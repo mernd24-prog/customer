@@ -1,15 +1,13 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   plugins: [
-    tailwindcss(),
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg"],
+      includeAssets: ["favicon.png"],
       manifest: {
         name: "Sam Global Customer",
         short_name: "SamGlobal",
@@ -17,7 +15,14 @@ export default defineConfig({
         theme_color: "#f7f4ef",
         background_color: "#f7f4ef",
         display: "standalone",
-        icons: []
+        icons: [
+          {
+            src: "favicon.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable"
+          }
+        ]
       },
       workbox: {
         navigateFallback: "/index.html",
