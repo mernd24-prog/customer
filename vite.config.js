@@ -7,13 +7,14 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.png"],
+      includeAssets: ["favicon.svg"],
       manifest: {
         name: "Sam Global Customer",
         short_name: "SamGlobal",
         description: "Customer ecommerce web app for Sam Global.",
         theme_color: "#f7f4ef",
         background_color: "#f7f4ef",
+        
         display: "standalone",
         icons: [
           {
