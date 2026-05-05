@@ -1,0 +1,25 @@
+[
+  {
+    "id": 1,
+    "title": "Diamond-Like Simulant Jewelry Sets",
+    "views": "66K+",
+    "images" : [
+        "images/women-wearing-diamond-jewellery 1.png",
+        "images/rings-diamonds-background-rock-black-sparkling 1.png"
+    ],
+    "price": 9993,
+    "oldPrice": 11199
+  },
+  {
+    "id": 2,
+    "title": "Trendy Outfits for Men & Women",
+    "views": "66K+",
+    "badge": "March",
+    "images": [
+      "/images/fashion1.jpg",
+      "/images/fashion2.jpg"
+    ],
+    "price": 993,
+    "oldPrice": 1199
+  }
+]

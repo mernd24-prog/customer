@@ -32,6 +32,11 @@ import { fetchCmsPages, fetchCmsPageBySlug } from "../features/cms/cmsSlice";
 import { fetchDynamicPrice } from "../features/dynamicPricing/dynamicPricingSlice";
 import { fetchMe, updateMe, addAddress, submitUserKyc } from "../features/user/userSlice";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
+import CategoryCard from "../components/ui/CategoryCard";
+import categories from "../data/categories.json";
+import SectionContainer from "../components/ui/SectionContainer";
+import NewArrivalCard from "../components/ui/NewArrivalCard";
+import arrivals from "../data/arrivals.json";
 
 const loginSchema = z.object({ email: z.string().email(), password: z.string().min(8) });
 const emailSchema = z.object({ email: z.string().email() });
@@ -89,31 +94,61 @@ export function HomePage() {
   const run = useToastThunk();
   const recent = getRecentlyViewed();
   const products = itemsFrom(trending);
+  const [activeId, setActiveId] = useState(null);
 
   const addToCart = (product) => run(dispatch, updateCart(addProductToCartPayload(cart, product)), "Added to cart");
   const wishlist = (product) => run(dispatch, updateCart(wishlistPayload(cart, product)), "Saved to wishlist");
 
   return (
-    <section>
-      <Seo title="Sam Global | Shop smarter" />
-      <div className="hero">
-        <div>
-          <h1>Sam Global</h1>
-          <p>Products, warranty, delivery, loyalty, wallet, returns, and subscriptions in one customer account.</p>
-          <Link className="button" to="/products">Shop products</Link>
-        </div>
-      </div>
-      <ApiState loading={catalog.loading || cms.loading} error={catalog.error || cms.error} empty={!itemsFrom(catalog).length && !itemsFrom(cms).length} onRetry={() => dispatch(fetchCategories({ active: true }))}>
-        <div className="rail">
-          {itemsFrom(catalog).map((category) => <Link className="chip" key={category.categoryKey || category.id} to={`/categories/${category.categoryKey}`}>{category.title || category.categoryKey}</Link>)}
-        </div>
-      </ApiState>
-      <h2>Trending now</h2>
-      <ApiState loading={trending.loading} error={trending.error} empty={!products.length} onRetry={() => dispatch(fetchTrendingProducts({ limit: 8 }))}>
-        <div className="grid">{products.map((product) => <ProductCard key={product.id || product._id || product.productId} product={product} onAddToCart={addToCart} onWishlist={wishlist} />)}</div>
-      </ApiState>
-      {recent.length > 0 && <><h2>Recently viewed</h2><div className="grid">{recent.map((product) => <ProductCard key={product.id || product._id || product.productId} product={product} onAddToCart={addToCart} onWishlist={wishlist} />)}</div></>}
-    </section>
+    // <section>
+    //   <Seo title="Sam Global | Shop smarter" />
+    //   <div className="hero">
+    //     <div>
+    //       <h1>Sam Global</h1>
+    //       <p>Products, warranty, delivery, loyalty, wallet, returns, and subscriptions in one customer account.</p>
+    //       <Link className="button" to="/products">Shop products</Link>
+    //     </div>
+    //   </div>
+    //   <ApiState loading={catalog.loading || cms.loading} error={catalog.error || cms.error} empty={!itemsFrom(catalog).length && !itemsFrom(cms).length} onRetry={() => dispatch(fetchCategories({ active: true }))}>
+    //     <div className="rail">
+    //       {itemsFrom(catalog).map((category) => <Link className="chip" key={category.categoryKey || category.id} to={`/categories/${category.categoryKey}`}>{category.title || category.categoryKey}</Link>)}
+    //     </div>
+    //   </ApiState>
+    //   <h2>Trending now</h2>
+    //   <ApiState loading={trending.loading} error={trending.error} empty={!products.length} onRetry={() => dispatch(fetchTrendingProducts({ limit: 8 }))}>
+    //     <div className="grid">{products.map((product) => <ProductCard key={product.id || product._id || product.productId} product={product} onAddToCart={addToCart} onWishlist={wishlist} />)}</div>
+    //   </ApiState>
+    //   {recent.length > 0 && <><h2>Recently viewed</h2><div className="grid">{recent.map((product) => <ProductCard key={product.id || product._id || product.productId} product={product} onAddToCart={addToCart} onWishlist={wishlist} />)}</div></>}
+    // </section>
+    // <div>
+    <>
+      {/* <div className="flex flex-wrap gap-4">
+        {categories.map((item) => (
+          <CategoryCard
+            key={item.id}
+            image={item.image}
+            title={item.title}
+            active={activeId === item.id}
+            onClick={() => setActiveId(item.id)}
+          />
+        ))}
+      </div> */}
+      
+
+  <SectionContainer
+  title="New Arrivals"
+  subtitle="Navigate trends with data-driven rankings"
+  bgColor="bg-[linear-gradient(270deg,_#A26D27_5.77%,_#CE9F2D_100%)]"
+>
+  <div className="grid md:grid-cols-3 gap-4"> 
+    {arrivals.map((item) => (
+      <NewArrivalCard key={item.id} {...item} />
+    ))}
+  </div>
+</SectionContainer>
+    </>
+
+
   );
 }
 
@@ -278,9 +313,9 @@ export function ProductDetailPage() {
   useEffect(() => {
     if (product) {
       addRecentlyViewed(product);
-      dispatch(trackAnalyticsEvent({ eventName: "product_view", metadata: { productId, source: "product_detail" } })).catch(() => {});
-      dispatch(trackRecommendationInteraction({ productId, interactionType: "viewed" })).catch(() => {});
-      dispatch(fetchDynamicPrice({ productId, quantity: 1 })).catch(() => {});
+      dispatch(trackAnalyticsEvent({ eventName: "product_view", metadata: { productId, source: "product_detail" } })).catch(() => { });
+      dispatch(trackRecommendationInteraction({ productId, interactionType: "viewed" })).catch(() => { });
+      dispatch(fetchDynamicPrice({ productId, quantity: 1 })).catch(() => { });
     }
   }, [dispatch, productId, Boolean(product)]);
 
