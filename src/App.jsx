@@ -34,6 +34,8 @@ import { SellerStatusPage, SellerTrackingDetailPage, SellerTrackingPage } from "
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
 import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 
+
+
 export default function App() {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
@@ -60,17 +62,21 @@ export default function App() {
 
   if (!sessionReady) {
     return (
+
       <main>
+
         <div className="state-box">
           <strong>Loading your session...</strong>
           <p>Please wait while Sam Global gets your account ready.</p>
         </div>
+        
       </main>
     );
   }
 
   return (
     <BrowserRouter>
+
       <Routes>
         <Route element={<AppLayout />}>
           <Route path={AUTH_ROUTES.login} element={<AuthFormPage mode="login" />} />
