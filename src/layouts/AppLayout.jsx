@@ -1,35 +1,36 @@
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { Bell, Package, Search, ShoppingCart, UserRound } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../features/auth/authSlice";
-import { AUTH_ROUTES } from "../features/auth/authRoutes";
-import { getRole, isSellerRole } from "../utils/roles";
-import { Footer } from "../components/organism/footer";
+import { Link, Outlet, } from "react-router-dom";
+// import { Bell, Package, Search, ShoppingCart, UserRound } from "lucide-react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { logout } from "../features/auth/authSlice";
+// import { AUTH_ROUTES } from "../features/auth/authRoutes";
+// import { getRole, isSellerRole } from "../utils/roles";
+import Header from "../components/Header/Hearder";
+import Navbar from "../components/Navbar/NavBar";
 
 export default function AppLayout() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.current);
-  const role = getRole(user);
-  const seller = isSellerRole(role);
+  // const dispatch = useDispatch();
+  // const navigate = useNavigate();
+  // const user = useSelector((state) => state.auth.current);
+  // const role = getRole(user);
+  // const seller = isSellerRole(role);
 
-  const links = seller
-    ? [
-        ["/seller/status", "Status"],
-        ["/seller/tracking", "Tracking"],
-      ]
-    : [
-        ["/products", "Products"],
-        ["/products/search", "Search"],
-        ["/orders", "Orders"],
-        ["/returns", "Returns"],
-        ["/wallet", "Wallet"],
-        ["/loyalty", "Loyalty"],
-      ];
+  // const links = seller
+  //   ? [
+  //       ["/seller/status", "Status"],
+  //       ["/seller/tracking", "Tracking"],
+  //     ]
+  //   : [
+  //       ["/products", "Products"],
+  //       ["/products/search", "Search"],
+  //       ["/orders", "Orders"],
+  //       ["/returns", "Returns"],
+  //       ["/wallet", "Wallet"],
+  //       ["/loyalty", "Loyalty"],
+  //     ];
 
   return (
     <div className="app-shell">
-      <header className="topbar">
+      {/* <header className="topbar">
         <Link to={seller ? "/seller/status" : "/"} className="brand">
           Sam Global
         </Link>
@@ -86,7 +87,10 @@ export default function AppLayout() {
             </button>
           )}
         </div>
-      </header>
+      </header> */}
+      <Navbar/>
+      <Header />
+
       <main>
         <Outlet />
       </main>
