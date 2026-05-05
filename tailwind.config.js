@@ -4,7 +4,6 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-<<<<<<< HEAD
         primary: "#CB9C2D",
         surface: "#FAF6EE",
         band: "#f7efde",
@@ -14,23 +13,6 @@ module.exports = {
         border: "#e7dfd1",
         divider: "#cfc5b5",
         blue: "#222178",
-      },
-
-      fontFamily: {
-        montserrat: ["Montserrat", "sans-serif"],
-      },
-
-      fontSize: {
-        paragraph: ["18px", "28px"],
-      },
-
-      fontWeight: {
-        medium: 500,
-      },
-
-=======
-        'primary': '#CB9C2D',
-
         card: {
           border: "#CE9F2D",
         },
@@ -43,9 +25,8 @@ module.exports = {
           border: "#e7dfd1",
           divider: "#cfc5b5",
           "bottom-from": "#222178",
-          "bottom-to": "#353498"
+          "bottom-to": "#353498",
         },
-
       },
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"],
@@ -56,17 +37,12 @@ module.exports = {
       fontWeight: {
         medium: 500,
       },
->>>>>>> origin/mahima-dev
       borderRadius: {
         xl: "1rem",
         "2xl": "1.5rem",
         custom: "12px",
         full: "9999px",
       },
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/mahima-dev
       screens: {
         xs: "320px",
         sm: "480px",
@@ -75,19 +51,11 @@ module.exports = {
         xl: "1280px",
         "2xl": "1536px",
       },
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/mahima-dev
       spacing: {
         128: "32rem",
         144: "36rem",
         160: "40rem",
       },
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/mahima-dev
       keyframes: {
         "slide-fade-in": {
           "0%": { transform: "translateY(-20px)", opacity: "0" },
@@ -127,8 +95,4 @@ module.exports = {
       });
     },
   ],
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> origin/mahima-dev
