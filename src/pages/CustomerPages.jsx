@@ -94,6 +94,11 @@ import {
 } from "../features/user/userSlice";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
 import SwiperSlider from "../components/ui/SwiperSlider";
+import CategoryCard from "../components/ui/CategoryCard";
+import categories from "../data/categories.json";
+import SectionContainer from "../components/ui/SectionContainer";
+import NewArrivalCard from "../components/ui/NewArrivalCard";
+import arrivals from "../data/arrivals.json";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -179,6 +184,7 @@ export function HomePage() {
   const run = useToastThunk();
   const recent = getRecentlyViewed();
   const products = itemsFrom(trending);
+  const [activeId, setActiveId] = useState(null);
 
   const addToCart = (product) =>
     run(
@@ -194,6 +200,7 @@ export function HomePage() {
     );
 
   return (
+    <>
     <section>
       <Seo title="Sam Global | Shop smarter" />
       <div>
@@ -253,6 +260,23 @@ export function HomePage() {
         </>
       )}
     </section>
+  
+      
+
+  <SectionContainer
+  title="New Arrivals"
+  subtitle="Navigate trends with data-driven rankings"
+  bgColor="bg-[linear-gradient(270deg,_#A26D27_5.77%,_#CE9F2D_100%)]"
+>
+  <div className="grid md:grid-cols-3 gap-4"> 
+    {arrivals.map((item) => (
+      <NewArrivalCard key={item.id} {...item} />
+    ))}
+  </div>
+</SectionContainer>
+    </>
+
+
   );
 }
 

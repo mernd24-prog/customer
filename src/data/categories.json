@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "title": "Women's Fashion",
+    "image": "/images/stylish-girls.jpg"
+  },
+  {
+    "id": 2,
+    "title": "Men's Fashion",
+    "image": "/images/men-fashion.png"
+  },
+  {
+    "id": 3,
+    "title": "Kids Collection",
+    "image": "/images/kids-fashion.jpg"
+  },
+  {
+    "id": 4,
+    "title": "Home Decor",
+    "image": "/images/home-decor.jpg"
+  },
+  {
+    "id": 5,
+    "title": "Smart Home",
+    "image": "/images/smart-home.jpg"
+  }
+]
