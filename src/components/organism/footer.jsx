@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { SocialIcons } from "../SocialIcons";
 import { footerData } from "../../data/footer";
-import { ActionSkeleton, ActiveLinkSkeleton } from "../skeleton/footerSkeleton";
+import { SkeletonLoader, SKELETON_PRESETS } from "../common/skeleton";
 
 /* ------------------ Reusable Components ------------------ */
 
@@ -23,7 +23,8 @@ const SectionTitle = ({ children, className = "" }) => (
 /* ------------------ Sections ------------------ */
 
 const Benefits = ({ items }) => (
-  <section className="border-t-4 lg:border-t-[10px] border-accent bg-band">
+  <section className="bg-band ">
+    <div className="w-full h-2 bg-gradient-to-l from-50% to-50% from-accent to-primary " />
     <SectionContainer className="grid py-8 gap-8 md:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => (
         <div key={item.title} className="flex items-center gap-6 md:gap-4">
@@ -72,7 +73,7 @@ const ActionLinks = ({ items }) => (
       <FooterLink
         key={item.label}
         href={item.href}
-        className="flex min-h-12 p-2 lg:p-6 items-center gap-4 custom-h6 font-semibold hover:text-accent"
+        className="flex min-h-12 p-2 lg:p-8  items-center gap-4 custom-h6 font-semibold hover:text-accent"
       >
         <img
           className="h-9 w-9 object-contain"
@@ -100,18 +101,21 @@ const AppDownload = ({ data }) => (
   </SectionContainer>
 );
 
-const BottomBar = ({ copyright, socialLinks }) => (
-  <section className="bg-gradient-to-r from-blue to-[#353498] py-6 md:py-4">
-    <SectionContainer className="flex flex-col gap-4 text-white md:flex-row md:items-center md:justify-between">
-      <p className="custom-para text-center md:text-left">{copyright}</p>
-      <div className="flex flex-wrap justify-center items-center gap-4">
-        {socialLinks.map((social) => (
-          <SocialIcons key={social.label} data={social} />
-        ))}
-      </div>
-    </SectionContainer>
-  </section>
-);
+const BottomBar = ({ copyright, socialLinks }) => {
+  return (
+    <section className="bg-gradient-to-r from-blue to-[#353498] py-6 md:py-4">
+      <SectionContainer className="flex flex-col gap-4 text-white md:flex-row md:items-center md:justify-between">
+        <p className="custom-para text-center md:text-left">{copyright}</p>
+
+        <div className="flex flex-wrap justify-center items-center gap-4">
+          {socialLinks.map((social) => (
+            <SocialIcons key={social.label} data={social} />
+          ))}
+        </div>
+      </SectionContainer>
+    </section>
+  );
+};
 
 /* ------------------ Main Footer ------------------ */
 
@@ -129,11 +133,24 @@ export function Footer({ data = footerData }) {
     <footer className="w-full bg-surface font-montserrat text-ink">
       <Benefits items={data.benefits} />
       {loading ? (
-        <ActiveLinkSkeleton />
+        <SkeletonLoader
+          layout={SKELETON_PRESETS.FOOTER_LINKS}
+          count={6}
+          containerClass="w-container grid gap-8 my-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
+        />
       ) : (
         <LinkGroups groups={data.linkGroups} />
       )}
-      {loading ? <ActionSkeleton /> : <ActionLinks items={data.actionLinks} />}
+      {loading ? (
+        <SkeletonLoader
+          layout={SKELETON_PRESETS.FOOTER_ACTIONS}
+          count={4}
+          containerClass="w-container grid gap-4 border-y bg-band border-accent grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+          wrapperClass="flex min-h-12 p-2 lg:p-8 items-center"
+        />
+      ) : (
+        <ActionLinks items={data.actionLinks} />
+      )}
       <AppDownload data={data.appDownload} />
       <BottomBar copyright={data.copyright} socialLinks={data.socialLinks} />
     </footer>

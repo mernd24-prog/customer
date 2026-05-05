@@ -141,7 +141,7 @@ export const footerData = {
     {
       label: "Facebook",
       href: "#",
-      icon: footer.youtube,
+      icon: footer.facebook,
       alt: "Facebook",
     },
     {

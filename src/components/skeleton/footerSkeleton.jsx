@@ -28,3 +28,15 @@ export function ActionSkeleton() {
     </div>
   );
 }
+
+export function SocialIconSkeleton() {
+  return (
+    <div className="flex gap-2 animate-pulse ">
+      {[...Array(3)].map((_, i) => (
+        <div key={i}>
+          <div className="bg-gray-200 w-10 h-10 rounded-full "></div>
+        </div>
+      ))}
+    </div>
+  );
+}

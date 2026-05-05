@@ -10,4 +10,5 @@ export const footer = {
   seller: "/image/svg/seller.svg",
   shipping: "/image/svg/shipping.svg",
   youtube: "/image/svg/youtube.svg",
+  facebook: "/image/svg/facebook.svg",
 };
