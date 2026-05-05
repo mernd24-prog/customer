@@ -6,6 +6,7 @@ import { Link, Outlet, } from "react-router-dom";
 // import { getRole, isSellerRole } from "../utils/roles";
 import Header from "../components/Header/Hearder";
 import Navbar from "../components/Navbar/NavBar";
+import { Footer } from "../components/organism/footer";
 
 export default function AppLayout() {
   // const dispatch = useDispatch();
