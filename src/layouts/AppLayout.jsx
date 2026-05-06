@@ -4,8 +4,8 @@ import { Link, Outlet } from "react-router-dom";
 // import { logout } from "../features/auth/authSlice";
 // import { AUTH_ROUTES } from "../features/auth/authRoutes";
 // import { getRole, isSellerRole } from "../utils/roles";
-import Header from "../components/Header/Hearder";
-import Navbar from "../components/Navbar/NavBar";
+import { Header } from "../components/organism/Hearder";
+
 import { Footer } from "../components/organism/footer";
 import MothersDaySwiper from "../components/mothersDaySwiper";
 
@@ -92,6 +92,8 @@ export default function AppLayout() {
       </header> */}
       {/* <Navbar />
       <Header /> */}
+     
+      <Header />
 
       <main>
         <Outlet />
