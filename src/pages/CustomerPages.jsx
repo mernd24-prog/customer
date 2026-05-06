@@ -17,7 +17,7 @@ import ProductCard, { formatMoney } from "../components/ProductCard";
 import Seo from "../components/Seo";
 import StatusTimeline from "../components/StatusTimeline";
 import { useToastThunk } from "../hooks/useToastThunk";
-import { addRecentlyViewed, getRecentlyViewed } from "../utils/recentlyViewed";
+import { addRecentlyViewed } from "../utils/recentlyViewed";
 import {
   loginUser,
   registerUser,
@@ -34,10 +34,7 @@ import {
   searchProducts,
   fetchProductById,
 } from "../features/product/productSlice";
-import {
-  fetchCategories,
-  fetchCategoryByKey,
-} from "../features/catalog/catalogSlice";
+import { fetchCategoryByKey } from "../features/catalog/catalogSlice";
 import { fetchCart, updateCart } from "../features/cart/cartSlice";
 import { createOrder } from "../features/order/orderSlice";
 import {
@@ -79,12 +76,9 @@ import {
   registerWarranty,
   claimWarranty,
 } from "../features/warranty/warrantySlice";
-import {
-  fetchTrendingProducts,
-  trackRecommendationInteraction,
-} from "../features/recommendation/recommendationSlice";
+import { trackRecommendationInteraction } from "../features/recommendation/recommendationSlice";
 import { trackAnalyticsEvent } from "../features/analytics/analyticsSlice";
-import { fetchCmsPages, fetchCmsPageBySlug } from "../features/cms/cmsSlice";
+import { fetchCmsPageBySlug } from "../features/cms/cmsSlice";
 import { fetchDynamicPrice } from "../features/dynamicPricing/dynamicPricingSlice";
 import {
   fetchMe,
@@ -93,15 +87,13 @@ import {
   submitUserKyc,
 } from "../features/user/userSlice";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
-// import CategoryCard from "../components/ui/CategoryCard";
-import categories from "../data/categories.json";
-import SectionContainer from "../components/ui/SectionContainer";
-import NewArrivalCard from "../components/ui/NewArrivalCard";
-import TopDealCard from "../components/ui/TopDealCard";
-import arrivals from "../data/arrivals.json";
-import topDeals from "../data/topDeals.json";
-import Banner from "../components/organism/Banner";
-import CategoryCard from "../components/ui/CategoryCard";
+import {
+  useFetch,
+  itemsFrom,
+  addProductToCartPayload,
+  wishlistPayload,
+} from "./customer/helpers";
+export { HomePage } from "./customer/HomePage";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -125,199 +117,6 @@ const registerSchema = z.object({
   password: z.string().min(8),
   referralCode: z.string().optional(),
 });
-
-function useFetch(thunk, arg, selector) {
-  const dispatch = useDispatch();
-  const state = useSelector(selector);
-  useEffect(() => {
-    dispatch(thunk(arg));
-  }, [dispatch, thunk, JSON.stringify(arg)]);
-  return state;
-}
-
-function itemsFrom(state) {
-  if (Array.isArray(state.current)) return state.current;
-  if (Array.isArray(state.current?.items)) return state.current.items;
-  if (Array.isArray(state.current?.orders)) return state.current.orders;
-  return state.list || [];
-}
-
-function addProductToCartPayload(cart, product, quantity = 1) {
-  const id = product?.id || product?._id || product?.productId;
-  const existing = cart?.items || [];
-  const items = existing.some((item) => item.productId === id)
-    ? existing.map((item) =>
-      item.productId === id
-        ? { ...item, quantity: item.quantity + quantity }
-        : item,
-    )
-    : [...existing, { productId: id, quantity, price: product.price }];
-  return { items, wishlist: cart?.wishlist || [] };
-}
-
-function wishlistPayload(cart, product, remove = false) {
-  const id = product?.id || product?._id || product?.productId || product;
-  const current = cart?.wishlist || [];
-  return {
-    items: cart?.items || [],
-    wishlist: remove
-      ? current.filter((item) => item !== id)
-      : Array.from(new Set([...current, id])),
-  };
-}
-
-export function HomePage() {
-  const dispatch = useDispatch();
-  const catalog = useFetch(
-    fetchCategories,
-    { page: 1, limit: 8, active: true },
-    (s) => s.catalog,
-  );
-  const trending = useFetch(
-    fetchTrendingProducts,
-    { limit: 8, period: "week" },
-    (s) => s.recommendation,
-  );
-  const cms = useFetch(
-    fetchCmsPages,
-    { pageType: "banner", published: true, limit: 3 },
-    (s) => s.cms,
-  );
-  const cart = useSelector((s) => s.cart.current);
-  const run = useToastThunk();
-  const recent = getRecentlyViewed();
-  const products = itemsFrom(trending);
-  const [activeId, setActiveId] = useState(null);
-
-  const addToCart = (product) =>
-    run(
-      dispatch,
-      updateCart(addProductToCartPayload(cart, product)),
-      "Added to cart",
-    );
-  const wishlist = (product) =>
-    run(
-      dispatch,
-      updateCart(wishlistPayload(cart, product)),
-      "Saved to wishlist",
-    );
-  return (
-    <>
-      <Seo title="Sam Global | Shop smarter" />
-      <Banner />
-      {/* <section>
-        <ApiState
-          loading={catalog.loading || cms.loading}
-          error={catalog.error || cms.error}
-          empty={!itemsFrom(catalog).length && !itemsFrom(cms).length}
-          onRetry={() => dispatch(fetchCategories({ active: true }))}
-        >
-
-
-          <div className="rail">
-            {itemsFrom(catalog).map((category) => (
-              <Link
-                className="chip"
-                key={category.categoryKey || category.id}
-                to={`/categories/${category.categoryKey}`}
-              >
-                {category.title || category.categoryKey}
-              </Link>
-            ))}
-          </div>
-        </ApiState>
-        <h2>Trending now</h2>
-        <ApiState
-          loading={trending.loading}
-          error={trending.error}
-          empty={!products.length}
-          onRetry={() => dispatch(fetchTrendingProducts({ limit: 8 }))}
-        >
-          <div className="grid">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id || product._id || product.productId}
-                product={product}
-                onAddToCart={addToCart}
-                onWishlist={wishlist}
-              />
-            ))}
-          </div>
-            </ApiState>
-      
-     
-    </section> */}
-      <div className="flex flex-wrap gap-4 justify-between">
-        {categories.map((item) => (
-          <CategoryCard
-            key={item.id}
-            image={item.image}
-            title={item.title}
-            active={activeId === item.id}
-            onClick={() => setActiveId(item.id)}
-          />))}
-      </div>
-
-
-      <SectionContainer
-        title="Top Deals"
-        subtitle="Score the lowest prices on samglobal.com"
-        headerbgColor="bg-[#C9C9DB]"
-        bodybgColor="bg-[#F3F3FA]"
-        className="mt-8"
-      >
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4">
-          {topDeals.map((item) => (
-            <TopDealCard key={item.id} {...item} />
-          ))}
-        </div>
-      </SectionContainer>
-
-      <SectionContainer
-        title="New Arrivals"
-        subtitle="Navigate trends with data-driven rankings"
-        headerbgColor="bg-[linear-gradient(270deg,_#A26D27_5.77%,_#CE9F2D_100%)]"
-        bodybgColor="bg-[#CE9F2D0D]"
-        className="mt-8"
-      >
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-3">
-          {arrivals.map((item) => (
-            <NewArrivalCard key={item.id} {...item} />
-          ))}
-        </div>
-      </SectionContainer>
-
-      {recent.length > 0 && (
-        <>
-          <h2>Recently viewed</h2>
-          <div className="grid">
-            {recent.map((product) => (
-              <ProductCard
-                key={product.id || product._id || product.productId}
-                product={product}
-                onAddToCart={addToCart}
-                onWishlist={wishlist}
-              />
-            ))}
-          </div>
-        </>
-      )}
-
-
-      <SectionContainer
-        title="New Arrivals"
-        subtitle="Navigate trends with data-driven rankings"
-        bgColor="bg-[linear-gradient(270deg,_#A26D27_5.77%,_#CE9F2D_100%)]"
-      >
-        <div className="grid md:grid-cols-3 gap-4">
-          {arrivals.map((item) => (
-            <NewArrivalCard key={item.id} {...item} />
-          ))}
-        </div>
-      </SectionContainer>
-    </>
-  );
-}
 
 export function AuthFormPage({ mode }) {
   const dispatch = useDispatch();

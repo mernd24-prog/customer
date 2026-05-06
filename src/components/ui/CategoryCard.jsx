@@ -2,17 +2,16 @@ export default function CategoryCard({ image, title, active, onClick }) {
     return (
         <div
             onClick={onClick}
-            className={`w-[301.24px] h-[311px] rounded-[20px] border border-card-border p-2 cursor-pointer transition
-        hover:bg-card-border border-card-border`}
+            className={`h-full w-full rounded-[20px] border border-card-border bg-white p-2 transition hover:bg-card-border ${active ? "ring-2 ring-primary/50" : ""} cursor-pointer`}
         >
             <div className="rounded-lg overflow-hidden">
                 <img
                     src={image}
                     alt={title}
-                    className="w-[284px] h-[256px] object-cover"
+                    className="aspect-[284/256] w-full object-cover"
                 />
             </div>
-            <p className="text-center mt-3 font-medium text-[18px] leading-[34px] tracking-normal font-montserrat">
+            <p className="mt-3 line-clamp-1 text-center font-montserrat text-[15px] font-medium leading-6 tracking-normal sm:text-[16px] lg:text-[18px]">
                 {title}
             </p>
         </div>

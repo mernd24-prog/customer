@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "title": "Burberry Jacket",
+    "subtitle": "Embroidered hooded wax jacket in black",
+    "image": "/image/jpg/stylish-girls.jpg",
+    "rating": 5,
+    "price": 990,
+    "oldPrice": 1200
+  },
+  {
+    "id": 2,
+    "title": "Lace Dress",
+    "subtitle": "Elegant lace long sleeve midi dress in black",
+    "image": "/image/jpg/kids-fashion.jpg",
+    "rating": 4,
+    "price": 950,
+    "oldPrice": 1180
+  },
+  {
+    "id": 3,
+    "title": "Classic Fit Set",
+    "subtitle": "Classic fit full set for men in premium cotton",
+    "image": "/image/png/men-fashion.png",
+    "rating": 4,
+    "price": 990,
+    "oldPrice": 1200
+  },
+  {
+    "id": 4,
+    "title": "Track Pants",
+    "subtitle": "Men's classic loose fit track pants in green",
+    "image": "/image/jpg/smart-home.jpg",
+    "rating": 4,
+    "price": 990,
+    "oldPrice": 1200
+  },
+  {
+    "id": 5,
+    "title": "Denim Street",
+    "subtitle": "Relaxed denim fashion with shopping look",
+    "image": "/image/jpg/home-decor.jpg",
+    "rating": 5,
+    "price": 990,
+    "oldPrice": 1200
+  },
+  {
+    "id": 6,
+    "title": "Men's Twin Set",
+    "subtitle": "Twin coordinated men style for festive wear",
+    "image": "/image/png/men-fashion.png",
+    "rating": 4,
+    "price": 990,
+    "oldPrice": 1200
+  },
+  {
+    "id": 7,
+    "title": "Duo Shades",
+    "subtitle": "Casual duo look with sunglasses and denim",
+    "image": "/image/jpg/stylish-girls.jpg",
+    "rating": 4,
+    "price": 990,
+    "oldPrice": 1200
+  },
+  {
+    "id": 8,
+    "title": "Kids Combo",
+    "subtitle": "Mini trend duo for boys and girls in grey",
+    "image": "/image/jpg/kids-fashion.jpg",
+    "rating": 4,
+    "price": 990,
+    "oldPrice": 1200
+  },
+  {
+    "id": 9,
+    "title": "Premium Mist",
+    "subtitle": "Luxury fragrance mist bottle with night glow",
+    "image": "/image/png/rings-diamonds-background-rock-black-sparkling 1.png",
+    "rating": 5,
+    "price": 990,
+    "oldPrice": 1200
+  },
+  {
+    "id": 10,
+    "title": "Air Cooler",
+    "subtitle": "Compact room air cooler for daily comfort",
+    "image": "/image/jpg/smart-home.jpg",
+    "rating": 4,
+    "price": 990,
+    "oldPrice": 1200
+  },
+  {
+    "id": 11,
+    "title": "Ethnic Duo",
+    "subtitle": "Festive kurta pair in contrast shades",
+    "image": "/image/png/men-fashion.png",
+    "rating": 4,
+    "price": 990,
+    "oldPrice": 1200
+  },
+  {
+    "id": 12,
+    "title": "Handbag Duo",
+    "subtitle": "Premium handbag set in coffee and beige",
+    "image": "/image/jpg/home-decor.jpg",
+    "rating": 4,
+    "price": 990,
+    "oldPrice": 1200
+  }
+]

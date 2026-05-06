@@ -19,11 +19,15 @@ export default function SectionContainer({
                             {subtitle}
                         </p>
                     </div>
-                    <button className="flex items-center gap-2 text-black text-[16px] font-medium font-montserrat">
+                    {/* <button className="flex items-center gap-2 text-black text-[16px] font-medium font-montserrat">
                         View More
                         <FaAngleRight />
 
-                    </button>
+                    </button> */}
+                    <button className="shrink-0 self-start sm:self-center flex items-center gap-2 text-black text-[14px] sm:text-[16px] lg:text-[18px] font-medium font-montserrat">
+    View More
+    <FaAngleRight />
+</button>
                 </div>
             </header>
             <div className={`p-3 sm:p-4 lg:p-6 ${bodybgColor}`}>
