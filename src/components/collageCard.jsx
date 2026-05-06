@@ -70,7 +70,7 @@ function CollageCard({ section }) {
 
 export default function Collage() {
   return (
-    <section className="w-container  my-6 overflow-hidden lg:my-10">
+    <section className="    overflow-hidden lg:my-10">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {collageSections.map((section) => (
           <CollageCard key={section.title} section={section} />
