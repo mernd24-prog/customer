@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Fusion Lehenga",
+    "image": "image/png/young-indian-bride-luxurious-bridal-costume-with-makeup-heavy-jewelry 1.png",
+    "price": 9993,
+    "oldPrice": 11199
+  },
+  {
+    "id": 2,
+    "title": "Men's Wear",
+    "image": "image/png/stylish-mens-kurtas 1.png",
+    "price": 993,
+    "oldPrice": 1199
+  },
+  {
+    "id": 3,
+    "title": "Jewelled Watches",
+    "image": "image/png/rings-diamonds-background-rock-black-sparkling 1.png",
+    "price": 9993,
+    "oldPrice": 11199
+  },
+  {
+    "id": 4,
+    "title": "Formal Shoes",
+    "image": "image/png/stylish-pair.png",
+    "price": 993,
+    "oldPrice": 1199
+  }
+]

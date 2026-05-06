@@ -1,26 +1,34 @@
+import { FaAngleRight } from "react-icons/fa6";
 export default function SectionContainer({
     title,
     subtitle,
-    bgColor,
+    headerbgColor,
     children,
+    bodybgColor,
+    className = "",
 }) {
     return (
-        <div >
-            <header className={`w-[auto] h-[111px] opacity-20 rounded-t-[20px] ${bgColor}`}>
-                <div className="flex justify-between items-center mb-4">
-                    <div>
-                        <h2 className="text-lg font-semibold">{title}</h2>
-                        <p className="text-sm text-gray-500">{subtitle}</p>
+        <section className={`w-full overflow-hidden rounded-[20px] ${className}`}>
+            <header className={`text-[#2E2E2E] ${headerbgColor}`}>
+                <div className="flex min-h-[92px] flex-col gap-3 px-4 py-5 sm:min-h-[111px] sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                    <div className="min-w-0">
+                        <h2 className="font-montserrat text-[22px] font-bold leading-tight tracking-normal sm:text-[26px]">
+                            {title}
+                        </h2>
+                        <p className="mt-2 font-montserrat text-sm leading-5 text-[#2E2E2E]">
+                            {subtitle}
+                        </p>
                     </div>
-                    <button className="text-sm font-medium">
-                        View More →
+                    <button className="flex items-center gap-2 text-black text-[16px] font-medium font-montserrat">
+                        View More
+                        <FaAngleRight />
+
                     </button>
                 </div>
             </header>
-            <body>
+            <div className={`p-3 sm:p-4 lg:p-6 ${bodybgColor}`}>
                 {children}
-            </body>
-
-        </div>
+            </div>
+        </section>
     );
 }

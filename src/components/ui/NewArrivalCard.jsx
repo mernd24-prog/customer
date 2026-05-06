@@ -1,57 +1,62 @@
 export default function NewArrivalCard({
     title,
     views,
-    images,
+    images = [],
     price,
     oldPrice,
     badge,
 }) {
-    return (
-        <div className="bg-[#f8f8f8] rounded-2xl p-4 relative">
+    const displayImages = images.slice(0, 2);
+    const formatPrice = (value) => Number(value).toLocaleString("en-IN");
+    const currentMonth = new Date().toLocaleString("en-US", { month: "long" });
+    const badgeText = badge ?? currentMonth;
 
-            {/* Badge */}
-            {badge && (
-                <span className="absolute top-3 left-3 bg-yellow-500 text-white text-xs px-2 py-1 rounded-md">
-                    {badge}
-                </span>
+    return (
+        <article className="relative h-full min-w-0 rounded-[12px] bg-white px-4 pb-6 pt-5 shadow-sm sm:px-5">
+            {badgeText && (
+                <div className="absolute left-[-10px] top-[18px] h-[37px] w-[102px] overflow-hidden rounded-l-full">
+                    <img
+                        src="image/png/image.png"
+                        alt=""
+                        className="h-full w-full object-fill"
+                    />
+                    <span className="absolute inset-x-0 top-0 flex h-[30px] items-center justify-center pl-3 pr-5 font-montserrat text-[15px] font-bold leading-none text-white">
+                        {badgeText}
+                    </span>
+                </div>
             )}
 
-            {/* Title */}
-            <h3 className="text-sm font-medium text-center text-gray-800">
+            <h3
+                className="mx-auto h-[34px] max-w-full overflow-hidden text-ellipsis whitespace-nowrap pl-[72px] pr-2 text-center font-montserrat text-[15px] font-medium leading-[34px] text-[#2E2E2E] sm:pl-[84px] sm:text-[16px] lg:text-[17px] xl:text-[18px]"
+                title={title}
+            >
                 {title}
             </h3>
 
-            {/* Views */}
-            <p className="text-xs text-gray-500 mt-1 mb-3">
+            <p className="mt-3 font-montserrat text-[14px] font-medium leading-[24px] text-[#A6A6A6] sm:text-[15px] lg:text-[16px]">
                 {views} Views
             </p>
 
-            {/* Images */}
-            <div className="flex flex-row gap-3 mb-4">
-                {images.map((img, index) => (
-                    <img
-                        key={index}
-                        src={img}
-                        alt=""
-                        className="w-1/2 h-[120px] object-cover rounded-xl"
-                    />
-                ))}
-            </div>
+            <div className="mt-2 grid grid-cols-2 gap-3">
+                {displayImages.map((img, index) => (
+                    <div key={`${img}-${index}`} className="min-w-0">
+                        <img
+                            src={img}
+                            alt={title}
+                            className="aspect-[238/273] w-full rounded-[10px] object-cover"
+                        />
 
-            {/* Price section */}
-            <div className="flex justify-center gap-3">
-                {[1, 2].map((_, i) => (
-                    <div
-                        key={i}
-                        className="border border-primary rounded-full px-3 py-1 text-xs flex items-center gap-1"
-                    >
-                        <span className="font-semibold">₹{price}</span>
-                        <span className="line-through text-gray-400 text-[10px]">
-                            ₹{oldPrice}
-                        </span>
+                        <div className="mx-auto mt-4 flex h-[34px] w-full max-w-[160px] items-center justify-center gap-1 rounded-full border border-[#CE9F2D] px-2 font-montserrat">
+                            <span className="text-[12px] font-semibold leading-none text-[#2E2E2E] sm:text-[13px] lg:text-[14px] xl:text-[15px]">
+                                ₹{formatPrice(price)}
+                            </span>
+                            <span className="text-[10px] leading-none text-[#A26D27] line-through sm:text-[11px] lg:text-[12px] xl:text-[13px]">
+                                ₹{formatPrice(oldPrice)}
+                            </span>
+                        </div>
                     </div>
                 ))}
             </div>
-        </div>
+        </article>
     );
 }
