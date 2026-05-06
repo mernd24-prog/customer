@@ -78,7 +78,7 @@ export default function MothersDaySwiper() {
           </div>
 
           {/* Right Side Swiper */}
-          <div className="w-full relative  xl:w-[60%] mt-12  md:-ml-12 lg:-ml-20">
+          <div className="w-full relative  xl:w-[60%] my-2  md:-ml-12 lg:-ml-20">
             {/* Navigation Buttons for Desktop */}
             <div className="flex  gap-2 absolute bottom-0  -left-[7rem] z-20">
               <button
@@ -122,7 +122,7 @@ export default function MothersDaySwiper() {
                     <img
                       src={slide.image}
                       alt={slide.title}
-                      className="w-full rounded-b-2xl h-full object-cover transition-transform duration-700"
+                      className="w-full rounded-b-2xl h-full object-cover object-top transition-transform duration-700"
                     />
                     <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
                       <p className="text-white font-montserrat font-bold text-lg md:text-xl">

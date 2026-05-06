@@ -18,7 +18,7 @@
   }
 
   .w-container {
-    @apply mx-auto w-11/12 md:w-8/12 lg:w-[95%] xl:w-10/12;
+    @apply mx-auto w-11/12 md:w-[85%] lg:w-[95%] xl:w-10/12;
   }
 }
 
@@ -132,7 +132,8 @@ nav a:hover {
   color: #fff;
   background:
     linear-gradient(90deg, rgba(14, 22, 19, 0.74), rgba(14, 22, 19, 0.18)),
-    url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=80") center/cover;
+    url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1800&q=80")
+      center/cover;
   border-radius: 8px;
 }
 
