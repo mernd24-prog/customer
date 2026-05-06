@@ -85,8 +85,5 @@ module.exports = {
     },
   ],
 };
-<<<<<<< HEAD
  
  
-=======
->>>>>>> origin/aditi-dev

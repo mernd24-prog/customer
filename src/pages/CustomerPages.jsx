@@ -93,7 +93,7 @@ import {
   submitUserKyc,
 } from "../features/user/userSlice";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
-import SwiperSlider from "../components/ui/SwiperSlider";
+// import SwiperSlider from "../components/ui/SwiperSlider";
 import SectionContainer from "../components/ui/SectionContainer";
 import NewArrivalCard from "../components/ui/NewArrivalCard";
 import TopDealCard from "../components/ui/TopDealCard";
