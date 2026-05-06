@@ -25,8 +25,9 @@ module.exports = {
           border: "#e7dfd1",
           divider: "#cfc5b5",
           "bottom-from": "#222178",
-          "bottom-to": "#353498",
+          "bottom-to": "#353498"
         },
+
       },
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"],
@@ -96,5 +97,3 @@ module.exports = {
     },
   ],
 };
- 
- 

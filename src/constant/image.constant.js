@@ -12,3 +12,11 @@ export const footer = {
   youtube: "/image/svg/youtube.svg",
   facebook: "/image/svg/facebook.svg",
 };
+
+export const mothersDaySwiperImages = {
+  jacket: "/image/png/jacket.png",
+  maxi: "/image/png/maxi.png",
+  coOrdSet: "/image/png/coOrdSet.png",
+  blazer: "/image/png/blazer.png",
+  pants: "/image/png/pants.png",
+};

@@ -1,7 +1,7 @@
-import React from "react";
+import { Link } from "react-router-dom";
 
 const Button = ({
-  children,
+  label,
   onClick,
   type = "button",
   variant = "primary",
@@ -10,6 +10,7 @@ const Button = ({
   disabled = false,
   className = "",
   bgColor,
+  size = "md",
   borderColor,
   textColor,
   hoverBgColor,
@@ -17,8 +18,13 @@ const Button = ({
   icon,
   ...rest
 }) => {
-  const baseStyles =
-    "px-4 py-2 text-base font-medium transition-all duration-200 flex items-center justify-center gap-2 min-h-[44px]";
+  const sizes = {
+    sm: "px-4 py-2 text-sm ",
+    md: "px-6 py-3 text-base ",
+    lg: "px-8 py-4  text-base xl:text-xl",
+  };
+
+  const baseStyles = `px-8 py-4  ${sizes[size]} transition-all duration-200 flex items-center justify-center gap-2 min-h-[44px]`;
 
   const width = fullWidth ? "w-full" : "";
   const borderRadius = rounded ? "rounded-full" : "rounded-sm";
@@ -26,6 +32,8 @@ const Button = ({
 
   const variantStyles = {
     primary: "bg-[#BF9B53] hover:bg-[#a6813f] text-white border-none",
+    gradient:
+      "bg-gradient-to-l from-accent to-primary text-white  rounded-full",
     secondary:
       "bg-[#F3F4F6] hover:bg-[#BF9B53] text-gray-700 border-2 border-[#BF9B53]",
     google: "bg-white border border-gray-300 text-gray-700 hover:bg-gray-100",
@@ -63,6 +71,8 @@ const Button = ({
       : variantStyles[variant]
   } ${className}`;
 
+  const content = label;
+
   return (
     <button
       type={type}
@@ -75,7 +85,7 @@ const Button = ({
       {...rest}
     >
       {icon && <span className="flex items-center">{icon}</span>}
-      {children}
+      {content}
     </button>
   );
 };

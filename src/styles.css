@@ -5,6 +5,10 @@
 /* Global Font-size set */
 
 @layer base {
+  .custom-h5 {
+    @apply text-xl md:text-2xl lg:text-3xl  2xl:text-4xl    leading-8 lg:leading-10;
+  }
+
   .custom-h6 {
     @apply text-base md:text-lg xl:text-xl leading-5 lg:leading-7;
   }
@@ -21,7 +25,7 @@
 :root {
   color-scheme: light;
   color: #1f2520;
-  background: #f7f4ef;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -70,9 +74,7 @@ main {
   background: rgba(247, 244, 239, 0.94);
   border-bottom: 1px solid #ddd6c9;
   backdrop-filter: blur(12px);
-
 }
-
 .topbar-second {
   position: sticky;
   top: 0;
@@ -105,7 +107,6 @@ nav,
   gap: 10px;
   align-items: center;
   flex-wrap: wrap;
-
 }
 
 nav a,
@@ -206,7 +207,6 @@ nav a:hover {
   padding: 10px;
   justify-content: flex-end;
   border-top: 1px solid #eee7dc;
-
 }
 
 .button,
