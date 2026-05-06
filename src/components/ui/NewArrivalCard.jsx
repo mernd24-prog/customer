@@ -1,3 +1,5 @@
+import PricePill from "./PricePill";
+
 export default function NewArrivalCard({
     title,
     views,
@@ -7,27 +9,28 @@ export default function NewArrivalCard({
     badge,
 }) {
     const displayImages = images.slice(0, 2);
-    const formatPrice = (value) => Number(value).toLocaleString("en-IN");
     const currentMonth = new Date().toLocaleString("en-US", { month: "long" });
     const badgeText = badge ?? currentMonth;
 
     return (
-        <article className="relative h-full min-w-0 rounded-[12px] bg-white px-4 pb-6 pt-5 shadow-sm sm:px-5">
+        <article
+            className="relative h-full min-w-0 rounded-[12px] bg-white px-3 pb-4 pt-4 shadow-sm transition hover:shadow-lg sm:px-4 sm:pb-5 sm:pt-5"
+        >
             {badgeText && (
-                <div className="absolute left-[-10px] top-[18px] h-[37px] w-[102px] overflow-hidden rounded-l-full">
-                    {/* <img
+                <div className="absolute left-[-8px] top-4 h-[34px] w-[94px] overflow-hidden rounded-l-full sm:left-[-10px] sm:top-[18px] sm:h-[37px] sm:w-[102px]">
+                    <img
                         src="image/png/image.png"
                         alt=""
                         className="h-full w-full object-fill"
-                    /> */}
-                    <span className="absolute inset-x-0 top-0 flex h-[30px] items-center justify-center pl-3 pr-5 font-montserrat text-[15px] font-bold leading-none text-white">
+                    />
+                    <span className="absolute inset-x-0 top-0 flex h-[28px] items-center justify-center pl-3 pr-4 font-montserrat text-[13px] font-bold leading-none text-white sm:h-[30px] sm:pl-3 sm:pr-5 sm:text-[15px]">
                         {badgeText}
                     </span>
                 </div>
             )}
 
             <h3
-                className="mx-auto h-[34px] max-w-full overflow-hidden text-ellipsis whitespace-nowrap pl-[72px] pr-2 text-center font-montserrat text-[15px] font-medium leading-[34px] text-[#2E2E2E] sm:pl-[84px] sm:text-[16px] lg:text-[17px] xl:text-[18px]"
+                className="mx-auto h-[32px] max-w-full overflow-hidden text-ellipsis whitespace-nowrap pl-[66px] pr-2 text-center font-montserrat text-[14px] font-medium leading-[32px] text-[#2E2E2E] sm:h-[34px] sm:pl-[84px] sm:text-[16px] sm:leading-[34px] lg:text-[17px] xl:text-[18px]"
                 title={title}
             >
                 {title}
@@ -46,14 +49,7 @@ export default function NewArrivalCard({
                             className="aspect-[238/273] w-full rounded-[10px] object-cover"
                         />
 
-                        <div className="mx-auto mt-4 flex h-[34px] w-full max-w-[160px] items-center justify-center gap-1 rounded-full border border-[#CE9F2D] px-2 font-montserrat">
-                            <span className="text-[12px] font-semibold leading-none text-[#2E2E2E] sm:text-[13px] lg:text-[14px] xl:text-[15px]">
-                                ₹{formatPrice(price)}
-                            </span>
-                            <span className="text-[10px] leading-none text-[#A26D27] line-through sm:text-[11px] lg:text-[12px] xl:text-[13px]">
-                                ₹{formatPrice(oldPrice)}
-                            </span>
-                        </div>
+                        <PricePill className="mx-auto mt-4" price={price} oldPrice={oldPrice} />
                     </div>
                 ))}
             </div>
