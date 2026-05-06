@@ -20,6 +20,8 @@ import {
   addProductToCartPayload,
   wishlistPayload,
 } from "./helpers";
+import Collage from "../../components/collageCard";
+import MothersDaySwiper from "../../components/mothersDaySwiper";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -78,7 +80,8 @@ export function HomePage() {
       <HomeCategoryGrid categories={categories} loading={isHomeLoading} />
       <HomeShowcaseSections sections={homeShowcaseSections} loading={isHomeLoading} />
       <HomeProductsForYouSection loading={isHomeLoading} />
-
+      <Collage />
+      <MothersDaySwiper />
       {recent.length > 0 && (
         <>
           <h2>Recently viewed</h2>

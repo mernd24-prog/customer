@@ -50,7 +50,7 @@ export default function MothersDaySwiper() {
   const swiperRef = useRef(null);
 
   return (
-    <section className="xl:w-container  w-full my-10 lg:my-20 overflow-x-hidden">
+    <section className="   w-full   overflow-x-hidden">
       {/* Mobile Heading */}
       <div className="xl:hidden xl:mb-8 md:mb-4">
         <h2 className="custom-h5 font-bold text-center font-montserrat text-blue">
