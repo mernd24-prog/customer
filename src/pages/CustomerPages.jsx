@@ -93,12 +93,12 @@ import {
   submitUserKyc,
 } from "../features/user/userSlice";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
-import SwiperSlider from "../components/ui/SwiperSlider";
-import CategoryCard from "../components/ui/CategoryCard";
-import categories from "../data/categories.json";
+// import CategoryCard from "../components/ui/CategoryCard";
+// import categories from "../data/categories.json";
 import SectionContainer from "../components/ui/SectionContainer";
 import NewArrivalCard from "../components/ui/NewArrivalCard";
 import arrivals from "../data/arrivals.json";
+import Banner from "../components/organism/Banner";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -184,7 +184,7 @@ export function HomePage() {
   const run = useToastThunk();
   const recent = getRecentlyViewed();
   const products = itemsFrom(trending);
-  const [activeId, setActiveId] = useState(null);
+  // const [activeId, setActiveId] = useState(null);
 
   const addToCart = (product) =>
     run(
@@ -198,57 +198,40 @@ export function HomePage() {
       updateCart(wishlistPayload(cart, product)),
       "Saved to wishlist",
     );
-
   return (
     <>
-    <section>
       <Seo title="Sam Global | Shop smarter" />
-      <div>
-        <SwiperSlider />
+      <Banner />
+      <section>
+        <ApiState
+          loading={catalog.loading || cms.loading}
+          error={catalog.error || cms.error}
+          empty={!itemsFrom(catalog).length && !itemsFrom(cms).length}
+          onRetry={() => dispatch(fetchCategories({ active: true }))}
+        >
 
-    
-      </div>
-      <ApiState
-        loading={catalog.loading || cms.loading}
-        error={catalog.error || cms.error}
-        empty={!itemsFrom(catalog).length && !itemsFrom(cms).length}
-        onRetry={() => dispatch(fetchCategories({ active: true }))}
-      >
-        <div className="rail">
-          {itemsFrom(catalog).map((category) => (
-            <Link
-              className="chip"
-              key={category.categoryKey || category.id}
-              to={`/categories/${category.categoryKey}`}
-            >
-              {category.title || category.categoryKey}
-            </Link>
-          ))}
-        </div>
-      </ApiState>
-      <h2>Trending now</h2>
-      <ApiState
-        loading={trending.loading}
-        error={trending.error}
-        empty={!products.length}
-        onRetry={() => dispatch(fetchTrendingProducts({ limit: 8 }))}
-      >
-        <div className="grid">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id || product._id || product.productId}
-              product={product}
-              onAddToCart={addToCart}
-              onWishlist={wishlist}
-            />
-          ))}
-        </div>
-      </ApiState>
-      {recent.length > 0 && (
-        <>
-          <h2>Recently viewed</h2>
+
+          <div className="rail">
+            {itemsFrom(catalog).map((category) => (
+              <Link
+                className="chip"
+                key={category.categoryKey || category.id}
+                to={`/categories/${category.categoryKey}`}
+              >
+                {category.title || category.categoryKey}
+              </Link>
+            ))}
+          </div>
+        </ApiState>
+        <h2>Trending now</h2>
+        <ApiState
+          loading={trending.loading}
+          error={trending.error}
+          empty={!products.length}
+          onRetry={() => dispatch(fetchTrendingProducts({ limit: 8 }))}
+        >
           <div className="grid">
-            {recent.map((product) => (
+            {products.map((product) => (
               <ProductCard
                 key={product.id || product._id || product.productId}
                 product={product}
@@ -257,26 +240,36 @@ export function HomePage() {
               />
             ))}
           </div>
-        </>
-      )}
-    </section>
-  
-      
+        </ApiState>
+        {recent.length > 0 && (
+          <>
+            <h2>Recently viewed</h2>
+            <div className="grid">
+              {recent.map((product) => (
+                <ProductCard
+                  key={product.id || product._id || product.productId}
+                  product={product}
+                  onAddToCart={addToCart}
+                  onWishlist={wishlist}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </section>
 
-  <SectionContainer
-  title="New Arrivals"
-  subtitle="Navigate trends with data-driven rankings"
-  bgColor="bg-[linear-gradient(270deg,_#A26D27_5.77%,_#CE9F2D_100%)]"
->
-  <div className="grid md:grid-cols-3 gap-4"> 
-    {arrivals.map((item) => (
-      <NewArrivalCard key={item.id} {...item} />
-    ))}
-  </div>
-</SectionContainer>
+      <SectionContainer
+        title="New Arrivals"
+        subtitle="Navigate trends with data-driven rankings"
+        bgColor="bg-[linear-gradient(270deg,_#A26D27_5.77%,_#CE9F2D_100%)]"
+      >
+        <div className="grid md:grid-cols-3 gap-4">
+          {arrivals.map((item) => (
+            <NewArrivalCard key={item.id} {...item} />
+          ))}
+        </div>
+      </SectionContainer>
     </>
-
-
   );
 }
 

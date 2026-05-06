@@ -17,8 +17,8 @@ const Button = ({
   icon,
   ...rest
 }) => {
-  const baseStyles =
-    "px-4 py-2 text-base font-medium transition-all duration-200 flex items-center justify-center gap-2 min-h-[44px]";
+  //   const baseStyles =
+  //     "px-4 py-2 text-base font-medium transition-all duration-200 flex items-center justify-center gap-2 min-h-[44px]";
 
   const width = fullWidth ? "w-full" : "";
   const borderRadius = rounded ? "rounded-full" : "rounded-sm";
@@ -35,7 +35,7 @@ const Button = ({
   const customStyles =
     variant === "custom"
       ? {
-          backgroundColor: bgColor || "transparent",
+          background: bgColor || "transparent",
           border: borderColor ? `1px solid ${borderColor}` : "none",
           color: textColor || "#000",
         }
@@ -43,7 +43,7 @@ const Button = ({
 
   const handleMouseEnter = (e) => {
     if (variant === "custom" && hoverBgColor) {
-      e.currentTarget.style.backgroundColor = hoverBgColor;
+      e.currentTarget.style.background = hoverBgColor;
     }
     if (variant === "custom" && hoverTextColor) {
       e.currentTarget.style.color = hoverTextColor;
@@ -52,14 +52,14 @@ const Button = ({
 
   const handleMouseLeave = (e) => {
     if (variant === "custom") {
-      e.currentTarget.style.backgroundColor = bgColor || "transparent";
+      e.currentTarget.style.background = bgColor || "transparent";
       e.currentTarget.style.color = textColor || "#000";
     }
   };
 
-  const finalStyles = `${baseStyles} ${width} ${borderRadius} ${focus} ${
+  const finalStyles = ` ${width} ${borderRadius} ${focus} ${
     disabled
-      ? "bg-gray-300 cursor-not-allowed text-gray-500 border-none"
+      ? "bg-gray-300 cursor-not-allowed text-gray-500 border-none rounded-full"
       : variantStyles[variant]
   } ${className}`;
 

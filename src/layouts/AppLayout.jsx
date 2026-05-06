@@ -1,11 +1,11 @@
-import { Link, Outlet, } from "react-router-dom";
+import {  Outlet, } from "react-router-dom";
 // import { Bell, Package, Search, ShoppingCart, UserRound } from "lucide-react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { logout } from "../features/auth/authSlice";
 // import { AUTH_ROUTES } from "../features/auth/authRoutes";
 // import { getRole, isSellerRole } from "../utils/roles";
-import Header from "../components/Header/Hearder";
-import Navbar from "../components/Navbar/NavBar";
+import { Header } from "../components/organism/Hearder";
+
 import { Footer } from "../components/organism/footer";
 
 export default function AppLayout() {
@@ -89,7 +89,7 @@ export default function AppLayout() {
           )}
         </div>
       </header> */}
-      <Navbar/>
+     
       <Header />
 
       <main>
