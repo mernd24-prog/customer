@@ -17,7 +17,7 @@ export const TopHeader = () => {
     { name: "Help & Contact", path: "#" },
   ];
   return (
-    <div className="w-full bg-[#1B1D60] border-b border-[#2d3080] h-[39px] hidden lg:flex items-center text-[15px] text-white ">
+    <div className="w-full bg-[#1B1D60] border-b border-[#2d3080] h-[39px] hidden lg:flex items-center text-sm text-white ">
       <div className="w-container flex items-center h-full">
         <div className="flex-1 flex items-center gap-6">
           {navLinks.map((link) => (
@@ -36,20 +36,21 @@ export const TopHeader = () => {
           </a>
           <div className="relative group cursor-pointer flex items-center gap-1">
             <span>Watchlist</span>
-            <ChevronDown size={14} />
+            <ChevronDown size={18} />
           </div>
           <div className="relative group cursor-pointer flex items-center gap-1">
             <span>My Sam</span>
-            <ChevronDown size={14} />
+            <ChevronDown size={18} />
           </div>
           <Button
             variant="custom"
             rounded={true}
-            className="px-4 py-1.5 font-bold border"
+            className="  font-bold border"
             bgColor="#FFFFFF"
             borderColor="#CE9F2D"
             textColor="#CE9F2D"
             label="Register"
+            size=""
           />
         </div>
       </div>
