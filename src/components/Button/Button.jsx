@@ -43,7 +43,7 @@ const Button = ({
   const customStyles =
     variant === "custom"
       ? {
-          background: bgColor || "transparent",
+          backgroundColor: bgColor || "transparent",
           border: borderColor ? `1px solid ${borderColor}` : "none",
           color: textColor || "#000",
         }
@@ -51,7 +51,7 @@ const Button = ({
 
   const handleMouseEnter = (e) => {
     if (variant === "custom" && hoverBgColor) {
-      e.currentTarget.style.background = hoverBgColor;
+      e.currentTarget.style.backgroundColor = hoverBgColor;
     }
     if (variant === "custom" && hoverTextColor) {
       e.currentTarget.style.color = hoverTextColor;
@@ -60,14 +60,14 @@ const Button = ({
 
   const handleMouseLeave = (e) => {
     if (variant === "custom") {
-      e.currentTarget.style.background = bgColor || "transparent";
+      e.currentTarget.style.backgroundColor = bgColor || "transparent";
       e.currentTarget.style.color = textColor || "#000";
     }
   };
 
-  const finalStyles = ` ${width} ${borderRadius} ${focus} ${
+  const finalStyles = `${baseStyles} ${width} ${borderRadius} ${focus} ${
     disabled
-      ? "bg-gray-300 cursor-not-allowed text-gray-500 border-none rounded-full"
+      ? "bg-gray-300 cursor-not-allowed text-gray-500 border-none"
       : variantStyles[variant]
   } ${className}`;
 
