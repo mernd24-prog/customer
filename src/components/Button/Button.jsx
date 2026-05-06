@@ -1,5 +1,4 @@
 
-
 const Button = ({
   label,
   onClick,
