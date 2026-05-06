@@ -1,4 +1,4 @@
-import { Link, Outlet, } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 // import { Bell, Package, Search, ShoppingCart, UserRound } from "lucide-react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { logout } from "../features/auth/authSlice";
@@ -7,6 +7,7 @@ import { Link, Outlet, } from "react-router-dom";
 import Header from "../components/Header/Hearder";
 import Navbar from "../components/Navbar/NavBar";
 import { Footer } from "../components/organism/footer";
+import MothersDaySwiper from "../components/mothersDaySwiper";
 
 export default function AppLayout() {
   // const dispatch = useDispatch();
@@ -89,12 +90,13 @@ export default function AppLayout() {
           )}
         </div>
       </header> */}
-      <Navbar/>
-      <Header />
+      {/* <Navbar />
+      <Header /> */}
 
       <main>
         <Outlet />
       </main>
+      <MothersDaySwiper />
       <Footer />
     </div>
   );

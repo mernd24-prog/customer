@@ -16,17 +16,6 @@ module.exports = {
         card: {
           border: "#CE9F2D",
         },
-        footer: {
-          surface: "#fffdf8",
-          band: "#f7efde",
-          accent: "#a76616",
-          ink: "#2d2d2d",
-          muted: "#3f3f3f",
-          border: "#e7dfd1",
-          divider: "#cfc5b5",
-          "bottom-from": "#222178",
-          "bottom-to": "#353498",
-        },
       },
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"],

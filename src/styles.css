@@ -5,6 +5,10 @@
 /* Global Font-size set */
 
 @layer base {
+  .custom-h5 {
+    @apply text-xl md:text-2xl lg:text-3xl  2xl:text-4xl    leading-8 lg:leading-10;
+  }
+
   .custom-h6 {
     @apply text-base md:text-lg xl:text-xl  leading-5 lg:leading-7;
   }
@@ -21,7 +25,7 @@
 :root {
   color-scheme: light;
   color: #1f2520;
-  background: #f7f4ef;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
