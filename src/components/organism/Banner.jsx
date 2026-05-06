@@ -71,9 +71,9 @@ const Banner = () => {
                     bgColor="linear-gradient(270deg, #A26D27 5.77%, #CE9F2D 100%)"
                     textColor="#FFFFFF"
                     rounded={true}
-                  >
-                    SHOP NOW
-                  </Button>
+                    label={"SHOP NOW"}
+                  />
+             
                 </div>
               </div>
 

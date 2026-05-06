@@ -6,7 +6,7 @@ import { ChevronDown, Search } from "lucide-react";
 import {
   header as categoryData,
   navbarIcons as navData,
-  icons
+  icons,
 } from "../../constant/image.constant";
 
 export const TopHeader = () => {
@@ -17,41 +17,40 @@ export const TopHeader = () => {
     { name: "Help & Contact", path: "#" },
   ];
   return (
-    <div className="w-full bg-[#1B1D60] border-b border-[#2d3080] h-[39px] hidden lg:flex items-center text-[12px] text-white">
+    <div className="w-full bg-[#1B1D60] border-b border-[#2d3080] h-[39px] hidden lg:flex items-center text-[15px] text-white ">
       <div className="w-container flex items-center h-full">
         <div className="flex-1 flex items-center gap-6">
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.path}
-              className="hover:text-[#BF9B53] transition-colors"
+              className=""
             >
               {link.name}
             </a>
           ))}
         </div>
         <div className="flex items-center gap-6 h-full">
-          <a href="#" className="hover:text-[#BF9B53] transition-colors">
+          <a href="#" className="">
             Become a Seller
           </a>
-          <div className="relative group cursor-pointer flex items-center gap-1 hover:text-[#BF9B53] transition-colors">
+          <div className="relative group cursor-pointer flex items-center gap-1">
             <span>Watchlist</span>
             <ChevronDown size={14} />
           </div>
-          <div className="relative group cursor-pointer flex items-center gap-1 hover:text-[#BF9B53] transition-colors">
+          <div className="relative group cursor-pointer flex items-center gap-1">
             <span>My Sam</span>
             <ChevronDown size={14} />
           </div>
           <Button
             variant="custom"
-            className="!w-[94px] !h-[27px] !min-h-0 !text-[12px] !px-0 flex items-center justify-center font-bold"
-            bgColor="white"
+            rounded={true}
+            className="px-4 py-1.5 font-bold border"
+            bgColor="#FFFFFF"
             borderColor="#CE9F2D"
             textColor="#CE9F2D"
-            rounded={true}
-          >
-            Register
-          </Button>
+            label="Register"
+          />
         </div>
       </div>
     </div>
@@ -100,13 +99,12 @@ export const Navbar = ({ icons: propIcons }) => {
                 <Button
                   variant="custom"
                   rounded={true}
-                  className="w-[90px] lg:w-[120px] h-[36px] lg:h-[42px] text-[10px] lg:text-sm font-bold flex items-center justify-center gap-2"
-                  bgColor={gradientBg}
+                  className="w-[120px] h-[42px] font-bold flex items-center justify-center gap-2"
+                  bgColor="linear-gradient(270deg, #A26D27 5.77%, #CE9F2D 100%)"
                   textColor="#FFFFFF"
                   icon={<Search size={14} color="#FFFFFF" />}
-                >
-                  Search
-                </Button>
+                  label="Search"
+                />
               </div>
             </div>
           </div>
@@ -142,12 +140,11 @@ export const Navbar = ({ icons: propIcons }) => {
           <Button
             variant="custom"
             rounded={true}
-            className="px-3 lg:px-6 py-2 transition font-bold whitespace-nowrap text-[10px] lg:text-base"
-            bgColor={gradientBg}
+            className="px-6 py-2 font-bold whitespace-nowrap transition-all duration-200"
+            bgColor="linear-gradient(270deg, #A26D27 5.77%, #CE9F2D 100%)"
             textColor="#FFFFFF"
-          >
-            Create Account
-          </Button>
+            label="Create Account"
+          />
         </div>
       </div>
     </header>
@@ -159,7 +156,7 @@ export const CategoryBar = ({ headerData }) => {
     headerData ||
     Object.entries(categoryData).map(([name, img]) => ({ name, img }));
   return (
-    <header className="w-full">
+    <header className="w-full ">
       <div className="flex gap-12 justify-start lg:justify-center px-3 py-3 w-container">
         {categories?.map((item, index) => (
           <Link

@@ -20,6 +20,15 @@
   .w-container {
     @apply mx-auto w-11/12 md:w-[85%] lg:w-[95%] xl:w-10/12;
   }
+
+  /* Hide scrollbar utility */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 :root {
@@ -38,9 +47,15 @@
   box-sizing: border-box;
 }
 
+/* Hide global scrollbar */
+body::-webkit-scrollbar {
+  display: none;
+}
 body {
   margin: 0;
   min-width: 320px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 a {
@@ -58,7 +73,7 @@ textarea {
 main {
   /* width: min(1180px, calc(100% - 32px)); */
   margin: 0 auto;
-  padding: 28px 0 56px;
+  padding: 0 0 56px;
 }
 
 .topbar {
@@ -314,6 +329,7 @@ textarea {
 textarea {
   min-height: 110px;
   resize: vertical;
+  white-space: pre-wrap;
 }
 
 small {
