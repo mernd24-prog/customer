@@ -93,13 +93,15 @@ import {
   submitUserKyc,
 } from "../features/user/userSlice";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
-// import SwiperSlider from "../components/ui/SwiperSlider";
+// import CategoryCard from "../components/ui/CategoryCard";
+import categories from "../data/categories.json";
 import SectionContainer from "../components/ui/SectionContainer";
 import NewArrivalCard from "../components/ui/NewArrivalCard";
 import TopDealCard from "../components/ui/TopDealCard";
 import arrivals from "../data/arrivals.json";
 import topDeals from "../data/topDeals.json";
 import Banner from "../components/organism/Banner";
+import CategoryCard from "../components/ui/CategoryCard";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -145,10 +147,10 @@ function addProductToCartPayload(cart, product, quantity = 1) {
   const existing = cart?.items || [];
   const items = existing.some((item) => item.productId === id)
     ? existing.map((item) =>
-        item.productId === id
-          ? { ...item, quantity: item.quantity + quantity }
-          : item,
-      )
+      item.productId === id
+        ? { ...item, quantity: item.quantity + quantity }
+        : item,
+    )
     : [...existing, { productId: id, quantity, price: product.price }];
   return { items, wishlist: cart?.wishlist || [] };
 }
@@ -185,7 +187,7 @@ export function HomePage() {
   const run = useToastThunk();
   const recent = getRecentlyViewed();
   const products = itemsFrom(trending);
-  // const [activeId, setActiveId] = useState(null);
+  const [activeId, setActiveId] = useState(null);
 
   const addToCart = (product) =>
     run(
@@ -203,7 +205,7 @@ export function HomePage() {
     <>
       <Seo title="Sam Global | Shop smarter" />
       <Banner />
-      <section>
+      {/* <section>
         <ApiState
           loading={catalog.loading || cms.loading}
           error={catalog.error || cms.error}
@@ -241,23 +243,66 @@ export function HomePage() {
               />
             ))}
           </div>
-        </ApiState>
-        {recent.length > 0 && (
-          <>
-            <h2>Recently viewed</h2>
-            <div className="grid">
-              {recent.map((product) => (
-                <ProductCard
-                  key={product.id || product._id || product.productId}
-                  product={product}
-                  onAddToCart={addToCart}
-                  onWishlist={wishlist}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </section>
+            </ApiState>
+      
+     
+    </section> */}
+      <div className="flex flex-wrap gap-4 justify-between">
+        {categories.map((item) => (
+          <CategoryCard
+            key={item.id}
+            image={item.image}
+            title={item.title}
+            active={activeId === item.id}
+            onClick={() => setActiveId(item.id)}
+          />))}
+      </div>
+
+
+      <SectionContainer
+        title="Top Deals"
+        subtitle="Score the lowest prices on samglobal.com"
+        headerbgColor="bg-[#C9C9DB]"
+        bodybgColor="bg-[#F3F3FA]"
+        className="mt-8"
+      >
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4">
+          {topDeals.map((item) => (
+            <TopDealCard key={item.id} {...item} />
+          ))}
+        </div>
+      </SectionContainer>
+
+      <SectionContainer
+        title="New Arrivals"
+        subtitle="Navigate trends with data-driven rankings"
+        headerbgColor="bg-[linear-gradient(270deg,_#A26D27_5.77%,_#CE9F2D_100%)]"
+        bodybgColor="bg-[#CE9F2D0D]"
+        className="mt-8"
+      >
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-3">
+          {arrivals.map((item) => (
+            <NewArrivalCard key={item.id} {...item} />
+          ))}
+        </div>
+      </SectionContainer>
+
+      {recent.length > 0 && (
+        <>
+          <h2>Recently viewed</h2>
+          <div className="grid">
+            {recent.map((product) => (
+              <ProductCard
+                key={product.id || product._id || product.productId}
+                product={product}
+                onAddToCart={addToCart}
+                onWishlist={wishlist}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
 
       <SectionContainer
         title="New Arrivals"
@@ -313,13 +358,13 @@ export function AuthFormPage({ mode }) {
   const submit = async (values) => {
     const payload = values.firstName
       ? {
-          email: values.email,
-          phone: values.phone,
-          password: values.password,
-          role: "buyer",
-          profile: { firstName: values.firstName, lastName: values.lastName },
-          referralCode: values.referralCode || undefined,
-        }
+        email: values.email,
+        phone: values.phone,
+        password: values.password,
+        role: "buyer",
+        profile: { firstName: values.firstName, lastName: values.lastName },
+        referralCode: values.referralCode || undefined,
+      }
       : values;
     const thunk =
       mode === "register"
@@ -335,9 +380,9 @@ export function AuthFormPage({ mode }) {
                 : mode === "verify-otp"
                   ? verifyOtp({ ...values, purpose: "login" })
                   : loginUser({
-                      email: values.email,
-                      password: values.password,
-                    });
+                    email: values.email,
+                    password: values.password,
+                  });
     const result = await run(dispatch, thunk, "Success");
     const session = result?.data || result || {};
     const hasSession = Boolean(session?.accessToken || session?.refreshToken);
@@ -392,23 +437,23 @@ export function AuthFormPage({ mode }) {
         {(mode === "login" ||
           mode === "register" ||
           mode === "register-otp") && (
-          <>
-            <input
-              placeholder="Password"
-              type="password"
-              {...register("password")}
-            />
-            <small>{errors.password?.message}</small>
-          </>
-        )}
+            <>
+              <input
+                placeholder="Password"
+                type="password"
+                {...register("password")}
+              />
+              <small>{errors.password?.message}</small>
+            </>
+          )}
         {(mode === "verify-registration" ||
           mode === "verify-otp" ||
           mode === "reset") && (
-          <>
-            <input placeholder="OTP" {...register("otp")} />
-            <small>{errors.otp?.message}</small>
-          </>
-        )}
+            <>
+              <input placeholder="OTP" {...register("otp")} />
+              <small>{errors.otp?.message}</small>
+            </>
+          )}
         {mode === "reset" && (
           <>
             <input
@@ -439,14 +484,14 @@ export function AuthFormPage({ mode }) {
             onClick={handleSubmit((values) =>
               values.socialIdToken
                 ? run(
-                    dispatch,
-                    socialLogin({
-                      provider: "google",
-                      idToken: values.socialIdToken,
-                      role: "buyer",
-                    }),
-                    "Social login complete",
-                  )
+                  dispatch,
+                  socialLogin({
+                    provider: "google",
+                    idToken: values.socialIdToken,
+                    role: "buyer",
+                  }),
+                  "Social login complete",
+                )
                 : toast.error("Paste a provider ID token first"),
             )}
           >
@@ -807,14 +852,14 @@ export function ProductDetailPage() {
           eventName: "product_view",
           metadata: { productId, source: "product_detail" },
         }),
-      ).catch(() => {});
+      ).catch(() => { });
       dispatch(
         trackRecommendationInteraction({
           productId,
           interactionType: "viewed",
         }),
-      ).catch(() => {});
-      dispatch(fetchDynamicPrice({ productId, quantity: 1 })).catch(() => {});
+      ).catch(() => { });
+      dispatch(fetchDynamicPrice({ productId, quantity: 1 })).catch(() => { });
     }
   }, [dispatch, productId, Boolean(product)]);
 

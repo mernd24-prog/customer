@@ -15,11 +15,11 @@ export default function NewArrivalCard({
         <article className="relative h-full min-w-0 rounded-[12px] bg-white px-4 pb-6 pt-5 shadow-sm sm:px-5">
             {badgeText && (
                 <div className="absolute left-[-10px] top-[18px] h-[37px] w-[102px] overflow-hidden rounded-l-full">
-                    <img
+                    {/* <img
                         src="image/png/image.png"
                         alt=""
                         className="h-full w-full object-fill"
-                    />
+                    /> */}
                     <span className="absolute inset-x-0 top-0 flex h-[30px] items-center justify-center pl-3 pr-5 font-montserrat text-[15px] font-bold leading-none text-white">
                         {badgeText}
                     </span>
