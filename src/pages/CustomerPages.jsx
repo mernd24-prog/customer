@@ -94,11 +94,11 @@ import {
 } from "../features/user/userSlice";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
 import SwiperSlider from "../components/ui/SwiperSlider";
-import CategoryCard from "../components/ui/CategoryCard";
-import categories from "../data/categories.json";
 import SectionContainer from "../components/ui/SectionContainer";
 import NewArrivalCard from "../components/ui/NewArrivalCard";
+import TopDealCard from "../components/ui/TopDealCard";
 import arrivals from "../data/arrivals.json";
+import topDeals from "../data/topDeals.json";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -260,20 +260,45 @@ export function HomePage() {
         </>
       )}
     </section>
-  
-      
+    {/* <div className="flex flex-wrap gap-4">
+        {categories.map((item) => (
+          <CategoryCard
+            key={item.id}
+            image={item.image}
+            title={item.title}
+            active={activeId === item.id}
+            onClick={() => setActiveId(item.id)}
+          />))}
+    </div> */}
 
-  <SectionContainer
-  title="New Arrivals"
-  subtitle="Navigate trends with data-driven rankings"
-  bgColor="bg-[linear-gradient(270deg,_#A26D27_5.77%,_#CE9F2D_100%)]"
->
-  <div className="grid md:grid-cols-3 gap-4"> 
-    {arrivals.map((item) => (
-      <NewArrivalCard key={item.id} {...item} />
-    ))}
-  </div>
-</SectionContainer>
+
+    <SectionContainer
+      title="Top Deals"
+      subtitle="Score the lowest prices on samglobal.com"
+      headerbgColor="bg-[#C9C9DB]"
+      bodybgColor="bg-[#F3F3FA]"
+      className="mt-8"
+    >
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4">
+        {topDeals.map((item) => (
+          <TopDealCard key={item.id} {...item} />
+        ))}
+      </div>
+    </SectionContainer>
+
+    <SectionContainer
+      title="New Arrivals"
+      subtitle="Navigate trends with data-driven rankings"
+      headerbgColor="bg-[linear-gradient(270deg,_#A26D27_5.77%,_#CE9F2D_100%)]"
+      bodybgColor="bg-[#CE9F2D0D]"
+      className="mt-8"
+    >
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-3">
+        {arrivals.map((item) => (
+          <NewArrivalCard key={item.id} {...item} />
+        ))}
+      </div>
+    </SectionContainer>
     </>
 
 
