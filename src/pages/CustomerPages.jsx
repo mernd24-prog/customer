@@ -13,9 +13,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { CreditCard, Heart, PackageCheck, ShieldCheck } from "lucide-react";
 import ApiState from "../components/ApiState";
-import ProductCard from "../components/ProductCard";
 import Seo from "../components/Seo";
 import StatusTimeline from "../components/StatusTimeline";
+import ProductCard from "../components/cards/ProductCard";
 import { useToastThunk } from "../hooks/useToastThunk";
 import { addRecentlyViewed } from "../utils/recentlyViewed";
 import { formatMoney } from "../utils/ecommerce";
@@ -158,13 +158,13 @@ export function AuthFormPage({ mode }) {
   const submit = async (values) => {
     const payload = values.firstName
       ? {
-        email: values.email,
-        phone: values.phone,
-        password: values.password,
-        role: "buyer",
-        profile: { firstName: values.firstName, lastName: values.lastName },
-        referralCode: values.referralCode || undefined,
-      }
+          email: values.email,
+          phone: values.phone,
+          password: values.password,
+          role: "buyer",
+          profile: { firstName: values.firstName, lastName: values.lastName },
+          referralCode: values.referralCode || undefined,
+        }
       : values;
     const thunk =
       mode === "register"
@@ -180,9 +180,9 @@ export function AuthFormPage({ mode }) {
                 : mode === "verify-otp"
                   ? verifyOtp({ ...values, purpose: "login" })
                   : loginUser({
-                    email: values.email,
-                    password: values.password,
-                  });
+                      email: values.email,
+                      password: values.password,
+                    });
     const result = await run(dispatch, thunk, "Success");
     const session = result?.data || result || {};
     const hasSession = Boolean(session?.accessToken || session?.refreshToken);
@@ -237,23 +237,23 @@ export function AuthFormPage({ mode }) {
         {(mode === "login" ||
           mode === "register" ||
           mode === "register-otp") && (
-            <>
-              <input
-                placeholder="Password"
-                type="password"
-                {...register("password")}
-              />
-              <small>{errors.password?.message}</small>
-            </>
-          )}
+          <>
+            <input
+              placeholder="Password"
+              type="password"
+              {...register("password")}
+            />
+            <small>{errors.password?.message}</small>
+          </>
+        )}
         {(mode === "verify-registration" ||
           mode === "verify-otp" ||
           mode === "reset") && (
-            <>
-              <input placeholder="OTP" {...register("otp")} />
-              <small>{errors.otp?.message}</small>
-            </>
-          )}
+          <>
+            <input placeholder="OTP" {...register("otp")} />
+            <small>{errors.otp?.message}</small>
+          </>
+        )}
         {mode === "reset" && (
           <>
             <input
@@ -284,14 +284,14 @@ export function AuthFormPage({ mode }) {
             onClick={handleSubmit((values) =>
               values.socialIdToken
                 ? run(
-                  dispatch,
-                  socialLogin({
-                    provider: "google",
-                    idToken: values.socialIdToken,
-                    role: "buyer",
-                  }),
-                  "Social login complete",
-                )
+                    dispatch,
+                    socialLogin({
+                      provider: "google",
+                      idToken: values.socialIdToken,
+                      role: "buyer",
+                    }),
+                    "Social login complete",
+                  )
                 : toast.error("Paste a provider ID token first"),
             )}
           >
@@ -652,14 +652,14 @@ export function ProductDetailPage() {
           eventName: "product_view",
           metadata: { productId, source: "product_detail" },
         }),
-      ).catch(() => { });
+      ).catch(() => {});
       dispatch(
         trackRecommendationInteraction({
           productId,
           interactionType: "viewed",
         }),
-      ).catch(() => { });
-      dispatch(fetchDynamicPrice({ productId, quantity: 1 })).catch(() => { });
+      ).catch(() => {});
+      dispatch(fetchDynamicPrice({ productId, quantity: 1 })).catch(() => {});
     }
   }, [dispatch, product, productId]);
 

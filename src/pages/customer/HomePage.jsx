@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ProductCard from "../../components/ProductCard";
+import ProductCard from "../../components/cards/ProductCard";
 import Seo from "../../components/Seo";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
@@ -8,9 +8,7 @@ import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { updateCart } from "../../features/cart/cartSlice";
 import { fetchTrendingProducts } from "../../features/recommendation/recommendationSlice";
 import { fetchCmsPages } from "../../features/cms/cmsSlice";
-import categories from "../../data/categories";
 import { homeShowcaseSections } from "../../data/homeSections";
-import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import HomeShowcaseSections from "../../components/home/HomeShowcaseSections";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
 import {
@@ -19,11 +17,12 @@ import {
   addProductToCartPayload,
   wishlistPayload,
 } from "./helpers";
-import MothersDaySwiper from "../../components/mothersDaySwiper";
-import CollageMainSection from "../../components/collageCard";
-import BrandSwiper from "../../components/brandSwiper";
-
-
+import CollageMainSection from "../../components/cards/collageCard";
+import MothersDaySwiper from "../../components/swiper/mothersDaySwiper";
+import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
+import categories from "../../data/categories";
+import { valueData } from "../../data/aboutSection";
+import ValueCardSection from "../../components/ui/sections/valueCardSection";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -77,19 +76,19 @@ export function HomePage() {
     <>
       <Seo title="Sam Global | Shop smarter" />
 
-
       <div className="hidden">{Boolean(catalog || cms || products.length)}</div>
       <HomeCategoryGrid categories={categories} loading={isHomeLoading} />
       <CollageMainSection />
+      <ValueCardSection data={valueData} />
+
       <HomeShowcaseSections
         sections={homeShowcaseSections}
         loading={isHomeLoading}
       />
       <MothersDaySwiper />
-      <BrandSwiper />
+
       <HomeProductsForYouSection loading={isHomeLoading} />
 
-      <MothersDaySwiper />
       {recent.length > 0 && (
         <>
           <h2>Recently viewed</h2>
