@@ -1,17 +1,18 @@
 import { RefreshCw } from "lucide-react";
-
-export function SkeletonGrid({ count = 6 }) {
-  return (
-    <div className="grid">
-      {Array.from({ length: count }).map((_, index) => (
-        <div className="skeleton-card" key={index} />
-      ))}
-    </div>
-  );
-}
+import { SkeletonLoader } from "./common/skeleton";
 
 export default function ApiState({ loading, error, empty, onRetry, children, emptyTitle = "Nothing here yet", emptyText = "Once data is available, it will appear here." }) {
-  if (loading) return <SkeletonGrid />;
+  if (loading) {
+    return (
+      <SkeletonLoader
+        preset="API_GRID_CARD"
+        count={6}
+        containerClass="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        wrapperClass="rounded-[8px] bg-white p-4 shadow-sm"
+      />
+    );
+  }
+
   if (error) {
     return (
       <div className="state-box error">

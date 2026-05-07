@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /account/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders
+Sitemap: https://samglobal.com/sitemap.xml

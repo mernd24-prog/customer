@@ -8,7 +8,7 @@ import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { updateCart } from "../../features/cart/cartSlice";
 import { fetchTrendingProducts } from "../../features/recommendation/recommendationSlice";
 import { fetchCmsPages } from "../../features/cms/cmsSlice";
-import categories from "../../data/categories.json";
+import categories from "../../data/categories";
 import { homeShowcaseSections } from "../../data/homeSections";
 import Banner from "../../components/organism/Banner";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";

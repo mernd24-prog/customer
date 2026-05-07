@@ -1,7 +1,7 @@
 import NewArrivalCard from "../components/ui/NewArrivalCard";
 import TopDealCard from "../components/ui/TopDealCard";
-import arrivals from "./arrivals.json";
-import topDeals from "./topDeals.json";
+import arrivals from "./arrivals";
+import topDeals from "./topDeals";
 
 export const homeShowcaseSections = [
     {

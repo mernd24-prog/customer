@@ -2,6 +2,7 @@ import axios from "axios";
 import { endpoints } from "./endpoints";
 import { normalizeApiError, normalizeApiResponse } from "./normalizeApiError";
 import { tokenStorage } from "./tokenStorage";
+import { createCacheKey, getCache, removeCache, setCache } from "../utils/cache";
 
 const api = axios.create({
   baseURL: "http://localhost:4000",
@@ -61,10 +62,36 @@ api.interceptors.response.use(
   }
 );
 
-export async function apiRequest({ method = "get", url, data, params }) {
+export async function apiRequest({
+  method = "get",
+  url,
+  data,
+  params,
+  cache = false,
+  cacheTtl,
+  cacheKey,
+}) {
+  const normalizedMethod = method.toLowerCase();
+  const shouldCache = cache && normalizedMethod === "get";
+  const resolvedCacheKey =
+    cacheKey || createCacheKey("api", [normalizedMethod, url, params]);
+
+  if (shouldCache) {
+    const cached = getCache(resolvedCacheKey);
+    if (cached) return cached;
+  }
+
   try {
     const response = await api.request({ method, url, data, params });
-    return normalizeApiResponse(response);
+    const result = normalizeApiResponse(response);
+
+    if (shouldCache) {
+      setCache(resolvedCacheKey, result, { ttl: cacheTtl });
+    } else if (normalizedMethod !== "get") {
+      removeCache(resolvedCacheKey);
+    }
+
+    return result;
   } catch (error) {
     throw new Error(normalizeApiError(error));
   }

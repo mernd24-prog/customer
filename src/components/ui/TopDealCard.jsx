@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import PricePill from "./PricePill";
 
 export default function TopDealCard({
@@ -5,13 +6,14 @@ export default function TopDealCard({
     image,
     price,
     oldPrice,
+    link = "/"
 }) {
     return (
-        <article
-            className="min-w-0 rounded-[12px] bg-white px-3 pb-4 pt-4 shadow-sm transition hover:shadow-lg sm:px-4 sm:pb-5 sm:pt-5"
-        >
-
-            <img
+        <Link to={link} className="block">
+            <article
+                className="min-w-0 rounded-[12px] bg-white px-3 pb-4 pt-4 shadow-sm transition hover:shadow-lg sm:px-4 sm:pb-5 sm:pt-5"
+            >
+                <img
                 src={image}
                 alt={title}
                 className="aspect-[292/310] w-full rounded-[10px] object-cover"
@@ -34,5 +36,6 @@ export default function TopDealCard({
                 />
             </div>
         </article>
+        </Link>
     );
 }

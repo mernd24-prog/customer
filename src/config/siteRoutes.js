@@ -1,0 +1,80 @@
+export const SITE_ROUTES = [
+  {
+    path: "/",
+    title: "Home",
+    description: "Discover latest deals, new arrivals, and products picked for you.",
+    changefreq: "daily",
+    priority: 1,
+  },
+  {
+    path: "/products",
+    title: "Products",
+    description: "Browse Sam Global products with category, delivery, and pricing features.",
+    changefreq: "daily",
+    priority: 0.9,
+  },
+  {
+    path: "/products/search",
+    title: "Search Products",
+    description: "Search products across Sam Global categories.",
+    changefreq: "daily",
+    priority: 0.8,
+  },
+  {
+    path: "/cart",
+    title: "Cart",
+    description: "Review your cart and continue checkout.",
+    changefreq: "weekly",
+    priority: 0.3,
+    robots: "noindex,nofollow",
+    includeInSitemap: false,
+  },
+  {
+    path: "/account/profile",
+    title: "Account",
+    description: "Manage your Sam Global account profile.",
+    changefreq: "monthly",
+    priority: 0.2,
+    robots: "noindex,nofollow",
+    includeInSitemap: false,
+  },
+  {
+    path: "/orders",
+    title: "Orders",
+    description: "View and track your Sam Global orders.",
+    changefreq: "weekly",
+    priority: 0.2,
+    robots: "noindex,nofollow",
+    includeInSitemap: false,
+  },
+  {
+    path: "/seller/status",
+    title: "Seller Status",
+    description: "Check seller onboarding and web status.",
+    changefreq: "monthly",
+    priority: 0.2,
+    robots: "noindex,nofollow",
+    includeInSitemap: false,
+  },
+];
+
+export const DYNAMIC_ROUTE_PATTERNS = [
+  {
+    path: "/products/:productId",
+    entity: "product",
+    changefreq: "daily",
+    priority: 0.8,
+  },
+  {
+    path: "/categories/:categoryKey",
+    entity: "category",
+    changefreq: "daily",
+    priority: 0.7,
+  },
+  {
+    path: "/cms/:slug",
+    entity: "cms",
+    changefreq: "weekly",
+    priority: 0.5,
+  },
+];

@@ -1,5 +1,5 @@
 import ProductsForYouCard from "../ui/ProductsForYouCard";
-import productsForYou from "../../data/productsForYou.json";
+import productsForYou from "../../data/productsForYou";
 
 export default function HomeProductsForYouSection({ loading = false }) {
     const list = loading ? Array.from({ length: 12 }) : productsForYou;
@@ -15,7 +15,7 @@ export default function HomeProductsForYouSection({ loading = false }) {
                         <ProductsForYouCard key={`skeleton-${index}`} loading />
                     ))
                     : list.map((item) => (
-                        <ProductsForYouCard key={item.id} {...item} />
+                        <ProductsForYouCard key={item.id} {...item} variant="list"   link={`/product/${item.id}`}/>
                     ))}
             </div>
         </section>

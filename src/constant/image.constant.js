@@ -97,3 +97,40 @@ export const bannerConfig = {
   website: "www.samglobal.com",
   gradient: "linear-gradient(270deg, #3E4094 5.77%, #1B1D60 100%)"
 };
+
+export const productImages = {
+  stylishGirls: "/image/jpg/stylish-girls.jpg",
+  kidsFashion: "/image/jpg/kids-fashion.jpg",
+  menFashion: "/image/png/men-fashion.png",
+  smartHome: "/image/jpg/smart-home.jpg",
+  homeDecor: "/image/jpg/home-decor.jpg",
+  blazer: "/image/png/blazer.png",
+  perfume: "/image/png/Perfume.png",
+  diamondJewellery: "/image/png/women-wearing-diamond-jewellery 1.png",
+  diamondRings: "/image/png/rings-diamonds-background-rock-black-sparkling 1.png",
+};
+
+export const categoryImages = {
+  womenFashion: productImages.stylishGirls,
+  menFashion: productImages.menFashion,
+  kidsCollection: productImages.kidsFashion,
+  homeDecor: productImages.homeDecor,
+  smartHome: productImages.smartHome,
+};
+
+export const topDealImages = {
+  fusionLehenga: "/image/png/FusionLehenga.png",
+  mensWear: "/image/png/stylish-mens-kurtas 1.png",
+  jewelledWatches: "/image/png/gold-watch-with-rhinestones 1.png",
+  formalShoes: "/image/png/stylish-pair.png",
+};
+
+export const arrivalImages = {
+  monthBadge: "/image/png/image.png",
+  diamondJewellery: "/image/png/SimulantJewelrySets.png",
+  diamondRings: "/image/png/Ring.png",
+  stylishGirls: productImages.stylishGirls,
+  blazer: productImages.blazer,
+  sprayBottle : "/image/png/SprayBottle.png",
+  perfume: "/image/png/Perfume.png",
+};
