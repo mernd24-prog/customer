@@ -1,5 +1,3 @@
-
-
 const Button = ({
   label,
   onClick,
@@ -19,12 +17,12 @@ const Button = ({
   ...rest
 }) => {
   const sizes = {
-    sm: "px-4 py-2 text-sm ",
-    md: "px-6 py-3 text-base ",
-    lg: "px-8 py-4  text-base xl:text-xl",
+    sm: "text-xs min-h-[28px]",
+    md: "text-base min-h-[44px]",
+    lg: "text-base xl:text-xl min-h-[50px]",
   };
 
-  const baseStyles = `px-8 py-4  ${sizes[size]} transition-all duration-200 flex items-center justify-center gap-2 min-h-[44px]`;
+  const baseStyles = `${sizes[size]} transition-all duration-200 flex items-center justify-center gap-2`;
 
   const width = fullWidth ? "w-full" : "";
   const borderRadius = rounded ? "rounded-full" : "rounded-sm";
@@ -37,7 +35,6 @@ const Button = ({
     secondary:
       "bg-[#F3F4F6] hover:bg-[#BF9B53] text-gray-700 border-2 border-[#BF9B53]",
     google: "bg-white border border-gray-300 text-gray-700 hover:bg-gray-100",
-    custom: "",
   };
 
   const customStyles =
