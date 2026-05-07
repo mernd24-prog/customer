@@ -122,7 +122,7 @@ export default function MothersDaySwiper() {
                     <img
                       src={slide.image}
                       alt={slide.title}
-                      className="w-full rounded-b-2xl h-full object-cover object-top transition-transform duration-700"
+                      className="w-full rounded-b-2xl h-full object-cover object-top duration-700 transition-transform hover:scale-105"
                     />
                     <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
                       <p className="text-white font-montserrat font-bold text-lg md:text-xl">
