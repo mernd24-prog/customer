@@ -43,6 +43,7 @@ import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 
 
 
+
 export default function App() {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
