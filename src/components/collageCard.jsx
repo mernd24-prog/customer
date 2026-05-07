@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { collageCards } from "../data/homeSections";
+import { useEffect, useState } from "react";
+import { SkeletonLoader, SKELETON_PRESETS } from "./common/skeleton";
 
 function CollageImage({ src, title, link }) {
   return (
@@ -37,13 +39,30 @@ function CollageCard({ section, index }) {
 }
 
 export default function CollageMainSection() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <section className="    overflow-hidden lg:my-10">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {collageCards.map((section, idx) => (
-          <CollageCard index={idx} section={section} />
-        ))}
-      </div>
+    <section className="overflow-hidden lg:my-10">
+      {loading ? (
+        <SkeletonLoader
+          layout={SKELETON_PRESETS.HERO_CARDS}
+          count={4}
+          containerClass="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4"
+        />
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {collageCards.map((section, idx) => (
+            <CollageCard index={idx} section={section} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

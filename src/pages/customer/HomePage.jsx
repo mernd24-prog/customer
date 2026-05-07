@@ -23,6 +23,7 @@ import {
 import MothersDaySwiper from "../../components/mothersDaySwiper";
 
 import CollageMainSection from "../../components/collageCard";
+import BrandSwiper from "../../components/brandSwiper";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -78,13 +79,14 @@ export function HomePage() {
       <Banner />
       {/* Keep fetched values currently in use to avoid behavior drift while refactoring. */}
       <div className="hidden">{Boolean(catalog || cms || products.length)}</div>
-      <HomeCategoryGrid categories={categories} loading={isHomeLoading} />
+      {/* <HomeCategoryGrid categories={categories} loading={isHomeLoading} /> */}
       <CollageMainSection />
-      <HomeShowcaseSections
+      {/* <HomeShowcaseSections
         sections={homeShowcaseSections}
         loading={isHomeLoading}
-      />
+      /> */}
       <MothersDaySwiper />
+      <BrandSwiper />
       <HomeProductsForYouSection loading={isHomeLoading} />
 
       {recent.length > 0 && (

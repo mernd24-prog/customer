@@ -111,3 +111,12 @@ export const bannerConfig = {
   website: "www.samglobal.com",
   gradient: "linear-gradient(270deg, #3E4094 5.77%, #1B1D60 100%)",
 };
+
+export const brandSwiper = {
+  zara: "image/png/zara.png",
+  lacoste: "image/png/lacoste.png",
+  vogue: "image/png/vogue.png",
+  gq: "image/png/gq.png",
+  gucci: "image/png/gucci.png",
+  prada: "image/png/prada.png",
+};

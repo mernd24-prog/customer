@@ -84,7 +84,12 @@ export const SKELETON_PRESETS = {
         {
           type: "row",
           children: [
-            { type: "box", width: "24px", height: "24px", rounded: "rounded-sm" }, // Icon
+            {
+              type: "box",
+              width: "24px",
+              height: "24px",
+              rounded: "rounded-sm",
+            }, // Icon
             { type: "box", width: "100px", height: "14px" }, // Label
           ],
           count: 8,
@@ -110,7 +115,8 @@ export const SKELETON_PRESETS = {
   NAVBAR: [
     {
       type: "row",
-      className: "justify-between px-6 h-16 items-center border-b border-gray-100",
+      className:
+        "justify-between px-6 h-16 items-center border-b border-gray-100",
       children: [
         { type: "box", width: "120px", height: "24px" }, // Logo
         {
@@ -180,5 +186,22 @@ export const SKELETON_PRESETS = {
   // 11. Social Icons
   SOCIAL_ICONS: [
     { type: "box", width: "40px", height: "40px", variant: "circle", count: 3 },
+  ],
+
+  // 12. Hero/Banner Cards
+  HERO_CARDS: [
+    {
+      type: "col",
+      className: "relative h-[250px] overflow-hidden rounded-2xl",
+      children: [
+        { type: "box", height: "100%", width: "100%" }, // Image area
+        {
+          type: "box",
+          width: "70%",
+          height: "24px",
+          className: "absolute bottom-6 left-6",
+        }, // Title overlay
+      ],
+    },
   ],
 };

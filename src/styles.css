@@ -47,6 +47,19 @@
   box-sizing: border-box;
 }
 
+.brand-auto-carousel {
+  animation: brand-auto-carousel 20s infinite linear;
+}
+
+@keyframes brand-auto-carousel {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 /* Hide global scrollbar */
 body::-webkit-scrollbar {
   display: none;

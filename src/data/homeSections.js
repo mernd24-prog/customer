@@ -127,39 +127,48 @@ export const collageCards = [
 
 export const mothersDayData = [
   {
-    name: "Lace & Beads long sleeve ruffle hem maxi dress in white polka dot",
+    name: "Personalized Gifts",
     image: mothersDaySwiperImages.maxi,
+    link: "#",
   },
   {
-    name: "Men's Classic Loose Fit Track Pants – Green & White",
+    name: "Fashion Gifts",
     image: mothersDaySwiperImages.blazer,
+    link: "#",
   },
   {
-    name: "Lace & Beads long sleeve ruffle hem maxi dress in white polka dot",
+    name: "Beauty & Personal Care",
     image: mothersDaySwiperImages.pants,
+    link: "#",
   },
   {
-    name: "Lace & Beads long sleeve ruffle hem maxi dress in white polka dot",
+    name: "Personalized Gifts",
     image: mothersDaySwiperImages.maxi,
+    link: "#",
   },
   {
-    name: "Men's Classic Loose Fit Track Pants – Green & White",
+    name: "Fashion Gifts",
     image: mothersDaySwiperImages.blazer,
+    link: "#",
   },
   {
-    name: "Lace & Beads long sleeve ruffle hem maxi dress in white polka dot",
+    name: "Beauty & Personal Care",
     image: mothersDaySwiperImages.pants,
+    link: "#",
   },
   {
-    name: "Lace & Beads long sleeve ruffle hem maxi dress in white polka dot",
+    name: "Fashion Gifts",
     image: mothersDaySwiperImages.maxi,
+    link: "#",
   },
   {
-    name: "Men's Classic Loose Fit Track Pants – Green & White",
+    name: "Fashion Gifts",
     image: mothersDaySwiperImages.blazer,
+    link: "#",
   },
   {
-    name: "Lace & Beads long sleeve ruffle hem maxi dress in white polka dot",
+    name: "Beauty & Personal Care",
     image: mothersDaySwiperImages.pants,
+    link: "#",
   },
 ];
