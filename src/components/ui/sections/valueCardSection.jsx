@@ -9,7 +9,7 @@ export default function ValueCardSection({ data }) {
           {sectionDetails?.heading}
         </h2>
       </div>
-      <div className="flex justify-center gap-8 my-8 flex-wrap">
+      <div className="flex justify-center gap-8 my-8 flex-wrap ">
         <ValuesCard data={cards} />
       </div>
     </section>

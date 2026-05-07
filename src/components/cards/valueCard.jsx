@@ -2,7 +2,7 @@ export default function ValuesCard({ data }) {
   return (
     <>
       {data?.map((ele, index) => (
-        <section key={index} className="w-full md:w-[26rem]  xl:w-[30rem]">
+        <section key={index} className="w-full md:w-[26rem]  xl:w-[30rem] ">
           <div className="bg-band flex w-full flex-col items-center justify-center gap-4 rounded-t-xl p-4 text-center md:p-8 xl:p-10">
             <img
               src={ele.image}
@@ -14,7 +14,7 @@ export default function ValuesCard({ data }) {
               {ele.title}
             </h2>
 
-            <p className="font-montserrat">{ele.description}</p>
+            <p className="font-montserrat pb-2 md:pb-0">{ele.description}</p>
           </div>
 
           <div className="relative z-40 mx-auto -mt-1 h-[8px] max-w-60 rounded-full bg-gradient-to-l from-accent to-primary"></div>
