@@ -25,6 +25,7 @@ import BrandSwiper from "../../components/brandSwiper";
 import FAQSection from "../faq/FaqPage";
 import { productImages } from "../../constant/image.constant";
 import { faqData } from "../../data/faqData";
+import InfoSection from "../../components/ui/sections/InfoSection";
 
 
 
@@ -88,13 +89,14 @@ export function HomePage() {
         sections={homeShowcaseSections}
         loading={isHomeLoading}
       />
+      <InfoSection/>
       <MothersDaySwiper />
       <BrandSwiper />
       <HomeProductsForYouSection loading={isHomeLoading} />
- <FAQSection
-    image={productImages.menFashion}
-    faqs={faqData}
-/>
+      <FAQSection
+        image={productImages.menFashion}
+        faqs={faqData}
+      />
       <MothersDaySwiper />
       {recent.length > 0 && (
         <>
