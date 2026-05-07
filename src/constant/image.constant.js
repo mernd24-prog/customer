@@ -157,3 +157,16 @@ export const arrivalImages = {
   sprayBottle : "/image/png/SprayBottle.png",
   perfume: "/image/png/Perfume.png",
 };
+
+export const helpSupportImages = {
+  order: "/image/png/Order.png",
+  returns: "/image/png/Return.png",
+  payment: "/image/png/Payment.png",
+};
+
+export const helpYouImages = {
+  generalInquiries: "/image/png/GeneralInquiries.png",
+  brandPartnership: "/image/png/BrandAndPartnershipDiscussions.png",
+  storeRetail: "/image/png/StoreAndRetailOpportunities.png",
+  customerSupport: "/image/png/Payment.png",
+};
