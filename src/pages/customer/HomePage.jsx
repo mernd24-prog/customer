@@ -17,7 +17,6 @@ import {
   addProductToCartPayload,
   wishlistPayload,
 } from "./helpers";
-import BrandSwiper from "../../components/brandSwiper";
 import FAQSection from "../faq/FaqPage";
 import { productImages } from "../../constant/image.constant";
 import { faqData } from "../../data/faqData";
@@ -92,7 +91,7 @@ export function HomePage() {
         sections={homeShowcaseSections}
         loading={isHomeLoading}
       />
-      <InfoSection/>
+      <InfoSection />
       <MothersDaySwiper />
 
       <HomeProductsForYouSection loading={isHomeLoading} />
@@ -100,7 +99,6 @@ export function HomePage() {
         image={productImages.menFashion}
         faqs={faqData}
       />
-      <MothersDaySwiper />
       {recent.length > 0 && (
         <>
           <h2>Recently viewed</h2>
