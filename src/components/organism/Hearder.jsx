@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "../Button/Button";
 import ImageSkeleton from "../ui/Image";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronDown, Search } from "lucide-react";
 import {
   header as categoryData,
@@ -11,21 +11,29 @@ import {
 
 export const TopHeader = () => {
   const navLinks = [
-    { name: "Deals", path: "#" },
-    { name: "Brand Outlet", path: "#" },
-    { name: "Gift Card", path: "#" },
-    { name: "Help & Contact", path: "/support" },
+    { name: "Deals", path: "/products?deals=true" },
+    { name: "Brand Outlet", path: "/products?brand=outlet" },
+    { name: "Gift Card", path: "/gift-cards" },
+    { name: "Help & Contact", path: "/cms/help" },
   ];
+
+  const watchlistData = [
+    "Saved Products",
+    "Recently Viewed",
+    "Favourite Brands",
+  ];
+
+  const mySamData = ["My Profile", "My Orders", "Settings", "Logout"];
+
+  const [showWatchlist, setShowWatchlist] = useState(false);
+  const [showMySam, setShowMySam] = useState(false);
+  const navigate = useNavigate();
   return (
-    <div className="w-full bg-[#1B1D60] border-b border-[#2d3080] h-[39px] hidden lg:flex items-center text-sm text-white ">
+    <div className=" text-[#FFFFFF] w-full  bg-[#1B1D60]  h-[39px] hidden lg:flex items-center justify-center text-[14px] leading-[24px] font-medium text-center font-['Montserrat']">
       <div className="w-container flex items-center h-full">
-        <div className="flex-1 flex items-center gap-6">
+        <div className="flex-1 flex items-center gap-14">
           {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.path}
-              className=""
-            >
+            <Link key={link.name} to={link.path} className="hover:opacity-80 transition-opacity">
               {link.name}
             </Link>
           ))}
@@ -34,24 +42,70 @@ export const TopHeader = () => {
           <a href="#" className="">
             Become a Seller
           </a>
-          <div className="relative group cursor-pointer flex items-center gap-1">
-            <span>Watchlist</span>
-            <ChevronDown size={18} />
+          <div
+            className="relative flex items-center gap-1 h-full"
+            onMouseEnter={() => setShowWatchlist(true)}
+            onMouseLeave={() => setShowWatchlist(false)}
+          >
+            <button
+              onClick={() => setShowWatchlist(!showWatchlist)}
+              className="flex items-center gap-1"
+            >
+              <span>Watchlist</span>
+              <ChevronDown size={18} />
+            </button>
+
+            {showWatchlist && (
+              <div className="absolute top-full right-0 flex flex-col min-w-[220px] bg-white shadow-xl rounded-xl py-3 z-50 border border-gray-200">
+                {watchlistData.map((item, index) => (
+                  <div
+                    key={index}
+                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer transition"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-          <div className="relative group cursor-pointer flex items-center gap-1">
-            <span>My Sam</span>
-            <ChevronDown size={18} />
+
+          <div
+            className="relative flex items-center gap-1 h-full"
+            onMouseEnter={() => setShowMySam(true)}
+            onMouseLeave={() => setShowMySam(false)}
+          >
+            <button
+              onClick={() => setShowMySam(!showMySam)}
+              className="flex items-center gap-1"
+            >
+              <span>My Sam</span>
+              <ChevronDown size={18} />
+            </button>
+
+            {showMySam && (
+              <div className="absolute top-full right-0 flex flex-col min-w-[220px] bg-white shadow-xl rounded-xl py-3 z-50 border border-gray-200">
+                {mySamData.map((item, index) => (
+                  <div
+                    key={index}
+                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer transition"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <Button
             variant="custom"
             rounded={true}
             className="  font-bold border px-3 py-1"
+            // className="  pxfont-bold border"
             bgColor="#FFFFFF"
             borderColor="#CE9F2D"
             textColor="#CE9F2D"
             label="Register"
-            size=""
+            onClick={() => navigate("/register")}
           />
         </div>
       </div>
@@ -61,8 +115,21 @@ export const TopHeader = () => {
 
 export const Navbar = ({ icons: propIcons }) => {
   const displayIcons = propIcons || navData;
-  const gradientBg = "linear-gradient(270deg, #A26D27 5.77%, #CE9F2D 100%)";
   const borderGradient = "linear-gradient(90deg, #A26D27 0%, #CE9F2D 100%)";
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/products/search?q=${searchQuery}`);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   return (
     <header className="w-full">
@@ -87,7 +154,10 @@ export const Navbar = ({ icons: propIcons }) => {
             <div className="flex h-[44px] w-full items-center overflow-hidden rounded-full border-none bg-white pl-3 pr-1 outline-none sm:h-[48px] sm:pl-4 lg:h-[54px] lg:pl-6 lg:pr-1.5">
               <input
                 type="text"
-                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Barbour Beadnell wax jacket in black"
                 className="w-full h-full outline-none border-none ring-0 text-gray-700 bg-transparent focus:ring-0 text-sm lg:text-base"
               />
 
@@ -99,13 +169,13 @@ export const Navbar = ({ icons: propIcons }) => {
                 />
 
                 <Button
-                  variant="custom"
+                  variant="gradient"
                   rounded={true}
-                  className="w-[120px] h-[42px] font-bold flex items-center justify-center gap-2"
-                  bgColor="linear-gradient(270deg, #A26D27 5.77%, #CE9F2D 100%)"
-                  textColor="#FFFFFF"
-                  icon={<Search size={14} color="#FFFFFF" />}
+                  icon={<Search size={18} />}
                   label="Search"
+                  size="md"
+                  className="px-4 2xl:px-6  font-medium "
+                  onClick={handleSearch}
                 />
               </div>
             </div>
@@ -138,14 +208,13 @@ export const Navbar = ({ icons: propIcons }) => {
               </React.Fragment>
             ))}
           </div>
-
           <Button
-            variant="custom"
+            variant="gradient"
             rounded={true}
-            className="whitespace-nowrap px-2.5 py-1.5 text-[10px] font-bold transition sm:px-3 sm:py-2 lg:px-6 lg:text-base"
-            bgColor={gradientBg}
-            textColor="#FFFFFF"
             label="Create Account"
+            size="md"
+            className="h-[40px] lg:h-[48px] px-6 font-medium whitespace-nowrap"
+            onClick={() => navigate("/register")}
           />
         </div>
       </div>
@@ -159,7 +228,7 @@ export const CategoryBar = ({ headerData }) => {
     Object.entries(categoryData).map(([name, img]) => ({ name, img }));
   return (
     <header className="w-full">
-      <div className="w-container hide-scrollbar flex justify-start gap-5 overflow-x-auto px-3 py-3 sm:gap-7 lg:justify-center lg:gap-12">
+      <div className="w-container hide-scrollbar flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-10 ">
         {categories?.map((item, index) => (
           <Link
             key={index}
@@ -169,7 +238,7 @@ export const CategoryBar = ({ headerData }) => {
             <div className="mx-auto flex items-center justify-center p-1 rounded-full group-hover:bg-white transition-all">
               <ImageSkeleton src={item?.img} alt={item?.name} />
             </div>
-            <span className="text-[12px] lg:text-[14px] mt-1 text-center leading-tight whitespace-nowrap">
+            <span className="text-[12px] lg:text-[14px] mt-1 text-center leading-tight whitespace-nowrap font-montserrat">
               {item?.name}
             </span>
           </Link>

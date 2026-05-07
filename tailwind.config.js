@@ -18,7 +18,8 @@ module.exports = {
         },
       },
       fontFamily: {
-        montserrat: ["Montserrat", "sans-serif"],
+        montserrat: ["Montserrat", "sans-serif",],
+        inter: ["Inter",],
       },
       fontSize: {
         paragraph: ["18px", "28px"],
@@ -85,3 +86,8 @@ module.exports = {
     },
   ],
 };
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/reeta-dev

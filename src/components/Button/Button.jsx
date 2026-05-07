@@ -18,18 +18,20 @@ const Button = ({
 }) => {
   const sizes = {
     sm: "text-xs min-h-[28px]",
-    md: "text-base min-h-[44px]",
+    md: "text-sm xl:text-base min-h-[36px] ",
     lg: "text-base xl:text-xl min-h-[50px]",
   };
+  
 
-  const baseStyles = `${sizes[size]} transition-all duration-200 flex items-center justify-center gap-2`;
+  const baseStyles = `  ${sizes[size]} transition-all duration-200 flex items-center justify-center gap-2 min-h-[44px] font-montserrat  cursor-pointer font-medium  `;
 
   const width = fullWidth ? "w-full" : "";
   const borderRadius = rounded ? "rounded-full" : "rounded-sm";
   const focus = "focus:outline-none focus:ring-2 focus:ring-[#BF9B53]";
 
   const variantStyles = {
-    primary: "bg-[#BF9B53] hover:bg-[#a6813f] text-white border-none",
+    primary:
+      "bg-[#BF9B53] hover:bg-[#a6813f] text-white border-none font-montserrat ",
     gradient:
       "bg-gradient-to-l from-accent to-primary text-white  rounded-full",
     secondary:
