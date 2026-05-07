@@ -20,7 +20,19 @@ export const mothersDaySwiperImages = {
   coOrdSet: "/image/png/coOrdSet.png",
   blazer: "/image/png/blazer.png",
   pants: "/image/png/pants.png",
+  homeDecor: "/image/jpg/home-decor.jpg",
+  smartHome: "/image/jpg/smart-home.jpg",
 };
+
+export const collageCard = {
+  menFashion: "/image/png/men-fashion.png",
+  stylishPair: "/image/png/stylish-pair.png",
+  watch: "/image/png/gold-watch-with-rhinestones%201.png",
+  blazer: "/image/png/blazer.png",
+  homeDecor: "/image/jpg/home-decor.jpg",
+  smartHome: "/image/jpg/smart-home.jpg",
+};
+
 export const header = {
   "For You": "/image/png/ForYou.png",
   Fashion: "/image/png/Fashion.png",
@@ -44,18 +56,18 @@ export const navbarIcons = [
   },
   {
     name: "Word",
-    img: "/image/png/Word.png"
+    img: "/image/png/Word.png",
   },
   {
     name: "Account",
     img: "/image/png/Account.png",
-    path: "/account"
+    path: "/account",
   },
   {
     name: "Cart",
     img: "/image/png/Cart.png",
-    path: "/cart"
-  }
+    path: "/cart",
+  },
 ];
 
 export const icons = {
@@ -74,7 +86,8 @@ export const bannerData = [
     subtitle: "FLASH SALE",
     discountImg: "/image/png/off.png",
     lineImg: "/image/png/line.png",
-    description: "Upgrade your style with our exclusive collection. Limited time offer on all premium categories.",
+    description:
+      "Upgrade your style with our exclusive collection. Limited time offer on all premium categories.",
     image: "/image/png/model.png",
     modelBg: "/image/png/%20modelbg.png",
   },
@@ -84,10 +97,11 @@ export const bannerData = [
     subtitle: "PREMIUM WEAR",
     discountImg: "/image/png/off.png",
     lineImg: "/image/png/line.png",
-    description: "Discover the latest trends in luxury fashion. Shop the new season arrivals today.",
+    description:
+      "Discover the latest trends in luxury fashion. Shop the new season arrivals today.",
     image: "/image/png/model.png",
     modelBg: "/image/png/%20modelbg.png",
-  }
+  },
 ];
 
 export const bannerConfig = {
@@ -95,5 +109,5 @@ export const bannerConfig = {
   phone: "+91 98765 43210",
   email: "support@samglobal.com",
   website: "www.samglobal.com",
-  gradient: "linear-gradient(270deg, #3E4094 5.77%, #1B1D60 100%)"
+  gradient: "linear-gradient(270deg, #3E4094 5.77%, #1B1D60 100%)",
 };

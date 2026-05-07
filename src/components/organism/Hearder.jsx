@@ -21,11 +21,7 @@ export const TopHeader = () => {
       <div className="w-container flex items-center h-full">
         <div className="flex-1 flex items-center gap-6">
           {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.path}
-              className=""
-            >
+            <a key={link.name} href={link.path} className="">
               {link.name}
             </a>
           ))}
@@ -42,10 +38,12 @@ export const TopHeader = () => {
             <span>My Sam</span>
             <ChevronDown size={14} />
           </div>
+
           <Button
             variant="custom"
             rounded={true}
-            className="px-4 py-1.5 font-bold border"
+            size="sm"
+            className="font-bold border px-3"
             bgColor="#FFFFFF"
             borderColor="#CE9F2D"
             textColor="#CE9F2D"
