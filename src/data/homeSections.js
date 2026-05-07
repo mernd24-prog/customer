@@ -4,9 +4,9 @@ import {
   collageCard,
   mothersDaySwiperImages,
 } from "../constant/image.constant";
-import arrivals from "./arrivals.json";
-import topDeals from "./topDeals.json";
  
+import arrivals from "./arrivals";
+import topDeals from "./topDeals";
 
 export const homeShowcaseSections = [
   {

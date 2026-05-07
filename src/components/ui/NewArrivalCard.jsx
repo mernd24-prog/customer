@@ -22,11 +22,11 @@ export default function NewArrivalCard({
         >
             {badgeText && (
                 <div className="absolute left-[-8px] top-4 h-[34px] w-[94px] overflow-hidden rounded-l-full sm:left-[-10px] sm:top-[18px] sm:h-[37px] sm:w-[102px]">
-                    <img
+                    {/* <img
                         src="image/png/image.png"
                         alt=""
                         className="h-full w-full object-fill"
-                    />
+                    /> */}
                     <span className="absolute inset-x-0 top-0 flex h-[28px] items-center justify-center pl-3 pr-4 font-montserrat text-[13px] font-bold leading-none text-white sm:h-[30px] sm:pl-3 sm:pr-5 sm:text-[15px]">
                         {badgeText}
                     </span>

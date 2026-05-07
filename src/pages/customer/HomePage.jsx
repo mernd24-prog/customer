@@ -10,7 +10,6 @@ import { fetchTrendingProducts } from "../../features/recommendation/recommendat
 import { fetchCmsPages } from "../../features/cms/cmsSlice";
 import categories from "../../data/categories";
 import { homeShowcaseSections } from "../../data/homeSections";
-import Banner from "../../components/organism/Banner";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import HomeShowcaseSections from "../../components/home/HomeShowcaseSections";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
@@ -20,11 +19,11 @@ import {
   addProductToCartPayload,
   wishlistPayload,
 } from "./helpers";
-import Collage from "../../components/collageCard";
 import MothersDaySwiper from "../../components/mothersDaySwiper";
-import MothersDaySwiper from "../../components/mothersDaySwiper";
+import CollageMainSection from "../../components/collageCard";
+import BrandSwiper from "../../components/brandSwiper";
 
- 
+
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -77,19 +76,19 @@ export function HomePage() {
   return (
     <>
       <Seo title="Sam Global | Shop smarter" />
-      <Banner />
-      {/* Keep fetched values currently in use to avoid behavior drift while refactoring. */}
+
+
       <div className="hidden">{Boolean(catalog || cms || products.length)}</div>
-      {/* <HomeCategoryGrid categories={categories} loading={isHomeLoading} /> */}
+      <HomeCategoryGrid categories={categories} loading={isHomeLoading} />
       <CollageMainSection />
-      {/* <HomeShowcaseSections
+      <HomeShowcaseSections
         sections={homeShowcaseSections}
         loading={isHomeLoading}
-      /> */}
+      />
       <MothersDaySwiper />
       <BrandSwiper />
       <HomeProductsForYouSection loading={isHomeLoading} />
-     
+
       <MothersDaySwiper />
       {recent.length > 0 && (
         <>

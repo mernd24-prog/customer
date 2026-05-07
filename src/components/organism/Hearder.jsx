@@ -46,7 +46,7 @@ export const TopHeader = () => {
           <Button
             variant="custom"
             rounded={true}
-            className="  font-bold border"
+            className="  font-bold border px-3 py-1"
             bgColor="#FFFFFF"
             borderColor="#CE9F2D"
             textColor="#CE9F2D"
