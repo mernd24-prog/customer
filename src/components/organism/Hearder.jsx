@@ -11,10 +11,10 @@ import {
 
 export const TopHeader = () => {
   const navLinks = [
-    { name: "Deals", path: "/products?deals=true" },
-    { name: "Brand Outlet", path: "/products?brand=outlet" },
-    { name: "Gift Card", path: "/gift-cards" },
-    { name: "Help & Contact", path: "/cms/help" },
+    { name: "Deals", path: "#" },
+    { name: "Brand Outlet", path: "#" },
+    { name: "Gift Card", path: "#" },
+    { name: "Help & Contact", path: "#" },
   ];
 
   const watchlistData = [
@@ -33,9 +33,9 @@ export const TopHeader = () => {
       <div className="w-container flex items-center h-full">
         <div className="flex-1 flex items-center gap-14">
           {navLinks.map((link) => (
-            <Link key={link.name} to={link.path} className="hover:opacity-80 transition-opacity">
+            <a key={link.name} href={link.path} className="">
               {link.name}
-            </Link>
+            </a>
           ))}
         </div>
         <div className="flex items-center gap-6 h-full">
@@ -95,12 +95,10 @@ export const TopHeader = () => {
               </div>
             )}
           </div>
-
           <Button
             variant="custom"
             rounded={true}
-            className="  font-bold border px-3 py-1"
-            // className="  pxfont-bold border"
+            className="  pxfont-bold border"
             bgColor="#FFFFFF"
             borderColor="#CE9F2D"
             textColor="#CE9F2D"
@@ -194,11 +192,10 @@ export const Navbar = ({ icons: propIcons }) => {
                   <img
                     src={item.img}
                     alt={item.name}
-                    className={`object-contain ${
-                      item.name === "IN"
-                        ? "w-[40px] h-[29px] lg:w-[60px] lg:h-[42px]"
-                        : "w-[24px] h-[24px] lg:w-[28px] lg:h-[28px]"
-                    }`}
+                    className={`object-contain ${item.name === "IN"
+                      ? "w-[40px] h-[29px] lg:w-[60px] lg:h-[42px]"
+                      : "w-[24px] h-[24px] lg:w-[28px] lg:h-[28px]"
+                      }`}
                   />
                 </Link>
 
