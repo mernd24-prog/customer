@@ -86,8 +86,3 @@ module.exports = {
     },
   ],
 };
-<<<<<<< HEAD
-=======
-
-
->>>>>>> origin/reeta-dev
