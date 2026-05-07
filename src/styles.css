@@ -4,7 +4,6 @@
 
 /* Global Font-size set */
 
-
 @layer base {
   .custom-h5 {
     @apply text-xl md:text-2xl lg:text-3xl  2xl:text-4xl    leading-8 lg:leading-10;
@@ -59,6 +58,37 @@
   100% {
     transform: translateX(-50%);
   }
+}
+
+.banner-swiper .swiper-pagination {
+  bottom: 20px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: fit-content;
+  left: 50% !important;
+  transform: translateX(-50%);
+  padding: 18px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+.banner-swiper .custom-bullet {
+  width: 18px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+
+  transition: all 0.3s ease;
+  opacity: 1;
+}
+
+.banner-swiper .swiper-pagination-bullet-active {
+  width: 40px;
+  background: #d4a437;
 }
 
 /* Hide global scrollbar */
@@ -321,7 +351,10 @@ nav a:hover {
 }
 
 .card-elevated {
-  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease,
+    border-color 0.28s ease;
 }
 
 .card-elevated:hover,

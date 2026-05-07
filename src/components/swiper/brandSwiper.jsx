@@ -1,4 +1,4 @@
-import { brandSwiperData } from "../data/aboutSection";
+import { brandSwiperData } from "../../data/aboutSection";
 
 export default function BrandSwiper({}) {
   const { sectionDetails, logos } = brandSwiperData;

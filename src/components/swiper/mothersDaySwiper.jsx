@@ -3,11 +3,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import Button from "../components/Button/Button";
+import Button from "../Button/Button";
 import { IoArrowBackOutline, IoArrowForwardOutline } from "react-icons/io5";
-import { mothersDayData } from "../data/homeSections";
+import { mothersDayData } from "../../data/homeSections";
 import { useEffect, useState } from "react";
-import { SkeletonLoader, SKELETON_PRESETS } from "./common/skeleton";
+import { SkeletonLoader, SKELETON_PRESETS } from "../common/skeleton";
 import { Link } from "react-router-dom";
 
 // Swiper js Setup
@@ -83,8 +83,8 @@ function SwiperButtons({ swiperRef, isBeginning, isEnd }) {
       <button
         disabled={isBeginning}
         onClick={() => swiperRef.current?.slidePrev()}
-        className={`w-12 h-12 flex items-center justify-center bg-[#E5E5E5] text-gray-500  transition-all duration-300 ${
-          isBeginning ? "opacity-50 cursor-not-allowed" : ""
+        className={`w-14 h-14 flex items-center justify-center bg-[#E5E5E5] text-gray-500  transition-all duration-300 ${
+          isBeginning ? "opacity-80 cursor-not-allowed" : ""
         }`}
       >
         <IoArrowBackOutline size={24} />
@@ -92,8 +92,8 @@ function SwiperButtons({ swiperRef, isBeginning, isEnd }) {
       <button
         disabled={isEnd}
         onClick={() => swiperRef.current?.slideNext()}
-        className={`w-12 h-12 flex items-center justify-center bg-accent text-white transition-all duration-300 ${
-          isEnd ? "opacity-50 cursor-not-allowed" : ""
+        className={`w-14 h-14 flex items-center justify-center bg-accent text-white transition-all duration-300 ${
+          isEnd ? "opacity-80 cursor-not-allowed" : ""
         }`}
       >
         <IoArrowForwardOutline size={24} />
@@ -113,7 +113,7 @@ export default function MothersDaySwiper() {
   };
 
   return (
-    <section className=" my-4  w-full   overflow-x-hidden">
+    <section className="my-8 lg:my-12  w-full   overflow-x-hidden">
       {/* Mobile Heading */}
       <div className="xl:hidden xl:mb-8 md:mb-4">
         <h2 className="custom-h5 font-bold text-center font-montserrat text-blue">
@@ -145,7 +145,7 @@ export default function MothersDaySwiper() {
           {/* Right Side Swiper */}
           <div className="w-full relative  xl:w-[60%] mt-6  md:-ml-12 lg:-ml-20">
             {/* Navigation Buttons for Desktop */}
-            <div className="flex  gap-2 absolute bottom-0  -left-[7rem] z-20">
+            <div className="flex  gap-2 absolute bottom-0  -left-[7.5rem] z-20">
               <SwiperButtons
                 swiperRef={swiperRef}
                 isBeginning={isBeginning}
@@ -159,7 +159,7 @@ export default function MothersDaySwiper() {
             />
 
             {/* Navigation Buttons for Mobile */}
-            <div className="flex xl:hidden justify-center gap-4  mt-8 xl:mt-4">
+            <div className="flex xl:hidden justify-center gap-10   mt-8 xl:mt-4">
               <SwiperButtons
                 swiperRef={swiperRef}
                 isBeginning={isBeginning}

@@ -4,7 +4,7 @@ import {
   collageCard,
   mothersDaySwiperImages,
 } from "../constant/image.constant";
- 
+
 import arrivals from "./arrivals";
 import topDeals from "./topDeals";
 
@@ -27,7 +27,7 @@ export const homeShowcaseSections = [
     id: "new-arrivals",
     title: "New Arrivals",
     subtitle: "Navigate trends with data-driven rankings",
-    headerbgColor: "bg-[linear-gradient(270deg,_#A26D27_5.77%,_#CE9F2D_100%)]",
+    headerbgColor: "bg-[#ECDFCB]",
     bodybgColor: "bg-[#CE9F2D0D]",
     gridClassName:
       "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-3",

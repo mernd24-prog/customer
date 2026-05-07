@@ -6,7 +6,7 @@ import CommitmentCard from "../ui/CommitmentCard";
 import { commitmentData } from "../../data/commitment";
 
 export default function HomeProductsForYouSection({ loading = false }) {
-    const list = loading ? Array.from({ length: 12 }) : productsForYou;
+  const list = loading ? Array.from({ length: 12 }) : productsForYou;
 
     return (
         <>

@@ -102,6 +102,28 @@ export const bannerData = [
     image: "/image/png/model.png",
     modelBg: "/image/png/%20modelbg.png",
   },
+  {
+    id: 3,
+    title: "END OF SEASON",
+    subtitle: "FLASH SALE",
+    discountImg: "/image/png/off.png",
+    lineImg: "/image/png/line.png",
+    description:
+      "Upgrade your style with our exclusive collection. Limited time offer on all premium categories.",
+    image: "/image/png/model.png",
+    modelBg: "/image/png/%20modelbg.png",
+  },
+  {
+    id: 4,
+    title: "NEW ARRIVALS",
+    subtitle: "PREMIUM WEAR",
+    discountImg: "/image/png/off.png",
+    lineImg: "/image/png/line.png",
+    description:
+      "Discover the latest trends in luxury fashion. Shop the new season arrivals today.",
+    image: "/image/png/model.png",
+    modelBg: "/image/png/%20modelbg.png",
+  },
 ];
 
 export const bannerConfig = {
@@ -130,7 +152,8 @@ export const productImages = {
   blazer: "/image/png/blazer.png",
   perfume: "/image/png/Perfume.png",
   diamondJewellery: "/image/png/women-wearing-diamond-jewellery 1.png",
-  diamondRings: "/image/png/rings-diamonds-background-rock-black-sparkling 1.png",
+  diamondRings:
+    "/image/png/rings-diamonds-background-rock-black-sparkling 1.png",
 };
 
 export const categoryImages = {
@@ -154,7 +177,7 @@ export const arrivalImages = {
   diamondRings: "/image/png/Ring.png",
   stylishGirls: productImages.stylishGirls,
   blazer: productImages.blazer,
-  sprayBottle : "/image/png/SprayBottle.png",
+  sprayBottle: "/image/png/SprayBottle.png",
   perfume: "/image/png/Perfume.png",
 };
 
@@ -169,4 +192,9 @@ export const helpYouImages = {
   brandPartnership: "/image/png/BrandAndPartnershipDiscussions.png",
   storeRetail: "/image/png/StoreAndRetailOpportunities.png",
   customerSupport: "/image/png/Payment.png",
+};
+export const aboutValues = {
+  excellence: "/image/png/excellence.png",
+  customer: "/image/png/customer.png",
+  growth: "/image/png/growth.png",
 };
