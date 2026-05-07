@@ -23,7 +23,7 @@ const Button = ({
   };
   
 
-  const baseStyles = `  ${sizes[size]} transition-all duration-200 flex items-center justify-center gap-2 min-h-[44px] font-montserrat  cursor-pointer font-medium  `;
+  const baseStyles = `  ${sizes[size]} transition-all duration-200 flex items-center justify-center gap-2   font-montserrat  cursor-pointer font-medium  `;
 
   const width = fullWidth ? "w-full" : "";
   const borderRadius = rounded ? "rounded-full" : "rounded-sm";
