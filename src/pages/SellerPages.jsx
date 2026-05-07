@@ -5,7 +5,7 @@ import Seo from "../components/Seo";
 import StatusTimeline from "../components/StatusTimeline";
 import { fetchSellerWebStatus, fetchSellerWebTracking, fetchSellerWebTrackingOrder } from "../features/seller/sellerSlice";
 import { useFetch } from "./useFetchPage";
-import { formatMoney } from "../components/ProductCard";
+import { formatMoney } from "../utils/ecommerce";
 
 export function SellerStatusPage() {
   const dispatch = useDispatch();

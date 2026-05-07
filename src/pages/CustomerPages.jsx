@@ -13,11 +13,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { CreditCard, Heart, PackageCheck, ShieldCheck } from "lucide-react";
 import ApiState from "../components/ApiState";
-import ProductCard, { formatMoney } from "../components/ProductCard";
+import ProductCard from "../components/ProductCard";
 import Seo from "../components/Seo";
 import StatusTimeline from "../components/StatusTimeline";
 import { useToastThunk } from "../hooks/useToastThunk";
 import { addRecentlyViewed } from "../utils/recentlyViewed";
+import { formatMoney } from "../utils/ecommerce";
 import {
   loginUser,
   registerUser,
@@ -660,7 +661,7 @@ export function ProductDetailPage() {
       ).catch(() => { });
       dispatch(fetchDynamicPrice({ productId, quantity: 1 })).catch(() => { });
     }
-  }, [dispatch, productId, Boolean(product)]);
+  }, [dispatch, product, productId]);
 
   return (
     <section>

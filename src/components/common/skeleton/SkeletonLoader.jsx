@@ -1,17 +1,22 @@
 import React from "react";
 import SkeletonBox from "./SkeletonBox";
+import { SKELETON_PRESETS } from "./skeletonPresets";
 
 /**
  * SkeletonLoader - Dynamic skeleton generator.
  * Takes a layout configuration and renders a complex skeleton structure.
  */
 const SkeletonLoader = ({
-  layout = [],
+  layout,
+  preset,
   count = 1,
   wrapperClass = "",
   containerClass = "space-y-4",
   ...props
 }) => {
+  const activeLayout =
+    layout || (typeof preset === "string" ? SKELETON_PRESETS[preset] : preset) || [];
+
   // Recursive function to render layout items
   const renderLayout = (items) => {
     return items.map((item, index) => {
@@ -33,7 +38,7 @@ const SkeletonLoader = ({
           case "group":
           case "row":
           case "col":
-          case "grid":
+          case "grid": {
             const layoutClasses = {
               group: "flex flex-wrap gap-4",
               row: "flex flex-row items-center gap-4",
@@ -46,6 +51,7 @@ const SkeletonLoader = ({
                 {children && renderLayout(children)}
               </div>
             );
+          }
 
           case "box":
           default:
@@ -62,7 +68,7 @@ const SkeletonLoader = ({
     <div className={containerClass} {...props}>
       {mainItems.map((_, i) => (
         <div key={i} className={wrapperClass}>
-          {renderLayout(layout)}
+          {renderLayout(activeLayout)}
         </div>
       ))}
     </div>

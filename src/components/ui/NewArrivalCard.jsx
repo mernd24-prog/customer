@@ -1,4 +1,6 @@
 import PricePill from "./PricePill";
+import { arrivalImages } from "../../constant/image.constant";
+import { Link } from "react-router-dom";
 
 export default function NewArrivalCard({
     title,
@@ -7,12 +9,14 @@ export default function NewArrivalCard({
     price,
     oldPrice,
     badge,
+    link
 }) {
     const displayImages = images.slice(0, 2);
     const currentMonth = new Date().toLocaleString("en-US", { month: "long" });
     const badgeText = badge ?? currentMonth;
 
     return (
+        <Link to ={link} className="block">
         <article
             className="relative h-full min-w-0 rounded-[12px] bg-white px-3 pb-4 pt-4 shadow-sm transition hover:shadow-lg sm:px-4 sm:pb-5 sm:pt-5"
         >
@@ -54,5 +58,6 @@ export default function NewArrivalCard({
                 ))}
             </div>
         </article>
+        </Link>
     );
 }

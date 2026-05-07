@@ -5,6 +5,8 @@ export default function SectionContainer({
     headerbgColor,
     children,
     bodybgColor,
+    actionLabel = "",
+    onAction,
     className = "",
 }) {
     return (
@@ -19,15 +21,16 @@ export default function SectionContainer({
                             {subtitle}
                         </p>
                     </div>
-                    {/* <button className="flex items-center gap-2 text-black text-[16px] font-medium font-montserrat">
-                        View More
-                        <FaAngleRight />
-
-                    </button> */}
-                    <button className="shrink-0 self-start sm:self-center flex items-center gap-2 text-black text-[14px] sm:text-[16px] lg:text-[18px] font-medium font-montserrat">
-    View More
-    <FaAngleRight />
-</button>
+                    {actionLabel ? (
+                        <button
+                            type="button"
+                            onClick={onAction}
+                            className="group shrink-0 self-start sm:self-center flex items-center gap-2 text-black text-[14px] sm:text-[16px] lg:text-[18px] font-medium font-montserrat transition-all duration-300 hover:text-gray-600 hover:gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                        >
+                            {actionLabel}
+                            <FaAngleRight className="transition-transform duration-300 group-hover:translate-x-1" />
+                        </button>
+                    ) : null}
                 </div>
             </header>
             <div className={`p-3 sm:p-4 lg:p-6 ${bodybgColor}`}>

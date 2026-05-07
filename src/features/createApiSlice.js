@@ -19,7 +19,18 @@ export function makeThunk(type, config) {
       const params = typeof config.params === "function" ? config.params(arg) : config.params || arg?.params;
       const data = typeof config.data === "function" ? config.data(arg) : config.data || arg?.data || arg;
       const url = typeof config.url === "function" ? config.url(arg) : config.url;
-      const result = await apiRequest({ method: config.method || "get", url, data, params });
+      const result = await apiRequest({
+        method: config.method || "get",
+        url,
+        data,
+        params,
+        cache: config.cache || arg?.cache,
+        cacheTtl: config.cacheTtl || arg?.cacheTtl,
+        cacheKey:
+          typeof config.cacheKey === "function"
+            ? config.cacheKey(arg)
+            : config.cacheKey || arg?.cacheKey,
+      });
       return { ...result, arg };
     } catch (error) {
       return rejectWithValue(error.message);

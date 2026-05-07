@@ -1,20 +1,17 @@
+import { getCache, setCache } from "./cache";
+import { getProductId } from "./ecommerce";
+
 const RECENT_KEY = "sam_global_recently_viewed";
 const COMPARE_KEY = "sam_global_compare";
+const STORAGE_OPTIONS = { ttl: Infinity, version: 1 };
 
-const read = (key) => {
-  try {
-    return JSON.parse(localStorage.getItem(key) || "[]");
-  } catch {
-    return [];
-  }
-};
-
-const write = (key, items) => localStorage.setItem(key, JSON.stringify(items.slice(0, 12)));
+const read = (key) => getCache(key, { ...STORAGE_OPTIONS, fallback: [] });
+const write = (key, items) => setCache(key, items.slice(0, 12), STORAGE_OPTIONS);
 
 export function addRecentlyViewed(product) {
   if (!product) return;
-  const id = product.id || product._id || product.productId;
-  const current = read(RECENT_KEY).filter((item) => (item.id || item._id || item.productId) !== id);
+  const id = getProductId(product);
+  const current = read(RECENT_KEY).filter((item) => getProductId(item) !== id);
   write(RECENT_KEY, [product, ...current]);
 }
 
@@ -23,10 +20,10 @@ export function getRecentlyViewed() {
 }
 
 export function toggleCompare(product) {
-  const id = product.id || product._id || product.productId;
+  const id = getProductId(product);
   const current = read(COMPARE_KEY);
-  const exists = current.some((item) => (item.id || item._id || item.productId) === id);
-  write(COMPARE_KEY, exists ? current.filter((item) => (item.id || item._id || item.productId) !== id) : [product, ...current].slice(0, 4));
+  const exists = current.some((item) => getProductId(item) === id);
+  write(COMPARE_KEY, exists ? current.filter((item) => getProductId(item) !== id) : [product, ...current].slice(0, 4));
 }
 
 export function getCompareList() {

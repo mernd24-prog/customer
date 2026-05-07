@@ -14,16 +14,20 @@ export const TopHeader = () => {
     { name: "Deals", path: "#" },
     { name: "Brand Outlet", path: "#" },
     { name: "Gift Card", path: "#" },
-    { name: "Help & Contact", path: "#" },
+    { name: "Help & Contact", path: "/support" },
   ];
   return (
     <div className="w-full bg-[#1B1D60] border-b border-[#2d3080] h-[39px] hidden lg:flex items-center text-[15px] text-white ">
       <div className="w-container flex items-center h-full">
         <div className="flex-1 flex items-center gap-6">
           {navLinks.map((link) => (
-            <a key={link.name} href={link.path} className="">
+            <Link
+              key={link.name}
+              to={link.path}
+              className=""
+            >
               {link.name}
-            </a>
+            </Link>
           ))}
         </div>
         <div className="flex items-center gap-6 h-full">

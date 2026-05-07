@@ -6,6 +6,7 @@ import {
 } from "../constant/image.constant";
 import arrivals from "./arrivals.json";
 import topDeals from "./topDeals.json";
+ 
 
 export const homeShowcaseSections = [
   {

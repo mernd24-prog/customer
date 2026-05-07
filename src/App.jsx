@@ -31,6 +31,13 @@ import {
 } from "./pages/CustomerPages";
 import { BuyerRegisterPage } from "./features/auth";
 import { SellerStatusPage, SellerTrackingDetailPage, SellerTrackingPage } from "./pages/SellerPages";
+import {
+  FaqPage,
+  SupportCenterPage,
+  WhyChooseUsPage,
+  OurCommitmentPage,
+  FeaturesPage,
+} from "./pages/StaticPages";
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
 import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 
@@ -86,6 +93,12 @@ export default function App() {
           <Route path={AUTH_ROUTES.verifyOtp} element={<AuthFormPage mode="verify-otp" />} />
           <Route path={AUTH_ROUTES.forgotPassword} element={<AuthFormPage mode="forgot" />} />
           <Route path={AUTH_ROUTES.resetPassword} element={<AuthFormPage mode="reset" />} />
+          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/support" element={<SupportCenterPage />} />
+          <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
+          <Route path="/our-commitment" element={<OurCommitmentPage />} />
+          <Route path="/features" element={<FeaturesPage />} />
+
           <Route element={<BuyerOnlyRoute />}>
             <Route index element={<HomePage />} />
             <Route path="/products" element={<ProductsPage />} />

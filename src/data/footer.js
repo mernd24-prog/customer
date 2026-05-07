@@ -45,9 +45,9 @@ export const footerData = {
       title: "About SAM",
       links: [
         { label: "Who We Are", href: "/cms/who-we-are" },
-        { label: "Our Journey", href: "/cms/our-journey" },
-        { label: "Our Vision", href: "/cms/our-vision" },
-        { label: "Careers", href: "/cms/careers" },
+        { label: "Why Choose Us", href: "/why-choose-us" },
+        { label: "Our Commitment", href: "/our-commitment" },
+        { label: "Features", href: "/features" },
       ],
     },
     {
@@ -61,8 +61,8 @@ export const footerData = {
     {
       title: "Help & Contact",
       links: [
-        { label: "Customer Support", href: "/cms/customer-support" },
-        { label: "FAQs", href: "/cms/faqs" },
+        { label: "Customer Support", href: "/support" },
+        { label: "FAQs", href: "/faq" },
         { label: "Returns", href: "/returns" },
       ],
     },
