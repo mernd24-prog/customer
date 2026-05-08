@@ -10,7 +10,7 @@ import {
   Headphones,
   CheckCircle2,
 } from "lucide-react";
-import Seo from "../components/Seo";
+import Seo from "../components/common/Seo";
 import InfoCard from "../components/ui/InfoCard";
 import SectionContainer from "../components/ui/SectionContainer";
 import { faqItems, supportTopics, whyChooseUsItems, commitmentItems, featureItems } from "../data/staticPages";

@@ -1,4 +1,4 @@
-import ShowcaseSection from "../ui/sections/ShowcaseSection";
+import ShowcaseSection from "./ShowcaseSection";
 
 export default function HomeShowcaseSections({
   sections = [],
@@ -7,8 +7,8 @@ export default function HomeShowcaseSections({
   return (
     <div>
       {sections.map((section) => (
-        <div className="my-8 lg:my-12">
-          <ShowcaseSection key={section.id} loading={loading} {...section} />
+        <div key={section.id} className="my-8 lg:my-12">
+          <ShowcaseSection loading={loading} {...section} />
         </div>
       ))}
     </div>

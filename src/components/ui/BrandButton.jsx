@@ -1,4 +1,5 @@
 const Button = ({
+  children,
   label,
   onClick,
   type = "button",
@@ -16,14 +17,13 @@ const Button = ({
   icon,
   ...rest
 }) => {
-  const sizes = {
+  const sizeStyles = {
     sm: "text-xs min-h-[28px]",
-    md: "text-sm xl:text-base min-h-[36px] ",
+    md: "text-sm xl:text-base min-h-[36px]",
     lg: "text-base xl:text-xl min-h-[50px]",
   };
-  
 
-  const baseStyles = `  ${sizes[size]} transition-all duration-200 flex items-center justify-center gap-2   font-montserrat  cursor-pointer font-medium  `;
+  const baseStyles = `${sizeStyles[size]} transition-all duration-200 flex items-center justify-center gap-2 font-montserrat cursor-pointer font-medium`;
 
   const width = fullWidth ? "w-full" : "";
   const borderRadius = rounded ? "rounded-full" : "rounded-sm";
@@ -31,9 +31,9 @@ const Button = ({
 
   const variantStyles = {
     primary:
-      "bg-[#BF9B53] hover:bg-[#a6813f] text-white border-none font-montserrat ",
+      "bg-[#BF9B53] hover:bg-[#a6813f] text-white border-none font-montserrat",
     gradient:
-      "bg-gradient-to-l from-accent to-primary text-white  rounded-full",
+      "bg-gradient-to-l from-accent to-primary text-white rounded-full",
     secondary:
       "bg-[#F3F4F6] hover:bg-[#BF9B53] text-gray-700 border-2 border-[#BF9B53]",
     google: "bg-white border border-gray-300 text-gray-700 hover:bg-gray-100",
@@ -70,8 +70,6 @@ const Button = ({
       : variantStyles[variant]
   } ${className}`;
 
-  const content = label;
-
   return (
     <button
       type={type}
@@ -84,7 +82,7 @@ const Button = ({
       {...rest}
     >
       {icon && <span className="flex items-center">{icon}</span>}
-      {content}
+      {children || label}
     </button>
   );
 };

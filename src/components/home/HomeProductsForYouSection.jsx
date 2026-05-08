@@ -3,7 +3,6 @@ import productsForYou from "../../data/productsForYou";
 import SupportFeatureSection from "../ui/SupportFeatureSection";
 import { helpSupportData } from "../../data/helpSupport";
 import CommitmentCard from "../ui/CommitmentCard";
-import { commitmentData } from "../../data/commitment";
 
 export default function HomeProductsForYouSection({ loading = false }) {
   const list = loading ? Array.from({ length: 12 }) : productsForYou;

@@ -1,25 +1,18 @@
-import React, { useRef } from "react";
+import { useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import Button from "../Button/Button";
+import BrandButton from "../ui/BrandButton";
 import { IoArrowBackOutline, IoArrowForwardOutline } from "react-icons/io5";
 import { mothersDayData } from "../../data/homeSections";
-import { useEffect, useState } from "react";
 import { SkeletonLoader, SKELETON_PRESETS } from "../common/skeleton";
 import { Link } from "react-router-dom";
+import { useDelayedLoading } from "../../hooks/useDelayedLoading";
 
 // Swiper js Setup
 function SwiperSection({ swiperRef, onSlideChange }) {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  const loading = useDelayedLoading();
 
   return (
     <Swiper
@@ -46,8 +39,8 @@ function SwiperSection({ swiperRef, onSlideChange }) {
       }}
       className="mother-day-swiper !overflow-hidden"
     >
-      {mothersDayData.map((slide, index) => (
-        <SwiperSlide key={index} className="">
+      {mothersDayData.map((slide) => (
+        <SwiperSlide key={slide.title || slide.name} className="">
           {loading ? (
             <SkeletonLoader
               layout={SKELETON_PRESETS.HERO_CARDS}
@@ -102,7 +95,7 @@ function SwiperButtons({ swiperRef, isBeginning, isEnd }) {
   );
 }
 
-export default function MothersDaySwiper() {
+export default function MothersDayCarousel() {
   const swiperRef = useRef(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
@@ -117,7 +110,7 @@ export default function MothersDaySwiper() {
       {/* Mobile Heading */}
       <div className="xl:hidden xl:mb-8 md:mb-4">
         <h2 className="custom-h5 font-bold text-center font-montserrat text-blue">
-          SAM-Special Gifts For <br /> Mother's Day
+          SAM-Special Gifts For <br /> Mother&apos;s Day
         </h2>
       </div>
 
@@ -130,10 +123,10 @@ export default function MothersDaySwiper() {
           {/* Left Side Content (Desktop) */}
           <div className="hidden xl:flex flex-col justify-center items-center   md:w-auto 2xl:w-[40%] p-24 2xl:p-16 z-10">
             <h2 className="custom-h5 font-bold text-white 2xl:text-center font-montserrat mb-8">
-              SAM-Special Gifts For <br className="lg:hidden" /> Mother's Day
+              SAM-Special Gifts For <br className="lg:hidden" /> Mother&apos;s Day
             </h2>
 
-            <Button
+            <BrandButton
               variant="gradient"
               rounded="true"
               label="Get Inspired"
@@ -172,7 +165,7 @@ export default function MothersDaySwiper() {
 
       {/* Mobile CTA */}
       <div className="lg:hidden flex justify-center mt-10">
-        <Button
+        <BrandButton
           variant="gradient"
           rounded="true"
           label="Get Inspired"

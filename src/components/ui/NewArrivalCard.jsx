@@ -1,5 +1,4 @@
 import PricePill from "./PricePill";
-import { arrivalImages } from "../../constant/image.constant";
 import { Link } from "react-router-dom";
 
 export default function NewArrivalCard({

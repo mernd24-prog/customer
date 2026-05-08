@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { SocialIcons } from "../SocialIcons";
+import { SocialIcons } from "../common/SocialIcons";
 import { footerData } from "../../data/footer";
 import { SkeletonLoader, SKELETON_PRESETS } from "../common/skeleton";
+import { useDelayedLoading } from "../../hooks/useDelayedLoading";
 
 /* ------------------ Reusable Components ------------------ */
 
@@ -120,14 +120,7 @@ const BottomBar = ({ copyright, socialLinks }) => {
 /* ------------------ Main Footer ------------------ */
 
 export function Footer({ data = footerData }) {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  const loading = useDelayedLoading();
 
   return (
     <footer className="w-full bg-surface font-montserrat text-ink">

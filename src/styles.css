@@ -48,7 +48,7 @@
 }
 
 .brand-auto-carousel {
-  animation: brand-auto-carousel 20s infinite linear;
+  animation: brand-auto-carousel 15s infinite linear;
 }
 
 @keyframes brand-auto-carousel {

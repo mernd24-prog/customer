@@ -1,5 +1,4 @@
-import React from "react";
-import Button from "../Button/Button";
+import BrandButton from "../ui/BrandButton";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import { bannerData, bannerConfig } from "../../constant/image.constant";
@@ -14,7 +13,7 @@ import "swiper/css/navigation";
  * A fully responsive, reusable hero slider.
  * Data is fetched from bannerData in image.constant.js
  */
-const Banner = () => {
+const HeroBanner = () => {
   return (
     <section
       className="w-full relative overflow-hidden h-[340px] md:h-[400px] lg:h-[480px] flex items-center shadow-lg"
@@ -66,7 +65,7 @@ const Banner = () => {
                 </p>
 
                 <div className="flex items-center justify-center lg:justify-start gap-6 pt-3">
-                  <Button
+                  <BrandButton
                     variant="custom"
                     className="!px-8 !py-3 lg:!px-10 lg:!py-4 font-black text-base lg:text-xl shadow-[0_10px_20px_rgba(191,155,83,0.3)] hover:scale-105 transition-transform"
                     bgColor="linear-gradient(270deg, #A26D27 5.77%, #CE9F2D 100%)"
@@ -104,4 +103,4 @@ const Banner = () => {
   );
 };
 
-export default Banner;
+export default HeroBanner;

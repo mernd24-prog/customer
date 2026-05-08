@@ -1,5 +1,5 @@
 import { RefreshCw } from "lucide-react";
-import { SkeletonLoader } from "./common/skeleton";
+import { SkeletonLoader } from "./skeleton";
 
 export default function ApiState({ loading, error, empty, onRetry, children, emptyTitle = "Nothing here yet", emptyText = "Once data is available, it will appear here." }) {
   if (loading) {

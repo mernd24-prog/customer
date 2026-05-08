@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
@@ -8,18 +8,21 @@ module.exports = {
         surface: "#FAF6EE",
         band: "#f7efde",
         accent: "#a76616",
-        ink: "#2d2d2d",
+        ink: "#2E2E2E",
+        gray: "#A6A6A6",
+        brown: "#9E886A",
         muted: "#3f3f3f",
         border: "#e7dfd1",
         divider: "#cfc5b5",
+        grayBorder: "#E0E0E0",
         blue: "#222178",
         card: {
           border: "#CE9F2D",
         },
       },
       fontFamily: {
-        montserrat: ["Montserrat", "sans-serif",],
-        inter: ["Inter",],
+        montserrat: ["Montserrat", "sans-serif"],
+        inter: ["Inter"],
       },
       fontSize: {
         paragraph: ["18px", "28px"],

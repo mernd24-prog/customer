@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import Button from "../Button/Button";
+import { Fragment, useState } from "react";
+import BrandButton from "../ui/BrandButton";
 import ImageSkeleton from "../ui/Image";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronDown, Search } from "lucide-react";
@@ -9,30 +9,66 @@ import {
   icons,
 } from "../../constant/image.constant";
 
+const topNavLinks = [
+  { name: "Deals", path: "#" },
+  { name: "Brand Outlet", path: "#" },
+  { name: "Gift Card", path: "#" },
+  { name: "Help & Contact", path: "#" },
+];
+
+const watchlistItems = [
+  "Saved Products",
+  "Recently Viewed",
+  "Favourite Brands",
+];
+
+const accountItems = ["My Profile", "My Orders", "Settings", "Logout"];
+
+const buildCategorySlug = (name) => name.toLowerCase().replace(/\s+/g, "-");
+
+const HeaderDropdown = ({ label, items }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      className="relative flex h-full items-center gap-1"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <button
+        type="button"
+        onClick={() => setIsOpen((current) => !current)}
+        className="flex items-center gap-1"
+      >
+        <span>{label}</span>
+        <ChevronDown size={18} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 top-full z-50 flex min-w-[220px] flex-col rounded-xl border border-gray-200 bg-white py-3 shadow-xl">
+          {items.map((item) => (
+            <button
+              key={item}
+              type="button"
+              className="cursor-pointer px-4 py-2 text-left text-sm text-gray-700 transition hover:bg-gray-100"
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const TopHeader = () => {
-  const navLinks = [
-    { name: "Deals", path: "#" },
-    { name: "Brand Outlet", path: "#" },
-    { name: "Gift Card", path: "#" },
-    { name: "Help & Contact", path: "#" },
-  ];
-
-  const watchlistData = [
-    "Saved Products",
-    "Recently Viewed",
-    "Favourite Brands",
-  ];
-
-  const mySamData = ["My Profile", "My Orders", "Settings", "Logout"];
-
-  const [showWatchlist, setShowWatchlist] = useState(false);
-  const [showMySam, setShowMySam] = useState(false);
   const navigate = useNavigate();
+
   return (
     <div className=" text-[#FFFFFF] w-full  bg-[#1B1D60]  h-[39px] hidden lg:flex items-center justify-center text-[14px] leading-[24px] font-medium text-center font-['Montserrat']">
       <div className="w-container flex items-center h-full">
         <div className="flex-1 flex items-center gap-14">
-          {navLinks.map((link) => (
+          {topNavLinks.map((link) => (
             <a key={link.name} href={link.path} className="">
               {link.name}
             </a>
@@ -42,63 +78,12 @@ export const TopHeader = () => {
           <a href="#" className="">
             Become a Seller
           </a>
-          <div
-            className="relative flex items-center gap-1 h-full"
-            onMouseEnter={() => setShowWatchlist(true)}
-            onMouseLeave={() => setShowWatchlist(false)}
-          >
-            <button
-              onClick={() => setShowWatchlist(!showWatchlist)}
-              className="flex items-center gap-1"
-            >
-              <span>Watchlist</span>
-              <ChevronDown size={18} />
-            </button>
-
-            {showWatchlist && (
-              <div className="absolute top-full right-0 flex flex-col min-w-[220px] bg-white shadow-xl rounded-xl py-3 z-50 border border-gray-200">
-                {watchlistData.map((item, index) => (
-                  <div
-                    key={index}
-                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer transition"
-                  >
-                    {item}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div
-            className="relative flex items-center gap-1 h-full"
-            onMouseEnter={() => setShowMySam(true)}
-            onMouseLeave={() => setShowMySam(false)}
-          >
-            <button
-              onClick={() => setShowMySam(!showMySam)}
-              className="flex items-center gap-1"
-            >
-              <span>My Sam</span>
-              <ChevronDown size={18} />
-            </button>
-
-            {showMySam && (
-              <div className="absolute top-full right-0 flex flex-col min-w-[220px] bg-white shadow-xl rounded-xl py-3 z-50 border border-gray-200">
-                {mySamData.map((item, index) => (
-                  <div
-                    key={index}
-                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer transition"
-                  >
-                    {item}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <Button
+          <HeaderDropdown label="Watchlist" items={watchlistItems} />
+          <HeaderDropdown label="My Sam" items={accountItems} />
+          <BrandButton
             variant="custom"
             rounded={true}
-            className="  pxfont-bold border"
+            className="min-h-[26px] border px-3 font-bold"
             bgColor="#FFFFFF"
             borderColor="#CE9F2D"
             textColor="#CE9F2D"
@@ -166,7 +151,7 @@ export const Navbar = ({ icons: propIcons }) => {
                   className="h-4 w-4 cursor-pointer object-contain hover:opacity-80 sm:h-5 sm:w-5 lg:h-7 lg:w-7"
                 />
 
-                <Button
+                <BrandButton
                   variant="gradient"
                   rounded={true}
                   icon={<Search size={18} />}
@@ -183,8 +168,8 @@ export const Navbar = ({ icons: propIcons }) => {
         {/* 3. ICONS & ACTIONS */}
         <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-3 lg:gap-5">
           <div className="hidden items-center gap-2 lg:flex lg:gap-4">
-            {displayIcons.map((item, index) => (
-              <React.Fragment key={index}>
+            {displayIcons.map((item, iconIndex) => (
+              <Fragment key={item.name}>
                 <Link
                   to={item.path || "#"}
                   className="flex flex-col items-center cursor-pointer hover:opacity-80 px-1 lg:px-4 group"
@@ -192,20 +177,21 @@ export const Navbar = ({ icons: propIcons }) => {
                   <img
                     src={item.img}
                     alt={item.name}
-                    className={`object-contain ${item.name === "IN"
-                      ? "w-[40px] h-[29px] lg:w-[60px] lg:h-[42px]"
-                      : "w-[24px] h-[24px] lg:w-[28px] lg:h-[28px]"
-                      }`}
+                    className={`object-contain ${
+                      item.name === "IN"
+                        ? "w-[40px] h-[29px] lg:w-[60px] lg:h-[42px]"
+                        : "w-[24px] h-[24px] lg:w-[28px] lg:h-[28px]"
+                    }`}
                   />
                 </Link>
 
-                {index < displayIcons.length - 1 && (
+                {iconIndex < displayIcons.length - 1 && (
                   <div className="h-6 lg:h-8 w-[1.5px] bg-gray-200"></div>
                 )}
-              </React.Fragment>
+              </Fragment>
             ))}
           </div>
-          <Button
+          <BrandButton
             variant="gradient"
             rounded={true}
             label="Create Account"
@@ -226,10 +212,10 @@ export const CategoryBar = ({ headerData }) => {
   return (
     <header className="w-full">
       <div className="w-container hide-scrollbar flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-10 ">
-        {categories?.map((item, index) => (
+        {categories?.map((item) => (
           <Link
-            key={index}
-            to={`/categories/${item.name.toLowerCase()}`}
+            key={item.name}
+            to={`/categories/${buildCategorySlug(item.name)}`}
             className="flex flex-col items-center min-w-[70px] lg:min-w-[80px] group"
           >
             <div className="mx-auto flex items-center justify-center p-1 rounded-full group-hover:bg-white transition-all">

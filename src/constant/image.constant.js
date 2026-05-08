@@ -198,3 +198,17 @@ export const aboutValues = {
   customer: "/image/png/customer.png",
   growth: "/image/png/growth.png",
 };
+
+export const whyChooseUs = {
+  performance: "/image/svg/performance.svg",
+  sop: "/image/svg/sop.svg",
+  expertise: "/image/svg/expertise.svg",
+  global: "/image/svg/global.svg",
+  partnership: "/image/svg/partnership.svg",
+  consumer: "/image/svg/consumer.svg",
+  multiCity: "/image/svg/multiCity.svg",
+};
+
+export const ourStory = {
+  about: "/image/png/ourStory.png",
+};

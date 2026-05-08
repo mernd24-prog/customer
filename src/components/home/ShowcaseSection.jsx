@@ -1,6 +1,6 @@
-import SectionContainer from "../SectionContainer";
-import { SkeletonLoader } from "../../common/skeleton";
-import TopDealCard from "../TopDealCard";
+import { SkeletonLoader } from "../common/skeleton";
+import SectionContainer from "../ui/SectionContainer";
+import TopDealCard from "../ui/TopDealCard";
 
 export default function ShowcaseSection({
   title,

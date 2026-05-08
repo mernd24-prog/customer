@@ -2,7 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AppLayout from "./layouts/AppLayout";
-import { BuyerOnlyRoute, ProtectedRoute, SellerOnlyRoute } from "./components/RouteGuards";
+import { BuyerOnlyRoute, ProtectedRoute, SellerOnlyRoute } from "./routing/RouteGuards";
 import { checkAuthStatus, logout } from "./features/auth/authSlice";
 import { AUTH_ROUTES } from "./features/auth/authRoutes";
 import { tokenStorage } from "./api/tokenStorage";
@@ -46,7 +46,7 @@ import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 
 export default function App() {
   const dispatch = useDispatch();
-  const auth = useSelector((state) => state.auth);
+  const currentUser = useSelector((state) => state.auth.current);
   const [sessionReady, setSessionReady] = useState(false);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function App() {
 
   useEffect(() => {
     const hasStoredSession = tokenStorage.getAccessToken() || tokenStorage.getRefreshToken();
-    if (!hasStoredSession || auth.current) {
+    if (!hasStoredSession || currentUser) {
       setSessionReady(true);
       return;
     }
@@ -66,7 +66,7 @@ export default function App() {
       .unwrap()
       .catch(() => dispatch(logout()))
       .finally(() => setSessionReady(true));
-  }, [auth.current, dispatch]);
+  }, [currentUser, dispatch]);
 
   if (!sessionReady) {
     return (

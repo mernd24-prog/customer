@@ -1,6 +1,13 @@
 import { Link } from "react-router-dom";
 
-export default function InfoCard({ icon, title, description, href, to, actionLabel }) {
+export default function InfoCard({
+  icon,
+  title,
+  description,
+  href,
+  to,
+  actionLabel,
+}) {
   const Component = to ? Link : href ? "a" : "div";
   const linkProps = to
     ? { to }
@@ -16,7 +23,7 @@ export default function InfoCard({ icon, title, description, href, to, actionLab
         </div>
         {actionLabel ? (
           <Component
-            className="inline-flex items-center rounded-full border border-accent bg-accent/10 px-4 py-2 text-[13px] font-semibold text-accent transition duration-300 hover:bg-accent hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="inline-flex  items-center rounded-full border border-accent bg-accent/10 px-4 py-2 text-[13px] font-semibold text-accent transition duration-300 hover:bg-accent hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             aria-label={actionLabel}
             {...linkProps}
           >
@@ -26,7 +33,9 @@ export default function InfoCard({ icon, title, description, href, to, actionLab
       </div>
 
       <h3 className="custom-h5 mb-3 text-slate-950">{title}</h3>
-      <p className="custom-para leading-relaxed text-slate-600">{description}</p>
+      <p className="custom-para leading-relaxed text-slate-600">
+        {description}
+      </p>
     </article>
   );
 }

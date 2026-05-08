@@ -20,7 +20,12 @@ export const SKELETON_PRESETS = {
   ],
 
   PRODUCTS_FOR_YOU_CARD: [
-    { type: "box", height: "auto", rounded: "rounded-[8px]", className: "aspect-[1/1.15] w-full" },
+    {
+      type: "box",
+      height: "auto",
+      rounded: "rounded-[8px]",
+      className: "aspect-[1/1.15] w-full",
+    },
     {
       type: "col",
       className: "mt-2 gap-1",
@@ -28,13 +33,24 @@ export const SKELETON_PRESETS = {
         { type: "box", width: "48px", height: "12px" },
         { type: "box", width: "80%", height: "12px" },
         { type: "box", width: "75%", height: "12px" },
-        { type: "box", width: "100%", height: "34px", rounded: "rounded-full", className: "mt-2 max-w-[160px]" },
+        {
+          type: "box",
+          width: "100%",
+          height: "34px",
+          rounded: "rounded-full",
+          className: "mt-2 max-w-[160px]",
+        },
       ],
     },
   ],
 
   PRODUCTS_FOR_YOU_LIST_CARD: [
-    { type: "box", height: "auto", rounded: "rounded-[8px]", className: "aspect-[302/300] w-full" },
+    {
+      type: "box",
+      height: "auto",
+      rounded: "rounded-[8px]",
+      className: "aspect-[302/300] w-full",
+    },
     {
       type: "row",
       className: "mt-3 justify-between border-b border-[#E9E9E9] pb-2",
@@ -48,18 +64,34 @@ export const SKELETON_PRESETS = {
   ],
 
   CATEGORY_CARD: [
-    { type: "box", height: "256px", rounded: "rounded-lg", className: "w-full" },
+    {
+      type: "box",
+      height: "256px",
+      rounded: "rounded-lg",
+      className: "w-full",
+    },
     { type: "box", width: "75%", height: "18px", className: "mx-auto mt-3" },
   ],
 
   TOP_DEAL_CARD: [
-    { type: "box", height: "auto", rounded: "rounded-[10px]", className: "aspect-[292/310] w-full" },
+    {
+      type: "box",
+      height: "auto",
+      rounded: "rounded-[10px]",
+      className: "aspect-[292/310] w-full",
+    },
     {
       type: "row",
-      className: "mt-4 min-h-[38px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
+      className:
+        "mt-4 min-h-[38px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
       children: [
         { type: "box", width: "50%", height: "16px" },
-        { type: "box", width: "138px", height: "34px", rounded: "rounded-full" },
+        {
+          type: "box",
+          width: "138px",
+          height: "34px",
+          rounded: "rounded-full",
+        },
       ],
     },
   ],
@@ -76,8 +108,19 @@ export const SKELETON_PRESETS = {
           className: "min-w-0 gap-0",
           count: 2,
           children: [
-            { type: "box", height: "auto", rounded: "rounded-[10px]", className: "aspect-[238/273] w-full" },
-            { type: "box", width: "100%", height: "34px", rounded: "rounded-full", className: "mx-auto mt-4 max-w-[160px]" },
+            {
+              type: "box",
+              height: "auto",
+              rounded: "rounded-[10px]",
+              className: "aspect-[238/273] w-full",
+            },
+            {
+              type: "box",
+              width: "100%",
+              height: "34px",
+              rounded: "rounded-full",
+              className: "mx-auto mt-4 max-w-[160px]",
+            },
           ],
         },
       ],
@@ -85,7 +128,12 @@ export const SKELETON_PRESETS = {
   ],
 
   API_GRID_CARD: [
-    { type: "box", height: "180px", rounded: "rounded-lg", className: "w-full" },
+    {
+      type: "box",
+      height: "180px",
+      rounded: "rounded-lg",
+      className: "w-full",
+    },
     { type: "box", width: "80%", height: "16px", className: "mt-4" },
     { type: "box", width: "55%", height: "14px", className: "mt-2" },
   ],
@@ -272,6 +320,94 @@ export const SKELETON_PRESETS = {
           height: "24px",
           className: "absolute bottom-6 left-6",
         }, // Title overlay
+      ],
+    },
+  ],
+
+  // 13. Brand Logo (for horizontal scrolling/swiper)
+  BRAND_LOGO: [
+    {
+      type: "box",
+      width: "250px",
+      height: "80px",
+      className: "md:w-32 md:h-12 lg:w-40 lg:h-18",
+      rounded: "rounded-md",
+    },
+  ],
+
+  WHY_CHOOSE_CARD: [
+    {
+      type: "row",
+      className: "items-start p-4",
+      children: [
+        {
+          type: "box",
+          width: "40px",
+          height: "40px",
+          rounded: "rounded-lg",
+          className: "flex-shrink-0",
+        },
+        {
+          type: "col",
+          className: "flex-1 ml-4 gap-2",
+          children: [
+            { type: "box", width: "60%", height: "18px" },
+            {
+              type: "col",
+              className: "gap-1",
+              children: [
+                { type: "box", width: "90%", height: "12px" },
+                { type: "box", width: "75%", height: "12px" },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+
+  // 14. Our Story Section
+  OUR_STORY: [
+    {
+      type: "grid",
+      className: "grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12",
+      children: [
+        {
+          type: "box",
+          height: "auto",
+          rounded: "rounded-lg",
+          className: "aspect-[4/3] w-full max-w-[750px]",
+        },
+        {
+          type: "col",
+          className: "justify-center gap-6",
+          children: [
+            { type: "box", width: "40%", height: "32px", rounded: "rounded-sm" },
+            {
+              type: "col",
+              className: "gap-3",
+              children: [
+                { type: "box", width: "100%", height: "16px" },
+                { type: "box", width: "100%", height: "16px" },
+                { type: "box", width: "90%", height: "16px" },
+                {
+                  type: "box",
+                  width: "100%",
+                  height: "16px",
+                  className: "mt-4",
+                },
+                { type: "box", width: "95%", height: "16px" },
+                {
+                  type: "box",
+                  width: "120px",
+                  height: "48px",
+                  rounded: "rounded-full",
+                  className: "mt-6",
+                },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],
