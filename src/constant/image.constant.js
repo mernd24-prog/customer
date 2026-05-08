@@ -198,3 +198,7 @@ export const aboutValues = {
   customer: "/image/png/customer.png",
   growth: "/image/png/growth.png",
 };
+ 
+export const aboutSectionImages = {
+  watermark : "/image/png/Watermark.png"
+}
