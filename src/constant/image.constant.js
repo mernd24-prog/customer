@@ -49,6 +49,12 @@ export const header = {
   Furniture: "/image/png/Furniture.png",
 };
 
+export const infoSection = {
+  image: "/image/png/hand.png",
+  logo: "/image/png/favicon.png",
+  arrow: "/image/svg/arrow.svg",
+};
+
 export const navbarIcons = [
   {
     name: "IN",
@@ -212,7 +218,7 @@ export const whyChooseUs = {
 export const ourStory = {
   about: "/image/png/ourStory.png",
 };
- 
+
 export const aboutSectionImages = {
-  watermark : "/image/png/Watermark.png"
-}
+  watermark: "/image/png/Watermark.png",
+};

@@ -2,6 +2,10 @@ import { useState } from "react";
 import { productDetailData } from "../../data/productDetails";
 import { CiStar } from "react-icons/ci";
 import { FaStar, FaChevronDown } from "react-icons/fa";
+import FAQAccordion from "../faq/FAQAccordion";
+import { productDetailFAQ } from "../../data/productDetailFAQ";
+import { MdZoomOutMap } from "react-icons/md";
+import { CiHeart } from "react-icons/ci";
 
 const sizes = ["S", "M", "L", "XL", "XXL"];
 
@@ -94,31 +98,105 @@ function ColorSelector({ color, isSelected, onSelect }) {
 
 function ProductImages({ data }) {
   const { mainImage, sideImages } = data?.images;
+  const [activeImage, setActiveImage] = useState(mainImage);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+
+  const handleMouseMove = (e) => {
+    if (!isZoomed) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPos({
+      x: Math.max(0, Math.min(100, x)),
+      y: Math.max(0, Math.min(100, y)),
+    });
+  };
+
+  const handleClick = () => {
+    setIsZoomed((prev) => !prev);
+  };
+
+  const handleMouseLeave = () => {
+    setIsZoomed(false);
+  };
+
   return (
-    <div className="flex  flex-row gap-6 w-1/2 justify-end">
-      <div className="flex flex-col gap-4">
-        {/* Slide Images for Preview Purpose */}
+    <div className="flex flex-col md:flex-row gap-6 w-full 2xl:w-1/2 xl:justify-end justify-start items-start">
+      <div className="flex order-2 md:order-1 md:flex-col flex-row gap-4">
+        {/* Thumbnail Images */}
         {sideImages.map((ele, index) => (
-          <div key={index}>
+          <div
+            key={index}
+            onMouseEnter={() => {
+              setActiveImage(ele.img);
+              setIsZoomed(false);
+            }}
+            className={`cursor-pointer rounded-md overflow-hidden border-2 transition-all duration-200 ${
+              activeImage === ele.img
+                ? "border-blue"
+                : "border-transparent hover:border-gray"
+            }`}
+          >
             <img
               src={ele.img}
-              alt="product"
-              className="max-w-[130px] aspect-square"
+              alt={`product-thumbnail-${index}`}
+              className="xl:w-[120px] xl:h-[120px] object-cover hover:scale-105"
             />
           </div>
         ))}
       </div>
-      <div className="max-w-[650px]">
-        {/* Main Image Of the Product */}
-        <img
-          src={mainImage}
-          alt="product"
-          className="w-full h-full object-contain"
-        />
+
+      {/* Main Center Image */}
+      <div className="order-1 md:order-2 w-full xl:max-w-[650px] relative">
+        <div
+          className={`w-full md:aspect-[5/4] xl:aspect-[3/3] overflow-hidden relative ${
+            isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
+          }`}
+          onClick={handleClick}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* Normal Image */}
+          <img
+            src={activeImage}
+            alt="product"
+            className={`h-full w-full object-cover transition-opacity duration-300 ${
+              isZoomed ? "opacity-0" : "opacity-100"
+            }`}
+          />
+
+          {/* Zoomed View (shown on click) */}
+          {isZoomed && (
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url(${activeImage})`,
+                backgroundSize: "250%",
+                backgroundPosition: `${zoomPos.x}% ${zoomPos.y}%`,
+                backgroundRepeat: "no-repeat",
+              }}
+            />
+          )}
+        </div>
+
+        {/* Zoom and wishlist Option */}
+        <div className="absolute top-4 right-4 flex flex-row gap-2">
+          <button
+            onClick={handleClick}
+            className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform"
+          >
+            <MdZoomOutMap className="text-black text-xl" />
+          </button>
+          <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+            <CiHeart className="text-black text-xl" />
+          </button>
+        </div>
       </div>
     </div>
   );
 }
+
 
 function ProductInfo() {
   const [selectedSize, setSelectedSize] = useState("M");
@@ -127,7 +205,7 @@ function ProductInfo() {
   const [quantity, setQuantity] = useState(1);
 
   return (
-    <div className="w-1/2 ">
+    <div className="xl:w-1/2 w-full">
       {/* Rating of the Product */}
       <div className="flex flex-row gap-1 items-center">
         <FaStar className="text-primary text-xl" />
@@ -139,7 +217,7 @@ function ProductInfo() {
 
       {/* Product Name and Details */}
       <div>
-        <h3 className="text-3xl font-semibold max-w-xl py-4  font-montserrat">
+        <h3 className="text-xl md:text-3xl font-semibold max-w-xl py-4 font-montserrat">
           Wanderdoll Classic Slim Fit Co-Ord Set for Men in Espresso
         </h3>
         <div className="flex flex-row items-center gap-4">
@@ -157,7 +235,7 @@ function ProductInfo() {
           <p className="font-montserrat text-lg font-semibold text-ink">
             Size: <span className="text-blue">{selectedSize}</span>
           </p>
-          <div className="flex flex-row items-center gap-6 my-2 relative">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-6 my-2 relative">
             <div className="flex flex-row gap-2">
               {sizes.map((ele, index) => (
                 <SizeSelectionOption
@@ -183,7 +261,7 @@ function ProductInfo() {
 
               {/* Size Chart Dropdown */}
               {showSizeChart && (
-                <div className="absolute top-full left-0 mt-4 bg-white border border-border  rounded-xl p-5 z-20 w-[280px]">
+                <div className="absolute top-full left-0 mt-4 bg-white border border-border rounded-xl p-5 z-20 w-[280px]">
                   <h6 className="font-bold text-ink mb-3">
                     Size Guide (Inches)
                   </h6>
@@ -199,7 +277,7 @@ function ProductInfo() {
                       {sizeChartData.map((item, idx) => (
                         <tr
                           key={idx}
-                          className="border-b border-border/50   last:border-0"
+                          className="border-b border-border/50 last:border-0"
                         >
                           <td className="py-2 font-bold">{item.size}</td>
                           <td className="py-2">{item.chest}"</td>
@@ -237,7 +315,7 @@ function ProductInfo() {
             <p className="font-montserrat text-lg font-semibold text-ink py-2">
               Quantity
             </p>
-            <button className="max-w-[250px] h-[32px] flex flex-row items-center justify-between rounded-full border border-grayBorder  w-full px-4">
+            <button className="max-w-[250px] h-[32px] flex flex-row items-center justify-between rounded-full border border-grayBorder w-full px-4">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="text-xl"
@@ -275,17 +353,21 @@ function ProductInfo() {
           />
         </div>
 
-        {/* Details  */}
+        {/* Details */}
         <div className="mt-4">
-          <h3>Details</h3>
-          <div>
+          <p className="py-2 font-montserrat text-lg font-semibold text-ink">
+            Details
+          </p>
+
+          <div className="space-y-3">
             {productInfo.map((ele, index) => {
               return (
-                <div key={index} className="flex gap-16 my-1 max-w-xl w-full">
-                  <h4 className="font-montserrat font-semibold min-w-md d  text-md text-ink">
+                <div key={index} className="flex items-start">
+                  <h4 className="w-40 font-montserrat text-md font-semibold text-ink">
                     {ele.label}
                   </h4>
-                  <p className="font-montserrat font-medium text-md  text-ink">
+
+                  <p className="font-montserrat text-md font-medium text-ink">
                     {ele.value}
                   </p>
                 </div>
@@ -298,16 +380,16 @@ function ProductInfo() {
   );
 }
 
-function ProductFaq() {}
-
 export default function ProductDetailPage() {
   return (
     <section className="py-16">
-      <div className="flex flex-row gap-8 ">
+      <div className="flex flex-col xl:flex-row gap-8 items-start">
         <ProductImages data={productDetailData} />
         <ProductInfo />
       </div>
-      <ProductFaq />
+      <div className="my-14">
+        <FAQAccordion faqs={productDetailFAQ} variant="productDetailPageFAQ" />
+      </div>
     </section>
   );
 }

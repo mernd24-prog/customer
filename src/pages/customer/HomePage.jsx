@@ -14,6 +14,10 @@ import HomeShowcaseSections from "../../components/home/HomeShowcaseSections";
 import MothersDaySwiper from "../../components/home/MothersDayCarousel";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
 import { homeShowcaseSections, mothersDayData } from "../../data/homeSections";
+import PolicyPage from "../../pages/customer/policyPage";
+import { termsOfUseData } from "../../data/termsOfUseData";
+import { refundPolicyData } from "../../data/refundPolicyData";
+import { shippingPolicyData } from "../../data/shippingPolicyData";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -37,23 +41,18 @@ export function HomePage() {
   return (
     <>
       <Seo title="Sam Global | Shop smarter" />
-
-      {/* About Us Page */}
-      {/* <OurStory data={ourStoryData} />
+      {/* About Us Page
+      <OurStory data={ourStoryData} />
       <ValuesSection data={valueData} />
       <BrandCarousel />
-      <WhyChooseSection data={whyChooseUsData} />
-      <InfoSection data={ourMission} /> */}
+      <WhyChooseSection data={whyChooseUsData} /> */}
 
       {/* Product Detail Page */}
       <ProductDetailPage />
-
       <HomeShowcaseSections sections={homeShowcaseSections} loading={false} />
       <InfoSection data={ourMission} />
       <MothersDaySwiper data={mothersDayData} />
-
       <HomeProductsForYouSection loading={false} />
-
       <FAQPage />
 
       {recent.length > 0 && (

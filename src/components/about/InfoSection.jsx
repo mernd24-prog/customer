@@ -1,13 +1,14 @@
-import infoSectionData from "../../data/infoSectionData.json";
+import { roadAheadData } from "../../data/infoSectionData.js";
 
-const InfoSection = ({ data = infoSectionData }) => {
+const InfoSection = ({ data }) => {
+  const finalData = data || roadAheadData[0];
   const {
     title,
     description,
     image,
     logo,
     brandText = "",
-  } = data || infoSectionData;
+  } = finalData;
 
   const [part1, part2] = brandText?.split(". ") || ["", ""];
 

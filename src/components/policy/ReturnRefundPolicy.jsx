@@ -1,4 +1,3 @@
-import React from "react";
 import Header from "../../components/organism/Header";
 import { Footer } from "../../components/organism/footer";
 import PolicyHeader from "./PolicyHeader";
