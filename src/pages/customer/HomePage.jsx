@@ -17,6 +17,24 @@ import OurStory from "../../components/about/OurStory";
 import ValuesSection from "../../components/about/ValuesSection";
 import WhyChooseSection from "../../components/about/WhyChooseSection";
 import ProductDetailPage from "../../components/product/ProductDetail";
+import {
+  useFetch,
+  itemsFrom,
+  addProductToCartPayload,
+  wishlistPayload,
+} from "./helpers";
+import FAQPage from "../faq/FAQPage"
+import { productImages } from "../../constant/image.constant";
+import { faqData } from "../../data/faqData";
+import InfoSection from "../../components/ui/sections/InfoSection";
+
+
+import CollageMainSection from "../../components/cards/collageCard";
+import MothersDaySwiper from "../../components/swiper/mothersDaySwiper";
+import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
+import categories from "../../data/categories";
+import { valueData } from "../../data/aboutSection";
+import ValueCardSection from "../../components/ui/sections/valueCardSection";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -48,6 +66,17 @@ export function HomePage() {
 
       <ProductDetailPage />
 
+      <HomeShowcaseSections
+        sections={homeShowcaseSections}
+        loading={isHomeLoading}
+      />
+      <InfoSection />
+      <MothersDaySwiper />
+
+      <HomeProductsForYouSection loading={isHomeLoading} />
+
+      <FAQPage />
+      
       {recent.length > 0 && (
         <>
           <h2>Recently viewed</h2>

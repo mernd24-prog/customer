@@ -212,3 +212,7 @@ export const whyChooseUs = {
 export const ourStory = {
   about: "/image/png/ourStory.png",
 };
+ 
+export const aboutSectionImages = {
+  watermark : "/image/png/Watermark.png"
+}

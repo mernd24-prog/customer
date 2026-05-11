@@ -8,6 +8,7 @@ import {
   navbarIcons as navData,
   icons,
 } from "../../constant/image.constant";
+import SearchBar from "../ui/SearchBar";
 
 const topNavLinks = [
   { name: "Deals", path: "#" },
@@ -129,7 +130,7 @@ export const Navbar = ({ icons: propIcons }) => {
         </div>
 
         {/* 2. SEARCH BAR */}
-        <div className="group order-3 mt-1 w-full flex-1 lg:order-none lg:mt-0 lg:w-auto">
+        {/* <div className="group order-3 mt-1 w-full flex-1 lg:order-none lg:mt-0 lg:w-auto">
           <div
             className="p-[2px] rounded-full"
             style={{ background: borderGradient }}
@@ -163,7 +164,16 @@ export const Navbar = ({ icons: propIcons }) => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
+
+        <SearchBar
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onSearch={handleSearch}
+          placeholder="Barbour Beadnell wax jacket in black"
+          micIcon={icons.Mic}
+        />
 
         {/* 3. ICONS & ACTIONS */}
         <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-3 lg:gap-5">
