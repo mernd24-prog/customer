@@ -15,6 +15,7 @@ export default {
         border: "#e7dfd1",
         divider: "#cfc5b5",
         grayBorder: "#E0E0E0",
+        green: "#45C500",
         blue: "#222178",
         card: {
           border: "#CE9F2D",

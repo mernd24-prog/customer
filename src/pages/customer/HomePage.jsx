@@ -58,12 +58,15 @@ export function HomePage() {
   return (
     <>
       <Seo title="Sam Global | Shop smarter" />
+
+      {/* About Us Page */}
       {/* <OurStory data={ourStoryData} />
       <ValuesSection data={valueData} />
       <BrandCarousel />
       <WhyChooseSection data={whyChooseUsData} />
       <InfoSection data={ourMission} /> */}
 
+      {/* Product Detail Page */}
       <ProductDetailPage />
 
       <HomeShowcaseSections
