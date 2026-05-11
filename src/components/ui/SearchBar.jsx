@@ -58,7 +58,7 @@ const SearchBar = ({
               icon={<Search size={18} />}
               label="Search"
               size="md"
-              className="px-4 2xl:px-6 font-medium"
+              className="px-4  2xl:px-6 min-h-[20px] font-medium"
               onClick={handleSearch}
             />
           </div>

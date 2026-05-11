@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { productDetailData } from "../../data/productDetails";
 import { CiStar } from "react-icons/ci";
 import { FaStar, FaChevronDown } from "react-icons/fa";
@@ -6,6 +6,7 @@ import FAQAccordion from "../faq/FAQAccordion";
 import { productDetailFAQ } from "../../data/productDetailFAQ";
 import { MdZoomOutMap } from "react-icons/md";
 import { CiHeart } from "react-icons/ci";
+import { IoMdClose } from "react-icons/io";
 
 const sizes = ["S", "M", "L", "XL", "XXL"];
 
@@ -96,9 +97,12 @@ function ColorSelector({ color, isSelected, onSelect }) {
   );
 }
 
-function ProductImages({ data }) {
-  const { mainImage, sideImages } = data?.images;
-  const [activeImage, setActiveImage] = useState(mainImage);
+function ProductGallery({
+  sideImages,
+  activeImage,
+  setActiveImage,
+  isModal = false,
+}) {
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
 
@@ -117,13 +121,13 @@ function ProductImages({ data }) {
     setIsZoomed((prev) => !prev);
   };
 
-  const handleMouseLeave = () => {
-    setIsZoomed(false);
-  };
-
   return (
-    <div className="flex flex-col md:flex-row gap-6 w-full 2xl:w-1/2 xl:justify-end justify-start items-start">
-      <div className="flex order-2 md:order-1 md:flex-col flex-row gap-4">
+    <div
+      className={`flex flex-col md:flex-row gap-6 w-full ${isModal ? "h-full items-center justify-center max-w-[1200px] mx-auto px-4" : "xl:justify-end justify-start items-start"}`}
+    >
+      <div
+        className={`flex order-2 md:order-1 md:flex-col flex-row gap-4 ${isModal ? "max-h-[70vh] overflow-y-auto pr-2" : ""}`}
+      >
         {/* Thumbnail Images */}
         {sideImages.map((ele, index) => (
           <div
@@ -132,7 +136,7 @@ function ProductImages({ data }) {
               setActiveImage(ele.img);
               setIsZoomed(false);
             }}
-            className={`cursor-pointer rounded-md overflow-hidden border-2 transition-all duration-200 ${
+            className={`cursor-pointer rounded-md overflow-hidden border-2 transition-all duration-200 shrink-0 ${
               activeImage === ele.img
                 ? "border-blue"
                 : "border-transparent hover:border-gray"
@@ -141,27 +145,29 @@ function ProductImages({ data }) {
             <img
               src={ele.img}
               alt={`product-thumbnail-${index}`}
-              className="xl:w-[120px] xl:h-[120px] object-cover hover:scale-105"
+              className={`${isModal ? "w-[100px] h-[100px]" : "xl:w-[120px] xl:h-[120px]"} object-contain hover:scale-105`}
             />
           </div>
         ))}
       </div>
 
       {/* Main Center Image */}
-      <div className="order-1 md:order-2 w-full xl:max-w-[650px] relative">
+      <div
+        className={`order-1 md:order-2 w-full relative ${isModal ? "flex-1 h-full max-h-[85vh]" : "xl:max-w-[650px]"}`}
+      >
         <div
-          className={`w-full md:aspect-[5/4] xl:aspect-[3/3] overflow-hidden relative ${
+          className={`w-full h-full md:aspect-[5/4] xl:aspect-[3/3] overflow-hidden relative ${
             isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
           }`}
           onClick={handleClick}
           onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
+          onMouseLeave={() => setIsZoomed(false)}
         >
           {/* Normal Image */}
           <img
             src={activeImage}
             alt="product"
-            className={`h-full w-full object-cover transition-opacity duration-300 ${
+            className={`h-full w-full object-contain transition-opacity duration-300 rounded-xl ${
               isZoomed ? "opacity-0" : "opacity-100"
             }`}
           />
@@ -179,24 +185,70 @@ function ProductImages({ data }) {
             />
           )}
         </div>
-
-        {/* Zoom and wishlist Option */}
-        <div className="absolute top-4 right-4 flex flex-row gap-2">
-          <button
-            onClick={handleClick}
-            className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform"
-          >
-            <MdZoomOutMap className="text-black text-xl" />
-          </button>
-          <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
-            <CiHeart className="text-black text-xl" />
-          </button>
-        </div>
       </div>
     </div>
   );
 }
 
+function ProductImages({ data }) {
+  const { mainImage, sideImages } = data?.images;
+  const [activeImage, setActiveImage] = useState(mainImage);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isModalOpen]);
+
+  return (
+    <div className="flex flex-col md:flex-row gap-6 w-full 2xl:w-1/2 xl:justify-end justify-start items-start relative">
+      <ProductGallery
+        sideImages={sideImages}
+        activeImage={activeImage}
+        setActiveImage={setActiveImage}
+      />
+
+      {/* Zoom and wishlist Option */}
+      <div className="absolute top-4 right-4 flex flex-row gap-2 z-10">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="w-8 h-8 bg-white rounded-full hidden md:flex items-center justify-center shadow-md hover:scale-110 transition-transform"
+        >
+          <MdZoomOutMap className="text-black text-xl" />
+        </button>
+        <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+          <CiHeart className="text-black text-xl" />
+        </button>
+      </div>
+
+      {/* eBay Style Popup Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center">
+          {/* Close Button */}
+          <button
+            onClick={() => setIsModalOpen(false)}
+            className="absolute top-6 right-6 z-50 w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+          >
+            <IoMdClose className="text-2xl" />
+          </button>
+
+          <ProductGallery
+            sideImages={sideImages}
+            activeImage={activeImage}
+            setActiveImage={setActiveImage}
+            isModal={true}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
 
 function ProductInfo() {
   const [selectedSize, setSelectedSize] = useState("M");

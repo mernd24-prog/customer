@@ -84,7 +84,7 @@ export const TopHeader = () => {
           <BrandButton
             variant="custom"
             rounded={true}
-            className="min-h-[26px] border px-3 font-bold"
+            className="min-h-[25px] border px-3 font-bold"
             bgColor="#FFFFFF"
             borderColor="#CE9F2D"
             textColor="#CE9F2D"

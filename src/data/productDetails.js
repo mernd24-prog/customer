@@ -1,18 +1,18 @@
 export const productDetailData = {
   images: {
-    mainImage: "/image/png/mainProduct.png",
+    mainImage: "/image/jpg/productImg1.jpg",
     sideImages: [
       {
-        img: "/image/png/productImg1.png",
+        img: "/image/jpg/mainProduct.jpg",
       },
       {
-        img: "/image/png/productImg2.png",
+        img: "/image/jpg/productImg2.jpg",
       },
       {
-        img: "/image/png/productImg3.png",
+        img: "/image/jpg/productImg3.jpg",
       },
       {
-        img: "/image/png/productImg1.png",
+        img: "/image/jpg/productImg4.jpg",
       },
     ],
   },
