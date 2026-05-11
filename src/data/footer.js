@@ -10,7 +10,7 @@ export const footerData = {
     },
     {
       title: "30 days Easy Returns & Exchanges",
-      description: "Hassle-free returns with customer-first policies.",
+      description: "Hassle-free returns with customer-first cies.",
       icon: footer.exchange,
       alt: "Returns and exchanges",
     },

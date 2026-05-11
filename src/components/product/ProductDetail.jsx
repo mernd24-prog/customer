@@ -281,14 +281,11 @@ function ProductInfo() {
           <div>
             {productInfo.map((ele, index) => {
               return (
-                <div
-                  key={index}
-                  className="grid grid-cols-[120px_1fr] items-center py-1.5"
-                >
-                  <h4 className="font-montserrat font-semibold text-md text-ink">
+                <div key={index} className="flex gap-16 my-1 max-w-xl w-full">
+                  <h4 className="font-montserrat font-semibold min-w-md d  text-md text-ink">
                     {ele.label}
                   </h4>
-                  <p className="font-montserrat font-medium text-md text-ink">
+                  <p className="font-montserrat font-medium text-md  text-ink">
                     {ele.value}
                   </p>
                 </div>
