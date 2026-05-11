@@ -5,7 +5,6 @@ import PolicyIntro from "./PolicyIntro";
 import PolicySection from "./PolicySection";
 import Seo from "../../components/Seo";
 import { POLICIES } from "../../data";
-
 const ReturnRefundPolicy = () => {
   const data = POLICIES.refund;
 
