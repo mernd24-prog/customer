@@ -6,35 +6,14 @@ import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import { updateCart } from "../../features/cart/cartSlice";
 import { addProductToCartPayload, wishlistPayload } from "./helpers";
 import InfoSection from "../../components/about/InfoSection";
-import {
-  ourMission,
-  ourStoryData,
-  valueData,
-  whyChooseUsData,
-} from "../../data/aboutUs";
-import BrandCarousel from "../../components/about/BrandCarousel";
-import OurStory from "../../components/about/OurStory";
-import ValuesSection from "../../components/about/ValuesSection";
-import WhyChooseSection from "../../components/about/WhyChooseSection";
+import { ourMission } from "../../data/aboutUs";
 import ProductDetailPage from "../../components/product/ProductDetail";
-import {
-  useFetch,
-  itemsFrom,
-  addProductToCartPayload,
-  wishlistPayload,
-} from "./helpers";
-import FAQPage from "../faq/FAQPage"
-import { productImages } from "../../constant/image.constant";
-import { faqData } from "../../data/faqData";
-import InfoSection from "../../components/ui/sections/InfoSection";
+import FAQPage from "../faq/FAQPage";
 
-
-import CollageMainSection from "../../components/cards/collageCard";
-import MothersDaySwiper from "../../components/swiper/mothersDaySwiper";
-import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
-import categories from "../../data/categories";
-import { valueData } from "../../data/aboutSection";
-import ValueCardSection from "../../components/ui/sections/valueCardSection";
+import HomeShowcaseSections from "../../components/home/HomeShowcaseSections";
+import MothersDaySwiper from "../../components/home/MothersDayCarousel";
+import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
+import { homeShowcaseSections, mothersDayData } from "../../data/homeSections";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -69,17 +48,14 @@ export function HomePage() {
       {/* Product Detail Page */}
       <ProductDetailPage />
 
-      <HomeShowcaseSections
-        sections={homeShowcaseSections}
-        loading={isHomeLoading}
-      />
-      <InfoSection />
-      <MothersDaySwiper />
+      <HomeShowcaseSections sections={homeShowcaseSections} loading={false} />
+      <InfoSection data={ourMission} />
+      <MothersDaySwiper data={mothersDayData} />
 
-      <HomeProductsForYouSection loading={isHomeLoading} />
+      <HomeProductsForYouSection loading={false} />
 
       <FAQPage />
-      
+
       {recent.length > 0 && (
         <>
           <h2>Recently viewed</h2>

@@ -21,6 +21,47 @@ const colors = [
   { name: "Silver", hex: "#EBEBEB" },
 ];
 
+const productInfo = [
+  {
+    label: "Fabric",
+    value: "100% Premium Cotton",
+  },
+  {
+    label: "Fit",
+    value: "Slim Fit",
+  },
+  {
+    label: "Sleeve",
+    value: "Full Sleeve",
+  },
+  {
+    label: "Pattern",
+    value: "Solid",
+  },
+  {
+    label: "Collar",
+    value: "Spread Collar",
+  },
+  {
+    label: "Wash Care",
+    value: "Machine Wash Cold",
+  },
+  {
+    label: "Occasion",
+    value: "Casual / Semi-Formal",
+  },
+];
+
+function TransparentButton({ text, bgColor, textColor, border }) {
+  return (
+    <button
+      className={`max-w-xs py-2 ${textColor} ${border} rounded-full ${bgColor} w-full`}
+    >
+      {text}
+    </button>
+  );
+}
+
 function SizeSelectionOption({ name, isSelected, onSelect }) {
   return (
     <button
@@ -198,7 +239,7 @@ function ProductInfo() {
             </p>
             <button className="max-w-[250px] h-[32px] flex flex-row items-center justify-between rounded-full border border-grayBorder  w-full px-4">
               <button
-                onClick={() => setQuantity(quantity - 1)}
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="text-xl"
               >
                 -
@@ -211,6 +252,48 @@ function ProductInfo() {
                 +
               </button>
             </button>
+          </div>
+          <div className="flex flex-row gap-2 mt-4">
+            <div className="w-4 h-4 rounded-full bg-green my-auto"></div>
+            <p className="font-medium font-montserrat text-base">52 in stock</p>
+          </div>
+        </div>
+
+        {/* Add to Cart and Buy It Now Button */}
+        <div className="flex flex-col gap-4 mt-4">
+          <TransparentButton
+            text="Add To Cart"
+            bgColor="bg-primary"
+            textColor="text-white"
+            border="border border-primary"
+          />
+          <TransparentButton
+            text="Buy It Now"
+            bgColor="bg-white"
+            textColor="text-blue"
+            border="border border-blue"
+          />
+        </div>
+
+        {/* Details  */}
+        <div className="mt-4">
+          <h3>Details</h3>
+          <div>
+            {productInfo.map((ele, index) => {
+              return (
+                <div
+                  key={index}
+                  className="grid grid-cols-[120px_1fr] items-center py-1.5"
+                >
+                  <h4 className="font-montserrat font-semibold text-md text-ink">
+                    {ele.label}
+                  </h4>
+                  <p className="font-montserrat font-medium text-md text-ink">
+                    {ele.value}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
