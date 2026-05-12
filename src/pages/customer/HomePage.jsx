@@ -18,6 +18,7 @@ import PolicyPage from "../../pages/customer/policyPage";
 import { termsOfUseData } from "../../data/termsOfUseData";
 import { refundPolicyData } from "../../data/refundPolicyData";
 import { shippingPolicyData } from "../../data/shippingPolicyData";
+import CartPage from "../cart/CartPage";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ export function HomePage() {
 
       {/* Product Detail Page */}
       <ProductDetailPage />
+      <CartPage/>
       <HomeShowcaseSections sections={homeShowcaseSections} loading={false} />
       <InfoSection data={ourMission} />
       <MothersDaySwiper data={mothersDayData} />
