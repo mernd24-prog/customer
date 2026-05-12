@@ -40,8 +40,20 @@ import {
   SellerTrackingPage,
 } from "./pages/SellerPages";
 import {
+  AdvertisePage,
+  AnnouncementsPage,
+  BlogPage,
+  BrandOutletPage,
+  DealsPage,
   FaqPage,
+  GiftCardsPage,
+  GrowthSupportPage,
+  HelpContactPage,
+  MobileAppPage,
+  SellerPoliciesPage,
   SupportCenterPage,
+  UpdatesPage,
+  WhoWeArePage,
   WhyChooseUsPage,
   OurCommitmentPage,
   FeaturesPage,
@@ -53,6 +65,7 @@ import { termsOfUseData } from "./data/termsOfUseData";
 import { shippingPolicyData } from "./data/shippingPolicyData";
 import { refundPolicyData } from "./data/refundPolicyData";
 import ScrollToTop from "./components/common/scrollToTop";
+import WatchlistPage from "./pages/customer/WatchlistPage";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -122,12 +135,25 @@ export default function App() {
           />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/support" element={<SupportCenterPage />} />
+          <Route path="/help-contact" element={<HelpContactPage />} />
+          <Route path="/deals" element={<DealsPage />} />
+          <Route path="/brand-outlet" element={<BrandOutletPage />} />
+          <Route path="/gift-cards" element={<GiftCardsPage />} />
+          <Route path="/who-we-are" element={<WhoWeArePage />} />
+          <Route path="/mobile-app" element={<MobileAppPage />} />
+          <Route path="/seller-policies" element={<SellerPoliciesPage />} />
+          <Route path="/growth-support" element={<GrowthSupportPage />} />
+          <Route path="/advertise" element={<AdvertisePage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/updates" element={<UpdatesPage />} />
+          <Route path="/announcements" element={<AnnouncementsPage />} />
           <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
           <Route path="/our-commitment" element={<OurCommitmentPage />} />
           <Route path="/features" element={<FeaturesPage />} />
 
           <Route element={<BuyerOnlyRoute />}>
             <Route index element={<HomePage />} />
+            <Route path="/watchlist" element={<WatchlistPage />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/products/search" element={<ProductsPage search />} />
             <Route
@@ -136,7 +162,12 @@ export default function App() {
             />
             <Route path="/categories/:categoryKey" element={<CategoryPage />} />
             <Route path="/cms/:slug" element={<CmsPage />} />
-            <Route path="/backend-gaps" element={<BackendGapNotes />} />
+              <Route path="/backend-gaps" element={<BackendGapNotes />} />
+              <Route path="/profile" element={<Navigate to="/account/profile" replace />} />
+              <Route
+                path="/settings"
+                element={<Navigate to="/notification-preferences" replace />}
+              />
             <Route
               path="/terms-of-use"
               element={<PolicyPage data={termsOfUseData} />}
@@ -149,6 +180,7 @@ export default function App() {
               path="/refund-policy"
               element={<PolicyPage data={refundPolicyData} />}
             />
+            <Route path="/watchlist" element={<WatchlistPage />} />
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route element={<BuyerOnlyRoute />}>

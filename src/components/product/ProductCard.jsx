@@ -8,7 +8,12 @@ import {
   getProductTitle,
 } from "../../utils/ecommerce";
 
-export default function ProductCard({ product, onWishlist, onAddToCart }) {
+export default function ProductCard({
+  product,
+  onWishlist,
+  onAddToCart,
+  isWishlisted,
+}) {
   const id = getProductId(product);
   const image = getProductImage(product);
   const title = getProductTitle(product);
@@ -27,22 +32,37 @@ export default function ProductCard({ product, onWishlist, onAddToCart }) {
       </div>
       <div className="icon-row">
         <button
+          type="button"
           className="icon-button"
-          title="Add to wishlist"
+          title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          aria-label={
+            isWishlisted
+              ? `Remove ${title} from wishlist`
+              : `Add ${title} to wishlist`
+          }
           onClick={() => onWishlist?.(product)}
         >
-          <Heart size={18} />
+          <Heart
+            size={18}
+            fill={isWishlisted ? "red" : "none"}
+            color={isWishlisted ? "red" : "currentColor"}
+          />
         </button>
+
         <button
+          type="button"
           className="icon-button"
           title="Compare"
+          aria-label={`Compare ${title}`}
           onClick={() => toggleCompare(product)}
         >
           <Scale size={18} />
         </button>
         <button
+          type="button"
           className="icon-button primary"
           title="Add to cart"
+          aria-label={`Add ${title} to cart`}
           onClick={() => onAddToCart?.(product)}
         >
           <ShoppingCart size={18} />

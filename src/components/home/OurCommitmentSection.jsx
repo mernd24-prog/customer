@@ -1,5 +1,4 @@
 import CommitmentCard from "../ui/CommitmentCard";
-import { aboutSectionImages} from "../constant/image.constant";
 
 export default function OurCommitmentSection() {
     return (

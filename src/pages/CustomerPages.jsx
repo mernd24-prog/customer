@@ -18,7 +18,8 @@ import StatusTimeline from "../components/common/StatusTimeline";
 import ProductCard from "../components/product/ProductCard";
 import { useToastThunk } from "../hooks/useToastThunk";
 import { addRecentlyViewed } from "../utils/recentlyViewed";
-import { formatMoney } from "../utils/ecommerce";
+import { formatMoney, getProductId } from "../utils/ecommerce";
+import { useProductActions } from "../hooks/useProductActions";
 import {
   loginUser,
   registerUser,
@@ -91,8 +92,6 @@ import { AUTH_ROUTES } from "../features/auth/authRoutes";
 import {
   useFetch,
   itemsFrom,
-  addProductToCartPayload,
-  wishlistPayload,
 } from "./customer/helpers";
 export { HomePage } from "./customer/HomePage";
 
@@ -502,21 +501,8 @@ export function ProductsPage({ search = false }) {
     search ? { q: query } : Object.fromEntries(params),
     (s) => s.product,
   );
-  const cart = useSelector((s) => s.cart.current);
-  const run = useToastThunk();
   const products = itemsFrom(productState);
-  const addToCart = (product) =>
-    run(
-      dispatch,
-      updateCart(addProductToCartPayload(cart, product)),
-      "Added to cart",
-    );
-  const wishlist = (product) =>
-    run(
-      dispatch,
-      updateCart(wishlistPayload(cart, product)),
-      "Saved to wishlist",
-    );
+  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
   return (
     <section>
@@ -576,10 +562,11 @@ export function ProductsPage({ search = false }) {
         <div className="grid">
           {products.map((product) => (
             <ProductCard
-              key={product.id || product._id || product.productId}
+              key={getProductId(product)}
               product={product}
               onAddToCart={addToCart}
-              onWishlist={wishlist}
+              onWishlist={toggleWishlist}
+              isWishlisted={isWishlisted(product)}
             />
           ))}
         </div>
@@ -601,6 +588,7 @@ export function CategoryPage() {
     { category: categoryKey, page: 1, limit: 20 },
     (s) => s.product,
   );
+  const { isWishlisted, toggleWishlist } = useProductActions();
   return (
     <section>
       <Seo title={`${category.current?.title || categoryKey} | Sam Global`} />
@@ -614,8 +602,10 @@ export function CategoryPage() {
         <div className="grid">
           {itemsFrom(products).map((product) => (
             <ProductCard
-              key={product.id || product._id || product.productId}
+              key={getProductId(product)}
               product={product}
+              onWishlist={toggleWishlist}
+              isWishlisted={isWishlisted(product)}
             />
           ))}
         </div>
@@ -639,10 +629,9 @@ export function ProductDetailPage() {
   );
   const dynamic = useSelector((s) => s.dynamicPricing);
   const delivery = useSelector((s) => s.delivery);
-  const cart = useSelector((s) => s.cart.current);
-  const run = useToastThunk();
   const product = productState.current;
   const [pincode, setPincode] = useState("");
+  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
   useEffect(() => {
     if (product) {
@@ -703,27 +692,21 @@ export function ProductDetailPage() {
             <div className="button-row">
               <button
                 className="button"
-                onClick={() =>
-                  run(
-                    dispatch,
-                    updateCart(addProductToCartPayload(cart, product)),
-                    "Added to cart",
-                  )
-                }
+                onClick={() => addToCart(product)}
               >
                 Add to cart
               </button>
               <button
                 className="button secondary"
-                onClick={() =>
-                  run(
-                    dispatch,
-                    updateCart(wishlistPayload(cart, product)),
-                    "Saved to wishlist",
-                  )
-                }
+                onClick={() => toggleWishlist(product)}
+                aria-pressed={isWishlisted(product)}
               >
-                <Heart size={16} /> Wishlist
+                <Heart
+                  size={16}
+                  fill={isWishlisted(product) ? "red" : "none"}
+                  color={isWishlisted(product) ? "red" : "currentColor"}
+                />{" "}
+                Wishlist
               </button>
             </div>
             <form

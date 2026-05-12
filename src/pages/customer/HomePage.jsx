@@ -1,10 +1,6 @@
-import { useDispatch, useSelector } from "react-redux";
 import ProductCard from "../../components/product/ProductCard";
 import Seo from "../../components/common/Seo";
-import { useToastThunk } from "../../hooks/useToastThunk";
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
-import { updateCart } from "../../features/cart/cartSlice";
-import { addProductToCartPayload, wishlistPayload } from "./helpers";
 import InfoSection from "../../components/about/InfoSection";
 import { ourMission } from "../../data/aboutUs";
 import ProductDetailPage from "../../components/product/ProductDetail";
@@ -14,29 +10,12 @@ import HomeShowcaseSections from "../../components/home/HomeShowcaseSections";
 import MothersDaySwiper from "../../components/home/MothersDayCarousel";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
 import { homeShowcaseSections, mothersDayData } from "../../data/homeSections";
-import PolicyPage from "../../pages/customer/policyPage";
-import { termsOfUseData } from "../../data/termsOfUseData";
-import { refundPolicyData } from "../../data/refundPolicyData";
-import { shippingPolicyData } from "../../data/shippingPolicyData";
+import { useProductActions } from "../../hooks/useProductActions";
+import { getProductId } from "../../utils/ecommerce";
 
 export function HomePage() {
-  const dispatch = useDispatch();
-  const cart = useSelector((s) => s.cart.current);
-  const run = useToastThunk();
   const recent = getRecentlyViewed();
-
-  const addToCart = (product) =>
-    run(
-      dispatch,
-      updateCart(addProductToCartPayload(cart, product)),
-      "Added to cart",
-    );
-  const wishlist = (product) =>
-    run(
-      dispatch,
-      updateCart(wishlistPayload(cart, product)),
-      "Saved to wishlist",
-    );
+  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
   return (
     <>
@@ -61,10 +40,11 @@ export function HomePage() {
           <div className="grid">
             {recent.map((product) => (
               <ProductCard
-                key={product.id || product._id || product.productId}
+                key={getProductId(product)}
                 product={product}
                 onAddToCart={addToCart}
-                onWishlist={wishlist}
+                onWishlist={toggleWishlist}
+                isWishlisted={isWishlisted(product)}
               />
             ))}
           </div>

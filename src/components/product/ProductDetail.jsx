@@ -60,6 +60,7 @@ const productInfo = [
 function TransparentButton({ text, bgColor, textColor, border }) {
   return (
     <button
+      type="button"
       className={`max-w-xs py-2 ${textColor} ${border} rounded-full ${bgColor} w-full`}
     >
       {text}
@@ -70,7 +71,10 @@ function TransparentButton({ text, bgColor, textColor, border }) {
 function SizeSelectionOption({ name, isSelected, onSelect }) {
   return (
     <button
+      type="button"
       onClick={onSelect}
+      aria-pressed={isSelected}
+      aria-label={`Select size ${name}`}
       className={`border w-10 h-10 flex items-center justify-center rounded-md cursor-pointer transition-colors ${
         isSelected ? "bg-blue border-blue text-white" : "border-gray text-gray"
       }`}
@@ -83,7 +87,10 @@ function SizeSelectionOption({ name, isSelected, onSelect }) {
 function ColorSelector({ color, isSelected, onSelect }) {
   return (
     <button
+      type="button"
       onClick={onSelect}
+      aria-pressed={isSelected}
+      aria-label={`Select ${color.name}`}
       className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
         isSelected ? "border-blue p-[2px]" : "border-transparent"
       }`}
@@ -191,7 +198,7 @@ function ProductGallery({
 }
 
 function ProductImages({ data }) {
-  const { mainImage, sideImages } = data?.images;
+  const { mainImage, sideImages = [] } = data?.images || {};
   const [activeImage, setActiveImage] = useState(mainImage);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -217,12 +224,18 @@ function ProductImages({ data }) {
       {/* Zoom and wishlist Option */}
       <div className="absolute top-4 right-4 flex flex-row gap-2 z-10">
         <button
+          type="button"
           onClick={() => setIsModalOpen(true)}
+          aria-label="Open image gallery"
           className="w-8 h-8 bg-white rounded-full hidden md:flex items-center justify-center shadow-md hover:scale-110 transition-transform"
         >
           <MdZoomOutMap className="text-black text-xl" />
         </button>
-        <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+        <button
+          type="button"
+          className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform"
+          aria-label="Add product to wishlist"
+        >
           <CiHeart className="text-black text-xl" />
         </button>
       </div>
@@ -232,7 +245,9 @@ function ProductImages({ data }) {
         <div className="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center">
           {/* Close Button */}
           <button
+            type="button"
             onClick={() => setIsModalOpen(false)}
+            aria-label="Close image gallery"
             className="absolute top-6 right-6 z-50 w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
           >
             <IoMdClose className="text-2xl" />
@@ -278,9 +293,9 @@ function ProductInfo() {
           <h5 className="font-light text-md line-through text-gray">
             ₹1299.00
           </h5>
-          <button className="bg-blue text-white text-xs px-2 py-1 rounded-md font-bold uppercase tracking-wider">
+          <span className="inline-flex bg-blue text-white text-xs px-2 py-1 rounded-md font-bold uppercase tracking-wider">
             Sale 15%
-          </button>
+          </span>
         </div>
         {/* Size Option */}
         <div className="mt-4">
@@ -302,7 +317,9 @@ function ProductInfo() {
             {/* Size Chart Selector */}
             <div className="relative">
               <button
+                type="button"
                 onClick={() => setShowSizeChart(!showSizeChart)}
+                aria-expanded={showSizeChart}
                 className="flex items-center gap-1 text-md font-semibold text-ink/80 transition-all"
               >
                 Size Chart{" "}
@@ -332,8 +349,8 @@ function ProductInfo() {
                           className="border-b border-border/50 last:border-0"
                         >
                           <td className="py-2 font-bold">{item.size}</td>
-                          <td className="py-2">{item.chest}"</td>
-                          <td className="py-2">{item.length}"</td>
+                          <td className="py-2">{item.chest}&quot;</td>
+                          <td className="py-2">{item.length}&quot;</td>
                         </tr>
                       ))}
                     </tbody>
@@ -367,21 +384,25 @@ function ProductInfo() {
             <p className="font-montserrat text-lg font-semibold text-ink py-2">
               Quantity
             </p>
-            <button className="max-w-[250px] h-[32px] flex flex-row items-center justify-between rounded-full border border-grayBorder w-full px-4">
+            <div className="max-w-[250px] h-[32px] flex flex-row items-center justify-between rounded-full border border-grayBorder w-full px-4">
               <button
+                type="button"
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="text-xl"
+                aria-label="Decrease quantity"
               >
                 -
               </button>
               <p className="font-medium text-md text-blue">{quantity}</p>
               <button
+                type="button"
                 onClick={() => setQuantity(quantity + 1)}
                 className="text-xl"
+                aria-label="Increase quantity"
               >
                 +
               </button>
-            </button>
+            </div>
           </div>
           <div className="flex flex-row gap-2 mt-4">
             <div className="w-4 h-4 rounded-full bg-green my-auto"></div>

@@ -1,71 +1,39 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  ArrowRight,
-  ChevronDown,
   ShieldCheck,
   Sparkles,
   LifeBuoy,
   Shield,
   Headphones,
   CheckCircle2,
+  ArrowRight,
 } from "lucide-react";
 import Seo from "../components/common/Seo";
 import InfoCard from "../components/ui/InfoCard";
-import SectionContainer from "../components/ui/SectionContainer";
-import { faqItems, supportTopics, whyChooseUsItems, commitmentItems, featureItems } from "../data/staticPages";
+import CardGridSection from "../components/static/CardGridSection";
+import FaqItem from "../components/static/FaqItem";
+import MarketingPage from "../components/static/MarketingPage";
+import PageHero from "../components/static/PageHero";
+import {
+  commitmentItems,
+  faqItems,
+  featureItems,
+  supportTopics,
+  whyChooseUsItems,
+} from "../data/staticPages";
 
-function PageHero({ eyebrow, title, description, ctaText, ctaTo, children }) {
-  return (
-    <section className="rounded-[32px] bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 px-6 py-14 text-white shadow-2xl shadow-slate-900/10">
-      <div className="w-full max-w-6xl mx-auto">
-        <span className="mb-4 inline-flex items-center rounded-full bg-white/10 px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-slate-200">
-          {eyebrow}
-        </span>
-        <div className="mt-4 max-w-3xl space-y-5">
-          <h1 className="custom-h2 text-white">{title}</h1>
-          <p className="custom-para max-w-2xl text-slate-300">{description}</p>
-          {ctaText ? (
-            <Link
-              to={ctaTo}
-              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-0.5 hover:bg-accent/90"
-            >
-              {ctaText}
-              <ArrowRight size={18} />
-            </Link>
-          ) : null}
-        </div>
-        {children}
-      </div>
-    </section>
-  );
-}
-
-function FaqItem({ item, index }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <article className="group rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl focus-within:border-accent focus-within:outline-none">
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-controls={`faq-panel-${index}`}
-        className="flex w-full items-start justify-between gap-4 text-left"
-        onClick={() => setOpen((value) => !value)}
-      >
-        <span className="custom-h5 text-slate-950">{item.question}</span>
-        <ChevronDown className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
-      </button>
-      <div
-        id={`faq-panel-${index}`}
-        role="region"
-        aria-labelledby={`faq-title-${index}`}
-        className={`mt-4 overflow-hidden transition-all duration-300 ${open ? "max-h-80" : "max-h-0"}`}
-      >
-        <p className="custom-para leading-relaxed text-slate-600">{item.answer}</p>
-      </div>
-    </article>
-  );
-}
+export const DealsPage = () => <MarketingPage pageKey="deals" />;
+export const BrandOutletPage = () => <MarketingPage pageKey="brandOutlet" />;
+export const GiftCardsPage = () => <MarketingPage pageKey="giftCards" />;
+export const HelpContactPage = () => <MarketingPage pageKey="helpContact" />;
+export const WhoWeArePage = () => <MarketingPage pageKey="whoWeAre" />;
+export const MobileAppPage = () => <MarketingPage pageKey="mobileApp" />;
+export const SellerPoliciesPage = () => <MarketingPage pageKey="sellerPolicies" />;
+export const GrowthSupportPage = () => <MarketingPage pageKey="growthSupport" />;
+export const AdvertisePage = () => <MarketingPage pageKey="advertise" />;
+export const BlogPage = () => <MarketingPage pageKey="blog" />;
+export const UpdatesPage = () => <MarketingPage pageKey="updates" />;
+export const AnnouncementsPage = () => <MarketingPage pageKey="announcements" />;
 
 export function FaqPage() {
   return (
@@ -80,18 +48,15 @@ export function FaqPage() {
           ctaTo="/support"
         />
 
-        <SectionContainer
+        <CardGridSection
           title="Top questions"
           subtitle="Clear, easy answers to help you move faster."
-          headerbgColor="bg-white"
-          bodybgColor="bg-slate-50"
+          className="grid gap-4 md:grid-cols-2"
         >
-          <div className="grid gap-4 md:grid-cols-2">
-            {faqItems.map((faq, index) => (
-              <FaqItem key={faq.question} item={faq} index={index} />
-            ))}
-          </div>
-        </SectionContainer>
+          {faqItems.map((faq, index) => (
+            <FaqItem key={faq.question} item={faq} index={index} />
+          ))}
+        </CardGridSection>
       </div>
     </main>
   );
@@ -121,25 +86,21 @@ export function SupportCenterPage() {
           </div>
         </PageHero>
 
-        <SectionContainer
+        <CardGridSection
           title="Instant support topics"
           subtitle="Choose the topic that best matches your request."
-          headerbgColor="bg-white"
-          bodybgColor="bg-slate-50"
         >
-          <div className="grid gap-6 sm:grid-cols-2">
-            {supportTopics.map((topic) => (
-              <InfoCard
-                key={topic.title}
-                icon={<LifeBuoy size={24} />}
-                title={topic.title}
-                description={topic.description}
-                to={topic.href}
-                actionLabel="Get help"
-              />
-            ))}
-          </div>
-        </SectionContainer>
+          {supportTopics.map((topic) => (
+            <InfoCard
+              key={topic.title}
+              icon={<LifeBuoy size={24} />}
+              title={topic.title}
+              description={topic.description}
+              to={topic.href}
+              actionLabel="Get help"
+            />
+          ))}
+        </CardGridSection>
 
         <section className="rounded-[28px] bg-white p-8 shadow-sm shadow-slate-200/50">
           <div className="grid gap-8 md:grid-cols-3">
@@ -185,23 +146,20 @@ export function WhyChooseUsPage() {
           ctaTo="/features"
         />
 
-        <SectionContainer
+        <CardGridSection
           title="What sets us apart"
           subtitle="The reasons customers keep choosing Sam Global."
-          headerbgColor="bg-white"
-          bodybgColor="bg-slate-50"
+          className="grid gap-6 lg:grid-cols-2"
         >
-          <div className="grid gap-6 lg:grid-cols-2">
-            {whyChooseUsItems.map((item) => (
-              <InfoCard
-                key={item.title}
-                icon={<Sparkles size={24} />}
-                title={item.title}
-                description={item.description}
-              />
-            ))}
-          </div>
-        </SectionContainer>
+          {whyChooseUsItems.map((item) => (
+            <InfoCard
+              key={item.title}
+              icon={<Sparkles size={24} />}
+              title={item.title}
+              description={item.description}
+            />
+          ))}
+        </CardGridSection>
       </div>
     </main>
   );
@@ -220,23 +178,20 @@ export function OurCommitmentPage() {
           ctaTo="/support"
         />
 
-        <SectionContainer
+        <CardGridSection
           title="Our commitment to you"
           subtitle="Meaningful service, clear policies, and quality first."
-          headerbgColor="bg-white"
-          bodybgColor="bg-slate-50"
+          className="grid gap-6 md:grid-cols-2"
         >
-          <div className="grid gap-6 md:grid-cols-2">
-            {commitmentItems.map((item) => (
-              <InfoCard
-                key={item.title}
-                icon={<Shield size={24} />}
-                title={item.title}
-                description={item.description}
-              />
-            ))}
-          </div>
-        </SectionContainer>
+          {commitmentItems.map((item) => (
+            <InfoCard
+              key={item.title}
+              icon={<Shield size={24} />}
+              title={item.title}
+              description={item.description}
+            />
+          ))}
+        </CardGridSection>
       </div>
     </main>
   );
@@ -253,23 +208,19 @@ export function FeaturesPage() {
           description="Explore the tools and experiences that make Sam Global fast, secure, and easy to use."
         />
 
-        <SectionContainer
+        <CardGridSection
           title="Platform features"
           subtitle="Smart shopping features built to help you save time and shop confidently."
-          headerbgColor="bg-white"
-          bodybgColor="bg-slate-50"
         >
-          <div className="grid gap-6 sm:grid-cols-2">
-            {featureItems.map((item) => (
-              <InfoCard
-                key={item.title}
-                icon={<CheckCircle2 size={24} />}
-                title={item.title}
-                description={item.description}
-              />
-            ))}
-          </div>
-        </SectionContainer>
+          {featureItems.map((item) => (
+            <InfoCard
+              key={item.title}
+              icon={<CheckCircle2 size={24} />}
+              title={item.title}
+              description={item.description}
+            />
+          ))}
+        </CardGridSection>
 
         <section className="rounded-[28px] bg-white p-8 shadow-sm shadow-slate-200/50">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">

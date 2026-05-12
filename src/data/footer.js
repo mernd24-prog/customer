@@ -10,7 +10,7 @@ export const footerData = {
     },
     {
       title: "30 days Easy Returns & Exchanges",
-      description: "Hassle-free returns with customer-first cies.",
+      description: "Hassle-free returns with customer-first policies.",
       icon: footer.exchange,
       alt: "Returns and exchanges",
     },
@@ -37,14 +37,14 @@ export const footerData = {
       links: [
         { label: "Become a Seller", href: "/seller/status" },
         { label: "Seller Dashboard", href: "/seller/status" },
-        { label: "Seller Policies", href: "/cms/seller-policies" },
-        { label: "Growth Support", href: "/cms/growth-support" },
+        { label: "Seller Policies", href: "/seller-policies" },
+        { label: "Growth Support", href: "/growth-support" },
       ],
     },
     {
       title: "About SAM",
       links: [
-        { label: "Who We Are", href: "/cms/who-we-are" },
+        { label: "Who We Are", href: "/who-we-are" },
         { label: "Why Choose Us", href: "/why-choose-us" },
         { label: "Our Commitment", href: "/our-commitment" },
         { label: "Features", href: "/features" },
@@ -53,7 +53,7 @@ export const footerData = {
     {
       title: "Tools & apps",
       links: [
-        { label: "Mobile App", href: "/cms/mobile-app" },
+        { label: "Mobile App", href: "/mobile-app" },
         { label: "Seller Tools", href: "/seller/status" },
         { label: "Analytics Dashboard", href: "/seller/tracking" },
       ],
@@ -73,9 +73,9 @@ export const footerData = {
     {
       title: "Community",
       links: [
-        { label: "Blog", href: "/cms/blog" },
-        { label: "Updates", href: "/cms/updates" },
-        { label: "Announcements", href: "/cms/announcements" },
+        { label: "Blog", href: "/blog" },
+        { label: "Updates", href: "/updates" },
+        { label: "Announcements", href: "/announcements" },
       ],
     },
   ],
@@ -88,19 +88,19 @@ export const footerData = {
     },
     {
       label: "Advertise",
-      href: "/cms/advertise",
+      href: "/advertise",
       icon: footer.advertise,
       alt: "Advertise",
     },
     {
       label: "Gift Cards",
-      href: "/cms/gift-cards",
+      href: "/gift-cards",
       icon: footer.gift,
       alt: "Gift cards",
     },
     {
       label: "Help Center",
-      href: "/cms/customer-support",
+      href: "/help-contact",
       icon: footer.help,
       alt: "Help center",
     },
