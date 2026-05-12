@@ -12,6 +12,11 @@ import HomeProductsForYouSection from "../../components/home/HomeProductsForYouS
 import { homeShowcaseSections, mothersDayData } from "../../data/homeSections";
 import { useProductActions } from "../../hooks/useProductActions";
 import { getProductId } from "../../utils/ecommerce";
+import PolicyPage from "../../pages/customer/policyPage";
+import { termsOfUseData } from "../../data/termsOfUseData";
+import { refundPolicyData } from "../../data/refundPolicyData";
+import { shippingPolicyData } from "../../data/shippingPolicyData";
+import CartPage from "../cart/CartPage";
 
 export function HomePage() {
   const recent = getRecentlyViewed();
@@ -28,6 +33,7 @@ export function HomePage() {
 
       {/* Product Detail Page */}
       <ProductDetailPage />
+      <CartPage/>
       <HomeShowcaseSections sections={homeShowcaseSections} loading={false} />
       <InfoSection data={ourMission} />
       <MothersDaySwiper data={mothersDayData} />
