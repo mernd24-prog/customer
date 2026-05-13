@@ -254,6 +254,14 @@ export const endpoints = {
     platformContentPages: `${API_PREFIX}/admin/platform/content-pages`,
     platformContentPage: (slug) => `${API_PREFIX}/admin/platform/content-pages/${slug}`,
     platformBrands: `${API_PREFIX}/admin/platform/brands`,
-    platformBrand: (brandId) => `${API_PREFIX}/admin/platform/brands/${brandId}`
+    platformBrand: (brandId) => `${API_PREFIX}/admin/platform/brands/${brandId}`,
+    platformWarrantyTemplates: `${API_PREFIX}/admin/platform/warranty-templates`,
+    platformWarrantyTemplate: (templateId) =>
+      `${API_PREFIX}/admin/platform/warranty-templates/${templateId}`,
+    platformDimensions: `${API_PREFIX}/admin/platform/dimensions`,
+    platformDimension: (dimensionId) =>
+      `${API_PREFIX}/admin/platform/dimensions/${dimensionId}`,
+    platformBatches: `${API_PREFIX}/admin/platform/batches`,
+    platformBatch: (batchId) => `${API_PREFIX}/admin/platform/batches/${batchId}`
   }
 };
