@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Camera,
@@ -177,9 +177,9 @@ export const TopHeader = () => {
             </button>
           ) : (
             <BrandButton
-              variant="secondary"
+              variant="gradient"
               rounded
-              className="min-h-[22px] border px-3 font-bold"
+              className="min-h-[22px] px-3"
               size="md"
               label="Register"
               onClick={() => navigate("/register")}
@@ -322,12 +322,15 @@ export const CategoryBar = ({ headerData }) => {
 };
 
 export const Header = () => {
+  const location = useLocation();
+  const hideCategoryBar = location.pathname === "/watchlist";
+
   return (
     <div className="flex w-full flex-col">
       <TopHeader />
       <Navbar />
       <div className="mx-auto w-full max-w-[1648px] border-t border-gray-300" />
-      <CategoryBar />
+      {!hideCategoryBar && <CategoryBar />}
     </div>
   );
 };
