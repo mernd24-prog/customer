@@ -1,0 +1,589 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "react-toastify";
+import {
+  BadgeCheck,
+  ChevronDown,
+  ChevronUp,
+  Home,
+  KeyRound,
+  MapPin,
+  Pencil,
+  Shield,
+  Trash2,
+  Upload,
+  User,
+} from "lucide-react";
+import ApiState from "../../components/common/ApiState";
+import Seo from "../../components/common/Seo";
+import Button from "../../components/ui/Button";
+import FormField from "../../components/ui/FormField";
+import { useToastThunk } from "../../hooks/useToastThunk";
+import {
+  fetchMe,
+  updateMe,
+  addAddress,
+  updateAddress,
+  deleteAddress,
+  submitUserKyc,
+  uploadKycDocuments,
+} from "../../features/user/userSlice";
+import { changePassword } from "../../features/auth/authSlice";
+
+// ─── Schemas ──────────────────────────────────────────────────────────────────
+
+const profileSchema = z.object({
+  firstName: z.string().trim().min(1, "First name is required"),
+  lastName: z.string().trim().min(1, "Last name is required"),
+  avatarUrl: z.string().trim().url("Enter a valid URL").optional().or(z.literal("")),
+});
+
+const addressSchema = z.object({
+  label: z.string().trim().min(1, "Label is required (e.g. Home, Work)"),
+  fullName: z.string().trim().min(2, "Full name is required"),
+  phone: z.string().trim().min(8, "Enter a valid phone number"),
+  line1: z.string().trim().min(3, "Address line 1 is required"),
+  line2: z.string().trim().optional(),
+  city: z.string().trim().min(2, "City is required"),
+  state: z.string().trim().min(2, "State is required"),
+  postalCode: z.string().trim().min(4, "Postal code is required"),
+  country: z.string().trim().min(2, "Country is required"),
+  isDefault: z.boolean().optional(),
+});
+
+const securitySchema = z
+  .object({
+    currentPassword: z.string().min(8, "Enter your current password"),
+    newPassword: z.string().min(8, "New password must be at least 8 characters"),
+    confirmPassword: z.string().min(8, "Confirm your new password"),
+  })
+  .refine((v) => v.newPassword === v.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+const kycSchema = z.object({
+  legalName: z.string().trim().min(2, "Legal name is required"),
+  panNumber: z
+    .string()
+    .trim()
+    .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, "Enter a valid PAN (e.g. ABCDE1234F)"),
+  aadhaarNumber: z
+    .string()
+    .trim()
+    .regex(/^\d{12}$/, "Aadhaar must be 12 digits"),
+});
+
+// ─── Tab nav ──────────────────────────────────────────────────────────────────
+
+const TABS = [
+  { id: "profile", label: "Profile", icon: User, path: "/account/profile" },
+  { id: "addresses", label: "Addresses", icon: MapPin, path: "/account/addresses" },
+  { id: "security", label: "Security", icon: KeyRound, path: "/account/security" },
+  { id: "kyc", label: "KYC", icon: Shield, path: "/account/kyc" },
+];
+
+// ─── Profile Tab ──────────────────────────────────────────────────────────────
+
+function ProfileTab({ user }) {
+  const dispatch = useDispatch();
+  const run = useToastThunk();
+  const { loading } = useSelector((s) => s.user);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      firstName: user?.profile?.firstName || "",
+      lastName: user?.profile?.lastName || "",
+      avatarUrl: user?.profile?.avatarUrl || "",
+    },
+  });
+
+  const submit = (values) =>
+    run(dispatch, updateMe({ profile: { firstName: values.firstName, lastName: values.lastName, avatarUrl: values.avatarUrl || undefined } }), "Profile updated");
+
+  return (
+    <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
+      <div className="flex items-center gap-4">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+          {user?.profile?.avatarUrl ? (
+            <img src={user.profile.avatarUrl} alt="Avatar" className="h-16 w-16 rounded-full object-cover" />
+          ) : (
+            <User size={28} />
+          )}
+        </div>
+        <div>
+          <p className="font-semibold text-slate-900">
+            {user?.profile?.firstName} {user?.profile?.lastName}
+          </p>
+          <p className="text-sm text-slate-500">{user?.email}</p>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <FormField
+          id="firstName"
+          label="First name"
+          registration={register("firstName")}
+          error={errors.firstName}
+          autoComplete="given-name"
+        />
+        <FormField
+          id="lastName"
+          label="Last name"
+          registration={register("lastName")}
+          error={errors.lastName}
+          autoComplete="family-name"
+        />
+      </div>
+
+      <FormField
+        id="avatarUrl"
+        label="Avatar URL"
+        registration={register("avatarUrl")}
+        error={errors.avatarUrl}
+        placeholder="https://example.com/avatar.jpg"
+        type="url"
+      />
+
+      <div className="rounded-md border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-slate-600">
+        <p><span className="font-medium">Email:</span> {user?.email}</p>
+        <p className="mt-1"><span className="font-medium">Phone:</span> {user?.phone || "Not set"}</p>
+        <p className="mt-1"><span className="font-medium">Role:</span> {user?.role || "buyer"}</p>
+      </div>
+
+      <Button type="submit" loading={loading} className="w-full sm:w-auto">
+        Save profile
+      </Button>
+    </form>
+  );
+}
+
+// ─── Address Tab ──────────────────────────────────────────────────────────────
+
+function AddressTab({ user }) {
+  const dispatch = useDispatch();
+  const run = useToastThunk();
+  const { loading } = useSelector((s) => s.user);
+  const [editingId, setEditingId] = useState(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  const addresses = user?.addresses || [];
+
+  const addForm = useForm({ resolver: zodResolver(addressSchema), defaultValues: { country: "India", isDefault: false } });
+  const editForm = useForm({ resolver: zodResolver(addressSchema) });
+
+  const startEdit = (addr) => {
+    setEditingId(addr._id || addr.id);
+    editForm.reset({ ...addr, isDefault: Boolean(addr.isDefault) });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    editForm.reset();
+  };
+
+  const handleAdd = async (values) => {
+    await run(dispatch, addAddress({ ...values, isDefault: Boolean(values.isDefault) }), "Address added");
+    addForm.reset({ country: "India", isDefault: false });
+    setShowAddForm(false);
+    dispatch(fetchMe());
+  };
+
+  const handleUpdate = async (values) => {
+    await run(dispatch, updateAddress({ addressId: editingId, ...values, isDefault: Boolean(values.isDefault) }), "Address updated");
+    setEditingId(null);
+    dispatch(fetchMe());
+  };
+
+  const handleDelete = async (addressId) => {
+    if (!window.confirm("Delete this address?")) return;
+    await run(dispatch, deleteAddress({ addressId }), "Address deleted");
+    dispatch(fetchMe());
+  };
+
+  return (
+    <div className="grid gap-6">
+      {/* Existing addresses */}
+      {addresses.length > 0 ? (
+        <div className="grid gap-4">
+          {addresses.map((addr) => {
+            const addrId = addr._id || addr.id;
+            const isEditing = editingId === addrId;
+            return (
+              <div key={addrId} className="rounded-lg border border-stone-200 bg-white p-4">
+                {isEditing ? (
+                  <form className="grid gap-4" onSubmit={editForm.handleSubmit(handleUpdate)} noValidate>
+                    <p className="text-sm font-medium text-slate-700">Edit address</p>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <FormField id={`edit-label-${addrId}`} label="Label" registration={editForm.register("label")} error={editForm.formState.errors.label} placeholder="Home, Work…" />
+                      <FormField id={`edit-fullName-${addrId}`} label="Full name" registration={editForm.register("fullName")} error={editForm.formState.errors.fullName} autoComplete="name" />
+                    </div>
+                    <FormField id={`edit-phone-${addrId}`} label="Phone" type="tel" registration={editForm.register("phone")} error={editForm.formState.errors.phone} autoComplete="tel" />
+                    <FormField id={`edit-line1-${addrId}`} label="Address line 1" registration={editForm.register("line1")} error={editForm.formState.errors.line1} autoComplete="address-line1" />
+                    <FormField id={`edit-line2-${addrId}`} label="Address line 2" registration={editForm.register("line2")} error={editForm.formState.errors.line2} autoComplete="address-line2" />
+                    <div className="grid gap-4 sm:grid-cols-3">
+                      <FormField id={`edit-city-${addrId}`} label="City" registration={editForm.register("city")} error={editForm.formState.errors.city} autoComplete="address-level2" />
+                      <FormField id={`edit-state-${addrId}`} label="State" registration={editForm.register("state")} error={editForm.formState.errors.state} autoComplete="address-level1" />
+                      <FormField id={`edit-postalCode-${addrId}`} label="Postal code" registration={editForm.register("postalCode")} error={editForm.formState.errors.postalCode} autoComplete="postal-code" />
+                    </div>
+                    <FormField id={`edit-country-${addrId}`} label="Country" registration={editForm.register("country")} error={editForm.formState.errors.country} autoComplete="country-name" />
+                    <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+                      <input type="checkbox" {...editForm.register("isDefault")} className="h-4 w-4 rounded border-stone-300" />
+                      Set as default address
+                    </label>
+                    <div className="flex gap-3">
+                      <Button type="submit" loading={loading}>Save changes</Button>
+                      <Button type="button" variant="secondary" onClick={cancelEdit}>Cancel</Button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Home size={14} className="text-slate-400" />
+                        <span className="text-sm font-semibold text-slate-900">{addr.label}</span>
+                        {addr.isDefault && (
+                          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Default</span>
+                        )}
+                      </div>
+                      <p className="mt-1 text-sm text-slate-600">{addr.fullName} · {addr.phone}</p>
+                      <p className="text-sm text-slate-600">
+                        {addr.line1}{addr.line2 ? `, ${addr.line2}` : ""}, {addr.city}, {addr.state} {addr.postalCode}, {addr.country}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => startEdit(addr)}
+                        className="rounded p-1.5 text-slate-500 hover:bg-stone-100 hover:text-slate-900 transition"
+                        aria-label="Edit address"
+                      >
+                        <Pencil size={15} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(addrId)}
+                        className="rounded p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700 transition"
+                        aria-label="Delete address"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="rounded-lg border border-dashed border-stone-300 bg-stone-50 p-8 text-center">
+          <MapPin size={24} className="mx-auto mb-2 text-slate-400" />
+          <p className="text-sm text-slate-500">No addresses saved yet.</p>
+        </div>
+      )}
+
+      {/* Add address toggle */}
+      <div>
+        <button
+          type="button"
+          onClick={() => setShowAddForm((v) => !v)}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-900 underline-offset-4 hover:underline"
+        >
+          {showAddForm ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          {showAddForm ? "Cancel" : "Add new address"}
+        </button>
+
+        {showAddForm && (
+          <form className="mt-4 grid gap-4 rounded-lg border border-stone-200 bg-white p-4" onSubmit={addForm.handleSubmit(handleAdd)} noValidate>
+            <p className="text-sm font-medium text-slate-700">New address</p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField id="add-label" label="Label" registration={addForm.register("label")} error={addForm.formState.errors.label} placeholder="Home, Work…" />
+              <FormField id="add-fullName" label="Full name" registration={addForm.register("fullName")} error={addForm.formState.errors.fullName} autoComplete="name" />
+            </div>
+            <FormField id="add-phone" label="Phone" type="tel" registration={addForm.register("phone")} error={addForm.formState.errors.phone} autoComplete="tel" />
+            <FormField id="add-line1" label="Address line 1" registration={addForm.register("line1")} error={addForm.formState.errors.line1} autoComplete="address-line1" />
+            <FormField id="add-line2" label="Address line 2 (optional)" registration={addForm.register("line2")} error={addForm.formState.errors.line2} autoComplete="address-line2" />
+            <div className="grid gap-4 sm:grid-cols-3">
+              <FormField id="add-city" label="City" registration={addForm.register("city")} error={addForm.formState.errors.city} autoComplete="address-level2" />
+              <FormField id="add-state" label="State" registration={addForm.register("state")} error={addForm.formState.errors.state} autoComplete="address-level1" />
+              <FormField id="add-postalCode" label="Postal code" registration={addForm.register("postalCode")} error={addForm.formState.errors.postalCode} autoComplete="postal-code" />
+            </div>
+            <FormField id="add-country" label="Country" registration={addForm.register("country")} error={addForm.formState.errors.country} autoComplete="country-name" />
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+              <input type="checkbox" {...addForm.register("isDefault")} className="h-4 w-4 rounded border-stone-300" />
+              Set as default address
+            </label>
+            <Button type="submit" loading={loading} className="w-full sm:w-auto">
+              Save address
+            </Button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Security Tab ─────────────────────────────────────────────────────────────
+
+function SecurityTab() {
+  const dispatch = useDispatch();
+  const run = useToastThunk();
+  const { loading } = useSelector((s) => s.auth);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(securitySchema) });
+
+  const submit = async (values) => {
+    await run(dispatch, changePassword({ currentPassword: values.currentPassword, newPassword: values.newPassword }), "Password changed successfully");
+    reset();
+  };
+
+  return (
+    <form className="grid gap-5 max-w-md" onSubmit={handleSubmit(submit)} noValidate>
+      <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        Choose a strong password with at least 8 characters, including numbers and symbols.
+      </div>
+
+      <FormField
+        id="currentPassword"
+        label="Current password"
+        type="password"
+        registration={register("currentPassword")}
+        error={errors.currentPassword}
+        autoComplete="current-password"
+        placeholder="••••••••"
+      />
+
+      <FormField
+        id="newPassword"
+        label="New password"
+        type="password"
+        registration={register("newPassword")}
+        error={errors.newPassword}
+        autoComplete="new-password"
+        placeholder="••••••••"
+      />
+
+      <FormField
+        id="confirmPassword"
+        label="Confirm new password"
+        type="password"
+        registration={register("confirmPassword")}
+        error={errors.confirmPassword}
+        autoComplete="new-password"
+        placeholder="••••••••"
+      />
+
+      <Button type="submit" loading={loading} className="w-full sm:w-auto">
+        <KeyRound size={16} /> Change password
+      </Button>
+    </form>
+  );
+}
+
+// ─── KYC Tab ──────────────────────────────────────────────────────────────────
+
+const KYC_DOCS = [
+  { key: "panDocumentUrl", label: "PAN card" },
+  { key: "gstCertificateUrl", label: "GST certificate (optional)" },
+  { key: "aadhaarFrontUrl", label: "Aadhaar front" },
+  { key: "aadhaarBackUrl", label: "Aadhaar back" },
+  { key: "addressProofUrl", label: "Address proof" },
+];
+
+function KycTab({ user }) {
+  const dispatch = useDispatch();
+  const run = useToastThunk();
+  const { loading } = useSelector((s) => s.user);
+  const [docUrls, setDocUrls] = useState({});
+  const kyc = user?.kyc;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(kycSchema),
+    defaultValues: {
+      legalName: kyc?.legalName || user?.profile?.firstName || "",
+      panNumber: kyc?.panNumber || "",
+      aadhaarNumber: kyc?.aadhaarNumber || "",
+    },
+  });
+
+  const handleDocUpload = async (docKey, url) => {
+    if (!url) return;
+    setDocUrls((prev) => ({ ...prev, [docKey]: url }));
+  };
+
+  const submit = async (values) => {
+    if (Object.keys(docUrls).length > 0) {
+      await run(dispatch, uploadKycDocuments({ documents: docUrls }), "Documents saved");
+    }
+    await run(
+      dispatch,
+      submitUserKyc({
+        legalName: values.legalName,
+        panNumber: values.panNumber,
+        aadhaarNumber: values.aadhaarNumber,
+        documents: docUrls,
+      }),
+      "KYC submitted for review",
+    );
+  };
+
+  const statusColor = {
+    verified: "text-emerald-700 bg-emerald-100",
+    under_review: "text-amber-700 bg-amber-100",
+    rejected: "text-red-700 bg-red-100",
+    submitted: "text-blue-700 bg-blue-100",
+  }[kyc?.status] || "text-slate-700 bg-stone-100";
+
+  return (
+    <form className="grid gap-6" onSubmit={handleSubmit(submit)} noValidate>
+      {kyc?.status && (
+        <div className="flex items-center gap-3">
+          <BadgeCheck size={20} className="shrink-0 text-slate-600" />
+          <div>
+            <p className="text-sm text-slate-500">KYC status</p>
+            <span className={`mt-0.5 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${statusColor}`}>
+              {kyc.status.replace(/_/g, " ")}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {kyc?.status === "verified" ? (
+        <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          Your KYC is verified. No action needed.
+        </div>
+      ) : (
+        <>
+          <div className="grid gap-5 max-w-md">
+            <FormField
+              id="legalName"
+              label="Legal name (as on PAN)"
+              registration={register("legalName")}
+              error={errors.legalName}
+              placeholder="As it appears on your PAN card"
+            />
+            <FormField
+              id="panNumber"
+              label="PAN number"
+              registration={register("panNumber")}
+              error={errors.panNumber}
+              placeholder="ABCDE1234F"
+              className="uppercase"
+            />
+            <FormField
+              id="aadhaarNumber"
+              label="Aadhaar number"
+              registration={register("aadhaarNumber")}
+              error={errors.aadhaarNumber}
+              placeholder="12-digit Aadhaar"
+              inputMode="numeric"
+            />
+          </div>
+
+          {/* Document URLs */}
+          <div>
+            <p className="mb-3 text-sm font-medium text-slate-800">Document URLs</p>
+            <p className="mb-4 text-xs text-slate-500">Upload each document to a file hosting service and paste the URL here.</p>
+            <div className="grid gap-3">
+              {KYC_DOCS.map(({ key, label }) => (
+                <label key={key} className="grid gap-1.5 text-sm font-medium text-slate-800">
+                  <span className="flex items-center gap-1.5">
+                    <Upload size={13} /> {label}
+                  </span>
+                  <input
+                    type="url"
+                    placeholder="https://..."
+                    value={docUrls[key] || ""}
+                    onChange={(e) => handleDocUpload(key, e.target.value)}
+                    className="min-h-10 rounded-md border border-stone-300 bg-white px-3 py-2 text-slate-950 outline-none transition placeholder:text-stone-400 focus:border-slate-950 focus:ring-2 focus:ring-slate-950/10"
+                  />
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {kyc?.rejectionReason && (
+            <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+              <strong>Rejection reason:</strong> {kyc.rejectionReason}
+            </div>
+          )}
+
+          <Button type="submit" loading={loading} className="w-full sm:w-auto">
+            <Shield size={16} /> Submit KYC
+          </Button>
+        </>
+      )}
+    </form>
+  );
+}
+
+// ─── Main AccountPage ─────────────────────────────────────────────────────────
+
+export default function AccountPage({ tab = "profile" }) {
+  const dispatch = useDispatch();
+  const userState = useSelector((s) => s.user);
+  const user = userState.current;
+
+  useEffect(() => {
+    dispatch(fetchMe());
+  }, [dispatch]);
+
+  return (
+    <>
+      <Seo title={`Account — ${tab.charAt(0).toUpperCase() + tab.slice(1)} | Sam Global`} />
+
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
+        <h1 className="mb-6 text-2xl font-bold text-slate-950 sm:text-3xl">My Account</h1>
+
+        {/* Tab navigation */}
+        <div className="mb-8 flex gap-1 overflow-x-auto rounded-lg border border-stone-200 bg-stone-50 p-1">
+          {TABS.map(({ id, label, icon: Icon, path }) => (
+            <Link
+              key={id}
+              to={path}
+              className={`flex min-w-max items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
+                tab === id
+                  ? "bg-white text-slate-950 shadow-sm"
+                  : "text-slate-500 hover:text-slate-900"
+              }`}
+            >
+              <Icon size={15} />
+              {label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Tab content */}
+        <div className="rounded-lg border border-stone-200 bg-white p-6 sm:p-8">
+          <ApiState
+            loading={userState.loading && !user}
+            error={userState.error}
+            empty={false}
+            onRetry={() => dispatch(fetchMe())}
+          >
+            {tab === "profile" && <ProfileTab user={user} />}
+            {tab === "addresses" && <AddressTab user={user} />}
+            {tab === "security" && <SecurityTab />}
+            {tab === "kyc" && <KycTab user={user} />}
+          </ApiState>
+        </div>
+      </div>
+    </>
+  );
+}

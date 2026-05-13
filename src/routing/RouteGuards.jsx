@@ -8,6 +8,11 @@ export function ProtectedRoute() {
   return user ? <Outlet /> : <Navigate to="/login" replace state={{ from: location.pathname }} />;
 }
 
+export function GuestRoute() {
+  const user = useSelector((state) => state.auth.current);
+  return user ? <Navigate to="/" replace /> : <Outlet />;
+}
+
 export function BuyerOnlyRoute() {
   const role = getRole(useSelector((state) => state.auth.current));
   return isSellerRole(role) ? <Navigate to="/seller/status" replace /> : <Outlet />;

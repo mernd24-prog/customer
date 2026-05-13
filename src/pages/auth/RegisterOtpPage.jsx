@@ -1,0 +1,137 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Smartphone } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { z } from "zod";
+import AuthCard from "../../components/ui/AuthCard";
+import Button from "../../components/ui/Button";
+import FormField from "../../components/ui/FormField";
+import Seo from "../../components/common/Seo";
+import { AUTH_ROUTES } from "../../features/auth/authRoutes";
+import { registerUserWithOtp, clearError } from "../../features/auth/authSlice";
+import { useToastThunk } from "../../hooks/useToastThunk";
+
+const schema = z.object({
+  firstName: z.string().trim().min(1, "First name is required"),
+  lastName: z.string().trim().min(1, "Last name is required"),
+  email: z.string().trim().email("Enter a valid email address"),
+  phone: z.string().trim().min(8, "Enter a valid phone number"),
+  referralCode: z.string().trim().optional(),
+});
+
+export default function RegisterOtpPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const run = useToastThunk();
+  const { loading, error } = useSelector((s) => s.auth);
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(schema) });
+
+  const submit = async (values) => {
+    const payload = {
+      email: values.email,
+      phone: values.phone,
+      role: "buyer",
+      profile: { firstName: values.firstName, lastName: values.lastName },
+      referralCode: values.referralCode || undefined,
+    };
+    await run(dispatch, registerUserWithOtp(payload), "OTP sent to your email");
+    navigate(AUTH_ROUTES.verifyRegistration, { state: { email: values.email } });
+  };
+
+  return (
+    <>
+      <Seo title="Register with OTP | Sam Global" />
+      <AuthCard
+        eyebrow="New account"
+        title="Create account with OTP"
+        subtitle="No password needed — we'll verify your email with a one-time code."
+      >
+        <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-950">Register with OTP</h2>
+            <p className="mt-1 text-sm text-slate-500">We'll send an OTP to your email to complete registration.</p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormField
+              id="firstName"
+              label="First name"
+              registration={register("firstName")}
+              error={errors.firstName}
+              autoComplete="given-name"
+            />
+            <FormField
+              id="lastName"
+              label="Last name"
+              registration={register("lastName")}
+              error={errors.lastName}
+              autoComplete="family-name"
+            />
+          </div>
+
+          <FormField
+            id="email"
+            label="Email address"
+            type="email"
+            registration={register("email")}
+            error={errors.email}
+            autoComplete="email"
+            placeholder="you@example.com"
+          />
+
+          <FormField
+            id="phone"
+            label="Phone number"
+            type="tel"
+            registration={register("phone")}
+            error={errors.phone}
+            autoComplete="tel"
+            placeholder="+91 98765 43210"
+          />
+
+          <FormField
+            id="referralCode"
+            label="Referral code"
+            registration={register("referralCode")}
+            error={errors.referralCode}
+            placeholder="Optional"
+          />
+
+          {error && (
+            <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+              {error}
+            </div>
+          )}
+
+          <Button type="submit" loading={loading} className="w-full">
+            <Smartphone size={18} /> Send OTP &amp; register
+          </Button>
+
+          <p className="text-center text-sm text-slate-600">
+            Already have an account?{" "}
+            <Link to={AUTH_ROUTES.login} className="font-semibold text-slate-950 underline-offset-4 hover:underline">
+              Login
+            </Link>
+          </p>
+          <p className="text-center text-sm text-slate-600">
+            Prefer password?{" "}
+            <Link to={AUTH_ROUTES.register} className="font-semibold text-slate-950 underline-offset-4 hover:underline">
+              Register with password
+            </Link>
+          </p>
+        </form>
+      </AuthCard>
+    </>
+  );
+}

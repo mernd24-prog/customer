@@ -33,7 +33,7 @@ const SearchBar = ({
       return;
     }
     if (searchQuery.trim()) {
-      navigate(`/products/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 

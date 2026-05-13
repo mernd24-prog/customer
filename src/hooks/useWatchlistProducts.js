@@ -1,10 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
-import watchlistData from "../data/watchlistitem";
 import { getProductId } from "../utils/ecommerce";
 
-export function useWatchlistProducts({ fallback = watchlistData } = {}) {
+export function useWatchlistProducts({ fallback = [] } = {}) {
   const [hiddenFallbackIds, setHiddenFallbackIds] = useState([]);
   const wishlistIds = useSelector((state) => state.cart.current?.wishlist || []);
   const allProducts = useSelector((state) => state.product.list || []);

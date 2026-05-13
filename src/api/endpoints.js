@@ -1,9 +1,15 @@
 export const API_PREFIX = "/api/v1";
 
+export const SEARCH_PREFIX = `${API_PREFIX}/search`;
+
 export const endpoints = {
   health: "/health",
   meta: {
     routes: `${API_PREFIX}/meta/routes`
+  },
+  search: {
+    main: `${SEARCH_PREFIX}`,
+    autocomplete: `${SEARCH_PREFIX}/autocomplete`
   },
   auth: {
     register: `${API_PREFIX}/auth/register`,
@@ -25,6 +31,7 @@ export const endpoints = {
     addresses: `${API_PREFIX}/users/me/addresses`,
     address: (addressId) => `${API_PREFIX}/users/me/addresses/${addressId}`,
     kyc: `${API_PREFIX}/users/me/kyc`,
+    kycDocuments: `${API_PREFIX}/users/me/kyc/documents`,
     reviewKyc: (userId) => `${API_PREFIX}/users/${userId}/kyc/review`
   },
   products: {
@@ -67,6 +74,7 @@ export const endpoints = {
   platform: {
     categories: `${API_PREFIX}/platform/categories`,
     category: (categoryKey) => `${API_PREFIX}/platform/categories/${categoryKey}`,
+    categoryAttributes: (categoryKey) => `${API_PREFIX}/platform/categories/${categoryKey}/attributes`,
     families: `${API_PREFIX}/platform/families`,
     family: (familyCode) => `${API_PREFIX}/platform/families/${familyCode}`,
     variants: `${API_PREFIX}/platform/variants`,
@@ -76,7 +84,14 @@ export const endpoints = {
     geographies: `${API_PREFIX}/platform/geographies`,
     geography: (countryCode) => `${API_PREFIX}/platform/geographies/${countryCode}`,
     cms: `${API_PREFIX}/platform/cms`,
-    cmsPage: (slug) => `${API_PREFIX}/platform/cms/${slug}`
+    cmsPage: (slug) => `${API_PREFIX}/platform/cms/${slug}`,
+    brands: `${API_PREFIX}/platform/brands`,
+    brand: (brandId) => `${API_PREFIX}/platform/brands/${brandId}`,
+    warrantyTemplates: `${API_PREFIX}/platform/warranty-templates`,
+    productOptions: `${API_PREFIX}/platform/product-options`,
+    productOptionValues: `${API_PREFIX}/platform/product-option-values`,
+    finishes: `${API_PREFIX}/platform/finishes`,
+    dimensions: `${API_PREFIX}/platform/dimensions`
   },
   pricing: {
     coupons: `${API_PREFIX}/pricing/coupons`,

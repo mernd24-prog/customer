@@ -1,5 +1,6 @@
 import { Fragment, useCallback, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Camera,
   Heart,
@@ -19,17 +20,16 @@ import MenuDropdown from "./header/MenuDropdown";
 import SellDropdown from "./header/SellDropdown";
 import WatchlistDropdown from "./header/WatchlistDropdown";
 import {
-  header as categoryData,
   icons,
   navbarIcons as navData,
 } from "../../constant/image.constant";
 import {
-  accountMenuItems,
   sellDropdownData,
   topNavLinks,
 } from "../../data/header";
 import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
+import { logout } from "../../features/auth/authSlice";
 
 const buildCategorySlug = (name) => name.toLowerCase().replace(/\s+/g, "-");
 
@@ -43,29 +43,33 @@ const dropdownIconMap = {
   user: User,
 };
 
+const accountMenuItems = [
+  { label: "My Profile", path: "/account/profile", icon: "user" },
+  { label: "My Orders", path: "/orders", icon: "shoppingBag" },
+  { label: "Wallet", path: "/wallet", icon: "lock" },
+  { label: "Notifications", path: "/notifications", icon: "settings" },
+  { label: "Settings", path: "/notification-preferences", icon: "settings" },
+];
+
 function withIcons(items) {
   return items.map((item) => {
     const Icon = dropdownIconMap[item.icon];
-    return {
-      ...item,
-      icon: Icon ? <Icon size={18} /> : null,
-    };
+    return { ...item, icon: Icon ? <Icon size={18} /> : null };
   });
 }
 
 export const TopHeader = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const currentUser = useSelector((s) => s.auth.current);
+
   const { removeFromWishlist } = useProductActions();
   const { products: wishlistedProducts, hideFallbackProduct, isUsingFallback } =
     useWatchlistProducts();
 
   const handleRemoveWatchlist = useCallback(
     (product) => {
-      if (isUsingFallback) {
-        hideFallbackProduct(product);
-        return;
-      }
-
+      if (isUsingFallback) { hideFallbackProduct(product); return; }
       removeFromWishlist(product);
     },
     [hideFallbackProduct, isUsingFallback, removeFromWishlist],
@@ -91,16 +95,18 @@ export const TopHeader = () => {
         items: wishlistedProducts,
         onRemove: handleRemoveWatchlist,
       },
-      {
-        type: "menu",
-        label: "My Sam",
-        path: "/account/profile",
-        icon: <User size={16} />,
-        title: "My Account",
-        items: withIcons(accountMenuItems),
-      },
+      ...(currentUser
+        ? [{
+            type: "menu",
+            label: currentUser.firstName || currentUser.email?.split("@")[0] || "My Sam",
+            path: "/account/profile",
+            icon: <User size={16} />,
+            title: "My Account",
+            items: withIcons(accountMenuItems),
+          }]
+        : []),
     ],
-    [handleRemoveWatchlist, wishlistedProducts],
+    [handleRemoveWatchlist, wishlistedProducts, currentUser],
   );
 
   const renderDropdown = (dropdown) => {
@@ -127,11 +133,7 @@ export const TopHeader = () => {
       <div className="w-container flex h-full items-center">
         <div className="flex flex-1 items-center gap-14 text-white">
           {topNavLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.path}
-              className="text-white transition-opacity hover:opacity-70"
-            >
+            <Link key={link.name} to={link.path} className="text-white transition-opacity hover:opacity-70">
               {link.name}
             </Link>
           ))}
@@ -149,14 +151,24 @@ export const TopHeader = () => {
             </HeaderDropdown>
           ))}
 
-          <BrandButton
-            variant="secondary"
-            rounded
-            className="min-h-[22px] border px-3 font-bold"
-            size="md"
-            label="Register"
-            onClick={() => navigate("/register")}
-          />
+          {currentUser ? (
+            <button
+              type="button"
+              onClick={() => dispatch(logout())}
+              className="flex items-center gap-1.5 rounded border border-white/40 px-3 py-0.5 text-sm font-semibold text-white hover:bg-white/10 transition"
+            >
+              <LogOut size={14} /> Sign Out
+            </button>
+          ) : (
+            <BrandButton
+              variant="secondary"
+              rounded
+              className="min-h-[22px] border px-3 font-bold"
+              size="md"
+              label="Register"
+              onClick={() => navigate("/register")}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -165,15 +177,13 @@ export const TopHeader = () => {
 
 export const Navbar = ({ icons: propIcons }) => {
   const navigate = useNavigate();
+  const currentUser = useSelector((s) => s.auth.current);
   const displayIcons = propIcons || navData;
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (nextQuery = searchQuery) => {
     const trimmedQuery = nextQuery.trim();
-
-    if (trimmedQuery) {
-      navigate(`/products/search?q=${encodeURIComponent(trimmedQuery)}`);
-    }
+    if (trimmedQuery) navigate(`/search?q=${encodeURIComponent(trimmedQuery)}`);
   };
 
   return (
@@ -210,13 +220,10 @@ export const Navbar = ({ icons: propIcons }) => {
                     src={item.img}
                     alt=""
                     className={`object-contain ${
-                      item.name === "IN"
-                        ? "h-[42px] w-[60px]"
-                        : "h-[28px] w-[28px]"
+                      item.name === "IN" ? "h-[42px] w-[60px]" : "h-[28px] w-[28px]"
                     }`}
                   />
                 </Link>
-
                 {iconIndex < displayIcons.length - 1 && (
                   <div className="h-8 w-[1.5px] bg-gray-200" />
                 )}
@@ -224,14 +231,24 @@ export const Navbar = ({ icons: propIcons }) => {
             ))}
           </div>
 
-          <BrandButton
-            variant="gradient"
-            rounded
-            label="Create Account"
-            size="md"
-            className="h-[48px] whitespace-nowrap px-6 font-medium"
-            onClick={() => navigate("/register")}
-          />
+          {currentUser ? (
+            <Link
+              to="/account/profile"
+              className="flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-200 transition"
+            >
+              <User size={16} />
+              {currentUser.firstName || "Account"}
+            </Link>
+          ) : (
+            <BrandButton
+              variant="gradient"
+              rounded
+              label="Create Account"
+              size="md"
+              className="h-[48px] whitespace-nowrap px-6 font-medium"
+              onClick={() => navigate("/register")}
+            />
+          )}
         </div>
       </div>
     </header>
@@ -239,12 +256,21 @@ export const Navbar = ({ icons: propIcons }) => {
 };
 
 export const CategoryBar = ({ headerData }) => {
-  const categories =
-    headerData ||
-    Object.entries(categoryData).map(([name, img]) => ({
-      name,
-      img,
-    }));
+  const catalogCategories = useSelector((s) =>
+    Array.isArray(s.catalog.list) ? s.catalog.list : [],
+  );
+
+  const categories = headerData
+    ? headerData
+    : catalogCategories.length > 0
+    ? catalogCategories.slice(0, 14).map((cat) => ({
+        name: cat.title || cat.name,
+        img: cat.imageUrl || cat.image,
+        slug: cat.categoryKey || cat.key || buildCategorySlug(cat.title || cat.name),
+      }))
+    : [];
+
+  if (!categories.length) return null;
 
   return (
     <header className="w-full">
@@ -252,13 +278,18 @@ export const CategoryBar = ({ headerData }) => {
         {categories.map((item) => (
           <Link
             key={item.name}
-            to={`/categories/${buildCategorySlug(item.name)}`}
+            to={`/categories/${item.slug || buildCategorySlug(item.name)}`}
             className="group flex min-w-[70px] flex-col items-center lg:min-w-[80px]"
           >
             <div className="mx-auto flex items-center justify-center rounded-full p-1 transition-all group-hover:bg-gray-100">
-              <ImageSkeleton src={item.img} alt={item.name} />
+              {item.img ? (
+                <ImageSkeleton src={item.img} alt={item.name} />
+              ) : (
+                <div className="h-10 w-10 rounded-full bg-stone-100 flex items-center justify-center text-slate-400">
+                  <ShoppingBag size={18} />
+                </div>
+              )}
             </div>
-
             <span className="mt-1 whitespace-nowrap text-center text-[12px] leading-tight text-black lg:text-[14px]">
               {item.name}
             </span>

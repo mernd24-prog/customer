@@ -1,49 +1,159 @@
-import ProductCard from "../../components/product/ProductCard";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
-import { getRecentlyViewed } from "../../utils/recentlyViewed";
-import InfoSection from "../../components/about/InfoSection";
-import { ourMission } from "../../data/aboutUs";
-import ProductDetailPage from "../../components/product/ProductDetail";
-import FAQPage from "../faq/FAQPage";
-
-import HomeShowcaseSections from "../../components/home/HomeShowcaseSections";
+import ProductCard from "../../components/product/ProductCard";
 import MothersDaySwiper from "../../components/home/MothersDayCarousel";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
-import { homeShowcaseSections, mothersDayData } from "../../data/homeSections";
+import InfoSection from "../../components/about/InfoSection";
+import { ourMission } from "../../data/aboutUs";
+import { mothersDayData } from "../../data/homeSections";
 import { useProductActions } from "../../hooks/useProductActions";
 import { getProductId } from "../../utils/ecommerce";
-import PolicyPage from "../../pages/customer/policyPage";
-import { termsOfUseData } from "../../data/termsOfUseData";
-import { refundPolicyData } from "../../data/refundPolicyData";
-import { shippingPolicyData } from "../../data/shippingPolicyData";
-import CartPage from "../cart/CartPage";
+import { getRecentlyViewed } from "../../utils/recentlyViewed";
+import { fetchTrendingProducts, fetchRecommendations } from "../../features/recommendation/recommendationSlice";
+import { fetchCategories } from "../../features/catalog/catalogSlice";
+import { fetchProducts } from "../../features/product/productSlice";
 
 export function HomePage() {
+  const dispatch = useDispatch();
   const recent = getRecentlyViewed();
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
+  const trendingList = useSelector((s) => s.recommendation.list);
+  const trendingLoading = useSelector((s) => s.recommendation.loading);
+  const categoryList = useSelector((s) => s.catalog.list);
+  const productList = useSelector((s) => s.product.list);
+  const productLoading = useSelector((s) => s.product.loading);
+
+  const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
+  const categories = Array.isArray(categoryList) ? categoryList : [];
+  const featuredProducts = Array.isArray(productList) ? productList.slice(0, 8) : [];
+
+  useEffect(() => {
+    dispatch(fetchTrendingProducts({ limit: 8 })).catch(() => {});
+    dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
+    dispatch(fetchCategories({ limit: 20 })).catch(() => {});
+    dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(() => {});
+  }, [dispatch]);
+
   return (
     <>
-      <Seo title="Sam Global | Shop smarter" />
-      {/* About Us Page
-      <OurStory data={ourStoryData} />
-      <ValuesSection data={valueData} />
-      <BrandCarousel />
-      <WhyChooseSection data={whyChooseUsData} /> */}
+      <Seo
+        title="Sam Global | Shop smarter"
+        description="Discover the best deals on fashion, electronics, home and more at Sam Global."
+      />
 
-      {/* Product Detail Page */}
-      <ProductDetailPage />
-      <CartPage/>
-      <HomeShowcaseSections sections={homeShowcaseSections} loading={false} />
-      <InfoSection data={ourMission} />
+      {/* Category Quick Links */}
+      {categories.length > 0 && (
+        <section className="w-container my-8">
+          <h2 className="mb-4 text-center font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
+            Shop by Category
+          </h2>
+          <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+            {categories.slice(0, 12).map((cat) => (
+              <Link
+                key={cat.categoryKey || cat.key || cat.id}
+                to={`/categories/${cat.categoryKey || cat.key}`}
+                className="flex shrink-0 flex-col items-center gap-1.5 rounded-xl border border-stone-200 bg-white px-4 py-3 text-center transition hover:border-slate-400 hover:shadow-sm"
+              >
+                {cat.imageUrl && (
+                  <img src={cat.imageUrl} alt={cat.title} className="h-10 w-10 object-contain" />
+                )}
+                <span className="whitespace-nowrap max-w-[80px] truncate text-xs font-medium text-slate-700">
+                  {cat.title || cat.name}
+                </span>
+              </Link>
+            ))}
+            <Link
+              to="/products"
+              className="flex shrink-0 flex-col items-center gap-1.5 rounded-xl border border-dashed border-stone-300 bg-stone-50 px-4 py-3 text-center transition hover:border-slate-400"
+            >
+              <span className="text-xl font-bold text-slate-400">→</span>
+              <span className="whitespace-nowrap text-xs font-medium text-slate-600">All</span>
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* Trending Now */}
+      {(trendingProducts.length > 0 || trendingLoading) && (
+        <section className="w-container my-8">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">Trending Now</h2>
+            <Link to="/products?sort=rating" className="text-sm font-medium text-[#d4a437] underline-offset-4 hover:underline">
+              See all →
+            </Link>
+          </div>
+          {trendingLoading && !trendingProducts.length ? (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="aspect-[3/4] animate-pulse rounded-2xl bg-stone-100" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {trendingProducts.map((product) => (
+                <ProductCard
+                  key={getProductId(product)}
+                  product={product}
+                  onAddToCart={addToCart}
+                  onWishlist={toggleWishlist}
+                  isWishlisted={isWishlisted(product)}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* New Arrivals */}
+      {(featuredProducts.length > 0 || productLoading) && (
+        <section className="w-container my-8">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">New Arrivals</h2>
+            <Link to="/products?sort=newest" className="text-sm font-medium text-[#d4a437] underline-offset-4 hover:underline">
+              View all →
+            </Link>
+          </div>
+          {productLoading && !featuredProducts.length ? (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="aspect-[3/4] animate-pulse rounded-2xl bg-stone-100" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {featuredProducts.map((product) => (
+                <ProductCard
+                  key={getProductId(product)}
+                  product={product}
+                  onAddToCart={addToCart}
+                  onWishlist={toggleWishlist}
+                  isWishlisted={isWishlisted(product)}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Seasonal swiper */}
       <MothersDaySwiper data={mothersDayData} />
-      <HomeProductsForYouSection loading={false} />
-      <FAQPage />
 
+      {/* Products For You + Our Commitment */}
+      <div className="w-container">
+        <HomeProductsForYouSection />
+      </div>
+
+      {/* Our Mission */}
+      <InfoSection data={ourMission} />
+
+      {/* Recently Viewed */}
       {recent.length > 0 && (
-        <>
-          <h2>Recently viewed</h2>
-          <div className="grid">
+        <section className="w-container my-8">
+          <h2 className="mb-4 font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">Recently Viewed</h2>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {recent.map((product) => (
               <ProductCard
                 key={getProductId(product)}
@@ -54,7 +164,7 @@ export function HomePage() {
               />
             ))}
           </div>
-        </>
+        </section>
       )}
     </>
   );

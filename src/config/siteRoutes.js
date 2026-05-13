@@ -14,7 +14,7 @@ export const SITE_ROUTES = [
     priority: 0.9,
   },
   {
-    path: "/products/search",
+    path: "/search",
     title: "Search Products",
     description: "Search products across Sam Global categories.",
     changefreq: "daily",

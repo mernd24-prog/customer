@@ -24,20 +24,29 @@ export const userThunks = {
   fetchMe: makeThunk("user/fetchMe", { url: endpoints.users.me }),
   updateMe: makeThunk("user/updateMe", { method: "patch", url: endpoints.users.me, data: body }),
   addAddress: makeThunk("user/addAddress", { method: "post", url: endpoints.users.addresses, data: body }),
-  updateAddress: makeThunk("user/updateAddress", { method: "patch", url: ({ addressId }) => endpoints.users.address(addressId), data: body }),
+  updateAddress: makeThunk("user/updateAddress", { method: "patch", url: ({ addressId, ...rest }) => endpoints.users.address(addressId), data: body }),
   deleteAddress: makeThunk("user/deleteAddress", { method: "delete", url: ({ addressId }) => endpoints.users.address(addressId) }),
-  submitUserKyc: makeThunk("user/submitUserKyc", { method: "post", url: endpoints.users.kyc, data: body })
+  submitUserKyc: makeThunk("user/submitUserKyc", { method: "post", url: endpoints.users.kyc, data: body }),
+  uploadKycDocuments: makeThunk("user/uploadKycDocuments", { method: "post", url: endpoints.users.kycDocuments, data: body })
 };
 
 export const catalogThunks = {
-  fetchCategories: makeThunk("catalog/fetchCategories", { url: endpoints.platform.categories, params: q }),
+  fetchCategories: makeThunk("catalog/fetchCategories", { url: endpoints.platform.categories, params: q, cache: true, cacheTtl: 300000 }),
   fetchCategoryByKey: makeThunk("catalog/fetchCategoryByKey", { url: ({ categoryKey }) => endpoints.platform.category(categoryKey) }),
+  fetchCategoryAttributes: makeThunk("catalog/fetchCategoryAttributes", { url: ({ categoryKey }) => endpoints.platform.categoryAttributes(categoryKey) }),
   fetchFamilies: makeThunk("catalog/fetchFamilies", { url: endpoints.platform.families, params: q }),
   fetchFamilyByCode: makeThunk("catalog/fetchFamilyByCode", { url: ({ familyCode }) => endpoints.platform.family(familyCode) }),
   fetchVariants: makeThunk("catalog/fetchVariants", { url: endpoints.platform.variants, params: q }),
   fetchVariantById: makeThunk("catalog/fetchVariantById", { url: ({ variantId }) => endpoints.platform.variant(variantId) }),
   fetchHsnCodes: makeThunk("catalog/fetchHsnCodes", { url: endpoints.platform.hsnCodes, params: q }),
-  fetchGeographies: makeThunk("catalog/fetchGeographies", { url: endpoints.platform.geographies, params: q })
+  fetchGeographies: makeThunk("catalog/fetchGeographies", { url: endpoints.platform.geographies, params: q }),
+  fetchBrands: makeThunk("catalog/fetchBrands", { url: endpoints.platform.brands, params: q, cache: true, cacheTtl: 300000 }),
+  fetchBrandById: makeThunk("catalog/fetchBrandById", { url: ({ brandId }) => endpoints.platform.brand(brandId) })
+};
+
+export const searchThunks = {
+  searchElastic: makeThunk("search/searchElastic", { url: endpoints.search.main, params: q }),
+  searchAutocomplete: makeThunk("search/searchAutocomplete", { url: endpoints.search.autocomplete, params: q })
 };
 
 export const productThunks = {

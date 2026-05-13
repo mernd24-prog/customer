@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import auth from "../features/auth/authSlice";
+import search from "../features/search/searchSlice";
 import user from "../features/user/userSlice";
 import catalog from "../features/catalog/catalogSlice";
 import product from "../features/product/productSlice";
@@ -30,6 +31,7 @@ import fraud from "../features/fraud/fraudSlice";
 export const store = configureStore({
   reducer: {
     auth,
+    search,
     user,
     catalog,
     product,

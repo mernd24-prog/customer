@@ -67,5 +67,6 @@ export const {
   changePassword,
   checkAuthStatus
 } = authThunks;
+
 export const { logout, clearError, resetState } = authSlice.actions;
 export default authSlice.reducer;
