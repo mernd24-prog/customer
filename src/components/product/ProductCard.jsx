@@ -19,18 +19,24 @@ export default function ProductCard({
   const title = getProductTitle(product);
 
   return (
-    <article className="product-card">
+    <article className="product-card ">
       <Link to={`/products/${id}`} className="product-media" aria-label={title}>
-        {image ? <img src={image} alt={title} /> : <span>No image</span>}
+        {image ? (
+          <img src={image} alt={title} />
+        ) : (
+          <div className="flex h-full  w-full items-center justify-center bg-stone-50 text-stone-300">
+            <ShoppingCart size={48} strokeWidth={1} />
+          </div>
+        )}
       </Link>
-      <div className="product-body">
+      <div className="product-body ">
         <Link to={`/products/${id}`} className="product-title">
           {title}
         </Link>
         <p>{product?.category || product?.brand || "Catalog item"}</p>
         <strong>{formatMoney(product?.price, product?.currency)}</strong>
       </div>
-      <div className="icon-row">
+      <div className="icon-row ">
         <button
           type="button"
           className="icon-button"
