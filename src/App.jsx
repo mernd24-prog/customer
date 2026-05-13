@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AppLayout from "./layouts/AppLayout";
 import {
+  AdminOnlyRoute,
   BuyerOnlyRoute,
   GuestRoute,
   ProtectedRoute,
   SellerOnlyRoute,
 } from "./routing/RouteGuards";
 import { checkAuthStatus, logout } from "./features/auth/authSlice";
+import { fetchCart } from "./features/cart/cartSlice";
 import { AUTH_ROUTES } from "./features/auth/authRoutes";
 import { tokenStorage } from "./api/tokenStorage";
 
@@ -82,6 +84,10 @@ import { shippingPolicyData } from "./data/shippingPolicyData";
 import { refundPolicyData } from "./data/refundPolicyData";
 import ScrollToTop from "./components/common/scrollToTop";
 import WatchlistPage from "./pages/customer/WatchlistPage";
+import AdminProductManagementPage from "./pages/admin/AdminProductManagementPage";
+import AdminBrandManagementPage from "./pages/admin/AdminBrandManagementPage";
+import AdminCatalogManagementPage from "./pages/admin/AdminCatalogManagementPage";
+import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -106,6 +112,11 @@ export default function App() {
       .unwrap()
       .catch(() => dispatch(logout()))
       .finally(() => setSessionReady(true));
+  }, [currentUser, dispatch]);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    dispatch(fetchCart()).catch(() => {});
   }, [currentUser, dispatch]);
 
   if (!sessionReady) {
@@ -241,6 +252,13 @@ export default function App() {
               <Route path="/seller/status" element={<SellerStatusPage />} />
               <Route path="/seller/tracking" element={<SellerTrackingPage />} />
               <Route path="/seller/tracking/:orderId" element={<SellerTrackingDetailPage />} />
+            </Route>
+
+            <Route element={<AdminOnlyRoute />}>
+              <Route path="/admin/products" element={<AdminProductManagementPage />} />
+              <Route path="/admin/catalog" element={<AdminCatalogManagementPage />} />
+              <Route path="/admin/brands" element={<AdminBrandManagementPage />} />
+              <Route path="/admin/rbac" element={<AdminRbacManagementPage />} />
             </Route>
           </Route>
 

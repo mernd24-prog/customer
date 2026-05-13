@@ -208,6 +208,8 @@ export const endpoints = {
     vendors: `${API_PREFIX}/admin/vendors`,
     vendorStatus: (sellerId) => `${API_PREFIX}/admin/vendors/${sellerId}/status`,
     productsModerationQueue: `${API_PREFIX}/admin/products/moderation-queue`,
+    products: `${API_PREFIX}/admin/products`,
+    product: (productId) => `${API_PREFIX}/admin/products/${productId}`,
     moderateProduct: (productId) => `${API_PREFIX}/admin/products/${productId}/moderate`,
     orders: `${API_PREFIX}/admin/orders`,
     payments: `${API_PREFIX}/admin/payments`,
@@ -250,6 +252,8 @@ export const endpoints = {
     platformGeography: `${API_PREFIX}/admin/platform/geography`,
     platformGeographyDetail: (countryCode) => `${API_PREFIX}/admin/platform/geography/${countryCode}`,
     platformContentPages: `${API_PREFIX}/admin/platform/content-pages`,
-    platformContentPage: (slug) => `${API_PREFIX}/admin/platform/content-pages/${slug}`
+    platformContentPage: (slug) => `${API_PREFIX}/admin/platform/content-pages/${slug}`,
+    platformBrands: `${API_PREFIX}/admin/platform/brands`,
+    platformBrand: (brandId) => `${API_PREFIX}/admin/platform/brands/${brandId}`
   }
 };

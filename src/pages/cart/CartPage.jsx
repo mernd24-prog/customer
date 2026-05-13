@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ShoppingCart } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import PageHeader from "../../components/common/PageHeader";
@@ -10,7 +9,14 @@ import CartSummary from "../../components/cart/CartSummary";
 import BrandButton from "../../components/ui/BrandButton";
 import { fetchCart, updateCart } from "../../features/cart/cartSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { getProductId, getProductImage, getProductTitle, formatMoney } from "../../utils/ecommerce";
+import {
+  getProductId,
+  getProductImage,
+  getProductTitle,
+  addProductToCartPayload,
+  normalizeCartPayloadForWrite,
+  wishlistPayload,
+} from "../../utils/ecommerce";
 
 function adaptItemForCard(item) {
   const product = item.product || {};
@@ -62,7 +68,7 @@ export default function CartPage() {
       const cid = ci.productId || getProductId(ci.product);
       return cid === id ? { ...ci, quantity: (ci.quantity || 1) + 1 } : ci;
     });
-    run(dispatch, updateCart({ items: updated, wishlist: cart.wishlist || [] }), "Cart updated");
+    run(dispatch, updateCart(normalizeCartPayloadForWrite({ items: updated, wishlist: cart.wishlist || [] })), "Cart updated");
   };
 
   const handleDecrease = (id) => {
@@ -74,7 +80,11 @@ export default function CartPage() {
         return newQty <= 0 ? null : { ...ci, quantity: newQty };
       })
       .filter(Boolean);
-    run(dispatch, updateCart({ items: updated, wishlist: cart.wishlist || [] }), updated.length < rawItems.length ? "Item removed" : "Cart updated");
+    run(
+      dispatch,
+      updateCart(normalizeCartPayloadForWrite({ items: updated, wishlist: cart.wishlist || [] })),
+      updated.length < rawItems.length ? "Item removed" : "Cart updated",
+    );
   };
 
   return (
@@ -115,9 +125,14 @@ export default function CartPage() {
                       Saved for later ({cart.wishlist.length})
                     </h3>
                     <div className="grid gap-3">
-                      {cart.wishlist.map((productId) => (
-                        <div key={productId} className="flex items-center justify-between gap-3 rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3">
-                          <span className="truncate font-montserrat text-sm text-[#787878]">{productId}</span>
+                      {cart.wishlist.map((wishlistProduct) => {
+                        const wishlistId = getProductId(wishlistProduct);
+                        const wishlistTitle = typeof wishlistProduct === "object"
+                          ? getProductTitle(wishlistProduct, wishlistId)
+                          : wishlistId;
+                        return (
+                        <div key={wishlistId} className="flex items-center justify-between gap-3 rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3">
+                          <span className="truncate font-montserrat text-sm text-[#787878]">{wishlistTitle}</span>
                           <BrandButton
                             variant="secondary"
                             rounded
@@ -125,13 +140,13 @@ export default function CartPage() {
                             label="Move to cart"
                             className="shrink-0 h-8 px-3 text-xs"
                             onClick={() => {
-                              const newItems = [...rawItems, { productId, quantity: 1 }];
-                              const newWishlist = cart.wishlist.filter((id) => id !== productId);
-                              run(dispatch, updateCart({ items: newItems, wishlist: newWishlist }), "Moved to cart");
+                              const payload = addProductToCartPayload(cart, wishlistProduct, 1);
+                              const newWishlistPayload = wishlistPayload(payload, wishlistProduct, true);
+                              run(dispatch, updateCart(newWishlistPayload), "Moved to cart");
                             }}
                           />
                         </div>
-                      ))}
+                      )})}
                     </div>
                   </div>
                 )}

@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { getRole, isSellerRole } from "../utils/roles";
+import { getRole, isAdminRole, isSellerRole } from "../utils/roles";
 
 export function ProtectedRoute() {
   const user = useSelector((state) => state.auth.current);
@@ -21,4 +21,9 @@ export function BuyerOnlyRoute() {
 export function SellerOnlyRoute() {
   const role = getRole(useSelector((state) => state.auth.current));
   return isSellerRole(role) ? <Outlet /> : <Navigate to="/" replace />;
+}
+
+export function AdminOnlyRoute() {
+  const role = getRole(useSelector((state) => state.auth.current));
+  return isAdminRole(role) ? <Outlet /> : <Navigate to="/" replace />;
 }

@@ -30,6 +30,7 @@ import {
 import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import { logout } from "../../features/auth/authSlice";
+import { getRole, isAdminRole } from "../../utils/roles";
 
 const buildCategorySlug = (name) => name.toLowerCase().replace(/\s+/g, "-");
 
@@ -43,7 +44,7 @@ const dropdownIconMap = {
   user: User,
 };
 
-const accountMenuItems = [
+const baseAccountMenuItems = [
   { label: "My Profile", path: "/account/profile", icon: "user" },
   { label: "My Orders", path: "/orders", icon: "shoppingBag" },
   { label: "Wallet", path: "/wallet", icon: "lock" },
@@ -62,6 +63,7 @@ export const TopHeader = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentUser = useSelector((s) => s.auth.current);
+  const currentRole = getRole(currentUser);
 
   const { removeFromWishlist } = useProductActions();
   const { products: wishlistedProducts, hideFallbackProduct, isUsingFallback } =
@@ -102,11 +104,21 @@ export const TopHeader = () => {
             path: "/account/profile",
             icon: <User size={16} />,
             title: "My Account",
-            items: withIcons(accountMenuItems),
+            items: withIcons([
+              ...baseAccountMenuItems,
+              ...(isAdminRole(currentRole)
+                ? [
+                    { label: "Admin Products", path: "/admin/products", icon: "settings" },
+                    { label: "Admin Catalog", path: "/admin/catalog", icon: "settings" },
+                    { label: "Admin Brands", path: "/admin/brands", icon: "settings" },
+                    { label: "Admin RBAC", path: "/admin/rbac", icon: "settings" },
+                  ]
+                : []),
+            ]),
           }]
         : []),
     ],
-    [handleRemoveWatchlist, wishlistedProducts, currentUser],
+    [handleRemoveWatchlist, wishlistedProducts, currentUser, currentRole],
   );
 
   const renderDropdown = (dropdown) => {

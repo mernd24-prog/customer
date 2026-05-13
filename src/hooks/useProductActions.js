@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { updateCart } from "../features/cart/cartSlice";
+import { openAddedToCartModal } from "../features/cart/cartUiSlice";
 import {
   addProductToCartPayload,
   getProductId,
@@ -13,22 +14,24 @@ export function useProductActions() {
   const dispatch = useDispatch();
   const run = useToastThunk();
   const cart = useSelector((state) => state.cart.current);
-  const wishlistIds = useSelector((state) => state.cart.current?.wishlist || []);
+  const wishlistIds = useSelector((state) =>
+    (state.cart.current?.wishlist || []).map((item) => getProductId(item)),
+  );
 
   const isWishlisted = useCallback(
     (product) => wishlistIds.includes(getProductId(product)),
     [wishlistIds],
   );
 
-  const addToCart = useCallback(
-    (product, quantity = 1) =>
-      run(
-        dispatch,
-        updateCart(addProductToCartPayload(cart, product, quantity)),
-        "Added to cart",
-      ),
-    [cart, dispatch, run],
-  );
+  const addToCart = useCallback(async (product, quantity = 1) => {
+    const result = await run(
+      dispatch,
+      updateCart(addProductToCartPayload(cart, product, quantity)),
+      "Added to cart",
+    );
+    dispatch(openAddedToCartModal({ product }));
+    return result;
+  }, [cart, dispatch, run]);
 
   const toggleWishlist = useCallback(
     (product) => {

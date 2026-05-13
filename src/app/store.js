@@ -5,6 +5,7 @@ import user from "../features/user/userSlice";
 import catalog from "../features/catalog/catalogSlice";
 import product from "../features/product/productSlice";
 import cart from "../features/cart/cartSlice";
+import cartUi from "../features/cart/cartUiSlice";
 import checkout from "../features/checkout/checkoutSlice";
 import order from "../features/order/orderSlice";
 import payment from "../features/payment/paymentSlice";
@@ -36,6 +37,7 @@ export const store = configureStore({
     catalog,
     product,
     cart,
+    cartUi,
     checkout,
     order,
     payment,
