@@ -35,11 +35,11 @@ export default function AdminRbacManagementPage() {
   const [roleId, setRoleId] = useState("");
   const [permissionId, setPermissionId] = useState("");
 
-  const permissions = useMemo(() => rbacState.list || [], [rbacState.list]);
-  const modules = useMemo(() => rbacState.current?.modules || [], [rbacState.current]);
+  const permissions = useMemo(() => rbacState.list || [], [rbacState]);
+  const modules = useMemo(() => rbacState.current?.modules || [], [rbacState]);
   const roles = useMemo(
     () => (Array.isArray(rbacState.current?.items) ? rbacState.current.items : rbacState.list || []),
-    [rbacState.current, rbacState.list],
+    [rbacState],
   );
 
   useEffect(() => {

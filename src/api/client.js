@@ -2,10 +2,17 @@ import axios from "axios";
 import { endpoints } from "./endpoints";
 import { normalizeApiError, normalizeApiResponse } from "./normalizeApiError";
 import { tokenStorage } from "./tokenStorage";
-import { createCacheKey, getCache, removeCache, setCache } from "../utils/cache";
+import {
+  createCacheKey,
+  getCache,
+  removeCache,
+  setCache,
+} from "../utils/cache";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000",
+  // baseURL: "http://localhost:4000",
+  baseURL: "http://192.168.16.47:4000",
+
   headers: { "Content-Type": "application/json" },
 });
 
@@ -44,7 +51,7 @@ api.interceptors.response.use(
             `${import.meta.env.VITE_API_BASE_URL || ""}${
               endpoints.auth.refresh
             }`,
-            { refreshToken }
+            { refreshToken },
           )
           .then((response) => normalizeApiResponse(response).data);
       const session = await refreshPromise;
@@ -59,7 +66,7 @@ api.interceptors.response.use(
       window.dispatchEvent(new CustomEvent("auth:logout"));
       return Promise.reject(refreshError);
     }
-  }
+  },
 );
 
 export async function apiRequest({

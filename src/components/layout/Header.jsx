@@ -19,14 +19,8 @@ import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
 import SellDropdown from "./header/SellDropdown";
 import WatchlistDropdown from "./header/WatchlistDropdown";
-import {
-  icons,
-  navbarIcons as navData,
-} from "../../constant/image.constant";
-import {
-  sellDropdownData,
-  topNavLinks,
-} from "../../data/header";
+import { icons, navbarIcons as navData } from "../../constant/image.constant";
+import { sellDropdownData, topNavLinks } from "../../data/header";
 import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import { logout } from "../../features/auth/authSlice";
@@ -66,12 +60,18 @@ export const TopHeader = () => {
   const currentRole = getRole(currentUser);
 
   const { removeFromWishlist } = useProductActions();
-  const { products: wishlistedProducts, hideFallbackProduct, isUsingFallback } =
-    useWatchlistProducts();
+  const {
+    products: wishlistedProducts,
+    hideFallbackProduct,
+    isUsingFallback,
+  } = useWatchlistProducts();
 
   const handleRemoveWatchlist = useCallback(
     (product) => {
-      if (isUsingFallback) { hideFallbackProduct(product); return; }
+      if (isUsingFallback) {
+        hideFallbackProduct(product);
+        return;
+      }
       removeFromWishlist(product);
     },
     [hideFallbackProduct, isUsingFallback, removeFromWishlist],
@@ -145,7 +145,11 @@ export const TopHeader = () => {
       <div className="w-container flex h-full items-center">
         <div className="flex flex-1 items-center gap-14 text-white">
           {topNavLinks.map((link) => (
-            <Link key={link.name} to={link.path} className="text-white transition-opacity hover:opacity-70">
+            <Link
+              key={link.name}
+              to={link.path}
+              className="text-white transition-opacity hover:opacity-70"
+            >
               {link.name}
             </Link>
           ))}
@@ -232,7 +236,9 @@ export const Navbar = ({ icons: propIcons }) => {
                     src={item.img}
                     alt=""
                     className={`object-contain ${
-                      item.name === "IN" ? "h-[42px] w-[60px]" : "h-[28px] w-[28px]"
+                      item.name === "IN"
+                        ? "h-[42px] w-[60px]"
+                        : "h-[28px] w-[28px]"
                     }`}
                   />
                 </Link>
@@ -275,34 +281,37 @@ export const CategoryBar = ({ headerData }) => {
   const categories = headerData
     ? headerData
     : catalogCategories.length > 0
-    ? catalogCategories.slice(0, 14).map((cat) => ({
-        name: cat.title || cat.name,
-        img: cat.imageUrl || cat.image,
-        slug: cat.categoryKey || cat.key || buildCategorySlug(cat.title || cat.name),
-      }))
-    : [];
+      ? catalogCategories.slice(0, 14).map((cat) => ({
+          name: cat.title || cat.name,
+          img: cat.imageUrl || cat.image,
+          slug:
+            cat.categoryKey ||
+            cat.key ||
+            buildCategorySlug(cat.title || cat.name),
+        }))
+      : [];
 
   if (!categories.length) return null;
 
   return (
     <header className="w-full">
-      <div className="w-container hide-scrollbar flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-10">
+      <div className="w-container  hide-scrollbar  flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
         {categories.map((item) => (
           <Link
             key={item.name}
             to={`/categories/${item.slug || buildCategorySlug(item.name)}`}
-            className="group flex min-w-[70px] flex-col items-center lg:min-w-[80px]"
+            className="group flex min-w-[70px]  flex-col items-center lg:min-w-[80px]"
           >
-            <div className="mx-auto flex items-center justify-center rounded-full p-1 transition-all group-hover:bg-gray-100">
+            <div className="mx-auto  flex items-center justify-center rounded-full p-1 transition-all group-hover:bg-gray-100">
               {item.img ? (
                 <ImageSkeleton src={item.img} alt={item.name} />
               ) : (
-                <div className="h-10 w-10 rounded-full bg-stone-100 flex items-center justify-center text-slate-400">
+                <div className="h-10 w-10  rounded-full bg-stone-100 flex items-center justify-center text-slate-400">
                   <ShoppingBag size={18} />
                 </div>
               )}
             </div>
-            <span className="mt-1 whitespace-nowrap text-center text-[12px] leading-tight text-black lg:text-[14px]">
+            <span className="mt-1 line-clamp-1   w-full max-w-[80px] text-center text-[12px] leading-tight text-black lg:max-w-[100px] lg:text-[14px]">
               {item.name}
             </span>
           </Link>

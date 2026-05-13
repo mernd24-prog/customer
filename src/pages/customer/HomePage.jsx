@@ -6,12 +6,20 @@ import ProductCard from "../../components/product/ProductCard";
 import MothersDaySwiper from "../../components/home/MothersDayCarousel";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
 import InfoSection from "../../components/about/InfoSection";
-import { ourMission, ourStoryData, valueData, whyChooseUsData } from "../../data/aboutUs";
+import {
+  ourMission,
+  ourStoryData,
+  valueData,
+  whyChooseUsData,
+} from "../../data/aboutUs";
 import { mothersDayData } from "../../data/homeSections";
 import { useProductActions } from "../../hooks/useProductActions";
 import { getProductId } from "../../utils/ecommerce";
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
-import { fetchTrendingProducts, fetchRecommendations } from "../../features/recommendation/recommendationSlice";
+import {
+  fetchTrendingProducts,
+  fetchRecommendations,
+} from "../../features/recommendation/recommendationSlice";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { fetchProducts } from "../../features/product/productSlice";
 import BrandCarousel from "../../components/about/BrandCarousel";
@@ -33,13 +41,17 @@ export function HomePage() {
 
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
   const categories = Array.isArray(categoryList) ? categoryList : [];
-  const featuredProducts = Array.isArray(productList) ? productList.slice(0, 8) : [];
+  const featuredProducts = Array.isArray(productList)
+    ? productList.slice(0, 8)
+    : [];
 
   useEffect(() => {
-    dispatch(fetchTrendingProducts({ limit: 8 })).catch(() => { });
-    dispatch(fetchRecommendations({ limit: 8 })).catch(() => { });
-    dispatch(fetchCategories({ limit: 20 })).catch(() => { });
-    dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(() => { });
+    dispatch(fetchTrendingProducts({ limit: 8 })).catch(() => {});
+    dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
+    dispatch(fetchCategories({ limit: 20 })).catch(() => {});
+    dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(
+      () => {},
+    );
   }, [dispatch]);
 
   return (
@@ -50,7 +62,7 @@ export function HomePage() {
       />
 
       {/* Category Quick Links */}
-      {categories.length > 0 && (
+      {/* {categories.length > 0 && (
         <section className="w-container my-8">
           <h2 className="mb-4 text-center font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
             Shop by Category
@@ -79,25 +91,33 @@ export function HomePage() {
             </Link>
           </div>
         </section>
-      )}
+      )} */}
 
       {/* Trending Now */}
       {(trendingProducts.length > 0 || trendingLoading) && (
         <section className="w-container my-8">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">Trending Now</h2>
-            <Link to="/products?sort=rating" className="font-montserrat text-sm font-medium text-[#CE9F2D] underline-offset-4 hover:underline">
+            <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
+              Trending Now
+            </h2>
+            <Link
+              to="/products?sort=rating"
+              className="font-montserrat text-sm font-medium text-[#CE9F2D] underline-offset-4 hover:underline"
+            >
               See all →
             </Link>
           </div>
           {trendingLoading && !trendingProducts.length ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="aspect-[3/4] animate-pulse rounded-[12px] bg-[#F5ECDD]" />
+                <div
+                  key={i}
+                  className="aspect-[3/4] animate-pulse rounded-[12px] bg-[#F5ECDD]"
+                />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid  grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {trendingProducts.map((product) => (
                 <ProductCard
                   key={getProductId(product)}
@@ -114,21 +134,29 @@ export function HomePage() {
 
       {/* New Arrivals */}
       {(featuredProducts.length > 0 || productLoading) && (
-        <section className="w-container my-8">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">New Arrivals</h2>
-            <Link to="/products?sort=newest" className="font-montserrat text-sm font-medium text-[#CE9F2D] underline-offset-4 hover:underline">
+        <section className="my-8">
+          <div className="my-6 flex items-center justify-between">
+            <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
+              New Arrivals
+            </h2>
+            <Link
+              to="/products?sort=newest"
+              className="font-montserrat text-lg font-medium text-black "
+            >
               View all →
             </Link>
           </div>
           {productLoading && !featuredProducts.length ? (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid  grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 ">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="aspect-[3/4] animate-pulse rounded-[12px] bg-[#F5ECDD]" />
+                <div
+                  key={i}
+                  className="aspect-[3/4]   animate-pulse rounded-[12px] bg-[#F5ECDD]"
+                />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {featuredProducts.map((product) => (
                 <ProductCard
                   key={getProductId(product)}
@@ -157,8 +185,10 @@ export function HomePage() {
       {/* Recently Viewed */}
       {recent.length > 0 && (
         <section className="w-container my-8">
-          <h2 className="mb-4 font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">Recently Viewed</h2>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <h2 className="mb-4 font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
+            Recently Viewed
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {recent.map((product) => (
               <ProductCard
                 key={getProductId(product)}
@@ -175,8 +205,7 @@ export function HomePage() {
       <ValuesSection data={valueData} />
       <BrandCarousel />
       <WhyChooseSection data={whyChooseUsData} />
-       <FAQPage />
-
+      <FAQPage />
     </>
   );
 }
