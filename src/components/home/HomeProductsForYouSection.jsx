@@ -5,39 +5,54 @@ import { helpSupportData } from "../../data/helpSupport";
 import CommitmentCard from "../ui/CommitmentCard";
 import { aboutSectionImages } from "../../constant/image.constant";
 
-export default function HomeProductsForYouSection({ loading = false }) {
-  const list = loading ? Array.from({ length: 12 }) : productsForYou;
+export default function HomeProductsForYouSection({
+  loading = false,
+}) {
+  const list = loading
+    ? Array.from({ length: 12 })
+    : productsForYou;
 
   return (
     <>
-      <section className="mt-8 rounded-[10px]  bg-[#F7F6F500] p-5 sm:p-4 lg:p-6">
-        <h2 className="text-center font-montserrat text-[16px] font-semibold text-[#2E2E2E] sm:text-[18px]">
+      {/* Products Section */}
+      <section className="mt-6 rounded-[12px] bg-[#F7F6F500] px-3 py-4 sm:mt-8 sm:px-4 sm:py-5 lg:px-6 lg:py-6">
+        
+        {/* Heading */}
+        <h2 className="text-center font-montserrat text-[18px] font-semibold text-[#2E2E2E] sm:text-[20px] md:text-[22px] lg:text-[24px]">
           Products For You
         </h2>
-        <div className="mt-4 grid grid-cols-2 gap-4 sm:gap-4  md:grid-cols-3 lg:grid-cols-4">
+
+        {/* Products Grid */}
+        <div className="mt-5 grid grid-cols-1 gap-4 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:gap-5">
           {loading
             ? list.map((_, index) => (
-                <ProductsForYouCard key={`skeleton-${index}`} loading />
+                <ProductsForYouCard
+                  key={`skeleton-${index}`}
+                  loading
+                />
               ))
             : list.map((item) => (
                 <ProductsForYouCard
                   key={item.id}
                   {...item}
-                  variant="list"
+                  variant=""
                   link={`/product/${item.id}`}
                 />
               ))}
         </div>
       </section>
 
-      <section className="mt-8 bg-transparent px-4 py-6 lg:px-6">
+      {/* Commitment Section */}
+      <section className="mt-8 px-3 py-5 sm:px-4 sm:py-6 lg:mt-10 lg:px-6 lg:py-8">
+        
         {/* Heading */}
-        <h2 className="mb-8 text-center font-montserrat text-[28px] font-bold leading-[40px] text-[#2E2E2E] sm:text-[29px] ">
+        <h2 className="mb-6 text-center font-montserrat text-[22px] font-bold leading-tight text-[#2E2E2E] sm:text-[26px] md:text-[30px] lg:mb-8 lg:text-[34px]">
           Our Commitment
         </h2>
 
-        {/* Cards Container */}
-        <div className="grid grid-cols-1 md:grid-cols-2 ">
+        {/* Cards */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
+          
           {/* Customer Card */}
           <CommitmentCard
             title="To our customers, we promise:"
@@ -66,7 +81,8 @@ export default function HomeProductsForYouSection({ loading = false }) {
         </div>
       </section>
 
-      <section>
+      {/* Support Section */}
+      <section className="px-3 pb-6 sm:px-4 lg:px-6 lg:pb-10">
         <SupportFeatureSection
           title="How Can We Help You?"
           subtitle="From product questions to partnership opportunities, our team is here to support you every step."
@@ -77,5 +93,3 @@ export default function HomeProductsForYouSection({ loading = false }) {
     </>
   );
 }
-
-//
