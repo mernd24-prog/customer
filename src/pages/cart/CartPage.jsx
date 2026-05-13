@@ -13,8 +13,8 @@ import { useToastThunk } from "../../hooks/useToastThunk";
 import { getProductId, getProductImage, getProductTitle, formatMoney } from "../../utils/ecommerce";
 
 function adaptItemForCard(item) {
-  const product = item.product || {};
-  const productId = item.productId || getProductId(product);
+  const product = item.productId || {};
+  const productId = item.productId?._id || getProductId(product);
   const title = item.title || getProductTitle(product) || "Product";
   const image = item.image || getProductImage(product);
   const price = item.price ?? product.price ?? product.sellingPrice ?? 0;
@@ -81,7 +81,7 @@ export default function CartPage() {
     <>
       <Seo title="Cart | Sam Global" description="Review items in your shopping cart." />
 
-      <section className="bg-white px-4 py-6 sm:px-6 sm:py-8 lg:px-12 lg:py-10">
+      <section className=" bg-white px-4 py-6 sm:px-6 sm:py-8 lg:px-12 lg:py-10">
         <div className="mx-auto max-w-[1400px]">
           <PageHeader
             title={`Cart${items.length > 0 ? ` (${items.length})` : ""}`}
@@ -96,7 +96,7 @@ export default function CartPage() {
             emptyText="Add some products to continue shopping."
             onRetry={() => dispatch(fetchCart())}
           >
-            <div className="grid grid-cols-1 items-start gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_420px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_420px]">
               {/* Items */}
               <div className="space-y-6">
                 {items.map((item) => (
