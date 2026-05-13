@@ -15,48 +15,39 @@ export default function NewArrivalCard({
     const badgeText = badge ?? currentMonth;
 
     return (
-        <Link to ={link} className="block">
-        <article
-            className="relative h-full min-w-0 rounded-[12px] bg-white px-3 pb-4 pt-4 shadow-sm transition hover:shadow-lg sm:px-4 sm:pb-5 sm:pt-5"
-        >
-            {badgeText && (
-                <div className="absolute left-[-8px] top-4 h-[34px] w-[94px] overflow-hidden rounded-l-full sm:left-[-10px] sm:top-[18px] sm:h-[37px] sm:w-[102px]">
-                    {/* <img
-                        src="image/png/image.png"
-                        alt=""
-                        className="h-full w-full object-fill"
-                    /> */}
-                    <span className="absolute inset-x-0 top-0 flex h-[28px] items-center justify-center pl-3 pr-4 font-montserrat text-[13px] font-bold leading-none text-white sm:h-[30px] sm:pl-3 sm:pr-5 sm:text-[15px]">
-                        {badgeText}
-                    </span>
-                </div>
-            )}
-
-            <h3
-                className="mx-auto h-[32px] max-w-full overflow-hidden text-ellipsis whitespace-nowrap pl-[66px] pr-2 text-center font-montserrat text-[14px] font-medium leading-[32px] text-[#2E2E2E] sm:h-[34px] sm:pl-[84px] sm:text-[16px] sm:leading-[34px] lg:text-[17px] xl:text-[18px]"
-                title={title}
+        <Link to={link} className="block">
+            <article
+                className="relative h-full min-w-0 rounded-[12px] bg-white px-3 pb-4 pt-4 shadow-sm transition hover:shadow-lg sm:px-4 sm:pb-5 sm:pt-5"
             >
-                {title}
-            </h3>
+                <h3
+                    className="mx-auto w-full max-w-[90%] overflow-hidden text-ellipsis whitespace-nowrap text-center font-montserrat text-[13px] font-medium leading-6 text-[#2E2E2E] sm:text-[15px] md:text-[16px] lg:text-[17px] xl:text-[18px]"
+                    title={title}
+                >
+                    {title}
+                </h3>
 
-            <p className="mt-3 font-montserrat text-[14px] font-medium leading-[24px] text-[#A6A6A6] sm:text-[15px] lg:text-[16px]">
-                {views} Views
-            </p>
+                <p className="mt-3 font-montserrat text-[14px] font-medium leading-[24px] text-[#A6A6A6] sm:text-[15px] lg:text-[16px]">
+                    {views} Views
+                </p>
 
-            <div className="mt-2 grid grid-cols-2 gap-3">
-                {displayImages.map((img, index) => (
-                    <div key={`${img}-${index}`} className="min-w-0">
-                        <img
-                            src={img}
-                            alt={title}
-                            className="aspect-[238/273] w-full rounded-[10px] object-cover"
-                        />
+                <div className="mt-3 flex gap-2 sm:gap-3 md:gap-4">
+                    {displayImages.map((img, index) => (
+                        <div key={`${img}-${index}`} className="flex-1 min-w-0">
+                            <img
+                                src={img}
+                                alt={title}
+                                className="aspect-[238/273] w-full rounded-[8px] object-cover sm:rounded-[10px] md:rounded-[12px]"
+                            />
 
-                        <PricePill className="mx-auto mt-4" price={price} oldPrice={oldPrice} />
-                    </div>
-                ))}
-            </div>
-        </article>
+                            <PricePill
+                                className="mx-auto mt-2 w-full max-w-[120px] sm:mt-3 sm:max-w-[140px] md:mt-4"
+                                price={price}
+                                oldPrice={oldPrice}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </article>
         </Link>
     );
 }
