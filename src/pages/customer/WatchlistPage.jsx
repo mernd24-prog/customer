@@ -28,8 +28,8 @@ export default function WatchlistPage() {
       <section className="min-h-screen py-8">
         <div className="w-container">
           <div className="mb-6">
-            <h1 className="text-[34px] font-bold text-black">Watchlist</h1>
-            <p className="mt-1 text-[15px] text-gray-600">
+            <h1 className="font-montserrat text-[34px] font-bold text-[#2E2E2E]">Watchlist</h1>
+            <p className="mt-1 font-montserrat text-[15px] text-[#787878]">
               {products.length} saved {products.length === 1 ? "item" : "items"}
             </p>
           </div>
@@ -46,11 +46,11 @@ export default function WatchlistPage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-gray-200 bg-white py-24 text-center">
-              <h2 className="text-[30px] font-bold text-black">
+            <div className="rounded-[16px] border border-[#e7dfd1] bg-white py-24 text-center">
+              <h2 className="font-montserrat text-[30px] font-bold text-[#2E2E2E]">
                 Your watchlist is empty
               </h2>
-              <p className="mt-3 text-[16px] text-gray-500">
+              <p className="mt-3 font-montserrat text-[16px] text-[#787878]">
                 Save items you love to buy later.
               </p>
               <BrandButton

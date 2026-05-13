@@ -48,8 +48,8 @@ export default function ForgotPasswordPage() {
       >
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
           <div>
-            <h2 className="text-2xl font-bold text-slate-950">Reset your password</h2>
-            <p className="mt-1 text-sm text-slate-500">We'll send an OTP to your email address.</p>
+            <h2 className="text-2xl font-bold text-[#2E2E2E]">Reset your password</h2>
+            <p className="mt-1 text-sm text-[#A6A6A6]">We'll send an OTP to your email address.</p>
           </div>
 
           <FormField
@@ -72,9 +72,9 @@ export default function ForgotPasswordPage() {
             <Mail size={18} /> Send reset OTP
           </Button>
 
-          <p className="text-center text-sm text-slate-600">
+          <p className="text-center text-sm text-[#787878]">
             Remember your password?{" "}
-            <Link to={AUTH_ROUTES.login} className="font-semibold text-slate-950 underline-offset-4 hover:underline">
+            <Link to={AUTH_ROUTES.login} className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline">
               Back to login
             </Link>
           </p>

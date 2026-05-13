@@ -11,9 +11,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
-import { CreditCard, Heart, PackageCheck, ShieldCheck } from "lucide-react";
+import { Bell, CheckCircle2, CreditCard, Gift, Heart, PackageCheck, ShieldCheck, Star, Wallet, XCircle } from "lucide-react";
 import ApiState from "../components/common/ApiState";
 import Seo from "../components/common/Seo";
+import BrandButton from "../components/ui/BrandButton";
 import StatusTimeline from "../components/common/StatusTimeline";
 import ProductCard from "../components/product/ProductCard";
 import { useToastThunk } from "../hooks/useToastThunk";
@@ -942,20 +943,36 @@ export function CheckoutPage() {
 
 export function PaymentResultPage({ failed = false }) {
   return (
-    <section className="narrow">
-      <Seo title={failed ? "Payment failed" : "Payment success"} />
-      <div className={`state-box ${failed ? "error" : ""}`}>
-        <h1>{failed ? "Payment failed" : "Payment successful"}</h1>
-        <p>
-          {failed
-            ? "You can retry from payment history or the order detail page."
-            : "Your order has been placed."}
-        </p>
-        <Link className="button" to={failed ? "/orders" : "/orders"}>
-          {failed ? "Review orders" : "View orders"}
-        </Link>
+    <>
+      <Seo title={failed ? "Payment Failed | Sam Global" : "Payment Successful | Sam Global"} />
+      <div className="w-container flex min-h-[60vh] items-center justify-center py-12">
+        <div className="w-full max-w-md rounded-[16px] border border-[#e7dfd1] bg-white p-8 text-center">
+          <div className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full ${failed ? "bg-red-100" : "bg-[#F5ECDD]"}`}>
+            {failed ? (
+              <svg className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            ) : (
+              <svg className="h-8 w-8 text-[#CE9F2D]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+            )}
+          </div>
+          <h1 className="font-montserrat text-2xl font-bold text-[#2E2E2E]">
+            {failed ? "Payment Failed" : "Order Placed!"}
+          </h1>
+          <p className="mt-2 font-montserrat text-sm text-[#787878]">
+            {failed
+              ? "Your payment could not be processed. Please try again or contact support."
+              : "Your order has been placed successfully. We'll send you a confirmation soon."}
+          </p>
+          <div className="mt-6 flex flex-col gap-3">
+            <Link to="/orders">
+              <BrandButton variant="primary" rounded label={failed ? "View Orders" : "Track My Order"} className="w-full h-11 text-sm font-semibold" />
+            </Link>
+            <Link to="/">
+              <BrandButton variant="secondary" rounded label="Continue Shopping" className="w-full h-11 text-sm" />
+            </Link>
+          </div>
+        </div>
       </div>
-    </section>
+    </>
   );
 }
 
@@ -1134,211 +1151,224 @@ export function ReturnsPage({ request = false }) {
   );
 }
 
-export function SimpleApiPage({
-  title,
-  selector,
-  thunk,
-  icon: Icon = PackageCheck,
-  action,
-}) {
+export function SimpleApiPage({ title, selector, thunk, icon: Icon = PackageCheck, action }) {
   const dispatch = useDispatch();
   const state = useFetch(thunk, action?.arg, selector);
   const list = itemsFrom(state);
   return (
-    <section>
+    <>
       <Seo title={`${title} | Sam Global`} />
-      <div className="section-head">
-        <h1>{title}</h1>
-        <Icon />
+      <div className="w-container py-8">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">{title}</h1>
+        <ApiState
+          loading={state.loading}
+          error={state.error}
+          empty={!list.length && !state.current}
+          onRetry={() => dispatch(thunk(action?.arg))}
+        >
+          <div className="rounded-[12px] border border-[#e7dfd1] bg-white p-6">
+            <pre className="overflow-x-auto font-mono text-xs text-[#787878]">
+              {JSON.stringify(list.length ? list : state.current, null, 2)}
+            </pre>
+          </div>
+        </ApiState>
       </div>
-      <ApiState
-        loading={state.loading}
-        error={state.error}
-        empty={!list.length && !state.current}
-        onRetry={() => dispatch(thunk(action?.arg))}
-      >
-        <pre className="json">
-          {JSON.stringify(list.length ? list : state.current, null, 2)}
-        </pre>
-      </ApiState>
-    </section>
+    </>
   );
 }
 
 export function SubscriptionPage() {
   const dispatch = useDispatch();
-  const plans = useFetch(
-    fetchSubscriptionPlans,
-    undefined,
-    (s) => s.subscription,
-  );
+  const plans = useFetch(fetchSubscriptionPlans, undefined, (s) => s.subscription);
   const run = useToastThunk();
   return (
-    <section>
-      <Seo title="Subscriptions" />
-      <h1>Subscriptions</h1>
-      <ApiState
-        loading={plans.loading}
-        error={plans.error}
-        empty={!itemsFrom(plans).length}
-        onRetry={() => dispatch(fetchSubscriptionPlans())}
-      >
-        <div className="grid">
-          {itemsFrom(plans).map((plan) => (
-            <div className="card" key={plan.id || plan.planId || plan.planCode}>
-              <h2>{plan.title}</h2>
-              <p>{plan.description}</p>
-              <strong>{formatMoney(plan.monthlyPrice, plan.currency)}</strong>
-              <button
-                className="button"
-                onClick={() =>
-                  run(
-                    dispatch,
-                    purchaseSubscription({
-                      planId: plan.id || plan.planId,
-                      billingCycle: "monthly",
-                      metadata: {},
-                    }),
-                    "Subscription purchased",
-                  )
-                }
-              >
-                Purchase
-              </button>
-            </div>
-          ))}
-        </div>
-      </ApiState>
-      <div className="panel">
-        <button
-          className="button secondary"
-          onClick={() => dispatch(fetchMySubscriptions())}
+    <>
+      <Seo title="Subscriptions | Sam Global" />
+      <div className="w-container py-8">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">Subscription Plans</h1>
+        <ApiState
+          loading={plans.loading}
+          error={plans.error}
+          empty={!itemsFrom(plans).length}
+          emptyTitle="No plans available"
+          emptyText="Subscription plans will appear here."
+          onRetry={() => dispatch(fetchSubscriptionPlans())}
         >
-          Load my subscriptions
-        </button>
-        <p>
-          Pause, resume, and cancel actions are available from a loaded
-          subscription record when its subscriptionId is known.
-        </p>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {itemsFrom(plans).map((plan) => (
+              <div key={plan.id || plan.planId || plan.planCode} className="flex flex-col rounded-[16px] border border-[#e7dfd1] bg-white p-6">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-[#F5ECDD]">
+                  <Star size={18} className="text-[#CE9F2D]" />
+                </div>
+                <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E]">{plan.title}</h2>
+                <p className="mt-1 font-montserrat text-sm text-[#787878]">{plan.description}</p>
+                <p className="mt-4 font-montserrat text-2xl font-bold text-[#CE9F2D]">
+                  {formatMoney(plan.monthlyPrice, plan.currency || "INR")}
+                  <span className="font-montserrat text-sm font-normal text-[#A6A6A6]">/mo</span>
+                </p>
+                <div className="mt-auto pt-5">
+                  <BrandButton
+                    variant="primary"
+                    rounded
+                    label="Subscribe"
+                    className="w-full h-11 text-sm font-semibold"
+                    onClick={() => run(dispatch, purchaseSubscription({ planId: plan.id || plan.planId, billingCycle: "monthly", metadata: {} }), "Subscription purchased")}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </ApiState>
       </div>
-    </section>
+    </>
   );
 }
 
 export function PreferencesPage() {
   const dispatch = useDispatch();
-  const state = useFetch(
-    fetchNotificationPreferences,
-    undefined,
-    (s) => s.notification,
-  );
+  const state = useFetch(fetchNotificationPreferences, undefined, (s) => s.notification);
   const run = useToastThunk();
   const { register, handleSubmit } = useForm({
-    defaultValues: {
-      email: true,
-      sms: true,
-      push: true,
-      inApp: true,
-      frequency: "real_time",
-      timezone: "Asia/Kolkata",
-    },
+    defaultValues: { email: true, sms: true, push: true, inApp: true, frequency: "real_time", timezone: "Asia/Kolkata" },
   });
+
+  const CHANNELS = [
+    { key: "email", label: "Email notifications" },
+    { key: "sms", label: "SMS notifications" },
+    { key: "push", label: "Push notifications" },
+    { key: "inApp", label: "In-app notifications" },
+  ];
+
   return (
-    <section>
-      <Seo title="Notification preferences" />
-      <form
-        className="panel"
-        onSubmit={handleSubmit((v) =>
-          run(
-            dispatch,
-            updateNotificationPreferences({
-              channels: {
-                email: v.email,
-                sms: v.sms,
-                push: v.push,
-                inApp: v.inApp,
-              },
-              eventTypes: {
-                order: true,
-                payment: true,
-                shipping: true,
-                promo: true,
-                referral: true,
-                newProduct: true,
-              },
-              frequency: v.frequency,
-              doNotDisturbStart: "22:00",
-              doNotDisturbEnd: "07:00",
-              timezone: v.timezone,
-            }),
-            "Preferences saved",
-          ),
-        )}
-      >
-        <h1>Notification preferences</h1>
+    <>
+      <Seo title="Notification Preferences | Sam Global" />
+      <div className="w-container py-8">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">Notification Preferences</h1>
         <ApiState
           loading={state.loading}
           error={state.error}
           empty={false}
           onRetry={() => dispatch(fetchNotificationPreferences())}
         >
-          <label>
-            <input type="checkbox" {...register("email")} /> Email
-          </label>
-          <label>
-            <input type="checkbox" {...register("sms")} /> SMS
-          </label>
-          <label>
-            <input type="checkbox" {...register("push")} /> Push
-          </label>
-          <label>
-            <input type="checkbox" {...register("inApp")} /> In-app
-          </label>
-          <select {...register("frequency")}>
-            <option value="real_time">Real time</option>
-            <option value="daily">Daily</option>
-          </select>
-          <input {...register("timezone")} />
-          <button className="button">Save</button>
+          <form
+            className="rounded-[12px] border border-[#e7dfd1] bg-white p-6 sm:p-8"
+            onSubmit={handleSubmit((v) =>
+              run(dispatch, updateNotificationPreferences({
+                channels: { email: v.email, sms: v.sms, push: v.push, inApp: v.inApp },
+                eventTypes: { order: true, payment: true, shipping: true, promo: true, referral: true, newProduct: true },
+                frequency: v.frequency,
+                doNotDisturbStart: "22:00",
+                doNotDisturbEnd: "07:00",
+                timezone: v.timezone,
+              }), "Preferences saved")
+            )}
+          >
+            <div className="mb-6">
+              <h2 className="mb-1 font-montserrat text-base font-semibold text-[#2E2E2E]">Channels</h2>
+              <p className="font-montserrat text-sm text-[#787878]">Choose how you'd like to receive notifications.</p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {CHANNELS.map(({ key, label }) => (
+                <label key={key} className="flex cursor-pointer items-center justify-between gap-3 rounded-[10px] border border-[#e7dfd1] px-4 py-3">
+                  <span className="font-montserrat text-sm font-medium text-[#2E2E2E]">{label}</span>
+                  <input type="checkbox" {...register(key)} className="h-4 w-4 accent-[#CE9F2D]" />
+                </label>
+              ))}
+            </div>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <label className="grid gap-1.5">
+                <span className="font-montserrat text-sm font-medium text-[#2E2E2E]">Frequency</span>
+                <select {...register("frequency")} className="rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-sm text-[#2E2E2E] outline-none focus:border-[#CE9F2D]">
+                  <option value="real_time">Real time</option>
+                  <option value="daily">Daily digest</option>
+                </select>
+              </label>
+              <label className="grid gap-1.5">
+                <span className="font-montserrat text-sm font-medium text-[#2E2E2E]">Timezone</span>
+                <input {...register("timezone")} className="rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-sm text-[#2E2E2E] outline-none focus:border-[#CE9F2D]" />
+              </label>
+            </div>
+            <div className="mt-6">
+              <BrandButton variant="primary" rounded type="submit" label="Save preferences" className="h-11 px-8 text-sm font-semibold" />
+            </div>
+          </form>
         </ApiState>
-      </form>
-    </section>
+      </div>
+    </>
   );
 }
 
 export function LoyaltyPage() {
   const dispatch = useDispatch();
-  const profile = useFetch(fetchLoyaltyProfile, undefined, (s) => s.loyalty);
+  const loyaltyState = useSelector((s) => s.loyalty);
+  const profile = loyaltyState.current;
+  const history = Array.isArray(loyaltyState.list) ? loyaltyState.list : [];
   const run = useToastThunk();
+
   useEffect(() => {
+    dispatch(fetchLoyaltyProfile());
     dispatch(fetchLoyaltyBenefits());
-    dispatch(fetchLoyaltyHistory({ limit: 50, offset: 0 }));
+    dispatch(fetchLoyaltyHistory({ limit: 20, offset: 0 }));
   }, [dispatch]);
+
   return (
-    <section>
-      <Seo title="Loyalty" />
-      <h1>Loyalty</h1>
-      <ApiState
-        loading={profile.loading}
-        error={profile.error}
-        empty={!profile.current}
-        onRetry={() => dispatch(fetchLoyaltyProfile())}
-      >
-        <pre className="json">{JSON.stringify(profile.current, null, 2)}</pre>
-        <button
-          className="button"
-          onClick={() =>
-            run(
-              dispatch,
-              redeemLoyaltyPoints({ points: 50 }),
-              "Points redeemed",
-            )
-          }
+    <>
+      <Seo title="Loyalty Rewards | Sam Global" />
+      <div className="w-container py-8">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">Loyalty Rewards</h1>
+        <ApiState
+          loading={loyaltyState.loading && !profile}
+          error={loyaltyState.error}
+          empty={!profile && !loyaltyState.loading}
+          emptyTitle="No loyalty profile"
+          emptyText="Start shopping to earn loyalty points."
+          onRetry={() => dispatch(fetchLoyaltyProfile())}
         >
-          Redeem 50 points
-        </button>
-      </ApiState>
-    </section>
+          {/* Points card */}
+          {profile && (
+            <div className="mb-6 rounded-[16px] bg-gradient-to-br from-[#CE9F2D] to-[#A26D27] p-6 text-white">
+              <div className="mb-1 flex items-center gap-2">
+                <Gift size={18} />
+                <span className="font-montserrat text-sm font-medium opacity-80">Available Points</span>
+              </div>
+              <p className="font-montserrat text-4xl font-bold">{profile.points || profile.balance || 0}</p>
+              <p className="mt-1 font-montserrat text-sm opacity-70">Tier: {profile.tier || profile.level || "Standard"}</p>
+              <div className="mt-5">
+                <BrandButton
+                  variant="secondary"
+                  rounded
+                  label="Redeem 50 Points"
+                  className="h-10 border-white px-6 text-sm font-semibold text-white hover:bg-white/20"
+                  onClick={() => run(dispatch, redeemLoyaltyPoints({ points: 50 }), "Points redeemed")}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Transaction history */}
+          {history.length > 0 && (
+            <div className="rounded-[12px] border border-[#e7dfd1] bg-white">
+              <div className="border-b border-[#e7dfd1] px-5 py-4">
+                <h2 className="font-montserrat text-base font-semibold text-[#2E2E2E]">Transaction History</h2>
+              </div>
+              <div className="divide-y divide-[#e7dfd1]">
+                {history.map((tx, i) => (
+                  <div key={tx.id || i} className="flex items-center justify-between px-5 py-3">
+                    <div>
+                      <p className="font-montserrat text-sm font-medium text-[#2E2E2E]">{tx.reason || tx.description || "Points transaction"}</p>
+                      <p className="font-montserrat text-xs text-[#A6A6A6]">{tx.createdAt ? new Date(tx.createdAt).toLocaleDateString("en-IN") : ""}</p>
+                    </div>
+                    <span className={`font-montserrat text-sm font-semibold ${(tx.points || tx.amount || 0) >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                      {(tx.points || tx.amount || 0) >= 0 ? "+" : ""}{tx.points || tx.amount || 0} pts
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </ApiState>
+      </div>
+    </>
   );
 }
 
@@ -1347,152 +1377,269 @@ export function WarrantyPage({ detail = false }) {
   const dispatch = useDispatch();
   const state = useSelector((s) => s.warranty);
   const run = useToastThunk();
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
+
   useEffect(() => {
     if (detail) dispatch(fetchWarrantyById({ warrantyId }));
   }, [detail, dispatch, warrantyId]);
-  return (
-    <section>
-      <Seo title="Warranty" />
-      <h1>Warranty</h1>
-      {!detail && (
-        <form
-          className="panel"
-          onSubmit={handleSubmit((values) =>
-            dispatch(fetchOrderWarranties({ orderId: values.orderId })),
-          )}
-        >
-          <input
-            placeholder="Order ID"
-            {...register("orderId", { required: true })}
-          />
-          <button className="button secondary">Load order warranties</button>
-        </form>
-      )}
-      <ApiState
-        loading={state.loading}
-        error={state.error}
-        empty={!state.current && !itemsFrom(state).length}
-        onRetry={() => detail && dispatch(fetchWarrantyById({ warrantyId }))}
-      >
-        <pre className="json">
-          {JSON.stringify(state.current || itemsFrom(state), null, 2)}
-        </pre>
-        <form
-          className="panel"
-          onSubmit={handleSubmit((values) =>
-            run(
-              dispatch,
-              registerWarranty({
-                orderId: values.orderId,
-                productId: values.productId,
-                variantId: values.variantId,
-              }),
-              "Warranty registered",
-            ),
-          )}
-        >
-          <input placeholder="Order ID" {...register("orderId")} />
-          <input placeholder="Product ID" {...register("productId")} />
-          <input placeholder="Variant ID" {...register("variantId")} />
-          <button className="button secondary">Register warranty</button>
-        </form>
-        {detail && (
-          <button
-            className="button"
-            onClick={() =>
-              run(
-                dispatch,
-                claimWarranty({
-                  warrantyId,
-                  reason: "Issue reported",
-                  description: "Customer warranty claim",
-                }),
-                "Claim submitted",
-              )
-            }
-          >
-            Claim warranty
-          </button>
-        )}
-        <p className="todo">
-          TODO: warranty claim evidence upload API is missing.
-        </p>
-      </ApiState>
-    </section>
-  );
-}
 
-export function CmsPage() {
-  const { slug } = useParams();
-  const dispatch = useDispatch();
-  const state = useFetch(fetchCmsPageBySlug, { slug }, (s) => s.cms);
-  const page = state.current;
+  const warranty = state.current;
+  const warranties = Array.isArray(state.list) ? state.list : [];
+
   return (
-    <section className="content-page">
-      <Seo
-        title={`${page?.metadata?.seoTitle || page?.title || slug} | Sam Global`}
-      />
-      <ApiState
-        loading={state.loading}
-        error={state.error}
-        empty={!page}
-        onRetry={() => dispatch(fetchCmsPageBySlug({ slug }))}
-      >
-        <h1>{page?.title}</h1>
-        <div dangerouslySetInnerHTML={{ __html: page?.body || "" }} />
-      </ApiState>
-    </section>
+    <>
+      <Seo title={detail ? "Warranty Details | Sam Global" : "My Warranties | Sam Global"} />
+      <div className="w-container py-8">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">{detail ? "Warranty Details" : "My Warranties"}</h1>
+
+        {!detail && (
+          <form
+            className="mb-6 rounded-[12px] border border-[#e7dfd1] bg-white p-5"
+            onSubmit={handleSubmit((v) => { dispatch(fetchOrderWarranties({ orderId: v.orderId })); reset(); })}
+          >
+            <h2 className="mb-3 font-montserrat text-sm font-semibold text-[#2E2E2E]">Look up by Order ID</h2>
+            <div className="flex gap-3">
+              <input
+                placeholder="Enter Order ID"
+                {...register("orderId", { required: true })}
+                className="flex-1 rounded-[8px] border border-[#cfc6b8] px-3 py-2.5 font-montserrat text-sm outline-none focus:border-[#CE9F2D]"
+              />
+              <BrandButton variant="secondary" rounded type="submit" label="Search" className="h-11 px-5 text-sm" />
+            </div>
+          </form>
+        )}
+
+        <ApiState
+          loading={state.loading}
+          error={state.error}
+          empty={!warranty && !warranties.length && !state.loading}
+          emptyTitle="No warranties found"
+          emptyText="Your registered warranties will appear here."
+          onRetry={() => detail && dispatch(fetchWarrantyById({ warrantyId }))}
+        >
+          {(warranty || warranties.length > 0) && (
+            <div className="rounded-[12px] border border-[#e7dfd1] bg-white">
+              {warranty && (
+                <div className="p-6">
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F5ECDD]">
+                      <ShieldCheck size={18} className="text-[#CE9F2D]" />
+                    </div>
+                    <div>
+                      <p className="font-montserrat text-sm font-semibold text-[#2E2E2E]">{warranty.type || "Product Warranty"}</p>
+                      <p className="font-montserrat text-xs text-[#A6A6A6]">ID: {warranty.id || warrantyId}</p>
+                    </div>
+                  </div>
+                  <div className="grid gap-2 text-sm">
+                    {warranty.period && <div className="flex gap-2"><span className="text-[#787878]">Period:</span><span className="font-medium text-[#2E2E2E]">{warranty.period}</span></div>}
+                    {warranty.expiresAt && <div className="flex gap-2"><span className="text-[#787878]">Expires:</span><span className="font-medium text-[#2E2E2E]">{new Date(warranty.expiresAt).toLocaleDateString("en-IN")}</span></div>}
+                  </div>
+                  {detail && (
+                    <div className="mt-5">
+                      <BrandButton
+                        variant="secondary"
+                        rounded
+                        label="File a Claim"
+                        className="h-10 px-6 text-sm"
+                        onClick={() => run(dispatch, claimWarranty({ warrantyId, reason: "Issue reported", description: "Customer warranty claim" }), "Claim submitted")}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+              {warranties.map((w, i) => (
+                <div key={w.id || i} className="flex items-center justify-between border-t border-[#e7dfd1] px-5 py-4 first:border-t-0">
+                  <div className="flex items-center gap-3">
+                    <ShieldCheck size={16} className="text-[#CE9F2D]" />
+                    <div>
+                      <p className="font-montserrat text-sm font-medium text-[#2E2E2E]">{w.type || "Warranty"}</p>
+                      <p className="font-montserrat text-xs text-[#A6A6A6]">{w.period}</p>
+                    </div>
+                  </div>
+                  <Link to={`/warranty/${w.id}`}>
+                    <BrandButton variant="secondary" rounded size="sm" label="View" className="h-8 px-3 text-xs" />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Register warranty form */}
+          <form
+            className="mt-6 rounded-[12px] border border-[#e7dfd1] bg-white p-5"
+            onSubmit={handleSubmit((v) => run(dispatch, registerWarranty({ orderId: v.reg_orderId, productId: v.reg_productId, variantId: v.reg_variantId }), "Warranty registered"))}
+          >
+            <h2 className="mb-4 font-montserrat text-sm font-semibold text-[#2E2E2E]">Register a Warranty</h2>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <input placeholder="Order ID" {...register("reg_orderId")} className="rounded-[8px] border border-[#cfc6b8] px-3 py-2.5 font-montserrat text-sm outline-none focus:border-[#CE9F2D]" />
+              <input placeholder="Product ID" {...register("reg_productId")} className="rounded-[8px] border border-[#cfc6b8] px-3 py-2.5 font-montserrat text-sm outline-none focus:border-[#CE9F2D]" />
+              <input placeholder="Variant ID (optional)" {...register("reg_variantId")} className="rounded-[8px] border border-[#cfc6b8] px-3 py-2.5 font-montserrat text-sm outline-none focus:border-[#CE9F2D]" />
+            </div>
+            <div className="mt-4">
+              <BrandButton variant="primary" rounded type="submit" label="Register Warranty" className="h-10 px-6 text-sm" />
+            </div>
+          </form>
+        </ApiState>
+      </div>
+    </>
   );
 }
 
 export function BackendGapNotes() {
   return (
-    <section>
-      <Seo title="Backend gaps" />
-      <h1>Backend TODO adapters</h1>
-      <div className="panel">
-        <p>
-          Wishlist uses cart.wishlist. Coupon validation flows through order
-          couponCode. File uploads, invoice download, referral routes, product
-          reviews, public autocomplete, product compare API, live customer
-          carrier tracking, and marketing banner APIs are intentionally left as
-          TODOs without fake paths.
-        </p>
+    <>
+      <Seo title="API Notes | Sam Global" />
+      <div className="w-container py-8">
+        <h1 className="mb-4 font-montserrat text-2xl font-bold text-[#2E2E2E]">API Integration Notes</h1>
+        <div className="rounded-[12px] border border-[#e7dfd1] bg-white p-6">
+          <p className="font-montserrat text-sm text-[#787878]">
+            Wishlist uses <code className="rounded bg-[#FAF6EE] px-1.5 py-0.5 text-[#A26D27]">cart.wishlist</code>.
+            Coupon validation flows through the order's <code className="rounded bg-[#FAF6EE] px-1.5 py-0.5 text-[#A26D27]">couponCode</code> field.
+            File uploads, invoice download, referral routes, product reviews, public autocomplete,
+            product compare, live carrier tracking, and marketing banner APIs are backend-only features not yet exposed.
+          </p>
+        </div>
       </div>
-    </section>
-  );
-}
-
-export function PaymentsPage() {
-  return (
-    <SimpleApiPage
-      title="Payments"
-      selector={(s) => s.payment}
-      thunk={fetchPayments}
-      icon={CreditCard}
-    />
+    </>
   );
 }
 
 export function WalletPage() {
+  const dispatch = useDispatch();
+  const walletState = useSelector((s) => s.wallet);
+  const wallet = walletState.current;
+
+  useEffect(() => {
+    dispatch(fetchWallet());
+  }, [dispatch]);
+
   return (
-    <SimpleApiPage
-      title="Wallet"
-      selector={(s) => s.wallet}
-      thunk={fetchWallet}
-      icon={CreditCard}
-    />
+    <>
+      <Seo title="My Wallet | Sam Global" />
+      <div className="w-container py-8">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">My Wallet</h1>
+        <ApiState
+          loading={walletState.loading && !wallet}
+          error={walletState.error}
+          empty={!wallet && !walletState.loading}
+          emptyTitle="Wallet not available"
+          emptyText="Your wallet information will appear here."
+          onRetry={() => dispatch(fetchWallet())}
+        >
+          {wallet && (
+            <div className="rounded-[16px] bg-gradient-to-br from-[#2E2E2E] to-[#4a4a4a] p-6 text-white">
+              <div className="mb-1 flex items-center gap-2">
+                <Wallet size={18} />
+                <span className="font-montserrat text-sm font-medium opacity-80">Available Balance</span>
+              </div>
+              <p className="font-montserrat text-4xl font-bold">
+                {formatMoney(wallet.balance || 0, wallet.currency || "INR")}
+              </p>
+              {wallet.lockedBalance > 0 && (
+                <p className="mt-1 font-montserrat text-sm opacity-60">Locked: {formatMoney(wallet.lockedBalance, wallet.currency || "INR")}</p>
+              )}
+            </div>
+          )}
+        </ApiState>
+      </div>
+    </>
+  );
+}
+
+export function PaymentsPage() {
+  const dispatch = useDispatch();
+  const paymentState = useSelector((s) => s.payment);
+  const payments = Array.isArray(paymentState.list) ? paymentState.list : [];
+
+  useEffect(() => {
+    dispatch(fetchPayments());
+  }, [dispatch]);
+
+  return (
+    <>
+      <Seo title="Payment History | Sam Global" />
+      <div className="w-container py-8">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">Payment History</h1>
+        <ApiState
+          loading={paymentState.loading && !payments.length}
+          error={paymentState.error}
+          empty={!payments.length && !paymentState.loading}
+          emptyTitle="No payments yet"
+          emptyText="Your payment transactions will appear here."
+          onRetry={() => dispatch(fetchPayments())}
+        >
+          <div className="rounded-[12px] border border-[#e7dfd1] bg-white">
+            {payments.map((payment, i) => {
+              const id = payment.id || payment.paymentId;
+              const status = payment.status;
+              const statusColor = status === "success" || status === "paid" ? "text-emerald-600 bg-emerald-50" : status === "failed" ? "text-red-600 bg-red-50" : "text-amber-600 bg-amber-50";
+              return (
+                <div key={id || i} className="flex items-center justify-between border-b border-[#e7dfd1] px-5 py-4 last:border-b-0">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F5ECDD]">
+                      <CreditCard size={14} className="text-[#CE9F2D]" />
+                    </div>
+                    <div>
+                      <p className="font-montserrat text-sm font-medium text-[#2E2E2E]">{payment.provider || "Payment"}</p>
+                      <p className="font-montserrat text-xs text-[#A6A6A6]">{payment.createdAt ? new Date(payment.createdAt).toLocaleDateString("en-IN") : id}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className={`rounded-full px-2.5 py-0.5 font-montserrat text-xs font-semibold capitalize ${statusColor}`}>{status}</span>
+                    <span className="font-montserrat text-sm font-bold text-[#2E2E2E]">{formatMoney(payment.amount || 0, payment.currency || "INR")}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </ApiState>
+      </div>
+    </>
   );
 }
 
 export function NotificationsPage() {
+  const dispatch = useDispatch();
+  const notifState = useSelector((s) => s.notification);
+  const notifications = Array.isArray(notifState.list) ? notifState.list : [];
+
+  useEffect(() => {
+    dispatch(fetchNotifications());
+  }, [dispatch]);
+
   return (
-    <SimpleApiPage
-      title="Notifications"
-      selector={(s) => s.notification}
-      thunk={fetchNotifications}
-      icon={PackageCheck}
-    />
+    <>
+      <Seo title="Notifications | Sam Global" />
+      <div className="w-container py-8">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">Notifications</h1>
+        <ApiState
+          loading={notifState.loading && !notifications.length}
+          error={notifState.error}
+          empty={!notifications.length && !notifState.loading}
+          emptyTitle="No notifications"
+          emptyText="You're all caught up! Notifications will appear here."
+          onRetry={() => dispatch(fetchNotifications())}
+        >
+          <div className="rounded-[12px] border border-[#e7dfd1] bg-white">
+            {notifications.map((notif, i) => {
+              const isRead = notif.read || notif.isRead;
+              return (
+                <div key={notif.id || i} className={`flex gap-4 border-b border-[#e7dfd1] px-5 py-4 last:border-b-0 ${isRead ? "" : "bg-[#FAF6EE]"}`}>
+                  <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${isRead ? "bg-[#FAF6EE]" : "bg-[#F5ECDD]"}`}>
+                    <Bell size={14} className={isRead ? "text-[#A6A6A6]" : "text-[#CE9F2D]"} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-montserrat text-sm font-medium text-[#2E2E2E]">{notif.title || notif.subject || "Notification"}</p>
+                    <p className="mt-0.5 font-montserrat text-xs text-[#787878]">{notif.message || notif.body || ""}</p>
+                    <p className="mt-1 font-montserrat text-xs text-[#A6A6A6]">{notif.createdAt ? new Date(notif.createdAt).toLocaleDateString("en-IN") : ""}</p>
+                  </div>
+                  {!isRead && <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#CE9F2D]" />}
+                </div>
+              );
+            })}
+          </div>
+        </ApiState>
+      </div>
+    </>
   );
 }

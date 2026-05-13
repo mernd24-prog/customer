@@ -60,22 +60,22 @@ export function HomePage() {
               <Link
                 key={cat.categoryKey || cat.key || cat.id}
                 to={`/categories/${cat.categoryKey || cat.key}`}
-                className="flex shrink-0 flex-col items-center gap-1.5 rounded-xl border border-stone-200 bg-white px-4 py-3 text-center transition hover:border-slate-400 hover:shadow-sm"
+                className="flex shrink-0 flex-col items-center gap-1.5 rounded-[12px] border border-[#e7dfd1] bg-white px-4 py-3 text-center transition hover:border-[#CE9F2D] hover:shadow-sm"
               >
                 {cat.imageUrl && (
                   <img src={cat.imageUrl} alt={cat.title} className="h-10 w-10 object-contain" />
                 )}
-                <span className="whitespace-nowrap max-w-[80px] truncate text-xs font-medium text-slate-700">
+                <span className="max-w-[80px] truncate whitespace-nowrap font-montserrat text-xs font-medium text-[#2E2E2E]">
                   {cat.title || cat.name}
                 </span>
               </Link>
             ))}
             <Link
               to="/products"
-              className="flex shrink-0 flex-col items-center gap-1.5 rounded-xl border border-dashed border-stone-300 bg-stone-50 px-4 py-3 text-center transition hover:border-slate-400"
+              className="flex shrink-0 flex-col items-center gap-1.5 rounded-[12px] border border-dashed border-[#cfc6b8] bg-[#FAF6EE] px-4 py-3 text-center transition hover:border-[#CE9F2D]"
             >
-              <span className="text-xl font-bold text-slate-400">→</span>
-              <span className="whitespace-nowrap text-xs font-medium text-slate-600">All</span>
+              <span className="text-xl font-bold text-[#CE9F2D]">→</span>
+              <span className="whitespace-nowrap font-montserrat text-xs font-medium text-[#787878]">All</span>
             </Link>
           </div>
         </section>
@@ -86,14 +86,14 @@ export function HomePage() {
         <section className="w-container my-8">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">Trending Now</h2>
-            <Link to="/products?sort=rating" className="text-sm font-medium text-[#d4a437] underline-offset-4 hover:underline">
+            <Link to="/products?sort=rating" className="font-montserrat text-sm font-medium text-[#CE9F2D] underline-offset-4 hover:underline">
               See all →
             </Link>
           </div>
           {trendingLoading && !trendingProducts.length ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="aspect-[3/4] animate-pulse rounded-2xl bg-stone-100" />
+                <div key={i} className="aspect-[3/4] animate-pulse rounded-[12px] bg-[#F5ECDD]" />
               ))}
             </div>
           ) : (
@@ -117,14 +117,14 @@ export function HomePage() {
         <section className="w-container my-8">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">New Arrivals</h2>
-            <Link to="/products?sort=newest" className="text-sm font-medium text-[#d4a437] underline-offset-4 hover:underline">
+            <Link to="/products?sort=newest" className="font-montserrat text-sm font-medium text-[#CE9F2D] underline-offset-4 hover:underline">
               View all →
             </Link>
           </div>
           {productLoading && !featuredProducts.length ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="aspect-[3/4] animate-pulse rounded-2xl bg-stone-100" />
+                <div key={i} className="aspect-[3/4] animate-pulse rounded-[12px] bg-[#F5ECDD]" />
               ))}
             </div>
           ) : (

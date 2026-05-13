@@ -112,7 +112,7 @@ function ProfileTab({ user }) {
   return (
     <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
       <div className="flex items-center gap-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F5ECDD] text-[#CE9F2D]">
           {user?.profile?.avatarUrl ? (
             <img src={user.profile.avatarUrl} alt="Avatar" className="h-16 w-16 rounded-full object-cover" />
           ) : (
@@ -120,10 +120,10 @@ function ProfileTab({ user }) {
           )}
         </div>
         <div>
-          <p className="font-semibold text-slate-900">
+          <p className="font-montserrat font-semibold text-[#2E2E2E]">
             {user?.profile?.firstName} {user?.profile?.lastName}
           </p>
-          <p className="text-sm text-slate-500">{user?.email}</p>
+          <p className="font-montserrat text-sm text-[#787878]">{user?.email}</p>
         </div>
       </div>
 
@@ -153,10 +153,10 @@ function ProfileTab({ user }) {
         type="url"
       />
 
-      <div className="rounded-md border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-slate-600">
-        <p><span className="font-medium">Email:</span> {user?.email}</p>
-        <p className="mt-1"><span className="font-medium">Phone:</span> {user?.phone || "Not set"}</p>
-        <p className="mt-1"><span className="font-medium">Role:</span> {user?.role || "buyer"}</p>
+      <div className="rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3 font-montserrat text-sm text-[#787878]">
+        <p><span className="font-semibold text-[#2E2E2E]">Email:</span> {user?.email}</p>
+        <p className="mt-1"><span className="font-semibold text-[#2E2E2E]">Phone:</span> {user?.phone || "Not set"}</p>
+        <p className="mt-1"><span className="font-semibold text-[#2E2E2E]">Role:</span> {user?.role || "buyer"}</p>
       </div>
 
       <Button type="submit" loading={loading} className="w-full sm:w-auto">
@@ -218,10 +218,10 @@ function AddressTab({ user }) {
             const addrId = addr._id || addr.id;
             const isEditing = editingId === addrId;
             return (
-              <div key={addrId} className="rounded-lg border border-stone-200 bg-white p-4">
+              <div key={addrId} className="rounded-[10px] border border-[#e7dfd1] bg-white p-4">
                 {isEditing ? (
                   <form className="grid gap-4" onSubmit={editForm.handleSubmit(handleUpdate)} noValidate>
-                    <p className="text-sm font-medium text-slate-700">Edit address</p>
+                    <p className="text-sm font-medium text-[#787878]">Edit address</p>
                     <div className="grid gap-4 sm:grid-cols-2">
                       <FormField id={`edit-label-${addrId}`} label="Label" registration={editForm.register("label")} error={editForm.formState.errors.label} placeholder="Home, Work…" />
                       <FormField id={`edit-fullName-${addrId}`} label="Full name" registration={editForm.register("fullName")} error={editForm.formState.errors.fullName} autoComplete="name" />
@@ -235,8 +235,8 @@ function AddressTab({ user }) {
                       <FormField id={`edit-postalCode-${addrId}`} label="Postal code" registration={editForm.register("postalCode")} error={editForm.formState.errors.postalCode} autoComplete="postal-code" />
                     </div>
                     <FormField id={`edit-country-${addrId}`} label="Country" registration={editForm.register("country")} error={editForm.formState.errors.country} autoComplete="country-name" />
-                    <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
-                      <input type="checkbox" {...editForm.register("isDefault")} className="h-4 w-4 rounded border-stone-300" />
+                    <label className="flex cursor-pointer items-center gap-2 text-sm text-[#787878]">
+                      <input type="checkbox" {...editForm.register("isDefault")} className="h-4 w-4 rounded border-[#cfc6b8]" />
                       Set as default address
                     </label>
                     <div className="flex gap-3">
@@ -248,14 +248,14 @@ function AddressTab({ user }) {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2">
-                        <Home size={14} className="text-slate-400" />
-                        <span className="text-sm font-semibold text-slate-900">{addr.label}</span>
+                        <Home size={14} className="text-[#A6A6A6]" />
+                        <span className="text-sm font-semibold text-[#2E2E2E]">{addr.label}</span>
                         {addr.isDefault && (
                           <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Default</span>
                         )}
                       </div>
-                      <p className="mt-1 text-sm text-slate-600">{addr.fullName} · {addr.phone}</p>
-                      <p className="text-sm text-slate-600">
+                      <p className="mt-1 text-sm text-[#787878]">{addr.fullName} · {addr.phone}</p>
+                      <p className="text-sm text-[#787878]">
                         {addr.line1}{addr.line2 ? `, ${addr.line2}` : ""}, {addr.city}, {addr.state} {addr.postalCode}, {addr.country}
                       </p>
                     </div>
@@ -263,7 +263,7 @@ function AddressTab({ user }) {
                       <button
                         type="button"
                         onClick={() => startEdit(addr)}
-                        className="rounded p-1.5 text-slate-500 hover:bg-stone-100 hover:text-slate-900 transition"
+                        className="rounded p-1.5 text-[#A6A6A6] hover:bg-[#FAF6EE] hover:text-[#2E2E2E] transition"
                         aria-label="Edit address"
                       >
                         <Pencil size={15} />
@@ -284,9 +284,9 @@ function AddressTab({ user }) {
           })}
         </div>
       ) : (
-        <div className="rounded-lg border border-dashed border-stone-300 bg-stone-50 p-8 text-center">
-          <MapPin size={24} className="mx-auto mb-2 text-slate-400" />
-          <p className="text-sm text-slate-500">No addresses saved yet.</p>
+        <div className="rounded-[10px] border border-dashed border-[#cfc6b8] bg-[#FAF6EE] p-8 text-center">
+          <MapPin size={24} className="mx-auto mb-2 text-[#A6A6A6]" />
+          <p className="font-montserrat text-sm text-[#787878]">No addresses saved yet.</p>
         </div>
       )}
 
@@ -295,15 +295,15 @@ function AddressTab({ user }) {
         <button
           type="button"
           onClick={() => setShowAddForm((v) => !v)}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-900 underline-offset-4 hover:underline"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-[#2E2E2E] underline-offset-4 hover:underline"
         >
           {showAddForm ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           {showAddForm ? "Cancel" : "Add new address"}
         </button>
 
         {showAddForm && (
-          <form className="mt-4 grid gap-4 rounded-lg border border-stone-200 bg-white p-4" onSubmit={addForm.handleSubmit(handleAdd)} noValidate>
-            <p className="text-sm font-medium text-slate-700">New address</p>
+          <form className="mt-4 grid gap-4 rounded-[10px] border border-[#e7dfd1] bg-white p-4" onSubmit={addForm.handleSubmit(handleAdd)} noValidate>
+            <p className="text-sm font-medium text-[#787878]">New address</p>
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField id="add-label" label="Label" registration={addForm.register("label")} error={addForm.formState.errors.label} placeholder="Home, Work…" />
               <FormField id="add-fullName" label="Full name" registration={addForm.register("fullName")} error={addForm.formState.errors.fullName} autoComplete="name" />
@@ -317,8 +317,8 @@ function AddressTab({ user }) {
               <FormField id="add-postalCode" label="Postal code" registration={addForm.register("postalCode")} error={addForm.formState.errors.postalCode} autoComplete="postal-code" />
             </div>
             <FormField id="add-country" label="Country" registration={addForm.register("country")} error={addForm.formState.errors.country} autoComplete="country-name" />
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
-              <input type="checkbox" {...addForm.register("isDefault")} className="h-4 w-4 rounded border-stone-300" />
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-[#787878]">
+              <input type="checkbox" {...addForm.register("isDefault")} className="h-4 w-4 rounded border-[#cfc6b8]" />
               Set as default address
             </label>
             <Button type="submit" loading={loading} className="w-full sm:w-auto">
@@ -351,7 +351,7 @@ function SecurityTab() {
 
   return (
     <form className="grid gap-5 max-w-md" onSubmit={handleSubmit(submit)} noValidate>
-      <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+      <div className="rounded-[8px] border border-[#F5ECDD] bg-[#FFF8EC] px-4 py-3 font-montserrat text-sm text-[#A26D27]">
         Choose a strong password with at least 8 characters, including numbers and symbols.
       </div>
 
@@ -448,15 +448,15 @@ function KycTab({ user }) {
     under_review: "text-amber-700 bg-amber-100",
     rejected: "text-red-700 bg-red-100",
     submitted: "text-blue-700 bg-blue-100",
-  }[kyc?.status] || "text-slate-700 bg-stone-100";
+  }[kyc?.status] || "text-[#787878] bg-[#FAF6EE]";
 
   return (
     <form className="grid gap-6" onSubmit={handleSubmit(submit)} noValidate>
       {kyc?.status && (
         <div className="flex items-center gap-3">
-          <BadgeCheck size={20} className="shrink-0 text-slate-600" />
+          <BadgeCheck size={20} className="shrink-0 text-[#787878]" />
           <div>
-            <p className="text-sm text-slate-500">KYC status</p>
+            <p className="text-sm text-[#A6A6A6]">KYC status</p>
             <span className={`mt-0.5 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${statusColor}`}>
               {kyc.status.replace(/_/g, " ")}
             </span>
@@ -498,11 +498,11 @@ function KycTab({ user }) {
 
           {/* Document URLs */}
           <div>
-            <p className="mb-3 text-sm font-medium text-slate-800">Document URLs</p>
-            <p className="mb-4 text-xs text-slate-500">Upload each document to a file hosting service and paste the URL here.</p>
+            <p className="mb-3 text-sm font-medium text-[#2E2E2E]">Document URLs</p>
+            <p className="mb-4 text-xs text-[#A6A6A6]">Upload each document to a file hosting service and paste the URL here.</p>
             <div className="grid gap-3">
               {KYC_DOCS.map(({ key, label }) => (
-                <label key={key} className="grid gap-1.5 text-sm font-medium text-slate-800">
+                <label key={key} className="grid gap-1.5 text-sm font-medium text-[#2E2E2E]">
                   <span className="flex items-center gap-1.5">
                     <Upload size={13} /> {label}
                   </span>
@@ -511,7 +511,7 @@ function KycTab({ user }) {
                     placeholder="https://..."
                     value={docUrls[key] || ""}
                     onChange={(e) => handleDocUpload(key, e.target.value)}
-                    className="min-h-10 rounded-md border border-stone-300 bg-white px-3 py-2 text-slate-950 outline-none transition placeholder:text-stone-400 focus:border-slate-950 focus:ring-2 focus:ring-slate-950/10"
+                    className="min-h-10 rounded-md border border-[#cfc6b8] bg-white px-3 py-2 text-[#2E2E2E] outline-none transition placeholder:text-[#A6A6A6] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20"
                   />
                 </label>
               ))}
@@ -548,19 +548,19 @@ export default function AccountPage({ tab = "profile" }) {
     <>
       <Seo title={`Account — ${tab.charAt(0).toUpperCase() + tab.slice(1)} | Sam Global`} />
 
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
-        <h1 className="mb-6 text-2xl font-bold text-slate-950 sm:text-3xl">My Account</h1>
+      <div className="w-container py-8 sm:py-10">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E] sm:text-3xl">My Account</h1>
 
         {/* Tab navigation */}
-        <div className="mb-8 flex gap-1 overflow-x-auto rounded-lg border border-stone-200 bg-stone-50 p-1">
+        <div className="mb-6 flex gap-1 overflow-x-auto rounded-[10px] border border-[#e7dfd1] bg-[#FAF6EE] p-1">
           {TABS.map(({ id, label, icon: Icon, path }) => (
             <Link
               key={id}
               to={path}
-              className={`flex min-w-max items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
+              className={`flex min-w-max items-center gap-2 rounded-[8px] px-4 py-2 font-montserrat text-sm font-medium transition ${
                 tab === id
-                  ? "bg-white text-slate-950 shadow-sm"
-                  : "text-slate-500 hover:text-slate-900"
+                  ? "bg-white text-[#CE9F2D] shadow-sm"
+                  : "text-[#787878] hover:text-[#2E2E2E]"
               }`}
             >
               <Icon size={15} />
@@ -570,7 +570,7 @@ export default function AccountPage({ tab = "profile" }) {
         </div>
 
         {/* Tab content */}
-        <div className="rounded-lg border border-stone-200 bg-white p-6 sm:p-8">
+        <div className="rounded-[12px] border border-[#e7dfd1] bg-white p-6 sm:p-8">
           <ApiState
             loading={userState.loading && !user}
             error={userState.error}

@@ -64,8 +64,8 @@ export default function ResetPasswordPage() {
       >
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
           <div>
-            <h2 className="text-2xl font-bold text-slate-950">Set new password</h2>
-            <p className="mt-1 text-sm text-slate-500">Check your email for the OTP code.</p>
+            <h2 className="text-2xl font-bold text-[#2E2E2E]">Set new password</h2>
+            <p className="mt-1 text-sm text-[#A6A6A6]">Check your email for the OTP code.</p>
           </div>
 
           <FormField
@@ -118,12 +118,12 @@ export default function ResetPasswordPage() {
             <KeyRound size={18} /> Reset password
           </Button>
 
-          <p className="text-center text-sm text-slate-600">
-            <Link to={AUTH_ROUTES.forgotPassword} className="font-semibold text-slate-950 underline-offset-4 hover:underline">
+          <p className="text-center text-sm text-[#787878]">
+            <Link to={AUTH_ROUTES.forgotPassword} className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline">
               Resend OTP
             </Link>
             {" · "}
-            <Link to={AUTH_ROUTES.login} className="text-slate-600 underline-offset-4 hover:underline">
+            <Link to={AUTH_ROUTES.login} className="text-[#787878] underline-offset-4 hover:underline">
               Back to login
             </Link>
           </p>

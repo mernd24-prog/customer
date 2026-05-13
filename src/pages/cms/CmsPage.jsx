@@ -33,7 +33,14 @@ export default function CmsPage() {
   const publishedAt = page?.publishedAt || page?.createdAt;
   const updatedAt = page?.updatedAt;
   const category = page?.category || page?.type;
-  const coverImage = page?.coverImage || page?.thumbnailUrl;
+  const coverImage =
+    page?.coverImage ||
+    page?.heroImage ||
+    page?.thumbnailUrl ||
+    page?.metadata?.coverImage ||
+    page?.metadata?.heroImage ||
+    page?.metadata?.thumbnailUrl;
+  const galleryImages = Array.isArray(page?.galleryImages) ? page.galleryImages : [];
   const author = page?.author;
   const readTime = page?.readTime || page?.metadata?.readTime;
 
@@ -132,6 +139,20 @@ export default function CmsPage() {
               <div className="mt-8">
                 <CmsContent body={page.body || page.content} />
               </div>
+
+              {/* Gallery */}
+              {galleryImages.length > 0 && (
+                <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {galleryImages.map((imageUrl) => (
+                    <img
+                      key={imageUrl}
+                      src={imageUrl}
+                      alt={page.title}
+                      className="h-28 w-full rounded-[10px] object-cover sm:h-36"
+                    />
+                  ))}
+                </div>
+              )}
 
               {/* Tags */}
               {page.tags?.length > 0 && (

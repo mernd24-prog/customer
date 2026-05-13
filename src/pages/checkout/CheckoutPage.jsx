@@ -129,8 +129,8 @@ export default function CheckoutPage() {
     <>
       <Seo title="Checkout | Sam Global" />
 
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
-        <h1 className="mb-8 text-2xl font-bold text-slate-950 sm:text-3xl">Checkout</h1>
+      <div className="w-container py-8 sm:py-10">
+        <h1 className="mb-8 font-montserrat text-2xl font-bold text-[#2E2E2E] sm:text-3xl">Checkout</h1>
 
         <ApiState
           loading={cartState.loading}
@@ -146,8 +146,8 @@ export default function CheckoutPage() {
               <div className="grid gap-6">
                 {/* Saved addresses */}
                 {addresses.length > 0 && (
-                  <section className="rounded-lg border border-stone-200 bg-white p-5">
-                    <h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-slate-900">
+                  <section className="rounded-[12px] border border-[#e7dfd1] bg-white p-5">
+                    <h2 className="mb-4 flex items-center gap-2 font-montserrat text-base font-semibold text-[#2E2E2E]">
                       <MapPin size={16} /> Delivery address
                     </h2>
                     <div className="grid gap-3">
@@ -158,8 +158,8 @@ export default function CheckoutPage() {
                             key={addrId}
                             className={`flex cursor-pointer items-start gap-3 rounded-md border p-3 transition ${
                               selectedAddressId === addrId && !useNewAddress
-                                ? "border-slate-950 bg-slate-50"
-                                : "border-stone-200 hover:border-stone-400"
+                                ? "border-[#CE9F2D] bg-[#FAF6EE]"
+                                : "border-[#e7dfd1] hover:border-[#CE9F2D]"
                             }`}
                           >
                             <input
@@ -168,26 +168,26 @@ export default function CheckoutPage() {
                               value={addrId}
                               checked={selectedAddressId === addrId && !useNewAddress}
                               onChange={() => { setSelectedAddressId(addrId); setUseNewAddress(false); }}
-                              className="mt-1 h-4 w-4 accent-slate-950"
+                              className="mt-1 h-4 w-4 accent-[#CE9F2D]"
                             />
                             <div className="text-sm">
-                              <p className="font-medium text-slate-900">{addr.label} {addr.isDefault && <span className="ml-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Default</span>}</p>
-                              <p className="text-slate-600">{addr.fullName} · {addr.phone}</p>
-                              <p className="text-slate-500">{addr.line1}{addr.line2 ? `, ${addr.line2}` : ""}, {addr.city}, {addr.state} {addr.postalCode}</p>
+                              <p className="font-medium text-[#2E2E2E]">{addr.label} {addr.isDefault && <span className="ml-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Default</span>}</p>
+                              <p className="text-[#787878]">{addr.fullName} · {addr.phone}</p>
+                              <p className="text-[#787878]">{addr.line1}{addr.line2 ? `, ${addr.line2}` : ""}, {addr.city}, {addr.state} {addr.postalCode}</p>
                             </div>
                           </label>
                         );
                       })}
 
-                      <label className={`flex cursor-pointer items-center gap-3 rounded-md border p-3 transition ${useNewAddress ? "border-slate-950 bg-slate-50" : "border-stone-200 hover:border-stone-400"}`}>
+                      <label className={`flex cursor-pointer items-center gap-3 rounded-md border p-3 transition ${useNewAddress ? "border-[#CE9F2D] bg-[#FAF6EE]" : "border-[#e7dfd1] hover:border-[#CE9F2D]"}`}>
                         <input
                           type="radio"
                           name="addressSelect"
                           checked={useNewAddress}
                           onChange={() => setUseNewAddress(true)}
-                          className="h-4 w-4 accent-slate-950"
+                          className="h-4 w-4 accent-[#CE9F2D]"
                         />
-                        <span className="text-sm font-medium text-slate-900">Use a different address</span>
+                        <span className="text-sm font-medium text-[#2E2E2E]">Use a different address</span>
                       </label>
                     </div>
                   </section>
@@ -195,8 +195,8 @@ export default function CheckoutPage() {
 
                 {/* New address form */}
                 {(useNewAddress || addresses.length === 0) && (
-                  <section className="rounded-lg border border-stone-200 bg-white p-5">
-                    <h2 className="mb-4 text-base font-semibold text-slate-900">Shipping address</h2>
+                  <section className="rounded-[12px] border border-[#e7dfd1] bg-white p-5">
+                    <h2 className="mb-4 font-montserrat text-base font-semibold text-[#2E2E2E]">Shipping address</h2>
                     <div className="grid gap-4">
                       <div className="grid gap-4 sm:grid-cols-2">
                         <FormField id="fullName" label="Full name" registration={register("fullName")} error={errors.fullName} autoComplete="name" />
@@ -215,8 +215,8 @@ export default function CheckoutPage() {
                 )}
 
                 {/* Coupons & wallet */}
-                <section className="rounded-lg border border-stone-200 bg-white p-5">
-                  <h2 className="mb-4 text-base font-semibold text-slate-900">Discounts</h2>
+                <section className="rounded-[12px] border border-[#e7dfd1] bg-white p-5">
+                  <h2 className="mb-4 font-montserrat text-base font-semibold text-[#2E2E2E]">Discounts</h2>
                   <div className="grid gap-4">
                     <FormField
                       id="couponCode"
@@ -235,7 +235,7 @@ export default function CheckoutPage() {
                         max={walletBalance}
                         placeholder="0"
                         {...register("walletAmount")}
-                        className="min-h-11 rounded-md border border-stone-300 bg-white px-3 py-2.5 text-slate-950 outline-none transition placeholder:text-stone-400 focus:border-slate-950 focus:ring-2 focus:ring-slate-950/10"
+                        className="min-h-11 rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-[#2E2E2E] outline-none transition placeholder:text-[#A6A6A6] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20"
                       />
                     </label>
                   </div>
@@ -244,28 +244,28 @@ export default function CheckoutPage() {
 
               {/* Right column: order summary */}
               <aside>
-                <div className="rounded-lg border border-stone-200 bg-white p-5 sticky top-4">
-                  <h2 className="mb-4 text-base font-semibold text-slate-900">Order summary</h2>
-                  <div className="grid gap-3 divide-y divide-stone-100">
+                <div className="rounded-lg border border-[#e7dfd1] bg-white p-5 sticky top-4">
+                  <h2 className="mb-4 font-montserrat text-base font-semibold text-[#2E2E2E]">Order summary</h2>
+                  <div className="grid gap-3 divide-y divide-[#e7dfd1]">
                     {items.map((item) => (
                       <div key={item.productId} className="flex justify-between pt-3 text-sm first:pt-0">
                         <span className="text-slate-700 truncate max-w-[180px]">
                           {item.title || item.productId}
-                          <span className="text-slate-400"> × {item.quantity}</span>
+                          <span className="text-[#A6A6A6]"> × {item.quantity}</span>
                         </span>
-                        <span className="font-medium text-slate-900 shrink-0 ml-2">
+                        <span className="font-medium text-[#2E2E2E] shrink-0 ml-2">
                           {formatMoney((item.price || 0) * item.quantity, "INR")}
                         </span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="mt-4 border-t border-stone-200 pt-4">
-                    <div className="flex justify-between text-sm text-slate-600">
+                  <div className="mt-4 border-t border-[#e7dfd1] pt-4">
+                    <div className="flex justify-between text-sm text-[#787878]">
                       <span>Subtotal</span>
                       <span>{formatMoney(items.reduce((s, i) => s + (i.price || 0) * i.quantity, 0), "INR")}</span>
                     </div>
-                    <div className="mt-1 flex justify-between text-sm text-slate-500">
+                    <div className="mt-1 flex justify-between text-sm text-[#787878]">
                       <span>Shipping</span>
                       <span>Calculated at order</span>
                     </div>
@@ -279,7 +279,7 @@ export default function CheckoutPage() {
                     <CreditCard size={16} /> Place order &amp; pay
                   </Button>
 
-                  <p className="mt-3 text-center text-xs text-slate-400">
+                  <p className="mt-3 text-center text-xs text-[#A6A6A6]">
                     Secured by Razorpay · SSL encrypted
                   </p>
                 </div>

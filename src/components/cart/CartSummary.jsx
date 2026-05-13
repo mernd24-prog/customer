@@ -13,87 +13,69 @@ export default function CartSummary({
     onCheckout,
 }) {
     const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
     const shipping = items.reduce((acc, item) => acc + item.shipping * item.quantity, 0);
-
     const total = subtotal + shipping;
+    const fmt = (n) => `₹${n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
     return (
-        <div className="sticky top-5 h-fit w-full rounded-2xl bg-[#f7f7f7] p-4 sm:p-5 md:p-6">
+        <div className="sticky top-5 h-fit w-full rounded-[16px] border border-[#e7dfd1] bg-[#FAF6EE] p-4 sm:p-5 md:p-6">
             {/* Heading */}
-            <h2 className="text-lg font-bold leading-tight text-black sm:text-xl md:text-2xl">
+            <h2 className="font-montserrat text-lg font-bold leading-tight text-[#2E2E2E] sm:text-xl">
                 Order summary
             </h2>
 
             {/* Summary */}
-            <div className="mt-5 space-y-4 font-medium text-[#0f0f0f] sm:mt-6">
+            <div className="mt-5 space-y-4 sm:mt-6">
                 {/* Items */}
-                <div className="flex items-center justify-between gap-3 text-xs sm:text-sm md:text-base">
-                    <span className="text-gray-700">
-                        Items ({items.length})
-                    </span>
-
-                    <span className="font-medium text-[#111]">
-                        ${subtotal.toFixed(2)}
-                    </span>
+                <div className="flex items-center justify-between gap-3 font-montserrat text-xs sm:text-sm">
+                    <span className="text-[#787878]">Items ({items.length})</span>
+                    <span className="font-semibold text-[#2E2E2E]">{fmt(subtotal)}</span>
                 </div>
 
                 {/* Shipping */}
-                <div className="flex items-center justify-between gap-3 text-xs sm:text-sm md:text-base">
+                <div className="flex items-center justify-between gap-3 font-montserrat text-xs sm:text-sm">
                     <div className="flex items-center gap-1">
-                        <span className="text-gray-700">
-                            {shippingLabel} {shippingLocation}
-                        </span>
-
+                        <span className="text-[#787878]">{shippingLabel} {shippingLocation}</span>
                         {showInfoIcon && (
-                            <button className="font-bold text-[#0a0a0a] transition hover:text-[#0a0a0a]">
-                                <Info size={16} strokeWidth={2.5} />
+                            <button type="button" className="text-[#A6A6A6] transition hover:text-[#2E2E2E]">
+                                <Info size={14} strokeWidth={2} />
                             </button>
                         )}
                     </div>
-
-                    <span className="font-medium text-[#111]">
-                        ${shipping.toFixed(2)}
-                    </span>
+                    <span className="font-semibold text-[#2E2E2E]">{fmt(shipping)}</span>
                 </div>
             </div>
 
             {/* Divider */}
-            <div className="my-5 border-t border-[#b4b3b3] sm:my-6" />
+            <div className="my-5 border-t border-[#e7dfd1] sm:my-6" />
 
             {/* Total */}
             <div className="flex items-center justify-between gap-3 pt-1">
-                <span className="text-sm font-bold leading-tight text-[#111] sm:text-base md:text-lg lg:text-xl">
-                    Subtotal
+                <span className="font-montserrat text-sm font-bold text-[#2E2E2E] sm:text-base md:text-lg">
+                    Total
                 </span>
-
-                <span className="text-sm font-bold leading-tight text-[#111] sm:text-base md:text-lg lg:text-xl">
-                    ${total.toFixed(2)}
+                <span className="font-montserrat text-sm font-bold text-[#CE9F2D] sm:text-base md:text-lg">
+                    {fmt(total)}
                 </span>
             </div>
 
             {/* Button */}
-           
             <Button
                 variant="primary"
                 rounded
                 onClick={onCheckout}
-                className="mt-5 sm:mt-6 px-6 py-3 w-full h-12 rounded-full text-sm font-semibold text-white flex items-center justify-center transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:py-4 sm:text-base md:text-lg"
-            >
-                {buttonText}
-            </Button>
+                label={buttonText}
+                className="mt-5 sm:mt-6 w-full h-12 text-sm font-semibold"
+            />
 
             {/* Protection Text */}
-            <div className="mt-4 text-center text-xs leading-5 text-gray-600 sm:text-sm">
-                <span>
-                    {protectionText}{" "}
-                </span>
-
+            <div className="mt-4 text-center font-montserrat text-xs leading-5 text-[#787878] sm:text-sm">
+                <span>{protectionText} </span>
                 <a
                     href={protectionLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-semibold text-[#d48f03] underline transition hover:text-blue-700"
+                    className="font-semibold text-[#CE9F2D] underline underline-offset-2 transition hover:text-[#A26D27]"
                 >
                     {protectionLinkText}
                 </a>

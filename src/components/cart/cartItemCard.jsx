@@ -78,7 +78,7 @@ export default function CartItemCard({
 
                             {/* Old Price */}
                             {item.oldPrice && (
-                                <span className="text-[11px] font-medium text-gray-400 line-through sm:text-xs text-[#555454]">
+                                <span className="text-[11px] font-medium line-through text-[#A6A6A6] sm:text-xs">
                                     ${item.oldPrice}
                                 </span>
                             )}

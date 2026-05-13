@@ -59,8 +59,8 @@ export default function RegisterOtpPage() {
       >
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
           <div>
-            <h2 className="text-2xl font-bold text-slate-950">Register with OTP</h2>
-            <p className="mt-1 text-sm text-slate-500">We'll send an OTP to your email to complete registration.</p>
+            <h2 className="text-2xl font-bold text-[#2E2E2E]">Register with OTP</h2>
+            <p className="mt-1 text-sm text-[#A6A6A6]">We'll send an OTP to your email to complete registration.</p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -118,15 +118,15 @@ export default function RegisterOtpPage() {
             <Smartphone size={18} /> Send OTP &amp; register
           </Button>
 
-          <p className="text-center text-sm text-slate-600">
+          <p className="text-center text-sm text-[#787878]">
             Already have an account?{" "}
-            <Link to={AUTH_ROUTES.login} className="font-semibold text-slate-950 underline-offset-4 hover:underline">
+            <Link to={AUTH_ROUTES.login} className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline">
               Login
             </Link>
           </p>
-          <p className="text-center text-sm text-slate-600">
+          <p className="text-center text-sm text-[#787878]">
             Prefer password?{" "}
-            <Link to={AUTH_ROUTES.register} className="font-semibold text-slate-950 underline-offset-4 hover:underline">
+            <Link to={AUTH_ROUTES.register} className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline">
               Register with password
             </Link>
           </p>

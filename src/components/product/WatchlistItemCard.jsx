@@ -22,16 +22,16 @@ export function WatchlistItemCard({
 
   if (compact) {
     return (
-      <article className="group relative flex gap-3 border-b border-gray-100 p-3 transition-colors hover:bg-gray-50">
+      <article className="group relative flex gap-3 border-b border-[#e7dfd1] p-3 transition-colors hover:bg-[#FAF6EE]">
         <Link
           to={`/products/${id}`}
-          className="h-16 w-16 shrink-0 overflow-hidden rounded-md border border-gray-200"
+          className="h-16 w-16 shrink-0 overflow-hidden rounded-[8px] border border-[#e7dfd1]"
           aria-label={`View ${title}`}
         >
           {image ? (
             <img src={image} alt="" className="h-full w-full object-cover" />
           ) : (
-            <span className="flex h-full items-center justify-center text-xs text-gray-500">
+            <span className="flex h-full items-center justify-center font-montserrat text-xs text-[#A6A6A6]">
               No image
             </span>
           )}
@@ -39,15 +39,15 @@ export function WatchlistItemCard({
 
         <div className="flex flex-1 flex-col justify-between pr-5">
           <div>
-            <h4 className="line-clamp-2 text-[13px] font-semibold text-black transition-colors group-hover:text-blue-600">
+            <h4 className="line-clamp-2 font-montserrat text-[13px] font-semibold text-[#2E2E2E] transition-colors group-hover:text-[#CE9F2D]">
               <Link to={`/products/${id}`}>{title}</Link>
             </h4>
-            <p className="mt-1 text-[12px] font-bold text-black">{price}</p>
+            <p className="mt-1 font-montserrat text-[12px] font-bold text-[#2E2E2E]">{price}</p>
           </div>
 
           <Link
             to={`/products/${id}`}
-            className="mt-1 text-[11px] font-medium text-blue hover:underline"
+            className="mt-1 font-montserrat text-[11px] font-medium text-[#CE9F2D] hover:underline"
           >
             View item
           </Link>
@@ -55,7 +55,7 @@ export function WatchlistItemCard({
 
         <button
           type="button"
-          className="absolute right-2 top-2 rounded-full p-1 text-gray-400 transition-colors hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="absolute right-2 top-2 rounded-full p-1 text-[#A6A6A6] transition-colors hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-[#CE9F2D]/30"
           onClick={() => onRemove?.(product)}
           aria-label={`Remove ${title} from watchlist`}
         >
@@ -66,67 +66,55 @@ export function WatchlistItemCard({
   }
 
   return (
-    <article className="p-4 transition-shadow hover:shadow-md sm:p-5">
+    <article className="rounded-[12px] border border-[#e7dfd1] bg-white p-4 transition-shadow hover:shadow-sm sm:p-5">
       <div className="flex flex-col gap-6 lg:flex-row">
         <div className="flex flex-1 flex-col gap-5 sm:flex-row">
-          <div className="flex h-[180px] w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#f7f7f7] sm:h-[220px] sm:w-[220px]">
+          <div className="flex h-[180px] w-full shrink-0 items-center justify-center overflow-hidden rounded-[12px] bg-[#FAF6EE] sm:h-[220px] sm:w-[220px]">
             {image ? (
               <img src={image} alt={title} className="h-full w-full object-contain" />
             ) : (
-              <span className="text-sm text-gray-500">No image</span>
+              <span className="font-montserrat text-sm text-[#A6A6A6]">No image</span>
             )}
           </div>
 
           <div className="flex flex-1 flex-col">
             <Link
               to={`/products/${id}`}
-              className="max-w-[700px] text-[22px] font-medium leading-8 text-[#111820] hover:text-blue-600 sm:text-[24px] sm:leading-[34px]"
+              className="font-montserrat text-[22px] font-semibold leading-8 text-[#2E2E2E] hover:text-[#CE9F2D] sm:text-[24px] sm:leading-[34px]"
             >
               {title}
             </Link>
 
-            <p className="mt-1 text-[16px] text-gray-600">
-              {product?.subtitle || product?.category || "Pre-owned - Good"}
+            <p className="mt-1 font-montserrat text-[15px] text-[#787878]">
+              {product?.subtitle || product?.category || ""}
             </p>
 
             <div className="mt-3">
-              <p className="text-[32px] font-bold text-black sm:text-[36px]">
+              <p className="font-montserrat text-[28px] font-bold text-[#CE9F2D] sm:text-[32px]">
                 {price}
               </p>
-              <p className="text-[17px] text-gray-700">Or buy it now</p>
-              <p className="text-[17px] text-gray-700">Free shipping</p>
-            </div>
-
-            <div className="mt-5 flex flex-wrap items-center gap-2 text-[16px]">
-              <span className="font-medium text-black underline">
-                {product?.seller || "brandstreet.tokyo"}
-              </span>
-              <span className="font-medium text-black underline">
-                {product?.sellerRating || "99.50% (42627)"}
-              </span>
+              {product?.seller && (
+                <p className="mt-1 font-montserrat text-sm text-[#787878]">
+                  Sold by <span className="font-semibold text-[#2E2E2E]">{product.seller}</span>
+                </p>
+              )}
             </div>
           </div>
         </div>
 
-        <div className="flex w-full flex-col gap-3 lg:w-[280px]">
+        <div className="flex w-full flex-col gap-3 lg:w-[240px]">
           <BrandButton
-            variant="gradient"
+            variant="primary"
             rounded
-            label="Buy it now"
-            className="h-[52px] text-[17px] font-bold"
+            label="Add to Cart"
+            className="h-[48px] text-[15px] font-bold"
             onClick={() => onAddToCart?.(product)}
           />
           <BrandButton
             variant="secondary"
             rounded
-            label="View seller's other items"
-            className="h-[52px] border-2 border-blue-600 bg-white text-[17px] font-medium text-blue-600 hover:bg-blue-50"
-          />
-          <BrandButton
-            variant="secondary"
-            rounded
-            label="Remove"
-            className="h-[52px] border-2 border-blue-600 bg-white text-[17px] font-medium text-blue-600 hover:bg-blue-50"
+            label="Remove from Watchlist"
+            className="h-[48px] text-[15px] font-medium"
             onClick={() => onRemove?.(product)}
           />
         </div>

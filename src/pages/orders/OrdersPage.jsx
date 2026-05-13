@@ -21,7 +21,7 @@ const STATUS_BADGE = {
 };
 
 function OrderStatusBadge({ status }) {
-  const cls = STATUS_BADGE[status] || "bg-stone-100 text-slate-700";
+  const cls = STATUS_BADGE[status] || "bg-[#FAF6EE] text-[#787878]";
   return (
     <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}>
       {(status || "unknown").replace(/_/g, " ")}
@@ -44,8 +44,8 @@ function OrderDetail({ orderId, track }) {
   return (
     <>
       <Seo title={`Order ${orderId} | Sam Global`} />
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
-        <Link to="/orders" className="mb-6 inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 transition">
+      <div className="w-container py-8 sm:py-10">
+        <Link to="/orders" className="mb-6 inline-flex items-center gap-1.5 text-sm text-[#787878] hover:text-[#2E2E2E] transition">
           <ArrowLeft size={14} /> Back to orders
         </Link>
 
@@ -55,13 +55,13 @@ function OrderDetail({ orderId, track }) {
           empty={!order}
           onRetry={() => dispatch(fetchOrderById({ orderId }))}
         >
-          <div className="rounded-lg border border-stone-200 bg-white">
+          <div className="rounded-[12px] border border-[#e7dfd1] bg-white">
             {/* Header */}
-            <div className="border-b border-stone-200 px-6 py-4">
+            <div className="border-b border-[#e7dfd1] px-6 py-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs text-slate-500">Order ID</p>
-                  <p className="font-mono text-sm font-medium text-slate-900">{orderId}</p>
+                  <p className="text-xs text-[#787878]">Order ID</p>
+                  <p className="font-mono text-sm font-medium text-[#2E2E2E]">{orderId}</p>
                 </div>
                 <OrderStatusBadge status={order?.status || order?.orderStatus} />
               </div>
@@ -69,24 +69,24 @@ function OrderDetail({ orderId, track }) {
 
             {/* Timeline */}
             {track && (
-              <div className="border-b border-stone-200 px-6 py-5">
-                <h2 className="mb-4 text-sm font-semibold text-slate-900">Order tracking</h2>
+              <div className="border-b border-[#e7dfd1] px-6 py-5">
+                <h2 className="mb-4 text-sm font-semibold text-[#2E2E2E]">Order tracking</h2>
                 <StatusTimeline status={order?.status || order?.orderStatus} />
               </div>
             )}
 
             {/* Items */}
             {(order?.items || []).length > 0 && (
-              <div className="border-b border-stone-200 px-6 py-5">
-                <h2 className="mb-3 text-sm font-semibold text-slate-900">Items</h2>
+              <div className="border-b border-[#e7dfd1] px-6 py-5">
+                <h2 className="mb-3 text-sm font-semibold text-[#2E2E2E]">Items</h2>
                 <div className="grid gap-3">
                   {(order.items || []).map((item, i) => (
-                    <div key={item.productId || i} className="flex items-center justify-between gap-4 rounded-md border border-stone-100 bg-stone-50 px-4 py-3">
+                    <div key={item.productId || i} className="flex items-center justify-between gap-4 rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3">
                       <div className="text-sm">
-                        <p className="font-medium text-slate-900">{item.title || item.productId}</p>
-                        <p className="text-slate-500">Qty: {item.quantity}</p>
+                        <p className="font-medium text-[#2E2E2E]">{item.title || item.productId}</p>
+                        <p className="text-[#787878]">Qty: {item.quantity}</p>
                       </div>
-                      <p className="text-sm font-semibold text-slate-900">
+                      <p className="text-sm font-semibold text-[#2E2E2E]">
                         {formatMoney((item.unitPrice || item.price || 0) * item.quantity, order?.currency || "INR")}
                       </p>
                     </div>
@@ -97,11 +97,11 @@ function OrderDetail({ orderId, track }) {
 
             {/* Amounts */}
             {order?.amounts && (
-              <div className="border-b border-stone-200 px-6 py-5">
-                <h2 className="mb-3 text-sm font-semibold text-slate-900">Payment</h2>
+              <div className="border-b border-[#e7dfd1] px-6 py-5">
+                <h2 className="mb-3 text-sm font-semibold text-[#2E2E2E]">Payment</h2>
                 <div className="grid gap-2 text-sm">
                   {order.amounts.subtotal !== undefined && (
-                    <div className="flex justify-between text-slate-600">
+                    <div className="flex justify-between text-[#787878]">
                       <span>Subtotal</span>
                       <span>{formatMoney(order.amounts.subtotal, order.currency)}</span>
                     </div>
@@ -113,12 +113,12 @@ function OrderDetail({ orderId, track }) {
                     </div>
                   )}
                   {order.amounts.shippingFee !== undefined && (
-                    <div className="flex justify-between text-slate-600">
+                    <div className="flex justify-between text-[#787878]">
                       <span>Shipping</span>
                       <span>{formatMoney(order.amounts.shippingFee, order.currency)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between border-t border-stone-200 pt-2 font-semibold text-slate-900">
+                  <div className="flex justify-between border-t border-[#e7dfd1] pt-2 font-semibold text-[#2E2E2E]">
                     <span>Total</span>
                     <span>{formatMoney(order.amounts.payableAmount || order.totalAmount, order.currency || "INR")}</span>
                   </div>
@@ -172,9 +172,9 @@ function OrderList() {
   return (
     <>
       <Seo title="My Orders | Sam Global" />
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
+      <div className="w-container py-8 sm:py-10">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-950 sm:text-3xl">My Orders</h1>
+          <h1 className="font-montserrat text-2xl font-bold text-[#2E2E2E] sm:text-3xl">My Orders</h1>
         </div>
 
         <ApiState
@@ -192,20 +192,20 @@ function OrderList() {
                 <Link
                   key={id}
                   to={`/orders/${id}`}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-stone-200 bg-white px-5 py-4 hover:border-slate-400 transition"
+                  className="flex items-center justify-between gap-4 rounded-[12px] border border-[#e7dfd1] bg-white px-5 py-4 hover:border-[#CE9F2D] transition"
                 >
                   <div className="min-w-0">
                     <p className="flex items-center gap-2 text-sm">
-                      <Package size={14} className="shrink-0 text-slate-400" />
-                      <span className="font-mono text-slate-700 truncate">{id}</span>
+                      <Package size={14} className="shrink-0 text-[#A6A6A6]" />
+                      <span className="font-mono text-[#787878] truncate">{id}</span>
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-[#787878]">
                       {order.createdAt ? new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : ""}
                     </p>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-1">
                     <OrderStatusBadge status={order.status || order.orderStatus} />
-                    <span className="text-sm font-semibold text-slate-900">
+                    <span className="text-sm font-semibold text-[#2E2E2E]">
                       {formatMoney(order.amounts?.payableAmount || order.totalAmount, order.currency || "INR")}
                     </span>
                   </div>

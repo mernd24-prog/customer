@@ -61,15 +61,15 @@ function ReturnRequestPage({ orderId }) {
   return (
     <>
       <Seo title="Request Return | Sam Global" />
-      <div className="mx-auto max-w-xl px-4 py-8 sm:py-12">
-        <Link to="/orders" className="mb-6 inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 transition">
+      <div className="w-container max-w-xl py-8 sm:py-10">
+        <Link to="/orders" className="mb-6 inline-flex items-center gap-1.5 text-sm text-[#787878] hover:text-[#2E2E2E] transition">
           <ArrowLeft size={14} /> Back to orders
         </Link>
 
-        <div className="rounded-lg border border-stone-200 bg-white p-6 sm:p-8">
+        <div className="rounded-[12px] border border-[#e7dfd1] bg-white p-6 sm:p-8">
           <div className="mb-6">
-            <h1 className="text-xl font-bold text-slate-950">Request a return</h1>
-            <p className="mt-1 text-sm text-slate-500">Order: <span className="font-mono">{orderId}</span></p>
+            <h1 className="text-xl font-bold text-[#2E2E2E]">Request a return</h1>
+            <p className="mt-1 text-sm text-[#787878]">Order: <span className="font-mono">{orderId}</span></p>
           </div>
 
           <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
@@ -101,11 +101,11 @@ function ReturnRequestPage({ orderId }) {
               />
             </div>
 
-            <label className="grid gap-1.5 text-sm font-medium text-slate-800">
+            <label className="grid gap-1.5 text-sm font-medium text-[#2E2E2E]">
               <span>Reason for return</span>
               <select
                 {...register("reason")}
-                className="min-h-11 rounded-md border border-stone-300 bg-white px-3 py-2.5 text-slate-950 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-950/10"
+                className="min-h-11 rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 text-[#2E2E2E] outline-none transition focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20"
               >
                 {RETURN_REASONS.map((r) => (
                   <option key={r.value} value={r.value}>{r.label}</option>
@@ -114,13 +114,13 @@ function ReturnRequestPage({ orderId }) {
               {errors.reason && <span className="text-xs text-red-700">{errors.reason.message}</span>}
             </label>
 
-            <label className="grid gap-1.5 text-sm font-medium text-slate-800">
+            <label className="grid gap-1.5 text-sm font-medium text-[#2E2E2E]">
               <span>Description</span>
               <textarea
                 {...register("description")}
                 rows={4}
                 placeholder="Describe the issue in detail…"
-                className="rounded-md border border-stone-300 bg-white px-3 py-2.5 text-slate-950 outline-none transition placeholder:text-stone-400 focus:border-slate-950 focus:ring-2 focus:ring-slate-950/10 resize-none"
+                className="rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 text-[#2E2E2E] outline-none transition placeholder:text-stone-400 focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 resize-none"
               />
               {errors.description && <span className="text-xs text-red-700">{errors.description.message}</span>}
             </label>
@@ -147,8 +147,8 @@ function ReturnsListPage() {
   return (
     <>
       <Seo title="My Returns | Sam Global" />
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
-        <h1 className="mb-6 text-2xl font-bold text-slate-950 sm:text-3xl">My Returns</h1>
+      <div className="w-container py-8 sm:py-10">
+        <h1 className="mb-6 text-2xl font-bold text-[#2E2E2E] sm:text-3xl">My Returns</h1>
 
         <ApiState
           loading={state.loading && !returns.length}
@@ -162,12 +162,12 @@ function ReturnsListPage() {
             {returns.map((item) => {
               const id = item.id || item.returnId;
               const status = item.status || item.refundStatus;
-              const cls = STATUS_BADGE[status] || "bg-stone-100 text-slate-700";
+              const cls = STATUS_BADGE[status] || "bg-[#FAF6EE] text-[#787878]";
               return (
-                <div key={id} className="flex items-center justify-between gap-4 rounded-lg border border-stone-200 bg-white px-5 py-4">
+                <div key={id} className="flex items-center justify-between gap-4 rounded-[12px] border border-[#e7dfd1] bg-white px-5 py-4">
                   <div>
-                    <p className="font-mono text-sm font-medium text-slate-900">{id}</p>
-                    <p className="text-xs text-slate-500">{item.reason?.replace(/_/g, " ")}</p>
+                    <p className="font-mono text-sm font-medium text-[#2E2E2E]">{id}</p>
+                    <p className="text-xs text-[#787878]">{item.reason?.replace(/_/g, " ")}</p>
                   </div>
                   <span className={`shrink-0 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}>
                     {status?.replace(/_/g, " ")}
