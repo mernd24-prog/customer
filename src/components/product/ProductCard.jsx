@@ -30,16 +30,20 @@ export default function ProductCard({
         )}
       </Link>
       <div className="product-body ">
-        <Link to={`/products/${id}`} className="product-title">
+        <Link to={`/products/${id}`} className="product-title ">
           {title}
         </Link>
-        <p>{product?.category || product?.brand || "Catalog item"}</p>
-        <strong>{formatMoney(product?.price, product?.currency)}</strong>
+        <p className="my-2">
+          {product?.category || product?.brand || "Catalog item"}
+        </p>
+        <strong className="py-2">
+          {formatMoney(product?.price, product?.currency)}/-
+        </strong>
       </div>
       <div className="icon-row ">
         <button
           type="button"
-          className="icon-button"
+          className="icon-button "
           title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           aria-label={
             isWishlisted

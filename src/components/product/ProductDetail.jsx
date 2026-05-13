@@ -75,7 +75,7 @@ function SizeSelectionOption({ name, isSelected, onSelect }) {
       onClick={onSelect}
       aria-pressed={isSelected}
       aria-label={`Select size ${name}`}
-      className={`border w-10 h-10 flex items-center justify-center rounded-md cursor-pointer transition-colors ${
+      className={`border w-10 h-10 flex items-center   justify-center rounded-md cursor-pointer transition-colors ${
         isSelected ? "bg-blue border-blue text-white" : "border-gray text-gray"
       }`}
     >
@@ -439,7 +439,7 @@ function ProductInfo() {
 
         {/* Details */}
         <div className="mt-4">
-          <p className="py-2 font-montserrat text-lg font-semibold text-ink">
+          <p className="py-2  font-montserrat text-lg font-semibold text-ink">
             Details
           </p>
 
