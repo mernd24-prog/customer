@@ -10,6 +10,7 @@ export default function CartSummary({
     protectionLink = "/",
     buttonText = "Go to checkout",
     showInfoIcon = true,
+    onCheckout,
 }) {
     const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
@@ -76,6 +77,7 @@ export default function CartSummary({
             <Button
                 variant="primary"
                 rounded
+                onClick={onCheckout}
                 className="mt-5 sm:mt-6 px-6 py-3 w-full h-12 rounded-full text-sm font-semibold text-white flex items-center justify-center transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:py-4 sm:text-base md:text-lg"
             >
                 {buttonText}

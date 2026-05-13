@@ -6,7 +6,7 @@ import ProductCard from "../../components/product/ProductCard";
 import MothersDaySwiper from "../../components/home/MothersDayCarousel";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
 import InfoSection from "../../components/about/InfoSection";
-import { ourMission } from "../../data/aboutUs";
+import { ourMission, ourStoryData, valueData, whyChooseUsData } from "../../data/aboutUs";
 import { mothersDayData } from "../../data/homeSections";
 import { useProductActions } from "../../hooks/useProductActions";
 import { getProductId } from "../../utils/ecommerce";
@@ -14,6 +14,11 @@ import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import { fetchTrendingProducts, fetchRecommendations } from "../../features/recommendation/recommendationSlice";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { fetchProducts } from "../../features/product/productSlice";
+import BrandCarousel from "../../components/about/BrandCarousel";
+import WhyChooseSection from "../../components/about/WhyChooseSection";
+import FAQPage from "../faq/FAQPage";
+import OurStory from "../../components/about/OurStory";
+import ValuesSection from "../../components/about/ValuesSection";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -31,10 +36,10 @@ export function HomePage() {
   const featuredProducts = Array.isArray(productList) ? productList.slice(0, 8) : [];
 
   useEffect(() => {
-    dispatch(fetchTrendingProducts({ limit: 8 })).catch(() => {});
-    dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
-    dispatch(fetchCategories({ limit: 20 })).catch(() => {});
-    dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(() => {});
+    dispatch(fetchTrendingProducts({ limit: 8 })).catch(() => { });
+    dispatch(fetchRecommendations({ limit: 8 })).catch(() => { });
+    dispatch(fetchCategories({ limit: 20 })).catch(() => { });
+    dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(() => { });
   }, [dispatch]);
 
   return (
@@ -166,6 +171,12 @@ export function HomePage() {
           </div>
         </section>
       )}
+      <OurStory data={ourStoryData} />
+      <ValuesSection data={valueData} />
+      <BrandCarousel />
+      <WhyChooseSection data={whyChooseUsData} />
+       <FAQPage />
+
     </>
   );
 }
