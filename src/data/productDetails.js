@@ -1,6 +1,6 @@
 export const productDetailData = {
   images: {
-    mainImage: "/image/jpg/productImg1.jpg",
+    mainImage: "/image/jpg/productImg4.jpg",
     sideImages: [
       {
         img: "/image/jpg/mainProduct.jpg",
