@@ -113,11 +113,21 @@ function ProductGallery({
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
 
-  const handleMouseMove = (e) => {
+  const handleMove = (e) => {
     if (!isZoomed) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    let clientX, clientY;
+
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
+    const x = ((clientX - rect.left) / rect.width) * 100;
+    const y = ((clientY - rect.top) / rect.height) * 100;
     setZoomPos({
       x: Math.max(0, Math.min(100, x)),
       y: Math.max(0, Math.min(100, y)),
@@ -130,10 +140,10 @@ function ProductGallery({
 
   return (
     <div
-      className={`flex flex-col md:flex-row gap-6 w-full ${isModal ? "h-full items-center justify-center max-w-[1200px] mx-auto px-4" : "xl:justify-end justify-start items-start"}`}
+      className={`flex flex-col ${isModal ? "lg:flex-row" : "md:flex-row"} gap-4 w-full ${isModal ? "h-[90vh] lg:h-[85vh] items-center justify-center max-w-[1400px] mx-auto px-4 lg:px-10" : "xl:justify-end justify-start items-start"}`}
     >
       <div
-        className={`flex order-2 md:order-1 md:flex-col flex-row gap-4 ${isModal ? "max-h-[70vh] overflow-y-auto pr-2" : ""}`}
+        className={`flex order-2 ${isModal ? "lg:order-1 lg:flex-col lg:max-h-[70vh]  lg:w-24 xl:w-32" : "md:order-1 md:flex-col"} flex-row gap-4 shrink-0 overflow-auto ${isModal ? "max-h-[20vh] w-full pr-2" : "w-full md:w-auto"}`}
       >
         {/* Thumbnail Images */}
         {sideImages.map((ele, index) => (
@@ -152,7 +162,7 @@ function ProductGallery({
             <img
               src={ele.img}
               alt={`product-thumbnail-${index}`}
-              className={`${isModal ? "w-[100px] h-[100px]" : "xl:w-[120px] xl:h-[120px]"} object-contain hover:scale-105`}
+              className={`${isModal ? "w-[100px] h-[100px] mx-auto lg:mx-0" : "w-full h-28 md:w-[100px] md:h-[120px] xl:w-[120px] xl:h-[120px]"} object-contain hover:scale-105 transition-transform duration-200`}
             />
           </div>
         ))}
@@ -160,21 +170,22 @@ function ProductGallery({
 
       {/* Main Center Image */}
       <div
-        className={`order-1 md:order-2 w-full relative ${isModal ? "flex-1 h-full max-h-[85vh]" : "xl:max-w-[650px]"}`}
+        className={`order-1 ${isModal ? "lg:order-2 flex-1 w-auto" : "md:order-2 w-full xl:max-w-[650px]"} relative ${isModal ? "h-full max-h-[85vh]" : ""}`}
       >
         <div
-          className={`w-full h-full md:aspect-[5/4] xl:aspect-[3/3] overflow-hidden relative ${
+          className={`w-full h-full ${isModal ? "aspect-[1/5]" : "aspect-[5/5]"} overflow-hidden relative touch-none ${
             isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
           }`}
           onClick={handleClick}
-          onMouseMove={handleMouseMove}
+          onMouseMove={handleMove}
+          onTouchMove={handleMove}
           onMouseLeave={() => setIsZoomed(false)}
         >
           {/* Normal Image */}
           <img
             src={activeImage}
             alt="product"
-            className={`h-full w-full object-contain transition-opacity duration-300 rounded-xl ${
+            className={`h-full w-full object-contain transition-opacity duration-300 rounded-lg ${
               isZoomed ? "opacity-0" : "opacity-100"
             }`}
           />
@@ -227,7 +238,7 @@ function ProductImages({ data }) {
           type="button"
           onClick={() => setIsModalOpen(true)}
           aria-label="Open image gallery"
-          className="w-8 h-8 bg-white rounded-full hidden md:flex items-center justify-center shadow-md hover:scale-110 transition-transform"
+          className="w-8 h-8 bg-white rounded-full hidden lg:flex items-center justify-center shadow-md hover:scale-110 transition-transform"
         >
           <MdZoomOutMap className="text-black text-xl" />
         </button>
