@@ -1,8 +1,9 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import ProductCard from "../../components/product/ProductCard";
+import SectionContainer from "../../components/ui/SectionContainer";
 import MothersDaySwiper from "../../components/home/MothersDayCarousel";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
 import InfoSection from "../../components/about/InfoSection";
@@ -27,9 +28,11 @@ import WhyChooseSection from "../../components/about/WhyChooseSection";
 import FAQPage from "../faq/FAQPage";
 import OurStory from "../../components/about/OurStory";
 import ValuesSection from "../../components/about/ValuesSection";
+import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 
 export function HomePage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const recent = getRecentlyViewed();
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
@@ -46,11 +49,11 @@ export function HomePage() {
     : [];
 
   useEffect(() => {
-    dispatch(fetchTrendingProducts({ limit: 8 })).catch(() => {});
-    dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
-    dispatch(fetchCategories({ limit: 20 })).catch(() => {});
+    dispatch(fetchTrendingProducts({ limit: 8 })).catch(() => { });
+    dispatch(fetchRecommendations({ limit: 8 })).catch(() => { });
+    dispatch(fetchCategories({ limit: 20 })).catch(() => { });
     dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(
-      () => {},
+      () => { },
     );
   }, [dispatch]);
 
@@ -132,6 +135,12 @@ export function HomePage() {
         </section>
       )}
 
+      {/* Category Grid */}
+      <HomeCategoryGrid
+        categories={categories}
+        loading={false}
+      />
+
       {/* New Arrivals */}
       {(featuredProducts.length > 0 || productLoading) && (
         <section className="my-8 ">
@@ -147,7 +156,7 @@ export function HomePage() {
             </Link>
           </div>
           {productLoading && !featuredProducts.length ? (
-            <div className="grid  grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 ">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 ">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}

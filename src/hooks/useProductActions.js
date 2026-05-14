@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { updateCart } from "../features/cart/cartSlice";
@@ -14,8 +14,9 @@ export function useProductActions() {
   const dispatch = useDispatch();
   const run = useToastThunk();
   const cart = useSelector((state) => state.cart.current);
-  const wishlistIds = useSelector((state) =>
-    (state.cart.current?.wishlist || []).map((item) => getProductId(item)),
+  const wishlistIds = useMemo(
+    () => (cart?.wishlist || []).map((item) => getProductId(item)),
+    [cart?.wishlist],
   );
 
   const isWishlisted = useCallback(

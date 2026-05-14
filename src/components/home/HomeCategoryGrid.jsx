@@ -21,12 +21,12 @@ export default function HomeCategoryGrid({ categories = [], loading = false }) {
       <h1 className="text-2xl font-bold text-[#2E2E2E] font-montserrat mb-5 mt-8">
         Time for a spring refresh
       </h1>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-[1.5rem] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {" "}
         {categories.map((item) => (
           <CategoryCard
             key={item.id}
-            image={item.image}
+            image={item.imageUrl}
             title={item.title}
             active={activeId === item.id}
             onClick={() => setActiveId(item.id)}

@@ -225,7 +225,7 @@ export default function ProductCard({
           />
         </button>
 
-        <button
+        {/* <button
           type="button"
           className="icon-button"
           title="Compare"
@@ -233,7 +233,7 @@ export default function ProductCard({
           onClick={() => toggleCompare(product)}
         >
           <Scale size={18} />
-        </button>
+        </button> */}
         <button
           type="button"
           className="icon-button primary"
