@@ -917,15 +917,6 @@ export default function ProductDetailPage() {
                   </div>
                 </section>
               )}
-              {/* Debug: Raw API Data */}
-              <div className="mt-12 border-t pt-8">
-                <h3 className="mb-2 font-montserrat text-sm font-bold text-[#A6A6A6] uppercase tracking-wider">
-                  Raw API Dat
-                </h3>
-                <pre className="rounded-[12px] bg-[#1a1a1a] p-4 text-[10px] text-[#00FF00] overflow-auto max-h-[400px]">
-                  {JSON.stringify(product, null, 2)}
-                </pre>
-              </div>
             </>
           )}
         </ApiState>

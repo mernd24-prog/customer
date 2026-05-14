@@ -42,7 +42,9 @@ export function WatchlistItemCard({
             <h4 className="line-clamp-2 font-montserrat text-[13px] font-semibold text-[#2E2E2E] transition-colors group-hover:text-[#CE9F2D]">
               <Link to={`/products/${id}`}>{title}</Link>
             </h4>
-            <p className="mt-1 font-montserrat text-[12px] font-bold text-[#2E2E2E]">{price}</p>
+            <p className="mt-1 font-montserrat text-[12px] font-bold text-[#2E2E2E]">
+              {price}
+            </p>
           </div>
 
           <Link
@@ -55,7 +57,7 @@ export function WatchlistItemCard({
 
         <button
           type="button"
-          className="absolute right-2 top-2 rounded-full p-1 text-[#A6A6A6] transition-colors hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-[#CE9F2D]/30"
+          className="absolute right-2 top-2  rounded-full p-1 text-[#A6A6A6] transition-colors hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-[#CE9F2D]/30"
           onClick={() => onRemove?.(product)}
           aria-label={`Remove ${title} from watchlist`}
         >
@@ -71,9 +73,15 @@ export function WatchlistItemCard({
         <div className="flex flex-1 flex-col gap-5 sm:flex-row">
           <div className="flex h-[180px] w-full shrink-0 items-center justify-center overflow-hidden rounded-[12px] bg-[#FAF6EE] sm:h-[220px] sm:w-[220px]">
             {image ? (
-              <img src={image} alt={title} className="h-full w-full object-contain" />
+              <img
+                src={image}
+                alt={title}
+                className="h-full w-full object-contain"
+              />
             ) : (
-              <span className="font-montserrat text-sm text-[#A6A6A6]">No image</span>
+              <span className="font-montserrat text-sm text-[#A6A6A6]">
+                No image
+              </span>
             )}
           </div>
 
@@ -95,7 +103,10 @@ export function WatchlistItemCard({
               </p>
               {product?.seller && (
                 <p className="mt-1 font-montserrat text-sm text-[#787878]">
-                  Sold by <span className="font-semibold text-[#2E2E2E]">{product.seller}</span>
+                  Sold by{" "}
+                  <span className="font-semibold text-[#2E2E2E]">
+                    {product.seller}
+                  </span>
                 </p>
               )}
             </div>
@@ -114,7 +125,7 @@ export function WatchlistItemCard({
             variant="secondary"
             rounded
             label="Remove from Watchlist"
-            className="h-[48px] text-[15px] font-medium"
+            className="h-[48px] text-[15px] font-medium "
             onClick={() => onRemove?.(product)}
           />
         </div>

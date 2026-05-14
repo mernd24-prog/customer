@@ -98,24 +98,45 @@ export const TopHeader = () => {
         onRemove: handleRemoveWatchlist,
       },
       ...(currentUser
-        ? [{
-            type: "menu",
-            label: currentUser.firstName || currentUser.email?.split("@")[0] || "My Sam",
-            path: "/account/profile",
-            icon: <User size={16} />,
-            title: "My Account",
-            items: withIcons([
-              ...baseAccountMenuItems,
-              ...(isAdminRole(currentRole)
-                ? [
-                    { label: "Admin Products", path: "/admin/products", icon: "settings" },
-                    { label: "Admin Catalog", path: "/admin/catalog", icon: "settings" },
-                    { label: "Admin Brands", path: "/admin/brands", icon: "settings" },
-                    { label: "Admin RBAC", path: "/admin/rbac", icon: "settings" },
-                  ]
-                : []),
-            ]),
-          }]
+        ? [
+            {
+              type: "menu",
+              label:
+                currentUser.firstName ||
+                currentUser.email?.split("@")[0] ||
+                "My Sam",
+              path: "/account/profile",
+              icon: <User size={16} />,
+              title: "My Account",
+              items: withIcons([
+                ...baseAccountMenuItems,
+                ...(isAdminRole(currentRole)
+                  ? [
+                      {
+                        label: "Admin Products",
+                        path: "/admin/products",
+                        icon: "settings",
+                      },
+                      {
+                        label: "Admin Catalog",
+                        path: "/admin/catalog",
+                        icon: "settings",
+                      },
+                      {
+                        label: "Admin Brands",
+                        path: "/admin/brands",
+                        icon: "settings",
+                      },
+                      {
+                        label: "Admin RBAC",
+                        path: "/admin/rbac",
+                        icon: "settings",
+                      },
+                    ]
+                  : []),
+              ]),
+            },
+          ]
         : []),
     ],
     [handleRemoveWatchlist, wishlistedProducts, currentUser, currentRole],
@@ -179,7 +200,7 @@ export const TopHeader = () => {
             <BrandButton
               variant="gradient"
               rounded
-              className="min-h-[22px] px-3"
+              className="min-h-[18px] px-3"
               size="md"
               label="Register"
               onClick={() => navigate("/register")}

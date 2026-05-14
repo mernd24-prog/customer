@@ -65,31 +65,85 @@ export default function CartPage() {
 
   const handleIncrease = (id) => {
     const updated = rawItems.map((ci) => {
-      const cid = ci.productId || getProductId(ci.product);
+      const cid = getProductId(ci.productId || ci.product);
       return cid === id ? { ...ci, quantity: (ci.quantity || 1) + 1 } : ci;
     });
-    run(dispatch, updateCart(normalizeCartPayloadForWrite({ items: updated, wishlist: cart.wishlist || [] })), "Cart updated");
+    run(
+      dispatch,
+      updateCart(
+        normalizeCartPayloadForWrite({
+          items: updated,
+          wishlist: cart.wishlist || [],
+        }),
+      ),
+      "Cart updated",
+    );
   };
 
   const handleDecrease = (id) => {
-    const updated = rawItems
-      .map((ci) => {
-        const cid = ci.productId || getProductId(ci.product);
-        if (cid !== id) return ci;
-        const newQty = (ci.quantity || 1) - 1;
-        return newQty <= 0 ? null : { ...ci, quantity: newQty };
-      })
-      .filter(Boolean);
+    const updated = rawItems.map((ci) => {
+      const cid = getProductId(ci.productId || ci.product);
+      if (cid !== id) return ci;
+      const newQty = Math.max(1, (ci.quantity || 1) - 1);
+      return { ...ci, quantity: newQty };
+    });
     run(
       dispatch,
-      updateCart(normalizeCartPayloadForWrite({ items: updated, wishlist: cart.wishlist || [] })),
-      updated.length < rawItems.length ? "Item removed" : "Cart updated",
+      updateCart(
+        normalizeCartPayloadForWrite({
+          items: updated,
+          wishlist: cart.wishlist || [],
+        }),
+      ),
+      "Cart updated",
     );
+  };
+
+  const handleRemove = (id) => {
+    const updated = rawItems.filter((ci) => {
+      const cid = getProductId(ci.productId || ci.product);
+      return cid !== id;
+    });
+    run(
+      dispatch,
+      updateCart(
+        normalizeCartPayloadForWrite({
+          items: updated,
+          wishlist: cart.wishlist || [],
+        }),
+      ),
+      "Item removed",
+    );
+  };
+
+  const handleSaveForLater = (id) => {
+    const itemToSave = rawItems.find((ci) => {
+      const cid = getProductId(ci.productId || ci.product);
+      return cid === id;
+    });
+    if (!itemToSave) return;
+
+    const remainingItems = rawItems.filter((ci) => {
+      const cid = getProductId(ci.productId || ci.product);
+      return cid !== id;
+    });
+
+    const productToWishlist = itemToSave.productId || itemToSave.product;
+    const newWishlistPayload = wishlistPayload(
+      { items: remainingItems, wishlist: cart.wishlist || [] },
+      productToWishlist,
+      false,
+    );
+
+    run(dispatch, updateCart(newWishlistPayload), "Saved for later");
   };
 
   return (
     <>
-      <Seo title="Cart | Sam Global" description="Review items in your shopping cart." />
+      <Seo
+        title="Cart | Sam Global"
+        description="Review items in your shopping cart."
+      />
 
       <section className=" bg-white px-4 py-6 sm:px-6 sm:py-8 lg:px-12 lg:py-10">
         <div className="mx-auto max-w-[1400px]">
@@ -115,6 +169,8 @@ export default function CartPage() {
                     item={item}
                     onIncrease={handleIncrease}
                     onDecrease={handleDecrease}
+                    onRemove={handleRemove}
+                    onSaveForLater={handleSaveForLater}
                   />
                 ))}
 
@@ -127,26 +183,45 @@ export default function CartPage() {
                     <div className="grid gap-3">
                       {cart.wishlist.map((wishlistProduct) => {
                         const wishlistId = getProductId(wishlistProduct);
-                        const wishlistTitle = typeof wishlistProduct === "object"
-                          ? getProductTitle(wishlistProduct, "Saved item")
-                          : "Saved item";
+                        const wishlistTitle =
+                          typeof wishlistProduct === "object"
+                            ? getProductTitle(wishlistProduct, wishlistId)
+                            : wishlistId;
                         return (
-                        <div key={wishlistId} className="flex items-center justify-between gap-3 rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3">
-                          <span className="truncate font-montserrat text-sm text-[#787878]">{wishlistTitle}</span>
-                          <BrandButton
-                            variant="secondary"
-                            rounded
-                            size="sm"
-                            label="Move to cart"
-                            className="shrink-0 h-8 px-3 text-xs"
-                            onClick={() => {
-                              const payload = addProductToCartPayload(cart, wishlistProduct, 1);
-                              const newWishlistPayload = wishlistPayload(payload, wishlistProduct, true);
-                              run(dispatch, updateCart(newWishlistPayload), "Moved to cart");
-                            }}
-                          />
-                        </div>
-                      )})}
+                          <div
+                            key={wishlistId}
+                            className="flex items-center justify-between gap-3 rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3"
+                          >
+                            <span className="truncate font-montserrat text-sm text-[#787878]">
+                              {wishlistTitle}
+                            </span>
+                            <BrandButton
+                              variant="secondary"
+                              rounded
+                              size="sm"
+                              label="Move to cart"
+                              className="shrink-0 h-8 px-3 text-xs"
+                              onClick={() => {
+                                const payload = addProductToCartPayload(
+                                  cart,
+                                  wishlistProduct,
+                                  1,
+                                );
+                                const newWishlistPayload = wishlistPayload(
+                                  payload,
+                                  wishlistProduct,
+                                  true,
+                                );
+                                run(
+                                  dispatch,
+                                  updateCart(newWishlistPayload),
+                                  "Moved to cart",
+                                );
+                              }}
+                            />
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -154,7 +229,13 @@ export default function CartPage() {
                 {/* Continue shopping */}
                 <div className="flex items-center gap-3">
                   <Link to="/products">
-                    <BrandButton variant="secondary" rounded label="Continue Shopping" size="md" className="h-[44px] px-6" />
+                    <BrandButton
+                      variant="secondary"
+                      rounded
+                      label="Continue Shopping"
+                      size="md"
+                      className="h-[44px] px-6"
+                    />
                   </Link>
                 </div>
               </div>
