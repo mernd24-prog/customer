@@ -274,9 +274,8 @@ export const Navbar = ({ icons: propIcons }) => {
 };
 
 export const CategoryBar = ({ headerData }) => {
-  const catalogCategories = useSelector((s) =>
-    Array.isArray(s.catalog.list) ? s.catalog.list : [],
-  );
+  const catalogList = useSelector((s) => s.catalog.list);
+  const catalogCategories = Array.isArray(catalogList) ? catalogList : [];
 
   const categories = headerData
     ? headerData

@@ -78,7 +78,13 @@ import {
 } from "./pages/StaticPages";
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
 import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
-import PolicyPage from "./pages/customer/policyPage";
+import {
+  NewArrivalsPage,
+  RecentlyUploadedPage,
+  RelatedProductsPage,
+  TrendingNowPage,
+  RecentlyViewedPage,
+} from "./pages/discovery/DiscoveryPages";
 import { termsOfUseData } from "./data/termsOfUseData";
 import { shippingPolicyData } from "./data/shippingPolicyData";
 import { refundPolicyData } from "./data/refundPolicyData";
@@ -155,6 +161,7 @@ export default function App() {
           <Route path="/brand-outlet" element={<BrandOutletPage />} />
           <Route path="/gift-cards" element={<GiftCardsPage />} />
           <Route path="/who-we-are" element={<WhoWeArePage />} />
+          <Route path="/about" element={<Navigate to="/cms/about-us" replace />} />
           <Route path="/mobile-app" element={<MobileAppPage />} />
           <Route path="/seller-policies" element={<SellerPoliciesPage />} />
           <Route path="/growth-support" element={<GrowthSupportPage />} />
@@ -165,9 +172,11 @@ export default function App() {
           <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
           <Route path="/our-commitment" element={<OurCommitmentPage />} />
           <Route path="/features" element={<FeaturesPage />} />
-          <Route path="/terms-of-use" element={<PolicyPage data={termsOfUseData} />} />
-          <Route path="/shipping-policy" element={<PolicyPage data={shippingPolicyData} />} />
-          <Route path="/refund-policy" element={<PolicyPage data={refundPolicyData} />} />
+          <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" fallbackData={termsOfUseData} />} />
+          <Route path="/terms-and-conditions" element={<CmsPage slugOverride="terms-and-conditions" fallbackData={termsOfUseData} />} />
+          <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" fallbackData={shippingPolicyData} />} />
+          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" fallbackData={refundPolicyData} />} />
+          <Route path="/return-refund-policy" element={<CmsPage slugOverride="return-refund-policy" fallbackData={refundPolicyData} />} />
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
@@ -175,6 +184,11 @@ export default function App() {
             <Route path="/watchlist" element={<WatchlistPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/products" element={<ProductsPage />} />
+            <Route path="/new-arrivals" element={<NewArrivalsPage />} />
+            <Route path="/recently-uploaded" element={<RecentlyUploadedPage />} />
+            <Route path="/related-products" element={<RelatedProductsPage />} />
+            <Route path="/trending-now" element={<TrendingNowPage />} />
+            <Route path="/recently-viewed" element={<RecentlyViewedPage />} />
             <Route path="/products/:productId" element={<ProductDetailPage />} />
             <Route path="/categories/:categoryKey" element={<CategoryPage />} />
             <Route path="/cms/:slug" element={<CmsPage />} />

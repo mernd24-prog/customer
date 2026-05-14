@@ -1,4 +1,5 @@
 export const shippingPolicyData = {
+  cmsKey: "shipping-policy",
   title: "Shipping & Delivery Policy",
   intro: {
     heading: "Designed for Convenience. Delivered with Care.",

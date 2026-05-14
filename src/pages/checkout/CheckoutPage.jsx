@@ -15,7 +15,7 @@ import { fetchWallet } from "../../features/wallet/walletSlice";
 import { fetchMe } from "../../features/user/userSlice";
 import { createOrder } from "../../features/order/orderSlice";
 import { initiatePayment } from "../../features/payment/paymentSlice";
-import { formatMoney } from "../../utils/ecommerce";
+import { formatMoney, getProductId, getProductTitle } from "../../utils/ecommerce";
 
 const addressSchema = z.object({
   fullName: z.string().trim().min(2, "Full name is required"),
@@ -45,7 +45,15 @@ export default function CheckoutPage() {
   const [useNewAddress, setUseNewAddress] = useState(false);
 
   const cart = cartState.current || {};
-  const items = cart.items || [];
+  const items = (cart.items || []).map((item, index) => {
+    const product = item?.productId && typeof item.productId === "object" ? item.productId : item?.product || null;
+    const safeProductId = getProductId(product || item?.productId || item?.id || `item-${index}`);
+    return {
+      ...item,
+      _safeId: safeProductId || `item-${index}`,
+      _safeTitle: item?.title || getProductTitle(product, "Product"),
+    };
+  });
   const addresses = userState.current?.addresses || [];
   const walletBalance = walletState.current?.balance || 0;
 
@@ -102,7 +110,10 @@ export default function CheckoutPage() {
         couponCode: values.couponCode || undefined,
         walletAmount: Number(values.walletAmount || 0),
         shippingAddress,
-        items: items.map(({ productId, quantity }) => ({ productId, quantity })),
+        items: items.map(({ productId, _safeId, quantity }) => ({
+          productId: typeof productId === "object" ? _safeId : productId,
+          quantity,
+        })),
       }),
       "Order created",
     );
@@ -248,9 +259,9 @@ export default function CheckoutPage() {
                   <h2 className="mb-4 font-montserrat text-base font-semibold text-[#2E2E2E]">Order summary</h2>
                   <div className="grid gap-3 divide-y divide-[#e7dfd1]">
                     {items.map((item) => (
-                      <div key={item.productId} className="flex justify-between pt-3 text-sm first:pt-0">
+                      <div key={item._safeId} className="flex justify-between pt-3 text-sm first:pt-0">
                         <span className="text-slate-700 truncate max-w-[180px]">
-                          {item.title || item.productId}
+                          {item._safeTitle}
                           <span className="text-[#A6A6A6]"> × {item.quantity}</span>
                         </span>
                         <span className="font-medium text-[#2E2E2E] shrink-0 ml-2">

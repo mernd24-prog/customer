@@ -241,19 +241,46 @@ nav a:hover {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  background: #fffdf9;
+  border: 1px solid #e7dfd1;
+  border-radius: 16px;
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease,
+    border-color 0.28s ease;
   height: 100%;
 }
 
+.product-card:hover,
+.product-card:focus-within {
+  transform: translateY(-4px);
+  border-color: #d8bf90;
+  box-shadow: 0 16px 34px rgba(46, 46, 46, 0.12);
+}
+
+.product-card-compact .product-body {
+  padding: 10px 10px 8px;
+}
+
+.product-card-compact .product-title {
+  font-size: 0.9rem;
+  -webkit-line-clamp: 1;
+}
+
+.product-card-compact .icon-row {
+  padding: 8px 10px 10px;
+}
+
+.product-card-detailed .product-title {
+  -webkit-line-clamp: 3;
+}
+
 .product-media {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 5;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f9f9f9;
+  background: linear-gradient(180deg, #fffefb 0%, #f8f2e8 100%);
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -262,27 +289,26 @@ nav a:hover {
 .product-media img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 8px;
+  object-fit: cover;
   transition: transform 0.3s ease;
 }
 
 .product-card:hover .product-media img {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
 .product-body {
-  padding: 12px;
+  padding: 14px 14px 10px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   flex: 1;
 }
 
 .product-title {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #1a1a1a;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #2e2e2e;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -292,34 +318,34 @@ nav a:hover {
 }
 
 .product-body p {
-  font-size: 0.8rem;
-  color: #666;
+  font-size: 0.82rem;
+  color: #7a7368;
   margin: 0;
   line-clamp: 1;
 }
 
 .product-body strong {
-  font-size: 1.1rem;
-  color: #111;
+  font-size: 1.15rem;
+  color: #1f2520;
   margin-top: auto;
 }
 
 .icon-row {
-  padding: 8px 12px;
+  padding: 10px 12px 12px;
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  border-top: 1px solid #f0f0f0;
-  background: #fafafa;
+  border-top: 1px solid #efe7d9;
+  background: #fffaf2;
 }
 
 .button,
 .icon-button,
 .chip {
-  border: 1px solid #1f2520;
-  background: #1f2520;
+  border: 1px solid #2e2e2e;
+  background: #2e2e2e;
   color: #fff;
-  border-radius: 6px;
+  border-radius: 10px;
   padding: 10px 14px;
   min-height: 40px;
   display: inline-flex;
@@ -327,23 +353,45 @@ nav a:hover {
   justify-content: center;
   gap: 8px;
   cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .button.secondary,
 .icon-button,
 .chip {
   background: #fffdf9;
-  color: #1f2520;
-  border-color: #cfc6b8;
+  color: #2e2e2e;
+  border-color: #d9ccba;
+}
+
+.button:hover,
+.icon-button:hover,
+.chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(46, 46, 46, 0.1);
 }
 
 .icon-button {
   width: 40px;
+  height: 40px;
   padding: 0;
+  border-radius: 999px;
 }
 
 .icon-button.primary {
-  background: #1f2520;
+  background: #ce9f2d;
+  color: #fff;
+  border-color: #ce9f2d;
+}
+
+.icon-button.primary:hover {
+  background: #a26d27;
+  border-color: #a26d27;
   color: #fff;
 }
 

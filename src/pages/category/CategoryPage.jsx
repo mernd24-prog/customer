@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronLeft, ChevronRight, Grid2X2, List, SlidersHorizontal, X } from "lucide-react";
@@ -6,7 +6,6 @@ import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import ProductCard from "../../components/product/ProductCard";
 import BrandButton from "../../components/ui/BrandButton";
-import SectionContainer from "../../components/ui/SectionContainer";
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
 import { fetchCategoryByKey, fetchBrands } from "../../features/catalog/catalogSlice";
@@ -91,37 +90,91 @@ export default function CategoryPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [brandList, setBrandList] = useState([]);
   const [categoryData, setCategoryData] = useState(null);
+  const [items, setItems] = useState([]);
+  const [pageInfo, setPageInfo] = useState({ page: 1, totalPages: 1, total: 0 });
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [firstLoadDone, setFirstLoadDone] = useState(false);
+  const sentinelRef = useRef(null);
 
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
-  const products = useMemo(() => (Array.isArray(productState.list) ? productState.list : []), [productState.list]);
-  const meta = productState.meta;
-  const totalPages = meta?.totalPages || meta?.pages || 1;
-  const currentPage = Number(searchParams.get("page") || 1);
+  const products = items;
+  const totalPages = pageInfo.totalPages || 1;
+  const currentPage = pageInfo.page || 1;
 
-  const getParams = useCallback(() => ({
+  const getParams = useCallback((pageOverride) => ({
     category: categoryKey,
     brand: searchParams.get("brand") || undefined,
     minPrice: searchParams.get("minPrice") || undefined,
     maxPrice: searchParams.get("maxPrice") || undefined,
     sort: searchParams.get("sort") || undefined,
-    page: currentPage,
+    page: pageOverride || 1,
     limit: Number(searchParams.get("limit") || 12),
-  }), [searchParams, currentPage, categoryKey]);
+  }), [searchParams, categoryKey]);
+
+  const loadProducts = useCallback(async ({ page = 1, append = false } = {}) => {
+    const params = getParams(page);
+    if (append) setIsLoadingMore(true);
+    const result = await dispatch(fetchProducts(params)).unwrap();
+    const data = result?.data;
+    const list = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.items)
+        ? data.items
+        : Array.isArray(data?.list)
+          ? data.list
+          : [];
+    const meta = result?.meta || {};
+    const nextPage = Number(meta.page || meta.currentPage || params.page || 1);
+    const nextTotalPages = Number(meta.totalPages || meta.pages || 1);
+    const nextTotal = Number(meta.total || meta.count || list.length || 0);
+    setPageInfo({ page: nextPage, totalPages: nextTotalPages, total: nextTotal });
+    setItems((prev) => (append ? [...prev, ...list] : list));
+    setFirstLoadDone(true);
+    setIsLoadingMore(false);
+  }, [dispatch, getParams]);
 
   useEffect(() => {
-    dispatch(fetchProducts(getParams()));
-  }, [dispatch, searchParams, getParams, categoryKey]);
+    loadProducts({ page: 1, append: false }).catch(() => {
+      setFirstLoadDone(true);
+      setIsLoadingMore(false);
+    });
+  }, [loadProducts]);
 
   useEffect(() => {
     dispatch(fetchCategoryByKey({ categoryKey }))
       .then((action) => { const d = action?.payload?.data || action?.payload; if (d) setCategoryData(d); })
       .catch(() => {});
     dispatch(fetchBrands({ limit: 50 }))
-      .then((action) => { const list = action?.payload?.data; setBrandList(Array.isArray(list) ? list : []); })
+      .then((action) => {
+        const data = action?.payload?.data;
+        const list = Array.isArray(data) ? data : data?.items || data?.list || [];
+        setBrandList(
+          list
+            .map((brand) => {
+              const label = brand?.name || brand?.title || brand?.brandName || brand?.code;
+              return label ? { value: String(label), label: String(label) } : null;
+            })
+            .filter(Boolean),
+        );
+      })
       .catch(() => {});
   }, [dispatch, categoryKey]);
+
+  useEffect(() => {
+    if (!sentinelRef.current || !firstLoadDone || productState.loading || isLoadingMore) return undefined;
+    if (currentPage >= totalPages) return undefined;
+
+    const observer = new IntersectionObserver((entries) => {
+      const [entry] = entries;
+      if (!entry?.isIntersecting) return;
+      loadProducts({ page: currentPage + 1, append: true }).catch(() => {});
+    }, { threshold: 0.2, rootMargin: "0px 0px 300px 0px" });
+
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [currentPage, totalPages, firstLoadDone, loadProducts, productState.loading, isLoadingMore]);
 
   const updateParam = (key, value) => {
     setSearchParams((prev) => {
@@ -143,7 +196,7 @@ export default function CategoryPage() {
   };
 
   const setPage = (p) => {
-    setSearchParams((prev) => { const next = new URLSearchParams(prev); next.set("page", p); return next; });
+    loadProducts({ page: p, append: false }).catch(() => {});
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -161,7 +214,7 @@ export default function CategoryPage() {
       <div className="card">
         {brandList.length > 0 && (
           <FilterSection title="Brand">
-            <CheckboxFilter options={brandList} selected={searchParams.get("brand")} onChange={(v) => updateParam("brand", v)} labelKey="name" valueKey="id" />
+            <CheckboxFilter options={brandList} selected={searchParams.get("brand")} onChange={(v) => updateParam("brand", v)} labelKey="label" valueKey="value" />
           </FilterSection>
         )}
         <FilterSection title="Price Range">
@@ -175,7 +228,6 @@ export default function CategoryPage() {
     <>
       <Seo title={`${categoryTitle} | Sam Global`} description={categoryDesc || `Shop ${categoryTitle} products at Sam Global`} />
 
-      {/* Category hero */}
       {categoryImage ? (
         <div className="relative h-44 w-full overflow-hidden sm:h-56">
           <img src={categoryImage} alt={categoryTitle} className="h-full w-full object-cover" />
@@ -209,10 +261,9 @@ export default function CategoryPage() {
       )}
 
       <div className="w-container py-6 sm:py-8">
-        {/* Controls row */}
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <p className="font-montserrat text-sm text-[#787878]">
-            {meta?.total != null ? `${meta.total.toLocaleString()} products` : ""}
+            {(pageInfo.total || products.length).toLocaleString()} products
           </p>
           <div className="flex items-center gap-3">
             <select value={searchParams.get("sort") || ""} onChange={(e) => updateParam("sort", e.target.value)}
@@ -240,7 +291,6 @@ export default function CategoryPage() {
           </div>
         </div>
 
-        {/* Active filters */}
         {activeFilters.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
             {activeFilters.map((f) => (
@@ -271,12 +321,12 @@ export default function CategoryPage() {
 
           <div className="min-w-0 flex-1">
             <ApiState
-              loading={productState.loading && !products.length}
+              loading={(productState.loading && !products.length) || (!firstLoadDone && !products.length)}
               error={productState.error}
-              empty={!products.length && !productState.loading}
+              empty={!products.length && !productState.loading && firstLoadDone}
               emptyTitle="No products found"
               emptyText="Try adjusting your filters or browse other categories."
-              onRetry={() => dispatch(fetchProducts(getParams()))}
+              onRetry={() => loadProducts({ page: 1, append: false })}
             >
               <div className={viewMode === "grid" ? "grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4" : "grid gap-4"}>
                 {products.map((product) => (
@@ -300,6 +350,11 @@ export default function CategoryPage() {
                   <button type="button" disabled={currentPage >= totalPages} onClick={() => setPage(currentPage + 1)} className="icon-button secondary"><ChevronRight size={16} /></button>
                 </div>
               )}
+
+              {isLoadingMore && (
+                <div className="mt-6 text-center font-montserrat text-sm text-[#787878]">Loading more products...</div>
+              )}
+              <div ref={sentinelRef} className="h-8 w-full" />
             </ApiState>
           </div>
         </div>

@@ -12,9 +12,16 @@ import { getProductId } from "../../utils/ecommerce";
 export default function HomeProductsForYouSection() {
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const recommendationList = useSelector((s) => s.recommendation.list);
-  const loading = useSelector((s) => s.recommendation.loading);
+  const trendingList = useSelector((s) => s.recommendation.trendingList);
+  const productList = useSelector((s) => s.product.list);
+  const loading = useSelector(
+    (s) => s.recommendation.loadingRecommendations || s.recommendation.loadingTrending || s.product.loading,
+  );
 
-  const products = Array.isArray(recommendationList) ? recommendationList.slice(0, 8) : [];
+  const recommendations = Array.isArray(recommendationList) ? recommendationList : [];
+  const trending = Array.isArray(trendingList) ? trendingList : [];
+  const productsFallback = Array.isArray(productList) ? productList : [];
+  const products = (recommendations.length ? recommendations : trending.length ? trending : productsFallback).slice(0, 8);
 
   return (
     <>

@@ -1,4 +1,5 @@
 export const refundPolicyData = {
+  cmsKey: "return-refund-policy",
   title: "Return & Refund Policy",
   intro: {
     heading: "Simple. Transparent. Hassle-Free.",

@@ -1,4 +1,5 @@
 export const productDetailData = {
+  cmsKey: "product-detail-static-content",
   images: {
     mainImage: "/image/jpg/productImg4.jpg",
     sideImages: [

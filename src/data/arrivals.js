@@ -2,6 +2,7 @@ import { arrivalImages } from "../constant/image.constant";
 
 export const arrivals = [
   {
+    cmsKey: "arrival-diamond-jewelry-sets",
     id: 1,
     title: "Diamond-Like Simulant Jewelry Sets",
     views: "66K+",
@@ -13,6 +14,7 @@ export const arrivals = [
     oldPrice: 11199,
   },
   {
+    cmsKey: "arrival-trendy-outfits",
     id: 2,
     title: "Trendy Outfits for Men & Women",
     views: "66K+",
@@ -24,6 +26,7 @@ export const arrivals = [
     oldPrice: 11199,
   },
   {
+    cmsKey: "arrival-fragrances",
     id: 3,
     title: "Fine Mist Unisex Fragrances",
     views: "66K+",

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { useDelayedLoading } from "../../hooks/useDelayedLoading";
 
 // Swiper js Setup
-function SwiperSection({ swiperRef, onSlideChange }) {
+function SwiperSection({ swiperRef, onSlideChange, slides }) {
   const loading = useDelayedLoading();
 
   return (
@@ -21,8 +21,8 @@ function SwiperSection({ swiperRef, onSlideChange }) {
       slidesPerView={1.2}
       onSwiper={(swiper) => (swiperRef.current = swiper)}
       onSlideChange={(swiper) => onSlideChange(swiper)}
-      onReachBeginning={() => onSlideChange(swiperRef.current)}
-      onReachEnd={() => onSlideChange(swiperRef.current)}
+      onReachBeginning={(swiper) => onSlideChange(swiper)}
+      onReachEnd={(swiper) => onSlideChange(swiper)}
       breakpoints={{
         480: {
           slidesPerView: 1.5,
@@ -39,8 +39,8 @@ function SwiperSection({ swiperRef, onSlideChange }) {
       }}
       className="mother-day-swiper !overflow-hidden"
     >
-      {mothersDayData.map((slide) => (
-        <SwiperSlide key={slide.title || slide.name} className="">
+      {slides.map((slide) => (
+        <SwiperSlide key={slide._slideKey} className="">
           {loading ? (
             <SkeletonLoader
               layout={SKELETON_PRESETS.HERO_CARDS}
@@ -48,16 +48,16 @@ function SwiperSection({ swiperRef, onSlideChange }) {
               containerClass="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
             />
           ) : (
-            <Link to={slide.link}>
+            <Link to={slide.link || "/products"}>
               <div className="relative rounded-b-xl overflow-hidden group h-[350px] p-3 xl:p-0 md:h-full">
                 <img
                   src={slide.image}
-                  alt={slide.title}
+                  alt={slide.title || slide.name || "Featured offer"}
                   className="w-full rounded-b-2xl h-full object-cover object-top duration-700 transition-transform hover:scale-105"
                 />
                 <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
                   <p className="text-white  font-montserrat font-bold text-lg md:text-xl">
-                    {slide.name}
+                    {slide.name || slide.title}
                   </p>
                 </div>
               </div>
@@ -95,14 +95,37 @@ function SwiperButtons({ swiperRef, isBeginning, isEnd }) {
   );
 }
 
-export default function MothersDayCarousel() {
+export default function MothersDayCarousel({ data }) {
   const swiperRef = useRef(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
+  const rawSlides = Array.isArray(data) && data.length ? data : mothersDayData;
+  const slides = useMemo(
+    () =>
+      rawSlides
+        .filter((slide) => slide?.image)
+        .map((slide, index) => {
+          const identity =
+            slide.id ||
+            slide._id ||
+            slide.cmsKey ||
+            slide.slug ||
+            slide.link ||
+            slide.title ||
+            slide.name ||
+            "slide";
+          return {
+            ...slide,
+            _slideKey: `${identity}-${slide.image}-${index}`,
+          };
+        }),
+    [rawSlides],
+  );
 
   const handleSlideChange = (swiper) => {
-    setIsBeginning(swiper.isBeginning);
-    setIsEnd(swiper.isEnd);
+    if (!swiper || swiper.destroyed) return;
+    setIsBeginning(Boolean(swiper.isBeginning));
+    setIsEnd(Boolean(swiper.isEnd));
   };
 
   return (
@@ -149,6 +172,7 @@ export default function MothersDayCarousel() {
             <SwiperSection
               swiperRef={swiperRef}
               onSlideChange={handleSlideChange}
+              slides={slides}
             />
 
             {/* Navigation Buttons for Mobile */}

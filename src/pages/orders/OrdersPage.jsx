@@ -83,7 +83,7 @@ function OrderDetail({ orderId, track }) {
                   {(order.items || []).map((item, i) => (
                     <div key={item.productId || i} className="flex items-center justify-between gap-4 rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3">
                       <div className="text-sm">
-                        <p className="font-medium text-[#2E2E2E]">{item.title || item.productId}</p>
+                        <p className="font-medium text-[#2E2E2E]">{item.title || "Product"}</p>
                         <p className="text-[#787878]">Qty: {item.quantity}</p>
                       </div>
                       <p className="text-sm font-semibold text-[#2E2E2E]">

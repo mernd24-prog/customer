@@ -7,8 +7,10 @@ import { fetchProductById } from "../features/product/productSlice";
 export function useWatchlistProducts({ fallback = [] } = {}) {
   const dispatch = useDispatch();
   const [hiddenFallbackIds, setHiddenFallbackIds] = useState([]);
-  const wishlistIds = useSelector((state) =>
-    (state.cart.current?.wishlist || []).map((item) => getProductId(item)),
+  const wishlist = useSelector((state) => state.cart.current?.wishlist);
+  const wishlistIds = useMemo(
+    () => (Array.isArray(wishlist) ? wishlist.map((item) => getProductId(item)) : []),
+    [wishlist],
   );
   const productEntities = useSelector((state) => state.product.entities || {});
   const allProducts = useSelector((state) => state.product.list || []);
@@ -46,7 +48,7 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
     // Synthetic fallback
     const hiddenSet = new Set(hiddenFallbackIds);
     const syntheticFromWishlist = wishlistIds
-      .map((id) => ({ _id: id, title: `Saved item ${id}`, image: "" }))
+      .map((id) => ({ _id: id, title: "Saved item", image: "" }))
       .filter((product) => !hiddenSet.has(getProductId(product)));
 
     if (fallback.length) {

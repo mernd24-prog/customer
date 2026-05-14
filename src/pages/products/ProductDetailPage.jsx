@@ -362,7 +362,7 @@ export default function ProductDetailPage() {
   // console.log("DEBUG: Product API Response:", product);
   const warrantyState = useSelector((s) => s.warranty);
   const dynamicState = useSelector((s) => s.dynamicPricing);
-  const relatedList = useSelector((s) => s.recommendation.list);
+  const relatedList = useSelector((s) => s.recommendation.trendingList);
 
   const warranty = warrantyState.current;
   const dynamicPrice = dynamicState.current?.price;
@@ -382,7 +382,7 @@ export default function ProductDetailPage() {
     if (!product) return;
     addRecentlyViewed(product);
     dispatch(fetchProductWarranty({ productId })).catch(() => {});
-    dispatch(fetchTrendingProducts({ limit: 4 })).catch(() => {});
+    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
     dispatch(
       trackAnalyticsEvent({
         eventName: "product_view",

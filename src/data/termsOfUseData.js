@@ -1,4 +1,5 @@
 export const termsOfUseData = {
+  cmsKey: "terms-of-use",
   title: "Terms of Use",
   intro: {
     heading: "Please Read Carefully",

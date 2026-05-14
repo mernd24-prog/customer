@@ -1,6 +1,7 @@
 import { SkeletonLoader, SKELETON_PRESETS } from "../common/skeleton";
 import { useDelayedLoading } from "../../hooks/useDelayedLoading";
 import { footerData } from "../../data/footer";
+import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 import FooterActionLinks from "./footer/FooterActionLinks";
 import FooterAppDownload from "./footer/FooterAppDownload";
 import FooterBenefits from "./footer/FooterBenefits";
@@ -9,10 +10,27 @@ import FooterLinkGroups from "./footer/FooterLinkGroups";
 
 export function Footer({ data = footerData }) {
   const loading = useDelayedLoading();
+  const { page } = useCmsRecord("footer-links");
+  const cmsData = getCmsPayload(page, data);
+  const footer = {
+    ...data,
+    ...cmsData,
+    linkGroups: (cmsData.linkGroups || cmsData.groups || data.linkGroups || []).map((group) => ({
+      ...group,
+      links: (group.links || []).map((link) => ({
+        ...link,
+        href: link.href || link.url || "#",
+      })),
+    })),
+    socialLinks: (cmsData.socialLinks || data.socialLinks || []).map((item) => ({
+      ...item,
+      href: item.href || item.url || "#",
+    })),
+  };
 
   return (
     <footer className="w-full bg-surface font-montserrat text-ink">
-      <FooterBenefits items={data.benefits} />
+      <FooterBenefits items={footer.benefits} />
 
       {loading ? (
         <SkeletonLoader
@@ -21,7 +39,7 @@ export function Footer({ data = footerData }) {
           containerClass="w-container my-8 grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
         />
       ) : (
-        <FooterLinkGroups groups={data.linkGroups} />
+        <FooterLinkGroups groups={footer.linkGroups} />
       )}
 
       {loading ? (
@@ -32,13 +50,13 @@ export function Footer({ data = footerData }) {
           wrapperClass="flex min-h-12 items-center p-2 lg:p-8"
         />
       ) : (
-        <FooterActionLinks items={data.actionLinks} />
+        <FooterActionLinks items={footer.actionLinks} />
       )}
 
-      <FooterAppDownload data={data.appDownload} />
+      <FooterAppDownload data={footer.appDownload} />
       <FooterBottomBar
-        copyright={data.copyright}
-        socialLinks={data.socialLinks}
+        copyright={footer.copyright}
+        socialLinks={footer.socialLinks}
       />
     </footer>
   );

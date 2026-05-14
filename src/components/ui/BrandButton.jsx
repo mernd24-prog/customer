@@ -23,26 +23,26 @@ const Button = ({
     lg: "text-base xl:text-xl min-h-[50px]",
   };
 
-  const baseStyles = `${sizeStyles[size]} transition-all duration-200 flex items-center justify-center gap-2 font-montserrat cursor-pointer font-medium`;
+  const baseStyles = `${sizeStyles[size]} transition-all duration-200 flex items-center justify-center gap-2 font-montserrat cursor-pointer font-semibold tracking-wide`;
 
   const width = fullWidth ? "w-full" : "";
   const borderRadius = rounded ? "rounded-full" : "rounded-sm";
-  const focus = "focus:outline-none focus:ring-2 focus:ring-[#BF9B53]";
+  const focus = "focus:outline-none focus:ring-2 focus:ring-[#CE9F2D] focus:ring-offset-2";
 
   const variantStyles = {
     primary:
-      "bg-[#BF9B53] hover:bg-[#a6813f] text-white border-none hover:text-white font-montserrat",
+      "bg-[#CE9F2D] hover:bg-[#A26D27] text-white border border-[#CE9F2D] hover:text-white shadow-sm hover:shadow-md",
     gradient:
-      "bg-gradient-to-l from-accent to-primary text-white  rounded-full",
+      "bg-gradient-to-l from-[#A26D27] to-[#CE9F2D] text-white rounded-full shadow-sm hover:shadow-md",
     secondary:
-      "bg-[#F3F4F6] hover:bg-[#BF9B53]  border-2 border-[#BF9B53] text-[#CE9F2D] ",
+      "bg-[#FFF8EE] hover:bg-[#F5ECDD] border border-[#CE9F2D] text-[#A26D27]",
     google: "bg-white border border-gray-300 text-gray-700 hover:bg-gray-100",
   };
 
   const customStyles =
     variant === "custom"
       ? {
-          backgroundColor: bgColor || "transparent",
+          background: bgColor || "transparent",
           border: borderColor ? `1px solid ${borderColor}` : "none",
           color: textColor || "#000",
         }
@@ -50,7 +50,7 @@ const Button = ({
 
   const handleMouseEnter = (e) => {
     if (variant === "custom" && hoverBgColor) {
-      e.currentTarget.style.backgroundColor = hoverBgColor;
+      e.currentTarget.style.background = hoverBgColor;
     }
     if (variant === "custom" && hoverTextColor) {
       e.currentTarget.style.color = hoverTextColor;
@@ -60,6 +60,7 @@ const Button = ({
   const handleMouseLeave = (e) => {
     if (variant === "custom") {
       e.currentTarget.style.backgroundColor = bgColor || "transparent";
+      e.currentTarget.style.background = bgColor || "transparent";
       e.currentTarget.style.color = textColor || "#000";
     }
   };

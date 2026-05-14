@@ -2,6 +2,7 @@
 
 export const commitmentData = [
   {
+    cmsKey: "commitment-customers",
     id: 1,
     title: "To our customers, we promise:",
     bgColor: "bg-[#F5ECDD]",
@@ -14,6 +15,7 @@ export const commitmentData = [
     ],
   },
   {
+    cmsKey: "commitment-partners",
     id: 2,
     title: "To our partners, we offer:",
     bgColor: "bg-[#ECEBFA]",

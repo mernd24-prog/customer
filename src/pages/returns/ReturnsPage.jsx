@@ -13,7 +13,7 @@ import { useToastThunk } from "../../hooks/useToastThunk";
 import { requestReturn, fetchMyReturns } from "../../features/returns/returnsSlice";
 
 const returnSchema = z.object({
-  productId: z.string().trim().min(1, "Product ID is required"),
+  productId: z.string().trim().min(1, "Product is required"),
   quantity: z.coerce.number().int().min(1, "Quantity must be at least 1"),
   unitPrice: z.coerce.number().min(0, "Unit price is required"),
   reason: z.enum(["defective", "not_as_described", "changed_mind", "other"]),
@@ -69,16 +69,16 @@ function ReturnRequestPage({ orderId }) {
         <div className="rounded-[12px] border border-[#e7dfd1] bg-white p-6 sm:p-8">
           <div className="mb-6">
             <h1 className="text-xl font-bold text-[#2E2E2E]">Request a return</h1>
-            <p className="mt-1 text-sm text-[#787878]">Order: <span className="font-mono">{orderId}</span></p>
+            <p className="mt-1 text-sm text-[#787878]">Order reference available in your order details.</p>
           </div>
 
           <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
             <FormField
               id="productId"
-              label="Product ID"
+              label="Product"
               registration={register("productId")}
               error={errors.productId}
-              placeholder="Enter the product ID to return"
+              placeholder="Enter product name or code"
             />
 
             <div className="grid gap-4 sm:grid-cols-2">

@@ -1,6 +1,7 @@
 import { footer } from "../constant/image.constant";
 
 export const footerData = {
+  cmsKey: "footer-links",
   benefits: [
     {
       title: "10% Cashback on all App orders",

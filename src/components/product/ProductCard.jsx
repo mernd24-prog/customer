@@ -18,11 +18,16 @@ export default function ProductCard({
   onWishlist,
   onAddToCart,
   isWishlisted,
+  variant = "default",
 }) {
   const id = getProductId(product);
   const title = getProductTitle(product);
   const images = product?.images || [];
   const primaryImage = getProductImage(product);
+  const categoryLabel = product?.category || "";
+  const brandLabel = product?.brand || "";
+  const price = Number(product?.price || 0);
+  const mrp = Number(product?.mrp || 0);
   const [isHovering, setIsHovering] = useState(false);
   const [hoveredSide, setHoveredSide] = useState(null);
   const [canHover, setCanHover] = useState(() => {
@@ -81,9 +86,9 @@ export default function ProductCard({
   }, [isHovering, hoveredSide, displayImages.length, canHover]);
 
   return (
-    <article className="product-card ">
+    <article className={`product-card ${variant === "compact" ? "product-card-compact" : ""} ${variant === "detailed" ? "product-card-detailed" : ""}`}>
       <div
-        className="product-media relative group"
+        className="product-media relative group aspect-[4/5] w-full overflow-hidden"
         onMouseEnter={() => canHover && setIsHovering(true)}
         onMouseLeave={() => {
           setIsHovering(false);
@@ -102,7 +107,9 @@ export default function ProductCard({
                 <img
                   src={displayImages[0]}
                   alt={title}
-                  className="w-full h-full object-cover"
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               </Link>
             ) : (
@@ -143,7 +150,9 @@ export default function ProductCard({
                         <img
                           src={img}
                           alt={`${title} - Image ${index + 1}`}
-                          className="w-full h-full object-cover cursor-pointer"
+                          className="h-full w-full cursor-pointer object-cover"
+                          loading="lazy"
+                          decoding="async"
                           draggable="false"
                         />
                       </Link>
@@ -196,15 +205,22 @@ export default function ProductCard({
         )}
       </div>
       <div className="product-body ">
+        {(brandLabel || categoryLabel) && (
+          <div className="flex flex-wrap gap-1.5">
+            {brandLabel && <span className="chip !min-h-0 !rounded-full !px-2 !py-0.5 !text-[10px] !font-semibold !leading-4">{brandLabel}</span>}
+            {categoryLabel && <span className="chip !min-h-0 !rounded-full !px-2 !py-0.5 !text-[10px] !font-semibold !leading-4">{categoryLabel}</span>}
+          </div>
+        )}
         <Link to={`/products/${id}`} className="product-title ">
           {title}
         </Link>
-        <p className="my-2">
-          {product?.category || product?.brand || "Catalog item"}
-        </p>
-        <strong className="py-2">
-          {formatMoney(product?.price, product?.currency)}/-
-        </strong>
+        <p className="my-2">{categoryLabel || brandLabel || "Catalog item"}</p>
+        <div className="flex items-center gap-2 py-1">
+          <strong>{formatMoney(price, product?.currency)}/-</strong>
+          {mrp > price && (
+            <span className="text-xs text-[#8a8275] line-through">{formatMoney(mrp, product?.currency)}</span>
+          )}
+        </div>
       </div>
       <div className="icon-row ">
         <button

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
@@ -20,8 +20,10 @@ import {
   fetchTrendingProducts,
   fetchRecommendations,
 } from "../../features/recommendation/recommendationSlice";
+import { fetchCmsPages } from "../../features/cms/cmsSlice";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { fetchProducts } from "../../features/product/productSlice";
+import { tokenStorage } from "../../api/tokenStorage";
 import BrandCarousel from "../../components/about/BrandCarousel";
 import WhyChooseSection from "../../components/about/WhyChooseSection";
 import FAQPage from "../faq/FAQPage";
@@ -33,25 +35,55 @@ export function HomePage() {
   const recent = getRecentlyViewed();
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
-  const trendingList = useSelector((s) => s.recommendation.list);
-  const trendingLoading = useSelector((s) => s.recommendation.loading);
-  const categoryList = useSelector((s) => s.catalog.list);
+  const trendingList = useSelector((s) => s.recommendation.trendingList);
+  const trendingLoading = useSelector((s) => s.recommendation.loadingTrending);
   const productList = useSelector((s) => s.product.list);
   const productLoading = useSelector((s) => s.product.loading);
+  const cmsPages = useSelector((s) => s.cms.list);
 
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
-  const categories = Array.isArray(categoryList) ? categoryList : [];
   const featuredProducts = Array.isArray(productList)
     ? productList.slice(0, 8)
     : [];
+  const cmsBannerSlides = useMemo(() => {
+    const list = Array.isArray(cmsPages) ? cmsPages : [];
+    const bannerLike = list
+      .filter((item) => {
+        const pageType = String(item?.pageType || item?.type || "").toLowerCase();
+        const slug = String(item?.slug || "").toLowerCase();
+        const isBannerLike = pageType.includes("banner") || slug.includes("banner") || slug.includes("hero");
+        const isPublished = item?.published !== false;
+        const isActive = item?.metadata?.active !== false;
+        return isBannerLike && isPublished && isActive;
+      })
+      .sort((a, b) => Number(a?.metadata?.sortOrder || 999) - Number(b?.metadata?.sortOrder || 999))
+      .slice(0, 8)
+      .map((item) => ({
+        title: item?.metadata?.headline || item?.title || "Featured",
+        name: item?.metadata?.subtitle || item?.title || "Featured",
+        link: item?.metadata?.ctaUrl || (item?.slug ? `/cms/${item.slug}` : "/products"),
+        image:
+          item?.heroImage ||
+          item?.coverImage ||
+          item?.thumbnailUrl ||
+          item?.metadata?.heroImage ||
+          item?.metadata?.coverImage ||
+          item?.metadata?.thumbnailUrl,
+      }))
+      .filter((item) => item.image);
+    return bannerLike;
+  }, [cmsPages]);
 
   useEffect(() => {
-    dispatch(fetchTrendingProducts({ limit: 8 })).catch(() => {});
-    dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
+    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
+    if (tokenStorage.getAccessToken()) {
+      dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
+    }
     dispatch(fetchCategories({ limit: 20 })).catch(() => {});
     dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(
       () => {},
     );
+    dispatch(fetchCmsPages({ limit: 20 })).catch(() => {});
   }, [dispatch]);
 
   return (
@@ -101,7 +133,7 @@ export function HomePage() {
               Trending Now
             </h2>
             <Link
-              to="/products?sort=rating"
+              to="/trending-now"
               className="font-montserrat text-sm font-medium text-[#CE9F2D] underline-offset-4 hover:underline"
             >
               See all →
@@ -140,7 +172,7 @@ export function HomePage() {
               New Arrivals
             </h2>
             <Link
-              to="/products?sort=newest"
+              to="/new-arrivals"
               className="font-montserrat text-lg font-medium text-black "
             >
               View all →
@@ -172,7 +204,7 @@ export function HomePage() {
       )}
 
       {/* Seasonal swiper */}
-      <MothersDaySwiper data={mothersDayData} />
+      <MothersDaySwiper data={cmsBannerSlides.length ? cmsBannerSlides : mothersDayData} />
 
       {/* Products For You + Our Commitment */}
       <div className="w-container">
@@ -185,9 +217,14 @@ export function HomePage() {
       {/* Recently Viewed */}
       {recent.length > 0 && (
         <section className="w-container my-8">
-          <h2 className="mb-4 font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
-            Recently Viewed
-          </h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
+              Recently Viewed
+            </h2>
+            <Link to="/recently-viewed" className="font-montserrat text-sm font-medium text-[#CE9F2D]">
+              See all →
+            </Link>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {recent.map((product) => (
               <ProductCard

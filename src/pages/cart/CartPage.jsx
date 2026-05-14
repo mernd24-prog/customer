@@ -128,8 +128,8 @@ export default function CartPage() {
                       {cart.wishlist.map((wishlistProduct) => {
                         const wishlistId = getProductId(wishlistProduct);
                         const wishlistTitle = typeof wishlistProduct === "object"
-                          ? getProductTitle(wishlistProduct, wishlistId)
-                          : wishlistId;
+                          ? getProductTitle(wishlistProduct, "Saved item")
+                          : "Saved item";
                         return (
                         <div key={wishlistId} className="flex items-center justify-between gap-3 rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3">
                           <span className="truncate font-montserrat text-sm text-[#787878]">{wishlistTitle}</span>

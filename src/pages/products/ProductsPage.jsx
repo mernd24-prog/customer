@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronLeft, ChevronRight, Grid2X2, List, SlidersHorizontal, X } from "lucide-react";
@@ -91,43 +91,95 @@ export default function ProductsPage() {
   const [viewMode, setViewMode] = useState("grid");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [brandList, setBrandList] = useState([]);
+  const [items, setItems] = useState([]);
+  const [pageInfo, setPageInfo] = useState({ page: 1, totalPages: 1, total: 0 });
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [firstLoadDone, setFirstLoadDone] = useState(false);
+  const sentinelRef = useRef(null);
 
   const productState = useSelector((s) => s.product);
   const catalogState = useSelector((s) => s.catalog);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
   const categories = useMemo(() => (Array.isArray(catalogState.list) ? catalogState.list : []), [catalogState.list]);
-  const products = useMemo(() => (Array.isArray(productState.list) ? productState.list : []), [productState.list]);
-  const meta = productState.meta;
-  const totalPages = meta?.totalPages || meta?.pages || 1;
-  const currentPage = Number(searchParams.get("page") || 1);
+  const products = items;
+  const totalPages = pageInfo.totalPages || 1;
+  const currentPage = pageInfo.page || 1;
 
-  const getParams = useCallback(() => ({
+  const getParams = useCallback((pageOverride) => ({
     category: searchParams.get("category") || undefined,
     brand: searchParams.get("brand") || undefined,
     q: searchParams.get("q") || undefined,
     minPrice: searchParams.get("minPrice") || undefined,
     maxPrice: searchParams.get("maxPrice") || undefined,
     sort: searchParams.get("sort") || undefined,
-    page: currentPage,
+    page: pageOverride || 1,
     limit: Number(searchParams.get("limit") || 12),
-  }), [searchParams, currentPage]);
+  }), [searchParams]);
+
+  const loadProducts = useCallback(async ({ page = 1, append = false } = {}) => {
+    const params = getParams(page);
+    const thunk = params.q ? searchProducts : fetchProducts;
+    if (append) setIsLoadingMore(true);
+    const result = await dispatch(thunk(params)).unwrap();
+
+    const data = result?.data;
+    const list = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.items)
+        ? data.items
+        : Array.isArray(data?.list)
+          ? data.list
+          : [];
+    const meta = result?.meta || {};
+    const nextPage = Number(meta.page || meta.currentPage || params.page || 1);
+    const nextTotalPages = Number(meta.totalPages || meta.pages || 1);
+    const nextTotal = Number(meta.total || meta.count || list.length || 0);
+
+    setPageInfo({ page: nextPage, totalPages: nextTotalPages, total: nextTotal });
+    setItems((prev) => (append ? [...prev, ...list] : list));
+    setFirstLoadDone(true);
+    setIsLoadingMore(false);
+    return list;
+  }, [dispatch, getParams]);
 
   useEffect(() => {
-    const p = getParams();
-    if (p.q) dispatch(searchProducts(p));
-    else dispatch(fetchProducts(p));
-  }, [dispatch, searchParams, getParams]);
+    loadProducts({ page: 1, append: false }).catch(() => {
+      setFirstLoadDone(true);
+      setIsLoadingMore(false);
+    });
+  }, [loadProducts]);
 
   useEffect(() => {
     dispatch(fetchCategories({ limit: 50 }));
     dispatch(fetchBrands({ limit: 50 }))
       .then((action) => {
-        const list = action?.payload?.data;
-        setBrandList(Array.isArray(list) ? list : []);
+        const data = action?.payload?.data;
+        const list = Array.isArray(data) ? data : data?.items || data?.list || [];
+        const normalized = list
+          .map((brand) => {
+            const label = brand?.name || brand?.title || brand?.brandName || brand?.code;
+            return label ? { value: String(label), label: String(label) } : null;
+          })
+          .filter(Boolean);
+        setBrandList(normalized);
       })
       .catch(() => {});
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!sentinelRef.current || !firstLoadDone || productState.loading || isLoadingMore) return undefined;
+    if (currentPage >= totalPages) return undefined;
+
+    const observer = new IntersectionObserver((entries) => {
+      const [entry] = entries;
+      if (!entry?.isIntersecting) return;
+      loadProducts({ page: currentPage + 1, append: true }).catch(() => {});
+    }, { threshold: 0.2, rootMargin: "0px 0px 300px 0px" });
+
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [currentPage, totalPages, firstLoadDone, loadProducts, productState.loading, isLoadingMore]);
 
   const updateParam = (key, value) => {
     setSearchParams((prev) => {
@@ -158,7 +210,7 @@ export default function ProductsPage() {
   };
 
   const setPage = (p) => {
-    setSearchParams((prev) => { const next = new URLSearchParams(prev); next.set("page", p); return next; });
+    loadProducts({ page: p, append: false }).catch(() => {});
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -186,7 +238,7 @@ export default function ProductsPage() {
         )}
         {brandList.length > 0 && (
           <FilterSection title="Brand">
-            <CheckboxFilter options={brandList} selected={searchParams.get("brand")} onChange={(v) => updateParam("brand", v)} labelKey="name" valueKey="id" />
+            <CheckboxFilter options={brandList} selected={searchParams.get("brand")} onChange={(v) => updateParam("brand", v)} labelKey="label" valueKey="value" />
           </FilterSection>
         )}
         <FilterSection title="Price Range">
@@ -201,13 +253,10 @@ export default function ProductsPage() {
       <Seo title={`${pageTitle} | Sam Global`} description="Browse products with filters, sort, and pagination." />
 
       <div className="w-container py-6 sm:py-8">
-        {/* Controls row */}
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <PageHeader title={pageTitle} className="mb-0" />
-            {meta?.total != null && (
-              <p className="mt-0.5 font-montserrat text-sm text-[#787878]">{meta.total.toLocaleString()} products</p>
-            )}
+            <p className="mt-0.5 font-montserrat text-sm text-[#787878]">{(pageInfo.total || products.length).toLocaleString()} products</p>
           </div>
           <div className="flex items-center gap-3">
             <select value={searchParams.get("sort") || ""} onChange={(e) => updateParam("sort", e.target.value)}
@@ -235,7 +284,6 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        {/* Active filters */}
         {activeFilters.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
             {activeFilters.map((f) => (
@@ -270,12 +318,12 @@ export default function ProductsPage() {
 
           <div className="min-w-0 flex-1">
             <ApiState
-              loading={productState.loading && !products.length}
+              loading={(productState.loading && !products.length) || (!firstLoadDone && !products.length)}
               error={productState.error}
-              empty={!products.length && !productState.loading}
+              empty={!products.length && !productState.loading && firstLoadDone}
               emptyTitle={isSearchMode ? "No results found" : "No products found"}
               emptyText={isSearchMode ? "Try different keywords or remove filters." : "Try adjusting your filters or browse other categories."}
-              onRetry={() => dispatch(fetchProducts(getParams()))}
+              onRetry={() => loadProducts({ page: 1, append: false })}
             >
               <div className={viewMode === "grid" ? "grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4" : "grid gap-4"}>
                 {products.map((product) => (
@@ -299,6 +347,11 @@ export default function ProductsPage() {
                   <button type="button" disabled={currentPage >= totalPages} onClick={() => setPage(currentPage + 1)} className="icon-button secondary"><ChevronRight size={16} /></button>
                 </div>
               )}
+
+              {isLoadingMore && (
+                <div className="mt-6 text-center font-montserrat text-sm text-[#787878]">Loading more products...</div>
+              )}
+              <div ref={sentinelRef} className="h-8 w-full" />
             </ApiState>
           </div>
         </div>

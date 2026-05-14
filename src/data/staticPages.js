@@ -1,25 +1,30 @@
 export const faqItems = [
   {
+    cmsKey: "faq-place-order",
     question: "How do I place an order?",
     answer:
       "Search for the product you want, add it to your cart, then follow the checkout steps to choose delivery and payment options.",
   },
   {
+    cmsKey: "faq-payment-methods",
     question: "What payment methods do you accept?",
     answer:
       "We accept major credit and debit cards, digital wallets, and cash-on-delivery in eligible locations.",
   },
   {
+    cmsKey: "faq-return-exchange",
     question: "Can I return or exchange a product?",
     answer:
       "Yes. Most orders are eligible for returns and exchanges within 30 days. Visit the Returns page for policy details.",
   },
   {
+    cmsKey: "faq-contact-support",
     question: "How can I contact customer support?",
     answer:
       "Reach our team via the Support Center, email, or the live help options shown on the site. We respond quickly to urgent requests.",
   },
   {
+    cmsKey: "faq-track-order",
     question: "How do I track my order?",
     answer:
       "Check your order status under Orders, then follow the tracking link for live delivery updates.",
@@ -28,36 +33,42 @@ export const faqItems = [
 
 export const supportTopics = [
   {
+    cmsKey: "support-order-status-tracking",
     title: "Order status & tracking",
     description:
       "View real-time delivery progress and estimated arrival for every purchase.",
     href: "/orders",
   },
   {
+    cmsKey: "support-returns-refunds",
     title: "Returns & refunds",
     description:
       "Start a return, check return eligibility, and monitor your refund progress.",
     href: "/returns",
   },
   {
+    cmsKey: "support-account",
     title: "Account support",
     description:
       "Update account details, reset passwords, and manage saved addresses securely.",
     href: "/account/profile",
   },
   {
+    cmsKey: "support-payment",
     title: "Payment help",
     description:
       "Get answers on payment methods, invoices, and checkout security.",
     href: "/payments",
   },
   {
+    cmsKey: "support-product",
     title: "Product help",
     description:
       "Find sizing, warranty, and product availability information quickly.",
     href: "/products",
   },
   {
+    cmsKey: "support-resources",
     title: "Support resources",
     description:
       "Browse FAQs, policies, and customer guidance to resolve questions instantly.",
@@ -67,21 +78,25 @@ export const supportTopics = [
 
 export const whyChooseUsItems = [
   {
+    cmsKey: "why-curated-collections",
     title: "Curated collections",
     description:
       "We handpick products from trusted brands so you get high quality every time.",
   },
   {
+    cmsKey: "why-smart-savings",
     title: "Smart savings",
     description:
       "Enjoy frequent deals, cashback offers, and member-only promotions.",
   },
   {
+    cmsKey: "why-fast-delivery",
     title: "Fast delivery",
     description:
       "Reliable delivery with real-time tracking and trusted carriers.",
   },
   {
+    cmsKey: "why-easy-returns",
     title: "Easy returns",
     description:
       "Hassle-free returns and support that prioritizes your satisfaction.",
@@ -90,21 +105,25 @@ export const whyChooseUsItems = [
 
 export const commitmentItems = [
   {
+    cmsKey: "commitment-customer-first-policies",
     title: "Customer-first policies",
     description:
       "We build policies around your convenience, with clear support and easy refunds.",
   },
   {
+    cmsKey: "commitment-quality-assurance",
     title: "Quality assurance",
     description:
       "Our products are sourced from verified suppliers and quality-reviewed before launch.",
   },
   {
+    cmsKey: "commitment-trust-transparency",
     title: "Trust and transparency",
     description:
       "We communicate honestly about pricing, delivery, and product details.",
   },
   {
+    cmsKey: "commitment-continuous-improvement",
     title: "Continuous improvement",
     description:
       "We refine our experience every day based on customer feedback and usage data.",
@@ -113,31 +132,37 @@ export const commitmentItems = [
 
 export const featureItems = [
   {
+    cmsKey: "feature-intelligent-search",
     title: "Intelligent search",
     description:
       "Find what you need faster with smart search suggestions and refined filters.",
   },
   {
+    cmsKey: "feature-secure-checkout",
     title: "Secure checkout",
     description:
       "Enjoy encrypted checkout with trusted payment options and order confirmation.",
   },
   {
+    cmsKey: "feature-personalized-recommendations",
     title: "Personalized recommendations",
     description:
       "Receive product suggestions tailored to your tastes and browsing behavior.",
   },
   {
+    cmsKey: "feature-order-tracking",
     title: "Order tracking",
     description:
       "Track every shipment update from dispatch through delivery.",
   },
   {
+    cmsKey: "feature-fast-returns",
     title: "Fast returns",
     description:
       "Start returns quickly and follow the refund process with complete clarity.",
   },
   {
+    cmsKey: "feature-support",
     title: "24/7 support",
     description:
       "Access guided help and customer support whenever you need it.",
@@ -146,6 +171,7 @@ export const featureItems = [
 
 export const marketingPages = {
   deals: {
+    cmsKey: "deals",
     eyebrow: "Deals",
     title: "Fresh deals across every category",
     description:
@@ -178,6 +204,7 @@ export const marketingPages = {
     ],
   },
   brandOutlet: {
+    cmsKey: "brand-outlet",
     eyebrow: "Brand outlet",
     title: "Premium brands, smarter prices",
     description:
@@ -210,6 +237,7 @@ export const marketingPages = {
     ],
   },
   giftCards: {
+    cmsKey: "gift-cards",
     eyebrow: "Gift cards",
     title: "Easy gifting for every occasion",
     description:
@@ -242,6 +270,7 @@ export const marketingPages = {
     ],
   },
   helpContact: {
+    cmsKey: "help-contact",
     eyebrow: "Help & contact",
     title: "Get the right help faster",
     description:
@@ -274,6 +303,7 @@ export const marketingPages = {
     ],
   },
   whoWeAre: {
+    cmsKey: "who-we-are",
     eyebrow: "About Sam",
     title: "A shopping platform built around trust",
     description:
@@ -306,6 +336,7 @@ export const marketingPages = {
     ],
   },
   mobileApp: {
+    cmsKey: "mobile-app",
     eyebrow: "Mobile app",
     title: "Shop faster from your phone",
     description:
@@ -338,6 +369,7 @@ export const marketingPages = {
     ],
   },
   sellerPolicies: {
+    cmsKey: "seller-policies",
     eyebrow: "Seller policies",
     title: "Clear standards for marketplace partners",
     description:
@@ -370,6 +402,7 @@ export const marketingPages = {
     ],
   },
   growthSupport: {
+    cmsKey: "growth-support",
     eyebrow: "Growth support",
     title: "Support for brands and retail partners",
     description:
@@ -402,6 +435,7 @@ export const marketingPages = {
     ],
   },
   advertise: {
+    cmsKey: "advertise",
     eyebrow: "Advertise",
     title: "Reach shoppers at the right moment",
     description:
@@ -434,6 +468,7 @@ export const marketingPages = {
     ],
   },
   blog: {
+    cmsKey: "blog",
     eyebrow: "Blog",
     title: "Shopping guides and marketplace stories",
     description:
@@ -466,6 +501,7 @@ export const marketingPages = {
     ],
   },
   updates: {
+    cmsKey: "updates",
     eyebrow: "Updates",
     title: "What is new at Sam Global",
     description:
@@ -498,6 +534,7 @@ export const marketingPages = {
     ],
   },
   announcements: {
+    cmsKey: "announcements",
     eyebrow: "Announcements",
     title: "Official announcements and notices",
     description:

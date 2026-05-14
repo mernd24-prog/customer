@@ -14,6 +14,7 @@ import CardGridSection from "../components/static/CardGridSection";
 import FaqItem from "../components/static/FaqItem";
 import MarketingPage from "../components/static/MarketingPage";
 import PageHero from "../components/static/PageHero";
+import { getCmsImageSet, getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
 import {
   commitmentItems,
   faqItems,
@@ -21,6 +22,14 @@ import {
   supportTopics,
   whyChooseUsItems,
 } from "../data/staticPages";
+
+function useStaticCmsPage(cmsKey, fallback) {
+  const { page } = useCmsRecord(cmsKey);
+  return {
+    page: getCmsPayload(page, fallback),
+    images: getCmsImageSet(page, fallback.heroImage),
+  };
+}
 
 export const DealsPage = () => <MarketingPage pageKey="deals" />;
 export const BrandOutletPage = () => <MarketingPage pageKey="brandOutlet" />;
@@ -36,16 +45,26 @@ export const UpdatesPage = () => <MarketingPage pageKey="updates" />;
 export const AnnouncementsPage = () => <MarketingPage pageKey="announcements" />;
 
 export function FaqPage() {
+  const { page, images } = useStaticCmsPage("faq", {
+    eyebrow: "Support",
+    title: "Frequently Asked Questions",
+    description: "Quick answers for the most common questions about orders, payments, deliveries, and returns.",
+    ctaText: "Visit Support Center",
+    ctaTo: "/support",
+    questions: faqItems,
+  });
+
   return (
     <main className="content-page py-12">
       <Seo title="FAQs | Sam Global" />
       <div className="w-full max-w-6xl mx-auto space-y-12">
         <PageHero
-          eyebrow="Support"
-          title="Frequently Asked Questions"
-          description="Quick answers for the most common questions about orders, payments, deliveries, and returns."
-          ctaText="Visit Support Center"
-          ctaTo="/support"
+          eyebrow={page.eyebrow}
+          title={page.title}
+          description={page.description}
+          ctaText={page.ctaText}
+          ctaTo={page.ctaTo}
+          image={images.heroImage}
         />
 
         <CardGridSection
@@ -53,7 +72,7 @@ export function FaqPage() {
           subtitle="Clear, easy answers to help you move faster."
           className="grid gap-4 md:grid-cols-2"
         >
-          {faqItems.map((faq, index) => (
+          {(page.questions || faqItems).map((faq, index) => (
             <FaqItem key={faq.question} item={faq} index={index} />
           ))}
         </CardGridSection>
@@ -63,16 +82,26 @@ export function FaqPage() {
 }
 
 export function SupportCenterPage() {
+  const { page, images } = useStaticCmsPage("support-center", {
+    eyebrow: "Help center",
+    title: "Support Center",
+    description: "Find the right support path for orders, returns, account issues, and product questions.",
+    ctaText: "Browse FAQs",
+    ctaTo: "/faq",
+    topics: supportTopics,
+  });
+
   return (
     <main className="content-page py-12">
       <Seo title="Support Center | Sam Global" />
       <div className="w-full max-w-6xl mx-auto space-y-12">
         <PageHero
-          eyebrow="Help center"
-          title="Support Center"
-          description="Find the right support path for orders, returns, account issues, and product questions."
-          ctaText="Browse FAQs"
-          ctaTo="/faq"
+          eyebrow={page.eyebrow}
+          title={page.title}
+          description={page.description}
+          ctaText={page.ctaText}
+          ctaTo={page.ctaTo}
+          image={images.heroImage}
         >
           <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             <span className="rounded-3xl border border-white/15 bg-white/10 px-5 py-4 text-sm text-slate-200 shadow-sm backdrop-blur">
@@ -90,7 +119,7 @@ export function SupportCenterPage() {
           title="Instant support topics"
           subtitle="Choose the topic that best matches your request."
         >
-          {supportTopics.map((topic) => (
+          {(page.topics || supportTopics).map((topic) => (
             <InfoCard
               key={topic.title}
               icon={<LifeBuoy size={24} />}
@@ -134,16 +163,26 @@ export function SupportCenterPage() {
 }
 
 export function WhyChooseUsPage() {
+  const { page, images } = useStaticCmsPage("why-choose-us", {
+    eyebrow: "Why choose us",
+    title: "Shop with confidence at Sam Global",
+    description: "Enjoy curated products, meaningful savings, fast delivery, and customer service built around your needs.",
+    ctaText: "See features",
+    ctaTo: "/features",
+    items: whyChooseUsItems,
+  });
+
   return (
     <main className="content-page py-12">
       <Seo title="Why Choose Us | Sam Global" />
       <div className="w-full max-w-6xl mx-auto space-y-12">
         <PageHero
-          eyebrow="Why choose us"
-          title="Shop with confidence at Sam Global"
-          description="Enjoy curated products, meaningful savings, fast delivery, and customer service built around your needs."
-          ctaText="See features"
-          ctaTo="/features"
+          eyebrow={page.eyebrow}
+          title={page.title}
+          description={page.description}
+          ctaText={page.ctaText}
+          ctaTo={page.ctaTo}
+          image={images.heroImage}
         />
 
         <CardGridSection
@@ -151,7 +190,7 @@ export function WhyChooseUsPage() {
           subtitle="The reasons customers keep choosing Sam Global."
           className="grid gap-6 lg:grid-cols-2"
         >
-          {whyChooseUsItems.map((item) => (
+          {(page.items || whyChooseUsItems).map((item) => (
             <InfoCard
               key={item.title}
               icon={<Sparkles size={24} />}
@@ -166,16 +205,26 @@ export function WhyChooseUsPage() {
 }
 
 export function OurCommitmentPage() {
+  const { page, images } = useStaticCmsPage("our-commitment", {
+    eyebrow: "Our promise",
+    title: "Committed to quality, transparency, and every customer",
+    description: "We keep our promises with clear policies, dependable service, and continuous improvement.",
+    ctaText: "Browse support",
+    ctaTo: "/support",
+    items: commitmentItems,
+  });
+
   return (
     <main className="content-page py-12">
       <Seo title="Our Commitment | Sam Global" />
       <div className="w-full max-w-6xl mx-auto space-y-12">
         <PageHero
-          eyebrow="Our promise"
-          title="Committed to quality, transparency, and every customer"
-          description="We keep our promises with clear policies, dependable service, and continuous improvement."
-          ctaText="Browse support"
-          ctaTo="/support"
+          eyebrow={page.eyebrow}
+          title={page.title}
+          description={page.description}
+          ctaText={page.ctaText}
+          ctaTo={page.ctaTo}
+          image={images.heroImage}
         />
 
         <CardGridSection
@@ -183,7 +232,7 @@ export function OurCommitmentPage() {
           subtitle="Meaningful service, clear policies, and quality first."
           className="grid gap-6 md:grid-cols-2"
         >
-          {commitmentItems.map((item) => (
+          {(page.items || commitmentItems).map((item) => (
             <InfoCard
               key={item.title}
               icon={<Shield size={24} />}
@@ -198,21 +247,29 @@ export function OurCommitmentPage() {
 }
 
 export function FeaturesPage() {
+  const { page, images } = useStaticCmsPage("features", {
+    eyebrow: "Features",
+    title: "Features designed for effortless shopping",
+    description: "Explore the tools and experiences that make Sam Global fast, secure, and easy to use.",
+    items: featureItems,
+  });
+
   return (
     <main className="content-page py-12">
       <Seo title="Features | Sam Global" />
       <div className="w-full max-w-6xl mx-auto space-y-12">
         <PageHero
-          eyebrow="Features"
-          title="Features designed for effortless shopping"
-          description="Explore the tools and experiences that make Sam Global fast, secure, and easy to use."
+          eyebrow={page.eyebrow}
+          title={page.title}
+          description={page.description}
+          image={images.heroImage}
         />
 
         <CardGridSection
           title="Platform features"
           subtitle="Smart shopping features built to help you save time and shop confidently."
         >
-          {featureItems.map((item) => (
+          {(page.items || featureItems).map((item) => (
             <InfoCard
               key={item.title}
               icon={<CheckCircle2 size={24} />}

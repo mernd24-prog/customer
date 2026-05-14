@@ -2,6 +2,7 @@ import { productImages } from "../constant/image.constant";
 
 export const productsForYou = [
   {
+    cmsKey: "for-you-burberry-jacket",
     id: 1,
     title: "Burberry Jacket",
     subtitle: "Embroidered hooded wax jacket in black",
@@ -11,6 +12,7 @@ export const productsForYou = [
     oldPrice: 1200,
   },
   {
+    cmsKey: "for-you-lace-dress",
     id: 2,
     title: "Lace Dress",
     subtitle: "Elegant lace long sleeve midi dress in black",
@@ -20,6 +22,7 @@ export const productsForYou = [
     oldPrice: 1180,
   },
   {
+    cmsKey: "for-you-classic-fit-set",
     id: 3,
     title: "Classic Fit Set",
     subtitle: "Classic fit full set for men in premium cotton",
@@ -29,6 +32,7 @@ export const productsForYou = [
     oldPrice: 1200,
   },
   {
+    cmsKey: "for-you-track-pants",
     id: 4,
     title: "Track Pants",
     subtitle: "Men's classic loose fit track pants in green",
@@ -38,6 +42,7 @@ export const productsForYou = [
     oldPrice: 1200,
   },
   {
+    cmsKey: "for-you-denim-street",
     id: 5,
     title: "Denim Street",
     subtitle: "Relaxed denim fashion with shopping look",
@@ -47,6 +52,7 @@ export const productsForYou = [
     oldPrice: 1200,
   },
   {
+    cmsKey: "for-you-mens-twin-set",
     id: 6,
     title: "Men's Twin Set",
     subtitle: "Twin coordinated men style for festive wear",
@@ -56,6 +62,7 @@ export const productsForYou = [
     oldPrice: 1200,
   },
   {
+    cmsKey: "for-you-duo-shades",
     id: 7,
     title: "Duo Shades",
     subtitle: "Casual duo look with sunglasses and denim",
@@ -65,6 +72,7 @@ export const productsForYou = [
     oldPrice: 1200,
   },
   {
+    cmsKey: "for-you-kids-combo",
     id: 8,
     title: "Kids Combo",
     subtitle: "Mini trend duo for boys and girls in grey",
@@ -74,6 +82,7 @@ export const productsForYou = [
     oldPrice: 1200,
   },
   {
+    cmsKey: "for-you-premium-mist",
     id: 9,
     title: "Premium Mist",
     subtitle: "Luxury fragrance mist bottle with night glow",
@@ -83,6 +92,7 @@ export const productsForYou = [
     oldPrice: 1200,
   },
   {
+    cmsKey: "for-you-air-cooler",
     id: 10,
     title: "Air Cooler",
     subtitle: "Compact room air cooler for daily comfort",
@@ -92,6 +102,7 @@ export const productsForYou = [
     oldPrice: 1200,
   },
   {
+    cmsKey: "for-you-ethnic-duo",
     id: 11,
     title: "Ethnic Duo",
     subtitle: "Festive kurta pair in contrast shades",
@@ -101,6 +112,7 @@ export const productsForYou = [
     oldPrice: 1200,
   },
   {
+    cmsKey: "for-you-handbag-duo",
     id: 12,
     title: "Handbag Duo",
     subtitle: "Premium handbag set in coffee and beige",

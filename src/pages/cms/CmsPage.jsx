@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Calendar, Clock, Tag } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
-import PageHeader from "../../components/common/PageHeader";
 import BrandButton from "../../components/ui/BrandButton";
 import { fetchCmsPageBySlug } from "../../features/cms/cmsSlice";
+import PolicyPage from "../customer/policyPage";
 
 function CmsContent({ body }) {
   if (!body) return null;
@@ -18,14 +18,50 @@ function CmsContent({ body }) {
   );
 }
 
-export default function CmsPage() {
-  const { slug } = useParams();
+const CMS_SLUG_ALIASES = {
+  "terms-and-conditions": ["terms-and-conditions", "terms-of-use"],
+  "terms-of-use": ["terms-of-use", "terms-and-conditions"],
+  "refund-policy": ["refund-policy", "return-refund-policy"],
+  "return-refund-policy": ["return-refund-policy", "refund-policy"],
+  "about": ["about", "about-us"],
+  "about-us": ["about-us", "about"],
+  "help": ["help", "help-and-support"],
+};
+
+function slugCandidates(slug = "") {
+  const value = String(slug || "").trim();
+  if (!value) return [];
+  return CMS_SLUG_ALIASES[value] || [value];
+}
+
+export default function CmsPage({ fallbackData = null, slugOverride = "" }) {
+  const { slug: paramSlug } = useParams();
+  const slug = slugOverride || paramSlug;
+  const candidates = slugCandidates(slug);
   const dispatch = useDispatch();
   const cmsState = useSelector((s) => s.cms);
   const page = cmsState.current;
 
   useEffect(() => {
-    dispatch(fetchCmsPageBySlug({ slug }));
+    let mounted = true;
+    const load = async () => {
+      if (!candidates.length) return;
+      for (const candidate of candidates) {
+        try {
+          await dispatch(fetchCmsPageBySlug({ slug: candidate })).unwrap();
+          return;
+        } catch {
+          // try next alias
+        }
+      }
+      if (mounted) {
+        dispatch(fetchCmsPageBySlug({ slug: candidates[0] })).catch(() => {});
+      }
+    };
+    load();
+    return () => {
+      mounted = false;
+    };
   }, [dispatch, slug]);
 
   const title = page?.metadata?.seoTitle || page?.title || slug;
@@ -66,13 +102,16 @@ export default function CmsPage() {
       </div>
 
       <div className="w-container py-8">
+        {!cmsState.loading && !page && fallbackData ? (
+          <PolicyPage data={fallbackData} />
+        ) : (
         <ApiState
           loading={cmsState.loading && !page}
           error={cmsState.error}
           empty={!page && !cmsState.loading}
           emptyTitle="Page not found"
           emptyText="This content page doesn't exist or has been removed."
-          onRetry={() => dispatch(fetchCmsPageBySlug({ slug }))}
+          onRetry={() => dispatch(fetchCmsPageBySlug({ slug: candidates[0] || slug }))}
         >
           {page && (
             <div className="mx-auto max-w-3xl">
@@ -183,6 +222,7 @@ export default function CmsPage() {
             </div>
           )}
         </ApiState>
+        )}
       </div>
     </>
   );

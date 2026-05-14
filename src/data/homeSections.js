@@ -11,6 +11,7 @@ import topDeals from "./topDeals";
 export const homeShowcaseSections = [
   {
     id: "top-deals",
+    cmsKey: "home-top-deals",
     title: "Top Deals",
     subtitle: "Score the lowest prices on samglobal.com",
     headerbgColor: "bg-[#C9C9DB]",
@@ -25,6 +26,7 @@ export const homeShowcaseSections = [
   },
   {
     id: "new-arrivals",
+    cmsKey: "home-new-arrivals",
     title: "New Arrivals",
     subtitle: "Navigate trends with data-driven rankings",
     headerbgColor: "bg-[#ECDFCB]",
@@ -41,6 +43,7 @@ export const homeShowcaseSections = [
 
 export const collageCards = [
   {
+    cmsKey: "home-collage-men-fashion",
     title: "Best Sellers in Men's Fashion",
     images: [
       {
@@ -62,6 +65,7 @@ export const collageCards = [
     ],
   },
   {
+    cmsKey: "home-collage-home-lifestyle",
     title: "Up to 60% Off | Home & Lifestyle",
     images: [
       {
@@ -83,6 +87,7 @@ export const collageCards = [
     ],
   },
   {
+    cmsKey: "home-collage-womens-fashion",
     title: "Trending in Women's Fashion",
     images: [
       {
@@ -104,6 +109,7 @@ export const collageCards = [
     ],
   },
   {
+    cmsKey: "home-collage-kids-fashion",
     title: "Top Picks in Kids Fashion",
     images: [
       {
@@ -128,46 +134,55 @@ export const collageCards = [
 
 export const mothersDayData = [
   {
+    cmsKey: "home-seasonal-personalized-gifts",
     name: "Personalized Gifts",
     image: mothersDaySwiperImages.maxi,
     link: "#",
   },
   {
+    cmsKey: "home-seasonal-fashion-gifts",
     name: "Fashion Gifts",
     image: mothersDaySwiperImages.blazer,
     link: "#",
   },
   {
+    cmsKey: "home-seasonal-beauty-care",
     name: "Beauty & Personal Care",
     image: mothersDaySwiperImages.pants,
     link: "#",
   },
   {
+    cmsKey: "home-seasonal-personalized-gifts-repeat-1",
     name: "Personalized Gifts",
     image: mothersDaySwiperImages.maxi,
     link: "#",
   },
   {
+    cmsKey: "home-seasonal-fashion-gifts-repeat-1",
     name: "Fashion Gifts",
     image: mothersDaySwiperImages.blazer,
     link: "#",
   },
   {
+    cmsKey: "home-seasonal-beauty-care-repeat-1",
     name: "Beauty & Personal Care",
     image: mothersDaySwiperImages.pants,
     link: "#",
   },
   {
+    cmsKey: "home-seasonal-fashion-gifts-repeat-2",
     name: "Fashion Gifts",
     image: mothersDaySwiperImages.maxi,
     link: "#",
   },
   {
+    cmsKey: "home-seasonal-fashion-gifts-repeat-3",
     name: "Fashion Gifts",
     image: mothersDaySwiperImages.blazer,
     link: "#",
   },
   {
+    cmsKey: "home-seasonal-beauty-care-repeat-2",
     name: "Beauty & Personal Care",
     image: mothersDaySwiperImages.pants,
     link: "#",

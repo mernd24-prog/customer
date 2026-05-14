@@ -7,11 +7,23 @@ export default function PageHero({
   description,
   ctaText,
   ctaTo,
+  image,
   children,
 }) {
   return (
-    <section className="rounded-[32px] bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 px-6 py-14 text-white shadow-2xl shadow-slate-900/10">
-      <div className="mx-auto w-full max-w-6xl">
+    <section
+      className="relative overflow-hidden rounded-[8px] bg-slate-950 px-6 py-14 text-white shadow-xl shadow-slate-900/10"
+      style={
+        image
+          ? {
+              backgroundImage: `linear-gradient(90deg, rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.58)), url(${image})`,
+              backgroundPosition: "center",
+              backgroundSize: "cover",
+            }
+          : undefined
+      }
+    >
+      <div className="relative mx-auto w-full max-w-6xl">
         <span className="mb-4 inline-flex items-center rounded-full bg-white/10 px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-slate-200">
           {eyebrow}
         </span>
