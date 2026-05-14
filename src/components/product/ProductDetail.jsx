@@ -185,23 +185,13 @@ function ProductGallery({
           <img
             src={activeImage}
             alt="product"
-            className={`h-full w-full object-contain transition-opacity duration-300 rounded-lg ${
-              isZoomed ? "opacity-0" : "opacity-100"
+            className={`h-full w-full object-contain transition-transform duration-300 rounded-lg ${
+              isZoomed ? "scale-[2.5]" : "scale-100"
             }`}
+            style={{
+              transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+            }}
           />
-
-          {/* Zoomed View (shown on click) */}
-          {isZoomed && (
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage: `url(${activeImage})`,
-                backgroundSize: "250%",
-                backgroundPosition: `${zoomPos.x}% ${zoomPos.y}%`,
-                backgroundRepeat: "no-repeat",
-              }}
-            />
-          )}
         </div>
       </div>
     </div>
