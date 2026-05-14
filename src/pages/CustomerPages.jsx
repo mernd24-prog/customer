@@ -560,7 +560,7 @@ export function ProductsPage({ search = false }) {
           )
         }
       >
-        <div className="grid">
+        <div className="grid-auto-fit">
           {products.map((product) => (
             <ProductCard
               key={getProductId(product)}

@@ -134,7 +134,7 @@ export function HomePage() {
 
       {/* New Arrivals */}
       {(featuredProducts.length > 0 || productLoading) && (
-        <section className="my-8">
+        <section className="my-8 ">
           <div className="my-6 flex items-center justify-between">
             <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
               New Arrivals
@@ -156,7 +156,7 @@ export function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {featuredProducts.map((product) => (
                 <ProductCard
                   key={getProductId(product)}
