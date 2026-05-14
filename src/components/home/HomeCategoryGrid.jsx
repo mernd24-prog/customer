@@ -22,7 +22,7 @@ export default function HomeCategoryGrid({ categories = [], loading = false }) {
         Time for a spring refresh
       </h1>
       <div className="grid grid-cols-1 gap-[1.5rem] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        {" "}
+
         {categories.map((item) => (
           <CategoryCard
             key={item.id}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { Link ,useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import ProductCard from "../../components/product/ProductCard";
@@ -31,6 +31,13 @@ import FAQPage from "../faq/FAQPage";
 import OurStory from "../../components/about/OurStory";
 import ValuesSection from "../../components/about/ValuesSection";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
+import Banner from "../../components/swiper/brandSwiper";
+import CollageMainSection from "../../components/ui/collageCard";
+import NeedHelpSection from "../../components/faq/NeedHelpSection";
+import CommitmentCard from "../../components/ui/CommitmentCard";
+import { aboutSectionImages } from "../../constant/image.constant";
+import SupportFeatureSection from "../../components/ui/SupportFeatureSection";
+import { helpSupportData } from "../../data/helpSupport";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -43,7 +50,7 @@ export function HomePage() {
   const productList = useSelector((s) => s.product.list);
   const productLoading = useSelector((s) => s.product.loading);
   const cmsPages = useSelector((s) => s.cms.list);
-   const categoryList = useSelector((s) => s.catalog.list);
+  const categoryList = useSelector((s) => s.catalog.list);
   const categories = Array.isArray(categoryList) ? categoryList : [];
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
   const featuredProducts = Array.isArray(productList)
@@ -79,15 +86,15 @@ export function HomePage() {
   }, [cmsPages]);
 
   useEffect(() => {
-    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
+    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => { });
     if (tokenStorage.getAccessToken()) {
-      dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
+      dispatch(fetchRecommendations({ limit: 8 })).catch(() => { });
     }
-    dispatch(fetchCategories({ limit: 20 })).catch(() => {});
+    dispatch(fetchCategories({ limit: 20 })).catch(() => { });
     dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(
       () => { },
     );
-    dispatch(fetchCmsPages({ limit: 20 })).catch(() => {});
+    dispatch(fetchCmsPages({ limit: 20 })).catch(() => { });
   }, [dispatch]);
 
   return (
@@ -96,41 +103,80 @@ export function HomePage() {
         title="Sam Global | Shop smarter"
         description="Discover the best deals on fashion, electronics, home and more at Sam Global."
       />
+      <Banner />
 
-      {/* Category Quick Links */}
-      {/* {categories.length > 0 && (
-        <section className="w-container my-8">
-          <h2 className="mb-4 text-center font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
-            Shop by Category
-          </h2>
-          <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
-            {categories.slice(0, 12).map((cat) => (
-              <Link
-                key={cat.categoryKey || cat.key || cat.id}
-                to={`/categories/${cat.categoryKey || cat.key}`}
-                className="flex shrink-0 flex-col items-center gap-1.5 rounded-[12px] border border-[#e7dfd1] bg-white px-4 py-3 text-center transition hover:border-[#CE9F2D] hover:shadow-sm"
-              >
-                {cat.imageUrl && (
-                  <img src={cat.imageUrl} alt={cat.title} className="h-10 w-10 object-contain" />
-                )}
-                <span className="max-w-[80px] truncate whitespace-nowrap font-montserrat text-xs font-medium text-[#2E2E2E]">
-                  {cat.title || cat.name}
-                </span>
-              </Link>
-            ))}
-            <Link
-              to="/products"
-              className="flex shrink-0 flex-col items-center gap-1.5 rounded-[12px] border border-dashed border-[#cfc6b8] bg-[#FAF6EE] px-4 py-3 text-center transition hover:border-[#CE9F2D]"
-            >
-              <span className="text-xl font-bold text-[#CE9F2D]">→</span>
-              <span className="whitespace-nowrap font-montserrat text-xs font-medium text-[#787878]">All</span>
-            </Link>
-          </div>
-        </section>
-      )} */}
+      {/* Category Grid */}
+      {/* Category Grid */}
+      <HomeCategoryGrid
+        categories={categories?.slice(0, 5)}
+        loading={false}
+      />
+      <CollageMainSection />
+      <NeedHelpSection
+        heading1="Shopping Made Easy"
+        heading2=""
+        description="Enjoy reliablity ,secure dileveries and hassle free returns. Shop with confidence at Sam Global."
+        buttonText="Contact Us"
+      />
 
+
+      {/* Seasonal swiper */}
+      <MothersDaySwiper data={cmsBannerSlides.length ? cmsBannerSlides : mothersDayData} />
+      {/* Products For You + Our Commitment */}
+      <div className="w-container">
+        <HomeProductsForYouSection />
+      </div>
+      {/* <ValuesSection data={valueData} /> */}
+      {/* Commitment Section */}
+      {/* <section className="mt-8 px-3 py-5 sm:px-4 sm:py-6 lg:mt-10 lg:px-6 lg:py-8">
+ 
+        <h2 className="mb-6 text-center font-montserrat text-[22px] font-bold leading-tight text-[#2E2E2E] sm:text-[26px] md:text-[30px] lg:mb-8 lg:text-[34px]">
+          Our Commitment
+        </h2>
+
+        
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
+
+        
+          <CommitmentCard
+            title="To our customers, we promise:"
+            bgColor="bg-[#F5ECDD]"
+            iconColor="text-[#B57A2B]"
+            watermarkImage={aboutSectionImages.watermark}
+            points={[
+              "Quality and curated selection",
+              "Seamless shopping experience",
+              "Trust and consistency",
+            ]}
+          />
+
+          <CommitmentCard
+            title="To our partners, we offer:"
+            bgColor="bg-[#E9E8F6]"
+            iconColor="text-[#2E3192]"
+            watermarkImage={aboutSectionImages.watermark}
+            points={[
+              "Scalable growth opportunities",
+              "Strong execution and performance",
+              "Structured and reliable retail expansion",
+            ]}
+          />
+        </div>
+      </section> */}
+
+      {/* Support Section */}
+      {/* <section className="px-3 pb-6 sm:px-4 lg:px-6 lg:pb-10">
+        <SupportFeatureSection
+          title="How Can We Help You?"
+          subtitle="From product questions to partnership opportunities, our team is here to support you every step."
+          items={helpSupportData}
+          columns={4}
+        />
+      </section> */}
+      {/* Our Mission */}
+      {/* <InfoSection data={ourMission} /> */}
       {/* Trending Now */}
-      {(trendingProducts.length > 0 || trendingLoading) && (
+      {/* {(trendingProducts.length > 0 || trendingLoading) && (
         <section className="w-container my-8">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
@@ -166,16 +212,11 @@ export function HomePage() {
             </div>
           )}
         </section>
-      )}
+      )} */}
 
-      {/* Category Grid */}
-      <HomeCategoryGrid
-        categories={categories}
-        loading={false}
-      />
 
       {/* New Arrivals */}
-      {(featuredProducts.length > 0 || productLoading) && (
+      {/* {(featuredProducts.length > 0 || productLoading) && (
         <section className="my-8 ">
           <div className="my-6 flex items-center justify-between">
             <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
@@ -211,21 +252,10 @@ export function HomePage() {
             </div>
           )}
         </section>
-      )}
-
-      {/* Seasonal swiper */}
-      <MothersDaySwiper data={cmsBannerSlides.length ? cmsBannerSlides : mothersDayData} />
-
-      {/* Products For You + Our Commitment */}
-      <div className="w-container">
-        <HomeProductsForYouSection />
-      </div>
-
-      {/* Our Mission */}
-      <InfoSection data={ourMission} />
+      )} */}
 
       {/* Recently Viewed */}
-      {recent.length > 0 && (
+      {/* {recent.length > 0 && (
         <section className="w-container my-8">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
@@ -247,12 +277,11 @@ export function HomePage() {
             ))}
           </div>
         </section>
-      )}
-      <OurStory data={ourStoryData} />
-      <ValuesSection data={valueData} />
-      <BrandCarousel />
-      <WhyChooseSection data={whyChooseUsData} />
-      <FAQPage />
+      )} */}
+      {/* <OurStory data={ourStoryData} /> */}
+      {/* <BrandCarousel /> */}
+      {/* <WhyChooseSection data={whyChooseUsData} /> */}
+      {/* <FAQPage /> */}
     </>
   );
 }

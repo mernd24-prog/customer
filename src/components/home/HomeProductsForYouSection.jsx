@@ -56,53 +56,6 @@ export default function HomeProductsForYouSection() {
         ) : null}
       </section>
 
-      {/* Commitment Section */}
-      <section className="mt-8 px-3 py-5 sm:px-4 sm:py-6 lg:mt-10 lg:px-6 lg:py-8">
-        
-        {/* Heading */}
-        <h2 className="mb-6 text-center font-montserrat text-[22px] font-bold leading-tight text-[#2E2E2E] sm:text-[26px] md:text-[30px] lg:mb-8 lg:text-[34px]">
-          Our Commitment
-        </h2>
-
-        {/* Cards */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
-          
-          {/* Customer Card */}
-          <CommitmentCard
-            title="To our customers, we promise:"
-            bgColor="bg-[#F5ECDD]"
-            iconColor="text-[#B57A2B]"
-            watermarkImage={aboutSectionImages.watermark}
-            points={[
-              "Quality and curated selection",
-              "Seamless shopping experience",
-              "Trust and consistency",
-            ]}
-          />
-
-          <CommitmentCard
-            title="To our partners, we offer:"
-            bgColor="bg-[#E9E8F6]"
-            iconColor="text-[#2E3192]"
-            watermarkImage={aboutSectionImages.watermark}
-            points={[
-              "Scalable growth opportunities",
-              "Strong execution and performance",
-              "Structured and reliable retail expansion",
-            ]}
-          />
-        </div>
-      </section>
-
-      {/* Support Section */}
-      <section className="px-3 pb-6 sm:px-4 lg:px-6 lg:pb-10">
-        <SupportFeatureSection
-          title="How Can We Help You?"
-          subtitle="From product questions to partnership opportunities, our team is here to support you every step."
-          items={helpSupportData}
-          columns={4}
-        />
-      </section>
     </>
   );
 }
