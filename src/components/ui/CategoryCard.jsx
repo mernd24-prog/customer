@@ -2,7 +2,7 @@ export default function CategoryCard({ image, title, active, onClick }) {
     return (
         <div
             onClick={onClick}
-            className={`h-full w-full rounded-[20px] border border-card-border bg-white p-2 transition hover:bg-card-border ${active ? "ring-2 ring-primary/50" : ""} cursor-pointer`}
+            className={`h-full w-full rounded-[20px] border border-card-border p-4 bg-white transition hover:bg-card-border ${active ? "ring-2 ring-primary/50" : ""} cursor-pointer`}
         >
             <div className="rounded-lg overflow-hidden">
                 <img

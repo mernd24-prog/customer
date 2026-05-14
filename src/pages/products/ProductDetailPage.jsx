@@ -207,19 +207,11 @@ function ProductGallery({ images, isModal = false }) {
                 <img
                   src={img}
                   alt=""
-                  className={`h-full w-full object-contain p-3 transition-all duration-300 sm:p-4 ${isZoomed ? "opacity-30 scale-105" : "opacity-100 scale-100"}`}
+                  className={`h-full w-full object-contain p-3 transition-transform duration-300 sm:p-4 ${isZoomed ? (isModal ? "scale-[2.2]" : "scale-[2.8]") : "scale-100"}`}
+                  style={{
+                    transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                  }}
                 />
-                {(isLarge || isModal) && (
-                  <div
-                    className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ease-in-out ${isZoomed ? "opacity-100" : "opacity-0"}`}
-                    style={{
-                      backgroundImage: `url("${img}")`,
-                      backgroundSize: isModal ? "220% 220%" : "300% 300%",
-                      backgroundPosition: `${zoomPos.x}% ${zoomPos.y}%`,
-                      backgroundRepeat: "no-repeat",
-                    }}
-                  />
-                )}
               </div>
             </SwiperSlide>
           ))}

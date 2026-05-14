@@ -188,6 +188,9 @@ function ProductGallery({
             className={`h-full w-full object-contain transition-opacity duration-300 rounded-lg ${
               isZoomed && isModal ? "opacity-0" : "opacity-100"
             }`}
+            style={{
+              transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+            }}
           />
 
           {/* eBay Style Rectangular Lens (Main View Only) */}
