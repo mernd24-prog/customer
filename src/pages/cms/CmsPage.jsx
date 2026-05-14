@@ -18,8 +18,31 @@ function CmsContent({ body }) {
   );
 }
 
+<<<<<<< HEAD
 export default function CmsPage() {
   const { slug } = useParams();
+=======
+const CMS_SLUG_ALIASES = {
+  "terms-and-conditions": ["terms-and-conditions", "terms-of-use"],
+  "terms-of-use": ["terms-of-use", "terms-and-conditions"],
+  "refund-policy": ["refund-policy", "return-refund-policy"],
+  "return-refund-policy": ["return-refund-policy", "refund-policy"],
+  about: ["about", "about-us"],
+  "about-us": ["about-us", "about"],
+  help: ["help", "help-and-support"],
+};
+
+function slugCandidates(slug = "") {
+  const value = String(slug || "").trim();
+  if (!value) return [];
+  return CMS_SLUG_ALIASES[value] || [value];
+}
+
+export default function CmsPage({ fallbackData = null, slugOverride = "" }) {
+  const { slug: paramSlug } = useParams();
+  const slug = slugOverride || paramSlug;
+  const candidates = slugCandidates(slug);
+>>>>>>> 3827ea0 (fix:Api related error fixes in the policy pages)
   const dispatch = useDispatch();
   const cmsState = useSelector((s) => s.cms);
   const page = cmsState.current;
@@ -40,7 +63,9 @@ export default function CmsPage() {
     page?.metadata?.coverImage ||
     page?.metadata?.heroImage ||
     page?.metadata?.thumbnailUrl;
-  const galleryImages = Array.isArray(page?.galleryImages) ? page.galleryImages : [];
+  const galleryImages = Array.isArray(page?.galleryImages)
+    ? page.galleryImages
+    : [];
   const author = page?.author;
   const readTime = page?.readTime || page?.metadata?.readTime;
 
@@ -52,7 +77,9 @@ export default function CmsPage() {
       <div className="border-b border-[#e7dfd1] bg-[#FAF6EE] px-4 py-6 sm:px-6">
         <div className="w-container">
           <nav className="mb-2 flex items-center gap-1 font-montserrat text-xs text-[#A6A6A6]">
-            <Link to="/" className="hover:text-[#2E2E2E]">Home</Link>
+            <Link to="/" className="hover:text-[#2E2E2E]">
+              Home
+            </Link>
             <span>/</span>
             {category && (
               <>
@@ -66,6 +93,7 @@ export default function CmsPage() {
       </div>
 
       <div className="w-container py-8">
+<<<<<<< HEAD
         <ApiState
           loading={cmsState.loading && !page}
           error={cmsState.error}
@@ -112,77 +140,106 @@ export default function CmsPage() {
                     <span className="font-montserrat text-sm font-medium text-[#2E2E2E]">
                       {author.name || author}
                     </span>
+=======
+        {!cmsState.loading && !page && fallbackData ? (
+          <PolicyPage data={fallbackData} />
+        ) : (
+          <ApiState
+            loading={cmsState.loading && !page}
+            error={cmsState.error}
+            empty={!page && !cmsState.loading}
+            emptyTitle="Page not found"
+            emptyText="This content page doesn't exist or has been removed."
+            onRetry={() =>
+              dispatch(fetchCmsPageBySlug({ slug: candidates[0] || slug }))
+            }
+          >
+            {page && (
+              <div className="mx-auto max-w-3xl">
+                {/* Cover image */}
+                {coverImage && (
+                  <div className="mb-8 overflow-hidden rounded-[16px]">
+                    <img
+                      src={coverImage}
+                      alt={title}
+                      className="max-h-[420px] w-full object-cover"
+                    />
+>>>>>>> 3827ea0 (fix:Api related error fixes in the policy pages)
                   </div>
                 )}
-                {publishedAt && (
-                  <div className="flex items-center gap-1 font-montserrat text-xs text-[#A6A6A6]">
-                    <Calendar size={13} />
-                    {new Date(publishedAt).toLocaleDateString("en-IN", {
-                      day: "numeric", month: "long", year: "numeric",
-                    })}
-                  </div>
-                )}
-                {readTime && (
-                  <div className="flex items-center gap-1 font-montserrat text-xs text-[#A6A6A6]">
-                    <Clock size={13} />
-                    {readTime} min read
-                  </div>
-                )}
-                {updatedAt && updatedAt !== publishedAt && (
-                  <span className="font-montserrat text-xs text-[#A6A6A6]">
-                    Updated {new Date(updatedAt).toLocaleDateString("en-IN")}
+
+                {/* Category badge */}
+                {category && (
+                  <span className="chip mb-3 inline-block text-xs font-semibold uppercase tracking-wide">
+                    {category}
                   </span>
                 )}
-              </div>
 
-              {/* Body content */}
-              <div className="mt-8">
-                <CmsContent body={page.body || page.content} />
-              </div>
+                {/* Title */}
+                <h1 className="font-montserrat text-3xl font-bold leading-tight text-[#2E2E2E] sm:text-[36px]">
+                  {page.title}
+                </h1>
 
-              {/* Gallery */}
-              {galleryImages.length > 0 && (
-                <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {galleryImages.map((imageUrl) => (
-                    <img
-                      key={imageUrl}
-                      src={imageUrl}
-                      alt={page.title}
-                      className="h-28 w-full rounded-[10px] object-cover sm:h-36"
-                    />
-                  ))}
-                </div>
-              )}
+                {/* Excerpt */}
+                {page.excerpt && (
+                  <p className="mt-3 font-montserrat text-[17px] leading-relaxed text-[#787878]">
+                    {page.excerpt}
+                  </p>
+                )}
 
-              {/* Tags */}
-              {page.tags?.length > 0 && (
-                <div className="mt-10 flex flex-wrap items-center gap-2 border-t border-[#e7dfd1] pt-6">
-                  <Tag size={13} className="text-[#A6A6A6]" />
-                  {page.tags.map((tag) => (
-                    <span key={tag} className="chip text-xs font-medium">
-                      #{tag}
+                {/* Meta row */}
+                <div className="mt-5 flex flex-wrap items-center gap-4 border-b border-[#e7dfd1] pb-6">
+                  {author && (
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#CE9F2D] font-montserrat text-xs font-bold text-white">
+                        {(author?.name ||
+                          (typeof author === "string"
+                            ? author
+                            : ""))[0]?.toUpperCase()}
+                      </div>
+                      <span className="font-montserrat text-sm font-medium text-[#2E2E2E]">
+                        {author?.name ||
+                          (typeof author === "string" ? author : "")}
+                      </span>
+                    </div>
+                  )}
+                  {publishedAt && (
+                    <div className="flex items-center gap-1 font-montserrat text-xs text-[#A6A6A6]">
+                      <Calendar size={13} />
+                      {new Date(publishedAt).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </div>
+                  )}
+                  {readTime && (
+                    <div className="flex items-center gap-1 font-montserrat text-xs text-[#A6A6A6]">
+                      <Clock size={13} />
+                      {readTime} min read
+                    </div>
+                  )}
+                  {updatedAt && updatedAt !== publishedAt && (
+                    <span className="font-montserrat text-xs text-[#A6A6A6]">
+                      Updated {new Date(updatedAt).toLocaleDateString("en-IN")}
                     </span>
-                  ))}
+                  )}
                 </div>
-              )}
 
-              {/* CTA block */}
-              <div className="mt-10 rounded-[16px] bg-[#2E2E2E] px-8 py-10 text-center">
-                <p className="font-montserrat text-xl font-bold text-white">
-                  Ready to start shopping?
-                </p>
-                <p className="mt-1 font-montserrat text-sm text-[#A6A6A6]">
-                  Discover thousands of products at Sam Global.
-                </p>
-                <div className="mt-5 flex justify-center">
-                  <Link to="/products">
-                    <BrandButton variant="primary" rounded label="Browse Products" size="md" className="h-11 px-8 text-sm font-semibold" />
-                  </Link>
+                {/* Body content */}
+                <div className="mt-8">
+                  <CmsContent body={page.body || page.content} />
                 </div>
               </div>
+<<<<<<< HEAD
             </div>
           )}
         </ApiState>
+=======
+            )}
+          </ApiState>
+        )}
+>>>>>>> 3827ea0 (fix:Api related error fixes in the policy pages)
       </div>
     </>
   );

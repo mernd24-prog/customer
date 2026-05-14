@@ -8,17 +8,30 @@ export const defaultInitialState = {
   meta: null,
   loading: false,
   error: null,
-  lastFetchedAt: null
+  lastFetchedAt: null,
 };
 
-const idOf = (item) => item?.id || item?._id || item?.productId || item?.orderId || item?.slug || item?.categoryKey;
+const idOf = (item) =>
+  item?.id ||
+  item?._id ||
+  item?.productId ||
+  item?.orderId ||
+  item?.slug ||
+  item?.categoryKey;
 
 export function makeThunk(type, config) {
   return createAsyncThunk(type, async (arg = {}, { rejectWithValue }) => {
     try {
-      const params = typeof config.params === "function" ? config.params(arg) : config.params || arg?.params;
-      const data = typeof config.data === "function" ? config.data(arg) : config.data || arg?.data || arg;
-      const url = typeof config.url === "function" ? config.url(arg) : config.url;
+      const params =
+        typeof config.params === "function"
+          ? config.params(arg)
+          : config.params || arg?.params;
+      const data =
+        typeof config.data === "function"
+          ? config.data(arg)
+          : config.data || arg?.data || arg;
+      const url =
+        typeof config.url === "function" ? config.url(arg) : config.url;
       const result = await apiRequest({
         method: config.method || "get",
         url,
@@ -38,7 +51,12 @@ export function makeThunk(type, config) {
   });
 }
 
-export function createApiSlice({ name, thunks = {}, extraReducers, reducers = {} }) {
+export function createApiSlice({
+  name,
+  thunks = {},
+  extraReducers,
+  reducers = {},
+}) {
   const slice = createSlice({
     name,
     initialState: defaultInitialState,
@@ -47,7 +65,7 @@ export function createApiSlice({ name, thunks = {}, extraReducers, reducers = {}
       clearError: (state) => {
         state.error = null;
       },
-      ...reducers
+      ...reducers,
     },
     extraReducers: (builder) => {
       Object.values(thunks).forEach((thunk) => {
@@ -63,15 +81,21 @@ export function createApiSlice({ name, thunks = {}, extraReducers, reducers = {}
             const data = action.payload.data;
             if (Array.isArray(data)) {
               state.list = data;
-              state.entities = Object.fromEntries(data.map((item, index) => [idOf(item) || index, item]));
+              state.entities = Object.fromEntries(
+                data.map((item, index) => [idOf(item) || index, item]),
+              );
             } else if (data?.items && Array.isArray(data.items)) {
               state.list = data.items;
               state.current = data;
-              state.entities = Object.fromEntries(data.items.map((item, index) => [idOf(item) || index, item]));
+              state.entities = Object.fromEntries(
+                data.items.map((item, index) => [idOf(item) || index, item]),
+              );
             } else if (data?.orders && Array.isArray(data.orders)) {
               state.list = data.orders;
               state.current = data;
-              state.entities = Object.fromEntries(data.orders.map((item, index) => [idOf(item) || index, item]));
+              state.entities = Object.fromEntries(
+                data.orders.map((item, index) => [idOf(item) || index, item]),
+              );
             } else {
               state.current = data;
               const key = idOf(data);
@@ -84,11 +108,11 @@ export function createApiSlice({ name, thunks = {}, extraReducers, reducers = {}
           });
       });
       if (extraReducers) extraReducers(builder);
-    }
+    },
   });
 
   return {
     reducer: slice.reducer,
-    actions: slice.actions
+    actions: slice.actions,
   };
 }
