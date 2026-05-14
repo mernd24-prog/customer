@@ -76,6 +76,7 @@ import {
   OurCommitmentPage,
   FeaturesPage,
 } from "./pages/StaticPages";
+import AboutPage from "./pages/about/AboutPage";
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
 import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 import {
@@ -161,7 +162,8 @@ export default function App() {
           <Route path="/brand-outlet" element={<BrandOutletPage />} />
           <Route path="/gift-cards" element={<GiftCardsPage />} />
           <Route path="/who-we-are" element={<WhoWeArePage />} />
-          <Route path="/about" element={<Navigate to="/cms/about-us" replace />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/about-us" element={<AboutPage />} />
           <Route path="/mobile-app" element={<MobileAppPage />} />
           <Route path="/seller-policies" element={<SellerPoliciesPage />} />
           <Route path="/growth-support" element={<GrowthSupportPage />} />

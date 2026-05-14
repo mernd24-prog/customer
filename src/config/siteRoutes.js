@@ -55,6 +55,14 @@ export const SITE_ROUTES = [
     changefreq: "monthly",
     priority: 0.5,
   },
+  
+  {
+    path: "/about-us",
+    title: "About Sam Global",
+    description: "Discover Sam Global's mission, story, values, and retail approach.",
+    changefreq: "monthly",
+    priority: 0.5,
+  },
   {
     path: "/mobile-app",
     title: "Mobile App",
