@@ -28,7 +28,9 @@ export default function WatchlistPage() {
       <section className="min-h-screen py-8">
         <div className="w-container">
           <div className="mb-6">
-            <h1 className="font-montserrat text-[34px] font-bold text-[#2E2E2E]">Watchlist</h1>
+            <h1 className="font-montserrat text-[34px] font-bold text-[#2E2E2E]">
+              Watchlist
+            </h1>
             <p className="mt-1 font-montserrat text-[15px] text-[#787878]">
               {products.length} saved {products.length === 1 ? "item" : "items"}
             </p>
@@ -57,7 +59,7 @@ export default function WatchlistPage() {
                 variant="gradient"
                 rounded
                 label="Continue Shopping"
-                className="mt-7 h-[52px] px-8 text-[15px] font-bold"
+                className="mt-7 h-[52px] px-8  mx-auto text-[15px] font-bold"
                 onClick={() => navigate("/")}
               />
             </div>

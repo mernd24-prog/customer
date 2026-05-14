@@ -35,7 +35,7 @@ const Button = ({
     gradient:
       "bg-gradient-to-l from-accent to-primary text-white  rounded-full",
     secondary:
-      "bg-[#F3F4F6] hover:bg-[#BF9B53]  border-2 border-[#BF9B53] text-[#CE9F2D] ",
+      "bg-[#F3F4F6] hover:bg-[#BF9B53] hover:text-white  border-2 border-[#BF9B53] text-[#CE9F2D] ",
     google: "bg-white border border-gray-300 text-gray-700 hover:bg-gray-100",
   };
 

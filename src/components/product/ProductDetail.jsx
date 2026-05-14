@@ -109,33 +109,30 @@ function ProductGallery({
   activeImage,
   setActiveImage,
   isModal = false,
+  onImageClick,
 }) {
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
 
   const handleMove = (e) => {
-    if (!isZoomed) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    let clientX, clientY;
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
+    // Clamp lens position to stay inside (lens is 35% of container)
+    const padding = 17.5;
+    const clampedX = Math.max(padding, Math.min(100 - padding, x));
+    const clampedY = Math.max(padding, Math.min(100 - padding, y));
 
-    const x = ((clientX - rect.left) / rect.width) * 100;
-    const y = ((clientY - rect.top) / rect.height) * 100;
     setZoomPos({
       x: Math.max(0, Math.min(100, x)),
       y: Math.max(0, Math.min(100, y)),
     });
-  };
-
-  const handleClick = () => {
-    setIsZoomed((prev) => !prev);
+    setCursorPos({
+      x: (clampedX / 100) * rect.width,
+      y: (clampedY / 100) * rect.height,
+    });
   };
 
   return (
@@ -173,36 +170,58 @@ function ProductGallery({
         className={`order-1 ${isModal ? "lg:order-2 flex-1 w-auto" : "md:order-2 w-full xl:max-w-[650px]"} relative ${isModal ? "h-full max-h-[85vh]" : ""}`}
       >
         <div
-          className={`w-full h-full ${isModal ? "aspect-[1/5]" : "aspect-[5/5]"} overflow-hidden relative touch-none ${
-            isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
+          className={`w-full h-full ${isModal ? "aspect-[4/5]" : "aspect-square"} overflow-hidden relative touch-none ${
+            isZoomed ? "cursor-none" : "cursor-zoom-in"
           }`}
-          onClick={handleClick}
           onMouseMove={handleMove}
-          onTouchMove={handleMove}
+          onMouseEnter={(e) => {
+            handleMove(e);
+            setIsZoomed(true);
+          }}
           onMouseLeave={() => setIsZoomed(false)}
+          onClick={() => !isModal && onImageClick?.()}
         >
           {/* Normal Image */}
           <img
             src={activeImage}
             alt="product"
             className={`h-full w-full object-contain transition-opacity duration-300 rounded-lg ${
-              isZoomed ? "opacity-0" : "opacity-100"
+              isZoomed && isModal ? "opacity-0" : "opacity-100"
             }`}
           />
 
-          {/* Zoomed View (shown on click) */}
-          {isZoomed && (
+          {/* eBay Style Rectangular Lens (Main View Only) */}
+          {isZoomed && !isModal && (
             <div
-              className="absolute inset-0"
+              className="absolute pointer-events-none border border-[#7e7c7c]/40 bg-[#FAF6EE]/30 shadow-sm transition-all duration-75 ease-out"
               style={{
-                backgroundImage: `url(${activeImage})`,
-                backgroundSize: "250%",
-                backgroundPosition: `${zoomPos.x}% ${zoomPos.y}%`,
-                backgroundRepeat: "no-repeat",
+                width: "35%",
+                height: "35%",
+                left: `${cursorPos.x}px`,
+                top: `${cursorPos.y}px`,
+                transform: "translate(-50%, -50%)",
+                zIndex: 20,
               }}
             />
           )}
         </div>
+
+        {/* eBay Style Side Zoom Window (Main View Only) */}
+        {isZoomed && !isModal && (
+          <div
+            className="absolute left-full top-0 ml-6 hidden lg:block w-full h-full bg-white border border-[#e9e8e8] shadow-2xl rounded-2xl overflow-hidden z-[100]"
+            style={{
+              backgroundImage: `url(${activeImage})`,
+              backgroundSize: "300%",
+              backgroundPosition: `${zoomPos.x}% ${zoomPos.y}%`,
+              backgroundRepeat: "no-repeat",
+              transition: "background-position 0.15s ease-out",
+            }}
+          >
+            {/* Subtle glass effect on zoom window */}
+            <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-black/5 shadow-inner" />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -212,6 +231,12 @@ function ProductImages({ data }) {
   const { mainImage, sideImages = [] } = data?.images || {};
   const [activeImage, setActiveImage] = useState(mainImage);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (mainImage) {
+      setActiveImage(mainImage);
+    }
+  }, [mainImage]);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -230,6 +255,7 @@ function ProductImages({ data }) {
         sideImages={sideImages}
         activeImage={activeImage}
         setActiveImage={setActiveImage}
+        onImageClick={() => setIsModalOpen(true)}
       />
 
       {/* Zoom and wishlist Option */}
