@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import ProductCard from "../../components/product/ProductCard";
@@ -43,7 +43,8 @@ export function HomePage() {
   const productList = useSelector((s) => s.product.list);
   const productLoading = useSelector((s) => s.product.loading);
   const cmsPages = useSelector((s) => s.cms.list);
-
+   const categoryList = useSelector((s) => s.catalog.list);
+  const categories = Array.isArray(categoryList) ? categoryList : [];
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
   const featuredProducts = Array.isArray(productList)
     ? productList.slice(0, 8)
