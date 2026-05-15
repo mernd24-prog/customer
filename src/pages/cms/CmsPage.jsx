@@ -146,10 +146,10 @@ export default function CmsPage({ fallbackData = null, slugOverride = "" }) {
                 {author && (
                   <div className="flex items-center gap-2">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#CE9F2D] font-montserrat text-xs font-bold text-white">
-                      {(author.name || author)[0]?.toUpperCase()}
+                      {(typeof author === "string" ? author : author?.name || "A")[0]?.toUpperCase()}
                     </div>
                     <span className="font-montserrat text-sm font-medium text-[#2E2E2E]">
-                      {author.name || author}
+                      {typeof author === "string" ? author : author?.name || "Admin"}
                     </span>
                   </div>
                 )}

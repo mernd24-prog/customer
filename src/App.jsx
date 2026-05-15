@@ -86,9 +86,6 @@ import {
   TrendingNowPage,
   RecentlyViewedPage,
 } from "./pages/discovery/DiscoveryPages";
-import { termsOfUseData } from "./data/termsOfUseData";
-import { shippingPolicyData } from "./data/shippingPolicyData";
-import { refundPolicyData } from "./data/refundPolicyData";
 import ScrollToTop from "./components/common/scrollToTop";
 import WatchlistPage from "./pages/customer/WatchlistPage";
 import AdminProductManagementPage from "./pages/admin/AdminProductManagementPage";
@@ -174,11 +171,11 @@ export default function App() {
           <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
           <Route path="/our-commitment" element={<OurCommitmentPage />} />
           <Route path="/features" element={<FeaturesPage />} />
-          <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" fallbackData={termsOfUseData} />} />
-          <Route path="/terms-and-conditions" element={<CmsPage slugOverride="terms-and-conditions" fallbackData={termsOfUseData} />} />
-          <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" fallbackData={shippingPolicyData} />} />
-          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" fallbackData={refundPolicyData} />} />
-          <Route path="/return-refund-policy" element={<CmsPage slugOverride="return-refund-policy" fallbackData={refundPolicyData} />} />
+          <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} />
+          <Route path="/terms-and-conditions" element={<CmsPage slugOverride="terms-and-conditions" />} />
+          <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" />} />
+          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} />
+          <Route path="/return-refund-policy" element={<CmsPage slugOverride="return-refund-policy" />} />
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
