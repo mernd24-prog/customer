@@ -1,10 +1,10 @@
 import React from "react";
-import Header from "../../components/organism/Header";
-import { Footer } from "../../components/organism/footer";
+import Header from "../layout/Header";
+import Footer from "../layout/Footer";
 import PolicyHeader from "./PolicyHeader";
 import PolicyIntro from "./PolicyIntro";
 import PolicySection from "./PolicySection";
-import Seo from "../../components/Seo";
+import Seo from "../common/Seo";
 import { POLICIES } from "../../data";
 
 const TermsOfUse = () => {
