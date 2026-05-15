@@ -2,6 +2,20 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  WhatsappShareButton,
+  FacebookShareButton,
+  TwitterShareButton,
+  TelegramShareButton,
+  LinkedinShareButton,
+  EmailShareButton,
+  WhatsappIcon,
+  FacebookIcon,
+  TwitterIcon,
+  TelegramIcon,
+  LinkedinIcon,
+  EmailIcon,
+} from "react-share";
+import {
   ChevronRight,
   Heart,
   MapPin,
@@ -107,7 +121,7 @@ function ProductGallery({ images, isModal = false }) {
       y: Math.max(0, Math.min(100, y)),
     });
 
-    if (!isZoomed) {
+    if (!isModal && !isZoomed) {
       setIsZoomed(true);
     }
   };
@@ -393,7 +407,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
-
+  const [shareOpen, setShareOpen] = useState(false);
   useEffect(() => {
     dispatch(fetchProductById({ productId }));
   }, [dispatch, productId]);
@@ -509,18 +523,92 @@ export default function ProductDetailPage() {
                         {getProductTitle(product)}
                       </h1>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        window.navigator.clipboard?.writeText(
-                          window.location.href,
-                        )
-                      }
-                      className="icon-button shrink-0"
-                      title="Share"
-                    >
-                      <Share2 size={16} />
-                    </button>
+                    <div className="relative shrink-0">
+                      {/* Share Trigger */}
+                      <button
+                        type="button"
+                        onClick={() => setShareOpen((prev) => !prev)}
+                        className="icon-button"
+                        title="Share Product"
+                      >
+                        <Share2 size={16} />
+                      </button>
+
+                      {/* Share Popup */}
+                      {shareOpen && (
+                        <div className="absolute right-0 top-12 z-50 w-[260px] rounded-2xl border border-[#ece7dc] bg-white p-4 shadow-2xl">
+                          <div className="mb-3">
+                            <h3 className="font-montserrat text-sm font-bold text-[#2E2E2E]">
+                              Share Product
+                            </h3>
+
+                            <p className="mt-1 text-xs text-[#787878]">
+                              Share this product with friends
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-3">
+                            <WhatsappShareButton
+                              url={window.location.href}
+                              title={getProductTitle(product)}
+                            >
+                              <WhatsappIcon size={42} round />
+                            </WhatsappShareButton>
+
+                            <FacebookShareButton
+                              url={window.location.href}
+                              quote={getProductTitle(product)}
+                            >
+                              <FacebookIcon size={42} round />
+                            </FacebookShareButton>
+
+                            <TwitterShareButton
+                              url={window.location.href}
+                              title={getProductTitle(product)}
+                            >
+                              <TwitterIcon size={42} round />
+                            </TwitterShareButton>
+
+                            <TelegramShareButton
+                              url={window.location.href}
+                              title={getProductTitle(product)}
+                            >
+                              <TelegramIcon size={42} round />
+                            </TelegramShareButton>
+
+                            <LinkedinShareButton
+                              url={window.location.href}
+                              title={getProductTitle(product)}
+                            >
+                              <LinkedinIcon size={42} round />
+                            </LinkedinShareButton>
+
+                            <EmailShareButton
+                              url={window.location.href}
+                              subject={getProductTitle(product)}
+                              body={`Check this product:\n${window.location.href}`}
+                            >
+                              <EmailIcon size={42} round />
+                            </EmailShareButton>
+                          </div>
+
+                          {/* Copy Link */}
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              await navigator.clipboard.writeText(
+                                window.location.href,
+                              );
+
+                              alert("Link copied!");
+                            }}
+                            className="mt-4 w-full rounded-full bg-[#CE9F2D] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#b88d28]"
+                          >
+                            Copy Link
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Rating */}
