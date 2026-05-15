@@ -115,10 +115,17 @@ export function createApiSlice({
               );
             } else if (data !== undefined && data !== null) {
               state.current = data;
-              const key = idOf(data);
-              if (key !== undefined && key !== null) {
+              const keys = [
+                idOf(data),
+                data?.slug,
+                action.payload?.arg?.slug,
+                action.meta?.arg?.slug,
+                action.payload?.arg?.id,
+                action.meta?.arg?.id,
+              ].filter((key) => key !== undefined && key !== null);
+              keys.forEach((key) => {
                 state.entities[key] = data;
-              }
+              });
             }
           })
           .addCase(thunk.rejected, (state, action) => {
