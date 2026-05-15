@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useMemo, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -26,6 +26,7 @@ import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import { logout } from "../../features/auth/authSlice";
 import { getRole, isAdminRole } from "../../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
+import FashionMegaMenu from "../category/FashionMegaMenu";
 
 const buildCategorySlug = (name) => name.toLowerCase().replace(/\s+/g, "-");
 
@@ -297,6 +298,19 @@ export const Navbar = ({ icons: propIcons }) => {
 export const CategoryBar = ({ headerData }) => {
   const catalogList = useSelector((s) => s.catalog.list);
   const catalogCategories = asArray(catalogList);
+  const [activeMenu, setActiveMenu] = useState(null);
+  const timeoutRef = useRef(null);
+
+  const handleMouseEnter = (item) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setActiveMenu(item);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setActiveMenu(null);
+    }, 200);
+  };
 
   const categories = asArray(headerData).length
     ? asArray(headerData)
@@ -312,30 +326,46 @@ export const CategoryBar = ({ headerData }) => {
   if (!categories.length) return null;
 
   return (
-    <header className="w-full">
-      <div className="w-container  hide-scrollbar  flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
-        {asArray(categories).map((item, index) => (
-          <Link
-            key={keyOr(item?.name, `category-${index}`)}
-            to={`/categories/${keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`}
-            className="group flex min-w-[70px]  flex-col items-center lg:min-w-[80px]"
-          >
-            <div className="mx-auto  flex items-center justify-center rounded-full p-1 transition-all group-hover:bg-gray-100">
-              {item?.img ? (
-                <ImageSkeleton src={item?.img} alt={textOr(item?.name, "Category")} />
-              ) : (
-                <div className="h-10 w-10  rounded-full bg-stone-100 flex items-center justify-center text-slate-400">
-                  <ShoppingBag size={18} />
+    <div className="relative w-full" onMouseLeave={handleMouseLeave}>
+      <div className="w-container hide-scrollbar flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
+        {asArray(categories).map((item, index) => {
+          return (
+            <div
+              key={keyOr(item?.name, `category-${index}`)}
+              onMouseEnter={() => handleMouseEnter(item)}
+              className="flex flex-col items-center"
+            >
+              <Link
+                to={`/categories/${keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`}
+                className="group flex min-w-[70px] flex-col items-center lg:min-w-[80px]"
+              >
+                <div className="mx-auto flex items-center justify-center rounded-full p-1 transition-all group-hover:bg-gray-100">
+                  {item?.img ? (
+                    <ImageSkeleton src={item?.img} alt={textOr(item?.name, "Category")} />
+                  ) : (
+                    <div className="h-10 w-10 rounded-full bg-stone-100 flex items-center justify-center text-slate-400">
+                      <ShoppingBag size={18} />
+                    </div>
+                  )}
                 </div>
-              )}
+                <span className="mt-1 line-clamp-1 w-full max-w-[80px] text-center text-[12px] leading-tight text-black lg:max-w-[100px] lg:text-[14px]">
+                  {textOr(item?.name, "Category")}
+                </span>
+              </Link>
             </div>
-            <span className="mt-1 line-clamp-1   w-full max-w-[80px] text-center text-[12px] leading-tight text-black lg:max-w-[100px] lg:text-[14px]">
-              {textOr(item?.name, "Category")}
-            </span>
-          </Link>
-        ))}
+          );
+        })}
       </div>
-    </header>
+      {activeMenu && (
+        <div
+          onMouseEnter={() => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          }}
+        >
+          <FashionMegaMenu activeCategory={activeMenu} />
+        </div>
+      )}
+    </div>
   );
 };
 
