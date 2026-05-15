@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -307,7 +308,7 @@ function ImageGallery({
       </div>
 
       {/* Modal */}
-      {isModalOpen && (
+      {isModalOpen && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4 animate-fadeIn sm:p-6">
           {/* Close Button */}
           <button
@@ -324,7 +325,8 @@ function ImageGallery({
           <div className="flex h-[90vh] w-full max-w-[1200px] items-center justify-center">
             <ProductGallery images={images} isModal={true} />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
