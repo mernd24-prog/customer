@@ -1,13 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { faqData } from "../../data/faqData";
 import FAQAccordion from "./FAQAccordion";
 import FAQSidebar from "./FAQSidebar";
 
-export default function FAQContentSection() {
+const getTopics = (faqs) => {
+  const topics = faqs
+    .map((faq) => faq?.topic)
+    .filter(Boolean);
+  return [...new Set(topics)];
+};
 
-  const [activeTopic, setActiveTopic] = useState("FAQ'S");
+export default function FAQContentSection({ faqs = faqData }) {
+  const topics = getTopics(faqs);
+  const firstTopic = topics[0] || "FAQ'S";
+  const [activeTopic, setActiveTopic] = useState(firstTopic);
 
-  const filteredFaqs = faqData.filter(
+  useEffect(() => {
+    if (!topics.includes(activeTopic)) {
+      setActiveTopic(firstTopic);
+    }
+  }, [activeTopic, firstTopic, topics]);
+
+  const filteredFaqs = faqs.filter(
     (faq) => faq.topic === activeTopic
   );
 
@@ -18,6 +32,7 @@ export default function FAQContentSection() {
         <FAQSidebar
           activeTopic={activeTopic}
           setActiveTopic={setActiveTopic}
+          topics={topics.length ? topics : undefined}
         />
 
         <FAQAccordion faqs={filteredFaqs} />

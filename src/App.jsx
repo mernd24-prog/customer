@@ -63,7 +63,6 @@ import {
   BlogPage,
   BrandOutletPage,
   DealsPage,
-  FaqPage,
   GiftCardsPage,
   GrowthSupportPage,
   HelpContactPage,
@@ -96,6 +95,7 @@ import PolicyPage from "./pages/customer/policyPage";
 import { termsOfUseData } from "./data/termsOfUseData";
 import { shippingPolicyData } from "./data/shippingPolicyData";
 import { refundPolicyData } from "./data/refundPolicyData";
+import FAQPage from "./pages/faq/FAQPage";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -156,7 +156,7 @@ export default function App() {
           </Route>
 
           {/* ── Static / info pages (public) ──────────────────────────── */}
-          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/faq" element={<FAQPage />} />
           <Route path="/support" element={<SupportCenterPage />} />
           <Route path="/help-contact" element={<HelpContactPage />} />
           <Route path="/deals" element={<DealsPage />} />
