@@ -9,7 +9,14 @@ import { store } from "./app/store";
 import App from "./App";
 import "./styles.css";
 
-registerSW({ immediate: true });
+if (import.meta.env.PROD) {
+  registerSW({ immediate: true });
+} else if ("serviceWorker" in navigator) {
+  // Prevent stale SW from hijacking dev assets and returning HTML for JS chunk requests.
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((registration) => registration.unregister());
+  });
+}
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

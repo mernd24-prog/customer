@@ -7,6 +7,7 @@ import FooterAppDownload from "./footer/FooterAppDownload";
 import FooterBenefits from "./footer/FooterBenefits";
 import FooterBottomBar from "./footer/FooterBottomBar";
 import FooterLinkGroups from "./footer/FooterLinkGroups";
+import { asArray, hrefOr } from "../../utils/content";
 
 export function Footer({ data = footerData }) {
   const loading = useDelayedLoading();
@@ -15,16 +16,16 @@ export function Footer({ data = footerData }) {
   const footer = {
     ...data,
     ...cmsData,
-    linkGroups: (cmsData.linkGroups || cmsData.groups || data.linkGroups || []).map((group) => ({
+    linkGroups: asArray(cmsData?.linkGroups || cmsData?.groups || data?.linkGroups).map((group) => ({
       ...group,
-      links: (group.links || []).map((link) => ({
+      links: asArray(group?.links).map((link) => ({
         ...link,
-        href: link.href || link.url || "#",
+        href: hrefOr(link?.href || link?.url),
       })),
     })),
-    socialLinks: (cmsData.socialLinks || data.socialLinks || []).map((item) => ({
+    socialLinks: asArray(cmsData?.socialLinks || data?.socialLinks).map((item) => ({
       ...item,
-      href: item.href || item.url || "#",
+      href: hrefOr(item?.href || item?.url),
     })),
   };
 

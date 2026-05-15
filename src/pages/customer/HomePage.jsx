@@ -33,13 +33,129 @@ import ValuesSection from "../../components/about/ValuesSection";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import Banner from "../../components/layout/HeroBanner";
 import CollageMainSection from "../../components/ui/collageCard";
+import ShowcaseSection from "../../components/home/ShowcaseSection";
+import TopDealCard from "../../components/ui/TopDealCard";
+import NewArrivalCard from "../../components/ui/NewArrivalCard";
+import Button from "../../components/ui/Button";
 import NeedHelpSection from "../../components/faq/NeedHelpSection";
 import CommitmentCard from "../../components/ui/CommitmentCard";
 import { aboutSectionImages } from "../../constant/image.constant";
 import SupportFeatureSection from "../../components/ui/SupportFeatureSection";
 import { helpSupportData } from "../../data/helpSupport";
+import { useCardPlayground } from "../../hooks/useCardPlayground";
 // import FashionMegaMenu from "../../components/category/FashionMegaMenu";
 // import { fashionMenuData } from "../../data/megaMenu";
+
+const reusableTopDealsDemo = [
+  {
+    id: "demo-top-1",
+    title: "Minimal Street Jacket",
+    image: "/image/png/blazer.png",
+    price: "₹1,499",
+    oldPrice: "₹2,099",
+  },
+  {
+    id: "demo-top-2",
+    title: "Smart Home Accent Set",
+    image: "/image/jpg/home-decor.jpg",
+    price: "₹2,299",
+    oldPrice: "₹3,099",
+  },
+  {
+    id: "demo-top-3",
+    title: "Everyday Classic Watch",
+    image: "/image/png/watch.png",
+    price: "₹999",
+    oldPrice: "₹1,499",
+  },
+  {
+    id: "demo-top-4",
+    title: "Premium Fragrance Duo",
+    image: "/image/png/ForYou.png",
+    price: "₹1,799",
+    oldPrice: "₹2,499",
+  },
+];
+
+const reusableArrivalsDemo = [
+  {
+    id: "demo-arrival-1",
+    title: "Summer Style Pack",
+    views: 2400,
+    images: ["/image/png/maxi.png", "/image/png/blazer.png"],
+    price: "₹1,299",
+    oldPrice: "₹1,899",
+  },
+  {
+    id: "demo-arrival-2",
+    title: "Home Comfort Edit",
+    views: 1800,
+    images: ["/image/jpg/home-decor.jpg", "/image/png/stylishPair.png"],
+    price: "₹2,099",
+    oldPrice: "₹2,899",
+  },
+  {
+    id: "demo-arrival-3",
+    title: "Weekend Casual Picks",
+    views: 3200,
+    images: ["/image/png/pants.png", "/image/png/menswear.png"],
+    price: "₹1,099",
+    oldPrice: "₹1,599",
+  },
+];
+
+const universalCardsDemo = [
+  {
+    id: "u-1",
+    title: "Fashion Capsule Pack",
+    description: "Single-image reusable card with CTA and rating.",
+    image: "/image/png/blazer.png",
+    category: "fashion",
+    rating: 4.7,
+    ctaLabel: "Shop Now",
+    to: "/products",
+  },
+  {
+    id: "u-2",
+    title: "Home Styling Bundle",
+    description: "Multi-image card rendered by same component.",
+    images: ["/image/jpg/home-decor.jpg", "/image/png/stylishPair.png"],
+    category: "home",
+    rating: 4.5,
+    ctaLabel: "Explore",
+    to: "/products",
+  },
+  {
+    id: "u-3",
+    title: "Smart Essentials Combo",
+    description: "Category + favorite toggle + dynamic layout support.",
+    images: ["/image/png/ForYou.png", "/image/png/watch.png"],
+    category: "electronics",
+    rating: 4.2,
+    ctaLabel: "View Deal",
+    to: "/products",
+  },
+  {
+    id: "u-4",
+    title: "Premium Fragrance Set",
+    description: "Reusable structure with only props changed.",
+    image: "/image/png/ForYou.png",
+    category: "beauty",
+    rating: 4.8,
+    ctaLabel: "Buy",
+    to: "/products",
+  },
+  {
+    id: "u-5",
+    title: "Kids Trend Collection",
+    description: "Can be filtered and sorted through shared handlers.",
+    images: ["/image/png/maxi.png", "/image/png/pants.png"],
+    category: "kids",
+    rating: 4.3,
+    ctaLabel: "Browse",
+    to: "/products",
+  },
+];
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -97,6 +213,7 @@ export function HomePage() {
       .filter((item) => item.image);
     return bannerLike;
   }, [cmsPages]);
+  const demo = useCardPlayground(universalCardsDemo);
 
   useEffect(() => {
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
@@ -123,6 +240,40 @@ export function HomePage() {
       {/* Category Grid */}
       <HomeCategoryGrid categories={categories?.slice(0, 5)} loading={false} />
       <CollageMainSection />
+
+      <section className="w-container my-10">
+        <h2 className="mb-2 font-montserrat text-2xl font-bold text-[#1d1d1d]">
+          Reusable UI Demo
+        </h2>
+        <p className="mb-6 text-sm text-[#6b6b6b]">
+          Same components, different data props. This is the library-style pattern now in app.
+        </p>
+
+        <ShowcaseSection
+          title="Top Deals Demo (Reusable TopDealCard)"
+          subtitle="Configured only by props + items"
+          headerbgColor="bg-[#C9C9DB]"
+          bodybgColor="bg-[#F3F3FA]"
+          gridClassName="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4"
+          items={reusableTopDealsDemo}
+          CardComponent={TopDealCard}
+        />
+
+        <ShowcaseSection
+          title="New Arrivals Demo (Reusable NewArrivalCard)"
+          subtitle="Same section, only component + item shape changed"
+          headerbgColor="bg-[#ECDFCB]"
+          bodybgColor="bg-[#CE9F2D0D]"
+          gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-3"
+          items={reusableArrivalsDemo}
+          CardComponent={NewArrivalCard}
+          skeletonVariant="new-arrivals"
+          skeletonCount={3}
+          className="mt-8"
+        />
+      </section>
+
+   
       <NeedHelpSection
         heading1="Shopping Made Easy"
         heading2=""

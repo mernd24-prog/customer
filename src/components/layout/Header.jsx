@@ -25,6 +25,7 @@ import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import { logout } from "../../features/auth/authSlice";
 import { getRole, isAdminRole } from "../../utils/roles";
+import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 
 const buildCategorySlug = (name) => name.toLowerCase().replace(/\s+/g, "-");
 
@@ -47,7 +48,7 @@ const baseAccountMenuItems = [
 ];
 
 function withIcons(items) {
-  return items.map((item) => {
+  return asArray(items).map((item) => {
     const Icon = dropdownIconMap[item.icon];
     return { ...item, icon: Icon ? <Icon size={18} /> : null };
   });
@@ -165,13 +166,13 @@ export const TopHeader = () => {
     <div className="hidden h-[39px] w-full items-center justify-center bg-blue text-[14px] font-medium text-white lg:flex">
       <div className="w-container flex h-full items-center">
         <div className="flex flex-1 items-center gap-14 text-white">
-          {topNavLinks.map((link) => (
+          {asArray(topNavLinks).map((link, index) => (
             <Link
-              key={link.name}
-              to={link.path}
+              key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
+              to={hrefOr(link?.path)}
               className="text-white transition-opacity hover:opacity-70"
             >
-              {link.name}
+              {textOr(link?.name, "Link")}
             </Link>
           ))}
         </div>
@@ -246,17 +247,17 @@ export const Navbar = ({ icons: propIcons }) => {
 
         <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-3 lg:gap-5">
           <div className="hidden items-center gap-2 lg:flex lg:gap-4">
-            {displayIcons.map((item, iconIndex) => (
-              <Fragment key={item.name}>
+            {asArray(displayIcons).map((item, iconIndex) => (
+              <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
                 <Link
-                  to={item.path || "#"}
+                  to={hrefOr(item?.path)}
                   className="group flex flex-col items-center px-1 transition-opacity hover:opacity-80 lg:px-4"
-                  aria-label={item.name}
+                  aria-label={textOr(item?.name, "navigation")}
                 >
                   <img
-                    src={item.img}
-                    alt=""
-                    className={`object-contain ${item.name === "IN"
+                    src={item?.img}
+                    alt={textOr(item?.name, "Navigation icon")}
+                    className={`object-contain ${item?.name === "IN"
                       ? "h-[42px] w-[60px]"
                       : "h-[28px] w-[28px]"
                       }`}
@@ -295,18 +296,16 @@ export const Navbar = ({ icons: propIcons }) => {
 
 export const CategoryBar = ({ headerData }) => {
   const catalogList = useSelector((s) => s.catalog.list);
-  const catalogCategories = Array.isArray(catalogList) ? catalogList : [];
+  const catalogCategories = asArray(catalogList);
 
-  const categories = headerData
-    ? headerData
+  const categories = asArray(headerData).length
+    ? asArray(headerData)
     : catalogCategories.length > 0
       ? catalogCategories.slice(0, 14).map((cat) => ({
-        name: cat.title || cat.name,
+        name: textOr(cat?.title, textOr(cat?.name, "Category")),
         img: cat.imageUrl || cat.image,
         slug:
-          cat.categoryKey ||
-          cat.key ||
-          buildCategorySlug(cat.title || cat.name),
+          keyOr(cat?.categoryKey, keyOr(cat?.key, buildCategorySlug(textOr(cat?.title, cat?.name)))),
       }))
       : [];
 
@@ -315,15 +314,15 @@ export const CategoryBar = ({ headerData }) => {
   return (
     <header className="w-full">
       <div className="w-container  hide-scrollbar  flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
-        {categories.map((item) => (
+        {asArray(categories).map((item, index) => (
           <Link
-            key={item.name}
-            to={`/categories/${item.slug || buildCategorySlug(item.name)}`}
+            key={keyOr(item?.name, `category-${index}`)}
+            to={`/categories/${keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`}
             className="group flex min-w-[70px]  flex-col items-center lg:min-w-[80px]"
           >
             <div className="mx-auto  flex items-center justify-center rounded-full p-1 transition-all group-hover:bg-gray-100">
-              {item.img ? (
-                <ImageSkeleton src={item.img} alt={item.name} />
+              {item?.img ? (
+                <ImageSkeleton src={item?.img} alt={textOr(item?.name, "Category")} />
               ) : (
                 <div className="h-10 w-10  rounded-full bg-stone-100 flex items-center justify-center text-slate-400">
                   <ShoppingBag size={18} />
@@ -331,7 +330,7 @@ export const CategoryBar = ({ headerData }) => {
               )}
             </div>
             <span className="mt-1 line-clamp-1   w-full max-w-[80px] text-center text-[12px] leading-tight text-black lg:max-w-[100px] lg:text-[14px]">
-              {item.name}
+              {textOr(item?.name, "Category")}
             </span>
           </Link>
         ))}

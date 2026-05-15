@@ -7,8 +7,8 @@ import BrandButton from "../ui/BrandButton";
 import { IoArrowBackOutline, IoArrowForwardOutline } from "react-icons/io5";
 import { mothersDayData } from "../../data/homeSections";
 import { SkeletonLoader, SKELETON_PRESETS } from "../common/skeleton";
-import { Link } from "react-router-dom";
 import { useDelayedLoading } from "../../hooks/useDelayedLoading";
+import PromoSlideCard from "../ui/PromoSlideCard";
 
 // Swiper js Setup
 function SwiperSection({ swiperRef, onSlideChange, slides }) {
@@ -48,20 +48,7 @@ function SwiperSection({ swiperRef, onSlideChange, slides }) {
               containerClass="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
             />
           ) : (
-            <Link to={slide.link || "/products"}>
-              <div className="relative rounded-b-xl overflow-hidden group h-[350px] p-3 xl:p-0 md:h-full">
-                <img
-                  src={slide.image}
-                  alt={slide.title || slide.name || "Featured offer"}
-                  className="w-full rounded-b-2xl h-full object-cover object-top duration-700 transition-transform hover:scale-105"
-                />
-                <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/70 via-black/20 to-transparent">
-                  <p className="text-white  font-montserrat font-bold text-lg md:text-xl">
-                    {slide.name || slide.title}
-                  </p>
-                </div>
-              </div>
-            </Link>
+            <PromoSlideCard slide={slide} />
           )}
         </SwiperSlide>
       ))}

@@ -5,9 +5,6 @@ import {
   mothersDaySwiperImages,
 } from "../constant/image.constant";
 
-import arrivals from "./arrivals";
-import topDeals from "./topDeals";
-
 export const homeShowcaseSections = [
   {
     id: "top-deals",
@@ -18,7 +15,7 @@ export const homeShowcaseSections = [
     bodybgColor: "bg-[#F3F3FA]",
     gridClassName:
       "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4",
-    items: topDeals,
+    items: [],
     CardComponent: TopDealCard,
     skeletonVariant: "top-deals",
     skeletonCount: 4,
@@ -33,7 +30,7 @@ export const homeShowcaseSections = [
     bodybgColor: "bg-[#CE9F2D0D]",
     gridClassName:
       "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-3",
-    items: arrivals,
+    items: [],
     CardComponent: NewArrivalCard,
     skeletonVariant: "new-arrivals",
     skeletonCount: 3,

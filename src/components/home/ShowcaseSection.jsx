@@ -1,6 +1,10 @@
 import { SkeletonLoader } from "../common/skeleton";
 import SectionContainer from "../ui/SectionContainer";
 import TopDealCard from "../ui/TopDealCard";
+import { asArray, keyOr } from "../../utils/content";
+
+const buildCardLink = (CardComponent, id) =>
+  CardComponent === TopDealCard ? `/top-deals/${id}` : `/new-arrivals/${id}`;
 
 export default function ShowcaseSection({
   title,
@@ -39,15 +43,11 @@ export default function ShowcaseSection({
         />
       ) : (
         <div className={gridClassName + ` py-4`}>
-          {items.map((item) => (
+          {asArray(items).map((item, index) => (
             <CardComponent
-              key={item.id}
+              key={keyOr(item?.id, `item-${index}`)}
               {...item}
-              link={
-                CardComponent === TopDealCard
-                  ? `/top-deals/${item.id}`
-                  : `/new-arrivals/${item.id}`
-              }
+              link={buildCardLink(CardComponent, item?.id)}
             />
           ))}
         </div>

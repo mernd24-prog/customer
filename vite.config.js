@@ -26,7 +26,14 @@ export default defineConfig({
         ]
       },
       workbox: {
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
         navigateFallback: "/index.html",
+        navigateFallbackDenylist: [
+          /^\/assets\//,
+          /\/[^/?]+\.(?:js|mjs|css|map|json|ico|png|jpg|jpeg|svg|webp)$/i,
+        ],
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === "image",
