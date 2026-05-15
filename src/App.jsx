@@ -95,6 +95,7 @@ import AdminProductManagementPage from "./pages/admin/AdminProductManagementPage
 import AdminBrandManagementPage from "./pages/admin/AdminBrandManagementPage";
 import AdminCatalogManagementPage from "./pages/admin/AdminCatalogManagementPage";
 import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
+import PolicyPage from "./pages/customer/policyPage";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -174,11 +175,14 @@ export default function App() {
           <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
           <Route path="/our-commitment" element={<OurCommitmentPage />} />
           <Route path="/features" element={<FeaturesPage />} />
-          <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" fallbackData={termsOfUseData} />} />
+          {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" fallbackData={termsOfUseData} />} />
           <Route path="/terms-and-conditions" element={<CmsPage slugOverride="terms-and-conditions" fallbackData={termsOfUseData} />} />
           <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" fallbackData={shippingPolicyData} />} />
           <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" fallbackData={refundPolicyData} />} />
-          <Route path="/return-refund-policy" element={<CmsPage slugOverride="return-refund-policy" fallbackData={refundPolicyData} />} />
+          <Route path="/return-refund-policy" element={<CmsPage slugOverride="return-refund-policy" fallbackData={refundPolicyData} />} /> */}
+  <Route path="/terms-of-use" element={<PolicyPage data={termsOfUseData} />} />
+          <Route path="/shipping-policy" element={<PolicyPage data={shippingPolicyData} />} />
+          <Route path="/refund-policy" element={<PolicyPage data={refundPolicyData} />} />
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
