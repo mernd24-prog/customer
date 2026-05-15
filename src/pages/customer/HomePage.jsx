@@ -38,6 +38,8 @@ import CommitmentCard from "../../components/ui/CommitmentCard";
 import { aboutSectionImages } from "../../constant/image.constant";
 import SupportFeatureSection from "../../components/ui/SupportFeatureSection";
 import { helpSupportData } from "../../data/helpSupport";
+// import FashionMegaMenu from "../../components/category/FashionMegaMenu";
+// import { fashionMenuData } from "../../data/megaMenu";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -115,6 +117,7 @@ export function HomePage() {
         description="Discover the best deals on fashion, electronics, home and more at Sam Global."
       />
       <Banner />
+      {/* <FashionMegaMenu/> */}
 
       {/* Category Grid */}
       {/* Category Grid */}

@@ -5,7 +5,7 @@ const ImageSkeleton = ({ src, alt }) => {
 
   return (
     <div className="relative w-10 h-10 flex items-center justify-center">
-      
+
       {/* Skeleton */}
       {loading && (
         <div className="absolute inset-0 bg-gray-100 animate-pulse rounded-full"></div>
@@ -15,9 +15,8 @@ const ImageSkeleton = ({ src, alt }) => {
       <img
         src={src}
         alt={alt}
-        className={`w-8 h-8 object-contain transition-opacity duration-300 ${
-          loading ? "opacity-0" : "opacity-100"
-        }`}
+        className={`w-8 h-8 object-contain transition-opacity duration-300 ${loading ? "opacity-0" : "opacity-100"
+          }`}
         onLoad={() => setLoading(false)}
       />
     </div>

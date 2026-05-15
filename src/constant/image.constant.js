@@ -222,3 +222,7 @@ export const ourStory = {
 export const aboutSectionImages = {
   watermark: "/image/png/Watermark.png",
 };
+
+export const megaMenu = {
+  fashionPromo: "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&q=80&w=800",
+};
