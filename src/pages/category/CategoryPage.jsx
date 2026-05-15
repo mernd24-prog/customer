@@ -155,7 +155,11 @@ export default function CategoryPage() {
   const [brandList, setBrandList] = useState([]);
   const [categoryData, setCategoryData] = useState(null);
   const [items, setItems] = useState([]);
-  const [pageInfo, setPageInfo] = useState({ page: 1, totalPages: 1, total: 0 });
+  const [pageInfo, setPageInfo] = useState({
+    page: 1,
+    totalPages: 1,
+    total: 0,
+  });
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
@@ -179,7 +183,7 @@ export default function CategoryPage() {
       maxPrice: searchParams.get("maxPrice") || undefined,
       sort: searchParams.get("sort") || undefined,
       page: pageOverride || 1,
-      limit: Number(searchParams.get("limit") || 12),
+      limit: Number(searchParams.get("limit") || 20),
     }),
     [searchParams, categoryKey],
   );

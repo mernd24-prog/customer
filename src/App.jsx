@@ -86,9 +86,6 @@ import {
   TrendingNowPage,
   RecentlyViewedPage,
 } from "./pages/discovery/DiscoveryPages";
-import { termsOfUseData } from "./data/termsOfUseData";
-import { shippingPolicyData } from "./data/shippingPolicyData";
-import { refundPolicyData } from "./data/refundPolicyData";
 import ScrollToTop from "./components/common/scrollToTop";
 import WatchlistPage from "./pages/customer/WatchlistPage";
 import AdminProductManagementPage from "./pages/admin/AdminProductManagementPage";
@@ -96,6 +93,9 @@ import AdminBrandManagementPage from "./pages/admin/AdminBrandManagementPage";
 import AdminCatalogManagementPage from "./pages/admin/AdminCatalogManagementPage";
 import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
 import PolicyPage from "./pages/customer/policyPage";
+import { termsOfUseData } from "./data/termsOfUseData";
+import { shippingPolicyData } from "./data/shippingPolicyData";
+import { refundPolicyData } from "./data/refundPolicyData";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -124,7 +124,7 @@ export default function App() {
 
   useEffect(() => {
     if (!currentUser) return;
-    dispatch(fetchCart()).catch(() => {});
+    dispatch(fetchCart()).catch(() => { });
   }, [currentUser, dispatch]);
 
   if (!sessionReady) {
@@ -180,7 +180,7 @@ export default function App() {
           <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" fallbackData={shippingPolicyData} />} />
           <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" fallbackData={refundPolicyData} />} />
           <Route path="/return-refund-policy" element={<CmsPage slugOverride="return-refund-policy" fallbackData={refundPolicyData} />} /> */}
-  <Route path="/terms-of-use" element={<PolicyPage data={termsOfUseData} />} />
+          <Route path="/terms-of-use" element={<PolicyPage data={termsOfUseData} />} />
           <Route path="/shipping-policy" element={<PolicyPage data={shippingPolicyData} />} />
           <Route path="/refund-policy" element={<PolicyPage data={refundPolicyData} />} />
 

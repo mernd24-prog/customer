@@ -22,18 +22,31 @@ const idOf = (item) =>
 export function makeThunk(type, config) {
   return createAsyncThunk(type, async (arg = {}, { rejectWithValue }) => {
     try {
+      const method = config.method || "get";
+
       const params =
         typeof config.params === "function"
           ? config.params(arg)
-          : config.params || arg?.params;
-      const data =
-        typeof config.data === "function"
-          ? config.data(arg)
-          : config.data || arg?.data || arg;
+          : config.params !== undefined
+            ? config.params
+            : arg?.params;
+
+      let data;
+      if (typeof config.data === "function") {
+        data = config.data(arg);
+      } else if (config.data !== undefined) {
+        data = config.data;
+      } else if (arg?.data !== undefined) {
+        data = arg.data;
+      } else if (method.toLowerCase() !== "get") {
+        data = arg;
+      }
+
       const url =
         typeof config.url === "function" ? config.url(arg) : config.url;
+
       const result = await apiRequest({
-        method: config.method || "get",
+        method,
         url,
         data,
         params,
@@ -69,6 +82,9 @@ export function createApiSlice({
     },
     extraReducers: (builder) => {
       Object.values(thunks).forEach((thunk) => {
+        // Skip if thunk doesn't have a valid action creator
+        if (!thunk || !thunk.pending) return;
+
         builder
           .addCase(thunk.pending, (state) => {
             state.loading = true;
@@ -76,35 +92,46 @@ export function createApiSlice({
           })
           .addCase(thunk.fulfilled, (state, action) => {
             state.loading = false;
-            state.meta = action.payload.meta;
+            state.meta = action.payload?.meta || null;
             state.lastFetchedAt = Date.now();
-            const data = action.payload.data;
+            const data = action.payload?.data;
+
             if (Array.isArray(data)) {
               state.list = data;
               state.entities = Object.fromEntries(
-                data.map((item, index) => [idOf(item) || index, item]),
+                data.map((item, index) => [idOf(item) ?? index, item]),
               );
             } else if (data?.items && Array.isArray(data.items)) {
               state.list = data.items;
               state.current = data;
               state.entities = Object.fromEntries(
-                data.items.map((item, index) => [idOf(item) || index, item]),
+                data.items.map((item, index) => [idOf(item) ?? index, item]),
               );
             } else if (data?.orders && Array.isArray(data.orders)) {
               state.list = data.orders;
               state.current = data;
               state.entities = Object.fromEntries(
-                data.orders.map((item, index) => [idOf(item) || index, item]),
+                data.orders.map((item, index) => [idOf(item) ?? index, item]),
               );
-            } else {
+            } else if (data !== undefined && data !== null) {
               state.current = data;
-              const key = idOf(data);
-              if (key) state.entities[key] = data;
+              const keys = [
+                idOf(data),
+                data?.slug,
+                action.payload?.arg?.slug,
+                action.meta?.arg?.slug,
+                action.payload?.arg?.id,
+                action.meta?.arg?.id,
+              ].filter((key) => key !== undefined && key !== null);
+              keys.forEach((key) => {
+                state.entities[key] = data;
+              });
             }
           })
           .addCase(thunk.rejected, (state, action) => {
             state.loading = false;
-            state.error = action.payload || action.error.message;
+            state.error =
+              action.payload || action.error?.message || "An error occurred";
           });
       });
       if (extraReducers) extraReducers(builder);
