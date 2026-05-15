@@ -39,28 +39,25 @@ export default function MegaMenu({ data, activeHeaderCategory }) {
                   <div
                     onMouseEnter={() => setActiveCategory(item)}
                     onClick={() => handleToggle(item)}
-                    className={`group flex cursor-pointer items-center justify-between rounded-xl px-4 py-3.5 text-[15px] transition-all duration-300 ${
-                      isActive
+                    className={`group flex cursor-pointer items-center justify-between rounded-xl px-4 py-3.5 text-[15px] transition-all duration-300 ${isActive
                         ? "translate-x-2 bg-white font-bold text-blue-600 shadow-[0_10px_25px_rgba(59,130,246,0.1)]"
                         : "text-gray-500 hover:translate-x-1 hover:bg-white/80 hover:text-blue-500"
-                    }`}
+                      }`}
                   >
                     <span>{item.name}</span>
 
                     {/* DESKTOP ICON */}
                     <ChevronRight
                       size={14}
-                      className={`hidden lg:block transition-all duration-300 ${
-                        isActive ? "opacity-100" : "-rotate-90 opacity-0"
-                      }`}
+                      className={`hidden lg:block transition-all duration-300 ${isActive ? "opacity-100" : "-rotate-90 opacity-0"
+                        }`}
                     />
 
                     {/* MOBILE ICON */}
                     <ChevronDown
                       size={16}
-                      className={`block lg:hidden transition-transform duration-300 ${
-                        mobileExpanded === item.name ? "rotate-180" : ""
-                      }`}
+                      className={`block lg:hidden transition-transform duration-300 ${mobileExpanded === item.name ? "rotate-180" : ""
+                        }`}
                     />
                   </div>
 

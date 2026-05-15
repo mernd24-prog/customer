@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useMemo, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -298,6 +298,18 @@ export const CategoryBar = ({ headerData }) => {
   const catalogList = useSelector((s) => s.catalog.list);
   const catalogCategories = Array.isArray(catalogList) ? catalogList : [];
   const [activeMenu, setActiveMenu] = useState(null);
+  const timeoutRef = useRef(null);
+
+  const handleMouseEnter = (item) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setActiveMenu(item);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setActiveMenu(null);
+    }, 200);
+  };
 
   const categories = headerData
     ? headerData
@@ -315,13 +327,13 @@ export const CategoryBar = ({ headerData }) => {
   if (!categories.length) return null;
 
   return (
-    <div className="relative w-full" onMouseLeave={() => setActiveMenu(null)}>
+    <div className="relative w-full" onMouseLeave={handleMouseLeave}>
       <div className="w-container hide-scrollbar flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
         {categories.map((item) => {
           return (
             <div 
               key={item.name}
-              onMouseEnter={() => setActiveMenu(item)}
+              onMouseEnter={() => handleMouseEnter(item)}
               className="flex flex-col items-center"
             >
               <Link
@@ -345,7 +357,11 @@ export const CategoryBar = ({ headerData }) => {
           );
         })}
       </div>
-      {activeMenu && <FashionMegaMenu activeCategory={activeMenu} />}
+      {activeMenu && (
+        <div onMouseEnter={() => { if(timeoutRef.current) clearTimeout(timeoutRef.current) }}>
+          <FashionMegaMenu activeCategory={activeMenu} />
+        </div>
+      )}
     </div>
   );
 };
