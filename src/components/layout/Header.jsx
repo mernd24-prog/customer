@@ -99,44 +99,44 @@ export const TopHeader = () => {
       },
       ...(currentUser
         ? [
-            {
-              type: "menu",
-              label:
-                currentUser.firstName ||
-                currentUser.email?.split("@")[0] ||
-                "My Sam",
-              path: "/account/profile",
-              icon: <User size={16} />,
-              title: "My Account",
-              items: withIcons([
-                ...baseAccountMenuItems,
-                ...(isAdminRole(currentRole)
-                  ? [
-                      {
-                        label: "Admin Products",
-                        path: "/admin/products",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin Catalog",
-                        path: "/admin/catalog",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin Brands",
-                        path: "/admin/brands",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin RBAC",
-                        path: "/admin/rbac",
-                        icon: "settings",
-                      },
-                    ]
-                  : []),
-              ]),
-            },
-          ]
+          {
+            type: "menu",
+            label:
+              currentUser.firstName ||
+              currentUser.email?.split("@")[0] ||
+              "My Sam",
+            path: "/account/profile",
+            icon: <User size={16} />,
+            title: "My Account",
+            items: withIcons([
+              ...baseAccountMenuItems,
+              ...(isAdminRole(currentRole)
+                ? [
+                  {
+                    label: "Admin Products",
+                    path: "/admin/products",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin Catalog",
+                    path: "/admin/catalog",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin Brands",
+                    path: "/admin/brands",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin RBAC",
+                    path: "/admin/rbac",
+                    icon: "settings",
+                  },
+                ]
+                : []),
+            ]),
+          },
+        ]
         : []),
     ],
     [handleRemoveWatchlist, wishlistedProducts, currentUser, currentRole],
@@ -256,11 +256,10 @@ export const Navbar = ({ icons: propIcons }) => {
                   <img
                     src={item.img}
                     alt=""
-                    className={`object-contain ${
-                      item.name === "IN"
-                        ? "h-[42px] w-[60px]"
-                        : "h-[28px] w-[28px]"
-                    }`}
+                    className={`object-contain ${item.name === "IN"
+                      ? "h-[42px] w-[60px]"
+                      : "h-[28px] w-[28px]"
+                      }`}
                   />
                 </Link>
                 {iconIndex < displayIcons.length - 1 && (
@@ -302,13 +301,13 @@ export const CategoryBar = ({ headerData }) => {
     ? headerData
     : catalogCategories.length > 0
       ? catalogCategories.slice(0, 14).map((cat) => ({
-          name: cat.title || cat.name,
-          img: cat.imageUrl || cat.image,
-          slug:
-            cat.categoryKey ||
-            cat.key ||
-            buildCategorySlug(cat.title || cat.name),
-        }))
+        name: cat.title || cat.name,
+        img: cat.imageUrl || cat.image,
+        slug:
+          cat.categoryKey ||
+          cat.key ||
+          buildCategorySlug(cat.title || cat.name),
+      }))
       : [];
 
   if (!categories.length) return null;
