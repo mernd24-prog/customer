@@ -76,44 +76,51 @@ function ProductGallery({ images, isModal = false }) {
   const [mainSwiper, setMainSwiper] = useState(null);
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+  const [activeIndex, setActiveIndex] = useState(0);
   const [isLarge, setIsLarge] = useState(window.innerWidth >= 1024);
 
   useEffect(() => {
     const handleResize = () => {
       const nextIsLarge = window.innerWidth >= 1024;
       setIsLarge(nextIsLarge);
-      if (!nextIsLarge) setIsZoomed(false);
+
+      if (!nextIsLarge) {
+        setIsZoomed(false);
+      }
     };
 
     window.addEventListener("resize", handleResize);
+
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleMouseMove = (e) => {
     if (!isLarge && !isModal) return;
+
     const rect = e.currentTarget.getBoundingClientRect();
+
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setZoomPos({ x, y });
-    if (!isZoomed) setIsZoomed(true);
+
+    setZoomPos({
+      x: Math.max(0, Math.min(100, x)),
+      y: Math.max(0, Math.min(100, y)),
+    });
+
+    if (!isZoomed) {
+      setIsZoomed(true);
+    }
   };
 
-  const handleTouchMove = (e) => {
-    if (!isModal) return;
-    const touch = e.touches?.[0];
-    if (!touch) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((touch.clientX - rect.left) / rect.width) * 100;
-    const y = ((touch.clientY - rect.top) / rect.height) * 100;
-    setZoomPos({
-      x: Math.min(100, Math.max(0, x)),
-      y: Math.min(100, Math.max(0, y)),
-    });
+  const handleMouseLeave = () => {
+    if (!isModal) {
+      setIsZoomed(false);
+    }
   };
 
   const handleImageClick = () => {
     if (isModal) {
-      setIsZoomed((value) => !value);
+      setIsZoomed((prev) => !prev);
       return;
     }
 
@@ -128,94 +135,107 @@ function ProductGallery({ images, isModal = false }) {
 
   return (
     <div
-      className={`flex min-w-0 flex-col gap-3 overflow-hidden sm:gap-4 lg:flex-row ${
-        isModal
-          ? "mx-auto h-[78vh] max-h-[680px] w-full max-w-[980px]"
-          : "h-auto w-full lg:h-[500px] xl:h-[600px]"
+      className={`flex min-w-0 flex-col gap-4 overflow-hidden ${
+        isModal ? "h-full w-full" : "h-auto w-full lg:h-[620px]"
       }`}
     >
-      {/* Thumbnails Swiper - Bottom on Mobile/Tablet, Left on Large Screen */}
-      <div className="order-2 h-[76px] w-full shrink-0 overflow-hidden sm:h-[88px] lg:order-1 lg:h-full lg:w-20 xl:w-24">
-        <Swiper
-          onSwiper={setThumbsSwiper}
-          spaceBetween={8}
-          slidesPerView="auto"
-          freeMode={true}
-          watchSlidesProgress={true}
-          modules={[FreeMode, Navigation, Thumbs]}
-          direction={isLarge ? "vertical" : "horizontal"}
-          className="thumbs-swiper h-full w-full"
-        >
-          {images.map((img, i) => (
-            <SwiperSlide
-              key={i}
-              className="!h-full !w-[76px] cursor-pointer sm:!w-[88px] lg:!h-auto lg:!w-full"
-            >
-              <div
-                className={`h-full w-full overflow-hidden rounded-lg border-2 bg-white transition-all hover:shadow-sm lg:aspect-square lg:h-auto ${thumbsSwiper?.activeIndex === i ? "border-[#CE9F2D]" : "border-[#e7dfd1]"}`}
+      <div className="flex flex-col lg:flex-row gap-4 h-full overflow-hidden">
+        {/* Thumbnail */}
+        <div className="order-2 lg:order-1 h-[90px] lg:h-full lg:w-[90px] overflow-hidden shrink-0">
+          <Swiper
+            onSwiper={setThumbsSwiper}
+            spaceBetween={10}
+            slidesPerView="auto"
+            freeMode
+            watchSlidesProgress
+            direction={isLarge ? "vertical" : "horizontal"}
+            modules={[FreeMode, Thumbs]}
+            className="h-full"
+          >
+            {images.map((img, i) => (
+              <SwiperSlide
+                key={i}
+                className="!w-[78px] lg:!w-full lg:!h-[90px]"
               >
-                <img
-                  src={img}
-                  alt=""
-                  className="h-full w-full object-contain p-1"
-                />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
+                <button
+                  type="button"
+                  className={`w-full h-full overflow-hidden rounded-xl border-2 bg-white transition-all duration-300 ${
+                    activeIndex === i
+                      ? "border-[#CE9F2D] shadow-md"
+                      : "border-[#ece7dc]"
+                  }`}
+                >
+                  <img
+                    src={img}
+                    alt=""
+                    className="w-full h-full object-contain p-1"
+                  />
+                </button>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
 
-      {/* Main Swiper - Top on Mobile/Tablet, Right on Large Screen */}
-      <div
-        className={`relative order-1 min-w-0 flex-1 overflow-hidden rounded-xl border border-[#e7dfd1] bg-white lg:order-2 ${
-          isModal
-            ? "mx-auto aspect-square max-h-[620px] w-full max-w-[620px] lg:aspect-auto lg:max-w-none"
-            : "aspect-square max-h-[72vh] min-h-[280px] sm:min-h-[360px] md:max-h-[620px] lg:aspect-auto lg:max-h-none lg:min-h-0"
-        }`}
-      >
-        <Swiper
-          onSwiper={setMainSwiper}
-          spaceBetween={10}
-          navigation={false}
-          thumbs={{
-            swiper:
-              thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
-          }}
-          modules={[FreeMode, Navigation, Thumbs, Zoom]}
-          className="main-swiper h-full w-full"
-          onSlideChange={() => setIsZoomed(false)}
+        {/* Main Image */}
+        <div
+          className={`relative order-1 lg:order-2 flex-1 overflow-hidden rounded-2xl border border-[#ece7dc] bg-[#fafafa] ${
+            isModal ? "h-full" : "aspect-square lg:aspect-auto"
+          }`}
         >
-          {images.map((img, i) => (
-            <SwiperSlide key={i} className="overflow-hidden">
-              <div
-                className={`relative flex h-full w-full items-center justify-center ${
-                  isModal
-                    ? isZoomed
-                      ? "cursor-zoom-out touch-none"
-                      : "cursor-zoom-in"
-                    : isLarge
-                      ? "cursor-pointer"
-                      : "cursor-grab"
-                }`}
-                onClick={handleImageClick}
-                onMouseMove={handleMouseMove}
-                onTouchMove={handleTouchMove}
-                onMouseLeave={() => {
-                  if (!isModal) setIsZoomed(false);
-                }}
-              >
-                <img
-                  src={img}
-                  alt=""
-                  className={`h-full w-full object-contain p-3 transition-transform duration-300 sm:p-4 ${isZoomed ? (isModal ? "scale-[2.2]" : "scale-[2.8]") : "scale-100"}`}
-                  style={{
-                    transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
-                  }}
-                />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+          <Swiper
+            onSwiper={setMainSwiper}
+            onSlideChange={(swiper) => {
+              setActiveIndex(swiper.activeIndex);
+              setIsZoomed(false);
+            }}
+            spaceBetween={10}
+            thumbs={{
+              swiper:
+                thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
+            }}
+            modules={[Thumbs, FreeMode]}
+            className="h-full"
+          >
+            {images.map((img, i) => (
+              <SwiperSlide key={i}>
+                <div
+                  className={`relative h-full w-full overflow-hidden ${
+                    isModal
+                      ? isZoomed
+                        ? "cursor-zoom-out"
+                        : "cursor-zoom-in"
+                      : "cursor-crosshair"
+                  }`}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                  onClick={handleImageClick}
+                >
+                  <img
+                    src={img}
+                    alt=""
+                    draggable={false}
+                    className={`h-full w-full object-contain transition-transform duration-300 ease-out select-none ${
+                      isZoomed
+                        ? isModal
+                          ? "scale-[2]"
+                          : "scale-[2]"
+                        : "scale-100"
+                    }`}
+                    style={{
+                      transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                      willChange: "transform",
+                    }}
+                  />
+
+                  {/* Premium Overlay */}
+                  {!isZoomed && (
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
+                  )}
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
       </div>
     </div>
   );
@@ -225,9 +245,17 @@ function ImageGallery({ images, isWishlisted, onWishlist }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    document.body.style.overflow = isModalOpen ? "hidden" : "unset";
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+      document.documentElement.style.overflow = "unset";
+    }
+
     return () => {
       document.body.style.overflow = "unset";
+      document.documentElement.style.overflow = "unset";
     };
   }, [isModalOpen]);
 
@@ -267,7 +295,7 @@ function ImageGallery({ images, isWishlisted, onWishlist }) {
             <X size={28} />
           </button>
 
-          <div className="flex w-full max-w-[1040px] items-center justify-center">
+          <div className="flex h-[90vh] w-full max-w-[1200px] items-center justify-center">
             <ProductGallery images={images} isModal={true} />
           </div>
         </div>
@@ -528,7 +556,7 @@ export default function ProductDetailPage() {
 
                   {inStock ? (
                     <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
+                      <div className="relative z-0 w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
                       <p className="font-montserrat text-sm font-semibold text-[#10B981]">
                         {product?.stock || 52} in stock
                       </p>

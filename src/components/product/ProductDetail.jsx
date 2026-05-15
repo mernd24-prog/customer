@@ -185,11 +185,10 @@ function ProductGallery({
           <img
             src={activeImage}
             alt="product"
-            className={`h-full w-full object-contain transition-opacity duration-300 rounded-lg ${
-              isZoomed && isModal ? "opacity-0" : "opacity-100"
-            }`}
+            className="h-full w-full object-contain rounded-lg transition-transform duration-300"
             style={{
               transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+              transform: isZoomed ? "scale(1.35)" : "scale(1)",
             }}
           />
 
@@ -282,23 +281,25 @@ function ProductImages({ data }) {
 
       {/* eBay Style Popup Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center">
-          {/* Close Button */}
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(false)}
-            aria-label="Close image gallery"
-            className="absolute top-6 right-6 z-50 w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
-          >
-            <IoMdClose className="text-2xl" />
-          </button>
+        <div className="fixed inset-0 z-[9999] bg-white overflow-y-auto">
+          <div className="relative min-h-screen flex flex-col items-center justify-center px-4 py-6 lg:px-8">
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              aria-label="Close image gallery"
+              className="absolute top-6 right-6 z-50 w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+            >
+              <IoMdClose className="text-2xl" />
+            </button>
 
-          <ProductGallery
-            sideImages={sideImages}
-            activeImage={activeImage}
-            setActiveImage={setActiveImage}
-            isModal={true}
-          />
+            <ProductGallery
+              sideImages={sideImages}
+              activeImage={activeImage}
+              setActiveImage={setActiveImage}
+              isModal={true}
+            />
+          </div>
         </div>
       )}
     </div>

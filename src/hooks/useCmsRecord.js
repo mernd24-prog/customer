@@ -12,12 +12,16 @@ export function useCmsRecord(cmsKey) {
   const page = useMemo(() => {
     if (!cmsKey) return null;
     if (entities[cmsKey]) return entities[cmsKey];
-    return Array.isArray(list) ? list.find((item) => item?.slug === cmsKey) || null : null;
+    return Array.isArray(list)
+      ? list.find((item) => item?.slug === cmsKey) || null
+      : null;
   }, [cmsKey, entities, list]);
 
   useEffect(() => {
     if (!cmsKey || page) return;
-    dispatch(fetchCmsPageBySlug({ slug: cmsKey })).catch(() => {});
+    dispatch(fetchCmsPageBySlug({ slug: cmsKey })).catch((error) => {
+      console.error(`Failed to fetch CMS page "${cmsKey}":`, error);
+    });
   }, [cmsKey, dispatch, page]);
 
   return { page, loading };

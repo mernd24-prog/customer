@@ -31,7 +31,7 @@ import FAQPage from "../faq/FAQPage";
 import OurStory from "../../components/about/OurStory";
 import ValuesSection from "../../components/about/ValuesSection";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
-import Banner from "../../components/swiper/brandSwiper";
+import Banner from "../../components/layout/HeroBanner";
 import CollageMainSection from "../../components/ui/collageCard";
 import NeedHelpSection from "../../components/faq/NeedHelpSection";
 import CommitmentCard from "../../components/ui/CommitmentCard";
@@ -60,19 +60,30 @@ export function HomePage() {
     const list = Array.isArray(cmsPages) ? cmsPages : [];
     const bannerLike = list
       .filter((item) => {
-        const pageType = String(item?.pageType || item?.type || "").toLowerCase();
+        const pageType = String(
+          item?.pageType || item?.type || "",
+        ).toLowerCase();
         const slug = String(item?.slug || "").toLowerCase();
-        const isBannerLike = pageType.includes("banner") || slug.includes("banner") || slug.includes("hero");
+        const isBannerLike =
+          pageType.includes("banner") ||
+          slug.includes("banner") ||
+          slug.includes("hero");
         const isPublished = item?.published !== false;
         const isActive = item?.metadata?.active !== false;
         return isBannerLike && isPublished && isActive;
       })
-      .sort((a, b) => Number(a?.metadata?.sortOrder || 999) - Number(b?.metadata?.sortOrder || 999))
+      .sort(
+        (a, b) =>
+          Number(a?.metadata?.sortOrder || 999) -
+          Number(b?.metadata?.sortOrder || 999),
+      )
       .slice(0, 8)
       .map((item) => ({
         title: item?.metadata?.headline || item?.title || "Featured",
         name: item?.metadata?.subtitle || item?.title || "Featured",
-        link: item?.metadata?.ctaUrl || (item?.slug ? `/cms/${item.slug}` : "/products"),
+        link:
+          item?.metadata?.ctaUrl ||
+          (item?.slug ? `/cms/${item.slug}` : "/products"),
         image:
           item?.heroImage ||
           item?.coverImage ||
@@ -86,15 +97,15 @@ export function HomePage() {
   }, [cmsPages]);
 
   useEffect(() => {
-    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => { });
+    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
     if (tokenStorage.getAccessToken()) {
-      dispatch(fetchRecommendations({ limit: 8 })).catch(() => { });
+      dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
     }
-    dispatch(fetchCategories({ limit: 20 })).catch(() => { });
+    dispatch(fetchCategories({ limit: 20 })).catch(() => {});
     dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(
-      () => { },
+      () => {},
     );
-    dispatch(fetchCmsPages({ limit: 20 })).catch(() => { });
+    dispatch(fetchCmsPages({ limit: 100 })).catch(() => {});
   }, [dispatch]);
 
   return (
@@ -107,10 +118,7 @@ export function HomePage() {
 
       {/* Category Grid */}
       {/* Category Grid */}
-      <HomeCategoryGrid
-        categories={categories?.slice(0, 5)}
-        loading={false}
-      />
+      <HomeCategoryGrid categories={categories?.slice(0, 5)} loading={false} />
       <CollageMainSection />
       <NeedHelpSection
         heading1="Shopping Made Easy"
@@ -119,9 +127,10 @@ export function HomePage() {
         buttonText="Contact Us"
       />
 
-
       {/* Seasonal swiper */}
-      <MothersDaySwiper data={cmsBannerSlides.length ? cmsBannerSlides : mothersDayData} />
+      <MothersDaySwiper
+        data={cmsBannerSlides.length ? cmsBannerSlides : mothersDayData}
+      />
       {/* Products For You + Our Commitment */}
       <div className="w-container">
         <HomeProductsForYouSection />
@@ -213,7 +222,6 @@ export function HomePage() {
           )}
         </section>
       )} */}
-
 
       {/* New Arrivals */}
       {/* {(featuredProducts.length > 0 || productLoading) && (
