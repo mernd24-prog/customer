@@ -7,15 +7,17 @@ export function useCmsRecord(cmsKey) {
   const dispatch = useDispatch();
   const entities = useSelector((state) => state.cms.entities || {});
   const list = useSelector((state) => state.cms.list);
+  const current = useSelector((state) => state.cms.current);
   const loading = useSelector((state) => state.cms.loading);
 
   const page = useMemo(() => {
     if (!cmsKey) return null;
     if (entities[cmsKey]) return entities[cmsKey];
+    if (current?.slug === cmsKey) return current;
     return Array.isArray(list)
       ? list.find((item) => item?.slug === cmsKey) || null
       : null;
-  }, [cmsKey, entities, list]);
+  }, [cmsKey, current, entities, list]);
 
   useEffect(() => {
     if (!cmsKey || page) return;
@@ -28,7 +30,17 @@ export function useCmsRecord(cmsKey) {
 }
 
 export function getCmsPayload(page, fallback) {
-  return page?.metadata?.data || page?.metadata?.content || fallback;
+  if (!page) return fallback;
+
+  return (
+    page?.metadata?.data ||
+    page?.metadata?.content ||
+    page?.metadata?.sections ||
+    page?.data ||
+    page?.content ||
+    page?.sections ||
+    page
+  );
 }
 
 export function getCmsImageSet(page, fallbackImage = "") {
