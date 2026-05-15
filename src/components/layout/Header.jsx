@@ -25,6 +25,7 @@ import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import { logout } from "../../features/auth/authSlice";
 import { getRole, isAdminRole } from "../../utils/roles";
+import FashionMegaMenu from "../category/FashionMegaMenu";
 
 const buildCategorySlug = (name) => name.toLowerCase().replace(/\s+/g, "-");
 
@@ -296,6 +297,7 @@ export const Navbar = ({ icons: propIcons }) => {
 export const CategoryBar = ({ headerData }) => {
   const catalogList = useSelector((s) => s.catalog.list);
   const catalogCategories = Array.isArray(catalogList) ? catalogList : [];
+  const [activeMenu, setActiveMenu] = useState(null);
 
   const categories = headerData
     ? headerData
@@ -313,30 +315,38 @@ export const CategoryBar = ({ headerData }) => {
   if (!categories.length) return null;
 
   return (
-    <header className="w-full">
-      <div className="w-container  hide-scrollbar  flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
-        {categories.map((item) => (
-          <Link
-            key={item.name}
-            to={`/categories/${item.slug || buildCategorySlug(item.name)}`}
-            className="group flex min-w-[70px]  flex-col items-center lg:min-w-[80px]"
-          >
-            <div className="mx-auto  flex items-center justify-center rounded-full p-1 transition-all group-hover:bg-gray-100">
-              {item.img ? (
-                <ImageSkeleton src={item.img} alt={item.name} />
-              ) : (
-                <div className="h-10 w-10  rounded-full bg-stone-100 flex items-center justify-center text-slate-400">
-                  <ShoppingBag size={18} />
+    <div className="relative w-full" onMouseLeave={() => setActiveMenu(null)}>
+      <div className="w-container hide-scrollbar flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
+        {categories.map((item) => {
+          return (
+            <div 
+              key={item.name}
+              onMouseEnter={() => setActiveMenu(item)}
+              className="flex flex-col items-center"
+            >
+              <Link
+                to={`/categories/${item.slug || buildCategorySlug(item.name)}`}
+                className="group flex min-w-[70px] flex-col items-center lg:min-w-[80px]"
+              >
+                <div className="mx-auto flex items-center justify-center rounded-full p-1 transition-all group-hover:bg-gray-100">
+                  {item.img ? (
+                    <ImageSkeleton src={item.img} alt={item.name} />
+                  ) : (
+                    <div className="h-10 w-10 rounded-full bg-stone-100 flex items-center justify-center text-slate-400">
+                      <ShoppingBag size={18} />
+                    </div>
+                  )}
                 </div>
-              )}
+                <span className="mt-1 line-clamp-1 w-full max-w-[80px] text-center text-[12px] leading-tight text-black lg:max-w-[100px] lg:text-[14px]">
+                  {item.name}
+                </span>
+              </Link>
             </div>
-            <span className="mt-1 line-clamp-1   w-full max-w-[80px] text-center text-[12px] leading-tight text-black lg:max-w-[100px] lg:text-[14px]">
-              {item.name}
-            </span>
-          </Link>
-        ))}
+          );
+        })}
       </div>
-    </header>
+      {activeMenu && <FashionMegaMenu activeCategory={activeMenu} />}
+    </div>
   );
 };
 
