@@ -12,7 +12,6 @@ import {
   ourMission,
   ourStoryData,
   valueData,
-  whyChooseUsData,
 } from "../../data/aboutUs";
 
 const asArray = (value, fallback = []) => {
@@ -26,10 +25,7 @@ const asArray = (value, fallback = []) => {
 export default function AboutPage() {
   // About Us Banner Data Fetch from the CMS API
   const { page: cmsData } = useCmsRecord("about-us");
-  console.log(cmsData);
   const image = cmsData?.coverImage;
-
-  console.log(image);
 
   // About Us Why Choose Us Data Fetch From the CMS API
   const { page: whyChoose } = useCmsRecord("why-choose-us");
@@ -115,22 +111,6 @@ export default function AboutPage() {
     [aboutCmsData],
   );
 
-  const whyChooseData = useMemo(
-    () => ({
-      ...whyChooseUsData,
-      sectionDetails: {
-        heading:
-          aboutCmsData?.whyChoose?.heading ||
-          whyChooseUsData.sectionDetails.heading,
-        description:
-          aboutCmsData?.whyChoose?.description ||
-          whyChooseUsData.sectionDetails.description,
-      },
-      cards: asArray(aboutCmsData?.whyChoose, whyChooseUsData.cards),
-    }),
-    [aboutCmsData],
-  );
-
   const missionData = useMemo(
     () => ({
       ...ourMission,
@@ -163,7 +143,7 @@ export default function AboutPage() {
     <>
       <Seo title={pageTitle} description={pageDescription} />
 
-      {/* <AboutBanner image={image} /> */}
+      <AboutBanner image={image} />
 
       <main className="w-full">
         <div>
