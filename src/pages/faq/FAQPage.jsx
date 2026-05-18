@@ -16,11 +16,11 @@ const normalizeFaqQuestions = (payload) => {
   const source = groupedQuestions.length ? groupedQuestions : questions;
   return source.length
     ? source.map((item, index) => ({
-        cmsKey: item?.cmsKey || `faq-${index}`,
-        topic: item?.topic || "FAQ'S",
-        question: item?.question || "",
-        answer: item?.answer || "",
-      })).filter((item) => item.question && item.answer)
+      cmsKey: item?.cmsKey || `faq-${index}`,
+      topic: item?.topic || "FAQ'S",
+      question: item?.question || "",
+      answer: item?.answer || "",
+    })).filter((item) => item.question && item.answer)
     : faqData;
 };
 
@@ -57,8 +57,8 @@ export default function FAQPage() {
         title={title}
         description={description}
       />
-      <h1 className="text-3xl font-bold text-center mt-10">{title}</h1>
-      <FAQSearchSection/>
+      <h1 className="text-3xl font-bold text-center mt-10 uppercase">FAQ'S</h1>
+      <FAQSearchSection />
       <FAQContentSection faqs={faqs} />
       <NeedHelpSection
         heading1="Need More Help?"

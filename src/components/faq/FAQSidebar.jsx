@@ -1,3 +1,5 @@
+import { ArrowRight } from "lucide-react";
+
 const defaultTopics = [
   "FAQ'S",
   "Return & Refund Policy",
@@ -11,25 +13,30 @@ export default function FAQSidebar({
   topics = defaultTopics,
 }) {
   return (
-    <div className="self-start overflow-hidden rounded-xl border font-montserrat">
-      
-      <div className="bg-[#3E4094] p-4 text-white">
+    <div className="self-start overflow-hidden rounded-md border border-gray-200 font-montserrat shadow-sm bg-[#F4F4F6]">
+      <div className="bg-[#3E4094] p-4 text-[16px] font-semibold text-white">
         Help Topics
       </div>
 
-      {topics.map((topic) => (
-        <button
-          key={topic}
-          onClick={() => setActiveTopic(topic)}
-          className={`block w-full border-b p-4 text-left transition ${
-            activeTopic === topic
-              ? "bg-[#ECECFA] font-semibold text-[#2E3192]"
-              : "hover:bg-gray-100"
-          }`}
-        >
-          {topic}
-        </button>
-      ))}
+      <div className="flex flex-col">
+        {topics.map((topic, index) => {
+          const isActive = activeTopic === topic;
+          return (
+            <button
+              key={topic}
+              onClick={() => setActiveTopic(topic)}
+              className={`flex w-full items-center justify-between p-4 text-left transition ${
+                isActive
+                  ? "bg-white font-semibold text-[#3E4094]"
+                  : "bg-transparent text-gray-500 hover:bg-gray-200"
+              } ${index !== topics.length - 1 ? "border-b border-gray-200" : ""}`}
+            >
+              <span className="text-[14px]">{topic}</span>
+              {isActive && <ArrowRight size={18} className="text-[#3E4094]" />}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -12,6 +12,7 @@ const SearchBar = ({
   onSearch,
   onKeyDown,
   micIcon = icons.Mic,
+  showButtonLabel = true,
 }) => {
   const [internalQuery, setInternalQuery] = useState("");
   const navigate = useNavigate();
@@ -66,9 +67,9 @@ const SearchBar = ({
               variant="gradient"
               rounded={true}
               icon={<Search size={18} />}
-              label="Search"
+              label={showButtonLabel ? "Search" : ""}
               size="md"
-              className="px-4  2xl:px-6 min-h-[20px] font-medium"
+              className={showButtonLabel ? "px-4 2xl:px-6 min-h-[20px] font-medium" : "h-[36px] w-[36px] sm:h-[40px] sm:w-[40px] flex items-center justify-center !p-0"}
               onClick={handleSearch}
             />
           </div>
