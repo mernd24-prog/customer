@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
-import { productDetailData } from "../../data/productDetails";
 import { CiStar } from "react-icons/ci";
 import { FaStar, FaChevronDown } from "react-icons/fa";
 import FAQAccordion from "../faq/FAQAccordion";
-import { productDetailFAQ } from "../../data/productDetailFAQ";
 import { MdZoomOutMap } from "react-icons/md";
 import { CiHeart } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
@@ -494,15 +492,15 @@ function ProductInfo() {
   );
 }
 
-export default function ProductDetailPage() {
+export default function ProductDetailPage({ productData = null, faqItems = [] }) {
   return (
     <section className="py-16">
       <div className="flex flex-col xl:flex-row gap-8 items-start">
-        <ProductImages data={productDetailData} />
+        <ProductImages data={productData || {}} />
         <ProductInfo />
       </div>
       <div className="my-14">
-        <FAQAccordion faqs={productDetailFAQ} variant="productDetailPageFAQ" />
+        <FAQAccordion faqs={faqItems} variant="productDetailPageFAQ" />
       </div>
     </section>
   );

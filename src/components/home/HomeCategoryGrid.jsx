@@ -25,9 +25,10 @@ export default function HomeCategoryGrid({ categories = [], loading = false }) {
 
         {categories.map((item, idx) => (
           <CategoryCard
-            key={item.id ? item.id : `idx-${idx}`}
+            key={item.id ? item.id : item.categoryKey ? item.categoryKey : `idx-${idx}`}
             image={item.imageUrl}
             title={item.title}
+            href={item.categoryKey ? `/categories/${item.categoryKey}` : undefined}
             active={activeId === item.id}
             onClick={() => setActiveId(item.id)}
           />

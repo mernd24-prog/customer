@@ -2,7 +2,6 @@ import { BadgePercent, Gift, Megaphone, Sparkles, Store } from "lucide-react";
 
 import Seo from "../common/Seo";
 import InfoCard from "../ui/InfoCard";
-import { marketingPages } from "../../data/staticPages";
 import { getCmsImageSet, getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 import CardGridSection from "./CardGridSection";
 import PageHero from "./PageHero";
@@ -15,8 +14,18 @@ const iconByPage = {
 };
 
 export default function MarketingPage({ pageKey }) {
-  const fallbackPage = marketingPages[pageKey];
-  const { page: cmsPage } = useCmsRecord(fallbackPage?.cmsKey);
+  const cmsKey = String(pageKey || "").replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
+  const fallbackPage = {
+    cmsKey,
+    eyebrow: "Featured",
+    title: "Featured Page",
+    description: "",
+    ctaText: "Explore",
+    ctaTo: "/products",
+    sections: [],
+    heroImage: "",
+  };
+  const { page: cmsPage } = useCmsRecord(cmsKey);
   const page = getCmsPayload(cmsPage, fallbackPage);
   const images = getCmsImageSet(cmsPage, page?.heroImage);
   const Icon = iconByPage[pageKey] || Sparkles;

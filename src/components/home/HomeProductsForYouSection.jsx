@@ -2,10 +2,6 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ProductCard from "../product/ProductCard";
 import ProductsForYouCard from "../ui/ProductsForYouCard";
-import SupportFeatureSection from "../ui/SupportFeatureSection";
-import { helpSupportData } from "../../data/helpSupport";
-import CommitmentCard from "../ui/CommitmentCard";
-import { aboutSectionImages } from "../../constant/image.constant";
 import { useProductActions } from "../../hooks/useProductActions";
 import { getProductId } from "../../utils/ecommerce";
 

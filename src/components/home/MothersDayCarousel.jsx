@@ -5,7 +5,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 import BrandButton from "../ui/BrandButton";
 import { IoArrowBackOutline, IoArrowForwardOutline } from "react-icons/io5";
-import { mothersDayData } from "../../data/homeSections";
 import { SkeletonLoader, SKELETON_PRESETS } from "../common/skeleton";
 import { useDelayedLoading } from "../../hooks/useDelayedLoading";
 import PromoSlideCard from "../ui/PromoSlideCard";
@@ -86,7 +85,7 @@ export default function MothersDayCarousel({ data }) {
   const swiperRef = useRef(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
-  const rawSlides = Array.isArray(data) && data.length ? data : mothersDayData;
+  const rawSlides = Array.isArray(data) ? data : [];
   const slides = useMemo(
     () =>
       rawSlides
@@ -108,6 +107,7 @@ export default function MothersDayCarousel({ data }) {
         }),
     [rawSlides],
   );
+  if (!slides.length) return null;
 
   const handleSlideChange = (swiper) => {
     if (!swiper || swiper.destroyed) return;

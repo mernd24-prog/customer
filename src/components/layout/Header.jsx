@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useMemo, useState, useRef } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -20,14 +20,14 @@ import MenuDropdown from "./header/MenuDropdown";
 import SellDropdown from "./header/SellDropdown";
 import WatchlistDropdown from "./header/WatchlistDropdown";
 import { icons, navbarIcons as navData } from "../../constant/image.constant";
-import { sellDropdownData, topNavLinks } from "../../data/header";
 import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import { logout } from "../../features/auth/authSlice";
+import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { getRole, isAdminRole } from "../../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 import FashionMegaMenu from "../category/FashionMegaMenu";
-import { fashionMenuData } from "../../data/megaMenu";
+import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 
 const buildCategorySlug = (name) => name.toLowerCase().replace(/\s+/g, "-");
 
@@ -49,6 +49,45 @@ const baseAccountMenuItems = [
   { label: "Settings", path: "/notification-preferences", icon: "settings" },
 ];
 
+const DEFAULT_TOP_NAV_LINKS = [
+  { name: "Deals", path: "/deals" },
+  { name: "Brand Outlet", path: "/brand-outlet" },
+  { name: "Gift Card", path: "/gift-cards" },
+  { name: "Help & Contact", path: "/help-contact" },
+];
+
+const DEFAULT_SELL_DROPDOWN = {
+  title: "Start selling in a snap",
+  description: "Turn your pre-loved items into extra cash.",
+  features: [
+    { icon: "camera", text: "Listing is easy and faster than ever in the app" },
+    { icon: "lock", text: "Seller protections and secure payments" },
+    { icon: "truck", text: "Easy shipping and local pickup" },
+  ],
+  buttons: [
+    { label: "List an item", path: "/seller/status" },
+    { label: "Download the app", path: "/mobile-app" },
+  ],
+};
+
+const DEFAULT_FASHION_MENU = { leftSections: [], promo: null };
+
+
+function buildCategoryTreeFromFlat(list = []) {
+  const items = Array.isArray(list) ? list : [];
+  const byKey = new Map(
+    items.map((item) => [item?.categoryKey || item?.key, { ...item, children: [] }]),
+  );
+
+  byKey.forEach((node) => {
+    if (node?.parentKey && byKey.has(node.parentKey)) {
+      byKey.get(node.parentKey).children.push(node);
+    }
+  });
+
+  return Array.from(byKey.values()).filter((node) => !node?.parentKey || Number(node?.level ?? 0) === 0);
+}
+
 function withIcons(items) {
   return asArray(items).map((item) => {
     const Icon = dropdownIconMap[item.icon];
@@ -61,6 +100,20 @@ export const TopHeader = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((s) => s.auth.current);
   const currentRole = getRole(currentUser);
+
+  const { page: dealsPage } = useCmsRecord("deals");
+  const { page: brandOutletPage } = useCmsRecord("brand-outlet");
+  const { page: giftCardsPage } = useCmsRecord("gift-cards");
+  const { page: helpContactPage } = useCmsRecord("help-contact");
+  const { page: headerSellPage } = useCmsRecord("header-sell-dropdown");
+
+  const sellDropdownCms = getCmsPayload(headerSellPage, DEFAULT_SELL_DROPDOWN);
+  const topLinks = [
+    { name: dealsPage?.title || "Deals", path: "/deals" },
+    { name: brandOutletPage?.title || "Brand Outlet", path: "/brand-outlet" },
+    { name: giftCardsPage?.title || "Gift Card", path: "/gift-cards" },
+    { name: helpContactPage?.title || "Help & Contact", path: "/help-contact" },
+  ];
 
   const { removeFromWishlist } = useProductActions();
   const {
@@ -87,8 +140,9 @@ export const TopHeader = () => {
         label: "Sell",
         path: "/seller/status",
         data: {
-          ...sellDropdownData,
-          features: withIcons(sellDropdownData.features),
+          ...DEFAULT_SELL_DROPDOWN,
+          ...sellDropdownCms,
+          features: withIcons(sellDropdownCms?.features || DEFAULT_SELL_DROPDOWN.features),
         },
       },
       {
@@ -168,7 +222,7 @@ export const TopHeader = () => {
     <div className="hidden h-[39px] w-full items-center justify-center bg-blue text-[14px] font-medium text-white lg:flex">
       <div className="w-container flex h-full items-center">
         <div className="flex flex-1 items-center gap-14 text-white">
-          {asArray(topNavLinks).map((link, index) => (
+          {asArray(topLinks.length ? topLinks : DEFAULT_TOP_NAV_LINKS).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
               to={hrefOr(link?.path)}
@@ -298,10 +352,24 @@ export const Navbar = ({ icons: propIcons }) => {
 };
 
 export const CategoryBar = ({ headerData }) => {
+  const dispatch = useDispatch();
   const catalogList = useSelector((s) => s.catalog.list);
+  const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
+  const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
   const catalogCategories = Array.isArray(catalogList) ? catalogList : [];
   const [activeMenu, setActiveMenu] = useState(null);
   const timeoutRef = useRef(null);
+
+  useEffect(() => {
+    const hasTreeRoots = catalogCategories.some(
+      (item) => !item?.parentKey || Number(item?.level ?? 0) === 0,
+    );
+    const hasNestedChildren = catalogCategories.some(
+      (item) => Array.isArray(item?.children) && item.children.length > 0,
+    );
+    if (hasTreeRoots && hasNestedChildren) return;
+    dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 })).catch(() => {});
+  }, [catalogCategories.length, dispatch]);
 
   const handleMouseEnter = (item) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -314,18 +382,49 @@ export const CategoryBar = ({ headerData }) => {
     }, 200);
   };
 
-  const categories = asArray(headerData).length
-    ? asArray(headerData)
-    : catalogCategories.length > 0
-      ? catalogCategories.slice(0, 14).map((cat) => ({
-          name: textOr(cat?.title, textOr(cat?.name, "Category")),
-          img: cat.imageUrl || cat.image,
-          slug: keyOr(
-            cat?.categoryKey,
-            keyOr(cat?.key, buildCategorySlug(textOr(cat?.title, cat?.name))),
-          ),
-        }))
-      : [];
+  const catalogTree = useMemo(
+    () => buildCategoryTreeFromFlat(catalogCategories),
+    [catalogCategories],
+  );
+
+  const categories = useMemo(() => {
+    if (asArray(headerData).length) return asArray(headerData);
+    if (!catalogTree.length) return [];
+
+    const byParent = new Map();
+    for (const node of catalogTree) {
+      const parentKey = node?.parentKey || "__root__";
+      if (!byParent.has(parentKey)) byParent.set(parentKey, []);
+      byParent.get(parentKey).push(node);
+    }
+
+    const roots = (byParent.get("__root__") || [])
+      .filter((cat) => Number(cat?.level ?? 0) === 0 || !cat?.parentKey)
+      .slice(0, 14);
+
+    return roots.map((cat) => {
+      const catKey = cat?.categoryKey || cat?.key;
+      const childNodes = asArray(cat?.children?.length ? cat.children : byParent.get(catKey) || []);
+      const children = childNodes.map((child) => {
+        const childKey = child?.categoryKey || child?.key;
+        return {
+          ...child,
+          children: asArray(child?.children?.length ? child.children : byParent.get(childKey) || []),
+        };
+      });
+
+      return {
+        name: textOr(cat?.title, textOr(cat?.name, "Category")),
+        img: cat.imageUrl || cat.image,
+        slug: keyOr(
+          cat?.categoryKey,
+          keyOr(cat?.key, buildCategorySlug(textOr(cat?.title, cat?.name))),
+        ),
+        categoryKey: catKey,
+        children,
+      };
+    });
+  }, [catalogTree, headerData]);
 
   if (!categories.length) return null;
 
@@ -374,7 +473,7 @@ export const CategoryBar = ({ headerData }) => {
           }}
           onMouseLeave={handleMouseLeave}
         >
-          <FashionMegaMenu data={fashionMenuData} activeCategory={activeMenu} />
+          <FashionMegaMenu data={megaMenuData} activeCategory={activeMenu} />
         </div>
       )}
     </header>

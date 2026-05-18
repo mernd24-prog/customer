@@ -8,14 +8,15 @@ import { z } from "zod";
 import AuthCard from "../../components/ui/AuthCard";
 import Button from "../../components/ui/Button";
 import FormField from "../../components/ui/FormField";
+import OtpInput from "../../components/ui/OtpInput";
 import Seo from "../../components/common/Seo";
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
-import { verifyOtp, clearError } from "../../features/auth/authSlice";
+import { verifyOtp, clearError, resendOtp, sendOtp } from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
 
 const schema = z.object({
   email: z.string().trim().email("Enter a valid email address"),
-  otp: z.string().trim().min(4, "Enter the OTP"),
+  otp: z.string().trim().length(6, "Enter 6-digit OTP"),
 });
 
 export default function VerifyOtpPage() {
@@ -33,6 +34,8 @@ export default function VerifyOtpPage() {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
@@ -72,14 +75,26 @@ export default function VerifyOtpPage() {
             placeholder="you@example.com"
           />
 
-          <FormField
-            id="otp"
-            label="OTP code"
-            registration={register("otp")}
-            error={errors.otp}
-            autoComplete="one-time-code"
-            placeholder="Enter OTP"
-            inputMode="numeric"
+          <div className="flex justify-end">
+            <button
+              type="button"
+              className="text-sm font-semibold text-[#2E2E2E] underline-offset-4 hover:underline"
+              onClick={() => {
+                const email = watch("email");
+                if (!email) return;
+                run(dispatch, sendOtp({ email, purpose: "login" }), "OTP sent");
+              }}
+            >
+              Send OTP
+            </button>
+          </div>
+
+          <label className="text-sm font-semibold text-[#2E2E2E]">OTP code</label>
+          <input type="hidden" {...register("otp")} />
+          <OtpInput
+            value={watch("otp") || ""}
+            onChange={(otp) => setValue("otp", otp, { shouldValidate: true })}
+            error={errors.otp?.message}
           />
 
           {error && (
@@ -88,7 +103,7 @@ export default function VerifyOtpPage() {
             </div>
           )}
 
-          <Button type="submit" loading={loading} className="w-full">
+          <Button type="submit" loading={loading} className="w-full" disabled={(watch("otp") || "").length !== 6}>
             <ShieldCheck size={18} /> Verify &amp; sign in
           </Button>
 
@@ -96,6 +111,20 @@ export default function VerifyOtpPage() {
             <Link to={AUTH_ROUTES.login} className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline">
               Back to login
             </Link>
+          </p>
+          <p className="text-center text-sm text-[#787878]">
+            Didn't get OTP?{" "}
+            <button
+              type="button"
+              className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline"
+              onClick={() => {
+                const email = watch("email");
+                if (!email) return;
+                run(dispatch, resendOtp({ email, purpose: "login" }), "OTP resent");
+              }}
+            >
+              Resend OTP
+            </button>
           </p>
         </form>
       </AuthCard>

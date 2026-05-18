@@ -15,13 +15,6 @@ import FaqItem from "../components/static/FaqItem";
 import MarketingPage from "../components/static/MarketingPage";
 import PageHero from "../components/static/PageHero";
 import { getCmsImageSet, getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
-import {
-  commitmentItems,
-  faqItems,
-  featureItems,
-  supportTopics,
-  whyChooseUsItems,
-} from "../data/staticPages";
 
 function useStaticCmsPage(cmsKey, fallback) {
   const { page } = useCmsRecord(cmsKey);
@@ -51,7 +44,7 @@ export function FaqPage() {
     description: "Quick answers for the most common questions about orders, payments, deliveries, and returns.",
     ctaText: "Visit Support Center",
     ctaTo: "/support",
-    questions: faqItems,
+    questions: [],
   });
 
   return (
@@ -72,7 +65,7 @@ export function FaqPage() {
           subtitle="Clear, easy answers to help you move faster."
           className="grid gap-4 md:grid-cols-2"
         >
-          {(page.questions || faqItems).map((faq, index) => (
+          {(Array.isArray(page.questions) ? page.questions : []).map((faq, index) => (
             <FaqItem key={faq.question} item={faq} index={index} />
           ))}
         </CardGridSection>
@@ -88,8 +81,11 @@ export function SupportCenterPage() {
     description: "Find the right support path for orders, returns, account issues, and product questions.",
     ctaText: "Browse FAQs",
     ctaTo: "/faq",
-    topics: supportTopics,
+    topics: [],
   });
+  const topics = Array.isArray(page?.topics) && page.topics.length
+    ? page.topics
+    : (Array.isArray(page?.points) ? page.points.map((p) => ({ title: p.title, description: p.description, href: "/support" })) : []);
 
   return (
     <main className="content-page py-12">
@@ -119,7 +115,7 @@ export function SupportCenterPage() {
           title="Instant support topics"
           subtitle="Choose the topic that best matches your request."
         >
-          {(page.topics || supportTopics).map((topic) => (
+          {topics.map((topic) => (
             <InfoCard
               key={topic.title}
               icon={<LifeBuoy size={24} />}
@@ -169,8 +165,11 @@ export function WhyChooseUsPage() {
     description: "Enjoy curated products, meaningful savings, fast delivery, and customer service built around your needs.",
     ctaText: "See features",
     ctaTo: "/features",
-    items: whyChooseUsItems,
+    items: [],
   });
+  const items = Array.isArray(page?.items) && page.items.length
+    ? page.items
+    : (Array.isArray(page?.points) ? page.points.map((p) => ({ title: p.title, description: p.description })) : []);
 
   return (
     <main className="content-page py-12">
@@ -190,7 +189,7 @@ export function WhyChooseUsPage() {
           subtitle="The reasons customers keep choosing Sam Global."
           className="grid gap-6 lg:grid-cols-2"
         >
-          {(page.items || whyChooseUsItems).map((item) => (
+          {items.map((item) => (
             <InfoCard
               key={item.title}
               icon={<Sparkles size={24} />}
@@ -211,8 +210,11 @@ export function OurCommitmentPage() {
     description: "We keep our promises with clear policies, dependable service, and continuous improvement.",
     ctaText: "Browse support",
     ctaTo: "/support",
-    items: commitmentItems,
+    items: [],
   });
+  const items = Array.isArray(page?.items) && page.items.length
+    ? page.items
+    : (Array.isArray(page?.points) ? page.points.map((p) => ({ title: p.title, description: p.description })) : []);
 
   return (
     <main className="content-page py-12">
@@ -232,7 +234,7 @@ export function OurCommitmentPage() {
           subtitle="Meaningful service, clear policies, and quality first."
           className="grid gap-6 md:grid-cols-2"
         >
-          {(page.items || commitmentItems).map((item) => (
+          {items.map((item) => (
             <InfoCard
               key={item.title}
               icon={<Shield size={24} />}
@@ -251,8 +253,11 @@ export function FeaturesPage() {
     eyebrow: "Features",
     title: "Features designed for effortless shopping",
     description: "Explore the tools and experiences that make Sam Global fast, secure, and easy to use.",
-    items: featureItems,
+    items: [],
   });
+  const items = Array.isArray(page?.items) && page.items.length
+    ? page.items
+    : (Array.isArray(page?.points) ? page.points.map((p) => ({ title: p.title, description: p.description })) : []);
 
   return (
     <main className="content-page py-12">
@@ -269,7 +274,7 @@ export function FeaturesPage() {
           title="Platform features"
           subtitle="Smart shopping features built to help you save time and shop confidently."
         >
-          {(page.items || featureItems).map((item) => (
+          {items.map((item) => (
             <InfoCard
               key={item.title}
               icon={<CheckCircle2 size={24} />}

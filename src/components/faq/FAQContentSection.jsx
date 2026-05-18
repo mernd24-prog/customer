@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { faqData } from "../../data/faqData";
 import FAQAccordion from "./FAQAccordion";
 import FAQSidebar from "./FAQSidebar";
 
@@ -10,7 +9,7 @@ const getTopics = (faqs) => {
   return [...new Set(topics)];
 };
 
-export default function FAQContentSection({ faqs = faqData }) {
+export default function FAQContentSection({ faqs = [] }) {
   const topics = getTopics(faqs);
   const firstTopic = topics[0] || "FAQ'S";
   const [activeTopic, setActiveTopic] = useState(firstTopic);

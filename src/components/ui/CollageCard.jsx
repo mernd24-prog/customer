@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SKELETON_PRESETS, SkeletonLoader } from "../common/skeleton";
-import { collageCards } from "../../data/homeSections";
 
 function CollageImage({ src, title, link }) {
   return (
@@ -38,7 +37,24 @@ function CollageCard({ section, index }) {
   );
 }
 
-export default function CollageMainSection() {
+function toCollageSections(cmsPages = []) {
+  const sections = (Array.isArray(cmsPages) ? cmsPages : [])
+    .filter((page) => String(page?.pageType || "") === "homepage-slide")
+    .slice(0, 4)
+    .map((page) => ({
+      title: page?.title || "Featured",
+      images: [
+        {
+          image: page?.coverImage || page?.metadata?.coverImage || "",
+          link: page?.metadata?.ctaLink || `/cms/${page?.slug || ""}`,
+        },
+      ].filter((img) => img.image),
+    }))
+    .filter((section) => section.images.length > 0);
+  return sections;
+}
+
+export default function CollageMainSection({ cmsPages = [] }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,6 +63,8 @@ export default function CollageMainSection() {
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  const sections = toCollageSections(cmsPages);
 
   return (
     <section className="overflow-hidden lg:my-10">
@@ -58,7 +76,7 @@ export default function CollageMainSection() {
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {collageCards.map((section, idx) => (
+          {sections.map((section, idx) => (
             <CollageCard key={idx} index={idx} section={section} />
           ))}
         </div>

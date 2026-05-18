@@ -1,9 +1,9 @@
-import { brandSwiperData } from "../../data/aboutUs";
 import { SkeletonLoader } from "../common/skeleton";
 import { useDelayedLoading } from "../../hooks/useDelayedLoading";
 
-export default function BrandCarousel({ data = brandSwiperData }) {
-  const { sectionDetails, logos } = data;
+export default function BrandCarousel({ data = {} }) {
+  const sectionDetails = data?.sectionDetails || {};
+  const logos = Array.isArray(data?.logos) ? data.logos : [];
   const duplicatedLogos = [...logos, ...logos];
   const loading = useDelayedLoading();
 

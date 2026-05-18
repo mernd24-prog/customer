@@ -257,13 +257,13 @@ export default function LoginPage() {
 
           {/* OTP LOGIN */}
           <p className="text-center text-sm text-slate-600">
-            Prefer OTP login?{" "}
+            Seller account login?{" "}
 
             <Link
               to={AUTH_ROUTES.verifyOtp}
               className="font-semibold text-[#1E1B6D] underline-offset-4 transition hover:underline"
             >
-              Login with OTP
+              Verify with OTP
             </Link>
           </p>
 

@@ -58,24 +58,11 @@ import {
   SellerTrackingPage,
 } from "./pages/SellerPages";
 import {
-  AdvertisePage,
-  AnnouncementsPage,
-  BlogPage,
-  BrandOutletPage,
-  DealsPage,
-  GiftCardsPage,
-  GrowthSupportPage,
-  HelpContactPage,
-  MobileAppPage,
-  SellerPoliciesPage,
   SupportCenterPage,
-  UpdatesPage,
-  WhoWeArePage,
   WhyChooseUsPage,
   OurCommitmentPage,
   FeaturesPage,
 } from "./pages/StaticPages";
-import AboutPage from "./pages/about/AboutPage";
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
 import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 import {
@@ -91,10 +78,6 @@ import AdminProductManagementPage from "./pages/admin/AdminProductManagementPage
 import AdminBrandManagementPage from "./pages/admin/AdminBrandManagementPage";
 import AdminCatalogManagementPage from "./pages/admin/AdminCatalogManagementPage";
 import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
-import PolicyPage from "./pages/customer/PolicyPage";
-import { termsOfUseData } from "./data/termsOfUseData";
-import { shippingPolicyData } from "./data/shippingPolicyData";
-import { refundPolicyData } from "./data/refundPolicyData";
 import FAQPage from "./pages/faq/FAQPage";
 
 export default function App() {
@@ -116,10 +99,28 @@ export default function App() {
       return;
     }
 
+    let isDone = false;
+    const timeoutId = window.setTimeout(() => {
+      if (isDone) return;
+      isDone = true;
+      dispatch(logout());
+      setSessionReady(true);
+    }, 8000);
+
     dispatch(checkAuthStatus())
       .unwrap()
       .catch(() => dispatch(logout()))
-      .finally(() => setSessionReady(true));
+      .finally(() => {
+        if (isDone) return;
+        isDone = true;
+        window.clearTimeout(timeoutId);
+        setSessionReady(true);
+      });
+
+    return () => {
+      isDone = true;
+      window.clearTimeout(timeoutId);
+    };
   }, [currentUser, dispatch]);
 
   useEffect(() => {
@@ -158,20 +159,20 @@ export default function App() {
           {/* ── Static / info pages (public) ──────────────────────────── */}
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/support" element={<SupportCenterPage />} />
-          <Route path="/help-contact" element={<HelpContactPage />} />
-          <Route path="/deals" element={<DealsPage />} />
-          <Route path="/brand-outlet" element={<BrandOutletPage />} />
-          <Route path="/gift-cards" element={<GiftCardsPage />} />
-          <Route path="/who-we-are" element={<WhoWeArePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/about-us" element={<AboutPage />} />
-          <Route path="/mobile-app" element={<MobileAppPage />} />
-          <Route path="/seller-policies" element={<SellerPoliciesPage />} />
-          <Route path="/growth-support" element={<GrowthSupportPage />} />
-          <Route path="/advertise" element={<AdvertisePage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/updates" element={<UpdatesPage />} />
-          <Route path="/announcements" element={<AnnouncementsPage />} />
+          <Route path="/help-contact" element={<CmsPage slugOverride="help-contact" />} />
+          <Route path="/deals" element={<CmsPage slugOverride="deals" />} />
+          <Route path="/brand-outlet" element={<CmsPage slugOverride="brand-outlet" />} />
+          <Route path="/gift-cards" element={<CmsPage slugOverride="gift-cards" />} />
+          <Route path="/who-we-are" element={<CmsPage slugOverride="who-we-are" />} />
+          <Route path="/about" element={<CmsPage slugOverride="about-us" />} />
+          <Route path="/about-us" element={<CmsPage slugOverride="about-us" />} />
+          <Route path="/mobile-app" element={<CmsPage slugOverride="mobile-app" />} />
+          <Route path="/seller-policies" element={<CmsPage slugOverride="seller-policies" />} />
+          <Route path="/growth-support" element={<CmsPage slugOverride="growth-support" />} />
+          <Route path="/advertise" element={<CmsPage slugOverride="advertise" />} />
+          <Route path="/blog" element={<CmsPage slugOverride="blog" />} />
+          <Route path="/updates" element={<CmsPage slugOverride="updates" />} />
+          <Route path="/announcements" element={<CmsPage slugOverride="announcements" />} />
           <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
           <Route path="/our-commitment" element={<OurCommitmentPage />} />
           <Route path="/features" element={<FeaturesPage />} />
@@ -180,9 +181,9 @@ export default function App() {
           <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" fallbackData={shippingPolicyData} />} />
           <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" fallbackData={refundPolicyData} />} />
           <Route path="/return-refund-policy" element={<CmsPage slugOverride="return-refund-policy" fallbackData={refundPolicyData} />} /> */}
-          <Route path="/terms-of-use" element={<PolicyPage data={termsOfUseData} />} />
-          <Route path="/shipping-policy" element={<PolicyPage data={shippingPolicyData} />} />
-          <Route path="/refund-policy" element={<PolicyPage data={refundPolicyData} />} />
+          <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} />
+          <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" />} />
+          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} />
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>

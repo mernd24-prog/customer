@@ -7,12 +7,6 @@ import OurStory from "../../components/about/OurStory";
 import ValuesSection from "../../components/about/ValuesSection";
 import BrandCarousel from "../../components/about/BrandCarousel";
 import WhyChooseSection from "../../components/about/WhyChooseSection";
-import {
-  brandSwiperData,
-  ourMission,
-  ourStoryData,
-  valueData,
-} from "../../data/aboutUs";
 
 const asArray = (value, fallback = []) => {
   if (Array.isArray(value)) return value;
@@ -58,73 +52,68 @@ export default function AboutPage() {
 
   const storyData = useMemo(
     () => ({
-      ...ourStoryData,
+      heading: "Our Story",
+      description: "",
+      image: "",
+      ctaText: "",
       ...aboutCmsData?.story,
       image:
         aboutCmsData?.story?.image ||
         aboutCmsData?.coverImage ||
-        aboutCmsData?.image ||
-        ourStoryData.image,
+        aboutCmsData?.image,
       description:
         aboutCmsData?.story?.description ||
         aboutCmsData?.description ||
-        aboutCmsData?.body ||
-        ourStoryData.description,
+        aboutCmsData?.body,
       heading:
         aboutCmsData?.story?.heading ||
         aboutCmsData?.heading ||
-        aboutCmsData?.title ||
-        ourStoryData.heading,
+        aboutCmsData?.title,
       ctaText:
         aboutCmsData?.story?.ctaText ||
-        aboutCmsData?.ctaText ||
-        ourStoryData.ctaText,
+        aboutCmsData?.ctaText,
     }),
     [aboutCmsData],
   );
 
   const valuesData = useMemo(
     () => ({
-      ...valueData,
+      sectionDetails: { heading: "Our Values" },
       sectionDetails: {
-        heading:
-          aboutCmsData?.values?.heading || valueData.sectionDetails.heading,
+        heading: aboutCmsData?.values?.heading || "Our Values",
       },
-      cards: asArray(aboutCmsData?.values, valueData.cards),
+      cards: asArray(aboutCmsData?.values, []),
     }),
     [aboutCmsData],
   );
 
   const brandData = useMemo(
     () => ({
-      ...brandSwiperData,
       sectionDetails: {
-        heading:
-          aboutCmsData?.brands?.heading ||
-          brandSwiperData.sectionDetails.heading,
+        heading: aboutCmsData?.brands?.heading || "Our Brand Network",
         description:
-          aboutCmsData?.brands?.description ||
-          brandSwiperData.sectionDetails.description,
+          aboutCmsData?.brands?.description || "",
       },
-      logos: asArray(aboutCmsData?.brands, brandSwiperData.logos),
+      logos: asArray(aboutCmsData?.brands, []),
     }),
     [aboutCmsData],
   );
 
   const missionData = useMemo(
     () => ({
-      ...ourMission,
+      title: "Our Mission",
+      description: "",
+      image: "",
       ...aboutCmsData?.mission,
       image:
         aboutCmsData?.mission?.image ||
         aboutCmsData?.heroImage ||
-        aboutCmsData?.galleryImages?.[0] ||
-        ourMission.image,
+        aboutCmsData?.galleryImages?.[0],
       title:
         aboutCmsData?.mission?.title ||
         aboutCmsData?.mission?.heading ||
-        ourMission.title,
-      description: aboutCmsData?.mission?.description || ourMission.description,
+        "Our Mission",
+      description: aboutCmsData?.mission?.description || "",
     }),
     [aboutCmsData],
   );

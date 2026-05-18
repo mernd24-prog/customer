@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { collageCards } from "../../data/homeSections";
 import { SkeletonLoader, SKELETON_PRESETS } from "../common/skeleton";
 import { useDelayedLoading } from "../../hooks/useDelayedLoading";
 
@@ -41,7 +40,7 @@ function CollageCard({ section, index }) {
   );
 }
 
-export default function HomeCollageSection() {
+export default function HomeCollageSection({ sections = [] }) {
   const loading = useDelayedLoading();
 
   return (
@@ -54,7 +53,7 @@ export default function HomeCollageSection() {
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 ">
-          {collageCards.map((section, idx) => (
+          {sections.map((section, idx) => (
             <CollageCard key={section.title} index={idx} section={section} />
           ))}
         </div>

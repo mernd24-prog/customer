@@ -1,12 +1,13 @@
 import React from "react";
 import { infoSection } from "../../../constant/image.constant";
-import { roadAheadData } from "../../../data/infoSectionData";
 
-const InfoSection = () => {
-  const { title, description, brandText } = roadAheadData[0];
+const InfoSection = ({ content }) => {
+  const title = content?.title || "";
+  const description = content?.description || "";
+  const brandText = content?.brandText || "";
   const { image, logo } = infoSection;
 
-  const [part1, part2] = brandText.split(". ");
+  const [part1 = "", part2 = ""] = brandText.split(". ");
 
   return (
     <section className="w-full bg-[linear-gradient(270deg,#3E4094_5.77%,#1B1D60_100%)] pt-6 sm:pt-8 lg:pt-10 pb-0 overflow-hidden ">

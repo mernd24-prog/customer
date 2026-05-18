@@ -18,8 +18,9 @@ function CmsContent({ body }) {
   );
 }
 
-export default function CmsPage() {
-  const { slug } = useParams();
+export default function CmsPage({ slugOverride = "" }) {
+  const { slug: slugFromParams } = useParams();
+  const slug = slugOverride || slugFromParams;
   const dispatch = useDispatch();
   const cmsState = useSelector((s) => s.cms);
   const page = cmsState.current;
@@ -40,6 +41,7 @@ export default function CmsPage() {
     page?.metadata?.coverImage ||
     page?.metadata?.heroImage ||
     page?.metadata?.thumbnailUrl;
+  const points = Array.isArray(page?.points) ? page.points : [];
   const galleryImages = Array.isArray(page?.galleryImages) ? page.galleryImages : [];
   const author = page?.author;
   const readTime = page?.readTime || page?.metadata?.readTime;
@@ -96,9 +98,9 @@ export default function CmsPage() {
               </h1>
 
               {/* Excerpt */}
-              {page.excerpt && (
+              {(page.excerpt || page.description) && (
                 <p className="mt-3 font-montserrat text-[17px] leading-relaxed text-[#787878]">
-                  {page.excerpt}
+                  {page.excerpt || page.description}
                 </p>
               )}
 
@@ -139,6 +141,27 @@ export default function CmsPage() {
               <div className="mt-8">
                 <CmsContent body={page.body || page.content} />
               </div>
+
+              {points.length > 0 && (
+                <div className="mt-8 rounded-[12px] border border-[#e7dfd1] bg-[#fffdf8] p-5">
+                  <h2 className="mb-3 font-montserrat text-xl font-semibold text-[#2E2E2E]">Highlights</h2>
+                  <div className="space-y-3">
+                    {points.map((point, idx) => (
+                      <div key={`${point?.title || "point"}-${idx}`} className="flex gap-3">
+                        {point?.image ? (
+                          <img src={point.image} alt={point?.title || "point"} className="h-12 w-12 rounded object-cover" />
+                        ) : null}
+                        <div>
+                          <p className="font-montserrat text-sm font-semibold text-[#2E2E2E]">{point?.title}</p>
+                          {point?.description ? (
+                            <p className="font-montserrat text-sm text-[#787878]">{point.description}</p>
+                          ) : null}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Gallery */}
               {galleryImages.length > 0 && (

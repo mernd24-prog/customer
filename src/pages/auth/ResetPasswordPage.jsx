@@ -8,15 +8,16 @@ import { z } from "zod";
 import AuthCard from "../../components/ui/AuthCard";
 import Button from "../../components/ui/Button";
 import FormField from "../../components/ui/FormField";
+import OtpInput from "../../components/ui/OtpInput";
 import Seo from "../../components/common/Seo";
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
-import { resetPassword, clearError } from "../../features/auth/authSlice";
+import { resetPassword, clearError, resendOtp } from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
 
 const schema = z
   .object({
     email: z.string().trim().email("Enter a valid email address"),
-    otp: z.string().trim().min(4, "Enter the OTP sent to your email"),
+    otp: z.string().trim().length(6, "Enter 6-digit OTP"),
     newPassword: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string().min(8, "Confirm your password"),
   })
@@ -39,6 +40,8 @@ export default function ResetPasswordPage() {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
@@ -78,14 +81,12 @@ export default function ResetPasswordPage() {
             placeholder="you@example.com"
           />
 
-          <FormField
-            id="otp"
-            label="OTP code"
-            registration={register("otp")}
-            error={errors.otp}
-            autoComplete="one-time-code"
-            placeholder="Enter OTP"
-            inputMode="numeric"
+          <label className="text-sm font-semibold text-[#2E2E2E]">OTP code</label>
+          <input type="hidden" {...register("otp")} />
+          <OtpInput
+            value={watch("otp") || ""}
+            onChange={(otp) => setValue("otp", otp, { shouldValidate: true })}
+            error={errors.otp?.message}
           />
 
           <FormField
@@ -119,9 +120,17 @@ export default function ResetPasswordPage() {
           </Button>
 
           <p className="text-center text-sm text-[#787878]">
-            <Link to={AUTH_ROUTES.forgotPassword} className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline">
+            <button
+              type="button"
+              className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline"
+              onClick={() => {
+                const email = watch("email");
+                if (!email) return;
+                run(dispatch, resendOtp({ email, purpose: "forgot_password" }), "OTP resent");
+              }}
+            >
               Resend OTP
-            </Link>
+            </button>
             {" · "}
             <Link to={AUTH_ROUTES.login} className="text-[#787878] underline-offset-4 hover:underline">
               Back to login

@@ -1,7 +1,5 @@
-import { roadAheadData } from "../../data/infoSectionData.js";
-
 const InfoSection = ({ data }) => {
-  const finalData = data || roadAheadData[0];
+  const finalData = data || {};
   const {
     title,
     description,

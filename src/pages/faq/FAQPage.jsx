@@ -1,11 +1,12 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import FAQContentSection from "../../components/faq/FAQContentSection";
 import FAQHeroSection from "../../components/faq/FAQHeroSection";
 import FAQSearchSection from "../../components/faq/FAQSearchBar";
 import NeedHelpSection from "../../components/faq/NeedHelpSection";
-import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
-import { faqData } from "../../data/faqData";
+import { getCmsPayload } from "../../hooks/useCmsRecord";
+import { fetchCmsPages } from "../../features/cms/cmsSlice";
 
 const normalizeFaqQuestions = (payload) => {
   const groupedQuestions = Array.isArray(payload?.groupedQuestions)
@@ -25,33 +26,51 @@ const normalizeFaqQuestions = (payload) => {
 };
 
 export default function FAQPage() {
-  const { page: cmsFaqPage } = useCmsRecord("faq");
-  const faqCmsData = useMemo(
-    () => getCmsPayload(cmsFaqPage, null),
-    [cmsFaqPage],
-  );
-  const faqs = useMemo(() => normalizeFaqQuestions(faqCmsData), [faqCmsData]);
+  const dispatch = useDispatch();
+  const cmsList = useSelector((s) => s.cms.list);
 
-  const title =
-    faqCmsData?.title ||
-    cmsFaqPage?.title ||
-    "Frequently Asked Questions";
+  useEffect(() => {
+    dispatch(fetchCmsPages({ pageType: "faq", limit: 100 })).catch(() => {});
+  }, [dispatch]);
+
+  const faqEntries = useMemo(
+    () => (Array.isArray(cmsList) ? cmsList : []).filter((item) => item?.pageType === "faq"),
+    [cmsList],
+  );
+
+  const faqs = useMemo(() => {
+    if (!faqEntries.length) return [];
+    return faqEntries
+      .map((item, index) => ({
+        cmsKey: item?.slug || `faq-${index}`,
+        topic: item?.metadata?.topic || "FAQ'S",
+        question: item?.title || "",
+        answer: item?.body || item?.description || "",
+      }))
+      .filter((item) => item.question && item.answer);
+  }, [faqEntries]);
+
+  const title = "Frequently Asked Questions";
   const description =
-    faqCmsData?.description ||
-    cmsFaqPage?.excerpt ||
     "Quick answers for common shopping questions.";
-  const ctaText = faqCmsData?.ctaText || "Contact Us";
+  const ctaText = "Contact Us";
+
+  const faqCmsData = useMemo(() => {
+    const page = faqEntries[0] || null;
+    return getCmsPayload(page, null);
+  }, [faqEntries]);
+  const seoTitle =
+    faqCmsData?.seo?.metaTitle ||
+    faqEntries[0]?.metadata?.seoTitle ||
+    title;
+  const seoDescription =
+    faqCmsData?.seo?.metaDescription ||
+    faqEntries[0]?.metadata?.seoDescription ||
+    "Quick answers for common shopping questions.";
 
   return (
     <>
-      <Seo
-        title={faqCmsData?.seo?.metaTitle || cmsFaqPage?.seo?.metaTitle || title}
-        description={
-          faqCmsData?.seo?.metaDescription ||
-          cmsFaqPage?.seo?.metaDescription ||
-          description
-        }
-      />
+      <Seo title={seoTitle} description={seoDescription} />
       <FAQHeroSection
         eyebrow={faqCmsData?.eyebrow}
         title={title}
