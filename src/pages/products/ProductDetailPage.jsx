@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -255,7 +256,13 @@ function ProductGallery({ images, isModal = false }) {
   );
 }
 
-function ImageGallery({ images, isWishlisted, onWishlist }) {
+function ImageGallery({
+  images,
+  isWishlisted,
+  onWishlist,
+  onModalOpen,
+  onModalClose,
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -281,7 +288,10 @@ function ImageGallery({ images, isWishlisted, onWishlist }) {
       <div className="absolute right-3 top-3 z-20 flex flex-col gap-2 sm:right-4 sm:top-4">
         <button
           type="button"
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            if (onModalOpen) onModalOpen();
+            setIsModalOpen(true);
+          }}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#2c2c2c] shadow-md backdrop-blur-sm transition-all hover:scale-110 hover:bg-white sm:h-10 sm:w-10"
           title="Zoom image"
         >
@@ -298,12 +308,15 @@ function ImageGallery({ images, isWishlisted, onWishlist }) {
       </div>
 
       {/* Modal */}
-      {isModalOpen && (
+      {isModalOpen && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4 animate-fadeIn sm:p-6">
           {/* Close Button */}
           <button
             type="button"
-            onClick={() => setIsModalOpen(false)}
+            onClick={() => {
+              setIsModalOpen(false);
+              if (onModalClose) onModalClose();
+            }}
             className="absolute top-6 right-6 z-[10000] w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors shadow-sm"
           >
             <X size={28} />
@@ -312,7 +325,8 @@ function ImageGallery({ images, isWishlisted, onWishlist }) {
           <div className="flex h-[90vh] w-full max-w-[1200px] items-center justify-center">
             <ProductGallery images={images} isModal={true} />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
@@ -406,6 +420,7 @@ export default function ProductDetailPage() {
 
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(null);
+  const [zoomOpen, setZoomOpen] = useState(false);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const [shareOpen, setShareOpen] = useState(false);
   useEffect(() => {
@@ -506,6 +521,11 @@ export default function ProductDetailPage() {
                     images={images}
                     isWishlisted={isWishlisted(product)}
                     onWishlist={() => toggleWishlist(product)}
+                    onModalOpen={() => {
+                      setShareOpen(false);
+                      setZoomOpen(true);
+                    }}
+                    onModalClose={() => setZoomOpen(false)}
                   />
                 </div>
 
@@ -524,89 +544,93 @@ export default function ProductDetailPage() {
                       </h1>
                     </div>
                     <div className="relative shrink-0">
-                      {/* Share Trigger */}
-                      <button
-                        type="button"
-                        onClick={() => setShareOpen((prev) => !prev)}
-                        className="icon-button"
-                        title="Share Product"
-                      >
-                        <Share2 size={16} />
-                      </button>
-
-                      {/* Share Popup */}
-                      {shareOpen && (
-                        <div className="absolute right-0 top-12 z-50 w-[260px] rounded-2xl border border-[#ece7dc] bg-white p-4 shadow-2xl">
-                          <div className="mb-3">
-                            <h3 className="font-montserrat text-sm font-bold text-[#2E2E2E]">
-                              Share Product
-                            </h3>
-
-                            <p className="mt-1 text-xs text-[#787878]">
-                              Share this product with friends
-                            </p>
-                          </div>
-
-                          <div className="grid grid-cols-3 gap-3">
-                            <WhatsappShareButton
-                              url={window.location.href}
-                              title={getProductTitle(product)}
-                            >
-                              <WhatsappIcon size={42} round />
-                            </WhatsappShareButton>
-
-                            <FacebookShareButton
-                              url={window.location.href}
-                              quote={getProductTitle(product)}
-                            >
-                              <FacebookIcon size={42} round />
-                            </FacebookShareButton>
-
-                            <TwitterShareButton
-                              url={window.location.href}
-                              title={getProductTitle(product)}
-                            >
-                              <TwitterIcon size={42} round />
-                            </TwitterShareButton>
-
-                            <TelegramShareButton
-                              url={window.location.href}
-                              title={getProductTitle(product)}
-                            >
-                              <TelegramIcon size={42} round />
-                            </TelegramShareButton>
-
-                            <LinkedinShareButton
-                              url={window.location.href}
-                              title={getProductTitle(product)}
-                            >
-                              <LinkedinIcon size={42} round />
-                            </LinkedinShareButton>
-
-                            <EmailShareButton
-                              url={window.location.href}
-                              subject={getProductTitle(product)}
-                              body={`Check this product:\n${window.location.href}`}
-                            >
-                              <EmailIcon size={42} round />
-                            </EmailShareButton>
-                          </div>
-
-                          {/* Copy Link */}
+                      {!zoomOpen && (
+                        <>
+                          {/* Share Trigger */}
                           <button
                             type="button"
-                            onClick={async () => {
-                              await navigator.clipboard.writeText(
-                                window.location.href,
-                              );
-
-                              alert("Link copied!");
-                            }}
-                            className="mt-4 w-full rounded-full bg-[#CE9F2D] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#b88d28]"
+                            onClick={() => setShareOpen((prev) => !prev)}
+                            className="icon-button"
+                            title="Share Product"
                           >
-                            Copy Link
+                            <Share2 size={16} />
                           </button>
-                        </div>
+
+                          {/* Share Popup */}
+                          {shareOpen && (
+                            <div className="absolute right-0 top-12 z-50 w-[260px] rounded-2xl border border-[#ece7dc] bg-white p-4 shadow-2xl">
+                              <div className="mb-3">
+                                <h3 className="font-montserrat text-sm font-bold text-[#2E2E2E]">
+                                  Share Product
+                                </h3>
+
+                                <p className="mt-1 text-xs text-[#787878]">
+                                  Share this product with friends
+                                </p>
+                              </div>
+
+                              <div className="grid grid-cols-3 gap-3">
+                                <WhatsappShareButton
+                                  url={window.location.href}
+                                  title={getProductTitle(product)}
+                                >
+                                  <WhatsappIcon size={42} round />
+                                </WhatsappShareButton>
+
+                                <FacebookShareButton
+                                  url={window.location.href}
+                                  quote={getProductTitle(product)}
+                                >
+                                  <FacebookIcon size={42} round />
+                                </FacebookShareButton>
+
+                                <TwitterShareButton
+                                  url={window.location.href}
+                                  title={getProductTitle(product)}
+                                >
+                                  <TwitterIcon size={42} round />
+                                </TwitterShareButton>
+
+                                <TelegramShareButton
+                                  url={window.location.href}
+                                  title={getProductTitle(product)}
+                                >
+                                  <TelegramIcon size={42} round />
+                                </TelegramShareButton>
+
+                                <LinkedinShareButton
+                                  url={window.location.href}
+                                  title={getProductTitle(product)}
+                                >
+                                  <LinkedinIcon size={42} round />
+                                </LinkedinShareButton>
+
+                                <EmailShareButton
+                                  url={window.location.href}
+                                  subject={getProductTitle(product)}
+                                  body={`Check this product:\n${window.location.href}`}
+                                >
+                                  <EmailIcon size={42} round />
+                                </EmailShareButton>
+                              </div>
+
+                              {/* Copy Link */}
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  await navigator.clipboard.writeText(
+                                    window.location.href,
+                                  );
+
+                                  alert("Link copied!");
+                                }}
+                                className="mt-4 w-full rounded-full bg-[#CE9F2D] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#b88d28]"
+                              >
+                                Copy Link
+                              </button>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
