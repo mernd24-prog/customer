@@ -12,6 +12,7 @@ import {
   ourMission,
   ourStoryData,
   valueData,
+  whyChooseUsData,
 } from "../../data/aboutUs";
 
 const asArray = (value, fallback = []) => {
@@ -150,8 +151,8 @@ export default function AboutPage() {
           <OurStory data={storyData} />
           <ValuesSection data={valuesData} />
           <BrandCarousel data={brandData} />
-          <WhyChooseSection data={(transformedData && transformedData) || {}} />
           <InfoSection data={missionData} />
+          <WhyChooseSection data={transformedData || whyChooseUsData} />
         </div>
       </main>
     </>
