@@ -25,7 +25,6 @@ import { fetchCmsPages } from "../../features/cms/cmsSlice";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { fetchProducts } from "../../features/product/productSlice";
 import { tokenStorage } from "../../api/tokenStorage";
-import BrandCarousel from "../../components/about/BrandCarousel";
 import WhyChooseSection from "../../components/about/WhyChooseSection";
 import FAQPage from "../faq/FAQPage";
 import OurStory from "../../components/about/OurStory";
@@ -246,7 +245,8 @@ export function HomePage() {
           Reusable UI Demo
         </h2>
         <p className="mb-6 text-sm text-[#6b6b6b]">
-          Same components, different data props. This is the library-style pattern now in app.
+          Same components, different data props. This is the library-style
+          pattern now in app.
         </p>
 
         <ShowcaseSection
@@ -273,7 +273,6 @@ export function HomePage() {
         />
       </section>
 
-   
       <NeedHelpSection
         heading1="Shopping Made Easy"
         heading2=""
@@ -289,161 +288,6 @@ export function HomePage() {
       <div className="w-container">
         <HomeProductsForYouSection />
       </div>
-      {/* <ValuesSection data={valueData} /> */}
-      {/* Commitment Section */}
-      {/* <section className="mt-8 px-3 py-5 sm:px-4 sm:py-6 lg:mt-10 lg:px-6 lg:py-8">
- 
-        <h2 className="mb-6 text-center font-montserrat text-[22px] font-bold leading-tight text-[#2E2E2E] sm:text-[26px] md:text-[30px] lg:mb-8 lg:text-[34px]">
-          Our Commitment
-        </h2>
-
-        
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
-
-        
-          <CommitmentCard
-            title="To our customers, we promise:"
-            bgColor="bg-[#F5ECDD]"
-            iconColor="text-[#B57A2B]"
-            watermarkImage={aboutSectionImages.watermark}
-            points={[
-              "Quality and curated selection",
-              "Seamless shopping experience",
-              "Trust and consistency",
-            ]}
-          />
-
-          <CommitmentCard
-            title="To our partners, we offer:"
-            bgColor="bg-[#E9E8F6]"
-            iconColor="text-[#2E3192]"
-            watermarkImage={aboutSectionImages.watermark}
-            points={[
-              "Scalable growth opportunities",
-              "Strong execution and performance",
-              "Structured and reliable retail expansion",
-            ]}
-          />
-        </div>
-      </section> */}
-
-      {/* Support Section */}
-      {/* <section className="px-3 pb-6 sm:px-4 lg:px-6 lg:pb-10">
-        <SupportFeatureSection
-          title="How Can We Help You?"
-          subtitle="From product questions to partnership opportunities, our team is here to support you every step."
-          items={helpSupportData}
-          columns={4}
-        />
-      </section> */}
-      {/* Our Mission */}
-      {/* <InfoSection data={ourMission} /> */}
-      {/* Trending Now */}
-      {/* {(trendingProducts.length > 0 || trendingLoading) && (
-        <section className="w-container my-8">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
-              Trending Now
-            </h2>
-            <Link
-              to="/trending-now"
-              className="font-montserrat text-sm font-medium text-[#CE9F2D] underline-offset-4 hover:underline"
-            >
-              See all →
-            </Link>
-          </div>
-          {trendingLoading && !trendingProducts.length ? (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="aspect-[3/4] animate-pulse rounded-[12px] bg-[#F5ECDD]"
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="grid  grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {trendingProducts.map((product) => (
-                <ProductCard
-                  key={getProductId(product)}
-                  product={product}
-                  onAddToCart={addToCart}
-                  onWishlist={toggleWishlist}
-                  isWishlisted={isWishlisted(product)}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-      )} */}
-
-      {/* New Arrivals */}
-      {/* {(featuredProducts.length > 0 || productLoading) && (
-        <section className="my-8 ">
-          <div className="my-6 flex items-center justify-between">
-            <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
-              New Arrivals
-            </h2>
-            <Link
-              to="/new-arrivals"
-              className="font-montserrat text-lg font-medium text-black "
-            >
-              View all →
-            </Link>
-          </div>
-          {productLoading && !featuredProducts.length ? (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 ">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="aspect-[3/4]   animate-pulse rounded-[12px] bg-[#F5ECDD]"
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {featuredProducts.map((product) => (
-                <ProductCard
-                  key={getProductId(product)}
-                  product={product}
-                  onAddToCart={addToCart}
-                  onWishlist={toggleWishlist}
-                  isWishlisted={isWishlisted(product)}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-      )} */}
-
-      {/* Recently Viewed */}
-      {/* {recent.length > 0 && (
-        <section className="w-container my-8">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-xl">
-              Recently Viewed
-            </h2>
-            <Link to="/recently-viewed" className="font-montserrat text-sm font-medium text-[#CE9F2D]">
-              See all →
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {recent.map((product) => (
-              <ProductCard
-                key={getProductId(product)}
-                product={product}
-                onAddToCart={addToCart}
-                onWishlist={toggleWishlist}
-                isWishlisted={isWishlisted(product)}
-              />
-            ))}
-          </div>
-        </section>
-      )} */}
-      {/* <OurStory data={ourStoryData} /> */}
-      {/* <BrandCarousel /> */}
-      {/* <WhyChooseSection data={whyChooseUsData} /> */}
-      {/* <FAQPage /> */}
     </>
   );
 }

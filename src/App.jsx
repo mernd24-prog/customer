@@ -75,7 +75,7 @@ import {
   OurCommitmentPage,
   FeaturesPage,
 } from "./pages/StaticPages";
-import AboutPage from "./pages/about/AboutPage";
+
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
 import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 import {
@@ -96,6 +96,7 @@ import { termsOfUseData } from "./data/termsOfUseData";
 import { shippingPolicyData } from "./data/shippingPolicyData";
 import { refundPolicyData } from "./data/refundPolicyData";
 import FAQPage from "./pages/faq/FAQPage";
+import AboutPage from "./pages/about/AboutPage";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -124,7 +125,7 @@ export default function App() {
 
   useEffect(() => {
     if (!currentUser) return;
-    dispatch(fetchCart()).catch(() => { });
+    dispatch(fetchCart()).catch(() => {});
   }, [currentUser, dispatch]);
 
   if (!sessionReady) {
@@ -132,7 +133,9 @@ export default function App() {
       <main className="flex min-h-screen items-center justify-center bg-[#FAF6EE]">
         <div className="text-center">
           <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-[#e7dfd1] border-t-[#CE9F2D]" />
-          <p className="font-montserrat text-sm text-[#787878]">Loading your session…</p>
+          <p className="font-montserrat text-sm text-[#787878]">
+            Loading your session…
+          </p>
         </div>
       </main>
     );
@@ -143,16 +146,30 @@ export default function App() {
       <ScrollToTop />
       <Routes>
         <Route element={<AppLayout />}>
-
           {/* ── Auth routes (guest only) ───────────────────────────────── */}
           <Route element={<GuestRoute />}>
             <Route path={AUTH_ROUTES.login} element={<LoginPage />} />
-            <Route path={AUTH_ROUTES.register} element={<BuyerRegisterPage />} />
-            <Route path={AUTH_ROUTES.registerOtp} element={<RegisterOtpPage />} />
-            <Route path={AUTH_ROUTES.verifyRegistration} element={<VerifyRegistrationPage />} />
+            <Route
+              path={AUTH_ROUTES.register}
+              element={<BuyerRegisterPage />}
+            />
+            <Route
+              path={AUTH_ROUTES.registerOtp}
+              element={<RegisterOtpPage />}
+            />
+            <Route
+              path={AUTH_ROUTES.verifyRegistration}
+              element={<VerifyRegistrationPage />}
+            />
             <Route path={AUTH_ROUTES.verifyOtp} element={<VerifyOtpPage />} />
-            <Route path={AUTH_ROUTES.forgotPassword} element={<ForgotPasswordPage />} />
-            <Route path={AUTH_ROUTES.resetPassword} element={<ResetPasswordPage />} />
+            <Route
+              path={AUTH_ROUTES.forgotPassword}
+              element={<ForgotPasswordPage />}
+            />
+            <Route
+              path={AUTH_ROUTES.resetPassword}
+              element={<ResetPasswordPage />}
+            />
           </Route>
 
           {/* ── Static / info pages (public) ──────────────────────────── */}
@@ -175,14 +192,51 @@ export default function App() {
           <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
           <Route path="/our-commitment" element={<OurCommitmentPage />} />
           <Route path="/features" element={<FeaturesPage />} />
-          {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" fallbackData={termsOfUseData} />} />
-          <Route path="/terms-and-conditions" element={<CmsPage slugOverride="terms-and-conditions" fallbackData={termsOfUseData} />} />
-          <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" fallbackData={shippingPolicyData} />} />
-          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" fallbackData={refundPolicyData} />} />
-          <Route path="/return-refund-policy" element={<CmsPage slugOverride="return-refund-policy" fallbackData={refundPolicyData} />} /> */}
-          <Route path="/terms-of-use" element={<PolicyPage data={termsOfUseData} />} />
-          <Route path="/shipping-policy" element={<PolicyPage data={shippingPolicyData} />} />
-          <Route path="/refund-policy" element={<PolicyPage data={refundPolicyData} />} />
+          <Route
+            path="/terms-of-use"
+            element={
+              <CmsPage
+                slugOverride="terms-of-use"
+                fallbackData={termsOfUseData}
+              />
+            }
+          />
+          <Route
+            path="/terms-and-conditions"
+            element={
+              <CmsPage
+                slugOverride="terms-and-conditions"
+                fallbackData={termsOfUseData}
+              />
+            }
+          />
+          <Route
+            path="/shipping-policy"
+            element={
+              <CmsPage
+                slugOverride="shipping-policy"
+                fallbackData={shippingPolicyData}
+              />
+            }
+          />
+          <Route
+            path="/refund-policy"
+            element={
+              <CmsPage
+                slugOverride="refund-policy"
+                fallbackData={refundPolicyData}
+              />
+            }
+          />
+          <Route
+            path="/return-refund-policy"
+            element={
+              <CmsPage
+                slugOverride="return-refund-policy"
+                fallbackData={refundPolicyData}
+              />
+            }
+          />
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
@@ -191,42 +245,75 @@ export default function App() {
             <Route path="/search" element={<SearchPage />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/new-arrivals" element={<NewArrivalsPage />} />
-            <Route path="/recently-uploaded" element={<RecentlyUploadedPage />} />
+            <Route
+              path="/recently-uploaded"
+              element={<RecentlyUploadedPage />}
+            />
             <Route path="/related-products" element={<RelatedProductsPage />} />
             <Route path="/trending-now" element={<TrendingNowPage />} />
             <Route path="/recently-viewed" element={<RecentlyViewedPage />} />
-            <Route path="/products/:productId" element={<ProductDetailPage />} />
+            <Route
+              path="/products/:productId"
+              element={<ProductDetailPage />}
+            />
             <Route path="/categories/:categoryKey" element={<CategoryPage />} />
             <Route path="/cms/:slug" element={<CmsPage />} />
             <Route path="/backend-gaps" element={<BackendGapNotes />} />
-            <Route path="/profile" element={<Navigate to="/account/profile" replace />} />
-            <Route path="/settings" element={<Navigate to="/notification-preferences" replace />} />
+            <Route
+              path="/profile"
+              element={<Navigate to="/account/profile" replace />}
+            />
+            <Route
+              path="/settings"
+              element={<Navigate to="/notification-preferences" replace />}
+            />
           </Route>
 
           {/* ── Protected buyer routes (must be logged in) ────────────── */}
           <Route element={<ProtectedRoute />}>
             <Route element={<BuyerOnlyRoute />}>
               {/* Account */}
-              <Route path="/account" element={<Navigate to="/account/profile" replace />} />
-              <Route path="/account/profile" element={<AccountPage tab="profile" />} />
-              <Route path="/account/addresses" element={<AccountPage tab="addresses" />} />
-              <Route path="/account/security" element={<AccountPage tab="security" />} />
+              <Route
+                path="/account"
+                element={<Navigate to="/account/profile" replace />}
+              />
+              <Route
+                path="/account/profile"
+                element={<AccountPage tab="profile" />}
+              />
+              <Route
+                path="/account/addresses"
+                element={<AccountPage tab="addresses" />}
+              />
+              <Route
+                path="/account/security"
+                element={<AccountPage tab="security" />}
+              />
               <Route path="/account/kyc" element={<AccountPage tab="kyc" />} />
 
               {/* Cart & Checkout */}
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/payment/success" element={<PaymentResultPage />} />
-              <Route path="/payment/failed" element={<PaymentResultPage failed />} />
+              <Route
+                path="/payment/failed"
+                element={<PaymentResultPage failed />}
+              />
 
               {/* Orders */}
               <Route path="/orders" element={<OrdersPage />} />
               <Route path="/orders/:orderId" element={<OrdersPage detail />} />
-              <Route path="/orders/:orderId/track" element={<OrdersPage detail track />} />
+              <Route
+                path="/orders/:orderId/track"
+                element={<OrdersPage detail track />}
+              />
 
               {/* Returns */}
               <Route path="/returns" element={<ReturnsPage />} />
-              <Route path="/returns/request/:orderId" element={<ReturnsPage request />} />
+              <Route
+                path="/returns/request/:orderId"
+                element={<ReturnsPage request />}
+              />
 
               {/* Financial */}
               <Route path="/wallet" element={<WalletPage />} />
@@ -248,11 +335,17 @@ export default function App() {
 
               {/* Warranty */}
               <Route path="/warranty" element={<WarrantyPage />} />
-              <Route path="/warranty/:warrantyId" element={<WarrantyPage detail />} />
+              <Route
+                path="/warranty/:warrantyId"
+                element={<WarrantyPage detail />}
+              />
 
               {/* Notifications */}
               <Route path="/notifications" element={<NotificationsPage />} />
-              <Route path="/notification-preferences" element={<PreferencesPage />} />
+              <Route
+                path="/notification-preferences"
+                element={<PreferencesPage />}
+              />
 
               {/* Recommendations */}
               <Route
@@ -271,13 +364,25 @@ export default function App() {
             <Route element={<SellerOnlyRoute />}>
               <Route path="/seller/status" element={<SellerStatusPage />} />
               <Route path="/seller/tracking" element={<SellerTrackingPage />} />
-              <Route path="/seller/tracking/:orderId" element={<SellerTrackingDetailPage />} />
+              <Route
+                path="/seller/tracking/:orderId"
+                element={<SellerTrackingDetailPage />}
+              />
             </Route>
 
             <Route element={<AdminOnlyRoute />}>
-              <Route path="/admin/products" element={<AdminProductManagementPage />} />
-              <Route path="/admin/catalog" element={<AdminCatalogManagementPage />} />
-              <Route path="/admin/brands" element={<AdminBrandManagementPage />} />
+              <Route
+                path="/admin/products"
+                element={<AdminProductManagementPage />}
+              />
+              <Route
+                path="/admin/catalog"
+                element={<AdminCatalogManagementPage />}
+              />
+              <Route
+                path="/admin/brands"
+                element={<AdminBrandManagementPage />}
+              />
               <Route path="/admin/rbac" element={<AdminRbacManagementPage />} />
             </Route>
           </Route>

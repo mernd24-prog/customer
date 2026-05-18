@@ -1,6 +1,6 @@
-import { SkeletonLoader } from "../common/skeleton";
 import { useDelayedLoading } from "../../hooks/useDelayedLoading";
-import WhyChooseCard from "./WhyChooseCard";
+import WhyChooseCard from "../../components/card/WhyChooseCard";
+import { SkeletonLoader } from "../../components/common/skeleton";
 
 export default function WhyChooseSection({ data }) {
   const sectionDetails = data?.sectionDetails;
