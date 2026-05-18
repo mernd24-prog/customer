@@ -43,54 +43,60 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
       <div className="grid gap-4 sm:grid-cols-2 mt-3">
         <FormField
           id="firstName"
-          label="First name"
+          label="First name*"
           registration={register("firstName")}
           error={errors.firstName}
           autoComplete="given-name"
+          placeholder="John"
         />
         <FormField
           id="lastName"
-          label="Last name"
+          label="Last name*"
           registration={register("lastName")}
           error={errors.lastName}
           autoComplete="family-name"
+          placeholder="Doe"
         />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           id="email"
-          label="Email"
+          label="Email*"
           type="email"
           registration={register("email")}
           error={errors.email}
           autoComplete="email"
+          placeholder="you@example.com"
         />
         <FormField
           id="phone"
-          label="Phone"
+          label="Phone*"
           registration={register("phone")}
           error={errors.phone}
           autoComplete="tel"
+          placeholder="+91 98765 43210"
         />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           id="password"
-          label="Password"
+          label="Password*"
           type="password"
           registration={register("password")}
           error={errors.password}
           autoComplete="new-password"
+          placeholder="••••••••"
         />
         <FormField
           id="confirmPassword"
-          label="Confirm password"
+          label="Confirm password*"
           type="password"
           registration={register("confirmPassword")}
           error={errors.confirmPassword}
           autoComplete="new-password"
+          placeholder="••••••••"
         />
       </div>
 
@@ -99,7 +105,6 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         label="Referral code"
         registration={register("referralCode")}
         error={errors.referralCode}
-        placeholder="Optional"
       />
 
       {error && (
