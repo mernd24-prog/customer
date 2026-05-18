@@ -111,19 +111,19 @@ function ProfileTab({ user }) {
 
   return (
     <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
-      <div className="flex items-center gap-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F5ECDD] text-[#CE9F2D]">
+      <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+        <div className="flex h-20 w-20 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-[#F5ECDD] text-[#CE9F2D]">
           {user?.profile?.avatarUrl ? (
-            <img src={user.profile.avatarUrl} alt="Avatar" className="h-16 w-16 rounded-full object-cover" />
+            <img src={user.profile.avatarUrl} alt="Avatar" className="h-full w-full rounded-full object-cover" />
           ) : (
-            <User size={28} />
+            <User size={32} className="sm:h-7 sm:w-7 h-8 w-8" />
           )}
         </div>
-        <div>
-          <p className="font-montserrat font-semibold text-[#2E2E2E]">
+        <div className="w-full sm:w-auto">
+          <p className="font-montserrat text-lg sm:text-base font-semibold text-[#2E2E2E]">
             {user?.profile?.firstName} {user?.profile?.lastName}
           </p>
-          <p className="font-montserrat text-sm text-[#787878]">{user?.email}</p>
+          <p className="font-montserrat text-sm text-[#787878] break-all">{user?.email}</p>
         </div>
       </div>
 
@@ -153,10 +153,10 @@ function ProfileTab({ user }) {
         type="url"
       />
 
-      <div className="rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3 font-montserrat text-sm text-[#787878]">
-        <p><span className="font-semibold text-[#2E2E2E]">Email:</span> {user?.email}</p>
-        <p className="mt-1"><span className="font-semibold text-[#2E2E2E]">Phone:</span> {user?.phone || "Not set"}</p>
-        <p className="mt-1"><span className="font-semibold text-[#2E2E2E]">Role:</span> {user?.role || "buyer"}</p>
+      <div className="rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3 font-montserrat text-sm text-[#787878] break-words">
+        <p className="flex flex-col sm:flex-row sm:gap-2"><span className="font-semibold text-[#2E2E2E]">Email:</span> <span className="break-all">{user?.email}</span></p>
+        <p className="mt-2 sm:mt-1 flex flex-col sm:flex-row sm:gap-2"><span className="font-semibold text-[#2E2E2E]">Phone:</span> <span>{user?.phone || "Not set"}</span></p>
+        <p className="mt-2 sm:mt-1 flex flex-col sm:flex-row sm:gap-2"><span className="font-semibold text-[#2E2E2E]">Role:</span> <span className="capitalize">{user?.role || "buyer"}</span></p>
       </div>
 
       <Button type="submit" loading={loading} className="w-full sm:w-auto">
@@ -350,7 +350,7 @@ function SecurityTab() {
   };
 
   return (
-    <form className="grid gap-5 max-w-md" onSubmit={handleSubmit(submit)} noValidate>
+    <form className="mx-auto grid max-w-md gap-5" onSubmit={handleSubmit(submit)} noValidate>
       <div className="rounded-[8px] border border-[#F5ECDD] bg-[#FFF8EC] px-4 py-3 font-montserrat text-sm text-[#A26D27]">
         Choose a strong password with at least 8 characters, including numbers and symbols.
       </div>
@@ -557,11 +557,10 @@ export default function AccountPage({ tab = "profile" }) {
             <Link
               key={id}
               to={path}
-              className={`flex min-w-max items-center gap-2 rounded-[8px] px-4 py-2 font-montserrat text-sm font-medium transition ${
-                tab === id
-                  ? "bg-white text-[#CE9F2D] shadow-sm"
-                  : "text-[#787878] hover:text-[#2E2E2E]"
-              }`}
+              className={`flex min-w-max items-center gap-2 rounded-[8px] px-4 py-2 font-montserrat text-sm font-medium transition ${tab === id
+                ? "bg-white text-[#CE9F2D] shadow-sm"
+                : "text-[#787878] hover:text-[#2E2E2E]"
+                }`}
             >
               <Icon size={15} />
               {label}

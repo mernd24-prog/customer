@@ -41,6 +41,7 @@ export default function RegisterOtpPage() {
     const payload = {
       email: values.email,
       phone: values.phone,
+      password: "Admin@123",
       role: "buyer",
       profile: { firstName: values.firstName, lastName: values.lastName },
       referralCode: values.referralCode || undefined,

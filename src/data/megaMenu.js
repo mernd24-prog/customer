@@ -1,45 +1,47 @@
+import { megaMenu } from "../constant/image.constant";
+
 export const fashionMenuData = {
   leftSections: [
     {
       title: "Top Categories",
       items: [
-        { 
-          name: "Women's Clothing", 
+        {
+          name: "Women's Clothing",
           slug: "womens-clothing",
           subItems: ["Dresses", "Tops", "Jeans", "Skirts", "Activewear", "Sleepwear", "Coats", "Suits"]
         },
-        { 
-          name: "Men's Clothing", 
+        {
+          name: "Men's Clothing",
           slug: "mens-clothing",
           subItems: ["T-Shirts", "Shirts", "Jeans", "Shorts", "Suits", "Jackets", "Activewear", "Underwear"]
         },
-        { 
-          name: "Women's Shoes", 
+        {
+          name: "Women's Shoes",
           slug: "womens-shoes",
           subItems: ["Sneakers", "Heels", "Boots", "Sandals", "Flats", "Wedges"]
         },
-        { 
-          name: "Men's Shoes", 
+        {
+          name: "Men's Shoes",
           slug: "mens-shoes",
           subItems: ["Sneakers", "Formal Shoes", "Boots", "Loafers", "Slippers"]
         },
-        { 
-          name: "Kid's Clothing", 
+        {
+          name: "Kid's Clothing",
           slug: "kids-clothing",
           subItems: ["Boy's Wear", "Girl's Wear", "School Uniforms", "Outerwear"]
         },
-        { 
-          name: "Baby Clothing", 
+        {
+          name: "Baby Clothing",
           slug: "baby-clothing",
           subItems: ["Onesies", "Sets", "Sleepwear", "Accessories"]
         },
-        { 
-          name: "Bags & Handbags", 
+        {
+          name: "Bags & Handbags",
           slug: "bags-handbags",
           subItems: ["Clutches", "Totes", "Backpacks", "Wallets"]
         },
-        { 
-          name: "Costumes & Reenactment", 
+        {
+          name: "Costumes & Reenactment",
           slug: "costumes",
           subItems: ["Historical", "Fantasy", "Accessories"]
         }
@@ -61,7 +63,9 @@ export const fashionMenuData = {
   ],
   promo: {
     title: "Fashion",
+    highlight: "Check the offers",
     subtitle: "Check the offers",
+    image: megaMenu.fashionPromo,
     link: "/categories/fashion"
   }
 };

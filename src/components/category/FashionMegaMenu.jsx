@@ -65,16 +65,20 @@ export default function MegaMenu({ data, activeHeaderCategory }) {
                   {mobileExpanded === item.name && (
                     <div className="mt-1 rounded-xl bg-white/40 py-3 pl-6 pr-2 lg:hidden">
                       <ul className="grid grid-cols-2 gap-3">
-                        {item?.subItems?.map((subItem) => (
-                          <li key={subItem.name}>
-                            <Link
-                              to={subItem.link}
-                              className="text-[13px] text-gray-500 transition-all hover:text-blue-600"
-                            >
-                              {subItem.name}
-                            </Link>
-                          </li>
-                        ))}
+                        {item?.subItems?.map((subItem) => {
+                          const name = subItem.name || subItem;
+                          const link = subItem.link || `/categories/${item.slug || 'category'}/${name.toLowerCase().replace(/\\s+/g, '-')}`;
+                          return (
+                            <li key={name}>
+                              <Link
+                                to={link}
+                                className="text-[13px] text-gray-500 transition-all hover:text-blue-600"
+                              >
+                                {name}
+                              </Link>
+                            </li>
+                          );
+                        })}
                       </ul>
                     </div>
                   )}
@@ -91,18 +95,22 @@ export default function MegaMenu({ data, activeHeaderCategory }) {
                       </div>
 
                       <ul className="grid gap-3.5">
-                        {item?.subItems?.map((subItem) => (
-                          <li key={subItem.name}>
-                            <Link
-                              to={subItem.link}
-                              className="group/sub flex items-center gap-3 text-[14px] text-gray-500 transition-all duration-300 hover:pl-3 hover:text-blue-600"
-                            >
-                              <div className="h-1 w-1 rounded-full bg-gray-300 transition-all duration-300 group-hover/sub:w-4 group-hover/sub:bg-blue-400"></div>
+                        {item?.subItems?.map((subItem) => {
+                          const name = subItem.name || subItem;
+                          const link = subItem.link || `/categories/${item.slug || 'category'}/${name.toLowerCase().replace(/\\s+/g, '-')}`;
+                          return (
+                            <li key={name}>
+                              <Link
+                                to={link}
+                                className="group/sub flex items-center gap-3 text-[14px] text-gray-500 transition-all duration-300 hover:pl-3 hover:text-blue-600"
+                              >
+                                <div className="h-1 w-1 rounded-full bg-gray-300 transition-all duration-300 group-hover/sub:w-4 group-hover/sub:bg-blue-400"></div>
 
-                              {subItem.name}
-                            </Link>
-                          </li>
-                        ))}
+                                {name}
+                              </Link>
+                            </li>
+                          );
+                        })}
                       </ul>
                     </div>
                   )}

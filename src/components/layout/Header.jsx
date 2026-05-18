@@ -27,6 +27,7 @@ import { logout } from "../../features/auth/authSlice";
 import { getRole, isAdminRole } from "../../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 import FashionMegaMenu from "../category/FashionMegaMenu";
+import { fashionMenuData } from "../../data/megaMenu";
 
 const buildCategorySlug = (name) => name.toLowerCase().replace(/\s+/g, "-");
 
@@ -326,7 +327,7 @@ export const CategoryBar = ({ headerData }) => {
   if (!categories.length) return null;
 
   return (
-    <header className="w-full">
+    <header className="w-full relative">
       <div className="w-container  hide-scrollbar  flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
       {asArray(categories).map((item, index) => (
   <div
@@ -370,7 +371,7 @@ export const CategoryBar = ({ headerData }) => {
     }}
     onMouseLeave={handleMouseLeave}
   >
-    <FashionMegaMenu activeCategory={activeMenu} />
+    <FashionMegaMenu data={fashionMenuData} activeCategory={activeMenu} />
   </div>
 )}
     </header>
