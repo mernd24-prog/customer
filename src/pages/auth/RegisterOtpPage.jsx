@@ -12,14 +12,7 @@ import Seo from "../../components/common/Seo";
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
 import { registerUserWithOtp, clearError } from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
-
-const schema = z.object({
-  firstName: z.string().trim().min(1, "First name is required"),
-  lastName: z.string().trim().min(1, "Last name is required"),
-  email: z.string().trim().email("Enter a valid email address"),
-  phone: z.string().trim().min(8, "Enter a valid phone number"),
-  referralCode: z.string().trim().optional(),
-});
+import { registerOtpSchema } from "../../validations/validationSchemas";
 
 export default function RegisterOtpPage() {
   const dispatch = useDispatch();
@@ -35,7 +28,7 @@ export default function RegisterOtpPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(schema) });
+  } = useForm({ resolver: zodResolver(registerOtpSchema) });
 
   const submit = async (values) => {
     const payload = {

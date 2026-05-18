@@ -3,7 +3,6 @@ import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import ApiState from "../../components/common/ApiState";
 import Seo from "../../components/common/Seo";
@@ -11,14 +10,8 @@ import Button from "../../components/ui/Button";
 import FormField from "../../components/ui/FormField";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { requestReturn, fetchMyReturns } from "../../features/returns/returnsSlice";
+import { returnSchema } from "../../validations/validationSchemas";
 
-const returnSchema = z.object({
-  productId: z.string().trim().min(1, "Product is required"),
-  quantity: z.coerce.number().int().min(1, "Quantity must be at least 1"),
-  unitPrice: z.coerce.number().min(0, "Unit price is required"),
-  reason: z.enum(["defective", "not_as_described", "changed_mind", "other"]),
-  description: z.string().trim().min(10, "Please provide at least 10 characters describing the issue"),
-});
 
 const RETURN_REASONS = [
   { value: "defective", label: "Defective / damaged" },

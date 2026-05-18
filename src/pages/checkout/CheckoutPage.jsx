@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { CheckCircle, CreditCard, MapPin, Tag, Wallet } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
@@ -16,19 +15,9 @@ import { fetchMe } from "../../features/user/userSlice";
 import { createOrder } from "../../features/order/orderSlice";
 import { initiatePayment } from "../../features/payment/paymentSlice";
 import { formatMoney, getProductId, getProductTitle } from "../../utils/ecommerce";
+import { addressSchema } from "../../validations/validationSchemas";
 
-const addressSchema = z.object({
-  fullName: z.string().trim().min(2, "Full name is required"),
-  phone: z.string().trim().min(8, "Phone is required"),
-  line1: z.string().trim().min(3, "Address line 1 is required"),
-  line2: z.string().trim().optional(),
-  city: z.string().trim().min(2, "City is required"),
-  state: z.string().trim().min(2, "State is required"),
-  postalCode: z.string().trim().min(4, "Postal code is required"),
-  country: z.string().trim().min(2, "Country is required"),
-  couponCode: z.string().trim().optional(),
-  walletAmount: z.coerce.number().min(0).optional(),
-});
+
 
 export default function CheckoutPage() {
   const dispatch = useDispatch();

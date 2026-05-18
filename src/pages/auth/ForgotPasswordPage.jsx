@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { z } from "zod";
 import AuthCard from "../../components/ui/AuthCard";
 import Button from "../../components/ui/Button";
 import FormField from "../../components/ui/FormField";
@@ -12,10 +11,7 @@ import Seo from "../../components/common/Seo";
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
 import { forgotPassword, clearError } from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
-
-const schema = z.object({
-  email: z.string().trim().email("Enter a valid email address"),
-});
+import { forgotPasswordSchema } from "../../validations/validationSchemas";
 
 export default function ForgotPasswordPage() {
   const dispatch = useDispatch();
@@ -31,7 +27,7 @@ export default function ForgotPasswordPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(schema) });
+  } = useForm({ resolver: zodResolver(forgotPasswordSchema) });
 
   const submit = async (values) => {
     await run(dispatch, forgotPassword({ email: values.email }), "OTP sent to your email");

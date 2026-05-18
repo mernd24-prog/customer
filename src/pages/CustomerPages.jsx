@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { Bell, CheckCircle2, CreditCard, Gift, Heart, PackageCheck, ShieldCheck, Star, Wallet, XCircle } from "lucide-react";
@@ -94,30 +93,9 @@ import {
   useFetch,
   itemsFrom,
 } from "./customer/helpers";
+import { loginSchema, emailSchema, resetSchema, registerSchema } from "../validations/validationSchemas";
 export { HomePage } from "./customer/HomePage";
 
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
-const emailSchema = z.object({ email: z.string().email() });
-const otpSchema = z.object({
-  email: z.string().email(),
-  otp: z.string().min(4),
-});
-const resetSchema = z.object({
-  email: z.string().email(),
-  otp: z.string().min(4),
-  newPassword: z.string().min(8),
-});
-const registerSchema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().min(8),
-  password: z.string().min(8),
-  referralCode: z.string().optional(),
-});
 
 export function AuthFormPage({ mode }) {
   const dispatch = useDispatch();

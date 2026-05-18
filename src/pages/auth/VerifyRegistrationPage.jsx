@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { z } from "zod";
 import AuthCard from "../../components/ui/AuthCard";
 import Button from "../../components/ui/Button";
 import FormField from "../../components/ui/FormField";
@@ -13,11 +12,8 @@ import Seo from "../../components/common/Seo";
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
 import { verifyRegistration, clearError, resendOtp } from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
+import { verifyOtpSchema } from "../../validations/validationSchemas";
 
-const schema = z.object({
-  email: z.string().trim().email("Enter a valid email address"),
-  otp: z.string().trim().length(6, "Enter 6-digit OTP"),
-});
 
 export default function VerifyRegistrationPage() {
   const dispatch = useDispatch();
@@ -37,7 +33,7 @@ export default function VerifyRegistrationPage() {
     setValue,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(verifyOtpSchema),
     defaultValues: { email: location.state?.email || "" },
   });
 

@@ -33,50 +33,7 @@ import {
   uploadKycDocuments,
 } from "../../features/user/userSlice";
 import { changePassword } from "../../features/auth/authSlice";
-
-// ─── Schemas ──────────────────────────────────────────────────────────────────
-
-const profileSchema = z.object({
-  firstName: z.string().trim().min(1, "First name is required"),
-  lastName: z.string().trim().min(1, "Last name is required"),
-  avatarUrl: z.string().trim().url("Enter a valid URL").optional().or(z.literal("")),
-});
-
-const addressSchema = z.object({
-  label: z.string().trim().min(1, "Label is required (e.g. Home, Work)"),
-  fullName: z.string().trim().min(2, "Full name is required"),
-  phone: z.string().trim().min(8, "Enter a valid phone number"),
-  line1: z.string().trim().min(3, "Address line 1 is required"),
-  line2: z.string().trim().optional(),
-  city: z.string().trim().min(2, "City is required"),
-  state: z.string().trim().min(2, "State is required"),
-  postalCode: z.string().trim().min(4, "Postal code is required"),
-  country: z.string().trim().min(2, "Country is required"),
-  isDefault: z.boolean().optional(),
-});
-
-const securitySchema = z
-  .object({
-    currentPassword: z.string().min(8, "Enter your current password"),
-    newPassword: z.string().min(8, "New password must be at least 8 characters"),
-    confirmPassword: z.string().min(8, "Confirm your new password"),
-  })
-  .refine((v) => v.newPassword === v.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-
-const kycSchema = z.object({
-  legalName: z.string().trim().min(2, "Legal name is required"),
-  panNumber: z
-    .string()
-    .trim()
-    .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, "Enter a valid PAN (e.g. ABCDE1234F)"),
-  aadhaarNumber: z
-    .string()
-    .trim()
-    .regex(/^\d{12}$/, "Aadhaar must be 12 digits"),
-});
+import { profileSchema, addressSchema, securitySchema, kycSchema } from "../../validations/validationSchemas";
 
 // ─── Tab nav ──────────────────────────────────────────────────────────────────
 

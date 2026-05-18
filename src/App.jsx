@@ -63,10 +63,6 @@ import {
   OurCommitmentPage,
   FeaturesPage,
 } from "./pages/StaticPages";
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/aditi-dev
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
 import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 import {
@@ -197,7 +193,6 @@ export default function App() {
           <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
           <Route path="/our-commitment" element={<OurCommitmentPage />} />
           <Route path="/features" element={<FeaturesPage />} />
-<<<<<<< HEAD
           {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" fallbackData={termsOfUseData} />} />
           <Route path="/terms-and-conditions" element={<CmsPage slugOverride="terms-and-conditions" fallbackData={termsOfUseData} />} />
           <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" fallbackData={shippingPolicyData} />} />
@@ -206,53 +201,6 @@ export default function App() {
           <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} />
           <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" />} />
           <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} />
-=======
-          <Route
-            path="/terms-of-use"
-            element={
-              <CmsPage
-                slugOverride="terms-of-use"
-                fallbackData={termsOfUseData}
-              />
-            }
-          />
-          <Route
-            path="/terms-and-conditions"
-            element={
-              <CmsPage
-                slugOverride="terms-and-conditions"
-                fallbackData={termsOfUseData}
-              />
-            }
-          />
-          <Route
-            path="/shipping-policy"
-            element={
-              <CmsPage
-                slugOverride="shipping-policy"
-                fallbackData={shippingPolicyData}
-              />
-            }
-          />
-          <Route
-            path="/refund-policy"
-            element={
-              <CmsPage
-                slugOverride="refund-policy"
-                fallbackData={refundPolicyData}
-              />
-            }
-          />
-          <Route
-            path="/return-refund-policy"
-            element={
-              <CmsPage
-                slugOverride="return-refund-policy"
-                fallbackData={refundPolicyData}
-              />
-            }
-          />
->>>>>>> origin/aditi-dev
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
