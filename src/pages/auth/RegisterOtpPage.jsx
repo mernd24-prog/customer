@@ -78,7 +78,6 @@ export default function RegisterOtpPage() {
               registration={register("firstName")}
               error={errors.firstName}
               autoComplete="given-name"
-              placeholder="John"
             />
             <FormField
               id="lastName"
