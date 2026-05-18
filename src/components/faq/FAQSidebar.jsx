@@ -1,4 +1,4 @@
-const topics = [
+const defaultTopics = [
   "FAQ'S",
   "Return & Refund Policy",
   "Terms & Conditions",
@@ -8,6 +8,7 @@ const topics = [
 export default function FAQSidebar({
   activeTopic,
   setActiveTopic,
+  topics = defaultTopics,
 }) {
   return (
     <div className="self-start overflow-hidden rounded-xl border font-montserrat">
