@@ -1,6 +1,6 @@
-import { SkeletonLoader } from "../common/skeleton";
-import SectionContainer from "../ui/SectionContainer";
-import TopDealCard from "../ui/TopDealCard";
+import { SkeletonLoader } from "../../components/common/skeleton";
+import SectionContainer from "../../components/ui/SectionContainer";
+import TopDealCard from "../../components/ui/TopDealCard";
 import { asArray, keyOr } from "../../utils/content";
 
 const buildCardLink = (CardComponent, id) =>

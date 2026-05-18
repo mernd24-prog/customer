@@ -3,11 +3,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import BrandButton from "../ui/BrandButton";
+import BrandButton from "../../components/ui/BrandButton";
 import { IoArrowBackOutline, IoArrowForwardOutline } from "react-icons/io5";
 import { SkeletonLoader, SKELETON_PRESETS } from "../common/skeleton";
 import { useDelayedLoading } from "../../hooks/useDelayedLoading";
-import PromoSlideCard from "../ui/PromoSlideCard";
+import PromoSlideCard from "../../components/ui/PromoSlideCard";
 
 // Swiper js Setup
 function SwiperSection({ swiperRef, onSlideChange, slides }) {
@@ -133,7 +133,8 @@ export default function MothersDayCarousel({ data }) {
           {/* Left Side Content (Desktop) */}
           <div className="hidden xl:flex flex-col justify-center items-center   md:w-auto 2xl:w-[40%] p-24 2xl:p-16 z-10">
             <h2 className="custom-h5 font-bold text-white 2xl:text-center font-montserrat mb-8">
-              SAM-Special Gifts For <br className="lg:hidden" /> Mother&apos;s Day
+              SAM-Special Gifts For <br className="lg:hidden" /> Mother&apos;s
+              Day
             </h2>
 
             <BrandButton

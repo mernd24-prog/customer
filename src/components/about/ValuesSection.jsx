@@ -1,6 +1,6 @@
-import { SkeletonLoader } from "../common/skeleton";
+import ValueCard from "../../components/card/ValueCard";
+import { SkeletonLoader } from "../../components/common/skeleton";
 import { useDelayedLoading } from "../../hooks/useDelayedLoading";
-import ValueCard from "./ValueCard";
 
 export default function ValuesSection({ data }) {
   const { sectionDetails, cards } = data;

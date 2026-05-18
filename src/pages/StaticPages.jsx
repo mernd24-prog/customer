@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import {
   ShieldCheck,
   Sparkles,
@@ -30,18 +29,25 @@ export const GiftCardsPage = () => <MarketingPage pageKey="giftCards" />;
 export const HelpContactPage = () => <MarketingPage pageKey="helpContact" />;
 export const WhoWeArePage = () => <MarketingPage pageKey="whoWeAre" />;
 export const MobileAppPage = () => <MarketingPage pageKey="mobileApp" />;
-export const SellerPoliciesPage = () => <MarketingPage pageKey="sellerPolicies" />;
-export const GrowthSupportPage = () => <MarketingPage pageKey="growthSupport" />;
+export const SellerPoliciesPage = () => (
+  <MarketingPage pageKey="sellerPolicies" />
+);
+export const GrowthSupportPage = () => (
+  <MarketingPage pageKey="growthSupport" />
+);
 export const AdvertisePage = () => <MarketingPage pageKey="advertise" />;
 export const BlogPage = () => <MarketingPage pageKey="blog" />;
 export const UpdatesPage = () => <MarketingPage pageKey="updates" />;
-export const AnnouncementsPage = () => <MarketingPage pageKey="announcements" />;
+export const AnnouncementsPage = () => (
+  <MarketingPage pageKey="announcements" />
+);
 
 export function FaqPage() {
   const { page, images } = useStaticCmsPage("faq", {
     eyebrow: "Support",
     title: "Frequently Asked Questions",
-    description: "Quick answers for the most common questions about orders, payments, deliveries, and returns.",
+    description:
+      "Quick answers for the most common questions about orders, payments, deliveries, and returns.",
     ctaText: "Visit Support Center",
     ctaTo: "/support",
     questions: [],
@@ -78,7 +84,8 @@ export function SupportCenterPage() {
   const { page, images } = useStaticCmsPage("support-center", {
     eyebrow: "Help center",
     title: "Support Center",
-    description: "Find the right support path for orders, returns, account issues, and product questions.",
+    description:
+      "Find the right support path for orders, returns, account issues, and product questions.",
     ctaText: "Browse FAQs",
     ctaTo: "/faq",
     topics: [],
@@ -102,11 +109,17 @@ export function SupportCenterPage() {
           <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             <span className="rounded-3xl border border-white/15 bg-white/10 px-5 py-4 text-sm text-slate-200 shadow-sm backdrop-blur">
               <strong className="block text-lg font-semibold">Live help</strong>
-              <span className="mt-1 block text-slate-300">Available 24/7 for urgent order questions.</span>
+              <span className="mt-1 block text-slate-300">
+                Available 24/7 for urgent order questions.
+              </span>
             </span>
             <span className="rounded-3xl border border-white/15 bg-white/10 px-5 py-4 text-sm text-slate-200 shadow-sm backdrop-blur">
-              <strong className="block text-lg font-semibold">Fast responses</strong>
-              <span className="mt-1 block text-slate-300">We aim to resolve support requests within one business day.</span>
+              <strong className="block text-lg font-semibold">
+                Fast responses
+              </strong>
+              <span className="mt-1 block text-slate-300">
+                We aim to resolve support requests within one business day.
+              </span>
             </span>
           </div>
         </PageHero>
@@ -132,7 +145,14 @@ export function SupportCenterPage() {
             <div>
               <h2 className="custom-h4 mb-3">Need real-time support?</h2>
               <p className="custom-para text-[#787878]">
-                Email us at <a href="mailto:support@samglobal.com" className="text-accent underline">support@samglobal.com</a> or visit the FAQ page for guided answers.
+                Email us at{" "}
+                <a
+                  href="mailto:support@samglobal.com"
+                  className="text-accent underline"
+                >
+                  support@samglobal.com
+                </a>{" "}
+                or visit the FAQ page for guided answers.
               </p>
             </div>
             <div className="grid gap-4">
@@ -162,7 +182,8 @@ export function WhyChooseUsPage() {
   const { page, images } = useStaticCmsPage("why-choose-us", {
     eyebrow: "Why choose us",
     title: "Shop with confidence at Sam Global",
-    description: "Enjoy curated products, meaningful savings, fast delivery, and customer service built around your needs.",
+    description:
+      "Enjoy curated products, meaningful savings, fast delivery, and customer service built around your needs.",
     ctaText: "See features",
     ctaTo: "/features",
     items: [],
@@ -207,7 +228,8 @@ export function OurCommitmentPage() {
   const { page, images } = useStaticCmsPage("our-commitment", {
     eyebrow: "Our promise",
     title: "Committed to quality, transparency, and every customer",
-    description: "We keep our promises with clear policies, dependable service, and continuous improvement.",
+    description:
+      "We keep our promises with clear policies, dependable service, and continuous improvement.",
     ctaText: "Browse support",
     ctaTo: "/support",
     items: [],
@@ -289,7 +311,8 @@ export function FeaturesPage() {
             <div>
               <h2 className="custom-h4">A smoother shopping experience</h2>
               <p className="custom-para text-[#787878]">
-                From search to checkout, every interaction is designed to feel fast and effortless.
+                From search to checkout, every interaction is designed to feel
+                fast and effortless.
               </p>
             </div>
             <Link

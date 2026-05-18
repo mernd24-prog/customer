@@ -1,6 +1,6 @@
 import { useState } from "react";
-import CategoryCard from "../ui/CategoryCard";
-import { SkeletonLoader } from "../common/skeleton";
+import CategoryCard from "../../components/ui/CategoryCard";
+import { SkeletonLoader } from "../../components/common/skeleton";
 
 export default function HomeCategoryGrid({ categories = [], loading = false }) {
   const [activeId, setActiveId] = useState(null);
@@ -22,7 +22,6 @@ export default function HomeCategoryGrid({ categories = [], loading = false }) {
         Time for a spring refresh
       </h1>
       <div className="grid grid-cols-1 gap-[1.5rem] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-
         {categories.map((item, idx) => (
           <CategoryCard
             key={item.id ? item.id : item.categoryKey ? item.categoryKey : `idx-${idx}`}

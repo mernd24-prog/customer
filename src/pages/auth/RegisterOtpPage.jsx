@@ -47,7 +47,9 @@ export default function RegisterOtpPage() {
       referralCode: values.referralCode || undefined,
     };
     await run(dispatch, registerUserWithOtp(payload), "OTP sent to your email");
-    navigate(AUTH_ROUTES.verifyRegistration, { state: { email: values.email } });
+    navigate(AUTH_ROUTES.verifyRegistration, {
+      state: { email: values.email },
+    });
   };
 
   return (
@@ -60,12 +62,17 @@ export default function RegisterOtpPage() {
       >
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
           <div>
-            <h2 className="text-2xl font-bold text-[#2E2E2E]">Register with OTP</h2>
-            <p className="mt-1 text-sm text-[#A6A6A6]">We'll send an OTP to your email to complete registration.</p>
+            <h2 className="text-2xl font-bold text-[#2E2E2E]">
+              Register with OTP
+            </h2>
+            <p className="mt-1 text-sm text-[#A6A6A6]">
+              We'll send an OTP to your email to complete registration.
+            </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4  sm:grid-cols-2">
             <FormField
+              placeholder="John Doe"
               id="firstName"
               label="First name"
               registration={register("firstName")}
@@ -78,6 +85,7 @@ export default function RegisterOtpPage() {
               registration={register("lastName")}
               error={errors.lastName}
               autoComplete="family-name"
+              placeholder="Doe"
             />
           </div>
 
@@ -110,7 +118,10 @@ export default function RegisterOtpPage() {
           />
 
           {error && (
-            <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+            <div
+              className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+              role="alert"
+            >
               {error}
             </div>
           )}
@@ -121,13 +132,19 @@ export default function RegisterOtpPage() {
 
           <p className="text-center text-sm text-[#787878]">
             Already have an account?{" "}
-            <Link to={AUTH_ROUTES.login} className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline">
+            <Link
+              to={AUTH_ROUTES.login}
+              className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline"
+            >
               Login
             </Link>
           </p>
           <p className="text-center text-sm text-[#787878]">
             Prefer password?{" "}
-            <Link to={AUTH_ROUTES.register} className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline">
+            <Link
+              to={AUTH_ROUTES.register}
+              className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline"
+            >
               Register with password
             </Link>
           </p>

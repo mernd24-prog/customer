@@ -5,7 +5,7 @@ import AboutBanner from "../../components/about/AboutBanner";
 import InfoSection from "../../components/about/InfoSection";
 import OurStory from "../../components/about/OurStory";
 import ValuesSection from "../../components/about/ValuesSection";
-import BrandCarousel from "../../components/about/BrandCarousel";
+import BrandCarousel from "../../components/about/BrandSection";
 import WhyChooseSection from "../../components/about/WhyChooseSection";
 
 const asArray = (value, fallback = []) => {
@@ -19,7 +19,7 @@ const asArray = (value, fallback = []) => {
 export default function AboutPage() {
   // About Us Banner Data Fetch from the CMS API
   const { page: cmsData } = useCmsRecord("about-us");
-  const image = cmsData?.coverImage;
+  const image = cmsData?.coverImage ?? "/image/png/aboutBanner.png";
 
   // About Us Why Choose Us Data Fetch From the CMS API
   const { page: whyChoose } = useCmsRecord("why-choose-us");

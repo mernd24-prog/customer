@@ -1,4 +1,4 @@
-import { SkeletonLoader } from "../common/skeleton";
+import { SkeletonLoader } from "../../components/common/skeleton";
 import { useDelayedLoading } from "../../hooks/useDelayedLoading";
 
 function PrimaryCta({ children }) {

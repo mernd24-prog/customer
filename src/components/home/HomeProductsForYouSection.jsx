@@ -11,13 +11,24 @@ export default function HomeProductsForYouSection() {
   const trendingList = useSelector((s) => s.recommendation.trendingList);
   const productList = useSelector((s) => s.product.list);
   const loading = useSelector(
-    (s) => s.recommendation.loadingRecommendations || s.recommendation.loadingTrending || s.product.loading,
+    (s) =>
+      s.recommendation.loadingRecommendations ||
+      s.recommendation.loadingTrending ||
+      s.product.loading,
   );
 
-  const recommendations = Array.isArray(recommendationList) ? recommendationList : [];
+  const recommendations = Array.isArray(recommendationList)
+    ? recommendationList
+    : [];
   const trending = Array.isArray(trendingList) ? trendingList : [];
   const productsFallback = Array.isArray(productList) ? productList : [];
-  const products = (recommendations.length ? recommendations : trending.length ? trending : productsFallback).slice(0, 8);
+  const products = (
+    recommendations.length
+      ? recommendations
+      : trending.length
+        ? trending
+        : productsFallback
+  ).slice(0, 8);
 
   return (
     <>
@@ -26,7 +37,10 @@ export default function HomeProductsForYouSection() {
           <h2 className="font-montserrat text-[16px] font-semibold text-[#2E2E2E] sm:text-[18px]">
             Products For You
           </h2>
-          <Link to="/products" className="text-sm font-medium text-[#d4a437] underline-offset-4 hover:underline">
+          <Link
+            to="/products"
+            className="text-sm font-medium text-[#d4a437] underline-offset-4 hover:underline"
+          >
             See all →
           </Link>
         </div>
@@ -51,7 +65,6 @@ export default function HomeProductsForYouSection() {
           </div>
         ) : null}
       </section>
-
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { SkeletonLoader } from "../common/skeleton";
 import { useDelayedLoading } from "../../hooks/useDelayedLoading";
+import InfiniteLoopSwiper from "../../components/swiper/InfiniteLoopSwiper";
 
 export default function BrandCarousel({ data = {} }) {
   const sectionDetails = data?.sectionDetails || {};
@@ -8,7 +9,7 @@ export default function BrandCarousel({ data = {} }) {
   const loading = useDelayedLoading();
 
   return (
-    <section className="overflow-hidden pt-8 md:pt-20">
+    <section className="overflow-hidden pt-8 md:pt-20 ">
       <div className=" flex flex-col items-center gap-2 text-center">
         <h2 className="font-bold font-montserrat text-xl md:text-2xl lg:text-3xl xl:text-4xl">
           {sectionDetails.heading}
@@ -27,13 +28,11 @@ export default function BrandCarousel({ data = {} }) {
       ) : (
         <div className="brand-auto-carousel my-10 lg:my-16 flex w-max items-center gap-10 md:gap-20">
           {duplicatedLogos.map((item, index) => (
-            <div key={`${item.name}-${index}`} className="flex-shrink-0">
-              <img
-                src={item.icon}
-                alt={item.name}
-                className="h-8 md:h-12 lg:h-18 w-full object-contain"
-              />
-            </div>
+            <InfiniteLoopSwiper
+              key={`${item.name}-${index}`}
+              item={item}
+              index={index}
+            />
           ))}
         </div>
       )}
