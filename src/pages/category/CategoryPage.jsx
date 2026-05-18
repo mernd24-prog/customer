@@ -1,18 +1,20 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  ChevronLeft,
-  ChevronRight,
-  Grid2X2,
-  List,
   SlidersHorizontal,
   X,
 } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import ProductCard from "../../components/product/ProductCard";
-import BrandButton from "../../components/ui/BrandButton";
+import {
+  Breadcrumbs,
+  OptionFilter,
+  Pagination,
+  PriceRangeFilter,
+  ProductFilterSidebar,
+} from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
 import {
@@ -30,127 +32,11 @@ const SORT_OPTIONS = [
 ];
 const PAGE_SIZES = [12, 24, 48];
 
-function FilterSection({ title, children, defaultOpen = true }) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div className="border-b border-[#e7dfd1] py-4">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between font-montserrat text-sm font-semibold text-[#2E2E2E]"
-      >
-        {title}
-        <span className="text-[#A6A6A6]">{open ? "−" : "+"}</span>
-      </button>
-      {open && <div className="mt-3">{children}</div>}
-    </div>
-  );
-}
-
-function PriceRangeFilter({ min, max, onChange }) {
-  const [localMin, setLocalMin] = useState(min || "");
-  const [localMax, setLocalMax] = useState(max || "");
-  const apply = () =>
-    onChange({
-      minPrice: localMin || undefined,
-      maxPrice: localMax || undefined,
-    });
-  return (
-    <div className="grid gap-3">
-      <div className="grid grid-cols-2 gap-2">
-        <div>
-          <label className="mb-1 block font-montserrat text-xs text-[#A6A6A6]">
-            Min (₹)
-          </label>
-          <input
-            type="number"
-            value={localMin}
-            onChange={(e) => setLocalMin(e.target.value)}
-            placeholder="0"
-            min="0"
-            className="w-full rounded-[6px] border border-[#cfc6b8] px-2.5 py-1.5 text-sm"
-          />
-        </div>
-        <div>
-          <label className="mb-1 block font-montserrat text-xs text-[#A6A6A6]">
-            Max (₹)
-          </label>
-          <input
-            type="number"
-            value={localMax}
-            onChange={(e) => setLocalMax(e.target.value)}
-            placeholder="Any"
-            min="0"
-            className="w-full rounded-[6px] border border-[#cfc6b8] px-2.5 py-1.5 text-sm"
-          />
-        </div>
-      </div>
-      <BrandButton
-        variant="primary"
-        rounded
-        size="sm"
-        label="Apply"
-        className="h-8 text-xs"
-        onClick={apply}
-      />
-      {(min || max) && (
-        <button
-          type="button"
-          onClick={() => {
-            setLocalMin("");
-            setLocalMax("");
-            onChange({ minPrice: undefined, maxPrice: undefined });
-          }}
-          className="font-montserrat text-xs text-red-500 underline-offset-2 hover:underline"
-        >
-          Clear price filter
-        </button>
-      )}
-    </div>
-  );
-}
-
-function CheckboxFilter({
-  options,
-  selected,
-  onChange,
-  labelKey = "name",
-  valueKey = "id",
-}) {
-  if (!options?.length)
-    return <p className="font-montserrat text-xs text-[#A6A6A6]">Loading…</p>;
-  return (
-    <div className="grid max-h-48 gap-2 overflow-y-auto pr-1">
-      {options.map((opt) => {
-        const val = opt[valueKey] || opt._id || opt.id;
-        const label = opt[labelKey] || opt.title || val;
-        const checked = selected === val;
-        return (
-          <label
-            key={val}
-            className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-[#2E2E2E]"
-          >
-            <input
-              type="radio"
-              name={valueKey}
-              value={val}
-              checked={checked}
-              onChange={() => onChange(checked ? undefined : val)}
-              className="h-3.5 w-3.5 accent-[#CE9F2D]"
-            />
-            <span className="truncate">{label}</span>
-          </label>
-        );
-      })}
-    </div>
-  );
-}
-
 export default function CategoryPage() {
   const { categoryKey } = useParams();
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [viewMode, setViewMode] = useState("grid");
+  const [viewMode] = useState("grid");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [brandList, setBrandList] = useState([]);
   const [categoryData, setCategoryData] = useState(null);
@@ -167,13 +53,10 @@ export default function CategoryPage() {
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
-  const products = useMemo(
-    () => (Array.isArray(productState.list) ? productState.list : []),
-    [productState.list],
-  );
+  const products = items;
   const meta = productState.meta;
-  const totalPages = meta?.totalPages || meta?.pages || 1;
-  const currentPage = Number(searchParams.get("page") || 1);
+  const totalPages = pageInfo.totalPages || meta?.totalPages || meta?.pages || 1;
+  const currentPage = pageInfo.page || Number(searchParams.get("page") || 1);
 
   const getParams = useCallback(
     (pageOverride) => ({
@@ -331,30 +214,37 @@ export default function CategoryPage() {
     },
   ].filter(Boolean);
 
-  const Sidebar = () => (
-    <aside className="w-full lg:w-60 lg:shrink-0">
-      <div className="card">
-        {brandList.length > 0 && (
-          <FilterSection title="Brand">
-            <CheckboxFilter
-              options={brandList}
-              selected={searchParams.get("brand")}
-              onChange={(v) => updateParam("brand", v)}
-              labelKey="label"
-              valueKey="value"
-            />
-          </FilterSection>
-        )}
-        <FilterSection title="Price Range">
-          <PriceRangeFilter
-            min={searchParams.get("minPrice")}
-            max={searchParams.get("maxPrice")}
-            onChange={handlePriceChange}
-          />
-        </FilterSection>
-      </div>
-    </aside>
-  );
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Products", href: "/products" },
+    { label: categoryTitle },
+  ];
+
+  const filterSections = [
+    brandList.length > 0 && {
+      key: "brand",
+      title: "Brand",
+      content: (
+        <OptionFilter
+          name="brand"
+          options={brandList}
+          selected={searchParams.get("brand")}
+          onChange={(value) => updateParam("brand", value)}
+        />
+      ),
+    },
+    {
+      key: "price",
+      title: "Price Range",
+      content: (
+        <PriceRangeFilter
+          min={searchParams.get("minPrice")}
+          max={searchParams.get("maxPrice")}
+          onChange={handlePriceChange}
+        />
+      ),
+    },
+  ].filter(Boolean);
 
   return (
     <>
@@ -374,17 +264,7 @@ export default function CategoryPage() {
           />
           <div className="absolute inset-0 flex items-end bg-black/40 px-6 pb-6">
             <div>
-              <nav className="mb-1 flex items-center gap-1 font-montserrat text-xs text-white/70">
-                <Link to="/" className="hover:text-white">
-                  Home
-                </Link>
-                <span>/</span>
-                <Link to="/products" className="hover:text-white">
-                  Products
-                </Link>
-                <span>/</span>
-                <span className="text-white">{categoryTitle}</span>
-              </nav>
+              <Breadcrumbs items={breadcrumbItems} className="mb-1 text-white/70" />
               <h1 className="font-montserrat text-[26px] font-bold text-white sm:text-[32px]">
                 {categoryTitle}
               </h1>
@@ -394,17 +274,7 @@ export default function CategoryPage() {
       ) : (
         <div className="border-b border-[#e7dfd1] bg-[#FAF6EE] px-4 py-6 sm:px-6">
           <div className="w-container">
-            <nav className="mb-2 flex items-center gap-1 font-montserrat text-xs text-[#A6A6A6]">
-              <Link to="/" className="hover:text-[#2E2E2E]">
-                Home
-              </Link>
-              <span>/</span>
-              <Link to="/products" className="hover:text-[#2E2E2E]">
-                Products
-              </Link>
-              <span>/</span>
-              <span className="text-[#2E2E2E]">{categoryTitle}</span>
-            </nav>
+            <Breadcrumbs items={breadcrumbItems} className="mb-2 text-[#A6A6A6]" />
             <h1 className="font-montserrat text-[26px] font-bold text-[#2E2E2E] sm:text-[32px]">
               {categoryTitle}
             </h1>
@@ -484,7 +354,7 @@ export default function CategoryPage() {
 
         <div className="flex gap-6">
           <div className="hidden lg:block">
-            <Sidebar />
+            <ProductFilterSidebar sections={filterSections} />
           </div>
 
           {sidebarOpen && (
@@ -506,7 +376,7 @@ export default function CategoryPage() {
                     <X size={16} />
                   </button>
                 </div>
-                <Sidebar />
+                <ProductFilterSidebar sections={filterSections} />
               </div>
             </div>
           )}
@@ -541,40 +411,11 @@ export default function CategoryPage() {
                 ))}
               </div>
 
-              {totalPages > 1 && (
-                <div className="mt-8 flex items-center justify-center gap-2">
-                  <button
-                    type="button"
-                    disabled={currentPage <= 1}
-                    onClick={() => setPage(currentPage - 1)}
-                    className="icon-button secondary"
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-                  {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-                    const page = i + 1;
-                    return (
-                      <button
-                        key={page}
-                        type="button"
-                        onClick={() => setPage(page)}
-                        className={`h-9 min-w-[36px] rounded-[6px] border px-2.5 font-montserrat text-sm font-medium transition ${currentPage === page ? "border-[#CE9F2D] bg-[#CE9F2D] text-white" : "border-[#cfc6b8] text-[#2E2E2E] hover:bg-[#FAF6EE]"}`}
-                      >
-                        {page}
-                      </button>
-                    );
-                  })}
-                  {totalPages > 7 && <span className="text-[#A6A6A6]">…</span>}
-                  <button
-                    type="button"
-                    disabled={currentPage >= totalPages}
-                    onClick={() => setPage(currentPage + 1)}
-                    className="icon-button secondary"
-                  >
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              )}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
 
               {isLoadingMore && (
                 <div className="mt-6 text-center font-montserrat text-sm text-[#787878]">

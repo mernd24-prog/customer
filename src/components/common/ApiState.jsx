@@ -1,5 +1,6 @@
-import { RefreshCw } from "lucide-react";
 import { SkeletonLoader } from "./skeleton";
+import EmptyState from "./EmptyState";
+import ErrorState from "./ErrorState";
 
 export default function ApiState({ loading, error, empty, onRetry, children, emptyTitle = "Nothing here yet", emptyText = "Once data is available, it will appear here." }) {
   if (loading) {
@@ -15,23 +16,12 @@ export default function ApiState({ loading, error, empty, onRetry, children, emp
 
   if (error) {
     return (
-      <div className="state-box error">
-        <strong>We could not load this.</strong>
-        <p>{error}</p>
-        {onRetry && (
-          <button className="button secondary" onClick={onRetry}>
-            <RefreshCw size={16} /> Retry
-          </button>
-        )}
-      </div>
+      <ErrorState message={error} onRetry={onRetry} />
     );
   }
   if (empty) {
     return (
-      <div className="state-box">
-        <strong>{emptyTitle}</strong>
-        <p>{emptyText}</p>
-      </div>
+      <EmptyState title={emptyTitle} description={emptyText} />
     );
   }
   return children;

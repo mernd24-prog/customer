@@ -32,7 +32,7 @@ import OurStory from "../../components/about/OurStory";
 import ValuesSection from "../../components/about/ValuesSection";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import Banner from "../../components/layout/HeroBanner";
-import CollageMainSection from "../../components/ui/collageCard";
+import CollageMainSection from "../../components/ui/CollageCard";
 import ShowcaseSection from "../../components/home/ShowcaseSection";
 import TopDealCard from "../../components/ui/TopDealCard";
 import NewArrivalCard from "../../components/ui/NewArrivalCard";

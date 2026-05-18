@@ -85,13 +85,13 @@ import {
   TrendingNowPage,
   RecentlyViewedPage,
 } from "./pages/discovery/DiscoveryPages";
-import ScrollToTop from "./components/common/scrollToTop";
+import ScrollToTop from "./components/common/ScrollToTop";
 import WatchlistPage from "./pages/customer/WatchlistPage";
 import AdminProductManagementPage from "./pages/admin/AdminProductManagementPage";
 import AdminBrandManagementPage from "./pages/admin/AdminBrandManagementPage";
 import AdminCatalogManagementPage from "./pages/admin/AdminCatalogManagementPage";
 import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
-import PolicyPage from "./pages/customer/policyPage";
+import PolicyPage from "./pages/customer/PolicyPage";
 import { termsOfUseData } from "./data/termsOfUseData";
 import { shippingPolicyData } from "./data/shippingPolicyData";
 import { refundPolicyData } from "./data/refundPolicyData";

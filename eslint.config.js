@@ -27,6 +27,13 @@ export default [
         Object: "readonly",
         Set: "readonly",
         Array: "readonly",
+        URLSearchParams: "readonly",
+        IntersectionObserver: "readonly",
+        clearTimeout: "readonly",
+        setTimeout: "readonly",
+        navigator: "readonly",
+        console: "readonly",
+        alert: "readonly",
         localStorage: "readonly",
         window: "readonly"
       }

@@ -1,0 +1,16 @@
+export const productShape = {
+  id: "string",
+  title: "string",
+  description: "string",
+  image: "string",
+  images: "string[]",
+  brand: "string",
+  category: "string",
+  price: "number",
+  salePrice: "number",
+  mrp: "number",
+  currency: "string",
+  rating: "number",
+  ratingCount: "number",
+  isInStock: "boolean",
+};

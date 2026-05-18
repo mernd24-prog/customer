@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import PageHeader from "../../components/common/PageHeader";
-import CartItemCard from "../../components/cart/cartItemCard";
+import CartItemCard from "../../components/cart/CartItemCard";
 import CartSummary from "../../components/cart/CartSummary";
 import BrandButton from "../../components/ui/BrandButton";
 import { fetchCart, updateCart } from "../../features/cart/cartSlice";

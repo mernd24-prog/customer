@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import CmsPage from "./CmsPage";
-import PolicyPage from "../customer/policyPage";
+import PolicyPage from "../customer/PolicyPage";
 import { termsOfUseData } from "../../data/termsOfUseData";
 import { shippingPolicyData } from "../../data/shippingPolicyData";
 import { refundPolicyData } from "../../data/refundPolicyData";
@@ -19,4 +19,3 @@ export default function CmsFallbackPage({ fallbackType }) {
     return fallback ? <PolicyPage data={fallback} /> : null;
   }
 }
-
