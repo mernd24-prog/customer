@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { z } from "zod";
 import { toast } from "react-toastify";
 
 import AuthCard from "../../components/ui/AuthCard";
@@ -20,22 +19,8 @@ import {
 } from "../../features/auth/authSlice";
 
 import { useToastThunk } from "../../hooks/useToastThunk";
+import { loginSchema } from "../../validations/validationSchemas";
 
-const loginSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .email("Please enter a valid email address"),
-
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Must contain one uppercase letter")
-    .regex(/[a-z]/, "Must contain one lowercase letter")
-    .regex(/[0-9]/, "Must contain one number")
-    .regex(/[^A-Za-z0-9]/, "Must contain one special character"),
-});
 
 export default function LoginPage() {
   const dispatch = useDispatch();

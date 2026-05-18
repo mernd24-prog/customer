@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { z } from "zod";
 import AuthCard from "../../components/ui/AuthCard";
 import Button from "../../components/ui/Button";
 import FormField from "../../components/ui/FormField";
@@ -12,18 +11,7 @@ import Seo from "../../components/common/Seo";
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
 import { resetPassword, clearError } from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
-
-const schema = z
-  .object({
-    email: z.string().trim().email("Enter a valid email address"),
-    otp: z.string().trim().min(4, "Enter the OTP sent to your email"),
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(8, "Confirm your password"),
-  })
-  .refine((v) => v.newPassword === v.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+import { resetPasswordSchema } from "../../validations/validationSchemas";
 
 export default function ResetPasswordPage() {
   const dispatch = useDispatch();
@@ -41,7 +29,7 @@ export default function ResetPasswordPage() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: { email: location.state?.email || "" },
   });
 
