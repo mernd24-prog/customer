@@ -14,7 +14,7 @@ export default function AppLayout() {
   return (
     <div className="app-shell">
       <Header />
-      
+
       <main className="main-content" style={{ width: "90%" }}>
         <Outlet />
       </main>

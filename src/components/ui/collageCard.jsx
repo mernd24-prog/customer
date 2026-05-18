@@ -30,8 +30,8 @@ function CollageCard({ section, index }) {
       </h2>
 
       <div className="grid gap-2  xs:grid-cols-2">
-        {section.images.map((ele) => (
-          <CollageImage src={ele.image} link={ele.link} title={section.title} />
+        {section.images.map((ele, idx) => (
+          <CollageImage key={idx} src={ele.image} link={ele.link} title={section.title} />
         ))}
       </div>
     </article>
@@ -59,7 +59,7 @@ export default function CollageMainSection() {
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {collageCards.map((section, idx) => (
-            <CollageCard index={idx} section={section} />
+            <CollageCard key={idx} index={idx} section={section} />
           ))}
         </div>
       )}

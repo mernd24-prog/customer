@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Button from "../Button/Button";
 import { icons } from "../../constant/image.constant";
+import Button from "./BrandButton";
 
 const SearchBar = ({
   placeholder = "Barbour Beadnell wax jacket in black",

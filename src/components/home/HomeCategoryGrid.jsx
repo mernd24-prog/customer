@@ -23,9 +23,9 @@ export default function HomeCategoryGrid({ categories = [], loading = false }) {
       </h1>
       <div className="grid grid-cols-1 gap-[1.5rem] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
 
-        {categories.map((item) => (
+        {categories.map((item, idx) => (
           <CategoryCard
-            key={item.id}
+            key={item.id ? item.id : `idx-${idx}`}
             image={item.imageUrl}
             title={item.title}
             active={activeId === item.id}
