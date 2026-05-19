@@ -81,9 +81,7 @@ import AdminCatalogManagementPage from "./pages/admin/AdminCatalogManagementPage
 import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
 import FAQPage from "./pages/faq/FAQPage";
 import AboutPage from "./pages/about/AboutPage";
-import ShippingDelivery from "./components/policy/ShippingDelivery";
-import TermsOfUse from "./components/policy/TermsOfUse";
-import ReturnRefundPolicy from "./components/policy/ReturnRefundPolicy";
+ 
 
 export default function App() {
   const dispatch = useDispatch();
