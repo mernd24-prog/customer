@@ -62,8 +62,9 @@ export default function MegaMenu({ data, activeCategory }) {
   };
 
   return (
-    <div className="absolute left-0 top-full z-50 w-full max-h-[85vh] overflow-y-auto rounded-b-2xl border-t border-gray-100 bg-white/95 shadow-[0_30px_100px_rgba(0,0,0,0.2)] backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-300 hide-scrollbar">
+    <div className="relative z-50 w-full max-h-[85vh] overflow-y-auto rounded-b-2xl border-t border-gray-100 bg-white/95 shadow-[0_30px_100px_rgba(0,0,0,0.2)] backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-300 hide-scrollbar">
       <div className="w-container mx-auto flex flex-col xl:flex-row">
+        {/* Panel 1 – Sub-categories (hover to reveal panel 2) */}
         <div className="w-full border-b border-gray-100 bg-gray-50/40 p-5 xl:w-[24%] xl:border-b-0 xl:border-r xl:p-7">
           <div className="mb-5 flex items-center gap-2 border-b border-blue-100 pb-3">
             <Sparkles size={15} className="text-blue-500" />
@@ -77,17 +78,22 @@ export default function MegaMenu({ data, activeCategory }) {
               const isActive = activeSubCategory?.categoryKey === item?.categoryKey;
               return (
                 <div key={item?.categoryKey} className="relative">
-                  <button
-                    type="button"
-                    onMouseEnter={() => setActiveSubCategoryKey(item?.categoryKey)}
-                    onClick={() => handleToggle(item?.categoryKey)}
+                  <div
                     className={`group flex w-full cursor-pointer items-center justify-between rounded-xl px-4 py-3 text-left text-[14px] transition-all duration-200 ${
                       isActive
                         ? "translate-x-1 bg-white font-bold text-blue-600 shadow-[0_10px_25px_rgba(59,130,246,0.1)]"
                         : "text-gray-600 hover:translate-x-0.5 hover:bg-white/80 hover:text-blue-500"
                     }`}
+                    onMouseEnter={() => setActiveSubCategoryKey(item?.categoryKey)}
+                    onClick={() => handleToggle(item?.categoryKey)}
                   >
-                    <span className="line-clamp-1">{item?.title}</span>
+                    <Link
+                      to={`/categories/${item?.categoryKey}`}
+                      className="flex-1 line-clamp-1"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {item?.title}
+                    </Link>
                     <ChevronRight
                       size={14}
                       className={`hidden xl:block transition-all duration-200 ${isActive ? "opacity-100" : "-rotate-90 opacity-0"}`}
@@ -96,7 +102,7 @@ export default function MegaMenu({ data, activeCategory }) {
                       size={16}
                       className={`block xl:hidden transition-transform duration-200 ${mobileExpanded === item?.categoryKey ? "rotate-180" : ""}`}
                     />
-                  </button>
+                  </div>
 
                   {mobileExpanded === item?.categoryKey && (
                     <div className="mt-1 rounded-xl bg-white/40 py-3 pl-4 pr-2 xl:hidden">
@@ -119,6 +125,7 @@ export default function MegaMenu({ data, activeCategory }) {
           </div>
         </div>
 
+        {/* Panel 2 – Sub-sub-categories (hover to reveal panel 3) */}
         <div className="w-full border-b border-gray-100 p-5 xl:w-[22%] xl:border-b-0 xl:border-r xl:p-7">
           <h3 className="mb-5 border-b border-gray-100 pb-3 text-[12px] font-black uppercase tracking-[0.2em] text-gray-400">
             {activeSubCategory?.title || "Subcategories"}
@@ -128,19 +135,27 @@ export default function MegaMenu({ data, activeCategory }) {
               leafParents.map((item) => {
                 const isActive = activeLeafParent?.categoryKey === item?.categoryKey;
                 return (
-                  <button
+                  <div
                     key={item?.categoryKey}
-                    type="button"
-                    onMouseEnter={() => setActiveLeafParentKey(item?.categoryKey)}
-                    onClick={() => setActiveLeafParentKey(item?.categoryKey)}
-                    className={`rounded-xl px-3 py-2.5 text-left text-[13px] transition ${
+                    className={`group flex items-center justify-between rounded-xl px-3 py-2.5 text-left text-[13px] transition cursor-pointer ${
                       isActive
                         ? "bg-blue-50 font-semibold text-blue-700"
                         : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
                     }`}
+                    onMouseEnter={() => setActiveLeafParentKey(item?.categoryKey)}
+                    onClick={() => setActiveLeafParentKey(item?.categoryKey)}
                   >
-                    {item?.title}
-                  </button>
+                    <Link
+                      to={`/categories/${item?.categoryKey}`}
+                      className="flex-1"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {item?.title}
+                    </Link>
+                    {Array.isArray(item?.children) && item.children.length > 0 && (
+                      <ChevronRight size={12} className="hidden xl:block opacity-40 group-hover:opacity-100" />
+                    )}
+                  </div>
                 );
               })
             ) : (
@@ -149,6 +164,7 @@ export default function MegaMenu({ data, activeCategory }) {
           </div>
         </div>
 
+        {/* Panel 3 – Leaf items */}
         <div className="w-full border-b border-gray-100 p-5 xl:w-[20%] xl:border-b-0 xl:border-r xl:p-7">
           <h3 className="mb-5 border-b border-gray-100 pb-3 text-[12px] font-black uppercase tracking-[0.2em] text-gray-400">
             {hasNestedThirdLevel ? activeLeafParent?.title || "Items" : activeSubCategory?.title || "Items"}
@@ -180,6 +196,7 @@ export default function MegaMenu({ data, activeCategory }) {
           </div>
         </div>
 
+        {/* Panel 4 – Promo image */}
         <div className="w-full p-5 xl:w-[34%] xl:p-7">
           <div className="group relative h-[220px] w-full overflow-hidden rounded-[1.5rem] shadow-2xl xl:h-full">
             <div className="absolute inset-0">

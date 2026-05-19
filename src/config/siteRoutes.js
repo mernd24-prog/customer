@@ -164,6 +164,12 @@ export const DYNAMIC_ROUTE_PATTERNS = [
     priority: 0.7,
   },
   {
+    path: "/brands/:brandSlug",
+    entity: "brand",
+    changefreq: "daily",
+    priority: 0.7,
+  },
+  {
     path: "/cms/:slug",
     entity: "cms",
     changefreq: "weekly",

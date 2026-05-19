@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
 import Price from "./Price";
@@ -21,6 +21,7 @@ export default function ProductCard({
   showActions = true,
   className = "",
 }) {
+  const navigate = useNavigate();
   const id = getProductId(product);
   const title = getProductTitle(product);
   const image = getProductImage(product);
@@ -47,6 +48,13 @@ export default function ProductCard({
     onAddToCart?.(product);
   };
 
+  const handleBrandClick = (event) => {
+    if (!brand) return;
+    event.preventDefault();
+    event.stopPropagation();
+    navigate(`/products?brand=${encodeURIComponent(brand)}`);
+  };
+
   if (isListVariant) {
     return (
       <article className={cn("rounded-[8px] bg-white p-3 shadow-sm transition hover:shadow-xl", className)}>
@@ -63,9 +71,13 @@ export default function ProductCard({
 
           <Link to={to} className="min-w-0">
             {brand && (
-              <p className="font-montserrat text-[11px] font-medium uppercase text-[#787878]">
+              <button
+                type="button"
+                onClick={handleBrandClick}
+                className="font-montserrat text-left text-[11px] font-medium uppercase text-[#787878] hover:text-[#CE9F2D]"
+              >
                 {brand}
-              </p>
+              </button>
             )}
             <h3 className="mt-1 line-clamp-2 font-montserrat text-sm font-semibold text-[#2E2E2E] sm:text-base" title={title}>
               {title}
@@ -126,9 +138,13 @@ export default function ProductCard({
           <Rating value={rating} count={ratingCount} />
 
           {brand && (
-            <p className="mt-2 font-montserrat text-[11px] font-medium uppercase tracking-wide text-[#787878]">
+            <button
+              type="button"
+              onClick={handleBrandClick}
+              className="mt-2 font-montserrat text-left text-[11px] font-medium uppercase tracking-wide text-[#787878] hover:text-[#CE9F2D]"
+            >
               {brand}
-            </p>
+            </button>
           )}
 
           <h3 className="mt-1 line-clamp-1 font-montserrat text-[12px] font-semibold text-[#2E2E2E] sm:text-[14px]" title={title}>

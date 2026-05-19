@@ -11,17 +11,18 @@ import {
   Pagination,
   PriceRangeFilter,
   ProductFilterSidebar,
+  RatingFilter,
 } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
-import { fetchProducts, searchProducts } from "../../features/product/productSlice";
+import { fetchProducts } from "../../features/product/productSlice";
 import { fetchCategories, fetchBrands } from "../../features/catalog/catalogSlice";
 import { getProductId } from "../../utils/ecommerce";
 
 const SORT_OPTIONS = [
   { value: "", label: "Relevance" },
+  { value: "newest", label: "Latest" },
   { value: "price_asc", label: "Price: Low to High" },
   { value: "price_desc", label: "Price: High to Low" },
-  { value: "newest", label: "Newest First" },
   { value: "rating", label: "Top Rated" },
 ];
 const PAGE_SIZES = [12, 24, 48];
@@ -32,6 +33,7 @@ export default function ProductsPage() {
   const [viewMode, setViewMode] = useState("grid");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [brandList, setBrandList] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
   const [items, setItems] = useState([]);
   const [pageInfo, setPageInfo] = useState({ page: 1, totalPages: 1, total: 0 });
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -39,10 +41,8 @@ export default function ProductsPage() {
   const sentinelRef = useRef(null);
 
   const productState = useSelector((s) => s.product);
-  const catalogState = useSelector((s) => s.catalog);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
-  const categories = useMemo(() => (Array.isArray(catalogState.list) ? catalogState.list : []), [catalogState.list]);
   const products = items;
   const totalPages = pageInfo.totalPages || 1;
   const currentPage = pageInfo.page || 1;
@@ -54,15 +54,24 @@ export default function ProductsPage() {
     minPrice: searchParams.get("minPrice") || undefined,
     maxPrice: searchParams.get("maxPrice") || undefined,
     sort: searchParams.get("sort") || undefined,
+    productFamilyCode: searchParams.get("productFamilyCode") || searchParams.get("family") || undefined,
+    color: searchParams.get("color") || undefined,
+    size: searchParams.get("size") || undefined,
+    material: searchParams.get("material") || undefined,
+    fit: searchParams.get("fit") || undefined,
+    storage: searchParams.get("storage") || undefined,
+    skinType: searchParams.get("skinType") || undefined,
+    shade: searchParams.get("shade") || undefined,
+    rating: searchParams.get("rating") || undefined,
+    inStock: searchParams.get("inStock") || undefined,
     page: pageOverride || 1,
     limit: Number(searchParams.get("limit") || 12),
   }), [searchParams]);
 
   const loadProducts = useCallback(async ({ page = 1, append = false } = {}) => {
     const params = getParams(page);
-    const thunk = params.q ? searchProducts : fetchProducts;
     if (append) setIsLoadingMore(true);
-    const result = await dispatch(thunk(params)).unwrap();
+    const result = await dispatch(fetchProducts(params)).unwrap();
 
     const data = result?.data;
     const list = Array.isArray(data)
@@ -73,11 +82,11 @@ export default function ProductsPage() {
           ? data.list
           : [];
     const meta = result?.meta || {};
-    const nextPage = Number(meta.page || meta.currentPage || params.page || 1);
-    const nextTotalPages = Number(meta.totalPages || meta.pages || 1);
-    const nextTotal = Number(meta.total || meta.count || list.length || 0);
-
-    setPageInfo({ page: nextPage, totalPages: nextTotalPages, total: nextTotal });
+    setPageInfo({
+      page: Number(meta.page || meta.currentPage || params.page || 1),
+      totalPages: Number(meta.totalPages || meta.pages || 1),
+      total: Number(meta.total || meta.count || list.length || 0),
+    });
     setItems((prev) => (append ? [...prev, ...list] : list));
     setFirstLoadDone(true);
     setIsLoadingMore(false);
@@ -92,18 +101,30 @@ export default function ProductsPage() {
   }, [loadProducts]);
 
   useEffect(() => {
-    dispatch(fetchCategories({ limit: 50 }));
-    dispatch(fetchBrands({ limit: 50 }))
+    dispatch(fetchCategories({ limit: 100 }))
+      .then((action) => {
+        const data = action?.payload?.data;
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.items)
+            ? data.items
+            : [];
+        setCategoryList(list);
+      })
+      .catch(() => {});
+
+    dispatch(fetchBrands({ limit: 100 }))
       .then((action) => {
         const data = action?.payload?.data;
         const list = Array.isArray(data) ? data : data?.items || data?.list || [];
-        const normalized = list
-          .map((brand) => {
-            const label = brand?.name || brand?.title || brand?.brandName || brand?.code;
-            return label ? { value: String(label), label: String(label) } : null;
-          })
-          .filter(Boolean);
-        setBrandList(normalized);
+        setBrandList(
+          list
+            .map((brand) => {
+              const label = brand?.name || brand?.title || brand?.brandName || brand?.code;
+              return label ? { value: String(label), label: String(label) } : null;
+            })
+            .filter(Boolean),
+        );
       })
       .catch(() => {});
   }, [dispatch]);
@@ -158,9 +179,18 @@ export default function ProductsPage() {
   const activeFilters = [
     searchParams.get("category") && { key: "category", label: `Category: ${searchParams.get("category")}` },
     searchParams.get("brand") && { key: "brand", label: `Brand: ${searchParams.get("brand")}` },
-    (searchParams.get("minPrice") || searchParams.get("maxPrice")) && { key: "price", label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}` },
+    searchParams.get("productFamilyCode") && { key: "productFamilyCode", label: `Family: ${searchParams.get("productFamilyCode")}` },
+    searchParams.get("rating") && { key: "rating", label: `Rating: ${searchParams.get("rating")}★ & up` },
+    searchParams.get("inStock") && { key: "inStock", label: "In Stock Only" },
+    ["color", "size", "material", "fit", "storage", "skinType", "shade"]
+      .map((key) => searchParams.get(key) && { key, label: `${key}: ${searchParams.get(key)}` })
+      .filter(Boolean),
+    (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
+      key: "price",
+      label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,
+    },
     searchParams.get("q") && { key: "q", label: `Search: "${searchParams.get("q")}"` },
-  ].filter(Boolean);
+  ].flat().filter(Boolean);
 
   const isSearchMode = Boolean(searchParams.get("q"));
   const pageTitle = isSearchMode
@@ -170,15 +200,15 @@ export default function ProductsPage() {
     : "All Products";
 
   const filterSections = [
-    categories.length > 0 && {
+    categoryList.length > 0 && {
       key: "category",
       title: "Category",
       content: (
         <OptionFilter
           name="category"
-          options={categories.map((category) => ({
-            value: category.categoryKey || category.id || category._id,
-            label: category.title || category.name,
+          options={categoryList.map((cat) => ({
+            value: cat.categoryKey || cat.id || cat._id,
+            label: cat.title || cat.name,
           }))}
           selected={searchParams.get("category")}
           onChange={(value) => updateParam("category", value)}
@@ -206,6 +236,31 @@ export default function ProductsPage() {
           max={searchParams.get("maxPrice")}
           onChange={handlePriceChange}
         />
+      ),
+    },
+    {
+      key: "rating",
+      title: "Rating",
+      content: (
+        <RatingFilter
+          selected={searchParams.get("rating")}
+          onChange={(v) => updateParam("rating", v)}
+        />
+      ),
+    },
+    {
+      key: "inStock",
+      title: "Availability",
+      content: (
+        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-[#2E2E2E]">
+          <input
+            type="checkbox"
+            checked={searchParams.get("inStock") === "true"}
+            onChange={(e) => updateParam("inStock", e.target.checked ? "true" : undefined)}
+            className="h-3.5 w-3.5 accent-[#CE9F2D]"
+          />
+          In Stock Only
+        </label>
       ),
     },
   ].filter(Boolean);
@@ -295,11 +350,7 @@ export default function ProductsPage() {
                 ))}
               </div>
 
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setPage}
-              />
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
 
               {isLoadingMore && (
                 <div className="mt-6 text-center font-montserrat text-sm text-[#787878]">Loading more products...</div>

@@ -353,23 +353,30 @@ export const Navbar = ({ icons: propIcons }) => {
 
 export const CategoryBar = ({ headerData }) => {
   const dispatch = useDispatch();
-  const catalogList = useSelector((s) => s.catalog.list);
+  const [catalogCategories, setCatalogCategories] = useState([]);
   const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
   const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
-  const catalogCategories = Array.isArray(catalogList) ? catalogList : [];
   const [activeMenu, setActiveMenu] = useState(null);
   const timeoutRef = useRef(null);
+  const fetchedRef = useRef(false);
 
   useEffect(() => {
-    const hasTreeRoots = catalogCategories.some(
-      (item) => !item?.parentKey || Number(item?.level ?? 0) === 0,
-    );
-    const hasNestedChildren = catalogCategories.some(
-      (item) => Array.isArray(item?.children) && item.children.length > 0,
-    );
-    if (hasTreeRoots && hasNestedChildren) return;
-    dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 })).catch(() => {});
-  }, [catalogCategories.length, dispatch]);
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
+    dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 }))
+      .then((action) => {
+        const data = action?.payload?.data;
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.items)
+            ? data.items
+            : Array.isArray(data?.list)
+              ? data.list
+              : [];
+        if (list.length) setCatalogCategories(list);
+      })
+      .catch(() => {});
+  }, [dispatch]);
 
   const handleMouseEnter = (item) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
