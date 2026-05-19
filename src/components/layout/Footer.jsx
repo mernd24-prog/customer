@@ -7,7 +7,6 @@ import FooterBenefits from "./footer/FooterBenefits";
 import FooterBottomBar from "./footer/FooterBottomBar";
 import FooterLinkGroups from "./footer/FooterLinkGroups";
 import { asArray, hrefOr } from "../../utils/content";
-import { footerData } from "../../data/footer";
 
 const EMPTY_FOOTER = {
   benefits: [],
@@ -18,35 +17,36 @@ const EMPTY_FOOTER = {
   copyright: "",
 };
 
-export function Footer({ data = {} }) {
+export function Footer() {
   const loading = useDelayedLoading();
   const { page } = useCmsRecord("footer-links");
-  const baseData = { ...footerData, ...data };
-  const cmsData = getCmsPayload(page, baseData) || {};
+  const cmsData = getCmsPayload(page);
+
   const footer = {
     ...EMPTY_FOOTER,
-    ...baseData,
     ...cmsData,
-    benefits: asArray(cmsData?.benefits || baseData?.benefits),
-    linkGroups: asArray(cmsData?.linkGroups || cmsData?.groups || baseData?.linkGroups).map((group) => ({
-      ...group,
-      links: asArray(group?.links).map((link) => ({
-        ...link,
-        href: hrefOr(link?.href || link?.url),
-      })),
-    })),
-    actionLinks: asArray(cmsData?.actionLinks || baseData?.actionLinks).map((item) => ({
+    benefits: asArray(cmsData?.benefits),
+    linkGroups: asArray(cmsData?.linkGroups || cmsData?.groups).map(
+      (group) => ({
+        ...group,
+        links: asArray(group?.links).map((link) => ({
+          ...link,
+          href: hrefOr(link?.href || link?.url),
+        })),
+      }),
+    ),
+    actionLinks: asArray(cmsData?.actionLinks).map((item) => ({
       ...item,
       href: hrefOr(item?.href || item?.url),
     })),
     appDownload: {
-      title: cmsData?.appDownload?.title || baseData?.appDownload?.title || "",
-      links: asArray(cmsData?.appDownload?.links || baseData?.appDownload?.links).map((link) => ({
+      title: cmsData?.appDownload?.title || "",
+      links: asArray(cmsData?.appDownload?.links).map((link) => ({
         ...link,
         href: hrefOr(link?.href || link?.url),
       })),
     },
-    socialLinks: asArray(cmsData?.socialLinks || baseData?.socialLinks).map((item) => ({
+    socialLinks: asArray(cmsData?.socialLinks).map((item) => ({
       ...item,
       href: hrefOr(item?.href || item?.url),
     })),

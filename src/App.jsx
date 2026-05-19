@@ -80,6 +80,7 @@ import AdminCatalogManagementPage from "./pages/admin/AdminCatalogManagementPage
 import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
 import FAQPage from "./pages/faq/FAQPage";
 import AboutPage from "./pages/about/AboutPage";
+import ReturnRefundPolicy from "./components/refundReturnPolicy/ReturnRefundPolicy";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -222,6 +223,7 @@ export default function App() {
           <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
           <Route path="/our-commitment" element={<OurCommitmentPage />} />
           <Route path="/features" element={<FeaturesPage />} />
+
           <Route
             path="/terms-of-use"
             element={<CmsPage slugOverride="terms-of-use" />}
@@ -230,17 +232,15 @@ export default function App() {
             path="/terms-and-conditions"
             element={<CmsPage slugOverride="terms-and-conditions" />}
           />
+
           <Route
             path="/shipping-policy"
             element={<CmsPage slugOverride="shipping-policy" />}
           />
+          <Route path="/refund-policy" element={<ReturnRefundPolicy />} />
           <Route
-            path="/refund-policy"
-            element={<CmsPage slugOverride="refund-policy" />}
-          />
-          <Route
-            path="/return-refund-policy"
-            element={<CmsPage slugOverride="return-refund-policy" />}
+            path="/return-policy"
+            element={<CmsPage slugOverride="return-policy" />}
           />
 
           {/* ── Public buyer routes ────────────────────────────────────── */}

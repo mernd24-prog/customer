@@ -1,10 +1,10 @@
-import Header from "../../components/organism/Header";
-import { Footer } from "../../components/organism/footer";
+import Header from "../../components/layout/Header";
+import { Footer } from "../../components/layout/Footer";
 import PolicyHeader from "../policy/PolicyHeader";
 import PolicyIntro from "../policy/PolicyIntro";
 import PolicySection from "../policy/PolicySection";
-import Seo from "../../components/Seo";
-import { POLICIES } from "../../data";
+import Seo from "../common/Seo";
+
 const ReturnRefundPolicy = () => {
   const data = POLICIES.refund;
 
