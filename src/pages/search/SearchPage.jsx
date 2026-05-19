@@ -1,26 +1,24 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Search,
-  SlidersHorizontal,
-  X,
-} from "lucide-react";
+import { Search } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
+import ActiveFilterChips from "../../components/common/ActiveFilterChips";
+import FilterDrawer from "../../components/common/FilterDrawer";
 import PageHeader from "../../components/common/PageHeader";
-import ProductCard from "../../components/product/ProductCard";
 import BrandButton from "../../components/ui/BrandButton";
 import {
+  CollectionToolbar,
   OptionFilter,
   Pagination,
   PriceRangeFilter,
+  ProductGrid,
   ProductFilterSidebar,
   RatingFilter,
 } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { searchElastic } from "../../features/search/searchSlice";
-import { getProductId } from "../../utils/ecommerce";
 
 const SORT_OPTIONS = [
   { value: "", label: "Relevance" },
@@ -247,85 +245,34 @@ export default function SearchPage() {
               </p>
             )}
           </div>
-          <div className="flex items-center gap-3">
-            <select
-              value={searchParams.get("sort") || ""}
-              onChange={(e) => updateParam("sort", e.target.value)}
-              className="rounded-[6px] border border-[#cfc6b8] bg-white px-3 py-2 font-montserrat text-sm"
-            >
-              {SORT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              onClick={() => setSidebarOpen(true)}
-              className="button secondary flex items-center gap-1.5 px-3 py-2 text-sm lg:hidden"
-            >
-              <SlidersHorizontal size={14} /> Filters
-            </button>
-          </div>
+          <CollectionToolbar
+            sortValue={searchParams.get("sort") || ""}
+            sortOptions={SORT_OPTIONS}
+            onSortChange={(value) => updateParam("sort", value)}
+            onOpenFilters={() => setSidebarOpen(true)}
+          />
         </div>
 
-        {/* Active filters */}
-        {activeFilters.length > 0 && (
-          <div className="mb-4 flex flex-wrap gap-2">
-            {activeFilters.map((f) => (
-              <button
-                key={f.key}
-                type="button"
-                onClick={() => removeFilter(f.key)}
-                className="chip inline-flex items-center gap-1.5 text-xs font-medium"
-              >
-                {f.label} <X size={10} />
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() =>
-                setSearchParams((prev) => {
-                  const next = new URLSearchParams();
-                  next.set("q", prev.get("q") || "");
-                  return next;
-                })
-              }
-              className="font-montserrat text-xs text-red-500 underline-offset-2 hover:underline"
-            >
-              Clear all
-            </button>
-          </div>
-        )}
+        <ActiveFilterChips
+          filters={activeFilters}
+          onRemove={removeFilter}
+          onClear={() =>
+            setSearchParams((prev) => {
+              const next = new URLSearchParams();
+              next.set("q", prev.get("q") || "");
+              return next;
+            })
+          }
+        />
 
         <div className="flex gap-6">
           <div className="hidden lg:block">
             <ProductFilterSidebar sections={filterSections} />
           </div>
 
-          {sidebarOpen && (
-            <div className="fixed inset-0 z-50 lg:hidden">
-              <div
-                className="absolute inset-0 bg-black/40"
-                onClick={() => setSidebarOpen(false)}
-              />
-              <div className="absolute right-0 top-0 h-full w-72 overflow-y-auto bg-white p-4">
-                <div className="mb-4 flex items-center justify-between">
-                  <span className="font-montserrat font-semibold text-[#2E2E2E]">
-                    Filters
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setSidebarOpen(false)}
-                    className="icon-button"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-                <ProductFilterSidebar sections={filterSections} />
-              </div>
-            </div>
-          )}
+          <FilterDrawer open={sidebarOpen} onClose={() => setSidebarOpen(false)}>
+            <ProductFilterSidebar sections={filterSections} />
+          </FilterDrawer>
 
           <div className="min-w-0 flex-1">
             {!q ? (
@@ -347,17 +294,12 @@ export default function SearchPage() {
                 emptyText={`We couldn't find anything for "${q}". Try different keywords or remove some filters.`}
                 onRetry={() => dispatch(searchElastic(getParams()))}
               >
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                  {hits.map((product) => (
-                    <ProductCard
-                      key={getProductId(product)}
-                      product={product}
-                      onAddToCart={addToCart}
-                      onWishlist={toggleWishlist}
-                      isWishlisted={isWishlisted(product)}
-                    />
-                  ))}
-                </div>
+                <ProductGrid
+                  products={hits}
+                  onAddToCart={addToCart}
+                  onWishlist={toggleWishlist}
+                  isWishlisted={isWishlisted}
+                />
 
                 <Pagination
                   currentPage={currentPage}

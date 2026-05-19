@@ -1,8 +1,13 @@
 import { useState } from "react";
-import CategoryCard from "../../components/ui/CategoryCard";
+import { CategoryCard } from "../../components/ecommerce";
 import { SkeletonLoader } from "../../components/common/skeleton";
 
-export default function HomeCategoryGrid({ categories = [], loading = false }) {
+export default function HomeCategoryGrid({
+  categories = [],
+  loading = false,
+  title = "Shop by Category",
+  subtitle = "",
+}) {
   const [activeId, setActiveId] = useState(null);
 
   if (loading) {
@@ -17,10 +22,13 @@ export default function HomeCategoryGrid({ categories = [], loading = false }) {
   }
 
   return (
-    <div className="my-12 ">
-      <h1 className="text-2xl font-bold text-[#2E2E2E] font-montserrat mb-5 mt-8">
-        Time for a spring refresh
-      </h1>
+    <div className="my-12">
+      {title && (
+        <div className="mb-5 mt-8">
+          <h2 className="font-montserrat text-2xl font-bold text-[#2E2E2E]">{title}</h2>
+          {subtitle && <p className="mt-1 font-montserrat text-sm text-[#787878]">{subtitle}</p>}
+        </div>
+      )}
       <div className="grid grid-cols-1 gap-[1.5rem] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {categories.map((item, idx) => (
           <CategoryCard

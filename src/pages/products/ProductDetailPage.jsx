@@ -37,7 +37,7 @@ import "swiper/css/free-mode";
 import "swiper/css/zoom";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
-import ProductCard from "../../components/product/ProductCard";
+import { ProductCard } from "../../components/ecommerce";
 import { fetchProductById } from "../../features/product/productSlice";
 import { fetchProductWarranty } from "../../features/warranty/warrantySlice";
 import { checkServiceability } from "../../features/delivery/deliverySlice";

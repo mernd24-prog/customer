@@ -2,19 +2,20 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
-import ProductCard from "../../components/product/ProductCard";
+import { EmptyState } from "../../components/common";
+import { ProductGrid } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
 import {
   fetchRecommendations,
   fetchTrendingProducts,
 } from "../../features/recommendation/recommendationSlice";
-import { getProductId } from "../../utils/ecommerce";
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import { tokenStorage } from "../../api/tokenStorage";
 
 function ProductGridPage({ title, description, items = [], sourceLink, sourceText }) {
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+
   return (
     <>
       <Seo title={`${title} | Sam Global`} description={description} />
@@ -24,28 +25,26 @@ function ProductGridPage({ title, description, items = [], sourceLink, sourceTex
             <h1 className="font-montserrat text-2xl font-semibold text-[#2E2E2E]">{title}</h1>
             <p className="mt-1 text-sm text-[#787878]">{description}</p>
           </div>
-          {sourceLink ? (
+          {sourceLink && (
             <Link to={sourceLink} className="font-montserrat text-sm font-medium text-[#CE9F2D]">
               {sourceText || "Explore more"} →
             </Link>
-          ) : null}
+          )}
         </div>
+
         {items.length ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-            {items.map((product) => (
-              <ProductCard
-                key={getProductId(product)}
-                product={product}
-                onAddToCart={addToCart}
-                onWishlist={toggleWishlist}
-                isWishlisted={isWishlisted(product)}
-              />
-            ))}
-          </div>
+          <ProductGrid
+            products={items}
+            onAddToCart={addToCart}
+            onWishlist={toggleWishlist}
+            isWishlisted={isWishlisted}
+            className="grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+          />
         ) : (
-          <div className="rounded border border-[#e7dfd1] bg-white p-8 text-center text-sm text-[#787878]">
-            No products available right now.
-          </div>
+          <EmptyState
+            title="No products available"
+            description="Check back later or explore other sections."
+          />
         )}
       </section>
     </>

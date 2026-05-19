@@ -1,22 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { SlidersHorizontal, X, Store } from "lucide-react";
+import { Store } from "lucide-react";
 import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
-import ProductCard from "../../components/product/ProductCard";
 import {
-  Breadcrumbs,
+  BrandProductPage,
   OptionFilter,
-  Pagination,
   PriceRangeFilter,
-  ProductFilterSidebar,
   RatingFilter,
 } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
 import { fetchBrands } from "../../features/catalog/catalogSlice";
-import { applyImageFallback, getProductId } from "../../utils/ecommerce";
 
 const SORT_OPTIONS = [
   { value: "", label: "Relevance" },
@@ -202,6 +197,16 @@ export default function BrandPage() {
     });
   };
 
+  const removeFilter = (key) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (key === "price") { next.delete("minPrice"); next.delete("maxPrice"); }
+      else next.delete(key);
+      next.delete("page");
+      return next;
+    });
+  };
+
   const setPage = (p) => {
     loadProducts({ page: p, append: false }).catch(() => {});
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -295,163 +300,44 @@ export default function BrandPage() {
         description={brandDescription || `Shop ${brandName} products at Sam Global`}
       />
 
-      {/* Brand Hero */}
-      <div className="border-b border-[#e7dfd1] bg-gradient-to-br from-slate-50 to-[#FAF6EE] px-4 py-8 sm:px-6">
-        <div className="w-container">
-          <Breadcrumbs items={breadcrumbItems} className="mb-4 text-[#A6A6A6]" />
-          <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-            {brandImage ? (
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-[#e7dfd1] bg-white p-2 shadow-sm sm:h-28 sm:w-28">
-                <img
-                  src={brandImage}
-                  alt={brandName}
-                  className="h-full w-full object-contain"
-                  onError={(event) => applyImageFallback(event, brandName, "brand")}
-                />
-              </div>
-            ) : (
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-slate-100 sm:h-28 sm:w-28">
-                <Store size={32} className="text-slate-400" />
-              </div>
-            )}
-            <div>
-              <h1 className="font-montserrat text-3xl font-bold text-[#2E2E2E] sm:text-4xl">
-                {brandName}
-              </h1>
-              {brandDescription && (
-                <p className="mt-2 max-w-2xl font-montserrat text-sm leading-relaxed text-[#787878]">
-                  {brandDescription}
-                </p>
-              )}
-              <p className="mt-2 font-montserrat text-sm text-[#A6A6A6]">
-                {pageInfo.total.toLocaleString()} products
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="w-container py-6 sm:py-8">
-        {/* Toolbar */}
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <p className="font-montserrat text-sm text-[#787878]">
-            Showing {items.length.toLocaleString()} of {pageInfo.total.toLocaleString()} products
-          </p>
-          <div className="flex items-center gap-3">
-            <select
-              value={searchParams.get("sort") || ""}
-              onChange={(e) => updateParam("sort", e.target.value)}
-              className="rounded-[6px] border border-[#cfc6b8] bg-white px-3 py-2 font-montserrat text-sm"
-            >
-              {SORT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
-            <select
-              value={searchParams.get("limit") || "20"}
-              onChange={(e) => updateParam("limit", e.target.value)}
-              className="rounded-[6px] border border-[#cfc6b8] bg-white px-3 py-2 font-montserrat text-sm"
-            >
-              {PAGE_SIZES.map((s) => (
-                <option key={s} value={s}>{s} per page</option>
-              ))}
-            </select>
-            <button
-              type="button"
-              onClick={() => setSidebarOpen(true)}
-              className="button secondary flex items-center gap-1.5 px-3 py-2 text-sm lg:hidden"
-            >
-              <SlidersHorizontal size={14} /> Filters
-            </button>
-          </div>
-        </div>
-
-        {/* Active filter chips */}
-        {activeFilters.length > 0 && (
-          <div className="mb-4 flex flex-wrap gap-2">
-            {activeFilters.map((f) => (
-              <button
-                key={f.key}
-                type="button"
-                onClick={() =>
-                  setSearchParams((prev) => {
-                    const next = new URLSearchParams(prev);
-                    if (f.key === "price") { next.delete("minPrice"); next.delete("maxPrice"); }
-                    else next.delete(f.key);
-                    return next;
-                  })
-                }
-                className="chip inline-flex items-center gap-1.5 text-xs font-medium"
-              >
-                {f.label} <X size={10} />
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => setSearchParams(new URLSearchParams())}
-              className="font-montserrat text-xs text-red-500 underline-offset-2 hover:underline"
-            >
-              Clear all
-            </button>
-          </div>
-        )}
-
-        <div className="flex gap-6">
-          {/* Desktop sidebar */}
-          <div className="hidden lg:block">
-            <ProductFilterSidebar sections={filterSections} />
-          </div>
-
-          {/* Mobile sidebar overlay */}
-          {sidebarOpen && (
-            <div className="fixed inset-0 z-50 lg:hidden">
-              <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} />
-              <div className="absolute right-0 top-0 h-full w-72 overflow-y-auto bg-white p-4">
-                <div className="mb-4 flex items-center justify-between">
-                  <span className="font-montserrat font-semibold text-[#2E2E2E]">Filters</span>
-                  <button type="button" onClick={() => setSidebarOpen(false)} className="icon-button">
-                    <X size={16} />
-                  </button>
-                </div>
-                <ProductFilterSidebar sections={filterSections} />
-              </div>
-            </div>
-          )}
-
-          {/* Product grid */}
-          <div className="min-w-0 flex-1">
-            <ApiState
-              loading={(productState.loading && !items.length) || (!firstLoadDone && !items.length && !!brand)}
-              error={productState.error}
-              empty={!items.length && !productState.loading && firstLoadDone}
-              emptyTitle={`No products from ${brandName}`}
-              emptyText="Try adjusting your filters or check back later."
-              onRetry={() => loadProducts({ page: 1, append: false })}
-            >
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                {items.map((product) => (
-                  <ProductCard
-                    key={getProductId(product)}
-                    product={product}
-                    onAddToCart={addToCart}
-                    onWishlist={toggleWishlist}
-                    isWishlisted={isWishlisted(product)}
-                  />
-                ))}
-              </div>
-
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
-
-              {isLoadingMore && (
-                <div className="mt-6 text-center font-montserrat text-sm text-[#787878]">
-                  Loading more products...
-                </div>
-              )}
-              <div ref={sentinelRef} className="h-8 w-full" />
-            </ApiState>
-          </div>
-        </div>
-      </div>
+      <BrandProductPage
+        brandName={brandName}
+        brandDescription={brandDescription}
+        brandImage={brandImage}
+        breadcrumbs={breadcrumbItems}
+        total={pageInfo.total}
+        shown={items.length}
+        sortValue={searchParams.get("sort") || ""}
+        sortOptions={SORT_OPTIONS}
+        onSortChange={(value) => updateParam("sort", value)}
+        pageSizeValue={searchParams.get("limit") || "20"}
+        pageSizes={PAGE_SIZES}
+        onPageSizeChange={(value) => updateParam("limit", value)}
+        onOpenFilters={() => setSidebarOpen(true)}
+        resultsProps={{
+          filterSections,
+          filters: activeFilters,
+          onRemoveFilter: removeFilter,
+          onClearFilters: () => setSearchParams(new URLSearchParams()),
+          sidebarOpen,
+          onCloseSidebar: () => setSidebarOpen(false),
+          loading: (productState.loading && !items.length) || (!firstLoadDone && !items.length && !!brand),
+          error: productState.error,
+          empty: !items.length && !productState.loading && firstLoadDone,
+          emptyTitle: `No products from ${brandName}`,
+          emptyText: "Try adjusting your filters or check back later.",
+          onRetry: () => loadProducts({ page: 1, append: false }),
+          products: items,
+          onAddToCart: addToCart,
+          onWishlist: toggleWishlist,
+          isWishlisted,
+          currentPage,
+          totalPages,
+          onPageChange: setPage,
+          loadingMore: isLoadingMore,
+          sentinelRef,
+        }}
+      />
     </>
   );
 }

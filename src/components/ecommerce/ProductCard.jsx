@@ -14,6 +14,18 @@ import { cn } from "../../utils/classNames";
 
 export default function ProductCard({
   product,
+  image: imageProp,
+  title: titleProp,
+  subtitle: subtitleProp,
+  price: priceProp,
+  oldPrice: oldPriceProp,
+  rating: ratingProp,
+  ratingCount: ratingCountProp,
+  badge,
+  brand: brandProp,
+  currency,
+  inStock,
+  discountPercent: discountPercentProp,
   href,
   variant = "grid",
   onAddToCart,
@@ -23,30 +35,32 @@ export default function ProductCard({
   className = "",
 }) {
   const navigate = useNavigate();
-  const id = getProductId(product);
-  const title = getProductTitle(product);
-  const image = getProductImage(product);
-  const subtitle = product?.description || product?.category || product?.brand || "";
-  const price = product?.salePrice || product?.price || 0;
-  const oldPrice = product?.mrp || product?.compareAtPrice || 0;
-  const rating = product?.rating || product?.averageRating || 0;
-  const ratingCount = product?.ratingCount || product?.reviewsCount;
-  const discountPercent = product?.discountPercent || 0;
-  const isInStock = product?.isInStock !== false;
-  const brand = product?.brand;
+  const cardProduct = product || {};
+  const id = getProductId(cardProduct);
+  const title = titleProp || getProductTitle(cardProduct);
+  const image = imageProp || getProductImage(cardProduct);
+  const subtitle = subtitleProp || cardProduct?.description || cardProduct?.category || cardProduct?.brand || "";
+  const price = priceProp ?? cardProduct?.salePrice ?? cardProduct?.price ?? 0;
+  const oldPrice = oldPriceProp ?? cardProduct?.mrp ?? cardProduct?.compareAtPrice ?? 0;
+  const rating = ratingProp ?? cardProduct?.rating ?? cardProduct?.averageRating ?? 0;
+  const ratingCount = ratingCountProp ?? cardProduct?.ratingCount ?? cardProduct?.reviewsCount;
+  const discountPercent = discountPercentProp ?? cardProduct?.discountPercent ?? 0;
+  const isInStock = inStock ?? (cardProduct?.isInStock !== false);
+  const brand = brandProp || cardProduct?.brand;
   const to = href || `/products/${id}`;
   const isListVariant = variant === "list" || variant === "compact";
+  const badgeText = badge || (discountPercent > 0 ? `${discountPercent}% OFF` : "");
 
   const handleWishlist = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    onWishlist?.(product);
+    onWishlist?.(cardProduct);
   };
 
   const handleAddToCart = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    onAddToCart?.(product);
+    onAddToCart?.(cardProduct);
   };
 
   const handleBrandClick = (event) => {
@@ -57,7 +71,7 @@ export default function ProductCard({
   };
 
   const handleImageError = (event) => {
-    applyImageFallback(event, title, product?.category || brand);
+    applyImageFallback(event, title, cardProduct?.category || brand);
   };
 
   if (isListVariant) {
@@ -94,7 +108,7 @@ export default function ProductCard({
           </Link>
 
           <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
-            <Price price={price} oldPrice={oldPrice} currency={product?.currency} layout="stacked" />
+            <Price price={price} oldPrice={oldPrice} currency={currency || cardProduct?.currency} layout="stacked" />
             {showActions && (
               <div className="flex gap-2">
                 <WishlistButton active={isWishlisted} label={title} onClick={handleWishlist} />
@@ -109,9 +123,9 @@ export default function ProductCard({
 
   return (
     <article className={cn("group relative min-w-0 rounded-[8px] bg-white p-3 shadow-sm transition-all duration-300 hover:shadow-xl sm:px-4 sm:pb-5 sm:pt-5", className)}>
-      {discountPercent > 0 && (
+      {badgeText && (
         <span className="absolute left-5 top-5 z-10 rounded-full bg-[#E23B3B] px-2 py-1 font-montserrat text-[11px] font-semibold text-white">
-          {discountPercent}% OFF
+          {badgeText}
         </span>
       )}
 
@@ -160,7 +174,7 @@ export default function ProductCard({
             {subtitle}
           </p>
 
-          <Price price={price} oldPrice={oldPrice} currency={product?.currency} layout="pill" className="mt-3 h-[34px] w-full max-w-[160px]" />
+          <Price price={price} oldPrice={oldPrice} currency={currency || cardProduct?.currency} layout="pill" className="mt-3 h-[34px] w-full max-w-[160px]" />
         </div>
       </Link>
     </article>

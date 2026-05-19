@@ -26,7 +26,7 @@ import ApiState from "../components/common/ApiState";
 import Seo from "../components/common/Seo";
 import BrandButton from "../components/ui/BrandButton";
 import StatusTimeline from "../components/common/StatusTimeline";
-import ProductCard from "../components/product/ProductCard";
+import { ProductCard } from "../components/ecommerce";
 import { useToastThunk } from "../hooks/useToastThunk";
 import { addRecentlyViewed } from "../utils/recentlyViewed";
 import { formatMoney, getProductId } from "../utils/ecommerce";

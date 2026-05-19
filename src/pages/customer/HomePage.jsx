@@ -87,7 +87,11 @@ export function HomePage() {
       />
       <Banner />
 
-      <HomeCategoryGrid categories={categories?.slice(0, 5)} loading={false} />
+      <HomeCategoryGrid
+        categories={categories?.slice(0, 5)}
+        loading={false}
+        title="Time for a spring refresh"
+      />
       <CollageMainSection />
 
       <section className=" my-10">

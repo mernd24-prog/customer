@@ -26,7 +26,7 @@ import { logout } from "../../features/auth/authSlice";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { getRole, isAdminRole } from "../../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
-import FashionMegaMenu from "../category/FashionMegaMenu";
+import CategoryMegaMenu from "../ecommerce/CategoryMegaMenu";
 import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 
 const buildCategorySlug = (name) => name.toLowerCase().replace(/\s+/g, "-");
@@ -480,7 +480,7 @@ export const CategoryBar = ({ headerData }) => {
           }}
           onMouseLeave={handleMouseLeave}
         >
-          <FashionMegaMenu data={megaMenuData} activeCategory={activeMenu} />
+          <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
         </div>
       )}
     </header>

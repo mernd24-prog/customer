@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 
-import { WatchlistItemCard } from "../../product/WatchlistItemCard";
+import { WatchlistItemCard } from "../../ecommerce/WatchlistItemCard";
 import BrandButton from "../../ui/BrandButton";
 import DropdownContainer from "./DropdownContainer";
 import DropdownHeader from "./DropdownHeader";

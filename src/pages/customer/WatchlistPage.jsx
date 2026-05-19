@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import Seo from "../../components/common/Seo";
-import { WatchlistItemCard } from "../../components/product/WatchlistItemCard";
+import { WatchlistItemCard } from "../../components/ecommerce/WatchlistItemCard";
 import BrandButton from "../../components/ui/BrandButton";
 import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";

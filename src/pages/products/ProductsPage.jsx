@@ -1,22 +1,19 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Grid2X2, List, SlidersHorizontal, X } from "lucide-react";
+import { Grid2X2, List } from "lucide-react";
 import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
 import PageHeader from "../../components/common/PageHeader";
-import ProductCard from "../../components/product/ProductCard";
 import {
+  CollectionToolbar,
   OptionFilter,
-  Pagination,
   PriceRangeFilter,
-  ProductFilterSidebar,
+  ProductResultsLayout,
   RatingFilter,
 } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
 import { fetchCategories, fetchBrands } from "../../features/catalog/catalogSlice";
-import { getProductId } from "../../utils/ecommerce";
 
 const SORT_OPTIONS = [
   { value: "", label: "Relevance" },
@@ -275,90 +272,53 @@ export default function ProductsPage() {
             <PageHeader title={pageTitle} className="mb-0" />
             <p className="mt-0.5 font-montserrat text-sm text-[#787878]">{(pageInfo.total || products.length).toLocaleString()} products</p>
           </div>
-          <div className="flex items-center gap-3">
-            <select value={searchParams.get("sort") || ""} onChange={(e) => updateParam("sort", e.target.value)}
-              className="rounded-[6px] border border-[#cfc6b8] bg-white px-3 py-2 font-montserrat text-sm">
-              {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-            <select value={searchParams.get("limit") || "12"} onChange={(e) => updateParam("limit", e.target.value)}
-              className="rounded-[6px] border border-[#cfc6b8] bg-white px-3 py-2 font-montserrat text-sm">
-              {PAGE_SIZES.map((s) => <option key={s} value={s}>{s} per page</option>)}
-            </select>
-            <div className="hidden items-center gap-0.5 rounded-[6px] border border-[#cfc6b8] bg-white p-1 sm:flex">
-              <button type="button" onClick={() => setViewMode("grid")}
-                className={`rounded p-1.5 transition ${viewMode === "grid" ? "bg-[#CE9F2D] text-white" : "text-[#A6A6A6] hover:text-[#2E2E2E]"}`}>
-                <Grid2X2 size={15} />
-              </button>
-              <button type="button" onClick={() => setViewMode("list")}
-                className={`rounded p-1.5 transition ${viewMode === "list" ? "bg-[#CE9F2D] text-white" : "text-[#A6A6A6] hover:text-[#2E2E2E]"}`}>
-                <List size={15} />
-              </button>
-            </div>
-            <button type="button" onClick={() => setSidebarOpen(true)}
-              className="button secondary flex items-center gap-1.5 px-3 py-2 text-sm lg:hidden">
-              <SlidersHorizontal size={14} /> Filters
-            </button>
-          </div>
+          <CollectionToolbar
+            sortValue={searchParams.get("sort") || ""}
+            sortOptions={SORT_OPTIONS}
+            onSortChange={(value) => updateParam("sort", value)}
+            pageSizeValue={searchParams.get("limit") || "12"}
+            pageSizes={PAGE_SIZES}
+            onPageSizeChange={(value) => updateParam("limit", value)}
+            onOpenFilters={() => setSidebarOpen(true)}
+            viewControls={(
+              <div className="hidden items-center gap-0.5 rounded-[6px] border border-[#cfc6b8] bg-white p-1 sm:flex">
+                <button type="button" onClick={() => setViewMode("grid")}
+                  className={`rounded p-1.5 transition ${viewMode === "grid" ? "bg-[#CE9F2D] text-white" : "text-[#A6A6A6] hover:text-[#2E2E2E]"}`}>
+                  <Grid2X2 size={15} />
+                </button>
+                <button type="button" onClick={() => setViewMode("list")}
+                  className={`rounded p-1.5 transition ${viewMode === "list" ? "bg-[#CE9F2D] text-white" : "text-[#A6A6A6] hover:text-[#2E2E2E]"}`}>
+                  <List size={15} />
+                </button>
+              </div>
+            )}
+          />
         </div>
 
-        {activeFilters.length > 0 && (
-          <div className="mb-4 flex flex-wrap gap-2">
-            {activeFilters.map((f) => (
-              <button key={f.key} type="button" onClick={() => removeFilter(f.key)}
-                className="chip inline-flex items-center gap-1.5 text-xs font-medium">
-                {f.label} <X size={10} />
-              </button>
-            ))}
-            <button type="button"
-              onClick={() => setSearchParams(new URLSearchParams())}
-              className="font-montserrat text-xs text-red-500 underline-offset-2 hover:underline">
-              Clear all
-            </button>
-          </div>
-        )}
-
-        <div className="flex gap-6">
-          <div className="hidden lg:block">
-            <ProductFilterSidebar sections={filterSections} />
-          </div>
-
-          {sidebarOpen && (
-            <div className="fixed inset-0 z-50 lg:hidden">
-              <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} />
-              <div className="absolute right-0 top-0 h-full w-72 overflow-y-auto bg-white p-4">
-                <div className="mb-4 flex items-center justify-between">
-                  <span className="font-montserrat font-semibold text-[#2E2E2E]">Filters</span>
-                  <button type="button" onClick={() => setSidebarOpen(false)} className="icon-button"><X size={16} /></button>
-                </div>
-                <ProductFilterSidebar sections={filterSections} />
-              </div>
-            </div>
-          )}
-
-          <div className="min-w-0 flex-1">
-            <ApiState
-              loading={(productState.loading && !products.length) || (!firstLoadDone && !products.length)}
-              error={productState.error}
-              empty={!products.length && !productState.loading && firstLoadDone}
-              emptyTitle={isSearchMode ? "No results found" : "No products found"}
-              emptyText={isSearchMode ? "Try different keywords or remove filters." : "Try adjusting your filters or browse other categories."}
-              onRetry={() => loadProducts({ page: 1, append: false })}
-            >
-              <div className={viewMode === "grid" ? "grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4" : "grid gap-4"}>
-                {products.map((product) => (
-                  <ProductCard key={getProductId(product)} product={product} onAddToCart={addToCart} onWishlist={toggleWishlist} isWishlisted={isWishlisted(product)} />
-                ))}
-              </div>
-
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
-
-              {isLoadingMore && (
-                <div className="mt-6 text-center font-montserrat text-sm text-[#787878]">Loading more products...</div>
-              )}
-              <div ref={sentinelRef} className="h-8 w-full" />
-            </ApiState>
-          </div>
-        </div>
+        <ProductResultsLayout
+          filterSections={filterSections}
+          filters={activeFilters}
+          onRemoveFilter={removeFilter}
+          onClearFilters={() => setSearchParams(new URLSearchParams())}
+          sidebarOpen={sidebarOpen}
+          onCloseSidebar={() => setSidebarOpen(false)}
+          loading={(productState.loading && !products.length) || (!firstLoadDone && !products.length)}
+          error={productState.error}
+          empty={!products.length && !productState.loading && firstLoadDone}
+          emptyTitle={isSearchMode ? "No results found" : "No products found"}
+          emptyText={isSearchMode ? "Try different keywords or remove filters." : "Try adjusting your filters or browse other categories."}
+          onRetry={() => loadProducts({ page: 1, append: false })}
+          products={products}
+          viewMode={viewMode}
+          onAddToCart={addToCart}
+          onWishlist={toggleWishlist}
+          isWishlisted={isWishlisted}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          loadingMore={isLoadingMore}
+          sentinelRef={sentinelRef}
+        />
       </div>
     </>
   );
