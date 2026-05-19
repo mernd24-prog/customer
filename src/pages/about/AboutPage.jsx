@@ -23,26 +23,37 @@ export default function AboutPage() {
 
   // About Us Why Choose Us Data Fetch From the CMS API
   const { page: whyChoose } = useCmsRecord("why-choose-us");
-  const apiData = whyChoose?.metadata?.data;
+  
+  const apiData = whyChoose || {};
 
   const transformedData = useMemo(() => {
-    if (apiData?.items && apiData?.items.length > 0) {
-      return {
-        sectionDetails: {
-          heading:
-            apiData?.title && apiData?.title !== ""
-              ? apiData.title
-              : "Why Choose Us ?",
-          description: apiData?.description,
-        },
-        cards: apiData?.items.map((item) => ({
-          title: item?.title,
-          description: item?.description,
-          icon: "",
-        })),
-      };
-    }
-  }, [apiData]);
+  if (apiData?.points && apiData?.points.length > 0) {
+    return {
+      sectionDetails: {
+        heading: apiData?.title || "Why Choose Us ?",
+
+        description:
+          apiData?.description ||
+          "Benefits customers value most.",
+      },
+
+      cards: apiData?.points.map((item) => ({
+        title: item?.title || "",
+        description: item?.description || "",
+        image: item?.image || "",
+      })),
+    };
+  }
+
+  return {
+    sectionDetails: {
+      heading: "Why Choose Us ?",
+      description: "",
+    },
+
+    cards: [],
+  };
+}, [apiData]);
 
   const { page: cmsAboutPage } = useCmsRecord("home-about-sections");
   const aboutCmsData = useMemo(
@@ -144,7 +155,7 @@ export default function AboutPage() {
           <ValuesSection data={valuesData} />
           <BrandCarousel data={brandData} />
           <InfoSection data={missionData} />
-          <WhyChooseSection data={transformedData || whyChooseUsData} />
+          <WhyChooseSection data={transformedData} />
         </div>
       </main>
     </>

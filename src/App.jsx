@@ -182,6 +182,7 @@ export default function App() {
             element={<CmsPage slugOverride="help-contact" />}
           />
           <Route path="/deals" element={<CmsPage slugOverride="deals" />} />
+<<<<<<< HEAD
           <Route
             path="/brand-outlet"
             element={<CmsPage slugOverride="brand-outlet" />}
@@ -214,6 +215,18 @@ export default function App() {
             path="/advertise"
             element={<CmsPage slugOverride="advertise" />}
           />
+=======
+          <Route path="/brand-outlet" element={<CmsPage slugOverride="brand-outlet" />} />
+          <Route path="/gift-cards" element={<CmsPage slugOverride="gift-cards" />} />
+          <Route path="/who-we-are" element={<CmsPage slugOverride="who-we-are" />} />
+          {/* <Route path="/about-us" element={<CmsPage slugOverride="about-us" />} /> */}
+
+          <Route path="/about-us" element={<AboutPage />} />
+          <Route path="/mobile-app" element={<CmsPage slugOverride="mobile-app" />} />
+          <Route path="/seller-policies" element={<CmsPage slugOverride="seller-policies" />} />
+          <Route path="/growth-support" element={<CmsPage slugOverride="growth-support" />} />
+          <Route path="/advertise" element={<CmsPage slugOverride="advertise" />} />
+>>>>>>> origin/mahima-dev
           <Route path="/blog" element={<CmsPage slugOverride="blog" />} />
           <Route path="/updates" element={<CmsPage slugOverride="updates" />} />
           <Route
