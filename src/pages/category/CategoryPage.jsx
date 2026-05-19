@@ -19,7 +19,7 @@ import {
   fetchCategoryByKey,
   fetchBrands,
 } from "../../features/catalog/catalogSlice";
-import { getProductId } from "../../utils/ecommerce";
+import { applyImageFallback, getProductId } from "../../utils/ecommerce";
 
 const SORT_OPTIONS = [
   { value: "", label: "Relevance" },
@@ -313,7 +313,12 @@ export default function CategoryPage() {
 
       {categoryImage ? (
         <div className="relative h-44 w-full overflow-hidden sm:h-56">
-          <img src={categoryImage} alt={categoryTitle} className="h-full w-full object-cover" />
+          <img
+            src={categoryImage}
+            alt={categoryTitle}
+            className="h-full w-full object-cover"
+            onError={(event) => applyImageFallback(event, categoryTitle, "category")}
+          />
           <div className="absolute inset-0 flex items-end bg-black/40 px-6 pb-6">
             <div>
               <Breadcrumbs items={breadcrumbItems} className="mb-1 text-white/70" />

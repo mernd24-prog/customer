@@ -8,6 +8,7 @@ import {
   getProductId,
   getProductImage,
   getProductTitle,
+  applyImageFallback,
 } from "../../utils/ecommerce";
 import { cn } from "../../utils/classNames";
 
@@ -55,13 +56,17 @@ export default function ProductCard({
     navigate(`/products?brand=${encodeURIComponent(brand)}`);
   };
 
+  const handleImageError = (event) => {
+    applyImageFallback(event, title, product?.category || brand);
+  };
+
   if (isListVariant) {
     return (
       <article className={cn("rounded-[8px] bg-white p-3 shadow-sm transition hover:shadow-xl", className)}>
         <div className="grid gap-4 sm:grid-cols-[180px_1fr_auto] sm:items-center">
           <Link to={to} className="block overflow-hidden rounded-[8px] bg-[#FAF6EE]">
             {image ? (
-              <img src={image} alt={title} className="aspect-square w-full object-cover" loading="lazy" decoding="async" />
+              <img src={image} alt={title} className="aspect-square w-full object-cover" loading="lazy" decoding="async" onError={handleImageError} />
             ) : (
               <div className="flex aspect-square items-center justify-center text-[#CFC6B8]">
                 <ShoppingCart size={42} strokeWidth={1.4} />
@@ -126,7 +131,7 @@ export default function ProductCard({
       <Link to={to} className="block">
         <div className="overflow-hidden rounded-[8px] bg-[#FAF6EE]">
           {image ? (
-            <img src={image} alt={title} className="mx-auto aspect-[1/1.15] w-full object-cover transition duration-300 group-hover:scale-[1.02]" loading="lazy" decoding="async" />
+            <img src={image} alt={title} className="mx-auto aspect-[1/1.15] w-full object-cover transition duration-300 group-hover:scale-[1.02]" loading="lazy" decoding="async" onError={handleImageError} />
           ) : (
             <div className="flex aspect-[1/1.15] items-center justify-center text-[#CFC6B8]">
               <ShoppingCart size={48} strokeWidth={1.4} />

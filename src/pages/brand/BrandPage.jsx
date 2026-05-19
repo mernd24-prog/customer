@@ -16,7 +16,7 @@ import {
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
 import { fetchBrands } from "../../features/catalog/catalogSlice";
-import { getProductId } from "../../utils/ecommerce";
+import { applyImageFallback, getProductId } from "../../utils/ecommerce";
 
 const SORT_OPTIONS = [
   { value: "", label: "Relevance" },
@@ -306,6 +306,7 @@ export default function BrandPage() {
                   src={brandImage}
                   alt={brandName}
                   className="h-full w-full object-contain"
+                  onError={(event) => applyImageFallback(event, brandName, "brand")}
                 />
               </div>
             ) : (

@@ -10,6 +10,48 @@ export function getProductImage(product) {
   return product?.images?.[0] || product?.image || product?.imageUrl || product?.thumbnail || "";
 }
 
+const FALLBACK_PALETTES = [
+  ["#12343B", "#E1B866"],
+  ["#5B2A3E", "#E8C7B7"],
+  ["#234D3C", "#A9D18E"],
+  ["#243B6B", "#9EC5FE"],
+  ["#4D3B2F", "#D8B384"],
+];
+
+export function getImageFallbackSrc(label = "Sam Global", context = "") {
+  const text = String(label || context || "Sam Global").trim().slice(0, 36);
+  const key = `${text} ${context}`;
+  const paletteIndex = Array.from(key).reduce((sum, char) => sum + char.charCodeAt(0), 0) % FALLBACK_PALETTES.length;
+  const [from, to] = FALLBACK_PALETTES[paletteIndex];
+  const safeText = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+      <defs>
+        <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stop-color="${from}"/>
+          <stop offset="100%" stop-color="${to}"/>
+        </linearGradient>
+      </defs>
+      <rect width="800" height="800" fill="url(#bg)"/>
+      <circle cx="650" cy="140" r="150" fill="#ffffff" opacity=".16"/>
+      <circle cx="100" cy="690" r="180" fill="#ffffff" opacity=".12"/>
+      <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Montserrat, Arial, sans-serif" font-size="54" font-weight="700">${safeText}</text>
+    </svg>
+  `;
+
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
+export function applyImageFallback(event, label, context) {
+  const img = event?.currentTarget;
+  if (!img || img.dataset.fallbackApplied === "true") return;
+  img.dataset.fallbackApplied = "true";
+  img.src = getImageFallbackSrc(label, context);
+}
+
 export function clampRating(rating, max = 5) {
   return Math.max(0, Math.min(max, Number(rating) || 0));
 }

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import PolicyHeader from "./PolicyHeader";
-import PolicyIntro from "./PolicyIntro";
-import PolicySection from "./PolicySection";
+import PolicyHeader from "../policy/PolicyHeader";
+import PolicyIntro from "../policy/PolicyIntro";
+import PolicySection from "../policy/PolicySection";
 import Seo from "../common/Seo";
 import ApiState from "../common/ApiState";
 import { useCmsRecord, getCmsPayload } from "../../hooks/useCmsRecord";

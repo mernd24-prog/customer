@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, ChevronRight, Sparkles } from "lucide-react";
+import { applyImageFallback } from "../../utils/ecommerce";
 
 const slugifyKey = (value = "") => String(value).trim().toLowerCase().replace(/\s+/g, "-");
 
@@ -204,6 +205,7 @@ export default function MegaMenu({ data, activeCategory }) {
                 src={root.image || data?.promo?.image}
                 alt={root.title || data?.promo?.title}
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                onError={(event) => applyImageFallback(event, root.title || data?.promo?.title, "category")}
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-black/30 to-transparent" />
             </div>

@@ -50,8 +50,11 @@ import { trackAnalyticsEvent } from "../../features/analytics/analyticsSlice";
 import { useProductActions } from "../../hooks/useProductActions";
 import { addRecentlyViewed } from "../../utils/recentlyViewed";
 import {
+  applyImageFallback,
   formatMoney,
   getProductId,
+  getImageFallbackSrc,
+  getProductImage,
   getProductTitle,
 } from "../../utils/ecommerce";
 
@@ -86,7 +89,7 @@ function StarRating({ rating, count }) {
   );
 }
 
-function ProductGallery({ images, isModal = false }) {
+function ProductGallery({ images, isModal = false, fallbackLabel = "Product" }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [mainSwiper, setMainSwiper] = useState(null);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -184,6 +187,7 @@ function ProductGallery({ images, isModal = false }) {
                     src={img}
                     alt=""
                     className="w-full h-full object-contain p-1"
+                    onError={(event) => applyImageFallback(event, fallbackLabel, "product")}
                   />
                 </button>
               </SwiperSlide>
@@ -240,6 +244,7 @@ function ProductGallery({ images, isModal = false }) {
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
                       willChange: "transform",
                     }}
+                    onError={(event) => applyImageFallback(event, fallbackLabel, "product")}
                   />
 
                   {/* Premium Overlay */}
@@ -258,6 +263,7 @@ function ProductGallery({ images, isModal = false }) {
 
 function ImageGallery({
   images,
+  fallbackLabel,
   isWishlisted,
   onWishlist,
   onModalOpen,
@@ -282,7 +288,7 @@ function ImageGallery({
 
   return (
     <div className="relative w-full min-w-0 overflow-hidden">
-      <ProductGallery images={images} />
+      <ProductGallery images={images} fallbackLabel={fallbackLabel} />
 
       {/* Actions */}
       <div className="absolute right-3 top-3 z-20 flex flex-col gap-2 sm:right-4 sm:top-4">
@@ -323,7 +329,7 @@ function ImageGallery({
           </button>
 
           <div className="flex h-[90vh] w-full max-w-[1200px] items-center justify-center">
-            <ProductGallery images={images} isModal={true} />
+            <ProductGallery images={images} isModal={true} fallbackLabel={fallbackLabel} />
           </div>
         </div>,
         document.body
@@ -452,11 +458,14 @@ export default function ProductDetailPage() {
   const mrp = product?.mrp ?? product?.originalPrice;
   const discount =
     mrp && price && mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
+  const fallbackProductImage = getProductImage(product) || getImageFallbackSrc(getProductTitle(product), product?.category);
   const images = product?.images?.length
     ? product.images
     : product?.imageUrl
       ? [product.imageUrl]
-      : [];
+      : fallbackProductImage
+        ? [fallbackProductImage]
+        : [];
   const variants = product?.variants || [];
   const attributes = product?.attributes || product?.specifications || {};
   const inStock =
@@ -519,6 +528,7 @@ export default function ProductDetailPage() {
                 <div className="min-w-0 lg:sticky lg:top-24 lg:h-[calc(100vh-7rem)] lg:self-start">
                   <ImageGallery
                     images={images}
+                    fallbackLabel={getProductTitle(product)}
                     isWishlisted={isWishlisted(product)}
                     onWishlist={() => toggleWishlist(product)}
                     onModalOpen={() => {

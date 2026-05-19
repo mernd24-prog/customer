@@ -81,6 +81,9 @@ import AdminCatalogManagementPage from "./pages/admin/AdminCatalogManagementPage
 import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
 import FAQPage from "./pages/faq/FAQPage";
 import AboutPage from "./pages/about/AboutPage";
+import TermsOfUse from "./components/termsPolicy/TermsOfUse";
+import ShippingDelivery from "./components/shipping/ShippingDelivery";
+import ReturnRefundPolicy from "./components/refundReturnPolicy/ReturnRefundPolicy";
  
 
 export default function App() {
@@ -195,10 +198,10 @@ export default function App() {
             path="/who-we-are"
             element={<CmsPage slugOverride="who-we-are" />}
           />
-          <Route
+          {/* <Route
             path="/about-us"
             element={<CmsPage slugOverride="about-us" />}
-          />
+          /> */}
           <Route
             path="/mobile-app"
             element={<CmsPage slugOverride="mobile-app" />}
@@ -229,10 +232,13 @@ export default function App() {
           <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" fallbackData={shippingPolicyData} />} />
           <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" fallbackData={refundPolicyData} />} />
           <Route path="/return-refund-policy" element={<CmsPage slugOverride="return-refund-policy" fallbackData={refundPolicyData} />} /> */}
-          <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} />
+          {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} />
           <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" />} />
-          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} />
-
+          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} /> */}
+     <Route path="/terms-of-use" element={<TermsOfUse />} />
+          <Route path="/shipping-policy" element={<ShippingDelivery />} />
+          <Route path="/refund-policy" element={<ReturnRefundPolicy />} />
+ 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
             <Route index element={<HomePage />} />
@@ -251,6 +257,8 @@ export default function App() {
               path="/products/:productId"
               element={<ProductDetailPage />}
             />
+          <Route path="/about-us" element={<AboutPage />} />
+
             <Route path="/categories/:categoryKey" element={<CategoryPage />} />
             <Route path="/brands/:brandSlug" element={<BrandPage />} />
             <Route path="/cms/:slug" element={<CmsPage />} />
