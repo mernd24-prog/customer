@@ -1,12 +1,14 @@
+import React from "react";
 import Header from "../../components/organism/Header";
 import { Footer } from "../../components/organism/footer";
-import PolicyHeader from "./PolicyHeader";
-import PolicyIntro from "./PolicyIntro";
-import PolicySection from "./PolicySection";
+import PolicyHeader from "../policy/PolicyHeader";
+import PolicyIntro from "../policy/PolicyIntro";
+import PolicySection from "../policy/PolicySection";
 import Seo from "../../components/Seo";
 import { POLICIES } from "../../data";
-const ReturnRefundPolicy = () => {
-  const data = POLICIES.refund;
+
+const ShippingDelivery = () => {
+  const data = POLICIES.shipping;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -19,7 +21,7 @@ const ReturnRefundPolicy = () => {
 
         <PolicyHeader title={data.title} />
 
-        <div className="w-full px-8 md:px-12 lg:px-16 mt-12 md:mt-16 max-w-[1648px] mx-auto">
+        <div className="w-full  px-8 md:px-12 lg:px-16 mt-12 md:mt-16 max-w-[1648px] mx-auto">
           <PolicyIntro
             heading={data.intro?.heading}
             description={data.intro?.description}
@@ -44,4 +46,4 @@ const ReturnRefundPolicy = () => {
   );
 };
 
-export default ReturnRefundPolicy;
+export default ShippingDelivery;

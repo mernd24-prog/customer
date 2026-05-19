@@ -12,7 +12,7 @@ function CmsContent({ body }) {
   if (!body) return null;
   return (
     <div
-      className="cms-content font-montserrat leading-relaxed text-[#787878] [&_h1]:mt-8 [&_h1]:mb-4 [&_h1]:font-montserrat [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-[#2E2E2E] [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:font-montserrat [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-[#2E2E2E] [&_h3]:mt-5 [&_h3]:mb-2 [&_h3]:font-montserrat [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-[#2E2E2E] [&_h4]:mt-4 [&_h4]:mb-2 [&_h4]:font-montserrat [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:text-[#2E2E2E] [&_p]:mb-4 [&_p]:leading-7 [&_a]:font-semibold [&_a]:text-[#CE9F2D] [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-[#A26D27] [&_strong]:font-bold [&_strong]:text-[#2E2E2E] [&_em]:italic [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1 [&_blockquote]:my-4 [&_blockquote]:rounded-r-[8px] [&_blockquote]:border-l-4 [&_blockquote]:border-[#CE9F2D] [&_blockquote]:bg-[#FAF6EE] [&_blockquote]:px-4 [&_blockquote]:py-3 [&_blockquote]:italic [&_img]:my-6 [&_img]:max-w-full [&_img]:rounded-[12px] [&_hr]:my-8 [&_hr]:border-[#e7dfd1] [&_table]:my-4 [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-[#e7dfd1] [&_th]:bg-[#FAF6EE] [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-montserrat [&_th]:font-semibold [&_th]:text-[#2E2E2E] [&_td]:border [&_td]:border-[#e7dfd1] [&_td]:px-3 [&_td]:py-2 [&_code]:rounded [&_code]:bg-[#F5ECDD] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:text-[#A26D27] [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-[8px] [&_pre]:bg-[#2E2E2E] [&_pre]:p-4 [&_pre]:text-white"
+      className=" cms-content font-montserrat leading-relaxed text-[#787878] [&_h1]:mt-8 [&_h1]:mb-4 [&_h1]:font-montserrat [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-[#2E2E2E] [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:font-montserrat [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-[#2E2E2E] [&_h3]:mt-5 [&_h3]:mb-2 [&_h3]:font-montserrat [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-[#2E2E2E] [&_h4]:mt-4 [&_h4]:mb-2 [&_h4]:font-montserrat [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:text-[#2E2E2E] [&_p]:mb-4 [&_p]:leading-7 [&_a]:font-semibold [&_a]:text-[#CE9F2D] [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-[#A26D27] [&_strong]:font-bold [&_strong]:text-[#2E2E2E] [&_em]:italic [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1 [&_blockquote]:my-4 [&_blockquote]:rounded-r-[8px] [&_blockquote]:border-l-4 [&_blockquote]:border-[#CE9F2D] [&_blockquote]:bg-[#FAF6EE] [&_blockquote]:px-4 [&_blockquote]:py-3 [&_blockquote]:italic [&_img]:my-6 [&_img]:max-w-full [&_img]:rounded-[12px] [&_hr]:my-8 [&_hr]:border-[#e7dfd1] [&_table]:my-4 [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-[#e7dfd1] [&_th]:bg-[#FAF6EE] [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-montserrat [&_th]:font-semibold [&_th]:text-[#2E2E2E] [&_td]:border [&_td]:border-[#e7dfd1] [&_td]:px-3 [&_td]:py-2 [&_code]:rounded [&_code]:bg-[#F5ECDD] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:text-[#A26D27] [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-[8px] [&_pre]:bg-[#2E2E2E] [&_pre]:p-4 [&_pre]:text-white"
       dangerouslySetInnerHTML={{ __html: body }}
     />
   );
@@ -42,7 +42,9 @@ export default function CmsPage({ slugOverride = "" }) {
     page?.metadata?.heroImage ||
     page?.metadata?.thumbnailUrl;
   const points = Array.isArray(page?.points) ? page.points : [];
-  const galleryImages = Array.isArray(page?.galleryImages) ? page.galleryImages : [];
+  const galleryImages = Array.isArray(page?.galleryImages)
+    ? page.galleryImages
+    : [];
   const author = page?.author;
   const readTime = page?.readTime || page?.metadata?.readTime;
 
@@ -54,7 +56,9 @@ export default function CmsPage({ slugOverride = "" }) {
       <div className="border-b border-[#e7dfd1] bg-[#FAF6EE] px-4 py-6 sm:px-6">
         <div className="w-container">
           <nav className="mb-2 flex items-center gap-1 font-montserrat text-xs text-[#A6A6A6]">
-            <Link to="/" className="hover:text-[#2E2E2E]">Home</Link>
+            <Link to="/" className="hover:text-[#2E2E2E]">
+              Home
+            </Link>
             <span>/</span>
             {category && (
               <>
@@ -67,7 +71,7 @@ export default function CmsPage({ slugOverride = "" }) {
         </div>
       </div>
 
-      <div className="w-container py-8">
+      <div className="w-container  py-8">
         <ApiState
           loading={cmsState.loading && !page}
           error={cmsState.error}
@@ -80,8 +84,12 @@ export default function CmsPage({ slugOverride = "" }) {
             <div className="mx-auto max-w-3xl">
               {/* Cover image */}
               {coverImage && (
-                <div className="mb-8 overflow-hidden rounded-[16px]">
-                  <img src={coverImage} alt={title} className="max-h-[420px] w-full object-cover" />
+                <div className="mb-8 overflow-hidden  rounded-[16px]">
+                  <img
+                    src={coverImage}
+                    alt={title}
+                    className="max-h-[420px] w-full object-cover"
+                  />
                 </div>
               )}
 
@@ -93,26 +101,30 @@ export default function CmsPage({ slugOverride = "" }) {
               )}
 
               {/* Title */}
-              <h1 className="font-montserrat text-3xl font-bold leading-tight text-[#2E2E2E] sm:text-[36px]">
+              <h1 className="font-montserrat  text-3xl font-bold leading-tight text-[#2E2E2E] sm:text-[36px]">
                 {page.title}
               </h1>
 
               {/* Excerpt */}
               {(page.excerpt || page.description) && (
-                <p className="mt-3 font-montserrat text-[17px] leading-relaxed text-[#787878]">
+                <p className="mt-3 font-montserrat  text-[17px] leading-relaxed text-[#787878]">
                   {page.excerpt || page.description}
                 </p>
               )}
 
               {/* Meta row */}
-              <div className="mt-5 flex flex-wrap items-center gap-4 border-b border-[#e7dfd1] pb-6">
+              <div className="mt-5  flex flex-wrap items-center gap-4 border-b border-[#e7dfd1] pb-6">
                 {author && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 ">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#CE9F2D] font-montserrat text-xs font-bold text-white">
-                      {(typeof author === "string" ? author : author?.name || "A")[0]?.toUpperCase()}
+                      {(typeof author === "string"
+                        ? author
+                        : author?.name || "A")[0]?.toUpperCase()}
                     </div>
                     <span className="font-montserrat text-sm font-medium text-[#2E2E2E]">
-                      {typeof author === "string" ? author : author?.name || "Admin"}
+                      {typeof author === "string"
+                        ? author
+                        : author?.name || "Admin"}
                     </span>
                   </div>
                 )}
@@ -120,7 +132,9 @@ export default function CmsPage({ slugOverride = "" }) {
                   <div className="flex items-center gap-1 font-montserrat text-xs text-[#A6A6A6]">
                     <Calendar size={13} />
                     {new Date(publishedAt).toLocaleDateString("en-IN", {
-                      day: "numeric", month: "long", year: "numeric",
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
                     })}
                   </div>
                 )}
@@ -144,17 +158,30 @@ export default function CmsPage({ slugOverride = "" }) {
 
               {points.length > 0 && (
                 <div className="mt-8 rounded-[12px] border border-[#e7dfd1] bg-[#fffdf8] p-5">
-                  <h2 className="mb-3 font-montserrat text-xl font-semibold text-[#2E2E2E]">Highlights</h2>
+                  <h2 className="mb-3 font-montserrat text-xl font-semibold text-[#2E2E2E]">
+                    Highlights
+                  </h2>
                   <div className="space-y-3">
                     {points.map((point, idx) => (
-                      <div key={`${point?.title || "point"}-${idx}`} className="flex gap-3">
+                      <div
+                        key={`${point?.title || "point"}-${idx}`}
+                        className="flex gap-3"
+                      >
                         {point?.image ? (
-                          <img src={point.image} alt={point?.title || "point"} className="h-12 w-12 rounded object-cover" />
+                          <img
+                            src={point.image}
+                            alt={point?.title || "point"}
+                            className="h-12 w-12 rounded object-cover"
+                          />
                         ) : null}
                         <div>
-                          <p className="font-montserrat text-sm font-semibold text-[#2E2E2E]">{point?.title}</p>
+                          <p className="font-montserrat text-sm font-semibold text-[#2E2E2E]">
+                            {point?.title}
+                          </p>
                           {point?.description ? (
-                            <p className="font-montserrat text-sm text-[#787878]">{point.description}</p>
+                            <p className="font-montserrat text-sm text-[#787878]">
+                              {point.description}
+                            </p>
                           ) : null}
                         </div>
                       </div>
@@ -199,7 +226,13 @@ export default function CmsPage({ slugOverride = "" }) {
                 </p>
                 <div className="mt-5 flex justify-center">
                   <Link to="/products">
-                    <BrandButton variant="primary" rounded label="Browse Products" size="md" className="h-11 px-8 text-sm font-semibold" />
+                    <BrandButton
+                      variant="primary"
+                      rounded
+                      label="Browse Products"
+                      size="md"
+                      className="h-11 px-8 text-sm font-semibold"
+                    />
                   </Link>
                 </div>
               </div>

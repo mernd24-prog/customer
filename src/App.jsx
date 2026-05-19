@@ -63,10 +63,6 @@ import {
   OurCommitmentPage,
   FeaturesPage,
 } from "./pages/StaticPages";
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/aditi-dev
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
 import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 import {
@@ -180,79 +176,72 @@ export default function App() {
           {/* ── Static / info pages (public) ──────────────────────────── */}
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/support" element={<SupportCenterPage />} />
-          <Route path="/help-contact" element={<CmsPage slugOverride="help-contact" />} />
+          <Route
+            path="/help-contact"
+            element={<CmsPage slugOverride="help-contact" />}
+          />
           <Route path="/deals" element={<CmsPage slugOverride="deals" />} />
-          <Route path="/brand-outlet" element={<CmsPage slugOverride="brand-outlet" />} />
-          <Route path="/gift-cards" element={<CmsPage slugOverride="gift-cards" />} />
-          <Route path="/who-we-are" element={<CmsPage slugOverride="who-we-are" />} />
-          <Route path="/about" element={<CmsPage slugOverride="about-us" />} />
-          <Route path="/about-us" element={<CmsPage slugOverride="about-us" />} />
-          <Route path="/mobile-app" element={<CmsPage slugOverride="mobile-app" />} />
-          <Route path="/seller-policies" element={<CmsPage slugOverride="seller-policies" />} />
-          <Route path="/growth-support" element={<CmsPage slugOverride="growth-support" />} />
-          <Route path="/advertise" element={<CmsPage slugOverride="advertise" />} />
+          <Route
+            path="/brand-outlet"
+            element={<CmsPage slugOverride="brand-outlet" />}
+          />
+          <Route
+            path="/gift-cards"
+            element={<CmsPage slugOverride="gift-cards" />}
+          />
+          <Route
+            path="/who-we-are"
+            element={<CmsPage slugOverride="who-we-are" />}
+          />
+          <Route
+            path="/about-us"
+            element={<CmsPage slugOverride="about-us" />}
+          />
+          <Route
+            path="/mobile-app"
+            element={<CmsPage slugOverride="mobile-app" />}
+          />
+          <Route
+            path="/seller-policies"
+            element={<CmsPage slugOverride="seller-policies" />}
+          />
+          <Route
+            path="/growth-support"
+            element={<CmsPage slugOverride="growth-support" />}
+          />
+          <Route
+            path="/advertise"
+            element={<CmsPage slugOverride="advertise" />}
+          />
           <Route path="/blog" element={<CmsPage slugOverride="blog" />} />
           <Route path="/updates" element={<CmsPage slugOverride="updates" />} />
-          <Route path="/announcements" element={<CmsPage slugOverride="announcements" />} />
+          <Route
+            path="/announcements"
+            element={<CmsPage slugOverride="announcements" />}
+          />
           <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
           <Route path="/our-commitment" element={<OurCommitmentPage />} />
           <Route path="/features" element={<FeaturesPage />} />
-<<<<<<< HEAD
-          {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" fallbackData={termsOfUseData} />} />
-          <Route path="/terms-and-conditions" element={<CmsPage slugOverride="terms-and-conditions" fallbackData={termsOfUseData} />} />
-          <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" fallbackData={shippingPolicyData} />} />
-          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" fallbackData={refundPolicyData} />} />
-          <Route path="/return-refund-policy" element={<CmsPage slugOverride="return-refund-policy" fallbackData={refundPolicyData} />} /> */}
-          <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} />
-          <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" />} />
-          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} />
-=======
           <Route
             path="/terms-of-use"
-            element={
-              <CmsPage
-                slugOverride="terms-of-use"
-                fallbackData={termsOfUseData}
-              />
-            }
+            element={<CmsPage slugOverride="terms-of-use" />}
           />
           <Route
             path="/terms-and-conditions"
-            element={
-              <CmsPage
-                slugOverride="terms-and-conditions"
-                fallbackData={termsOfUseData}
-              />
-            }
+            element={<CmsPage slugOverride="terms-and-conditions" />}
           />
           <Route
             path="/shipping-policy"
-            element={
-              <CmsPage
-                slugOverride="shipping-policy"
-                fallbackData={shippingPolicyData}
-              />
-            }
+            element={<CmsPage slugOverride="shipping-policy" />}
           />
           <Route
             path="/refund-policy"
-            element={
-              <CmsPage
-                slugOverride="refund-policy"
-                fallbackData={refundPolicyData}
-              />
-            }
+            element={<CmsPage slugOverride="refund-policy" />}
           />
           <Route
             path="/return-refund-policy"
-            element={
-              <CmsPage
-                slugOverride="return-refund-policy"
-                fallbackData={refundPolicyData}
-              />
-            }
+            element={<CmsPage slugOverride="return-refund-policy" />}
           />
->>>>>>> origin/aditi-dev
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>

@@ -1,14 +1,12 @@
-import React from "react";
 import Header from "../../components/organism/Header";
 import { Footer } from "../../components/organism/footer";
-import PolicyHeader from "./PolicyHeader";
-import PolicyIntro from "./PolicyIntro";
-import PolicySection from "./PolicySection";
+import PolicyHeader from "../policy/PolicyHeader";
+import PolicyIntro from "../policy/PolicyIntro";
+import PolicySection from "../policy/PolicySection";
 import Seo from "../../components/Seo";
 import { POLICIES } from "../../data";
-
-const ShippingDelivery = () => {
-  const data = POLICIES.shipping;
+const ReturnRefundPolicy = () => {
+  const data = POLICIES.refund;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -46,4 +44,4 @@ const ShippingDelivery = () => {
   );
 };
 
-export default ShippingDelivery;
+export default ReturnRefundPolicy;
