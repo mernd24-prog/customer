@@ -82,6 +82,9 @@ import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
 import FAQPage from "./pages/faq/FAQPage";
 import AboutPage from "./pages/about/AboutPage";
 
+import ReturnRefundPolicy from "./pages/policiesPage/PoliciesPages";
+import PolicyPage from "./pages/policiesPage/PoliciesPages";
+
 export default function App() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.auth.current);
@@ -127,7 +130,7 @@ export default function App() {
 
   useEffect(() => {
     if (!currentUser) return;
-    dispatch(fetchCart()).catch(() => { });
+    dispatch(fetchCart()).catch(() => {});
   }, [currentUser, dispatch]);
 
   if (!sessionReady) {
@@ -223,26 +226,17 @@ export default function App() {
           <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
           <Route path="/our-commitment" element={<OurCommitmentPage />} />
           <Route path="/features" element={<FeaturesPage />} />
-          <Route
-            path="/terms-of-use"
-            element={<CmsPage slugOverride="terms-of-use" />}
-          />
-          <Route
-            path="/terms-and-conditions"
-            element={<CmsPage slugOverride="terms-and-conditions" />}
-          />
-          <Route
-            path="/shipping-policy"
-            element={<CmsPage slugOverride="shipping-policy" />}
-          />
-          <Route
-            path="/refund-policy"
-            element={<CmsPage slugOverride="refund-policy" />}
-          />
-          <Route
-            path="/return-refund-policy"
-            element={<CmsPage slugOverride="return-refund-policy" />}
-          />
+          {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" fallbackData={termsOfUseData} />} />
+          <Route path="/terms-and-conditions" element={<CmsPage slugOverride="terms-and-conditions" fallbackData={termsOfUseData} />} />
+          <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" fallbackData={shippingPolicyData} />} />
+          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" fallbackData={refundPolicyData} />} />
+          <Route path="/return-refund-policy" element={<CmsPage slugOverride="return-refund-policy" fallbackData={refundPolicyData} />} /> */}
+          {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} />
+          <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" />} />
+          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} /> */}
+          <Route path="/terms-of-use" element={<PolicyPage />} />
+          <Route path="/shipping-policy" element={<PolicyPage />} />
+          <Route path="/refund-policy" element={<PolicyPage />} />
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
@@ -262,7 +256,7 @@ export default function App() {
               path="/products/:productId"
               element={<ProductDetailPage />}
             />
-          <Route path="/about-us" element={<AboutPage />} />
+            <Route path="/about-us" element={<AboutPage />} />
 
             <Route path="/categories/:categoryKey" element={<CategoryPage />} />
             <Route path="/brands/:brandSlug" element={<BrandPage />} />

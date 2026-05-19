@@ -2,9 +2,10 @@ import React from "react";
 import { infoSection } from "../../constant/image.constant";
 
 const PolicySection = ({ title, points, description, footer }) => {
+  console.log("this is the points", points);
   return (
     <section className="group py-2 md:py-3 mt-3 first:mt-0">
-      <div className="flex items-center gap-4 mb-3">
+      {/* <div className="flex items-center gap-4 mb-3">
         <h3
           className="text-xl md:text-2xl font-bold font-montserrat m-0"
           style={{ color: "#2E2E2E" }}
@@ -14,11 +15,10 @@ const PolicySection = ({ title, points, description, footer }) => {
       </div>
 
       {description && (
-        <p
-          className="text-muted leading-relaxed tracking-wide text-[15px] md:text-[16.5px] mb-2 font-montserrat"
-          dangerouslySetInnerHTML={{ __html: description }}
-        />
-      )}
+        <p className="text-muted leading-relaxed tracking-wide text-[15px] md:text-[16.5px] mb-2 font-montserrat">
+          {description}
+        </p>
+      )} */}
 
       {points && (
         <ul className="space-y-4">
@@ -31,10 +31,13 @@ const PolicySection = ({ title, points, description, footer }) => {
                   className="w-4 h-4 md:w-5 md:h-5 object-contain opacity-70"
                 />
               </div>
-              <p
-                className="text-muted leading-relaxed tracking-wide text-[15px] md:text-[16.5px] font-montserrat"
-                dangerouslySetInnerHTML={{ __html: point }}
-              />
+
+              <div className="text-muted leading-relaxed tracking-wide text-[15px] md:text-[16.5px] font-montserrat">
+                <span className="font-semibold text-[#2E2E2E]">
+                  {point.title}:
+                </span>{" "}
+                <span>{point.description}</span>
+              </div>
             </li>
           ))}
         </ul>
@@ -42,10 +45,9 @@ const PolicySection = ({ title, points, description, footer }) => {
 
       {footer && (
         <div className="mt-2">
-          <p
-            className="text-muted leading-relaxed tracking-wide text-[15px] md:text-[16.5px] font-montserrat"
-            dangerouslySetInnerHTML={{ __html: footer }}
-          />
+          <p className="text-muted leading-relaxed tracking-wide text-[15px] md:text-[16.5px] font-montserrat">
+            {footer}
+          </p>
         </div>
       )}
     </section>
