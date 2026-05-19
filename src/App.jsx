@@ -80,6 +80,9 @@ import AdminCatalogManagementPage from "./pages/admin/AdminCatalogManagementPage
 import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
 import FAQPage from "./pages/faq/FAQPage";
 import AboutPage from "./pages/about/AboutPage";
+import ShippingDelivery from "./components/policy/ShippingDelivery";
+import TermsOfUse from "./components/policy/TermsOfUse";
+import ReturnRefundPolicy from "./components/policy/ReturnRefundPolicy";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -126,7 +129,7 @@ export default function App() {
 
   useEffect(() => {
     if (!currentUser) return;
-    dispatch(fetchCart()).catch(() => {});
+    dispatch(fetchCart()).catch(() => { });
   }, [currentUser, dispatch]);
 
   if (!sessionReady) {
@@ -198,9 +201,10 @@ export default function App() {
           <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" fallbackData={shippingPolicyData} />} />
           <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" fallbackData={refundPolicyData} />} />
           <Route path="/return-refund-policy" element={<CmsPage slugOverride="return-refund-policy" fallbackData={refundPolicyData} />} /> */}
-          <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} />
-          <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" />} />
-          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} />
+          <Route path="/terms-of-use" element={<TermsOfUse />} />
+          <Route path="/shipping-policy" element={<ShippingDelivery />} />
+          <Route path="/refund-policy" element={<ReturnRefundPolicy />} />
+          
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
