@@ -1,9 +1,9 @@
 import React from "react";
 import Header from "../layout/Header";
 import Footer from "../layout/Footer";
-import PolicyHeader from "./PolicyHeader";
-import PolicyIntro from "./PolicyIntro";
-import PolicySection from "./PolicySection";
+import PolicyHeader from "../policy/PolicyHeader";
+import PolicyIntro from "../policy/PolicyIntro";
+import PolicySection from "../policy/PolicySection";
 import Seo from "../common/Seo";
 import { POLICIES } from "../../data";
 

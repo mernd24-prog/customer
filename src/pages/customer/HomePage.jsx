@@ -200,18 +200,10 @@ export function HomePage() {
       <HomeCategoryGrid categories={categories?.slice(0, 5)} loading={false} />
       <CollageMainSection />
 
-      <section className="w-container my-10">
-        <h2 className="mb-2 font-montserrat text-2xl font-bold text-[#1d1d1d]">
-          Reusable UI Demo
-        </h2>
-        <p className="mb-6 text-sm text-[#6b6b6b]">
-          Same components, different data props. This is the library-style
-          pattern now in app.
-        </p>
-
+      <section className=" my-10">
         <ShowcaseSection
-          title="Top Deals Demo (Reusable TopDealCard)"
-          subtitle="Configured only by props + items"
+          title="Top Deals"
+          subtitle="Score the lowest prices on samglobal.com"
           headerbgColor="bg-[#C9C9DB]"
           bodybgColor="bg-[#F3F3FA]"
           gridClassName="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4"
@@ -220,8 +212,8 @@ export function HomePage() {
         />
 
         <ShowcaseSection
-          title="New Arrivals Demo (Reusable NewArrivalCard)"
-          subtitle="Same section, only component + item shape changed"
+          title="New Arrivals"
+          subtitle="Navigate trends with data-driven rankings"
           headerbgColor="bg-[#ECDFCB]"
           bodybgColor="bg-[#CE9F2D0D]"
           gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-3"
