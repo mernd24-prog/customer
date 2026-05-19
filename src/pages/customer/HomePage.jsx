@@ -200,7 +200,7 @@ export function HomePage() {
       <HomeCategoryGrid categories={categories?.slice(0, 5)} loading={false} />
       <CollageMainSection />
 
-      <section className="w-container my-10">
+      <section className="my-10">
         <h2 className="mb-2 font-montserrat text-2xl font-bold text-[#1d1d1d]">
           Reusable UI Demo
         </h2>

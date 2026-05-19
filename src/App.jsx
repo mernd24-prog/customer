@@ -181,8 +181,9 @@ export default function App() {
           <Route path="/brand-outlet" element={<CmsPage slugOverride="brand-outlet" />} />
           <Route path="/gift-cards" element={<CmsPage slugOverride="gift-cards" />} />
           <Route path="/who-we-are" element={<CmsPage slugOverride="who-we-are" />} />
-          <Route path="/about" element={<CmsPage slugOverride="about-us" />} />
-          <Route path="/about-us" element={<CmsPage slugOverride="about-us" />} />
+          {/* <Route path="/about-us" element={<CmsPage slugOverride="about-us" />} /> */}
+
+          <Route path="/about-us" element={<AboutPage />} />
           <Route path="/mobile-app" element={<CmsPage slugOverride="mobile-app" />} />
           <Route path="/seller-policies" element={<CmsPage slugOverride="seller-policies" />} />
           <Route path="/growth-support" element={<CmsPage slugOverride="growth-support" />} />
