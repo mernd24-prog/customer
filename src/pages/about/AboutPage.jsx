@@ -51,41 +51,44 @@ export default function AboutPage() {
   );
 
   const storyData = useMemo(
-    () => ({
-      heading: "Our Story",
-      description: "",
-      image: "",
-      ctaText: "",
-      ...aboutCmsData?.story,
-      image:
-        aboutCmsData?.story?.image ||
-        aboutCmsData?.coverImage ||
-        aboutCmsData?.image,
-      description:
-        aboutCmsData?.story?.description ||
-        aboutCmsData?.description ||
-        aboutCmsData?.body,
-      heading:
-        aboutCmsData?.story?.heading ||
-        aboutCmsData?.heading ||
-        aboutCmsData?.title,
-      ctaText:
-        aboutCmsData?.story?.ctaText ||
-        aboutCmsData?.ctaText,
-    }),
-    [aboutCmsData],
-  );
+  () => ({
+    ...aboutCmsData?.story,
 
+    heading:
+      aboutCmsData?.story?.heading ||
+      aboutCmsData?.heading ||
+      aboutCmsData?.title ||
+      "Our Story",
+
+    description:
+      aboutCmsData?.story?.description ||
+      aboutCmsData?.description ||
+      aboutCmsData?.body ||
+      "",
+
+    image:
+      aboutCmsData?.story?.image ||
+      aboutCmsData?.coverImage ||
+      aboutCmsData?.image ||
+      "",
+
+    ctaText:
+      aboutCmsData?.story?.ctaText ||
+      aboutCmsData?.ctaText ||
+      "",
+  }),
+  [aboutCmsData],
+);
   const valuesData = useMemo(
-    () => ({
-      sectionDetails: { heading: "Our Values" },
-      sectionDetails: {
-        heading: aboutCmsData?.values?.heading || "Our Values",
-      },
-      cards: asArray(aboutCmsData?.values, []),
-    }),
-    [aboutCmsData],
-  );
+  () => ({
+    sectionDetails: {
+      heading: aboutCmsData?.values?.heading || "Our Values",
+    },
+
+    cards: asArray(aboutCmsData?.values, []),
+  }),
+  [aboutCmsData],
+);
 
   const brandData = useMemo(
     () => ({
@@ -100,24 +103,25 @@ export default function AboutPage() {
   );
 
   const missionData = useMemo(
-    () => ({
-      title: "Our Mission",
-      description: "",
-      image: "",
-      ...aboutCmsData?.mission,
-      image:
-        aboutCmsData?.mission?.image ||
-        aboutCmsData?.heroImage ||
-        aboutCmsData?.galleryImages?.[0],
-      title:
-        aboutCmsData?.mission?.title ||
-        aboutCmsData?.mission?.heading ||
-        "Our Mission",
-      description: aboutCmsData?.mission?.description || "",
-    }),
-    [aboutCmsData],
-  );
+  () => ({
+    ...aboutCmsData?.mission,
 
+    title:
+      aboutCmsData?.mission?.title ||
+      aboutCmsData?.mission?.heading ||
+      "Our Mission",
+
+    description:
+      aboutCmsData?.mission?.description || "",
+
+    image:
+      aboutCmsData?.mission?.image ||
+      aboutCmsData?.heroImage ||
+      aboutCmsData?.galleryImages?.[0] ||
+      "",
+  }),
+  [aboutCmsData],
+);
   const pageTitle =
     cmsAboutPage?.metadata?.seoTitle ||
     cmsAboutPage?.title ||
