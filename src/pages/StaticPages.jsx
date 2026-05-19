@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   ArrowRight,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import Seo from "../components/common/Seo";
 import InfoCard from "../components/ui/InfoCard";
 import CardGridSection from "../components/static/CardGridSection";

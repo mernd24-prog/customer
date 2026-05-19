@@ -10,7 +10,9 @@ import {
 } from "../utils/cache";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:4000",
+  baseURL: "http://192.168.16.47:4000",
+  // baseURL: "https://sam-global-backend.vercel.app/",
+
   headers: { "Content-Type": "application/json" },
 });
 

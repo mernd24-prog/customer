@@ -81,6 +81,9 @@ import AdminCatalogManagementPage from "./pages/admin/AdminCatalogManagementPage
 import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
 import FAQPage from "./pages/faq/FAQPage";
 import AboutPage from "./pages/about/AboutPage";
+import ShippingDelivery from "./components/policy/ShippingDelivery";
+import TermsOfUse from "./components/policy/TermsOfUse";
+import ReturnRefundPolicy from "./components/policy/ReturnRefundPolicy";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -127,7 +130,7 @@ export default function App() {
 
   useEffect(() => {
     if (!currentUser) return;
-    dispatch(fetchCart()).catch(() => {});
+    dispatch(fetchCart()).catch(() => { });
   }, [currentUser, dispatch]);
 
   if (!sessionReady) {
@@ -182,7 +185,6 @@ export default function App() {
             element={<CmsPage slugOverride="help-contact" />}
           />
           <Route path="/deals" element={<CmsPage slugOverride="deals" />} />
-<<<<<<< HEAD
           <Route
             path="/brand-outlet"
             element={<CmsPage slugOverride="brand-outlet" />}
@@ -215,18 +217,6 @@ export default function App() {
             path="/advertise"
             element={<CmsPage slugOverride="advertise" />}
           />
-=======
-          <Route path="/brand-outlet" element={<CmsPage slugOverride="brand-outlet" />} />
-          <Route path="/gift-cards" element={<CmsPage slugOverride="gift-cards" />} />
-          <Route path="/who-we-are" element={<CmsPage slugOverride="who-we-are" />} />
-          {/* <Route path="/about-us" element={<CmsPage slugOverride="about-us" />} /> */}
-
-          <Route path="/about-us" element={<AboutPage />} />
-          <Route path="/mobile-app" element={<CmsPage slugOverride="mobile-app" />} />
-          <Route path="/seller-policies" element={<CmsPage slugOverride="seller-policies" />} />
-          <Route path="/growth-support" element={<CmsPage slugOverride="growth-support" />} />
-          <Route path="/advertise" element={<CmsPage slugOverride="advertise" />} />
->>>>>>> origin/mahima-dev
           <Route path="/blog" element={<CmsPage slugOverride="blog" />} />
           <Route path="/updates" element={<CmsPage slugOverride="updates" />} />
           <Route
@@ -236,7 +226,6 @@ export default function App() {
           <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
           <Route path="/our-commitment" element={<OurCommitmentPage />} />
           <Route path="/features" element={<FeaturesPage />} />
-<<<<<<< HEAD
           {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" fallbackData={termsOfUseData} />} />
           <Route path="/terms-and-conditions" element={<CmsPage slugOverride="terms-and-conditions" fallbackData={termsOfUseData} />} />
           <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" fallbackData={shippingPolicyData} />} />
@@ -245,28 +234,6 @@ export default function App() {
           <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} />
           <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" />} />
           <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} />
-=======
-          <Route
-            path="/terms-of-use"
-            element={<CmsPage slugOverride="terms-of-use" />}
-          />
-          <Route
-            path="/terms-and-conditions"
-            element={<CmsPage slugOverride="terms-and-conditions" />}
-          />
-          <Route
-            path="/shipping-policy"
-            element={<CmsPage slugOverride="shipping-policy" />}
-          />
-          <Route
-            path="/refund-policy"
-            element={<CmsPage slugOverride="refund-policy" />}
-          />
-          <Route
-            path="/return-refund-policy"
-            element={<CmsPage slugOverride="return-refund-policy" />}
-          />
->>>>>>> origin/aditi-dev
 
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
