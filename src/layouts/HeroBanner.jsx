@@ -1,4 +1,3 @@
-import BrandButton from "../ui/BrandButton";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import { bannerData, bannerConfig } from "../constant/image.constant";
@@ -7,6 +6,7 @@ import { bannerData, bannerConfig } from "../constant/image.constant";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import { Button } from "../components/common";
 
 /**
  * Banner Component
@@ -65,7 +65,7 @@ const HeroBanner = () => {
                 </p>
 
                 <div className="flex items-center justify-center lg:justify-start gap-6 pt-3">
-                  <BrandButton
+                  <Button
                     variant="custom"
                     className="!px-8 !py-3 lg:!px-10 lg:!py-4 font-black text-base lg:text-xl shadow-[0_10px_20px_rgba(191,155,83,0.3)] hover:scale-105 transition-transform"
                     bgColor="linear-gradient(270deg, #A26D27 5.77%, #CE9F2D 100%)"

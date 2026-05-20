@@ -47,31 +47,66 @@ const PolicyPage = () => {
   const { page: cmsPolicy, loading } = useCmsRecord(config?.slug);
 
   const cmsData = useMemo(() => getCmsPayload(cmsPolicy, null), [cmsPolicy]);
-
   const data = useMemo(() => {
     if (!cmsData) return null;
+
+    const sections =
+      Array.isArray(cmsData.sections) && cmsData.sections.length > 0
+        ? cmsData.sections
+          .filter(
+            (section) =>
+              section?.title ||
+              section?.description ||
+              section?.points?.length > 0
+          )
+          .map((section) => ({
+            type: section.type || "content",
+            title: section.title || "",
+            description: section.description || "",
+            points: Array.isArray(section.points)
+              ? section.points.map((point) => ({
+                title: point.title || "",
+                description: point.description || "",
+                image: point.image || null,
+                cta: point.cta || null,
+                sortOrder: point.sortOrder || 0,
+              }))
+              : [],
+            image: section.image || null,
+            gallery: section.gallery || [],
+            cta: section.cta || null,
+            footer: section.footer || "",
+            sortOrder: section.sortOrder || 0,
+          }))
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+        : [
+          {
+            title: cmsData.title || config?.fallbackTitle,
+            description: cmsData.description || cmsData.excerpt || "",
+            points: cmsData.points || [],
+            footer: cmsData.footer || "",
+          },
+        ];
 
     return {
       title: cmsData.title || config?.fallbackTitle,
 
       intro: {
         heading:
-          cmsData.intro?.heading || cmsData.title || config?.fallbackTitle,
+          cmsData.intro?.heading ||
+          cmsData.metadata?.data?.intro?.heading ||
+          cmsData.title ||
+          config?.fallbackTitle,
 
-        description: cmsData.intro?.description || cmsData.description || "",
+        description:
+          cmsData.intro?.description ||
+          cmsData.metadata?.data?.intro?.description ||
+          cmsData.description ||
+          cmsData.excerpt ||
+          "",
       },
 
-      sections:
-        cmsData.sections?.length > 0
-          ? cmsData.sections
-          : [
-              {
-                title: cmsData.title || config?.fallbackTitle,
-                description: cmsData.description || "",
-                points: cmsData.points || [],
-                footer: cmsData.footer || "",
-              },
-            ],
+      sections,
     };
   }, [cmsData, config]);
 
@@ -104,12 +139,15 @@ const PolicyPage = () => {
                 <div className="space-y-10 md:space-y-12">
                   {data.sections.map((section, index) => (
                     <PolicySection
-                      key={index}
+                      key={`${section.type}-${index}`}
                       index={index}
                       title={section.title}
-                      points={section.points}
                       description={section.description}
+                      points={section.points}
                       footer={section.footer}
+                      image={section.image}
+                      gallery={section.gallery}
+                      cta={section.cta}
                     />
                   ))}
                 </div>

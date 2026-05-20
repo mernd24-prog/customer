@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 
-import { WatchlistItemCard } from "../../../components/ecommerce/WatchlistItemCard";
-import BrandButton from "../../../components/ui/BrandButton";
 import DropdownContainer from "./DropdownContainer";
 import DropdownHeader from "./DropdownHeader";
+import { WatchlistItemCard } from "../../components/ecommerce";
+import { Button } from "../../components/common";
 
 export default function WatchlistDropdown({ title, items, onRemove }) {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function WatchlistDropdown({ title, items, onRemove }) {
             <p className="text-center text-[13px] text-black">
               You are not watching any items yet.
             </p>
-            <BrandButton
+            <Button
               variant="gradient"
               rounded
               size="sm"
