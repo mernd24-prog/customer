@@ -12,22 +12,22 @@ import {
   User,
 } from "lucide-react";
 
-import BrandButton from "../ui/BrandButton";
-import ImageSkeleton from "../ui/Image";
-import SearchBar from "../ui/SearchBar";
+import BrandButton from "../components/ui/BrandButton";
+import ImageSkeleton from "../components/ui/Image";
+import SearchBar from "../components/ui/SearchBar";
 import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
 import SellDropdown from "./header/SellDropdown";
 import WatchlistDropdown from "./header/WatchlistDropdown";
-import { icons, navbarIcons as navData } from "../../constant/image.constant";
-import { useProductActions } from "../../hooks/useProductActions";
-import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
-import { logout } from "../../features/auth/authSlice";
-import { fetchCategories } from "../../features/catalog/catalogSlice";
-import { getRole, isAdminRole } from "../../utils/roles";
-import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
-import CategoryMegaMenu from "../ecommerce/CategoryMegaMenu";
-import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
+import { icons, navbarIcons as navData } from "../constant/image.constant";
+import { useProductActions } from "../hooks/useProductActions";
+import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
+import { logout } from "../features/auth/authSlice";
+import { fetchCategories } from "../features/catalog/catalogSlice";
+import { getRole, isAdminRole } from "../utils/roles";
+import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
+import CategoryMegaMenu from "../components/ecommerce/CategoryMegaMenu";
+import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
 
 const buildCategorySlug = (name) => name.toLowerCase().replace(/\s+/g, "-");
 

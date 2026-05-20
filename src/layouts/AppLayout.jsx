@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Header } from "../components/layout/Header";
-import { Footer } from "../components/layout/Footer";
+import { Header } from "./Header";
+import { Footer } from "./Footer";
 import AddedToCartModal from "../components/cart/AddedToCartModal";
 import { closeAddedToCartModal } from "../features/cart/cartUiSlice";
 

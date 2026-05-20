@@ -1,7 +1,7 @@
 import BrandButton from "../ui/BrandButton";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
-import { bannerData, bannerConfig } from "../../constant/image.constant";
+import { bannerData, bannerConfig } from "../constant/image.constant";
 
 // Swiper styles
 import "swiper/css";

@@ -13,7 +13,7 @@ import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { fetchProducts } from "../../features/product/productSlice";
 import { tokenStorage } from "../../api/tokenStorage";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
-import Banner from "../../components/layout/HeroBanner";
+import Banner from "../../layouts/HeroBanner";
 import CollageMainSection from "../../components/ui/CollageCard";
 import ShowcaseSection from "../../components/home/ShowcaseSection";
 import TopDealCard from "../../components/ui/TopDealCard";

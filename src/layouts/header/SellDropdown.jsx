@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
-import BrandButton from "../../ui/BrandButton";
+import BrandButton from "../../components/ui/BrandButton";
 import DropdownContainer from "./DropdownContainer";
-import { asArray, hrefOr, keyOr, textOr } from "../../../utils/content";
+import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 
 export default function SellDropdown({ data }) {
   const navigate = useNavigate();

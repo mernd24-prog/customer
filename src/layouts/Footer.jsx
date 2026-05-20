@@ -1,13 +1,13 @@
 import { SkeletonLoader, SKELETON_PRESETS } from "../common/skeleton";
-import { useDelayedLoading } from "../../hooks/useDelayedLoading";
-import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
+import { useDelayedLoading } from "../hooks/useDelayedLoading";
+import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
 import FooterActionLinks from "./footer/FooterActionLinks";
 import FooterAppDownload from "./footer/FooterAppDownload";
 import FooterBenefits from "./footer/FooterBenefits";
 import FooterBottomBar from "./footer/FooterBottomBar";
 import FooterLinkGroups from "./footer/FooterLinkGroups";
-import { asArray, hrefOr } from "../../utils/content";
-import { footerData } from "../../data/footer";
+import { asArray, hrefOr } from "../utils/content";
+import { footerData } from "../data/footer";
 
 const EMPTY_FOOTER = {
   benefits: [],
