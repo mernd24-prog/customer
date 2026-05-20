@@ -1,4 +1,4 @@
-import { SocialIcons } from "../../common/SocialIcons";
+import SocialIcons from "../../common/SocialIcons";
 import FooterSectionContainer from "./FooterSectionContainer";
 
 export default function FooterBottomBar({ copyright = "", socialLinks = [] }) {
@@ -8,7 +8,10 @@ export default function FooterBottomBar({ copyright = "", socialLinks = [] }) {
         <p className="custom-para text-center md:text-left">{copyright}</p>
         <div className="flex flex-wrap items-center justify-center gap-4">
           {socialLinks.map((social, index) => (
-            <SocialIcons key={social?.label || `social-${index}`} data={social} />
+            <SocialIcons
+              key={social?.label || `social-${index}`}
+              data={social}
+            />
           ))}
         </div>
       </FooterSectionContainer>
