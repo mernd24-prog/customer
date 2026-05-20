@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import AuthCard from "../../components/ui/AuthCard";
 import Button from "../../components/ui/Button";
@@ -31,10 +31,11 @@ export default function VerifyRegistrationPage() {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(verifyOtpSchema),
-    defaultValues: { email: location.state?.email || "" },
+    mode: "onChange",
+    defaultValues: { email: location.state?.email || "", otp: "" },
   });
 
   const submit = async (values) => {
@@ -74,7 +75,7 @@ export default function VerifyRegistrationPage() {
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}
-            onChange={(otp) => setValue("otp", otp, { shouldValidate: true })}
+            onChange={(otp) => setValue("otp", otp, { shouldValidate: true, shouldDirty: true })}
             error={errors.otp?.message}
           />
 
@@ -84,7 +85,7 @@ export default function VerifyRegistrationPage() {
             </div>
           )}
 
-          <Button type="submit" loading={loading} className="w-full">
+          <Button type="submit" loading={loading} className="w-full" disabled={!isValid || loading}>
             <CheckCircle size={18} /> Verify &amp; activate account
           </Button>
 

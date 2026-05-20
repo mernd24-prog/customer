@@ -26,8 +26,12 @@ export default function ForgotPasswordPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm({ resolver: zodResolver(forgotPasswordSchema) });
+    formState: { errors, isValid },
+  } = useForm({
+    resolver: zodResolver(forgotPasswordSchema),
+    mode: "onChange",
+    defaultValues: { email: "" },
+  });
 
   const submit = async (values) => {
     await run(dispatch, forgotPassword({ email: values.email }), "OTP sent to your email");
@@ -45,7 +49,7 @@ export default function ForgotPasswordPage() {
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
           <div>
             <h2 className="text-2xl font-bold text-[#2E2E2E]">Reset your password</h2>
-            <p className="mt-1 text-sm text-[#A6A6A6]">We'll send an OTP to your email address.</p>
+            <p className="mt-1 text-sm text-[#A6A6A6]">We&apos;ll send an OTP to your email address.</p>
           </div>
 
           <FormField
@@ -64,7 +68,7 @@ export default function ForgotPasswordPage() {
             </div>
           )}
 
-          <Button type="submit" loading={loading} className="w-full">
+          <Button type="submit" loading={loading} className="w-full" disabled={!isValid || loading}>
             <Mail size={18} /> Send reset OTP
           </Button>
 

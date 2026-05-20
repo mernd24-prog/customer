@@ -33,10 +33,11 @@ export default function VerifyOtpPage() {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(verifyOtpSchema),
-    defaultValues: { email: location.state?.email || "" },
+    mode: "onChange",
+    defaultValues: { email: location.state?.email || "", otp: "" },
   });
 
   const submit = async (values) => {
@@ -90,7 +91,7 @@ export default function VerifyOtpPage() {
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}
-            onChange={(otp) => setValue("otp", otp, { shouldValidate: true })}
+            onChange={(otp) => setValue("otp", otp, { shouldValidate: true, shouldDirty: true })}
             error={errors.otp?.message}
           />
 
@@ -100,7 +101,7 @@ export default function VerifyOtpPage() {
             </div>
           )}
 
-          <Button type="submit" loading={loading} className="w-full" disabled={(watch("otp") || "").length !== 6}>
+          <Button type="submit" loading={loading} className="w-full" disabled={!isValid || loading}>
             <ShieldCheck size={18} /> Verify &amp; sign in
           </Button>
 
@@ -110,7 +111,7 @@ export default function VerifyOtpPage() {
             </Link>
           </p>
           <p className="text-center text-sm text-[#787878]">
-            Didn't get OTP?{" "}
+            Didn&apos;t get OTP?{" "}
             <button
               type="button"
               className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline"

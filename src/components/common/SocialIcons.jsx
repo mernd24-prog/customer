@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export function SocialIcons({ data, className = "" }) {
+export default function  SocialIcons({ data, className = "" }) {
   const { href, icon, alt, label } = data;
 
   return (

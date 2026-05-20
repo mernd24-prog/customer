@@ -3,7 +3,15 @@ import { defaultInitialState } from "../createApiSlice";
 import { authThunks } from "../domainThunks";
 import { tokenStorage } from "../../api/tokenStorage";
 
-const sessionThunks = [authThunks.loginUser, authThunks.socialLogin, authThunks.registerUser, authThunks.verifyRegistration, authThunks.refreshSession];
+const sessionThunks = [
+  authThunks.loginUser,
+  authThunks.socialLogin,
+  authThunks.registerUser,
+  authThunks.verifyRegistration,
+  authThunks.verifyOtp,
+  authThunks.refreshSession,
+];
+const currentPayloadThunks = [authThunks.checkAuthStatus];
 
 function extractTokens(payload = {}) {
   if (payload?.tokens) return payload.tokens;
@@ -13,6 +21,11 @@ function extractTokens(payload = {}) {
 
 function extractSessionUser(payload = {}) {
   return payload?.user || payload?.session?.user || payload;
+}
+
+function hasSession(payload = {}) {
+  const tokens = extractTokens(payload);
+  return Boolean(tokens?.accessToken || tokens?.refreshToken || payload?.user || payload?.session?.user);
 }
 
 const authSlice = createSlice({
@@ -42,7 +55,11 @@ const authSlice = createSlice({
           state.loading = false;
           state.meta = action.payload.meta;
           state.lastFetchedAt = Date.now();
-          state.current = sessionThunks.includes(thunk) ? extractSessionUser(session) : session;
+          if (sessionThunks.includes(thunk) && hasSession(session)) {
+            state.current = extractSessionUser(session);
+          } else if (currentPayloadThunks.includes(thunk)) {
+            state.current = session;
+          }
         })
         .addCase(thunk.rejected, (state, action) => {
           state.loading = false;

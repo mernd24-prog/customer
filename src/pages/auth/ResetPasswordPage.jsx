@@ -30,10 +30,11 @@ export default function ResetPasswordPage() {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(resetPasswordSchema),
-    defaultValues: { email: location.state?.email || "" },
+    mode: "onChange",
+    defaultValues: { email: location.state?.email || "", otp: "", newPassword: "", confirmPassword: "" },
   });
 
   const submit = async (values) => {
@@ -73,7 +74,7 @@ export default function ResetPasswordPage() {
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}
-            onChange={(otp) => setValue("otp", otp, { shouldValidate: true })}
+            onChange={(otp) => setValue("otp", otp, { shouldValidate: true, shouldDirty: true })}
             error={errors.otp?.message}
           />
 
@@ -103,7 +104,7 @@ export default function ResetPasswordPage() {
             </div>
           )}
 
-          <Button type="submit" loading={loading} className="w-full">
+          <Button type="submit" loading={loading} className="w-full" disabled={!isValid || loading}>
             <KeyRound size={18} /> Reset password
           </Button>
 

@@ -20,10 +20,10 @@ const strongPasswordField = passwordField
   .regex(/[^A-Za-z0-9]/, "Must contain one special character");
 
 const otpField = textField
-  .min(4, "Enter the OTP");
+  .regex(/^\d{6}$/, "Enter the 6-digit OTP");
 
 const phoneField = textField
-  .min(8, "Enter a valid phone number");
+  .regex(/^\+?[0-9\s-]{10,15}$/, "Enter a valid phone number");
 
 const optionalString = textField.optional();
 
@@ -36,7 +36,7 @@ const requiredString = (field) =>
 
 export const loginSchema = z.object({
   email: emailField,
-  password: strongPasswordField,
+  password: passwordField,
 });
 
 export const emailSchema = z.object({
@@ -51,7 +51,7 @@ export const otpSchema = z.object({
 export const resetSchema = z.object({
   email: emailField,
   otp: otpField,
-  newPassword: passwordField,
+  newPassword: strongPasswordField,
 });
 
 export const registerSchema = z.object({
@@ -59,7 +59,7 @@ export const registerSchema = z.object({
   lastName: requiredString("Last name"),
   email: emailField,
   phone: phoneField,
-  password: passwordField,
+  password: strongPasswordField,
   referralCode: optionalString,
 });
 
@@ -77,15 +77,20 @@ export const registerOtpSchema = z.object({
   lastName: requiredString("Last name"),
   email: emailField,
   phone: phoneField,
+  password: strongPasswordField,
+  confirmPassword: strongPasswordField,
   referralCode: optionalString,
+}).refine((v) => v.password === v.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
 export const resetPasswordSchema = z
   .object({
     email: emailField,
     otp: otpField,
-    newPassword: passwordField,
-    confirmPassword: passwordField,
+    newPassword: strongPasswordField,
+    confirmPassword: strongPasswordField,
   })
   .refine((v) => v.newPassword === v.confirmPassword, {
     message: "Passwords do not match",
