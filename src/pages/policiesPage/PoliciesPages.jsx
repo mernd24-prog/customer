@@ -134,7 +134,7 @@ const PolicyPage = () => {
                 heading={data.intro?.heading}
                 description={data.intro?.description}
               />
-
+ 
               {data.sections?.length > 0 && (
                 <div className="space-y-10 md:space-y-12">
                   {data.sections.map((section, index) => (

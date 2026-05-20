@@ -53,7 +53,7 @@ export default function FAQPage() {
   const title = "Frequently Asked Questions";
   const description =
     "Quick answers for common shopping questions.";
-  const ctaText = "Contact Us";
+  const ctaText = "Contact Support";
 
   const faqCmsData = useMemo(() => {
     const page = faqEntries[0] || null;
