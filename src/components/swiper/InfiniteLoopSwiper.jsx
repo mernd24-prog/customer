@@ -2,7 +2,7 @@ export default function InfiniteLoopSwiper({ item, index }) {
   return (
     <div key={`${item.name}-${index}`} className="flex-shrink-0">
       <img
-        src={item.icon}
+        src={item.image}
         alt={item.name}
         loading="lazy"
         decoding="async"

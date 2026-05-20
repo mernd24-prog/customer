@@ -5,18 +5,41 @@ import { applyImageFallback } from "../../utils/ecommerce";
 
 const slugifyKey = (value = "") => String(value).trim().toLowerCase().replace(/\s+/g, "-");
 
-function toNode(item = {}) {
+const sortByOrder = (a, b) => Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0);
+
+function getChildren(item = {}) {
+  if (Array.isArray(item?.children)) return item.children;
+  if (Array.isArray(item?.subCategories)) return item.subCategories;
+  if (Array.isArray(item?.categories)) return item.categories;
+  if (Array.isArray(item?.items)) return item.items;
+  return [];
+}
+
+function toNode(item = {}, parentKey = "") {
+  const categoryKey =
+    item?.categoryKey ||
+    item?.key ||
+    item?.slug ||
+    slugifyKey(item?.title || item?.name || "category");
+  const title = item?.title || item?.name || item?.label || "Category";
+
   return {
-    categoryKey: item?.categoryKey || item?.key || slugifyKey(item?.title || item?.name || "category"),
-    title: item?.title || item?.name || "Category",
-    image: item?.img || item?.imageUrl || item?.image || "",
-    children: Array.isArray(item?.children) ? item.children : [],
+    ...item,
+    categoryKey,
+    key: item?.key || categoryKey,
+    parentKey: item?.parentKey ?? parentKey,
+    title,
+    name: item?.name || title,
+    image: item?.img || item?.imageUrl || item?.image || item?.iconUrl || "",
+    children: getChildren(item)
+      .map((child) => toNode(child, categoryKey))
+      .sort(sortByOrder),
   };
 }
 
 export default function MegaMenu({ data, activeCategory }) {
   const root = useMemo(() => toNode(activeCategory), [activeCategory]);
-  const subCategories = Array.isArray(root.children) ? root.children : [];
+  const subCategories = useMemo(() => root.children || [], [root]);
 
   const [activeSubCategoryKey, setActiveSubCategoryKey] = useState("");
   const [mobileExpanded, setMobileExpanded] = useState("");
@@ -36,25 +59,31 @@ export default function MegaMenu({ data, activeCategory }) {
     [activeSubCategoryKey, subCategories],
   );
 
-  const leafParents = Array.isArray(activeSubCategory?.children) ? activeSubCategory.children : [];
+  const subSubCategories = useMemo(
+    () => (Array.isArray(activeSubCategory?.children) ? activeSubCategory.children : []),
+    [activeSubCategory],
+  );
 
   useEffect(() => {
-    setActiveLeafParentKey(leafParents?.[0]?.categoryKey || "");
-  }, [activeSubCategory?.categoryKey]);
+    setActiveLeafParentKey(subSubCategories?.[0]?.categoryKey || "");
+  }, [subSubCategories]);
 
-  const activeLeafParent = useMemo(
+  const activeSubSubCategory = useMemo(
     () =>
-      leafParents.find((item) => item?.categoryKey === activeLeafParentKey) ||
-      leafParents[0] ||
+      subSubCategories.find((item) => item?.categoryKey === activeLeafParentKey) ||
+      subSubCategories[0] ||
       null,
-    [activeLeafParentKey, leafParents],
+    [activeLeafParentKey, subSubCategories],
   );
 
-  const thirdLevel = Array.isArray(activeLeafParent?.children) ? activeLeafParent.children : [];
-  const hasNestedThirdLevel = leafParents.some(
-    (item) => Array.isArray(item?.children) && item.children.length > 0,
+  const deeperCategories = useMemo(
+    () => (Array.isArray(activeSubSubCategory?.children) ? activeSubSubCategory.children : []),
+    [activeSubSubCategory],
   );
-  const effectiveItems = hasNestedThirdLevel ? thirdLevel : leafParents;
+  const hasDeeperCategories = useMemo(
+    () => subSubCategories.some((item) => Array.isArray(item?.children) && item.children.length > 0),
+    [subSubCategories],
+  );
   const quickLinks = Array.isArray(data?.leftSections?.[1]?.items) ? data.leftSections[1].items : [];
 
   const handleToggle = (itemKey) => {
@@ -109,13 +138,27 @@ export default function MegaMenu({ data, activeCategory }) {
                     <div className="mt-1 rounded-xl bg-white/40 py-3 pl-4 pr-2 xl:hidden">
                       <div className="grid grid-cols-1 gap-2">
                         {(Array.isArray(item?.children) ? item.children : []).map((leaf) => (
-                          <Link
-                            key={leaf?.categoryKey}
-                            to={`/categories/${leaf?.categoryKey}`}
-                            className="rounded px-2 py-1 text-[13px] text-gray-600 transition hover:bg-blue-50 hover:text-blue-600"
-                          >
-                            {leaf?.title}
-                          </Link>
+                          <div key={leaf?.categoryKey}>
+                            <Link
+                              to={`/categories/${leaf?.categoryKey}`}
+                              className="block rounded px-2 py-1 text-[13px] text-gray-600 transition hover:bg-blue-50 hover:text-blue-600"
+                            >
+                              {leaf?.title}
+                            </Link>
+                            {Array.isArray(leaf?.children) && leaf.children.length > 0 && (
+                              <div className="mt-1 grid gap-1 pl-3">
+                                {leaf.children.map((child) => (
+                                  <Link
+                                    key={child?.categoryKey}
+                                    to={`/categories/${child?.categoryKey}`}
+                                    className="block rounded px-2 py-1 text-[12px] text-gray-500 transition hover:bg-blue-50 hover:text-blue-600"
+                                  >
+                                    {child?.title}
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -126,15 +169,15 @@ export default function MegaMenu({ data, activeCategory }) {
           </div>
         </div>
 
-        {/* Panel 2 – Sub-sub-categories (hover to reveal panel 3) */}
-        <div className="w-full border-b border-gray-100 p-5 xl:w-[22%] xl:border-b-0 xl:border-r xl:p-7">
+        {/* Panel 2 – Sub-sub-categories */}
+        <div className="w-full border-b border-gray-100 p-5 xl:w-[24%] xl:border-b-0 xl:border-r xl:p-7">
           <h3 className="mb-5 border-b border-gray-100 pb-3 text-[12px] font-black uppercase tracking-[0.2em] text-gray-400">
-            {activeSubCategory?.title || "Subcategories"}
+            {activeSubCategory?.title || "Sub-sub categories"}
           </h3>
           <div className="grid grid-cols-2 gap-2 xl:grid-cols-1">
-            {leafParents.length ? (
-              leafParents.map((item) => {
-                const isActive = activeLeafParent?.categoryKey === item?.categoryKey;
+            {subSubCategories.length ? (
+              subSubCategories.map((item) => {
+                const isActive = activeSubSubCategory?.categoryKey === item?.categoryKey;
                 return (
                   <div
                     key={item?.categoryKey}
@@ -153,7 +196,7 @@ export default function MegaMenu({ data, activeCategory }) {
                     >
                       {item?.title}
                     </Link>
-                    {Array.isArray(item?.children) && item.children.length > 0 && (
+                    {hasDeeperCategories && Array.isArray(item?.children) && item.children.length > 0 && (
                       <ChevronRight size={12} className="hidden xl:block opacity-40 group-hover:opacity-100" />
                     )}
                   </div>
@@ -165,40 +208,42 @@ export default function MegaMenu({ data, activeCategory }) {
           </div>
         </div>
 
-        {/* Panel 3 – Leaf items */}
-        <div className="w-full border-b border-gray-100 p-5 xl:w-[20%] xl:border-b-0 xl:border-r xl:p-7">
-          <h3 className="mb-5 border-b border-gray-100 pb-3 text-[12px] font-black uppercase tracking-[0.2em] text-gray-400">
-            {hasNestedThirdLevel ? activeLeafParent?.title || "Items" : activeSubCategory?.title || "Items"}
-          </h3>
-          <div className="grid grid-cols-2 gap-2 xl:grid-cols-1">
-            {effectiveItems.length ? (
-              effectiveItems.map((item) => (
-                <Link
-                  key={item?.categoryKey}
-                  to={`/categories/${item?.categoryKey}`}
-                  className="rounded-xl px-3 py-2.5 text-[13px] text-gray-600 transition hover:bg-blue-50 hover:text-blue-600"
-                >
-                  {item?.title}
-                </Link>
-              ))
-            ) : quickLinks.length ? (
-              quickLinks.map((item) => (
-                <Link
-                  key={item?.name}
-                  to={item?.link || "#"}
-                  className="rounded-xl px-3 py-2.5 text-[13px] text-gray-600 transition hover:bg-blue-50 hover:text-blue-600"
-                >
-                  {item?.name}
-                </Link>
-              ))
-            ) : (
-              <p className="text-sm text-gray-400">No items available</p>
-            )}
+        {/* Panel 3 – Deeper categories, only when sub-sub categories have children */}
+        {hasDeeperCategories && (
+          <div className="w-full border-b border-gray-100 p-5 xl:w-[18%] xl:border-b-0 xl:border-r xl:p-7">
+            <h3 className="mb-5 border-b border-gray-100 pb-3 text-[12px] font-black uppercase tracking-[0.2em] text-gray-400">
+              {activeSubSubCategory?.title || "Items"}
+            </h3>
+            <div className="grid grid-cols-2 gap-2 xl:grid-cols-1">
+              {deeperCategories.length ? (
+                deeperCategories.map((item) => (
+                  <Link
+                    key={item?.categoryKey}
+                    to={`/categories/${item?.categoryKey}`}
+                    className="rounded-xl px-3 py-2.5 text-[13px] text-gray-600 transition hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    {item?.title}
+                  </Link>
+                ))
+              ) : quickLinks.length ? (
+                quickLinks.map((item) => (
+                  <Link
+                    key={item?.name}
+                    to={item?.link || "#"}
+                    className="rounded-xl px-3 py-2.5 text-[13px] text-gray-600 transition hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    {item?.name}
+                  </Link>
+                ))
+              ) : (
+                <p className="text-sm text-gray-400">No items available</p>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Panel 4 – Promo image */}
-        <div className="w-full p-5 xl:w-[34%] xl:p-7">
+        <div className={`w-full p-5 xl:p-7 ${hasDeeperCategories ? "xl:w-[34%]" : "xl:w-[52%]"}`}>
           <div className="group relative h-[220px] w-full overflow-hidden rounded-[1.5rem] shadow-2xl xl:h-full">
             <div className="absolute inset-0">
               <img

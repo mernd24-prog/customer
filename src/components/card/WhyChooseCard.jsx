@@ -8,7 +8,7 @@ export default function WhyChooseCard({ data, icon, title, description }) {
         <div className="flex flex-row gap-4 ">
           <div>
             <img
-              src={card.icon}
+              src={card.image.url}
               alt={card.title}
               className="aspect-square object-contain bg-primary rounded-lg group-hover:bg-blue transition-colors p-1 md:p-2"
             />

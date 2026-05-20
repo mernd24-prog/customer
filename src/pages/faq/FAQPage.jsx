@@ -1,84 +1,107 @@
-import { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useMemo } from "react";
+
 import Seo from "../../components/common/Seo";
 import FAQContentSection from "../../components/faq/FAQContentSection";
 import FAQHeroSection from "../../components/faq/FAQHeroSection";
 import FAQSearchSection from "../../components/faq/FAQSearchBar";
 import NeedHelpSection from "../../components/faq/NeedHelpSection";
-import { getCmsPayload } from "../../hooks/useCmsRecord";
-import { fetchCmsPages } from "../../features/cms/cmsSlice";
 
-const normalizeFaqQuestions = (payload) => {
-  const groupedQuestions = Array.isArray(payload?.groupedQuestions)
-    ? payload.groupedQuestions
-    : [];
-  const questions = Array.isArray(payload?.questions) ? payload.questions : [];
-
-  const source = groupedQuestions.length ? groupedQuestions : questions;
-  return source.length
-    ? source.map((item, index) => ({
-      cmsKey: item?.cmsKey || `faq-${index}`,
-      topic: item?.topic || "FAQ'S",
-      question: item?.question || "",
-      answer: item?.answer || "",
-    })).filter((item) => item.question && item.answer)
-    : faqData;
-};
+import {
+  useCmsRecord,
+  getCmsPayload,
+} from "../../hooks/useCmsRecord";
 
 export default function FAQPage() {
-  const dispatch = useDispatch();
-  const cmsList = useSelector((s) => s.cms.list);
+  // Fetch FAQ CMS Page By Slug
+  const { page: faqPage } = useCmsRecord("faq");
 
-  useEffect(() => {
-    dispatch(fetchCmsPages({ pageType: "faq", limit: 100 })).catch(() => {});
-  }, [dispatch]);
-
-  const faqEntries = useMemo(
-    () => (Array.isArray(cmsList) ? cmsList : []).filter((item) => item?.pageType === "faq"),
-    [cmsList],
+  const faqCmsData = useMemo(
+    () => getCmsPayload(faqPage, null),
+    [faqPage]
   );
 
+  // FAQ Questions
   const faqs = useMemo(() => {
-    if (!faqEntries.length) return [];
-    return faqEntries
-      .map((item, index) => ({
-        cmsKey: item?.slug || `faq-${index}`,
-        topic: item?.metadata?.topic || "FAQ'S",
-        question: item?.title || "",
-        answer: item?.body || item?.description || "",
-      }))
-      .filter((item) => item.question && item.answer);
-  }, [faqEntries]);
+  const sections =
+    faqPage?.data?.sections ||
+    faqCmsData?.sections ||
+    [];
 
-  const title = "Frequently Asked Questions";
+  return sections.flatMap(
+    (section, sectionIndex) => {
+      const topic =
+        section?.title || "FAQ'S";
+
+      const points = Array.isArray(
+        section?.points
+      )
+        ? section.points
+        : [];
+
+      return points
+        .map((point, pointIndex) => ({
+          cmsKey:
+            point?.cmsKey ||
+            `faq-${sectionIndex}-${pointIndex}`,
+
+          topic,
+
+          question:
+            point?.title || "",
+
+          answer:
+            point?.description || "",
+        }))
+        .filter(
+          (item) =>
+            item.question &&
+            item.answer
+        );
+    }
+  );
+}, [faqPage, faqCmsData]);
+
+  const title =
+    faqCmsData?.title ||
+    "Frequently Asked Questions";
+
   const description =
+    faqCmsData?.description ||
     "Quick answers for common shopping questions.";
-  const ctaText = "Contact Us";
 
-  const faqCmsData = useMemo(() => {
-    const page = faqEntries[0] || null;
-    return getCmsPayload(page, null);
-  }, [faqEntries]);
   const seoTitle =
-    faqCmsData?.seo?.metaTitle ||
-    faqEntries[0]?.metadata?.seoTitle ||
+    faqPage?.metadata?.seoTitle ||
     title;
+
   const seoDescription =
-    faqCmsData?.seo?.metaDescription ||
-    faqEntries[0]?.metadata?.seoDescription ||
-    "Quick answers for common shopping questions.";
+    faqPage?.metadata?.seoDescription ||
+    description;
+
+  const ctaText =
+    faqCmsData?.cta?.label ||
+    "Contact Us";
 
   return (
     <>
-      <Seo title={seoTitle} description={seoDescription} />
+      <Seo
+        title={seoTitle}
+        description={seoDescription}
+      />
+
       <FAQHeroSection
         eyebrow={faqCmsData?.eyebrow}
         title={title}
         description={description}
       />
-      <h1 className="text-3xl font-bold text-center mt-10 uppercase">FAQ'S</h1>
+
+      <h1 className="text-3xl font-bold text-center mt-10 uppercase">
+         {faqPage?.excerpt}
+      </h1>
+
       <FAQSearchSection />
+
       <FAQContentSection faqs={faqs} />
+
       <NeedHelpSection
         heading1="Need More Help?"
         heading2="We’re here for you."
