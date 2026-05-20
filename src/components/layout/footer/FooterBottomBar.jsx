@@ -1,4 +1,4 @@
-import { SocialIcons } from "../../common/SocialIcons";
+import SocialIcons from "../../common/SocialIcons";
 import FooterSectionContainer from "./FooterSectionContainer";
 
 export default function FooterBottomBar({ copyright = "", socialLinks = [] }) {
