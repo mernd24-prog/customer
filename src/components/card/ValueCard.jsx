@@ -5,7 +5,7 @@ export default function ValueCard({ data, icon, title, description }) {
     <article className="w-full md:w-[26rem] xl:w-[30rem]">
       <div className="bg-band flex w-full flex-col items-center justify-center gap-4 rounded-t-xl p-4 text-center md:p-8 xl:p-10">
         <img
-          src={card.icon}
+          src={card.image}
           alt={card.title}
           className="h-14 w-14 object-contain md:h-18 md:w-18"
         />

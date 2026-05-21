@@ -29,7 +29,8 @@ import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
 import CategoryMegaMenu from "../components/ecommerce/CategoryMegaMenu";
 import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
 
-const buildCategorySlug = (name) => name.toLowerCase().replace(/\s+/g, "-");
+const buildCategorySlug = (name = "category") =>
+  String(name).trim().toLowerCase().replace(/\s+/g, "-");
 
 const dropdownIconMap = {
   camera: Camera,
@@ -73,11 +74,52 @@ const DEFAULT_SELL_DROPDOWN = {
 const DEFAULT_FASHION_MENU = { leftSections: [], promo: null };
 
 
-function buildCategoryTreeFromFlat(list = []) {
-  const items = Array.isArray(list) ? list : [];
-  const byKey = new Map(
-    items.map((item) => [item?.categoryKey || item?.key, { ...item, children: [] }]),
+function getCategoryKey(item = {}) {
+  return keyOr(
+    item?.categoryKey,
+    keyOr(item?.key, buildCategorySlug(textOr(item?.title, item?.name))),
   );
+}
+
+
+function normalizeCategoryNode(item = {}, parentKey = null) {
+  const categoryKey = getCategoryKey(item);
+  const title = textOr(item?.title, textOr(item?.name, "Category"));
+
+  return {
+    ...item,
+    categoryKey,
+    key: keyOr(item?.key, categoryKey),
+    title,
+    name: textOr(item?.name, title),
+    parentKey: item?.parentKey ?? parentKey,
+    imageUrl: item?.imageUrl || item?.img || item?.image || item?.iconUrl || "",
+    image: item?.image || item?.imageUrl || item?.img || item?.iconUrl || "",
+    slug: keyOr(item?.slug, categoryKey),
+    children: [],
+  };
+}
+
+function buildCategoryTree(list = []) {
+  const items = Array.isArray(list) ? list : [list].filter(Boolean);
+  const byKey = new Map();
+  const sortByOrder = (a, b) => Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0);
+
+  const visit = (item, parentKey = null) => {
+    if (!item || typeof item !== "object") return;
+    const node = normalizeCategoryNode(item, item?.parentKey ?? parentKey);
+    if (!node.categoryKey) return;
+
+    byKey.set(node.categoryKey, {
+      ...byKey.get(node.categoryKey),
+      ...node,
+      children: [],
+    });
+
+    asArray(item?.children).forEach((child) => visit(child, node.categoryKey));
+  };
+
+  items.forEach((item) => visit(item, item?.parentKey ?? null));
 
   byKey.forEach((node) => {
     if (node?.parentKey && byKey.has(node.parentKey)) {
@@ -85,7 +127,24 @@ function buildCategoryTreeFromFlat(list = []) {
     }
   });
 
-  return Array.from(byKey.values()).filter((node) => !node?.parentKey || Number(node?.level ?? 0) === 0);
+  byKey.forEach((node) => {
+    node.children.sort(sortByOrder);
+  });
+
+  return Array.from(byKey.values())
+    .filter((node) => !node?.parentKey || !byKey.has(node.parentKey) || Number(node?.level ?? 0) === 0)
+    .sort(sortByOrder);
+}
+
+function getCategoryListFromResponse(data) {
+  if (Array.isArray(data)) return data;
+  if (!data || typeof data !== "object") return [];
+  if (Array.isArray(data?.items)) return data.items;
+  if (Array.isArray(data?.list)) return data.list;
+  if (Array.isArray(data?.categories)) return data.categories;
+  if (data?.category && typeof data.category === "object") return [data.category];
+  if (data?.data) return getCategoryListFromResponse(data.data);
+  return [data];
 }
 
 function withIcons(items) {
@@ -366,13 +425,7 @@ export const CategoryBar = ({ headerData }) => {
     dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 }))
       .then((action) => {
         const data = action?.payload?.data;
-        const list = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.items)
-            ? data.items
-            : Array.isArray(data?.list)
-              ? data.list
-              : [];
+        const list = getCategoryListFromResponse(data);
         if (list.length) setCatalogCategories(list);
       })
       .catch(() => {});
@@ -389,48 +442,21 @@ export const CategoryBar = ({ headerData }) => {
     }, 200);
   };
 
-  const catalogTree = useMemo(
-    () => buildCategoryTreeFromFlat(catalogCategories),
-    [catalogCategories],
-  );
+  const catalogTree = useMemo(() => buildCategoryTree(catalogCategories), [catalogCategories]);
 
   const categories = useMemo(() => {
-    if (asArray(headerData).length) return asArray(headerData);
+    const headerCategories = getCategoryListFromResponse(headerData);
+    if (headerCategories.length) return buildCategoryTree(headerCategories);
     if (!catalogTree.length) return [];
 
-    const byParent = new Map();
-    for (const node of catalogTree) {
-      const parentKey = node?.parentKey || "__root__";
-      if (!byParent.has(parentKey)) byParent.set(parentKey, []);
-      byParent.get(parentKey).push(node);
-    }
-
-    const roots = (byParent.get("__root__") || [])
-      .filter((cat) => Number(cat?.level ?? 0) === 0 || !cat?.parentKey)
-      .slice(0, 14);
-
-    return roots.map((cat) => {
-      const catKey = cat?.categoryKey || cat?.key;
-      const childNodes = asArray(cat?.children?.length ? cat.children : byParent.get(catKey) || []);
-      const children = childNodes.map((child) => {
-        const childKey = child?.categoryKey || child?.key;
-        return {
-          ...child,
-          children: asArray(child?.children?.length ? child.children : byParent.get(childKey) || []),
-        };
-      });
-
-      return {
-        name: textOr(cat?.title, textOr(cat?.name, "Category")),
-        img: cat.imageUrl || cat.image,
-        slug: keyOr(
-          cat?.categoryKey,
-          keyOr(cat?.key, buildCategorySlug(textOr(cat?.title, cat?.name))),
-        ),
-        categoryKey: catKey,
-        children,
-      };
-    });
+    return catalogTree.slice(0, 14).map((cat) => ({
+      ...cat,
+      name: textOr(cat?.name, textOr(cat?.title, "Category")),
+      img: cat?.imageUrl || cat?.image || cat?.img,
+      slug: keyOr(cat?.slug, getCategoryKey(cat)),
+      categoryKey: getCategoryKey(cat),
+      children: asArray(cat?.children),
+    }));
   }, [catalogTree, headerData]);
 
   if (!categories.length) return null;

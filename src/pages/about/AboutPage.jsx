@@ -17,122 +17,151 @@ const asArray = (value, fallback = []) => {
 };
 
 export default function AboutPage() {
-  // About Us Banner Data Fetch from the CMS API
-  const { page: cmsData } = useCmsRecord("about-us");
-  const image = cmsData?.coverImage ?? "/image/png/aboutBanner.png";
 
   // About Us Why Choose Us Data Fetch From the CMS API
   const { page: whyChoose } = useCmsRecord("why-choose-us");
-  
+
   const apiData = whyChoose || {};
 
   const transformedData = useMemo(() => {
-  if (apiData?.points && apiData?.points.length > 0) {
+    if (apiData?.points && apiData?.points.length > 0) {
+      return {
+        sectionDetails: {
+          heading: apiData?.title || "Why Choose Us ?",
+
+          description:
+            apiData?.description ||
+            "Benefits customers value most.",
+        },
+
+        cards: apiData?.points.map((item) => ({
+          title: item?.title || "",
+          description: item?.description || "",
+          image: item?.image || "",
+        })),
+      };
+    }
+
     return {
       sectionDetails: {
-        heading: apiData?.title || "Why Choose Us ?",
-
-        description:
-          apiData?.description ||
-          "Benefits customers value most.",
+        heading: "Why Choose Us ?",
+        description: "",
       },
 
-      cards: apiData?.points.map((item) => ({
-        title: item?.title || "",
-        description: item?.description || "",
-        image: item?.image || "",
-      })),
+      cards: [],
     };
-  }
-
-  return {
-    sectionDetails: {
-      heading: "Why Choose Us ?",
-      description: "",
-    },
-
-    cards: [],
-  };
-}, [apiData]);
+  }, [apiData]);
 
   const { page: cmsAboutPage } = useCmsRecord("home-about-sections");
-  const aboutCmsData = useMemo(
-    () => getCmsPayload(cmsAboutPage, null),
-    [cmsAboutPage],
-  );
+
+  const sections =
+    cmsAboutPage?.data?.sections ||
+    cmsAboutPage?.sections ||
+    [];
+
+  const image = cmsAboutPage?.image ?? "/image/png/aboutBanner.png";
+
+  const sectionMap = useMemo(() => {
+    return sections.reduce((acc, section) => {
+      const key = section?.title
+        ?.toLowerCase()
+        ?.replace(/\s+/g, "-");
+
+      if (key) {
+        acc[key] = section;
+      }
+
+      return acc;
+    }, {});
+  }, [sections]);
+  const storySection = sectionMap["our-story"];
+  const valuesSection = sectionMap["our-values"];
+  const missionSection = sectionMap["our-mission"];
+  const brandsSection = sectionMap["indian-brands"];
 
   const storyData = useMemo(
-  () => ({
-    ...aboutCmsData?.story,
+    () => ({
+      heading:
+        storySection?.title || "Our Story",
 
-    heading:
-      aboutCmsData?.story?.heading ||
-      aboutCmsData?.heading ||
-      aboutCmsData?.title ||
-      "Our Story",
+      description:
+        storySection?.description || "",
 
-    description:
-      aboutCmsData?.story?.description ||
-      aboutCmsData?.description ||
-      aboutCmsData?.body ||
-      "",
+      image:
+        storySection?.image?.url || "",
 
-    image:
-      aboutCmsData?.story?.image ||
-      aboutCmsData?.coverImage ||
-      aboutCmsData?.image ||
-      "",
+      ctaText:
+        storySection?.cta?.label || "",
+    }),
+    [storySection],
+  );
 
-    ctaText:
-      aboutCmsData?.story?.ctaText ||
-      aboutCmsData?.ctaText ||
-      "",
-  }),
-  [aboutCmsData],
-);
+
   const valuesData = useMemo(
-  () => ({
-    sectionDetails: {
-      heading: aboutCmsData?.values?.heading || "Our Values",
-    },
+    () => ({
+      sectionDetails: {
+        heading:
+          valuesSection?.title || "Our Values",
 
-    cards: asArray(aboutCmsData?.values, []),
-  }),
-  [aboutCmsData],
-);
+        description:
+          valuesSection?.description || "",
+      },
+
+      cards: (valuesSection?.points || []).map(
+        (item) => ({
+          title: item?.title || "",
+          description:
+            item?.description || "",
+
+          image:
+            item?.image?.url || "",
+
+          alt:
+            item?.image?.alt || item?.title,
+        }),
+      ),
+    }),
+    [valuesSection],
+  );
 
   const brandData = useMemo(
     () => ({
       sectionDetails: {
-        heading: aboutCmsData?.brands?.heading || "Our Brand Network",
+        heading:
+          brandsSection?.title ||
+          "Indian Brands",
+
         description:
-          aboutCmsData?.brands?.description || "",
+          brandsSection?.description || "",
       },
-      logos: asArray(aboutCmsData?.brands, []),
+
+      logos: (brandsSection?.points || []).map(
+        (item) => ({
+          image:
+            item?.image?.url || "",
+
+          alt:
+            item?.image?.alt || "",
+        }),
+      ),
     }),
-    [aboutCmsData],
+    [brandsSection],
   );
 
   const missionData = useMemo(
-  () => ({
-    ...aboutCmsData?.mission,
+    () => ({
+      title:
+        missionSection?.title ||
+        "Our Mission",
 
-    title:
-      aboutCmsData?.mission?.title ||
-      aboutCmsData?.mission?.heading ||
-      "Our Mission",
+      description:
+        missionSection?.description || "",
 
-    description:
-      aboutCmsData?.mission?.description || "",
-
-    image:
-      aboutCmsData?.mission?.image ||
-      aboutCmsData?.heroImage ||
-      aboutCmsData?.galleryImages?.[0] ||
-      "",
-  }),
-  [aboutCmsData],
-);
+      image:
+        missionSection?.image?.url || "",
+    }),
+    [missionSection],
+  );
   const pageTitle =
     cmsAboutPage?.metadata?.seoTitle ||
     cmsAboutPage?.title ||
