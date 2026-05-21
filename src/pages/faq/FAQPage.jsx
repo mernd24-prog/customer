@@ -78,9 +78,7 @@ export default function FAQPage() {
     faqPage?.metadata?.seoDescription ||
     description;
 
-  const ctaText =
-    faqCmsData?.cta?.label ||
-    "Contact Us";
+
 
   return (
     <>

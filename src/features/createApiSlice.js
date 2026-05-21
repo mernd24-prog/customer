@@ -17,6 +17,10 @@ const idOf = (item) =>
   item?.productId ||
   item?.orderId ||
   item?.slug ||
+  item?.cmsKey ||
+  item?.metadata?.cmsKey ||
+  item?.metadata?.data?.cmsKey ||
+  item?.data?.cmsKey ||
   item?.categoryKey;
 
 export function makeThunk(type, config) {

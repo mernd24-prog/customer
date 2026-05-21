@@ -1,11 +1,30 @@
-import { useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, ChevronRight, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronRight, Sparkles, ArrowRight, Tag, Flame, ShoppingBag } from "lucide-react";
 import { applyImageFallback } from "../../utils/ecommerce";
 
 const slugifyKey = (value = "") => String(value).trim().toLowerCase().replace(/\s+/g, "-");
-
 const sortByOrder = (a, b) => Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0);
+const EMPTY_ITEMS = [];
+const DEFAULT_LABELS = {
+  shopAll: "Shop All Category",
+  noSubcategories: "No subcategories",
+  noItems: "No item lists",
+  trending: "Trending Now",
+  directItem: (title) => `Shop directly in ${title}`,
+  childTitle: "Categories",
+  innerTitle: "More",
+  promoTitle: "Explore Store",
+  promoButton: "Explore Now",
+};
+
+const defaultGetItemHref = (item) => `/categories/${item.categoryKey}`;
+const defaultGetQuickLinkHref = (item) => item?.link || "#";
+const defaultImageErrorHandler = (event, title, fallbackType) => {
+  applyImageFallback(event, title, fallbackType);
+};
+
+const mergeLabels = (labels) => ({ ...DEFAULT_LABELS, ...labels });
 
 function getChildren(item = {}) {
   if (Array.isArray(item?.children)) return item.children;
@@ -37,247 +56,515 @@ function toNode(item = {}, parentKey = "") {
   };
 }
 
-export default function MegaMenu({ data, activeCategory }) {
-  const root = useMemo(() => toNode(activeCategory), [activeCategory]);
-  const subCategories = useMemo(() => root.children || [], [root]);
+// ==========================================
+// SUBCOMPONENTS (Clean & Modular Architecture)
+// ==========================================
 
-  const [activeSubCategoryKey, setActiveSubCategoryKey] = useState("");
-  const [mobileExpanded, setMobileExpanded] = useState("");
-  const [activeLeafParentKey, setActiveLeafParentKey] = useState("");
-
-  useEffect(() => {
-    const firstKey = subCategories?.[0]?.categoryKey || "";
-    setActiveSubCategoryKey(firstKey);
-    setMobileExpanded(firstKey);
-  }, [subCategories]);
-
-  const activeSubCategory = useMemo(
-    () =>
-      subCategories.find((item) => item?.categoryKey === activeSubCategoryKey) ||
-      subCategories[0] ||
-      null,
-    [activeSubCategoryKey, subCategories],
-  );
-
-  const subSubCategories = useMemo(
-    () => (Array.isArray(activeSubCategory?.children) ? activeSubCategory.children : []),
-    [activeSubCategory],
-  );
-
-  useEffect(() => {
-    setActiveLeafParentKey(subSubCategories?.[0]?.categoryKey || "");
-  }, [subSubCategories]);
-
-  const activeSubSubCategory = useMemo(
-    () =>
-      subSubCategories.find((item) => item?.categoryKey === activeLeafParentKey) ||
-      subSubCategories[0] ||
-      null,
-    [activeLeafParentKey, subSubCategories],
-  );
-
-  const deeperCategories = useMemo(
-    () => (Array.isArray(activeSubSubCategory?.children) ? activeSubSubCategory.children : []),
-    [activeSubSubCategory],
-  );
-  const hasDeeperCategories = useMemo(
-    () => subSubCategories.some((item) => Array.isArray(item?.children) && item.children.length > 0),
-    [subSubCategories],
-  );
-  const quickLinks = Array.isArray(data?.leftSections?.[1]?.items) ? data.leftSections[1].items : [];
-
-  const handleToggle = (itemKey) => {
-    setActiveSubCategoryKey(itemKey);
-    setMobileExpanded((prev) => (prev === itemKey ? "" : itemKey));
-  };
-
+/**
+ * Component for Column 1: Subcategories
+ */
+const SubCategoryColumn = memo(function SubCategoryColumn({
+  items,
+  activeKey,
+  onHover,
+  title,
+  rootHref,
+  getItemHref,
+  labels,
+}) {
   return (
-    <div className="relative z-50 w-full max-h-[85vh] overflow-y-auto rounded-b-2xl border-t border-gray-100 bg-white/95 shadow-[0_30px_100px_rgba(0,0,0,0.2)] backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-300 hide-scrollbar">
-      <div className="w-container mx-auto flex flex-col xl:flex-row">
-        {/* Panel 1 – Sub-categories (hover to reveal panel 2) */}
-        <div className="w-full border-b border-gray-100 bg-gray-50/40 p-5 xl:w-[24%] xl:border-b-0 xl:border-r xl:p-7">
-          <div className="mb-5 flex items-center gap-2 border-b border-blue-100 pb-3">
-            <Sparkles size={15} className="text-blue-500" />
-            <h3 className="text-[12px] font-black uppercase tracking-[0.2em] text-blue-600">
-              {root.title || data?.leftSections?.[0]?.title}
-            </h3>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            {subCategories.map((item) => {
-              const isActive = activeSubCategory?.categoryKey === item?.categoryKey;
-              return (
-                <div key={item?.categoryKey} className="relative">
-                  <div
-                    className={`group flex w-full cursor-pointer items-center justify-between rounded-xl px-4 py-3 text-left text-[14px] transition-all duration-200 ${
-                      isActive
-                        ? "translate-x-1 bg-white font-bold text-blue-600 shadow-[0_10px_25px_rgba(59,130,246,0.1)]"
-                        : "text-gray-600 hover:translate-x-0.5 hover:bg-white/80 hover:text-blue-500"
-                    }`}
-                    onMouseEnter={() => setActiveSubCategoryKey(item?.categoryKey)}
-                    onClick={() => handleToggle(item?.categoryKey)}
-                  >
-                    <Link
-                      to={`/categories/${item?.categoryKey}`}
-                      className="flex-1 line-clamp-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {item?.title}
-                    </Link>
-                    <ChevronRight
-                      size={14}
-                      className={`hidden xl:block transition-all duration-200 ${isActive ? "opacity-100" : "-rotate-90 opacity-0"}`}
-                    />
-                    <ChevronDown
-                      size={16}
-                      className={`block xl:hidden transition-transform duration-200 ${mobileExpanded === item?.categoryKey ? "rotate-180" : ""}`}
-                    />
-                  </div>
-
-                  {mobileExpanded === item?.categoryKey && (
-                    <div className="mt-1 rounded-xl bg-white/40 py-3 pl-4 pr-2 xl:hidden">
-                      <div className="grid grid-cols-1 gap-2">
-                        {(Array.isArray(item?.children) ? item.children : []).map((leaf) => (
-                          <div key={leaf?.categoryKey}>
-                            <Link
-                              to={`/categories/${leaf?.categoryKey}`}
-                              className="block rounded px-2 py-1 text-[13px] text-gray-600 transition hover:bg-blue-50 hover:text-blue-600"
-                            >
-                              {leaf?.title}
-                            </Link>
-                            {Array.isArray(leaf?.children) && leaf.children.length > 0 && (
-                              <div className="mt-1 grid gap-1 pl-3">
-                                {leaf.children.map((child) => (
-                                  <Link
-                                    key={child?.categoryKey}
-                                    to={`/categories/${child?.categoryKey}`}
-                                    className="block rounded px-2 py-1 text-[12px] text-gray-500 transition hover:bg-blue-50 hover:text-blue-600"
-                                  >
-                                    {child?.title}
-                                  </Link>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Panel 2 – Sub-sub-categories */}
-        <div className="w-full border-b border-gray-100 p-5 xl:w-[24%] xl:border-b-0 xl:border-r xl:p-7">
-          <h3 className="mb-5 border-b border-gray-100 pb-3 text-[12px] font-black uppercase tracking-[0.2em] text-gray-400">
-            {activeSubCategory?.title || "Sub-sub categories"}
-          </h3>
-          <div className="grid grid-cols-2 gap-2 xl:grid-cols-1">
-            {subSubCategories.length ? (
-              subSubCategories.map((item) => {
-                const isActive = activeSubSubCategory?.categoryKey === item?.categoryKey;
-                return (
-                  <div
-                    key={item?.categoryKey}
-                    className={`group flex items-center justify-between rounded-xl px-3 py-2.5 text-left text-[13px] transition cursor-pointer ${
-                      isActive
-                        ? "bg-blue-50 font-semibold text-blue-700"
-                        : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
-                    }`}
-                    onMouseEnter={() => setActiveLeafParentKey(item?.categoryKey)}
-                    onClick={() => setActiveLeafParentKey(item?.categoryKey)}
-                  >
-                    <Link
-                      to={`/categories/${item?.categoryKey}`}
-                      className="flex-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {item?.title}
-                    </Link>
-                    {hasDeeperCategories && Array.isArray(item?.children) && item.children.length > 0 && (
-                      <ChevronRight size={12} className="hidden xl:block opacity-40 group-hover:opacity-100" />
-                    )}
-                  </div>
-                );
-              })
-            ) : (
-              <p className="text-sm text-gray-400">No subcategories</p>
-            )}
-          </div>
-        </div>
-
-        {/* Panel 3 – Deeper categories, only when sub-sub categories have children */}
-        {hasDeeperCategories && (
-          <div className="w-full border-b border-gray-100 p-5 xl:w-[18%] xl:border-b-0 xl:border-r xl:p-7">
-            <h3 className="mb-5 border-b border-gray-100 pb-3 text-[12px] font-black uppercase tracking-[0.2em] text-gray-400">
-              {activeSubSubCategory?.title || "Items"}
-            </h3>
-            <div className="grid grid-cols-2 gap-2 xl:grid-cols-1">
-              {deeperCategories.length ? (
-                deeperCategories.map((item) => (
-                  <Link
-                    key={item?.categoryKey}
-                    to={`/categories/${item?.categoryKey}`}
-                    className="rounded-xl px-3 py-2.5 text-[13px] text-gray-600 transition hover:bg-blue-50 hover:text-blue-600"
-                  >
-                    {item?.title}
-                  </Link>
-                ))
-              ) : quickLinks.length ? (
-                quickLinks.map((item) => (
-                  <Link
-                    key={item?.name}
-                    to={item?.link || "#"}
-                    className="rounded-xl px-3 py-2.5 text-[13px] text-gray-600 transition hover:bg-blue-50 hover:text-blue-600"
-                  >
-                    {item?.name}
-                  </Link>
-                ))
-              ) : (
-                <p className="text-sm text-gray-400">No items available</p>
-              )}
+    <div className="flex flex-col h-full bg-[#FAF6EE]/40 border-r border-[#e7dfd1] p-5">
+      <div className="mb-4 flex items-center gap-2 border-b border-[#e7dfd1] pb-3">
+        <Sparkles size={15} className="text-[#CE9F2D]" />
+        <h3 className="font-montserrat text-[11px] font-black uppercase tracking-wider text-[#2E2E2E]">
+          {title}
+        </h3>
+      </div>
+      
+      <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar pr-1 flex-1">
+        {items.map((item) => {
+          const isActive = activeKey === item.categoryKey;
+          return (
+            <div
+              key={item.categoryKey}
+              className={`group flex items-center justify-between rounded-xl px-4 py-3 text-left text-sm cursor-pointer transition-all duration-200 border-l-4 ${
+                isActive
+                  ? "bg-white shadow-[0_4px_12px_rgba(206,159,45,0.06)] border-[#CE9F2D] text-[#CE9F2D] font-semibold translate-x-1"
+                  : "border-transparent text-[#2E2E2E]/80 hover:bg-white/60 hover:text-[#CE9F2D] hover:translate-x-0.5"
+              }`}
+              onMouseEnter={activeKey === item.categoryKey ? undefined : () => onHover(item.categoryKey)}
+            >
+              <Link
+                to={getItemHref(item)}
+                className="flex-1 truncate"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {item.title}
+              </Link>
+              <ChevronRight
+                size={14}
+                className={`transition-all duration-300 ${
+                  isActive ? "opacity-100 translate-x-0.5" : "opacity-0 -translate-x-1 group-hover:opacity-60"
+                }`}
+              />
             </div>
+          );
+        })}
+      </div>
+      
+      <Link
+        to={rootHref}
+        className="mt-4 flex items-center justify-center gap-1.5 rounded-lg bg-[#FAF6EE] py-2.5 text-xs font-semibold text-[#CE9F2D] transition hover:bg-[#CE9F2D]/10"
+      >
+        <span>{labels.shopAll}</span>
+        <ArrowRight size={12} />
+      </Link>
+    </div>
+  );
+});
+
+/**
+ * Component for Column 2: Child Categories
+ */
+const ChildCategoryColumn = memo(function ChildCategoryColumn({
+  items,
+  activeKey,
+  onHover,
+  title,
+  showChevron,
+  getItemHref,
+  labels,
+}) {
+  return (
+    <div className="flex flex-col h-full bg-white border-r border-[#e7dfd1] p-5">
+      <h3 className="mb-4 border-b border-[#e7dfd1] pb-3 font-montserrat text-[11px] font-black uppercase tracking-wider text-[#A6A6A6]">
+        {title}
+      </h3>
+      
+      <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar pr-1 flex-1">
+        {items.length > 0 ? (
+          items.map((item) => {
+            const isActive = activeKey === item.categoryKey;
+            return (
+              <div
+                key={item.categoryKey}
+                className={`group flex items-center justify-between rounded-xl px-4 py-2.5 text-left text-sm cursor-pointer transition-all duration-200 ${
+                  isActive
+                    ? "bg-[#FAF6EE] text-[#a76616] font-semibold"
+                    : "text-[#2E2E2E]/70 hover:bg-[#FAF6EE]/40 hover:text-[#CE9F2D]"
+                }`}
+                onMouseEnter={activeKey === item.categoryKey ? undefined : () => onHover(item.categoryKey)}
+              >
+                <Link
+                  to={getItemHref(item)}
+                  className="flex-1 truncate"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {item.title}
+                </Link>
+                {showChevron && Array.isArray(item.children) && item.children.length > 0 && (
+                  <ChevronRight
+                    size={12}
+                    className={`opacity-40 transition-transform group-hover:opacity-100 group-hover:translate-x-0.5 ${
+                      isActive ? "opacity-100 text-[#a76616]" : ""
+                    }`}
+                  />
+                )}
+              </div>
+            );
+          })
+        ) : (
+          <div className="flex flex-col items-center justify-center py-10 text-center text-xs text-[#A6A6A6]">
+            <ShoppingBag size={20} className="mb-2 opacity-40" />
+            <p>{labels.noSubcategories}</p>
           </div>
         )}
+      </div>
+    </div>
+  );
+});
 
-        {/* Panel 4 – Promo image */}
-        <div className={`w-full p-5 xl:p-7 ${hasDeeperCategories ? "xl:w-[34%]" : "xl:w-[52%]"}`}>
-          <div className="group relative h-[220px] w-full overflow-hidden rounded-[1.5rem] shadow-2xl xl:h-full">
-            <div className="absolute inset-0">
-              <img
-                src={root.image || data?.promo?.image}
-                alt={root.title || data?.promo?.title}
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                onError={(event) => applyImageFallback(event, root.title || data?.promo?.title, "category")}
-              />
-              <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-black/30 to-transparent" />
+/**
+ * Component for Column 3: Inner / Leaf Categories
+ */
+const InnerCategoryColumn = memo(function InnerCategoryColumn({
+  items,
+  title,
+  quickLinks,
+  getItemHref,
+  getQuickLinkHref,
+  labels,
+}) {
+  return (
+    <div className="flex flex-col h-full bg-white p-5">
+      <h3 className="mb-4 border-b border-[#e7dfd1] pb-3 font-montserrat text-[11px] font-black uppercase tracking-wider text-[#A6A6A6]">
+        {title}
+      </h3>
+      
+      <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar pr-1 flex-1">
+        {items.length > 0 ? (
+          items.map((item) => (
+            <Link
+              key={item.categoryKey}
+              to={getItemHref(item)}
+              className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm text-[#2E2E2E]/70 transition-all duration-200 hover:bg-[#FAF6EE]/50 hover:text-[#CE9F2D] hover:pl-5"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-[#e7dfd1] group-hover:bg-[#CE9F2D] transition-colors" />
+              <span className="flex-1 truncate">{item.title}</span>
+            </Link>
+          ))
+        ) : quickLinks.length > 0 ? (
+          <>
+            <div className="mb-2 flex items-center gap-1.5 px-4 text-xs font-bold uppercase tracking-wider text-[#CE9F2D]">
+              <Flame size={12} />
+              <span>{labels.trending}</span>
             </div>
-            <div className="relative z-10 flex h-full flex-col items-start justify-center px-8 xl:px-10">
-              <h2 className="text-2xl font-black leading-tight tracking-tight text-white xl:text-4xl">
-                {root.title || data?.promo?.title}
-                {data?.promo?.highlight ? (
-                  <>
-                    <br />
-                    <span className="bg-gradient-to-r from-blue-300 via-teal-300 to-white bg-clip-text text-transparent">
-                      {data.promo.highlight}
-                    </span>
-                  </>
-                ) : null}
-              </h2>
-
+            {quickLinks.map((item) => (
               <Link
-                to={data?.promo?.link || `/categories/${root.categoryKey}`}
-                className="mt-6 inline-flex items-center justify-center overflow-hidden rounded-full bg-white px-6 py-3 text-[14px] font-bold text-gray-900 shadow-[0_20px_40px_rgba(255,255,255,0.2)] transition-all hover:shadow-white/40 active:scale-95"
+                key={item.name}
+                to={getQuickLinkHref(item)}
+                className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm text-[#2E2E2E]/70 transition-all duration-200 hover:bg-[#FAF6EE]/50 hover:text-[#CE9F2D] hover:pl-5"
               >
-                <span>{data?.promo?.buttonText || "Explore Now"}</span>
-                <ChevronRight size={18} className="ml-2" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#e7dfd1] group-hover:bg-[#CE9F2D] transition-colors" />
+                <span className="flex-1 truncate">{item.name}</span>
               </Link>
+            ))}
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-10 text-center text-xs text-[#A6A6A6]">
+            <Tag size={20} className="mb-2 opacity-40" />
+            <p>{labels.noItems}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
+
+/**
+ * Component for Right Promotional Card
+ */
+const PromotionBanner = memo(function PromotionBanner({
+  promoData,
+  rootData,
+  getItemHref,
+  imageFallbackType,
+  labels,
+  onImageError,
+}) {
+  const title = rootData.title || promoData?.title || labels.promoTitle;
+  const image = rootData.image || promoData?.image || "";
+  const highlight = promoData?.highlight || "";
+  const link = promoData?.link || getItemHref(rootData);
+  const buttonText = promoData?.buttonText || labels.promoButton;
+
+  return (
+    <div className="h-full bg-gradient-to-br from-[#FAF6EE]/60 to-white p-5 flex flex-col justify-between border-l border-[#e7dfd1]">
+      <div className="group relative h-full min-h-[220px] w-full overflow-hidden rounded-2xl shadow-md transition-shadow hover:shadow-xl">
+        <div className="absolute inset-0">
+          <img
+            src={image}
+            alt={title}
+            className="relative w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            onError={(event) => onImageError(event, title, imageFallbackType)}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        </div>
+        
+        <div className="relative z-10 flex h-full flex-col items-start justify-end p-6">
+          <h2 className="font-montserrat text-xl font-extrabold leading-tight text-white xl:text-2xl drop-shadow-sm">
+            {title}
+            {highlight && (
+              <>
+                <br />
+                <span className="bg-gradient-to-r from-[#CE9F2D] via-yellow-200 to-white bg-clip-text text-transparent">
+                  {highlight}
+                </span>
+              </>
+            )}
+          </h2>
+          
+          <Link
+            to={link}
+            className="mt-4 inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-l from-[#A26D27] to-[#CE9F2D] px-5 py-2.5 text-xs font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-95"
+          >
+            <span>{buttonText}</span>
+            <ChevronRight size={14} />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+/**
+ * Mobile-first responsive accordion megamenu component
+ */
+const MobileAccordionMenu = memo(function MobileAccordionMenu({ items, rootTitle, getItemHref, labels }) {
+  const [expandedSubKey, setExpandedSubKey] = useState("");
+  const [expandedChildKey, setExpandedChildKey] = useState("");
+
+  const handleToggleSub = useCallback((key) => {
+    setExpandedSubKey((prev) => (prev === key ? "" : key));
+    setExpandedChildKey("");
+  }, []);
+
+  const handleToggleChild = useCallback((key) => {
+    setExpandedChildKey((prev) => (prev === key ? "" : key));
+  }, []);
+
+  return (
+    <div className="w-full bg-white border-t border-[#e7dfd1] p-4 flex flex-col gap-3 max-h-[75vh] overflow-y-auto">
+      <div className="flex items-center gap-2 border-b border-[#e7dfd1] pb-2">
+        <Sparkles size={14} className="text-[#CE9F2D]" />
+        <span className="font-montserrat text-[10px] font-black uppercase tracking-wider text-[#CE9F2D]">
+          {rootTitle}
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        {items.map((sub) => {
+          const isSubExpanded = expandedSubKey === sub.categoryKey;
+          return (
+            <div key={sub.categoryKey} className="border border-[#e7dfd1]/60 rounded-xl overflow-hidden bg-[#FAF6EE]/10">
+              <button
+                type="button"
+                onClick={() => handleToggleSub(sub.categoryKey)}
+                className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold transition ${
+                  isSubExpanded ? "bg-[#FAF6EE] text-[#CE9F2D]" : "text-[#2E2E2E]"
+                }`}
+              >
+                <span>{sub.title}</span>
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform duration-200 ${isSubExpanded ? "rotate-180 text-[#CE9F2D]" : "text-gray-400"}`}
+                />
+              </button>
+
+              {isSubExpanded && (
+                <div className="px-4 pb-3 pt-2 bg-white flex flex-col gap-1.5">
+                  {Array.isArray(sub.children) && sub.children.length > 0 ? (
+                    sub.children.map((child) => {
+                      const isChildExpanded = expandedChildKey === child.categoryKey;
+                      const hasInner = Array.isArray(child.children) && child.children.length > 0;
+                      return (
+                        <div key={child.categoryKey} className="flex flex-col border-b border-gray-50 pb-1.5 last:border-0 last:pb-0">
+                          <div className="flex items-center justify-between py-1">
+                            <Link
+                              to={getItemHref(child)}
+                              className="text-xs font-semibold text-[#2E2E2E] hover:text-[#CE9F2D] flex-1 py-1"
+                            >
+                              {child.title}
+                            </Link>
+                            {hasInner && (
+                              <button
+                                type="button"
+                                onClick={() => handleToggleChild(child.categoryKey)}
+                                className="p-1 hover:bg-[#FAF6EE] rounded animate-pulse"
+                              >
+                                <ChevronDown
+                                  size={14}
+                                  className={`transition-transform duration-200 text-gray-400 ${isChildExpanded ? "rotate-180" : ""}`}
+                                />
+                              </button>
+                            )}
+                          </div>
+
+                          {isChildExpanded && hasInner && (
+                            <div className="pl-4 pt-1 pb-2 flex flex-col gap-1 border-l-2 border-[#FAF6EE] mt-1 bg-gray-50/30 rounded-r-lg">
+                              {child.children.map((inner) => (
+                                <Link
+                                  key={inner.categoryKey}
+                                  to={getItemHref(inner)}
+                                  className="block py-1 text-xs text-[#2E2E2E]/70 hover:text-[#CE9F2D]"
+                                >
+                                  {inner.title}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <Link
+                      to={getItemHref(sub)}
+                      className="text-xs text-gray-400 italic py-1 hover:text-[#CE9F2D]"
+                    >
+                      {labels.directItem(sub.title)}
+                    </Link>
+                  )}
+                </div>
+              )}
             </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+});
+
+// ==========================================
+// MAIN COMPONENT
+// ==========================================
+/**
+ * Reusable responsive megamenu.
+ *
+ * Defaults preserve the ecommerce category behavior. Pass getItemHref, labels,
+ * quickLinks, promo, and className props to reuse it for other menu trees.
+ */
+export default function CategoryMegaMenu({
+  data,
+  activeCategory,
+  rootItem = activeCategory,
+  quickLinks: quickLinksProp,
+  promo,
+  labels: labelsProp,
+  getItemHref = defaultGetItemHref,
+  getQuickLinkHref = defaultGetQuickLinkHref,
+  onImageError = defaultImageErrorHandler,
+  imageFallbackType = "category",
+  className = "",
+  desktopContainerClassName = "",
+}) {
+  const [activeSubCategoryKey, setActiveSubCategoryKey] = useState("");
+  const [activeSubSubCategoryKey, setActiveSubSubCategoryKey] = useState("");
+
+  const labels = useMemo(() => mergeLabels(labelsProp), [labelsProp]);
+  const root = useMemo(() => (rootItem ? toNode(rootItem) : null), [rootItem]);
+  const subCategories = root?.children || EMPTY_ITEMS;
+  const promoData = promo || data?.promo;
+  const rootTitle = root?.title || data?.leftSections?.[0]?.title;
+  const rootHref = root ? getItemHref(root) : "#";
+
+  const activeSubKey = useMemo(() => {
+    if (!subCategories.length) return "";
+    return subCategories.some((item) => item.categoryKey === activeSubCategoryKey)
+      ? activeSubCategoryKey
+      : subCategories[0].categoryKey;
+  }, [activeSubCategoryKey, subCategories]);
+
+  const handleSubCategoryHover = useCallback((key) => {
+    setActiveSubSubCategoryKey((currentKey) => (currentKey ? "" : currentKey));
+    setActiveSubCategoryKey((currentKey) => (currentKey === key ? currentKey : key));
+  }, []);
+
+  const handleChildCategoryHover = useCallback((key) => {
+    setActiveSubSubCategoryKey((currentKey) => (currentKey === key ? currentKey : key));
+  }, []);
+
+  // Active subcategory object
+  const activeSubCategory = useMemo(() => {
+    return subCategories.find((item) => item.categoryKey === activeSubKey) || null;
+  }, [activeSubKey, subCategories]);
+
+  // Level 2 children (Sub-subcategories)
+  const subSubCategories = useMemo(() => {
+    return activeSubCategory && Array.isArray(activeSubCategory.children) ? activeSubCategory.children : EMPTY_ITEMS;
+  }, [activeSubCategory]);
+
+  const activeChildKey = useMemo(() => {
+    if (!subSubCategories.length) return "";
+    return subSubCategories.some((item) => item.categoryKey === activeSubSubCategoryKey)
+      ? activeSubSubCategoryKey
+      : subSubCategories[0].categoryKey;
+  }, [activeSubSubCategoryKey, subSubCategories]);
+
+  // Active child category object (Level 2)
+  const activeSubSubCategory = useMemo(() => {
+    return subSubCategories.find((item) => item.categoryKey === activeChildKey) || null;
+  }, [activeChildKey, subSubCategories]);
+
+  // Level 3 children (Deeper/Inner categories)
+  const deeperCategories = useMemo(() => {
+    return activeSubSubCategory && Array.isArray(activeSubSubCategory.children)
+      ? activeSubSubCategory.children
+      : EMPTY_ITEMS;
+  }, [activeSubSubCategory]);
+
+  // Check if any sub-subcategory has deeper nested categories
+  const hasDeeperCategories = useMemo(() => {
+    return subSubCategories.some((item) => Array.isArray(item.children) && item.children.length > 0);
+  }, [subSubCategories]);
+
+  // Quick links fallback from data CMS
+  const quickLinks = useMemo(() => {
+    if (Array.isArray(quickLinksProp)) return quickLinksProp;
+    return Array.isArray(data?.leftSections?.[1]?.items) ? data.leftSections[1].items : EMPTY_ITEMS;
+  }, [data, quickLinksProp]);
+
+  if (!root) return null;
+
+  return (
+    <div className={`w-full bg-white/95 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-slide-fade-in border-b border-[#e7dfd1] ${className}`}>
+      {/* Mobile view (< 1024px) */}
+      <div className="block lg:hidden">
+        <MobileAccordionMenu
+          items={subCategories}
+          rootTitle={rootTitle}
+          getItemHref={getItemHref}
+          labels={labels}
+        />
+      </div>
+
+      {/* Desktop view (>= 1024px) */}
+      <div className={`hidden lg:block w-container mx-auto ${desktopContainerClassName}`}>
+        <div className="grid grid-cols-12 min-h-[380px] max-h-[500px]">
+          {/* Column 1: Subcategories */}
+          <div className="col-span-3">
+            <SubCategoryColumn
+              items={subCategories}
+              activeKey={activeSubKey}
+              onHover={handleSubCategoryHover}
+              title={rootTitle}
+              rootHref={rootHref}
+              getItemHref={getItemHref}
+              labels={labels}
+            />
+          </div>
+
+          {/* Column 2: Child Categories */}
+          <div className={hasDeeperCategories ? "col-span-3" : "col-span-4"}>
+            <ChildCategoryColumn
+              items={subSubCategories}
+              activeKey={activeChildKey}
+              onHover={handleChildCategoryHover}
+              title={activeSubCategory?.title || labels.childTitle}
+              showChevron={hasDeeperCategories}
+              getItemHref={getItemHref}
+              labels={labels}
+            />
+          </div>
+
+          {/* Column 3: Inner Categories (Optional) */}
+          {hasDeeperCategories && (
+            <div className="col-span-3">
+              <InnerCategoryColumn
+                items={deeperCategories}
+                title={activeSubSubCategory?.title || labels.innerTitle}
+                quickLinks={quickLinks}
+                getItemHref={getItemHref}
+                getQuickLinkHref={getQuickLinkHref}
+                labels={labels}
+              />
+            </div>
+          )}
+
+          {/* Column 4: Promo Banner */}
+          <div className={hasDeeperCategories ? "col-span-3" : "col-span-5"}>
+            <PromotionBanner
+              promoData={promoData}
+              rootData={root}
+              getItemHref={getItemHref}
+              imageFallbackType={imageFallbackType}
+              labels={labels}
+              onImageError={onImageError}
+            />
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+export { toNode as normalizeMegaMenuItem };

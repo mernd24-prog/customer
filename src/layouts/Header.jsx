@@ -412,12 +412,17 @@ export const Navbar = ({ icons: propIcons }) => {
 
 export const CategoryBar = ({ headerData }) => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const [catalogCategories, setCatalogCategories] = useState([]);
   const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
   const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
   const [activeMenu, setActiveMenu] = useState(null);
   const timeoutRef = useRef(null);
   const fetchedRef = useRef(false);
+
+  useEffect(() => {
+    setActiveMenu(null);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (fetchedRef.current) return;
@@ -432,14 +437,29 @@ export const CategoryBar = ({ headerData }) => {
   }, [dispatch]);
 
   const handleMouseEnter = (item) => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setActiveMenu(item);
+    if (window.innerWidth >= 1024) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      setActiveMenu(item);
+    }
   };
 
   const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setActiveMenu(null);
-    }, 200);
+    if (window.innerWidth >= 1024) {
+      timeoutRef.current = setTimeout(() => {
+        setActiveMenu(null);
+      }, 200);
+    }
+  };
+
+  const handleCategoryClick = (e, item) => {
+    if (window.innerWidth < 1024) {
+      e.preventDefault();
+      if (activeMenu?.categoryKey === item?.categoryKey) {
+        setActiveMenu(null);
+      } else {
+        setActiveMenu(item);
+      }
+    }
   };
 
   const catalogTree = useMemo(() => buildCategoryTree(catalogCategories), [catalogCategories]);
@@ -463,7 +483,7 @@ export const CategoryBar = ({ headerData }) => {
 
   return (
     <header className="w-full relative">
-      <div className="w-container  hide-scrollbar  flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
+      <div className="w-container hide-scrollbar flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
         {asArray(categories).map((item, index) => (
           <div
             key={keyOr(item?.name, `category-${index}`)}
@@ -476,6 +496,7 @@ export const CategoryBar = ({ headerData }) => {
                 item?.slug,
                 buildCategorySlug(textOr(item?.name, "category")),
               )}`}
+              onClick={(e) => handleCategoryClick(e, item)}
               className="group flex min-w-[70px] flex-col items-center lg:min-w-[80px]"
             >
               <div className="mx-auto flex items-center justify-center rounded-full p-1 transition-all group-hover:bg-gray-100">
@@ -500,9 +521,11 @@ export const CategoryBar = ({ headerData }) => {
       </div>
       {activeMenu && (
         <div
-          className="absolute left-0 top-full z-50 w-full"
+          className="absolute left-0 top-[calc(100%-2px)] z-[9999] w-full"
           onMouseEnter={() => {
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            if (window.innerWidth >= 1024 && timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+            }
           }}
           onMouseLeave={handleMouseLeave}
         >
@@ -518,7 +541,7 @@ export const Header = () => {
   const hideCategoryBar = location.pathname === "/watchlist";
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col relative z-50 bg-white shadow-sm">
       <TopHeader />
       <Navbar />
       <div className="mx-auto w-full max-w-[1648px] border-t border-gray-300" />

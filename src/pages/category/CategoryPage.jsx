@@ -110,6 +110,8 @@ export default function CategoryPage() {
   }, [loadProducts]);
 
   useEffect(() => {
+    setItems([]);
+    setFirstLoadDone(false);
     setCategoryData(null);
     dispatch(fetchCategoryByKey({ categoryKey }))
       .then((action) => {
