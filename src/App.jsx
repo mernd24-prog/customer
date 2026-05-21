@@ -59,7 +59,6 @@ import {
   SellerTrackingPage,
 } from "./pages/SellerPages";
 import {
-  SupportCenterPage,
   WhyChooseUsPage,
   OurCommitmentPage,
   FeaturesPage,
@@ -81,6 +80,8 @@ import AdminCatalogManagementPage from "./pages/admin/AdminCatalogManagementPage
 import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
 import FAQPage from "./pages/faq/FAQPage";
 import AboutPage from "./pages/about/AboutPage";
+import ContactUs from "./pages/contact/ContactUs";
+import SupportHelpCenter from "./pages/contact/SupportHelpCenter";
 
 import ReturnRefundPolicy from "./pages/policiesPage/PoliciesPages";
 import PolicyPage from "./pages/policiesPage/PoliciesPages";
@@ -179,10 +180,10 @@ export default function App() {
 
           {/* ── Static / info pages (public) ──────────────────────────── */}
           <Route path="/faq" element={<FAQPage />} />
-          <Route path="/support" element={<SupportCenterPage />} />
+          <Route path="/support" element={<SupportHelpCenter />} />
           <Route
             path="/help-contact"
-            element={<CmsPage slugOverride="help-contact" />}
+            element={<ContactUs />}
           />
           <Route path="/deals" element={<CmsPage slugOverride="deals" />} />
           <Route

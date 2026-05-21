@@ -748,3 +748,18 @@ small {
 .animate-fadeIn {
   animation: fadeIn 0.4s ease-out forwards;
 }
+
+/* Custom scrollbar for mega menu columns */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e7dfd1;
+  border-radius: 999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #ce9f2d;
+}
