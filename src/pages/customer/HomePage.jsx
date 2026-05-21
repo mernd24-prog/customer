@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import MothersDaySwiper from "../../components/home/MothersDayCarousel";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
-
+import { FaRegHeart } from "react-icons/fa";
 import {
   fetchTrendingProducts,
   fetchRecommendations,
@@ -20,6 +20,22 @@ import TopDealCard from "../../components/ui/TopDealCard";
 import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import NeedHelpSection from "../../components/faq/NeedHelpSection";
 import { reusableArrivalsDemo, reusableTopDealsDemo } from "../../data/topdeal";
+
+import {
+  PrimaryGradientButton,
+  RegisterButton,
+  RoundIconWithBg,
+  ButtonWithIcon,
+  PriceButton,
+} from "../../components/dynamicComponent/button/static";
+import GlobalCard from "../../components/dynamicComponent/cards/GlobalCard";
+import {
+  ProductCard,
+  CategoryPriceCard,
+  DealGridCard,
+  FourGridCard,
+  CategoryCard,
+} from "../../components/dynamicComponent/cards/static";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -128,8 +144,86 @@ export function HomePage() {
 
       <MothersDaySwiper data={cmsBannerSlides} />
 
-      <div className="">
+      <div className="mt-16">
         <HomeProductsForYouSection />
+      </div>
+
+      <div className="m-14">
+        <h2 className="text-3xl font-bold">All varities of the Buttons</h2>
+        <div className="flex flex-wrap gap-4">
+          <PrimaryGradientButton>Primary Button</PrimaryGradientButton>
+
+          <RegisterButton>Register</RegisterButton>
+          <RoundIconWithBg />
+
+          <ButtonWithIcon icon={<FaRegHeart />}>Shop Nowssss</ButtonWithIcon>
+          <PriceButton currentPrice="₹1,499" originalPrice="₹1,499" />
+        </div>
+      </div>
+
+      {/* GLOBAL CARD EXAMPLES */}
+      <div className="m-14">
+        {/* --- Using Pre-configured Static Wrappers --- */}
+        <div className="flex flex-wrap items-start gap-6">
+          {/* 1. ProductCard — wishlist + cart shown on hover */}
+          <ProductCard
+            title="Lace & Beads long sleeve ruffle hem maxi dress in white polka dot"
+            rating={4}
+            price="₹ 993.00"
+            originalPrice="₹ 1199.00"
+            images={[{ src: "/image/png/jacket.png" }]}
+            customWidth="260px"
+            onWishlist={() => alert("Added to wishlist!")}
+            onAddToCart={() => alert("Added to cart!")}
+          />
+
+          {/* <CategoryPriceCard
+            category="Men's Wear"
+            price="₹ 993.00"
+            originalPrice="₹ 1199.00"
+            images={[{ src: "/image/jpg/home-decor.jpg" }]}
+            customWidth="260px"
+          /> */}
+
+          {/* 3. DealGridCard — two images with individual prices */}
+          <DealGridCard
+            badge="March"
+            title="Trendy Outfits for Men & Women"
+            subtitle="66K+ Views"
+            images={[
+              {
+                src: "/image/png/blazer.png",
+                price: "₹ 993.00",
+                originalPrice: "₹ 1199.00",
+              },
+              {
+                src: "/image/png/men-fashion.png",
+                price: "₹ 993.00",
+                originalPrice: "₹ 1199.00",
+              },
+            ]}
+            customWidth="460px"
+          />
+
+          {/* 4. FourGridCard — 2x2 image grid */}
+          <FourGridCard
+            title="Trending in Women's Fashion"
+            images={[
+              { src: "/image/png/blazer.png" },
+              { src: "/image/png/maxi.png" },
+              { src: "/image/png/jacket.png" },
+              { src: "/image/png/men-fashion.png" },
+            ]}
+            customWidth="260px"
+          />
+
+          {/* 5. CategoryCard — golden border */}
+          <CategoryCard
+            category="Women's Fashion"
+            images={[{ src: "/image/png/jacket.png" }]}
+            customWidth="180px"
+          />
+        </div>
       </div>
     </>
   );
