@@ -21,6 +21,7 @@ import {
 function adaptItemForCard(item) {
   const product = item.productId || {};
   const productId = item.productId?._id || getProductId(product);
+  const variantKey = item.variantId || item.variantSku || "";
   const title = item.title || getProductTitle(product) || "Product";
   const image = item.image || getProductImage(product);
   const price = item.price ?? product.price ?? product.sellingPrice ?? 0;
@@ -29,11 +30,15 @@ function adaptItemForCard(item) {
   const quantity = item.quantity || 1;
   const seller = item.seller || product.seller?.name || product.brand;
   const condition = item.condition;
-  const color = item.color || item.selectedColor;
-  const size = item.size || item.selectedSize;
+  const attributes = item.attributes || {};
+  const color = item.color || item.selectedColor || attributes.color;
+  const size = item.size || item.selectedSize || attributes.size;
 
   return {
-    id: productId,
+    id: [productId, variantKey].filter(Boolean).join(":"),
+    productId,
+    variantId: item.variantId,
+    variantSku: item.variantSku,
     title,
     image,
     price,
@@ -44,8 +49,15 @@ function adaptItemForCard(item) {
     condition,
     color,
     size,
+    attributes,
     _raw: item,
   };
+}
+
+function cartLineKey(item) {
+  const productId = getProductId(item.productId || item.product);
+  const variantKey = item.variantId || item.variantSku || "";
+  return [productId, variantKey].filter(Boolean).join(":");
 }
 
 export default function CartPage() {
@@ -65,7 +77,7 @@ export default function CartPage() {
 
   const handleIncrease = (id) => {
     const updated = rawItems.map((ci) => {
-      const cid = getProductId(ci.productId || ci.product);
+      const cid = cartLineKey(ci);
       return cid === id ? { ...ci, quantity: (ci.quantity || 1) + 1 } : ci;
     });
     run(
@@ -82,7 +94,7 @@ export default function CartPage() {
 
   const handleDecrease = (id) => {
     const updated = rawItems.map((ci) => {
-      const cid = getProductId(ci.productId || ci.product);
+      const cid = cartLineKey(ci);
       if (cid !== id) return ci;
       const newQty = Math.max(1, (ci.quantity || 1) - 1);
       return { ...ci, quantity: newQty };
@@ -101,7 +113,7 @@ export default function CartPage() {
 
   const handleRemove = (id) => {
     const updated = rawItems.filter((ci) => {
-      const cid = getProductId(ci.productId || ci.product);
+      const cid = cartLineKey(ci);
       return cid !== id;
     });
     run(

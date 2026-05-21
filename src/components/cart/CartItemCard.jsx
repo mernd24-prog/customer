@@ -59,6 +59,14 @@ export default function CartItemCard({
                 Size: {item.size}
               </span>
             )}
+
+            {Object.entries(item.attributes || {})
+              .filter(([key]) => !["color", "size"].includes(key))
+              .map(([key, value]) => (
+                <span key={key} className="text-[13px] font-medium capitalize text-[#555454]">
+                  {key.replace(/_/g, " ")}: {String(value)}
+                </span>
+              ))}
           </div>
 
           {/* Pricing */}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -454,21 +454,89 @@ export default function ProductDetailPage() {
     dispatch(fetchDynamicPrice({ productId, quantity })).catch(() => {});
   }, [dispatch, product, productId, quantity]);
 
-  const price = dynamicPrice ?? product?.price ?? product?.sellingPrice;
-  const mrp = product?.mrp ?? product?.originalPrice;
+  const variants = useMemo(() => product?.variants || [], [product?.variants]);
+  const variantOptions = useMemo(() => {
+    const configuredOptions = Array.isArray(product?.options) ? product.options : [];
+    if (configuredOptions.length) {
+      return configuredOptions
+        .map((option) => ({
+          ...option,
+          slug:
+            option.slug ||
+            String(option.name || "")
+              .trim()
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, "_")
+              .replace(/^_+|_+$/g, ""),
+          values: Array.from(new Set((option.values || []).filter(Boolean))),
+        }))
+        .filter((option) => option.slug && option.values.length);
+    }
+
+    const axisMap = new Map();
+    variants.forEach((variant) => {
+      Object.entries(variant.attributes || {}).forEach(([key, value]) => {
+        if (!axisMap.has(key)) axisMap.set(key, new Set());
+        axisMap.get(key).add(String(value));
+      });
+    });
+
+    return Array.from(axisMap.entries()).map(([slug, values]) => ({
+      name: slug.replace(/_/g, " "),
+      slug,
+      values: Array.from(values),
+      displayType: slug.includes("color") ? "color_swatch" : "button",
+      valueCodes: {},
+    }));
+  }, [product?.options, variants]);
+
+  useEffect(() => {
+    if (!variants.length) {
+      setSelectedVariant(null);
+      return;
+    }
+    const defaultVariant = variants.find((variant) => variant.isDefault) || variants[0];
+    setSelectedVariant((current) =>
+      current && variants.some((variant) => (variant._id || variant.sku) === (current._id || current.sku))
+        ? current
+        : defaultVariant,
+    );
+  }, [variants]);
+
+  const selectedAttributes = selectedVariant?.attributes || {};
+  const findVariantForSelection = (axis, value) => {
+    const nextSelection = { ...selectedAttributes, [axis]: value };
+    return (
+      variants.find((variant) =>
+        Object.entries(nextSelection).every(
+          ([key, selectedValue]) => String(variant.attributes?.[key]) === String(selectedValue),
+        ),
+      ) ||
+      variants.find((variant) => String(variant.attributes?.[axis]) === String(value))
+    );
+  };
+
+  const selectedVariantPrice = selectedVariant?.salePrice ?? selectedVariant?.price;
+  const price = dynamicPrice ?? selectedVariantPrice ?? product?.price ?? product?.sellingPrice;
+  const mrp = selectedVariant?.mrp ?? product?.mrp ?? product?.originalPrice;
   const discount =
     mrp && price && mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
   const fallbackProductImage = getProductImage(product) || getImageFallbackSrc(getProductTitle(product), product?.category);
-  const images = product?.images?.length
+  const variantImages = selectedVariant?.images?.length ? selectedVariant.images : [];
+  const images = variantImages.length
+    ? variantImages
+    : product?.images?.length
     ? product.images
     : product?.imageUrl
       ? [product.imageUrl]
       : fallbackProductImage
         ? [fallbackProductImage]
         : [];
-  const variants = product?.variants || [];
   const attributes = product?.attributes || product?.specifications || {};
   const inStock =
+    selectedVariant?.stock != null
+      ? selectedVariant.stock > 0
+      :
     typeof product?.inStock === "boolean"
       ? product.inStock
       : product?.stock != null
@@ -680,7 +748,7 @@ export default function ProductDetailPage() {
                     <div className="flex items-center gap-2">
                       <div className="relative z-0 w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
                       <p className="font-montserrat text-sm font-semibold text-[#10B981]">
-                        {product?.stock || 52} in stock
+                        {selectedVariant?.stock ?? product?.stock ?? 52} in stock
                       </p>
                     </div>
                   ) : (
@@ -689,136 +757,57 @@ export default function ProductDetailPage() {
                     </p>
                   )}
 
-                  {/* Variants - Split into Size and Color if possible */}
-                  {variants.length > 0 && (
+                  {/* Variants */}
+                  {variants.length > 0 && variantOptions.length > 0 && (
                     <div className="flex flex-col gap-6">
-                      {/* Size Selection */}
-                      <div>
-                        <p className="mb-2 font-montserrat text-sm font-semibold text-[#2E2E2E]">
-                          Size:{" "}
-                          <span className="text-[#CE9F2D] font-bold">
-                            {selectedVariant?.title?.split(" / ")[0] ||
-                              selectedVariant?.name ||
-                              "Select"}
-                          </span>
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {[
-                            ...new Set(
-                              variants.map(
-                                (v) =>
-                                  (v.title || v.name || "").split(" / ")[0],
-                              ),
-                            ),
-                          ].map((size, i) => (
-                            <button
-                              key={size}
-                              type="button"
-                              onClick={() => {
-                                const found = variants.find((v) =>
-                                  (v.title || v.name || "").startsWith(size),
-                                );
-                                if (found) setSelectedVariant(found);
-                              }}
-                              className={`min-w-[45px] h-[45px] rounded-[6px] border px-3 py-1 font-montserrat text-sm font-bold transition-all ${
-                                (
-                                  selectedVariant?.title ||
-                                  selectedVariant?.name ||
-                                  ""
-                                ).startsWith(size)
-                                  ? "border-[#CE9F2D] bg-[#CE9F2D] text-white shadow-md"
-                                  : "border-[#cfc6b8] text-[#2E2E2E] hover:border-[#CE9F2D] bg-white"
-                              }`}
-                            >
-                              {size || `V${i + 1}`}
-                            </button>
-                          ))}
-                          <button className="ml-2 font-montserrat text-xs font-semibold text-[#2E2E2E] flex items-center gap-1 hover:underline group">
-                            Size Chart{" "}
-                            <ChevronRight
-                              size={12}
-                              className="rotate-90 transition-transform group-hover:translate-y-0.5"
-                            />
-                          </button>
-                        </div>
-                      </div>
+                      {variantOptions.map((option) => (
+                        <div key={option.slug}>
+                          <p className="mb-2 font-montserrat text-sm font-semibold capitalize text-[#2E2E2E]">
+                            {option.name}:{" "}
+                            <span className="font-bold text-[#CE9F2D]">
+                              {selectedAttributes[option.slug] || "Select"}
+                            </span>
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {option.values.map((value) => {
+                              const isSelected = String(selectedAttributes[option.slug]) === String(value);
+                              const matchingVariant = findVariantForSelection(option.slug, value);
+                              const disabled = !matchingVariant;
+                              const swatchValue = option.valueCodes?.[value];
 
-                      {/* Color Selection */}
-                      <div>
-                        <p className="mb-2 font-montserrat text-sm font-semibold text-[#2E2E2E]">
-                          Color:{" "}
-                          <span className="text-[#3730A3] font-bold">
-                            {selectedVariant?.title?.split(" / ")[1] ||
-                              "Default"}
-                          </span>
-                        </p>
-                        <div className="flex flex-wrap gap-3">
-                          {[
-                            ...new Set(
-                              variants
-                                .map(
-                                  (v) =>
-                                    (v.title || v.name || "").split(" / ")[1],
-                                )
-                                .filter(Boolean),
-                            ),
-                          ].map((color) => {
-                            const colorMap = {
-                              Black: "#1A1919",
-                              Navy: "#0F1121",
-                              White: "#FFFFFF",
-                              Beige: "#E8D9CC",
-                              Coffee: "#7A5C4A",
-                              Espresso: "#4B3621",
-                              Olive: "#556B2F",
-                            };
-                            return (
-                              <button
-                                key={color}
-                                type="button"
-                                onClick={() => {
-                                  const size = (
-                                    selectedVariant?.title ||
-                                    selectedVariant?.name ||
-                                    ""
-                                  ).split(" / ")[0];
-                                  const found =
-                                    variants.find(
-                                      (v) =>
-                                        (v.title || v.name || "").includes(
-                                          color,
-                                        ) &&
-                                        (v.title || v.name || "").startsWith(
-                                          size,
-                                        ),
-                                    ) ||
-                                    variants.find((v) =>
-                                      (v.title || v.name || "").includes(color),
-                                    );
-                                  if (found) setSelectedVariant(found);
-                                }}
-                                className={`w-8 h-8 rounded-full border-2 transition-all p-0.5 ${
-                                  (
-                                    selectedVariant?.title ||
-                                    selectedVariant?.name ||
-                                    ""
-                                  ).includes(color)
-                                    ? "border-[#CE9F2D] scale-110 shadow-md"
-                                    : "border-transparent hover:border-[#cfc6b8]"
-                                }`}
-                                title={color}
-                              >
-                                <div
-                                  className="w-full h-full rounded-full border border-gray-200"
-                                  style={{
-                                    backgroundColor: colorMap[color] || "#ddd",
-                                  }}
-                                />
-                              </button>
-                            );
-                          })}
+                              if (option.displayType === "color_swatch") {
+                                return (
+                                  <button
+                                    key={value}
+                                    type="button"
+                                    disabled={disabled}
+                                    onClick={() => matchingVariant && setSelectedVariant(matchingVariant)}
+                                    className={`h-9 w-9 rounded-full border-2 p-0.5 transition-all disabled:cursor-not-allowed disabled:opacity-40 ${isSelected ? "scale-110 border-[#CE9F2D] shadow-md" : "border-transparent hover:border-[#cfc6b8]"}`}
+                                    title={value}
+                                  >
+                                    <span
+                                      className="block h-full w-full rounded-full border border-gray-200"
+                                      style={{ backgroundColor: swatchValue?.startsWith("#") ? swatchValue : value }}
+                                    />
+                                  </button>
+                                );
+                              }
+
+                              return (
+                                <button
+                                  key={value}
+                                  type="button"
+                                  disabled={disabled}
+                                  onClick={() => matchingVariant && setSelectedVariant(matchingVariant)}
+                                  className={`min-h-[42px] min-w-[45px] rounded-[6px] border px-3 py-1 font-montserrat text-sm font-bold transition-all disabled:cursor-not-allowed disabled:opacity-40 ${isSelected ? "border-[#CE9F2D] bg-[#CE9F2D] text-white shadow-md" : "border-[#cfc6b8] bg-white text-[#2E2E2E] hover:border-[#CE9F2D]"}`}
+                                >
+                                  {value}
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
                   )}
 
@@ -855,7 +844,7 @@ export default function ProductDetailPage() {
                       type="button"
                       disabled={!inStock}
                       onClick={() => {
-                        addToCart(product, quantity);
+                        addToCart({ ...product, selectedVariant }, quantity);
                         navigate("/cart");
                       }}
                       className="w-full h-[54px] rounded-full bg-[#CE9F2D] text-white font-montserrat font-bold text-base shadow-lg hover:bg-[#b88d28] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -866,7 +855,7 @@ export default function ProductDetailPage() {
                       type="button"
                       disabled={!inStock}
                       onClick={() => {
-                        addToCart(product, quantity);
+                        addToCart({ ...product, selectedVariant }, quantity);
                         navigate("/checkout");
                       }}
                       className="w-full h-[54px] rounded-full border-2 border-[#CE9F2D] text-[#CE9F2D] font-montserrat font-bold text-base hover:bg-[#FAF6EE] transition-all disabled:opacity-50 disabled:cursor-not-allowed"

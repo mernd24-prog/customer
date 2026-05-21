@@ -850,8 +850,12 @@ export function CheckoutPage() {
         couponCode: values.couponCode || undefined,
         walletAmount: Number(values.walletAmount || 0),
         shippingAddress: values,
-        items: (cart.current?.items || []).map(({ productId, quantity }) => ({
-          productId,
+        items: (cart.current?.items || []).map(({ productId, product, quantity, variantId, variantSku, variantTitle, attributes }) => ({
+          productId: getProductId(productId || product),
+          variantId: variantId || undefined,
+          variantSku: variantSku || undefined,
+          variantTitle: variantTitle || undefined,
+          attributes: attributes || {},
           quantity,
         })),
       }),

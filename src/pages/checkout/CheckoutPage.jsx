@@ -99,8 +99,12 @@ export default function CheckoutPage() {
         couponCode: values.couponCode || undefined,
         walletAmount: Number(values.walletAmount || 0),
         shippingAddress,
-        items: items.map(({ productId, _safeId, quantity }) => ({
+        items: items.map(({ productId, _safeId, quantity, variantId, variantSku, variantTitle, attributes }) => ({
           productId: typeof productId === "object" ? _safeId : productId,
+          variantId: variantId || undefined,
+          variantSku: variantSku || undefined,
+          variantTitle: variantTitle || undefined,
+          attributes: attributes || {},
           quantity,
         })),
       }),
