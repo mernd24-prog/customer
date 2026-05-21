@@ -24,7 +24,9 @@ const SORT_OPTIONS = [
 const PAGE_SIZES = [12, 24, 48];
 
 function slugToBrandName(slug = "") {
-  return slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return decodeURIComponent(slug)
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function brandToSlug(name = "") {
@@ -46,6 +48,7 @@ function LoadingSkeleton() {
 
 export default function BrandPage() {
   const { brandSlug } = useParams();
+  const decodedBrandSlug = decodeURIComponent(brandSlug || "");
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -74,7 +77,7 @@ export default function BrandPage() {
     setItems([]);
     setFirstLoadDone(false);
 
-    dispatch(fetchBrands({ limit: 200 }))
+    dispatch(fetchBrands({ limit: 100 }))
       .then((action) => {
         const data = action?.payload?.data;
         const list = Array.isArray(data)
@@ -85,15 +88,19 @@ export default function BrandPage() {
               ? data.list
               : [];
 
-        const matched = list.find(
-          (b) => brandToSlug(b?.name || b?.brandName || b?.title || "") === brandSlug,
-        );
+        const matched = list.find((b) => {
+          const name = b?.name || b?.brandName || b?.title || "";
+          return (
+            brandToSlug(name) === brandToSlug(decodedBrandSlug) ||
+            name.toLowerCase() === decodedBrandSlug.toLowerCase()
+          );
+        });
 
         if (matched) {
           setBrand(matched);
         } else {
           // Fallback: fuzzy match by approximate name
-          const nameGuess = slugToBrandName(brandSlug);
+          const nameGuess = slugToBrandName(decodedBrandSlug);
           const fuzzy = list.find(
             (b) => (b?.name || b?.brandName || b?.title || "").toLowerCase() === nameGuess.toLowerCase(),
           );
@@ -109,7 +116,7 @@ export default function BrandPage() {
         setBrandError("Failed to load brand");
         setBrandLoading(false);
       });
-  }, [brandSlug, dispatch]);
+  }, [decodedBrandSlug, dispatch]);
 
   const brandName = brand?.name || brand?.brandName || brand?.title || slugToBrandName(brandSlug);
 
@@ -263,7 +270,7 @@ export default function BrandPage() {
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
-    { label: "Brands", href: "/products" },
+    { label: "Brands", href: "/brands" },
     { label: brandName },
   ];
 
@@ -283,8 +290,8 @@ export default function BrandPage() {
         <p className="mt-2 font-montserrat text-sm text-[#787878]">
           The brand you're looking for doesn't exist or may have been removed.
         </p>
-        <Link to="/products" className="button primary mt-6 inline-block px-6 py-2">
-          Browse All Products
+        <Link to="/brands" className="button primary mt-6 inline-block px-6 py-2">
+          Browse All Brands
         </Link>
       </div>
     );
