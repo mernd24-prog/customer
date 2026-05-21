@@ -18,7 +18,7 @@ import {
 import Seo from "../../components/common/Seo";
 import Button from "../../components/common/buttons/Button";
 import { ContactHero, ReasonCard, SectionIntro } from "./ContactUs";
-import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
+import { useCmsRecord } from "../../hooks/useCmsRecord";
 
 const commonQuestions = [
   {
@@ -71,12 +71,11 @@ function getTopicIcon(title = "") {
   return match?.[1] || PackageOpen;
 }
 
-function normalizeHelpTopics(cmsData) {
-  const cmsPoints = Array.isArray(cmsData?.points) ? cmsData.points : [];
-  const sectionItems = Array.isArray(cmsData?.sections)
-    ? cmsData.sections.flatMap((section) => section?.points || section?.items || [])
-    : [];
-  const candidates = [...cmsPoints, ...sectionItems]
+function normalizeHelpTopics(page) {
+  const sections = Array.isArray(page?.sections) ? page.sections : [];
+  const allPoints = sections.flatMap((s) => s?.points || []);
+  const rootPoints = Array.isArray(page?.points) ? page.points : [];
+  const candidates = [...allPoints, ...rootPoints]
     .filter((item) => item?.title)
     .slice(0, 8)
     .map((item, index) => ({
@@ -153,21 +152,13 @@ function OptionCard({ option }) {
 
 export default function SupportHelpCenter() {
   const { page } = useCmsRecord("help-contact");
-  const cmsData = useMemo(
-    () =>
-      getCmsPayload(page, {
-        title: "Help & Support Centre",
-        description: "Find answers, get support, and connect with our team.",
-      }),
-    [page],
-  );
-  const pageTitle = cmsData?.title || page?.title || "Help & Support Centre";
+
+  const pageTitle = page?.title || "Help & Support Centre";
   const pageDescription =
-    cmsData?.description ||
     page?.description ||
     page?.excerpt ||
     "Find answers, get support, and connect with our team.";
-  const topics = useMemo(() => normalizeHelpTopics(cmsData), [cmsData]);
+  const topics = useMemo(() => normalizeHelpTopics(page), [page]);
 
   return (
     <>
