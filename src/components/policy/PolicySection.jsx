@@ -5,21 +5,6 @@ const PolicySection = ({ title, points, description, footer }) => {
   console.log("this is the points", points);
   return (
     <section className="group py-2 md:py-3 mt-3 first:mt-0">
-      {/* <div className="flex items-center gap-4 mb-3">
-        <h3
-          className="text-xl md:text-2xl font-bold font-montserrat m-0"
-          style={{ color: "#2E2E2E" }}
-        >
-          {title}
-        </h3>
-      </div>
-
-      {description && (
-        <p className="text-muted leading-relaxed tracking-wide text-[15px] md:text-[16.5px] mb-2 font-montserrat">
-          {description}
-        </p>
-      )} */}
-
       {points && (
         <ul className="space-y-4">
           {points.map((point, pIdx) => (
