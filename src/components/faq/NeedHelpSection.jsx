@@ -1,4 +1,5 @@
 import Button from "../ui/Button";
+import { useNavigate } from "react-router-dom";
 
 export default function NeedHelpSection({
   heading1,
@@ -8,6 +9,7 @@ export default function NeedHelpSection({
   isFullWidth = true,
   layout = "col",
 }) {
+  const navigate = useNavigate();
   return (
     <section
       className={`${
@@ -42,6 +44,7 @@ export default function NeedHelpSection({
             ? "!bg-[#3E4094] !border-none !text-white hover:!bg-[#1B1D60] md:mt-0 md:ml-6"
             : "!bg-white !text-[#4E4E4E] border border-[#666666] hover:!bg-[#F5F5F5] min-h-[52px] sm:min-h-[60px] md:min-h-[68px] w-[180px] sm:w-[200px] md:w-[213px]"
         }`}
+        onClick={() => navigate("/help-contact")}
       />
     </section>
   );

@@ -139,7 +139,7 @@ export function HomePage() {
         heading1="Shopping Made Easy"
         heading2=""
         description="Enjoy reliablity ,secure dileveries and hassle free returns. Shop with confidence at Sam Global."
-        buttonText="Contact Us"
+        buttonText="Contact Support"
       />
 
       <MothersDaySwiper data={cmsBannerSlides} />

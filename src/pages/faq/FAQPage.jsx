@@ -68,6 +68,7 @@ export default function FAQPage() {
   const description =
     faqCmsData?.description ||
     "Quick answers for common shopping questions.";
+  const ctaText = "Contact Support";
 
   const seoTitle =
     faqPage?.metadata?.seoTitle ||

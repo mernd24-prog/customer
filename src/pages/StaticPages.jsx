@@ -137,6 +137,7 @@ export function SupportCenterPage() {
               description={topic.description}
               to={topic.href}
               actionLabel="Get help"
+              
             />
           ))}
         </CardGridSection>
@@ -162,7 +163,7 @@ export function SupportCenterPage() {
                 title="Contact support"
                 description="Get help with orders, account updates, and returns."
                 to="/support"
-                actionLabel="Contact us"
+                actionLabel="Contact Support"
               />
               <InfoCard
                 icon={<ShieldCheck size={24} />}
