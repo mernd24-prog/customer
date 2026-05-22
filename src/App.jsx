@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { AuthModalProvider } from "./context/AuthModalContext";
 import AppLayout from "./layouts/AppLayout";
 import {
   AdminOnlyRoute,
@@ -150,6 +151,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <AuthModalProvider>
       <ScrollToTop />
       <Routes>
         <Route element={<AppLayout />}>
@@ -400,6 +402,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
+      </AuthModalProvider>
     </BrowserRouter>
   );
 }

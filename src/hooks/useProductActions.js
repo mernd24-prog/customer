@@ -9,10 +9,14 @@ import {
   wishlistPayload,
 } from "../utils/ecommerce";
 import { useToastThunk } from "./useToastThunk";
+import { useAuthModal } from "../context/AuthModalContext";
 
 export function useProductActions() {
   const dispatch = useDispatch();
   const run = useToastThunk();
+  const { openAuthModal } = useAuthModal();
+
+  const user = useSelector((state) => state.auth.current);
   const cart = useSelector((state) => state.cart.current);
   const wishlist = useSelector((state) => state.cart.current?.wishlist);
   const wishlistIds = useMemo(
@@ -25,37 +29,52 @@ export function useProductActions() {
     [wishlistIds],
   );
 
-  const addToCart = useCallback(async (product, quantity = 1) => {
-    const result = await run(
-      dispatch,
-      updateCart(addProductToCartPayload(cart, product, quantity)),
-      "Added to cart",
-    );
-    dispatch(openAddedToCartModal({ product }));
-    return result;
-  }, [cart, dispatch, run]);
+  const addToCart = useCallback(
+    async (product, quantity = 1) => {
+      if (!user) {
+        openAuthModal();
+        return;
+      }
+      const result = await run(
+        dispatch,
+        updateCart(addProductToCartPayload(cart, product, quantity)),
+        "Added to cart",
+      );
+      dispatch(openAddedToCartModal({ product }));
+      return result;
+    },
+    [cart, dispatch, run, user, openAuthModal],
+  );
 
   const toggleWishlist = useCallback(
     (product) => {
+      if (!user) {
+        openAuthModal();
+        return;
+      }
       const added = isWishlisted(product);
-
       return run(
         dispatch,
         updateCart(wishlistPayload(cart, product, added)),
         added ? "Removed from wishlist" : "Saved to wishlist",
       );
     },
-    [cart, dispatch, isWishlisted, run],
+    [cart, dispatch, isWishlisted, run, user, openAuthModal],
   );
 
   const removeFromWishlist = useCallback(
-    (product) =>
-      run(
+    (product) => {
+      if (!user) {
+        openAuthModal();
+        return;
+      }
+      return run(
         dispatch,
         updateCart(wishlistPayload(cart, product, true)),
         "Removed from wishlist",
-      ),
-    [cart, dispatch, run],
+      );
+    },
+    [cart, dispatch, run, user, openAuthModal],
   );
 
   return {

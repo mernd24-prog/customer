@@ -148,7 +148,7 @@ export function HomePage() {
         <HomeProductsForYouSection />
       </div>
 
-      <div className="m-14">
+      {/* <div className="m-14">
         <h2 className="text-3xl font-bold">All varities of the Buttons</h2>
         <div className="flex flex-wrap gap-4">
           <PrimaryGradientButton>Primary Button</PrimaryGradientButton>
@@ -159,14 +159,12 @@ export function HomePage() {
           <ButtonWithIcon icon={<FaRegHeart />}>Shop Nowssss</ButtonWithIcon>
           <PriceButton currentPrice="₹1,499" originalPrice="₹1,499" />
         </div>
-      </div>
+      </div> */}
 
       {/* GLOBAL CARD EXAMPLES */}
-      <div className="m-14">
-        {/* --- Using Pre-configured Static Wrappers --- */}
+      <div className=" ">
         <div className="flex flex-wrap items-start gap-6">
-          {/* 1. ProductCard — wishlist + cart shown on hover */}
-          <ProductCard
+          {/* <ProductCard
             title="Lace & Beads long sleeve ruffle hem maxi dress in white polka dot"
             rating={4}
             price="₹ 993.00"
@@ -175,7 +173,7 @@ export function HomePage() {
             customWidth="260px"
             onWishlist={() => alert("Added to wishlist!")}
             onAddToCart={() => alert("Added to cart!")}
-          />
+          /> */}
 
           {/* <CategoryPriceCard
             category="Men's Wear"
@@ -185,8 +183,8 @@ export function HomePage() {
             customWidth="260px"
           /> */}
 
-          {/* 3. DealGridCard — two images with individual prices */}
-          <DealGridCard
+        
+          {/* <DealGridCard
             badge="March"
             title="Trendy Outfits for Men & Women"
             subtitle="66K+ Views"
@@ -203,9 +201,9 @@ export function HomePage() {
               },
             ]}
             customWidth="460px"
-          />
+          /> */}
 
-          {/* 4. FourGridCard — 2x2 image grid */}
+{/*          
           <FourGridCard
             title="Trending in Women's Fashion"
             images={[
@@ -215,14 +213,13 @@ export function HomePage() {
               { src: "/image/png/men-fashion.png" },
             ]}
             customWidth="260px"
-          />
+          /> */}
 
-          {/* 5. CategoryCard — golden border */}
-          <CategoryCard
+          {/* <CategoryCard
             category="Women's Fashion"
             images={[{ src: "/image/png/jacket.png" }]}
             customWidth="180px"
-          />
+          /> */}
         </div>
       </div>
     </>

@@ -67,12 +67,27 @@ export default {
           "0%": { transform: "translateY(0)", opacity: "1" },
           "100%": { transform: "translateY(-100%)", opacity: "0" },
         },
+        "modal-in": {
+          "0%": { opacity: "0", transform: "scale(0.95) translateY(12px)" },
+          "100%": { opacity: "1", transform: "scale(1) translateY(0)" },
+        },
+        "sheet-in": {
+          "0%": { opacity: "0", transform: "translateY(100%)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "overlay-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
       },
       animation: {
         "slide-fade-in": "slide-fade-in 0.3s ease-out forwards",
         "slide-fade-out": "slide-fade-out 0.3s ease-in forwards",
         "slide-down": "slide-down 0.3s ease-out forwards",
         "slide-up": "slide-up 0.3s ease-in forwards",
+        "modal-in": "modal-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards",
+        "sheet-in": "sheet-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards",
+        "overlay-in": "overlay-in 0.18s ease-out forwards",
       },
     },
   },
