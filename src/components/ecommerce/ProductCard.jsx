@@ -67,7 +67,7 @@ export default function ProductCard({
     if (!brand) return;
     event.preventDefault();
     event.stopPropagation();
-    navigate(`/products?brand=${encodeURIComponent(brand)}`);
+    navigate(`/brands/${encodeURIComponent(brand)}`);
   };
 
   const handleImageError = (event) => {

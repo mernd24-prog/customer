@@ -49,6 +49,7 @@ import ProductsPage from "./pages/products/ProductsPage";
 import ProductDetailPage from "./pages/products/ProductDetailPage";
 import CategoryPage from "./pages/category/CategoryPage";
 import BrandPage from "./pages/brand/BrandPage";
+import BrandListingPage from "./pages/brand/BrandListingPage";
 import SearchPage from "./pages/search/SearchPage";
 import CmsPage from "./pages/cms/CmsPage";
 
@@ -259,7 +260,11 @@ export default function App() {
             />
             <Route path="/about-us" element={<AboutPage />} />
 
+            <Route path="/categories/brand" element={<BrandListingPage />} />
+            <Route path="/categories/brand/:brandSlug" element={<BrandPage />} />
+            <Route path="/categories/brands/:brandSlug" element={<BrandPage />} />
             <Route path="/categories/:categoryKey" element={<CategoryPage />} />
+            <Route path="/brands" element={<BrandListingPage />} />
             <Route path="/brands/:brandSlug" element={<BrandPage />} />
             <Route path="/cms/:slug" element={<CmsPage />} />
             <Route path="/backend-gaps" element={<BackendGapNotes />} />

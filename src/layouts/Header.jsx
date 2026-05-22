@@ -52,6 +52,7 @@ const baseAccountMenuItems = [
 
 const DEFAULT_TOP_NAV_LINKS = [
   { name: "Deals", path: "/deals" },
+  { name: "Brands", path: "/brands" },
   { name: "Brand Outlet", path: "/brand-outlet" },
   { name: "Gift Card", path: "/gift-cards" },
   { name: "Help & Contact", path: "/help-contact" },
@@ -169,6 +170,7 @@ export const TopHeader = () => {
   const sellDropdownCms = getCmsPayload(headerSellPage, DEFAULT_SELL_DROPDOWN);
   const topLinks = [
     { name: dealsPage?.title || "Deals", path: "/deals" },
+    { name: "Brands", path: "/brands" },
     { name: brandOutletPage?.title || "Brand Outlet", path: "/brand-outlet" },
     { name: giftCardsPage?.title || "Gift Card", path: "/gift-cards" },
     { name: helpContactPage?.title || "Help & Contact", path: "/help-contact" },
