@@ -104,7 +104,7 @@ export function HomePage() {
       <Banner />
 
       <HomeCategoryGrid
-        categories={categories?.slice(0, 5)}
+        categories={categories?.slice(7, 12)}
         loading={false}
         title="Time for a spring refresh"
       />
