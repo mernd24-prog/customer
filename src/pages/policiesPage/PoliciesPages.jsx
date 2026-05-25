@@ -39,6 +39,10 @@ const policyConfig = {
   },
 };
 
+function cleanPolicyText(value = "") {
+  return String(value || "").replace(/^\s*:\s*/, "").trim();
+}
+
 const PolicyPage = () => {
   const location = useLocation();
 
@@ -65,8 +69,8 @@ const PolicyPage = () => {
             description: section.description || "",
             points: Array.isArray(section.points)
               ? section.points.map((point) => ({
-                title: point.title || "",
-                description: point.description || "",
+                title: cleanPolicyText(point.title),
+                description: cleanPolicyText(point.description),
                 image: point.image || null,
                 cta: point.cta || null,
                 sortOrder: point.sortOrder || 0,
@@ -83,7 +87,13 @@ const PolicyPage = () => {
           {
             title: cmsData.title || config?.fallbackTitle,
             description: cmsData.description || cmsData.excerpt || "",
-            points: cmsData.points || [],
+            points: Array.isArray(cmsData.points)
+              ? cmsData.points.map((point) => ({
+                ...point,
+                title: cleanPolicyText(point.title),
+                description: cleanPolicyText(point.description),
+              }))
+              : [],
             footer: cmsData.footer || "",
           },
         ];

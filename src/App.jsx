@@ -50,6 +50,8 @@ import ProductDetailPage from "./pages/products/ProductDetailPage";
 import CategoryPage from "./pages/category/CategoryPage";
 import BrandPage from "./pages/brand/BrandPage";
 import BrandListingPage from "./pages/brand/BrandListingPage";
+import BrandOutletPage from "./pages/brand/BrandOutletPage";
+
 import SearchPage from "./pages/search/SearchPage";
 import CmsPage from "./pages/cms/CmsPage";
 
@@ -189,12 +191,9 @@ export default function App() {
           <Route path="/deals" element={<CmsPage slugOverride="deals" />} />
           <Route
             path="/brand-outlet"
-            element={<CmsPage slugOverride="brand-outlet" />}
+            element={<BrandOutletPage />}
           />
-          <Route
-            path="/gift-cards"
-            element={<CmsPage slugOverride="gift-cards" />}
-          />
+         
           <Route
             path="/who-we-are"
             element={<CmsPage slugOverride="who-we-are" />}

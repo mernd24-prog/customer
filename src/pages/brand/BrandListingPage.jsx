@@ -3,10 +3,23 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Seo from "../../components/common/Seo";
 import { Breadcrumbs, BrandCard } from "../../components/ecommerce";
+import CUSTOMER_ROUTES from "../../constants/routes";
 import { fetchBrands } from "../../features/catalog/catalogSlice";
 
 function getBrandName(brand = {}) {
   return brand.name || brand.brandName || brand.title || brand.code || "";
+}
+
+function slugifyBrand(value = "") {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function getBrandRouteKey(brand = {}) {
+  return brand.slug || brand.code || slugifyBrand(getBrandName(brand));
 }
 
 function getBrandImage(brand = {}) {
@@ -108,7 +121,7 @@ export default function BrandListingPage() {
                 image={brand.displayImage}
                 subtitle={brand.description}
                 productCount={brand.productCount}
-                href={`/brands/${encodeURIComponent(brand.displayName)}`}
+                href={CUSTOMER_ROUTES.brand(encodeURIComponent(getBrandRouteKey(brand)))}
               />
             ))}
           </div>
