@@ -6,98 +6,64 @@ import FAQHeroSection from "../../components/faq/FAQHeroSection";
 import FAQSearchSection from "../../components/faq/FAQSearchBar";
 import NeedHelpSection from "../../components/faq/NeedHelpSection";
 
-import {
-  useCmsRecord,
-  getCmsPayload,
-} from "../../hooks/useCmsRecord";
+import { useCmsRecord, getCmsPayload } from "../../hooks/useCmsRecord";
 
 export default function FAQPage() {
-  // Fetch FAQ CMS Page By Slug
   const { page: faqPage } = useCmsRecord("faq");
 
-  const faqCmsData = useMemo(
-    () => getCmsPayload(faqPage, null),
-    [faqPage]
-  );
+  const faqCmsData = useMemo(() => {
+    return getCmsPayload(faqPage, null);
+  }, [faqPage]);
 
-  // FAQ Questions
   const faqs = useMemo(() => {
-  const sections =
-    faqPage?.data?.sections ||
-    faqCmsData?.sections ||
-    [];
+    const sections = faqCmsData?.sections || [];
 
-  return sections.flatMap(
-    (section, sectionIndex) => {
-      const topic =
-        section?.title || "FAQ'S";
+    return sections.flatMap((section, sectionIndex) => {
+      const topic = section?.title || "FAQ";
 
-      const points = Array.isArray(
-        section?.points
-      )
-        ? section.points
-        : [];
+      const points = Array.isArray(section?.points) ? section.points : [];
 
       return points
         .map((point, pointIndex) => ({
-          cmsKey:
-            point?.cmsKey ||
-            `faq-${sectionIndex}-${pointIndex}`,
-
+          cmsKey: point?.cmsKey || `faq-${sectionIndex}-${pointIndex}`,
           topic,
-
-          question:
-            point?.title || "",
-
-          answer:
-            point?.description || "",
+          question: point?.title || "",
+          answer: point?.description || "",
         }))
-        .filter(
-          (item) =>
-            item.question &&
-            item.answer
-        );
-    }
-  );
-}, [faqPage, faqCmsData]);
+        .filter((item) => item.question && item.answer);
+    });
+  }, [faqCmsData]);
 
-  const title =
-    faqCmsData?.title ||
-    "Frequently Asked Questions";
+  const title = faqCmsData?.title || "Frequently Asked Questions";
 
   const description =
-    faqCmsData?.description ||
-    "Quick answers for common shopping questions.";
-  const ctaText =
-    faqCmsData?.cta?.label ||
-    faqPage?.cta?.label ||
-    "Contact Support";
+    faqCmsData?.description || "Quick answers for common shopping questions.";
 
-  const seoTitle =
-    faqPage?.metadata?.seoTitle ||
-    title;
+  const excerpt = faqCmsData?.excerpt || "FAQ";
 
-  const seoDescription =
-    faqPage?.metadata?.seoDescription ||
-    description;
+  const ctaText = faqCmsData?.cta?.label || "Contact Support";
 
+  const seoTitle = faqCmsData?.seo?.metaTitle || title;
 
+  const seoDescription = faqCmsData?.seo?.metaDescription || description;
+
+  const needHelpSection = faqCmsData?.sections?.find((section) =>
+    section?.title?.toLowerCase().includes("need more help"),
+  );
 
   return (
     <>
-      <Seo
-        title={seoTitle}
-        description={seoDescription}
-      />
+      <Seo title={seoTitle} description={seoDescription} />
 
       <FAQHeroSection
         eyebrow={faqCmsData?.eyebrow}
         title={title}
         description={description}
+        image={faqCmsData?.heroImage || faqCmsData?.coverImage}
       />
 
-      <h1 className="text-3xl font-bold text-center mt-10 uppercase">
-         {faqPage?.excerpt}
+      <h1 className="mt-10 text-center text-3xl font-bold uppercase">
+        {excerpt}
       </h1>
 
       <FAQSearchSection />
@@ -105,9 +71,11 @@ export default function FAQPage() {
       <FAQContentSection faqs={faqs} />
 
       <NeedHelpSection
-        heading1="Need More Help?"
-        heading2="We’re here for you."
-        description="Get the help you need from our automated assistant, or contact an agent"
+        heading1={needHelpSection?.title || "Need More Help?"}
+        description={
+          needHelpSection?.description ||
+          "Get the help you need from our automated assistant, or contact an agent"
+        }
         buttonText={ctaText}
       />
     </>

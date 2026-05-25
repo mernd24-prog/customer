@@ -35,7 +35,7 @@ export default function ProductResultsLayout({
       <ActiveFilterChips filters={filters} onRemove={onRemoveFilter} onClear={onClearFilters} />
 
       <div className="flex gap-6">
-        <div className="hidden lg:block">
+        <div className="hidden lg:block lg:sticky lg:top-5 lg:self-start ">
           <ProductFilterSidebar sections={filterSections} />
         </div>
 

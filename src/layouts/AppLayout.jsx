@@ -4,6 +4,7 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import AddedToCartModal from "../components/cart/AddedToCartModal";
 import { closeAddedToCartModal } from "../features/cart/cartUiSlice";
+import ScrollTopButton from "../components/common/ScrollTopButton";
 
 const EMPTY_ITEMS = [];
 
@@ -21,6 +22,7 @@ export default function AppLayout() {
         <Outlet />
       </main>
       <Footer />
+      <ScrollTopButton />
       <AddedToCartModal
         open={addedModalOpen}
         onClose={() => dispatch(closeAddedToCartModal())}

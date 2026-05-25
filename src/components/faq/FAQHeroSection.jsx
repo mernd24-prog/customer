@@ -1,5 +1,5 @@
 export default function FAQHeroSection({
-  title = "Frequently Asked Questions",
+  title = "",
   eyebrow = "",
   description = "",
 }) {

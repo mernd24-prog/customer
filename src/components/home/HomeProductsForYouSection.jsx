@@ -34,7 +34,7 @@ export default function HomeProductsForYouSection({
   ).slice(0, limit);
 
   return (
-    <section className="mt-8 rounded-[10px] bg-[#F7F6F500] p-5 sm:p-4 lg:p-6">
+    <section className="mt-8 rounded-[10px] bg-[#F7F6F500] p-5 sm:p-2 lg:p-2">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-montserrat text-[16px] font-semibold text-[#2E2E2E] sm:text-[18px]">
           {title}

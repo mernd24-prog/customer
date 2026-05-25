@@ -6,7 +6,10 @@ import Seo from "../../components/common/Seo";
 import { BrandCard } from "../../components/ecommerce";
 import ProductFilterSidebar from "../../components/ecommerce/ProductFilterSidebar";
 import CUSTOMER_ROUTES from "../../constants/routes";
-import { fetchBrands, fetchCategories } from "../../features/catalog/catalogSlice";
+import {
+  fetchBrands,
+  fetchCategories,
+} from "../../features/catalog/catalogSlice";
 
 function listFromPayload(payload) {
   const data = payload?.data ?? payload;
@@ -19,7 +22,14 @@ function listFromPayload(payload) {
 }
 
 function getCategoryLabel(category = {}) {
-  return category.title || category.name || category.label || category.categoryKey || category.key || "";
+  return (
+    category.title ||
+    category.name ||
+    category.label ||
+    category.categoryKey ||
+    category.key ||
+    ""
+  );
 }
 
 function slugifyCategory(value = "") {
@@ -60,7 +70,14 @@ function getBrandRouteKey(brand = {}) {
 
 function getBrandLogo(brand = {}) {
   if (typeof brand === "string") return "";
-  return brand.logoUrl || brand.logo || brand.imageUrl || brand.image || brand.thumbnailUrl || "";
+  return (
+    brand.logoUrl ||
+    brand.logo ||
+    brand.imageUrl ||
+    brand.image ||
+    brand.thumbnailUrl ||
+    ""
+  );
 }
 
 function OutletLinkList({ items, getHref }) {
@@ -124,11 +141,11 @@ export default function BrandOutletPage() {
   const brands = useMemo(
     () =>
       brandList
-      .filter((brand) => getBrandName(brand))
-      .map((brand) => ({
-        ...brand,
-        discount: `Shop ${getBrandName(brand)}`,
-      })),
+        .filter((brand) => getBrandName(brand))
+        .map((brand) => ({
+          ...brand,
+          discount: `Shop ${getBrandName(brand)}`,
+        })),
     [brandList],
   );
 
@@ -152,7 +169,9 @@ export default function BrandOutletPage() {
         content: (
           <OutletLinkList
             items={sidebarBrands}
-            getHref={(brand) => CUSTOMER_ROUTES.brand(encodeURIComponent(brand.key))}
+            getHref={(brand) =>
+              CUSTOMER_ROUTES.brand(encodeURIComponent(brand.key))
+            }
           />
         ),
       },
@@ -168,44 +187,54 @@ export default function BrandOutletPage() {
       />
 
       <main className="bg-white font-montserrat text-[#191919]">
-        <div className="mx-auto grid w-full max-w-[1470px] grid-cols-1 gap-6 px-3 py-5 sm:px-5 sm:py-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-8 lg:px-8">
-          <aside className="hidden lg:block">
-            <ProductFilterSidebar sections={sidebarSections} className="sticky top-4" />
+        <div className="mx-auto grid w-full max-w-[1470px] grid-cols-1 gap-6 px-3 py-5 sm:px-5 sm:py-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10 lg:px-8">
+          <aside className="hidden lg:block  ">
+            <div className="hidden lg:block lg:sticky lg:top-5 lg:self-start ">
+              <ProductFilterSidebar sections={sidebarSections} />
+            </div>
           </aside>
 
           <div className="min-w-0">
             <div className="mb-6 grid gap-4 lg:hidden">
               {sidebarCategories.length > 0 && (
-              <div className="min-w-0">
-                <h2 className="mb-2 text-sm font-bold sm:text-base">Shop by category</h2>
-                <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
-                  {sidebarCategories.map((category) => (
-                    <Link
-                      key={category.key}
-                      to={CUSTOMER_ROUTES.category(encodeURIComponent(category.key))}
-                      className="shrink-0 rounded-full border border-[#d8d8d8] px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
-                    >
-                      {category.label}
-                    </Link>
-                  ))}
+                <div className="min-w-0">
+                  <h2 className="mb-2 text-sm font-bold sm:text-base">
+                    Shop by category
+                  </h2>
+                  <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
+                    {sidebarCategories.map((category) => (
+                      <Link
+                        key={category.key}
+                        to={CUSTOMER_ROUTES.category(
+                          encodeURIComponent(category.key),
+                        )}
+                        className="shrink-0 rounded-full border border-[#d8d8d8] px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
+                      >
+                        {category.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
               )}
               {sidebarBrands.length > 0 && (
-              <div className="min-w-0">
-                <h2 className="mb-2 text-sm font-bold sm:text-base">Shop by brand</h2>
-                <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
-                  {sidebarBrands.slice(0, 16).map((brand) => (
-                    <Link
-                      key={brand.key}
-                      to={CUSTOMER_ROUTES.brand(encodeURIComponent(brand.key))}
-                      className="shrink-0 rounded-full border border-[#d8d8d8] px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
-                    >
-                      {brand.label}
-                    </Link>
-                  ))}
+                <div className="min-w-0">
+                  <h2 className="mb-2 text-sm font-bold sm:text-base">
+                    Shop by brand
+                  </h2>
+                  <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
+                    {sidebarBrands.slice(0, 16).map((brand) => (
+                      <Link
+                        key={brand.key}
+                        to={CUSTOMER_ROUTES.brand(
+                          encodeURIComponent(brand.key),
+                        )}
+                        className="shrink-0 rounded-full border border-[#d8d8d8] px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
+                      >
+                        {brand.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
               )}
             </div>
 
@@ -231,9 +260,11 @@ export default function BrandOutletPage() {
                         key={getBrandRouteKey(brand)}
                         name={name}
                         image={getBrandLogo(brand)}
-                        subtitle={brand.discount || `Shop ${name}`}
-                        href={CUSTOMER_ROUTES.brand(encodeURIComponent(getBrandRouteKey(brand)))}
-                        className="p-3 sm:p-4 [&_div:first-child]:h-16 [&_div:first-child]:w-16 [&_div:first-child]:rounded-[14px] [&_div:first-child]:bg-[#f4f4f4] sm:[&_div:first-child]:h-20 sm:[&_div:first-child]:w-20 lg:[&_div:first-child]:h-24 lg:[&_div:first-child]:w-24 xl:[&_div:first-child]:h-28 xl:[&_div:first-child]:w-28"
+                        subtitle=""
+                        href={CUSTOMER_ROUTES.brand(
+                          encodeURIComponent(getBrandRouteKey(brand)),
+                        )}
+                        className="min-h-0 items-center border-0 bg-transparent p-0 text-center shadow-none hover:translate-y-0 hover:border-transparent hover:shadow-none [&>div:first-child]:h-[150px] [&>div:first-child]:w-[150px] [&>div:first-child]:rounded-[14px] [&>div:first-child]:border-0 [&>div:first-child]:bg-[#f4f4f4] [&>div:first-child]:p-7 [&>div:first-child_img]:max-h-[90px] [&>div:first-child_img]:max-w-[112px] [&>div:nth-child(2)]:mt-2 [&>div:nth-child(2)]:flex-none [&>div:nth-child(2)_p]:hidden"
                       />
                     );
                   })}
