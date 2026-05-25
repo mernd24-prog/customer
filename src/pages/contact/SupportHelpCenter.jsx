@@ -2,52 +2,22 @@ import { useMemo } from "react";
 import {
   Boxes,
   CircleDollarSign,
-  HandCoins,
   PackageCheck,
   PackageOpen,
   RefreshCcw,
-  Search,
   ShieldCheck,
   Store,
   Truck,
   UserCheck,
-  Users,
   WalletCards,
 } from "lucide-react";
 
 import Seo from "../../components/common/Seo";
 import Button from "../../components/common/buttons/Button";
-import { ContactHero, ReasonCard, SectionIntro } from "./ContactUs";
+import FAQHeroSection from "../../components/faq/FAQHeroSection";
+import SearchBar from "../../components/ui/SearchBar";
+import { ReasonCard, SectionIntro } from "./ContactUs";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
-
-const commonQuestions = [
-  {
-    title: "Where is my order?",
-    description: "Track your order status in real-time through your account dashboard.",
-    icon: PackageCheck,
-  },
-  {
-    title: "How do returns work?",
-    description: "Simple and hassle-free return process within the defined return window.",
-    icon: HandCoins,
-  },
-  {
-    title: "Payment Methods",
-    description: "We support secure payments via cards, UPI, net banking, and wallets.",
-    icon: WalletCards,
-  },
-];
-
-const helpTopics = [
-  { title: "Return & Refunds", icon: RefreshCcw },
-  { title: "Tracking", icon: Truck, active: true },
-  { title: "Paying", icon: CircleDollarSign },
-  { title: "Selling Fees", icon: Store },
-  { title: "Shipping Labels", icon: Boxes },
-  { title: "Selling Protection", icon: ShieldCheck },
-  { title: "Account Security", icon: UserCheck },
-  { title: "Verification", icon: PackageOpen },
-];
 
 const topicIconByTitle = {
   order: PackageCheck,
@@ -61,6 +31,7 @@ const topicIconByTitle = {
   verification: PackageOpen,
   shipping: Boxes,
   security: ShieldCheck,
+  wallet: WalletCards,
 };
 
 function getTopicIcon(title = "") {
@@ -71,56 +42,117 @@ function getTopicIcon(title = "") {
   return match?.[1] || PackageOpen;
 }
 
-function normalizeHelpTopics(page) {
+function parseBodySections(body = "") {
+  if (!body) return [];
+
+  const sections = [];
+  let current = null;
+
+  body.split(/\n+/).forEach((line) => {
+    const value = line.trim();
+    if (!value) return;
+
+    if (value.startsWith("## ")) {
+      current = {
+        title: value.replace(/^##\s+/, "").trim(),
+        description: "",
+      };
+      sections.push(current);
+      return;
+    }
+
+    if (value.startsWith("# ")) return;
+
+    if (current) {
+      current.description = [current.description, value]
+        .filter(Boolean)
+        .join(" ");
+    }
+  });
+
+  return sections.filter((section) => section.title);
+}
+
+function normalizeKey(value = "") {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function getSection(page, names) {
   const sections = Array.isArray(page?.sections) ? page.sections : [];
-  const allPoints = sections.flatMap((s) => s?.points || []);
-  const rootPoints = Array.isArray(page?.points) ? page.points : [];
-  const candidates = [...allPoints, ...rootPoints]
+  const normalizedNames = names.map(normalizeKey);
+
+  return sections.find((section) => {
+    const sectionKeys = [section?.type, section?.title].map(normalizeKey);
+
+    return sectionKeys.some((key) => normalizedNames.includes(key));
+  });
+}
+
+function getSectionTitle(section) {
+  return section?.title || section?.type || "";
+}
+
+function mapCards(items = []) {
+  return items
     .filter((item) => item?.title)
-    .slice(0, 8)
     .map((item, index) => ({
       title: item.title,
       description: item.description,
       icon: getTopicIcon(item.title),
       active: index === 1,
     }));
-
-  return candidates.length ? candidates : helpTopics;
 }
 
-const options = [
-  { title: "Ask the Community", icon: Users },
-  { title: "Start a return", icon: RefreshCcw },
-  { title: "Report an item that hasn't arrived", icon: Truck },
-];
+function normalizeHelpTopics(page) {
+  const section = getSection(page, ["All Help Topics"]);
+  const points = Array.isArray(section?.points) ? section.points : [];
 
-function SearchBox() {
-  return (
-    <form className="mx-auto mt-6 flex h-11 max-w-[500px] items-center rounded-full border border-[#CE9F2D] bg-white pl-5 pr-1 shadow-sm">
-      <input
-        type="search"
-        aria-label="Search SAM Global Help"
-        placeholder="Search SAM Global Help"
-        className="min-w-0 flex-1 bg-transparent font-montserrat text-xs text-[#2E2E2E] outline-none placeholder:text-[#A6A6A6]"
-      />
-      <button
-        type="submit"
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#CE9F2D] text-white transition hover:bg-[#A26D27]"
-      >
-        <Search size={18} />
-      </button>
-    </form>
+  if (points.length) return mapCards(points);
+
+  const rootPoints = Array.isArray(page?.points) ? page.points : [];
+  return mapCards(rootPoints.filter((item) => !item?.description)).slice(0, 8);
+}
+
+function normalizeCommonQuestions(page) {
+  const section = getSection(page, ["Common Question", "Common Questions"]);
+  const points = Array.isArray(section?.points) ? section.points : [];
+
+  if (points.length) return mapCards(points);
+
+  const rootPoints = Array.isArray(page?.points) ? page.points : [];
+  const questionPoints = rootPoints.filter((item) => item?.description);
+  const bodySections = parseBodySections(page?.body);
+
+  return mapCards(questionPoints.length ? questionPoints : bodySections).slice(
+    0,
+    3,
   );
+}
+
+function normalizeOptions(page) {
+  const optionSection = getSection(page, [
+    "Other Options For You",
+    "Options",
+    "Support Options",
+  ]);
+  const points = Array.isArray(optionSection?.points)
+    ? optionSection.points
+    : [];
+
+  return mapCards(points);
 }
 
 function TopicCard({ topic }) {
   const Icon = topic.icon;
   return (
-    <button
+    <Button
       type="button"
-      className={`relative flex min-h-[74px] items-center gap-4 rounded-[8px] px-4 py-3 text-left font-montserrat shadow-[0_10px_28px_rgba(46,46,46,0.08)] transition hover:-translate-y-0.5 ${
-        topic.active ? "bg-blue text-white" : "bg-white text-[#2E2E2E]"
-      }`}
+      variant="ghost"
+      className={`!relative !flex min-h-[74px] w-full !items-center !justify-start gap-4 rounded-[8px] border-none px-4 py-3 text-left font-montserrat shadow-[0_10px_28px_rgba(46,46,46,0.08)] transition hover:-translate-y-0.5 
+      `}
     >
       <span className="absolute left-14 top-0 h-1 w-14 rounded-b-full bg-[#A26D27]" />
       <span
@@ -131,96 +163,128 @@ function TopicCard({ topic }) {
         <Icon size={24} />
       </span>
       <span className="text-base font-semibold">{topic.title}</span>
-    </button>
+    </Button>
   );
 }
 
 function OptionCard({ option }) {
   const Icon = option.icon;
   return (
-    <button
+    <Button
       type="button"
-      className="flex min-h-[82px] items-center gap-5 rounded-[8px] border border-[#2E2E2E] bg-white px-6 text-left font-montserrat shadow-sm transition hover:border-[#CE9F2D] hover:text-blue"
+      variant="ghost"
+      className="!flex min-h-[82px] w-full !items-center !justify-start gap-5 rounded-[8px] !border !border-[#2E2E2E] !bg-white px-6 text-left font-montserrat shadow-sm transition hover:!border-[#CE9F2D] hover:!text-blue"
     >
       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#F3F3FA] text-blue">
         <Icon size={25} fill="currentColor" strokeWidth={1.7} />
       </span>
       <span className="text-lg font-bold leading-snug">{option.title}</span>
-    </button>
+    </Button>
   );
 }
 
 export default function SupportHelpCenter() {
-  const { page } = useCmsRecord("help-contact");
+  const { page } = useCmsRecord("support-center");
 
-  const pageTitle = page?.title || "Help & Support Centre";
-  const pageDescription =
-    page?.description ||
-    page?.excerpt ||
-    "Find answers, get support, and connect with our team.";
+  const pageTitle = page?.title || "";
+  const pageDescription = page?.description || page?.excerpt || "";
   const topics = useMemo(() => normalizeHelpTopics(page), [page]);
+  const commonQuestions = useMemo(() => normalizeCommonQuestions(page), [page]);
+  const options = useMemo(() => normalizeOptions(page), [page]);
+  const introSection = getSection(page, [
+    "Help & Support Centre",
+    "Support Center",
+  ]);
+  const commonSection = getSection(page, [
+    "Common Question",
+    "Common Questions",
+  ]);
+  const topicsSection = getSection(page, ["All Help Topics"]);
+  const optionsSection = getSection(page, ["Other Options For You"]);
+  const ctaLabel = page?.cta?.label;
+  const ctaUrl = page?.cta?.url;
+  const searchPlaceholder =
+    page?.metadata?.data?.searchPlaceholder || "Search SAM Global Help";
 
   return (
     <>
-      <Seo
-        title={`${pageTitle} | Sam Global`}
-        description={pageDescription}
-      />
-      <ContactHero />
+      <Seo title={`${pageTitle} | Sam Global`} description={pageDescription} />
+      <FAQHeroSection title={pageTitle} description={pageDescription} />
 
       <section className="w-container py-14 sm:py-16 lg:py-20">
         <SectionIntro
-          title="Help & Support Centre"
-          description={pageDescription}
+          title={getSectionTitle(introSection) || pageTitle}
+          description={introSection?.description || pageDescription}
         />
-        <SearchBox />
+        <SearchBar
+          placeholder={searchPlaceholder}
+          showButtonLabel={false}
+          className="mx-auto mt-6 max-w-[500px]"
+        />
 
-        <SectionIntro className="mt-16" title="Common Question" />
+        {commonQuestions.length > 0 && (
+          <>
+            <SectionIntro
+              className="mt-16"
+              title={getSectionTitle(commonSection)}
+              description={commonSection?.description}
+            />
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-3 lg:gap-0">
-          {commonQuestions.map((item, index) => (
-            <div key={item.title} className="relative">
-              <ReasonCard item={item} showDivider={index > 0} />
-              <p className="mx-auto -mt-3 max-w-[300px] text-center font-montserrat text-sm leading-7 text-[#787878]">
-                {item.description}
-              </p>
+            <div className="mt-12 grid gap-8 lg:grid-cols-3 lg:gap-0">
+              {commonQuestions.map((item, index) => (
+                <div key={item.title} className="relative">
+                  <ReasonCard item={item} showDivider={index > 0} />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
 
-        <div className="mt-9 flex justify-center">
-          <Button
-            rounded
-            size="lg"
-            className="!bg-blue !px-8 !text-white hover:!bg-[#1b1a62]"
-            onClick={() => {
-              window.location.href = "/help-contact";
-            }}
-          >
-            Still need help? Contact our support team
-          </Button>
-        </div>
+        {ctaLabel && ctaUrl && (
+          <div className="mt-9 flex justify-center">
+            <Button
+              rounded
+              size="lg"
+              className="!bg-blue !px-8 !text-white hover:!bg-[#1b1a62]"
+              onClick={() => {
+                window.location.href = ctaUrl;
+              }}
+            >
+              {ctaLabel}
+            </Button>
+          </div>
+        )}
       </section>
 
-      <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#F3F3FA] py-14">
-        <div className="w-container">
-          <SectionIntro title="All Help Topics" />
-          <div className="mt-10 grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
-            {topics.map((topic) => (
-              <TopicCard key={topic.title} topic={topic} />
+      {topics.length > 0 && (
+        <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#F3F3FA] py-14">
+          <div className="w-container">
+            <SectionIntro
+              title={getSectionTitle(topicsSection)}
+              description={topicsSection?.description}
+            />
+            <div className="mt-10 grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
+              {topics.map((topic) => (
+                <TopicCard key={topic.title} topic={topic} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {options.length > 0 && (
+        <section className="w-container py-14">
+          <SectionIntro
+            title={getSectionTitle(optionsSection)}
+            description={optionsSection?.description}
+          />
+          <div className="mt-10 grid gap-8 lg:grid-cols-3">
+            {options.map((option) => (
+              <OptionCard key={option.title} option={option} />
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="w-container py-14">
-        <SectionIntro title="Other Options For You" />
-        <div className="mt-10 grid gap-8 lg:grid-cols-3">
-          {options.map((option) => (
-            <OptionCard key={option.title} option={option} />
-          ))}
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 }

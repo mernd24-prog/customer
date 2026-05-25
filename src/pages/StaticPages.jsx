@@ -321,7 +321,7 @@ export function FeaturesPage() {
               to="/support"
               className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-[#2E2E2E] transition duration-300 hover:-translate-y-0.5 hover:bg-accent/90"
             >
-              Visit support
+             Contact Support 
               <ArrowRight size={18} />
             </Link>
           </div>

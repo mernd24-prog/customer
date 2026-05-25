@@ -52,7 +52,6 @@ const baseAccountMenuItems = [
 
 const DEFAULT_TOP_NAV_LINKS = [
   { name: "Deals", path: "/deals" },
-  { name: "Brands", path: "/brands" },
   { name: "Brand Outlet", path: "/brand-outlet" },
   { name: "Gift Card", path: "/gift-cards" },
   { name: "Help & Contact", path: "/help-contact" },
@@ -170,7 +169,6 @@ export const TopHeader = () => {
   const sellDropdownCms = getCmsPayload(headerSellPage, DEFAULT_SELL_DROPDOWN);
   const topLinks = [
     { name: dealsPage?.title || "Deals", path: "/deals" },
-    { name: "Brands", path: "/brands" },
     { name: brandOutletPage?.title || "Brand Outlet", path: "/brand-outlet" },
     { name: giftCardsPage?.title || "Gift Card", path: "/gift-cards" },
     { name: helpContactPage?.title || "Help & Contact", path: "/help-contact" },
@@ -316,9 +314,9 @@ export const TopHeader = () => {
             </button>
           ) : (
             <BrandButton
-              variant="gradient"
+              variant="outline"
               rounded
-              className="min-h-[18px] px-3"
+              className="h-[31px] min-h-0 min-w-[112px] border-[#CE9F2D] bg-white px-5 py-0 text-[15px] font-medium text-[#CE9F2D] hover:bg-white hover:text-[#A26D27]"
               size="md"
               label="Register"
               onClick={() => navigate("/register")}

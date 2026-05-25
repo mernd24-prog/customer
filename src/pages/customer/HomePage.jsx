@@ -135,13 +135,6 @@ export function HomePage() {
         />
       </section>
 
-      <NeedHelpSection
-        heading1="Shopping Made Easy"
-        heading2=""
-        description="Enjoy reliablity ,secure dileveries and hassle free returns. Shop with confidence at Sam Global."
-        buttonText="Contact Support"
-      />
-
       <MothersDaySwiper data={cmsBannerSlides} />
 
       <div className="mt-16">

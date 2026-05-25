@@ -2,12 +2,27 @@ import React from "react";
 import { infoSection } from "../../constant/image.constant";
 
 const PolicySection = ({ title, points, description, footer }) => {
-  console.log("this is the points", points);
+  const visiblePoints = Array.isArray(points)
+    ? points.filter((point) => point?.title || point?.description)
+    : [];
+
   return (
     <section className="group py-2 md:py-3 mt-3 first:mt-0">
-      {points && (
+      {title && (
+        <h2 className="mb-3 font-montserrat text-xl font-bold leading-tight text-[#2E2E2E] md:text-2xl">
+          {title}
+        </h2>
+      )}
+
+      {description && (
+        <p className="mb-4 font-montserrat text-[15px] leading-relaxed tracking-wide text-[#2E2E2E] md:text-[16.5px]">
+          {description}
+        </p>
+      )}
+
+      {visiblePoints.length > 0 && (
         <ul className="space-y-4">
-          {points.map((point, pIdx) => (
+          {visiblePoints.map((point, pIdx) => (
             <li key={pIdx} className="flex items-start gap-2">
               <div className="mt-1 flex-shrink-0">
                 <img
@@ -18,9 +33,12 @@ const PolicySection = ({ title, points, description, footer }) => {
               </div>
 
               <div className="text-muted leading-relaxed tracking-wide text-[15px] md:text-[16.5px] font-montserrat">
-                <span className="font-semibold text-[#2E2E2E]">
-                  {point.title}
-                </span>{" "}
+                {point.title && (
+                  <span className="font-semibold text-[#2E2E2E]">
+                    {point.title}
+                    {point.description ? ": " : ""}
+                  </span>
+                )}
                 <span>{point.description}</span>
               </div>
             </li>
