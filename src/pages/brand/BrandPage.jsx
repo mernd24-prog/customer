@@ -12,6 +12,7 @@ import {
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
 import { fetchBrands } from "../../features/catalog/catalogSlice";
+import { getImageUrlFromValue } from "../../utils/ecommerce";
 
 const SORT_OPTIONS = [
   { value: "", label: "Relevance" },
@@ -297,7 +298,13 @@ export default function BrandPage() {
     );
   }
 
-  const brandImage = brand?.imageUrl || brand?.image || brand?.logoUrl || brand?.logo;
+  const brandImage =
+    getImageUrlFromValue(brand?.thumbnails) ||
+    getImageUrlFromValue(brand?.thumbnail) ||
+    getImageUrlFromValue(brand?.imageUrl) ||
+    getImageUrlFromValue(brand?.image) ||
+    getImageUrlFromValue(brand?.logoUrl) ||
+    getImageUrlFromValue(brand?.logo);
   const brandDescription = brand?.description || brand?.about;
 
   return (

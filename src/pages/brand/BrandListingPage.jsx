@@ -4,13 +4,21 @@ import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import { Breadcrumbs, BrandCard } from "../../components/ecommerce";
 import { fetchBrands } from "../../features/catalog/catalogSlice";
+import { getImageUrlFromValue } from "../../utils/ecommerce";
 
 function getBrandName(brand = {}) {
   return brand.name || brand.brandName || brand.title || brand.code || "";
 }
 
 function getBrandImage(brand = {}) {
-  return brand.logoUrl || brand.logo || brand.imageUrl || brand.image || brand.thumbnailUrl || "";
+  return (
+    getImageUrlFromValue(brand.thumbnails) ||
+    getImageUrlFromValue(brand.thumbnail) ||
+    getImageUrlFromValue(brand.logoUrl) ||
+    getImageUrlFromValue(brand.logo) ||
+    getImageUrlFromValue(brand.imageUrl) ||
+    getImageUrlFromValue(brand.image)
+  );
 }
 
 function getBrandCount(brand = {}) {
@@ -34,7 +42,7 @@ function BrandGridSkeleton() {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
       {Array.from({ length: 12 }).map((_, index) => (
-        <div key={index} className="h-[170px] animate-pulse rounded-[12px] bg-gray-200" />
+        <div key={index} className="h-[188px] animate-pulse rounded-lg bg-gray-200" />
       ))}
     </div>
   );

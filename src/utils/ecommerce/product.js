@@ -6,8 +6,38 @@ export function getProductTitle(product, fallback = "Untitled product") {
   return product?.title || product?.name || product?.productName || fallback;
 }
 
+export function getImageUrlFromValue(value) {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) {
+    return value.map(getImageUrlFromValue).find(Boolean) || "";
+  }
+  if (typeof value === "object") {
+    return [
+      value.url,
+      value.src,
+      value.imageUrl,
+      value.thumbnailUrl,
+      value.path,
+      value.secure_url,
+      value.original,
+      value.large,
+      value.medium,
+      value.small,
+    ]
+      .map(getImageUrlFromValue)
+      .find(Boolean) || "";
+  }
+  return "";
+}
+
 export function getProductImage(product) {
-  return product?.images?.[0] || product?.image || product?.imageUrl || product?.thumbnail || "";
+  return (
+    getImageUrlFromValue(product?.images) ||
+    getImageUrlFromValue(product?.image) ||
+    getImageUrlFromValue(product?.imageUrl) ||
+    getImageUrlFromValue(product?.thumbnail)
+  );
 }
 
 const FALLBACK_PALETTES = [
