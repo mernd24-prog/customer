@@ -1,3 +1,5 @@
+import NeedHelpSection from "../faq/NeedHelpSection";
+
 const InfoSection = ({ data }) => {
   const finalData = data || {};
   const {
@@ -18,6 +20,7 @@ const InfoSection = ({ data }) => {
             heading2={helpSection.heading2}
             description={helpSection.description}
             buttonText={helpSection.buttonText}
+            buttonPath={helpSection.buttonPath}
             isFullWidth={false}
             layout="row"
           />

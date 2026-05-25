@@ -46,7 +46,7 @@ export const footerData = {
       title: "About SAM",
       links: [
         { label: "Who We Are", href: "/who-we-are" },
-        { label: "Why Choose Us", href: "/why-choose-us" },
+        { label: "Why Choose Us", href: "/about-us#why-choose-us" },
         { label: "Our Commitment", href: "/our-commitment" },
         { label: "Features", href: "/features" },
       ],

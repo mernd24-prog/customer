@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, LogIn, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -91,23 +91,14 @@ export default function LoginPage() {
         eyebrow="Welcome back"
         title="Sign in to Sam Global"
         subtitle="Access your orders, wallet, loyalty rewards, and personalized deals — all in one place."
+        icon={<User size={28} />}
+        maxWidth="max-w-[460px]"
       >
         <form
           className="grid gap-4 sm:gap-5"
           onSubmit={handleSubmit(submit)}
           noValidate
         >
-          {/* HEADING */}
-          <div>
-            <h2 className="text-2xl font-bold text-[#1E1B6D] sm:text-3xl">
-              Login to your account
-            </h2>
-
-            <p className="mt-2 text-sm leading-6 text-slate-500 sm:text-base">
-              Enter your credentials to continue shopping.
-            </p>
-          </div>
-
           {/* EMAIL */}
           <FormField
             id="email"
@@ -139,10 +130,10 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 disabled={loading}
                 {...register("password")}
-                className={`w-full rounded-xl border bg-white px-4 py-3 pr-12 text-sm outline-none transition sm:text-base ${
+                className={`min-h-11 w-full rounded-[8px] border bg-white px-3 py-2.5 pr-12 font-montserrat text-sm text-[#2E2E2E] outline-none transition placeholder:text-[#A6A6A6] ${
                   errors.password
                     ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
-                    : "border-gray-300 focus:border-[#D4A017] focus:ring-4 focus:ring-[#D4A017]/20"
+                    : "border-[#cfc6b8] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20"
                 }`}
               />
 
@@ -150,7 +141,8 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[#1E1B6D]"
+                className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#9E886A] transition hover:bg-[#FAF6EE] hover:text-[#2E2E2E]"
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
                   <EyeOff size={20} />
@@ -172,7 +164,7 @@ export default function LoginPage() {
             <div className="flex justify-end">
               <Link
                 to={AUTH_ROUTES.forgotPassword}
-                className="text-xs font-medium text-slate-600 underline-offset-4 transition hover:text-[#1E1B6D] hover:underline"
+                className="font-montserrat text-xs font-medium text-[#9E886A] underline-offset-4 transition hover:text-[#CE9F2D] hover:underline"
               >
                 Forgot password?
               </Link>
@@ -183,7 +175,7 @@ export default function LoginPage() {
           {/* API ERROR */}
           {error && (
             <div
-              className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 font-montserrat text-sm text-red-700"
               role="alert"
             >
               {error}
@@ -195,21 +187,21 @@ export default function LoginPage() {
             type="submit"
             loading={loading}
             disabled={!isValid || loading}
-            className="h-12 w-full rounded-xl bg-[#D4A017] text-white transition hover:bg-[#B8860B] disabled:cursor-not-allowed disabled:opacity-60 sm:h-14"
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-[#CE9F2D] to-[#A26D27] font-montserrat text-[0.9rem] font-semibold tracking-wide text-white shadow-sm transition-all duration-200 hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <LogIn size={18} />
             Sign in
           </Button>
 
           {/* DIVIDER */}
-          <div className="relative flex items-center gap-3 py-1">
-            <hr className="flex-1 border-stone-200" />
+          <div className="relative flex items-center gap-3 py-0.5">
+            <hr className="flex-1 border-[#f0e9da]" />
 
-            <span className="text-xs text-slate-400">
+            <span className="font-montserrat text-xs text-[#A6A6A6]">
               or
             </span>
 
-            <hr className="flex-1 border-stone-200" />
+            <hr className="flex-1 border-[#f0e9da]" />
           </div>
 
           {/* GOOGLE LOGIN */}
@@ -217,7 +209,7 @@ export default function LoginPage() {
             type="button"
             variant="secondary"
             onClick={handleGoogleLogin}
-            className="h-12 w-full rounded-xl border border-[#D4A017] bg-white text-[#1E1B6D] transition hover:bg-[#FFF8E1] sm:h-14"
+            className="h-12 w-full rounded-[8px] border border-[#e7dfd1] bg-white font-montserrat text-[0.9rem] font-semibold tracking-wide text-[#2E2E2E] transition-all duration-200 hover:border-[#CE9F2D] hover:bg-[#FAF6EE] hover:text-[#CE9F2D]"
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -229,24 +221,24 @@ export default function LoginPage() {
           </Button>
 
           {/* REGISTER */}
-          <p className="text-center text-sm text-slate-600">
+          <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
             Don&apos;t have an account?{" "}
 
             <Link
               to={AUTH_ROUTES.register}
-              className="font-semibold text-[#1E1B6D] underline-offset-4 transition hover:underline"
+              className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
             >
               Create account
             </Link>
           </p>
 
           {/* OTP LOGIN */}
-          <p className="text-center text-sm text-slate-600">
+          <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
             Seller account login?{" "}
 
             <Link
               to={AUTH_ROUTES.verifyOtp}
-              className="font-semibold text-[#1E1B6D] underline-offset-4 transition hover:underline"
+              className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
             >
               Verify with OTP
             </Link>

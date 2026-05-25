@@ -124,7 +124,7 @@ export default function ProductCard({
   return (
     <article className={cn("group relative min-w-0 rounded-[8px] bg-white p-3 shadow-sm transition-all duration-300 hover:shadow-xl sm:px-4 sm:pb-5 sm:pt-5", className)}>
       {badgeText && (
-        <span className="absolute left-5 top-5 z-10 rounded-full bg-[#E23B3B] px-2 py-1 font-montserrat text-[11px] font-semibold text-white">
+        <span className="absolute left-5 top-7 z-10 rounded-full bg-[#E23B3B] px-2 py-1 font-montserrat text-[11px] font-semibold text-white">
           {badgeText}
         </span>
       )}
@@ -136,7 +136,7 @@ export default function ProductCard({
       )}
 
       {showActions && (
-        <div className="absolute right-5 top-5 z-20 flex gap-2 opacity-100 sm:opacity-0 sm:transition group-hover:opacity-100">
+        <div className="absolute right-5 top-7 z-20 flex gap-2 opacity-100 sm:opacity-0 sm:transition group-hover:opacity-100">
           <WishlistButton active={isWishlisted} label={title} onClick={handleWishlist} />
           <AddToCartButton compact disabled={!isInStock} label={`Add ${title} to cart`} onClick={handleAddToCart} />
         </div>

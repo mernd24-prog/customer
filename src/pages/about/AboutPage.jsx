@@ -159,6 +159,15 @@ export default function AboutPage() {
 
       image:
         missionSection?.image?.url || "",
+
+      helpSection: missionSection?.helpSection || {
+        heading1: "Shopping Made Easy",
+        heading2: "",
+        description:
+          "Enjoy seamless shopping with reliable delivery, secure payments, and hassle-free returns.",
+        buttonText: "Shop Now",
+        buttonPath: "/products",
+      },
     }),
     [missionSection],
   );
@@ -180,11 +189,13 @@ export default function AboutPage() {
 
       <main className="w-full">
         <div>
-          <OurStory data={storyData} />
+          <OurStory data={storyData}  />
           <ValuesSection data={valuesData} />
           <BrandCarousel data={brandData} />
           <InfoSection data={missionData} />
-          <WhyChooseSection data={transformedData} />
+          <div id="why-choose-us" className="scroll-mt-24">
+            <WhyChooseSection data={transformedData} />
+          </div>
         </div>
       </main>
     </>

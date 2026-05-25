@@ -4,73 +4,66 @@ export default function AuthCard({
   subtitle,
   title,
   showFeatures = true,
+  icon,
+  maxWidth = "max-w-[480px]",
 }) {
   return (
-    <section className="min-h-screen   py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto flex min-h-[calc(100vh-48px)] max-w-6xl items-center justify-center">
-        <div className="grid w-full overflow-hidden rounded-lg  md:rounded-[28px] border border-[#E5E7EB] bg-white shadow-xl lg:grid-cols-[0.95fr_1.05fr]">
-          {/* LEFT SIDE */}
-          <aside className="relative overflow-hidden bg-gradient-to-br from-[#1E1B6D] via-[#27248A] to-[#15134D] px-6 py-10 text-white sm:px-10 sm:py-12 lg:px-12 lg:py-16">
-            {/* Decorative Effects */}
-            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[#D4A017]/20 blur-3xl" />
-            <div className="absolute bottom-0 left-0 h-28 w-28 rounded-full bg-white/10 blur-2xl" />
+    <section className="bg-[#FAF6EE] px-4 py-1 sm:py-2 lg:py-3">
+      <div className={`mx-auto flex w-full ${maxWidth} items-center justify-center`}>
+        <div className="w-full overflow-hidden rounded-[20px] border border-[#e7dfd1] bg-white shadow-xl">
+          <div className="h-[3px] w-full bg-gradient-to-r from-[#CE9F2D] via-[#e8b94a] to-[#A26D27]" />
 
-            {/* Eyebrow */}
-            {eyebrow && (
-              <p className="mb-4 text-xs  font-semibold uppercase  text-white sm:text-sm">
-                {eyebrow}
-              </p>
-            )}
+          <div className="px-5 pb-5 pt-4 sm:px-6 sm:pb-6 sm:pt-5 lg:px-6">
+            <div className="mb-3 text-center">
+              <div
+                className="mx-auto mb-2 flex h-[46px] w-[46px] items-center justify-center rounded-full text-[#CE9F2D]"
+                style={{
+                  background: "linear-gradient(135deg, #fdf6e8 0%, #faf0d7 100%)",
+                  boxShadow: "0 0 0 5px #fdf3dc, 0 0 0 8px #faf0d720",
+                }}
+              >
+                {icon ? (
+                  icon
+                ) : (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect x="3" y="11" width="18" height="11" rx="2.5" stroke="#CE9F2D" strokeWidth="1.8" />
+                    <path d="M7 11V7a5 5 0 0110 0v4" stroke="#CE9F2D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="12" cy="16.5" r="1.4" fill="#CE9F2D" />
+                    <line x1="12" y1="17.9" x2="12" y2="19.5" stroke="#CE9F2D" strokeWidth="1.6" strokeLinecap="round" />
+                  </svg>
+                )}
+              </div>
 
-            {/* Title */}
-            {title && (
-              <h1 className="max-w-lg lg:max-w-md text-2xl font-bold leading-tight sm:text-4xl xl:text-5xl">
-                {title}
-              </h1>
-            )}
+              {eyebrow && (
+                <p className="mb-0.5 font-montserrat text-[0.68rem] font-semibold uppercase tracking-wide text-[#9E886A]">
+                  {eyebrow}
+                </p>
+              )}
 
-            {/* Subtitle */}
-            {subtitle && (
-              <p className="mt-5 max-w-md text-sm leading-7 text-slate-200 sm:text-base">
-                {subtitle}
-              </p>
-            )}
+              {title && (
+                <h1 className="font-montserrat text-[1.2rem] font-semibold leading-snug text-[#2E2E2E] sm:text-[1.3rem]">
+                  {title}
+                </h1>
+              )}
 
-            {/* FEATURES */}
+              {subtitle && (
+                <p className="mx-auto mt-1 max-w-2xl font-montserrat text-[0.78rem] leading-relaxed text-[#787878]">
+                  {subtitle}
+                </p>
+              )}
+            </div>
+
+            <div className="mb-3 h-px w-full bg-[#f0e9da]" />
+
+            <div className="w-full">
+              {children}
+            </div>
+
             {showFeatures && (
-              <div className="mt-10 space-y-5">
-                <div className="flex items-start gap-2">
-                  <div className="mt-2 h-2.5 w-2.5 rounded-full bg-white" />
-                  <p className="text-sm text-slate-100 sm:text-base">
-                    Secure and fast authentication
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="mt-2 h-2.5 w-2.5 rounded-full bg-white" />
-                  <p className="text-sm text-slate-100 sm:text-base">
-                    Access cart, orders & wishlist
-                  </p>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="mt-2 h-2.5 w-2.5 rounded-full bg-white" />
-                  <p className="text-sm text-slate-100 sm:text-base">
-                    Personalized shopping experience
-                  </p>
-                </div>
+              <div className="mt-3 rounded-[8px] bg-[#FAF6EE] px-3 py-1.5 font-montserrat text-[0.7rem] leading-4 text-[#9E886A]">
+                Sam Global Secure Access
               </div>
             )}
-
-            {/* Bottom Badge */}
-            <div className="mt-10 inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-medium text-white backdrop-blur-sm sm:text-sm">
-              Sam Global Secure Access
-            </div>
-          </aside>
-
-          {/* RIGHT SIDE */}
-          <div className="flex items-center bg-white px-5 py-4 sm:px-8 sm:py-10 lg:px-12 lg:py-14">
-            <div className="w-full">{children}</div>
           </div>
         </div>
       </div>

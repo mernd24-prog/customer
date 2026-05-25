@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail } from "lucide-react";
+import { Mail, KeyRound } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -45,13 +45,10 @@ export default function ForgotPasswordPage() {
         eyebrow="Password recovery"
         title="Forgot your password?"
         subtitle="Enter your registered email and we'll send you a one-time password to reset your account."
+        icon={<KeyRound size={24} />}
+        maxWidth="max-w-[460px]"
       >
-        <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
-          <div>
-            <h2 className="text-2xl font-bold text-[#2E2E2E]">Reset your password</h2>
-            <p className="mt-1 text-sm text-[#A6A6A6]">We&apos;ll send an OTP to your email address.</p>
-          </div>
-
+        <form className="grid gap-4" onSubmit={handleSubmit(submit)} noValidate>
           <FormField
             id="email"
             label="Email address"
@@ -63,18 +60,26 @@ export default function ForgotPasswordPage() {
           />
 
           {error && (
-            <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+            <div className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 font-montserrat text-sm text-red-700" role="alert">
               {error}
             </div>
           )}
 
-          <Button type="submit" loading={loading} className="w-full" disabled={!isValid || loading}>
+          <Button
+            type="submit"
+            loading={loading}
+            disabled={!isValid || loading}
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-[#CE9F2D] to-[#A26D27] font-montserrat text-[0.9rem] font-semibold tracking-wide text-white shadow-sm transition-all duration-200 hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+          >
             <Mail size={18} /> Send reset OTP
           </Button>
 
-          <p className="text-center text-sm text-[#787878]">
+          <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
             Remember your password?{" "}
-            <Link to={AUTH_ROUTES.login} className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline">
+            <Link
+              to={AUTH_ROUTES.login}
+              className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
+            >
               Back to login
             </Link>
           </p>

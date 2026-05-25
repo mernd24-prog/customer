@@ -19,6 +19,14 @@ const EMPTY_FOOTER = {
   copyright: "",
 };
 
+const normalizeFooterHref = (link) => {
+  if (String(link?.label || "").trim().toLowerCase() === "why choose us") {
+    return "/about-us#why-choose-us";
+  }
+
+  return hrefOr(link?.href || link?.url);
+};
+
 export function Footer({ data = {} }) {
   const loading = useDelayedLoading();
   const { page } = useCmsRecord("footer-links");
@@ -35,7 +43,7 @@ export function Footer({ data = {} }) {
       ...group,
       links: asArray(group?.links).map((link) => ({
         ...link,
-        href: hrefOr(link?.href || link?.url),
+        href: normalizeFooterHref(link),
       })),
     })),
     actionLinks: asArray(cmsData?.actionLinks || baseData?.actionLinks).map(

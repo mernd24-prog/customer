@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { KeyRound } from "lucide-react";
+import { KeyRound, Lock } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -53,13 +53,10 @@ export default function ResetPasswordPage() {
         eyebrow="Password recovery"
         title="Create a new password"
         subtitle="Enter the OTP we sent to your email along with your new password."
+        icon={<Lock size={28} />}
+        maxWidth="max-w-[460px]"
       >
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
-          <div>
-            <h2 className="text-2xl font-bold text-[#2E2E2E]">Set new password</h2>
-            <p className="mt-1 text-sm text-[#A6A6A6]">Check your email for the OTP code.</p>
-          </div>
-
           <FormField
             id="email"
             label="Email address"
@@ -99,19 +96,25 @@ export default function ResetPasswordPage() {
           />
 
           {error && (
-            <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+            <div className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 font-montserrat text-sm text-red-700" role="alert">
               {error}
             </div>
           )}
 
-          <Button type="submit" loading={loading} className="w-full" disabled={!isValid || loading}>
+          <Button
+            type="submit"
+            loading={loading}
+            disabled={!isValid || loading}
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-[#CE9F2D] to-[#A26D27] font-montserrat text-[0.9rem] font-semibold tracking-wide text-white shadow-sm transition-all duration-200 hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+          >
             <KeyRound size={18} /> Reset password
           </Button>
 
-          <p className="text-center text-sm text-[#787878]">
+          <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
+            Didn&apos;t receive the OTP?{" "}
             <button
               type="button"
-              className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline"
+              className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
               onClick={() => {
                 const email = watch("email");
                 if (!email) return;
@@ -120,8 +123,13 @@ export default function ResetPasswordPage() {
             >
               Resend OTP
             </button>
-            {" · "}
-            <Link to={AUTH_ROUTES.login} className="text-[#787878] underline-offset-4 hover:underline">
+          </p>
+
+          <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
+            <Link
+              to={AUTH_ROUTES.login}
+              className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
+            >
               Back to login
             </Link>
           </p>

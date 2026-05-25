@@ -29,18 +29,8 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
   const submit = (values) => onSubmit(buildBuyerRegistrationPayload(values));
 
   return (
-    <form className="grid gap-3" onSubmit={handleSubmit(submit)}>
-      <div>
-        <h2 className="text-2xl font-bold text-slate-950">
-          Create buyer account
-        </h2>
-        <p className="mt-1 text-sm text-slate-600">
-          Use this account for shopping, checkout, orders, returns, and customer
-          services.
-        </p>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2 mt-3">
+    <form className="grid gap-4" onSubmit={handleSubmit(submit)}>
+      <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           id="firstName"
           label="First name*"
@@ -109,30 +99,34 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
 
       {error && (
         <div
-          className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+          className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 font-montserrat text-sm text-red-700"
           role="alert"
         >
           {error}
         </div>
       )}
 
-      <Button className="w-full" loading={loading} type="submit">
+      <Button
+        className="h-12 w-full rounded-[8px] bg-gradient-to-r from-[#CE9F2D] to-[#A26D27] font-montserrat text-[0.9rem] font-semibold tracking-wide text-white shadow-sm transition-all duration-200 hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+        loading={loading}
+        type="submit"
+      >
         <UserPlus size={18} /> Register as buyer
       </Button>
 
-      <p className="text-center text-sm text-slate-600">
+      <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
         Already have an account?{" "}
         <Link
-          className="font-semibold text-slate-950 underline-offset-4 hover:underline"
+          className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
           to={AUTH_ROUTES.login}
         >
           Login
         </Link>
       </p>
-      <p className="text-center text-sm text-slate-600">
+      <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
         Prefer OTP registration?{" "}
         <Link
-          className="font-semibold text-slate-950 underline-offset-4 hover:underline"
+          className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
           to={AUTH_ROUTES.registerOtp}
         >
           Continue with OTP

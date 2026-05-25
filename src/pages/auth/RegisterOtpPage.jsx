@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Smartphone } from "lucide-react";
+import { Eye, EyeOff, Smartphone, UserPlus } from "lucide-react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -65,17 +65,10 @@ export default function RegisterOtpPage() {
         eyebrow="New account"
         title="Create account with OTP"
         subtitle="Create your password now, then verify your email with a one-time code."
+        icon={<UserPlus size={28} />}
+        maxWidth="max-w-[1120px]"
       >
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
-          <div>
-            <h2 className="text-2xl font-bold text-[#2E2E2E]">
-              Register with OTP
-            </h2>
-            <p className="mt-1 text-sm text-[#A6A6A6]">
-              We&apos;ll send an OTP to your email to complete registration.
-            </p>
-          </div>
-
           <div className="grid gap-4  sm:grid-cols-2">
             <FormField
               placeholder="John Doe"
@@ -136,65 +129,88 @@ export default function RegisterOtpPage() {
                   placeholder="••••••••"
                   disabled={loading}
                   {...register("password")}
-                  className={`w-full rounded-md border bg-white px-4 py-3 pr-11 text-sm outline-none transition ${
+                  className={`min-h-11 w-full rounded-[8px] border bg-white px-3 py-2.5 pr-11 font-montserrat text-sm text-[#2E2E2E] outline-none transition placeholder:text-[#A6A6A6] ${
                     errors.password
                       ? "border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
-                      : "border-[#d9d4c7] focus:border-[#ce9f2d] focus:ring-2 focus:ring-[#ce9f2d]/20"
+                      : "border-[#cfc6b8] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20"
                   }`}
                 />
                 <button
                   type="button"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#787878] transition hover:text-[#2E2E2E]"
+                  className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#9E886A] transition hover:bg-[#FAF6EE] hover:text-[#2E2E2E]"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               {errors.password?.message ? (
-                <p className="text-xs text-red-700">{errors.password.message}</p>
+                <p className="font-montserrat text-xs text-red-600">{errors.password.message}</p>
               ) : null}
             </div>
 
-            <FormField
-              id="confirmPassword"
-              label="Confirm password"
-              type={showPassword ? "text" : "password"}
-              registration={register("confirmPassword")}
-              error={errors.confirmPassword}
-              autoComplete="new-password"
-              placeholder="••••••••"
-              disabled={loading}
-            />
+            <div className="grid gap-2">
+              <label htmlFor="confirmPassword" className="text-sm font-semibold text-[#2E2E2E]">
+                Confirm password
+              </label>
+              <div className="relative">
+                <input
+                  id="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                  disabled={loading}
+                  {...register("confirmPassword")}
+                  className={`min-h-11 w-full rounded-[8px] border bg-white px-3 py-2.5 pr-11 font-montserrat text-sm text-[#2E2E2E] outline-none transition placeholder:text-[#A6A6A6] ${
+                    errors.confirmPassword
+                      ? "border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                      : "border-[#cfc6b8] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20"
+                  }`}
+                />
+                <button
+                  type="button"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#9E886A] transition hover:bg-[#FAF6EE] hover:text-[#2E2E2E]"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              {errors.confirmPassword?.message ? (
+                <p className="font-montserrat text-xs text-red-600">
+                  {errors.confirmPassword.message}
+                </p>
+              ) : null}
+            </div>
           </div>
 
           {error && (
             <div
-              className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 font-montserrat text-sm text-red-700"
               role="alert"
             >
               {error}
             </div>
           )}
 
-          <Button type="submit" loading={loading} className="w-full" disabled={!isValid || loading}>
+          <Button type="submit" loading={loading} className="h-12 w-full rounded-[8px] bg-gradient-to-r from-[#CE9F2D] to-[#A26D27] font-montserrat text-[0.9rem] font-semibold tracking-wide text-white shadow-sm transition-all duration-200 hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60" disabled={!isValid || loading}>
             <Smartphone size={18} /> Send OTP &amp; register
           </Button>
 
-          <p className="text-center text-sm text-[#787878]">
+          <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
             Already have an account?{" "}
             <Link
               to={AUTH_ROUTES.login}
-              className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline"
+              className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
             >
               Login
             </Link>
           </p>
-          <p className="text-center text-sm text-[#787878]">
+          <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
             Prefer password?{" "}
             <Link
               to={AUTH_ROUTES.register}
-              className="font-semibold text-[#2E2E2E] underline-offset-4 hover:underline"
+              className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
             >
               Register with password
             </Link>

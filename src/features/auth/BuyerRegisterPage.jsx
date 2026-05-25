@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { User } from "lucide-react";
 import AuthCard from "../../components/ui/AuthCard";
 import Seo from "../../components/common/Seo";
 import { useToastThunk } from "../../hooks/useToastThunk";
@@ -40,6 +41,8 @@ export default function BuyerRegisterPage() {
         eyebrow="Buyer registration"
         title="Start shopping with a customer account."
         subtitle="Your role is locked to buyer on submit, so this form cannot accidentally create a seller or admin profile."
+        icon={<User size={28} />}
+        maxWidth="max-w-[1120px]"
       >
         <BuyerRegisterForm
           error={auth.error}
