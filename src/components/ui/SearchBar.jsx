@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { icons } from "../../constant/image.constant";
 import Button from "./BrandButton";
+import { sanitizeSearchQuery } from "../../validations";
 
 const SearchBar = ({
   placeholder = "Barbour Beadnell wax jacket in black",
@@ -11,7 +11,6 @@ const SearchBar = ({
   onChange,
   onSearch,
   onKeyDown,
-  micIcon = icons.Mic,
   showButtonLabel = true,
 }) => {
   const [internalQuery, setInternalQuery] = useState("");
@@ -20,21 +19,31 @@ const SearchBar = ({
   const searchQuery = value ?? internalQuery;
 
   const handleChange = (event) => {
+    const nextValue = sanitizeSearchQuery(event.target.value);
+
     if (onChange) {
-      onChange(event);
+      onChange({
+        ...event,
+        target: {
+          ...event.target,
+          value: nextValue,
+        },
+      });
       return;
     }
 
-    setInternalQuery(event.target.value);
+    setInternalQuery(nextValue);
   };
 
   const handleSearch = () => {
+    const query = sanitizeSearchQuery(searchQuery);
+
     if (onSearch) {
-      onSearch(searchQuery.trim());
+      onSearch(query);
       return;
     }
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    if (query) {
+      navigate(`/search?q=${encodeURIComponent(query)}`);
     }
   };
 

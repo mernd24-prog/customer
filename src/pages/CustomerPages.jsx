@@ -14,6 +14,8 @@ import {
   Bell,
   CheckCircle2,
   CreditCard,
+  Eye,
+  EyeOff,
   Gift,
   Heart,
   PackageCheck,
@@ -99,7 +101,8 @@ import {
   useFetch,
   itemsFrom,
 } from "./customer/helpers";
-import { loginSchema, emailSchema, resetSchema, registerSchema } from "../validations/validationSchemas";
+import { loginSchema, emailSchema, otpSchema, resetSchema, registerSchema } from "../validations/validationSchemas";
+import { sanitizeSearchQuery } from "../validations";
 export { HomePage } from "./customer/HomePage";
 
 
@@ -109,6 +112,7 @@ export function AuthFormPage({ mode }) {
   const navigate = useNavigate();
   const auth = useSelector((s) => s.auth);
   const run = useToastThunk();
+  const [showPassword, setShowPassword] = useState(false);
   const schema =
     mode === "register" || mode === "register-otp"
       ? registerSchema
@@ -222,11 +226,23 @@ export function AuthFormPage({ mode }) {
           mode === "register" ||
           mode === "register-otp") && (
           <>
-            <input
-              placeholder="Password"
-              type="password"
-              {...register("password")}
-            />
+            <span className="relative block">
+              <input
+                className="w-full pr-10"
+                placeholder="Password"
+                type={showPassword ? "text" : "password"}
+                {...register("password")}
+              />
+              {/* SHOW/HIDE PASSWORD */}
+              <button
+                type="button"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowPassword((currentValue) => !currentValue)}
+                className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </span>
             <small>{errors.password?.message}</small>
           </>
         )}
@@ -240,11 +256,23 @@ export function AuthFormPage({ mode }) {
         )}
         {mode === "reset" && (
           <>
-            <input
-              placeholder="New password"
-              type="password"
-              {...register("newPassword")}
-            />
+            <span className="relative block">
+              <input
+                className="w-full pr-10"
+                placeholder="New password"
+                type={showPassword ? "text" : "password"}
+                {...register("newPassword")}
+              />
+              {/* SHOW/HIDE PASSWORD */}
+              <button
+                type="button"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowPassword((currentValue) => !currentValue)}
+                className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </span>
             <small>{errors.newPassword?.message}</small>
           </>
         )}
@@ -332,6 +360,7 @@ export function AccountPage({ tab = "profile" }) {
   const dispatch = useDispatch();
   const user = useFetch(fetchMe, undefined, (s) => s.user);
   const run = useToastThunk();
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -438,16 +467,40 @@ export function AccountPage({ tab = "profile" }) {
               run(dispatch, changePassword(values), "Password changed"),
             )}
           >
-            <input
-              type="password"
-              placeholder="Current password"
-              {...register("currentPassword", { required: true })}
-            />
-            <input
-              type="password"
-              placeholder="New password"
-              {...register("newPassword", { required: true })}
-            />
+            <span className="relative block">
+              <input
+                className="w-full pr-10"
+                type={showPassword ? "text" : "password"}
+                placeholder="Current password"
+                {...register("currentPassword", { required: true })}
+              />
+              {/* SHOW/HIDE PASSWORD */}
+              <button
+                type="button"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowPassword((currentValue) => !currentValue)}
+                className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </span>
+            <span className="relative block">
+              <input
+                className="w-full pr-10"
+                type={showPassword ? "text" : "password"}
+                placeholder="New password"
+                {...register("newPassword", { required: true })}
+              />
+              {/* SHOW/HIDE PASSWORD */}
+              <button
+                type="button"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowPassword((currentValue) => !currentValue)}
+                className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </span>
             <button className="button">Change password</button>
           </form>
         )}
@@ -507,13 +560,16 @@ export function ProductsPage({ search = false }) {
         className="toolbar"
         onSubmit={(event) => {
           event.preventDefault();
-          setParams({ q: query });
-          dispatch(searchProducts({ q: query }));
+          const searchValue = sanitizeSearchQuery(query);
+          if (!searchValue) return;
+          setQuery(searchValue);
+          setParams({ q: searchValue });
+          dispatch(searchProducts({ q: searchValue }));
         }}
       >
         <input
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => setQuery(sanitizeSearchQuery(event.target.value))}
           placeholder="Search phones, appliances, fashion..."
         />
         <select

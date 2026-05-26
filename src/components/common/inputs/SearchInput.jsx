@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../../utils/classNames";
+import { sanitizeSearchQuery } from "../../../validations";
 
 export default function SearchInput({
   placeholder = "Search products…",
@@ -23,18 +24,27 @@ export default function SearchInput({
   const query = value ?? internal;
 
   const handleChange = (e) => {
-    const val = e.target.value;
-    if (onChange) onChange(e);
-    else setInternal(val);
+    const val = sanitizeSearchQuery(e.target.value);
+    if (onChange) {
+      onChange({
+        ...e,
+        target: {
+          ...e.target,
+          value: val,
+        },
+      });
+    } else setInternal(val);
   };
 
   const handleSearch = () => {
+    const searchValue = sanitizeSearchQuery(query);
+
     if (onSearch) {
-      onSearch(query.trim());
+      onSearch(searchValue);
       return;
     }
-    if (query.trim()) {
-      navigate(`${navigateTo}?${queryParam}=${encodeURIComponent(query.trim())}`);
+    if (searchValue) {
+      navigate(`${navigateTo}?${queryParam}=${encodeURIComponent(searchValue)}`);
     }
   };
 

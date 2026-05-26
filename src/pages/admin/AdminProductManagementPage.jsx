@@ -14,6 +14,7 @@ import {
   updateAdminProduct,
 } from "../../features/admin/adminSlice";
 import AdminShell from "./AdminShell";
+import { sanitizeSearchQuery } from "../../validations";
 
 const arr = (value) => (Array.isArray(value) ? value : []);
 const idOf = (item) => item?._id || item?.id;
@@ -675,7 +676,7 @@ export default function AdminProductManagementPage() {
         <div className="rounded-lg border border-slate-200 bg-white p-4">
           <div className="mb-3 flex items-center justify-between gap-2">
             <p className="text-sm font-semibold text-slate-700">Products</p>
-            <input className="rounded border p-2 text-sm" placeholder="Search products" value={query} onChange={(e) => setQuery(e.target.value)} />
+            <input className="rounded border p-2 text-sm" placeholder="Search products" value={query} onChange={(e) => setQuery(sanitizeSearchQuery(e.target.value))} />
           </div>
 
           <div className="max-h-[60vh] overflow-auto">

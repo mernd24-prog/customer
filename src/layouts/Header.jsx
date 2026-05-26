@@ -72,6 +72,8 @@ const DEFAULT_SELL_DROPDOWN = {
 };
 
 const DEFAULT_FASHION_MENU = { leftSections: [], promo: null };
+const CATEGORY_MENU_OPEN_DELAY_MS = 350;
+const CATEGORY_MENU_CLOSE_DELAY_MS = 160;
 
 
 function getCategoryKey(item = {}) {
@@ -417,12 +419,45 @@ export const CategoryBar = ({ headerData }) => {
   const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
   const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
   const [activeMenu, setActiveMenu] = useState(null);
-  const timeoutRef = useRef(null);
+  const categoryBarRef = useRef(null);
+  const openTimeoutRef = useRef(null);
+  const closeTimeoutRef = useRef(null);
   const fetchedRef = useRef(false);
 
   useEffect(() => {
     setActiveMenu(null);
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!activeMenu) return undefined;
+
+    const handleDocumentPointerDown = (event) => {
+      if (!categoryBarRef.current?.contains(event.target)) {
+        setActiveMenu(null);
+      }
+    };
+
+    const handleDocumentKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setActiveMenu(null);
+      }
+    };
+
+    document.addEventListener("pointerdown", handleDocumentPointerDown);
+    document.addEventListener("keydown", handleDocumentKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handleDocumentPointerDown);
+      document.removeEventListener("keydown", handleDocumentKeyDown);
+    };
+  }, [activeMenu]);
+
+  useEffect(() => {
+    return () => {
+      if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (fetchedRef.current) return;
@@ -436,30 +471,31 @@ export const CategoryBar = ({ headerData }) => {
       .catch(() => {});
   }, [dispatch]);
 
-  const handleMouseEnter = (item) => {
-    if (window.innerWidth >= 1024) {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  const handleCategoryMouseEnter = (item) => {
+    if (window.innerWidth < 1024) return;
+
+    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+
+    openTimeoutRef.current = setTimeout(() => {
       setActiveMenu(item);
-    }
+    }, CATEGORY_MENU_OPEN_DELAY_MS);
   };
 
-  const handleMouseLeave = () => {
-    if (window.innerWidth >= 1024) {
-      timeoutRef.current = setTimeout(() => {
-        setActiveMenu(null);
-      }, 200);
-    }
+  const handleCategoryMouseLeave = () => {
+    if (window.innerWidth < 1024) return;
+
+    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+
+    closeTimeoutRef.current = setTimeout(() => {
+      setActiveMenu(null);
+    }, CATEGORY_MENU_CLOSE_DELAY_MS);
   };
 
-  const handleCategoryClick = (e, item) => {
-    if (window.innerWidth < 1024) {
-      e.preventDefault();
-      if (activeMenu?.categoryKey === item?.categoryKey) {
-        setActiveMenu(null);
-      } else {
-        setActiveMenu(item);
-      }
-    }
+  const keepCategoryMenuOpen = () => {
+    if (window.innerWidth < 1024) return;
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
   };
 
   const catalogTree = useMemo(() => buildCategoryTree(catalogCategories), [catalogCategories]);
@@ -482,23 +518,29 @@ export const CategoryBar = ({ headerData }) => {
   if (!categories.length) return null;
 
   return (
-    <header className="w-full relative">
+    <header ref={categoryBarRef} className="w-full relative">
       <div className="w-container hide-scrollbar flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
-        {asArray(categories).map((item, index) => (
-          <div
-            key={keyOr(item?.name, `category-${index}`)}
-            className="relative"
-            onMouseEnter={() => handleMouseEnter(item)}
-            onMouseLeave={handleMouseLeave}
-          >
-            <Link
-              to={`/categories/${keyOr(
-                item?.slug,
-                buildCategorySlug(textOr(item?.name, "category")),
-              )}`}
-              onClick={(e) => handleCategoryClick(e, item)}
-              className="group flex min-w-[70px] flex-col items-center lg:min-w-[80px]"
+        {asArray(categories).map((item, index) => {
+          const isActive = activeMenu?.categoryKey === item?.categoryKey;
+
+          return (
+            <div
+              key={keyOr(item?.name, `category-${index}`)}
+              className="relative"
+              onMouseEnter={() => handleCategoryMouseEnter(item)}
+              onMouseLeave={handleCategoryMouseLeave}
             >
+              <Link
+                to={`/categories/${keyOr(
+                  item?.slug,
+                  buildCategorySlug(textOr(item?.name, "category")),
+                )}`}
+                aria-expanded={isActive}
+                aria-controls="category-mega-menu"
+                className={`group flex min-w-[70px] flex-col items-center rounded-md outline-none transition lg:min-w-[80px] ${
+                  isActive ? "text-[#CE9F2D]" : "text-black"
+                } focus-visible:ring-2 focus-visible:ring-[#CE9F2D]/40 focus-visible:ring-offset-2`}
+              >
               <div className="mx-auto flex items-center justify-center rounded-full p-1 transition-all group-hover:bg-gray-100">
                 {item?.img ? (
                   <ImageSkeleton
@@ -512,22 +554,22 @@ export const CategoryBar = ({ headerData }) => {
                 )}
               </div>
 
-              <span className="mt-1 line-clamp-1 w-full max-w-[80px] text-center text-[12px] leading-tight text-black lg:max-w-[100px] lg:text-[14px]">
+              <span className={`mt-1 line-clamp-1 w-full max-w-[80px] text-center text-[12px] leading-tight lg:max-w-[100px] lg:text-[14px] ${
+                isActive ? "font-semibold text-[#CE9F2D]" : "text-black"
+              }`}>
                 {textOr(item?.name, "Category")}
               </span>
-            </Link>
-          </div>
-        ))}
+              </Link>
+            </div>
+          );
+        })}
       </div>
       {activeMenu && (
         <div
+          id="category-mega-menu"
           className="absolute left-0 top-[calc(100%-2px)] z-[9999] w-full"
-          onMouseEnter={() => {
-            if (window.innerWidth >= 1024 && timeoutRef.current) {
-              clearTimeout(timeoutRef.current);
-            }
-          }}
-          onMouseLeave={handleMouseLeave}
+          onMouseEnter={keepCategoryMenuOpen}
+          onMouseLeave={handleCategoryMouseLeave}
         >
           <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
         </div>

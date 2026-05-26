@@ -19,6 +19,7 @@ import {
 } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { searchElastic } from "../../features/search/searchSlice";
+import { sanitizeSearchQuery } from "../../validations";
 
 const SORT_OPTIONS = [
   { value: "", label: "Relevance" },
@@ -103,13 +104,17 @@ export default function SearchPage() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (!queryInput.trim()) return;
+    const query = sanitizeSearchQuery(queryInput);
+
+    if (!query) return;
+
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      next.set("q", queryInput.trim());
+      next.set("q", query);
       next.delete("page");
       return next;
     });
+    setQueryInput(query);
   };
 
   const activeFilters = [
@@ -221,7 +226,7 @@ export default function SearchPage() {
             <input
               type="text"
               value={queryInput}
-              onChange={(e) => setQueryInput(e.target.value)}
+              onChange={(e) => setQueryInput(sanitizeSearchQuery(e.target.value))}
               placeholder="Search products…"
               className="w-full rounded-[6px] border border-[#cfc6b8] bg-white py-2.5 pl-9 pr-4 font-montserrat text-sm"
             />
