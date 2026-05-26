@@ -18,6 +18,70 @@ const api = axios.create({
 
 let refreshPromise = null;
 
+const FORCE_LOGOUT_CODES = new Set([
+  "USER_NOT_FOUND",
+  "USER_INACTIVE",
+  "USER_BLOCKED",
+  "USER_DELETED",
+  "TOKEN_EXPIRED",
+  "TOKEN_INVALID",
+  "ROLE_CHANGED",
+  "ROLE_INACTIVE",
+  "PERMISSION_REMOVED",
+  "SESSION_INVALID",
+  "FORCE_LOGOUT",
+]);
+
+const FORCE_LOGOUT_MESSAGES = {
+  USER_NOT_FOUND: "Your account no longer exists. Please contact administrator.",
+  USER_DELETED: "Your account has been removed. Please contact administrator.",
+  USER_INACTIVE: "Your account has been deactivated. Please contact administrator.",
+  USER_BLOCKED: "Your account has been blocked. Please contact support.",
+  TOKEN_EXPIRED: "Your session has expired. Please login again.",
+  TOKEN_INVALID: "Invalid session. Please login again.",
+  ROLE_CHANGED: "Your role was changed. Please login again.",
+  ROLE_INACTIVE: "Your role is no longer active. Please contact administrator.",
+  PERMISSION_REMOVED: "Your permissions were updated. Please login again.",
+  SESSION_INVALID: "Your session is no longer valid. Please login again.",
+  FORCE_LOGOUT: "Please login again to continue.",
+};
+
+const getAuthCode = (error = {}) => {
+  const data = error?.response?.data || error?.data || error || {};
+  return data?.code || data?.error?.code || null;
+};
+
+const getAuthMessage = (error = {}) => {
+  const data = error?.response?.data || error?.data || error || {};
+  const code = getAuthCode(error);
+  return data?.message ||
+    data?.error?.message ||
+    FORCE_LOGOUT_MESSAGES[code] ||
+    "Your session has expired. Please login again.";
+};
+
+const forceLogout = (error = {}) => {
+  const code = getAuthCode(error) || "SESSION_INVALID";
+  const message = getAuthMessage(error);
+  tokenStorage.clear();
+  localStorage.setItem("logoutReason", JSON.stringify({ code, message }));
+  window.dispatchEvent(new CustomEvent("auth:logout", { detail: { code, message } }));
+};
+
+const isPublicAuthEndpoint = (url = "") =>
+  [
+    endpoints.auth.login,
+    endpoints.auth.register,
+    endpoints.auth.registerOtp,
+    endpoints.auth.verifyRegistration,
+    endpoints.auth.social,
+    endpoints.auth.sendOtp,
+    endpoints.auth.verifyOtp,
+    endpoints.auth.resendOtp,
+    endpoints.auth.forgotPassword,
+    endpoints.auth.resetPassword,
+  ].some((endpoint) => String(url || "").includes(endpoint));
+
 api.interceptors.request.use((config) => {
   const token = tokenStorage.getAccessToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -28,17 +92,27 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    if (isPublicAuthEndpoint(originalRequest?.url)) {
+      return Promise.reject(error);
+    }
+    const authCode = getAuthCode(error);
+    const shouldForceLogout =
+      FORCE_LOGOUT_CODES.has(authCode) || error?.response?.status === 401;
     if (
       error?.response?.status !== 401 ||
+      (authCode && authCode !== "TOKEN_EXPIRED" && authCode !== "TOKEN_INVALID") ||
       originalRequest?._retry ||
       originalRequest?.url === endpoints.auth.refresh
     ) {
+      if (shouldForceLogout && originalRequest?.url !== endpoints.auth.refresh) {
+        forceLogout(error);
+      }
       return Promise.reject(error);
     }
 
     const refreshToken = tokenStorage.getRefreshToken();
     if (!refreshToken) {
-      tokenStorage.clear();
+      forceLogout(error);
       return Promise.reject(error);
     }
 
@@ -62,8 +136,7 @@ api.interceptors.response.use(
       return api(originalRequest);
     } catch (refreshError) {
       refreshPromise = null;
-      tokenStorage.clear();
-      window.dispatchEvent(new CustomEvent("auth:logout"));
+      forceLogout(refreshError);
       return Promise.reject(refreshError);
     }
   },
