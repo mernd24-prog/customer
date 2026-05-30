@@ -7,6 +7,12 @@ export const endpoints = {
   meta: {
     routes: `${API_PREFIX}/meta/routes`
   },
+  global: {
+    states: `${API_PREFIX}/global/states`,
+    cities: `${API_PREFIX}/global/cities`,
+    countries: `${API_PREFIX}/global/countries`,
+    zipCodes: `${API_PREFIX}/global/zip-codes`
+  },
   search: {
     main: `${SEARCH_PREFIX}`,
     autocomplete: `${SEARCH_PREFIX}/autocomplete`

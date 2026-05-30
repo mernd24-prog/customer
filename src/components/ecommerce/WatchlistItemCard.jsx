@@ -22,7 +22,7 @@ export function WatchlistItemCard({
 
   if (compact) {
     return (
-      <article className="group relative flex gap-3 border-b border-[#e7dfd1] p-3 transition-colors hover:bg-[#FAF6EE]">
+      <article className="group relative flex gap-3 border-b border-[#e7dfd1] p-3 transition-all duration-300 ease-in-out hover:bg-[#FAF6EE]">
         <Link
           to={`/products/${id}`}
           className="h-16 w-16 shrink-0 overflow-hidden rounded-[8px] border border-[#e7dfd1]"
@@ -39,7 +39,7 @@ export function WatchlistItemCard({
 
         <div className="flex flex-1 flex-col justify-between pr-5">
           <div>
-            <h4 className="line-clamp-2 font-montserrat text-[13px] font-semibold text-[#2E2E2E] transition-colors group-hover:text-[#CE9F2D]">
+            <h4 className="line-clamp-2 font-montserrat text-[13px] font-semibold text-[#2E2E2E] transition-all duration-300 ease-in-out group-hover:text-[#CE9F2D]">
               <Link to={`/products/${id}`}>{title}</Link>
             </h4>
             <p className="mt-1 font-montserrat text-[12px] font-bold text-[#2E2E2E]">
@@ -57,7 +57,7 @@ export function WatchlistItemCard({
 
         <button
           type="button"
-          className="absolute right-2 top-2  rounded-full p-1 text-[#A6A6A6] transition-colors hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-[#CE9F2D]/30"
+          className="absolute right-2 top-2  rounded-full p-1 text-[#A6A6A6] transition-all duration-300 ease-in-out hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-[#CE9F2D]/30"
           onClick={() => onRemove?.(product)}
           aria-label={`Remove ${title} from watchlist`}
         >
@@ -68,7 +68,7 @@ export function WatchlistItemCard({
   }
 
   return (
-    <article className="rounded-[12px] border border-[#e7dfd1] bg-white p-4 transition-shadow hover:shadow-sm sm:p-5">
+    <article className="rounded-[12px] border border-[#e7dfd1] bg-white p-4 transition-all duration-300 ease-in-out hover:shadow-sm sm:p-5">
       <div className="flex flex-col gap-6 lg:flex-row">
         <div className="flex flex-1 flex-col gap-5 sm:flex-row">
           <div className="flex h-[180px] w-full shrink-0 items-center justify-center overflow-hidden rounded-[12px] bg-[#FAF6EE] sm:h-[220px] sm:w-[220px]">

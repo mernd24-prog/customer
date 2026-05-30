@@ -283,11 +283,11 @@ export default function ProductsPage() {
             viewControls={(
               <div className="hidden items-center gap-0.5 rounded-[6px] border border-[#cfc6b8] bg-white p-1 sm:flex">
                 <button type="button" onClick={() => setViewMode("grid")}
-                  className={`rounded p-1.5 transition ${viewMode === "grid" ? "bg-[#CE9F2D] text-white" : "text-[#A6A6A6] hover:text-[#2E2E2E]"}`}>
+                  className={`rounded p-1.5 transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-[#CE9F2D] text-white" : "text-[#A6A6A6] hover:text-[#2E2E2E]"}`}>
                   <Grid2X2 size={15} />
                 </button>
                 <button type="button" onClick={() => setViewMode("list")}
-                  className={`rounded p-1.5 transition ${viewMode === "list" ? "bg-[#CE9F2D] text-white" : "text-[#A6A6A6] hover:text-[#2E2E2E]"}`}>
+                  className={`rounded p-1.5 transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-[#CE9F2D] text-white" : "text-[#A6A6A6] hover:text-[#2E2E2E]"}`}>
                   <List size={15} />
                 </button>
               </div>

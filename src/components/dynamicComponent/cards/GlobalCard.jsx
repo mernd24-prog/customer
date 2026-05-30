@@ -35,7 +35,7 @@ const Image = ({
       alt={alt}
       loading="lazy"
       className={cn(
-        "w-full object-cover transition-transform duration-500 group-hover:scale-105",
+        "w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105",
         aspect,
         radius,
       )}
@@ -95,7 +95,7 @@ const layouts = {
         {showWishlist && (
           <IconButton
             onClick={onWishlist}
-            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-md opacity-0 group-hover:opacity-100 transition-all hover:text-red-500"
+            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out hover:text-red-500"
           >
             <FaRegHeart size={14} />
           </IconButton>
@@ -201,7 +201,7 @@ export default function GlobalCard({
   const Layout = layouts[layout];
 
   const classes = cn(
-    "group relative flex flex-col overflow-hidden p-4 transition-all duration-300",
+    "group relative flex flex-col overflow-hidden p-4 transition-all duration-300 ease-in-out",
     variants[variant],
     hovers[hoverEffect],
     customRadius,

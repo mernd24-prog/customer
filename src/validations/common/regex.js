@@ -1,14 +1,15 @@
 export const REGEX = Object.freeze({
   email: /^(?!.*\.\.)[A-Z0-9._%+-]+@[A-Z0-9-]+(?:\.[A-Z0-9-]+)+$/i,
-  phone: /^\+?[1-9]\d{7,14}$/,
-  indianPhone: /^(?:\+91|91)?[6-9]\d{9}$/,
+  phone: /^\d{10}$/,
   passwordUppercase: /[A-Z]/,
   passwordLowercase: /[a-z]/,
   passwordNumber: /\d/,
   passwordSpecial: /[^A-Za-z0-9]/,
   otp: /^\d{6}$/,
   postalCode: /^[A-Za-z0-9][A-Za-z0-9\s-]{2,11}$/,
-  indianPostalCode: /^[1-9]\d{5}$/,
+  // Relaxed: allow any digit sequence and let the API enforce exact PIN requirements
+  indianPostalCode: /^\d+$/,
+  lettersOnly: /^[A-Za-z]+$/,
   name: /^[A-Za-z]+(?:[ '.-][A-Za-z]+)*$/,
   safeText: /^[A-Za-z0-9\s.,'’"()/&:+#-]+$/,
   addressLine: /^[A-Za-z0-9\s.,'’/#()-]+$/,

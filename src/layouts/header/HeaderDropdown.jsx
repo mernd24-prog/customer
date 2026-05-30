@@ -29,18 +29,19 @@ export default function HeaderDropdown({
       <Link
         to={path || "#"}
         className={cn(
-          "flex items-center gap-1 text-white transition-opacity hover:opacity-80",
+          "flex items-center gap-1.5 text-white transition-all duration-300 ease-in-out hover:opacity-80",
           className,
         )}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
+        {icon && <span className="flex items-center shrink-0">{icon}</span>}
         <span>{label}</span>
         <ChevronDown
           size={16}
           aria-hidden="true"
           className={cn(
-            "transition-transform duration-200",
+            "transition-all duration-300 ease-in-out",
             isOpen && "rotate-180",
           )}
         />
@@ -48,7 +49,7 @@ export default function HeaderDropdown({
 
       <div
         className={cn(
-          "absolute right-0 top-full z-50 mt-2 transition-all duration-200",
+          "absolute right-0 top-full z-50 mt-2 transition-all duration-300 ease-in-out",
           isOpen
             ? "visible translate-y-0 opacity-100"
             : "invisible -translate-y-2 opacity-0",

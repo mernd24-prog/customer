@@ -130,7 +130,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 disabled={loading}
                 {...register("password")}
-                className={`min-h-11 w-full rounded-[8px] border bg-white px-3 py-2.5 pr-12 font-montserrat text-sm text-[#2E2E2E] outline-none transition placeholder:text-[#A6A6A6] ${
+                className={`min-h-11 w-full rounded-[8px] border bg-white px-3 py-2.5 pr-12 font-montserrat text-sm text-[#2E2E2E] outline-none transition-all duration-500 ease-in-out placeholder:text-[#A6A6A6] ${
                   errors.password
                     ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
                     : "border-[#cfc6b8] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20"
@@ -141,7 +141,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#9E886A] transition hover:bg-[#FAF6EE] hover:text-[#2E2E2E]"
+                className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#9E886A] transition-all duration-500 ease-in-out hover:bg-[#FAF6EE] hover:text-[#2E2E2E]"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
@@ -164,7 +164,7 @@ export default function LoginPage() {
             <div className="flex justify-end">
               <Link
                 to={AUTH_ROUTES.forgotPassword}
-                className="font-montserrat text-xs font-medium text-[#9E886A] underline-offset-4 transition hover:text-[#CE9F2D] hover:underline"
+                className="font-montserrat text-xs font-medium text-[#9E886A] underline-offset-4 transition-all duration-500 ease-in-out hover:text-[#CE9F2D] hover:underline"
               >
                 Forgot password?
               </Link>
@@ -187,7 +187,7 @@ export default function LoginPage() {
             type="submit"
             loading={loading}
             disabled={!isValid || loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-[#CE9F2D] to-[#A26D27] font-montserrat text-[0.9rem] font-semibold tracking-wide text-white shadow-sm transition-all duration-200 hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-[#CE9F2D] to-[#A26D27] font-montserrat text-[0.9rem] font-semibold tracking-wide text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <LogIn size={18} />
             Sign in
@@ -207,17 +207,17 @@ export default function LoginPage() {
           {/* GOOGLE LOGIN */}
           <Button
             type="button"
-            variant="secondary"
+            variant="google"
             onClick={handleGoogleLogin}
-            className="h-12 w-full rounded-[8px] border border-[#e7dfd1] bg-white font-montserrat text-[0.9rem] font-semibold tracking-wide text-[#2E2E2E] transition-all duration-200 hover:border-[#CE9F2D] hover:bg-[#FAF6EE] hover:text-[#CE9F2D]"
+            className="h-12 w-full rounded-[8px] border-[#dadce0] bg-white font-montserrat text-[0.9rem] font-semibold tracking-wide text-[#2E2E2E] shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:border-[#c8ccd0] hover:bg-white hover:text-[#1f1f1f] hover:shadow-md active:translate-y-0 active:scale-[0.98] active:bg-[#f8fafd]"
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
               alt="Google"
-              className="h-4 w-4"
+              className="h-5 w-5"
             />
 
-            Continue with Google
+            <span>Continue with Google</span>
           </Button>
 
           {/* REGISTER */}
@@ -226,7 +226,7 @@ export default function LoginPage() {
 
             <Link
               to={AUTH_ROUTES.register}
-              className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
+              className="font-semibold text-[#CE9F2D] underline-offset-4 transition-all duration-500 ease-in-out hover:text-[#A26D27] hover:underline"
             >
               Create account
             </Link>
@@ -238,7 +238,7 @@ export default function LoginPage() {
 
             <Link
               to={AUTH_ROUTES.verifyOtp}
-              className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
+              className="font-semibold text-[#CE9F2D] underline-offset-4 transition-all duration-500 ease-in-out hover:text-[#A26D27] hover:underline"
             >
               Verify with OTP
             </Link>

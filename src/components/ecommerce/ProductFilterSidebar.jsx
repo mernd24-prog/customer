@@ -92,7 +92,9 @@ export function RatingFilter({ selected, onChange }) {
 
 export default function ProductFilterSidebar({ sections = [], className = "" }) {
   return (
-    <aside className={`w-full lg:w-60 lg:shrink-0 ${className}`}>
+    <aside
+      className={`w-full lg:sticky lg:top-24  lg:w-60 lg:shrink-0 lg:self-start lg:overflow-y-auto lg:overscroll-contain ${className}`}
+    >
       <div className="card">
         {sections.map((section) => (
           <FilterSection key={section.key || section.title} title={section.title} defaultOpen={section.defaultOpen}>

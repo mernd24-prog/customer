@@ -3,6 +3,16 @@ import { makeThunk } from "./createApiSlice";
 
 const q = (arg) => arg?.params || arg;
 const body = (arg) => arg?.data || arg;
+const positivePaymentBody = (arg) => {
+  const payload = body(arg);
+  const amount = Number(payload?.amount);
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error("Payment amount must be greater than zero");
+  }
+
+  return { ...payload, amount };
+};
 
 export const authThunks = {
   registerUser: makeThunk("auth/registerUser", { method: "post", url: endpoints.auth.register, data: body }),
@@ -75,7 +85,7 @@ export const orderThunks = {
 
 export const paymentThunks = {
   fetchPayments: makeThunk("payment/fetchPayments", { url: endpoints.payments.me }),
-  initiatePayment: makeThunk("payment/initiatePayment", { method: "post", url: endpoints.payments.initiate, data: body }),
+  initiatePayment: makeThunk("payment/initiatePayment", { method: "post", url: endpoints.payments.initiate, data: positivePaymentBody }),
   verifyPayment: makeThunk("payment/verifyPayment", { method: "post", url: endpoints.payments.verify, data: body })
 };
 
@@ -111,6 +121,13 @@ export const simpleThunks = {
     fetchAnalytics: makeThunk("analytics/fetchAnalytics", { url: endpoints.analytics.overview, params: q }),
     trackAnalyticsEvent: makeThunk("analytics/trackAnalyticsEvent", { method: "post", url: endpoints.analytics.events, data: body })
   }
+};
+
+export const globalThunks = {
+  fetchCountries: makeThunk("global/fetchCountries", { url: endpoints.global.countries, params: q }),
+  fetchStates: makeThunk("global/fetchStates", { url: endpoints.global.states, params: q }),
+  fetchCities: makeThunk("global/fetchCities", { url: endpoints.global.cities, params: q }),
+  fetchZipCodes: makeThunk("global/fetchZipCodes", { url: endpoints.global.zipCodes, params: q })
 };
 
 export const subscriptionThunks = {

@@ -10,7 +10,7 @@ export const PrimaryGradientButton = ({ children, ...props }) => (
 
 export const RegisterButton = ({ children, ...props }) => (
   <DynamicButton
-    className="bg-white rounded-full border border-primary text-primary"
+    className="bg-white rounded-full border border-primary text-primary transition-all duration-300 ease-in-out"
     {...props}
   >
     {children}

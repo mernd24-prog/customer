@@ -42,8 +42,8 @@ export default function Button({
       onClick={onClick}
       disabled={isDisabled}
       className={cn(
-        "inline-flex cursor-pointer items-center justify-center gap-2 font-montserrat font-semibold tracking-wide transition-all duration-200",
-        "focus:outline-none focus:ring-2 focus:ring-[#CE9F2D] focus:ring-offset-2",
+        "inline-flex cursor-pointer items-center justify-center gap-2 font-montserrat font-semibold tracking-wide transition-all duration-300 ease-in-out",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-2",
         sizeMap[size] || sizeMap.md,
         rounded ? "rounded-full" : "rounded-[6px]",
         fullWidth ? "w-full" : "",

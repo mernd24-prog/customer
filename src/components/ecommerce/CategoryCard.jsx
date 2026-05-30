@@ -14,7 +14,7 @@ export default function CategoryCard({
   const content = (
     <article
       className={cn(
-        "h-full w-full cursor-pointer rounded-[8px] border border-card-border bg-white p-4 transition hover:bg-card-border",
+        "h-full w-full cursor-pointer rounded-[8px] border border-card-border bg-white p-4 transition-all duration-300 ease-in-out hover:bg-card-border",
         active && "ring-2 ring-primary/50",
         className,
       )}
@@ -24,7 +24,7 @@ export default function CategoryCard({
           <img
             src={image}
             alt={title}
-            className="aspect-[284/256] w-full object-cover transition duration-300 hover:scale-[1.02]"
+            className="aspect-[284/256] w-full object-cover transition-all duration-300 ease-in-out hover:scale-[1.02]"
             loading="lazy"
             decoding="async"
             onError={(event) => applyImageFallback(event, title, "category")}

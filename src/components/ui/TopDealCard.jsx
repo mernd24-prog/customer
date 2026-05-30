@@ -10,14 +10,14 @@ export default function TopDealCard({
 }) {
   return (
     <Link to={link} className="block h-full">
-      <article className="flex h-full flex-col rounded-[12px] bg-white p-3 shadow-sm transition-all duration-300 hover:shadow-xl sm:p-4 md:p-5">
+      <article className="flex h-full flex-col rounded-[12px] bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:shadow-xl sm:p-4 md:p-5">
         
         {/* Product Image */}
         <div className="overflow-hidden rounded-[10px]">
           <img
             src={image}
             alt={title}
-            className="aspect-[292/310] w-full object-cover transition-transform duration-300 hover:scale-105"
+            className="aspect-[292/310] w-full object-cover transition-all duration-300 ease-in-out hover:scale-105"
           />
         </div>
 

@@ -33,7 +33,7 @@ export default function PageHero({
           {ctaText ? (
             <Link
               to={ctaTo}
-              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-0.5 hover:bg-accent/90"
+              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-slate-950 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:bg-accent/90"
             >
               {ctaText}
               <ArrowRight size={18} aria-hidden="true" />

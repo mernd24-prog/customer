@@ -7,19 +7,59 @@ export const ERROR_MESSAGES = Object.freeze({
   min: (field, length) => `${field} must be at least ${length} characters`,
   max: (field, length) => `${field} must be ${length} characters or less`,
   email: "Enter a valid email address",
-  phone: "Enter a valid 10-digit mobile number",
+  phone: "Enter a valid 10-digit phone number",
   safeText: "Only letters, numbers, spaces, and basic punctuation are allowed",
   name: (field) => `${field} can contain letters, spaces, apostrophes, dots, and hyphens only`,
+  firstName: "First name should contain only letters",
+  lastName: "Last name should contain only letters",
   passwordMin: "Password must be at least 8 characters",
   passwordUppercase: "Password must contain at least one uppercase letter",
   passwordLowercase: "Password must contain at least one lowercase letter",
   passwordNumber: "Password must contain at least one number",
   passwordSpecial: "Password must contain at least one special character",
   passwordMatch: "Passwords do not match",
+  passwordSameAsCurrent: "New password must be different from current password",
   otp: "Enter the 6-digit OTP",
   postalCode: "Enter a valid postal code",
+  indianPostalCode: "Enter PIN code",
   url: "Enter a valid URL",
 });
+
+const normalizeCountry = (country = "") =>
+  String(country)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z]/g, "");
+
+// Only enforce Indian PIN validation for India; otherwise fallback to generic postal code validation.
+export const getPostalCodeRule = (country) => {
+  const normalizedCountry = normalizeCountry(country);
+  const indianCountries = ["india", "bharat", "in"];
+
+  if (indianCountries.includes(normalizedCountry)) {
+    return {
+      pattern: REGEX.indianPostalCode,
+      message: ERROR_MESSAGES.indianPostalCode,
+    };
+  }
+
+  return undefined;
+};
+
+export const validatePostalCodeForCountry = (postalCode, country) => {
+  const value = String(postalCode || "").trim();
+  const rule = getPostalCodeRule(country);
+
+  if (!rule) {
+    return REGEX.postalCode.test(value)
+      ? { valid: true }
+      : { valid: false, message: ERROR_MESSAGES.postalCode };
+  }
+
+  return rule.pattern.test(value)
+    ? { valid: true }
+    : { valid: false, message: rule.message };
+};
 
 export const trimString = z.string().trim();
 
@@ -49,9 +89,13 @@ export const isValidSearchQuery = (value = "", options = {}) => {
 export const requiredString = (field, options = {}) => {
   const { min = 1, max = 120, pattern, patternMessage = ERROR_MESSAGES.safeText } = options;
 
-  let stringSchema = trimString
-    .min(min, min === 1 ? ERROR_MESSAGES.required(field) : ERROR_MESSAGES.min(field, min))
-    .max(max, ERROR_MESSAGES.max(field, max));
+  let stringSchema = trimString.min(1, ERROR_MESSAGES.required(field));
+
+  if (min > 1) {
+    stringSchema = stringSchema.min(min, ERROR_MESSAGES.min(field, min));
+  }
+
+  stringSchema = stringSchema.max(max, ERROR_MESSAGES.max(field, max));
 
   if (pattern) {
     stringSchema = stringSchema.regex(pattern, patternMessage);
@@ -100,6 +144,24 @@ export const nameField = (field, options = {}) =>
     patternMessage: ERROR_MESSAGES.name(field),
   });
 
+export const firstNameField = (options = {}) =>
+  requiredString("First name", {
+    min: 2,
+    max: 40,
+    ...options,
+    pattern: REGEX.lettersOnly,
+    patternMessage: ERROR_MESSAGES.firstName,
+  });
+
+export const lastNameField = (options = {}) =>
+  requiredString("Last name", {
+    min: 1,
+    max: 50,
+    ...options,
+    pattern: REGEX.lettersOnly,
+    patternMessage: ERROR_MESSAGES.lastName,
+  });
+
 export const addressLineField = (field, options = {}) =>
   requiredString(field, {
     min: 3,
@@ -109,13 +171,18 @@ export const addressLineField = (field, options = {}) =>
     patternMessage: `Enter a valid ${field.toLowerCase()}`,
   });
 
+export const optionalAddressLineField = (max = 120) =>
+  optionalString(max).refine((value) => !value || REGEX.addressLine.test(value), {
+    message: "Enter a valid address line",
+  });
+
 export const locationField = (field, options = {}) =>
   requiredString(field, {
-    min: 2,
+    min: 1,
     max: 80,
-    ...options,
-    pattern: REGEX.name,
+    pattern: /^[\p{L}\p{N}\s.,'’"()/&:+#-]+$/u,
     patternMessage: `Enter a valid ${field.toLowerCase()}`,
+    ...options,
   });
 
 export const couponCodeField = optionalString(30).transform((value) => value?.toUpperCase()).refine(
@@ -173,30 +240,35 @@ export const emailField = trimString
       .every((label) => label.length > 0 && label.length <= 63 && !label.startsWith("-") && !label.endsWith("-"));
   }, ERROR_MESSAGES.email);
 
-export const normalizePhoneNumber = (value = "") =>
-  String(value)
-    .trim()
-    .replace(/[\s()-]/g, "")
-    .replace(/^0091/, "91");
-
-export const toIndianMobileNumber = (value = "") => {
-  const normalized = normalizePhoneNumber(value);
-  const withoutCountryCode = normalized.replace(/^(\+91|91)/, "");
-
-  return withoutCountryCode.length === 10 ? withoutCountryCode : normalized;
-};
+export const normalizePhoneNumber = (value = "") => String(value).replace(/\D/g, "").slice(0, 10);
 
 export const phoneField = z.preprocess(
-  (value) => (typeof value === "string" ? toIndianMobileNumber(value) : value),
+  (value) => (typeof value === "string" ? normalizePhoneNumber(value) : value),
   trimString
     .min(1, ERROR_MESSAGES.required("Phone number"))
-    .regex(/^[6-9]\d{9}$/, ERROR_MESSAGES.phone),
+    .regex(REGEX.phone, ERROR_MESSAGES.phone),
 );
 
 export const passwordField = z
   .string()
   .min(8, ERROR_MESSAGES.passwordMin)
   .max(72, ERROR_MESSAGES.max("Password", 72));
+
+export const loginPasswordField = z
+  .string({
+    required_error: ERROR_MESSAGES.required("Password"),
+    invalid_type_error: ERROR_MESSAGES.required("Password"),
+  })
+  .min(1, ERROR_MESSAGES.required("Password"))
+  .max(72, ERROR_MESSAGES.max("Password", 72));
+
+export const confirmPasswordField = z
+  .string({
+    required_error: ERROR_MESSAGES.required("Confirm password"),
+    invalid_type_error: ERROR_MESSAGES.required("Confirm password"),
+  })
+  .min(1, ERROR_MESSAGES.required("Confirm password"))
+  .max(72, ERROR_MESSAGES.max("Confirm password", 72));
 
 export const strongPasswordField = passwordField
   .regex(REGEX.passwordUppercase, ERROR_MESSAGES.passwordUppercase)
@@ -210,6 +282,18 @@ export const otpField = trimString.regex(REGEX.otp, ERROR_MESSAGES.otp);
 export const postalCodeField = trimString
   .min(1, ERROR_MESSAGES.required("Postal code"))
   .regex(REGEX.postalCode, ERROR_MESSAGES.postalCode);
+
+export const indianPostalCodeField = trimString
+  .min(1, ERROR_MESSAGES.required("PIN code"))
+  .regex(REGEX.indianPostalCode, ERROR_MESSAGES.indianPostalCode);
+
+export const idField = (field = "Selection") =>
+  requiredString(field, {
+    min: 1,
+    max: 80,
+    pattern: /^[A-Za-z0-9_-]+$/,
+    patternMessage: `Enter a valid ${field.toLowerCase()}`,
+  });
 
 export const moneyField = (field, options = {}) => {
   const { min = 0, max = 99999999 } = options;
@@ -280,7 +364,12 @@ export const quantityField = (field = "Quantity", options = {}) => {
 
 export const optionalUrlField = z.preprocess(
   (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
-  trimString.url(ERROR_MESSAGES.url).optional(),
+  trimString
+    .refine(
+      (value) => value.startsWith("data:image/") || z.string().url().safeParse(value).success,
+      ERROR_MESSAGES.url,
+    )
+    .optional(),
 );
 
 export const matchFields = (leftField, rightField, message = ERROR_MESSAGES.passwordMatch) => ({

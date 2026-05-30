@@ -9,7 +9,7 @@ export default function Breadcrumbs({ items = [], className = "" }) {
         return (
           <span key={`${item.label}-${index}`} className="inline-flex items-center gap-1">
             {item.href && !isLast ? (
-              <Link to={item.href} className="hover:underline">
+              <Link to={item.href} className="text-white">
                 {item.label}
               </Link>
             ) : (

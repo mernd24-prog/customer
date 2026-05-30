@@ -100,7 +100,7 @@ export default function SearchInput({
             <button
               type="button"
               onClick={handleSearch}
-              className="ml-1 shrink-0 rounded-full bg-gradient-to-l from-[#A26D27] to-[#CE9F2D] px-4 py-1.5 font-montserrat text-sm font-semibold text-white transition hover:opacity-90"
+              className="ml-1 shrink-0 rounded-full bg-gradient-to-l from-[#A26D27] to-[#CE9F2D] px-4 py-1.5 font-montserrat text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:opacity-90"
               aria-label="Search"
             >
               {buttonLabel}

@@ -235,7 +235,7 @@ export default function CategoryPage() {
             <Link
               key={sub?.categoryKey || sub?.key}
               to={`/categories/${sub?.categoryKey || sub?.key}`}
-              className="flex items-center justify-between rounded-lg px-2 py-2 text-sm text-[#2E2E2E] hover:bg-blue-50 hover:text-blue-600 transition"
+              className="flex items-center justify-between rounded-lg px-2 py-2 text-sm text-[#2E2E2E] hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 ease-in-out"
             >
               <span className="truncate">{sub?.title || sub?.name}</span>
               <ChevronRight size={12} className="shrink-0 text-gray-400" />
@@ -331,7 +331,7 @@ export default function CategoryPage() {
           />
           <div className="absolute inset-0 flex items-end bg-black/40 px-6 pb-6">
             <div>
-              <Breadcrumbs items={breadcrumbItems} className="mb-1 text-white/70" />
+              <Breadcrumbs items={breadcrumbItems} className="mb-1 text-white" />
               <h1 className="font-montserrat text-[26px] font-bold text-white sm:text-[32px]">
                 {categoryTitle}
               </h1>
@@ -342,7 +342,7 @@ export default function CategoryPage() {
         <div className="border-b border-[#e7dfd1] bg-[#FAF6EE] px-4 py-6 sm:px-6">
           <div className="w-container">
             <Breadcrumbs items={breadcrumbItems} className="mb-2 text-[#A6A6A6]" />
-            <h1 className="font-montserrat text-[26px] font-bold text-[#2E2E2E] sm:text-[32px]">
+            <h1 className="font-montserrat text-[26px] font-bold text-[#A6A6A6] sm:text-[32px]">
               {categoryTitle}
             </h1>
             {categoryDesc && (

@@ -8,7 +8,8 @@ import {
   fetchSellerWebTracking,
   fetchSellerWebTrackingOrder,
 } from "../features/seller/sellerSlice";
-export { useFetchThunk as useFetch } from "../hooks/useFetchThunk";
+import { useFetchThunk as useFetch } from "../hooks/useFetchThunk";
+export { useFetch };
 import { formatMoney } from "../utils/ecommerce";
 
 export function SellerStatusPage() {

@@ -15,6 +15,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
     register,
   } = useForm({
     resolver: zodResolver(buyerRegisterSchema),
+    mode: "onChange",
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -33,26 +34,26 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           id="firstName"
-          label="First name*"
+          label="First name"
           registration={register("firstName")}
           error={errors.firstName}
           autoComplete="given-name"
-          placeholder="John"
+          placeholder="Enter first name"
         />
         <FormField
           id="lastName"
-          label="Last name*"
+          label="Last name"
           registration={register("lastName")}
           error={errors.lastName}
           autoComplete="family-name"
-          placeholder="Doe"
+          placeholder="Enter last name"
         />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           id="email"
-          label="Email*"
+          label="Email"
           type="email"
           registration={register("email")}
           error={errors.email}
@@ -61,18 +62,18 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         />
         <FormField
           id="phone"
-          label="Phone*"
+          label="Phone"
           registration={register("phone")}
           error={errors.phone}
           autoComplete="tel"
-          placeholder="+91 98765 43210"
+          placeholder="Enter phone number"
         />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           id="password"
-          label="Password*"
+          label="Password"
           type="password"
           registration={register("password")}
           error={errors.password}
@@ -81,7 +82,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         />
         <FormField
           id="confirmPassword"
-          label="Confirm password*"
+          label="Confirm password"
           type="password"
           registration={register("confirmPassword")}
           error={errors.confirmPassword}
@@ -107,7 +108,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
       )}
 
       <Button
-        className="h-12 w-full rounded-[8px] bg-gradient-to-r from-[#CE9F2D] to-[#A26D27] font-montserrat text-[0.9rem] font-semibold tracking-wide text-white shadow-sm transition-all duration-200 hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+        className="h-12 w-full rounded-[8px] bg-gradient-to-r from-[#CE9F2D] to-[#A26D27] font-montserrat text-[0.9rem] font-semibold tracking-wide text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
         loading={loading}
         type="submit"
       >
@@ -117,7 +118,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
       <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
         Already have an account?{" "}
         <Link
-          className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
+          className="font-semibold text-[#CE9F2D] underline-offset-4 transition-all duration-500 ease-in-out hover:text-[#A26D27] hover:underline"
           to={AUTH_ROUTES.login}
         >
           Login
@@ -126,7 +127,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
       <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
         Prefer OTP registration?{" "}
         <Link
-          className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
+          className="font-semibold text-[#CE9F2D] underline-offset-4 transition-all duration-500 ease-in-out hover:text-[#A26D27] hover:underline"
           to={AUTH_ROUTES.registerOtp}
         >
           Continue with OTP

@@ -20,6 +20,7 @@ import recommendation from "../features/recommendation/recommendationSlice";
 import analytics from "../features/analytics/analyticsSlice";
 import cms from "../features/cms/cmsSlice";
 import meta from "../features/meta/metaSlice";
+import global from "../features/global/globalSlice";
 import seller from "../features/seller/sellerSlice";
 import sellerCommission from "../features/sellerCommission/sellerCommissionSlice";
 import pricing from "../features/pricing/pricingSlice";
@@ -52,6 +53,7 @@ export const store = configureStore({
     analytics,
     cms,
     meta,
+    global,
     seller,
     sellerCommission,
     pricing,

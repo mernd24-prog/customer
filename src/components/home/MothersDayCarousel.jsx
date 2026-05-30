@@ -52,14 +52,14 @@ function SwiperButtons({ swiperRef, isBeginning, isEnd }) {
       <button
         disabled={isBeginning}
         onClick={() => swiperRef.current?.slidePrev()}
-        className={`flex h-14 w-14 items-center justify-center bg-[#E5E5E5] text-gray-500 transition-all duration-300 ${isBeginning ? "cursor-not-allowed opacity-80" : ""}`}
+        className={`flex h-14 w-14 items-center justify-center bg-[#E5E5E5] text-gray-500 transition-all duration-300 ease-in-out ${isBeginning ? "cursor-not-allowed opacity-80" : ""}`}
       >
         <IoArrowBackOutline size={24} />
       </button>
       <button
         disabled={isEnd}
         onClick={() => swiperRef.current?.slideNext()}
-        className={`flex h-14 w-14 items-center justify-center bg-accent text-white transition-all duration-300 ${isEnd ? "cursor-not-allowed opacity-80" : ""}`}
+        className={`flex h-14 w-14 items-center justify-center bg-accent text-white transition-all duration-300 ease-in-out ${isEnd ? "cursor-not-allowed opacity-80" : ""}`}
       >
         <IoArrowForwardOutline size={24} />
       </button>

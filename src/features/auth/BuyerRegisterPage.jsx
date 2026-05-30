@@ -1,10 +1,11 @@
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
 import AuthCard from "../../components/ui/AuthCard";
 import Seo from "../../components/common/Seo";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { registerUser } from "./authSlice";
+import { registerUser, clearError } from "./authSlice";
 import { AUTH_ROUTES } from "./authRoutes";
 import BuyerRegisterForm from "./BuyerRegisterForm";
 
@@ -13,6 +14,10 @@ export default function BuyerRegisterPage() {
   const navigate = useNavigate();
   const auth = useSelector((state) => state.auth);
   const run = useToastThunk();
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
   const registerBuyer = async (payload) => {
     const result = await run(

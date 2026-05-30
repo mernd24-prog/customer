@@ -8,7 +8,7 @@ export default function AuthCard({
   maxWidth = "max-w-[480px]",
 }) {
   return (
-    <section className="bg-[#FAF6EE] px-4 py-1 sm:py-2 lg:py-3">
+    <section className="px-4 py-2 sm:py-2 lg:py-3">
       <div className={`mx-auto flex w-full ${maxWidth} items-center justify-center`}>
         <div className="w-full overflow-hidden rounded-[20px] border border-[#e7dfd1] bg-white shadow-xl">
           <div className="h-[3px] w-full bg-gradient-to-r from-[#CE9F2D] via-[#e8b94a] to-[#A26D27]" />

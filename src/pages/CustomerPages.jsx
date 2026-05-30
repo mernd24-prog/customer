@@ -68,7 +68,7 @@ import {
   fetchReturnByOrder,
 } from "../features/returns/returnsSlice";
 import { fetchWallet } from "../features/wallet/walletSlice";
-import { fetchSubscriptionPlans } from "../features/subscription/subscriptionSlice";
+import { fetchSubscriptionPlans, purchaseSubscription } from "../features/subscription/subscriptionSlice";
 import {
   fetchNotifications,
   fetchNotificationPreferences,
@@ -105,6 +105,31 @@ import { loginSchema, emailSchema, otpSchema, resetSchema, registerSchema } from
 import { sanitizeSearchQuery } from "../validations";
 export { HomePage } from "./customer/HomePage";
 
+const toNumber = (value) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+};
+
+const getOrderPayableAmount = (order = {}) =>
+  toNumber(
+    order.amounts?.payableAmount ??
+      order.amounts?.payable_amount ??
+      order.order?.amounts?.payableAmount ??
+      order.order?.amounts?.payable_amount ??
+      order.order?.payable_amount ??
+      order.order?.total_amount ??
+      order.payable_amount ??
+      order.total_amount ??
+      order.totalAmount,
+  );
+
+const getCreatedOrder = (result = {}) =>
+  result?.data?.order ||
+  result?.data?.data?.order ||
+  result?.data?.data ||
+  result?.order ||
+  result?.data ||
+  result;
 
 export function AuthFormPage({ mode }) {
   const dispatch = useDispatch();
@@ -216,7 +241,20 @@ export function AuthFormPage({ mode }) {
             <small>{errors.firstName?.message}</small>
             <input placeholder="Last name" {...register("lastName")} />
             <small>{errors.lastName?.message}</small>
-            <input placeholder="Phone" {...register("phone")} />
+            {(() => {
+              const { onChange, ...rest } = register("phone");
+              return (
+                <input
+                  placeholder="Enter phone number"
+                  maxLength={10}
+                  {...rest}
+                  onChange={(e) => {
+                    e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    onChange(e);
+                  }}
+                />
+              );
+            })()}
             <small>{errors.phone?.message}</small>
           </>
         )}
@@ -433,10 +471,20 @@ export function AccountPage({ tab = "profile" }) {
               placeholder="Full name"
               {...register("fullName", { required: true })}
             />
-            <input
-              placeholder="Phone"
-              {...register("phone", { required: true })}
-            />
+            {(() => {
+              const { onChange, ...rest } = register("phone", { required: true });
+              return (
+                <input
+                  placeholder="Enter phone number"
+                  maxLength={10}
+                  {...rest}
+                  onChange={(e) => {
+                    e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    onChange(e);
+                  }}
+                />
+              );
+            })()}
             <input
               placeholder="Line 1"
               {...register("line1", { required: true })}
@@ -917,14 +965,27 @@ export function CheckoutPage() {
       }),
       "Order created",
     );
-    const orderId = order.data?.id || order.data?.orderId;
+    const createdOrder = getCreatedOrder(order);
+    const orderId = createdOrder?.id || createdOrder?.orderId || createdOrder?.order_id;
+    let paymentOrder = createdOrder;
+    let payableAmount = getOrderPayableAmount(paymentOrder);
+    if (payableAmount <= 0 && orderId) {
+      const orderDetail = await dispatch(fetchOrderById({ orderId })).unwrap();
+      paymentOrder = getCreatedOrder(orderDetail);
+      payableAmount = getOrderPayableAmount(paymentOrder);
+    }
+
+    if (payableAmount <= 0) {
+      toast.error("Payment amount is missing from order response. Please try again.");
+      return;
+    }
     await run(
       dispatch,
       initiatePayment({
         orderId,
         provider: "razorpay",
-        amount: order.data?.amounts?.payableAmount || 0,
-        currency: "INR",
+        amount: payableAmount,
+        currency: paymentOrder?.currency || createdOrder?.currency || "INR",
         notes: { source: "web_checkout" },
       }),
       "Payment initiated",

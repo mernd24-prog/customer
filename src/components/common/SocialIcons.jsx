@@ -7,7 +7,7 @@ export default function  SocialIcons({ data, className = "" }) {
     <Link
       to={href}
       aria-label={label || alt}
-      className={`flex items-center justify-center h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 transition ${className}`}
+      className={`flex items-center justify-center h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 ease-in-out ${className}`}
     >
       <img src={icon} alt={alt} className="h-5 w-5 object-contain" />
     </Link>

@@ -14,6 +14,35 @@ export default function FormField({
   const isPassword = type === "password";
   const inputType = isPassword && showPassword ? "text" : type;
 
+  const isPhone =
+    type === "tel" ||
+    id?.toLowerCase().includes("phone") ||
+    registration?.name?.toLowerCase().includes("phone");
+  const isPostalCode =
+    id?.toLowerCase().includes("postalcode") ||
+    registration?.name?.toLowerCase().includes("postalcode");
+  const isTextOnly =
+    id?.toLowerCase().includes("name") ||
+    registration?.name?.toLowerCase().includes("name") ||
+    id?.toLowerCase().includes("city") ||
+    registration?.name?.toLowerCase().includes("city");
+
+  const handleChange = (e) => {
+    if (isPhone) {
+      e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+    } else if (isPostalCode) {
+      e.target.value = e.target.value.replace(/\D/g, "");
+    } else if (isTextOnly) {
+      e.target.value = e.target.value.replace(/[^A-Za-z\s'.-]/g, "");
+    }
+    if (registration && registration.onChange) {
+      registration.onChange(e);
+    }
+    if (props.onChange) {
+      props.onChange(e);
+    }
+  };
+
   return (
     <label
       className="grid gap-1.5 font-montserrat text-sm font-medium text-[#2E2E2E]"
@@ -25,12 +54,14 @@ export default function FormField({
           placeholder={placeholder}
           id={id}
           type={inputType}
-          className={`min-h-11 w-full rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-sm text-[#2E2E2E] outline-none transition placeholder:text-[#A6A6A6] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 ${
+          className={`min-h-11 w-full rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-sm text-[#2E2E2E] outline-none transition-all duration-300 ease-in-out placeholder:text-[#A6A6A6] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 ${
             isPassword ? "pr-11" : ""
           }`}
           aria-invalid={Boolean(error)}
           {...registration}
           {...props}
+          onChange={handleChange}
+          maxLength={props.maxLength}
         />
         {isPassword ? (
           <button
@@ -40,7 +71,7 @@ export default function FormField({
               event.preventDefault();
               setShowPassword((currentValue) => !currentValue);
             }}
-            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#9E886A] transition hover:bg-[#FAF6EE] hover:text-[#2E2E2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D]/40"
+            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#9E886A] transition-all duration-300 ease-in-out hover:bg-[#FAF6EE] hover:text-[#2E2E2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D]/40"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>

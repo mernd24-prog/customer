@@ -53,11 +53,11 @@ export default function HomeProductsForYouSection({
         <SkeletonLoader
           preset="PRODUCTS_FOR_YOU_CARD"
           count={limit}
-          containerClass="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
+          containerClass="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4"
           wrapperClass="min-w-0 rounded-[8px] bg-white p-3 shadow-sm"
         />
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {products.map((product) => (
             <ProductCard
               key={getProductId(product)}

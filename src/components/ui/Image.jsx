@@ -15,7 +15,7 @@ const ImageSkeleton = ({ src, alt }) => {
       <img
         src={src}
         alt={alt}
-        className={`w-8 h-8 rounded object-contain transition-opacity duration-300 ${loading ? "opacity-0" : "opacity-100"
+        className={`w-8 h-8 rounded object-contain transition-all duration-300 ease-in-out ${loading ? "opacity-0" : "opacity-100"
           }`}
         onLoad={() => setLoading(false)}
       />

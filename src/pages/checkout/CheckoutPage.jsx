@@ -1,23 +1,233 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle, CreditCard, MapPin, Tag, Wallet } from "lucide-react";
+import { z } from "zod";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
-import Button from "../../components/ui/Button";
-import FormField from "../../components/ui/FormField";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { fetchCart } from "../../features/cart/cartSlice";
 import { fetchWallet } from "../../features/wallet/walletSlice";
 import { fetchMe } from "../../features/user/userSlice";
-import { createOrder } from "../../features/order/orderSlice";
+import { createOrder, fetchOrderById } from "../../features/order/orderSlice";
 import { initiatePayment } from "../../features/payment/paymentSlice";
-import { formatMoney, getProductId, getProductTitle } from "../../utils/ecommerce";
-import { addressSchema } from "../../validations/validationSchemas";
+import {
+  fetchCountries,
+  fetchStates,
+  fetchCities,
+  fetchZipCodes,
+} from "../../features/global/globalSlice";
+import {
+  formatMoney,
+  getImageFallbackSrc,
+  getProductId,
+  getProductImage,
+  getProductTitle,
+} from "../../utils/ecommerce";
 
+const getAddressId = (addr) => addr?._id || addr?.id || "";
+import {
+  checkoutAddressSchema,
+  couponCodeField,
+  optionalMoneyField,
+  validatePostalCodeForCountry,
+} from "../../validations";
 
+// Import reusable checkout subcomponents
+import AddressSelection from "./AddressSelection";
+import ShippingAddressForm from "./ShippingAddressForm";
+import DiscountsSection from "./DiscountsSection";
+import CheckoutSummary from "./CheckoutSummary";
+
+async function fetchFullList(dispatch, thunkAction, params = {}) {
+  const res = await dispatch(thunkAction({ params })).unwrap();
+  const total = res.meta?.total || 20;
+  const limit = res.meta?.limit || 20;
+  if (total > limit) {
+    const allRes = await dispatch(
+      thunkAction({ params: { ...params, limit: total } }),
+    ).unwrap();
+    return allRes.data || allRes.list || allRes || [];
+  }
+  return res.data || res.list || res || [];
+}
+
+const checkoutFormSchema = z
+  .object({
+    useNewAddress: z.preprocess(
+      (value) => value === true || value === "true",
+      z.boolean(),
+    ),
+    selectedAddressId: z.string().optional(),
+    fullName: z.string().optional(),
+    dialCode: z.string().optional(),
+    phone: z.string().optional(),
+    line1: z.string().optional(),
+    line2: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    postalCode: z.string().optional(),
+    country: z.string().optional(),
+    couponCode: couponCodeField,
+    walletAmount: optionalMoneyField("Wallet amount"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.useNewAddress) {
+      const addressResult = checkoutAddressSchema.safeParse(data);
+      if (!addressResult.success) {
+        addressResult.error.issues.forEach((issue) => {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: issue.path,
+            message: issue.message,
+          });
+        });
+      }
+    } else {
+      if (!data.selectedAddressId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["selectedAddressId"],
+          message: "Select a delivery address",
+        });
+      }
+    }
+  });
+
+const asNumber = (value) => {
+  const num = Number(value);
+  return isNaN(num) ? 0 : num;
+};
+
+const getOrderAmount = (order = {}, key) => {
+  const snakeKey = {
+    subtotal: "subtotal_amount",
+    shipping: "shipping_amount",
+    total: "total_amount",
+    payable: "payable_amount",
+    discount: "discount_amount",
+    walletAmount: "wallet_amount",
+    platformFee: "platform_fee_amount",
+  }[key];
+
+  return (
+    order.amounts?.[key] ??
+    order.amounts?.[snakeKey] ??
+    order[snakeKey] ??
+    order[key]
+  );
+};
+const getCartItemPrice = (item = {}) => {
+  const product =
+    item.productId && typeof item.productId === "object"
+      ? item.productId
+      : item.product || {};
+  return asNumber(
+    item.price ??
+      item.unitPrice ??
+      item.unit_price ??
+      item.salePrice ??
+      product.price ??
+      product.sellingPrice ??
+      product.salePrice ??
+      0,
+  );
+};
+const getCartItemShipping = (item = {}) =>
+  asNumber(item.shipping ?? item.shippingFee ?? 0) *
+  asNumber(item.quantity || 1);
+const getCartItemProduct = (item = {}) =>
+  item?.productId && typeof item.productId === "object"
+    ? item.productId
+    : item?.product || {};
+const getCartItemTitle = (item = {}) => {
+  const product = getCartItemProduct(item);
+  return item.title || getProductTitle(product, "Product");
+};
+const getCartItemVariantTitle = (item = {}) =>
+  item.variantTitle || item.variant_title || item.variant?.title || "";
+const getCartItemAttributes = (item = {}) =>
+  Object.entries(
+    item.attributes && typeof item.attributes === "object"
+      ? item.attributes
+      : {},
+  ).filter(
+    ([, value]) => value !== null && value !== undefined && value !== "",
+  );
+const adaptCheckoutItem = (item = {}, index = 0) => {
+  const product = getCartItemProduct(item);
+  const productId = getProductId(product || item.productId || item.id);
+  const variantKey = item.variantId || item.variantSku || "";
+  const title = getCartItemTitle(item);
+  const image =
+    getProductImage(product) ||
+    item.image ||
+    getImageFallbackSrc(title, "checkout");
+  const price = getCartItemPrice(item);
+  const quantity = asNumber(item.quantity || 1) || 1;
+
+  return {
+    ...item,
+    price,
+    quantity,
+    _safeId: productId || `item-${index}`,
+    _lineKey: [productId || `item-${index}`, variantKey]
+      .filter(Boolean)
+      .join(":"),
+    _safeTitle: title,
+    _variantTitle: getCartItemVariantTitle(item),
+    _image: image,
+    _attributes: getCartItemAttributes(item),
+    _lineTotal: price * quantity,
+    _shippingTotal: getCartItemShipping({ ...item, quantity }),
+  };
+};
+const getOrderPayableAmount = (order = {}) =>
+  asNumber(
+    getOrderAmount(order, "payable") ??
+      getOrderAmount(order, "total") ??
+      getOrderAmount(order?.order, "payable") ??
+      getOrderAmount(order?.order, "total"),
+  );
+const getCreatedOrder = (result = {}) =>
+  result?.data?.order ||
+  result?.data?.data?.order ||
+  result?.data?.data ||
+  result?.order ||
+  result?.data ||
+  result;
+const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
+const SELECTED_CHECKOUT_STORAGE_KEY = "sam_global_selected_checkout_item_ids";
+const getBuyNowItems = () => {
+  try {
+    const parsed = JSON.parse(
+      window.sessionStorage.getItem(BUY_NOW_STORAGE_KEY) || "[]",
+    );
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+const getSelectedCheckoutItemIds = () => {
+  try {
+    const storedValue = window.sessionStorage.getItem(
+      SELECTED_CHECKOUT_STORAGE_KEY,
+    );
+    if (storedValue === null) return null;
+    const parsed = JSON.parse(storedValue);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+const getCartLineKey = (item = {}) =>
+  [
+    getProductId(item.productId || item.product),
+    item.variantId || item.variantSku || "",
+  ]
+    .filter(Boolean)
+    .join(":");
 
 export default function CheckoutPage() {
   const dispatch = useDispatch();
@@ -30,58 +240,229 @@ export default function CheckoutPage() {
   const orderState = useSelector((s) => s.order);
   const paymentState = useSelector((s) => s.payment);
 
-  const [selectedAddressId, setSelectedAddressId] = useState(null);
-  const [useNewAddress, setUseNewAddress] = useState(false);
-
+  const buyNowItems = useMemo(getBuyNowItems, []);
+  const selectedCheckoutItemIds = useMemo(getSelectedCheckoutItemIds, []);
+  const isBuyNowCheckout = buyNowItems.length > 0;
   const cart = cartState.current || {};
-  const items = (cart.items || []).map((item, index) => {
-    const product = item?.productId && typeof item.productId === "object" ? item.productId : item?.product || null;
-    const safeProductId = getProductId(product || item?.productId || item?.id || `item-${index}`);
-    return {
-      ...item,
-      _safeId: safeProductId || `item-${index}`,
-      _safeTitle: item?.title || getProductTitle(product, "Product"),
-    };
-  });
-  const addresses = userState.current?.addresses || [];
+  const checkoutSourceItems = isBuyNowCheckout
+    ? buyNowItems
+    : selectedCheckoutItemIds !== null
+      ? (cart.items || []).filter((item) =>
+          selectedCheckoutItemIds.includes(getCartLineKey(item)),
+        )
+      : cart.items || [];
+  const items = checkoutSourceItems.map(adaptCheckoutItem);
+  const subtotal = items.reduce((sum, item) => sum + item._lineTotal, 0);
+  const shipping = items.reduce((sum, item) => sum + item._shippingTotal, 0);
+  const total = subtotal + shipping;
+
+  const addresses = useMemo(
+    () => userState.current?.addresses || [],
+    [userState],
+  );
   const walletBalance = walletState.current?.balance || 0;
+
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [postalCodes, setPostalCodes] = useState([]);
 
   useEffect(() => {
     dispatch(fetchCart());
     dispatch(fetchWallet());
     dispatch(fetchMe());
+    fetchFullList(dispatch, fetchCountries)
+      .then((list) => {
+        setCountries(list);
+      })
+      .catch((err) => console.error("Error fetching countries:", err));
+    fetchFullList(dispatch, fetchStates)
+      .then((list) => {
+        setStates(list);
+      })
+      .catch((err) => console.error("Error fetching states:", err));
   }, [dispatch]);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    setError,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(checkoutFormSchema),
+    mode: "onTouched",
+    defaultValues: {
+      useNewAddress: false,
+      selectedAddressId: "",
+      country: "",
+      dialCode: "",
+      walletAmount: 0,
+      couponCode: "",
+    },
+  });
+
+  const useNewAddress = watch("useNewAddress");
+  const selectedAddressId = watch("selectedAddressId");
+  const selectedCountry = watch("country");
+  const selectedState = watch("state");
+  const selectedCity = watch("city");
+  const watchedPostalCode = watch("postalCode");
+
+  const countryObj = countries.find((c) => (c.name || c) === selectedCountry);
+  const countryId = countryObj?._id || countryObj?.id;
+  const checkoutDialCodes = countryObj?.dialCode
+    ? [countryObj.dialCode]
+    : Array.from(
+        new Set(countries.map((c) => c.dialCode).filter(Boolean)),
+      ).sort((a, b) => Number(a) - Number(b));
+
+  const filteredStates = selectedCountry
+    ? states.filter((s) => {
+        const stateCountryId =
+          typeof s.countryId === "object"
+            ? s.countryId?._id || s.countryId?.id
+            : s.countryId;
+        const stateCountryName = s.countryId?.name || "";
+        return (
+          (countryId && stateCountryId === countryId) ||
+          stateCountryName.toLowerCase() === selectedCountry.toLowerCase()
+        );
+      })
+    : [];
+
+  // Clear state and city if they don't match the selected country
+  useEffect(() => {
+    if (selectedCountry && selectedState) {
+      const isValid = filteredStates.some(
+        (s) => (s.name || s) === selectedState,
+      );
+      if (!isValid) {
+        setValue("state", "");
+        setValue("city", "");
+      }
+    }
+  }, [selectedCountry, filteredStates, selectedState, setValue]);
+
+  useEffect(() => {
+    if (selectedCountry && countryObj?.dialCode) {
+      setValue("dialCode", countryObj.dialCode, { shouldValidate: true });
+    }
+  }, [selectedCountry, countryObj, setValue]);
+
+  // Fetch cities when state changes
+  useEffect(() => {
+    if (selectedState) {
+      const stateObj = states.find((s) => (s.name || s) === selectedState);
+      const stateId = stateObj?._id || stateObj?.id;
+      if (stateId) {
+        fetchFullList(dispatch, fetchCities, { stateId })
+          .then((list) => {
+            setCities(list);
+          })
+          .catch((err) => console.error("Error fetching cities:", err));
+      } else {
+        setCities([]);
+      }
+    } else {
+      setCities([]);
+    }
+  }, [selectedState, states, dispatch]);
+
+  // Fetch postal codes when city changes
+  useEffect(() => {
+    if (selectedCity) {
+      const cityObj = cities.find((c) => (c.name || c) === selectedCity);
+      const cityId = cityObj?._id || cityObj?.id;
+      if (cityId) {
+        fetchFullList(dispatch, fetchZipCodes, { cityId })
+          .then((list) => {
+            setPostalCodes(list);
+          })
+          .catch((err) => console.error("Error fetching zip codes:", err));
+      } else {
+        setPostalCodes([]);
+      }
+    } else {
+      setPostalCodes([]);
+    }
+  }, [selectedCity, cities, dispatch]);
+
+  // Zipcode auto-fill logic (with 500ms debounce)
+  useEffect(() => {
+    const isValid =
+      watchedPostalCode &&
+      validatePostalCodeForCountry(watchedPostalCode, selectedCountry).valid;
+    if (isValid) {
+      const timer = setTimeout(() => {
+        dispatch(fetchZipCodes({ params: { zip: watchedPostalCode } }))
+          .unwrap()
+          .then((res) => {
+            const data = res.data || res || {};
+            if (data.city && data.state) {
+              setValue("city", data.city, { shouldValidate: true });
+              setValue("state", data.state, { shouldValidate: true });
+              if (data.country) {
+                setValue("country", data.country, { shouldValidate: true });
+              }
+            }
+          })
+          .catch((err) => console.error("Error fetching zip code:", err));
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [watchedPostalCode, selectedCountry, dispatch, setValue]);
 
   // Auto-select default address
   useEffect(() => {
     if (addresses.length > 0 && !selectedAddressId) {
       const def = addresses.find((a) => a.isDefault) || addresses[0];
-      setSelectedAddressId(def._id || def.id);
+      setValue("selectedAddressId", getAddressId(def), {
+        shouldValidate: true,
+      });
+      setValue("useNewAddress", false);
     }
-    if (addresses.length === 0) setUseNewAddress(true);
-  }, [addresses, selectedAddressId]);
+    if (addresses.length === 0) {
+      setValue("useNewAddress", true);
+    }
+  }, [addresses, selectedAddressId, setValue]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(addressSchema),
-    defaultValues: { country: "India", walletAmount: 0 },
-  });
-
-  const loading = cartState.loading || walletState.loading || orderState.loading || paymentState.loading;
+  const loading =
+    cartState.loading ||
+    walletState.loading ||
+    orderState.loading ||
+    paymentState.loading;
 
   const submit = async (values) => {
     let shippingAddress;
-    if (!useNewAddress && selectedAddressId) {
-      const saved = addresses.find((a) => (a._id || a.id) === selectedAddressId);
-      shippingAddress = saved
-        ? { fullName: saved.fullName, phone: saved.phone, line1: saved.line1, line2: saved.line2, city: saved.city, state: saved.state, postalCode: saved.postalCode, country: saved.country }
-        : values;
-    } else {
+    if (!values.useNewAddress && values.selectedAddressId) {
+      const saved = addresses.find(
+        (a) => getAddressId(a) === String(values.selectedAddressId),
+      );
+      if (!saved) {
+        setError("selectedAddressId", {
+          type: "manual",
+          message: "Select a delivery address",
+        });
+        return;
+      }
+
       shippingAddress = {
+        fullName: saved.fullName,
+        dialCode: saved.dialCode,
+        phone: saved.phone,
+        line1: saved.line1,
+        line2: saved.line2 || "",
+        city: saved.city,
+        state: saved.state,
+        postalCode: saved.postalCode,
+        country: saved.country || "",
+      };
+    } else {
+      const addressResult = checkoutAddressSchema.safeParse({
         fullName: values.fullName,
+        dialCode: values.dialCode,
         phone: values.phone,
         line1: values.line1,
         line2: values.line2,
@@ -89,7 +470,70 @@ export default function CheckoutPage() {
         state: values.state,
         postalCode: values.postalCode,
         country: values.country,
+        couponCode: values.couponCode,
+        walletAmount: values.walletAmount,
+      });
+
+      if (!addressResult.success) {
+        addressResult.error.issues.forEach((issue) => {
+          const field = issue.path[0];
+          if (field) {
+            setError(String(field), {
+              type: "manual",
+              message: issue.message,
+            });
+          }
+        });
+        return;
+      }
+
+      const addressValues = addressResult.data;
+      shippingAddress = {
+        fullName: addressValues.fullName,
+        dialCode: addressValues.dialCode,
+        phone: addressValues.phone,
+        line1: addressValues.line1,
+        line2: addressValues.line2 || "",
+        city: addressValues.city,
+        state: addressValues.state,
+        postalCode: addressValues.postalCode,
+        country: addressValues.country || "",
       };
+    }
+
+    const walletAmount = Number(values.walletAmount || 0);
+    if (walletAmount > walletBalance) {
+      setError("walletAmount", {
+        type: "manual",
+        message: "Wallet amount cannot exceed your available balance",
+      });
+      return;
+    }
+
+    const orderItems = items
+      .map(
+        ({
+          productId,
+          _safeId,
+          quantity,
+          variantId,
+          variantSku,
+          variantTitle,
+          attributes,
+        }) => ({
+          productId:
+            typeof productId === "object" ? _safeId : productId || _safeId,
+          variantId: variantId || undefined,
+          variantSku: variantSku || undefined,
+          variantTitle: variantTitle || undefined,
+          attributes: attributes || {},
+          quantity: Number(quantity || 1),
+        }),
+      )
+      .filter((item) => Boolean(item.productId));
+
+    if (!orderItems.length) {
+      return;
     }
 
     const order = await run(
@@ -97,34 +541,51 @@ export default function CheckoutPage() {
       createOrder({
         currency: "INR",
         couponCode: values.couponCode || undefined,
-        walletAmount: Number(values.walletAmount || 0),
+        walletAmount,
         shippingAddress,
-        items: items.map(({ productId, _safeId, quantity, variantId, variantSku, variantTitle, attributes }) => ({
-          productId: typeof productId === "object" ? _safeId : productId,
-          variantId: variantId || undefined,
-          variantSku: variantSku || undefined,
-          variantTitle: variantTitle || undefined,
-          attributes: attributes || {},
-          quantity,
-        })),
+        items: orderItems,
       }),
       "Order created",
     );
 
-    const orderId = order?.data?.id || order?.data?.orderId;
+    const createdOrder = getCreatedOrder(order);
+    const orderId =
+      createdOrder?.id || createdOrder?.orderId || createdOrder?.order_id;
     if (!orderId) return;
+
+    let paymentOrder = createdOrder;
+    let payableAmount = getOrderPayableAmount(paymentOrder);
+    if (payableAmount <= 0) {
+      const orderDetail = await dispatch(fetchOrderById({ orderId })).unwrap();
+      paymentOrder = getCreatedOrder(orderDetail);
+      payableAmount = getOrderPayableAmount(paymentOrder);
+    }
+
+    if (payableAmount <= 0) {
+      setError("root", {
+        type: "manual",
+        message:
+          "Payment amount is missing from order details. Please try again.",
+      });
+      return;
+    }
 
     await run(
       dispatch,
       initiatePayment({
         orderId,
         provider: "razorpay",
-        amount: order?.data?.amounts?.payableAmount || 0,
-        currency: "INR",
+        amount: payableAmount,
+        currency: paymentOrder?.currency || createdOrder?.currency || "INR",
         notes: { source: "web_checkout" },
       }),
       "Redirecting to payment…",
     );
+
+    if (isBuyNowCheckout) {
+      window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
+    }
+    window.sessionStorage.removeItem(SELECTED_CHECKOUT_STORAGE_KEY);
 
     navigate("/payment/success");
   };
@@ -134,7 +595,9 @@ export default function CheckoutPage() {
       <Seo title="Checkout | Sam Global" />
 
       <div className="w-container py-8 sm:py-10">
-        <h1 className="mb-8 font-montserrat text-2xl font-bold text-[#2E2E2E] sm:text-3xl">Checkout</h1>
+        <h1 className="mb-8 font-montserrat text-2xl font-bold text-[#2E2E2E] sm:text-3xl">
+          Checkout
+        </h1>
 
         <ApiState
           loading={cartState.loading}
@@ -145,149 +608,61 @@ export default function CheckoutPage() {
           onRetry={() => dispatch(fetchCart())}
         >
           <form onSubmit={handleSubmit(submit)} noValidate>
-            <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
+            {errors.root?.message ? (
+              <div className="mb-4 rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {errors.root.message}
+              </div>
+            ) : null}
+            <input type="hidden" value={String(useNewAddress)} {...register("useNewAddress")} />
+            <input type="hidden" value={selectedAddressId || ""} {...register("selectedAddressId")} />
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(320px,380px)]">
               {/* Left column: shipping + payment */}
               <div className="grid gap-6">
                 {/* Saved addresses */}
                 {addresses.length > 0 && (
-                  <section className="rounded-[12px] border border-[#e7dfd1] bg-white p-5">
-                    <h2 className="mb-4 flex items-center gap-2 font-montserrat text-base font-semibold text-[#2E2E2E]">
-                      <MapPin size={16} /> Delivery address
-                    </h2>
-                    <div className="grid gap-3">
-                      {addresses.map((addr) => {
-                        const addrId = addr._id || addr.id;
-                        return (
-                          <label
-                            key={addrId}
-                            className={`flex cursor-pointer items-start gap-3 rounded-md border p-3 transition ${
-                              selectedAddressId === addrId && !useNewAddress
-                                ? "border-[#CE9F2D] bg-[#FAF6EE]"
-                                : "border-[#e7dfd1] hover:border-[#CE9F2D]"
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              name="addressSelect"
-                              value={addrId}
-                              checked={selectedAddressId === addrId && !useNewAddress}
-                              onChange={() => { setSelectedAddressId(addrId); setUseNewAddress(false); }}
-                              className="mt-1 h-4 w-4 accent-[#CE9F2D]"
-                            />
-                            <div className="text-sm">
-                              <p className="font-medium text-[#2E2E2E]">{addr.label} {addr.isDefault && <span className="ml-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Default</span>}</p>
-                              <p className="text-[#787878]">{addr.fullName} · {addr.phone}</p>
-                              <p className="text-[#787878]">{addr.line1}{addr.line2 ? `, ${addr.line2}` : ""}, {addr.city}, {addr.state} {addr.postalCode}</p>
-                            </div>
-                          </label>
-                        );
-                      })}
-
-                      <label className={`flex cursor-pointer items-center gap-3 rounded-md border p-3 transition ${useNewAddress ? "border-[#CE9F2D] bg-[#FAF6EE]" : "border-[#e7dfd1] hover:border-[#CE9F2D]"}`}>
-                        <input
-                          type="radio"
-                          name="addressSelect"
-                          checked={useNewAddress}
-                          onChange={() => setUseNewAddress(true)}
-                          className="h-4 w-4 accent-[#CE9F2D]"
-                        />
-                        <span className="text-sm font-medium text-[#2E2E2E]">Use a different address</span>
-                      </label>
-                    </div>
-                  </section>
+                  <AddressSelection
+                    addresses={addresses}
+                    selectedAddressId={selectedAddressId}
+                    useNewAddress={useNewAddress}
+                    setValue={setValue}
+                    errors={errors}
+                  />
                 )}
 
                 {/* New address form */}
                 {(useNewAddress || addresses.length === 0) && (
-                  <section className="rounded-[12px] border border-[#e7dfd1] bg-white p-5">
-                    <h2 className="mb-4 font-montserrat text-base font-semibold text-[#2E2E2E]">Shipping address</h2>
-                    <div className="grid gap-4">
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <FormField id="fullName" label="Full name" registration={register("fullName")} error={errors.fullName} autoComplete="name" />
-                        <FormField id="phone" label="Phone" type="tel" registration={register("phone")} error={errors.phone} autoComplete="tel" />
-                      </div>
-                      <FormField id="line1" label="Address line 1" registration={register("line1")} error={errors.line1} autoComplete="address-line1" />
-                      <FormField id="line2" label="Address line 2 (optional)" registration={register("line2")} error={errors.line2} autoComplete="address-line2" />
-                      <div className="grid gap-4 sm:grid-cols-3">
-                        <FormField id="city" label="City" registration={register("city")} error={errors.city} autoComplete="address-level2" />
-                        <FormField id="state" label="State" registration={register("state")} error={errors.state} autoComplete="address-level1" />
-                        <FormField id="postalCode" label="Postal code" registration={register("postalCode")} error={errors.postalCode} autoComplete="postal-code" />
-                      </div>
-                      <FormField id="country" label="Country" registration={register("country")} error={errors.country} autoComplete="country-name" />
-                    </div>
-                  </section>
+                  <ShippingAddressForm
+                    register={register}
+                    errors={errors}
+                    checkoutDialCodes={checkoutDialCodes}
+                    countries={countries}
+                    selectedCountry={selectedCountry}
+                    filteredStates={filteredStates}
+                    selectedState={selectedState}
+                    cities={cities}
+                    selectedCity={selectedCity}
+                    watchedPostalCode={watchedPostalCode}
+                    setValue={setValue}
+                    postalCodes={postalCodes}
+                  />
                 )}
 
                 {/* Coupons & wallet */}
-                <section className="rounded-[12px] border border-[#e7dfd1] bg-white p-5">
-                  <h2 className="mb-4 font-montserrat text-base font-semibold text-[#2E2E2E]">Discounts</h2>
-                  <div className="grid gap-4">
-                    <FormField
-                      id="couponCode"
-                      label="Coupon code"
-                      registration={register("couponCode")}
-                      error={errors.couponCode}
-                      placeholder="Enter coupon (applied on order)"
-                    />
-                    <label className="grid gap-1.5 text-sm font-medium text-slate-800">
-                      <span className="flex items-center gap-1.5">
-                        <Wallet size={14} /> Wallet amount (balance: {formatMoney(walletBalance, "INR")})
-                      </span>
-                      <input
-                        type="number"
-                        min="0"
-                        max={walletBalance}
-                        placeholder="0"
-                        {...register("walletAmount")}
-                        className="min-h-11 rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-[#2E2E2E] outline-none transition placeholder:text-[#A6A6A6] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20"
-                      />
-                    </label>
-                  </div>
-                </section>
+                <DiscountsSection
+                  register={register}
+                  errors={errors}
+                  walletBalance={walletBalance}
+                />
               </div>
 
               {/* Right column: order summary */}
-              <aside>
-                <div className="rounded-lg border border-[#e7dfd1] bg-white p-5 sticky top-4">
-                  <h2 className="mb-4 font-montserrat text-base font-semibold text-[#2E2E2E]">Order summary</h2>
-                  <div className="grid gap-3 divide-y divide-[#e7dfd1]">
-                    {items.map((item) => (
-                      <div key={item._safeId} className="flex justify-between pt-3 text-sm first:pt-0">
-                        <span className="text-slate-700 truncate max-w-[180px]">
-                          {item._safeTitle}
-                          <span className="text-[#A6A6A6]"> × {item.quantity}</span>
-                        </span>
-                        <span className="font-medium text-[#2E2E2E] shrink-0 ml-2">
-                          {formatMoney((item.price || 0) * item.quantity, "INR")}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 border-t border-[#e7dfd1] pt-4">
-                    <div className="flex justify-between text-sm text-[#787878]">
-                      <span>Subtotal</span>
-                      <span>{formatMoney(items.reduce((s, i) => s + (i.price || 0) * i.quantity, 0), "INR")}</span>
-                    </div>
-                    <div className="mt-1 flex justify-between text-sm text-[#787878]">
-                      <span>Shipping</span>
-                      <span>Calculated at order</span>
-                    </div>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    loading={loading}
-                    className="mt-5 w-full"
-                  >
-                    <CreditCard size={16} /> Place order &amp; pay
-                  </Button>
-
-                  <p className="mt-3 text-center text-xs text-[#A6A6A6]">
-                    Secured by Razorpay · SSL encrypted
-                  </p>
-                </div>
-              </aside>
+              <CheckoutSummary
+                items={items}
+                subtotal={subtotal}
+                shipping={shipping}
+                total={total}
+                loading={loading}
+              />
             </div>
           </form>
         </ApiState>

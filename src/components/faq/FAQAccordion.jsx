@@ -19,7 +19,7 @@ export default function FAQAccordion({ faqs = [], variant }) {
                 {/* Question */}
                 <div
                   onClick={() => toggleFAQ(index)}
-                  className="flex cursor-pointer items-center justify-between px-5 py-4 transition"
+                  className="flex cursor-pointer items-center justify-between px-5 py-4 transition-all duration-300 ease-in-out"
                 >
                   <h3 className="font-montserrat text-[15px] font-medium text-[#4D4D4D] md:text-[16px]">
                     {faq.question}
@@ -27,7 +27,7 @@ export default function FAQAccordion({ faqs = [], variant }) {
 
                   <button
                     className={`
-                      flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition
+                      flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ease-in-out
                       ${isOpen
                         ? "border-[#3E4094] bg-[#3E4094] text-white"
                         : "border-[#3E4094] bg-white text-[#3E4094]"
