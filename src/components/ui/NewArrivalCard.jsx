@@ -17,7 +17,7 @@ export default function NewArrivalCard({
     return (
         <Link to={link} className="block">
             <article
-                className="relative h-full min-w-0 rounded-[12px] bg-white px-3 pb-4 pt-4 shadow-sm transition hover:shadow-lg sm:px-4 sm:pb-5 sm:pt-5"
+                className="relative h-full min-w-0 rounded-[12px] bg-white px-3 pb-4 pt-4 shadow-sm transition-all duration-300 ease-in-out hover:shadow-lg sm:px-4 sm:pb-5 sm:pt-5"
             >
                 <h3
                     className="mx-auto w-full max-w-[90%] overflow-hidden text-ellipsis whitespace-nowrap text-center font-montserrat text-[13px] font-medium leading-6 text-[#2E2E2E] sm:text-[15px] md:text-[16px] lg:text-[17px] xl:text-[18px]"

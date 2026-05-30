@@ -7,7 +7,7 @@ import {
   getProductTitle,
 } from "../../utils/ecommerce";
 
-function CartLine({ item }) {
+function CartLine({ item, onClose }) {
   const product = item?.productId && typeof item.productId === "object" ? item.productId : item?.product || {};
   const id = getProductId(product) || item?.productId || item?._id;
   const title = getProductTitle(product, "Product");
@@ -26,7 +26,11 @@ function CartLine({ item }) {
           Qty {quantity} • {formatMoney(price, product?.currency || "INR")}
         </p>
       </div>
-      <Link to={`/products/${id}`} className="font-montserrat text-[11px] font-semibold text-[#CE9F2D]">
+      <Link
+        to={`/products/${id}`}
+        onClick={onClose}
+        className="font-montserrat text-[11px] font-semibold text-[#CE9F2D]"
+      >
         View
       </Link>
     </div>
@@ -50,8 +54,17 @@ export default function AddedToCartModal({
   );
 
   return (
-    <ModalOverlay onClose={onClose}>
-      <div className="grid max-h-[80vh] grid-cols-1 overflow-hidden rounded-2xl bg-white md:grid-cols-[minmax(0,1fr)_360px]">
+    <ModalOverlay onClose={onClose} showCloseButton={false}>
+      <div className="grid max-h-[90vh] md:max-h-[80vh] grid-cols-1 overflow-y-auto md:overflow-hidden rounded-2xl bg-white md:grid-cols-[minmax(0,1fr)_360px]">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-[#F7F3EA] text-lg font-bold leading-none text-[#2E2E2E] transition-all duration-300 ease-in-out hover:bg-[#efe6d4]"
+          aria-label="Close"
+        >
+          ×
+        </button>
+ 
         <div className="border-b p-5 md:border-b-0 md:border-r">
           <h2 className="font-montserrat text-xl font-bold text-[#2E2E2E]">Added to cart</h2>
           <div className="mt-4 flex items-center gap-3 rounded-[10px] bg-[#FAF6EE] p-3">
@@ -74,15 +87,19 @@ export default function AddedToCartModal({
             </Link>
           </div>
         </div>
-
-        <div className="flex max-h-[80vh] flex-col p-5">
-          <div className="mb-3 flex items-center justify-between">
+ 
+        <div className="flex md:max-h-[80vh] flex-col p-5">
+          <div className="mb-3 flex items-center justify-between gap-4 pr-11">
             <h3 className="font-montserrat text-sm font-bold text-[#2E2E2E]">Cart Items</h3>
-            <span className="font-montserrat text-xs text-[#787878]">{formatMoney(subtotal, "INR")}</span>
+            <span className="shrink-0 font-montserrat text-xs text-[#787878]">{formatMoney(subtotal, "INR")}</span>
           </div>
           <div className="space-y-2 overflow-y-auto pr-1">
             {cartItems.map((item, index) => (
-              <CartLine key={`${getProductId(item?.productId || item?.product || item)}-${index}`} item={item} />
+              <CartLine
+                key={`${getProductId(item?.productId || item?.product || item)}-${index}`}
+                item={item}
+                onClose={onClose}
+              />
             ))}
             {cartItems.length === 0 && (
               <p className="font-montserrat text-xs text-[#787878]">No items in cart yet.</p>
@@ -93,4 +110,3 @@ export default function AddedToCartModal({
     </ModalOverlay>
   );
 }
-

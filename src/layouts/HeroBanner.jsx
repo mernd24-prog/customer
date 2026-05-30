@@ -79,7 +79,7 @@ const HeroBanner = () => {
                 <div className="flex items-center justify-center pt-3 lg:justify-start">
                   <Button
                     variant="custom"
-                    className="!px-6 !py-3 text-sm font-black shadow-[0_10px_20px_rgba(191,155,83,0.3)] transition-transform hover:scale-105 sm:!px-8 sm:text-base lg:!px-10 lg:!py-4 lg:text-xl"
+                    className="!px-6 !py-3 text-sm font-black shadow-[0_10px_20px_rgba(191,155,83,0.3)] transition-all duration-300 ease-in-out hover:scale-105 sm:!px-8 sm:text-base lg:!px-10 lg:!py-4 lg:text-xl"
                     bgColor="linear-gradient(270deg, #A26D27 5.77%, #CE9F2D 100%)"
                     textColor="#FFFFFF"
                     rounded={true}

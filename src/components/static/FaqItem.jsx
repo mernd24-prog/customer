@@ -9,7 +9,7 @@ export default function FaqItem({ item, index }) {
   const panelId = `faq-panel-${index}`;
 
   return (
-    <article className="group rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl focus-within:border-accent focus-within:outline-none">
+    <article className="group rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl focus-within:border-accent focus-within:outline-none">
       <button
         type="button"
         aria-expanded={open}
@@ -21,7 +21,7 @@ export default function FaqItem({ item, index }) {
           {item.question}
         </span>
         <ChevronDown
-          className={cn("transition-transform duration-300", open && "rotate-180")}
+          className={cn("transition-all duration-300 ease-in-out", open && "rotate-180")}
           aria-hidden="true"
         />
       </button>
@@ -30,7 +30,7 @@ export default function FaqItem({ item, index }) {
         role="region"
         aria-labelledby={titleId}
         className={cn(
-          "mt-4 overflow-hidden transition-all duration-300",
+          "mt-4 overflow-hidden transition-all duration-300 ease-in-out",
           open ? "max-h-80" : "max-h-0",
         )}
       >

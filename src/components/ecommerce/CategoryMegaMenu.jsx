@@ -1,5 +1,5 @@
 import { memo, useCallback, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ChevronDown, ChevronRight, Sparkles, ArrowRight, Tag, Flame, ShoppingBag } from "lucide-react";
 import { applyImageFallback } from "../../utils/ecommerce";
 
@@ -23,6 +23,7 @@ const defaultGetQuickLinkHref = (item) => item?.link || "#";
 const defaultImageErrorHandler = (event, title, fallbackType) => {
   applyImageFallback(event, title, fallbackType);
 };
+const isActiveHref = (pathname, href) => href && href !== "#" && pathname === href;
 
 const mergeLabels = (labels) => ({ ...DEFAULT_LABELS, ...labels });
 
@@ -72,6 +73,7 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
   getItemHref,
   labels,
 }) {
+  const location = useLocation();
   return (
     <div className="flex flex-col h-full bg-[#FAF6EE]/40 border-r border-[#e7dfd1] p-5">
       <div className="mb-4 flex items-center gap-2 border-b border-[#e7dfd1] pb-3">
@@ -84,10 +86,12 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
       <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar pr-1 flex-1">
         {items.map((item) => {
           const isActive = activeKey === item.categoryKey;
+          const itemHref = getItemHref(item);
+          const isCurrentLink = isActiveHref(location.pathname, itemHref);
           return (
             <div
               key={item.categoryKey}
-              className={`group flex items-center justify-between rounded-xl px-4 py-3 text-left text-sm cursor-pointer transition-all duration-200 border-l-4 ${
+              className={`group flex items-center justify-between rounded-xl px-4 py-3 text-left text-sm cursor-pointer transition-all duration-300 ease-in-out border-l-4 ${
                 isActive
                   ? "bg-white shadow-[0_4px_12px_rgba(206,159,45,0.06)] border-[#CE9F2D] text-[#CE9F2D] font-semibold translate-x-1"
                   : "border-transparent text-[#2E2E2E]/80 hover:bg-white/60 hover:text-[#CE9F2D] hover:translate-x-0.5"
@@ -95,15 +99,15 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
               onMouseEnter={activeKey === item.categoryKey ? undefined : () => onHover(item.categoryKey)}
             >
               <Link
-                to={getItemHref(item)}
-                className="flex-1 truncate"
+                to={itemHref}
+                className={`flex-1 truncate ${isCurrentLink ? "font-bold text-[#CE9F2D]" : ""}`}
                 onClick={(e) => e.stopPropagation()}
               >
                 {item.title}
               </Link>
               <ChevronRight
                 size={14}
-                className={`transition-all duration-300 ${
+                className={`transition-all duration-300 ease-in-out ${
                   isActive ? "opacity-100 translate-x-0.5" : "opacity-0 -translate-x-1 group-hover:opacity-60"
                 }`}
               />
@@ -114,7 +118,7 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
       
       <Link
         to={rootHref}
-        className="mt-4 flex items-center justify-center gap-1.5 rounded-lg bg-[#FAF6EE] py-2.5 text-xs font-semibold text-[#CE9F2D] transition hover:bg-[#CE9F2D]/10"
+        className="mt-4 flex items-center justify-center gap-1.5 rounded-lg bg-[#FAF6EE] py-2.5 text-xs font-semibold text-[#CE9F2D] transition-all duration-300 ease-in-out hover:bg-[#CE9F2D]/10"
       >
         <span>{labels.shopAll}</span>
         <ArrowRight size={12} />
@@ -135,6 +139,7 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
   getItemHref,
   labels,
 }) {
+  const location = useLocation();
   return (
     <div className="flex flex-col h-full bg-white border-r border-[#e7dfd1] p-5">
       <h3 className="mb-4 border-b border-[#e7dfd1] pb-3 font-montserrat text-[11px] font-black uppercase tracking-wider text-[#A6A6A6]">
@@ -145,10 +150,12 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
         {items.length > 0 ? (
           items.map((item) => {
             const isActive = activeKey === item.categoryKey;
+            const itemHref = getItemHref(item);
+            const isCurrentLink = isActiveHref(location.pathname, itemHref);
             return (
               <div
                 key={item.categoryKey}
-                className={`group flex items-center justify-between rounded-xl px-4 py-2.5 text-left text-sm cursor-pointer transition-all duration-200 ${
+                className={`group flex items-center justify-between rounded-xl px-4 py-2.5 text-left text-sm cursor-pointer transition-all duration-300 ease-in-out ${
                   isActive
                     ? "bg-[#FAF6EE] text-[#a76616] font-semibold"
                     : "text-[#2E2E2E]/70 hover:bg-[#FAF6EE]/40 hover:text-[#CE9F2D]"
@@ -156,8 +163,8 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
                 onMouseEnter={activeKey === item.categoryKey ? undefined : () => onHover(item.categoryKey)}
               >
                 <Link
-                  to={getItemHref(item)}
-                  className="flex-1 truncate"
+                  to={itemHref}
+                  className={`flex-1 truncate ${isCurrentLink ? "font-bold text-[#CE9F2D]" : ""}`}
                   onClick={(e) => e.stopPropagation()}
                 >
                   {item.title}
@@ -165,7 +172,7 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
                 {showChevron && Array.isArray(item.children) && item.children.length > 0 && (
                   <ChevronRight
                     size={12}
-                    className={`opacity-40 transition-transform group-hover:opacity-100 group-hover:translate-x-0.5 ${
+                    className={`opacity-40 transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:translate-x-0.5 ${
                       isActive ? "opacity-100 text-[#a76616]" : ""
                     }`}
                   />
@@ -195,6 +202,7 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
   getQuickLinkHref,
   labels,
 }) {
+  const location = useLocation();
   return (
     <div className="flex flex-col h-full bg-white p-5">
       <h3 className="mb-4 border-b border-[#e7dfd1] pb-3 font-montserrat text-[11px] font-black uppercase tracking-wider text-[#A6A6A6]">
@@ -203,16 +211,23 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
       
       <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar pr-1 flex-1">
         {items.length > 0 ? (
-          items.map((item) => (
-            <Link
-              key={item.categoryKey}
-              to={getItemHref(item)}
-              className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm text-[#2E2E2E]/70 transition-all duration-200 hover:bg-[#FAF6EE]/50 hover:text-[#CE9F2D] hover:pl-5"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-[#e7dfd1] group-hover:bg-[#CE9F2D] transition-colors" />
-              <span className="flex-1 truncate">{item.title}</span>
-            </Link>
-          ))
+          items.map((item) => {
+            const itemHref = getItemHref(item);
+            const isCurrentLink = isActiveHref(location.pathname, itemHref);
+
+            return (
+              <Link
+                key={item.categoryKey}
+                to={itemHref}
+                className={`group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm transition-all duration-300 ease-in-out hover:bg-[#FAF6EE]/50 hover:text-[#CE9F2D] hover:pl-5 ${
+                  isCurrentLink ? "bg-[#FAF6EE] font-bold text-[#CE9F2D]" : "text-[#2E2E2E]/70"
+                }`}
+              >
+                <span className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ease-in-out ${isCurrentLink ? "bg-[#CE9F2D]" : "bg-[#e7dfd1] group-hover:bg-[#CE9F2D]"}`} />
+                <span className="flex-1 truncate">{item.title}</span>
+              </Link>
+            );
+          })
         ) : quickLinks.length > 0 ? (
           <>
             <div className="mb-2 flex items-center gap-1.5 px-4 text-xs font-bold uppercase tracking-wider text-[#CE9F2D]">
@@ -223,9 +238,9 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
               <Link
                 key={item.name}
                 to={getQuickLinkHref(item)}
-                className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm text-[#2E2E2E]/70 transition-all duration-200 hover:bg-[#FAF6EE]/50 hover:text-[#CE9F2D] hover:pl-5"
+                className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm text-[#2E2E2E]/70 transition-all duration-300 ease-in-out hover:bg-[#FAF6EE]/50 hover:text-[#CE9F2D] hover:pl-5"
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-[#e7dfd1] group-hover:bg-[#CE9F2D] transition-colors" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#e7dfd1] group-hover:bg-[#CE9F2D] transition-all duration-300 ease-in-out" />
                 <span className="flex-1 truncate">{item.name}</span>
               </Link>
             ))}
@@ -253,19 +268,19 @@ const PromotionBanner = memo(function PromotionBanner({
   onImageError,
 }) {
   const title = rootData.title || promoData?.title || labels.promoTitle;
-  const image = rootData.image || promoData?.image || "";
+  const image = promoData?.image || rootData.image || "";
   const highlight = promoData?.highlight || "";
   const link = promoData?.link || getItemHref(rootData);
   const buttonText = promoData?.buttonText || labels.promoButton;
 
   return (
     <div className="h-full bg-gradient-to-br from-[#FAF6EE]/60 to-white p-5 flex flex-col justify-between border-l border-[#e7dfd1]">
-      <div className="group relative h-full min-h-[220px] w-full overflow-hidden rounded-2xl shadow-md transition-shadow hover:shadow-xl">
+      <div className="group relative h-full min-h-[220px] w-full overflow-hidden rounded-2xl shadow-md transition-all duration-300 ease-in-out hover:shadow-xl">
         <div className="absolute inset-0">
           <img
             src={image}
             alt={title}
-            className="relative w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            className="h-full w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105"
             onError={(event) => onImageError(event, title, imageFallbackType)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
@@ -286,7 +301,7 @@ const PromotionBanner = memo(function PromotionBanner({
           
           <Link
             to={link}
-            className="mt-4 inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-l from-[#A26D27] to-[#CE9F2D] px-5 py-2.5 text-xs font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-95"
+            className="mt-4 inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-l from-[#A26D27] to-[#CE9F2D] px-5 py-2.5 text-xs font-bold text-white shadow-lg transition-all duration-300 ease-in-out hover:opacity-90 active:scale-95"
           >
             <span>{buttonText}</span>
             <ChevronRight size={14} />
@@ -330,14 +345,14 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({ items, rootTitle
               <button
                 type="button"
                 onClick={() => handleToggleSub(sub.categoryKey)}
-                className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold transition ${
+                className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold transition-all duration-300 ease-in-out ${
                   isSubExpanded ? "bg-[#FAF6EE] text-[#CE9F2D]" : "text-[#2E2E2E]"
                 }`}
               >
                 <span>{sub.title}</span>
                 <ChevronDown
                   size={16}
-                  className={`transition-transform duration-200 ${isSubExpanded ? "rotate-180 text-[#CE9F2D]" : "text-gray-400"}`}
+                  className={`transition-all duration-300 ease-in-out ${isSubExpanded ? "rotate-180 text-[#CE9F2D]" : "text-gray-400"}`}
                 />
               </button>
 
@@ -364,7 +379,7 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({ items, rootTitle
                               >
                                 <ChevronDown
                                   size={14}
-                                  className={`transition-transform duration-200 text-gray-400 ${isChildExpanded ? "rotate-180" : ""}`}
+                                  className={`transition-all duration-300 ease-in-out text-gray-400 ${isChildExpanded ? "rotate-180" : ""}`}
                                 />
                               </button>
                             )}

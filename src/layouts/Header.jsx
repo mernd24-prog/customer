@@ -2,6 +2,7 @@ import { Fragment, useCallback, useEffect, useMemo, useState, useRef } from "rea
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  Bell,
   Camera,
   Heart,
   Lock,
@@ -33,6 +34,7 @@ const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
 
 const dropdownIconMap = {
+  bell: Bell,
   camera: Camera,
   lock: Lock,
   logOut: LogOut,
@@ -42,11 +44,26 @@ const dropdownIconMap = {
   user: User,
 };
 
+const navbarIconLabels = {
+  IN: "Deliver to address",
+  Word: "Language and region",
+  Account: "Account",
+  Cart: "Cart",
+};
+
+const getNavbarIconPath = (item = {}) => {
+  if (item.name === "IN") return "/account/addresses";
+  return hrefOr(item.path);
+};
+
+const getNavbarIconLabel = (item = {}) =>
+  item.tooltip || navbarIconLabels[item.name] || textOr(item.name, "Navigation");
+
 const baseAccountMenuItems = [
   { label: "My Profile", path: "/account/profile", icon: "user" },
   { label: "My Orders", path: "/orders", icon: "shoppingBag" },
   { label: "Wallet", path: "/wallet", icon: "lock" },
-  { label: "Notifications", path: "/notifications", icon: "settings" },
+  { label: "Notifications", path: "/notifications", icon: "bell" },
   { label: "Settings", path: "/notification-preferences", icon: "settings" },
 ];
 
@@ -220,9 +237,11 @@ export const TopHeader = () => {
             {
               type: "menu",
               label:
-                currentUser.firstName ||
-                currentUser.email?.split("@")[0] ||
-                "My Sam",
+                currentUser.profile?.firstName
+                  ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
+                  : (currentUser.firstName ||
+                     currentUser.email?.split("@")[0] ||
+                     "My Sam"),
               path: "/account/profile",
               icon: <User size={16} />,
               title: "My Account",
@@ -257,7 +276,7 @@ export const TopHeader = () => {
           ]
         : []),
     ],
-    [handleRemoveWatchlist, wishlistedProducts, currentUser, currentRole],
+    [handleRemoveWatchlist, wishlistedProducts, currentUser, currentRole, sellDropdownCms],
   );
 
   const renderDropdown = (dropdown) => {
@@ -282,19 +301,19 @@ export const TopHeader = () => {
   return (
     <div className="hidden h-[39px] w-full items-center justify-center bg-blue text-[14px] font-medium text-white lg:flex">
       <div className="w-container flex h-full items-center">
-        <div className="flex flex-1 items-center gap-14 text-white">
+        <div className="flex flex-1 items-center gap-14 text-white  ">
           {asArray(topLinks.length ? topLinks : DEFAULT_TOP_NAV_LINKS).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
               to={hrefOr(link?.path)}
-              className="text-white transition-opacity hover:opacity-70"
+              className="text-white transition-all duration-300 ease-in-out hover:opacity-70"
             >
               {textOr(link?.name, "Link")}
             </Link>
           ))}
         </div>
 
-        <div className="flex h-full items-center gap-6">
+        <div className="flex h-full items-center gap-6 ">
           {dropdowns.map((dropdown) => (
             <HeaderDropdown
               key={dropdown.type}
@@ -310,7 +329,7 @@ export const TopHeader = () => {
             <button
               type="button"
               onClick={() => dispatch(logout())}
-              className="flex items-center gap-1.5 rounded border border-white/40 px-3 py-0.5 text-sm font-semibold text-white hover:bg-white/10 transition"
+              className="flex items-center gap-1.5 rounded border border-white/40 px-3 py-0.5 text-sm font-semibold text-white hover:bg-white/10 transition-all duration-300 ease-in-out"
             >
               <LogOut size={14} /> Sign Out
             </button>
@@ -318,7 +337,7 @@ export const TopHeader = () => {
             <BrandButton
               variant="outline"
               rounded
-              className="h-[31px] min-h-0 min-w-[112px] border-[#CE9F2D] bg-white px-5 py-0 text-[15px] font-medium text-[#CE9F2D] hover:bg-white hover:text-[#A26D27]"
+              className="h-[31px] min-h-[5px] min-w-[112px] border-[#CE9F2D] bg-white px-5 py-0 text-[15px] font-medium text-[#CE9F2D] hover:bg-white hover:text-[#A26D27]"
               size="md"
               label="Register"
               onClick={() => navigate("/register")}
@@ -367,19 +386,22 @@ export const Navbar = ({ icons: propIcons }) => {
             {asArray(displayIcons).map((item, iconIndex) => (
               <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
                 <Link
-                  to={hrefOr(item?.path)}
-                  className="group flex flex-col items-center px-1 transition-opacity hover:opacity-80 lg:px-4"
-                  aria-label={textOr(item?.name, "navigation")}
+                  to={getNavbarIconPath(item)}
+                  className="group relative flex flex-col items-center px-1 transition-all duration-300 ease-in-out hover:opacity-80 lg:px-4"
+                  aria-label={getNavbarIconLabel(item)}
                 >
                   <img
                     src={item?.img}
-                    alt={textOr(item?.name, "Navigation icon")}
+                    alt={getNavbarIconLabel(item)}
                     className={`object-contain ${
                       item?.name === "IN"
                         ? "h-[42px] w-[60px]"
                         : "h-[28px] w-[28px]"
                     }`}
                   />
+                  <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[#2E2E2E] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+                    {getNavbarIconLabel(item)}
+                  </span>
                 </Link>
                 {iconIndex < displayIcons.length - 1 && (
                   <div className="h-8 w-[1.5px] bg-gray-200" />
@@ -391,10 +413,12 @@ export const Navbar = ({ icons: propIcons }) => {
           {currentUser ? (
             <Link
               to="/account/profile"
-              className="flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-200 transition"
+              className="flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-200 transition-all duration-300 ease-in-out"
             >
               <User size={16} />
-              {currentUser.firstName || "Account"}
+              {currentUser.profile?.firstName
+                ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
+                : (currentUser.firstName || "Account")}
             </Link>
           ) : (
             <BrandButton
@@ -521,7 +545,13 @@ export const CategoryBar = ({ headerData }) => {
     <header ref={categoryBarRef} className="w-full relative">
       <div className="w-container hide-scrollbar flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
         {asArray(categories).map((item, index) => {
-          const isActive = activeMenu?.categoryKey === item?.categoryKey;
+          const categoryHref = `/categories/${keyOr(
+            item?.slug,
+            buildCategorySlug(textOr(item?.name, "category")),
+          )}`;
+          const isActive =
+            activeMenu?.categoryKey === item?.categoryKey ||
+            location.pathname === categoryHref;
 
           return (
             <div
@@ -531,17 +561,14 @@ export const CategoryBar = ({ headerData }) => {
               onMouseLeave={handleCategoryMouseLeave}
             >
               <Link
-                to={`/categories/${keyOr(
-                  item?.slug,
-                  buildCategorySlug(textOr(item?.name, "category")),
-                )}`}
+                to={categoryHref}
                 aria-expanded={isActive}
                 aria-controls="category-mega-menu"
-                className={`group flex min-w-[70px] flex-col items-center rounded-md outline-none transition lg:min-w-[80px] ${
+                className={`group flex min-w-[70px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out lg:min-w-[80px] ${
                   isActive ? "text-[#CE9F2D]" : "text-black"
                 } focus-visible:ring-2 focus-visible:ring-[#CE9F2D]/40 focus-visible:ring-offset-2`}
               >
-              <div className="mx-auto flex items-center justify-center rounded-full p-1 transition-all group-hover:bg-gray-100">
+              <div className="mx-auto flex items-center justify-center rounded-full p-1 transition-all duration-300 ease-in-out group-hover:bg-gray-100">
                 {item?.img ? (
                   <ImageSkeleton
                     src={item?.img}

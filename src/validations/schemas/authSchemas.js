@@ -1,7 +1,11 @@
 import { z } from "zod";
 import {
   aadhaarField,
+  confirmPasswordField,
   emailField,
+  firstNameField,
+  lastNameField,
+  loginPasswordField,
   nameField,
   optionalUrlField,
   otpField,
@@ -9,14 +13,13 @@ import {
   passwordField,
   phoneField,
   referralCodeField,
-  requiredString,
   strongPasswordField,
   withMatchingFields,
 } from "../common/commonValidations";
 
 export const loginSchema = z.object({
   email: emailField,
-  password: requiredString("Password", { max: 72 }),
+  password: loginPasswordField,
 });
 
 export const forgotPasswordSchema = z.object({
@@ -32,8 +35,8 @@ export const otpSchema = verifyOtpSchema;
 export const emailSchema = forgotPasswordSchema;
 
 export const registerSchema = z.object({
-  firstName: nameField("First name"),
-  lastName: nameField("Last name"),
+  firstName: firstNameField(),
+  lastName: lastNameField(),
   email: emailField,
   phone: phoneField,
   password: strongPasswordField,
@@ -42,7 +45,7 @@ export const registerSchema = z.object({
 
 export const registerOtpSchema = withMatchingFields(
   registerSchema.extend({
-    confirmPassword: strongPasswordField,
+    confirmPassword: confirmPasswordField,
   }),
   "password",
   "confirmPassword",
@@ -55,7 +58,7 @@ export const resetPasswordSchema = withMatchingFields(
     email: emailField,
     otp: otpField,
     newPassword: strongPasswordField,
-    confirmPassword: strongPasswordField,
+    confirmPassword: confirmPasswordField,
   }),
   "newPassword",
   "confirmPassword",
@@ -68,17 +71,24 @@ export const resetSchema = z.object({
 });
 
 export const profileSchema = z.object({
-  firstName: nameField("First name"),
-  lastName: nameField("Last name"),
+  firstName: firstNameField(),
+  lastName: lastNameField(),
+  email: emailField,
+  phone: phoneField,
   avatarUrl: optionalUrlField,
 });
 
 export const securitySchema = withMatchingFields(
-  z.object({
-    currentPassword: passwordField,
-    newPassword: strongPasswordField,
-    confirmPassword: strongPasswordField,
-  }),
+  z
+    .object({
+      currentPassword: passwordField,
+      newPassword: strongPasswordField,
+      confirmPassword: confirmPasswordField,
+    })
+    .refine((values) => values.currentPassword !== values.newPassword, {
+      message: "New password must be different from current password",
+      path: ["newPassword"],
+    }),
   "newPassword",
   "confirmPassword",
 );

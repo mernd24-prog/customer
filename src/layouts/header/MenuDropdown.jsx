@@ -7,7 +7,7 @@ function MenuItem({ item }) {
   return (
     <Link
       to={item.path || "#"}
-      className="flex items-center gap-3 px-4 py-3 text-[14px] font-medium text-black transition-all hover:bg-blue-50 hover:text-blue-700"
+      className="flex items-center gap-3 px-4 py-3 text-[14px] font-medium text-black transition-all duration-300 ease-in-out hover:bg-blue-50 hover:text-blue-700"
     >
       {item.icon && <span className="text-blue-600">{item.icon}</span>}
       <span>{item.label}</span>

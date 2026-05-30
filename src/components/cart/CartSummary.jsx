@@ -37,7 +37,7 @@ export default function CartSummary({
                     <div className="flex items-center gap-1">
                         <span className="text-[#787878]">{shippingLabel} {shippingLocation}</span>
                         {showInfoIcon && (
-                            <button type="button" className="text-[#A6A6A6] transition hover:text-[#2E2E2E]">
+                            <button type="button" className="text-[#A6A6A6] transition-all duration-300 ease-in-out hover:text-[#2E2E2E]">
                                 <Info size={14} strokeWidth={2} />
                             </button>
                         )}
@@ -75,7 +75,7 @@ export default function CartSummary({
                     href={protectionLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-semibold text-[#CE9F2D] underline underline-offset-2 transition hover:text-[#A26D27]"
+                    className="font-semibold text-[#CE9F2D] underline underline-offset-2 transition-all duration-300 ease-in-out hover:text-[#A26D27]"
                 >
                     {protectionLinkText}
                 </a>

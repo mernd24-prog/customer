@@ -48,7 +48,7 @@ export default function QuantityInput({
         disabled={atMin || disabled}
         aria-label="Decrease quantity"
         className={cn(
-          "flex items-center justify-center font-semibold text-[#2c2c2c] transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-white",
+          "flex items-center justify-center font-semibold text-[#2c2c2c] transition-all duration-300 ease-in-out hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-white",
           s.btn,
         )}
       >
@@ -68,7 +68,7 @@ export default function QuantityInput({
         disabled={atMax || disabled}
         aria-label="Increase quantity"
         className={cn(
-          "flex items-center justify-center font-semibold text-[#2c2c2c] transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-white",
+          "flex items-center justify-center font-semibold text-[#2c2c2c] transition-all duration-300 ease-in-out hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-white",
           s.btn,
         )}
       >

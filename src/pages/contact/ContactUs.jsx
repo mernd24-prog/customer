@@ -140,7 +140,7 @@ function ContactInfoCard({ item, showDivider }) {
         {item.href ? (
           <a
             href={item.href}
-            className="mt-1 block text-base font-bold text-[#2E2E2E] transition hover:text-[#CE9F2D]"
+            className="mt-1 block text-base font-bold text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
           >
             {item.value}
           </a>

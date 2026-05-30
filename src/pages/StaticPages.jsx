@@ -319,7 +319,7 @@ export function FeaturesPage() {
             </div>
             <Link
               to="/support"
-              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-[#2E2E2E] transition duration-300 hover:-translate-y-0.5 hover:bg-accent/90"
+              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-[#2E2E2E] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:bg-accent/90"
             >
              Contact Support 
               <ArrowRight size={18} />

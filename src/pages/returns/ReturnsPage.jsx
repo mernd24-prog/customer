@@ -55,7 +55,7 @@ function ReturnRequestPage({ orderId }) {
     <>
       <Seo title="Request Return | Sam Global" />
       <div className="w-container max-w-xl py-8 sm:py-10">
-        <Link to="/orders" className="mb-6 inline-flex items-center gap-1.5 text-sm text-[#787878] hover:text-[#2E2E2E] transition">
+        <Link to="/orders" className="mb-6 inline-flex items-center gap-1.5 text-sm text-[#787878] hover:text-[#2E2E2E] transition-all duration-300 ease-in-out">
           <ArrowLeft size={14} /> Back to orders
         </Link>
 
@@ -98,7 +98,7 @@ function ReturnRequestPage({ orderId }) {
               <span>Reason for return</span>
               <select
                 {...register("reason")}
-                className="min-h-11 rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 text-[#2E2E2E] outline-none transition focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20"
+                className="min-h-11 rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 text-[#2E2E2E] outline-none transition-all duration-300 ease-in-out focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20"
               >
                 {RETURN_REASONS.map((r) => (
                   <option key={r.value} value={r.value}>{r.label}</option>
@@ -113,7 +113,7 @@ function ReturnRequestPage({ orderId }) {
                 {...register("description")}
                 rows={4}
                 placeholder="Describe the issue in detail…"
-                className="rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 text-[#2E2E2E] outline-none transition placeholder:text-stone-400 focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 resize-none"
+                className="rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 text-[#2E2E2E] outline-none transition-all duration-300 ease-in-out placeholder:text-stone-400 focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 resize-none"
               />
               {errors.description && <span className="text-xs text-red-700">{errors.description.message}</span>}
             </label>

@@ -17,7 +17,7 @@ export default function FooterLinkGroups({ groups = [] }) {
               <li key={link?.label || `link-${linkIndex}`}>
                 <FooterLink
                   href={link?.href}
-                  className="custom-para transition hover:font-medium hover:text-black"
+                  className="custom-para transition-all duration-300 ease-in-out hover:font-medium hover:text-black"
                 >
                   {link?.label}
                 </FooterLink>

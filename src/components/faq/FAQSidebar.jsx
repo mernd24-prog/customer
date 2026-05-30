@@ -25,7 +25,7 @@ export default function FAQSidebar({
             <button
               key={topic}
               onClick={() => setActiveTopic(topic)}
-              className={`flex w-full items-center justify-between p-4 text-left transition ${
+              className={`flex w-full items-center justify-between p-4 text-left transition-all duration-300 ease-in-out ${
                 isActive
                   ? "bg-white font-semibold text-[#3E4094]"
                   : "bg-transparent text-gray-500 hover:bg-gray-200"

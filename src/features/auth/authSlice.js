@@ -58,7 +58,7 @@ const authSlice = createSlice({
           if (sessionThunks.includes(thunk) && hasSession(session)) {
             state.current = extractSessionUser(session);
           } else if (currentPayloadThunks.includes(thunk)) {
-            state.current = session;
+            state.current = extractSessionUser(session);
           }
         })
         .addCase(thunk.rejected, (state, action) => {

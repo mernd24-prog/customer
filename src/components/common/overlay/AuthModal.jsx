@@ -151,7 +151,7 @@ export default function AuthModal({ open, onClose }) {
           onClick={onClose}
           className={cn(
             "absolute right-4 top-4 flex h-8 w-8 items-center justify-center",
-            "rounded-full text-[#9E886A] transition-colors",
+            "rounded-full text-[#9E886A] transition-all duration-500 ease-in-out",
             "hover:bg-[#FAF6EE] hover:text-[#2E2E2E]",
             "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-1",
           )}
@@ -205,7 +205,7 @@ export default function AuthModal({ open, onClose }) {
                 "font-montserrat text-[0.9rem] font-semibold tracking-wide text-white",
                 "bg-gradient-to-r from-[#CE9F2D] to-[#A26D27]",
                 "shadow-sm hover:shadow-md",
-                "transition-all duration-200 hover:brightness-105 active:brightness-95",
+                "transition-all duration-500 ease-in-out hover:brightness-105 active:brightness-95",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-2",
               )}
             >
@@ -219,7 +219,7 @@ export default function AuthModal({ open, onClose }) {
                 "font-montserrat text-[0.9rem] font-semibold tracking-wide",
                 "border border-[#e7dfd1] text-[#2E2E2E]",
                 "hover:bg-[#FAF6EE] hover:border-[#CE9F2D] hover:text-[#CE9F2D]",
-                "transition-all duration-200",
+                "transition-all duration-500 ease-in-out",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-2",
               )}
             >
@@ -234,7 +234,7 @@ export default function AuthModal({ open, onClose }) {
               onClick={handleGoToRegister}
               className={cn(
                 "font-semibold text-[#CE9F2D]",
-                "transition-colors hover:text-[#A26D27]",
+                "transition-all duration-500 ease-in-out hover:text-[#A26D27]",
                 "focus:outline-none focus-visible:underline",
               )}
             >

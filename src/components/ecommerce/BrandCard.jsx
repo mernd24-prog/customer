@@ -27,7 +27,7 @@ export default function BrandCard({
   const content = (
     <article
       className={cn(
-        "group flex h-full min-h-[188px] flex-col items-center  border-[#e7dfd1] bg-white p-3 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-[#CE9F2D]/50 hover:shadow-lg",
+        "group flex h-full min-h-[188px] flex-col items-center  border-[#e7dfd1] bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-[#CE9F2D]/50 hover:shadow-lg",
         active && "ring-2 ring-[#CE9F2D]/50",
         className,
       )}
@@ -37,7 +37,7 @@ export default function BrandCard({
           <img
             src={displayImage}
             alt={name}
-            className="max-h-full max-w-full object-contain transition duration-300 group-hover:scale-[1.04]"
+            className="max-h-full max-w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.04]"
             loading="lazy"
             decoding="async"
             onError={(event) => applyImageFallback(event, name, "brand")}
@@ -49,7 +49,7 @@ export default function BrandCard({
         )}
         <span
           aria-hidden="true"
-          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-[#e7dfd1] bg-white/90 text-[#8B6A1D] opacity-0 shadow-sm transition group-hover:opacity-100"
+          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-[#e7dfd1] bg-white/90 text-[#8B6A1D] opacity-0 shadow-sm transition-all duration-300 ease-in-out group-hover:opacity-100"
         >
           <ArrowUpRight size={14} strokeWidth={1.8} />
         </span>

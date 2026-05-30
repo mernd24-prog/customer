@@ -13,7 +13,7 @@ export default function PriceRangeInput({
   const [localMax, setLocalMax] = useState(initialMax || "");
 
   const inputClass =
-    "w-full rounded-[6px] border border-[#cfc6b8] px-2.5 py-1.5 font-montserrat text-sm outline-none transition focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20";
+    "w-full rounded-[6px] border border-[#cfc6b8] px-2.5 py-1.5 font-montserrat text-sm outline-none transition-all duration-300 ease-in-out focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20";
 
   const apply = () => {
     const result = { minPrice: localMin || undefined, maxPrice: localMax || undefined };

@@ -80,6 +80,7 @@ function getBrandLogo(brand = {}) {
   );
 }
 
+
 function OutletLinkList({ items, getHref }) {
   return (
     <nav className="grid max-h-64 gap-2 overflow-y-auto pr-1">
@@ -87,7 +88,7 @@ function OutletLinkList({ items, getHref }) {
         <Link
           key={item.key || item.label || item}
           to={getHref(item)}
-          className="block truncate font-montserrat text-sm text-[#2E2E2E] hover:text-[#3665f3] hover:underline"
+          className="block truncate font-montserrat text-sm text-[#2E2E2E] "
         >
           {item.label || item}
         </Link>
@@ -187,9 +188,9 @@ export default function BrandOutletPage() {
       />
 
       <main className="bg-white font-montserrat text-[#191919]">
-        <div className="mx-auto grid w-full max-w-[1470px] grid-cols-1 gap-6 px-3 py-5 sm:px-5 sm:py-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10 lg:px-8">
-          <aside className="hidden lg:block  ">
-            <div className="hidden lg:block lg:sticky lg:top-5 lg:self-start ">
+        <div className="mx-auto grid w-full max-w-[1470px] grid-cols-1 gap-6 px-3 py-5 sm:px-5 sm:py-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:px-8">
+          <aside className="hidden lg:sticky lg:top-24 lg:block lg:w-60 lg:shrink-0 lg:self-start">
+            <div>
               <ProductFilterSidebar sections={sidebarSections} />
             </div>
           </aside>
@@ -243,16 +244,16 @@ export default function BrandOutletPage() {
                 Shop brands available now
               </h1>
               {loading ? (
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5">
                   {Array.from({ length: 10 }).map((_, index) => (
                     <div
                       key={index}
-                      className="h-[160px] animate-pulse rounded-[12px] bg-[#f4f4f4] sm:h-[180px] lg:h-[190px]"
+                      className="h-[190px] animate-pulse rounded-[14px] bg-[#f4f4f4] sm:h-[215px] lg:h-[235px]"
                     />
                   ))}
                 </div>
               ) : brands.length ? (
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:gap-4 xl:grid-cols-5">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5">
                   {brands.map((brand) => {
                     const name = getBrandName(brand);
                     return (
@@ -264,7 +265,7 @@ export default function BrandOutletPage() {
                         href={CUSTOMER_ROUTES.brand(
                           encodeURIComponent(getBrandRouteKey(brand)),
                         )}
-                        className="min-h-0 items-center border-0 bg-transparent p-0 text-center shadow-none hover:translate-y-0 hover:border-transparent hover:shadow-none [&>div:first-child]:h-[150px] [&>div:first-child]:w-[150px] [&>div:first-child]:rounded-[14px] [&>div:first-child]:border-0 [&>div:first-child]:bg-[#f4f4f4] [&>div:first-child]:p-7 [&>div:first-child_img]:max-h-[90px] [&>div:first-child_img]:max-w-[112px] [&>div:nth-child(2)]:mt-2 [&>div:nth-child(2)]:flex-none [&>div:nth-child(2)_p]:hidden"
+                        className="min-h-0 items-center border-0 bg-transparent p-0 text-center shadow-none hover:translate-y-0 hover:border-transparent hover:shadow-none [&>div:first-child]:h-[165px] [&>div:first-child]:w-[165px] [&>div:first-child]:rounded-[14px] [&>div:first-child]:border-0 [&>div:first-child]:bg-[#f4f4f4] [&>div:first-child]:p-8 [&>div:first-child_img]:max-h-[105px] [&>div:first-child_img]:max-w-[130px] [&>div:nth-child(2)]:mt-3 [&>div:nth-child(2)]:flex-none [&>div:nth-child(2)_p]:hidden sm:[&>div:first-child]:h-[185px] sm:[&>div:first-child]:w-[185px] sm:[&>div:first-child_img]:max-h-[120px] sm:[&>div:first-child_img]:max-w-[145px] lg:[&>div:first-child]:h-[200px] lg:[&>div:first-child]:w-[200px] lg:[&>div:first-child_img]:max-h-[130px] lg:[&>div:first-child_img]:max-w-[160px]"
                       />
                     );
                   })}

@@ -69,7 +69,7 @@ export default function ForgotPasswordPage() {
             type="submit"
             loading={loading}
             disabled={!isValid || loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-[#CE9F2D] to-[#A26D27] font-montserrat text-[0.9rem] font-semibold tracking-wide text-white shadow-sm transition-all duration-200 hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-[#CE9F2D] to-[#A26D27] font-montserrat text-[0.9rem] font-semibold tracking-wide text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Mail size={18} /> Send reset OTP
           </Button>
@@ -78,7 +78,7 @@ export default function ForgotPasswordPage() {
             Remember your password?{" "}
             <Link
               to={AUTH_ROUTES.login}
-              className="font-semibold text-[#CE9F2D] underline-offset-4 transition hover:text-[#A26D27] hover:underline"
+              className="font-semibold text-[#CE9F2D] underline-offset-4 transition-all duration-500 ease-in-out hover:text-[#A26D27] hover:underline"
             >
               Back to login
             </Link>

@@ -17,7 +17,6 @@ import {
   EmailIcon,
 } from "react-share";
 import {
-  ChevronRight,
   Heart,
   MapPin,
   RefreshCw,
@@ -29,7 +28,7 @@ import {
   X,
 } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Thumbs, FreeMode, Zoom } from "swiper/modules";
+import { Thumbs, FreeMode } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
@@ -56,7 +55,10 @@ import {
   getImageFallbackSrc,
   getProductImage,
   getProductTitle,
+  buildCartItem,
 } from "../../utils/ecommerce";
+
+const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
 function StarRating({ rating, count }) {
   const stars = Math.round(rating || 0);
@@ -89,7 +91,11 @@ function StarRating({ rating, count }) {
   );
 }
 
-function ProductGallery({ images, isModal = false, fallbackLabel = "Product" }) {
+function ProductGallery({
+  images,
+  isModal = false,
+  fallbackLabel = "Product",
+}) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [mainSwiper, setMainSwiper] = useState(null);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -177,7 +183,7 @@ function ProductGallery({ images, isModal = false, fallbackLabel = "Product" }) 
               >
                 <button
                   type="button"
-                  className={`w-full h-full overflow-hidden rounded-xl border-2 bg-white transition-all duration-300 ${
+                  className={`w-full h-full overflow-hidden rounded-xl border-2 bg-white transition-all duration-300 ease-in-out ${
                     activeIndex === i
                       ? "border-[#CE9F2D] shadow-md"
                       : "border-[#ece7dc]"
@@ -187,7 +193,9 @@ function ProductGallery({ images, isModal = false, fallbackLabel = "Product" }) 
                     src={img}
                     alt=""
                     className="w-full h-full object-contain p-1"
-                    onError={(event) => applyImageFallback(event, fallbackLabel, "product")}
+                    onError={(event) =>
+                      applyImageFallback(event, fallbackLabel, "product")
+                    }
                   />
                 </button>
               </SwiperSlide>
@@ -233,7 +241,7 @@ function ProductGallery({ images, isModal = false, fallbackLabel = "Product" }) 
                     src={img}
                     alt=""
                     draggable={false}
-                    className={`h-full w-full object-contain transition-transform duration-300 ease-out select-none ${
+                    className={`h-full w-full object-contain transition-all duration-300 ease-in-out select-none ${
                       isZoomed
                         ? isModal
                           ? "scale-[2]"
@@ -244,7 +252,9 @@ function ProductGallery({ images, isModal = false, fallbackLabel = "Product" }) 
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
                       willChange: "transform",
                     }}
-                    onError={(event) => applyImageFallback(event, fallbackLabel, "product")}
+                    onError={(event) =>
+                      applyImageFallback(event, fallbackLabel, "product")
+                    }
                   />
 
                   {/* Premium Overlay */}
@@ -298,7 +308,7 @@ function ImageGallery({
             if (onModalOpen) onModalOpen();
             setIsModalOpen(true);
           }}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#2c2c2c] shadow-md backdrop-blur-sm transition-all hover:scale-110 hover:bg-white sm:h-10 sm:w-10"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#2c2c2c] shadow-md backdrop-blur-sm transition-all duration-300 ease-in-out hover:scale-110 hover:bg-white sm:h-10 sm:w-10"
           title="Zoom image"
         >
           <ZoomIn size={18} />
@@ -306,7 +316,7 @@ function ImageGallery({
         <button
           type="button"
           onClick={onWishlist}
-          className={`flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-all hover:scale-110 hover:bg-white sm:h-10 sm:w-10 ${isWishlisted ? "text-red-500" : "text-[#2c2c2c]"}`}
+          className={`flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-all duration-300 ease-in-out hover:scale-110 hover:bg-white sm:h-10 sm:w-10 ${isWishlisted ? "text-red-500" : "text-[#2c2c2c]"}`}
           title="Add to Wishlist"
         >
           <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
@@ -314,26 +324,31 @@ function ImageGallery({
       </div>
 
       {/* Modal */}
-      {isModalOpen && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4 animate-fadeIn sm:p-6">
-          {/* Close Button */}
-          <button
-            type="button"
-            onClick={() => {
-              setIsModalOpen(false);
-              if (onModalClose) onModalClose();
-            }}
-            className="absolute top-6 right-6 z-[10000] w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors shadow-sm"
-          >
-            <X size={28} />
-          </button>
+      {isModalOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4 animate-fadeIn sm:p-6">
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsModalOpen(false);
+                if (onModalClose) onModalClose();
+              }}
+              className="absolute top-6 right-6 z-[10000] w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out shadow-sm"
+            >
+              <X size={28} />
+            </button>
 
-          <div className="flex h-[90vh] w-full max-w-[1200px] items-center justify-center">
-            <ProductGallery images={images} isModal={true} fallbackLabel={fallbackLabel} />
-          </div>
-        </div>,
-        document.body
-      )}
+            <div className="flex h-[90vh] w-full max-w-[1200px] items-center justify-center">
+              <ProductGallery
+                images={images}
+                isModal={true}
+                fallbackLabel={fallbackLabel}
+              />
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
@@ -456,7 +471,9 @@ export default function ProductDetailPage() {
 
   const variants = useMemo(() => product?.variants || [], [product?.variants]);
   const variantOptions = useMemo(() => {
-    const configuredOptions = Array.isArray(product?.options) ? product.options : [];
+    const configuredOptions = Array.isArray(product?.options)
+      ? product.options
+      : [];
     if (configuredOptions.length) {
       return configuredOptions
         .map((option) => ({
@@ -495,9 +512,14 @@ export default function ProductDetailPage() {
       setSelectedVariant(null);
       return;
     }
-    const defaultVariant = variants.find((variant) => variant.isDefault) || variants[0];
+    const defaultVariant =
+      variants.find((variant) => variant.isDefault) || variants[0];
     setSelectedVariant((current) =>
-      current && variants.some((variant) => (variant._id || variant.sku) === (current._id || current.sku))
+      current &&
+      variants.some(
+        (variant) =>
+          (variant._id || variant.sku) === (current._id || current.sku),
+      )
         ? current
         : defaultVariant,
     );
@@ -509,39 +531,50 @@ export default function ProductDetailPage() {
     return (
       variants.find((variant) =>
         Object.entries(nextSelection).every(
-          ([key, selectedValue]) => String(variant.attributes?.[key]) === String(selectedValue),
+          ([key, selectedValue]) =>
+            String(variant.attributes?.[key]) === String(selectedValue),
         ),
       ) ||
-      variants.find((variant) => String(variant.attributes?.[axis]) === String(value))
+      variants.find(
+        (variant) => String(variant.attributes?.[axis]) === String(value),
+      )
     );
   };
 
-  const selectedVariantPrice = selectedVariant?.salePrice ?? selectedVariant?.price;
-  const price = dynamicPrice ?? selectedVariantPrice ?? product?.price ?? product?.sellingPrice;
+  const selectedVariantPrice =
+    selectedVariant?.salePrice ?? selectedVariant?.price;
+  const price =
+    dynamicPrice ??
+    selectedVariantPrice ??
+    product?.price ??
+    product?.sellingPrice;
   const mrp = selectedVariant?.mrp ?? product?.mrp ?? product?.originalPrice;
   const discount =
     mrp && price && mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
-  const fallbackProductImage = getProductImage(product) || getImageFallbackSrc(getProductTitle(product), product?.category);
-  const variantImages = selectedVariant?.images?.length ? selectedVariant.images : [];
+  const fallbackProductImage =
+    getProductImage(product) ||
+    getImageFallbackSrc(getProductTitle(product), product?.category);
+  const variantImages = selectedVariant?.images?.length
+    ? selectedVariant.images
+    : [];
   const images = variantImages.length
     ? variantImages
     : product?.images?.length
-    ? product.images
-    : product?.imageUrl
-      ? [product.imageUrl]
-      : fallbackProductImage
-        ? [fallbackProductImage]
-        : [];
+      ? product.images
+      : product?.imageUrl
+        ? [product.imageUrl]
+        : fallbackProductImage
+          ? [fallbackProductImage]
+          : [];
   const attributes = product?.attributes || product?.specifications || {};
   const inStock =
     selectedVariant?.stock != null
       ? selectedVariant.stock > 0
-      :
-    typeof product?.inStock === "boolean"
-      ? product.inStock
-      : product?.stock != null
-        ? product.stock > 0
-        : true;
+      : typeof product?.inStock === "boolean"
+        ? product.inStock
+        : product?.stock != null
+          ? product.stock > 0
+          : true;
   const detailRows = Object.entries({
     Brand: product?.brand,
     Category: product?.category,
@@ -561,7 +594,7 @@ export default function ProductDetailPage() {
       <div className="mx-auto w-full max-w-[1440px] px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
         {/* Breadcrumb */}
         <nav className="mb-4 flex flex-wrap items-center gap-1 font-montserrat text-xs text-[#A6A6A6]">
-          <Link to="/" className="hover:text-[#2E2E2E] transition">
+          <Link to="/" className="hover:text-[#2E2E2E] transition-all duration-300 ease-in-out">
             Home
           </Link>
           <span>/</span>
@@ -569,7 +602,7 @@ export default function ProductDetailPage() {
             <>
               <Link
                 to={`/categories/${product.category}`}
-                className="capitalize hover:text-[#2E2E2E] transition"
+                className="capitalize hover:text-[#2E2E2E] transition-all duration-300 ease-in-out"
               >
                 {product.category}
               </Link>
@@ -636,51 +669,70 @@ export default function ProductDetailPage() {
 
                           {/* Share Popup */}
                           {shareOpen && (
-                            <div className="absolute right-0 top-12 z-50 w-[260px] rounded-2xl border border-[#ece7dc] bg-white p-4 shadow-2xl">
+                            <div
+                              className="
+      absolute right-0 top-12 z-50
+      w-[230px] max-w-[calc(100vw-24px)]
+      rounded-2xl border border-[#ece7dc]
+      bg-white p-3 shadow-2xl
+      sm:w-[260px] sm:p-4
+      md:w-[280px]
+    "
+                            >
                               <div className="mb-3">
-                                <h3 className="font-montserrat text-sm font-bold text-[#2E2E2E]">
+                                <h3 className="font-montserrat text-[13px] font-bold text-[#2E2E2E] sm:text-sm">
                                   Share Product
                                 </h3>
 
-                                <p className="mt-1 text-xs text-[#787878]">
+                                <p className="mt-1 text-[11px] text-[#787878] sm:text-xs">
                                   Share this product with friends
                                 </p>
                               </div>
 
-                              <div className="grid grid-cols-3 gap-3">
+                              <div className="grid grid-cols-3 place-items-center gap-2 sm:gap-3">
                                 <WhatsappShareButton
                                   url={window.location.href}
                                   title={getProductTitle(product)}
                                 >
-                                  <WhatsappIcon size={42} round />
+                                  <span className="block scale-[0.85] transition-all duration-300 ease-in-out sm:scale-95 md:scale-100">
+                                    <WhatsappIcon size={42} round />
+                                  </span>
                                 </WhatsappShareButton>
 
                                 <FacebookShareButton
                                   url={window.location.href}
                                   quote={getProductTitle(product)}
                                 >
-                                  <FacebookIcon size={42} round />
+                                  <span className="block scale-[0.85] transition-all duration-300 ease-in-out sm:scale-95 md:scale-100">
+                                    <FacebookIcon size={42} round />
+                                  </span>
                                 </FacebookShareButton>
 
                                 <TwitterShareButton
                                   url={window.location.href}
                                   title={getProductTitle(product)}
                                 >
-                                  <TwitterIcon size={42} round />
+                                  <span className="block scale-[0.85] transition-all duration-300 ease-in-out sm:scale-95 md:scale-100">
+                                    <TwitterIcon size={42} round />
+                                  </span>
                                 </TwitterShareButton>
 
                                 <TelegramShareButton
                                   url={window.location.href}
                                   title={getProductTitle(product)}
                                 >
-                                  <TelegramIcon size={42} round />
+                                  <span className="block scale-[0.85] transition-all duration-300 ease-in-out sm:scale-95 md:scale-100">
+                                    <TelegramIcon size={42} round />
+                                  </span>
                                 </TelegramShareButton>
 
                                 <LinkedinShareButton
                                   url={window.location.href}
                                   title={getProductTitle(product)}
                                 >
-                                  <LinkedinIcon size={42} round />
+                                  <span className="block scale-[0.85] transition-all duration-300 ease-in-out sm:scale-95 md:scale-100">
+                                    <LinkedinIcon size={42} round />
+                                  </span>
                                 </LinkedinShareButton>
 
                                 <EmailShareButton
@@ -688,21 +740,27 @@ export default function ProductDetailPage() {
                                   subject={getProductTitle(product)}
                                   body={`Check this product:\n${window.location.href}`}
                                 >
-                                  <EmailIcon size={42} round />
+                                  <span className="block scale-[0.85] transition-all duration-300 ease-in-out sm:scale-95 md:scale-100">
+                                    <EmailIcon size={42} round />
+                                  </span>
                                 </EmailShareButton>
                               </div>
 
-                              {/* Copy Link */}
                               <button
                                 type="button"
                                 onClick={async () => {
                                   await navigator.clipboard.writeText(
                                     window.location.href,
                                   );
-
                                   alert("Link copied!");
                                 }}
-                                className="mt-4 w-full rounded-full bg-[#CE9F2D] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#b88d28]"
+                                className="
+        mt-4 w-full rounded-full
+        bg-[#CE9F2D] px-3 py-2
+        text-[12px] font-semibold text-white
+        transition-all duration-300 ease-in-out hover:bg-[#b88d28]
+        sm:px-4 sm:text-sm
+      "
                               >
                                 Copy Link
                               </button>
@@ -748,7 +806,8 @@ export default function ProductDetailPage() {
                     <div className="flex items-center gap-2">
                       <div className="relative z-0 w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
                       <p className="font-montserrat text-sm font-semibold text-[#10B981]">
-                        {selectedVariant?.stock ?? product?.stock ?? 52} in stock
+                        {selectedVariant?.stock ?? product?.stock ?? 52} in
+                        stock
                       </p>
                     </div>
                   ) : (
@@ -770,8 +829,13 @@ export default function ProductDetailPage() {
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {option.values.map((value) => {
-                              const isSelected = String(selectedAttributes[option.slug]) === String(value);
-                              const matchingVariant = findVariantForSelection(option.slug, value);
+                              const isSelected =
+                                String(selectedAttributes[option.slug]) ===
+                                String(value);
+                              const matchingVariant = findVariantForSelection(
+                                option.slug,
+                                value,
+                              );
                               const disabled = !matchingVariant;
                               const swatchValue = option.valueCodes?.[value];
 
@@ -781,13 +845,21 @@ export default function ProductDetailPage() {
                                     key={value}
                                     type="button"
                                     disabled={disabled}
-                                    onClick={() => matchingVariant && setSelectedVariant(matchingVariant)}
-                                    className={`h-9 w-9 rounded-full border-2 p-0.5 transition-all disabled:cursor-not-allowed disabled:opacity-40 ${isSelected ? "scale-110 border-[#CE9F2D] shadow-md" : "border-transparent hover:border-[#cfc6b8]"}`}
+                                    onClick={() =>
+                                      matchingVariant &&
+                                      setSelectedVariant(matchingVariant)
+                                    }
+                                    className={`h-9 w-9 rounded-full border-2 p-0.5 transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 ${isSelected ? "scale-110 border-[#CE9F2D] shadow-md" : "border-transparent hover:border-[#cfc6b8]"}`}
                                     title={value}
                                   >
                                     <span
                                       className="block h-full w-full rounded-full border border-gray-200"
-                                      style={{ backgroundColor: swatchValue?.startsWith("#") ? swatchValue : value }}
+                                      style={{
+                                        backgroundColor:
+                                          swatchValue?.startsWith("#")
+                                            ? swatchValue
+                                            : value,
+                                      }}
                                     />
                                   </button>
                                 );
@@ -798,8 +870,11 @@ export default function ProductDetailPage() {
                                   key={value}
                                   type="button"
                                   disabled={disabled}
-                                  onClick={() => matchingVariant && setSelectedVariant(matchingVariant)}
-                                  className={`min-h-[42px] min-w-[45px] rounded-[6px] border px-3 py-1 font-montserrat text-sm font-bold transition-all disabled:cursor-not-allowed disabled:opacity-40 ${isSelected ? "border-[#CE9F2D] bg-[#CE9F2D] text-white shadow-md" : "border-[#cfc6b8] bg-white text-[#2E2E2E] hover:border-[#CE9F2D]"}`}
+                                  onClick={() =>
+                                    matchingVariant &&
+                                    setSelectedVariant(matchingVariant)
+                                  }
+                                  className={`min-h-[42px] min-w-[45px] rounded-[6px] border px-3 py-1 font-montserrat text-sm font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 ${isSelected ? "border-[#CE9F2D] bg-[#CE9F2D] text-white shadow-md" : "border-[#cfc6b8] bg-white text-[#2E2E2E] hover:border-[#CE9F2D]"}`}
                                 >
                                   {value}
                                 </button>
@@ -821,7 +896,7 @@ export default function ProductDetailPage() {
                         type="button"
                         onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                         disabled={quantity <= 1}
-                        className="flex h-10 w-10 items-center justify-center text-[#2c2c2c] transition hover:bg-[#FAF6EE] disabled:opacity-40 text-xl"
+                        className="flex h-10 w-10 items-center justify-center text-[#2c2c2c] transition-all duration-300 ease-in-out hover:bg-[#FAF6EE] disabled:opacity-40 text-xl"
                       >
                         −
                       </button>
@@ -831,7 +906,7 @@ export default function ProductDetailPage() {
                       <button
                         type="button"
                         onClick={() => setQuantity((q) => q + 1)}
-                        className="flex h-10 w-10 items-center justify-center text-[#2c2c2c] transition hover:bg-[#FAF6EE] text-xl"
+                        className="flex h-10 w-10 items-center justify-center text-[#2c2c2c] transition-all duration-300 ease-in-out hover:bg-[#FAF6EE] text-xl"
                       >
                         +
                       </button>
@@ -845,9 +920,8 @@ export default function ProductDetailPage() {
                       disabled={!inStock}
                       onClick={() => {
                         addToCart({ ...product, selectedVariant }, quantity);
-                        navigate("/cart");
                       }}
-                      className="w-full h-[54px] rounded-full bg-[#CE9F2D] text-white font-montserrat font-bold text-base shadow-lg hover:bg-[#b88d28] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full h-[54px] rounded-full bg-[#CE9F2D] text-white font-montserrat font-bold text-base shadow-lg hover:bg-[#b88d28] transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Add To Cart
                     </button>
@@ -855,10 +929,17 @@ export default function ProductDetailPage() {
                       type="button"
                       disabled={!inStock}
                       onClick={() => {
-                        addToCart({ ...product, selectedVariant }, quantity);
+                        const buyNowItem = buildCartItem(
+                          { ...product, selectedVariant },
+                          quantity,
+                        );
+                        window.sessionStorage.setItem(
+                          BUY_NOW_STORAGE_KEY,
+                          JSON.stringify([buyNowItem]),
+                        );
                         navigate("/checkout");
                       }}
-                      className="w-full h-[54px] rounded-full border-2 border-[#CE9F2D] text-[#CE9F2D] font-montserrat font-bold text-base hover:bg-[#FAF6EE] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full h-[54px] rounded-full border-2 border-[#CE9F2D] text-[#CE9F2D] font-montserrat font-bold text-base hover:bg-[#FAF6EE] transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Buy It Now
                     </button>
@@ -1030,12 +1111,12 @@ export default function ProductDetailPage() {
                     </h2>
                     <Link
                       to="/products"
-                      className="font-montserrat text-sm font-medium text-[#CE9F2D] hover:text-[#a76616] transition"
+                      className="font-montserrat text-sm font-medium text-[#CE9F2D] hover:text-[#a76616] transition-all duration-300 ease-in-out"
                     >
                       View all →
                     </Link>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                     {relatedProducts.map((p) => (
                       <ProductCard
                         key={getProductId(p)}

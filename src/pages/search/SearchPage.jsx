@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import ActiveFilterChips from "../../components/common/ActiveFilterChips";
@@ -40,12 +40,14 @@ export default function SearchPage() {
 
   const hits = useMemo(
     () => (Array.isArray(searchState.hits) ? searchState.hits : []),
-    [searchState.hits],
+    [searchState.hits]
   );
+
   const facets = searchState.facets || {};
   const meta = searchState.meta || {};
   const totalPages = meta.totalPages || meta.pages || 1;
   const currentPage = Number(searchParams.get("page") || 1);
+  const q = searchParams.get("q") || "";
 
   const getParams = useCallback(
     () => ({
@@ -59,13 +61,13 @@ export default function SearchPage() {
       page: currentPage,
       limit: Number(searchParams.get("limit") || 12),
     }),
-    [searchParams, currentPage],
+    [searchParams, currentPage]
   );
 
   useEffect(() => {
     const p = getParams();
     if (p.q) dispatch(searchElastic(p));
-  }, [dispatch, searchParams, getParams]);
+  }, [dispatch, getParams]);
 
   useEffect(() => {
     setQueryInput(searchParams.get("q") || "");
@@ -74,8 +76,13 @@ export default function SearchPage() {
   const updateParam = (key, value) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      if (value == null || value === "") next.delete(key);
-      else next.set(key, value);
+
+      if (value == null || value === "") {
+        next.delete(key);
+      } else {
+        next.set(key, value);
+      }
+
       next.delete("page");
       return next;
     });
@@ -84,10 +91,13 @@ export default function SearchPage() {
   const handlePriceChange = ({ minPrice, maxPrice }) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
+
       if (minPrice) next.set("minPrice", minPrice);
       else next.delete("minPrice");
+
       if (maxPrice) next.set("maxPrice", maxPrice);
       else next.delete("maxPrice");
+
       next.delete("page");
       return next;
     });
@@ -99,11 +109,13 @@ export default function SearchPage() {
       next.set("page", p);
       return next;
     });
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
+
     const query = sanitizeSearchQuery(queryInput);
 
     if (!query) return;
@@ -114,7 +126,19 @@ export default function SearchPage() {
       next.delete("page");
       return next;
     });
+
     setQueryInput(query);
+  };
+
+  const handleClearSearch = () => {
+    setQueryInput("");
+
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete("q");
+      next.delete("page");
+      return next;
+    });
   };
 
   const activeFilters = [
@@ -124,28 +148,35 @@ export default function SearchPage() {
     },
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
-      label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,
+      label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${
+        searchParams.get("maxPrice") || "∞"
+      }`,
     },
     searchParams.get("minRating") && {
       key: "minRating",
       label: `${searchParams.get("minRating")}★ & up`,
     },
-    searchParams.get("inStock") && { key: "inStock", label: "In Stock Only" },
+    searchParams.get("inStock") && {
+      key: "inStock",
+      label: "In Stock Only",
+    },
   ].filter(Boolean);
 
   const removeFilter = (key) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
+
       if (key === "price") {
         next.delete("minPrice");
         next.delete("maxPrice");
-      } else next.delete(key);
+      } else {
+        next.delete(key);
+      }
+
       next.delete("page");
       return next;
     });
   };
-
-  const q = searchParams.get("q") || "";
 
   const facetCategories = (facets?.category || []).map((category) => ({
     value: category.key || category.value || category._id,
@@ -216,40 +247,58 @@ export default function SearchPage() {
       />
 
       <div className="w-container py-6 sm:py-8">
-        {/* Search bar */}
-        <form onSubmit={handleSearch} className="mb-6 flex gap-2">
-          <div className="relative flex-1">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A6A6A6]"
-            />
-            <input
-              type="text"
-              value={queryInput}
-              onChange={(e) => setQueryInput(sanitizeSearchQuery(e.target.value))}
-              placeholder="Search products…"
-              className="w-full rounded-[6px] border border-[#cfc6b8] bg-white py-2.5 pl-9 pr-4 font-montserrat text-sm"
+        <form
+          onSubmit={handleSearch}
+          className="mb-6 rounded-[14px]  p-3 sm:p-4"
+        >
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="group relative flex-1">
+              <Search
+                size={18}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9b9387] transition-all duration-300 ease-in-out group-focus-within:text-[#CE9F2D]"
+              />
+
+              <input
+                type="text"
+                value={queryInput}
+                onChange={(e) => setQueryInput(e.target.value)}
+                placeholder="Search products, brands, categories..."
+                className="h-12 w-full rounded-[10px] border border-[#d8c8b3] bg-white pl-11 pr-11 font-montserrat text-sm text-[#2E2E2E] outline-none transition-all duration-300 ease-in-out placeholder:text-[#9b9387] hover:border-[#CE9F2D] focus:border-[#CE9F2D] focus:ring-4 focus:ring-[#CE9F2D]/15"
+              />
+
+              {queryInput ? (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-[#787878] transition-all duration-300 ease-in-out hover:bg-[#FAF6EE] hover:text-[#2E2E2E]"
+                  aria-label="Clear search"
+                >
+                  <X size={15} />
+                </button>
+              ) : null}
+            </div>
+
+            <BrandButton
+              variant="primary"
+              rounded
+              label="Search"
+              type="submit"
+              className="h-12 px-7 text-sm font-semibold shadow-[0_8px_18px_rgba(206,159,45,0.25)] sm:min-w-[130px]"
             />
           </div>
-          <BrandButton
-            variant="primary"
-            rounded
-            label="Search"
-            type="submit"
-            className="h-11 px-6 text-sm font-semibold"
-          />
         </form>
 
-        {/* Header */}
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             {q && <PageHeader title={`Results for "${q}"`} className="mb-0" />}
+
             {meta.total != null && (
               <p className="font-montserrat text-sm text-[#787878]">
                 {meta.total.toLocaleString()} results
               </p>
             )}
           </div>
+
           <CollectionToolbar
             sortValue={searchParams.get("sort") || ""}
             sortOptions={SORT_OPTIONS}
@@ -283,9 +332,11 @@ export default function SearchPage() {
             {!q ? (
               <div className="state-box flex flex-col items-center py-20 text-center">
                 <Search size={48} className="mb-4 text-[#A6A6A6]" />
+
                 <p className="font-montserrat text-[18px] font-semibold text-[#2E2E2E]">
                   What are you looking for?
                 </p>
+
                 <p className="mt-2 font-montserrat text-sm text-[#787878]">
                   Enter a search term above to find products.
                 </p>

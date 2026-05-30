@@ -8,7 +8,7 @@ export default function QuantitySelector({ quantity, onIncrease, onDecrease }) {
         type="button"
         onClick={onDecrease}
         disabled={quantity <= 1}
-        className="flex h-8 w-8 items-center justify-center text-base font-semibold text-[#2c2c2c] transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-white sm:h-9 sm:w-9 sm:text-lg"
+        className="flex h-8 w-8 items-center justify-center text-base font-semibold text-[#2c2c2c] transition-all duration-300 ease-in-out hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-white sm:h-9 sm:w-9 sm:text-lg"
       >
         -
       </button>
@@ -22,7 +22,7 @@ export default function QuantitySelector({ quantity, onIncrease, onDecrease }) {
       <button
         type="button"
         onClick={onIncrease}
-        className="flex h-8 w-8 items-center justify-center text-base font-semibold text-[#2c2c2c] transition hover:bg-gray-100 sm:h-9 sm:w-9 sm:text-lg"
+        className="flex h-8 w-8 items-center justify-center text-base font-semibold text-[#2c2c2c] transition-all duration-300 ease-in-out hover:bg-gray-100 sm:h-9 sm:w-9 sm:text-lg"
       >
         +
       </button>

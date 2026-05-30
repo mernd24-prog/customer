@@ -31,7 +31,7 @@ export default function ImageWithFallback({
         alt={alt}
         onLoad={() => setLoading(false)}
         onError={handleError}
-        className={cn("h-full w-full object-cover transition-opacity duration-300", loading ? "opacity-0" : "opacity-100")}
+        className={cn("h-full w-full object-cover transition-all duration-300 ease-in-out", loading ? "opacity-0" : "opacity-100")}
         {...props}
       />
     </div>

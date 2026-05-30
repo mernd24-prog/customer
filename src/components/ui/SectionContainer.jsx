@@ -25,10 +25,10 @@ export default function SectionContainer({
                         <button
                             type="button"
                             onClick={onAction}
-                            className="group shrink-0 self-start sm:self-center flex items-center gap-2 text-black text-[14px] sm:text-[16px] lg:text-[18px] font-medium font-montserrat transition-all duration-300 hover:text-gray-600 hover:gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                            className="group shrink-0 self-start sm:self-center flex items-center gap-2 text-black text-[14px] sm:text-[16px] lg:text-[18px] font-medium font-montserrat transition-all duration-300 ease-in-out hover:text-gray-600 hover:gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                         >
                             {actionLabel}
-                            <FaAngleRight className="transition-transform duration-300 group-hover:translate-x-1" />
+                            <FaAngleRight className="transition-all duration-300 ease-in-out group-hover:translate-x-1" />
                         </button>
                     ) : null}
                 </div>

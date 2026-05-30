@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
@@ -8,22 +8,56 @@ import CartItemCard from "../../components/cart/CartItemCard";
 import CartSummary from "../../components/cart/CartSummary";
 import BrandButton from "../../components/ui/BrandButton";
 import { fetchCart, updateCart } from "../../features/cart/cartSlice";
+import { fetchProductById } from "../../features/product/productSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import {
   getProductId,
   getProductImage,
+  getImageFallbackSrc,
   getProductTitle,
   addProductToCartPayload,
   normalizeCartPayloadForWrite,
   wishlistPayload,
 } from "../../utils/ecommerce";
 
+const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
+const SAVED_FOR_LATER_STORAGE_KEY = "sam_global_saved_for_later_items";
+const SELECTED_CHECKOUT_STORAGE_KEY = "sam_global_selected_checkout_item_ids";
+
+function readSavedForLaterItems() {
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(SAVED_FOR_LATER_STORAGE_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeSavedForLaterItems(items) {
+  window.localStorage.setItem(SAVED_FOR_LATER_STORAGE_KEY, JSON.stringify(items));
+}
+
+function readSelectedCheckoutItemIds() {
+  try {
+    const storedValue = window.sessionStorage.getItem(SELECTED_CHECKOUT_STORAGE_KEY);
+    if (storedValue === null) return null;
+    const parsed = JSON.parse(storedValue);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeSelectedCheckoutItemIds(itemIds) {
+  window.sessionStorage.setItem(SELECTED_CHECKOUT_STORAGE_KEY, JSON.stringify(itemIds));
+}
+
 function adaptItemForCard(item) {
   const product = item.productId || {};
   const productId = item.productId?._id || getProductId(product);
   const variantKey = item.variantId || item.variantSku || "";
-  const title = item.title || getProductTitle(product) || "Product";
-  const image = item.image || getProductImage(product);
+  const title = getProductTitle(product, item.title || "Product");
+  const image = getProductImage(product) || item.image || getImageFallbackSrc(title, "cart");
   const price = item.price ?? product.price ?? product.sellingPrice ?? 0;
   const oldPrice = item.oldPrice ?? product.mrp ?? product.originalPrice;
   const shipping = item.shipping ?? 0;
@@ -60,6 +94,22 @@ function cartLineKey(item) {
   return [productId, variantKey].filter(Boolean).join(":");
 }
 
+function buildSavedProductView(wishlistProduct, resolvedProduct) {
+  const product = resolvedProduct || (typeof wishlistProduct === "object" ? wishlistProduct : null);
+  const id = getProductId(product || wishlistProduct);
+  const title = product ? getProductTitle(product, "Saved product") : "Saved product";
+  const image = product ? getProductImage(product) : "";
+
+  return {
+    id,
+    title,
+    image: image || getImageFallbackSrc(title, "saved"),
+    price: product?.price ?? product?.sellingPrice ?? product?.salePrice,
+    brand: product?.brand?.name || product?.brand || product?.seller?.name || "",
+    productForCart: product || wishlistProduct,
+  };
+}
+
 export default function CartPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -67,87 +117,211 @@ export default function CartPage() {
 
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
-  const rawItems = cart.items || [];
+  const rawItems = useMemo(() => cart.items || [], [cart.items]);
+  const wishlist = useMemo(() => cart.wishlist || [], [cart.wishlist]);
+  const productEntities = useSelector((state) => state.product.entities || {});
+  const fetchedIdsRef = useRef(new Set());
+  const hasInitializedRef = useRef(false);
+  const prevItemIdsRef = useRef(new Set());
+  const [savedForLaterItems, setSavedForLaterItems] = useState(() => readSavedForLaterItems());
+  const [selectedItemIds, setSelectedItemIds] = useState([]);
 
   useEffect(() => {
     dispatch(fetchCart());
   }, [dispatch]);
 
-  const items = rawItems.map(adaptItemForCard);
+  useEffect(() => {
+    const wishlistIds = wishlist.map(getProductId).filter(Boolean);
+    const missingIds = wishlistIds.filter(
+      (id) => !productEntities[id] && !fetchedIdsRef.current.has(id)
+    );
+
+    if (!missingIds.length) return;
+
+    missingIds.forEach((id) => fetchedIdsRef.current.add(id));
+
+    missingIds.forEach((productId) => {
+      dispatch(fetchProductById({ productId })).catch(() => {});
+    });
+  }, [dispatch, wishlist, productEntities]);
+
+  const items = useMemo(() => rawItems.map(adaptItemForCard), [rawItems]);
+  const hasCartItems = items.length > 0;
+  const hasSavedItems = savedForLaterItems.length > 0 || wishlist.length > 0;
+  const selectedItems = items.filter((item) => selectedItemIds.includes(item.id));
+
+  useEffect(() => {
+    const currentItemIds = items.map((item) => item.id);
+    const currentItemIdsSet = new Set(currentItemIds);
+
+    if (items.length > 0 && !hasInitializedRef.current) {
+      const savedSelectedItemIds = readSelectedCheckoutItemIds();
+      const nextSelectedItemIds = savedSelectedItemIds === null
+        ? currentItemIds
+        : savedSelectedItemIds.filter((id) => currentItemIdsSet.has(id));
+
+      setSelectedItemIds(nextSelectedItemIds);
+      writeSelectedCheckoutItemIds(nextSelectedItemIds);
+      hasInitializedRef.current = true;
+    } else if (hasInitializedRef.current) {
+      // Find if there are any new items that were added
+      const newIds = currentItemIds.filter((id) => !prevItemIdsRef.current.has(id));
+
+      setSelectedItemIds((current) => {
+        // Filter out any selected items that are no longer in the cart
+        const nextFiltered = current.filter((id) => currentItemIdsSet.has(id));
+        // Add any newly added items
+        const next = [...nextFiltered, ...newIds];
+
+        // Only update state if selection actually changed
+        const isSame =
+          next.length === current.length &&
+          next.every((id, idx) => id === current[idx]);
+        if (!isSame) writeSelectedCheckoutItemIds(next);
+        return isSame ? current : next;
+      });
+    }
+
+    prevItemIdsRef.current = currentItemIdsSet;
+  }, [items]);
+
+  const persistSavedForLater = (itemsToSave) => {
+    setSavedForLaterItems(itemsToSave);
+    writeSavedForLaterItems(itemsToSave);
+  };
 
   const handleIncrease = (id) => {
-    const updated = rawItems.map((ci) => {
-      const cid = cartLineKey(ci);
-      return cid === id ? { ...ci, quantity: (ci.quantity || 1) + 1 } : ci;
-    });
+    const updated = rawItems.map((ci) =>
+      cartLineKey(ci) === id ? { ...ci, quantity: (ci.quantity || 1) + 1 } : ci
+    );
+
     run(
       dispatch,
       updateCart(
         normalizeCartPayloadForWrite({
           items: updated,
           wishlist: cart.wishlist || [],
-        }),
+        })
       ),
-      "Cart updated",
+      "Cart updated"
     );
   };
 
   const handleDecrease = (id) => {
     const updated = rawItems.map((ci) => {
-      const cid = cartLineKey(ci);
-      if (cid !== id) return ci;
-      const newQty = Math.max(1, (ci.quantity || 1) - 1);
-      return { ...ci, quantity: newQty };
+      if (cartLineKey(ci) !== id) return ci;
+
+      return {
+        ...ci,
+        quantity: Math.max(1, (ci.quantity || 1) - 1),
+      };
     });
+
     run(
       dispatch,
       updateCart(
         normalizeCartPayloadForWrite({
           items: updated,
           wishlist: cart.wishlist || [],
-        }),
+        })
       ),
-      "Cart updated",
+      "Cart updated"
     );
   };
 
   const handleRemove = (id) => {
-    const updated = rawItems.filter((ci) => {
-      const cid = cartLineKey(ci);
-      return cid !== id;
-    });
+    const updated = rawItems.filter((ci) => cartLineKey(ci) !== id);
+
     run(
       dispatch,
       updateCart(
         normalizeCartPayloadForWrite({
           items: updated,
           wishlist: cart.wishlist || [],
-        }),
+        })
       ),
-      "Item removed",
+      "Item removed"
     );
   };
 
-  const handleSaveForLater = (id) => {
-    const itemToSave = rawItems.find((ci) => {
-      const cid = getProductId(ci.productId || ci.product);
-      return cid === id;
+  const handleSelectItem = (id, selected) => {
+    setSelectedItemIds((current) => {
+      const next = selected
+        ? Array.from(new Set([...current, id]))
+        : current.filter((itemId) => itemId !== id);
+      writeSelectedCheckoutItemIds(next);
+      return next;
     });
+  };
+
+  const handleSelectAll = (selected) => {
+    const next = selected ? items.map((item) => item.id) : [];
+    writeSelectedCheckoutItemIds(next);
+    setSelectedItemIds(next);
+  };
+
+  const handleSaveForLater = (id) => {
+    const itemToSave = rawItems.find((ci) => cartLineKey(ci) === id);
+    const itemView = items.find((item) => item.id === id);
+
     if (!itemToSave) return;
 
-    const remainingItems = rawItems.filter((ci) => {
-      const cid = getProductId(ci.productId || ci.product);
-      return cid !== id;
-    });
+    const remainingItems = rawItems.filter((ci) => cartLineKey(ci) !== id);
+    const savedLine = {
+      ...itemToSave,
+      title: itemToSave.title || itemView?.title,
+      image: itemToSave.image || itemView?.image,
+      price: itemToSave.price ?? itemView?.price,
+      savedAt: Date.now(),
+    };
 
-    const productToWishlist = itemToSave.productId || itemToSave.product;
+    persistSavedForLater([
+      savedLine,
+      ...savedForLaterItems.filter((item) => cartLineKey(item) !== id),
+    ]);
+    run(
+      dispatch,
+      updateCart(
+        normalizeCartPayloadForWrite({
+          items: remainingItems,
+          wishlist: cart.wishlist || [],
+        }),
+      ),
+      "Saved for later",
+    );
+  };
+
+  const handleMoveWishlistToCart = (savedProduct) => {
+    const payload = addProductToCartPayload(cart, savedProduct.productForCart, 1);
+
     const newWishlistPayload = wishlistPayload(
-      { items: remainingItems, wishlist: cart.wishlist || [] },
-      productToWishlist,
-      false,
+      payload,
+      savedProduct.productForCart,
+      true
     );
 
-    run(dispatch, updateCart(newWishlistPayload), "Saved for later");
+    run(dispatch, updateCart(newWishlistPayload), "Moved to cart");
+  };
+
+  const handleMoveSavedLineToCart = (savedItem) => {
+    persistSavedForLater(savedForLaterItems.filter((item) => cartLineKey(item) !== cartLineKey(savedItem)));
+    run(
+      dispatch,
+      updateCart(
+        normalizeCartPayloadForWrite({
+          items: [...rawItems, savedItem],
+          wishlist: cart.wishlist || [],
+        }),
+      ),
+      "Moved to cart",
+    );
+  };
+
+  const handleBuyNow = (id) => {
+    const itemToBuy = rawItems.find((ci) => cartLineKey(ci) === id);
+    if (!itemToBuy) return;
+    window.sessionStorage.setItem(BUY_NOW_STORAGE_KEY, JSON.stringify([itemToBuy]));
+    navigate("/checkout");
   };
 
   return (
@@ -157,79 +331,149 @@ export default function CartPage() {
         description="Review items in your shopping cart."
       />
 
-      <section className=" bg-white px-4 py-6 sm:px-6 sm:py-8 lg:px-12 lg:py-10">
+      <section className="bg-white px-4 py-6 sm:px-6 sm:py-8 lg:px-12 lg:py-10">
         <div className="mx-auto max-w-[1400px]">
           <PageHeader
-            title={`Cart${items.length > 0 ? ` (${items.length})` : ""}`}
+            title={`Cart${hasCartItems ? ` (${items.length})` : ""}`}
             className="mb-6"
           />
 
           <ApiState
             loading={cartState.loading && !cart.items}
             error={cartState.error}
-            empty={!items.length && !cartState.loading}
+            empty={!hasCartItems && !hasSavedItems && !cartState.loading}
             emptyTitle="Your cart is empty"
             emptyText="Add some products to continue shopping."
             onRetry={() => dispatch(fetchCart())}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_420px]">
-              {/* Items */}
-              <div className="space-y-6">
+            <div className="grid grid-cols-1 items-start gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_420px]">
+              <div className="space-y-6 min-w-0">
                 {items.map((item) => (
                   <CartItemCard
                     key={item.id}
                     item={item}
+                    selected={selectedItemIds.includes(item.id)}
+                    onSelect={handleSelectItem}
                     onIncrease={handleIncrease}
                     onDecrease={handleDecrease}
                     onRemove={handleRemove}
                     onSaveForLater={handleSaveForLater}
+                    onBuyNow={handleBuyNow}
                   />
                 ))}
 
-                {/* Saved for later (wishlist) */}
-                {(cart.wishlist || []).length > 0 && (
+                {hasCartItems && (
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-[#e7dfd1] bg-white px-4 py-3">
+                    <label className="flex items-center gap-2 font-montserrat text-sm font-semibold text-[#2E2E2E]">
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.length === items.length && items.length > 0}
+                        onChange={(event) => handleSelectAll(event.target.checked)}
+                        className="h-4 w-4 rounded border-[#cfc6b8] accent-[#CE9F2D]"
+                      />
+                      Select all
+                    </label>
+                    <span className="font-montserrat text-xs text-[#787878]">
+                      {selectedItems.length > 0
+                        ? `${selectedItems.length} selected for checkout`
+                        : "Select all"}
+                    </span>
+                  </div>
+                )}
+
+                {hasSavedItems && (
                   <div className="panel">
                     <h3 className="mb-4 font-montserrat text-[16px] font-semibold text-[#2E2E2E]">
-                      Saved for later ({cart.wishlist.length})
+                      Saved for later ({savedForLaterItems.length + wishlist.length})
                     </h3>
+
                     <div className="grid gap-3">
-                      {cart.wishlist.map((wishlistProduct) => {
-                        const wishlistId = getProductId(wishlistProduct);
-                        const wishlistTitle =
-                          typeof wishlistProduct === "object"
-                            ? getProductTitle(wishlistProduct, wishlistId)
-                            : wishlistId;
+                      {savedForLaterItems.map((savedItem) => {
+                        const savedItemView = adaptItemForCard(savedItem);
+
                         return (
                           <div
-                            key={wishlistId}
-                            className="flex items-center justify-between gap-3 rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3"
+                            key={savedItemView.id}
+                            className="flex min-w-0 flex-col gap-3 rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
                           >
-                            <span className="truncate font-montserrat text-sm text-[#787878]">
-                              {wishlistTitle}
-                            </span>
+                            <div className="flex min-w-0 items-center gap-3">
+                              <img
+                                src={savedItemView.image}
+                                alt={savedItemView.title}
+                                className="h-14 w-14 shrink-0 rounded-md object-cover"
+                              />
+
+                              <div className="min-w-0">
+                                <p className="truncate font-montserrat text-sm font-semibold text-[#2E2E2E]">
+                                  {savedItemView.title}
+                                </p>
+
+                                <div className="mt-0.5 flex flex-wrap items-center gap-2 font-montserrat text-xs text-[#787878]">
+                                  {savedItemView.variantSku ? <span>{savedItemView.variantSku}</span> : null}
+                                  <span>Qty: {savedItemView.quantity}</span>
+                                  <span className="font-semibold text-[#2E2E2E]">
+                                    ₹{Number(savedItemView.price || 0).toLocaleString("en-IN")}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
                             <BrandButton
                               variant="secondary"
                               rounded
                               size="sm"
                               label="Move to cart"
-                              className="shrink-0 h-8 px-3 text-xs"
-                              onClick={() => {
-                                const payload = addProductToCartPayload(
-                                  cart,
-                                  wishlistProduct,
-                                  1,
-                                );
-                                const newWishlistPayload = wishlistPayload(
-                                  payload,
-                                  wishlistProduct,
-                                  true,
-                                );
-                                run(
-                                  dispatch,
-                                  updateCart(newWishlistPayload),
-                                  "Moved to cart",
-                                );
-                              }}
+                              className="h-8 w-full shrink-0 px-3 text-xs sm:w-auto"
+                              onClick={() => handleMoveSavedLineToCart(savedItem)}
+                            />
+                          </div>
+                        );
+                      })}
+
+                      {wishlist.map((wishlistProduct) => {
+                        const wishlistId = getProductId(wishlistProduct);
+
+                        const savedProduct = buildSavedProductView(
+                          wishlistProduct,
+                          productEntities[wishlistId]
+                        );
+
+                        return (
+                          <div
+                            key={wishlistId}
+                            className="flex min-w-0 flex-col gap-3 rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+                          >
+                            <div className="flex min-w-0 items-center gap-3">
+                              <img
+                                src={savedProduct.image}
+                                alt={savedProduct.title}
+                                className="h-14 w-14 shrink-0 rounded-md object-cover"
+                              />
+
+                              <div className="min-w-0">
+                                <p className="truncate font-montserrat text-sm font-semibold text-[#2E2E2E]">
+                                  {savedProduct.title}
+                                </p>
+
+                                <div className="mt-0.5 flex flex-wrap items-center gap-2 font-montserrat text-xs text-[#787878]">
+                                  {savedProduct.brand ? <span>{savedProduct.brand}</span> : null}
+
+                                  {savedProduct.price != null ? (
+                                    <span className="font-semibold text-[#2E2E2E]">
+                                      ₹{Number(savedProduct.price).toLocaleString("en-IN")}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </div>
+                            </div>
+
+                            <BrandButton
+                              variant="secondary"
+                              rounded
+                              size="sm"
+                              label="Move to cart"
+                              className="h-8 w-full shrink-0 px-3 text-xs sm:w-auto"
+                              onClick={() => handleMoveWishlistToCart(savedProduct)}
                             />
                           </div>
                         );
@@ -238,7 +482,6 @@ export default function CartPage() {
                   </div>
                 )}
 
-                {/* Continue shopping */}
                 <div className="flex items-center gap-3">
                   <Link to="/products">
                     <BrandButton
@@ -252,19 +495,22 @@ export default function CartPage() {
                 </div>
               </div>
 
-              {/* Summary */}
-              {items.length > 0 && (
+              {hasCartItems && (
                 <div className="self-start">
                   <CartSummary
-                    items={items}
+                    items={selectedItems}
                     shippingLabel="Shipping"
                     shippingLocation=""
                     showInfoIcon={false}
                     protectionText="Purchase protected by"
                     protectionLinkText="Sam Global Money Back Guarantee"
                     protectionLink="/"
-                    buttonText="Proceed to Checkout"
-                    onCheckout={() => navigate("/checkout")}
+                    buttonText={selectedItems.length ? "Proceed to Checkout" : "Select products to checkout"}
+                    onCheckout={() => {
+                      if (!selectedItems.length) return;
+                      window.sessionStorage.setItem(SELECTED_CHECKOUT_STORAGE_KEY, JSON.stringify(selectedItemIds));
+                      navigate("/checkout");
+                    }}
                   />
                 </div>
               )}

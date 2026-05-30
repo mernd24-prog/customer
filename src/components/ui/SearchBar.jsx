@@ -78,7 +78,11 @@ const SearchBar = ({
               icon={<Search size={18} />}
               label={showButtonLabel ? "Search" : ""}
               size="md"
-              className={showButtonLabel ? "px-4 2xl:px-6 min-h-[20px] font-medium" : "h-[36px] w-[36px] sm:h-[40px] sm:w-[40px] flex items-center justify-center !p-0"}
+              className={
+                showButtonLabel
+                  ? "min-h-[20px] px-4 font-medium shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:brightness-105 hover:shadow-md active:translate-y-0 active:scale-[0.98] 2xl:px-6"
+                  : "flex h-[36px] w-[36px] items-center justify-center !p-0 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:brightness-105 hover:shadow-md active:translate-y-0 active:scale-[0.96] sm:h-[40px] sm:w-[40px]"
+              }
               onClick={handleSearch}
             />
           </div>

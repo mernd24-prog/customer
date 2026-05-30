@@ -40,7 +40,7 @@ export default function NeedHelpSection({
 
       <Button
         label={buttonText}
-        className={`mt-6 shrink-0 rounded-full px-8 py-3 text-[16px] font-semibold sm:text-[18px] md:text-[20px] transition-colors ${
+        className={`mt-6 shrink-0 rounded-full px-8 py-3 text-[16px] font-semibold sm:text-[18px] md:text-[20px] transition-all duration-300 ease-in-out ${
           layout === "row"
             ? "!bg-[#3E4094] !border-none !text-white hover:!bg-[#1B1D60] md:mt-0 md:ml-6"
             : "!mt-4 !min-h-[34px] w-auto min-w-[124px] !bg-white !px-6 !py-2 !text-[13px] !font-medium !text-[#4E4E4E] border border-[#666666] hover:!bg-[#F5F5F5]"

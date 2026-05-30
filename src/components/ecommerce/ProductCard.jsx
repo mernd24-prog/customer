@@ -76,7 +76,7 @@ export default function ProductCard({
 
   if (isListVariant) {
     return (
-      <article className={cn("rounded-[8px] bg-white p-3 shadow-sm transition hover:shadow-xl", className)}>
+      <article className={cn("rounded-[8px] bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:shadow-xl", className)}>
         <div className="grid gap-4 sm:grid-cols-[180px_1fr_auto] sm:items-center">
           <Link to={to} className="block overflow-hidden rounded-[8px] bg-[#FAF6EE]">
             {image ? (
@@ -122,7 +122,7 @@ export default function ProductCard({
   }
 
   return (
-    <article className={cn("group relative min-w-0 rounded-[8px] bg-white p-3 shadow-sm transition-all duration-300 hover:shadow-xl sm:px-4 sm:pb-5 sm:pt-5", className)}>
+    <article className={cn("group relative min-w-0 rounded-[8px] bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:shadow-xl sm:px-4 sm:pb-5 sm:pt-5", className)}>
       {badgeText && (
         <span className="absolute left-5 top-7 z-10 rounded-full bg-[#E23B3B] px-2 py-1 font-montserrat text-[11px] font-semibold text-white">
           {badgeText}
@@ -136,7 +136,7 @@ export default function ProductCard({
       )}
 
       {showActions && (
-        <div className="absolute right-5 top-7 z-20 flex gap-2 opacity-100 sm:opacity-0 sm:transition group-hover:opacity-100">
+        <div className="absolute right-5 top-7 z-20 flex gap-2 opacity-100 transition-all duration-300 ease-in-out sm:opacity-0 group-hover:opacity-100">
           <WishlistButton active={isWishlisted} label={title} onClick={handleWishlist} />
           <AddToCartButton compact disabled={!isInStock} label={`Add ${title} to cart`} onClick={handleAddToCart} />
         </div>
@@ -145,7 +145,7 @@ export default function ProductCard({
       <Link to={to} className="block">
         <div className="overflow-hidden rounded-[8px] bg-[#FAF6EE]">
           {image ? (
-            <img src={image} alt={title} className="mx-auto aspect-[1/1.15] w-full object-cover transition duration-300 group-hover:scale-[1.02]" loading="lazy" decoding="async" onError={handleImageError} />
+            <img src={image} alt={title} className="mx-auto aspect-[1/1.15] w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-[1.02]" loading="lazy" decoding="async" onError={handleImageError} />
           ) : (
             <div className="flex aspect-[1/1.15] items-center justify-center text-[#CFC6B8]">
               <ShoppingCart size={48} strokeWidth={1.4} />
