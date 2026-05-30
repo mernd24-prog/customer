@@ -3,11 +3,7 @@ import productsForYou from "../../data/productsForYou";
 import SupportFeatureSection from "../ui/SupportFeatureSection";
 import { helpSupportData } from "../../data/helpSupport";
 import CommitmentCard from "../ui/CommitmentCard";
-<<<<<<< HEAD
-=======
-import { commitmentData } from "../../data/commitment";
 import { aboutSectionImages } from "../../constant/image.constant";
->>>>>>> origin/mahima-dev
 
 export default function HomeProductsForYouSection({ loading = false }) {
   const list = loading ? Array.from({ length: 12 }) : productsForYou;

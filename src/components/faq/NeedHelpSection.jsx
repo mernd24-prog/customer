@@ -1,4 +1,4 @@
-import Button from "../Button/Button";
+import Button from "../ui/Button";
 
 export default function NeedHelpSection({
   heading1,
@@ -26,15 +26,11 @@ export default function NeedHelpSection({
       </p>
 
       <Button
-        label={buttonText}
-        variant="custom"
-        rounded
-        bgColor="#FFFFFF"
-        textColor="#4E4E4E"
-        borderColor="#666666"
-        hoverBgColor="#F5F5F5"
+        variant="secondary"
         className="mt-6 h-[52px] w-[180px] text-[16px] font-semibold leading-[28px] sm:h-[60px] sm:w-[200px] sm:text-[18px] md:h-[68px] md:w-[213px] md:text-[20px] md:leading-[34px]"
-      />
+      >
+        {buttonText}
+      </Button>
 
     </section>
   );

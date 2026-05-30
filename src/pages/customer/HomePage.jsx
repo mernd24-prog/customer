@@ -4,43 +4,20 @@ import Seo from "../../components/common/Seo";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import { updateCart } from "../../features/cart/cartSlice";
-import { addProductToCartPayload, wishlistPayload } from "./helpers";
-import InfoSection from "../../components/about/InfoSection";
-import {
-  ourMission,
-  ourStoryData,
-  valueData,
-  whyChooseUsData,
-} from "../../data/aboutUs";
-import BrandCarousel from "../../components/about/BrandCarousel";
-import OurStory from "../../components/about/OurStory";
-import ValuesSection from "../../components/about/ValuesSection";
-import WhyChooseSection from "../../components/about/WhyChooseSection";
 import ProductDetailPage from "../../components/product/ProductDetail";
-import {
-  useFetch,
-  itemsFrom,
-  addProductToCartPayload,
-  wishlistPayload,
-} from "./helpers";
-import FAQPage from "../faq/FAQPage"
-import { productImages } from "../../constant/image.constant";
-import { faqData } from "../../data/faqData";
-import InfoSection from "../../components/ui/sections/InfoSection";
-
-
-import CollageMainSection from "../../components/cards/collageCard";
-import MothersDaySwiper from "../../components/swiper/mothersDaySwiper";
-import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
-import categories from "../../data/categories";
-import { valueData } from "../../data/aboutSection";
-import ValueCardSection from "../../components/ui/sections/valueCardSection";
+import { addProductToCartPayload, wishlistPayload } from "./helpers";
+import FAQPage from "../faq/FAQPage";
+import HomeShowcaseSections from "../../components/home/HomeShowcaseSections";
+import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
+import MothersDayCarousel from "../../components/home/MothersDayCarousel";
+import { homeShowcaseSections } from "../../data/homeSections";
 
 export function HomePage() {
   const dispatch = useDispatch();
   const cart = useSelector((s) => s.cart.current);
   const run = useToastThunk();
   const recent = getRecentlyViewed();
+  const isHomeLoading = false;
 
   const addToCart = (product) =>
     run(
@@ -70,8 +47,7 @@ export function HomePage() {
         sections={homeShowcaseSections}
         loading={isHomeLoading}
       />
-      <InfoSection />
-      <MothersDaySwiper />
+      <MothersDayCarousel />
 
       <HomeProductsForYouSection loading={isHomeLoading} />
 

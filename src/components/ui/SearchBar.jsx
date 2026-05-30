@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import Button from "../Button/Button";
+import Button from "./Button";
 
 export default function SearchBar({
     value,
@@ -43,16 +43,15 @@ export default function SearchBar({
 
                         <Button
                             variant="gradient"
-                            rounded
-                            icon={<Search size={18} />}
-                            label={showButtonLabel ? "Search" : ""}
-                            size="md"
                             className={`font-medium 2xl:px-6 ${showButtonLabel
                                 ? "px-4"
                                 : "h-8 w-8 p-0"
                                 }`}
                             onClick={onSearch}
-                        />
+                        >
+                            <Search size={18} />
+                            {showButtonLabel ? "Search" : ""}
+                        </Button>
 
                     </div>
                 </div>

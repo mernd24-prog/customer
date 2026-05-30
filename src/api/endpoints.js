@@ -49,6 +49,7 @@ export const endpoints = {
   payments: {
     razorpayWebhook: `${API_PREFIX}/payments/webhooks/razorpay`,
     me: `${API_PREFIX}/payments/me`,
+    options: `${API_PREFIX}/payments/options`,
     initiate: `${API_PREFIX}/payments/initiate`,
     verify: `${API_PREFIX}/payments/verify`
   },
