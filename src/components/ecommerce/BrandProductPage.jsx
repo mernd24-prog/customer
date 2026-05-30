@@ -27,7 +27,7 @@ export default function BrandProductPage({
         <Store size={48} className="mx-auto mb-4 text-gray-300" />
         <h2 className="font-montserrat text-2xl font-bold text-[#2E2E2E]">Brand Not Found</h2>
         <p className="mt-2 font-montserrat text-sm text-[#787878]">
-          The brand you're looking for doesn't exist or may have been removed.
+          The brand you&apos;re looking for doesn&apos;t exist or may have been removed.
         </p>
         <Link to="/products" className="button primary mt-6 inline-block px-6 py-2">
           Browse All Products

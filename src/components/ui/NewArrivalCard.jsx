@@ -7,13 +7,9 @@ export default function NewArrivalCard({
     images = [],
     price,
     oldPrice,
-    badge,
     link
 }) {
     const displayImages = images.slice(0, 2);
-    const currentMonth = new Date().toLocaleString("en-US", { month: "long" });
-    const badgeText = badge ?? currentMonth;
-
     return (
         <Link to={link} className="block">
             <article

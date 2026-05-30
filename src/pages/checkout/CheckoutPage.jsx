@@ -11,7 +11,10 @@ import { fetchCart } from "../../features/cart/cartSlice";
 import { fetchWallet } from "../../features/wallet/walletSlice";
 import { fetchMe } from "../../features/user/userSlice";
 import { createOrder, fetchOrderById } from "../../features/order/orderSlice";
-import { initiatePayment } from "../../features/payment/paymentSlice";
+import {
+  fetchPaymentOptions,
+  initiatePayment,
+} from "../../features/payment/paymentSlice";
 import {
   fetchCountries,
   fetchStates,
@@ -19,7 +22,6 @@ import {
   fetchZipCodes,
 } from "../../features/global/globalSlice";
 import {
-  formatMoney,
   getImageFallbackSrc,
   getProductId,
   getProductImage,
@@ -228,6 +230,10 @@ const getCartLineKey = (item = {}) =>
   ]
     .filter(Boolean)
     .join(":");
+const getPaymentProviderLabel = (provider = "") =>
+  String(provider || "")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
 export default function CheckoutPage() {
   const dispatch = useDispatch();
@@ -255,6 +261,14 @@ export default function CheckoutPage() {
   const subtotal = items.reduce((sum, item) => sum + item._lineTotal, 0);
   const shipping = items.reduce((sum, item) => sum + item._shippingTotal, 0);
   const total = subtotal + shipping;
+  const [paymentProvider, setPaymentProvider] = useState("razorpay");
+  const paymentOptions = useMemo(
+    () =>
+      Array.isArray(paymentState.current?.providers)
+        ? paymentState.current.providers
+        : [],
+    [paymentState],
+  );
 
   const addresses = useMemo(
     () => userState.current?.addresses || [],
@@ -282,6 +296,24 @@ export default function CheckoutPage() {
       })
       .catch((err) => console.error("Error fetching states:", err));
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchPaymentOptions({ orderAmount: total || subtotal || 0 })).catch(
+      () => {},
+    );
+  }, [dispatch, subtotal, total]);
+
+  useEffect(() => {
+    if (!paymentOptions.length) return;
+    const selected = paymentOptions.find(
+      (option) => option.provider === paymentProvider,
+    );
+    if (selected?.enabled) return;
+    const firstEnabled = paymentOptions.find((option) => option.enabled);
+    if (firstEnabled?.provider) {
+      setPaymentProvider(firstEnabled.provider);
+    }
+  }, [paymentOptions, paymentProvider]);
 
   const {
     register,
@@ -542,6 +574,7 @@ export default function CheckoutPage() {
         currency: "INR",
         couponCode: values.couponCode || undefined,
         walletAmount,
+        paymentProvider,
         shippingAddress,
         items: orderItems,
       }),
@@ -574,12 +607,12 @@ export default function CheckoutPage() {
       dispatch,
       initiatePayment({
         orderId,
-        provider: "razorpay",
+        provider: paymentProvider,
         amount: payableAmount,
         currency: paymentOrder?.currency || createdOrder?.currency || "INR",
-        notes: { source: "web_checkout" },
+        notes: { source: "web_checkout", paymentProvider },
       }),
-      "Redirecting to payment…",
+      paymentProvider === "cod" ? "COD order confirmed" : "Payment initiated",
     );
 
     if (isBuyNowCheckout) {
@@ -662,6 +695,11 @@ export default function CheckoutPage() {
                 shipping={shipping}
                 total={total}
                 loading={loading}
+                paymentOptions={paymentOptions}
+                paymentOptionsLoading={paymentState.loading && !paymentOptions.length}
+                selectedPaymentProvider={paymentProvider}
+                onPaymentProviderChange={setPaymentProvider}
+                getPaymentProviderLabel={getPaymentProviderLabel}
               />
             </div>
           </form>

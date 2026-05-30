@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useCmsRecord, getCmsPayload } from "../../hooks/useCmsRecord";
+import { useCmsRecord } from "../../hooks/useCmsRecord";
 import Seo from "../../components/common/Seo";
 import AboutBanner from "../../components/about/AboutBanner";
 import InfoSection from "../../components/about/InfoSection";
@@ -7,14 +7,6 @@ import OurStory from "../../components/about/OurStory";
 import ValuesSection from "../../components/about/ValuesSection";
 import BrandCarousel from "../../components/about/BrandSection";
 import WhyChooseSection from "../../components/about/WhyChooseSection";
-
-const asArray = (value, fallback = []) => {
-  if (Array.isArray(value)) return value;
-  if (Array.isArray(value?.cards)) return value.cards;
-  if (Array.isArray(value?.items)) return value.items;
-  if (Array.isArray(value?.logos)) return value.logos;
-  return fallback;
-};
 
 export default function AboutPage() {
 

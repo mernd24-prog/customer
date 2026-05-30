@@ -1,6 +1,13 @@
-import { CreditCard } from "lucide-react";
+import { Banknote, Building2, CreditCard, Smartphone } from "lucide-react";
 import Button from "../../components/ui/Button";
 import { formatMoney } from "../../utils/ecommerce";
+
+const PAYMENT_ICONS = {
+  razorpay: CreditCard,
+  cod: Banknote,
+  manual_upi: Smartphone,
+  manual_bank_transfer: Building2,
+};
 
 export default function CheckoutSummary({
   items,
@@ -8,7 +15,26 @@ export default function CheckoutSummary({
   shipping,
   total,
   loading,
+  paymentOptions = [],
+  paymentOptionsLoading = false,
+  selectedPaymentProvider,
+  onPaymentProviderChange,
+  getPaymentProviderLabel,
 }) {
+  const selectedOption = paymentOptions.find(
+    (option) => option.provider === selectedPaymentProvider,
+  );
+  const selectedLabel =
+    selectedOption?.label ||
+    getPaymentProviderLabel?.(selectedPaymentProvider) ||
+    "Payment";
+  const buttonLabel =
+    selectedPaymentProvider === "cod"
+      ? "Place COD order"
+      : selectedPaymentProvider?.startsWith("manual_")
+        ? "Place order"
+        : "Place order & pay";
+
   return (
     <aside className="min-w-0">
       <div className="sticky top-4 w-full overflow-hidden rounded-lg border border-[#e7dfd1] bg-white p-5">
@@ -79,16 +105,72 @@ export default function CheckoutSummary({
           </div>
         </div>
 
+        <div className="mt-5 border-t border-[#e7dfd1] pt-4">
+          <h3 className="mb-3 font-montserrat text-sm font-semibold text-[#2E2E2E]">
+            Payment method
+          </h3>
+
+          {paymentOptions.length > 0 ? (
+            <div className="grid gap-2">
+              {paymentOptions.map((option) => {
+                const Icon = PAYMENT_ICONS[option.provider] || CreditCard;
+                const isSelected = selectedPaymentProvider === option.provider;
+                return (
+                  <label
+                    key={option.provider}
+                    className={`flex cursor-pointer items-center gap-3 rounded-[8px] border px-3 py-3 text-sm transition ${
+                      isSelected
+                        ? "border-[#CE9F2D] bg-[#FAF6EE]"
+                        : "border-[#e7dfd1] bg-white"
+                    } ${option.enabled ? "" : "cursor-not-allowed opacity-50"}`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentProvider"
+                      value={option.provider}
+                      checked={isSelected}
+                      disabled={!option.enabled}
+                      onChange={(event) =>
+                        onPaymentProviderChange?.(event.target.value)
+                      }
+                      className="h-4 w-4 accent-[#CE9F2D]"
+                    />
+                    <Icon size={18} className="shrink-0 text-[#CE9F2D]" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-medium text-[#2E2E2E]">
+                        {option.label ||
+                          getPaymentProviderLabel?.(option.provider)}
+                      </span>
+                      {Number(option.chargeAmount || 0) > 0 ? (
+                        <span className="block text-xs text-[#787878]">
+                          Charge: {formatMoney(option.chargeAmount, "INR")}
+                        </span>
+                      ) : null}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-3 py-3 text-sm text-[#787878]">
+              {paymentOptionsLoading
+                ? "Loading payment methods..."
+                : "Payment methods are not available right now."}
+            </div>
+          )}
+        </div>
+
         <Button
           type="submit"
           loading={loading}
+          disabled={!selectedPaymentProvider || paymentOptionsLoading}
           className="mt-5 w-full"
         >
-          <CreditCard size={16} /> Place order &amp; pay
+          <CreditCard size={16} /> {buttonLabel}
         </Button>
 
         <p className="mt-3 text-center text-xs text-[#A6A6A6]">
-          Secured by Razorpay · SSL encrypted
+          Selected method: {selectedLabel}
         </p>
       </div>
     </aside>

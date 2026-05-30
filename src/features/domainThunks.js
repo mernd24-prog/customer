@@ -3,16 +3,6 @@ import { makeThunk } from "./createApiSlice";
 
 const q = (arg) => arg?.params || arg;
 const body = (arg) => arg?.data || arg;
-const positivePaymentBody = (arg) => {
-  const payload = body(arg);
-  const amount = Number(payload?.amount);
-
-  if (!Number.isFinite(amount) || amount <= 0) {
-    throw new Error("Payment amount must be greater than zero");
-  }
-
-  return { ...payload, amount };
-};
 
 export const authThunks = {
   registerUser: makeThunk("auth/registerUser", { method: "post", url: endpoints.auth.register, data: body }),

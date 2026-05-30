@@ -73,7 +73,6 @@ const getVariantTitle = (item) =>
   item?.variantTitle ||
   item?.variant?.title ||
   "";
-const getItemTitle = (item) => getVariantTitle(item) || getProductTitle(item);
 const getItemSku = (item) => item?.variant_sku || item?.variantSku || item?.sku || getItemProduct(item)?.sku || "";
 const getItemAttributes = (item) => {
   const attributes = item?.attributes && typeof item.attributes === "object" ? item.attributes : {};
