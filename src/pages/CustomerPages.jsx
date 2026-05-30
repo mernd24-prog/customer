@@ -24,6 +24,7 @@ import {
   Wallet,
   XCircle,
 } from "lucide-react";
+import { Banknote, CreditCard, Heart, PackageCheck, ShieldCheck } from "lucide-react";
 import ApiState from "../components/common/ApiState";
 import Seo from "../components/common/Seo";
 import BrandButton from "../components/ui/BrandButton";
@@ -53,6 +54,7 @@ import { fetchCategoryByKey } from "../features/catalog/catalogSlice";
 import { fetchCart, updateCart } from "../features/cart/cartSlice";
 import { createOrder } from "../features/order/orderSlice";
 import {
+  fetchPaymentOptions,
   initiatePayment,
   fetchPayments,
 } from "../features/payment/paymentSlice";
@@ -87,6 +89,7 @@ import {
   registerWarranty,
   claimWarranty,
 } from "../features/warranty/warrantySlice";
+import { fetchOrderInvoice } from "../features/tax/taxSlice";
 import { trackRecommendationInteraction } from "../features/recommendation/recommendationSlice";
 import { trackAnalyticsEvent } from "../features/analytics/analyticsSlice";
 import { fetchDynamicPrice } from "../features/dynamicPricing/dynamicPricingSlice";
@@ -130,6 +133,33 @@ const getCreatedOrder = (result = {}) =>
   result?.order ||
   result?.data ||
   result;
+
+const firstDefined = (...values) =>
+  values.find((value) => value !== undefined && value !== null && value !== "");
+
+const displayLabel = (value = "") =>
+  String(value || "N/A").replace(/_/g, " ");
+
+const getProductId = (item = {}) => {
+  const product = item.productId || item.product_id || item.product;
+  return typeof product === "object"
+    ? firstDefined(product._id, product.id, product.productId)
+    : product;
+};
+
+const getProductTitle = (item = {}) => {
+  const product = item.productId || item.product_id || item.product;
+  return typeof product === "object"
+    ? firstDefined(product.title, product.name, product.sku, product._id, product.id)
+    : product;
+};
+
+const cartEstimate = (items = []) =>
+  items.reduce((sum, item) => {
+    const product = item.productId || item.product_id || item.product || {};
+    const unit = Number(firstDefined(item.unitPrice, item.unit_price, product.salePrice, product.price, 0));
+    return sum + unit * Number(item.quantity || 0);
+  }, 0);
 
 export function AuthFormPage({ mode }) {
   const dispatch = useDispatch();
@@ -842,7 +872,7 @@ export function CartPage() {
     run(
       dispatch,
       updateCart({
-        items: items.filter((item) => item.productId !== productId),
+        items: items.filter((item) => getProductId(item) !== productId),
         wishlist: cart.wishlist || [],
       }),
       "Removed from cart",
@@ -871,8 +901,8 @@ export function CartPage() {
           <div className="panel">
             <h2>Items</h2>
             {items.map((item) => (
-              <div className="line-item" key={item.productId}>
-                <span>{item.productId}</span>
+              <div className="line-item" key={getProductId(item)}>
+                <span>{getProductTitle(item)}</span>
                 <input
                   type="number"
                   min="1"
@@ -882,7 +912,7 @@ export function CartPage() {
                       dispatch,
                       updateCart({
                         items: items.map((x) =>
-                          x.productId === item.productId
+                          getProductId(x) === getProductId(item)
                             ? { ...x, quantity: Number(e.target.value) }
                             : x,
                         ),
@@ -894,7 +924,7 @@ export function CartPage() {
                 />
                 <button
                   className="button secondary"
-                  onClick={() => remove(item.productId)}
+                  onClick={() => remove(getProductId(item))}
                 >
                   Remove
                 </button>
@@ -939,8 +969,20 @@ export function CheckoutPage() {
   const cart = useFetch(fetchCart, undefined, (s) => s.cart);
   const wallet = useFetch(fetchWallet, undefined, (s) => s.wallet);
   const checkout = useSelector((s) => s.checkout);
+  const payment = useSelector((s) => s.payment);
   const run = useToastThunk();
   const navigate = useNavigate();
+  const [paymentProvider, setPaymentProvider] = useState("razorpay");
+  const cartItems = cart.current?.items || [];
+  const estimatedAmount = cartEstimate(cartItems);
+  const paymentOptions = Array.isArray(payment.current?.providers)
+    ? payment.current.providers
+    : [];
+
+  useEffect(() => {
+    dispatch(fetchPaymentOptions({ orderAmount: estimatedAmount }));
+  }, [dispatch, estimatedAmount]);
+
   const {
     register,
     handleSubmit,
@@ -953,44 +995,32 @@ export function CheckoutPage() {
         currency: "INR",
         couponCode: values.couponCode || undefined,
         walletAmount: Number(values.walletAmount || 0),
+        paymentProvider,
         shippingAddress: values,
-        items: (cart.current?.items || []).map(({ productId, product, quantity, variantId, variantSku, variantTitle, attributes }) => ({
-          productId: getProductId(productId || product),
-          variantId: variantId || undefined,
-          variantSku: variantSku || undefined,
-          variantTitle: variantTitle || undefined,
-          attributes: attributes || {},
-          quantity,
+        items: cartItems.map((item) => ({
+          productId: getProductId(item),
+          variantId: firstDefined(item.variantId, item.variant_id, ""),
+          variantSku: firstDefined(item.variantSku, item.variant_sku, ""),
+          quantity: Number(item.quantity || 1),
         })),
       }),
       "Order created",
     );
-    const createdOrder = getCreatedOrder(order);
-    const orderId = createdOrder?.id || createdOrder?.orderId || createdOrder?.order_id;
-    let paymentOrder = createdOrder;
-    let payableAmount = getOrderPayableAmount(paymentOrder);
-    if (payableAmount <= 0 && orderId) {
-      const orderDetail = await dispatch(fetchOrderById({ orderId })).unwrap();
-      paymentOrder = getCreatedOrder(orderDetail);
-      payableAmount = getOrderPayableAmount(paymentOrder);
-    }
-
-    if (payableAmount <= 0) {
-      toast.error("Payment amount is missing from order response. Please try again.");
-      return;
-    }
-    await run(
+    const orderData = order.data || order;
+    const orderId = firstDefined(orderData?.id, orderData?.orderId);
+    const paymentResult = await run(
       dispatch,
       initiatePayment({
         orderId,
-        provider: "razorpay",
-        amount: payableAmount,
-        currency: paymentOrder?.currency || createdOrder?.currency || "INR",
-        notes: { source: "web_checkout" },
+        provider: paymentProvider,
+        amount: firstDefined(orderData?.payableAmount, orderData?.payable_amount, orderData?.totalAmount, 0),
+        currency: "INR",
+        notes: { source: "web_checkout", paymentProvider },
       }),
-      "Payment initiated",
+      paymentProvider === "cod" ? "COD order confirmed" : "Payment initiated",
     );
-    navigate("/payment/success");
+    const status = firstDefined(paymentResult?.data?.status, paymentResult?.status);
+    navigate(status === "failed" ? "/payment/failed" : `/orders/${orderId}`);
   };
   return (
     <section>
@@ -1003,41 +1033,80 @@ export function CheckoutPage() {
         emptyTitle="Your cart is empty"
         onRetry={() => dispatch(fetchCart())}
       >
-        <form className="panel" onSubmit={handleSubmit(submit)}>
-          <input
-            placeholder="Line 1"
-            {...register("line1", { required: true })}
-          />
-          <small>{errors.line1 && "Required"}</small>
-          <input placeholder="Line 2" {...register("line2")} />
-          <input placeholder="City" {...register("city", { required: true })} />
-          <input
-            placeholder="State"
-            {...register("state", { required: true })}
-          />
-          <input
-            placeholder="Postal code"
-            {...register("postalCode", { required: true })}
-          />
-          <input
-            placeholder="Country"
-            defaultValue="India"
-            {...register("country", { required: true })}
-          />
-          <input placeholder="Coupon code" {...register("couponCode")} />
-          <p className="todo">
-            TODO: coupon validation/apply API is missing; couponCode is sent
-            through order creation.
-          </p>
-          <input
-            type="number"
-            placeholder={`Wallet amount, balance ${wallet.current?.balance || 0}`}
-            {...register("walletAmount")}
-          />
-          <button className="button">
-            <CreditCard size={16} /> Place order and pay
-          </button>
-        </form>
+        <div className="split">
+          <form className="panel" onSubmit={handleSubmit(submit)}>
+            <h2>Delivery address</h2>
+            <input
+              placeholder="Line 1"
+              {...register("line1", { required: true })}
+            />
+            <small>{errors.line1 && "Required"}</small>
+            <input placeholder="Line 2" {...register("line2")} />
+            <input placeholder="City" {...register("city", { required: true })} />
+            <input
+              placeholder="State"
+              {...register("state", { required: true })}
+            />
+            <input
+              placeholder="Postal code"
+              {...register("postalCode", { required: true })}
+            />
+            <input
+              placeholder="Country"
+              defaultValue="India"
+              {...register("country", { required: true })}
+            />
+            <input placeholder="Coupon code" {...register("couponCode")} />
+            <input
+              type="number"
+              placeholder={`Wallet amount, balance ${wallet.current?.balance || 0}`}
+              {...register("walletAmount")}
+            />
+            <button className="button">
+              {paymentProvider === "cod" ? <Banknote size={16} /> : <CreditCard size={16} />}
+              {paymentProvider === "cod" ? "Place COD order" : "Place order and continue"}
+            </button>
+          </form>
+
+          <aside className="panel">
+            <h2>Payment option</h2>
+            <div className="payment-options">
+              {paymentOptions.map((option) => (
+                <label
+                  key={option.provider}
+                  className={`payment-option ${paymentProvider === option.provider ? "selected" : ""} ${option.enabled ? "" : "disabled"}`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentProvider"
+                    value={option.provider}
+                    checked={paymentProvider === option.provider}
+                    disabled={!option.enabled}
+                    onChange={(event) => setPaymentProvider(event.target.value)}
+                  />
+                  <span>
+                    <strong>{option.label || displayLabel(option.provider)}</strong>
+                    <small>
+                      {option.chargeAmount > 0
+                        ? `Charge ${formatMoney(option.chargeAmount, option.config?.currency || "INR")}`
+                        : option.payableNow
+                          ? "Pay securely online"
+                          : "Pay after placing the order"}
+                    </small>
+                  </span>
+                </label>
+              ))}
+              {!paymentOptions.length && (
+                <div className="state-box">Loading payment options...</div>
+              )}
+            </div>
+            <div className="summary-lines">
+              <div><span>Estimated cart</span><strong>{formatMoney(estimatedAmount)}</strong></div>
+              <div><span>Selected method</span><strong>{displayLabel(paymentProvider)}</strong></div>
+              <div><span>Final payable</span><strong>Calculated after order validation</strong></div>
+            </div>
+          </aside>
+        </div>
       </ApiState>
     </section>
   );
@@ -1128,9 +1197,18 @@ export function OrdersPage({ detail = false, track = false }) {
     detail || track ? { orderId } : undefined,
     (s) => s.order,
   );
+  const taxState = useSelector((s) => s.tax);
   const run = useToastThunk();
   const orders = itemsFrom(state);
   const order = state.current;
+  const invoice = taxState.current?.order_id === orderId || taxState.current?.orderId === orderId ? taxState.current : null;
+
+  useEffect(() => {
+    if (detail || track) {
+      dispatch(fetchOrderInvoice({ orderId })).catch(() => {});
+    }
+  }, [detail, dispatch, orderId, track]);
+
   if (detail || track)
     return (
       <section>
@@ -1146,10 +1224,32 @@ export function OrdersPage({ detail = false, track = false }) {
             <StatusTimeline status={order?.status || order?.orderStatus} />
             <p>
               {formatMoney(
-                order?.amounts?.payableAmount || order?.totalAmount,
+                firstDefined(order?.payable_amount, order?.payableAmount, order?.amounts?.payableAmount, order?.total_amount, order?.totalAmount),
                 order?.currency,
               )}
             </p>
+            <div className="summary-lines">
+              <div><span>Payment method</span><strong>{displayLabel(firstDefined(order?.payment_provider, order?.paymentProvider))}</strong></div>
+              <div><span>Payment status</span><strong>{displayLabel(firstDefined(order?.payment_status, order?.paymentStatus))}</strong></div>
+              <div><span>COD charge</span><strong>{formatMoney(firstDefined(order?.cod_charge_amount, order?.codChargeAmount, 0), order?.currency)}</strong></div>
+              <div><span>Tax</span><strong>{formatMoney(firstDefined(order?.tax_amount, order?.taxAmount, 0), order?.currency)}</strong></div>
+            </div>
+            <div className="panel nested-panel">
+              <h2>Invoice</h2>
+              {taxState.loading && <p>Loading invoice...</p>}
+              {!taxState.loading && invoice ? (
+                <div className="summary-lines">
+                  <div><span>Invoice number</span><strong>{invoice.invoice_number || invoice.invoiceNumber}</strong></div>
+                  <div><span>Taxable amount</span><strong>{formatMoney(invoice.taxable_amount || invoice.taxableAmount, invoice.currency)}</strong></div>
+                  <div><span>CGST</span><strong>{formatMoney(invoice.cgst_amount || invoice.cgstAmount, invoice.currency)}</strong></div>
+                  <div><span>SGST</span><strong>{formatMoney(invoice.sgst_amount || invoice.sgstAmount, invoice.currency)}</strong></div>
+                  <div><span>IGST</span><strong>{formatMoney(invoice.igst_amount || invoice.igstAmount, invoice.currency)}</strong></div>
+                  <div><span>Total invoice</span><strong>{formatMoney(invoice.total_amount || invoice.totalAmount, invoice.currency)}</strong></div>
+                </div>
+              ) : (
+                !taxState.loading && <p>Invoice will appear here after payment is confirmed.</p>
+              )}
+            </div>
             <div className="button-row">
               <button
                 className="button secondary"
@@ -1175,10 +1275,6 @@ export function OrdersPage({ detail = false, track = false }) {
                 Reorder
               </button>
             </div>
-            <p className="todo">
-              TODO: customer live carrier tracking and invoice download APIs are
-              missing.
-            </p>
           </div>
         </ApiState>
       </section>

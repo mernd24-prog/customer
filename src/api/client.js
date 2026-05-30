@@ -10,7 +10,7 @@ import {
 } from "../utils/cache";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:4000",
+  baseURL: "http://192.168.16.42:4000",
   headers: { "Content-Type": "application/json" },
 });
 

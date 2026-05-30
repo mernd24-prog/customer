@@ -698,6 +698,65 @@ small {
   background: #fffdf9;
 }
 
+.payment-options,
+.summary-lines {
+  display: grid;
+  gap: 10px;
+}
+
+.payment-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 12px;
+  border: 1px solid #ddd6c9;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.payment-option.selected {
+  border-color: #1f2520;
+  background: #f2ecdf;
+}
+
+.payment-option.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.payment-option input {
+  width: auto;
+  margin-top: 4px;
+}
+
+.payment-option span {
+  display: grid;
+  gap: 4px;
+}
+
+.summary-lines {
+  margin-top: 14px;
+}
+
+.summary-lines > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee6d9;
+}
+
+.summary-lines > div:last-child {
+  border-bottom: 0;
+}
+
+.nested-panel {
+  margin-top: 14px;
+  background: #fff;
+}
+
 .json {
   overflow: auto;
   white-space: pre-wrap;

@@ -85,7 +85,8 @@ export const orderThunks = {
 
 export const paymentThunks = {
   fetchPayments: makeThunk("payment/fetchPayments", { url: endpoints.payments.me }),
-  initiatePayment: makeThunk("payment/initiatePayment", { method: "post", url: endpoints.payments.initiate, data: positivePaymentBody }),
+  fetchPaymentOptions: makeThunk("payment/fetchPaymentOptions", { url: endpoints.payments.options, params: q }),
+  initiatePayment: makeThunk("payment/initiatePayment", { method: "post", url: endpoints.payments.initiate, data: body }),
   verifyPayment: makeThunk("payment/verifyPayment", { method: "post", url: endpoints.payments.verify, data: body })
 };
 
@@ -210,6 +211,7 @@ export const pricingThunks = {
 
 export const taxThunks = {
   createInvoice: makeThunk("tax/createInvoice", { method: "post", url: ({ orderId }) => endpoints.tax.invoice(orderId), data: body }),
+  fetchOrderInvoice: makeThunk("tax/fetchOrderInvoice", { url: ({ orderId }) => endpoints.tax.invoice(orderId) }),
   fetchTaxReports: makeThunk("tax/fetchTaxReports", { url: endpoints.tax.reports, params: q })
 };
 
