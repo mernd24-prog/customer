@@ -24,7 +24,7 @@ export default function PhoneField({
               <option value=""></option>
               {normalizedDialCodes.map((code) => (
                 <option key={code} value={code}>
-                  +{code}
+                  {code}
                 </option>
               ))}
             </select>
@@ -35,7 +35,7 @@ export default function PhoneField({
         ) : (
           <>
             <div className="h-full flex items-center pl-3 text-sm text-[#2E2E2E] min-w-[70px]">
-              +{normalizedDialCodes[0] || ""}
+              {normalizedDialCodes[0] || ""}
             </div>
             <input
               type="hidden"

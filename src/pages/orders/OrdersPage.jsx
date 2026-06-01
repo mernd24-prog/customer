@@ -1,17 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ArrowLeft, Package, RotateCcw, XCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarDays,
+  CheckCircle2,
+  Circle,
+  Clock3,
+  CreditCard,
+  MapPin,
+  Package,
+  ReceiptText,
+  RotateCcw,
+  Truck,
+  XCircle,
+} from "lucide-react";
 import ApiState from "../../components/common/ApiState";
 import Seo from "../../components/common/Seo";
 import Button from "../../components/ui/Button";
-import StatusTimeline from "../../components/common/StatusTimeline";
+import ConfirmModal from "../../components/common/overlay/ConfirmModal";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { fetchMyOrders, fetchOrderById, cancelOrder } from "../../features/order/orderSlice";
 import { formatMoney } from "../../utils/ecommerce";
 
 const STATUS_BADGE = {
   pending_payment: "bg-amber-100 text-amber-700",
+  payment_failed: "bg-red-100 text-red-700",
   confirmed: "bg-blue-100 text-blue-700",
   packed: "bg-indigo-100 text-indigo-700",
   shipped: "bg-purple-100 text-purple-700",
@@ -19,10 +33,31 @@ const STATUS_BADGE = {
   fulfilled: "bg-green-100 text-green-700",
   cancelled: "bg-red-100 text-red-700",
 };
+const ORDER_STEPS = ["pending_payment", "confirmed", "packed", "shipped", "delivered", "fulfilled"];
+const TRACKING_LABELS = {
+  pending_payment: "Payment pending",
+  payment_failed: "Payment failed",
+  confirmed: "Order confirmed",
+  packed: "Packed",
+  shipped: "Shipped",
+  delivered: "Delivered",
+  fulfilled: "Completed",
+  cancelled: "Cancelled",
+};
 
 const getOrderId = (order) => order?.id || order?._id || order?.orderId || order?.order_id;
+const getOrderNumber = (order) => order?.order_number || order?.orderNumber || getOrderId(order);
 const getOrderStatus = (order) => order?.status || order?.orderStatus || "unknown";
+const getPaymentStatus = (order) => order?.payment_status || order?.paymentStatus || "unknown";
+const getDeliveryStatus = (order) => order?.delivery_status || order?.deliveryStatus || null;
 const hasKnownStatus = (order) => getOrderStatus(order) !== "unknown";
+const canCancelOrder = (order) => {
+  const status = getOrderStatus(order);
+  const deliveryStatus = order?.delivery_status || order?.deliveryStatus;
+  const cancellableStatuses = ["pending_payment", "payment_failed", "confirmed", "packed"];
+  const preHandoverDeliveryStatuses = [undefined, null, "", "initiated", "cancelled", "failed"];
+  return cancellableStatuses.includes(status) && preHandoverDeliveryStatuses.includes(deliveryStatus);
+};
 const getOrderItems = (order) => {
   const items =
     order?.items ||
@@ -73,7 +108,6 @@ const getVariantTitle = (item) =>
   item?.variantTitle ||
   item?.variant?.title ||
   "";
-const getItemTitle = (item) => getVariantTitle(item) || getProductTitle(item);
 const getItemSku = (item) => item?.variant_sku || item?.variantSku || item?.sku || getItemProduct(item)?.sku || "";
 const getItemAttributes = (item) => {
   const attributes = item?.attributes && typeof item.attributes === "object" ? item.attributes : {};
@@ -156,6 +190,7 @@ const getAmount = (order, key) => {
   }[key] || [];
 
   for (const field of [key, snakeKey, ...aliases]) {
+    if (field && order?.summary?.[field] !== undefined) return order.summary[field];
     if (field && order?.amounts?.[field] !== undefined) return order.amounts[field];
     if (field && order?.[field] !== undefined) return order[field];
   }
@@ -166,6 +201,23 @@ const getAmount = (order, key) => {
 
   return undefined;
 };
+const getCustomerOrderAmount = (order) => {
+  if (order?.summary?.customerPayableAmount !== undefined) {
+    return asNumber(order.summary.customerPayableAmount);
+  }
+  if (order?.summary?.customerTotalAmount !== undefined) {
+    return Math.max(0, asNumber(order.summary.customerTotalAmount) - asNumber(order.summary.walletDiscountAmount));
+  }
+  const subtotal = getAmount(order, "subtotal") ?? getItemsTotal(order);
+  const discount = getAmount(order, "discount") ?? 0;
+  const walletDiscount = getAmount(order, "walletDiscount") ?? 0;
+  const shipping = getAmount(order, "shipping") ?? 0;
+  return Number(Math.max(0, asNumber(subtotal) - asNumber(discount) + asNumber(shipping) - asNumber(walletDiscount)).toFixed(2));
+};
+const getTaxIncludedAmount = (order, taxBreakup = {}) =>
+  asNumber(order?.summary?.taxIncludedAmount ?? taxBreakup?.taxIncludedAmount ?? taxBreakup?.tax_included_amount ?? 0);
+const getTaxPayableAmount = (order, taxBreakup = {}) =>
+  asNumber(order?.summary?.taxPayableAmount ?? taxBreakup?.taxPayableAmount ?? taxBreakup?.tax_payable_amount ?? 0);
 const formatOrderDate = (value) =>
   value
     ? new Date(value).toLocaleString("en-IN", {
@@ -188,10 +240,33 @@ const getOrderListSummary = (order) => {
 
   return [itemText, locationText].filter(Boolean).join(" · ");
 };
+const getOrderRelations = (order) => order?.relations || {};
+const getOrderShipments = (order) => {
+  const shipments = getOrderRelations(order).shipments || order?.shipments || [];
+  return Array.isArray(shipments) ? shipments : [];
+};
+const getTrackingEvents = (order) =>
+  getOrderShipments(order)
+    .flatMap((shipment) => shipment?.trackingEvents || shipment?.tracking_events || [])
+    .sort((a, b) => new Date(a.event_time || a.eventTime || a.created_at || 0) - new Date(b.event_time || b.eventTime || b.created_at || 0));
+const getLatestShipment = (order) => getOrderShipments(order)[0] || null;
+const getTrackingNumber = (order) => {
+  const shipment = getLatestShipment(order);
+  return shipment?.tracking_number || shipment?.trackingNumber || shipment?.awb_number || shipment?.awbNumber || null;
+};
+const getCourierName = (order) => {
+  const shipment = getLatestShipment(order);
+  return shipment?.courier_name || shipment?.courierName || shipment?.provider || null;
+};
+const getPaymentMethod = (order) => {
+  const payment = getOrderRelations(order).payments?.[0];
+  return payment?.provider || order?.payment_provider || order?.paymentProvider || "N/A";
+};
 const asNumber = (value) => {
   const number = Number(value);
   return Number.isFinite(number) ? number : 0;
 };
+const humanize = (value, fallback = "N/A") => value ? String(value).replace(/_/g, " ") : fallback;
 
 function OrderStatusBadge({ status }) {
   const cls = STATUS_BADGE[status] || "bg-[#FAF6EE] text-[#787878]";
@@ -202,11 +277,99 @@ function OrderStatusBadge({ status }) {
   );
 }
 
+function InfoTile({ icon, label, value }) {
+  return (
+    <div className="rounded-[8px] border border-[#e7dfd1] bg-white px-4 py-3">
+      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#A6A6A6]">
+        {icon}
+        <span>{label}</span>
+      </div>
+      <p className="mt-2 break-words text-sm font-semibold capitalize text-[#2E2E2E]">{value || "N/A"}</p>
+    </div>
+  );
+}
+
+function OrderProgress({ status }) {
+  const activeIndex = ORDER_STEPS.indexOf(status);
+  const isCancelled = status === "cancelled";
+  const isFailed = status === "payment_failed";
+
+  if (isCancelled || isFailed) {
+    return (
+      <div className={`rounded-[8px] border px-4 py-3 text-sm ${isCancelled ? "border-red-200 bg-red-50 text-red-700" : "border-amber-200 bg-amber-50 text-amber-800"}`}>
+        <div className="flex items-center gap-2 font-semibold">
+          <XCircle size={16} />
+          {TRACKING_LABELS[status]}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-6">
+      {ORDER_STEPS.map((step, index) => {
+        const done = activeIndex >= index;
+        const current = activeIndex === index;
+        return (
+          <div key={step} className="min-w-0">
+            <div className={`flex h-10 items-center justify-center rounded-full border ${done ? "border-[#CE9F2D] bg-[#CE9F2D] text-white" : "border-[#e7dfd1] bg-white text-[#A6A6A6]"}`}>
+              {done ? <CheckCircle2 size={16} /> : <Circle size={14} />}
+            </div>
+            <p className={`mt-2 text-center text-[11px] font-semibold capitalize ${current ? "text-[#2E2E2E]" : "text-[#787878]"}`}>
+              {TRACKING_LABELS[step]}
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function TrackingEvents({ order }) {
+  const events = getTrackingEvents(order);
+  const timeline = events.length
+    ? events
+    : (order?.timeline || []).map((event) => ({
+        status: event.to_status || event.status,
+        note: event.note || event.reason,
+        event_time: event.created_at,
+      }));
+
+  if (!timeline.length) {
+    return (
+      <div className="rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-4 text-sm text-[#787878]">
+        Tracking events will appear after the order moves forward.
+      </div>
+    );
+  }
+
+  return (
+    <ol className="space-y-4">
+      {timeline.map((event, index) => (
+        <li key={event.id || `${event.status}-${index}`} className="grid grid-cols-[28px_1fr] gap-3">
+          <span className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#FAF6EE] text-[#CE9F2D]">
+            <Clock3 size={14} />
+          </span>
+          <div className="min-w-0 border-b border-[#e7dfd1] pb-4 last:border-b-0 last:pb-0">
+            <p className="text-sm font-semibold capitalize text-[#2E2E2E]">{humanize(event.status || event.to_status || "Updated")}</p>
+            {event.note && <p className="mt-1 text-sm text-[#787878]">{event.note}</p>}
+            {(event.location || event.source) && (
+              <p className="mt-1 text-xs capitalize text-[#A6A6A6]">{[event.location, event.source].filter(Boolean).join(" · ")}</p>
+            )}
+            <p className="mt-1 text-xs text-[#A6A6A6]">{formatOrderDate(event.event_time || event.eventTime || event.created_at)}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 // ─── Order Detail ──────────────────────────────────────────────────────────────
 
 function OrderDetail({ orderId, track }) {
   const dispatch = useDispatch();
   const run = useToastThunk();
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const state = useSelector((s) => s.order);
   const orders = getOrderCollection(state.current).length ? getOrderCollection(state.current) : state.list;
   const order = getMatchingOrder({
@@ -222,14 +385,31 @@ function OrderDetail({ orderId, track }) {
   const subtotal = getAmount(order, "subtotal");
   const discount = getAmount(order, "discount");
   const tax = getAmount(order, "tax");
-  const total = getAmount(order, "total");
   const walletDiscount = getAmount(order, "walletDiscount");
-  const payable = getAmount(order, "payable");
-  const platformFee = getAmount(order, "platformFee");
+  const shipping = getAmount(order, "shipping");
+  const customerAmount = getCustomerOrderAmount(order);
+  const taxIncluded = getTaxIncludedAmount(order, taxBreakup);
+  const taxPayable = getTaxPayableAmount(order, taxBreakup);
+  const status = getOrderStatus(order);
+  const paymentStatus = getPaymentStatus(order);
+  const deliveryStatus = getDeliveryStatus(order);
+  const trackingNumber = getTrackingNumber(order);
+  const courierName = getCourierName(order);
+  const paymentMethod = getPaymentMethod(order);
 
   useEffect(() => {
     dispatch(fetchOrderById({ orderId }));
   }, [dispatch, orderId]);
+
+  const handleCancelOrder = async () => {
+    await run(
+      dispatch,
+      cancelOrder({ orderId, reason: "Requested by customer" }),
+      "Order cancelled",
+    );
+    setCancelModalOpen(false);
+    dispatch(fetchOrderById({ orderId }));
+  };
 
   return (
     <>
@@ -245,192 +425,236 @@ function OrderDetail({ orderId, track }) {
           empty={!order}
           onRetry={() => dispatch(fetchOrderById({ orderId }))}
         >
-          <div className="overflow-hidden rounded-[12px] border border-[#e7dfd1] bg-white">
-            {/* Header */}
-            <div className="border-b border-[#e7dfd1] px-4 py-4 sm:px-6">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="min-w-0">
-                  <p className="text-xs text-[#787878]">Order ID</p>
-                  <p className="break-all font-mono text-sm font-medium text-[#2E2E2E]">{getOrderId(order) || orderId}</p>
-                  <p className="mt-1 text-xs text-[#787878]">{formatOrderDate(order?.created_at || order?.createdAt)}</p>
+          <div className="grid gap-5">
+            <section className="overflow-hidden rounded-[8px] border border-[#e7dfd1] bg-white">
+              <div className="bg-[#FAF6EE] px-4 py-4 sm:px-6">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#A26D27]">
+                      {track ? "Track order" : "Order details"}
+                    </p>
+                    <h1 className="mt-1 break-words text-xl font-bold text-[#2E2E2E] sm:text-2xl">
+                      #{formatOrderId(getOrderNumber(order))}
+                    </h1>
+                    <p className="mt-1 break-all font-mono text-xs text-[#787878]">{getOrderId(order) || orderId}</p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {hasKnownStatus(order) && <OrderStatusBadge status={status} />}
+                    <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold capitalize text-[#787878]">
+                      Payment: {humanize(paymentStatus)}
+                    </span>
+                  </div>
                 </div>
-                {hasKnownStatus(order) && <OrderStatusBadge status={getOrderStatus(order)} />}
               </div>
-            </div>
 
-            {/* Timeline */}
-            {track && hasKnownStatus(order) && (
-              <div className="border-b border-[#e7dfd1] px-4 py-5 sm:px-6">
-                <h2 className="mb-4 text-sm font-semibold text-[#2E2E2E]">Order tracking</h2>
-                <StatusTimeline status={getOrderStatus(order)} />
+              <div className="grid gap-3 border-t border-[#e7dfd1] bg-white p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
+                <InfoTile icon={<CalendarDays size={14} />} label="Placed on" value={formatOrderDate(order?.created_at || order?.createdAt)} />
+                <InfoTile icon={<CreditCard size={14} />} label="Payment" value={`${humanize(paymentMethod)} · ${humanize(paymentStatus)}`} />
+                <InfoTile icon={<Truck size={14} />} label="Delivery" value={humanize(deliveryStatus || status)} />
+                <InfoTile icon={<ReceiptText size={14} />} label="Order amount" value={formatMoney(customerAmount, currency)} />
               </div>
-            )}
 
-            {/* Items */}
-            {items.length > 0 && (
-              <div className="border-b border-[#e7dfd1] px-4 py-5 sm:px-6">
-                <h2 className="mb-3 text-sm font-semibold text-[#2E2E2E]">Items</h2>
-                <div className="grid gap-3">
-                  {items.map((item, i) => {
-                    const unitPrice = getItemUnitPrice(item);
-                    const lineTotal = getItemLineTotal(item);
+              {hasKnownStatus(order) && (
+                <div className="border-t border-[#e7dfd1] px-4 py-5 sm:px-6">
+                  <OrderProgress status={status} />
+                </div>
+              )}
+            </section>
 
-                    return (
-                      <div key={item.id || item._id || item.product_id || getItemProductId(item) || i} className="rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-3 py-3 sm:px-4">
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-                          <div className="flex min-w-0 gap-3">
-                            {getItemImage(item) && (
-                              <img
-                                src={getItemImage(item)}
-                                alt={getProductTitle(item)}
-                                className="h-16 w-16 shrink-0 rounded-[8px] bg-white object-cover sm:h-20 sm:w-20"
-                                loading="lazy"
-                              />
-                            )}
-                            <div className="min-w-0 text-sm">
-                              <p className="font-medium text-[#2E2E2E]">{getProductTitle(item)}</p>
-                              {getVariantTitle(item) && (
-                                <p className="mt-0.5 text-xs font-medium text-[#787878]">{getVariantTitle(item)}</p>
-                              )}
-                              <p className="mt-1 break-all text-xs text-[#787878]">Product ID: {getItemProductId(item)}</p>
-                              {getItemSku(item) && (
-                                <p className="mt-0.5 break-all text-xs text-[#787878]">SKU: {getItemSku(item)}</p>
-                              )}
-                              <p className="mt-1 text-xs text-[#787878]">
-                                Qty: {item.quantity} x {formatMoney(unitPrice, currency)}
-                              </p>
-                            </div>
-                          </div>
-                          <p className="text-sm font-semibold text-[#2E2E2E] sm:shrink-0">
-                            {formatMoney(lineTotal, currency)}
-                          </p>
-                        </div>
-                        {getItemAttributes(item).length > 0 && (
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {getItemAttributes(item).map(([key, value]) => (
-                              <span key={key} className="rounded-full bg-white px-2.5 py-1 text-xs capitalize text-[#787878]">
-                                {key.replace(/[_-]/g, " ")}: {String(value)}
-                              </span>
-                            ))}
-                          </div>
-                        )}
+            {track && (
+              <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+                <div className="rounded-[8px] border border-[#e7dfd1] bg-white p-4 sm:p-6">
+                  <div className="mb-5 flex items-center justify-between gap-3">
+                    <div>
+                      <h2 className="text-base font-bold text-[#2E2E2E]">Tracking activity</h2>
+                      <p className="mt-1 text-sm text-[#787878]">
+                        {trackingNumber ? `Tracking number ${trackingNumber}` : "Shipment tracking will update here."}
+                      </p>
+                    </div>
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FAF6EE] text-[#CE9F2D]">
+                      <Truck size={18} />
+                    </span>
+                  </div>
+                  <TrackingEvents order={order} />
+                </div>
+
+                <aside className="grid gap-4">
+                  <div className="rounded-[8px] border border-[#e7dfd1] bg-white p-4">
+                    <h2 className="text-sm font-bold text-[#2E2E2E]">Shipment</h2>
+                    <div className="mt-4 grid gap-3 text-sm">
+                      <div className="flex justify-between gap-4">
+                        <span className="text-[#787878]">Courier</span>
+                        <span className="text-right font-semibold capitalize text-[#2E2E2E]">{humanize(courierName)}</span>
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
+                      <div className="flex justify-between gap-4">
+                        <span className="text-[#787878]">Tracking no.</span>
+                        <span className="break-all text-right font-mono text-xs font-semibold text-[#2E2E2E]">{trackingNumber || "N/A"}</span>
+                      </div>
+                      <div className="flex justify-between gap-4">
+                        <span className="text-[#787878]">Status</span>
+                        <span className="text-right font-semibold capitalize text-[#2E2E2E]">{humanize(deliveryStatus || status)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {hasShippingAddress(shippingAddress) && (
+                    <div className="rounded-[8px] border border-[#e7dfd1] bg-white p-4">
+                      <h2 className="flex items-center gap-2 text-sm font-bold text-[#2E2E2E]">
+                        <MapPin size={15} /> Delivery address
+                      </h2>
+                      <div className="mt-3 break-words text-sm leading-6 text-[#787878]">
+                        {getAddressValue(shippingAddress, "fullName", "full_name") && <p className="font-medium text-[#2E2E2E]">{getAddressValue(shippingAddress, "fullName", "full_name")}</p>}
+                        {shippingAddress.phone && <p>{shippingAddress.phone}</p>}
+                        {[shippingAddress.line1, shippingAddress.line2].filter(Boolean).length > 0 && <p>{[shippingAddress.line1, shippingAddress.line2].filter(Boolean).join(", ")}</p>}
+                        {[shippingAddress.city, shippingAddress.state, getAddressValue(shippingAddress, "postalCode", "postal_code")].filter(Boolean).length > 0 && (
+                          <p>{[shippingAddress.city, shippingAddress.state, getAddressValue(shippingAddress, "postalCode", "postal_code")].filter(Boolean).join(", ")}</p>
+                        )}
+                        {shippingAddress.country && <p>{shippingAddress.country}</p>}
+                      </div>
+                    </div>
+                  )}
+                </aside>
+              </section>
             )}
 
-            {/* Shipping */}
-            {hasShippingAddress(shippingAddress) && (
-              <div className="border-b border-[#e7dfd1] px-4 py-5 sm:px-6">
-                <h2 className="mb-3 text-sm font-semibold text-[#2E2E2E]">Shipping address</h2>
-                <div className="break-words text-sm leading-6 text-[#787878]">
-                  {getAddressValue(shippingAddress, "fullName", "full_name") && <p className="font-medium text-[#2E2E2E]">{getAddressValue(shippingAddress, "fullName", "full_name")}</p>}
-                  {shippingAddress.phone && <p>{shippingAddress.phone}</p>}
-                  {[shippingAddress.line1, shippingAddress.line2].filter(Boolean).length > 0 && (
-                    <p>
-                      {[shippingAddress.line1, shippingAddress.line2].filter(Boolean).join(", ")}
-                    </p>
-                  )}
-                  {[shippingAddress.city, shippingAddress.state, getAddressValue(shippingAddress, "postalCode", "postal_code")].filter(Boolean).length > 0 && (
-                    <p>
-                      {[shippingAddress.city, shippingAddress.state, getAddressValue(shippingAddress, "postalCode", "postal_code")]
-                        .filter(Boolean)
-                        .join(", ")}
-                    </p>
-                  )}
-                  {shippingAddress.country && <p>{shippingAddress.country}</p>}
-                </div>
-              </div>
-            )}
+            {!track && (
+              <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+                <div className="rounded-[8px] border border-[#e7dfd1] bg-white">
+                  <div className="border-b border-[#e7dfd1] px-4 py-4 sm:px-6">
+                    <h2 className="text-base font-bold text-[#2E2E2E]">Items</h2>
+                    <p className="mt-1 text-sm text-[#787878]">{items.length} item{items.length === 1 ? "" : "s"} in this order</p>
+                  </div>
+                  <div className="divide-y divide-[#e7dfd1]">
+                    {items.map((item, i) => {
+                      const unitPrice = getItemUnitPrice(item);
+                      const lineTotal = getItemLineTotal(item);
 
-            {/* Amounts */}
-            {(subtotal !== undefined || payable !== undefined || total !== undefined) && (
-              <div className="border-b border-[#e7dfd1] px-4 py-5 sm:px-6">
-                <h2 className="mb-3 text-sm font-semibold text-[#2E2E2E]">Payment</h2>
-                <div className="grid gap-2 text-sm">
-                  {subtotal !== undefined && (
-                    <div className="flex items-start justify-between gap-4 text-[#787878]">
-                      <span>Subtotal</span>
-                      <span className="text-right">{formatMoney(subtotal, currency)}</span>
-                    </div>
-                  )}
-                  {asNumber(discount) > 0 && (
-                    <div className="flex items-start justify-between gap-4 text-emerald-700">
-                      <span>Discount</span>
-                      <span className="text-right">-{formatMoney(discount, currency)}</span>
-                    </div>
-                  )}
-                  {asNumber(walletDiscount) > 0 && (
-                    <div className="flex items-start justify-between gap-4 text-emerald-700">
-                      <span>Wallet discount</span>
-                      <span className="text-right">-{formatMoney(walletDiscount, currency)}</span>
-                    </div>
-                  )}
-                  {tax !== undefined && (
-                    <div className="flex items-start justify-between gap-4 text-[#787878]">
-                      <span>Tax</span>
-                      <span className="text-right">{formatMoney(tax, currency)}</span>
-                    </div>
-                  )}
-                  {asNumber(platformFee) > 0 && (
-                    <div className="flex items-start justify-between gap-4 text-[#787878]">
-                      <span>Platform fee</span>
-                      <span className="text-right">{formatMoney(platformFee, currency)}</span>
-                    </div>
-                  )}
-                  {total !== undefined && (
-                    <div className="flex items-start justify-between gap-4 text-[#787878]">
-                      <span>Total</span>
-                      <span className="text-right">{formatMoney(total, currency)}</span>
-                    </div>
-                  )}
-                  <div className="flex items-start justify-between gap-4 border-t border-[#e7dfd1] pt-2 font-semibold text-[#2E2E2E]">
-                    <span>Payable</span>
-                    <span className="text-right">{formatMoney(payable ?? total, currency)}</span>
+                      return (
+                        <div key={item.id || item._id || item.product_id || getItemProductId(item) || i} className="px-4 py-4 sm:px-6">
+                          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                            <div className="flex min-w-0 gap-3">
+                              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[8px] bg-[#FAF6EE]">
+                                {getItemImage(item) ? (
+                                  <img src={getItemImage(item)} alt={getProductTitle(item)} className="h-20 w-20 rounded-[8px] object-cover" loading="lazy" />
+                                ) : (
+                                  <Package size={22} className="text-[#CE9F2D]" />
+                                )}
+                              </div>
+                              <div className="min-w-0 text-sm">
+                                <p className="font-semibold text-[#2E2E2E]">{getProductTitle(item)}</p>
+                                {getVariantTitle(item) && <p className="mt-0.5 text-xs font-medium text-[#787878]">{getVariantTitle(item)}</p>}
+                                <p className="mt-1 break-all text-xs text-[#A6A6A6]">Product ID: {getItemProductId(item)}</p>
+                                {getItemSku(item) && <p className="mt-0.5 break-all text-xs text-[#A6A6A6]">SKU: {getItemSku(item)}</p>}
+                                <p className="mt-2 text-xs text-[#787878]">Qty {item.quantity} x {formatMoney(unitPrice, currency)}</p>
+                              </div>
+                            </div>
+                            <p className="text-sm font-bold text-[#2E2E2E] sm:shrink-0">{formatMoney(lineTotal, currency)}</p>
+                          </div>
+                          {getItemAttributes(item).length > 0 && (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {getItemAttributes(item).map(([key, value]) => (
+                                <span key={key} className="rounded-full bg-[#FAF6EE] px-2.5 py-1 text-xs capitalize text-[#787878]">
+                                  {key.replace(/[_-]/g, " ")}: {String(value)}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-                {taxBreakup && (
-                  <div className="mt-4 rounded-[8px] bg-[#FAF6EE] p-3 text-xs text-[#787878]">
-                    <p>Tax mode: {(taxBreakup.taxMode || taxBreakup.tax_mode || "N/A").toString().toUpperCase()}</p>
-                    <p>Total tax: {formatMoney(taxBreakup.totalTaxAmount || taxBreakup.total_tax_amount || tax, currency)}</p>
-                  </div>
-                )}
-              </div>
+
+                <aside className="grid gap-4 self-start">
+                  {(subtotal !== undefined || items.length > 0) && (
+                    <div className="rounded-[8px] border border-[#e7dfd1] bg-white p-4">
+                      <h2 className="flex items-center gap-2 text-sm font-bold text-[#2E2E2E]">
+                        <CreditCard size={15} /> Payment summary
+                      </h2>
+                      <div className="mt-4 grid gap-2 text-sm">
+                        {subtotal !== undefined && <div className="flex justify-between gap-4 text-[#787878]"><span>Subtotal</span><span>{formatMoney(subtotal, currency)}</span></div>}
+                        {asNumber(discount) > 0 && <div className="flex justify-between gap-4 text-emerald-700"><span>Discount</span><span>-{formatMoney(discount, currency)}</span></div>}
+                        {asNumber(walletDiscount) > 0 && <div className="flex justify-between gap-4 text-emerald-700"><span>Wallet discount</span><span>-{formatMoney(walletDiscount, currency)}</span></div>}
+                        {asNumber(shipping) > 0 && <div className="flex justify-between gap-4 text-[#787878]"><span>Shipping</span><span>{formatMoney(shipping, currency)}</span></div>}
+                        <div className="mt-1 flex justify-between gap-4 border-t border-[#e7dfd1] pt-3 font-bold text-[#2E2E2E]">
+                          <span>Order amount</span>
+                          <span>{formatMoney(customerAmount, currency)}</span>
+                        </div>
+                      </div>
+                      {(taxBreakup || tax !== undefined) && (
+                        <div className="mt-4 rounded-[8px] bg-[#FAF6EE] p-3 text-xs text-[#787878]">
+                          <p className="font-semibold text-[#2E2E2E]">GST invoice breakup</p>
+                          {taxBreakup && <p className="mt-1">Tax mode: {(taxBreakup.taxMode || taxBreakup.tax_mode || "N/A").toString().toUpperCase()}</p>}
+                          {taxPayable > 0 && <p>GST added to payable: {formatMoney(taxPayable, currency)}</p>}
+                          {taxIncluded > 0 && <p>GST included in item price: {formatMoney(taxIncluded, currency)}</p>}
+                          {tax !== undefined && taxPayable === 0 && taxIncluded === 0 && <p>GST breakup: {formatMoney(tax, currency)}</p>}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {hasShippingAddress(shippingAddress) && (
+                    <div className="rounded-[8px] border border-[#e7dfd1] bg-white p-4">
+                      <h2 className="flex items-center gap-2 text-sm font-bold text-[#2E2E2E]">
+                        <MapPin size={15} /> Shipping address
+                      </h2>
+                      <div className="mt-3 break-words text-sm leading-6 text-[#787878]">
+                        {getAddressValue(shippingAddress, "fullName", "full_name") && <p className="font-medium text-[#2E2E2E]">{getAddressValue(shippingAddress, "fullName", "full_name")}</p>}
+                        {shippingAddress.phone && <p>{shippingAddress.phone}</p>}
+                        {[shippingAddress.line1, shippingAddress.line2].filter(Boolean).length > 0 && <p>{[shippingAddress.line1, shippingAddress.line2].filter(Boolean).join(", ")}</p>}
+                        {[shippingAddress.city, shippingAddress.state, getAddressValue(shippingAddress, "postalCode", "postal_code")].filter(Boolean).length > 0 && (
+                          <p>{[shippingAddress.city, shippingAddress.state, getAddressValue(shippingAddress, "postalCode", "postal_code")].filter(Boolean).join(", ")}</p>
+                        )}
+                        {shippingAddress.country && <p>{shippingAddress.country}</p>}
+                      </div>
+                    </div>
+                  )}
+                </aside>
+              </section>
             )}
 
-            {/* Actions */}
             {hasKnownStatus(order) && (
-              <div className="grid gap-3 px-4 py-4 sm:flex sm:flex-wrap sm:px-6">
-                {!["delivered", "fulfilled", "cancelled"].includes(getOrderStatus(order)) && (
-                  <Button
-                    variant="secondary"
-                    className="w-full sm:w-auto"
-                    onClick={() =>
-                      run(dispatch, cancelOrder({ orderId, reason: "Requested by customer" }), "Order cancelled")
-                    }
-                  >
+              <section className="grid gap-3 rounded-[8px] border border-[#e7dfd1] bg-white px-4 py-4 sm:flex sm:flex-wrap sm:px-6">
+                {canCancelOrder(order) && (
+                  <Button variant="secondary" className="w-full sm:w-auto" onClick={() => setCancelModalOpen(true)}>
                     <XCircle size={15} /> Cancel order
                   </Button>
                 )}
-                {["delivered", "fulfilled"].includes(getOrderStatus(order)) && (
+                {["delivered", "fulfilled"].includes(status) && (
                   <Link to={`/returns/request/${orderId}`} className="block sm:inline-flex">
                     <Button variant="secondary" className="w-full sm:w-auto">
                       <RotateCcw size={15} /> Request return
                     </Button>
                   </Link>
                 )}
-                <Link to={`/orders/${orderId}/track`} className="block sm:inline-flex">
-                  <Button variant="secondary" className="w-full sm:w-auto">
-                    <Package size={15} /> Track order
-                  </Button>
-                </Link>
-              </div>
+                {!track && (
+                  <Link to={`/orders/${orderId}/track`} className="block sm:inline-flex">
+                    <Button variant="secondary" className="w-full sm:w-auto">
+                      <Truck size={15} /> Track order
+                    </Button>
+                  </Link>
+                )}
+                {track && (
+                  <Link to={`/orders/${orderId}`} className="block sm:inline-flex">
+                    <Button variant="secondary" className="w-full sm:w-auto">
+                      <ReceiptText size={15} /> View order
+                    </Button>
+                  </Link>
+                )}
+              </section>
             )}
           </div>
         </ApiState>
       </div>
+      <ConfirmModal
+        open={cancelModalOpen}
+        title="Cancel this order?"
+        description="Your order will be cancelled and any reserved items will be released. If payment was already captured, the refund will be handled according to the payment method."
+        confirmLabel={state.loading ? "Cancelling..." : "Cancel order"}
+        cancelLabel="Keep order"
+        onCancel={() => setCancelModalOpen(false)}
+        onConfirm={handleCancelOrder}
+      />
     </>
   );
 }
@@ -467,7 +691,7 @@ function OrderList() {
               const id = getOrderId(order);
               const summary = getOrderListSummary(order);
               const createdAt = order.created_at || order.createdAt;
-              const payableAmount = getAmount(order, "payable") ?? getAmount(order, "total");
+              const payableAmount = getCustomerOrderAmount(order);
               return (
                 <Link
                   key={id}

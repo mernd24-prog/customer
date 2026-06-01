@@ -6,6 +6,62 @@ export function getProductTitle(product, fallback = "Untitled product") {
   return product?.title || product?.name || product?.productName || fallback;
 }
 
+export function normalizeMoneyNumber(value) {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : undefined;
+  }
+  if (typeof value === "string") {
+    const numericValue = Number(value.replace(/[^\d.-]/g, ""));
+    return Number.isFinite(numericValue) ? numericValue : undefined;
+  }
+  return undefined;
+}
+
+export function firstMoneyValue(...values) {
+  for (const value of values) {
+    const normalized = normalizeMoneyNumber(value);
+    if (normalized !== undefined) return normalized;
+  }
+  return undefined;
+}
+
+export function getVariantPrice(variant) {
+  return firstMoneyValue(
+    variant?.salePrice,
+    variant?.sale_price,
+    variant?.sellingPrice,
+    variant?.selling_price,
+    variant?.price,
+    variant?.currentPrice,
+    variant?.current_price,
+  );
+}
+
+export function getProductPrice(product) {
+  return firstMoneyValue(
+    product?.salePrice,
+    product?.sale_price,
+    product?.sellingPrice,
+    product?.selling_price,
+    product?.price,
+    product?.currentPrice,
+    product?.current_price,
+    product?.amount,
+  );
+}
+
+export function getProductMrp(product) {
+  return firstMoneyValue(
+    product?.mrp,
+    product?.compareAtPrice,
+    product?.compare_at_price,
+    product?.originalPrice,
+    product?.original_price,
+    product?.regularPrice,
+    product?.regular_price,
+  );
+}
+
 export function getImageUrlFromValue(value) {
   if (!value) return "";
   if (typeof value === "string") return value;

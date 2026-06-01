@@ -1,5 +1,3 @@
-import { Trash2 } from "lucide-react";
-
 export default function QuantitySelector({ quantity, onIncrease, onDecrease }) {
   return (
     <div className="flex w-fit items-center overflow-hidden rounded-lg border border-[#7e7c7c] bg-white">

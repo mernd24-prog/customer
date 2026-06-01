@@ -87,7 +87,6 @@ import AboutPage from "./pages/about/AboutPage";
 import ContactUs from "./pages/contact/ContactUs";
 import SupportHelpCenter from "./pages/contact/SupportHelpCenter";
 
-import ReturnRefundPolicy from "./pages/policiesPage/PoliciesPages";
 import PolicyPage from "./pages/policiesPage/PoliciesPages";
 
 export default function App() {

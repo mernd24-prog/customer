@@ -7,7 +7,6 @@ import { registerSW } from "virtual:pwa-register";
 import "react-toastify/dist/ReactToastify.css";
 import { store } from "./app/store";
 import App from "./App";
-import AppErrorBoundary from "./components/common/AppErrorBoundary";
 import "./styles.css";
 
 if (import.meta.env.PROD) {

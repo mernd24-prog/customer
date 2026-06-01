@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import SkeletonLoader from "../common/skeleton/SkeletonLoader";
 import { ProductCard } from "../ecommerce";
-import { SkeletonLoader } from "../common/skeleton";
 import { useProductActions } from "../../hooks/useProductActions";
 import { getProductId } from "../../utils/ecommerce";
 

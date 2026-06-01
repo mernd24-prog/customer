@@ -19,11 +19,10 @@ import {
   EyeOff,
   Gift,
   Heart,
-  PackageCheck,
   ShieldCheck,
   Star,
   Wallet,
-  XCircle,
+  Banknote,
 } from "lucide-react";
 import ApiState from "../components/common/ApiState";
 import Seo from "../components/common/Seo";
@@ -107,32 +106,6 @@ import {
 import { loginSchema, emailSchema, otpSchema, resetSchema, registerSchema } from "../validations/validationSchemas";
 import { sanitizeSearchQuery } from "../validations";
 export { HomePage } from "./customer/HomePage";
-
-const toNumber = (value) => {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : 0;
-};
-
-const getOrderPayableAmount = (order = {}) =>
-  toNumber(
-    order.amounts?.payableAmount ??
-      order.amounts?.payable_amount ??
-      order.order?.amounts?.payableAmount ??
-      order.order?.amounts?.payable_amount ??
-      order.order?.payable_amount ??
-      order.order?.total_amount ??
-      order.payable_amount ??
-      order.total_amount ??
-      order.totalAmount,
-  );
-
-const getCreatedOrder = (result = {}) =>
-  result?.data?.order ||
-  result?.data?.data?.order ||
-  result?.data?.data ||
-  result?.order ||
-  result?.data ||
-  result;
 
 const firstDefined = (...values) =>
   values.find((value) => value !== undefined && value !== null && value !== "");
@@ -1395,7 +1368,6 @@ export function SimpleApiPage({
   title,
   selector,
   thunk,
-  icon: Icon = PackageCheck,
   action,
 }) {
   const dispatch = useDispatch();
@@ -1570,7 +1542,7 @@ export function PreferencesPage() {
                 Channels
               </h2>
               <p className="font-montserrat text-sm text-[#787878]">
-                Choose how you'd like to receive notifications.
+                Choose how you&apos;d like to receive notifications.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -1950,7 +1922,7 @@ export function BackendGapNotes() {
             <code className="rounded bg-[#FAF6EE] px-1.5 py-0.5 text-[#A26D27]">
               cart.wishlist
             </code>
-            . Coupon validation flows through the order's{" "}
+            . Coupon validation flows through the order&apos;s{" "}
             <code className="rounded bg-[#FAF6EE] px-1.5 py-0.5 text-[#A26D27]">
               couponCode
             </code>{" "}

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import MothersDaySwiper from "../../components/home/MothersDayCarousel";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
-import { FaRegHeart } from "react-icons/fa";
 import {
   fetchTrendingProducts,
   fetchRecommendations,
@@ -18,24 +17,7 @@ import CollageMainSection from "../../components/ui/CollageCard";
 import ShowcaseSection from "../../components/home/ShowcaseSection";
 import TopDealCard from "../../components/ui/TopDealCard";
 import NewArrivalCard from "../../components/ui/NewArrivalCard";
-import NeedHelpSection from "../../components/faq/NeedHelpSection";
 import { reusableArrivalsDemo, reusableTopDealsDemo } from "../../data/topdeal";
-
-import {
-  PrimaryGradientButton,
-  RegisterButton,
-  RoundIconWithBg,
-  ButtonWithIcon,
-  PriceButton,
-} from "../../components/dynamicComponent/button/static";
-import GlobalCard from "../../components/dynamicComponent/cards/GlobalCard";
-import {
-  ProductCard,
-  CategoryPriceCard,
-  DealGridCard,
-  FourGridCard,
-  CategoryCard,
-} from "../../components/dynamicComponent/cards/static";
 
 export function HomePage() {
   const dispatch = useDispatch();
