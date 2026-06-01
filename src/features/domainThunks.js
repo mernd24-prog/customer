@@ -65,6 +65,7 @@ export const cartThunks = {
 };
 
 export const orderThunks = {
+  quoteOrder: makeThunk("order/quoteOrder", { method: "post", url: endpoints.orders.quote, data: body }),
   createOrder: makeThunk("order/createOrder", { method: "post", url: endpoints.orders.create, data: body }),
   fetchMyOrders: makeThunk("order/fetchMyOrders", { url: endpoints.orders.me }),
   fetchSellerOrders: makeThunk("order/fetchSellerOrders", { url: endpoints.orders.sellerMe }),

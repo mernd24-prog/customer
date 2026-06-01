@@ -10,7 +10,7 @@ import { useToastThunk } from "../../hooks/useToastThunk";
 import { fetchCart } from "../../features/cart/cartSlice";
 import { fetchWallet } from "../../features/wallet/walletSlice";
 import { fetchMe } from "../../features/user/userSlice";
-import { createOrder, fetchOrderById } from "../../features/order/orderSlice";
+import { createOrder, fetchOrderById, quoteOrder } from "../../features/order/orderSlice";
 import {
   fetchPaymentOptions,
   initiatePayment,
@@ -234,6 +234,32 @@ const getPaymentProviderLabel = (provider = "") =>
   String(provider || "")
     .replace(/_/g, " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
+const createCheckoutIdempotencyKey = () => {
+  if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+  return `checkout-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+const buildOrderItems = (items = []) =>
+  items
+    .map(
+      ({
+        productId,
+        _safeId,
+        quantity,
+        variantId,
+        variantSku,
+        variantTitle,
+        attributes,
+      }) => ({
+        productId:
+          typeof productId === "object" ? _safeId : productId || _safeId,
+        variantId: variantId || undefined,
+        variantSku: variantSku || undefined,
+        variantTitle: variantTitle || undefined,
+        attributes: attributes || {},
+        quantity: Number(quantity || 1),
+      }),
+    )
+    .filter((item) => Boolean(item.productId));
 
 export default function CheckoutPage() {
   const dispatch = useDispatch();
@@ -245,19 +271,30 @@ export default function CheckoutPage() {
   const userState = useSelector((s) => s.user);
   const orderState = useSelector((s) => s.order);
   const paymentState = useSelector((s) => s.payment);
+  const [quoteData, setQuoteData] = useState(null);
+  const [quoteLoading, setQuoteLoading] = useState(false);
+  const [quoteError, setQuoteError] = useState("");
 
   const buyNowItems = useMemo(getBuyNowItems, []);
   const selectedCheckoutItemIds = useMemo(getSelectedCheckoutItemIds, []);
+  const checkoutIdempotencyKey = useMemo(createCheckoutIdempotencyKey, []);
   const isBuyNowCheckout = buyNowItems.length > 0;
   const cart = cartState.current || {};
-  const checkoutSourceItems = isBuyNowCheckout
-    ? buyNowItems
-    : selectedCheckoutItemIds !== null
-      ? (cart.items || []).filter((item) =>
-          selectedCheckoutItemIds.includes(getCartLineKey(item)),
-        )
-      : cart.items || [];
-  const items = checkoutSourceItems.map(adaptCheckoutItem);
+  const checkoutSourceItems = useMemo(
+    () =>
+      isBuyNowCheckout
+        ? buyNowItems
+        : selectedCheckoutItemIds !== null
+          ? (cart.items || []).filter((item) =>
+              selectedCheckoutItemIds.includes(getCartLineKey(item)),
+            )
+          : cart.items || [],
+    [buyNowItems, cart.items, isBuyNowCheckout, selectedCheckoutItemIds],
+  );
+  const items = useMemo(
+    () => checkoutSourceItems.map(adaptCheckoutItem),
+    [checkoutSourceItems],
+  );
   const subtotal = items.reduce((sum, item) => sum + item._lineTotal, 0);
   const shipping = items.reduce((sum, item) => sum + item._shippingTotal, 0);
   const total = subtotal + shipping;
@@ -268,6 +305,10 @@ export default function CheckoutPage() {
         ? paymentState.current.providers
         : [],
     [paymentState],
+  );
+  const quoteSummary = quoteData?.summary || {};
+  const quotePayableAmount = asNumber(
+    quoteSummary.customerPayableAmount ?? quoteData?.quote?.payableAmount,
   );
 
   const addresses = useMemo(
@@ -298,10 +339,8 @@ export default function CheckoutPage() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchPaymentOptions({ orderAmount: total || subtotal || 0 })).catch(
-      () => {},
-    );
-  }, [dispatch, subtotal, total]);
+    dispatch(fetchPaymentOptions({ orderAmount: quotePayableAmount || total || subtotal || 0 })).catch(() => {});
+  }, [dispatch, quotePayableAmount, subtotal, total]);
 
   useEffect(() => {
     if (!paymentOptions.length) return;
@@ -341,6 +380,13 @@ export default function CheckoutPage() {
   const selectedState = watch("state");
   const selectedCity = watch("city");
   const watchedPostalCode = watch("postalCode");
+  const watchedCouponCode = watch("couponCode");
+  const watchedWalletAmount = watch("walletAmount");
+  const watchedFullName = watch("fullName");
+  const watchedDialCode = watch("dialCode");
+  const watchedPhone = watch("phone");
+  const watchedLine1 = watch("line1");
+  const watchedLine2 = watch("line2");
 
   const countryObj = countries.find((c) => (c.name || c) === selectedCountry);
   const countryId = countryObj?._id || countryObj?.id;
@@ -460,6 +506,107 @@ export default function CheckoutPage() {
     }
   }, [addresses, selectedAddressId, setValue]);
 
+  const quoteShippingAddress = useMemo(() => {
+    if (!useNewAddress && selectedAddressId) {
+      const saved = addresses.find(
+        (address) => getAddressId(address) === String(selectedAddressId),
+      );
+      if (!saved) return null;
+      return {
+        fullName: saved.fullName,
+        dialCode: saved.dialCode,
+        phone: saved.phone,
+        line1: saved.line1,
+        line2: saved.line2 || "",
+        city: saved.city,
+        state: saved.state,
+        postalCode: saved.postalCode,
+        country: saved.country || "",
+      };
+    }
+
+    if (
+      !watchedLine1 ||
+      !selectedCity ||
+      !selectedState ||
+      !watchedPostalCode ||
+      !selectedCountry
+    ) {
+      return null;
+    }
+
+    return {
+      fullName: watchedFullName || "",
+      dialCode: watchedDialCode || "",
+      phone: watchedPhone || "",
+      line1: watchedLine1,
+      line2: watchedLine2 || "",
+      city: selectedCity,
+      state: selectedState,
+      postalCode: watchedPostalCode,
+      country: selectedCountry,
+    };
+  }, [
+    addresses,
+    selectedAddressId,
+    selectedCity,
+    selectedCountry,
+    selectedState,
+    useNewAddress,
+    watchedDialCode,
+    watchedFullName,
+    watchedLine1,
+    watchedLine2,
+    watchedPhone,
+    watchedPostalCode,
+  ]);
+
+  const orderItems = useMemo(() => buildOrderItems(items), [items]);
+  const quotePayload = useMemo(() => {
+    if (!quoteShippingAddress || !orderItems.length) return null;
+    return {
+      currency: "INR",
+      couponCode: watchedCouponCode || undefined,
+      walletAmount: Number(watchedWalletAmount || 0),
+      paymentProvider,
+      shippingAddress: quoteShippingAddress,
+      items: orderItems,
+    };
+  }, [orderItems, paymentProvider, quoteShippingAddress, watchedCouponCode, watchedWalletAmount]);
+
+  useEffect(() => {
+    if (!quotePayload) {
+      setQuoteData(null);
+      setQuoteError("");
+      setQuoteLoading(false);
+      return undefined;
+    }
+
+    let active = true;
+    const timer = window.setTimeout(() => {
+      setQuoteLoading(true);
+      setQuoteError("");
+      dispatch(quoteOrder(quotePayload))
+        .unwrap()
+        .then((result) => {
+          if (active) setQuoteData(result.data || null);
+        })
+        .catch((error) => {
+          if (!active) return;
+          setQuoteData(null);
+          setQuoteError(error || "Unable to calculate order quote");
+        })
+        .finally(() => {
+          if (active) setQuoteLoading(false);
+        });
+    }, 450);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
+  }, [dispatch, quotePayload]);
+
   const loading =
     cartState.loading ||
     walletState.loading ||
@@ -542,28 +689,6 @@ export default function CheckoutPage() {
       return;
     }
 
-    const orderItems = items
-      .map(
-        ({
-          productId,
-          _safeId,
-          quantity,
-          variantId,
-          variantSku,
-          variantTitle,
-          attributes,
-        }) => ({
-          productId:
-            typeof productId === "object" ? _safeId : productId || _safeId,
-          variantId: variantId || undefined,
-          variantSku: variantSku || undefined,
-          variantTitle: variantTitle || undefined,
-          attributes: attributes || {},
-          quantity: Number(quantity || 1),
-        }),
-      )
-      .filter((item) => Boolean(item.productId));
-
     if (!orderItems.length) {
       return;
     }
@@ -575,6 +700,7 @@ export default function CheckoutPage() {
         couponCode: values.couponCode || undefined,
         walletAmount,
         paymentProvider,
+        idempotencyKey: checkoutIdempotencyKey,
         shippingAddress,
         items: orderItems,
       }),
@@ -694,6 +820,9 @@ export default function CheckoutPage() {
                 subtotal={subtotal}
                 shipping={shipping}
                 total={total}
+                quote={quoteData}
+                quoteLoading={quoteLoading}
+                quoteError={quoteError}
                 loading={loading}
                 paymentOptions={paymentOptions}
                 paymentOptionsLoading={paymentState.loading && !paymentOptions.length}

@@ -14,6 +14,9 @@ export default function CheckoutSummary({
   subtotal,
   shipping,
   total,
+  quote,
+  quoteLoading = false,
+  quoteError = "",
   loading,
   paymentOptions = [],
   paymentOptionsLoading = false,
@@ -34,6 +37,15 @@ export default function CheckoutSummary({
       : selectedPaymentProvider?.startsWith("manual_")
         ? "Place order"
         : "Place order & pay";
+  const quoteSummary = quote?.summary || {};
+  const quoteAmounts = quote?.quote || {};
+  const quoteSubtotal = Number(quoteSummary.itemAmount ?? quoteAmounts.subtotalAmount ?? subtotal);
+  const quoteDiscount = Number(quoteSummary.discountAmount ?? quoteAmounts.discountAmount ?? 0);
+  const quoteWallet = Number(quoteSummary.walletDiscountAmount ?? quoteAmounts.walletAppliedAmount ?? 0);
+  const taxIncluded = Number(quoteSummary.taxIncludedAmount ?? quoteAmounts.taxIncludedAmount ?? 0);
+  const taxPayable = Number(quoteSummary.taxPayableAmount ?? quoteAmounts.taxPayableAmount ?? 0);
+  const codCharge = Number(quoteSummary.codChargeAmount ?? quoteAmounts.codChargeAmount ?? 0);
+  const quotePayable = Number(quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total);
 
   return (
     <aside className="min-w-0">
@@ -93,16 +105,48 @@ export default function CheckoutSummary({
         <div className="mt-4 border-t border-[#e7dfd1] pt-4">
           <div className="flex justify-between text-sm text-[#787878]">
             <span>Items ({items.length})</span>
-            <span>{formatMoney(subtotal, "INR")}</span>
+            <span>{formatMoney(quoteSubtotal, "INR")}</span>
           </div>
+          {quoteDiscount > 0 ? (
+            <div className="mt-1 flex justify-between text-sm text-emerald-700">
+              <span>Discount</span>
+              <span>-{formatMoney(quoteDiscount, "INR")}</span>
+            </div>
+          ) : null}
           <div className="mt-1 flex justify-between text-sm text-[#787878]">
             <span>Shipping</span>
             <span>{formatMoney(shipping, "INR")}</span>
           </div>
+          {taxPayable > 0 ? (
+            <div className="mt-1 flex justify-between text-sm text-[#787878]">
+              <span>GST added</span>
+              <span>{formatMoney(taxPayable, "INR")}</span>
+            </div>
+          ) : null}
+          {taxIncluded > 0 ? (
+            <div className="mt-1 flex justify-between text-sm text-[#787878]">
+              <span>GST included</span>
+              <span>{formatMoney(taxIncluded, "INR")}</span>
+            </div>
+          ) : null}
+          {codCharge > 0 ? (
+            <div className="mt-1 flex justify-between text-sm text-[#787878]">
+              <span>COD charge</span>
+              <span>{formatMoney(codCharge, "INR")}</span>
+            </div>
+          ) : null}
+          {quoteWallet > 0 ? (
+            <div className="mt-1 flex justify-between text-sm text-emerald-700">
+              <span>Wallet</span>
+              <span>-{formatMoney(quoteWallet, "INR")}</span>
+            </div>
+          ) : null}
           <div className="mt-4 flex justify-between border-t border-[#e7dfd1] pt-4 font-semibold text-[#2E2E2E]">
-            <span>Total</span>
-            <span>{formatMoney(total, "INR")}</span>
+            <span>Payable</span>
+            <span>{formatMoney(quotePayable, "INR")}</span>
           </div>
+          {quoteLoading ? <p className="mt-2 text-xs text-[#A6A6A6]">Calculating final order amount...</p> : null}
+          {quoteError ? <p className="mt-2 text-xs text-red-600">{quoteError}</p> : null}
         </div>
 
         <div className="mt-5 border-t border-[#e7dfd1] pt-4">

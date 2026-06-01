@@ -55,6 +55,10 @@ import {
   getImageFallbackSrc,
   getProductImage,
   getProductTitle,
+  getProductPrice,
+  getProductMrp,
+  getVariantPrice,
+  firstMoneyValue,
   buildCartItem,
 } from "../../utils/ecommerce";
 
@@ -434,7 +438,10 @@ export default function ProductDetailPage() {
   const relatedList = useSelector((s) => s.recommendation.trendingList);
 
   const warranty = warrantyState.current;
-  const dynamicPrice = dynamicState.current?.price;
+  const dynamicPrice =
+    String(dynamicState.current?.productId || "") === String(productId || "")
+      ? firstMoneyValue(dynamicState.current?.price)
+      : undefined;
   const relatedProducts = Array.isArray(relatedList)
     ? relatedList.slice(0, 4)
     : [];
@@ -541,14 +548,16 @@ export default function ProductDetailPage() {
     );
   };
 
-  const selectedVariantPrice =
-    selectedVariant?.salePrice ?? selectedVariant?.price;
-  const price =
-    dynamicPrice ??
-    selectedVariantPrice ??
-    product?.price ??
-    product?.sellingPrice;
-  const mrp = selectedVariant?.mrp ?? product?.mrp ?? product?.originalPrice;
+  const selectedVariantPrice = getVariantPrice(selectedVariant);
+  const productPrice = getProductPrice(product);
+  const baseDisplayPrice = firstMoneyValue(selectedVariantPrice, productPrice);
+  const safeDynamicPrice =
+    dynamicPrice && baseDisplayPrice && dynamicPrice >= baseDisplayPrice * 0.5 && dynamicPrice <= baseDisplayPrice * 2
+      ? dynamicPrice
+      : undefined;
+  const price = firstMoneyValue(safeDynamicPrice, selectedVariantPrice, productPrice);
+  const mrp = firstMoneyValue(getProductMrp(selectedVariant), getProductMrp(product));
+  const currency = selectedVariant?.currency || product?.currency || "INR";
   const discount =
     mrp && price && mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
   const fallbackProductImage =
@@ -782,11 +791,11 @@ export default function ProductDetailPage() {
                   {/* Price */}
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="font-montserrat text-[18px] font-bold leading-none text-[#2E2E2E] sm:text-[20px]">
-                      {formatMoney(price)}
+                      {formatMoney(price, currency)}
                     </span>
                     {mrp && mrp > price && (
                       <span className="font-montserrat text-sm text-[#A6A6A6] line-through">
-                        {formatMoney(mrp)}
+                        {formatMoney(mrp, currency)}
                       </span>
                     )}
                     {discount > 0 && (
@@ -796,7 +805,7 @@ export default function ProductDetailPage() {
                     )}
                   </div>
 
-                  {dynamicState.current?.loyalty && (
+                  {safeDynamicPrice && dynamicState.current?.loyalty && (
                     <p className="inline-block w-fit rounded-full bg-[#F5ECDD] px-3 py-1 font-montserrat text-xs font-semibold text-[#A26D27]">
                       ✦ Loyalty price applied
                     </p>

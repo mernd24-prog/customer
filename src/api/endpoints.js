@@ -55,6 +55,7 @@ export const endpoints = {
     me: `${API_PREFIX}/orders/me`,
     sellerMe: `${API_PREFIX}/orders/seller/me`,
     create: `${API_PREFIX}/orders`,
+    quote: `${API_PREFIX}/orders/quote`,
     detail: (orderId) => `${API_PREFIX}/orders/${orderId}`,
     cancel: (orderId) => `${API_PREFIX}/orders/${orderId}/cancel`,
     status: (orderId) => `${API_PREFIX}/orders/${orderId}/status`

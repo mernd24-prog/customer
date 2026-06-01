@@ -89,9 +89,42 @@ function adaptItemForCard(item) {
 }
 
 function cartLineKey(item) {
+  const product = item.productId && typeof item.productId === "object" ? item.productId : item.product;
   const productId = getProductId(item.productId || item.product);
-  const variantKey = item.variantId || item.variantSku || "";
+  const defaultVariant =
+    !item.variantId && !item.variantSku && Array.isArray(product?.variants)
+      ? product.variants.find((variant) => variant.isDefault) || product.variants[0]
+      : null;
+  const variantKey = item.variantId || item.variantSku || defaultVariant?._id || defaultVariant?.id || defaultVariant?.sku || "";
   return [productId, variantKey].filter(Boolean).join(":");
+}
+
+function mergeDisplayCartItems(items = []) {
+  const byKey = new Map();
+
+  items.forEach((item) => {
+    const key = cartLineKey(item);
+    if (!key) return;
+    const existing = byKey.get(key);
+    if (!existing) {
+      byKey.set(key, item);
+      return;
+    }
+
+    byKey.set(key, {
+      ...existing,
+      ...item,
+      productId:
+        typeof existing.productId === "object"
+          ? existing.productId
+          : item.productId,
+      image: existing.image || item.image,
+      title: existing.title || item.title,
+      quantity: Number(existing.quantity || 0) + Number(item.quantity || 0),
+    });
+  });
+
+  return [...byKey.values()];
 }
 
 function buildSavedProductView(wishlistProduct, resolvedProduct) {
@@ -117,7 +150,7 @@ export default function CartPage() {
 
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
-  const rawItems = useMemo(() => cart.items || [], [cart.items]);
+  const rawItems = useMemo(() => mergeDisplayCartItems(cart.items || []), [cart.items]);
   const wishlist = useMemo(() => cart.wishlist || [], [cart.wishlist]);
   const productEntities = useSelector((state) => state.product.entities || {});
   const fetchedIdsRef = useRef(new Set());
