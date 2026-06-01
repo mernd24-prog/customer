@@ -150,13 +150,13 @@ export function HomePage() {
             onAddToCart={() => alert("Added to cart!")}
           /> */}
 
-          {/* <CategoryPriceCard
+          <CategoryPriceCard
             category="Men's Wear"
             price="₹ 993.00"
             originalPrice="₹ 1199.00"
             images={[{ src: "/image/jpg/home-decor.jpg" }]}
             customWidth="260px"
-          /> */}
+          />
 
         
           {/* <DealGridCard
