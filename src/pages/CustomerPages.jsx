@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import {
   Bell,
+  Banknote,
   CheckCircle2,
   CreditCard,
   Eye,
@@ -24,7 +25,6 @@ import {
   Wallet,
   XCircle,
 } from "lucide-react";
-import { Banknote, CreditCard, Heart, PackageCheck, ShieldCheck } from "lucide-react";
 import ApiState from "../components/common/ApiState";
 import Seo from "../components/common/Seo";
 import BrandButton from "../components/ui/BrandButton";
@@ -32,7 +32,7 @@ import StatusTimeline from "../components/common/StatusTimeline";
 import { ProductCard } from "../components/ecommerce";
 import { useToastThunk } from "../hooks/useToastThunk";
 import { addRecentlyViewed } from "../utils/recentlyViewed";
-import { formatMoney, getProductId } from "../utils/ecommerce";
+import { formatMoney } from "../utils/ecommerce";
 import { useProductActions } from "../hooks/useProductActions";
 import {
   loginUser,
@@ -141,9 +141,9 @@ const displayLabel = (value = "") =>
   String(value || "N/A").replace(/_/g, " ");
 
 const getProductId = (item = {}) => {
-  const product = item.productId || item.product_id || item.product;
+  const product = item.productId || item.product_id || item.product || item;
   return typeof product === "object"
-    ? firstDefined(product._id, product.id, product.productId)
+    ? firstDefined(product._id, product.id, product.productId, product.sku)
     : product;
 };
 

@@ -1,9 +1,9 @@
-import ProductsForYouCard from "../ui/ProductsForYouCard";
-import productsForYou from "../../data/productsForYou";
-import SupportFeatureSection from "../ui/SupportFeatureSection";
-import { helpSupportData } from "../../data/helpSupport";
-import CommitmentCard from "../ui/CommitmentCard";
-import { aboutSectionImages } from "../../constant/image.constant";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { ProductCard } from "../ecommerce";
+import { SkeletonLoader } from "../common/skeleton";
+import { useProductActions } from "../../hooks/useProductActions";
+import { getProductId } from "../../utils/ecommerce";
 
 export default function HomeProductsForYouSection({
   title = "Products For You",

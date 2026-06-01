@@ -9,8 +9,12 @@ import {
   setCache,
 } from "../utils/cache";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
+const buildApiUrl = (path = "") =>
+  `${API_BASE_URL.replace(/\/+$/, "")}/${String(path).replace(/^\/+/, "")}`;
+
 const api = axios.create({
-  baseURL: "http://192.168.16.42:4000",
+  baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -119,12 +123,7 @@ api.interceptors.response.use(
       refreshPromise =
         refreshPromise ||
         axios
-          .post(
-            `${import.meta.env.VITE_API_BASE_URL || ""}${
-              endpoints.auth.refresh
-            }`,
-            { refreshToken },
-          )
+          .post(buildApiUrl(endpoints.auth.refresh), { refreshToken })
           .then((response) => normalizeApiResponse(response).data);
       const session = await refreshPromise;
       refreshPromise = null;
