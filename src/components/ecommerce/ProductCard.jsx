@@ -122,15 +122,15 @@ export default function ProductCard({
   }
 
   return (
-    <article className={cn("customer-card group relative min-w-0 p-2.5 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)] sm:p-3", className)}>
+    <article className={cn("customer-card group relative min-w-0 p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)] sm:p-4", className)}>
       {badgeText && (
-        <span className="absolute left-4 top-4 z-10 rounded-full bg-[var(--customer-gold)] px-2 py-0.5 font-montserrat text-[10px] font-bold text-[var(--customer-navy)]">
+        <span className="absolute left-4 top-4 z-10 rounded-full bg-[var(--customer-gold)] px-2.5 py-1 font-montserrat text-[11px] font-bold text-[var(--customer-navy)]">
           {badgeText}
         </span>
       )}
 
       {!isInStock && (
-        <span className="absolute right-4 top-4 z-10 rounded-full bg-black/70 px-2 py-1 font-montserrat text-[11px] font-semibold text-white">
+        <span className="absolute right-4 top-4 z-10 rounded-full bg-black/70 px-2.5 py-1 font-montserrat text-[12px] font-semibold text-white">
           Out of stock
         </span>
       )}
@@ -160,21 +160,17 @@ export default function ProductCard({
             <button
               type="button"
               onClick={handleBrandClick}
-              className="mt-2 font-montserrat text-left text-[10px] font-bold uppercase tracking-normal text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
+              className="mt-2 font-montserrat text-left text-[11px] font-bold uppercase tracking-wide text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
             >
               {brand}
             </button>
           )}
 
-          <h3 className="mt-1 line-clamp-1 font-montserrat text-[12px] font-semibold text-[var(--customer-ink)] sm:text-[13px]" title={title}>
+          <h3 className="mt-1.5 line-clamp-2 font-montserrat text-[13px] font-semibold leading-snug text-[var(--customer-ink)] sm:text-[14px]" title={title}>
             {title}
           </h3>
 
-          <p className="mt-1 line-clamp-2 min-h-[28px] font-montserrat text-[12px] leading-4 text-[var(--customer-muted)]" title={subtitle}>
-            {subtitle}
-          </p>
-
-          <Price price={price} oldPrice={oldPrice} currency={currency || cardProduct?.currency} layout="pill" className="mt-3 h-[30px] w-full max-w-[150px]" />
+          <Price price={price} oldPrice={oldPrice} currency={currency || cardProduct?.currency} layout="pill" className="mt-3 h-[32px] w-full max-w-[180px]" />
         </div>
       </Link>
     </article>

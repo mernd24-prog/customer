@@ -15,7 +15,7 @@ export default function HomeCategoryGrid({
       <SkeletonLoader
         preset="CATEGORY_CARD"
         count={5}
-        containerClass="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+        containerClass="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5"
         wrapperClass="customer-card p-2"
       />
     );
@@ -29,7 +29,7 @@ export default function HomeCategoryGrid({
           {subtitle && <p className="mt-1 font-montserrat text-xs text-[var(--customer-muted)]">{subtitle}</p>}
         </div>
       )}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5">
         {categories.map((item, idx) => (
           <CategoryCard
             key={item.id ? item.id : item.categoryKey ? item.categoryKey : `idx-${idx}`}
