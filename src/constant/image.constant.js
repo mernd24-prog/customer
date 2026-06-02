@@ -137,7 +137,7 @@ export const bannerConfig = {
   phone: "+91 98765 43210",
   email: "support@samglobal.com",
   website: "www.samglobal.com",
-  gradient: "linear-gradient(270deg, #3E4094 5.77%, #1B1D60 100%)",
+  gradient: "linear-gradient(270deg, var(--customer-navy) 5.77%, var(--customer-navy-dark) 100%)",
 };
 
 export const brandSwiper = {

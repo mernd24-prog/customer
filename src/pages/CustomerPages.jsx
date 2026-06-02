@@ -1096,9 +1096,9 @@ export function PaymentResultPage({ failed = false }) {
         }
       />
       <div className="w-container flex min-h-[60vh] items-center justify-center py-12">
-        <div className="w-full max-w-md rounded-[16px] border border-[#e7dfd1] bg-white p-8 text-center">
+        <div className="w-full max-w-md rounded-[var(--customer-radius)] border border-border bg-white p-8 text-center">
           <div
-            className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full ${failed ? "bg-red-100" : "bg-[#F5ECDD]"}`}
+            className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full ${failed ? "bg-red-100" : "bg-gold-soft"}`}
           >
             {failed ? (
               <svg
@@ -1116,7 +1116,7 @@ export function PaymentResultPage({ failed = false }) {
               </svg>
             ) : (
               <svg
-                className="h-8 w-8 text-[#CE9F2D]"
+                className="h-8 w-8 text-gold"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -1130,10 +1130,10 @@ export function PaymentResultPage({ failed = false }) {
               </svg>
             )}
           </div>
-          <h1 className="font-montserrat text-2xl font-bold text-[#2E2E2E]">
+          <h1 className="font-montserrat text-2xl font-bold text-ink">
             {failed ? "Payment Failed" : "Order Placed!"}
           </h1>
-          <p className="mt-2 font-montserrat text-sm text-[#787878]">
+          <p className="mt-2 font-montserrat text-sm text-muted">
             {failed
               ? "Your payment could not be processed. Please try again or contact support."
               : "Your order has been placed successfully. We'll send you a confirmation soon."}
@@ -1377,7 +1377,7 @@ export function SimpleApiPage({
     <>
       <Seo title={`${title} | Sam Global`} />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
           {title}
         </h1>
         <ApiState
@@ -1386,8 +1386,8 @@ export function SimpleApiPage({
           empty={!list.length && !state.current}
           onRetry={() => dispatch(thunk(action?.arg))}
         >
-          <div className="rounded-[12px] border border-[#e7dfd1] bg-white p-6">
-            <pre className="overflow-x-auto font-mono text-xs text-[#787878]">
+          <div className="rounded-[12px] border border-border bg-white p-6">
+            <pre className="overflow-x-auto font-mono text-xs text-muted">
               {JSON.stringify(list.length ? list : state.current, null, 2)}
             </pre>
           </div>
@@ -1409,7 +1409,7 @@ export function SubscriptionPage() {
     <>
       <Seo title="Subscriptions | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
           Subscription Plans
         </h1>
         <ApiState
@@ -1424,20 +1424,20 @@ export function SubscriptionPage() {
             {itemsFrom(plans).map((plan) => (
               <div
                 key={plan.id || plan.planId || plan.planCode}
-                className="flex flex-col rounded-[16px] border border-[#e7dfd1] bg-white p-6"
+                className="flex flex-col rounded-[var(--customer-radius)] border border-border bg-white p-6"
               >
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-[#F5ECDD]">
-                  <Star size={18} className="text-[#CE9F2D]" />
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gold-soft">
+                  <Star size={18} className="text-gold" />
                 </div>
-                <h2 className="font-montserrat text-lg font-semibold text-[#2E2E2E]">
+                <h2 className="font-montserrat text-lg font-semibold text-ink">
                   {plan.title}
                 </h2>
-                <p className="mt-1 font-montserrat text-sm text-[#787878]">
+                <p className="mt-1 font-montserrat text-sm text-muted">
                   {plan.description}
                 </p>
-                <p className="mt-4 font-montserrat text-2xl font-bold text-[#CE9F2D]">
+                <p className="mt-4 font-montserrat text-2xl font-bold text-gold">
                   {formatMoney(plan.monthlyPrice, plan.currency || "INR")}
-                  <span className="font-montserrat text-sm font-normal text-[#A6A6A6]">
+                  <span className="font-montserrat text-sm font-normal text-gray">
                     /mo
                   </span>
                 </p>
@@ -1499,7 +1499,7 @@ export function PreferencesPage() {
     <>
       <Seo title="Notification Preferences | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
           Notification Preferences
         </h1>
         <ApiState
@@ -1509,7 +1509,7 @@ export function PreferencesPage() {
           onRetry={() => dispatch(fetchNotificationPreferences())}
         >
           <form
-            className="rounded-[12px] border border-[#e7dfd1] bg-white p-6 sm:p-8"
+            className="rounded-[12px] border border-border bg-white p-6 sm:p-8"
             onSubmit={handleSubmit((v) =>
               run(
                 dispatch,
@@ -1538,10 +1538,10 @@ export function PreferencesPage() {
             )}
           >
             <div className="mb-6">
-              <h2 className="mb-1 font-montserrat text-base font-semibold text-[#2E2E2E]">
+              <h2 className="mb-1 font-montserrat text-base font-semibold text-ink">
                 Channels
               </h2>
-              <p className="font-montserrat text-sm text-[#787878]">
+              <p className="font-montserrat text-sm text-muted">
                 Choose how you&apos;d like to receive notifications.
               </p>
             </div>
@@ -1549,39 +1549,39 @@ export function PreferencesPage() {
               {CHANNELS.map(({ key, label }) => (
                 <label
                   key={key}
-                  className="flex cursor-pointer items-center justify-between gap-3 rounded-[10px] border border-[#e7dfd1] px-4 py-3"
+                  className="flex cursor-pointer items-center justify-between gap-3 rounded-[10px] border border-border px-4 py-3"
                 >
-                  <span className="font-montserrat text-sm font-medium text-[#2E2E2E]">
+                  <span className="font-montserrat text-sm font-medium text-ink">
                     {label}
                   </span>
                   <input
                     type="checkbox"
                     {...register(key)}
-                    className="h-4 w-4 accent-[#CE9F2D]"
+                    className="h-4 w-4 accent-gold"
                   />
                 </label>
               ))}
             </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <label className="grid gap-1.5">
-                <span className="font-montserrat text-sm font-medium text-[#2E2E2E]">
+                <span className="font-montserrat text-sm font-medium text-ink">
                   Frequency
                 </span>
                 <select
                   {...register("frequency")}
-                  className="rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-sm text-[#2E2E2E] outline-none focus:border-[#CE9F2D]"
+                  className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5 font-montserrat text-sm text-ink outline-none focus:border-gold"
                 >
                   <option value="real_time">Real time</option>
                   <option value="daily">Daily digest</option>
                 </select>
               </label>
               <label className="grid gap-1.5">
-                <span className="font-montserrat text-sm font-medium text-[#2E2E2E]">
+                <span className="font-montserrat text-sm font-medium text-ink">
                   Timezone
                 </span>
                 <input
                   {...register("timezone")}
-                  className="rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-sm text-[#2E2E2E] outline-none focus:border-[#CE9F2D]"
+                  className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5 font-montserrat text-sm text-ink outline-none focus:border-gold"
                 />
               </label>
             </div>
@@ -1618,7 +1618,7 @@ export function LoyaltyPage() {
     <>
       <Seo title="Loyalty Rewards | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
           Loyalty Rewards
         </h1>
         <ApiState
@@ -1631,7 +1631,7 @@ export function LoyaltyPage() {
         >
           {/* Points card */}
           {profile && (
-            <div className="mb-6 rounded-[16px] bg-gradient-to-br from-[#CE9F2D] to-[#A26D27] p-6 text-white">
+            <div className="mb-6 rounded-[var(--customer-radius)] bg-gradient-to-br from-gold to-gold-dark p-6 text-white">
               <div className="mb-1 flex items-center gap-2">
                 <Gift size={18} />
                 <span className="font-montserrat text-sm font-medium opacity-80">
@@ -1664,23 +1664,23 @@ export function LoyaltyPage() {
 
           {/* Transaction history */}
           {history.length > 0 && (
-            <div className="rounded-[12px] border border-[#e7dfd1] bg-white">
-              <div className="border-b border-[#e7dfd1] px-5 py-4">
-                <h2 className="font-montserrat text-base font-semibold text-[#2E2E2E]">
+            <div className="rounded-[12px] border border-border bg-white">
+              <div className="border-b border-border px-5 py-4">
+                <h2 className="font-montserrat text-base font-semibold text-ink">
                   Transaction History
                 </h2>
               </div>
-              <div className="divide-y divide-[#e7dfd1]">
+              <div className="divide-y divide-border">
                 {history.map((tx, i) => (
                   <div
                     key={tx.id || i}
                     className="flex items-center justify-between px-5 py-3"
                   >
                     <div>
-                      <p className="font-montserrat text-sm font-medium text-[#2E2E2E]">
+                      <p className="font-montserrat text-sm font-medium text-ink">
                         {tx.reason || tx.description || "Points transaction"}
                       </p>
-                      <p className="font-montserrat text-xs text-[#A6A6A6]">
+                      <p className="font-montserrat text-xs text-gray">
                         {tx.createdAt
                           ? new Date(tx.createdAt).toLocaleDateString("en-IN")
                           : ""}
@@ -1727,26 +1727,26 @@ export function WarrantyPage({ detail = false }) {
         }
       />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
           {detail ? "Warranty Details" : "My Warranties"}
         </h1>
 
         {!detail && (
           <form
-            className="mb-6 rounded-[12px] border border-[#e7dfd1] bg-white p-5"
+            className="mb-6 rounded-[12px] border border-border bg-white p-5"
             onSubmit={handleSubmit((v) => {
               dispatch(fetchOrderWarranties({ orderId: v.orderId }));
               reset();
             })}
           >
-            <h2 className="mb-3 font-montserrat text-sm font-semibold text-[#2E2E2E]">
+            <h2 className="mb-3 font-montserrat text-sm font-semibold text-ink">
               Look up by Order ID
             </h2>
             <div className="flex gap-3">
               <input
                 placeholder="Enter Order ID"
                 {...register("orderId", { required: true })}
-                className="flex-1 rounded-[8px] border border-[#cfc6b8] px-3 py-2.5 font-montserrat text-sm outline-none focus:border-[#CE9F2D]"
+                className="flex-1 rounded-[8px] border border-border-strong px-3 py-2.5 font-montserrat text-sm outline-none focus:border-gold"
               />
               <BrandButton
                 variant="secondary"
@@ -1768,18 +1768,18 @@ export function WarrantyPage({ detail = false }) {
           onRetry={() => detail && dispatch(fetchWarrantyById({ warrantyId }))}
         >
           {(warranty || warranties.length > 0) && (
-            <div className="rounded-[12px] border border-[#e7dfd1] bg-white">
+            <div className="rounded-[12px] border border-border bg-white">
               {warranty && (
                 <div className="p-6">
                   <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F5ECDD]">
-                      <ShieldCheck size={18} className="text-[#CE9F2D]" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-soft">
+                      <ShieldCheck size={18} className="text-gold" />
                     </div>
                     <div>
-                      <p className="font-montserrat text-sm font-semibold text-[#2E2E2E]">
+                      <p className="font-montserrat text-sm font-semibold text-ink">
                         {warranty.type || "Product Warranty"}
                       </p>
-                      <p className="font-montserrat text-xs text-[#A6A6A6]">
+                      <p className="font-montserrat text-xs text-gray">
                         ID: {warranty.id || warrantyId}
                       </p>
                     </div>
@@ -1787,16 +1787,16 @@ export function WarrantyPage({ detail = false }) {
                   <div className="grid gap-2 text-sm">
                     {warranty.period && (
                       <div className="flex gap-2">
-                        <span className="text-[#787878]">Period:</span>
-                        <span className="font-medium text-[#2E2E2E]">
+                        <span className="text-muted">Period:</span>
+                        <span className="font-medium text-ink">
                           {warranty.period}
                         </span>
                       </div>
                     )}
                     {warranty.expiresAt && (
                       <div className="flex gap-2">
-                        <span className="text-[#787878]">Expires:</span>
-                        <span className="font-medium text-[#2E2E2E]">
+                        <span className="text-muted">Expires:</span>
+                        <span className="font-medium text-ink">
                           {new Date(warranty.expiresAt).toLocaleDateString(
                             "en-IN",
                           )}
@@ -1830,15 +1830,15 @@ export function WarrantyPage({ detail = false }) {
               {warranties.map((w, i) => (
                 <div
                   key={w.id || i}
-                  className="flex items-center justify-between border-t border-[#e7dfd1] px-5 py-4 first:border-t-0"
+                  className="flex items-center justify-between border-t border-border px-5 py-4 first:border-t-0"
                 >
                   <div className="flex items-center gap-3">
-                    <ShieldCheck size={16} className="text-[#CE9F2D]" />
+                    <ShieldCheck size={16} className="text-gold" />
                     <div>
-                      <p className="font-montserrat text-sm font-medium text-[#2E2E2E]">
+                      <p className="font-montserrat text-sm font-medium text-ink">
                         {w.type || "Warranty"}
                       </p>
-                      <p className="font-montserrat text-xs text-[#A6A6A6]">
+                      <p className="font-montserrat text-xs text-gray">
                         {w.period}
                       </p>
                     </div>
@@ -1859,7 +1859,7 @@ export function WarrantyPage({ detail = false }) {
 
           {/* Register warranty form */}
           <form
-            className="mt-6 rounded-[12px] border border-[#e7dfd1] bg-white p-5"
+            className="mt-6 rounded-[12px] border border-border bg-white p-5"
             onSubmit={handleSubmit((v) =>
               run(
                 dispatch,
@@ -1872,24 +1872,24 @@ export function WarrantyPage({ detail = false }) {
               ),
             )}
           >
-            <h2 className="mb-4 font-montserrat text-sm font-semibold text-[#2E2E2E]">
+            <h2 className="mb-4 font-montserrat text-sm font-semibold text-ink">
               Register a Warranty
             </h2>
             <div className="grid gap-3 sm:grid-cols-3">
               <input
                 placeholder="Order ID"
                 {...register("reg_orderId")}
-                className="rounded-[8px] border border-[#cfc6b8] px-3 py-2.5 font-montserrat text-sm outline-none focus:border-[#CE9F2D]"
+                className="rounded-[8px] border border-border-strong px-3 py-2.5 font-montserrat text-sm outline-none focus:border-gold"
               />
               <input
                 placeholder="Product ID"
                 {...register("reg_productId")}
-                className="rounded-[8px] border border-[#cfc6b8] px-3 py-2.5 font-montserrat text-sm outline-none focus:border-[#CE9F2D]"
+                className="rounded-[8px] border border-border-strong px-3 py-2.5 font-montserrat text-sm outline-none focus:border-gold"
               />
               <input
                 placeholder="Variant ID (optional)"
                 {...register("reg_variantId")}
-                className="rounded-[8px] border border-[#cfc6b8] px-3 py-2.5 font-montserrat text-sm outline-none focus:border-[#CE9F2D]"
+                className="rounded-[8px] border border-border-strong px-3 py-2.5 font-montserrat text-sm outline-none focus:border-gold"
               />
             </div>
             <div className="mt-4">
@@ -1913,17 +1913,17 @@ export function BackendGapNotes() {
     <>
       <Seo title="API Notes | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-4 font-montserrat text-2xl font-bold text-[#2E2E2E]">
+        <h1 className="mb-4 font-montserrat text-2xl font-bold text-ink">
           API Integration Notes
         </h1>
-        <div className="rounded-[12px] border border-[#e7dfd1] bg-white p-6">
-          <p className="font-montserrat text-sm text-[#787878]">
+        <div className="rounded-[12px] border border-border bg-white p-6">
+          <p className="font-montserrat text-sm text-muted">
             Wishlist uses{" "}
-            <code className="rounded bg-[#FAF6EE] px-1.5 py-0.5 text-[#A26D27]">
+            <code className="rounded bg-cream px-1.5 py-0.5 text-gold-dark">
               cart.wishlist
             </code>
             . Coupon validation flows through the order&apos;s{" "}
-            <code className="rounded bg-[#FAF6EE] px-1.5 py-0.5 text-[#A26D27]">
+            <code className="rounded bg-cream px-1.5 py-0.5 text-gold-dark">
               couponCode
             </code>{" "}
             field. File uploads, invoice download, referral routes, product
@@ -1950,7 +1950,7 @@ export function WalletPage() {
     <>
       <Seo title="My Wallet | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
           My Wallet
         </h1>
         <ApiState
@@ -1962,7 +1962,7 @@ export function WalletPage() {
           onRetry={() => dispatch(fetchWallet())}
         >
           {wallet && (
-            <div className="rounded-[16px] bg-gradient-to-br from-[#2E2E2E] to-[#4a4a4a] p-6 text-white">
+            <div className="rounded-[var(--customer-radius)] bg-gradient-to-br from-ink to-muted p-6 text-white">
               <div className="mb-1 flex items-center gap-2">
                 <Wallet size={18} />
                 <span className="font-montserrat text-sm font-medium opacity-80">
@@ -1999,7 +1999,7 @@ export function PaymentsPage() {
     <>
       <Seo title="Payment History | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
           Payment History
         </h1>
         <ApiState
@@ -2010,7 +2010,7 @@ export function PaymentsPage() {
           emptyText="Your payment transactions will appear here."
           onRetry={() => dispatch(fetchPayments())}
         >
-          <div className="rounded-[12px] border border-[#e7dfd1] bg-white">
+          <div className="rounded-[12px] border border-border bg-white">
             {payments.map((payment, i) => {
               const id = payment.id || payment.paymentId;
               const status = payment.status;
@@ -2023,17 +2023,17 @@ export function PaymentsPage() {
               return (
                 <div
                   key={id || i}
-                  className="flex items-center justify-between border-b border-[#e7dfd1] px-5 py-4 last:border-b-0"
+                  className="flex items-center justify-between border-b border-border px-5 py-4 last:border-b-0"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F5ECDD]">
-                      <CreditCard size={14} className="text-[#CE9F2D]" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-soft">
+                      <CreditCard size={14} className="text-gold" />
                     </div>
                     <div>
-                      <p className="font-montserrat text-sm font-medium text-[#2E2E2E]">
+                      <p className="font-montserrat text-sm font-medium text-ink">
                         {payment.provider || "Payment"}
                       </p>
-                      <p className="font-montserrat text-xs text-[#A6A6A6]">
+                      <p className="font-montserrat text-xs text-gray">
                         {payment.createdAt
                           ? new Date(payment.createdAt).toLocaleDateString(
                               "en-IN",
@@ -2048,7 +2048,7 @@ export function PaymentsPage() {
                     >
                       {status}
                     </span>
-                    <span className="font-montserrat text-sm font-bold text-[#2E2E2E]">
+                    <span className="font-montserrat text-sm font-bold text-ink">
                       {formatMoney(
                         payment.amount || 0,
                         payment.currency || "INR",
@@ -2078,7 +2078,7 @@ export function NotificationsPage() {
     <>
       <Seo title="Notifications | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E]">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
           Notifications
         </h1>
         <ApiState
@@ -2089,37 +2089,37 @@ export function NotificationsPage() {
           emptyText="You're all caught up! Notifications will appear here."
           onRetry={() => dispatch(fetchNotifications())}
         >
-          <div className="rounded-[12px] border border-[#e7dfd1] bg-white">
+          <div className="rounded-[12px] border border-border bg-white">
             {notifications.map((notif, i) => {
               const isRead = notif.read || notif.isRead;
               return (
                 <div
                   key={notif.id || i}
-                  className={`flex gap-4 border-b border-[#e7dfd1] px-5 py-4 last:border-b-0 ${isRead ? "" : "bg-[#FAF6EE]"}`}
+                  className={`flex gap-4 border-b border-border px-5 py-4 last:border-b-0 ${isRead ? "" : "bg-cream"}`}
                 >
                   <div
-                    className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${isRead ? "bg-[#FAF6EE]" : "bg-[#F5ECDD]"}`}
+                    className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${isRead ? "bg-cream" : "bg-gold-soft"}`}
                   >
                     <Bell
                       size={14}
-                      className={isRead ? "text-[#A6A6A6]" : "text-[#CE9F2D]"}
+                      className={isRead ? "text-gray" : "text-gold"}
                     />
                   </div>
                   <div className="min-w-0">
-                    <p className="font-montserrat text-sm font-medium text-[#2E2E2E]">
+                    <p className="font-montserrat text-sm font-medium text-ink">
                       {notif.title || notif.subject || "Notification"}
                     </p>
-                    <p className="mt-0.5 font-montserrat text-xs text-[#787878]">
+                    <p className="mt-0.5 font-montserrat text-xs text-muted">
                       {notif.message || notif.body || ""}
                     </p>
-                    <p className="mt-1 font-montserrat text-xs text-[#A6A6A6]">
+                    <p className="mt-1 font-montserrat text-xs text-gray">
                       {notif.createdAt
                         ? new Date(notif.createdAt).toLocaleDateString("en-IN")
                         : ""}
                     </p>
                   </div>
                   {!isRead && (
-                    <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#CE9F2D]" />
+                    <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-gold" />
                   )}
                 </div>
               );

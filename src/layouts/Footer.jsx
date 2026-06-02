@@ -70,8 +70,22 @@ export function Footer({ data = {} }) {
   };
 
   return (
-    <footer className="w-full bg-surface font-montserrat text-ink">
+    <footer className="mt-10 w-full bg-[var(--customer-black)] font-montserrat text-white">
       <FooterBenefits items={footer.benefits} />
+      <div className="w-container flex flex-col gap-4 py-8 md:flex-row md:items-center md:justify-between justify-between">
+        <div className="flex items-center gap-3">
+          <img
+            src="/image/png/Dark-logo.svg"
+            alt="Sam Global"
+            className="h-12 w-auto rounded p-1"
+          />
+          <span className="text-4xl font-bold italic text-white">
+            Sam Global
+          </span>
+        </div>
+
+        <div> <FooterAppDownload data={footer.appDownload} /></div>
+      </div>
 
       {loading ? (
         <SkeletonLoader
@@ -82,7 +96,7 @@ export function Footer({ data = {} }) {
       ) : (
         <FooterLinkGroups groups={footer.linkGroups} />
       )}
-
+{/* 
       {loading ? (
         <SkeletonLoader
           layout={SKELETON_PRESETS.FOOTER_ACTIONS}
@@ -92,9 +106,8 @@ export function Footer({ data = {} }) {
         />
       ) : (
         <FooterActionLinks items={footer.actionLinks} />
-      )}
+      )} */}
 
-      <FooterAppDownload data={footer.appDownload} />
       <FooterBottomBar
         copyright={footer.copyright}
         socialLinks={footer.socialLinks}

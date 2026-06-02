@@ -45,7 +45,7 @@ export default function FormField({
 
   return (
     <label
-      className="grid gap-1.5 font-montserrat text-sm font-medium text-[#2E2E2E]"
+      className="grid gap-1.5 font-montserrat text-sm font-medium text-[var(--customer-ink)]"
       htmlFor={id}
     >
       <span>{label}</span>
@@ -54,7 +54,7 @@ export default function FormField({
           placeholder={placeholder}
           id={id}
           type={inputType}
-          className={`min-h-11 w-full rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-sm text-[#2E2E2E] outline-none transition-all duration-300 ease-in-out placeholder:text-[#A6A6A6] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 ${
+          className={`customer-input font-montserrat ${
             isPassword ? "pr-11" : ""
           }`}
           aria-invalid={Boolean(error)}
@@ -71,7 +71,7 @@ export default function FormField({
               event.preventDefault();
               setShowPassword((currentValue) => !currentValue);
             }}
-            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#9E886A] transition-all duration-300 ease-in-out hover:bg-[#FAF6EE] hover:text-[#2E2E2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D]/40"
+            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[var(--customer-muted)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>

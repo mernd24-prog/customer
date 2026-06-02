@@ -37,7 +37,7 @@ export default function SecurityTab() {
       onSubmit={handleSubmit(submit)}
       noValidate
     >
-      <div className="rounded-[8px] border border-[#F5ECDD] bg-[#FFF8EC] px-4 py-3 font-montserrat text-sm text-[#A26D27]">
+      <div className="rounded-[8px] border border-gold-soft bg-gold-soft px-4 py-3 font-montserrat text-sm text-gold-dark">
         Choose a strong password with at least 8 characters, including numbers
         and symbols.
       </div>

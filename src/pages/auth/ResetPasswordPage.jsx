@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
             placeholder="you@example.com"
           />
 
-          <label className="text-sm font-semibold text-[#2E2E2E]">OTP code</label>
+          <label className="text-sm font-semibold text-ink">OTP code</label>
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}
@@ -105,16 +105,16 @@ export default function ResetPasswordPage() {
             type="submit"
             loading={loading}
             disabled={!isValid || loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-[#CE9F2D] to-[#A26D27] font-montserrat text-[0.9rem] font-semibold tracking-wide text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark font-montserrat text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <KeyRound size={18} /> Reset password
           </Button>
 
-          <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
+          <p className="text-center font-montserrat text-[0.8rem] text-muted">
             Didn&apos;t receive the OTP?{" "}
             <button
               type="button"
-              className="font-semibold text-[#CE9F2D] underline-offset-4 transition-all duration-500 ease-in-out hover:text-[#A26D27] hover:underline"
+              className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
               onClick={() => {
                 const email = watch("email");
                 if (!email) return;
@@ -125,10 +125,10 @@ export default function ResetPasswordPage() {
             </button>
           </p>
 
-          <p className="text-center font-montserrat text-[0.8rem] text-[#9E886A]">
+          <p className="text-center font-montserrat text-[0.8rem] text-muted">
             <Link
               to={AUTH_ROUTES.login}
-              className="font-semibold text-[#CE9F2D] underline-offset-4 transition-all duration-500 ease-in-out hover:text-[#A26D27] hover:underline"
+              className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
             >
               Back to login
             </Link>

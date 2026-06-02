@@ -19,23 +19,23 @@ function LockIcon() {
         width="18"
         height="11"
         rx="2.5"
-        stroke="#CE9F2D"
+        stroke="currentColor"
         strokeWidth="1.8"
       />
       <path
         d="M7 11V7a5 5 0 0110 0v4"
-        stroke="#CE9F2D"
+        stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle cx="12" cy="16.5" r="1.4" fill="#CE9F2D" />
+      <circle cx="12" cy="16.5" r="1.4" fill="currentColor" />
       <line
         x1="12"
         y1="17.9"
         x2="12"
         y2="19.5"
-        stroke="#CE9F2D"
+        stroke="currentColor"
         strokeWidth="1.6"
         strokeLinecap="round"
       />
@@ -130,7 +130,7 @@ export default function AuthModal({ open, onClose }) {
       <div
         className={cn(
           "relative w-full bg-white overflow-hidden",
-          "rounded-t-[28px] sm:rounded-2xl",
+          "rounded-t-[20px] sm:rounded-[var(--customer-radius-lg)]",
           "sm:max-w-[400px]",
           "shadow-2xl",
           "sm:animate-modal-in animate-sheet-in",
@@ -138,11 +138,11 @@ export default function AuthModal({ open, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Gold accent bar */}
-        <div className="h-[3px] w-full bg-gradient-to-r from-[#CE9F2D] via-[#e8b94a] to-[#A26D27]" />
+        <div className="h-[3px] w-full bg-gradient-to-r from-gold via-gold to-gold-dark" />
 
         {/* Mobile drag handle */}
         <div className="flex justify-center pt-3 sm:hidden">
-          <div className="h-1 w-10 rounded-full bg-[#e7dfd1]" />
+          <div className="h-1 w-10 rounded-full bg-border" />
         </div>
 
         {/* Close button */}
@@ -151,9 +151,9 @@ export default function AuthModal({ open, onClose }) {
           onClick={onClose}
           className={cn(
             "absolute right-4 top-4 flex h-8 w-8 items-center justify-center",
-            "rounded-full text-[#9E886A] transition-all duration-500 ease-in-out",
-            "hover:bg-[#FAF6EE] hover:text-[#2E2E2E]",
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-1",
+            "rounded-full text-muted transition-all duration-500 ease-in-out",
+            "hover:bg-cream hover:text-ink",
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1",
           )}
           aria-label="Close login prompt"
         >
@@ -165,10 +165,10 @@ export default function AuthModal({ open, onClose }) {
           {/* Lock icon badge */}
           <div className="mb-5 flex justify-center">
             <div
-              className="flex h-[60px] w-[60px] items-center justify-center rounded-full"
+              className="flex h-[60px] w-[60px] items-center justify-center rounded-full text-gold"
               style={{
-                background: "linear-gradient(135deg, #fdf6e8 0%, #faf0d7 100%)",
-                boxShadow: "0 0 0 8px #fdf3dc, 0 0 0 14px #faf0d720",
+                background: "linear-gradient(135deg, var(--customer-gold-soft) 0%, var(--customer-cream) 100%)",
+                boxShadow: "0 0 0 8px rgba(214, 163, 35, 0.14), 0 0 0 14px rgba(214, 163, 35, 0.08)",
               }}
             >
               <LockIcon />
@@ -178,7 +178,7 @@ export default function AuthModal({ open, onClose }) {
           {/* Title */}
           <h2
             id="auth-modal-title"
-            className="text-center font-montserrat text-[1.25rem] font-semibold leading-snug text-[#2E2E2E]"
+            className="text-center font-montserrat text-[1.25rem] font-semibold leading-snug text-ink"
           >
             Login Required
           </h2>
@@ -186,14 +186,14 @@ export default function AuthModal({ open, onClose }) {
           {/* Description */}
           <p
             id="auth-modal-desc"
-            className="mt-2.5 text-center font-montserrat text-[0.825rem] leading-relaxed text-[#787878]"
+            className="mt-2.5 text-center font-montserrat text-[0.825rem] leading-relaxed text-muted"
           >
             Please login to continue. You need to be authenticated to access
             this feature and continue your shopping experience.
           </p>
 
           {/* Divider */}
-          <div className="my-5 h-px w-full bg-[#f0e9da]" />
+          <div className="my-5 h-px w-full bg-border" />
 
           {/* CTA buttons */}
           <div className="flex flex-col gap-3">
@@ -202,11 +202,11 @@ export default function AuthModal({ open, onClose }) {
               onClick={handleGoToLogin}
               className={cn(
                 "w-full rounded-[8px] py-3 px-6",
-                "font-montserrat text-[0.9rem] font-semibold tracking-wide text-white",
-                "bg-gradient-to-r from-[#CE9F2D] to-[#A26D27]",
+                "font-montserrat text-[0.9rem] font-semibold tracking-normal text-white",
+                "bg-gradient-to-r from-gold to-gold-dark",
                 "shadow-sm hover:shadow-md",
                 "transition-all duration-500 ease-in-out hover:brightness-105 active:brightness-95",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-2",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2",
               )}
             >
               Go to Login
@@ -216,11 +216,11 @@ export default function AuthModal({ open, onClose }) {
               onClick={onClose}
               className={cn(
                 "w-full rounded-[8px] py-3 px-6",
-                "font-montserrat text-[0.9rem] font-semibold tracking-wide",
-                "border border-[#e7dfd1] text-[#2E2E2E]",
-                "hover:bg-[#FAF6EE] hover:border-[#CE9F2D] hover:text-[#CE9F2D]",
+                "font-montserrat text-[0.9rem] font-semibold tracking-normal",
+                "border border-border text-ink",
+                "hover:bg-cream hover:border-gold hover:text-gold",
                 "transition-all duration-500 ease-in-out",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D] focus-visible:ring-offset-2",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2",
               )}
             >
               Cancel
@@ -228,13 +228,13 @@ export default function AuthModal({ open, onClose }) {
           </div>
 
           {/* Register nudge */}
-          <p className="mt-5 text-center font-montserrat text-[0.75rem] text-[#9E886A]">
+          <p className="mt-5 text-center font-montserrat text-[0.75rem] text-muted">
             New here?{" "}
             <button
               onClick={handleGoToRegister}
               className={cn(
-                "font-semibold text-[#CE9F2D]",
-                "transition-all duration-500 ease-in-out hover:text-[#A26D27]",
+                "font-semibold text-gold",
+                "transition-all duration-500 ease-in-out hover:text-gold-dark",
                 "focus:outline-none focus-visible:underline",
               )}
             >

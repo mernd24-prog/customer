@@ -22,7 +22,7 @@ const SkeletonBox = ({
   return (
     <div
       className={`
-        animate-pulse bg-gray-200 dark:bg-gray-700
+        animate-pulse bg-[var(--customer-cream-strong)]
         ${variantStyles[variant] || variantStyles.rect}
         ${className}
       `}

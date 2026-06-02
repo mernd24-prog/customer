@@ -9,9 +9,9 @@ export default function FooterAppDownload({ data = {} }) {
   if (!title && !links.length) return null;
 
   return (
-    <FooterSectionContainer className="grid gap-8 py-4 md:py-8 lg:grid-cols-[minmax(260px,380px)_1fr] lg:items-end">
+    <FooterSectionContainer className="grid gap-8 py-4 md:py-6 lg:grid-cols-[minmax(260px,380px)_1fr] lg:items-end">
       <div>
-        <FooterSectionTitle className="max-w-sm font-medium">
+        <FooterSectionTitle className="max-w-sm text-sm font-medium text-white/85">
           {title}
         </FooterSectionTitle>
         <div className="my-4 flex flex-wrap gap-4 md:my-6">

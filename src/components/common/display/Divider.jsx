@@ -4,12 +4,12 @@ export default function Divider({ label, className = "" }) {
   if (label) {
     return (
       <div className={cn("flex items-center gap-3", className)}>
-        <hr className="flex-1 border-[#E8E0D5]" />
-        <span className="font-montserrat text-xs text-[#A6A6A6]">{label}</span>
-        <hr className="flex-1 border-[#E8E0D5]" />
+        <hr className="flex-1 border-border" />
+        <span className="font-montserrat text-xs text-gray">{label}</span>
+        <hr className="flex-1 border-border" />
       </div>
     );
   }
 
-  return <hr className={cn("border-[#E8E0D5]", className)} />;
+  return <hr className={cn("border-border", className)} />;
 }

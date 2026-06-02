@@ -12,18 +12,18 @@ export default function SellDropdown({ data }) {
   return (
     <DropdownContainer width="w-[340px]">
       <div className="p-6">
-        <h2 className="text-[25px] font-bold leading-tight text-black">
+        <h2 className="text-[22px] font-bold leading-tight text-[var(--customer-navy)]">
           {textOr(data?.title, "Sell with us")}
         </h2>
-        <p className="mt-2 text-[14px] leading-relaxed text-black">
+        <p className="mt-2 text-[13px] leading-relaxed text-[var(--customer-muted)]">
           {textOr(data?.description)}
         </p>
 
-        <div className="mt-7 flex flex-col gap-5">
+        <div className="mt-6 flex flex-col gap-4">
           {features.map((feature, index) => (
             <div key={keyOr(feature?.text, `feature-${index}`)} className="flex items-start gap-4">
-              <div className="mt-0.5 text-black">{feature.icon}</div>
-              <p className="text-[14px] font-medium leading-tight text-black">
+              <div className="mt-0.5 text-[var(--customer-gold-dark)]">{feature.icon}</div>
+              <p className="text-[13px] font-semibold leading-tight text-[var(--customer-ink)]">
                 {feature.text}
               </p>
             </div>
@@ -35,7 +35,7 @@ export default function SellDropdown({ data }) {
             <BrandButton
               key={keyOr(button?.label, `button-${index}`)}
               variant="gradient"
-              rounded 
+              rounded
               label={textOr(button?.label, "Action")}
               className="w-full py-2.5 text-[13px] font-bold"
               onClick={() => navigate(hrefOr(button?.path, "/seller/status"))}

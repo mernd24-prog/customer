@@ -10,8 +10,8 @@ import { PriceButton } from "../button/static";
 
 const variants = {
   default: "bg-white shadow-sm hover:shadow-md",
-  gray: "bg-[#F7F7F7]",
-  bordered: "bg-white border border-[#D4A33B]",
+  gray: "bg-surface-soft",
+  bordered: "bg-white border border-gold",
 };
 
 const hovers = {
@@ -25,7 +25,7 @@ const Image = ({
   src,
   alt,
   aspect = "aspect-[4/5]",
-  radius = "rounded-2xl",
+  radius = "rounded-[var(--customer-radius)]",
 }) => {
   if (!src) return null;
 
@@ -89,7 +89,7 @@ const layouts = {
     onAddToCart,
   }) => (
     <>
-      <div className="relative overflow-hidden rounded-2xl">
+      <div className="relative overflow-hidden rounded-[var(--customer-radius)]">
         <Image src={images?.[0]?.src} alt={title} radius="rounded-none" />
 
         {showWishlist && (
@@ -127,7 +127,7 @@ const layouts = {
     <>
       <div className="flex items-center gap-2 mb-2">
         {badge && (
-          <span className="bg-[#D4A33B] text-white px-3 py-1 text-xs rounded-r-xl">
+          <span className="bg-gold text-white px-3 py-1 text-xs rounded-r-xl">
             {badge}
           </span>
         )}
@@ -192,7 +192,7 @@ export default function GlobalCard({
   customWidth,
   customHeight,
   customBg,
-  customRadius = "rounded-2xl",
+  customRadius = "rounded-[var(--customer-radius)]",
   className,
   to,
   href,
@@ -220,7 +220,7 @@ export default function GlobalCard({
         <SkeletonBox
           width="100%"
           height="260px"
-          rounded="rounded-2xl"
+          rounded="rounded-[var(--customer-radius)]"
           className="mb-4"
         />
 

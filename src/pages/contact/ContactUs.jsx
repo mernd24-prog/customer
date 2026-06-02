@@ -82,9 +82,9 @@ function normalizeContactItems(sections) {
 export function SectionIntro({ title, description, className = "" }) {
   return (
     <div className={`mx-auto max-w-4xl text-center font-montserrat ${className}`}>
-      <h2 className="text-2xl font-bold text-[#2E2E2E] sm:text-3xl">{title}</h2>
+      <h2 className="text-2xl font-bold text-ink sm:text-3xl">{title}</h2>
       {description && (
-        <p className="mt-4 text-sm leading-7 text-[#787878] sm:text-base">
+        <p className="mt-4 text-sm leading-7 text-muted sm:text-base">
           {description}
         </p>
       )}
@@ -95,11 +95,11 @@ export function SectionIntro({ title, description, className = "" }) {
 export function CircleIcon({ icon: Icon, tone = "gold" }) {
   const colors =
     tone === "blue"
-      ? "bg-[#F3F3FA] text-blue"
-      : "bg-[#F7EDD9] text-[#A26D27]";
+      ? "bg-navy-soft text-blue"
+      : "bg-gold-soft text-gold-dark";
 
   return (
-    <span className="relative flex h-[92px] w-[92px] items-center justify-center rounded-full border border-dashed border-[#D4A33B]/50 bg-white p-2">
+    <span className="relative flex h-[92px] w-[92px] items-center justify-center rounded-full border border-dashed border-gold/50 bg-white p-2">
       <span className={`flex h-[66px] w-[66px] items-center justify-center rounded-full ${colors}`}>
         <Icon size={32} strokeWidth={2.2} />
       </span>
@@ -111,14 +111,14 @@ export function ReasonCard({ item, showDivider }) {
   return (
     <div className="relative flex min-h-[180px] flex-col items-center justify-start px-4 text-center font-montserrat">
       {showDivider && (
-        <span className="absolute left-0 top-8 hidden h-[112px] w-px bg-[#D9D9E8] lg:block" />
+        <span className="absolute left-0 top-8 hidden h-[112px] w-px bg-border lg:block" />
       )}
       <CircleIcon icon={item.icon} />
-      <h3 className="mt-6 max-w-[270px] text-lg font-bold leading-snug text-[#2E2E2E] sm:text-xl">
+      <h3 className="mt-6 max-w-[270px] text-lg font-bold leading-snug text-ink sm:text-xl">
         {item.title}
       </h3>
       {item.description && (
-        <p className="mt-2 max-w-[220px] text-sm leading-6 text-[#787878]">
+        <p className="mt-2 max-w-[220px] text-sm leading-6 text-muted">
           {item.description}
         </p>
       )}
@@ -130,9 +130,9 @@ function ContactInfoCard({ item, showDivider }) {
   return (
     <div className="relative flex min-h-[96px] items-center gap-4 px-6 font-montserrat">
       {showDivider && (
-        <span className="absolute left-0 top-1/2 hidden h-[86px] w-px -translate-y-1/2 bg-[#D9D9E8] lg:block" />
+        <span className="absolute left-0 top-1/2 hidden h-[86px] w-px -translate-y-1/2 bg-border lg:block" />
       )}
-      <span className="flex h-[58px] w-[58px] shrink-0 items-center justify-center rounded-full border border-[#C7C7D8] bg-[#F3F3FA] text-blue">
+      <span className="flex h-[58px] w-[58px] shrink-0 items-center justify-center rounded-full border border-border bg-navy-soft text-blue">
         <item.icon size={27} fill="currentColor" strokeWidth={1.8} />
       </span>
       <div>
@@ -140,12 +140,12 @@ function ContactInfoCard({ item, showDivider }) {
         {item.href ? (
           <a
             href={item.href}
-            className="mt-1 block text-base font-bold text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
+            className="mt-1 block text-base font-bold text-ink transition-all duration-300 ease-in-out hover:text-gold"
           >
             {item.value}
           </a>
         ) : (
-          <p className="mt-1 max-w-[320px] text-sm font-medium leading-6 text-[#2E2E2E]">
+          <p className="mt-1 max-w-[320px] text-sm font-medium leading-6 text-ink">
             {item.value}
           </p>
         )}
@@ -160,11 +160,11 @@ function FramedPanel({ title, description, icon: Icon, buttonText, href, variant
   return (
     <section
       className={`relative overflow-hidden border bg-white px-6 py-9 text-center font-montserrat sm:px-10 ${
-        isBlue ? "border-[#C7C7D8]" : "border-[#D4A33B]"
+        isBlue ? "border-border" : "border-gold"
       }`}
     >
       <h3 className="text-xl font-bold text-blue sm:text-2xl">{title}</h3>
-      <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-[#787878]">
+      <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-muted">
         {description}
       </p>
       {href && (
@@ -174,19 +174,19 @@ function FramedPanel({ title, description, icon: Icon, buttonText, href, variant
           onClick={() => { window.location.href = href; }}
           className={`mt-6 min-w-[250px] ${
             isBlue
-              ? "!bg-blue !text-white hover:!bg-[#1b1a62]"
-              : "!bg-[#CE9F2D] !text-white hover:!bg-[#A26D27]"
+              ? "!bg-blue !text-white hover:!bg-navy-dark"
+              : "!bg-gold !text-white hover:!bg-gold-dark"
           }`}
           icon={
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white">
-              <Icon size={21} className={isBlue ? "text-blue" : "text-[#CE9F2D]"} />
+              <Icon size={21} className={isBlue ? "text-blue" : "text-gold"} />
             </span>
           }
         >
           {buttonText}
         </Button>
       )}
-      <span className="pointer-events-none absolute -bottom-7 right-3 font-serif text-[92px] leading-none text-[#D4A33B]/10">
+      <span className="pointer-events-none absolute -bottom-7 right-3 font-serif text-[92px] leading-none text-gold/10">
         SG
       </span>
     </section>
@@ -198,18 +198,18 @@ function CommitmentBand({ commitmentTitle, commitmentDescription, closingTitle }
     <section className="relative left-1/2 w-screen -translate-x-1/2">
       <div className="grid min-h-[145px] font-montserrat lg:grid-cols-2">
         {commitmentTitle && (
-          <div className="bg-[#F3F3FA] px-[7%] py-9">
+          <div className="bg-navy-soft px-[7%] py-9">
             <h3 className="text-xl font-bold text-blue">{commitmentTitle}</h3>
             {commitmentDescription && (
-              <p className="mt-5 text-sm leading-7 text-[#787878]">
+              <p className="mt-5 text-sm leading-7 text-muted">
                 {commitmentDescription}
               </p>
             )}
           </div>
         )}
         {closingTitle && (
-          <div className="bg-[#FAF6EE] px-[7%] py-9">
-            <p className="text-2xl font-bold leading-snug text-[#A26D27] sm:text-3xl">
+          <div className="bg-cream px-[7%] py-9">
+            <p className="text-2xl font-bold leading-snug text-gold-dark sm:text-3xl">
               {closingTitle}
             </p>
           </div>
@@ -290,7 +290,7 @@ export default function ContactUs() {
             <Button
               rounded
               size="lg"
-              className="!bg-blue !px-8 !text-white hover:!bg-[#1b1a62]"
+              className="!bg-blue !px-8 !text-white hover:!bg-navy-dark"
               onClick={() => { window.location.href = page.cta.url; }}
             >
               {page.cta.label}
@@ -300,7 +300,7 @@ export default function ContactUs() {
       </section>
 
       {(contactInfoSec || contactItems.length > 0) && (
-        <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#F3F3FA] py-12">
+        <section className="relative left-1/2 w-screen -translate-x-1/2 bg-navy-soft py-12">
           <div className="w-container">
             <SectionIntro
               title={contactInfoSec?.title || ""}

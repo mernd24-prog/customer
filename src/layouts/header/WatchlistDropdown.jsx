@@ -11,7 +11,7 @@ export default function WatchlistDropdown({ title, items, onRemove }) {
 
   return (
     <DropdownContainer>
-      <DropdownHeader  title={title} actionText="View all" actionPath="/watchlist"/>
+      <DropdownHeader title={title} actionText="View all" actionPath="/watchlist" />
 
       <div className="max-h-[420px] overflow-y-auto">
         {items.length > 0 ? (
@@ -25,8 +25,8 @@ export default function WatchlistDropdown({ title, items, onRemove }) {
           ))
         ) : (
           <div className="flex flex-col items-center justify-center px-6 py-10">
-            <Heart size={28} className="mb-3 text-gray-300" aria-hidden="true" />
-            <p className="text-center text-[13px] text-black">
+            <Heart size={28} className="mb-3 text-[var(--customer-border-strong)]" aria-hidden="true" />
+            <p className="text-center text-[13px] text-[var(--customer-muted)]">
               You are not watching any items yet.
             </p>
             <Button

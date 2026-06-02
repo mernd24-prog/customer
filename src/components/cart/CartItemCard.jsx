@@ -19,25 +19,22 @@ export default function CartItemCard({
   const productPath = item.productId ? `/products/${item.productId}` : "";
 
   return (
-    <div className="rounded-2xl border border-[#e9e8e8] bg-white p-4 sm:p-6 font-['Montserrat']">
-      {/* Seller Info */}
+    <div className="customer-card p-4 font-montserrat sm:p-5">
       <SellerInfo seller={item.seller} feedback={item.feedback} />
 
-      {/* Main Layout */}
       <div className="flex flex-col gap-6 md:flex-row">
-        <label className="flex items-start gap-2 font-montserrat text-sm font-semibold text-[#2E2E2E] md:pt-2">
+        <label className="flex items-start gap-2 font-montserrat text-sm font-semibold text-[var(--customer-ink)] md:pt-2">
           <input
             type="checkbox"
             checked={selected}
             onChange={(event) => onSelect?.(item.id, event.target.checked)}
-            className="mt-1 h-4 w-4 rounded border-[#cfc6b8] accent-[#CE9F2D]"
+            className="mt-1 h-4 w-4 rounded border-[var(--customer-border-strong)] accent-[var(--customer-gold)]"
           />
           <span className="sr-only">Select {item.title} for checkout</span>
         </label>
 
-        {/* Image */}
         {item.image && (
-          <div className="mx-auto h-[220px] w-full max-w-[220px] overflow-hidden rounded-xl sm:h-[250px] sm:max-w-[250px] md:mx-0 md:h-[180px] md:w-[180px]">
+          <div className="mx-auto h-[220px] w-full max-w-[220px] overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)] sm:h-[250px] sm:max-w-[250px] md:mx-0 md:h-[180px] md:w-[180px]">
             {productPath ? (
               <Link to={productPath} aria-label={`View details for ${item.title}`}>
                 <img
@@ -58,43 +55,36 @@ export default function CartItemCard({
           </div>
         )}
 
-        {/* Content */}
         <div className="flex-1">
-          {/* Sold Count */}
           {item.sold && <Badge>{item.sold} Sold</Badge>}
-          {/* Title */}
           {productPath ? (
             <Link
               to={productPath}
-              className="block text-base font-medium leading-7 text-[#050404] underline transition-all duration-300 ease-in-out hover:text-[#CE9F2D] sm:text-lg"
+              className="block text-base font-semibold leading-7 text-[var(--customer-ink)] underline-offset-2 transition-all duration-300 ease-in-out hover:text-[var(--customer-gold-dark)] hover:underline sm:text-lg"
             >
               {item.title}
             </Link>
           ) : (
-            <h3 className="text-base font-medium leading-7 text-[#050404] sm:text-lg">
+            <h3 className="text-base font-semibold leading-7 text-[var(--customer-ink)] sm:text-lg">
               {item.title}
             </h3>
           )}
 
-          {/* Details */}
-          <div className=" flex flex-col">
-            {/* Condition */}
+          <div className="flex flex-col">
             {item.condition && (
-              <span className="text-[13px] font-medium text-[#555454]">
+              <span className="text-[13px] font-medium text-[var(--customer-muted)]">
                 {item.condition}
               </span>
             )}
 
-            {/* Color */}
             {item.color && (
-              <span className="text-[13px] font-medium text-[#555454]">
+              <span className="text-[13px] font-medium text-[var(--customer-muted)]">
                 Color: {item.color}
               </span>
             )}
 
-            {/* Size */}
             {item.size && (
-              <span className="text-[13px] font-medium text-[#555454]">
+              <span className="text-[13px] font-medium text-[var(--customer-muted)]">
                 Size: {item.size}
               </span>
             )}
@@ -102,58 +92,49 @@ export default function CartItemCard({
             {Object.entries(item.attributes || {})
               .filter(([key]) => !["color", "size"].includes(key))
               .map(([key, value]) => (
-                <span key={key} className="text-[13px] font-medium capitalize text-[#555454]">
+                <span key={key} className="text-[13px] font-medium capitalize text-[var(--customer-muted)]">
                   {key.replace(/_/g, " ")}: {String(value)}
                 </span>
               ))}
           </div>
 
-          {/* Pricing */}
-          <div className="">
-            {/* Pricing */}
+          <div>
             <div className="mt-2 flex flex-col">
-              {/* Current Price */}
-              <span className="text-base font-semibold text-[#111] sm:text-lg md:text-xl">
+              <span className="text-base font-bold text-[var(--customer-navy)] sm:text-lg md:text-xl">
                 {formatMoney(item.price)}
               </span>
 
-              {/* Old Price */}
               {item.oldPrice && (
-                <span className="text-[11px] font-medium line-through text-[#A6A6A6] sm:text-xs">
+                <span className="text-[11px] font-medium line-through text-[var(--customer-subtle)] sm:text-xs">
                   {formatMoney(item.oldPrice)}
                 </span>
               )}
             </div>
 
-            {/* Shipping */}
             {shippingAmount > 0 ? (
               <div className="mt-1 flex flex-col gap-1">
-                <span className="text-sm font-medium text-[#111] sm:text-base">
+                <span className="text-sm font-semibold text-[var(--customer-ink)] sm:text-base">
                   + {formatMoney(shippingAmount)}
                 </span>
 
-                <span className="text-[14px] font-medium text-[#555454] sm:text-sm">
+                <span className="text-[14px] font-medium text-[var(--customer-muted)] sm:text-sm">
                   Shipping
                 </span>
               </div>
             ) : null}
 
-            {/* Returns */}
-            <span className="mt-1 block text-[14px] font-medium text-[#555454] sm:text-sm">
+            <span className="mt-1 block text-[14px] font-medium text-[var(--customer-muted)] sm:text-sm">
               Returns accepted
             </span>
           </div>
 
-          {/* Quantity */}
           <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-            {/* Quantity */}
             <QuantitySelector
               quantity={item.quantity}
               onIncrease={() => onIncrease(item.id)}
               onDecrease={() => onDecrease(item.id)}
             />
 
-            {/* Actions */}
             <CartActionButtons
               BuyNow="Buy it now"
               SaveForLater="Save for later"
@@ -161,7 +142,6 @@ export default function CartItemCard({
               onRemove={() => onRemove(item.id)}
               onSaveForLater={() => onSaveForLater(item.id)}
               onBuyNow={() => onBuyNow?.(item.id)}
-              
             />
           </div>
         </div>

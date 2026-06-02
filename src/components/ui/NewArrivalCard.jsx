@@ -13,16 +13,16 @@ export default function NewArrivalCard({
     return (
         <Link to={link} className="block">
             <article
-                className="relative h-full min-w-0 rounded-[12px] bg-white px-3 pb-4 pt-4 shadow-sm transition-all duration-300 ease-in-out hover:shadow-lg sm:px-4 sm:pb-5 sm:pt-5"
+                className="customer-card relative h-full min-w-0 px-3 pb-4 pt-4 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]"
             >
                 <h3
-                    className="mx-auto w-full max-w-[90%] overflow-hidden text-ellipsis whitespace-nowrap text-center font-montserrat text-[13px] font-medium leading-6 text-[#2E2E2E] sm:text-[15px] md:text-[16px] lg:text-[17px] xl:text-[18px]"
+                    className="mx-auto w-full max-w-[90%] overflow-hidden text-ellipsis whitespace-nowrap text-center font-montserrat text-[13px] font-semibold leading-6 text-[var(--customer-ink)] sm:text-[15px]"
                     title={title}
                 >
                     {title}
                 </h3>
 
-                <p className="mt-3 font-montserrat text-[14px] font-medium leading-[24px] text-[#A6A6A6] sm:text-[15px] lg:text-[16px]">
+                <p className="mt-2 font-montserrat text-[12px] font-medium leading-5 text-[var(--customer-muted)]">
                     {views} Views
                 </p>
 
@@ -32,7 +32,7 @@ export default function NewArrivalCard({
                             <img
                                 src={img}
                                 alt={title}
-                                className="aspect-[238/273] w-full rounded-[8px] object-cover sm:rounded-[10px] md:rounded-[12px]"
+                                className="aspect-[238/273] w-full rounded-[var(--customer-radius)] object-cover"
                             />
 
                             <PricePill

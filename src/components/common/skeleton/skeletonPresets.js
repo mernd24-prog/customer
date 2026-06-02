@@ -53,7 +53,7 @@ export const SKELETON_PRESETS = {
     },
     {
       type: "row",
-      className: "mt-3 justify-between border-b border-[#E9E9E9] pb-2",
+      className: "mt-3 justify-between border-b border-border pb-2",
       children: [
         { type: "box", width: "112px", height: "12px" },
         { type: "box", width: "72px", height: "12px" },
@@ -311,7 +311,7 @@ export const SKELETON_PRESETS = {
   HERO_CARDS: [
     {
       type: "col",
-      className: "relative h-[250px] overflow-hidden rounded-2xl",
+      className: "relative h-[250px] overflow-hidden rounded-[var(--customer-radius)]",
       children: [
         { type: "box", height: "100%", width: "100%" }, // Image area
         {

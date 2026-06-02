@@ -15,10 +15,10 @@ export default function AppLayout() {
   const cartItems = useSelector((state) => state.cart.current?.items ?? EMPTY_ITEMS);
 
   return (
-    <div className="app-shell">
+    <div className="customer-shell app-shell">
       <Header />
 
-      <main className="main-content" style={{ width: "90%" }}>
+      <main className="main-content customer-container">
         <Outlet />
       </main>
       <Footer />

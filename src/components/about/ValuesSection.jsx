@@ -18,7 +18,7 @@ export default function ValuesSection({ data }) {
           preset="CATEGORY_CARD"
           count={3}
           containerClass="grid grid-cols-1 gap-4 sm:grid-cols-2  lg:grid-cols-3 mt-4"
-          wrapperClass="rounded-[20px] border border-card-border bg-white p-2"
+          wrapperClass="rounded-[var(--customer-radius)] border border-card-border bg-white p-2"
         />
       ) : (
         <div className="flex justify-center gap-8 my-8 flex-wrap ">

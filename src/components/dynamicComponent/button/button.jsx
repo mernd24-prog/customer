@@ -30,10 +30,10 @@ export const DynamicButton = React.forwardRef(
 
     const variants = {
       primary:
-        "bg-gradient-to-l from-[#A26D27] to-[#CE9F2D] text-white rounded-full shadow-sm hover:shadow-md",
+        "bg-gradient-to-l from-gold-dark to-gold text-navy rounded-full shadow-sm hover:shadow-md",
       secondary:
-        "bg-gray-100 text-gray-900 hover:bg-gray-200 focus-visible:ring-gray-500",
-      outline: "border-2 border-[#A26D27] text-black",
+        "bg-cream text-navy hover:bg-gold-soft focus-visible:ring-gold",
+      outline: "border border-gold-dark text-navy",
       danger:
         "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600",
     };
@@ -48,7 +48,7 @@ export const DynamicButton = React.forwardRef(
 
     const shapes = {
       square: "rounded-none",
-      rounded: "rounded-2xl",
+      rounded: "rounded-[var(--customer-radius)]",
       circle: "rounded-full",
     };
 

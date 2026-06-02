@@ -24,11 +24,11 @@ export default function AddressLabel({ address, showIcon = false, className = ""
     <div className={className}>
       <div className="flex flex-wrap items-center gap-2">
         {showIcon && (
-          <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#FAF6EE] text-[#CE9F2D]">
+          <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cream text-gold">
             {getIcon()}
           </span>
         )}
-        <span className="break-words text-sm font-semibold text-[#2E2E2E] capitalize">
+        <span className="break-words text-sm font-semibold text-ink capitalize">
           {labelText}
         </span>
         {address.isDefault && (
@@ -37,10 +37,10 @@ export default function AddressLabel({ address, showIcon = false, className = ""
           </span>
         )}
       </div>
-      <p className="mt-3 break-words text-sm font-medium text-[#2E2E2E]">
+      <p className="mt-3 break-words text-sm font-medium text-ink">
         {address.fullName} {address.phone ? `- ${address.phone}` : ""}
       </p>
-      <p className="mt-1 break-words text-sm leading-6 text-[#787878]">
+      <p className="mt-1 break-words text-sm leading-6 text-muted">
         {address.line1}
         {address.line2 ? `, ${address.line2}` : ""}, {address.city},{" "}
         {address.state} {postalCode}, {country}

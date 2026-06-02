@@ -754,7 +754,7 @@ export default function CheckoutPage() {
       <Seo title="Checkout | Sam Global" />
 
       <div className="w-container py-8 sm:py-10">
-        <h1 className="mb-8 font-montserrat text-2xl font-bold text-[#2E2E2E] sm:text-3xl">
+        <h1 className="mb-8 font-montserrat text-2xl font-bold text-ink sm:text-3xl">
           Checkout
         </h1>
 

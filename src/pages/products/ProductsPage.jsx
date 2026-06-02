@@ -249,12 +249,12 @@ export default function ProductsPage() {
       key: "inStock",
       title: "Availability",
       content: (
-        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-[#2E2E2E]">
+        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-ink">
           <input
             type="checkbox"
             checked={searchParams.get("inStock") === "true"}
             onChange={(e) => updateParam("inStock", e.target.checked ? "true" : undefined)}
-            className="h-3.5 w-3.5 accent-[#CE9F2D]"
+            className="h-3.5 w-3.5 accent-gold"
           />
           In Stock Only
         </label>
@@ -270,7 +270,7 @@ export default function ProductsPage() {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <PageHeader title={pageTitle} className="mb-0" />
-            <p className="mt-0.5 font-montserrat text-sm text-[#787878]">{(pageInfo.total || products.length).toLocaleString()} products</p>
+            <p className="mt-0.5 font-montserrat text-sm text-muted">{(pageInfo.total || products.length).toLocaleString()} products</p>
           </div>
           <CollectionToolbar
             sortValue={searchParams.get("sort") || ""}
@@ -281,13 +281,13 @@ export default function ProductsPage() {
             onPageSizeChange={(value) => updateParam("limit", value)}
             onOpenFilters={() => setSidebarOpen(true)}
             viewControls={(
-              <div className="hidden items-center gap-0.5 rounded-[6px] border border-[#cfc6b8] bg-white p-1 sm:flex">
+              <div className="hidden items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
                 <button type="button" onClick={() => setViewMode("grid")}
-                  className={`rounded p-1.5 transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-[#CE9F2D] text-white" : "text-[#A6A6A6] hover:text-[#2E2E2E]"}`}>
+                  className={`rounded p-1.5 transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}>
                   <Grid2X2 size={15} />
                 </button>
                 <button type="button" onClick={() => setViewMode("list")}
-                  className={`rounded p-1.5 transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-[#CE9F2D] text-white" : "text-[#A6A6A6] hover:text-[#2E2E2E]"}`}>
+                  className={`rounded p-1.5 transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}>
                   <List size={15} />
                 </button>
               </div>

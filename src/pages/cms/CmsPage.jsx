@@ -11,7 +11,7 @@ function CmsContent({ body }) {
   if (!body) return null;
   return (
     <div
-      className=" cms-content font-montserrat leading-relaxed text-[#787878] [&_h1]:mt-8 [&_h1]:mb-4 [&_h1]:font-montserrat [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-[#2E2E2E] [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:font-montserrat [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-[#2E2E2E] [&_h3]:mt-5 [&_h3]:mb-2 [&_h3]:font-montserrat [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-[#2E2E2E] [&_h4]:mt-4 [&_h4]:mb-2 [&_h4]:font-montserrat [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:text-[#2E2E2E] [&_p]:mb-4 [&_p]:leading-7 [&_a]:font-semibold [&_a]:text-[#CE9F2D] [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-[#A26D27] [&_strong]:font-bold [&_strong]:text-[#2E2E2E] [&_em]:italic [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1 [&_blockquote]:my-4 [&_blockquote]:rounded-r-[8px] [&_blockquote]:border-l-4 [&_blockquote]:border-[#CE9F2D] [&_blockquote]:bg-[#FAF6EE] [&_blockquote]:px-4 [&_blockquote]:py-3 [&_blockquote]:italic [&_img]:my-6 [&_img]:max-w-full [&_img]:rounded-[12px] [&_hr]:my-8 [&_hr]:border-[#e7dfd1] [&_table]:my-4 [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-[#e7dfd1] [&_th]:bg-[#FAF6EE] [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-montserrat [&_th]:font-semibold [&_th]:text-[#2E2E2E] [&_td]:border [&_td]:border-[#e7dfd1] [&_td]:px-3 [&_td]:py-2 [&_code]:rounded [&_code]:bg-[#F5ECDD] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:text-[#A26D27] [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-[8px] [&_pre]:bg-[#2E2E2E] [&_pre]:p-4 [&_pre]:text-white"
+      className=" cms-content font-montserrat leading-relaxed text-muted [&_h1]:mt-8 [&_h1]:mb-4 [&_h1]:font-montserrat [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-ink [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:font-montserrat [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-ink [&_h3]:mt-5 [&_h3]:mb-2 [&_h3]:font-montserrat [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-ink [&_h4]:mt-4 [&_h4]:mb-2 [&_h4]:font-montserrat [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:text-ink [&_p]:mb-4 [&_p]:leading-7 [&_a]:font-semibold [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-gold-dark [&_strong]:font-bold [&_strong]:text-ink [&_em]:italic [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1 [&_blockquote]:my-4 [&_blockquote]:rounded-r-[8px] [&_blockquote]:border-l-4 [&_blockquote]:border-gold [&_blockquote]:bg-cream [&_blockquote]:px-4 [&_blockquote]:py-3 [&_blockquote]:italic [&_img]:my-6 [&_img]:max-w-full [&_img]:rounded-[12px] [&_hr]:my-8 [&_hr]:border-border [&_table]:my-4 [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-border [&_th]:bg-cream [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-montserrat [&_th]:font-semibold [&_th]:text-ink [&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_code]:rounded [&_code]:bg-gold-soft [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:text-gold-dark [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-[8px] [&_pre]:bg-ink [&_pre]:p-4 [&_pre]:text-white"
       dangerouslySetInnerHTML={{ __html: body }}
     />
   );
@@ -52,20 +52,20 @@ export default function CmsPage({ slugOverride = "" }) {
       <Seo title={`${title} | Sam Global`} description={description} />
 
       {/* Page header band */}
-      <div className="border-b border-[#e7dfd1] bg-[#FAF6EE] px-4 py-6 sm:px-6">
+      <div className="border-b border-border bg-cream px-4 py-6 sm:px-6">
         <div className="w-container">
-          <nav className="mb-2 flex items-center gap-1 font-montserrat text-xs text-[#A6A6A6]">
-            <Link to="/" className="hover:text-[#2E2E2E]">
+          <nav className="mb-2 flex items-center gap-1 font-montserrat text-xs text-gray">
+            <Link to="/" className="hover:text-ink">
               Home
             </Link>
             <span>/</span>
             {category && (
               <>
-                <span className="capitalize text-[#787878]">{category}</span>
+                <span className="capitalize text-muted">{category}</span>
                 <span>/</span>
               </>
             )}
-            <span className="line-clamp-1 text-[#2E2E2E]">{title}</span>
+            <span className="line-clamp-1 text-ink">{title}</span>
           </nav>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default function CmsPage({ slugOverride = "" }) {
             <div className="mx-auto max-w-3xl">
               {/* Cover image */}
               {coverImage && (
-                <div className="mb-8 overflow-hidden  rounded-[16px]">
+                <div className="mb-8 overflow-hidden  rounded-[var(--customer-radius)]">
                   <img
                     src={coverImage}
                     alt={title}
@@ -94,33 +94,33 @@ export default function CmsPage({ slugOverride = "" }) {
 
               {/* Category badge */}
               {category && (
-                <span className="chip mb-3 inline-block text-xs font-semibold uppercase tracking-wide">
+                <span className="chip mb-3 inline-block text-xs font-semibold uppercase tracking-normal">
                   {category}
                 </span>
               )}
 
               {/* Title */}
-              <h1 className="font-montserrat  text-3xl font-bold leading-tight text-[#2E2E2E] sm:text-[36px]">
+              <h1 className="font-montserrat  text-3xl font-bold leading-tight text-ink sm:text-[36px]">
                 {page.title}
               </h1>
 
               {/* Excerpt */}
               {(page.excerpt || page.description) && (
-                <p className="mt-3 font-montserrat  text-[17px] leading-relaxed text-[#787878]">
+                <p className="mt-3 font-montserrat  text-[17px] leading-relaxed text-muted">
                   {page.excerpt || page.description}
                 </p>
               )}
 
               {/* Meta row */}
-              <div className="mt-5  flex flex-wrap items-center gap-4 border-b border-[#e7dfd1] pb-6">
+              <div className="mt-5  flex flex-wrap items-center gap-4 border-b border-border pb-6">
                 {author && (
                   <div className="flex items-center gap-2 ">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#CE9F2D] font-montserrat text-xs font-bold text-white">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gold font-montserrat text-xs font-bold text-white">
                       {(typeof author === "string"
                         ? author
                         : author?.name || "A")[0]?.toUpperCase()}
                     </div>
-                    <span className="font-montserrat text-sm font-medium text-[#2E2E2E]">
+                    <span className="font-montserrat text-sm font-medium text-ink">
                       {typeof author === "string"
                         ? author
                         : author?.name || "Admin"}
@@ -128,7 +128,7 @@ export default function CmsPage({ slugOverride = "" }) {
                   </div>
                 )}
                 {publishedAt && (
-                  <div className="flex items-center gap-1 font-montserrat text-xs text-[#A6A6A6]">
+                  <div className="flex items-center gap-1 font-montserrat text-xs text-gray">
                     <Calendar size={13} />
                     {new Date(publishedAt).toLocaleDateString("en-IN", {
                       day: "numeric",
@@ -138,13 +138,13 @@ export default function CmsPage({ slugOverride = "" }) {
                   </div>
                 )}
                 {readTime && (
-                  <div className="flex items-center gap-1 font-montserrat text-xs text-[#A6A6A6]">
+                  <div className="flex items-center gap-1 font-montserrat text-xs text-gray">
                     <Clock size={13} />
                     {readTime} min read
                   </div>
                 )}
                 {updatedAt && updatedAt !== publishedAt && (
-                  <span className="font-montserrat text-xs text-[#A6A6A6]">
+                  <span className="font-montserrat text-xs text-gray">
                     Updated {new Date(updatedAt).toLocaleDateString("en-IN")}
                   </span>
                 )}
@@ -156,8 +156,8 @@ export default function CmsPage({ slugOverride = "" }) {
               </div>
 
               {points.length > 0 && (
-                <div className="mt-8 rounded-[12px] border border-[#e7dfd1] bg-[#fffdf8] p-5">
-                  <h2 className="mb-3 font-montserrat text-xl font-semibold text-[#2E2E2E]">
+                <div className="mt-8 rounded-[12px] border border-border bg-surface-soft p-5">
+                  <h2 className="mb-3 font-montserrat text-xl font-semibold text-ink">
                     Highlights
                   </h2>
                   <div className="space-y-3">
@@ -174,11 +174,11 @@ export default function CmsPage({ slugOverride = "" }) {
                           />
                         ) : null}
                         <div>
-                          <p className="font-montserrat text-sm font-semibold text-[#2E2E2E]">
+                          <p className="font-montserrat text-sm font-semibold text-ink">
                             {point?.title}
                           </p>
                           {point?.description ? (
-                            <p className="font-montserrat text-sm text-[#787878]">
+                            <p className="font-montserrat text-sm text-muted">
                               {point.description}
                             </p>
                           ) : null}
@@ -205,8 +205,8 @@ export default function CmsPage({ slugOverride = "" }) {
 
               {/* Tags */}
               {page.tags?.length > 0 && (
-                <div className="mt-10 flex flex-wrap items-center gap-2 border-t border-[#e7dfd1] pt-6">
-                  <Tag size={13} className="text-[#A6A6A6]" />
+                <div className="mt-10 flex flex-wrap items-center gap-2 border-t border-border pt-6">
+                  <Tag size={13} className="text-gray" />
                   {page.tags.map((tag) => (
                     <span key={tag} className="chip text-xs font-medium">
                       #{tag}
@@ -216,11 +216,11 @@ export default function CmsPage({ slugOverride = "" }) {
               )}
 
               {/* CTA block */}
-              <div className="mt-10 rounded-[16px] bg-[#2E2E2E] px-8 py-10 text-center">
+              <div className="mt-10 rounded-[var(--customer-radius)] bg-ink px-8 py-10 text-center">
                 <p className="font-montserrat text-xl font-bold text-white">
                   Ready to start shopping?
                 </p>
-                <p className="mt-1 font-montserrat text-sm text-[#A6A6A6]">
+                <p className="mt-1 font-montserrat text-sm text-gray">
                   Discover thousands of products at Sam Global.
                 </p>
                 <div className="mt-5 flex justify-center">

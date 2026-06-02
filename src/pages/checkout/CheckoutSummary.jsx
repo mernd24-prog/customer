@@ -49,11 +49,11 @@ export default function CheckoutSummary({
 
   return (
     <aside className="min-w-0">
-      <div className="sticky top-4 w-full overflow-hidden rounded-lg border border-[#e7dfd1] bg-white p-5">
-        <h2 className="mb-4 font-montserrat text-base font-semibold text-[#2E2E2E]">
+      <div className="sticky top-4 w-full overflow-hidden rounded-lg border border-border bg-white p-5">
+        <h2 className="mb-4 font-montserrat text-base font-semibold text-ink">
           Order summary
         </h2>
-        <div className="grid divide-y divide-[#e7dfd1]">
+        <div className="grid divide-y divide-border">
           {items.map((item) => (
             <div
               key={item._lineKey}
@@ -62,26 +62,26 @@ export default function CheckoutSummary({
               <img
                 src={item._image}
                 alt={item._safeTitle}
-                className="h-14 w-14 shrink-0 rounded-[8px] bg-[#FAF6EE] object-cover"
+                className="h-14 w-14 shrink-0 rounded-[8px] bg-cream object-cover"
                 loading="lazy"
               />
               <div className="min-w-0 flex-1">
                 <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
                   <div className="min-w-0">
-                    <p className="truncate font-medium text-[#2E2E2E]">
+                    <p className="truncate font-medium text-ink">
                       {item._safeTitle}
                     </p>
                     {item._variantTitle ? (
-                      <p className="mt-0.5 truncate text-xs text-[#787878]">
+                      <p className="mt-0.5 truncate text-xs text-muted">
                         {item._variantTitle}
                       </p>
                     ) : null}
-                    <p className="mt-1 text-xs text-[#787878]">
+                    <p className="mt-1 text-xs text-muted">
                       Qty: {item.quantity} ·{" "}
                       {formatMoney(item.price, "INR")}
                     </p>
                   </div>
-                  <span className="whitespace-nowrap text-right font-medium text-[#2E2E2E]">
+                  <span className="whitespace-nowrap text-right font-medium text-ink">
                     {formatMoney(item._lineTotal, "INR")}
                   </span>
                 </div>
@@ -90,7 +90,7 @@ export default function CheckoutSummary({
                     {item._attributes.map(([key, value]) => (
                       <span
                         key={key}
-                        className="rounded-full bg-[#FAF6EE] px-2 py-0.5 text-[11px] capitalize text-[#787878]"
+                        className="rounded-full bg-cream px-2 py-0.5 text-[11px] capitalize text-muted"
                       >
                         {key.replace(/[_-]/g, " ")}: {String(value)}
                       </span>
@@ -102,8 +102,8 @@ export default function CheckoutSummary({
           ))}
         </div>
 
-        <div className="mt-4 border-t border-[#e7dfd1] pt-4">
-          <div className="flex justify-between text-sm text-[#787878]">
+        <div className="mt-4 border-t border-border pt-4">
+          <div className="flex justify-between text-sm text-muted">
             <span>Items ({items.length})</span>
             <span>{formatMoney(quoteSubtotal, "INR")}</span>
           </div>
@@ -113,24 +113,24 @@ export default function CheckoutSummary({
               <span>-{formatMoney(quoteDiscount, "INR")}</span>
             </div>
           ) : null}
-          <div className="mt-1 flex justify-between text-sm text-[#787878]">
+          <div className="mt-1 flex justify-between text-sm text-muted">
             <span>Shipping</span>
             <span>{formatMoney(shipping, "INR")}</span>
           </div>
           {taxPayable > 0 ? (
-            <div className="mt-1 flex justify-between text-sm text-[#787878]">
+            <div className="mt-1 flex justify-between text-sm text-muted">
               <span>GST added</span>
               <span>{formatMoney(taxPayable, "INR")}</span>
             </div>
           ) : null}
           {taxIncluded > 0 ? (
-            <div className="mt-1 flex justify-between text-sm text-[#787878]">
+            <div className="mt-1 flex justify-between text-sm text-muted">
               <span>GST included</span>
               <span>{formatMoney(taxIncluded, "INR")}</span>
             </div>
           ) : null}
           {codCharge > 0 ? (
-            <div className="mt-1 flex justify-between text-sm text-[#787878]">
+            <div className="mt-1 flex justify-between text-sm text-muted">
               <span>COD charge</span>
               <span>{formatMoney(codCharge, "INR")}</span>
             </div>
@@ -141,16 +141,16 @@ export default function CheckoutSummary({
               <span>-{formatMoney(quoteWallet, "INR")}</span>
             </div>
           ) : null}
-          <div className="mt-4 flex justify-between border-t border-[#e7dfd1] pt-4 font-semibold text-[#2E2E2E]">
+          <div className="mt-4 flex justify-between border-t border-border pt-4 font-semibold text-ink">
             <span>Payable</span>
             <span>{formatMoney(quotePayable, "INR")}</span>
           </div>
-          {quoteLoading ? <p className="mt-2 text-xs text-[#A6A6A6]">Calculating final order amount...</p> : null}
+          {quoteLoading ? <p className="mt-2 text-xs text-gray">Calculating final order amount...</p> : null}
           {quoteError ? <p className="mt-2 text-xs text-red-600">{quoteError}</p> : null}
         </div>
 
-        <div className="mt-5 border-t border-[#e7dfd1] pt-4">
-          <h3 className="mb-3 font-montserrat text-sm font-semibold text-[#2E2E2E]">
+        <div className="mt-5 border-t border-border pt-4">
+          <h3 className="mb-3 font-montserrat text-sm font-semibold text-ink">
             Payment method
           </h3>
 
@@ -164,8 +164,8 @@ export default function CheckoutSummary({
                     key={option.provider}
                     className={`flex cursor-pointer items-center gap-3 rounded-[8px] border px-3 py-3 text-sm transition ${
                       isSelected
-                        ? "border-[#CE9F2D] bg-[#FAF6EE]"
-                        : "border-[#e7dfd1] bg-white"
+                        ? "border-gold bg-cream"
+                        : "border-border bg-white"
                     } ${option.enabled ? "" : "cursor-not-allowed opacity-50"}`}
                   >
                     <input
@@ -177,16 +177,16 @@ export default function CheckoutSummary({
                       onChange={(event) =>
                         onPaymentProviderChange?.(event.target.value)
                       }
-                      className="h-4 w-4 accent-[#CE9F2D]"
+                      className="h-4 w-4 accent-gold"
                     />
-                    <Icon size={18} className="shrink-0 text-[#CE9F2D]" />
+                    <Icon size={18} className="shrink-0 text-gold" />
                     <span className="min-w-0 flex-1">
-                      <span className="block font-medium text-[#2E2E2E]">
+                      <span className="block font-medium text-ink">
                         {option.label ||
                           getPaymentProviderLabel?.(option.provider)}
                       </span>
                       {Number(option.chargeAmount || 0) > 0 ? (
-                        <span className="block text-xs text-[#787878]">
+                        <span className="block text-xs text-muted">
                           Charge: {formatMoney(option.chargeAmount, "INR")}
                         </span>
                       ) : null}
@@ -196,7 +196,7 @@ export default function CheckoutSummary({
               })}
             </div>
           ) : (
-            <div className="rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-3 py-3 text-sm text-[#787878]">
+            <div className="rounded-[8px] border border-border bg-cream px-3 py-3 text-sm text-muted">
               {paymentOptionsLoading
                 ? "Loading payment methods..."
                 : "Payment methods are not available right now."}
@@ -213,7 +213,7 @@ export default function CheckoutSummary({
           <CreditCard size={16} /> {buttonLabel}
         </Button>
 
-        <p className="mt-3 text-center text-xs text-[#A6A6A6]">
+        <p className="mt-3 text-center text-xs text-gray">
           Selected method: {selectedLabel}
         </p>
       </div>

@@ -8,8 +8,8 @@ export default function DiscountsSection({
   walletBalance,
 }) {
   return (
-    <section className="rounded-[12px] border border-[#e7dfd1] bg-white p-5">
-      <h2 className="mb-4 font-montserrat text-base font-semibold text-[#2E2E2E]">
+    <section className="rounded-[12px] border border-border bg-white p-5">
+      <h2 className="mb-4 font-montserrat text-base font-semibold text-ink">
         Discounts
       </h2>
       <div className="grid gap-4">
@@ -31,7 +31,7 @@ export default function DiscountsSection({
             max={walletBalance}
             placeholder="0"
             {...register("walletAmount")}
-            className="min-h-11 rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-[#2E2E2E] outline-none transition-all duration-300 ease-in-out placeholder:text-[#A6A6A6] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20"
+            className="min-h-11 rounded-[8px] border border-border-strong bg-white px-3 py-2.5 font-montserrat text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-gray focus:border-gold focus:ring-2 focus:ring-gold/20"
           />
           {errors.walletAmount?.message ? (
             <span className="min-h-4 font-montserrat text-xs font-normal text-red-600">

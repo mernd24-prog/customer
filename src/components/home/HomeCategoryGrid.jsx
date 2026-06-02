@@ -16,20 +16,20 @@ export default function HomeCategoryGrid({
         preset="CATEGORY_CARD"
         count={5}
         containerClass="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
-        wrapperClass="rounded-[20px] border border-card-border bg-white p-2"
+        wrapperClass="customer-card p-2"
       />
     );
   }
 
   return (
-    <div className="my-12">
+    <section className="my-8">
       {title && (
         <div className="mb-5 mt-8">
-          <h2 className="font-montserrat text-2xl font-bold text-[#2E2E2E]">{title}</h2>
-          {subtitle && <p className="mt-1 font-montserrat text-sm text-[#787878]">{subtitle}</p>}
+          <h2 className="customer-section-title font-montserrat text-[20px]">{title}</h2>
+          {subtitle && <p className="mt-1 font-montserrat text-xs text-[var(--customer-muted)]">{subtitle}</p>}
         </div>
       )}
-      <div className="grid grid-cols-1 gap-[1.5rem] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {categories.map((item, idx) => (
           <CategoryCard
             key={item.id ? item.id : item.categoryKey ? item.categoryKey : `idx-${idx}`}
@@ -41,6 +41,6 @@ export default function HomeCategoryGrid({
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 }

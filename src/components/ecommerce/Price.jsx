@@ -32,7 +32,7 @@ export default function Price({
       className={cn(
         "flex font-montserrat",
         layout === "pill"
-          ? "h-[34px] w-full max-w-[160px] items-center justify-evenly gap-1 rounded-full border border-[#CE9F2D] px-2"
+          ? "h-[32px] w-full max-w-[160px] items-center justify-evenly gap-1 rounded-full border border-[var(--customer-gold)] bg-white px-2"
           : "items-baseline gap-2",
         layout === "stacked" && "flex-col gap-0.5",
         className,
@@ -40,7 +40,7 @@ export default function Price({
     >
       <span
         className={cn(
-          "font-semibold leading-none text-[#2E2E2E]",
+          "font-semibold leading-none text-[var(--customer-ink)]",
           layout === "pill" ? "text-[12px] sm:text-[13px] lg:text-[14px] xl:text-[15px]" : "text-sm",
           priceClassName,
         )}
@@ -51,7 +51,7 @@ export default function Price({
       {hasDiscount && (
         <span
           className={cn(
-            "leading-none text-[#A26D27] line-through",
+            "leading-none text-[var(--customer-gold-dark)] line-through",
             layout === "pill" ? "text-[10px] sm:text-[11px] lg:text-[12px] xl:text-[13px]" : "text-xs",
             oldPriceClassName,
           )}
@@ -61,7 +61,7 @@ export default function Price({
       )}
 
       {showSavings && hasDiscount && (
-        <span className="text-xs font-medium text-[#14804A]">
+        <span className="text-xs font-medium text-[var(--customer-success)]">
           Save {formatMoney(savings, currency)}
         </span>
       )}

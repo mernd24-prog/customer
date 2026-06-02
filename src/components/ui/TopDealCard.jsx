@@ -10,10 +10,10 @@ export default function TopDealCard({
 }) {
   return (
     <Link to={link} className="block h-full">
-      <article className="flex h-full flex-col rounded-[12px] bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:shadow-xl sm:p-4 md:p-5">
+      <article className="customer-card flex h-full flex-col p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]">
         
         {/* Product Image */}
-        <div className="overflow-hidden rounded-[10px]">
+        <div className="overflow-hidden rounded-[var(--customer-radius)]">
           <img
             src={image}
             alt={title}
@@ -26,7 +26,7 @@ export default function TopDealCard({
           
           {/* Title */}
           <h3
-            className="line-clamp-2 text-center font-montserrat text-[13px] font-medium leading-5 text-[#2E2E2E] sm:text-left sm:text-[14px] md:text-[15px] lg:text-[16px]"
+            className="line-clamp-2 text-center font-montserrat text-[13px] font-semibold leading-5 text-[var(--customer-ink)] sm:text-left"
             title={title}
           >
             {title}

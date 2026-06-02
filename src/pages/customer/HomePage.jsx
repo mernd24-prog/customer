@@ -18,7 +18,6 @@ import ShowcaseSection from "../../components/home/ShowcaseSection";
 import TopDealCard from "../../components/ui/TopDealCard";
 import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import { reusableArrivalsDemo, reusableTopDealsDemo } from "../../data/topdeal";
-import { CategoryPriceCard } from "../../components/dynamicComponent/cards/static";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -89,16 +88,17 @@ export function HomePage() {
       <HomeCategoryGrid
         categories={categories?.slice(7, 12)}
         loading={false}
-        title="Time for a spring refresh"
+        title="Time for a Spring Refresh"
+        subtitle="Curated collections for every style and home"
       />
       <CollageMainSection />
 
       <section className=" my-10">
         <ShowcaseSection
-          title="Top Deals"
-          subtitle="Score the lowest prices on samglobal.com"
-          headerbgColor="bg-[#C9C9DB]"
-          bodybgColor="bg-[#F3F3FA]"
+          title="Featured Collections"
+          subtitle="Fresh edits across fashion, home, beauty and gifts"
+          headerbgColor="bg-white"
+          bodybgColor="bg-white"
           gridClassName="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4"
           items={reusableTopDealsDemo}
           CardComponent={TopDealCard}
@@ -106,9 +106,9 @@ export function HomePage() {
 
         <ShowcaseSection
           title="New Arrivals"
-          subtitle="Navigate trends with data-driven rankings"
-          headerbgColor="bg-[#ECDFCB]"
-          bodybgColor="bg-[#CE9F2D0D]"
+          subtitle="Newly added products with trend-driven rankings"
+          headerbgColor="bg-white"
+          bodybgColor="bg-white"
           gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-3"
           items={reusableArrivalsDemo}
           CardComponent={NewArrivalCard}
@@ -121,82 +121,7 @@ export function HomePage() {
       <MothersDaySwiper data={cmsBannerSlides} />
 
       <div className="mt-16">
-        <HomeProductsForYouSection />
-      </div>
-
-      {/* <div className="m-14">
-        <h2 className="text-3xl font-bold">All varities of the Buttons</h2>
-        <div className="flex flex-wrap gap-4">
-          <PrimaryGradientButton>Primary Button</PrimaryGradientButton>
-
-          <RegisterButton>Register</RegisterButton>
-          <RoundIconWithBg />
-
-          <ButtonWithIcon icon={<FaRegHeart />}>Shop Nowssss</ButtonWithIcon>
-          <PriceButton currentPrice="₹1,499" originalPrice="₹1,499" />
-        </div>
-      </div> */}
-
-      {/* GLOBAL CARD EXAMPLES */}
-      <div className=" ">
-        <div className="flex flex-wrap items-start gap-6">
-          {/* <ProductCard
-            title="Lace & Beads long sleeve ruffle hem maxi dress in white polka dot"
-            rating={4}
-            price="₹ 993.00"
-            originalPrice="₹ 1199.00"
-            images={[{ src: "/image/png/jacket.png" }]}
-            customWidth="260px"
-            onWishlist={() => alert("Added to wishlist!")}
-            onAddToCart={() => alert("Added to cart!")}
-          /> */}
-
-          <CategoryPriceCard
-            category="Men's Wear"
-            price="₹ 993.00"
-            originalPrice="₹ 1199.00"
-            images={[{ src: "/image/jpg/home-decor.jpg" }]}
-            customWidth="260px"
-          />
-
-        
-          {/* <DealGridCard
-            badge="March"
-            title="Trendy Outfits for Men & Women"
-            subtitle="66K+ Views"
-            images={[
-              {
-                src: "/image/png/blazer.png",
-                price: "₹ 993.00",
-                originalPrice: "₹ 1199.00",
-              },
-              {
-                src: "/image/png/men-fashion.png",
-                price: "₹ 993.00",
-                originalPrice: "₹ 1199.00",
-              },
-            ]}
-            customWidth="460px"
-          /> */}
-
-{/*          
-          <FourGridCard
-            title="Trending in Women's Fashion"
-            images={[
-              { src: "/image/png/blazer.png" },
-              { src: "/image/png/maxi.png" },
-              { src: "/image/png/jacket.png" },
-              { src: "/image/png/men-fashion.png" },
-            ]}
-            customWidth="260px"
-          /> */}
-
-          {/* <CategoryCard
-            category="Women's Fashion"
-            images={[{ src: "/image/png/jacket.png" }]}
-            customWidth="180px"
-          /> */}
-        </div>
+        <HomeProductsForYouSection title="Explore Our Collection" actionLabel="Browse All Products" limit={10} />
       </div>
     </>
   );

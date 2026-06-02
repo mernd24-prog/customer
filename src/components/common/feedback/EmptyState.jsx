@@ -10,10 +10,10 @@ export default function EmptyState({
   children,
 }) {
   return (
-    <div className="flex min-h-[220px] flex-col items-center justify-center rounded-[8px] border border-dashed border-[#D9D9E8] bg-white px-4 py-8 text-center font-montserrat">
-      <Icon className="h-10 w-10 text-[#3E4094]" aria-hidden="true" />
-      <h2 className="mt-4 text-[18px] font-semibold text-[#2E2E2E]">{title}</h2>
-      <p className="mt-2 max-w-md text-[14px] leading-6 text-[#787878]">{description}</p>
+    <div className="flex min-h-[220px] flex-col items-center justify-center rounded-[var(--customer-radius)] border border-dashed border-[var(--customer-border)] bg-[var(--customer-surface-soft)] px-4 py-8 text-center font-montserrat">
+      <Icon className="h-10 w-10 text-[var(--customer-navy)]" aria-hidden="true" />
+      <h2 className="mt-4 text-[18px] font-semibold text-[var(--customer-ink)]">{title}</h2>
+      <p className="mt-2 max-w-md text-[14px] leading-6 text-[var(--customer-muted)]">{description}</p>
       {actionLabel && onAction && (
         <Button className="mt-5" onClick={onAction}>
           {actionLabel}

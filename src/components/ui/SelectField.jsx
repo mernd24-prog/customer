@@ -29,13 +29,13 @@ export default function SelectField({
   const showSelect = hasOptions || disabled;
 
   return (
-    <label className="grid gap-1.5 font-montserrat text-sm font-medium text-[#2E2E2E]" htmlFor={id}>
+    <label className="grid gap-1.5 font-montserrat text-sm font-medium text-[var(--customer-ink)]" htmlFor={id}>
       <span>{label}</span>
       {showSelect ? (
         <select
           id={id}
           disabled={disabled}
-          className="min-h-11 w-full rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-sm text-[#2E2E2E] outline-none transition-all duration-300 ease-in-out placeholder:text-[#A6A6A6] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 disabled:bg-[#FAF6EE] disabled:cursor-not-allowed"
+          className="customer-input font-montserrat disabled:cursor-not-allowed disabled:bg-[var(--customer-cream)]"
           {...registration}
           {...props}
         >
@@ -52,7 +52,7 @@ export default function SelectField({
           id={id}
           type="text"
           placeholder={placeholder || label}
-          className="min-h-11 w-full rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-sm text-[#2E2E2E] outline-none transition-all duration-300 ease-in-out placeholder:text-[#A6A6A6] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20"
+          className="customer-input font-montserrat"
           {...registration}
           {...props}
         />

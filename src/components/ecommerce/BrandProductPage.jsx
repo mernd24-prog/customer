@@ -25,8 +25,8 @@ export default function BrandProductPage({
     return (
       <div className="w-container py-16 text-center">
         <Store size={48} className="mx-auto mb-4 text-gray-300" />
-        <h2 className="font-montserrat text-2xl font-bold text-[#2E2E2E]">Brand Not Found</h2>
-        <p className="mt-2 font-montserrat text-sm text-[#787878]">
+        <h2 className="font-montserrat text-2xl font-bold text-ink">Brand Not Found</h2>
+        <p className="mt-2 font-montserrat text-sm text-muted">
           The brand you&apos;re looking for doesn&apos;t exist or may have been removed.
         </p>
         <Link to="/products" className="button primary mt-6 inline-block px-6 py-2">
@@ -38,12 +38,12 @@ export default function BrandProductPage({
 
   return (
     <>
-      <div className="border-b border-[#e7dfd1] bg-gradient-to-br from-slate-50 to-[#FAF6EE] px-4 py-8 sm:px-6">
+      <div className="border-b border-border bg-gradient-to-br from-slate-50 to-cream px-4 py-8 sm:px-6">
         <div className="w-container">
-          <Breadcrumbs items={breadcrumbs} className="mb-4 text-[#A6A6A6]" />
+          <Breadcrumbs items={breadcrumbs} className="mb-4 text-gray" />
           <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
             {brandImage ? (
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-[#e7dfd1] bg-white p-2 shadow-sm sm:h-28 sm:w-28">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[var(--customer-radius)] border border-border bg-white p-2 shadow-sm sm:h-28 sm:w-28">
                 <img
                   src={brandImage}
                   alt={brandName}
@@ -52,20 +52,20 @@ export default function BrandProductPage({
                 />
               </div>
             ) : (
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-slate-100 sm:h-28 sm:w-28">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[var(--customer-radius)] bg-slate-100 sm:h-28 sm:w-28">
                 <Store size={32} className="text-slate-400" />
               </div>
             )}
             <div>
-              <h1 className="font-montserrat text-3xl font-bold text-[#2E2E2E] sm:text-4xl">
+              <h1 className="font-montserrat text-3xl font-bold text-ink sm:text-4xl">
                 {brandName}
               </h1>
               {brandDescription && (
-                <p className="mt-2 max-w-2xl font-montserrat text-sm leading-relaxed text-[#787878]">
+                <p className="mt-2 max-w-2xl font-montserrat text-sm leading-relaxed text-muted">
                   {brandDescription}
                 </p>
               )}
-              <p className="mt-2 font-montserrat text-sm text-[#A6A6A6]">
+              <p className="mt-2 font-montserrat text-sm text-gray">
                 {Number(total || 0).toLocaleString()} products
               </p>
             </div>

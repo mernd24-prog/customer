@@ -28,7 +28,7 @@ const InfoSection = ({ data }) => {
       )}
 
       {/* Main Blue Section */}
-      <section className="relative left-1/2 right-1/2 w-[100vw] -ml-[50vw] -mr-[50vw] overflow-hidden bg-[linear-gradient(270deg,#3E4094_5.77%,#1B1D60_100%)] pt-[100px] pb-10 lg:pb-0 rounded-2xl">
+      <section className="relative left-1/2 right-1/2 w-[100vw] -ml-[50vw] -mr-[50vw] overflow-hidden rounded-[var(--customer-radius)] bg-gradient-to-r from-navy to-navy-dark pt-[100px] pb-10 lg:pb-0">
         <div className="mx-auto flex max-w-[1648px] flex-col items-center gap-6 lg:flex-row lg:items-stretch lg:px-4 xl:px-6">
           {/* Left Content */}
           <div className="flex w-full flex-col items-start px-4 text-left sm:px-6 lg:w-[60%] lg:px-0 lg:py-12">

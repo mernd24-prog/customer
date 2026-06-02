@@ -299,21 +299,21 @@ export const TopHeader = () => {
   };
 
   return (
-    <div className="hidden h-[39px] w-full items-center justify-center bg-blue text-[14px] font-medium text-white lg:flex">
-      <div className="w-container flex h-full items-center">
-        <div className="flex flex-1 items-center gap-14 text-white  ">
+    <div className="hidden h-[26px] w-full items-center justify-center bg-[var(--customer-black)] text-[11px] font-medium text-white lg:flex">
+      <div className="w-container flex h-full items-center justify-between">
+        <div className="flex flex-1 items-center gap-8 text-white">
           {asArray(topLinks.length ? topLinks : DEFAULT_TOP_NAV_LINKS).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
               to={hrefOr(link?.path)}
-              className="text-white transition-all duration-300 ease-in-out hover:opacity-70"
+              className="text-white/85 transition-all duration-300 ease-in-out hover:text-white"
             >
               {textOr(link?.name, "Link")}
             </Link>
           ))}
         </div>
 
-        <div className="flex h-full items-center gap-6 ">
+        <div className="flex h-full items-center gap-5">
           {dropdowns.map((dropdown) => (
             <HeaderDropdown
               key={dropdown.type}
@@ -329,17 +329,17 @@ export const TopHeader = () => {
             <button
               type="button"
               onClick={() => dispatch(logout())}
-              className="flex items-center gap-1.5 rounded border border-white/40 px-3 py-0.5 text-sm font-semibold text-white hover:bg-white/10 transition-all duration-300 ease-in-out"
+              className="flex items-center gap-1.5 rounded border border-white/30 px-3 py-0.5 text-[11px] font-semibold text-white transition-all duration-300 ease-in-out hover:bg-white/10"
             >
               <LogOut size={14} /> Sign Out
             </button>
           ) : (
             <BrandButton
-              variant="outline"
+              variant="primary"
               rounded
-              className="h-[31px] min-h-[5px] min-w-[112px] border-[#CE9F2D] bg-white px-5 py-0 text-[15px] font-medium text-[#CE9F2D] hover:bg-white hover:text-[#A26D27]"
-              size="md"
-              label="Register"
+              className="h-[20px] min-h-[20px] min-w-[96px] px-4 py-0 text-[10px] font-bold"
+              size="xs"
+              label="Become a Seller"
               onClick={() => navigate("/register")}
             />
           )}
@@ -362,13 +362,13 @@ export const Navbar = ({ icons: propIcons }) => {
 
   return (
     <header className="w-full">
-      <div className="w-container flex flex-wrap items-center justify-between gap-3 py-2 sm:gap-4 lg:flex-nowrap lg:gap-6 lg:py-3">
+      <div className="w-container flex flex-wrap items-center justify-between gap-3 py-2 sm:gap-4 lg:flex-nowrap lg:gap-5">
         <div className="flex shrink-0 items-center">
           <Link to="/" aria-label="Sam Global home">
             <img
               src="/image/png/logo.png"
               alt="Sam Global"
-              className="h-auto w-[84px] object-contain sm:w-[104px] lg:h-[78px] lg:w-[141px]"
+              className="h-auto w-[78px] object-contain sm:w-[92px] lg:h-[44px] lg:w-[112px]"
             />
           </Link>
         </div>
@@ -377,17 +377,18 @@ export const Navbar = ({ icons: propIcons }) => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onSearch={handleSearch}
-          placeholder="Search products..."
+          placeholder="Search for products, brands and categories..."
           micIcon={icons.Mic}
+          showButtonLabel={false}
         />
 
-        <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-3 lg:gap-5">
-          <div className="hidden items-center gap-2 lg:flex lg:gap-4">
+        <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-3 lg:gap-3">
+          <div className="hidden items-center gap-1 lg:flex">
             {asArray(displayIcons).map((item, iconIndex) => (
               <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
                 <Link
                   to={getNavbarIconPath(item)}
-                  className="group relative flex flex-col items-center px-1 transition-all duration-300 ease-in-out hover:opacity-80 lg:px-4"
+                  className="group relative flex h-8 w-8 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]"
                   aria-label={getNavbarIconLabel(item)}
                 >
                   <img
@@ -395,16 +396,16 @@ export const Navbar = ({ icons: propIcons }) => {
                     alt={getNavbarIconLabel(item)}
                     className={`object-contain ${
                       item?.name === "IN"
-                        ? "h-[42px] w-[60px]"
-                        : "h-[28px] w-[28px]"
+                        ? "h-[22px] w-[24px]"
+                        : "h-[17px] w-[17px]"
                     }`}
                   />
-                  <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[#2E2E2E] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+                  <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
                     {getNavbarIconLabel(item)}
                   </span>
                 </Link>
                 {iconIndex < displayIcons.length - 1 && (
-                  <div className="h-8 w-[1.5px] bg-gray-200" />
+                  <div className="hidden h-6 w-px bg-[var(--customer-border)] xl:block" />
                 )}
               </Fragment>
             ))}
@@ -413,7 +414,7 @@ export const Navbar = ({ icons: propIcons }) => {
           {currentUser ? (
             <Link
               to="/account/profile"
-              className="flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-200 transition-all duration-300 ease-in-out"
+              className="flex items-center gap-2 rounded-full border border-[var(--customer-border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]"
             >
               <User size={16} />
               {currentUser.profile?.firstName
@@ -422,11 +423,11 @@ export const Navbar = ({ icons: propIcons }) => {
             </Link>
           ) : (
             <BrandButton
-              variant="gradient"
+              variant="outline"
               rounded
               label="Create Account"
-              size="md"
-              className="h-[48px] whitespace-nowrap px-6 font-medium"
+              size="sm"
+              className="h-[32px] whitespace-nowrap px-4 text-[11px] font-bold"
               onClick={() => navigate("/register")}
             />
           )}
@@ -542,8 +543,8 @@ export const CategoryBar = ({ headerData }) => {
   if (!categories.length) return null;
 
   return (
-    <header ref={categoryBarRef} className="w-full relative">
-      <div className="w-container hide-scrollbar flex justify-start gap-7 overflow-x-auto px-3 py-3 sm:gap-8 lg:justify-center lg:gap-6">
+    <header ref={categoryBarRef} className="relative w-full bg-[var(--customer-cream)]">
+      <div className="w-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:justify-center lg:gap-5">
         {asArray(categories).map((item, index) => {
           const categoryHref = `/categories/${keyOr(
             item?.slug,
@@ -564,25 +565,25 @@ export const CategoryBar = ({ headerData }) => {
                 to={categoryHref}
                 aria-expanded={isActive}
                 aria-controls="category-mega-menu"
-                className={`group flex min-w-[70px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out lg:min-w-[80px] ${
-                  isActive ? "text-[#CE9F2D]" : "text-black"
-                } focus-visible:ring-2 focus-visible:ring-[#CE9F2D]/40 focus-visible:ring-offset-2`}
+                className={`group flex min-w-[58px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out lg:min-w-[68px] ${
+                  isActive ? "text-[var(--customer-navy)]" : "text-[var(--customer-ink)]"
+                } focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2`}
               >
-              <div className="mx-auto flex items-center justify-center rounded-full p-1 transition-all duration-300 ease-in-out group-hover:bg-gray-100">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[var(--customer-gold)] p-2 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5 group-hover:bg-[var(--customer-gold-dark)] sm:h-14 sm:w-14">
                 {item?.img ? (
                   <ImageSkeleton
                     src={item?.img}
                     alt={textOr(item?.name, "Category")}
                   />
                 ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-stone-100 text-slate-400">
+                  <div className="flex h-full w-full items-center justify-center rounded-full bg-[var(--customer-gold-soft)] text-[var(--customer-navy)]">
                     <ShoppingBag size={18} />
                   </div>
                 )}
               </div>
 
-              <span className={`mt-1 line-clamp-1 w-full max-w-[80px] text-center text-[12px] leading-tight lg:max-w-[100px] lg:text-[14px] ${
-                isActive ? "font-semibold text-[#CE9F2D]" : "text-black"
+              <span className={`mt-1 line-clamp-1 w-full max-w-[72px] text-center text-[10px] font-medium leading-tight lg:max-w-[90px] lg:text-[11px] ${
+                isActive ? "font-bold text-[var(--customer-navy)]" : "text-[var(--customer-ink)]"
               }`}>
                 {textOr(item?.name, "Category")}
               </span>
@@ -610,10 +611,10 @@ export const Header = () => {
   const hideCategoryBar = location.pathname === "/watchlist";
 
   return (
-    <div className="flex w-full flex-col relative z-50 bg-white shadow-sm">
+    <div className="relative z-50 flex w-full flex-col bg-white shadow-[0_2px_10px_rgba(17,24,39,0.08)]">
       <TopHeader />
       <Navbar />
-      <div className="mx-auto w-full max-w-[1648px] border-t border-gray-300" />
+      <div className="mx-auto w-full max-w-[1648px] border-t border-[var(--customer-border)]" />
       {!hideCategoryBar && <CategoryBar />}
     </div>
   );

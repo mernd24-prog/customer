@@ -62,17 +62,14 @@ export default function SearchInput({
 
   return (
     <div className={cn("group w-full", className)}>
-      <div
-        className="rounded-full p-[2px]"
-        style={{ background: "linear-gradient(90deg,#A26D27 0%,#CE9F2D 100%)" }}
-      >
+      <div className="rounded-full border border-[var(--customer-border)] bg-white shadow-sm focus-within:border-[var(--customer-gold)] focus-within:ring-2 focus-within:ring-[var(--customer-gold)]/15">
         <div
           className={cn(
             "flex w-full items-center overflow-hidden rounded-full bg-white pl-4 pr-1",
             heightMap[size] || heightMap.md,
           )}
         >
-          <Search size={16} className="mr-2 shrink-0 text-[#A6A6A6]" />
+          <Search size={16} className="mr-2 shrink-0 text-[var(--customer-muted)]" />
           <input
             type="text"
             value={query}
@@ -82,7 +79,7 @@ export default function SearchInput({
             autoFocus={autoFocus}
             aria-label="Search"
             className={cn(
-              "h-full w-full border-none bg-transparent text-sm text-[#2E2E2E] outline-none ring-0 placeholder:text-[#A6A6A6] focus:ring-0",
+              "h-full w-full border-none bg-transparent text-sm text-[var(--customer-ink)] outline-none ring-0 placeholder:text-[var(--customer-subtle)] focus:ring-0",
               inputClassName,
             )}
           />
@@ -90,7 +87,7 @@ export default function SearchInput({
             <button
               type="button"
               onClick={handleClear}
-              className="mr-1 shrink-0 rounded-full p-1 text-[#A6A6A6] hover:text-[#2E2E2E]"
+              className="mr-1 shrink-0 rounded-full p-1 text-[var(--customer-muted)] hover:text-[var(--customer-ink)]"
               aria-label="Clear search"
             >
               <X size={14} />
@@ -100,7 +97,7 @@ export default function SearchInput({
             <button
               type="button"
               onClick={handleSearch}
-              className="ml-1 shrink-0 rounded-full bg-gradient-to-l from-[#A26D27] to-[#CE9F2D] px-4 py-1.5 font-montserrat text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:opacity-90"
+              className="ml-1 shrink-0 rounded-full bg-[var(--customer-gold)] px-4 py-1.5 font-montserrat text-sm font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-dark)]"
               aria-label="Search"
             >
               {buttonLabel}

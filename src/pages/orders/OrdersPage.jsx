@@ -269,7 +269,7 @@ const asNumber = (value) => {
 const humanize = (value, fallback = "N/A") => value ? String(value).replace(/_/g, " ") : fallback;
 
 function OrderStatusBadge({ status }) {
-  const cls = STATUS_BADGE[status] || "bg-[#FAF6EE] text-[#787878]";
+  const cls = STATUS_BADGE[status] || "bg-cream text-muted";
   return (
     <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}>
       {(status || "unknown").replace(/_/g, " ")}
@@ -279,12 +279,12 @@ function OrderStatusBadge({ status }) {
 
 function InfoTile({ icon, label, value }) {
   return (
-    <div className="rounded-[8px] border border-[#e7dfd1] bg-white px-4 py-3">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#A6A6A6]">
+    <div className="rounded-[8px] border border-border bg-white px-4 py-3">
+      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-normal text-gray">
         {icon}
         <span>{label}</span>
       </div>
-      <p className="mt-2 break-words text-sm font-semibold capitalize text-[#2E2E2E]">{value || "N/A"}</p>
+      <p className="mt-2 break-words text-sm font-semibold capitalize text-ink">{value || "N/A"}</p>
     </div>
   );
 }
@@ -312,10 +312,10 @@ function OrderProgress({ status }) {
         const current = activeIndex === index;
         return (
           <div key={step} className="min-w-0">
-            <div className={`flex h-10 items-center justify-center rounded-full border ${done ? "border-[#CE9F2D] bg-[#CE9F2D] text-white" : "border-[#e7dfd1] bg-white text-[#A6A6A6]"}`}>
+            <div className={`flex h-10 items-center justify-center rounded-full border ${done ? "border-gold bg-gold text-white" : "border-border bg-white text-gray"}`}>
               {done ? <CheckCircle2 size={16} /> : <Circle size={14} />}
             </div>
-            <p className={`mt-2 text-center text-[11px] font-semibold capitalize ${current ? "text-[#2E2E2E]" : "text-[#787878]"}`}>
+            <p className={`mt-2 text-center text-[11px] font-semibold capitalize ${current ? "text-ink" : "text-muted"}`}>
               {TRACKING_LABELS[step]}
             </p>
           </div>
@@ -337,7 +337,7 @@ function TrackingEvents({ order }) {
 
   if (!timeline.length) {
     return (
-      <div className="rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-4 text-sm text-[#787878]">
+      <div className="rounded-[8px] border border-border bg-cream px-4 py-4 text-sm text-muted">
         Tracking events will appear after the order moves forward.
       </div>
     );
@@ -347,16 +347,16 @@ function TrackingEvents({ order }) {
     <ol className="space-y-4">
       {timeline.map((event, index) => (
         <li key={event.id || `${event.status}-${index}`} className="grid grid-cols-[28px_1fr] gap-3">
-          <span className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#FAF6EE] text-[#CE9F2D]">
+          <span className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-cream text-gold">
             <Clock3 size={14} />
           </span>
-          <div className="min-w-0 border-b border-[#e7dfd1] pb-4 last:border-b-0 last:pb-0">
-            <p className="text-sm font-semibold capitalize text-[#2E2E2E]">{humanize(event.status || event.to_status || "Updated")}</p>
-            {event.note && <p className="mt-1 text-sm text-[#787878]">{event.note}</p>}
+          <div className="min-w-0 border-b border-border pb-4 last:border-b-0 last:pb-0">
+            <p className="text-sm font-semibold capitalize text-ink">{humanize(event.status || event.to_status || "Updated")}</p>
+            {event.note && <p className="mt-1 text-sm text-muted">{event.note}</p>}
             {(event.location || event.source) && (
-              <p className="mt-1 text-xs capitalize text-[#A6A6A6]">{[event.location, event.source].filter(Boolean).join(" · ")}</p>
+              <p className="mt-1 text-xs capitalize text-gray">{[event.location, event.source].filter(Boolean).join(" · ")}</p>
             )}
-            <p className="mt-1 text-xs text-[#A6A6A6]">{formatOrderDate(event.event_time || event.eventTime || event.created_at)}</p>
+            <p className="mt-1 text-xs text-gray">{formatOrderDate(event.event_time || event.eventTime || event.created_at)}</p>
           </div>
         </li>
       ))}
@@ -415,7 +415,7 @@ function OrderDetail({ orderId, track }) {
     <>
       <Seo title={`Order ${orderId} | Sam Global`} />
       <div className="w-container py-6 sm:py-10">
-        <Link to="/orders" className="mb-6 inline-flex items-center gap-1.5 text-sm text-[#787878] hover:text-[#2E2E2E] transition-all duration-300 ease-in-out">
+        <Link to="/orders" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink transition-all duration-300 ease-in-out">
           <ArrowLeft size={14} /> Back to orders
         </Link>
 
@@ -426,28 +426,28 @@ function OrderDetail({ orderId, track }) {
           onRetry={() => dispatch(fetchOrderById({ orderId }))}
         >
           <div className="grid gap-5">
-            <section className="overflow-hidden rounded-[8px] border border-[#e7dfd1] bg-white">
-              <div className="bg-[#FAF6EE] px-4 py-4 sm:px-6">
+            <section className="overflow-hidden rounded-[8px] border border-border bg-white">
+              <div className="bg-cream px-4 py-4 sm:px-6">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-[#A26D27]">
+                    <p className="text-xs font-semibold uppercase tracking-normal text-gold-dark">
                       {track ? "Track order" : "Order details"}
                     </p>
-                    <h1 className="mt-1 break-words text-xl font-bold text-[#2E2E2E] sm:text-2xl">
+                    <h1 className="mt-1 break-words text-xl font-bold text-ink sm:text-2xl">
                       #{formatOrderId(getOrderNumber(order))}
                     </h1>
-                    <p className="mt-1 break-all font-mono text-xs text-[#787878]">{getOrderId(order) || orderId}</p>
+                    <p className="mt-1 break-all font-mono text-xs text-muted">{getOrderId(order) || orderId}</p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     {hasKnownStatus(order) && <OrderStatusBadge status={status} />}
-                    <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold capitalize text-[#787878]">
+                    <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold capitalize text-muted">
                       Payment: {humanize(paymentStatus)}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="grid gap-3 border-t border-[#e7dfd1] bg-white p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
+              <div className="grid gap-3 border-t border-border bg-white p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
                 <InfoTile icon={<CalendarDays size={14} />} label="Placed on" value={formatOrderDate(order?.created_at || order?.createdAt)} />
                 <InfoTile icon={<CreditCard size={14} />} label="Payment" value={`${humanize(paymentMethod)} · ${humanize(paymentStatus)}`} />
                 <InfoTile icon={<Truck size={14} />} label="Delivery" value={humanize(deliveryStatus || status)} />
@@ -455,7 +455,7 @@ function OrderDetail({ orderId, track }) {
               </div>
 
               {hasKnownStatus(order) && (
-                <div className="border-t border-[#e7dfd1] px-4 py-5 sm:px-6">
+                <div className="border-t border-border px-4 py-5 sm:px-6">
                   <OrderProgress status={status} />
                 </div>
               )}
@@ -463,15 +463,15 @@ function OrderDetail({ orderId, track }) {
 
             {track && (
               <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-                <div className="rounded-[8px] border border-[#e7dfd1] bg-white p-4 sm:p-6">
+                <div className="rounded-[8px] border border-border bg-white p-4 sm:p-6">
                   <div className="mb-5 flex items-center justify-between gap-3">
                     <div>
-                      <h2 className="text-base font-bold text-[#2E2E2E]">Tracking activity</h2>
-                      <p className="mt-1 text-sm text-[#787878]">
+                      <h2 className="text-base font-bold text-ink">Tracking activity</h2>
+                      <p className="mt-1 text-sm text-muted">
                         {trackingNumber ? `Tracking number ${trackingNumber}` : "Shipment tracking will update here."}
                       </p>
                     </div>
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FAF6EE] text-[#CE9F2D]">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cream text-gold">
                       <Truck size={18} />
                     </span>
                   </div>
@@ -479,31 +479,31 @@ function OrderDetail({ orderId, track }) {
                 </div>
 
                 <aside className="grid gap-4">
-                  <div className="rounded-[8px] border border-[#e7dfd1] bg-white p-4">
-                    <h2 className="text-sm font-bold text-[#2E2E2E]">Shipment</h2>
+                  <div className="rounded-[8px] border border-border bg-white p-4">
+                    <h2 className="text-sm font-bold text-ink">Shipment</h2>
                     <div className="mt-4 grid gap-3 text-sm">
                       <div className="flex justify-between gap-4">
-                        <span className="text-[#787878]">Courier</span>
-                        <span className="text-right font-semibold capitalize text-[#2E2E2E]">{humanize(courierName)}</span>
+                        <span className="text-muted">Courier</span>
+                        <span className="text-right font-semibold capitalize text-ink">{humanize(courierName)}</span>
                       </div>
                       <div className="flex justify-between gap-4">
-                        <span className="text-[#787878]">Tracking no.</span>
-                        <span className="break-all text-right font-mono text-xs font-semibold text-[#2E2E2E]">{trackingNumber || "N/A"}</span>
+                        <span className="text-muted">Tracking no.</span>
+                        <span className="break-all text-right font-mono text-xs font-semibold text-ink">{trackingNumber || "N/A"}</span>
                       </div>
                       <div className="flex justify-between gap-4">
-                        <span className="text-[#787878]">Status</span>
-                        <span className="text-right font-semibold capitalize text-[#2E2E2E]">{humanize(deliveryStatus || status)}</span>
+                        <span className="text-muted">Status</span>
+                        <span className="text-right font-semibold capitalize text-ink">{humanize(deliveryStatus || status)}</span>
                       </div>
                     </div>
                   </div>
 
                   {hasShippingAddress(shippingAddress) && (
-                    <div className="rounded-[8px] border border-[#e7dfd1] bg-white p-4">
-                      <h2 className="flex items-center gap-2 text-sm font-bold text-[#2E2E2E]">
+                    <div className="rounded-[8px] border border-border bg-white p-4">
+                      <h2 className="flex items-center gap-2 text-sm font-bold text-ink">
                         <MapPin size={15} /> Delivery address
                       </h2>
-                      <div className="mt-3 break-words text-sm leading-6 text-[#787878]">
-                        {getAddressValue(shippingAddress, "fullName", "full_name") && <p className="font-medium text-[#2E2E2E]">{getAddressValue(shippingAddress, "fullName", "full_name")}</p>}
+                      <div className="mt-3 break-words text-sm leading-6 text-muted">
+                        {getAddressValue(shippingAddress, "fullName", "full_name") && <p className="font-medium text-ink">{getAddressValue(shippingAddress, "fullName", "full_name")}</p>}
                         {shippingAddress.phone && <p>{shippingAddress.phone}</p>}
                         {[shippingAddress.line1, shippingAddress.line2].filter(Boolean).length > 0 && <p>{[shippingAddress.line1, shippingAddress.line2].filter(Boolean).join(", ")}</p>}
                         {[shippingAddress.city, shippingAddress.state, getAddressValue(shippingAddress, "postalCode", "postal_code")].filter(Boolean).length > 0 && (
@@ -519,12 +519,12 @@ function OrderDetail({ orderId, track }) {
 
             {!track && (
               <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-                <div className="rounded-[8px] border border-[#e7dfd1] bg-white">
-                  <div className="border-b border-[#e7dfd1] px-4 py-4 sm:px-6">
-                    <h2 className="text-base font-bold text-[#2E2E2E]">Items</h2>
-                    <p className="mt-1 text-sm text-[#787878]">{items.length} item{items.length === 1 ? "" : "s"} in this order</p>
+                <div className="rounded-[8px] border border-border bg-white">
+                  <div className="border-b border-border px-4 py-4 sm:px-6">
+                    <h2 className="text-base font-bold text-ink">Items</h2>
+                    <p className="mt-1 text-sm text-muted">{items.length} item{items.length === 1 ? "" : "s"} in this order</p>
                   </div>
-                  <div className="divide-y divide-[#e7dfd1]">
+                  <div className="divide-y divide-border">
                     {items.map((item, i) => {
                       const unitPrice = getItemUnitPrice(item);
                       const lineTotal = getItemLineTotal(item);
@@ -533,27 +533,27 @@ function OrderDetail({ orderId, track }) {
                         <div key={item.id || item._id || item.product_id || getItemProductId(item) || i} className="px-4 py-4 sm:px-6">
                           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                             <div className="flex min-w-0 gap-3">
-                              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[8px] bg-[#FAF6EE]">
+                              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[8px] bg-cream">
                                 {getItemImage(item) ? (
                                   <img src={getItemImage(item)} alt={getProductTitle(item)} className="h-20 w-20 rounded-[8px] object-cover" loading="lazy" />
                                 ) : (
-                                  <Package size={22} className="text-[#CE9F2D]" />
+                                  <Package size={22} className="text-gold" />
                                 )}
                               </div>
                               <div className="min-w-0 text-sm">
-                                <p className="font-semibold text-[#2E2E2E]">{getProductTitle(item)}</p>
-                                {getVariantTitle(item) && <p className="mt-0.5 text-xs font-medium text-[#787878]">{getVariantTitle(item)}</p>}
-                                <p className="mt-1 break-all text-xs text-[#A6A6A6]">Product ID: {getItemProductId(item)}</p>
-                                {getItemSku(item) && <p className="mt-0.5 break-all text-xs text-[#A6A6A6]">SKU: {getItemSku(item)}</p>}
-                                <p className="mt-2 text-xs text-[#787878]">Qty {item.quantity} x {formatMoney(unitPrice, currency)}</p>
+                                <p className="font-semibold text-ink">{getProductTitle(item)}</p>
+                                {getVariantTitle(item) && <p className="mt-0.5 text-xs font-medium text-muted">{getVariantTitle(item)}</p>}
+                                <p className="mt-1 break-all text-xs text-gray">Product ID: {getItemProductId(item)}</p>
+                                {getItemSku(item) && <p className="mt-0.5 break-all text-xs text-gray">SKU: {getItemSku(item)}</p>}
+                                <p className="mt-2 text-xs text-muted">Qty {item.quantity} x {formatMoney(unitPrice, currency)}</p>
                               </div>
                             </div>
-                            <p className="text-sm font-bold text-[#2E2E2E] sm:shrink-0">{formatMoney(lineTotal, currency)}</p>
+                            <p className="text-sm font-bold text-ink sm:shrink-0">{formatMoney(lineTotal, currency)}</p>
                           </div>
                           {getItemAttributes(item).length > 0 && (
                             <div className="mt-3 flex flex-wrap gap-2">
                               {getItemAttributes(item).map(([key, value]) => (
-                                <span key={key} className="rounded-full bg-[#FAF6EE] px-2.5 py-1 text-xs capitalize text-[#787878]">
+                                <span key={key} className="rounded-full bg-cream px-2.5 py-1 text-xs capitalize text-muted">
                                   {key.replace(/[_-]/g, " ")}: {String(value)}
                                 </span>
                               ))}
@@ -567,23 +567,23 @@ function OrderDetail({ orderId, track }) {
 
                 <aside className="grid gap-4 self-start">
                   {(subtotal !== undefined || items.length > 0) && (
-                    <div className="rounded-[8px] border border-[#e7dfd1] bg-white p-4">
-                      <h2 className="flex items-center gap-2 text-sm font-bold text-[#2E2E2E]">
+                    <div className="rounded-[8px] border border-border bg-white p-4">
+                      <h2 className="flex items-center gap-2 text-sm font-bold text-ink">
                         <CreditCard size={15} /> Payment summary
                       </h2>
                       <div className="mt-4 grid gap-2 text-sm">
-                        {subtotal !== undefined && <div className="flex justify-between gap-4 text-[#787878]"><span>Subtotal</span><span>{formatMoney(subtotal, currency)}</span></div>}
+                        {subtotal !== undefined && <div className="flex justify-between gap-4 text-muted"><span>Subtotal</span><span>{formatMoney(subtotal, currency)}</span></div>}
                         {asNumber(discount) > 0 && <div className="flex justify-between gap-4 text-emerald-700"><span>Discount</span><span>-{formatMoney(discount, currency)}</span></div>}
                         {asNumber(walletDiscount) > 0 && <div className="flex justify-between gap-4 text-emerald-700"><span>Wallet discount</span><span>-{formatMoney(walletDiscount, currency)}</span></div>}
-                        {asNumber(shipping) > 0 && <div className="flex justify-between gap-4 text-[#787878]"><span>Shipping</span><span>{formatMoney(shipping, currency)}</span></div>}
-                        <div className="mt-1 flex justify-between gap-4 border-t border-[#e7dfd1] pt-3 font-bold text-[#2E2E2E]">
+                        {asNumber(shipping) > 0 && <div className="flex justify-between gap-4 text-muted"><span>Shipping</span><span>{formatMoney(shipping, currency)}</span></div>}
+                        <div className="mt-1 flex justify-between gap-4 border-t border-border pt-3 font-bold text-ink">
                           <span>Order amount</span>
                           <span>{formatMoney(customerAmount, currency)}</span>
                         </div>
                       </div>
                       {(taxBreakup || tax !== undefined) && (
-                        <div className="mt-4 rounded-[8px] bg-[#FAF6EE] p-3 text-xs text-[#787878]">
-                          <p className="font-semibold text-[#2E2E2E]">GST invoice breakup</p>
+                        <div className="mt-4 rounded-[8px] bg-cream p-3 text-xs text-muted">
+                          <p className="font-semibold text-ink">GST invoice breakup</p>
                           {taxBreakup && <p className="mt-1">Tax mode: {(taxBreakup.taxMode || taxBreakup.tax_mode || "N/A").toString().toUpperCase()}</p>}
                           {taxPayable > 0 && <p>GST added to payable: {formatMoney(taxPayable, currency)}</p>}
                           {taxIncluded > 0 && <p>GST included in item price: {formatMoney(taxIncluded, currency)}</p>}
@@ -594,12 +594,12 @@ function OrderDetail({ orderId, track }) {
                   )}
 
                   {hasShippingAddress(shippingAddress) && (
-                    <div className="rounded-[8px] border border-[#e7dfd1] bg-white p-4">
-                      <h2 className="flex items-center gap-2 text-sm font-bold text-[#2E2E2E]">
+                    <div className="rounded-[8px] border border-border bg-white p-4">
+                      <h2 className="flex items-center gap-2 text-sm font-bold text-ink">
                         <MapPin size={15} /> Shipping address
                       </h2>
-                      <div className="mt-3 break-words text-sm leading-6 text-[#787878]">
-                        {getAddressValue(shippingAddress, "fullName", "full_name") && <p className="font-medium text-[#2E2E2E]">{getAddressValue(shippingAddress, "fullName", "full_name")}</p>}
+                      <div className="mt-3 break-words text-sm leading-6 text-muted">
+                        {getAddressValue(shippingAddress, "fullName", "full_name") && <p className="font-medium text-ink">{getAddressValue(shippingAddress, "fullName", "full_name")}</p>}
                         {shippingAddress.phone && <p>{shippingAddress.phone}</p>}
                         {[shippingAddress.line1, shippingAddress.line2].filter(Boolean).length > 0 && <p>{[shippingAddress.line1, shippingAddress.line2].filter(Boolean).join(", ")}</p>}
                         {[shippingAddress.city, shippingAddress.state, getAddressValue(shippingAddress, "postalCode", "postal_code")].filter(Boolean).length > 0 && (
@@ -614,7 +614,7 @@ function OrderDetail({ orderId, track }) {
             )}
 
             {hasKnownStatus(order) && (
-              <section className="grid gap-3 rounded-[8px] border border-[#e7dfd1] bg-white px-4 py-4 sm:flex sm:flex-wrap sm:px-6">
+              <section className="grid gap-3 rounded-[8px] border border-border bg-white px-4 py-4 sm:flex sm:flex-wrap sm:px-6">
                 {canCancelOrder(order) && (
                   <Button variant="secondary" className="w-full sm:w-auto" onClick={() => setCancelModalOpen(true)}>
                     <XCircle size={15} /> Cancel order
@@ -675,7 +675,7 @@ function OrderList() {
       <Seo title="My Orders | Sam Global" />
       <div className="w-container py-6 sm:py-10">
         <div className="mb-5 flex items-center justify-between sm:mb-6">
-          <h1 className="font-montserrat text-2xl font-bold text-[#2E2E2E] sm:text-3xl">My Orders</h1>
+          <h1 className="font-montserrat text-2xl font-bold text-ink sm:text-3xl">My Orders</h1>
         </div>
 
         <ApiState
@@ -696,23 +696,23 @@ function OrderList() {
                 <Link
                   key={id}
                   to={`/orders/${id}`}
-                  className="flex flex-col gap-4 rounded-[12px] border border-[#e7dfd1] bg-white px-4 py-4 hover:border-[#CE9F2D] transition-all duration-300 ease-in-out sm:flex-row sm:items-center sm:justify-between sm:px-5"
+                  className="flex flex-col gap-4 rounded-[12px] border border-border bg-white px-4 py-4 hover:border-gold transition-all duration-300 ease-in-out sm:flex-row sm:items-center sm:justify-between sm:px-5"
                 >
                   <div className="min-w-0">
                     <p className="flex min-w-0 items-start gap-2 text-sm sm:items-center">
-                      <Package size={14} className="shrink-0 text-[#A6A6A6]" />
-                      <span className="shrink-0 font-mono font-semibold text-[#2E2E2E]">#{formatOrderId(id)}</span>
-                      <span className="min-w-0 break-all font-mono text-xs text-[#A6A6A6] sm:truncate">{id}</span>
+                      <Package size={14} className="shrink-0 text-gray" />
+                      <span className="shrink-0 font-mono font-semibold text-ink">#{formatOrderId(id)}</span>
+                      <span className="min-w-0 break-all font-mono text-xs text-gray sm:truncate">{id}</span>
                     </p>
-                    <p className="mt-1 text-xs text-[#787878]">
+                    <p className="mt-1 text-xs text-muted">
                       {formatOrderDate(createdAt)}
                     </p>
-                    {summary && <p className="mt-1 line-clamp-1 text-xs text-[#787878]">{summary}</p>}
+                    {summary && <p className="mt-1 line-clamp-1 text-xs text-muted">{summary}</p>}
                   </div>
                   <div className="flex flex-row items-center justify-between gap-3 sm:shrink-0 sm:flex-col sm:items-end sm:gap-1">
                     {hasKnownStatus(order) && <OrderStatusBadge status={getOrderStatus(order)} />}
                     {payableAmount !== undefined && (
-                      <span className="text-right text-sm font-semibold text-[#2E2E2E]">
+                      <span className="text-right text-sm font-semibold text-ink">
                         {formatMoney(payableAmount, getOrderCurrency(order))}
                       </span>
                     )}

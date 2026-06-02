@@ -29,7 +29,7 @@ export const RoundIconWithBg = (props) => (
 );
 
 export const ButtonWithIcon = ({ children, icon, ...props }) => (
-  <DynamicButton size="xl" customColor="#3C3E91" {...props}>
+  <DynamicButton size="xl" customColor="var(--customer-navy)" {...props}>
     {icon ? (
       <span className="flex gap-2 items-center">
         {icon}
@@ -55,7 +55,7 @@ export const PriceButton = ({
     <span className="flex items-center gap-2 font-bold text-black">
       {currentPrice}
       {originalPrice && (
-        <span className="line-through decoration-[#A26D27] text-[#A26D27] text-sm font-normal">
+        <span className="line-through decoration-gold-dark text-gold-dark text-sm font-normal">
           {originalPrice}
         </span>
       )}

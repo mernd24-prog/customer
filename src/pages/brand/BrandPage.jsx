@@ -36,7 +36,7 @@ function brandToSlug(name = "") {
 function LoadingSkeleton() {
   return (
     <div className="animate-pulse">
-      <div className="mb-6 h-44 w-full rounded-2xl bg-gray-200" />
+      <div className="mb-6 h-44 w-full rounded-[var(--customer-radius)] bg-gray-200" />
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="h-72 rounded-xl bg-gray-200" />
@@ -255,12 +255,12 @@ export default function BrandPage() {
       key: "inStock",
       title: "Availability",
       content: (
-        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-[#2E2E2E]">
+        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-ink">
           <input
             type="checkbox"
             checked={searchParams.get("inStock") === "true"}
             onChange={(e) => updateParam("inStock", e.target.checked ? "true" : undefined)}
-            className="h-3.5 w-3.5 accent-[#CE9F2D]"
+            className="h-3.5 w-3.5 accent-gold"
           />
           In Stock Only
         </label>
@@ -286,8 +286,8 @@ export default function BrandPage() {
     return (
       <div className="w-container py-16 text-center">
         <Store size={48} className="mx-auto mb-4 text-gray-300" />
-        <h2 className="font-montserrat text-2xl font-bold text-[#2E2E2E]">Brand Not Found</h2>
-        <p className="mt-2 font-montserrat text-sm text-[#787878]">
+        <h2 className="font-montserrat text-2xl font-bold text-ink">Brand Not Found</h2>
+        <p className="mt-2 font-montserrat text-sm text-muted">
           The brand you&apos;re looking for doesn&apos;t exist or may have been removed.
         </p>
         <Link to="/brands" className="button primary mt-6 inline-block px-6 py-2">

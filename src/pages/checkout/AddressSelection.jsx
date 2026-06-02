@@ -11,8 +11,8 @@ export default function AddressSelection({
   errors,
 }) {
   return (
-    <section className="rounded-[12px] border border-[#e7dfd1] bg-white p-5">
-      <h2 className="mb-4 flex items-center gap-2 font-montserrat text-base font-semibold text-[#2E2E2E]">
+    <section className="rounded-[12px] border border-border bg-white p-5">
+      <h2 className="mb-4 flex items-center gap-2 font-montserrat text-base font-semibold text-ink">
         <MapPin size={16} /> Delivery address
       </h2>
       <div className="grid gap-3">
@@ -23,8 +23,8 @@ export default function AddressSelection({
               key={addrId}
               className={`flex cursor-pointer items-start gap-3 rounded-md border p-3 transition-all duration-300 ease-in-out ${
                 selectedAddressId === addrId && !useNewAddress
-                  ? "border-[#CE9F2D] bg-[#FAF6EE]"
-                  : "border-[#e7dfd1] hover:border-[#CE9F2D]"
+                  ? "border-gold bg-cream"
+                  : "border-border hover:border-gold"
               }`}
             >
               <input
@@ -40,7 +40,7 @@ export default function AddressSelection({
                     shouldValidate: true,
                   });
                 }}
-                className="mt-1 h-4 w-4 accent-[#CE9F2D]"
+                className="mt-1 h-4 w-4 accent-gold"
               />
               <AddressLabel address={addr} showIcon={false} />
             </label>
@@ -49,7 +49,7 @@ export default function AddressSelection({
 
         <label
           className={`flex cursor-pointer items-center gap-3 rounded-md border p-3 transition-all duration-300 ease-in-out ${
-            useNewAddress ? "border-[#CE9F2D] bg-[#FAF6EE]" : "border-[#e7dfd1] hover:border-[#CE9F2D]"
+            useNewAddress ? "border-gold bg-cream" : "border-border hover:border-gold"
           }`}
         >
           <input
@@ -61,9 +61,9 @@ export default function AddressSelection({
                 shouldValidate: true,
               });
             }}
-            className="h-4 w-4 accent-[#CE9F2D]"
+            className="h-4 w-4 accent-gold"
           />
-          <span className="text-sm font-medium text-[#2E2E2E]">
+          <span className="text-sm font-medium text-ink">
             Use a different address
           </span>
         </label>

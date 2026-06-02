@@ -396,17 +396,17 @@ export default function CartPage() {
                 ))}
 
                 {hasCartItems && (
-                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-[#e7dfd1] bg-white px-4 py-3">
-                    <label className="flex items-center gap-2 font-montserrat text-sm font-semibold text-[#2E2E2E]">
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-border bg-white px-4 py-3">
+                    <label className="flex items-center gap-2 font-montserrat text-sm font-semibold text-ink">
                       <input
                         type="checkbox"
                         checked={selectedItems.length === items.length && items.length > 0}
                         onChange={(event) => handleSelectAll(event.target.checked)}
-                        className="h-4 w-4 rounded border-[#cfc6b8] accent-[#CE9F2D]"
+                        className="h-4 w-4 rounded border-border-strong accent-gold"
                       />
                       Select all
                     </label>
-                    <span className="font-montserrat text-xs text-[#787878]">
+                    <span className="font-montserrat text-xs text-muted">
                       {selectedItems.length > 0
                         ? `${selectedItems.length} selected for checkout`
                         : "Select all"}
@@ -416,7 +416,7 @@ export default function CartPage() {
 
                 {hasSavedItems && (
                   <div className="panel">
-                    <h3 className="mb-4 font-montserrat text-[16px] font-semibold text-[#2E2E2E]">
+                    <h3 className="mb-4 font-montserrat text-[16px] font-semibold text-ink">
                       Saved for later ({savedForLaterItems.length + wishlist.length})
                     </h3>
 
@@ -427,7 +427,7 @@ export default function CartPage() {
                         return (
                           <div
                             key={savedItemView.id}
-                            className="flex min-w-0 flex-col gap-3 rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+                            className="flex min-w-0 flex-col gap-3 rounded-[8px] border border-border bg-cream px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
                           >
                             <div className="flex min-w-0 items-center gap-3">
                               <img
@@ -437,14 +437,14 @@ export default function CartPage() {
                               />
 
                               <div className="min-w-0">
-                                <p className="truncate font-montserrat text-sm font-semibold text-[#2E2E2E]">
+                                <p className="truncate font-montserrat text-sm font-semibold text-ink">
                                   {savedItemView.title}
                                 </p>
 
-                                <div className="mt-0.5 flex flex-wrap items-center gap-2 font-montserrat text-xs text-[#787878]">
+                                <div className="mt-0.5 flex flex-wrap items-center gap-2 font-montserrat text-xs text-muted">
                                   {savedItemView.variantSku ? <span>{savedItemView.variantSku}</span> : null}
                                   <span>Qty: {savedItemView.quantity}</span>
-                                  <span className="font-semibold text-[#2E2E2E]">
+                                  <span className="font-semibold text-ink">
                                     ₹{Number(savedItemView.price || 0).toLocaleString("en-IN")}
                                   </span>
                                 </div>
@@ -474,7 +474,7 @@ export default function CartPage() {
                         return (
                           <div
                             key={wishlistId}
-                            className="flex min-w-0 flex-col gap-3 rounded-[8px] border border-[#e7dfd1] bg-[#FAF6EE] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+                            className="flex min-w-0 flex-col gap-3 rounded-[8px] border border-border bg-cream px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
                           >
                             <div className="flex min-w-0 items-center gap-3">
                               <img
@@ -484,15 +484,15 @@ export default function CartPage() {
                               />
 
                               <div className="min-w-0">
-                                <p className="truncate font-montserrat text-sm font-semibold text-[#2E2E2E]">
+                                <p className="truncate font-montserrat text-sm font-semibold text-ink">
                                   {savedProduct.title}
                                 </p>
 
-                                <div className="mt-0.5 flex flex-wrap items-center gap-2 font-montserrat text-xs text-[#787878]">
+                                <div className="mt-0.5 flex flex-wrap items-center gap-2 font-montserrat text-xs text-muted">
                                   {savedProduct.brand ? <span>{savedProduct.brand}</span> : null}
 
                                   {savedProduct.price != null ? (
-                                    <span className="font-semibold text-[#2E2E2E]">
+                                    <span className="font-semibold text-ink">
                                       ₹{Number(savedProduct.price).toLocaleString("en-IN")}
                                     </span>
                                   ) : null}

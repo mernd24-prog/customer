@@ -37,7 +37,7 @@ export default function QuantityInput({
   return (
     <div
       className={cn(
-        "flex w-fit items-center overflow-hidden rounded-lg border border-[#7e7c7c] bg-white",
+        "flex w-fit items-center overflow-hidden rounded-[var(--customer-radius-sm)] border border-border bg-white",
         disabled && "opacity-60",
         className,
       )}
@@ -48,7 +48,7 @@ export default function QuantityInput({
         disabled={atMin || disabled}
         aria-label="Decrease quantity"
         className={cn(
-          "flex items-center justify-center font-semibold text-[#2c2c2c] transition-all duration-300 ease-in-out hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-white",
+          "flex items-center justify-center font-semibold text-navy transition-all duration-300 ease-in-out hover:bg-gold-soft disabled:cursor-not-allowed disabled:text-gray disabled:hover:bg-white",
           s.btn,
         )}
       >
@@ -56,7 +56,7 @@ export default function QuantityInput({
       </button>
       <span
         className={cn(
-          "flex items-center justify-center font-semibold text-[#2c2c2c]",
+          "flex items-center justify-center border-x border-border font-semibold text-ink",
           s.count,
         )}
       >
@@ -68,7 +68,7 @@ export default function QuantityInput({
         disabled={atMax || disabled}
         aria-label="Increase quantity"
         className={cn(
-          "flex items-center justify-center font-semibold text-[#2c2c2c] transition-all duration-300 ease-in-out hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-white",
+          "flex items-center justify-center font-semibold text-navy transition-all duration-300 ease-in-out hover:bg-gold-soft disabled:cursor-not-allowed disabled:text-gray disabled:hover:bg-white",
           s.btn,
         )}
       >

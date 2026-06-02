@@ -88,7 +88,7 @@ function OutletLinkList({ items, getHref }) {
         <Link
           key={item.key || item.label || item}
           to={getHref(item)}
-          className="block truncate font-montserrat text-sm text-[#2E2E2E] "
+          className="block truncate font-montserrat text-sm text-ink "
         >
           {item.label || item}
         </Link>
@@ -187,7 +187,7 @@ export default function BrandOutletPage() {
         description="Shop Brand Outlet deals by category and brand at Sam Global."
       />
 
-      <main className="bg-white font-montserrat text-[#191919]">
+      <main className="bg-white font-montserrat text-ink">
         <div className="mx-auto grid w-full max-w-[1470px] grid-cols-1 gap-6 px-3 py-5 sm:px-5 sm:py-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:px-8">
           <aside className="hidden lg:sticky lg:top-24 lg:block lg:w-60 lg:shrink-0 lg:self-start">
             <div>
@@ -209,7 +209,7 @@ export default function BrandOutletPage() {
                         to={CUSTOMER_ROUTES.category(
                           encodeURIComponent(category.key),
                         )}
-                        className="shrink-0 rounded-full border border-[#d8d8d8] px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
+                        className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
                       >
                         {category.label}
                       </Link>
@@ -229,7 +229,7 @@ export default function BrandOutletPage() {
                         to={CUSTOMER_ROUTES.brand(
                           encodeURIComponent(brand.key),
                         )}
-                        className="shrink-0 rounded-full border border-[#d8d8d8] px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
+                        className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
                       >
                         {brand.label}
                       </Link>
@@ -240,7 +240,7 @@ export default function BrandOutletPage() {
             </div>
 
             <section className="pb-7">
-              <h1 className="mb-4 text-[20px] font-bold leading-tight text-[#191919] sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">
+              <h1 className="mb-4 text-[20px] font-bold leading-tight text-ink sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">
                 Shop brands available now
               </h1>
               {loading ? (
@@ -248,7 +248,7 @@ export default function BrandOutletPage() {
                   {Array.from({ length: 10 }).map((_, index) => (
                     <div
                       key={index}
-                      className="h-[190px] animate-pulse rounded-[14px] bg-[#f4f4f4] sm:h-[215px] lg:h-[235px]"
+                      className="h-[190px] animate-pulse rounded-[14px] bg-surface-soft sm:h-[215px] lg:h-[235px]"
                     />
                   ))}
                 </div>
@@ -265,14 +265,14 @@ export default function BrandOutletPage() {
                         href={CUSTOMER_ROUTES.brand(
                           encodeURIComponent(getBrandRouteKey(brand)),
                         )}
-                        className="min-h-0 items-center border-0 bg-transparent p-0 text-center shadow-none hover:translate-y-0 hover:border-transparent hover:shadow-none [&>div:first-child]:h-[165px] [&>div:first-child]:w-[165px] [&>div:first-child]:rounded-[14px] [&>div:first-child]:border-0 [&>div:first-child]:bg-[#f4f4f4] [&>div:first-child]:p-8 [&>div:first-child_img]:max-h-[105px] [&>div:first-child_img]:max-w-[130px] [&>div:nth-child(2)]:mt-3 [&>div:nth-child(2)]:flex-none [&>div:nth-child(2)_p]:hidden sm:[&>div:first-child]:h-[185px] sm:[&>div:first-child]:w-[185px] sm:[&>div:first-child_img]:max-h-[120px] sm:[&>div:first-child_img]:max-w-[145px] lg:[&>div:first-child]:h-[200px] lg:[&>div:first-child]:w-[200px] lg:[&>div:first-child_img]:max-h-[130px] lg:[&>div:first-child_img]:max-w-[160px]"
+                        className="min-h-0 items-center border-0 bg-transparent p-0 text-center shadow-none hover:translate-y-0 hover:border-transparent hover:shadow-none [&>div:first-child]:h-[165px] [&>div:first-child]:w-[165px] [&>div:first-child]:rounded-[14px] [&>div:first-child]:border-0 [&>div:first-child]:bg-surface-soft [&>div:first-child]:p-8 [&>div:first-child_img]:max-h-[105px] [&>div:first-child_img]:max-w-[130px] [&>div:nth-child(2)]:mt-3 [&>div:nth-child(2)]:flex-none [&>div:nth-child(2)_p]:hidden sm:[&>div:first-child]:h-[185px] sm:[&>div:first-child]:w-[185px] sm:[&>div:first-child_img]:max-h-[120px] sm:[&>div:first-child_img]:max-w-[145px] lg:[&>div:first-child]:h-[200px] lg:[&>div:first-child]:w-[200px] lg:[&>div:first-child_img]:max-h-[130px] lg:[&>div:first-child_img]:max-w-[160px]"
                       />
                     );
                   })}
                 </div>
               ) : (
-                <div className="rounded-[12px] border border-[#e7dfd1] bg-[#FAF6EE] p-6 text-center">
-                  <p className="font-montserrat text-sm font-semibold text-[#2E2E2E]">
+                <div className="rounded-[12px] border border-border bg-cream p-6 text-center">
+                  <p className="font-montserrat text-sm font-semibold text-ink">
                     No brands available right now.
                   </p>
                 </div>

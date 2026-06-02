@@ -224,14 +224,14 @@ export default function SearchPage() {
       title: "Availability",
       defaultOpen: false,
       content: (
-        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-[#2E2E2E]">
+        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-ink">
           <input
             type="checkbox"
             checked={searchParams.get("inStock") === "true"}
             onChange={(event) =>
               updateParam("inStock", event.target.checked ? "true" : undefined)
             }
-            className="h-3.5 w-3.5 accent-[#CE9F2D]"
+            className="h-3.5 w-3.5 accent-gold"
           />
           In Stock Only
         </label>
@@ -255,7 +255,7 @@ export default function SearchPage() {
             <div className="group relative flex-1">
               <Search
                 size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9b9387] transition-all duration-300 ease-in-out group-focus-within:text-[#CE9F2D]"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted transition-all duration-300 ease-in-out group-focus-within:text-gold"
               />
 
               <input
@@ -263,14 +263,14 @@ export default function SearchPage() {
                 value={queryInput}
                 onChange={(e) => setQueryInput(e.target.value)}
                 placeholder="Search products, brands, categories..."
-                className="h-12 w-full rounded-[10px] border border-[#d8c8b3] bg-white pl-11 pr-11 font-montserrat text-sm text-[#2E2E2E] outline-none transition-all duration-300 ease-in-out placeholder:text-[#9b9387] hover:border-[#CE9F2D] focus:border-[#CE9F2D] focus:ring-4 focus:ring-[#CE9F2D]/15"
+                className="h-12 w-full rounded-[10px] border border-border-strong bg-white pl-11 pr-11 font-montserrat text-sm text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-muted hover:border-gold focus:border-gold focus:ring-4 focus:ring-gold/15"
               />
 
               {queryInput ? (
                 <button
                   type="button"
                   onClick={handleClearSearch}
-                  className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-[#787878] transition-all duration-300 ease-in-out hover:bg-[#FAF6EE] hover:text-[#2E2E2E]"
+                  className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-muted transition-all duration-300 ease-in-out hover:bg-cream hover:text-ink"
                   aria-label="Clear search"
                 >
                   <X size={15} />
@@ -293,7 +293,7 @@ export default function SearchPage() {
             {q && <PageHeader title={`Results for "${q}"`} className="mb-0" />}
 
             {meta.total != null && (
-              <p className="font-montserrat text-sm text-[#787878]">
+              <p className="font-montserrat text-sm text-muted">
                 {meta.total.toLocaleString()} results
               </p>
             )}
@@ -331,13 +331,13 @@ export default function SearchPage() {
           <div className="min-w-0 flex-1">
             {!q ? (
               <div className="state-box flex flex-col items-center py-20 text-center">
-                <Search size={48} className="mb-4 text-[#A6A6A6]" />
+                <Search size={48} className="mb-4 text-gray" />
 
-                <p className="font-montserrat text-[18px] font-semibold text-[#2E2E2E]">
+                <p className="font-montserrat text-[18px] font-semibold text-ink">
                   What are you looking for?
                 </p>
 
-                <p className="mt-2 font-montserrat text-sm text-[#787878]">
+                <p className="mt-2 font-montserrat text-sm text-muted">
                   Enter a search term above to find products.
                 </p>
               </div>

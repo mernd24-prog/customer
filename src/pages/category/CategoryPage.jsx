@@ -235,7 +235,7 @@ export default function CategoryPage() {
             <Link
               key={sub?.categoryKey || sub?.key}
               to={`/categories/${sub?.categoryKey || sub?.key}`}
-              className="flex items-center justify-between rounded-lg px-2 py-2 text-sm text-[#2E2E2E] hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 ease-in-out"
+              className="flex items-center justify-between rounded-lg px-2 py-2 text-sm text-ink hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 ease-in-out"
             >
               <span className="truncate">{sub?.title || sub?.name}</span>
               <ChevronRight size={12} className="shrink-0 text-gray-400" />
@@ -301,12 +301,12 @@ export default function CategoryPage() {
       key: "inStock",
       title: "Availability",
       content: (
-        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-[#2E2E2E]">
+        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-ink">
           <input
             type="checkbox"
             checked={searchParams.get("inStock") === "true"}
             onChange={(e) => updateParam("inStock", e.target.checked ? "true" : undefined)}
-            className="h-3.5 w-3.5 accent-[#CE9F2D]"
+            className="h-3.5 w-3.5 accent-gold"
           />
           In Stock Only
         </label>
@@ -339,14 +339,14 @@ export default function CategoryPage() {
           </div>
         </div>
       ) : (
-        <div className="border-b border-[#e7dfd1] bg-[#FAF6EE] px-4 py-6 sm:px-6">
+        <div className="border-b border-border bg-cream px-4 py-6 sm:px-6">
           <div className="w-container">
-            <Breadcrumbs items={breadcrumbItems} className="mb-2 text-[#A6A6A6]" />
-            <h1 className="font-montserrat text-[26px] font-bold text-[#A6A6A6] sm:text-[32px]">
+            <Breadcrumbs items={breadcrumbItems} className="mb-2 text-gray" />
+            <h1 className="font-montserrat text-[26px] font-bold text-gray sm:text-[32px]">
               {categoryTitle}
             </h1>
             {categoryDesc && (
-              <p className="mt-1 max-w-2xl font-montserrat text-sm text-[#787878]">{categoryDesc}</p>
+              <p className="mt-1 max-w-2xl font-montserrat text-sm text-muted">{categoryDesc}</p>
             )}
           </div>
         </div>

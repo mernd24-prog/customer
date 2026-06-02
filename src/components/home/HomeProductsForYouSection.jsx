@@ -6,8 +6,8 @@ import { useProductActions } from "../../hooks/useProductActions";
 import { getProductId } from "../../utils/ecommerce";
 
 export default function HomeProductsForYouSection({
-  title = "Products For You",
-  actionLabel = "See all →",
+  title = "Featured Products",
+  actionLabel = "View Featured Products",
   actionHref = "/products",
   limit = 8,
 }) {
@@ -34,15 +34,15 @@ export default function HomeProductsForYouSection({
   ).slice(0, limit);
 
   return (
-    <section className="mt-8 rounded-[10px] bg-[#F7F6F500] p-5 sm:p-2 lg:p-2">
+    <section className="mt-8 rounded-[var(--customer-radius)] bg-white">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-montserrat text-[16px] font-semibold text-[#2E2E2E] sm:text-[18px]">
+        <h2 className="customer-section-title font-montserrat text-[18px] sm:text-[20px]">
           {title}
         </h2>
         {actionHref && actionLabel && (
           <Link
             to={actionHref}
-            className="text-sm font-medium text-[#d4a437] underline-offset-4 hover:underline"
+            className="rounded-full border border-[var(--customer-border)] px-3 py-1.5 text-xs font-semibold text-[var(--customer-navy)] hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]"
           >
             {actionLabel}
           </Link>
@@ -53,11 +53,11 @@ export default function HomeProductsForYouSection({
         <SkeletonLoader
           preset="PRODUCTS_FOR_YOU_CARD"
           count={limit}
-          containerClass="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4"
-          wrapperClass="min-w-0 rounded-[8px] bg-white p-3 shadow-sm"
+          containerClass="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
+          wrapperClass="customer-card min-w-0 p-3"
         />
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
           {products.map((product) => (
             <ProductCard
               key={getProductId(product)}

@@ -15,18 +15,18 @@ export default function Rating({
 
   return (
     <div
-      className={cn("flex items-center gap-1 font-montserrat text-xs text-[#787878]", className)}
+      className={cn("flex items-center gap-1 font-montserrat text-xs text-[var(--customer-muted)]", className)}
       aria-label={`${rating} out of ${max} stars`}
     >
-      <span className="flex items-center gap-0.5 text-[#CE9F2D]">
+      <span className="flex items-center gap-0.5 text-[var(--customer-gold)]">
         {Array.from({ length: max }, (_, index) => (
           <Star
             key={index}
             size={size}
             className={
               index < roundedRating
-                ? "fill-[#CE9F2D] text-[#CE9F2D]"
-                : "fill-[#E7DFD1] text-[#E7DFD1]"
+                ? "fill-[var(--customer-gold)] text-[var(--customer-gold)]"
+                : "fill-[var(--customer-border)] text-[var(--customer-border)]"
             }
           />
         ))}

@@ -6,13 +6,16 @@ export default function CartActionButtons({
   onSaveForLater,
   onRemove,
 }) {
+  const actionClass =
+    "rounded-[var(--customer-radius-sm)] border border-transparent px-3 py-2 font-semibold text-[var(--customer-navy)] underline-offset-2 transition-all duration-300 ease-in-out hover:border-[var(--customer-border)] hover:bg-[var(--customer-gold-soft)] hover:no-underline";
+
   return (
-    <div className="mt-4 flex flex-wrap gap-3 text-sm sm:flex-row sm:items-center">
+    <div className="mt-4 flex flex-wrap gap-2 text-sm sm:flex-row sm:items-center">
       {BuyNow && (
         <button
           type="button"
           onClick={onBuyNow}
-          className="rounded-md px-4 py-2 underline font-semibold text-[#292929] transition-all duration-300 ease-in-out hover:bg-gray-100"
+          className={actionClass}
         >
           {BuyNow}
         </button>
@@ -22,7 +25,7 @@ export default function CartActionButtons({
         <button
           type="button"
           onClick={onSaveForLater}
-          className="rounded-md px-4 py-2 underline font-semibold text-[#292929] transition-all duration-300 ease-in-out hover:bg-gray-100"
+          className={actionClass}
         >
           {SaveForLater}
         </button>
@@ -32,7 +35,7 @@ export default function CartActionButtons({
         <button
           type="button"
           onClick={onRemove}
-          className="rounded-md px-4 py-2 underline font-semibold text-[#292929] transition-all duration-300 ease-in-out hover:bg-red-50"
+          className={`${actionClass} hover:bg-red-50 hover:text-red-600`}
         >
           {Remove}
         </button>

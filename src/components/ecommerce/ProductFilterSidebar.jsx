@@ -6,10 +6,10 @@ export function FilterSection({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="border-b border-[#e7dfd1] py-4">
-      <button type="button" onClick={() => setOpen((value) => !value)} className="flex w-full items-center justify-between font-montserrat text-sm font-semibold text-[#2E2E2E]">
+    <div className="border-b border-[var(--customer-border)] py-4 last:border-b-0">
+      <button type="button" onClick={() => setOpen((value) => !value)} className="flex w-full items-center justify-between font-montserrat text-sm font-semibold text-[var(--customer-ink)]">
         {title}
-        <span className="text-[#A6A6A6]">{open ? "-" : "+"}</span>
+        <span className="text-[var(--customer-gold-dark)]">{open ? "-" : "+"}</span>
       </button>
       {open && <div className="mt-3">{children}</div>}
     </div>
@@ -31,12 +31,12 @@ export function PriceRangeFilter({ min, max, onChange }) {
     <div className="grid gap-3">
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="mb-1 block font-montserrat text-xs text-[#A6A6A6]">Min (₹)</label>
-          <input type="number" value={localMin} onChange={(event) => setLocalMin(event.target.value)} placeholder="0" min="0" className="w-full rounded-[6px] border border-[#cfc6b8] px-2.5 py-1.5 text-sm" />
+          <label className="mb-1 block font-montserrat text-xs text-[var(--customer-muted)]">Min (₹)</label>
+          <input type="number" value={localMin} onChange={(event) => setLocalMin(event.target.value)} placeholder="0" min="0" className="customer-input min-h-9 px-2.5 py-1.5 text-sm" />
         </div>
         <div>
-          <label className="mb-1 block font-montserrat text-xs text-[#A6A6A6]">Max (₹)</label>
-          <input type="number" value={localMax} onChange={(event) => setLocalMax(event.target.value)} placeholder="Any" min="0" className="w-full rounded-[6px] border border-[#cfc6b8] px-2.5 py-1.5 text-sm" />
+          <label className="mb-1 block font-montserrat text-xs text-[var(--customer-muted)]">Max (₹)</label>
+          <input type="number" value={localMax} onChange={(event) => setLocalMax(event.target.value)} placeholder="Any" min="0" className="customer-input min-h-9 px-2.5 py-1.5 text-sm" />
         </div>
       </div>
       <BrandButton variant="primary" rounded size="sm" label="Apply" className="h-8 text-xs" onClick={apply} />
@@ -50,7 +50,7 @@ export function PriceRangeFilter({ min, max, onChange }) {
 }
 
 export function OptionFilter({ name, options, selected, onChange, emptyText = "Loading..." }) {
-  if (!options?.length) return <p className="font-montserrat text-xs text-[#A6A6A6]">{emptyText}</p>;
+  if (!options?.length) return <p className="font-montserrat text-xs text-[var(--customer-muted)]">{emptyText}</p>;
 
   return (
     <div className="grid max-h-48 gap-2 overflow-y-auto pr-1">
@@ -61,10 +61,10 @@ export function OptionFilter({ name, options, selected, onChange, emptyText = "L
         const checked = selected === String(value);
 
         return (
-          <label key={value} className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-[#2E2E2E]">
-            <input type="radio" name={name} value={value} checked={checked} onChange={() => onChange?.(checked ? undefined : String(value))} className="h-3.5 w-3.5 accent-[#CE9F2D]" />
+          <label key={value} className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-[var(--customer-ink)]">
+            <input type="radio" name={name} value={value} checked={checked} onChange={() => onChange?.(checked ? undefined : String(value))} className="h-3.5 w-3.5 accent-[var(--customer-gold)]" />
             <span className="flex-1 truncate">{label}</span>
-            {count != null && <span className="text-xs text-[#A6A6A6]">({count})</span>}
+            {count != null && <span className="text-xs text-[var(--customer-subtle)]">({count})</span>}
           </label>
         );
       })}
@@ -77,12 +77,12 @@ export function RatingFilter({ selected, onChange }) {
     <div className="grid gap-2">
       {[4, 3, 2, 1].map((stars) => (
         <label key={stars} className="flex cursor-pointer items-center gap-2">
-          <input type="radio" name="rating" value={stars} checked={selected === String(stars)} onChange={() => onChange?.(selected === String(stars) ? undefined : String(stars))} className="h-3.5 w-3.5 accent-[#CE9F2D]" />
+          <input type="radio" name="rating" value={stars} checked={selected === String(stars)} onChange={() => onChange?.(selected === String(stars) ? undefined : String(stars))} className="h-3.5 w-3.5 accent-[var(--customer-gold)]" />
           <span className="flex items-center gap-0.5">
             {Array.from({ length: 5 }, (_, index) => (
-              <Star key={index} size={12} className={index < stars ? "fill-[#CE9F2D] text-[#CE9F2D]" : "fill-[#E0E0E0] text-[#E0E0E0]"} />
+              <Star key={index} size={12} className={index < stars ? "fill-[var(--customer-gold)] text-[var(--customer-gold)]" : "fill-[var(--customer-border)] text-[var(--customer-border)]"} />
             ))}
-            <span className="ml-1 font-montserrat text-xs text-[#787878]">& up</span>
+            <span className="ml-1 font-montserrat text-xs text-[var(--customer-muted)]">& up</span>
           </span>
         </label>
       ))}
@@ -95,7 +95,7 @@ export default function ProductFilterSidebar({ sections = [], className = "" }) 
     <aside
       className={`w-full lg:sticky lg:top-24  lg:w-60 lg:shrink-0 lg:self-start lg:overflow-y-auto lg:overscroll-contain ${className}`}
     >
-      <div className="card">
+      <div className="customer-card px-4 py-1">
         {sections.map((section) => (
           <FilterSection key={section.key || section.title} title={section.title} defaultOpen={section.defaultOpen}>
             {section.content}

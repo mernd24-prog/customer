@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "../../utils/classNames";
 
- 
-
 export default function HeaderDropdown({
   label,
   icon,
@@ -29,7 +27,7 @@ export default function HeaderDropdown({
       <Link
         to={path || "#"}
         className={cn(
-          "flex items-center gap-1.5 text-white transition-all duration-300 ease-in-out hover:opacity-80",
+          "flex items-center gap-1.5 text-white/85 transition-all duration-300 ease-in-out hover:text-white",
           className,
         )}
         aria-expanded={isOpen}
@@ -41,7 +39,7 @@ export default function HeaderDropdown({
           size={16}
           aria-hidden="true"
           className={cn(
-            "transition-all duration-300 ease-in-out",
+            "transition-all duration-300 ease-in-out text-[var(--customer-gold)]",
             isOpen && "rotate-180",
           )}
         />

@@ -27,12 +27,12 @@ export default function BrandCard({
   const content = (
     <article
       className={cn(
-        "group flex h-full min-h-[188px] flex-col items-center  border-[#e7dfd1] bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-[#CE9F2D]/50 hover:shadow-lg",
-        active && "ring-2 ring-[#CE9F2D]/50",
+        "group flex h-full min-h-[188px] flex-col items-center  border-border bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-lg",
+        active && "ring-2 ring-gold/50",
         className,
       )}
     >
-      <div className="relative flex h-28 shrink-0 items-center justify-center overflow-hidden rounded-md border border-[#EFE7DA] bg-[#FAF6EE] p-4">
+      <div className="relative flex h-28 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-cream p-4">
         {displayImage ? (
           <img
             src={displayImage}
@@ -43,31 +43,31 @@ export default function BrandCard({
             onError={(event) => applyImageFallback(event, name, "brand")}
           />
         ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[#E4D8C5] bg-white text-center font-montserrat text-lg font-bold text-[#CE9F2D] shadow-sm">
-            {initials || <Store size={30} strokeWidth={1.4} className="text-[#CFC6B8]" />}
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-white text-center font-montserrat text-lg font-bold text-gold shadow-sm">
+            {initials || <Store size={30} strokeWidth={1.4} className="text-border-strong" />}
           </div>
         )}
         <span
           aria-hidden="true"
-          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-[#e7dfd1] bg-white/90 text-[#8B6A1D] opacity-0 shadow-sm transition-all duration-300 ease-in-out group-hover:opacity-100"
+          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-white/90 text-gold-dark opacity-0 shadow-sm transition-all duration-300 ease-in-out group-hover:opacity-100"
         >
           <ArrowUpRight size={14} strokeWidth={1.8} />
         </span>
       </div>
 
       <div className="mt-3 flex flex-1 flex-col">
-        <h3 className="line-clamp-1 font-montserrat text-[14px] font-semibold text-[#2E2E2E] sm:text-[15px]">
+        <h3 className="line-clamp-1 font-montserrat text-[14px] font-semibold text-ink sm:text-[15px]">
           {name}
         </h3>
 
         {subtitle && (
-          <p className="mt-1 line-clamp-2 font-montserrat text-[12px] leading-5 text-[#787878]">
+          <p className="mt-1 line-clamp-2 font-montserrat text-[12px] leading-5 text-muted">
             {subtitle}
           </p>
         )}
 
         {productCount != null && (
-          <p className="mt-auto pt-2 font-montserrat text-[11px] font-medium text-[#8D826F]">
+          <p className="mt-auto pt-2 font-montserrat text-[11px] font-medium text-muted">
             {Number(productCount).toLocaleString()} products
           </p>
         )}
@@ -80,7 +80,7 @@ export default function BrandCard({
       <button
         type="button"
         onClick={onClick}
-        className="block h-full w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CE9F2D]"
+        className="block h-full w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
       >
         {content}
       </button>
@@ -91,7 +91,7 @@ export default function BrandCard({
     <Link
       to={to}
       onClick={onClick}
-      className="block h-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CE9F2D]"
+      className="block h-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
     >
       {content}
     </Link>

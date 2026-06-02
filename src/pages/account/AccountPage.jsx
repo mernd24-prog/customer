@@ -45,20 +45,20 @@ export default function AccountPage({ tab = "profile" }) {
       />
 
       <div className="w-container py-8 sm:py-10">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-[#2E2E2E] sm:text-3xl">
+        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink sm:text-3xl">
           My Account
         </h1>
 
         {/* Tab navigation */}
-        <div className="mb-6 flex gap-1 overflow-x-auto rounded-[10px] border border-[#e7dfd1] bg-[#FAF6EE] p-1">
+        <div className="mb-6 flex gap-1 overflow-x-auto rounded-[10px] border border-border bg-cream p-1">
           {TABS.map(({ id, label, icon: Icon, path }) => (
             <Link
               key={id}
               to={path}
               className={`flex min-w-max items-center gap-2 rounded-[8px] px-4 py-2 font-montserrat text-sm font-medium transition-all duration-300 ease-in-out ${
                 tab === id
-                  ? "bg-white text-[#CE9F2D] shadow-sm"
-                  : "text-[#787878] hover:text-[#2E2E2E]"
+                  ? "bg-white text-gold shadow-sm"
+                  : "text-muted hover:text-ink"
               }`}
             >
               <Icon size={15} />
@@ -68,7 +68,7 @@ export default function AccountPage({ tab = "profile" }) {
         </div>
 
         {/* Tab content */}
-        <div className="rounded-[12px] border border-[#e7dfd1] bg-white p-6 sm:p-8">
+        <div className="rounded-[12px] border border-border bg-white p-6 sm:p-8">
           <ApiState
             loading={userState.loading && !user}
             error={userState.error}

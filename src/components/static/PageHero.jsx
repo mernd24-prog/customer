@@ -24,7 +24,7 @@ export default function PageHero({
       }
     >
       <div className="relative mx-auto w-full max-w-6xl">
-        <span className="mb-4 inline-flex items-center rounded-full bg-white/10 px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-slate-200">
+        <span className="mb-4 inline-flex items-center rounded-full bg-white/10 px-4 py-2 text-sm font-semibold uppercase tracking-normal text-slate-200">
           {eyebrow}
         </span>
         <div className="mt-4 max-w-3xl space-y-5">

@@ -6,10 +6,10 @@ export default function FooterLinkGroups({ groups = [] }) {
   if (!groups.length) return null;
 
   return (
-    <FooterSectionContainer className="my-8 grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+    <FooterSectionContainer className="grid grid-cols-2 gap-8 border-t border-white/10 py-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
       {groups.map((group, groupIndex) => (
         <div key={group?.title || `group-${groupIndex}`}>
-          <FooterSectionTitle className="mb-4 text-accent">
+          <FooterSectionTitle className="mb-4 border-l border-[var(--customer-gold)] pl-2 text-xs uppercase tracking-normal text-white">
             {group?.title}
           </FooterSectionTitle>
           <ul className="grid gap-2">
@@ -17,7 +17,7 @@ export default function FooterLinkGroups({ groups = [] }) {
               <li key={link?.label || `link-${linkIndex}`}>
                 <FooterLink
                   href={link?.href}
-                  className="custom-para transition-all duration-300 ease-in-out hover:font-medium hover:text-black"
+                  className="text-xs leading-6 text-white/65 transition-all duration-300 ease-in-out hover:text-white"
                 >
                   {link?.label}
                 </FooterLink>

@@ -18,13 +18,13 @@ export default function CollectionToolbar({
 
   return (
     <div className={shellClassName}>
-      {countText && <p className="font-montserrat text-sm text-[#787878]">{countText}</p>}
+      {countText && <p className="font-montserrat text-sm text-[var(--customer-muted)]">{countText}</p>}
       <div className="flex items-center gap-3">
         {!!sortOptions.length && (
           <select
             value={sortValue}
             onChange={(event) => onSortChange?.(event.target.value)}
-            className="rounded-[6px] border border-[#cfc6b8] bg-white px-3 py-2 font-montserrat text-sm"
+            className="customer-input min-h-9 w-auto px-3 py-2 font-montserrat text-sm"
           >
             {sortOptions.map((option) => (
               <option key={option.value} value={option.value}>{option.label}</option>
@@ -35,7 +35,7 @@ export default function CollectionToolbar({
           <select
             value={pageSizeValue}
             onChange={(event) => onPageSizeChange?.(event.target.value)}
-            className="rounded-[6px] border border-[#cfc6b8] bg-white px-3 py-2 font-montserrat text-sm"
+            className="customer-input min-h-9 w-auto px-3 py-2 font-montserrat text-sm"
           >
             {pageSizes.map((size) => (
               <option key={size} value={size}>{size} per page</option>

@@ -15,7 +15,7 @@ export default function RadioInput({
     <label
       htmlFor={id}
       className={cn(
-        "flex cursor-pointer items-center gap-2 font-montserrat text-sm text-[#2E2E2E]",
+        "flex cursor-pointer items-center gap-2 font-montserrat text-sm text-ink",
         disabled && "cursor-not-allowed opacity-60",
         className,
       )}
@@ -28,7 +28,7 @@ export default function RadioInput({
         checked={checked}
         onChange={onChange}
         disabled={disabled}
-        className="h-3.5 w-3.5 cursor-pointer accent-[#CE9F2D]"
+        className="h-3.5 w-3.5 cursor-pointer accent-gold"
         {...props}
       />
       {label}

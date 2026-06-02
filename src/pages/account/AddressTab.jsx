@@ -359,12 +359,12 @@ export default function AddressTab({ user }) {
 
   return (
     <div className="grid gap-5">
-      <div className="flex flex-col gap-3 border-b border-[#F5ECDD] pb-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="font-montserrat text-base font-semibold text-[#2E2E2E]">
+          <p className="font-montserrat text-base font-semibold text-ink">
             Saved addresses
           </p>
-          <p className="font-montserrat text-sm text-[#787878]">
+          <p className="font-montserrat text-sm text-muted">
             {addresses.length
               ? `${addresses.length} address${addresses.length === 1 ? "" : "es"} saved`
               : "Add a delivery address for faster checkout."}
@@ -373,7 +373,7 @@ export default function AddressTab({ user }) {
         <button
           type="button"
           onClick={() => setShowAddForm((value) => !value)}
-          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[8px] border border-[#CE9F2D] bg-[#CE9F2D] px-4 font-montserrat text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-[#B88920] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D]/30 sm:w-auto"
+          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4 font-montserrat text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
         >
           {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
           {showAddForm ? "Close form" : "Add address"}
@@ -382,12 +382,12 @@ export default function AddressTab({ user }) {
 
       {showAddForm && (
         <form
-          className="grid gap-4 rounded-[10px] border border-[#e7dfd1] bg-[#FFFDF9] p-4 sm:p-5"
+          className="grid gap-4 rounded-[10px] border border-border bg-surface-soft p-4 sm:p-5"
           onSubmit={addForm.handleSubmit(handleAdd)}
           noValidate
         >
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#2E2E2E]">
-            <MapPin size={16} className="text-[#CE9F2D]" />
+          <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+            <MapPin size={16} className="text-gold" />
             New address
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -533,7 +533,7 @@ export default function AddressTab({ user }) {
             return (
               <div
                 key={addrId}
-                className="rounded-[10px] border border-[#e7dfd1] bg-white p-4 transition-all duration-300 ease-in-out hover:border-[#CE9F2D]/40 hover:shadow-sm sm:p-5"
+                className="rounded-[10px] border border-border bg-white p-4 transition-all duration-300 ease-in-out hover:border-gold/40 hover:shadow-sm sm:p-5"
               >
                 {isEditing ? (
                   <form
@@ -541,8 +541,8 @@ export default function AddressTab({ user }) {
                     onSubmit={editForm.handleSubmit(handleUpdate)}
                     noValidate
                   >
-                    <div className="flex items-center gap-2 text-sm font-semibold text-[#2E2E2E]">
-                      <Pencil size={16} className="text-[#CE9F2D]" />
+                    <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+                      <Pencil size={16} className="text-gold" />
                       Edit address
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2">
@@ -683,7 +683,7 @@ export default function AddressTab({ user }) {
                       <button
                         type="button"
                         onClick={() => startEdit(addr)}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#e7dfd1] text-[#787878] transition-all duration-300 ease-in-out hover:border-[#CE9F2D] hover:bg-[#FAF6EE] hover:text-[#2E2E2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CE9F2D]/30"
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted transition-all duration-300 ease-in-out hover:border-gold hover:bg-cream hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30"
                         aria-label="Edit address"
                       >
                         <Pencil size={15} />
@@ -704,11 +704,11 @@ export default function AddressTab({ user }) {
           })}
         </div>
       ) : (
-        <div className="rounded-[10px] border border-dashed border-[#cfc6b8] bg-[#FAF6EE] p-8 text-center">
-          <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#CE9F2D]">
+        <div className="rounded-[10px] border border-dashed border-border-strong bg-cream p-8 text-center">
+          <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-gold">
             <MapPin size={24} />
           </span>
-          <p className="font-montserrat text-sm font-medium text-[#2E2E2E]">
+          <p className="font-montserrat text-sm font-medium text-ink">
             No addresses saved yet.
           </p>
         </div>

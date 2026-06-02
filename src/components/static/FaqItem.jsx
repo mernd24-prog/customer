@@ -9,7 +9,7 @@ export default function FaqItem({ item, index }) {
   const panelId = `faq-panel-${index}`;
 
   return (
-    <article className="group rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl focus-within:border-accent focus-within:outline-none">
+    <article className="group rounded-[var(--customer-radius)] border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl focus-within:border-accent focus-within:outline-none">
       <button
         type="button"
         aria-expanded={open}

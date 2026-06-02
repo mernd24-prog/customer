@@ -29,7 +29,7 @@ export default function Pagination({
       <button type="button" disabled={currentPage <= 1} onClick={() => onPageChange?.(currentPage - 1)} className="icon-button secondary">
         <ChevronLeft size={16} />
       </button>
-      {firstVisiblePage > 1 && <span className="text-[#A6A6A6]">...</span>}
+      {firstVisiblePage > 1 && <span className="text-[var(--customer-subtle)]">...</span>}
       {pages.map((page) => (
         <button
           key={page}
@@ -38,14 +38,14 @@ export default function Pagination({
           className={cn(
             "h-9 min-w-[36px] rounded-[6px] border px-2.5 font-montserrat text-sm font-medium transition-all duration-300 ease-in-out",
             currentPage === page
-              ? "border-[#CE9F2D] bg-[#CE9F2D] text-white"
-              : "border-[#cfc6b8] text-[#2E2E2E] hover:bg-[#FAF6EE]",
+              ? "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-[var(--customer-navy)]"
+              : "border-[var(--customer-border-strong)] text-[var(--customer-ink)] hover:bg-[var(--customer-cream)]",
           )}
         >
           {page}
         </button>
       ))}
-      {lastVisiblePage < totalPages && <span className="text-[#A6A6A6]">...</span>}
+      {lastVisiblePage < totalPages && <span className="text-[var(--customer-subtle)]">...</span>}
       <button type="button" disabled={currentPage >= totalPages} onClick={() => onPageChange?.(currentPage + 1)} className="icon-button secondary">
         <ChevronRight size={16} />
       </button>

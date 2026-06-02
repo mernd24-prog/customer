@@ -59,16 +59,16 @@ export default function ProfileTab({ user }) {
     <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
       {/* Profile Header */}
       <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[#F5ECDD] text-[#CE9F2D] sm:h-16 sm:w-16">
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold sm:h-16 sm:w-16">
           <User size={32} className="h-8 w-8 sm:h-7 sm:w-7" />
         </div>
 
         <div className="w-full sm:w-auto">
-          <p className="font-montserrat text-lg font-semibold text-[#2E2E2E] sm:text-base">
+          <p className="font-montserrat text-lg font-semibold text-ink sm:text-base">
             {watch("firstName")} {watch("lastName")}
           </p>
 
-          <p className="break-all font-montserrat text-sm text-[#787878]">
+          <p className="break-all font-montserrat text-sm text-muted">
             {watch("email")}
           </p>
         </div>

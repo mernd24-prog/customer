@@ -142,11 +142,11 @@ export function SupportCenterPage() {
           ))}
         </CardGridSection>
 
-        <section className="rounded-[28px] bg-white p-8 shadow-sm shadow-[#e7dfd1]">
+        <section className="rounded-[var(--customer-radius)] bg-white p-8 shadow-sm shadow-border">
           <div className="grid gap-8 md:grid-cols-3">
             <div>
               <h2 className="custom-h4 mb-3">Need real-time support?</h2>
-              <p className="custom-para text-[#787878]">
+              <p className="custom-para text-muted">
                 Email us at{" "}
                 <a
                   href="mailto:support@samglobal.com"
@@ -308,18 +308,18 @@ export function FeaturesPage() {
           ))}
         </CardGridSection>
 
-        <section className="rounded-[28px] bg-white p-8 shadow-sm shadow-[#e7dfd1]">
+        <section className="rounded-[var(--customer-radius)] bg-white p-8 shadow-sm shadow-border">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h2 className="custom-h4">A smoother shopping experience</h2>
-              <p className="custom-para text-[#787878]">
+              <p className="custom-para text-muted">
                 From search to checkout, every interaction is designed to feel
                 fast and effortless.
               </p>
             </div>
             <Link
               to="/support"
-              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-[#2E2E2E] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:bg-accent/90"
+              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-ink transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:bg-accent/90"
             >
              Contact Support 
               <ArrowRight size={18} />

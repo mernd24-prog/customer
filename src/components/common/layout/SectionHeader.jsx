@@ -10,7 +10,7 @@ export default function SectionHeader({
   className = "",
 }) {
   const actionContent = actionHref ? (
-    <Link to={actionHref} className="font-montserrat text-sm font-semibold text-[#CE9F2D] underline-offset-4 hover:underline">
+    <Link to={actionHref} className="rounded-full border border-[var(--customer-border)] px-3 py-1.5 font-montserrat text-xs font-semibold text-[var(--customer-navy)] hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]">
       {actionLabel}
     </Link>
   ) : action ? (
@@ -20,10 +20,10 @@ export default function SectionHeader({
   return (
     <div className={cn("mb-4 flex flex-wrap items-end justify-between gap-3", className)}>
       <div>
-        <h2 className="font-montserrat text-xl font-bold text-[#1d1d1d] sm:text-2xl">
+        <h2 className="customer-section-title font-montserrat text-xl sm:text-2xl">
           {title}
         </h2>
-        {subtitle && <p className="mt-1 text-sm text-[#6b6b6b]">{subtitle}</p>}
+        {subtitle && <p className="mt-1 text-sm text-[var(--customer-muted)]">{subtitle}</p>}
       </div>
       {actionContent}
     </div>

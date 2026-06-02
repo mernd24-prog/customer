@@ -16,9 +16,9 @@ export default function InfoCard({
       : {};
 
   return (
-    <article className="group card-elevated rounded-[28px] border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl focus-within:border-accent focus-within:outline-none">
+    <article className="group card-elevated rounded-[var(--customer-radius)] border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl focus-within:border-accent focus-within:outline-none">
       <div className="mb-5 flex items-center justify-between gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10 text-accent shadow-sm">
+        <div className="flex h-12 w-12 items-center justify-center rounded-[var(--customer-radius)] bg-accent/10 text-accent shadow-sm">
           {icon}
         </div>
         {actionLabel ? (

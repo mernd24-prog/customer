@@ -19,7 +19,7 @@ export default function TextInput({
       {label && (
         <label
           htmlFor={id}
-          className="text-sm font-medium text-[#2E2E2E]"
+          className="text-sm font-medium text-[var(--customer-ink)]"
         >
           {label}
           {required && <span className="ml-0.5 text-red-500">*</span>}
@@ -33,8 +33,7 @@ export default function TextInput({
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
         className={cn(
-          "min-h-11 w-full rounded-[8px] border border-[#cfc6b8] bg-white px-3 py-2.5 font-montserrat text-sm text-[#2E2E2E] outline-none transition-all duration-300 ease-in-out",
-          "placeholder:text-[#A6A6A6] focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20",
+          "customer-input font-montserrat",
           disabled && "cursor-not-allowed bg-gray-50 opacity-70",
           error && "border-red-400 focus:border-red-400 focus:ring-red-200",
           inputClassName,
@@ -43,7 +42,7 @@ export default function TextInput({
         {...props}
       />
       {hint && !error && (
-        <span id={`${id}-hint`} className="text-xs text-[#A6A6A6]">{hint}</span>
+        <span id={`${id}-hint`} className="text-xs text-[var(--customer-muted)]">{hint}</span>
       )}
       {error && (
         <span id={`${id}-error`} role="alert" className="min-h-4 text-xs text-red-600">

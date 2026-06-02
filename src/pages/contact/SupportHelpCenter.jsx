@@ -154,10 +154,10 @@ function TopicCard({ topic }) {
       className={`!relative !flex min-h-[74px] w-full !items-center !justify-start gap-4 rounded-[8px] border-none px-4 py-3 text-left font-montserrat shadow-[0_10px_28px_rgba(46,46,46,0.08)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 
       `}
     >
-      <span className="absolute left-14 top-0 h-1 w-14 rounded-b-full bg-[#A26D27]" />
+      <span className="absolute left-14 top-0 h-1 w-14 rounded-b-full bg-gold-dark" />
       <span
         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[6px] ${
-          topic.active ? "bg-white text-[#CE9F2D]" : "bg-[#CE9F2D] text-white"
+          topic.active ? "bg-white text-gold" : "bg-gold text-white"
         }`}
       >
         <Icon size={24} />
@@ -173,9 +173,9 @@ function OptionCard({ option }) {
     <Button
       type="button"
       variant="ghost"
-      className="!flex min-h-[82px] w-full !items-center !justify-start gap-5 rounded-[8px] !border !border-[#2E2E2E] !bg-white px-6 text-left font-montserrat shadow-sm transition-all duration-300 ease-in-out hover:!border-[#CE9F2D] hover:!text-blue"
+      className="!flex min-h-[82px] w-full !items-center !justify-start gap-5 rounded-[8px] !border !border-ink !bg-white px-6 text-left font-montserrat shadow-sm transition-all duration-300 ease-in-out hover:!border-gold hover:!text-blue"
     >
-      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#F3F3FA] text-blue">
+      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-navy-soft text-blue">
         <Icon size={25} fill="currentColor" strokeWidth={1.7} />
       </span>
       <span className="text-lg font-bold leading-snug">{option.title}</span>
@@ -245,7 +245,7 @@ export default function SupportHelpCenter() {
             <Button
               rounded
               size="lg"
-              className="!bg-blue !px-8 !text-white hover:!bg-[#1b1a62]"
+              className="!bg-blue !px-8 !text-white hover:!bg-navy-dark"
               onClick={() => {
                 window.location.href = ctaUrl;
               }}
@@ -257,7 +257,7 @@ export default function SupportHelpCenter() {
       </section>
 
       {topics.length > 0 && (
-        <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#F3F3FA] py-14">
+        <section className="relative left-1/2 w-screen -translate-x-1/2 bg-navy-soft py-14">
           <div className="w-container">
             <SectionIntro
               title={getSectionTitle(topicsSection)}

@@ -10,14 +10,14 @@ export default function SectionContainer({
     className = "",
 }) {
     return (
-        <section className={`w-full overflow-hidden rounded-[20px] ${className}`}>
-            <header className={`text-[#2E2E2E] ${headerbgColor}`}>
-                <div className="flex min-h-[92px] flex-col gap-3 px-4 py-5 sm:min-h-[111px] sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <section className={`w-full overflow-hidden rounded-[var(--customer-radius)] border border-[var(--customer-border)] bg-white ${className}`}>
+            <header className={`text-[var(--customer-ink)] ${headerbgColor || "bg-white"}`}>
+                <div className="flex min-h-[72px] flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
                     <div className="min-w-0">
-                        <h2 className="font-montserrat text-[22px] font-bold leading-tight tracking-normal sm:text-[26px]">
+                        <h2 className="customer-section-title font-montserrat text-[20px] leading-tight sm:text-[22px]">
                             {title}
                         </h2>
-                        <p className="mt-2 font-montserrat text-sm leading-5 text-[#2E2E2E]">
+                        <p className="mt-1 font-montserrat text-xs leading-5 text-[var(--customer-muted)]">
                             {subtitle}
                         </p>
                     </div>
@@ -25,7 +25,7 @@ export default function SectionContainer({
                         <button
                             type="button"
                             onClick={onAction}
-                            className="group shrink-0 self-start sm:self-center flex items-center gap-2 text-black text-[14px] sm:text-[16px] lg:text-[18px] font-medium font-montserrat transition-all duration-300 ease-in-out hover:text-gray-600 hover:gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                            className="group flex shrink-0 items-center gap-2 self-start rounded-full border border-[var(--customer-border)] bg-white px-3 py-1.5 font-montserrat text-xs font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--customer-gold)] sm:self-center"
                         >
                             {actionLabel}
                             <FaAngleRight className="transition-all duration-300 ease-in-out group-hover:translate-x-1" />
@@ -33,7 +33,7 @@ export default function SectionContainer({
                     ) : null}
                 </div>
             </header>
-            <div className={`p-3 sm:p-4 lg:p-6 ${bodybgColor}`}>
+            <div className={`p-3 sm:p-4 ${bodybgColor || "bg-white"}`}>
                 {children}
             </div>
         </section>

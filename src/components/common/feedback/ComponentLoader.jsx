@@ -11,7 +11,7 @@ export default function ComponentLoader({ className = "", size = "md" }) {
     <div className={cn("flex items-center justify-center", className)}>
       <div
         className={cn(
-          "animate-spin rounded-full border-[#CE9F2D] border-t-transparent",
+          "animate-spin rounded-full border-gold border-t-transparent",
           sizeMap[size] || sizeMap.md
         )}
         role="status"

@@ -14,12 +14,12 @@ export default function CategoryCard({
   const content = (
     <article
       className={cn(
-        "h-full w-full cursor-pointer rounded-[8px] border border-card-border bg-white p-4 transition-all duration-300 ease-in-out hover:bg-card-border",
+        "customer-card h-full w-full cursor-pointer p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-[var(--customer-gold)] hover:bg-[var(--customer-surface-soft)]",
         active && "ring-2 ring-primary/50",
         className,
       )}
     >
-      <div className="overflow-hidden rounded-[8px] bg-[#FAF6EE]">
+      <div className="overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)]">
         {image ? (
           <img
             src={image}
@@ -30,12 +30,12 @@ export default function CategoryCard({
             onError={(event) => applyImageFallback(event, title, "category")}
           />
         ) : (
-          <div className="flex aspect-[284/256] items-center justify-center text-[#CFC6B8]">
+          <div className="flex aspect-[284/256] items-center justify-center text-[var(--customer-border-strong)]">
             <Grid2X2 size={42} strokeWidth={1.4} />
           </div>
         )}
       </div>
-      <p className="mt-3 line-clamp-1 text-center font-montserrat text-[15px] font-medium leading-6 sm:text-[16px] lg:text-[18px]">
+      <p className="mt-3 line-clamp-1 text-center font-montserrat text-[13px] font-semibold leading-5 text-[var(--customer-ink)] sm:text-[14px]">
         {title}
       </p>
     </article>
