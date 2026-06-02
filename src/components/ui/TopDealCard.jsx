@@ -11,7 +11,6 @@ export default function TopDealCard({
   return (
     <Link to={link} className="block h-full">
       <article className="customer-card flex h-full flex-col p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]">
-        
         {/* Product Image */}
         <div className="overflow-hidden rounded-[var(--customer-radius)]">
           <img
@@ -23,10 +22,9 @@ export default function TopDealCard({
 
         {/* Content */}
         <div className="mt-3 flex flex-1 flex-col gap-3 sm:mt-4 sm:flex-row sm:items-center sm:justify-between">
-          
           {/* Title */}
           <h3
-            className="line-clamp-2 text-center font-montserrat text-[13px] font-semibold leading-5 text-[var(--customer-ink)] sm:text-left"
+            className="line-clamp-2 text-center  text-[13px] font-semibold leading-5 text-[var(--customer-ink)] sm:text-left"
             title={title}
           >
             {title}

@@ -26,7 +26,9 @@ const SELECTED_CHECKOUT_STORAGE_KEY = "sam_global_selected_checkout_item_ids";
 
 function readSavedForLaterItems() {
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(SAVED_FOR_LATER_STORAGE_KEY) || "[]");
+    const parsed = JSON.parse(
+      window.localStorage.getItem(SAVED_FOR_LATER_STORAGE_KEY) || "[]",
+    );
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
@@ -34,12 +36,17 @@ function readSavedForLaterItems() {
 }
 
 function writeSavedForLaterItems(items) {
-  window.localStorage.setItem(SAVED_FOR_LATER_STORAGE_KEY, JSON.stringify(items));
+  window.localStorage.setItem(
+    SAVED_FOR_LATER_STORAGE_KEY,
+    JSON.stringify(items),
+  );
 }
 
 function readSelectedCheckoutItemIds() {
   try {
-    const storedValue = window.sessionStorage.getItem(SELECTED_CHECKOUT_STORAGE_KEY);
+    const storedValue = window.sessionStorage.getItem(
+      SELECTED_CHECKOUT_STORAGE_KEY,
+    );
     if (storedValue === null) return null;
     const parsed = JSON.parse(storedValue);
     return Array.isArray(parsed) ? parsed : null;
@@ -49,7 +56,10 @@ function readSelectedCheckoutItemIds() {
 }
 
 function writeSelectedCheckoutItemIds(itemIds) {
-  window.sessionStorage.setItem(SELECTED_CHECKOUT_STORAGE_KEY, JSON.stringify(itemIds));
+  window.sessionStorage.setItem(
+    SELECTED_CHECKOUT_STORAGE_KEY,
+    JSON.stringify(itemIds),
+  );
 }
 
 function adaptItemForCard(item) {
@@ -57,7 +67,10 @@ function adaptItemForCard(item) {
   const productId = item.productId?._id || getProductId(product);
   const variantKey = item.variantId || item.variantSku || "";
   const title = getProductTitle(product, item.title || "Product");
-  const image = getProductImage(product) || item.image || getImageFallbackSrc(title, "cart");
+  const image =
+    getProductImage(product) ||
+    item.image ||
+    getImageFallbackSrc(title, "cart");
   const price = item.price ?? product.price ?? product.sellingPrice ?? 0;
   const oldPrice = item.oldPrice ?? product.mrp ?? product.originalPrice;
   const shipping = item.shipping ?? 0;
@@ -89,13 +102,23 @@ function adaptItemForCard(item) {
 }
 
 function cartLineKey(item) {
-  const product = item.productId && typeof item.productId === "object" ? item.productId : item.product;
+  const product =
+    item.productId && typeof item.productId === "object"
+      ? item.productId
+      : item.product;
   const productId = getProductId(item.productId || item.product);
   const defaultVariant =
     !item.variantId && !item.variantSku && Array.isArray(product?.variants)
-      ? product.variants.find((variant) => variant.isDefault) || product.variants[0]
+      ? product.variants.find((variant) => variant.isDefault) ||
+        product.variants[0]
       : null;
-  const variantKey = item.variantId || item.variantSku || defaultVariant?._id || defaultVariant?.id || defaultVariant?.sku || "";
+  const variantKey =
+    item.variantId ||
+    item.variantSku ||
+    defaultVariant?._id ||
+    defaultVariant?.id ||
+    defaultVariant?.sku ||
+    "";
   return [productId, variantKey].filter(Boolean).join(":");
 }
 
@@ -128,9 +151,13 @@ function mergeDisplayCartItems(items = []) {
 }
 
 function buildSavedProductView(wishlistProduct, resolvedProduct) {
-  const product = resolvedProduct || (typeof wishlistProduct === "object" ? wishlistProduct : null);
+  const product =
+    resolvedProduct ||
+    (typeof wishlistProduct === "object" ? wishlistProduct : null);
   const id = getProductId(product || wishlistProduct);
-  const title = product ? getProductTitle(product, "Saved product") : "Saved product";
+  const title = product
+    ? getProductTitle(product, "Saved product")
+    : "Saved product";
   const image = product ? getProductImage(product) : "";
 
   return {
@@ -138,7 +165,8 @@ function buildSavedProductView(wishlistProduct, resolvedProduct) {
     title,
     image: image || getImageFallbackSrc(title, "saved"),
     price: product?.price ?? product?.sellingPrice ?? product?.salePrice,
-    brand: product?.brand?.name || product?.brand || product?.seller?.name || "",
+    brand:
+      product?.brand?.name || product?.brand || product?.seller?.name || "",
     productForCart: product || wishlistProduct,
   };
 }
@@ -150,13 +178,18 @@ export default function CartPage() {
 
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
-  const rawItems = useMemo(() => mergeDisplayCartItems(cart.items || []), [cart.items]);
+  const rawItems = useMemo(
+    () => mergeDisplayCartItems(cart.items || []),
+    [cart.items],
+  );
   const wishlist = useMemo(() => cart.wishlist || [], [cart.wishlist]);
   const productEntities = useSelector((state) => state.product.entities || {});
   const fetchedIdsRef = useRef(new Set());
   const hasInitializedRef = useRef(false);
   const prevItemIdsRef = useRef(new Set());
-  const [savedForLaterItems, setSavedForLaterItems] = useState(() => readSavedForLaterItems());
+  const [savedForLaterItems, setSavedForLaterItems] = useState(() =>
+    readSavedForLaterItems(),
+  );
   const [selectedItemIds, setSelectedItemIds] = useState([]);
 
   useEffect(() => {
@@ -166,7 +199,7 @@ export default function CartPage() {
   useEffect(() => {
     const wishlistIds = wishlist.map(getProductId).filter(Boolean);
     const missingIds = wishlistIds.filter(
-      (id) => !productEntities[id] && !fetchedIdsRef.current.has(id)
+      (id) => !productEntities[id] && !fetchedIdsRef.current.has(id),
     );
 
     if (!missingIds.length) return;
@@ -181,7 +214,9 @@ export default function CartPage() {
   const items = useMemo(() => rawItems.map(adaptItemForCard), [rawItems]);
   const hasCartItems = items.length > 0;
   const hasSavedItems = savedForLaterItems.length > 0 || wishlist.length > 0;
-  const selectedItems = items.filter((item) => selectedItemIds.includes(item.id));
+  const selectedItems = items.filter((item) =>
+    selectedItemIds.includes(item.id),
+  );
 
   useEffect(() => {
     const currentItemIds = items.map((item) => item.id);
@@ -189,16 +224,19 @@ export default function CartPage() {
 
     if (items.length > 0 && !hasInitializedRef.current) {
       const savedSelectedItemIds = readSelectedCheckoutItemIds();
-      const nextSelectedItemIds = savedSelectedItemIds === null
-        ? currentItemIds
-        : savedSelectedItemIds.filter((id) => currentItemIdsSet.has(id));
+      const nextSelectedItemIds =
+        savedSelectedItemIds === null
+          ? currentItemIds
+          : savedSelectedItemIds.filter((id) => currentItemIdsSet.has(id));
 
       setSelectedItemIds(nextSelectedItemIds);
       writeSelectedCheckoutItemIds(nextSelectedItemIds);
       hasInitializedRef.current = true;
     } else if (hasInitializedRef.current) {
       // Find if there are any new items that were added
-      const newIds = currentItemIds.filter((id) => !prevItemIdsRef.current.has(id));
+      const newIds = currentItemIds.filter(
+        (id) => !prevItemIdsRef.current.has(id),
+      );
 
       setSelectedItemIds((current) => {
         // Filter out any selected items that are no longer in the cart
@@ -225,7 +263,7 @@ export default function CartPage() {
 
   const handleIncrease = (id) => {
     const updated = rawItems.map((ci) =>
-      cartLineKey(ci) === id ? { ...ci, quantity: (ci.quantity || 1) + 1 } : ci
+      cartLineKey(ci) === id ? { ...ci, quantity: (ci.quantity || 1) + 1 } : ci,
     );
 
     run(
@@ -234,9 +272,9 @@ export default function CartPage() {
         normalizeCartPayloadForWrite({
           items: updated,
           wishlist: cart.wishlist || [],
-        })
+        }),
       ),
-      "Cart updated"
+      "Cart updated",
     );
   };
 
@@ -256,9 +294,9 @@ export default function CartPage() {
         normalizeCartPayloadForWrite({
           items: updated,
           wishlist: cart.wishlist || [],
-        })
+        }),
       ),
-      "Cart updated"
+      "Cart updated",
     );
   };
 
@@ -271,9 +309,9 @@ export default function CartPage() {
         normalizeCartPayloadForWrite({
           items: updated,
           wishlist: cart.wishlist || [],
-        })
+        }),
       ),
-      "Item removed"
+      "Item removed",
     );
   };
 
@@ -325,19 +363,27 @@ export default function CartPage() {
   };
 
   const handleMoveWishlistToCart = (savedProduct) => {
-    const payload = addProductToCartPayload(cart, savedProduct.productForCart, 1);
+    const payload = addProductToCartPayload(
+      cart,
+      savedProduct.productForCart,
+      1,
+    );
 
     const newWishlistPayload = wishlistPayload(
       payload,
       savedProduct.productForCart,
-      true
+      true,
     );
 
     run(dispatch, updateCart(newWishlistPayload), "Moved to cart");
   };
 
   const handleMoveSavedLineToCart = (savedItem) => {
-    persistSavedForLater(savedForLaterItems.filter((item) => cartLineKey(item) !== cartLineKey(savedItem)));
+    persistSavedForLater(
+      savedForLaterItems.filter(
+        (item) => cartLineKey(item) !== cartLineKey(savedItem),
+      ),
+    );
     run(
       dispatch,
       updateCart(
@@ -353,7 +399,10 @@ export default function CartPage() {
   const handleBuyNow = (id) => {
     const itemToBuy = rawItems.find((ci) => cartLineKey(ci) === id);
     if (!itemToBuy) return;
-    window.sessionStorage.setItem(BUY_NOW_STORAGE_KEY, JSON.stringify([itemToBuy]));
+    window.sessionStorage.setItem(
+      BUY_NOW_STORAGE_KEY,
+      JSON.stringify([itemToBuy]),
+    );
     navigate("/checkout");
   };
 
@@ -397,16 +446,21 @@ export default function CartPage() {
 
                 {hasCartItems && (
                   <div className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-border bg-white px-4 py-3">
-                    <label className="flex items-center gap-2 font-montserrat text-sm font-semibold text-ink">
+                    <label className="flex items-center gap-2  text-sm font-semibold text-ink">
                       <input
                         type="checkbox"
-                        checked={selectedItems.length === items.length && items.length > 0}
-                        onChange={(event) => handleSelectAll(event.target.checked)}
+                        checked={
+                          selectedItems.length === items.length &&
+                          items.length > 0
+                        }
+                        onChange={(event) =>
+                          handleSelectAll(event.target.checked)
+                        }
                         className="h-4 w-4 rounded border-border-strong accent-gold"
                       />
                       Select all
                     </label>
-                    <span className="font-montserrat text-xs text-muted">
+                    <span className=" text-xs text-muted">
                       {selectedItems.length > 0
                         ? `${selectedItems.length} selected for checkout`
                         : "Select all"}
@@ -416,8 +470,9 @@ export default function CartPage() {
 
                 {hasSavedItems && (
                   <div className="panel">
-                    <h3 className="mb-4 font-montserrat text-[16px] font-semibold text-ink">
-                      Saved for later ({savedForLaterItems.length + wishlist.length})
+                    <h3 className="mb-4  text-[16px] font-semibold text-ink">
+                      Saved for later (
+                      {savedForLaterItems.length + wishlist.length})
                     </h3>
 
                     <div className="grid gap-3">
@@ -437,15 +492,20 @@ export default function CartPage() {
                               />
 
                               <div className="min-w-0">
-                                <p className="truncate font-montserrat text-sm font-semibold text-ink">
+                                <p className="truncate  text-sm font-semibold text-ink">
                                   {savedItemView.title}
                                 </p>
 
-                                <div className="mt-0.5 flex flex-wrap items-center gap-2 font-montserrat text-xs text-muted">
-                                  {savedItemView.variantSku ? <span>{savedItemView.variantSku}</span> : null}
+                                <div className="mt-0.5 flex flex-wrap items-center gap-2  text-xs text-muted">
+                                  {savedItemView.variantSku ? (
+                                    <span>{savedItemView.variantSku}</span>
+                                  ) : null}
                                   <span>Qty: {savedItemView.quantity}</span>
                                   <span className="font-semibold text-ink">
-                                    ₹{Number(savedItemView.price || 0).toLocaleString("en-IN")}
+                                    ₹
+                                    {Number(
+                                      savedItemView.price || 0,
+                                    ).toLocaleString("en-IN")}
                                   </span>
                                 </div>
                               </div>
@@ -457,7 +517,9 @@ export default function CartPage() {
                               size="sm"
                               label="Move to cart"
                               className="h-8 w-full shrink-0 px-3 text-xs sm:w-auto"
-                              onClick={() => handleMoveSavedLineToCart(savedItem)}
+                              onClick={() =>
+                                handleMoveSavedLineToCart(savedItem)
+                              }
                             />
                           </div>
                         );
@@ -468,7 +530,7 @@ export default function CartPage() {
 
                         const savedProduct = buildSavedProductView(
                           wishlistProduct,
-                          productEntities[wishlistId]
+                          productEntities[wishlistId],
                         );
 
                         return (
@@ -484,16 +546,21 @@ export default function CartPage() {
                               />
 
                               <div className="min-w-0">
-                                <p className="truncate font-montserrat text-sm font-semibold text-ink">
+                                <p className="truncate  text-sm font-semibold text-ink">
                                   {savedProduct.title}
                                 </p>
 
-                                <div className="mt-0.5 flex flex-wrap items-center gap-2 font-montserrat text-xs text-muted">
-                                  {savedProduct.brand ? <span>{savedProduct.brand}</span> : null}
+                                <div className="mt-0.5 flex flex-wrap items-center gap-2  text-xs text-muted">
+                                  {savedProduct.brand ? (
+                                    <span>{savedProduct.brand}</span>
+                                  ) : null}
 
                                   {savedProduct.price != null ? (
                                     <span className="font-semibold text-ink">
-                                      ₹{Number(savedProduct.price).toLocaleString("en-IN")}
+                                      ₹
+                                      {Number(
+                                        savedProduct.price,
+                                      ).toLocaleString("en-IN")}
                                     </span>
                                   ) : null}
                                 </div>
@@ -506,7 +573,9 @@ export default function CartPage() {
                               size="sm"
                               label="Move to cart"
                               className="h-8 w-full shrink-0 px-3 text-xs sm:w-auto"
-                              onClick={() => handleMoveWishlistToCart(savedProduct)}
+                              onClick={() =>
+                                handleMoveWishlistToCart(savedProduct)
+                              }
                             />
                           </div>
                         );
@@ -538,10 +607,17 @@ export default function CartPage() {
                     protectionText="Purchase protected by"
                     protectionLinkText="Sam Global Money Back Guarantee"
                     protectionLink="/"
-                    buttonText={selectedItems.length ? "Proceed to Checkout" : "Select products to checkout"}
+                    buttonText={
+                      selectedItems.length
+                        ? "Proceed to Checkout"
+                        : "Select products to checkout"
+                    }
                     onCheckout={() => {
                       if (!selectedItems.length) return;
-                      window.sessionStorage.setItem(SELECTED_CHECKOUT_STORAGE_KEY, JSON.stringify(selectedItemIds));
+                      window.sessionStorage.setItem(
+                        SELECTED_CHECKOUT_STORAGE_KEY,
+                        JSON.stringify(selectedItemIds),
+                      );
                       navigate("/checkout");
                     }}
                   />

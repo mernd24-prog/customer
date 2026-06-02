@@ -45,7 +45,7 @@ export default function FormField({
 
   return (
     <label
-      className="grid gap-1.5 font-montserrat text-sm font-medium text-[var(--customer-ink)]"
+      className="grid gap-1.5  text-sm font-medium text-[var(--customer-ink)]"
       htmlFor={id}
     >
       <span>{label}</span>
@@ -54,9 +54,7 @@ export default function FormField({
           placeholder={placeholder}
           id={id}
           type={inputType}
-          className={`customer-input font-montserrat ${
-            isPassword ? "pr-11" : ""
-          }`}
+          className={`customer-input  ${isPassword ? "pr-11" : ""}`}
           aria-invalid={Boolean(error)}
           {...registration}
           {...props}
@@ -77,7 +75,7 @@ export default function FormField({
           </button>
         ) : null}
       </span>
-      <span className="min-h-4 font-montserrat text-xs font-normal text-red-600">
+      <span className="min-h-4  text-xs font-normal text-red-600">
         {error?.message}
       </span>
     </label>

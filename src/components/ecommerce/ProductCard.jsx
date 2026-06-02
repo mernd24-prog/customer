@@ -39,17 +39,27 @@ export default function ProductCard({
   const id = getProductId(cardProduct);
   const title = titleProp || getProductTitle(cardProduct);
   const image = imageProp || getProductImage(cardProduct);
-  const subtitle = subtitleProp || cardProduct?.description || cardProduct?.category || cardProduct?.brand || "";
+  const subtitle =
+    subtitleProp ||
+    cardProduct?.description ||
+    cardProduct?.category ||
+    cardProduct?.brand ||
+    "";
   const price = priceProp ?? cardProduct?.salePrice ?? cardProduct?.price ?? 0;
-  const oldPrice = oldPriceProp ?? cardProduct?.mrp ?? cardProduct?.compareAtPrice ?? 0;
-  const rating = ratingProp ?? cardProduct?.rating ?? cardProduct?.averageRating ?? 0;
-  const ratingCount = ratingCountProp ?? cardProduct?.ratingCount ?? cardProduct?.reviewsCount;
-  const discountPercent = discountPercentProp ?? cardProduct?.discountPercent ?? 0;
-  const isInStock = inStock ?? (cardProduct?.isInStock !== false);
+  const oldPrice =
+    oldPriceProp ?? cardProduct?.mrp ?? cardProduct?.compareAtPrice ?? 0;
+  const rating =
+    ratingProp ?? cardProduct?.rating ?? cardProduct?.averageRating ?? 0;
+  const ratingCount =
+    ratingCountProp ?? cardProduct?.ratingCount ?? cardProduct?.reviewsCount;
+  const discountPercent =
+    discountPercentProp ?? cardProduct?.discountPercent ?? 0;
+  const isInStock = inStock ?? cardProduct?.isInStock !== false;
   const brand = brandProp || cardProduct?.brand;
   const to = href || `/products/${id}`;
   const isListVariant = variant === "list" || variant === "compact";
-  const badgeText = badge || (discountPercent > 0 ? `${discountPercent}% OFF` : "");
+  const badgeText =
+    badge || (discountPercent > 0 ? `${discountPercent}% OFF` : "");
 
   const handleWishlist = (event) => {
     event.preventDefault();
@@ -76,11 +86,26 @@ export default function ProductCard({
 
   if (isListVariant) {
     return (
-      <article className={cn("customer-card p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]", className)}>
+      <article
+        className={cn(
+          "customer-card p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]",
+          className,
+        )}
+      >
         <div className="grid gap-4 sm:grid-cols-[180px_1fr_auto] sm:items-center">
-          <Link to={to} className="block overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)]">
+          <Link
+            to={to}
+            className="block overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)]"
+          >
             {image ? (
-              <img src={image} alt={title} className="aspect-square w-full object-cover" loading="lazy" decoding="async" onError={handleImageError} />
+              <img
+                src={image}
+                alt={title}
+                className="aspect-square w-full object-cover"
+                loading="lazy"
+                decoding="async"
+                onError={handleImageError}
+              />
             ) : (
               <div className="flex aspect-square items-center justify-center text-[var(--customer-border-strong)]">
                 <ShoppingCart size={42} strokeWidth={1.4} />
@@ -93,26 +118,51 @@ export default function ProductCard({
               <button
                 type="button"
                 onClick={handleBrandClick}
-                className="font-montserrat text-left text-[11px] font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
+                className=" text-left text-[11px] font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
               >
                 {brand}
               </button>
             )}
-            <h3 className="mt-1 line-clamp-2 font-montserrat text-sm font-semibold text-[var(--customer-ink)] sm:text-base" title={title}>
+            <h3
+              className="mt-1 line-clamp-2  text-sm font-semibold text-[var(--customer-ink)] sm:text-base"
+              title={title}
+            >
               {title}
             </h3>
-            <p className="mt-2 line-clamp-2 font-montserrat text-sm text-[var(--customer-muted)]" title={subtitle}>
+            <p
+              className="mt-2 line-clamp-2  text-sm text-[var(--customer-muted)]"
+              title={subtitle}
+            >
               {subtitle}
             </p>
-            <Rating value={rating} count={ratingCount} showValue className="mt-3" />
+            <Rating
+              value={rating}
+              count={ratingCount}
+              showValue
+              className="mt-3"
+            />
           </Link>
 
           <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
-            <Price price={price} oldPrice={oldPrice} currency={currency || cardProduct?.currency} layout="stacked" />
+            <Price
+              price={price}
+              oldPrice={oldPrice}
+              currency={currency || cardProduct?.currency}
+              layout="stacked"
+            />
             {showActions && (
               <div className="flex gap-2">
-                <WishlistButton active={isWishlisted} label={title} onClick={handleWishlist} />
-                <AddToCartButton compact disabled={!isInStock} label={`Add ${title} to cart`} onClick={handleAddToCart} />
+                <WishlistButton
+                  active={isWishlisted}
+                  label={title}
+                  onClick={handleWishlist}
+                />
+                <AddToCartButton
+                  compact
+                  disabled={!isInStock}
+                  label={`Add ${title} to cart`}
+                  onClick={handleAddToCart}
+                />
               </div>
             )}
           </div>
@@ -122,30 +172,51 @@ export default function ProductCard({
   }
 
   return (
-    <article className={cn("customer-card group relative min-w-0 p-2.5 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)] sm:p-3", className)}>
+    <article
+      className={cn(
+        "customer-card group relative min-w-0 p-2.5 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)] sm:p-3",
+        className,
+      )}
+    >
       {badgeText && (
-        <span className="absolute left-4 top-4 z-10 rounded-full bg-[var(--customer-gold)] px-2 py-0.5 font-montserrat text-[10px] font-bold text-[var(--customer-navy)]">
+        <span className="absolute left-4 top-4 z-10 rounded-full bg-[var(--customer-gold)] px-2 py-0.5  text-[10px] font-bold text-[var(--customer-navy)]">
           {badgeText}
         </span>
       )}
 
       {!isInStock && (
-        <span className="absolute right-4 top-4 z-10 rounded-full bg-black/70 px-2 py-1 font-montserrat text-[11px] font-semibold text-white">
+        <span className="absolute right-4 top-4 z-10 rounded-full bg-black/70 px-2 py-1  text-[11px] font-semibold text-white">
           Out of stock
         </span>
       )}
 
       {showActions && (
         <div className="absolute right-4 top-4 z-20 flex gap-2 opacity-100 transition-all duration-300 ease-in-out sm:opacity-0 group-hover:opacity-100">
-          <WishlistButton active={isWishlisted} label={title} onClick={handleWishlist} />
-          <AddToCartButton compact disabled={!isInStock} label={`Add ${title} to cart`} onClick={handleAddToCart} />
+          <WishlistButton
+            active={isWishlisted}
+            label={title}
+            onClick={handleWishlist}
+          />
+          <AddToCartButton
+            compact
+            disabled={!isInStock}
+            label={`Add ${title} to cart`}
+            onClick={handleAddToCart}
+          />
         </div>
       )}
 
       <Link to={to} className="block">
         <div className="overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)]">
           {image ? (
-            <img src={image} alt={title} className="mx-auto aspect-[1/1.15] w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-[1.02]" loading="lazy" decoding="async" onError={handleImageError} />
+            <img
+              src={image}
+              alt={title}
+              className="mx-auto aspect-[1/1.15] w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
+              loading="lazy"
+              decoding="async"
+              onError={handleImageError}
+            />
           ) : (
             <div className="flex aspect-[1/1.15] items-center justify-center text-[var(--customer-border-strong)]">
               <ShoppingCart size={48} strokeWidth={1.4} />
@@ -160,21 +231,33 @@ export default function ProductCard({
             <button
               type="button"
               onClick={handleBrandClick}
-              className="mt-2 font-montserrat text-left text-[10px] font-bold uppercase tracking-normal text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
+              className="mt-2  text-left text-[10px] font-bold uppercase tracking-normal text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
             >
               {brand}
             </button>
           )}
 
-          <h3 className="mt-1 line-clamp-1 font-montserrat text-[12px] font-semibold text-[var(--customer-ink)] sm:text-[13px]" title={title}>
+          <h3
+            className="mt-1 line-clamp-1  text-[12px] font-semibold text-[var(--customer-ink)] sm:text-[13px]"
+            title={title}
+          >
             {title}
           </h3>
 
-          <p className="mt-1 line-clamp-2 min-h-[28px] font-montserrat text-[12px] leading-4 text-[var(--customer-muted)]" title={subtitle}>
+          <p
+            className="mt-1 line-clamp-2 min-h-[28px]  text-[12px] leading-4 text-[var(--customer-muted)]"
+            title={subtitle}
+          >
             {subtitle}
           </p>
 
-          <Price price={price} oldPrice={oldPrice} currency={currency || cardProduct?.currency} layout="pill" className="mt-3 h-[30px] w-full max-w-[150px]" />
+          <Price
+            price={price}
+            oldPrice={oldPrice}
+            currency={currency || cardProduct?.currency}
+            layout="pill"
+            className="mt-3 h-[30px] w-full max-w-[150px]"
+          />
         </div>
       </Link>
     </article>

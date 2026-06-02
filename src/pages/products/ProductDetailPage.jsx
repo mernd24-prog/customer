@@ -74,20 +74,18 @@ function StarRating({ rating, count }) {
             key={i}
             size={15}
             className={
-              i < stars
-                ? "fill-gold text-gold"
-                : "fill-border text-border"
+              i < stars ? "fill-gold text-gold" : "fill-border text-border"
             }
           />
         ))}
       </div>
       {rating != null && (
-        <span className="font-montserrat text-sm font-semibold text-ink">
+        <span className=" text-sm font-semibold text-ink">
           {Number(rating).toFixed(1)}
         </span>
       )}
       {count != null && (
-        <span className="font-montserrat text-xs text-gray">
+        <span className=" text-xs text-gray">
           ({count.toLocaleString()} reviews)
         </span>
       )}
@@ -389,9 +387,7 @@ function DeliveryChecker({ productId }) {
     <div className="panel">
       <div className="mb-3 flex items-center gap-2">
         <MapPin size={16} className="text-gold" />
-        <span className="font-montserrat text-sm  font-semibold text-ink">
-          Check Delivery
-        </span>
+        <span className=" text-sm  font-semibold text-ink">Check Delivery</span>
       </div>
       <form onSubmit={check} className="flex gap-2">
         <input
@@ -414,7 +410,7 @@ function DeliveryChecker({ productId }) {
       {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
       {result && (
         <p
-          className={`mt-2 font-montserrat text-sm font-medium ${result.serviceable ? "success" : "text-red-600"}`}
+          className={`mt-2  text-sm font-medium ${result.serviceable ? "success" : "text-red-600"}`}
         >
           {result.serviceable
             ? `✓ Delivery by ${result.estimatedDelivery || result.estimatedDate || "2–5 business days"}`
@@ -552,11 +548,21 @@ export default function ProductDetailPage() {
   const productPrice = getProductPrice(product);
   const baseDisplayPrice = firstMoneyValue(selectedVariantPrice, productPrice);
   const safeDynamicPrice =
-    dynamicPrice && baseDisplayPrice && dynamicPrice >= baseDisplayPrice * 0.5 && dynamicPrice <= baseDisplayPrice * 2
+    dynamicPrice &&
+    baseDisplayPrice &&
+    dynamicPrice >= baseDisplayPrice * 0.5 &&
+    dynamicPrice <= baseDisplayPrice * 2
       ? dynamicPrice
       : undefined;
-  const price = firstMoneyValue(safeDynamicPrice, selectedVariantPrice, productPrice);
-  const mrp = firstMoneyValue(getProductMrp(selectedVariant), getProductMrp(product));
+  const price = firstMoneyValue(
+    safeDynamicPrice,
+    selectedVariantPrice,
+    productPrice,
+  );
+  const mrp = firstMoneyValue(
+    getProductMrp(selectedVariant),
+    getProductMrp(product),
+  );
   const currency = selectedVariant?.currency || product?.currency || "INR";
   const discount =
     mrp && price && mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
@@ -602,8 +608,11 @@ export default function ProductDetailPage() {
 
       <div className="mx-auto w-full max-w-[1440px] px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
         {/* Breadcrumb */}
-        <nav className="mb-4 flex flex-wrap items-center gap-1 font-montserrat text-xs text-gray">
-          <Link to="/" className="hover:text-ink transition-all duration-300 ease-in-out">
+        <nav className="mb-4 flex flex-wrap items-center gap-1  text-xs text-gray">
+          <Link
+            to="/"
+            className="hover:text-ink transition-all duration-300 ease-in-out"
+          >
             Home
           </Link>
           <span>/</span>
@@ -655,11 +664,11 @@ export default function ProductDetailPage() {
                   <div className="flex min-w-0 items-start justify-between gap-3">
                     <div className="min-w-0">
                       {product.brand && (
-                        <p className="font-montserrat text-xs font-semibold uppercase tracking-normal text-gold-dark">
+                        <p className=" text-xs font-semibold uppercase tracking-normal text-gold-dark">
                           {product.brand}
                         </p>
                       )}
-                      <h1 className="mt-1 break-words font-montserrat text-[20px] font-bold leading-snug text-ink sm:text-[24px] lg:text-[26px]">
+                      <h1 className="mt-1 break-words  text-[20px] font-bold leading-snug text-ink sm:text-[24px] lg:text-[26px]">
                         {getProductTitle(product)}
                       </h1>
                     </div>
@@ -689,7 +698,7 @@ export default function ProductDetailPage() {
     "
                             >
                               <div className="mb-3">
-                                <h3 className="font-montserrat text-[13px] font-bold text-ink sm:text-sm">
+                                <h3 className=" text-[13px] font-bold text-ink sm:text-sm">
                                   Share Product
                                 </h3>
 
@@ -790,23 +799,23 @@ export default function ProductDetailPage() {
 
                   {/* Price */}
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="font-montserrat text-[18px] font-bold leading-none text-ink sm:text-[20px]">
+                    <span className=" text-[18px] font-bold leading-none text-ink sm:text-[20px]">
                       {formatMoney(price, currency)}
                     </span>
                     {mrp && mrp > price && (
-                      <span className="font-montserrat text-sm text-gray line-through">
+                      <span className=" text-sm text-gray line-through">
                         {formatMoney(mrp, currency)}
                       </span>
                     )}
                     {discount > 0 && (
-                      <span className="rounded-[4px] bg-navy px-2 py-0.5 font-montserrat text-[10px] font-bold uppercase text-white">
+                      <span className="rounded-[4px] bg-navy px-2 py-0.5  text-[10px] font-bold uppercase text-white">
                         Sale {discount}%
                       </span>
                     )}
                   </div>
 
                   {safeDynamicPrice && dynamicState.current?.loyalty && (
-                    <p className="inline-block w-fit rounded-full bg-gold-soft px-3 py-1 font-montserrat text-xs font-semibold text-gold-dark">
+                    <p className="inline-block w-fit rounded-full bg-gold-soft px-3 py-1  text-xs font-semibold text-gold-dark">
                       ✦ Loyalty price applied
                     </p>
                   )}
@@ -814,13 +823,13 @@ export default function ProductDetailPage() {
                   {inStock ? (
                     <div className="flex items-center gap-2">
                       <div className="relative z-0 w-2.5 h-2.5 rounded-full bg-success animate-pulse" />
-                      <p className="font-montserrat text-sm font-semibold text-success">
+                      <p className=" text-sm font-semibold text-success">
                         {selectedVariant?.stock ?? product?.stock ?? 52} in
                         stock
                       </p>
                     </div>
                   ) : (
-                    <p className="font-montserrat text-sm font-semibold text-red-500">
+                    <p className=" text-sm font-semibold text-red-500">
                       Out of stock
                     </p>
                   )}
@@ -830,7 +839,7 @@ export default function ProductDetailPage() {
                     <div className="flex flex-col gap-6">
                       {variantOptions.map((option) => (
                         <div key={option.slug}>
-                          <p className="mb-2 font-montserrat text-sm font-semibold capitalize text-ink">
+                          <p className="mb-2  text-sm font-semibold capitalize text-ink">
                             {option.name}:{" "}
                             <span className="font-bold text-gold">
                               {selectedAttributes[option.slug] || "Select"}
@@ -883,7 +892,7 @@ export default function ProductDetailPage() {
                                     matchingVariant &&
                                     setSelectedVariant(matchingVariant)
                                   }
-                                  className={`min-h-[42px] min-w-[45px] rounded-[6px] border px-3 py-1 font-montserrat text-sm font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 ${isSelected ? "border-gold bg-gold text-white shadow-md" : "border-border-strong bg-white text-ink hover:border-gold"}`}
+                                  className={`min-h-[42px] min-w-[45px] rounded-[6px] border px-3 py-1  text-sm font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 ${isSelected ? "border-gold bg-gold text-white shadow-md" : "border-border-strong bg-white text-ink hover:border-gold"}`}
                                 >
                                   {value}
                                 </button>
@@ -897,7 +906,7 @@ export default function ProductDetailPage() {
 
                   {/* Quantity */}
                   <div className="flex flex-col gap-2">
-                    <span className="font-montserrat text-xs font-semibold text-gray uppercase tracking-normal">
+                    <span className=" text-xs font-semibold text-gray uppercase tracking-normal">
                       Quantity
                     </span>
                     <div className="flex w-full max-w-[220px] items-center overflow-hidden rounded-full border border-border-strong bg-white sm:w-fit">
@@ -909,7 +918,7 @@ export default function ProductDetailPage() {
                       >
                         −
                       </button>
-                      <span className="flex min-w-[60px] items-center justify-center font-montserrat text-base font-bold text-ink">
+                      <span className="flex min-w-[60px] items-center justify-center  text-base font-bold text-ink">
                         {quantity}
                       </span>
                       <button
@@ -930,7 +939,7 @@ export default function ProductDetailPage() {
                       onClick={() => {
                         addToCart({ ...product, selectedVariant }, quantity);
                       }}
-                      className="w-full h-[54px] rounded-full bg-gold text-white font-montserrat font-bold text-base shadow-lg hover:bg-gold-dark transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full h-[54px] rounded-full bg-gold text-white  font-bold text-base shadow-lg hover:bg-gold-dark transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Add To Cart
                     </button>
@@ -948,7 +957,7 @@ export default function ProductDetailPage() {
                         );
                         navigate("/checkout");
                       }}
-                      className="w-full h-[54px] rounded-full border-2 border-gold text-gold font-montserrat font-bold text-base hover:bg-cream transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full h-[54px] rounded-full border-2 border-gold text-gold  font-bold text-base hover:bg-cream transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Buy It Now
                     </button>
@@ -963,16 +972,12 @@ export default function ProductDetailPage() {
                         desc: "On all orders",
                       },
                       {
-                        icon: (
-                          <RefreshCw size={20} className="text-gold" />
-                        ),
+                        icon: <RefreshCw size={20} className="text-gold" />,
                         label: "Easy Returns",
                         desc: "30-day window",
                       },
                       {
-                        icon: (
-                          <ShieldCheck size={20} className="text-gold" />
-                        ),
+                        icon: <ShieldCheck size={20} className="text-gold" />,
                         label: "Secure Pay",
                         desc: "100% protected",
                       },
@@ -983,10 +988,10 @@ export default function ProductDetailPage() {
                       >
                         <div className="shrink-0">{item.icon}</div>
                         <div>
-                          <p className="font-montserrat text-xs font-bold text-ink">
+                          <p className=" text-xs font-bold text-ink">
                             {item.label}
                           </p>
-                          <p className="font-montserrat text-[10px] text-gray mt-0.5">
+                          <p className=" text-[10px] text-gray mt-0.5">
                             {item.desc}
                           </p>
                         </div>
@@ -1005,10 +1010,10 @@ export default function ProductDetailPage() {
                         className="mt-0.5 shrink-0 text-green"
                       />
                       <div>
-                        <p className="font-montserrat text-sm font-semibold text-ink">
+                        <p className=" text-sm font-semibold text-ink">
                           Warranty Included
                         </p>
-                        <p className="mt-0.5 font-montserrat text-xs text-muted">
+                        <p className="mt-0.5  text-xs text-muted">
                           {warranty.period ||
                             warranty.duration ||
                             warranty.type ||
@@ -1022,7 +1027,7 @@ export default function ProductDetailPage() {
                   {detailRows.length > 0 && (
                     <div className="border-t border-border pt-4">
                       <details open className="group">
-                        <summary className="flex cursor-pointer list-none items-center justify-between font-montserrat text-base font-bold text-ink">
+                        <summary className="flex cursor-pointer list-none items-center justify-between  text-base font-bold text-ink">
                           Details
                           <span className="text-xl leading-none group-open:rotate-45">
                             +
@@ -1032,7 +1037,7 @@ export default function ProductDetailPage() {
                           {detailRows.slice(0, 8).map(([key, value]) => (
                             <div
                               key={key}
-                              className="grid grid-cols-1 gap-1 font-montserrat text-[12px] sm:grid-cols-[118px_1fr] sm:gap-3"
+                              className="grid grid-cols-1 gap-1  text-[12px] sm:grid-cols-[118px_1fr] sm:gap-3"
                             >
                               <dt className="font-semibold capitalize text-ink">
                                 {key}
@@ -1055,10 +1060,10 @@ export default function ProductDetailPage() {
               <div className="mt-10 grid gap-6">
                 {product.description && (
                   <div className="panel">
-                    <h2 className="mb-3 font-montserrat text-[18px] font-bold text-ink">
+                    <h2 className="mb-3  text-[18px] font-bold text-ink">
                       Description
                     </h2>
-                    <p className="font-montserrat text-sm leading-7 text-muted whitespace-pre-line">
+                    <p className=" text-sm leading-7 text-muted whitespace-pre-line">
                       {product.description}
                     </p>
                   </div>
@@ -1066,7 +1071,7 @@ export default function ProductDetailPage() {
 
                 {Object.keys(attributes).length > 0 && (
                   <div className="panel">
-                    <h2 className="mb-4 font-montserrat text-[18px] font-bold text-ink">
+                    <h2 className="mb-4  text-[18px] font-bold text-ink">
                       Specifications
                     </h2>
                     <div className="grid grid-cols-1 gap-y-0 sm:grid-cols-2">
@@ -1075,10 +1080,10 @@ export default function ProductDetailPage() {
                           key={key}
                           className="flex gap-4 border-b border-border py-2.5 last:border-0"
                         >
-                          <dt className="w-36 shrink-0 font-montserrat text-xs font-semibold uppercase tracking-normal text-gray">
+                          <dt className="w-36 shrink-0  text-xs font-semibold uppercase tracking-normal text-gray">
                             {key}
                           </dt>
-                          <dd className="font-montserrat text-sm text-ink">
+                          <dd className=" text-sm text-ink">
                             {Array.isArray(val) ? val.join(", ") : String(val)}
                           </dd>
                         </div>
@@ -1089,15 +1094,15 @@ export default function ProductDetailPage() {
 
                 {product.seller && (
                   <div className="panel">
-                    <h2 className="mb-3 font-montserrat text-[18px] font-bold text-ink">
+                    <h2 className="mb-3  text-[18px] font-bold text-ink">
                       Sold By
                     </h2>
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-soft font-montserrat font-bold text-gold-dark">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-soft  font-bold text-gold-dark">
                         {(product.seller.name || "S")[0].toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-montserrat text-sm font-semibold text-ink">
+                        <p className=" text-sm font-semibold text-ink">
                           {product.seller.name ||
                             product.seller.storeName ||
                             "Seller"}
@@ -1115,12 +1120,12 @@ export default function ProductDetailPage() {
               {relatedProducts.length > 0 && (
                 <section className="mt-12">
                   <div className="section-head mb-6">
-                    <h2 className="font-montserrat text-[22px] font-bold text-ink">
+                    <h2 className=" text-[22px] font-bold text-ink">
                       You May Also Like
                     </h2>
                     <Link
                       to="/products"
-                      className="font-montserrat text-sm font-medium text-gold hover:text-gold-dark transition-all duration-300 ease-in-out"
+                      className=" text-sm font-medium text-gold hover:text-gold-dark transition-all duration-300 ease-in-out"
                     >
                       View all →
                     </Link>

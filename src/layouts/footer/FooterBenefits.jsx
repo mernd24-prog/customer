@@ -1,28 +1,30 @@
-import FooterSectionContainer from "./FooterSectionContainer";
-import FooterSectionTitle from "./FooterSectionTitle";
-
 export default function FooterBenefits({ items = [] }) {
   if (!items.length) return null;
 
   return (
-    <section className="border-y border-white/10 bg-white">
-      <FooterSectionContainer className="grid gap-4 py-5 sm:grid-cols-2 lg:grid-cols-4">
+    <section className="">
+      <div className="flex flex-col  lg:flex-row justify-between py-3">
         {items.map((item, index) => (
-          <div key={item?.title || `benefit-${index}`} className="flex items-center gap-4 rounded-[var(--customer-radius)] border border-[var(--customer-border)] bg-[var(--customer-surface-soft)] px-4 py-3">
+          <div
+            key={item?.title || `benefit-${index}`}
+            className="flex items-center gap-4 rounded-[var(--customer-radius)] px-4 py-3"
+          >
             <img
-              className="h-10 w-10 shrink-0 object-contain sm:h-10 sm:w-10 xl:h-12 xl:w-12"
+              className="h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12 2xl:h-16 2xl:w-16"
               src={item?.icon}
               alt={item?.alt || item?.title || "Benefit"}
             />
             <div>
-              <FooterSectionTitle className="mb-0 text-sm leading-snug text-[var(--customer-navy)]">
+              <h2 className="mb-0 text-lg xl:text-2xl  font-bold text-[#1B1D60]">
                 {item?.title}
-              </FooterSectionTitle>
-              <p className="text-xs text-[var(--customer-muted)]">{item?.description}</p>
+              </h2>
+              <p className="text-sm xl:text-lg font-light text-[#2E2E2E]">
+                {item?.description}
+              </p>
             </div>
           </div>
         ))}
-      </FooterSectionContainer>
+      </div>
     </section>
   );
 }

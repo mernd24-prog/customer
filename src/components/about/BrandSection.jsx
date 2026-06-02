@@ -11,12 +11,10 @@ export default function BrandCarousel({ data = {} }) {
   return (
     <section className="overflow-hidden pt-8 md:pt-20 ">
       <div className=" flex flex-col items-center gap-2 text-center">
-        <h2 className="font-bold font-montserrat text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+        <h2 className="font-bold  text-xl md:text-2xl lg:text-3xl xl:text-4xl">
           {sectionDetails.heading}
         </h2>
-        <p className="custom-h6  font-montserrat">
-          {sectionDetails.description}
-        </p>
+        <p className="custom-h6  ">{sectionDetails.description}</p>
       </div>
       {loading ? (
         <SkeletonLoader

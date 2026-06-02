@@ -45,7 +45,7 @@ export default function AccountPage({ tab = "profile" }) {
       />
 
       <div className="w-container py-8 sm:py-10">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink sm:text-3xl">
+        <h1 className="mb-6  text-2xl font-bold text-ink sm:text-3xl">
           My Account
         </h1>
 
@@ -55,7 +55,7 @@ export default function AccountPage({ tab = "profile" }) {
             <Link
               key={id}
               to={path}
-              className={`flex min-w-max items-center gap-2 rounded-[8px] px-4 py-2 font-montserrat text-sm font-medium transition-all duration-300 ease-in-out ${
+              className={`flex min-w-max items-center gap-2 rounded-[8px] px-4 py-2  text-sm font-medium transition-all duration-300 ease-in-out ${
                 tab === id
                   ? "bg-white text-gold shadow-sm"
                   : "text-muted hover:text-ink"

@@ -15,7 +15,9 @@ export default function BrandCard({
   className = "",
 }) {
   const displayImage = logo || image;
-  const to = href || `/brands/${encodeURIComponent((name || "").toLowerCase().replace(/\s+/g, "-"))}`;
+  const to =
+    href ||
+    `/brands/${encodeURIComponent((name || "").toLowerCase().replace(/\s+/g, "-"))}`;
   const initials = String(name || "Brand")
     .split(/\s+/)
     .filter(Boolean)
@@ -43,8 +45,14 @@ export default function BrandCard({
             onError={(event) => applyImageFallback(event, name, "brand")}
           />
         ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-white text-center font-montserrat text-lg font-bold text-gold shadow-sm">
-            {initials || <Store size={30} strokeWidth={1.4} className="text-border-strong" />}
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-white text-center  text-lg font-bold text-gold shadow-sm">
+            {initials || (
+              <Store
+                size={30}
+                strokeWidth={1.4}
+                className="text-border-strong"
+              />
+            )}
           </div>
         )}
         <span
@@ -56,18 +64,18 @@ export default function BrandCard({
       </div>
 
       <div className="mt-3 flex flex-1 flex-col">
-        <h3 className="line-clamp-1 font-montserrat text-[14px] font-semibold text-ink sm:text-[15px]">
+        <h3 className="line-clamp-1  text-[14px] font-semibold text-ink sm:text-[15px]">
           {name}
         </h3>
 
         {subtitle && (
-          <p className="mt-1 line-clamp-2 font-montserrat text-[12px] leading-5 text-muted">
+          <p className="mt-1 line-clamp-2  text-[12px] leading-5 text-muted">
             {subtitle}
           </p>
         )}
 
         {productCount != null && (
-          <p className="mt-auto pt-2 font-montserrat text-[11px] font-medium text-muted">
+          <p className="mt-auto pt-2  text-[11px] font-medium text-muted">
             {Number(productCount).toLocaleString()} products
           </p>
         )}

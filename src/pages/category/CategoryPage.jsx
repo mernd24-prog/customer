@@ -37,7 +37,11 @@ export default function CategoryPage() {
   const [brandList, setBrandList] = useState([]);
   const [categoryData, setCategoryData] = useState(null);
   const [items, setItems] = useState([]);
-  const [pageInfo, setPageInfo] = useState({ page: 1, totalPages: 1, total: 0 });
+  const [pageInfo, setPageInfo] = useState({
+    page: 1,
+    totalPages: 1,
+    total: 0,
+  });
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
@@ -47,7 +51,8 @@ export default function CategoryPage() {
 
   const products = items;
   const meta = productState.meta;
-  const totalPages = pageInfo.totalPages || meta?.totalPages || meta?.pages || 1;
+  const totalPages =
+    pageInfo.totalPages || meta?.totalPages || meta?.pages || 1;
   const currentPage = pageInfo.page || Number(searchParams.get("page") || 1);
 
   const getParams = useCallback(
@@ -58,7 +63,10 @@ export default function CategoryPage() {
         minPrice: searchParams.get("minPrice") || undefined,
         maxPrice: searchParams.get("maxPrice") || undefined,
         sort: searchParams.get("sort") || undefined,
-        productFamilyCode: searchParams.get("productFamilyCode") || searchParams.get("family") || undefined,
+        productFamilyCode:
+          searchParams.get("productFamilyCode") ||
+          searchParams.get("family") ||
+          undefined,
         rating: searchParams.get("rating") || undefined,
         inStock: searchParams.get("inStock") || undefined,
         page: pageOverride || 1,
@@ -68,7 +76,19 @@ export default function CategoryPage() {
       searchParams.forEach((value, key) => {
         if (key.startsWith("attr_")) params[key] = value;
       });
-      ["color", "size", "material", "fit", "storage", "skinType", "shade", "finish", "room", "sport", "concern"].forEach((key) => {
+      [
+        "color",
+        "size",
+        "material",
+        "fit",
+        "storage",
+        "skinType",
+        "shade",
+        "finish",
+        "room",
+        "sport",
+        "concern",
+      ].forEach((key) => {
         const value = searchParams.get(key);
         if (value) params[key] = value;
       });
@@ -91,10 +111,16 @@ export default function CategoryPage() {
             ? data.list
             : [];
       const meta = result?.meta || {};
-      const nextPage = Number(meta.page || meta.currentPage || params.page || 1);
+      const nextPage = Number(
+        meta.page || meta.currentPage || params.page || 1,
+      );
       const nextTotalPages = Number(meta.totalPages || meta.pages || 1);
       const nextTotal = Number(meta.total || meta.count || list.length || 0);
-      setPageInfo({ page: nextPage, totalPages: nextTotalPages, total: nextTotal });
+      setPageInfo({
+        page: nextPage,
+        totalPages: nextTotalPages,
+        total: nextTotal,
+      });
       setItems((prev) => (append ? [...prev, ...list] : list));
       setFirstLoadDone(true);
       setIsLoadingMore(false);
@@ -129,8 +155,11 @@ export default function CategoryPage() {
         setBrandList(
           list
             .map((brand) => {
-              const label = brand?.name || brand?.title || brand?.brandName || brand?.code;
-              return label ? { value: String(label), label: String(label) } : null;
+              const label =
+                brand?.name || brand?.title || brand?.brandName || brand?.code;
+              return label
+                ? { value: String(label), label: String(label) }
+                : null;
             })
             .filter(Boolean),
         );
@@ -139,7 +168,13 @@ export default function CategoryPage() {
   }, [dispatch, categoryKey]);
 
   useEffect(() => {
-    if (!sentinelRef.current || !firstLoadDone || productState.loading || isLoadingMore) return undefined;
+    if (
+      !sentinelRef.current ||
+      !firstLoadDone ||
+      productState.loading ||
+      isLoadingMore
+    )
+      return undefined;
     if (currentPage >= totalPages) return undefined;
 
     const observer = new IntersectionObserver(
@@ -153,7 +188,14 @@ export default function CategoryPage() {
 
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
-  }, [currentPage, totalPages, firstLoadDone, loadProducts, productState.loading, isLoadingMore]);
+  }, [
+    currentPage,
+    totalPages,
+    firstLoadDone,
+    loadProducts,
+    productState.loading,
+    isLoadingMore,
+  ]);
 
   const updateParam = (key, value) => {
     setSearchParams((prev) => {
@@ -168,8 +210,10 @@ export default function CategoryPage() {
   const handlePriceChange = ({ minPrice, maxPrice }) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      if (minPrice) next.set("minPrice", minPrice); else next.delete("minPrice");
-      if (maxPrice) next.set("maxPrice", maxPrice); else next.delete("maxPrice");
+      if (minPrice) next.set("minPrice", minPrice);
+      else next.delete("minPrice");
+      if (maxPrice) next.set("maxPrice", maxPrice);
+      else next.delete("maxPrice");
       next.delete("page");
       return next;
     });
@@ -178,8 +222,10 @@ export default function CategoryPage() {
   const removeFilter = (key) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      if (key === "price") { next.delete("minPrice"); next.delete("maxPrice"); }
-      else next.delete(key);
+      if (key === "price") {
+        next.delete("minPrice");
+        next.delete("maxPrice");
+      } else next.delete(key);
       next.delete("page");
       return next;
     });
@@ -194,29 +240,64 @@ export default function CategoryPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const categoryTitle = categoryData?.title || categoryData?.name || categoryKey;
+  const categoryTitle =
+    categoryData?.title || categoryData?.name || categoryKey;
   const categoryDesc = categoryData?.description;
   const categoryImage = categoryData?.imageUrl || categoryData?.bannerUrl;
 
   // Sub-categories and sub-sub-categories from category data
-  const subCategories = Array.isArray(categoryData?.children) ? categoryData.children : [];
+  const subCategories = Array.isArray(categoryData?.children)
+    ? categoryData.children
+    : [];
 
   const activeFilters = [
-    searchParams.get("brand") && { key: "brand", label: `Brand: ${searchParams.get("brand")}` },
-    searchParams.get("productFamilyCode") && { key: "productFamilyCode", label: `Family: ${searchParams.get("productFamilyCode")}` },
-    searchParams.get("rating") && { key: "rating", label: `Rating: ${searchParams.get("rating")}★ & up` },
+    searchParams.get("brand") && {
+      key: "brand",
+      label: `Brand: ${searchParams.get("brand")}`,
+    },
+    searchParams.get("productFamilyCode") && {
+      key: "productFamilyCode",
+      label: `Family: ${searchParams.get("productFamilyCode")}`,
+    },
+    searchParams.get("rating") && {
+      key: "rating",
+      label: `Rating: ${searchParams.get("rating")}★ & up`,
+    },
     searchParams.get("inStock") && { key: "inStock", label: "In Stock Only" },
-    ["color", "size", "material", "fit", "storage", "skinType", "shade", "finish", "room", "sport", "concern"]
-      .map((key) => searchParams.get(key) && { key, label: `${key}: ${searchParams.get(key)}` })
+    [
+      "color",
+      "size",
+      "material",
+      "fit",
+      "storage",
+      "skinType",
+      "shade",
+      "finish",
+      "room",
+      "sport",
+      "concern",
+    ]
+      .map(
+        (key) =>
+          searchParams.get(key) && {
+            key,
+            label: `${key}: ${searchParams.get(key)}`,
+          },
+      )
       .filter(Boolean),
     ...Array.from(searchParams.entries())
       .filter(([key, value]) => key.startsWith("attr_") && value)
-      .map(([key, value]) => ({ key, label: `${key.replace(/^attr_/, "")}: ${value}` })),
+      .map(([key, value]) => ({
+        key,
+        label: `${key.replace(/^attr_/, "")}: ${value}`,
+      })),
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
       label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,
     },
-  ].flat().filter(Boolean);
+  ]
+    .flat()
+    .filter(Boolean);
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -247,15 +328,26 @@ export default function CategoryPage() {
     // Dynamic attribute filters from category schema
     Array.isArray(categoryData?.attributeSchema) &&
       categoryData.attributeSchema
-        .filter((attribute) => attribute?.isFilterable !== false && Array.isArray(attribute?.options) && attribute.options.length)
+        .filter(
+          (attribute) =>
+            attribute?.isFilterable !== false &&
+            Array.isArray(attribute?.options) &&
+            attribute.options.length,
+        )
         .map((attribute) => ({
           key: `attr_${attribute.key}`,
           title: attribute.label || attribute.key,
           content: (
             <OptionFilter
               name={`attr_${attribute.key}`}
-              options={attribute.options.map((option) => ({ value: String(option), label: String(option) }))}
-              selected={searchParams.get(attribute.key) || searchParams.get(`attr_${attribute.key}`)}
+              options={attribute.options.map((option) => ({
+                value: String(option),
+                label: String(option),
+              }))}
+              selected={
+                searchParams.get(attribute.key) ||
+                searchParams.get(`attr_${attribute.key}`)
+              }
               onChange={(value) => updateParam(attribute.key, value)}
             />
           ),
@@ -301,24 +393,30 @@ export default function CategoryPage() {
       key: "inStock",
       title: "Availability",
       content: (
-        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-ink">
+        <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
           <input
             type="checkbox"
             checked={searchParams.get("inStock") === "true"}
-            onChange={(e) => updateParam("inStock", e.target.checked ? "true" : undefined)}
+            onChange={(e) =>
+              updateParam("inStock", e.target.checked ? "true" : undefined)
+            }
             className="h-3.5 w-3.5 accent-gold"
           />
           In Stock Only
         </label>
       ),
     },
-  ].flat().filter(Boolean);
+  ]
+    .flat()
+    .filter(Boolean);
 
   return (
     <>
       <Seo
         title={`${categoryTitle} | Sam Global`}
-        description={categoryDesc || `Shop ${categoryTitle} products at Sam Global`}
+        description={
+          categoryDesc || `Shop ${categoryTitle} products at Sam Global`
+        }
       />
 
       {categoryImage ? (
@@ -327,12 +425,17 @@ export default function CategoryPage() {
             src={categoryImage}
             alt={categoryTitle}
             className="h-full w-full object-cover"
-            onError={(event) => applyImageFallback(event, categoryTitle, "category")}
+            onError={(event) =>
+              applyImageFallback(event, categoryTitle, "category")
+            }
           />
           <div className="absolute inset-0 flex items-end bg-black/40 px-6 pb-6">
             <div>
-              <Breadcrumbs items={breadcrumbItems} className="mb-1 text-white" />
-              <h1 className="font-montserrat text-[26px] font-bold text-white sm:text-[32px]">
+              <Breadcrumbs
+                items={breadcrumbItems}
+                className="mb-1 text-white"
+              />
+              <h1 className=" text-[26px] font-bold text-white sm:text-[32px]">
                 {categoryTitle}
               </h1>
             </div>
@@ -342,11 +445,13 @@ export default function CategoryPage() {
         <div className="border-b border-border bg-cream px-4 py-6 sm:px-6">
           <div className="w-container">
             <Breadcrumbs items={breadcrumbItems} className="mb-2 text-gray" />
-            <h1 className="font-montserrat text-[26px] font-bold text-gray sm:text-[32px]">
+            <h1 className=" text-[26px] font-bold text-gray sm:text-[32px]">
               {categoryTitle}
             </h1>
             {categoryDesc && (
-              <p className="mt-1 max-w-2xl font-montserrat text-sm text-muted">{categoryDesc}</p>
+              <p className="mt-1 max-w-2xl  text-sm text-muted">
+                {categoryDesc}
+              </p>
             )}
           </div>
         </div>
@@ -371,7 +476,10 @@ export default function CategoryPage() {
           onClearFilters={() => setSearchParams(new URLSearchParams())}
           sidebarOpen={sidebarOpen}
           onCloseSidebar={() => setSidebarOpen(false)}
-          loading={(productState.loading && !products.length) || (!firstLoadDone && !products.length)}
+          loading={
+            (productState.loading && !products.length) ||
+            (!firstLoadDone && !products.length)
+          }
           error={productState.error}
           empty={!products.length && !productState.loading && firstLoadDone}
           emptyTitle="No products found"

@@ -1,10 +1,20 @@
 import { memo, useCallback, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronDown, ChevronRight, Sparkles, ArrowRight, Tag, Flame, ShoppingBag } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Sparkles,
+  ArrowRight,
+  Tag,
+  Flame,
+  ShoppingBag,
+} from "lucide-react";
 import { applyImageFallback } from "../../utils/ecommerce";
 
-const slugifyKey = (value = "") => String(value).trim().toLowerCase().replace(/\s+/g, "-");
-const sortByOrder = (a, b) => Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0);
+const slugifyKey = (value = "") =>
+  String(value).trim().toLowerCase().replace(/\s+/g, "-");
+const sortByOrder = (a, b) =>
+  Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0);
 const EMPTY_ITEMS = [];
 const DEFAULT_LABELS = {
   shopAll: "Shop All Category",
@@ -23,7 +33,8 @@ const defaultGetQuickLinkHref = (item) => item?.link || "#";
 const defaultImageErrorHandler = (event, title, fallbackType) => {
   applyImageFallback(event, title, fallbackType);
 };
-const isActiveHref = (pathname, href) => href && href !== "#" && pathname === href;
+const isActiveHref = (pathname, href) =>
+  href && href !== "#" && pathname === href;
 
 const mergeLabels = (labels) => ({ ...DEFAULT_LABELS, ...labels });
 
@@ -78,11 +89,11 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
     <div className="flex flex-col h-full bg-cream/40 border-r border-border p-5">
       <div className="mb-4 flex items-center gap-2 border-b border-border pb-3">
         <Sparkles size={15} className="text-gold" />
-        <h3 className="font-montserrat text-[11px] font-black uppercase tracking-normal text-ink">
+        <h3 className=" text-[11px] font-black uppercase tracking-normal text-ink">
           {title}
         </h3>
       </div>
-      
+
       <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar pr-1 flex-1">
         {items.map((item) => {
           const isActive = activeKey === item.categoryKey;
@@ -96,7 +107,11 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
                   ? "bg-white shadow-[0_4px_12px_rgba(206,159,45,0.06)] border-gold text-gold font-semibold translate-x-1"
                   : "border-transparent text-ink/80 hover:bg-white/60 hover:text-gold hover:translate-x-0.5"
               }`}
-              onMouseEnter={activeKey === item.categoryKey ? undefined : () => onHover(item.categoryKey)}
+              onMouseEnter={
+                activeKey === item.categoryKey
+                  ? undefined
+                  : () => onHover(item.categoryKey)
+              }
             >
               <Link
                 to={itemHref}
@@ -108,14 +123,16 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
               <ChevronRight
                 size={14}
                 className={`transition-all duration-300 ease-in-out ${
-                  isActive ? "opacity-100 translate-x-0.5" : "opacity-0 -translate-x-1 group-hover:opacity-60"
+                  isActive
+                    ? "opacity-100 translate-x-0.5"
+                    : "opacity-0 -translate-x-1 group-hover:opacity-60"
                 }`}
               />
             </div>
           );
         })}
       </div>
-      
+
       <Link
         to={rootHref}
         className="mt-4 flex items-center justify-center gap-1.5 rounded-lg bg-cream py-2.5 text-xs font-semibold text-gold transition-all duration-300 ease-in-out hover:bg-gold/10"
@@ -142,10 +159,10 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
   const location = useLocation();
   return (
     <div className="flex flex-col h-full bg-white border-r border-border p-5">
-      <h3 className="mb-4 border-b border-border pb-3 font-montserrat text-[11px] font-black uppercase tracking-normal text-gray">
+      <h3 className="mb-4 border-b border-border pb-3  text-[11px] font-black uppercase tracking-normal text-gray">
         {title}
       </h3>
-      
+
       <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar pr-1 flex-1">
         {items.length > 0 ? (
           items.map((item) => {
@@ -160,7 +177,11 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
                     ? "bg-cream text-gold-dark font-semibold"
                     : "text-ink/70 hover:bg-cream/40 hover:text-gold"
                 }`}
-                onMouseEnter={activeKey === item.categoryKey ? undefined : () => onHover(item.categoryKey)}
+                onMouseEnter={
+                  activeKey === item.categoryKey
+                    ? undefined
+                    : () => onHover(item.categoryKey)
+                }
               >
                 <Link
                   to={itemHref}
@@ -169,14 +190,16 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
                 >
                   {item.title}
                 </Link>
-                {showChevron && Array.isArray(item.children) && item.children.length > 0 && (
-                  <ChevronRight
-                    size={12}
-                    className={`opacity-40 transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:translate-x-0.5 ${
-                      isActive ? "opacity-100 text-gold-dark" : ""
-                    }`}
-                  />
-                )}
+                {showChevron &&
+                  Array.isArray(item.children) &&
+                  item.children.length > 0 && (
+                    <ChevronRight
+                      size={12}
+                      className={`opacity-40 transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:translate-x-0.5 ${
+                        isActive ? "opacity-100 text-gold-dark" : ""
+                      }`}
+                    />
+                  )}
               </div>
             );
           })
@@ -205,10 +228,10 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
   const location = useLocation();
   return (
     <div className="flex flex-col h-full bg-white p-5">
-      <h3 className="mb-4 border-b border-border pb-3 font-montserrat text-[11px] font-black uppercase tracking-normal text-gray">
+      <h3 className="mb-4 border-b border-border pb-3  text-[11px] font-black uppercase tracking-normal text-gray">
         {title}
       </h3>
-      
+
       <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar pr-1 flex-1">
         {items.length > 0 ? (
           items.map((item) => {
@@ -223,7 +246,9 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
                   isCurrentLink ? "bg-cream font-bold text-gold" : "text-ink/70"
                 }`}
               >
-                <span className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ease-in-out ${isCurrentLink ? "bg-gold" : "bg-border group-hover:bg-gold"}`} />
+                <span
+                  className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ease-in-out ${isCurrentLink ? "bg-gold" : "bg-border group-hover:bg-gold"}`}
+                />
                 <span className="flex-1 truncate">{item.title}</span>
               </Link>
             );
@@ -285,9 +310,9 @@ const PromotionBanner = memo(function PromotionBanner({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         </div>
-        
+
         <div className="relative z-10 flex h-full flex-col items-start justify-end p-6">
-          <h2 className="font-montserrat text-xl font-extrabold leading-tight text-white xl:text-2xl drop-shadow-sm">
+          <h2 className=" text-xl font-extrabold leading-tight text-white xl:text-2xl drop-shadow-sm">
             {title}
             {highlight && (
               <>
@@ -298,7 +323,7 @@ const PromotionBanner = memo(function PromotionBanner({
               </>
             )}
           </h2>
-          
+
           <Link
             to={link}
             className="mt-4 inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-l from-gold-dark to-gold px-5 py-2.5 text-xs font-bold text-white shadow-lg transition-all duration-300 ease-in-out hover:opacity-90 active:scale-95"
@@ -315,7 +340,12 @@ const PromotionBanner = memo(function PromotionBanner({
 /**
  * Mobile-first responsive accordion megamenu component
  */
-const MobileAccordionMenu = memo(function MobileAccordionMenu({ items, rootTitle, getItemHref, labels }) {
+const MobileAccordionMenu = memo(function MobileAccordionMenu({
+  items,
+  rootTitle,
+  getItemHref,
+  labels,
+}) {
   const [expandedSubKey, setExpandedSubKey] = useState("");
   const [expandedChildKey, setExpandedChildKey] = useState("");
 
@@ -332,7 +362,7 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({ items, rootTitle
     <div className="w-full bg-white border-t border-border p-4 flex flex-col gap-3 max-h-[75vh] overflow-y-auto">
       <div className="flex items-center gap-2 border-b border-border pb-2">
         <Sparkles size={14} className="text-gold" />
-        <span className="font-montserrat text-[10px] font-black uppercase tracking-normal text-gold">
+        <span className=" text-[10px] font-black uppercase tracking-normal text-gold">
           {rootTitle}
         </span>
       </div>
@@ -341,7 +371,10 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({ items, rootTitle
         {items.map((sub) => {
           const isSubExpanded = expandedSubKey === sub.categoryKey;
           return (
-            <div key={sub.categoryKey} className="border border-border/60 rounded-xl overflow-hidden bg-cream/10">
+            <div
+              key={sub.categoryKey}
+              className="border border-border/60 rounded-xl overflow-hidden bg-cream/10"
+            >
               <button
                 type="button"
                 onClick={() => handleToggleSub(sub.categoryKey)}
@@ -360,10 +393,16 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({ items, rootTitle
                 <div className="px-4 pb-3 pt-2 bg-white flex flex-col gap-1.5">
                   {Array.isArray(sub.children) && sub.children.length > 0 ? (
                     sub.children.map((child) => {
-                      const isChildExpanded = expandedChildKey === child.categoryKey;
-                      const hasInner = Array.isArray(child.children) && child.children.length > 0;
+                      const isChildExpanded =
+                        expandedChildKey === child.categoryKey;
+                      const hasInner =
+                        Array.isArray(child.children) &&
+                        child.children.length > 0;
                       return (
-                        <div key={child.categoryKey} className="flex flex-col border-b border-gray-50 pb-1.5 last:border-0 last:pb-0">
+                        <div
+                          key={child.categoryKey}
+                          className="flex flex-col border-b border-gray-50 pb-1.5 last:border-0 last:pb-0"
+                        >
                           <div className="flex items-center justify-between py-1">
                             <Link
                               to={getItemHref(child)}
@@ -374,7 +413,9 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({ items, rootTitle
                             {hasInner && (
                               <button
                                 type="button"
-                                onClick={() => handleToggleChild(child.categoryKey)}
+                                onClick={() =>
+                                  handleToggleChild(child.categoryKey)
+                                }
                                 className="p-1 hover:bg-cream rounded animate-pulse"
                               >
                                 <ChevronDown
@@ -454,40 +495,55 @@ export default function CategoryMegaMenu({
 
   const activeSubKey = useMemo(() => {
     if (!subCategories.length) return "";
-    return subCategories.some((item) => item.categoryKey === activeSubCategoryKey)
+    return subCategories.some(
+      (item) => item.categoryKey === activeSubCategoryKey,
+    )
       ? activeSubCategoryKey
       : subCategories[0].categoryKey;
   }, [activeSubCategoryKey, subCategories]);
 
   const handleSubCategoryHover = useCallback((key) => {
     setActiveSubSubCategoryKey((currentKey) => (currentKey ? "" : currentKey));
-    setActiveSubCategoryKey((currentKey) => (currentKey === key ? currentKey : key));
+    setActiveSubCategoryKey((currentKey) =>
+      currentKey === key ? currentKey : key,
+    );
   }, []);
 
   const handleChildCategoryHover = useCallback((key) => {
-    setActiveSubSubCategoryKey((currentKey) => (currentKey === key ? currentKey : key));
+    setActiveSubSubCategoryKey((currentKey) =>
+      currentKey === key ? currentKey : key,
+    );
   }, []);
 
   // Active subcategory object
   const activeSubCategory = useMemo(() => {
-    return subCategories.find((item) => item.categoryKey === activeSubKey) || null;
+    return (
+      subCategories.find((item) => item.categoryKey === activeSubKey) || null
+    );
   }, [activeSubKey, subCategories]);
 
   // Level 2 children (Sub-subcategories)
   const subSubCategories = useMemo(() => {
-    return activeSubCategory && Array.isArray(activeSubCategory.children) ? activeSubCategory.children : EMPTY_ITEMS;
+    return activeSubCategory && Array.isArray(activeSubCategory.children)
+      ? activeSubCategory.children
+      : EMPTY_ITEMS;
   }, [activeSubCategory]);
 
   const activeChildKey = useMemo(() => {
     if (!subSubCategories.length) return "";
-    return subSubCategories.some((item) => item.categoryKey === activeSubSubCategoryKey)
+    return subSubCategories.some(
+      (item) => item.categoryKey === activeSubSubCategoryKey,
+    )
       ? activeSubSubCategoryKey
       : subSubCategories[0].categoryKey;
   }, [activeSubSubCategoryKey, subSubCategories]);
 
   // Active child category object (Level 2)
   const activeSubSubCategory = useMemo(() => {
-    return subSubCategories.find((item) => item.categoryKey === activeChildKey) || null;
+    return (
+      subSubCategories.find((item) => item.categoryKey === activeChildKey) ||
+      null
+    );
   }, [activeChildKey, subSubCategories]);
 
   // Level 3 children (Deeper/Inner categories)
@@ -499,19 +555,25 @@ export default function CategoryMegaMenu({
 
   // Check if any sub-subcategory has deeper nested categories
   const hasDeeperCategories = useMemo(() => {
-    return subSubCategories.some((item) => Array.isArray(item.children) && item.children.length > 0);
+    return subSubCategories.some(
+      (item) => Array.isArray(item.children) && item.children.length > 0,
+    );
   }, [subSubCategories]);
 
   // Quick links fallback from data CMS
   const quickLinks = useMemo(() => {
     if (Array.isArray(quickLinksProp)) return quickLinksProp;
-    return Array.isArray(data?.leftSections?.[1]?.items) ? data.leftSections[1].items : EMPTY_ITEMS;
+    return Array.isArray(data?.leftSections?.[1]?.items)
+      ? data.leftSections[1].items
+      : EMPTY_ITEMS;
   }, [data, quickLinksProp]);
 
   if (!root) return null;
 
   return (
-    <div className={`w-full bg-white/95 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-slide-fade-in border-b border-border ${className}`}>
+    <div
+      className={`w-full bg-white/95 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-slide-fade-in border-b border-border ${className}`}
+    >
       {/* Mobile view (< 1024px) */}
       <div className="block lg:hidden">
         <MobileAccordionMenu
@@ -523,7 +585,9 @@ export default function CategoryMegaMenu({
       </div>
 
       {/* Desktop view (>= 1024px) */}
-      <div className={`hidden lg:block w-container mx-auto ${desktopContainerClassName}`}>
+      <div
+        className={`hidden lg:block w-container mx-auto ${desktopContainerClassName}`}
+      >
         <div className="grid grid-cols-12 min-h-[380px] max-h-[500px]">
           {/* Column 1: Subcategories */}
           <div className="col-span-3">

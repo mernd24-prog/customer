@@ -13,7 +13,13 @@ import {
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import { tokenStorage } from "../../api/tokenStorage";
 
-function ProductGridPage({ title, description, items = [], sourceLink, sourceText }) {
+function ProductGridPage({
+  title,
+  description,
+  items = [],
+  sourceLink,
+  sourceText,
+}) {
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
   return (
@@ -22,11 +28,11 @@ function ProductGridPage({ title, description, items = [], sourceLink, sourceTex
       <section className="w-container py-8">
         <div className="mb-5 flex items-center justify-between gap-3">
           <div>
-            <h1 className="font-montserrat text-2xl font-semibold text-ink">{title}</h1>
+            <h1 className=" text-2xl font-semibold text-ink">{title}</h1>
             <p className="mt-1 text-sm text-muted">{description}</p>
           </div>
           {sourceLink && (
-            <Link to={sourceLink} className="font-montserrat text-sm font-medium text-gold">
+            <Link to={sourceLink} className=" text-sm font-medium text-gold">
               {sourceText || "Explore more"} →
             </Link>
           )}
@@ -53,9 +59,13 @@ function ProductGridPage({ title, description, items = [], sourceLink, sourceTex
 
 export function RecentlyUploadedPage() {
   const dispatch = useDispatch();
-  const products = useSelector((s) => (Array.isArray(s.product.list) ? s.product.list : []));
+  const products = useSelector((s) =>
+    Array.isArray(s.product.list) ? s.product.list : [],
+  );
   useEffect(() => {
-    dispatch(fetchProducts({ sort: "newest", page: 1, limit: 48 })).catch(() => {});
+    dispatch(fetchProducts({ sort: "newest", page: 1, limit: 48 })).catch(
+      () => {},
+    );
   }, [dispatch]);
   return (
     <ProductGridPage
@@ -70,9 +80,13 @@ export function RecentlyUploadedPage() {
 
 export function NewArrivalsPage() {
   const dispatch = useDispatch();
-  const products = useSelector((s) => (Array.isArray(s.product.list) ? s.product.list : []));
+  const products = useSelector((s) =>
+    Array.isArray(s.product.list) ? s.product.list : [],
+  );
   useEffect(() => {
-    dispatch(fetchProducts({ sort: "newest", page: 1, limit: 48 })).catch(() => {});
+    dispatch(fetchProducts({ sort: "newest", page: 1, limit: 48 })).catch(
+      () => {},
+    );
   }, [dispatch]);
   return (
     <ProductGridPage
@@ -87,14 +101,20 @@ export function NewArrivalsPage() {
 
 export function RelatedProductsPage() {
   const dispatch = useDispatch();
-  const recommendations = useSelector((s) => (Array.isArray(s.recommendation.list) ? s.recommendation.list : []));
-  const fallbackProducts = useSelector((s) => (Array.isArray(s.product.list) ? s.product.list : []));
+  const recommendations = useSelector((s) =>
+    Array.isArray(s.recommendation.list) ? s.recommendation.list : [],
+  );
+  const fallbackProducts = useSelector((s) =>
+    Array.isArray(s.product.list) ? s.product.list : [],
+  );
   const products = recommendations.length ? recommendations : fallbackProducts;
   useEffect(() => {
     if (tokenStorage.getAccessToken()) {
       dispatch(fetchRecommendations({ limit: 48 })).catch(() => {});
     } else {
-      dispatch(fetchProducts({ sort: "rating", page: 1, limit: 48 })).catch(() => {});
+      dispatch(fetchProducts({ sort: "rating", page: 1, limit: 48 })).catch(
+        () => {},
+      );
     }
   }, [dispatch]);
   return (
@@ -110,12 +130,20 @@ export function RelatedProductsPage() {
 
 export function TrendingNowPage() {
   const dispatch = useDispatch();
-  const trending = useSelector((s) => (Array.isArray(s.recommendation.trendingList) ? s.recommendation.trendingList : []));
-  const fallbackProducts = useSelector((s) => (Array.isArray(s.product.list) ? s.product.list : []));
+  const trending = useSelector((s) =>
+    Array.isArray(s.recommendation.trendingList)
+      ? s.recommendation.trendingList
+      : [],
+  );
+  const fallbackProducts = useSelector((s) =>
+    Array.isArray(s.product.list) ? s.product.list : [],
+  );
   const products = trending.length ? trending : fallbackProducts;
   useEffect(() => {
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
-    dispatch(fetchProducts({ sort: "rating", page: 1, limit: 48 })).catch(() => {});
+    dispatch(fetchProducts({ sort: "rating", page: 1, limit: 48 })).catch(
+      () => {},
+    );
   }, [dispatch]);
   return (
     <ProductGridPage

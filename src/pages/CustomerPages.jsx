@@ -69,7 +69,10 @@ import {
   fetchReturnByOrder,
 } from "../features/returns/returnsSlice";
 import { fetchWallet } from "../features/wallet/walletSlice";
-import { fetchSubscriptionPlans, purchaseSubscription } from "../features/subscription/subscriptionSlice";
+import {
+  fetchSubscriptionPlans,
+  purchaseSubscription,
+} from "../features/subscription/subscriptionSlice";
 import {
   fetchNotifications,
   fetchNotificationPreferences,
@@ -99,19 +102,21 @@ import {
   submitUserKyc,
 } from "../features/user/userSlice";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
+import { useFetch, itemsFrom } from "./customer/helpers";
 import {
-  useFetch,
-  itemsFrom,
-} from "./customer/helpers";
-import { loginSchema, emailSchema, otpSchema, resetSchema, registerSchema } from "../validations/validationSchemas";
+  loginSchema,
+  emailSchema,
+  otpSchema,
+  resetSchema,
+  registerSchema,
+} from "../validations/validationSchemas";
 import { sanitizeSearchQuery } from "../validations";
 export { HomePage } from "./customer/HomePage";
 
 const firstDefined = (...values) =>
   values.find((value) => value !== undefined && value !== null && value !== "");
 
-const displayLabel = (value = "") =>
-  String(value || "N/A").replace(/_/g, " ");
+const displayLabel = (value = "") => String(value || "N/A").replace(/_/g, " ");
 
 const getProductId = (item = {}) => {
   const product = item.productId || item.product_id || item.product || item;
@@ -123,14 +128,28 @@ const getProductId = (item = {}) => {
 const getProductTitle = (item = {}) => {
   const product = item.productId || item.product_id || item.product;
   return typeof product === "object"
-    ? firstDefined(product.title, product.name, product.sku, product._id, product.id)
+    ? firstDefined(
+        product.title,
+        product.name,
+        product.sku,
+        product._id,
+        product.id,
+      )
     : product;
 };
 
 const cartEstimate = (items = []) =>
   items.reduce((sum, item) => {
     const product = item.productId || item.product_id || item.product || {};
-    const unit = Number(firstDefined(item.unitPrice, item.unit_price, product.salePrice, product.price, 0));
+    const unit = Number(
+      firstDefined(
+        item.unitPrice,
+        item.unit_price,
+        product.salePrice,
+        product.price,
+        0,
+      ),
+    );
     return sum + unit * Number(item.quantity || 0);
   }, 0);
 
@@ -252,7 +271,9 @@ export function AuthFormPage({ mode }) {
                   maxLength={10}
                   {...rest}
                   onChange={(e) => {
-                    e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    e.target.value = e.target.value
+                      .replace(/\D/g, "")
+                      .slice(0, 10);
                     onChange(e);
                   }}
                 />
@@ -475,14 +496,18 @@ export function AccountPage({ tab = "profile" }) {
               {...register("fullName", { required: true })}
             />
             {(() => {
-              const { onChange, ...rest } = register("phone", { required: true });
+              const { onChange, ...rest } = register("phone", {
+                required: true,
+              });
               return (
                 <input
                   placeholder="Enter phone number"
                   maxLength={10}
                   {...rest}
                   onChange={(e) => {
-                    e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    e.target.value = e.target.value
+                      .replace(/\D/g, "")
+                      .slice(0, 10);
                     onChange(e);
                   }}
                 />
@@ -620,7 +645,9 @@ export function ProductsPage({ search = false }) {
       >
         <input
           value={query}
-          onChange={(event) => setQuery(sanitizeSearchQuery(event.target.value))}
+          onChange={(event) =>
+            setQuery(sanitizeSearchQuery(event.target.value))
+          }
           placeholder="Search phones, appliances, fashion..."
         />
         <select
@@ -986,13 +1013,21 @@ export function CheckoutPage() {
       initiatePayment({
         orderId,
         provider: paymentProvider,
-        amount: firstDefined(orderData?.payableAmount, orderData?.payable_amount, orderData?.totalAmount, 0),
+        amount: firstDefined(
+          orderData?.payableAmount,
+          orderData?.payable_amount,
+          orderData?.totalAmount,
+          0,
+        ),
         currency: "INR",
         notes: { source: "web_checkout", paymentProvider },
       }),
       paymentProvider === "cod" ? "COD order confirmed" : "Payment initiated",
     );
-    const status = firstDefined(paymentResult?.data?.status, paymentResult?.status);
+    const status = firstDefined(
+      paymentResult?.data?.status,
+      paymentResult?.status,
+    );
     navigate(status === "failed" ? "/payment/failed" : `/orders/${orderId}`);
   };
   return (
@@ -1015,7 +1050,10 @@ export function CheckoutPage() {
             />
             <small>{errors.line1 && "Required"}</small>
             <input placeholder="Line 2" {...register("line2")} />
-            <input placeholder="City" {...register("city", { required: true })} />
+            <input
+              placeholder="City"
+              {...register("city", { required: true })}
+            />
             <input
               placeholder="State"
               {...register("state", { required: true })}
@@ -1036,8 +1074,14 @@ export function CheckoutPage() {
               {...register("walletAmount")}
             />
             <button className="button">
-              {paymentProvider === "cod" ? <Banknote size={16} /> : <CreditCard size={16} />}
-              {paymentProvider === "cod" ? "Place COD order" : "Place order and continue"}
+              {paymentProvider === "cod" ? (
+                <Banknote size={16} />
+              ) : (
+                <CreditCard size={16} />
+              )}
+              {paymentProvider === "cod"
+                ? "Place COD order"
+                : "Place order and continue"}
             </button>
           </form>
 
@@ -1058,7 +1102,9 @@ export function CheckoutPage() {
                     onChange={(event) => setPaymentProvider(event.target.value)}
                   />
                   <span>
-                    <strong>{option.label || displayLabel(option.provider)}</strong>
+                    <strong>
+                      {option.label || displayLabel(option.provider)}
+                    </strong>
                     <small>
                       {option.chargeAmount > 0
                         ? `Charge ${formatMoney(option.chargeAmount, option.config?.currency || "INR")}`
@@ -1074,9 +1120,18 @@ export function CheckoutPage() {
               )}
             </div>
             <div className="summary-lines">
-              <div><span>Estimated cart</span><strong>{formatMoney(estimatedAmount)}</strong></div>
-              <div><span>Selected method</span><strong>{displayLabel(paymentProvider)}</strong></div>
-              <div><span>Final payable</span><strong>Calculated after order validation</strong></div>
+              <div>
+                <span>Estimated cart</span>
+                <strong>{formatMoney(estimatedAmount)}</strong>
+              </div>
+              <div>
+                <span>Selected method</span>
+                <strong>{displayLabel(paymentProvider)}</strong>
+              </div>
+              <div>
+                <span>Final payable</span>
+                <strong>Calculated after order validation</strong>
+              </div>
             </div>
           </aside>
         </div>
@@ -1130,10 +1185,10 @@ export function PaymentResultPage({ failed = false }) {
               </svg>
             )}
           </div>
-          <h1 className="font-montserrat text-2xl font-bold text-ink">
+          <h1 className=" text-2xl font-bold text-ink">
             {failed ? "Payment Failed" : "Order Placed!"}
           </h1>
-          <p className="mt-2 font-montserrat text-sm text-muted">
+          <p className="mt-2  text-sm text-muted">
             {failed
               ? "Your payment could not be processed. Please try again or contact support."
               : "Your order has been placed successfully. We'll send you a confirmation soon."}
@@ -1174,7 +1229,11 @@ export function OrdersPage({ detail = false, track = false }) {
   const run = useToastThunk();
   const orders = itemsFrom(state);
   const order = state.current;
-  const invoice = taxState.current?.order_id === orderId || taxState.current?.orderId === orderId ? taxState.current : null;
+  const invoice =
+    taxState.current?.order_id === orderId ||
+    taxState.current?.orderId === orderId
+      ? taxState.current
+      : null;
 
   useEffect(() => {
     if (detail || track) {
@@ -1197,30 +1256,120 @@ export function OrdersPage({ detail = false, track = false }) {
             <StatusTimeline status={order?.status || order?.orderStatus} />
             <p>
               {formatMoney(
-                firstDefined(order?.payable_amount, order?.payableAmount, order?.amounts?.payableAmount, order?.total_amount, order?.totalAmount),
+                firstDefined(
+                  order?.payable_amount,
+                  order?.payableAmount,
+                  order?.amounts?.payableAmount,
+                  order?.total_amount,
+                  order?.totalAmount,
+                ),
                 order?.currency,
               )}
             </p>
             <div className="summary-lines">
-              <div><span>Payment method</span><strong>{displayLabel(firstDefined(order?.payment_provider, order?.paymentProvider))}</strong></div>
-              <div><span>Payment status</span><strong>{displayLabel(firstDefined(order?.payment_status, order?.paymentStatus))}</strong></div>
-              <div><span>COD charge</span><strong>{formatMoney(firstDefined(order?.cod_charge_amount, order?.codChargeAmount, 0), order?.currency)}</strong></div>
-              <div><span>Tax</span><strong>{formatMoney(firstDefined(order?.tax_amount, order?.taxAmount, 0), order?.currency)}</strong></div>
+              <div>
+                <span>Payment method</span>
+                <strong>
+                  {displayLabel(
+                    firstDefined(
+                      order?.payment_provider,
+                      order?.paymentProvider,
+                    ),
+                  )}
+                </strong>
+              </div>
+              <div>
+                <span>Payment status</span>
+                <strong>
+                  {displayLabel(
+                    firstDefined(order?.payment_status, order?.paymentStatus),
+                  )}
+                </strong>
+              </div>
+              <div>
+                <span>COD charge</span>
+                <strong>
+                  {formatMoney(
+                    firstDefined(
+                      order?.cod_charge_amount,
+                      order?.codChargeAmount,
+                      0,
+                    ),
+                    order?.currency,
+                  )}
+                </strong>
+              </div>
+              <div>
+                <span>Tax</span>
+                <strong>
+                  {formatMoney(
+                    firstDefined(order?.tax_amount, order?.taxAmount, 0),
+                    order?.currency,
+                  )}
+                </strong>
+              </div>
             </div>
             <div className="panel nested-panel">
               <h2>Invoice</h2>
               {taxState.loading && <p>Loading invoice...</p>}
               {!taxState.loading && invoice ? (
                 <div className="summary-lines">
-                  <div><span>Invoice number</span><strong>{invoice.invoice_number || invoice.invoiceNumber}</strong></div>
-                  <div><span>Taxable amount</span><strong>{formatMoney(invoice.taxable_amount || invoice.taxableAmount, invoice.currency)}</strong></div>
-                  <div><span>CGST</span><strong>{formatMoney(invoice.cgst_amount || invoice.cgstAmount, invoice.currency)}</strong></div>
-                  <div><span>SGST</span><strong>{formatMoney(invoice.sgst_amount || invoice.sgstAmount, invoice.currency)}</strong></div>
-                  <div><span>IGST</span><strong>{formatMoney(invoice.igst_amount || invoice.igstAmount, invoice.currency)}</strong></div>
-                  <div><span>Total invoice</span><strong>{formatMoney(invoice.total_amount || invoice.totalAmount, invoice.currency)}</strong></div>
+                  <div>
+                    <span>Invoice number</span>
+                    <strong>
+                      {invoice.invoice_number || invoice.invoiceNumber}
+                    </strong>
+                  </div>
+                  <div>
+                    <span>Taxable amount</span>
+                    <strong>
+                      {formatMoney(
+                        invoice.taxable_amount || invoice.taxableAmount,
+                        invoice.currency,
+                      )}
+                    </strong>
+                  </div>
+                  <div>
+                    <span>CGST</span>
+                    <strong>
+                      {formatMoney(
+                        invoice.cgst_amount || invoice.cgstAmount,
+                        invoice.currency,
+                      )}
+                    </strong>
+                  </div>
+                  <div>
+                    <span>SGST</span>
+                    <strong>
+                      {formatMoney(
+                        invoice.sgst_amount || invoice.sgstAmount,
+                        invoice.currency,
+                      )}
+                    </strong>
+                  </div>
+                  <div>
+                    <span>IGST</span>
+                    <strong>
+                      {formatMoney(
+                        invoice.igst_amount || invoice.igstAmount,
+                        invoice.currency,
+                      )}
+                    </strong>
+                  </div>
+                  <div>
+                    <span>Total invoice</span>
+                    <strong>
+                      {formatMoney(
+                        invoice.total_amount || invoice.totalAmount,
+                        invoice.currency,
+                      )}
+                    </strong>
+                  </div>
                 </div>
               ) : (
-                !taxState.loading && <p>Invoice will appear here after payment is confirmed.</p>
+                !taxState.loading && (
+                  <p>Invoice will appear here after payment is confirmed.</p>
+                )
               )}
             </div>
             <div className="button-row">
@@ -1364,12 +1513,7 @@ export function ReturnsPage({ request = false }) {
   );
 }
 
-export function SimpleApiPage({
-  title,
-  selector,
-  thunk,
-  action,
-}) {
+export function SimpleApiPage({ title, selector, thunk, action }) {
   const dispatch = useDispatch();
   const state = useFetch(thunk, action?.arg, selector);
   const list = itemsFrom(state);
@@ -1377,9 +1521,7 @@ export function SimpleApiPage({
     <>
       <Seo title={`${title} | Sam Global`} />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
-          {title}
-        </h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">{title}</h1>
         <ApiState
           loading={state.loading}
           error={state.error}
@@ -1409,7 +1551,7 @@ export function SubscriptionPage() {
     <>
       <Seo title="Subscriptions | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-6  text-2xl font-bold text-ink">
           Subscription Plans
         </h1>
         <ApiState
@@ -1429,17 +1571,13 @@ export function SubscriptionPage() {
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gold-soft">
                   <Star size={18} className="text-gold" />
                 </div>
-                <h2 className="font-montserrat text-lg font-semibold text-ink">
+                <h2 className=" text-lg font-semibold text-ink">
                   {plan.title}
                 </h2>
-                <p className="mt-1 font-montserrat text-sm text-muted">
-                  {plan.description}
-                </p>
-                <p className="mt-4 font-montserrat text-2xl font-bold text-gold">
+                <p className="mt-1  text-sm text-muted">{plan.description}</p>
+                <p className="mt-4  text-2xl font-bold text-gold">
                   {formatMoney(plan.monthlyPrice, plan.currency || "INR")}
-                  <span className="font-montserrat text-sm font-normal text-gray">
-                    /mo
-                  </span>
+                  <span className=" text-sm font-normal text-gray">/mo</span>
                 </p>
                 <div className="mt-auto pt-5">
                   <BrandButton
@@ -1499,7 +1637,7 @@ export function PreferencesPage() {
     <>
       <Seo title="Notification Preferences | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-6  text-2xl font-bold text-ink">
           Notification Preferences
         </h1>
         <ApiState
@@ -1538,10 +1676,10 @@ export function PreferencesPage() {
             )}
           >
             <div className="mb-6">
-              <h2 className="mb-1 font-montserrat text-base font-semibold text-ink">
+              <h2 className="mb-1  text-base font-semibold text-ink">
                 Channels
               </h2>
-              <p className="font-montserrat text-sm text-muted">
+              <p className=" text-sm text-muted">
                 Choose how you&apos;d like to receive notifications.
               </p>
             </div>
@@ -1551,9 +1689,7 @@ export function PreferencesPage() {
                   key={key}
                   className="flex cursor-pointer items-center justify-between gap-3 rounded-[10px] border border-border px-4 py-3"
                 >
-                  <span className="font-montserrat text-sm font-medium text-ink">
-                    {label}
-                  </span>
+                  <span className=" text-sm font-medium text-ink">{label}</span>
                   <input
                     type="checkbox"
                     {...register(key)}
@@ -1564,24 +1700,20 @@ export function PreferencesPage() {
             </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <label className="grid gap-1.5">
-                <span className="font-montserrat text-sm font-medium text-ink">
-                  Frequency
-                </span>
+                <span className=" text-sm font-medium text-ink">Frequency</span>
                 <select
                   {...register("frequency")}
-                  className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5 font-montserrat text-sm text-ink outline-none focus:border-gold"
+                  className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5  text-sm text-ink outline-none focus:border-gold"
                 >
                   <option value="real_time">Real time</option>
                   <option value="daily">Daily digest</option>
                 </select>
               </label>
               <label className="grid gap-1.5">
-                <span className="font-montserrat text-sm font-medium text-ink">
-                  Timezone
-                </span>
+                <span className=" text-sm font-medium text-ink">Timezone</span>
                 <input
                   {...register("timezone")}
-                  className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5 font-montserrat text-sm text-ink outline-none focus:border-gold"
+                  className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5  text-sm text-ink outline-none focus:border-gold"
                 />
               </label>
             </div>
@@ -1618,9 +1750,7 @@ export function LoyaltyPage() {
     <>
       <Seo title="Loyalty Rewards | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
-          Loyalty Rewards
-        </h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">Loyalty Rewards</h1>
         <ApiState
           loading={loyaltyState.loading && !profile}
           error={loyaltyState.error}
@@ -1634,14 +1764,14 @@ export function LoyaltyPage() {
             <div className="mb-6 rounded-[var(--customer-radius)] bg-gradient-to-br from-gold to-gold-dark p-6 text-white">
               <div className="mb-1 flex items-center gap-2">
                 <Gift size={18} />
-                <span className="font-montserrat text-sm font-medium opacity-80">
+                <span className=" text-sm font-medium opacity-80">
                   Available Points
                 </span>
               </div>
-              <p className="font-montserrat text-4xl font-bold">
+              <p className=" text-4xl font-bold">
                 {profile.points || profile.balance || 0}
               </p>
-              <p className="mt-1 font-montserrat text-sm opacity-70">
+              <p className="mt-1  text-sm opacity-70">
                 Tier: {profile.tier || profile.level || "Standard"}
               </p>
               <div className="mt-5">
@@ -1666,7 +1796,7 @@ export function LoyaltyPage() {
           {history.length > 0 && (
             <div className="rounded-[12px] border border-border bg-white">
               <div className="border-b border-border px-5 py-4">
-                <h2 className="font-montserrat text-base font-semibold text-ink">
+                <h2 className=" text-base font-semibold text-ink">
                   Transaction History
                 </h2>
               </div>
@@ -1677,17 +1807,17 @@ export function LoyaltyPage() {
                     className="flex items-center justify-between px-5 py-3"
                   >
                     <div>
-                      <p className="font-montserrat text-sm font-medium text-ink">
+                      <p className=" text-sm font-medium text-ink">
                         {tx.reason || tx.description || "Points transaction"}
                       </p>
-                      <p className="font-montserrat text-xs text-gray">
+                      <p className=" text-xs text-gray">
                         {tx.createdAt
                           ? new Date(tx.createdAt).toLocaleDateString("en-IN")
                           : ""}
                       </p>
                     </div>
                     <span
-                      className={`font-montserrat text-sm font-semibold ${(tx.points || tx.amount || 0) >= 0 ? "text-emerald-600" : "text-red-500"}`}
+                      className={` text-sm font-semibold ${(tx.points || tx.amount || 0) >= 0 ? "text-emerald-600" : "text-red-500"}`}
                     >
                       {(tx.points || tx.amount || 0) >= 0 ? "+" : ""}
                       {tx.points || tx.amount || 0} pts
@@ -1727,7 +1857,7 @@ export function WarrantyPage({ detail = false }) {
         }
       />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-6  text-2xl font-bold text-ink">
           {detail ? "Warranty Details" : "My Warranties"}
         </h1>
 
@@ -1739,14 +1869,14 @@ export function WarrantyPage({ detail = false }) {
               reset();
             })}
           >
-            <h2 className="mb-3 font-montserrat text-sm font-semibold text-ink">
+            <h2 className="mb-3  text-sm font-semibold text-ink">
               Look up by Order ID
             </h2>
             <div className="flex gap-3">
               <input
                 placeholder="Enter Order ID"
                 {...register("orderId", { required: true })}
-                className="flex-1 rounded-[8px] border border-border-strong px-3 py-2.5 font-montserrat text-sm outline-none focus:border-gold"
+                className="flex-1 rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
               <BrandButton
                 variant="secondary"
@@ -1776,10 +1906,10 @@ export function WarrantyPage({ detail = false }) {
                       <ShieldCheck size={18} className="text-gold" />
                     </div>
                     <div>
-                      <p className="font-montserrat text-sm font-semibold text-ink">
+                      <p className=" text-sm font-semibold text-ink">
                         {warranty.type || "Product Warranty"}
                       </p>
-                      <p className="font-montserrat text-xs text-gray">
+                      <p className=" text-xs text-gray">
                         ID: {warranty.id || warrantyId}
                       </p>
                     </div>
@@ -1835,12 +1965,10 @@ export function WarrantyPage({ detail = false }) {
                   <div className="flex items-center gap-3">
                     <ShieldCheck size={16} className="text-gold" />
                     <div>
-                      <p className="font-montserrat text-sm font-medium text-ink">
+                      <p className=" text-sm font-medium text-ink">
                         {w.type || "Warranty"}
                       </p>
-                      <p className="font-montserrat text-xs text-gray">
-                        {w.period}
-                      </p>
+                      <p className=" text-xs text-gray">{w.period}</p>
                     </div>
                   </div>
                   <Link to={`/warranty/${w.id}`}>
@@ -1872,24 +2000,24 @@ export function WarrantyPage({ detail = false }) {
               ),
             )}
           >
-            <h2 className="mb-4 font-montserrat text-sm font-semibold text-ink">
+            <h2 className="mb-4  text-sm font-semibold text-ink">
               Register a Warranty
             </h2>
             <div className="grid gap-3 sm:grid-cols-3">
               <input
                 placeholder="Order ID"
                 {...register("reg_orderId")}
-                className="rounded-[8px] border border-border-strong px-3 py-2.5 font-montserrat text-sm outline-none focus:border-gold"
+                className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
               <input
                 placeholder="Product ID"
                 {...register("reg_productId")}
-                className="rounded-[8px] border border-border-strong px-3 py-2.5 font-montserrat text-sm outline-none focus:border-gold"
+                className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
               <input
                 placeholder="Variant ID (optional)"
                 {...register("reg_variantId")}
-                className="rounded-[8px] border border-border-strong px-3 py-2.5 font-montserrat text-sm outline-none focus:border-gold"
+                className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
             </div>
             <div className="mt-4">
@@ -1913,11 +2041,11 @@ export function BackendGapNotes() {
     <>
       <Seo title="API Notes | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-4 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-4  text-2xl font-bold text-ink">
           API Integration Notes
         </h1>
         <div className="rounded-[12px] border border-border bg-white p-6">
-          <p className="font-montserrat text-sm text-muted">
+          <p className=" text-sm text-muted">
             Wishlist uses{" "}
             <code className="rounded bg-cream px-1.5 py-0.5 text-gold-dark">
               cart.wishlist
@@ -1950,9 +2078,7 @@ export function WalletPage() {
     <>
       <Seo title="My Wallet | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
-          My Wallet
-        </h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">My Wallet</h1>
         <ApiState
           loading={walletState.loading && !wallet}
           error={walletState.error}
@@ -1965,15 +2091,15 @@ export function WalletPage() {
             <div className="rounded-[var(--customer-radius)] bg-gradient-to-br from-ink to-muted p-6 text-white">
               <div className="mb-1 flex items-center gap-2">
                 <Wallet size={18} />
-                <span className="font-montserrat text-sm font-medium opacity-80">
+                <span className=" text-sm font-medium opacity-80">
                   Available Balance
                 </span>
               </div>
-              <p className="font-montserrat text-4xl font-bold">
+              <p className=" text-4xl font-bold">
                 {formatMoney(wallet.balance || 0, wallet.currency || "INR")}
               </p>
               {wallet.lockedBalance > 0 && (
-                <p className="mt-1 font-montserrat text-sm opacity-60">
+                <p className="mt-1  text-sm opacity-60">
                   Locked:{" "}
                   {formatMoney(wallet.lockedBalance, wallet.currency || "INR")}
                 </p>
@@ -1999,9 +2125,7 @@ export function PaymentsPage() {
     <>
       <Seo title="Payment History | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
-          Payment History
-        </h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">Payment History</h1>
         <ApiState
           loading={paymentState.loading && !payments.length}
           error={paymentState.error}
@@ -2030,10 +2154,10 @@ export function PaymentsPage() {
                       <CreditCard size={14} className="text-gold" />
                     </div>
                     <div>
-                      <p className="font-montserrat text-sm font-medium text-ink">
+                      <p className=" text-sm font-medium text-ink">
                         {payment.provider || "Payment"}
                       </p>
-                      <p className="font-montserrat text-xs text-gray">
+                      <p className=" text-xs text-gray">
                         {payment.createdAt
                           ? new Date(payment.createdAt).toLocaleDateString(
                               "en-IN",
@@ -2044,11 +2168,11 @@ export function PaymentsPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span
-                      className={`rounded-full px-2.5 py-0.5 font-montserrat text-xs font-semibold capitalize ${statusColor}`}
+                      className={`rounded-full px-2.5 py-0.5  text-xs font-semibold capitalize ${statusColor}`}
                     >
                       {status}
                     </span>
-                    <span className="font-montserrat text-sm font-bold text-ink">
+                    <span className=" text-sm font-bold text-ink">
                       {formatMoney(
                         payment.amount || 0,
                         payment.currency || "INR",
@@ -2078,9 +2202,7 @@ export function NotificationsPage() {
     <>
       <Seo title="Notifications | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
-          Notifications
-        </h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">Notifications</h1>
         <ApiState
           loading={notifState.loading && !notifications.length}
           error={notifState.error}
@@ -2106,13 +2228,13 @@ export function NotificationsPage() {
                     />
                   </div>
                   <div className="min-w-0">
-                    <p className="font-montserrat text-sm font-medium text-ink">
+                    <p className=" text-sm font-medium text-ink">
                       {notif.title || notif.subject || "Notification"}
                     </p>
-                    <p className="mt-0.5 font-montserrat text-xs text-muted">
+                    <p className="mt-0.5  text-xs text-muted">
                       {notif.message || notif.body || ""}
                     </p>
-                    <p className="mt-1 font-montserrat text-xs text-gray">
+                    <p className="mt-1  text-xs text-gray">
                       {notif.createdAt
                         ? new Date(notif.createdAt).toLocaleDateString("en-IN")
                         : ""}

@@ -18,6 +18,8 @@ export default function ShowcaseSection({
   loading = false,
   skeletonVariant = "top-deals",
   skeletonCount = 4,
+  actionLabel,
+  onAction,
 }) {
   const skeletonPreset =
     skeletonVariant === "new-arrivals" ? "NEW_ARRIVAL_CARD" : "TOP_DEAL_CARD";
@@ -33,6 +35,8 @@ export default function ShowcaseSection({
       headerbgColor={headerbgColor}
       bodybgColor={bodybgColor}
       className={className}
+      actionLabel={actionLabel}
+      onAction={onAction}
     >
       {loading ? (
         <SkeletonLoader

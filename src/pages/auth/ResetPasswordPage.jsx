@@ -10,7 +10,11 @@ import FormField from "../../components/ui/FormField";
 import OtpInput from "../../components/ui/OtpInput";
 import Seo from "../../components/common/Seo";
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
-import { resetPassword, clearError, resendOtp } from "../../features/auth/authSlice";
+import {
+  resetPassword,
+  clearError,
+  resendOtp,
+} from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { resetPasswordSchema } from "../../validations/validationSchemas";
 
@@ -34,13 +38,22 @@ export default function ResetPasswordPage() {
   } = useForm({
     resolver: zodResolver(resetPasswordSchema),
     mode: "onChange",
-    defaultValues: { email: location.state?.email || "", otp: "", newPassword: "", confirmPassword: "" },
+    defaultValues: {
+      email: location.state?.email || "",
+      otp: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
 
   const submit = async (values) => {
     await run(
       dispatch,
-      resetPassword({ email: values.email, otp: values.otp, newPassword: values.newPassword }),
+      resetPassword({
+        email: values.email,
+        otp: values.otp,
+        newPassword: values.newPassword,
+      }),
       "Password reset successfully",
     );
     navigate(AUTH_ROUTES.login, { state: { email: values.email } });
@@ -71,7 +84,9 @@ export default function ResetPasswordPage() {
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}
-            onChange={(otp) => setValue("otp", otp, { shouldValidate: true, shouldDirty: true })}
+            onChange={(otp) =>
+              setValue("otp", otp, { shouldValidate: true, shouldDirty: true })
+            }
             error={errors.otp?.message}
           />
 
@@ -96,7 +111,10 @@ export default function ResetPasswordPage() {
           />
 
           {error && (
-            <div className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 font-montserrat text-sm text-red-700" role="alert">
+            <div
+              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700"
+              role="alert"
+            >
               {error}
             </div>
           )}
@@ -105,12 +123,12 @@ export default function ResetPasswordPage() {
             type="submit"
             loading={loading}
             disabled={!isValid || loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark font-montserrat text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <KeyRound size={18} /> Reset password
           </Button>
 
-          <p className="text-center font-montserrat text-[0.8rem] text-muted">
+          <p className="text-center  text-[0.8rem] text-muted">
             Didn&apos;t receive the OTP?{" "}
             <button
               type="button"
@@ -118,14 +136,18 @@ export default function ResetPasswordPage() {
               onClick={() => {
                 const email = watch("email");
                 if (!email) return;
-                run(dispatch, resendOtp({ email, purpose: "forgot_password" }), "OTP resent");
+                run(
+                  dispatch,
+                  resendOtp({ email, purpose: "forgot_password" }),
+                  "OTP resent",
+                );
               }}
             >
               Resend OTP
             </button>
           </p>
 
-          <p className="text-center font-montserrat text-[0.8rem] text-muted">
+          <p className="text-center  text-[0.8rem] text-muted">
             <Link
               to={AUTH_ROUTES.login}
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"

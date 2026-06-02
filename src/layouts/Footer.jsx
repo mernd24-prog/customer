@@ -20,7 +20,11 @@ const EMPTY_FOOTER = {
 };
 
 const normalizeFooterHref = (link) => {
-  if (String(link?.label || "").trim().toLowerCase() === "why choose us") {
+  if (
+    String(link?.label || "")
+      .trim()
+      .toLowerCase() === "why choose us"
+  ) {
     return "/about-us#why-choose-us";
   }
 
@@ -70,21 +74,23 @@ export function Footer({ data = {} }) {
   };
 
   return (
-    <footer className="mt-10 w-full bg-[var(--customer-black)] font-montserrat text-white">
-      <FooterBenefits items={footer.benefits} />
-      <div className="w-container flex flex-col gap-4 py-8 md:flex-row md:items-center md:justify-between justify-between">
+    <footer className=" w-full bg-[#1C1C1C]   text-white">
+      <div className=" xl:px-12 bg-[#F5F8FB] border-t-2  border-[#1B1D6033]">
+        <FooterBenefits items={footer.benefits} />
+      </div>
+      <div className="pt-8 flex flex-col customer-container gap-2 md:gap-4  md:flex-row justify-between">
         <div className="flex items-center gap-3">
           <img
-            src="/image/png/Dark-logo.svg"
+            src="/image/svg/logoWithName.svg"
             alt="Sam Global"
-            className="h-12 w-auto rounded p-1"
+            className="h-12 lg:h-16 lg:h-18 rounded p-1"
           />
-          <span className="text-4xl font-bold italic text-white">
-            Sam Global
-          </span>
         </div>
 
-        <div> <FooterAppDownload data={footer.appDownload} /></div>
+        <div>
+          {" "}
+          <FooterAppDownload data={footer.appDownload} />
+        </div>
       </div>
 
       {loading ? (
@@ -94,19 +100,11 @@ export function Footer({ data = {} }) {
           containerClass="w-container my-8 grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
         />
       ) : (
-        <FooterLinkGroups groups={footer.linkGroups} />
-      )}
-{/* 
-      {loading ? (
-        <SkeletonLoader
-          layout={SKELETON_PRESETS.FOOTER_ACTIONS}
-          count={4}
-          containerClass="w-container grid grid-cols-1 gap-4 border-y border-accent bg-band sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-          wrapperClass="flex min-h-12 items-center p-2 lg:p-8"
+        <FooterLinkGroups
+          groups={footer.linkGroups}
+          socialLinks={footer.socialLinks}
         />
-      ) : (
-        <FooterActionLinks items={footer.actionLinks} />
-      )} */}
+      )}
 
       <FooterBottomBar
         copyright={footer.copyright}

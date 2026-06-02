@@ -3,7 +3,7 @@ import { useDelayedLoading } from "../../hooks/useDelayedLoading";
 
 function PrimaryCta({ children }) {
   return (
-    <button className="text-white bg-blue px-6 py-3 font-montserrat font-semibold rounded-full">
+    <button className="text-white bg-blue px-6 py-3  font-semibold rounded-full">
       {children}
     </button>
   );
@@ -30,12 +30,12 @@ export default function OurStory({ data }) {
           <div className="w-full xl:w-[45%]  flex flex-col lg:mt-8 justify-between">
             <div>
               {/* {data.heading && (
-                <h2 className="font-bold text-xl md:text-2xl lg:text-3xl xl:text-4xl font-montserrat ">
+                <h2 className="font-bold text-xl md:text-2xl lg:text-3xl xl:text-4xl  ">
                   {data.heading}
                 </h2>
               )} */}
               <p
-                className="text-base md:text-lg lg:text-xl font-light mt-4 lg:mt-8 font-montserrat"
+                className="text-base md:text-lg lg:text-xl font-light mt-4 lg:mt-8 "
                 dangerouslySetInnerHTML={{ __html: data.description }}
               />
             </div>

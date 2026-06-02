@@ -18,11 +18,15 @@ export default function NeedHelpSection({
           ? "relative left-1/2 right-1/2 w-[100vw] -ml-[50vw] -mr-[50vw] -mb-[56px] rounded-t-[8px]"
           : "w-full rounded-[var(--customer-radius)]"
       } flex ${
-        layout === "row" ? "flex-col md:flex-row md:justify-between" : "flex-col justify-center"
+        layout === "row"
+          ? "flex-col md:flex-row md:justify-between"
+          : "flex-col justify-center"
       } min-h-[200px] items-center bg-gradient-to-r from-gold-dark to-gold px-4 py-10 sm:px-6 md:px-12`}
     >
-      <div className={`${layout === "row" ? "text-left max-w-[800px]" : "text-center max-w-[660px]"}`}>
-        <h2 className="font-montserrat uppercase leading-tight text-white">
+      <div
+        className={`${layout === "row" ? "text-left max-w-[800px]" : "text-center max-w-[660px]"}`}
+      >
+        <h2 className=" uppercase leading-tight text-white">
           <span className="block text-[22px] font-bold sm:inline md:text-[26px]">
             {heading1}
           </span>{" "}
@@ -33,7 +37,7 @@ export default function NeedHelpSection({
           )}
         </h2>
 
-        <p className="mt-2 font-montserrat text-[26px] font-normal leading-6 text-white/90 sm:text-[16px]">
+        <p className="mt-2  text-[26px] font-normal leading-6 text-white/90 sm:text-[16px]">
           {description}
         </p>
       </div>

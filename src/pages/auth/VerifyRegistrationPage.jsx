@@ -10,10 +10,13 @@ import FormField from "../../components/ui/FormField";
 import OtpInput from "../../components/ui/OtpInput";
 import Seo from "../../components/common/Seo";
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
-import { verifyRegistration, clearError, resendOtp } from "../../features/auth/authSlice";
+import {
+  verifyRegistration,
+  clearError,
+  resendOtp,
+} from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { verifyOtpSchema } from "../../validations/validationSchemas";
-
 
 export default function VerifyRegistrationPage() {
   const dispatch = useDispatch();
@@ -39,7 +42,11 @@ export default function VerifyRegistrationPage() {
   });
 
   const submit = async (values) => {
-    await run(dispatch, verifyRegistration({ email: values.email, otp: values.otp }), "Account verified! Welcome.");
+    await run(
+      dispatch,
+      verifyRegistration({ email: values.email, otp: values.otp }),
+      "Account verified! Welcome.",
+    );
     navigate(AUTH_ROUTES.home);
   };
 
@@ -64,25 +71,35 @@ export default function VerifyRegistrationPage() {
             placeholder="you@example.com"
           />
 
-          <label className="font-montserrat text-sm font-semibold text-ink">OTP code</label>
+          <label className=" text-sm font-semibold text-ink">OTP code</label>
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}
-            onChange={(otp) => setValue("otp", otp, { shouldValidate: true, shouldDirty: true })}
+            onChange={(otp) =>
+              setValue("otp", otp, { shouldValidate: true, shouldDirty: true })
+            }
             error={errors.otp?.message}
           />
 
           {error && (
-            <div className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 font-montserrat text-sm text-red-700" role="alert">
+            <div
+              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700"
+              role="alert"
+            >
               {error}
             </div>
           )}
 
-          <Button type="submit" loading={loading} className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark font-montserrat text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60" disabled={!isValid || loading}>
+          <Button
+            type="submit"
+            loading={loading}
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={!isValid || loading}
+          >
             <CheckCircle size={18} /> Verify &amp; activate account
           </Button>
 
-          <p className="text-center font-montserrat text-[0.8rem] text-muted">
+          <p className="text-center  text-[0.8rem] text-muted">
             Didn&apos;t receive the code?{" "}
             <button
               type="button"
@@ -90,7 +107,11 @@ export default function VerifyRegistrationPage() {
               onClick={() => {
                 const email = watch("email");
                 if (!email) return;
-                run(dispatch, resendOtp({ email, purpose: "registration" }), "OTP resent");
+                run(
+                  dispatch,
+                  resendOtp({ email, purpose: "registration" }),
+                  "OTP resent",
+                );
               }}
             >
               Resend OTP

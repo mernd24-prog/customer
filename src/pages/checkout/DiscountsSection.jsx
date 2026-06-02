@@ -2,16 +2,10 @@ import { Wallet } from "lucide-react";
 import FormField from "../../components/ui/FormField";
 import { formatMoney } from "../../utils/ecommerce";
 
-export default function DiscountsSection({
-  register,
-  errors,
-  walletBalance,
-}) {
+export default function DiscountsSection({ register, errors, walletBalance }) {
   return (
     <section className="rounded-[12px] border border-border bg-white p-5">
-      <h2 className="mb-4 font-montserrat text-base font-semibold text-ink">
-        Discounts
-      </h2>
+      <h2 className="mb-4  text-base font-semibold text-ink">Discounts</h2>
       <div className="grid gap-4">
         <FormField
           id="couponCode"
@@ -31,10 +25,10 @@ export default function DiscountsSection({
             max={walletBalance}
             placeholder="0"
             {...register("walletAmount")}
-            className="min-h-11 rounded-[8px] border border-border-strong bg-white px-3 py-2.5 font-montserrat text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-gray focus:border-gold focus:ring-2 focus:ring-gold/20"
+            className="min-h-11 rounded-[8px] border border-border-strong bg-white px-3 py-2.5  text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-gray focus:border-gold focus:ring-2 focus:ring-gold/20"
           />
           {errors.walletAmount?.message ? (
-            <span className="min-h-4 font-montserrat text-xs font-normal text-red-600">
+            <span className="min-h-4  text-xs font-normal text-red-600">
               {errors.walletAmount.message}
             </span>
           ) : null}

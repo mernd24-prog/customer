@@ -119,7 +119,10 @@ export default function AuthModal({ open, onClose }) {
   return createPortal(
     <div
       className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center sm:p-4 animate-overlay-in"
-      style={{ backgroundColor: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)" }}
+      style={{
+        backgroundColor: "rgba(0,0,0,0.55)",
+        backdropFilter: "blur(6px)",
+      }}
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
@@ -167,8 +170,10 @@ export default function AuthModal({ open, onClose }) {
             <div
               className="flex h-[60px] w-[60px] items-center justify-center rounded-full text-gold"
               style={{
-                background: "linear-gradient(135deg, var(--customer-gold-soft) 0%, var(--customer-cream) 100%)",
-                boxShadow: "0 0 0 8px rgba(214, 163, 35, 0.14), 0 0 0 14px rgba(214, 163, 35, 0.08)",
+                background:
+                  "linear-gradient(135deg, var(--customer-gold-soft) 0%, var(--customer-cream) 100%)",
+                boxShadow:
+                  "0 0 0 8px rgba(214, 163, 35, 0.14), 0 0 0 14px rgba(214, 163, 35, 0.08)",
               }}
             >
               <LockIcon />
@@ -178,7 +183,7 @@ export default function AuthModal({ open, onClose }) {
           {/* Title */}
           <h2
             id="auth-modal-title"
-            className="text-center font-montserrat text-[1.25rem] font-semibold leading-snug text-ink"
+            className="text-center  text-[1.25rem] font-semibold leading-snug text-ink"
           >
             Login Required
           </h2>
@@ -186,7 +191,7 @@ export default function AuthModal({ open, onClose }) {
           {/* Description */}
           <p
             id="auth-modal-desc"
-            className="mt-2.5 text-center font-montserrat text-[0.825rem] leading-relaxed text-muted"
+            className="mt-2.5 text-center  text-[0.825rem] leading-relaxed text-muted"
           >
             Please login to continue. You need to be authenticated to access
             this feature and continue your shopping experience.
@@ -202,7 +207,7 @@ export default function AuthModal({ open, onClose }) {
               onClick={handleGoToLogin}
               className={cn(
                 "w-full rounded-[8px] py-3 px-6",
-                "font-montserrat text-[0.9rem] font-semibold tracking-normal text-white",
+                " text-[0.9rem] font-semibold tracking-normal text-white",
                 "bg-gradient-to-r from-gold to-gold-dark",
                 "shadow-sm hover:shadow-md",
                 "transition-all duration-500 ease-in-out hover:brightness-105 active:brightness-95",
@@ -216,7 +221,7 @@ export default function AuthModal({ open, onClose }) {
               onClick={onClose}
               className={cn(
                 "w-full rounded-[8px] py-3 px-6",
-                "font-montserrat text-[0.9rem] font-semibold tracking-normal",
+                " text-[0.9rem] font-semibold tracking-normal",
                 "border border-border text-ink",
                 "hover:bg-cream hover:border-gold hover:text-gold",
                 "transition-all duration-500 ease-in-out",
@@ -228,7 +233,7 @@ export default function AuthModal({ open, onClose }) {
           </div>
 
           {/* Register nudge */}
-          <p className="mt-5 text-center font-montserrat text-[0.75rem] text-muted">
+          <p className="mt-5 text-center  text-[0.75rem] text-muted">
             New here?{" "}
             <button
               onClick={handleGoToRegister}

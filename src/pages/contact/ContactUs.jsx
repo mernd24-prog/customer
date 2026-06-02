@@ -37,12 +37,17 @@ const CONTACT_ICON_MAP = {
 
 function getSupportIcon(title = "") {
   const n = title.toLowerCase();
-  return Object.entries(SUPPORT_ICON_MAP).find(([k]) => n.includes(k))?.[1] || ScrollText;
+  return (
+    Object.entries(SUPPORT_ICON_MAP).find(([k]) => n.includes(k))?.[1] ||
+    ScrollText
+  );
 }
 
 function getContactIcon(title = "") {
   const n = title.toLowerCase();
-  return Object.entries(CONTACT_ICON_MAP).find(([k]) => n.includes(k))?.[1] || Mail;
+  return (
+    Object.entries(CONTACT_ICON_MAP).find(([k]) => n.includes(k))?.[1] || Mail
+  );
 }
 
 // ─── CMS section helpers ───────────────────────────────────────
@@ -71,17 +76,22 @@ function normalizeContactItems(sections) {
     const href = isPhone
       ? `tel:${p.description.replace(/[^0-9+]/g, "")}`
       : isEmail
-      ? `mailto:${p.description}`
-      : isAddress
-      ? undefined
-      : undefined;
-    return { label: p.title, value: p.description, href, icon: getContactIcon(p.title) };
+        ? `mailto:${p.description}`
+        : isAddress
+          ? undefined
+          : undefined;
+    return {
+      label: p.title,
+      value: p.description,
+      href,
+      icon: getContactIcon(p.title),
+    };
   });
 }
 
 export function SectionIntro({ title, description, className = "" }) {
   return (
-    <div className={`mx-auto max-w-4xl text-center font-montserrat ${className}`}>
+    <div className={`mx-auto max-w-4xl text-center  ${className}`}>
       <h2 className="text-2xl font-bold text-ink sm:text-3xl">{title}</h2>
       {description && (
         <p className="mt-4 text-sm leading-7 text-muted sm:text-base">
@@ -94,13 +104,13 @@ export function SectionIntro({ title, description, className = "" }) {
 
 export function CircleIcon({ icon: Icon, tone = "gold" }) {
   const colors =
-    tone === "blue"
-      ? "bg-navy-soft text-blue"
-      : "bg-gold-soft text-gold-dark";
+    tone === "blue" ? "bg-navy-soft text-blue" : "bg-gold-soft text-gold-dark";
 
   return (
     <span className="relative flex h-[92px] w-[92px] items-center justify-center rounded-full border border-dashed border-gold/50 bg-white p-2">
-      <span className={`flex h-[66px] w-[66px] items-center justify-center rounded-full ${colors}`}>
+      <span
+        className={`flex h-[66px] w-[66px] items-center justify-center rounded-full ${colors}`}
+      >
         <Icon size={32} strokeWidth={2.2} />
       </span>
     </span>
@@ -109,7 +119,7 @@ export function CircleIcon({ icon: Icon, tone = "gold" }) {
 
 export function ReasonCard({ item, showDivider }) {
   return (
-    <div className="relative flex min-h-[180px] flex-col items-center justify-start px-4 text-center font-montserrat">
+    <div className="relative flex min-h-[180px] flex-col items-center justify-start px-4 text-center ">
       {showDivider && (
         <span className="absolute left-0 top-8 hidden h-[112px] w-px bg-border lg:block" />
       )}
@@ -128,7 +138,7 @@ export function ReasonCard({ item, showDivider }) {
 
 function ContactInfoCard({ item, showDivider }) {
   return (
-    <div className="relative flex min-h-[96px] items-center gap-4 px-6 font-montserrat">
+    <div className="relative flex min-h-[96px] items-center gap-4 px-6 ">
       {showDivider && (
         <span className="absolute left-0 top-1/2 hidden h-[86px] w-px -translate-y-1/2 bg-border lg:block" />
       )}
@@ -154,12 +164,19 @@ function ContactInfoCard({ item, showDivider }) {
   );
 }
 
-function FramedPanel({ title, description, icon: Icon, buttonText, href, variant = "blue" }) {
+function FramedPanel({
+  title,
+  description,
+  icon: Icon,
+  buttonText,
+  href,
+  variant = "blue",
+}) {
   const isBlue = variant === "blue";
 
   return (
     <section
-      className={`relative overflow-hidden border bg-white px-6 py-9 text-center font-montserrat sm:px-10 ${
+      className={`relative overflow-hidden border bg-white px-6 py-9 text-center  sm:px-10 ${
         isBlue ? "border-border" : "border-gold"
       }`}
     >
@@ -171,7 +188,9 @@ function FramedPanel({ title, description, icon: Icon, buttonText, href, variant
         <Button
           rounded
           size="lg"
-          onClick={() => { window.location.href = href; }}
+          onClick={() => {
+            window.location.href = href;
+          }}
           className={`mt-6 min-w-[250px] ${
             isBlue
               ? "!bg-blue !text-white hover:!bg-navy-dark"
@@ -193,10 +212,14 @@ function FramedPanel({ title, description, icon: Icon, buttonText, href, variant
   );
 }
 
-function CommitmentBand({ commitmentTitle, commitmentDescription, closingTitle }) {
+function CommitmentBand({
+  commitmentTitle,
+  commitmentDescription,
+  closingTitle,
+}) {
   return (
     <section className="relative left-1/2 w-screen -translate-x-1/2">
-      <div className="grid min-h-[145px] font-montserrat lg:grid-cols-2">
+      <div className="grid min-h-[145px]  lg:grid-cols-2">
         {commitmentTitle && (
           <div className="bg-navy-soft px-[7%] py-9">
             <h3 className="text-xl font-bold text-blue">{commitmentTitle}</h3>
@@ -224,42 +247,39 @@ export default function ContactUs() {
 
   const sections = page?.sections || [];
 
-  const supportSection    = getSectionByType(sections, "support_categories");
-  const contactInfoSec    = getSectionByType(sections, "contact_info");
-  const businessSec       = getSectionByType(sections, "business_inquiry");
-  const visitSec          = getSectionByType(sections, "visit_us");
-  const commitmentSec     = getSectionByType(sections, "response_commitment");
-  const closingSec        = getSectionByType(sections, "closing_message");
+  const supportSection = getSectionByType(sections, "support_categories");
+  const contactInfoSec = getSectionByType(sections, "contact_info");
+  const businessSec = getSectionByType(sections, "business_inquiry");
+  const visitSec = getSectionByType(sections, "visit_us");
+  const commitmentSec = getSectionByType(sections, "response_commitment");
+  const closingSec = getSectionByType(sections, "closing_message");
 
-  const heroTitle    = page?.title || "";
-  const description  = page?.description || page?.excerpt || "";
-  const intro        = page?.metadata?.data?.intro;
+  const heroTitle = page?.title || "";
+  const description = page?.description || page?.excerpt || "";
+  const intro = page?.metadata?.data?.intro;
 
-  const reasons      = useMemo(() => normalizeReasons(sections), [sections]);
-  const contactItems = useMemo(() => normalizeContactItems(sections), [sections]);
+  const reasons = useMemo(() => normalizeReasons(sections), [sections]);
+  const contactItems = useMemo(
+    () => normalizeContactItems(sections),
+    [sections],
+  );
 
   const businessTitle = businessSec?.title || "";
-  const businessDesc  = businessSec?.description || "";
-  const businessCta   = businessSec?.cta;
-  const businessHref  = businessCta?.url || "";
-  const businessBtn   = businessCta?.label || "";
+  const businessDesc = businessSec?.description || "";
+  const businessCta = businessSec?.cta;
+  const businessHref = businessCta?.url || "";
+  const businessBtn = businessCta?.label || "";
 
   const visitTitle = visitSec?.title || "";
-  const visitDesc  = visitSec?.description || "";
-  const visitCta   = visitSec?.cta;
-  const visitHref  = visitCta?.url || "";
-  const visitBtn   = visitCta?.label || (visitSec?.points?.[0]?.description) || "";
+  const visitDesc = visitSec?.description || "";
+  const visitCta = visitSec?.cta;
+  const visitHref = visitCta?.url || "";
+  const visitBtn = visitCta?.label || visitSec?.points?.[0]?.description || "";
 
   return (
     <>
-      <Seo
-        title={`${heroTitle} | Sam Global`}
-        description={description}
-      />
-      <FAQHeroSection
-        title={heroTitle}
-        description={description}
-      />
+      <Seo title={`${heroTitle} | Sam Global`} description={description} />
+      <FAQHeroSection title={heroTitle} description={description} />
 
       <section className="w-container py-14 sm:py-16 lg:py-20">
         {(intro?.heading || intro?.description || description) && (
@@ -279,7 +299,11 @@ export default function ContactUs() {
 
             <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-0">
               {reasons.map((item, index) => (
-                <ReasonCard key={item.title} item={item} showDivider={index > 0} />
+                <ReasonCard
+                  key={item.title}
+                  item={item}
+                  showDivider={index > 0}
+                />
               ))}
             </div>
           </>
@@ -291,7 +315,9 @@ export default function ContactUs() {
               rounded
               size="lg"
               className="!bg-blue !px-8 !text-white hover:!bg-navy-dark"
-              onClick={() => { window.location.href = page.cta.url; }}
+              onClick={() => {
+                window.location.href = page.cta.url;
+              }}
             >
               {page.cta.label}
             </Button>
@@ -308,7 +334,11 @@ export default function ContactUs() {
             />
             <div className="mt-9 grid gap-8 lg:grid-cols-3 lg:gap-12">
               {contactItems.map((item, index) => (
-                <ContactInfoCard key={item.label} item={item} showDivider={index > 0} />
+                <ContactInfoCard
+                  key={item.label}
+                  item={item}
+                  showDivider={index > 0}
+                />
               ))}
             </div>
           </div>

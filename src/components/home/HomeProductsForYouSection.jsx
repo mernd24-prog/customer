@@ -22,7 +22,9 @@ export default function HomeProductsForYouSection({
       s.product.loading,
   );
 
-  const recommendations = Array.isArray(recommendationList) ? recommendationList : [];
+  const recommendations = Array.isArray(recommendationList)
+    ? recommendationList
+    : [];
   const trending = Array.isArray(trendingList) ? trendingList : [];
   const productsFallback = Array.isArray(productList) ? productList : [];
   const products = (
@@ -36,7 +38,7 @@ export default function HomeProductsForYouSection({
   return (
     <section className="mt-8 rounded-[var(--customer-radius)] bg-white">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="customer-section-title font-montserrat text-[18px] sm:text-[20px]">
+        <h2 className="customer-section-title  text-[18px] sm:text-[20px]">
           {title}
         </h2>
         {actionHref && actionLabel && (
