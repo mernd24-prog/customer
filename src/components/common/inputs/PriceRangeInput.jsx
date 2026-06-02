@@ -13,7 +13,7 @@ export default function PriceRangeInput({
   const [localMax, setLocalMax] = useState(initialMax || "");
 
   const inputClass =
-    "w-full rounded-[6px] border border-border-strong px-2.5 py-1.5 font-montserrat text-sm outline-none transition-all duration-300 ease-in-out focus:border-gold focus:ring-2 focus:ring-gold/20";
+    "w-full rounded-[6px] border border-border-strong px-2.5 py-1.5  text-sm outline-none transition-all duration-300 ease-in-out focus:border-gold focus:ring-2 focus:ring-gold/20";
 
   const apply = () => {
     const result = { minPrice: localMin || undefined, maxPrice: localMax || undefined };
@@ -33,7 +33,7 @@ export default function PriceRangeInput({
     <div className={`grid gap-3 ${className}`}>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="mb-1 block font-montserrat text-xs text-gray">Min ({currency})</label>
+          <label className="mb-1 block  text-xs text-gray">Min ({currency})</label>
           <input
             type="number"
             value={localMin}
@@ -44,7 +44,7 @@ export default function PriceRangeInput({
           />
         </div>
         <div>
-          <label className="mb-1 block font-montserrat text-xs text-gray">Max ({currency})</label>
+          <label className="mb-1 block  text-xs text-gray">Max ({currency})</label>
           <input
             type="number"
             value={localMax}
@@ -62,7 +62,7 @@ export default function PriceRangeInput({
         <button
           type="button"
           onClick={clear}
-          className="font-montserrat text-xs text-red-500 underline-offset-2 hover:underline"
+          className=" text-xs text-red-500 underline-offset-2 hover:underline"
         >
           Clear price filter
         </button>

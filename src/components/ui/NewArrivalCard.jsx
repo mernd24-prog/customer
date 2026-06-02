@@ -16,13 +16,13 @@ export default function NewArrivalCard({
                 className="customer-card relative h-full min-w-0 px-3 pb-4 pt-4 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]"
             >
                 <h3
-                    className="mx-auto w-full max-w-[90%] overflow-hidden text-ellipsis whitespace-nowrap text-center font-montserrat text-[13px] font-semibold leading-6 text-[var(--customer-ink)] sm:text-[15px]"
+                    className="mx-auto w-full max-w-[90%] overflow-hidden text-ellipsis whitespace-nowrap text-center  text-[13px] font-semibold leading-6 text-[var(--customer-ink)] sm:text-[15px]"
                     title={title}
                 >
                     {title}
                 </h3>
 
-                <p className="mt-2 font-montserrat text-[12px] font-medium leading-5 text-[var(--customer-muted)]">
+                <p className="mt-2  text-[12px] font-medium leading-5 text-[var(--customer-muted)]">
                     {views} Views
                 </p>
 

@@ -224,7 +224,7 @@ export default function SearchPage() {
       title: "Availability",
       defaultOpen: false,
       content: (
-        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-ink">
+        <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
           <input
             type="checkbox"
             checked={searchParams.get("inStock") === "true"}
@@ -263,7 +263,7 @@ export default function SearchPage() {
                 value={queryInput}
                 onChange={(e) => setQueryInput(e.target.value)}
                 placeholder="Search products, brands, categories..."
-                className="h-12 w-full rounded-[10px] border border-border-strong bg-white pl-11 pr-11 font-montserrat text-sm text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-muted hover:border-gold focus:border-gold focus:ring-4 focus:ring-gold/15"
+                className="h-12 w-full rounded-[10px] border border-border-strong bg-white pl-11 pr-11  text-sm text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-muted hover:border-gold focus:border-gold focus:ring-4 focus:ring-gold/15"
               />
 
               {queryInput ? (
@@ -293,7 +293,7 @@ export default function SearchPage() {
             {q && <PageHeader title={`Results for "${q}"`} className="mb-0" />}
 
             {meta.total != null && (
-              <p className="font-montserrat text-sm text-muted">
+              <p className=" text-sm text-muted">
                 {meta.total.toLocaleString()} results
               </p>
             )}
@@ -333,11 +333,11 @@ export default function SearchPage() {
               <div className="state-box flex flex-col items-center py-20 text-center">
                 <Search size={48} className="mb-4 text-gray" />
 
-                <p className="font-montserrat text-[18px] font-semibold text-ink">
+                <p className=" text-[18px] font-semibold text-ink">
                   What are you looking for?
                 </p>
 
-                <p className="mt-2 font-montserrat text-sm text-muted">
+                <p className="mt-2  text-sm text-muted">
                   Enter a search term above to find products.
                 </p>
               </div>

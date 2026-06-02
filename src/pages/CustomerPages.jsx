@@ -1130,10 +1130,10 @@ export function PaymentResultPage({ failed = false }) {
               </svg>
             )}
           </div>
-          <h1 className="font-montserrat text-2xl font-bold text-ink">
+          <h1 className=" text-2xl font-bold text-ink">
             {failed ? "Payment Failed" : "Order Placed!"}
           </h1>
-          <p className="mt-2 font-montserrat text-sm text-muted">
+          <p className="mt-2  text-sm text-muted">
             {failed
               ? "Your payment could not be processed. Please try again or contact support."
               : "Your order has been placed successfully. We'll send you a confirmation soon."}
@@ -1377,7 +1377,7 @@ export function SimpleApiPage({
     <>
       <Seo title={`${title} | Sam Global`} />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-6  text-2xl font-bold text-ink">
           {title}
         </h1>
         <ApiState
@@ -1409,7 +1409,7 @@ export function SubscriptionPage() {
     <>
       <Seo title="Subscriptions | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-6  text-2xl font-bold text-ink">
           Subscription Plans
         </h1>
         <ApiState
@@ -1429,15 +1429,15 @@ export function SubscriptionPage() {
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gold-soft">
                   <Star size={18} className="text-gold" />
                 </div>
-                <h2 className="font-montserrat text-lg font-semibold text-ink">
+                <h2 className=" text-lg font-semibold text-ink">
                   {plan.title}
                 </h2>
-                <p className="mt-1 font-montserrat text-sm text-muted">
+                <p className="mt-1  text-sm text-muted">
                   {plan.description}
                 </p>
-                <p className="mt-4 font-montserrat text-2xl font-bold text-gold">
+                <p className="mt-4  text-2xl font-bold text-gold">
                   {formatMoney(plan.monthlyPrice, plan.currency || "INR")}
-                  <span className="font-montserrat text-sm font-normal text-gray">
+                  <span className=" text-sm font-normal text-gray">
                     /mo
                   </span>
                 </p>
@@ -1499,7 +1499,7 @@ export function PreferencesPage() {
     <>
       <Seo title="Notification Preferences | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-6  text-2xl font-bold text-ink">
           Notification Preferences
         </h1>
         <ApiState
@@ -1538,10 +1538,10 @@ export function PreferencesPage() {
             )}
           >
             <div className="mb-6">
-              <h2 className="mb-1 font-montserrat text-base font-semibold text-ink">
+              <h2 className="mb-1  text-base font-semibold text-ink">
                 Channels
               </h2>
-              <p className="font-montserrat text-sm text-muted">
+              <p className=" text-sm text-muted">
                 Choose how you&apos;d like to receive notifications.
               </p>
             </div>
@@ -1551,7 +1551,7 @@ export function PreferencesPage() {
                   key={key}
                   className="flex cursor-pointer items-center justify-between gap-3 rounded-[10px] border border-border px-4 py-3"
                 >
-                  <span className="font-montserrat text-sm font-medium text-ink">
+                  <span className=" text-sm font-medium text-ink">
                     {label}
                   </span>
                   <input
@@ -1564,24 +1564,24 @@ export function PreferencesPage() {
             </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <label className="grid gap-1.5">
-                <span className="font-montserrat text-sm font-medium text-ink">
+                <span className=" text-sm font-medium text-ink">
                   Frequency
                 </span>
                 <select
                   {...register("frequency")}
-                  className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5 font-montserrat text-sm text-ink outline-none focus:border-gold"
+                  className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5  text-sm text-ink outline-none focus:border-gold"
                 >
                   <option value="real_time">Real time</option>
                   <option value="daily">Daily digest</option>
                 </select>
               </label>
               <label className="grid gap-1.5">
-                <span className="font-montserrat text-sm font-medium text-ink">
+                <span className=" text-sm font-medium text-ink">
                   Timezone
                 </span>
                 <input
                   {...register("timezone")}
-                  className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5 font-montserrat text-sm text-ink outline-none focus:border-gold"
+                  className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5  text-sm text-ink outline-none focus:border-gold"
                 />
               </label>
             </div>
@@ -1618,7 +1618,7 @@ export function LoyaltyPage() {
     <>
       <Seo title="Loyalty Rewards | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-6  text-2xl font-bold text-ink">
           Loyalty Rewards
         </h1>
         <ApiState
@@ -1634,14 +1634,14 @@ export function LoyaltyPage() {
             <div className="mb-6 rounded-[var(--customer-radius)] bg-gradient-to-br from-gold to-gold-dark p-6 text-white">
               <div className="mb-1 flex items-center gap-2">
                 <Gift size={18} />
-                <span className="font-montserrat text-sm font-medium opacity-80">
+                <span className=" text-sm font-medium opacity-80">
                   Available Points
                 </span>
               </div>
-              <p className="font-montserrat text-4xl font-bold">
+              <p className=" text-4xl font-bold">
                 {profile.points || profile.balance || 0}
               </p>
-              <p className="mt-1 font-montserrat text-sm opacity-70">
+              <p className="mt-1  text-sm opacity-70">
                 Tier: {profile.tier || profile.level || "Standard"}
               </p>
               <div className="mt-5">
@@ -1666,7 +1666,7 @@ export function LoyaltyPage() {
           {history.length > 0 && (
             <div className="rounded-[12px] border border-border bg-white">
               <div className="border-b border-border px-5 py-4">
-                <h2 className="font-montserrat text-base font-semibold text-ink">
+                <h2 className=" text-base font-semibold text-ink">
                   Transaction History
                 </h2>
               </div>
@@ -1677,17 +1677,17 @@ export function LoyaltyPage() {
                     className="flex items-center justify-between px-5 py-3"
                   >
                     <div>
-                      <p className="font-montserrat text-sm font-medium text-ink">
+                      <p className=" text-sm font-medium text-ink">
                         {tx.reason || tx.description || "Points transaction"}
                       </p>
-                      <p className="font-montserrat text-xs text-gray">
+                      <p className=" text-xs text-gray">
                         {tx.createdAt
                           ? new Date(tx.createdAt).toLocaleDateString("en-IN")
                           : ""}
                       </p>
                     </div>
                     <span
-                      className={`font-montserrat text-sm font-semibold ${(tx.points || tx.amount || 0) >= 0 ? "text-emerald-600" : "text-red-500"}`}
+                      className={` text-sm font-semibold ${(tx.points || tx.amount || 0) >= 0 ? "text-emerald-600" : "text-red-500"}`}
                     >
                       {(tx.points || tx.amount || 0) >= 0 ? "+" : ""}
                       {tx.points || tx.amount || 0} pts
@@ -1727,7 +1727,7 @@ export function WarrantyPage({ detail = false }) {
         }
       />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-6  text-2xl font-bold text-ink">
           {detail ? "Warranty Details" : "My Warranties"}
         </h1>
 
@@ -1739,14 +1739,14 @@ export function WarrantyPage({ detail = false }) {
               reset();
             })}
           >
-            <h2 className="mb-3 font-montserrat text-sm font-semibold text-ink">
+            <h2 className="mb-3  text-sm font-semibold text-ink">
               Look up by Order ID
             </h2>
             <div className="flex gap-3">
               <input
                 placeholder="Enter Order ID"
                 {...register("orderId", { required: true })}
-                className="flex-1 rounded-[8px] border border-border-strong px-3 py-2.5 font-montserrat text-sm outline-none focus:border-gold"
+                className="flex-1 rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
               <BrandButton
                 variant="secondary"
@@ -1776,10 +1776,10 @@ export function WarrantyPage({ detail = false }) {
                       <ShieldCheck size={18} className="text-gold" />
                     </div>
                     <div>
-                      <p className="font-montserrat text-sm font-semibold text-ink">
+                      <p className=" text-sm font-semibold text-ink">
                         {warranty.type || "Product Warranty"}
                       </p>
-                      <p className="font-montserrat text-xs text-gray">
+                      <p className=" text-xs text-gray">
                         ID: {warranty.id || warrantyId}
                       </p>
                     </div>
@@ -1835,10 +1835,10 @@ export function WarrantyPage({ detail = false }) {
                   <div className="flex items-center gap-3">
                     <ShieldCheck size={16} className="text-gold" />
                     <div>
-                      <p className="font-montserrat text-sm font-medium text-ink">
+                      <p className=" text-sm font-medium text-ink">
                         {w.type || "Warranty"}
                       </p>
-                      <p className="font-montserrat text-xs text-gray">
+                      <p className=" text-xs text-gray">
                         {w.period}
                       </p>
                     </div>
@@ -1872,24 +1872,24 @@ export function WarrantyPage({ detail = false }) {
               ),
             )}
           >
-            <h2 className="mb-4 font-montserrat text-sm font-semibold text-ink">
+            <h2 className="mb-4  text-sm font-semibold text-ink">
               Register a Warranty
             </h2>
             <div className="grid gap-3 sm:grid-cols-3">
               <input
                 placeholder="Order ID"
                 {...register("reg_orderId")}
-                className="rounded-[8px] border border-border-strong px-3 py-2.5 font-montserrat text-sm outline-none focus:border-gold"
+                className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
               <input
                 placeholder="Product ID"
                 {...register("reg_productId")}
-                className="rounded-[8px] border border-border-strong px-3 py-2.5 font-montserrat text-sm outline-none focus:border-gold"
+                className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
               <input
                 placeholder="Variant ID (optional)"
                 {...register("reg_variantId")}
-                className="rounded-[8px] border border-border-strong px-3 py-2.5 font-montserrat text-sm outline-none focus:border-gold"
+                className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
             </div>
             <div className="mt-4">
@@ -1913,11 +1913,11 @@ export function BackendGapNotes() {
     <>
       <Seo title="API Notes | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-4 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-4  text-2xl font-bold text-ink">
           API Integration Notes
         </h1>
         <div className="rounded-[12px] border border-border bg-white p-6">
-          <p className="font-montserrat text-sm text-muted">
+          <p className=" text-sm text-muted">
             Wishlist uses{" "}
             <code className="rounded bg-cream px-1.5 py-0.5 text-gold-dark">
               cart.wishlist
@@ -1950,7 +1950,7 @@ export function WalletPage() {
     <>
       <Seo title="My Wallet | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-6  text-2xl font-bold text-ink">
           My Wallet
         </h1>
         <ApiState
@@ -1965,15 +1965,15 @@ export function WalletPage() {
             <div className="rounded-[var(--customer-radius)] bg-gradient-to-br from-ink to-muted p-6 text-white">
               <div className="mb-1 flex items-center gap-2">
                 <Wallet size={18} />
-                <span className="font-montserrat text-sm font-medium opacity-80">
+                <span className=" text-sm font-medium opacity-80">
                   Available Balance
                 </span>
               </div>
-              <p className="font-montserrat text-4xl font-bold">
+              <p className=" text-4xl font-bold">
                 {formatMoney(wallet.balance || 0, wallet.currency || "INR")}
               </p>
               {wallet.lockedBalance > 0 && (
-                <p className="mt-1 font-montserrat text-sm opacity-60">
+                <p className="mt-1  text-sm opacity-60">
                   Locked:{" "}
                   {formatMoney(wallet.lockedBalance, wallet.currency || "INR")}
                 </p>
@@ -1999,7 +1999,7 @@ export function PaymentsPage() {
     <>
       <Seo title="Payment History | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-6  text-2xl font-bold text-ink">
           Payment History
         </h1>
         <ApiState
@@ -2030,10 +2030,10 @@ export function PaymentsPage() {
                       <CreditCard size={14} className="text-gold" />
                     </div>
                     <div>
-                      <p className="font-montserrat text-sm font-medium text-ink">
+                      <p className=" text-sm font-medium text-ink">
                         {payment.provider || "Payment"}
                       </p>
-                      <p className="font-montserrat text-xs text-gray">
+                      <p className=" text-xs text-gray">
                         {payment.createdAt
                           ? new Date(payment.createdAt).toLocaleDateString(
                               "en-IN",
@@ -2044,11 +2044,11 @@ export function PaymentsPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span
-                      className={`rounded-full px-2.5 py-0.5 font-montserrat text-xs font-semibold capitalize ${statusColor}`}
+                      className={`rounded-full px-2.5 py-0.5  text-xs font-semibold capitalize ${statusColor}`}
                     >
                       {status}
                     </span>
-                    <span className="font-montserrat text-sm font-bold text-ink">
+                    <span className=" text-sm font-bold text-ink">
                       {formatMoney(
                         payment.amount || 0,
                         payment.currency || "INR",
@@ -2078,7 +2078,7 @@ export function NotificationsPage() {
     <>
       <Seo title="Notifications | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6 font-montserrat text-2xl font-bold text-ink">
+        <h1 className="mb-6  text-2xl font-bold text-ink">
           Notifications
         </h1>
         <ApiState
@@ -2106,13 +2106,13 @@ export function NotificationsPage() {
                     />
                   </div>
                   <div className="min-w-0">
-                    <p className="font-montserrat text-sm font-medium text-ink">
+                    <p className=" text-sm font-medium text-ink">
                       {notif.title || notif.subject || "Notification"}
                     </p>
-                    <p className="mt-0.5 font-montserrat text-xs text-muted">
+                    <p className="mt-0.5  text-xs text-muted">
                       {notif.message || notif.body || ""}
                     </p>
-                    <p className="mt-1 font-montserrat text-xs text-gray">
+                    <p className="mt-1  text-xs text-gray">
                       {notif.createdAt
                         ? new Date(notif.createdAt).toLocaleDateString("en-IN")
                         : ""}

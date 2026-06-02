@@ -19,11 +19,11 @@ export default function CartItemCard({
   const productPath = item.productId ? `/products/${item.productId}` : "";
 
   return (
-    <div className="customer-card p-4 font-montserrat sm:p-5">
+    <div className="customer-card p-4  sm:p-5">
       <SellerInfo seller={item.seller} feedback={item.feedback} />
 
       <div className="flex flex-col gap-6 md:flex-row">
-        <label className="flex items-start gap-2 font-montserrat text-sm font-semibold text-[var(--customer-ink)] md:pt-2">
+        <label className="flex items-start gap-2  text-sm font-semibold text-[var(--customer-ink)] md:pt-2">
           <input
             type="checkbox"
             checked={selected}

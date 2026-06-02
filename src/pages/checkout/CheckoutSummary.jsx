@@ -50,7 +50,7 @@ export default function CheckoutSummary({
   return (
     <aside className="min-w-0">
       <div className="sticky top-4 w-full overflow-hidden rounded-lg border border-border bg-white p-5">
-        <h2 className="mb-4 font-montserrat text-base font-semibold text-ink">
+        <h2 className="mb-4  text-base font-semibold text-ink">
           Order summary
         </h2>
         <div className="grid divide-y divide-border">
@@ -150,7 +150,7 @@ export default function CheckoutSummary({
         </div>
 
         <div className="mt-5 border-t border-border pt-4">
-          <h3 className="mb-3 font-montserrat text-sm font-semibold text-ink">
+          <h3 className="mb-3  text-sm font-semibold text-ink">
             Payment method
           </h3>
 

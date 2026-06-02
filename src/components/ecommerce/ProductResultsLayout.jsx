@@ -64,7 +64,7 @@ export default function ProductResultsLayout({
               <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
 
               {loadingMore && (
-                <div className="mt-6 text-center font-montserrat text-sm text-muted">
+                <div className="mt-6 text-center  text-sm text-muted">
                   Loading more products...
                 </div>
               )}

@@ -29,13 +29,13 @@ export default function SelectField({
   const showSelect = hasOptions || disabled;
 
   return (
-    <label className="grid gap-1.5 font-montserrat text-sm font-medium text-[var(--customer-ink)]" htmlFor={id}>
+    <label className="grid gap-1.5  text-sm font-medium text-[var(--customer-ink)]" htmlFor={id}>
       <span>{label}</span>
       {showSelect ? (
         <select
           id={id}
           disabled={disabled}
-          className="customer-input font-montserrat disabled:cursor-not-allowed disabled:bg-[var(--customer-cream)]"
+          className="customer-input  disabled:cursor-not-allowed disabled:bg-[var(--customer-cream)]"
           {...registration}
           {...props}
         >
@@ -52,12 +52,12 @@ export default function SelectField({
           id={id}
           type="text"
           placeholder={placeholder || label}
-          className="customer-input font-montserrat"
+          className="customer-input "
           {...registration}
           {...props}
         />
       )}
-      <span className="min-h-4 font-montserrat text-xs font-normal text-red-600">
+      <span className="min-h-4  text-xs font-normal text-red-600">
         {!disabled && error?.message}
       </span>
     </label>

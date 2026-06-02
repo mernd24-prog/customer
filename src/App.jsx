@@ -142,7 +142,7 @@ export default function App() {
       <main className="flex min-h-screen items-center justify-center bg-[var(--customer-cream)]">
         <div className="text-center">
           <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-[var(--customer-border)] border-t-[var(--customer-gold)]" />
-          <p className="font-montserrat text-sm text-[var(--customer-muted)]">
+          <p className=" text-sm text-[var(--customer-muted)]">
             Loading your session…
           </p>
         </div>

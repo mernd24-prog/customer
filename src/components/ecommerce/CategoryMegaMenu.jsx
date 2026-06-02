@@ -78,7 +78,7 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
     <div className="flex flex-col h-full bg-cream/40 border-r border-border p-5">
       <div className="mb-4 flex items-center gap-2 border-b border-border pb-3">
         <Sparkles size={15} className="text-gold" />
-        <h3 className="font-montserrat text-[11px] font-black uppercase tracking-normal text-ink">
+        <h3 className=" text-[11px] font-black uppercase tracking-normal text-ink">
           {title}
         </h3>
       </div>
@@ -142,7 +142,7 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
   const location = useLocation();
   return (
     <div className="flex flex-col h-full bg-white border-r border-border p-5">
-      <h3 className="mb-4 border-b border-border pb-3 font-montserrat text-[11px] font-black uppercase tracking-normal text-gray">
+      <h3 className="mb-4 border-b border-border pb-3  text-[11px] font-black uppercase tracking-normal text-gray">
         {title}
       </h3>
       
@@ -205,7 +205,7 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
   const location = useLocation();
   return (
     <div className="flex flex-col h-full bg-white p-5">
-      <h3 className="mb-4 border-b border-border pb-3 font-montserrat text-[11px] font-black uppercase tracking-normal text-gray">
+      <h3 className="mb-4 border-b border-border pb-3  text-[11px] font-black uppercase tracking-normal text-gray">
         {title}
       </h3>
       
@@ -287,7 +287,7 @@ const PromotionBanner = memo(function PromotionBanner({
         </div>
         
         <div className="relative z-10 flex h-full flex-col items-start justify-end p-6">
-          <h2 className="font-montserrat text-xl font-extrabold leading-tight text-white xl:text-2xl drop-shadow-sm">
+          <h2 className=" text-xl font-extrabold leading-tight text-white xl:text-2xl drop-shadow-sm">
             {title}
             {highlight && (
               <>
@@ -332,7 +332,7 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({ items, rootTitle
     <div className="w-full bg-white border-t border-border p-4 flex flex-col gap-3 max-h-[75vh] overflow-y-auto">
       <div className="flex items-center gap-2 border-b border-border pb-2">
         <Sparkles size={14} className="text-gold" />
-        <span className="font-montserrat text-[10px] font-black uppercase tracking-normal text-gold">
+        <span className=" text-[10px] font-black uppercase tracking-normal text-gold">
           {rootTitle}
         </span>
       </div>

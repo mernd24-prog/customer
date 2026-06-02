@@ -36,7 +36,7 @@ export default function Pagination({
           type="button"
           onClick={() => onPageChange?.(page)}
           className={cn(
-            "h-9 min-w-[36px] rounded-[6px] border px-2.5 font-montserrat text-sm font-medium transition-all duration-300 ease-in-out",
+            "h-9 min-w-[36px] rounded-[6px] border px-2.5  text-sm font-medium transition-all duration-300 ease-in-out",
             currentPage === page
               ? "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-[var(--customer-navy)]"
               : "border-[var(--customer-border-strong)] text-[var(--customer-ink)] hover:bg-[var(--customer-cream)]",

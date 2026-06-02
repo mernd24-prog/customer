@@ -15,7 +15,7 @@ export default function Rating({
 
   return (
     <div
-      className={cn("flex items-center gap-1 font-montserrat text-xs text-[var(--customer-muted)]", className)}
+      className={cn("flex items-center gap-1  text-xs text-[var(--customer-muted)]", className)}
       aria-label={`${rating} out of ${max} stars`}
     >
       <span className="flex items-center gap-0.5 text-[var(--customer-gold)]">

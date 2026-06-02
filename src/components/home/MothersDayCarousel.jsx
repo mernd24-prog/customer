@@ -103,7 +103,7 @@ export default function MothersDayCarousel({
     <section className="my-8 w-full overflow-x-hidden lg:my-12">
       {/* Mobile heading */}
       <div className="xl:hidden xl:mb-8 md:mb-4">
-        <h2 className="custom-h5 text-center font-bold font-montserrat text-blue">{heading}</h2>
+        <h2 className="custom-h5 text-center font-bold  text-blue">{heading}</h2>
       </div>
 
       <div className="relative">
@@ -112,13 +112,13 @@ export default function MothersDayCarousel({
         <div className="flex flex-col items-center xl:flex-row">
           {/* Desktop left panel */}
           <div className="hidden flex-col items-center justify-center p-24 z-10 xl:flex 2xl:w-[40%] 2xl:p-16">
-            <h2 className="custom-h5 mb-8 font-bold font-montserrat text-white 2xl:text-center">{heading}</h2>
+            <h2 className="custom-h5 mb-8 font-bold  text-white 2xl:text-center">{heading}</h2>
             <Button
               variant="gradient"
               rounded
               label={ctaLabel}
               size="lg"
-              className="font-montserrat font-semibold !px-10 py-4"
+              className=" font-semibold !px-10 py-4"
               onClick={onCtaClick}
             />
           </div>
@@ -143,7 +143,7 @@ export default function MothersDayCarousel({
           rounded
           label={ctaLabel}
           size="lg"
-          className="w-full font-montserrat font-semibold px-8 md:w-fit"
+          className="w-full  font-semibold px-8 md:w-fit"
           onClick={onCtaClick}
         />
       </div>

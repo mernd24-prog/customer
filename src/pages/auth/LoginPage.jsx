@@ -130,7 +130,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 disabled={loading}
                 {...register("password")}
-                className={`min-h-11 w-full rounded-[8px] border bg-white px-3 py-2.5 pr-12 font-montserrat text-sm text-ink outline-none transition-all duration-500 ease-in-out placeholder:text-gray ${
+                className={`min-h-11 w-full rounded-[8px] border bg-white px-3 py-2.5 pr-12  text-sm text-ink outline-none transition-all duration-500 ease-in-out placeholder:text-gray ${
                   errors.password
                     ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
                     : "border-border-strong focus:border-gold focus:ring-2 focus:ring-gold/20"
@@ -155,7 +155,7 @@ export default function LoginPage() {
 
             {/* PASSWORD ERROR */}
             {errors.password?.message && (
-              <p className="min-h-4 font-montserrat text-xs font-normal text-red-600">
+              <p className="min-h-4  text-xs font-normal text-red-600">
                 {errors.password.message}
               </p>
             )} 
@@ -164,7 +164,7 @@ export default function LoginPage() {
             <div className="flex justify-end">
               <Link
                 to={AUTH_ROUTES.forgotPassword}
-                className="font-montserrat text-xs font-medium text-muted underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold hover:underline"
+                className=" text-xs font-medium text-muted underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold hover:underline"
               >
                 Forgot password?
               </Link>
@@ -175,7 +175,7 @@ export default function LoginPage() {
           {/* API ERROR */}
           {error && (
             <div
-              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 font-montserrat text-sm text-red-700"
+              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700"
               role="alert"
             >
               {error}
@@ -187,7 +187,7 @@ export default function LoginPage() {
             type="submit"
             loading={loading}
             disabled={!isValid || loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark font-montserrat text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <LogIn size={18} />
             Sign in
@@ -197,7 +197,7 @@ export default function LoginPage() {
           <div className="relative flex items-center gap-3 py-0.5">
             <hr className="flex-1 border-border" />
 
-            <span className="font-montserrat text-xs text-gray">
+            <span className=" text-xs text-gray">
               or
             </span>
 
@@ -209,7 +209,7 @@ export default function LoginPage() {
             type="button"
             variant="google"
             onClick={handleGoogleLogin}
-            className="h-12 w-full rounded-[8px] border-border bg-white font-montserrat text-[0.9rem] font-semibold tracking-normal text-ink shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:bg-white hover:text-ink hover:shadow-md active:translate-y-0 active:scale-[0.98] active:bg-navy-soft"
+            className="h-12 w-full rounded-[8px] border-border bg-white  text-[0.9rem] font-semibold tracking-normal text-ink shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:bg-white hover:text-ink hover:shadow-md active:translate-y-0 active:scale-[0.98] active:bg-navy-soft"
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -221,7 +221,7 @@ export default function LoginPage() {
           </Button>
 
           {/* REGISTER */}
-          <p className="text-center font-montserrat text-[0.8rem] text-muted">
+          <p className="text-center  text-[0.8rem] text-muted">
             Don&apos;t have an account?{" "}
 
             <Link
@@ -233,7 +233,7 @@ export default function LoginPage() {
           </p>
 
           {/* OTP LOGIN */}
-          <p className="text-center font-montserrat text-[0.8rem] text-muted">
+          <p className="text-center  text-[0.8rem] text-muted">
             Seller account login?{" "}
 
             <Link

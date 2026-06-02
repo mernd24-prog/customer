@@ -88,7 +88,7 @@ function OutletLinkList({ items, getHref }) {
         <Link
           key={item.key || item.label || item}
           to={getHref(item)}
-          className="block truncate font-montserrat text-sm text-ink "
+          className="block truncate  text-sm text-ink "
         >
           {item.label || item}
         </Link>
@@ -187,7 +187,7 @@ export default function BrandOutletPage() {
         description="Shop Brand Outlet deals by category and brand at Sam Global."
       />
 
-      <main className="bg-white font-montserrat text-ink">
+      <main className="bg-white  text-ink">
         <div className="mx-auto grid w-full max-w-[1470px] grid-cols-1 gap-6 px-3 py-5 sm:px-5 sm:py-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:px-8">
           <aside className="hidden lg:sticky lg:top-24 lg:block lg:w-60 lg:shrink-0 lg:self-start">
             <div>
@@ -272,7 +272,7 @@ export default function BrandOutletPage() {
                 </div>
               ) : (
                 <div className="rounded-[12px] border border-border bg-cream p-6 text-center">
-                  <p className="font-montserrat text-sm font-semibold text-ink">
+                  <p className=" text-sm font-semibold text-ink">
                     No brands available right now.
                   </p>
                 </div>

@@ -30,7 +30,7 @@ export default function Price({
   return (
     <div
       className={cn(
-        "flex font-montserrat",
+        "flex ",
         layout === "pill"
           ? "h-[32px] w-full max-w-[160px] items-center justify-evenly gap-1 rounded-full border border-[var(--customer-gold)] bg-white px-2"
           : "items-baseline gap-2",

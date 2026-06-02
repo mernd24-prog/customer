@@ -32,7 +32,7 @@ export default function Avatar({
   return (
     <div
       className={cn(
-        "flex items-center justify-center rounded-full bg-gold font-montserrat font-semibold text-white",
+        "flex items-center justify-center rounded-full bg-gold  font-semibold text-white",
         sizeMap[size] || sizeMap.md,
         className
       )}

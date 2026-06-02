@@ -361,10 +361,10 @@ export default function AddressTab({ user }) {
     <div className="grid gap-5">
       <div className="flex flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="font-montserrat text-base font-semibold text-ink">
+          <p className=" text-base font-semibold text-ink">
             Saved addresses
           </p>
-          <p className="font-montserrat text-sm text-muted">
+          <p className=" text-sm text-muted">
             {addresses.length
               ? `${addresses.length} address${addresses.length === 1 ? "" : "es"} saved`
               : "Add a delivery address for faster checkout."}
@@ -373,7 +373,7 @@ export default function AddressTab({ user }) {
         <button
           type="button"
           onClick={() => setShowAddForm((value) => !value)}
-          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4 font-montserrat text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
+          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4  text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
         >
           {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
           {showAddForm ? "Close form" : "Add address"}
@@ -708,7 +708,7 @@ export default function AddressTab({ user }) {
           <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-gold">
             <MapPin size={24} />
           </span>
-          <p className="font-montserrat text-sm font-medium text-ink">
+          <p className=" text-sm font-medium text-ink">
             No addresses saved yet.
           </p>
         </div>

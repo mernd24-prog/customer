@@ -15,7 +15,7 @@ export default function TextInput({
   ...props
 }) {
   return (
-    <div className={cn("grid gap-1.5 font-montserrat", className)}>
+    <div className={cn("grid gap-1.5 ", className)}>
       {label && (
         <label
           htmlFor={id}
@@ -33,7 +33,7 @@ export default function TextInput({
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
         className={cn(
-          "customer-input font-montserrat",
+          "customer-input ",
           disabled && "cursor-not-allowed bg-gray-50 opacity-70",
           error && "border-red-400 focus:border-red-400 focus:ring-red-200",
           inputClassName,

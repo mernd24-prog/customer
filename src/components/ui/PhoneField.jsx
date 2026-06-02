@@ -11,7 +11,7 @@ export default function PhoneField({
   const normalizedDialCodes = dialCodes.map((c) => String(c)).filter(Boolean);
 
   return (
-    <label className="grid gap-1.5 font-montserrat text-sm font-medium text-ink" htmlFor={id}>
+    <label className="grid gap-1.5  text-sm font-medium text-ink" htmlFor={id}>
       <span>{label}</span>
       <div className="flex items-center min-h-11 w-full rounded-[8px] border border-border-strong bg-white focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/20 transition-all duration-300 ease-in-out">
         {normalizedDialCodes.length > 1 ? (
@@ -19,7 +19,7 @@ export default function PhoneField({
             <select
               id={`${id}-dialCode`}
               {...dialCodeRegistration}
-              className="h-full w-full appearance-none bg-transparent pl-3 pr-5 py-2 font-montserrat text-sm text-ink outline-none border-none focus:ring-0 cursor-pointer"
+              className="h-full w-full appearance-none bg-transparent pl-3 pr-5 py-2  text-sm text-ink outline-none border-none focus:ring-0 cursor-pointer"
             >
               <option value=""></option>
               {normalizedDialCodes.map((code) => (
@@ -50,7 +50,7 @@ export default function PhoneField({
           type="tel"
           placeholder={placeholder}
           maxLength={10}
-          className="h-full flex-1 bg-transparent px-3 py-2 font-montserrat text-sm text-ink outline-none border-none focus:ring-0 placeholder:text-gray"
+          className="h-full flex-1 bg-transparent px-3 py-2  text-sm text-ink outline-none border-none focus:ring-0 placeholder:text-gray"
           onInput={(e) => {
             e.target.value = e.target.value.replace(/\D/g, "");
           }}
@@ -58,7 +58,7 @@ export default function PhoneField({
           {...props}
         />
       </div>
-      <span className="min-h-4 font-montserrat text-xs font-normal text-red-600">
+      <span className="min-h-4  text-xs font-normal text-red-600">
         {error?.message}
       </span>
     </label>

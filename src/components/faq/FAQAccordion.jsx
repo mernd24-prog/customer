@@ -21,7 +21,7 @@ export default function FAQAccordion({ faqs = [] }) {
                   onClick={() => toggleFAQ(index)}
                   className="flex cursor-pointer items-center justify-between px-5 py-4 transition-all duration-300 ease-in-out"
                 >
-                  <h3 className="font-montserrat text-[15px] font-medium text-ink md:text-[16px]">
+                  <h3 className=" text-[15px] font-medium text-ink md:text-[16px]">
                     {faq.question}
                   </h3>
 
@@ -50,7 +50,7 @@ export default function FAQAccordion({ faqs = [] }) {
                       : "max-h-0 px-5 py-0 opacity-0"
                   }`}
                 >
-                  <p className="font-montserrat text-[14px] leading-6 text-muted">
+                  <p className=" text-[14px] leading-6 text-muted">
                     {faq.answer}
                   </p>
                 </div>
@@ -58,7 +58,7 @@ export default function FAQAccordion({ faqs = [] }) {
             );
           })
         ) : (
-          <p className="py-10 text-center font-montserrat text-muted">
+          <p className="py-10 text-center  text-muted">
             No FAQs found.
           </p>
         )}

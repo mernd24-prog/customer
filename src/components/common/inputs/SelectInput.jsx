@@ -16,7 +16,7 @@ export default function SelectInput({
   ...props
 }) {
   return (
-    <div className={cn("grid gap-1.5 font-montserrat", className)}>
+    <div className={cn("grid gap-1.5 ", className)}>
       {label && (
         <label htmlFor={id} className="text-sm font-medium text-[var(--customer-ink)]">
           {label}
@@ -30,7 +30,7 @@ export default function SelectInput({
         disabled={disabled}
         aria-invalid={Boolean(error)}
         className={cn(
-          "customer-input cursor-pointer appearance-none font-montserrat",
+          "customer-input cursor-pointer appearance-none ",
           disabled && "cursor-not-allowed bg-gray-50 opacity-70",
           error && "border-red-400",
           selectClassName,

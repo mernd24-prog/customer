@@ -31,7 +31,7 @@ export function WatchlistItemCard({
           {image ? (
             <img src={image} alt="" className="h-full w-full object-cover" />
           ) : (
-            <span className="flex h-full items-center justify-center font-montserrat text-xs text-gray">
+            <span className="flex h-full items-center justify-center  text-xs text-gray">
               No image
             </span>
           )}
@@ -39,17 +39,17 @@ export function WatchlistItemCard({
 
         <div className="flex flex-1 flex-col justify-between pr-5">
           <div>
-            <h4 className="line-clamp-2 font-montserrat text-[13px] font-semibold text-ink transition-all duration-300 ease-in-out group-hover:text-gold">
+            <h4 className="line-clamp-2  text-[13px] font-semibold text-ink transition-all duration-300 ease-in-out group-hover:text-gold">
               <Link to={`/products/${id}`}>{title}</Link>
             </h4>
-            <p className="mt-1 font-montserrat text-[12px] font-bold text-ink">
+            <p className="mt-1  text-[12px] font-bold text-ink">
               {price}
             </p>
           </div>
 
           <Link
             to={`/products/${id}`}
-            className="mt-1 font-montserrat text-[11px] font-medium text-gold hover:underline"
+            className="mt-1  text-[11px] font-medium text-gold hover:underline"
           >
             View item
           </Link>
@@ -79,7 +79,7 @@ export function WatchlistItemCard({
                 className="h-full w-full object-contain"
               />
             ) : (
-              <span className="font-montserrat text-sm text-gray">
+              <span className=" text-sm text-gray">
                 No image
               </span>
             )}
@@ -88,21 +88,21 @@ export function WatchlistItemCard({
           <div className="flex flex-1 flex-col">
             <Link
               to={`/products/${id}`}
-              className="font-montserrat text-[22px] font-semibold leading-8 text-ink hover:text-gold sm:text-[24px] sm:leading-[34px]"
+              className=" text-[22px] font-semibold leading-8 text-ink hover:text-gold sm:text-[24px] sm:leading-[34px]"
             >
               {title}
             </Link>
 
-            <p className="mt-1 font-montserrat text-[15px] text-muted">
+            <p className="mt-1  text-[15px] text-muted">
               {product?.subtitle || product?.category || ""}
             </p>
 
             <div className="mt-3">
-              <p className="font-montserrat text-[28px] font-bold text-gold sm:text-[32px]">
+              <p className=" text-[28px] font-bold text-gold sm:text-[32px]">
                 {price}
               </p>
               {product?.seller && (
-                <p className="mt-1 font-montserrat text-sm text-muted">
+                <p className="mt-1  text-sm text-muted">
                   Sold by{" "}
                   <span className="font-semibold text-ink">
                     {product.seller}

@@ -9,7 +9,7 @@ import {
   setCache,
 } from "../utils/cache";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://192.168.16.47:4000";
 const buildApiUrl = (path = "") =>
   `${API_BASE_URL.replace(/\/+$/, "")}/${String(path).replace(/^\/+/, "")}`;
 

@@ -675,7 +675,7 @@ function OrderList() {
       <Seo title="My Orders | Sam Global" />
       <div className="w-container py-6 sm:py-10">
         <div className="mb-5 flex items-center justify-between sm:mb-6">
-          <h1 className="font-montserrat text-2xl font-bold text-ink sm:text-3xl">My Orders</h1>
+          <h1 className=" text-2xl font-bold text-ink sm:text-3xl">My Orders</h1>
         </div>
 
         <ApiState

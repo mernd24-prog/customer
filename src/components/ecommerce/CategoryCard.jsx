@@ -35,7 +35,7 @@ export default function CategoryCard({
           </div>
         )}
       </div>
-      <p className="mt-3 line-clamp-1 text-center font-montserrat text-[13px] font-semibold leading-5 text-[var(--customer-ink)] sm:text-[14px]">
+      <p className="mt-3 line-clamp-1 text-center  text-[13px] font-semibold leading-5 text-[var(--customer-ink)] sm:text-[14px]">
         {title}
       </p>
     </article>

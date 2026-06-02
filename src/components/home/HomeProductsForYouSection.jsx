@@ -36,7 +36,7 @@ export default function HomeProductsForYouSection({
   return (
     <section className="mt-8 rounded-[var(--customer-radius)] bg-white">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="customer-section-title font-montserrat text-[18px] sm:text-[20px]">
+        <h2 className="customer-section-title  text-[18px] sm:text-[20px]">
           {title}
         </h2>
         {actionHref && actionLabel && (

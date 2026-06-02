@@ -70,7 +70,7 @@ export function Footer({ data = {} }) {
   };
 
   return (
-    <footer className="mt-10 w-full bg-[var(--customer-black)] font-montserrat text-white">
+    <footer className="mt-10 w-full bg-[var(--customer-black)]  text-white">
       <FooterBenefits items={footer.benefits} />
       <div className="w-container flex flex-col gap-4 py-8 md:flex-row md:items-center md:justify-between justify-between">
         <div className="flex items-center gap-3">

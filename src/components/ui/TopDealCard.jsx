@@ -26,7 +26,7 @@ export default function TopDealCard({
           
           {/* Title */}
           <h3
-            className="line-clamp-2 text-center font-montserrat text-[13px] font-semibold leading-5 text-[var(--customer-ink)] sm:text-left"
+            className="line-clamp-2 text-center  text-[13px] font-semibold leading-5 text-[var(--customer-ink)] sm:text-left"
             title={title}
           >
             {title}

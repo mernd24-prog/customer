@@ -33,13 +33,13 @@ const InfoSection = ({ data }) => {
           {/* Left Content */}
           <div className="flex w-full flex-col items-start px-4 text-left sm:px-6 lg:w-[60%] lg:px-0 lg:py-12">
             <div className="flex w-full flex-col gap-6">
-              <h2 className="font-montserrat text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
+              <h2 className=" text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
                 {title}
               </h2>
 
               <div className="flex flex-col gap-5">
                 <p
-                  className="font-montserrat text-base font-light leading-8 text-white/90 sm:text-lg"
+                  className=" text-base font-light leading-8 text-white/90 sm:text-lg"
                   dangerouslySetInnerHTML={{ __html: description }}
                 />
               </div>

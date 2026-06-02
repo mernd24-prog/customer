@@ -18,7 +18,7 @@ export default function ShippingAddressForm({
 }) {
   return (
     <section className="rounded-[12px] border border-border bg-white p-5">
-      <h2 className="mb-4 font-montserrat text-base font-semibold text-ink">
+      <h2 className="mb-4  text-base font-semibold text-ink">
         Shipping address
       </h2>
       <div className="grid gap-4">

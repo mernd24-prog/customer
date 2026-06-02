@@ -57,7 +57,7 @@ export default function Button({
       disabled={isDisabled}
       style={customStyle}
       className={cn(
-        "inline-flex cursor-pointer items-center justify-center gap-2 font-montserrat font-semibold tracking-normal transition-all duration-300 ease-in-out",
+        "inline-flex cursor-pointer items-center justify-center gap-2  font-semibold tracking-normal transition-all duration-300 ease-in-out",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/60 focus-visible:ring-offset-2",
         sizeMap[size] || sizeMap.md,
         rounded ? "rounded-full" : "rounded-[var(--customer-radius-sm)]",

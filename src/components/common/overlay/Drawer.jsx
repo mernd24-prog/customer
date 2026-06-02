@@ -17,7 +17,7 @@ export default function Drawer({
       <div className="absolute inset-0 bg-black/45 backdrop-blur-sm" onClick={onClose} />
       <div className={`absolute top-0 ${sideClass} h-full ${width} overflow-y-auto border-l border-[var(--customer-border)] bg-white p-4 shadow-[var(--customer-shadow-strong)]`}>
         <div className="mb-4 flex items-center justify-between border-b border-[var(--customer-border)] pb-3">
-          <span className="font-montserrat font-semibold text-[var(--customer-ink)]">{title}</span>
+          <span className=" font-semibold text-[var(--customer-ink)]">{title}</span>
           <button type="button" onClick={onClose} className="icon-button" aria-label="Close">
             <X size={16} />
           </button>

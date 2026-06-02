@@ -9,13 +9,13 @@ const PolicySection = ({ title, points, description, footer }) => {
   return (
     <section className="group py-2 md:py-3 mt-3 first:mt-0">
       {title && (
-        <h2 className="mb-3 font-montserrat text-xl font-bold leading-tight text-ink md:text-2xl">
+        <h2 className="mb-3  text-xl font-bold leading-tight text-ink md:text-2xl">
           {title}
         </h2>
       )}
 
       {description && (
-        <p className="mb-4 font-montserrat text-[15px] leading-relaxed tracking-normal text-ink md:text-[16.5px]">
+        <p className="mb-4  text-[15px] leading-relaxed tracking-normal text-ink md:text-[16.5px]">
           {description}
         </p>
       )}
@@ -32,7 +32,7 @@ const PolicySection = ({ title, points, description, footer }) => {
                 />
               </div>
 
-              <div className="text-muted leading-relaxed tracking-normal text-[15px] md:text-[16.5px] font-montserrat">
+              <div className="text-muted leading-relaxed tracking-normal text-[15px] md:text-[16.5px] ">
                 {point.title && (
                   <span className="font-semibold text-ink">
                     {point.title}
@@ -48,7 +48,7 @@ const PolicySection = ({ title, points, description, footer }) => {
 
       {footer && (
         <div className="mt-2">
-          <p className="text-muted leading-relaxed tracking-normal text-[15px] md:text-[16.5px] font-montserrat">
+          <p className="text-muted leading-relaxed tracking-normal text-[15px] md:text-[16.5px] ">
             {footer}
           </p>
         </div>

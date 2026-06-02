@@ -184,14 +184,14 @@ textarea {
 
 .customer-container,
 .w-container {
-  width: min(100% - 32px, 1440px);
+  width: min(100% - 32px, 1760px);
   margin-inline: auto;
 }
 
 @media (min-width: 1024px) {
   .customer-container,
   .w-container {
-    width: min(100% - 48px, 1440px);
+    width: min(100% - 48px, 1760px);
   }
 }
 

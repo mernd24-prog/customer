@@ -249,7 +249,7 @@ export default function ProductsPage() {
       key: "inStock",
       title: "Availability",
       content: (
-        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-ink">
+        <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
           <input
             type="checkbox"
             checked={searchParams.get("inStock") === "true"}
@@ -270,7 +270,7 @@ export default function ProductsPage() {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <PageHeader title={pageTitle} className="mb-0" />
-            <p className="mt-0.5 font-montserrat text-sm text-muted">{(pageInfo.total || products.length).toLocaleString()} products</p>
+            <p className="mt-0.5  text-sm text-muted">{(pageInfo.total || products.length).toLocaleString()} products</p>
           </div>
           <CollectionToolbar
             sortValue={searchParams.get("sort") || ""}

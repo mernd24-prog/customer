@@ -125,7 +125,7 @@ const PolicyPage = () => {
   const pageDescription = data?.intro?.description || config?.description;
 
   return (
-    <main className="w-full bg-white font-montserrat pb-20">
+    <main className="w-full bg-white  pb-20">
       <Seo title={pageTitle} description={pageDescription} />
 
       <ApiState

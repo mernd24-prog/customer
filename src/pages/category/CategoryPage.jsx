@@ -301,7 +301,7 @@ export default function CategoryPage() {
       key: "inStock",
       title: "Availability",
       content: (
-        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-ink">
+        <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
           <input
             type="checkbox"
             checked={searchParams.get("inStock") === "true"}
@@ -332,7 +332,7 @@ export default function CategoryPage() {
           <div className="absolute inset-0 flex items-end bg-black/40 px-6 pb-6">
             <div>
               <Breadcrumbs items={breadcrumbItems} className="mb-1 text-white" />
-              <h1 className="font-montserrat text-[26px] font-bold text-white sm:text-[32px]">
+              <h1 className=" text-[26px] font-bold text-white sm:text-[32px]">
                 {categoryTitle}
               </h1>
             </div>
@@ -342,11 +342,11 @@ export default function CategoryPage() {
         <div className="border-b border-border bg-cream px-4 py-6 sm:px-6">
           <div className="w-container">
             <Breadcrumbs items={breadcrumbItems} className="mb-2 text-gray" />
-            <h1 className="font-montserrat text-[26px] font-bold text-gray sm:text-[32px]">
+            <h1 className=" text-[26px] font-bold text-gray sm:text-[32px]">
               {categoryTitle}
             </h1>
             {categoryDesc && (
-              <p className="mt-1 max-w-2xl font-montserrat text-sm text-muted">{categoryDesc}</p>
+              <p className="mt-1 max-w-2xl  text-sm text-muted">{categoryDesc}</p>
             )}
           </div>
         </div>

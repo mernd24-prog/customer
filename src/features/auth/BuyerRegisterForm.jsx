@@ -100,7 +100,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
 
       {error && (
         <div
-          className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 font-montserrat text-sm text-red-700"
+          className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700"
           role="alert"
         >
           {error}
@@ -108,14 +108,14 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
       )}
 
       <Button
-        className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark font-montserrat text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+        className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
         loading={loading}
         type="submit"
       >
         <UserPlus size={18} /> Register as buyer
       </Button>
 
-      <p className="text-center font-montserrat text-[0.8rem] text-muted">
+      <p className="text-center  text-[0.8rem] text-muted">
         Already have an account?{" "}
         <Link
           className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
@@ -124,7 +124,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
           Login
         </Link>
       </p>
-      <p className="text-center font-montserrat text-[0.8rem] text-muted">
+      <p className="text-center  text-[0.8rem] text-muted">
         Prefer OTP registration?{" "}
         <Link
           className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"

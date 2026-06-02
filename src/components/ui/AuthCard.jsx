@@ -35,19 +35,19 @@ export default function AuthCard({
               </div>
 
               {eyebrow && (
-                <p className="mb-0.5 font-montserrat text-[0.68rem] font-semibold uppercase tracking-normal text-muted">
+                <p className="mb-0.5  text-[0.68rem] font-semibold uppercase tracking-normal text-muted">
                   {eyebrow}
                 </p>
               )}
 
               {title && (
-                <h1 className="font-montserrat text-[1.2rem] font-semibold leading-snug text-ink sm:text-[1.3rem]">
+                <h1 className=" text-[1.2rem] font-semibold leading-snug text-ink sm:text-[1.3rem]">
                   {title}
                 </h1>
               )}
 
               {subtitle && (
-                <p className="mx-auto mt-1 max-w-2xl font-montserrat text-[0.78rem] leading-relaxed text-muted">
+                <p className="mx-auto mt-1 max-w-2xl  text-[0.78rem] leading-relaxed text-muted">
                   {subtitle}
                 </p>
               )}
@@ -60,7 +60,7 @@ export default function AuthCard({
             </div>
 
             {showFeatures && (
-              <div className="mt-3 rounded-[8px] bg-cream px-3 py-1.5 font-montserrat text-[0.7rem] leading-4 text-muted">
+              <div className="mt-3 rounded-[8px] bg-cream px-3 py-1.5  text-[0.7rem] leading-4 text-muted">
                 Sam Global Secure Access
               </div>
             )}

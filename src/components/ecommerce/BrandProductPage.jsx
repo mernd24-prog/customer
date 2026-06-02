@@ -25,8 +25,8 @@ export default function BrandProductPage({
     return (
       <div className="w-container py-16 text-center">
         <Store size={48} className="mx-auto mb-4 text-gray-300" />
-        <h2 className="font-montserrat text-2xl font-bold text-ink">Brand Not Found</h2>
-        <p className="mt-2 font-montserrat text-sm text-muted">
+        <h2 className=" text-2xl font-bold text-ink">Brand Not Found</h2>
+        <p className="mt-2  text-sm text-muted">
           The brand you&apos;re looking for doesn&apos;t exist or may have been removed.
         </p>
         <Link to="/products" className="button primary mt-6 inline-block px-6 py-2">
@@ -57,15 +57,15 @@ export default function BrandProductPage({
               </div>
             )}
             <div>
-              <h1 className="font-montserrat text-3xl font-bold text-ink sm:text-4xl">
+              <h1 className=" text-3xl font-bold text-ink sm:text-4xl">
                 {brandName}
               </h1>
               {brandDescription && (
-                <p className="mt-2 max-w-2xl font-montserrat text-sm leading-relaxed text-muted">
+                <p className="mt-2 max-w-2xl  text-sm leading-relaxed text-muted">
                   {brandDescription}
                 </p>
               )}
-              <p className="mt-2 font-montserrat text-sm text-gray">
+              <p className="mt-2  text-sm text-gray">
                 {Number(total || 0).toLocaleString()} products
               </p>
             </div>

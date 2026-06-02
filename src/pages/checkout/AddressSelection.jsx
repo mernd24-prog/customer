@@ -12,7 +12,7 @@ export default function AddressSelection({
 }) {
   return (
     <section className="rounded-[12px] border border-border bg-white p-5">
-      <h2 className="mb-4 flex items-center gap-2 font-montserrat text-base font-semibold text-ink">
+      <h2 className="mb-4 flex items-center gap-2  text-base font-semibold text-ink">
         <MapPin size={16} /> Delivery address
       </h2>
       <div className="grid gap-3">
@@ -68,7 +68,7 @@ export default function AddressSelection({
           </span>
         </label>
         {errors.selectedAddressId && (
-          <p className="text-xs text-red-600 font-montserrat mt-1">
+          <p className="text-xs text-red-600  mt-1">
             {errors.selectedAddressId.message}
           </p>
         )}

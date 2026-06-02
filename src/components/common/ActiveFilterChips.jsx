@@ -25,7 +25,7 @@ export default function ActiveFilterChips({
         <button
           type="button"
           onClick={onClear}
-          className="font-montserrat text-xs text-red-500 underline-offset-2 hover:underline"
+          className=" text-xs text-red-500 underline-offset-2 hover:underline"
         >
           {clearLabel}
         </button>

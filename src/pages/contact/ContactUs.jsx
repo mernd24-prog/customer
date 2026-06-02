@@ -81,7 +81,7 @@ function normalizeContactItems(sections) {
 
 export function SectionIntro({ title, description, className = "" }) {
   return (
-    <div className={`mx-auto max-w-4xl text-center font-montserrat ${className}`}>
+    <div className={`mx-auto max-w-4xl text-center  ${className}`}>
       <h2 className="text-2xl font-bold text-ink sm:text-3xl">{title}</h2>
       {description && (
         <p className="mt-4 text-sm leading-7 text-muted sm:text-base">
@@ -109,7 +109,7 @@ export function CircleIcon({ icon: Icon, tone = "gold" }) {
 
 export function ReasonCard({ item, showDivider }) {
   return (
-    <div className="relative flex min-h-[180px] flex-col items-center justify-start px-4 text-center font-montserrat">
+    <div className="relative flex min-h-[180px] flex-col items-center justify-start px-4 text-center ">
       {showDivider && (
         <span className="absolute left-0 top-8 hidden h-[112px] w-px bg-border lg:block" />
       )}
@@ -128,7 +128,7 @@ export function ReasonCard({ item, showDivider }) {
 
 function ContactInfoCard({ item, showDivider }) {
   return (
-    <div className="relative flex min-h-[96px] items-center gap-4 px-6 font-montserrat">
+    <div className="relative flex min-h-[96px] items-center gap-4 px-6 ">
       {showDivider && (
         <span className="absolute left-0 top-1/2 hidden h-[86px] w-px -translate-y-1/2 bg-border lg:block" />
       )}
@@ -159,7 +159,7 @@ function FramedPanel({ title, description, icon: Icon, buttonText, href, variant
 
   return (
     <section
-      className={`relative overflow-hidden border bg-white px-6 py-9 text-center font-montserrat sm:px-10 ${
+      className={`relative overflow-hidden border bg-white px-6 py-9 text-center  sm:px-10 ${
         isBlue ? "border-border" : "border-gold"
       }`}
     >
@@ -196,7 +196,7 @@ function FramedPanel({ title, description, icon: Icon, buttonText, href, variant
 function CommitmentBand({ commitmentTitle, commitmentDescription, closingTitle }) {
   return (
     <section className="relative left-1/2 w-screen -translate-x-1/2">
-      <div className="grid min-h-[145px] font-montserrat lg:grid-cols-2">
+      <div className="grid min-h-[145px]  lg:grid-cols-2">
         {commitmentTitle && (
           <div className="bg-navy-soft px-[7%] py-9">
             <h3 className="text-xl font-bold text-blue">{commitmentTitle}</h3>
