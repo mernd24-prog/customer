@@ -36,8 +36,9 @@ export default {
         },
       },
       fontFamily: {
+        sans: ["DM Sans", "sans-serif"],
         montserrat: ["Montserrat", "sans-serif"],
-        inter: ["Inter"],
+        inter: ["Inter", "sans-serif"],
       },
       fontSize: {
         paragraph: ["18px", "28px"],

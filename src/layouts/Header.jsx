@@ -234,46 +234,46 @@ export const TopHeader = () => {
       },
       ...(currentUser
         ? [
-            {
-              type: "menu",
-              label:
-                currentUser.profile?.firstName
-                  ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
-                  : (currentUser.firstName ||
-                     currentUser.email?.split("@")[0] ||
-                     "My Sam"),
-              path: "/account/profile",
-              icon: <User size={16} />,
-              title: "My Account",
-              items: withIcons([
-                ...baseAccountMenuItems,
-                ...(isAdminRole(currentRole)
-                  ? [
-                      {
-                        label: "Admin Products",
-                        path: "/admin/products",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin Catalog",
-                        path: "/admin/catalog",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin Brands",
-                        path: "/admin/brands",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin RBAC",
-                        path: "/admin/rbac",
-                        icon: "settings",
-                      },
-                    ]
-                  : []),
-              ]),
-            },
-          ]
+          {
+            type: "menu",
+            label:
+              currentUser.profile?.firstName
+                ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
+                : (currentUser.firstName ||
+                  currentUser.email?.split("@")[0] ||
+                  "My Sam"),
+            path: "/account/profile",
+            icon: <User size={16} />,
+            title: "My Account",
+            items: withIcons([
+              ...baseAccountMenuItems,
+              ...(isAdminRole(currentRole)
+                ? [
+                  {
+                    label: "Admin Products",
+                    path: "/admin/products",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin Catalog",
+                    path: "/admin/catalog",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin Brands",
+                    path: "/admin/brands",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin RBAC",
+                    path: "/admin/rbac",
+                    icon: "settings",
+                  },
+                ]
+                : []),
+            ]),
+          },
+        ]
         : []),
     ],
     [handleRemoveWatchlist, wishlistedProducts, currentUser, currentRole, sellDropdownCms],
@@ -299,9 +299,9 @@ export const TopHeader = () => {
   };
 
   return (
-    <div className="hidden h-[26px] w-full items-center justify-center bg-[var(--customer-black)] text-[11px] font-medium text-white lg:flex">
-      <div className="w-container flex h-full items-center justify-between">
-        <div className="flex flex-1 items-center gap-8 text-white">
+    <div className="hidden h-[60px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
+      <div className="customer-container flex h-full items-center justify-between">
+        <div className="flex flex-1 items-center gap-8 text-[#FFFFFF]">
           {asArray(topLinks.length ? topLinks : DEFAULT_TOP_NAV_LINKS).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
@@ -336,8 +336,9 @@ export const TopHeader = () => {
           ) : (
             <BrandButton
               variant="primary"
-              rounded
-              className="h-[20px] min-h-[20px] min-w-[96px] px-4 py-0 text-[10px] font-bold"
+              rounded={false}
+              style={{ borderRadius: "5px" }}
+              className="h-[20px] min-h-[41px] min-w-[153px] px-4 py-0 text-[14px] font-semibold "
               size="xs"
               label="Become a Seller"
               onClick={() => navigate("/register")}
@@ -361,18 +362,18 @@ export const Navbar = ({ icons: propIcons }) => {
   };
 
   return (
-    <header className="w-full">
-      <div className="w-container flex flex-wrap items-center justify-between gap-3 py-2 sm:gap-4 lg:flex-nowrap lg:gap-5">
-        <div className="flex shrink-0 items-center">
+    <header className="customer-container w-full">
+      <div className="flex flex-wrap items-center justify-between gap-3 py-3 sm:gap-4 lg:flex-nowrap lg:gap-5 h-auto lg:h-[90px]">
+        <div className="flex shrink-0 items-center gap-6 order-1">
           <Link to="/" aria-label="Sam Global home">
             <img
               src="/image/png/logo.png"
               alt="Sam Global"
-              className="h-auto w-[78px] object-contain sm:w-[92px] lg:h-[44px] lg:w-[112px]"
+              className="h-auto w-[78px] object-contain sm:w-[92px] lg:h-[58px] lg:w-[140px]"
             />
           </Link>
+          <div className="hidden h-10 w-px bg-[var(--customer-border)] lg:block" />
         </div>
-
         <SearchBar
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -380,54 +381,70 @@ export const Navbar = ({ icons: propIcons }) => {
           placeholder="Search for products, brands and categories..."
           micIcon={icons.Mic}
           showButtonLabel={false}
+          className="order-3 w-full lg:order-2 lg:w-auto lg:max-w-[720px] lg:flex-1"
         />
 
-        <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-3 lg:gap-3">
-          <div className="hidden items-center gap-1 lg:flex">
+        <div className="order-2 lg:order-3 flex shrink-0 items-center gap-2 sm:gap-3 lg:gap-5">
+          <div className="hidden items-center gap-5 lg:flex">
             {asArray(displayIcons).map((item, iconIndex) => (
               <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
                 <Link
                   to={getNavbarIconPath(item)}
-                  className="group relative flex h-8 w-8 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]"
+                  className="group relative flex h-10 w-10 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]"
                   aria-label={getNavbarIconLabel(item)}
                 >
                   <img
                     src={item?.img}
                     alt={getNavbarIconLabel(item)}
-                    className={`object-contain ${
-                      item?.name === "IN"
+                    className={`object-contain ${item?.name === "IN"
                         ? "h-[22px] w-[24px]"
                         : "h-[17px] w-[17px]"
-                    }`}
+                      }`}
                   />
                   <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
                     {getNavbarIconLabel(item)}
                   </span>
                 </Link>
                 {iconIndex < displayIcons.length - 1 && (
-                  <div className="hidden h-6 w-px bg-[var(--customer-border)] xl:block" />
+                  <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
                 )}
               </Fragment>
             ))}
           </div>
 
+          {/* Mobile/Tablet Cart Icon */}
+          <Link
+            to="/cart"
+            className="flex lg:hidden h-9 w-9 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)] shrink-0"
+            aria-label="Cart"
+          >
+            <img
+              src="/image/png/Cart.png"
+              alt="Cart"
+              className="h-[17px] w-[17px] object-contain"
+            />
+          </Link>
+
           {currentUser ? (
             <Link
               to="/account/profile"
-              className="flex items-center gap-2 rounded-full border border-[var(--customer-border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]"
+              className="flex items-center gap-2 rounded-full border border-[var(--customer-border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)] max-w-[150px] sm:max-w-none"
             >
-              <User size={16} />
-              {currentUser.profile?.firstName
-                ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
-                : (currentUser.firstName || "Account")}
+              <User size={16} className="shrink-0" />
+              <span className="truncate">
+                {currentUser.profile?.firstName
+                  ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
+                  : (currentUser.firstName || "Account")}
+              </span>
             </Link>
           ) : (
             <BrandButton
               variant="outline"
-              rounded
+              rounded={false}
+              style={{ borderRadius: "5px" }}
               label="Create Account"
               size="sm"
-              className="h-[32px] whitespace-nowrap px-4 text-[11px] font-bold"
+              className="h-[36px] sm:h-[41px] min-h-[36px] sm:min-h-[41px] min-w-[120px] sm:min-w-[153px] whitespace-nowrap px-3 sm:px-4 text-[13px] sm:text-[16px] font-semibold"
               onClick={() => navigate("/register")}
             />
           )}
@@ -493,7 +510,7 @@ export const CategoryBar = ({ headerData }) => {
         const list = getCategoryListFromResponse(data);
         if (list.length) setCatalogCategories(list);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [dispatch]);
 
   const handleCategoryMouseEnter = (item) => {
@@ -543,79 +560,82 @@ export const CategoryBar = ({ headerData }) => {
   if (!categories.length) return null;
 
   return (
-    <header ref={categoryBarRef} className="relative w-full bg-[var(--customer-cream)]">
-      <div className="w-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:justify-center lg:gap-5">
-        {asArray(categories).map((item, index) => {
-          const categoryHref = `/categories/${keyOr(
-            item?.slug,
-            buildCategorySlug(textOr(item?.name, "category")),
-          )}`;
-          const isActive =
-            activeMenu?.categoryKey === item?.categoryKey ||
-            location.pathname === categoryHref;
+    <header 
+      ref={categoryBarRef} 
+      className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen h-[130px] sm:h-[150px] lg:h-[220px] flex items-center"
+    >
+      {/* Split Background Images */}
+      <div className="absolute inset-y-0 left-0 w-1/2 bg-cover bg-center bg-no-repeat z-0" style={{ backgroundImage: "url('/image/jpg/cat1.png')" }} />
+      <div className="absolute inset-y-0 right-0 w-1/2 bg-cover bg-center bg-no-repeat z-0" style={{ backgroundImage: "url('/image/jpg/cat.jpg')" }} />
+      
+      {/* Golden Overlay */}
+      <div className="absolute inset-0 bg-[#CE9F2D33] z-10" />
+      
+      <div className="w-full relative z-20">
+        <div className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:justify-center lg:gap-5">
+          {asArray(categories).map((item, index) => {
+            const categoryHref = `/categories/${keyOr(
+              item?.slug,
+              buildCategorySlug(textOr(item?.name, "category")),
+            )}`;
+            const isActive =
+              activeMenu?.categoryKey === item?.categoryKey ||
+              location.pathname === categoryHref;
 
-          return (
-            <div
-              key={keyOr(item?.name, `category-${index}`)}
-              className="relative"
-              onMouseEnter={() => handleCategoryMouseEnter(item)}
-              onMouseLeave={handleCategoryMouseLeave}
-            >
-              <Link
-                to={categoryHref}
-                aria-expanded={isActive}
-                aria-controls="category-mega-menu"
-                className={`group flex min-w-[58px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out lg:min-w-[68px] ${
-                  isActive ? "text-[var(--customer-navy)]" : "text-[var(--customer-ink)]"
-                } focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2`}
+            return (
+              <div
+                key={keyOr(item?.name, `category-${index}`)}
+                className="relative"
+                onMouseEnter={() => handleCategoryMouseEnter(item)}
+                onMouseLeave={handleCategoryMouseLeave}
               >
-              <div className="mx-auto flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[var(--customer-gold)] p-2 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5 group-hover:bg-[var(--customer-gold-dark)] sm:h-14 sm:w-14">
-                {item?.img ? (
-                  <ImageSkeleton
-                    src={item?.img}
-                    alt={textOr(item?.name, "Category")}
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center rounded-full bg-[var(--customer-gold-soft)] text-[var(--customer-navy)]">
-                    <ShoppingBag size={18} />
+                <Link
+                  to={categoryHref}
+                  aria-expanded={isActive}
+                  aria-controls="category-mega-menu"
+                  className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
+                >
+                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px] lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#f1ead9] p-1.5 sm:p-2 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5">
+                    {item?.img ? (
+                      <ImageSkeleton
+                        src={item?.img}
+                        alt={textOr(item?.name, "Category")}
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center rounded-full bg-[#f6efde] text-[var(--customer-navy)]">
+                        <ShoppingBag className="w-5 h-5 sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
 
-              <span className={`mt-1 line-clamp-1 w-full max-w-[72px] text-center text-[10px] font-medium leading-tight lg:max-w-[90px] lg:text-[11px] ${
-                isActive ? "font-bold text-[var(--customer-navy)]" : "text-[var(--customer-ink)]"
-              }`}>
-                {textOr(item?.name, "Category")}
-              </span>
-              </Link>
-            </div>
-          );
-        })}
-      </div>
-      {activeMenu && (
-        <div
-          id="category-mega-menu"
-          className="absolute left-0 top-[calc(100%-2px)] z-[9999] w-full"
-          onMouseEnter={keepCategoryMenuOpen}
-          onMouseLeave={handleCategoryMouseLeave}
-        >
-          <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
+                  <span className={`mt-1 lg:mt-2 line-clamp-1 w-full max-w-[80px] sm:max-w-[100px] lg:max-w-[140px] text-center text-[11px] sm:text-[13px] lg:text-[20px] ${isActive ? "font-bold" : "font-medium"} leading-none tracking-[0.2px] text-[#2E2E2E]`}>
+                    {textOr(item?.name, "Category")}
+                  </span>
+                </Link>
+              </div>
+            );
+          })}
         </div>
-      )}
+        {activeMenu && (
+          <div
+            id="category-mega-menu"
+            className="absolute left-0 top-[calc(100%-2px)] z-[9999] w-full"
+            onMouseEnter={keepCategoryMenuOpen}
+            onMouseLeave={handleCategoryMouseLeave}
+          >
+            <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
+          </div>
+        )}
+      </div>
     </header>
   );
 };
 
 export const Header = () => {
-  const location = useLocation();
-  const hideCategoryBar = location.pathname === "/watchlist";
-
   return (
-    <div className="relative z-50 flex w-full flex-col bg-white shadow-[0_2px_10px_rgba(17,24,39,0.08)]">
+    <div className="relative z-50 w-full bg-white shadow-[0_2px_10px_rgba(17,24,39,0.08)]">
       <TopHeader />
       <Navbar />
-      <div className="mx-auto w-full max-w-[1648px] border-t border-[var(--customer-border)]" />
-      {!hideCategoryBar && <CategoryBar />}
     </div>
   );
 };
