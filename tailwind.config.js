@@ -2,6 +2,10 @@
 export default {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
+    fontFamily: {
+      sans: ["DM Sans", "sans-serif"],
+      "dm-sans": ["DM Sans",  "sans-serif"],
+    },
     extend: {
       colors: {
         primary: "#D6A323",
@@ -34,10 +38,6 @@ export default {
         card: {
           border: "#E4DDCF",
         },
-      },
-      fontFamily: {
-        montserrat: ["Montserrat", "sans-serif"],
-        inter: ["Inter"],
       },
       fontSize: {
         paragraph: ["18px", "28px"],

@@ -5,9 +5,7 @@ import { collageCard } from "../../constant/image.constant";
 
 function CollageImage({ src, title, link }) {
   return (
-    <div
-      className="h-28 w-full overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)] md:w-full lg:h-36"
-    >
+    <div className="h-28 w-full overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)] md:w-full lg:h-36">
       <Link to={link}>
         <img
           src={src}
@@ -25,16 +23,24 @@ function CollageCard({ section, index }) {
     <article
       className="customer-card p-4 sm:p-[18px]"
       style={{
-        "--customer-card-bg": index % 2 === 0 ? "var(--customer-navy-soft)" : "var(--customer-surface-soft)",
+        "--customer-card-bg":
+          index % 2 === 0
+            ? "var(--customer-navy-soft)"
+            : "var(--customer-surface-soft)",
       }}
     >
-      <h2 className="mb-4 font-montserrat text-lg font-bold text-[var(--customer-navy)] md:text-xl">
+      <h2 className="mb-4  text-lg font-bold text-[var(--customer-navy)] md:text-xl">
         {section.title}
       </h2>
 
       <div className="grid gap-2  xs:grid-cols-2">
         {section.images.map((ele, idx) => (
-          <CollageImage key={idx} src={ele.image} link={ele.link} title={section.title} />
+          <CollageImage
+            key={idx}
+            src={ele.image}
+            link={ele.link}
+            title={section.title}
+          />
         ))}
       </div>
     </article>

@@ -19,11 +19,11 @@ export default function CartItemCard({
   const productPath = item.productId ? `/products/${item.productId}` : "";
 
   return (
-    <div className="customer-card p-4 font-montserrat sm:p-5">
+    <div className="customer-card p-4  sm:p-5">
       <SellerInfo seller={item.seller} feedback={item.feedback} />
 
       <div className="flex flex-col gap-6 md:flex-row">
-        <label className="flex items-start gap-2 font-montserrat text-sm font-semibold text-[var(--customer-ink)] md:pt-2">
+        <label className="flex items-start gap-2  text-sm font-semibold text-[var(--customer-ink)] md:pt-2">
           <input
             type="checkbox"
             checked={selected}
@@ -36,12 +36,17 @@ export default function CartItemCard({
         {item.image && (
           <div className="mx-auto h-[220px] w-full max-w-[220px] overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)] sm:h-[250px] sm:max-w-[250px] md:mx-0 md:h-[180px] md:w-[180px]">
             {productPath ? (
-              <Link to={productPath} aria-label={`View details for ${item.title}`}>
+              <Link
+                to={productPath}
+                aria-label={`View details for ${item.title}`}
+              >
                 <img
                   src={item.image}
                   alt={item.title}
                   className="h-full w-full object-cover transition-all duration-300 ease-in-out hover:scale-105"
-                  onError={(event) => applyImageFallback(event, item.title, "cart")}
+                  onError={(event) =>
+                    applyImageFallback(event, item.title, "cart")
+                  }
                 />
               </Link>
             ) : (
@@ -49,7 +54,9 @@ export default function CartItemCard({
                 src={item.image}
                 alt={item.title}
                 className="h-full w-full object-cover"
-                onError={(event) => applyImageFallback(event, item.title, "cart")}
+                onError={(event) =>
+                  applyImageFallback(event, item.title, "cart")
+                }
               />
             )}
           </div>
@@ -92,7 +99,10 @@ export default function CartItemCard({
             {Object.entries(item.attributes || {})
               .filter(([key]) => !["color", "size"].includes(key))
               .map(([key, value]) => (
-                <span key={key} className="text-[13px] font-medium capitalize text-[var(--customer-muted)]">
+                <span
+                  key={key}
+                  className="text-[13px] font-medium capitalize text-[var(--customer-muted)]"
+                >
                   {key.replace(/_/g, " ")}: {String(value)}
                 </span>
               ))}

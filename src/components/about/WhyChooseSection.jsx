@@ -11,11 +11,11 @@ export default function WhyChooseSection({ data }) {
   return (
     <section className="pt-8 md:pt-20">
       <div className="text-center">
-        <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-montserrat text-ink font-bold">
+        <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl  text-ink font-bold">
           {sectionDetails?.heading}
         </h2>
 
-        <p className="font-montserrat custom-h6 text-ink py-4">
+        <p className=" custom-h6 text-ink py-4">
           {sectionDetails?.description}
         </p>
       </div>

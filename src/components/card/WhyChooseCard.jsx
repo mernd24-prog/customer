@@ -14,10 +14,10 @@ export default function WhyChooseCard({ data, icon, title, description }) {
             />
           </div>
           <div>
-            <h4 className="font-montserrat text-blue font-semibold  text-md lg:text-lg group-hover:text-white transition-all duration-300 ease-in-out">
+            <h4 className=" text-blue font-semibold  text-md lg:text-lg group-hover:text-white transition-all duration-300 ease-in-out">
               {card.title}
             </h4>
-            <p className=" font-montserrat text-sm lg:text-base max-w-sm py-2 group-hover:text-white transition-all duration-300 ease-in-out">
+            <p className="  text-sm lg:text-base max-w-sm py-2 group-hover:text-white transition-all duration-300 ease-in-out">
               {card.description}
             </p>
           </div>

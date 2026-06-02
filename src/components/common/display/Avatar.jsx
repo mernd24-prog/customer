@@ -16,7 +16,12 @@ export default function Avatar({
   };
 
   const initials = name
-    ? name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()
+    ? name
+        .split(" ")
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
     : "?";
 
   if (src) {
@@ -24,7 +29,11 @@ export default function Avatar({
       <img
         src={src}
         alt={alt || name}
-        className={cn("rounded-full object-cover", sizeMap[size] || sizeMap.md, className)}
+        className={cn(
+          "rounded-full object-cover",
+          sizeMap[size] || sizeMap.md,
+          className,
+        )}
       />
     );
   }
@@ -32,9 +41,9 @@ export default function Avatar({
   return (
     <div
       className={cn(
-        "flex items-center justify-center rounded-full bg-gold font-montserrat font-semibold text-white",
+        "flex items-center justify-center rounded-full bg-gold  font-semibold text-white",
         sizeMap[size] || sizeMap.md,
-        className
+        className,
       )}
       aria-label={name}
     >

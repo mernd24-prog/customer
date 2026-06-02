@@ -40,7 +40,9 @@ const policyConfig = {
 };
 
 function cleanPolicyText(value = "") {
-  return String(value || "").replace(/^\s*:\s*/, "").trim();
+  return String(value || "")
+    .replace(/^\s*:\s*/, "")
+    .trim();
 }
 
 const PolicyPage = () => {
@@ -57,46 +59,46 @@ const PolicyPage = () => {
     const sections =
       Array.isArray(cmsData.sections) && cmsData.sections.length > 0
         ? cmsData.sections
-          .filter(
-            (section) =>
-              section?.title ||
-              section?.description ||
-              section?.points?.length > 0
-          )
-          .map((section) => ({
-            type: section.type || "content",
-            title: section.title || "",
-            description: section.description || "",
-            points: Array.isArray(section.points)
-              ? section.points.map((point) => ({
-                title: cleanPolicyText(point.title),
-                description: cleanPolicyText(point.description),
-                image: point.image || null,
-                cta: point.cta || null,
-                sortOrder: point.sortOrder || 0,
-              }))
-              : [],
-            image: section.image || null,
-            gallery: section.gallery || [],
-            cta: section.cta || null,
-            footer: section.footer || "",
-            sortOrder: section.sortOrder || 0,
-          }))
-          .sort((a, b) => a.sortOrder - b.sortOrder)
+            .filter(
+              (section) =>
+                section?.title ||
+                section?.description ||
+                section?.points?.length > 0,
+            )
+            .map((section) => ({
+              type: section.type || "content",
+              title: section.title || "",
+              description: section.description || "",
+              points: Array.isArray(section.points)
+                ? section.points.map((point) => ({
+                    title: cleanPolicyText(point.title),
+                    description: cleanPolicyText(point.description),
+                    image: point.image || null,
+                    cta: point.cta || null,
+                    sortOrder: point.sortOrder || 0,
+                  }))
+                : [],
+              image: section.image || null,
+              gallery: section.gallery || [],
+              cta: section.cta || null,
+              footer: section.footer || "",
+              sortOrder: section.sortOrder || 0,
+            }))
+            .sort((a, b) => a.sortOrder - b.sortOrder)
         : [
-          {
-            title: cmsData.title || config?.fallbackTitle,
-            description: cmsData.description || cmsData.excerpt || "",
-            points: Array.isArray(cmsData.points)
-              ? cmsData.points.map((point) => ({
-                ...point,
-                title: cleanPolicyText(point.title),
-                description: cleanPolicyText(point.description),
-              }))
-              : [],
-            footer: cmsData.footer || "",
-          },
-        ];
+            {
+              title: cmsData.title || config?.fallbackTitle,
+              description: cmsData.description || cmsData.excerpt || "",
+              points: Array.isArray(cmsData.points)
+                ? cmsData.points.map((point) => ({
+                    ...point,
+                    title: cleanPolicyText(point.title),
+                    description: cleanPolicyText(point.description),
+                  }))
+                : [],
+              footer: cmsData.footer || "",
+            },
+          ];
 
     return {
       title: cmsData.title || config?.fallbackTitle,
@@ -125,7 +127,7 @@ const PolicyPage = () => {
   const pageDescription = data?.intro?.description || config?.description;
 
   return (
-    <main className="w-full bg-white font-montserrat pb-20">
+    <main className="w-full bg-white  pb-20">
       <Seo title={pageTitle} description={pageDescription} />
 
       <ApiState
@@ -144,7 +146,7 @@ const PolicyPage = () => {
                 heading={data.intro?.heading}
                 description={data.intro?.description}
               />
- 
+
               {data.sections?.length > 0 && (
                 <div className="space-y-10 md:space-y-12">
                   {data.sections.map((section, index) => (

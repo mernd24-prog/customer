@@ -13,7 +13,7 @@ export default function FAQSidebar({
   topics = defaultTopics,
 }) {
   return (
-    <div className="self-start overflow-hidden rounded-md border border-gray-200 font-montserrat shadow-sm bg-navy-soft">
+    <div className="self-start overflow-hidden rounded-md border border-gray-200  shadow-sm bg-navy-soft">
       <div className="bg-navy p-4 text-[16px] font-semibold text-white">
         Help Topics
       </div>

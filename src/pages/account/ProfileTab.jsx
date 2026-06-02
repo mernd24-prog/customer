@@ -64,13 +64,11 @@ export default function ProfileTab({ user }) {
         </div>
 
         <div className="w-full sm:w-auto">
-          <p className="font-montserrat text-lg font-semibold text-ink sm:text-base">
+          <p className=" text-lg font-semibold text-ink sm:text-base">
             {watch("firstName")} {watch("lastName")}
           </p>
 
-          <p className="break-all font-montserrat text-sm text-muted">
-            {watch("email")}
-          </p>
+          <p className="break-all  text-sm text-muted">{watch("email")}</p>
         </div>
       </div>
 

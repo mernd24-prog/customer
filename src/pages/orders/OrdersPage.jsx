@@ -20,7 +20,11 @@ import Seo from "../../components/common/Seo";
 import Button from "../../components/ui/Button";
 import ConfirmModal from "../../components/common/overlay/ConfirmModal";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { fetchMyOrders, fetchOrderById, cancelOrder } from "../../features/order/orderSlice";
+import {
+  fetchMyOrders,
+  fetchOrderById,
+  cancelOrder,
+} from "../../features/order/orderSlice";
 import { formatMoney } from "../../utils/ecommerce";
 
 const STATUS_BADGE = {
@@ -33,7 +37,14 @@ const STATUS_BADGE = {
   fulfilled: "bg-green-100 text-green-700",
   cancelled: "bg-red-100 text-red-700",
 };
-const ORDER_STEPS = ["pending_payment", "confirmed", "packed", "shipped", "delivered", "fulfilled"];
+const ORDER_STEPS = [
+  "pending_payment",
+  "confirmed",
+  "packed",
+  "shipped",
+  "delivered",
+  "fulfilled",
+];
 const TRACKING_LABELS = {
   pending_payment: "Payment pending",
   payment_failed: "Payment failed",
@@ -45,18 +56,38 @@ const TRACKING_LABELS = {
   cancelled: "Cancelled",
 };
 
-const getOrderId = (order) => order?.id || order?._id || order?.orderId || order?.order_id;
-const getOrderNumber = (order) => order?.order_number || order?.orderNumber || getOrderId(order);
-const getOrderStatus = (order) => order?.status || order?.orderStatus || "unknown";
-const getPaymentStatus = (order) => order?.payment_status || order?.paymentStatus || "unknown";
-const getDeliveryStatus = (order) => order?.delivery_status || order?.deliveryStatus || null;
+const getOrderId = (order) =>
+  order?.id || order?._id || order?.orderId || order?.order_id;
+const getOrderNumber = (order) =>
+  order?.order_number || order?.orderNumber || getOrderId(order);
+const getOrderStatus = (order) =>
+  order?.status || order?.orderStatus || "unknown";
+const getPaymentStatus = (order) =>
+  order?.payment_status || order?.paymentStatus || "unknown";
+const getDeliveryStatus = (order) =>
+  order?.delivery_status || order?.deliveryStatus || null;
 const hasKnownStatus = (order) => getOrderStatus(order) !== "unknown";
 const canCancelOrder = (order) => {
   const status = getOrderStatus(order);
   const deliveryStatus = order?.delivery_status || order?.deliveryStatus;
-  const cancellableStatuses = ["pending_payment", "payment_failed", "confirmed", "packed"];
-  const preHandoverDeliveryStatuses = [undefined, null, "", "initiated", "cancelled", "failed"];
-  return cancellableStatuses.includes(status) && preHandoverDeliveryStatuses.includes(deliveryStatus);
+  const cancellableStatuses = [
+    "pending_payment",
+    "payment_failed",
+    "confirmed",
+    "packed",
+  ];
+  const preHandoverDeliveryStatuses = [
+    undefined,
+    null,
+    "",
+    "initiated",
+    "cancelled",
+    "failed",
+  ];
+  return (
+    cancellableStatuses.includes(status) &&
+    preHandoverDeliveryStatuses.includes(deliveryStatus)
+  );
 };
 const getOrderItems = (order) => {
   const items =
@@ -68,10 +99,20 @@ const getOrderItems = (order) => {
     order?.products;
   return Array.isArray(items) ? items : [];
 };
-const getItemProduct = (item) => (item?.productId && typeof item.productId === "object" ? item.productId : item?.product);
+const getItemProduct = (item) =>
+  item?.productId && typeof item.productId === "object"
+    ? item.productId
+    : item?.product;
 const getItemProductId = (item) => {
   const product = getItemProduct(item);
-  return item?.product_id || item?.productId?._id || item?.productId || product?.id || product?._id || "N/A";
+  return (
+    item?.product_id ||
+    item?.productId?._id ||
+    item?.productId ||
+    product?.id ||
+    product?._id ||
+    "N/A"
+  );
 };
 const getItemImage = (item) => {
   const product = getItemProduct(item);
@@ -83,17 +124,18 @@ const getOrderCurrency = (order) => {
   const firstProduct = getItemProduct(firstItem);
   return order?.currency || firstProduct?.currency || "INR";
 };
-const getAddressValue = (address, camelKey, snakeKey = camelKey) => address?.[camelKey] || address?.[snakeKey];
+const getAddressValue = (address, camelKey, snakeKey = camelKey) =>
+  address?.[camelKey] || address?.[snakeKey];
 const hasShippingAddress = (address) =>
   Boolean(
     getAddressValue(address, "fullName", "full_name") ||
-      address?.phone ||
-      address?.line1 ||
-      address?.line2 ||
-      address?.city ||
-      address?.state ||
-      getAddressValue(address, "postalCode", "postal_code") ||
-      address?.country,
+    address?.phone ||
+    address?.line1 ||
+    address?.line2 ||
+    address?.city ||
+    address?.state ||
+    getAddressValue(address, "postalCode", "postal_code") ||
+    address?.country,
   );
 const getProductTitle = (item) =>
   getItemProduct(item)?.title ||
@@ -104,14 +146,21 @@ const getProductTitle = (item) =>
   item?.name ||
   "Product";
 const getVariantTitle = (item) =>
-  item?.variant_title ||
-  item?.variantTitle ||
-  item?.variant?.title ||
+  item?.variant_title || item?.variantTitle || item?.variant?.title || "";
+const getItemSku = (item) =>
+  item?.variant_sku ||
+  item?.variantSku ||
+  item?.sku ||
+  getItemProduct(item)?.sku ||
   "";
-const getItemSku = (item) => item?.variant_sku || item?.variantSku || item?.sku || getItemProduct(item)?.sku || "";
 const getItemAttributes = (item) => {
-  const attributes = item?.attributes && typeof item.attributes === "object" ? item.attributes : {};
-  return Object.entries(attributes).filter(([, value]) => value !== null && value !== undefined && value !== "");
+  const attributes =
+    item?.attributes && typeof item.attributes === "object"
+      ? item.attributes
+      : {};
+  return Object.entries(attributes).filter(
+    ([, value]) => value !== null && value !== undefined && value !== "",
+  );
 };
 const getItemUnitPrice = (item) =>
   item?.unit_price ??
@@ -145,9 +194,12 @@ const unwrapOrder = (value) => {
   if (wrapper?.order && typeof wrapper.order === "object") {
     return {
       ...wrapper.order,
-      items: getOrderItems(wrapper.order).length ? getOrderItems(wrapper.order) : getOrderItems(wrapper),
+      items: getOrderItems(wrapper.order).length
+        ? getOrderItems(wrapper.order)
+        : getOrderItems(wrapper),
       amounts: wrapper.order.amounts || wrapper.amounts,
-      shipping_address: wrapper.order.shipping_address || wrapper.shipping_address,
+      shipping_address:
+        wrapper.order.shipping_address || wrapper.shipping_address,
       shippingAddress: wrapper.order.shippingAddress || wrapper.shippingAddress,
       tax_breakup: wrapper.order.tax_breakup || wrapper.tax_breakup,
       taxBreakup: wrapper.order.taxBreakup || wrapper.taxBreakup,
@@ -165,7 +217,11 @@ const getMatchingOrder = ({ current, entities, orders, orderId }) => {
 
   return orders.find((item) => idsMatch(getOrderId(item), orderId)) || null;
 };
-const getItemsTotal = (order) => getOrderItems(order).reduce((total, item) => total + asNumber(getItemLineTotal(item)), 0);
+const getItemsTotal = (order) =>
+  getOrderItems(order).reduce(
+    (total, item) => total + asNumber(getItemLineTotal(item)),
+    0,
+  );
 const getAmount = (order, key) => {
   const snakeKey = {
     subtotal: "subtotal_amount",
@@ -178,24 +234,35 @@ const getAmount = (order, key) => {
     shipping: "shipping_fee_amount",
   }[key];
 
-  const aliases = {
-    subtotal: ["subtotalAmount", "subTotal", "subtotal"],
-    discount: ["discountAmount", "discount"],
-    tax: ["taxAmount", "totalTaxAmount", "tax"],
-    total: ["totalAmount", "orderTotal", "grandTotal", "total"],
-    walletDiscount: ["walletDiscountAmount", "walletDiscount"],
-    payable: ["payableAmount", "payable", "amountPayable", "totalAmount"],
-    platformFee: ["platformFeeAmount", "platformFee"],
-    shipping: ["shippingFeeAmount", "shippingFee", "shippingAmount", "shipping"],
-  }[key] || [];
+  const aliases =
+    {
+      subtotal: ["subtotalAmount", "subTotal", "subtotal"],
+      discount: ["discountAmount", "discount"],
+      tax: ["taxAmount", "totalTaxAmount", "tax"],
+      total: ["totalAmount", "orderTotal", "grandTotal", "total"],
+      walletDiscount: ["walletDiscountAmount", "walletDiscount"],
+      payable: ["payableAmount", "payable", "amountPayable", "totalAmount"],
+      platformFee: ["platformFeeAmount", "platformFee"],
+      shipping: [
+        "shippingFeeAmount",
+        "shippingFee",
+        "shippingAmount",
+        "shipping",
+      ],
+    }[key] || [];
 
   for (const field of [key, snakeKey, ...aliases]) {
-    if (field && order?.summary?.[field] !== undefined) return order.summary[field];
-    if (field && order?.amounts?.[field] !== undefined) return order.amounts[field];
+    if (field && order?.summary?.[field] !== undefined)
+      return order.summary[field];
+    if (field && order?.amounts?.[field] !== undefined)
+      return order.amounts[field];
     if (field && order?.[field] !== undefined) return order[field];
   }
 
-  if (["subtotal", "total", "payable"].includes(key) && getOrderItems(order).length) {
+  if (
+    ["subtotal", "total", "payable"].includes(key) &&
+    getOrderItems(order).length
+  ) {
     return getItemsTotal(order);
   }
 
@@ -206,18 +273,40 @@ const getCustomerOrderAmount = (order) => {
     return asNumber(order.summary.customerPayableAmount);
   }
   if (order?.summary?.customerTotalAmount !== undefined) {
-    return Math.max(0, asNumber(order.summary.customerTotalAmount) - asNumber(order.summary.walletDiscountAmount));
+    return Math.max(
+      0,
+      asNumber(order.summary.customerTotalAmount) -
+        asNumber(order.summary.walletDiscountAmount),
+    );
   }
   const subtotal = getAmount(order, "subtotal") ?? getItemsTotal(order);
   const discount = getAmount(order, "discount") ?? 0;
   const walletDiscount = getAmount(order, "walletDiscount") ?? 0;
   const shipping = getAmount(order, "shipping") ?? 0;
-  return Number(Math.max(0, asNumber(subtotal) - asNumber(discount) + asNumber(shipping) - asNumber(walletDiscount)).toFixed(2));
+  return Number(
+    Math.max(
+      0,
+      asNumber(subtotal) -
+        asNumber(discount) +
+        asNumber(shipping) -
+        asNumber(walletDiscount),
+    ).toFixed(2),
+  );
 };
 const getTaxIncludedAmount = (order, taxBreakup = {}) =>
-  asNumber(order?.summary?.taxIncludedAmount ?? taxBreakup?.taxIncludedAmount ?? taxBreakup?.tax_included_amount ?? 0);
+  asNumber(
+    order?.summary?.taxIncludedAmount ??
+      taxBreakup?.taxIncludedAmount ??
+      taxBreakup?.tax_included_amount ??
+      0,
+  );
 const getTaxPayableAmount = (order, taxBreakup = {}) =>
-  asNumber(order?.summary?.taxPayableAmount ?? taxBreakup?.taxPayableAmount ?? taxBreakup?.tax_payable_amount ?? 0);
+  asNumber(
+    order?.summary?.taxPayableAmount ??
+      taxBreakup?.taxPayableAmount ??
+      taxBreakup?.tax_payable_amount ??
+      0,
+  );
 const formatOrderDate = (value) =>
   value
     ? new Date(value).toLocaleString("en-IN", {
@@ -232,46 +321,75 @@ const formatOrderId = (id = "") => String(id).slice(0, 8).toUpperCase();
 const getOrderListSummary = (order) => {
   const items = getOrderItems(order);
   const city = order?.shipping_address?.city || order?.shippingAddress?.city;
-  const stateName = order?.shipping_address?.state || order?.shippingAddress?.state;
+  const stateName =
+    order?.shipping_address?.state || order?.shippingAddress?.state;
   const itemText = items.length
     ? `${getProductTitle(items[0])}${items.length > 1 ? ` +${items.length - 1} more` : ""}`
     : "";
-  const locationText = city ? `${city}${stateName ? `, ${stateName}` : ""}` : "";
+  const locationText = city
+    ? `${city}${stateName ? `, ${stateName}` : ""}`
+    : "";
 
   return [itemText, locationText].filter(Boolean).join(" · ");
 };
 const getOrderRelations = (order) => order?.relations || {};
 const getOrderShipments = (order) => {
-  const shipments = getOrderRelations(order).shipments || order?.shipments || [];
+  const shipments =
+    getOrderRelations(order).shipments || order?.shipments || [];
   return Array.isArray(shipments) ? shipments : [];
 };
 const getTrackingEvents = (order) =>
   getOrderShipments(order)
-    .flatMap((shipment) => shipment?.trackingEvents || shipment?.tracking_events || [])
-    .sort((a, b) => new Date(a.event_time || a.eventTime || a.created_at || 0) - new Date(b.event_time || b.eventTime || b.created_at || 0));
+    .flatMap(
+      (shipment) => shipment?.trackingEvents || shipment?.tracking_events || [],
+    )
+    .sort(
+      (a, b) =>
+        new Date(a.event_time || a.eventTime || a.created_at || 0) -
+        new Date(b.event_time || b.eventTime || b.created_at || 0),
+    );
 const getLatestShipment = (order) => getOrderShipments(order)[0] || null;
 const getTrackingNumber = (order) => {
   const shipment = getLatestShipment(order);
-  return shipment?.tracking_number || shipment?.trackingNumber || shipment?.awb_number || shipment?.awbNumber || null;
+  return (
+    shipment?.tracking_number ||
+    shipment?.trackingNumber ||
+    shipment?.awb_number ||
+    shipment?.awbNumber ||
+    null
+  );
 };
 const getCourierName = (order) => {
   const shipment = getLatestShipment(order);
-  return shipment?.courier_name || shipment?.courierName || shipment?.provider || null;
+  return (
+    shipment?.courier_name ||
+    shipment?.courierName ||
+    shipment?.provider ||
+    null
+  );
 };
 const getPaymentMethod = (order) => {
   const payment = getOrderRelations(order).payments?.[0];
-  return payment?.provider || order?.payment_provider || order?.paymentProvider || "N/A";
+  return (
+    payment?.provider ||
+    order?.payment_provider ||
+    order?.paymentProvider ||
+    "N/A"
+  );
 };
 const asNumber = (value) => {
   const number = Number(value);
   return Number.isFinite(number) ? number : 0;
 };
-const humanize = (value, fallback = "N/A") => value ? String(value).replace(/_/g, " ") : fallback;
+const humanize = (value, fallback = "N/A") =>
+  value ? String(value).replace(/_/g, " ") : fallback;
 
 function OrderStatusBadge({ status }) {
   const cls = STATUS_BADGE[status] || "bg-cream text-muted";
   return (
-    <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}>
+    <span
+      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}
+    >
       {(status || "unknown").replace(/_/g, " ")}
     </span>
   );
@@ -284,7 +402,9 @@ function InfoTile({ icon, label, value }) {
         {icon}
         <span>{label}</span>
       </div>
-      <p className="mt-2 break-words text-sm font-semibold capitalize text-ink">{value || "N/A"}</p>
+      <p className="mt-2 break-words text-sm font-semibold capitalize text-ink">
+        {value || "N/A"}
+      </p>
     </div>
   );
 }
@@ -296,7 +416,9 @@ function OrderProgress({ status }) {
 
   if (isCancelled || isFailed) {
     return (
-      <div className={`rounded-[8px] border px-4 py-3 text-sm ${isCancelled ? "border-red-200 bg-red-50 text-red-700" : "border-amber-200 bg-amber-50 text-amber-800"}`}>
+      <div
+        className={`rounded-[8px] border px-4 py-3 text-sm ${isCancelled ? "border-red-200 bg-red-50 text-red-700" : "border-amber-200 bg-amber-50 text-amber-800"}`}
+      >
         <div className="flex items-center gap-2 font-semibold">
           <XCircle size={16} />
           {TRACKING_LABELS[status]}
@@ -312,10 +434,14 @@ function OrderProgress({ status }) {
         const current = activeIndex === index;
         return (
           <div key={step} className="min-w-0">
-            <div className={`flex h-10 items-center justify-center rounded-full border ${done ? "border-gold bg-gold text-white" : "border-border bg-white text-gray"}`}>
+            <div
+              className={`flex h-10 items-center justify-center rounded-full border ${done ? "border-gold bg-gold text-white" : "border-border bg-white text-gray"}`}
+            >
               {done ? <CheckCircle2 size={16} /> : <Circle size={14} />}
             </div>
-            <p className={`mt-2 text-center text-[11px] font-semibold capitalize ${current ? "text-ink" : "text-muted"}`}>
+            <p
+              className={`mt-2 text-center text-[11px] font-semibold capitalize ${current ? "text-ink" : "text-muted"}`}
+            >
               {TRACKING_LABELS[step]}
             </p>
           </div>
@@ -346,17 +472,30 @@ function TrackingEvents({ order }) {
   return (
     <ol className="space-y-4">
       {timeline.map((event, index) => (
-        <li key={event.id || `${event.status}-${index}`} className="grid grid-cols-[28px_1fr] gap-3">
+        <li
+          key={event.id || `${event.status}-${index}`}
+          className="grid grid-cols-[28px_1fr] gap-3"
+        >
           <span className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-cream text-gold">
             <Clock3 size={14} />
           </span>
           <div className="min-w-0 border-b border-border pb-4 last:border-b-0 last:pb-0">
-            <p className="text-sm font-semibold capitalize text-ink">{humanize(event.status || event.to_status || "Updated")}</p>
-            {event.note && <p className="mt-1 text-sm text-muted">{event.note}</p>}
-            {(event.location || event.source) && (
-              <p className="mt-1 text-xs capitalize text-gray">{[event.location, event.source].filter(Boolean).join(" · ")}</p>
+            <p className="text-sm font-semibold capitalize text-ink">
+              {humanize(event.status || event.to_status || "Updated")}
+            </p>
+            {event.note && (
+              <p className="mt-1 text-sm text-muted">{event.note}</p>
             )}
-            <p className="mt-1 text-xs text-gray">{formatOrderDate(event.event_time || event.eventTime || event.created_at)}</p>
+            {(event.location || event.source) && (
+              <p className="mt-1 text-xs capitalize text-gray">
+                {[event.location, event.source].filter(Boolean).join(" · ")}
+              </p>
+            )}
+            <p className="mt-1 text-xs text-gray">
+              {formatOrderDate(
+                event.event_time || event.eventTime || event.created_at,
+              )}
+            </p>
           </div>
         </li>
       ))}
@@ -371,7 +510,9 @@ function OrderDetail({ orderId, track }) {
   const run = useToastThunk();
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const state = useSelector((s) => s.order);
-  const orders = getOrderCollection(state.current).length ? getOrderCollection(state.current) : state.list;
+  const orders = getOrderCollection(state.current).length
+    ? getOrderCollection(state.current)
+    : state.list;
   const order = getMatchingOrder({
     current: state.current,
     entities: state.entities,
@@ -380,7 +521,8 @@ function OrderDetail({ orderId, track }) {
   });
   const currency = getOrderCurrency(order);
   const items = getOrderItems(order);
-  const shippingAddress = order?.shipping_address || order?.shippingAddress || {};
+  const shippingAddress =
+    order?.shipping_address || order?.shippingAddress || {};
   const taxBreakup = order?.tax_breakup || order?.taxBreakup;
   const subtotal = getAmount(order, "subtotal");
   const discount = getAmount(order, "discount");
@@ -415,7 +557,10 @@ function OrderDetail({ orderId, track }) {
     <>
       <Seo title={`Order ${orderId} | Sam Global`} />
       <div className="w-container py-6 sm:py-10">
-        <Link to="/orders" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink transition-all duration-300 ease-in-out">
+        <Link
+          to="/orders"
+          className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink transition-all duration-300 ease-in-out"
+        >
           <ArrowLeft size={14} /> Back to orders
         </Link>
 
@@ -436,10 +581,14 @@ function OrderDetail({ orderId, track }) {
                     <h1 className="mt-1 break-words text-xl font-bold text-ink sm:text-2xl">
                       #{formatOrderId(getOrderNumber(order))}
                     </h1>
-                    <p className="mt-1 break-all font-mono text-xs text-muted">{getOrderId(order) || orderId}</p>
+                    <p className="mt-1 break-all font-mono text-xs text-muted">
+                      {getOrderId(order) || orderId}
+                    </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    {hasKnownStatus(order) && <OrderStatusBadge status={status} />}
+                    {hasKnownStatus(order) && (
+                      <OrderStatusBadge status={status} />
+                    )}
                     <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold capitalize text-muted">
                       Payment: {humanize(paymentStatus)}
                     </span>
@@ -448,10 +597,26 @@ function OrderDetail({ orderId, track }) {
               </div>
 
               <div className="grid gap-3 border-t border-border bg-white p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
-                <InfoTile icon={<CalendarDays size={14} />} label="Placed on" value={formatOrderDate(order?.created_at || order?.createdAt)} />
-                <InfoTile icon={<CreditCard size={14} />} label="Payment" value={`${humanize(paymentMethod)} · ${humanize(paymentStatus)}`} />
-                <InfoTile icon={<Truck size={14} />} label="Delivery" value={humanize(deliveryStatus || status)} />
-                <InfoTile icon={<ReceiptText size={14} />} label="Order amount" value={formatMoney(customerAmount, currency)} />
+                <InfoTile
+                  icon={<CalendarDays size={14} />}
+                  label="Placed on"
+                  value={formatOrderDate(order?.created_at || order?.createdAt)}
+                />
+                <InfoTile
+                  icon={<CreditCard size={14} />}
+                  label="Payment"
+                  value={`${humanize(paymentMethod)} · ${humanize(paymentStatus)}`}
+                />
+                <InfoTile
+                  icon={<Truck size={14} />}
+                  label="Delivery"
+                  value={humanize(deliveryStatus || status)}
+                />
+                <InfoTile
+                  icon={<ReceiptText size={14} />}
+                  label="Order amount"
+                  value={formatMoney(customerAmount, currency)}
+                />
               </div>
 
               {hasKnownStatus(order) && (
@@ -466,9 +631,13 @@ function OrderDetail({ orderId, track }) {
                 <div className="rounded-[8px] border border-border bg-white p-4 sm:p-6">
                   <div className="mb-5 flex items-center justify-between gap-3">
                     <div>
-                      <h2 className="text-base font-bold text-ink">Tracking activity</h2>
+                      <h2 className="text-base font-bold text-ink">
+                        Tracking activity
+                      </h2>
                       <p className="mt-1 text-sm text-muted">
-                        {trackingNumber ? `Tracking number ${trackingNumber}` : "Shipment tracking will update here."}
+                        {trackingNumber
+                          ? `Tracking number ${trackingNumber}`
+                          : "Shipment tracking will update here."}
                       </p>
                     </div>
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cream text-gold">
@@ -484,15 +653,21 @@ function OrderDetail({ orderId, track }) {
                     <div className="mt-4 grid gap-3 text-sm">
                       <div className="flex justify-between gap-4">
                         <span className="text-muted">Courier</span>
-                        <span className="text-right font-semibold capitalize text-ink">{humanize(courierName)}</span>
+                        <span className="text-right font-semibold capitalize text-ink">
+                          {humanize(courierName)}
+                        </span>
                       </div>
                       <div className="flex justify-between gap-4">
                         <span className="text-muted">Tracking no.</span>
-                        <span className="break-all text-right font-mono text-xs font-semibold text-ink">{trackingNumber || "N/A"}</span>
+                        <span className="break-all text-right font-mono text-xs font-semibold text-ink">
+                          {trackingNumber || "N/A"}
+                        </span>
                       </div>
                       <div className="flex justify-between gap-4">
                         <span className="text-muted">Status</span>
-                        <span className="text-right font-semibold capitalize text-ink">{humanize(deliveryStatus || status)}</span>
+                        <span className="text-right font-semibold capitalize text-ink">
+                          {humanize(deliveryStatus || status)}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -503,13 +678,57 @@ function OrderDetail({ orderId, track }) {
                         <MapPin size={15} /> Delivery address
                       </h2>
                       <div className="mt-3 break-words text-sm leading-6 text-muted">
-                        {getAddressValue(shippingAddress, "fullName", "full_name") && <p className="font-medium text-ink">{getAddressValue(shippingAddress, "fullName", "full_name")}</p>}
-                        {shippingAddress.phone && <p>{shippingAddress.phone}</p>}
-                        {[shippingAddress.line1, shippingAddress.line2].filter(Boolean).length > 0 && <p>{[shippingAddress.line1, shippingAddress.line2].filter(Boolean).join(", ")}</p>}
-                        {[shippingAddress.city, shippingAddress.state, getAddressValue(shippingAddress, "postalCode", "postal_code")].filter(Boolean).length > 0 && (
-                          <p>{[shippingAddress.city, shippingAddress.state, getAddressValue(shippingAddress, "postalCode", "postal_code")].filter(Boolean).join(", ")}</p>
+                        {getAddressValue(
+                          shippingAddress,
+                          "fullName",
+                          "full_name",
+                        ) && (
+                          <p className="font-medium text-ink">
+                            {getAddressValue(
+                              shippingAddress,
+                              "fullName",
+                              "full_name",
+                            )}
+                          </p>
                         )}
-                        {shippingAddress.country && <p>{shippingAddress.country}</p>}
+                        {shippingAddress.phone && (
+                          <p>{shippingAddress.phone}</p>
+                        )}
+                        {[shippingAddress.line1, shippingAddress.line2].filter(
+                          Boolean,
+                        ).length > 0 && (
+                          <p>
+                            {[shippingAddress.line1, shippingAddress.line2]
+                              .filter(Boolean)
+                              .join(", ")}
+                          </p>
+                        )}
+                        {[
+                          shippingAddress.city,
+                          shippingAddress.state,
+                          getAddressValue(
+                            shippingAddress,
+                            "postalCode",
+                            "postal_code",
+                          ),
+                        ].filter(Boolean).length > 0 && (
+                          <p>
+                            {[
+                              shippingAddress.city,
+                              shippingAddress.state,
+                              getAddressValue(
+                                shippingAddress,
+                                "postalCode",
+                                "postal_code",
+                              ),
+                            ]
+                              .filter(Boolean)
+                              .join(", ")}
+                          </p>
+                        )}
+                        {shippingAddress.country && (
+                          <p>{shippingAddress.country}</p>
+                        )}
                       </div>
                     </div>
                   )}
@@ -522,7 +741,10 @@ function OrderDetail({ orderId, track }) {
                 <div className="rounded-[8px] border border-border bg-white">
                   <div className="border-b border-border px-4 py-4 sm:px-6">
                     <h2 className="text-base font-bold text-ink">Items</h2>
-                    <p className="mt-1 text-sm text-muted">{items.length} item{items.length === 1 ? "" : "s"} in this order</p>
+                    <p className="mt-1 text-sm text-muted">
+                      {items.length} item{items.length === 1 ? "" : "s"} in this
+                      order
+                    </p>
                   </div>
                   <div className="divide-y divide-border">
                     {items.map((item, i) => {
@@ -530,30 +752,64 @@ function OrderDetail({ orderId, track }) {
                       const lineTotal = getItemLineTotal(item);
 
                       return (
-                        <div key={item.id || item._id || item.product_id || getItemProductId(item) || i} className="px-4 py-4 sm:px-6">
+                        <div
+                          key={
+                            item.id ||
+                            item._id ||
+                            item.product_id ||
+                            getItemProductId(item) ||
+                            i
+                          }
+                          className="px-4 py-4 sm:px-6"
+                        >
                           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                             <div className="flex min-w-0 gap-3">
                               <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[8px] bg-cream">
                                 {getItemImage(item) ? (
-                                  <img src={getItemImage(item)} alt={getProductTitle(item)} className="h-20 w-20 rounded-[8px] object-cover" loading="lazy" />
+                                  <img
+                                    src={getItemImage(item)}
+                                    alt={getProductTitle(item)}
+                                    className="h-20 w-20 rounded-[8px] object-cover"
+                                    loading="lazy"
+                                  />
                                 ) : (
                                   <Package size={22} className="text-gold" />
                                 )}
                               </div>
                               <div className="min-w-0 text-sm">
-                                <p className="font-semibold text-ink">{getProductTitle(item)}</p>
-                                {getVariantTitle(item) && <p className="mt-0.5 text-xs font-medium text-muted">{getVariantTitle(item)}</p>}
-                                <p className="mt-1 break-all text-xs text-gray">Product ID: {getItemProductId(item)}</p>
-                                {getItemSku(item) && <p className="mt-0.5 break-all text-xs text-gray">SKU: {getItemSku(item)}</p>}
-                                <p className="mt-2 text-xs text-muted">Qty {item.quantity} x {formatMoney(unitPrice, currency)}</p>
+                                <p className="font-semibold text-ink">
+                                  {getProductTitle(item)}
+                                </p>
+                                {getVariantTitle(item) && (
+                                  <p className="mt-0.5 text-xs font-medium text-muted">
+                                    {getVariantTitle(item)}
+                                  </p>
+                                )}
+                                <p className="mt-1 break-all text-xs text-gray">
+                                  Product ID: {getItemProductId(item)}
+                                </p>
+                                {getItemSku(item) && (
+                                  <p className="mt-0.5 break-all text-xs text-gray">
+                                    SKU: {getItemSku(item)}
+                                  </p>
+                                )}
+                                <p className="mt-2 text-xs text-muted">
+                                  Qty {item.quantity} x{" "}
+                                  {formatMoney(unitPrice, currency)}
+                                </p>
                               </div>
                             </div>
-                            <p className="text-sm font-bold text-ink sm:shrink-0">{formatMoney(lineTotal, currency)}</p>
+                            <p className="text-sm font-bold text-ink sm:shrink-0">
+                              {formatMoney(lineTotal, currency)}
+                            </p>
                           </div>
                           {getItemAttributes(item).length > 0 && (
                             <div className="mt-3 flex flex-wrap gap-2">
                               {getItemAttributes(item).map(([key, value]) => (
-                                <span key={key} className="rounded-full bg-cream px-2.5 py-1 text-xs capitalize text-muted">
+                                <span
+                                  key={key}
+                                  className="rounded-full bg-cream px-2.5 py-1 text-xs capitalize text-muted"
+                                >
                                   {key.replace(/[_-]/g, " ")}: {String(value)}
                                 </span>
                               ))}
@@ -572,10 +828,32 @@ function OrderDetail({ orderId, track }) {
                         <CreditCard size={15} /> Payment summary
                       </h2>
                       <div className="mt-4 grid gap-2 text-sm">
-                        {subtotal !== undefined && <div className="flex justify-between gap-4 text-muted"><span>Subtotal</span><span>{formatMoney(subtotal, currency)}</span></div>}
-                        {asNumber(discount) > 0 && <div className="flex justify-between gap-4 text-emerald-700"><span>Discount</span><span>-{formatMoney(discount, currency)}</span></div>}
-                        {asNumber(walletDiscount) > 0 && <div className="flex justify-between gap-4 text-emerald-700"><span>Wallet discount</span><span>-{formatMoney(walletDiscount, currency)}</span></div>}
-                        {asNumber(shipping) > 0 && <div className="flex justify-between gap-4 text-muted"><span>Shipping</span><span>{formatMoney(shipping, currency)}</span></div>}
+                        {subtotal !== undefined && (
+                          <div className="flex justify-between gap-4 text-muted">
+                            <span>Subtotal</span>
+                            <span>{formatMoney(subtotal, currency)}</span>
+                          </div>
+                        )}
+                        {asNumber(discount) > 0 && (
+                          <div className="flex justify-between gap-4 text-emerald-700">
+                            <span>Discount</span>
+                            <span>-{formatMoney(discount, currency)}</span>
+                          </div>
+                        )}
+                        {asNumber(walletDiscount) > 0 && (
+                          <div className="flex justify-between gap-4 text-emerald-700">
+                            <span>Wallet discount</span>
+                            <span>
+                              -{formatMoney(walletDiscount, currency)}
+                            </span>
+                          </div>
+                        )}
+                        {asNumber(shipping) > 0 && (
+                          <div className="flex justify-between gap-4 text-muted">
+                            <span>Shipping</span>
+                            <span>{formatMoney(shipping, currency)}</span>
+                          </div>
+                        )}
                         <div className="mt-1 flex justify-between gap-4 border-t border-border pt-3 font-bold text-ink">
                           <span>Order amount</span>
                           <span>{formatMoney(customerAmount, currency)}</span>
@@ -583,11 +861,38 @@ function OrderDetail({ orderId, track }) {
                       </div>
                       {(taxBreakup || tax !== undefined) && (
                         <div className="mt-4 rounded-[8px] bg-cream p-3 text-xs text-muted">
-                          <p className="font-semibold text-ink">GST invoice breakup</p>
-                          {taxBreakup && <p className="mt-1">Tax mode: {(taxBreakup.taxMode || taxBreakup.tax_mode || "N/A").toString().toUpperCase()}</p>}
-                          {taxPayable > 0 && <p>GST added to payable: {formatMoney(taxPayable, currency)}</p>}
-                          {taxIncluded > 0 && <p>GST included in item price: {formatMoney(taxIncluded, currency)}</p>}
-                          {tax !== undefined && taxPayable === 0 && taxIncluded === 0 && <p>GST breakup: {formatMoney(tax, currency)}</p>}
+                          <p className="font-semibold text-ink">
+                            GST invoice breakup
+                          </p>
+                          {taxBreakup && (
+                            <p className="mt-1">
+                              Tax mode:{" "}
+                              {(
+                                taxBreakup.taxMode ||
+                                taxBreakup.tax_mode ||
+                                "N/A"
+                              )
+                                .toString()
+                                .toUpperCase()}
+                            </p>
+                          )}
+                          {taxPayable > 0 && (
+                            <p>
+                              GST added to payable:{" "}
+                              {formatMoney(taxPayable, currency)}
+                            </p>
+                          )}
+                          {taxIncluded > 0 && (
+                            <p>
+                              GST included in item price:{" "}
+                              {formatMoney(taxIncluded, currency)}
+                            </p>
+                          )}
+                          {tax !== undefined &&
+                            taxPayable === 0 &&
+                            taxIncluded === 0 && (
+                              <p>GST breakup: {formatMoney(tax, currency)}</p>
+                            )}
                         </div>
                       )}
                     </div>
@@ -599,13 +904,57 @@ function OrderDetail({ orderId, track }) {
                         <MapPin size={15} /> Shipping address
                       </h2>
                       <div className="mt-3 break-words text-sm leading-6 text-muted">
-                        {getAddressValue(shippingAddress, "fullName", "full_name") && <p className="font-medium text-ink">{getAddressValue(shippingAddress, "fullName", "full_name")}</p>}
-                        {shippingAddress.phone && <p>{shippingAddress.phone}</p>}
-                        {[shippingAddress.line1, shippingAddress.line2].filter(Boolean).length > 0 && <p>{[shippingAddress.line1, shippingAddress.line2].filter(Boolean).join(", ")}</p>}
-                        {[shippingAddress.city, shippingAddress.state, getAddressValue(shippingAddress, "postalCode", "postal_code")].filter(Boolean).length > 0 && (
-                          <p>{[shippingAddress.city, shippingAddress.state, getAddressValue(shippingAddress, "postalCode", "postal_code")].filter(Boolean).join(", ")}</p>
+                        {getAddressValue(
+                          shippingAddress,
+                          "fullName",
+                          "full_name",
+                        ) && (
+                          <p className="font-medium text-ink">
+                            {getAddressValue(
+                              shippingAddress,
+                              "fullName",
+                              "full_name",
+                            )}
+                          </p>
                         )}
-                        {shippingAddress.country && <p>{shippingAddress.country}</p>}
+                        {shippingAddress.phone && (
+                          <p>{shippingAddress.phone}</p>
+                        )}
+                        {[shippingAddress.line1, shippingAddress.line2].filter(
+                          Boolean,
+                        ).length > 0 && (
+                          <p>
+                            {[shippingAddress.line1, shippingAddress.line2]
+                              .filter(Boolean)
+                              .join(", ")}
+                          </p>
+                        )}
+                        {[
+                          shippingAddress.city,
+                          shippingAddress.state,
+                          getAddressValue(
+                            shippingAddress,
+                            "postalCode",
+                            "postal_code",
+                          ),
+                        ].filter(Boolean).length > 0 && (
+                          <p>
+                            {[
+                              shippingAddress.city,
+                              shippingAddress.state,
+                              getAddressValue(
+                                shippingAddress,
+                                "postalCode",
+                                "postal_code",
+                              ),
+                            ]
+                              .filter(Boolean)
+                              .join(", ")}
+                          </p>
+                        )}
+                        {shippingAddress.country && (
+                          <p>{shippingAddress.country}</p>
+                        )}
                       </div>
                     </div>
                   )}
@@ -616,26 +965,39 @@ function OrderDetail({ orderId, track }) {
             {hasKnownStatus(order) && (
               <section className="grid gap-3 rounded-[8px] border border-border bg-white px-4 py-4 sm:flex sm:flex-wrap sm:px-6">
                 {canCancelOrder(order) && (
-                  <Button variant="secondary" className="w-full sm:w-auto" onClick={() => setCancelModalOpen(true)}>
+                  <Button
+                    variant="secondary"
+                    className="w-full sm:w-auto"
+                    onClick={() => setCancelModalOpen(true)}
+                  >
                     <XCircle size={15} /> Cancel order
                   </Button>
                 )}
                 {["delivered", "fulfilled"].includes(status) && (
-                  <Link to={`/returns/request/${orderId}`} className="block sm:inline-flex">
+                  <Link
+                    to={`/returns/request/${orderId}`}
+                    className="block sm:inline-flex"
+                  >
                     <Button variant="secondary" className="w-full sm:w-auto">
                       <RotateCcw size={15} /> Request return
                     </Button>
                   </Link>
                 )}
                 {!track && (
-                  <Link to={`/orders/${orderId}/track`} className="block sm:inline-flex">
+                  <Link
+                    to={`/orders/${orderId}/track`}
+                    className="block sm:inline-flex"
+                  >
                     <Button variant="secondary" className="w-full sm:w-auto">
                       <Truck size={15} /> Track order
                     </Button>
                   </Link>
                 )}
                 {track && (
-                  <Link to={`/orders/${orderId}`} className="block sm:inline-flex">
+                  <Link
+                    to={`/orders/${orderId}`}
+                    className="block sm:inline-flex"
+                  >
                     <Button variant="secondary" className="w-full sm:w-auto">
                       <ReceiptText size={15} /> View order
                     </Button>
@@ -664,7 +1026,9 @@ function OrderDetail({ orderId, track }) {
 function OrderList() {
   const dispatch = useDispatch();
   const state = useSelector((s) => s.order);
-  const orders = state.list.length ? state.list : getOrderCollection(state.current);
+  const orders = state.list.length
+    ? state.list
+    : getOrderCollection(state.current);
 
   useEffect(() => {
     dispatch(fetchMyOrders());
@@ -675,7 +1039,9 @@ function OrderList() {
       <Seo title="My Orders | Sam Global" />
       <div className="w-container py-6 sm:py-10">
         <div className="mb-5 flex items-center justify-between sm:mb-6">
-          <h1 className="font-montserrat text-2xl font-bold text-ink sm:text-3xl">My Orders</h1>
+          <h1 className=" text-2xl font-bold text-ink sm:text-3xl">
+            My Orders
+          </h1>
         </div>
 
         <ApiState
@@ -701,16 +1067,26 @@ function OrderList() {
                   <div className="min-w-0">
                     <p className="flex min-w-0 items-start gap-2 text-sm sm:items-center">
                       <Package size={14} className="shrink-0 text-gray" />
-                      <span className="shrink-0 font-mono font-semibold text-ink">#{formatOrderId(id)}</span>
-                      <span className="min-w-0 break-all font-mono text-xs text-gray sm:truncate">{id}</span>
+                      <span className="shrink-0 font-mono font-semibold text-ink">
+                        #{formatOrderId(id)}
+                      </span>
+                      <span className="min-w-0 break-all font-mono text-xs text-gray sm:truncate">
+                        {id}
+                      </span>
                     </p>
                     <p className="mt-1 text-xs text-muted">
                       {formatOrderDate(createdAt)}
                     </p>
-                    {summary && <p className="mt-1 line-clamp-1 text-xs text-muted">{summary}</p>}
+                    {summary && (
+                      <p className="mt-1 line-clamp-1 text-xs text-muted">
+                        {summary}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-row items-center justify-between gap-3 sm:shrink-0 sm:flex-col sm:items-end sm:gap-1">
-                    {hasKnownStatus(order) && <OrderStatusBadge status={getOrderStatus(order)} />}
+                    {hasKnownStatus(order) && (
+                      <OrderStatusBadge status={getOrderStatus(order)} />
+                    )}
                     {payableAmount !== undefined && (
                       <span className="text-right text-sm font-semibold text-ink">
                         {formatMoney(payableAmount, getOrderCurrency(order))}

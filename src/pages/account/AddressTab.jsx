@@ -361,10 +361,8 @@ export default function AddressTab({ user }) {
     <div className="grid gap-5">
       <div className="flex flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="font-montserrat text-base font-semibold text-ink">
-            Saved addresses
-          </p>
-          <p className="font-montserrat text-sm text-muted">
+          <p className=" text-base font-semibold text-ink">Saved addresses</p>
+          <p className=" text-sm text-muted">
             {addresses.length
               ? `${addresses.length} address${addresses.length === 1 ? "" : "es"} saved`
               : "Add a delivery address for faster checkout."}
@@ -373,7 +371,7 @@ export default function AddressTab({ user }) {
         <button
           type="button"
           onClick={() => setShowAddForm((value) => !value)}
-          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4 font-montserrat text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
+          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4  text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
         >
           {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
           {showAddForm ? "Close form" : "Add address"}
@@ -413,7 +411,10 @@ export default function AddressTab({ user }) {
             dialCodes={addDialCodes}
             phoneRegistration={addForm.register("phone")}
             dialCodeRegistration={addForm.register("dialCode")}
-            error={addForm.formState.errors.phone || addForm.formState.errors.dialCode}
+            error={
+              addForm.formState.errors.phone ||
+              addForm.formState.errors.dialCode
+            }
           />
           <FormField
             id="add-line1"
@@ -566,7 +567,10 @@ export default function AddressTab({ user }) {
                       dialCodes={editDialCodes}
                       phoneRegistration={editForm.register("phone")}
                       dialCodeRegistration={editForm.register("dialCode")}
-                      error={editForm.formState.errors.phone || editForm.formState.errors.dialCode}
+                      error={
+                        editForm.formState.errors.phone ||
+                        editForm.formState.errors.dialCode
+                      }
                     />
                     <FormField
                       id={`edit-line1-${addrId}`}
@@ -678,7 +682,11 @@ export default function AddressTab({ user }) {
                   </form>
                 ) : (
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                    <AddressLabel address={addr} showIcon={true} className="min-w-0" />
+                    <AddressLabel
+                      address={addr}
+                      showIcon={true}
+                      className="min-w-0"
+                    />
                     <div className="flex shrink-0 gap-2 sm:self-start">
                       <button
                         type="button"
@@ -708,7 +716,7 @@ export default function AddressTab({ user }) {
           <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-gold">
             <MapPin size={24} />
           </span>
-          <p className="font-montserrat text-sm font-medium text-ink">
+          <p className=" text-sm font-medium text-ink">
             No addresses saved yet.
           </p>
         </div>

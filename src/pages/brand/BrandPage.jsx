@@ -30,7 +30,10 @@ function slugToBrandName(slug = "") {
 }
 
 function brandToSlug(name = "") {
-  return name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
 }
 
 function LoadingSkeleton() {
@@ -58,7 +61,11 @@ export default function BrandPage() {
   const [brandError, setBrandError] = useState(null);
 
   const [items, setItems] = useState([]);
-  const [pageInfo, setPageInfo] = useState({ page: 1, totalPages: 1, total: 0 });
+  const [pageInfo, setPageInfo] = useState({
+    page: 1,
+    totalPages: 1,
+    total: 0,
+  });
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
@@ -102,7 +109,9 @@ export default function BrandPage() {
           // Fallback: fuzzy match by approximate name
           const nameGuess = slugToBrandName(decodedBrandSlug);
           const fuzzy = list.find(
-            (b) => (b?.name || b?.brandName || b?.title || "").toLowerCase() === nameGuess.toLowerCase(),
+            (b) =>
+              (b?.name || b?.brandName || b?.title || "").toLowerCase() ===
+              nameGuess.toLowerCase(),
           );
           if (fuzzy) {
             setBrand(fuzzy);
@@ -118,7 +127,11 @@ export default function BrandPage() {
       });
   }, [decodedBrandSlug, dispatch]);
 
-  const brandName = brand?.name || brand?.brandName || brand?.title || slugToBrandName(brandSlug);
+  const brandName =
+    brand?.name ||
+    brand?.brandName ||
+    brand?.title ||
+    slugToBrandName(brandSlug);
 
   const getParams = useCallback(
     (pageOverride) => ({
@@ -169,7 +182,13 @@ export default function BrandPage() {
   }, [brand, loadProducts]);
 
   useEffect(() => {
-    if (!sentinelRef.current || !firstLoadDone || productState.loading || isLoadingMore) return undefined;
+    if (
+      !sentinelRef.current ||
+      !firstLoadDone ||
+      productState.loading ||
+      isLoadingMore
+    )
+      return undefined;
     if (currentPage >= totalPages) return undefined;
 
     const observer = new IntersectionObserver(
@@ -182,7 +201,14 @@ export default function BrandPage() {
 
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
-  }, [currentPage, totalPages, firstLoadDone, loadProducts, productState.loading, isLoadingMore]);
+  }, [
+    currentPage,
+    totalPages,
+    firstLoadDone,
+    loadProducts,
+    productState.loading,
+    isLoadingMore,
+  ]);
 
   const updateParam = (key, value) => {
     setSearchParams((prev) => {
@@ -197,8 +223,10 @@ export default function BrandPage() {
   const handlePriceChange = ({ minPrice, maxPrice }) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      if (minPrice) next.set("minPrice", minPrice); else next.delete("minPrice");
-      if (maxPrice) next.set("maxPrice", maxPrice); else next.delete("maxPrice");
+      if (minPrice) next.set("minPrice", minPrice);
+      else next.delete("minPrice");
+      if (maxPrice) next.set("maxPrice", maxPrice);
+      else next.delete("maxPrice");
       next.delete("page");
       return next;
     });
@@ -207,8 +235,10 @@ export default function BrandPage() {
   const removeFilter = (key) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      if (key === "price") { next.delete("minPrice"); next.delete("maxPrice"); }
-      else next.delete(key);
+      if (key === "price") {
+        next.delete("minPrice");
+        next.delete("maxPrice");
+      } else next.delete(key);
       next.delete("page");
       return next;
     });
@@ -220,8 +250,14 @@ export default function BrandPage() {
   };
 
   const activeFilters = [
-    searchParams.get("sort") && { key: "sort", label: `Sort: ${SORT_OPTIONS.find((o) => o.value === searchParams.get("sort"))?.label || searchParams.get("sort")}` },
-    searchParams.get("rating") && { key: "rating", label: `Rating: ${searchParams.get("rating")}★ & up` },
+    searchParams.get("sort") && {
+      key: "sort",
+      label: `Sort: ${SORT_OPTIONS.find((o) => o.value === searchParams.get("sort"))?.label || searchParams.get("sort")}`,
+    },
+    searchParams.get("rating") && {
+      key: "rating",
+      label: `Rating: ${searchParams.get("rating")}★ & up`,
+    },
     searchParams.get("inStock") && { key: "inStock", label: "In Stock Only" },
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
@@ -255,11 +291,13 @@ export default function BrandPage() {
       key: "inStock",
       title: "Availability",
       content: (
-        <label className="flex cursor-pointer items-center gap-2 font-montserrat text-sm text-ink">
+        <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
           <input
             type="checkbox"
             checked={searchParams.get("inStock") === "true"}
-            onChange={(e) => updateParam("inStock", e.target.checked ? "true" : undefined)}
+            onChange={(e) =>
+              updateParam("inStock", e.target.checked ? "true" : undefined)
+            }
             className="h-3.5 w-3.5 accent-gold"
           />
           In Stock Only
@@ -286,11 +324,15 @@ export default function BrandPage() {
     return (
       <div className="w-container py-16 text-center">
         <Store size={48} className="mx-auto mb-4 text-gray-300" />
-        <h2 className="font-montserrat text-2xl font-bold text-ink">Brand Not Found</h2>
-        <p className="mt-2 font-montserrat text-sm text-muted">
-          The brand you&apos;re looking for doesn&apos;t exist or may have been removed.
+        <h2 className=" text-2xl font-bold text-ink">Brand Not Found</h2>
+        <p className="mt-2  text-sm text-muted">
+          The brand you&apos;re looking for doesn&apos;t exist or may have been
+          removed.
         </p>
-        <Link to="/brands" className="button primary mt-6 inline-block px-6 py-2">
+        <Link
+          to="/brands"
+          className="button primary mt-6 inline-block px-6 py-2"
+        >
           Browse All Brands
         </Link>
       </div>
@@ -310,7 +352,9 @@ export default function BrandPage() {
     <>
       <Seo
         title={`${brandName} Products | Sam Global`}
-        description={brandDescription || `Shop ${brandName} products at Sam Global`}
+        description={
+          brandDescription || `Shop ${brandName} products at Sam Global`
+        }
       />
 
       <BrandProductPage
@@ -334,7 +378,9 @@ export default function BrandPage() {
           onClearFilters: () => setSearchParams(new URLSearchParams()),
           sidebarOpen,
           onCloseSidebar: () => setSidebarOpen(false),
-          loading: (productState.loading && !items.length) || (!firstLoadDone && !items.length && !!brand),
+          loading:
+            (productState.loading && !items.length) ||
+            (!firstLoadDone && !items.length && !!brand),
           error: productState.error,
           empty: !items.length && !productState.loading && firstLoadDone,
           emptyTitle: `No products from ${brandName}`,

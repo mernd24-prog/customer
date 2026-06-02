@@ -37,7 +37,9 @@ export default function OtpInput({
 
   const handlePaste = (event) => {
     event.preventDefault();
-    const pasted = (event.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, length);
+    const pasted = (event.clipboardData.getData("text") || "")
+      .replace(/\D/g, "")
+      .slice(0, length);
     if (!pasted) return;
     const next = Array.from({ length }, (_, i) => pasted[i] || "");
     emit(next);
@@ -62,11 +64,11 @@ export default function OtpInput({
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             onPaste={handlePaste}
-            className="h-12 w-full rounded-[8px] border border-border-strong bg-white text-center font-montserrat text-lg font-semibold text-ink outline-none transition-all duration-300 ease-in-out focus:border-gold focus:ring-2 focus:ring-gold/20"
+            className="h-12 w-full rounded-[8px] border border-border-strong bg-white text-center  text-lg font-semibold text-ink outline-none transition-all duration-300 ease-in-out focus:border-gold focus:ring-2 focus:ring-gold/20"
           />
         ))}
       </div>
-      {error ? <p className="mt-2 font-montserrat text-xs text-red-600">{error}</p> : null}
+      {error ? <p className="mt-2  text-xs text-red-600">{error}</p> : null}
     </div>
   );
 }

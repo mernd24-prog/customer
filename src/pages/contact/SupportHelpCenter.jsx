@@ -151,7 +151,7 @@ function TopicCard({ topic }) {
     <Button
       type="button"
       variant="ghost"
-      className={`!relative !flex min-h-[74px] w-full !items-center !justify-start gap-4 rounded-[8px] border-none px-4 py-3 text-left font-montserrat shadow-[0_10px_28px_rgba(46,46,46,0.08)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 
+      className={`!relative !flex min-h-[74px] w-full !items-center !justify-start gap-4 rounded-[8px] border-none px-4 py-3 text-left  shadow-[0_10px_28px_rgba(46,46,46,0.08)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 
       `}
     >
       <span className="absolute left-14 top-0 h-1 w-14 rounded-b-full bg-gold-dark" />
@@ -173,7 +173,7 @@ function OptionCard({ option }) {
     <Button
       type="button"
       variant="ghost"
-      className="!flex min-h-[82px] w-full !items-center !justify-start gap-5 rounded-[8px] !border !border-ink !bg-white px-6 text-left font-montserrat shadow-sm transition-all duration-300 ease-in-out hover:!border-gold hover:!text-blue"
+      className="!flex min-h-[82px] w-full !items-center !justify-start gap-5 rounded-[8px] !border !border-ink !bg-white px-6 text-left  shadow-sm transition-all duration-300 ease-in-out hover:!border-gold hover:!text-blue"
     >
       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-navy-soft text-blue">
         <Icon size={25} fill="currentColor" strokeWidth={1.7} />

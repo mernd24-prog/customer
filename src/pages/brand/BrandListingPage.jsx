@@ -35,7 +35,12 @@ function getBrandImage(brand = {}) {
 }
 
 function getBrandCount(brand = {}) {
-  return brand.productCount ?? brand.productsCount ?? brand.totalProducts ?? brand.count;
+  return (
+    brand.productCount ??
+    brand.productsCount ??
+    brand.totalProducts ??
+    brand.count
+  );
 }
 
 function getBrandsFromPayload(payload) {
@@ -55,7 +60,10 @@ function BrandGridSkeleton() {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
       {Array.from({ length: 12 }).map((_, index) => (
-        <div key={index} className="h-[188px] animate-pulse rounded-lg bg-gray-200" />
+        <div
+          key={index}
+          className="h-[188px] animate-pulse rounded-lg bg-gray-200"
+        />
       ))}
     </div>
   );
@@ -87,10 +95,7 @@ export default function BrandListingPage() {
     [catalogState],
   );
 
-  const breadcrumbItems = [
-    { label: "Home", href: "/" },
-    { label: "Brands" },
-  ];
+  const breadcrumbItems = [{ label: "Home", href: "/" }, { label: "Brands" }];
 
   return (
     <>
@@ -102,10 +107,10 @@ export default function BrandListingPage() {
       <div className="border-b border-border bg-cream px-4 py-6 sm:px-6">
         <div className="w-container">
           <Breadcrumbs items={breadcrumbItems} className="mb-2 text-gray" />
-          <h1 className="font-montserrat text-[26px] font-bold text-ink sm:text-[32px]">
+          <h1 className=" text-[26px] font-bold text-ink sm:text-[32px]">
             Brands
           </h1>
-          <p className="mt-1 max-w-2xl font-montserrat text-sm text-muted">
+          <p className="mt-1 max-w-2xl  text-sm text-muted">
             Explore products by brand.
           </p>
         </div>
@@ -113,7 +118,7 @@ export default function BrandListingPage() {
 
       <section className="w-container py-6 sm:py-8">
         <div className="mb-5 flex items-center justify-between">
-          <p className="font-montserrat text-sm font-semibold text-ink">
+          <p className=" text-sm font-semibold text-ink">
             {brands.length.toLocaleString()} brands
           </p>
         </div>
@@ -129,18 +134,16 @@ export default function BrandListingPage() {
                 image={brand.displayImage}
                 subtitle={brand.description}
                 productCount={brand.productCount}
-                href={CUSTOMER_ROUTES.brand(encodeURIComponent(getBrandRouteKey(brand)))}
+                href={CUSTOMER_ROUTES.brand(
+                  encodeURIComponent(getBrandRouteKey(brand)),
+                )}
               />
             ))}
           </div>
         ) : (
           <div className="rounded-[12px] border border-border bg-white px-6 py-12 text-center">
-            <h2 className="font-montserrat text-xl font-bold text-ink">
-              No brands found
-            </h2>
-            <p className="mt-2 font-montserrat text-sm text-muted">
-              Please check back later.
-            </p>
+            <h2 className=" text-xl font-bold text-ink">No brands found</h2>
+            <p className="mt-2  text-sm text-muted">Please check back later.</p>
           </div>
         )}
       </section>

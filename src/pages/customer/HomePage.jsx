@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Seo from "../../components/common/Seo";
 import MothersDaySwiper from "../../components/home/MothersDayCarousel";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
@@ -18,52 +19,13 @@ import ShowcaseSection from "../../components/home/ShowcaseSection";
 import TopDealCard from "../../components/ui/TopDealCard";
 import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import { reusableArrivalsDemo, reusableTopDealsDemo } from "../../data/topdeal";
+import { mothersDayData } from "../../data/special";
 
 export function HomePage() {
   const dispatch = useDispatch();
-  const cmsPages = useSelector((s) => s.cms.list);
+  const navigate = useNavigate();
   const categoryList = useSelector((s) => s.catalog.list);
   const categories = Array.isArray(categoryList) ? categoryList : [];
-
-  const cmsBannerSlides = useMemo(() => {
-    const list = Array.isArray(cmsPages) ? cmsPages : [];
-    const bannerLike = list
-      .filter((item) => {
-        const pageType = String(
-          item?.pageType || item?.type || "",
-        ).toLowerCase();
-        const slug = String(item?.slug || "").toLowerCase();
-        const isBannerLike =
-          pageType.includes("banner") ||
-          slug.includes("banner") ||
-          slug.includes("hero");
-        const isPublished = item?.published !== false;
-        const isActive = item?.metadata?.active !== false;
-        return isBannerLike && isPublished && isActive;
-      })
-      .sort(
-        (a, b) =>
-          Number(a?.metadata?.sortOrder || 999) -
-          Number(b?.metadata?.sortOrder || 999),
-      )
-      .slice(0, 8)
-      .map((item) => ({
-        title: item?.metadata?.headline || item?.title || "Featured",
-        name: item?.metadata?.subtitle || item?.title || "Featured",
-        link:
-          item?.metadata?.ctaUrl ||
-          (item?.slug ? `/cms/${item.slug}` : "/products"),
-        image:
-          item?.heroImage ||
-          item?.coverImage ||
-          item?.thumbnailUrl ||
-          item?.metadata?.heroImage ||
-          item?.metadata?.coverImage ||
-          item?.metadata?.thumbnailUrl,
-      }))
-      .filter((item) => item.image);
-    return bannerLike;
-  }, [cmsPages]);
 
   useEffect(() => {
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
@@ -115,13 +77,19 @@ export function HomePage() {
           skeletonVariant="new-arrivals"
           skeletonCount={3}
           className="mt-8"
+          actionLabel="View Shop"
+          onAction={() => navigate("/products")}
         />
       </section>
 
-      <MothersDaySwiper data={cmsBannerSlides} />
+      <MothersDaySwiper data={mothersDayData} />
 
       <div className="mt-16">
-        <HomeProductsForYouSection title="Explore Our Collection" actionLabel="Browse All Products" limit={10} />
+        <HomeProductsForYouSection
+          title="Explore Our Collection"
+          actionLabel="Browse All Products"
+          limit={10}
+        />
       </div>
     </>
   );

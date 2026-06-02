@@ -1,151 +1,88 @@
-import { useMemo, useRef, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import Button from "../../components/ui/Button";
-import { IoArrowBackOutline, IoArrowForwardOutline } from "react-icons/io5";
-import { SkeletonLoader, SKELETON_PRESETS } from "../common/skeleton";
-import { useDelayedLoading } from "../../hooks/useDelayedLoading";
-import PromoSlideCard from "../../components/ui/PromoSlideCard";
-
-function SwiperSection({ swiperRef, onSlideChange, slides }) {
-  const loading = useDelayedLoading();
-
-  return (
-    <Swiper
-      modules={[Navigation]}
-      spaceBetween={20}
-      slidesPerView={1.2}
-      onSwiper={(swiper) => (swiperRef.current = swiper)}
-      onSlideChange={(swiper) => onSlideChange(swiper)}
-      onReachBeginning={(swiper) => onSlideChange(swiper)}
-      onReachEnd={(swiper) => onSlideChange(swiper)}
-      breakpoints={{
-        480: { slidesPerView: 1.5 },
-        768: { slidesPerView: 2.2 },
-        1024: { slidesPerView: 2.5 },
-        1280: { slidesPerView: 3 },
-      }}
-      className="mother-day-swiper !overflow-hidden"
-    >
-      {slides.map((slide) => (
-        <SwiperSlide key={slide._slideKey}>
-          {loading ? (
-            <SkeletonLoader
-              layout={SKELETON_PRESETS.HERO_CARDS}
-              count={3}
-              containerClass="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
-            />
-          ) : (
-            <PromoSlideCard slide={slide} />
-          )}
-        </SwiperSlide>
-      ))}
-    </Swiper>
-  );
-}
-
-function SwiperButtons({ swiperRef, isBeginning, isEnd }) {
-  return (
-    <div className="flex flex-row gap-2">
-      <button
-        disabled={isBeginning}
-        onClick={() => swiperRef.current?.slidePrev()}
-        className={`flex h-14 w-14 items-center justify-center bg-border text-gray-500 transition-all duration-300 ease-in-out ${isBeginning ? "cursor-not-allowed opacity-80" : ""}`}
-      >
-        <IoArrowBackOutline size={24} />
-      </button>
-      <button
-        disabled={isEnd}
-        onClick={() => swiperRef.current?.slideNext()}
-        className={`flex h-14 w-14 items-center justify-center bg-accent text-white transition-all duration-300 ease-in-out ${isEnd ? "cursor-not-allowed opacity-80" : ""}`}
-      >
-        <IoArrowForwardOutline size={24} />
-      </button>
-    </div>
-  );
-}
+import { Link } from "react-router-dom";
+import { IoArrowForwardOutline, IoChevronForward } from "react-icons/io5";
+import { hrefOr } from "../../utils/content";
 
 export default function MothersDayCarousel({
-  data,
+  data = [],
   heading = "SAM-Special Gifts For Mother's Day",
   ctaLabel = "Get Inspired",
   onCtaClick,
 }) {
-  const swiperRef = useRef(null);
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
+  const cards = Array.isArray(data) ? data : [];
 
-  const rawSlides = Array.isArray(data) ? data : [];
-  const slides = useMemo(
-    () =>
-      rawSlides
-        .filter((slide) => slide?.image)
-        .map((slide, index) => {
-          const identity =
-            slide.id || slide._id || slide.cmsKey || slide.slug ||
-            slide.link || slide.title || slide.name || "slide";
-          return { ...slide, _slideKey: `${identity}-${slide.image}-${index}` };
-        }),
-    [rawSlides],
-  );
+  if (!cards.length) return null;
 
-  if (!slides.length) return null;
-
-  const handleSlideChange = (swiper) => {
-    if (!swiper || swiper.destroyed) return;
-    setIsBeginning(Boolean(swiper.isBeginning));
-    setIsEnd(Boolean(swiper.isEnd));
-  };
+  // If heading is the default fallback, render the exact UI text from design:
+  // "Special Gifts For This Month"
+  const isDefaultHeading = heading === "SAM-Special Gifts For Mother's Day";
 
   return (
-    <section className="my-8 w-full overflow-x-hidden lg:my-12">
-      {/* Mobile heading */}
-      <div className="xl:hidden xl:mb-8 md:mb-4">
-        <h2 className="custom-h5 text-center font-bold font-montserrat text-blue">{heading}</h2>
-      </div>
-
-      <div className="relative">
-        <div className="absolute left-0 right-0 top-0 hidden h-[85%] -z-10 translate-y-6 rounded-[40px] bg-blue xl:block" />
-
-        <div className="flex flex-col items-center xl:flex-row">
-          {/* Desktop left panel */}
-          <div className="hidden flex-col items-center justify-center p-24 z-10 xl:flex 2xl:w-[40%] 2xl:p-16">
-            <h2 className="custom-h5 mb-8 font-bold font-montserrat text-white 2xl:text-center">{heading}</h2>
-            <Button
-              variant="gradient"
-              rounded
-              label={ctaLabel}
-              size="lg"
-              className="font-montserrat font-semibold !px-10 py-4"
-              onClick={onCtaClick}
-            />
-          </div>
-
-          {/* Swiper */}
-          <div className="relative mt-6 w-full xl:w-[60%] md:-ml-12 lg:-ml-20">
-            <div className="absolute -left-[7.5rem] bottom-0 z-20 flex gap-2">
-              <SwiperButtons swiperRef={swiperRef} isBeginning={isBeginning} isEnd={isEnd} />
-            </div>
-            <SwiperSection swiperRef={swiperRef} onSlideChange={handleSlideChange} slides={slides} />
-            <div className="mt-8 flex justify-center gap-10 xl:hidden xl:mt-4">
-              <SwiperButtons swiperRef={swiperRef} isBeginning={isBeginning} isEnd={isEnd} />
-            </div>
-          </div>
+    <section className="my-8 bg-[#1B1E5C] w-full py-12 lg:py-4 ">
+      <div className="max-w-[1760px] mx-auto px-4 xl:px-8 grid grid-cols-1 lg:grid-cols-4 gap-8 items-center">
+        {/* Left Text Block */}
+        <div className="flex flex-col items-center text-center lg:items-start lg:text-left text-white  p-2 2xl:p-5">
+          <h2 className="text-2xl xl:text-4xl 2xl:text-[44px]  font-bold  ">
+            {isDefaultHeading ? (
+              <>
+                Special Gifts <br className="hidden lg:block" />
+                For{" "}
+                <span className="text-[#D6A323] font-extrabold">
+                  This Month
+                </span>
+              </>
+            ) : (
+              heading
+            )}
+          </h2>
+          <p className="mt-4 mb-8 text-sm md:text-base  text-white/80 max-w-md">
+            Discover thoughtfully curated gifts for every occasion — from
+            birthdays to anniversaries and everything in between.
+          </p>
+          <button
+            onClick={onCtaClick}
+            className="flex items-center gap-2 bg-[#D6A323] hover:bg-[#B5851B] text-[#1F2430] font-bold  px-8 py-3.5 rounded-md  text-sm xl:text-base transition-all duration-300 w-fit cursor-pointer shadow-md hover:shadow-lg active:scale-95"
+          >
+            {ctaLabel} <IoArrowForwardOutline className="text-lg" />
+          </button>
         </div>
-      </div>
 
-      {/* Mobile CTA */}
-      <div className="mt-10 flex justify-center lg:hidden">
-        <Button
-          variant="gradient"
-          rounded
-          label={ctaLabel}
-          size="lg"
-          className="w-full font-montserrat font-semibold px-8 md:w-fit"
-          onClick={onCtaClick}
-        />
+        {/* Right Cards Section */}
+        <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
+          {cards.map((card, index) => {
+            const cardLink = hrefOr(card?.link || card?.href, "/products");
+            return (
+              <Link
+                key={index}
+                to={cardLink}
+                className="relative overflow-hidden  rounded-md md:rounded-2xl group shadow-xl h-[350px] xl:h-[440px] w-full block"
+              >
+                {/* Background Image */}
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent transition-opacity duration-300 group-hover:opacity-95" />
+
+                {/* Content at Bottom Left */}
+                <div className="absolute bottom-0 left-0 right-0 p-3 xl:p-4 flex flex-col justify-end text-white z-10">
+                  <h3 className="text-lg xl:text-2xl font-bold mb-1">
+                    {card.title}
+                  </h3>
+                  <p className="text-sm xl:text-base  text-white/65 mb-3 lg:mb-5 ">
+                    {card.description}
+                  </p>
+                  <button className="flex items-center gap-1.5 bg-[#CE9F2D4D] border border-[#CE9F2D4D]  text-[#D6A323] text-sm  xl:text-base font-semibold px-4 py-2 rounded-full transition-all duration-300 w-fit hover:bg-black/60">
+                    <span>Explore</span>
+                    <IoChevronForward className="text-xs text-[#D6A323]" />
+                  </button>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

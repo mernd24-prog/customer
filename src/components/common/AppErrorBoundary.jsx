@@ -23,16 +23,16 @@ export default class AppErrorBoundary extends React.Component {
       return (
         <main className="flex min-h-screen items-center justify-center bg-cream px-4">
           <div className="max-w-md text-center">
-            <h1 className="font-montserrat text-2xl font-bold text-ink">
+            <h1 className=" text-2xl font-bold text-ink">
               Something went wrong
             </h1>
-            <p className="mt-2 font-montserrat text-sm text-muted">
+            <p className="mt-2  text-sm text-muted">
               We hit an unexpected issue while rendering this page.
             </p>
             <button
               type="button"
               onClick={this.handleReload}
-              className="mt-5 rounded bg-ink px-5 py-2 font-montserrat text-sm font-semibold text-white"
+              className="mt-5 rounded bg-ink px-5 py-2  text-sm font-semibold text-white"
             >
               Reload
             </button>

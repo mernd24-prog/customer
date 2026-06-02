@@ -32,7 +32,11 @@ export default function ProductResultsLayout({
 }) {
   return (
     <>
-      <ActiveFilterChips filters={filters} onRemove={onRemoveFilter} onClear={onClearFilters} />
+      <ActiveFilterChips
+        filters={filters}
+        onRemove={onRemoveFilter}
+        onClear={onClearFilters}
+      />
 
       <div className="flex items-start gap-6">
         <div className="hidden lg:block">
@@ -61,10 +65,14 @@ export default function ProductResultsLayout({
                 isWishlisted={isWishlisted}
               />
 
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
 
               {loadingMore && (
-                <div className="mt-6 text-center font-montserrat text-sm text-muted">
+                <div className="mt-6 text-center  text-sm text-muted">
                   Loading more products...
                 </div>
               )}

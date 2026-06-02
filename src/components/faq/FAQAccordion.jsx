@@ -15,22 +15,26 @@ export default function FAQAccordion({ faqs = [] }) {
           faqs.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
-              <div key={index} className="overflow-hidden rounded-md bg-navy-soft mb-4">
+              <div
+                key={index}
+                className="overflow-hidden rounded-md bg-navy-soft mb-4"
+              >
                 {/* Question */}
                 <div
                   onClick={() => toggleFAQ(index)}
                   className="flex cursor-pointer items-center justify-between px-5 py-4 transition-all duration-300 ease-in-out"
                 >
-                  <h3 className="font-montserrat text-[15px] font-medium text-ink md:text-[16px]">
+                  <h3 className=" text-[15px] font-medium text-ink md:text-[16px]">
                     {faq.question}
                   </h3>
 
                   <button
                     className={`
                       flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ease-in-out
-                      ${isOpen
-                        ? "border-navy bg-navy text-white"
-                        : "border-navy bg-white text-navy"
+                      ${
+                        isOpen
+                          ? "border-navy bg-navy text-white"
+                          : "border-navy bg-white text-navy"
                       }
                     `}
                   >
@@ -50,7 +54,7 @@ export default function FAQAccordion({ faqs = [] }) {
                       : "max-h-0 px-5 py-0 opacity-0"
                   }`}
                 >
-                  <p className="font-montserrat text-[14px] leading-6 text-muted">
+                  <p className=" text-[14px] leading-6 text-muted">
                     {faq.answer}
                   </p>
                 </div>
@@ -58,9 +62,7 @@ export default function FAQAccordion({ faqs = [] }) {
             );
           })
         ) : (
-          <p className="py-10 text-center font-montserrat text-muted">
-            No FAQs found.
-          </p>
+          <p className="py-10 text-center  text-muted">No FAQs found.</p>
         )}
       </div>
     </section>

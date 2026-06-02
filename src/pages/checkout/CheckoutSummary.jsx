@@ -39,18 +39,32 @@ export default function CheckoutSummary({
         : "Place order & pay";
   const quoteSummary = quote?.summary || {};
   const quoteAmounts = quote?.quote || {};
-  const quoteSubtotal = Number(quoteSummary.itemAmount ?? quoteAmounts.subtotalAmount ?? subtotal);
-  const quoteDiscount = Number(quoteSummary.discountAmount ?? quoteAmounts.discountAmount ?? 0);
-  const quoteWallet = Number(quoteSummary.walletDiscountAmount ?? quoteAmounts.walletAppliedAmount ?? 0);
-  const taxIncluded = Number(quoteSummary.taxIncludedAmount ?? quoteAmounts.taxIncludedAmount ?? 0);
-  const taxPayable = Number(quoteSummary.taxPayableAmount ?? quoteAmounts.taxPayableAmount ?? 0);
-  const codCharge = Number(quoteSummary.codChargeAmount ?? quoteAmounts.codChargeAmount ?? 0);
-  const quotePayable = Number(quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total);
+  const quoteSubtotal = Number(
+    quoteSummary.itemAmount ?? quoteAmounts.subtotalAmount ?? subtotal,
+  );
+  const quoteDiscount = Number(
+    quoteSummary.discountAmount ?? quoteAmounts.discountAmount ?? 0,
+  );
+  const quoteWallet = Number(
+    quoteSummary.walletDiscountAmount ?? quoteAmounts.walletAppliedAmount ?? 0,
+  );
+  const taxIncluded = Number(
+    quoteSummary.taxIncludedAmount ?? quoteAmounts.taxIncludedAmount ?? 0,
+  );
+  const taxPayable = Number(
+    quoteSummary.taxPayableAmount ?? quoteAmounts.taxPayableAmount ?? 0,
+  );
+  const codCharge = Number(
+    quoteSummary.codChargeAmount ?? quoteAmounts.codChargeAmount ?? 0,
+  );
+  const quotePayable = Number(
+    quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
+  );
 
   return (
     <aside className="min-w-0">
       <div className="sticky top-4 w-full overflow-hidden rounded-lg border border-border bg-white p-5">
-        <h2 className="mb-4 font-montserrat text-base font-semibold text-ink">
+        <h2 className="mb-4  text-base font-semibold text-ink">
           Order summary
         </h2>
         <div className="grid divide-y divide-border">
@@ -77,8 +91,7 @@ export default function CheckoutSummary({
                       </p>
                     ) : null}
                     <p className="mt-1 text-xs text-muted">
-                      Qty: {item.quantity} ·{" "}
-                      {formatMoney(item.price, "INR")}
+                      Qty: {item.quantity} · {formatMoney(item.price, "INR")}
                     </p>
                   </div>
                   <span className="whitespace-nowrap text-right font-medium text-ink">
@@ -145,12 +158,18 @@ export default function CheckoutSummary({
             <span>Payable</span>
             <span>{formatMoney(quotePayable, "INR")}</span>
           </div>
-          {quoteLoading ? <p className="mt-2 text-xs text-gray">Calculating final order amount...</p> : null}
-          {quoteError ? <p className="mt-2 text-xs text-red-600">{quoteError}</p> : null}
+          {quoteLoading ? (
+            <p className="mt-2 text-xs text-gray">
+              Calculating final order amount...
+            </p>
+          ) : null}
+          {quoteError ? (
+            <p className="mt-2 text-xs text-red-600">{quoteError}</p>
+          ) : null}
         </div>
 
         <div className="mt-5 border-t border-border pt-4">
-          <h3 className="mb-3 font-montserrat text-sm font-semibold text-ink">
+          <h3 className="mb-3  text-sm font-semibold text-ink">
             Payment method
           </h3>
 

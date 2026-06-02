@@ -4,22 +4,28 @@ export const footerData = {
   cmsKey: "footer-links",
   benefits: [
     {
-      title: "10% Cashback on all App orders",
-      description: "Enjoy exclusive savings on every purchase.",
-      icon: footer.caseBack,
-      alt: "Cashback",
+      title: "100% Secure Payments",
+      description: "Multiple sale payment options",
+      icon: footer.payment,
+      alt: "Payment",
     },
     {
-      title: "30 days Easy Returns & Exchanges",
-      description: "Hassle-free returns with customer-first policies.",
-      icon: footer.exchange,
+      title: "Free Shipping",
+      description: "On order above ₹999",
+      icon: footer.shipping,
+      alt: "Shipping",
+    },
+    {
+      title: "Easy Returns",
+      description: "Hassle-free 10 days return",
+      icon: footer.return,
       alt: "Returns and exchanges",
     },
     {
-      title: "Free & Fast Shipping",
-      description: "Reliable and quick delivery across locations.",
-      icon: footer.shipping,
-      alt: "Shipping",
+      title: "24/7 Support",
+      description: "We’re here to help you.",
+      icon: footer.support,
+      alt: "Support",
     },
   ],
   linkGroups: [
@@ -47,8 +53,8 @@ export const footerData = {
       links: [
         { label: "Who We Are", href: "/who-we-are" },
         { label: "Why Choose Us", href: "/about-us#why-choose-us" },
-        { label: "Our Commitment", href: "/our-commitment" },
-        { label: "Features", href: "/features" },
+        { label: "Our Vision", href: "/our-commitment" },
+        { label: "Careers", href: "/features" },
       ],
     },
     {
@@ -66,9 +72,7 @@ export const footerData = {
         { label: "FAQs", href: "/faq" },
         { label: "Returns", href: "/returns" },
         // Added policy routes
-        { label: "Terms of Use", href: "/terms-of-use" },
-        { label: "Shipping Policy", href: "/shipping-policy" },
-        { label: "Refund Policy", href: "/refund-policy" },
+       
       ],
     },
     {

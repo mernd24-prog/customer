@@ -10,7 +10,11 @@ import { useToastThunk } from "../../hooks/useToastThunk";
 import { fetchCart } from "../../features/cart/cartSlice";
 import { fetchWallet } from "../../features/wallet/walletSlice";
 import { fetchMe } from "../../features/user/userSlice";
-import { createOrder, fetchOrderById, quoteOrder } from "../../features/order/orderSlice";
+import {
+  createOrder,
+  fetchOrderById,
+  quoteOrder,
+} from "../../features/order/orderSlice";
 import {
   fetchPaymentOptions,
   initiatePayment,
@@ -339,7 +343,11 @@ export default function CheckoutPage() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchPaymentOptions({ orderAmount: quotePayableAmount || total || subtotal || 0 })).catch(() => {});
+    dispatch(
+      fetchPaymentOptions({
+        orderAmount: quotePayableAmount || total || subtotal || 0,
+      }),
+    ).catch(() => {});
   }, [dispatch, quotePayableAmount, subtotal, total]);
 
   useEffect(() => {
@@ -572,7 +580,13 @@ export default function CheckoutPage() {
       shippingAddress: quoteShippingAddress,
       items: orderItems,
     };
-  }, [orderItems, paymentProvider, quoteShippingAddress, watchedCouponCode, watchedWalletAmount]);
+  }, [
+    orderItems,
+    paymentProvider,
+    quoteShippingAddress,
+    watchedCouponCode,
+    watchedWalletAmount,
+  ]);
 
   useEffect(() => {
     if (!quotePayload) {
@@ -754,7 +768,7 @@ export default function CheckoutPage() {
       <Seo title="Checkout | Sam Global" />
 
       <div className="w-container py-8 sm:py-10">
-        <h1 className="mb-8 font-montserrat text-2xl font-bold text-ink sm:text-3xl">
+        <h1 className="mb-8  text-2xl font-bold text-ink sm:text-3xl">
           Checkout
         </h1>
 
@@ -772,8 +786,16 @@ export default function CheckoutPage() {
                 {errors.root.message}
               </div>
             ) : null}
-            <input type="hidden" value={String(useNewAddress)} {...register("useNewAddress")} />
-            <input type="hidden" value={selectedAddressId || ""} {...register("selectedAddressId")} />
+            <input
+              type="hidden"
+              value={String(useNewAddress)}
+              {...register("useNewAddress")}
+            />
+            <input
+              type="hidden"
+              value={selectedAddressId || ""}
+              {...register("selectedAddressId")}
+            />
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(320px,380px)]">
               {/* Left column: shipping + payment */}
               <div className="grid gap-6">
@@ -825,7 +847,9 @@ export default function CheckoutPage() {
                 quoteError={quoteError}
                 loading={loading}
                 paymentOptions={paymentOptions}
-                paymentOptionsLoading={paymentState.loading && !paymentOptions.length}
+                paymentOptionsLoading={
+                  paymentState.loading && !paymentOptions.length
+                }
                 selectedPaymentProvider={paymentProvider}
                 onPaymentProviderChange={setPaymentProvider}
                 getPaymentProviderLabel={getPaymentProviderLabel}
