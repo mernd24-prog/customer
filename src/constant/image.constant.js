@@ -96,7 +96,7 @@ export const bannerData = [
     lineImg: "/image/png/line.png",
     description:
       "Upgrade your style with our exclusive collection. Limited time offer on all premium categories.",
-    image: "/image/png/model.png",
+    image: "/image/png/HeroImg.png",
     modelBg: "/image/png/%20modelbg.png",
   },
   {
@@ -107,7 +107,7 @@ export const bannerData = [
     lineImg: "/image/png/line.png",
     description:
       "Discover the latest trends in luxury fashion. Shop the new season arrivals today.",
-    image: "/image/png/model.png",
+    image: "/image/png/HeroImg.png",
     modelBg: "/image/png/%20modelbg.png",
   },
   {
@@ -118,7 +118,7 @@ export const bannerData = [
     lineImg: "/image/png/line.png",
     description:
       "Upgrade your style with our exclusive collection. Limited time offer on all premium categories.",
-    image: "/image/png/model.png",
+    image: "/image/png/HeroImg.png",
     modelBg: "/image/png/%20modelbg.png",
   },
   {
@@ -129,7 +129,7 @@ export const bannerData = [
     lineImg: "/image/png/line.png",
     description:
       "Discover the latest trends in luxury fashion. Shop the new season arrivals today.",
-    image: "/image/png/model.png",
+    image: "/image/png/HeroImg.png",
     modelBg: "/image/png/%20modelbg.png",
   },
 ];

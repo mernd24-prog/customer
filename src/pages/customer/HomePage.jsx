@@ -14,6 +14,7 @@ import { fetchProducts } from "../../features/product/productSlice";
 import { tokenStorage } from "../../api/tokenStorage";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import Banner from "../../layouts/HeroBanner";
+import { CategoryBar } from "../../layouts/Header";
 import CollageMainSection from "../../components/ui/CollageCard";
 import ShowcaseSection from "../../components/home/ShowcaseSection";
 import TopDealCard from "../../components/ui/TopDealCard";
@@ -47,6 +48,7 @@ export function HomePage() {
         description="Discover the best deals on fashion, electronics, home and more at Sam Global."
       />
       <Banner />
+      <CategoryBar />
 
       <HomeCategoryGrid
         categories={categories?.slice(7, 12)}

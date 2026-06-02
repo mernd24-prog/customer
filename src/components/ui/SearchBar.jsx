@@ -1,17 +1,15 @@
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Button from "./BrandButton";
 import { sanitizeSearchQuery } from "../../validations";
 
 const SearchBar = ({
-  placeholder = "Barbour Beadnell wax jacket in black",
+  placeholder = "Search for products, brands and categories...",
   className = "",
   value,
   onChange,
   onSearch,
   onKeyDown,
-  showButtonLabel = true,
 }) => {
   const [internalQuery, setInternalQuery] = useState("");
   const navigate = useNavigate();
@@ -54,9 +52,20 @@ const SearchBar = ({
   };
 
   return (
-    <div className={`group w-full ${className}`}>
-      <div className="rounded-full border border-[var(--customer-border)] bg-white shadow-sm focus-within:border-[var(--customer-gold)] focus-within:ring-2 focus-within:ring-[var(--customer-gold)]/15">
-        <div className="flex h-[38px] w-full items-center overflow-hidden rounded-full border-none bg-white pl-3 pr-1 outline-none sm:pl-4 lg:h-[42px] lg:pl-5 lg:pr-1">
+    <div className={`group w-full max-w-[720px] ${className}`}>
+      <div className="rounded-full border border-[#1B1D604D] bg-white shadow-sm focus-within:border-[#CE9F2D] focus-within:ring-2 focus-within:ring-[#CE9F2D]/15">
+        <div className="flex h-[46px] w-full items-center overflow-hidden rounded-full border-none bg-white pl-0 pr-0 outline-none">
+          
+          {/* Categories Selector */}
+          <div className="hidden sm:flex h-full items-center gap-2 pl-6 pr-4 text-sm font-medium text-[var(--customer-ink)] cursor-pointer hover:bg-black/[0.02] transition-colors select-none whitespace-nowrap">
+            <span>All Categories</span>
+            <ChevronDown size={16} className="text-[var(--customer-muted)]" />
+          </div>
+
+          {/* Vertical Divider */}
+          <div className="hidden sm:block h-[24px] w-px bg-[#1B1D604D] shrink-0" />
+
+          {/* Input field */}
           <input
             type="text"
             value={searchQuery}
@@ -64,24 +73,19 @@ const SearchBar = ({
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             aria-label="Search products"
-            className="h-full w-full border-none bg-transparent text-xs text-[var(--customer-ink)] outline-none ring-0 placeholder:text-[var(--customer-muted)] focus:ring-0 lg:text-sm"
+            className="h-full w-full flex-1 border-none bg-transparent pl-5 pr-4 sm:px-4 text-sm text-[var(--customer-ink)] outline-none ring-0 placeholder:text-[var(--customer-muted)] focus:ring-0"
           />
 
-          <div className="ml-1 flex shrink-0 items-center gap-2 sm:gap-3 lg:ml-2">
-            <Button
-              variant="primary"
-              rounded={true}
-              icon={<Search size={18} />}
-              label={showButtonLabel ? "Search" : ""}
-              size="sm"
-              className={
-                showButtonLabel
-                  ? "min-h-[30px] px-4 font-semibold shadow-none active:translate-y-0 active:scale-[0.98] 2xl:px-5"
-                  : "flex h-[32px] w-[32px] items-center justify-center !p-0 shadow-none active:scale-[0.96]"
-              }
-              onClick={handleSearch}
-            />
-          </div>
+          {/* Search Button */}
+          <button
+            type="button"
+            onClick={handleSearch}
+            className="flex h-full w-[64px] items-center justify-center bg-[#CE9F2D] text-white transition-all duration-200 hover:bg-[#CE9F2D]/95 active:scale-[0.98]"
+            aria-label="Search"
+          >
+            <Search size={20} className="text-white" />
+          </button>
+
         </div>
       </div>
     </div>
