@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import {
   Bell,
-  Banknote,
+  // Banknote,
   CheckCircle2,
   CreditCard,
   Eye,
@@ -22,7 +22,7 @@ import {
   ShieldCheck,
   Star,
   Wallet,
-  Banknote,
+  // Banknote,
 } from "lucide-react";
 import ApiState from "../components/common/ApiState";
 import Seo from "../components/common/Seo";

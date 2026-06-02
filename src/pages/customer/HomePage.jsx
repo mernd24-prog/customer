@@ -18,6 +18,7 @@ import ShowcaseSection from "../../components/home/ShowcaseSection";
 import TopDealCard from "../../components/ui/TopDealCard";
 import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import { reusableArrivalsDemo, reusableTopDealsDemo } from "../../data/topdeal";
+import { CategoryPriceCard } from "../../components/dynamicComponent/cards/static";
 
 export function HomePage() {
   const dispatch = useDispatch();
