@@ -90,7 +90,7 @@ export function HomePage() {
         ctaLabel="Shop Now"
       />
 
-      <MothersDaySwiper data={cmsBannerSlides} />
+      {/* <MothersDaySwiper data={cmsBannerSlides} /> */}
 
       <div className="mt-16">
         <HomeProductsForYouSection
