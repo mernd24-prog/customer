@@ -22,15 +22,8 @@ export default function Drawer({
         className={`absolute top-0 ${sideClass} h-full ${width} overflow-y-auto border-l border-[var(--customer-border)] bg-white p-4 shadow-[var(--customer-shadow-strong)]`}
       >
         <div className="mb-4 flex items-center justify-between border-b border-[var(--customer-border)] pb-3">
-          <span className=" font-semibold text-[var(--customer-ink)]">
-            {title}
-          </span>
-          <button
-            type="button"
-            onClick={onClose}
-            className="icon-button"
-            aria-label="Close"
-          >
+          <span className=" font-semibold text-[var(--customer-ink)]">{title}</span>
+          <button type="button" onClick={onClose} className="icon-button" aria-label="Close">
             <X size={16} />
           </button>
         </div>

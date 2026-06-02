@@ -82,20 +82,12 @@ export default function VerifyRegistrationPage() {
           />
 
           {error && (
-            <div
-              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700"
-              role="alert"
-            >
+            <div className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700" role="alert">
               {error}
             </div>
           )}
 
-          <Button
-            type="submit"
-            loading={loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={!isValid || loading}
-          >
+          <Button type="submit" loading={loading} className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60" disabled={!isValid || loading}>
             <CheckCircle size={18} /> Verify &amp; activate account
           </Button>
 

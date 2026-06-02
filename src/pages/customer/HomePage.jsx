@@ -20,6 +20,7 @@ import TopDealCard from "../../components/ui/TopDealCard";
 import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import { reusableArrivalsDemo, reusableTopDealsDemo } from "../../data/topdeal";
 import { mothersDayData } from "../../data/special";
+import ShoppingMadeEasyBanner from "../../components/home/ShoppingBanner";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -28,15 +29,15 @@ export function HomePage() {
   const categories = Array.isArray(categoryList) ? categoryList : [];
 
   useEffect(() => {
-    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
+    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => { });
     if (tokenStorage.getAccessToken()) {
-      dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
+      dispatch(fetchRecommendations({ limit: 8 })).catch(() => { });
     }
-    dispatch(fetchCategories({ limit: 20 })).catch(() => {});
+    dispatch(fetchCategories({ limit: 20 })).catch(() => { });
     dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(
-      () => {},
+      () => { },
     );
-    dispatch(fetchCmsPages({ limit: 100 })).catch(() => {});
+    dispatch(fetchCmsPages({ limit: 100 })).catch(() => { });
   }, [dispatch]);
 
   return (
@@ -83,6 +84,13 @@ export function HomePage() {
       </section>
 
       <MothersDaySwiper data={mothersDayData} />
+      <ShoppingMadeEasyBanner
+        title="Shopping Made Easy"
+        description="Enjoy seamless shopping with reliable delivery, secure payments, and hassle-free returns."
+        ctaLabel="Shop Now"
+      />
+
+      <MothersDaySwiper data={cmsBannerSlides} />
 
       <div className="mt-16">
         <HomeProductsForYouSection

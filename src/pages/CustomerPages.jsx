@@ -1521,7 +1521,9 @@ export function SimpleApiPage({ title, selector, thunk, action }) {
     <>
       <Seo title={`${title} | Sam Global`} />
       <div className="w-container py-8">
-        <h1 className="mb-6  text-2xl font-bold text-ink">{title}</h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">
+          {title}
+        </h1>
         <ApiState
           loading={state.loading}
           error={state.error}
@@ -1574,10 +1576,14 @@ export function SubscriptionPage() {
                 <h2 className=" text-lg font-semibold text-ink">
                   {plan.title}
                 </h2>
-                <p className="mt-1  text-sm text-muted">{plan.description}</p>
+                <p className="mt-1  text-sm text-muted">
+                  {plan.description}
+                </p>
                 <p className="mt-4  text-2xl font-bold text-gold">
                   {formatMoney(plan.monthlyPrice, plan.currency || "INR")}
-                  <span className=" text-sm font-normal text-gray">/mo</span>
+                  <span className=" text-sm font-normal text-gray">
+                    /mo
+                  </span>
                 </p>
                 <div className="mt-auto pt-5">
                   <BrandButton
@@ -1689,7 +1695,9 @@ export function PreferencesPage() {
                   key={key}
                   className="flex cursor-pointer items-center justify-between gap-3 rounded-[10px] border border-border px-4 py-3"
                 >
-                  <span className=" text-sm font-medium text-ink">{label}</span>
+                  <span className=" text-sm font-medium text-ink">
+                    {label}
+                  </span>
                   <input
                     type="checkbox"
                     {...register(key)}
@@ -1700,7 +1708,9 @@ export function PreferencesPage() {
             </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <label className="grid gap-1.5">
-                <span className=" text-sm font-medium text-ink">Frequency</span>
+                <span className=" text-sm font-medium text-ink">
+                  Frequency
+                </span>
                 <select
                   {...register("frequency")}
                   className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5  text-sm text-ink outline-none focus:border-gold"
@@ -1710,7 +1720,9 @@ export function PreferencesPage() {
                 </select>
               </label>
               <label className="grid gap-1.5">
-                <span className=" text-sm font-medium text-ink">Timezone</span>
+                <span className=" text-sm font-medium text-ink">
+                  Timezone
+                </span>
                 <input
                   {...register("timezone")}
                   className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5  text-sm text-ink outline-none focus:border-gold"
@@ -1750,7 +1762,9 @@ export function LoyaltyPage() {
     <>
       <Seo title="Loyalty Rewards | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6  text-2xl font-bold text-ink">Loyalty Rewards</h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">
+          Loyalty Rewards
+        </h1>
         <ApiState
           loading={loyaltyState.loading && !profile}
           error={loyaltyState.error}
@@ -1968,7 +1982,9 @@ export function WarrantyPage({ detail = false }) {
                       <p className=" text-sm font-medium text-ink">
                         {w.type || "Warranty"}
                       </p>
-                      <p className=" text-xs text-gray">{w.period}</p>
+                      <p className=" text-xs text-gray">
+                        {w.period}
+                      </p>
                     </div>
                   </div>
                   <Link to={`/warranty/${w.id}`}>
@@ -2078,7 +2094,9 @@ export function WalletPage() {
     <>
       <Seo title="My Wallet | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6  text-2xl font-bold text-ink">My Wallet</h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">
+          My Wallet
+        </h1>
         <ApiState
           loading={walletState.loading && !wallet}
           error={walletState.error}
@@ -2125,7 +2143,9 @@ export function PaymentsPage() {
     <>
       <Seo title="Payment History | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6  text-2xl font-bold text-ink">Payment History</h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">
+          Payment History
+        </h1>
         <ApiState
           loading={paymentState.loading && !payments.length}
           error={paymentState.error}
@@ -2202,7 +2222,9 @@ export function NotificationsPage() {
     <>
       <Seo title="Notifications | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6  text-2xl font-bold text-ink">Notifications</h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">
+          Notifications
+        </h1>
         <ApiState
           loading={notifState.loading && !notifications.length}
           error={notifState.error}

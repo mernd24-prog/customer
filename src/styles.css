@@ -200,7 +200,7 @@ textarea {
 
 .customer-container,
 .w-container {
-  width: min(100% - 32px, 1440px);
+  width: min(100% - 32px, 1760px);
   margin-inline: auto;
 }
 

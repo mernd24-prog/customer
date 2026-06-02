@@ -26,9 +26,7 @@ function CartLine({ item, onClose }) {
         ) : null}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="line-clamp-1  text-xs font-semibold text-[var(--customer-ink)]">
-          {title}
-        </p>
+        <p className="line-clamp-1  text-xs font-semibold text-[var(--customer-ink)]">{title}</p>
         <p className=" text-xs text-[var(--customer-muted)]">
           Qty {quantity} • {formatMoney(price, product?.currency || "INR")}
         </p>
@@ -77,9 +75,7 @@ export default function AddedToCartModal({
         </button>
 
         <div className="border-b border-[var(--customer-border)] p-5 md:border-b-0 md:border-r">
-          <h2 className=" text-xl font-bold text-[var(--customer-navy)]">
-            Added to cart
-          </h2>
+          <h2 className=" text-xl font-bold text-[var(--customer-navy)]">Added to cart</h2>
           <div className="mt-4 flex items-center gap-3 rounded-[var(--customer-radius)] bg-[var(--customer-cream)] p-3">
             <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[var(--customer-radius-sm)] bg-white">
               {addedImage ? (
@@ -91,12 +87,9 @@ export default function AddedToCartModal({
               ) : null}
             </div>
             <div>
-              <p className="line-clamp-2  text-sm font-semibold text-[var(--customer-ink)]">
-                {addedTitle}
-              </p>
+              <p className="line-clamp-2  text-sm font-semibold text-[var(--customer-ink)]">{addedTitle}</p>
               <p className="mt-1  text-xs text-[var(--customer-muted)]">
-                Cart now has {cartItems.length}{" "}
-                {cartItems.length === 1 ? "item" : "items"}
+                Cart now has {cartItems.length} {cartItems.length === 1 ? "item" : "items"}
               </p>
             </div>
           </div>
@@ -120,12 +113,8 @@ export default function AddedToCartModal({
 
         <div className="flex flex-col p-5 md:max-h-[80vh]">
           <div className="mb-3 flex items-center justify-between gap-4 pr-11">
-            <h3 className=" text-sm font-bold text-[var(--customer-ink)]">
-              Cart Items
-            </h3>
-            <span className="shrink-0  text-xs text-[var(--customer-muted)]">
-              {formatMoney(subtotal, "INR")}
-            </span>
+            <h3 className=" text-sm font-bold text-[var(--customer-ink)]">Cart Items</h3>
+            <span className="shrink-0  text-xs text-[var(--customer-muted)]">{formatMoney(subtotal, "INR")}</span>
           </div>
           <div className="space-y-2 overflow-y-auto pr-1">
             {cartItems.map((item, index) => (
@@ -136,9 +125,7 @@ export default function AddedToCartModal({
               />
             ))}
             {cartItems.length === 0 && (
-              <p className=" text-xs text-[var(--customer-muted)]">
-                No items in cart yet.
-              </p>
+              <p className=" text-xs text-[var(--customer-muted)]">No items in cart yet.</p>
             )}
           </div>
         </div>

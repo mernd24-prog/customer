@@ -341,9 +341,7 @@ export default function ProductsPage() {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <PageHeader title={pageTitle} className="mb-0" />
-            <p className="mt-0.5  text-sm text-muted">
-              {(pageInfo.total || products.length).toLocaleString()} products
-            </p>
+            <p className="mt-0.5  text-sm text-muted">{(pageInfo.total || products.length).toLocaleString()} products</p>
           </div>
           <CollectionToolbar
             sortValue={searchParams.get("sort") || ""}

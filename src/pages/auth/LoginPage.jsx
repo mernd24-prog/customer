@@ -180,7 +180,9 @@ export default function LoginPage() {
           <div className="relative flex items-center gap-3 py-0.5">
             <hr className="flex-1 border-border" />
 
-            <span className=" text-xs text-gray">or</span>
+            <span className=" text-xs text-gray">
+              or
+            </span>
 
             <hr className="flex-1 border-border" />
           </div>

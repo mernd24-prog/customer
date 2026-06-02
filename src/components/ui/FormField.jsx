@@ -54,7 +54,13 @@ export default function FormField({
           placeholder={placeholder}
           id={id}
           type={inputType}
+<<<<<<< HEAD
           className={`customer-input  ${isPassword ? "pr-11" : ""}`}
+=======
+          className={`customer-input  ${
+            isPassword ? "pr-11" : ""
+          }`}
+>>>>>>> origin/mahima-dev
           aria-invalid={Boolean(error)}
           {...registration}
           {...props}

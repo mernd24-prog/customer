@@ -23,9 +23,7 @@ export default function NeedHelpSection({
           : "flex-col justify-center"
       } min-h-[200px] items-center bg-gradient-to-r from-gold-dark to-gold px-4 py-10 sm:px-6 md:px-12`}
     >
-      <div
-        className={`${layout === "row" ? "text-left max-w-[800px]" : "text-center max-w-[660px]"}`}
-      >
+      <div className={`${layout === "row" ? "text-left max-w-[800px]" : "text-center max-w-[660px]"}`}>
         <h2 className=" uppercase leading-tight text-white">
           <span className="block text-[22px] font-bold sm:inline md:text-[26px]">
             {heading1}

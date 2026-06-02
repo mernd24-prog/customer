@@ -18,9 +18,7 @@ export default function CollectionToolbar({
 
   return (
     <div className={shellClassName}>
-      {countText && (
-        <p className=" text-sm text-[var(--customer-muted)]">{countText}</p>
-      )}
+      {countText && <p className=" text-sm text-[var(--customer-muted)]">{countText}</p>}
       <div className="flex items-center gap-3">
         {!!sortOptions.length && (
           <select

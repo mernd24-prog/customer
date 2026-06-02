@@ -431,10 +431,7 @@ export default function CategoryPage() {
           />
           <div className="absolute inset-0 flex items-end bg-black/40 px-6 pb-6">
             <div>
-              <Breadcrumbs
-                items={breadcrumbItems}
-                className="mb-1 text-white"
-              />
+              <Breadcrumbs items={breadcrumbItems} className="mb-1 text-white" />
               <h1 className=" text-[26px] font-bold text-white sm:text-[32px]">
                 {categoryTitle}
               </h1>
@@ -449,9 +446,7 @@ export default function CategoryPage() {
               {categoryTitle}
             </h1>
             {categoryDesc && (
-              <p className="mt-1 max-w-2xl  text-sm text-muted">
-                {categoryDesc}
-              </p>
+              <p className="mt-1 max-w-2xl  text-sm text-muted">{categoryDesc}</p>
             )}
           </div>
         </div>

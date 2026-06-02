@@ -28,7 +28,9 @@ export default function WatchlistPage() {
       <section className="min-h-screen py-8">
         <div className="w-container">
           <div className="mb-6">
-            <h1 className=" text-[34px] font-bold text-ink">Watchlist</h1>
+            <h1 className=" text-[34px] font-bold text-ink">
+              Watchlist
+            </h1>
             <p className="mt-1  text-[15px] text-muted">
               {products.length} saved {products.length === 1 ? "item" : "items"}
             </p>

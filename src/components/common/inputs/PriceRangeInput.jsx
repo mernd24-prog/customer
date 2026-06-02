@@ -36,9 +36,7 @@ export default function PriceRangeInput({
     <div className={`grid gap-3 ${className}`}>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="mb-1 block  text-xs text-gray">
-            Min ({currency})
-          </label>
+          <label className="mb-1 block  text-xs text-gray">Min ({currency})</label>
           <input
             type="number"
             value={localMin}
@@ -49,9 +47,7 @@ export default function PriceRangeInput({
           />
         </div>
         <div>
-          <label className="mb-1 block  text-xs text-gray">
-            Max ({currency})
-          </label>
+          <label className="mb-1 block  text-xs text-gray">Max ({currency})</label>
           <input
             type="number"
             value={localMax}

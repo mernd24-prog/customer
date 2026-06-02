@@ -148,9 +148,7 @@ export default function RegisterOtpPage() {
                 </button>
               </div>
               {errors.password?.message ? (
-                <p className=" text-xs text-red-600">
-                  {errors.password.message}
-                </p>
+                <p className=" text-xs text-red-600">{errors.password.message}</p>
               ) : null}
             </div>
 
@@ -201,12 +199,7 @@ export default function RegisterOtpPage() {
             </div>
           )}
 
-          <Button
-            type="submit"
-            loading={loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={!isValid || loading}
-          >
+          <Button type="submit" loading={loading} className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60" disabled={!isValid || loading}>
             <Smartphone size={18} /> Send OTP &amp; register
           </Button>
 

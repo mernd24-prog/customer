@@ -17,33 +17,39 @@ export default function MothersDayCarousel({
   const isDefaultHeading = heading === "SAM-Special Gifts For Mother's Day";
 
   return (
-    <section className="my-8 bg-[#1B1E5C] w-full py-12 lg:py-4 ">
-      <div className="max-w-[1760px] mx-auto px-4 xl:px-8 grid grid-cols-1 lg:grid-cols-4 gap-8 items-center">
-        {/* Left Text Block */}
-        <div className="flex flex-col items-center text-center lg:items-start lg:text-left text-white  p-2 2xl:p-5">
-          <h2 className="text-2xl xl:text-4xl 2xl:text-[44px]  font-bold  ">
-            {isDefaultHeading ? (
-              <>
-                Special Gifts <br className="hidden lg:block" />
-                For{" "}
-                <span className="text-[#D6A323] font-extrabold">
-                  This Month
-                </span>
-              </>
-            ) : (
-              heading
-            )}
-          </h2>
-          <p className="mt-4 mb-8 text-sm md:text-base  text-white/80 max-w-md">
-            Discover thoughtfully curated gifts for every occasion — from
-            birthdays to anniversaries and everything in between.
-          </p>
-          <button
-            onClick={onCtaClick}
-            className="flex items-center gap-2 bg-[#D6A323] hover:bg-[#B5851B] text-[#1F2430] font-bold  px-8 py-3.5 rounded-md  text-sm xl:text-base transition-all duration-300 w-fit cursor-pointer shadow-md hover:shadow-lg active:scale-95"
-          >
-            {ctaLabel} <IoArrowForwardOutline className="text-lg" />
-          </button>
+    <section className="my-8 w-full overflow-x-hidden lg:my-12">
+      {/* Mobile heading */}
+      <div className="xl:hidden xl:mb-8 md:mb-4">
+        <h2 className="custom-h5 text-center font-bold  text-blue">{heading}</h2>
+      </div>
+
+      <div className="relative">
+        <div className="absolute left-0 right-0 top-0 hidden h-[85%] -z-10 translate-y-6 rounded-[40px] bg-blue xl:block" />
+
+        <div className="flex flex-col items-center xl:flex-row">
+          {/* Desktop left panel */}
+          <div className="hidden flex-col items-center justify-center p-24 z-10 xl:flex 2xl:w-[40%] 2xl:p-16">
+            <h2 className="custom-h5 mb-8 font-bold  text-white 2xl:text-center">{heading}</h2>
+            <Button
+              variant="gradient"
+              rounded
+              label={ctaLabel}
+              size="lg"
+              className=" font-semibold !px-10 py-4"
+              onClick={onCtaClick}
+            />
+          </div>
+
+          {/* Swiper */}
+          <div className="relative mt-6 w-full xl:w-[60%] md:-ml-12 lg:-ml-20">
+            <div className="absolute -left-[7.5rem] bottom-0 z-20 flex gap-2">
+              <SwiperButtons swiperRef={swiperRef} isBeginning={isBeginning} isEnd={isEnd} />
+            </div>
+            <SwiperSection swiperRef={swiperRef} onSlideChange={handleSlideChange} slides={slides} />
+            <div className="mt-8 flex justify-center gap-10 xl:hidden xl:mt-4">
+              <SwiperButtons swiperRef={swiperRef} isBeginning={isBeginning} isEnd={isEnd} />
+            </div>
+          </div>
         </div>
 
         {/* Right Cards Section */}

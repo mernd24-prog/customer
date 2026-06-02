@@ -2,17 +2,24 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SKELETON_PRESETS, SkeletonLoader } from "../common/skeleton";
 import { collageCard } from "../../constant/image.constant";
+import Label from "../common/label/Label";
 
 function CollageImage({ src, title, link }) {
   return (
-    <div className="h-28 w-full overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)] md:w-full lg:h-36">
+    <div className="relative h-28 w-full overflow-hidden  bg-[var(--customer-cream)] md:w-full lg:h-36">
       <Link to={link}>
         <img
           src={src}
           alt={title}
-          className="h-full w-full object-top  object-cover transition-all duration-300 ease-in-out hover:scale-105"
+          className="h-full w-full object-cover object-top transition-all duration-300 ease-in-out hover:scale-105"
           loading="lazy"
         />
+
+        <span className="absolute bottom-3 left-3 rounded-full  backdrop-blur-[8px]">
+           <Label variant="imageLabel">
+        Trending
+       </Label>
+        </span>
       </Link>
     </div>
   );
@@ -20,32 +27,31 @@ function CollageImage({ src, title, link }) {
 
 function CollageCard({ section, index }) {
   return (
-    <article
-      className="customer-card p-4 sm:p-[18px]"
-      style={{
-        "--customer-card-bg":
-          index % 2 === 0
-            ? "var(--customer-navy-soft)"
-            : "var(--customer-surface-soft)",
-      }}
-    >
-      <h2 className="mb-4  text-lg font-bold text-[var(--customer-navy)] md:text-xl">
-        {section.title}
-      </h2>
+    <article className="overflow-hidden rounded-[20px] bg-[#CE9F2D33] border border-[#CE9F2D66]">
+      <div className="flex items-center justify-between px-6 py-5">
+        <h2 className="font-['Sans'] text-[18px] font-bold leading-[100%] text-[#2E2E2E]">
+          {section.title}
+        </h2>
 
-      <div className="grid gap-2  xs:grid-cols-2">
+       <Label variant="outline">
+        {section.label}
+       </Label>
+      </div>
+
+      <div className="grid grid-cols-2 gap-[1px]">
         {section.images.map((ele, idx) => (
           <CollageImage
             key={idx}
             src={ele.image}
             link={ele.link}
-            title={section.title}
+            title={ele.title}
           />
         ))}
       </div>
     </article>
   );
 }
+
 
 function toCollageSections(cmsPages = []) {
   const sections = (Array.isArray(cmsPages) ? cmsPages : [])
@@ -78,6 +84,7 @@ export default function CollageMainSection({ cmsPages = [] }) {
   const fallbackSections = [
     {
       title: "Best Sellers in Men's Fashion",
+      label: "Trending",
       images: [
         { image: collageCard.menFashion, link: "/categories/mens-fashion" },
         { image: collageCard.stylishPair, link: "/products" },
@@ -87,23 +94,32 @@ export default function CollageMainSection({ cmsPages = [] }) {
     },
     {
       title: "Up to 60% Off Home & Lifestyle",
+      label: "Trending",
       images: [
         { image: collageCard.homeDecor, link: "/categories/home" },
         { image: collageCard.smartHome, link: "/categories/electronics" },
+        { image: collageCard.blazer, link: "/categories/fashion" },
+        { image: collageCard.watch, link: "/categories/accessories" },
       ],
     },
     {
       title: "Trending in Women's Fashion",
+      label: "Trending",
       images: [
         { image: collageCard.stylishPair, link: "/categories/womens-fashion" },
         { image: collageCard.watch, link: "/categories/jewellery" },
+        { image: collageCard.blazer, link: "/categories/fashion" },
+        { image: collageCard.watch, link: "/categories/accessories" },
       ],
     },
     {
       title: "Top Picks in Kids Fashion",
+      label: "Trending",
       images: [
         { image: collageCard.blazer, link: "/categories/kids" },
         { image: collageCard.menFashion, link: "/products" },
+        { image: collageCard.blazer, link: "/categories/fashion" },
+        { image: collageCard.watch, link: "/categories/accessories" },
       ],
     },
   ];
@@ -118,7 +134,7 @@ export default function CollageMainSection({ cmsPages = [] }) {
           containerClass="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4"
         />
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 h-full">
           {visibleSections.map((section, idx) => (
             <CollageCard key={idx} index={idx} section={section} />
           ))}

@@ -68,7 +68,9 @@ export default function ProfileTab({ user }) {
             {watch("firstName")} {watch("lastName")}
           </p>
 
-          <p className="break-all  text-sm text-muted">{watch("email")}</p>
+          <p className="break-all  text-sm text-muted">
+            {watch("email")}
+          </p>
         </div>
       </div>
 

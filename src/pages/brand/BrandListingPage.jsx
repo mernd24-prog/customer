@@ -142,8 +142,12 @@ export default function BrandListingPage() {
           </div>
         ) : (
           <div className="rounded-[12px] border border-border bg-white px-6 py-12 text-center">
-            <h2 className=" text-xl font-bold text-ink">No brands found</h2>
-            <p className="mt-2  text-sm text-muted">Please check back later.</p>
+            <h2 className=" text-xl font-bold text-ink">
+              No brands found
+            </h2>
+            <p className="mt-2  text-sm text-muted">
+              Please check back later.
+            </p>
           </div>
         )}
       </section>

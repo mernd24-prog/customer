@@ -14,7 +14,9 @@ export default function BrandCarousel({ data = {} }) {
         <h2 className="font-bold  text-xl md:text-2xl lg:text-3xl xl:text-4xl">
           {sectionDetails.heading}
         </h2>
-        <p className="custom-h6  ">{sectionDetails.description}</p>
+        <p className="custom-h6  ">
+          {sectionDetails.description}
+        </p>
       </div>
       {loading ? (
         <SkeletonLoader

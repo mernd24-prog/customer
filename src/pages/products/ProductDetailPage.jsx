@@ -387,7 +387,9 @@ function DeliveryChecker({ productId }) {
     <div className="panel">
       <div className="mb-3 flex items-center gap-2">
         <MapPin size={16} className="text-gold" />
-        <span className=" text-sm  font-semibold text-ink">Check Delivery</span>
+        <span className=" text-sm  font-semibold text-ink">
+          Check Delivery
+        </span>
       </div>
       <form onSubmit={check} className="flex gap-2">
         <input
@@ -609,10 +611,7 @@ export default function ProductDetailPage() {
       <div className="mx-auto w-full max-w-[1440px] px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
         {/* Breadcrumb */}
         <nav className="mb-4 flex flex-wrap items-center gap-1  text-xs text-gray">
-          <Link
-            to="/"
-            className="hover:text-ink transition-all duration-300 ease-in-out"
-          >
+          <Link to="/" className="hover:text-ink transition-all duration-300 ease-in-out">
             Home
           </Link>
           <span>/</span>

@@ -42,7 +42,9 @@ export function WatchlistItemCard({
             <h4 className="line-clamp-2  text-[13px] font-semibold text-ink transition-all duration-300 ease-in-out group-hover:text-gold">
               <Link to={`/products/${id}`}>{title}</Link>
             </h4>
-            <p className="mt-1  text-[12px] font-bold text-ink">{price}</p>
+            <p className="mt-1  text-[12px] font-bold text-ink">
+              {price}
+            </p>
           </div>
 
           <Link
@@ -77,7 +79,9 @@ export function WatchlistItemCard({
                 className="h-full w-full object-contain"
               />
             ) : (
-              <span className=" text-sm text-gray">No image</span>
+              <span className=" text-sm text-gray">
+                No image
+              </span>
             )}
           </div>
 

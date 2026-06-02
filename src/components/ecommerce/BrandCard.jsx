@@ -46,13 +46,7 @@ export default function BrandCard({
           />
         ) : (
           <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-white text-center  text-lg font-bold text-gold shadow-sm">
-            {initials || (
-              <Store
-                size={30}
-                strokeWidth={1.4}
-                className="text-border-strong"
-              />
-            )}
+            {initials || <Store size={30} strokeWidth={1.4} className="text-border-strong" />}
           </div>
         )}
         <span

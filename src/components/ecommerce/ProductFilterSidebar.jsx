@@ -7,11 +7,7 @@ export function FilterSection({ title, children, defaultOpen = true }) {
 
   return (
     <div className="border-b border-[var(--customer-border)] py-4 last:border-b-0">
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center justify-between  text-sm font-semibold text-[var(--customer-ink)]"
-      >
+      <button type="button" onClick={() => setOpen((value) => !value)} className="flex w-full items-center justify-between  text-sm font-semibold text-[var(--customer-ink)]">
         {title}
         <span className="text-[var(--customer-gold-dark)]">
           {open ? "-" : "+"}
@@ -41,30 +37,12 @@ export function PriceRangeFilter({ min, max, onChange }) {
     <div className="grid gap-3">
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="mb-1 block  text-xs text-[var(--customer-muted)]">
-            Min (₹)
-          </label>
-          <input
-            type="number"
-            value={localMin}
-            onChange={(event) => setLocalMin(event.target.value)}
-            placeholder="0"
-            min="0"
-            className="customer-input min-h-9 px-2.5 py-1.5 text-sm"
-          />
+          <label className="mb-1 block  text-xs text-[var(--customer-muted)]">Min (₹)</label>
+          <input type="number" value={localMin} onChange={(event) => setLocalMin(event.target.value)} placeholder="0" min="0" className="customer-input min-h-9 px-2.5 py-1.5 text-sm" />
         </div>
         <div>
-          <label className="mb-1 block  text-xs text-[var(--customer-muted)]">
-            Max (₹)
-          </label>
-          <input
-            type="number"
-            value={localMax}
-            onChange={(event) => setLocalMax(event.target.value)}
-            placeholder="Any"
-            min="0"
-            className="customer-input min-h-9 px-2.5 py-1.5 text-sm"
-          />
+          <label className="mb-1 block  text-xs text-[var(--customer-muted)]">Max (₹)</label>
+          <input type="number" value={localMax} onChange={(event) => setLocalMax(event.target.value)} placeholder="Any" min="0" className="customer-input min-h-9 px-2.5 py-1.5 text-sm" />
         </div>
       </div>
       <BrandButton
@@ -76,11 +54,7 @@ export function PriceRangeFilter({ min, max, onChange }) {
         onClick={apply}
       />
       {(min || max) && (
-        <button
-          type="button"
-          onClick={clear}
-          className=" text-xs text-red-500 underline-offset-2 hover:underline"
-        >
+        <button type="button" onClick={clear} className=" text-xs text-red-500 underline-offset-2 hover:underline">
           Clear price filter
         </button>
       )}
@@ -88,15 +62,8 @@ export function PriceRangeFilter({ min, max, onChange }) {
   );
 }
 
-export function OptionFilter({
-  name,
-  options,
-  selected,
-  onChange,
-  emptyText = "Loading...",
-}) {
-  if (!options?.length)
-    return <p className=" text-xs text-[var(--customer-muted)]">{emptyText}</p>;
+export function OptionFilter({ name, options, selected, onChange, emptyText = "Loading..." }) {
+  if (!options?.length) return <p className=" text-xs text-[var(--customer-muted)]">{emptyText}</p>;
 
   return (
     <div className="grid max-h-48 gap-2 overflow-y-auto pr-1">
@@ -108,18 +75,8 @@ export function OptionFilter({
         const checked = selected === String(value);
 
         return (
-          <label
-            key={value}
-            className="flex cursor-pointer items-center gap-2  text-sm text-[var(--customer-ink)]"
-          >
-            <input
-              type="radio"
-              name={name}
-              value={value}
-              checked={checked}
-              onChange={() => onChange?.(checked ? undefined : String(value))}
-              className="h-3.5 w-3.5 accent-[var(--customer-gold)]"
-            />
+          <label key={value} className="flex cursor-pointer items-center gap-2  text-sm text-[var(--customer-ink)]">
+            <input type="radio" name={name} value={value} checked={checked} onChange={() => onChange?.(checked ? undefined : String(value))} className="h-3.5 w-3.5 accent-[var(--customer-gold)]" />
             <span className="flex-1 truncate">{label}</span>
             {count != null && (
               <span className="text-xs text-[var(--customer-subtle)]">
@@ -160,9 +117,7 @@ export function RatingFilter({ selected, onChange }) {
                 }
               />
             ))}
-            <span className="ml-1  text-xs text-[var(--customer-muted)]">
-              & up
-            </span>
+            <span className="ml-1  text-xs text-[var(--customer-muted)]">& up</span>
           </span>
         </label>
       ))}

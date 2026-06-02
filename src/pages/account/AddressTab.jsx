@@ -361,7 +361,9 @@ export default function AddressTab({ user }) {
     <div className="grid gap-5">
       <div className="flex flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className=" text-base font-semibold text-ink">Saved addresses</p>
+          <p className=" text-base font-semibold text-ink">
+            Saved addresses
+          </p>
           <p className=" text-sm text-muted">
             {addresses.length
               ? `${addresses.length} address${addresses.length === 1 ? "" : "es"} saved`

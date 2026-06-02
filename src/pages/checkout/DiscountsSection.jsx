@@ -5,7 +5,9 @@ import { formatMoney } from "../../utils/ecommerce";
 export default function DiscountsSection({ register, errors, walletBalance }) {
   return (
     <section className="rounded-[12px] border border-border bg-white p-5">
-      <h2 className="mb-4  text-base font-semibold text-ink">Discounts</h2>
+      <h2 className="mb-4  text-base font-semibold text-ink">
+        Discounts
+      </h2>
       <div className="grid gap-4">
         <FormField
           id="couponCode"

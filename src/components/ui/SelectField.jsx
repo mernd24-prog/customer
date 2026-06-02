@@ -32,10 +32,7 @@ export default function SelectField({
   const showSelect = hasOptions || disabled;
 
   return (
-    <label
-      className="grid gap-1.5  text-sm font-medium text-[var(--customer-ink)]"
-      htmlFor={id}
-    >
+    <label className="grid gap-1.5  text-sm font-medium text-[var(--customer-ink)]" htmlFor={id}>
       <span>{label}</span>
       {showSelect ? (
         <select
