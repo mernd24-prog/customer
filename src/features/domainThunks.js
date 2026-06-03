@@ -45,13 +45,12 @@ export const catalogThunks = {
 };
 
 export const searchThunks = {
-  searchElastic: makeThunk("search/searchElastic", { url: endpoints.search.main, params: q, cache: true, cacheTtl: 120000 }),
+  searchCatalog: makeThunk("search/searchCatalog", { url: endpoints.search.main, params: q, cache: true, cacheTtl: 120000 }),
   searchAutocomplete: makeThunk("search/searchAutocomplete", { url: endpoints.search.autocomplete, params: q, cache: true, cacheTtl: 120000 })
 };
 
 export const productThunks = {
   fetchProducts: makeThunk("product/fetchProducts", { url: endpoints.products.list, params: q }),
-  searchProducts: makeThunk("product/searchProducts", { url: endpoints.products.search, params: q }),
   fetchSellerProducts: makeThunk("product/fetchSellerProducts", { url: endpoints.products.sellerMe, params: q }),
   fetchProductById: makeThunk("product/fetchProductById", { url: ({ productId }) => endpoints.products.detail(productId) }),
   createProduct: makeThunk("product/createProduct", { method: "post", url: endpoints.products.create, data: body }),

@@ -44,7 +44,6 @@ import {
 } from "../features/auth/authSlice";
 import {
   fetchProducts,
-  searchProducts,
   fetchProductById,
 } from "../features/product/productSlice";
 import { fetchCategoryByKey } from "../features/catalog/catalogSlice";
@@ -609,7 +608,7 @@ export function ProductsPage({ search = false }) {
   const [params, setParams] = useSearchParams();
   const [query, setQuery] = useState(params.get("q") || "");
   const productState = useFetch(
-    search ? searchProducts : fetchProducts,
+    fetchProducts,
     search ? { q: query } : Object.fromEntries(params),
     (s) => s.product,
   );
@@ -638,7 +637,7 @@ export function ProductsPage({ search = false }) {
           if (!searchValue) return;
           setQuery(searchValue);
           setParams({ q: searchValue });
-          dispatch(searchProducts({ q: searchValue }));
+          dispatch(fetchProducts({ q: searchValue }));
         }}
       >
         <input
@@ -671,7 +670,7 @@ export function ProductsPage({ search = false }) {
         onRetry={() =>
           dispatch(
             search
-              ? searchProducts({ q: query })
+              ? fetchProducts({ q: query })
               : fetchProducts(Object.fromEntries(params)),
           )
         }

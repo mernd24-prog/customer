@@ -345,10 +345,9 @@ export default function CategoryPage() {
                 label: String(option),
               }))}
               selected={
-                searchParams.get(attribute.key) ||
                 searchParams.get(`attr_${attribute.key}`)
               }
-              onChange={(value) => updateParam(attribute.key, value)}
+              onChange={(value) => updateParam(`attr_${attribute.key}`, value)}
             />
           ),
         })),

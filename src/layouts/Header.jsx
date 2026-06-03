@@ -41,6 +41,7 @@ import { getRole, isAdminRole } from "../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
 import CategoryMegaMenu from "../components/ecommerce/CategoryMegaMenu";
 import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
+import { Button } from "../components/common";
 
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
@@ -377,7 +378,7 @@ export const TopHeader = () => {
           </Link>
 
           {currentUser ? (
-            <BrandButton
+            <Button
               variant="custom"
               textColor="#03014D"
               rounded={false}
@@ -447,6 +448,8 @@ export const Navbar = ({ icons: propIcons }) => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onSearch={handleSearch}
+          enableAutocomplete
+          autocompleteLimit={8}
           placeholder="Search for products, brands and categories..."
           micIcon={icons.Mic}
           showButtonLabel={false}

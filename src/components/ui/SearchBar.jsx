@@ -4,6 +4,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { sanitizeSearchQuery } from "../../validations";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
+import {
+  clearSuggestions,
+  searchAutocomplete,
+} from "../../features/search/searchSlice";
+import useDebouncedValue from "../../hooks/useDebouncedValue";
 
 function getCategoryListFromResponse(data) {
   if (Array.isArray(data)) return data;
@@ -23,6 +28,9 @@ const SearchBar = ({
   onChange,
   onSearch,
   onKeyDown,
+  enableAutocomplete = false,
+  autocompleteLimit = 8,
+  autocompleteMinLength = 2,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -30,15 +38,31 @@ const SearchBar = ({
 
   const categoriesRaw = useSelector((state) => state.catalog.list || []);
   const categoriesLoading = useSelector((state) => state.catalog.loading);
+  const suggestionsRaw = useSelector((state) => state.search.suggestions || []);
   const categories = getCategoryListFromResponse(categoriesRaw);
+  const suggestions = Array.isArray(suggestionsRaw)
+    ? Array.from(
+        new Set(
+          suggestionsRaw
+            .map((suggestion) =>
+              typeof suggestion === "string"
+                ? suggestion
+                : suggestion?.title || suggestion?.name || suggestion?.query,
+            )
+            .filter(Boolean),
+        ),
+      )
+    : [];
 
   const [internalQuery, setInternalQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   
   const dropdownRef = useRef(null);
   const categoriesRequestedRef = useRef(false);
   const searchQuery = value ?? internalQuery;
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 250);
 
   const catParam = searchParams.get("categoryId") || searchParams.get("category") || searchParams.get("categorySlug");
 
@@ -53,6 +77,29 @@ const SearchBar = ({
       dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 }));
     }
   }, [dispatch, categories.length, categoriesLoading]);
+
+  useEffect(() => {
+    if (!enableAutocomplete) return;
+
+    const query = sanitizeSearchQuery(debouncedSearchQuery);
+    if (query.length < autocompleteMinLength) {
+      dispatch(clearSuggestions());
+      return;
+    }
+
+    dispatch(
+      searchAutocomplete({
+        params: { q: query, limit: autocompleteLimit },
+        cacheKey: `search-autocomplete-${query}-${autocompleteLimit}`,
+      }),
+    ).catch(() => {});
+  }, [
+    autocompleteLimit,
+    autocompleteMinLength,
+    debouncedSearchQuery,
+    dispatch,
+    enableAutocomplete,
+  ]);
 
   // Sync selectedCategory with query params
   useEffect(() => {
@@ -77,6 +124,7 @@ const SearchBar = ({
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
+        setIsSuggestionOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -87,6 +135,7 @@ const SearchBar = ({
 
   const handleChange = (event) => {
     const nextValue = sanitizeSearchQuery(event.target.value);
+    setIsSuggestionOpen(Boolean(enableAutocomplete && nextValue.length >= autocompleteMinLength));
 
     if (onChange) {
       onChange({
@@ -105,6 +154,7 @@ const SearchBar = ({
   const handleSearch = (nextCategory = selectedCategory) => {
     const query = sanitizeSearchQuery(searchQuery);
 
+    setIsSuggestionOpen(false);
     if (onSearch) {
       onSearch(query, nextCategory);
       return;
@@ -120,6 +170,30 @@ const SearchBar = ({
     }
   };
 
+  const handleSuggestionSelect = (suggestion) => {
+    const query = sanitizeSearchQuery(suggestion);
+    if (!query) return;
+
+    if (onChange) {
+      onChange({ target: { value: query } });
+    } else {
+      setInternalQuery(query);
+    }
+
+    setIsSuggestionOpen(false);
+    if (onSearch) {
+      onSearch(query, selectedCategory);
+      return;
+    }
+
+    let url = `/search?q=${encodeURIComponent(query)}`;
+    if (selectedCategory) {
+      const catKey = selectedCategory.categoryKey || selectedCategory.key || selectedCategory.id || selectedCategory._id;
+      url += `&category=${encodeURIComponent(catKey)}&categoryId=${encodeURIComponent(catKey)}&categorySlug=${encodeURIComponent(catKey)}`;
+    }
+    navigate(url);
+  };
+
   const handleSelectCategory = (category) => {
     setSelectedCategory(category);
     setIsDropdownOpen(false);
@@ -129,13 +203,24 @@ const SearchBar = ({
 
   const handleKeyDown = (e) => {
     onKeyDown?.(e);
+    if (e.key === "Escape") {
+      setIsSuggestionOpen(false);
+      setIsDropdownOpen(false);
+      return;
+    }
     if (e.key === "Enter") {
       handleSearch();
     }
   };
 
+  const shouldShowSuggestions =
+    enableAutocomplete &&
+    isSuggestionOpen &&
+    sanitizeSearchQuery(searchQuery).length >= autocompleteMinLength &&
+    suggestions.length > 0;
+
   return (
-    <div className={`group w-full max-w-[720px] ${className}`} ref={dropdownRef}>
+    <div className={`group relative w-full max-w-[720px] ${className}`} ref={dropdownRef}>
       <div className="rounded-full border border-[#1B1D604D] bg-white shadow-sm focus-within:border-[#CE9F2D] focus-within:ring-2 focus-within:ring-[#CE9F2D]/15">
         <div className="flex h-[46px] w-full items-center overflow-visible rounded-full border-none bg-white pl-0 pr-0 outline-none">
           
@@ -200,8 +285,17 @@ const SearchBar = ({
             value={searchQuery}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
+            onFocus={() => {
+              if (
+                enableAutocomplete &&
+                sanitizeSearchQuery(searchQuery).length >= autocompleteMinLength
+              ) {
+                setIsSuggestionOpen(true);
+              }
+            }}
             placeholder={placeholder}
             aria-label="Search products"
+            aria-autocomplete={enableAutocomplete ? "list" : undefined}
             className="h-full w-full flex-1 border-none bg-transparent pl-5 pr-4 sm:px-4 text-sm text-[var(--customer-ink)] outline-none ring-0 placeholder:text-[var(--customer-muted)] focus:ring-0"
           />
 
@@ -217,6 +311,22 @@ const SearchBar = ({
 
         </div>
       </div>
+      {shouldShowSuggestions && (
+        <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-xl border border-[#1B1D6020] bg-white py-2 shadow-[0_12px_32px_rgba(0,0,0,0.1)]">
+          {suggestions.slice(0, autocompleteLimit).map((suggestion) => (
+            <button
+              key={suggestion}
+              type="button"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => handleSuggestionSelect(suggestion)}
+              className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-[var(--customer-ink)] transition-colors hover:bg-[#CE9F2D]/10 hover:text-[#03014D]"
+            >
+              <Search size={15} className="shrink-0 text-[var(--customer-muted)]" />
+              <span className="truncate">{suggestion}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

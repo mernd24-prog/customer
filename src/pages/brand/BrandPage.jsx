@@ -9,7 +9,7 @@ import {
   RatingFilter,
 } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
-import { searchElastic } from "../../features/search/searchSlice";
+import { fetchProducts } from "../../features/product/productSlice";
 import { fetchBrands } from "../../features/catalog/catalogSlice";
 import { getImageUrlFromValue } from "../../utils/ecommerce";
 
@@ -70,7 +70,7 @@ export default function BrandPage() {
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
 
-  const searchState = useSelector((s) => s.search);
+  const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
   const totalPages = pageInfo.totalPages || 1;
@@ -140,7 +140,7 @@ export default function BrandPage() {
       maxPrice: searchParams.get("maxPrice") || undefined,
       sort: searchParams.get("sort") || undefined,
       minRating: searchParams.get("rating") || undefined,
-      inStock: searchParams.get("inStock") !== "false" ? "true" : undefined,
+      inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
       page: pageOverride || 1,
       limit: Number(searchParams.get("limit") || 20),
     }),
@@ -151,12 +151,7 @@ export default function BrandPage() {
     async ({ page = 1, append = false } = {}) => {
       const params = getParams(page);
       if (append) setIsLoadingMore(true);
-      const result = await dispatch(
-        searchElastic({
-          params,
-          cacheKey: `search-list-${JSON.stringify(params)}`,
-        }),
-      ).unwrap();
+      const result = await dispatch(fetchProducts(params)).unwrap();
       const data = result?.data || {};
       const list =
         data.hits ||
@@ -165,7 +160,7 @@ export default function BrandPage() {
         data.items ||
         data.list ||
         (Array.isArray(data) ? data : []);
-      const meta = result?.meta || {};
+      const meta = result?.meta?.pagination || result?.pagination || result?.meta || {};
       setPageInfo({
         page: Number(meta.page || meta.currentPage || params.page || 1),
         totalPages: Number(meta.totalPages || meta.pages || 1),
@@ -191,7 +186,7 @@ export default function BrandPage() {
     if (
       !sentinelRef.current ||
       !firstLoadDone ||
-      searchState.loading ||
+      productState.loading ||
       isLoadingMore
     )
       return undefined;
@@ -212,7 +207,7 @@ export default function BrandPage() {
     totalPages,
     firstLoadDone,
     loadProducts,
-    searchState.loading,
+    productState.loading,
     isLoadingMore,
   ]);
 
@@ -304,9 +299,9 @@ export default function BrandPage() {
         <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
           <input
             type="checkbox"
-            checked={searchParams.get("inStock") !== "false"}
+            checked={searchParams.get("inStock") === "true"}
             onChange={(e) =>
-              updateParam("inStock", e.target.checked ? undefined : "false")
+              updateParam("inStock", e.target.checked ? "true" : undefined)
             }
             className="h-3.5 w-3.5 accent-gold"
           />

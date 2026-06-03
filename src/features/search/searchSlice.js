@@ -21,19 +21,32 @@ const searchSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(searchThunks.searchElastic.pending, (state) => {
+      .addCase(searchThunks.searchCatalog.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(searchThunks.searchElastic.fulfilled, (state, action) => {
+      .addCase(searchThunks.searchCatalog.fulfilled, (state, action) => {
         state.loading = false;
         const data = action.payload.data || {};
         state.hits = data.hits || data.products || data.results || (Array.isArray(data) ? data : []);
         state.facets = data.facets || null;
-        state.meta = action.payload.meta;
+        const total = Number(data.total ?? action.payload.meta?.total ?? state.hits.length);
+        const limit = Number(data.limit ?? action.payload.meta?.limit ?? action.payload.arg?.params?.limit ?? 12);
+        state.meta = {
+          ...(action.payload.meta || {}),
+          page: Number(data.page ?? action.payload.meta?.page ?? action.payload.arg?.params?.page ?? 1),
+          limit,
+          total,
+          totalPages: Number(
+            data.totalPages ??
+              action.payload.meta?.totalPages ??
+              Math.max(1, Math.ceil(total / Math.max(1, limit))),
+          ),
+          source: data.source || action.payload.meta?.source || "elasticsearch",
+        };
         state.lastQuery = action.payload.arg;
       })
-      .addCase(searchThunks.searchElastic.rejected, (state, action) => {
+      .addCase(searchThunks.searchCatalog.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
       })
@@ -53,5 +66,5 @@ const searchSlice = createSlice({
 });
 
 export const { clearSearch, clearSuggestions } = searchSlice.actions;
-export const { searchElastic, searchAutocomplete } = searchThunks;
+export const { searchCatalog, searchAutocomplete } = searchThunks;
 export default searchSlice.reducer;

@@ -105,11 +105,24 @@ export function createApiSlice({
               state.entities = Object.fromEntries(
                 data.map((item, index) => [idOf(item) ?? index, item]),
               );
-            } else if (data?.items && Array.isArray(data.items)) {
-              state.list = data.items;
+            } else if (
+              Array.isArray(data?.items) ||
+              Array.isArray(data?.results) ||
+              Array.isArray(data?.hits) ||
+              Array.isArray(data?.products) ||
+              Array.isArray(data?.list)
+            ) {
+              const list =
+                data.items ||
+                data.results ||
+                data.hits ||
+                data.products ||
+                data.list ||
+                [];
+              state.list = list;
               state.current = data;
               state.entities = Object.fromEntries(
-                data.items.map((item, index) => [idOf(item) ?? index, item]),
+                list.map((item, index) => [idOf(item) ?? index, item]),
               );
             } else if (data?.orders && Array.isArray(data.orders)) {
               state.list = data.orders;

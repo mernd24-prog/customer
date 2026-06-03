@@ -18,7 +18,7 @@ import {
   RatingFilter,
 } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
-import { searchElastic } from "../../features/search/searchSlice";
+import { searchCatalog } from "../../features/search/searchSlice";
 import { sanitizeSearchQuery } from "../../validations";
 import useDebouncedValue from "../../hooks/useDebouncedValue";
 
@@ -59,7 +59,7 @@ export default function SearchPage() {
       minPrice: searchParams.get("minPrice") || undefined,
       maxPrice: searchParams.get("maxPrice") || undefined,
       minRating: searchParams.get("minRating") || undefined,
-      inStock: searchParams.get("inStock") !== "false" ? "true" : undefined,
+      inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
       sort: searchParams.get("sort") || undefined,
       page: currentPage,
       limit: Number(searchParams.get("limit") || 12),
@@ -71,7 +71,7 @@ export default function SearchPage() {
     const p = getParams();
     if (p.q || p.category || p.categoryId || p.categorySlug) {
       dispatch(
-        searchElastic({
+        searchCatalog({
           params: p,
           cacheKey: `search-list-${JSON.stringify(p)}`,
         }),
@@ -224,14 +224,14 @@ export default function SearchPage() {
     });
   };
 
-  const facetCategories = (facets?.category || []).map((category) => ({
+  const facetCategories = (facets?.category || facets?.categories || []).map((category) => ({
     value: category.key || category.value || category._id,
     label: category.label || category.title || category.key || category.value,
     count: category.count || category.doc_count || 0,
-  }));
+  })).filter((category) => category.value && category.label);
 
   const filterSections = [
-    Object.keys(facets).length > 0 && {
+    facetCategories.length > 0 && {
       key: "category",
       title: "Category",
       content: (
@@ -273,9 +273,9 @@ export default function SearchPage() {
         <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
           <input
             type="checkbox"
-            checked={searchParams.get("inStock") !== "false"}
+            checked={searchParams.get("inStock") === "true"}
             onChange={(event) =>
-              updateParam("inStock", event.target.checked ? undefined : "false")
+              updateParam("inStock", event.target.checked ? "true" : undefined)
             }
             className="h-3.5 w-3.5 accent-gold"
           />
@@ -409,7 +409,7 @@ export default function SearchPage() {
                 onRetry={() => {
                   const p = getParams();
                   dispatch(
-                    searchElastic({
+                    searchCatalog({
                       params: p,
                       cacheKey: `search-list-${JSON.stringify(p)}`,
                     })
