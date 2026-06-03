@@ -116,7 +116,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         <UserPlus size={18} /> Register as buyer
       </Button>
 
-      {/* <p className="text-center  text-[0.8rem] text-muted">
+      <p className="text-center  text-[0.8rem] text-muted">
         Already have an account?{" "}
         <Link
           className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
@@ -133,7 +133,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         >
           Continue with OTP
         </Link>
-      </p> */}
+      </p>
     </form>
   );
 }

@@ -49,8 +49,8 @@ export default function ForgotPasswordPage() {
         eyebrow="Password recovery"
         title="Forgot your password?"
         subtitle="Enter your registered email and we'll send you a one-time password to reset your account."
-        icon={<KeyRound size={24} />}
-        maxWidth="max-w-[460px]"
+        icon="/image/png/person.png"
+        maxWidth="max-w-[60rem]"
       >
         <form className="grid gap-4" onSubmit={handleSubmit(submit)} noValidate>
           <FormField
@@ -64,7 +64,10 @@ export default function ForgotPasswordPage() {
           />
 
           {error && (
-            <div className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700" role="alert">
+            <div
+              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700"
+              role="alert"
+            >
               {error}
             </div>
           )}
