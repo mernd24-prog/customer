@@ -358,10 +358,12 @@ export const TopHeader = () => {
             </button>
           ) : (
             <BrandButton
-              variant="primary"
+              variant="custom"
+              bgColor="#CE9F2D"
+              textColor="#03014D"
               rounded={false}
               style={{ borderRadius: "5px" }}
-              className="h-[20px] min-h-[41px] min-w-[153px] px-4 py-0 text-[14px] font-semibold "
+              className="h-[20px] min-h-[41px] min-w-[153px] px-4 py-0 text-[14px] font-semibold hover:brightness-95 hover:shadow-md transition-all duration-300 ease-in-out"
               size="xs"
               label="Become a Seller"
               onClick={() => navigate("/register")}
@@ -379,9 +381,16 @@ export const Navbar = ({ icons: propIcons }) => {
   const displayIcons = propIcons || navData;
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSearch = (nextQuery = searchQuery) => {
+  const handleSearch = (nextQuery = searchQuery, category = null) => {
     const trimmedQuery = nextQuery.trim();
-    if (trimmedQuery) navigate(`/search?q=${encodeURIComponent(trimmedQuery)}`);
+    let url = `/search?q=${encodeURIComponent(trimmedQuery)}`;
+    if (category) {
+      const catKey = category.categoryKey || category.key || category.id || category._id;
+      url += `&category=${encodeURIComponent(catKey)}&categoryId=${encodeURIComponent(catKey)}&categorySlug=${encodeURIComponent(catKey)}`;
+    }
+    if (trimmedQuery || category) {
+      navigate(url);
+    }
   };
 
   return (
@@ -463,12 +472,14 @@ export const Navbar = ({ icons: propIcons }) => {
             </Link>
           ) : (
             <BrandButton
-              variant="outline"
+              variant="custom"
+              bgColor="#CE9F2D"
+              textColor="#03014D"
               rounded={false}
               style={{ borderRadius: "5px" }}
               label="Create Account"
               size="sm"
-              className="h-[36px] sm:h-[41px] min-h-[36px] sm:min-h-[41px] min-w-[120px] sm:min-w-[153px] whitespace-nowrap px-3 sm:px-4 text-[13px] sm:text-[16px] font-semibold"
+              className="h-[36px] sm:h-[41px] min-h-[36px] sm:min-h-[41px] min-w-[120px] sm:min-w-[153px] whitespace-nowrap px-3 sm:px-4 text-[13px] sm:text-[16px] font-semibold hover:brightness-95 hover:shadow-md transition-all duration-300 ease-in-out"
               onClick={() => navigate("/register")}
             />
           )}

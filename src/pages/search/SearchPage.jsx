@@ -53,6 +53,8 @@ export default function SearchPage() {
     () => ({
       q: searchParams.get("q") || "",
       category: searchParams.get("category") || undefined,
+      categoryId: searchParams.get("categoryId") || undefined,
+      categorySlug: searchParams.get("categorySlug") || undefined,
       minPrice: searchParams.get("minPrice") || undefined,
       maxPrice: searchParams.get("maxPrice") || undefined,
       minRating: searchParams.get("minRating") || undefined,
@@ -66,7 +68,7 @@ export default function SearchPage() {
 
   useEffect(() => {
     const p = getParams();
-    if (p.q) dispatch(searchElastic(p));
+    if (p.q || p.category || p.categoryId || p.categorySlug) dispatch(searchElastic(p));
   }, [dispatch, getParams]);
 
   useEffect(() => {
@@ -290,7 +292,16 @@ export default function SearchPage() {
 
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            {q && <PageHeader title={`Results for "${q}"`} className="mb-0" />}
+            {(q || searchParams.get("category") || searchParams.get("categoryId") || searchParams.get("categorySlug")) && (
+              <PageHeader
+                title={
+                  q
+                    ? `Results for "${q}"`
+                    : `Products in Category: "${searchParams.get("category") || searchParams.get("categoryId") || searchParams.get("categorySlug")}"`
+                }
+                className="mb-0"
+              />
+            )}
 
             {meta.total != null && (
               <p className=" text-sm text-muted">
@@ -332,7 +343,7 @@ export default function SearchPage() {
           </FilterDrawer>
 
           <div className="min-w-0 flex-1">
-            {!q ? (
+            {!(q || searchParams.get("category") || searchParams.get("categoryId") || searchParams.get("categorySlug")) ? (
               <div className="state-box flex flex-col items-center py-20 text-center">
                 <Search size={48} className="mb-4 text-gray" />
 
@@ -350,7 +361,7 @@ export default function SearchPage() {
                 error={searchState.error}
                 empty={!hits.length && !searchState.loading}
                 emptyTitle="No results found"
-                emptyText={`We couldn't find anything for "${q}". Try different keywords or remove some filters.`}
+                emptyText={q ? `We couldn't find anything for "${q}". Try different keywords or remove some filters.` : "We couldn't find any products in this category. Try selecting another category or removing some filters."}
                 onRetry={() => dispatch(searchElastic(getParams()))}
               >
                 <ProductGrid
