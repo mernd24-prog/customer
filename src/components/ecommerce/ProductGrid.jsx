@@ -1,4 +1,4 @@
-import ResponsiveGrid from "../common/ResponsiveGrid";
+import ResponsiveGrid from "../common/display/ResponsiveGrid";
 import ProductCard from "./ProductCard";
 import { getProductId } from "../../utils/ecommerce";
 

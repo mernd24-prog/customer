@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 
-import DropdownContainer from "./DropdownContainer";
 import DropdownHeader from "./DropdownHeader";
 import { WatchlistItemCard } from "../../components/ecommerce";
 import { Button } from "../../components/common";
@@ -10,7 +9,7 @@ export default function WatchlistDropdown({ title, items, onRemove }) {
   const navigate = useNavigate();
 
   return (
-    <DropdownContainer>
+    <div className="w-[320px] overflow-hidden rounded-[var(--customer-radius)] border border-[var(--customer-border)] bg-white shadow-[var(--customer-shadow-strong)]">
       <DropdownHeader title={title} actionText="View all" actionPath="/watchlist" />
 
       <div className="max-h-[420px] overflow-y-auto">
@@ -40,6 +39,6 @@ export default function WatchlistDropdown({ title, items, onRemove }) {
           </div>
         )}
       </div>
-    </DropdownContainer>
+    </div>
   );
 }
