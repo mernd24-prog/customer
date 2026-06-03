@@ -17,11 +17,17 @@ export default function MothersDayCarousel({
   const isDefaultHeading = heading === "SAM-Special Gifts For Mother's Day";
 
   return (
-    <section className="my-8 bg-[#1B1E5C] w-full py-12 lg:py-4 ">
-      <div className="max-w-[1760px] mx-auto px-4 xl:px-8 grid grid-cols-1 lg:grid-cols-4 gap-8 items-center">
+    <section className="my-8 bg-[#1B1E5C] relative w-full py-12 lg:py-4 banner-full">
+      <div className="max-w-[1760px]  mx-auto px-4 xl:px-8 grid grid-cols-1 lg:grid-cols-4 gap-8 items-center">
         {/* Left Text Block */}
-        <div className="flex flex-col items-center text-center lg:items-start lg:text-left text-white  p-2 2xl:p-5">
-          <h2 className="text-2xl xl:text-4xl 2xl:text-[44px]  font-bold  ">
+
+        <div className=" flex flex-col items-center text-center lg:items-start lg:text-left text-white p-2 2xl:p-5 ">
+          <img
+            src="/image/png/backgroundImg.png"
+            alt="decorative ring"
+            className="absolute top-0 left-0  md:block hidden"
+          />
+          <h2 className="relative text-2xl xl:text-4xl 2xl:text-[44px] font-bold  ">
             {isDefaultHeading ? (
               <>
                 Special Gifts <br className="hidden lg:block" />

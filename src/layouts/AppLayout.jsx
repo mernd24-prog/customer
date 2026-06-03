@@ -5,6 +5,7 @@ import { Footer } from "./Footer";
 import AddedToCartModal from "../components/cart/AddedToCartModal";
 import { closeAddedToCartModal } from "../features/cart/cartUiSlice";
 import ScrollTopButton from "../components/common/ScrollTopButton";
+import { footerData } from "../data/footer";
 
 const EMPTY_ITEMS = [];
 
@@ -12,7 +13,9 @@ export default function AppLayout() {
   const dispatch = useDispatch();
   const addedModalOpen = useSelector((state) => state.cartUi.addedModalOpen);
   const addedProduct = useSelector((state) => state.cartUi.addedProduct);
-  const cartItems = useSelector((state) => state.cart.current?.items ?? EMPTY_ITEMS);
+  const cartItems = useSelector(
+    (state) => state.cart.current?.items ?? EMPTY_ITEMS,
+  );
 
   return (
     <div className="customer-shell app-shell">
@@ -21,7 +24,7 @@ export default function AppLayout() {
       <main className="main-content customer-container">
         <Outlet />
       </main>
-      <Footer />
+      <Footer data={footerData} />
       <ScrollTopButton />
       <AddedToCartModal
         open={addedModalOpen}

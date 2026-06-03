@@ -72,7 +72,6 @@ export const footerData = {
         { label: "FAQs", href: "/faq" },
         { label: "Returns", href: "/returns" },
         // Added policy routes
-       
       ],
     },
     {
@@ -127,19 +126,26 @@ export const footerData = {
       },
     ],
   },
-  paymentMethods: [
-    "VISA",
-    "Mastercard",
-    "Maestro",
-    "American Express",
-    "Diners Club",
-    "Discover",
-    "RuPay",
-    "Net Banking",
-    "Cash on Delivery",
-    "Easy EMI",
+
+  copyright: "© 2026 Samglobal Marketplace Pvt. Ltd. All rights reserved.",
+  extrapages: [
+    {
+      labels: "Privacy Policy",
+      links: "/privacy-policy",
+    },
+    {
+      labels: "Terms of Use",
+      links: "/terms-of-use",
+    },
+    {
+      labels: "Cookie Settings",
+      links: "/cookie-settings",
+    },
+    {
+      labels: "Sitemap",
+      links: "#",
+    },
   ],
-  copyright: "Sam Global - Smart Choices. Better Living.",
   socialLinks: [
     {
       label: "Instagram",

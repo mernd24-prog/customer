@@ -86,7 +86,7 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
 }) {
   const location = useLocation();
   return (
-    <div className="flex flex-col h-full bg-cream/40 border-r border-border p-5">
+    <div className="flex flex-col h-full  bg-cream/40 border-r border-border p-5">
       <div className="mb-4 flex items-center gap-2 border-b border-border pb-3">
         <Sparkles size={15} className="text-gold" />
         <h3 className=" text-[11px] font-black uppercase tracking-normal text-ink">

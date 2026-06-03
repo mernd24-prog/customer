@@ -30,15 +30,15 @@ export function HomePage() {
   const categories = Array.isArray(categoryList) ? categoryList : [];
 
   useEffect(() => {
-    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => { });
+    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
     if (tokenStorage.getAccessToken()) {
-      dispatch(fetchRecommendations({ limit: 8 })).catch(() => { });
+      dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
     }
-    dispatch(fetchCategories({ limit: 20 })).catch(() => { });
+    dispatch(fetchCategories({ limit: 20 })).catch(() => {});
     dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(
-      () => { },
+      () => {},
     );
-    dispatch(fetchCmsPages({ limit: 100 })).catch(() => { });
+    dispatch(fetchCmsPages({ limit: 100 })).catch(() => {});
   }, [dispatch]);
 
   return (
@@ -56,19 +56,16 @@ export function HomePage() {
         title="Time for a Spring Refresh"
         subtitle="Curated collections for every style and home"
       />
+
       <CollageMainSection />
 
-      <section className=" my-10">
-        <ShowcaseSection
-          title="Featured Collections"
-          subtitle="Fresh edits across fashion, home, beauty and gifts"
-          headerbgColor="bg-white"
-          bodybgColor="bg-white"
-          gridClassName="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4"
-          items={reusableTopDealsDemo}
-          CardComponent={TopDealCard}
-        />
+      <ShoppingMadeEasyBanner
+        title="Shopping Made Easy"
+        description="Enjoy seamless shopping with reliable delivery, secure payments, and hassle-free returns."
+        ctaLabel="Shop Now"
+      />
 
+      <section className=" my-10">
         <ShowcaseSection
           title="New Arrivals"
           subtitle="Newly added products with trend-driven rankings"
@@ -86,11 +83,6 @@ export function HomePage() {
       </section>
 
       <MothersDaySwiper data={mothersDayData} />
-      <ShoppingMadeEasyBanner
-        title="Shopping Made Easy"
-        description="Enjoy seamless shopping with reliable delivery, secure payments, and hassle-free returns."
-        ctaLabel="Shop Now"
-      />
 
       {/* <MothersDaySwiper data={cmsBannerSlides} /> */}
 

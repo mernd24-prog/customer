@@ -11,7 +11,7 @@ export default function NewArrivalCard({
   const displayProducts = Array.isArray(products) ? products : [];
 
   return (
-    <article className="flex flex-col h-full overflow-hidden rounded-[1.5rem] border border-[var(--customer-border)] bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
+    <article className="flex flex-col h-full overflow-hidden rounded-[1.5rem] border border-[#1B1D6066] bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
       {/* Card Header (Navy Blue background) */}
       <div className="bg-[#1B1D60] p-5 flex flex-col justify-between">
         <div className="flex items-center justify-between w-full">
@@ -38,7 +38,7 @@ export default function NewArrivalCard({
       </div>
 
       {/* Card Body (Products List) */}
-      <div className="flex flex-col divide-y divide-[var(--customer-border)] bg-white flex-grow">
+      <div className="flex flex-col divide-y divide-[#1B1D6066] bg-white flex-grow">
         {displayProducts.map((prod, index) => (
           <Link
             key={prod.id || index}

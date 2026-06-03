@@ -14,7 +14,7 @@ export default function CategoryCard({
   const content = (
     <article
       className={cn(
-        "customer-card h-full w-full cursor-pointer p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-[var(--customer-gold)] hover:bg-[var(--customer-surface-soft)]",
+        "customer-card h-full   w-full cursor-pointer p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-[var(--customer-gold)] hover:bg-[var(--customer-surface-soft)]",
         active && "ring-2 ring-primary/50",
         className,
       )}

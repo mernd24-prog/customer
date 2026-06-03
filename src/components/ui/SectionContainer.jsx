@@ -11,17 +11,17 @@ export default function SectionContainer({
 }) {
   return (
     <section
-      className={`w-full overflow-hidden rounded-[var(--customer-radius)] border border-[var(--customer-border)] bg-white ${className}`}
+      className={`w-full overflow-hidden rounded-[var(--customer-radius)]  bg-white ${className}`}
     >
       <header
         className={`text-[var(--customer-ink)] ${headerbgColor || "bg-white"}`}
       >
         <div className="flex min-h-[72px] flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
           <div className="min-w-0">
-            <h2 className="customer-section-title  text-[20px] leading-tight sm:text-[22px]">
+            <h2 className="customer-section-title  text-[20px]  sm:text-[36px]">
               {title}
             </h2>
-            <p className="mt-1  text-xs leading-5 text-[var(--customer-muted)]">
+            <p className="mt-1  text-lg text-[var(--customer-muted)]">
               {subtitle}
             </p>
           </div>
@@ -29,7 +29,7 @@ export default function SectionContainer({
             <button
               type="button"
               onClick={onAction}
-              className="group flex shrink-0 items-center gap-2 self-start rounded-full border border-[var(--customer-border)] bg-white px-3 py-1.5  text-xs font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--customer-gold)] sm:self-center"
+              className="flex gap-1 text-[var(--customer-navy)] items-center justify-center border border-[var(--customer-navy)] px-4 py-2 rounded-md"
             >
               {actionLabel}
               <FaAngleRight className="transition-all duration-300 ease-in-out group-hover:translate-x-1" />

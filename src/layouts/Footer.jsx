@@ -1,84 +1,90 @@
-import { useDelayedLoading } from "../hooks/useDelayedLoading";
-import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
-import FooterActionLinks from "./footer/FooterActionLinks";
-import FooterAppDownload from "./footer/FooterAppDownload";
-import FooterBenefits from "./footer/FooterBenefits";
-import FooterBottomBar from "./footer/FooterBottomBar";
-import FooterLinkGroups from "./footer/FooterLinkGroups";
 import { asArray, hrefOr } from "../utils/content";
 import { footerData } from "../data/footer";
-import { SkeletonLoader } from "../components/common";
-import { SKELETON_PRESETS } from "../components/common/skeleton";
+import { SocialIcons } from "../components/common";
+import { Link } from "react-router-dom";
 
-const EMPTY_FOOTER = {
-  benefits: [],
-  linkGroups: [],
-  actionLinks: [],
-  appDownload: { title: "", links: [] },
-  socialLinks: [],
-  copyright: "",
-};
 
-const normalizeFooterHref = (link) => {
-  if (
-    String(link?.label || "")
-      .trim()
-      .toLowerCase() === "why choose us"
-  ) {
-    return "/about-us#why-choose-us";
-  }
 
-  return hrefOr(link?.href || link?.url);
-};
-
-export function Footer({ data = {} }) {
-  const loading = useDelayedLoading();
-  const { page } = useCmsRecord("footer-links");
-  const baseData = { ...footerData, ...data };
-  const cmsData = getCmsPayload(page, baseData) || {};
-  const footer = {
-    ...EMPTY_FOOTER,
-    ...baseData,
-    ...cmsData,
-    benefits: asArray(cmsData?.benefits || baseData?.benefits),
-    linkGroups: asArray(
-      cmsData?.linkGroups || cmsData?.groups || baseData?.linkGroups,
-    ).map((group) => ({
-      ...group,
-      links: asArray(group?.links).map((link) => ({
-        ...link,
-        href: normalizeFooterHref(link),
-      })),
-    })),
-    actionLinks: asArray(cmsData?.actionLinks || baseData?.actionLinks).map(
-      (item) => ({
-        ...item,
-        href: hrefOr(item?.href || item?.url),
-      }),
-    ),
-    appDownload: {
-      title: cmsData?.appDownload?.title || baseData?.appDownload?.title || "",
-      links: asArray(
-        cmsData?.appDownload?.links || baseData?.appDownload?.links,
-      ).map((link) => ({
-        ...link,
-        href: hrefOr(link?.href || link?.url),
-      })),
-    },
-    socialLinks: asArray(cmsData?.socialLinks || baseData?.socialLinks).map(
-      (item) => ({
-        ...item,
-        href: hrefOr(item?.href || item?.url),
-      }),
-    ),
-  };
+// Inline Footer Link Groups Component
+function FooterLinkGroups({ groups = [], socialLinks = [] }) {
+  if (!groups.length) return null;
 
   return (
-    <footer className=" w-full bg-[#1C1C1C]   text-white">
-      <div className=" xl:px-12 bg-[#F5F8FB] border-t-2  border-[#1B1D6033]">
-        <FooterBenefits items={footer.benefits} />
+    <div className="max-w-[1760px] mx-auto px-4 md:px-8">
+      <div className="grid grid-cols-2 gap-6 border-t border-white/25 pt-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+        {groups.map((group, groupIndex) => (
+          <div key={group?.title || `group-${groupIndex}`}>
+            <h2 className="mb-4 border-l-2 font-semibold text-lg md:text-2xl pl-2 border-[var(--customer-gold)] text-white">
+              {group?.title}
+            </h2>
+            <ul className="grid gap-1 md:gap-3">
+              {(Array.isArray(group?.links) ? group.links : []).map(
+                (link, linkIndex) => (
+                  <li key={link?.label || `link-${linkIndex}`}>
+                    <Link
+                      to={hrefOr(link?.href)}
+                      className="text-sm md:text-base text-white/70 text-white transition-all duration-300 ease-in-out font-medium hover:text-white"
+                    >
+                      {link?.label}
+                    </Link>
+                  </li>
+                ),
+              )}
+            </ul>
+          </div>
+        ))}
       </div>
-      <div className="pt-8 flex flex-col customer-container gap-2 md:gap-4  md:flex-row justify-between">
+      <div className="flex flex-wrap gap-4 py-10">
+        {socialLinks.map((social, index) => (
+          <SocialIcons key={social?.label || `social-${index}`} data={social} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function Footer({ data = footerData }) {
+  const footer = data || footerData;
+  const {
+    copyright = footerData.copyright,
+    extrapages = footerData.extrapages,
+  } = footer;
+  const benefits = asArray(footer.benefits);
+  const linkGroups = asArray(footer.linkGroups);
+  const socialLinks = asArray(footer.socialLinks);
+  const extraPages = asArray(extrapages);
+  const appDownload = footer.appDownload || {};
+  const appDownloadLinks = asArray(appDownload.links);
+
+  return (
+    <footer className="w-full bg-[#1C1C1C] text-white">
+      {benefits.length > 0 && (
+        <div className="xl:px-12 bg-[#F5F8FB] border-t-2 border-[#1B1D6033]">
+          <div className="flex flex-col lg:flex-row justify-between py-3">
+            {benefits.map((item, index) => (
+              <div
+                key={item?.title || `benefit-${index}`}
+                className="flex items-center gap-4 rounded-[var(--customer-radius)] px-4 py-3"
+              >
+                <img
+                  className="h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12 2xl:h-16 2xl:w-16"
+                  src={item?.icon}
+                  alt={item?.alt || item?.title || "Benefit"}
+                />
+                <div>
+                  <h2 className="mb-0 text-lg xl:text-2xl font-bold text-[#1B1D60]">
+                    {item?.title}
+                  </h2>
+                  <p className="text-sm xl:text-lg font-light text-[#2E2E2E]">
+                    {item?.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <div className="pt-8 flex flex-col customer-container gap-2 md:gap-4 md:flex-row justify-between">
         <div className="flex items-center gap-3">
           <img
             src="/image/svg/logoWithName.svg"
@@ -87,29 +93,50 @@ export function Footer({ data = {} }) {
           />
         </div>
 
-        <div>
-          {" "}
-          <FooterAppDownload data={footer.appDownload} />
-        </div>
+        {/* App download Section */}
+        {(appDownload.title || appDownloadLinks.length > 0) && (
+          <div className="md:py-6">
+            <h2 className="max-w-sm lg:!w-full text-sm font-medium text-white/85">
+              {appDownload.title}
+            </h2>
+            <div className="my-4 flex flex-wrap gap-4 lg:my-6">
+              {appDownloadLinks.map((app, index) => (
+                <Link
+                  key={app?.label || `app-link-${index}`}
+                  to={hrefOr(app?.href)}
+                  aria-label={app?.label || "App link"}
+                >
+                  <img
+                    className="h-10 md:h-12 w-auto"
+                    src={app?.image}
+                    alt={app?.alt || app?.label || "App"}
+                  />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
-      {loading ? (
-        <SkeletonLoader
-          layout={SKELETON_PRESETS.FOOTER_LINKS}
-          count={6}
-          containerClass="w-container my-8 grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
-        />
-      ) : (
-        <FooterLinkGroups
-          groups={footer.linkGroups}
-          socialLinks={footer.socialLinks}
-        />
-      )}
+      <FooterLinkGroups groups={linkGroups} socialLinks={socialLinks} />
 
-      <FooterBottomBar
-        copyright={footer.copyright}
-        socialLinks={footer.socialLinks}
-      />
+      {/* Bottom Section with copyright and extra pages */}
+      <section className="bg-black py-4">
+        <div className="flex flex-col gap-2 lg:gap-10 text-white text-xs md:text-base lg:flex-row justify-center">
+          <p className="text-center">{copyright}</p>
+          <div className="flex items-center justify-center gap-2 md:gap-4">
+            {extraPages.map((item, index) => (
+              <a
+                key={item?.labels || `extra-page-${index}`}
+                href={hrefOr(item?.links)}
+                className=""
+              >
+                {item.labels}
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
     </footer>
   );
 }

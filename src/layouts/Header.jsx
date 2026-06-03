@@ -1,4 +1,11 @@
-import { Fragment, useCallback, useEffect, useMemo, useState, useRef } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -57,7 +64,9 @@ const getNavbarIconPath = (item = {}) => {
 };
 
 const getNavbarIconLabel = (item = {}) =>
-  item.tooltip || navbarIconLabels[item.name] || textOr(item.name, "Navigation");
+  item.tooltip ||
+  navbarIconLabels[item.name] ||
+  textOr(item.name, "Navigation");
 
 const baseAccountMenuItems = [
   { label: "My Profile", path: "/account/profile", icon: "user" },
@@ -92,14 +101,12 @@ const DEFAULT_FASHION_MENU = { leftSections: [], promo: null };
 const CATEGORY_MENU_OPEN_DELAY_MS = 350;
 const CATEGORY_MENU_CLOSE_DELAY_MS = 160;
 
-
 function getCategoryKey(item = {}) {
   return keyOr(
     item?.categoryKey,
     keyOr(item?.key, buildCategorySlug(textOr(item?.title, item?.name))),
   );
 }
-
 
 function normalizeCategoryNode(item = {}, parentKey = null) {
   const categoryKey = getCategoryKey(item);
@@ -122,7 +129,8 @@ function normalizeCategoryNode(item = {}, parentKey = null) {
 function buildCategoryTree(list = []) {
   const items = Array.isArray(list) ? list : [list].filter(Boolean);
   const byKey = new Map();
-  const sortByOrder = (a, b) => Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0);
+  const sortByOrder = (a, b) =>
+    Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0);
 
   const visit = (item, parentKey = null) => {
     if (!item || typeof item !== "object") return;
@@ -151,7 +159,12 @@ function buildCategoryTree(list = []) {
   });
 
   return Array.from(byKey.values())
-    .filter((node) => !node?.parentKey || !byKey.has(node.parentKey) || Number(node?.level ?? 0) === 0)
+    .filter(
+      (node) =>
+        !node?.parentKey ||
+        !byKey.has(node.parentKey) ||
+        Number(node?.level ?? 0) === 0,
+    )
     .sort(sortByOrder);
 }
 
@@ -161,7 +174,8 @@ function getCategoryListFromResponse(data) {
   if (Array.isArray(data?.items)) return data.items;
   if (Array.isArray(data?.list)) return data.list;
   if (Array.isArray(data?.categories)) return data.categories;
-  if (data?.category && typeof data.category === "object") return [data.category];
+  if (data?.category && typeof data.category === "object")
+    return [data.category];
   if (data?.data) return getCategoryListFromResponse(data.data);
   return [data];
 }
@@ -220,7 +234,9 @@ export const TopHeader = () => {
         data: {
           ...DEFAULT_SELL_DROPDOWN,
           ...sellDropdownCms,
-          features: withIcons(sellDropdownCms?.features || DEFAULT_SELL_DROPDOWN.features),
+          features: withIcons(
+            sellDropdownCms?.features || DEFAULT_SELL_DROPDOWN.features,
+          ),
         },
       },
       {
@@ -234,49 +250,54 @@ export const TopHeader = () => {
       },
       ...(currentUser
         ? [
-          {
-            type: "menu",
-            label:
-              currentUser.profile?.firstName
+            {
+              type: "menu",
+              label: currentUser.profile?.firstName
                 ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
-                : (currentUser.firstName ||
+                : currentUser.firstName ||
                   currentUser.email?.split("@")[0] ||
-                  "My Sam"),
-            path: "/account/profile",
-            icon: <User size={16} />,
-            title: "My Account",
-            items: withIcons([
-              ...baseAccountMenuItems,
-              ...(isAdminRole(currentRole)
-                ? [
-                  {
-                    label: "Admin Products",
-                    path: "/admin/products",
-                    icon: "settings",
-                  },
-                  {
-                    label: "Admin Catalog",
-                    path: "/admin/catalog",
-                    icon: "settings",
-                  },
-                  {
-                    label: "Admin Brands",
-                    path: "/admin/brands",
-                    icon: "settings",
-                  },
-                  {
-                    label: "Admin RBAC",
-                    path: "/admin/rbac",
-                    icon: "settings",
-                  },
-                ]
-                : []),
-            ]),
-          },
-        ]
+                  "My Sam",
+              path: "/account/profile",
+              icon: <User size={16} />,
+              title: "My Account",
+              items: withIcons([
+                ...baseAccountMenuItems,
+                ...(isAdminRole(currentRole)
+                  ? [
+                      {
+                        label: "Admin Products",
+                        path: "/admin/products",
+                        icon: "settings",
+                      },
+                      {
+                        label: "Admin Catalog",
+                        path: "/admin/catalog",
+                        icon: "settings",
+                      },
+                      {
+                        label: "Admin Brands",
+                        path: "/admin/brands",
+                        icon: "settings",
+                      },
+                      {
+                        label: "Admin RBAC",
+                        path: "/admin/rbac",
+                        icon: "settings",
+                      },
+                    ]
+                  : []),
+              ]),
+            },
+          ]
         : []),
     ],
-    [handleRemoveWatchlist, wishlistedProducts, currentUser, currentRole, sellDropdownCms],
+    [
+      handleRemoveWatchlist,
+      wishlistedProducts,
+      currentUser,
+      currentRole,
+      sellDropdownCms,
+    ],
   );
 
   const renderDropdown = (dropdown) => {
@@ -302,15 +323,17 @@ export const TopHeader = () => {
     <div className="hidden h-[60px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
       <div className="customer-container flex h-full items-center justify-between">
         <div className="flex flex-1 items-center gap-8 text-[#FFFFFF]">
-          {asArray(topLinks.length ? topLinks : DEFAULT_TOP_NAV_LINKS).map((link, index) => (
-            <Link
-              key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
-              to={hrefOr(link?.path)}
-              className="text-white/85 transition-all duration-300 ease-in-out hover:text-white"
-            >
-              {textOr(link?.name, "Link")}
-            </Link>
-          ))}
+          {asArray(topLinks.length ? topLinks : DEFAULT_TOP_NAV_LINKS).map(
+            (link, index) => (
+              <Link
+                key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
+                to={hrefOr(link?.path)}
+                className="text-white/85 transition-all duration-300 ease-in-out hover:text-white"
+              >
+                {textOr(link?.name, "Link")}
+              </Link>
+            ),
+          )}
         </div>
 
         <div className="flex h-full items-center gap-5">
@@ -396,10 +419,11 @@ export const Navbar = ({ icons: propIcons }) => {
                   <img
                     src={item?.img}
                     alt={getNavbarIconLabel(item)}
-                    className={`object-contain ${item?.name === "IN"
+                    className={`object-contain ${
+                      item?.name === "IN"
                         ? "h-[22px] w-[24px]"
                         : "h-[17px] w-[17px]"
-                      }`}
+                    }`}
                   />
                   <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
                     {getNavbarIconLabel(item)}
@@ -434,7 +458,7 @@ export const Navbar = ({ icons: propIcons }) => {
               <span className="truncate">
                 {currentUser.profile?.firstName
                   ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
-                  : (currentUser.firstName || "Account")}
+                  : currentUser.firstName || "Account"}
               </span>
             </Link>
           ) : (
@@ -510,7 +534,7 @@ export const CategoryBar = ({ headerData }) => {
         const list = getCategoryListFromResponse(data);
         if (list.length) setCatalogCategories(list);
       })
-      .catch(() => { });
+      .catch(() => {});
   }, [dispatch]);
 
   const handleCategoryMouseEnter = (item) => {
@@ -540,7 +564,10 @@ export const CategoryBar = ({ headerData }) => {
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
   };
 
-  const catalogTree = useMemo(() => buildCategoryTree(catalogCategories), [catalogCategories]);
+  const catalogTree = useMemo(
+    () => buildCategoryTree(catalogCategories),
+    [catalogCategories],
+  );
 
   const categories = useMemo(() => {
     const headerCategories = getCategoryListFromResponse(headerData);
@@ -560,17 +587,23 @@ export const CategoryBar = ({ headerData }) => {
   if (!categories.length) return null;
 
   return (
-    <header 
-      ref={categoryBarRef} 
-      className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen h-[130px] sm:h-[150px] lg:h-[220px] flex items-center"
+    <header
+      ref={categoryBarRef}
+      className="relative left-1/2 right-1/2  -ml-[50vw] -mr-[50vw] w-screen h-[130px] sm:h-[150px] lg:h-[220px] flex items-center"
     >
       {/* Split Background Images */}
-      <div className="absolute inset-y-0 left-0 w-1/2 bg-cover bg-center bg-no-repeat z-0" style={{ backgroundImage: "url('/image/jpg/cat1.png')" }} />
-      <div className="absolute inset-y-0 right-0 w-1/2 bg-cover bg-center bg-no-repeat z-0" style={{ backgroundImage: "url('/image/jpg/cat.jpg')" }} />
-      
+      <div
+        className="absolute inset-y-0 left-0 w-1/2 bg-cover bg-center bg-no-repeat z-0"
+        style={{ backgroundImage: "url('/image/jpg/cat1.png')" }}
+      />
+      <div
+        className="absolute inset-y-0 right-0 w-1/2 bg-cover bg-center bg-no-repeat z-0"
+        style={{ backgroundImage: "url('/image/jpg/cat.jpg')" }}
+      />
+
       {/* Golden Overlay */}
-      <div className="absolute inset-0 bg-[#CE9F2D33] z-10" />
-      
+      <div className="absolute inset-0 bg-[#CE9F2D33]  z-10" />
+
       <div className="w-full relative z-20">
         <div className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:justify-center lg:gap-5">
           {asArray(categories).map((item, index) => {
@@ -595,7 +628,7 @@ export const CategoryBar = ({ headerData }) => {
                   aria-controls="category-mega-menu"
                   className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
-                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px] lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#f1ead9] p-1.5 sm:p-2 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5">
+                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5">
                     {item?.img ? (
                       <ImageSkeleton
                         src={item?.img}
@@ -608,7 +641,9 @@ export const CategoryBar = ({ headerData }) => {
                     )}
                   </div>
 
-                  <span className={`mt-1 lg:mt-2 line-clamp-1 w-full max-w-[80px] sm:max-w-[100px] lg:max-w-[140px] text-center text-[11px] sm:text-[13px] lg:text-[20px] ${isActive ? "font-bold" : "font-medium"} leading-none tracking-[0.2px] text-[#2E2E2E]`}>
+                  <span
+                    className={`mt-1 lg:mt-2 line-clamp-1 w-full max-w-[80px] sm:max-w-[100px] lg:max-w-[140px] text-center text-[11px] sm:text-[13px] lg:text-[20px] ${isActive ? "font-bold" : "font-medium"} leading-none tracking-[0.2px] text-[#2E2E2E]`}
+                  >
                     {textOr(item?.name, "Category")}
                   </span>
                 </Link>
