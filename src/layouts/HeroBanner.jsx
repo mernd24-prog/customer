@@ -3,6 +3,7 @@ import { Autoplay, Navigation } from "swiper/modules";
 import { Tag } from "lucide-react";
 import { bannerData } from "../constant/image.constant";
 
+
 // Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
@@ -55,9 +56,9 @@ const HeroBanner = () => {
                   {/* Heading */}
                   <h2 className="max-w-[681px] lg:max-w-[800px] font-sans text-3xl font-bold leading-[40px] tracking-normal sm:text-5xl sm:leading-[58px] lg:text-[48px] lg:leading-[58px] xl:text-[54px] xl:leading-[64px] 2xl:text-[65px] 2xl:leading-[75px]">
                     Shop Smarter Across {' '}
-                    <br className="hidden sm:block lg:hidden" />
+                    <br />
                     <span className="text-[#CE9F2D]">
-                      Every Category
+                      Every Category {' '}
                     </span>
                   </h2>
                 </div>
@@ -72,11 +73,12 @@ const HeroBanner = () => {
                   <Button
                     variant="custom"
                     bgColor="#CE9F2D"
-                    textColor="#1B1D60"
+                    textColor="#03014D"
                     className="font-bold shadow-none text-sm hover:scale-105 transition-transform"
                     style={{ width: "141px", height: "48px", borderRadius: "10px" }}
                     rounded={false}
                     label="Shop Now"
+                    link="/products"
                   />
                   <Button
                     variant="custom"
@@ -84,6 +86,7 @@ const HeroBanner = () => {
                     style={{ width: "212px", height: "50px", borderRadius: "10px" }}
                     rounded={false}
                     label="Explore Categories"
+                    link="/products"
                   />
                 </div>
               </div>
