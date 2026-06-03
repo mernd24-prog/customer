@@ -66,8 +66,8 @@ export default function ResetPasswordPage() {
         eyebrow="Password recovery"
         title="Create a new password"
         subtitle="Enter the OTP we sent to your email along with your new password."
-        icon={<Lock size={28} />}
-        maxWidth="max-w-[460px]"
+        icon="/image/png/person.png"
+        maxWidth="max-w-[70rem]"
       >
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
           <FormField
@@ -111,7 +111,10 @@ export default function ResetPasswordPage() {
           />
 
           {error && (
-            <div className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700" role="alert">
+            <div
+              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700"
+              role="alert"
+            >
               {error}
             </div>
           )}

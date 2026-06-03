@@ -82,8 +82,8 @@ export default function LoginPage() {
         eyebrow="Welcome back"
         title="Sign in to Sam Global"
         subtitle="Access your orders, wallet, loyalty rewards, and personalized deals — all in one place."
-        icon={<User size={28} />}
-        maxWidth="max-w-[460px]"
+        icon="/image/png/person.png"
+        maxWidth="max-w-[60rem]"
       >
         <form
           className="grid gap-4 sm:gap-5"
@@ -180,9 +180,7 @@ export default function LoginPage() {
           <div className="relative flex items-center gap-3 py-0.5">
             <hr className="flex-1 border-border" />
 
-            <span className=" text-xs text-gray">
-              or
-            </span>
+            <span className=" text-xs text-gray">or</span>
 
             <hr className="flex-1 border-border" />
           </div>

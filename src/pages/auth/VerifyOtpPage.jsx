@@ -59,8 +59,8 @@ export default function VerifyOtpPage() {
         eyebrow="OTP login"
         title="Verify your identity"
         subtitle="Enter the OTP sent to your email to sign in to your account."
-        icon={<ShieldCheck size={28} />}
-        maxWidth="max-w-[460px]"
+        icon="/image/png/person.png"
+        maxWidth="max-w-[60rem]"
       >
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
           <FormField
@@ -98,17 +98,28 @@ export default function VerifyOtpPage() {
           />
 
           {error && (
-            <div className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700" role="alert">
+            <div
+              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700"
+              role="alert"
+            >
               {error}
             </div>
           )}
 
-          <Button type="submit" loading={loading} className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60" disabled={!isValid || loading}>
+          <Button
+            type="submit"
+            loading={loading}
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={!isValid || loading}
+          >
             <ShieldCheck size={18} /> Verify &amp; sign in
           </Button>
 
           <p className="text-center  text-[0.8rem] text-muted">
-            <Link to={AUTH_ROUTES.login} className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline">
+            <Link
+              to={AUTH_ROUTES.login}
+              className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
+            >
               Back to login
             </Link>
           </p>
