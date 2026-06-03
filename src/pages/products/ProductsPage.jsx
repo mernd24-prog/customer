@@ -12,7 +12,7 @@ import {
   RatingFilter,
 } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
-import { fetchProducts } from "../../features/product/productSlice";
+import { searchElastic } from "../../features/search/searchSlice";
 import {
   fetchCategories,
   fetchBrands,
@@ -44,7 +44,7 @@ export default function ProductsPage() {
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
 
-  const productState = useSelector((s) => s.product);
+  const searchState = useSelector((s) => s.search);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
   const products = items;
@@ -70,8 +70,8 @@ export default function ProductsPage() {
       storage: searchParams.get("storage") || undefined,
       skinType: searchParams.get("skinType") || undefined,
       shade: searchParams.get("shade") || undefined,
-      rating: searchParams.get("rating") || undefined,
-      inStock: searchParams.get("inStock") || undefined,
+      minRating: searchParams.get("rating") || undefined,
+      inStock: searchParams.get("inStock") !== "false" ? "true" : undefined,
       page: pageOverride || 1,
       limit: Number(searchParams.get("limit") || 12),
     }),
@@ -82,16 +82,21 @@ export default function ProductsPage() {
     async ({ page = 1, append = false } = {}) => {
       const params = getParams(page);
       if (append) setIsLoadingMore(true);
-      const result = await dispatch(fetchProducts(params)).unwrap();
+      const result = await dispatch(
+        searchElastic({
+          params,
+          cacheKey: `search-list-${JSON.stringify(params)}`,
+        }),
+      ).unwrap();
 
-      const data = result?.data;
-      const list = Array.isArray(data)
-        ? data
-        : Array.isArray(data?.items)
-          ? data.items
-          : Array.isArray(data?.list)
-            ? data.list
-            : [];
+      const data = result?.data || {};
+      const list =
+        data.hits ||
+        data.products ||
+        data.results ||
+        data.items ||
+        data.list ||
+        (Array.isArray(data) ? data : []);
       const meta = result?.meta || {};
       setPageInfo({
         page: Number(meta.page || meta.currentPage || params.page || 1),
@@ -107,11 +112,12 @@ export default function ProductsPage() {
   );
 
   useEffect(() => {
-    loadProducts({ page: 1, append: false }).catch(() => {
+    const pageVal = Number(searchParams.get("page") || 1);
+    loadProducts({ page: pageVal, append: false }).catch(() => {
       setFirstLoadDone(true);
       setIsLoadingMore(false);
     });
-  }, [loadProducts]);
+  }, [loadProducts, searchParams]);
 
   useEffect(() => {
     dispatch(fetchCategories({ limit: 100 }))
@@ -151,7 +157,7 @@ export default function ProductsPage() {
     if (
       !sentinelRef.current ||
       !firstLoadDone ||
-      productState.loading ||
+      searchState.loading ||
       isLoadingMore
     )
       return undefined;
@@ -173,7 +179,7 @@ export default function ProductsPage() {
     totalPages,
     firstLoadDone,
     loadProducts,
-    productState.loading,
+    searchState.loading,
     isLoadingMore,
   ]);
 
@@ -212,7 +218,11 @@ export default function ProductsPage() {
   };
 
   const setPage = (p) => {
-    loadProducts({ page: p, append: false }).catch(() => {});
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("page", p);
+      return next;
+    });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -233,7 +243,7 @@ export default function ProductsPage() {
       key: "rating",
       label: `Rating: ${searchParams.get("rating")}★ & up`,
     },
-    searchParams.get("inStock") && { key: "inStock", label: "In Stock Only" },
+    searchParams.get("inStock") === "true" && { key: "inStock", label: "In Stock Only" },
     ["color", "size", "material", "fit", "storage", "skinType", "shade"]
       .map(
         (key) =>
@@ -318,9 +328,9 @@ export default function ProductsPage() {
         <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
           <input
             type="checkbox"
-            checked={searchParams.get("inStock") === "true"}
+            checked={searchParams.get("inStock") !== "false"}
             onChange={(e) =>
-              updateParam("inStock", e.target.checked ? "true" : undefined)
+              updateParam("inStock", e.target.checked ? undefined : "false")
             }
             className="h-3.5 w-3.5 accent-gold"
           />
@@ -380,11 +390,11 @@ export default function ProductsPage() {
           sidebarOpen={sidebarOpen}
           onCloseSidebar={() => setSidebarOpen(false)}
           loading={
-            (productState.loading && !products.length) ||
+            (searchState.loading && !products.length) ||
             (!firstLoadDone && !products.length)
           }
-          error={productState.error}
-          empty={!products.length && !productState.loading && firstLoadDone}
+          error={searchState.error}
+          empty={!products.length && !searchState.loading && firstLoadDone}
           emptyTitle={isSearchMode ? "No results found" : "No products found"}
           emptyText={
             isSearchMode

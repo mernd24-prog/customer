@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 import BrandButton from "../ui/BrandButton";
 
@@ -21,6 +21,14 @@ export function FilterSection({ title, children, defaultOpen = true }) {
 export function PriceRangeFilter({ min, max, onChange }) {
   const [localMin, setLocalMin] = useState(min || "");
   const [localMax, setLocalMax] = useState(max || "");
+
+  useEffect(() => {
+    setLocalMin(min || "");
+  }, [min]);
+
+  useEffect(() => {
+    setLocalMax(max || "");
+  }, [max]);
 
   const apply = () =>
     onChange?.({

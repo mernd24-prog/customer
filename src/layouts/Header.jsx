@@ -18,6 +18,8 @@ import {
   ShoppingBag,
   Truck,
   User,
+  LifeBuoy,
+  ShoppingCart,
 } from "lucide-react";
 
 import ImageSkeleton from "../components/ui/Image";
@@ -209,6 +211,11 @@ export const TopHeader = () => {
     { name: giftCardsPage?.title || "Gift Card", path: "/gift-cards" },
     { name: helpContactPage?.title || "Help & Contact", path: "/help-contact" },
   ];
+  const filteredTopLinks = topLinks.filter(
+    (link) =>
+      link.name !== "Help & Contact" &&
+      link.name !== helpContactPage?.title,
+  );
 
   const { removeFromWishlist } = useProductActions();
   const {
@@ -253,45 +260,45 @@ export const TopHeader = () => {
       },
       ...(currentUser
         ? [
-            {
-              type: "menu",
-              label: currentUser.profile?.firstName
-                ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
-                : currentUser.firstName ||
-                  currentUser.email?.split("@")[0] ||
-                  "My Sam",
-              path: "/account/profile",
-              icon: <User size={16} />,
-              title: "My Account",
-              items: withIcons([
-                ...baseAccountMenuItems,
-                ...(isAdminRole(currentRole)
-                  ? [
-                      {
-                        label: "Admin Products",
-                        path: "/admin/products",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin Catalog",
-                        path: "/admin/catalog",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin Brands",
-                        path: "/admin/brands",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin RBAC",
-                        path: "/admin/rbac",
-                        icon: "settings",
-                      },
-                    ]
-                  : []),
-              ]),
-            },
-          ]
+          {
+            type: "menu",
+            label: currentUser.profile?.firstName
+              ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
+              : currentUser.firstName ||
+              currentUser.email?.split("@")[0] ||
+              "My Sam",
+            path: "/account/profile",
+            icon: <User size={16} />,
+            title: "My Account",
+            items: withIcons([
+              ...baseAccountMenuItems,
+              ...(isAdminRole(currentRole)
+                ? [
+                  {
+                    label: "Admin Products",
+                    path: "/admin/products",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin Catalog",
+                    path: "/admin/catalog",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin Brands",
+                    path: "/admin/brands",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin RBAC",
+                    path: "/admin/rbac",
+                    icon: "settings",
+                  },
+                ]
+                : []),
+            ]),
+          },
+        ]
         : []),
     ],
     [
@@ -326,7 +333,7 @@ export const TopHeader = () => {
     <div className="hidden h-[60px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
       <div className="customer-container flex h-full items-center justify-between">
         <div className="flex flex-1 items-center gap-8 text-[#FFFFFF]">
-          {asArray(topLinks.length ? topLinks : DEFAULT_TOP_NAV_LINKS).map(
+          {asArray(filteredTopLinks.length ? filteredTopLinks : DEFAULT_TOP_NAV_LINKS.filter(l => l.name !== "Help & Contact")).map(
             (link, index) => (
               <Link
                 key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
@@ -339,7 +346,7 @@ export const TopHeader = () => {
           )}
         </div>
 
-        <div className="flex h-full items-center gap-5">
+        <div className="flex h-full items-center gap-6">
           {dropdowns.map((dropdown) => (
             <HeaderDropdown
               key={dropdown.type}
@@ -351,14 +358,39 @@ export const TopHeader = () => {
             </HeaderDropdown>
           ))}
 
+          {/* Help & Contact */}
+          <Link
+            to="/help-contact"
+            className="flex items-center gap-2 text-white/85 transition-all duration-300 ease-in-out hover:text-white"
+          >
+            <LifeBuoy size={16} className="text-[#CE9F2D] shrink-0" />
+            <span>Help & Contact</span>
+          </Link>
+
+          {/* Vendor Login */}
+          <Link
+            to="/seller/status"
+            className="flex items-center gap-2 text-white/85 transition-all duration-300 ease-in-out hover:text-white"
+          >
+            <User size={16} className="text-[#CE9F2D] shrink-0" />
+            <span>Vendor Login</span>
+          </Link>
+
           {currentUser ? (
-            <button
-              type="button"
+            <BrandButton
+              variant="custom"
+              textColor="#03014D"
+              rounded={false}
+              style={{ borderRadius: "5px", border: "1px solid #1B1D604D" }}
+              className="h-[36px] min-h-[36px] min-w-[153px] px-4 py-0 text-[14px] font-bold hover:bg-gray-50 hover:shadow-md transition-all duration-300 ease-in-out"
+              size="sm"
+              label={
+                <span className="flex items-center gap-1.5 justify-center w-full">
+                  <LogOut size={14} /> Sign Out
+                </span>
+              }
               onClick={() => dispatch(logout())}
-              className="flex items-center gap-1.5 rounded border border-white/30 px-3 py-0.5 text-[11px] font-semibold text-white transition-all duration-300 ease-in-out hover:bg-white/10"
-            >
-              <LogOut size={14} /> Sign Out
-            </button>
+            />
           ) : (
             <HeaderGoldButton
               className="hidden text-[14px] lg:inline-flex"
@@ -378,6 +410,12 @@ export const Navbar = ({ icons: propIcons }) => {
   const currentUser = useSelector((s) => s.auth.current);
   const displayIcons = propIcons || navData;
   const [searchQuery, setSearchQuery] = useState("");
+
+  const cartState = useSelector((s) => s.cart);
+  const cartItemsCount = cartState?.current?.items?.reduce((total, item) => total + (item.quantity || 1), 0) || 0;
+
+  const wishlist = useSelector((s) => s.cart.current?.wishlist);
+  const wishlistCount = Array.isArray(wishlist) ? wishlist.length : 0;
 
   const handleSearch = (nextQuery = searchQuery, category = null) => {
     const trimmedQuery = nextQuery.trim();
@@ -538,7 +576,7 @@ export const CategoryBar = ({ headerData }) => {
         const list = getCategoryListFromResponse(data);
         if (list.length) setCatalogCategories(list);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [dispatch]);
 
   const handleCategoryMouseEnter = (item) => {

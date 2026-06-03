@@ -45,8 +45,8 @@ export const catalogThunks = {
 };
 
 export const searchThunks = {
-  searchElastic: makeThunk("search/searchElastic", { url: endpoints.search.main, params: q }),
-  searchAutocomplete: makeThunk("search/searchAutocomplete", { url: endpoints.search.autocomplete, params: q })
+  searchElastic: makeThunk("search/searchElastic", { url: endpoints.search.main, params: q, cache: true, cacheTtl: 120000 }),
+  searchAutocomplete: makeThunk("search/searchAutocomplete", { url: endpoints.search.autocomplete, params: q, cache: true, cacheTtl: 120000 })
 };
 
 export const productThunks = {
