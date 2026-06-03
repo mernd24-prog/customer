@@ -12,7 +12,7 @@ export default function ShoppingMadeEasyBanner({
 }) {
   return (
     <section
-       className={`relative h-[250px] sm:h-[350px] md:h-[450px] lg:h-[600px] w-full overflow-hidden ${className}`}
+      className={`relative h-[250px] full-banner sm:h-[350px] md:h-[450px] lg:h-[600px] w-full overflow-hidden ${className}`}
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",
@@ -22,7 +22,7 @@ export default function ShoppingMadeEasyBanner({
     >
       <div className="flex h-full py-8 sm:py-10 md:py-12 lg:py-[65px] px-6 sm:px-12 lg:px-[180px]">
         <div className="max-w-[470px]">
-          <h2 className="font-['DM_Sans'] text-[32px] font-bold leading-[100%] text-[#3E4093] sm:text-[40px] lg:text-[51px]">
+          <h2 className="font-['DM_Sans'] text-[32px] font-bold leading-[100%] text-[#3E4093] sm:text-[40px] lg:text-[50px]">
             {title}
           </h2>
 
@@ -32,10 +32,17 @@ export default function ShoppingMadeEasyBanner({
 
           <Link
             to={ctaTo}
-            className="mt-8 inline-flex h-[48px] items-center gap-2 rounded-[8px] bg-[#CE9F2D] px-6 text-[14px] font-bold text-black transition-colors hover:bg-[#bd9025]"
+            className="mt-6 sm:mt-8 inline-flex items-center gap-2 
+             h-[40px] sm:h-[44px] md:h-[48px]
+             px-4 sm:px-5 md:px-6
+             rounded-[8px]
+             bg-[#CE9F2D]
+             text-[12px] sm:text-[13px] md:text-[14px]
+             font-bold text-black
+             transition-colors hover:bg-[#bd9025]"
           >
             {ctaLabel}
-            <FaAngleRight className="text-xs" />
+            <FaAngleRight className="text-[10px] sm:text-xs" />
           </Link>
         </div>
       </div>

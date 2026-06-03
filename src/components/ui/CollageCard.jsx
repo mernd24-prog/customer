@@ -25,7 +25,7 @@ function CollageImage({ src, title, link }) {
   );
 }
 
-function CollageCard({ section, index }) {
+function CollageCard({ section }) {
   return (
     <article className="overflow-hidden rounded-[20px] bg-[#CE9F2D33] border border-[#CE9F2D66]">
       <div className="flex items-center justify-between px-6 py-5">
@@ -126,7 +126,7 @@ export default function CollageMainSection({ cmsPages = [] }) {
   const visibleSections = sections.length ? sections : fallbackSections;
 
   return (
-    <section className="overflow-hidden lg:my-8">
+    <section className="my-6 overflow-hidden sm:my-7 md:my-8">
       {loading ? (
         <SkeletonLoader
           layout={SKELETON_PRESETS.HERO_CARDS}
@@ -136,7 +136,7 @@ export default function CollageMainSection({ cmsPages = [] }) {
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 h-full">
           {visibleSections.map((section, idx) => (
-            <CollageCard key={idx} index={idx} section={section} />
+            <CollageCard key={idx} section={section} />
           ))}
         </div>
       )}

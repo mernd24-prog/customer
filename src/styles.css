@@ -140,6 +140,13 @@
   backdrop-filter: blur(8px);
 }
 
+.full-banner {
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
 .banner-swiper .custom-bullet {
   width: 18px;
   height: 4px;

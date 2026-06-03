@@ -1,43 +1,68 @@
+import { Link } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa6";
+
 export default function SectionContainer({
   title,
-  subtitle,
+  subtitle = "",
   headerbgColor,
   children,
   bodybgColor,
   actionLabel = "",
+  actionHref = "",
   onAction,
   className = "",
+  headerClassName = "",
+  contentClassName = "",
 }) {
+  const hasHeader = Boolean(title || subtitle || actionLabel);
+  const hasAction = Boolean(actionLabel && (actionHref || onAction));
+  const actionClassName =
+    "inline-flex h-9 shrink-0 items-center justify-center gap-2 self-start rounded-[6px] border border-[#33368F33] px-4 text-[12px] font-bold text-[#33368F] transition-all duration-300 ease-in-out hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A] sm:self-center";
+
   return (
-    <section
-      className={`w-full overflow-hidden rounded-[var(--customer-radius)]  bg-white ${className}`}
-    >
-      <header
-        className={`text-[var(--customer-ink)] ${headerbgColor || "bg-white"}`}
-      >
-        <div className="flex min-h-[72px] flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-          <div className="min-w-0">
-            <h2 className="customer-section-title  text-[20px]  sm:text-[36px]">
-              {title}
-            </h2>
-            <p className="mt-1  text-lg text-[var(--customer-muted)]">
-              {subtitle}
-            </p>
+    <section className={`my-8 bg-white ${className}`}>
+      {hasHeader && (
+        <header
+          className={`text-[var(--customer-ink)] ${headerbgColor || "bg-white"}`}
+        >
+          <div
+            className={`mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between ${headerClassName}`}
+          >
+            <div className="min-w-0">
+              {title && (
+                <h2 className="text-[24px] font-bold leading-tight text-[#3E4093] sm:text-[28px] md:text-[32px] lg:text-[38px]">
+                  {title}
+                </h2>
+              )}
+              {subtitle && (
+                <p className="mt-2 text-[14px] font-medium leading-normal text-[#2E2E2E] sm:text-[16px] md:text-[17px] lg:text-[18px]">
+                  {subtitle}
+                </p>
+              )}
+            </div>
+
+            {hasAction && actionHref ? (
+              <Link to={actionHref} className={actionClassName}>
+                {actionLabel}
+                <FaAngleRight className="text-[10px]" />
+              </Link>
+            ) : null}
+
+            {hasAction && !actionHref ? (
+              <button
+                type="button"
+                onClick={onAction}
+                className={actionClassName}
+              >
+                {actionLabel}
+                <FaAngleRight className="text-[10px]" />
+              </button>
+            ) : null}
           </div>
-          {actionLabel ? (
-            <button
-              type="button"
-              onClick={onAction}
-              className="flex gap-1 text-[var(--customer-navy)] items-center justify-center border border-[var(--customer-navy)] px-4 py-2 rounded-md"
-            >
-              {actionLabel}
-              <FaAngleRight className="transition-all duration-300 ease-in-out group-hover:translate-x-1" />
-            </button>
-          ) : null}
-        </div>
-      </header>
-      <div className={`p-3 sm:p-4 ${bodybgColor || "bg-white"}`}>
+        </header>
+      )}
+
+      <div className={`${bodybgColor || "bg-white"} ${contentClassName}`}>
         {children}
       </div>
     </section>
