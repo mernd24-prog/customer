@@ -1,12 +1,13 @@
-import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import SkeletonLoader from "../common/skeleton/SkeletonLoader";
 import { ProductCard } from "../ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { getProductId } from "../../utils/ecommerce";
+import SectionContainer from "../ui/SectionContainer";
 
 export default function HomeProductsForYouSection({
   title = "Featured Products",
+  description = "",
   actionLabel = "View Featured Products",
   actionHref = "/products",
   limit = 8,
@@ -36,21 +37,12 @@ export default function HomeProductsForYouSection({
   ).slice(0, limit);
 
   return (
-    <section className="mt-8 rounded-[var(--customer-radius)] bg-white">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="customer-section-title  text-[18px] sm:text-[20px]">
-          {title}
-        </h2>
-        {actionHref && actionLabel && (
-          <Link
-            to={actionHref}
-            className="rounded-full border border-[var(--customer-border)] px-3 py-1.5 text-xs font-semibold text-[var(--customer-navy)] hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]"
-          >
-            {actionLabel}
-          </Link>
-        )}
-      </div>
-
+    <SectionContainer
+      title={title}
+      subtitle={description}
+      actionLabel={actionLabel}
+      actionHref={actionHref}
+    >
       {loading && !products.length ? (
         <SkeletonLoader
           preset="PRODUCTS_FOR_YOU_CARD"
@@ -71,6 +63,6 @@ export default function HomeProductsForYouSection({
           ))}
         </div>
       ) : null}
-    </section>
+    </SectionContainer>
   );
 }

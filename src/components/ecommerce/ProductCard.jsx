@@ -252,7 +252,7 @@ export default function ProductCard({
       </Link>
 
       {showActions && (
-        <div className="flex items-center gap-4 sm:gap-6 md:gap-6 lg:gap-10 px-5 pb-6 sm:px-6">
+        <div className="flex items-center gap-6 sm:gap-6 md:gap-6 lg:gap-[60px] px-5 pb-6 sm:px-6">
           <button
             type="button"
             disabled={!isInStock}

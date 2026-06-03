@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { FaAngleRight } from "react-icons/fa6";
 import { SkeletonLoader } from "../../components/common/skeleton";
 import CategoryCard from "./CategoryCard";
+import SectionContainer from "../ui/SectionContainer";
 
 const fallbackCategoryImages = [
   "/image/jpg/stylish-girls.jpg",
@@ -65,30 +64,12 @@ export default function HomeCategoryGrid({
   }
 
   return (
-    <section className="my-8">
-      {title && (
-        <div className="mb-5 mt-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h2 className=" h-[49px]  text-[38px] font-bold leading-none text-[#3E4093]">
-              {title}
-            </h2>
-            {subtitle && (
-              <p className="mt-2  text-[18px] font-medium leading-5 text-[#2E2E2E]">
-                {subtitle}
-              </p>
-            )}
-          </div>
-          {actionHref && actionLabel ? (
-            <Link
-              to={actionHref}
-              className="inline-flex h-9 shrink-0 items-center justify-center gap-2 self-start rounded-[6px] border border-[#33368F33] px-4  text-[12px] font-bold text-[#33368F] transition-all duration-300 ease-in-out hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]"
-            >
-              {actionLabel}
-              <FaAngleRight className="text-[10px]" />
-            </Link>
-          ) : null}
-        </div>
-      )}
+    <SectionContainer
+      title={title}
+      subtitle={subtitle}
+      actionLabel={actionLabel}
+      actionHref={actionHref}
+    >
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {displayCategories.map((item, idx) => (
           <CategoryCard
@@ -110,6 +91,6 @@ export default function HomeCategoryGrid({
           />
         ))}
       </div>
-    </section>
+    </SectionContainer>
   );
 }

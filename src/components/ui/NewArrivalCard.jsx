@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
 import { IoStar, IoArrowForwardOutline } from "react-icons/io5";
+import Label from "../common/label/Label";
+
+const badgeVariants = {
+  new: "featured",
+  trending: "success",
+  luxe: "bestseller",
+};
 
 export default function NewArrivalCard({
   badgeText = "New",
@@ -9,6 +16,7 @@ export default function NewArrivalCard({
   products = [],
 }) {
   const displayProducts = Array.isArray(products) ? products : [];
+  const labelVariant = badgeVariants[badgeType] || "featured";
 
   return (
     <article className="flex flex-col h-full overflow-hidden rounded-[1.5rem] border border-[var(--customer-border)] bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
@@ -16,10 +24,9 @@ export default function NewArrivalCard({
       <div className="bg-[#1B1D60] p-5 flex flex-col justify-between">
         <div className="flex items-center justify-between w-full">
           {/* Badge */}
-          <div className="flex items-center gap-1 bg-[#D6A323] text-white px-3 py-1 rounded-full text-sm font-semibold">
-            <span>✦</span>
-            <span>{badgeText}</span>
-          </div>
+          <Label variant={labelVariant} className="text-sm font-semibold">
+            {badgeText}
+          </Label>
 
           {/* See all Link */}
           <Link

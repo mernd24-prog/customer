@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Seo from "../../components/common/Seo";
@@ -22,6 +22,7 @@ import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import { reusableArrivalsDemo, reusableTopDealsDemo } from "../../data/topdeal";
 import { mothersDayData } from "../../data/special";
 import ShoppingMadeEasyBanner from "../../components/home/ShoppingBanner";
+import FeaturedProductsSection from "../../components/home/FeaturedProductsSection";
 
 export function HomePage() {
   const dispatch = useDispatch();
@@ -57,17 +58,16 @@ export function HomePage() {
         subtitle="Curated collections for every style and home"
       />
       <CollageMainSection />
+      <ShoppingMadeEasyBanner
+        title="Shopping Made Easy"
+        description="Enjoy seamless shopping with reliable delivery, secure payments, and hassle-free returns."
+        ctaLabel="Shop Now"
+      />
+
+      <FeaturedProductsSection />
 
       <section className=" my-10">
-        <ShowcaseSection
-          title="Featured Collections"
-          subtitle="Fresh edits across fashion, home, beauty and gifts"
-          headerbgColor="bg-white"
-          bodybgColor="bg-white"
-          gridClassName="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4"
-          items={reusableTopDealsDemo}
-          CardComponent={TopDealCard}
-        />
+        
 
         <ShowcaseSection
           title="New Arrivals"
@@ -86,19 +86,15 @@ export function HomePage() {
       </section>
 
       <MothersDaySwiper data={mothersDayData} />
-      <ShoppingMadeEasyBanner
-        title="Shopping Made Easy"
-        description="Enjoy seamless shopping with reliable delivery, secure payments, and hassle-free returns."
-        ctaLabel="Shop Now"
-      />
-
+      
       {/* <MothersDaySwiper data={cmsBannerSlides} /> */}
 
       <div className="mt-16">
         <HomeProductsForYouSection
           title="Explore Our Collection"
+          description="Handpicked products loved by thousands of shoppers"
           actionLabel="Browse All Products"
-          limit={10}
+          limit={5}
         />
       </div>
     </>

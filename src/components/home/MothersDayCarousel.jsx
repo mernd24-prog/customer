@@ -17,7 +17,7 @@ export default function MothersDayCarousel({
   const isDefaultHeading = heading === "SAM-Special Gifts For Mother's Day";
 
   return (
-    <section className="my-8 bg-[#1B1E5C] w-full py-12 lg:py-4 ">
+    <section className="my-8 full-banner bg-[#1B1E5C] w-full py-12 lg:py-4 ">
       <div className="max-w-[1760px] mx-auto px-4 xl:px-8 grid grid-cols-1 lg:grid-cols-4 gap-8 items-center">
         {/* Left Text Block */}
         <div className="flex flex-col items-center text-center lg:items-start lg:text-left text-white  p-2 2xl:p-5">
