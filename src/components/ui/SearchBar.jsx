@@ -37,13 +37,19 @@ const SearchBar = ({
   const [selectedCategory, setSelectedCategory] = useState(null);
   
   const dropdownRef = useRef(null);
+  const categoriesRequestedRef = useRef(false);
   const searchQuery = value ?? internalQuery;
 
   const catParam = searchParams.get("categoryId") || searchParams.get("category") || searchParams.get("categorySlug");
 
   // Fetch categories if not loaded
   useEffect(() => {
-    if (!categories.length && !categoriesLoading) {
+    if (
+      !categories.length &&
+      !categoriesLoading &&
+      !categoriesRequestedRef.current
+    ) {
+      categoriesRequestedRef.current = true;
       dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 }));
     }
   }, [dispatch, categories.length, categoriesLoading]);

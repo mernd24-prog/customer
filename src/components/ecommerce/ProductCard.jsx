@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
 import Label from "../common/label/Label";
+import { IconCircleButton, PillButton } from "../dynamicComponent/button/static";
 import Price from "./Price";
 import Rating from "./Rating";
 import WishlistButton from "./WishlistButton";
@@ -177,7 +178,7 @@ export default function ProductCard({
   }
 
   return (
-    <article className={cn("group relative min-w-0 overflow-hidden rounded-[24px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(17,24,39,0.12)]", className)}>
+    <article className={cn("group relative min-w-0 overflow-hidden rounded-[24px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_16px_40px_rgba(17,24,39,0.12)]", className)}>
       <div className="absolute left-4 top-4 z-20 flex max-w-[calc(100%-2rem)] flex-wrap items-center gap-2">
         <Label variant="featured" className="px-4 py-1.5 text-[13px] font-bold leading-none lg:text-[14px]">
           {badgeText || "Featured"}
@@ -253,20 +254,18 @@ export default function ProductCard({
 
       {showActions && (
         <div className="flex items-center gap-6 sm:gap-6 md:gap-6 lg:gap-[60px] px-5 pb-6 sm:px-6">
-          <button
-            type="button"
+          <PillButton
             disabled={!isInStock}
             onClick={handleAddToCart}
+            rightIcon={<ShoppingCart size={19} strokeWidth={2.4} />}
             className={cn(
-              "inline-flex h-[40px] w-[197px] items-center justify-center gap-[15px] rounded-[25px] bg-[#CE9F2D] px-[25px] py-[10px] font-['DM_Sans'] text-[15px] font-semibold leading-[100%] text-white transition-all duration-300 ease-in-out hover:bg-[#bd9025] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B1D60]",
-              !isInStock && "cursor-not-allowed opacity-60"
+              "w-[197px] gap-[15px] font-['DM_Sans'] text-[15px] leading-[100%] focus-visible:outline-[#1B1D60]",
+              !isInStock && "cursor-not-allowed opacity-60",
             )}
           >
             Add to Cart
-            <ShoppingCart size={19} strokeWidth={2.4} />
-          </button>
-          <button
-            type="button"
+          </PillButton>
+          <IconCircleButton
             title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
             aria-label={
               isWishlisted
@@ -274,14 +273,14 @@ export default function ProductCard({
                 : `Add ${title} to wishlist`
             }
             onClick={handleWishlist}
-            className="inline-flex h-[40px] w-[40px] items-center justify-center rounded-[25px] border border-[#1B1D6099] bg-[#1B1D600D] text-[#1B1D60] p-[10px] transition-all duration-300 ease-in-out hover:border-[#CE9F2D] hover:text-[#CE9F2D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B1D60]"
+            className="focus-visible:outline-[#1B1D60]"
           >
             <Heart
               size={19}
-              fill={isWishlisted ? "#CE9F2D" : "none"}
-              stroke={isWishlisted ? "#CE9F2D" : "currentColor"}
+              fill={isWishlisted ? "#1B1D60" : "none"}
+              stroke={isWishlisted ? "#1B1D60" : "currentColor"}
             />
-          </button>
+          </IconCircleButton>
         </div>
       )}
     </article>

@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom";
-import { IoArrowForwardOutline, IoChevronForward } from "react-icons/io5";
+import { IoChevronForward } from "react-icons/io5";
+import {
+  GhostPillButton,
+  SolidLargeButton,
+} from "../dynamicComponent/button/static";
+import { FaAngleRight } from "react-icons/fa6";
 import { hrefOr } from "../../utils/content";
 
 export default function MothersDayCarousel({
@@ -44,12 +49,13 @@ export default function MothersDayCarousel({
             Discover thoughtfully curated gifts for every occasion — from
             birthdays to anniversaries and everything in between.
           </p>
-          <button
+          <SolidLargeButton
             onClick={onCtaClick}
-            className="flex items-center gap-2 bg-[#D6A323] hover:bg-[#B5851B] text-[#1F2430] font-bold  px-8 py-3.5 rounded-md  text-sm xl:text-base transition-all duration-300 w-fit cursor-pointer shadow-md hover:shadow-lg active:scale-95"
+            rightIcon={<FaAngleRight size={16} className="text-lg" />}
+            className="w-fit px-8 py-3.5 text-sm font-bold shadow-md hover:shadow-lg active:scale-95 xl:text-base"
           >
-            {ctaLabel} <IoArrowForwardOutline className="text-lg" />
-          </button>
+            {ctaLabel}
+          </SolidLargeButton>
         </div>
 
         {/* Right Cards Section */}
@@ -80,10 +86,15 @@ export default function MothersDayCarousel({
                   <p className="text-sm xl:text-base  text-white/65 mb-3 lg:mb-5 ">
                     {card.description}
                   </p>
-                  <button className="flex items-center gap-1.5 bg-[#CE9F2D4D] border border-[#CE9F2D4D]  text-[#D6A323] text-sm  xl:text-base font-semibold px-4 py-2 rounded-full transition-all duration-300 w-fit hover:bg-black/60">
-                    <span>Explore</span>
-                    <IoChevronForward className="text-xs text-[#D6A323]" />
-                  </button>
+                  <GhostPillButton
+                    as="span"
+                    rightIcon={
+                      <IoChevronForward className="text-xs text-[#D6A323]" />
+                    }
+                    className="w-fit"
+                  >
+                    Explore
+                  </GhostPillButton>
                 </div>
               </Link>
             );

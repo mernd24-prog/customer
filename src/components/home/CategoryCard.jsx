@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Grid2X2 } from "lucide-react";
 import { FaAngleRight } from "react-icons/fa6";
 import Label from "../common/label/Label";
+import { TextGoldButton } from "../dynamicComponent/button/static";
 import { applyImageFallback } from "../../utils/ecommerce";
 import { cn } from "../../utils/classNames";
 
@@ -19,7 +20,7 @@ export default function CategoryCard({
   const content = (
     <article
       className={cn(
-        "group h-full overflow-hidden rounded-[14px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(17,24,39,0.1)]",
+        "group h-full overflow-hidden rounded-[14px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_14px_34px_rgba(17,24,39,0.1)]",
         active && "ring-2 ring-[#33368F]/40",
         className,
       )}
@@ -65,12 +66,14 @@ export default function CategoryCard({
 
         {/* <div className="my-3 h-px w-full bg-[#CE9F2D33]" /> */}
 
-       <div className="w-[297px] h-[36px] pt-[15px] border-t border-[#CE9F2D4D] mt-[17px]">
-  <span className="inline-flex  items-center gap-[10px] text-[16px] font-semibold leading-none text-[#CE9F2D] transition-all duration-300">
-    {ctaLabel}
-    <FaAngleRight className="text-[10px]" />
-  </span>
-</div>
+        <div className="mt-[17px] h-[36px] border-t border-[#CE9F2D4D] pt-[15px]">
+          <TextGoldButton
+            as="span"
+            rightIcon={<FaAngleRight className="text-[10px]" />}
+          >
+            {ctaLabel}
+          </TextGoldButton>
+        </div>
       </div>
     </article>
   );

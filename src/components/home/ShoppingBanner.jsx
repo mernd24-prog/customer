@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa6";
+import { SolidLargeButton } from "../dynamicComponent/button/static";
 import defaultBannerImage from "/image/png/ShoppingBanner.png";
 
 export default function ShoppingMadeEasyBanner({
@@ -12,7 +12,7 @@ export default function ShoppingMadeEasyBanner({
 }) {
   return (
     <section
-      className={`relative h-[250px] full-banner sm:h-[350px] md:h-[450px] lg:h-[600px] w-full overflow-hidden ${className}`}
+      className={`relative h-[250px] my-10 full-banner sm:h-[350px] md:h-[450px] lg:h-[600px] w-full overflow-hidden ${className}`}
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",
@@ -30,20 +30,13 @@ export default function ShoppingMadeEasyBanner({
             {description}
           </p>
 
-          <Link
+          <SolidLargeButton
             to={ctaTo}
-            className="mt-6 sm:mt-8 inline-flex items-center gap-2 
-             h-[40px] sm:h-[44px] md:h-[48px]
-             px-4 sm:px-5 md:px-6
-             rounded-[8px]
-             bg-[#CE9F2D]
-             text-[12px] sm:text-[13px] md:text-[14px]
-             font-bold text-black
-             transition-colors hover:bg-[#bd9025]"
+            rightIcon={<FaAngleRight className="text-[10px] sm:text-xs" />}
+            className="mt-6 h-[40px] rounded-[8px] px-4 text-[12px] font-bold sm:mt-8 sm:h-[44px] sm:px-5 sm:text-[13px] md:h-[48px] md:px-6 md:text-[14px]"
           >
             {ctaLabel}
-            <FaAngleRight className="text-[10px] sm:text-xs" />
-          </Link>
+          </SolidLargeButton>
         </div>
       </div>
     </section>

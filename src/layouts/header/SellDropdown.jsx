@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import BrandButton from "../../components/ui/BrandButton";
+import { HeaderGoldButton } from "../../components/dynamicComponent/button/static";
 import DropdownContainer from "./DropdownContainer";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 
@@ -32,14 +32,13 @@ export default function SellDropdown({ data }) {
 
         <div className="mt-8 flex flex-col gap-3">
           {buttons.map((button, index) => (
-            <BrandButton
+            <HeaderGoldButton
               key={keyOr(button?.label, `button-${index}`)}
-              variant="gradient"
-              rounded
-              label={textOr(button?.label, "Action")}
-              className="w-full py-2.5 text-[13px] font-bold"
+              className="w-full max-w-none text-[13px] font-bold"
               onClick={() => navigate(hrefOr(button?.path, "/seller/status"))}
-            />
+            >
+              {textOr(button?.label, "Action")}
+            </HeaderGoldButton>
           ))}
         </div>
       </div>

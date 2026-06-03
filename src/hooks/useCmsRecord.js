@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { fetchCmsPageBySlug } from "../features/cms/cmsSlice";
 
+const requestedCmsKeys = new Set();
+
 const cmsRecordKey = (item) =>
   item?.slug ||
   item?.cmsKey ||
@@ -29,7 +31,8 @@ export function useCmsRecord(cmsKey) {
   }, [cmsKey, current, entities, list]);
 
   useEffect(() => {
-    if (!cmsKey || page) return;
+    if (!cmsKey || page || requestedCmsKeys.has(cmsKey)) return;
+    requestedCmsKeys.add(cmsKey);
     dispatch(fetchCmsPageBySlug({ slug: cmsKey })).catch((error) => {
       console.error(`Failed to fetch CMS page "${cmsKey}":`, error);
     });

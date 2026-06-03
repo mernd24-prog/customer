@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa6";
+import { OutlineSmallButton } from "../dynamicComponent/button/static";
 
 export default function SectionContainer({
   title,
@@ -16,8 +16,6 @@ export default function SectionContainer({
 }) {
   const hasHeader = Boolean(title || subtitle || actionLabel);
   const hasAction = Boolean(actionLabel && (actionHref || onAction));
-  const actionClassName =
-    "inline-flex h-9 shrink-0 items-center justify-center gap-2 self-start rounded-[6px] border border-[#33368F33] px-4 text-[12px] font-bold text-[#33368F] transition-all duration-300 ease-in-out hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A] sm:self-center";
 
   return (
     <section className={`my-8 bg-white ${className}`}>
@@ -42,21 +40,23 @@ export default function SectionContainer({
             </div>
 
             {hasAction && actionHref ? (
-              <Link to={actionHref} className={actionClassName}>
+              <OutlineSmallButton
+                to={actionHref}
+                rightIcon={<FaAngleRight className="text-[10px]" />}
+                className="self-start text-[12px] sm:self-center"
+              >
                 {actionLabel}
-                <FaAngleRight className="text-[10px]" />
-              </Link>
+              </OutlineSmallButton>
             ) : null}
 
             {hasAction && !actionHref ? (
-              <button
-                type="button"
+              <OutlineSmallButton
                 onClick={onAction}
-                className={actionClassName}
+                rightIcon={<FaAngleRight className="text-[10px]" />}
+                className="self-start text-[12px] sm:self-center"
               >
                 {actionLabel}
-                <FaAngleRight className="text-[10px]" />
-              </button>
+              </OutlineSmallButton>
             ) : null}
           </div>
         </header>

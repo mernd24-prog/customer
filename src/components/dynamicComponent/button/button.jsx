@@ -29,6 +29,7 @@ export const DynamicButton = React.forwardRef(
       "inline-flex items-center justify-center font-medium transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 
     const variants = {
+      unstyled: "",
       primary:
         "bg-gradient-to-l from-gold-dark to-gold text-navy rounded-full shadow-sm hover:shadow-md",
       secondary:
@@ -139,7 +140,7 @@ export const DynamicButton = React.forwardRef(
         ref={ref}
         className={classes}
         style={dynamicStyles}
-        disabled={isDisabled}
+        disabled={ComponentToUse === "button" ? isDisabled : undefined}
         type={ComponentToUse === "button" ? type : undefined}
         onClick={handleClick}
         {...props}

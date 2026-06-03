@@ -20,9 +20,12 @@ import {
   User,
 } from "lucide-react";
 
-import BrandButton from "../components/ui/BrandButton";
 import ImageSkeleton from "../components/ui/Image";
 import SearchBar from "../components/ui/SearchBar";
+import {
+  HeaderGoldButton,
+  HeaderIconButton,
+} from "../components/dynamicComponent/button/static";
 import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
 import SellDropdown from "./header/SellDropdown";
@@ -357,17 +360,12 @@ export const TopHeader = () => {
               <LogOut size={14} /> Sign Out
             </button>
           ) : (
-            <BrandButton
-              variant="custom"
-              bgColor="#CE9F2D"
-              textColor="#03014D"
-              rounded={false}
-              style={{ borderRadius: "5px" }}
-              className="h-[20px] min-h-[41px] min-w-[153px] px-4 py-0 text-[14px] font-semibold hover:brightness-95 hover:shadow-md transition-all duration-300 ease-in-out"
-              size="xs"
-              label="Become a Seller"
+            <HeaderGoldButton
+              className="hidden text-[14px] lg:inline-flex"
               onClick={() => navigate("/register")}
-            />
+            >
+              Become a Seller
+            </HeaderGoldButton>
           )}
         </div>
       </div>
@@ -420,9 +418,8 @@ export const Navbar = ({ icons: propIcons }) => {
           <div className="hidden items-center gap-5 lg:flex">
             {asArray(displayIcons).map((item, iconIndex) => (
               <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
-                <Link
+                <HeaderIconButton
                   to={getNavbarIconPath(item)}
-                  className="group relative flex h-10 w-10 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]"
                   aria-label={getNavbarIconLabel(item)}
                 >
                   <img
@@ -437,7 +434,7 @@ export const Navbar = ({ icons: propIcons }) => {
                   <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
                     {getNavbarIconLabel(item)}
                   </span>
-                </Link>
+                </HeaderIconButton>
                 {iconIndex < displayIcons.length - 1 && (
                   <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
                 )}
@@ -446,9 +443,9 @@ export const Navbar = ({ icons: propIcons }) => {
           </div>
 
           {/* Mobile/Tablet Cart Icon */}
-          <Link
+          <HeaderIconButton
             to="/cart"
-            className="flex lg:hidden h-9 w-9 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)] shrink-0"
+            className="h-9 w-9 shrink-0 lg:hidden"
             aria-label="Cart"
           >
             <img
@@ -456,7 +453,7 @@ export const Navbar = ({ icons: propIcons }) => {
               alt="Cart"
               className="h-[17px] w-[17px] object-contain"
             />
-          </Link>
+          </HeaderIconButton>
 
           {currentUser ? (
             <Link
@@ -471,17 +468,12 @@ export const Navbar = ({ icons: propIcons }) => {
               </span>
             </Link>
           ) : (
-            <BrandButton
-              variant="custom"
-              bgColor="#CE9F2D"
-              textColor="#03014D"
-              rounded={false}
-              style={{ borderRadius: "5px" }}
-              label="Create Account"
-              size="sm"
-              className="h-[36px] sm:h-[41px] min-h-[36px] sm:min-h-[41px] min-w-[120px] sm:min-w-[153px] whitespace-nowrap px-3 sm:px-4 text-[13px] sm:text-[16px] font-semibold hover:brightness-95 hover:shadow-md transition-all duration-300 ease-in-out"
+            <HeaderGoldButton
+              className="whitespace-nowrap"
               onClick={() => navigate("/register")}
-            />
+            >
+              Create Account
+            </HeaderGoldButton>
           )}
         </div>
       </div>

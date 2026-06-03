@@ -8,7 +8,11 @@ import { bannerData } from "../constant/image.constant";
 import "swiper/css";
 import "swiper/css/navigation";
 
-import { Button } from "../components/common";
+import Label from "../components/common/label/Label";
+import {
+  OutlineLightButton,
+  SolidLargeButton,
+} from "../components/dynamicComponent/button/static";
 
 /**
  * Hero Banner Component
@@ -42,16 +46,15 @@ const HeroBanner = () => {
             <div className="absolute inset-y-0 left-0 right-1/3 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/90 to-transparent z-10 pointer-events-none" />
 
             <div className="customer-container relative z-20 flex h-full flex-col items-center justify-between gap-6 py-8 lg:flex-row lg:py-0">
-              
+
               {/* Left Content */}
               <div className=" flex flex-1 flex-col items-center space-y-4 md:space-y-6 lg:space-y-8 pt-4 text-center text-white lg:items-start lg:pl-4 lg:pt-0 lg:text-left">
-                
+
                 {/* Top Decorative */}
                 <div className="flex flex-col items-center gap-2 md:gap-4 lg:gap-6 lg:items-start">
-                  <div className="flex items-center gap-2 rounded-full border border-[#CE9F2D1A] bg-[#CE9F2D]/10 px-4 py-1.5 text-xs font-bold tracking-wider text-[#CE9F2D]">
-                    <Tag size={14} className="text-[#CE9F2D]" />
-                    <span>END OF SEASON SALE | UP TO 50% OFF</span>
-                  </div>
+                  <Label variant="seasonSale" leftIcon={<Tag size={14} className="text-[#CE9F2D]" />}>
+                    END OF SEASON SALE | UP TO 50% OFF
+                  </Label>
 
                   {/* Heading */}
                   <h2 className="max-w-[681px] lg:max-w-[800px] font-sans text-3xl font-bold leading-[40px] tracking-normal sm:text-5xl sm:leading-[58px] lg:text-[48px] lg:leading-[58px] xl:text-[54px] xl:leading-[64px] 2xl:text-[65px] 2xl:leading-[75px]">
@@ -70,24 +73,18 @@ const HeroBanner = () => {
 
                 {/* CTA */}
                 <div className="flex flex-wrap items-center justify-center gap-3 pt-1 md:pt-3 lg:justify-start">
-                  <Button
-                    variant="custom"
-                    bgColor="#CE9F2D"
-                    textColor="#03014D"
-                    className="font-bold shadow-none text-sm hover:scale-105 transition-transform"
-                    style={{ width: "141px", height: "48px", borderRadius: "10px" }}
-                    rounded={false}
-                    label="Shop Now"
-                    link="/products"
-                  />
-                  <Button
-                    variant="custom"
-                    className="border border-white/50 bg-transparent font-bold text-white hover:bg-white/10 text-sm hover:scale-105 transition-transform"
-                    style={{ width: "212px", height: "50px", borderRadius: "10px" }}
-                    rounded={false}
-                    label="Explore Categories"
-                    link="/products"
-                  />
+                  <SolidLargeButton
+                    to="/products"
+                    className="h-[48px] w-[141px] rounded-[10px] text-sm font-bold shadow-none hover:scale-105"
+                  >
+                    Shop Now
+                  </SolidLargeButton>
+                  <OutlineLightButton
+                    to="/products"
+                    className="h-[50px] w-[212px] rounded-[10px] text-sm font-bold hover:scale-105"
+                  >
+                    Explore Categories
+                  </OutlineLightButton>
                 </div>
               </div>
 

@@ -60,16 +60,16 @@ export function HomePage() {
 
       <CollageMainSection />
 
+      <ShoppingMadeEasyBanner
+        title="Shopping Made Easy"
+        description="Enjoy seamless shopping with reliable delivery, secure payments, and hassle-free returns."
+        ctaLabel="Shop Now"
+      />
+
+       <FeaturedProductsSection />
+
       <section className=" my-10">
-        <ShowcaseSection
-          title="Featured Collections"
-          subtitle="Fresh edits across fashion, home, beauty and gifts"
-          headerbgColor="bg-white"
-          bodybgColor="bg-white"
-          gridClassName="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 xl:grid-cols-4"
-          items={reusableTopDealsDemo}
-          CardComponent={TopDealCard}
-        />
+        
 
         <ShowcaseSection
           title="New Arrivals"
@@ -88,11 +88,7 @@ export function HomePage() {
       </section>
 
       <MothersDaySwiper data={mothersDayData} />
-      <ShoppingMadeEasyBanner
-        title="Shopping Made Easy"
-        description="Enjoy seamless shopping with reliable delivery, secure payments, and hassle-free returns."
-        ctaLabel="Shop Now"
-      />
+      
 
       {/* <MothersDaySwiper data={cmsBannerSlides} /> */}
 

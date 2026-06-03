@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import { IoStar, IoArrowForwardOutline } from "react-icons/io5";
 import Label from "../common/label/Label";
+import { TextWhiteButton } from "../dynamicComponent/button/static";
 
-const badgeVariants = {
-  new: "featured",
-  trending: "success",
-  luxe: "bestseller",
-};
+// const badgeVariants = {
+//   new: "featured",
+//   trending: "success",
+//   luxe: "bestseller",
+// };
 
 export default function NewArrivalCard({
   badgeText = "New",
@@ -16,7 +17,7 @@ export default function NewArrivalCard({
   products = [],
 }) {
   const displayProducts = Array.isArray(products) ? products : [];
-  const labelVariant = badgeVariants[badgeType] || "featured";
+  // const labelVariant = badgeVariants[badgeType] || "featured";
 
   return (
     <article className="flex flex-col h-full overflow-hidden rounded-[1.5rem] border border-[#1B1D6066] bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
@@ -24,18 +25,16 @@ export default function NewArrivalCard({
       <div className="bg-[#1B1D60] p-5 flex flex-col justify-between">
         <div className="flex items-center justify-between w-full">
           {/* Badge */}
-          <Label variant={labelVariant} className="text-sm font-semibold">
+          <Label variant="featured" className="text-sm font-semibold" leftIcon="✦">
             {badgeText}
           </Label>
-
           {/* See all Link */}
-          <Link
+          <TextWhiteButton
             to={seeAllLink}
-            className="flex items-center gap-1 text-white hover:text-white/80 text-sm transition-colors duration-200"
+            rightIcon={<IoArrowForwardOutline className="text-xs" />}
           >
-            <span>See all</span>
-            <IoArrowForwardOutline className="text-xs" />
-          </Link>
+            See all
+          </TextWhiteButton>
         </div>
 
         {/* Card Title */}
