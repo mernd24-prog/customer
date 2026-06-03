@@ -8,6 +8,7 @@ import { bannerData } from "../constant/image.constant";
 import "swiper/css";
 import "swiper/css/navigation";
 
+import { useNavigate } from "react-router-dom";
 import { Button } from "../components/common";
 
 /**
@@ -15,6 +16,7 @@ import { Button } from "../components/common";
  * Fully Responsive Full Width Slider
  */
 const HeroBanner = () => {
+  const navigate = useNavigate();
   return (
     <section className=" relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[480px] sm:h-[520px] md:h-[620px] lg:h-[750px] w-screen items-center overflow-hidden bg-[#1B1D60]">
       <Swiper
@@ -78,7 +80,7 @@ const HeroBanner = () => {
                     style={{ width: "141px", height: "48px", borderRadius: "10px" }}
                     rounded={false}
                     label="Shop Now"
-                    link="/products"
+                    onClick={() => navigate("/products")}
                   />
                   <Button
                     variant="custom"
@@ -86,7 +88,14 @@ const HeroBanner = () => {
                     style={{ width: "212px", height: "50px", borderRadius: "10px" }}
                     rounded={false}
                     label="Explore Categories"
-                    link="/products"
+                    onClick={() => {
+                      const el = document.querySelector(".categories-section");
+                      if (el) {
+                        el.scrollIntoView({ behavior: "smooth" });
+                      } else {
+                        navigate("/products");
+                      }
+                    }}
                   />
                 </div>
               </div>

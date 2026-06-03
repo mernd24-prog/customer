@@ -18,6 +18,8 @@ import {
   ShoppingBag,
   Truck,
   User,
+  LifeBuoy,
+  ShoppingCart,
 } from "lucide-react";
 
 import BrandButton from "../components/ui/BrandButton";
@@ -206,6 +208,11 @@ export const TopHeader = () => {
     { name: giftCardsPage?.title || "Gift Card", path: "/gift-cards" },
     { name: helpContactPage?.title || "Help & Contact", path: "/help-contact" },
   ];
+  const filteredTopLinks = topLinks.filter(
+    (link) =>
+      link.name !== "Help & Contact" &&
+      link.name !== helpContactPage?.title,
+  );
 
   const { removeFromWishlist } = useProductActions();
   const {
@@ -250,45 +257,45 @@ export const TopHeader = () => {
       },
       ...(currentUser
         ? [
-            {
-              type: "menu",
-              label: currentUser.profile?.firstName
-                ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
-                : currentUser.firstName ||
-                  currentUser.email?.split("@")[0] ||
-                  "My Sam",
-              path: "/account/profile",
-              icon: <User size={16} />,
-              title: "My Account",
-              items: withIcons([
-                ...baseAccountMenuItems,
-                ...(isAdminRole(currentRole)
-                  ? [
-                      {
-                        label: "Admin Products",
-                        path: "/admin/products",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin Catalog",
-                        path: "/admin/catalog",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin Brands",
-                        path: "/admin/brands",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin RBAC",
-                        path: "/admin/rbac",
-                        icon: "settings",
-                      },
-                    ]
-                  : []),
-              ]),
-            },
-          ]
+          {
+            type: "menu",
+            label: currentUser.profile?.firstName
+              ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
+              : currentUser.firstName ||
+              currentUser.email?.split("@")[0] ||
+              "My Sam",
+            path: "/account/profile",
+            icon: <User size={16} />,
+            title: "My Account",
+            items: withIcons([
+              ...baseAccountMenuItems,
+              ...(isAdminRole(currentRole)
+                ? [
+                  {
+                    label: "Admin Products",
+                    path: "/admin/products",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin Catalog",
+                    path: "/admin/catalog",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin Brands",
+                    path: "/admin/brands",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin RBAC",
+                    path: "/admin/rbac",
+                    icon: "settings",
+                  },
+                ]
+                : []),
+            ]),
+          },
+        ]
         : []),
     ],
     [
@@ -323,7 +330,7 @@ export const TopHeader = () => {
     <div className="hidden h-[60px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
       <div className="customer-container flex h-full items-center justify-between">
         <div className="flex flex-1 items-center gap-8 text-[#FFFFFF]">
-          {asArray(topLinks.length ? topLinks : DEFAULT_TOP_NAV_LINKS).map(
+          {asArray(filteredTopLinks.length ? filteredTopLinks : DEFAULT_TOP_NAV_LINKS.filter(l => l.name !== "Help & Contact")).map(
             (link, index) => (
               <Link
                 key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
@@ -336,7 +343,7 @@ export const TopHeader = () => {
           )}
         </div>
 
-        <div className="flex h-full items-center gap-5">
+        <div className="flex h-full items-center gap-6">
           {dropdowns.map((dropdown) => (
             <HeaderDropdown
               key={dropdown.type}
@@ -348,14 +355,39 @@ export const TopHeader = () => {
             </HeaderDropdown>
           ))}
 
+          {/* Help & Contact */}
+          <Link
+            to="/help-contact"
+            className="flex items-center gap-2 text-white/85 transition-all duration-300 ease-in-out hover:text-white"
+          >
+            <LifeBuoy size={16} className="text-[#CE9F2D] shrink-0" />
+            <span>Help & Contact</span>
+          </Link>
+
+          {/* Vendor Login */}
+          <Link
+            to="/seller/status"
+            className="flex items-center gap-2 text-white/85 transition-all duration-300 ease-in-out hover:text-white"
+          >
+            <User size={16} className="text-[#CE9F2D] shrink-0" />
+            <span>Vendor Login</span>
+          </Link>
+
           {currentUser ? (
-            <button
-              type="button"
+            <BrandButton
+              variant="custom"
+              textColor="#03014D"
+              rounded={false}
+              style={{ borderRadius: "5px", border: "1px solid #1B1D604D" }}
+              className="h-[36px] min-h-[36px] min-w-[153px] px-4 py-0 text-[14px] font-bold hover:bg-gray-50 hover:shadow-md transition-all duration-300 ease-in-out"
+              size="sm"
+              label={
+                <span className="flex items-center gap-1.5 justify-center w-full">
+                  <LogOut size={14} /> Sign Out
+                </span>
+              }
               onClick={() => dispatch(logout())}
-              className="flex items-center gap-1.5 rounded border border-white/30 px-3 py-0.5 text-[11px] font-semibold text-white transition-all duration-300 ease-in-out hover:bg-white/10"
-            >
-              <LogOut size={14} /> Sign Out
-            </button>
+            />
           ) : (
             <BrandButton
               variant="custom"
@@ -363,8 +395,8 @@ export const TopHeader = () => {
               textColor="#03014D"
               rounded={false}
               style={{ borderRadius: "5px" }}
-              className="h-[20px] min-h-[41px] min-w-[153px] px-4 py-0 text-[14px] font-semibold hover:brightness-95 hover:shadow-md transition-all duration-300 ease-in-out"
-              size="xs"
+              className="h-[36px] min-h-[36px] min-w-[153px] px-4 py-0 text-[14px] font-bold hover:brightness-95 hover:shadow-md transition-all duration-300 ease-in-out"
+              size="sm"
               label="Become a Seller"
               onClick={() => navigate("/register")}
             />
@@ -380,6 +412,12 @@ export const Navbar = ({ icons: propIcons }) => {
   const currentUser = useSelector((s) => s.auth.current);
   const displayIcons = propIcons || navData;
   const [searchQuery, setSearchQuery] = useState("");
+
+  const cartState = useSelector((s) => s.cart);
+  const cartItemsCount = cartState?.current?.items?.reduce((total, item) => total + (item.quantity || 1), 0) || 0;
+
+  const wishlist = useSelector((s) => s.cart.current?.wishlist);
+  const wishlistCount = Array.isArray(wishlist) ? wishlist.length : 0;
 
   const handleSearch = (nextQuery = searchQuery, category = null) => {
     const trimmedQuery = nextQuery.trim();
@@ -417,38 +455,36 @@ export const Navbar = ({ icons: propIcons }) => {
         />
 
         <div className="order-2 lg:order-3 flex shrink-0 items-center gap-2 sm:gap-3 lg:gap-5">
-          <div className="hidden items-center gap-5 lg:flex">
-            {asArray(displayIcons).map((item, iconIndex) => (
-              <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
-                <Link
-                  to={getNavbarIconPath(item)}
-                  className="group relative flex h-10 w-10 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]"
-                  aria-label={getNavbarIconLabel(item)}
-                >
-                  <img
-                    src={item?.img}
-                    alt={getNavbarIconLabel(item)}
-                    className={`object-contain ${
-                      item?.name === "IN"
-                        ? "h-[22px] w-[24px]"
-                        : "h-[17px] w-[17px]"
-                    }`}
-                  />
-                  <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-                    {getNavbarIconLabel(item)}
-                  </span>
-                </Link>
-                {iconIndex < displayIcons.length - 1 && (
-                  <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
-                )}
-              </Fragment>
-            ))}
+          <div className="hidden items-center gap-3 lg:flex">
+            {/* Cart Icon */}
+            <Link
+              to="/cart"
+              className="group relative flex h-[41px] w-[41px] items-center justify-center rounded-full border border-[#1B1D604D] bg-[#F0F2F9] transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)]"
+              aria-label="Cart"
+            >
+              <ShoppingCart size={18} className="text-[#03014D]" />
+              {cartItemsCount > 0 && (
+                <span className="absolute -right-1 -top-1 z-10 h-3.5 w-3.5 rounded-full bg-[#CE9F2D] border-2 border-white" />
+              )}
+            </Link>
+
+            {/* Wishlist / Heart Icon */}
+            <Link
+              to="/watchlist"
+              className="group relative flex h-[41px] w-[41px] items-center justify-center rounded-full border border-[#1B1D604D] bg-[#F0F2F9] transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)]"
+              aria-label="Wishlist"
+            >
+              <Heart size={18} className="text-[#03014D] fill-[#03014D]" />
+              {wishlistCount > 0 && (
+                <span className="absolute -right-1 -top-1 z-10 h-3.5 w-3.5 rounded-full bg-[#CE9F2D] border-2 border-white" />
+              )}
+            </Link>
           </div>
 
           {/* Mobile/Tablet Cart Icon */}
           <Link
             to="/cart"
-            className="flex lg:hidden h-9 w-9 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)] shrink-0"
+            className="group relative flex lg:hidden h-9 w-9 items-center justify-center rounded-full border border-[var(--customer-border)] bg-white transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)] shrink-0"
             aria-label="Cart"
           >
             <img
@@ -456,6 +492,9 @@ export const Navbar = ({ icons: propIcons }) => {
               alt="Cart"
               className="h-[17px] w-[17px] object-contain"
             />
+            {cartItemsCount > 0 && (
+              <span className="absolute -right-1 -top-1 z-10 h-3 w-3 rounded-full bg-[#CE9F2D] border-2 border-white" />
+            )}
           </Link>
 
           {currentUser ? (
@@ -471,17 +510,30 @@ export const Navbar = ({ icons: propIcons }) => {
               </span>
             </Link>
           ) : (
-            <BrandButton
-              variant="custom"
-              bgColor="#CE9F2D"
-              textColor="#03014D"
-              rounded={false}
-              style={{ borderRadius: "5px" }}
-              label="Create Account"
-              size="sm"
-              className="h-[36px] sm:h-[41px] min-h-[36px] sm:min-h-[41px] min-w-[120px] sm:min-w-[153px] whitespace-nowrap px-3 sm:px-4 text-[13px] sm:text-[16px] font-semibold hover:brightness-95 hover:shadow-md transition-all duration-300 ease-in-out"
-              onClick={() => navigate("/register")}
-            />
+            <>
+              <BrandButton
+                variant="custom"
+                bgColor="#FFFFFF"
+                textColor="#03014D"
+                rounded={false}
+                style={{ borderRadius: "5px", border: "1px solid #1B1D604D" }}
+                label="Log In"
+                size="sm"
+                className="h-[36px] sm:h-[41px] min-h-[36px] sm:min-h-[41px] min-w-[100px] sm:min-w-[120px] whitespace-nowrap px-3 sm:px-4 text-[13px] sm:text-[16px] font-bold hover:bg-gray-50 hover:shadow-md transition-all duration-300 ease-in-out"
+                onClick={() => navigate("/login")}
+              />
+              <BrandButton
+                variant="custom"
+                bgColor="#CE9F2D"
+                textColor="#03014D"
+                rounded={false}
+                style={{ borderRadius: "5px" }}
+                label="Create Account"
+                size="sm"
+                className="h-[36px] sm:h-[41px] min-h-[36px] sm:min-h-[41px] min-w-[120px] sm:min-w-[153px] whitespace-nowrap px-3 sm:px-4 text-[13px] sm:text-[16px] font-bold hover:brightness-95 hover:shadow-md transition-all duration-300 ease-in-out"
+                onClick={() => navigate("/register")}
+              />
+            </>
           )}
         </div>
       </div>
@@ -545,7 +597,7 @@ export const CategoryBar = ({ headerData }) => {
         const list = getCategoryListFromResponse(data);
         if (list.length) setCatalogCategories(list);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [dispatch]);
 
   const handleCategoryMouseEnter = (item) => {

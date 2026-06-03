@@ -20,6 +20,7 @@ import {
 import { useProductActions } from "../../hooks/useProductActions";
 import { searchElastic } from "../../features/search/searchSlice";
 import { sanitizeSearchQuery } from "../../validations";
+import useDebouncedValue from "../../hooks/useDebouncedValue";
 
 const SORT_OPTIONS = [
   { value: "", label: "Relevance" },
@@ -58,7 +59,7 @@ export default function SearchPage() {
       minPrice: searchParams.get("minPrice") || undefined,
       maxPrice: searchParams.get("maxPrice") || undefined,
       minRating: searchParams.get("minRating") || undefined,
-      inStock: searchParams.get("inStock") || undefined,
+      inStock: searchParams.get("inStock") !== "false" ? "true" : undefined,
       sort: searchParams.get("sort") || undefined,
       page: currentPage,
       limit: Number(searchParams.get("limit") || 12),
@@ -68,11 +69,40 @@ export default function SearchPage() {
 
   useEffect(() => {
     const p = getParams();
-    if (p.q || p.category || p.categoryId || p.categorySlug) dispatch(searchElastic(p));
+    if (p.q || p.category || p.categoryId || p.categorySlug) {
+      dispatch(
+        searchElastic({
+          params: p,
+          cacheKey: `search-list-${JSON.stringify(p)}`,
+        }),
+      ).catch(() => {});
+    }
   }, [dispatch, getParams]);
 
+  const debouncedQuery = useDebouncedValue(queryInput, 500);
+
   useEffect(() => {
-    setQueryInput(searchParams.get("q") || "");
+    const currentQ = searchParams.get("q") || "";
+    const sanitizedDebounced = sanitizeSearchQuery(debouncedQuery);
+    if (sanitizedDebounced !== currentQ) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        if (sanitizedDebounced) {
+          next.set("q", sanitizedDebounced);
+        } else {
+          next.delete("q");
+        }
+        next.delete("page");
+        return next;
+      });
+    }
+  }, [debouncedQuery, setSearchParams, searchParams]);
+
+  useEffect(() => {
+    const currentQ = searchParams.get("q") || "";
+    if (queryInput !== currentQ) {
+      setQueryInput(currentQ);
+    }
   }, [searchParams]);
 
   const updateParam = (key, value) => {
@@ -83,6 +113,12 @@ export default function SearchPage() {
         next.delete(key);
       } else {
         next.set(key, value);
+      }
+
+      if (key === "category" || key === "categoryId" || key === "categorySlug") {
+        if (key !== "category") next.delete("category");
+        if (key !== "categoryId") next.delete("categoryId");
+        if (key !== "categorySlug") next.delete("categorySlug");
       }
 
       next.delete("page");
@@ -148,6 +184,14 @@ export default function SearchPage() {
       key: "category",
       label: `Category: ${searchParams.get("category")}`,
     },
+    searchParams.get("categoryId") && {
+      key: "categoryId",
+      label: `Category: ${searchParams.get("categoryId")}`,
+    },
+    searchParams.get("categorySlug") && {
+      key: "categorySlug",
+      label: `Category: ${searchParams.get("categorySlug")}`,
+    },
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
       label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${
@@ -158,7 +202,7 @@ export default function SearchPage() {
       key: "minRating",
       label: `${searchParams.get("minRating")}★ & up`,
     },
-    searchParams.get("inStock") && {
+    searchParams.get("inStock") === "true" && {
       key: "inStock",
       label: "In Stock Only",
     },
@@ -229,9 +273,9 @@ export default function SearchPage() {
         <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
           <input
             type="checkbox"
-            checked={searchParams.get("inStock") === "true"}
+            checked={searchParams.get("inStock") !== "false"}
             onChange={(event) =>
-              updateParam("inStock", event.target.checked ? "true" : undefined)
+              updateParam("inStock", event.target.checked ? undefined : "false")
             }
             className="h-3.5 w-3.5 accent-gold"
           />
@@ -362,7 +406,15 @@ export default function SearchPage() {
                 empty={!hits.length && !searchState.loading}
                 emptyTitle="No results found"
                 emptyText={q ? `We couldn't find anything for "${q}". Try different keywords or remove some filters.` : "We couldn't find any products in this category. Try selecting another category or removing some filters."}
-                onRetry={() => dispatch(searchElastic(getParams()))}
+                onRetry={() => {
+                  const p = getParams();
+                  dispatch(
+                    searchElastic({
+                      params: p,
+                      cacheKey: `search-list-${JSON.stringify(p)}`,
+                    })
+                  ).catch(() => {});
+                }}
               >
                 <ProductGrid
                   products={hits}
