@@ -46,7 +46,7 @@ export default function BuyerRegisterPage() {
         eyebrow="Buyer registration"
         title="Start shopping with a customer account."
         subtitle="Your role is locked to buyer on submit, so this form cannot accidentally create a seller or admin profile."
-        icon={<User size={28} />}
+        icon="/image/png/person.png"
         maxWidth="max-w-[1120px]"
       >
         <BuyerRegisterForm

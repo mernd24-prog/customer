@@ -30,7 +30,7 @@ import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
 import SellDropdown from "./header/SellDropdown";
 import WatchlistDropdown from "./header/WatchlistDropdown";
-import { icons, navbarIcons as navData } from "../constant/image.constant";
+import { icons, navbarIcons as navData } from "../constants/image.constant";
 import { useProductActions } from "../hooks/useProductActions";
 import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
 import { logout } from "../features/auth/authSlice";
@@ -383,7 +383,8 @@ export const Navbar = ({ icons: propIcons }) => {
     const trimmedQuery = nextQuery.trim();
     let url = `/search?q=${encodeURIComponent(trimmedQuery)}`;
     if (category) {
-      const catKey = category.categoryKey || category.key || category.id || category._id;
+      const catKey =
+        category.categoryKey || category.key || category.id || category._id;
       url += `&category=${encodeURIComponent(catKey)}&categoryId=${encodeURIComponent(catKey)}&categorySlug=${encodeURIComponent(catKey)}`;
     }
     if (trimmedQuery || category) {

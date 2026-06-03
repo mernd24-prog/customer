@@ -12,8 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import {
   Bell,
-  // Banknote,
-  CheckCircle2,
+  Banknote,
   CreditCard,
   Eye,
   EyeOff,
@@ -22,12 +21,11 @@ import {
   ShieldCheck,
   Star,
   Wallet,
-  // Banknote,
 } from "lucide-react";
 import ApiState from "../components/common/ApiState";
 import Seo from "../components/common/Seo";
 import BrandButton from "../components/ui/BrandButton";
-import StatusTimeline from "../components/common/StatusTimeline";
+import StatusTimeline from "../components/common/display/StatusTimeline";
 import { ProductCard } from "../components/ecommerce";
 import { useToastThunk } from "../hooks/useToastThunk";
 import { addRecentlyViewed } from "../utils/recentlyViewed";

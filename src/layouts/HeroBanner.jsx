@@ -1,8 +1,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import { Tag } from "lucide-react";
-import { bannerData } from "../constant/image.constant";
-
+import { bannerData } from "../constants/image.constant";
 
 // Swiper styles
 import "swiper/css";
@@ -34,7 +33,10 @@ const HeroBanner = () => {
         className="banner-swiper h-full w-full"
       >
         {bannerData.map((slide) => (
-          <SwiperSlide key={slide.id} className="relative overflow-hidden bg-[#1B1D60]">
+          <SwiperSlide
+            key={slide.id}
+            className="relative overflow-hidden bg-[#1B1D60]"
+          >
             {/* Slide Background Image - Aligned to right, preserving aspect ratio */}
             <img
               src={slide.image}
@@ -58,17 +60,17 @@ const HeroBanner = () => {
 
                   {/* Heading */}
                   <h2 className="max-w-[681px] lg:max-w-[800px] font-sans text-3xl font-bold leading-[40px] tracking-normal sm:text-5xl sm:leading-[58px] lg:text-[48px] lg:leading-[58px] xl:text-[54px] xl:leading-[64px] 2xl:text-[65px] 2xl:leading-[75px]">
-                    Shop Smarter Across {' '}
-                    <br />
-                    <span className="text-[#CE9F2D]">
-                      Every Category {' '}
-                    </span>
+                    Shop Smarter Across <br />
+                    <span className="text-[#CE9F2D]">Every Category </span>
                   </h2>
                 </div>
 
                 {/* Description */}
                 <p className="max-w-[681px] font-sans text-xs sm:text-sm md:text-base lg:text-[18px] font-normal leading-relaxed lg:leading-[28px] text-white/80">
-                  Discover fashion, electronics, beauty, home essentials, gifts, and more from trusted sellers. Enjoy exciting deals, secure payments, fast delivery, and a smooth shopping experience. Experience in one marketplace.
+                  Discover fashion, electronics, beauty, home essentials, gifts,
+                  and more from trusted sellers. Enjoy exciting deals, secure
+                  payments, fast delivery, and a smooth shopping experience.
+                  Experience in one marketplace.
                 </p>
 
                 {/* CTA */}

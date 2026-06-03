@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SKELETON_PRESETS, SkeletonLoader } from "../common/skeleton";
-import { collageCard } from "../../constant/image.constant";
+import { collageCard } from "../../constants/image.constant";
 import Label from "../common/label/Label";
 
 function CollageImage({ src, title, link }) {
@@ -16,9 +16,7 @@ function CollageImage({ src, title, link }) {
         />
 
         <span className="absolute bottom-3 left-3 rounded-full  backdrop-blur-[8px]">
-           <Label variant="imageLabel">
-        Trending
-       </Label>
+          <Label variant="imageLabel">Trending</Label>
         </span>
       </Link>
     </div>
@@ -33,9 +31,7 @@ function CollageCard({ section }) {
           {section.title}
         </h2>
 
-       <Label variant="outline">
-        {section.label}
-       </Label>
+        <Label variant="outline">{section.label}</Label>
       </div>
 
       <div className="grid grid-cols-2 gap-[1px]">
@@ -51,7 +47,6 @@ function CollageCard({ section }) {
     </article>
   );
 }
-
 
 function toCollageSections(cmsPages = []) {
   const sections = (Array.isArray(cmsPages) ? cmsPages : [])

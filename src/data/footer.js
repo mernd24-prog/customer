@@ -1,4 +1,4 @@
-import { footer } from "../constant/image.constant";
+import { footer } from "../constants/image.constant";
 
 export const footerData = {
   cmsKey: "footer-links",

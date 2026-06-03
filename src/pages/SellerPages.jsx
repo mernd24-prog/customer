@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import ApiState from "../components/common/ApiState";
 import Seo from "../components/common/Seo";
-import StatusTimeline from "../components/common/StatusTimeline";
+import StatusTimeline from "../components/common/display/StatusTimeline";
 import {
   fetchSellerWebStatus,
   fetchSellerWebTracking,

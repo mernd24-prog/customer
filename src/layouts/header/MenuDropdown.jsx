@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 
-import DropdownContainer from "./DropdownContainer";
 import DropdownHeader from "./DropdownHeader";
 
 function MenuItem({ item }) {
@@ -17,13 +16,13 @@ function MenuItem({ item }) {
 
 export default function MenuDropdown({ title, items }) {
   return (
-    <DropdownContainer width="w-[250px]">
+    <div className="w-[250px] overflow-hidden rounded-[var(--customer-radius)] border border-[var(--customer-border)] bg-white shadow-[var(--customer-shadow-strong)]">
       <DropdownHeader title={title} />
       <div className="py-2">
         {items.map((item) => (
           <MenuItem key={item.label} item={item} />
         ))}
       </div>
-    </DropdownContainer>
+    </div>
   );
 }

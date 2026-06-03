@@ -1,6 +1,6 @@
 import { SkeletonLoader } from "./skeleton";
-import EmptyState from "./EmptyState";
-import ErrorState from "./ErrorState";
+import EmptyState from "./feedback/EmptyState";
+import ErrorState from "./feedback/ErrorState";
 
 export default function ApiState({ loading, error, empty, onRetry, children, emptyTitle = "Nothing here yet", emptyText = "Once data is available, it will appear here." }) {
   if (loading) {

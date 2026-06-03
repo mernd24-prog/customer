@@ -1,5 +1,5 @@
 import React from "react";
-import { infoSection } from "../../constant/image.constant";
+import { infoSection } from "../../constants/image.constant";
 
 const PolicySection = ({ title, points, description, footer }) => {
   const visiblePoints = Array.isArray(points)

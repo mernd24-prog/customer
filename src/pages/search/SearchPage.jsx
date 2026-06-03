@@ -5,7 +5,7 @@ import { Search, X } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import ActiveFilterChips from "../../components/common/ActiveFilterChips";
-import FilterDrawer from "../../components/common/FilterDrawer";
+import FilterDrawer from "../../components/common/overlay/Drawer";
 import PageHeader from "../../components/common/PageHeader";
 import BrandButton from "../../components/ui/BrandButton";
 import {

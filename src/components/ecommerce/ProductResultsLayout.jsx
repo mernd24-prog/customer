@@ -1,6 +1,6 @@
 import ApiState from "../common/ApiState";
 import ActiveFilterChips from "../common/ActiveFilterChips";
-import FilterDrawer from "../common/FilterDrawer";
+import FilterDrawer from "../common/overlay/Drawer";
 import ProductFilterSidebar from "./ProductFilterSidebar";
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import { HeaderGoldButton } from "../../components/dynamicComponent/button/static";
-import DropdownContainer from "./DropdownContainer";
+import BrandButton from "../../components/ui/BrandButton";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 
 export default function SellDropdown({ data }) {
@@ -10,7 +10,7 @@ export default function SellDropdown({ data }) {
   const buttons = asArray(data?.buttons);
 
   return (
-    <DropdownContainer width="w-[340px]">
+    <div className="w-[340px] overflow-hidden rounded-[var(--customer-radius)] border border-[var(--customer-border)] bg-white shadow-[var(--customer-shadow-strong)]">
       <div className="p-6">
         <h2 className="text-[22px] font-bold leading-tight text-[var(--customer-navy)]">
           {textOr(data?.title, "Sell with us")}
@@ -42,6 +42,6 @@ export default function SellDropdown({ data }) {
           ))}
         </div>
       </div>
-    </DropdownContainer>
+    </div>
   );
 }

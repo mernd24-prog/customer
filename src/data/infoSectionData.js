@@ -1,4 +1,4 @@
-import { infoSection } from "../constant/image.constant";
+import { infoSection } from "../constants/image.constant";
 
 export const roadAheadData = [
   {

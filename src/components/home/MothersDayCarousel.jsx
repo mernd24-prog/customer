@@ -22,17 +22,18 @@ export default function MothersDayCarousel({
   const isDefaultHeading = heading === "SAM-Special Gifts For Mother's Day";
 
   return (
-    <section className="my-8 full-banner bg-[#1B1E5C] w-full py-12 lg:py-4 ">
-      <div className="max-w-[1760px] mx-auto px-4 xl:px-8 grid grid-cols-1 lg:grid-cols-4 gap-8 items-center">
+    <section className="my-8 full-banner relative bg-[#1B1E5C] w-full py-12 lg:py-4 ">
+      <div className="max-w-[1760px]   mx-auto px-4 xl:px-8 grid grid-cols-1 lg:grid-cols-4 gap-8 items-center">
         {/* Left Text Block */}
 
-        <div className=" flex flex-col items-center text-center lg:items-start lg:text-left text-white p-2 2xl:p-5 ">
+        <div className=" flex flex-col items-center text-center lg:items-start lg:text-left text-white p-2 2xl:p-5">
           <img
             src="/image/png/backgroundImg.png"
             alt="decorative ring"
-            className="absolute top-0 left-0  md:block hidden"
+            aria-hidden="true"
+            className="absolute top-0 left-0 lg:block hidden"
           />
-          <h2 className="relative text-2xl xl:text-4xl 2xl:text-[44px] font-bold  ">
+          <h2 className="relative z-10 text-2xl xl:text-4xl 2xl:text-[44px] font-bold">
             {isDefaultHeading ? (
               <>
                 Special Gifts <br className="hidden lg:block" />
@@ -45,7 +46,7 @@ export default function MothersDayCarousel({
               heading
             )}
           </h2>
-          <p className="mt-4 mb-8 text-sm md:text-base  text-white/80 max-w-md">
+          <p className="relative z-10 mt-4 mb-8 text-sm md:text-base text-white/80 max-w-md">
             Discover thoughtfully curated gifts for every occasion — from
             birthdays to anniversaries and everything in between.
           </p>

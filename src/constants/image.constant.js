@@ -16,16 +16,6 @@ export const footer = {
   exchange: "/image/png/return.png",
 };
 
-export const mothersDaySwiperImages = {
-  jacket: "/image/png/jacket.png",
-  maxi: "/image/png/maxi.png",
-  coOrdSet: "/image/png/coOrdSet.png",
-  blazer: "/image/png/blazer.png",
-  pants: "/image/png/pants.png",
-  homeDecor: "/image/jpg/home-decor.jpg",
-  smartHome: "/image/jpg/smart-home.jpg",
-};
-
 export const collageCard = {
   menFashion: "/image/png/men-fashion.png",
   stylishPair: "/image/png/stylish-pair.png",
