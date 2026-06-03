@@ -30,7 +30,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
   const submit = (values) => onSubmit(buildBuyerRegistrationPayload(values));
 
   return (
-    <form className="grid gap-4" onSubmit={handleSubmit(submit)}>
+    <form className="grid gap-3" onSubmit={handleSubmit(submit)}>
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           id="firstName"
@@ -108,14 +108,15 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
       )}
 
       <Button
-        className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+        className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
         loading={loading}
+        size="lg"
         type="submit"
       >
         <UserPlus size={18} /> Register as buyer
       </Button>
 
-      <p className="text-center  text-[0.8rem] text-muted">
+      {/* <p className="text-center  text-[0.8rem] text-muted">
         Already have an account?{" "}
         <Link
           className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
@@ -132,7 +133,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         >
           Continue with OTP
         </Link>
-      </p>
+      </p> */}
     </form>
   );
 }
