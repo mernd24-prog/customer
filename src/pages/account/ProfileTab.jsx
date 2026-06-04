@@ -56,19 +56,23 @@ export default function ProfileTab({ user }) {
     );
 
   return (
-    <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
+    <form className="grid gap-3 " onSubmit={handleSubmit(submit)} noValidate>
       {/* Profile Header */}
-      <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gold-soft text-gold sm:h-16 sm:w-16">
-          <User size={32} className="h-8 w-8 sm:h-7 sm:w-7" />
+      <div className="flex gap-3 items-center lg:items-start flex-row lg:flex-col ">
+        <div className="w-16 h-16 ">
+          <img
+            src="/image/png/person.png"
+            alt="Icon"
+            className="h-full w-full object-cover"
+          />
         </div>
 
-        <div className="w-full sm:w-auto">
-          <p className=" text-lg font-semibold text-ink sm:text-base">
+        <div className=" my-4">
+          <p className=" text-lg font-semibold text-ink md:text-2xl">
             {watch("firstName")} {watch("lastName")}
           </p>
 
-          <p className="break-all  text-sm text-muted">
+          <p className="break-all font-medium text-sm md:text-lg  text-[#182D50B2]">
             {watch("email")}
           </p>
         </div>
@@ -126,7 +130,12 @@ export default function ProfileTab({ user }) {
       />
 
       {/* Submit Button */}
-      <Button type="submit" loading={loading} className="w-full sm:w-auto">
+      <Button
+        type="submit"
+        loading={loading}
+        className="w-full text-white sm:w-auto font-semibold "
+        size="lg"
+      >
         Save profile
       </Button>
     </form>

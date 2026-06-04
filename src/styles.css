@@ -261,12 +261,12 @@ textarea {
 .customer-input {
   min-height: 42px;
   width: 100%;
-  border: 1px solid var(--customer-border-strong);
+  border: 1px solid #04258633;
   border-radius: var(--customer-radius-sm);
   background: var(--customer-surface);
   padding: 10px 12px;
   color: var(--customer-ink);
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
   transition:
     border-color 180ms ease,
@@ -278,10 +278,10 @@ textarea {
   color: var(--customer-subtle);
 }
 
-.customer-input:focus {
+/* .customer-input:focus {
   border-color: var(--customer-gold);
   box-shadow: 0 0 0 3px rgba(214, 163, 35, 0.18);
-}
+} */
 
 main {
   /* width: min(1180px, calc(100% - 32px)); */

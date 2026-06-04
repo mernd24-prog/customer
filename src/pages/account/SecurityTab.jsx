@@ -32,11 +32,7 @@ export default function SecurityTab() {
   };
 
   return (
-    <form
-      className="mx-auto grid max-w-md gap-5"
-      onSubmit={handleSubmit(submit)}
-      noValidate
-    >
+    <form className=" grid  gap-5" onSubmit={handleSubmit(submit)} noValidate>
       <div className="rounded-[8px] border border-gold-soft bg-gold-soft px-4 py-3  text-sm text-gold-dark">
         Choose a strong password with at least 8 characters, including numbers
         and symbols.
@@ -72,7 +68,12 @@ export default function SecurityTab() {
         placeholder="••••••••"
       />
 
-      <Button type="submit" loading={loading} className="w-full sm:w-auto">
+      <Button
+        type="submit"
+        loading={loading}
+        className="w-full sm:w-auto font-semibold text-white"
+        size="lg"
+      >
         <KeyRound size={16} /> Change password
       </Button>
     </form>
