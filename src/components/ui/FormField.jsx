@@ -45,16 +45,16 @@ export default function FormField({
 
   return (
     <label
-      className="grid gap-1.5  text-sm font-medium text-[var(--customer-ink)]"
+      className="grid gap-1.5  text-base font-medium text-[#2E2E2E]"
       htmlFor={id}
     >
       <span>{label}</span>
-      <span className="relative">
+      <span className="relative ">
         <input
           placeholder={placeholder}
           id={id}
           type={inputType}
-          className={`customer-input  ${isPassword ? "pr-11" : ""}`}
+          className={`customer-input   ${isPassword ? "pr-11" : ""}`}
           aria-invalid={Boolean(error)}
           {...registration}
           {...props}
@@ -69,7 +69,7 @@ export default function FormField({
               event.preventDefault();
               setShowPassword((currentValue) => !currentValue);
             }}
-            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[var(--customer-muted)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40"
+            className="absolute  right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[var(--customer-muted)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>

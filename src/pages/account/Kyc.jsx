@@ -6,7 +6,10 @@ import { BadgeCheck, Shield, Upload } from "lucide-react";
 import FormField from "../../components/ui/FormField";
 import Button from "../../components/ui/Button";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { submitUserKyc, uploadKycDocuments } from "../../features/user/userSlice";
+import {
+  submitUserKyc,
+  uploadKycDocuments,
+} from "../../features/user/userSlice";
 import { kycSchema } from "../../validations/validationSchemas";
 
 const KYC_DOCS = [
@@ -71,7 +74,11 @@ export default function KycTab({ user }) {
     }[kyc?.status] || "text-muted bg-cream";
 
   return (
-    <form className="grid gap-6" onSubmit={handleSubmit(submit)} noValidate>
+    <form
+      className="grid gap-4 lg:gap-3"
+      onSubmit={handleSubmit(submit)}
+      noValidate
+    >
       {kyc?.status && (
         <div className="flex items-center gap-3">
           <BadgeCheck size={20} className="shrink-0 text-muted" />
@@ -92,7 +99,7 @@ export default function KycTab({ user }) {
         </div>
       ) : (
         <>
-          <div className="grid gap-5 max-w-md">
+          <div className="grid gap-3 ">
             <FormField
               id="legalName"
               label="Legal name (as on PAN)"
@@ -120,10 +127,8 @@ export default function KycTab({ user }) {
 
           {/* Document URLs */}
           <div>
-            <p className="mb-3 text-sm font-medium text-ink">
-              Document URLs
-            </p>
-            <p className="mb-4 text-xs text-gray">
+            <p className="   text-base font-medium text-ink">Document URLs</p>
+            <p className="mb-4 text-base text-gray">
               Upload each document to a file hosting service and paste the URL
               here.
             </p>
@@ -131,7 +136,7 @@ export default function KycTab({ user }) {
               {KYC_DOCS.map(({ key, label }) => (
                 <label
                   key={key}
-                  className="grid gap-1.5 text-sm font-medium text-ink"
+                  className="grid gap-1.5 text-base font-medium text-ink"
                 >
                   <span className="flex items-center gap-1.5">
                     <Upload size={13} /> {label}
@@ -141,7 +146,7 @@ export default function KycTab({ user }) {
                     placeholder="https://..."
                     value={docUrls[key] || ""}
                     onChange={(e) => handleDocUpload(key, e.target.value)}
-                    className="min-h-10 rounded-md border border-border-strong bg-white px-3 py-2 text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-gray focus:border-gold focus:ring-2 focus:ring-gold/20"
+                    className="min-h-10 rounded-md border border-border-strong bg-white px-3 py-2 text-ink   focus:outline-none  outline-none transition-all duration-300 ease-in-out placeholder:text-gray "
                   />
                 </label>
               ))}
@@ -154,7 +159,12 @@ export default function KycTab({ user }) {
             </div>
           )}
 
-          <Button type="submit" loading={loading} className="w-full sm:w-auto">
+          <Button
+            type="submit"
+            loading={loading}
+            className="w-full sm:w-auto  font-semibold text-white"
+            size="lg"
+          >
             <Shield size={16} /> Submit KYC
           </Button>
         </>
