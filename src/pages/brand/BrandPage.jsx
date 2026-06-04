@@ -383,10 +383,10 @@ export default function BrandPage() {
           sidebarOpen,
           onCloseSidebar: () => setSidebarOpen(false),
           loading:
-            (searchState.loading && !items.length) ||
+            (productState.loading && !items.length) ||
             (!firstLoadDone && !items.length && !!brand),
-          error: searchState.error,
-          empty: !items.length && !searchState.loading && firstLoadDone,
+          error: productState.error,
+          empty: !items.length && !productState.loading && firstLoadDone,
           emptyTitle: `No products from ${brandName}`,
           emptyText: "Try adjusting your filters or check back later.",
           onRetry: () => loadProducts({ page: 1, append: false }),

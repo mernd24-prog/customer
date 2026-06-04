@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Search, ChevronDown } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,15 +11,45 @@ import {
 import useDebouncedValue from "../../hooks/useDebouncedValue";
 
 function getCategoryListFromResponse(data) {
-  if (Array.isArray(data)) return data;
+  if (Array.isArray(data)) {
+    return data.flatMap((category) => [
+      category,
+      ...getCategoryListFromResponse(
+        category?.children || category?.subCategories || [],
+      ),
+    ]);
+  }
   if (!data || typeof data !== "object") return [];
-  if (Array.isArray(data?.items)) return data.items;
-  if (Array.isArray(data?.list)) return data.list;
-  if (Array.isArray(data?.categories)) return data.categories;
-  if (data?.category && typeof data.category === "object") return [data.category];
+  if (Array.isArray(data?.items))
+    return getCategoryListFromResponse(data.items);
+  if (Array.isArray(data?.list)) return getCategoryListFromResponse(data.list);
+  if (Array.isArray(data?.categories))
+    return getCategoryListFromResponse(data.categories);
+  if (data?.category && typeof data.category === "object") {
+    return getCategoryListFromResponse([data.category]);
+  }
   if (data?.data) return getCategoryListFromResponse(data.data);
-  return [data];
+  return [
+    data,
+    ...getCategoryListFromResponse(data?.children || data?.subCategories || []),
+  ];
 }
+
+const getCategoryId = (category) =>
+  category?.id ||
+  category?._id ||
+  category?.categoryId ||
+  category?.categoryKey ||
+  category?.key ||
+  category?.slug;
+
+const getCategoryLabel = (category) =>
+  category?.title ||
+  category?.name ||
+  category?.label ||
+  getCategoryId(category);
+
+let categoriesRequestStarted = false;
 
 const SearchBar = ({
   placeholder = "Search for products, brands and categories...",
@@ -28,6 +58,7 @@ const SearchBar = ({
   onChange,
   onSearch,
   onKeyDown,
+  enableCategoryDropdown = false,
   enableAutocomplete = false,
   autocompleteLimit = 8,
   autocompleteMinLength = 2,
@@ -39,7 +70,10 @@ const SearchBar = ({
   const categoriesRaw = useSelector((state) => state.catalog.list || []);
   const categoriesLoading = useSelector((state) => state.catalog.loading);
   const suggestionsRaw = useSelector((state) => state.search.suggestions || []);
-  const categories = getCategoryListFromResponse(categoriesRaw);
+  const categories = useMemo(
+    () => getCategoryListFromResponse(categoriesRaw),
+    [categoriesRaw],
+  );
   const suggestions = Array.isArray(suggestionsRaw)
     ? Array.from(
         new Set(
@@ -58,25 +92,35 @@ const SearchBar = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  
+
   const dropdownRef = useRef(null);
   const categoriesRequestedRef = useRef(false);
   const searchQuery = value ?? internalQuery;
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 250);
 
-  const catParam = searchParams.get("categoryId") || searchParams.get("category") || searchParams.get("categorySlug");
+  const catParam =
+    searchParams.get("categoryId") ||
+    searchParams.get("category") ||
+    searchParams.get("categorySlug");
 
   // Fetch categories if not loaded
   useEffect(() => {
     if (
+      enableCategoryDropdown &&
       !categories.length &&
       !categoriesLoading &&
-      !categoriesRequestedRef.current
+      !categoriesRequestedRef.current &&
+      !categoriesRequestStarted
     ) {
       categoriesRequestedRef.current = true;
-      dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 }));
+      categoriesRequestStarted = true;
+      dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 }))
+        .catch(() => {})
+        .finally(() => {
+          categoriesRequestStarted = false;
+        });
     }
-  }, [dispatch, categories.length, categoriesLoading]);
+  }, [dispatch, enableCategoryDropdown, categories.length, categoriesLoading]);
 
   useEffect(() => {
     if (!enableAutocomplete) return;
@@ -103,13 +147,19 @@ const SearchBar = ({
 
   // Sync selectedCategory with query params
   useEffect(() => {
+    if (!enableCategoryDropdown) {
+      setSelectedCategory(null);
+      return;
+    }
     if (catParam && categories.length) {
       const found = categories.find(
         (c) =>
+          (c.categoryId && c.categoryId === catParam) ||
           (c.categoryKey && c.categoryKey === catParam) ||
           (c.key && c.key === catParam) ||
+          (c.slug && c.slug === catParam) ||
           (c._id && c._id === catParam) ||
-          (c.id && c.id === catParam)
+          (c.id && c.id === catParam),
       );
       if (found) {
         setSelectedCategory(found);
@@ -117,7 +167,7 @@ const SearchBar = ({
       }
     }
     setSelectedCategory(null);
-  }, [catParam, categories]);
+  }, [catParam, categories, enableCategoryDropdown]);
 
   // Handle outside clicks to close dropdown
   useEffect(() => {
@@ -135,7 +185,9 @@ const SearchBar = ({
 
   const handleChange = (event) => {
     const nextValue = sanitizeSearchQuery(event.target.value);
-    setIsSuggestionOpen(Boolean(enableAutocomplete && nextValue.length >= autocompleteMinLength));
+    setIsSuggestionOpen(
+      Boolean(enableAutocomplete && nextValue.length >= autocompleteMinLength),
+    );
 
     if (onChange) {
       onChange({
@@ -160,11 +212,15 @@ const SearchBar = ({
       return;
     }
 
-    if (query || nextCategory) {
+    const category = enableCategoryDropdown ? nextCategory : null;
+
+    if (query || category) {
       let url = `/search?q=${encodeURIComponent(query)}`;
-      if (nextCategory) {
-        const catKey = nextCategory.categoryKey || nextCategory.key || nextCategory.id || nextCategory._id;
-        url += `&category=${encodeURIComponent(catKey)}&categoryId=${encodeURIComponent(catKey)}&categorySlug=${encodeURIComponent(catKey)}`;
+      if (category) {
+        const catKey = getCategoryId(category);
+        const catName = getCategoryLabel(category);
+        if (catKey) url += `&categoryId=${encodeURIComponent(catKey)}`;
+        if (catName) url += `&categoryName=${encodeURIComponent(catName)}`;
       }
       navigate(url);
     }
@@ -187,9 +243,11 @@ const SearchBar = ({
     }
 
     let url = `/search?q=${encodeURIComponent(query)}`;
-    if (selectedCategory) {
-      const catKey = selectedCategory.categoryKey || selectedCategory.key || selectedCategory.id || selectedCategory._id;
-      url += `&category=${encodeURIComponent(catKey)}&categoryId=${encodeURIComponent(catKey)}&categorySlug=${encodeURIComponent(catKey)}`;
+    if (enableCategoryDropdown && selectedCategory) {
+      const catKey = getCategoryId(selectedCategory);
+      const catName = getCategoryLabel(selectedCategory);
+      if (catKey) url += `&categoryId=${encodeURIComponent(catKey)}`;
+      if (catName) url += `&categoryName=${encodeURIComponent(catName)}`;
     }
     navigate(url);
   };
@@ -220,64 +278,81 @@ const SearchBar = ({
     suggestions.length > 0;
 
   return (
-    <div className={`group relative w-full max-w-[720px] ${className}`} ref={dropdownRef}>
-      <div className="rounded-full border border-[#1B1D604D] bg-white shadow-sm focus-within:border-[#CE9F2D] focus-within:ring-2 focus-within:ring-[#CE9F2D]/15">
+    <div
+      className={`group relative w-full max-w-[720px] ${className}`}
+      ref={dropdownRef}
+    >
+      <div className="rounded-full border border-[#1B1D604D] bg-white shadow-sm outline-0 transition-all duration-200">
         <div className="flex h-[46px] w-full items-center overflow-visible rounded-full border-none bg-white pl-0 pr-0 outline-none">
-          
-          {/* Categories Selector */}
-          <div className="relative h-full flex items-center">
-            <button
-              type="button"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="hidden sm:flex h-full items-center gap-2 pl-6 pr-4 text-sm font-medium text-[var(--customer-ink)] cursor-pointer hover:bg-black/[0.02] transition-colors select-none whitespace-nowrap outline-none rounded-l-full"
-            >
-              <span>{selectedCategory ? (selectedCategory.title || selectedCategory.name) : "All Categories"}</span>
-              <ChevronDown size={16} className={`text-[var(--customer-muted)] transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
-            </button>
-            
-            {isDropdownOpen && (
-              <div className="absolute left-4 top-[calc(100%+8px)] z-50 min-w-[220px] max-h-[300px] overflow-y-auto rounded-xl border border-[#1B1D6020] bg-white py-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-200">
+          {enableCategoryDropdown ? (
+            <>
+              {/* Categories Selector */}
+              <div className="static sm:relative h-full flex items-center">
                 <button
                   type="button"
-                  onClick={() => handleSelectCategory(null)}
-                  className={`w-full px-4 py-2.5 text-left text-sm transition-colors ${
-                    !selectedCategory
-                      ? "bg-[#CE9F2D]/10 text-[#03014D] font-semibold"
-                      : "text-[var(--customer-ink)] hover:bg-[#CE9F2D]/10 hover:text-[#03014D] font-medium"
-                  }`}
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex h-full max-w-[118px] items-center gap-1.5 rounded-l-full pl-3 pr-2 text-xs font-medium text-[var(--customer-ink)] outline-none transition-colors hover:bg-black/[0.02] sm:max-w-none sm:gap-2 sm:pl-6 sm:pr-4 sm:text-sm"
                 >
-                  All Categories
+                  <span className="truncate">
+                    {selectedCategory
+                      ? getCategoryLabel(selectedCategory)
+                      : "All Categories"}
+                  </span>
+                  <ChevronDown
+                    size={16}
+                    className={`text-[var(--customer-muted)] transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
+                  />
                 </button>
-                {categories.map((category) => {
-                  const label = category.title || category.name || category.categoryKey;
-                  const key = category.categoryKey || category.key || category.id || category._id;
-                  const isSelected = selectedCategory && (
-                    selectedCategory.categoryKey === category.categoryKey ||
-                    selectedCategory.key === category.key ||
-                    selectedCategory._id === category._id ||
-                    selectedCategory.id === category.id
-                  );
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => handleSelectCategory(category)}
-                      className={`w-full px-4 py-2.5 text-left text-sm transition-colors ${
-                        isSelected
-                          ? "bg-[#CE9F2D]/10 text-[#03014D] font-semibold"
-                          : "text-[var(--customer-ink)] hover:bg-[#CE9F2D]/10 hover:text-[#03014D] font-medium"
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
 
-          {/* Vertical Divider */}
-          <div className="hidden sm:block h-[24px] w-px bg-[#1B1D604D] shrink-0" />
+                {isDropdownOpen && (
+                  <div className="absolute left-0 right-0 sm:right-auto top-[calc(100%+10px)] z-50 max-h-[320px] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_18px_45px_rgba(3,1,77,0.14)] animate-in fade-in slide-in-from-top-2 duration-200 sm:left-2 sm:min-w-[260px] sm:w-auto">
+                    <div className="max-h-[320px] overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
+                      <button
+                        type="button"
+                        onClick={() => handleSelectCategory(null)}
+                        className={`w-full rounded-xl px-4 py-3 text-left text-sm transition-colors hover:bg-[#F8F3E7] focus-visible:bg-[#F8F3E7] ${
+                          !selectedCategory
+                            ? "font-semibold text-[#03014D]"
+                            : "font-medium text-[var(--customer-ink)]"
+                        }`}
+                      >
+                        All Categories
+                      </button>
+                      {categories.map((category) => {
+                        const label = getCategoryLabel(category);
+                        const key = getCategoryId(category);
+                        const isSelected =
+                          selectedCategory &&
+                          (selectedCategory.categoryId === category.categoryId ||
+                            selectedCategory.categoryKey === category.categoryKey ||
+                            selectedCategory.key === category.key ||
+                            selectedCategory.slug === category.slug ||
+                            selectedCategory._id === category._id ||
+                            selectedCategory.id === category.id);
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            onClick={() => handleSelectCategory(category)}
+                            className={`w-full rounded-xl px-4 py-3 text-left text-sm leading-snug transition-colors ${
+                              isSelected
+                                ? "font-semibold text-[#03014D]"
+                                : "font-semibold text-[#03014D]"
+                            } hover:bg-[#F8F3E7] focus-visible:bg-[#F8F3E7]`}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Vertical Divider */}
+              <div className="h-[24px] w-px shrink-0 bg-[#1B1D604D]" />
+            </>
+          ) : null}
 
           {/* Input field */}
           <input
@@ -296,19 +371,18 @@ const SearchBar = ({
             placeholder={placeholder}
             aria-label="Search products"
             aria-autocomplete={enableAutocomplete ? "list" : undefined}
-            className="h-full w-full flex-1 border-none bg-transparent pl-5 pr-4 sm:px-4 text-sm text-[var(--customer-ink)] outline-none ring-0 placeholder:text-[var(--customer-muted)] focus:ring-0"
+            className="h-full min-w-0 flex-1 appearance-none border-0 bg-transparent pl-3 pr-2 text-xs text-[var(--customer-ink)] shadow-none outline-none ring-0 placeholder:text-[var(--customer-muted)] focus:border-0 focus:outline-none focus:ring-0 focus:shadow-none focus-visible:outline-none sm:px-4 sm:text-sm"
           />
 
           {/* Search Button */}
           <button
             type="button"
             onClick={() => handleSearch()}
-            className="flex h-full w-[64px] items-center justify-center bg-[#CE9F2D] text-white transition-all duration-200 hover:bg-[#CE9F2D]/95 active:scale-[0.98] rounded-r-full"
+            className="flex h-full w-[52px] shrink-0 items-center justify-center rounded-r-full bg-[#CE9F2D] text-white transition-all duration-200 hover:bg-[#CE9F2D]/95 active:scale-[0.98] sm:w-[64px]"
             aria-label="Search"
           >
             <Search size={20} className="text-white" />
           </button>
-
         </div>
       </div>
       {shouldShowSuggestions && (
@@ -321,7 +395,10 @@ const SearchBar = ({
               onClick={() => handleSuggestionSelect(suggestion)}
               className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-[var(--customer-ink)] transition-colors hover:bg-[#CE9F2D]/10 hover:text-[#03014D]"
             >
-              <Search size={15} className="shrink-0 text-[var(--customer-muted)]" />
+              <Search
+                size={15}
+                className="shrink-0 text-[var(--customer-muted)]"
+              />
               <span className="truncate">{suggestion}</span>
             </button>
           ))}

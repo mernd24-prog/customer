@@ -419,7 +419,7 @@ export default function CategoryPage() {
       />
 
       {categoryImage ? (
-        <div className="relative h-44 w-full overflow-hidden sm:h-56">
+        <div className="mt-6 rounded-[var(--customer-radius-lg)] relative h-44 w-full overflow-hidden sm:h-56">
           <img
             src={categoryImage}
             alt={categoryTitle}
@@ -438,7 +438,7 @@ export default function CategoryPage() {
           </div>
         </div>
       ) : (
-        <div className="border-b border-border bg-cream px-4 py-6 sm:px-6">
+        <div className="mt-6 rounded-[var(--customer-radius-lg)] border border-border bg-cream px-4 py-6 sm:px-6">
           <div className="w-container">
             <Breadcrumbs items={breadcrumbItems} className="mb-2 text-gray" />
             <h1 className=" text-[26px] font-bold text-gray sm:text-[32px]">

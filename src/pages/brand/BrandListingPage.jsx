@@ -104,7 +104,7 @@ export default function BrandListingPage() {
         description="Browse all brands available on Sam Global."
       />
 
-      <div className="border-b border-border bg-cream px-4 py-6 sm:px-6">
+      <div className="mt-6 rounded-[var(--customer-radius-lg)] border border-border bg-cream px-4 py-6 sm:px-6">
         <div className="w-container">
           <Breadcrumbs items={breadcrumbItems} className="mb-2 text-gray" />
           <h1 className=" text-[26px] font-bold text-ink sm:text-[32px]">

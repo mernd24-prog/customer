@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import Seo from "../../components/common/Seo";
 import FAQContentSection from "../../components/faq/FAQContentSection";
@@ -10,6 +10,7 @@ import { useCmsRecord, getCmsPayload } from "../../hooks/useCmsRecord";
 
 export default function FAQPage() {
   const { page: faqPage } = useCmsRecord("faq");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const faqCmsData = useMemo(() => {
     return getCmsPayload(faqPage, null);
@@ -33,6 +34,17 @@ export default function FAQPage() {
         .filter((item) => item.question && item.answer);
     });
   }, [faqCmsData]);
+
+  const filteredFaqs = useMemo(() => {
+    if (!searchQuery.trim()) return faqs;
+    const query = searchQuery.toLowerCase();
+    return faqs.filter(
+      (faq) =>
+        faq.question.toLowerCase().includes(query) ||
+        faq.answer.toLowerCase().includes(query) ||
+        faq.topic.toLowerCase().includes(query)
+    );
+  }, [faqs, searchQuery]);
 
   const title = faqCmsData?.title || "Frequently Asked Questions";
 
@@ -66,9 +78,9 @@ export default function FAQPage() {
         {excerpt}
       </h1>
 
-      <FAQSearchSection />
+      <FAQSearchSection value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
 
-      <FAQContentSection faqs={faqs} />
+      <FAQContentSection faqs={filteredFaqs} />
 
       <NeedHelpSection
         heading1={needHelpSection?.title || "Need More Help?"}

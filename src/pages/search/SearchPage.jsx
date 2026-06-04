@@ -30,6 +30,23 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Top Rated" },
 ];
 
+function flattenCategoryList(data) {
+  const source = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.items)
+      ? data.items
+      : Array.isArray(data?.list)
+        ? data.list
+        : Array.isArray(data?.categories)
+          ? data.categories
+          : [];
+
+  return source.flatMap((category) => [
+    category,
+    ...flattenCategoryList(category?.children || category?.subCategories || []),
+  ]);
+}
+
 export default function SearchPage() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -37,11 +54,16 @@ export default function SearchPage() {
   const [queryInput, setQueryInput] = useState(searchParams.get("q") || "");
 
   const searchState = useSelector((s) => s.search);
+  const categoriesRaw = useSelector((s) => s.catalog.list || []);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
   const hits = useMemo(
     () => (Array.isArray(searchState.hits) ? searchState.hits : []),
     [searchState.hits],
+  );
+  const categories = useMemo(
+    () => flattenCategoryList(categoriesRaw),
+    [categoriesRaw],
   );
 
   const facets = searchState.facets || {};
@@ -49,27 +71,52 @@ export default function SearchPage() {
   const totalPages = meta.totalPages || meta.pages || 1;
   const currentPage = Number(searchParams.get("page") || 1);
   const q = searchParams.get("q") || "";
+  const categoryValue =
+    searchParams.get("categoryId") ||
+    searchParams.get("category") ||
+    searchParams.get("categorySlug") ||
+    "";
+  const hasLegacyCategoryParams =
+    searchParams.has("category") || searchParams.has("categorySlug");
+  const selectedCategory = useMemo(
+    () =>
+      categories.find(
+        (category) =>
+          category?.categoryId === categoryValue ||
+          category?.categoryKey === categoryValue ||
+          category?.key === categoryValue ||
+          category?.id === categoryValue ||
+          category?._id === categoryValue ||
+          category?.slug === categoryValue,
+      ),
+    [categories, categoryValue],
+  );
+  const categoryLabel =
+    searchParams.get("categoryName") ||
+    selectedCategory?.title ||
+    selectedCategory?.name ||
+    selectedCategory?.label ||
+    categoryValue;
 
   const getParams = useCallback(
     () => ({
       q: searchParams.get("q") || "",
-      category: searchParams.get("category") || undefined,
-      categoryId: searchParams.get("categoryId") || undefined,
-      categorySlug: searchParams.get("categorySlug") || undefined,
+      categoryId: categoryValue || undefined,
       minPrice: searchParams.get("minPrice") || undefined,
       maxPrice: searchParams.get("maxPrice") || undefined,
       minRating: searchParams.get("minRating") || undefined,
       inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
       sort: searchParams.get("sort") || undefined,
       page: currentPage,
-      limit: Number(searchParams.get("limit") || 12),
+      limit: Number(searchParams.get("limit") || 20),
     }),
-    [searchParams, currentPage],
+    [searchParams, categoryValue, currentPage],
   );
 
   useEffect(() => {
     const p = getParams();
-    if (p.q || p.category || p.categoryId || p.categorySlug) {
+    if (hasLegacyCategoryParams) return;
+    if (p.q || p.categoryId) {
       dispatch(
         searchCatalog({
           params: p,
@@ -77,7 +124,28 @@ export default function SearchPage() {
         }),
       ).catch(() => {});
     }
-  }, [dispatch, getParams]);
+  }, [dispatch, getParams, hasLegacyCategoryParams]);
+
+  useEffect(() => {
+    if (!categoryValue) return;
+    if (
+      searchParams.get("categoryId") === categoryValue &&
+      !hasLegacyCategoryParams
+    ) {
+      return;
+    }
+
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set("categoryId", categoryValue);
+        next.delete("category");
+        next.delete("categorySlug");
+        return next;
+      },
+      { replace: true },
+    );
+  }, [categoryValue, hasLegacyCategoryParams, searchParams, setSearchParams]);
 
   const debouncedQuery = useDebouncedValue(queryInput, 500);
 
@@ -100,9 +168,9 @@ export default function SearchPage() {
 
   useEffect(() => {
     const currentQ = searchParams.get("q") || "";
-    if (queryInput !== currentQ) {
-      setQueryInput(currentQ);
-    }
+    setQueryInput((previousQuery) =>
+      previousQuery === currentQ ? previousQuery : currentQ,
+    );
   }, [searchParams]);
 
   const updateParam = (key, value) => {
@@ -115,10 +183,19 @@ export default function SearchPage() {
         next.set(key, value);
       }
 
-      if (key === "category" || key === "categoryId" || key === "categorySlug") {
-        if (key !== "category") next.delete("category");
-        if (key !== "categoryId") next.delete("categoryId");
-        if (key !== "categorySlug") next.delete("categorySlug");
+      if (
+        key === "category" ||
+        key === "categoryId" ||
+        key === "categorySlug"
+      ) {
+        if (value == null || value === "") {
+          next.delete("categoryId");
+          next.delete("categoryName");
+        } else {
+          next.set("categoryId", value);
+        }
+        next.delete("category");
+        next.delete("categorySlug");
       }
 
       next.delete("page");
@@ -180,17 +257,9 @@ export default function SearchPage() {
   };
 
   const activeFilters = [
-    searchParams.get("category") && {
-      key: "category",
-      label: `Category: ${searchParams.get("category")}`,
-    },
-    searchParams.get("categoryId") && {
+    categoryValue && {
       key: "categoryId",
-      label: `Category: ${searchParams.get("categoryId")}`,
-    },
-    searchParams.get("categorySlug") && {
-      key: "categorySlug",
-      label: `Category: ${searchParams.get("categorySlug")}`,
+      label: `Category: ${categoryLabel}`,
     },
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
@@ -215,6 +284,11 @@ export default function SearchPage() {
       if (key === "price") {
         next.delete("minPrice");
         next.delete("maxPrice");
+      } else if (key === "categoryId" || key === "category") {
+        next.delete("category");
+        next.delete("categoryId");
+        next.delete("categorySlug");
+        next.delete("categoryName");
       } else {
         next.delete(key);
       }
@@ -224,11 +298,13 @@ export default function SearchPage() {
     });
   };
 
-  const facetCategories = (facets?.category || facets?.categories || []).map((category) => ({
-    value: category.key || category.value || category._id,
-    label: category.label || category.title || category.key || category.value,
-    count: category.count || category.doc_count || 0,
-  })).filter((category) => category.value && category.label);
+  const facetCategories = (facets?.category || facets?.categories || [])
+    .map((category) => ({
+      value: category.key || category.value || category._id,
+      label: category.label || category.title || category.key || category.value,
+      count: category.count || category.doc_count || 0,
+    }))
+    .filter((category) => category.value && category.label);
 
   const filterSections = [
     facetCategories.length > 0 && {
@@ -236,10 +312,10 @@ export default function SearchPage() {
       title: "Category",
       content: (
         <OptionFilter
-          name="category"
+          name="categoryId"
           options={facetCategories}
-          selected={searchParams.get("category")}
-          onChange={(value) => updateParam("category", value)}
+          selected={searchParams.get("categoryId")}
+          onChange={(value) => updateParam("categoryId", value)}
           emptyText="No categories"
         />
       ),
@@ -303,13 +379,33 @@ export default function SearchPage() {
                 size={18}
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-muted transition-all duration-300 ease-in-out group-focus-within:text-gold"
               />
-
               <input
                 type="text"
                 value={queryInput}
                 onChange={(e) => setQueryInput(e.target.value)}
                 placeholder="Search products, brands, categories..."
-                className="h-12 w-full rounded-[10px] border border-border-strong bg-white pl-11 pr-11  text-sm text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-muted hover:border-gold focus:border-gold focus:ring-4 focus:ring-gold/15"
+                className="
+    h-10 sm:h-11 lg:h-12
+    w-full
+    rounded-[10px]
+    border
+    border-border-strong
+    bg-white
+    pl-10 pr-10 sm:pl-11 sm:pr-11
+    text-xs sm:text-sm
+    text-ink
+    placeholder:text-muted
+    outline-none
+    ring-0
+    focus:outline-none
+    focus:ring-0
+    focus:border-gold
+    focus:shadow-[0_0_0_3px_rgba(191,155,83,0.15)]
+    hover:border-gold
+    transition-all
+    duration-300
+    ease-in-out
+  "
               />
 
               {queryInput ? (
@@ -336,12 +432,12 @@ export default function SearchPage() {
 
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            {(q || searchParams.get("category") || searchParams.get("categoryId") || searchParams.get("categorySlug")) && (
+            {(q || categoryValue) && (
               <PageHeader
                 title={
                   q
                     ? `Results for "${q}"`
-                    : `Products in Category: "${searchParams.get("category") || searchParams.get("categoryId") || searchParams.get("categorySlug")}"`
+                    : `Products in Category: "${categoryLabel}"`
                 }
                 className="mb-0"
               />
@@ -368,7 +464,8 @@ export default function SearchPage() {
           onClear={() =>
             setSearchParams((prev) => {
               const next = new URLSearchParams();
-              next.set("q", prev.get("q") || "");
+              const query = prev.get("q") || "";
+              if (query) next.set("q", query);
               return next;
             })
           }
@@ -387,7 +484,7 @@ export default function SearchPage() {
           </FilterDrawer>
 
           <div className="min-w-0 flex-1">
-            {!(q || searchParams.get("category") || searchParams.get("categoryId") || searchParams.get("categorySlug")) ? (
+            {!(q || categoryValue) ? (
               <div className="state-box flex flex-col items-center py-20 text-center">
                 <Search size={48} className="mb-4 text-gray" />
 
@@ -405,14 +502,18 @@ export default function SearchPage() {
                 error={searchState.error}
                 empty={!hits.length && !searchState.loading}
                 emptyTitle="No results found"
-                emptyText={q ? `We couldn't find anything for "${q}". Try different keywords or remove some filters.` : "We couldn't find any products in this category. Try selecting another category or removing some filters."}
+                emptyText={
+                  q
+                    ? `We couldn't find anything for "${q}". Try different keywords or remove some filters.`
+                    : "We couldn't find any products in this category. Try selecting another category or removing some filters."
+                }
                 onRetry={() => {
                   const p = getParams();
                   dispatch(
                     searchCatalog({
                       params: p,
                       cacheKey: `search-list-${JSON.stringify(p)}`,
-                    })
+                    }),
                   ).catch(() => {});
                 }}
               >
