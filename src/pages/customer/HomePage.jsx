@@ -9,7 +9,6 @@ import {
   fetchRecommendations,
 } from "../../features/recommendation/recommendationSlice";
 import { fetchCmsPages } from "../../features/cms/cmsSlice";
-import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { fetchProducts } from "../../features/product/productSlice";
 import { tokenStorage } from "../../api/tokenStorage";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
@@ -17,9 +16,8 @@ import Banner from "../../layouts/HeroBanner";
 import { CategoryBar } from "../../layouts/Header";
 import CollageMainSection from "../../components/ui/CollageCard";
 import ShowcaseSection from "../../components/home/ShowcaseSection";
-import TopDealCard from "../../components/ui/TopDealCard";
 import NewArrivalCard from "../../components/ui/NewArrivalCard";
-import { reusableArrivalsDemo, reusableTopDealsDemo } from "../../data/topdeal";
+import { reusableArrivalsDemo } from "../../data/topdeal";
 import { mothersDayData } from "../../data/special";
 import ShoppingMadeEasyBanner from "../../components/home/ShoppingBanner";
 import FeaturedProductsSection from "../../components/home/FeaturedProductsSection";
@@ -35,7 +33,6 @@ export function HomePage() {
     if (tokenStorage.getAccessToken()) {
       dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
     }
-    dispatch(fetchCategories({ limit: 20 })).catch(() => {});
     dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(
       () => {},
     );

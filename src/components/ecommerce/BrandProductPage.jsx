@@ -41,7 +41,7 @@ export default function BrandProductPage({
 
   return (
     <>
-      <div className="border-b border-border bg-gradient-to-br from-slate-50 to-cream px-4 py-8 sm:px-6">
+      <div className="mt-6 rounded-[var(--customer-radius-lg)] border border-border bg-gradient-to-br from-slate-50 to-cream px-4 py-8 sm:px-6">
         <div className="w-container">
           <Breadcrumbs items={breadcrumbs} className="mb-4 text-gray" />
           <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">

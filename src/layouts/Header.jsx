@@ -36,12 +36,10 @@ import { icons, navbarIcons as navData } from "../constants/image.constant";
 import { useProductActions } from "../hooks/useProductActions";
 import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
 import { logout } from "../features/auth/authSlice";
-import { fetchCategories } from "../features/catalog/catalogSlice";
 import { getRole, isAdminRole } from "../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
 import CategoryMegaMenu from "../components/ecommerce/CategoryMegaMenu";
 import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
-import { Button } from "../components/common";
 
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
@@ -253,7 +251,7 @@ export const TopHeader = () => {
         type: "watchlist",
         label: `Watchlist (${wishlistedProducts.length})`,
         path: "/watchlist",
-        icon: <Heart size={16} />,
+        icon: <Heart size={16} className="text-[#CE9F2D] shrink-0" />,
         title: "My Watchlist",
         items: wishlistedProducts,
         onRemove: handleRemoveWatchlist,
@@ -268,7 +266,7 @@ export const TopHeader = () => {
                   currentUser.email?.split("@")[0] ||
                   "My Sam",
               path: "/account/profile",
-              icon: <User size={16} />,
+              icon: <User size={16} className="text-[#CE9F2D] shrink-0" />,
               title: "My Account",
               items: withIcons([
                 ...baseAccountMenuItems,
@@ -301,13 +299,7 @@ export const TopHeader = () => {
           ]
         : []),
     ],
-    [
-      handleRemoveWatchlist,
-      wishlistedProducts,
-      currentUser,
-      currentRole,
-      sellDropdownCms,
-    ],
+    [currentRole, currentUser, sellDropdownCms, wishlistedProducts, handleRemoveWatchlist],
   );
 
   const renderDropdown = (dropdown) => {
@@ -337,8 +329,8 @@ export const TopHeader = () => {
             filteredTopLinks.length
               ? filteredTopLinks
               : DEFAULT_TOP_NAV_LINKS.filter(
-                  (l) => l.name !== "Help & Contact",
-                ),
+                (l) => l.name !== "Help & Contact",
+              ),
           ).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
@@ -350,7 +342,7 @@ export const TopHeader = () => {
           ))}
         </div>
 
-        <div className="flex h-full items-center gap-6">
+        <div className="flex h-full items-center gap-[20px]">
           {dropdowns.map((dropdown) => (
             <HeaderDropdown
               key={dropdown.type}
@@ -371,27 +363,47 @@ export const TopHeader = () => {
             <span>Help & Contact</span>
           </Link>
 
-          {/* Vendor Login */}
-          <Link
-            to="/seller/status"
-            className="flex items-center gap-2 text-white/85 transition-all duration-300 ease-in-out hover:text-white"
-          >
-            <User size={16} className="text-[#CE9F2D] shrink-0" />
-            <span>Vendor Login</span>
-          </Link>
+          {!currentUser && (
+            <Link
+              to="/seller/status"
+              className="flex items-center gap-2 text-white/85 transition-all duration-300 ease-in-out hover:text-white"
+            >
+              <img
+                src="/image/png/Vector%20(1).png"
+                alt=""
+                className="h-[14px] w-[11px] shrink-0 object-contain"
+                aria-hidden="true"
+              />
+              <span>Vendor Login</span>
+            </Link>
+          )}
 
           {currentUser ? (
-            <OutlineSmallButton
+            <HeaderGoldButton
               leftIcon={<LogOut size={14} />}
-              className="h-[36px] min-h-[36px] min-w-[153px] rounded-[5px] bg-white px-4 py-0 text-[14px] font-bold hover:bg-gray-50 hover:shadow-md"
+              className="
+    inline-flex items-center justify-center gap-2
+    h-[36px] sm:h-[38px] lg:h-[41px]
+    min-w-[105px] sm:min-w-[115px] lg:min-w-[121px]
+    rounded-[5px]
+    px-3 sm:px-4
+    py-0
+    text-[13px] sm:text-[14px]
+    font-semibold
+    leading-none
+    whitespace-nowrap
+    transition-all duration-300 ease-in-out
+    hover:bg-gray-50
+    hover:shadow-md
+  "
               onClick={() => dispatch(logout())}
             >
               Sign Out
-            </OutlineSmallButton>
+            </HeaderGoldButton>
           ) : (
             <HeaderGoldButton
-              className="hidden text-[14px] lg:inline-flex"
-              onClick={() => navigate("/register")}
+              className="hidden lg:inline-flex items-center justify-center whitespace-nowrap rounded-[5px] h-[41px] min-w-[153px] px-4 font-sans text-[16px] font-semibold leading-[100%] tracking-[0%] text-[#03014D]"
+              onClick={() => navigate("/seller/status")}
             >
               Become a Seller
             </HeaderGoldButton>
@@ -406,15 +418,28 @@ export const Navbar = ({ icons: propIcons }) => {
   const navigate = useNavigate();
   const currentUser = useSelector((s) => s.auth.current);
   const displayIcons = propIcons || navData;
+  const utilityIcons = asArray(displayIcons).filter(
+    (item) => !["IN", "Word", "Account", "Cart"].includes(item?.name),
+  );
   const [searchQuery, setSearchQuery] = useState("");
+  const accountLabel = currentUser?.profile?.firstName
+    ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
+    : currentUser?.firstName || "Account";
 
   const handleSearch = (nextQuery = searchQuery, category = null) => {
     const trimmedQuery = nextQuery.trim();
     let url = `/search?q=${encodeURIComponent(trimmedQuery)}`;
     if (category) {
       const catKey =
-        category.categoryKey || category.key || category.id || category._id;
-      url += `&category=${encodeURIComponent(catKey)}&categoryId=${encodeURIComponent(catKey)}&categorySlug=${encodeURIComponent(catKey)}`;
+        category.id ||
+        category._id ||
+        category.categoryId ||
+        category.categoryKey ||
+        category.key ||
+        category.slug;
+      const catName = category.title || category.name || category.label;
+      if (catKey) url += `&categoryId=${encodeURIComponent(catKey)}`;
+      if (catName) url += `&categoryName=${encodeURIComponent(catName)}`;
     }
     if (trimmedQuery || category) {
       navigate(url);
@@ -429,15 +454,29 @@ export const Navbar = ({ icons: propIcons }) => {
             <img
               src="/image/png/logo.png"
               alt="Sam Global"
-              className="h-auto w-[78px] object-contain sm:w-[92px] lg:h-[58px] lg:w-[140px]"
+              className="h-[50px] w-[50px] object-contain sm:w-[92px] lg:h-[58px] lg:w-[140px]"
             />
           </Link>
           <div className="hidden h-10 w-px bg-[var(--customer-border)] lg:block" />
+          <HeaderIconButton
+            className="hidden lg:flex h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent p-0"
+            aria-label="Menu"
+          >
+            <img
+              src="/image/png/list.png"
+              alt="Menu"
+              className="h-[40px] w-[40px] object-contain"
+            />
+            <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+              Menu
+            </span>
+          </HeaderIconButton>
         </div>
         <SearchBar
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onSearch={handleSearch}
+          enableCategoryDropdown
           enableAutocomplete
           autocompleteLimit={8}
           placeholder="Search for products, brands and categories..."
@@ -446,9 +485,9 @@ export const Navbar = ({ icons: propIcons }) => {
           className="order-3 w-full lg:order-2 lg:w-auto lg:max-w-[720px] lg:flex-1"
         />
 
-        <div className="order-2 lg:order-3 flex shrink-0 items-center gap-2 sm:gap-3 lg:gap-5">
+        <div className="order-2 lg:order-3 flex shrink-0 items-center gap-3 lg:gap-4">
           <div className="hidden items-center gap-5 lg:flex">
-            {asArray(displayIcons).map((item, iconIndex) => (
+            {utilityIcons.map((item, iconIndex) => (
               <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
                 <HeaderIconButton
                   to={getNavbarIconPath(item)}
@@ -457,51 +496,115 @@ export const Navbar = ({ icons: propIcons }) => {
                   <img
                     src={item?.img}
                     alt={getNavbarIconLabel(item)}
-                    className={`object-contain ${
-                      item?.name === "IN"
-                        ? "h-[22px] w-[24px]"
-                        : "h-[17px] w-[17px]"
-                    }`}
+                    className={`object-contain ${item?.name === "IN"
+                      ? "h-[22px] w-[24px]"
+                      : "h-[17px] w-[17px]"
+                      }`}
                   />
                   <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
                     {getNavbarIconLabel(item)}
                   </span>
                 </HeaderIconButton>
-                {iconIndex < displayIcons.length - 1 && (
+                {iconIndex < utilityIcons.length - 1 && (
                   <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
                 )}
               </Fragment>
             ))}
+            {utilityIcons.length > 0 && (
+              <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
+            )}
+            <HeaderIconButton
+              to="/cart"
+              className="h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent"
+              aria-label="Cart"
+            >
+              <img
+                src="/image/png/cart.png"
+                alt="Cart"
+                className="h-[40px] w-[40px] object-contain"
+              />
+              <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+                Cart
+              </span>
+            </HeaderIconButton>
+            <HeaderIconButton
+              to="/watchlist"
+              className="h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent"
+              aria-label="Watchlist"
+            >
+              <img
+                src="/image/png/Wishlist.png"
+                alt="Wishlist"
+                className="h-[40px] w-[40px] object-contain"
+              />
+              <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+                Watchlist
+              </span>
+            </HeaderIconButton>
+            {!currentUser && (
+              <OutlineSmallButton
+                className="
+  inline-flex items-center justify-center
+  h-[42px] sm:h-[45px]
+  min-w-[124px]
+  rounded-[4px]
+  border border-[#1B1D60]
+  bg-white
+  px-4 sm:px-6
+  text-[14px] sm:text-[16px]
+  font-semibold
+  text-[#1B1D60]
+  whitespace-nowrap
+  transition-all duration-300 ease-in-out
+  hover:border-[#CE9F2D]
+  hover:bg-[#CE9F2D1A]
+"
+                onClick={() => navigate("/login")}
+              >
+                Log In
+              </OutlineSmallButton>
+            )}
           </div>
-
-          {/* Mobile/Tablet Cart Icon */}
-          <HeaderIconButton
-            to="/cart"
-            className="h-9 w-9 shrink-0 lg:hidden"
-            aria-label="Cart"
-          >
-            <img
-              src="/image/png/Cart.png"
-              alt="Cart"
-              className="h-[17px] w-[17px] object-contain"
-            />
-          </HeaderIconButton>
 
           {currentUser ? (
             <Link
               to="/account/profile"
-              className="flex items-center gap-2 rounded-full border border-[var(--customer-border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)] max-w-[150px] sm:max-w-none"
+              className="
+  inline-flex items-center justify-center
+  h-[42px] sm:h-[45px]
+  min-w-[124px]
+  gap-2
+  rounded-[4px]
+  border border-[#1B1D60]
+  bg-white
+  px-4 sm:px-6
+  text-[14px] sm:text-[16px]
+  font-semibold
+  text-[#1B1D60]
+  whitespace-nowrap
+  transition-all duration-300 ease-in-out
+  hover:border-[#CE9F2D]
+  hover:bg-[#CE9F2D1A]
+"
             >
               <User size={16} className="shrink-0" />
-              <span className="truncate">
-                {currentUser.profile?.firstName
-                  ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
-                  : currentUser.firstName || "Account"}
-              </span>
+              <span className="truncate">{accountLabel}</span>
             </Link>
           ) : (
             <HeaderGoldButton
-              className="whitespace-nowrap"
+              className="
+    flex items-center justify-center
+    whitespace-nowrap
+    rounded-[4px]
+    h-[41px]
+    min-w-[142px]
+    px-5
+    font-sans
+    text-[16px]
+    font-semibold
+    leading-[100%]
+    tracking-[0%]
+  "
               onClick={() => navigate("/register")}
             >
               Create Account
@@ -514,16 +617,18 @@ export const Navbar = ({ icons: propIcons }) => {
 };
 
 export const CategoryBar = ({ headerData }) => {
-  const dispatch = useDispatch();
   const location = useLocation();
-  const [catalogCategories, setCatalogCategories] = useState([]);
+  const catalogCategoryList = useSelector((state) => state.catalog.list || []);
+  const catalogCategories = useMemo(
+    () => getCategoryListFromResponse(catalogCategoryList),
+    [catalogCategoryList],
+  );
   const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
   const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
   const [activeMenu, setActiveMenu] = useState(null);
   const categoryBarRef = useRef(null);
   const openTimeoutRef = useRef(null);
   const closeTimeoutRef = useRef(null);
-  const fetchedRef = useRef(false);
 
   useEffect(() => {
     setActiveMenu(null);
@@ -559,18 +664,6 @@ export const CategoryBar = ({ headerData }) => {
       if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
     };
   }, []);
-
-  useEffect(() => {
-    if (fetchedRef.current) return;
-    fetchedRef.current = true;
-    dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 }))
-      .then((action) => {
-        const data = action?.payload?.data;
-        const list = getCategoryListFromResponse(data);
-        if (list.length) setCatalogCategories(list);
-      })
-      .catch(() => {});
-  }, [dispatch]);
 
   const handleCategoryMouseEnter = (item) => {
     if (window.innerWidth < 1024) return;

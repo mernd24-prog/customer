@@ -12,15 +12,15 @@ import {
   OutlineLightButton,
   SolidLargeButton,
 } from "../components/dynamicComponent/button/static";
-import { useNavigate } from "react-router-dom";
-import { Button } from "../components/common";
+
+
 
 /**
  * Hero Banner Component
  * Fully Responsive Full Width Slider
  */
 const HeroBanner = () => {
-  const navigate = useNavigate();
+
   return (
     <section className=" relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[480px] sm:h-[520px] md:h-[620px] lg:h-[750px] w-screen items-center overflow-hidden bg-[#1B1D60]">
       <Swiper

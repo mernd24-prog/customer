@@ -72,7 +72,7 @@ export const icons = {
   Word: "/image/png/Word.png",
   IN: "/image/png/IN.png",
   Account: "/image/png/Account.png",
-  Heart: "/image/png/Heart.png",
+  Heart: "/image/png/Wishlist.png",
   Cart: "/image/png/Cart.png",
   Mic: "/image/png/Mic.png",
 };

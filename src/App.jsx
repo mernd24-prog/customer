@@ -1,5 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthModalProvider } from "./context/AuthModalContext";
 import AppLayout from "./layouts/AppLayout";
@@ -14,80 +14,147 @@ import { checkAuthStatus, logout } from "./features/auth/authSlice";
 import { fetchCart } from "./features/cart/cartSlice";
 import { AUTH_ROUTES } from "./features/auth/authRoutes";
 import { tokenStorage } from "./api/tokenStorage";
-
-// Auth pages
-import LoginPage from "./pages/auth/LoginPage";
-import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
-import RegisterOtpPage from "./pages/auth/RegisterOtpPage";
-import VerifyRegistrationPage from "./pages/auth/VerifyRegistrationPage";
-import VerifyOtpPage from "./pages/auth/VerifyOtpPage";
-import { BuyerRegisterPage } from "./features/auth";
-
-// Account pages
-import AccountPage from "./pages/account/AccountPage";
-
-// Feature pages
-import CheckoutPage from "./pages/checkout/CheckoutPage";
-import OrdersPage from "./pages/orders/OrdersPage";
-import ReturnsPage from "./pages/returns/ReturnsPage";
-
-import {
-  BackendGapNotes,
-  LoyaltyPage,
-  NotificationsPage,
-  PaymentResultPage,
-  PaymentsPage,
-  PreferencesPage,
-  SimpleApiPage,
-  SubscriptionPage,
-  WalletPage,
-  WarrantyPage,
-} from "./pages/CustomerPages";
-
-import CartPage from "./pages/cart/CartPage";
-import ProductsPage from "./pages/products/ProductsPage";
-import ProductDetailPage from "./pages/products/ProductDetailPage";
-import CategoryPage from "./pages/category/CategoryPage";
-import BrandPage from "./pages/brand/BrandPage";
-import BrandListingPage from "./pages/brand/BrandListingPage";
-import BrandOutletPage from "./pages/brand/BrandOutletPage";
-
-import SearchPage from "./pages/search/SearchPage";
-import CmsPage from "./pages/cms/CmsPage";
-
-import { HomePage } from "./pages/customer/HomePage";
-import {
-  SellerStatusPage,
-  SellerTrackingDetailPage,
-  SellerTrackingPage,
-} from "./pages/SellerPages";
-import {
-  WhyChooseUsPage,
-  OurCommitmentPage,
-  FeaturesPage,
-} from "./pages/StaticPages";
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
 import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
-import {
-  NewArrivalsPage,
-  RecentlyUploadedPage,
-  RelatedProductsPage,
-  TrendingNowPage,
-  RecentlyViewedPage,
-} from "./pages/discovery/DiscoveryPages";
 import ScrollToTop from "./components/common/ScrollToTop";
-import WatchlistPage from "./pages/customer/WatchlistPage";
-import AdminProductManagementPage from "./pages/admin/AdminProductManagementPage";
-import AdminBrandManagementPage from "./pages/admin/AdminBrandManagementPage";
-import AdminCatalogManagementPage from "./pages/admin/AdminCatalogManagementPage";
-import AdminRbacManagementPage from "./pages/admin/AdminRbacManagementPage";
-import FAQPage from "./pages/faq/FAQPage";
-import AboutPage from "./pages/about/AboutPage";
-import ContactUs from "./pages/contact/ContactUs";
-import SupportHelpCenter from "./pages/contact/SupportHelpCenter";
 
-import PolicyPage from "./pages/policiesPage/PoliciesPages";
+const lazyNamed = (loader, exportName) =>
+  lazy(() => loader().then((module) => ({ default: module[exportName] })));
+
+const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
+const BuyerRegisterPage = lazy(() => import("./features/auth/BuyerRegisterPage"));
+const RegisterOtpPage = lazy(() => import("./pages/auth/RegisterOtpPage"));
+const VerifyRegistrationPage = lazy(
+  () => import("./pages/auth/VerifyRegistrationPage"),
+);
+const VerifyOtpPage = lazy(() => import("./pages/auth/VerifyOtpPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/auth/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
+
+const FAQPage = lazy(() => import("./pages/faq/FAQPage"));
+const SupportHelpCenter = lazy(() => import("./pages/contact/SupportHelpCenter"));
+const ContactUs = lazy(() => import("./pages/contact/ContactUs"));
+const CmsPage = lazy(() => import("./pages/cms/CmsPage"));
+const BrandOutletPage = lazy(() => import("./pages/brand/BrandOutletPage"));
+const WhyChooseUsPage = lazyNamed(
+  () => import("./pages/StaticPages"),
+  "WhyChooseUsPage",
+);
+const OurCommitmentPage = lazyNamed(
+  () => import("./pages/StaticPages"),
+  "OurCommitmentPage",
+);
+const FeaturesPage = lazyNamed(() => import("./pages/StaticPages"), "FeaturesPage");
+const PolicyPage = lazy(() => import("./pages/policiesPage/PoliciesPages"));
+
+const HomePage = lazyNamed(() => import("./pages/customer/HomePage"), "HomePage");
+const WatchlistPage = lazy(() => import("./pages/customer/WatchlistPage"));
+const SearchPage = lazy(() => import("./pages/search/SearchPage"));
+const ProductsPage = lazy(() => import("./pages/products/ProductsPage"));
+const ProductDetailPage = lazy(() => import("./pages/products/ProductDetailPage"));
+const NewArrivalsPage = lazyNamed(
+  () => import("./pages/discovery/DiscoveryPages"),
+  "NewArrivalsPage",
+);
+const RecentlyUploadedPage = lazyNamed(
+  () => import("./pages/discovery/DiscoveryPages"),
+  "RecentlyUploadedPage",
+);
+const RelatedProductsPage = lazyNamed(
+  () => import("./pages/discovery/DiscoveryPages"),
+  "RelatedProductsPage",
+);
+const TrendingNowPage = lazyNamed(
+  () => import("./pages/discovery/DiscoveryPages"),
+  "TrendingNowPage",
+);
+const RecentlyViewedPage = lazyNamed(
+  () => import("./pages/discovery/DiscoveryPages"),
+  "RecentlyViewedPage",
+);
+const AboutPage = lazy(() => import("./pages/about/AboutPage"));
+const BrandListingPage = lazy(() => import("./pages/brand/BrandListingPage"));
+const BrandPage = lazy(() => import("./pages/brand/BrandPage"));
+const CategoryPage = lazy(() => import("./pages/category/CategoryPage"));
+const BackendGapNotes = lazyNamed(
+  () => import("./pages/CustomerPages"),
+  "BackendGapNotes",
+);
+
+const AccountPage = lazy(() => import("./pages/account/AccountPage"));
+const CartPage = lazy(() => import("./pages/cart/CartPage"));
+const CheckoutPage = lazy(() => import("./pages/checkout/CheckoutPage"));
+const PaymentResultPage = lazyNamed(
+  () => import("./pages/CustomerPages"),
+  "PaymentResultPage",
+);
+const OrdersPage = lazy(() => import("./pages/orders/OrdersPage"));
+const ReturnsPage = lazy(() => import("./pages/returns/ReturnsPage"));
+const WalletPage = lazyNamed(() => import("./pages/CustomerPages"), "WalletPage");
+const PaymentsPage = lazyNamed(
+  () => import("./pages/CustomerPages"),
+  "PaymentsPage",
+);
+const SubscriptionPage = lazyNamed(
+  () => import("./pages/CustomerPages"),
+  "SubscriptionPage",
+);
+const LoyaltyPage = lazyNamed(
+  () => import("./pages/CustomerPages"),
+  "LoyaltyPage",
+);
+const SimpleApiPage = lazyNamed(
+  () => import("./pages/CustomerPages"),
+  "SimpleApiPage",
+);
+const WarrantyPage = lazyNamed(
+  () => import("./pages/CustomerPages"),
+  "WarrantyPage",
+);
+const NotificationsPage = lazyNamed(
+  () => import("./pages/CustomerPages"),
+  "NotificationsPage",
+);
+const PreferencesPage = lazyNamed(
+  () => import("./pages/CustomerPages"),
+  "PreferencesPage",
+);
+
+const SellerStatusPage = lazyNamed(
+  () => import("./pages/SellerPages"),
+  "SellerStatusPage",
+);
+const SellerTrackingPage = lazyNamed(
+  () => import("./pages/SellerPages"),
+  "SellerTrackingPage",
+);
+const SellerTrackingDetailPage = lazyNamed(
+  () => import("./pages/SellerPages"),
+  "SellerTrackingDetailPage",
+);
+const AdminProductManagementPage = lazy(
+  () => import("./pages/admin/AdminProductManagementPage"),
+);
+const AdminCatalogManagementPage = lazy(
+  () => import("./pages/admin/AdminCatalogManagementPage"),
+);
+const AdminBrandManagementPage = lazy(
+  () => import("./pages/admin/AdminBrandManagementPage"),
+);
+const AdminRbacManagementPage = lazy(
+  () => import("./pages/admin/AdminRbacManagementPage"),
+);
+
+function RouteFallback() {
+  return (
+    <main className="flex min-h-[60vh] items-center justify-center bg-[var(--customer-cream)]">
+      <div className="text-center">
+        <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-[var(--customer-border)] border-t-[var(--customer-gold)]" />
+        <p className="text-sm text-[var(--customer-muted)]">Loading page…</p>
+      </div>
+    </main>
+  );
+}
 
 export default function App() {
   const dispatch = useDispatch();
@@ -154,8 +221,9 @@ export default function App() {
     <BrowserRouter>
       <AuthModalProvider>
         <ScrollToTop />
-        <Routes>
-          <Route element={<AppLayout />}>
+        <Suspense fallback={<RouteFallback />}>
+          <Routes>
+            <Route element={<AppLayout />}>
             {/* ── Auth routes (guest only) ───────────────────────────────── */}
             <Route element={<GuestRoute />}>
               <Route path={AUTH_ROUTES.login} element={<LoginPage />} />
@@ -422,8 +490,9 @@ export default function App() {
 
             {/* Catch-all */}
             <Route path="*" element={<Navigate to="/" replace />} />
-          </Route>
-        </Routes>
+            </Route>
+          </Routes>
+        </Suspense>
       </AuthModalProvider>
     </BrowserRouter>
   );

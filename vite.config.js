@@ -46,5 +46,43 @@ export default defineConfig({
         ]
       }
     })
-  ]
+  ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return;
+
+          if (id.includes("react-router")) return "vendor-router";
+          if (id.includes("react-dom") || id.includes("/react/")) {
+            return "vendor-react";
+          }
+          if (
+            id.includes("@reduxjs") ||
+            id.includes("react-redux") ||
+            id.includes("redux") ||
+            id.includes("immer") ||
+            id.includes("reselect")
+          ) {
+            return "vendor-redux";
+          }
+          if (id.includes("lucide-react") || id.includes("react-icons")) {
+            return "vendor-icons";
+          }
+          if (id.includes("axios")) return "vendor-http";
+          if (
+            id.includes("react-helmet-async") ||
+            id.includes("react-hook-form") ||
+            id.includes("react-toastify") ||
+            id.includes("@hookform")
+          ) {
+            return "vendor-ui";
+          }
+          if (id.includes("zod")) return "zod";
+
+          return undefined;
+        }
+      }
+    }
+  }
 });

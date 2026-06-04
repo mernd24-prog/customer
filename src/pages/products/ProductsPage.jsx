@@ -385,11 +385,11 @@ export default function ProductsPage() {
           sidebarOpen={sidebarOpen}
           onCloseSidebar={() => setSidebarOpen(false)}
           loading={
-            (searchState.loading && !products.length) ||
+            (productState.loading && !products.length) ||
             (!firstLoadDone && !products.length)
           }
-          error={searchState.error}
-          empty={!products.length && !searchState.loading && firstLoadDone}
+          error={productState.error}
+          empty={!products.length && !productState.loading && firstLoadDone}
           emptyTitle={isSearchMode ? "No results found" : "No products found"}
           emptyText={
             isSearchMode

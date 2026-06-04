@@ -12,7 +12,7 @@ export default function Breadcrumbs({ items = [], className = "" }) {
             className="inline-flex items-center gap-1"
           >
             {item.href && !isLast ? (
-              <Link to={item.href} className="text-white">
+              <Link to={item.href} className="text-[#A6A6A6]">
                 {item.label}
               </Link>
             ) : (

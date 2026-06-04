@@ -1,5 +1,8 @@
 export function normalizeApiError(error, fallback = "Something went wrong. Please try again.") {
   const data = error?.response?.data;
+  if (error?.code === "ECONNABORTED") {
+    return "The server is taking too long to respond. Please try again.";
+  }
   if (typeof data === "string") return data;
   if (data?.message) return normalizeErrorMessage(data.message, fallback);
   if (data?.error) return normalizeErrorMessage(data.error, fallback);

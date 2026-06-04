@@ -31,7 +31,7 @@ const searchSlice = createSlice({
         state.hits = data.hits || data.products || data.results || (Array.isArray(data) ? data : []);
         state.facets = data.facets || null;
         const total = Number(data.total ?? action.payload.meta?.total ?? state.hits.length);
-        const limit = Number(data.limit ?? action.payload.meta?.limit ?? action.payload.arg?.params?.limit ?? 12);
+        const limit = Number(data.limit ?? action.payload.meta?.limit ?? action.payload.arg?.params?.limit ?? 20);
         state.meta = {
           ...(action.payload.meta || {}),
           page: Number(data.page ?? action.payload.meta?.page ?? action.payload.arg?.params?.page ?? 1),
