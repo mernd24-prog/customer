@@ -46,15 +46,6 @@ export default defineConfig({
             handler: "CacheFirst",
             options: {
               cacheName: "images",
-<<<<<<< HEAD
-              expiration: { maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 14 },
-            },
-          },
-        ],
-      },
-    }),
-  ],
-=======
               expiration: { maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 14 }
             }
           }
@@ -100,5 +91,4 @@ export default defineConfig({
       }
     }
   }
->>>>>>> origin/reeta-dev-2
 });
