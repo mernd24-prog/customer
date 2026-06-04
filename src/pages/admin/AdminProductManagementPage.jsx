@@ -58,6 +58,7 @@ const emptyForm = {
   category: "",
   brand: "",
   hsnCode: "",
+  gstInclusive: true,
   productFamilyCode: "",
   batchCode: "",
   status: "draft",
@@ -346,6 +347,7 @@ export default function AdminProductManagementPage() {
         description: form.description.trim(),
         price: Number(form.price),
         mrp: Number(form.mrp),
+        gstInclusive: true,
         stock: Number(form.stock),
         category: form.category,
         brand: form.brand || undefined,
@@ -423,8 +425,8 @@ export default function AdminProductManagementPage() {
             <textarea className="rounded border p-2" placeholder="Description" value={form.description} onChange={(e) => setForm((v) => ({ ...v, description: e.target.value }))} required />
 
             <div className="grid grid-cols-3 gap-2">
-              <input className="rounded border p-2" placeholder="Price" type="number" value={form.price} onChange={(e) => setForm((v) => ({ ...v, price: e.target.value }))} required />
-              <input className="rounded border p-2" placeholder="MRP" type="number" value={form.mrp} onChange={(e) => setForm((v) => ({ ...v, mrp: e.target.value }))} required />
+              <input className="rounded border p-2" placeholder="Price (GST included)" type="number" value={form.price} onChange={(e) => setForm((v) => ({ ...v, price: e.target.value }))} required />
+              <input className="rounded border p-2" placeholder="MRP (GST included)" type="number" value={form.mrp} onChange={(e) => setForm((v) => ({ ...v, mrp: e.target.value }))} required />
               <input className="rounded border p-2" placeholder="Stock" type="number" value={form.stock} onChange={(e) => setForm((v) => ({ ...v, stock: e.target.value }))} required />
             </div>
 
@@ -711,6 +713,7 @@ export default function AdminProductManagementPage() {
                               category: product.category || "",
                               brand: product.brand || "",
                               hsnCode: product.hsnCode || "",
+                              gstInclusive: product.gstInclusive ?? true,
                               productFamilyCode: product.productFamilyCode || "",
                               batchCode: product.metadata?.batchCode || "",
                               status: product.status || "draft",
