@@ -47,15 +47,13 @@ export default function AccountPage({ tab = "profile" }) {
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-6 py-8 sm:py-10">
         {/* Sidebar Navigation */}
         <div className="w-full lg:w-[30%] shrink-0">
-          <div className="sticky border   border-[#CE9F2D66] bg-[#F7F8FC] top-24 2xl:w-[85%] ml-auto flex flex-row lg:flex-col justify-between xl:gap-2 overflow-x-auto lg:overflow-x-visible rounded-[12px] p-3 hide-scrollbar">
+          <div className="sticky top-24 2xl:w-[85%] ml-auto flex flex-row lg:flex-col justify-between xl:gap-2 overflow-x-auto lg:overflow-x-visible rounded-[12px] p-3 hide-scrollbar">
             {TABS.map(({ id, label, icon: Icon, path }) => (
               <Link
                 key={id}
                 to={path}
                 className={`flex  min-w-max  lg:min-w-0 items-center gap-1 sm:gap-3 rounded-[8px] px-4 py-2 sm:py-4 text-xl font-medium transition-all duration-300 ease-in-out ${
-                  tab === id
-                    ? "bg-[#1B1D60] text-white shadow-md"
-                    : "hover:bg-[#1B1D60]/10"
+                  tab === id ? "bg-[#1B1D60] text-white shadow-md" : ""
                 }`}
               >
                 <Icon

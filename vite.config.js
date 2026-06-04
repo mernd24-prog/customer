@@ -7,23 +7,29 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg"],
+      includeAssets: ["image/png/favicon.png", "image/png/logo.png"],
       manifest: {
-        name: "Sam Global Customer",
+        name: "Sam Global",
         short_name: "SamGlobal",
-        description: "Customer ecommerce web app for Sam Global.",
+        description: "Shop smarter with Sam Global.",
         theme_color: "#f7f4ef",
         background_color: "#f7f4ef",
-        
+
         display: "standalone",
         icons: [
           {
-            src: "favicon.png",
-            sizes: "512x512",
+            src: "image/png/favicon.png",
+            sizes: "738x718",
             type: "image/png",
-            purpose: "any maskable"
-          }
-        ]
+            purpose: "any maskable",
+          },
+          {
+            src: "image/png/logo.png",
+            sizes: "994x549",
+            type: "image/png",
+            purpose: "any",
+          },
+        ],
       },
       workbox: {
         cleanupOutdatedCaches: true,
@@ -40,11 +46,11 @@ export default defineConfig({
             handler: "CacheFirst",
             options: {
               cacheName: "images",
-              expiration: { maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 14 }
-            }
-          }
-        ]
-      }
-    })
-  ]
+              expiration: { maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 14 },
+            },
+          },
+        ],
+      },
+    }),
+  ],
 });

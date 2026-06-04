@@ -33,7 +33,7 @@ export default function HeaderDropdown({
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        {icon && <span className="flex items-center shrink-0">{icon}</span>}
+        {icon && <span className="flex  items-center shrink-0">{icon}</span>}
         <span>{label}</span>
         <ChevronDown
           size={16}

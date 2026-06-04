@@ -74,7 +74,11 @@ export default function KycTab({ user }) {
     }[kyc?.status] || "text-muted bg-cream";
 
   return (
-    <form className="grid gap-6" onSubmit={handleSubmit(submit)} noValidate>
+    <form
+      className="grid gap-4 lg:gap-3"
+      onSubmit={handleSubmit(submit)}
+      noValidate
+    >
       {kyc?.status && (
         <div className="flex items-center gap-3">
           <BadgeCheck size={20} className="shrink-0 text-muted" />

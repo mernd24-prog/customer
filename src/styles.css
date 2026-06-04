@@ -274,6 +274,26 @@ textarea {
     background-color 180ms ease;
 }
 
+.category-bg {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: #fbcc39;
+  position: relative;
+  overflow: hidden;
+}
+
+.shadow-shape {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 76%;
+  height: 68%;
+  background: #c69926;
+  opacity: 0.75;
+  clip-path: polygon(0 35%, 52% 0, 100% 73%, 63% 100%, 0 100%);
+}
+
 .customer-input::placeholder {
   color: var(--customer-subtle);
 }
