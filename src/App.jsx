@@ -48,6 +48,7 @@ import {
 import CartPage from "./pages/cart/CartPage";
 import ProductsPage from "./pages/products/ProductsPage";
 import ProductDetailPage from "./pages/products/ProductDetailPage";
+import CategoryListingPage from "./pages/category/CategoryListingPage";
 import CategoryPage from "./pages/category/CategoryPage";
 import BrandPage from "./pages/brand/BrandPage";
 import BrandListingPage from "./pages/brand/BrandListingPage";
@@ -261,6 +262,7 @@ export default function App() {
               <Route path="/about-us" element={<AboutPage />} />
 
               <Route path="/categories/brand" element={<BrandListingPage />} />
+              <Route path="/categories" element={<CategoryListingPage />} />
               <Route
                 path="/categories/brand/:brandSlug"
                 element={<BrandPage />}

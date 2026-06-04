@@ -296,7 +296,7 @@ const SearchBar = ({
             placeholder={placeholder}
             aria-label="Search products"
             aria-autocomplete={enableAutocomplete ? "list" : undefined}
-            className="h-full w-full flex-1 border-none bg-transparent pl-5 pr-4 sm:px-4 text-sm text-[var(--customer-ink)] outline-none ring-0 placeholder:text-[var(--customer-muted)] focus:ring-0"
+            className="h-full  w-full flex-1 border-none bg-transparent pl-5 pr-4 sm:px-4 text-sm text-[var(--customer-ink)] outline-none ring-0 placeholder:text-[var(--customer-muted)] focus:ring-0 focus-visible:outline-none"
           />
 
           {/* Search Button */}

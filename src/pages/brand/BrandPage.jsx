@@ -69,6 +69,7 @@ export default function BrandPage() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
+  const searchState = useSelector((s) => s.search);
 
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();

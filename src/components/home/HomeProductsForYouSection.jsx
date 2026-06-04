@@ -36,8 +36,6 @@ export default function HomeProductsForYouSection({
         : productsFallback
   ).slice(0, limit);
 
-  console.log("HomeProductsForYouSection products:", products);
-
   return (
     <SectionContainer
       title={title}

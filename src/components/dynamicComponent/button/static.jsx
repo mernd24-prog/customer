@@ -25,6 +25,8 @@ const buttonStyles = {
     "h-auto justify-start rounded-none bg-transparent p-0 text-sm font-medium text-white hover:text-white/80",
   iconCircle:
     "h-[40px] w-[40px] rounded-full border border-[#1B1D6099] bg-[#1B1D600D] p-[10px] text-[#1B1D60] hover:border-[#CE9F2D] hover:text-[#CE9F2D]",
+  categoryMore:
+    "group flex h-auto min-h-0 min-w-[80px] flex-col items-center rounded-md bg-transparent px-0 py-0 text-inherit shadow-none outline-none transition-all duration-300 ease-in-out hover:bg-transparent focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2 sm:min-w-[100px] lg:min-w-[140px]",
 };
 
 export const PrimaryGradientButton = ({ children, ...props }) => (
@@ -142,6 +144,40 @@ export const IconCircleButton = ({ children, className = "", ...props }) => (
     {children}
   </DynamicButton>
 );
+
+export const CategoryMoreButton = ({
+  active = false,
+  icon,
+  label = "More",
+  className = "",
+  ...props
+}) => {
+  return (
+    <DynamicButton
+      variant="unstyled"
+      className={`${buttonStyles.categoryMore} ${className}`}
+      {...props}
+    >
+      {/* ICON */}
+      <span className="mx-auto flex h-[50px] w-[50px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5 sm:h-[65px] sm:w-[65px] sm:p-2 lg:h-[90px] lg:w-[90px]">
+        <img
+          src={icon}
+          alt={label}
+          className="h-7 w-7 object-contain sm:h-9 sm:w-9 lg:h-12 lg:w-12"
+        />
+      </span>
+
+      {/* LABEL */}
+      <span
+        className={`mt-1 line-clamp-1 w-full max-w-[80px] text-center text-[11px] leading-none tracking-[0.2px] text-[#2E2E2E] sm:max-w-[100px] sm:text-[13px] lg:mt-2 lg:max-w-[140px] lg:text-[20px] ${
+          active ? "font-bold" : "font-medium"
+        }`}
+      >
+        {label}
+      </span>
+    </DynamicButton>
+  );
+};
 
 export const RegisterButton = ({ children, ...props }) => (
   <DynamicButton
