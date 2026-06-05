@@ -78,6 +78,7 @@ const AboutPage = lazy(() => import("./pages/about/AboutPage"));
 const BrandListingPage = lazy(() => import("./pages/brand/BrandListingPage"));
 const BrandPage = lazy(() => import("./pages/brand/BrandPage"));
 const CategoryPage = lazy(() => import("./pages/category/CategoryPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const BackendGapNotes = lazyNamed(
   () => import("./pages/CustomerPages"),
   "BackendGapNotes",
@@ -492,7 +493,7 @@ export default function App() {
             </Route>
 
             {/* Catch-all */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
             </Route>
           </Routes>
         </Suspense>

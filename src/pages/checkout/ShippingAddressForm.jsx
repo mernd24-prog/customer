@@ -26,7 +26,7 @@ export default function ShippingAddressForm({
           <FormField
             id="fullName"
             label="Full name"
-            placeholder="Enter you fullname"
+            placeholder="Enter your full name"
             registration={register("fullName")}
             error={errors.fullName}
             autoComplete="name"

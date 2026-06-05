@@ -8,6 +8,7 @@ export default function FormField({
   label,
   registration,
   type = "text",
+  className = "",
   ...props
 }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,7 +46,7 @@ export default function FormField({
 
   return (
     <label
-      className="grid gap-1.5  text-base font-medium text-[#2E2E2E]"
+      className="grid gap-1.5 text-sm font-medium text-[var(--customer-ink)]"
       htmlFor={id}
     >
       <span>{label}</span>
@@ -54,7 +55,7 @@ export default function FormField({
           placeholder={placeholder}
           id={id}
           type={inputType}
-          className={`customer-input   ${isPassword ? "pr-11" : ""}`}
+          className={`customer-input ${isPassword ? "pr-11" : ""} ${className}`}
           aria-invalid={Boolean(error)}
           {...registration}
           {...props}
@@ -75,7 +76,7 @@ export default function FormField({
           </button>
         ) : null}
       </span>
-      <span className="min-h-2  text-xs font-normal text-red-600">
+      <span className="min-h-4  text-xs font-normal text-red-600">
         {error?.message}
       </span>
     </label>

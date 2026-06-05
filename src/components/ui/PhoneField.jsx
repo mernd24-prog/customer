@@ -8,35 +8,41 @@ export default function PhoneField({
   placeholder = "Enter your phone",
   ...props
 }) {
-  const normalizedDialCodes = dialCodes.map((c) => String(c)).filter(Boolean);
+  const normalizedDialCodes = dialCodes
+    .map((c) => String(c))
+    .filter(Boolean);
 
   return (
-    <label className="grid gap-1.5  text-sm font-medium text-ink" htmlFor={id}>
+    <label
+      className="grid gap-1.5 text-sm font-medium text-ink"
+      htmlFor={id}
+    >
       <span>{label}</span>
-      <div className="flex items-center min-h-11 w-full rounded-[8px] border border-border-strong bg-white focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/20 transition-all duration-300 ease-in-out">
+
+      <div className="flex h-11 w-full overflow-hidden rounded-[6px] border border-[#CBD5E1] bg-white">
+
         {normalizedDialCodes.length > 1 ? (
-          <div className="relative flex h-full items-center min-w-[70px]">
+          <div className="relative min-w-[78px]">
             <select
               id={`${id}-dialCode`}
               {...dialCodeRegistration}
-              className="h-full w-full appearance-none bg-transparent pl-3 pr-5 py-2  text-sm text-ink outline-none border-none focus:ring-0 cursor-pointer"
+              className="h-11 appearance-none border-0 bg-transparent px-3 text-sm text-ink outline-none focus:outline-none focus:ring-0"
             >
               <option value=""></option>
+
               {normalizedDialCodes.map((code) => (
                 <option key={code} value={code}>
                   {code}
                 </option>
               ))}
             </select>
-            <span className="pointer-events-none absolute right-2 text-[10px] text-muted">
-              ▼
-            </span>
           </div>
         ) : (
           <>
-            <div className="h-full flex items-center pl-3 text-sm text-ink min-w-[70px]">
+            <div className="flex h-11 min-w-[78px] items-center px-3 text-sm text-ink">
               {normalizedDialCodes[0] || ""}
             </div>
+
             <input
               type="hidden"
               {...dialCodeRegistration}
@@ -44,13 +50,15 @@ export default function PhoneField({
             />
           </>
         )}
-        <div className="h-6 w-[1px] bg-border-strong"></div>
+
+        <div className="my-auto h-5 w-px bg-[#CBD5E1]" />
+
         <input
           id={id}
           type="tel"
           placeholder={placeholder}
           maxLength={10}
-          className="h-full flex-1 bg-transparent px-3 py-2  text-sm text-ink outline-none border-none focus:ring-0 placeholder:text-gray"
+          className="h-11 flex-1 border-0 bg-transparent px-3 text-sm text-ink outline-none placeholder:text-gray focus:outline-none focus:ring-0"
           onInput={(e) => {
             e.target.value = e.target.value.replace(/\D/g, "");
           }}
@@ -58,7 +66,8 @@ export default function PhoneField({
           {...props}
         />
       </div>
-      <span className="min-h-4  text-xs font-normal text-red-600">
+
+      <span className="min-h-4 text-xs font-normal text-red-600">
         {error?.message}
       </span>
     </label>

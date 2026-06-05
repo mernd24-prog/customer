@@ -7,6 +7,7 @@ export default function SelectField({
   error,
   placeholder = "Select option",
   disabled = false,
+  className = "",
   ...props
 }) {
   // Normalize options dynamically
@@ -32,13 +33,16 @@ export default function SelectField({
   const showSelect = hasOptions || disabled;
 
   return (
-    <label className="grid gap-1.5  text-sm font-medium text-[var(--customer-ink)]" htmlFor={id}>
+    <label
+      className="grid gap-1.5 text-sm font-medium text-[var(--customer-ink)]"
+      htmlFor={id}
+    >
       <span>{label}</span>
       {showSelect ? (
         <select
           id={id}
           disabled={disabled}
-          className="customer-input  disabled:cursor-not-allowed disabled:bg-[var(--customer-cream)]"
+          className={`customer-input cursor-pointer disabled:cursor-not-allowed disabled:bg-[var(--customer-cream)] ${className}`}
           {...registration}
           {...props}
         >
@@ -55,7 +59,7 @@ export default function SelectField({
           id={id}
           type="text"
           placeholder={placeholder || label}
-          className="customer-input "
+          className={`customer-input ${className}`}
           {...registration}
           {...props}
         />

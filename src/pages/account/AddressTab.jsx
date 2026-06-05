@@ -402,7 +402,7 @@ export default function AddressTab({ user }) {
             <FormField
               id="add-fullName"
               label="Full name"
-              placeholder="Enter your fullname"
+              placeholder="Enter your full name"
               registration={addForm.register("fullName")}
               error={addForm.formState.errors.fullName}
               autoComplete="name"
@@ -559,6 +559,7 @@ export default function AddressTab({ user }) {
                       <FormField
                         id={`edit-fullName-${addrId}`}
                         label="Full name"
+                        placeholder="Enter your full name"
                         registration={editForm.register("fullName")}
                         error={editForm.formState.errors.fullName}
                         autoComplete="name"
