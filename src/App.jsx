@@ -17,6 +17,8 @@ import { tokenStorage } from "./api/tokenStorage";
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
 import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 import ScrollToTop from "./components/common/ScrollToTop";
+import CategoryListingPage from "./pages/category/CategoryListingPage";
+
 
 const lazyNamed = (loader, exportName) =>
   lazy(() => loader().then((module) => ({ default: module[exportName] })));
@@ -329,6 +331,7 @@ export default function App() {
               <Route path="/about-us" element={<AboutPage />} />
 
               <Route path="/categories/brand" element={<BrandListingPage />} />
+              <Route path="/categories" element={<CategoryListingPage />} />
               <Route
                 path="/categories/brand/:brandSlug"
                 element={<BrandPage />}

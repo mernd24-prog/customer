@@ -371,7 +371,7 @@ const SearchBar = ({
             placeholder={placeholder}
             aria-label="Search products"
             aria-autocomplete={enableAutocomplete ? "list" : undefined}
-            className="h-full min-w-0 flex-1 appearance-none border-0 bg-transparent pl-3 pr-2 text-xs text-[var(--customer-ink)] shadow-none outline-none ring-0 placeholder:text-[var(--customer-muted)] focus:border-0 focus:outline-none focus:ring-0 focus:shadow-none focus-visible:outline-none sm:px-4 sm:text-sm"
+            className="h-full  w-full flex-1 border-none bg-transparent pl-5 pr-4 sm:px-4 text-sm text-[var(--customer-ink)] outline-none ring-0 placeholder:text-[var(--customer-muted)] focus:ring-0 focus-visible:outline-none"
           />
 
           {/* Search Button */}

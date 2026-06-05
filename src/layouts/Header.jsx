@@ -20,10 +20,12 @@ import {
   User,
   LifeBuoy,
 } from "lucide-react";
+import moreImage from "/image/png/MoreImage.png"
 
 import ImageSkeleton from "../components/ui/Image";
 import SearchBar from "../components/ui/SearchBar";
 import {
+  CategoryMoreButton,
   HeaderGoldButton,
   HeaderIconButton,
   OutlineSmallButton,
@@ -711,6 +713,10 @@ export const CategoryBar = ({ headerData }) => {
       children: asArray(cat?.children),
     }));
   }, [catalogTree, headerData]);
+  const visibleCategories = useMemo(
+    () => asArray(categories).slice(0, 10),
+    [categories],
+  );
 
   if (!categories.length) return null;
 
@@ -730,11 +736,11 @@ export const CategoryBar = ({ headerData }) => {
       />
 
       {/* Golden Overlay */}
-      <div className="absolute inset-0 bg-[#CE9F2D33]  z-10" />
+      <div className="absolute inset-0 bg-[#CE9F2D33]  z-10  " />
 
       <div className="w-full relative z-20">
         <div className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:justify-center lg:gap-5">
-          {asArray(categories).map((item, index) => {
+          {visibleCategories.map((item, index) => {
             const categoryHref = `/categories/${keyOr(
               item?.slug,
               buildCategorySlug(textOr(item?.name, "category")),
@@ -778,6 +784,11 @@ export const CategoryBar = ({ headerData }) => {
               </div>
             );
           })}
+          <CategoryMoreButton
+            to="/categories"
+            active={location.pathname === "/categories"}
+            icon={moreImage}
+          />
         </div>
         {activeMenu && (
           <div
