@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { Grid2X2, ChevronRight } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { Grid2X2 } from "lucide-react";
 
 import Seo from "../../components/common/Seo";
 import ProductFilterSidebar from "../../components/ecommerce/ProductFilterSidebar";
@@ -9,14 +9,17 @@ import CUSTOMER_ROUTES from "../../constants/routes";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { applyImageFallback, getImageUrlFromValue } from "../../utils/ecommerce";
 
-const PAGE_SIZE = 5000;
+const PAGE_SIZE = 20;
 
-function listFromPayload(payload) {
-  const data = payload?.data ?? payload;
+function getCategoryListFromResponse(data) {
   if (Array.isArray(data)) return data;
+  if (!data || typeof data !== "object") return [];
   if (Array.isArray(data?.items)) return data.items;
   if (Array.isArray(data?.list)) return data.list;
   if (Array.isArray(data?.categories)) return data.categories;
+  if (data?.category && typeof data.category === "object") return [data.category];
+  if (data?.data) return getCategoryListFromResponse(data.data);
+  if (data?.categoryKey || data?.title) return [data];
   return [];
 }
 
@@ -98,115 +101,107 @@ function getCategoryCount(category = {}) {
   );
 }
 
+function normalizeCategory(category = {}) {
+  const routeKey = getCategoryKey(category);
+  const displayName = getCategoryLabel(category);
+  const imageUrl = getImageUrlFromValue(category.imageUrl);
+  const bannerUrl = getImageUrlFromValue(category.bannerUrl);
+  const iconUrl = getImageUrlFromValue(category.iconUrl);
+
+  return {
+    id: category._id || category.id || routeKey,
+    categoryKey: category.categoryKey || routeKey,
+    displayName,
+    imageUrl,
+    bannerUrl,
+    iconUrl,
+    displayImage: imageUrl || bannerUrl || iconUrl || getCategoryImage(category),
+    routeKey,
+    parentKey: category.parentKey,
+    level: category.level,
+    active: category.active,
+    sortOrder: category.sortOrder,
+    productCount: getCategoryCount(category),
+  };
+}
+
+function getRootCategories(list = []) {
+  const categories = getCategoryListFromResponse(list);
+  const byKey = new Map();
+  const sortByOrder = (a, b) =>
+    Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0);
+
+  categories.forEach((category) => {
+    const normalized = normalizeCategory(category);
+    if (!normalized.routeKey || !normalized.displayName) return;
+    byKey.set(normalized.routeKey, normalized);
+  });
+
+  return Array.from(byKey.values())
+    .filter(
+      (category) =>
+        category.parentKey === null ||
+        category.parentKey === undefined ||
+        !byKey.has(category.parentKey) ||
+        Number(category.level || 0) === 0,
+    )
+    .sort(sortByOrder);
+}
+
 function CategoryLinkList({ items }) {
-  const [expanded, setExpanded] = useState({});
   return (
     <nav className="grid max-h-[75vh] gap-1 overflow-y-auto pr-1">
-      {items.map((item) => {
-        const subs = item.children || item.subCategories || [];
-        const isOpen = expanded[item.key];
-        return (
-          <div key={item.key}>
-            <div className="flex items-center justify-between">
-              <Link
-                to={CUSTOMER_ROUTES.category(encodeURIComponent(item.key))}
-                className="flex-1 truncate py-1 text-sm font-medium text-[var(--customer-ink)] hover:text-[var(--customer-gold)]"
-              >
-                {item.label}
-              </Link>
-              {subs.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setExpanded((p) => ({ ...p, [item.key]: !p[item.key] }))}
-                  className="ml-1 p-0.5 text-[var(--customer-muted)] hover:text-[var(--customer-gold)]"
-                >
-                  <ChevronRight size={12} className={`transition-transform ${isOpen ? "rotate-90" : ""}`} />
-                </button>
-              )}
-            </div>
-            {isOpen && subs.length > 0 && (
-              <div className="ml-3 mt-0.5 flex flex-col gap-0.5 border-l border-[var(--customer-border)] pl-2">
-                {subs.slice(0, 8).map((sub) => {
-                  const sk = sub?.categoryKey || sub?.key || slugifyCategory(getCategoryLabel(sub));
-                  return (
-                    <Link
-                      key={sk}
-                      to={CUSTOMER_ROUTES.category(encodeURIComponent(sk))}
-                      className="truncate py-0.5 text-xs text-[var(--customer-muted)] hover:text-[var(--customer-gold)]"
-                    >
-                      {getCategoryLabel(sub)}
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        );
-      })}
+      {items.map((item) => (
+        <Link
+          key={item.key}
+          to={CUSTOMER_ROUTES.category(encodeURIComponent(item.key))}
+          className="truncate py-1 text-sm font-medium text-[var(--customer-ink)] hover:text-[var(--customer-gold)]"
+        >
+          {item.label}
+        </Link>
+      ))}
     </nav>
   );
 }
 
 function CategoryTile({ category }) {
-  const title = category.displayName;
   const count = getCategoryCount(category);
-  const subs = Array.isArray(category.children)
-    ? category.children
-    : Array.isArray(category.subCategories)
-      ? category.subCategories
-      : [];
+  const imageSrc = category.imageUrl || category.displayImage;
 
   return (
-    <div className="group flex flex-col">
-      <Link
-        to={CUSTOMER_ROUTES.category(encodeURIComponent(category.routeKey))}
-        className="block text-center"
-      >
-        <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[14px] bg-surface-soft p-4 transition-all duration-300 ease-in-out group-hover:bg-[var(--customer-gold-soft)]">
-          {category.displayImage ? (
-            <img
-              src={category.displayImage}
-              alt={title}
-              loading="lazy"
-              decoding="async"
-              onError={(event) => applyImageFallback(event, title, "category")}
-              className="h-full w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-[1.03]"
-            />
-          ) : (
-            <Grid2X2
-              size={46}
-              strokeWidth={1.4}
-              className="text-[var(--customer-border-strong)]"
-            />
-          )}
-        </div>
-        <h2 className="mt-3 line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
-          {title}
-        </h2>
-        {count !== undefined && count !== null && count !== "" ? (
-          <p className="mt-1 text-xs font-semibold text-muted">
-            {Number(count).toLocaleString()} products
-          </p>
-        ) : null}
-      </Link>
-      {subs.length > 0 && (
-        <div className="mt-2 flex flex-wrap justify-center gap-1">
-          {subs.slice(0, 4).map((sub) => {
-            const subKey = sub?.categoryKey || sub?.key || slugifyCategory(getCategoryLabel(sub));
-            const subName = getCategoryLabel(sub);
-            return subKey ? (
-              <Link
-                key={subKey}
-                to={CUSTOMER_ROUTES.category(encodeURIComponent(subKey))}
-                className="rounded-full border border-border px-2 py-0.5 text-[10px] text-muted hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold)] transition-colors"
-              >
-                {subName}
-              </Link>
-            ) : null;
-          })}
-        </div>
-      )}
-    </div>
+    <Link
+      to={CUSTOMER_ROUTES.category(encodeURIComponent(category.routeKey))}
+      className="group block text-center"
+    >
+      <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[14px] bg-surface-soft p-4 transition-all duration-300 ease-in-out group-hover:bg-[var(--customer-gold-soft)]">
+        {imageSrc ? (
+          <img
+            src={imageSrc}
+            alt={category.displayName}
+            loading="lazy"
+            decoding="async"
+            onError={(event) =>
+              applyImageFallback(event, category.displayName, "category")
+            }
+            className="h-full w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-[1.03]"
+          />
+        ) : (
+          <Grid2X2
+            size={46}
+            strokeWidth={1.4}
+            className="text-[var(--customer-border-strong)]"
+          />
+        )}
+      </div>
+      <h2 className="mt-3 line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
+        {category.displayName}
+      </h2>
+      {count !== undefined && count !== null && count !== "" ? (
+        <p className="mt-1 text-xs font-semibold text-muted">
+          {Number(count).toLocaleString()} products
+        </p>
+      ) : null}
+    </Link>
   );
 }
 
@@ -225,6 +220,8 @@ function CategoryGridSkeleton() {
 
 export default function CategoryListingPage() {
   const dispatch = useDispatch();
+  const catalogState = useSelector((state) => state.catalog);
+  const catalogListRef = useRef(catalogState.list);
   const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -237,38 +234,74 @@ export default function CategoryListingPage() {
   });
   const sentinelRef = useRef(null);
 
-  const loadCategories = useCallback(async ({ page = 1, append = false } = {}) => {
-    if (append) setIsLoadingMore(true);
-    else setLoading(true);
+  useEffect(() => {
+    catalogListRef.current = catalogState.list;
+  }, [catalogState.list]);
 
-    const action = await dispatch(fetchCategories({ limit: PAGE_SIZE, page }));
-    const list = listFromPayload(action?.payload);
-    const nextPageInfo = paginationFromPayload(action?.payload, list.length, page);
+  const loadCategories = useCallback(
+    async ({ page = 1, append = false } = {}) => {
+      if (append) setIsLoadingMore(true);
+      else setLoading(true);
 
-    setPageInfo(nextPageInfo);
-    setCategoryList((prev) => {
-      if (!append) return list;
-      const seen = new Set(
-        prev.map((category) => category._id || category.id || getCategoryKey(category)),
+      const action = await dispatch(
+        fetchCategories({
+          tree: true,
+          active: true,
+          maxDepth: 3,
+          limit: PAGE_SIZE,
+          page,
+        }),
       );
-      const nextItems = list.filter((category) => {
-        const key = category._id || category.id || getCategoryKey(category);
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
+      if (action?.error) {
+        throw new Error(action.payload || action.error.message);
+      }
+      const list = getCategoryListFromResponse(action?.payload);
+      const rootList = getRootCategories(list);
+      const fallbackRootList = !append && !rootList.length
+        ? getRootCategories(catalogListRef.current)
+        : [];
+      const nextRootList = fallbackRootList.length ? fallbackRootList : rootList;
+      const nextPageInfo = paginationFromPayload(
+        action?.payload,
+        nextRootList.length,
+        page,
+      );
+
+      setPageInfo(nextPageInfo);
+      setCategoryList((prev) => {
+        if (!append) return nextRootList;
+        const seen = new Set(prev.map((category) => category.routeKey));
+        const nextItems = nextRootList.filter((category) => {
+          if (seen.has(category.routeKey)) return false;
+          seen.add(category.routeKey);
+          return true;
+        });
+        return [...prev, ...nextItems];
       });
-      return [...prev, ...nextItems];
-    });
-    setFirstLoadDone(true);
-    setIsLoadingMore(false);
-    setLoading(false);
-    return list;
-  }, [dispatch]);
+      setFirstLoadDone(true);
+      setIsLoadingMore(false);
+      setLoading(false);
+      return nextRootList;
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
+    const existingRootCategories = getRootCategories(catalogState.list);
+    if (existingRootCategories.length) {
+      setCategoryList(existingRootCategories);
+      setLoading(false);
+    }
+
     loadCategories({ page: 1, append: false }).catch(() => {
-      setCategoryList([]);
-      setPageInfo({ page: 1, totalPages: 1, total: 0, hasMore: false });
+      const fallbackList = getRootCategories(catalogState.list);
+      setCategoryList(fallbackList);
+      setPageInfo({
+        page: 1,
+        totalPages: 1,
+        total: fallbackList.length,
+        hasMore: false,
+      });
       setFirstLoadDone(true);
       setIsLoadingMore(false);
       setLoading(false);
@@ -308,15 +341,7 @@ export default function CategoryListingPage() {
   ]);
 
   const categories = useMemo(
-    () =>
-      categoryList
-        .map((category) => ({
-          ...category,
-          displayName: getCategoryLabel(category),
-          displayImage: getCategoryImage(category),
-          routeKey: getCategoryKey(category),
-        }))
-        .filter((category) => category.displayName && category.routeKey),
+    () => categoryList,
     [categoryList],
   );
 
@@ -325,7 +350,6 @@ export default function CategoryListingPage() {
       categories.map((category) => ({
         label: category.displayName,
         key: category.routeKey,
-        children: category.children || category.subCategories || [],
       })),
     [categories],
   );
@@ -350,7 +374,7 @@ export default function CategoryListingPage() {
 
       <main className="bg-white text-ink">
         <div className="mx-auto grid w-full max-w-[1470px] grid-cols-1 gap-6 px-3 py-5 sm:px-5 sm:py-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:px-8">
-            <ProductFilterSidebar sections={sidebarSections} />
+          <ProductFilterSidebar sections={sidebarSections} />
 
           <div className="min-w-0">
             {sidebarCategories.length > 0 && (
@@ -378,24 +402,24 @@ export default function CategoryListingPage() {
               <h1 className="mb-2 text-[20px] font-bold leading-tight text-ink sm:text-[26px] lg:text-[28px]">
                 Shop all categories
               </h1>
-              <p className="mb-5 max-w-2xl text-sm text-muted sm:mb-7">
-                {categories.length
-                  ? `${categories.length} categories across fashion, electronics, home, beauty and more.`
-                  : "Explore Sam Global collections by category."}
-              </p>
+              
 
-              {loading ? (
+              {loading && !categories.length ? (
                 <CategoryGridSkeleton />
               ) : categories.length ? (
                 <>
+                 
                   <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-6 xl:grid-cols-5">
                     {categories.map((category) => (
-                      <CategoryTile
-                        key={category._id || category.id || category.routeKey}
-                        category={category}
-                      />
+                      <CategoryTile key={category.id} category={category} />
                     ))}
                   </div>
+                  <div ref={sentinelRef} className="h-10" aria-hidden="true" />
+                  {isLoadingMore && (
+                    <div className="mt-6 flex justify-center">
+                      <div className="h-9 w-9 animate-spin rounded-full border-2 border-[var(--customer-border)] border-t-[var(--customer-gold)]" />
+                    </div>
+                  )}
                 </>
               ) : (
                 <div className="rounded-[12px] border border-border bg-cream p-6 text-center">
@@ -407,7 +431,6 @@ export default function CategoryListingPage() {
             </section>
           </div>
         </div>
-        
       </main>
     </>
   );
