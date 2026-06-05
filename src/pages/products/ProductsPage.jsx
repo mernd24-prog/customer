@@ -116,14 +116,14 @@ export default function ProductsPage() {
   }, [loadProducts, searchParams]);
 
   useEffect(() => {
-    dispatch(fetchCategories({ limit: 100 }))
+    dispatch(fetchCategories())
       .then((action) => {
         const data = action?.payload?.data;
         const list = Array.isArray(data)
           ? data
           : Array.isArray(data?.items)
             ? data.items
-            : [];
+            : data?.list || [];
         setCategoryList(list);
       })
       .catch(() => {});

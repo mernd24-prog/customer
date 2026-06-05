@@ -10,6 +10,7 @@ import {
 } from "../../features/recommendation/recommendationSlice";
 import { fetchCmsPages } from "../../features/cms/cmsSlice";
 import { fetchProducts } from "../../features/product/productSlice";
+import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { tokenStorage } from "../../api/tokenStorage";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import Banner from "../../layouts/HeroBanner";
@@ -29,6 +30,7 @@ export function HomePage() {
   const categories = Array.isArray(categoryList) ? categoryList : [];
 
   useEffect(() => {
+    dispatch(fetchCategories()).catch(() => {});
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
     if (tokenStorage.getAccessToken()) {
       dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
@@ -49,10 +51,10 @@ export function HomePage() {
       <CategoryBar />
 
       <HomeCategoryGrid
-        categories={categories?.slice(7, 12)}
+        categories={categories?.filter((c) => c?.isDashboardVisible !== false).slice(0, 10)}
         loading={false}
-        title="Time for a Spring Refresh"
-        subtitle="Curated collections for every style and home"
+        title="Shop by Category"
+        subtitle="Explore fashion, electronics, home, beauty and more"
       />
 
       <CollageMainSection />

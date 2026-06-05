@@ -12,6 +12,7 @@ import {
 } from "./routing/RouteGuards";
 import { checkAuthStatus, logout } from "./features/auth/authSlice";
 import { fetchCart } from "./features/cart/cartSlice";
+import { fetchCategories } from "./features/catalog/catalogSlice";
 import { AUTH_ROUTES } from "./features/auth/authRoutes";
 import { tokenStorage } from "./api/tokenStorage";
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
@@ -200,6 +201,10 @@ export default function App() {
       window.clearTimeout(timeoutId);
     };
   }, [currentUser, dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchCategories()).catch(() => {});
+  }, [dispatch]);
 
   useEffect(() => {
     if (!currentUser) return;

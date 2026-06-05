@@ -704,7 +704,7 @@ export const CategoryBar = ({ headerData }) => {
     if (headerCategories.length) return buildCategoryTree(headerCategories);
     if (!catalogTree.length) return [];
 
-    return catalogTree.slice(0, 14).map((cat) => ({
+    return catalogTree.map((cat) => ({
       ...cat,
       name: textOr(cat?.name, textOr(cat?.title, "Category")),
       img: cat?.imageUrl || cat?.image || cat?.img,
@@ -713,6 +713,7 @@ export const CategoryBar = ({ headerData }) => {
       children: asArray(cat?.children),
     }));
   }, [catalogTree, headerData]);
+  // Show up to 12 root categories in the bar; overflow accessible via "More" button
   const visibleCategories = useMemo(
     () => asArray(categories).slice(0, 10),
     [categories],
@@ -741,13 +742,12 @@ export const CategoryBar = ({ headerData }) => {
       <div className="w-full relative z-20">
         <div className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:justify-center lg:gap-5">
           {visibleCategories.map((item, index) => {
-            const categoryHref = `/categories/${keyOr(
-              item?.slug,
-              buildCategorySlug(textOr(item?.name, "category")),
-            )}`;
+            // Always use categoryKey first — it's the canonical route key from the DB
+            const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
             const isActive =
               activeMenu?.categoryKey === item?.categoryKey ||
-              location.pathname === categoryHref;
+              location.pathname === categoryHref ||
+              location.pathname.startsWith(categoryHref + "/");
 
             return (
               <div

@@ -592,9 +592,12 @@ export default function ProductDetailPage() {
         : product?.stock != null
           ? product.stock > 0
           : true;
+  const categoryLabel = product?.category
+    ? (product.category || '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+    : null;
   const detailRows = Object.entries({
     Brand: product?.brand,
-    Category: product?.category,
+    Category: categoryLabel,
     ...attributes,
   }).filter(([, value]) => value != null && value !== "");
 
@@ -615,13 +618,24 @@ export default function ProductDetailPage() {
             Home
           </Link>
           <span>/</span>
-          {product?.category && (
+          {product?.parentCategory && (
+            <>
+              <Link
+                to={`/categories/${product.parentCategory}`}
+                className="capitalize hover:text-ink transition-all duration-300 ease-in-out"
+              >
+                {(product.parentCategory || '').replace(/-/g, ' ')}
+              </Link>
+              <span>/</span>
+            </>
+          )}
+          {product?.category && product.category !== product.parentCategory && (
             <>
               <Link
                 to={`/categories/${product.category}`}
                 className="capitalize hover:text-ink transition-all duration-300 ease-in-out"
               >
-                {product.category}
+                {(product.category || '').replace(/-/g, ' ')}
               </Link>
               <span>/</span>
             </>

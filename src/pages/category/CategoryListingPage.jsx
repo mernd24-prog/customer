@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Grid2X2 } from "lucide-react";
+import { Grid2X2, ChevronRight } from "lucide-react";
 
 import Seo from "../../components/common/Seo";
 import ProductFilterSidebar from "../../components/ecommerce/ProductFilterSidebar";
@@ -9,7 +9,7 @@ import CUSTOMER_ROUTES from "../../constants/routes";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { applyImageFallback, getImageUrlFromValue } from "../../utils/ecommerce";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 5000;
 
 function listFromPayload(payload) {
   const data = payload?.data ?? payload;
@@ -99,17 +99,50 @@ function getCategoryCount(category = {}) {
 }
 
 function CategoryLinkList({ items }) {
+  const [expanded, setExpanded] = useState({});
   return (
-    <nav className="grid max-h-64 gap-2 overflow-y-auto pr-1">
-      {items.map((item) => (
-        <Link
-          key={item.key}
-          to={CUSTOMER_ROUTES.category(encodeURIComponent(item.key))}
-          className="block truncate text-sm text-ink"
-        >
-          {item.label}
-        </Link>
-      ))}
+    <nav className="grid max-h-[75vh] gap-1 overflow-y-auto pr-1">
+      {items.map((item) => {
+        const subs = item.children || item.subCategories || [];
+        const isOpen = expanded[item.key];
+        return (
+          <div key={item.key}>
+            <div className="flex items-center justify-between">
+              <Link
+                to={CUSTOMER_ROUTES.category(encodeURIComponent(item.key))}
+                className="flex-1 truncate py-1 text-sm font-medium text-[var(--customer-ink)] hover:text-[var(--customer-gold)]"
+              >
+                {item.label}
+              </Link>
+              {subs.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setExpanded((p) => ({ ...p, [item.key]: !p[item.key] }))}
+                  className="ml-1 p-0.5 text-[var(--customer-muted)] hover:text-[var(--customer-gold)]"
+                >
+                  <ChevronRight size={12} className={`transition-transform ${isOpen ? "rotate-90" : ""}`} />
+                </button>
+              )}
+            </div>
+            {isOpen && subs.length > 0 && (
+              <div className="ml-3 mt-0.5 flex flex-col gap-0.5 border-l border-[var(--customer-border)] pl-2">
+                {subs.slice(0, 8).map((sub) => {
+                  const sk = sub?.categoryKey || sub?.key || slugifyCategory(getCategoryLabel(sub));
+                  return (
+                    <Link
+                      key={sk}
+                      to={CUSTOMER_ROUTES.category(encodeURIComponent(sk))}
+                      className="truncate py-0.5 text-xs text-[var(--customer-muted)] hover:text-[var(--customer-gold)]"
+                    >
+                      {getCategoryLabel(sub)}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </nav>
   );
 }
@@ -117,39 +150,63 @@ function CategoryLinkList({ items }) {
 function CategoryTile({ category }) {
   const title = category.displayName;
   const count = getCategoryCount(category);
+  const subs = Array.isArray(category.children)
+    ? category.children
+    : Array.isArray(category.subCategories)
+      ? category.subCategories
+      : [];
 
   return (
-    <Link
-      to={CUSTOMER_ROUTES.category(encodeURIComponent(category.routeKey))}
-      className="group block text-center"
-    >
-      <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[14px] bg-surface-soft p-4 transition-all duration-300 ease-in-out group-hover:bg-[var(--customer-gold-soft)]">
-        {category.displayImage ? (
-          <img
-            src={category.displayImage}
-            alt={title}
-            loading="lazy"
-            decoding="async"
-            onError={(event) => applyImageFallback(event, title, "category")}
-            className="h-full w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-[1.03]"
-          />
-        ) : (
-          <Grid2X2
-            size={46}
-            strokeWidth={1.4}
-            className="text-[var(--customer-border-strong)]"
-          />
-        )}
-      </div>
-      <h2 className="mt-3 line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
-        {title}
-      </h2>
-      {count !== undefined && count !== null && count !== "" ? (
-        <p className="mt-1 text-xs font-semibold text-muted">
-          {Number(count).toLocaleString()} products
-        </p>
-      ) : null}
-    </Link>
+    <div className="group flex flex-col">
+      <Link
+        to={CUSTOMER_ROUTES.category(encodeURIComponent(category.routeKey))}
+        className="block text-center"
+      >
+        <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[14px] bg-surface-soft p-4 transition-all duration-300 ease-in-out group-hover:bg-[var(--customer-gold-soft)]">
+          {category.displayImage ? (
+            <img
+              src={category.displayImage}
+              alt={title}
+              loading="lazy"
+              decoding="async"
+              onError={(event) => applyImageFallback(event, title, "category")}
+              className="h-full w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-[1.03]"
+            />
+          ) : (
+            <Grid2X2
+              size={46}
+              strokeWidth={1.4}
+              className="text-[var(--customer-border-strong)]"
+            />
+          )}
+        </div>
+        <h2 className="mt-3 line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
+          {title}
+        </h2>
+        {count !== undefined && count !== null && count !== "" ? (
+          <p className="mt-1 text-xs font-semibold text-muted">
+            {Number(count).toLocaleString()} products
+          </p>
+        ) : null}
+      </Link>
+      {subs.length > 0 && (
+        <div className="mt-2 flex flex-wrap justify-center gap-1">
+          {subs.slice(0, 4).map((sub) => {
+            const subKey = sub?.categoryKey || sub?.key || slugifyCategory(getCategoryLabel(sub));
+            const subName = getCategoryLabel(sub);
+            return subKey ? (
+              <Link
+                key={subKey}
+                to={CUSTOMER_ROUTES.category(encodeURIComponent(subKey))}
+                className="rounded-full border border-border px-2 py-0.5 text-[10px] text-muted hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold)] transition-colors"
+              >
+                {subName}
+              </Link>
+            ) : null;
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -268,6 +325,7 @@ export default function CategoryListingPage() {
       categories.map((category) => ({
         label: category.displayName,
         key: category.routeKey,
+        children: category.children || category.subCategories || [],
       })),
     [categories],
   );
@@ -318,20 +376,19 @@ export default function CategoryListingPage() {
 
             <section className="pb-7">
               <h1 className="mb-2 text-[20px] font-bold leading-tight text-ink sm:text-[26px] lg:text-[28px]">
-                Shop categories available now
+                Shop all categories
               </h1>
               <p className="mb-5 max-w-2xl text-sm text-muted sm:mb-7">
-                Explore Sam Global collections by category.
+                {categories.length
+                  ? `${categories.length} categories across fashion, electronics, home, beauty and more.`
+                  : "Explore Sam Global collections by category."}
               </p>
 
               {loading ? (
                 <CategoryGridSkeleton />
               ) : categories.length ? (
                 <>
-                  <div className="mb-5 text-sm font-semibold text-muted">
-                    {(pageInfo.total || categories.length).toLocaleString()} categories
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5">
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-6 xl:grid-cols-5">
                     {categories.map((category) => (
                       <CategoryTile
                         key={category._id || category.id || category.routeKey}
@@ -339,12 +396,6 @@ export default function CategoryListingPage() {
                       />
                     ))}
                   </div>
-                  <div ref={sentinelRef} className="h-10" aria-hidden="true" />
-                  {isLoadingMore && (
-                    <div className="mt-6 flex justify-center">
-                      <div className="h-9 w-9 animate-spin rounded-full border-2 border-[var(--customer-border)] border-t-[var(--customer-gold)]" />
-                    </div>
-                  )}
                 </>
               ) : (
                 <div className="rounded-[12px] border border-border bg-cream p-6 text-center">

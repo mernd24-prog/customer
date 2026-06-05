@@ -31,7 +31,7 @@ export const userThunks = {
 };
 
 export const catalogThunks = {
-  fetchCategories: makeThunk("catalog/fetchCategories", { url: endpoints.platform.categories, params: q, cache: true, cacheTtl: 300000 }),
+  fetchCategories: makeThunk("catalog/fetchCategories", { url: endpoints.platform.categories, params: (q) => ({ tree: true, active: true, ...q }), cache: true, cacheTtl: 300000 }),
   fetchCategoryByKey: makeThunk("catalog/fetchCategoryByKey", { url: ({ categoryKey }) => endpoints.platform.category(categoryKey) }),
   fetchCategoryAttributes: makeThunk("catalog/fetchCategoryAttributes", { url: ({ categoryKey }) => endpoints.platform.categoryAttributes(categoryKey) }),
   fetchFamilies: makeThunk("catalog/fetchFamilies", { url: endpoints.platform.families, params: q }),

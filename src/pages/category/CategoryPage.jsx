@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Grid2X2, LayoutGrid } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import {
   Breadcrumbs,
@@ -15,6 +15,7 @@ import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
 import {
   fetchCategoryByKey,
+  fetchCategories,
   fetchBrands,
 } from "../../features/catalog/catalogSlice";
 import { applyImageFallback } from "../../utils/ecommerce";
@@ -28,33 +29,124 @@ const SORT_OPTIONS = [
 ];
 const PAGE_SIZES = [12, 24, 48];
 
+// ── Sub-category card in top strip ──────────────────────────────────────────
+function SubCategoryCard({ sub, isActive, onClick }) {
+  const key = sub?.categoryKey || sub?.key || "";
+  const name = sub?.title || sub?.name || key.replace(/-/g, " ");
+  const image = sub?.imageUrl || sub?.image || sub?.iconUrl || "";
+  const childCount = (sub?.children || []).length;
+
+  return (
+    <Link
+      to={`/categories/${key}`}
+      onClick={onClick}
+      className={`group flex min-w-[100px] max-w-[130px] flex-col items-center gap-2 rounded-xl p-3 text-center transition-all duration-200 ${
+        isActive
+          ? "bg-[var(--customer-gold)] text-white shadow-md"
+          : "bg-white hover:bg-[var(--customer-gold-soft)] border border-[var(--customer-border)]"
+      }`}
+    >
+      <div
+        className={`flex h-12 w-12 items-center justify-center overflow-hidden rounded-full ${
+          isActive ? "bg-white/20" : "bg-[var(--customer-surface-soft)]"
+        }`}
+      >
+        {image ? (
+          <img
+            src={image}
+            alt={name}
+            className="h-full w-full object-cover"
+            onError={(e) => applyImageFallback(e, name, "category")}
+          />
+        ) : (
+          <LayoutGrid size={20} className={isActive ? "text-white" : "text-[var(--customer-muted)]"} />
+        )}
+      </div>
+      <span
+        className={`line-clamp-2 text-[11px] font-semibold leading-tight ${
+          isActive ? "text-white" : "text-[var(--customer-ink)]"
+        }`}
+      >
+        {name}
+      </span>
+      {childCount > 0 && (
+        <span
+          className={`text-[10px] font-medium ${
+            isActive ? "text-white/80" : "text-[var(--customer-muted)]"
+          }`}
+        >
+          {childCount} sub-types
+        </span>
+      )}
+    </Link>
+  );
+}
+
+// ── Child category chips below active sub ────────────────────────────────────
+function ChildChips({ children, selectedKey, onSelect }) {
+  if (!children?.length) return null;
+  return (
+    <div className="flex flex-wrap gap-2 pt-2">
+      <button
+        type="button"
+        onClick={() => onSelect("")}
+        className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
+          !selectedKey
+            ? "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-white"
+            : "border-[var(--customer-border)] bg-white text-[var(--customer-ink)] hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold)]"
+        }`}
+      >
+        All
+      </button>
+      {children.map((child) => {
+        const k = child?.categoryKey || child?.key || "";
+        const n = child?.title || child?.name || k.replace(/-/g, " ");
+        return (
+          <Link
+            key={k}
+            to={`/categories/${k}`}
+            className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
+              selectedKey === k
+                ? "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-white"
+                : "border-[var(--customer-border)] bg-white text-[var(--customer-ink)] hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold)]"
+            }`}
+          >
+            {n}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function CategoryPage() {
   const { categoryKey } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode] = useState("grid");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [brandList, setBrandList] = useState([]);
   const [categoryData, setCategoryData] = useState(null);
+  const [subCategories, setSubCategories] = useState([]);
   const [items, setItems] = useState([]);
-  const [pageInfo, setPageInfo] = useState({
-    page: 1,
-    totalPages: 1,
-    total: 0,
-  });
+  const [pageInfo, setPageInfo] = useState({ page: 1, totalPages: 1, total: 0 });
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
-  const sentinelRef = useRef(null);
 
+  // active sub-category key for the top strip highlight
+  const activeSubKey = searchParams.get("sub") || "";
+
+  const sentinelRef = useRef(null);
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
   const products = items;
   const meta = productState.meta;
-  const totalPages =
-    pageInfo.totalPages || meta?.totalPages || meta?.pages || 1;
+  const totalPages = pageInfo.totalPages || meta?.totalPages || 1;
   const currentPage = pageInfo.page || Number(searchParams.get("page") || 1);
 
+  // ── Build product fetch params ───────────────────────────────────────────
   const getParams = useCallback(
     (pageOverride) => {
       const params = {
@@ -63,32 +155,16 @@ export default function CategoryPage() {
         minPrice: searchParams.get("minPrice") || undefined,
         maxPrice: searchParams.get("maxPrice") || undefined,
         sort: searchParams.get("sort") || undefined,
-        productFamilyCode:
-          searchParams.get("productFamilyCode") ||
-          searchParams.get("family") ||
-          undefined,
+        productFamilyCode: searchParams.get("productFamilyCode") || searchParams.get("family") || undefined,
         rating: searchParams.get("rating") || undefined,
         inStock: searchParams.get("inStock") || undefined,
         page: pageOverride || 1,
         limit: Number(searchParams.get("limit") || 20),
       };
-
       searchParams.forEach((value, key) => {
         if (key.startsWith("attr_")) params[key] = value;
       });
-      [
-        "color",
-        "size",
-        "material",
-        "fit",
-        "storage",
-        "skinType",
-        "shade",
-        "finish",
-        "room",
-        "sport",
-        "concern",
-      ].forEach((key) => {
+      ["color","size","material","fit","storage","skinType","shade","finish","room","sport","concern"].forEach((key) => {
         const value = searchParams.get(key);
         if (value) params[key] = value;
       });
@@ -97,29 +173,19 @@ export default function CategoryPage() {
     [searchParams, categoryKey],
   );
 
+  // ── Load products (append = infinite scroll page) ──────────────────────
   const loadProducts = useCallback(
     async ({ page = 1, append = false } = {}) => {
       const params = getParams(page);
       if (append) setIsLoadingMore(true);
       const result = await dispatch(fetchProducts(params)).unwrap();
       const data = result?.data;
-      const list = Array.isArray(data)
-        ? data
-        : Array.isArray(data?.items)
-          ? data.items
-          : Array.isArray(data?.list)
-            ? data.list
-            : [];
-      const meta = result?.meta || {};
-      const nextPage = Number(
-        meta.page || meta.currentPage || params.page || 1,
-      );
-      const nextTotalPages = Number(meta.totalPages || meta.pages || 1);
-      const nextTotal = Number(meta.total || meta.count || list.length || 0);
+      const list = Array.isArray(data) ? data : data?.items || data?.list || [];
+      const m = result?.meta || {};
       setPageInfo({
-        page: nextPage,
-        totalPages: nextTotalPages,
-        total: nextTotal,
+        page: Number(m.page || m.currentPage || params.page || 1),
+        totalPages: Number(m.totalPages || m.pages || 1),
+        total: Number(m.total || m.count || list.length || 0),
       });
       setItems((prev) => (append ? [...prev, ...list] : list));
       setFirstLoadDone(true);
@@ -135,31 +201,41 @@ export default function CategoryPage() {
     });
   }, [loadProducts]);
 
+  // ── Load category meta + subcategories ──────────────────────────────────
   useEffect(() => {
     setItems([]);
     setFirstLoadDone(false);
     setCategoryData(null);
+    setSubCategories([]);
+
     dispatch(fetchCategoryByKey({ categoryKey }))
       .then((action) => {
         const d = action?.payload?.data || action?.payload;
-        if (d) setCategoryData(d);
+        if (!d) return;
+        setCategoryData(d);
+        // fetch direct subcategories
+        dispatch(fetchCategories({ parentKey: categoryKey, limit: 200 }))
+          .then((subAction) => {
+            const subData = subAction?.payload?.data;
+            const subs = Array.isArray(subData) ? subData : subData?.items || subData?.list || [];
+            setSubCategories(subs);
+            if (subs.length) {
+              setCategoryData((prev) => prev ? { ...prev, children: subs } : prev);
+            }
+          })
+          .catch(() => {});
       })
       .catch(() => {});
 
     dispatch(fetchBrands({ limit: 100 }))
       .then((action) => {
         const data = action?.payload?.data;
-        const list = Array.isArray(data)
-          ? data
-          : data?.items || data?.list || [];
+        const list = Array.isArray(data) ? data : data?.items || data?.list || [];
         setBrandList(
           list
             .map((brand) => {
-              const label =
-                brand?.name || brand?.title || brand?.brandName || brand?.code;
-              return label
-                ? { value: String(label), label: String(label) }
-                : null;
+              const label = brand?.name || brand?.title || brand?.brandName || brand?.code;
+              return label ? { value: String(label), label: String(label) } : null;
             })
             .filter(Boolean),
         );
@@ -167,36 +243,22 @@ export default function CategoryPage() {
       .catch(() => {});
   }, [dispatch, categoryKey]);
 
+  // ── Infinite scroll ──────────────────────────────────────────────────────
   useEffect(() => {
-    if (
-      !sentinelRef.current ||
-      !firstLoadDone ||
-      productState.loading ||
-      isLoadingMore
-    )
-      return undefined;
+    if (!sentinelRef.current || !firstLoadDone || productState.loading || isLoadingMore) return undefined;
     if (currentPage >= totalPages) return undefined;
-
     const observer = new IntersectionObserver(
       (entries) => {
-        const [entry] = entries;
-        if (!entry?.isIntersecting) return;
+        if (!entries[0]?.isIntersecting) return;
         loadProducts({ page: currentPage + 1, append: true }).catch(() => {});
       },
       { threshold: 0.2, rootMargin: "0px 0px 300px 0px" },
     );
-
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
-  }, [
-    currentPage,
-    totalPages,
-    firstLoadDone,
-    loadProducts,
-    productState.loading,
-    isLoadingMore,
-  ]);
+  }, [currentPage, totalPages, firstLoadDone, loadProducts, productState.loading, isLoadingMore]);
 
+  // ── Param helpers ────────────────────────────────────────────────────────
   const updateParam = (key, value) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
@@ -210,10 +272,8 @@ export default function CategoryPage() {
   const handlePriceChange = ({ minPrice, maxPrice }) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      if (minPrice) next.set("minPrice", minPrice);
-      else next.delete("minPrice");
-      if (maxPrice) next.set("maxPrice", maxPrice);
-      else next.delete("maxPrice");
+      if (minPrice) next.set("minPrice", minPrice); else next.delete("minPrice");
+      if (maxPrice) next.set("maxPrice", maxPrice); else next.delete("maxPrice");
       next.delete("page");
       return next;
     });
@@ -222,10 +282,8 @@ export default function CategoryPage() {
   const removeFilter = (key) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      if (key === "price") {
-        next.delete("minPrice");
-        next.delete("maxPrice");
-      } else next.delete(key);
+      if (key === "price") { next.delete("minPrice"); next.delete("maxPrice"); }
+      else next.delete(key);
       next.delete("page");
       return next;
     });
@@ -240,118 +298,83 @@ export default function CategoryPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const categoryTitle =
-    categoryData?.title || categoryData?.name || categoryKey;
+  // ── Derived data ─────────────────────────────────────────────────────────
+  const categoryTitle = categoryData?.title || categoryData?.name || (categoryKey || "").replace(/-/g, " ");
   const categoryDesc = categoryData?.description;
   const categoryImage = categoryData?.imageUrl || categoryData?.bannerUrl;
 
-  // Sub-categories and sub-sub-categories from category data
-  const subCategories = Array.isArray(categoryData?.children)
-    ? categoryData.children
-    : [];
+  // Active sub + its children
+  const activeSubData = useMemo(
+    () => subCategories.find((s) => (s?.categoryKey || s?.key) === activeSubKey) || null,
+    [subCategories, activeSubKey],
+  );
+  const activeSubChildren = activeSubData?.children || [];
 
-  const activeFilters = [
-    searchParams.get("brand") && {
-      key: "brand",
-      label: `Brand: ${searchParams.get("brand")}`,
-    },
-    searchParams.get("productFamilyCode") && {
-      key: "productFamilyCode",
-      label: `Family: ${searchParams.get("productFamilyCode")}`,
-    },
-    searchParams.get("rating") && {
-      key: "rating",
-      label: `Rating: ${searchParams.get("rating")}★ & up`,
-    },
-    searchParams.get("inStock") && { key: "inStock", label: "In Stock Only" },
-    [
-      "color",
-      "size",
-      "material",
-      "fit",
-      "storage",
-      "skinType",
-      "shade",
-      "finish",
-      "room",
-      "sport",
-      "concern",
-    ]
-      .map(
-        (key) =>
-          searchParams.get(key) && {
-            key,
-            label: `${key}: ${searchParams.get(key)}`,
-          },
-      )
-      .filter(Boolean),
-    ...Array.from(searchParams.entries())
-      .filter(([key, value]) => key.startsWith("attr_") && value)
-      .map(([key, value]) => ({
-        key,
-        label: `${key.replace(/^attr_/, "")}: ${value}`,
-      })),
-    (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
-      key: "price",
-      label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,
-    },
-  ]
-    .flat()
-    .filter(Boolean);
-
-  const breadcrumbItems = [
+  // Breadcrumb
+  const breadcrumbItems = useMemo(() => [
     { label: "Home", href: "/" },
-    { label: "Products", href: "/products" },
-    { label: categoryTitle },
-  ];
+    { label: "Categories", href: "/categories" },
+    { label: categoryTitle.replace(/\b\w/g, (c) => c.toUpperCase()) },
+  ], [categoryTitle]);
 
-  const filterSections = [
-    // Sub-categories as navigation links (not a filter param, just navigation)
+  // ── Filter sections for sidebar ──────────────────────────────────────────
+  const filterSections = useMemo(() => [
     subCategories.length > 0 && {
       key: "subcategories",
       title: "Sub-Categories",
       content: (
-        <div className="grid gap-1">
-          {subCategories.map((sub) => (
-            <Link
-              key={sub?.categoryKey || sub?.key}
-              to={`/categories/${sub?.categoryKey || sub?.key}`}
-              className="flex items-center justify-between rounded-lg px-2 py-2 text-sm text-ink hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 ease-in-out"
-            >
-              <span className="truncate">{sub?.title || sub?.name}</span>
-              <ChevronRight size={12} className="shrink-0 text-gray-400" />
-            </Link>
-          ))}
+        <div className="flex flex-col gap-0.5">
+          <Link
+            to={`/categories/${categoryKey}`}
+            className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
+              !activeSubKey ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]" : "text-[var(--customer-ink)] hover:bg-gray-50"
+            }`}
+          >
+            <span>All in {categoryTitle}</span>
+          </Link>
+          {subCategories.map((sub) => {
+            const k = sub?.categoryKey || sub?.key || "";
+            const n = sub?.title || sub?.name || k.replace(/-/g, " ");
+            const childCount = (sub?.children || []).length;
+            const isAct = activeSubKey === k;
+            return (
+              <Link
+                key={k}
+                to={`/categories/${k}`}
+                className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
+                  isAct ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]" : "text-[var(--customer-ink)] hover:bg-gray-50"
+                }`}
+              >
+                <span className="truncate">{n}</span>
+                <div className="flex items-center gap-1 shrink-0">
+                  {childCount > 0 && (
+                    <span className="text-[10px] text-[var(--customer-muted)]">{childCount}</span>
+                  )}
+                  <ChevronRight size={12} className="text-gray-300" />
+                </div>
+              </Link>
+            );
+          })}
         </div>
       ),
     },
-    // Dynamic attribute filters from category schema
-    Array.isArray(categoryData?.attributeSchema) &&
-      categoryData.attributeSchema
-        .filter(
-          (attribute) =>
-            attribute?.isFilterable !== false &&
-            Array.isArray(attribute?.options) &&
-            attribute.options.length,
-        )
-        .map((attribute) => ({
-          key: `attr_${attribute.key}`,
-          title: attribute.label || attribute.key,
-          content: (
-            <OptionFilter
-              name={`attr_${attribute.key}`}
-              options={attribute.options.map((option) => ({
-                value: String(option),
-                label: String(option),
-              }))}
-              selected={
-                searchParams.get(`attr_${attribute.key}`)
-              }
-              onChange={(value) => updateParam(`attr_${attribute.key}`, value)}
-            />
-          ),
-        })),
-    // Brand filter
+    // Dynamic attribute filters
+    ...(Array.isArray(categoryData?.attributeSchema)
+      ? categoryData.attributeSchema
+          .filter((a) => a?.isFilterable !== false && Array.isArray(a?.options) && a.options.length)
+          .map((attribute) => ({
+            key: `attr_${attribute.key}`,
+            title: attribute.label || attribute.key,
+            content: (
+              <OptionFilter
+                name={`attr_${attribute.key}`}
+                options={attribute.options.map((o) => ({ value: String(o), label: String(o) }))}
+                selected={searchParams.get(`attr_${attribute.key}`)}
+                onChange={(value) => updateParam(`attr_${attribute.key}`, value)}
+              />
+            ),
+          }))
+      : []),
     brandList.length > 0 && {
       key: "brand",
       title: "Brand",
@@ -364,7 +387,6 @@ export default function CategoryPage() {
         />
       ),
     },
-    // Price filter
     {
       key: "price",
       title: "Price Range",
@@ -376,7 +398,6 @@ export default function CategoryPage() {
         />
       ),
     },
-    // Rating filter
     {
       key: "rating",
       title: "Rating",
@@ -387,71 +408,132 @@ export default function CategoryPage() {
         />
       ),
     },
-    // Availability filter
     {
       key: "inStock",
       title: "Availability",
       content: (
-        <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
+        <label className="flex cursor-pointer items-center gap-2 text-sm text-ink">
           <input
             type="checkbox"
             checked={searchParams.get("inStock") === "true"}
-            onChange={(e) =>
-              updateParam("inStock", e.target.checked ? "true" : undefined)
-            }
+            onChange={(e) => updateParam("inStock", e.target.checked ? "true" : undefined)}
             className="h-3.5 w-3.5 accent-gold"
           />
           In Stock Only
         </label>
       ),
     },
-  ]
-    .flat()
-    .filter(Boolean);
+  ].flat().filter(Boolean), [
+    subCategories, categoryKey, activeSubKey, categoryTitle, categoryData, brandList, searchParams,
+  ]);
+
+  // ── Active filter chips ──────────────────────────────────────────────────
+  const activeFilters = [
+    searchParams.get("brand") && { key: "brand", label: `Brand: ${searchParams.get("brand")}` },
+    searchParams.get("rating") && { key: "rating", label: `Rating: ${searchParams.get("rating")}★ & up` },
+    searchParams.get("inStock") && { key: "inStock", label: "In Stock Only" },
+    ["color","size","material","fit","storage","skinType","shade","finish","room","sport","concern"]
+      .map((key) => searchParams.get(key) && { key, label: `${key}: ${searchParams.get(key)}` })
+      .filter(Boolean),
+    ...Array.from(searchParams.entries())
+      .filter(([key, value]) => key.startsWith("attr_") && value)
+      .map(([key, value]) => ({ key, label: `${key.replace(/^attr_/, "")}: ${value}` })),
+    (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
+      key: "price",
+      label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,
+    },
+  ].flat().filter(Boolean);
 
   return (
     <>
       <Seo
-        title={`${categoryTitle} | Sam Global`}
-        description={
-          categoryDesc || `Shop ${categoryTitle} products at Sam Global`
-        }
+        title={`${categoryTitle.replace(/\b\w/g, (c) => c.toUpperCase())} | Sam Global`}
+        description={categoryDesc || `Shop ${categoryTitle} products at best prices. Free delivery & easy returns.`}
       />
 
+      {/* ── Hero banner ─────────────────────────────────────────────────── */}
       {categoryImage ? (
-        <div className="mt-6 rounded-[var(--customer-radius-lg)] relative h-44 w-full overflow-hidden sm:h-56">
+        <div className="relative h-44 w-full overflow-hidden rounded-[var(--customer-radius-lg)] mt-4 sm:h-56">
           <img
             src={categoryImage}
             alt={categoryTitle}
             className="h-full w-full object-cover"
-            onError={(event) =>
-              applyImageFallback(event, categoryTitle, "category")
-            }
+            onError={(event) => applyImageFallback(event, categoryTitle, "category")}
           />
-          <div className="absolute inset-0 flex items-end bg-black/40 px-6 pb-6">
+          <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/20 to-transparent px-6 pb-6">
             <div>
-              <Breadcrumbs items={breadcrumbItems} className="mb-1 text-white" />
-              <h1 className=" text-[26px] font-bold text-white sm:text-[32px]">
+              <Breadcrumbs items={breadcrumbItems} className="mb-1 text-white/80" />
+              <h1 className="text-2xl font-extrabold text-white sm:text-3xl capitalize">
                 {categoryTitle}
               </h1>
+              {pageInfo.total > 0 && (
+                <p className="mt-1 text-sm text-white/70">{pageInfo.total.toLocaleString()} products</p>
+              )}
             </div>
           </div>
         </div>
       ) : (
-        <div className="mt-6 rounded-[var(--customer-radius-lg)] border border-border bg-cream px-4 py-6 sm:px-6">
-          <div className="w-container">
-            <Breadcrumbs items={breadcrumbItems} className="mb-2 text-gray" />
-            <h1 className=" text-[26px] font-bold text-gray sm:text-[32px]">
-              {categoryTitle}
-            </h1>
-            {categoryDesc && (
-              <p className="mt-1 max-w-2xl  text-sm text-muted">{categoryDesc}</p>
-            )}
-          </div>
+        <div className="mt-4 rounded-[var(--customer-radius-lg)] border border-[var(--customer-border)] bg-[var(--customer-cream)] px-5 py-5">
+          <Breadcrumbs items={breadcrumbItems} className="mb-2 text-[var(--customer-muted)]" />
+          <h1 className="text-2xl font-extrabold text-[var(--customer-ink)] capitalize sm:text-3xl">
+            {categoryTitle}
+          </h1>
+          {pageInfo.total > 0 && (
+            <p className="mt-1 text-sm text-[var(--customer-muted)]">{pageInfo.total.toLocaleString()} products</p>
+          )}
+          {categoryDesc && <p className="mt-1 max-w-2xl text-sm text-[var(--customer-muted)]">{categoryDesc}</p>}
         </div>
       )}
 
-      <div className="w-container py-6 sm:py-8">
+      {/* ── Subcategory showcase strip ───────────────────────────────────── */}
+      {subCategories.length > 0 && (
+        <div className="mt-4 rounded-[var(--customer-radius)] border border-[var(--customer-border)] bg-white p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-bold text-[var(--customer-ink)]">
+              <Grid2X2 size={14} className="mr-1.5 inline text-[var(--customer-gold)]" />
+              Shop by Sub-Category
+            </h2>
+            <Link
+              to={`/categories/${categoryKey}`}
+              className="text-xs text-[var(--customer-gold)] hover:underline"
+            >
+              View All
+            </Link>
+          </div>
+
+          {/* Horizontal scroll strip of sub-category cards */}
+          <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-1">
+            {subCategories.map((sub) => {
+              const k = sub?.categoryKey || sub?.key || "";
+              return (
+                <SubCategoryCard
+                  key={k}
+                  sub={sub}
+                  isActive={activeSubKey === k}
+                  onClick={() => {}}
+                />
+              );
+            })}
+          </div>
+
+          {/* If active sub has children, show child chips */}
+          {activeSubChildren.length > 0 && (
+            <div className="mt-3 border-t border-[var(--customer-border)] pt-3">
+              <p className="mb-2 text-xs font-semibold text-[var(--customer-muted)] uppercase tracking-wide">
+                {activeSubData?.title || "Sub-types"}
+              </p>
+              <ChildChips
+                children={activeSubChildren}
+                selectedKey=""
+                onSelect={() => {}}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Product listing with sidebar filters ────────────────────────── */}
+      <div className="py-5 sm:py-7">
         <CollectionToolbar
           countText={`${(pageInfo.total || meta?.total || products.length).toLocaleString()} products`}
           sortValue={searchParams.get("sort") || ""}
@@ -470,10 +552,7 @@ export default function CategoryPage() {
           onClearFilters={() => setSearchParams(new URLSearchParams())}
           sidebarOpen={sidebarOpen}
           onCloseSidebar={() => setSidebarOpen(false)}
-          loading={
-            (productState.loading && !products.length) ||
-            (!firstLoadDone && !products.length)
-          }
+          loading={(productState.loading && !products.length) || (!firstLoadDone && !products.length)}
           error={productState.error}
           empty={!products.length && !productState.loading && firstLoadDone}
           emptyTitle="No products found"
