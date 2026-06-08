@@ -1,3 +1,5 @@
+
+
 import {
   Fragment,
   useCallback,
@@ -260,45 +262,45 @@ export const TopHeader = () => {
       },
       ...(currentUser
         ? [
-            {
-              type: "menu",
-              label: currentUser.profile?.firstName
-                ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
-                : currentUser.firstName ||
-                  currentUser.email?.split("@")[0] ||
-                  "My Sam",
-              path: "/account/profile",
-              icon: <User size={16} className="text-[#CE9F2D] shrink-0" />,
-              title: "My Account",
-              items: withIcons([
-                ...baseAccountMenuItems,
-                ...(isAdminRole(currentRole)
-                  ? [
-                      {
-                        label: "Admin Products",
-                        path: "/admin/products",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin Catalog",
-                        path: "/admin/catalog",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin Brands",
-                        path: "/admin/brands",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin RBAC",
-                        path: "/admin/rbac",
-                        icon: "settings",
-                      },
-                    ]
-                  : []),
-              ]),
-            },
-          ]
+          {
+            type: "menu",
+            label: currentUser.profile?.firstName
+              ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
+              : currentUser.firstName ||
+              currentUser.email?.split("@")[0] ||
+              "My Sam",
+            path: "/account/profile",
+            icon: <User size={16} className="text-[#CE9F2D] shrink-0" />,
+            title: "My Account",
+            items: withIcons([
+              ...baseAccountMenuItems,
+              ...(isAdminRole(currentRole)
+                ? [
+                  {
+                    label: "Admin Products",
+                    path: "/admin/products",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin Catalog",
+                    path: "/admin/catalog",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin Brands",
+                    path: "/admin/brands",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin RBAC",
+                    path: "/admin/rbac",
+                    icon: "settings",
+                  },
+                ]
+                : []),
+            ]),
+          },
+        ]
         : []),
     ],
     [
@@ -337,8 +339,8 @@ export const TopHeader = () => {
             filteredTopLinks.length
               ? filteredTopLinks
               : DEFAULT_TOP_NAV_LINKS.filter(
-                  (l) => l.name !== "Help & Contact",
-                ),
+                (l) => l.name !== "Help & Contact",
+              ),
           ).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
@@ -450,7 +452,7 @@ export const Navbar = ({ icons: propIcons }) => {
               className="h-[50px] w-[50px] object-contain sm:w-[92px] lg:h-[58px] lg:w-[140px]"
             />
           </Link>
-          {/* <div className="hidden h-10 w-px bg-[var(--customer-border)] lg:block" />
+          <div className="hidden h-10 w-px bg-[var(--customer-border)] lg:block" />
           <HeaderIconButton
             className="hidden lg:flex h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent p-0"
             aria-label="Menu"
@@ -463,7 +465,7 @@ export const Navbar = ({ icons: propIcons }) => {
             <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
               Menu
             </span>
-          </HeaderIconButton> */}
+          </HeaderIconButton>
         </div>
         <SearchBar
           value={searchQuery}
@@ -489,11 +491,10 @@ export const Navbar = ({ icons: propIcons }) => {
                   <img
                     src={item?.img}
                     alt={getNavbarIconLabel(item)}
-                    className={`object-contain ${
-                      item?.name === "IN"
+                    className={`object-contain ${item?.name === "IN"
                         ? "h-[22px] w-[24px]"
                         : "h-[17px] w-[17px]"
-                    }`}
+                      }`}
                   />
                   <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
                     {getNavbarIconLabel(item)}
@@ -708,8 +709,8 @@ export const CategoryBar = ({ headerData }) => {
               <div
                 key={keyOr(item?.name, `category-${index}`)}
                 className="relative"
-                onMouseEnter={() => handleCategoryMouseEnter(item)}
-                onMouseLeave={handleCategoryMouseLeave}
+              // onMouseEnter={() => handleCategoryMouseEnter(item)}
+              // onMouseLeave={handleCategoryMouseLeave}
               >
                 <Link
                   to={categoryHref}
@@ -717,7 +718,7 @@ export const CategoryBar = ({ headerData }) => {
                   aria-controls="category-mega-menu"
                   className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
-                  <div className="mx-auto  flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5">
+                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-all duration-300 ease-in-out">
                     {item?.img ? (
                       <ImageSkeleton
                         src={item?.img}

@@ -8,7 +8,7 @@ export default function ShippingAddressForm({
   checkoutDialCodes,
   countries,
   selectedCountry,
-  filteredStates,
+  states,
   selectedState,
   cities,
   selectedCity,
@@ -73,7 +73,7 @@ export default function ShippingAddressForm({
             id="state"
             label="State"
             placeholder="Select State"
-            options={filteredStates}
+            options={states}
             value={selectedState}
             registration={register("state", {
               onChange: () => {

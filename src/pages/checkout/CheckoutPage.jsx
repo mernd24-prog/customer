@@ -335,12 +335,21 @@ export default function CheckoutPage() {
         setCountries(list);
       })
       .catch((err) => console.error("Error fetching countries:", err));
-    fetchFullList(dispatch, fetchStates)
-      .then((list) => {
-        setStates(list);
-      })
-      .catch((err) => console.error("Error fetching states:", err));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (country) {
+      const countryObj = countries.find((c) => (c.name || c) === country);
+      const countryId = countryObj?._id || countryObj?.id;
+      if (countryId) {
+        fetchFullList(dispatch, fetchStates, { countryId })
+          .then((list) => setStates(list))
+          .catch(() => setStates([]));
+      }
+    } else {
+      setStates([]);
+    }
+  }, [country, countries, dispatch]);
 
   useEffect(() => {
     dispatch(
@@ -404,24 +413,10 @@ export default function CheckoutPage() {
         new Set(countries.map((c) => c.dialCode).filter(Boolean)),
       ).sort((a, b) => Number(a) - Number(b));
 
-  const filteredStates = selectedCountry
-    ? states.filter((s) => {
-        const stateCountryId =
-          typeof s.countryId === "object"
-            ? s.countryId?._id || s.countryId?.id
-            : s.countryId;
-        const stateCountryName = s.countryId?.name || "";
-        return (
-          (countryId && stateCountryId === countryId) ||
-          stateCountryName.toLowerCase() === selectedCountry.toLowerCase()
-        );
-      })
-    : [];
-
   // Clear state and city if they don't match the selected country
   useEffect(() => {
     if (selectedCountry && selectedState) {
-      const isValid = filteredStates.some(
+      const isValid = states.some(
         (s) => (s.name || s) === selectedState,
       );
       if (!isValid) {
@@ -429,7 +424,7 @@ export default function CheckoutPage() {
         setValue("city", "");
       }
     }
-  }, [selectedCountry, filteredStates, selectedState, setValue]);
+  }, [selectedCountry, states, selectedState, setValue]);
 
   useEffect(() => {
     if (selectedCountry && countryObj?.dialCode) {
@@ -818,7 +813,7 @@ export default function CheckoutPage() {
                     checkoutDialCodes={checkoutDialCodes}
                     countries={countries}
                     selectedCountry={selectedCountry}
-                    filteredStates={filteredStates}
+                    states={states}
                     selectedState={selectedState}
                     cities={cities}
                     selectedCity={selectedCity}

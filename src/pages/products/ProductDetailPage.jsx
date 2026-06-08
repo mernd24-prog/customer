@@ -36,6 +36,7 @@ import "swiper/css/free-mode";
 import "swiper/css/zoom";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
+import NotFoundPage from "../NotFoundPage";
 import { ProductCard } from "../../components/ecommerce";
 import { fetchProductById } from "../../features/product/productSlice";
 import { fetchProductWarranty } from "../../features/warranty/warrantySlice";
@@ -61,6 +62,7 @@ import {
   firstMoneyValue,
   buildCartItem,
 } from "../../utils/ecommerce";
+import { isNotFoundApiError } from "../../utils/apiErrors";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
@@ -600,6 +602,10 @@ export default function ProductDetailPage() {
     Category: categoryLabel,
     ...attributes,
   }).filter(([, value]) => value != null && value !== "");
+
+  if (!productState.loading && isNotFoundApiError(productState.error)) {
+    return <NotFoundPage />;
+  }
 
   return (
     <>

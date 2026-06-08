@@ -25,7 +25,6 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High to Low" },
   { value: "rating", label: "Top Rated" },
 ];
-const PAGE_SIZES = [12, 24, 48];
 
 export default function ProductsPage() {
   const dispatch = useDispatch();
@@ -43,7 +42,6 @@ export default function ProductsPage() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
-  const searchState = useSelector((s) => s.search);
 
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
@@ -213,15 +211,6 @@ export default function ProductsPage() {
     });
   };
 
-  const setPage = (p) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.set("page", p);
-      return next;
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   const activeFilters = [
     searchParams.get("category") && {
       key: "category",
@@ -353,9 +342,6 @@ export default function ProductsPage() {
             sortValue={searchParams.get("sort") || ""}
             sortOptions={SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
-            pageSizeValue={searchParams.get("limit") || "12"}
-            pageSizes={PAGE_SIZES}
-            onPageSizeChange={(value) => updateParam("limit", value)}
             onOpenFilters={() => setSidebarOpen(true)}
             viewControls={
               <div className="hidden items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
@@ -405,7 +391,7 @@ export default function ProductsPage() {
           isWishlisted={isWishlisted}
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setPage}
+          showPagination={false}
           loadingMore={isLoadingMore}
           sentinelRef={sentinelRef}
         />

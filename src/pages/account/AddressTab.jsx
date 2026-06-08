@@ -78,13 +78,35 @@ export default function AddressTab({ user }) {
         setCountries(list);
       })
       .catch((err) => console.error("Error fetching countries:", err));
-    fetchFullList(dispatch, fetchStates)
-      .then((list) => {
-        setAddStates(list);
-        setEditStates(list);
-      })
-      .catch((err) => console.error("Error fetching states:", err));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (addCountry) {
+      const countryObj = countries.find((c) => (c.name || c) === addCountry);
+      const countryId = countryObj?._id || countryObj?.id;
+      if (countryId) {
+        fetchFullList(dispatch, fetchStates, { countryId })
+          .then((list) => setAddStates(list))
+          .catch(() => setAddStates([]));
+      }
+    } else {
+      setAddStates([]);
+    }
+  }, [addCountry, countries, dispatch]);
+
+  useEffect(() => {
+    if (editCountry) {
+      const countryObj = countries.find((c) => (c.name || c) === editCountry);
+      const countryId = countryObj?._id || countryObj?.id;
+      if (countryId) {
+        fetchFullList(dispatch, fetchStates, { countryId })
+          .then((list) => setEditStates(list))
+          .catch(() => setEditStates([]));
+      }
+    } else {
+      setEditStates([]);
+    }
+  }, [editCountry, countries, dispatch]);
 
   // Watchers for Add Form
   const addCountry = addForm.watch("country");
@@ -100,30 +122,16 @@ export default function AddressTab({ user }) {
         new Set(countries.map((c) => c.dialCode).filter(Boolean)),
       ).sort((a, b) => Number(a) - Number(b));
 
-  const filteredAddStates = addCountry
-    ? addStates.filter((s) => {
-        const stateCountryId =
-          typeof s.countryId === "object"
-            ? s.countryId?._id || s.countryId?.id
-            : s.countryId;
-        const stateCountryName = s.countryId?.name || "";
-        return (
-          (addCountryId && stateCountryId === addCountryId) ||
-          stateCountryName.toLowerCase() === addCountry.toLowerCase()
-        );
-      })
-    : [];
-
   // Clear state and city if they don't match the selected country for Add Form
   useEffect(() => {
     if (addCountry && addState) {
-      const isValid = filteredAddStates.some((s) => (s.name || s) === addState);
+      const isValid = addStates.some((s) => (s.name || s) === addState);
       if (!isValid) {
         addForm.setValue("state", "");
         addForm.setValue("city", "");
       }
     }
-  }, [addCountry, filteredAddStates, addState, addForm]);
+  }, [addCountry, addStates, addState, addForm]);
 
   useEffect(() => {
     if (addState) {
@@ -207,24 +215,10 @@ export default function AddressTab({ user }) {
         new Set(countries.map((c) => c.dialCode).filter(Boolean)),
       ).sort((a, b) => Number(a) - Number(b));
 
-  const filteredEditStates = editCountry
-    ? editStates.filter((s) => {
-        const stateCountryId =
-          typeof s.countryId === "object"
-            ? s.countryId?._id || s.countryId?.id
-            : s.countryId;
-        const stateCountryName = s.countryId?.name || "";
-        return (
-          (editCountryId && stateCountryId === editCountryId) ||
-          stateCountryName.toLowerCase() === editCountry.toLowerCase()
-        );
-      })
-    : [];
-
   // Clear state and city if they don't match the selected country for Edit Form
   useEffect(() => {
     if (editCountry && editState) {
-      const isValid = filteredEditStates.some(
+      const isValid = editStates.some(
         (s) => (s.name || s) === editState,
       );
       if (!isValid) {
@@ -232,7 +226,7 @@ export default function AddressTab({ user }) {
         editForm.setValue("city", "");
       }
     }
-  }, [editCountry, filteredEditStates, editState, editForm]);
+  }, [editCountry, editStates, editState, editForm]);
 
   useEffect(() => {
     if (editState) {
@@ -452,7 +446,7 @@ export default function AddressTab({ user }) {
               id="add-state"
               label="State"
               placeholder="Select State"
-              options={filteredAddStates}
+              options={addStates}
               value={addState}
               registration={addForm.register("state", {
                 onChange: () => {
@@ -609,7 +603,7 @@ export default function AddressTab({ user }) {
                         id={`edit-state-${addrId}`}
                         label="State"
                         placeholder="Select State"
-                        options={filteredEditStates}
+                        options={editStates}
                         value={editState}
                         registration={editForm.register("state", {
                           onChange: () => {

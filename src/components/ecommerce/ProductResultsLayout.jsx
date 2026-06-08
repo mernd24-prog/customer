@@ -26,6 +26,7 @@ export default function ProductResultsLayout({
   currentPage,
   totalPages,
   onPageChange,
+  showPagination = true,
   loadingMore,
   sentinelRef,
   children,
@@ -65,11 +66,13 @@ export default function ProductResultsLayout({
                 isWishlisted={isWishlisted}
               />
 
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={onPageChange}
-              />
+              {showPagination && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={onPageChange}
+                />
+              )}
 
               {loadingMore && (
                 <div className="mt-6 text-center  text-sm text-muted">
