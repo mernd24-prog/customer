@@ -9,7 +9,11 @@ import {
   Flame,
   ShoppingBag,
 } from "lucide-react";
-import { applyImageFallback } from "../../utils/ecommerce";
+import {
+  applyImageFallback,
+  getImageFallbackSrc,
+  getImageUrlFromValue,
+} from "../../utils/ecommerce";
 
 const slugifyKey = (value = "") =>
   String(value).trim().toLowerCase().replace(/\s+/g, "-");
@@ -37,6 +41,14 @@ const isActiveHref = (pathname, href) =>
   href && href !== "#" && pathname === href;
 
 const mergeLabels = (labels) => ({ ...DEFAULT_LABELS, ...labels });
+const getCategoryImage = (item = {}) =>
+  getImageUrlFromValue([
+    item?.img,
+    item?.imageUrl,
+    item?.image,
+    item?.iconUrl,
+    item?.thumbnail,
+  ]);
 
 function getChildren(item = {}) {
   if (Array.isArray(item?.children)) return item.children;
@@ -61,7 +73,7 @@ function toNode(item = {}, parentKey = "") {
     parentKey: item?.parentKey ?? parentKey,
     title,
     name: item?.name || title,
-    image: item?.img || item?.imageUrl || item?.image || item?.iconUrl || "",
+    image: getCategoryImage(item),
     children: getChildren(item)
       .map((child) => toNode(child, categoryKey))
       .sort(sortByOrder),
@@ -86,7 +98,7 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
 }) {
   const location = useLocation();
   return (
-    <div className="flex flex-col h-full  bg-cream/40 border-r border-border p-5">
+    <div className="flex h-full min-h-0 flex-col border-r border-border bg-cream/40 p-5">
       <div className="mb-4 flex items-center gap-2 border-b border-border pb-3">
         <Sparkles size={15} className="text-gold" />
         <h3 className=" text-[11px] font-black uppercase tracking-normal text-ink">
@@ -94,7 +106,7 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
         </h3>
       </div>
 
-      <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar pr-1 flex-1">
+      <div className="custom-scrollbar flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1">
         {items.map((item) => {
           const isActive = activeKey === item.categoryKey;
           const itemHref = getItemHref(item);
@@ -158,12 +170,12 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
 }) {
   const location = useLocation();
   return (
-    <div className="flex flex-col h-full bg-white border-r border-border p-5">
+    <div className="flex h-full min-h-0 flex-col border-r border-border bg-white p-5">
       <h3 className="mb-4 border-b border-border pb-3  text-[11px] font-black uppercase tracking-normal text-gray">
         {title}
       </h3>
 
-      <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar pr-1 flex-1">
+      <div className="custom-scrollbar flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1">
         {items.length > 0 ? (
           items.map((item) => {
             const isActive = activeKey === item.categoryKey;
@@ -227,12 +239,12 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
 }) {
   const location = useLocation();
   return (
-    <div className="flex flex-col h-full bg-white p-5">
+    <div className="flex h-full min-h-0 flex-col bg-white p-5">
       <h3 className="mb-4 border-b border-border pb-3  text-[11px] font-black uppercase tracking-normal text-gray">
         {title}
       </h3>
 
-      <div className="flex flex-col gap-1 overflow-y-auto custom-scrollbar pr-1 flex-1">
+      <div className="custom-scrollbar flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1">
         {items.length > 0 ? (
           items.map((item) => {
             const itemHref = getItemHref(item);
@@ -293,13 +305,16 @@ const PromotionBanner = memo(function PromotionBanner({
   onImageError,
 }) {
   const title = rootData.title || promoData?.title || labels.promoTitle;
-  const image = promoData?.image || rootData.image || "";
+  const image =
+    getImageUrlFromValue(promoData?.image) ||
+    getImageUrlFromValue(rootData?.image) ||
+    getImageFallbackSrc(title, imageFallbackType);
   const highlight = promoData?.highlight || "";
   const link = promoData?.link || getItemHref(rootData);
   const buttonText = promoData?.buttonText || labels.promoButton;
 
   return (
-    <div className="h-full bg-gradient-to-br from-cream/60 to-white p-5 flex flex-col justify-between border-l border-border">
+    <div className="flex h-full flex-col justify-between border-l border-border bg-gradient-to-br from-cream/60 to-white p-4 xl:p-5">
       <div className="group relative h-full min-h-[220px] w-full overflow-hidden rounded-[var(--customer-radius)] shadow-md transition-all duration-300 ease-in-out hover:shadow-xl">
         <div className="absolute inset-0">
           <img
@@ -359,7 +374,7 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({
   }, []);
 
   return (
-    <div className="w-full bg-white border-t border-border p-4 flex flex-col gap-3 max-h-[75vh] overflow-y-auto">
+    <div className="custom-scrollbar flex max-h-[75vh] w-full flex-col gap-3 overflow-y-auto border-t border-border bg-white p-4">
       <div className="flex items-center gap-2 border-b border-border pb-2">
         <Sparkles size={14} className="text-gold" />
         <span className=" text-[10px] font-black uppercase tracking-normal text-gold">
@@ -572,7 +587,7 @@ export default function CategoryMegaMenu({
 
   return (
     <div
-      className={`w-full bg-white/95 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-slide-fade-in border-b border-border ${className}`}
+      className={`w-full border-b border-border bg-white/95 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-slide-fade-in ${className}`}
     >
       {/* Mobile view (< 1024px) */}
       <div className="block lg:hidden">
@@ -586,9 +601,9 @@ export default function CategoryMegaMenu({
 
       {/* Desktop view (>= 1024px) */}
       <div
-        className={`hidden lg:block w-container mx-auto ${desktopContainerClassName}`}
+        className={`customer-container hidden lg:block ${desktopContainerClassName}`}
       >
-        <div className="grid grid-cols-12 min-h-[380px] max-h-[500px]">
+        <div className="grid max-h-[70vh] min-h-[380px] grid-cols-12 overflow-hidden rounded-b-2xl border-x border-border/70 bg-white">
           {/* Column 1: Subcategories */}
           <div className="col-span-3">
             <SubCategoryColumn

@@ -185,6 +185,14 @@ function ProductGallery({
               >
                 <button
                   type="button"
+                  onClick={() => {
+                    setActiveIndex(i);
+                    mainSwiper?.slideTo(i);
+                  }}
+                  onMouseEnter={() => {
+                    setActiveIndex(i);
+                    mainSwiper?.slideTo(i);
+                  }}
                   className={`w-full h-full overflow-hidden rounded-xl border-2 bg-white transition-all duration-300 ease-in-out ${
                     activeIndex === i
                       ? "border-gold shadow-md"
@@ -194,7 +202,7 @@ function ProductGallery({
                   <img
                     src={img}
                     alt=""
-                    className="w-full h-full object-contain p-1"
+                    className="w-full h-full object-cover"
                     onError={(event) =>
                       applyImageFallback(event, fallbackLabel, "product")
                     }
@@ -208,7 +216,7 @@ function ProductGallery({
         {/* Main Image */}
         <div
           className={`relative order-1 lg:order-2 flex-1 overflow-hidden rounded-[var(--customer-radius)] border border-border bg-surface-soft ${
-            isModal ? "h-full" : "aspect-square lg:aspect-auto"
+            isModal ? "h-full" : "aspect-square"
           }`}
         >
           <Swiper
@@ -243,12 +251,8 @@ function ProductGallery({
                     src={img}
                     alt=""
                     draggable={false}
-                    className={`h-full w-full object-contain transition-all duration-300 ease-in-out select-none ${
-                      isZoomed
-                        ? isModal
-                          ? "scale-[2]"
-                          : "scale-[2]"
-                        : "scale-100"
+                    className={`h-full w-full object-cover transition-transform duration-300 ease-out select-none ${
+                      isZoomed ? "scale-[2.2]" : "scale-100"
                     }`}
                     style={{
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
@@ -1070,7 +1074,7 @@ export default function ProductDetailPage() {
               </div>
 
               {/* ── Info tabs below ── */}
-              <div className="mt-10 grid gap-6">
+              <div className="relative z-10 mt-10 grid gap-6 bg-white">
                 {product.description && (
                   <div className="panel">
                     <h2 className="mb-3  text-[18px] font-bold text-ink">
@@ -1131,7 +1135,7 @@ export default function ProductDetailPage() {
 
               {/* ── Related products ── */}
               {relatedProducts.length > 0 && (
-                <section className="mt-12">
+                <section className="relative z-10 mt-12 bg-white">
                   <div className="section-head mb-6">
                     <h2 className=" text-[22px] font-bold text-ink">
                       You May Also Like
