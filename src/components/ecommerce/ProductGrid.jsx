@@ -18,12 +18,12 @@ export default function ProductGrid({
 
   return (
     <ResponsiveGrid variant={gridVariant} className={className}>
-      {products.map((product) =>
+      {products.map((product, index) =>
         renderProduct ? (
           renderProduct(product)
         ) : (
           <ProductCard
-            key={getKey(product)}
+            key={`${getKey(product) ?? "product"}-${index}`}
             product={product}
             variant={resolvedCardVariant}
             onAddToCart={onAddToCart}

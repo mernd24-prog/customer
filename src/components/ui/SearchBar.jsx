@@ -295,7 +295,7 @@ const SearchBar = ({
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex h-full max-w-[118px] items-center gap-1.5 rounded-l-full pl-3 pr-2 text-xs font-medium text-[var(--customer-ink)] outline-none transition-colors hover:bg-black/[0.02] sm:max-w-none sm:gap-2 sm:pl-6 sm:pr-4 sm:text-sm"
+                  className="flex h-full max-w-[118px] items-center gap-1.5 rounded-l-full pl-3 pr-2 text-xs font-medium text-[var(--customer-ink)] !outline-none focus:!outline-none focus-visible:!outline-none transition-all duration-300 ease-in-out hover:bg-black/[0.02] hover:text-[#03014D] sm:max-w-none sm:gap-2 sm:pl-6 sm:pr-4 sm:text-sm"
                 >
                   <span className="truncate">
                     {selectedCategory
@@ -308,13 +308,18 @@ const SearchBar = ({
                   />
                 </button>
 
-                {isDropdownOpen && (
-                  <div className="absolute left-0 right-0 sm:right-auto top-[calc(100%+10px)] z-50 max-h-[320px] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_18px_45px_rgba(3,1,77,0.14)] animate-in fade-in slide-in-from-top-2 duration-200 sm:left-2 sm:min-w-[260px] sm:w-auto">
+                <div
+                  className={`absolute left-0 right-0 sm:right-auto top-[calc(100%+10px)] z-50 max-h-[320px] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_18px_45px_rgba(3,1,77,0.14)] transition-all duration-300 ease-in-out sm:left-2 sm:min-w-[260px] sm:w-auto ${
+                    isDropdownOpen
+                      ? "visible translate-y-0 opacity-100"
+                      : "invisible -translate-y-2 opacity-0"
+                  }`}
+                >
                     <div className="max-h-[320px] overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
                       <button
                         type="button"
                         onClick={() => handleSelectCategory(null)}
-                        className={`w-full rounded-xl px-4 py-3 text-left text-sm transition-colors hover:bg-[#F8F3E7] focus-visible:bg-[#F8F3E7] ${
+                        className={`w-full rounded-xl px-4 py-3 text-left text-sm transition-all duration-300 ease-in-out hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7] !outline-none focus:!outline-none focus-visible:!outline-none ${
                           !selectedCategory
                             ? "font-semibold text-[#03014D]"
                             : "font-medium text-[var(--customer-ink)]"
@@ -338,11 +343,11 @@ const SearchBar = ({
                             key={key}
                             type="button"
                             onClick={() => handleSelectCategory(category)}
-                            className={`w-full rounded-xl px-4 py-3 text-left text-sm leading-snug transition-colors ${
+                            className={`w-full rounded-xl px-4 py-3 text-left text-sm leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none ${
                               isSelected
                                 ? "font-semibold text-[#03014D]"
                                 : "font-semibold text-[#03014D]"
-                            } hover:bg-[#F8F3E7] focus-visible:bg-[#F8F3E7]`}
+                            } hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7]`}
                           >
                             {label}
                           </button>
@@ -350,7 +355,6 @@ const SearchBar = ({
                       })}
                     </div>
                   </div>
-                )}
               </div>
 
               {/* Vertical Divider */}
@@ -382,7 +386,7 @@ const SearchBar = ({
           <button
             type="button"
             onClick={() => handleSearch()}
-            className="flex h-full w-[52px] shrink-0 items-center justify-center rounded-r-full bg-[#CE9F2D] text-white transition-all duration-200 hover:bg-[#CE9F2D]/95 active:scale-[0.98] sm:w-[64px]"
+            className="flex h-full w-[52px] shrink-0 items-center justify-center rounded-r-full bg-[#CE9F2D] text-white transition-all duration-200 hover:bg-[#CE9F2D]/95 active:scale-[0.98] sm:w-[64px] !outline-none focus:!outline-none focus-visible:!outline-none"
             aria-label="Search"
           >
             <Search size={20} className="text-white" />

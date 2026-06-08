@@ -105,14 +105,32 @@ const FALLBACK_PALETTES = [
 ];
 
 export function getImageFallbackSrc(label = "Sam Global", context = "") {
-  const text = String(label || context || "Sam Global").trim().slice(0, 36);
+  const text = String(label || context || "Sam Global").trim().slice(0, 50);
   const key = `${text} ${context}`;
   const paletteIndex = Array.from(key).reduce((sum, char) => sum + char.charCodeAt(0), 0) % FALLBACK_PALETTES.length;
   const [from, to] = FALLBACK_PALETTES[paletteIndex];
-  const safeText = text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+
+  // Wrap text into lines of max 15 characters to make it fit
+  const words = text.split(" ");
+  const lines = [];
+  let currentLine = "";
+  words.forEach(word => {
+    if ((currentLine + " " + word).trim().length <= 15) {
+      currentLine = (currentLine + " " + word).trim();
+    } else {
+      if (currentLine) lines.push(currentLine);
+      currentLine = word;
+    }
+  });
+  if (currentLine) lines.push(currentLine);
+
+  const displayLines = lines.slice(0, 3);
+  const tspans = displayLines.map((line, idx) => {
+    const safeLine = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const dy = idx === 0 ? `-${(displayLines.length - 1) * 0.6}em` : "1.2em";
+    return `<tspan x="50%" dy="${dy}">${safeLine}</tspan>`;
+  }).join("");
+
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
       <defs>
@@ -124,7 +142,9 @@ export function getImageFallbackSrc(label = "Sam Global", context = "") {
       <rect width="800" height="800" fill="url(#bg)"/>
       <circle cx="650" cy="140" r="150" fill="#ffffff" opacity=".16"/>
       <circle cx="100" cy="690" r="180" fill="#ffffff" opacity=".12"/>
-      <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Montserrat, Arial, sans-serif" font-size="54" font-weight="700">${safeText}</text>
+      <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-family="Montserrat, Arial, sans-serif" font-size="44" font-weight="700">
+        ${tspans}
+      </text>
     </svg>
   `;
 
