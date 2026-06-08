@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useSearchParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronRight, Grid2X2, LayoutGrid } from "lucide-react";
 import Seo from "../../components/common/Seo";
+import NotFoundPage from "../NotFoundPage";
 import {
   Breadcrumbs,
   CollectionToolbar,
@@ -19,6 +20,7 @@ import {
   fetchBrands,
 } from "../../features/catalog/catalogSlice";
 import { applyImageFallback } from "../../utils/ecommerce";
+import { isNotFoundApiError } from "../../utils/apiErrors";
 
 const SORT_OPTIONS = [
   { value: "", label: "Relevance" },
@@ -27,7 +29,6 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High to Low" },
   { value: "rating", label: "Top Rated" },
 ];
-const PAGE_SIZES = [12, 24, 48];
 
 // ── Sub-category card in top strip ──────────────────────────────────────────
 function SubCategoryCard({ sub, isActive, onClick }) {
@@ -122,7 +123,6 @@ function ChildChips({ children, selectedKey, onSelect }) {
 export default function CategoryPage() {
   const { categoryKey } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode] = useState("grid");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -133,6 +133,7 @@ export default function CategoryPage() {
   const [pageInfo, setPageInfo] = useState({ page: 1, totalPages: 1, total: 0 });
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
+  const [categoryError, setCategoryError] = useState(null);
 
   // active sub-category key for the top strip highlight
   const activeSubKey = searchParams.get("sub") || "";
@@ -207,10 +208,12 @@ export default function CategoryPage() {
     setFirstLoadDone(false);
     setCategoryData(null);
     setSubCategories([]);
+    setCategoryError(null);
 
     dispatch(fetchCategoryByKey({ categoryKey }))
-      .then((action) => {
-        const d = action?.payload?.data || action?.payload;
+      .unwrap()
+      .then((result) => {
+        const d = result?.data || result;
         if (!d) return;
         setCategoryData(d);
         // fetch direct subcategories
@@ -225,7 +228,9 @@ export default function CategoryPage() {
           })
           .catch(() => {});
       })
-      .catch(() => {});
+      .catch((error) => {
+        setCategoryError(error);
+      });
 
     dispatch(fetchBrands({ limit: 100 }))
       .then((action) => {
@@ -287,15 +292,6 @@ export default function CategoryPage() {
       next.delete("page");
       return next;
     });
-  };
-
-  const setPage = (p) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.set("page", p);
-      return next;
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // ── Derived data ─────────────────────────────────────────────────────────
@@ -444,6 +440,10 @@ export default function CategoryPage() {
     },
   ].flat().filter(Boolean);
 
+  if (isNotFoundApiError(categoryError)) {
+    return <NotFoundPage />;
+  }
+
   return (
     <>
       <Seo
@@ -522,11 +522,9 @@ export default function CategoryPage() {
               <p className="mb-2 text-xs font-semibold text-[var(--customer-muted)] uppercase tracking-wide">
                 {activeSubData?.title || "Sub-types"}
               </p>
-              <ChildChips
-                children={activeSubChildren}
-                selectedKey=""
-                onSelect={() => {}}
-              />
+              <ChildChips selectedKey="" onSelect={() => {}}>
+                {activeSubChildren}
+              </ChildChips>
             </div>
           )}
         </div>
@@ -539,9 +537,6 @@ export default function CategoryPage() {
           sortValue={searchParams.get("sort") || ""}
           sortOptions={SORT_OPTIONS}
           onSortChange={(value) => updateParam("sort", value)}
-          pageSizeValue={searchParams.get("limit") || "20"}
-          pageSizes={PAGE_SIZES}
-          onPageSizeChange={(value) => updateParam("limit", value)}
           onOpenFilters={() => setSidebarOpen(true)}
         />
 
@@ -565,7 +560,7 @@ export default function CategoryPage() {
           isWishlisted={isWishlisted}
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setPage}
+          showPagination={false}
           loadingMore={isLoadingMore}
           sentinelRef={sentinelRef}
         />

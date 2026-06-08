@@ -667,27 +667,27 @@ export const CategoryBar = ({ headerData }) => {
     };
   }, []);
 
-  const handleCategoryMouseEnter = (item) => {
-    if (window.innerWidth < 1024) return;
+  // const handleCategoryMouseEnter = (item) => {
+  //   if (window.innerWidth < 1024) return;
 
-    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+  //   if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+  //   if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
 
-    openTimeoutRef.current = setTimeout(() => {
-      setActiveMenu(item);
-    }, CATEGORY_MENU_OPEN_DELAY_MS);
-  };
+  //   openTimeoutRef.current = setTimeout(() => {
+  //     setActiveMenu(item);
+  //   }, CATEGORY_MENU_OPEN_DELAY_MS);
+  // };
 
-  const handleCategoryMouseLeave = () => {
-    if (window.innerWidth < 1024) return;
+  // const handleCategoryMouseLeave = () => {
+  //   if (window.innerWidth < 1024) return;
 
-    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+  //   if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+  //   if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
 
-    closeTimeoutRef.current = setTimeout(() => {
-      setActiveMenu(null);
-    }, CATEGORY_MENU_CLOSE_DELAY_MS);
-  };
+  //   closeTimeoutRef.current = setTimeout(() => {
+  //     setActiveMenu(null);
+  //   }, CATEGORY_MENU_CLOSE_DELAY_MS);
+  // };
 
   const keepCategoryMenuOpen = () => {
     if (window.innerWidth < 1024) return;
@@ -753,8 +753,8 @@ export const CategoryBar = ({ headerData }) => {
               <div
                 key={keyOr(item?.name, `category-${index}`)}
                 className="relative"
-                onMouseEnter={() => handleCategoryMouseEnter(item)}
-                onMouseLeave={handleCategoryMouseLeave}
+                // onMouseEnter={() => handleCategoryMouseEnter(item)}
+                // onMouseLeave={handleCategoryMouseLeave}
               >
                 <Link
                   to={categoryHref}
@@ -762,7 +762,7 @@ export const CategoryBar = ({ headerData }) => {
                   aria-controls="category-mega-menu"
                   className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
-                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5">
+                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-all duration-300 ease-in-out">
                     {item?.img ? (
                       <ImageSkeleton
                         src={item?.img}

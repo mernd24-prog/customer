@@ -65,7 +65,7 @@ export function HomePage() {
         ctaLabel="Shop Now"
       />
 
-       <FeaturedProductsSection />
+       {/* <FeaturedProductsSection /> */}
 
       <section className=" my-10">
         

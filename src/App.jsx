@@ -151,7 +151,7 @@ const AdminRbacManagementPage = lazy(
 
 function RouteFallback() {
   return (
-    <main className="flex min-h-[60vh] items-center justify-center bg-[var(--customer-cream)]">
+    <main className="flex min-h-[100vh] items-center justify-center bg-[var(--customer-cream)]">
       <div className="text-center">
         <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-[var(--customer-border)] border-t-[var(--customer-gold)]" />
         <p className="text-sm text-[var(--customer-muted)]">Loading page…</p>

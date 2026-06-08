@@ -10,30 +10,30 @@ import {
 } from "../../features/search/searchSlice";
 import useDebouncedValue from "../../hooks/useDebouncedValue";
 
-function getCategoryListFromResponse(data) {
-  if (Array.isArray(data)) {
-    return data.flatMap((category) => [
-      category,
-      ...getCategoryListFromResponse(
-        category?.children || category?.subCategories || [],
-      ),
-    ]);
-  }
-  if (!data || typeof data !== "object") return [];
-  if (Array.isArray(data?.items))
-    return getCategoryListFromResponse(data.items);
-  if (Array.isArray(data?.list)) return getCategoryListFromResponse(data.list);
-  if (Array.isArray(data?.categories))
-    return getCategoryListFromResponse(data.categories);
-  if (data?.category && typeof data.category === "object") {
-    return getCategoryListFromResponse([data.category]);
-  }
-  if (data?.data) return getCategoryListFromResponse(data.data);
-  return [
-    data,
-    ...getCategoryListFromResponse(data?.children || data?.subCategories || []),
-  ];
-}
+// function getCategoryListFromResponse(data) {
+//   if (Array.isArray(data)) {
+//     return data.flatMap((category) => [
+//       category,
+//       ...getCategoryListFromResponse(
+//         category?.children || category?.subCategories || [],
+//       ),
+//     ]);
+//   }
+//   if (!data || typeof data !== "object") return [];
+//   if (Array.isArray(data?.items))
+//     return getCategoryListFromResponse(data.items);
+//   if (Array.isArray(data?.list)) return getCategoryListFromResponse(data.list);
+//   if (Array.isArray(data?.categories))
+//     return getCategoryListFromResponse(data.categories);
+//   if (data?.category && typeof data.category === "object") {
+//     return getCategoryListFromResponse([data.category]);
+//   }
+//   if (data?.data) return getCategoryListFromResponse(data.data);
+//   return [
+//     data,
+//     ...getCategoryListFromResponse(data?.children || data?.subCategories || []),
+//   ];
+// }
 
 const getCategoryId = (category) =>
   category?.id ||
@@ -70,10 +70,11 @@ const SearchBar = ({
   const categoriesRaw = useSelector((state) => state.catalog.list || []);
   const categoriesLoading = useSelector((state) => state.catalog.loading);
   const suggestionsRaw = useSelector((state) => state.search.suggestions || []);
-  const categories = useMemo(
-    () => getCategoryListFromResponse(categoriesRaw),
-    [categoriesRaw],
-  );
+  // const categories = useMemo(
+  //   () => getCategoryListFromResponse(categoriesRaw),
+  //   [categoriesRaw],
+  // );
+  const categories = categoriesRaw
   const suggestions = Array.isArray(suggestionsRaw)
     ? Array.from(
         new Set(
@@ -184,9 +185,12 @@ const SearchBar = ({
   }, []);
 
   const handleChange = (event) => {
-    const nextValue = sanitizeSearchQuery(event.target.value);
+    const nextValue = event.target.value;
+    const sanitizedValue = sanitizeSearchQuery(nextValue);
     setIsSuggestionOpen(
-      Boolean(enableAutocomplete && nextValue.length >= autocompleteMinLength),
+      Boolean(
+        enableAutocomplete && sanitizedValue.length >= autocompleteMinLength,
+      ),
     );
 
     if (onChange) {
