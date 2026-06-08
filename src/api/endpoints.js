@@ -2,8 +2,15 @@ export const API_PREFIX = "/api/v1";
 
 export const SEARCH_PREFIX = `${API_PREFIX}/search`;
 
+export const FILE_UPLOAD_MODULES = {
+  profiles: "PROFILES",
+};
+
 export const endpoints = {
   health: "/health",
+  fileUploader: {
+    upload: `${API_PREFIX}/file-uploader/upload`
+  },
   meta: {
     routes: `${API_PREFIX}/meta/routes`
   },

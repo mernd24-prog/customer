@@ -39,7 +39,7 @@ export default function CategoryCard({
           <img
             src={image}
             alt={title}
-            className="aspect-[284/170] w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-[1.03]"
+            className="aspect-[284/160] w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-100"
             loading="lazy"
             decoding="async"
             onError={(event) => applyImageFallback(event, title, "category")}
@@ -87,7 +87,11 @@ export default function CategoryCard({
   }
 
   return (
-    <button type="button" onClick={onClick} className="block h-full w-full text-left">
+    <button
+      type="button"
+      onClick={onClick}
+      className="block h-full w-full text-left"
+    >
       {content}
     </button>
   );

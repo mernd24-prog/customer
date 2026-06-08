@@ -1,23 +1,64 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "lucide-react";
+import { Pencil, X } from "lucide-react";
 import FormField from "../../components/ui/FormField";
 import Button from "../../components/ui/Button";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { updateMe } from "../../features/user/userSlice";
+import { updateMe, uploadProfileImage } from "../../features/user/userSlice";
 import { profileSchema } from "../../validations/validationSchemas";
+
+const fallbackAvatar = "/image/png/person.png";
+const isBase64Avatar = (avatarUrl) =>
+  typeof avatarUrl === "string" && avatarUrl.startsWith("data:image/");
+const normalizeAvatarPreview = (avatarUrl) =>
+  typeof avatarUrl === "string" && avatarUrl && !isBase64Avatar(avatarUrl)
+    ? avatarUrl
+    : fallbackAvatar;
+const getUploadedFileUrl = (uploadResult) => {
+  const data = uploadResult?.data || uploadResult;
+  const file =
+    data?.file ||
+    data?.uploadedFile ||
+    data?.attachment ||
+    data?.files?.[0] ||
+    data?.items?.[0] ||
+    data?.[0];
+
+  return (
+    data?.url ||
+    data?.imageURL ||
+    data?.fileUrl ||
+    data?.fileURL ||
+    data?.path ||
+    data?.location ||
+    data?.secureUrl ||
+    file?.url ||
+    file?.imageURL ||
+    file?.fileUrl ||
+    file?.fileURL ||
+    file?.path ||
+    file?.location ||
+    file?.secureUrl ||
+    ""
+  );
+};
 
 export default function ProfileTab({ user }) {
   const dispatch = useDispatch();
   const run = useToastThunk();
   const { loading } = useSelector((s) => s.user);
+  const fileInputRef = useRef(null);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(fallbackAvatar);
+  const [avatarError, setAvatarError] = useState("");
 
   const {
     register,
     handleSubmit,
     watch,
+    getValues,
     reset,
     formState: { errors },
   } = useForm({
@@ -32,39 +73,154 @@ export default function ProfileTab({ user }) {
 
   useEffect(() => {
     if (user) {
+      setAvatarPreview(
+        normalizeAvatarPreview(
+          user?.profile?.avatarUrl || user?.profile?.avatar,
+        ),
+      );
       reset({
         firstName: user.profile?.firstName || "",
         lastName: user.profile?.lastName || "",
         email: user.email || "",
         phone: user.phone || "",
       });
+      setAvatarFile(null);
+      setAvatarError("");
     }
   }, [user, reset]);
 
-  const submit = (values) =>
-    run(
+  useEffect(() => {
+    return () => {
+      if (avatarPreview.startsWith("blob:")) {
+        globalThis.URL.revokeObjectURL(avatarPreview);
+      }
+    };
+  }, [avatarPreview]);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setAvatarError("Please select a valid image file.");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setAvatarError("Profile image must be 2 MB or smaller.");
+      return;
+    }
+
+    setAvatarError("");
+    setAvatarFile(file);
+    setAvatarPreview(globalThis.URL.createObjectURL(file));
+  };
+
+  const handleRemoveAvatar = async () => {
+    const values = getValues();
+
+    await run(
       dispatch,
       updateMe({
         email: values.email,
         phone: values.phone,
+        avatarUrl: null,
+        user_image: null,
         profile: {
           firstName: values.firstName,
           lastName: values.lastName,
+          avatar: "",
+          avatarUrl: null,
         },
       }),
-      "Profile updated",
+      "Profile image removed",
     );
+
+    if (avatarPreview.startsWith("blob:")) {
+      globalThis.URL.revokeObjectURL(avatarPreview);
+    }
+
+    setAvatarFile(null);
+    setAvatarError("");
+    setAvatarPreview(fallbackAvatar);
+  };
+
+  const submit = async (values) => {
+    const profile = {
+      firstName: values.firstName,
+      lastName: values.lastName,
+    };
+    const payload = {
+      email: values.email,
+      phone: values.phone,
+      profile,
+    };
+
+    if (avatarFile) {
+      const uploadResult = await run(
+        dispatch,
+        uploadProfileImage({ file: avatarFile }),
+      );
+      const avatarUrl = getUploadedFileUrl(uploadResult);
+
+      if (!avatarUrl) {
+        throw new Error("Profile image upload did not return a file URL.");
+      }
+
+      profile.avatarUrl = avatarUrl;
+    }
+
+    return run(dispatch, updateMe(payload), "Profile updated");
+  };
 
   return (
     <form className="grid gap-3 " onSubmit={handleSubmit(submit)} noValidate>
       {/* Profile Header */}
       <div className="flex gap-3 items-center lg:items-start flex-row lg:flex-col ">
-        <div className="w-16 h-16 ">
-          <img
-            src="/image/png/person.png"
-            alt="Icon"
-            className="h-full w-full object-cover"
-          />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+
+        <div className="group relative h-16 w-16">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="relative h-full w-full cursor-pointer overflow-hidden rounded-full border border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1B1D60]/40"
+            aria-label="Edit profile image"
+          >
+            <img
+              src={avatarPreview}
+              alt="Profile avatar"
+              className="h-full w-full object-cover"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = fallbackAvatar;
+              }}
+            />
+
+            {!avatarFile && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <Pencil size={16} className="text-white" />
+              </div>
+            )}
+          </button>
+
+          {avatarPreview !== fallbackAvatar && (
+            <button
+              type="button"
+              onClick={handleRemoveAvatar}
+              className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white opacity-0 shadow transition-opacity duration-300 hover:bg-red-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 group-hover:opacity-100"
+              aria-label="Remove profile image"
+            >
+              <X size={12} />
+            </button>
+          )}
         </div>
 
         <div className=" my-4">
@@ -77,6 +233,10 @@ export default function ProfileTab({ user }) {
           </p>
         </div>
       </div>
+
+      {avatarError && (
+        <p className="text-xs font-medium text-red-500">{avatarError}</p>
+      )}
 
       {/* Name Fields */}
       <div className="grid gap-4 sm:grid-cols-2">

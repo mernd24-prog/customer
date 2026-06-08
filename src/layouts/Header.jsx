@@ -20,7 +20,7 @@ import {
   User,
   LifeBuoy,
 } from "lucide-react";
-import moreImage from "/image/png/MoreImage.png"
+import moreImage from "/image/png/MoreImage.png";
 
 import ImageSkeleton from "../components/ui/Image";
 import SearchBar from "../components/ui/SearchBar";
@@ -301,7 +301,13 @@ export const TopHeader = () => {
           ]
         : []),
     ],
-    [currentRole, currentUser, sellDropdownCms, wishlistedProducts, handleRemoveWatchlist],
+    [
+      currentRole,
+      currentUser,
+      sellDropdownCms,
+      wishlistedProducts,
+      handleRemoveWatchlist,
+    ],
   );
 
   const renderDropdown = (dropdown) => {
@@ -331,8 +337,8 @@ export const TopHeader = () => {
             filteredTopLinks.length
               ? filteredTopLinks
               : DEFAULT_TOP_NAV_LINKS.filter(
-                (l) => l.name !== "Help & Contact",
-              ),
+                  (l) => l.name !== "Help & Contact",
+                ),
           ).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
@@ -364,21 +370,6 @@ export const TopHeader = () => {
             <LifeBuoy size={16} className="text-[#CE9F2D] shrink-0" />
             <span>Help & Contact</span>
           </Link>
-
-          {!currentUser && (
-            <Link
-              to="/seller/status"
-              className="flex items-center gap-2 text-white/85 transition-all duration-300 ease-in-out hover:text-white"
-            >
-              <img
-                src="/image/png/Vector%20(1).png"
-                alt=""
-                className="h-[14px] w-[11px] shrink-0 object-contain"
-                aria-hidden="true"
-              />
-              <span>Vendor Login</span>
-            </Link>
-          )}
 
           {currentUser ? (
             <HeaderGoldButton
@@ -464,11 +455,11 @@ export const Navbar = ({ icons: propIcons }) => {
             className="hidden lg:flex h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent p-0"
             aria-label="Menu"
           >
-            <img
+            {/* <img
               src="/image/png/list.png"
               alt="Menu"
               className="h-[40px] w-[40px] object-contain"
-            />
+            /> */}
             <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
               Menu
             </span>
@@ -498,10 +489,11 @@ export const Navbar = ({ icons: propIcons }) => {
                   <img
                     src={item?.img}
                     alt={getNavbarIconLabel(item)}
-                    className={`object-contain ${item?.name === "IN"
-                      ? "h-[22px] w-[24px]"
-                      : "h-[17px] w-[17px]"
-                      }`}
+                    className={`object-contain ${
+                      item?.name === "IN"
+                        ? "h-[22px] w-[24px]"
+                        : "h-[17px] w-[17px]"
+                    }`}
                   />
                   <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
                     {getNavbarIconLabel(item)}
@@ -529,43 +521,6 @@ export const Navbar = ({ icons: propIcons }) => {
                 Cart
               </span>
             </HeaderIconButton>
-            <HeaderIconButton
-              to="/watchlist"
-              className="h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent"
-              aria-label="Watchlist"
-            >
-              <img
-                src="/image/png/Wishlist.png"
-                alt="Wishlist"
-                className="h-[40px] w-[40px] object-contain"
-              />
-              <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-                Watchlist
-              </span>
-            </HeaderIconButton>
-            {!currentUser && (
-              <OutlineSmallButton
-                className="
-  inline-flex items-center justify-center
-  h-[42px] sm:h-[45px]
-  min-w-[124px]
-  rounded-[4px]
-  border border-[#1B1D60]
-  bg-white
-  px-4 sm:px-6
-  text-[14px] sm:text-[16px]
-  font-semibold
-  text-[#1B1D60]
-  whitespace-nowrap
-  transition-all duration-300 ease-in-out
-  hover:border-[#CE9F2D]
-  hover:bg-[#CE9F2D1A]
-"
-                onClick={() => navigate("/login")}
-              >
-                Log In
-              </OutlineSmallButton>
-            )}
           </div>
 
           {currentUser ? (
@@ -740,7 +695,7 @@ export const CategoryBar = ({ headerData }) => {
       <div className="absolute inset-0 bg-[#CE9F2D33]  z-10  " />
 
       <div className="w-full relative z-20">
-        <div className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:justify-center lg:gap-5">
+        <div className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5  lg:justify-center lg:gap-5">
           {visibleCategories.map((item, index) => {
             // Always use categoryKey first — it's the canonical route key from the DB
             const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
@@ -762,7 +717,7 @@ export const CategoryBar = ({ headerData }) => {
                   aria-controls="category-mega-menu"
                   className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
-                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5">
+                  <div className="mx-auto  flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5">
                     {item?.img ? (
                       <ImageSkeleton
                         src={item?.img}
@@ -790,7 +745,7 @@ export const CategoryBar = ({ headerData }) => {
             icon={moreImage}
           />
         </div>
-        {activeMenu && (
+        {/* {activeMenu && (
           <div
             id="category-mega-menu"
             className="absolute left-0 top-[calc(100%-2px)] z-[9999] w-full"
@@ -799,7 +754,7 @@ export const CategoryBar = ({ headerData }) => {
           >
             <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
           </div>
-        )}
+        )} */}
       </div>
     </header>
   );
