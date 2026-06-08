@@ -12,16 +12,56 @@ const fallbackCategoryImages = [
 ];
 
 const defaultHomeCategories = [
-  { title: "Women's Fashion", image: "/image/jpg/stylish-girls.jpg",  categoryKey: "womens-fashion" },
-  { title: "Men's Fashion",   image: "/image/png/men-fashion.png",    categoryKey: "mens-fashion"   },
-  { title: "Kids' Fashion",   image: "/image/jpg/kids-fashion.jpg",   categoryKey: "kids-fashion"   },
-  { title: "Electronics",     image: "/image/jpg/smart-home.jpg",     categoryKey: "electronics"    },
-  { title: "Home & Kitchen",  image: "/image/jpg/home-decor.jpg",     categoryKey: "home-kitchen"   },
-  { title: "Beauty & Care",   image: "/image/jpg/stylish-girls.jpg",  categoryKey: "beauty"         },
-  { title: "Sports & Fitness",image: "/image/jpg/home-decor.jpg",     categoryKey: "sports"         },
-  { title: "Furniture",       image: "/image/jpg/home-decor.jpg",     categoryKey: "furniture"      },
-  { title: "Jewellery",       image: "/image/jpg/stylish-girls.jpg",  categoryKey: "jewelry"        },
-  { title: "Books & Media",   image: "/image/jpg/home-decor.jpg",     categoryKey: "books"          },
+  {
+    title: "Women's Fashion",
+    image: "/image/jpg/stylish-girls.jpg",
+    categoryKey: "womens-fashion",
+  },
+  {
+    title: "Men's Fashion",
+    image: "/image/png/men-fashion.png",
+    categoryKey: "mens-fashion",
+  },
+  {
+    title: "Kids' Fashion",
+    image: "/image/jpg/kids-fashion.jpg",
+    categoryKey: "kids-fashion",
+  },
+  {
+    title: "Electronics",
+    image: "/image/jpg/smart-home.jpg",
+    categoryKey: "electronics",
+  },
+  {
+    title: "Home & Kitchen",
+    image: "/image/jpg/home-decor.jpg",
+    categoryKey: "home-kitchen",
+  },
+  {
+    title: "Beauty & Care",
+    image: "/image/jpg/stylish-girls.jpg",
+    categoryKey: "beauty",
+  },
+  {
+    title: "Sports & Fitness",
+    image: "/image/jpg/home-decor.jpg",
+    categoryKey: "sports",
+  },
+  {
+    title: "Furniture",
+    image: "/image/jpg/home-decor.jpg",
+    categoryKey: "furniture",
+  },
+  {
+    title: "Jewellery",
+    image: "/image/jpg/stylish-girls.jpg",
+    categoryKey: "jewelry",
+  },
+  {
+    title: "Books & Media",
+    image: "/image/jpg/home-decor.jpg",
+    categoryKey: "books",
+  },
 ];
 
 export default function HomeCategoryGrid({
@@ -35,7 +75,9 @@ export default function HomeCategoryGrid({
   ctaLabel = "Shop Now",
 }) {
   const [activeId, setActiveId] = useState(null);
-  const displayCategories = categories.length ? categories.slice(0, 10) : defaultHomeCategories;
+  const displayCategories = categories.length
+    ? categories.slice(0, 10)
+    : defaultHomeCategories;
 
   if (loading) {
     return (
@@ -55,10 +97,16 @@ export default function HomeCategoryGrid({
       actionLabel={actionLabel}
       actionHref={actionHref}
     >
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid grid-cols-1  gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {displayCategories.map((item, idx) => (
           <CategoryCard
-            key={item.id ? item.id : item.categoryKey ? item.categoryKey : `idx-${idx}`}
+            key={
+              item.id
+                ? item.id
+                : item.categoryKey
+                  ? item.categoryKey
+                  : `idx-${idx}`
+            }
             image={
               item.imageUrl ||
               item.image ||
@@ -67,8 +115,19 @@ export default function HomeCategoryGrid({
               fallbackCategoryImages[idx % fallbackCategoryImages.length]
             }
             title={item.title || item.name || "Featured Collection"}
-            stylesCount={item.stylesCount || item.productCountLabel || item.countLabel || "3,200+ styles"}
-            href={item.categoryKey ? `/categories/${item.categoryKey}` : item.slug ? `/categories/${item.slug}` : undefined}
+            stylesCount={
+              item.stylesCount ||
+              item.productCountLabel ||
+              item.countLabel ||
+              "3,200+ styles"
+            }
+            href={
+              item.categoryKey
+                ? `/categories/${item.categoryKey}`
+                : item.slug
+                  ? `/categories/${item.slug}`
+                  : undefined
+            }
             badge={item.badge || badge}
             ctaLabel={ctaLabel}
             active={activeId === item.id}
