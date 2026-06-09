@@ -315,7 +315,7 @@ const SearchBar = ({
                       : "invisible -translate-y-2 opacity-0"
                   }`}
                 >
-                    <div className="max-h-[320px] overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
+                    <div className="max-h-[320px]  overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
                       <button
                         type="button"
                         onClick={() => handleSelectCategory(null)}

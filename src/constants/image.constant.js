@@ -17,12 +17,22 @@ export const footer = {
 };
 
 export const collageCard = {
-  menFashion: "/image/png/men-fashion.png",
-  stylishPair: "/image/png/stylish-pair.png",
-  watch: "/image/png/gold-watch-with-rhinestones%201.png",
-  blazer: "/image/png/blazer.png",
-  homeDecor: "/image/jpg/home-decor.jpg",
-  smartHome: "/image/jpg/smart-home.jpg",
+  menFashion: "/image/png/Sneakers.png",
+  stylishPair: "/image/png/Jackets.png",
+  watch: "/image/png/Shirts.png",
+  blazer: "/image/png/Trousers.png",
+  homeDecor: "/image/png/Vases.png",
+  smartHome: "/image/png/Sofas.png",
+  plants: "/image/png/Plants.png",
+  candles: "/image/png/Candles.png",
+  hats: "/image/png/Hats.png",
+  handbags: "/image/png/Handbags.png",
+  jeweler: "/image/png/Jeweler.png",
+  heels: "/image/png/Heels.png",
+  caps: "/image/png/Caps.png",
+  shorts: "/image/png/Shorts.png",
+  shoes: "/image/png/Shoes.png",
+  socks: "/image/png/Socks.png",
 };
 
 export const header = {
@@ -97,7 +107,7 @@ export const bannerData = [
     lineImg: "/image/png/line.png",
     description:
       "Discover the latest trends in luxury fashion. Shop the new season arrivals today.",
-    image: "/image/png/HeroImg.png",
+    image: "/image/jpg/Banner2.jpg",
     modelBg: "/image/png/%20modelbg.png",
   },
   {
@@ -108,20 +118,10 @@ export const bannerData = [
     lineImg: "/image/png/line.png",
     description:
       "Upgrade your style with our exclusive collection. Limited time offer on all premium categories.",
-    image: "/image/png/HeroImg.png",
+    image: "/image/jpg/Banner3.jpg",
     modelBg: "/image/png/%20modelbg.png",
   },
-  {
-    id: 4,
-    title: "NEW ARRIVALS",
-    subtitle: "PREMIUM WEAR",
-    discountImg: "/image/png/off.png",
-    lineImg: "/image/png/line.png",
-    description:
-      "Discover the latest trends in luxury fashion. Shop the new season arrivals today.",
-    image: "/image/png/HeroImg.png",
-    modelBg: "/image/png/%20modelbg.png",
-  },
+
 ];
 
 export const bannerConfig = {

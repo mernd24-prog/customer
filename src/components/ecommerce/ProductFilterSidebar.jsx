@@ -223,7 +223,7 @@ export default function ProductFilterSidebar({
 }) {
   return (
     <aside
-      className={`w-full overflow-x-hidden lg:sticky lg:top-24 lg:w-64 xl:w-72 lg:shrink-0 lg:self-start lg:overflow-y-auto lg:overflow-x-hidden lg:overscroll-contain ${className}`}
+      className={`w-full overflow-x-hidden lg:sticky lg:top-24 lg:w-64 xl:w-72 lg:shrink-0 lg:self-start lg:overflow-y-auto lg:overflow-x-hidden lg:overscroll-contain [scrollbar-color:#CE9F2D33_transparent]  ${className}`}
     >
       <div className="customer-card w-full overflow-x-hidden px-4 py-1">
         {sections.map((section) => (

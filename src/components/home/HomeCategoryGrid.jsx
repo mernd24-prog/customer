@@ -76,7 +76,7 @@ export default function HomeCategoryGrid({
 }) {
   const [activeId, setActiveId] = useState(null);
   const displayCategories = categories.length
-    ? categories.slice(0, 10)
+    ? categories.slice(0, 5)
     : defaultHomeCategories;
 
   if (loading) {

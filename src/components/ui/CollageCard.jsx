@@ -93,28 +93,28 @@ export default function CollageMainSection({ cmsPages = [] }) {
       images: [
         { image: collageCard.homeDecor, link: "/categories/home" },
         { image: collageCard.smartHome, link: "/categories/electronics" },
-        { image: collageCard.blazer, link: "/categories/fashion" },
-        { image: collageCard.watch, link: "/categories/accessories" },
+        { image: collageCard.plants, link: "/categories/fashion" },
+        { image: collageCard.candles, link: "/categories/accessories" },
       ],
     },
     {
       title: "Trending in Women's Fashion",
       label: "Trending",
       images: [
-        { image: collageCard.stylishPair, link: "/categories/womens-fashion" },
-        { image: collageCard.watch, link: "/categories/jewellery" },
-        { image: collageCard.blazer, link: "/categories/fashion" },
-        { image: collageCard.watch, link: "/categories/accessories" },
+        { image: collageCard.hats, link: "/categories/womens-fashion" },
+        { image: collageCard.handbags, link: "/categories/jewellery" },
+        { image: collageCard.jeweler, link: "/categories/fashion" },
+        { image: collageCard.heels, link: "/categories/accessories" },
       ],
     },
     {
       title: "Top Picks in Kids Fashion",
       label: "Trending",
       images: [
-        { image: collageCard.blazer, link: "/categories/kids" },
-        { image: collageCard.menFashion, link: "/products" },
-        { image: collageCard.blazer, link: "/categories/fashion" },
-        { image: collageCard.watch, link: "/categories/accessories" },
+        { image: collageCard.caps, link: "/categories/kids" },
+        { image: collageCard.shorts, link: "/products" },
+        { image: collageCard.shoes, link: "/categories/fashion" },
+        { image: collageCard.socks, link: "/categories/accessories" },
       ],
     },
   ];

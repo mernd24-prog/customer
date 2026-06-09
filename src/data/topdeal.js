@@ -40,7 +40,7 @@ export const reusableArrivalsDemo = [
       {
         id: "prod-1",
         title: "Oxidised Silver Necklace Set",
-        image: "/image/png/SimulantJewelrySets.png",
+        image: "/image/png/Traditional Jewelry Set.png",
         price: "₹1,999",
         oldPrice: "₹3,099",
         rating: 4.1,
@@ -50,7 +50,7 @@ export const reusableArrivalsDemo = [
       {
         id: "prod-2",
         title: "Gold-Plated Earring Collection",
-        image: "/image/png/Ring.png",
+        image: "/image/png/Emerald Pendant Necklace.png.png",
         price: "₹1,999",
         oldPrice: "₹3,099",
         rating: 4.1,
@@ -69,7 +69,7 @@ export const reusableArrivalsDemo = [
       {
         id: "prod-3",
         title: "Oxidised Silver Necklace Set",
-        image: "/image/png/stylish-mens-kurtas 1.png",
+        image: "/image/png/Designer Ethnic Dress.png",
         price: "₹1,999",
         oldPrice: "₹3,099",
         rating: 4.1,
@@ -79,7 +79,7 @@ export const reusableArrivalsDemo = [
       {
         id: "prod-4",
         title: "Gold-Plated Earring Collection",
-        image: "/image/png/coOrdSet.png",
+        image: "/image/png/Kids Winter Outfit.png",
         price: "₹1,999",
         oldPrice: "₹3,099",
         rating: 4.1,
@@ -98,7 +98,7 @@ export const reusableArrivalsDemo = [
       {
         id: "prod-5",
         title: "Oxidised Silver Necklace Set",
-        image: "/image/png/SprayBottle.png",
+        image: "/image/png/Minimal Skincare Collection.png",
         price: "₹1,999",
         oldPrice: "₹3,099",
         rating: 4.1,
@@ -108,7 +108,7 @@ export const reusableArrivalsDemo = [
       {
         id: "prod-6",
         title: "Gold-Plated Earring Collection",
-        image: "/image/png/Perfume.png",
+        image: "/image/png/Luxury Perfume Bottle.png",
         price: "₹1,999",
         oldPrice: "₹3,099",
         rating: 4.1,

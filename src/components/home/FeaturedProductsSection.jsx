@@ -6,7 +6,7 @@ const featuredProducts = [
   {
     id: "featured-lehenga",
     title: "Lehenga - Designer Ethnic Wear",
-    image: "/image/png/FusionLehenga.png",
+    image: "/image/png/bridal-fashion.png",
     price: 1999,
     mrp: 3099,
     rating: 4.1,
@@ -15,7 +15,7 @@ const featuredProducts = [
   {
     id: "featured-formal-wear",
     title: "Men's Premium Formal Wear Set",
-    image: "/image/png/hand.png",
+    image: "/image/png/men-formal-look.png",
     price: 1999,
     mrp: 3099,
     rating: 4.1,
@@ -24,7 +24,7 @@ const featuredProducts = [
   {
     id: "featured-watch",
     title: "Bejewelled Luxury Watch Collection",
-    image: "/image/png/JewelledWatches.png",
+    image: "/image/png/luxury-watches.png",
     price: 1999,
     mrp: 3099,
     rating: 3.4,
@@ -33,7 +33,7 @@ const featuredProducts = [
   {
     id: "featured-formal-shoes",
     title: "Men's Premium Formal Shoes",
-    image: "/image/png/stylish-pair.png",
+    image: "/image/png/formal-shoes.png",
     price: 1999,
     mrp: 3099,
     rating: 3.4,
@@ -42,7 +42,7 @@ const featuredProducts = [
   {
     id: "featured-earrings",
     title: "Silver Earrings",
-    image: "/image/png/Ring.png",
+    image: "/image/png/silver-earrings.png",
     price: 1999,
     mrp: 3099,
     rating: 3.4,

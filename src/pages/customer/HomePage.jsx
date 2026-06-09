@@ -53,8 +53,8 @@ export function HomePage() {
       <HomeCategoryGrid
         categories={categories?.filter((c) => c?.isDashboardVisible !== false).slice(0, 10)}
         loading={false}
-        title="Shop by Category"
-        subtitle="Explore fashion, electronics, home, beauty and more"
+        title="Time for a Spring Refresh"
+        subtitle="Curated collections for every style & home"
       />
 
       <CollageMainSection />
@@ -65,7 +65,7 @@ export function HomePage() {
         ctaLabel="Shop Now"
       />
 
-       {/* <FeaturedProductsSection /> */}
+        <FeaturedProductsSection /> 
 
       <section className=" my-10">
         
@@ -96,7 +96,7 @@ export function HomePage() {
           title="Explore Our Collection"
           description="Handpicked products loved by thousands of shoppers"
           actionLabel="Browse All Products"
-          limit={5}
+          limit={10}
         />
       </div>
     </>

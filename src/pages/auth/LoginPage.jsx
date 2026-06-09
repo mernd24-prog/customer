@@ -1,9 +1,9 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, LogIn, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LogIn } from "lucide-react";
 import { toast } from "react-toastify";
 
 import AuthCard from "../../components/ui/AuthCard";
@@ -12,25 +12,17 @@ import FormField from "../../components/ui/FormField";
 import Seo from "../../components/common/Seo";
 
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
-
 import { loginUser, clearError } from "../../features/auth/authSlice";
-
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { loginSchema } from "../../validations/validationSchemas";
 
 export default function LoginPage() {
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
-
   const location = useLocation();
-
   const run = useToastThunk();
 
-  const [showPassword, setShowPassword] = useState(false);
-
   const { loading, error } = useSelector((s) => s.auth);
-
   const from = location.state?.from || AUTH_ROUTES.home;
 
   useEffect(() => {
@@ -43,11 +35,8 @@ export default function LoginPage() {
     formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(loginSchema),
-
     mode: "onChange",
-
     reValidateMode: "onChange",
-
     defaultValues: {
       email: location.state?.email || "",
       password: "",
@@ -63,7 +52,6 @@ export default function LoginPage() {
       }),
       "Welcome back!",
     );
-
     navigate(from, { replace: true });
   };
 
@@ -90,7 +78,7 @@ export default function LoginPage() {
           onSubmit={handleSubmit(submit)}
           noValidate
         >
-          {/* EMAIL */}
+          {/* EMAIL FIELD */}
           <FormField
             id="email"
             label="Email address"
@@ -102,107 +90,75 @@ export default function LoginPage() {
             disabled={loading}
           />
 
-          {/* PASSWORD */}
-          <div className="grid gap-2">
-            <label
-              htmlFor="password"
-              className="text-sm font-medium text-slate-700"
-            >
-              Password
-            </label>
+          {/* PASSWORD FIELD (Now leveraging your clean FormField component) */}
+          <div className="grid gap-1">
+            <FormField
+              id="password"
+              label="Password"
+              type="password"
+              registration={register("password")}
+              error={errors.password}
+              autoComplete="current-password"
+              placeholder="••••••••"
+              disabled={loading}
+            />
 
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                placeholder="••••••••"
-                disabled={loading}
-                {...register("password")}
-                className={`min-h-11 w-full rounded-[8px] border bg-white px-3 py-2.5 pr-12  text-sm text-ink outline-none transition-all duration-500 ease-in-out placeholder:text-gray ${
-                  errors.password
-                    ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
-                    : "border-border-strong focus:border-gold focus:ring-2 focus:ring-gold/20"
-                }`}
-              />
-
-              {/* SHOW/HIDE PASSWORD */}
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted transition-all duration-500 ease-in-out hover:bg-cream hover:text-ink"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-
-            {/* PASSWORD ERROR */}
-            {errors.password?.message && (
-              <p className="min-h-4  text-xs font-normal text-red-600">
-                {errors.password.message}
-              </p>
-            )}
-
-            {/* FORGOT PASSWORD */}
-            <div className="flex justify-end">
+            {/* FORGOT PASSWORD LINK */}
+            <div className="flex justify-end mt-1">
               <Link
                 to={AUTH_ROUTES.forgotPassword}
-                className=" text-xs font-medium text-muted underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold hover:underline"
+                className="text-xs font-medium text-muted underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold hover:underline"
               >
                 Forgot password?
               </Link>
             </div>
           </div>
 
-          {/* API ERROR */}
+          {/* API ERROR SUMMARY */}
           {error && (
             <div
-              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3  text-sm text-red-700"
+              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
               role="alert"
             >
               {error}
             </div>
           )}
 
-          {/* LOGIN BUTTON */}
+          {/* SUBMIT BUTTON */}
           <Button
             type="submit"
             loading={loading}
             disabled={!isValid || loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <LogIn size={18} />
             Sign in
           </Button>
 
-          {/* DIVIDER */}
+          {/* ACCESSIBLE DIVIDER */}
           <div className="relative flex items-center gap-3 py-0.5">
             <hr className="flex-1 border-border" />
-
-            <span className=" text-xs text-gray">or</span>
-
+            <span className="text-xs text-gray">or</span>
             <hr className="flex-1 border-border" />
           </div>
 
-          {/* GOOGLE LOGIN */}
+          {/* OAUTH GOOGLE SIGN IN */}
           <Button
             type="button"
             variant="google"
             onClick={handleGoogleLogin}
-            className="h-12 w-full rounded-[8px] border-border bg-white  text-[0.9rem] font-semibold tracking-normal text-ink shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:bg-white hover:text-ink hover:shadow-md active:translate-y-0 active:scale-[0.98] active:bg-navy-soft"
+            className="h-12 w-full rounded-[8px] border-border bg-white text-[0.9rem] font-semibold tracking-normal text-ink shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:bg-white hover:text-ink hover:shadow-md active:translate-y-0 active:scale-[0.98] active:bg-navy-soft"
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
               alt="Google"
               className="h-5 w-5"
             />
-
             <span>Continue with Google</span>
           </Button>
 
-          {/* REGISTER */}
-          <p className="text-center  text-[0.8rem] text-muted">
+          {/* ROUTING LINKS */}
+          <p className="text-center text-[0.8rem] text-muted">
             Don&apos;t have an account?{" "}
             <Link
               to={AUTH_ROUTES.register}
@@ -212,8 +168,7 @@ export default function LoginPage() {
             </Link>
           </p>
 
-          {/* OTP LOGIN */}
-          <p className="text-center  text-[0.8rem] text-muted">
+          <p className="text-center text-[0.8rem] text-muted">
             Seller account login?{" "}
             <Link
               to={AUTH_ROUTES.verifyOtp}
