@@ -4,9 +4,7 @@ import { SKELETON_PRESETS, SkeletonLoader } from "../common/skeleton";
 import { collageCard } from "../../constants/image.constant";
 import Label from "../common/label/Label";
 
-function CollageImage({ src, title, link, label }) {
-  const imageLabel = label || title;
-
+function CollageImage({ src, title, link }) {
   return (
     <div className="relative h-28 w-full overflow-hidden  bg-[var(--customer-cream)] md:w-full lg:h-36">
       <Link to={link}>
@@ -17,11 +15,9 @@ function CollageImage({ src, title, link, label }) {
           loading="lazy"
         />
 
-        {imageLabel && (
-          <span className="absolute bottom-3 left-3 rounded-full  backdrop-blur-[8px]">
-            <Label variant="imageLabel">{imageLabel}</Label>
-          </span>
-        )}
+        <span className="absolute bottom-3 left-3 rounded-full  backdrop-blur-[8px]">
+          <Label variant="imageLabel">Trending</Label>
+        </span>
       </Link>
     </div>
   );
@@ -44,8 +40,7 @@ function CollageCard({ section }) {
             key={idx}
             src={ele.image}
             link={ele.link}
-            title={ele.title || ele.label}
-            label={ele.label}
+            title={ele.title}
           />
         ))}
       </div>
@@ -96,7 +91,7 @@ export default function CollageMainSection({ cmsPages = [] }) {
     },
     {
       title: "Up to 60% Off Home & Lifestyle",
-      label: "Trending",
+      label: "Hot Deal",
       images: [
         { image: collageCard.homeDecor, link: "/categories/home", label: "Vases" },
         { image: collageCard.smartHome, link: "/categories/electronics", label: "Sofas" },
@@ -106,17 +101,17 @@ export default function CollageMainSection({ cmsPages = [] }) {
     },
     {
       title: "Trending in Women's Fashion",
-      label: "Trending",
+      label: "New In",
       images: [
-        { image: collageCard.hats, link: "/categories/womens-fashion", label: "Hats" },
-        { image: collageCard.handbags, link: "/categories/jewellery", label: "Handbags" },
-        { image: collageCard.jeweler, link: "/categories/fashion", label: "Jewelry" },
-        { image: collageCard.heels, link: "/categories/accessories", label: "Heels" },
+        { image: collageCard.hats, link: "/categories/womens-fashion" },
+        { image: collageCard.handbags, link: "/categories/jewellery" },
+        { image: collageCard.jeweler, link: "/categories/fashion" },
+        { image: collageCard.heels, link: "/categories/accessories" },
       ],
     },
     {
       title: "Top Picks in Kids Fashion",
-      label: "Trending",
+      label: "Popular",
       images: [
         { image: collageCard.caps, link: "/categories/kids", label: "Caps" },
         { image: collageCard.shorts, link: "/products", label: "Shorts" },

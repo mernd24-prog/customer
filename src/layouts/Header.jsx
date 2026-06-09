@@ -465,7 +465,7 @@ export const Navbar = ({ icons: propIcons }) => {
             />
           </Link>
           {/* <div className="hidden h-10 w-px bg-[var(--customer-border)] lg:block" /> */}
-          <HeaderIconButton
+          {/* <HeaderIconButton
             className="hidden lg:flex h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent p-0"
             aria-label="Menu"
           >
@@ -477,7 +477,7 @@ export const Navbar = ({ icons: propIcons }) => {
             <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
               Menu
             </span>
-          </HeaderIconButton>
+          {/* </HeaderIconButton> */}
         </div>
         <SearchBar
           value={searchQuery}

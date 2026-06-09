@@ -1,3 +1,11 @@
+function formatPageTitle(value = "") {
+  return String(value)
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 export default function PageHeader({
   title,
   description,
@@ -5,6 +13,8 @@ export default function PageHeader({
   action,
   className = "",
 }) {
+  const displayTitle = formatPageTitle(title);
+
   return (
     <header
       className={`mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between ${className}`}
@@ -16,7 +26,7 @@ export default function PageHeader({
           </p>
         )}
         <h1 className="mt-1  text-2xl font-bold text-[var(--customer-navy)]">
-          {title}
+          {displayTitle}
         </h1>
         {description && (
           <p className="mt-2 max-w-2xl  text-[14px] leading-6 text-[var(--customer-muted)]">
