@@ -383,7 +383,6 @@ export default function ProductsPage() {
               ? "Try different keywords or remove filters."
               : "Try adjusting your filters or browse other categories."
           }
-          onRetry={() => loadProducts({ page: 1, append: false })}
           products={products}
           viewMode={viewMode}
           onAddToCart={addToCart}

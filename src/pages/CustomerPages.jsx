@@ -463,7 +463,6 @@ export function AccountPage({ tab = "profile" }) {
         loading={user.loading}
         error={user.error}
         empty={!user.current}
-        onRetry={() => dispatch(fetchMe())}
       >
         {tab === "profile" && (
           <form className="panel" onSubmit={handleSubmit(submitProfile)}>
@@ -667,13 +666,6 @@ export function ProductsPage({ search = false }) {
         empty={!products.length}
         emptyTitle="No products found"
         emptyText="Try a different search or filter."
-        onRetry={() =>
-          dispatch(
-            search
-              ? fetchProducts({ q: query })
-              : fetchProducts(Object.fromEntries(params)),
-          )
-        }
       >
         <div className="grid-auto-fit">
           {products.map((product) => (
@@ -713,7 +705,6 @@ export function CategoryPage() {
         loading={products.loading}
         error={products.error}
         empty={!itemsFrom(products).length}
-        onRetry={() => dispatch(fetchProducts({ category: categoryKey }))}
       >
         <div className="grid">
           {itemsFrom(products).map((product) => (
@@ -781,7 +772,6 @@ export function ProductDetailPage() {
         loading={productState.loading}
         error={productState.error}
         empty={!product}
-        onRetry={() => dispatch(fetchProductById({ productId }))}
       >
         <div className="detail">
           <div className="gallery">
@@ -892,7 +882,6 @@ export function CartPage() {
         loading={cartState.loading}
         error={cartState.error}
         empty={!items.length && !(cart.wishlist || []).length}
-        onRetry={() => dispatch(fetchCart())}
       >
         <div className="split">
           <div className="panel">
@@ -1036,7 +1025,6 @@ export function CheckoutPage() {
         error={cart.error || wallet.error || checkout.error}
         empty={!(cart.current?.items || []).length}
         emptyTitle="Your cart is empty"
-        onRetry={() => dispatch(fetchCart())}
       >
         <div className="split">
           <form className="panel" onSubmit={handleSubmit(submit)}>
@@ -1246,7 +1234,6 @@ export function OrdersPage({ detail = false, track = false }) {
           loading={state.loading}
           error={state.error}
           empty={!order}
-          onRetry={() => dispatch(fetchOrderById({ orderId }))}
         >
           <div className="panel">
             <h1>Order {orderId}</h1>
@@ -1406,7 +1393,6 @@ export function OrdersPage({ detail = false, track = false }) {
         loading={state.loading}
         error={state.error}
         empty={!orders.length}
-        onRetry={() => dispatch(fetchMyOrders())}
       >
         <div className="list">
           {orders.map((order) => (
@@ -1495,7 +1481,6 @@ export function ReturnsPage({ request = false }) {
         loading={state.loading}
         error={state.error}
         empty={!itemsFrom(state).length}
-        onRetry={() => dispatch(fetchMyReturns())}
       >
         <div className="list">
           {itemsFrom(state).map((item) => (
@@ -1525,7 +1510,6 @@ export function SimpleApiPage({ title, selector, thunk, action }) {
           loading={state.loading}
           error={state.error}
           empty={!list.length && !state.current}
-          onRetry={() => dispatch(thunk(action?.arg))}
         >
           <div className="rounded-[12px] border border-border bg-white p-6">
             <pre className="overflow-x-auto font-mono text-xs text-muted">
@@ -1559,7 +1543,6 @@ export function SubscriptionPage() {
           empty={!itemsFrom(plans).length}
           emptyTitle="No plans available"
           emptyText="Subscription plans will appear here."
-          onRetry={() => dispatch(fetchSubscriptionPlans())}
         >
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {itemsFrom(plans).map((plan) => (
@@ -1647,7 +1630,6 @@ export function PreferencesPage() {
           loading={state.loading}
           error={state.error}
           empty={false}
-          onRetry={() => dispatch(fetchNotificationPreferences())}
         >
           <form
             className="rounded-[12px] border border-border bg-white p-6 sm:p-8"
@@ -1768,7 +1750,6 @@ export function LoyaltyPage() {
           empty={!profile && !loyaltyState.loading}
           emptyTitle="No loyalty profile"
           emptyText="Start shopping to earn loyalty points."
-          onRetry={() => dispatch(fetchLoyaltyProfile())}
         >
           {/* Points card */}
           {profile && (
@@ -1906,7 +1887,6 @@ export function WarrantyPage({ detail = false }) {
           empty={!warranty && !warranties.length && !state.loading}
           emptyTitle="No warranties found"
           emptyText="Your registered warranties will appear here."
-          onRetry={() => detail && dispatch(fetchWarrantyById({ warrantyId }))}
         >
           {(warranty || warranties.length > 0) && (
             <div className="rounded-[12px] border border-border bg-white">
@@ -2100,7 +2080,6 @@ export function WalletPage() {
           empty={!wallet && !walletState.loading}
           emptyTitle="Wallet not available"
           emptyText="Your wallet information will appear here."
-          onRetry={() => dispatch(fetchWallet())}
         >
           {wallet && (
             <div className="rounded-[var(--customer-radius)] bg-gradient-to-br from-ink to-muted p-6 text-white">
@@ -2149,7 +2128,6 @@ export function PaymentsPage() {
           empty={!payments.length && !paymentState.loading}
           emptyTitle="No payments yet"
           emptyText="Your payment transactions will appear here."
-          onRetry={() => dispatch(fetchPayments())}
         >
           <div className="rounded-[12px] border border-border bg-white">
             {payments.map((payment, i) => {
@@ -2228,7 +2206,6 @@ export function NotificationsPage() {
           empty={!notifications.length && !notifState.loading}
           emptyTitle="No notifications"
           emptyText="You're all caught up! Notifications will appear here."
-          onRetry={() => dispatch(fetchNotifications())}
         >
           <div className="rounded-[12px] border border-border bg-white">
             {notifications.map((notif, i) => {

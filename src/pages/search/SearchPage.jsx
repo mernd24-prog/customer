@@ -507,15 +507,6 @@ export default function SearchPage() {
                     ? `We couldn't find anything for "${q}". Try different keywords or remove some filters.`
                     : "We couldn't find any products in this category. Try selecting another category or removing some filters."
                 }
-                onRetry={() => {
-                  const p = getParams();
-                  dispatch(
-                    searchCatalog({
-                      params: p,
-                      cacheKey: `search-list-${JSON.stringify(p)}`,
-                    }),
-                  ).catch(() => {});
-                }}
               >
                 <ProductGrid
                   products={hits}

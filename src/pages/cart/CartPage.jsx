@@ -426,7 +426,6 @@ export default function CartPage() {
             empty={!hasCartItems && !hasSavedItems && !cartState.loading}
             emptyTitle="Your cart is empty"
             emptyText="Add some products to continue shopping."
-            onRetry={() => dispatch(fetchCart())}
           >
             <div className="grid grid-cols-1 items-start gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_420px]">
               <div className="space-y-6 min-w-0">

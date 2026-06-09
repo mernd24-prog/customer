@@ -17,7 +17,6 @@ export default function ProductResultsLayout({
   empty,
   emptyTitle,
   emptyText,
-  onRetry,
   products = [],
   viewMode = "grid",
   onAddToCart,
@@ -56,7 +55,6 @@ export default function ProductResultsLayout({
               empty={empty}
               emptyTitle={emptyTitle}
               emptyText={emptyText}
-              onRetry={onRetry}
             >
               <ProductGrid
                 products={products}

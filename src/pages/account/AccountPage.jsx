@@ -77,7 +77,6 @@ export default function AccountPage({ tab = "profile" }) {
               loading={userState.loading && !user}
               error={userState.error}
               empty={false}
-              onRetry={() => dispatch(fetchMe())}
             >
               {tab === "profile" && <ProfileTab user={user} />}
               {tab === "addresses" && <AddressTab user={user} />}

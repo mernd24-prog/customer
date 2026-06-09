@@ -568,7 +568,6 @@ function OrderDetail({ orderId, track }) {
           loading={state.loading && !order}
           error={state.error}
           empty={!order}
-          onRetry={() => dispatch(fetchOrderById({ orderId }))}
         >
           <div className="grid gap-5">
             <section className="overflow-hidden rounded-[8px] border border-border bg-white">
@@ -1048,7 +1047,6 @@ function OrderList() {
           empty={!orders.length}
           emptyTitle="No orders yet"
           emptyText="Once you place an order, it will appear here."
-          onRetry={() => dispatch(fetchMyOrders())}
         >
           <div className="grid gap-3">
             {orders.map((order) => {

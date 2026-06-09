@@ -24,7 +24,6 @@ export function SellerStatusPage() {
         loading={state.loading}
         error={state.error}
         empty={!status}
-        onRetry={() => dispatch(fetchSellerWebStatus())}
       >
         <div className="split">
           <div className="panel">
@@ -82,9 +81,6 @@ export function SellerTrackingPage() {
         loading={state.loading}
         error={state.error}
         empty={!orders.length}
-        onRetry={() =>
-          dispatch(fetchSellerWebTracking({ limit: 20, offset: 0 }))
-        }
       >
         <div className="panel">
           <h2>Summary</h2>
@@ -127,7 +123,6 @@ export function SellerTrackingDetailPage() {
         loading={state.loading}
         error={state.error}
         empty={!order}
-        onRetry={() => dispatch(fetchSellerWebTrackingOrder({ orderId }))}
       >
         <div className="panel">
           <h2>{order?.orderId || orderId}</h2>

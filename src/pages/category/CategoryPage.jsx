@@ -603,7 +603,6 @@ export default function CategoryPage() {
           empty={!products.length && !productState.loading && firstLoadDone}
           emptyTitle="No products found"
           emptyText="Try adjusting your filters or browse other categories."
-          onRetry={() => loadProducts({ page: 1, append: false })}
           products={products}
           viewMode={viewMode}
           onAddToCart={addToCart}

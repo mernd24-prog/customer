@@ -662,7 +662,6 @@ export default function ProductDetailPage() {
           empty={!product && !productState.loading}
           emptyTitle="Product coming soon"
           emptyText="This product page is being prepared or is temporarily unavailable."
-          onRetry={() => dispatch(fetchProductById({ productId }))}
         >
           {product && (
             <>

@@ -390,7 +390,6 @@ export default function BrandPage() {
           empty: !items.length && !productState.loading && firstLoadDone,
           emptyTitle: `No products from ${brandName}`,
           emptyText: "Try adjusting your filters or check back later.",
-          onRetry: () => loadProducts({ page: 1, append: false }),
           products: items,
           onAddToCart: addToCart,
           onWishlist: toggleWishlist,

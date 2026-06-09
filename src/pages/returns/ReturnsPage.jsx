@@ -149,7 +149,6 @@ function ReturnsListPage() {
           empty={!returns.length}
           emptyTitle="No returns yet"
           emptyText="Your return requests will appear here."
-          onRetry={() => dispatch(fetchMyReturns())}
         >
           <div className="grid gap-3">
             {returns.map((item) => {

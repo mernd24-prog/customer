@@ -773,7 +773,6 @@ export default function CheckoutPage() {
           empty={items.length === 0}
           emptyTitle="Your cart is empty"
           emptyText="Add products to your cart before checking out."
-          onRetry={() => dispatch(fetchCart())}
         >
           <form onSubmit={handleSubmit(submit)} noValidate>
             {errors.root?.message ? (

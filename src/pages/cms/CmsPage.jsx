@@ -82,7 +82,6 @@ export default function CmsPage({ slugOverride = "" }) {
           empty={pageUnavailable}
           emptyTitle="Coming soon"
           emptyText="This content page is being prepared and will be available soon."
-          onRetry={() => dispatch(fetchCmsPageBySlug({ slug }))}
         >
           {page && (
             <div className="mx-auto max-w-3xl">

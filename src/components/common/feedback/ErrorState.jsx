@@ -1,21 +1,37 @@
-import { RefreshCw } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { cn } from "../../../utils/classNames";
 
+const getMessage = (message) => {
+  if (!message) return "";
+  if (typeof message === "string") return message;
+  return message.message || message.error || "Please try again later.";
+};
+
 export default function ErrorState({
-  title = "We could not load this.",
+  title = "Something went wrong",
   message,
-  onRetry,
   className = "",
 }) {
+  const displayMessage = getMessage(message);
+
   return (
-    <div className={cn("state-box error", className)}>
-      <strong>{title}</strong>
-      {message && <p>{message}</p>}
-      {onRetry && (
-        <button className="button secondary" onClick={onRetry}>
-          <RefreshCw size={16} /> Retry
-        </button>
+    <div
+      className={cn(
+        "flex min-h-[240px] flex-col items-center justify-center rounded-[16px] border border-red-100 bg-gradient-to-br from-white via-white to-red-50 px-5 py-10 text-center shadow-sm",
+        className,
       )}
+      role="status"
+    >
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500 ring-1 ring-red-100">
+        <AlertTriangle size={24} strokeWidth={1.8} />
+      </div>
+      <h2 className="mt-5 text-xl font-bold text-[var(--customer-ink)]">
+        {title}
+      </h2>
+      <p className="mt-2 max-w-md text-sm leading-6 text-[var(--customer-muted)]">
+        {displayMessage ||
+          "We could not load this section right now. Please continue browsing other available sections."}
+      </p>
     </div>
   );
 }
