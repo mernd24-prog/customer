@@ -18,7 +18,7 @@ export default function SectionContainer({
   const hasAction = Boolean(actionLabel && (actionHref || onAction));
 
   return (
-    <section className={`my-8 bg-white ${className}`}>
+    <section className={`my-16 bg-white ${className}`}>
       {hasHeader && (
         <header
           className={`text-[var(--customer-ink)] ${headerbgColor || "bg-white"}`}

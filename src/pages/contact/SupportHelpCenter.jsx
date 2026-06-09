@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import Seo from "../../components/common/Seo";
+import ApiState from "../../components/common/ApiState";
 import Button from "../../components/common/buttons/Button";
 import FAQHeroSection from "../../components/faq/FAQHeroSection";
 import SearchBar from "../../components/ui/SearchBar";
@@ -184,7 +185,7 @@ function OptionCard({ option }) {
 }
 
 export default function SupportHelpCenter() {
-  const { page } = useCmsRecord("support-center");
+  const { page, loading } = useCmsRecord("support-center");
 
   const pageTitle = page?.title || "";
   const pageDescription = page?.description || page?.excerpt || "";
@@ -205,10 +206,46 @@ export default function SupportHelpCenter() {
   const ctaUrl = page?.cta?.url;
   const searchPlaceholder =
     page?.metadata?.data?.searchPlaceholder || "Search SAM Global Help";
+  const hasPageContent = Boolean(
+    page &&
+      (pageTitle ||
+        pageDescription ||
+        introSection ||
+        commonQuestions.length ||
+        topics.length ||
+        options.length ||
+        (ctaLabel && ctaUrl)),
+  );
+  const isPageLoading = loading && !page;
+
+  if (isPageLoading || !hasPageContent) {
+    return (
+      <>
+        <Seo
+          title={`${pageTitle || "Customer Support"} | Sam Global`}
+          description={pageDescription}
+        />
+        <section className="w-container py-8 sm:py-10">
+          <h1 className="mb-8 text-2xl font-bold text-ink sm:text-3xl">
+            {pageTitle || "Customer Support"}
+          </h1>
+          <ApiState
+            loading={isPageLoading}
+            empty={!isPageLoading && !hasPageContent}
+            emptyTitle="Customer Support"
+            emptyText="Help topics and support options will appear here ."
+          />
+        </section>
+      </>
+    );
+  }
 
   return (
     <>
-      <Seo title={`${pageTitle} | Sam Global`} description={pageDescription} />
+      <Seo
+        title={`${pageTitle || "Customer Support"} | Sam Global`}
+        description={pageDescription}
+      />
       <FAQHeroSection title={pageTitle} description={pageDescription} />
 
       <section className="w-container py-14 sm:py-16 lg:py-20">

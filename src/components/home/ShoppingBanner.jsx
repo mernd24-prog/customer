@@ -12,7 +12,7 @@ export default function ShoppingMadeEasyBanner({
 }) {
   return (
     <section
-      className={`relative h-[250px] my-10 full-banner sm:h-[350px] md:h-[450px] lg:h-[600px] w-full overflow-hidden ${className}`}
+      className={`relative h-[250px] my-16 full-banner sm:h-[350px] md:h-[450px] lg:h-[600px] w-full overflow-hidden ${className}`}
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",

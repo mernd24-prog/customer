@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import Seo from "../../components/common/Seo";
+import ApiState from "../../components/common/ApiState";
 import Button from "../../components/common/buttons/Button";
 import FAQHeroSection from "../../components/faq/FAQHeroSection";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
@@ -242,10 +243,12 @@ function CommitmentBand({
   );
 }
 
-export default function ContactUs() {
-  const { page } = useCmsRecord("help-contact");
+const EMPTY_SECTIONS = [];
 
-  const sections = page?.sections || [];
+export default function ContactUs() {
+  const { page, loading } = useCmsRecord("help-contact");
+
+  const sections = page?.sections || EMPTY_SECTIONS;
 
   const supportSection = getSectionByType(sections, "support_categories");
   const contactInfoSec = getSectionByType(sections, "contact_info");
@@ -275,10 +278,53 @@ export default function ContactUs() {
   const visitCta = visitSec?.cta;
   const visitHref = visitCta?.url || "";
   const visitBtn = visitCta?.label || visitSec?.points?.[0]?.description || "";
+  const hasPageContent = Boolean(
+    page &&
+      (heroTitle ||
+        description ||
+        intro?.heading ||
+        intro?.description ||
+        supportSection ||
+        reasons.length ||
+        contactInfoSec ||
+        contactItems.length ||
+        businessTitle ||
+        visitTitle ||
+        commitmentSec ||
+        closingSec ||
+        page?.cta?.url),
+  );
+  const isPageLoading = loading && !page;
+
+  if (isPageLoading || !hasPageContent) {
+    return (
+      <>
+        <Seo
+          title={`${heroTitle || "Help & Contact"} | Sam Global`}
+          description={description}
+        />
+        <section className="w-container py-8 sm:py-10">
+          <h1 className="mb-8 text-2xl font-bold text-ink sm:text-3xl">
+            {heroTitle || "Help & Contact"}
+          </h1>
+          <ApiState
+            loading={isPageLoading}
+            empty={!isPageLoading && !hasPageContent}
+            emptyTitle="Help & Contact content unavailable"
+            emptyText="Support information will appear here ."
+          />
+        </section>
+      </>
+    );
+  }
 
   return (
     <>
-      <Seo title={`${heroTitle} | Sam Global`} description={description} />
+      <Seo
+        title={`${heroTitle || "Help & Contact"} | Sam Global`}
+        description={description}
+      />
+
       <FAQHeroSection title={heroTitle} description={description} />
 
       <section className="w-container py-14 sm:py-16 lg:py-20">

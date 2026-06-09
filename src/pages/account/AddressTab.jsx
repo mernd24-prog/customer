@@ -73,6 +73,18 @@ export default function AddressTab({ user }) {
   const addCountry = addForm.watch("country");
   const editCountry = editForm.watch("country");
 
+  // Watchers for Add Form
+  const addCountry = addForm.watch("country");
+  const addState = addForm.watch("state");
+  const addCity = addForm.watch("city");
+  const addPostalCode = addForm.watch("postalCode");
+
+  // Watchers for Edit Form
+  const editCountry = editForm.watch("country");
+  const editState = editForm.watch("state");
+  const editCity = editForm.watch("city");
+  const editPostalCode = editForm.watch("postalCode");
+
   // Fetch initial countries and states
   useEffect(() => {
     fetchFullList(dispatch, fetchCountries)
@@ -117,7 +129,6 @@ export default function AddressTab({ user }) {
   const addPostalCode = addForm.watch("postalCode");
 
   const addCountryObj = countries.find((c) => (c.name || c) === addCountry);
-  const addCountryId = addCountryObj?._id || addCountryObj?.id;
   const addDialCodes = addCountryObj?.dialCode
     ? [addCountryObj.dialCode]
     : Array.from(
@@ -210,7 +221,6 @@ export default function AddressTab({ user }) {
   const editPostalCode = editForm.watch("postalCode");
 
   const editCountryObj = countries.find((c) => (c.name || c) === editCountry);
-  const editCountryId = editCountryObj?._id || editCountryObj?.id;
   const editDialCodes = editCountryObj?.dialCode
     ? [editCountryObj.dialCode]
     : Array.from(
