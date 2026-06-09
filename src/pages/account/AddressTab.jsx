@@ -70,16 +70,12 @@ export default function AddressTab({ user }) {
   const [editStates, setEditStates] = useState([]);
   const [editCities, setEditCities] = useState([]);
   const [editPostalCodes, setEditPostalCodes] = useState([]);
-  const addCountry = addForm.watch("country");
-  const editCountry = editForm.watch("country");
 
-  // Watchers for Add Form
   const addCountry = addForm.watch("country");
   const addState = addForm.watch("state");
   const addCity = addForm.watch("city");
   const addPostalCode = addForm.watch("postalCode");
 
-  // Watchers for Edit Form
   const editCountry = editForm.watch("country");
   const editState = editForm.watch("state");
   const editCity = editForm.watch("city");
@@ -121,12 +117,6 @@ export default function AddressTab({ user }) {
       setEditStates([]);
     }
   }, [editCountry, countries, dispatch]);
-
-  // Watchers for Add Form
-
-  const addState = addForm.watch("state");
-  const addCity = addForm.watch("city");
-  const addPostalCode = addForm.watch("postalCode");
 
   const addCountryObj = countries.find((c) => (c.name || c) === addCountry);
   const addDialCodes = addCountryObj?.dialCode
@@ -213,12 +203,6 @@ export default function AddressTab({ user }) {
       }
     }
   }, [addCountry, countries, addForm]);
-
-  // Watchers for Edit Form
-
-  const editState = editForm.watch("state");
-  const editCity = editForm.watch("city");
-  const editPostalCode = editForm.watch("postalCode");
 
   const editCountryObj = countries.find((c) => (c.name || c) === editCountry);
   const editDialCodes = editCountryObj?.dialCode
