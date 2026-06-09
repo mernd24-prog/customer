@@ -6,6 +6,7 @@ import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import BrandButton from "../../components/ui/BrandButton";
 import { fetchCmsPageBySlug } from "../../features/cms/cmsSlice";
+import { isNotFoundApiError } from "../../utils/apiErrors";
 
 function CmsContent({ body }) {
   if (!body) return null;
@@ -46,6 +47,10 @@ export default function CmsPage({ slugOverride = "" }) {
     : [];
   const author = page?.author;
   const readTime = page?.readTime || page?.metadata?.readTime;
+  const pageUnavailable =
+    !page &&
+    !cmsState.loading &&
+    (!cmsState.error || isNotFoundApiError(cmsState.error));
 
   return (
     <>
@@ -73,10 +78,10 @@ export default function CmsPage({ slugOverride = "" }) {
       <div className="w-container  py-8">
         <ApiState
           loading={cmsState.loading && !page}
-          error={cmsState.error}
-          empty={!page && !cmsState.loading}
-          emptyTitle="Page not found"
-          emptyText="This content page doesn't exist or has been removed."
+          error={pageUnavailable ? null : cmsState.error}
+          empty={pageUnavailable}
+          emptyTitle="Coming soon"
+          emptyText="This content page is being prepared and will be available soon."
           onRetry={() => dispatch(fetchCmsPageBySlug({ slug }))}
         >
           {page && (

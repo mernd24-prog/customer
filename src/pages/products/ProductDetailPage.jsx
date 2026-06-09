@@ -63,6 +63,7 @@ import {
   buildCartItem,
 } from "../../utils/ecommerce";
 import { isNotFoundApiError } from "../../utils/apiErrors";
+import CUSTOMER_ROUTES from "../../constants/routes";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
@@ -631,7 +632,7 @@ export default function ProductDetailPage() {
           {product?.parentCategory && (
             <>
               <Link
-                to={`/categories/${product.parentCategory}`}
+                to={CUSTOMER_ROUTES.category(product.parentCategory)}
                 className="capitalize hover:text-ink transition-all duration-300 ease-in-out"
               >
                 {(product.parentCategory || '').replace(/-/g, ' ')}
@@ -642,7 +643,7 @@ export default function ProductDetailPage() {
           {product?.category && product.category !== product.parentCategory && (
             <>
               <Link
-                to={`/categories/${product.category}`}
+                to={CUSTOMER_ROUTES.category(product.category)}
                 className="capitalize hover:text-ink transition-all duration-300 ease-in-out"
               >
                 {(product.category || '').replace(/-/g, ' ')}
@@ -659,8 +660,8 @@ export default function ProductDetailPage() {
           loading={productState.loading && !product}
           error={productState.error}
           empty={!product && !productState.loading}
-          emptyTitle="Product not found"
-          emptyText="This product may no longer be available."
+          emptyTitle="Product coming soon"
+          emptyText="This product page is being prepared or is temporarily unavailable."
           onRetry={() => dispatch(fetchProductById({ productId }))}
         >
           {product && (

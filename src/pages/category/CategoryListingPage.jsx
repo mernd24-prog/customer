@@ -154,7 +154,7 @@ function CategoryLinkList({ items }) {
       {items.map((item) => (
         <Link
           key={item.key}
-          to={CUSTOMER_ROUTES.category(encodeURIComponent(item.key))}
+          to={CUSTOMER_ROUTES.category(item.key)}
           className="rounded-lg px-2 py-2 text-sm font-medium leading-snug text-[var(--customer-ink)] transition-colors duration-200 hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-gold-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]"
         >
           {item.label}
@@ -170,7 +170,7 @@ function CategoryTile({ category }) {
 
   return (
     <Link
-      to={CUSTOMER_ROUTES.category(encodeURIComponent(category.routeKey))}
+      to={CUSTOMER_ROUTES.category(category.routeKey)}
       className="group block text-center"
     >
       <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[14px] bg-surface-soft p-4 transition-all duration-300 ease-in-out group-hover:bg-[var(--customer-gold-soft)]">
@@ -390,9 +390,7 @@ export default function CategoryListingPage() {
             {sidebarCategories.map((category) => (
               <Link
                 key={category.key}
-                to={CUSTOMER_ROUTES.category(
-                  encodeURIComponent(category.key),
-                )}
+                to={CUSTOMER_ROUTES.category(category.key)}
                 className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
               >
                 {category.label}

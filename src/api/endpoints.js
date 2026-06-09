@@ -2,6 +2,15 @@ export const API_PREFIX = "/api/v1";
 
 export const SEARCH_PREFIX = `${API_PREFIX}/search`;
 
+const pathParam = (value = "") => {
+  const text = String(value || "").trim();
+  try {
+    return encodeURIComponent(decodeURIComponent(text));
+  } catch {
+    return encodeURIComponent(text);
+  }
+};
+
 export const FILE_UPLOAD_MODULES = {
   profiles: "PROFILES",
 };
@@ -87,8 +96,8 @@ export const endpoints = {
   },
   platform: {
     categories: `${API_PREFIX}/platform/categories`,
-    category: (categoryKey) => `${API_PREFIX}/platform/categories/${categoryKey}`,
-    categoryAttributes: (categoryKey) => `${API_PREFIX}/platform/categories/${categoryKey}/attributes`,
+    category: (categoryKey) => `${API_PREFIX}/platform/categories/${pathParam(categoryKey)}`,
+    categoryAttributes: (categoryKey) => `${API_PREFIX}/platform/categories/${pathParam(categoryKey)}/attributes`,
     families: `${API_PREFIX}/platform/families`,
     family: (familyCode) => `${API_PREFIX}/platform/families/${familyCode}`,
     variants: `${API_PREFIX}/platform/variants`,
@@ -250,7 +259,7 @@ export const endpoints = {
     feeConfig: `${API_PREFIX}/admin/platform/fee-config`,
     feeConfigDetail: (configId) => `${API_PREFIX}/admin/platform/fee-config/${configId}`,
     platformCategories: `${API_PREFIX}/admin/platform/categories`,
-    platformCategory: (categoryKey) => `${API_PREFIX}/admin/platform/categories/${categoryKey}`,
+    platformCategory: (categoryKey) => `${API_PREFIX}/admin/platform/categories/${pathParam(categoryKey)}`,
     platformProductFamilies: `${API_PREFIX}/admin/platform/product-families`,
     platformProductFamily: (familyCode) => `${API_PREFIX}/admin/platform/product-families/${familyCode}`,
     platformProductVariants: `${API_PREFIX}/admin/platform/product-variants`,
@@ -261,7 +270,7 @@ export const endpoints = {
     platformProductOption: (optionId) => `${API_PREFIX}/admin/platform/product-options/${optionId}`,
     platformProductOptionValues: `${API_PREFIX}/admin/platform/product-option-values`,
     platformProductOptionValue: (optionValueId) => `${API_PREFIX}/admin/platform/product-option-values/${optionValueId}`,
-    platformCategoryAttributes: (categoryKey) => `${API_PREFIX}/admin/categories/${categoryKey}/attributes`,
+    platformCategoryAttributes: (categoryKey) => `${API_PREFIX}/admin/categories/${pathParam(categoryKey)}/attributes`,
     platformCatalogPrefill: `${API_PREFIX}/admin/platform/catalog-prefill`,
     platformGeography: `${API_PREFIX}/admin/platform/geography`,
     platformGeographyDetail: (countryCode) => `${API_PREFIX}/admin/platform/geography/${countryCode}`,

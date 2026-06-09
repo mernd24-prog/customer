@@ -158,7 +158,7 @@ export default function BrandOutletPage() {
           <OutletLinkList
             items={sidebarCategories}
             getHref={(category) =>
-              CUSTOMER_ROUTES.category(encodeURIComponent(category.key))
+              CUSTOMER_ROUTES.category(category.key)
             }
           />
         ),
@@ -170,7 +170,7 @@ export default function BrandOutletPage() {
           <OutletLinkList
             items={sidebarBrands}
             getHref={(brand) =>
-              CUSTOMER_ROUTES.brand(encodeURIComponent(brand.key))
+              CUSTOMER_ROUTES.brand(brand.key)
             }
           />
         ),
@@ -211,9 +211,7 @@ export default function BrandOutletPage() {
                       {sidebarCategories.map((category) => (
                         <Link
                           key={category.key}
-                          to={CUSTOMER_ROUTES.category(
-                            encodeURIComponent(category.key),
-                          )}
+                          to={CUSTOMER_ROUTES.category(category.key)}
                           className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
                         >
                           {category.label}

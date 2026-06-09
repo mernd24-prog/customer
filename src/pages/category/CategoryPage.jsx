@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ChevronRight, Grid2X2, LayoutGrid } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import NotFoundPage from "../NotFoundPage";
+import CUSTOMER_ROUTES from "../../constants/routes";
 import {
   Breadcrumbs,
   CollectionToolbar,
@@ -39,7 +40,7 @@ function SubCategoryCard({ sub, isActive, onClick }) {
 
   return (
     <Link
-      to={`/categories/${key}`}
+      to={CUSTOMER_ROUTES.category(key)}
       onClick={onClick}
       className={`group flex min-w-[100px] max-w-[130px] flex-col items-center gap-2 rounded-xl p-3 text-center transition-all duration-200 ${
         isActive
@@ -105,7 +106,7 @@ function ChildChips({ children, selectedKey, onSelect }) {
         return (
           <Link
             key={k}
-            to={`/categories/${k}`}
+            to={CUSTOMER_ROUTES.category(k)}
             className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
               selectedKey === k
                 ? "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-white"
@@ -116,6 +117,38 @@ function ChildChips({ children, selectedKey, onSelect }) {
           </Link>
         );
       })}
+    </div>
+  );
+}
+
+function CategoryPageSkeleton() {
+  return (
+    <div className="animate-pulse py-5 sm:py-7">
+      <div className="mt-4 rounded-[var(--customer-radius-lg)] border border-[var(--customer-border)] bg-[var(--customer-cream)] px-5 py-6">
+        <div className="mb-3 h-3 w-48 rounded bg-[var(--customer-border)]" />
+        <div className="h-8 w-64 max-w-full rounded bg-[var(--customer-border)]" />
+        <div className="mt-3 h-4 w-full max-w-xl rounded bg-[var(--customer-border)]" />
+      </div>
+      <div className="mt-5 flex items-center justify-between">
+        <div className="h-8 w-40 rounded bg-[var(--customer-border)]" />
+        <div className="h-8 w-28 rounded bg-[var(--customer-border)]" />
+      </div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
+        <div className="hidden space-y-3 lg:block">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div key={index} className="h-10 rounded bg-[var(--customer-border)]" />
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div key={index} className="space-y-3">
+              <div className="aspect-[3/4] rounded-[14px] bg-[var(--customer-border)]" />
+              <div className="h-4 rounded bg-[var(--customer-border)]" />
+              <div className="h-4 w-2/3 rounded bg-[var(--customer-border)]" />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -134,6 +167,7 @@ export default function CategoryPage() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [categoryError, setCategoryError] = useState(null);
+  const [categoryLoading, setCategoryLoading] = useState(true);
 
   // active sub-category key for the top strip highlight
   const activeSubKey = searchParams.get("sub") || "";
@@ -179,18 +213,21 @@ export default function CategoryPage() {
     async ({ page = 1, append = false } = {}) => {
       const params = getParams(page);
       if (append) setIsLoadingMore(true);
-      const result = await dispatch(fetchProducts(params)).unwrap();
-      const data = result?.data;
-      const list = Array.isArray(data) ? data : data?.items || data?.list || [];
-      const m = result?.meta || {};
-      setPageInfo({
-        page: Number(m.page || m.currentPage || params.page || 1),
-        totalPages: Number(m.totalPages || m.pages || 1),
-        total: Number(m.total || m.count || list.length || 0),
-      });
-      setItems((prev) => (append ? [...prev, ...list] : list));
-      setFirstLoadDone(true);
-      setIsLoadingMore(false);
+      try {
+        const result = await dispatch(fetchProducts(params)).unwrap();
+        const data = result?.data;
+        const list = Array.isArray(data) ? data : data?.items || data?.list || [];
+        const m = result?.meta || {};
+        setPageInfo({
+          page: Number(m.page || m.currentPage || params.page || 1),
+          totalPages: Number(m.totalPages || m.pages || 1),
+          total: Number(m.total || m.count || list.length || 0),
+        });
+        setItems((prev) => (append ? [...prev, ...list] : list));
+        setFirstLoadDone(true);
+      } finally {
+        if (append) setIsLoadingMore(false);
+      }
     },
     [dispatch, getParams],
   );
@@ -209,6 +246,7 @@ export default function CategoryPage() {
     setCategoryData(null);
     setSubCategories([]);
     setCategoryError(null);
+    setCategoryLoading(true);
 
     dispatch(fetchCategoryByKey({ categoryKey }))
       .unwrap()
@@ -230,6 +268,9 @@ export default function CategoryPage() {
       })
       .catch((error) => {
         setCategoryError(error);
+      })
+      .finally(() => {
+        setCategoryLoading(false);
       });
 
     dispatch(fetchBrands({ limit: 100 }))
@@ -321,7 +362,7 @@ export default function CategoryPage() {
       content: (
         <div className="flex flex-col gap-0.5">
           <Link
-            to={`/categories/${categoryKey}`}
+            to={CUSTOMER_ROUTES.category(categoryKey)}
             className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
               !activeSubKey ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]" : "text-[var(--customer-ink)] hover:bg-gray-50"
             }`}
@@ -336,7 +377,7 @@ export default function CategoryPage() {
             return (
               <Link
                 key={k}
-                to={`/categories/${k}`}
+                to={CUSTOMER_ROUTES.category(k)}
                 className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
                   isAct ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]" : "text-[var(--customer-ink)] hover:bg-gray-50"
                 }`}
@@ -444,6 +485,10 @@ export default function CategoryPage() {
     return <NotFoundPage />;
   }
 
+  if (categoryLoading && !categoryData && !firstLoadDone && !products.length) {
+    return <CategoryPageSkeleton />;
+  }
+
   return (
     <>
       <Seo
@@ -485,6 +530,12 @@ export default function CategoryPage() {
         </div>
       )}
 
+      {categoryError && !isNotFoundApiError(categoryError) && (
+        <div className="mt-4 rounded-[var(--customer-radius)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Category details could not be loaded right now. Product results and filters are still available below.
+        </div>
+      )}
+
       {/* ── Subcategory showcase strip ───────────────────────────────────── */}
       {subCategories.length > 0 && (
         <div className="mt-4 rounded-[var(--customer-radius)] border border-[var(--customer-border)] bg-white p-4">
@@ -494,7 +545,7 @@ export default function CategoryPage() {
               Shop by Sub-Category
             </h2>
             <Link
-              to={`/categories/${categoryKey}`}
+              to={CUSTOMER_ROUTES.category(categoryKey)}
               className="text-xs text-[var(--customer-gold)] hover:underline"
             >
               View All

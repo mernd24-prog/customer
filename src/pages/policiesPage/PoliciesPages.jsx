@@ -134,8 +134,8 @@ const PolicyPage = () => {
         loading={loading && !cmsData}
         error={null}
         empty={!cmsData && !loading}
-        emptyTitle="Content Not Found"
-        emptyText={config?.emptyText}
+        emptyTitle="Coming soon"
+        emptyText={config?.emptyText || "This policy page is being prepared."}
       >
         {data && (
           <>

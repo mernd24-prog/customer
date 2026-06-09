@@ -25,9 +25,9 @@ export default function BrandProductPage({
     return (
       <div className="w-container py-16 text-center">
         <Store size={48} className="mx-auto mb-4 text-gray-300" />
-        <h2 className=" text-2xl font-bold text-ink">Brand Not Found</h2>
+        <h2 className=" text-2xl font-bold text-ink">Brand coming soon</h2>
         <p className="mt-2  text-sm text-muted">
-          The brand you&apos;re looking for doesn&apos;t exist or may have been removed.
+          This brand page is being prepared and will be available soon.
         </p>
         <Link
           to="/products"

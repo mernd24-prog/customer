@@ -2,6 +2,7 @@ import { useState } from "react";
 import { SkeletonLoader } from "../../components/common/skeleton";
 import CategoryCard from "./CategoryCard";
 import SectionContainer from "../ui/SectionContainer";
+import CUSTOMER_ROUTES from "../../constants/routes";
 
 const fallbackCategoryImages = [
   "/image/jpg/stylish-girls.jpg",
@@ -123,9 +124,9 @@ export default function HomeCategoryGrid({
             }
             href={
               item.categoryKey
-                ? `/categories/${item.categoryKey}`
+                ? CUSTOMER_ROUTES.category(item.categoryKey)
                 : item.slug
-                  ? `/categories/${item.slug}`
+                  ? CUSTOMER_ROUTES.category(item.slug)
                   : undefined
             }
             badge={item.badge || badge}

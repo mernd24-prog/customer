@@ -14,6 +14,7 @@ import {
   getImageFallbackSrc,
   getImageUrlFromValue,
 } from "../../utils/ecommerce";
+import CUSTOMER_ROUTES from "../../constants/routes";
 
 const slugifyKey = (value = "") =>
   String(value).trim().toLowerCase().replace(/\s+/g, "-");
@@ -32,7 +33,7 @@ const DEFAULT_LABELS = {
   promoButton: "Explore Now",
 };
 
-const defaultGetItemHref = (item) => `/categories/${item.categoryKey}`;
+const defaultGetItemHref = (item) => CUSTOMER_ROUTES.category(item.categoryKey);
 const defaultGetQuickLinkHref = (item) => item?.link || "#";
 const defaultImageErrorHandler = (event, title, fallbackType) => {
   applyImageFallback(event, title, fallbackType);
