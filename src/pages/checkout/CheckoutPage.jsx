@@ -338,20 +338,6 @@ export default function CheckoutPage() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (country) {
-      const countryObj = countries.find((c) => (c.name || c) === country);
-      const countryId = countryObj?._id || countryObj?.id;
-      if (countryId) {
-        fetchFullList(dispatch, fetchStates, { countryId })
-          .then((list) => setStates(list))
-          .catch(() => setStates([]));
-      }
-    } else {
-      setStates([]);
-    }
-  }, [country, countries, dispatch]);
-
-  useEffect(() => {
     dispatch(
       fetchPaymentOptions({
         orderAmount: quotePayableAmount || total || subtotal || 0,
@@ -412,6 +398,17 @@ export default function CheckoutPage() {
     : Array.from(
         new Set(countries.map((c) => c.dialCode).filter(Boolean)),
       ).sort((a, b) => Number(a) - Number(b));
+
+  useEffect(() => {
+    if (!countryId) {
+      setStates([]);
+      return;
+    }
+
+    fetchFullList(dispatch, fetchStates, { countryId })
+      .then((list) => setStates(list))
+      .catch(() => setStates([]));
+  }, [countryId, dispatch]);
 
   // Clear state and city if they don't match the selected country
   useEffect(() => {

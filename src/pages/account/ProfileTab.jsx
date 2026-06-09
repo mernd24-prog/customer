@@ -118,35 +118,6 @@ export default function ProfileTab({ user }) {
     setAvatarPreview(globalThis.URL.createObjectURL(file));
   };
 
-  const handleRemoveAvatar = async () => {
-    const values = getValues();
-
-    await run(
-      dispatch,
-      updateMe({
-        email: values.email,
-        phone: values.phone,
-        avatarUrl: null,
-        user_image: null,
-        profile: {
-          firstName: values.firstName,
-          lastName: values.lastName,
-          avatar: "",
-          avatarUrl: null,
-        },
-      }),
-      "Profile image removed",
-    );
-
-    if (avatarPreview.startsWith("blob:")) {
-      globalThis.URL.revokeObjectURL(avatarPreview);
-    }
-
-    setAvatarFile(null);
-    setAvatarError("");
-    setAvatarPreview(fallbackAvatar);
-  };
-
   const submit = async (values) => {
     const profile = {
       firstName: values.firstName,
@@ -210,17 +181,6 @@ export default function ProfileTab({ user }) {
               </div>
             )}
           </button>
-
-          {avatarPreview !== fallbackAvatar && (
-            <button
-              type="button"
-              onClick={handleRemoveAvatar}
-              className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white opacity-0 shadow transition-opacity duration-300 hover:bg-red-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 group-hover:opacity-100"
-              aria-label="Remove profile image"
-            >
-              <X size={12} />
-            </button>
-          )}
         </div>
 
         <div className=" my-4">
