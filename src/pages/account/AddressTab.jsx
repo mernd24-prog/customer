@@ -70,6 +70,8 @@ export default function AddressTab({ user }) {
   const [editStates, setEditStates] = useState([]);
   const [editCities, setEditCities] = useState([]);
   const [editPostalCodes, setEditPostalCodes] = useState([]);
+  const addCountry = addForm.watch("country");
+  const editCountry = editForm.watch("country");
 
   // Fetch initial countries and states
   useEffect(() => {
@@ -109,7 +111,7 @@ export default function AddressTab({ user }) {
   }, [editCountry, countries, dispatch]);
 
   // Watchers for Add Form
-  const addCountry = addForm.watch("country");
+
   const addState = addForm.watch("state");
   const addCity = addForm.watch("city");
   const addPostalCode = addForm.watch("postalCode");
@@ -202,7 +204,7 @@ export default function AddressTab({ user }) {
   }, [addCountry, countries, addForm]);
 
   // Watchers for Edit Form
-  const editCountry = editForm.watch("country");
+
   const editState = editForm.watch("state");
   const editCity = editForm.watch("city");
   const editPostalCode = editForm.watch("postalCode");
@@ -218,9 +220,7 @@ export default function AddressTab({ user }) {
   // Clear state and city if they don't match the selected country for Edit Form
   useEffect(() => {
     if (editCountry && editState) {
-      const isValid = editStates.some(
-        (s) => (s.name || s) === editState,
-      );
+      const isValid = editStates.some((s) => (s.name || s) === editState);
       if (!isValid) {
         editForm.setValue("state", "");
         editForm.setValue("city", "");
@@ -355,9 +355,7 @@ export default function AddressTab({ user }) {
     <div className="grid gap-5">
       <div className="flex flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className=" text-base font-semibold text-ink">
-            Saved addresses
-          </p>
+          <p className=" text-base font-semibold text-ink">Saved addresses</p>
           <p className=" text-sm text-muted">
             {addresses.length
               ? `${addresses.length} address${addresses.length === 1 ? "" : "es"} saved`
