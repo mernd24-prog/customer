@@ -44,7 +44,6 @@ import { getRole, isAdminRole } from "../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
 import CategoryMegaMenu from "../components/ecommerce/CategoryMegaMenu";
 import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
-import CUSTOMER_ROUTES from "../constants/routes";
 
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
@@ -470,15 +469,15 @@ export const Navbar = ({ icons: propIcons }) => {
             className="hidden lg:flex h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent p-0"
             aria-label="Menu"
           >
-             <img
+            {/* <img
               src="/image/png/list.png"
               alt="Menu"
               className="h-[40px] w-[40px] object-contain"
-            /> 
+            /> */}
             <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
               Menu
             </span>
-          </HeaderIconButton> 
+          </HeaderIconButton>
         </div>
         <SearchBar
           value={searchQuery}
@@ -712,10 +711,7 @@ export const CategoryBar = ({ headerData }) => {
         <div className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5  lg:justify-center lg:gap-5">
           {visibleCategories.map((item, index) => {
             // Always use categoryKey first — it's the canonical route key from the DB
-            const categoryHref = CUSTOMER_ROUTES.category(
-              item?.categoryKey ||
-                keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category"))),
-            );
+            const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
             const isActive =
               activeMenu?.categoryKey === item?.categoryKey ||
               location.pathname === categoryHref ||
