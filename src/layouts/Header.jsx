@@ -423,17 +423,29 @@ export const Navbar = ({ icons: propIcons }) => {
 
   const handleSearch = (nextQuery = searchQuery, category = null) => {
     const trimmedQuery = nextQuery.trim();
+    const categoryKey = category
+      ? category.categoryKey ||
+        category.key ||
+        category.slug ||
+        buildCategorySlug(textOr(category?.title, category?.name))
+      : "";
+
+    if (!trimmedQuery && categoryKey) {
+      navigate(`/categories/${encodeURIComponent(categoryKey)}`);
+      return;
+    }
+
     let url = `/search?q=${encodeURIComponent(trimmedQuery)}`;
     if (category) {
       const catKey =
-        category.id ||
-        category._id ||
-        category.categoryId ||
         category.categoryKey ||
         category.key ||
-        category.slug;
+        category.slug ||
+        category.categoryId ||
+        category.id ||
+        category._id;
       const catName = category.title || category.name || category.label;
-      if (catKey) url += `&categoryId=${encodeURIComponent(catKey)}`;
+      if (catKey) url += `&category=${encodeURIComponent(catKey)}`;
       if (catName) url += `&categoryName=${encodeURIComponent(catName)}`;
     }
     if (trimmedQuery || category) {
@@ -452,7 +464,7 @@ export const Navbar = ({ icons: propIcons }) => {
               className="h-[50px] w-[50px] object-contain sm:w-[92px] lg:h-[58px] lg:w-[140px]"
             />
           </Link>
-          <div className="hidden h-10 w-px bg-[var(--customer-border)] lg:block" />
+          {/* <div className="hidden h-10 w-px bg-[var(--customer-border)] lg:block" /> */}
           <HeaderIconButton
             className="hidden lg:flex h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent p-0"
             aria-label="Menu"
@@ -492,8 +504,8 @@ export const Navbar = ({ icons: propIcons }) => {
                     src={item?.img}
                     alt={getNavbarIconLabel(item)}
                     className={`object-contain ${item?.name === "IN"
-                        ? "h-[22px] w-[24px]"
-                        : "h-[17px] w-[17px]"
+                      ? "h-[22px] w-[24px]"
+                      : "h-[17px] w-[17px]"
                       }`}
                   />
                   <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
@@ -718,7 +730,7 @@ export const CategoryBar = ({ headerData }) => {
                   aria-controls="category-mega-menu"
                   className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
-                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-all duration-300 ease-in-out">
+                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px] lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform">
                     {item?.img ? (
                       <ImageSkeleton
                         src={item?.img}

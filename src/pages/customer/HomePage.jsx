@@ -33,9 +33,9 @@ export function HomePage() {
     dispatch(fetchCategories()).catch(() => {});
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
     if (tokenStorage.getAccessToken()) {
-      dispatch(fetchRecommendations({ limit: 8 })).catch(() => {});
+      dispatch(fetchRecommendations({ limit: 10 })).catch(() => {});
     }
-    dispatch(fetchProducts({ limit: 8, page: 1, sort: "newest" })).catch(
+    dispatch(fetchProducts({ limit: 10, page: 1, sort: "newest" })).catch(
       () => {},
     );
     dispatch(fetchCmsPages({ limit: 100 })).catch(() => {});
@@ -96,7 +96,7 @@ export function HomePage() {
           title="Explore Our Collection"
           description="Handpicked products loved by thousands of shoppers"
           actionLabel="Browse All Products"
-          limit={5}
+          limit={10}
         />
       </div>
     </>

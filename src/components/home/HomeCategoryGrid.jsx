@@ -4,11 +4,11 @@ import CategoryCard from "./CategoryCard";
 import SectionContainer from "../ui/SectionContainer";
 
 const fallbackCategoryImages = [
-  "/image/jpg/stylish-girls.jpg",
-  "/image/png/men-fashion.png",
-  "/image/jpg/kids-fashion.jpg",
-  "/image/jpg/home-decor.jpg",
-  "/image/jpg/smart-home.jpg",
+  "/image/png/electronics.png",
+  "/image/png/computerLaptop.png",
+  "/image/jpg/tv.jpg",
+  "/image/png/manFashion.png",
+  "/image/jpg/womanFashion.jpg",
 ];
 
 const defaultHomeCategories = [
@@ -29,7 +29,7 @@ const defaultHomeCategories = [
   },
   {
     title: "Electronics",
-    image: "/image/jpg/smart-home.jpg",
+    image: "/image/jpg/electronics.jpg",
     categoryKey: "electronics",
   },
   {
@@ -37,31 +37,7 @@ const defaultHomeCategories = [
     image: "/image/jpg/home-decor.jpg",
     categoryKey: "home-kitchen",
   },
-  {
-    title: "Beauty & Care",
-    image: "/image/jpg/stylish-girls.jpg",
-    categoryKey: "beauty",
-  },
-  {
-    title: "Sports & Fitness",
-    image: "/image/jpg/home-decor.jpg",
-    categoryKey: "sports",
-  },
-  {
-    title: "Furniture",
-    image: "/image/jpg/home-decor.jpg",
-    categoryKey: "furniture",
-  },
-  {
-    title: "Jewellery",
-    image: "/image/jpg/stylish-girls.jpg",
-    categoryKey: "jewelry",
-  },
-  {
-    title: "Books & Media",
-    image: "/image/jpg/home-decor.jpg",
-    categoryKey: "books",
-  },
+
 ];
 
 export default function HomeCategoryGrid({
@@ -76,7 +52,7 @@ export default function HomeCategoryGrid({
 }) {
   const [activeId, setActiveId] = useState(null);
   const displayCategories = categories.length
-    ? categories.slice(0, 10)
+    ? categories.slice(0, 5)
     : defaultHomeCategories;
 
   if (loading) {
@@ -108,11 +84,11 @@ export default function HomeCategoryGrid({
                   : `idx-${idx}`
             }
             image={
-              item.imageUrl ||
-              item.image ||
-              item.thumbnailUrl ||
-              item.coverImage ||
               fallbackCategoryImages[idx % fallbackCategoryImages.length]
+              // item.imageUrl ||
+              // item.image ||
+              // item.thumbnailUrl ||
+              // item.coverImage ||
             }
             title={item.title || item.name || "Featured Collection"}
             stylesCount={

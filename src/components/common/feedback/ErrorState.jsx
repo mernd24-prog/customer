@@ -1,5 +1,7 @@
 import { RefreshCw } from "lucide-react";
+import NotFoundPage from "../../../pages/NotFoundPage";
 import { cn } from "../../../utils/classNames";
+import { isNotFoundApiError } from "../../../utils/apiErrors";
 
 export default function ErrorState({
   title = "We could not load this.",
@@ -7,6 +9,10 @@ export default function ErrorState({
   onRetry,
   className = "",
 }) {
+  if (isNotFoundApiError(message) || isNotFoundApiError(title)) {
+    return <NotFoundPage />;
+  }
+
   return (
     <div className={cn("state-box error", className)}>
       <strong>{title}</strong>

@@ -159,11 +159,11 @@ export const CategoryMoreButton = ({
       {...props}
     >
       {/* ICON */}
-      <span className="mx-auto flex h-[50px] w-[50px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5 sm:h-[65px] sm:w-[65px] sm:p-2 lg:h-[90px] lg:w-[90px]">
+      <span className="mx-auto flex h-[50px] w-[50px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 shadow-sm transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform sm:h-[65px] sm:w-[65px] sm:p-2 lg:h-[90px] lg:w-[90px]">
         <img
           src={icon}
           alt={label}
-          className="h-7 w-7 object-contain sm:h-9 sm:w-9 lg:h-12 lg:w-12"
+          className="h-7 w-7 object-contain sm:h-9 sm:w-7 lg:h-9 lg:w-9"
         />
       </span>
 
