@@ -10,7 +10,7 @@ export default function HomeProductsForYouSection({
   description = "",
   actionLabel = "View Featured Products",
   actionHref = "/products",
-  limit = 8,
+  limit = 10,
 }) {
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const recommendationList = useSelector((s) => s.recommendation.list);

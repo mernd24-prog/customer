@@ -20,11 +20,9 @@ import useDebouncedValue from "../../hooks/useDebouncedValue";
 //     ]);
 //   }
 //   if (!data || typeof data !== "object") return [];
-//   if (Array.isArray(data?.items))
-//     return getCategoryListFromResponse(data.items);
+//   if (Array.isArray(data?.items)) return getCategoryListFromResponse(data.items);
 //   if (Array.isArray(data?.list)) return getCategoryListFromResponse(data.list);
-//   if (Array.isArray(data?.categories))
-//     return getCategoryListFromResponse(data.categories);
+//   if (Array.isArray(data?.categories)) return getCategoryListFromResponse(data.categories);
 //   if (data?.category && typeof data.category === "object") {
 //     return getCategoryListFromResponse([data.category]);
 //   }
@@ -70,23 +68,23 @@ const SearchBar = ({
   const categoriesRaw = useSelector((state) => state.catalog.list || []);
   const categoriesLoading = useSelector((state) => state.catalog.loading);
   const suggestionsRaw = useSelector((state) => state.search.suggestions || []);
-  // const categories = useMemo(
+   // const categories = useMemo(
   //   () => getCategoryListFromResponse(categoriesRaw),
   //   [categoriesRaw],
   // );
-  const categories = categoriesRaw
+     const categories = categoriesRaw
   const suggestions = Array.isArray(suggestionsRaw)
     ? Array.from(
-        new Set(
-          suggestionsRaw
-            .map((suggestion) =>
-              typeof suggestion === "string"
-                ? suggestion
-                : suggestion?.title || suggestion?.name || suggestion?.query,
-            )
-            .filter(Boolean),
-        ),
-      )
+      new Set(
+        suggestionsRaw
+          .map((suggestion) =>
+            typeof suggestion === "string"
+              ? suggestion
+              : suggestion?.title || suggestion?.name || suggestion?.query,
+          )
+          .filter(Boolean),
+      ),
+    )
     : [];
 
   const [internalQuery, setInternalQuery] = useState("");
@@ -106,6 +104,8 @@ const SearchBar = ({
 
   // Fetch categories if not loaded
   useEffect(() => {
+    let ignore = false;
+
     if (
       enableCategoryDropdown &&
       !categories.length &&
@@ -116,12 +116,21 @@ const SearchBar = ({
       categoriesRequestedRef.current = true;
       categoriesRequestStarted = true;
       dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 }))
-        .catch(() => {})
+        .then((action) => {
+          if (ignore) return;
+          const nextCategories = getCategoryListFromResponse(action?.payload?.data).filter(isCategoryLike);
+          setCategoryOptions(nextCategories);
+        })
+        .catch(() => { })
         .finally(() => {
           categoriesRequestStarted = false;
         });
     }
-  }, [dispatch, enableCategoryDropdown, categories.length, categoriesLoading]);
+
+    return () => {
+      ignore = true;
+    };
+  }, [dispatch, enableCategoryDropdown,categories.length, categoriesLoading]);
 
   useEffect(() => {
     if (!enableAutocomplete) return;
@@ -137,7 +146,7 @@ const SearchBar = ({
         params: { q: query, limit: autocompleteLimit },
         cacheKey: `search-autocomplete-${query}-${autocompleteLimit}`,
       }),
-    ).catch(() => {});
+    ).catch(() => { });
   }, [
     autocompleteLimit,
     autocompleteMinLength,
@@ -173,14 +182,35 @@ const SearchBar = ({
   // Handle outside clicks to close dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (!dropdownRef.current) return;
+
+      if (!dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
         setIsSuggestionOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+
+    const handleScroll = (event) => {
+      if (!dropdownRef.current) return;
+
+      // If scroll is happening inside dropdown → DO NOTHING
+      const path = event.target;
+
+      if (dropdownRef.current.contains(path)) return;
+
+      // Scroll happened outside dropdown → close it
+      setIsDropdownOpen(false);
+      setIsSuggestionOpen(false);
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    // IMPORTANT: passive scroll + capture phase
+    window.addEventListener("scroll", handleScroll, true);
+
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll, true);
     };
   }, []);
 
@@ -302,59 +332,52 @@ const SearchBar = ({
                       ? getCategoryLabel(selectedCategory)
                       : "All Categories"}
                   </span>
+
                   <ChevronDown
                     size={16}
-                    className={`text-[var(--customer-muted)] transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
+                    className={`text-[var(--customer-muted)] transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
 
                 <div
-                  className={`absolute left-0 right-0 sm:right-auto top-[calc(100%+10px)] z-50 max-h-[320px] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_18px_45px_rgba(3,1,77,0.14)] transition-all duration-300 ease-in-out sm:left-2 sm:min-w-[260px] sm:w-auto ${
-                    isDropdownOpen
+                  className={`absolute left-0 right-0 sm:right-auto top-[calc(100%+10px)] z-50 max-h-[320px] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_18px_45px_rgba(3,1,77,0.14)] transition-all duration-300 ease-in-out sm:left-2 sm:min-w-[260px] sm:w-auto ${isDropdownOpen
                       ? "visible translate-y-0 opacity-100"
-                      : "invisible -translate-y-2 opacity-0"
-                  }`}
+                      : "invisible -translate-y-2 opacity-0 pointer-events-none"
+                    }`}
                 >
-                    <div className="max-h-[320px] overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
-                      <button
-                        type="button"
-                        onClick={() => handleSelectCategory(null)}
-                        className={`w-full rounded-xl px-4 py-3 text-left text-sm transition-all duration-300 ease-in-out hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7] !outline-none focus:!outline-none focus-visible:!outline-none ${
-                          !selectedCategory
-                            ? "font-semibold text-[#03014D]"
-                            : "font-medium text-[var(--customer-ink)]"
-                        }`}
-                      >
-                        All Categories
-                      </button>
-                      {categories.map((category) => {
-                        const label = getCategoryLabel(category);
-                        const key = getCategoryId(category);
-                        const isSelected =
-                          selectedCategory &&
-                          (selectedCategory.categoryId === category.categoryId ||
-                            selectedCategory.categoryKey === category.categoryKey ||
-                            selectedCategory.key === category.key ||
-                            selectedCategory.slug === category.slug ||
-                            selectedCategory._id === category._id ||
-                            selectedCategory.id === category.id);
-                        return (
-                          <button
-                            key={key}
-                            type="button"
-                            onClick={() => handleSelectCategory(category)}
-                            className={`w-full rounded-xl px-4 py-3 text-left text-sm leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none ${
-                              isSelected
-                                ? "font-semibold text-[#03014D]"
-                                : "font-semibold text-[#03014D]"
+                  <div
+                    className="max-h-[320px] overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]"
+                  >
+                    {categories.map((category) => {
+                      const label = getCategoryLabel(category);
+                      const key = getCategoryId(category);
+
+                      const isSelected =
+                        selectedCategory &&
+                        (selectedCategory.categoryId === category.categoryId ||
+                          selectedCategory.categoryKey === category.categoryKey ||
+                          selectedCategory.key === category.key ||
+                          selectedCategory.slug === category.slug ||
+                          selectedCategory._id === category._id ||
+                          selectedCategory.id === category.id);
+
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => handleSelectCategory(category)}
+                          className={`w-full rounded-xl px-4 py-3 text-left text-sm leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none ${isSelected
+                              ? "font-semibold text-[#03014D]"
+                              : "font-medium text-[var(--customer-ink)]"
                             } hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7]`}
-                          >
-                            {label}
-                          </button>
-                        );
-                      })}
-                    </div>
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
                   </div>
+                </div>
               </div>
 
               {/* Vertical Divider */}
