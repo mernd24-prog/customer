@@ -4,7 +4,7 @@ import { SKELETON_PRESETS, SkeletonLoader } from "../common/skeleton";
 import { collageCard } from "../../constants/image.constant";
 import Label from "../common/label/Label";
 
-function CollageImage({ src, title, link }) {
+function CollageImage({ src, title, link, label }) {
   return (
     <div className="relative h-28 w-full overflow-hidden  bg-[var(--customer-cream)] md:w-full lg:h-36">
       <Link to={link}>
@@ -16,7 +16,7 @@ function CollageImage({ src, title, link }) {
         />
 
         <span className="absolute bottom-3 left-3 rounded-full  backdrop-blur-[8px]">
-          <Label variant="imageLabel">Trending</Label>
+          <Label variant="imageLabel">{label}</Label>
         </span>
       </Link>
     </div>
@@ -41,6 +41,7 @@ function CollageCard({ section }) {
             src={ele.image}
             link={ele.link}
             title={ele.title}
+            label={ele.label}
           />
         ))}
       </div>
@@ -81,40 +82,40 @@ export default function CollageMainSection({ cmsPages = [] }) {
       title: "Best Sellers in Men's Fashion",
       label: "Trending",
       images: [
-        { image: collageCard.menFashion, link: "/categories/mens-fashion" },
-        { image: collageCard.stylishPair, link: "/products" },
-        { image: collageCard.blazer, link: "/categories/fashion" },
-        { image: collageCard.watch, link: "/categories/accessories" },
+        { image: collageCard.menFashion, link: "/categories/mens-fashion", label: "Sneakers" },
+        { image: collageCard.stylishPair, link: "/products", label: "Jackets" },
+        { image: collageCard.blazer, link: "/categories/fashion", label: "Shirts" },
+        { image: collageCard.watch, link: "/categories/accessories", label: "Trousers" },
       ],
     },
     {
       title: "Up to 60% Off Home & Lifestyle",
-      label: "Trending",
+      label: "Hot Deal",
       images: [
-        { image: collageCard.homeDecor, link: "/categories/home" },
-        { image: collageCard.smartHome, link: "/categories/electronics" },
-        { image: collageCard.plants, link: "/categories/fashion" },
-        { image: collageCard.candles, link: "/categories/accessories" },
+        { image: collageCard.homeDecor, link: "/categories/home", label: "Vases" },
+        { image: collageCard.smartHome, link: "/categories/electronics", label: "Sofas" },
+        { image: collageCard.plants, link: "/categories/fashion", label: "Plants" },
+        { image: collageCard.candles, link: "/categories/accessories", label: "Candles" },
       ],
     },
     {
       title: "Trending in Women's Fashion",
-      label: "Trending",
+      label: "New In",
       images: [
-        { image: collageCard.hats, link: "/categories/womens-fashion" },
-        { image: collageCard.handbags, link: "/categories/jewellery" },
-        { image: collageCard.jeweler, link: "/categories/fashion" },
-        { image: collageCard.heels, link: "/categories/accessories" },
+        { image: collageCard.hats, link: "/categories/womens-fashion", label: "Hats" },
+        { image: collageCard.handbags, link: "/categories/jewellery", label: "Handbags" },
+        { image: collageCard.jeweler, link: "/categories/fashion", label: "Jeweler" },
+        { image: collageCard.heels, link: "/categories/accessories", label: "Heels" },
       ],
     },
     {
       title: "Top Picks in Kids Fashion",
-      label: "Trending",
+      label: "Popular",
       images: [
-        { image: collageCard.caps, link: "/categories/kids" },
-        { image: collageCard.shorts, link: "/products" },
-        { image: collageCard.shoes, link: "/categories/fashion" },
-        { image: collageCard.socks, link: "/categories/accessories" },
+        { image: collageCard.caps, link: "/categories/kids", label: "Caps" },
+        { image: collageCard.shorts, link: "/products", label: "Shorts" },
+        { image: collageCard.shoes, link: "/categories/fashion", label: "Shoes" },
+        { image: collageCard.socks, link: "/categories/accessories", label: "Socks" },
       ],
     },
   ];
