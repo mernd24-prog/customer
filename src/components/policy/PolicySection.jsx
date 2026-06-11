@@ -1,54 +1,80 @@
 import React from "react";
 import { infoSection } from "../../constants/image.constant";
 
+function getTextLines(value = "") {
+  return String(value || "")
+    .replace(/<li[^>]*>/gi, "\n")
+    .replace(/<\/li>/gi, "\n")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .split(/\n|•|&#8226;|&bull;/)
+    .map((line) => line.replace(/&nbsp;/g, " ").trim())
+    .filter(Boolean);
+}
+
 const PolicySection = ({ title, points, description, footer }) => {
   const visiblePoints = Array.isArray(points)
     ? points.filter((point) => point?.title || point?.description)
     : [];
 
   return (
-    <section className="group py-2 md:py-3 mt-3 first:mt-0">
+    <section className="py-1 first:pt-0">
       {title && (
-        <h2 className="mb-3  text-xl font-bold leading-tight text-ink md:text-2xl">
+        <h2 className="mb-3 text-[17px] font-bold leading-tight text-ink md:text-[28px]">
           {title}
         </h2>
       )}
 
       {description && (
-        <p className="mb-4  text-[15px] leading-relaxed tracking-normal text-ink md:text-[16.5px]">
+        <p className="mb-8 text-[12px] leading-relaxed tracking-normal text-muted md:text-[18px]">
           {description}
         </p>
       )}
 
       {visiblePoints.length > 0 && (
-        <ul className="space-y-4">
+        <div className="space-y-8">
           {visiblePoints.map((point, pIdx) => (
-            <li key={pIdx} className="flex items-start gap-2">
-              <div className="mt-1 flex-shrink-0">
-                <img
-                  src={infoSection.arrow}
-                  alt="arrow"
-                  className="w-4 h-4 md:w-5 md:h-5 object-contain opacity-70"
-                />
-              </div>
+            <div key={pIdx}>
+              {point.title && (
+                <h3 className="mb-3 text-[15px] font-bold leading-tight text-ink md:text-[28px]">
+                  {point.title}
+                </h3>
+              )}
 
-              <div className="text-muted leading-relaxed tracking-normal text-[15px] md:text-[16.5px] ">
-                {point.title && (
-                  <span className="font-semibold text-ink">
-                    {point.title}
-                    {point.description ? ": " : ""}
-                  </span>
-                )}
-                <span>{point.description}</span>
-              </div>
-            </li>
+              {getTextLines(point.description).length > 1 ? (
+                <ul className="space-y-2">
+                  {getTextLines(point.description).map((line, lineIdx) => (
+                    <li key={lineIdx} className="flex items-start gap-2">
+                      <img
+                        src={infoSection.arrow}
+                        alt=""
+                        className="mt-[3px] h-3 w-3 flex-shrink-0 object-contain md:h-3.5 md:w-3.5"
+                      />
+                      <span className="text-[12px] leading-relaxed tracking-normal text-muted md:text-[18px]">
+                        {line}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                getTextLines(point.description).map((line, lineIdx) => (
+                  <p
+                    key={lineIdx}
+                    className="text-[12px] leading-relaxed tracking-normal text-muted md:text-[13px]"
+                  >
+                    {line}
+                  </p>
+                ))
+              )}
+            </div>
           ))}
-        </ul>
+        </div>
       )}
 
       {footer && (
-        <div className="mt-2">
-          <p className="text-muted leading-relaxed tracking-normal text-[15px] md:text-[16.5px] ">
+        <div className="mt-8">
+          <p className="text-[12px] leading-relaxed tracking-normal text-muted md:text-[13px]">
             {footer}
           </p>
         </div>
