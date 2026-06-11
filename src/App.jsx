@@ -320,38 +320,13 @@ export default function App() {
               <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
               <Route path="/our-commitment" element={<OurCommitmentPage />} />
               <Route path="/features" element={<FeaturesPage />} />
-              {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" fallbackData={termsOfUseData} />} /> */}
 
-              {/* <Route
+              {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} /> */}
+              <Route
                 path="/shipping-policy"
-                element={
-                  <CmsPage
-                    slugOverride="shipping-policy"
-                    fallbackData={shippingPolicyData}
-                  />
-                }
-              /> */}
-              {/* <Route
-                path="/refund-policy"
-                element={
-                  <CmsPage
-                    slugOverride="refund-policy"
-                    fallbackData={refundPolicyData}
-                  />
-                }
-              /> */}
-              {/* <Route
-                path="/return-refund-policy"
-                element={
-                  <CmsPage
-                    slugOverride="return-refund-policy"
-                    fallbackData={refundPolicyData}
-                  />
-                }
-              /> */}
-              {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} />
-          <Route path="/shipping-policy" element={<CmsPage slugOverride="shipping-policy" />} />
-          <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} /> */}
+                element={<PolicyPage slugOverride="order-status-shipped" />}
+              />
+              {/* <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} />  */}
               {/* <Route path="/terms-of-use" element={<PolicyPage />} />
               <Route path="/shipping-policy" element={<PolicyPage />} />
               <Route path="/refund-policy" element={<PolicyPage />} /> */}

@@ -3,10 +3,9 @@ import { useLocation } from "react-router-dom";
 
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
-import { useCmsRecord, getCmsPayload } from "../../hooks/useCmsRecord";
+import { useCmsRecord } from "../../hooks/useCmsRecord";
 
 import PolicyHeader from "../../components/policy/PolicyHeader";
-import PolicyIntro from "../../components/policy/PolicyIntro";
 import PolicySection from "../../components/policy/PolicySection";
 
 const policyConfig = {
@@ -19,7 +18,7 @@ const policyConfig = {
 
   "/shipping-policy": {
     slug: "shipping-policy",
-    fallbackTitle: "Shipping Policy",
+    fallbackTitle: "Shipping & Delivery",
     emptyText: "The shipping policy is currently unavailable.",
     description: "Learn about our shipping times, costs, and delivery methods.",
   },
@@ -39,114 +38,91 @@ const policyConfig = {
   },
 };
 
+const emptyPolicyConfig = {};
+
 function cleanPolicyText(value = "") {
   return String(value || "")
     .replace(/^\s*:\s*/, "")
     .trim();
 }
 
-const PolicyPage = () => {
+const PolicyPage = ({ slugOverride = "" }) => {
   const location = useLocation();
 
-  const config = policyConfig[location.pathname];
+  const config = policyConfig[location.pathname] || emptyPolicyConfig;
+  const {
+    description: configDescription,
+    emptyText,
+    fallbackTitle,
+    slug,
+  } = config;
+  const cmsSlug = slugOverride || slug;
 
-  const { page: cmsPolicy, loading } = useCmsRecord(config?.slug);
+  const { page: cmsPolicy, loading } = useCmsRecord(cmsSlug);
 
-  const cmsData = useMemo(() => getCmsPayload(cmsPolicy, null), [cmsPolicy]);
-  const data = useMemo(() => {
-    if (!cmsData) return null;
+  const sections = useMemo(() => {
+    if (!cmsPolicy) return null;
 
-    const sections =
-      Array.isArray(cmsData.sections) && cmsData.sections.length > 0
-        ? cmsData.sections
-            .filter(
-              (section) =>
-                section?.title ||
-                section?.description ||
-                section?.points?.length > 0,
-            )
-            .map((section) => ({
-              type: section.type || "content",
-              title: section.title || "",
-              description: section.description || "",
-              points: Array.isArray(section.points)
-                ? section.points.map((point) => ({
-                    title: cleanPolicyText(point.title),
-                    description: cleanPolicyText(point.description),
-                    image: point.image || null,
-                    cta: point.cta || null,
-                    sortOrder: point.sortOrder || 0,
-                  }))
-                : [],
-              image: section.image || null,
-              gallery: section.gallery || [],
-              cta: section.cta || null,
-              footer: section.footer || "",
-              sortOrder: section.sortOrder || 0,
+    const sectionList = Array.isArray(cmsPolicy?.metadata?.data?.sections)
+      ? cmsPolicy.metadata.data.sections
+      : [];
+
+    return sectionList
+      .filter(
+        (section) =>
+          section?.title || section?.description || section?.points?.length > 0,
+      )
+      .map((section) => ({
+        type: section.type || "content",
+        title: section.title || "",
+        description: section.description || "",
+        points: Array.isArray(section.points)
+          ? section.points.map((point) => ({
+              title: cleanPolicyText(point.title),
+              description: cleanPolicyText(point.description),
+              image: point.image || null,
+              cta: point.cta || null,
+              sortOrder: point.sortOrder || 0,
             }))
-            .sort((a, b) => a.sortOrder - b.sortOrder)
-        : [
-            {
-              title: cmsData.title || config?.fallbackTitle,
-              description: cmsData.description || cmsData.excerpt || "",
-              points: Array.isArray(cmsData.points)
-                ? cmsData.points.map((point) => ({
-                    ...point,
-                    title: cleanPolicyText(point.title),
-                    description: cleanPolicyText(point.description),
-                  }))
-                : [],
-              footer: cmsData.footer || "",
-            },
-          ];
+          : [],
+        image: section.image || null,
+        gallery: section.gallery || [],
+        cta: section.cta || null,
+        footer: section.footer || "",
+        sortOrder: section.sortOrder || 0,
+      }))
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+  }, [cmsPolicy]);
+
+  const data = useMemo(() => {
+    if (!sections) return null;
 
     return {
-      title: cmsData.title || config?.fallbackTitle,
-
-      intro: {
-        heading:
-          cmsData.intro?.heading ||
-          cmsData.metadata?.data?.intro?.heading ||
-          cmsData.title ||
-          config?.fallbackTitle,
-
-        description:
-          cmsData.intro?.description ||
-          cmsData.metadata?.data?.intro?.description ||
-          cmsData.description ||
-          cmsData.excerpt ||
-          "",
-      },
-
+      title: fallbackTitle,
       sections,
     };
-  }, [cmsData, config]);
+  }, [sections, fallbackTitle]);
 
-  const pageTitle = `${data?.title || config?.fallbackTitle} | Sam Global`;
+  const pageTitle = `${data?.title || fallbackTitle} | Sam Global`;
 
-  const pageDescription = data?.intro?.description || config?.description;
+  const pageDescription = data?.sections?.[0]?.description || configDescription;
 
   return (
     <main className="w-full bg-white  pb-20">
       <Seo title={pageTitle} description={pageDescription} />
 
       <ApiState
-        loading={loading && !cmsData}
+        loading={loading && !sections}
         error={null}
-        empty={!cmsData && !loading}
+        empty={!sections?.length && !loading}
         emptyTitle="Coming soon"
-        emptyText={config?.emptyText || "This policy page is being prepared."}
+        emptyText={emptyText || "This policy page is being prepared."}
       >
         {data && (
           <>
             <PolicyHeader title={data.title} />
 
-            <div className="w-full px-8 md:px-12 lg:px-16 mt-12 md:mt-16 max-w-[1648px] mx-auto">
-              <PolicyIntro
-                heading={data.intro?.heading}
-                description={data.intro?.description}
-              />
-
+            <div className="mx-auto mt-10 w-full   md:mt-12 md:px-12">
               {data.sections?.length > 0 && (
                 <div className="space-y-10 md:space-y-12">
                   {data.sections.map((section, index) => (
