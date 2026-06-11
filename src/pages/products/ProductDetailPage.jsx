@@ -135,10 +135,6 @@ function ProductGallery({
       x: Math.max(0, Math.min(100, x)),
       y: Math.max(0, Math.min(100, y)),
     });
-
-    if (!isModal && !isZoomed) {
-      setIsZoomed(true);
-    }
   };
 
   const handleMouseLeave = () => {
@@ -147,19 +143,19 @@ function ProductGallery({
     }
   };
 
-  const handleImageClick = () => {
-    if (isModal) {
-      setIsZoomed((prev) => !prev);
-      return;
-    }
+  const handleImageClick = (e) => {
+    if (!isLarge && !isModal) return;
 
-    if (mainSwiper) {
-      if (mainSwiper.activeIndex === images.length - 1) {
-        mainSwiper.slideTo(0);
-      } else {
-        mainSwiper.slideNext();
-      }
-    }
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    setZoomPos({
+      x: Math.max(0, Math.min(100, x)),
+      y: Math.max(0, Math.min(100, y)),
+    });
+
+    setIsZoomed((prev) => !prev);
   };
 
   return (
@@ -240,11 +236,7 @@ function ProductGallery({
               <SwiperSlide key={i}>
                 <div
                   className={`relative h-full w-full overflow-hidden ${
-                    isModal
-                      ? isZoomed
-                        ? "cursor-zoom-out"
-                        : "cursor-zoom-in"
-                      : "cursor-crosshair"
+                    isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
                   }`}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
@@ -254,8 +246,8 @@ function ProductGallery({
                     src={img}
                     alt=""
                     draggable={false}
-                    className={`h-full w-full object-cover transition-transform duration-300 ease-out select-none ${
-                      isZoomed ? "scale-[2.2]" : "scale-100"
+                    className={`h-full w-full object-contain transition-transform duration-300 ease-out select-none ${
+                      isZoomed ? "scale-[1.6]" : "scale-100"
                     }`}
                     style={{
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
@@ -394,9 +386,7 @@ function DeliveryChecker({ productId }) {
     <div className="panel">
       <div className="mb-3 flex items-center gap-2">
         <MapPin size={16} className="text-gold" />
-        <span className=" text-sm  font-semibold text-ink">
-          Check Delivery
-        </span>
+        <span className=" text-sm  font-semibold text-ink">Check Delivery</span>
       </div>
       <form onSubmit={check} className="flex gap-2">
         <input
@@ -411,7 +401,7 @@ function DeliveryChecker({ productId }) {
         <button
           type="submit"
           disabled={loading}
-          className="button px-4 py-2 text-sm"
+          className="button px-4 py-2 font-semibold text-[#1B1D60]"
         >
           {loading ? "…" : "Check"}
         </button>
@@ -600,7 +590,9 @@ export default function ProductDetailPage() {
           ? product.stock > 0
           : true;
   const categoryLabel = product?.category
-    ? (product.category || '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+    ? (product.category || "")
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase())
     : null;
   const detailRows = Object.entries({
     Brand: product?.brand,
@@ -625,7 +617,10 @@ export default function ProductDetailPage() {
       <div className="mx-auto w-full max-w-[1440px] px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
         {/* Breadcrumb */}
         <nav className="mb-4 flex flex-wrap items-center gap-1  text-xs text-gray">
-          <Link to="/" className="hover:text-ink transition-all duration-300 ease-in-out">
+          <Link
+            to="/"
+            className="hover:text-ink transition-all duration-300 ease-in-out"
+          >
             Home
           </Link>
           <span>/</span>
@@ -635,7 +630,7 @@ export default function ProductDetailPage() {
                 to={CUSTOMER_ROUTES.category(product.parentCategory)}
                 className="capitalize hover:text-ink transition-all duration-300 ease-in-out"
               >
-                {(product.parentCategory || '').replace(/-/g, ' ')}
+                {(product.parentCategory || "").replace(/-/g, " ")}
               </Link>
               <span>/</span>
             </>
@@ -646,7 +641,7 @@ export default function ProductDetailPage() {
                 to={CUSTOMER_ROUTES.category(product.category)}
                 className="capitalize hover:text-ink transition-all duration-300 ease-in-out"
               >
-                {(product.category || '').replace(/-/g, ' ')}
+                {(product.category || "").replace(/-/g, " ")}
               </Link>
               <span>/</span>
             </>
@@ -667,7 +662,7 @@ export default function ProductDetailPage() {
             <>
               {/* ── Main detail layout ── */}
               <div className="grid min-w-0 items-start gap-6 lg:grid-cols-2 lg:gap-12">
-                <div className="min-w-0 lg:sticky lg:top-24 lg:h-[calc(100vh-7rem)] lg:self-start">
+                <div className="min-w-0">
                   <ImageGallery
                     images={images}
                     fallbackLabel={getProductTitle(product)}
@@ -962,7 +957,7 @@ export default function ProductDetailPage() {
                       onClick={() => {
                         addToCart({ ...product, selectedVariant }, quantity);
                       }}
-                      className="w-full h-[54px] rounded-full bg-gold text-white  font-bold text-base shadow-lg hover:bg-gold-dark transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full h-[54px] rounded-full bg-gold text-white  font-semibold text-base shadow-lg hover:bg-gold-dark transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Add To Cart
                     </button>

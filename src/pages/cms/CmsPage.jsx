@@ -84,7 +84,7 @@ export default function CmsPage({ slugOverride = "" }) {
           emptyText="This content page is being prepared and will be available soon."
         >
           {page && (
-            <div className="mx-auto max-w-3xl">
+            <div className="mx-auto max-w-3xl ">
               {/* Cover image */}
               {coverImage && (
                 <div className="mb-8 overflow-hidden  rounded-[var(--customer-radius)]">

@@ -21,7 +21,7 @@ export default function CategoryCard({
     <article
       className={cn(
         "group h-full overflow-hidden rounded-[14px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_14px_34px_rgba(17,24,39,0.1)]",
-        active && "ring-2 ring-[#33368F]/40",
+        active && "ring-2 ring-[#33368F]/40 ",
         className,
       )}
     >
@@ -29,7 +29,7 @@ export default function CategoryCard({
         {badge ? (
           <Label
             variant="featured"
-            className="absolute left-3 top-3 z-10 px-3 py-1 text-[10px] font-bold leading-none lg:text-[11px]"
+            className="absolute  left-3 top-3 z-10 px-3 py-1 text-[10px] font-bold leading-none lg:text-[11px]"
           >
             {badge}
           </Label>
@@ -39,7 +39,7 @@ export default function CategoryCard({
           <img
             src={image}
             alt={title}
-            className="aspect-[284/160] w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-100"
+            className="aspect-[284/185] w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-100"
             loading="lazy"
             decoding="async"
             onError={(event) => applyImageFallback(event, title, "category")}
@@ -51,7 +51,7 @@ export default function CategoryCard({
         )}
       </div>
 
-      <div className="px-4 pb-4 pt-4">
+      <div className="px-4 py-6">
         <div className="flex flex-col gap-3">
           <h3 className="font-semibold text-[24px] leading-none text-[#2E2E2E] line-clamp-1 mt-3">
             {title}

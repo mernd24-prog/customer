@@ -1,5 +1,6 @@
 import React from "react";
 import { FaRegHeart } from "react-icons/fa";
+import { cn } from "../../../lib/utils";
 import DynamicButton from "./button";
 
 const buttonStyles = {
@@ -15,8 +16,7 @@ const buttonStyles = {
     "h-[36px] min-h-[36px] min-w-[120px] rounded-[5px] bg-[#CE9F2D] px-3 text-[13px] font-semibold text-[#03014D] hover:brightness-95 hover:shadow-md sm:h-[41px] sm:min-h-[41px] sm:min-w-[153px] sm:px-4 sm:text-[16px]",
   headerIcon:
     "group relative h-10 w-10 rounded-full border border-[var(--customer-border)] bg-white p-0 hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]",
-  pill:
-    "inline-flex min-w-[110px] sm:min-w-[130px] h-[36px] sm:h-[40px] items-center justify-center gap-2 sm:gap-[15px] md:gap-0 rounded-full bg-[#CE9F2D] px-4 sm:px-[25px] py-2 text-[14px] sm:text-[15px] font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[#bd9025]",
+  pill: "inline-flex min-w-[110px] sm:min-w-[130px] h-[36px] sm:h-[40px] items-center justify-center gap-2 sm:gap-[15px] md:gap-0 rounded-full bg-[#CE9F2D] px-4 sm:px-[25px] py-2 text-[14px] sm:text-[15px] font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[#bd9025]",
   ghostPill:
     "rounded-full border border-[#CE9F2D4D] bg-[#CE9F2D4D] px-4 py-2 text-sm font-semibold text-[#D6A323] hover:bg-black/60 xl:text-base",
   textGold:
@@ -58,7 +58,7 @@ export const OutlineSmallButton = ({ children, className = "", ...props }) => (
 export const OutlineLightButton = ({ children, className = "", ...props }) => (
   <DynamicButton
     variant="unstyled"
-    className={`${buttonStyles.outlineLight} ${className}`}
+    className={cn(buttonStyles.outlineLight, className)}
     {...props}
   >
     {children}
@@ -68,7 +68,7 @@ export const OutlineLightButton = ({ children, className = "", ...props }) => (
 export const SolidLargeButton = ({ children, className = "", ...props }) => (
   <DynamicButton
     variant="unstyled"
-    className={`${buttonStyles.solidLarge} ${className}`}
+    className={cn(buttonStyles.solidLarge, className)}
     {...props}
   >
     {children}
@@ -212,11 +212,7 @@ export const ButtonWithIcon = ({ children, icon, ...props }) => (
   </DynamicButton>
 );
 
-export const PriceButton = ({
-  currentPrice,
-  originalPrice,
-  ...props
-}) => (
+export const PriceButton = ({ currentPrice, originalPrice, ...props }) => (
   <DynamicButton
     variant="outline"
     shape="circle"

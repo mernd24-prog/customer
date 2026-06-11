@@ -4,19 +4,19 @@ import { SKELETON_PRESETS, SkeletonLoader } from "../common/skeleton";
 import { collageCard } from "../../constants/image.constant";
 import Label from "../common/label/Label";
 
-function CollageImage({ src, title, link }) {
+function CollageImage({ src, label, link }) {
   return (
     <div className="relative h-28 w-full overflow-hidden  bg-[var(--customer-cream)] md:w-full lg:h-36">
       <Link to={link}>
         <img
           src={src}
-          alt={title}
+          alt={label}
           className="h-full w-full object-cover object-top transition-all duration-300 ease-in-out hover:scale-105"
           loading="lazy"
         />
 
-        <span className="absolute bottom-3 left-3 rounded-full  backdrop-blur-[8px]">
-          <Label variant="imageLabel">Trending</Label>
+        <span className="absolute text-base font-medium bottom-3 left-3 rounded-full  backdrop-blur-[8px]">
+          <Label variant="imageLabel">{label}</Label>
         </span>
       </Link>
     </div>
@@ -27,11 +27,13 @@ function CollageCard({ section }) {
   return (
     <article className="overflow-hidden rounded-[20px] bg-[#CE9F2D33] border border-[#CE9F2D66]">
       <div className="flex items-center justify-between px-6 py-5">
-        <h2 className="font-['Sans'] text-[18px] font-bold leading-[100%] text-[#2E2E2E]">
+        <h2 className="  text-[18px] font-bold leading-[100%] text-[#2E2E2E]">
           {section.title}
         </h2>
 
-        <Label variant="outline">{section.label}</Label>
+        <Label className="text-xs " variant="outline">
+          {section.label}
+        </Label>
       </div>
 
       <div className="grid grid-cols-2 gap-[1px]">
@@ -40,7 +42,7 @@ function CollageCard({ section }) {
             key={idx}
             src={ele.image}
             link={ele.link}
-            title={ele.title}
+            label={ele.label}
           />
         ))}
       </div>
@@ -83,30 +85,74 @@ export default function CollageMainSection({ cmsPages = [] }) {
       title: "Best Sellers in Men's Fashion",
       label: "Trending",
       images: [
-        { image: collageCard.menFashion, link: "/categories/mens-fashion", label: "Sneakers" },
+        {
+          image: collageCard.menFashion,
+          link: "/categories/mens-fashion",
+          label: "Sneakers",
+        },
         { image: collageCard.stylishPair, link: "/products", label: "Jackets" },
-        { image: collageCard.blazer, link: "/categories/fashion", label: "Shirts" },
-        { image: collageCard.watch, link: "/categories/accessories", label: "Trousers" },
+        {
+          image: collageCard.blazer,
+          link: "/categories/fashion",
+          label: "Shirts",
+        },
+        {
+          image: collageCard.watch,
+          link: "/categories/accessories",
+          label: "Trousers",
+        },
       ],
     },
     {
       title: "Up to 60% Off Home & Lifestyle",
       label: "Hot Deal",
       images: [
-        { image: collageCard.homeDecor, link: "/categories/home", label: "Vases" },
-        { image: collageCard.smartHome, link: "/categories/electronics", label: "Sofas" },
-        { image: collageCard.plants, link: "/categories/fashion", label: "Plants" },
-        { image: collageCard.candles, link: "/categories/accessories", label: "Candles" },
+        {
+          image: collageCard.homeDecor,
+          link: "/categories/home",
+          label: "Vases",
+        },
+        {
+          image: collageCard.smartHome,
+          link: "/categories/electronics",
+          label: "Sofas",
+        },
+        {
+          image: collageCard.plants,
+          link: "/categories/fashion",
+          label: "Plants",
+        },
+        {
+          image: collageCard.candles,
+          link: "/categories/accessories",
+          label: "Candles",
+        },
       ],
     },
     {
       title: "Trending in Women's Fashion",
       label: "New In",
       images: [
-        { image: collageCard.hats, link: "/categories/womens-fashion" },
-        { image: collageCard.handbags, link: "/categories/jewellery" },
-        { image: collageCard.jeweler, link: "/categories/fashion" },
-        { image: collageCard.heels, link: "/categories/accessories" },
+        {
+          image: collageCard.hats,
+          link: "/categories/womens-fashion",
+          label: "Hats",
+        },
+        {
+          image: collageCard.handbags,
+          link: "/categories/jewellery",
+          label: "Handbags",
+        },
+        {
+          image: collageCard.jeweler,
+          link: "/categories/fashion",
+          label: "Jeweler",
+        },
+        {
+          image: collageCard.heels,
+          link: "/categories/accessories",
+          label: "Heels",
+        },
       ],
     },
     {
@@ -115,8 +161,16 @@ export default function CollageMainSection({ cmsPages = [] }) {
       images: [
         { image: collageCard.caps, link: "/categories/kids", label: "Caps" },
         { image: collageCard.shorts, link: "/products", label: "Shorts" },
-        { image: collageCard.shoes, link: "/categories/fashion", label: "Shoes" },
-        { image: collageCard.socks, link: "/categories/accessories", label: "Socks" },
+        {
+          image: collageCard.shoes,
+          link: "/categories/fashion",
+          label: "Shoes",
+        },
+        {
+          image: collageCard.socks,
+          link: "/categories/accessories",
+          label: "Socks",
+        },
       ],
     },
   ];

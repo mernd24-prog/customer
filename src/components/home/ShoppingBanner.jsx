@@ -20,20 +20,20 @@ export default function ShoppingMadeEasyBanner({
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="flex h-full py-8 sm:py-10 md:py-12 lg:py-[65px] px-6 sm:px-12 lg:px-[180px]">
+      <div className="flex h-full py-8 sm:py-10 md:py-12 lg:py-[65px] px-6 sm:px-12 lg:px-[65px]  2xl:px-[180px]">
         <div className="max-w-[470px]">
-          <h2 className="font-['DM_Sans'] text-[32px] font-bold leading-[100%] text-[#3E4093] sm:text-[40px] lg:text-[50px]">
+          <h2 className=" text-[32px] font-bold leading-[100%] text-[#3E4093] sm:text-[40px] lg:text-[50px]">
             {title}
           </h2>
 
-          <p className="mt-5 text-[14px] font-normal leading-[24px] text-[#2E2E2E] sm:text-[16px] sm:leading-[26px]">
+          <p className="mt-5 text-[14px] font-medium leading-[24px] text-[#2E2E2E] sm:text-[18px] sm:leading-[26px]">
             {description}
           </p>
 
           <SolidLargeButton
             to={ctaTo}
             rightIcon={<FaAngleRight className="text-[10px] sm:text-xs" />}
-            className="mt-6 h-[40px] rounded-[8px] px-4 text-[12px] font-bold sm:mt-8 sm:h-[44px] sm:px-5 sm:text-[13px] md:h-[48px] md:px-6 md:text-[14px]"
+            className="mt-6 h-[40px] rounded-[8px] px-4 text-[12px] font-bold sm:mt-8 sm:h-[44px] sm:px-5 sm:text-[13px] md:h-[48px] md:px-6 md:text-[20px]"
           >
             {ctaLabel}
           </SolidLargeButton>

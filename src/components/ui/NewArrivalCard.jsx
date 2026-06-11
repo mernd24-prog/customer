@@ -22,10 +22,14 @@ export default function NewArrivalCard({
   return (
     <article className="flex flex-col h-full overflow-hidden rounded-[1.5rem] border border-[#1B1D6066] bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
       {/* Card Header (Navy Blue background) */}
-      <div className="bg-[#1B1D60] p-5 flex flex-col justify-between">
+      <div className="bg-[#1B1D60] p-5 flex  flex-col justify-between">
         <div className="flex items-center justify-between w-full">
           {/* Badge */}
-          <Label variant="featured" className="text-sm font-semibold" leftIcon="✦">
+          <Label
+            variant="featured"
+            className="text-sm font-semibold gap-1"
+            leftIcon="✦"
+          >
             {badgeText}
           </Label>
           {/* See all Link */}
@@ -70,29 +74,29 @@ export default function NewArrivalCard({
 
               {/* Price Row */}
               <div className="flex items-baseline mt-1 ">
-                <span className="text-[var(--customer-navy)] font-bold text-lg">
+                <span className="text-[var(--customer-navy)] font-bold text-[21px]">
                   {prod.price}
                 </span>
                 {prod.oldPrice && (
-                  <span className="text-[var(--customer-muted)] text-lg line-through ml-2">
+                  <span className="text-[var(--customer-muted)] text-[21px] line-through ml-2">
                     {prod.oldPrice}
                   </span>
                 )}
               </div>
 
               {/* Star Rating Row */}
-              <div className="flex items-center mt-1">
-                <span className="text-base font-semibold text-[var(--customer-muted)] mr-1">
+              <div className="flex gap-2 items-center mt-1">
+                <span className="text-base font-semibold text-[#2E2E2E] mr-1">
                   {prod.rating || "0.0"}
                 </span>
-                <div className="flex text-[#D6A323] text-base gap-0.5">
+                <div className="flex text-[#F58220] text-base gap-0.5">
                   <IoStar />
                   <IoStar />
                   <IoStar />
                   <IoStar />
                   <IoStar />
                 </div>
-                <span className="text-base text-[var(--customer-muted)] ml-1">
+                <span className="text-base font-medium  text-[#2E2E2E] ml-1">
                   ({prod.reviewsCount || "0"})
                 </span>
               </div>

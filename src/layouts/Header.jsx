@@ -1,5 +1,3 @@
-
-
 import {
   Fragment,
   useCallback,
@@ -262,45 +260,45 @@ export const TopHeader = () => {
       },
       ...(currentUser
         ? [
-          {
-            type: "menu",
-            label: currentUser.profile?.firstName
-              ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
-              : currentUser.firstName ||
-              currentUser.email?.split("@")[0] ||
-              "My Sam",
-            path: "/account/profile",
-            icon: <User size={16} className="text-[#CE9F2D] shrink-0" />,
-            title: "My Account",
-            items: withIcons([
-              ...baseAccountMenuItems,
-              ...(isAdminRole(currentRole)
-                ? [
-                  {
-                    label: "Admin Products",
-                    path: "/admin/products",
-                    icon: "settings",
-                  },
-                  {
-                    label: "Admin Catalog",
-                    path: "/admin/catalog",
-                    icon: "settings",
-                  },
-                  {
-                    label: "Admin Brands",
-                    path: "/admin/brands",
-                    icon: "settings",
-                  },
-                  {
-                    label: "Admin RBAC",
-                    path: "/admin/rbac",
-                    icon: "settings",
-                  },
-                ]
-                : []),
-            ]),
-          },
-        ]
+            {
+              type: "menu",
+              label: currentUser.profile?.firstName
+                ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
+                : currentUser.firstName ||
+                  currentUser.email?.split("@")[0] ||
+                  "My Sam",
+              path: "/account/profile",
+              icon: <User size={16} className="text-[#CE9F2D] shrink-0" />,
+              title: "My Account",
+              items: withIcons([
+                ...baseAccountMenuItems,
+                ...(isAdminRole(currentRole)
+                  ? [
+                      {
+                        label: "Admin Products",
+                        path: "/admin/products",
+                        icon: "settings",
+                      },
+                      {
+                        label: "Admin Catalog",
+                        path: "/admin/catalog",
+                        icon: "settings",
+                      },
+                      {
+                        label: "Admin Brands",
+                        path: "/admin/brands",
+                        icon: "settings",
+                      },
+                      {
+                        label: "Admin RBAC",
+                        path: "/admin/rbac",
+                        icon: "settings",
+                      },
+                    ]
+                  : []),
+              ]),
+            },
+          ]
         : []),
     ],
     [
@@ -339,8 +337,8 @@ export const TopHeader = () => {
             filteredTopLinks.length
               ? filteredTopLinks
               : DEFAULT_TOP_NAV_LINKS.filter(
-                (l) => l.name !== "Help & Contact",
-              ),
+                  (l) => l.name !== "Help & Contact",
+                ),
           ).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
@@ -397,7 +395,7 @@ export const TopHeader = () => {
             </HeaderGoldButton>
           ) : (
             <HeaderGoldButton
-              className="hidden lg:inline-flex items-center justify-center whitespace-nowrap rounded-[5px] h-[41px] min-w-[153px] px-4 font-sans text-[16px] font-semibold leading-[100%] tracking-[0%] text-[#03014D]"
+              className="hidden lg:inline-flex items-center justify-center whitespace-nowrap rounded-[5px] h-[41px] min-w-[153px] px-4 font-sans text-[16px] font-semibold  text-[#03014D]"
               onClick={() => navigate("/seller/status")}
             >
               Become a Seller
@@ -474,9 +472,9 @@ export const Navbar = ({ icons: propIcons }) => {
               alt="Menu"
               className="h-[40px] w-[40px] object-contain"
             /> */}
-            <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-              Menu
-            </span>
+          <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+            Menu
+          </span>
           {/* </HeaderIconButton> */}
         </div>
         <SearchBar
@@ -503,10 +501,11 @@ export const Navbar = ({ icons: propIcons }) => {
                   <img
                     src={item?.img}
                     alt={getNavbarIconLabel(item)}
-                    className={`object-contain ${item?.name === "IN"
-                      ? "h-[22px] w-[24px]"
-                      : "h-[17px] w-[17px]"
-                      }`}
+                    className={`object-contain ${
+                      item?.name === "IN"
+                        ? "h-[22px] w-[24px]"
+                        : "h-[17px] w-[17px]"
+                    }`}
                   />
                   <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
                     {getNavbarIconLabel(item)}
@@ -540,22 +539,21 @@ export const Navbar = ({ icons: propIcons }) => {
             <Link
               to="/account/profile"
               className="
-  inline-flex items-center justify-center
-  h-[42px] sm:h-[45px]
-  min-w-[124px]
-  gap-2
-  rounded-[4px]
-  border border-[#1B1D60]
-  bg-white
-  px-4 sm:px-6
-  text-[14px] sm:text-[16px]
-  font-semibold
-  text-[#1B1D60]
-  whitespace-nowrap
-  transition-all duration-300 ease-in-out
-  hover:border-[#CE9F2D]
-  hover:bg-[#CE9F2D1A]
-"
+              inline-flex items-center justify-center
+              h-[42px] sm:h-[45px]
+              min-w-[124px]
+              gap-2
+              rounded-[4px]
+              border border-[#1B1D60]
+              bg-white
+              px-4 sm:px-6
+              text-[14px] sm:text-[16px]
+              font-semibold
+              text-[#1B1D60]
+              whitespace-nowrap
+              transition-all duration-300 ease-in-out
+              hover:border-[#CE9F2D]
+              hover:bg-[#CE9F2D1A]"
             >
               <User size={16} className="shrink-0" />
               <span className="truncate">{accountLabel}</span>
@@ -572,8 +570,7 @@ export const Navbar = ({ icons: propIcons }) => {
     font-sans
     text-[16px]
     font-semibold
-    leading-[100%]
-    tracking-[0%]
+    text-[#03014D]
   "
               onClick={() => navigate("/register")}
             >
@@ -721,8 +718,8 @@ export const CategoryBar = ({ headerData }) => {
               <div
                 key={keyOr(item?.name, `category-${index}`)}
                 className="relative"
-              // onMouseEnter={() => handleCategoryMouseEnter(item)}
-              // onMouseLeave={handleCategoryMouseLeave}
+                // onMouseEnter={() => handleCategoryMouseEnter(item)}
+                // onMouseLeave={handleCategoryMouseLeave}
               >
                 <Link
                   to={categoryHref}
@@ -744,7 +741,7 @@ export const CategoryBar = ({ headerData }) => {
                   </div>
 
                   <span
-                    className={`mt-1 lg:mt-2 line-clamp-1 w-full max-w-[80px] sm:max-w-[100px] lg:max-w-[140px] text-center text-[11px] sm:text-[13px] lg:text-[20px] ${isActive ? "font-bold" : "font-medium"} leading-none tracking-[0.2px] text-[#2E2E2E]`}
+                    className={`mt-1  lg:mt-2 line-clamp-1 w-full max-w-[80px] sm:max-w-[100px] lg:max-w-[140px] text-center text-[11px] sm:text-[13px] lg:text-[20px] font-medium leading-none tracking-[0.2px] text-[#2E2E2E]`}
                   >
                     {textOr(item?.name, "Category")}
                   </span>

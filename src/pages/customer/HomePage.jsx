@@ -51,7 +51,9 @@ export function HomePage() {
       <CategoryBar />
 
       <HomeCategoryGrid
-        categories={categories?.filter((c) => c?.isDashboardVisible !== false).slice(0, 10)}
+        categories={categories
+          ?.filter((c) => c?.isDashboardVisible !== false)
+          .slice(0, 10)}
         loading={false}
         title="Time for a Spring Refresh"
         subtitle="Curated collections for every style & home"
@@ -65,17 +67,15 @@ export function HomePage() {
         ctaLabel="Shop Now"
       />
 
-        <FeaturedProductsSection /> 
+      <FeaturedProductsSection />
 
       <section className=" my-10">
-        
-
         <ShowcaseSection
           title="New Arrivals"
           subtitle="Newly added products with trend-driven rankings"
           headerbgColor="bg-white"
           bodybgColor="bg-white"
-          gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-3"
+          gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-9 xl:grid-cols-3"
           items={reusableArrivalsDemo}
           CardComponent={NewArrivalCard}
           skeletonVariant="new-arrivals"
@@ -87,7 +87,6 @@ export function HomePage() {
       </section>
 
       <MothersDaySwiper data={mothersDayData} />
-      
 
       {/* <MothersDaySwiper data={cmsBannerSlides} /> */}
 

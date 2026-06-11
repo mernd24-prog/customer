@@ -13,14 +13,11 @@ import {
   SolidLargeButton,
 } from "../components/dynamicComponent/button/static";
 
-
-
 /**
  * Hero Banner Component
  * Fully Responsive Full Width Slider
  */
 const HeroBanner = () => {
-
   return (
     <section className=" relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[480px] sm:h-[520px] md:h-[620px] lg:h-[750px] w-screen items-center overflow-hidden bg-[#1B1D60]">
       <Swiper
@@ -48,16 +45,18 @@ const HeroBanner = () => {
             />
 
             {/* Gradient Overlay to blend left side seamlessly */}
-            <div className="absolute inset-y-0 left-0 right-1/3 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/90 to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 left-0 right-0  lg:right-1/3 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/90 to-transparent z-10 pointer-events-none" />
 
             <div className="customer-container relative z-20 flex h-full flex-col items-center justify-between gap-6 py-8 lg:flex-row lg:py-0">
-
               {/* Left Content */}
-              <div className=" flex flex-1 flex-col items-center space-y-4 md:space-y-6 lg:space-y-8 pt-4 text-center text-white lg:items-start lg:pl-4 lg:pt-0 lg:text-left">
-
+              <div className=" flex flex-1 flex-col  space-y-4 md:space-y-5  pt-4  text-white items-start lg:pl-4 lg:pt-0 lg:text-left">
                 {/* Top Decorative */}
-                <div className="flex flex-col items-center gap-2 md:gap-4 lg:gap-6 lg:items-start">
-                  <Label variant="seasonSale" leftIcon={<Tag size={14} className="text-[#CE9F2D]" />}>
+                <div className="flex  flex-col gap-2 md:gap-4 lg:gap-6 items-start">
+                  <Label
+                    variant="seasonSale"
+                    className="text-xs"
+                    leftIcon={<Tag size={14} className="text-[#CE9F2D]" />}
+                  >
                     END OF SEASON SALE | UP TO 50% OFF
                   </Label>
 
@@ -69,7 +68,7 @@ const HeroBanner = () => {
                 </div>
 
                 {/* Description */}
-                <p className="max-w-[681px] font-sans text-xs sm:text-sm md:text-base lg:text-[18px] font-normal leading-relaxed lg:leading-[28px] text-white/80">
+                <p className="max-w-xl sm:max-w-[681px] font-medium font-sans text-xs sm:text-sm md:text-base lg:text-[18px]  leading-relaxed lg:leading-[28px] text-white/80">
                   Discover fashion, electronics, beauty, home essentials, gifts,
                   and more from trusted sellers. Enjoy exciting deals, secure
                   payments, fast delivery, and a smooth shopping experience.
@@ -77,16 +76,16 @@ const HeroBanner = () => {
                 </p>
 
                 {/* CTA */}
-                <div className="flex flex-wrap items-center justify-center gap-3 pt-1 md:pt-3 lg:justify-start">
+                <div className="flex  flex-wrap  gap-3 pt-1 md:pt-3 justify-start">
                   <SolidLargeButton
                     to="/products"
-                    className="h-[48px] w-[141px] rounded-[10px] text-sm font-bold shadow-none hover:scale-105"
+                    className="h-[48px]  w-full sm:w-[141px] rounded-[10px] text-base font-semibold shadow-none hover:scale-105"
                   >
                     Shop Now
                   </SolidLargeButton>
                   <OutlineLightButton
                     to="/products"
-                    className="h-[50px] w-[212px] rounded-[10px] text-sm font-bold hover:scale-105"
+                    className="h-[50px] border-[1px]  border-white w-full sm:w-[212px] rounded-[10px] text-base font-semibold hover:scale-105"
                   >
                     Explore Categories
                   </OutlineLightButton>

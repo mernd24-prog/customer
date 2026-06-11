@@ -8,185 +8,40 @@ import ValuesSection from "../../components/about/ValuesSection";
 import BrandCarousel from "../../components/about/BrandSection";
 import WhyChooseSection from "../../components/about/WhyChooseSection";
 
+const normalizeSectionType = (type = "") =>
+  String(type).trim().toLowerCase().replace(/\s+/g, "-");
+
+const getSectionByType = (sections, type) =>
+  Array.isArray(sections)
+    ? sections.find((section) => normalizeSectionType(section?.type) === type)
+    : null;
+
 export default function AboutPage() {
+  const { page: cmsAboutPage } = useCmsRecord("about-us-details");
 
-  // About Us Why Choose Us Data Fetch From the CMS API
-  const { page: whyChoose } = useCmsRecord("why-choose-us");
+  const sections = cmsAboutPage?.data?.sections || cmsAboutPage?.sections || [];
 
-  const apiData = whyChoose || {};
-
-  const transformedData = useMemo(() => {
-    if (apiData?.points && apiData?.points.length > 0) {
-      return {
-        sectionDetails: {
-          heading: apiData?.title || "Why Choose Us ?",
-
-          description:
-            apiData?.description ||
-            "Benefits customers value most.",
-        },
-
-        cards: apiData?.points.map((item) => ({
-          title: item?.title || "",
-          description: item?.description || "",
-          image: item?.image || "",
-        })),
-      };
-    }
-
-    return {
-      sectionDetails: {
-        heading: "Why Choose Us ?",
-        description: "",
-      },
-
-      cards: [],
-    };
-  }, [apiData]);
-
-  const { page: cmsAboutPage } = useCmsRecord("home-about-sections");
-
-  const sections =
-    cmsAboutPage?.data?.sections ||
-    cmsAboutPage?.sections ||
-    [];
-
-  const image = cmsAboutPage?.image ?? "/image/png/aboutBanner.png";
-
-  const sectionMap = useMemo(() => {
-    return sections.reduce((acc, section) => {
-      const key = section?.title
-        ?.toLowerCase()
-        ?.replace(/\s+/g, "-");
-
-      if (key) {
-        acc[key] = section;
-      }
-
-      return acc;
-    }, {});
-  }, [sections]);
-  const storySection = sectionMap["our-story"];
-  const valuesSection = sectionMap["our-values"];
-  const missionSection = sectionMap["our-mission"];
-  const brandsSection = sectionMap["indian-brands"];
-
-  const storyData = useMemo(
-    () => ({
-      heading:
-        storySection?.title || "Our Story",
-
-      description:
-        storySection?.description || "",
-
-      image:
-        storySection?.image?.url || "",
-
-      ctaText:
-        storySection?.cta?.label || "",
-    }),
-    [storySection],
-  );
-
-
-  const valuesData = useMemo(
-    () => ({
-      sectionDetails: {
-        heading:
-          valuesSection?.title || "Our Values",
-
-        description:
-          valuesSection?.description || "",
-      },
-
-      cards: (valuesSection?.points || []).map(
-        (item) => ({
-          title: item?.title || "",
-          description:
-            item?.description || "",
-
-          image:
-            item?.image?.url || "",
-
-          alt:
-            item?.image?.alt || item?.title,
-        }),
-      ),
-    }),
-    [valuesSection],
-  );
-
-  const brandData = useMemo(
-    () => ({
-      sectionDetails: {
-        heading:
-          brandsSection?.title ||
-          "Indian Brands",
-
-        description:
-          brandsSection?.description || "",
-      },
-
-      logos: (brandsSection?.points || []).map(
-        (item) => ({
-          image:
-            item?.image?.url || "",
-
-          alt:
-            item?.image?.alt || "",
-        }),
-      ),
-    }),
-    [brandsSection],
-  );
-
-  const missionData = useMemo(
-    () => ({
-      title:
-        missionSection?.title ||
-        "Our Mission",
-
-      description:
-        missionSection?.description || "",
-
-      image:
-        missionSection?.image?.url || "",
-
-      helpSection: missionSection?.helpSection || {
-        heading1: "Shopping Made Easy",
-        heading2: "",
-        description:
-          "Enjoy seamless shopping with reliable delivery, secure payments, and hassle-free returns.",
-        buttonText: "Shop Now",
-        buttonPath: "/products",
-      },
-    }),
-    [missionSection],
-  );
-  const pageTitle =
-    cmsAboutPage?.metadata?.seoTitle ||
-    cmsAboutPage?.title ||
-    "About Sam Global";
-  const pageDescription =
-    cmsAboutPage?.metadata?.seoDescription ||
-    cmsAboutPage?.excerpt ||
-    storyData?.description ||
-    "Learn about Sam Global's mission, story, values, and retail approach.";
+  const bannerSection = getSectionByType(sections, "about-banner");
+  const aboutSamGlobalSection = getSectionByType(sections, "about-sam-global");
+  const valuesSection = getSectionByType(sections, "our-values");
+  const brandSection = getSectionByType(sections, "indian-brand");
+  const missionSection = getSectionByType(sections, "our-mission");
+  const chooseSection = getSectionByType(sections, "why-choose-us");
 
   return (
     <>
-      <Seo title={pageTitle} description={pageDescription} />
+      {/* <Seo title={pageTitle} description={pageDescription} /> */}
 
-      <AboutBanner image={image} />
+      <AboutBanner image={bannerSection?.image?.url} />
 
       <main className="w-full">
         <div>
-          <OurStory data={storyData}  />
-          <ValuesSection data={valuesData} />
-          <BrandCarousel data={brandData} />
-          <InfoSection data={missionData} />
+          <OurStory data={aboutSamGlobalSection} />
+          <ValuesSection data={valuesSection} />
+          <BrandCarousel data={brandSection} />
+          <InfoSection data={missionSection} />
           <div id="why-choose-us" className="scroll-mt-24">
-            <WhyChooseSection data={transformedData} />
+            <WhyChooseSection data={chooseSection} />
           </div>
         </div>
       </main>

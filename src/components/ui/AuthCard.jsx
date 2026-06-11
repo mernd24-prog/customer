@@ -10,7 +10,7 @@ export default function AuthCard({
   return (
     <section className="px-4 py-6">
       <div
-        className={`mx-auto w-full ${maxWidth} bg-[#F7F8FC] rounded-xl border border-[#EAEFF3] p-6 shadow-sm`}
+        className={`mx-auto w-full ${maxWidth} bg-[#F7F8FC]  rounded-xl border border-[#EAEFF3] p-6 shadow-sm`}
       >
         <div className="flex flex-col md:flex-row items-stretch gap-6">
           {/* Left image - visible on md+ */}

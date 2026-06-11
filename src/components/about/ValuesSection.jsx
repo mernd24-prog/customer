@@ -3,14 +3,13 @@ import { SkeletonLoader } from "../../components/common/skeleton";
 import { useDelayedLoading } from "../../hooks/useDelayedLoading";
 
 export default function ValuesSection({ data }) {
-  const { sectionDetails, cards } = data;
   const loading = useDelayedLoading();
 
   return (
     <section className="pt-8 md:pt-18">
       <div className="w-full flex flex-col items-center gap-4 ">
         <h2 className=" text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold py-2">
-          {sectionDetails?.heading}
+          {data?.title}
         </h2>
       </div>
       {loading ? (
@@ -22,8 +21,8 @@ export default function ValuesSection({ data }) {
         />
       ) : (
         <div className="flex justify-center gap-8 my-8 flex-wrap ">
-          {cards.map((card) => (
-            <ValueCard key={card.title} data={card} />
+          {data?.points?.map((item) => (
+            <ValueCard key={item.title} data={item} />
           ))}
         </div>
       )}

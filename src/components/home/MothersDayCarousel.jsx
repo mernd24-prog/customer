@@ -92,7 +92,7 @@ export default function MothersDayCarousel({
                     rightIcon={
                       <IoChevronForward className="text-xs text-[#D6A323]" />
                     }
-                    className="w-fit"
+                    className="w-fit hover:bg-[#d8a524]/40 transition-colors duration-300 ease-in-out"
                   >
                     Explore
                   </GhostPillButton>
