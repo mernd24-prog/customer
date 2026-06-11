@@ -90,34 +90,37 @@ export const icons = {
 export const bannerData = [
   {
     id: 1,
-    title: "END OF SEASON",
-    subtitle: "FLASH SALE",
+    label: "END OF SEASON SALE | UP TO 50% OFF",
+    title: "Shop Smarter Across",
+    subtitle: "Every Category",
     discountImg: "/image/png/off.png",
     lineImg: "/image/png/line.png",
     description:
-      "Upgrade your style with our exclusive collection. Limited time offer on all premium categories.",
+      "Discover fashion, electronics, beauty, home essentials,  gifts, and more from trusted sellers. Enjoy exciting deals, secure payments, fast delivery, and a smooth shopping. Experience in one marketplace.",
     image: "/image/png/HeroImg.png",
     modelBg: "/image/png/%20modelbg.png",
   },
   {
     id: 2,
-    title: "NEW ARRIVALS",
-    subtitle: "PREMIUM WEAR",
+    label: "NEW ARRIVALS",
+    title: "Upgrade Your Daily",
+    subtitle: "Lifestyle Essentials",
     discountImg: "/image/png/off.png",
     lineImg: "/image/png/line.png",
-    description:
-      "Discover the latest trends in luxury fashion. Shop the new season arrivals today.",
+     description:
+      "Discover premium accessories, smart gadgets, travel gear, and everyday essentials designed to complement your modern lifestyle.",
     image: "/image/jpg/Banner2.jpg",
     modelBg: "/image/png/%20modelbg.png",
   },
   {
     id: 3,
-    title: "END OF SEASON",
-    subtitle: "FLASH SALE",
+    label: "Limited Time Offers | Save Up to 50%",
+    title: "Upgrade Your Lifestyle",
+    subtitle: "With Smart Tech",
     discountImg: "/image/png/off.png",
     lineImg: "/image/png/line.png",
     description:
-      "Upgrade your style with our exclusive collection. Limited time offer on all premium categories.",
+      "From premium laptops and wireless headphones to everyday gadgets and accessories, find everything you need at unbeatable prices with quick and reliable delivery.",
     image: "/image/jpg/Banner3.jpg",
     modelBg: "/image/png/%20modelbg.png",
   },

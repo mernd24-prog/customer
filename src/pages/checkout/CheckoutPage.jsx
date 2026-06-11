@@ -33,6 +33,7 @@ import {
   getProductImage,
   getProductTitle,
 } from "../../utils/ecommerce";
+import { normalizeDialCode } from "../../lib/utils";
 
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 import {
@@ -512,7 +513,7 @@ export default function CheckoutPage() {
       useNewAddress: false,
       selectedAddressId: "",
       country: "",
-      dialCode: "",
+      dialCode: "+91",
       walletAmount: 0,
       couponCode: "",
     },
@@ -535,10 +536,10 @@ export default function CheckoutPage() {
   const countryObj = countries.find((c) => (c.name || c) === selectedCountry);
   const countryId = countryObj?._id || countryObj?.id;
   const checkoutDialCodes = countryObj?.dialCode
-    ? [countryObj.dialCode]
+    ? [normalizeDialCode(countryObj.dialCode)]
     : Array.from(
-        new Set(countries.map((c) => c.dialCode).filter(Boolean)),
-      ).sort((a, b) => Number(a) - Number(b));
+        new Set(countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean)),
+      ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   useEffect(() => {
     if (!countryId) {
@@ -566,7 +567,11 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (selectedCountry && countryObj?.dialCode) {
-      setValue("dialCode", countryObj.dialCode, { shouldValidate: true });
+      setValue(
+        "dialCode",
+        normalizeDialCode(countryObj.dialCode),
+        { shouldValidate: true },
+      );
     }
   }, [selectedCountry, countryObj, setValue]);
 

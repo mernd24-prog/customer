@@ -42,13 +42,6 @@ export const SITE_ROUTES = [
     priority: 0.7,
   },
   {
-    path: "/gift-cards",
-    title: "Gift Cards",
-    description: "Flexible Sam Global gift card options for every occasion.",
-    changefreq: "monthly",
-    priority: 0.6,
-  },
-  {
     path: "/help-contact",
     title: "Help & Contact",
     description: "Get support for orders, returns, payments, and account questions.",

@@ -16,12 +16,13 @@ import {
   LogOut,
   Settings,
   ShoppingBag,
+  Store,
   Truck,
   User,
   LifeBuoy,
 } from "lucide-react";
-import moreImage from "/image/png/MoreImage.png";
 
+import moreImage from "/image/png/MoreImage.png";
 import ImageSkeleton from "../components/ui/Image";
 import SearchBar from "../components/ui/SearchBar";
 import {
@@ -53,8 +54,10 @@ const dropdownIconMap = {
   logOut: LogOut,
   settings: Settings,
   shoppingBag: ShoppingBag,
+  store: Store,
   truck: Truck,
   user: User,
+  lifeBuoy: LifeBuoy,
 };
 
 const navbarIconLabels = {
@@ -85,7 +88,6 @@ const baseAccountMenuItems = [
 const DEFAULT_TOP_NAV_LINKS = [
   { name: "Deals", path: "/deals" },
   { name: "Brand Outlet", path: "/brand-outlet" },
-  { name: "Gift Card", path: "/gift-cards" },
   { name: "Help & Contact", path: "/help-contact" },
 ];
 
@@ -194,7 +196,6 @@ function withIcons(items) {
 }
 
 export const TopHeader = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentUser = useSelector((s) => s.auth.current);
   const currentRole = getRole(currentUser);
@@ -209,7 +210,6 @@ export const TopHeader = () => {
   const topLinks = [
     { name: dealsPage?.title || "Deals", path: "/deals" },
     { name: brandOutletPage?.title || "Brand Outlet", path: "/brand-outlet" },
-    { name: giftCardsPage?.title || "Gift Card", path: "/gift-cards" },
     { name: helpContactPage?.title || "Help & Contact", path: "/help-contact" },
   ];
   const filteredTopLinks = topLinks.filter(
@@ -260,50 +260,64 @@ export const TopHeader = () => {
       },
       ...(currentUser
         ? [
-            {
-              type: "menu",
-              label: currentUser.profile?.firstName
-                ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
-                : currentUser.firstName ||
-                  currentUser.email?.split("@")[0] ||
-                  "My Sam",
-              path: "/account/profile",
-              icon: <User size={16} className="text-[#CE9F2D] shrink-0" />,
-              title: "My Account",
-              items: withIcons([
-                ...baseAccountMenuItems,
-                ...(isAdminRole(currentRole)
-                  ? [
-                      {
-                        label: "Admin Products",
-                        path: "/admin/products",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin Catalog",
-                        path: "/admin/catalog",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin Brands",
-                        path: "/admin/brands",
-                        icon: "settings",
-                      },
-                      {
-                        label: "Admin RBAC",
-                        path: "/admin/rbac",
-                        icon: "settings",
-                      },
-                    ]
-                  : []),
-              ]),
-            },
-          ]
+          {
+            type: "menu",
+            label: currentUser.profile?.firstName
+              ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
+              : currentUser.firstName ||
+              currentUser.email?.split("@")[0] ||
+              "My Sam",
+            path: "/account/profile",
+            icon: <User size={16} className="text-[#CE9F2D] shrink-0" />,
+            title: "My Account",
+            items: withIcons([
+              ...baseAccountMenuItems,
+              ...(isAdminRole(currentRole)
+                ? [
+                  {
+                    label: "Admin Products",
+                    path: "/admin/products",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin Catalog",
+                    path: "/admin/catalog",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin Brands",
+                    path: "/admin/brands",
+                    icon: "settings",
+                  },
+                  {
+                    label: "Admin RBAC",
+                    path: "/admin/rbac",
+                    icon: "settings",
+                  },
+                ]
+                : []),
+            ]),
+          },
+        ]
         : []),
+      {
+        type: "menu",
+        label: "More",
+        title: "More",
+        items: withIcons([
+          { label: "Seller Login", path: "/seller/status", icon: "store" },
+          {
+            label: helpContactPage?.title || "Help & Contact",
+            path: "/help-contact",
+            icon: "lifeBuoy",
+          },
+        ]),
+      },
     ],
     [
       currentRole,
       currentUser,
+      helpContactPage?.title,
       sellDropdownCms,
       wishlistedProducts,
       handleRemoveWatchlist,
@@ -337,8 +351,8 @@ export const TopHeader = () => {
             filteredTopLinks.length
               ? filteredTopLinks
               : DEFAULT_TOP_NAV_LINKS.filter(
-                  (l) => l.name !== "Help & Contact",
-                ),
+                (l) => l.name !== "Help & Contact",
+              ),
           ).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
@@ -362,19 +376,11 @@ export const TopHeader = () => {
             </HeaderDropdown>
           ))}
 
-          {/* Help & Contact */}
-          <Link
-            to="/help-contact"
-            className="flex items-center gap-2 text[#FFFFFF] transition-all duration-300 ease-in-out hover:text-[#FFFFFF] font-medium "
-          >
-            <LifeBuoy size={16} className="text-[#CE9F2D] shrink-0" />
-            <span>Help & Contact</span>
-          </Link>
-
-          {currentUser ? (
-            <HeaderGoldButton
-              leftIcon={<LogOut size={14} />}
-              className="
+  {
+    currentUser ? (
+      <HeaderGoldButton
+        leftIcon={<LogOut size={14} />}
+        className="
     inline-flex items-center justify-center gap-2
     h-[36px] sm:h-[38px] lg:h-[41px]
     min-w-[105px] sm:min-w-[115px] lg:min-w-[121px]
@@ -389,26 +395,22 @@ export const TopHeader = () => {
     hover:bg-gray-50
     hover:shadow-md
   "
-              onClick={() => dispatch(logout())}
-            >
-              Sign Out
-            </HeaderGoldButton>
-          ) : (
-            <HeaderGoldButton
-              className="hidden lg:inline-flex items-center justify-center whitespace-nowrap rounded-[5px] h-[41px] min-w-[153px] px-4 font-sans text-[16px] font-semibold leading-[100%] tracking-[0%] text-[#03014D]"
-              onClick={() => navigate("/seller/status")}
-            >
-              Become a Seller
-            </HeaderGoldButton>
-          )}
-        </div>
-      </div>
-    </div>
+        onClick={() => dispatch(logout())}
+      >
+        Sign Out
+      </HeaderGoldButton>
+    ) : null
+  }
+        </div >
+      </div >
+    </div >
   );
 };
 
 export const Navbar = ({ icons: propIcons }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const prevPathnameRef = useRef(location.pathname);
   const currentUser = useSelector((s) => s.auth.current);
   const displayIcons = propIcons || navData;
   const utilityIcons = asArray(displayIcons).filter(
@@ -419,13 +421,20 @@ export const Navbar = ({ icons: propIcons }) => {
     ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
     : currentUser?.firstName || "Account";
 
+  useEffect(() => {
+    if (location.pathname === "/" && prevPathnameRef.current !== "/") {
+      setSearchQuery("");
+    }
+    prevPathnameRef.current = location.pathname;
+  }, [location.pathname]);
+
   const handleSearch = (nextQuery = searchQuery, category = null) => {
     const trimmedQuery = nextQuery.trim();
     const categoryKey = category
       ? category.categoryKey ||
-        category.key ||
-        category.slug ||
-        buildCategorySlug(textOr(category?.title, category?.name))
+      category.key ||
+      category.slug ||
+      buildCategorySlug(textOr(category?.title, category?.name))
       : "";
 
     if (!trimmedQuery && categoryKey) {
@@ -452,102 +461,117 @@ export const Navbar = ({ icons: propIcons }) => {
   };
 
   return (
-<header className="customer-container w-full">
-  <div className="flex flex-wrap items-center justify-between gap-2 py-3 sm:gap-4 lg:h-[90px] lg:flex-nowrap lg:gap-5">
-    {/* Logo */}
-    <div className="order-1 flex shrink-0 items-center gap-2 sm:gap-4 lg:gap-6">
-      <Link to="/" aria-label="Sam Global home">
-        <img
-          src="/image/png/logo.png"
-          alt="Sam Global"
-          className="h-auto w-[82px] object-contain min-[375px]:w-[90px] min-[425px]:w-[98px] sm:w-[115px] md:w-[125px] lg:w-[100px] xl:w-[110px]"
-        />
-      </Link>
-    </div>
-
-    {/* Search */}
-    <SearchBar
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      onSearch={handleSearch}
-      enableCategoryDropdown
-      enableAutocomplete
-      autocompleteLimit={8}
-      placeholder="Search for products, brands and categories..."
-      showButtonLabel={false}
-      className="order-3 w-full lg:order-2 lg:w-auto lg:max-w-[720px] lg:flex-1"
-    />
-
-    {/* Actions */}
-    <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
-      <div className="hidden items-center gap-5 lg:flex">
-        {utilityIcons.map((item, iconIndex) => (
-          <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
-            <HeaderIconButton
-              to={getNavbarIconPath(item)}
-              aria-label={getNavbarIconLabel(item)}
-            >
-              <img
-                src={item?.img}
-                alt={getNavbarIconLabel(item)}
-                className={`object-contain ${
-                  item?.name === "IN"
-                    ? "h-[22px] w-[24px]"
-                    : "h-[17px] w-[17px]"
-                }`}
-              />
-
-              <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-                {getNavbarIconLabel(item)}
-              </span>
-            </HeaderIconButton>
-
-            {iconIndex < utilityIcons.length - 1 && (
-              <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
-            )}
-          </Fragment>
-        ))}
-
-        {utilityIcons.length > 0 && (
-          <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
-        )}
-
-        <HeaderIconButton
-          to="/cart"
-          className="h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent"
-          aria-label="Cart"
-        >
-          <img
-            src="/image/png/cart.png"
-            alt="Cart"
-            className="h-[40px] w-[40px] object-contain"
-          />
-
-          <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-            Cart
+    <header className="customer-container w-full">
+      <div className="flex flex-wrap items-center justify-between gap-3 py-3 sm:gap-4 lg:flex-nowrap lg:gap-5 h-auto lg:h-[90px]">
+        <div className="flex shrink-0 items-center gap-6 order-1">
+          <Link to="/" aria-label="Sam Global home">
+            <img
+              src="/image/png/logo.png"
+              alt="Sam Global"
+              className="h-auto w-[82px] object-contain min-[375px]:w-[90px] min-[425px]:w-[98px] sm:w-[115px] md:w-[125px] lg:w-[100px] xl:w-[110px]"
+            />
+          </Link>
+          {/* <div className="hidden h-10 w-px bg-[var(--customer-border)] lg:block" /> */}
+          {/* <HeaderIconButton
+            className="hidden lg:flex h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent p-0"
+            aria-label="Menu"
+          >
+            {/* <img
+              src="/image/png/list.png"
+              alt="Menu"
+              className="h-[40px] w-[40px] object-contain"
+            /> */}
+          <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+            Menu
           </span>
-        </HeaderIconButton>
-      </div>
+          {/* </HeaderIconButton> */}
+        </div>
+        <SearchBar
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onSearch={handleSearch}
+          enableCategoryDropdown
+          enableAutocomplete
+          autocompleteLimit={8}
+          autocompleteMinLength={1}
+          autocompleteDebounceMs={1000}
+          placeholder="Search for products, brands and categories..."
+          micIcon={icons.Mic}
+          showButtonLabel={false}
+          className="order-3 w-full lg:order-2 lg:w-auto lg:max-w-[720px] lg:flex-1"
+        />
+     
 
-      {currentUser ? (
-        <Link
-          to="/account/profile"
-          className="inline-flex h-[34px] max-w-[145px] items-center justify-center gap-1.5 rounded-[4px] border border-[#1B1D60] bg-white px-2.5 text-[11px] font-semibold text-[#1B1D60] whitespace-nowrap transition-colors duration-200 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A] min-[375px]:h-[36px] min-[375px]:max-w-[160px] min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:max-w-[175px] sm:h-[45px] sm:max-w-[220px] sm:gap-2 sm:px-6 sm:text-[16px]"
-        >
-          <User size={14} className="shrink-0 sm:size-4" />
-          <span className="truncate">{accountLabel}</span>
-        </Link>
-      ) : (
-        <HeaderGoldButton
-          className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[11px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
-          onClick={() => navigate("/register")}
-        >
-          Create Account
-        </HeaderGoldButton>
+   
+  {/* Actions */ }
+  <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
+    <div className="hidden items-center gap-5 lg:flex">
+      {utilityIcons.map((item, iconIndex) => (
+        <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
+          <HeaderIconButton
+            to={getNavbarIconPath(item)}
+            aria-label={getNavbarIconLabel(item)}
+          >
+            <img
+              src={item?.img}
+              alt={getNavbarIconLabel(item)}
+              className={`object-contain ${item?.name === "IN"
+                  ? "h-[22px] w-[24px]"
+                  : "h-[17px] w-[17px]"
+                }`}
+            />
+
+            <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+              {getNavbarIconLabel(item)}
+            </span>
+          </HeaderIconButton>
+
+          {iconIndex < utilityIcons.length - 1 && (
+            <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
+          )}
+        </Fragment>
+      ))}
+
+      {utilityIcons.length > 0 && (
+        <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
       )}
+
+      <HeaderIconButton
+        to="/cart"
+        className="h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent"
+        aria-label="Cart"
+      >
+        <img
+          src="/image/png/cart.png"
+          alt="Cart"
+          className="h-[40px] w-[40px] object-contain"
+        />
+
+        <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+          Cart
+        </span>
+      </HeaderIconButton>
     </div>
+
+    {currentUser ? (
+      <Link
+        to="/account/profile"
+        className="inline-flex h-[34px] max-w-[145px] items-center justify-center gap-1.5 rounded-[4px] border border-[#1B1D60] bg-white px-2.5 text-[11px] font-semibold text-[#1B1D60] whitespace-nowrap transition-colors duration-200 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A] min-[375px]:h-[36px] min-[375px]:max-w-[160px] min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:max-w-[175px] sm:h-[45px] sm:max-w-[220px] sm:gap-2 sm:px-6 sm:text-[16px]"
+      >
+        <User size={14} className="shrink-0 sm:size-4" />
+        <span className="truncate">{accountLabel}</span>
+      </Link>
+    ) : (
+      <HeaderGoldButton
+        className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[11px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
+        onClick={() => navigate("/register")}
+      >
+        Create Account
+      </HeaderGoldButton>
+    )}
   </div>
-</header>
+  </div >
+</header >
   );
 };
 
@@ -561,9 +585,12 @@ export const CategoryBar = ({ headerData }) => {
   const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
   const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
   const [activeMenu, setActiveMenu] = useState(null);
+  const [isPinned, setIsPinned] = useState(false);
   const categoryBarRef = useRef(null);
+  const isPinnedRef = useRef(false);
   const openTimeoutRef = useRef(null);
   const closeTimeoutRef = useRef(null);
+
 
   useEffect(() => {
     setActiveMenu(null);
@@ -597,6 +624,32 @@ export const CategoryBar = ({ headerData }) => {
     return () => {
       if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
       if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!categoryBarRef.current) return;
+
+      const headerOffset = window.innerWidth >= 1024 ? 150 : 90;
+      const { bottom } = categoryBarRef.current.getBoundingClientRect();
+      const nextPinned = isPinnedRef.current
+        ? bottom <= headerOffset + 16
+        : bottom <= headerOffset - 8;
+
+      if (nextPinned !== isPinnedRef.current) {
+        isPinnedRef.current = nextPinned;
+        setIsPinned(nextPinned);
+      }
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
     };
   }, []);
 
@@ -686,8 +739,8 @@ export const CategoryBar = ({ headerData }) => {
               <div
                 key={keyOr(item?.name, `category-${index}`)}
                 className="relative"
-                // onMouseEnter={() => handleCategoryMouseEnter(item)}
-                // onMouseLeave={handleCategoryMouseLeave}
+              // onMouseEnter={() => handleCategoryMouseEnter(item)}
+              // onMouseLeave={handleCategoryMouseLeave}
               >
                 <Link
                   to={categoryHref}
@@ -734,13 +787,62 @@ export const CategoryBar = ({ headerData }) => {
           </div>
         )} */}
       </div>
+      <nav
+        aria-label="Sticky category navigation"
+        className={`fixed left-0  top-[132px] z-40 w-full bg-white/95 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur transition-all duration-300 ease-out will-change-transform lg:top-[150px] ${isPinned
+          ? "pointer-events-auto translate-y-0 opacity-100"
+          : "pointer-events-none -translate-y-full opacity-0"
+          }`}
+      >
+        <div className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-2 sm:gap-7 lg:h-[46px] lg:justify-center">
+          {visibleCategories.map((item, index) => {
+            const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
+            const isActive =
+              activeMenu?.categoryKey === item?.categoryKey ||
+              location.pathname === categoryHref ||
+              location.pathname.startsWith(categoryHref + "/");
+
+            return (
+              <Link
+                key={keyOr(item?.name, `sticky-category-${index}`)}
+                to={categoryHref}
+                className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
+                  }`}
+              >
+                <span className="max-w-[140px] truncate">
+                  {textOr(item?.name, "Category")}
+                </span>
+                <span
+                  className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${isActive ? "w-full opacity-100" : "w-0 opacity-0"
+                    }`}
+                />
+              </Link>
+            );
+          })}
+          <Link
+            to="/categories"
+            className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${location.pathname === "/categories"
+              ? "text-[#03014D]"
+              : "text-[#2E2E2E]"
+              }`}
+          >
+            More
+            <span
+              className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${location.pathname === "/categories"
+                ? "w-full opacity-100"
+                : "w-0 opacity-0"
+                }`}
+            />
+          </Link>
+        </div>
+      </nav>
     </header>
   );
 };
 
 export const Header = () => {
   return (
-    <div className="relative z-50 w-full bg-white shadow-[0_2px_10px_rgba(17,24,39,0.08)]">
+    <div className="fixed left-0 top-0 z-50 w-full bg-white shadow-[0_2px_10px_rgba(17,24,39,0.08)]">
       <TopHeader />
       <Navbar />
     </div>
