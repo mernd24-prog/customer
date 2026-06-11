@@ -149,13 +149,16 @@ function ProductGallery({
   const handleImageClick = (e) => {
     if (!isLarge && !isModal) return;
 
-    if (!mainSwiper) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-    if (mainSwiper.activeIndex === images.length - 1) {
-      mainSwiper.slideTo(0);
-    } else {
-      mainSwiper.slideNext();
-    }
+    setZoomPos({
+      x: Math.max(0, Math.min(100, x)),
+      y: Math.max(0, Math.min(100, y)),
+    });
+
+    setIsZoomed((prev) => !prev);
   };
 
   return (
@@ -249,8 +252,8 @@ function ProductGallery({
                     src={img}
                     alt=""
                     draggable={false}
-                    className={`h-full w-full select-none object-cover transition-transform duration-300 ease-out ${
-                      isZoomed ? "scale-[2.2]" : "scale-100"
+                    className={`h-full w-full object-contain transition-transform duration-300 ease-out select-none ${
+                      isZoomed ? "scale-[1.6]" : "scale-100"
                     }`}
                     style={{
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,

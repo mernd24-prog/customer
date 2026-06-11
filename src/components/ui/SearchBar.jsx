@@ -168,24 +168,20 @@ const SearchBar = ({
   const categoriesRaw = useSelector((state) => state.catalog.list || []);
   const categoriesLoading = useSelector((state) => state.catalog.loading);
   const suggestionsRaw = useSelector((state) => state.search.suggestions || []);
-   // const categories = useMemo(
-  //   () => getCategoryListFromResponse(categoriesRaw),
-  //   [categoriesRaw],
-  // );
-     const categories = categoriesRaw
-  const suggestions = Array.isArray(suggestionsRaw)
-    ? Array.from(
-      new Set(
-        suggestionsRaw
-          .map((suggestion) =>
-            typeof suggestion === "string"
-              ? suggestion
-              : suggestion?.title || suggestion?.name || suggestion?.query,
-          )
-          .filter(Boolean),
-      ),
-    )
-    : [];
+  const autocompleteLoading = useSelector(
+    (state) => state.search.autocompleteLoading,
+  );
+  const categories = useMemo(
+    () =>
+      categoriesRaw
+        .filter(isCategoryLike)
+        .filter(
+          (category, index, list) =>
+            list.findIndex((item) => getCategoryId(item) === getCategoryId(category)) ===
+            index,
+        ),
+    [categoriesRaw],
+  );
 
   const [internalQuery, setInternalQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -251,8 +247,6 @@ const SearchBar = ({
       dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 }))
         .then(() => {
           if (ignore) return;
-          const nextCategories = getCategoryListFromResponse(action?.payload?.data).filter(isCategoryLike);
-          setCategoryOptions(nextCategories);
         })
         .catch(() => {})
         .finally(() => {
@@ -513,8 +507,8 @@ const SearchBar = ({
 
                 <div
                   className={`absolute left-0 right-0 sm:right-auto top-[calc(100%+10px)] z-50 max-h-[320px] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_18px_45px_rgba(3,1,77,0.14)] transition-all duration-300 ease-in-out sm:left-2 sm:min-w-[260px] sm:w-auto ${isDropdownOpen
-                      ? "visible translate-y-0 opacity-100"
-                      : "invisible -translate-y-2 opacity-0 pointer-events-none"
+                    ? "visible translate-y-0 opacity-100"
+                    : "invisible -translate-y-2 opacity-0 pointer-events-none"
                     }`}
                 >
                   <div className="max-h-[320px]  overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
@@ -538,8 +532,8 @@ const SearchBar = ({
                           type="button"
                           onClick={() => handleSelectCategory(category)}
                           className={`w-full rounded-xl px-4 py-3 text-left text-sm leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none ${isSelected
-                              ? "font-semibold text-[#03014D]"
-                              : "font-medium text-[var(--customer-ink)]"
+                            ? "font-semibold text-[#03014D]"
+                            : "font-medium text-[var(--customer-ink)]"
                             } hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7]`}
                         >
                           {label}
@@ -572,6 +566,8 @@ const SearchBar = ({
             placeholder={placeholder}
             aria-label="Search products"
             aria-autocomplete={enableAutocomplete ? "list" : undefined}
+            aria-expanded={enableAutocomplete ? shouldShowSuggestions : undefined}
+            aria-controls={enableAutocomplete ? "search-suggestions" : undefined}
             className="h-full  w-full flex-1 border-none bg-transparent pl-5 pr-4 sm:px-4 text-sm text-[var(--customer-ink)] outline-none ring-0 placeholder:text-[var(--customer-muted)] focus:ring-0 focus-visible:outline-none"
           />
 

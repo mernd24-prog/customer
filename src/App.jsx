@@ -322,7 +322,7 @@ export default function App() {
               <Route path="/features" element={<FeaturesPage />} />
               {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" fallbackData={termsOfUseData} />} /> */}
 
-              <Route
+              {/* <Route
                 path="/shipping-policy"
                 element={
                   <CmsPage
@@ -330,7 +330,7 @@ export default function App() {
                     fallbackData={shippingPolicyData}
                   />
                 }
-              />
+              /> */}
               {/* <Route
                 path="/refund-policy"
                 element={
