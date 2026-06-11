@@ -19,7 +19,7 @@ import { fetchRecommendations } from "./features/recommendation/recommendationSl
 import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 import ScrollToTop from "./components/common/ScrollToTop";
 import CategoryListingPage from "./pages/category/CategoryListingPage";
-
+import DownloadApp from "./pages/downloadApp/DownloadApp";
 const lazyNamed = (loader, exportName) =>
   lazy(() => loader().then((module) => ({ default: module[exportName] })));
 
@@ -292,10 +292,7 @@ export default function App() {
             path="/about-us"
             element={<CmsPage slugOverride="about-us" />}
           /> */}
-              <Route
-                path="/mobile-app"
-                element={<CmsPage slugOverride="mobile-app" />}
-              />
+              <Route path="/mobile-app" element={<DownloadApp />} />
               <Route
                 path="/seller-policies"
                 element={<CmsPage slugOverride="seller-policies" />}

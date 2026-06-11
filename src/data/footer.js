@@ -70,7 +70,9 @@ export const footerData = {
       links: [
         { label: "Customer Support", href: "/support" },
         { label: "FAQs", href: "/faq" },
+        { label: "Shipping & Delivery Policy", href: "/shipping-policy" },
         { label: "Returns", href: "/returns" },
+
         // Added policy routes
       ],
     },

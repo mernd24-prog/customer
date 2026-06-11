@@ -21,13 +21,13 @@ const PolicySection = ({ title, points, description, footer }) => {
   return (
     <section className="py-1 first:pt-0">
       {title && (
-        <h2 className="mb-3 text-[17px] font-bold leading-tight text-ink md:text-[28px]">
+        <h2 className="mb-3  text-[20px] md:text-[24px] font-bold leading-tight text-ink lg:text-[28px]">
           {title}
         </h2>
       )}
 
       {description && (
-        <p className="mb-8 text-[12px] leading-relaxed tracking-normal text-muted md:text-[18px]">
+        <p className="mb-8 text-[14px] leading-relaxed tracking-normal text-muted md:text-[18px]">
           {description}
         </p>
       )}
@@ -37,7 +37,7 @@ const PolicySection = ({ title, points, description, footer }) => {
           {visiblePoints.map((point, pIdx) => (
             <div key={pIdx}>
               {point.title && (
-                <h3 className="mb-3 text-[15px] font-bold leading-tight text-ink md:text-[28px]">
+                <h3 className="mb-3 text-[20px] md:text-[24px] font-bold leading-tight text-ink lg:text-[28px]">
                   {point.title}
                 </h3>
               )}
@@ -51,7 +51,7 @@ const PolicySection = ({ title, points, description, footer }) => {
                         alt=""
                         className="mt-[3px] h-3 w-3 flex-shrink-0 object-contain md:h-3.5 md:w-3.5"
                       />
-                      <span className="text-[12px] leading-relaxed tracking-normal text-muted md:text-[18px]">
+                      <span className="text-[14px] leading-relaxed tracking-normal text-muted md:text-[18px]">
                         {line}
                       </span>
                     </li>
