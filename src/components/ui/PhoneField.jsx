@@ -1,3 +1,5 @@
+import { normalizeDialCode } from "../../lib/utils";
+
 export default function PhoneField({
   id,
   label = "Phone",
@@ -9,8 +11,12 @@ export default function PhoneField({
   ...props
 }) {
   const normalizedDialCodes = dialCodes
-    .map((c) => String(c))
+    .map((c) => normalizeDialCode(c))
     .filter(Boolean);
+
+  const defaultDialCode = normalizedDialCodes.includes("+91")
+    ? "+91"
+    : normalizedDialCodes[0] || "+91";
 
   return (
     <label
@@ -26,6 +32,7 @@ export default function PhoneField({
             <select
               id={`${id}-dialCode`}
               {...dialCodeRegistration}
+              defaultValue={defaultDialCode}
               className="h-11 appearance-none border-0 bg-transparent px-3 text-sm text-ink outline-none focus:outline-none focus:ring-0"
             >
               <option value=""></option>
@@ -40,13 +47,13 @@ export default function PhoneField({
         ) : (
           <>
             <div className="flex h-11 min-w-[78px] items-center px-3 text-sm text-ink">
-              {normalizedDialCodes[0] || ""}
+              {defaultDialCode}
             </div>
 
             <input
               type="hidden"
               {...dialCodeRegistration}
-              defaultValue={normalizedDialCodes[0] || ""}
+              defaultValue={defaultDialCode}
             />
           </>
         )}

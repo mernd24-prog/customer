@@ -1,6 +1,44 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { searchThunks } from "../domainThunks";
 
+const getSuggestionLabel = (suggestion) => {
+  if (typeof suggestion === "string") return suggestion;
+  if (!suggestion || typeof suggestion !== "object") return "";
+
+  return (
+    suggestion.title ||
+    suggestion.name ||
+    suggestion.query ||
+    suggestion.keyword ||
+    suggestion.label ||
+    suggestion.productName ||
+    suggestion.brandName ||
+    suggestion.categoryName ||
+    ""
+  );
+};
+
+const extractSuggestions = (data) => {
+  const source = Array.isArray(data)
+    ? data
+    : data?.suggestions ||
+      data?.items ||
+      data?.results ||
+      data?.hits ||
+      data?.products ||
+      data?.list ||
+      [];
+
+  const seen = new Set();
+
+  return source.filter((suggestion) => {
+    const label = getSuggestionLabel(suggestion).trim().toLowerCase();
+    if (!label || seen.has(label)) return false;
+    seen.add(label);
+    return true;
+  });
+};
+
 const initialState = {
   hits: [],
   facets: null,
@@ -8,6 +46,7 @@ const initialState = {
   meta: null,
   loading: false,
   autocompleteLoading: false,
+  autocompleteRequestId: null,
   error: null,
   lastQuery: null,
 };
@@ -17,7 +56,11 @@ const searchSlice = createSlice({
   initialState,
   reducers: {
     clearSearch: () => initialState,
-    clearSuggestions: (state) => { state.suggestions = []; },
+    clearSuggestions: (state) => {
+      state.suggestions = [];
+      state.autocompleteLoading = false;
+      state.autocompleteRequestId = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -50,16 +93,23 @@ const searchSlice = createSlice({
         state.loading = false;
         state.error = action.payload || action.error.message;
       })
-      .addCase(searchThunks.searchAutocomplete.pending, (state) => {
+      .addCase(searchThunks.searchAutocomplete.pending, (state, action) => {
         state.autocompleteLoading = true;
+        state.autocompleteRequestId = action.meta.requestId;
       })
       .addCase(searchThunks.searchAutocomplete.fulfilled, (state, action) => {
+        if (state.autocompleteRequestId !== action.meta.requestId) return;
+
         state.autocompleteLoading = false;
+        state.autocompleteRequestId = null;
         const data = action.payload.data;
-        state.suggestions = Array.isArray(data) ? data : data?.suggestions || [];
+        state.suggestions = extractSuggestions(data);
       })
-      .addCase(searchThunks.searchAutocomplete.rejected, (state) => {
+      .addCase(searchThunks.searchAutocomplete.rejected, (state, action) => {
+        if (state.autocompleteRequestId !== action.meta.requestId) return;
+
         state.autocompleteLoading = false;
+        state.autocompleteRequestId = null;
         state.suggestions = [];
       });
   },

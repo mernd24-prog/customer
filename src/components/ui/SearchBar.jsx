@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { sanitizeSearchQuery } from "../../validations";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
+import { getImageUrlFromValue } from "../../utils/ecommerce/product";
 import {
   clearSuggestions,
   searchAutocomplete,
@@ -22,7 +23,12 @@ import useDebouncedValue from "../../hooks/useDebouncedValue";
 //   if (!data || typeof data !== "object") return [];
 //   if (Array.isArray(data?.items)) return getCategoryListFromResponse(data.items);
 //   if (Array.isArray(data?.list)) return getCategoryListFromResponse(data.list);
-//   if (Array.isArray(data?.categories)) return getCategoryListFromResponse(data.categories);
+//   if (Array.isArray(data?.categories)) {
+//     return getCategoryListFromResponse(data.categories);
+//   }
+//   if (Array.isArray(data?.results)) {
+//     return getCategoryListFromResponse(data.results);
+//   }
 //   if (data?.category && typeof data.category === "object") {
 //     return getCategoryListFromResponse([data.category]);
 //   }
@@ -47,6 +53,99 @@ const getCategoryLabel = (category) =>
   category?.label ||
   getCategoryId(category);
 
+const isCategoryLike = (category) =>
+  Boolean(category && typeof category === "object" && getCategoryLabel(category));
+
+const textValue = (value) => {
+  if (!value) return "";
+  if (typeof value === "string" || typeof value === "number") {
+    return String(value).trim();
+  }
+  if (typeof value === "object") {
+    return (
+      value.title ||
+      value.name ||
+      value.label ||
+      value.categoryName ||
+      value.parentName ||
+      ""
+    ).trim();
+  }
+  return "";
+};
+
+const formatCategorySubtitle = (value) => {
+  const text = textValue(value);
+  if (!text) return "";
+  return /^in\s+/i.test(text) ? text : `in ${text}`;
+};
+
+const getCategoryContextLabel = (category) => {
+  const label = getCategoryLabel(category);
+  const context =
+    textValue(category?.parentCategory) ||
+    textValue(category?.parent) ||
+    textValue(category?.parentCategoryName) ||
+    textValue(category?.parentName) ||
+    textValue(category?.categoryName) ||
+    textValue(category?.category) ||
+    label;
+
+  return context === "Categories" ? label : context;
+};
+
+
+const getSuggestionLabel = (suggestion) => {
+  if (typeof suggestion === "string") return suggestion;
+  if (!suggestion || typeof suggestion !== "object") return "";
+
+  return (
+    suggestion.title ||
+    suggestion.name ||
+    suggestion.query ||
+    suggestion.keyword ||
+    suggestion.label ||
+    suggestion.productName ||
+    suggestion.brandName ||
+    suggestion.categoryName ||
+    ""
+  );
+};
+
+const getSuggestionSubtitle = (suggestion) => {
+  if (!suggestion || typeof suggestion !== "object") return "";
+
+  const subtitle =
+    suggestion.subtitle ||
+    suggestion.category ||
+    suggestion.categoryName ||
+    suggestion.brandName ||
+    suggestion.type ||
+    "";
+
+  return formatCategorySubtitle(subtitle);
+};
+
+const getSuggestionImage = (suggestion) => {
+  if (!suggestion || typeof suggestion !== "object") return "";
+
+  return (
+    getImageUrlFromValue(suggestion.image) ||
+    getImageUrlFromValue(suggestion.images) ||
+    getImageUrlFromValue(suggestion.imageUrl) ||
+    getImageUrlFromValue(suggestion.thumbnail) ||
+    getImageUrlFromValue(suggestion.thumbnailUrl) ||
+    getImageUrlFromValue(suggestion.productImage)
+  );
+};
+
+const normalizeSuggestion = (suggestion, source = "api") => ({
+  label: getSuggestionLabel(suggestion).trim(),
+  subtitle: getSuggestionSubtitle(suggestion),
+  image: getSuggestionImage(suggestion),
+  source,
+});
+
 let categoriesRequestStarted = false;
 
 const SearchBar = ({
@@ -59,7 +158,8 @@ const SearchBar = ({
   enableCategoryDropdown = false,
   enableAutocomplete = false,
   autocompleteLimit = 8,
-  autocompleteMinLength = 2,
+  autocompleteMinLength = 1,
+  autocompleteDebounceMs = 300,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -68,34 +168,63 @@ const SearchBar = ({
   const categoriesRaw = useSelector((state) => state.catalog.list || []);
   const categoriesLoading = useSelector((state) => state.catalog.loading);
   const suggestionsRaw = useSelector((state) => state.search.suggestions || []);
-   // const categories = useMemo(
-  //   () => getCategoryListFromResponse(categoriesRaw),
-  //   [categoriesRaw],
-  // );
-     const categories = categoriesRaw
-  const suggestions = Array.isArray(suggestionsRaw)
-    ? Array.from(
-      new Set(
-        suggestionsRaw
-          .map((suggestion) =>
-            typeof suggestion === "string"
-              ? suggestion
-              : suggestion?.title || suggestion?.name || suggestion?.query,
-          )
-          .filter(Boolean),
-      ),
-    )
-    : [];
+  const autocompleteLoading = useSelector(
+    (state) => state.search.autocompleteLoading,
+  );
+  const categories = useMemo(
+    () =>
+      categoriesRaw
+        .filter(isCategoryLike)
+        .filter(
+          (category, index, list) =>
+            list.findIndex((item) => getCategoryId(item) === getCategoryId(category)) ===
+            index,
+        ),
+    [categoriesRaw],
+  );
 
   const [internalQuery, setInternalQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const dropdownRef = useRef(null);
   const categoriesRequestedRef = useRef(false);
   const searchQuery = value ?? internalQuery;
-  const debouncedSearchQuery = useDebouncedValue(searchQuery, 250);
+  const debouncedSearchQuery = useDebouncedValue(
+    searchQuery,
+    autocompleteDebounceMs,
+  );
+  const sanitizedQuery = sanitizeSearchQuery(searchQuery);
+  const suggestions = useMemo(() => {
+    const query = sanitizedQuery.toLowerCase();
+    if (query.length < autocompleteMinLength) return [];
+
+    const apiSuggestions = Array.isArray(suggestionsRaw)
+      ? suggestionsRaw.map((suggestion) => normalizeSuggestion(suggestion))
+      : [];
+
+    const seen = new Set();
+
+    return [...apiSuggestions]
+      .filter((suggestion) => {
+        const label = suggestion.label || "";
+        const haystack = `${label} ${suggestion.subtitle}`.toLowerCase();
+        const isMatch = haystack.includes(query);
+        const key = label.toLowerCase();
+        if (!label || !isMatch || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, autocompleteLimit);
+  }, [
+    autocompleteLimit,
+    autocompleteMinLength,
+    categories,
+    sanitizedQuery,
+    suggestionsRaw,
+  ]);
 
   const catParam =
     searchParams.get("categoryId") ||
@@ -116,10 +245,8 @@ const SearchBar = ({
       categoriesRequestedRef.current = true;
       categoriesRequestStarted = true;
       dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 }))
-        .then((action) => {
+        .then(() => {
           if (ignore) return;
-          const nextCategories = getCategoryListFromResponse(action?.payload?.data).filter(isCategoryLike);
-          setCategoryOptions(nextCategories);
         })
         .catch(() => { })
         .finally(() => {
@@ -130,7 +257,7 @@ const SearchBar = ({
     return () => {
       ignore = true;
     };
-  }, [dispatch, enableCategoryDropdown,categories.length, categoriesLoading]);
+  }, [dispatch, enableCategoryDropdown, categories.length, categoriesLoading]);
 
   useEffect(() => {
     if (!enableAutocomplete) return;
@@ -150,10 +277,15 @@ const SearchBar = ({
   }, [
     autocompleteLimit,
     autocompleteMinLength,
+    autocompleteDebounceMs,
     debouncedSearchQuery,
     dispatch,
     enableAutocomplete,
   ]);
+
+  useEffect(() => {
+    setActiveSuggestionIndex(-1);
+  }, [sanitizedQuery, suggestions.length]);
 
   // Sync selectedCategory with query params
   useEffect(() => {
@@ -222,6 +354,7 @@ const SearchBar = ({
         enableAutocomplete && sanitizedValue.length >= autocompleteMinLength,
       ),
     );
+    setActiveSuggestionIndex(-1);
 
     if (onChange) {
       onChange({
@@ -238,7 +371,7 @@ const SearchBar = ({
   };
 
   const handleSearch = (nextCategory = selectedCategory) => {
-    const query = sanitizeSearchQuery(searchQuery);
+    const query = sanitizedQuery;
 
     setIsSuggestionOpen(false);
     if (onSearch) {
@@ -261,7 +394,7 @@ const SearchBar = ({
   };
 
   const handleSuggestionSelect = (suggestion) => {
-    const query = sanitizeSearchQuery(suggestion);
+    const query = sanitizeSearchQuery(getSuggestionLabel(suggestion));
     if (!query) return;
 
     if (onChange) {
@@ -298,18 +431,49 @@ const SearchBar = ({
     if (e.key === "Escape") {
       setIsSuggestionOpen(false);
       setIsDropdownOpen(false);
+      setActiveSuggestionIndex(-1);
+      return;
+    }
+    if (
+      e.key === "ArrowDown" &&
+      shouldShowAutocompletePanel &&
+      suggestions.length > 0
+    ) {
+      e.preventDefault();
+      setActiveSuggestionIndex((current) =>
+        current < suggestions.length - 1 ? current + 1 : 0,
+      );
+      return;
+    }
+    if (
+      e.key === "ArrowUp" &&
+      shouldShowAutocompletePanel &&
+      suggestions.length > 0
+    ) {
+      e.preventDefault();
+      setActiveSuggestionIndex((current) =>
+        current > 0 ? current - 1 : suggestions.length - 1,
+      );
       return;
     }
     if (e.key === "Enter") {
+      if (isSuggestionOpen && activeSuggestionIndex >= 0) {
+        e.preventDefault();
+        handleSuggestionSelect(suggestions[activeSuggestionIndex]);
+        return;
+      }
       handleSearch();
     }
   };
 
-  const shouldShowSuggestions =
+  const shouldShowAutocompletePanel =
     enableAutocomplete &&
     isSuggestionOpen &&
-    sanitizeSearchQuery(searchQuery).length >= autocompleteMinLength &&
-    suggestions.length > 0;
+    sanitizedQuery.length >= autocompleteMinLength;
+
+  const shouldShowSuggestions =
+    shouldShowAutocompletePanel &&
+    (suggestions.length > 0 || autocompleteLoading);
 
   return (
     <div
@@ -342,8 +506,8 @@ const SearchBar = ({
 
                 <div
                   className={`absolute left-0 right-0 sm:right-auto top-[calc(100%+10px)] z-50 max-h-[320px] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_18px_45px_rgba(3,1,77,0.14)] transition-all duration-300 ease-in-out sm:left-2 sm:min-w-[260px] sm:w-auto ${isDropdownOpen
-                      ? "visible translate-y-0 opacity-100"
-                      : "invisible -translate-y-2 opacity-0 pointer-events-none"
+                    ? "visible translate-y-0 opacity-100"
+                    : "invisible -translate-y-2 opacity-0 pointer-events-none"
                     }`}
                 >
                   <div
@@ -368,8 +532,8 @@ const SearchBar = ({
                           type="button"
                           onClick={() => handleSelectCategory(category)}
                           className={`w-full rounded-xl px-4 py-3 text-left text-sm leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none ${isSelected
-                              ? "font-semibold text-[#03014D]"
-                              : "font-medium text-[var(--customer-ink)]"
+                            ? "font-semibold text-[#03014D]"
+                            : "font-medium text-[var(--customer-ink)]"
                             } hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7]`}
                         >
                           {label}
@@ -394,7 +558,7 @@ const SearchBar = ({
             onFocus={() => {
               if (
                 enableAutocomplete &&
-                sanitizeSearchQuery(searchQuery).length >= autocompleteMinLength
+                sanitizedQuery.length >= autocompleteMinLength
               ) {
                 setIsSuggestionOpen(true);
               }
@@ -402,6 +566,8 @@ const SearchBar = ({
             placeholder={placeholder}
             aria-label="Search products"
             aria-autocomplete={enableAutocomplete ? "list" : undefined}
+            aria-expanded={enableAutocomplete ? shouldShowSuggestions : undefined}
+            aria-controls={enableAutocomplete ? "search-suggestions" : undefined}
             className="h-full  w-full flex-1 border-none bg-transparent pl-5 pr-4 sm:px-4 text-sm text-[var(--customer-ink)] outline-none ring-0 placeholder:text-[var(--customer-muted)] focus:ring-0 focus-visible:outline-none"
           />
 
@@ -417,22 +583,59 @@ const SearchBar = ({
         </div>
       </div>
       {shouldShowSuggestions && (
-        <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-xl border border-[#1B1D6020] bg-white py-2 shadow-[0_12px_32px_rgba(0,0,0,0.1)]">
-          {suggestions.slice(0, autocompleteLimit).map((suggestion) => (
-            <button
-              key={suggestion}
-              type="button"
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => handleSuggestionSelect(suggestion)}
-              className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-[var(--customer-ink)] transition-colors hover:bg-[#CE9F2D]/10 hover:text-[#03014D]"
-            >
-              <Search
-                size={15}
-                className="shrink-0 text-[var(--customer-muted)]"
-              />
-              <span className="truncate">{suggestion}</span>
-            </button>
-          ))}
+        <div
+          id="search-suggestions"
+          role="listbox"
+          className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 max-h-[390px] overflow-y-auto rounded-xl border border-[#1B1D6020] bg-white py-2 shadow-[0_12px_32px_rgba(0,0,0,0.1)] [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]"
+        >
+          {suggestions.map((suggestion, index) => {
+            const label = getSuggestionLabel(suggestion);
+            const subtitle = getSuggestionSubtitle(suggestion);
+            const image = getSuggestionImage(suggestion);
+            const isActive = index === activeSuggestionIndex;
+
+            return (
+              <button
+                key={`${label}-${index}`}
+                type="button"
+                role="option"
+                aria-selected={isActive}
+                onMouseDown={(event) => event.preventDefault()}
+                onMouseEnter={() => setActiveSuggestionIndex(index)}
+                onClick={() => handleSuggestionSelect(suggestion)}
+                className={`flex min-h-[56px] w-full items-center gap-3 px-4 py-2 text-left transition-colors hover:bg-[#CE9F2D]/10 ${isActive ? "bg-[#CE9F2D]/10" : ""
+                  }`}
+              >
+                {image ? (
+                  <img
+                    src={image}
+                    alt=""
+                    className="h-10 w-10 shrink-0 rounded-md object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#F8F3E7] text-[#CE9F2D]">
+                    <Search size={17} />
+                  </span>
+                )}
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-medium leading-5 text-[var(--customer-ink)]">
+                    {label}
+                  </span>
+                  {subtitle ? (
+                    <span className="block truncate text-sm leading-5 text-[#0B63F6]">
+                      {subtitle}
+                    </span>
+                  ) : null}
+                </span>
+              </button>
+            );
+          })}
+          {autocompleteLoading && suggestions.length === 0 ? (
+            <div className="px-4 py-3 text-sm font-medium text-[var(--customer-muted)]">
+              Searching...
+            </div>
+          ) : null}
         </div>
       )}
     </div>

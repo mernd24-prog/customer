@@ -97,12 +97,6 @@ export const footerData = {
       alt: "Advertise",
     },
     {
-      label: "Gift Cards",
-      href: "/gift-cards",
-      icon: footer.gift,
-      alt: "Gift cards",
-    },
-    {
       label: "Help Center",
       href: "/help-contact",
       icon: footer.help,

@@ -58,22 +58,19 @@ const HeroBanner = () => {
                 {/* Top Decorative */}
                 <div className="flex flex-col items-center gap-2 md:gap-4 lg:gap-6 lg:items-start">
                   <Label variant="seasonSale" leftIcon={<Tag size={14} className="text-[#CE9F2D]" />}>
-                    END OF SEASON SALE | UP TO 50% OFF
+                    {slide.label}
                   </Label>
 
                   {/* Heading */}
                   <h2 className="max-w-[681px] lg:max-w-[800px] font-sans text-3xl font-bold leading-[40px] tracking-normal sm:text-5xl sm:leading-[58px] lg:text-[48px] lg:leading-[58px] xl:text-[54px] xl:leading-[64px] 2xl:text-[65px] 2xl:leading-[75px]">
-                    Shop Smarter Across <br />
-                    <span className="text-[#CE9F2D]">Every Category </span>
+                    {slide.title} <br />
+                    <span className="text-[#CE9F2D]">{slide.subtitle}</span>
                   </h2>
                 </div>
 
                 {/* Description */}
                 <p className="max-w-[681px] font-sans text-xs sm:text-sm md:text-base lg:text-[18px] font-normal leading-relaxed lg:leading-[28px] text-white/80">
-                  Discover fashion, electronics, beauty, home essentials, gifts,
-                  and more from trusted sellers. Enjoy exciting deals, secure
-                  payments, fast delivery, and a smooth shopping experience.
-                  Experience in one marketplace.
+                  {slide.description}
                 </p>
 
                 {/* CTA */}

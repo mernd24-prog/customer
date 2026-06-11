@@ -10,6 +10,7 @@ import CheckboxField from "../../components/ui/CheckboxField";
 import Button from "../../components/ui/Button";
 import AddressLabel from "../../components/ui/AddressLabel";
 import { useToastThunk } from "../../hooks/useToastThunk";
+import { normalizeDialCode } from "../../lib/utils";
 import { addressSchema } from "../../validations/validationSchemas";
 import { validatePostalCodeForCountry } from "../../validations";
 import {
@@ -54,7 +55,7 @@ export default function AddressTab({ user }) {
 
   const addForm = useForm({
     resolver: zodResolver(addressSchema),
-    defaultValues: { country: "", label: "home", isDefault: false },
+    defaultValues: { country: "", dialCode: "+91", label: "home", isDefault: false },
   });
   const editForm = useForm({ resolver: zodResolver(addressSchema) });
 
@@ -120,10 +121,10 @@ export default function AddressTab({ user }) {
 
   const addCountryObj = countries.find((c) => (c.name || c) === addCountry);
   const addDialCodes = addCountryObj?.dialCode
-    ? [addCountryObj.dialCode]
+    ? [normalizeDialCode(addCountryObj.dialCode)]
     : Array.from(
-        new Set(countries.map((c) => c.dialCode).filter(Boolean)),
-      ).sort((a, b) => Number(a) - Number(b));
+        new Set(countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean)),
+      ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   // Clear state and city if they don't match the selected country for Add Form
   useEffect(() => {
@@ -199,17 +200,17 @@ export default function AddressTab({ user }) {
     if (addCountry && countries.length > 0) {
       const countryObj = countries.find((c) => (c.name || c) === addCountry);
       if (countryObj?.dialCode) {
-        addForm.setValue("dialCode", countryObj.dialCode);
+        addForm.setValue("dialCode", normalizeDialCode(countryObj.dialCode));
       }
     }
   }, [addCountry, countries, addForm]);
 
   const editCountryObj = countries.find((c) => (c.name || c) === editCountry);
   const editDialCodes = editCountryObj?.dialCode
-    ? [editCountryObj.dialCode]
+    ? [normalizeDialCode(editCountryObj.dialCode)]
     : Array.from(
-        new Set(countries.map((c) => c.dialCode).filter(Boolean)),
-      ).sort((a, b) => Number(a) - Number(b));
+        new Set(countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean)),
+      ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   // Clear state and city if they don't match the selected country for Edit Form
   useEffect(() => {
@@ -285,7 +286,7 @@ export default function AddressTab({ user }) {
     if (editCountry && countries.length > 0) {
       const countryObj = countries.find((c) => (c.name || c) === editCountry);
       if (countryObj?.dialCode) {
-        editForm.setValue("dialCode", countryObj.dialCode);
+        editForm.setValue("dialCode", normalizeDialCode(countryObj.dialCode));
       }
     }
   }, [editCountry, countries, editForm]);
