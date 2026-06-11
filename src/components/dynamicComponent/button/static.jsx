@@ -6,7 +6,7 @@ const buttonStyles = {
   solidSmall:
     "h-[35px] rounded-[6px] bg-[#CE9F2D] px-[14px] py-[7px] text-[16px] font-semibold text-[#1F2430] hover:bg-[#bd9025]",
   outlineSmall:
-    "inline-flex h-[40px] sm:h-[45px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-transparent px-4 sm:px-5 py-[10px] text-[16px] sm:text-[18px] font-semibold leading-[100%] text-[#3E4093] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]",
+    "inline-flex h-[40px] sm:h-[45px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-transparent px-4 sm:px-5 py-[10px] font-dm-sans text-[15px] sm:text-[16px] lg:text-[18px] font-semibold leading-[100%] tracking-[0%] align-middle text-[#3E4093] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]",
   outlineLight:
     "border border-white/50 bg-transparent text-white hover:bg-white/10",
   solidLarge:
@@ -169,7 +169,7 @@ export const CategoryMoreButton = ({
 
       {/* LABEL */}
       <span
-        className={`mt-1 line-clamp-1 w-full max-w-[80px] text-center text-[11px] leading-none tracking-[0.2px] text-[#2E2E2E] sm:max-w-[100px] sm:text-[13px] lg:mt-2 lg:max-w-[140px] lg:text-[20px] ${
+        className={`mt-1 line-clamp-1 w-full max-w-[80px] text-center text-[15px] leading-none tracking-[0.2px] text-[#2E2E2E] sm:max-w-[100px] sm:text-[13px] lg:mt-2 lg:max-w-[140px] lg:text-[20px] ${
           active ? "font-bold" : "font-medium"
         }`}
       >

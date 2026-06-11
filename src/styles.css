@@ -221,9 +221,11 @@ body::-webkit-scrollbar {
 a {
   color: inherit;
   text-decoration: none;
-  transition: all 0.3s ease-in-out;
+  transition:
+    color 0.3s ease-in-out,
+    background-color 0.3s ease-in-out,
+    border-color 0.3s ease-in-out;
 }
-
 button,
 input,
 select,
@@ -510,9 +512,8 @@ nav a:hover {
 }
 
 .product-card:hover .product-media img {
-  transform: scale(1.06);
+  transform: scale(1.05);
 }
-
 .product-body {
   padding: 14px 14px 10px;
   display: flex;

@@ -20,26 +20,39 @@ export default function CategoryCard({
   const content = (
     <article
       className={cn(
-        "group h-full overflow-hidden rounded-[14px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_14px_34px_rgba(17,24,39,0.1)]",
+        "group h-[421px]   overflow-hidden rounded-[14px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_14px_34px_rgba(17,24,39,0.1)]",
         active && "ring-2 ring-[#33368F]/40",
         className,
       )}
     >
       <div className="relative overflow-hidden bg-[var(--customer-cream)]">
         {badge ? (
-          <Label
-            variant="featured"
-            className="absolute left-3 top-3 z-10 px-3 py-1 text-[10px] font-bold leading-none lg:text-[11px]"
-          >
-            {badge}
-          </Label>
+        <Label
+  variant="featured"
+  className="
+    absolute left-3 top-3 z-10
+    flex h-[24px] min-w-[75px] items-center justify-center
+    rounded-[50px]
+    bg-[#CE9F2D]
+    px-[12px] py-[5px]
+    font-dmSans
+    text-[12px] font-semibold
+    leading-none
+    text-[#FFFFFF]
+    sm:h-[28px] sm:min-w-[91px]
+    sm:px-[15px]
+    sm:text-[14px]
+  "
+>
+  {badge}
+</Label>
         ) : null}
 
         {image ? (
           <img
             src={image}
             alt={title}
-            className="aspect-[284/160] w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-100"
+            className="aspect-[284/160] h-[260px] object-cover transition-all duration-300 ease-in-out group-hover:scale-100"
             loading="lazy"
             decoding="async"
             onError={(event) => applyImageFallback(event, title, "category")}
@@ -53,12 +66,12 @@ export default function CategoryCard({
 
       <div className="px-4 pb-4 pt-4">
         <div className="flex flex-col gap-3">
-          <h3 className="font-semibold text-[24px] leading-none text-[#2E2E2E] line-clamp-1 mt-3">
+          <h3 className="mt-3 line-clamp-1 font-dmSans text-2xl font-semibold leading-none text-[#2E2E2E]">
             {title}
           </h3>
 
           {stylesCount ? (
-            <p className="font-medium text-[16px] leading-none text-[#2E2E2E]">
+            <p className="font-medium text-[16px] leading-none text-[#2E2E2E] font-sans  ">
               {stylesCount}
             </p>
           ) : null}

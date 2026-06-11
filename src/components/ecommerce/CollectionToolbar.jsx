@@ -41,7 +41,7 @@ function ToolbarDropdown({ value = "", options = [], onChange }) {
 
       {/* Popover Menu - Fixed size & strict dropdown positioning */}
       <div
-        className={`absolute right-0 top-full z-50 mt-1 w-[200px] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_12px_30px_rgba(3,1,77,0.08)] transition-all duration-300 ease-in-out ${
+        className={`absolute -right-3.5  top-full z-50 mt-1 w-[200px] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_12px_30px_rgba(3,1,77,0.08)] transition-all duration-300 ease-in-out ${
           isOpen
             ? "visible translate-y-0 opacity-100"
             : "invisible -translate-y-2 opacity-0"

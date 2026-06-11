@@ -55,6 +55,7 @@ export function HomePage() {
         loading={false}
         title="Time for a Spring Refresh"
         subtitle="Curated collections for every style & home"
+        className = "text-[#3E4093] font-bold"
       />
 
       <CollageMainSection />
@@ -75,7 +76,7 @@ export function HomePage() {
           subtitle="Newly added products with trend-driven rankings"
           headerbgColor="bg-white"
           bodybgColor="bg-white"
-          gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6 xl:grid-cols-3"
+          gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-9 xl:grid-cols-3"
           items={reusableArrivalsDemo}
           CardComponent={NewArrivalCard}
           skeletonVariant="new-arrivals"

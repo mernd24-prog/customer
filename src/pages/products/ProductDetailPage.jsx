@@ -106,11 +106,13 @@ function ProductGallery({
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isLarge, setIsLarge] = useState(window.innerWidth >= 1024);
+  const [isLarge, setIsLarge] = useState(
+    typeof window !== "undefined" ? window.innerWidth >= 1280 : false,
+  );
 
   useEffect(() => {
     const handleResize = () => {
-      const nextIsLarge = window.innerWidth >= 1024;
+      const nextIsLarge = window.innerWidth >= 1280;
       setIsLarge(nextIsLarge);
 
       if (!nextIsLarge) {
@@ -118,6 +120,7 @@ function ProductGallery({
       }
     };
 
+    handleResize();
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);
@@ -153,24 +156,24 @@ function ProductGallery({
       return;
     }
 
-    if (mainSwiper) {
-      if (mainSwiper.activeIndex === images.length - 1) {
-        mainSwiper.slideTo(0);
-      } else {
-        mainSwiper.slideNext();
-      }
+    if (!mainSwiper) return;
+
+    if (mainSwiper.activeIndex === images.length - 1) {
+      mainSwiper.slideTo(0);
+    } else {
+      mainSwiper.slideNext();
     }
   };
 
   return (
     <div
       className={`flex min-w-0 flex-col gap-4 overflow-hidden ${
-        isModal ? "h-full w-full" : "h-auto w-full lg:h-[620px]"
+        isModal ? "h-full w-full" : "h-auto w-full xl:h-[620px] 2xl:h-[680px]"
       }`}
     >
-      <div className="flex flex-col lg:flex-row gap-4 h-full overflow-hidden">
+      <div className="flex h-full min-w-0 flex-col gap-4 overflow-hidden xl:flex-row">
         {/* Thumbnail */}
-        <div className="order-2 lg:order-1 h-[90px] lg:h-full lg:w-[90px] overflow-hidden shrink-0">
+        <div className="order-2 h-[88px] w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[96px]">
           <Swiper
             onSwiper={setThumbsSwiper}
             spaceBetween={10}
@@ -179,12 +182,12 @@ function ProductGallery({
             watchSlidesProgress
             direction={isLarge ? "vertical" : "horizontal"}
             modules={[FreeMode, Thumbs]}
-            className="h-full"
+            className="h-full w-full"
           >
             {images.map((img, i) => (
               <SwiperSlide
                 key={i}
-                className="!w-[78px] lg:!w-full lg:!h-[90px]"
+                className="!h-[78px] !w-[78px] xl:!h-[96px] xl:!w-full"
               >
                 <button
                   type="button"
@@ -193,10 +196,11 @@ function ProductGallery({
                     mainSwiper?.slideTo(i);
                   }}
                   onMouseEnter={() => {
+                    if (!isLarge) return;
                     setActiveIndex(i);
                     mainSwiper?.slideTo(i);
                   }}
-                  className={`w-full h-full overflow-hidden rounded-xl border-2 bg-white transition-all duration-300 ease-in-out ${
+                  className={`h-full w-full overflow-hidden rounded-xl border-2 bg-white transition-colors duration-200 ${
                     activeIndex === i
                       ? "border-gold shadow-md"
                       : "border-border"
@@ -205,7 +209,7 @@ function ProductGallery({
                   <img
                     src={img}
                     alt=""
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                     onError={(event) =>
                       applyImageFallback(event, fallbackLabel, "product")
                     }
@@ -218,8 +222,10 @@ function ProductGallery({
 
         {/* Main Image */}
         <div
-          className={`relative order-1 lg:order-2 flex-1 overflow-hidden rounded-[var(--customer-radius)] border border-border bg-surface-soft ${
-            isModal ? "h-full" : "aspect-square"
+          className={`relative order-1 min-w-0 flex-1 overflow-hidden rounded-[var(--customer-radius)] border border-border bg-surface-soft xl:order-2 ${
+            isModal
+              ? "h-full"
+              : "aspect-[4/5] max-h-[360px] sm:max-h-[430px] md:max-h-[520px] xl:h-full xl:max-h-none"
           }`}
         >
           <Swiper
@@ -234,7 +240,7 @@ function ProductGallery({
                 thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
             }}
             modules={[Thumbs, FreeMode]}
-            className="h-full"
+            className="h-full w-full"
           >
             {images.map((img, i) => (
               <SwiperSlide key={i}>
@@ -254,7 +260,7 @@ function ProductGallery({
                     src={img}
                     alt=""
                     draggable={false}
-                    className={`h-full w-full object-cover transition-transform duration-300 ease-out select-none ${
+                    className={`h-full w-full select-none object-cover transition-transform duration-300 ease-out ${
                       isZoomed ? "scale-[2.2]" : "scale-100"
                     }`}
                     style={{
@@ -266,7 +272,6 @@ function ProductGallery({
                     }
                   />
 
-                  {/* Premium Overlay */}
                   {!isZoomed && (
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
                   )}
@@ -394,9 +399,7 @@ function DeliveryChecker({ productId }) {
     <div className="panel">
       <div className="mb-3 flex items-center gap-2">
         <MapPin size={16} className="text-gold" />
-        <span className=" text-sm  font-semibold text-ink">
-          Check Delivery
-        </span>
+        <span className=" text-sm  font-semibold text-ink">Check Delivery</span>
       </div>
       <form onSubmit={check} className="flex gap-2">
         <input
@@ -411,7 +414,7 @@ function DeliveryChecker({ productId }) {
         <button
           type="submit"
           disabled={loading}
-          className="button px-4 py-2 text-sm"
+          className="button px-4 py-2 font-semibold text-[#1B1D60]"
         >
           {loading ? "…" : "Check"}
         </button>
@@ -600,7 +603,9 @@ export default function ProductDetailPage() {
           ? product.stock > 0
           : true;
   const categoryLabel = product?.category
-    ? (product.category || '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+    ? (product.category || "")
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase())
     : null;
   const detailRows = Object.entries({
     Brand: product?.brand,
@@ -625,7 +630,10 @@ export default function ProductDetailPage() {
       <div className="mx-auto w-full max-w-[1440px] px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
         {/* Breadcrumb */}
         <nav className="mb-4 flex flex-wrap items-center gap-1  text-xs text-gray">
-          <Link to="/" className="hover:text-ink transition-all duration-300 ease-in-out">
+          <Link
+            to="/"
+            className="hover:text-ink transition-all duration-300 ease-in-out"
+          >
             Home
           </Link>
           <span>/</span>
@@ -635,7 +643,7 @@ export default function ProductDetailPage() {
                 to={CUSTOMER_ROUTES.category(product.parentCategory)}
                 className="capitalize hover:text-ink transition-all duration-300 ease-in-out"
               >
-                {(product.parentCategory || '').replace(/-/g, ' ')}
+                {(product.parentCategory || "").replace(/-/g, " ")}
               </Link>
               <span>/</span>
             </>
@@ -646,7 +654,7 @@ export default function ProductDetailPage() {
                 to={CUSTOMER_ROUTES.category(product.category)}
                 className="capitalize hover:text-ink transition-all duration-300 ease-in-out"
               >
-                {(product.category || '').replace(/-/g, ' ')}
+                {(product.category || "").replace(/-/g, " ")}
               </Link>
               <span>/</span>
             </>
@@ -929,25 +937,28 @@ export default function ProductDetailPage() {
 
                   {/* Quantity */}
                   <div className="flex flex-col gap-2">
-                    <span className=" text-xs font-semibold text-gray uppercase tracking-normal">
+                    <span className="text-xs font-semibold uppercase text-gray">
                       Quantity
                     </span>
-                    <div className="flex w-full max-w-[220px] items-center overflow-hidden rounded-full border border-border-strong bg-white sm:w-fit">
+
+                    <div className="flex h-[40px] w-full max-w-[210px] items-center rounded-full border border-[#D8C7A5] bg-white sm:h-[44px] sm:max-w-[240px]">
                       <button
                         type="button"
                         onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                         disabled={quantity <= 1}
-                        className="flex h-10 w-10 items-center justify-center text-ink transition-all duration-300 ease-in-out hover:bg-cream disabled:opacity-40 text-xl"
+                        className="flex h-full w-[50px] items-center justify-center text-[20px] text-[#6B7280] disabled:opacity-40"
                       >
                         −
                       </button>
-                      <span className="flex min-w-[60px] items-center justify-center  text-base font-bold text-ink">
+
+                      <span className="flex flex-1 items-center justify-center text-[16px] font-semibold text-[#111827]">
                         {quantity}
                       </span>
+
                       <button
                         type="button"
                         onClick={() => setQuantity((q) => q + 1)}
-                        className="flex h-10 w-10 items-center justify-center text-ink transition-all duration-300 ease-in-out hover:bg-cream text-xl"
+                        className="flex h-full w-[50px] items-center justify-center text-[20px] text-[#111827]"
                       >
                         +
                       </button>
@@ -962,7 +973,7 @@ export default function ProductDetailPage() {
                       onClick={() => {
                         addToCart({ ...product, selectedVariant }, quantity);
                       }}
-                      className="w-full h-[54px] rounded-full bg-gold text-white  font-bold text-base shadow-lg hover:bg-gold-dark transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full h-[54px] rounded-full bg-gold text-white  font-semibold text-base shadow-lg hover:bg-gold-dark transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Add To Cart
                     </button>

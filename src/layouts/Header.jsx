@@ -1,5 +1,3 @@
-
-
 import {
   Fragment,
   useCallback,
@@ -262,45 +260,45 @@ export const TopHeader = () => {
       },
       ...(currentUser
         ? [
-          {
-            type: "menu",
-            label: currentUser.profile?.firstName
-              ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
-              : currentUser.firstName ||
-              currentUser.email?.split("@")[0] ||
-              "My Sam",
-            path: "/account/profile",
-            icon: <User size={16} className="text-[#CE9F2D] shrink-0" />,
-            title: "My Account",
-            items: withIcons([
-              ...baseAccountMenuItems,
-              ...(isAdminRole(currentRole)
-                ? [
-                  {
-                    label: "Admin Products",
-                    path: "/admin/products",
-                    icon: "settings",
-                  },
-                  {
-                    label: "Admin Catalog",
-                    path: "/admin/catalog",
-                    icon: "settings",
-                  },
-                  {
-                    label: "Admin Brands",
-                    path: "/admin/brands",
-                    icon: "settings",
-                  },
-                  {
-                    label: "Admin RBAC",
-                    path: "/admin/rbac",
-                    icon: "settings",
-                  },
-                ]
-                : []),
-            ]),
-          },
-        ]
+            {
+              type: "menu",
+              label: currentUser.profile?.firstName
+                ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
+                : currentUser.firstName ||
+                  currentUser.email?.split("@")[0] ||
+                  "My Sam",
+              path: "/account/profile",
+              icon: <User size={16} className="text-[#CE9F2D] shrink-0" />,
+              title: "My Account",
+              items: withIcons([
+                ...baseAccountMenuItems,
+                ...(isAdminRole(currentRole)
+                  ? [
+                      {
+                        label: "Admin Products",
+                        path: "/admin/products",
+                        icon: "settings",
+                      },
+                      {
+                        label: "Admin Catalog",
+                        path: "/admin/catalog",
+                        icon: "settings",
+                      },
+                      {
+                        label: "Admin Brands",
+                        path: "/admin/brands",
+                        icon: "settings",
+                      },
+                      {
+                        label: "Admin RBAC",
+                        path: "/admin/rbac",
+                        icon: "settings",
+                      },
+                    ]
+                  : []),
+              ]),
+            },
+          ]
         : []),
     ],
     [
@@ -339,13 +337,13 @@ export const TopHeader = () => {
             filteredTopLinks.length
               ? filteredTopLinks
               : DEFAULT_TOP_NAV_LINKS.filter(
-                (l) => l.name !== "Help & Contact",
-              ),
+                  (l) => l.name !== "Help & Contact",
+                ),
           ).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
               to={hrefOr(link?.path)}
-              className="text-white/85 transition-all duration-300 ease-in-out hover:text-white"
+              className="text-[#FFFFFF] transition-all duration-300 ease-in-out hover:text-[#FFFFFF]"
             >
               {textOr(link?.name, "Link")}
             </Link>
@@ -367,7 +365,7 @@ export const TopHeader = () => {
           {/* Help & Contact */}
           <Link
             to="/help-contact"
-            className="flex items-center gap-2 text-white/85 transition-all duration-300 ease-in-out hover:text-white"
+            className="flex items-center gap-2 text[#FFFFFF] transition-all duration-300 ease-in-out hover:text-[#FFFFFF] font-medium "
           >
             <LifeBuoy size={16} className="text-[#CE9F2D] shrink-0" />
             <span>Help & Contact</span>
@@ -454,135 +452,102 @@ export const Navbar = ({ icons: propIcons }) => {
   };
 
   return (
-    <header className="customer-container w-full">
-      <div className="flex flex-wrap items-center justify-between gap-3 py-3 sm:gap-4 lg:flex-nowrap lg:gap-5 h-auto lg:h-[90px]">
-        <div className="flex shrink-0 items-center gap-6 order-1">
-          <Link to="/" aria-label="Sam Global home">
-            <img
-              src="/image/png/logo.png"
-              alt="Sam Global"
-              className="h-[50px] w-[50px] object-contain sm:w-[92px] lg:h-[58px] lg:w-[140px]"
-            />
-          </Link>
-          {/* <div className="hidden h-10 w-px bg-[var(--customer-border)] lg:block" /> */}
-          {/* <HeaderIconButton
-            className="hidden lg:flex h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent p-0"
-            aria-label="Menu"
-          >
-            {/* <img
-              src="/image/png/list.png"
-              alt="Menu"
-              className="h-[40px] w-[40px] object-contain"
-            /> */}
-            <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-              Menu
-            </span>
-          {/* </HeaderIconButton> */}
-        </div>
-        <SearchBar
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onSearch={handleSearch}
-          enableCategoryDropdown
-          enableAutocomplete
-          autocompleteLimit={8}
-          placeholder="Search for products, brands and categories..."
-          micIcon={icons.Mic}
-          showButtonLabel={false}
-          className="order-3 w-full lg:order-2 lg:w-auto lg:max-w-[720px] lg:flex-1"
+<header className="customer-container w-full">
+  <div className="flex flex-wrap items-center justify-between gap-2 py-3 sm:gap-4 lg:h-[90px] lg:flex-nowrap lg:gap-5">
+    {/* Logo */}
+    <div className="order-1 flex shrink-0 items-center gap-2 sm:gap-4 lg:gap-6">
+      <Link to="/" aria-label="Sam Global home">
+        <img
+          src="/image/png/logo.png"
+          alt="Sam Global"
+          className="h-auto w-[82px] object-contain min-[375px]:w-[90px] min-[425px]:w-[98px] sm:w-[115px] md:w-[125px] lg:w-[100px] xl:w-[110px]"
         />
+      </Link>
+    </div>
 
-        <div className="order-2 lg:order-3 flex shrink-0 items-center gap-3 lg:gap-4">
-          <div className="hidden items-center gap-5 lg:flex">
-            {utilityIcons.map((item, iconIndex) => (
-              <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
-                <HeaderIconButton
-                  to={getNavbarIconPath(item)}
-                  aria-label={getNavbarIconLabel(item)}
-                >
-                  <img
-                    src={item?.img}
-                    alt={getNavbarIconLabel(item)}
-                    className={`object-contain ${item?.name === "IN"
-                      ? "h-[22px] w-[24px]"
-                      : "h-[17px] w-[17px]"
-                      }`}
-                  />
-                  <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-                    {getNavbarIconLabel(item)}
-                  </span>
-                </HeaderIconButton>
-                {iconIndex < utilityIcons.length - 1 && (
-                  <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
-                )}
-              </Fragment>
-            ))}
-            {utilityIcons.length > 0 && (
-              <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
-            )}
+    {/* Search */}
+    <SearchBar
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      onSearch={handleSearch}
+      enableCategoryDropdown
+      enableAutocomplete
+      autocompleteLimit={8}
+      placeholder="Search for products, brands and categories..."
+      showButtonLabel={false}
+      className="order-3 w-full lg:order-2 lg:w-auto lg:max-w-[720px] lg:flex-1"
+    />
+
+    {/* Actions */}
+    <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
+      <div className="hidden items-center gap-5 lg:flex">
+        {utilityIcons.map((item, iconIndex) => (
+          <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
             <HeaderIconButton
-              to="/cart"
-              className="h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent"
-              aria-label="Cart"
+              to={getNavbarIconPath(item)}
+              aria-label={getNavbarIconLabel(item)}
             >
               <img
-                src="/image/png/cart.png"
-                alt="Cart"
-                className="h-[40px] w-[40px] object-contain"
+                src={item?.img}
+                alt={getNavbarIconLabel(item)}
+                className={`object-contain ${
+                  item?.name === "IN"
+                    ? "h-[22px] w-[24px]"
+                    : "h-[17px] w-[17px]"
+                }`}
               />
-              <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-                Cart
+
+              <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+                {getNavbarIconLabel(item)}
               </span>
             </HeaderIconButton>
-          </div>
 
-          {currentUser ? (
-            <Link
-              to="/account/profile"
-              className="
-  inline-flex items-center justify-center
-  h-[42px] sm:h-[45px]
-  min-w-[124px]
-  gap-2
-  rounded-[4px]
-  border border-[#1B1D60]
-  bg-white
-  px-4 sm:px-6
-  text-[14px] sm:text-[16px]
-  font-semibold
-  text-[#1B1D60]
-  whitespace-nowrap
-  transition-all duration-300 ease-in-out
-  hover:border-[#CE9F2D]
-  hover:bg-[#CE9F2D1A]
-"
-            >
-              <User size={16} className="shrink-0" />
-              <span className="truncate">{accountLabel}</span>
-            </Link>
-          ) : (
-            <HeaderGoldButton
-              className="
-    flex items-center justify-center
-    whitespace-nowrap
-    rounded-[4px]
-    h-[41px]
-    min-w-[142px]
-    px-5
-    font-sans
-    text-[16px]
-    font-semibold
-    leading-[100%]
-    tracking-[0%]
-  "
-              onClick={() => navigate("/register")}
-            >
-              Create Account
-            </HeaderGoldButton>
-          )}
-        </div>
+            {iconIndex < utilityIcons.length - 1 && (
+              <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
+            )}
+          </Fragment>
+        ))}
+
+        {utilityIcons.length > 0 && (
+          <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
+        )}
+
+        <HeaderIconButton
+          to="/cart"
+          className="h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent"
+          aria-label="Cart"
+        >
+          <img
+            src="/image/png/cart.png"
+            alt="Cart"
+            className="h-[40px] w-[40px] object-contain"
+          />
+
+          <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+            Cart
+          </span>
+        </HeaderIconButton>
       </div>
-    </header>
+
+      {currentUser ? (
+        <Link
+          to="/account/profile"
+          className="inline-flex h-[34px] max-w-[145px] items-center justify-center gap-1.5 rounded-[4px] border border-[#1B1D60] bg-white px-2.5 text-[11px] font-semibold text-[#1B1D60] whitespace-nowrap transition-colors duration-200 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A] min-[375px]:h-[36px] min-[375px]:max-w-[160px] min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:max-w-[175px] sm:h-[45px] sm:max-w-[220px] sm:gap-2 sm:px-6 sm:text-[16px]"
+        >
+          <User size={14} className="shrink-0 sm:size-4" />
+          <span className="truncate">{accountLabel}</span>
+        </Link>
+      ) : (
+        <HeaderGoldButton
+          className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[11px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
+          onClick={() => navigate("/register")}
+        >
+          Create Account
+        </HeaderGoldButton>
+      )}
+    </div>
+  </div>
+</header>
   );
 };
 
@@ -721,8 +686,8 @@ export const CategoryBar = ({ headerData }) => {
               <div
                 key={keyOr(item?.name, `category-${index}`)}
                 className="relative"
-              // onMouseEnter={() => handleCategoryMouseEnter(item)}
-              // onMouseLeave={handleCategoryMouseLeave}
+                // onMouseEnter={() => handleCategoryMouseEnter(item)}
+                // onMouseLeave={handleCategoryMouseLeave}
               >
                 <Link
                   to={categoryHref}

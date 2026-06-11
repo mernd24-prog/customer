@@ -26,14 +26,14 @@ export default function SectionContainer({
           <div
             className={`mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between ${headerClassName}`}
           >
-            <div className="min-w-0">
+            <div className="min-w-0 ">
               {title && (
-                <h2 className="text-[24px] font-bold leading-tight text-[#3E4093] sm:text-[28px] md:text-[32px] lg:text-[38px]">
+                <h2 className="font-dm-sans  text-[28px] font-bold leading-[100%] tracking-[0px] align-middle text-[#3E4093] sm:text-[32px] md:text-[36px] lg:text-[38px]">
                   {title}
                 </h2>
               )}
               {subtitle && (
-                <p className="mt-2 text-[14px] font-medium leading-normal text-[#2E2E2E] sm:text-[16px] md:text-[17px] lg:text-[18px]">
+                <p className="mt-4 mb-4 font-dm-sans text-[14px] font-medium leading-[100%] tracking-[0%] align-middle text-[#2E2E2E] sm:text-[16px] md:text-[18px]">
                   {subtitle}
                 </p>
               )}

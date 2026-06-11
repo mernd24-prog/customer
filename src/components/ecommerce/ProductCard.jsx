@@ -2,7 +2,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
 import Label from "../common/label/Label";
-import { IconCircleButton, PillButton } from "../dynamicComponent/button/static";
+import {
+  IconCircleButton,
+  PillButton,
+} from "../dynamicComponent/button/static";
 import Price from "./Price";
 import Rating from "./Rating";
 import WishlistButton from "./WishlistButton";
@@ -60,18 +63,23 @@ export default function ProductCard({
   const brand = brandProp || cardProduct?.brand;
   const to = href || `/products/${id}`;
   const isListVariant = variant === "list" || variant === "compact";
-  const badgeText = badge || (discountPercent > 0 ? `${discountPercent}% OFF` : "");
+  const badgeText =
+    badge || (discountPercent > 0 ? `${discountPercent}% OFF` : "");
   const currentPriceNumber = Number(String(price || 0).replace(/[^\d.-]/g, ""));
   const oldPriceNumber = Number(String(oldPrice || 0).replace(/[^\d.-]/g, ""));
   const computedDiscountPercent =
     discountPercent ||
     (oldPriceNumber > currentPriceNumber && currentPriceNumber > 0
-      ? Math.round(((oldPriceNumber - currentPriceNumber) / oldPriceNumber) * 100)
+      ? Math.round(
+          ((oldPriceNumber - currentPriceNumber) / oldPriceNumber) * 100,
+        )
       : 0);
   const discountLabel = computedDiscountPercent
     ? `${computedDiscountPercent}% Off`
     : "";
-  const roundedRating = Math.round(Math.max(0, Math.min(Number(rating || 0), 5)));
+  const roundedRating = Math.round(
+    Math.max(0, Math.min(Number(rating || 0), 5)),
+  );
 
   const handleWishlist = (event) => {
     event.preventDefault();
@@ -110,14 +118,16 @@ export default function ProductCard({
             className="block overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)]"
           >
             {image ? (
-              <img
-                src={image}
-                alt={title}
-                className="aspect-square w-full object-cover"
-                loading="lazy"
-                decoding="async"
-                onError={handleImageError}
-              />
+              <div className="group flex aspect-square w-full items-center justify-center overflow-hidden p-4">
+                <img
+                  src={image}
+                  alt={title}
+                  className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
+                  onError={handleImageError}
+                />
+              </div>
             ) : (
               <div className="flex aspect-square items-center justify-center text-[var(--customer-border-strong)]">
                 <ShoppingCart size={42} strokeWidth={1.4} />
@@ -135,10 +145,16 @@ export default function ProductCard({
                 {brand}
               </button>
             )}
-            <h3 className="mt-1 line-clamp-2  text-sm font-semibold text-[var(--customer-ink)] sm:text-base" title={title}>
+            <h3
+              className="mt-1 line-clamp-2  text-sm font-semibold text-[var(--customer-ink)] sm:text-base"
+              title={title}
+            >
               {title}
             </h3>
-            <p className="mt-2 line-clamp-2  text-sm text-[var(--customer-muted)]" title={subtitle}>
+            <p
+              className="mt-2 line-clamp-2  text-sm text-[var(--customer-muted)]"
+              title={subtitle}
+            >
               {subtitle}
             </p>
             <Rating
@@ -178,20 +194,60 @@ export default function ProductCard({
   }
 
   return (
-    <article className={cn("group relative min-w-0 overflow-hidden rounded-[24px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_16px_40px_rgba(17,24,39,0.12)]", className)}>
+    <article
+      className={cn(
+        "group relative min-w-0 overflow-hidden rounded-[24px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_16px_40px_rgba(17,24,39,0.12)]",
+        className,
+      )}
+    >
       <div className="absolute left-4 top-4 z-20 flex max-w-[calc(100%-2rem)] flex-wrap items-center gap-2">
-        <Label variant="featured" className="px-4 py-1.5 text-[13px] font-bold leading-none lg:text-[14px]">
+        <Label
+          variant="featured"
+          className="
+    flex h-[24px] min-w-[75px] items-center justify-center
+    rounded-[50px]
+    bg-[#CE9F2D]
+    px-[12px] py-[5px]
+    font-dmSans
+    text-[12px] font-semibold
+    leading-none
+    tracking-[0px]
+    text-[#FFFFFF]
+    sm:h-[28px] sm:min-w-[91px]
+    sm:px-[15px]
+    sm:text-[14px]
+  "
+        >
           {badgeText || "Featured"}
         </Label>
         {discountLabel && (
-          <Label variant="success" className="px-4 py-1.5 text-[13px] font-bold leading-none text-[#148022] lg:text-[14px]">
+          <Label
+            variant="success"
+            className="
+    flex h-[24px] min-w-[72px] items-center justify-center
+    rounded-[50px]
+    bg-[#E8F5E8]
+    px-[12px] py-[5px]
+    font-dmSans
+    text-[12px] font-semibold
+    leading-none
+    tracking-[0%]
+    text-[#228B22]
+    sm:h-[28px] sm:min-w-[84px]
+    sm:px-[15px]
+    sm:text-[14px]
+  "
+          >
             {discountLabel}
           </Label>
         )}
       </div>
 
       {!isInStock && (
-        <Label variant="bestseller" className="absolute right-4 top-[58px] z-20 px-3 py-1 text-[11px] lg:text-[12px]">
+        <Label
+          variant="bestseller"
+          className="absolute right-4 top-[58px] z-20 px-3 py-1 text-[11px] lg:text-[12px]"
+        >
           Out of stock
         </Label>
       )}
@@ -199,7 +255,14 @@ export default function ProductCard({
       <Link to={to} className="block">
         <div className="overflow-hidden bg-[var(--customer-cream)]">
           {image ? (
-            <img src={image} alt={title} className="mx-auto aspect-[1.28/1] w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-[1.02]" loading="lazy" decoding="async" onError={handleImageError} />
+            <img
+              src={image}
+              alt={title}
+              className="mx-auto aspect-[1.28/1] w-full h-full object-cover transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
+              loading="lazy"
+              decoding="async"
+              onError={handleImageError}
+            />
           ) : (
             <div className="flex aspect-[1.28/1] items-center justify-center text-[var(--customer-border-strong)]">
               <ShoppingCart size={48} strokeWidth={1.4} />
@@ -235,7 +298,7 @@ export default function ProductCard({
           </div>
 
           <h3
-            className="mt-4 line-clamp-1 max-w-[297px] font-['Sans'] text-[18px] font-semibold leading-[100%] text-[#2E2E2E]"
+            className="mt-4 line-clamp-1 max-w-[297px] font-dm-sans text-[15px] font-semibold leading-[100%] tracking-[0%] align-middle text-[#2E2E2E] sm:text-[16px] lg:text-[18px]"
             title={title}
           >
             {title}
@@ -246,8 +309,8 @@ export default function ProductCard({
             oldPrice={oldPrice}
             currency={currency || cardProduct?.currency}
             className="mt-4 gap-3"
-            priceClassName=" text-[21px] font-extrabold leading-[100%] text-[#1B1D60] "
-            oldPriceClassName="text-[21px] font-semibold leading-[100%] text-[#949494] line-through align-middle"
+            priceClassName="font-dm-sans text-[17px] font-extrabold leading-[100%] tracking-[0%] align-middle text-[#1B1D60] sm:text-[19px] lg:text-[21px]"
+            oldPriceClassName="font-dm-sans text-[17px] font-semibold leading-[100%] tracking-[0%] text-[#949494] line-through align-middle sm:text-[19px] lg:text-[21px]"
           />
         </div>
       </Link>
@@ -259,7 +322,7 @@ export default function ProductCard({
             onClick={handleAddToCart}
             rightIcon={<ShoppingCart size={19} strokeWidth={2.4} />}
             className={cn(
-              "w-[197px] gap-[15px] font-['DM_Sans'] text-[15px] leading-[100%] focus-visible:outline-[#1B1D60]",
+              "w-[197px] gap-[15px] font-['DM_Sans'] text-[15px] font-semibold leading-[100%] focus-visible:outline-[#1B1D60]",
               !isInStock && "cursor-not-allowed opacity-60",
             )}
           >

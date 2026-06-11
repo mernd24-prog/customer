@@ -427,8 +427,8 @@ export default function CartPage() {
             emptyTitle="Your cart is empty"
             emptyText="Add some products to continue shopping."
           >
-            <div className="grid grid-cols-1 items-start gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_420px]">
-              <div className="space-y-6 min-w-0">
+            <div className="grid grid-cols-1 items-start gap-5 sm:gap-6 xl:grid-cols-[minmax(0,1fr)_360px] 2xl:grid-cols-[minmax(0,1fr)_420px]">
+              <div className="min-w-0 space-y-4 sm:space-y-5 lg:space-y-6">
                 {items.map((item) => (
                   <CartItemCard
                     key={item.id}
@@ -470,7 +470,8 @@ export default function CartPage() {
                 {hasSavedItems && (
                   <div className="panel">
                     <h3 className="mb-4  text-[16px] font-semibold text-ink">
-                      Saved for later ({savedForLaterItems.length + wishlist.length})
+                      Saved for later (
+                      {savedForLaterItems.length + wishlist.length})
                     </h3>
 
                     <div className="grid gap-3">
@@ -495,7 +496,9 @@ export default function CartPage() {
                                 </p>
 
                                 <div className="mt-0.5 flex flex-wrap items-center gap-2  text-xs text-muted">
-                                  {savedItemView.variantSku ? <span>{savedItemView.variantSku}</span> : null}
+                                  {savedItemView.variantSku ? (
+                                    <span>{savedItemView.variantSku}</span>
+                                  ) : null}
                                   <span>Qty: {savedItemView.quantity}</span>
                                   <span className="font-semibold text-ink">
                                     ₹
@@ -547,7 +550,9 @@ export default function CartPage() {
                                 </p>
 
                                 <div className="mt-0.5 flex flex-wrap items-center gap-2  text-xs text-muted">
-                                  {savedProduct.brand ? <span>{savedProduct.brand}</span> : null}
+                                  {savedProduct.brand ? (
+                                    <span>{savedProduct.brand}</span>
+                                  ) : null}
 
                                   {savedProduct.price != null ? (
                                     <span className="font-semibold text-ink">
