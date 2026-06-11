@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "react-toastify";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import { useToastThunk } from "../../hooks/useToastThunk";
@@ -18,6 +19,7 @@ import {
 import {
   fetchPaymentOptions,
   initiatePayment,
+  verifyPayment,
 } from "../../features/payment/paymentSlice";
 import {
   fetchCountries,
@@ -45,6 +47,53 @@ import AddressSelection from "./AddressSelection";
 import ShippingAddressForm from "./ShippingAddressForm";
 import DiscountsSection from "./DiscountsSection";
 import CheckoutSummary from "./CheckoutSummary";
+
+const RAZORPAY_CHECKOUT_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
+let razorpayScriptPromise;
+
+const loadRazorpayCheckout = () => {
+  if (window.Razorpay) {
+    return Promise.resolve(window.Razorpay);
+  }
+
+  if (razorpayScriptPromise) {
+    return razorpayScriptPromise;
+  }
+
+  razorpayScriptPromise = new Promise((resolve, reject) => {
+    const existingScript = document.querySelector(
+      `script[src="${RAZORPAY_CHECKOUT_SCRIPT}"]`,
+    );
+
+    const handleLoad = () => {
+      if (window.Razorpay) {
+        resolve(window.Razorpay);
+      } else {
+        reject(new Error("Razorpay checkout could not be loaded."));
+      }
+    };
+
+    if (existingScript) {
+      existingScript.addEventListener("load", handleLoad, { once: true });
+      existingScript.addEventListener(
+        "error",
+        () => reject(new Error("Razorpay checkout could not be loaded.")),
+        { once: true },
+      );
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = RAZORPAY_CHECKOUT_SCRIPT;
+    script.async = true;
+    script.onload = handleLoad;
+    script.onerror = () =>
+      reject(new Error("Razorpay checkout could not be loaded."));
+    document.body.appendChild(script);
+  });
+
+  return razorpayScriptPromise;
+};
 
 async function fetchFullList(dispatch, thunkAction, params = {}) {
   const res = await dispatch(thunkAction({ params })).unwrap();
@@ -75,7 +124,7 @@ const checkoutFormSchema = z
     state: z.string().optional(),
     postalCode: z.string().optional(),
     country: z.string().optional(),
-    couponCode: couponCodeField,
+    // couponCode: couponCodeField,
     walletAmount: optionalMoneyField("Wallet amount"),
   })
   .superRefine((data, ctx) => {
@@ -203,6 +252,15 @@ const getCreatedOrder = (result = {}) =>
   result?.order ||
   result?.data ||
   result;
+const getPaymentPayload = (result = {}) =>
+  result?.data?.payment ||
+  result?.data?.data?.payment ||
+  result?.data?.data ||
+  result?.payment ||
+  result?.data ||
+  result;
+const getPaymentStatus = (payment = {}) =>
+  payment?.status || payment?.payment_status || "";
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 const SELECTED_CHECKOUT_STORAGE_KEY = "sam_global_selected_checkout_item_ids";
 const getBuyNowItems = () => {
@@ -264,6 +322,89 @@ const buildOrderItems = (items = []) =>
       }),
     )
     .filter((item) => Boolean(item.productId));
+
+const openRazorpayCheckout = async ({
+  dispatch,
+  run,
+  order,
+  orderId,
+  payment,
+  user,
+}) => {
+  const checkout = payment?.checkout || {};
+  if (!checkout.keyId || !checkout.orderId || !checkout.amount) {
+    throw new Error(
+      "Razorpay checkout details are missing. Please try again.",
+    );
+  }
+
+  const Razorpay = await loadRazorpayCheckout();
+
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const settle = (callback, value) => {
+      if (settled) return;
+      settled = true;
+      callback(value);
+    };
+
+    const razorpay = new Razorpay({
+      key: checkout.keyId,
+      amount: checkout.amount,
+      currency: checkout.currency || payment.currency || "INR",
+      name: "Sam Global",
+      description: `Order ${order?.orderNumber || order?.order_number || orderId}`,
+      order_id: checkout.orderId,
+      prefill: {
+        name: user?.name || user?.fullName || "",
+        email: user?.email || "",
+        contact: user?.phone || user?.mobile || "",
+      },
+      notes: { orderId },
+      theme: { color: "#B48A3C" },
+      handler: async (response) => {
+        try {
+          const verifiedPayment = await run(
+            dispatch,
+            verifyPayment({
+              provider: "razorpay",
+              orderId,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            }),
+            "Payment verified",
+          );
+          settle(resolve, verifiedPayment);
+        } catch (error) {
+          settle(reject, error);
+        }
+      },
+      modal: {
+        ondismiss: () =>
+          settle(
+            reject,
+            new Error(
+              "Payment was not completed. Your order is still pending payment.",
+            ),
+          ),
+      },
+    });
+
+    razorpay.on("payment.failed", (response) => {
+      settle(
+        reject,
+        new Error(
+          response?.error?.description ||
+            response?.error?.reason ||
+            "Payment failed. Please try again.",
+        ),
+      );
+    });
+
+    razorpay.open();
+  });
+};
 
 export default function CheckoutPage() {
   const dispatch = useDispatch();
@@ -735,7 +876,7 @@ export default function CheckoutPage() {
       return;
     }
 
-    await run(
+    const initiatedPaymentResult = await run(
       dispatch,
       initiatePayment({
         orderId,
@@ -744,8 +885,31 @@ export default function CheckoutPage() {
         currency: paymentOrder?.currency || createdOrder?.currency || "INR",
         notes: { source: "web_checkout", paymentProvider },
       }),
-      paymentProvider === "cod" ? "COD order confirmed" : "Payment initiated",
+      paymentProvider === "cod" ? "COD order confirmed" : null,
     );
+    const initiatedPayment = getPaymentPayload(initiatedPaymentResult);
+
+    if (paymentProvider === "razorpay") {
+      if (getPaymentStatus(initiatedPayment) !== "captured") {
+        try {
+          await openRazorpayCheckout({
+            dispatch,
+            run,
+            order: paymentOrder || createdOrder,
+            orderId,
+            payment: initiatedPayment,
+            user: userState.current,
+          });
+        } catch (error) {
+          const message =
+            error?.message ||
+            "Payment was not completed. Your order is still pending payment.";
+          setError("root", { type: "manual", message });
+          toast.error(message);
+          return;
+        }
+      }
+    }
 
     if (isBuyNowCheckout) {
       window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
