@@ -10,7 +10,7 @@ function CollageImage({ src, title, link, label }) {
       <Link to={link}>
         <img
           src={src}
-          alt={title}
+          alt={label}
           className="h-full w-full object-cover object-top transition-all duration-300 ease-in-out hover:scale-105"
           loading="lazy"
         />

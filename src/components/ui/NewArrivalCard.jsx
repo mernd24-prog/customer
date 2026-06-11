@@ -22,7 +22,7 @@ export default function NewArrivalCard({
   return (
     <article className="flex flex-col h-full overflow-hidden rounded-[20px] border border-[#1B1D6066] bg-white shadow-sm hover:shadow-md transition-shadow duration-300 ">
       {/* Card Header (Navy Blue background) */}
-      <div className="bg-[#1B1D60] p-5 flex flex-col justify-between">
+      <div className="bg-[#1B1D60] p-5 flex  flex-col justify-between">
         <div className="flex items-center justify-between w-full">
           {/* Badge */}
           <Label

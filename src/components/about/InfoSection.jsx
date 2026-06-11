@@ -2,13 +2,9 @@ import NeedHelpSection from "../faq/NeedHelpSection";
 
 const InfoSection = ({ data }) => {
   const finalData = data || {};
-  const {
-    title,
-    description,
-    image,
-
-    helpSection,
-  } = finalData;
+  const { title, description, image, helpSection } = finalData;
+  const imageUrl = typeof image === "string" ? image : image?.url;
+  const imageAlt = typeof image === "object" ? image?.alt : title;
 
   return (
     <section className="relative my-8 lg:my-16">
@@ -46,16 +42,17 @@ const InfoSection = ({ data }) => {
             </div>
           </div>
 
-          {/* Right Image */}
-          <div className="mt-8 flex w-full items-end justify-center lg:mt-0 lg:w-[40%] lg:justify-end">
-            <div className="relative w-full max-w-[340px] overflow-hidden rounded-t-[1.8rem] sm:max-w-[450px] lg:max-w-[700px]">
-              <img
-                src={image}
-                alt={title}
-                className="block h-auto w-full object-cover"
-              />
+          {imageUrl && (
+            <div className="mt-8 flex w-full items-end justify-center lg:mt-0 lg:w-[40%] lg:justify-end">
+              <div className="relative w-full max-w-[340px] overflow-hidden rounded-t-[1.8rem] sm:max-w-[450px] lg:max-w-[700px]">
+                <img
+                  src={imageUrl}
+                  alt={imageAlt || title || ""}
+                  className="block h-auto w-full object-cover"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
     </section>

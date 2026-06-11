@@ -138,10 +138,6 @@ function ProductGallery({
       x: Math.max(0, Math.min(100, x)),
       y: Math.max(0, Math.min(100, y)),
     });
-
-    if (!isModal && !isZoomed) {
-      setIsZoomed(true);
-    }
   };
 
   const handleMouseLeave = () => {
@@ -150,11 +146,8 @@ function ProductGallery({
     }
   };
 
-  const handleImageClick = () => {
-    if (isModal) {
-      setIsZoomed((prev) => !prev);
-      return;
-    }
+  const handleImageClick = (e) => {
+    if (!isLarge && !isModal) return;
 
     if (!mainSwiper) return;
 
@@ -246,11 +239,7 @@ function ProductGallery({
               <SwiperSlide key={i}>
                 <div
                   className={`relative h-full w-full overflow-hidden ${
-                    isModal
-                      ? isZoomed
-                        ? "cursor-zoom-out"
-                        : "cursor-zoom-in"
-                      : "cursor-crosshair"
+                    isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
                   }`}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
@@ -675,7 +664,7 @@ export default function ProductDetailPage() {
             <>
               {/* ── Main detail layout ── */}
               <div className="grid min-w-0 items-start gap-6 lg:grid-cols-2 lg:gap-12">
-                <div className="min-w-0 lg:sticky lg:top-24 lg:h-[calc(100vh-7rem)] lg:self-start">
+                <div className="min-w-0">
                   <ImageGallery
                     images={images}
                     fallbackLabel={getProductTitle(product)}

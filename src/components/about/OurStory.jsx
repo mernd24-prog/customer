@@ -22,18 +22,13 @@ export default function OurStory({ data }) {
         <section className="flex  flex-col lg:flex-row  lg:gap-12 gap-2 py-8 lg:py-20">
           <div className=" w-full xl:w-[45%]  flex justify-center">
             <img
-              src={data.image}
-              alt="About the Sam Global"
+              src={data.image.url}
+              alt={data.image.alt}
               className="w-full h-full object-cover rounded-lg max-w-[750px]  "
             />
           </div>
           <div className="w-full xl:w-[45%]  flex flex-col lg:mt-8 justify-between">
             <div>
-              {/* {data.heading && (
-                <h2 className="font-bold text-xl md:text-2xl lg:text-3xl xl:text-4xl  ">
-                  {data.heading}
-                </h2>
-              )} */}
               <p
                 className="text-base md:text-lg lg:text-xl font-light mt-4 lg:mt-8 "
                 dangerouslySetInnerHTML={{ __html: data.description }}

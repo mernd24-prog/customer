@@ -64,7 +64,7 @@ export default function CategoryCard({
         )}
       </div>
 
-      <div className="px-4 pb-4 pt-4">
+      <div className="px-4 py-6">
         <div className="flex flex-col gap-3">
           <h3 className="mt-3 line-clamp-1 font-dmSans text-2xl font-semibold leading-none text-[#2E2E2E]">
             {title}

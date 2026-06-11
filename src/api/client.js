@@ -37,9 +37,11 @@ const FORCE_LOGOUT_CODES = new Set([
 ]);
 
 const FORCE_LOGOUT_MESSAGES = {
-  USER_NOT_FOUND: "Your account no longer exists. Please contact administrator.",
+  USER_NOT_FOUND:
+    "Your account no longer exists. Please contact administrator.",
   USER_DELETED: "Your account has been removed. Please contact administrator.",
-  USER_INACTIVE: "Your account has been deactivated. Please contact administrator.",
+  USER_INACTIVE:
+    "Your account has been deactivated. Please contact administrator.",
   USER_BLOCKED: "Your account has been blocked. Please contact support.",
   TOKEN_EXPIRED: "Your session has expired. Please login again.",
   TOKEN_INVALID: "Invalid session. Please login again.",
@@ -58,10 +60,12 @@ const getAuthCode = (error = {}) => {
 const getAuthMessage = (error = {}) => {
   const data = error?.response?.data || error?.data || error || {};
   const code = getAuthCode(error);
-  return data?.message ||
+  return (
+    data?.message ||
     data?.error?.message ||
     FORCE_LOGOUT_MESSAGES[code] ||
-    "Your session has expired. Please login again.";
+    "Your session has expired. Please login again."
+  );
 };
 
 const forceLogout = (error = {}) => {
@@ -69,7 +73,9 @@ const forceLogout = (error = {}) => {
   const message = getAuthMessage(error);
   tokenStorage.clear();
   localStorage.setItem("logoutReason", JSON.stringify({ code, message }));
-  window.dispatchEvent(new CustomEvent("auth:logout", { detail: { code, message } }));
+  window.dispatchEvent(
+    new CustomEvent("auth:logout", { detail: { code, message } }),
+  );
 };
 
 const isPublicAuthEndpoint = (url = "") =>
@@ -115,11 +121,16 @@ api.interceptors.response.use(
       FORCE_LOGOUT_CODES.has(authCode) || error?.response?.status === 401;
     if (
       error?.response?.status !== 401 ||
-      (authCode && authCode !== "TOKEN_EXPIRED" && authCode !== "TOKEN_INVALID") ||
+      (authCode &&
+        authCode !== "TOKEN_EXPIRED" &&
+        authCode !== "TOKEN_INVALID") ||
       originalRequest?._retry ||
       originalRequest?.url === endpoints.auth.refresh
     ) {
-      if (shouldForceLogout && originalRequest?.url !== endpoints.auth.refresh) {
+      if (
+        shouldForceLogout &&
+        originalRequest?.url !== endpoints.auth.refresh
+      ) {
         forceLogout(error);
       }
       return Promise.reject(error);

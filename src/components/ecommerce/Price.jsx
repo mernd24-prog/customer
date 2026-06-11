@@ -40,11 +40,10 @@ export default function Price({
     >
       <span
         className={cn(
-          "font-semibold leading-none",
+          "font-semibold leading-none text-[var(--customer-ink)]",
           layout === "pill"
             ? "text-[12px] sm:text-[13px] lg:text-[14px] xl:text-[15px]"
             : "text-sm",
-          !priceClassName && "text-[var(--customer-ink)]",
           priceClassName,
         )}
       >
@@ -54,11 +53,10 @@ export default function Price({
       {hasDiscount && (
         <span
           className={cn(
-            "leading-none line-through",
+            "leading-none text-[var(--customer-gold-dark)] line-through",
             layout === "pill"
               ? "text-[10px] sm:text-[11px] lg:text-[12px] xl:text-[13px]"
               : "text-xs",
-            !oldPriceClassName && "text-[var(--customer-gold-dark)]",
             oldPriceClassName,
           )}
         >

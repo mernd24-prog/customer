@@ -278,11 +278,11 @@ export default function ProductCard({
             <span className="font-['DM_Sans'] text-[14px] font-medium leading-[100%] text-[#2E2E2E]">
               {Number(rating || 0).toFixed(1)}
             </span>
-            <span className="flex h-[14px] w-[84px] items-center gap-0.5 text-[#F58220]">
+            <span className="flex  h-[14px] w-[84px] items-center gap-0.5 text-[#F58220]">
               {Array.from({ length: 5 }, (_, index) => (
                 <Star
                   key={index}
-                  size={14}
+                  size={16}
                   className={
                     index < roundedRating
                       ? "fill-[#F58220] text-[#F58220]"
@@ -336,7 +336,7 @@ export default function ProductCard({
                 : `Add ${title} to wishlist`
             }
             onClick={handleWishlist}
-            className="focus-visible:outline-[#1B1D60]"
+            className="focus-visible:outline-[#1B1D60] "
           >
             <Heart
               size={19}

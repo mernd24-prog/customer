@@ -14,6 +14,20 @@ export function createCacheKey(namespace, keyParts = []) {
   return [namespace, ...parts.map((part) => JSON.stringify(part))].join(":");
 }
 
+function isQuotaExceededError(error) {
+  if (!error) return false;
+  return (
+    (error instanceof DOMException &&
+      (error.name === "QuotaExceededError" ||
+        error.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
+        error.name === "QuotaExceededError")) ||
+    error.code === 22 ||
+    error.code === 1014 ||
+    error.name === "QuotaExceededError" ||
+    error.name === "NS_ERROR_DOM_QUOTA_REACHED"
+  );
+}
+
 export function setCache(key, value, options = {}) {
   const storage = getStorage(options.storage);
   if (!storage) return;
@@ -25,7 +39,18 @@ export function setCache(key, value, options = {}) {
     version: options.version || 1,
   };
 
-  storage.setItem(key, JSON.stringify(payload));
+  try {
+    storage.setItem(key, JSON.stringify(payload));
+  } catch (error) {
+    if (isQuotaExceededError(error)) {
+      try {
+        storage.removeItem(key);
+        storage.setItem(key, JSON.stringify(payload));
+      } catch (innerError) {
+        // Swallow quota errors to avoid app crash when localStorage is full.
+      }
+    }
+  }
 }
 
 export function getCache(key, options = {}) {
@@ -37,7 +62,11 @@ export function getCache(key, options = {}) {
     if (!raw) return options.fallback;
 
     const payload = JSON.parse(raw);
-    if (payload.version && options.version && payload.version !== options.version) {
+    if (
+      payload.version &&
+      options.version &&
+      payload.version !== options.version
+    ) {
       storage.removeItem(key);
       return options.fallback;
     }

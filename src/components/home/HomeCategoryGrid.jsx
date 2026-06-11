@@ -38,7 +38,6 @@ const defaultHomeCategories = [
     image: "/image/jpg/home-decor.jpg",
     categoryKey: "home-kitchen",
   },
-
 ];
 
 export default function HomeCategoryGrid({
