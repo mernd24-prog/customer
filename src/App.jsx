@@ -321,12 +321,16 @@ export default function App() {
               {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} /> */}
               <Route
                 path="/shipping-policy"
-                element={<PolicyPage slugOverride="order-status-shipped" />}
+                element={<PolicyPage slugOverride="shipping-delivery-policy" />}
               />
-              {/* <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} />  */}
-              {/* <Route path="/terms-of-use" element={<PolicyPage />} />
-              <Route path="/shipping-policy" element={<PolicyPage />} />
-              <Route path="/refund-policy" element={<PolicyPage />} /> */}
+              <Route
+                path="/refund-policy"
+                element={<PolicyPage slugOverride="return-refund-policy" />}
+              />
+              <Route
+                path="/terms-of-use"
+                element={<PolicyPage slugOverride="terms-of-use" />}
+              />
 
               {/* ── Public buyer routes ────────────────────────────────────── */}
               <Route element={<BuyerOnlyRoute />}>

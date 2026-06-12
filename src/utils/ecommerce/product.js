@@ -1,5 +1,7 @@
 export function getProductId(product) {
-  return product?.id || product?._id || product?.productId || product?.sku || product;
+  return (
+    product?.id || product?._id || product?.productId || product?.sku || product
+  );
 }
 
 export function getProductTitle(product, fallback = "Untitled product") {
@@ -69,20 +71,22 @@ export function getImageUrlFromValue(value) {
     return value.map(getImageUrlFromValue).find(Boolean) || "";
   }
   if (typeof value === "object") {
-    return [
-      value.url,
-      value.src,
-      value.imageUrl,
-      value.thumbnailUrl,
-      value.path,
-      value.secure_url,
-      value.original,
-      value.large,
-      value.medium,
-      value.small,
-    ]
-      .map(getImageUrlFromValue)
-      .find(Boolean) || "";
+    return (
+      [
+        value.url,
+        value.src,
+        value.imageUrl,
+        value.thumbnailUrl,
+        value.path,
+        value.secure_url,
+        value.original,
+        value.large,
+        value.medium,
+        value.small,
+      ]
+        .map(getImageUrlFromValue)
+        .find(Boolean) || ""
+    );
   }
   return "";
 }
@@ -93,7 +97,7 @@ export function getProductImage(product) {
     getImageUrlFromValue(product?.image) ||
     getImageUrlFromValue(product?.imageUrl) ||
     getImageUrlFromValue(product?.thumbnail) ||
-    getImageUrlFromValue(product?.images.gallery)
+    getImageUrlFromValue(product?.images?.gallery)
   );
 }
 
@@ -106,16 +110,20 @@ const FALLBACK_PALETTES = [
 ];
 
 export function getImageFallbackSrc(label = "Sam Global", context = "") {
-  const text = String(label || context || "Sam Global").trim().slice(0, 50);
+  const text = String(label || context || "Sam Global")
+    .trim()
+    .slice(0, 50);
   const key = `${text} ${context}`;
-  const paletteIndex = Array.from(key).reduce((sum, char) => sum + char.charCodeAt(0), 0) % FALLBACK_PALETTES.length;
+  const paletteIndex =
+    Array.from(key).reduce((sum, char) => sum + char.charCodeAt(0), 0) %
+    FALLBACK_PALETTES.length;
   const [from, to] = FALLBACK_PALETTES[paletteIndex];
 
   // Wrap text into lines of max 15 characters to make it fit
   const words = text.split(" ");
   const lines = [];
   let currentLine = "";
-  words.forEach(word => {
+  words.forEach((word) => {
     if ((currentLine + " " + word).trim().length <= 15) {
       currentLine = (currentLine + " " + word).trim();
     } else {
@@ -126,11 +134,16 @@ export function getImageFallbackSrc(label = "Sam Global", context = "") {
   if (currentLine) lines.push(currentLine);
 
   const displayLines = lines.slice(0, 3);
-  const tspans = displayLines.map((line, idx) => {
-    const safeLine = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    const dy = idx === 0 ? `-${(displayLines.length - 1) * 0.6}em` : "1.2em";
-    return `<tspan x="50%" dy="${dy}">${safeLine}</tspan>`;
-  }).join("");
+  const tspans = displayLines
+    .map((line, idx) => {
+      const safeLine = line
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      const dy = idx === 0 ? `-${(displayLines.length - 1) * 0.6}em` : "1.2em";
+      return `<tspan x="50%" dy="${dy}">${safeLine}</tspan>`;
+    })
+    .join("");
 
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">

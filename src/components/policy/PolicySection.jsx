@@ -49,7 +49,7 @@ const PolicySection = ({ title, points, description, footer }) => {
                       <img
                         src={infoSection.arrow}
                         alt=""
-                        className="mt-[3px] h-3 w-3 flex-shrink-0 object-contain md:h-3.5 md:w-3.5"
+                        className="my-auto  h-3 w-3 flex-shrink-0 object-contain md:h-3.5 md:w-3.5"
                       />
                       <span className="text-[14px] leading-relaxed tracking-normal text-muted md:text-[18px]">
                         {line}

@@ -253,7 +253,11 @@ function ProductGallery({
                     alt=""
                     draggable={false}
                     className={`h-full w-full object-contain transition-transform duration-300 ease-out select-none ${
-                      isZoomed ? "scale-[1.6]" : "scale-100"
+                      isZoomed
+                        ? isModal
+                          ? "scale-[2.2]"
+                          : "scale-[2.6]"
+                        : "scale-100"
                     }`}
                     style={{
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
@@ -712,13 +716,13 @@ export default function ProductDetailPage() {
                           {shareOpen && (
                             <div
                               className="
-      absolute right-0 top-12 z-50
-      w-[230px] max-w-[calc(100vw-24px)]
-      rounded-[var(--customer-radius)] border border-border
-      bg-white p-3 shadow-2xl
-      sm:w-[260px] sm:p-4
-      md:w-[280px]
-    "
+                              absolute right-0 top-12 z-50
+                              w-[230px] max-w-[calc(100vw-24px)]
+                              rounded-[var(--customer-radius)] border border-border
+                              bg-white p-3 shadow-2xl
+                              sm:w-[260px] sm:p-4
+                              md:w-[280px]
+                            "
                             >
                               <div className="mb-3">
                                 <h3 className=" text-[13px] font-bold text-ink sm:text-sm">
@@ -796,12 +800,12 @@ export default function ProductDetailPage() {
                                   alert("Link copied!");
                                 }}
                                 className="
-        mt-4 w-full rounded-full
-        bg-gold px-3 py-2
-        text-[12px] font-semibold text-white
-        transition-all duration-300 ease-in-out hover:bg-gold-dark
-        sm:px-4 sm:text-sm
-      "
+                                  mt-4 w-full rounded-full
+                                  bg-gold px-3 py-2
+                                  text-[12px] font-semibold text-white
+                                  transition-all duration-300 ease-in-out hover:bg-gold-dark
+                                  sm:px-4 sm:text-sm
+                                "
                               >
                                 Copy Link
                               </button>

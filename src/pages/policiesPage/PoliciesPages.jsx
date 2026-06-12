@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
@@ -8,38 +8,6 @@ import { useCmsRecord } from "../../hooks/useCmsRecord";
 import PolicyHeader from "../../components/policy/PolicyHeader";
 import PolicySection from "../../components/policy/PolicySection";
 
-const policyConfig = {
-  "/refund-policy": {
-    slug: "refund-policy",
-    fallbackTitle: "Refund Policy",
-    emptyText: "The refund policy is currently unavailable.",
-    description: "Learn about our return and refund policies.",
-  },
-
-  "/shipping-policy": {
-    slug: "shipping-policy",
-    fallbackTitle: "Shipping & Delivery",
-    emptyText: "The shipping policy is currently unavailable.",
-    description: "Learn about our shipping times, costs, and delivery methods.",
-  },
-
-  "/terms-of-use": {
-    slug: "terms-of-use",
-    fallbackTitle: "Terms Of Use",
-    emptyText: "The terms of use are currently unavailable.",
-    description: "Read our terms and conditions.",
-  },
-
-  "/features": {
-    slug: "features",
-    fallbackTitle: "Features",
-    emptyText: "Features are currently unavailable.",
-    description: "Core platform features for customers.",
-  },
-};
-
-const emptyPolicyConfig = {};
-
 function cleanPolicyText(value = "") {
   return String(value || "")
     .replace(/^\s*:\s*/, "")
@@ -47,18 +15,13 @@ function cleanPolicyText(value = "") {
 }
 
 const PolicyPage = ({ slugOverride = "" }) => {
-  const location = useLocation();
-
-  const config = policyConfig[location.pathname] || emptyPolicyConfig;
-  const {
-    description: configDescription,
-    emptyText,
-    fallbackTitle,
-    slug,
-  } = config;
-  const cmsSlug = slugOverride || slug;
+  const { slug } = useParams();
+  const cmsSlug = slugOverride || slug || "";
 
   const { page: cmsPolicy, loading } = useCmsRecord(cmsSlug);
+
+  const title = cmsPolicy?.metadata?.data?.title || "";
+  const description = cmsPolicy?.metadata?.data?.description || "";
 
   const sections = useMemo(() => {
     if (!cmsPolicy) return null;
@@ -94,22 +57,19 @@ const PolicyPage = ({ slugOverride = "" }) => {
       .sort((a, b) => a.sortOrder - b.sortOrder);
   }, [cmsPolicy]);
 
+  const emptyText = "";
+
   const data = useMemo(() => {
     if (!sections) return null;
-
     return {
-      title: fallbackTitle,
+      title: title,
       sections,
     };
-  }, [sections, fallbackTitle]);
-
-  const pageTitle = `${data?.title || fallbackTitle} | Sam Global`;
-
-  const pageDescription = data?.sections?.[0]?.description || configDescription;
+  }, [sections, title]);
 
   return (
     <main className="w-full bg-white  pb-20">
-      <Seo title={pageTitle} description={pageDescription} />
+      <Seo title={title} description={description} />
 
       <ApiState
         loading={loading && !sections}

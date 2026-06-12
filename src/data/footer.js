@@ -71,7 +71,7 @@ export const footerData = {
         { label: "Customer Support", href: "/support" },
         { label: "FAQs", href: "/faq" },
         { label: "Shipping & Delivery Policy", href: "/shipping-policy" },
-        { label: "Returns", href: "/returns" },
+        { label: "Return & Refund Policy", href: "/refund-policy" },
 
         // Added policy routes
       ],
@@ -125,10 +125,6 @@ export const footerData = {
 
   copyright: "© 2026 Samglobal Marketplace Pvt. Ltd. All rights reserved.",
   extrapages: [
-    {
-      labels: "Privacy Policy",
-      links: "/privacy-policy",
-    },
     {
       labels: "Terms of Use",
       links: "/terms-of-use",
