@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "react-toastify";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import { useToastThunk } from "../../hooks/useToastThunk";
+import { notify } from "../../utils/notify";
 import { fetchCart } from "../../features/cart/cartSlice";
 import { fetchWallet } from "../../features/wallet/walletSlice";
 import { fetchMe } from "../../features/user/userSlice";
@@ -910,7 +910,10 @@ export default function CheckoutPage() {
             error?.message ||
             "Payment was not completed. Your order is still pending payment.";
           setError("root", { type: "manual", message });
-          toast.error(message);
+          notify.error({
+            title: "Payment failed",
+            message,
+          });
           return;
         }
       }
@@ -928,8 +931,8 @@ export default function CheckoutPage() {
     <>
       <Seo title="Checkout | Sam Global" />
 
-      <div className="w-container py-8 sm:py-10">
-        <h1 className="mb-8  text-2xl font-bold text-ink sm:text-3xl">
+      <div className="w-container py-12 sm:py-10">
+        <h1 className="mb-6  text-2xl font-bold text-ink sm:text-3xl">
           Checkout
         </h1>
 

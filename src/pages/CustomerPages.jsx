@@ -9,7 +9,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "react-toastify";
 import {
   Bell,
   Banknote,
@@ -22,6 +21,7 @@ import {
   Star,
   Wallet,
 } from "lucide-react";
+import { notify } from "../utils/notify";
 import ApiState from "../components/common/ApiState";
 import Seo from "../components/common/Seo";
 import BrandButton from "../components/ui/BrandButton";
@@ -363,7 +363,10 @@ export function AuthFormPage({ mode }) {
                     }),
                     "Social login complete",
                   )
-                : toast.error("Paste a provider ID token first"),
+                : notify.error({
+                    title: "Missing token",
+                    message: "Paste a provider ID token first",
+                  }),
             )}
           >
             Continue with Google
@@ -1375,7 +1378,11 @@ export function OrdersPage({ detail = false, track = false }) {
               <button
                 className="button secondary"
                 onClick={() =>
-                  toast.info("Reorder builds a new cart from order items.")
+                  notify.info({
+                    title: "Reorder",
+                    message: "Reorder builds a new cart from order items.",
+                    tone: "cart",
+                  })
                 }
               >
                 Reorder

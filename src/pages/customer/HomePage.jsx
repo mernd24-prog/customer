@@ -57,7 +57,7 @@ export function HomePage() {
         loading={false}
         title="Time for a Spring Refresh"
         subtitle="Curated collections for every style & home"
-        className = "text-[#3E4093] font-bold"
+        className = "text-[#3E4093] font-bold "
       />
 
       <CollageMainSection />

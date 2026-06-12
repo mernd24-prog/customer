@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { HelmetProvider } from "react-helmet-async";
-import { ToastContainer } from "react-toastify";
+import { Slide, ToastContainer } from "react-toastify";
 import { registerSW } from "virtual:pwa-register";
 import "react-toastify/dist/ReactToastify.css";
 import { store } from "./app/store";
@@ -25,7 +25,22 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         {/* <AppErrorBoundary> */}
           <App />
         {/* </AppErrorBoundary> */}
-        <ToastContainer position="top-right" autoClose={3500} newestOnTop />
+        <ToastContainer
+          position="bottom-center"
+          autoClose={4200}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          draggable
+          hideProgressBar={false}
+          pauseOnFocusLoss={false}
+          limit={4}
+          theme="light"
+          transition={Slide}
+          toastClassName="customer-toast"
+          bodyClassName="customer-toast-body"
+          progressClassName="customer-toast-progress"
+        />
       </HelmetProvider>
     </Provider>
   </React.StrictMode>

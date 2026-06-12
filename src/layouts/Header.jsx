@@ -462,8 +462,8 @@ export const Navbar = ({ icons: propIcons }) => {
 
   return (
     <header className="customer-container w-full">
-      <div className="flex flex-wrap items-center justify-between gap-3 py-3 sm:gap-4 lg:flex-nowrap lg:gap-5 h-auto lg:h-[90px]">
-        <div className="flex shrink-0 items-center gap-6 order-1">
+      <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4 lg:h-[90px] lg:flex-nowrap lg:gap-5">
+        <div className="order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
           <Link to="/" aria-label="Sam Global home">
             <img
               src="/image/png/logo.png"
@@ -498,13 +498,13 @@ export const Navbar = ({ icons: propIcons }) => {
           placeholder="Search for products, brands and categories..."
           micIcon={icons.Mic}
           showButtonLabel={false}
-          className="order-3 w-full lg:order-2 lg:w-auto lg:max-w-[720px] lg:flex-1"
+          className="order-3 w-full min-w-0 lg:order-2 lg:w-auto lg:max-w-[720px] lg:flex-1"
         />
      
 
    
   {/* Actions */ }
-  <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
+  <div className="order-2 flex min-w-0 shrink items-center justify-end gap-1.5 min-[375px]:gap-2 sm:gap-3 lg:order-3 lg:shrink-0 lg:gap-4">
     <div className="hidden items-center gap-5 lg:flex">
       {utilityIcons.map((item, iconIndex) => (
         <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
@@ -556,14 +556,14 @@ export const Navbar = ({ icons: propIcons }) => {
     {currentUser ? (
       <Link
         to="/account/profile"
-        className="inline-flex h-[34px] max-w-[145px] items-center justify-center gap-1.5 rounded-[4px] border border-[#1B1D60] bg-white px-2.5 text-[11px] font-semibold text-[#1B1D60] whitespace-nowrap transition-colors duration-200 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A] min-[375px]:h-[36px] min-[375px]:max-w-[160px] min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:max-w-[175px] sm:h-[45px] sm:max-w-[220px] sm:gap-2 sm:px-6 sm:text-[16px]"
+        className="inline-flex h-[34px] max-w-[120px] min-w-0 items-center justify-center gap-1 rounded-[4px] border border-[#1B1D60] bg-white px-2 text-[10px] font-semibold text-[#1B1D60] whitespace-nowrap transition-colors duration-200 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A] min-[375px]:h-[36px] min-[375px]:max-w-[140px] min-[375px]:px-2.5 min-[375px]:text-[11px] min-[425px]:h-[38px] min-[425px]:max-w-[175px] min-[425px]:text-[13px] sm:h-[45px] sm:max-w-[220px] sm:gap-2 sm:px-6 sm:text-[16px]"
       >
         <User size={14} className="shrink-0 sm:size-4" />
         <span className="truncate">{accountLabel}</span>
       </Link>
     ) : (
       <HeaderGoldButton
-        className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[11px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
+        className="flex h-[34px] min-w-[84px] items-center justify-center rounded-[4px] px-2 text-[10px] font-sans font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[96px] min-[375px]:px-2.5 min-[375px]:text-[11px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
         onClick={() => navigate("/register")}
       >
         Create Account
@@ -631,7 +631,7 @@ export const CategoryBar = ({ headerData }) => {
     const handleScroll = () => {
       if (!categoryBarRef.current) return;
 
-      const headerOffset = window.innerWidth >= 1024 ? 150 : 90;
+      const headerOffset = window.innerWidth >= 1024 ? 150 : 132;
       const { bottom } = categoryBarRef.current.getBoundingClientRect();
       const nextPinned = isPinnedRef.current
         ? bottom <= headerOffset + 16
@@ -789,7 +789,7 @@ export const CategoryBar = ({ headerData }) => {
       </div>
       <nav
         aria-label="Sticky category navigation"
-        className={`fixed left-0  top-[132px] z-40 w-full bg-white/95 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur transition-all duration-300 ease-out will-change-transform lg:top-[150px] ${isPinned
+        className={`fixed left-0 top-[132px] z-40 w-full bg-white/95 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur transition-all duration-300 ease-out will-change-transform min-[375px]:top-[136px] min-[425px]:top-[140px] sm:top-[146px] lg:top-[150px] ${isPinned
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none -translate-y-full opacity-0"
           }`}

@@ -4,7 +4,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LogIn } from "lucide-react";
-import { toast } from "react-toastify";
 
 import AuthCard from "../../components/ui/AuthCard";
 import Button from "../../components/ui/Button";
@@ -14,6 +13,7 @@ import Seo from "../../components/common/Seo";
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
 import { loginUser, clearError } from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
+import { notify } from "../../utils/notify";
 import { loginSchema } from "../../validations/validationSchemas";
 
 export default function LoginPage() {
@@ -56,7 +56,11 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    toast.info("Google sign-in requires Firebase authentication integration.");
+    notify.info({
+      title: "Google sign-in unavailable",
+      message: "Google sign-in requires Firebase authentication integration.",
+      tone: "notification",
+    });
   };
 
   return (

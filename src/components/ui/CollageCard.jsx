@@ -6,7 +6,7 @@ import Label from "../common/label/Label";
 function CollageImage({ src, title, link, label }) {
   const imageLabel = label || title;
   return (
-    <div className="relative h-28 w-full overflow-hidden bg-[var(--customer-cream)] md:w-full lg:h-36">
+    <div className="relative h-[150px] w-full overflow-hidden bg-[var(--customer-cream)] sm:h-[160px] lg:h-[150px] xl:h-[150px]">
       <Link to={link}>
         <img
           src={src}
@@ -15,8 +15,13 @@ function CollageImage({ src, title, link, label }) {
           loading="lazy"
         />
         {imageLabel && (
-          <span className="absolute bottom-3 left-3 rounded-full backdrop-blur-[20px] text-[#FFFFFF] ">
-            <Label variant="imageLabel">{imageLabel}</Label>
+          <span className="absolute bottom-[14px] left-[14px]">
+            <Label
+              variant="imageLabel"
+              className="text-[11px] font-medium sm:text-[12px]"
+            >
+              {imageLabel}
+            </Label>
           </span>
         )}
       </Link>
@@ -25,15 +30,22 @@ function CollageImage({ src, title, link, label }) {
 }
 function CollageCard({ section }) {
   return (
-    <article className="overflow-hidden rounded-[20px] bg-[#CE9F2D33] border border-[#CE9F2D66] ">
-      <div className="flex items-center justify-between px-6 py-5">
-        <h2 className="font-dm-sans text-[15px] font-bold leading-[100%] tracking-[0%] align-middle text-[#2E2E2E] sm:text-[16px] lg:text-[18px]">
+    <article className="overflow-hidden rounded-[24px] border border-[#E8B84B] bg-[#F8EFD8]">
+      <div className="flex min-h-[76px] items-center justify-between gap-3 px-4 py-4 sm:px-5 sm:py-5 lg:px-6">
+        <h2
+          className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-dm-sans text-[14px] font-bold leading-[100%] tracking-[0%] align-middle text-[#2E2E2E] min-[375px]:text-[15px] sm:text-[16px] md:text-[17px] lg:max-w-[calc(100%-96px)] lg:text-[16px] xl:text-[18px]"
+        >
           {section.title}
         </h2>
-        
-        <Label variant="outline">{section.label}</Label>
+
+        <Label
+          variant="sectionLabel"
+          className="shrink-0 text-[10px] font-medium sm:text-[11px] md:text-[12px]"
+        >
+          {section.label}
+        </Label>
       </div>
-      <div className="grid grid-cols-2 gap-[1px]">
+      <div className="grid grid-cols-2 gap-0">
         {section.images.map((ele, idx) => (
           <CollageImage
             key={idx}
