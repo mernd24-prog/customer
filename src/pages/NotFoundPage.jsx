@@ -1,28 +1,29 @@
 import { Link } from "react-router-dom";
-import { Grid2X2, Home, Sparkles } from "lucide-react";
+import { Grid2X2, Home, SearchX } from "lucide-react";
 import Seo from "../components/common/Seo";
 
 export default function NotFoundPage() {
   return (
     <>
       <Seo
-        title="Coming Soon | Sam Global"
-        description="This Sam Global page is coming soon."
+        title="Page not found | Sam Global"
+        description="The page you're looking for doesn't exist."
         robots="noindex,follow"
       />
 
       <section className="flex min-h-[60vh] items-center justify-center px-4 py-12 text-center">
         <div className="mx-auto max-w-2xl rounded-[18px] border border-[var(--customer-border)] bg-white px-6 py-10 shadow-sm sm:px-10">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--customer-gold-soft)] text-[var(--customer-gold-dark)]">
-            <Sparkles size={26} strokeWidth={1.8} />
+            <SearchX size={26} strokeWidth={1.8} />
           </div>
 
-          <h1 className="mt-5 text-4xl font-black leading-tight text-[var(--customer-navy)] sm:text-5xl">
-            Coming soon
+          <p className="mt-5 text-6xl font-black text-[var(--customer-navy)]">404</p>
+          <h1 className="mt-2 text-2xl font-bold text-[var(--customer-navy)] sm:text-3xl">
+            Page not found
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[var(--customer-muted)] sm:text-base">
-            This section is being prepared. You can continue shopping from the
-            home page or browse live categories while we finish it.
+            We couldn&apos;t find the page you&apos;re looking for. It may have
+            been moved or the link might be incorrect.
           </p>
 
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

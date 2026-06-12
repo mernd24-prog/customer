@@ -44,7 +44,6 @@ export const productVariantSchema = z.object({
 export const returnSchema = z.object({
   productId: requiredString("Product"),
   quantity: quantityField("Quantity", { min: 1, max: 99 }),
-  unitPrice: moneyField("Unit price", { min: 0 }),
   reason: z.enum(["defective", "not_as_described", "changed_mind", "other"], {
     required_error: "Select a return reason",
   }),

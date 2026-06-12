@@ -56,7 +56,6 @@ const FeaturesPage = lazyNamed(
   () => import("./pages/StaticPages"),
   "FeaturesPage",
 );
-const PolicyPage = lazy(() => import("./pages/policiesPage/PoliciesPages"));
 
 const HomePage = lazyNamed(
   () => import("./pages/customer/HomePage"),
@@ -220,12 +219,12 @@ export default function App() {
   }, [currentUser, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchCategories()).catch(() => {});
+    dispatch(fetchCategories()).catch(() => { });
   }, [dispatch]);
 
   useEffect(() => {
     if (!currentUser) return;
-    dispatch(fetchCart()).catch(() => {});
+    dispatch(fetchCart()).catch(() => { });
   }, [currentUser, dispatch]);
 
   if (!sessionReady) {
@@ -321,15 +320,22 @@ export default function App() {
               <Route path="/our-commitment" element={<OurCommitmentPage />} />
               <Route path="/features" element={<FeaturesPage />} />
 
-              {/* <Route path="/terms-of-use" element={<CmsPage slugOverride="terms-of-use" />} /> */}
+              <Route
+                path="/terms-of-use"
+                element={<CmsPage slugOverride="terms-of-use" />}
+              />
               <Route
                 path="/shipping-policy"
-                element={<PolicyPage slugOverride="order-status-shipped" />}
+                element={<CmsPage slugOverride="shipping-policy" />}
               />
-              {/* <Route path="/refund-policy" element={<CmsPage slugOverride="refund-policy" />} />  */}
-              {/* <Route path="/terms-of-use" element={<PolicyPage />} />
-              <Route path="/shipping-policy" element={<PolicyPage />} />
-              <Route path="/refund-policy" element={<PolicyPage />} /> */}
+              <Route
+                path="/refund-policy"
+                element={<CmsPage slugOverride="refund-policy" />}
+              />
+              <Route
+                path="/privacy-policy"
+                element={<CmsPage slugOverride="privacy-policy" />}
+              />
 
               {/* ── Public buyer routes ────────────────────────────────────── */}
               <Route element={<BuyerOnlyRoute />}>
@@ -524,8 +530,9 @@ export default function App() {
                 </Route>
               </Route>
 
-              {/* Catch-all */}
+              {/* ── 404 catch-all ─────────────────────────────────────────── */}
               <Route path="*" element={<NotFoundPage />} />
+
             </Route>
           </Routes>
         </Suspense>

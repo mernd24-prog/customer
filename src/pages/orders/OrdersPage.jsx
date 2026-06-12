@@ -368,6 +368,10 @@ const getCourierName = (order) => {
     null
   );
 };
+const getTrackingUrl = (order) => {
+  const shipment = getLatestShipment(order);
+  return shipment?.tracking_url || shipment?.trackingUrl || null;
+};
 const getPaymentMethod = (order) => {
   const payment = getOrderRelations(order).payments?.[0];
   return (
@@ -537,6 +541,7 @@ function OrderDetail({ orderId, track }) {
   const deliveryStatus = getDeliveryStatus(order);
   const trackingNumber = getTrackingNumber(order);
   const courierName = getCourierName(order);
+  const trackingUrl = getTrackingUrl(order);
   const paymentMethod = getPaymentMethod(order);
 
   useEffect(() => {
@@ -634,9 +639,17 @@ function OrderDetail({ orderId, track }) {
                         Tracking activity
                       </h2>
                       <p className="mt-1 text-sm text-muted">
-                        {trackingNumber
-                          ? `Tracking number ${trackingNumber}`
-                          : "Shipment tracking will update here."}
+                        {trackingNumber ? (
+                          trackingUrl ? (
+                            <a href={trackingUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-gold underline underline-offset-2 hover:text-gold-dark">
+                              {trackingNumber}
+                            </a>
+                          ) : (
+                            <span className="font-mono">{trackingNumber}</span>
+                          )
+                        ) : (
+                          "Shipment tracking will update here."
+                        )}
                       </p>
                     </div>
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cream text-gold">
@@ -662,6 +675,19 @@ function OrderDetail({ orderId, track }) {
                           {trackingNumber || "N/A"}
                         </span>
                       </div>
+                      {trackingUrl && (
+                        <div className="flex justify-between gap-4">
+                          <span className="text-muted">Track package</span>
+                          <a
+                            href={trackingUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-right text-xs font-semibold text-gold underline underline-offset-2 hover:text-gold-dark"
+                          >
+                            Track on courier site
+                          </a>
+                        </div>
+                      )}
                       <div className="flex justify-between gap-4">
                         <span className="text-muted">Status</span>
                         <span className="text-right font-semibold capitalize text-ink">

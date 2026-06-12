@@ -1126,6 +1126,10 @@ export function CheckoutPage() {
 }
 
 export function PaymentResultPage({ failed = false }) {
+  const [searchParams] = useSearchParams();
+  const orderId = searchParams.get("orderId");
+  const orderLink = orderId ? `/orders/${orderId}` : "/orders";
+
   return (
     <>
       <Seo
@@ -1173,13 +1177,16 @@ export function PaymentResultPage({ failed = false }) {
           <h1 className=" text-2xl font-bold text-ink">
             {failed ? "Payment Failed" : "Order Placed!"}
           </h1>
+          {orderId && !failed && (
+            <p className="mt-1 font-mono text-xs text-muted">#{orderId}</p>
+          )}
           <p className="mt-2  text-sm text-muted">
             {failed
               ? "Your payment could not be processed. Please try again or contact support."
               : "Your order has been placed successfully. We'll send you a confirmation soon."}
           </p>
           <div className="mt-6 flex flex-col gap-3">
-            <Link to="/orders">
+            <Link to={orderLink}>
               <BrandButton
                 variant="primary"
                 rounded
@@ -1601,7 +1608,7 @@ export function PreferencesPage() {
     (s) => s.notification,
   );
   const run = useToastThunk();
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       email: true,
       sms: true,
@@ -1611,6 +1618,19 @@ export function PreferencesPage() {
       timezone: "Asia/Kolkata",
     },
   });
+
+  useEffect(() => {
+    if (!state.current) return;
+    const prefs = state.current;
+    reset({
+      email: prefs.channels?.email ?? true,
+      sms: prefs.channels?.sms ?? true,
+      push: prefs.channels?.push ?? true,
+      inApp: prefs.channels?.inApp ?? true,
+      frequency: prefs.frequency || "real_time",
+      timezone: prefs.timezone || "Asia/Kolkata",
+    });
+  }, [state.current, reset]);
 
   const CHANNELS = [
     { key: "email", label: "Email notifications" },
@@ -1728,13 +1748,20 @@ export function LoyaltyPage() {
   const dispatch = useDispatch();
   const loyaltyState = useSelector((s) => s.loyalty);
   const profile = loyaltyState.current;
-  const history = Array.isArray(loyaltyState.list) ? loyaltyState.list : [];
+  const [history, setHistory] = useState([]);
   const run = useToastThunk();
 
   useEffect(() => {
     dispatch(fetchLoyaltyProfile());
-    dispatch(fetchLoyaltyBenefits());
-    dispatch(fetchLoyaltyHistory({ limit: 20, offset: 0 }));
+    dispatch(fetchLoyaltyHistory({ limit: 20, offset: 0 }))
+      .unwrap()
+      .then((result) => {
+        const items = Array.isArray(result?.data)
+          ? result.data
+          : result?.data?.items || result?.data?.list || [];
+        setHistory(items);
+      })
+      .catch(() => {});
   }, [dispatch]);
 
   return (
@@ -1830,7 +1857,8 @@ export function WarrantyPage({ detail = false }) {
   const dispatch = useDispatch();
   const state = useSelector((s) => s.warranty);
   const run = useToastThunk();
-  const { register, handleSubmit, reset } = useForm();
+  const lookupForm = useForm();
+  const registerForm = useForm();
 
   useEffect(() => {
     if (detail) dispatch(fetchWarrantyById({ warrantyId }));
@@ -1856,9 +1884,9 @@ export function WarrantyPage({ detail = false }) {
         {!detail && (
           <form
             className="mb-6 rounded-[12px] border border-border bg-white p-5"
-            onSubmit={handleSubmit((v) => {
+            onSubmit={lookupForm.handleSubmit((v) => {
               dispatch(fetchOrderWarranties({ orderId: v.orderId }));
-              reset();
+              lookupForm.reset();
             })}
           >
             <h2 className="mb-3  text-sm font-semibold text-ink">
@@ -1867,7 +1895,7 @@ export function WarrantyPage({ detail = false }) {
             <div className="flex gap-3">
               <input
                 placeholder="Enter Order ID"
-                {...register("orderId", { required: true })}
+                {...lookupForm.register("orderId", { required: true })}
                 className="flex-1 rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
               <BrandButton
@@ -1981,13 +2009,13 @@ export function WarrantyPage({ detail = false }) {
           {/* Register warranty form */}
           <form
             className="mt-6 rounded-[12px] border border-border bg-white p-5"
-            onSubmit={handleSubmit((v) =>
+            onSubmit={registerForm.handleSubmit((v) =>
               run(
                 dispatch,
                 registerWarranty({
-                  orderId: v.reg_orderId,
-                  productId: v.reg_productId,
-                  variantId: v.reg_variantId,
+                  orderId: v.orderId,
+                  productId: v.productId,
+                  variantId: v.variantId || undefined,
                 }),
                 "Warranty registered",
               ),
@@ -1999,17 +2027,17 @@ export function WarrantyPage({ detail = false }) {
             <div className="grid gap-3 sm:grid-cols-3">
               <input
                 placeholder="Order ID"
-                {...register("reg_orderId")}
+                {...registerForm.register("orderId", { required: true })}
                 className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
               <input
                 placeholder="Product ID"
-                {...register("reg_productId")}
+                {...registerForm.register("productId", { required: true })}
                 className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
               <input
                 placeholder="Variant ID (optional)"
-                {...register("reg_variantId")}
+                {...registerForm.register("variantId")}
                 className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
             </div>

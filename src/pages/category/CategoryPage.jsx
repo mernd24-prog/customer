@@ -480,10 +480,7 @@ export default function CategoryPage() {
       label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,
     },
   ].flat().filter(Boolean);
-
-  if (isNotFoundApiError(categoryError)) {
-    return <NotFoundPage />;
-  }
+ 
 
   if (categoryLoading && !categoryData && !firstLoadDone && !products.length) {
     return <CategoryPageSkeleton />;

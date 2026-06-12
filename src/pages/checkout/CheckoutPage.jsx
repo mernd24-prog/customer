@@ -34,8 +34,6 @@ import {
   getProductTitle,
 } from "../../utils/ecommerce";
 import { normalizeDialCode } from "../../lib/utils";
-
-const getAddressId = (addr) => addr?._id || addr?.id || "";
 import {
   checkoutAddressSchema,
   couponCodeField,
@@ -48,6 +46,8 @@ import AddressSelection from "./AddressSelection";
 import ShippingAddressForm from "./ShippingAddressForm";
 import DiscountsSection from "./DiscountsSection";
 import CheckoutSummary from "./CheckoutSummary";
+
+const getAddressId = (addr) => addr?._id || addr?.id || "";
 
 const RAZORPAY_CHECKOUT_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
 let razorpayScriptPromise;
@@ -921,7 +921,7 @@ export default function CheckoutPage() {
     }
     window.sessionStorage.removeItem(SELECTED_CHECKOUT_STORAGE_KEY);
 
-    navigate("/payment/success");
+    navigate(`/payment/success?orderId=${orderId}`);
   };
 
   return (

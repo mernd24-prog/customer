@@ -61,7 +61,14 @@ export const endpoints = {
     sellerMe: `${API_PREFIX}/products/seller/me`,
     detail: (productId) => `${API_PREFIX}/products/${productId}`,
     create: `${API_PREFIX}/products`,
-    review: (productId) => `${API_PREFIX}/products/${productId}/review`
+    review: (productId) => `${API_PREFIX}/products/${productId}/review`,
+    reviews: (productId) => `${API_PREFIX}/products/${productId}/reviews`,
+    reviewItem: (productId, reviewId) => `${API_PREFIX}/products/${productId}/reviews/${reviewId}`,
+    reviewHelpful: (productId, reviewId) => `${API_PREFIX}/products/${productId}/reviews/${reviewId}/helpful`,
+    myReview: (productId) => `${API_PREFIX}/products/${productId}/my-review`,
+    related: (productId) => `${API_PREFIX}/products/${productId}/related`,
+    crossSell: (productId) => `${API_PREFIX}/products/${productId}/cross-sell`,
+    upSell: (productId) => `${API_PREFIX}/products/${productId}/up-sell`,
   },
   carts: {
     me: `${API_PREFIX}/carts/me`

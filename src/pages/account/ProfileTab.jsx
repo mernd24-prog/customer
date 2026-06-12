@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Pencil, X } from "lucide-react";
+import { Pencil } from "lucide-react";
 import FormField from "../../components/ui/FormField";
 import Button from "../../components/ui/Button";
 import { useToastThunk } from "../../hooks/useToastThunk";
@@ -58,7 +58,6 @@ export default function ProfileTab({ user }) {
     register,
     handleSubmit,
     watch,
-    getValues,
     reset,
     formState: { errors },
   } = useForm({
@@ -66,8 +65,6 @@ export default function ProfileTab({ user }) {
     defaultValues: {
       firstName: user?.profile?.firstName || "",
       lastName: user?.profile?.lastName || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
     },
   });
 
@@ -81,8 +78,6 @@ export default function ProfileTab({ user }) {
       reset({
         firstName: user.profile?.firstName || "",
         lastName: user.profile?.lastName || "",
-        email: user.email || "",
-        phone: user.phone || "",
       });
       setAvatarFile(null);
       setAvatarError("");
@@ -123,11 +118,6 @@ export default function ProfileTab({ user }) {
       firstName: values.firstName,
       lastName: values.lastName,
     };
-    const payload = {
-      email: values.email,
-      phone: values.phone,
-      profile,
-    };
 
     if (avatarFile) {
       const uploadResult = await run(
@@ -143,7 +133,7 @@ export default function ProfileTab({ user }) {
       profile.avatarUrl = avatarUrl;
     }
 
-    return run(dispatch, updateMe(payload), "Profile updated");
+    return run(dispatch, updateMe({ profile }), "Profile updated");
   };
 
   return (
@@ -189,7 +179,7 @@ export default function ProfileTab({ user }) {
           </p>
 
           <p className="break-all font-medium text-sm md:text-lg  text-[#182D50B2]">
-            {watch("email")}
+            {user?.email}
           </p>
         </div>
       </div>
@@ -217,27 +207,21 @@ export default function ProfileTab({ user }) {
         />
       </div>
 
-      {/* Contact Fields */}
+      {/* Contact Fields — read-only; email/phone are changed via account settings */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <FormField
-          id="email"
-          label="Email"
-          registration={register("email")}
-          error={errors.email}
-          type="email"
-          autoComplete="email"
-        />
+        <div className="grid gap-1.5">
+          <label className="text-sm font-medium text-ink">Email</label>
+          <div className="flex min-h-11 items-center rounded-[8px] border border-border bg-surface-soft px-3 py-2 text-sm text-muted">
+            {user?.email || "—"}
+          </div>
+        </div>
 
-        <FormField
-          id="phone"
-          label="Phone"
-          registration={register("phone")}
-          error={errors.phone}
-          type="tel"
-          autoComplete="tel"
-          inputMode="numeric"
-          placeholder="Enter phone number"
-        />
+        <div className="grid gap-1.5">
+          <label className="text-sm font-medium text-ink">Phone</label>
+          <div className="flex min-h-11 items-center rounded-[8px] border border-border bg-surface-soft px-3 py-2 text-sm text-muted">
+            {user?.phone || "—"}
+          </div>
+        </div>
       </div>
 
       {/* Role */}

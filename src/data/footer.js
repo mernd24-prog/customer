@@ -71,7 +71,9 @@ export const footerData = {
         { label: "Customer Support", href: "/support" },
         { label: "FAQs", href: "/faq" },
         { label: "Returns", href: "/returns" },
-        // Added policy routes
+        { label: "Shipping Policy", href: "/shipping-policy" },
+        { label: "Refund Policy", href: "/refund-policy" },
+        { label: "Privacy Policy", href: "/privacy-policy" },
       ],
     },
     {

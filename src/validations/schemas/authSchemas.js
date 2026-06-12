@@ -73,8 +73,6 @@ export const resetSchema = z.object({
 export const profileSchema = z.object({
   firstName: firstNameField(),
   lastName: lastNameField(),
-  email: emailField,
-  phone: phoneField,
   avatarUrl: optionalUrlField,
 });
 

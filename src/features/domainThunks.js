@@ -1311,3 +1311,26 @@ export const adminThunks = {
     data: body,
   }),
 };
+
+export const reviewThunks = {
+  fetchProductReviews: makeThunk("review/fetchProductReviews", {
+    url: ({ productId }) => endpoints.products.reviews(productId),
+    params: ({ productId: _p, ...rest }) => rest,
+  }),
+  submitProductReview: makeThunk("review/submitProductReview", {
+    method: "post",
+    url: ({ productId }) => endpoints.products.reviews(productId),
+    data: body,
+  }),
+  fetchMyProductReview: makeThunk("review/fetchMyProductReview", {
+    url: ({ productId }) => endpoints.products.myReview(productId),
+  }),
+  markReviewHelpful: makeThunk("review/markReviewHelpful", {
+    method: "patch",
+    url: ({ productId, reviewId }) => endpoints.products.reviewHelpful(productId, reviewId),
+  }),
+  deleteMyReview: makeThunk("review/deleteMyReview", {
+    method: "delete",
+    url: ({ productId, reviewId }) => endpoints.products.reviewItem(productId, reviewId),
+  }),
+};

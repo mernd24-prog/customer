@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -46,6 +46,10 @@ import {
   fetchTrendingProducts,
   trackRecommendationInteraction,
 } from "../../features/recommendation/recommendationSlice";
+import {
+  fetchRelatedProducts,
+  fetchCrossSellProducts,
+} from "../../features/product/relatedProductsSlice";
 import { trackAnalyticsEvent } from "../../features/analytics/analyticsSlice";
 import { useProductActions } from "../../hooks/useProductActions";
 import { addRecentlyViewed } from "../../utils/recentlyViewed";
@@ -64,6 +68,7 @@ import {
 } from "../../utils/ecommerce";
 import { isNotFoundApiError } from "../../utils/apiErrors";
 import CUSTOMER_ROUTES from "../../constants/routes";
+import ProductReviewsSection from "../../components/ecommerce/ProductReviewsSection";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
@@ -435,30 +440,41 @@ export default function ProductDetailPage() {
   // console.log("DEBUG: Product API Response:", product);
   const warrantyState = useSelector((s) => s.warranty);
   const dynamicState = useSelector((s) => s.dynamicPricing);
-  const relatedList = useSelector((s) => s.recommendation.trendingList);
+  const relatedState = useSelector((s) => s.relatedProducts);
+  const crossSellState = useSelector((s) => s.relatedProducts);
 
   const warranty = warrantyState.current;
   const dynamicPrice =
     String(dynamicState.current?.productId || "") === String(productId || "")
       ? firstMoneyValue(dynamicState.current?.price)
       : undefined;
-  const relatedProducts = Array.isArray(relatedList)
-    ? relatedList.slice(0, 4)
-    : [];
+  const relatedProducts = relatedState.relatedByProduct[productId]?.items || [];
+  const crossSellProducts = crossSellState.crossSellByProduct[productId]?.items || [];
 
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [zoomOpen, setZoomOpen] = useState(false);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const [shareOpen, setShareOpen] = useState(false);
+  // Track which productId has already had its one-shot side effects run
+  const sideEffectsRanFor = useRef(null);
+
   useEffect(() => {
     dispatch(fetchProductById({ productId }));
+    // Reset the guard so side effects re-run when navigating to a different product
+    sideEffectsRanFor.current = null;
   }, [dispatch, productId]);
 
   useEffect(() => {
     if (!product) return;
+    // Guard: only run once per productId regardless of how many times product state changes
+    if (sideEffectsRanFor.current === productId) return;
+    sideEffectsRanFor.current = productId;
+
     addRecentlyViewed(product);
     dispatch(fetchProductWarranty({ productId })).catch(() => {});
+    dispatch(fetchRelatedProducts({ productId })).catch(() => {});
+    dispatch(fetchCrossSellProducts({ productId })).catch(() => {});
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
     dispatch(
       trackAnalyticsEvent({
@@ -605,9 +621,7 @@ export default function ProductDetailPage() {
     ...attributes,
   }).filter(([, value]) => value != null && value !== "");
 
-  if (!productState.loading && isNotFoundApiError(productState.error)) {
-    return <NotFoundPage />;
-  }
+ 
 
   return (
     <>
@@ -1142,22 +1156,53 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
+              {/* ── Reviews ── */}
+              <ProductReviewsSection productId={productId} />
+
               {/* ── Related products ── */}
               {relatedProducts.length > 0 && (
                 <section className="relative z-10 mt-12 bg-white">
                   <div className="section-head mb-6">
-                    <h2 className=" text-[22px] font-bold text-ink">
+                    <h2 className="text-[22px] font-bold text-ink">
                       You May Also Like
                     </h2>
                     <Link
                       to="/products"
-                      className=" text-sm font-medium text-gold hover:text-gold-dark transition-all duration-300 ease-in-out"
+                      className="text-sm font-medium text-gold hover:text-gold-dark transition-all duration-300 ease-in-out"
                     >
                       View all →
                     </Link>
                   </div>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                     {relatedProducts.map((p) => (
+                      <ProductCard
+                        key={getProductId(p)}
+                        product={p}
+                        onAddToCart={addToCart}
+                        onWishlist={toggleWishlist}
+                        isWishlisted={isWishlisted(p)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* ── Cross-sell / Complete the look ── */}
+              {crossSellProducts.length > 0 && (
+                <section className="relative z-10 mt-10 bg-white">
+                  <div className="section-head mb-6">
+                    <h2 className="text-[22px] font-bold text-ink">
+                      Complete the Look
+                    </h2>
+                    <Link
+                      to="/products"
+                      className="text-sm font-medium text-gold hover:text-gold-dark transition-all duration-300 ease-in-out"
+                    >
+                      Explore more →
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                    {crossSellProducts.slice(0, 6).map((p) => (
                       <ProductCard
                         key={getProductId(p)}
                         product={p}

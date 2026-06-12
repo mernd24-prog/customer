@@ -316,9 +316,10 @@ export default function AddressTab({ user }) {
   };
 
   const handleAdd = async (values) => {
+    const { dialCode, ...addressFields } = values;
     await run(
       dispatch,
-      addAddress({ ...values, isDefault: Boolean(values.isDefault) }),
+      addAddress({ ...addressFields, isDefault: Boolean(values.isDefault) }),
       "Address added",
     );
     addForm.reset({ country: "", dialCode: "", isDefault: false });
@@ -327,11 +328,12 @@ export default function AddressTab({ user }) {
   };
 
   const handleUpdate = async (values) => {
+    const { dialCode, ...addressFields } = values;
     await run(
       dispatch,
       updateAddress({
         addressId: editingId,
-        ...values,
+        ...addressFields,
         isDefault: Boolean(values.isDefault),
       }),
       "Address updated",
