@@ -108,6 +108,17 @@ const DEFAULT_SELL_DROPDOWN = {
 const DEFAULT_FASHION_MENU = { leftSections: [], promo: null };
 const CATEGORY_MENU_OPEN_DELAY_MS = 350;
 const CATEGORY_MENU_CLOSE_DELAY_MS = 160;
+const HEADER_HEIGHT_VAR = "--customer-header-height";
+
+function getHeaderHeight() {
+  if (typeof window === "undefined") return 0;
+
+  const value = window
+    .getComputedStyle(document.documentElement)
+    .getPropertyValue(HEADER_HEIGHT_VAR);
+
+  return Number.parseFloat(value) || 0;
+}
 
 function getCategoryKey(item = {}) {
   return keyOr(
@@ -301,7 +312,7 @@ export const TopHeader = () => {
           ]
         : []),
       {
-        type: "menu",
+        type: "more",
         label: "More",
         title: "More",
         items: withIcons([
@@ -337,6 +348,7 @@ export const TopHeader = () => {
           />
         );
       case "menu":
+      case "more":
         return <MenuDropdown title={dropdown.title} items={dropdown.items} />;
       default:
         return null;
@@ -631,7 +643,7 @@ export const CategoryBar = ({ headerData }) => {
     const handleScroll = () => {
       if (!categoryBarRef.current) return;
 
-      const headerOffset = window.innerWidth >= 1024 ? 150 : 90;
+      const headerOffset = getHeaderHeight();
       const { bottom } = categoryBarRef.current.getBoundingClientRect();
       const nextPinned = isPinnedRef.current
         ? bottom <= headerOffset + 16
@@ -789,10 +801,12 @@ export const CategoryBar = ({ headerData }) => {
       </div>
       <nav
         aria-label="Sticky category navigation"
-        className={`fixed left-0  top-[132px] z-40 w-full bg-white/95 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur transition-all duration-300 ease-out will-change-transform lg:top-[150px] ${isPinned
-          ? "pointer-events-auto translate-y-0 opacity-100"
-          : "pointer-events-none -translate-y-full opacity-0"
-          }`}
+        style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
+        className={`fixed left-0 z-40 w-full bg-white/95 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur transition-all duration-300 ease-out will-change-transform ${
+          isPinned
+            ? "pointer-events-auto translate-y-0 opacity-100"
+            : "pointer-events-none -translate-y-full opacity-0"
+        }`}
       >
         <div className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-2 sm:gap-7 lg:h-[46px] lg:justify-center">
           {visibleCategories.map((item, index) => {
@@ -841,8 +855,37 @@ export const CategoryBar = ({ headerData }) => {
 };
 
 export const Header = () => {
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      const height = headerRef.current?.offsetHeight || 0;
+      document.documentElement.style.setProperty(
+        HEADER_HEIGHT_VAR,
+        `${height}px`,
+      );
+    };
+
+    updateHeaderHeight();
+
+    if (!headerRef.current) return undefined;
+
+    const observer = new ResizeObserver(updateHeaderHeight);
+    observer.observe(headerRef.current);
+    window.addEventListener("resize", updateHeaderHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeaderHeight);
+      document.documentElement.style.removeProperty(HEADER_HEIGHT_VAR);
+    };
+  }, []);
+
   return (
-    <div className="fixed left-0 top-0 z-50 w-full bg-white shadow-[0_2px_10px_rgba(17,24,39,0.08)]">
+    <div
+      className="fixed left-0 top-0 z-50 w-full bg-white shadow-[0_2px_10px_rgba(17,24,39,0.08)]"
+      ref={headerRef}
+    >
       <TopHeader />
       <Navbar />
     </div>
