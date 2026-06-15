@@ -93,7 +93,7 @@ export function getProductImage(product) {
     getImageUrlFromValue(product?.image) ||
     getImageUrlFromValue(product?.imageUrl) ||
     getImageUrlFromValue(product?.thumbnail) ||
-    getImageUrlFromValue(product?.images.gallery)
+    getImageUrlFromValue(product?.images?.gallery)
   );
 }
 

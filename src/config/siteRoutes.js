@@ -14,13 +14,6 @@ export const SITE_ROUTES = [
     priority: 0.9,
   },
   {
-    path: "/brands",
-    title: "Brands",
-    description: "Browse Sam Global products by brand.",
-    changefreq: "daily",
-    priority: 0.8,
-  },
-  {
     path: "/search",
     title: "Search Products",
     description: "Search products across Sam Global categories.",

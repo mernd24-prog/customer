@@ -89,7 +89,6 @@ const RecentlyViewedPage = lazyNamed(
   "RecentlyViewedPage",
 );
 const AboutPage = lazy(() => import("./pages/about/AboutPage"));
-const BrandListingPage = lazy(() => import("./pages/brand/BrandListingPage"));
 const BrandPage = lazy(() => import("./pages/brand/BrandPage"));
 const CategoryPage = lazy(() => import("./pages/category/CategoryPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
@@ -359,7 +358,7 @@ export default function App() {
 
                 <Route
                   path="/categories/brand"
-                  element={<BrandListingPage />}
+                  element={<BrandOutletPage />}
                 />
                 <Route path="/categories" element={<CategoryListingPage />} />
                 <Route
@@ -374,7 +373,6 @@ export default function App() {
                   path="/categories/:categoryKey"
                   element={<CategoryPage />}
                 />
-                <Route path="/brands" element={<BrandListingPage />} />
                 <Route path="/brands/:brandSlug" element={<BrandPage />} />
                 <Route path="/cms/:slug" element={<CmsPage />} />
                 <Route path="/backend-gaps" element={<BackendGapNotes />} />

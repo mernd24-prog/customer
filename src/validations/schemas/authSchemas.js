@@ -38,6 +38,7 @@ export const registerSchema = z.object({
   firstName: firstNameField(),
   lastName: lastNameField(),
   email: emailField,
+  dialCode: z.string().optional(),
   phone: phoneField,
   password: strongPasswordField,
   referralCode: referralCodeField,
