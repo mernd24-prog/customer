@@ -1,14 +1,33 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserPlus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import FormField from "../../components/ui/FormField";
+import PhoneField from "../../components/ui/PhoneField";
+import { fetchCountries } from "../global/globalSlice";
 import { AUTH_ROUTES } from "./authRoutes";
 import { buildBuyerRegistrationPayload } from "./buildBuyerRegistrationPayload";
 import { buyerRegisterSchema } from "./validation";
 
+async function fetchFullList(dispatch, thunkAction, params = {}) {
+  const res = await dispatch(thunkAction({ params })).unwrap();
+  const total = res.meta?.total || 20;
+  const limit = res.meta?.limit || 20;
+  if (total > limit) {
+    const allRes = await dispatch(
+      thunkAction({ params: { ...params, limit: total } }),
+    ).unwrap();
+    return allRes.data || allRes.list || allRes || [];
+  }
+  return res.data || res.list || res || [];
+}
+
 export default function BuyerRegisterForm({ error, loading, onSubmit }) {
+  const dispatch = useDispatch();
+  const [countries, setCountries] = useState([]);
   const {
     formState: { errors },
     handleSubmit,
@@ -20,12 +39,21 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
       firstName: "",
       lastName: "",
       email: "",
+      dialCode: "+91",
       phone: "",
       password: "",
       confirmPassword: "",
       referralCode: "",
     },
   });
+
+  useEffect(() => {
+    fetchFullList(dispatch, fetchCountries)
+      .then((list) => {
+        setCountries(list);
+      })
+      .catch((err) => console.error("Error fetching countries:", err));
+  }, [dispatch]);
 
   const submit = (values) => onSubmit(buildBuyerRegistrationPayload(values));
 
@@ -60,11 +88,13 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
           autoComplete="email"
           placeholder="you@example.com"
         />
-        <FormField
+        <PhoneField
           id="phone"
           label="Phone"
-          registration={register("phone")}
-          error={errors.phone}
+          countries={countries}
+          phoneRegistration={register("phone")}
+          dialCodeRegistration={register("dialCode")}
+          error={errors.phone || errors.dialCode}
           autoComplete="tel"
           placeholder="Enter phone number"
         />

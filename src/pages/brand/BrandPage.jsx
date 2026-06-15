@@ -69,8 +69,6 @@ export default function BrandPage() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
-  const searchState = useSelector((s) => s.search);
-
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
 
@@ -314,7 +312,7 @@ export default function BrandPage() {
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
-    { label: "Brands", href: "/brands" },
+    { label: "Brand Outlet", href: "/brand-outlet" },
     { label: brandName },
   ];
 
@@ -335,10 +333,10 @@ export default function BrandPage() {
           This brand page is being prepared and will be available soon.
         </p>
         <Link
-          to="/brands"
+          to="/brand-outlet"
           className="button primary mt-6 inline-block px-6 py-2"
         >
-          Browse All Brands
+          Browse Brand Outlet
         </Link>
       </div>
     );

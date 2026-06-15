@@ -189,7 +189,9 @@ const SearchBar = ({
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const dropdownRef = useRef(null);
+  const searchBarRef = useRef(null);
+  const categoryDropdownRef = useRef(null);
+  const searchDropdownRef = useRef(null);
   const categoriesRequestedRef = useRef(false);
   const searchQuery = value ?? internalQuery;
   const debouncedSearchQuery = useDebouncedValue(
@@ -314,25 +316,31 @@ const SearchBar = ({
   // Handle outside clicks to close dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!dropdownRef.current) return;
-
-      if (!dropdownRef.current.contains(event.target)) {
+      if (
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(event.target)
+      ) {
         setIsDropdownOpen(false);
+      }
+
+      if (
+        searchBarRef.current &&
+        !searchBarRef.current.contains(event.target)
+      ) {
         setIsSuggestionOpen(false);
       }
     };
 
     const handleScroll = (event) => {
-      if (!dropdownRef.current) return;
+      if (!categoryDropdownRef.current) return;
 
       // If scroll is happening inside dropdown → DO NOTHING
       const path = event.target;
 
-      if (dropdownRef.current.contains(path)) return;
+      if (categoryDropdownRef.current.contains(path)) return;
 
       // Scroll happened outside dropdown → close it
       setIsDropdownOpen(false);
-      setIsSuggestionOpen(false);
     };
 
     document.addEventListener("click", handleClickOutside);
@@ -477,15 +485,18 @@ const SearchBar = ({
 
   return (
     <div
+      ref={searchBarRef}
       className={`group relative w-full max-w-[720px] ${className}`}
-      ref={dropdownRef}
     >
       <div className="rounded-full border border-[#1B1D604D] bg-white shadow-sm outline-0 transition-all duration-200">
         <div className="flex h-[46px] w-full items-center overflow-visible rounded-full border-none bg-white pl-0 pr-0 outline-none">
           {enableCategoryDropdown ? (
             <>
               {/* Categories Selector */}
-              <div className="static sm:relative h-full flex items-center">
+              <div
+                className="static sm:relative h-full flex items-center"
+                ref={categoryDropdownRef}
+              >
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -585,6 +596,7 @@ const SearchBar = ({
       {shouldShowSuggestions && (
         <div
           id="search-suggestions"
+          ref={searchDropdownRef}
           role="listbox"
           className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 max-h-[390px] overflow-y-auto rounded-xl border border-[#1B1D6020] bg-white py-2 shadow-[0_12px_32px_rgba(0,0,0,0.1)] [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]"
         >

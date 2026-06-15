@@ -400,6 +400,7 @@ export default function AddressTab({ user }) {
           <PhoneField
             id="add-phone"
             dialCodes={addDialCodes}
+            countries={countries}
             phoneRegistration={addForm.register("phone")}
             dialCodeRegistration={addForm.register("dialCode")}
             error={
@@ -557,6 +558,7 @@ export default function AddressTab({ user }) {
                     <PhoneField
                       id={`edit-phone-${addrId}`}
                       dialCodes={editDialCodes}
+                      countries={countries}
                       phoneRegistration={editForm.register("phone")}
                       dialCodeRegistration={editForm.register("dialCode")}
                       error={

@@ -34,6 +34,7 @@ export default function ShippingAddressForm({
           <PhoneField
             id="phone"
             dialCodes={checkoutDialCodes}
+            countries={countries}
             phoneRegistration={register("phone")}
             dialCodeRegistration={register("dialCode")}
             error={errors.phone || errors.dialCode}
