@@ -9,8 +9,11 @@ export default function HeaderDropdown({
   path,
   children,
   className = "",
+  chevronClassName = "",
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const isExternal =
+    path && (path.startsWith("http://") || path.startsWith("https://"));
 
   return (
     <div
@@ -25,26 +28,57 @@ export default function HeaderDropdown({
       }}
     >
       {path ? (
-        <Link
-          to={path}
-          className={cn(
-            "flex items-center gap-1.5 text-white/85 transition-all duration-300 ease-in-out hover:text-white",
-            className,
-          )}
-          aria-expanded={isOpen}
-          aria-haspopup="true"
-        >
-          {icon && <span className="flex  items-center shrink-0">{icon}</span>}
-          <span>{label}</span>
-          <ChevronDown
-            size={16}
-            aria-hidden="true"
+        isExternal ? (
+          <a
+            target="_blank"
+            href={path}
             className={cn(
-              "transition-all duration-300 ease-in-out text-[var(--customer-gold)]",
-              isOpen && "rotate-180",
+              "flex items-center gap-1.5 text-white/85 transition-all duration-300 ease-in-out hover:text-white",
+              className,
             )}
-          />
-        </Link>
+            aria-expanded={isOpen}
+            aria-haspopup="true"
+          >
+            {icon && (
+              <span className="flex  items-center shrink-0">{icon}</span>
+            )}
+            <span>{label}</span>
+            <ChevronDown
+              size={16}
+              aria-hidden="true"
+              className={cn(
+                "transition-all duration-300 ease-in-out text-[var(--customer-gold)]",
+                chevronClassName,
+                isOpen && "rotate-180",
+              )}
+            />
+          </a>
+        ) : (
+          <Link
+            target="_blank"
+            to={path}
+            className={cn(
+              "flex items-center gap-1.5 text-white/85 transition-all duration-300 ease-in-out hover:text-white",
+              className,
+            )}
+            aria-expanded={isOpen}
+            aria-haspopup="true"
+          >
+            {icon && (
+              <span className="flex  items-center shrink-0">{icon}</span>
+            )}
+            <span>{label}</span>
+            <ChevronDown
+              size={16}
+              aria-hidden="true"
+              className={cn(
+                "transition-all duration-300 ease-in-out text-[var(--customer-gold)]",
+                chevronClassName,
+                isOpen && "rotate-180",
+              )}
+            />
+          </Link>
+        )
       ) : (
         <button
           type="button"
@@ -62,6 +96,7 @@ export default function HeaderDropdown({
             aria-hidden="true"
             className={cn(
               "transition-all duration-300 ease-in-out text-[var(--customer-gold)]",
+              chevronClassName,
               isOpen && "rotate-180",
             )}
           />

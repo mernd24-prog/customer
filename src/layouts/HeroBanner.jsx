@@ -35,7 +35,7 @@ const HeroBanner = () => {
         {bannerData.map((slide) => (
           <SwiperSlide
             key={slide.id}
-            className="relative overflow-hidden bg-[#1B1D60]"
+            className="relative  overflow-hidden bg-[#1B1D60]"
           >
             {/* Slide Background Image - Aligned to right, preserving aspect ratio */}
             <img
@@ -49,10 +49,13 @@ const HeroBanner = () => {
 
             <div className="customer-container relative z-20 flex h-full flex-col items-center justify-between gap-6 py-8 lg:flex-row lg:py-0">
               {/* Left Content */}
-              <div className=" flex flex-1 flex-col  space-y-4 md:space-y-5  pt-4  text-white items-start lg:pl-4 lg:pt-0 lg:text-left">
+              <div className="flex  mt-6  flex-1 flex-col items-center space-y-4 pt-4 text-center text-white md:space-y-5 lg:items-start lg:pl-4 lg:pt-0 lg:text-left">
                 {/* Top Decorative */}
                 <div className="flex flex-col items-center gap-2 md:gap-4 lg:gap-6 lg:items-start">
-                  <Label variant="seasonSale" leftIcon={<Tag size={14} className="text-[#CE9F2D]" />}>
+                  <Label
+                    variant="seasonSale"
+                    leftIcon={<Tag size={14} className="text-[#CE9F2D]" />}
+                  >
                     {slide.label}
                   </Label>
 
@@ -69,7 +72,7 @@ const HeroBanner = () => {
                 </p>
 
                 {/* CTA */}
-                <div className="flex  flex-wrap  gap-3 pt-1 md:pt-3 justify-start">
+                <div className="flex flex-wrap justify-center gap-3 pt-1 md:pt-3 lg:justify-start">
                   <SolidLargeButton
                     to="/products"
                     className="h-[48px]  w-full sm:w-[141px] rounded-[10px] text-base font-semibold shadow-none hover:scale-105"

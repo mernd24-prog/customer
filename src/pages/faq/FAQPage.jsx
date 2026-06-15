@@ -9,7 +9,9 @@ import NeedHelpSection from "../../components/faq/NeedHelpSection";
 import { useCmsRecord, getCmsPayload } from "../../hooks/useCmsRecord";
 
 export default function FAQPage() {
-  const { page: faqPage } = useCmsRecord("faq");
+  const { page: faqPage } = useCmsRecord("faq-details");
+
+  console.log("Details of the FAQ", faqPage);
   const [searchQuery, setSearchQuery] = useState("");
 
   const faqCmsData = useMemo(() => {
@@ -42,7 +44,7 @@ export default function FAQPage() {
       (faq) =>
         faq.question.toLowerCase().includes(query) ||
         faq.answer.toLowerCase().includes(query) ||
-        faq.topic.toLowerCase().includes(query)
+        faq.topic.toLowerCase().includes(query),
     );
   }, [faqs, searchQuery]);
 
@@ -78,7 +80,10 @@ export default function FAQPage() {
         {excerpt}
       </h1>
 
-      <FAQSearchSection value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+      <FAQSearchSection
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
 
       <FAQContentSection faqs={filteredFaqs} />
 

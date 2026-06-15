@@ -31,15 +31,25 @@ export default function SellDropdown({ data }) {
         </div>
 
         <div className="mt-8 flex flex-col gap-3">
-          {buttons.map((button, index) => (
-            <HeaderGoldButton
-              key={keyOr(button?.label, `button-${index}`)}
-              className="w-full max-w-none text-[13px] font-bold"
-              onClick={() => navigate(hrefOr(button?.path, "/seller/status"))}
-            >
-              {textOr(button?.label, "Action")}
-            </HeaderGoldButton>
-          ))}
+          {buttons.map((button, index) => {
+            const btnPath = hrefOr(button?.path, "/seller/status");
+            const isExternal = btnPath && (btnPath.startsWith("http://") || btnPath.startsWith("https://"));
+            return (
+              <HeaderGoldButton
+                key={keyOr(button?.label, `button-${index}`)}
+                className="w-full max-w-none text-[13px] font-bold"
+                onClick={() => {
+                  if (isExternal) {
+                    window.location.href = btnPath;
+                  } else {
+                    navigate(btnPath);
+                  }
+                }}
+              >
+                {textOr(button?.label, "Action")}
+              </HeaderGoldButton>
+            );
+          })}
         </div>
       </div>
     </div>

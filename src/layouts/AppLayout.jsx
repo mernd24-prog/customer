@@ -21,7 +21,7 @@ export default function AppLayout() {
     <div className="customer-shell app-shell">
       <Header />
 
-      <main className="main-content customer-container pt-[90px] lg:pt-[150px]">
+      <main className="main-content customer-container pt-[var(--customer-header-height,0px)]">
         <Outlet />
       </main>
       <Footer data={footerData} />

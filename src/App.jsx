@@ -19,7 +19,7 @@ import { fetchRecommendations } from "./features/recommendation/recommendationSl
 import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 import ScrollToTop from "./components/common/ScrollToTop";
 import CategoryListingPage from "./pages/category/CategoryListingPage";
-
+import DownloadApp from "./pages/downloadApp/DownloadApp";
 const lazyNamed = (loader, exportName) =>
   lazy(() => loader().then((module) => ({ default: module[exportName] })));
 
@@ -291,10 +291,7 @@ export default function App() {
             path="/about-us"
             element={<CmsPage slugOverride="about-us" />}
           /> */}
-              <Route
-                path="/mobile-app"
-                element={<CmsPage slugOverride="mobile-app" />}
-              />
+              <Route path="/mobile-app" element={<DownloadApp />} />
               <Route
                 path="/seller-policies"
                 element={<CmsPage slugOverride="seller-policies" />}
@@ -326,15 +323,15 @@ export default function App() {
               />
               <Route
                 path="/shipping-policy"
-                element={<CmsPage slugOverride="shipping-policy" />}
+                element={<PolicyPage slugOverride="shipping-delivery-policy" />}
               />
               <Route
                 path="/refund-policy"
-                element={<CmsPage slugOverride="refund-policy" />}
+                element={<PolicyPage slugOverride="return-refund-policy" />}
               />
               <Route
-                path="/privacy-policy"
-                element={<CmsPage slugOverride="privacy-policy" />}
+                path="/terms-of-use"
+                element={<PolicyPage slugOverride="terms-of-use" />}
               />
 
               {/* ── Public buyer routes ────────────────────────────────────── */}
