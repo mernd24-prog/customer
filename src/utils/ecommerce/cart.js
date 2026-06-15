@@ -88,17 +88,20 @@ export function addProductToCartPayload(cart, product, quantity = 1) {
   const nextItem = buildCartItem(product, quantity);
   const key = cartItemKey(nextItem);
   const existing = mergeCartItems(cart?.items || []);
+
   const items = existing.some((item) => cartItemKey(item) === key)
     ? existing.map((item) =>
         cartItemKey(item) === key
           ? { ...item, quantity: item.quantity + quantity }
           : item,
       )
-    : [...existing, nextItem];
+    : [nextItem, ...existing]; // Add new item at the top
 
-  return { items, wishlist: cart?.wishlist || [] };
+  return {
+    wishlist: cart?.wishlist || [],
+    items,
+  };
 }
-
 export function wishlistPayload(cart, product, remove = false) {
   const id = normalizeId(product);
   const current = (cart?.wishlist || []).map((item) => normalizeId(item));
@@ -107,6 +110,6 @@ export function wishlistPayload(cart, product, remove = false) {
     items: (cart?.items || []).map(normalizeCartItemForWrite),
     wishlist: remove
       ? current.filter((item) => item !== id)
-      : Array.from(new Set([...current, id])),
+      : [id, ...current.filter((item) => item !== id)],
   };
 }

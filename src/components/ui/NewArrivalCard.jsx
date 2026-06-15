@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { IoStar, IoArrowForwardOutline } from "react-icons/io5";
 import Label from "../common/label/Label";
 import { TextWhiteButton } from "../dynamicComponent/button/static";
+import { formatPageTitle } from "../../lib/utils";
 
 // const badgeVariants = {
 //   new: "featured",
@@ -18,6 +19,7 @@ export default function NewArrivalCard({
 }) {
   const displayProducts = Array.isArray(products) ? products : [];
   // const labelVariant = badgeVariants[badgeType] || "featured";
+ 
 
   return (
     <article className="flex flex-col h-full overflow-hidden rounded-[20px] border border-[#1B1D6066] bg-white shadow-sm hover:shadow-md transition-shadow duration-300 ">
@@ -43,8 +45,8 @@ export default function NewArrivalCard({
         </div>
 
         {/* Card Title */}
-        <h3 className="mt-4 text-left font-dm-sans text-[18px] font-bold leading-[100%] tracking-[0%] align-middle text-[#FFFFFF] sm:text-[20px] xl:text-[24px]">
-          {title}
+          <h3 className="mt-4 text-left font-dm-sans text-[18px] font-bold leading-[100%] tracking-[0%] align-middle text-[#FFFFFF] sm:text-[20px] xl:text-[24px]">
+            {formatPageTitle(title)}
         </h3>
       </div>
 

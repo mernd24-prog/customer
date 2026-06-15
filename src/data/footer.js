@@ -32,10 +32,9 @@ export const footerData = {
     {
       title: "Buy",
       links: [
-        { label: "Men", href: "/categories/men" },
-        { label: "Women", href: "/categories/women" },
-        { label: "Kids", href: "/categories/kids" },
-        { label: "Accessories", href: "/categories/accessories" },
+        { label: "Men", href: "/categories/mens-fashion" },
+        { label: "Women", href: "/categories/womens-fashion" },
+        { label: "Kids", href: "/categories/kids-fashion" },
         { label: "Footwear", href: "/categories/footwear" },
       ],
     },

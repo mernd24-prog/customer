@@ -1,9 +1,106 @@
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
 import { asArray, hrefOr } from "../utils/content";
 import { footerData } from "../data/footer";
 import { SocialIcons } from "../components/common";
 import { Link } from "react-router-dom";
+import { CUSTOMER_ROUTES } from "../constants/routes";
 
+const buildCategorySlug = (name = "category") =>
+  String(name).trim().toLowerCase().replace(/\s+/g, "-");
 
+const getCategoryKey = (item = {}) =>
+  item?.categoryKey ||
+  item?.key ||
+  item?.slug ||
+  buildCategorySlug(item?.title || item?.name);
+
+const normalizeForMatch = (value = "") =>
+  String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "");
+
+const getMatchTokens = (value = "") =>
+  String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+
+function getCategoryListFromResponse(data) {
+  if (Array.isArray(data)) return data;
+  if (!data || typeof data !== "object") return [];
+  if (Array.isArray(data?.items)) return data.items;
+  if (Array.isArray(data?.list)) return data.list;
+  if (Array.isArray(data?.categories)) return data.categories;
+  if (data?.category && typeof data.category === "object")
+    return [data.category];
+  if (data?.data) return getCategoryListFromResponse(data.data);
+  return [data];
+}
+
+function flattenCategories(categories = []) {
+  return asArray(categories).flatMap((category) => [
+    category,
+    ...flattenCategories(category?.children),
+    ...flattenCategories(category?.subCategories),
+  ]);
+}
+
+function findCategoryForFooterLink(link, categories) {
+  const labelKey = normalizeForMatch(link?.label);
+  const labelTokens = getMatchTokens(link?.label);
+  if (!labelKey) return null;
+
+  return categories.find((category) => {
+    const rawValues = [
+      category?.title,
+      category?.name,
+      category?.label,
+      category?.categoryKey,
+      category?.key,
+      category?.slug,
+    ];
+    const values = rawValues.map(normalizeForMatch);
+    const tokens = rawValues.flatMap(getMatchTokens);
+
+    return (
+      values.some((value) => value === labelKey) ||
+      labelTokens.some((labelToken) =>
+        tokens.some(
+          (token) =>
+            token === labelToken ||
+            token === `${labelToken}s` ||
+            `${token}s` === labelToken ||
+            token.startsWith(labelToken),
+        ),
+      )
+    );
+  });
+}
+
+function resolveFooterLinkGroups(groups, categories) {
+  if (!categories.length) return groups;
+
+  return groups.map((group) => {
+    if (String(group?.title || "").toLowerCase() !== "buy") return group;
+
+    return {
+      ...group,
+      links: asArray(group?.links).map((link) => {
+        const category = findCategoryForFooterLink(link, categories);
+        const categoryKey = category ? getCategoryKey(category) : "";
+
+        return categoryKey
+          ? { ...link, href: CUSTOMER_ROUTES.category(categoryKey) }
+          : link;
+      }),
+    };
+  });
+}
 
 // Inline Footer Link Groups Component
 function FooterLinkGroups({ groups = [], socialLinks = [] }) {
@@ -44,6 +141,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
 }
 
 export function Footer({ data = footerData }) {
+  const catalogCategoryList = useSelector((state) => state.catalog.list || []);
   const footer = data || footerData;
   const {
     copyright = footerData.copyright,
@@ -51,6 +149,14 @@ export function Footer({ data = footerData }) {
   } = footer;
   const benefits = asArray(footer.benefits);
   const linkGroups = asArray(footer.linkGroups);
+  const catalogCategories = useMemo(
+    () => flattenCategories(getCategoryListFromResponse(catalogCategoryList)),
+    [catalogCategoryList],
+  );
+  const resolvedLinkGroups = useMemo(
+    () => resolveFooterLinkGroups(linkGroups, catalogCategories),
+    [catalogCategories, linkGroups],
+  );
   const socialLinks = asArray(footer.socialLinks);
   const extraPages = asArray(extrapages);
   const appDownload = footer.appDownload || {};
@@ -118,7 +224,7 @@ export function Footer({ data = footerData }) {
         )}
       </div>
 
-      <FooterLinkGroups groups={linkGroups} socialLinks={socialLinks} />
+      <FooterLinkGroups groups={resolvedLinkGroups} socialLinks={socialLinks} />
 
       {/* Bottom Section with copyright and extra pages */}
       <section className="bg-black py-4">
