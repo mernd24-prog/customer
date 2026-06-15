@@ -20,6 +20,7 @@ import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 import ScrollToTop from "./components/common/ScrollToTop";
 import CategoryListingPage from "./pages/category/CategoryListingPage";
 import DownloadApp from "./pages/downloadApp/DownloadApp";
+import PolicyPage from "./pages/customer/PolicyPage";
 const lazyNamed = (loader, exportName) =>
   lazy(() => loader().then((module) => ({ default: module[exportName] })));
 

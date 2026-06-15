@@ -523,43 +523,51 @@ export const Navbar = ({ icons: propIcons }) => {
               </Fragment>
             ))}
 
-           {utilityIcons.length > 0 && (
-        <div className="hidden h-6 w-px bg-[var(--customer-border)] lg:block" />
-      )}
+            {utilityIcons.length > 0 && (
+              <div className="hidden h-6 w-px bg-[var(--customer-border)]  lg:block" />
+            )}
 
-      <HeaderIconButton
-        to="/cart"
-        className="h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent"
-        aria-label="Cart"
-      >
-        <img
-          src="/image/png/cart.png"
-          alt="Cart"
-          className="h-[40px] w-[40px] object-contain"
-        />
+            <HeaderIconButton
+              to="/cart"
+              className="relative h-8 w-8   md:h-[40px]  md:w-[40px] overflow-visible border-0 bg-transparent hover:border-0 hover:bg-transparent"
+              aria-label={`Cart with ${cartItemCount} ${cartItemCount === 1 ? "item" : "items"}`}
+            >
+              <img
+                src="/image/png/cart.png "
+                alt="Cart"
+                className="h-8 w-8  md:h-[40px]  md:w-[40px]  object-contain"
+              />
 
-        <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-          Cart
-        </span>
-      </HeaderIconButton>
-    </div>
+              {cartItemCount > 0 && (
+                <span className="absolute  -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1  text-[12px] font-bold  text-white shadow-sm">
+                  {cartItemCount > 99 ? "99+" : cartItemCount}
+                </span>
+              )}
 
-    {currentUser ? (
-      <Link
-        to="/account/profile"
-        className="inline-flex h-[34px] max-w-[145px] items-center justify-center gap-1.5 rounded-[4px] border border-[#1B1D60] bg-white px-2.5 text-[11px] font-semibold text-[#1B1D60] whitespace-nowrap transition-colors duration-200 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A] min-[375px]:h-[36px] min-[375px]:max-w-[160px] min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:max-w-[175px] sm:h-[45px] sm:max-w-[220px] sm:gap-2 sm:px-6 sm:text-[16px]"
-      >
-        <User size={14} className="shrink-0 sm:size-4" />
-        <span className="truncate">{accountLabel}</span>
-      </Link>
-    ) : (
-      <HeaderGoldButton
-        className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[11px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
-        onClick={() => navigate("/login")}
-      >
-        Login
-      </HeaderGoldButton>
-    )}
+              {/* <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+                Cart ({cartItemCount})
+              </span> */}
+            </HeaderIconButton>
+          </div>
+
+          {currentUser ? (
+            <HeaderDropdown
+              label={accountLabel}
+              icon={<User size={16} className="shrink-0 text-[#1B1D60]" />}
+              path="/account/profile"
+              className="h-[34px] max-w-[145px] rounded-[4px]  px-2.5 text-[11px] font-semibold !text-[#1B1D60] hover:!text-[#1B1D60] min-[375px]:h-[36px] min-[375px]:max-w-[160px] min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:max-w-[175px] sm:h-[41px] sm:max-w-[220px] sm:px-4 sm:text-[14px]"
+              chevronClassName="!text-[#1B1D60]"
+            >
+              <MenuDropdown title="My Account" items={accountMenuItems} />
+            </HeaderDropdown>
+          ) : (
+            <HeaderGoldButton
+              className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[11px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
+              onClick={() => navigate("/register")}
+            >
+              Create Account
+            </HeaderGoldButton>
+          )}
         </div>
       </div>
     </header>
