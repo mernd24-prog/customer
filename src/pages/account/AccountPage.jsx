@@ -79,7 +79,7 @@ export default function AccountPage({ tab = "profile" }) {
 
         {/* Tab content */}
         <div className="w-full flex-1 lg:w-[70%]">
-          <div className="min-h-[560px] w-full rounded-[12px] border border-[#CE9F2D66] bg-[#F7F8FC] p-4 shadow-sm sm:min-h-[620px] sm:p-6 lg:min-h-[720px] lg:p-8 2xl:w-[85%]">
+          <div className="min-h-[560px] w-full rounded-[12px] border border-[#CE9F2D66] bg-[#F7F8FC] p-4 shadow-sm  sm:p-6  lg:p-8 2xl:w-[85%]">
             <ApiState
               loading={userState.loading && !user}
               error={userState.error}

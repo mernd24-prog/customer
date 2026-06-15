@@ -104,9 +104,24 @@ async function fetchFullList(dispatch, thunkAction, params = {}) {
     const allRes = await dispatch(
       thunkAction({ params: { ...params, limit: total } }),
     ).unwrap();
-    return allRes.data || allRes.list || allRes || [];
+    return extractList(allRes);
   }
-  return res.data || res.list || res || [];
+  return extractList(res);
+}
+
+function extractList(response = {}) {
+  const data = response?.data ?? response;
+  if (Array.isArray(data)) return data;
+  return (
+    data?.items ||
+    data?.states ||
+    data?.countries ||
+    data?.cities ||
+    data?.pincodes ||
+    data?.results ||
+    data?.list ||
+    []
+  );
 }
 
 const checkoutFormSchema = z

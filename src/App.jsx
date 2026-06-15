@@ -219,12 +219,12 @@ export default function App() {
   }, [currentUser, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchCategories()).catch(() => { });
+    dispatch(fetchCategories()).catch(() => {});
   }, [dispatch]);
 
   useEffect(() => {
     if (!currentUser) return;
-    dispatch(fetchCart()).catch(() => { });
+    dispatch(fetchCart()).catch(() => {});
   }, [currentUser, dispatch]);
 
   if (!sessionReady) {
@@ -275,14 +275,15 @@ export default function App() {
                   element={<ResetPasswordPage />}
                 />
               </Route>
-
               {/* ── Static / info pages (public) ──────────────────────────── */}
               <Route path="/faq" element={<FAQPage />} />
+
+              {/* Not working */}
               <Route path="/support" element={<SupportHelpCenter />} />
+
               <Route path="/help-contact" element={<ContactUs />} />
               <Route path="/deals" element={<CmsPage slugOverride="deals" />} />
               <Route path="/brand-outlet" element={<BrandOutletPage />} />
-
               <Route
                 path="/who-we-are"
                 element={<CmsPage slugOverride="who-we-are" />}
@@ -316,7 +317,6 @@ export default function App() {
               <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
               <Route path="/our-commitment" element={<OurCommitmentPage />} />
               <Route path="/features" element={<FeaturesPage />} />
-
               <Route
                 path="/terms-of-use"
                 element={<CmsPage slugOverride="terms-of-use" />}
@@ -333,7 +333,6 @@ export default function App() {
                 path="/terms-of-use"
                 element={<PolicyPage slugOverride="terms-of-use" />}
               />
-
               {/* ── Public buyer routes ────────────────────────────────────── */}
               <Route element={<BuyerOnlyRoute />}>
                 <Route index element={<HomePage />} />
@@ -360,10 +359,7 @@ export default function App() {
                 />
                 <Route path="/about-us" element={<AboutPage />} />
 
-                <Route
-                  path="/categories/brand"
-                  element={<BrandOutletPage />}
-                />
+                <Route path="/categories/brand" element={<BrandOutletPage />} />
                 <Route path="/categories" element={<CategoryListingPage />} />
                 <Route
                   path="/categories/brand/:brandSlug"
@@ -389,7 +385,6 @@ export default function App() {
                   element={<Navigate to="/notification-preferences" replace />}
                 />
               </Route>
-
               {/* ── Protected buyer routes (must be logged in) ────────────── */}
               <Route element={<ProtectedRoute />}>
                 <Route element={<BuyerOnlyRoute />}>
@@ -525,10 +520,8 @@ export default function App() {
                   />
                 </Route>
               </Route>
-
               {/* ── 404 catch-all ─────────────────────────────────────────── */}
               <Route path="*" element={<NotFoundPage />} />
-
             </Route>
           </Routes>
         </Suspense>

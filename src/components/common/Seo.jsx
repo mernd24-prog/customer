@@ -4,49 +4,38 @@ import { buildSeo } from "../../utils/seo";
 
 export default function Seo({
   title,
-  description,
+  metaDescription,
   image,
+  keywords,
   path,
   canonical,
   type,
   robots,
   jsonLd,
 }) {
-  const meta = buildSeo({
-    title,
-    description,
-    image,
-    path,
-    canonical,
-    type,
-    robots,
-    jsonLd,
-  });
-
   return (
     <Helmet>
-      <title>{meta.title}</title>
-      <meta name="description" content={meta.description} />
-      <meta name="robots" content={meta.robots} />
-      <link rel="canonical" href={meta.canonical} />
+      <title>{title}</title>
+      <meta name="description" content={metaDescription} />
+      <meta name="robots" content={robots} />
+      <meta name="keywords" content={keywords} />
+      <link rel="canonical" href={canonical} />
       <meta property="og:site_name" content={SITE_CONFIG.name} />
       <meta property="og:locale" content={SITE_CONFIG.locale} />
-      <meta property="og:type" content={meta.type} />
-      <meta property="og:title" content={meta.title} />
-      <meta property="og:description" content={meta.description} />
-      <meta property="og:url" content={meta.canonical} />
-      <meta property="og:image" content={meta.image} />
+      <meta property="og:type" content={type} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={metaDescription} />
+      <meta property="og:url" content={canonical} />
+      <meta property="og:image" content={image} />
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={meta.title} />
-      <meta name="twitter:description" content={meta.description} />
-      <meta name="twitter:image" content={meta.image} />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={metaDescription} />
+      <meta name="twitter:image" content={image} />
       {SITE_CONFIG.twitterHandle && (
         <meta name="twitter:site" content={SITE_CONFIG.twitterHandle} />
       )}
-      {meta.jsonLd && (
-        <script type="application/ld+json">
-          {JSON.stringify(meta.jsonLd)}
-        </script>
+      {jsonLd && (
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       )}
     </Helmet>
   );
