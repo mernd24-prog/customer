@@ -4,6 +4,7 @@ import FilterDrawer from "../common/overlay/Drawer";
 import ProductFilterSidebar from "./ProductFilterSidebar";
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
+import Loader from "../common/Loader";
 
 export default function ProductResultsLayout({
   filterSections = [],
@@ -73,8 +74,8 @@ export default function ProductResultsLayout({
               )}
 
               {loadingMore && (
-                <div className="mt-6 text-center  text-sm text-muted">
-                  Loading more products...
+                <div className="mt-8 text-center  text-sm text-muted ">
+                  <Loader/>
                 </div>
               )}
               {sentinelRef && <div ref={sentinelRef} className="h-8 w-full" />}

@@ -10,7 +10,7 @@ import ApiState from "../../components/common/ApiState";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { fetchCart } from "../../features/cart/cartSlice";
 import { fetchWallet } from "../../features/wallet/walletSlice";
-import { fetchMe } from "../../features/user/userSlice";
+import { fetchMe, addAddress } from "../../features/user/userSlice";
 import {
   createOrder,
   fetchOrderById,
@@ -36,10 +36,10 @@ import {
 import { normalizeDialCode } from "../../lib/utils";
 import {
   checkoutAddressSchema,
-  couponCodeField,
   optionalMoneyField,
   validatePostalCodeForCountry,
 } from "../../validations";
+import { ADDRESS_LABEL_OPTIONS } from "../../components/address/AddressFormFields";
 
 // Import reusable checkout subcomponents
 import AddressSelection from "./AddressSelection";
@@ -131,6 +131,7 @@ const checkoutFormSchema = z
       z.boolean(),
     ),
     selectedAddressId: z.string().optional(),
+    label: z.enum(["home", "work", "other"]).optional(),
     fullName: z.string().optional(),
     dialCode: z.string().optional(),
     phone: z.string().optional(),
@@ -140,6 +141,7 @@ const checkoutFormSchema = z
     state: z.string().optional(),
     postalCode: z.string().optional(),
     country: z.string().optional(),
+    isDefault: z.coerce.boolean().optional(),
     // couponCode: couponCodeField,
     walletAmount: optionalMoneyField("Wallet amount"),
   })
@@ -476,6 +478,7 @@ export default function CheckoutPage() {
     () => userState.current?.addresses || [],
     [userState],
   );
+  const addressLabels = ADDRESS_LABEL_OPTIONS;
   const walletBalance = walletState.current?.balance || 0;
 
   const [countries, setCountries] = useState([]);
@@ -527,8 +530,10 @@ export default function CheckoutPage() {
     defaultValues: {
       useNewAddress: false,
       selectedAddressId: "",
+      label: "home",
       country: "",
       dialCode: "+91",
+      isDefault: false,
       walletAmount: 0,
       couponCode: "",
     },
@@ -780,6 +785,95 @@ export default function CheckoutPage() {
     orderState.loading ||
     paymentState.loading;
 
+  const saveCheckoutAddress = async (values) => {
+    const addressResult = checkoutAddressSchema.safeParse({
+      fullName: values.fullName,
+      dialCode: values.dialCode,
+      phone: values.phone,
+      line1: values.line1,
+      line2: values.line2,
+      city: values.city,
+      state: values.state,
+      postalCode: values.postalCode,
+      country: values.country,
+      couponCode: values.couponCode,
+      walletAmount: values.walletAmount,
+    });
+
+    if (!addressResult.success) {
+      addressResult.error.issues.forEach((issue) => {
+        const field = issue.path[0];
+        if (field) {
+          setError(String(field), {
+            type: "manual",
+            message: issue.message,
+          });
+        }
+      });
+      return null;
+    }
+
+    const addressValues = addressResult.data;
+    const savedAddress = await run(
+      dispatch,
+      addAddress({
+        label: values.label || "home",
+        fullName: addressValues.fullName,
+        phone: addressValues.phone,
+        line1: addressValues.line1,
+        line2: addressValues.line2 || "",
+        city: addressValues.city,
+        state: addressValues.state,
+        postalCode: addressValues.postalCode,
+        country: addressValues.country || "",
+        isDefault: Boolean(values.isDefault),
+      }),
+      "Address added",
+    );
+
+    const saved =
+      savedAddress?.data?.address ||
+      savedAddress?.data?.data?.address ||
+      savedAddress?.address ||
+      savedAddress?.data ||
+      null;
+    const freshMe = await dispatch(fetchMe()).unwrap().catch(() => null);
+    const freshAddresses =
+      freshMe?.data?.addresses || freshMe?.addresses || userState.current?.addresses || [];
+    const savedId = getAddressId(saved);
+    const selectedSaved =
+      freshAddresses.find((address) => getAddressId(address) === savedId) ||
+      freshAddresses.find(
+        (address) =>
+          address.line1 === addressValues.line1 &&
+          address.postalCode === addressValues.postalCode &&
+          address.phone === addressValues.phone,
+      ) ||
+      saved;
+
+    if (selectedSaved) {
+      const selectedSavedId = getAddressId(selectedSaved);
+      if (selectedSavedId) {
+        setValue("selectedAddressId", selectedSavedId, {
+          shouldValidate: true,
+        });
+        setValue("useNewAddress", false, { shouldValidate: true });
+      }
+    }
+
+    return {
+      fullName: addressValues.fullName,
+      dialCode: addressValues.dialCode,
+      phone: addressValues.phone,
+      line1: addressValues.line1,
+      line2: addressValues.line2 || "",
+      city: addressValues.city,
+      state: addressValues.state,
+      postalCode: addressValues.postalCode,
+      country: addressValues.country || "",
+    };
+  };
+
   const submit = async (values) => {
     let shippingAddress;
     if (!values.useNewAddress && values.selectedAddressId) {
@@ -806,45 +900,8 @@ export default function CheckoutPage() {
         country: saved.country || "",
       };
     } else {
-      const addressResult = checkoutAddressSchema.safeParse({
-        fullName: values.fullName,
-        dialCode: values.dialCode,
-        phone: values.phone,
-        line1: values.line1,
-        line2: values.line2,
-        city: values.city,
-        state: values.state,
-        postalCode: values.postalCode,
-        country: values.country,
-        couponCode: values.couponCode,
-        walletAmount: values.walletAmount,
-      });
-
-      if (!addressResult.success) {
-        addressResult.error.issues.forEach((issue) => {
-          const field = issue.path[0];
-          if (field) {
-            setError(String(field), {
-              type: "manual",
-              message: issue.message,
-            });
-          }
-        });
-        return;
-      }
-
-      const addressValues = addressResult.data;
-      shippingAddress = {
-        fullName: addressValues.fullName,
-        dialCode: addressValues.dialCode,
-        phone: addressValues.phone,
-        line1: addressValues.line1,
-        line2: addressValues.line2 || "",
-        city: addressValues.city,
-        state: addressValues.state,
-        postalCode: addressValues.postalCode,
-        country: addressValues.country || "",
-      };
+      shippingAddress = await saveCheckoutAddress(values);
+      if (!shippingAddress) return;
     }
 
     const walletAmount = Number(values.walletAmount || 0);
@@ -982,6 +1039,7 @@ export default function CheckoutPage() {
                     useNewAddress={useNewAddress}
                     setValue={setValue}
                     errors={errors}
+                    countries={countries}
                   />
                 )}
 
@@ -1000,6 +1058,8 @@ export default function CheckoutPage() {
                     watchedPostalCode={watchedPostalCode}
                     setValue={setValue}
                     postalCodes={postalCodes}
+                    showSavedAddressFields={true}
+                    addressLabels={addressLabels}
                   />
                 )}
 

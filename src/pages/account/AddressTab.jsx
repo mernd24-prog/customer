@@ -3,12 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronUp, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
-import FormField from "../../components/ui/FormField";
-import SelectField from "../../components/ui/SelectField";
-import PhoneField from "../../components/ui/PhoneField";
-import CheckboxField from "../../components/ui/CheckboxField";
 import Button from "../../components/ui/Button";
 import AddressLabel from "../../components/ui/AddressLabel";
+import AddressFormFields, {
+  ADDRESS_LABEL_OPTIONS,
+} from "../../components/address/AddressFormFields";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { normalizeDialCode } from "../../lib/utils";
 import { addressSchema } from "../../validations/validationSchemas";
@@ -47,11 +46,7 @@ export default function AddressTab({ user }) {
   const [showAddForm, setShowAddForm] = useState(false);
 
   const addresses = user?.addresses || [];
-  const addressLabels = [
-    { value: "home", label: "Home" },
-    { value: "work", label: "Work" },
-    { value: "other", label: "Other" },
-  ];
+  const addressLabels = ADDRESS_LABEL_OPTIONS;
 
   const addForm = useForm({
     resolver: zodResolver(addressSchema),
@@ -316,7 +311,9 @@ export default function AddressTab({ user }) {
   };
 
   const handleAdd = async (values) => {
-    const { dialCode, ...addressFields } = values;
+    const addressFields = Object.fromEntries(
+      Object.entries(values).filter(([key]) => key !== "dialCode"),
+    );
     await run(
       dispatch,
       addAddress({ ...addressFields, isDefault: Boolean(values.isDefault) }),
@@ -328,7 +325,9 @@ export default function AddressTab({ user }) {
   };
 
   const handleUpdate = async (values) => {
-    const { dialCode, ...addressFields } = values;
+    const addressFields = Object.fromEntries(
+      Object.entries(values).filter(([key]) => key !== "dialCode"),
+    );
     await run(
       dispatch,
       updateAddress({
@@ -379,132 +378,19 @@ export default function AddressTab({ user }) {
             <MapPin size={16} className="text-gold" />
             New address
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <SelectField
-              id="add-label"
-              label="Label"
-              placeholder="Select label"
-              options={addressLabels}
-              registration={addForm.register("label")}
-              error={addForm.formState.errors.label}
-            />
-            <FormField
-              id="add-fullName"
-              label="Full name"
-              placeholder="Enter your full name"
-              registration={addForm.register("fullName")}
-              error={addForm.formState.errors.fullName}
-              autoComplete="name"
-            />
-          </div>
-          <PhoneField
-            id="add-phone"
-            dialCodes={addDialCodes}
+          <AddressFormFields
+            form={addForm}
+            idPrefix="add"
             countries={countries}
-            phoneRegistration={addForm.register("phone")}
-            dialCodeRegistration={addForm.register("dialCode")}
-            error={
-              addForm.formState.errors.phone ||
-              addForm.formState.errors.dialCode
-            }
-          />
-          <FormField
-            id="add-line1"
-            label="Address line 1"
-            registration={addForm.register("line1")}
-            error={addForm.formState.errors.line1}
-            autoComplete="address-line1"
-          />
-          <FormField
-            id="add-line2"
-            label="Address line 2 (optional)"
-            registration={addForm.register("line2")}
-            error={addForm.formState.errors.line2}
-            autoComplete="address-line2"
-          />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <SelectField
-              id="add-country"
-              label="Country"
-              placeholder="Select Country"
-              options={countries}
-              value={addCountry}
-              registration={addForm.register("country", {
-                onChange: () => {
-                  addForm.setValue("state", "");
-                  addForm.setValue("city", "");
-                  addForm.setValue("postalCode", "");
-                },
-              })}
-              error={addForm.formState.errors.country}
-            />
-            <SelectField
-              id="add-state"
-              label="State"
-              placeholder="Select State"
-              options={addStates}
-              value={addState}
-              registration={addForm.register("state", {
-                onChange: () => {
-                  addForm.setValue("city", "");
-                  addForm.setValue("postalCode", "");
-                },
-              })}
-              error={addForm.formState.errors.state}
-              disabled={!addCountry}
-            />
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <SelectField
-              id="add-city"
-              label="City"
-              placeholder="Select City"
-              options={addCities}
-              value={addCity}
-              registration={addForm.register("city", {
-                onChange: () => {
-                  addForm.setValue("postalCode", "");
-                },
-              })}
-              error={addForm.formState.errors.city}
-              disabled={!addState}
-            />
-            <SelectField
-              id="add-postalCode"
-              label="Postal code"
-              placeholder="Select Postal code"
-              options={(() => {
-                const uniquePostalOptions = [];
-                const seenPostal = new Set();
-                for (const z of addPostalCodes) {
-                  const zip = String(
-                    z?.zipCode?.value ??
-                      z?.zipCode?.label ??
-                      z?.value ??
-                      z?.code ??
-                      z?.zipCode ??
-                      z,
-                  ).match(/\d+/)?.[0];
-                  if (!zip) continue;
-                  const area = z?.areaName || z?.meta?.areaName;
-                  const label = area ? `${zip} - ${area}` : zip;
-                  if (!seenPostal.has(zip)) {
-                    seenPostal.add(zip);
-                    uniquePostalOptions.push({ value: zip, label });
-                  }
-                }
-                return uniquePostalOptions;
-              })()}
-              value={addPostalCode}
-              registration={addForm.register("postalCode")}
-              error={addForm.formState.errors.postalCode}
-              disabled={!addCity}
-            />
-          </div>
-          <CheckboxField
-            id="add-isDefault"
-            label="Set as default address"
-            registration={addForm.register("isDefault")}
+            states={addStates}
+            cities={addCities}
+            postalCodes={addPostalCodes}
+            dialCodes={addDialCodes}
+            selectedCountry={addCountry}
+            selectedState={addState}
+            selectedCity={addCity}
+            selectedPostalCode={addPostalCode}
+            addressLabels={addressLabels}
           />
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button
@@ -546,131 +432,19 @@ export default function AddressTab({ user }) {
                       <Pencil size={16} className="text-gold" />
                       Edit address
                     </div>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <SelectField
-                        id={`edit-label-${addrId}`}
-                        label="Label"
-                        options={addressLabels}
-                        registration={editForm.register("label")}
-                        error={editForm.formState.errors.label}
-                      />
-                      <FormField
-                        id={`edit-fullName-${addrId}`}
-                        label="Full name"
-                        placeholder="Enter your full name"
-                        registration={editForm.register("fullName")}
-                        error={editForm.formState.errors.fullName}
-                        autoComplete="name"
-                      />
-                    </div>
-                    <PhoneField
-                      id={`edit-phone-${addrId}`}
-                      dialCodes={editDialCodes}
+                    <AddressFormFields
+                      form={editForm}
+                      idPrefix={`edit-${addrId}`}
                       countries={countries}
-                      phoneRegistration={editForm.register("phone")}
-                      dialCodeRegistration={editForm.register("dialCode")}
-                      error={
-                        editForm.formState.errors.phone ||
-                        editForm.formState.errors.dialCode
-                      }
-                    />
-                    <FormField
-                      id={`edit-line1-${addrId}`}
-                      label="Address line 1"
-                      registration={editForm.register("line1")}
-                      error={editForm.formState.errors.line1}
-                      autoComplete="address-line1"
-                    />
-                    <FormField
-                      id={`edit-line2-${addrId}`}
-                      label="Address line 2"
-                      registration={editForm.register("line2")}
-                      error={editForm.formState.errors.line2}
-                      autoComplete="address-line2"
-                    />
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <SelectField
-                        id={`edit-country-${addrId}`}
-                        label="Country"
-                        placeholder="Select Country"
-                        options={countries}
-                        value={editCountry}
-                        registration={editForm.register("country", {
-                          onChange: () => {
-                            editForm.setValue("state", "");
-                            editForm.setValue("city", "");
-                            editForm.setValue("postalCode", "");
-                          },
-                        })}
-                        error={editForm.formState.errors.country}
-                      />
-                      <SelectField
-                        id={`edit-state-${addrId}`}
-                        label="State"
-                        placeholder="Select State"
-                        options={editStates}
-                        value={editState}
-                        registration={editForm.register("state", {
-                          onChange: () => {
-                            editForm.setValue("city", "");
-                            editForm.setValue("postalCode", "");
-                          },
-                        })}
-                        error={editForm.formState.errors.state}
-                        disabled={!editCountry}
-                      />
-                    </div>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <SelectField
-                        id={`edit-city-${addrId}`}
-                        label="City"
-                        placeholder="Select City"
-                        options={editCities}
-                        value={editCity}
-                        registration={editForm.register("city", {
-                          onChange: () => {
-                            editForm.setValue("postalCode", "");
-                          },
-                        })}
-                        error={editForm.formState.errors.city}
-                        disabled={!editState}
-                      />
-                      <SelectField
-                        id={`edit-postalCode-${addrId}`}
-                        label="Postal code"
-                        placeholder="Select Postal code"
-                        options={(() => {
-                          const uniquePostalOptions = [];
-                          const seenPostal = new Set();
-                          for (const z of editPostalCodes) {
-                            const zip = String(
-                              z?.zipCode?.value ??
-                                z?.zipCode?.label ??
-                                z?.value ??
-                                z?.code ??
-                                z?.zipCode ??
-                                z,
-                            ).match(/\d+/)?.[0];
-                            if (!zip) continue;
-                            const area = z?.areaName || z?.meta?.areaName;
-                            const label = area ? `${zip} - ${area}` : zip;
-                            if (!seenPostal.has(zip)) {
-                              seenPostal.add(zip);
-                              uniquePostalOptions.push({ value: zip, label });
-                            }
-                          }
-                          return uniquePostalOptions;
-                        })()}
-                        value={editPostalCode}
-                        registration={editForm.register("postalCode")}
-                        error={editForm.formState.errors.postalCode}
-                        disabled={!editCity}
-                      />
-                    </div>
-                    <CheckboxField
-                      id={`edit-isDefault-${addrId}`}
-                      label="Set as default address"
-                      registration={editForm.register("isDefault")}
+                      states={editStates}
+                      cities={editCities}
+                      postalCodes={editPostalCodes}
+                      dialCodes={editDialCodes}
+                      selectedCountry={editCountry}
+                      selectedState={editState}
+                      selectedCity={editCity}
+                      selectedPostalCode={editPostalCode}
+                      addressLabels={addressLabels}
                     />
                     <div className="flex flex-col gap-3 sm:flex-row">
                       <Button

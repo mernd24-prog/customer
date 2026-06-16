@@ -12,3 +12,12 @@ export function normalizeDialCode(dialCode = "") {
   if (code.startsWith("00")) return `+${code.slice(2)}`;
   return `+${code}`;
 }
+
+ export function formatPageTitle(value = "") {
+  return String(value)
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+

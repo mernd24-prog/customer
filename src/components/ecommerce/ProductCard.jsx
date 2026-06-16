@@ -70,8 +70,8 @@ export default function ProductCard({
     discountPercent ||
     (oldPriceNumber > currentPriceNumber && currentPriceNumber > 0
       ? Math.round(
-          ((oldPriceNumber - currentPriceNumber) / oldPriceNumber) * 100,
-        )
+        ((oldPriceNumber - currentPriceNumber) / oldPriceNumber) * 100,
+      )
       : 0);
   const discountLabel = computedDiscountPercent
     ? `${computedDiscountPercent}% Off`
@@ -343,7 +343,7 @@ export default function ProductCard({
       </Link>
 
       {showActions && (
-        <div className="flex items-center gap-6 sm:gap-6 md:gap-6 lg:gap-[60px] px-5 pb-6 sm:px-6">
+        <div className="flex  items-center gap-6 sm:gap-6 md:gap-6 lg:gap-[60px] px-5 pb-6 sm:px-6">
           <PillButton
             disabled={!isInStock}
             onClick={handleAddToCart}
@@ -363,12 +363,17 @@ export default function ProductCard({
                 : `Add ${title} to wishlist`
             }
             onClick={handleWishlist}
-            className="focus-visible:outline-[#1B1D60] "
+            className={cn(
+              "focus-visible:outline-none",
+              isWishlisted
+                ? "border-[#DC2626] text-[#DC2626] hover:border-[#DC2626] hover:text-[#DC2626]"
+                : "border-[#CE9F2D] text-[#CE9F2D] hover:border-[#CE9F2D] hover:text-[#CE9F2D]"
+            )}
           >
             <Heart
               size={19}
-              fill={isWishlisted ? "#1B1D60" : "none"}
-              stroke={isWishlisted ? "#1B1D60" : "currentColor"}
+              fill={isWishlisted ? "#DC2626" : "none"}
+              stroke={isWishlisted ? "#DC2626" : "#CE9F2D"}
             />
           </IconCircleButton>
         </div>

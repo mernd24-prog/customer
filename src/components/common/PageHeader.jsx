@@ -1,10 +1,4 @@
-function formatPageTitle(value = "") {
-  return String(value)
-    .replace(/[_-]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(/\b\w/g, (char) => char.toUpperCase());
-}
+import { formatPageTitle } from "../../lib/utils";
 
 export default function PageHeader({
   title,
