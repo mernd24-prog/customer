@@ -13,6 +13,8 @@ const variants = {
 
   bestseller: "bg-[#1B1D60] text-white font-semibold",
 
+  outofStock: "bg-red-500 text-white font-semibold",
+
   imageLabel:
     "rounded-[25px] border border-[#FFFFFF80] bg-[#FFFFFF4D] text-white font-medium backdrop-blur-[8px]",
 };

@@ -36,11 +36,16 @@ export default function AboutPage() {
 
       <main className="w-full">
         <div>
-          <OurStory data={aboutSamGlobalSection} />
-          <ValuesSection data={valuesSection} />
+          <div id="who-we-are" className="scroll-mt-28">
+            <OurStory data={aboutSamGlobalSection} />
+          </div>
+          <div id="our-values" className="scroll-mt-20">
+            <ValuesSection data={valuesSection} />
+          </div>
+
           <BrandCarousel data={brandSection} />
           <InfoSection data={missionSection} />
-          <div id="why-choose-us" className="scroll-mt-24">
+          <div id="why-choose-us" className="scroll-mt-34">
             <WhyChooseSection data={chooseSection} />
           </div>
         </div>

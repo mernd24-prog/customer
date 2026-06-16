@@ -18,20 +18,20 @@ export const FILE_UPLOAD_MODULES = {
 export const endpoints = {
   health: "/health",
   fileUploader: {
-    upload: `${API_PREFIX}/file-uploader/upload`
+    upload: `${API_PREFIX}/file-uploader/upload`,
   },
   meta: {
-    routes: `${API_PREFIX}/meta/routes`
+    routes: `${API_PREFIX}/meta/routes`,
   },
   global: {
     states: `${API_PREFIX}/global/states`,
     cities: `${API_PREFIX}/global/cities`,
     countries: `${API_PREFIX}/global/countries`,
-    zipCodes: `${API_PREFIX}/global/zip-codes`
+    zipCodes: `${API_PREFIX}/meta/dropdowns/pincodes`,
   },
   search: {
     main: `${SEARCH_PREFIX}`,
-    autocomplete: `${SEARCH_PREFIX}/autocomplete`
+    autocomplete: `${SEARCH_PREFIX}/autocomplete`,
   },
   auth: {
     register: `${API_PREFIX}/auth/register`,
@@ -46,7 +46,7 @@ export const endpoints = {
     forgotPassword: `${API_PREFIX}/auth/forgot-password`,
     resetPassword: `${API_PREFIX}/auth/reset-password`,
     changePassword: `${API_PREFIX}/auth/change-password`,
-    status: `${API_PREFIX}/auth/status`
+    status: `${API_PREFIX}/auth/status`,
   },
   users: {
     me: `${API_PREFIX}/users/me`,
@@ -54,7 +54,7 @@ export const endpoints = {
     address: (addressId) => `${API_PREFIX}/users/me/addresses/${addressId}`,
     kyc: `${API_PREFIX}/users/me/kyc`,
     kycDocuments: `${API_PREFIX}/users/me/kyc/documents`,
-    reviewKyc: (userId) => `${API_PREFIX}/users/${userId}/kyc/review`
+    reviewKyc: (userId) => `${API_PREFIX}/users/${userId}/kyc/review`,
   },
   products: {
     list: `${API_PREFIX}/products`,
@@ -63,15 +63,17 @@ export const endpoints = {
     create: `${API_PREFIX}/products`,
     review: (productId) => `${API_PREFIX}/products/${productId}/review`,
     reviews: (productId) => `${API_PREFIX}/products/${productId}/reviews`,
-    reviewItem: (productId, reviewId) => `${API_PREFIX}/products/${productId}/reviews/${reviewId}`,
-    reviewHelpful: (productId, reviewId) => `${API_PREFIX}/products/${productId}/reviews/${reviewId}/helpful`,
+    reviewItem: (productId, reviewId) =>
+      `${API_PREFIX}/products/${productId}/reviews/${reviewId}`,
+    reviewHelpful: (productId, reviewId) =>
+      `${API_PREFIX}/products/${productId}/reviews/${reviewId}/helpful`,
     myReview: (productId) => `${API_PREFIX}/products/${productId}/my-review`,
     related: (productId) => `${API_PREFIX}/products/${productId}/related`,
     crossSell: (productId) => `${API_PREFIX}/products/${productId}/cross-sell`,
     upSell: (productId) => `${API_PREFIX}/products/${productId}/up-sell`,
   },
   carts: {
-    me: `${API_PREFIX}/carts/me`
+    me: `${API_PREFIX}/carts/me`,
   },
   orders: {
     me: `${API_PREFIX}/orders/me`,
@@ -80,19 +82,21 @@ export const endpoints = {
     quote: `${API_PREFIX}/orders/quote`,
     detail: (orderId) => `${API_PREFIX}/orders/${orderId}`,
     cancel: (orderId) => `${API_PREFIX}/orders/${orderId}/cancel`,
-    status: (orderId) => `${API_PREFIX}/orders/${orderId}/status`
+    status: (orderId) => `${API_PREFIX}/orders/${orderId}/status`,
   },
   payments: {
     razorpayWebhook: `${API_PREFIX}/payments/webhooks/razorpay`,
     me: `${API_PREFIX}/payments/me`,
     options: `${API_PREFIX}/payments/options`,
     initiate: `${API_PREFIX}/payments/initiate`,
-    verify: `${API_PREFIX}/payments/verify`
+    verify: `${API_PREFIX}/payments/verify`,
   },
   delivery: {
     serviceability: `${API_PREFIX}/delivery/serviceability`,
-    ewayBillByOrder: (orderId) => `${API_PREFIX}/delivery/orders/${orderId}/eway-bill`,
-    ewayBillStatus: (ewayBillId) => `${API_PREFIX}/delivery/eway-bills/${ewayBillId}/status`
+    ewayBillByOrder: (orderId) =>
+      `${API_PREFIX}/delivery/orders/${orderId}/eway-bill`,
+    ewayBillStatus: (ewayBillId) =>
+      `${API_PREFIX}/delivery/eway-bills/${ewayBillId}/status`,
   },
   returns: {
     create: `${API_PREFIX}/returns`,
@@ -114,8 +118,10 @@ export const endpoints = {
   },
   platform: {
     categories: `${API_PREFIX}/platform/categories`,
-    category: (categoryKey) => `${API_PREFIX}/platform/categories/${pathParam(categoryKey)}`,
-    categoryAttributes: (categoryKey) => `${API_PREFIX}/platform/categories/${pathParam(categoryKey)}/attributes`,
+    category: (categoryKey) =>
+      `${API_PREFIX}/platform/categories/${pathParam(categoryKey)}`,
+    categoryAttributes: (categoryKey) =>
+      `${API_PREFIX}/platform/categories/${pathParam(categoryKey)}/attributes`,
     families: `${API_PREFIX}/platform/families`,
     family: (familyCode) => `${API_PREFIX}/platform/families/${familyCode}`,
     variants: `${API_PREFIX}/platform/variants`,
@@ -123,7 +129,8 @@ export const endpoints = {
     hsnCodes: `${API_PREFIX}/platform/hsn-codes`,
     hsnCode: (hsnCode) => `${API_PREFIX}/platform/hsn-codes/${hsnCode}`,
     geographies: `${API_PREFIX}/platform/geographies`,
-    geography: (countryCode) => `${API_PREFIX}/platform/geographies/${countryCode}`,
+    geography: (countryCode) =>
+      `${API_PREFIX}/platform/geographies/${countryCode}`,
     cms: `${API_PREFIX}/cms`,
     cmsPage: (slug) => `${API_PREFIX}/cms/${slug}`,
     brands: `${API_PREFIX}/platform/brands`,
@@ -132,62 +139,71 @@ export const endpoints = {
     productOptions: `${API_PREFIX}/platform/product-options`,
     productOptionValues: `${API_PREFIX}/platform/product-option-values`,
     finishes: `${API_PREFIX}/platform/finishes`,
-    dimensions: `${API_PREFIX}/platform/dimensions`
+    dimensions: `${API_PREFIX}/platform/dimensions`,
   },
   pricing: {
     coupons: `${API_PREFIX}/pricing/coupons`,
-    coupon: (couponId) => `${API_PREFIX}/pricing/coupons/${couponId}`
+    coupon: (couponId) => `${API_PREFIX}/pricing/coupons/${couponId}`,
   },
   dynamicPricing: {
     price: `${API_PREFIX}/dynamic-pricing/price`,
-    adjust: `${API_PREFIX}/dynamic-pricing/adjust`
+    adjust: `${API_PREFIX}/dynamic-pricing/adjust`,
   },
   wallets: {
-    me: `${API_PREFIX}/wallets/me`
+    me: `${API_PREFIX}/wallets/me`,
   },
   subscriptions: {
     plans: `${API_PREFIX}/subscriptions/plans`,
     purchase: `${API_PREFIX}/subscriptions/purchase`,
     me: `${API_PREFIX}/subscriptions/me`,
-    pause: (subscriptionId) => `${API_PREFIX}/subscriptions/${subscriptionId}/pause`,
-    resume: (subscriptionId) => `${API_PREFIX}/subscriptions/${subscriptionId}/resume`,
-    cancel: (subscriptionId) => `${API_PREFIX}/subscriptions/${subscriptionId}/cancel`,
+    pause: (subscriptionId) =>
+      `${API_PREFIX}/subscriptions/${subscriptionId}/pause`,
+    resume: (subscriptionId) =>
+      `${API_PREFIX}/subscriptions/${subscriptionId}/resume`,
+    cancel: (subscriptionId) =>
+      `${API_PREFIX}/subscriptions/${subscriptionId}/cancel`,
     adminPlans: `${API_PREFIX}/subscriptions/admin/plans`,
     adminPlan: (planId) => `${API_PREFIX}/subscriptions/admin/plans/${planId}`,
     adminSubscriptions: `${API_PREFIX}/subscriptions/admin/subscriptions`,
-    adminSubscriptionStatus: (subscriptionId) => `${API_PREFIX}/subscriptions/admin/subscriptions/${subscriptionId}/status`,
+    adminSubscriptionStatus: (subscriptionId) =>
+      `${API_PREFIX}/subscriptions/admin/subscriptions/${subscriptionId}/status`,
     adminPlatformFeeConfig: `${API_PREFIX}/subscriptions/admin/platform-fee-config`,
-    adminPlatformFeeConfigDetail: (configId) => `${API_PREFIX}/subscriptions/admin/platform-fee-config/${configId}`
+    adminPlatformFeeConfigDetail: (configId) =>
+      `${API_PREFIX}/subscriptions/admin/platform-fee-config/${configId}`,
   },
   notifications: {
     me: `${API_PREFIX}/notifications/me`,
     create: `${API_PREFIX}/notifications`,
-    preferences: `${API_PREFIX}/notifications/preferences`
+    preferences: `${API_PREFIX}/notifications/preferences`,
   },
   analytics: {
     overview: `${API_PREFIX}/analytics`,
-    events: `${API_PREFIX}/analytics/events`
+    events: `${API_PREFIX}/analytics/events`,
   },
   warranty: {
-    product: (productId) => `${API_PREFIX}/warranty/products/${productId}/warranty`,
+    product: (productId) =>
+      `${API_PREFIX}/warranty/products/${productId}/warranty`,
     register: `${API_PREFIX}/warranty/register`,
     detail: (warrantyId) => `${API_PREFIX}/warranty/${warrantyId}`,
     byOrder: (orderId) => `${API_PREFIX}/warranty/orders/${orderId}`,
-    byCustomer: (customerId) => `${API_PREFIX}/warranty/customers/${customerId}`,
+    byCustomer: (customerId) =>
+      `${API_PREFIX}/warranty/customers/${customerId}`,
     claims: (warrantyId) => `${API_PREFIX}/warranty/${warrantyId}/claims`,
-    claimStatus: (warrantyId, claimId) => `${API_PREFIX}/warranty/${warrantyId}/claims/${claimId}/status`
+    claimStatus: (warrantyId, claimId) =>
+      `${API_PREFIX}/warranty/${warrantyId}/claims/${claimId}/status`,
   },
   loyalty: {
     profile: `${API_PREFIX}/loyalty/profile`,
     benefits: `${API_PREFIX}/loyalty/benefits`,
     points: `${API_PREFIX}/loyalty/points`,
     history: `${API_PREFIX}/loyalty/history`,
-    redeem: `${API_PREFIX}/loyalty/redeem`
+    redeem: `${API_PREFIX}/loyalty/redeem`,
   },
   recommendations: {
     list: `${API_PREFIX}/recommendations`,
-    interact: (productId) => `${API_PREFIX}/recommendations/${productId}/interact`,
-    trending: `${API_PREFIX}/recommendations/trending`
+    interact: (productId) =>
+      `${API_PREFIX}/recommendations/${productId}/interact`,
+    trending: `${API_PREFIX}/recommendations/trending`,
   },
   sellers: {
     onboardingKyc: `${API_PREFIX}/sellers/onboarding/kyc`,
@@ -195,7 +211,8 @@ export const endpoints = {
     reviewKyc: (sellerId) => `${API_PREFIX}/sellers/${sellerId}/kyc/review`,
     webStatus: `${API_PREFIX}/sellers/me/status`,
     webTracking: `${API_PREFIX}/sellers/me/tracking`,
-    webTrackingOrder: (orderId) => `${API_PREFIX}/sellers/me/tracking/${orderId}`,
+    webTrackingOrder: (orderId) =>
+      `${API_PREFIX}/sellers/me/tracking/${orderId}`,
     profile: `${API_PREFIX}/sellers/me/profile`,
     businessAddress: `${API_PREFIX}/sellers/me/business-address`,
     pickupAddress: `${API_PREFIX}/sellers/me/pickup-address`,
@@ -204,7 +221,8 @@ export const endpoints = {
     settings: `${API_PREFIX}/sellers/me/settings`,
     dashboard: `${API_PREFIX}/sellers/me/dashboard`,
     subAdmins: `${API_PREFIX}/sellers/me/sub-admins`,
-    subAdminModules: (userId) => `${API_PREFIX}/sellers/me/sub-admins/${userId}/modules`
+    subAdminModules: (userId) =>
+      `${API_PREFIX}/sellers/me/sub-admins/${userId}/modules`,
   },
   sellerCommissions: {
     myCommissions: `${API_PREFIX}/sellers/commissions/my-commissions`,
@@ -220,48 +238,59 @@ export const endpoints = {
   },
   tax: {
     invoice: (orderId) => `${API_PREFIX}/tax/orders/${orderId}/invoice`,
-    reports: `${API_PREFIX}/tax/reports`
+    reports: `${API_PREFIX}/tax/reports`,
   },
   fraud: {
-    review: (fraudId) => `${API_PREFIX}/fraud/${fraudId}/review`
+    review: (fraudId) => `${API_PREFIX}/fraud/${fraudId}/review`,
   },
   rbac: {
     permissionManagementModules: `${API_PREFIX}/rbac/permission-management/modules`,
     modules: `${API_PREFIX}/rbac/modules`,
     module: (moduleId) => `${API_PREFIX}/rbac/modules/${moduleId}`,
     permissions: `${API_PREFIX}/rbac/permissions`,
-    permission: (permissionId) => `${API_PREFIX}/rbac/permissions/${permissionId}`,
+    permission: (permissionId) =>
+      `${API_PREFIX}/rbac/permissions/${permissionId}`,
     roles: `${API_PREFIX}/rbac/roles`,
     role: (roleId) => `${API_PREFIX}/rbac/roles/${roleId}`,
-    rolePermissions: (roleId) => `${API_PREFIX}/rbac/roles/${roleId}/permissions`,
-    rolePermissionsBulk: (roleId) => `${API_PREFIX}/rbac/roles/${roleId}/permissions/bulk`,
-    userPermissions: (userId) => `${API_PREFIX}/rbac/users/${userId}/permissions`,
-    userEffectivePermissions: (userId) => `${API_PREFIX}/rbac/users/${userId}/permissions/effective`,
-    userPermissionCheck: (userId) => `${API_PREFIX}/rbac/users/${userId}/permissions/check`,
-    userPermissionsBulk: (userId) => `${API_PREFIX}/rbac/users/${userId}/permissions/bulk`,
+    rolePermissions: (roleId) =>
+      `${API_PREFIX}/rbac/roles/${roleId}/permissions`,
+    rolePermissionsBulk: (roleId) =>
+      `${API_PREFIX}/rbac/roles/${roleId}/permissions/bulk`,
+    userPermissions: (userId) =>
+      `${API_PREFIX}/rbac/users/${userId}/permissions`,
+    userEffectivePermissions: (userId) =>
+      `${API_PREFIX}/rbac/users/${userId}/permissions/effective`,
+    userPermissionCheck: (userId) =>
+      `${API_PREFIX}/rbac/users/${userId}/permissions/check`,
+    userPermissionsBulk: (userId) =>
+      `${API_PREFIX}/rbac/users/${userId}/permissions/bulk`,
     userRoles: (userId) => `${API_PREFIX}/rbac/users/${userId}/roles`,
     userRoleCheck: (userId) => `${API_PREFIX}/rbac/users/${userId}/roles/check`,
-    userRolesBulk: (userId) => `${API_PREFIX}/rbac/users/${userId}/roles/bulk`
+    userRolesBulk: (userId) => `${API_PREFIX}/rbac/users/${userId}/roles/bulk`,
   },
   admin: {
     accessModules: `${API_PREFIX}/admin/access/modules`,
     admins: `${API_PREFIX}/admin/access/admins`,
     subAdmins: `${API_PREFIX}/admin/access/sub-admins`,
-    subAdminModules: (userId) => `${API_PREFIX}/admin/access/sub-admins/${userId}/modules`,
+    subAdminModules: (userId) =>
+      `${API_PREFIX}/admin/access/sub-admins/${userId}/modules`,
     dashboardOverview: `${API_PREFIX}/admin/dashboard/overview`,
     users: `${API_PREFIX}/admin/users`,
     user: (userId) => `${API_PREFIX}/admin/users/${userId}`,
     vendors: `${API_PREFIX}/admin/vendors`,
-    vendorStatus: (sellerId) => `${API_PREFIX}/admin/vendors/${sellerId}/status`,
+    vendorStatus: (sellerId) =>
+      `${API_PREFIX}/admin/vendors/${sellerId}/status`,
     productsModerationQueue: `${API_PREFIX}/admin/products/moderation-queue`,
     products: `${API_PREFIX}/admin/products`,
     product: (productId) => `${API_PREFIX}/admin/products/${productId}`,
-    moderateProduct: (productId) => `${API_PREFIX}/admin/products/${productId}/moderate`,
+    moderateProduct: (productId) =>
+      `${API_PREFIX}/admin/products/${productId}/moderate`,
     orders: `${API_PREFIX}/admin/orders`,
     payments: `${API_PREFIX}/admin/payments`,
     payouts: `${API_PREFIX}/admin/payouts`,
     taxReports: `${API_PREFIX}/admin/tax/reports`,
-    taxInvoice: (orderId) => `${API_PREFIX}/admin/tax/orders/${orderId}/invoice`,
+    taxInvoice: (orderId) =>
+      `${API_PREFIX}/admin/tax/orders/${orderId}/invoice`,
     apiKeys: `${API_PREFIX}/admin/platform/api-keys`,
     webhooks: `${API_PREFIX}/admin/platform/webhooks`,
     featureFlags: `${API_PREFIX}/admin/platform/feature-flags`,
@@ -270,37 +299,54 @@ export const endpoints = {
     chargebacks: `${API_PREFIX}/admin/chargebacks`,
     systemHealth: `${API_PREFIX}/admin/system/health`,
     systemQueues: `${API_PREFIX}/admin/system/queues`,
-    pauseQueue: (queueName) => `${API_PREFIX}/admin/system/queues/${queueName}/pause`,
-    resumeQueue: (queueName) => `${API_PREFIX}/admin/system/queues/${queueName}/resume`,
+    pauseQueue: (queueName) =>
+      `${API_PREFIX}/admin/system/queues/${queueName}/pause`,
+    resumeQueue: (queueName) =>
+      `${API_PREFIX}/admin/system/queues/${queueName}/resume`,
     deadLetter: `${API_PREFIX}/admin/system/dead-letter`,
-    retryDeadLetter: (eventId) => `${API_PREFIX}/admin/system/dead-letter/${eventId}/retry`,
-    discardDeadLetter: (eventId) => `${API_PREFIX}/admin/system/dead-letter/${eventId}/discard`,
+    retryDeadLetter: (eventId) =>
+      `${API_PREFIX}/admin/system/dead-letter/${eventId}/retry`,
+    discardDeadLetter: (eventId) =>
+      `${API_PREFIX}/admin/system/dead-letter/${eventId}/discard`,
     subscriptionPlans: `${API_PREFIX}/admin/platform/subscription-plans`,
-    subscriptionPlan: (planId) => `${API_PREFIX}/admin/platform/subscription-plans/${planId}`,
+    subscriptionPlan: (planId) =>
+      `${API_PREFIX}/admin/platform/subscription-plans/${planId}`,
     subscriptions: `${API_PREFIX}/admin/platform/subscriptions`,
-    subscriptionStatus: (subscriptionId) => `${API_PREFIX}/admin/platform/subscriptions/${subscriptionId}/status`,
+    subscriptionStatus: (subscriptionId) =>
+      `${API_PREFIX}/admin/platform/subscriptions/${subscriptionId}/status`,
     feeConfig: `${API_PREFIX}/admin/platform/fee-config`,
-    feeConfigDetail: (configId) => `${API_PREFIX}/admin/platform/fee-config/${configId}`,
+    feeConfigDetail: (configId) =>
+      `${API_PREFIX}/admin/platform/fee-config/${configId}`,
     platformCategories: `${API_PREFIX}/admin/platform/categories`,
-    platformCategory: (categoryKey) => `${API_PREFIX}/admin/platform/categories/${pathParam(categoryKey)}`,
+    platformCategory: (categoryKey) =>
+      `${API_PREFIX}/admin/platform/categories/${pathParam(categoryKey)}`,
     platformProductFamilies: `${API_PREFIX}/admin/platform/product-families`,
-    platformProductFamily: (familyCode) => `${API_PREFIX}/admin/platform/product-families/${familyCode}`,
+    platformProductFamily: (familyCode) =>
+      `${API_PREFIX}/admin/platform/product-families/${familyCode}`,
     platformProductVariants: `${API_PREFIX}/admin/platform/product-variants`,
-    platformProductVariant: (variantId) => `${API_PREFIX}/admin/platform/product-variants/${variantId}`,
+    platformProductVariant: (variantId) =>
+      `${API_PREFIX}/admin/platform/product-variants/${variantId}`,
     platformHsnCodes: `${API_PREFIX}/admin/platform/hsn-codes`,
-    platformHsnCode: (hsnCode) => `${API_PREFIX}/admin/platform/hsn-codes/${hsnCode}`,
+    platformHsnCode: (hsnCode) =>
+      `${API_PREFIX}/admin/platform/hsn-codes/${hsnCode}`,
     platformProductOptions: `${API_PREFIX}/admin/platform/product-options`,
-    platformProductOption: (optionId) => `${API_PREFIX}/admin/platform/product-options/${optionId}`,
+    platformProductOption: (optionId) =>
+      `${API_PREFIX}/admin/platform/product-options/${optionId}`,
     platformProductOptionValues: `${API_PREFIX}/admin/platform/product-option-values`,
-    platformProductOptionValue: (optionValueId) => `${API_PREFIX}/admin/platform/product-option-values/${optionValueId}`,
-    platformCategoryAttributes: (categoryKey) => `${API_PREFIX}/admin/categories/${pathParam(categoryKey)}/attributes`,
+    platformProductOptionValue: (optionValueId) =>
+      `${API_PREFIX}/admin/platform/product-option-values/${optionValueId}`,
+    platformCategoryAttributes: (categoryKey) =>
+      `${API_PREFIX}/admin/categories/${pathParam(categoryKey)}/attributes`,
     platformCatalogPrefill: `${API_PREFIX}/admin/platform/catalog-prefill`,
     platformGeography: `${API_PREFIX}/admin/platform/geography`,
-    platformGeographyDetail: (countryCode) => `${API_PREFIX}/admin/platform/geography/${countryCode}`,
+    platformGeographyDetail: (countryCode) =>
+      `${API_PREFIX}/admin/platform/geography/${countryCode}`,
     platformContentPages: `${API_PREFIX}/admin/platform/content-pages`,
-    platformContentPage: (slug) => `${API_PREFIX}/admin/platform/content-pages/${slug}`,
+    platformContentPage: (slug) =>
+      `${API_PREFIX}/admin/platform/content-pages/${slug}`,
     platformBrands: `${API_PREFIX}/admin/platform/brands`,
-    platformBrand: (brandId) => `${API_PREFIX}/admin/platform/brands/${brandId}`,
+    platformBrand: (brandId) =>
+      `${API_PREFIX}/admin/platform/brands/${brandId}`,
     platformWarrantyTemplates: `${API_PREFIX}/admin/platform/warranty-templates`,
     platformWarrantyTemplate: (templateId) =>
       `${API_PREFIX}/admin/platform/warranty-templates/${templateId}`,
@@ -308,6 +354,7 @@ export const endpoints = {
     platformDimension: (dimensionId) =>
       `${API_PREFIX}/admin/platform/dimensions/${dimensionId}`,
     platformBatches: `${API_PREFIX}/admin/platform/batches`,
-    platformBatch: (batchId) => `${API_PREFIX}/admin/platform/batches/${batchId}`
-  }
+    platformBatch: (batchId) =>
+      `${API_PREFIX}/admin/platform/batches/${batchId}`,
+  },
 };

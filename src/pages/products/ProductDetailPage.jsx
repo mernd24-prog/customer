@@ -441,7 +441,8 @@ export default function ProductDetailPage() {
 
   const productState = useSelector((s) => s.product);
   const product = productState.current;
-  // console.log("DEBUG: Product API Response:", product);
+  const loadedProductId = getProductId(product);
+
   const warrantyState = useSelector((s) => s.warranty);
   const dynamicState = useSelector((s) => s.dynamicPricing);
   const relatedState = useSelector((s) => s.relatedProducts);
@@ -453,7 +454,8 @@ export default function ProductDetailPage() {
       ? firstMoneyValue(dynamicState.current?.price)
       : undefined;
   const relatedProducts = relatedState.relatedByProduct[productId]?.items || [];
-  const crossSellProducts = crossSellState.crossSellByProduct[productId]?.items || [];
+  const crossSellProducts =
+    crossSellState.crossSellByProduct[productId]?.items || [];
 
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -462,6 +464,7 @@ export default function ProductDetailPage() {
   const [shareOpen, setShareOpen] = useState(false);
   // Track which productId has already had its one-shot side effects run
   const sideEffectsRanFor = useRef(null);
+  const dynamicPriceRequestKey = useRef(null);
 
   useEffect(() => {
     dispatch(fetchProductById({ productId }));
@@ -492,9 +495,13 @@ export default function ProductDetailPage() {
   }, [dispatch, product, productId]);
 
   useEffect(() => {
-    if (!product) return;
+    if (!loadedProductId || String(loadedProductId) !== String(productId))
+      return;
+    const requestKey = `${productId}:${quantity}`;
+    if (dynamicPriceRequestKey.current === requestKey) return;
+    dynamicPriceRequestKey.current = requestKey;
     dispatch(fetchDynamicPrice({ productId, quantity })).catch(() => {});
-  }, [dispatch, product, productId, quantity]);
+  }, [dispatch, loadedProductId, productId, quantity]);
 
   const variants = useMemo(() => product?.variants || [], [product?.variants]);
   const variantOptions = useMemo(() => {
@@ -625,16 +632,13 @@ export default function ProductDetailPage() {
     ...attributes,
   }).filter(([, value]) => value != null && value !== "");
 
- 
-
   return (
     <>
       <Seo
-        title={`${getProductTitle(product) || "Product"} | Sam Global`}
-        description={
-          product?.description?.slice(0, 160) ||
-          "Shop this product at Sam Global."
-        }
+        title={product?.title}
+        metaDescription={product?.seo?.metaDescription}
+        keywords={product?.seo?.keywords || []}
+        image={product?.seo?.ogImage}
       />
 
       <div className="mx-auto w-full max-w-[1440px] px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
@@ -1081,12 +1085,12 @@ export default function ProductDetailPage() {
                           {detailRows.slice(0, 8).map(([key, value]) => (
                             <div
                               key={key}
-                              className="grid grid-cols-1 gap-1  text-[12px] sm:grid-cols-[118px_1fr] sm:gap-3"
+                              className="grid grid-cols-1 gap-1  text-[16px] sm:grid-cols-[118px_1fr] sm:gap-3"
                             >
                               <dt className="font-semibold capitalize text-ink">
                                 {key}
                               </dt>
-                              <dd className="text-muted">
+                              <dd className="text-black/80 text-lg">
                                 {Array.isArray(value)
                                   ? value.join(", ")
                                   : String(value)}
@@ -1107,14 +1111,14 @@ export default function ProductDetailPage() {
                     <h2 className="mb-3  text-[18px] font-bold text-ink">
                       Description
                     </h2>
-                    <p className=" text-sm leading-7 text-muted whitespace-pre-line">
+                    <p className=" text-sm leading-7 text-black/90 whitespace-pre-line">
                       {product.description}
                     </p>
                   </div>
                 )}
 
                 {Object.keys(attributes).length > 0 && (
-                  <div className="panel">
+                  <div className="panel ">
                     <h2 className="mb-4  text-[18px] font-bold text-ink">
                       Specifications
                     </h2>
@@ -1124,7 +1128,7 @@ export default function ProductDetailPage() {
                           key={key}
                           className="flex gap-4 border-b border-border py-2.5 last:border-0"
                         >
-                          <dt className="w-36 shrink-0  text-xs font-semibold uppercase tracking-normal text-gray">
+                          <dt className="w-36 shrink-0  text-xs font-semibold uppercase tracking-normal text-black">
                             {key}
                           </dt>
                           <dd className=" text-sm text-ink">
@@ -1161,7 +1165,9 @@ export default function ProductDetailPage() {
               </div>
 
               {/* ── Reviews ── */}
-              <ProductReviewsSection productId={productId} />
+              <div className="my-4">
+                <ProductReviewsSection productId={productId} />
+              </div>
 
               {/* ── Related products ── */}
               {relatedProducts.length > 0 && (
@@ -1205,7 +1211,7 @@ export default function ProductDetailPage() {
                       Explore more →
                     </Link>
                   </div>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
                     {crossSellProducts.slice(0, 6).map((p) => (
                       <ProductCard
                         key={getProductId(p)}

@@ -63,6 +63,10 @@
   }
 }
 
+.d {
+  border: 2px solid red;
+}
+
 .swiper-slide img {
   backface-visibility: hidden;
   transform-style: preserve-3d;

@@ -10,18 +10,35 @@ export default function SelectField({
   className = "",
   ...props
 }) {
+  const getOptionText = (option, fallback = "") => {
+    if (option == null) return fallback;
+    if (typeof option !== "object") return String(option);
+
+    const candidate =
+      option.name ??
+      option.label ??
+      option.value ??
+      option.zipCode ??
+      option.code ??
+      option.id ??
+      option._id;
+
+    return candidate === option ? fallback : getOptionText(candidate, fallback);
+  };
+
   // Normalize options dynamically
   const normalizedOptions = options
     .map((opt) => {
       if (!opt) return null;
       if (typeof opt === "object") {
-        if ("value" in opt && "label" in opt) {
-          return { value: opt.value, label: opt.label };
-        }
-        const name = opt.name || "";
-        return { value: name, label: name };
+        const value = getOptionText(
+          opt.value ?? opt.name ?? opt.zipCode ?? opt.code ?? opt.id ?? opt._id,
+        );
+        const label = getOptionText(opt.label ?? opt.name ?? opt.value, value);
+        return value ? { value, label } : null;
       }
-      return { value: opt, label: opt };
+      const text = String(opt);
+      return { value: text, label: text };
     })
     .filter(Boolean);
 

@@ -1,7 +1,7 @@
 export const SITE_CONFIG = {
   name: "Sam Global",
   titleTemplate: "%s | Sam Global",
-  defaultTitle: "Sam Global | Shop products, deals, orders & rewards",
+  defaultTitle: "Sam Global | Shop products, deals, orders & rewardsffff",
   description:
     "Shop smarter with Sam Global. Discover products, deals, order tracking, returns, loyalty rewards, wallet, warranties, and subscriptions in one ecommerce experience.",
   url: import.meta.env.VITE_SITE_URL || "https://samglobal.com",

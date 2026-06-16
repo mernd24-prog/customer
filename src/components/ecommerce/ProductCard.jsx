@@ -59,7 +59,6 @@ export default function ProductCard({
     ratingCountProp ?? cardProduct?.ratingCount ?? cardProduct?.reviewsCount;
   const discountPercent =
     discountPercentProp ?? cardProduct?.discountPercent ?? 0;
-  const isInStock = inStock ?? cardProduct?.isInStock !== false;
   const brand = brandProp || cardProduct?.brand;
   const to = href || `/products/${id}`;
   const isListVariant = variant === "list" || variant === "compact";
@@ -80,6 +79,35 @@ export default function ProductCard({
   const roundedRating = Math.round(
     Math.max(0, Math.min(Number(rating || 0), 5)),
   );
+
+  const stockValues = [
+    cardProduct?.stock,
+    cardProduct?.quantity,
+    cardProduct?.inventory,
+    cardProduct?.availableStock,
+    cardProduct?.totalStock,
+  ].filter((value) => value != null && value !== "");
+  const variantStockValues = Array.isArray(cardProduct?.variants)
+    ? cardProduct.variants
+        .map((variant) => variant?.stock)
+        .filter((value) => value != null && value !== "")
+    : [];
+  const hasStockQuantity = stockValues.length > 0 || variantStockValues.length > 0;
+  const stockQty = [...stockValues, ...variantStockValues].reduce(
+    (total, value) => total + (Number(value) || 0),
+    0,
+  );
+
+  const isInStock =
+    inStock !== undefined
+      ? Boolean(inStock)
+      : typeof cardProduct?.inStock === "boolean"
+        ? cardProduct.inStock
+        : typeof cardProduct?.isInStock === "boolean"
+          ? cardProduct.isInStock
+          : hasStockQuantity
+            ? stockQty > 0
+            : true;
 
   const handleWishlist = (event) => {
     event.preventDefault();
@@ -108,21 +136,21 @@ export default function ProductCard({
     return (
       <article
         className={cn(
-          "customer-card p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]",
+          "customer-card p-3 transition-all   duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]",
           className,
         )}
       >
-        <div className="grid gap-4 sm:grid-cols-[180px_1fr_auto] sm:items-center">
+        <div className="grid gap-4  sm:grid-cols-[180px_1fr_auto]  sm:items-center">
           <Link
             to={to}
-            className="block overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)]"
+            className="block overflow-hidden  rounded-[var(--customer-radius)] bg-[var(--customer-cream)]"
           >
             {image ? (
               <div className="group flex aspect-square w-full items-center justify-center overflow-hidden p-4">
                 <img
                   src={image}
                   alt={title}
-                  className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  className="h-full w-full object-contain  transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
                   onError={handleImageError}
@@ -196,27 +224,35 @@ export default function ProductCard({
   return (
     <article
       className={cn(
-        "group relative min-w-0 overflow-hidden rounded-[24px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_16px_40px_rgba(17,24,39,0.12)]",
+        ` ${!isInStock ? "opacity-50 " : ""} group relative min-w-0 overflow-hidden  rounded-[24px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_16px_40px_rgba(17,24,39,0.12)]`,
         className,
       )}
     >
-      <div className="absolute left-4 top-4 z-20 flex max-w-[calc(100%-2rem)] flex-wrap items-center gap-2">
+      {!isInStock && (
+        <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">
+          <span className="rounded-full border border-red-800 bg-white px-3 py-1 text-sm font-bold text-red-800 shadow-lg">
+            Out of Stock
+          </span>
+        </div>
+      )}
+
+      <div className="absolute  left-4 top-4 z-20 flex max-w-[calc(100%-2rem)] flex-wrap items-center gap-2">
         <Label
           variant="featured"
           className="
-    flex h-[24px] min-w-[75px] items-center justify-center
-    rounded-[50px]
-    bg-[#CE9F2D]
-    px-[12px] py-[5px]
-    font-dmSans
-    text-[12px] font-semibold
-    leading-none
-    tracking-[0px]
-    text-[#FFFFFF]
-    sm:h-[28px] sm:min-w-[91px]
-    sm:px-[15px]
-    sm:text-[14px]
-  "
+            flex h-[24px] min-w-[75px] items-center justify-center
+            rounded-[50px]
+            bg-[#CE9F2D]
+            px-[12px] py-[5px]
+            font-dmSans
+            text-[12px] font-semibold
+            leading-none
+            tracking-[0px]
+            text-[#FFFFFF]
+            sm:h-[28px] sm:min-w-[91px]
+            sm:px-[15px]
+            sm:text-[14px]
+          "
         >
           {badgeText || "Featured"}
         </Label>
@@ -224,33 +260,24 @@ export default function ProductCard({
           <Label
             variant="success"
             className="
-    flex h-[24px] min-w-[72px] items-center justify-center
-    rounded-[50px]
-    bg-[#E8F5E8]
-    px-[12px] py-[5px]
-    font-dmSans
-    text-[12px] font-semibold
-    leading-none
-    tracking-[0%]
-    text-[#228B22]
-    sm:h-[28px] sm:min-w-[84px]
-    sm:px-[15px]
-    sm:text-[14px]
-  "
+              flex h-[24px] min-w-[72px] items-center justify-center
+              rounded-[50px]
+              bg-[#E8F5E8]
+              px-[12px] py-[5px]
+              font-dmSans
+              text-[12px] font-semibold
+              leading-none
+              tracking-[0%]
+              text-[#228B22]
+              sm:h-[28px] sm:min-w-[84px]
+              sm:px-[15px]
+              sm:text-[14px]
+              "
           >
             {discountLabel}
           </Label>
         )}
       </div>
-
-      {!isInStock && (
-        <Label
-          variant="bestseller"
-          className="absolute right-4 top-[58px] z-20 px-3 py-1 text-[11px] lg:text-[12px]"
-        >
-          Out of stock
-        </Label>
-      )}
 
       <Link to={to} className="block">
         <div className="overflow-hidden bg-[var(--customer-cream)]">

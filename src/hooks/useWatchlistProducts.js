@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
+import { apiRequest } from "../api/client";
+import { endpoints } from "../api/endpoints";
 import { getProductId } from "../utils/ecommerce";
-import { fetchProductById } from "../features/product/productSlice";
 
 export function useWatchlistProducts({ fallback = [] } = {}) {
-  const dispatch = useDispatch();
   const [hiddenFallbackIds, setHiddenFallbackIds] = useState([]);
+  const [fetchedProducts, setFetchedProducts] = useState({});
   const wishlist = useSelector((state) => state.cart.current?.wishlist);
   const wishlistIds = useMemo(
     () => Array.from(new Set((Array.isArray(wishlist) ? wishlist : []).map((item) => getProductId(item)).filter(Boolean))),
@@ -15,19 +16,47 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
   const productEntities = useSelector((state) => state.product.entities || {});
   const allProducts = useSelector((state) => state.product.list || []);
 
-  // Fetch products for wishlist IDs that are not in entities
   useEffect(() => {
-    wishlistIds.forEach((id) => {
-      if (!productEntities[id] && id) {
-        dispatch(fetchProductById({ productId: id })).catch(() => {
-          // Ignore errors for missing products
+    const missingIds = wishlistIds.filter(
+      (id) =>
+        !productEntities[id] &&
+        !Object.prototype.hasOwnProperty.call(fetchedProducts, id),
+    );
+    if (!missingIds.length) return undefined;
+
+    let cancelled = false;
+    Promise.allSettled(
+      missingIds.map((id) =>
+        apiRequest({ method: "get", url: endpoints.products.detail(id) }),
+      ),
+    ).then((results) => {
+      if (cancelled) return;
+      setFetchedProducts((current) => {
+        const next = { ...current };
+        results.forEach((result, index) => {
+          const requestedId = missingIds[index];
+          if (result.status !== "fulfilled") {
+            next[requestedId] = null;
+            return;
+          }
+          const product = result.value?.data;
+          const id = getProductId(product);
+          next[requestedId] = product || null;
+          if (id && id !== requestedId) next[id] = product;
         });
-      }
+        return next;
+      });
     });
-  }, [wishlistIds, productEntities, dispatch]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [wishlistIds, productEntities, fetchedProducts]);
 
   const { products, isUsingFallback } = useMemo(() => {
-    const matchedProducts = wishlistIds.map((id) => productEntities[id]).filter(Boolean);
+    const matchedProducts = wishlistIds
+      .map((id) => productEntities[id] || fetchedProducts[id])
+      .filter(Boolean);
 
     if (matchedProducts.length === wishlistIds.length && matchedProducts.length > 0) {
       return { products: matchedProducts, isUsingFallback: false };
@@ -55,7 +84,14 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
       products: matchedProducts,
       isUsingFallback: false,
     };
-  }, [wishlistIds, productEntities, allProducts, fallback, hiddenFallbackIds]);
+  }, [
+    wishlistIds,
+    productEntities,
+    fetchedProducts,
+    allProducts,
+    fallback,
+    hiddenFallbackIds,
+  ]);
 
   const hideFallbackProduct = useCallback((product) => {
     const id = getProductId(product);

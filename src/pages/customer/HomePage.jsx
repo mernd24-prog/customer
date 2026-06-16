@@ -33,19 +33,17 @@ const getProductLink = (product) => {
 };
 
 const getProductImage = (product) =>
-  product?.images?.[0] ||
-  product?.image ||
-  product?.thumbnail ||
-  "";
+  product?.images?.[0] || product?.image || product?.thumbnail || "";
 
 const toNewArrivalProduct = (product) => ({
   id: String(product?._id || product?.id || ""),
   title: product?.title || "",
   image: getProductImage(product),
   price: formatPrice(product),
-  oldPrice: product?.mrp || product?.price
-    ? `₹${Number(product.mrp || product.price || 0).toLocaleString("en-IN")}`
-    : undefined,
+  oldPrice:
+    product?.mrp || product?.price
+      ? `₹${Number(product.mrp || product.price || 0).toLocaleString("en-IN")}`
+      : undefined,
   rating: Number(product?.rating || 0).toFixed(1),
   reviewsCount: product?.reviewCount || 0,
   link: getProductLink(product),
@@ -84,6 +82,7 @@ export function HomePage() {
   const productList = useSelector((s) => s.product.list);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
   const products = Array.isArray(productList) ? productList : [];
+
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
 
   useEffect(() => {
@@ -92,7 +91,9 @@ export function HomePage() {
     if (tokenStorage.getAccessToken()) {
       dispatch(fetchRecommendations({ limit: 10 })).catch(() => {});
     }
-    dispatch(fetchProducts({ limit: 18, page: 1, sort: "newest" })).catch(() => {});
+    dispatch(fetchProducts({ limit: 18, page: 1, sort: "newest" })).catch(
+      () => {},
+    );
     dispatch(fetchCmsPages({ limit: 100 })).catch(() => {});
   }, [dispatch]);
 

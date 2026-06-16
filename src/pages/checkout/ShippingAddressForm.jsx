@@ -109,11 +109,19 @@ export default function ShippingAddressForm({
               const uniquePostalOptions = [];
               const seenPostal = new Set();
               for (const z of postalCodes) {
-                const zip = z.zipCode || z;
-                const area = z.areaName;
+                const zip = String(
+                  z?.zipCode?.value ??
+                    z?.zipCode?.label ??
+                    z?.value ??
+                    z?.code ??
+                    z?.zipCode ??
+                    z,
+                ).match(/\d+/)?.[0];
+                if (!zip) continue;
+                const area = z?.areaName || z?.meta?.areaName;
                 const label = area ? `${zip} - ${area}` : zip;
-                if (!seenPostal.has(label)) {
-                  seenPostal.add(label);
+                if (!seenPostal.has(zip)) {
+                  seenPostal.add(zip);
                   uniquePostalOptions.push({ value: zip, label });
                 }
               }
