@@ -38,7 +38,11 @@ export function useProductActions() {
       const result = await run(
         dispatch,
         updateCart(addProductToCartPayload(cart, product, quantity)),
-        "Added to cart",
+        {
+          title: "Added to cart",
+          message: "Your item has been added to the cart successfully.",
+          tone: "cart",
+        },
       );
       dispatch(openAddedToCartModal({ product }));
       return result;
@@ -56,7 +60,17 @@ export function useProductActions() {
       return run(
         dispatch,
         updateCart(wishlistPayload(cart, product, added)),
-        added ? "Removed from wishlist" : "Saved to wishlist",
+        added
+          ? {
+              title: "Removed from wishlist",
+              message: "The item has been removed from your wishlist.",
+              tone: "remove",
+            }
+          : {
+              title: "Added to wishlist",
+              message: "The item has been saved to your wishlist.",
+              tone: "wishlist",
+            },
       );
     },
     [cart, dispatch, isWishlisted, run, user, openAuthModal],
@@ -71,7 +85,11 @@ export function useProductActions() {
       return run(
         dispatch,
         updateCart(wishlistPayload(cart, product, true)),
-        "Removed from wishlist",
+        {
+          title: "Removed from wishlist",
+          message: "The item has been removed from your wishlist.",
+          tone: "remove",
+        },
       );
     },
     [cart, dispatch, run, user, openAuthModal],

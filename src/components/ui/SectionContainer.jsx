@@ -28,7 +28,27 @@ export default function SectionContainer({
           >
             <div className="min-w-0 ">
               {title && (
-                <h2 className="font-dm-sans  text-[28px] font-bold leading-[100%] tracking-[0px] align-middle text-[#3E4093] sm:text-[32px] md:text-[36px] lg:text-[38px]">
+                <h2
+                  className="
+    font-dm-sans
+    text-[22px]
+    font-bold
+    leading-[110%]
+    tracking-normal
+    text-[#3E4093]
+
+    min-[375px]:text-[24px]
+    min-[425px]:text-[26px]
+
+    sm:text-[30px]
+    md:text-[34px]
+
+    lg:text-[38px]
+    xl:text-[42px]
+
+    2xl:text-[38px]
+  "
+                >
                   {title}
                 </h2>
               )}

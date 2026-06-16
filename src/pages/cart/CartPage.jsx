@@ -413,11 +413,11 @@ export default function CartPage() {
         description="Review items in your shopping cart."
       />
 
-      <section className="bg-white px-4 py-6 sm:px-6 sm:py-8 lg:px-12 lg:py-10">
+      <section className="bg-white px-4 py-4 sm:px-6 sm:py-6 lg:px-12 lg:py-10">
         <div className="mx-auto max-w-[1400px]">
           <PageHeader
             title={`Cart${hasCartItems ? ` (${items.length})` : ""}`}
-            className="mb-6"
+            className="mb-5 sm:mb-6"
           />
 
           <ApiState

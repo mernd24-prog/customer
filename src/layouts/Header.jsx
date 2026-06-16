@@ -454,8 +454,8 @@ export const Navbar = ({ icons: propIcons }) => {
 
   return (
     <header className="customer-container w-full">
-      <div className="flex flex-wrap items-center justify-between gap-3 py-3 sm:gap-4 lg:flex-nowrap lg:gap-5 h-auto lg:h-[90px]">
-        <div className="flex shrink-0 items-center gap-6 order-1">
+      <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4 lg:h-[90px] lg:flex-nowrap lg:gap-5">
+        <div className="order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
           <Link to="/" aria-label="Sam Global home">
             <img
               src="/image/png/logo.png"
@@ -490,7 +490,7 @@ export const Navbar = ({ icons: propIcons }) => {
           placeholder="Search for products, brands and categories..."
           micIcon={icons.Mic}
           showButtonLabel={false}
-          className="order-3 w-full lg:order-2 lg:w-auto lg:max-w-[720px] lg:flex-1"
+          className="order-3 w-full min-w-0 lg:order-2 lg:w-auto lg:max-w-[720px] lg:flex-1"
         />
 
         {/* Actions */}

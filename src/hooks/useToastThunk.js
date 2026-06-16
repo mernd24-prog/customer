@@ -1,14 +1,14 @@
-import { toast } from "react-toastify";
 import { normalizeErrorMessage } from "../api/normalizeApiError";
+import { notify } from "../utils/notify";
 
 export function useToastThunk() {
   return async (dispatch, thunk, successMessage) => {
     try {
       const result = await dispatch(thunk).unwrap();
-      if (successMessage) toast.success(successMessage);
+      if (successMessage) notify.success(successMessage);
       return result;
     } catch (error) {
-      toast.error(normalizeErrorMessage(error));
+      notify.error(normalizeErrorMessage(error));
       throw error;
     }
   };
