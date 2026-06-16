@@ -296,6 +296,64 @@ export const returnsThunks = {
   fetchReturnByOrder: makeThunk("returns/fetchReturnByOrder", {
     url: ({ orderId }) => endpoints.returns.byOrder(orderId),
   }),
+  fetchReturnById: makeThunk("returns/fetchReturnById", {
+    url: ({ returnId }) => endpoints.returns.detail(returnId),
+  }),
+  rejectReturn: makeThunk("returns/rejectReturn", {
+    method: "post",
+    url: ({ returnId }) => endpoints.returns.reject(returnId),
+    data: body,
+  }),
+  scheduleReversePickup: makeThunk("returns/scheduleReversePickup", {
+    method: "post",
+    url: ({ returnId }) => endpoints.returns.schedule(returnId),
+    data: body,
+  }),
+  shipReturnBack: makeThunk("returns/shipReturnBack", {
+    method: "post",
+    url: ({ returnId }) => endpoints.returns.shipBack(returnId),
+    data: body,
+  }),
+  updateReverseShipment: makeThunk("returns/updateReverseShipment", {
+    method: "post",
+    url: ({ returnId }) => endpoints.returns.reverseShipmentTracking(returnId),
+    data: body,
+  }),
+  receiveReturn: makeThunk("returns/receiveReturn", {
+    method: "post",
+    url: ({ returnId }) => endpoints.returns.receive(returnId),
+    data: body,
+  }),
+  processRefund: makeThunk("returns/processRefund", {
+    method: "post",
+    url: ({ returnId }) => endpoints.returns.refund(returnId),
+    data: body,
+  }),
+  retryRefund: makeThunk("returns/retryRefund", {
+    method: "post",
+    url: ({ returnId }) => endpoints.returns.refundRetry(returnId),
+    data: body,
+  }),
+  syncRefund: makeThunk("returns/syncRefund", {
+    method: "post",
+    url: ({ returnId }) => endpoints.returns.refundSync(returnId),
+    data: body,
+  }),
+  qcReturn: makeThunk("returns/qcReturn", {
+    method: "post",
+    url: ({ returnId }) => endpoints.returns.qc(returnId),
+    data: body,
+  }),
+  createReplacement: makeThunk("returns/createReplacement", {
+    method: "post",
+    url: ({ returnId }) => endpoints.returns.replacement(returnId),
+    data: body,
+  }),
+  closeReturn: makeThunk("returns/closeReturn", {
+    method: "post",
+    url: ({ returnId }) => endpoints.returns.close(returnId),
+    data: body,
+  }),
 };
 
 export const cmsThunks = {
@@ -574,6 +632,27 @@ export const sellerCommissionThunks = {
   }),
   fetchMyPayouts: makeThunk("sellerCommission/fetchMyPayouts", {
     url: endpoints.sellerCommissions.myPayouts,
+  }),
+  fetchCommissionSummary: makeThunk("sellerCommission/fetchCommissionSummary", {
+    url: endpoints.sellerCommissions.summary,
+  }),
+  fetchAllCommissions: makeThunk("sellerCommission/fetchAllCommissions", {
+    url: endpoints.sellerCommissions.allCommissions,
+    params: q,
+  }),
+  fetchAllPayouts: makeThunk("sellerCommission/fetchAllPayouts", {
+    url: endpoints.sellerCommissions.allPayouts,
+    params: q,
+  }),
+  processPayoutById: makeThunk("sellerCommission/processPayoutById", {
+    method: "post",
+    url: ({ payoutId }) => endpoints.sellerCommissions.processPayoutById(payoutId),
+    data: body,
+  }),
+  failPayoutById: makeThunk("sellerCommission/failPayoutById", {
+    method: "post",
+    url: ({ payoutId }) => endpoints.sellerCommissions.failPayoutById(payoutId),
+    data: body,
   }),
   calculateCommission: makeThunk("sellerCommission/calculateCommission", {
     method: "post",

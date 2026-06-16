@@ -10,6 +10,7 @@ export default function ConfirmModal({
   onConfirm,
   onCancel,
   variant = "danger",
+  children,
 }) {
   if (!open) return null;
 
@@ -20,6 +21,7 @@ export default function ConfirmModal({
         {description && (
           <p className="mt-2 text-sm text-muted">{description}</p>
         )}
+        {children && <div className="mt-4">{children}</div>}
         <div className="mt-6 flex justify-end gap-3">
           <Button variant="outline" size="sm" onClick={onCancel}>
             {cancelLabel}

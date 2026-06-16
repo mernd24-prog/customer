@@ -15,6 +15,11 @@ import { returnSchema } from "../../validations/validationSchemas";
 
 const RETURN_REASONS = [
   { value: "defective", label: "Defective / damaged" },
+  { value: "damaged_in_transit", label: "Damaged in transit" },
+  { value: "wrong_item", label: "Wrong item received" },
+  { value: "missing_parts", label: "Parts or accessories missing" },
+  { value: "size_issue", label: "Size or fit issue" },
+  { value: "quality_issue", label: "Quality issue" },
   { value: "not_as_described", label: "Not as described" },
   { value: "changed_mind", label: "Changed my mind" },
   { value: "other", label: "Other reason" },
@@ -23,7 +28,15 @@ const RETURN_REASONS = [
 const STATUS_BADGE = {
   requested: "bg-amber-100 text-amber-700",
   approved: "bg-blue-100 text-blue-700",
+  reverse_pickup_scheduled: "bg-blue-100 text-blue-700",
+  in_reverse_transit: "bg-blue-100 text-blue-700",
+  received: "bg-violet-100 text-violet-700",
+  qc_passed: "bg-violet-100 text-violet-700",
+  qc_completed: "bg-violet-100 text-violet-700",
+  refund_pending: "bg-amber-100 text-amber-700",
+  refund_failed: "bg-red-100 text-red-700",
   refunded: "bg-emerald-100 text-emerald-700",
+  replaced: "bg-emerald-100 text-emerald-700",
   rejected: "bg-red-100 text-red-700",
 };
 
@@ -42,6 +55,8 @@ const getItemImage = (item) => {
   const images = item?.images || (typeof item?.productId === "object" ? item.productId?.images : null);
   return Array.isArray(images) ? images[0] : images || null;
 };
+const getItemVariantSku = (item) => item?.variant_sku || item?.variantSku || "";
+const getItemId = (item) => item?.id || item?._id || item?.orderItemId || "";
 
 function ReturnRequestPage({ orderId }) {
   const dispatch = useDispatch();
@@ -60,32 +75,37 @@ function ReturnRequestPage({ orderId }) {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(returnSchema),
     defaultValues: { productId: "", reason: "defective", quantity: 1 },
   });
 
-  const watchedProductId = watch("productId");
-  const selectedItem = orderItems.find((item) => getItemProductId(item) === watchedProductId) || null;
+  const selectedItem = orderItems.find((item) => getItemId(item) === selectedProductId) || null;
 
   const handleItemSelect = (item) => {
     const pid = getItemProductId(item);
-    setSelectedProductId(pid);
+    setSelectedProductId(getItemId(item) || `${pid}:${getItemVariantSku(item)}`);
     setValue("productId", pid, { shouldValidate: true });
     setValue("quantity", 1, { shouldValidate: true });
   };
 
   const submit = async (values) => {
-    const item = orderItems.find((i) => getItemProductId(i) === values.productId);
+    const item = selectedItem || orderItems.find((i) => getItemProductId(i) === values.productId);
     const unitPrice = item ? getItemUnitPrice(item) : 0;
     await run(
       dispatch,
       requestReturn({
         orderId,
-        items: [{ productId: values.productId, quantity: Number(values.quantity), unitPrice }],
+        items: [{
+          orderItemId: getItemId(item),
+          productId: values.productId,
+          variantSku: getItemVariantSku(item),
+          quantity: Number(values.quantity),
+          unitPrice,
+        }],
         reason: values.reason,
+        resolution: "refund",
         description: values.description,
       }),
       "Return request submitted",
@@ -126,10 +146,11 @@ function ReturnRequestPage({ orderId }) {
                     const title = getItemTitle(item);
                     const img = getItemImage(item);
                     const price = getItemUnitPrice(item);
-                    const isSelected = watchedProductId === pid;
+                    const lineKey = getItemId(item) || `${pid}:${getItemVariantSku(item)}`;
+                    const isSelected = selectedProductId === lineKey;
                     return (
                       <button
-                        key={pid || title}
+                        key={lineKey || title}
                         type="button"
                         onClick={() => handleItemSelect(item)}
                         className={`flex items-center gap-3 rounded-[8px] border px-3 py-2.5 text-left transition-all duration-200 ${
@@ -237,14 +258,23 @@ function ReturnsListPage() {
         >
           <div className="grid gap-3">
             {returns.map((item) => {
-              const id = item.id || item.returnId;
+              const id = item._id || item.id || item.returnId;
               const status = item.status || item.refundStatus;
               const cls = STATUS_BADGE[status] || "bg-cream text-muted";
               return (
                 <div key={id} className="flex items-center justify-between gap-4 rounded-[12px] border border-border bg-white px-5 py-4">
                   <div>
-                    <p className="font-mono text-sm font-medium text-ink">{id}</p>
-                    <p className="text-xs text-muted">{item.reason?.replace(/_/g, " ")}</p>
+                    <p className="text-sm font-semibold text-ink">
+                      Return #{String(id || "").slice(0, 8).toUpperCase()}
+                    </p>
+                    <p className="mt-0.5 font-mono text-xs text-muted">{id}</p>
+                    <p className="mt-1 text-xs capitalize text-muted">{item.reason?.replace(/_/g, " ")}</p>
+                    {item.reverseShipment?.trackingNumber && (
+                      <p className="mt-1 text-xs text-muted">Tracking: {item.reverseShipment.trackingNumber}</p>
+                    )}
+                    {item.refund?.status && item.refund.status !== "not_started" && (
+                      <p className="mt-1 text-xs capitalize text-muted">Refund: {item.refund.status.replace(/_/g, " ")}</p>
+                    )}
                   </div>
                   <span className={`shrink-0 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}>
                     {status?.replace(/_/g, " ")}

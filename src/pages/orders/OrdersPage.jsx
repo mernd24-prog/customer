@@ -513,6 +513,9 @@ function OrderDetail({ orderId, track }) {
   const dispatch = useDispatch();
   const run = useToastThunk();
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [cancelReasonCode, setCancelReasonCode] = useState("changed_mind");
+  const [cancelItems, setCancelItems] = useState({});
   const state = useSelector((s) => s.order);
   const orders = getOrderCollection(state.current).length
     ? getOrderCollection(state.current)
@@ -525,6 +528,9 @@ function OrderDetail({ orderId, track }) {
   });
   const currency = getOrderCurrency(order);
   const items = getOrderItems(order);
+  const cancellations = Array.isArray(order?.relations?.cancellations)
+    ? order.relations.cancellations
+    : [];
   const shippingAddress =
     order?.shipping_address || order?.shippingAddress || {};
   const taxBreakup = order?.tax_breakup || order?.taxBreakup;
@@ -549,13 +555,34 @@ function OrderDetail({ orderId, track }) {
   }, [dispatch, orderId]);
 
   const handleCancelOrder = async () => {
+    const selectedItems = Object.entries(cancelItems)
+      .filter(([, quantity]) => Number(quantity) > 0)
+      .map(([orderItemId, quantity]) => ({ orderItemId, quantity: Number(quantity) }));
+    if (cancelReason.trim().length < 3) return;
+    if (!selectedItems.length) return;
     await run(
       dispatch,
-      cancelOrder({ orderId, reason: "Requested by customer" }),
-      "Order cancelled",
+      cancelOrder({
+        orderId,
+        reason: cancelReason.trim(),
+        reasonCode: cancelReasonCode,
+        refundMethod: "auto",
+        items: selectedItems,
+        idempotencyKey: `customer:${orderId}:${Date.now()}`,
+      }),
+      "Cancellation processed",
     );
     setCancelModalOpen(false);
+    setCancelReason("");
+    setCancelItems({});
     dispatch(fetchOrderById({ orderId }));
+  };
+
+  const openCancellation = () => {
+    setCancelItems(Object.fromEntries(items
+      .map((item) => [String(item.id || item._id), Number(item.quantity || 0) - Number(item.cancelled_quantity || 0)])
+      .filter(([itemId, quantity]) => itemId && quantity > 0)));
+    setCancelModalOpen(true);
   };
 
   return (
@@ -810,12 +837,13 @@ function OrderDetail({ orderId, track }) {
                                     {getVariantTitle(item)}
                                   </p>
                                 )}
-                                <p className="mt-1 break-all text-xs text-gray">
-                                  Product ID: {getItemProductId(item)}
-                                </p>
-                                {getItemSku(item) && (
-                                  <p className="mt-0.5 break-all text-xs text-gray">
+                                {getItemSku(item) ? (
+                                  <p className="mt-1 break-all text-xs text-gray">
                                     SKU: {getItemSku(item)}
+                                  </p>
+                                ) : (
+                                  <p className="mt-1 break-all font-mono text-xs text-gray">
+                                    #{String(getItemProductId(item)).slice(0, 12)}
                                   </p>
                                 )}
                                 <p className="mt-2 text-xs text-muted">
@@ -987,13 +1015,34 @@ function OrderDetail({ orderId, track }) {
               </section>
             )}
 
+            {cancellations.length > 0 && (
+              <section className="rounded-[8px] border border-border bg-white px-4 py-4 sm:px-6">
+                <h2 className="text-sm font-semibold text-ink">Cancellation and refund status</h2>
+                <div className="mt-3 grid gap-3">
+                  {cancellations.map((cancellation) => (
+                    <div key={cancellation.id} className="rounded-[6px] border border-border bg-surface px-3 py-3 text-sm">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <strong>{cancellation.cancellation_number}</strong>
+                        <span className="capitalize text-muted">{String(cancellation.status || "processing").replace(/_/g, " ")}</span>
+                      </div>
+                      <p className="mt-1 text-muted">{cancellation.reason}</p>
+                      <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted">
+                        <span>Refund: {formatMoney(cancellation.refund_amount, currency)}</span>
+                        <span>Refund status: {String(cancellation.refund_status || "pending").replace(/_/g, " ")}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {hasKnownStatus(order) && (
               <section className="grid gap-3 rounded-[8px] border border-border bg-white px-4 py-4 sm:flex sm:flex-wrap sm:px-6">
                 {canCancelOrder(order) && (
                   <Button
                     variant="secondary"
                     className="w-full sm:w-auto"
-                    onClick={() => setCancelModalOpen(true)}
+                    onClick={openCancellation}
                   >
                     <XCircle size={15} /> Cancel order
                   </Button>
@@ -1041,7 +1090,43 @@ function OrderDetail({ orderId, track }) {
         cancelLabel="Keep order"
         onCancel={() => setCancelModalOpen(false)}
         onConfirm={handleCancelOrder}
-      />
+      >
+        <div className="grid gap-3">
+          <label className="text-sm font-medium text-ink">
+            Reason
+            <select className="mt-1 w-full rounded-[6px] border border-border bg-white px-3 py-2" value={cancelReasonCode} onChange={(event) => setCancelReasonCode(event.target.value)}>
+              <option value="changed_mind">Changed my mind</option>
+              <option value="ordered_by_mistake">Ordered by mistake</option>
+              <option value="address_issue">Address issue</option>
+              <option value="payment_issue">Payment issue</option>
+              <option value="delivery_delay">Delivery delay</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+          <textarea className="min-h-20 w-full rounded-[6px] border border-border px-3 py-2 text-sm" value={cancelReason} onChange={(event) => setCancelReason(event.target.value)} maxLength={500} placeholder="Tell us why you are cancelling" />
+          <div className="grid gap-2">
+            {items.map((item) => {
+              const itemId = String(item.id || item._id);
+              const remaining = Number(item.quantity || 0) - Number(item.cancelled_quantity || 0);
+              const selected = Object.prototype.hasOwnProperty.call(cancelItems, itemId);
+              return (
+                <div key={itemId} className="flex items-center gap-2 rounded-[6px] border border-border p-2 text-sm">
+                  <input type="checkbox" checked={selected} disabled={remaining <= 0} onChange={(event) => setCancelItems((previous) => {
+                    const next = { ...previous };
+                    if (event.target.checked) next[itemId] = remaining;
+                    else delete next[itemId];
+                    return next;
+                  })} />
+                  <span className="min-w-0 flex-1 truncate">{getItemTitle(item)}</span>
+                  <input type="number" className="w-16 rounded border border-border px-2 py-1" min="1" max={remaining} disabled={!selected} value={selected ? cancelItems[itemId] : ""} onChange={(event) => setCancelItems((previous) => ({ ...previous, [itemId]: Math.min(Math.max(Number(event.target.value || 1), 1), remaining) }))} />
+                  <span className="text-xs text-muted">of {remaining}</span>
+                </div>
+              );
+            })}
+          </div>
+          {cancelReason.trim().length > 0 && cancelReason.trim().length < 3 && <p className="text-xs text-red-600">Please enter at least 3 characters.</p>}
+        </div>
+      </ConfirmModal>
     </>
   );
 }

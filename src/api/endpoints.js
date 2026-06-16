@@ -98,8 +98,19 @@ export const endpoints = {
     create: `${API_PREFIX}/returns`,
     mine: `${API_PREFIX}/returns/my-returns`,
     byOrder: (orderId) => `${API_PREFIX}/returns/order/${orderId}`,
+    detail: (returnId) => `${API_PREFIX}/returns/${returnId}`,
     approve: (returnId) => `${API_PREFIX}/returns/${returnId}/approve`,
-    refund: (returnId) => `${API_PREFIX}/returns/${returnId}/refund`
+    reject: (returnId) => `${API_PREFIX}/returns/${returnId}/reject`,
+    schedule: (returnId) => `${API_PREFIX}/returns/${returnId}/schedule`,
+    shipBack: (returnId) => `${API_PREFIX}/returns/${returnId}/ship-back`,
+    reverseShipmentTracking: (returnId) => `${API_PREFIX}/returns/${returnId}/reverse-shipment/tracking`,
+    receive: (returnId) => `${API_PREFIX}/returns/${returnId}/receive`,
+    refund: (returnId) => `${API_PREFIX}/returns/${returnId}/refund`,
+    refundRetry: (returnId) => `${API_PREFIX}/returns/${returnId}/refund/retry`,
+    refundSync: (returnId) => `${API_PREFIX}/returns/${returnId}/refund/sync`,
+    qc: (returnId) => `${API_PREFIX}/returns/${returnId}/qc`,
+    replacement: (returnId) => `${API_PREFIX}/returns/${returnId}/replacement`,
+    close: (returnId) => `${API_PREFIX}/returns/${returnId}/close`,
   },
   platform: {
     categories: `${API_PREFIX}/platform/categories`,
@@ -198,9 +209,14 @@ export const endpoints = {
   sellerCommissions: {
     myCommissions: `${API_PREFIX}/sellers/commissions/my-commissions`,
     myPayouts: `${API_PREFIX}/sellers/commissions/my-payouts`,
+    summary: `${API_PREFIX}/sellers/commissions/summary`,
+    allCommissions: `${API_PREFIX}/sellers/commissions`,
+    allPayouts: `${API_PREFIX}/sellers/commissions/payouts`,
+    processPayoutById: (payoutId) => `${API_PREFIX}/sellers/commissions/payouts/${payoutId}/process`,
+    failPayoutById: (payoutId) => `${API_PREFIX}/sellers/commissions/payouts/${payoutId}/fail`,
     calculate: (orderId) => `${API_PREFIX}/sellers/commissions/calculate/${orderId}`,
     processPayouts: `${API_PREFIX}/sellers/commissions/process-payouts`,
-    settlements: `${API_PREFIX}/sellers/commissions/settlements`
+    settlements: `${API_PREFIX}/sellers/commissions/settlements`,
   },
   tax: {
     invoice: (orderId) => `${API_PREFIX}/tax/orders/${orderId}/invoice`,
