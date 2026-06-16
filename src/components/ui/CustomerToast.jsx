@@ -55,7 +55,7 @@ export default function CustomerToast({
     <div className={`customer-toast-card customer-toast-card--${type}`}>
       <div className="customer-toast-card__icon-wrap">
         <span className="customer-toast-card__icon">
-          <Icon size={18} strokeWidth={2.4} />
+          <Icon size={16} strokeWidth={2.4} />
         </span>
       </div>
       <div className="customer-toast-card__content">
