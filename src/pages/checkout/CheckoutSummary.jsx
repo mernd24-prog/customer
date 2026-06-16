@@ -57,6 +57,13 @@ export default function CheckoutSummary({
   const codCharge = Number(
     quoteSummary.codChargeAmount ?? quoteAmounts.codChargeAmount ?? 0,
   );
+  const quoteShipping = Number(
+    quoteSummary.deliveryChargeAmount ??
+      quoteSummary.shippingFeeAmount ??
+      quoteAmounts.deliveryChargeAmount ??
+      quoteAmounts.shippingFeeAmount ??
+      shipping,
+  );
   const quotePayable = Number(
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
   );
@@ -128,7 +135,7 @@ export default function CheckoutSummary({
           ) : null}
           <div className="mt-1 flex justify-between text-sm text-muted">
             <span>Shipping</span>
-            <span>{formatMoney(shipping, "INR")}</span>
+            <span>{formatMoney(quoteShipping, "INR")}</span>
           </div>
           {taxPayable > 0 ? (
             <div className="mt-1 flex justify-between text-sm text-muted">

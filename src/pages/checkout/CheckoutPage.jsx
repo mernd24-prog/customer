@@ -498,14 +498,6 @@ export default function CheckoutPage() {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(
-      fetchPaymentOptions({
-        orderAmount: quotePayableAmount || total || subtotal || 0,
-      }),
-    ).catch(() => {});
-  }, [dispatch, quotePayableAmount, subtotal, total]);
-
-  useEffect(() => {
     if (!paymentOptions.length) return;
     const selected = paymentOptions.find(
       (option) => option.provider === paymentProvider,
@@ -728,6 +720,19 @@ export default function CheckoutPage() {
   ]);
 
   const orderItems = useMemo(() => buildOrderItems(items), [items]);
+  const paymentSellerContext = useMemo(() => {
+    const sellerOrderAmounts = {};
+    items.forEach((item) => {
+      const product = getCartItemProduct(item);
+      const sellerId = String(item.sellerId || item.seller_id || product.sellerId || product.seller_id || "").trim();
+      if (!sellerId) return;
+      sellerOrderAmounts[sellerId] = asNumber(sellerOrderAmounts[sellerId]) + asNumber(item._lineTotal);
+    });
+    return {
+      sellerIds: Object.keys(sellerOrderAmounts),
+      sellerOrderAmounts,
+    };
+  }, [items]);
   const quotePayload = useMemo(() => {
     if (!quoteShippingAddress || !orderItems.length) return null;
     return {
@@ -744,6 +749,27 @@ export default function CheckoutPage() {
     quoteShippingAddress,
     watchedCouponCode,
     watchedWalletAmount,
+  ]);
+
+  useEffect(() => {
+    const sellerIds = paymentSellerContext.sellerIds.join(",");
+    dispatch(
+      fetchPaymentOptions({
+        orderAmount: quotePayableAmount || total || subtotal || 0,
+        postalCode: quoteShippingAddress?.postalCode || "",
+        country: quoteShippingAddress?.country || "",
+        sellerIds,
+        sellerOrderAmounts: sellerIds ? JSON.stringify(paymentSellerContext.sellerOrderAmounts) : undefined,
+      }),
+    ).catch(() => {});
+  }, [
+    dispatch,
+    paymentSellerContext,
+    quotePayableAmount,
+    quoteShippingAddress?.country,
+    quoteShippingAddress?.postalCode,
+    subtotal,
+    total,
   ]);
 
   useEffect(() => {
