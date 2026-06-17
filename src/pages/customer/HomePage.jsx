@@ -172,6 +172,8 @@ export function HomePage() {
           limit={10}
         />
       </div>
+
+      {/* <Loader /> */}
     </>
   );
 }

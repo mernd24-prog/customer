@@ -114,6 +114,7 @@ export default function KycTab({ user }) {
               error={errors.panNumber}
               placeholder="ABCDE1234F"
               className="uppercase"
+              maxLength={10}
             />
             <FormField
               id="aadhaarNumber"
@@ -122,6 +123,7 @@ export default function KycTab({ user }) {
               error={errors.aadhaarNumber}
               placeholder="12-digit Aadhaar"
               inputMode="numeric"
+              maxLength={12}
             />
           </div>
 

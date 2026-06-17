@@ -23,6 +23,7 @@ import {
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 const SAVED_FOR_LATER_STORAGE_KEY = "sam_global_saved_for_later_items";
 const SELECTED_CHECKOUT_STORAGE_KEY = "sam_global_selected_checkout_item_ids";
+const CHECKOUT_CART_ITEM_IDS_STORAGE_KEY = "sam_global_checkout_cart_item_ids";
 
 function readSavedForLaterItems() {
   try {
@@ -58,6 +59,24 @@ function readSelectedCheckoutItemIds() {
 function writeSelectedCheckoutItemIds(itemIds) {
   window.sessionStorage.setItem(
     SELECTED_CHECKOUT_STORAGE_KEY,
+    JSON.stringify(itemIds),
+  );
+}
+
+function readCheckoutCartItemIds() {
+  try {
+    const parsed = JSON.parse(
+      window.sessionStorage.getItem(CHECKOUT_CART_ITEM_IDS_STORAGE_KEY) || "[]",
+    );
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeCheckoutCartItemIds(itemIds) {
+  window.sessionStorage.setItem(
+    CHECKOUT_CART_ITEM_IDS_STORAGE_KEY,
     JSON.stringify(itemIds),
   );
 }
@@ -222,15 +241,37 @@ export default function CartPage() {
     const currentItemIds = items.map((item) => item.id);
     const currentItemIdsSet = new Set(currentItemIds);
 
-    if (items.length > 0 && !hasInitializedRef.current) {
+    if (!items.length) {
+      setSelectedItemIds([]);
+      window.sessionStorage.removeItem(SELECTED_CHECKOUT_STORAGE_KEY);
+      window.sessionStorage.removeItem(CHECKOUT_CART_ITEM_IDS_STORAGE_KEY);
+      hasInitializedRef.current = false;
+      prevItemIdsRef.current = currentItemIdsSet;
+      return;
+    }
+
+    if (!hasInitializedRef.current) {
       const savedSelectedItemIds = readSelectedCheckoutItemIds();
+      const savedCartItemIds = readCheckoutCartItemIds();
+      const savedCartItemIdsSet = new Set(savedCartItemIds);
+      const newlyAddedItemIds = currentItemIds.filter(
+        (id) => !savedCartItemIdsSet.has(id),
+      );
       const nextSelectedItemIds =
         savedSelectedItemIds === null
           ? currentItemIds
-          : savedSelectedItemIds.filter((id) => currentItemIdsSet.has(id));
+          : Array.from(
+              new Set([
+                ...savedSelectedItemIds.filter((id) =>
+                  currentItemIdsSet.has(id),
+                ),
+                ...newlyAddedItemIds,
+              ]),
+            );
 
       setSelectedItemIds(nextSelectedItemIds);
       writeSelectedCheckoutItemIds(nextSelectedItemIds);
+      writeCheckoutCartItemIds(currentItemIds);
       hasInitializedRef.current = true;
     } else if (hasInitializedRef.current) {
       // Find if there are any new items that were added
@@ -249,6 +290,7 @@ export default function CartPage() {
           next.length === current.length &&
           next.every((id, idx) => id === current[idx]);
         if (!isSame) writeSelectedCheckoutItemIds(next);
+        writeCheckoutCartItemIds(currentItemIds);
         return isSame ? current : next;
       });
     }

@@ -29,7 +29,7 @@ export default function BrandCard({
   const content = (
     <article
       className={cn(
-        "group flex h-full min-h-[188px] flex-col items-center  border-border bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-lg",
+        "group flex h-full  min-h-[188px] flex-col items-center  border-border bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-lg",
         active && "ring-2 ring-gold/50",
         className,
       )}
@@ -46,7 +46,13 @@ export default function BrandCard({
           />
         ) : (
           <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-white text-center  text-lg font-bold text-gold shadow-sm">
-            {initials || <Store size={30} strokeWidth={1.4} className="text-border-strong" />}
+            {initials || (
+              <Store
+                size={30}
+                strokeWidth={1.4}
+                className="text-border-strong"
+              />
+            )}
           </div>
         )}
         <span
