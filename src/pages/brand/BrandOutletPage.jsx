@@ -137,9 +137,7 @@ export default function BrandOutletPage() {
 
           <div className="min-w-0 w-full">
             <div className="mb-6 grid gap-3 lg:hidden">
-              <h2 className="text-sm font-bold sm:text-base">
-                Shop by brand
-              </h2>
+              <h2 className="text-sm font-bold sm:text-base">Shop by brand</h2>
 
               <div className="flex max-w-full gap-2 overflow-x-auto pb-1 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
                 {sidebarBrands.slice(0, 24).map((brand) => (

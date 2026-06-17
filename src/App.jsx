@@ -20,7 +20,8 @@ import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
 import ScrollToTop from "./components/common/ScrollToTop";
 import CategoryListingPage from "./pages/category/CategoryListingPage";
 import DownloadApp from "./pages/downloadApp/DownloadApp";
-import PolicyPage from "./pages/customer/PolicyPage";
+import PolicyPage from "./pages/policiesPage/PoliciesPages";
+import Loader from "./components/common/Loader";
 const lazyNamed = (loader, exportName) =>
   lazy(() => loader().then((module) => ({ default: module[exportName] })));
 
@@ -67,6 +68,9 @@ const SearchPage = lazy(() => import("./pages/search/SearchPage"));
 const ProductsPage = lazy(() => import("./pages/products/ProductsPage"));
 const ProductDetailPage = lazy(
   () => import("./pages/products/ProductDetailPage"),
+);
+const ReviewDetailsPage = lazy(
+  () => import("./pages/reviewAndRating/ReviewDetailsPage"),
 );
 const NewArrivalsPage = lazyNamed(
   () => import("./pages/discovery/DiscoveryPages"),
@@ -167,9 +171,8 @@ const AdminRbacManagementPage = lazy(
 function RouteFallback() {
   return (
     <main className="flex min-h-[100vh] items-center justify-center bg-[var(--customer-cream)]">
-      <div className="text-center">
-        <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-[var(--customer-border)] border-t-[var(--customer-gold)]" />
-        <p className="text-sm text-[var(--customer-muted)]">Loading page…</p>
+      <div className="flex items-center justify-center">
+        <Loader size="lg" />
       </div>
     </main>
   );
@@ -230,11 +233,8 @@ export default function App() {
   if (!sessionReady) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[var(--customer-cream)]">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-[var(--customer-border)] border-t-[var(--customer-gold)]" />
-          <p className=" text-sm text-[var(--customer-muted)]">
-            Loading your session…
-          </p>
+        <div className="flex items-center justify-center">
+          <Loader size="lg" />
         </div>
       </main>
     );
@@ -317,10 +317,7 @@ export default function App() {
               <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
               <Route path="/our-commitment" element={<OurCommitmentPage />} />
               <Route path="/features" element={<FeaturesPage />} />
-              <Route
-                path="/terms-of-use"
-                element={<CmsPage slugOverride="terms-of-use" />}
-              />
+
               <Route
                 path="/shipping-policy"
                 element={<PolicyPage slugOverride="shipping-delivery-policy" />}
@@ -356,6 +353,10 @@ export default function App() {
                 <Route
                   path="/products/:productId"
                   element={<ProductDetailPage />}
+                />
+                <Route
+                  path="/products/:productId/reviews"
+                  element={<ReviewDetailsPage />}
                 />
                 <Route path="/about-us" element={<AboutPage />} />
 

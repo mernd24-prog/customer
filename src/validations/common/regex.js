@@ -1,6 +1,6 @@
 export const REGEX = Object.freeze({
   email: /^(?!.*\.\.)[A-Z0-9._%+-]+@[A-Z0-9-]+(?:\.[A-Z0-9-]+)+$/i,
-  phone: /^\d{10}$/,
+  phone: /^[6-9]\d{9}$/,
   passwordUppercase: /[A-Z]/,
   passwordLowercase: /[a-z]/,
   passwordNumber: /\d/,

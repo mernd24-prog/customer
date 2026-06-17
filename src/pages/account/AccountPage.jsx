@@ -88,7 +88,7 @@ export default function AccountPage({ tab = "profile" }) {
       <div className="flex flex-col gap-4 py-2 sm:gap-5 sm:py-8 lg:flex-row lg:gap-6 lg:py-10">
         {/* Sidebar Navigation */}
         <div className="w-full lg:w-[30%]">
-          <div className="relative lg:sticky lg:top-24 lg:ml-auto lg:w-full 2xl:w-[85%]">
+          <div className="relative lg:sticky lg:top-24 lg:ml-auto lg:max-h-[calc(100vh-7rem)] lg:w-full lg:overflow-y-auto lg:pr-2 2xl:w-[85%]">
             <div
               className={`pointer-events-none absolute inset-y-0 left-0 z-10 w-10 rounded-l-[12px] bg-gradient-to-r from-[#F7F8FC] to-transparent transition-opacity duration-200 lg:hidden ${
                 canScrollLeft ? "opacity-100" : "opacity-0"

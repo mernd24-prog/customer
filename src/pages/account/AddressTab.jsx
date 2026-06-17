@@ -50,7 +50,12 @@ export default function AddressTab({ user }) {
 
   const addForm = useForm({
     resolver: zodResolver(addressSchema),
-    defaultValues: { country: "", dialCode: "+91", label: "home", isDefault: false },
+    defaultValues: {
+      country: "",
+      dialCode: "+91",
+      label: "home",
+      isDefault: false,
+    },
   });
   const editForm = useForm({ resolver: zodResolver(addressSchema) });
 
@@ -118,7 +123,9 @@ export default function AddressTab({ user }) {
   const addDialCodes = addCountryObj?.dialCode
     ? [normalizeDialCode(addCountryObj.dialCode)]
     : Array.from(
-        new Set(countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean)),
+        new Set(
+          countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
+        ),
       ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   // Clear state and city if they don't match the selected country for Add Form
@@ -204,7 +211,9 @@ export default function AddressTab({ user }) {
   const editDialCodes = editCountryObj?.dialCode
     ? [normalizeDialCode(editCountryObj.dialCode)]
     : Array.from(
-        new Set(countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean)),
+        new Set(
+          countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
+        ),
       ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   // Clear state and city if they don't match the selected country for Edit Form
@@ -348,7 +357,7 @@ export default function AddressTab({ user }) {
   };
 
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-5  ">
       <div className="flex flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className=" text-base font-semibold text-ink">Saved addresses</p>

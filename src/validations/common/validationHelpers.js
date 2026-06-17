@@ -7,7 +7,7 @@ export const ERROR_MESSAGES = Object.freeze({
   min: (field, length) => `${field} must be at least ${length} characters`,
   max: (field, length) => `${field} must be ${length} characters or less`,
   email: "Enter a valid email address",
-  phone: "Enter a valid 10-digit phone number",
+  phone: "Enter a valid 10-digit Indian mobile number",
   safeText: "Only letters, numbers, spaces, and basic punctuation are allowed",
   name: (field) => `${field} can contain letters, spaces, apostrophes, dots, and hyphens only`,
   firstName: "First name should contain only letters",

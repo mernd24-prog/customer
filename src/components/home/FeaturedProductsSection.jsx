@@ -1,6 +1,7 @@
 import { ProductCard } from "../ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import SectionContainer from "../ui/SectionContainer";
+import { getProductId } from "../../utils/ecommerce";
 
 const featuredProducts = [
   {
@@ -66,9 +67,9 @@ export default function FeaturedProductsSection({
       actionHref={actionHref}
     >
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-        {displayProducts.map((product) => (
+        {displayProducts.map((product, index) => (
           <ProductCard
-            key={product.id}
+            key={getProductId(product) || `featured-product-${index}`}
             product={product}
             badge="Featured"
             onAddToCart={addToCart}

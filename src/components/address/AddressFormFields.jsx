@@ -9,15 +9,37 @@ export const ADDRESS_LABEL_OPTIONS = [
   { value: "other", label: "Other" },
 ];
 
+const normalizePostalCodeValue = (value = "") =>
+  String(value || "")
+    .trim()
+    .match(/^[A-Za-z0-9]+/)?.[0] || "";
+
 export const buildPostalOptions = (postalCodes = []) => {
   const uniquePostalOptions = [];
   const seenPostal = new Set();
   for (const z of postalCodes) {
-    const zip = z.zipCode || z;
-    const area = z.areaName;
+    const rawZip =
+      z && typeof z === "object"
+        ? z.zip ||
+          z.zipCode ||
+          z.postalCode ||
+          z.pinCode ||
+          z.pincode ||
+          z.code ||
+          z.value ||
+          z.label
+        : z;
+    const zip = normalizePostalCodeValue(
+      rawZip,
+    );
+    const area =
+      z && typeof z === "object"
+        ? z.areaName || z.area || z.locality || z.name
+        : "";
+    if (!zip) continue;
     const label = area ? `${zip} - ${area}` : zip;
-    if (!seenPostal.has(label)) {
-      seenPostal.add(label);
+    if (!seenPostal.has(zip)) {
+      seenPostal.add(zip);
       uniquePostalOptions.push({ value: zip, label });
     }
   }
@@ -143,7 +165,13 @@ export default function AddressFormFields({
           placeholder="Select Postal code"
           options={buildPostalOptions(postalCodes)}
           value={selectedPostalCode}
-          registration={register("postalCode")}
+          registration={register("postalCode", {
+            setValueAs: normalizePostalCodeValue,
+            onChange: (event) => {
+              const postalCode = normalizePostalCodeValue(event.target.value);
+              setValue("postalCode", postalCode, { shouldValidate: true });
+            },
+          })}
           error={errors.postalCode}
           disabled={!selectedCity}
         />

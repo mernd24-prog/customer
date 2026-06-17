@@ -36,7 +36,6 @@ import "swiper/css/free-mode";
 import "swiper/css/zoom";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
-import NotFoundPage from "../NotFoundPage";
 import { ProductCard } from "../../components/ecommerce";
 import { fetchProductById } from "../../features/product/productSlice";
 import { fetchProductWarranty } from "../../features/warranty/warrantySlice";
@@ -66,9 +65,8 @@ import {
   firstMoneyValue,
   buildCartItem,
 } from "../../utils/ecommerce";
-import { isNotFoundApiError } from "../../utils/apiErrors";
 import CUSTOMER_ROUTES from "../../constants/routes";
-import ProductReviewsSection from "../../components/ecommerce/ProductReviewsSection";
+import ReviewAndRating from "../reviewAndRating/reviewAndRating";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
@@ -1166,7 +1164,8 @@ export default function ProductDetailPage() {
 
               {/* ── Reviews ── */}
               <div className="my-4">
-                <ProductReviewsSection productId={productId} />
+                {/* <ProductReviewsSection productId={productId} /> */}
+                <ReviewAndRating productId={productId} product={product} />
               </div>
 
               {/* ── Related products ── */}

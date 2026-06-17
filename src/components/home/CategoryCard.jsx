@@ -27,25 +27,25 @@ export default function CategoryCard({
     >
       <div className="relative overflow-hidden bg-[var(--customer-cream)]">
         {badge ? (
-        <Label
-  variant="featured"
-  className="
-    absolute left-3 top-3 z-10
-    flex h-[24px] min-w-[75px] items-center justify-center
-    rounded-[50px]
-    bg-[#CE9F2D]
-    px-[12px] py-[5px]
-    font-dmSans
-    text-[12px] font-semibold
-    leading-none
-    text-[#FFFFFF]
-    sm:h-[28px] sm:min-w-[91px]
-    sm:px-[15px]
-    sm:text-[14px]
-  "
->
-  {badge}
-</Label>
+          <Label
+            variant="featured"
+            className="
+              absolute left-3 top-3 z-10
+              flex h-[24px] min-w-[75px] items-center justify-center
+              rounded-[50px]
+              bg-[#CE9F2D]
+              px-[12px] py-[5px]
+              font-dmSans
+              text-[12px] font-semibold
+              leading-none
+              text-[#FFFFFF]
+              sm:h-[28px] sm:min-w-[91px]
+              sm:px-[15px]
+              sm:text-[14px]
+            "
+          >
+            {badge}
+          </Label>
         ) : null}
 
         {image ? (

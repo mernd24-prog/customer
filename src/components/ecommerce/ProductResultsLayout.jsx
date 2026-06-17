@@ -74,8 +74,8 @@ export default function ProductResultsLayout({
               )}
 
               {loadingMore && (
-                <div className="mt-8 text-center  text-sm text-muted ">
-                  <Loader/>
+                <div className="mt-8 flex items-center justify-center   text-sm text-muted ">
+                  <Loader size="lg" />
                 </div>
               )}
               {sentinelRef && <div ref={sentinelRef} className="h-8 w-full" />}

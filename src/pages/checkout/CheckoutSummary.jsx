@@ -39,9 +39,11 @@ export default function CheckoutSummary({
         : "Place order & pay";
   const quoteSummary = quote?.summary || {};
   const quoteAmounts = quote?.quote || {};
-  const quoteSubtotal = Number(
+  const quotedSubtotal = Number(
     quoteSummary.itemAmount ?? quoteAmounts.subtotalAmount ?? subtotal,
   );
+  const quoteSubtotal =
+    quotedSubtotal > 0 || subtotal <= 0 ? quotedSubtotal : subtotal;
   const quoteDiscount = Number(
     quoteSummary.discountAmount ?? quoteAmounts.discountAmount ?? 0,
   );
@@ -65,8 +67,17 @@ export default function CheckoutSummary({
       shipping,
   );
   const quotePayable = Number(
+  
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
   );
+  const calculatedPayable = Math.max(
+    total + taxPayable + codCharge - quoteDiscount - quoteWallet,
+    0,
+  );
+  const quotePayable =
+    quotedPayable > 0 || calculatedPayable <= 0
+      ? quotedPayable
+      : calculatedPayable;
 
   return (
     <aside className="min-w-0">

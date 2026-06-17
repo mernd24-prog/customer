@@ -20,6 +20,8 @@ const PolicyPage = ({ slugOverride = "" }) => {
 
   const { page: cmsPolicy, loading } = useCmsRecord(cmsSlug);
 
+  console.log("cmsPolicy", cmsPolicy);
+
   const title = cmsPolicy?.metadata?.data?.title || "";
   const description = cmsPolicy?.metadata?.data?.description || "";
 

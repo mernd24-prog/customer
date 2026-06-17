@@ -7,7 +7,11 @@ import Seo from "../../components/common/Seo";
 import ProductFilterSidebar from "../../components/ecommerce/ProductFilterSidebar";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
-import { applyImageFallback, getImageUrlFromValue } from "../../utils/ecommerce";
+import {
+  applyImageFallback,
+  getImageUrlFromValue,
+} from "../../utils/ecommerce";
+import Loader from "../../components/common/Loader";
 
 const PAGE_SIZE = 20;
 
@@ -17,7 +21,8 @@ function getCategoryListFromResponse(data) {
   if (Array.isArray(data?.items)) return data.items;
   if (Array.isArray(data?.list)) return data.list;
   if (Array.isArray(data?.categories)) return data.categories;
-  if (data?.category && typeof data.category === "object") return [data.category];
+  if (data?.category && typeof data.category === "object")
+    return [data.category];
   if (data?.data) return getCategoryListFromResponse(data.data);
   if (data?.categoryKey || data?.title) return [data];
   return [];
@@ -25,7 +30,8 @@ function getCategoryListFromResponse(data) {
 
 function paginationFromPayload(payload, fallbackCount = 0, currentPage = 1) {
   const data = payload?.data ?? payload;
-  const meta = payload?.meta?.pagination || payload?.meta || data?.pagination || {};
+  const meta =
+    payload?.meta?.pagination || payload?.meta || data?.pagination || {};
   const total = Number(
     meta.total ||
       meta.totalItems ||
@@ -41,13 +47,15 @@ function paginationFromPayload(payload, fallbackCount = 0, currentPage = 1) {
       data?.pages ||
       Math.max(1, Math.ceil(total / PAGE_SIZE)),
   );
-  const page = Number(meta.page || meta.currentPage || data?.page || currentPage);
+  const page = Number(
+    meta.page || meta.currentPage || data?.page || currentPage,
+  );
 
   return {
     page,
     totalPages,
     total,
-    hasMore: page < totalPages || fallbackCount >= PAGE_SIZE,
+    hasMore: page < totalPages,
   };
 }
 
@@ -115,7 +123,8 @@ function normalizeCategory(category = {}) {
     imageUrl,
     bannerUrl,
     iconUrl,
-    displayImage: imageUrl || bannerUrl || iconUrl || getCategoryImage(category),
+    displayImage:
+      imageUrl || bannerUrl || iconUrl || getCategoryImage(category),
     routeKey,
     parentKey: category.parentKey,
     level: category.level,
@@ -226,6 +235,7 @@ export default function CategoryListingPage() {
   const [loading, setLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
+  const loadingMoreRef = useRef(false);
   const [pageInfo, setPageInfo] = useState({
     page: 1,
     totalPages: 1,
@@ -257,10 +267,13 @@ export default function CategoryListingPage() {
       }
       const list = getCategoryListFromResponse(action?.payload);
       const rootList = getRootCategories(list);
-      const fallbackRootList = !append && !rootList.length
-        ? getRootCategories(catalogListRef.current)
-        : [];
-      const nextRootList = fallbackRootList.length ? fallbackRootList : rootList;
+      const fallbackRootList =
+        !append && !rootList.length
+          ? getRootCategories(catalogListRef.current)
+          : [];
+      const nextRootList = fallbackRootList.length
+        ? fallbackRootList
+        : rootList;
       const nextPageInfo = paginationFromPayload(
         action?.payload,
         nextRootList.length,
@@ -316,34 +329,45 @@ export default function CategoryListingPage() {
       isLoadingMore ||
       !pageInfo.hasMore
     ) {
-      return undefined;
+      return;
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting) return;
-        loadCategories({ page: pageInfo.page + 1, append: true }).catch(() => {
-          setIsLoadingMore(false);
-        });
+        if (loadingMoreRef.current) return;
+
+        loadingMoreRef.current = true;
+
+        loadCategories({
+          page: pageInfo.page + 1,
+          append: true,
+        })
+          .catch(() => {})
+          .finally(() => {
+            loadingMoreRef.current = false;
+            setIsLoadingMore(false);
+          });
       },
-      { threshold: 0.2, rootMargin: "0px 0px 300px 0px" },
+      {
+        threshold: 0.2,
+        rootMargin: "0px 0px 300px 0px",
+      },
     );
 
     observer.observe(sentinelRef.current);
+
     return () => observer.disconnect();
   }, [
     firstLoadDone,
-    isLoadingMore,
-    loadCategories,
     loading,
+    isLoadingMore,
     pageInfo.hasMore,
     pageInfo.page,
+    loadCategories,
   ]);
 
-  const categories = useMemo(
-    () => categoryList,
-    [categoryList],
-  );
+  const categories = useMemo(() => categoryList, [categoryList]);
 
   const sidebarCategories = useMemo(
     () =>
@@ -372,68 +396,68 @@ export default function CategoryListingPage() {
         description="Browse Sam Global categories and collections."
       />
 
-     <main className="bg-white text-ink">
-  <div className="customer-container grid w-full grid-cols-1 gap-6 py-5 sm:py-6 lg:grid-cols-[288px_minmax(0,1fr)] lg:items-start lg:gap-10">
-    <ProductFilterSidebar
-      sections={sidebarSections}
-      className="hidden lg:block lg:w-full"
-    />
+      <main className="bg-white text-ink">
+        <div className="customer-container grid w-full grid-cols-1 gap-6 py-5 sm:py-6 lg:grid-cols-[288px_minmax(0,1fr)] lg:items-start lg:gap-10">
+          <ProductFilterSidebar
+            sections={sidebarSections}
+            className="hidden lg:block lg:w-full"
+          />
 
-    <div className="min-w-0 w-full">
-      {sidebarCategories.length > 0 && (
-        <div className="mb-6 grid gap-2 lg:hidden">
-          <h2 className="text-sm font-bold sm:text-base">
-            Shop by category
-          </h2>
+          <div className="min-w-0 w-full">
+            {sidebarCategories.length > 0 && (
+              <div className="mb-6 grid gap-2 lg:hidden">
+                <h2 className="text-sm font-bold sm:text-base">
+                  Shop by category
+                </h2>
 
-          <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
-            {sidebarCategories.map((category) => (
-              <Link
-                key={category.key}
-                to={CUSTOMER_ROUTES.category(category.key)}
-                className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
-              >
-                {category.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <section className="pb-7">
-        <h1 className="mb-4 text-[20px] font-bold leading-tight text-ink sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">
-          Shop all categories
-        </h1>
-
-        {loading && !categories.length ? (
-          <CategoryGridSkeleton />
-        ) : categories.length ? (
-          <>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5">
-              {categories.map((category) => (
-                <CategoryTile key={category.id} category={category} />
-              ))}
-            </div>
-
-            <div ref={sentinelRef} className="h-10" aria-hidden="true" />
-
-            {isLoadingMore && (
-              <div className="mt-6 flex justify-center">
-                <div className="h-9 w-9 animate-spin rounded-full border-2 border-[var(--customer-border)] border-t-[var(--customer-gold)]" />
+                <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
+                  {sidebarCategories.map((category) => (
+                    <Link
+                      key={category.key}
+                      to={CUSTOMER_ROUTES.category(category.key)}
+                      className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
+                    >
+                      {category.label}
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
-          </>
-        ) : (
-          <div className="rounded-[12px] border border-border bg-cream p-6 text-center">
-            <p className="text-sm font-semibold text-ink">
-              No categories available right now.
-            </p>
+
+            <section className="pb-7">
+              <h1 className="mb-4 text-[20px] font-bold leading-tight text-ink sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">
+                Shop all categories
+              </h1>
+
+              {loading && !categories.length ? (
+                <CategoryGridSkeleton />
+              ) : categories.length ? (
+                <>
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5">
+                    {categories.map((category) => (
+                      <CategoryTile key={category.id} category={category} />
+                    ))}
+                  </div>
+
+                  <div ref={sentinelRef} className="h-10" aria-hidden="true" />
+
+                  {isLoadingMore && (
+                    <div className="mt-6 flex items-center justify-center">
+                      <Loader size="lg" />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="rounded-[12px] border border-border bg-cream p-6 text-center">
+                  <p className="text-sm font-semibold text-ink">
+                    No categories available right now.
+                  </p>
+                </div>
+              )}
+            </section>
           </div>
-        )}
-      </section>
-    </div>
-  </div>
-</main>
+        </div>
+      </main>
     </>
   );
 }
