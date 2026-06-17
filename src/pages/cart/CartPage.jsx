@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
@@ -129,7 +129,7 @@ function cartLineKey(item) {
   const defaultVariant =
     !item.variantId && !item.variantSku && Array.isArray(product?.variants)
       ? product.variants.find((variant) => variant.isDefault) ||
-        product.variants[0]
+      product.variants[0]
       : null;
   const variantKey =
     item.variantId ||
@@ -211,9 +211,29 @@ export default function CartPage() {
   );
   const [selectedItemIds, setSelectedItemIds] = useState([]);
 
+  const [localQuantities, setLocalQuantities] = useState({});
+  const latestRef = useRef({ rawItems: [], wishlist: [], localQuantities: {} });
+  const updateTimerRef = useRef(null);
+
   useEffect(() => {
     dispatch(fetchCart());
   }, [dispatch]);
+
+  useEffect(() => {
+    latestRef.current = {
+      rawItems,
+      wishlist: cart.wishlist || [],
+      localQuantities,
+    };
+  }, [rawItems, cart.wishlist, localQuantities]);
+
+  useEffect(() => {
+    setLocalQuantities({});
+  }, [cart.items]);
+
+  useEffect(() => {
+    return () => clearTimeout(updateTimerRef.current);
+  }, []);
 
   useEffect(() => {
     const wishlistIds = wishlist.map(getProductId).filter(Boolean);
@@ -226,11 +246,21 @@ export default function CartPage() {
     missingIds.forEach((id) => fetchedIdsRef.current.add(id));
 
     missingIds.forEach((productId) => {
-      dispatch(fetchProductById({ productId })).catch(() => {});
+      dispatch(fetchProductById({ productId })).catch(() => { });
     });
   }, [dispatch, wishlist, productEntities]);
 
-  const items = useMemo(() => rawItems.map(adaptItemForCard), [rawItems]);
+  const items = useMemo(
+    () =>
+      rawItems.map((item) => {
+        const key = cartLineKey(item);
+        const adapted = adaptItemForCard(item);
+        return localQuantities[key] != null
+          ? { ...adapted, quantity: localQuantities[key] }
+          : adapted;
+      }),
+    [rawItems, localQuantities],
+  );
   const hasCartItems = items.length > 0;
   const hasSavedItems = savedForLaterItems.length > 0 || wishlist.length > 0;
   const selectedItems = items.filter((item) =>
@@ -261,13 +291,13 @@ export default function CartPage() {
         savedSelectedItemIds === null
           ? currentItemIds
           : Array.from(
-              new Set([
-                ...savedSelectedItemIds.filter((id) =>
-                  currentItemIdsSet.has(id),
-                ),
-                ...newlyAddedItemIds,
-              ]),
-            );
+            new Set([
+              ...savedSelectedItemIds.filter((id) =>
+                currentItemIdsSet.has(id),
+              ),
+              ...newlyAddedItemIds,
+            ]),
+          );
 
       setSelectedItemIds(nextSelectedItemIds);
       writeSelectedCheckoutItemIds(nextSelectedItemIds);
@@ -303,43 +333,41 @@ export default function CartPage() {
     writeSavedForLaterItems(itemsToSave);
   };
 
-  const handleIncrease = (id) => {
-    const updated = rawItems.map((ci) =>
-      cartLineKey(ci) === id ? { ...ci, quantity: (ci.quantity || 1) + 1 } : ci,
-    );
+  const scheduleCartUpdate = useCallback(() => {
+    clearTimeout(updateTimerRef.current);
+    updateTimerRef.current = setTimeout(() => {
+      const { rawItems: latestRawItems, wishlist: latestWishlist, localQuantities: pending } =
+        latestRef.current;
+      const updated = latestRawItems.map((ci) => {
+        const key = cartLineKey(ci);
+        return pending[key] != null ? { ...ci, quantity: pending[key] } : ci;
+      });
+      run(
+        dispatch,
+        updateCart(
+          normalizeCartPayloadForWrite({ items: updated, wishlist: latestWishlist }),
+        ),
+        "Cart updated",
+      );
+    }, 600);
+  }, [dispatch, run]);
 
-    run(
-      dispatch,
-      updateCart(
-        normalizeCartPayloadForWrite({
-          items: updated,
-          wishlist: cart.wishlist || [],
-        }),
-      ),
-      "Cart updated",
-    );
+  const handleIncrease = (id) => {
+    setLocalQuantities((prev) => {
+      const item = rawItems.find((ci) => cartLineKey(ci) === id);
+      const current = prev[id] ?? item?.quantity ?? 1;
+      return { ...prev, [id]: current + 1 };
+    });
+    scheduleCartUpdate();
   };
 
   const handleDecrease = (id) => {
-    const updated = rawItems.map((ci) => {
-      if (cartLineKey(ci) !== id) return ci;
-
-      return {
-        ...ci,
-        quantity: Math.max(1, (ci.quantity || 1) - 1),
-      };
+    setLocalQuantities((prev) => {
+      const item = rawItems.find((ci) => cartLineKey(ci) === id);
+      const current = prev[id] ?? item?.quantity ?? 1;
+      return { ...prev, [id]: Math.max(1, current - 1) };
     });
-
-    run(
-      dispatch,
-      updateCart(
-        normalizeCartPayloadForWrite({
-          items: updated,
-          wishlist: cart.wishlist || [],
-        }),
-      ),
-      "Cart updated",
-    );
+    scheduleCartUpdate();
   };
 
   const handleRemove = (id) => {

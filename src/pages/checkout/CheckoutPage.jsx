@@ -168,28 +168,82 @@ const checkoutFormSchema = z
     }
   });
 
-const asNumber = (value) => {
+const hasAmountValue = (value) =>
+  value !== undefined && value !== null && value !== "";
+
+const asOptionalNumber = (value) => {
+  if (!hasAmountValue(value)) return null;
   const num = Number(value);
-  return isNaN(num) ? 0 : num;
+  return Number.isFinite(num) ? num : null;
+};
+
+const asNumber = (value) => asOptionalNumber(value) ?? 0;
+
+const ORDER_AMOUNT_KEYS = {
+  subtotal: ["subtotalAmount", "subtotal_amount", "subtotal", "subTotal"],
+  shipping: [
+    "shippingFeeAmount",
+    "shipping_fee_amount",
+    "deliveryChargeAmount",
+    "delivery_charge_amount",
+    "shippingAmount",
+    "shipping_amount",
+    "shipping",
+  ],
+  total: [
+    "totalAmount",
+    "total_amount",
+    "customerTotalAmount",
+    "customer_total_amount",
+    "orderTotal",
+    "grandTotal",
+    "total",
+  ],
+  payable: [
+    "payableAmount",
+    "payable_amount",
+    "customerPayableAmount",
+    "customer_payable_amount",
+    "amountPayable",
+    "amount_payable",
+    "payable",
+  ],
+  discount: ["discountAmount", "discount_amount", "discount"],
+  walletAmount: [
+    "walletAmount",
+    "wallet_amount",
+    "walletAppliedAmount",
+    "wallet_applied_amount",
+    "walletDiscountAmount",
+    "wallet_discount_amount",
+  ],
+  platformFee: ["platformFeeAmount", "platform_fee_amount"],
+};
+
+const getAmountFromSource = (source, keys) => {
+  if (!source || typeof source !== "object") return undefined;
+  for (const key of keys) {
+    if (hasAmountValue(source[key])) return source[key];
+  }
+  return undefined;
 };
 
 const getOrderAmount = (order = {}, key) => {
-  const snakeKey = {
-    subtotal: "subtotal_amount",
-    shipping: "shipping_amount",
-    total: "total_amount",
-    payable: "payable_amount",
-    discount: "discount_amount",
-    walletAmount: "wallet_amount",
-    platformFee: "platform_fee_amount",
-  }[key];
+  const keys = ORDER_AMOUNT_KEYS[key] || [key];
+  const sources = [
+    order?.amounts,
+    order?.summary,
+    order?.totals,
+    order?.pricing,
+    order,
+  ];
 
-  return (
-    order.amounts?.[key] ??
-    order.amounts?.[snakeKey] ??
-    order[snakeKey] ??
-    order[key]
-  );
+  for (const source of sources) {
+    const amount = getAmountFromSource(source, keys);
+    if (amount !== undefined) return amount;
+  }
+
+  return undefined;
 };
 const getCartItemPrice = (item = {}) => {
   const product =
@@ -256,13 +310,18 @@ const adaptCheckoutItem = (item = {}, index = 0) => {
     _shippingTotal: getCartItemShipping({ ...item, quantity }),
   };
 };
-const getOrderPayableAmount = (order = {}) =>
-  asNumber(
-    getOrderAmount(order, "payable") ??
-      getOrderAmount(order, "total") ??
-      getOrderAmount(order?.order, "payable") ??
-      getOrderAmount(order?.order, "total"),
-  );
+const getOrderPayableAmount = (order = {}) => {
+  const orderCandidates = [order, order?.order, order?.data].filter(Boolean);
+  for (const candidate of orderCandidates) {
+    const payable = asOptionalNumber(getOrderAmount(candidate, "payable"));
+    if (payable !== null) return payable;
+  }
+  for (const candidate of orderCandidates) {
+    const total = asOptionalNumber(getOrderAmount(candidate, "total"));
+    if (total !== null) return total;
+  }
+  return null;
+};
 const getCreatedOrder = (result = {}) =>
   result?.data?.order ||
   result?.data?.data?.order ||
@@ -964,18 +1023,28 @@ export default function CheckoutPage() {
 
     let paymentOrder = createdOrder;
     let payableAmount = getOrderPayableAmount(paymentOrder);
-    if (payableAmount <= 0) {
+    if (payableAmount === null) {
       const orderDetail = await dispatch(fetchOrderById({ orderId })).unwrap();
       paymentOrder = getCreatedOrder(orderDetail);
       payableAmount = getOrderPayableAmount(paymentOrder);
     }
 
-    if (payableAmount <= 0) {
+    if (payableAmount === null) {
       setError("root", {
         type: "manual",
         message:
           "Payment amount is missing from order details. Please try again.",
       });
+      return;
+    }
+
+    if (payableAmount <= 0) {
+      if (isBuyNowCheckout) {
+        window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
+      }
+      window.sessionStorage.removeItem(SELECTED_CHECKOUT_STORAGE_KEY);
+      dispatch(fetchCart());
+      navigate(`/payment/success?orderId=${orderId}`);
       return;
     }
 
@@ -1021,6 +1090,7 @@ export default function CheckoutPage() {
       window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
     }
     window.sessionStorage.removeItem(SELECTED_CHECKOUT_STORAGE_KEY);
+    dispatch(fetchCart());
 
     navigate(`/payment/success?orderId=${orderId}`);
   };

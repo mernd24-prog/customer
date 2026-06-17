@@ -32,3 +32,36 @@ export function calculateDiscountPercent(price, oldPrice) {
 
   return Math.round(((previous - current) / previous) * 100);
 }
+
+/** Sum of (mrp × qty) across items — the "before discount" total */
+export function calcMRPSubtotal(items = []) {
+  return items.reduce((sum, item) => {
+    const mrp = Number(item.oldPrice ?? item.mrp ?? item.price ?? 0);
+    return sum + mrp * Number(item.quantity || 1);
+  }, 0);
+}
+
+/** Sum of (sellingPrice × qty) across items */
+export function calcSellingSubtotal(items = []) {
+  return items.reduce((sum, item) => {
+    return sum + Number(item.price ?? 0) * Number(item.quantity || 1);
+  }, 0);
+}
+
+/** Sum of per-unit shipping × qty */
+export function calcShippingTotal(items = []) {
+  return items.reduce((sum, item) => {
+    return sum + Number(item.shipping ?? 0) * Number(item.quantity || 1);
+  }, 0);
+}
+
+/** Savings = MRP subtotal − selling subtotal (clamped to 0) */
+export function calcTotalSavings(items = []) {
+  return Math.max(0, calcMRPSubtotal(items) - calcSellingSubtotal(items));
+}
+
+/** Safe numeric coercion */
+export function toNum(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
+}

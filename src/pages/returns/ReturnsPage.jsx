@@ -74,12 +74,18 @@ function ReturnRequestPage({ orderId }) {
   const {
     register,
     handleSubmit,
+    watch,
     setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(returnSchema),
     defaultValues: { productId: "", reason: "defective", quantity: 1 },
   });
+
+  const watchedQty = watch("quantity");
+  const estimatedRefund = selectedItem
+    ? Number(getItemUnitPrice(selectedItem) || 0) * Math.max(1, Number(watchedQty) || 1)
+    : 0;
 
   const selectedItem = orderItems.find((item) => getItemId(item) === selectedProductId) || null;
 
@@ -239,6 +245,18 @@ function ReturnRequestPage({ orderId }) {
                     {errors.description && <span className="text-xs text-red-700">{errors.description.message}</span>}
                   </label>
 
+                  {estimatedRefund > 0 && (
+                    <div className="rounded-[8px] border border-emerald-200 bg-emerald-50 px-4 py-3">
+                      <p className="text-xs font-semibold text-emerald-700">Estimated refund</p>
+                      <p className="mt-1 text-lg font-bold text-emerald-700">
+                        ₹{estimatedRefund.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                      <p className="mt-0.5 text-xs text-emerald-600">
+                        Final refund amount is subject to review and QC.
+                      </p>
+                    </div>
+                  )}
+
                   <Button type="submit" loading={loading} className="w-full">
                     <RotateCcw size={16} /> Submit return request
                   </Button>
@@ -279,24 +297,62 @@ function ReturnsListPage() {
               const id = item._id || item.id || item.returnId;
               const status = item.status || item.refundStatus;
               const cls = STATUS_BADGE[status] || "bg-cream text-muted";
+              const refundAmount = item.refund?.amount ?? item.refundAmount ?? item.refund_amount ?? null;
+              const refundStatus = item.refund?.status ?? item.refundStatus ?? null;
+              const trackingNumber = item.reverseShipment?.trackingNumber
+                || item.reverseShipment?.tracking_number
+                || item.reverse_shipment?.tracking_number
+                || null;
+              const pickupDate = item.reverseShipment?.scheduledDate
+                || item.reverseShipment?.scheduled_date
+                || item.pickup_scheduled_at
+                || null;
+              const resolution = item.resolution || item.resolutionType || null;
               return (
-                <div key={id} className="flex items-center justify-between gap-4 rounded-[12px] border border-border bg-white px-5 py-4">
-                  <div>
-                    <p className="text-sm font-semibold text-ink">
-                      Return #{String(id || "").slice(0, 8).toUpperCase()}
-                    </p>
-                    <p className="mt-0.5 font-mono text-xs text-muted">{id}</p>
-                    <p className="mt-1 text-xs capitalize text-muted">{item.reason?.replace(/_/g, " ")}</p>
-                    {item.reverseShipment?.trackingNumber && (
-                      <p className="mt-1 text-xs text-muted">Tracking: {item.reverseShipment.trackingNumber}</p>
-                    )}
-                    {item.refund?.status && item.refund.status !== "not_started" && (
-                      <p className="mt-1 text-xs capitalize text-muted">Refund: {item.refund.status.replace(/_/g, " ")}</p>
-                    )}
+                <div key={id} className="rounded-[12px] border border-border bg-white px-5 py-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-ink">
+                        Return #{String(id || "").slice(0, 8).toUpperCase()}
+                      </p>
+                      <p className="mt-0.5 font-mono text-xs text-muted">{id}</p>
+                      {item.reason && (
+                        <p className="mt-1 text-xs capitalize text-muted">{item.reason.replace(/_/g, " ")}</p>
+                      )}
+                      {resolution && resolution !== "refund" && (
+                        <p className="mt-1 text-xs capitalize text-muted">Resolution: {resolution.replace(/_/g, " ")}</p>
+                      )}
+                    </div>
+                    <span className={`shrink-0 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}>
+                      {status?.replace(/_/g, " ")}
+                    </span>
                   </div>
-                  <span className={`shrink-0 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}>
-                    {status?.replace(/_/g, " ")}
-                  </span>
+
+                  {(refundAmount !== null || refundStatus || trackingNumber || pickupDate) && (
+                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 border-t border-border pt-3 text-xs text-muted">
+                      {refundAmount !== null && Number(refundAmount) > 0 && (
+                        <span className="font-semibold text-emerald-700">
+                          Refund: ₹{Number(refundAmount).toLocaleString("en-IN")}
+                        </span>
+                      )}
+                      {refundStatus && refundStatus !== "not_started" && (
+                        <span className="capitalize">Refund status: {refundStatus.replace(/_/g, " ")}</span>
+                      )}
+                      {trackingNumber && (
+                        <span>Pickup tracking: {trackingNumber}</span>
+                      )}
+                      {pickupDate && (
+                        <span>
+                          Pickup:{" "}
+                          {new Date(pickupDate).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })}

@@ -1,10 +1,12 @@
-export default function QuantitySelector({ quantity, onIncrease, onDecrease }) {
+export default function QuantitySelector({ quantity, onIncrease, onDecrease, max, disabled }) {
+  const atMax = max != null && quantity >= max;
+
   return (
     <div className="flex w-fit items-center overflow-hidden rounded-[var(--customer-radius-sm)] border border-[var(--customer-border)] bg-white">
       <button
         type="button"
         onClick={onDecrease}
-        disabled={quantity <= 1}
+        disabled={disabled || quantity <= 1}
         className="flex h-8 w-8 items-center justify-center text-base font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] disabled:cursor-not-allowed disabled:text-[var(--customer-subtle)] disabled:hover:bg-white sm:h-9 sm:w-9 sm:text-lg"
         aria-label="Decrease quantity"
       >
@@ -18,7 +20,8 @@ export default function QuantitySelector({ quantity, onIncrease, onDecrease }) {
       <button
         type="button"
         onClick={onIncrease}
-        className="flex h-8 w-8 items-center justify-center text-base font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] sm:h-9 sm:w-9 sm:text-lg"
+        disabled={disabled || atMax}
+        className="flex h-8 w-8 items-center justify-center text-base font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] disabled:cursor-not-allowed disabled:text-[var(--customer-subtle)] disabled:hover:bg-white sm:h-9 sm:w-9 sm:text-lg"
         aria-label="Increase quantity"
       >
         +

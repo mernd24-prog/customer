@@ -16,6 +16,7 @@ export default function Price({
   currency,
   layout = "inline",
   showSavings = false,
+  showDiscount = false,
   className = "",
   priceClassName = "",
   oldPriceClassName = "",
@@ -26,6 +27,10 @@ export default function Price({
   const compareAtPriceNumber = Number(compareAtPrice || 0);
   const hasDiscount = compareAtPriceNumber > currentPriceNumber;
   const savings = hasDiscount ? compareAtPriceNumber - currentPriceNumber : 0;
+  const discountPct =
+    hasDiscount && compareAtPriceNumber > 0
+      ? Math.round((savings / compareAtPriceNumber) * 100)
+      : 0;
 
   return (
     <div
@@ -61,6 +66,12 @@ export default function Price({
           )}
         >
           {formatMoney(compareAtPrice, currency)}
+        </span>
+      )}
+
+      {showDiscount && discountPct > 0 && (
+        <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
+          {discountPct}% off
         </span>
       )}
 

@@ -108,6 +108,7 @@ const CATEGORY_MENU_OPEN_DELAY_MS = 350;
 const CATEGORY_MENU_CLOSE_DELAY_MS = 160;
 const HEADER_HEIGHT_VAR = "--customer-header-height";
 
+
 function getHeaderHeight() {
   if (typeof window === "undefined") return 0;
 
@@ -324,8 +325,8 @@ export const TopHeader = () => {
             filteredTopLinks.length
               ? filteredTopLinks
               : DEFAULT_TOP_NAV_LINKS.filter(
-                  (l) => l.name !== "Help & Contact",
-                ),
+                (l) => l.name !== "Help & Contact",
+              ),
           ).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
@@ -397,22 +398,24 @@ export const Navbar = ({ icons: propIcons }) => {
     ...baseAccountMenuItems,
     ...(isAdminRole(currentRole)
       ? [
-          {
-            label: "Admin Products",
-            path: "/admin/products",
-            icon: "settings",
-          },
-          { label: "Admin Catalog", path: "/admin/catalog", icon: "settings" },
-          { label: "Admin Brands", path: "/admin/brands", icon: "settings" },
-          { label: "Admin RBAC", path: "/admin/rbac", icon: "settings" },
-        ]
+        {
+          label: "Admin Products",
+          path: "/admin/products",
+          icon: "settings",
+        },
+        { label: "Admin Catalog", path: "/admin/catalog", icon: "settings" },
+        { label: "Admin Brands", path: "/admin/brands", icon: "settings" },
+        { label: "Admin RBAC", path: "/admin/rbac", icon: "settings" },
+      ]
       : []),
   ]);
   const cartItemCount = cartItems.reduce(
     (total, item) => total + Math.max(1, Number(item?.quantity) || 1),
     0,
   );
-
+  const cartState = useSelector((s) => s.cart);
+  const cart = cartState.current || {};
+  const cartItemsLength = useMemo(() => cart.items?.length || 0, [cart.items]);
   useEffect(() => {
     if (location.pathname === "/" && prevPathnameRef.current !== "/") {
       setSearchQuery("");
@@ -424,9 +427,9 @@ export const Navbar = ({ icons: propIcons }) => {
     const trimmedQuery = nextQuery.trim();
     const categoryKey = category
       ? category.categoryKey ||
-        category.key ||
-        category.slug ||
-        buildCategorySlug(textOr(category?.title, category?.name))
+      category.key ||
+      category.slug ||
+      buildCategorySlug(textOr(category?.title, category?.name))
       : "";
 
     if (!trimmedQuery && categoryKey) {
@@ -505,11 +508,10 @@ export const Navbar = ({ icons: propIcons }) => {
                   <img
                     src={item?.img}
                     alt={getNavbarIconLabel(item)}
-                    className={`object-contain ${
-                      item?.name === "IN"
-                        ? "h-[22px] w-[24px]"
-                        : "h-[17px] w-[17px]"
-                    }`}
+                    className={`object-contain ${item?.name === "IN"
+                      ? "h-[22px] w-[24px]"
+                      : "h-[17px] w-[17px]"
+                      }`}
                   />
 
                   <span className="pointer-events-none   absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
@@ -538,9 +540,9 @@ export const Navbar = ({ icons: propIcons }) => {
                 className="h-8 w-8  md:h-[40px]  md:w-[40px]  object-contain"
               />
 
-              {cartItemCount > 0 && (
+              {cartItemsLength > 0 && (
                 <span className="absolute  -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1  text-[12px] font-bold  text-white shadow-sm">
-                  {cartItemCount > 99 ? "99+" : cartItemCount}
+                  {cartItemsLength > 99 ? "99+" : cartItemsLength}
                 </span>
               )}
 
@@ -563,7 +565,7 @@ export const Navbar = ({ icons: propIcons }) => {
           ) : (
             <HeaderGoldButton
               className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[11px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
-              onClick={() => navigate("/login") }
+              onClick={() => navigate("/login")}
             >
               Login
             </HeaderGoldButton>
@@ -737,8 +739,8 @@ export const CategoryBar = ({ headerData }) => {
               <div
                 key={keyOr(item?.name, `category-${index}`)}
                 className="relative"
-                // onMouseEnter={() => handleCategoryMouseEnter(item)}
-                // onMouseLeave={handleCategoryMouseLeave}
+              // onMouseEnter={() => handleCategoryMouseEnter(item)}
+              // onMouseLeave={handleCategoryMouseLeave}
               >
                 <Link
                   to={categoryHref}
@@ -788,11 +790,10 @@ export const CategoryBar = ({ headerData }) => {
       <nav
         aria-label="Sticky category navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
-        className={`fixed left-0 z-40 w-full bg-white/95 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur transition-all duration-300 ease-out will-change-transform ${
-          isPinned
-            ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-full opacity-0"
-        }`}
+        className={`fixed left-0 z-40 w-full bg-white/95 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur transition-all duration-300 ease-out will-change-transform ${isPinned
+          ? "pointer-events-auto translate-y-0 opacity-100"
+          : "pointer-events-none -translate-y-full opacity-0"
+          }`}
       >
         <div className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-2 sm:gap-7 lg:h-[46px] lg:justify-center">
           {visibleCategories.map((item, index) => {
@@ -806,36 +807,32 @@ export const CategoryBar = ({ headerData }) => {
               <Link
                 key={keyOr(item?.name, `sticky-category-${index}`)}
                 to={categoryHref}
-                className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-                  isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
-                }`}
+                className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
+                  }`}
               >
                 <span className="max-w-[140px] truncate">
                   {textOr(item?.name, "Category")}
                 </span>
                 <span
-                  className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
-                    isActive ? "w-full opacity-100" : "w-0 opacity-0"
-                  }`}
+                  className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${isActive ? "w-full opacity-100" : "w-0 opacity-0"
+                    }`}
                 />
               </Link>
             );
           })}
           <Link
             to="/categories"
-            className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-              location.pathname === "/categories"
-                ? "text-[#03014D]"
-                : "text-[#2E2E2E]"
-            }`}
+            className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${location.pathname === "/categories"
+              ? "text-[#03014D]"
+              : "text-[#2E2E2E]"
+              }`}
           >
             More
             <span
-              className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
-                location.pathname === "/categories"
-                  ? "w-full opacity-100"
-                  : "w-0 opacity-0"
-              }`}
+              className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${location.pathname === "/categories"
+                ? "w-full opacity-100"
+                : "w-0 opacity-0"
+                }`}
             />
           </Link>
         </div>
