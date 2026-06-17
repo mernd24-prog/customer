@@ -9,6 +9,8 @@ function MenuItem({ item }) {
     return (
       <a
         href={item.path}
+        target="_blank"
+        rel="noreferrer"
         className="flex items-center gap-3 px-4 py-3 text-[13px] font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)]"
       >
         {item.icon && <span className="text-[var(--customer-gold-dark)]">{item.icon}</span>}

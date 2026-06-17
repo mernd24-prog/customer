@@ -8,10 +8,12 @@ import ApiState from "../../components/common/ApiState";
 import Seo from "../../components/common/Seo";
 import Button from "../../components/ui/Button";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { requestReturn, fetchMyReturns } from "../../features/returns/returnsSlice";
+import {
+  requestReturn,
+  fetchMyReturns,
+} from "../../features/returns/returnsSlice";
 import { fetchOrderById } from "../../features/order/orderSlice";
 import { returnSchema } from "../../validations/validationSchemas";
-
 
 const RETURN_REASONS = [
   { value: "defective", label: "Defective / damaged" },
@@ -41,18 +43,40 @@ const STATUS_BADGE = {
 };
 
 const getOrderItems = (order) => {
-  const items = order?.items || order?.orderItems || order?.order_items || order?.lineItems || order?.line_items;
+  const items =
+    order?.items ||
+    order?.orderItems ||
+    order?.order_items ||
+    order?.lineItems ||
+    order?.line_items;
   return Array.isArray(items) ? items : [];
 };
 const getItemProductId = (item) =>
-  item?.product_id || (typeof item?.productId === "object" ? item.productId?._id : item?.productId) || "";
+  item?.product_id ||
+  (typeof item?.productId === "object"
+    ? item.productId?._id
+    : item?.productId) ||
+  "";
 const getItemTitle = (item) =>
-  item?.product_title || item?.productTitle || item?.title || item?.name ||
-  (typeof item?.productId === "object" ? (item.productId?.title || item.productId?.name) : null) || "Product";
+  item?.product_title ||
+  item?.productTitle ||
+  item?.title ||
+  item?.name ||
+  (typeof item?.productId === "object"
+    ? item.productId?.title || item.productId?.name
+    : null) ||
+  "Product";
 const getItemUnitPrice = (item) =>
-  item?.unit_price ?? item?.unitPrice ?? item?.sale_price ?? item?.salePrice ?? item?.price ?? 0;
+  item?.unit_price ??
+  item?.unitPrice ??
+  item?.sale_price ??
+  item?.salePrice ??
+  item?.price ??
+  0;
 const getItemImage = (item) => {
-  const images = item?.images || (typeof item?.productId === "object" ? item.productId?.images : null);
+  const images =
+    item?.images ||
+    (typeof item?.productId === "object" ? item.productId?.images : null);
   return Array.isArray(images) ? images[0] : images || null;
 };
 const getItemVariantSku = (item) => item?.variant_sku || item?.variantSku || "";
@@ -91,25 +115,31 @@ function ReturnRequestPage({ orderId }) {
 
   const handleItemSelect = (item) => {
     const pid = getItemProductId(item);
-    setSelectedProductId(getItemId(item) || `${pid}:${getItemVariantSku(item)}`);
+    setSelectedProductId(
+      getItemId(item) || `${pid}:${getItemVariantSku(item)}`,
+    );
     setValue("productId", pid, { shouldValidate: true });
     setValue("quantity", 1, { shouldValidate: true });
   };
 
   const submit = async (values) => {
-    const item = selectedItem || orderItems.find((i) => getItemProductId(i) === values.productId);
+    const item =
+      selectedItem ||
+      orderItems.find((i) => getItemProductId(i) === values.productId);
     const unitPrice = item ? getItemUnitPrice(item) : 0;
     await run(
       dispatch,
       requestReturn({
         orderId,
-        items: [{
-          orderItemId: getItemId(item),
-          productId: values.productId,
-          variantSku: getItemVariantSku(item),
-          quantity: Number(values.quantity),
-          unitPrice,
-        }],
+        items: [
+          {
+            orderItemId: getItemId(item),
+            productId: values.productId,
+            variantSku: getItemVariantSku(item),
+            quantity: Number(values.quantity),
+            unitPrice,
+          },
+        ],
         reason: values.reason,
         resolution: "refund",
         description: values.description,
@@ -121,48 +151,63 @@ function ReturnRequestPage({ orderId }) {
   return (
     <>
       <Seo title="Request Return | Sam Global" />
-      <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <Link to="/orders" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink transition-all duration-300 ease-in-out">
+      <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 ">
+        <Link
+          to="/orders"
+          className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink transition-all duration-300 ease-in-out"
+        >
           <ArrowLeft size={14} /> Back to orders
         </Link>
 
-        <div className="overflow-hidden rounded-xl border border-border bg-white p-4 sm:p-6 lg:p-8">
+        <div className="overflow-hidden rounded-xl  border border-border bg-white p-4 sm:p-6 lg:p-8">
           <div className="mb-6">
             <h1 className="text-xl font-bold text-ink">Request a return</h1>
-            <p className="mt-1 text-sm text-muted">Select the item you want to return from this order.</p>
+            <p className="mt-1 text-sm text-muted">
+              Select the item you want to return from this order.
+            </p>
           </div>
 
           {orderLoading && !order ? (
-            <div className="flex items-center justify-center py-10 text-sm text-muted">Loading order…</div>
+            <div className="flex items-center justify-center py-10 text-sm text-muted">
+              Loading order…
+            </div>
           ) : !orderItems.length ? (
             <div className="rounded-[10px] border border-dashed border-border-strong bg-cream p-8 text-center text-sm text-muted">
               No items found for this order.
             </div>
           ) : (
-            <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
+            <form
+              className="grid gap-5"
+              onSubmit={handleSubmit(submit)}
+              noValidate
+            >
               {/* Hidden productId field */}
               <input type="hidden" {...register("productId")} />
 
               {/* Item selector */}
               <div className="grid gap-1.5">
-                <span className="text-sm font-medium text-ink">Select item to return</span>
+                <span className="text-sm font-medium text-ink">
+                  Select item to return
+                </span>
                 <div className="grid gap-3">
                   {orderItems.map((item) => {
                     const pid = getItemProductId(item);
                     const title = getItemTitle(item);
                     const img = getItemImage(item);
                     const price = getItemUnitPrice(item);
-                    const lineKey = getItemId(item) || `${pid}:${getItemVariantSku(item)}`;
+                    const lineKey =
+                      getItemId(item) || `${pid}:${getItemVariantSku(item)}`;
                     const isSelected = selectedProductId === lineKey;
                     return (
                       <button
                         key={lineKey || title}
                         type="button"
                         onClick={() => handleItemSelect(item)}
-                        className={`flex w-full min-w-0 items-center gap-3 rounded-lg border p-3 text-left transition-all duration-200 ${isSelected
-                          ? "border-gold bg-cream ring-2 ring-gold/20"
-                          : "border-border bg-white hover:border-gold/40"
-                          }`}
+                        className={`flex w-full min-w-0 items-center gap-3 rounded-lg border p-3 text-left transition-all duration-200 ${
+                          isSelected
+                            ? "border-gold bg-cream outline-none"
+                            : "border-border bg-white hover:border-gold/40"
+                        }`}
                       >
                         {img ? (
                           <img
@@ -192,46 +237,62 @@ function ReturnRequestPage({ orderId }) {
                         </div>
 
                         <span
-                          className={`h-4 w-4 flex-shrink-0 rounded-full border-2 ${isSelected
-                            ? "border-gold bg-gold"
-                            : "border-border"
-                            }`}
+                          className={`h-4 w-4 flex-shrink-0 rounded-full border-2 ${
+                            isSelected ? "border-gold bg-gold" : "border-border"
+                          }`}
                         />
                       </button>
                     );
                   })}
                 </div>
                 {errors.productId && (
-                  <span className="text-xs text-red-700">{errors.productId.message}</span>
+                  <span className="text-xs text-red-700">
+                    {errors.productId.message}
+                  </span>
                 )}
               </div>
 
               {selectedItem && (
                 <>
-                  <div className="grid gap-1.5">
-                    <label htmlFor="quantity" className="text-sm font-medium text-ink">Quantity</label>
+                  <div className="grid gap-1.5 ">
+                    <label
+                      htmlFor="quantity"
+                      className="text-sm font-medium text-ink"
+                    >
+                      Quantity
+                    </label>
                     <input
                       id="quantity"
                       type="number"
                       min="1"
                       max={selectedItem?.quantity || 99}
                       {...register("quantity", { valueAsNumber: true })}
-                      className="min-h-11 rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none transition-all duration-300 ease-in-out focus:border-gold focus:ring-2 focus:ring-gold/20"
+                      className="min-h-11 rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none transition-all duration-300 ease-in-out  focus:outline-none"
                     />
-                    {errors.quantity && <span className="text-xs text-red-700">{errors.quantity.message}</span>}
+                    {errors.quantity && (
+                      <span className="text-xs text-red-700">
+                        {errors.quantity.message}
+                      </span>
+                    )}
                   </div>
 
                   <label className="grid gap-1.5 text-sm font-medium text-ink">
                     <span>Reason for return</span>
                     <select
                       {...register("reason")}
-                      className="min-h-11 rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none transition-all duration-300 ease-in-out focus:border-gold focus:ring-2 focus:ring-gold/20"
+                      className="min-h-11 rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none transition-all duration-300 ease-in-out focus:outline-none"
                     >
                       {RETURN_REASONS.map((r) => (
-                        <option key={r.value} value={r.value}>{r.label}</option>
+                        <option key={r.value} value={r.value}>
+                          {r.label}
+                        </option>
                       ))}
                     </select>
-                    {errors.reason && <span className="text-xs text-red-700">{errors.reason.message}</span>}
+                    {errors.reason && (
+                      <span className="text-xs text-red-700">
+                        {errors.reason.message}
+                      </span>
+                    )}
                   </label>
 
                   <label className="grid gap-1.5 text-sm font-medium text-ink">
@@ -240,9 +301,13 @@ function ReturnRequestPage({ orderId }) {
                       {...register("description")}
                       rows={4}
                       placeholder="Describe the issue in detail…"
-                      className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-stone-400 focus:border-gold resize-none"
+                      className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-stone-400 focus:outline-none resize-none"
                     />
-                    {errors.description && <span className="text-xs text-red-700">{errors.description.message}</span>}
+                    {errors.description && (
+                      <span className="text-xs text-red-700">
+                        {errors.description.message}
+                      </span>
+                    )}
                   </label>
 
                   {estimatedRefund > 0 && (
@@ -283,7 +348,9 @@ function ReturnsListPage() {
     <>
       <Seo title="My Returns | Sam Global" />
       <div className="w-container py-8 sm:py-10">
-        <h1 className="mb-6 text-2xl font-bold text-ink sm:text-3xl">My Returns</h1>
+        <h1 className="mb-6 text-2xl font-bold text-ink sm:text-3xl">
+          My Returns
+        </h1>
 
         <ApiState
           loading={state.loading && !returns.length}
@@ -309,50 +376,38 @@ function ReturnsListPage() {
                 || null;
               const resolution = item.resolution || item.resolutionType || null;
               return (
-                <div key={id} className="rounded-[12px] border border-border bg-white px-5 py-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-ink">
-                        Return #{String(id || "").slice(0, 8).toUpperCase()}
+                <div
+                  key={id}
+                  className="flex items-center justify-between gap-4 rounded-[12px] border border-border bg-white px-5 py-4"
+                >
+                  <div>
+                    <p className="text-sm font-semibold text-ink">
+                      Return #
+                      {String(id || "")
+                        .slice(0, 8)
+                        .toUpperCase()}
+                    </p>
+                    <p className="mt-0.5 font-mono text-xs text-muted">{id}</p>
+                    <p className="mt-1 text-xs capitalize text-muted">
+                      {item.reason?.replace(/_/g, " ")}
+                    </p>
+                    {item.reverseShipment?.trackingNumber && (
+                      <p className="mt-1 text-xs text-muted">
+                        Tracking: {item.reverseShipment.trackingNumber}
                       </p>
-                      <p className="mt-0.5 font-mono text-xs text-muted">{id}</p>
-                      {item.reason && (
-                        <p className="mt-1 text-xs capitalize text-muted">{item.reason.replace(/_/g, " ")}</p>
+                    )}
+                    {item.refund?.status &&
+                      item.refund.status !== "not_started" && (
+                        <p className="mt-1 text-xs capitalize text-muted">
+                          Refund: {item.refund.status.replace(/_/g, " ")}
+                        </p>
                       )}
-                      {resolution && resolution !== "refund" && (
-                        <p className="mt-1 text-xs capitalize text-muted">Resolution: {resolution.replace(/_/g, " ")}</p>
-                      )}
-                    </div>
-                    <span className={`shrink-0 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}>
-                      {status?.replace(/_/g, " ")}
-                    </span>
                   </div>
-
-                  {(refundAmount !== null || refundStatus || trackingNumber || pickupDate) && (
-                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 border-t border-border pt-3 text-xs text-muted">
-                      {refundAmount !== null && Number(refundAmount) > 0 && (
-                        <span className="font-semibold text-emerald-700">
-                          Refund: ₹{Number(refundAmount).toLocaleString("en-IN")}
-                        </span>
-                      )}
-                      {refundStatus && refundStatus !== "not_started" && (
-                        <span className="capitalize">Refund status: {refundStatus.replace(/_/g, " ")}</span>
-                      )}
-                      {trackingNumber && (
-                        <span>Pickup tracking: {trackingNumber}</span>
-                      )}
-                      {pickupDate && (
-                        <span>
-                          Pickup:{" "}
-                          {new Date(pickupDate).toLocaleDateString("en-IN", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </span>
-                      )}
-                    </div>
-                  )}
+                  <span
+                    className={`shrink-0 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}
+                  >
+                    {status?.replace(/_/g, " ")}
+                  </span>
                 </div>
               );
             })}

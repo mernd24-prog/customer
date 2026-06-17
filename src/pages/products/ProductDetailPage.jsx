@@ -66,7 +66,8 @@ import {
   buildCartItem,
 } from "../../utils/ecommerce";
 import CUSTOMER_ROUTES from "../../constants/routes";
-import ReviewAndRating from "../reviewAndRating/reviewAndRating";
+
+import ProductReviewsSection from "../../components/ecommerce/ProductReviewsSection";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
@@ -339,7 +340,7 @@ function ImageGallery({
       {/* Modal */}
       {isModalOpen &&
         createPortal(
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4 animate-fadeIn sm:p-6">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/95 p-4 animate-fadeIn sm:p-6">
             {/* Close Button */}
             <button
               type="button"
@@ -347,7 +348,7 @@ function ImageGallery({
                 setIsModalOpen(false);
                 if (onModalClose) onModalClose();
               }}
-              className="absolute top-6 right-6 z-[10000] w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out shadow-sm"
+              className="absolute top-6 right-6 z-[10000] w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out"
             >
               <X size={28} />
             </button>
@@ -1164,8 +1165,8 @@ export default function ProductDetailPage() {
 
               {/* ── Reviews ── */}
               <div className="my-4">
-                {/* <ProductReviewsSection productId={productId} /> */}
-                <ReviewAndRating productId={productId} product={product} />
+                <ProductReviewsSection productId={productId} product={product} />
+                {/* <ReviewAndRating productId={productId} product={product} /> */}
               </div>
 
               {/* ── Related products ── */}

@@ -172,7 +172,7 @@ function RouteFallback() {
   return (
     <main className="flex min-h-[100vh] items-center justify-center bg-[var(--customer-cream)]">
       <div className="flex items-center justify-center">
-        <Loader size="lg" />
+        <Loader size="xl" />
       </div>
     </main>
   );

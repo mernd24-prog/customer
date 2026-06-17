@@ -12,6 +12,7 @@ export default function HeaderDropdown({
   chevronClassName = "",
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const hasDropdown = Boolean(children);
   const isExternal =
     path && (path.startsWith("http://") || path.startsWith("https://"));
 
@@ -42,10 +43,34 @@ export default function HeaderDropdown({
         }
       }}
     >
-      {path ? (
+      {hasDropdown ? (
+        <button
+          type="button"
+          className={cn(
+            "flex items-center gap-1.5 text-white/85 transition-all duration-300 ease-in-out hover:text-white",
+            className,
+          )}
+          aria-expanded={isOpen}
+          aria-haspopup="true"
+          onClick={() => setIsOpen((open) => !open)}
+        >
+          {icon && <span className="flex  items-center shrink-0">{icon}</span>}
+          <span>{label}</span>
+          <ChevronDown
+            size={16}
+            aria-hidden="true"
+            className={cn(
+              "transition-all duration-300 ease-in-out text-[var(--customer-gold)]",
+              chevronClassName,
+              isOpen && "rotate-180",
+            )}
+          />
+        </button>
+      ) : path ? (
         isExternal ? (
           <a
             target="_blank"
+            rel="noreferrer"
             href={path}
             className={cn(
               "flex items-center gap-1.5 text-white/85 transition-all duration-300 ease-in-out hover:text-white",
@@ -70,7 +95,6 @@ export default function HeaderDropdown({
           </a>
         ) : (
           <Link
-            target="_blank"
             to={path}
             className={cn(
               "flex items-center gap-1.5 text-white/85 transition-all duration-300 ease-in-out hover:text-white",

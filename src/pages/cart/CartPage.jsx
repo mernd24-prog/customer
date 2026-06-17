@@ -514,7 +514,7 @@ export default function CartPage() {
                 ))}
 
                 {hasCartItems && (
-                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-border bg-white px-4 py-3">
+                  <div className="flex  flex-wrap items-center justify-between gap-3 rounded-[8px] border border-border bg-white px-4 py-3">
                     <label className="flex items-center gap-2  text-sm font-semibold text-ink">
                       <input
                         type="checkbox"
@@ -551,45 +551,59 @@ export default function CartPage() {
                         return (
                           <div
                             key={savedItemView.id}
-                            className="flex min-w-0 flex-col gap-3 rounded-[8px] border border-border bg-cream px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+                            className="relative overflow-hidden rounded-[18px] border border-border bg-white px-4 py-4 shadow-[0_12px_32px_rgba(31,36,48,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_18px_45px_rgba(31,36,48,0.1)] sm:px-5"
                           >
-                            <div className="flex min-w-0 items-center gap-3">
-                              <img
-                                src={savedItemView.image}
-                                alt={savedItemView.title}
-                                className="h-14 w-14 shrink-0 rounded-md object-cover"
-                              />
+                            <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-gold to-gold-dark" />
+                            <div className="flex min-w-0 flex-col gap-4 pl-2 sm:flex-row sm:items-center sm:justify-between">
+                              <div className="flex min-w-0 items-center gap-4">
+                                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[14px] bg-cream ring-1 ring-border sm:h-20 sm:w-20">
+                                  <img
+                                    src={savedItemView.image}
+                                    alt={savedItemView.title}
+                                    className="h-full w-full object-cover"
+                                  />
+                                </div>
 
-                              <div className="min-w-0">
-                                <p className="truncate  text-sm font-semibold text-ink">
-                                  {savedItemView.title}
-                                </p>
+                                <div className="min-w-0">
+                                  <p className="line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
+                                    {savedItemView.title}
+                                  </p>
 
-                                <div className="mt-0.5 flex flex-wrap items-center gap-2  text-xs text-muted">
-                                  {savedItemView.variantSku ? (
-                                    <span>{savedItemView.variantSku}</span>
-                                  ) : null}
-                                  <span>Qty: {savedItemView.quantity}</span>
-                                  <span className="font-semibold text-ink">
-                                    ₹
-                                    {Number(
-                                      savedItemView.price || 0,
-                                    ).toLocaleString("en-IN")}
-                                  </span>
+                                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
+                                    {savedItemView.variantSku ? (
+                                      <span className="rounded-full bg-cream px-2.5 py-1 font-semibold text-gray">
+                                        {savedItemView.variantSku}
+                                      </span>
+                                    ) : null}
+                                    <span>
+                                      Qty {savedItemView.quantity} x{" "}
+                                      <span className="font-semibold text-ink">
+                                        ₹
+                                        {Number(
+                                          savedItemView.price || 0,
+                                        ).toLocaleString("en-IN")}
+                                      </span>
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
 
-                            <BrandButton
-                              variant="secondary"
-                              rounded
-                              size="sm"
-                              label="Move to cart"
-                              className="h-8 w-full shrink-0 px-3 text-xs sm:w-auto"
-                              onClick={() =>
-                                handleMoveSavedLineToCart(savedItem)
-                              }
-                            />
+                              <div className="flex shrink-0 flex-col items-stretch gap-2 sm:min-w-[150px] sm:items-end">
+                                <p className="hidden text-xs font-semibold uppercase text-muted sm:block">
+                                  Saved item
+                                </p>
+                                <BrandButton
+                                  variant="secondary"
+                                  rounded
+                                  size="sm"
+                                  label="Move to cart"
+                                  className="h-9 w-full border-gold/40 px-4 text-xs font-bold text-ink sm:w-auto"
+                                  onClick={() =>
+                                    handleMoveSavedLineToCart(savedItem)
+                                  }
+                                />
+                              </div>
+                            </div>
                           </div>
                         );
                       })}
@@ -605,47 +619,63 @@ export default function CartPage() {
                         return (
                           <div
                             key={wishlistId}
-                            className="flex min-w-0 flex-col gap-3 rounded-[8px] border border-border bg-cream px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+                            className="relative overflow-hidden rounded-[18px] border border-border bg-white px-4 py-4 shadow-[0_12px_32px_rgba(31,36,48,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_18px_45px_rgba(31,36,48,0.1)] sm:px-5"
                           >
-                            <div className="flex min-w-0 items-center gap-3">
-                              <img
-                                src={savedProduct.image}
-                                alt={savedProduct.title}
-                                className="h-14 w-14 shrink-0 rounded-md object-cover"
-                              />
+                            <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-gold to-gold-dark" />
+                            <div className="flex min-w-0 flex-col gap-4 pl-2 sm:flex-row sm:items-center sm:justify-between">
+                              <div className="flex min-w-0 items-center gap-4">
+                                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[14px] bg-cream ring-1 ring-border sm:h-20 sm:w-20">
+                                  <img
+                                    src={savedProduct.image}
+                                    alt={savedProduct.title}
+                                    className="h-full w-full object-cover"
+                                  />
+                                </div>
 
-                              <div className="min-w-0">
-                                <p className="truncate  text-sm font-semibold text-ink">
-                                  {savedProduct.title}
-                                </p>
+                                <div className="min-w-0">
+                                  <p className="line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
+                                    {savedProduct.title}
+                                  </p>
 
-                                <div className="mt-0.5 flex flex-wrap items-center gap-2  text-xs text-muted">
-                                  {savedProduct.brand ? (
-                                    <span>{savedProduct.brand}</span>
-                                  ) : null}
+                                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
+                                    {savedProduct.brand ? (
+                                      <span className="rounded-full bg-cream px-2.5 py-1 font-semibold text-gray">
+                                        {savedProduct.brand}
+                                      </span>
+                                    ) : null}
 
-                                  {savedProduct.price != null ? (
-                                    <span className="font-semibold text-ink">
-                                      ₹
-                                      {Number(
-                                        savedProduct.price,
-                                      ).toLocaleString("en-IN")}
-                                    </span>
-                                  ) : null}
+                                    {savedProduct.price != null ? (
+                                      <span className="font-semibold text-ink">
+                                        ₹
+                                        {Number(
+                                          savedProduct.price,
+                                        ).toLocaleString("en-IN")}
+                                      </span>
+                                    ) : (
+                                      <span className="font-semibold text-muted">
+                                        Price not available
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
 
-                            <BrandButton
-                              variant="secondary"
-                              rounded
-                              size="sm"
-                              label="Move to cart"
-                              className="h-8 w-full shrink-0 px-3 text-xs sm:w-auto"
-                              onClick={() =>
-                                handleMoveWishlistToCart(savedProduct)
-                              }
-                            />
+                              <div className="flex shrink-0 flex-col items-stretch gap-2 sm:min-w-[150px] sm:items-end">
+                                <p className="hidden text-xs font-semibold uppercase text-muted sm:block">
+                                  Saved item
+                                </p>
+                                <BrandButton
+                                  variant="secondary"
+                                  rounded
+                                  size="sm"
+                                  label="Move to cart"
+                                  className="h-9 w-full border-gold/40 px-4 text-xs font-bold text-ink sm:w-auto"
+                                  onClick={() =>
+                                    handleMoveWishlistToCart(savedProduct)
+                                  }
+                                />
+                              </div>
+                            </div>
                           </div>
                         );
                       })}

@@ -33,7 +33,7 @@ const TABS = [
     icon: KeyRound,
     path: "/account/security",
   },
-  { id: "kyc", label: "KYC", icon: Shield, path: "/account/kyc" },
+  // { id: "kyc", label: "KYC", icon: Shield, path: "/account/kyc" },
 ];
 
 export default function AccountPage({ tab = "profile" }) {

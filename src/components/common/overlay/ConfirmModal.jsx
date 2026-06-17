@@ -17,12 +17,12 @@ export default function ConfirmModal({
   return (
     <BaseModal onClose={onCancel} maxWidth="max-w-md">
       <div className="px-6 py-6 pt-8 ">
-        <h2 className="text-lg font-semibold text-ink">{title}</h2>
+        <h2 className="text-xl font-bold text-ink">{title}</h2>
         {description && (
-          <p className="mt-2 text-sm text-muted">{description}</p>
+          <p className="mt-2 text-sm  text-black/70">{description}</p>
         )}
-        {children && <div className="mt-4">{children}</div>}
-        <div className="mt-6 flex justify-end gap-3">
+        {children && <div className="mt-4 ">{children}</div>}
+        <div className="mt-6 flex justify-end gap-3 ">
           <Button variant="outline" size="sm" onClick={onCancel}>
             {cancelLabel}
           </Button>

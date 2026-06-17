@@ -74,10 +74,6 @@ export default function CheckoutSummary({
     total + taxPayable + codCharge - quoteDiscount - quoteWallet,
     0,
   );
-  const quotePayable =
-    quotedPayable > 0 || calculatedPayable <= 0
-      ? quotedPayable
-      : calculatedPayable;
 
   return (
     <aside className="min-w-0">

@@ -497,7 +497,7 @@ export const Navbar = ({ icons: propIcons }) => {
         />
 
         {/* Actions */}
-        <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
+        <div className="order-2 flex  shrink-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
           <div className=" items-center gap-5 flex">
             {utilityIcons.map((item, iconIndex) => (
               <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
