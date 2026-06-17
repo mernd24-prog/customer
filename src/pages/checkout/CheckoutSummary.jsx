@@ -59,6 +59,14 @@ export default function CheckoutSummary({
   const codCharge = Number(
     quoteSummary.codChargeAmount ?? quoteAmounts.codChargeAmount ?? 0,
   );
+  const quoteShipping = Number(
+    quoteSummary.deliveryChargeAmount ??
+      quoteSummary.shippingFeeAmount ??
+      quoteAmounts.deliveryChargeAmount ??
+      quoteAmounts.shippingFeeAmount ??
+      shipping,
+  );
+   
   const quotedPayable = Number(
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
   );
