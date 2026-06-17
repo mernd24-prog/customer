@@ -115,12 +115,12 @@ function ReturnRequestPage({ orderId }) {
   return (
     <>
       <Seo title="Request Return | Sam Global" />
-      <div className="w-container max-w-xl py-8 sm:py-10">
+      <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <Link to="/orders" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink transition-all duration-300 ease-in-out">
           <ArrowLeft size={14} /> Back to orders
         </Link>
 
-        <div className="rounded-[12px] border border-border bg-white p-6 sm:p-8">
+        <div className="overflow-hidden rounded-xl border border-border bg-white p-4 sm:p-6 lg:p-8">
           <div className="mb-6">
             <h1 className="text-xl font-bold text-ink">Request a return</h1>
             <p className="mt-1 text-sm text-muted">Select the item you want to return from this order.</p>
@@ -140,7 +140,7 @@ function ReturnRequestPage({ orderId }) {
               {/* Item selector */}
               <div className="grid gap-1.5">
                 <span className="text-sm font-medium text-ink">Select item to return</span>
-                <div className="grid gap-2">
+                <div className="grid gap-3">
                   {orderItems.map((item) => {
                     const pid = getItemProductId(item);
                     const title = getItemTitle(item);
@@ -153,26 +153,44 @@ function ReturnRequestPage({ orderId }) {
                         key={lineKey || title}
                         type="button"
                         onClick={() => handleItemSelect(item)}
-                        className={`flex items-center gap-3 rounded-[8px] border px-3 py-2.5 text-left transition-all duration-200 ${
-                          isSelected
-                            ? "border-gold bg-cream ring-2 ring-gold/20"
-                            : "border-border bg-white hover:border-gold/40"
-                        }`}
+                        className={`flex w-full min-w-0 items-center gap-3 rounded-lg border p-3 text-left transition-all duration-200 ${isSelected
+                          ? "border-gold bg-cream ring-2 ring-gold/20"
+                          : "border-border bg-white hover:border-gold/40"
+                          }`}
                       >
                         {img ? (
-                          <img src={img} alt={title} className="h-10 w-10 flex-shrink-0 rounded-[6px] object-cover" />
+                          <img
+                            src={img}
+                            alt={title}
+                            className="h-12 w-12 flex-shrink-0 rounded-md object-cover"
+                          />
                         ) : (
-                          <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[6px] bg-cream text-muted">
+                          <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md bg-cream text-muted">
                             <Package size={18} />
                           </span>
                         )}
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-ink">{title}</p>
+
+                        <div className="min-w-0 flex-1 overflow-hidden">
+                          <p
+                            className="break-words text-sm font-medium text-ink sm:text-base"
+                            title={title}
+                          >
+                            {title}
+                          </p>
+
                           {price > 0 && (
-                            <p className="text-xs text-muted">₹{Number(price).toLocaleString("en-IN")}</p>
+                            <p className="mt-1 text-xs text-muted sm:text-sm">
+                              ₹{Number(price).toLocaleString("en-IN")}
+                            </p>
                           )}
                         </div>
-                        <span className={`h-4 w-4 flex-shrink-0 rounded-full border-2 ${isSelected ? "border-gold bg-gold" : "border-border"}`} />
+
+                        <span
+                          className={`h-4 w-4 flex-shrink-0 rounded-full border-2 ${isSelected
+                            ? "border-gold bg-gold"
+                            : "border-border"
+                            }`}
+                        />
                       </button>
                     );
                   })}
@@ -216,7 +234,7 @@ function ReturnRequestPage({ orderId }) {
                       {...register("description")}
                       rows={4}
                       placeholder="Describe the issue in detail…"
-                      className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-stone-400 focus:border-gold focus:ring-2 focus:ring-gold/20 resize-none"
+                      className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-stone-400 focus:border-gold resize-none"
                     />
                     {errors.description && <span className="text-xs text-red-700">{errors.description.message}</span>}
                   </label>

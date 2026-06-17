@@ -21,7 +21,6 @@ import ScrollToTop from "./components/common/ScrollToTop";
 import CategoryListingPage from "./pages/category/CategoryListingPage";
 import DownloadApp from "./pages/downloadApp/DownloadApp";
 import PolicyPage from "./pages/policiesPage/PoliciesPages";
-import Loader from "./components/common/Loader";
 const lazyNamed = (loader, exportName) =>
   lazy(() => loader().then((module) => ({ default: module[exportName] })));
 
@@ -317,7 +316,6 @@ export default function App() {
               <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
               <Route path="/our-commitment" element={<OurCommitmentPage />} />
               <Route path="/features" element={<FeaturesPage />} />
-
               <Route
                 path="/shipping-policy"
                 element={<PolicyPage slugOverride="shipping-delivery-policy" />}

@@ -42,12 +42,40 @@ function getCategoryListFromResponse(data) {
   return [data];
 }
 
-function flattenCategories(categories = []) {
-  return asArray(categories).flatMap((category) => [
-    category,
-    ...flattenCategories(category?.children),
-    ...flattenCategories(category?.subCategories),
-  ]);
+function getRootCategories(categories = []) {
+  const byKey = new Map();
+
+  const visit = (category, parentKey = null) => {
+    if (!category || typeof category !== "object") return;
+
+    const categoryKey = getCategoryKey(category);
+    if (!categoryKey) return;
+
+    const normalized = {
+      ...category,
+      categoryKey,
+      parentKey: category?.parentKey ?? parentKey,
+    };
+
+    byKey.set(categoryKey, normalized);
+
+    asArray(category?.children).forEach((child) => visit(child, categoryKey));
+    asArray(category?.subCategories).forEach((child) =>
+      visit(child, categoryKey),
+    );
+  };
+
+  asArray(categories).forEach((category) =>
+    visit(category, category?.parentKey ?? null),
+  );
+
+  return Array.from(byKey.values()).filter(
+    (category) =>
+      category.parentKey === null ||
+      category.parentKey === undefined ||
+      !byKey.has(category.parentKey) ||
+      Number(category?.level ?? 0) === 0,
+  );
 }
 
 function findCategoryForFooterLink(link, categories) {
@@ -150,7 +178,7 @@ export function Footer({ data = footerData }) {
   const benefits = asArray(footer.benefits);
   const linkGroups = asArray(footer.linkGroups);
   const catalogCategories = useMemo(
-    () => flattenCategories(getCategoryListFromResponse(catalogCategoryList)),
+    () => getRootCategories(getCategoryListFromResponse(catalogCategoryList)),
     [catalogCategoryList],
   );
   const resolvedLinkGroups = useMemo(

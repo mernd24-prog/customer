@@ -27,7 +27,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         {/* </AppErrorBoundary> */}
         <ToastContainer
           position="bottom-center"
-          autoClose={4200}
+          autoClose={1200}
           newestOnTop
           closeOnClick
           pauseOnHover
