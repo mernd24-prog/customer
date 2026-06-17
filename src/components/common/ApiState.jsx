@@ -30,6 +30,8 @@ export default function ApiState({
   children,
   emptyTitle = "Nothing here yet",
   emptyText = "Once data is available, it will appear here.",
+  emptyActionLabel,
+  onEmptyAction,
 }) {
   if (loading) {
     return (
@@ -46,7 +48,12 @@ export default function ApiState({
 
   if (empty) {
     return (
-      <EmptyState title={emptyTitle} description={emptyText} />
+      <EmptyState
+        title={emptyTitle}
+        description={emptyText}
+        actionLabel={emptyActionLabel}
+        onAction={onEmptyAction}
+      />
     );
   }
   return children;

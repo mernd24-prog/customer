@@ -23,9 +23,13 @@ export default function ConfirmModal({
         )}
         {children && <div className="mt-4">{children}</div>}
         <div className="mt-6 flex justify-end gap-3">
-          <Button variant="outline" size="sm" onClick={onCancel}>
-            {cancelLabel}
-          </Button>
+          {
+            cancelLabel && (
+              <Button variant="outline" size="sm" onClick={onCancel}>
+                {cancelLabel}
+              </Button>
+            )
+          }
           <Button variant={variant} size="sm" onClick={onConfirm}>
             {confirmLabel}
           </Button>
