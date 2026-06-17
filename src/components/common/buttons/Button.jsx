@@ -17,7 +17,7 @@ const variantMap = {
   gradient:
     "border border-transparent bg-gradient-to-r from-[var(--customer-gold-dark)] to-[var(--customer-gold)] text-[var(--customer-navy)] shadow-sm hover:shadow-md",
   outline:
-    "bg-white border border-[var(--customer-navy)] text-[var(--customer-navy)] hover:bg-[var(--customer-navy-soft)]",
+    "bg-white border border-[var(--customer-navy)] text-[var(--customer-navy)] ",
   ghost:
     "bg-transparent text-[var(--customer-navy)] hover:bg-[var(--customer-navy-soft)] border border-transparent",
   link: "border border-transparent bg-transparent p-0 text-[var(--customer-navy)] underline-offset-4 hover:underline",

@@ -8,6 +8,7 @@ import AddressLabel from "../../components/ui/AddressLabel";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
 } from "../../components/address/AddressFormFields";
+import ConfirmModal from "../../components/common/overlay/ConfirmModal";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { normalizeDialCode } from "../../lib/utils";
 import { addressSchema } from "../../validations/validationSchemas";
@@ -44,6 +45,7 @@ export default function AddressTab({ user }) {
   const { loading } = useSelector((s) => s.user);
   const [editingId, setEditingId] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [deleteAddressId, setDeleteAddressId] = useState(null);
 
   const addresses = user?.addresses || [];
   const addressLabels = ADDRESS_LABEL_OPTIONS;
@@ -350,170 +352,191 @@ export default function AddressTab({ user }) {
     dispatch(fetchMe());
   };
 
-  const handleDelete = async (addressId) => {
-    if (!window.confirm("Delete this address?")) return;
-    await run(dispatch, deleteAddress({ addressId }), "Address deleted");
+  const handleDelete = (addressId) => {
+    setDeleteAddressId(addressId);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteAddressId) return;
+    await run(
+      dispatch,
+      deleteAddress({ addressId: deleteAddressId }),
+      "Address deleted",
+    );
+    setDeleteAddressId(null);
     dispatch(fetchMe());
   };
 
   return (
-    <div className="grid gap-5  ">
-      <div className="flex flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className=" text-base font-semibold text-ink">Saved addresses</p>
-          <p className=" text-sm text-muted">
-            {addresses.length
-              ? `${addresses.length} address${addresses.length === 1 ? "" : "es"} saved`
-              : "Add a delivery address for faster checkout."}
-          </p>
+    <>
+      <div className="grid gap-5  ">
+        <div className="flex flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className=" text-base font-semibold text-ink">Saved addresses</p>
+            <p className=" text-sm text-muted">
+              {addresses.length
+                ? `${addresses.length} address${addresses.length === 1 ? "" : "es"} saved`
+                : "Add a delivery address for faster checkout."}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowAddForm((value) => !value)}
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4  text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
+          >
+            {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
+            {showAddForm ? "Close form" : "Add address"}
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowAddForm((value) => !value)}
-          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4  text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
-        >
-          {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
-          {showAddForm ? "Close form" : "Add address"}
-        </button>
+
+        {showAddForm && (
+          <form
+            className="grid gap-4 rounded-[10px] border border-border bg-surface-soft p-4 sm:p-5"
+            onSubmit={addForm.handleSubmit(handleAdd)}
+            noValidate
+          >
+            <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+              <MapPin size={16} className="text-gold" />
+              New address
+            </div>
+            <AddressFormFields
+              form={addForm}
+              idPrefix="add"
+              countries={countries}
+              states={addStates}
+              cities={addCities}
+              postalCodes={addPostalCodes}
+              dialCodes={addDialCodes}
+              selectedCountry={addCountry}
+              selectedState={addState}
+              selectedCity={addCity}
+              selectedPostalCode={addPostalCode}
+              addressLabels={addressLabels}
+            />
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button
+                type="submit"
+                loading={loading}
+                className="w-full sm:w-auto"
+              >
+                Save address
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setShowAddForm(false)}
+                className="w-full sm:w-auto"
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        )}
+
+        {addresses.length > 0 ? (
+          <div className="grid gap-3">
+            {addresses.map((addr) => {
+              const addrId = addr._id || addr.id;
+              const isEditing = editingId === addrId;
+              return (
+                <div
+                  key={addrId}
+                  className="rounded-[10px] border border-border bg-white p-4 transition-all duration-300 ease-in-out hover:border-gold/40 hover:shadow-sm sm:p-5"
+                >
+                  {isEditing ? (
+                    <form
+                      className="grid gap-4"
+                      onSubmit={editForm.handleSubmit(handleUpdate)}
+                      noValidate
+                    >
+                      <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+                        <Pencil size={16} className="text-gold" />
+                        Edit address
+                      </div>
+                      <AddressFormFields
+                        form={editForm}
+                        idPrefix={`edit-${addrId}`}
+                        countries={countries}
+                        states={editStates}
+                        cities={editCities}
+                        postalCodes={editPostalCodes}
+                        dialCodes={editDialCodes}
+                        selectedCountry={editCountry}
+                        selectedState={editState}
+                        selectedCity={editCity}
+                        selectedPostalCode={editPostalCode}
+                        addressLabels={addressLabels}
+                      />
+                      <div className="flex flex-col gap-3 sm:flex-row">
+                        <Button
+                          type="submit"
+                          loading={loading}
+                          className="w-full sm:w-auto"
+                        >
+                          Save changes
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={cancelEdit}
+                          className="w-full sm:w-auto"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                      <AddressLabel
+                        address={addr}
+                        showIcon={true}
+                        className="min-w-0"
+                      />
+                      <div className="flex shrink-0 gap-2 sm:self-start">
+                        <button
+                          type="button"
+                          onClick={() => startEdit(addr)}
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted transition-all duration-300 ease-in-out hover:border-gold hover:bg-cream hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30"
+                          aria-label="Edit address"
+                        >
+                          <Pencil size={15} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(addrId)}
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-red-100 text-red-500 transition-all duration-300 ease-in-out hover:bg-red-50 hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
+                          aria-label="Delete address"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="rounded-[10px] border border-dashed border-border-strong bg-cream p-8 text-center">
+            <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-gold">
+              <MapPin size={24} />
+            </span>
+            <p className=" text-sm font-medium text-ink">
+              No addresses saved yet.
+            </p>
+          </div>
+        )}
       </div>
 
-      {showAddForm && (
-        <form
-          className="grid gap-4 rounded-[10px] border border-border bg-surface-soft p-4 sm:p-5"
-          onSubmit={addForm.handleSubmit(handleAdd)}
-          noValidate
-        >
-          <div className="flex items-center gap-2 text-sm font-semibold text-ink">
-            <MapPin size={16} className="text-gold" />
-            New address
-          </div>
-          <AddressFormFields
-            form={addForm}
-            idPrefix="add"
-            countries={countries}
-            states={addStates}
-            cities={addCities}
-            postalCodes={addPostalCodes}
-            dialCodes={addDialCodes}
-            selectedCountry={addCountry}
-            selectedState={addState}
-            selectedCity={addCity}
-            selectedPostalCode={addPostalCode}
-            addressLabels={addressLabels}
-          />
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button
-              type="submit"
-              loading={loading}
-              className="w-full sm:w-auto"
-            >
-              Save address
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setShowAddForm(false)}
-              className="w-full sm:w-auto"
-            >
-              Cancel
-            </Button>
-          </div>
-        </form>
-      )}
-
-      {addresses.length > 0 ? (
-        <div className="grid gap-3">
-          {addresses.map((addr) => {
-            const addrId = addr._id || addr.id;
-            const isEditing = editingId === addrId;
-            return (
-              <div
-                key={addrId}
-                className="rounded-[10px] border border-border bg-white p-4 transition-all duration-300 ease-in-out hover:border-gold/40 hover:shadow-sm sm:p-5"
-              >
-                {isEditing ? (
-                  <form
-                    className="grid gap-4"
-                    onSubmit={editForm.handleSubmit(handleUpdate)}
-                    noValidate
-                  >
-                    <div className="flex items-center gap-2 text-sm font-semibold text-ink">
-                      <Pencil size={16} className="text-gold" />
-                      Edit address
-                    </div>
-                    <AddressFormFields
-                      form={editForm}
-                      idPrefix={`edit-${addrId}`}
-                      countries={countries}
-                      states={editStates}
-                      cities={editCities}
-                      postalCodes={editPostalCodes}
-                      dialCodes={editDialCodes}
-                      selectedCountry={editCountry}
-                      selectedState={editState}
-                      selectedCity={editCity}
-                      selectedPostalCode={editPostalCode}
-                      addressLabels={addressLabels}
-                    />
-                    <div className="flex flex-col gap-3 sm:flex-row">
-                      <Button
-                        type="submit"
-                        loading={loading}
-                        className="w-full sm:w-auto"
-                      >
-                        Save changes
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={cancelEdit}
-                        className="w-full sm:w-auto"
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </form>
-                ) : (
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                    <AddressLabel
-                      address={addr}
-                      showIcon={true}
-                      className="min-w-0"
-                    />
-                    <div className="flex shrink-0 gap-2 sm:self-start">
-                      <button
-                        type="button"
-                        onClick={() => startEdit(addr)}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted transition-all duration-300 ease-in-out hover:border-gold hover:bg-cream hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30"
-                        aria-label="Edit address"
-                      >
-                        <Pencil size={15} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(addrId)}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-red-100 text-red-500 transition-all duration-300 ease-in-out hover:bg-red-50 hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
-                        aria-label="Delete address"
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="rounded-[10px] border border-dashed border-border-strong bg-cream p-8 text-center">
-          <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-gold">
-            <MapPin size={24} />
-          </span>
-          <p className=" text-sm font-medium text-ink">
-            No addresses saved yet.
-          </p>
-        </div>
-      )}
-    </div>
+      <ConfirmModal
+        open={Boolean(deleteAddressId)}
+        title="Delete this address?"
+        description="This saved address will be removed from your account. You can add it again later if needed."
+        confirmLabel={loading ? "Deleting..." : "Delete address"}
+        cancelLabel="Keep address"
+        onCancel={() => setDeleteAddressId(null)}
+        onConfirm={confirmDelete}
+      />
+    </>
   );
 }

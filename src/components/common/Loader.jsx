@@ -11,7 +11,7 @@ export default function Loader({ size = "md" }) {
     sm: "h-5 w-5",
     md: "h-12 w-12",
     lg: "h-16 w-16",
-    xl: "h-24 w-24",
+    xl: "h-20 w-20",
   };
 
   return (

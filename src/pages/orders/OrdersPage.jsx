@@ -114,6 +114,17 @@ const getItemProductId = (item) => {
     "N/A"
   );
 };
+
+const getItemTitle = (item) =>
+  item?.product_title ||
+  item?.productTitle ||
+  item?.title ||
+  item?.name ||
+  (typeof item?.productId === "object"
+    ? item.productId?.title || item.productId?.name
+    : null) ||
+  "Product";
+
 const getItemImage = (item) => {
   const product = getItemProduct(item);
   const images = item?.images || item?.variant?.images || product?.images;
@@ -417,95 +428,180 @@ function OrderProgress({ status }) {
   const activeIndex = ORDER_STEPS.indexOf(status);
   const isCancelled = status === "cancelled";
   const isFailed = status === "payment_failed";
+  const visibleSteps =
+    isCancelled || isFailed
+      ? [
+          {
+            status: "confirmed",
+            label: TRACKING_LABELS.confirmed,
+            note: "Your order update has been recorded.",
+            done: true,
+          },
+          {
+            status,
+            label: TRACKING_LABELS[status],
+            note: isCancelled
+              ? "Your cancellation request is being processed."
+              : "Payment could not be completed for this order.",
+            done: true,
+            danger: isCancelled,
+            warning: isFailed,
+          },
+        ]
+      : ORDER_STEPS.map((step, index) => ({
+          status: step,
+          label: TRACKING_LABELS[step],
+          done: activeIndex >= index,
+          current: activeIndex === index,
+        }));
 
-  if (isCancelled || isFailed) {
-    return (
-      <div
-        className={`rounded-[8px] border px-4 py-3 text-sm ${isCancelled ? "border-red-200 bg-red-50 text-red-700" : "border-amber-200 bg-amber-50 text-amber-800"}`}
-      >
-        <div className="flex items-center gap-2 font-semibold">
-          <XCircle size={16} />
-          {TRACKING_LABELS[status]}
-        </div>
-      </div>
-    );
-  }
+  const currentStep =
+    visibleSteps.find((step) => step.current) ||
+    visibleSteps[visibleSteps.length - 1];
 
   return (
-    <div className="grid gap-3 sm:grid-cols-6">
-      {ORDER_STEPS.map((step, index) => {
-        const done = activeIndex >= index;
-        const current = activeIndex === index;
-        return (
-          <div key={step} className="min-w-0">
-            <div
-              className={`flex h-10 items-center justify-center rounded-full border ${done ? "border-gold bg-gold text-white" : "border-border bg-white text-gray"}`}
+    <div className="overflow-hidden rounded-[12px] border border-border bg-white shadow-[0_14px_40px_rgba(31,36,48,0.06)]">
+      <div className="border-b border-border bg-gradient-to-r from-cream via-white to-gold-soft/50 px-4 py-3 sm:px-5">
+        <p className="text-[11px] font-bold uppercase tracking-normal text-gold-dark">
+          Order progress
+        </p>
+        <p className="mt-1 text-sm font-semibold capitalize text-ink">
+          {currentStep?.label || "Status update"}
+        </p>
+      </div>
+
+      <ol className="px-3 py-3 sm:px-4 sm:py-4">
+        {visibleSteps.map((step, index) => {
+          const isLast = index === visibleSteps.length - 1;
+          const isAlert = step.danger || step.warning;
+          const dotClass = step.danger
+            ? "border-danger bg-danger text-white ring-danger/10"
+            : step.warning
+              ? "border-warning bg-warning text-white ring-warning/10"
+              : step.done
+                ? "border-gold bg-gold text-white ring-gold-soft"
+                : "border-border-strong bg-white text-gray ring-cream";
+          const lineClass = isAlert
+            ? step.danger
+              ? "bg-danger/35"
+              : "bg-warning/35"
+            : step.done
+              ? "bg-gold/55"
+              : "bg-border";
+          const rowClass = step.current
+            ? "border-gold/50 bg-gold-soft/45 shadow-sm"
+            : step.done
+              ? "border-transparent bg-white"
+              : "border-transparent bg-white/60";
+
+          return (
+            <li
+              key={step.status}
+              className={`relative grid grid-cols-[34px_1fr] gap-3 rounded-[10px] border px-2.5 py-3 transition-all duration-300 ease-in-out sm:grid-cols-[42px_1fr] sm:px-3 ${rowClass}`}
             >
-              {done ? <CheckCircle2 size={16} /> : <Circle size={14} />}
-            </div>
-            <p
-              className={`mt-2 text-center text-[11px] font-semibold capitalize ${current ? "text-ink" : "text-muted"}`}
-            >
-              {TRACKING_LABELS[step]}
-            </p>
-          </div>
-        );
-      })}
+              <div className="relative flex justify-center">
+                {!isLast && (
+                  <span
+                    className={`absolute left-1/2 top-7 h-[calc(100%+20px)] w-px -translate-x-1/2 ${lineClass}`}
+                  />
+                )}
+                <span
+                  className={`relative z-10 flex h-5 w-5 items-center justify-center rounded-full border text-[10px] shadow-sm ring-4 sm:h-6 sm:w-6 ${dotClass}`}
+                >
+                  {step.done ? (
+                    isAlert ? (
+                      <XCircle size={14} />
+                    ) : (
+                      <CheckCircle2 size={14} />
+                    )
+                  ) : (
+                    <Circle size={11} />
+                  )}
+                </span>
+              </div>
+
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p
+                    className={`break-words text-sm font-semibold capitalize ${
+                      step.done || step.current ? "text-ink" : "text-muted"
+                    }`}
+                  >
+                    {step.label}
+                  </p>
+                  {step.current && (
+                    <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold uppercase text-gold-dark shadow-sm ring-1 ring-gold/15">
+                      Current
+                    </span>
+                  )}
+                </div>
+
+                <p className="mt-1 break-words text-xs leading-5 text-muted">
+                  {step.note ||
+                    (step.done
+                      ? "This step has been completed."
+                      : "Updates will appear as your order moves forward.")}
+                </p>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }
 
-function TrackingEvents({ order }) {
-  const events = getTrackingEvents(order);
-  const timeline = events.length
-    ? events
-    : (order?.timeline || []).map((event) => ({
-        status: event.to_status || event.status,
-        note: event.note || event.reason,
-        event_time: event.created_at,
-      }));
+// function TrackingEvents({ order }) {
+//   const events = getTrackingEvents(order);
+//   const timeline = events.length
+//     ? events
+//     : (order?.timeline || []).map((event) => ({
+//         status: event.to_status || event.status,
+//         note: event.note || event.reason,
+//         event_time: event.created_at,
+//       }));
 
-  if (!timeline.length) {
-    return (
-      <div className="rounded-[8px] border border-border bg-cream px-4 py-4 text-sm text-muted">
-        Tracking events will appear after the order moves forward.
-      </div>
-    );
-  }
+//   if (!timeline.length) {
+//     return (
+//       <div className="rounded-[8px] border border-border bg-cream px-4 py-4 text-sm text-muted">
+//         Tracking events will appear after the order moves forward.
+//       </div>
+//     );
+//   }
 
-  return (
-    <ol className="space-y-4">
-      {timeline.map((event, index) => (
-        <li
-          key={event.id || `${event.status}-${index}`}
-          className="grid grid-cols-[28px_1fr] gap-3"
-        >
-          <span className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-cream text-gold">
-            <Clock3 size={14} />
-          </span>
-          <div className="min-w-0 border-b border-border pb-4 last:border-b-0 last:pb-0">
-            <p className="text-sm font-semibold capitalize text-ink">
-              {humanize(event.status || event.to_status || "Updated")}
-            </p>
-            {event.note && (
-              <p className="mt-1 text-sm text-muted">{event.note}</p>
-            )}
-            {(event.location || event.source) && (
-              <p className="mt-1 text-xs capitalize text-gray">
-                {[event.location, event.source].filter(Boolean).join(" · ")}
-              </p>
-            )}
-            <p className="mt-1 text-xs text-gray">
-              {formatOrderDate(
-                event.event_time || event.eventTime || event.created_at,
-              )}
-            </p>
-          </div>
-        </li>
-      ))}
-    </ol>
-  );
-}
+//   return (
+//     <ol className="space-y-4">
+//       {timeline.map((event, index) => (
+//         <li
+//           key={event.id || `${event.status}-${index}`}
+//           className="grid grid-cols-[28px_1fr] gap-3"
+//         >
+//           <span className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-cream text-gold">
+//             <Clock3 size={14} />
+//           </span>
+//           <div className="min-w-0 border-b border-border pb-4 last:border-b-0 last:pb-0">
+//             <p className="text-sm font-semibold capitalize text-ink">
+//               {humanize(event.status || event.to_status || "Updated")}
+//             </p>
+//             {event.note && (
+//               <p className="mt-1 text-sm text-muted">{event.note}</p>
+//             )}
+//             {(event.location || event.source) && (
+//               <p className="mt-1 text-xs capitalize text-gray">
+//                 {[event.location, event.source].filter(Boolean).join(" · ")}
+//               </p>
+//             )}
+//             <p className="mt-1 text-xs text-gray">
+//               {formatOrderDate(
+//                 event.event_time || event.eventTime || event.created_at,
+//               )}
+//             </p>
+//           </div>
+//         </li>
+//       ))}
+//     </ol>
+//   );
+// }
 
 // ─── Order Detail ──────────────────────────────────────────────────────────────
 
@@ -557,7 +653,10 @@ function OrderDetail({ orderId, track }) {
   const handleCancelOrder = async () => {
     const selectedItems = Object.entries(cancelItems)
       .filter(([, quantity]) => Number(quantity) > 0)
-      .map(([orderItemId, quantity]) => ({ orderItemId, quantity: Number(quantity) }));
+      .map(([orderItemId, quantity]) => ({
+        orderItemId,
+        quantity: Number(quantity),
+      }));
     if (cancelReason.trim().length < 3) return;
     if (!selectedItems.length) return;
     await run(
@@ -579,9 +678,16 @@ function OrderDetail({ orderId, track }) {
   };
 
   const openCancellation = () => {
-    setCancelItems(Object.fromEntries(items
-      .map((item) => [String(item.id || item._id), Number(item.quantity || 0) - Number(item.cancelled_quantity || 0)])
-      .filter(([itemId, quantity]) => itemId && quantity > 0)));
+    setCancelItems(
+      Object.fromEntries(
+        items
+          .map((item) => [
+            String(item.id || item._id),
+            Number(item.quantity || 0) - Number(item.cancelled_quantity || 0),
+          ])
+          .filter(([itemId, quantity]) => itemId && quantity > 0),
+      ),
+    );
     setCancelModalOpen(true);
   };
 
@@ -603,7 +709,7 @@ function OrderDetail({ orderId, track }) {
         >
           <div className="grid gap-5">
             <section className="overflow-hidden rounded-[8px] border border-border bg-white">
-              <div className="bg-cream px-4 py-4 sm:px-6">
+              <div className="bg-cream px-4 py-4 sm:px-6 ">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div className="min-w-0">
                     <p className="text-xs font-semibold uppercase tracking-normal text-gold-dark">
@@ -627,7 +733,7 @@ function OrderDetail({ orderId, track }) {
                 </div>
               </div>
 
-              <div className="grid gap-3 border-t border-border bg-white p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
+              <div className="grid gap-3  border-t border-border bg-white p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
                 <InfoTile
                   icon={<CalendarDays size={14} />}
                   label="Placed on"
@@ -651,16 +757,16 @@ function OrderDetail({ orderId, track }) {
               </div>
 
               {hasKnownStatus(order) && (
-                <div className="border-t border-border px-4 py-5 sm:px-6">
+                <div className="border-t  border-border px-4 py-5 sm:px-6">
                   <OrderProgress status={status} />
                 </div>
               )}
             </section>
 
-            {track && (
-              <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+            {/* {track && (
+              <section className="grid gap-5  lg:grid-cols-[minmax(0,1fr)_360px]">
                 <div className="rounded-[8px] border border-border bg-white p-4 sm:p-6">
-                  <div className="mb-5 flex items-center justify-between gap-3">
+                  <div className="mb-5  flex items-center justify-between gap-3">
                     <div>
                       <h2 className="text-base font-bold text-ink">
                         Tracking activity
@@ -668,7 +774,12 @@ function OrderDetail({ orderId, track }) {
                       <p className="mt-1 text-sm text-muted">
                         {trackingNumber ? (
                           trackingUrl ? (
-                            <a href={trackingUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-gold underline underline-offset-2 hover:text-gold-dark">
+                            <a
+                              href={trackingUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-mono text-gold underline underline-offset-2 hover:text-gold-dark"
+                            >
                               {trackingNumber}
                             </a>
                           ) : (
@@ -686,7 +797,7 @@ function OrderDetail({ orderId, track }) {
                   <TrackingEvents order={order} />
                 </div>
 
-                <aside className="grid gap-4">
+                <aside className="grid gap-4 d">
                   <div className="rounded-[8px] border border-border bg-white p-4">
                     <h2 className="text-sm font-bold text-ink">Shipment</h2>
                     <div className="mt-4 grid gap-3 text-sm">
@@ -786,19 +897,19 @@ function OrderDetail({ orderId, track }) {
                   )}
                 </aside>
               </section>
-            )}
+            )} */}
 
             {!track && (
-              <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-                <div className="rounded-[8px] border border-border bg-white">
-                  <div className="border-b border-border px-4 py-4 sm:px-6">
+              <section className="grid    gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+                <div className="rounded-[8px]  border border-border bg-white">
+                  <div className="border-b  border-border px-4 py-4 sm:px-6">
                     <h2 className="text-base font-bold text-ink">Items</h2>
                     <p className="mt-1 text-sm text-muted">
                       {items.length} item{items.length === 1 ? "" : "s"} in this
                       order
                     </p>
                   </div>
-                  <div className="divide-y divide-border">
+                  <div className="grid gap-3  p-3 sm:gap-4 sm:p-4 lg:p-6">
                     {items.map((item, i) => {
                       const unitPrice = getItemUnitPrice(item);
                       const lineTotal = getItemLineTotal(item);
@@ -812,62 +923,77 @@ function OrderDetail({ orderId, track }) {
                             getItemProductId(item) ||
                             i
                           }
-                          className="px-4 py-4 sm:px-6"
+                          className="group relative overflow-hidden rounded-xl border border-border bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-primary  sm:rounded-2xl sm:p-4 lg:p-5"
                         >
-                          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-                            <div className="flex min-w-0 gap-3">
-                              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[8px] bg-cream">
+                          <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-primary to-accent opacity-70 transition-all duration-300 group-hover:w-1.5" />
+
+                          <div className="flex flex-col gap-4 pl-2 sm:flex-row sm:items-start sm:justify-between sm:gap-5">
+                            <div className="flex min-w-0 gap-3 sm:gap-4">
+                              <div className="flex w-10 h-10  md:h-14 md:w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary/10 text-primary sm:h-16 sm:w-16 sm:rounded-xl ">
                                 {getItemImage(item) ? (
                                   <img
                                     src={getItemImage(item)}
                                     alt={getProductTitle(item)}
-                                    className="h-20 w-20 rounded-[8px] object-cover"
+                                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                     loading="lazy"
                                   />
                                 ) : (
-                                  <Package size={22} className="text-gold" />
+                                  <Package size={22} className="sm:hidden" />
+                                )}
+
+                                {!getItemImage(item) && (
+                                  <Package
+                                    size={24}
+                                    className="hidden sm:block"
+                                  />
                                 )}
                               </div>
-                              <div className="min-w-0 text-sm">
-                                <p className="font-semibold text-ink">
+
+                              <div className="min-w-0 flex-1 text-sm">
+                                <p className="line-clamp-2 text-sm font-semibold leading-snug text-ink sm:text-base">
                                   {getProductTitle(item)}
                                 </p>
+
                                 {getVariantTitle(item) && (
-                                  <p className="mt-0.5 text-xs font-medium text-muted">
+                                  <p className="mt-1 text-xs font-medium text-muted sm:text-sm">
                                     {getVariantTitle(item)}
                                   </p>
                                 )}
+
                                 {getItemSku(item) ? (
-                                  <p className="mt-1 break-all text-xs text-gray">
+                                  <p className="mt-2 max-w-full break-all rounded-full bg-[#FAF6EE] px-2.5 py-1 text-[11px] text-gray sm:inline-block sm:px-3 sm:text-xs">
                                     SKU: {getItemSku(item)}
                                   </p>
                                 ) : (
-                                  <p className="mt-1 break-all font-mono text-xs text-gray">
-                                    #{String(getItemProductId(item)).slice(0, 12)}
+                                  <p className="mt-2 max-w-full break-all rounded-full bg-[#FAF6EE] px-2.5 py-1 font-mono text-[11px] text-gray sm:inline-block sm:px-3 sm:text-xs">
+                                    #
+                                    {String(getItemProductId(item)).slice(
+                                      0,
+                                      12,
+                                    )}
                                   </p>
                                 )}
-                                <p className="mt-2 text-xs text-muted">
-                                  Qty {item.quantity} x{" "}
-                                  {formatMoney(unitPrice, currency)}
+
+                                <p className="mt-2 text-xs text-muted sm:mt-3">
+                                  Qty{" "}
+                                  <span className="font-semibold text-ink">
+                                    {item.quantity}
+                                  </span>{" "}
+                                  × {formatMoney(unitPrice, currency)}
                                 </p>
                               </div>
                             </div>
-                            <p className="text-sm font-bold text-ink sm:shrink-0">
-                              {formatMoney(lineTotal, currency)}
-                            </p>
-                          </div>
-                          {getItemAttributes(item).length > 0 && (
-                            <div className="mt-3 flex flex-wrap gap-2">
-                              {getItemAttributes(item).map(([key, value]) => (
-                                <span
-                                  key={key}
-                                  className="rounded-full bg-cream px-2.5 py-1 text-xs capitalize text-muted"
-                                >
-                                  {key.replace(/[_-]/g, " ")}: {String(value)}
-                                </span>
-                              ))}
+
+                            <div className="flex items-center justify-between gap-3 border-t border-border pt-3 sm:min-w-[130px] sm:shrink-0 sm:flex-col sm:items-end sm:border-t-0 sm:pt-0">
+                              <p className="text-xs text-muted sm:mb-1">
+                                Line Total
+                              </p>
+
+                              <p className="text-sm font-bold text-ink sm:text-base">
+                                {formatMoney(lineTotal, currency)}
+                              </p>
                             </div>
-                          )}
+                          </div>
                         </div>
                       );
                     })}
@@ -1017,18 +1143,36 @@ function OrderDetail({ orderId, track }) {
 
             {cancellations.length > 0 && (
               <section className="rounded-[8px] border border-border bg-white px-4 py-4 sm:px-6">
-                <h2 className="text-sm font-semibold text-ink">Cancellation and refund status</h2>
+                <h2 className="text-sm font-semibold text-ink">
+                  Cancellation and refund status
+                </h2>
                 <div className="mt-3 grid gap-3">
                   {cancellations.map((cancellation) => (
-                    <div key={cancellation.id} className="rounded-[6px] border border-border bg-surface px-3 py-3 text-sm">
+                    <div
+                      key={cancellation.id}
+                      className="rounded-[6px] border border-border bg-surface px-3 py-3 text-sm"
+                    >
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <strong>{cancellation.cancellation_number}</strong>
-                        <span className="capitalize text-muted">{String(cancellation.status || "processing").replace(/_/g, " ")}</span>
+                        <span className="capitalize text-muted">
+                          {String(cancellation.status || "processing").replace(
+                            /_/g,
+                            " ",
+                          )}
+                        </span>
                       </div>
                       <p className="mt-1 text-muted">{cancellation.reason}</p>
                       <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted">
-                        <span>Refund: {formatMoney(cancellation.refund_amount, currency)}</span>
-                        <span>Refund status: {String(cancellation.refund_status || "pending").replace(/_/g, " ")}</span>
+                        <span>
+                          Refund:{" "}
+                          {formatMoney(cancellation.refund_amount, currency)}
+                        </span>
+                        <span>
+                          Refund status:{" "}
+                          {String(
+                            cancellation.refund_status || "pending",
+                          ).replace(/_/g, " ")}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -1094,7 +1238,11 @@ function OrderDetail({ orderId, track }) {
         <div className="grid gap-3">
           <label className="text-sm font-medium text-ink">
             Reason
-            <select className="mt-1 w-full rounded-[6px] border border-border bg-white px-3 py-2" value={cancelReasonCode} onChange={(event) => setCancelReasonCode(event.target.value)}>
+            <select
+              className="mt-1 w-full focus:outline-none  rounded-[6px] border border-border bg-white px-3 py-2 "
+              value={cancelReasonCode}
+              onChange={(event) => setCancelReasonCode(event.target.value)}
+            >
               <option value="changed_mind">Changed my mind</option>
               <option value="ordered_by_mistake">Ordered by mistake</option>
               <option value="address_issue">Address issue</option>
@@ -1103,28 +1251,71 @@ function OrderDetail({ orderId, track }) {
               <option value="other">Other</option>
             </select>
           </label>
-          <textarea className="min-h-20 w-full rounded-[6px] border border-border px-3 py-2 text-sm" value={cancelReason} onChange={(event) => setCancelReason(event.target.value)} maxLength={500} placeholder="Tell us why you are cancelling" />
-          <div className="grid gap-2">
+          <textarea
+            className="min-h-20 focus:outline-none  w-full rounded-[6px]  px-3 py-2 text-sm"
+            value={cancelReason}
+            onChange={(event) => setCancelReason(event.target.value)}
+            maxLength={500}
+            placeholder="Tell us why you are cancelling"
+          />
+          {/* <div className="grid gap-2 ">
             {items.map((item) => {
               const itemId = String(item.id || item._id);
-              const remaining = Number(item.quantity || 0) - Number(item.cancelled_quantity || 0);
-              const selected = Object.prototype.hasOwnProperty.call(cancelItems, itemId);
+              const remaining =
+                Number(item.quantity || 0) -
+                Number(item.cancelled_quantity || 0);
+              const selected = Object.prototype.hasOwnProperty.call(
+                cancelItems,
+                itemId,
+              );
               return (
-                <div key={itemId} className="flex items-center gap-2 rounded-[6px] border border-border p-2 text-sm">
-                  <input type="checkbox" checked={selected} disabled={remaining <= 0} onChange={(event) => setCancelItems((previous) => {
-                    const next = { ...previous };
-                    if (event.target.checked) next[itemId] = remaining;
-                    else delete next[itemId];
-                    return next;
-                  })} />
-                  <span className="min-w-0 flex-1 truncate">{getItemTitle(item)}</span>
-                  <input type="number" className="w-16 rounded border border-border px-2 py-1" min="1" max={remaining} disabled={!selected} value={selected ? cancelItems[itemId] : ""} onChange={(event) => setCancelItems((previous) => ({ ...previous, [itemId]: Math.min(Math.max(Number(event.target.value || 1), 1), remaining) }))} />
+                <div
+                  key={itemId}
+                  className="flex items-center gap-2 rounded-[6px] border border-border p-2 text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selected}
+                    disabled={remaining <= 0}
+                    onChange={(event) =>
+                      setCancelItems((previous) => {
+                        const next = { ...previous };
+                        if (event.target.checked) next[itemId] = remaining;
+                        else delete next[itemId];
+                        return next;
+                      })
+                    }
+                  />
+                  <span className="min-w-0 flex-1 truncate">
+                    {getItemTitle(item)}
+                  </span>
+                  <input
+                    type="number"
+                    className="w-16 rounded border border-border px-2 py-1"
+                    min="1"
+                    max={remaining}
+                    disabled={!selected}
+                    value={selected ? cancelItems[itemId] : ""}
+                    onChange={(event) =>
+                      setCancelItems((previous) => ({
+                        ...previous,
+                        [itemId]: Math.min(
+                          Math.max(Number(event.target.value || 1), 1),
+                          remaining,
+                        ),
+                      }))
+                    }
+                  />
                   <span className="text-xs text-muted">of {remaining}</span>
                 </div>
               );
             })}
-          </div>
-          {cancelReason.trim().length > 0 && cancelReason.trim().length < 3 && <p className="text-xs text-red-600">Please enter at least 3 characters.</p>}
+          </div> */}
+          {cancelReason.trim().length > 0 && cancelReason.trim().length < 3 && (
+            <p className="text-xs text-red-600">
+              Please enter at least 3 characters.
+            </p>
+          )}
         </div>
       </ConfirmModal>
     </>
@@ -1136,6 +1327,7 @@ function OrderDetail({ orderId, track }) {
 function OrderList() {
   const dispatch = useDispatch();
   const state = useSelector((s) => s.order);
+
   const orders = state.list.length
     ? state.list
     : getOrderCollection(state.current);
@@ -1147,65 +1339,97 @@ function OrderList() {
   return (
     <>
       <Seo title="My Orders | Sam Global" />
-      <div className="w-container py-6 sm:py-10">
-        <div className="mb-5 flex items-center justify-between sm:mb-6">
-          <h1 className=" text-2xl font-bold text-ink sm:text-3xl">My Orders</h1>
-        </div>
 
-        <ApiState
-          loading={state.loading && !orders.length}
-          error={state.error}
-          empty={!orders.length}
-          emptyTitle="No orders yet"
-          emptyText="Once you place an order, it will appear here."
-        >
-          <div className="grid gap-3">
-            {orders.map((order) => {
-              const id = getOrderId(order);
-              const summary = getOrderListSummary(order);
-              const createdAt = order.created_at || order.createdAt;
-              const payableAmount = getCustomerOrderAmount(order);
-              return (
-                <Link
-                  key={id}
-                  to={`/orders/${id}`}
-                  className="flex flex-col gap-4 rounded-[12px] border border-border bg-white px-4 py-4 hover:border-gold transition-all duration-300 ease-in-out sm:flex-row sm:items-center sm:justify-between sm:px-5"
-                >
-                  <div className="min-w-0">
-                    <p className="flex min-w-0 items-start gap-2 text-sm sm:items-center">
-                      <Package size={14} className="shrink-0 text-gray" />
-                      <span className="shrink-0 font-mono font-semibold text-ink">
-                        #{formatOrderId(id)}
-                      </span>
-                      <span className="min-w-0 break-all font-mono text-xs text-gray sm:truncate">
-                        {id}
-                      </span>
-                    </p>
-                    <p className="mt-1 text-xs text-muted">
-                      {formatOrderDate(createdAt)}
-                    </p>
-                    {summary && (
-                      <p className="mt-1 line-clamp-1 text-xs text-muted">
-                        {summary}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-row items-center justify-between gap-3 sm:shrink-0 sm:flex-col sm:items-end sm:gap-1">
-                    {hasKnownStatus(order) && (
-                      <OrderStatusBadge status={getOrderStatus(order)} />
-                    )}
-                    {payableAmount !== undefined && (
-                      <span className="text-right text-sm font-semibold text-ink">
-                        {formatMoney(payableAmount, getOrderCurrency(order))}
-                      </span>
-                    )}
-                  </div>
-                </Link>
-              );
-            })}
+      <section className="min-h-screen py-5 sm:py-8 lg:py-10">
+        <div className="w-container">
+          <div className="mb-5 sm:mb-6">
+            <h1 className="text-xl font-bold text-ink sm:text-2xl lg:text-3xl">
+              My Orders
+            </h1>
+            <p className="mt-1 text-xs text-muted sm:text-sm">
+              Track and review your recent purchases
+            </p>
           </div>
-        </ApiState>
-      </div>
+
+          <ApiState
+            loading={state.loading && !orders.length}
+            error={state.error}
+            empty={!orders.length}
+            emptyTitle="No orders yet"
+            emptyText="Once you place an order, it will appear here."
+          >
+            <div className="grid gap-3 sm:gap-4">
+              {orders.map((order) => {
+                const id = getOrderId(order);
+                const summary = getOrderListSummary(order);
+                const createdAt = order.created_at || order.createdAt;
+                const payableAmount = getCustomerOrderAmount(order);
+
+                return (
+                  <Link
+                    key={id}
+                    to={`/orders/${id}`}
+                    className="group relative block overflow-hidden rounded-xl border border-border bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-primary hover:shadow-[0_12px_35px_rgba(0,0,0,0.08)] focus:outline-none focus:ring-0 sm:rounded-2xl sm:p-4 lg:p-5"
+                  >
+                    <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-primary to-accent opacity-70 transition-all duration-300 group-hover:w-1.5" />
+
+                    <div className="flex flex-col gap-4 pl-2 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
+                      <div className="flex min-w-0 gap-3 sm:gap-4">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white sm:h-12 sm:w-12 sm:rounded-xl">
+                          <Package size={18} className="sm:hidden" />
+                          <Package size={20} className="hidden sm:block" />
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="rounded-full bg-[#FAF6EE] px-2.5 py-1 text-[11px] font-semibold text-ink sm:px-3 sm:text-xs">
+                              #{formatOrderId(id)}
+                            </span>
+
+                            <span className="rounded-full border border-border px-2.5 py-1 text-[11px] text-muted sm:px-3 sm:text-xs">
+                              {formatOrderDate(createdAt)}
+                            </span>
+                          </div>
+
+                          <p className="mt-2 max-w-full break-all font-mono text-[11px] leading-relaxed text-gray sm:text-xs md:max-w-[420px] lg:max-w-[560px] lg:truncate">
+                            Order ID: {id}
+                          </p>
+
+                          {summary && (
+                            <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted sm:line-clamp-1 sm:text-sm">
+                              {summary}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-3 border-t border-border pt-3 sm:min-w-[150px] sm:shrink-0 sm:flex-col sm:items-end sm:border-t-0 sm:pt-0">
+                        {hasKnownStatus(order) && (
+                          <OrderStatusBadge status={getOrderStatus(order)} />
+                        )}
+
+                        {payableAmount !== undefined && (
+                          <div className="text-left sm:text-right">
+                            <p className="text-[11px] text-muted sm:text-xs">
+                              Payable Amount
+                            </p>
+                            <span className="text-sm font-bold text-ink sm:text-base">
+                              {formatMoney(
+                                payableAmount,
+                                getOrderCurrency(order),
+                              )}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </ApiState>
+        </div>
+      </section>
     </>
   );
 }

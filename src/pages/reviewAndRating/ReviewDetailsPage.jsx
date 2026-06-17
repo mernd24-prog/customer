@@ -1,10 +1,6 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 import { ChevronLeft, MessageCircle, ThumbsUp } from "lucide-react";
-import {
-  ratingBreakdown,
-  reviewImages,
-  reviews,
-} from "./reviewAndRating";
+import { ratingBreakdown, reviewImages, reviews } from "../../data/review";
 
 const fallbackProduct = {
   title: "Doctor Extra Soft",
@@ -30,14 +26,12 @@ function displayImage(value) {
 function getProductDisplay(product) {
   return {
     title: displayText(
-      product?.title ||
-      product?.name ||
-        product?.productName,
+      product?.title || product?.name || product?.productName,
       fallbackProduct.title,
     ),
     category: displayText(
       product?.category?.name ||
-      product?.category ||
+        product?.category ||
         product?.subcategory?.name,
       fallbackProduct.category,
     ),
@@ -65,7 +59,10 @@ function MiniRatingBars() {
   return (
     <div className="space-y-2">
       {ratingBreakdown.map((item, index) => (
-        <div key={item.label} className="grid grid-cols-[18px_1fr_28px] items-center gap-3">
+        <div
+          key={item.label}
+          className="grid grid-cols-[18px_1fr_28px] items-center gap-3"
+        >
           <span className="text-[11px] font-semibold text-[var(--customer-muted)]">
             {5 - index}
           </span>
@@ -131,14 +128,18 @@ export default function ReviewDetailsPage() {
     ...reviews.map((review, index) => ({
       ...review,
       name: ["Ankita", "Mythra Customer", "Shivani", "Rachana"][index % 4],
-      date: ["13 Feb 2026", "2 June 2026", "20 May 2026", "15 May 2026"][index % 4],
+      date: ["13 Feb 2026", "2 June 2026", "20 May 2026", "15 May 2026"][
+        index % 4
+      ],
       helpful: index,
       images: reviewImages.slice(index % 3, (index % 3) + 2),
     })),
     ...reviews.map((review, index) => ({
       ...review,
       name: ["Priti", "Neha", "Divya", "Palavi"][index % 4],
-      date: ["25 Mar 2026", "2 June 2026", "19 Mar 2026", "20 May 2026"][index % 4],
+      date: ["25 Mar 2026", "2 June 2026", "19 Mar 2026", "20 May 2026"][
+        index % 4
+      ],
       text: [
         "Quality is too good. Soft and comfortable.",
         "Very soft and comfortable. Must buy.",
@@ -169,7 +170,9 @@ export default function ReviewDetailsPage() {
             <h1 className="text-base font-bold uppercase text-[var(--customer-ink)]">
               {product.title}
             </h1>
-            <p className="mt-1 text-sm text-[var(--customer-muted)]">{product.category}</p>
+            <p className="mt-1 text-sm text-[var(--customer-muted)]">
+              {product.category}
+            </p>
             <p className="mt-5 text-sm font-bold text-[var(--customer-ink)]">
               Rs. {product.price}
               <span className="ml-2 font-medium text-[var(--customer-muted)] line-through">
@@ -190,7 +193,10 @@ export default function ReviewDetailsPage() {
             <div className="mt-5 grid max-w-[560px] grid-cols-[110px_1fr] gap-8">
               <div>
                 <div className="flex items-center gap-2 text-4xl font-medium text-[var(--customer-ink)]">
-                  4.5 <span className="text-xl text-[var(--customer-success)]">★</span>
+                  4.5{" "}
+                  <span className="text-xl text-[var(--customer-success)]">
+                    ★
+                  </span>
                 </div>
                 <p className="mt-2 text-xs font-semibold text-[var(--customer-info)]">
                   147 Verified Buyers
@@ -226,7 +232,10 @@ export default function ReviewDetailsPage() {
               </span>
             </div>
             {allReviews.map((review, index) => (
-              <ReviewRow key={`${review.name}-${review.date}-${index}`} review={review} />
+              <ReviewRow
+                key={`${review.name}-${review.date}-${index}`}
+                review={review}
+              />
             ))}
           </div>
         </section>

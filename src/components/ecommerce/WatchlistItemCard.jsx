@@ -42,9 +42,7 @@ export function WatchlistItemCard({
             <h4 className="line-clamp-2  text-[13px] font-semibold text-ink transition-all duration-300 ease-in-out group-hover:text-gold">
               <Link to={`/products/${id}`}>{title}</Link>
             </h4>
-            <p className="mt-1  text-[12px] font-bold text-ink">
-              {price}
-            </p>
+            <p className="mt-1  text-[12px] font-bold text-ink">{price}</p>
           </div>
 
           <Link
@@ -68,7 +66,7 @@ export function WatchlistItemCard({
   }
 
   return (
-    <article className="rounded-[12px] border border-border bg-white p-4 transition-all duration-300 ease-in-out hover:shadow-sm sm:p-5">
+    <article className="mx-auto w-full max-w-[80rem] rounded-[12px] border border-border bg-white p-4 transition-all duration-300 ease-in-out hover:shadow-sm sm:p-5">
       <div className="flex flex-col gap-6 lg:flex-row">
         <div className="flex flex-1 flex-col gap-5 sm:flex-row">
           <div className="flex h-[180px] w-full shrink-0 items-center justify-center overflow-hidden rounded-[12px] bg-cream sm:h-[220px] sm:w-[220px]">
@@ -79,16 +77,14 @@ export function WatchlistItemCard({
                 className="h-full w-full object-contain"
               />
             ) : (
-              <span className=" text-sm text-gray">
-                No image
-              </span>
+              <span className=" text-sm text-gray">No image</span>
             )}
           </div>
 
-          <div className="flex flex-1 flex-col">
+          <div className="flex  flex-1 flex-col">
             <Link
               to={`/products/${id}`}
-              className=" text-[22px] font-semibold leading-8 text-ink hover:text-gold sm:text-[24px] sm:leading-[34px]"
+              className=" text-[22px] font-bold leading-8 text-ink  sm:text-[24px] sm:leading-[34px]"
             >
               {title}
             </Link>
@@ -98,7 +94,7 @@ export function WatchlistItemCard({
             </p>
 
             <div className="mt-3">
-              <p className=" text-[28px] font-bold text-gold sm:text-[32px]">
+              <p className=" text-[28px] font-bold text-black sm:text-[32px]">
                 {price}
               </p>
               {product?.seller && (
@@ -118,14 +114,14 @@ export function WatchlistItemCard({
             variant="primary"
             rounded
             label="Add to Cart"
-            className="h-[48px] text-[15px] font-bold"
+            className="h-[48px] text-[15px] font-bold bg-blue hover:bg-blue/90 border border-none text-white"
             onClick={() => onAddToCart?.(product)}
           />
           <BrandButton
             variant="secondary"
             rounded
             label="Remove from Watchlist"
-            className="h-[48px] text-[15px] font-medium "
+            className="h-[48px] text-[15px] font-medium  "
             onClick={() => onRemove?.(product)}
           />
         </div>

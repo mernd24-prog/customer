@@ -67,17 +67,12 @@ export default function CheckoutSummary({
       shipping,
   );
   const quotePayable = Number(
-  
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
   );
   const calculatedPayable = Math.max(
     total + taxPayable + codCharge - quoteDiscount - quoteWallet,
     0,
   );
-  const quotePayable =
-    quotedPayable > 0 || calculatedPayable <= 0
-      ? quotedPayable
-      : calculatedPayable;
 
   return (
     <aside className="min-w-0">

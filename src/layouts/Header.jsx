@@ -494,7 +494,7 @@ export const Navbar = ({ icons: propIcons }) => {
         />
 
         {/* Actions */}
-        <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
+        <div className="order-2 flex  shrink-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
           <div className=" items-center gap-5 flex">
             {utilityIcons.map((item, iconIndex) => (
               <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
@@ -563,7 +563,7 @@ export const Navbar = ({ icons: propIcons }) => {
           ) : (
             <HeaderGoldButton
               className="flex h-[34px] min-w-[96px] items-center justify-center rounded-[4px] px-2.5 font-sans text-[11px] font-semibold leading-none text-[#03014D] whitespace-nowrap min-[375px]:h-[36px] min-[375px]:min-w-[108px] min-[375px]:px-3 min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:min-w-[118px] min-[425px]:text-[13px] sm:h-[41px] sm:min-w-[142px] sm:px-5 sm:text-[14px] lg:text-[16px]"
-              onClick={() => navigate("/login") }
+              onClick={() => navigate("/login")}
             >
               Login
             </HeaderGoldButton>

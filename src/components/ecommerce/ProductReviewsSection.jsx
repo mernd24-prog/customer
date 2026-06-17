@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Star, ThumbsUp, Trash2, ChevronDown } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  ChevronRight,
+  Star,
+  ThumbsUp,
+  Trash2,
+  UserCircle,
+} from "lucide-react";
 import {
   fetchProductReviews,
   submitProductReview,
@@ -10,6 +17,10 @@ import {
   resetSubmitState,
 } from "../../features/review/reviewSlice";
 import { fetchMyOrders } from "../../features/order/orderSlice";
+import {
+  ratingBreakdown as fallbackRatingBreakdown,
+  reviews as fallbackReviews,
+} from "../../data/review";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -28,7 +39,11 @@ function StarInput({ value, onChange, size = 28 }) {
         >
           <Star
             size={size}
-            className={n <= (hovered || value) ? "fill-gold text-gold" : "fill-border text-border"}
+            className={
+              n <= (hovered || value)
+                ? "fill-gold text-gold"
+                : "fill-border text-border"
+            }
           />
         </button>
       ))}
@@ -36,110 +51,131 @@ function StarInput({ value, onChange, size = 28 }) {
   );
 }
 
-function StarDisplay({ rating, size = 14 }) {
-  const stars = Math.round(rating || 0);
+function RatingPill({ rating }) {
   return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: 5 }, (_, i) => (
-        <Star
-          key={i}
-          size={size}
-          className={i < stars ? "fill-gold text-gold" : "fill-border text-border"}
-        />
-      ))}
-    </div>
+    <span className="inline-flex items-center gap-1  rounded-full bg-[var(--customer-success)] px-2.5 py-1 text-xs font-bold text-white">
+      {rating} <span className="text-[10px]">★</span>
+    </span>
   );
 }
 
-function RatingBar({ label, count, total }) {
-  const pct = total > 0 ? Math.round((count / total) * 100) : 0;
-  return (
-    <div className="flex items-center gap-2 text-xs">
-      <span className="w-8 text-right text-gray shrink-0">{label}★</span>
-      <div className="flex-1 h-2 bg-surface-soft rounded-full overflow-hidden">
-        <div className="h-full bg-gold rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
-      </div>
-      <span className="w-6 text-gray shrink-0">{count}</span>
-    </div>
+function ProductReviewCard({ review, currentUserId, onHelpful, onDelete }) {
+  const isOwn =
+    currentUserId && String(review.buyerId) === String(currentUserId);
+  const alreadyVoted = (review.helpfulVotedBy || []).includes(
+    String(currentUserId || ""),
   );
-}
-
-function ReviewCard({ review, currentUserId, productId, onHelpful, onDelete }) {
-  const isOwn = currentUserId && String(review.buyerId) === String(currentUserId);
-  const alreadyVoted = (review.helpfulVotedBy || []).includes(String(currentUserId || ""));
   const dateStr = review.createdAt
     ? new Date(review.createdAt).toLocaleDateString("en-GB", {
-        day: "numeric", month: "short", year: "numeric",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
       })
     : "";
 
+  const rating = Number(review.rating || 0).toFixed(1);
+  const name = review.buyerName || review.name || "Verified Buyer";
+  const text = review.reviewText || review.text;
+  const media = review.media || review.images || [];
+  const helpfulVotes = review.helpfulVotes ?? review.helpful ?? 0;
+  const reviewId = review._id || review.id;
+
   return (
-    <div className="panel flex flex-col gap-3">
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-full bg-gold-soft flex items-center justify-center font-bold text-gold-dark text-sm shrink-0">
-            {String(review.buyerId || "U")[0].toUpperCase()}
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-ink">
-              {review.buyerName || "Verified Buyer"}
-            </p>
-            <p className="text-xs text-gray">{dateStr}</p>
-          </div>
-        </div>
-        <StarDisplay rating={review.rating} />
+    <article className="border-b border-[var(--customer-border)] py-5 last:border-b-0">
+      <div className="mb-3 flex items-center gap-2">
+        <UserCircle
+          size={24}
+          className="shrink-0 text-[var(--customer-border-strong)]"
+        />
+        <span className="text-sm font-bold text-[var(--customer-muted)]">
+          {name}
+        </span>
+      </div>
+
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <RatingPill rating={rating} />
+        <span className="text-[var(--customer-border-strong)]">•</span>
+        <span className="text-xs font-semibold text-[var(--customer-muted)]">
+          Posted on {dateStr || review.date}
+        </span>
       </div>
 
       {review.title && (
-        <p className="text-sm font-semibold text-ink">{review.title}</p>
+        <p className="mb-1 text-sm font-bold text-[var(--customer-ink)]">
+          {review.title}
+        </p>
       )}
-      {review.reviewText && (
-        <p className="text-sm text-muted leading-relaxed">{review.reviewText}</p>
+      {text && (
+        <p className="text-sm font-medium leading-6 text-[var(--customer-ink)]">
+          {text}
+        </p>
       )}
 
-      {review.media?.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {review.media.map((src, i) => (
+      {media.length > 0 && (
+        <div className="mt-4  flex flex-wrap gap-3">
+          {media.map((src, i) => (
             <img
-              key={i}
+              key={`${src}-${i}`}
               src={src}
               alt=""
-              className="h-16 w-16 rounded-lg object-cover border border-border"
-              onError={(e) => { e.target.style.display = "none"; }}
+              className="h-[74px] w-[74px] rounded-[8px] border border-[var(--customer-border)] bg-[var(--customer-cream)] object-cover"
+              onError={(e) => {
+                e.target.style.display = "none";
+              }}
             />
           ))}
         </div>
       )}
 
       {review.adminReply?.text && (
-        <div className="bg-surface-soft rounded-lg p-3 border-l-2 border-gold">
-          <p className="text-xs font-semibold text-gold-dark mb-1">Seller Response</p>
-          <p className="text-xs text-muted">{review.adminReply.text}</p>
+        <div className="mt-4 rounded-[6px] border-l-2 border-[var(--customer-gold)] bg-[var(--customer-cream)] p-3">
+          <p className="mb-1 text-xs font-bold text-[var(--customer-gold-dark)]">
+            Seller Response
+          </p>
+          <p className="text-xs font-medium text-[var(--customer-muted)]">
+            {review.adminReply.text}
+          </p>
         </div>
       )}
 
-      <div className="flex items-center gap-4 pt-1 border-t border-border">
-        <button
-          type="button"
-          onClick={() => onHelpful(review._id || review.id)}
-          className={`flex items-center gap-1.5 text-xs transition-colors ${
-            alreadyVoted ? "text-gold font-medium" : "text-gray hover:text-ink"
-          }`}
-        >
-          <ThumbsUp size={13} className={alreadyVoted ? "fill-gold" : ""} />
-          Helpful {review.helpfulVotes > 0 ? `(${review.helpfulVotes})` : ""}
-        </button>
+      <div className="mt-4 flex items-center gap-4">
+        {reviewId ? (
+          <button
+            type="button"
+            onClick={() => onHelpful(reviewId)}
+            className={`inline-flex items-center gap-2 text-sm font-semibold transition-colors ${
+              alreadyVoted
+                ? "text-[var(--customer-gold-dark)]"
+                : "text-[var(--customer-muted)] hover:text-[var(--customer-ink)]"
+            }`}
+          >
+            <ThumbsUp
+              size={18}
+              className={
+                alreadyVoted
+                  ? "fill-[var(--customer-gold-dark)]"
+                  : "fill-[var(--customer-muted)]"
+              }
+            />
+            Helpful ({helpfulVotes})
+          </button>
+        ) : (
+          <span className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--customer-muted)]">
+            <ThumbsUp size={18} className="fill-[var(--customer-muted)]" />
+            Helpful ({helpfulVotes})
+          </span>
+        )}
         {isOwn && (
           <button
             type="button"
-            onClick={() => onDelete(review._id || review.id)}
-            className="flex items-center gap-1 text-xs text-red-400 hover:text-red-600 ml-auto transition-colors"
+            onClick={() => onDelete(reviewId)}
+            className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-red-400 transition-colors hover:text-red-600"
           >
             <Trash2 size={12} /> Delete
           </button>
         )}
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -147,7 +183,9 @@ function ReviewCard({ review, currentUserId, productId, onHelpful, onDelete }) {
 
 function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
   const dispatch = useDispatch();
-  const { submitting, submitError, submitSuccess } = useSelector((s) => s.review);
+  const { submitting, submitError, submitSuccess } = useSelector(
+    (s) => s.review,
+  );
 
   const [form, setForm] = useState({
     orderId: deliveredOrders[0]?.id || deliveredOrders[0]?.orderId || "",
@@ -166,13 +204,15 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.rating) return;
-    dispatch(submitProductReview({
-      productId,
-      orderId:    form.orderId,
-      rating:     form.rating,
-      title:      form.title.trim(),
-      reviewText: form.reviewText.trim(),
-    }));
+    dispatch(
+      submitProductReview({
+        productId,
+        orderId: form.orderId,
+        rating: form.rating,
+        title: form.title.trim(),
+        reviewText: form.reviewText.trim(),
+      }),
+    );
   };
 
   return (
@@ -186,7 +226,9 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
           </label>
           <select
             value={form.orderId}
-            onChange={(e) => setForm((f) => ({ ...f, orderId: e.target.value }))}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, orderId: e.target.value }))
+            }
             className="w-full border border-border-strong rounded-[6px] px-3 py-2 text-sm"
           >
             {deliveredOrders.map((o) => {
@@ -232,16 +274,22 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
         <textarea
           rows={4}
           value={form.reviewText}
-          onChange={(e) => setForm((f) => ({ ...f, reviewText: e.target.value }))}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, reviewText: e.target.value }))
+          }
           maxLength={2000}
           placeholder="Share your experience with this product…"
           className="w-full border border-border-strong rounded-[6px] px-3 py-2 text-sm resize-none"
         />
-        <p className="text-xs text-gray text-right">{form.reviewText.length}/2000</p>
+        <p className="text-xs text-gray text-right">
+          {form.reviewText.length}/2000
+        </p>
       </div>
 
       {submitError && (
-        <p className="text-xs text-red-600 rounded-lg bg-red-50 px-3 py-2">{submitError}</p>
+        <p className="text-xs text-red-600 rounded-lg bg-red-50 px-3 py-2">
+          {submitError}
+        </p>
       )}
 
       <button
@@ -258,13 +306,38 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
 // ── Main section ──────────────────────────────────────────────────────────────
 
 const SORT_OPTIONS = [
-  { value: "newest",  label: "Most Recent" },
+  { value: "newest", label: "Most Recent" },
   { value: "helpful", label: "Most Helpful" },
   { value: "highest", label: "Highest Rated" },
-  { value: "lowest",  label: "Lowest Rated" },
+  { value: "lowest", label: "Lowest Rated" },
 ];
 
-export default function ProductReviewsSection({ productId }) {
+function getRatingBreakdown(stats) {
+  if (!stats?.distribution || !stats.count) return fallbackRatingBreakdown;
+
+  const labels = ["Excellent", "Very Good", "Good", "Average", "Poor"];
+  const colors = [
+    "bg-[var(--customer-success)]",
+    "bg-[var(--customer-success)]",
+    "bg-[var(--customer-warning)]",
+    "bg-[#f0793d]",
+    "bg-[var(--customer-danger)]",
+  ];
+
+  return [5, 4, 3, 2, 1].map((rating, index) => {
+    const count = stats.distribution[rating] || 0;
+    const width = `${Math.round((count / stats.count) * 100)}%`;
+    return {
+      label: labels[index],
+      count,
+      color: colors[index],
+      width,
+      rating,
+    };
+  });
+}
+
+export default function ProductReviewsSection({ productId, product }) {
   const dispatch = useDispatch();
 
   const currentUser = useSelector((s) => s.auth.current);
@@ -284,18 +357,27 @@ export default function ProductReviewsSection({ productId }) {
     (o) =>
       ["delivered", "completed"].includes(o.status) &&
       (o.items || []).some(
-        (item) => String(item.productId || item.product_id) === String(productId),
+        (item) =>
+          String(item.productId || item.product_id) === String(productId),
       ),
   );
 
-  const [page, setPage]         = useState(1);
-  const [sort, setSort]         = useState("newest");
+  const [page, setPage] = useState(1);
+  const [sort, setSort] = useState("newest");
   const [ratingFilter, setRatingFilter] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const LIMIT = 5;
 
   useEffect(() => {
-    dispatch(fetchProductReviews({ productId, page, limit: LIMIT, sort, rating: ratingFilter || undefined }));
+    dispatch(
+      fetchProductReviews({
+        productId,
+        page,
+        limit: LIMIT,
+        sort,
+        rating: ratingFilter || undefined,
+      }),
+    );
   }, [dispatch, productId, page, sort, ratingFilter]);
 
   useEffect(() => {
@@ -324,24 +406,31 @@ export default function ProductReviewsSection({ productId }) {
 
   const totalPages = Math.ceil(total / LIMIT);
   const canWriteReview = isLoggedIn && deliveredOrders.length > 0 && !myReview;
+  const filteredFallbackReviews = ratingFilter
+    ? fallbackReviews.filter(
+        (review) => Math.round(Number(review.rating || 0)) === ratingFilter,
+      )
+    : fallbackReviews;
+  const hasApiReviews = items.length > 0;
+  const displayTotal = total || filteredFallbackReviews.length;
+  const displayReviewCount = stats?.count || displayTotal;
+  const displayAvgRating = stats?.avgRating || 4;
+  const displayReviews =
+    bucket.loading && items.length === 0
+      ? []
+      : hasApiReviews
+        ? items
+        : filteredFallbackReviews;
+  const displayRatingBreakdown = getRatingBreakdown(stats);
 
   return (
-    <div className="panel" id="reviews">
+    <div className="panel overflow-hidden p-4 sm:p-6" id="reviews">
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-[18px] font-bold text-ink">
-            Reviews {total > 0 && <span className="text-gray font-normal text-sm">({total})</span>}
+          <h2 className="text-xl font-bold text-[var(--customer-ink)]">
+            Product Ratings & Reviews
           </h2>
-          {stats && (
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-3xl font-bold text-ink">{stats.avgRating?.toFixed(1)}</span>
-              <div>
-                <StarDisplay rating={stats.avgRating} size={16} />
-                <p className="text-xs text-gray mt-0.5">{stats.count} verified reviews</p>
-              </div>
-            </div>
-          )}
         </div>
 
         {canWriteReview && (
@@ -353,41 +442,81 @@ export default function ProductReviewsSection({ productId }) {
             {showForm ? "Cancel" : "Write a Review"}
           </button>
         )}
-        {isLoggedIn && !canWriteReview && deliveredOrders.length === 0 && total === 0 && (
-          <p className="text-xs text-gray">Purchase this product to leave a review.</p>
-        )}
+        {isLoggedIn &&
+          !canWriteReview &&
+          deliveredOrders.length === 0 &&
+          total === 0 && (
+            <p className="text-xs text-gray">
+              Purchase this product to leave a review.
+            </p>
+          )}
         {myReview && (
-          <p className="text-xs text-success font-medium">You have already reviewed this product.</p>
+          <p className="text-xs text-success font-medium">
+            You have already reviewed this product.
+          </p>
         )}
       </div>
 
       {/* Rating distribution */}
-      {stats?.distribution && total > 0 && (
-        <div className="flex flex-col gap-1.5 mb-6 max-w-xs">
-          {[5, 4, 3, 2, 1].map((n) => (
-            <button
-              key={n}
-              type="button"
-              onClick={() => { setRatingFilter(ratingFilter === n ? 0 : n); setPage(1); }}
-              className={`rounded transition-opacity ${ratingFilter && ratingFilter !== n ? "opacity-40" : "opacity-100"}`}
-            >
-              <RatingBar label={n} count={stats.distribution[n] || 0} total={stats.count} />
-            </button>
-          ))}
+      <div className="mt-8 grid gap-8 md:grid-cols-[120px_1fr] md:items-center">
+        <div>
+          <div className="flex items-center gap-2 text-[42px] font-bold leading-none text-[var(--customer-success)]">
+            {Number(displayAvgRating).toFixed(1)}{" "}
+            <span className="text-2xl">★</span>
+          </div>
+          <p className="mt-3 text-xs font-bold leading-5 text-[var(--customer-muted)]">
+            {displayReviewCount} Ratings,
+            <br />
+            {displayTotal} Reviews
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          {displayRatingBreakdown.map((item, index) => {
+            const rating = item.rating || 5 - index;
+            return (
+              <button
+                key={item.label}
+                type="button"
+                onClick={() => {
+                  setRatingFilter(ratingFilter === rating ? 0 : rating);
+                  setPage(1);
+                }}
+                className={`grid w-full grid-cols-[86px_1fr_48px] items-center gap-4 transition-opacity ${
+                  ratingFilter && ratingFilter !== rating
+                    ? "opacity-40"
+                    : "opacity-100"
+                }`}
+              >
+                <span className="text-right text-xs font-bold text-[var(--customer-ink)]">
+                  {item.label}
+                </span>
+                <span className="h-1.5 overflow-hidden rounded-full bg-[var(--customer-border)]">
+                  <span
+                    className={`block h-full rounded-full ${item.color}`}
+                    style={{ width: item.width }}
+                  />
+                </span>
+                <span className="text-left text-xs font-bold text-[var(--customer-muted)]">
+                  {item.count}
+                </span>
+              </button>
+            );
+          })}
           {ratingFilter > 0 && (
             <button
               onClick={() => setRatingFilter(0)}
-              className="text-xs text-gold hover:text-gold-dark mt-1 text-left"
+              className="text-xs font-bold text-[var(--customer-gold-dark)] hover:text-[var(--customer-gold)]"
             >
               Clear filter
             </button>
           )}
         </div>
-      )}
+      </div>
 
       {/* Write review form */}
       {showForm && canWriteReview && (
-        <div className="mb-6">
+        <div className="mt-8">
           <WriteReviewForm
             productId={productId}
             deliveredOrders={deliveredOrders}
@@ -397,19 +526,31 @@ export default function ProductReviewsSection({ productId }) {
       )}
 
       {/* Sort + filter bar */}
-      {total > 0 && (
-        <div className="flex items-center gap-2 mb-4">
+      {displayTotal > 0 && (
+        <div className="mt-5 flex items-center justify-between gap-2">
+          <h3 className="text-sm font-bold text-[var(--customer-ink)]">
+            Customer Reviews ({displayTotal})
+          </h3>
           <div className="relative">
             <select
               value={sort}
-              onChange={(e) => { setSort(e.target.value); setPage(1); }}
-              className="appearance-none border border-border-strong rounded-[6px] pl-3 pr-8 py-1.5 text-xs bg-white"
+              onChange={(e) => {
+                setSort(e.target.value);
+                setPage(1);
+              }}
+              className="appearance-none border-0 bg-white py-1.5 pl-3 pr-8 text-xs font-bold text-[var(--customer-gold-dark)]"
+              style={{
+                backgroundImage: "none",
+                WebkitAppearance: "none",
+                MozAppearance: "none",
+              }}
             >
               {SORT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
               ))}
             </select>
-            <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray pointer-events-none" />
           </div>
           {ratingFilter > 0 && (
             <span className="text-xs bg-gold-soft text-gold-dark px-2 py-1 rounded-full">
@@ -428,28 +569,31 @@ export default function ProductReviewsSection({ productId }) {
         </div>
       )}
 
-      {!bucket.loading && items.length === 0 && (
-        <div className="py-12 text-center text-gray">
-          <Star size={36} className="mx-auto mb-3 text-border" />
-          <p className="text-sm font-medium">No reviews yet</p>
-          {canWriteReview && (
-            <p className="text-xs mt-1">Be the first to review this product!</p>
-          )}
-        </div>
-      )}
-
-      <div className="flex flex-col gap-4">
-        {items.map((review) => (
-          <ReviewCard
-            key={review._id || review.id}
+      <div className="mt-2">
+        {displayReviews.map((review, index) => (
+          <ProductReviewCard
+            key={
+              review._id ||
+              review.id ||
+              `${review.name}-${review.date}-${index}`
+            }
             review={review}
             currentUserId={userId}
-            productId={productId}
             onHelpful={handleHelpful}
             onDelete={handleDelete}
           />
         ))}
       </div>
+
+      {displayTotal > 0 && (
+        <Link
+          to={`/products/${productId}/reviews`}
+          state={{ product }}
+          className="flex w-full items-center gap-2 border-t border-[var(--customer-border)] pt-5 text-left text-sm font-bold uppercase text-[var(--customer-gold-dark)] transition-colors hover:text-[var(--customer-gold)]"
+        >
+          View all reviews <ChevronRight size={18} />
+        </Link>
+      )}
 
       {/* Pagination */}
       {totalPages > 1 && (
