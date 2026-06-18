@@ -70,8 +70,8 @@ export default function ProductCard({
     discountPercent ||
     (oldPriceNumber > currentPriceNumber && currentPriceNumber > 0
       ? Math.round(
-        ((oldPriceNumber - currentPriceNumber) / oldPriceNumber) * 100,
-      )
+          ((oldPriceNumber - currentPriceNumber) / oldPriceNumber) * 100,
+        )
       : 0);
   const discountLabel = computedDiscountPercent
     ? `${computedDiscountPercent}% Off`
@@ -92,7 +92,8 @@ export default function ProductCard({
         .map((variant) => variant?.stock)
         .filter((value) => value != null && value !== "")
     : [];
-  const hasStockQuantity = stockValues.length > 0 || variantStockValues.length > 0;
+  const hasStockQuantity =
+    stockValues.length > 0 || variantStockValues.length > 0;
   const stockQty = [...stockValues, ...variantStockValues].reduce(
     (total, value) => total + (Number(value) || 0),
     0,
@@ -140,7 +141,7 @@ export default function ProductCard({
           className,
         )}
       >
-        <div className="grid gap-4  sm:grid-cols-[180px_1fr_auto]  sm:items-center">
+        <div className="grid gap-4   sm:grid-cols-[180px_1fr_auto]  sm:items-center">
           <Link
             to={to}
             className="block overflow-hidden  rounded-[var(--customer-radius)] bg-[var(--customer-cream)]"
@@ -224,7 +225,7 @@ export default function ProductCard({
   return (
     <article
       className={cn(
-        ` ${!isInStock ? "opacity-50 " : ""} group relative min-w-0 overflow-hidden  rounded-[24px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_16px_40px_rgba(17,24,39,0.12)]`,
+        ` ${!isInStock ? "opacity-50 " : ""}  group relative min-w-0 overflow-hidden  rounded-[20px] border border-[#CE9F2D66]/50 bg-white transition-all duration-300 ease-in-out hover:shadow-[0_16px_40px_rgba(17,24,39,0.12)]`,
         className,
       )}
     >
@@ -240,17 +241,11 @@ export default function ProductCard({
         <Label
           variant="featured"
           className="
-            flex h-[24px] min-w-[75px] items-center justify-center
+            flex  items-center justify-center
             rounded-[50px]
             bg-[#CE9F2D]
-            px-[12px] py-[5px]
-            font-dmSans
             text-[12px] font-semibold
-            leading-none
-            tracking-[0px]
-            text-[#FFFFFF]
-            sm:h-[28px] sm:min-w-[91px]
-            sm:px-[15px]
+            text-white
             sm:text-[14px]
           "
         >
@@ -297,12 +292,12 @@ export default function ProductCard({
           )}
         </div>
 
-        <div className="px-5 pb-5 pt-4 sm:px-6 sm:pb-6">
+        <div className="px-4 pb-4 pt-6">
           <div
             className="flex items-center gap-2  text-[14px] font-medium text-[#242424] my-[6px]"
             aria-label={`${rating || 0} out of 5 stars`}
           >
-            <span className="font-['DM_Sans'] text-[14px] font-medium leading-[100%] text-[#2E2E2E]">
+            <span className=" text-[14px]  font-medium  text-[#2E2E2E]">
               {Number(rating || 0).toFixed(1)}
             </span>
             <span className="flex  h-[14px] w-[84px] items-center gap-0.5 text-[#F58220]">
@@ -318,14 +313,14 @@ export default function ProductCard({
                 />
               ))}
             </span>
-            <span className="font-['DM_Sans'] text-[14px] font-medium leading-[100%] text-[#2E2E2E]">
+            <span className=" text-[16px] font-medium  text-[#2E2E2E]">
               {"(2.4k)"}
             </span>
             {ratingCount != null && <span>({ratingCount})</span>}
           </div>
 
           <h3
-            className="mt-4 line-clamp-1 max-w-[297px] font-dm-sans text-[15px] font-semibold leading-[100%] tracking-[0%] align-middle text-[#2E2E2E] sm:text-[16px] lg:text-[18px]"
+            className="mt-4  text-[14px] font-semibold    text-[#2E2E2E] sm:text-[18px] lg:text-[20px]"
             title={title}
           >
             {title}
@@ -335,21 +330,21 @@ export default function ProductCard({
             price={price}
             oldPrice={oldPrice}
             currency={currency || cardProduct?.currency}
-            className="mt-4 gap-3"
-            priceClassName="font-dm-sans text-[17px] font-extrabold leading-[100%] tracking-[0%] align-middle text-[#1B1D60] sm:text-[19px] lg:text-[21px]"
-            oldPriceClassName="font-dm-sans text-[17px] font-semibold leading-[100%] tracking-[0%] text-[#949494] line-through align-middle sm:text-[19px] lg:text-[21px]"
+            className="my-3 gap-3"
+            priceClassName=" text-[16px] font-extrabold   text-[#1B1D60] sm:text-[18px] lg:text-[22px]"
+            oldPriceClassName=" text-[16px] font-semibold  text-[#949494] line-through sm:text-[18px] lg:text-[22px]"
           />
         </div>
       </Link>
 
       {showActions && (
-        <div className="flex  items-center gap-6 sm:gap-6 md:gap-6 lg:gap-[60px] px-5 pb-6 sm:px-6">
+        <div className="flex  items-center gap-8 my-4 px-2">
           <PillButton
             disabled={!isInStock}
             onClick={handleAddToCart}
             rightIcon={<ShoppingCart size={19} strokeWidth={2.4} />}
             className={cn(
-              "w-[197px] gap-[15px] font-['DM_Sans'] text-[15px] font-semibold leading-[100%] focus-visible:outline-[#1B1D60]",
+              "w-full gap-[15px]  text-[15px] font-semibold  focus-visible:outline-[#1B1D60]",
               !isInStock && "cursor-not-allowed opacity-60",
             )}
           >
@@ -366,14 +361,14 @@ export default function ProductCard({
             className={cn(
               "focus-visible:outline-none",
               isWishlisted
-                ? "border-[#DC2626] text-[#DC2626] hover:border-[#DC2626] hover:text-[#DC2626]"
-                : "border-[#CE9F2D] text-[#CE9F2D] hover:border-[#CE9F2D] hover:text-[#CE9F2D]"
+                ? "border-[#1B1D60] text-[#1B1D60] hover:border-[#1B1D60] hover:text-[#1B1D60]"
+                : "border-[#1B1D60] text-[#1B1D60] hover:border-[#1B1D60] hover:text-[#1B1D60]",
             )}
           >
             <Heart
               size={19}
-              fill={isWishlisted ? "#DC2626" : "none"}
-              stroke={isWishlisted ? "#DC2626" : "#CE9F2D"}
+              fill={isWishlisted ? "#1B1D60" : "none"}
+              stroke={isWishlisted ? "#1B1D60" : " #1B1D60"}
             />
           </IconCircleButton>
         </div>

@@ -10,7 +10,7 @@ import {
 } from "../utils/cache";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://192.168.16.47:4000";
+  import.meta.env.VITE_API_BASE_URL || "http://45.195.90.183:4000";
 const API_TIMEOUT_MS = Number(import.meta.env.VITE_API_TIMEOUT_MS || 15000);
 const buildApiUrl = (path = "") =>
   `${API_BASE_URL.replace(/\/+$/, "")}/${String(path).replace(/^\/+/, "")}`;

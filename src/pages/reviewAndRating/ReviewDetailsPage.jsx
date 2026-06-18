@@ -1,6 +1,6 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 import { ChevronLeft, MessageCircle, ThumbsUp } from "lucide-react";
-import { ratingBreakdown, reviewImages, reviews } from "../../data/review";
+import { ratingBreakdown, reviews } from "../../data/review";
 
 const fallbackProduct = {
   title: "Doctor Extra Soft",
@@ -83,7 +83,7 @@ function MiniRatingBars() {
 
 function ReviewRow({ review }) {
   return (
-    <article className="border-b border-[var(--customer-border)] py-4">
+    <article className="border-b  border-[var(--customer-border)] py-4">
       <div className="flex items-start gap-3">
         <span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-sm bg-[var(--customer-success)] text-[10px] font-bold text-white">
           ✓
@@ -92,16 +92,7 @@ function ReviewRow({ review }) {
           <p className="text-[13px] font-semibold leading-5 text-[var(--customer-ink)]">
             {review.text}
           </p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {review.images.map((image) => (
-              <img
-                key={image}
-                src={image}
-                alt=""
-                className="h-16 w-16 rounded-[4px] border border-[var(--customer-border)] object-cover"
-              />
-            ))}
-          </div>
+
           <p className="mt-3 text-[11px] font-medium text-[var(--customer-muted)]">
             {review.name} | {review.date}
           </p>
@@ -132,7 +123,6 @@ export default function ReviewDetailsPage() {
         index % 4
       ],
       helpful: index,
-      images: reviewImages.slice(index % 3, (index % 3) + 2),
     })),
     ...reviews.map((review, index) => ({
       ...review,
@@ -147,7 +137,6 @@ export default function ReviewDetailsPage() {
         "Nice slipper and clean finish.",
       ][index % 4],
       helpful: 0,
-      images: reviewImages.slice(0, (index % 4) + 1),
     })),
   ];
 
@@ -164,7 +153,7 @@ export default function ReviewDetailsPage() {
           <img
             src={product.image}
             alt={product.title}
-            className="aspect-[3/4] w-full rounded-[4px] bg-[var(--customer-cream)] object-cover"
+            className="aspect-[3/4]  w-full rounded-[4px] bg-[var(--customer-cream)] object-cover"
           />
           <div className="mt-4">
             <h1 className="text-base font-bold uppercase text-[var(--customer-ink)]">
@@ -206,21 +195,11 @@ export default function ReviewDetailsPage() {
             </div>
           </div>
 
-          <div className="border-b border-[var(--customer-border)] py-5">
+          {/* <div className="border-b border-[var(--customer-border)] py-5">
             <h3 className="text-sm font-bold text-[var(--customer-ink)]">
               Customer Photos (33)
             </h3>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {reviewImages.map((image) => (
-                <img
-                  key={image}
-                  src={image}
-                  alt=""
-                  className="h-[70px] w-[70px] rounded-[4px] border border-[var(--customer-border)] object-cover"
-                />
-              ))}
-            </div>
-          </div>
+          </div> */}
 
           <div className="py-5">
             <div className="mb-2 flex items-center justify-between">
