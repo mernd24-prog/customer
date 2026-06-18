@@ -22,6 +22,7 @@ import {
 } from "../../features/catalog/catalogSlice";
 import { applyImageFallback } from "../../utils/ecommerce";
 import { isNotFoundApiError } from "../../utils/apiErrors";
+import categoryBannerImage from "/image/png/CategoryBanner.png"
 
 const SORT_OPTIONS = [
   { value: "", label: "Relevance" },
@@ -42,16 +43,14 @@ function SubCategoryCard({ sub, isActive, onClick }) {
     <Link
       to={CUSTOMER_ROUTES.category(key)}
       onClick={onClick}
-      className={`group flex min-w-[100px] max-w-[130px] flex-col items-center gap-2 rounded-xl p-3 text-center transition-all duration-200 ${
-        isActive
-          ? "bg-[var(--customer-gold)] text-white shadow-md"
-          : "bg-white hover:bg-[var(--customer-gold-soft)] border border-[var(--customer-border)]"
-      }`}
+      className={`group flex min-w-[100px] max-w-[130px] flex-col items-center gap-2 rounded-xl p-3 text-center transition-all duration-200 ${isActive
+        ? "bg-[var(--customer-gold)] text-white shadow-md"
+        : "bg-white hover:bg-[var(--customer-gold-soft)] border border-[var(--customer-border)]"
+        }`}
     >
       <div
-        className={`flex h-12 w-12 items-center justify-center overflow-hidden rounded-full ${
-          isActive ? "bg-white/20" : "bg-[var(--customer-surface-soft)]"
-        }`}
+        className={`flex h-12 w-12 items-center justify-center overflow-hidden rounded-full ${isActive ? "bg-white/20" : "bg-[var(--customer-surface-soft)]"
+          }`}
       >
         {image ? (
           <img
@@ -65,17 +64,15 @@ function SubCategoryCard({ sub, isActive, onClick }) {
         )}
       </div>
       <span
-        className={`line-clamp-2 text-[11px] font-semibold leading-tight ${
-          isActive ? "text-white" : "text-[var(--customer-ink)]"
-        }`}
+        className={`line-clamp-2 text-[11px] font-semibold leading-tight ${isActive ? "text-white" : "text-[var(--customer-ink)]"
+          }`}
       >
         {name}
       </span>
       {childCount > 0 && (
         <span
-          className={`text-[10px] font-medium ${
-            isActive ? "text-white/80" : "text-[var(--customer-muted)]"
-          }`}
+          className={`text-[10px] font-medium ${isActive ? "text-white/80" : "text-[var(--customer-muted)]"
+            }`}
         >
           {childCount} sub-types
         </span>
@@ -92,11 +89,10 @@ function ChildChips({ children, selectedKey, onSelect }) {
       <button
         type="button"
         onClick={() => onSelect("")}
-        className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
-          !selectedKey
-            ? "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-white"
-            : "border-[var(--customer-border)] bg-white text-[var(--customer-ink)] hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold)]"
-        }`}
+        className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${!selectedKey
+          ? "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-white"
+          : "border-[var(--customer-border)] bg-white text-[var(--customer-ink)] hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold)]"
+          }`}
       >
         All
       </button>
@@ -107,11 +103,10 @@ function ChildChips({ children, selectedKey, onSelect }) {
           <Link
             key={k}
             to={CUSTOMER_ROUTES.category(k)}
-            className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
-              selectedKey === k
-                ? "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-white"
-                : "border-[var(--customer-border)] bg-white text-[var(--customer-ink)] hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold)]"
-            }`}
+            className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${selectedKey === k
+              ? "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-white"
+              : "border-[var(--customer-border)] bg-white text-[var(--customer-ink)] hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold)]"
+              }`}
           >
             {n}
           </Link>
@@ -199,7 +194,7 @@ export default function CategoryPage() {
       searchParams.forEach((value, key) => {
         if (key.startsWith("attr_")) params[key] = value;
       });
-      ["color","size","material","fit","storage","skinType","shade","finish","room","sport","concern"].forEach((key) => {
+      ["color", "size", "material", "fit", "storage", "skinType", "shade", "finish", "room", "sport", "concern"].forEach((key) => {
         const value = searchParams.get(key);
         if (value) params[key] = value;
       });
@@ -264,7 +259,7 @@ export default function CategoryPage() {
               setCategoryData((prev) => prev ? { ...prev, children: subs } : prev);
             }
           })
-          .catch(() => {});
+          .catch(() => { });
       })
       .catch((error) => {
         setCategoryError(error);
@@ -286,7 +281,7 @@ export default function CategoryPage() {
             .filter(Boolean),
         );
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [dispatch, categoryKey]);
 
   // ── Infinite scroll ──────────────────────────────────────────────────────
@@ -296,7 +291,7 @@ export default function CategoryPage() {
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries[0]?.isIntersecting) return;
-        loadProducts({ page: currentPage + 1, append: true }).catch(() => {});
+        loadProducts({ page: currentPage + 1, append: true }).catch(() => { });
       },
       { threshold: 0.2, rootMargin: "0px 0px 300px 0px" },
     );
@@ -339,6 +334,7 @@ export default function CategoryPage() {
   const categoryTitle = categoryData?.title || categoryData?.name || (categoryKey || "").replace(/-/g, " ");
   const categoryDesc = categoryData?.description;
   const categoryImage = categoryData?.imageUrl || categoryData?.bannerUrl;
+  const bannerImage = categoryData?.bannerUrl || categoryBannerImage
 
   // Active sub + its children
   const activeSubData = useMemo(
@@ -363,9 +359,8 @@ export default function CategoryPage() {
         <div className="flex flex-col gap-0.5">
           <Link
             to={CUSTOMER_ROUTES.category(categoryKey)}
-            className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
-              !activeSubKey ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]" : "text-[var(--customer-ink)] hover:bg-gray-50"
-            }`}
+            className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${!activeSubKey ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]" : "text-[var(--customer-ink)] hover:bg-gray-50"
+              }`}
           >
             <span>All in {categoryTitle}</span>
           </Link>
@@ -378,9 +373,8 @@ export default function CategoryPage() {
               <Link
                 key={k}
                 to={CUSTOMER_ROUTES.category(k)}
-                className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
-                  isAct ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]" : "text-[var(--customer-ink)] hover:bg-gray-50"
-                }`}
+                className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${isAct ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]" : "text-[var(--customer-ink)] hover:bg-gray-50"
+                  }`}
               >
                 <span className="truncate">{n}</span>
                 <div className="flex items-center gap-1 shrink-0">
@@ -398,19 +392,19 @@ export default function CategoryPage() {
     // Dynamic attribute filters
     ...(Array.isArray(categoryData?.attributeSchema)
       ? categoryData.attributeSchema
-          .filter((a) => a?.isFilterable !== false && Array.isArray(a?.options) && a.options.length)
-          .map((attribute) => ({
-            key: `attr_${attribute.key}`,
-            title: attribute.label || attribute.key,
-            content: (
-              <OptionFilter
-                name={`attr_${attribute.key}`}
-                options={attribute.options.map((o) => ({ value: String(o), label: String(o) }))}
-                selected={searchParams.get(`attr_${attribute.key}`)}
-                onChange={(value) => updateParam(`attr_${attribute.key}`, value)}
-              />
-            ),
-          }))
+        .filter((a) => a?.isFilterable !== false && Array.isArray(a?.options) && a.options.length)
+        .map((attribute) => ({
+          key: `attr_${attribute.key}`,
+          title: attribute.label || attribute.key,
+          content: (
+            <OptionFilter
+              name={`attr_${attribute.key}`}
+              options={attribute.options.map((o) => ({ value: String(o), label: String(o) }))}
+              selected={searchParams.get(`attr_${attribute.key}`)}
+              onChange={(value) => updateParam(`attr_${attribute.key}`, value)}
+            />
+          ),
+        }))
       : []),
     brandList.length > 0 && {
       key: "brand",
@@ -469,7 +463,7 @@ export default function CategoryPage() {
     searchParams.get("brand") && { key: "brand", label: `Brand: ${searchParams.get("brand")}` },
     searchParams.get("rating") && { key: "rating", label: `Rating: ${searchParams.get("rating")}★ & up` },
     searchParams.get("inStock") && { key: "inStock", label: "In Stock Only" },
-    ["color","size","material","fit","storage","skinType","shade","finish","room","sport","concern"]
+    ["color", "size", "material", "fit", "storage", "skinType", "shade", "finish", "room", "sport", "concern"]
       .map((key) => searchParams.get(key) && { key, label: `${key}: ${searchParams.get(key)}` })
       .filter(Boolean),
     ...Array.from(searchParams.entries())
@@ -480,7 +474,6 @@ export default function CategoryPage() {
       label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,
     },
   ].flat().filter(Boolean);
- 
 
   if (categoryLoading && !categoryData && !firstLoadDone && !products.length) {
     return <CategoryPageSkeleton />;
@@ -494,23 +487,84 @@ export default function CategoryPage() {
       />
 
       {/* ── Hero banner ─────────────────────────────────────────────────── */}
-      {categoryImage ? (
-        <div className="relative h-44 w-full overflow-hidden rounded-[var(--customer-radius-lg)] mt-4 sm:h-56">
-          <img
-            src={categoryImage}
-            alt={categoryTitle}
-            className="h-full w-full object-cover"
-            onError={(event) => applyImageFallback(event, categoryTitle, "category")}
-          />
-          <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/20 to-transparent px-6 pb-6">
-            <div>
-              <Breadcrumbs items={breadcrumbItems} className="mb-1 text-white/80" />
-              <h1 className="text-2xl font-extrabold text-white sm:text-3xl capitalize">
-                {categoryTitle}
-              </h1>
-              {pageInfo.total > 0 && (
-                <p className="mt-1 text-sm text-white/70">{pageInfo.total.toLocaleString()} products</p>
-              )}
+      {bannerImage ? (
+        <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
+          <div className="grid gap-0 h-[320px] sm:h-[380px] md:h-[450px] lg:h-[500px] lg:grid-cols-[52%_48%]">
+
+            {/* Mobile & Tablet Banner */}
+            <div className="relative lg:hidden h-full">
+              <img
+                src={bannerImage}
+                alt={categoryTitle}
+                className="absolute inset-0 h-full w-full object-cover"
+                onError={(event) =>
+                  applyImageFallback(event, categoryTitle, "category")
+                }
+              />
+
+              <div className="absolute inset-0 bg-black/30" />
+
+              <div className="absolute inset-0 flex items-center px-5 sm:px-8">
+                <div className="max-w-md">
+                  <Breadcrumbs
+                    items={breadcrumbItems}
+                    className="mb-2 text-white/80"
+                  />
+
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white capitalize">
+                    {categoryTitle}
+                  </h1>
+
+                  <p className="mt-3 text-sm sm:text-base text-white">
+                    {categoryDesc ||
+                      `Explore our wide range of ${categoryTitle.toLowerCase()} with the latest features, premium quality, and the best offers available for every need.`}
+                  </p>
+
+                  {pageInfo.total > 0 && (
+                    <p className="mt-3 text-sm text-white">
+                      {pageInfo.total.toLocaleString()} Products
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop Content */}
+            <div className="hidden lg:flex items-center px-8 xl:px-16">
+              <div className="max-w-xl">
+                <Breadcrumbs
+                  items={breadcrumbItems}
+                  className="mb-3 text-white/80"
+                />
+
+                <h1 className=" font-bold text-[65px] leading-[75px] text-white capitalize">
+                  {categoryTitle}
+                </h1>
+
+                <p className="mt-4 font-normal text-[18px] leading-[18px] text-white/80">
+                  {categoryDesc ||
+                    `Explore our wide range of woman's with the latest features, premium quality, and the best offers available for every need.`}
+                </p>
+                {/* {pageInfo.total > 0 && (
+                  <p className="mt-4 text-white/70">
+                    {pageInfo.total.toLocaleString()} Products
+                  </p>
+                )} */}
+              </div>
+            </div>
+
+            {/* Desktop Image */}
+            <div className="relative hidden lg:block overflow-hidden -ml-px">
+              <img
+                src={bannerImage}
+                alt={categoryTitle}
+                className="h-full w-full object-cover object-right"
+                onError={(event) =>
+                  applyImageFallback(event, categoryTitle, "category")
+                }
+              />
+
+              <div className="absolute inset-y-0 -left-px right-0 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/20 to-transparent" />
             </div>
           </div>
         </div>
@@ -558,7 +612,7 @@ export default function CategoryPage() {
                   key={k}
                   sub={sub}
                   isActive={activeSubKey === k}
-                  onClick={() => {}}
+                  onClick={() => { }}
                 />
               );
             })}
@@ -570,7 +624,7 @@ export default function CategoryPage() {
               <p className="mb-2 text-xs font-semibold text-[var(--customer-muted)] uppercase tracking-wide">
                 {activeSubData?.title || "Sub-types"}
               </p>
-              <ChildChips selectedKey="" onSelect={() => {}}>
+              <ChildChips selectedKey="" onSelect={() => { }}>
                 {activeSubChildren}
               </ChildChips>
             </div>
