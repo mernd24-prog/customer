@@ -2,34 +2,42 @@ export default function QuantitySelector({
   quantity,
   onIncrease,
   onDecrease,
-  increaseDisabled = false,
-  increaseDisabledLabel = "Increase quantity unavailable",
+  max,
+  disabled,
 }) {
+  const atMax = max != null && quantity >= max;
+
   return (
-    <div className="flex w-fit items-center overflow-hidden rounded-[var(--customer-radius-sm)] border border-[var(--customer-border)] bg-white">
-      <button
-        type="button"
-        onClick={onDecrease}
-        disabled={disabled || quantity <= 1}
-        className="flex h-8 w-8 items-center justify-center text-base font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] disabled:cursor-not-allowed disabled:text-[var(--customer-subtle)] disabled:hover:bg-white sm:h-9 sm:w-9 sm:text-lg"
-        aria-label="Decrease quantity"
-      >
-        -
-      </button>
+    <div className="flex w-fit flex-col gap-2">
+      <p className="font-dm-sans text-[15px]  font-bold leading-none text-[#2E2E2E] min-[375px]:text-[16px] sm:text-[18px]">
+        Quantity
+      </p>
 
-      <span className="flex min-w-[40px] items-center justify-center border-x border-[var(--customer-border)] px-3 py-1 text-xs font-semibold text-[var(--customer-ink)] sm:min-w-[50px] sm:px-4 sm:text-sm">
-        {quantity}
-      </span>
+      <div className="flex h-[44px] w-[140px] items-center justify-between rounded-full border border-[#1B1D60]/60 bg-[#D9D9E3]  p-[6px] min-[375px]:h-[46px] min-[375px]:w-[160px] min-[375px]:p-[7px] sm:h-[54px] sm:w-[163px]">
+        <button
+          type="button"
+          onClick={onDecrease}
+          disabled={disabled || quantity <= 1}
+          className="flex h-[32px] w-[32px] items-center justify-center rounded-full bg-[#1B1D60] text-[24px] font-light leading-none text-white disabled:cursor-not-allowed disabled:opacity-50 min-[375px]:h-[36px] min-[375px]:w-[36px] min-[375px]:text-[28px] sm:h-[35px]  sm:w-[35px] sm:text-[28px]"
+          aria-label="Decrease quantity"
+        >
+          −
+        </button>
 
-      <button
-        type="button"
-        onClick={onIncrease}
-        disabled={increaseDisabled}
-        className="flex h-8 w-8 items-center justify-center text-base font-semibold text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] disabled:cursor-not-allowed disabled:text-[var(--customer-subtle)] disabled:hover:bg-white sm:h-9 sm:w-9 sm:text-lg"
-        aria-label={increaseDisabled ? increaseDisabledLabel : "Increase quantity"}
-      >
-        +
-      </button>
+        <span className="font-dm-sans text-[14px] font-medium leading-none text-[#2E2E2E] min-[375px]:text-[15px] sm:text-[16px]">
+          {String(quantity).padStart(2, "0")}
+        </span>
+
+        <button
+          type="button"
+          onClick={onIncrease}
+          disabled={disabled || atMax}
+          className="flex h-[32px] w-[32px] items-center justify-center rounded-full bg-[#1B1D60] text-[24px] font-light leading-none text-white disabled:cursor-not-allowed disabled:opacity-50 min-[375px]:h-[36px] min-[375px]:w-[36px] min-[375px]:text-[28px] sm:h-[35px]  sm:w-[35px] sm:text-[28px]"
+          aria-label="Increase quantity"
+        >
+          +
+        </button>
+      </div>
     </div>
   );
 }

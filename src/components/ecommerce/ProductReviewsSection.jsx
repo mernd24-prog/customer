@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  ChevronRight,
-  Star,
-  ThumbsUp,
-  Trash2,
-  UserCircle,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { IoIosStar } from "react-icons/io";
 import {
   fetchProductReviews,
   submitProductReview,
@@ -37,7 +32,7 @@ function StarInput({ value, onChange, size = 28 }) {
           onMouseLeave={() => setHovered(0)}
           className="transition-transform hover:scale-110"
         >
-          <Star
+          <IoIosStar
             size={size}
             className={
               n <= (hovered || value)
@@ -53,18 +48,13 @@ function StarInput({ value, onChange, size = 28 }) {
 
 function RatingPill({ rating }) {
   return (
-    <span className="inline-flex items-center gap-1  rounded-full bg-[var(--customer-success)] px-2.5 py-1 text-xs font-bold text-white">
-      {rating} <span className="text-[10px]">★</span>
+    <span className="inline-flex items-center gap-1 rounded-full bg-[#CE9F2D] px-2 py-1 text-[10px] font-bold text-white">
+      <IoIosStar className="text-base" />({rating})
     </span>
   );
 }
 
-function ProductReviewCard({ review, currentUserId, onHelpful, onDelete }) {
-  const isOwn =
-    currentUserId && String(review.buyerId) === String(currentUserId);
-  const alreadyVoted = (review.helpfulVotedBy || []).includes(
-    String(currentUserId || ""),
-  );
+function ProductReviewCard({ review }) {
   const dateStr = review.createdAt
     ? new Date(review.createdAt).toLocaleDateString("en-GB", {
         day: "numeric",
@@ -76,27 +66,20 @@ function ProductReviewCard({ review, currentUserId, onHelpful, onDelete }) {
   const rating = Number(review.rating || 0).toFixed(1);
   const name = review.buyerName || review.name || "Verified Buyer";
   const text = review.reviewText || review.text;
-  const media = review.media || review.images || [];
-  const helpfulVotes = review.helpfulVotes ?? review.helpful ?? 0;
-  const reviewId = review._id || review.id;
 
   return (
-    <article className="border-b border-[var(--customer-border)] py-5 last:border-b-0">
-      <div className="mb-3 flex items-center gap-2">
-        <UserCircle
-          size={24}
-          className="shrink-0 text-[var(--customer-border-strong)]"
-        />
-        <span className="text-sm font-bold text-[var(--customer-muted)]">
-          {name}
+    <article className="border-b border-[var(--customer-border)] last:border-b-0 sm:pb-4 mb-6">
+      <div className="mb-2  flex min-w-0 items-center gap-2.5">
+        <span className="w-10 h-10">
+          <img src="/image/png/person.png" alt="Person Image" />
         </span>
+        <span className=" text-xl font-bold text-[#2E2E2E]">{name}</span>
       </div>
 
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         <RatingPill rating={rating} />
-        <span className="text-[var(--customer-border-strong)]">•</span>
-        <span className="text-xs font-semibold text-[var(--customer-muted)]">
-          Posted on {dateStr || review.date}
+        <span className="text-sm font-medium text-[#949494]">
+          · Posted on {dateStr || review.date}
         </span>
       </div>
 
@@ -105,27 +88,7 @@ function ProductReviewCard({ review, currentUserId, onHelpful, onDelete }) {
           {review.title}
         </p>
       )}
-      {text && (
-        <p className="text-sm font-medium leading-6 text-[var(--customer-ink)]">
-          {text}
-        </p>
-      )}
-
-      {media.length > 0 && (
-        <div className="mt-4  flex flex-wrap gap-3">
-          {media.map((src, i) => (
-            <img
-              key={`${src}-${i}`}
-              src={src}
-              alt=""
-              className="h-[74px] w-[74px] rounded-[8px] border border-[var(--customer-border)] bg-[var(--customer-cream)] object-cover"
-              onError={(e) => {
-                e.target.style.display = "none";
-              }}
-            />
-          ))}
-        </div>
-      )}
+      {text && <p className="text-sm  text-[#2E2E2E] sm:text-lg ">{text}</p>}
 
       {review.adminReply?.text && (
         <div className="mt-4 rounded-[6px] border-l-2 border-[var(--customer-gold)] bg-[var(--customer-cream)] p-3">
@@ -137,44 +100,6 @@ function ProductReviewCard({ review, currentUserId, onHelpful, onDelete }) {
           </p>
         </div>
       )}
-
-      <div className="mt-4 flex items-center gap-4">
-        {reviewId ? (
-          <button
-            type="button"
-            onClick={() => onHelpful(reviewId)}
-            className={`inline-flex items-center gap-2 text-sm font-semibold transition-colors ${
-              alreadyVoted
-                ? "text-[var(--customer-gold-dark)]"
-                : "text-[var(--customer-muted)] hover:text-[var(--customer-ink)]"
-            }`}
-          >
-            <ThumbsUp
-              size={18}
-              className={
-                alreadyVoted
-                  ? "fill-[var(--customer-gold-dark)]"
-                  : "fill-[var(--customer-muted)]"
-              }
-            />
-            Helpful ({helpfulVotes})
-          </button>
-        ) : (
-          <span className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--customer-muted)]">
-            <ThumbsUp size={18} className="fill-[var(--customer-muted)]" />
-            Helpful ({helpfulVotes})
-          </span>
-        )}
-        {isOwn && (
-          <button
-            type="button"
-            onClick={() => onDelete(reviewId)}
-            className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-red-400 transition-colors hover:text-red-600"
-          >
-            <Trash2 size={12} /> Delete
-          </button>
-        )}
-      </div>
     </article>
   );
 }
@@ -312,6 +237,8 @@ const SORT_OPTIONS = [
   { value: "lowest", label: "Lowest Rated" },
 ];
 
+const EMPTY_REVIEWS = [];
+
 function getRatingBreakdown(stats) {
   if (!stats?.distribution || !stats.count) return fallbackRatingBreakdown;
 
@@ -337,6 +264,36 @@ function getRatingBreakdown(stats) {
   });
 }
 
+function getReviewRating(review) {
+  return Number(review?.rating || 0);
+}
+
+function getReviewHelpfulVotes(review) {
+  return Number(review?.helpfulVotes ?? review?.helpful ?? 0);
+}
+
+function getReviewTime(review) {
+  const rawDate = review?.createdAt || review?.date;
+  const time = rawDate ? new Date(rawDate).getTime() : 0;
+  return Number.isFinite(time) ? time : 0;
+}
+
+function sortReviewsByOption(reviews, sort) {
+  const sorted = [...reviews];
+
+  sorted.sort((a, b) => {
+    if (sort === "highest") return getReviewRating(b) - getReviewRating(a);
+    if (sort === "lowest") return getReviewRating(a) - getReviewRating(b);
+    if (sort === "helpful") {
+      return getReviewHelpfulVotes(b) - getReviewHelpfulVotes(a);
+    }
+
+    return getReviewTime(b) - getReviewTime(a);
+  });
+
+  return sorted;
+}
+
 export default function ProductReviewsSection({ productId, product }) {
   const dispatch = useDispatch();
 
@@ -348,7 +305,7 @@ export default function ProductReviewsSection({ productId, product }) {
   const bucket = reviewState.reviewsByProduct[productId] || {};
   const stats = reviewState.statsByProduct[productId] || null;
   const myReview = reviewState.myReviewByProduct[productId];
-  const items = bucket.items || [];
+  const items = bucket.items || EMPTY_REVIEWS;
   const total = bucket.total || 0;
 
   const orderState = useSelector((s) => s.order);
@@ -366,7 +323,21 @@ export default function ProductReviewsSection({ productId, product }) {
   const [sort, setSort] = useState("newest");
   const [ratingFilter, setRatingFilter] = useState(0);
   const [showForm, setShowForm] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortMenuRef = useRef(null);
   const LIMIT = 5;
+
+  useEffect(() => {
+    if (!sortOpen) return undefined;
+
+    const handlePointerDown = (event) => {
+      if (sortMenuRef.current?.contains(event.target)) return;
+      setSortOpen(false);
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [sortOpen]);
 
   useEffect(() => {
     dispatch(
@@ -406,219 +377,233 @@ export default function ProductReviewsSection({ productId, product }) {
 
   const totalPages = Math.ceil(total / LIMIT);
   const canWriteReview = isLoggedIn && deliveredOrders.length > 0 && !myReview;
-  const filteredFallbackReviews = ratingFilter
-    ? fallbackReviews.filter(
-        (review) => Math.round(Number(review.rating || 0)) === ratingFilter,
-      )
-    : fallbackReviews;
+  const filteredFallbackReviews = useMemo(
+    () =>
+      ratingFilter
+        ? fallbackReviews.filter(
+            (review) => Math.round(getReviewRating(review)) === ratingFilter,
+          )
+        : fallbackReviews,
+    [ratingFilter],
+  );
   const hasApiReviews = items.length > 0;
   const displayTotal = total || filteredFallbackReviews.length;
   const displayReviewCount = stats?.count || displayTotal;
   const displayAvgRating = stats?.avgRating || 4;
-  const displayReviews =
-    bucket.loading && items.length === 0
-      ? []
-      : hasApiReviews
-        ? items
-        : filteredFallbackReviews;
+  const displayReviews = useMemo(() => {
+    if (bucket.loading && items.length === 0) return [];
+    const sourceReviews = hasApiReviews ? items : filteredFallbackReviews;
+    return sortReviewsByOption(sourceReviews, sort);
+  }, [bucket.loading, filteredFallbackReviews, hasApiReviews, items, sort]);
   const displayRatingBreakdown = getRatingBreakdown(stats);
+  const selectedSortLabel =
+    SORT_OPTIONS.find((option) => option.value === sort)?.label ||
+    "Most Recent";
 
   return (
-    <div className="panel overflow-hidden p-4 sm:p-6" id="reviews">
-      {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
-        <div>
-          <h2 className="text-xl font-bold text-[var(--customer-ink)]">
-            Product Ratings & Reviews
-          </h2>
-        </div>
+    <section id="reviews" className="w-full overflow-hidden">
+      <div className="flex  flex-col gap-4 lg:gap-12 lg:flex-row">
+        <aside className=" lg:sticky lg:top-20 lg:self-start">
+          <div className="w-full lg:w-[400px] rounded-[8px] border border-[#CE9F2D66] bg-white">
+            <div className="bg-[#CE9F2D33] px-4 py-3 sm:px-5">
+              <h2 className="text-lg font-bold text-[#2E2E2E]">
+                Product Ratings & Reviews
+              </h2>
+            </div>
 
-        {canWriteReview && (
-          <button
-            type="button"
-            onClick={() => setShowForm((v) => !v)}
-            className="button px-5 py-2 text-sm font-semibold text-[#1B1D60]"
-          >
-            {showForm ? "Cancel" : "Write a Review"}
-          </button>
-        )}
-        {isLoggedIn &&
-          !canWriteReview &&
-          deliveredOrders.length === 0 &&
-          total === 0 && (
-            <p className="text-xs text-gray">
-              Purchase this product to leave a review.
-            </p>
-          )}
-        {myReview && (
-          <p className="text-xs text-success font-medium">
-            You have already reviewed this product.
-          </p>
-        )}
-      </div>
+            <div className="p-4 sm:p-5">
+              <div className="flex  items-center gap-2  font-bold  text-[#008425]">
+                <span>
+                  <IoIosStar className="text-lg" />
+                </span>
+                <span className="text-3xl">
+                  {Number(displayAvgRating).toFixed(1)}
+                </span>
+              </div>
+              <p className="my-2 text-base font-medium  text-[#2E2E2E]">
+                {displayReviewCount} Ratings, {displayTotal} Reviews
+              </p>
 
-      {/* Rating distribution */}
-      <div className="mt-8 grid gap-8 md:grid-cols-[120px_1fr] md:items-center">
-        <div>
-          <div className="flex items-center gap-2 text-[42px] font-bold leading-none text-[var(--customer-success)]">
-            {Number(displayAvgRating).toFixed(1)}{" "}
-            <span className="text-2xl">★</span>
+              <div className="space-y-3">
+                {displayRatingBreakdown.map((item, index) => {
+                  const rating = item.rating || 5 - index;
+                  return (
+                    <button
+                      key={item.label}
+                      type="button"
+                      onClick={() => {
+                        setRatingFilter(ratingFilter === rating ? 0 : rating);
+                        setPage(1);
+                      }}
+                      className={`grid  w-full  items-center gap-1 text-left   ${
+                        ratingFilter && ratingFilter !== rating
+                          ? "opacity-40"
+                          : "opacity-100"
+                      }`}
+                    >
+                      <div className="mt-2 flex justify-between">
+                        <span className="  text-[11px]  font-medium text-[#2E2E2E] sm:text-sm">
+                          {item.label}
+                        </span>
+                        <span className="text-right  text-[11px] font-medium text-[#2E2E2E] sm:text-base">
+                          {item.count}
+                        </span>
+                      </div>
+
+                      <span className="h-0.5  overflow-hidden bg-[var(--customer-border)]">
+                        <span
+                          className={`block h-full ${item.color}`}
+                          style={{ width: item.width }}
+                        />
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {ratingFilter > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setRatingFilter(0)}
+                  className="mt-4 text-xs font-bold text-[var(--customer-gold-dark)] hover:text-[var(--customer-gold)]"
+                >
+                  Clear filter
+                </button>
+              )}
+            </div>
           </div>
-          <p className="mt-3 text-xs font-bold leading-5 text-[var(--customer-muted)]">
-            {displayReviewCount} Ratings,
-            <br />
-            {displayTotal} Reviews
-          </p>
-        </div>
 
-        <div className="space-y-4">
-          {displayRatingBreakdown.map((item, index) => {
-            const rating = item.rating || 5 - index;
-            return (
+          <div className="mt-4 space-y-3">
+            {canWriteReview && (
               <button
-                key={item.label}
                 type="button"
-                onClick={() => {
-                  setRatingFilter(ratingFilter === rating ? 0 : rating);
-                  setPage(1);
-                }}
-                className={`grid w-full grid-cols-[86px_1fr_48px] items-center gap-4 transition-opacity ${
-                  ratingFilter && ratingFilter !== rating
-                    ? "opacity-40"
-                    : "opacity-100"
-                }`}
+                onClick={() => setShowForm((v) => !v)}
+                className="button w-full px-5 py-2 text-sm font-semibold text-[#1B1D60]"
               >
-                <span className="text-right text-xs font-bold text-[var(--customer-ink)]">
-                  {item.label}
-                </span>
-                <span className="h-1.5 overflow-hidden rounded-full bg-[var(--customer-border)]">
-                  <span
-                    className={`block h-full rounded-full ${item.color}`}
-                    style={{ width: item.width }}
-                  />
-                </span>
-                <span className="text-left text-xs font-bold text-[var(--customer-muted)]">
-                  {item.count}
-                </span>
+                {showForm ? "Cancel" : "Write a Review"}
               </button>
-            );
-          })}
-          {ratingFilter > 0 && (
-            <button
-              onClick={() => setRatingFilter(0)}
-              className="text-xs font-bold text-[var(--customer-gold-dark)] hover:text-[var(--customer-gold)]"
-            >
-              Clear filter
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Write review form */}
-      {showForm && canWriteReview && (
-        <div className="mt-8">
-          <WriteReviewForm
-            productId={productId}
-            deliveredOrders={deliveredOrders}
-            onSuccess={handleFormSuccess}
-          />
-        </div>
-      )}
-
-      {/* Sort + filter bar */}
-      {displayTotal > 0 && (
-        <div className="mt-5 flex items-center justify-between gap-2">
-          <h3 className="text-sm font-bold text-[var(--customer-ink)]">
-            Customer Reviews ({displayTotal})
-          </h3>
-          <div className="relative">
-            <select
-              value={sort}
-              onChange={(e) => {
-                setSort(e.target.value);
-                setPage(1);
-              }}
-              className="appearance-none border-0 bg-white py-1.5 pl-3 pr-8 text-xs font-bold text-[var(--customer-gold-dark)]"
-              style={{
-                backgroundImage: "none",
-                WebkitAppearance: "none",
-                MozAppearance: "none",
-              }}
-            >
-              {SORT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
+            )}
           </div>
-          {ratingFilter > 0 && (
-            <span className="text-xs bg-gold-soft text-gold-dark px-2 py-1 rounded-full">
-              {ratingFilter}★ only
-            </span>
+        </aside>
+
+        <div className="min-w-0">
+          {showForm && canWriteReview && (
+            <div className="mb-6">
+              <WriteReviewForm
+                productId={productId}
+                deliveredOrders={deliveredOrders}
+                onSuccess={handleFormSuccess}
+              />
+            </div>
+          )}
+
+          {displayTotal > 0 && (
+            <div className="flex flex-col gap-3 mt-6 sm:flex-row justify-end ">
+              <div className="flex flex-wrap items-center gap-2">
+                {ratingFilter > 0 && (
+                  <span className="rounded-full bg-gold-soft px-2 py-1 text-xs text-gold-dark">
+                    {ratingFilter}★ only
+                  </span>
+                )}
+                <div ref={sortMenuRef} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setSortOpen((open) => !open)}
+                    className="flex min-h-9 min-w-[160px] items-center justify-between gap-3 rounded-[6px] border border-[var(--customer-border)] bg-white py-2 pl-3 pr-2 text-left text-xs font-bold text-[var(--customer-gold-dark)] focus:outline-none"
+                  >
+                    <span>{selectedSortLabel}</span>
+                    <span className="text-[10px] text-ink">▾</span>
+                  </button>
+
+                  {sortOpen && (
+                    <div className="absolute right-0 top-[calc(100%+4px)] z-50 w-[160px] overflow-hidden rounded-[6px] border border-[var(--customer-border)] bg-white">
+                      {SORT_OPTIONS.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => {
+                            setSort(option.value);
+                            setPage(1);
+                            setSortOpen(false);
+                          }}
+                          className={`block w-full px-3 py-2 text-left text-xs font-medium ${
+                            sort === option.value
+                              ? "bg-[#1B1D60] text-white"
+                              : "bg-white text-[var(--customer-gold-dark)] hover:bg-[#F8F3E7]"
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {bucket.loading && items.length === 0 && (
+            <div className="flex flex-col gap-3 pt-4">
+              {Array.from({ length: 3 }, (_, i) => (
+                <div
+                  key={i}
+                  className="h-28 animate-pulse rounded-[8px] bg-surface-soft"
+                />
+              ))}
+            </div>
+          )}
+
+          <div>
+            {displayReviews.map((review, index) => (
+              <ProductReviewCard
+                key={
+                  review._id ||
+                  review.id ||
+                  `${review.name}-${review.date}-${index}`
+                }
+                review={review}
+                currentUserId={userId}
+                onHelpful={handleHelpful}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+
+          {displayTotal > 0 && (
+            <Link
+              to={`/products/${productId}/reviews`}
+              state={{ product }}
+              className=" flex w-full items-center gap-2 text-left text-lg font-semibold  text-[#CE9F2D] transition-colors "
+            >
+              View all reviews <ChevronRight size={16} />
+            </Link>
+          )}
+
+          {totalPages > 1 && (
+            <div className="mt-6 flex items-center justify-center gap-2">
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+                className="rounded-full border border-border-strong px-4 py-2 text-xs transition-colors hover:bg-surface-soft disabled:opacity-40"
+              >
+                Previous
+              </button>
+              <span className="text-xs text-gray">
+                Page {page} of {totalPages}
+              </span>
+              <button
+                type="button"
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => p + 1)}
+                className="rounded-full border border-border-strong px-4 py-2 text-xs transition-colors hover:bg-surface-soft disabled:opacity-40"
+              >
+                Next
+              </button>
+            </div>
           )}
         </div>
-      )}
-
-      {/* Reviews list */}
-      {bucket.loading && items.length === 0 && (
-        <div className="flex flex-col gap-3">
-          {Array.from({ length: 3 }, (_, i) => (
-            <div key={i} className="panel animate-pulse h-28 bg-surface-soft" />
-          ))}
-        </div>
-      )}
-
-      <div className="mt-2">
-        {displayReviews.map((review, index) => (
-          <ProductReviewCard
-            key={
-              review._id ||
-              review.id ||
-              `${review.name}-${review.date}-${index}`
-            }
-            review={review}
-            currentUserId={userId}
-            onHelpful={handleHelpful}
-            onDelete={handleDelete}
-          />
-        ))}
       </div>
-
-      {displayTotal > 0 && (
-        <Link
-          to={`/products/${productId}/reviews`}
-          state={{ product }}
-          className="flex w-full items-center gap-2 border-t border-[var(--customer-border)] pt-5 text-left text-sm font-bold uppercase text-[var(--customer-gold-dark)] transition-colors hover:text-[var(--customer-gold)]"
-        >
-          View all reviews <ChevronRight size={18} />
-        </Link>
-      )}
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-6">
-          <button
-            type="button"
-            disabled={page <= 1}
-            onClick={() => setPage((p) => p - 1)}
-            className="px-4 py-2 text-xs border border-border-strong rounded-full disabled:opacity-40 hover:bg-surface-soft transition-colors"
-          >
-            Previous
-          </button>
-          <span className="text-xs text-gray">
-            Page {page} of {totalPages}
-          </span>
-          <button
-            type="button"
-            disabled={page >= totalPages}
-            onClick={() => setPage((p) => p + 1)}
-            className="px-4 py-2 text-xs border border-border-strong rounded-full disabled:opacity-40 hover:bg-surface-soft transition-colors"
-          >
-            Next
-          </button>
-        </div>
-      )}
-    </div>
+    </section>
   );
 }
