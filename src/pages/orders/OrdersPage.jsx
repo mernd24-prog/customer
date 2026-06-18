@@ -8,12 +8,10 @@ import {
   Circle,
   Clock3,
   CreditCard,
-  Download,
   MapPin,
   Package,
   ReceiptText,
   RotateCcw,
-  Store,
   Truck,
   XCircle,
 } from "lucide-react";
@@ -38,14 +36,6 @@ const STATUS_BADGE = {
   delivered: "bg-emerald-100 text-emerald-700",
   fulfilled: "bg-green-100 text-green-700",
   cancelled: "bg-red-100 text-red-700",
-  return_requested: "bg-amber-100 text-amber-700",
-  return_approved: "bg-blue-100 text-blue-700",
-  return_rejected: "bg-red-100 text-red-700",
-  pickup_scheduled: "bg-indigo-100 text-indigo-700",
-  pickup_completed: "bg-violet-100 text-violet-700",
-  refund_initiated: "bg-sky-100 text-sky-700",
-  refund_completed: "bg-emerald-100 text-emerald-700",
-  order_closed: "bg-gray-100 text-gray-600",
 };
 const ORDER_STEPS = [
   "pending_payment",
@@ -54,14 +44,6 @@ const ORDER_STEPS = [
   "shipped",
   "delivered",
   "fulfilled",
-];
-const RETURN_STEPS = [
-  "return_requested",
-  "return_approved",
-  "pickup_scheduled",
-  "pickup_completed",
-  "refund_initiated",
-  "refund_completed",
 ];
 const TRACKING_LABELS = {
   pending_payment: "Payment pending",
@@ -72,14 +54,6 @@ const TRACKING_LABELS = {
   delivered: "Delivered",
   fulfilled: "Completed",
   cancelled: "Cancelled",
-  return_requested: "Return requested",
-  return_approved: "Return approved",
-  return_rejected: "Return rejected",
-  pickup_scheduled: "Pickup scheduled",
-  pickup_completed: "Pickup done",
-  refund_initiated: "Refund initiated",
-  refund_completed: "Refund completed",
-  order_closed: "Order closed",
 };
 
 const getOrderId = (order) =>
@@ -424,22 +398,6 @@ const asNumber = (value) => {
 };
 const humanize = (value, fallback = "N/A") =>
   value ? String(value).replace(/_/g, " ") : fallback;
-const getItemSeller = (item) => {
-  const seller = item?.seller ?? item?.sellerId;
-  if (!seller) return null;
-  if (typeof seller === "object") {
-    return seller?.storeName || seller?.store_name || seller?.businessName || seller?.name || seller?.full_name || null;
-  }
-  return null;
-};
-const getBillingAddress = (order) =>
-  order?.billing_address || order?.billingAddress || null;
-const getInvoiceUrl = (order) =>
-  order?.invoice_url || order?.invoiceUrl || order?.relations?.invoice?.url || null;
-const isInReturnLifecycle = (order) => {
-  const status = getOrderStatus(order);
-  return RETURN_STEPS.includes(status) || Boolean(order?.returns?.length || order?.relations?.returns?.length);
-};
 
 function OrderStatusBadge({ status }) {
   const cls = STATUS_BADGE[status] || "bg-cream text-muted";
@@ -466,37 +424,10 @@ function InfoTile({ icon, label, value }) {
   );
 }
 
-function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
-  const activeIndex = steps.indexOf(activeStatus);
-  return (
-    <div className={`grid gap-3`} style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
-      {steps.map((step, index) => {
-        const done = activeIndex >= index;
-        const current = activeIndex === index;
-        return (
-          <div key={step} className="min-w-0">
-            <div
-              className={`flex h-10 items-center justify-center rounded-full border ${done ? `${colorClass} text-white` : "border-border bg-white text-gray"}`}
-            >
-              {done ? <CheckCircle2 size={16} /> : <Circle size={14} />}
-            </div>
-            <p
-              className={`mt-2 text-center text-[11px] font-semibold capitalize ${current ? "text-ink" : "text-muted"}`}
-            >
-              {TRACKING_LABELS[step]}
-            </p>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function OrderProgress({ status, order }) {
+function OrderProgress({ status }) {
+  const activeIndex = ORDER_STEPS.indexOf(status);
   const isCancelled = status === "cancelled";
   const isFailed = status === "payment_failed";
-  const isReturnRejected = status === "return_rejected";
-  const inReturnFlow = RETURN_STEPS.includes(status) || isReturnRejected;
   const visibleSteps =
     isCancelled || isFailed
       ? [
@@ -528,25 +459,7 @@ function OrderProgress({ status, order }) {
     visibleSteps.find((step) => step.current) ||
     visibleSteps[visibleSteps.length - 1];
 
-  if (isReturnRejected) {
-    return (
-      <div className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-        <div className="flex items-center gap-2 font-semibold">
-          <XCircle size={16} /> Return rejected
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-5">
-      <StepBar steps={ORDER_STEPS} activeStatus={inReturnFlow ? "fulfilled" : status} colorClass="border-gold bg-gold" />
-      {inReturnFlow && (
-        <div className="rounded-[8px] border border-amber-200 bg-amber-50 p-4">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-amber-700">Return &amp; refund progress</p>
-          <StepBar steps={RETURN_STEPS} activeStatus={status} colorClass="border-amber-500 bg-amber-500" />
-        </div>
-      )}
     <div className="overflow-hidden rounded-[12px] border border-border bg-white shadow-[0_14px_40px_rgba(31,36,48,0.06)]">
       <div className="border-b border-border bg-gradient-to-r from-cream via-white to-gold-soft/50 px-4 py-3 sm:px-5">
         <p className="text-[11px] font-bold uppercase tracking-normal text-gold-dark">
@@ -634,7 +547,6 @@ function OrderProgress({ status, order }) {
           );
         })}
       </ol>
-    </div>
     </div>
   );
 }
@@ -733,8 +645,6 @@ function OrderDetail({ orderId, track }) {
   const courierName = getCourierName(order);
   const trackingUrl = getTrackingUrl(order);
   const paymentMethod = getPaymentMethod(order);
-  const billingAddress = getBillingAddress(order);
-  const invoiceUrl = getInvoiceUrl(order);
 
   useEffect(() => {
     dispatch(fetchOrderById({ orderId }));
@@ -1071,12 +981,6 @@ function OrderDetail({ orderId, track }) {
                                   </span>{" "}
                                   × {formatMoney(unitPrice, currency)}
                                 </p>
-                                {getItemSeller(item) && (
-                                  <p className="mt-1 flex items-center gap-1 text-xs text-muted">
-                                    <Store size={11} className="shrink-0" />
-                                    {getItemSeller(item)}
-                                  </p>
-                                )}
                               </div>
                             </div>
 
@@ -1233,29 +1137,6 @@ function OrderDetail({ orderId, track }) {
                       </div>
                     </div>
                   )}
-
-                  {billingAddress && hasShippingAddress(billingAddress) && (
-                    <div className="rounded-[8px] border border-border bg-white p-4">
-                      <h2 className="flex items-center gap-2 text-sm font-bold text-ink">
-                        <CreditCard size={15} /> Billing address
-                      </h2>
-                      <div className="mt-3 break-words text-sm leading-6 text-muted">
-                        {getAddressValue(billingAddress, "fullName", "full_name") && (
-                          <p className="font-medium text-ink">
-                            {getAddressValue(billingAddress, "fullName", "full_name")}
-                          </p>
-                        )}
-                        {billingAddress?.phone && <p>{billingAddress.phone}</p>}
-                        {[billingAddress?.line1, billingAddress?.line2].filter(Boolean).length > 0 && (
-                          <p>{[billingAddress.line1, billingAddress.line2].filter(Boolean).join(", ")}</p>
-                        )}
-                        {[billingAddress?.city, billingAddress?.state, getAddressValue(billingAddress, "postalCode", "postal_code")].filter(Boolean).length > 0 && (
-                          <p>{[billingAddress.city, billingAddress.state, getAddressValue(billingAddress, "postalCode", "postal_code")].filter(Boolean).join(", ")}</p>
-                        )}
-                        {billingAddress?.country && <p>{billingAddress.country}</p>}
-                      </div>
-                    </div>
-                  )}
                 </aside>
               </section>
             )}
@@ -1339,18 +1220,6 @@ function OrderDetail({ orderId, track }) {
                       <ReceiptText size={15} /> View order
                     </Button>
                   </Link>
-                )}
-                {invoiceUrl && (
-                  <a
-                    href={invoiceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block sm:inline-flex"
-                  >
-                    <Button variant="secondary" className="w-full sm:w-auto">
-                      <Download size={15} /> Download invoice
-                    </Button>
-                  </a>
                 )}
               </section>
             )}

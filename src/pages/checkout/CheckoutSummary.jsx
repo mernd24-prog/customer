@@ -66,7 +66,7 @@ export default function CheckoutSummary({
       quoteAmounts.shippingFeeAmount ??
       shipping,
   );
-   
+
   const quotedPayable = Number(
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
   );
@@ -74,6 +74,10 @@ export default function CheckoutSummary({
     total + taxPayable + codCharge - quoteDiscount - quoteWallet,
     0,
   );
+  const quotePayable =
+    Number.isFinite(quotedPayable) && quotedPayable > 0
+      ? quotedPayable
+      : calculatedPayable;
 
   return (
     <aside className="min-w-0">
