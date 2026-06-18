@@ -4,13 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { Store } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
-import PageHeader from "../../components/common/PageHeader";
 import CartItemCard from "../../components/cart/CartItemCard";
 import CartSummary from "../../components/cart/CartSummary";
 import BrandButton from "../../components/ui/BrandButton";
+import { ProductCard } from "../../components/ecommerce";
 import { fetchCart, updateCart } from "../../features/cart/cartSlice";
 import { fetchProductById } from "../../features/product/productSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
+import { useProductActions } from "../../hooks/useProductActions";
+import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import {
   getProductId,
   getProductImage,
@@ -21,6 +23,7 @@ import {
   wishlistPayload,
 } from "../../utils/ecommerce";
 import { ConfirmModal } from "../../components/common";
+import { ChevronRight } from "lucide-react";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 const SAVED_FOR_LATER_STORAGE_KEY = "sam_global_saved_for_later_items";
@@ -137,6 +140,19 @@ function adaptItemForCard(item) {
     : stockLimitReached
       ? `Only ${stock} in stock`
       : "";
+  const rating =
+    item.rating ??
+    item.averageRating ??
+    product.rating ??
+    product.averageRating ??
+    product.ratingsAverage;
+  const reviewCount =
+    item.reviewCount ??
+    item.reviewsCount ??
+    product.reviewCount ??
+    product.reviewsCount ??
+    product.numReviews;
+  
 
   return {
     id: [productId, variantKey].filter(Boolean).join(":"),
@@ -153,6 +169,9 @@ function adaptItemForCard(item) {
     condition,
     color,
     size,
+    rating,
+    reviewCount,
+    stock,
     attributes,
     stock,
     stockMessage,
@@ -170,7 +189,7 @@ function cartLineKey(item) {
   const defaultVariant =
     !item.variantId && !item.variantSku && Array.isArray(product?.variants)
       ? product.variants.find((variant) => variant.isDefault) ||
-      product.variants[0]
+        product.variants[0]
       : null;
   const variantKey =
     item.variantId ||
@@ -235,6 +254,8 @@ export default function CartPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const run = useToastThunk();
+  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+  const recentViewedItems = getRecentlyViewed();
 
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
@@ -288,7 +309,7 @@ export default function CartPage() {
     missingIds.forEach((id) => fetchedIdsRef.current.add(id));
 
     missingIds.forEach((productId) => {
-      dispatch(fetchProductById({ productId })).catch(() => { });
+      dispatch(fetchProductById({ productId })).catch(() => {});
     });
   }, [dispatch, wishlist, productEntities]);
 
@@ -347,13 +368,13 @@ export default function CartPage() {
         savedSelectedItemIds === null
           ? currentItemIds
           : Array.from(
-            new Set([
-              ...savedSelectedItemIds.filter((id) =>
-                currentItemIdsSet.has(id),
-              ),
-              ...newlyAddedItemIds,
-            ]),
-          );
+              new Set([
+                ...savedSelectedItemIds.filter((id) =>
+                  currentItemIdsSet.has(id),
+                ),
+                ...newlyAddedItemIds,
+              ]),
+            );
 
       setSelectedItemIds(nextSelectedItemIds);
       writeSelectedCheckoutItemIds(nextSelectedItemIds);
@@ -392,8 +413,11 @@ export default function CartPage() {
   const scheduleCartUpdate = useCallback(() => {
     clearTimeout(updateTimerRef.current);
     updateTimerRef.current = setTimeout(() => {
-      const { rawItems: latestRawItems, wishlist: latestWishlist, localQuantities: pending } =
-        latestRef.current;
+      const {
+        rawItems: latestRawItems,
+        wishlist: latestWishlist,
+        localQuantities: pending,
+      } = latestRef.current;
       const updated = latestRawItems.map((ci) => {
         const key = cartLineKey(ci);
         return pending[key] != null ? { ...ci, quantity: pending[key] } : ci;
@@ -401,7 +425,10 @@ export default function CartPage() {
       run(
         dispatch,
         updateCart(
-          normalizeCartPayloadForWrite({ items: updated, wishlist: latestWishlist }),
+          normalizeCartPayloadForWrite({
+            items: updated,
+            wishlist: latestWishlist,
+          }),
         ),
         "Cart updated",
       );
@@ -549,12 +576,26 @@ export default function CartPage() {
         description="Review items in your shopping cart."
       />
 
-      <section className="bg-white px-4 py-4 sm:px-6 sm:py-6 lg:px-12 lg:py-10">
-        <div className="mx-auto max-w-[1400px]">
-          <PageHeader
-            title={`Cart${hasCartItems ? ` (${items.length})` : ""}`}
-            className="mb-5 sm:mb-6"
-          />
+      <section className="bg-white px-3 py-6 min-[375px]:px-4 sm:px-6 sm:py-8 lg:px-10 2xl:px-0">
+        <div className="mx-auto w-full max-w-[1900px]">
+          <div className="mb-7 flex flex-col gap-4 sm:mb-8 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <nav
+                aria-label="Breadcrumb"
+                className="mb-4 flex items-center gap-2 text-sm font-medium text-[#2d2d2d] min-[375px]:text-base sm:mb-5 sm:gap-3 sm:text-lg"
+              >
+                <Link to="/" className="transition hover:text-[#1B1D60]">
+                  Home
+                </Link>
+                <span className="text-[#2d2d2d]">›</span>
+                <span className="text-[#CE9F2D]">Cart</span>
+              </nav>
+
+              <h1 className="text-2xl font-black leading-tight text-[#3F4095] min-[375px]:text-3xl sm:text-4xl">
+                Shopping Cart
+              </h1>
+            </div>
+          </div>
 
           <ApiState
             loading={cartState.loading && !cart.items}
@@ -565,39 +606,11 @@ export default function CartPage() {
             emptyActionLabel="Continue Shopping"
             onEmptyAction={() => navigate("/")}
           >
-            <div className="grid grid-cols-1 items-start gap-5 sm:gap-6 xl:grid-cols-[minmax(0,1fr)_360px] 2xl:grid-cols-[minmax(0,1fr)_420px]">
-              <div className="min-w-0 space-y-4 sm:space-y-5 lg:space-y-6">
-                {sellerGroups.map((group) => (
-                  <div key={group.sellerName || "other"}>
-                    {sellerGroups.length > 1 && (
-                      <div className="mb-3 flex items-center gap-2 rounded-[8px] border border-border bg-cream px-3 py-2">
-                        <Store size={14} className="shrink-0 text-gold-dark" />
-                        <span className="text-sm font-semibold text-ink">
-                          {group.sellerName || "Seller"}
-                        </span>
-                      </div>
-                    )}
-                    <div className="space-y-4">
-                      {group.items.map((item) => (
-                        <CartItemCard
-                          key={item.id}
-                          item={item}
-                          selected={selectedItemIds.includes(item.id)}
-                          onSelect={handleSelectItem}
-                          onIncrease={handleIncrease}
-                          onDecrease={handleDecrease}
-                          onRemove={handleRemove}
-                          onSaveForLater={handleSaveForLater}
-                          onBuyNow={handleBuyNow}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-
+            <div className="grid grid-cols-1 items-start gap-6 sm:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(360px,563px)] xl:gap-9">
+              <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8">
                 {hasCartItems && (
-                  <div className="flex  flex-wrap items-center justify-between gap-3 rounded-[8px] border border-border bg-white px-4 py-3">
-                    <label className="flex items-center gap-2  text-sm font-semibold text-ink">
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2 text-sm font-bold text-[#2d2d2d] sm:text-[15px]">
                       <input
                         type="checkbox"
                         checked={
@@ -607,15 +620,39 @@ export default function CartPage() {
                         onChange={(event) =>
                           handleSelectAll(event.target.checked)
                         }
-                        className="h-4 w-4 rounded border-border-strong accent-gold"
+                        className="h-4 w-4 rounded-[4px] border-[#A9B4D8] accent-[#3F4095]"
                       />
-                      Select all
+                      Select All Items
                     </label>
-                    <span className=" text-xs text-muted">
-                      {selectedItems.length > 0
-                        ? `${selectedItems.length} selected for checkout`
-                        : "Select all"}
+                    <span className="text-sm font-bold text-[#2d2d2d] sm:text-[15px]">
+                      {selectedItems.length}/{items.length} Items selected
                     </span>
+                  </div>
+                )}
+
+                {hasCartItems && (
+                  <div className="rounded-[16px] border border-[#F0E6D2] bg-[#FFFDF8] sm:rounded-[20px]">
+                    {items.map((item, index) => (
+                      <div
+                        key={item.id}
+                        className={
+                          index !== items.length - 1
+                            ? "border-b border-[#F0E6D2]"
+                            : ""
+                        }
+                      >
+                        <CartItemCard
+                          item={item}
+                          selected={selectedItemIds.includes(item.id)}
+                          onSelect={handleSelectItem}
+                          onIncrease={handleIncrease}
+                          onDecrease={handleDecrease}
+                          onRemove={handleRemove}
+                          onSaveForLater={handleSaveForLater}
+                          onBuyNow={handleBuyNow}
+                        />
+                      </div>
+                    ))}
                   </div>
                 )}
 
@@ -768,18 +805,18 @@ export default function CartPage() {
                 <div className="flex items-center gap-3">
                   <Link to="/products">
                     <BrandButton
-                      variant="secondary"
-                      rounded
+                      variant="custom"
                       label="Continue Shopping"
-                      size="md"
-                      className="h-[44px] px-6"
+                      icon={<ChevronRight className="h-4 w-4" />}
+                      iconPosition="right"
+                      className="h-[44px] rounded-lg border border-[#A9B4D8] bg-white px-6 text-[15px] font-semibold text-[#3F4095] hover:border-[#3F4095] hover:bg-gray-50"
                     />
                   </Link>
                 </div>
               </div>
 
               {hasCartItems && (
-                <div className="self-start">
+                <div className="w-full self-start xl:sticky xl:top-5">
                   <CartSummary
                     items={selectedItems}
                     shippingLabel="Shipping"
@@ -805,6 +842,42 @@ export default function CartPage() {
                 </div>
               )}
             </div>
+
+            {/* RECENTLY VIEWED SECTION */}
+            {recentViewedItems && recentViewedItems.length > 0 && (
+              <div className="mt-12 lg:mt-16">
+                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:mb-8">
+                  <div>
+                    <h2 className="text-xl font-bold text-[#3F4095] sm:text-2xl lg:text-[28px]">
+                      Recently Viewed
+                    </h2>
+                    <p className="mt-2 text-sm text-[#666] sm:text-[15px]">
+                      Multiple widgets available in the product designer
+                    </p>
+                  </div>
+                  <Link to="/products">
+                    <BrandButton
+                      variant="custom"
+                      label="Browse All Products"
+                      icon={<ChevronRight className="h-4 w-4" />}
+                      iconPosition="right"
+                      className="ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none inline-flex h-[40px] sm:h-[45px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-transparent px-4 sm:px-5 py-[10px] font-dm-sans sm:text-[16px] lg:text-[18px] font-semibold tracking-[0%] align-middle text-[#3E4093] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A] self-start text-[12px] sm:self-center"
+                    />
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 lg:gap-6">
+                  {recentViewedItems.map((item) => (
+                    <ProductCard
+                      key={getProductId(item)}
+                      product={item}
+                      onAddToCart={addToCart}
+                      onWishlist={toggleWishlist}
+                      isWishlisted={isWishlisted(item)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </ApiState>
         </div>
       </section>
