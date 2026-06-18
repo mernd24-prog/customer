@@ -322,6 +322,23 @@ const getOrderPayableAmount = (order = {}) => {
   }
   return null;
 };
+const getQuotePayableAmount = (quote = {}) => {
+  const quoteCandidates = [
+    quote,
+    quote?.quote,
+    quote?.summary,
+    quote?.data,
+    quote?.data?.quote,
+    quote?.data?.summary,
+  ].filter(Boolean);
+
+  for (const candidate of quoteCandidates) {
+    const payable = asOptionalNumber(getOrderAmount(candidate, "payable"));
+    if (payable !== null) return payable;
+  }
+
+  return 0;
+};
 const getCreatedOrder = (result = {}) =>
   result?.data?.order ||
   result?.data?.data?.order ||
@@ -410,9 +427,7 @@ const openRazorpayCheckout = async ({
 }) => {
   const checkout = payment?.checkout || {};
   if (!checkout.keyId || !checkout.orderId || !checkout.amount) {
-    throw new Error(
-      "Razorpay checkout details are missing. Please try again.",
-    );
+    throw new Error("Razorpay checkout details are missing. Please try again.");
   }
 
   const Razorpay = await loadRazorpayCheckout();
@@ -528,10 +543,7 @@ export default function CheckoutPage() {
         : [],
     [paymentState],
   );
-  const quoteSummary = quoteData?.summary || {};
-  const quotePayableAmount = asNumber(
-    quoteSummary.customerPayableAmount ?? quoteData?.quote?.payableAmount,
-  );
+  const quotePayableAmount = getQuotePayableAmount(quoteData);
 
   const addresses = useMemo(
     () => userState.current?.addresses || [],
@@ -609,7 +621,9 @@ export default function CheckoutPage() {
   const checkoutDialCodes = countryObj?.dialCode
     ? [normalizeDialCode(countryObj.dialCode)]
     : Array.from(
-        new Set(countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean)),
+        new Set(
+          countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
+        ),
       ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   useEffect(() => {
@@ -626,9 +640,7 @@ export default function CheckoutPage() {
   // Clear state and city if they don't match the selected country
   useEffect(() => {
     if (selectedCountry && selectedState) {
-      const isValid = states.some(
-        (s) => (s.name || s) === selectedState,
-      );
+      const isValid = states.some((s) => (s.name || s) === selectedState);
       if (!isValid) {
         setValue("state", "");
         setValue("city", "");
@@ -638,11 +650,9 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (selectedCountry && countryObj?.dialCode) {
-      setValue(
-        "dialCode",
-        normalizeDialCode(countryObj.dialCode),
-        { shouldValidate: true },
-      );
+      setValue("dialCode", normalizeDialCode(countryObj.dialCode), {
+        shouldValidate: true,
+      });
     }
   }, [selectedCountry, countryObj, setValue]);
 
@@ -783,9 +793,16 @@ export default function CheckoutPage() {
     const sellerOrderAmounts = {};
     items.forEach((item) => {
       const product = getCartItemProduct(item);
-      const sellerId = String(item.sellerId || item.seller_id || product.sellerId || product.seller_id || "").trim();
+      const sellerId = String(
+        item.sellerId ||
+          item.seller_id ||
+          product.sellerId ||
+          product.seller_id ||
+          "",
+      ).trim();
       if (!sellerId) return;
-      sellerOrderAmounts[sellerId] = asNumber(sellerOrderAmounts[sellerId]) + asNumber(item._lineTotal);
+      sellerOrderAmounts[sellerId] =
+        asNumber(sellerOrderAmounts[sellerId]) + asNumber(item._lineTotal);
     });
     return {
       sellerIds: Object.keys(sellerOrderAmounts),
@@ -818,7 +835,9 @@ export default function CheckoutPage() {
         postalCode: quoteShippingAddress?.postalCode || "",
         country: quoteShippingAddress?.country || "",
         sellerIds,
-        sellerOrderAmounts: sellerIds ? JSON.stringify(paymentSellerContext.sellerOrderAmounts) : undefined,
+        sellerOrderAmounts: sellerIds
+          ? JSON.stringify(paymentSellerContext.sellerOrderAmounts)
+          : undefined,
       }),
     ).catch(() => {});
   }, [
@@ -922,9 +941,14 @@ export default function CheckoutPage() {
       savedAddress?.address ||
       savedAddress?.data ||
       null;
-    const freshMe = await dispatch(fetchMe()).unwrap().catch(() => null);
+    const freshMe = await dispatch(fetchMe())
+      .unwrap()
+      .catch(() => null);
     const freshAddresses =
-      freshMe?.data?.addresses || freshMe?.addresses || userState.current?.addresses || [];
+      freshMe?.data?.addresses ||
+      freshMe?.addresses ||
+      userState.current?.addresses ||
+      [];
     const savedId = getAddressId(saved);
     const selectedSaved =
       freshAddresses.find((address) => getAddressId(address) === savedId) ||

@@ -39,8 +39,11 @@ const STATUS_BADGE = {
   qc_completed: "bg-violet-100 text-violet-700",
   refund_pending: "bg-amber-100 text-amber-700",
   refund_failed: "bg-red-100 text-red-700",
+  partially_refunded: "bg-sky-100 text-sky-700",
   refunded: "bg-emerald-100 text-emerald-700",
+  replacement_pending: "bg-amber-100 text-amber-700",
   replaced: "bg-emerald-100 text-emerald-700",
+  closed: "bg-gray-100 text-gray-700",
   rejected: "bg-red-100 text-red-700",
 };
 
@@ -96,6 +99,8 @@ function ReturnRequestPage({ orderId }) {
   }, [dispatch, orderId]);
 
   const orderItems = getOrderItems(order);
+  const selectedItem =
+    orderItems.find((item) => getItemId(item) === selectedProductId) || null;
 
   const {
     register,
@@ -112,8 +117,6 @@ function ReturnRequestPage({ orderId }) {
   const estimatedRefund = selectedItem
     ? Number(getItemUnitPrice(selectedItem) || 0) * Math.max(1, Number(watchedQty) || 1)
     : 0;
-
-  const selectedItem = orderItems.find((item) => getItemId(item) === selectedProductId) || null;
 
   const handleItemSelect = (item) => {
     const pid = getItemProductId(item);

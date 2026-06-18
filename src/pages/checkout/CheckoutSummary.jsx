@@ -89,6 +89,10 @@ export default function CheckoutSummary({
       quoteWallet,
     0,
   );
+  const quotePayable =
+    Number.isFinite(quotedPayable) && quotedPayable > 0
+      ? quotedPayable
+      : calculatedPayable;
 
   return (
     <aside className="min-w-0">
