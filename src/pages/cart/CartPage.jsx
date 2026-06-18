@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { Store } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import PageHeader from "../../components/common/PageHeader";
@@ -261,6 +262,20 @@ export default function CartPage() {
       }),
     [rawItems, localQuantities],
   );
+
+  const sellerGroups = useMemo(() => {
+    const groups = new Map();
+    items.forEach((item) => {
+      const key = item.seller || "other";
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(item);
+    });
+    return [...groups.entries()].map(([sellerName, groupItems]) => ({
+      sellerName: sellerName === "other" ? null : sellerName,
+      items: groupItems,
+    }));
+  }, [items]);
+
   const hasCartItems = items.length > 0;
   const hasSavedItems = savedForLaterItems.length > 0 || wishlist.length > 0;
   const selectedItems = items.filter((item) =>
@@ -499,18 +514,32 @@ export default function CartPage() {
           >
             <div className="grid grid-cols-1 items-start gap-5 sm:gap-6 xl:grid-cols-[minmax(0,1fr)_360px] 2xl:grid-cols-[minmax(0,1fr)_420px]">
               <div className="min-w-0 space-y-4 sm:space-y-5 lg:space-y-6">
-                {items.map((item) => (
-                  <CartItemCard
-                    key={item.id}
-                    item={item}
-                    selected={selectedItemIds.includes(item.id)}
-                    onSelect={handleSelectItem}
-                    onIncrease={handleIncrease}
-                    onDecrease={handleDecrease}
-                    onRemove={handleRemove}
-                    onSaveForLater={handleSaveForLater}
-                    onBuyNow={handleBuyNow}
-                  />
+                {sellerGroups.map((group) => (
+                  <div key={group.sellerName || "other"}>
+                    {sellerGroups.length > 1 && (
+                      <div className="mb-3 flex items-center gap-2 rounded-[8px] border border-border bg-cream px-3 py-2">
+                        <Store size={14} className="shrink-0 text-gold-dark" />
+                        <span className="text-sm font-semibold text-ink">
+                          {group.sellerName || "Seller"}
+                        </span>
+                      </div>
+                    )}
+                    <div className="space-y-4">
+                      {group.items.map((item) => (
+                        <CartItemCard
+                          key={item.id}
+                          item={item}
+                          selected={selectedItemIds.includes(item.id)}
+                          onSelect={handleSelectItem}
+                          onIncrease={handleIncrease}
+                          onDecrease={handleDecrease}
+                          onRemove={handleRemove}
+                          onSaveForLater={handleSaveForLater}
+                          onBuyNow={handleBuyNow}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 ))}
 
                 {hasCartItems && (

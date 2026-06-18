@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Package, RotateCcw } from "lucide-react";
+import { ArrowLeft, Download, FileText, Package, RotateCcw } from "lucide-react";
 import ApiState from "../../components/common/ApiState";
 import Seo from "../../components/common/Seo";
 import Button from "../../components/ui/Button";
@@ -14,6 +14,8 @@ import {
 } from "../../features/returns/returnsSlice";
 import { fetchOrderById } from "../../features/order/orderSlice";
 import { returnSchema } from "../../validations/validationSchemas";
+import { downloadAuthDocument } from "../../utils/downloadAuthDocument";
+import { endpoints } from "../../api/endpoints";
 
 const RETURN_REASONS = [
   { value: "defective", label: "Defective / damaged" },
@@ -339,10 +341,22 @@ function ReturnsListPage() {
   const dispatch = useDispatch();
   const state = useSelector((s) => s.returns);
   const returns = Array.isArray(state.list) ? state.list : [];
+  const [downloadingId, setDownloadingId] = useState(null);
 
   useEffect(() => {
     dispatch(fetchMyReturns());
   }, [dispatch]);
+
+  const handleDownload = async (apiPath, filename) => {
+    setDownloadingId(apiPath);
+    try {
+      await downloadAuthDocument(apiPath, filename);
+    } catch {
+      // silent
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   return (
     <>
@@ -364,50 +378,62 @@ function ReturnsListPage() {
               const id = item._id || item.id || item.returnId;
               const status = item.status || item.refundStatus;
               const cls = STATUS_BADGE[status] || "bg-cream text-muted";
+              const trackingNumber =
+                item.reverseShipment?.trackingNumber ||
+                item.reverseShipment?.tracking_number ||
+                item.reverse_shipment?.tracking_number ||
+                null;
               const refundAmount = item.refund?.amount ?? item.refundAmount ?? item.refund_amount ?? null;
               const refundStatus = item.refund?.status ?? item.refundStatus ?? null;
-              const trackingNumber = item.reverseShipment?.trackingNumber
-                || item.reverseShipment?.tracking_number
-                || item.reverse_shipment?.tracking_number
-                || null;
-              const pickupDate = item.reverseShipment?.scheduledDate
-                || item.reverseShipment?.scheduled_date
-                || item.pickup_scheduled_at
-                || null;
-              const resolution = item.resolution || item.resolutionType || null;
+              const creditNoteId = item.creditNoteId || item.credit_note_id || item.refund?.creditNoteId;
+              const cnPath = creditNoteId ? endpoints.tax.creditNoteDownload(creditNoteId) : null;
+
               return (
                 <div
                   key={id}
-                  className="flex items-center justify-between gap-4 rounded-[12px] border border-border bg-white px-5 py-4"
+                  className="rounded-[12px] border border-border bg-white px-5 py-4"
                 >
-                  <div>
-                    <p className="text-sm font-semibold text-ink">
-                      Return #
-                      {String(id || "")
-                        .slice(0, 8)
-                        .toUpperCase()}
-                    </p>
-                    <p className="mt-0.5 font-mono text-xs text-muted">{id}</p>
-                    <p className="mt-1 text-xs capitalize text-muted">
-                      {item.reason?.replace(/_/g, " ")}
-                    </p>
-                    {item.reverseShipment?.trackingNumber && (
-                      <p className="mt-1 text-xs text-muted">
-                        Tracking: {item.reverseShipment.trackingNumber}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-ink">
+                        Return #{String(id || "").slice(0, 8).toUpperCase()}
                       </p>
-                    )}
-                    {item.refund?.status &&
-                      item.refund.status !== "not_started" && (
-                        <p className="mt-1 text-xs capitalize text-muted">
-                          Refund: {item.refund.status.replace(/_/g, " ")}
+                      <p className="mt-0.5 font-mono text-xs text-muted">{id}</p>
+                      <p className="mt-1 text-xs capitalize text-muted">
+                        {item.reason?.replace(/_/g, " ")}
+                      </p>
+                      {trackingNumber && (
+                        <p className="mt-1 text-xs text-muted">
+                          Pickup tracking: {trackingNumber}
                         </p>
                       )}
+                      {refundAmount !== null && (
+                        <p className="mt-1 text-xs font-medium text-emerald-700">
+                          Refund: ₹{Number(refundAmount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                          {refundStatus && ` · ${String(refundStatus).replace(/_/g, " ")}`}
+                        </p>
+                      )}
+                    </div>
+                    <span
+                      className={`shrink-0 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}
+                    >
+                      {status?.replace(/_/g, " ")}
+                    </span>
                   </div>
-                  <span
-                    className={`shrink-0 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}
-                  >
-                    {status?.replace(/_/g, " ")}
-                  </span>
+                  {cnPath && (
+                    <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
+                      <FileText size={13} className="text-muted" />
+                      <span className="flex-1 text-xs text-muted">Credit note available</span>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        loading={downloadingId === cnPath}
+                        onClick={() => handleDownload(cnPath, `credit-note-${String(id).slice(0, 8)}.pdf`)}
+                      >
+                        <Download size={12} /> Download
+                      </Button>
+                    </div>
+                  )}
                 </div>
               );
             })}

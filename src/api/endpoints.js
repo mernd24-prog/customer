@@ -83,6 +83,7 @@ export const endpoints = {
     detail: (orderId) => `${API_PREFIX}/orders/${orderId}`,
     cancel: (orderId) => `${API_PREFIX}/orders/${orderId}/cancel`,
     status: (orderId) => `${API_PREFIX}/orders/${orderId}/status`,
+    retryPayment: (orderId) => `${API_PREFIX}/orders/${orderId}/payment/retry`,
   },
   payments: {
     razorpayWebhook: `${API_PREFIX}/payments/webhooks/razorpay`,
@@ -238,6 +239,9 @@ export const endpoints = {
   },
   tax: {
     invoice: (orderId) => `${API_PREFIX}/tax/orders/${orderId}/invoice`,
+    marketplaceInvoices: (orderId) => `${API_PREFIX}/tax/orders/${orderId}/marketplace-invoices`,
+    invoiceDownload: (invoiceId) => `${API_PREFIX}/tax/invoices/${invoiceId}/download`,
+    creditNoteDownload: (creditNoteId) => `${API_PREFIX}/tax/credit-notes/${creditNoteId}/download`,
     reports: `${API_PREFIX}/tax/reports`,
   },
   fraud: {

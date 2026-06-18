@@ -1,22 +1,25 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ArrowLeft,
   CalendarDays,
   CheckCircle2,
   Circle,
-  Clock3,
   CreditCard,
   Download,
+  FileText,
   MapPin,
   Package,
   ReceiptText,
+  RefreshCw,
   RotateCcw,
+  Star,
   Store,
   Truck,
   XCircle,
 } from "lucide-react";
+
 import ApiState from "../../components/common/ApiState";
 import Seo from "../../components/common/Seo";
 import Button from "../../components/ui/Button";
@@ -26,8 +29,17 @@ import {
   fetchMyOrders,
   fetchOrderById,
   cancelOrder,
+  retryOrderPayment,
 } from "../../features/order/orderSlice";
+import {
+  initiatePayment,
+  verifyPayment,
+} from "../../features/payment/paymentSlice";
+import { fetchMarketplaceInvoices } from "../../features/tax/taxSlice";
 import { formatMoney } from "../../utils/ecommerce";
+import { downloadAuthDocument } from "../../utils/downloadAuthDocument";
+import { openRazorpayCheckout } from "../../utils/razorpay";
+import { endpoints } from "../../api/endpoints";
 
 const STATUS_BADGE = {
   pending_payment: "bg-amber-100 text-amber-700",
@@ -35,7 +47,9 @@ const STATUS_BADGE = {
   confirmed: "bg-blue-100 text-blue-700",
   packed: "bg-indigo-100 text-indigo-700",
   shipped: "bg-purple-100 text-purple-700",
+  out_for_delivery: "bg-purple-100 text-purple-700",
   delivered: "bg-emerald-100 text-emerald-700",
+  partially_delivered: "bg-teal-100 text-teal-700",
   fulfilled: "bg-green-100 text-green-700",
   cancelled: "bg-red-100 text-red-700",
   return_requested: "bg-amber-100 text-amber-700",
@@ -45,6 +59,8 @@ const STATUS_BADGE = {
   pickup_completed: "bg-violet-100 text-violet-700",
   refund_initiated: "bg-sky-100 text-sky-700",
   refund_completed: "bg-emerald-100 text-emerald-700",
+  partially_returned: "bg-orange-100 text-orange-700",
+  partially_refunded: "bg-sky-100 text-sky-700",
   order_closed: "bg-gray-100 text-gray-600",
 };
 const ORDER_STEPS = [
@@ -497,6 +513,7 @@ function OrderProgress({ status, order }) {
   const isFailed = status === "payment_failed";
   const isReturnRejected = status === "return_rejected";
   const inReturnFlow = RETURN_STEPS.includes(status) || isReturnRejected;
+  const activeIndex = ORDER_STEPS.indexOf(inReturnFlow ? "fulfilled" : status);
   const visibleSteps =
     isCancelled || isFailed
       ? [
@@ -695,12 +712,18 @@ function OrderProgress({ status, order }) {
 
 function OrderDetail({ orderId, track }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const run = useToastThunk();
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [cancelReasonCode, setCancelReasonCode] = useState("changed_mind");
   const [cancelItems, setCancelItems] = useState({});
+  const [invoices, setInvoices] = useState(null);
+  const [invoicesLoading, setInvoicesLoading] = useState(false);
+  const [downloadingId, setDownloadingId] = useState(null);
+  const [retrying, setRetrying] = useState(false);
   const state = useSelector((s) => s.order);
+  const userState = useSelector((s) => s.user);
   const orders = getOrderCollection(state.current).length
     ? getOrderCollection(state.current)
     : state.list;
@@ -734,11 +757,64 @@ function OrderDetail({ orderId, track }) {
   const trackingUrl = getTrackingUrl(order);
   const paymentMethod = getPaymentMethod(order);
   const billingAddress = getBillingAddress(order);
-  const invoiceUrl = getInvoiceUrl(order);
 
   useEffect(() => {
     dispatch(fetchOrderById({ orderId }));
   }, [dispatch, orderId]);
+
+  useEffect(() => {
+    if (!orderId) return;
+    setInvoicesLoading(true);
+    dispatch(fetchMarketplaceInvoices({ orderId }))
+      .unwrap()
+      .then((result) => setInvoices(result?.data || result))
+      .catch(() => {})
+      .finally(() => setInvoicesLoading(false));
+  }, [dispatch, orderId]);
+
+  const handleRetryPayment = async () => {
+    setRetrying(true);
+    try {
+      await run(dispatch, retryOrderPayment({ orderId }), null);
+      const paymentResult = await run(
+        dispatch,
+        initiatePayment({
+          orderId,
+          provider: "razorpay",
+          currency: "INR",
+          notes: { source: "web_retry" },
+        }),
+        null,
+      );
+      const payment = paymentResult?.data || paymentResult;
+      await openRazorpayCheckout({
+        dispatch,
+        run,
+        order,
+        orderId,
+        payment,
+        user: userState.current,
+        verifyPayment,
+      });
+      navigate(`/payment/success?orderId=${orderId}`);
+    } catch (error) {
+      // openRazorpayCheckout throws on dismiss/failure; order stays pending
+    } finally {
+      setRetrying(false);
+      dispatch(fetchOrderById({ orderId }));
+    }
+  };
+
+  const handleDownload = async (apiPath, filename) => {
+    setDownloadingId(apiPath);
+    try {
+      await downloadAuthDocument(apiPath, filename);
+    } catch {
+      // silent — browser will show nothing; user can retry
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   const handleCancelOrder = async () => {
     const selectedItems = Object.entries(cancelItems)
@@ -1260,47 +1336,154 @@ function OrderDetail({ orderId, track }) {
               </section>
             )}
 
+            {(invoices?.sellerInvoices?.length > 0 || invoices?.orderInvoice) && (
+              <section className="rounded-[8px] border border-border bg-white px-4 py-4 sm:px-6">
+                <h2 className="flex items-center gap-2 text-sm font-semibold text-ink">
+                  <FileText size={15} /> Invoices &amp; documents
+                </h2>
+                <div className="mt-3 grid gap-2">
+                  {invoices.orderInvoice && (
+                    <div className="flex items-center justify-between gap-3 rounded-[6px] border border-border bg-surface px-3 py-2.5 text-sm">
+                      <span className="text-muted">Order invoice</span>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        loading={downloadingId === endpoints.tax.invoiceDownload(invoices.orderInvoice.id || invoices.orderInvoice._id)}
+                        onClick={() =>
+                          handleDownload(
+                            endpoints.tax.invoiceDownload(invoices.orderInvoice.id || invoices.orderInvoice._id),
+                            `invoice-${getOrderNumber(order)}.pdf`,
+                          )
+                        }
+                      >
+                        <Download size={13} /> Download
+                      </Button>
+                    </div>
+                  )}
+                  {(invoices.sellerInvoices || []).map((inv) => {
+                    const invId = inv.id || inv._id;
+                    const sellerName = inv.sellerName || inv.seller_name || `Seller ${String(invId).slice(0, 6)}`;
+                    const dlPath = endpoints.tax.invoiceDownload(invId);
+                    return (
+                      <div
+                        key={invId}
+                        className="flex items-center justify-between gap-3 rounded-[6px] border border-border bg-surface px-3 py-2.5 text-sm"
+                      >
+                        <div>
+                          <p className="font-medium text-ink">{sellerName}</p>
+                          <p className="text-xs text-muted">Seller invoice</p>
+                        </div>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          loading={downloadingId === dlPath}
+                          onClick={() =>
+                            handleDownload(dlPath, `invoice-${sellerName}-${getOrderNumber(order)}.pdf`)
+                          }
+                        >
+                          <Download size={13} /> Download
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
             {cancellations.length > 0 && (
               <section className="rounded-[8px] border border-border bg-white px-4 py-4 sm:px-6">
                 <h2 className="text-sm font-semibold text-ink">
                   Cancellation and refund status
                 </h2>
                 <div className="mt-3 grid gap-3">
-                  {cancellations.map((cancellation) => (
-                    <div
-                      key={cancellation.id}
-                      className="rounded-[6px] border border-border bg-surface px-3 py-3 text-sm"
-                    >
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <strong>{cancellation.cancellation_number}</strong>
-                        <span className="capitalize text-muted">
-                          {String(cancellation.status || "processing").replace(
-                            /_/g,
-                            " ",
+                  {cancellations.map((cancellation) => {
+                    const creditNoteId = cancellation.credit_note_id || cancellation.creditNoteId;
+                    const cnPath = creditNoteId ? endpoints.tax.creditNoteDownload(creditNoteId) : null;
+                    return (
+                      <div
+                        key={cancellation.id}
+                        className="rounded-[6px] border border-border bg-surface px-3 py-3 text-sm"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <strong>{cancellation.cancellation_number}</strong>
+                          <span className="capitalize text-muted">
+                            {String(cancellation.status || "processing").replace(/_/g, " ")}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-muted">{cancellation.reason}</p>
+                        <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-muted">
+                          <span>Refund: {formatMoney(cancellation.refund_amount, currency)}</span>
+                          <span>
+                            Refund status:{" "}
+                            {String(cancellation.refund_status || "pending").replace(/_/g, " ")}
+                          </span>
+                          {cnPath && (
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              loading={downloadingId === cnPath}
+                              onClick={() =>
+                                handleDownload(
+                                  cnPath,
+                                  `credit-note-${cancellation.cancellation_number || cancellation.id}.pdf`,
+                                )
+                              }
+                            >
+                              <Download size={12} /> Credit note
+                            </Button>
                           )}
-                        </span>
+                        </div>
                       </div>
-                      <p className="mt-1 text-muted">{cancellation.reason}</p>
-                      <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted">
-                        <span>
-                          Refund:{" "}
-                          {formatMoney(cancellation.refund_amount, currency)}
-                        </span>
-                        <span>
-                          Refund status:{" "}
-                          {String(
-                            cancellation.refund_status || "pending",
-                          ).replace(/_/g, " ")}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {["delivered", "fulfilled", "partially_delivered"].includes(status) && items.length > 0 && (
+              <section className="rounded-[8px] border border-border bg-white px-4 py-4 sm:px-6">
+                <h2 className="flex items-center gap-2 text-sm font-semibold text-ink">
+                  <Star size={15} className="text-gold" /> Rate your purchases
+                </h2>
+                <p className="mt-1 text-xs text-muted">Share your experience to help other buyers.</p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {items.map((item, i) => {
+                    const pid = getItemProductId(item);
+                    const title = getProductTitle(item);
+                    const img = getItemImage(item);
+                    return (
+                      <Link
+                        key={pid || i}
+                        to={pid && pid !== "N/A" ? `/products/${pid}#reviews` : "#"}
+                        className="flex items-center gap-3 rounded-[8px] border border-border px-3 py-2.5 text-sm transition hover:border-gold/50 hover:bg-cream"
+                      >
+                        {img ? (
+                          <img src={img} alt={title} className="h-10 w-10 shrink-0 rounded-md object-cover" />
+                        ) : (
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-cream text-muted">
+                            <Package size={16} />
+                          </span>
+                        )}
+                        <span className="min-w-0 flex-1 truncate font-medium text-ink">{title}</span>
+                        <span className="shrink-0 text-xs font-semibold text-gold-dark">Rate →</span>
+                      </Link>
+                    );
+                  })}
                 </div>
               </section>
             )}
 
             {hasKnownStatus(order) && (
               <section className="grid gap-3 rounded-[8px] border border-border bg-white px-4 py-4 sm:flex sm:flex-wrap sm:px-6">
+                {(status === "pending_payment" || status === "payment_failed") && (
+                  <Button
+                    className="w-full sm:w-auto"
+                    loading={retrying}
+                    onClick={handleRetryPayment}
+                  >
+                    <RefreshCw size={15} /> Retry payment
+                  </Button>
+                )}
                 {canCancelOrder(order) && (
                   <Button
                     variant="secondary"
@@ -1310,7 +1493,7 @@ function OrderDetail({ orderId, track }) {
                     <XCircle size={15} /> Cancel order
                   </Button>
                 )}
-                {["delivered", "fulfilled"].includes(status) && (
+                {["delivered", "fulfilled", "partially_delivered"].includes(status) && (
                   <Link
                     to={`/returns/request/${orderId}`}
                     className="block sm:inline-flex"
@@ -1339,18 +1522,6 @@ function OrderDetail({ orderId, track }) {
                       <ReceiptText size={15} /> View order
                     </Button>
                   </Link>
-                )}
-                {invoiceUrl && (
-                  <a
-                    href={invoiceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block sm:inline-flex"
-                  >
-                    <Button variant="secondary" className="w-full sm:w-auto">
-                      <Download size={15} /> Download invoice
-                    </Button>
-                  </a>
                 )}
               </section>
             )}
@@ -1455,13 +1626,34 @@ function OrderDetail({ orderId, track }) {
 
 // ─── Order List ────────────────────────────────────────────────────────────────
 
+const ORDER_FILTERS = [
+  { label: "All", value: "" },
+  { label: "Confirmed", value: "confirmed" },
+  { label: "Shipped", value: "shipped" },
+  { label: "Delivered", value: "delivered" },
+  { label: "Cancelled", value: "cancelled" },
+  { label: "Return", value: "return_requested" },
+  { label: "Payment failed", value: "payment_failed" },
+];
+
 function OrderList() {
   const dispatch = useDispatch();
   const state = useSelector((s) => s.order);
+  const [activeFilter, setActiveFilter] = useState("");
 
-  const orders = state.list.length
+  const allOrders = state.list.length
     ? state.list
     : getOrderCollection(state.current);
+
+  const orders = activeFilter
+    ? allOrders.filter((o) => {
+        const s = getOrderStatus(o);
+        if (activeFilter === "return_requested") {
+          return s === "return_requested" || s === "return_approved" || s === "partially_returned" || s === "returned";
+        }
+        return s === activeFilter;
+      })
+    : allOrders;
 
   useEffect(() => {
     dispatch(fetchMyOrders());
@@ -1482,12 +1674,30 @@ function OrderList() {
             </p>
           </div>
 
+          {allOrders.length > 0 && (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {ORDER_FILTERS.map((f) => (
+                <button
+                  key={f.value}
+                  onClick={() => setActiveFilter(f.value)}
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+                    activeFilter === f.value
+                      ? "bg-gold text-white"
+                      : "border border-border bg-white text-muted hover:border-gold/50 hover:text-ink"
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          )}
+
           <ApiState
-            loading={state.loading && !orders.length}
+            loading={state.loading && !allOrders.length}
             error={state.error}
-            empty={!orders.length}
-            emptyTitle="No orders yet"
-            emptyText="Once you place an order, it will appear here."
+            empty={!orders.length && !state.loading}
+            emptyTitle={activeFilter ? "No orders found" : "No orders yet"}
+            emptyText={activeFilter ? "Try a different filter." : "Once you place an order, it will appear here."}
           >
             <div className="grid gap-3 sm:gap-4">
               {orders.map((order) => {

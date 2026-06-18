@@ -24,6 +24,17 @@ export default function CheckoutSummary({
   onPaymentProviderChange,
   getPaymentProviderLabel,
 }) {
+  const sellerDeliveryBreakup = (() => {
+    const settlements = quote?.sellerSettlements || [];
+    const sellers = settlements.filter(
+      (s) => Number(s.sellerDeliveryChargeAmount || s.deliveryChargeAmount || 0) > 0,
+    );
+    if (sellers.length <= 1) return null;
+    return sellers.map((s) => ({
+      name: s.sellerName || s.seller_name || `Seller ${String(s.sellerId || "").slice(0, 6)}`,
+      amount: Number(s.sellerDeliveryChargeAmount || s.deliveryChargeAmount || 0),
+    }));
+  })();
   const selectedOption = paymentOptions.find(
     (option) => option.provider === selectedPaymentProvider,
   );
@@ -144,6 +155,16 @@ export default function CheckoutSummary({
             <span>Shipping</span>
             <span>{formatMoney(quoteShipping, "INR")}</span>
           </div>
+          {sellerDeliveryBreakup && (
+            <div className="mt-1 ml-3 grid gap-0.5">
+              {sellerDeliveryBreakup.map((s) => (
+                <div key={s.name} className="flex justify-between text-xs text-muted">
+                  <span className="truncate">{s.name}</span>
+                  <span>{formatMoney(s.amount, "INR")}</span>
+                </div>
+              ))}
+            </div>
+          )}
           {taxPayable > 0 ? (
             <div className="mt-1 flex justify-between text-sm text-muted">
               <span>GST added</span>
@@ -170,7 +191,7 @@ export default function CheckoutSummary({
           ) : null}
           <div className="mt-4 flex justify-between border-t border-border pt-4 font-semibold text-ink">
             <span>Payable</span>
-            <span>{formatMoney(quotePayable, "INR")}</span>
+            <span>{formatMoney(quotedPayable, "INR")}</span>
           </div>
           {quoteLoading ? (
             <p className="mt-2 text-xs text-gray">

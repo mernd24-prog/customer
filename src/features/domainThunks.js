@@ -242,6 +242,11 @@ export const orderThunks = {
     url: ({ orderId }) => endpoints.orders.status(orderId),
     data: body,
   }),
+  retryOrderPayment: makeThunk("order/retryOrderPayment", {
+    method: "post",
+    url: ({ orderId }) => endpoints.orders.retryPayment(orderId),
+    data: body,
+  }),
 };
 
 export const paymentThunks = {
@@ -705,6 +710,9 @@ export const taxThunks = {
   fetchTaxReports: makeThunk("tax/fetchTaxReports", {
     url: endpoints.tax.reports,
     params: q,
+  }),
+  fetchMarketplaceInvoices: makeThunk("tax/fetchMarketplaceInvoices", {
+    url: ({ orderId }) => endpoints.tax.marketplaceInvoices(orderId),
   }),
 };
 
