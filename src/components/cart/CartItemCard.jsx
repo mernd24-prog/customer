@@ -190,13 +190,20 @@ export default function CartItemCard({
           </div>
 
           <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-            <QuantitySelector
-              quantity={item?.quantity}
-              onIncrease={() => onIncrease(item?.id)}
-              onDecrease={() => onDecrease(item?.id)}
-              max={maxQty ?? undefined}
-              disabled={isOutOfStock}
-            />
+            <div>
+              <QuantitySelector
+                quantity={item.quantity}
+                onIncrease={() => onIncrease(item.id)}
+                onDecrease={() => onDecrease(item.id)}
+                increaseDisabled={item.increaseDisabled}
+                increaseDisabledLabel={item.stockMessage || undefined}
+              />
+              {item.stockMessage ? (
+                <p className="mt-1 text-xs font-semibold text-red-600">
+                  {item.stockMessage}
+                </p>
+              ) : null}
+            </div>
 
             {quantity > 1 && price > 0 && (
               <span className="text-sm font-semibold text-[var(--customer-navy)]">

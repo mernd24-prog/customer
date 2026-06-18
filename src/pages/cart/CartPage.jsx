@@ -20,6 +20,7 @@ import {
   normalizeCartPayloadForWrite,
   wishlistPayload,
 } from "../../utils/ecommerce";
+import { ConfirmModal } from "../../components/common";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 const SAVED_FOR_LATER_STORAGE_KEY = "sam_global_saved_for_later_items";
@@ -82,6 +83,34 @@ function writeCheckoutCartItemIds(itemIds) {
   );
 }
 
+function getNumericValue(...values) {
+  const value = values.find((entry) => entry !== undefined && entry !== null && entry !== "");
+  if (value === undefined) return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function getCartItemStock(item = {}, product = {}) {
+  const variants = Array.isArray(product?.variants) ? product.variants : [];
+  const matchingVariant = variants.find(
+    (variant) =>
+      String(variant?._id || variant?.id || "") === String(item.variantId || "") ||
+      String(variant?.sku || "") === String(item.variantSku || ""),
+  );
+
+  return getNumericValue(
+    item.stock,
+    item.availableStock,
+    item.inventory,
+    item.variant?.stock,
+    matchingVariant?.stock,
+    product.stock,
+    product.availableStock,
+    product.inventory,
+    product.totalStock,
+  );
+}
+
 function adaptItemForCard(item) {
   const product = item.productId || {};
   const productId = item.productId?._id || getProductId(product);
@@ -100,6 +129,14 @@ function adaptItemForCard(item) {
   const attributes = item.attributes || {};
   const color = item.color || item.selectedColor || attributes.color;
   const size = item.size || item.selectedSize || attributes.size;
+  const stock = getCartItemStock(item, product);
+  const outOfStock = stock !== null && stock <= 0;
+  const stockLimitReached = stock !== null && stock > 0 && quantity >= stock;
+  const stockMessage = outOfStock
+    ? "Out of stock"
+    : stockLimitReached
+      ? `Only ${stock} in stock`
+      : "";
 
   return {
     id: [productId, variantKey].filter(Boolean).join(":"),
@@ -117,6 +154,9 @@ function adaptItemForCard(item) {
     color,
     size,
     attributes,
+    stock,
+    stockMessage,
+    increaseDisabled: outOfStock || stockLimitReached,
     _raw: item,
   };
 }
@@ -211,6 +251,7 @@ export default function CartPage() {
     readSavedForLaterItems(),
   );
   const [selectedItemIds, setSelectedItemIds] = useState([]);
+  const [showLimitModal, setShowLimitModal] = useState(false);
 
   const [localQuantities, setLocalQuantities] = useState({});
   const latestRef = useRef({ rawItems: [], wishlist: [], localQuantities: {} });
@@ -493,6 +534,16 @@ export default function CartPage() {
 
   return (
     <>
+
+      <ConfirmModal
+        open={showLimitModal}
+        title="Maximum Quantity Reached"
+        description="You can only purchase up to 5 units of this product in a single order."
+        confirmLabel="OK"
+        cancelLabel={null}
+        onConfirm={() => setShowLimitModal(false)}
+        onCancel={() => setShowLimitModal(false)}
+      />
       <Seo
         title="Cart | Sam Global"
         description="Review items in your shopping cart."
@@ -511,6 +562,8 @@ export default function CartPage() {
             empty={!hasCartItems && !hasSavedItems && !cartState.loading}
             emptyTitle="Your cart is empty"
             emptyText="Add some products to continue shopping."
+            emptyActionLabel="Continue Shopping"
+            onEmptyAction={() => navigate("/")}
           >
             <div className="grid grid-cols-1 items-start gap-5 sm:gap-6 xl:grid-cols-[minmax(0,1fr)_360px] 2xl:grid-cols-[minmax(0,1fr)_420px]">
               <div className="min-w-0 space-y-4 sm:space-y-5 lg:space-y-6">

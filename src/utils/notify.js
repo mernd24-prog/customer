@@ -2,6 +2,8 @@ import { createElement } from "react";
 import { toast } from "react-toastify";
 import CustomerToast from "../components/ui/CustomerToast";
 
+const shownToasts = new Set();
+
 function normalizePayload(type, payload) {
   if (typeof payload === "string") {
     return { message: payload };
@@ -21,9 +23,27 @@ function normalizePayload(type, payload) {
   return { message: "" };
 }
 
+function getToastId(type, content, options) {
+  if (options.toastId) return options.toastId;
+
+  return [type, content.title || "", content.message || ""]
+    .join(":")
+    .trim()
+    .toLowerCase();
+}
+
 function show(type, payload) {
   const normalized = normalizePayload(type, payload);
   const { options = {}, ...content } = normalized;
+
+  const toastId = getToastId(type, content, options);
+
+  // Prevent duplicate messages
+  if (shownToasts.has(toastId)) {
+    return toastId;
+  }
+
+  shownToasts.add(toastId);
 
   return toast[type](
     createElement(CustomerToast, {
@@ -36,8 +56,13 @@ function show(type, payload) {
     }),
     {
       icon: false,
+      toastId,
       ...options,
-    },
+      onClose: () => {
+        shownToasts.delete(toastId);
+        options.onClose?.();
+      },
+    }
   );
 }
 

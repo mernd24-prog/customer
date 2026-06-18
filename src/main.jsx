@@ -27,14 +27,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         {/* </AppErrorBoundary> */}
         <ToastContainer
           position="bottom-center"
-          autoClose={1200}
+          autoClose={2000}
           newestOnTop
           closeOnClick
           pauseOnHover
           draggable
           hideProgressBar={false}
           pauseOnFocusLoss={false}
-          limit={4}
+          limit={1}
           theme="light"
           transition={Slide}
           toastClassName="customer-toast"

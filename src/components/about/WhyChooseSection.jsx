@@ -13,7 +13,7 @@ export default function WhyChooseSection({ data }) {
         </h2>
 
         {data?.description && (
-          <p className=" custom-h6 text-ink py-4">{data.description}</p>
+          <p className=" custom-h6 text-ink py-4">{data?.description}</p>
         )}
       </div>
 

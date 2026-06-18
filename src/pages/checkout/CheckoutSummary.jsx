@@ -77,12 +77,16 @@ export default function CheckoutSummary({
       quoteAmounts.shippingFeeAmount ??
       shipping,
   );
-   
   const quotedPayable = Number(
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
   );
   const calculatedPayable = Math.max(
-    total + taxPayable + codCharge - quoteDiscount - quoteWallet,
+    quoteSubtotal +
+      quoteShipping +
+      taxPayable +
+      codCharge -
+      quoteDiscount -
+      quoteWallet,
     0,
   );
 

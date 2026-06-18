@@ -22,8 +22,8 @@ export default function OurStory({ data }) {
         <section className="flex  flex-col lg:flex-row  lg:gap-12 gap-2 py-8 lg:py-20">
           <div className=" w-full xl:w-[45%]  flex justify-center">
             <img
-              src={data.image.url}
-              alt={data.image.alt}
+              src={data?.image?.url}
+              alt={data?.image?.alt}
               className="w-full h-full object-cover rounded-lg max-w-[750px]  "
             />
           </div>
@@ -31,13 +31,13 @@ export default function OurStory({ data }) {
             <div>
               <p
                 className="text-base md:text-lg lg:text-xl font-light mt-4 lg:mt-8 "
-                dangerouslySetInnerHTML={{ __html: data.description }}
+                dangerouslySetInnerHTML={{ __html: data?.description }}
               />
             </div>
 
-            {data.ctaText && (
+            {data?.ctaText && (
               <div className="mt-8  w-full flex justify-center md:justify-normal md:w-fit">
-                <PrimaryCta>{data.ctaText}</PrimaryCta>
+                <PrimaryCta>{data?.ctaText}</PrimaryCta>
               </div>
             )}
           </div>

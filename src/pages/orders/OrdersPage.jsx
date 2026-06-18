@@ -109,6 +109,9 @@ const getPaymentStatus = (order) =>
 const getDeliveryStatus = (order) =>
   order?.delivery_status || order?.deliveryStatus || null;
 const hasKnownStatus = (order) => getOrderStatus(order) !== "unknown";
+const getItemTitle = (item) =>
+  item?.product_title || item?.productTitle || item?.title || item?.name ||
+  (typeof item?.productId === "object" ? (item.productId?.title || item.productId?.name) : null) || "Product";
 const canCancelOrder = (order) => {
   const status = getOrderStatus(order);
   const deliveryStatus = order?.delivery_status || order?.deliveryStatus;
@@ -322,29 +325,51 @@ const getAmount = (order, key) => {
   return undefined;
 };
 const getCustomerOrderAmount = (order) => {
-  if (order?.summary?.customerPayableAmount !== undefined) {
-    return asNumber(order.summary.customerPayableAmount);
-  }
-  if (order?.summary?.customerTotalAmount !== undefined) {
-    return Math.max(
-      0,
-      asNumber(order.summary.customerTotalAmount) -
-        asNumber(order.summary.walletDiscountAmount),
-    );
-  }
   const subtotal = getAmount(order, "subtotal") ?? getItemsTotal(order);
   const discount = getAmount(order, "discount") ?? 0;
   const walletDiscount = getAmount(order, "walletDiscount") ?? 0;
   const shipping = getAmount(order, "shipping") ?? 0;
-  return Number(
+  const taxPayable =
+    order?.summary?.taxPayableAmount ??
+    order?.summary?.tax_payable_amount ??
+    order?.taxBreakup?.taxPayableAmount ??
+    order?.tax_breakup?.tax_payable_amount ??
+    0;
+  const codCharge =
+    order?.summary?.codChargeAmount ??
+    order?.summary?.cod_charge_amount ??
+    order?.amounts?.codChargeAmount ??
+    order?.amounts?.cod_charge_amount ??
+    0;
+  const calculatedAmount = Number(
     Math.max(
       0,
       asNumber(subtotal) -
         asNumber(discount) +
-        asNumber(shipping) -
+        asNumber(shipping) +
+        asNumber(taxPayable) +
+        asNumber(codCharge) -
         asNumber(walletDiscount),
     ).toFixed(2),
   );
+
+  if (order?.summary?.customerPayableAmount !== undefined) {
+    const payableAmount = asNumber(order.summary.customerPayableAmount);
+    return payableAmount > 0 || calculatedAmount <= 0
+      ? payableAmount
+      : calculatedAmount;
+  }
+  if (order?.summary?.customerTotalAmount !== undefined) {
+    const payableAmount = Math.max(
+      0,
+      asNumber(order.summary.customerTotalAmount) -
+        asNumber(order.summary.walletDiscountAmount),
+    );
+    return payableAmount > 0 || calculatedAmount <= 0
+      ? payableAmount
+      : calculatedAmount;
+  }
+  return calculatedAmount;
 };
 const getTaxIncludedAmount = (order, taxBreakup = {}) =>
   asNumber(

@@ -4,7 +4,7 @@ import InfiniteLoopSwiper from "../../components/swiper/InfiniteLoopSwiper";
 
 export default function BrandCarousel({ data = {} }) {
   const loading = useDelayedLoading();
-  const points = Array.isArray(data?.points) ? data.points : [];
+  const points = Array.isArray(data?.points) ? data?.points : [];
   const repeatedPoints = [...points, ...points];
 
   return (
