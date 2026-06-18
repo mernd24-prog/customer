@@ -39,23 +39,26 @@ const extractSuggestions = (data) => {
   });
 };
 
-const initialState = {
+const getInitialState = () => ({
   hits: [],
   facets: null,
   suggestions: [],
   meta: null,
   loading: false,
+  searchRequestId: null,
   autocompleteLoading: false,
   autocompleteRequestId: null,
   error: null,
   lastQuery: null,
-};
+});
+
+const initialState = getInitialState();
 
 const searchSlice = createSlice({
   name: "search",
   initialState,
   reducers: {
-    clearSearch: () => initialState,
+    clearSearch: () => getInitialState(),
     clearSuggestions: (state) => {
       state.suggestions = [];
       state.autocompleteLoading = false;
@@ -64,12 +67,16 @@ const searchSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(searchThunks.searchCatalog.pending, (state) => {
+      .addCase(searchThunks.searchCatalog.pending, (state, action) => {
         state.loading = true;
+        state.searchRequestId = action.meta.requestId;
         state.error = null;
       })
       .addCase(searchThunks.searchCatalog.fulfilled, (state, action) => {
+        if (state.searchRequestId !== action.meta.requestId) return;
+
         state.loading = false;
+        state.searchRequestId = null;
         const data = action.payload.data || {};
         state.hits = data.hits || data.products || data.results || (Array.isArray(data) ? data : []);
         state.facets = data.facets || null;
@@ -90,7 +97,10 @@ const searchSlice = createSlice({
         state.lastQuery = action.payload.arg;
       })
       .addCase(searchThunks.searchCatalog.rejected, (state, action) => {
+        if (state.searchRequestId !== action.meta.requestId) return;
+
         state.loading = false;
+        state.searchRequestId = null;
         state.error = action.payload || action.error.message;
       })
       .addCase(searchThunks.searchAutocomplete.pending, (state, action) => {
