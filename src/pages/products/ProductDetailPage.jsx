@@ -803,7 +803,7 @@ export default function ProductDetailPage() {
         >
           {product && (
             <>
-              <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,0.84fr)_minmax(420px,1.16fr)] lg:gap-7">
+              <div className="grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] lg:gap-7">
                 <div className="min-w-0">
                   <ImageGallery
                     images={images}
