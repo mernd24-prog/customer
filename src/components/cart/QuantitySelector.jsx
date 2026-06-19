@@ -3,7 +3,6 @@ export default function QuantitySelector({
   onIncrease,
   onDecrease,
   max,
-  disabled,
   disabled = false,
   increaseDisabled = false,
   increaseDisabledLabel = "Increase quantity unavailable",
