@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
+import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { notify } from "../../utils/notify";
 import { fetchCart } from "../../features/cart/cartSlice";
@@ -1099,11 +1100,7 @@ export default function CheckoutPage() {
     <>
       <Seo title="Checkout | Sam Global" />
 
-      <div className="w-container py-12 sm:py-10">
-        <h1 className="mb-6  text-2xl font-bold text-ink sm:text-3xl">
-          Checkout
-        </h1>
-
+      <div className="w-container py-6 sm:py-8">
         <ApiState
           loading={cartState.loading}
           error={cartState.error}
@@ -1111,6 +1108,22 @@ export default function CheckoutPage() {
           emptyTitle="Your cart is empty"
           emptyText="Add products to your cart before checking out."
         >
+          <div className="mb-6">
+            <Breadcrumbs
+              items={[
+                { label: "Home", href: "/" },
+                { label: "Cart", href: "/cart" },
+                { label: "Checkout" },
+              ]}
+              className="mb-3 gap-1.5 text-[11px] sm:gap-2"
+              linkClassName="!text-[11px] !leading-4 text-muted hover:text-navy sm:!text-[11px] lg:!text-[11px]"
+              currentClassName="!text-[11px] !leading-4 text-gold-dark sm:!text-[11px] lg:!text-[11px]"
+              separatorClassName="text-muted"
+            />
+            <h1 className="text-2xl font-bold leading-tight text-navy sm:text-3xl">
+              Checkout
+            </h1>
+          </div>
           <form onSubmit={handleSubmit(submit)} noValidate>
             {errors.root?.message ? (
               <div className="mb-4 rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -1127,7 +1140,7 @@ export default function CheckoutPage() {
               value={selectedAddressId || ""}
               {...register("selectedAddressId")}
             />
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(320px,380px)]">
+            <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,360px)]">
               {/* Left column: shipping + payment */}
               <div className="grid gap-6">
                 {/* Saved addresses */}

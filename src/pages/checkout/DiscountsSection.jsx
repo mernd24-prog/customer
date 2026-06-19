@@ -4,17 +4,17 @@ import { formatMoney } from "../../utils/ecommerce";
 
 export default function DiscountsSection({ register, errors, walletBalance }) {
   return (
-    <section className="rounded-[12px] border border-border bg-white p-5">
-      <h2 className="mb-4  text-base font-semibold text-ink">
-        Discounts
-      </h2>
-      <div className="grid gap-4">
+    <section className="overflow-hidden rounded-[8px] border border-border bg-white">
+      <div className="bg-cream-strong px-4 py-3 sm:px-5">
+        <h2 className="text-base font-bold text-ink">Discounts</h2>
+      </div>
+      <div className="grid gap-4 px-4 py-4 sm:grid-cols-2 sm:px-5">
         <FormField
           id="couponCode"
           label="Coupon code"
           registration={register("couponCode")}
           error={errors.couponCode}
-          placeholder="Enter coupon (applied on order)"
+          placeholder="Enter Coupon code"
         />
         <label className="grid gap-1.5 text-sm font-medium text-slate-800">
           <span className="flex items-center gap-1.5">
