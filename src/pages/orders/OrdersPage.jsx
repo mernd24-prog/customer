@@ -692,6 +692,7 @@ function OrderDetail({ orderId, track }) {
   const taxIncluded = getTaxIncludedAmount(order, taxBreakup);
   const taxPayable = getTaxPayableAmount(order, taxBreakup);
   const status = getOrderStatus(order);
+  const invoiceDownloadAvailable = ["delivered", "fulfilled"].includes(status);
   const paymentStatus = getPaymentStatus(order);
   const deliveryStatus = getDeliveryStatus(order);
   const trackingNumber = getTrackingNumber(order);
@@ -704,14 +705,17 @@ function OrderDetail({ orderId, track }) {
   }, [dispatch, orderId]);
 
   useEffect(() => {
-    if (!orderId) return;
+    if (!orderId || !invoiceDownloadAvailable) {
+      setInvoices(null);
+      return;
+    }
     setInvoicesLoading(true);
     dispatch(fetchMarketplaceInvoices({ orderId }))
       .unwrap()
       .then((result) => setInvoices(result?.data || result))
       .catch(() => {})
       .finally(() => setInvoicesLoading(false));
-  }, [dispatch, orderId]);
+  }, [dispatch, invoiceDownloadAvailable, orderId]);
 
   const handleRetryPayment = async () => {
     setRetrying(true);
@@ -1248,7 +1252,7 @@ function OrderDetail({ orderId, track }) {
               </section>
             )}
 
-            {(invoices?.sellerInvoices?.length > 0 || invoices?.orderInvoice) && (
+            {invoiceDownloadAvailable && (invoices?.sellerInvoices?.length > 0 || invoices?.orderInvoice) && (
               <section className="rounded-[8px] border border-border bg-white px-4 py-4 sm:px-6">
                 <h2 className="flex items-center gap-2 text-sm font-semibold text-ink">
                   <FileText size={15} /> Invoices &amp; documents

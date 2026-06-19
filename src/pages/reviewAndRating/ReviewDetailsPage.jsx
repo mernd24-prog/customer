@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,11 +7,6 @@ import {
   markReviewHelpful,
 } from "../../features/review/reviewSlice";
 import { fetchProductById } from "../../features/product/productSlice";
-=======
-import { Link, useLocation, useParams } from "react-router-dom";
-import { ChevronLeft, MessageCircle, ThumbsUp } from "lucide-react";
-import { ratingBreakdown, reviews } from "../../data/review";
->>>>>>> origin/aditi-dev
 
 const LIMIT = 10;
 
@@ -34,35 +28,10 @@ function StarRow({ rating, size = 14 }) {
 function RatingBar({ star, count, total }) {
   const pct = total > 0 ? Math.round((count / total) * 100) : 0;
   return (
-<<<<<<< HEAD
     <div className="grid grid-cols-[18px_1fr_32px] items-center gap-2">
       <span className="text-[11px] font-semibold text-muted">{star}</span>
       <div className="h-1.5 overflow-hidden rounded-full bg-border">
         <div className="h-full rounded-full bg-gold transition-all" style={{ width: `${pct}%` }} />
-=======
-    <article className="border-b  border-[var(--customer-border)] py-4">
-      <div className="flex items-start gap-3">
-        <span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-sm bg-[var(--customer-success)] text-[10px] font-bold text-white">
-          ✓
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="text-[13px] font-semibold leading-5 text-[var(--customer-ink)]">
-            {review.text}
-          </p>
-
-          <p className="mt-3 text-[11px] font-medium text-[var(--customer-muted)]">
-            {review.name} | {review.date}
-          </p>
-        </div>
-        <div className="ml-auto hidden items-center gap-4 text-[var(--customer-muted)] sm:flex">
-          <span className="inline-flex items-center gap-1 text-[11px]">
-            <ThumbsUp size={13} /> {review.helpful}
-          </span>
-          <span className="inline-flex items-center gap-1 text-[11px]">
-            <MessageCircle size={13} /> 0
-          </span>
-        </div>
->>>>>>> origin/aditi-dev
       </div>
       <span className="text-right text-[10px] font-semibold text-muted">{count}</span>
     </div>
@@ -152,7 +121,6 @@ function getProductInfo(product) {
 
 export default function ReviewDetailsPage() {
   const { productId } = useParams();
-<<<<<<< HEAD
   const dispatch = useDispatch();
 
   const currentUser = useSelector((s) => s.auth.current);
@@ -215,35 +183,6 @@ export default function ReviewDetailsPage() {
   const reviewCount = stats?.count ?? stats?.totalCount ?? total;
   const ratingDist = stats?.distribution || stats?.ratingDistribution || {};
   const totalPages = Math.ceil(total / LIMIT);
-=======
-  const { state } = useLocation();
-  const product = getProductDisplay(state?.product);
-  const allReviews = [
-    ...reviews,
-    ...reviews.map((review, index) => ({
-      ...review,
-      name: ["Ankita", "Mythra Customer", "Shivani", "Rachana"][index % 4],
-      date: ["13 Feb 2026", "2 June 2026", "20 May 2026", "15 May 2026"][
-        index % 4
-      ],
-      helpful: index,
-    })),
-    ...reviews.map((review, index) => ({
-      ...review,
-      name: ["Priti", "Neha", "Divya", "Palavi"][index % 4],
-      date: ["25 Mar 2026", "2 June 2026", "19 Mar 2026", "20 May 2026"][
-        index % 4
-      ],
-      text: [
-        "Quality is too good. Soft and comfortable.",
-        "Very soft and comfortable. Must buy.",
-        "Very good purchase till date. Thank you.",
-        "Nice slipper and clean finish.",
-      ][index % 4],
-      helpful: 0,
-    })),
-  ];
->>>>>>> origin/aditi-dev
 
   return (
     <main className="bg-white">
@@ -256,7 +195,6 @@ export default function ReviewDetailsPage() {
           >
             <ChevronLeft size={16} /> Back to product
           </Link>
-<<<<<<< HEAD
 
           {product ? (
             <>
@@ -285,30 +223,6 @@ export default function ReviewDetailsPage() {
           ) : (
             <div className="aspect-[3/4] w-full animate-pulse rounded-[4px] bg-cream" />
           )}
-=======
-          <img
-            src={product.image}
-            alt={product.title}
-            className="aspect-[3/4]  w-full rounded-[4px] bg-[var(--customer-cream)] object-cover"
-          />
-          <div className="mt-4">
-            <h1 className="text-base font-bold uppercase text-[var(--customer-ink)]">
-              {product.title}
-            </h1>
-            <p className="mt-1 text-sm text-[var(--customer-muted)]">
-              {product.category}
-            </p>
-            <p className="mt-5 text-sm font-bold text-[var(--customer-ink)]">
-              Rs. {product.price}
-              <span className="ml-2 font-medium text-[var(--customer-muted)] line-through">
-                Rs. {product.mrp}
-              </span>
-              <span className="ml-2 font-bold text-[var(--customer-gold-dark)]">
-                ({product.discount})
-              </span>
-            </p>
-          </div>
->>>>>>> origin/aditi-dev
         </aside>
 
         {/* ── Main content ── */}
@@ -348,7 +262,6 @@ export default function ReviewDetailsPage() {
             </div>
           </div>
 
-<<<<<<< HEAD
           {/* Customer photos */}
           {reviews.some((r) => (r.media || r.images || []).length > 0) && (
             <div className="border-b border-border py-5">
@@ -368,13 +281,6 @@ export default function ReviewDetailsPage() {
               </div>
             </div>
           )}
-=======
-          {/* <div className="border-b border-[var(--customer-border)] py-5">
-            <h3 className="text-sm font-bold text-[var(--customer-ink)]">
-              Customer Photos (33)
-            </h3>
-          </div> */}
->>>>>>> origin/aditi-dev
 
           {/* Sort + review list */}
           <div className="py-5">

@@ -1229,12 +1229,15 @@ export function OrdersPage({ detail = false, track = false }) {
     taxState.current?.orderId === orderId
       ? taxState.current
       : null;
+  const invoiceVisible = ["delivered", "fulfilled"].includes(
+    String(order?.status || order?.orderStatus || "").toLowerCase(),
+  );
 
   useEffect(() => {
-    if (detail || track) {
+    if ((detail || track) && invoiceVisible) {
       dispatch(fetchOrderInvoice({ orderId })).catch(() => {});
     }
-  }, [detail, dispatch, orderId, track]);
+  }, [detail, dispatch, invoiceVisible, orderId, track]);
 
   if (detail || track)
     return (
@@ -1306,7 +1309,7 @@ export function OrdersPage({ detail = false, track = false }) {
             <div className="panel nested-panel">
               <h2>Invoice</h2>
               {taxState.loading && <p>Loading invoice...</p>}
-              {!taxState.loading && invoice ? (
+              {!taxState.loading && invoiceVisible && invoice ? (
                 <div className="summary-lines">
                   <div>
                     <span>Invoice number</span>
@@ -1362,7 +1365,7 @@ export function OrdersPage({ detail = false, track = false }) {
                 </div>
               ) : (
                 !taxState.loading && (
-                  <p>Invoice will appear here after payment is confirmed.</p>
+                  <p>Invoice will appear here after the order is delivered.</p>
                 )
               )}
             </div>

@@ -175,7 +175,6 @@ function adaptItemForCard(item) {
     reviewCount,
     stock,
     attributes,
-    stock,
     stockMessage,
     increaseDisabled: outOfStock || stockLimitReached,
     _raw: item,

@@ -355,6 +355,14 @@ const getPaymentPayload = (result = {}) =>
   result;
 const getPaymentStatus = (payment = {}) =>
   payment?.status || payment?.payment_status || "";
+const getPaymentAmount = (payment = {}) =>
+  asOptionalNumber(payment?.amount ?? payment?.payableAmount ?? payment?.payable_amount);
+const getCheckoutAmount = (payment = {}) => {
+  const amountInPaise = asOptionalNumber(payment?.checkout?.amount);
+  return amountInPaise === null ? null : Number((amountInPaise / 100).toFixed(2));
+};
+const amountsMatch = (left, right) =>
+  Math.round(Number(left || 0) * 100) === Math.round(Number(right || 0) * 100);
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 const SELECTED_CHECKOUT_STORAGE_KEY = "sam_global_selected_checkout_item_ids";
 const getBuyNowItems = () => {
@@ -394,6 +402,20 @@ const createCheckoutIdempotencyKey = () => {
   if (window.crypto?.randomUUID) return window.crypto.randomUUID();
   return `checkout-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
+const createCheckoutPricingKey = ({
+  baseKey,
+  couponCode,
+  walletAmount,
+  paymentProvider,
+  payableAmount,
+}) =>
+  [
+    baseKey,
+    String(couponCode || "NOCOUPON").trim().toUpperCase(),
+    Number(walletAmount || 0).toFixed(2),
+    paymentProvider || "razorpay",
+    Number(payableAmount || 0).toFixed(2),
+  ].join(":");
 const buildOrderItems = (items = []) =>
   items
     .map(
@@ -514,7 +536,7 @@ export default function CheckoutPage() {
 
   const buyNowItems = useMemo(getBuyNowItems, []);
   const selectedCheckoutItemIds = useMemo(getSelectedCheckoutItemIds, []);
-  const checkoutIdempotencyKey = useMemo(createCheckoutIdempotencyKey, []);
+  const checkoutIdempotencyBaseKey = useMemo(createCheckoutIdempotencyKey, []);
   const isBuyNowCheckout = buyNowItems.length > 0;
   const cart = cartState.current || {};
   const checkoutSourceItems = useMemo(
@@ -1033,7 +1055,13 @@ export default function CheckoutPage() {
         couponCode: values.couponCode || undefined,
         walletAmount,
         paymentProvider,
-        idempotencyKey: checkoutIdempotencyKey,
+        idempotencyKey: createCheckoutPricingKey({
+          baseKey: checkoutIdempotencyBaseKey,
+          couponCode: values.couponCode,
+          walletAmount,
+          paymentProvider,
+          payableAmount: quotePayableAmount,
+        }),
         shippingAddress,
         items: orderItems,
       }),
@@ -1084,6 +1112,20 @@ export default function CheckoutPage() {
       paymentProvider === "cod" ? "COD order confirmed" : null,
     );
     const initiatedPayment = getPaymentPayload(initiatedPaymentResult);
+    const paymentAmount = getPaymentAmount(initiatedPayment);
+    const checkoutAmount = getCheckoutAmount(initiatedPayment);
+    if (
+      (paymentAmount !== null && !amountsMatch(paymentAmount, payableAmount)) ||
+      (checkoutAmount !== null && !amountsMatch(checkoutAmount, payableAmount))
+    ) {
+      const message = `Payment amount mismatch. Checkout payable is ₹${Number(payableAmount).toLocaleString("en-IN")} but payment gateway returned ₹${Number(paymentAmount ?? checkoutAmount ?? 0).toLocaleString("en-IN")}. Please refresh checkout and try again.`;
+      setError("root", { type: "manual", message });
+      notify.error({
+        title: "Payment amount mismatch",
+        message,
+      });
+      return;
+    }
 
     if (paymentProvider === "razorpay") {
       if (getPaymentStatus(initiatedPayment) !== "captured") {
