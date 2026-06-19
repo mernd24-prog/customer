@@ -208,7 +208,7 @@ body {
   color: var(--customer-ink);
   font-family: var(--font-sans);
 
-  overflow-x: hidden;
+  overflow-x: clip;
   overflow-y: auto;
   scrollbar-width: none;
   /* Firefox */

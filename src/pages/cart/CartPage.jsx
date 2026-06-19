@@ -21,7 +21,8 @@ import {
   normalizeCartPayloadForWrite,
   wishlistPayload,
 } from "../../utils/ecommerce";
-import { ChevronRight } from "lucide-react";
+import { OutlineSmallButton } from "../../components/dynamicComponent/button/static";
+import { FaAngleRight } from "react-icons/fa6";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 const SAVED_FOR_LATER_STORAGE_KEY = "sam_global_saved_for_later_items";
@@ -545,7 +546,7 @@ export default function CartPage() {
             emptyTitle="Your cart is empty"
             emptyText="Add some products to continue shopping."
           >
-            <div className="grid grid-cols-1 items-start gap-6 sm:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(360px,563px)] xl:gap-9">
+            <div className="grid grid-cols-1 gap-6 sm:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(360px,563px)] xl:gap-9">
               <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8">
                 {hasCartItems && (
                   <div className="flex items-center justify-between">
@@ -742,20 +743,17 @@ export default function CartPage() {
                 )}
 
                 <div className="flex items-center gap-3">
-                  <Link to="/products">
-                    <BrandButton
-                      variant="custom"
-                      label="Continue Shopping"
-                      icon={<ChevronRight className="h-4 w-4" />}
-                      iconPosition="right"
-                      className="h-[44px] rounded-lg border border-[#A9B4D8] bg-white px-6 text-[15px] font-semibold text-[#3F4095] hover:border-[#3F4095] hover:bg-gray-50"
-                    />
-                  </Link>
+                  <OutlineSmallButton
+                    to="/products"
+                    rightIcon={<FaAngleRight className="text-[10px]" />}
+                  >
+                    Continue Shopping
+                  </OutlineSmallButton>
                 </div>
               </div>
 
               {hasCartItems && (
-                <div className="w-full self-start xl:sticky xl:top-5">
+                <div className="w-full">
                   <CartSummary
                     items={selectedItems}
                     shippingLabel="Shipping"
@@ -794,15 +792,13 @@ export default function CartPage() {
                       Multiple widgets available in the product designer
                     </p>
                   </div>
-                  <Link to="/products">
-                    <BrandButton
-                      variant="custom"
-                      label="Browse All Products"
-                      icon={<ChevronRight className="h-4 w-4" />}
-                      iconPosition="right"
-                      className="ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none inline-flex h-[40px] sm:h-[45px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-transparent px-4 sm:px-5 py-[10px] font-dm-sans sm:text-[16px] lg:text-[18px] font-semibold tracking-[0%] align-middle text-[#3E4093] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A] self-start text-[12px] sm:self-center"
-                    />
-                  </Link>
+                  <OutlineSmallButton
+                    to="/products"
+                    rightIcon={<FaAngleRight className="text-[10px]" />}
+                    className="self-start sm:self-center"
+                  >
+                    Browse All Products
+                  </OutlineSmallButton>
                 </div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 lg:gap-6">
                   {recentViewedItems.map((item) => (
