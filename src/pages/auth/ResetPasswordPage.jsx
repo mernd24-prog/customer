@@ -63,14 +63,15 @@ export default function ResetPasswordPage() {
     <>
       <Seo title="Reset Password | Sam Global" />
       <AuthCard
-        eyebrow="Password recovery"
-        title="Create a new password"
-        subtitle="Enter the OTP we sent to your email along with your new password."
-        icon="/image/png/person.png"
-        maxWidth="max-w-[70rem]"
+        title="Reset Password"
+        subtitle="Enter your new password below and make sure it’s something strong and unique."
+        icon="/image/png/done.png"
+        image="/image/png/authImage.png"
+        maxWidth="max-w-[65rem]"
+        maxHeight="h-[650px]"
       >
-        <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
-          <FormField
+        <form className="grid gap-4" onSubmit={handleSubmit(submit)} noValidate>
+          {/* <FormField
             id="email"
             label="Email address"
             type="email"
@@ -78,9 +79,9 @@ export default function ResetPasswordPage() {
             error={errors.email}
             autoComplete="email"
             placeholder="you@example.com"
-          />
+          /> */}
 
-          <label className="text-sm font-semibold text-ink">OTP code</label>
+          {/* <label className="text-sm font-semibold text-ink">OTP code</label>
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}
@@ -88,7 +89,7 @@ export default function ResetPasswordPage() {
               setValue("otp", otp, { shouldValidate: true, shouldDirty: true })
             }
             error={errors.otp?.message}
-          />
+          /> */}
 
           <FormField
             id="newPassword"
@@ -125,7 +126,7 @@ export default function ResetPasswordPage() {
             disabled={!isValid || loading}
             className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <KeyRound size={18} /> Reset password
+            Reset password
           </Button>
 
           <p className="text-center  text-[0.8rem] text-muted">

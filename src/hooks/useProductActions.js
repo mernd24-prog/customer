@@ -20,7 +20,8 @@ export function useProductActions() {
   const cart = useSelector((state) => state.cart.current);
   const wishlist = useSelector((state) => state.cart.current?.wishlist);
   const wishlistIds = useMemo(
-    () => (Array.isArray(wishlist) ? wishlist.map((item) => getProductId(item)) : []),
+    () =>
+      Array.isArray(wishlist) ? wishlist.map((item) => getProductId(item)) : [],
     [wishlist],
   );
 
@@ -82,15 +83,11 @@ export function useProductActions() {
         openAuthModal();
         return;
       }
-      return run(
-        dispatch,
-        updateCart(wishlistPayload(cart, product, true)),
-        {
-          title: "Removed from wishlist",
-          message: "The item has been removed from your wishlist.",
-          tone: "remove",
-        },
-      );
+      return run(dispatch, updateCart(wishlistPayload(cart, product, true)), {
+        title: "Removed from wishlist",
+        message: "The item has been removed from your wishlist.",
+        tone: "remove",
+      });
     },
     [cart, dispatch, run, user, openAuthModal],
   );

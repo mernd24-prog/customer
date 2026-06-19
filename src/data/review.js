@@ -26,15 +26,6 @@ export const ratingBreakdown = [
   },
 ];
 
-export const reviewImages = [
-  "/image/jpg/productImg1.jpg",
-  "/image/jpg/productImg2.jpg",
-  "/image/jpg/productImg3.jpg",
-  "/image/jpg/productImg4.jpg",
-  "/image/png/luxury-watches.png",
-  "/image/png/gold-watch-with-rhinestones 1.png",
-];
-
 export const reviews = [
   {
     name: "Pooja",
@@ -42,7 +33,6 @@ export const reviews = [
     date: "5 Mar 2026",
     text: "I'm truly happy with my purchase – the wireless mouse is absolutely wonderful! It looks sleek and stylish, feels great in hand, and works so smoothly without any lag. It's extremely easy to use and quick and hassle-free connectivity.",
     helpful: 136,
-    images: reviewImages.slice(0, 4),
   },
   {
     name: "Meesho User",
@@ -50,7 +40,6 @@ export const reviews = [
     date: "6 June 2026",
     text: "I'm truly happy with my purchase – the wireless mouse is absolutely wonderful! It looks sleek and stylish, feels great in hand, and works so smoothly without any lag. It's extremely easy to use and quick and hassle-free connectivity.",
     helpful: 0,
-    images: reviewImages.slice(1, 4),
   },
   {
     name: "Vinay Shah",
@@ -58,6 +47,5 @@ export const reviews = [
     date: "7 June 2026",
     text: "I'm truly happy with my purchase – the wireless mouse is absolutely wonderful! It looks sleek and stylish, feels great in hand, and works so smoothly without any lag. It's extremely easy to use and quick and hassle-free connectivity.",
     helpful: 4,
-    images: reviewImages.slice(4, 5),
   },
 ];

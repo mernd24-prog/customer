@@ -48,8 +48,8 @@ function StarInput({ value, onChange, size = 28 }) {
 
 function RatingPill({ rating }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-[#CE9F2D] px-2 py-1 text-[10px] font-bold text-white">
-      <IoIosStar className="text-base" />({rating})
+    <span className="inline-flex items-center gap-1 rounded-full bg-[#CE9F2D] px-2 py-1 text-[10px] font-bold text-white lg:text-base">
+      <IoIosStar className="text-[10px] lg:text-base" />({rating})
     </span>
   );
 }
@@ -68,18 +68,21 @@ function ProductReviewCard({ review }) {
   const text = review.reviewText || review.text;
 
   return (
-    <article className="border-b border-[var(--customer-border)] last:border-b-0 sm:pb-4 mb-6">
+    <article className="border-b  border-[var(--customer-border)] last:border-b-0 sm:pb-4 mb-4 lg:mb-6">
       <div className="mb-2  flex min-w-0 items-center gap-2.5">
-        <span className="w-10 h-10">
+        <span className="w-8 h-8 lg:w-10 lg:h-10">
           <img src="/image/png/person.png" alt="Person Image" />
         </span>
-        <span className=" text-xl font-bold text-[#2E2E2E]">{name}</span>
+        <span className="text-base lg:text-2xl font-bold text-[#2E2E2E]">
+          {name}
+        </span>
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+      <div className="my-2 lg:my-4 flex flex-wrap items-center gap-2">
         <RatingPill rating={rating} />
-        <span className="text-sm font-medium text-[#949494]">
-          · Posted on {dateStr || review.date}
+        <span className="text-base flex gap-2 font-medium text-[#949494]">
+          <div className="w-1 h-1 my-auto rounded-full bg-[#949494]" />
+          Posted on {dateStr || review.date}
         </span>
       </div>
 
@@ -88,7 +91,11 @@ function ProductReviewCard({ review }) {
           {review.title}
         </p>
       )}
-      {text && <p className="text-sm  text-[#2E2E2E] sm:text-lg ">{text}</p>}
+      {text && (
+        <p className="text-sm text-[#2E2E2E] sm:text-lg  my-4 lg:mt-8 ">
+          {text}
+        </p>
+      )}
 
       {review.adminReply?.text && (
         <div className="mt-4 rounded-[6px] border-l-2 border-[var(--customer-gold)] bg-[var(--customer-cream)] p-3">
@@ -403,28 +410,28 @@ export default function ProductReviewsSection({ productId, product }) {
   return (
     <section id="reviews" className="w-full overflow-hidden">
       <div className="flex  flex-col gap-4 lg:gap-12 lg:flex-row">
-        <aside className=" lg:sticky lg:top-20 lg:self-start">
-          <div className="w-full lg:w-[400px] rounded-[8px] border border-[#CE9F2D66] bg-white">
-            <div className="bg-[#CE9F2D33] px-4 py-3 sm:px-5">
-              <h2 className="text-lg font-bold text-[#2E2E2E]">
+        <aside className=" lg:sticky lg:top-20   lg:self-start">
+          <div className="w-full lg:w-[580px]  rounded-xl  border border-[#CE9F2D66] bg-white">
+            <div className=" px-4 py-6  rounded-xl bg-[#CE9F2D33] sm:px-5">
+              <h2 className="text-lg md:text-[24px] font-bold text-[#2E2E2E]">
                 Product Ratings & Reviews
               </h2>
             </div>
 
-            <div className="p-4 sm:p-5">
+            <div className="p-3 lg:p-5">
               <div className="flex  items-center gap-2  font-bold  text-[#008425]">
                 <span>
-                  <IoIosStar className="text-lg" />
+                  <IoIosStar className="text-xl lg:text-3xl" />
                 </span>
-                <span className="text-3xl">
+                <span className="text-[28px] lg:text-[42px]">
                   {Number(displayAvgRating).toFixed(1)}
                 </span>
               </div>
-              <p className="my-2 text-base font-medium  text-[#2E2E2E]">
+              <p className="text-base lg:text-lg  font-medium text-[#2E2E2E]">
                 {displayReviewCount} Ratings, {displayTotal} Reviews
               </p>
 
-              <div className="space-y-3">
+              <div className="py-2 lg:py-3">
                 {displayRatingBreakdown.map((item, index) => {
                   const rating = item.rating || 5 - index;
                   return (
@@ -441,11 +448,11 @@ export default function ProductReviewsSection({ productId, product }) {
                           : "opacity-100"
                       }`}
                     >
-                      <div className="mt-2 flex justify-between">
-                        <span className="  text-[11px]  font-medium text-[#2E2E2E] sm:text-sm">
+                      <div className="my-3 flex justify-between">
+                        <span className="  text-[11px]  font-medium text-[#2E2E2E] sm:text-lg">
                           {item.label}
                         </span>
-                        <span className="text-right  text-[11px] font-medium text-[#2E2E2E] sm:text-base">
+                        <span className="text-right  text-[11px] font-medium text-[#2E2E2E] sm:text-lg">
                           {item.count}
                         </span>
                       </div>
@@ -498,7 +505,7 @@ export default function ProductReviewsSection({ productId, product }) {
           )}
 
           {displayTotal > 0 && (
-            <div className="flex flex-col gap-3 mt-6 sm:flex-row justify-end ">
+            <div className="flex flex-col gap-3  mt-2 lg:mt-6 sm:flex-row items-end justify-end ">
               <div className="flex flex-wrap items-center gap-2">
                 {ratingFilter > 0 && (
                   <span className="rounded-full bg-gold-soft px-2 py-1 text-xs text-gold-dark">
@@ -573,7 +580,7 @@ export default function ProductReviewsSection({ productId, product }) {
             <Link
               to={`/products/${productId}/reviews`}
               state={{ product }}
-              className=" flex w-full items-center gap-2 text-left text-lg font-semibold  text-[#CE9F2D] transition-colors "
+              className=" flex w-full items-center gap-2 text-left text-sm lg:text-lg font-semibold  text-[#CE9F2D] transition-colors "
             >
               View all reviews <ChevronRight size={16} />
             </Link>

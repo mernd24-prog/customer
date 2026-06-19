@@ -5,25 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import QuantitySelector from "../../components/cart/QuantitySelector";
 import { IoIosSearch } from "react-icons/io";
 import {
-  WhatsappShareButton,
-  FacebookShareButton,
-  TwitterShareButton,
-  TelegramShareButton,
-  LinkedinShareButton,
-  EmailShareButton,
-  WhatsappIcon,
-  FacebookIcon,
-  TwitterIcon,
-  TelegramIcon,
-  LinkedinIcon,
-  EmailIcon,
-} from "react-share";
-import {
   Heart,
   RefreshCw,
   Share2,
   ShieldCheck,
-  Star,
   Truck,
   ZoomIn,
   X,
@@ -55,7 +40,6 @@ import { useProductActions } from "../../hooks/useProductActions";
 import { addRecentlyViewed } from "../../utils/recentlyViewed";
 import {
   applyImageFallback,
-  formatMoney,
   getProductId,
   getImageFallbackSrc,
   getProductImage,
@@ -63,44 +47,68 @@ import {
   getProductPrice,
   getProductMrp,
   getVariantPrice,
+  getImageUrlFromValue,
   firstMoneyValue,
   buildCartItem,
 } from "../../utils/ecommerce";
 
 import ProductReviewsSection from "../../components/ecommerce/ProductReviewsSection";
 import CUSTOMER_ROUTES from "../../constants/routes";
+import StarRating from "./components/starRating";
+import ShareProductPopover from "./components/socialMediaShare";
+import ProductPriceBlock from "./components/oldAndNewPrice";
+import ProductStockStatus from "./components/stockStatus";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
-function StarRating({ rating, count }) {
-  const stars = Math.round(rating || 0);
-  return (
-    <div className="flex items-center  gap-2 my-2">
-      <div className="flex items-center gap-1 ">
-        {rating != null && (
-          <span className=" text-lg  font-medium text-ink">
-            {Number(rating).toFixed(1)}
-          </span>
-        )}
-        {Array.from({ length: 5 }, (_, i) => (
-          <Star
-            key={i}
-            size={15}
-            className={
-              i < stars
-                ? "fill-[#F58220] text-[#F58220]"
-                : "fill-border text-border"
-            }
-          />
-        ))}
-      </div>
+const isImageSource = (src) => {
+  if (!src || typeof src !== "string") return false;
+  const value = src.trim();
+  if (!value || value.startsWith("#")) return false;
 
-      {count != null && (
-        <span className=" text-lg  font-medium text-[#2E2E2E]">
-          ({count.toLocaleString()} reviews)
-        </span>
-      )}
-    </div>
+  return (
+    value.startsWith("/") ||
+    value.startsWith("http://") ||
+    value.startsWith("https://") ||
+    value.startsWith("data:image/") ||
+    value.startsWith("blob:") ||
+    /\.(avif|gif|jpe?g|png|svg|webp)(\?.*)?$/i.test(value)
+  );
+};
+
+const firstImageSource = (...values) =>
+  values.map(getImageUrlFromValue).find(isImageSource) || "";
+
+const getColorSwatchImage = ({
+  option,
+  value,
+  matchingVariant,
+  product,
+  index,
+}) =>
+  firstImageSource(
+    option?.images?.[value],
+    option?.imageUrls?.[value],
+    option?.valueImages?.[value],
+    option?.valueImageUrls?.[value],
+    option?.valueCodes?.[value],
+    matchingVariant?.images,
+    matchingVariant?.imageUrl,
+    matchingVariant?.image,
+    matchingVariant?.thumbnail,
+    product?.images?.[index],
+  );
+
+function IconActionButton({ title, onClick, children, className = "" }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-all duration-300 ease-in-out hover:scale-110 hover:bg-white sm:h-10 sm:w-10 ${className}`}
+      title={title}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -136,6 +144,7 @@ function ProductGallery({
 
   const handleMouseMove = (e) => {
     if (!isLarge && !isModal) return;
+    if (!isZoomed) return;
 
     const rect = e.currentTarget.getBoundingClientRect();
 
@@ -149,6 +158,8 @@ function ProductGallery({
   };
 
   const handleMouseLeave = () => {
+    setZoomPos({ x: 50, y: 50 });
+
     if (!isModal) {
       setIsZoomed(false);
     }
@@ -158,6 +169,7 @@ function ProductGallery({
     if (!isLarge && !isModal) return;
 
     const rect = e.currentTarget.getBoundingClientRect();
+
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
 
@@ -172,12 +184,11 @@ function ProductGallery({
   return (
     <div
       className={`flex min-w-0 flex-col gap-4 overflow-hidden ${
-        isModal ? "h-full w-full" : "h-auto w-full   xl:h-[400px]"
+        isModal ? "h-full w-full" : "h-auto w-full xl:h-[560px] 2xl:h-[620px]"
       }`}
     >
-      <div className="flex h-full min-w-0 flex-col gap-4 overflow-hidden xl:flex-row">
-        {/* Thumbnail */}
-        <div className="order-2 h-[90px]  w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[70px]">
+      <div className="flex min-w-0 flex-col gap-4 overflow-hidden xl:h-full xl:flex-row">
+        <div className="order-2 h-[90px]  w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[85px]">
           <Swiper
             onSwiper={setThumbsSwiper}
             spaceBetween={10}
@@ -191,7 +202,7 @@ function ProductGallery({
             {images.map((img, i) => (
               <SwiperSlide
                 key={i}
-                className="!h-[64px] !w-[64px] xl:!h-[70px] xl:!w-full"
+                className="!h-[90px] !w-[90px] xl:!h-[78px]  xl:!w-full"
               >
                 <button
                   type="button"
@@ -204,7 +215,7 @@ function ProductGallery({
                     setActiveIndex(i);
                     mainSwiper?.slideTo(i);
                   }}
-                  className={`h-full w-full overflow-hidden rounded-[8px] border bg-white transition-colors duration-200 ${
+                  className={`h-full w-full overflow-hidden rounded-[8px] border   transition-colors duration-200 ${
                     activeIndex === i
                       ? "border-gold shadow-sm"
                       : "border-border"
@@ -213,7 +224,7 @@ function ProductGallery({
                   <img
                     src={img}
                     alt=""
-                    className="h-full w-full object-cover"
+                    className="h-full p-2 w-full object-cover"
                     onError={(event) =>
                       applyImageFallback(event, fallbackLabel, "product")
                     }
@@ -224,12 +235,11 @@ function ProductGallery({
           </Swiper>
         </div>
 
-        {/* Main Image */}
         <div
-          className={`relative order-1 min-w-0 flex-1 overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white xl:order-2 ${
+          className={`relative order-1 min-w-0  overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-transparent xl:order-2 ${
             isModal
               ? "h-full"
-              : " max-h-[340px] sm:max-h-[380px] md:max-h-[430px]  xl:h-full xl:max-h-none"
+              : "h-[360px] sm:h-[400px] md:h-[460px]  lg:h-[600px] xl:h-full"
           }`}
         >
           <Swiper
@@ -244,12 +254,12 @@ function ProductGallery({
                 thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
             }}
             modules={[Thumbs, FreeMode]}
-            className="h-full w-full"
+            className="h-full w-full bg-transparent"
           >
             {images.map((img, i) => (
-              <SwiperSlide key={i}>
+              <SwiperSlide key={i} className="!h-full bg-transparent">
                 <div
-                  className={`relative h-full w-full overflow-hidden ${
+                  className={`relative h-full w-full overflow-hidden bg-transparent ${
                     isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
                   }`}
                   onMouseMove={handleMouseMove}
@@ -260,12 +270,12 @@ function ProductGallery({
                     src={img}
                     alt=""
                     draggable={false}
-                    className={`h-full w-full object-contain transition-transform duration-300 ease-out select-none ${
+                    className={`h-full w-full select-none object-contain transition-transform duration-300 ease-out ${
                       isZoomed
                         ? isModal
-                          ? "scale-[2.2]"
-                          : "scale-[2.6]"
-                        : "scale-100"
+                          ? "scale-[1.5]"
+                          : "scale-[1.6]"
+                        : "scale-95"
                     }`}
                     style={{
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
@@ -275,10 +285,6 @@ function ProductGallery({
                       applyImageFallback(event, fallbackLabel, "product")
                     }
                   />
-
-                  {!isZoomed && (
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
-                  )}
                 </div>
               </SwiperSlide>
             ))}
@@ -335,125 +341,42 @@ function ImageGallery({
     <div className="relative w-full min-w-0 overflow-hidden">
       <ProductGallery images={images} fallbackLabel={fallbackLabel} />
 
-      {/* Actions */}
       <div className="absolute right-3 top-3 z-20 flex flex-col gap-2 sm:right-4 sm:top-4">
-        <button
-          type="button"
+        <IconActionButton
+          title="Zoom image"
           onClick={() => {
             if (onModalOpen) onModalOpen();
             setIsModalOpen(true);
           }}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-ink shadow-md backdrop-blur-sm transition-all duration-300 ease-in-out hover:scale-110 hover:bg-white sm:h-10 sm:w-10"
-          title="Zoom image"
+          className="text-ink"
         >
           <ZoomIn size={18} />
-        </button>
-        <button
-          type="button"
-          onClick={onWishlist}
-          className={`flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-all duration-300 ease-in-out hover:scale-110 hover:bg-white sm:h-10 sm:w-10 ${isWishlisted ? "text-red-500" : "text-ink"}`}
+        </IconActionButton>
+
+        <IconActionButton
           title="Add to Wishlist"
+          onClick={onWishlist}
+          className={isWishlisted ? "text-red-500" : "text-ink"}
         >
           <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
-        </button>
+        </IconActionButton>
+
         <div ref={shareRef} className="relative">
-          <button
-            type="button"
-            onClick={onShareToggle}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-navy shadow-md backdrop-blur-sm transition-all duration-300 ease-in-out hover:scale-110 hover:bg-white sm:h-10 sm:w-10"
+          <IconActionButton
             title="Share Product"
+            onClick={onShareToggle}
+            className="text-navy"
           >
             <Share2 size={18} />
-          </button>
+          </IconActionButton>
 
-          {shareOpen && (
-            <div className="absolute right-0 top-12 z-50 w-[230px] max-w-[calc(100vw-24px)] rounded-[var(--customer-radius)] border border-border bg-white p-3 shadow-2xl sm:w-[260px] sm:p-4 md:w-[280px]">
-              <div className="mb-3">
-                <h3 className="text-[13px] font-bold text-ink sm:text-sm">
-                  Share Product
-                </h3>
-                <p className="mt-1 text-[11px] text-muted sm:text-xs">
-                  Share this product with friends
-                </p>
-              </div>
-
-              <div className="grid grid-cols-3 place-items-center gap-2 sm:gap-3">
-                <WhatsappShareButton
-                  url={window.location.href}
-                  title={productTitle}
-                >
-                  <span className="block scale-[0.85] transition-all duration-300 ease-in-out sm:scale-95 md:scale-100">
-                    <WhatsappIcon size={42} round />
-                  </span>
-                </WhatsappShareButton>
-
-                <FacebookShareButton
-                  url={window.location.href}
-                  quote={productTitle}
-                >
-                  <span className="block scale-[0.85] transition-all duration-300 ease-in-out sm:scale-95 md:scale-100">
-                    <FacebookIcon size={42} round />
-                  </span>
-                </FacebookShareButton>
-
-                <TwitterShareButton
-                  url={window.location.href}
-                  title={productTitle}
-                >
-                  <span className="block scale-[0.85] transition-all duration-300 ease-in-out sm:scale-95 md:scale-100">
-                    <TwitterIcon size={42} round />
-                  </span>
-                </TwitterShareButton>
-
-                <TelegramShareButton
-                  url={window.location.href}
-                  title={productTitle}
-                >
-                  <span className="block scale-[0.85] transition-all duration-300 ease-in-out sm:scale-95 md:scale-100">
-                    <TelegramIcon size={42} round />
-                  </span>
-                </TelegramShareButton>
-
-                <LinkedinShareButton
-                  url={window.location.href}
-                  title={productTitle}
-                >
-                  <span className="block scale-[0.85] transition-all duration-300 ease-in-out sm:scale-95 md:scale-100">
-                    <LinkedinIcon size={42} round />
-                  </span>
-                </LinkedinShareButton>
-
-                <EmailShareButton
-                  url={window.location.href}
-                  subject={productTitle}
-                  body={`Check this product:\n${window.location.href}`}
-                >
-                  <span className="block scale-[0.85] transition-all duration-300 ease-in-out sm:scale-95 md:scale-100">
-                    <EmailIcon size={42} round />
-                  </span>
-                </EmailShareButton>
-              </div>
-
-              <button
-                type="button"
-                onClick={async () => {
-                  await navigator.clipboard.writeText(window.location.href);
-                  alert("Link copied!");
-                }}
-                className="mt-4 w-full rounded-full bg-gold px-3 py-2 text-[12px] font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark sm:px-4 sm:text-sm"
-              >
-                Copy Link
-              </button>
-            </div>
-          )}
+          {shareOpen && <ShareProductPopover productTitle={productTitle} />}
         </div>
       </div>
 
-      {/* Modal */}
       {isModalOpen &&
         createPortal(
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/95 p-4 animate-fadeIn sm:p-6">
-            {/* Close Button */}
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4 animate-fadeIn sm:p-6">
             <button
               type="button"
               onClick={() => {
@@ -465,7 +388,7 @@ function ImageGallery({
               <X size={28} />
             </button>
 
-            <div className="flex h-[90vh] w-full max-w-[1200px] items-center justify-center">
+            <div className="flex h-[90vh] w-full max-w-[1200px] items-center justify-center bg-white">
               <ProductGallery
                 images={images}
                 isModal={true}
@@ -489,12 +412,15 @@ function DeliveryChecker({ productId }) {
   const check = async (e) => {
     e.preventDefault();
     const pin = pincode.trim();
+
     if (!/^\d{6}$/.test(pin)) {
       setError("Enter a valid 6-digit pincode");
       return;
     }
+
     setError("");
     setLoading(true);
+
     try {
       const action = await dispatch(
         checkServiceability({ pincode: pin, productId }),
@@ -510,9 +436,12 @@ function DeliveryChecker({ productId }) {
   return (
     <div>
       <div>
-        <span className="text-lg font-semibold text-ink">Check Delivery</span>
+        <span className="text-base lg:text-[20px] font-semibold text-ink">
+          Check Delivery
+        </span>
       </div>
-      <form onSubmit={check} className="flex h-10   w-full max-w-[280px] gap-0">
+
+      <form onSubmit={check} className="flex h-13  w-[360px]    gap-0">
         <input
           type="text"
           value={pincode}
@@ -520,27 +449,414 @@ function DeliveryChecker({ productId }) {
             setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))
           }
           placeholder="Enter 6-digit pincode"
-          className="focus:outline-none  rounded-l-full"
+          className="flex-1 focus:outline-none  text-[#4E4E4E]  text-sm lg:text-lg rounded-l-full"
         />
+
         <button
           type="submit"
           disabled={loading}
-          className="flex w-12 items-center  justify-center rounded-r-full bg-navy text-xs font-semibold text-white"
+          className="flex w-16 items-center  justify-center rounded-r-full bg-navy text-xs font-semibold text-white"
         >
           <IoIosSearch className="text-xl" />
         </button>
       </form>
+
       {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
+
       {result && (
         <p
-          className={`mt-2  text-sm font-medium ${result.serviceable ? "success" : "text-red-600"}`}
+          className={`mt-2  text-sm font-medium ${
+            result.serviceable ? "success" : "text-red-600"
+          }`}
         >
           {result.serviceable
-            ? `✓ Delivery by ${result.estimatedDelivery || result.estimatedDate || "2–5 business days"}`
+            ? `✓ Delivery by ${
+                result.estimatedDelivery ||
+                result.estimatedDate ||
+                "2–5 business days"
+              }`
             : "Delivery not available to this pincode."}
         </p>
       )}
     </div>
+  );
+}
+
+function VariantSelector({
+  variantOptions,
+  selectedAttributes,
+  findVariantForSelection,
+  setSelectedVariant,
+  product,
+}) {
+  return (
+    <div className="flex flex-col gap-4">
+      {variantOptions.map((option) => (
+        <div key={option.slug}>
+          <p
+            className={`mb-3 font-semibold capitalize text-ink ${
+              option.displayType === "color_swatch" ? "text-xl" : "text-[11px]"
+            }`}
+          >
+            {option.displayType === "color_swatch" ? "Colour" : option.name}:
+          </p>
+
+          <div className="flex  flex-wrap gap-4">
+            {option.values.map((value, valueIndex) => {
+              const isSelected =
+                String(selectedAttributes[option.slug]) === String(value);
+
+              const matchingVariant = findVariantForSelection(
+                option.slug,
+                value,
+              );
+
+              const disabled = !matchingVariant;
+
+              const swatchImage =
+                option.displayType === "color_swatch"
+                  ? getColorSwatchImage({
+                      option,
+                      value,
+                      matchingVariant,
+                      product,
+                      index: valueIndex,
+                    })
+                  : "";
+
+              if (option.displayType === "color_swatch") {
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    disabled={disabled}
+                    onClick={() =>
+                      matchingVariant && setSelectedVariant(matchingVariant)
+                    }
+                    className={`h-[80px]  w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 sm:h-[95px] sm:w-[95px] ${
+                      isSelected
+                        ? "border-gold shadow-sm"
+                        : "border-[#E7D9B8] hover:border-gold"
+                    }`}
+                    title={value}
+                  >
+                    <img
+                      src={swatchImage}
+                      alt={`${value} colour`}
+                      className="h-full w-full object-contain p-3"
+                    />
+                  </button>
+                );
+              }
+
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  disabled={disabled}
+                  onClick={() =>
+                    matchingVariant && setSelectedVariant(matchingVariant)
+                  }
+                  className={`min-h-10  min-w-12 rounded-[8px]  px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40  border border-gold ${
+                    isSelected
+                      ? " bg-white text-ink shadow-sm"
+                      : " bg-white text-ink "
+                  }`}
+                >
+                  {value}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ProductActionButtons({
+  inStock,
+  product,
+  selectedVariant,
+  quantity,
+  addToCart,
+  navigate,
+}) {
+  return (
+    <div className="mt-2  grid gap-4 sm:grid-cols-2">
+      <button
+        type="button"
+        disabled={!inStock}
+        onClick={() => {
+          addToCart({ ...product, selectedVariant }, quantity);
+        }}
+        className="py-3 w-full rounded-[10px] bg-gold text-base font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        Add To Cart
+      </button>
+
+      <button
+        type="button"
+        disabled={!inStock}
+        onClick={() => {
+          const buyNowItem = buildCartItem(
+            { ...product, selectedVariant },
+            quantity,
+          );
+
+          window.sessionStorage.setItem(
+            BUY_NOW_STORAGE_KEY,
+            JSON.stringify([buyNowItem]),
+          );
+
+          navigate("/checkout");
+        }}
+        className="py-3 w-full rounded-[10px] border border-navy text-base font-semibold text-navy transition-all duration-300 ease-in-out hover:bg-cream disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        Buy It Now
+      </button>
+    </div>
+  );
+}
+
+function ProductFeatureGrid() {
+  const features = [
+    {
+      icon: <ShieldCheck size={20} className="text-gold" />,
+      label: "100% Secure Payments",
+    },
+    {
+      icon: <Truck size={20} className="text-gold font-medium" />,
+      label: "Free Shipping",
+    },
+    {
+      icon: <RefreshCw size={20} className="text-gold" />,
+      label: "Easy Returns",
+    },
+    {
+      icon: <ShieldCheck size={20} className="text-gold" />,
+      label: "24/7 Support",
+    },
+  ];
+
+  return (
+    <div className="mt-8 lg:mt-16 grid grid-cols-1 gap-4  lg:gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {features.map((item) => (
+        <div
+          key={item.label}
+          className="flex py-2  lg:py-5  flex-col items-center justify-center gap-2 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8]  text-center"
+        >
+          <span className="flex w-10 h-10 md:h-16  md:w-16 items-center justify-center my-2 rounded-full border border-[#E7D9B8] bg-[#FFF8E8]">
+            {item.icon}
+          </span>
+
+          <p className="text-base  md:text-2xl font-bold text-navy">
+            {item.label}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function InfoTabs({ tabs, activeTab, onChange }) {
+  return (
+    <div className="flex overflow-x-auto border-b border-border">
+      {tabs.map((tab) => (
+        <button
+          key={tab.key}
+          type="button"
+          onClick={() => onChange(tab.key)}
+          className={`min-w-max px-5  lg:py-4 py-2 text-base lg:text-[24px] font-medium ${
+            activeTab === tab.key
+              ? "border-b-2 border-navy font-semibold bg-gradient-to-t from-[#1B1D6033] to-transparent text-navy"
+              : "text-[#2E2E2E]"
+          }`}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function InfoCard({ title, children, roundedClass = "rounded-[8px]" }) {
+  return (
+    <div
+      className={`mt-5 overflow-hidden ${roundedClass} border border-[#E7D9B8] bg-white`}
+    >
+      <div className="bg-[#CE9F2D33] px-4 py-6">
+        <h2 className="text-sm md:text-xl font-bold text-[#2E2E2E]">{title}</h2>
+      </div>
+
+      {children}
+    </div>
+  );
+}
+
+function DetailRows({
+  rows,
+  children,
+  rowClassName = "grid grid-cols-1 gap-1 px-4 py-3 text-sm md:text-lg sm:grid-cols-[220px_minmax(0,1fr)]",
+  labelClassName = "font-medium text-ink",
+  valueClassName = "text-left font-bold text-navy md:text-right",
+}) {
+  return (
+    <dl className="divide-y divide-border">
+      {rows.map(([key, value]) => (
+        <div key={key} className={rowClassName}>
+          <dt className={labelClassName}>{key}</dt>
+          <dd className={valueClassName}>
+            {Array.isArray(value) ? value.join(", ") : String(value)}
+          </dd>
+        </div>
+      ))}
+
+      {children}
+    </dl>
+  );
+}
+
+function ProductInfoSection({
+  infoTabs,
+  activeInfoTab,
+  setActiveInfoTab,
+  detailRows,
+  warranty,
+  product,
+  attributes,
+}) {
+  return (
+    <div className="relative  z-10  mt-8 lg:mt-24 bg-white">
+      <InfoTabs
+        tabs={infoTabs}
+        activeTab={activeInfoTab}
+        onChange={setActiveInfoTab}
+      />
+
+      {activeInfoTab === "details" && detailRows.length > 0 && (
+        <InfoCard title="Product Details" roundedClass="rounded-xl">
+          <DetailRows
+            rows={detailRows.slice(0, 8)}
+            rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[18px] sm:grid-cols-[220px_minmax(0,1fr)]"
+            labelClassName="font-medium text-[#2E2E2E]"
+            valueClassName="text-left font-bold text-navy sm:text-right"
+          >
+            {warranty && (
+              <div className="grid grid-cols-1 gap-1 px-4 py-3 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]">
+                <dt className="font-medium text-ink">Warranty</dt>
+                <dd className="text-left font-bold text-[#1B1D60] sm:text-right">
+                  {warranty.period ||
+                    warranty.duration ||
+                    warranty.type ||
+                    "Warranty available"}
+                  {warranty.coverage && ` · ${warranty.coverage}`}
+                </dd>
+              </div>
+            )}
+          </DetailRows>
+        </InfoCard>
+      )}
+
+      {activeInfoTab === "description" && (
+        <InfoCard title="Description">
+          <p className="px-4 py-4 text-sm lg:text-lg  text-black/90 whitespace-pre-line">
+            {product.description || "No description available."}
+          </p>
+        </InfoCard>
+      )}
+
+      {activeInfoTab === "specification" && (
+        <InfoCard title="Specification">
+          <dl className="divide-y divide-border">
+            {Object.entries(attributes).length > 0 ? (
+              Object.entries(attributes).map(([key, value]) => (
+                <div
+                  key={key}
+                  className="grid grid-cols-1 gap-1 px-4 py-3 text-sm md:text-lg sm:grid-cols-[220px_minmax(0,1fr)]"
+                >
+                  <dt className="font-medium text-ink">{key}</dt>
+                  <dd className="text-left font-bold text-navy md:text-right">
+                    {Array.isArray(value) ? value.join(", ") : String(value)}
+                  </dd>
+                </div>
+              ))
+            ) : (
+              <div className="px-4 py-4 text-sm lg:text-lg  text-black/90 whitespace-pre-line">
+                No specifications available.
+              </div>
+            )}
+          </dl>
+        </InfoCard>
+      )}
+
+      {activeInfoTab === "seller" && (
+        <InfoCard title="Seller Info">
+          {product.seller ? (
+            <div className="flex items-center gap-3 px-4 py-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-soft font-bold text-gold-dark">
+                {(product.seller.name || "S")[0].toUpperCase()}
+              </div>
+
+              <div>
+                <p className="text-sm font-semibold text-ink">
+                  {product.seller.name || product.seller.storeName || "Seller"}
+                </p>
+
+                {product.seller.rating && (
+                  <StarRating rating={product.seller.rating} />
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="px-4 py-4 text-sm lg:text-lg   text-black/90 whitespace-pre-line">
+              Seller information is not available.
+            </div>
+          )}
+        </InfoCard>
+      )}
+    </div>
+  );
+}
+
+function ProductRecommendationSection({
+  title,
+  linkText,
+  products,
+  addToCart,
+  toggleWishlist,
+  isWishlisted,
+  className = "mt-12",
+}) {
+  if (!products.length) return null;
+
+  return (
+    <section className={`relative z-10 ${className} bg-white`}>
+      <div className="section-head mb-6">
+        <h2 className="text-base lg:text-[28px] font-bold text-[#3E4093]">
+          {title}
+        </h2>
+
+        <Link
+          to="/products"
+          className="text-sm font-medium text-gold hover:text-gold-dark transition-all duration-300 ease-in-out"
+        >
+          {linkText}
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4  sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {products.slice(0, 4).map((p) => (
+          <ProductCard
+            key={getProductId(p)}
+            product={p}
+            onAddToCart={addToCart}
+            onWishlist={toggleWishlist}
+            isWishlisted={isWishlisted(p)}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -559,11 +875,14 @@ export default function ProductDetailPage() {
   const crossSellState = useSelector((s) => s.relatedProducts);
 
   const warranty = warrantyState.current;
+
   const dynamicPrice =
     String(dynamicState.current?.productId || "") === String(productId || "")
       ? firstMoneyValue(dynamicState.current?.price)
       : undefined;
+
   const relatedProducts = relatedState.relatedByProduct[productId]?.items || [];
+
   const crossSellProducts =
     crossSellState.crossSellByProduct[productId]?.items || [];
 
@@ -573,52 +892,64 @@ export default function ProductDetailPage() {
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const [shareOpen, setShareOpen] = useState(false);
   const [activeInfoTab, setActiveInfoTab] = useState("details");
-  // Track which productId has already had its one-shot side effects run
+
   const sideEffectsRanFor = useRef(null);
   const dynamicPriceRequestKey = useRef(null);
 
   useEffect(() => {
     dispatch(fetchProductById({ productId }));
-    // Reset the guard so side effects re-run when navigating to a different product
     sideEffectsRanFor.current = null;
   }, [dispatch, productId]);
 
   useEffect(() => {
     if (!product) return;
-    // Guard: only run once per productId regardless of how many times product state changes
+
     if (sideEffectsRanFor.current === productId) return;
     sideEffectsRanFor.current = productId;
 
     addRecentlyViewed(product);
+
     dispatch(fetchProductWarranty({ productId })).catch(() => {});
     dispatch(fetchRelatedProducts({ productId })).catch(() => {});
     dispatch(fetchCrossSellProducts({ productId })).catch(() => {});
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
+
     dispatch(
       trackAnalyticsEvent({
         eventName: "product_view",
         metadata: { productId },
       }),
     ).catch(() => {});
+
     dispatch(
-      trackRecommendationInteraction({ productId, interactionType: "viewed" }),
+      trackRecommendationInteraction({
+        productId,
+        interactionType: "viewed",
+      }),
     ).catch(() => {});
   }, [dispatch, product, productId]);
 
   useEffect(() => {
-    if (!loadedProductId || String(loadedProductId) !== String(productId))
+    if (!loadedProductId || String(loadedProductId) !== String(productId)) {
       return;
+    }
+
     const requestKey = `${productId}:${quantity}`;
+
     if (dynamicPriceRequestKey.current === requestKey) return;
+
     dynamicPriceRequestKey.current = requestKey;
+
     dispatch(fetchDynamicPrice({ productId, quantity })).catch(() => {});
   }, [dispatch, loadedProductId, productId, quantity]);
 
   const variants = useMemo(() => product?.variants || [], [product?.variants]);
+
   const variantOptions = useMemo(() => {
     const configuredOptions = Array.isArray(product?.options)
       ? product.options
       : [];
+
     if (configuredOptions.length) {
       return configuredOptions
         .map((option) => ({
@@ -636,6 +967,7 @@ export default function ProductDetailPage() {
     }
 
     const axisMap = new Map();
+
     variants.forEach((variant) => {
       Object.entries(variant.attributes || {}).forEach(([key, value]) => {
         if (!axisMap.has(key)) axisMap.set(key, new Set());
@@ -657,8 +989,10 @@ export default function ProductDetailPage() {
       setSelectedVariant(null);
       return;
     }
+
     const defaultVariant =
       variants.find((variant) => variant.isDefault) || variants[0];
+
     setSelectedVariant((current) =>
       current &&
       variants.some(
@@ -671,8 +1005,13 @@ export default function ProductDetailPage() {
   }, [variants]);
 
   const selectedAttributes = selectedVariant?.attributes || {};
+
   const findVariantForSelection = (axis, value) => {
-    const nextSelection = { ...selectedAttributes, [axis]: value };
+    const nextSelection = {
+      ...selectedAttributes,
+      [axis]: value,
+    };
+
     return (
       variants.find((variant) =>
         Object.entries(nextSelection).every(
@@ -688,7 +1027,9 @@ export default function ProductDetailPage() {
 
   const selectedVariantPrice = getVariantPrice(selectedVariant);
   const productPrice = getProductPrice(product);
+
   const baseDisplayPrice = firstMoneyValue(selectedVariantPrice, productPrice);
+
   const safeDynamicPrice =
     dynamicPrice &&
     baseDisplayPrice &&
@@ -696,24 +1037,31 @@ export default function ProductDetailPage() {
     dynamicPrice <= baseDisplayPrice * 2
       ? dynamicPrice
       : undefined;
+
   const price = firstMoneyValue(
     safeDynamicPrice,
     selectedVariantPrice,
     productPrice,
   );
+
   const mrp = firstMoneyValue(
     getProductMrp(selectedVariant),
     getProductMrp(product),
   );
+
   const currency = selectedVariant?.currency || product?.currency || "INR";
+
   const discount =
     mrp && price && mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
+
   const fallbackProductImage =
     getProductImage(product) ||
     getImageFallbackSrc(getProductTitle(product), product?.category);
+
   const variantImages = selectedVariant?.images?.length
     ? selectedVariant.images
     : [];
+
   const images = variantImages.length
     ? variantImages
     : product?.images?.length
@@ -723,7 +1071,9 @@ export default function ProductDetailPage() {
         : fallbackProductImage
           ? [fallbackProductImage]
           : [];
+
   const attributes = product?.attributes || product?.specifications || {};
+
   const inStock =
     selectedVariant?.stock != null
       ? selectedVariant.stock > 0
@@ -732,16 +1082,19 @@ export default function ProductDetailPage() {
         : product?.stock != null
           ? product.stock > 0
           : true;
+
   const categoryLabel = product?.category
     ? (product.category || "")
         .replace(/-/g, " ")
         .replace(/\b\w/g, (c) => c.toUpperCase())
     : null;
+
   const detailRows = Object.entries({
     Brand: product?.brand,
     Category: categoryLabel,
     ...attributes,
   }).filter(([, value]) => value != null && value !== "");
+
   const infoTabs = [
     { key: "details", label: "Product Details" },
     { key: "description", label: "Description" },
@@ -759,14 +1112,16 @@ export default function ProductDetailPage() {
       />
 
       <div className=" ">
-        <nav className=" flex  my-6 flex-wrap items-center gap-1 text-lg text-[#2E2E2E]">
+        <nav className=" flex  my-6 flex-wrap items-center gap-1 text-sm lg:text-lg text-[#2E2E2E]">
           <Link
             to="/"
             className="hover:text-ink text-[#2E2E2E] transition-all duration-300 ease-in-out"
           >
             Home
           </Link>
+
           <span>/</span>
+
           {product?.parentCategory && (
             <>
               <Link
@@ -778,6 +1133,7 @@ export default function ProductDetailPage() {
               <span>/</span>
             </>
           )}
+
           {product?.category && product.category !== product.parentCategory && (
             <>
               <Link
@@ -789,6 +1145,7 @@ export default function ProductDetailPage() {
               <span>/</span>
             </>
           )}
+
           <span className="line-clamp-1  text-gold-dark">
             {getProductTitle(product) || "Product"}
           </span>
@@ -803,7 +1160,7 @@ export default function ProductDetailPage() {
         >
           {product && (
             <>
-              <div className="grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] lg:gap-7">
+              <div className="grid min-w-0 items-start gap-2 xl:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] md:gap-7">
                 <div className="min-w-0">
                   <ImageGallery
                     images={images}
@@ -825,17 +1182,8 @@ export default function ProductDetailPage() {
                 <div className="flex min-w-0 flex-col gap-3">
                   <div className="flex min-w-0 items-start justify-between gap-3 ">
                     <div className="min-w-0">
-                      {/* {product.brand && (
-                        <p className="text-[11px] d font-semibold uppercase tracking-normal text-gold-dark">
-                          {product.brand}
-                        </p>
-	                      )} */}
-                      <h1 className="break-words text-[15px] font-semibold  text-ink sm:text-[17px] lg:text-2xl">
-                        {/* {getProductTitle(product)} */}
-                        OnePlus 15 | 12GB+256GB | Infinite Black | India's First
-                        Snapdragon® 8 Elite Gen 5 | 7300mAh Battery |
-                        Personalised AI | Game-Changing 165Hz Display | Triple
-                        50MP Camera with 4K 120fps Dolby Vision
+                      <h1 className="break-words text-[15px] font-semibold  text-ink sm:text-[17px] lg:text-[26px]">
+                        {getProductTitle(product)}
                       </h1>
                     </div>
                   </div>
@@ -847,44 +1195,23 @@ export default function ProductDetailPage() {
                     />
                   )}
 
-                  <div className="flex flex-wrap my-2 items-center gap-3">
-                    <span className="text-[28px] font-bold leading-none text-navy">
-                      {formatMoney(price, currency)}
-                    </span>
-                    {mrp && mrp > price && (
-                      <span className="text-[20px] font-semibold text-gray line-through">
-                        {formatMoney(mrp, currency)}
-                      </span>
-                    )}
-                    {discount > 0 && (
-                      <span className="rounded-full bg-[#FF3D31] px-3 py-1 text-[14px] font-bold uppercase text-white">
-                        {discount}% Off
-                      </span>
-                    )}
-                  </div>
+                  <ProductStockStatus
+                    inStock={inStock}
+                    selectedVariant={selectedVariant}
+                    product={product}
+                  />
 
-                  {safeDynamicPrice && dynamicState.current?.loyalty && (
-                    <p className="inline-block w-fit  rounded-full bg-gold-soft px-3 py-1 text-xs font-semibold text-gold-dark">
-                      ✦ Loyalty price applied
-                    </p>
-                  )}
+                  <ProductPriceBlock
+                    price={price}
+                    mrp={mrp}
+                    currency={currency}
+                    discount={discount}
+                    safeDynamicPrice={safeDynamicPrice}
+                    dynamicState={dynamicState}
+                  />
 
-                  {inStock ? (
-                    <div className="flex items-center gap-2">
-                      <div className="relative z-0 w-2.5 h-2.5 rounded-full bg-success animate-pulse" />
-                      <p className="text-[12px] font-bold text-success">
-                        {selectedVariant?.stock ?? product?.stock ?? 52} in
-                        stock
-                      </p>
-                    </div>
-                  ) : (
-                    <p className="text-[12px] font-semibold text-red-500">
-                      Out of stock
-                    </p>
-                  )}
-
-                  <div className="flex my-4 flex-row gap-4 items-center ">
-                    <div>
+                  <div className="flex my-4 flex-col md:flex-row gap-6 md:items-center ">
+                    <div className="w-full md:w-fit">
                       <QuantitySelector
                         quantity={quantity}
                         onIncrease={() => setQuantity((q) => q + 1)}
@@ -898,267 +1225,37 @@ export default function ProductDetailPage() {
                   </div>
 
                   {variants.length > 0 && variantOptions.length > 0 && (
-                    <div className="flex flex-col gap-4">
-                      {variantOptions.map((option) => (
-                        <div key={option.slug}>
-                          <p className="mb-2 text-[11px] font-semibold capitalize text-ink">
-                            {option.name}:
-                          </p>
-                          <div className="flex  flex-wrap gap-2">
-                            {option.values.map((value) => {
-                              const isSelected =
-                                String(selectedAttributes[option.slug]) ===
-                                String(value);
-                              const matchingVariant = findVariantForSelection(
-                                option.slug,
-                                value,
-                              );
-                              const disabled = !matchingVariant;
-                              const swatchValue = option.valueCodes?.[value];
-
-                              if (option.displayType === "color_swatch") {
-                                return (
-                                  <button
-                                    key={value}
-                                    type="button"
-                                    disabled={disabled}
-                                    onClick={() =>
-                                      matchingVariant &&
-                                      setSelectedVariant(matchingVariant)
-                                    }
-                                    className={`h-12  w-12 rounded-[8px] border p-1 transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 ${isSelected ? "border-gold bg-[#EEE7FF] shadow-sm" : "border-[#E7D9B8] bg-white hover:border-gold"}`}
-                                    title={value}
-                                  >
-                                    <span
-                                      className="block h-full w-full rounded-[6px] border border-gray-200"
-                                      style={{
-                                        backgroundColor:
-                                          swatchValue?.startsWith("#")
-                                            ? swatchValue
-                                            : value,
-                                      }}
-                                    />
-                                  </button>
-                                );
-                              }
-
-                              return (
-                                <button
-                                  key={value}
-                                  type="button"
-                                  disabled={disabled}
-                                  onClick={() =>
-                                    matchingVariant &&
-                                    setSelectedVariant(matchingVariant)
-                                  }
-                                  className={`min-h-10 min-w-12 rounded-[8px] border px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 ${isSelected ? "border-gold  bg-[#EEE7FF] text-navy shadow-sm" : "border-[#E7D9B8] bg-white text-ink hover:border-gold"}`}
-                                >
-                                  {value}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <VariantSelector
+                      variantOptions={variantOptions}
+                      selectedAttributes={selectedAttributes}
+                      findVariantForSelection={findVariantForSelection}
+                      setSelectedVariant={setSelectedVariant}
+                      product={product}
+                    />
                   )}
 
-                  <div className="mt-1  grid gap-4 sm:grid-cols-2">
-                    <button
-                      type="button"
-                      disabled={!inStock}
-                      onClick={() => {
-                        addToCart({ ...product, selectedVariant }, quantity);
-                      }}
-                      className="py-3 w-full rounded-xl bg-gold text-base font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      Add To Cart
-                    </button>
-                    <button
-                      type="button"
-                      disabled={!inStock}
-                      onClick={() => {
-                        const buyNowItem = buildCartItem(
-                          { ...product, selectedVariant },
-                          quantity,
-                        );
-                        window.sessionStorage.setItem(
-                          BUY_NOW_STORAGE_KEY,
-                          JSON.stringify([buyNowItem]),
-                        );
-                        navigate("/checkout");
-                      }}
-                      className="py-3 w-full rounded-xl border border-navy text-base font-semibold text-navy transition-all duration-300 ease-in-out hover:bg-cream disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      Buy It Now
-                    </button>
-                  </div>
+                  <ProductActionButtons
+                    inStock={inStock}
+                    product={product}
+                    selectedVariant={selectedVariant}
+                    quantity={quantity}
+                    addToCart={addToCart}
+                    navigate={navigate}
+                  />
                 </div>
               </div>
 
-              <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {[
-                  {
-                    icon: <ShieldCheck size={20} className="text-gold" />,
-                    label: "100% Secure Payments",
-                  },
-                  {
-                    icon: <Truck size={20} className="text-gold font-medium" />,
-                    label: "Free Shipping",
-                  },
-                  {
-                    icon: <RefreshCw size={20} className="text-gold" />,
-                    label: "Easy Returns",
-                  },
-                  {
-                    icon: <ShieldCheck size={20} className="text-gold" />,
-                    label: "24/7 Support",
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    className="flex  py-5  flex-col items-center justify-center gap-2 rounded-[10px] border border-[#E7D9B8] bg-[#FFFDF8] text-center"
-                  >
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[#E7D9B8] bg-[#FFF8E8]">
-                      {item.icon}
-                    </span>
-                    <p className="text-[18px] font-bold text-navy">
-                      {item.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
+              <ProductFeatureGrid />
 
-              <div className="relative  z-10 mt-9 bg-white">
-                <div className="flex overflow-x-auto border-b border-border">
-                  {infoTabs.map((tab) => (
-                    <button
-                      key={tab.key}
-                      type="button"
-                      onClick={() => setActiveInfoTab(tab.key)}
-                      className={`min-w-max px-5 py-4 text-[18px] font-medium ${
-                        activeInfoTab === tab.key
-                          ? "border-b-2 border-navy bg-gradient-to-t from-[#1B1D6033] to-transparent text-navy"
-                          : "text-[#2E2E2E]"
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
-
-                {activeInfoTab === "details" && detailRows.length > 0 && (
-                  <div className="mt-5  overflow-hidden rounded-[8px] border border-[#E7D9B8] bg-white">
-                    <div className="bg-[#CE9F2D33] px-4 py-3">
-                      <h2 className="text-xl font-bold text-[#2E2E2E]">
-                        Product Details
-                      </h2>
-                    </div>
-                    <dl className="divide-y divide-border">
-                      {detailRows.slice(0, 8).map(([key, value]) => (
-                        <div
-                          key={key}
-                          className="grid grid-cols-1 gap-1 px-4 py-3 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]"
-                        >
-                          <dt className="font-medium text-ink">{key}</dt>
-                          <dd className="text-left font-bold text-navy sm:text-right">
-                            {Array.isArray(value)
-                              ? value.join(", ")
-                              : String(value)}
-                          </dd>
-                        </div>
-                      ))}
-                      {warranty && (
-                        <div className="grid grid-cols-1 gap-1 px-4 py-3 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]">
-                          <dt className="font-medium text-ink">Warranty</dt>
-                          <dd className="text-left font-bold text-[#1B1D60] sm:text-right">
-                            {warranty.period ||
-                              warranty.duration ||
-                              warranty.type ||
-                              "Warranty available"}
-                            {warranty.coverage && ` · ${warranty.coverage}`}
-                          </dd>
-                        </div>
-                      )}
-                    </dl>
-                  </div>
-                )}
-
-                {activeInfoTab === "description" && (
-                  <div className="mt-5 overflow-hidden rounded-[8px] border border-[#E7D9B8] bg-white">
-                    <div className="bg-[var(--customer-cream)] px-4 py-3">
-                      <h2 className="text-[15px] font-bold text-ink">
-                        Description
-                      </h2>
-                    </div>
-                    <p className="px-4 py-4 text-lg  text-black/90 whitespace-pre-line">
-                      {product.description || "No description available."}
-                    </p>
-                  </div>
-                )}
-
-                {activeInfoTab === "specification" && (
-                  <div className="mt-5 overflow-hidden rounded-[8px] border border-[#E7D9B8] bg-white">
-                    <div className="bg-[var(--customer-cream)] px-4 py-3">
-                      <h2 className="text-[15px] font-bold text-ink">
-                        Specification
-                      </h2>
-                    </div>
-                    <dl className="divide-y divide-border">
-                      {Object.entries(attributes).length > 0 ? (
-                        Object.entries(attributes).map(([key, value]) => (
-                          <div
-                            key={key}
-                            className="grid grid-cols-1 gap-1 px-4 py-3 text-[12px] sm:grid-cols-[220px_minmax(0,1fr)]"
-                          >
-                            <dt className="font-medium text-ink">{key}</dt>
-                            <dd className="text-left font-bold text-navy sm:text-right">
-                              {Array.isArray(value)
-                                ? value.join(", ")
-                                : String(value)}
-                            </dd>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="px-4 py-4 text-lg  text-black/90 whitespace-pre-line">
-                          No specifications available.
-                        </div>
-                      )}
-                    </dl>
-                  </div>
-                )}
-
-                {activeInfoTab === "seller" && (
-                  <div className="mt-5 overflow-hidden rounded-[8px] border border-[#E7D9B8] bg-white">
-                    <div className="bg-[var(--customer-cream)] px-4 py-3">
-                      <h2 className="text-[15px] font-bold text-ink">
-                        Seller Info
-                      </h2>
-                    </div>
-                    {product.seller ? (
-                      <div className="flex items-center gap-3 px-4 py-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-soft font-bold text-gold-dark">
-                          {(product.seller.name || "S")[0].toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-ink">
-                            {product.seller.name ||
-                              product.seller.storeName ||
-                              "Seller"}
-                          </p>
-                          {product.seller.rating && (
-                            <StarRating rating={product.seller.rating} />
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="px-4 py-4 text-lg  text-black/90 whitespace-pre-line">
-                        Seller information is not available.
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+              <ProductInfoSection
+                infoTabs={infoTabs}
+                activeInfoTab={activeInfoTab}
+                setActiveInfoTab={setActiveInfoTab}
+                detailRows={detailRows}
+                warranty={warranty}
+                product={product}
+                attributes={attributes}
+              />
 
               <div className="my-4">
                 <ProductReviewsSection
@@ -1167,59 +1264,25 @@ export default function ProductDetailPage() {
                 />
               </div>
 
-              {relatedProducts.length > 0 && (
-                <section className="relative z-10 mt-12 bg-white">
-                  <div className="section-head mb-6">
-                    <h2 className="text-[28px] font-bold text-[#3E4093]">
-                      You May Also Like
-                    </h2>
-                    <Link
-                      to="/products"
-                      className="text-sm font-medium text-gold hover:text-gold-dark transition-all duration-300 ease-in-out"
-                    >
-                      View all →
-                    </Link>
-                  </div>
-                  <div className="grid grid-cols-1 gap-4  sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {relatedProducts.slice(0, 4).map((p) => (
-                      <ProductCard
-                        key={getProductId(p)}
-                        product={p}
-                        onAddToCart={addToCart}
-                        onWishlist={toggleWishlist}
-                        isWishlisted={isWishlisted(p)}
-                      />
-                    ))}
-                  </div>
-                </section>
-              )}
+              <ProductRecommendationSection
+                title="You May Also Like"
+                linkText="View all →"
+                products={relatedProducts}
+                addToCart={addToCart}
+                toggleWishlist={toggleWishlist}
+                isWishlisted={isWishlisted}
+                className="mt-12"
+              />
 
-              {crossSellProducts.length > 0 && (
-                <section className="relative z-10 mt-10 bg-white">
-                  <div className="section-head mb-6">
-                    <h2 className="text-[28px] font-bold text-[#3E4093]">
-                      Complete the Look
-                    </h2>
-                    <Link
-                      to="/products"
-                      className="text-sm font-medium text-gold hover:text-gold-dark transition-all duration-300 ease-in-out"
-                    >
-                      Explore more →
-                    </Link>
-                  </div>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {crossSellProducts.slice(0, 4).map((p) => (
-                      <ProductCard
-                        key={getProductId(p)}
-                        product={p}
-                        onAddToCart={addToCart}
-                        onWishlist={toggleWishlist}
-                        isWishlisted={isWishlisted(p)}
-                      />
-                    ))}
-                  </div>
-                </section>
-              )}
+              <ProductRecommendationSection
+                title="Complete the Look"
+                linkText="Explore more →"
+                products={crossSellProducts}
+                addToCart={addToCart}
+                toggleWishlist={toggleWishlist}
+                isWishlisted={isWishlisted}
+                className="mt-10"
+              />
             </>
           )}
         </ApiState>

@@ -9,29 +9,45 @@ function cartItemProductId(item) {
 }
 
 function cartItemKey(item) {
-  return [cartItemProductId(item), item?.variantId || item?.variantSku || ""].join(":");
+  return [
+    cartItemProductId(item),
+    item?.variantId || item?.variantSku || "",
+  ].join(":");
 }
 
 function getDefaultVariant(product) {
   if (!Array.isArray(product?.variants) || product.variants.length === 0) {
     return null;
   }
-  return product.variants.find((variant) => variant.isDefault) || product.variants[0];
+  return (
+    product.variants.find((variant) => variant.isDefault) || product.variants[0]
+  );
 }
 
 function normalizeCartItemForWrite(item) {
-  const productObj = item?.productId && typeof item.productId === "object" ? item.productId : item?.product;
-  const defaultVariant = !item?.variantId && !item?.variantSku ? getDefaultVariant(productObj) : null;
+  const productObj =
+    item?.productId && typeof item.productId === "object"
+      ? item.productId
+      : item?.product;
+  const defaultVariant =
+    !item?.variantId && !item?.variantSku
+      ? getDefaultVariant(productObj)
+      : null;
   const productId = cartItemProductId(item);
   return {
     ...item,
     productId,
-    variantId: item?.variantId || defaultVariant?._id || defaultVariant?.id || "",
+    variantId:
+      item?.variantId || defaultVariant?._id || defaultVariant?.id || "",
     variantSku: item?.variantSku || defaultVariant?.sku || "",
     variantTitle: item?.variantTitle || defaultVariant?.title || "",
     attributes: item?.attributes || defaultVariant?.attributes || {},
     quantity: Number(item?.quantity) > 0 ? Number(item.quantity) : 1,
-    price: getProductPrice(item) ?? getVariantPrice(defaultVariant) ?? getProductPrice(productObj) ?? 0,
+    price:
+      getProductPrice(item) ??
+      getVariantPrice(defaultVariant) ??
+      getProductPrice(productObj) ??
+      0,
   };
 }
 
@@ -66,7 +82,9 @@ function mergeCartItems(items = []) {
 export function normalizeCartPayloadForWrite(cart = {}) {
   const items = mergeCartItems(cart?.items || []);
   const wishlist = Array.from(
-    new Set((cart?.wishlist || []).map((item) => normalizeId(item)).filter(Boolean)),
+    new Set(
+      (cart?.wishlist || []).map((item) => normalizeId(item)).filter(Boolean),
+    ),
   );
   return { items, wishlist };
 }

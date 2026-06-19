@@ -71,11 +71,12 @@ export default function LoginPage() {
       />
 
       <AuthCard
-        eyebrow="Welcome back"
-        title="Sign in to Sam Global"
-        subtitle="Access your orders, wallet, loyalty rewards, and personalized deals — all in one place."
+        title="Login to Sam Global"
+        subtitle="Enter your details to access your account."
         icon="/image/png/person.png"
-        maxWidth="max-w-[60rem]"
+        maxWidth="max-w-[56rem]"
+        maxHeight="h-[650px]"
+        image="/image/png/authImage.png"
       >
         <form
           className="grid gap-4 sm:gap-5"

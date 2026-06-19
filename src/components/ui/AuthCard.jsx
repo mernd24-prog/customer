@@ -3,30 +3,35 @@ export default function AuthCard({
   eyebrow,
   subtitle,
   title,
-  showFeatures = true,
+  image,
   icon,
   maxWidth = "max-w-[480px]",
+  maxHeight,
 }) {
   return (
-    <section className="px-4 py-6">
+    <section className="mt-6">
       <div
-        className={`mx-auto w-full ${maxWidth} bg-[#F7F8FC]  rounded-xl border border-[#EAEFF3] p-6 shadow-sm`}
+        className={`mx-auto w-full ${maxWidth}   bg-[#F7F8FC]  rounded-xl border border-[#EAEFF3] p-4 lg:p-6 shadow-sm`}
       >
         <div className="flex flex-col md:flex-row items-stretch gap-6">
           {/* Left image - visible on md+ */}
-          <div className="md:w-1/2 w-full hidden md:block">
+          <div
+            className={`w-full hidden lg:block lg:w-1/2 ${
+              maxHeight || "h-full"
+            }`}
+          >
             <img
-              src="/image/png/registerCustomer.png"
+              src={image}
               alt="Register Decorative Image"
               className="w-full h-full object-cover rounded-md"
             />
           </div>
 
           {/* Right content */}
-          <div className="w-full md:w-1/2 flex flex-col justify-between">
-            <div>
+          <div className="flex w-full flex-col justify-center lg:w-1/2">
+            <div className="w-full">
               <div className="mb-3 text-center ">
-                <div className="mx-auto   mb-2 flex h-[46px] w-[46px] items-center justify-center rounded-full text-gold">
+                <div className="mx-auto   mb-2 flex h-[80px] w-[80px] items-center justify-center rounded-full text-gold">
                   {icon ? (
                     <img
                       src={icon}
@@ -87,7 +92,7 @@ export default function AuthCard({
                 )}
 
                 {subtitle && (
-                  <p className="mx-auto   max-w-2xl text-sm  text-muted">
+                  <p className="mx-auto  max-w-md   text-base text-muted">
                     {subtitle}
                   </p>
                 )}
