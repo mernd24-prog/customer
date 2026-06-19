@@ -1360,7 +1360,8 @@ function OrderSummaryCard({ order }) {
     e.preventDefault();
     e.stopPropagation();
     const formattedId = formatOrderId(orderNumber || id);
-    navigator.clipboard.writeText(formattedId)
+    navigator.clipboard
+      .writeText(formattedId)
       .then(() => {
         notify.success(`Order ID #${formattedId} copied to clipboard!`);
       })
@@ -1407,7 +1408,7 @@ function OrderSummaryCard({ order }) {
       <div className="grid   gap-6 p-3 grid-cols-1 md:grid-cols-[40%_70%] 2xl:grid-cols-[399px_1fr] sm:p-6">
         <Link
           to={`/orders/${id}`}
-          className="flex h-56 md:h-auto items-center justify-center overflow-hidden rounded-md border border-[#EFE5D2] bg-white"
+          className="flex h-56 md:h-auto items-center justify-center overflow-hidden rounded-md border border-[#EFE5D2]  bg-white"
         >
           {image ? (
             <img
@@ -1541,7 +1542,9 @@ function OrderList() {
     return statusOrders.filter((order) => {
       const id = String(getOrderId(order) || "").toLowerCase();
       const orderNumber = String(getOrderNumber(order) || "").toLowerCase();
-      const formattedId = String(formatOrderId(orderNumber || id)).toLowerCase();
+      const formattedId = String(
+        formatOrderId(orderNumber || id),
+      ).toLowerCase();
       const itemText = getOrderItems(order)
         .map((item) => getProductTitle(item))
         .join(" ")
