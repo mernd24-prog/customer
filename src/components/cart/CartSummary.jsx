@@ -68,9 +68,9 @@ export default function CartSummary({
   const rowClass = "";
 
   return (
-    <aside className="sticky top-5 h-fit w-full max-w-[563px] overflow-hidden rounded-[20px] border border-[#F0E6D2] bg-[#FFFDF8] md:min-h-[729px] xl:w-[563px]">
+    <aside className="sticky top-0 h-fit w-full max-w-[563px] overflow-hidden rounded-[20px] border border-[#F0E6D2] bg-[#FFFDF8] md:min-h-[729px] xl:w-[563px]">
       <div className="bg-[#F8EFD8] px-4 py-5 min-[375px]:px-5 sm:px-6 sm:py-6 md:px-8">
-        <h2 className="font-dm-sans text-[21px] font-bold leading-none tracking-normal text-[#2E2E2E] sm:text-[24px]">
+        <h2 className="text-dm-sans text-[21px] font-bold leading-none tracking-normal text-[#2E2E2E] sm:text-[24px]">
           Order Summary
         </h2>
       </div>

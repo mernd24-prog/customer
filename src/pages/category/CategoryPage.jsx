@@ -25,7 +25,7 @@ import { isNotFoundApiError } from "../../utils/apiErrors";
 import categoryBannerImage from "/image/png/CategoryBanner.png"
 
 const SORT_OPTIONS = [
-  { value: "", label: "Relevance" },
+  { value: "", label: "Sort By" },
   { value: "newest", label: "Latest" },
   { value: "price_asc", label: "Price: Low to High" },
   { value: "price_desc", label: "Price: High to Low" },

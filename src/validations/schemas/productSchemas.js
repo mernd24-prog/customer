@@ -16,7 +16,7 @@ export const productSearchSchema = z
     brand: optionalSafeTextField(80),
     minPrice: optionalMoneyField("Minimum price", { min: 0 }),
     maxPrice: optionalMoneyField("Maximum price", { min: 0 }),
-    sortBy: z.enum(["relevance", "newest", "price_low", "price_high", "rating"]).optional(),
+    sortBy: z.enum(["Sort By", "newest", "price_low", "price_high", "rating"]).optional(),
   })
   .refine((values) => !values.minPrice || !values.maxPrice || values.maxPrice >= values.minPrice, {
     message: "Maximum price must be greater than minimum price",
