@@ -1,7 +1,7 @@
 import { tokenStorage } from "../api/tokenStorage";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://192.168.16.47:4000";
+  import.meta.env.VITE_API_BASE_URL || "http://45.195.90.183:4000";
 
 const buildUrl = (path = "") =>
   `${API_BASE_URL.replace(/\/+$/, "")}/${String(path).replace(/^\/+/, "")}`;

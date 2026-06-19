@@ -2,7 +2,13 @@ import { Link } from "react-router-dom";
 import { cn } from "../../utils/classNames";
 import { IoIosArrowForward } from "react-icons/io";
 
-export default function Breadcrumbs({ items = [], className = "" }) {
+export default function Breadcrumbs({
+  items = [],
+  className = "",
+  linkClassName = "text-white",
+  currentClassName = "text-[#CE9F2D]",
+  separatorClassName = "text-white",
+}) {
   return (
     <nav
       className={cn(
@@ -21,16 +27,28 @@ export default function Breadcrumbs({ items = [], className = "" }) {
             {item.href && !isLast ? (
               <Link
                 to={item.href}
-                className="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-white"
+                className={cn(
+                  "font-medium text-[14px] leading-[100%] sm:text-[16px] lg:text-[18px]",
+                  linkClassName,
+                )}
               >
                 {item.label}
               </Link>
             ) : (
-              <span className="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]">
+              <span
+                className={cn(
+                  "font-medium text-[14px] leading-[100%] sm:text-[16px] lg:text-[18px]",
+                  currentClassName,
+                )}
+              >
                 {item.label}
               </span>
             )}
-            {!isLast && <span><IoIosArrowForward className="text-white" /></span>}
+            {!isLast && (
+              <span>
+                <IoIosArrowForward className={separatorClassName} />
+              </span>
+            )}
           </span>
         );
       })}

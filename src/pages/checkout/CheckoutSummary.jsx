@@ -80,91 +80,53 @@ export default function CheckoutSummary({
   const quotedPayable = Number(
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
   );
-  const calculatedPayable = Math.max(
-    quoteSubtotal +
-      quoteShipping +
-      taxPayable +
-      codCharge -
-      quoteDiscount -
-      quoteWallet,
-    0,
-  );
-  const quotePayable =
-    Number.isFinite(quotedPayable) && quotedPayable > 0
-      ? quotedPayable
-      : calculatedPayable;
 
   return (
     <aside className="min-w-0">
-      <div className="sticky top-4 w-full overflow-hidden rounded-lg border border-border bg-white p-5">
-        <h2 className="mb-4  text-base font-semibold text-ink">
-          Order summary
-        </h2>
-        <div className="grid divide-y divide-border">
+      <div className="sticky top-4 w-full overflow-hidden rounded-[8px] border border-border bg-white">
+        <div className="bg-cream-strong px-4 py-3 sm:px-5">
+          <h2 className="text-base font-bold text-ink">Order Summary</h2>
+        </div>
+
+        <div className="px-4 py-4 sm:px-5">
+          <p className="mb-2 text-sm font-bold text-ink">
+            {String(items.length).padStart(2, "0")} Item(s)
+          </p>
+          <div className="grid divide-y divide-border">
           {items.map((item) => (
             <div
               key={item._lineKey}
-              className="grid min-w-0 grid-cols-[56px_minmax(0,1fr)] gap-3 py-3 text-sm first:pt-0 last:pb-0"
+              className="flex min-w-0 items-center justify-between gap-3 py-3 text-xs first:pt-0 last:pb-0"
             >
-              <img
-                src={item._image}
-                alt={item._safeTitle}
-                className="h-14 w-14 shrink-0 rounded-[8px] bg-cream object-cover"
-                loading="lazy"
-              />
-              <div className="min-w-0 flex-1">
-                <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate font-medium text-ink">
-                      {item._safeTitle}
-                    </p>
-                    {item._variantTitle ? (
-                      <p className="mt-0.5 truncate text-xs text-muted">
-                        {item._variantTitle}
-                      </p>
-                    ) : null}
-                    <p className="mt-1 text-xs text-muted">
-                      Qty: {item.quantity} · {formatMoney(item.price, "INR")}
-                    </p>
-                  </div>
-                  <span className="whitespace-nowrap text-right font-medium text-ink">
-                    {formatMoney(item._lineTotal, "INR")}
-                  </span>
-                </div>
-                {item._attributes.length > 0 ? (
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {item._attributes.map(([key, value]) => (
-                      <span
-                        key={key}
-                        className="rounded-full bg-cream px-2 py-0.5 text-[11px] capitalize text-muted"
-                      >
-                        {key.replace(/[_-]/g, " ")}: {String(value)}
-                      </span>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
+              <span className="min-w-0 truncate font-semibold text-ink">
+                {item.quantity} x {item._safeTitle}
+              </span>
+              <span className="shrink-0 font-bold text-navy">
+                {formatMoney(item._lineTotal, "INR")}
+              </span>
             </div>
           ))}
-        </div>
+          </div>
 
-        <div className="mt-4 border-t border-border pt-4">
-          <div className="flex justify-between text-sm text-muted">
-            <span>Items ({items.length})</span>
-            <span>{formatMoney(quoteSubtotal, "INR")}</span>
+        <div className="border-t border-border pt-3">
+          <div className="flex justify-between py-2 text-sm text-ink">
+            <span>Item Total</span>
+            <span className="font-bold text-navy">{formatMoney(quoteSubtotal, "INR")}</span>
           </div>
           {quoteDiscount > 0 ? (
-            <div className="mt-1 flex justify-between text-sm text-emerald-700">
+            <div className="flex justify-between py-2 text-sm text-ink">
               <span>Discount</span>
-              <span>-{formatMoney(quoteDiscount, "INR")}</span>
+              <span className="font-bold text-navy">-{formatMoney(quoteDiscount, "INR")}</span>
             </div>
           ) : null}
-          <div className="mt-1 flex justify-between text-sm text-muted">
-            <span>Shipping</span>
-            <span>{formatMoney(quoteShipping, "INR")}</span>
+          <div className="flex justify-between py-2 text-sm text-ink">
+            <span>Delivery</span>
+            <span className="font-bold text-navy">
+              {quoteShipping > 0 ? formatMoney(quoteShipping, "INR") : "FREE"}
+            </span>
           </div>
           {sellerDeliveryBreakup && (
-            <div className="mt-1 ml-3 grid gap-0.5">
+            <div className="ml-3 grid gap-0.5 pb-1">
               {sellerDeliveryBreakup.map((s) => (
                 <div key={s.name} className="flex justify-between text-xs text-muted">
                   <span className="truncate">{s.name}</span>
@@ -174,32 +136,32 @@ export default function CheckoutSummary({
             </div>
           )}
           {taxPayable > 0 ? (
-            <div className="mt-1 flex justify-between text-sm text-muted">
+            <div className="flex justify-between py-2 text-sm text-ink">
               <span>GST added</span>
-              <span>{formatMoney(taxPayable, "INR")}</span>
+              <span className="font-bold text-navy">{formatMoney(taxPayable, "INR")}</span>
             </div>
           ) : null}
           {taxIncluded > 0 ? (
-            <div className="mt-1 flex justify-between text-sm text-muted">
+            <div className="flex justify-between py-2 text-sm text-ink">
               <span>GST included</span>
-              <span>{formatMoney(taxIncluded, "INR")}</span>
+              <span className="font-bold text-navy">{formatMoney(taxIncluded, "INR")}</span>
             </div>
           ) : null}
           {codCharge > 0 ? (
-            <div className="mt-1 flex justify-between text-sm text-muted">
+            <div className="flex justify-between py-2 text-sm text-ink">
               <span>COD charge</span>
-              <span>{formatMoney(codCharge, "INR")}</span>
+              <span className="font-bold text-navy">{formatMoney(codCharge, "INR")}</span>
             </div>
           ) : null}
           {quoteWallet > 0 ? (
-            <div className="mt-1 flex justify-between text-sm text-emerald-700">
-              <span>Wallet</span>
-              <span>-{formatMoney(quoteWallet, "INR")}</span>
+            <div className="flex justify-between py-2 text-sm text-emerald-700">
+              <span>Wallet Discount</span>
+              <span className="font-bold">-{formatMoney(quoteWallet, "INR")}</span>
             </div>
           ) : null}
-          <div className="mt-4 flex justify-between border-t border-border pt-4 font-semibold text-ink">
-            <span>Payable</span>
-            <span>{formatMoney(quotedPayable, "INR")}</span>
+          <div className="mt-2 flex justify-between border-t border-dashed border-border pt-4 font-bold text-ink">
+            <span>Total Payable</span>
+            <span className="text-lg text-navy">{formatMoney(quotedPayable, "INR")}</span>
           </div>
           {quoteLoading ? (
             <p className="mt-2 text-xs text-gray">
@@ -211,8 +173,8 @@ export default function CheckoutSummary({
           ) : null}
         </div>
 
-        <div className="mt-5 border-t border-border pt-4">
-          <h3 className="mb-3  text-sm font-semibold text-ink">
+        <div className="mt-6">
+          <h3 className="mb-3 text-base font-bold text-ink">
             Payment method
           </h3>
 
@@ -224,11 +186,9 @@ export default function CheckoutSummary({
                 return (
                   <label
                     key={option.provider}
-                    className={`flex cursor-pointer items-center gap-3 rounded-[8px] border px-3 py-3 text-sm transition ${
-                      isSelected
-                        ? "border-gold bg-cream"
-                        : "border-border bg-white"
-                    } ${option.enabled ? "" : "cursor-not-allowed opacity-50"}`}
+                    className={`flex cursor-pointer items-center gap-2 text-sm text-ink transition ${
+                      option.enabled ? "" : "cursor-not-allowed opacity-50"
+                    }`}
                   >
                     <input
                       type="radio"
@@ -239,11 +199,11 @@ export default function CheckoutSummary({
                       onChange={(event) =>
                         onPaymentProviderChange?.(event.target.value)
                       }
-                      className="h-4 w-4 accent-gold"
+                      className="h-4 w-4 accent-navy"
                     />
-                    <Icon size={18} className="shrink-0 text-gold" />
+                    <Icon size={14} className="shrink-0 text-muted" />
                     <span className="min-w-0 flex-1">
-                      <span className="block font-medium text-ink">
+                      <span className="block font-medium">
                         {option.label ||
                           getPaymentProviderLabel?.(option.provider)}
                       </span>
@@ -270,14 +230,15 @@ export default function CheckoutSummary({
           type="submit"
           loading={loading}
           disabled={!selectedPaymentProvider || paymentOptionsLoading}
-          className="mt-5 w-full"
+          className="mt-5 w-full rounded-[6px]"
         >
-          <CreditCard size={16} /> {buttonLabel}
+          {buttonLabel}
         </Button>
 
         <p className="mt-3 text-center text-xs text-gray">
           Selected method: {selectedLabel}
         </p>
+        </div>
       </div>
     </aside>
   );

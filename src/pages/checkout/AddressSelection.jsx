@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MapPin, Pencil } from "lucide-react";
-import AddressLabel from "../../components/ui/AddressLabel";
+import { MapPin, Pencil, Phone } from "lucide-react";
 import Button from "../../components/ui/Button";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
@@ -207,21 +206,30 @@ export default function AddressSelection({
   };
 
   return (
-    <section className="rounded-[12px] border border-border bg-white p-5">
-      <h2 className="mb-4 flex items-center gap-2  text-base font-semibold text-ink">
-        <MapPin size={16} /> Delivery address
-      </h2>
-      <div className="grid gap-3">
+    <section className="overflow-hidden rounded-[8px] border border-border bg-white">
+      <div className="flex items-center justify-between gap-3 bg-cream-strong px-4 py-3 sm:px-5">
+        <h2 className="text-base font-bold text-ink">Delivery Address</h2>
+        <button
+          type="button"
+          onClick={() => setValue("useNewAddress", true, { shouldValidate: true })}
+          className="text-xs font-bold text-navy transition hover:text-gold-dark"
+        >
+          + Add New Address
+        </button>
+      </div>
+      <div className="grid px-4 py-3 sm:px-5">
         {addresses.map((addr) => {
           const addrId = getAddressId(addr);
           const isEditing = editingId === addrId;
+          const postalCode = addr.postalCode || addr.postal_code || "";
+          const label = String(addr.label || "Home");
           return (
             <div
               key={addrId}
-              className={`rounded-md border p-3 transition-all duration-300 ease-in-out ${
+              className={`border-b border-border py-4 transition-all duration-300 ease-in-out last:border-b-0 ${
                 selectedAddressId === addrId && !useNewAddress
-                  ? "border-gold bg-cream"
-                  : "border-border hover:border-gold"
+                  ? "bg-white"
+                  : "bg-white"
               }`}
             >
               {isEditing ? (
@@ -265,62 +273,69 @@ export default function AddressSelection({
                 </div>
               ) : (
                 <div className="flex items-start gap-3">
-                  <input
-                    type="radio"
-                    name="addressSelect"
-                    value={addrId}
-                    checked={selectedAddressId === addrId && !useNewAddress}
-                    onChange={() => {
-                      setValue("selectedAddressId", addrId, {
-                        shouldValidate: true,
-                      });
-                      setValue("useNewAddress", false, {
-                        shouldValidate: true,
-                      });
-                    }}
-                    className="mt-1 h-4 w-4 accent-gold"
-                  />
-                  <AddressLabel
-                    address={addr}
-                    showIcon={false}
-                    className="min-w-0 flex-1"
-                  />
+                  <div className="min-w-0 flex-1">
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-[11px] font-bold capitalize text-white ${
+                        label.toLowerCase() === "work" ? "bg-navy" : "bg-gold"
+                      }`}
+                    >
+                      {label}
+                    </span>
+                    <label className="mt-3 flex cursor-pointer items-start gap-2">
+                      <input
+                        type="radio"
+                        name="addressSelect"
+                        value={addrId}
+                        checked={selectedAddressId === addrId && !useNewAddress}
+                        onChange={() => {
+                          setValue("selectedAddressId", addrId, {
+                            shouldValidate: true,
+                          });
+                          setValue("useNewAddress", false, {
+                            shouldValidate: true,
+                          });
+                        }}
+                        className="mt-1 h-4 w-4 accent-navy"
+                      />
+                      <span className="min-w-0">
+                        <span className="block text-lg font-bold leading-tight text-ink">
+                          {addr.fullName || "Address"}
+                        </span>
+                        {addr.phone && (
+                          <span className="mt-3 flex items-center gap-1.5 text-sm text-ink">
+                            <Phone size={13} className="text-gold-dark" />
+                            {addr.phone}
+                          </span>
+                        )}
+                        <span className="mt-2 flex items-start gap-1.5 text-sm leading-5 text-ink">
+                          <MapPin size={13} className="mt-0.5 shrink-0 text-gold-dark" />
+                          <span>
+                            {[addr.line1, addr.line2, addr.city, addr.state, postalCode, addr.country || "India"]
+                              .filter(Boolean)
+                              .join(", ")}
+                          </span>
+                        </span>
+                      </span>
+                    </label>
+                  </div>
                   <button
                     type="button"
                     onClick={() => startEdit(addr)}
-                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-muted transition-all duration-300 ease-in-out hover:border-gold hover:bg-white hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30"
+                    className="mt-8 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border text-navy transition-all duration-300 ease-in-out hover:border-gold hover:bg-gold-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30"
                     aria-label="Edit address"
                   >
-                    <Pencil size={15} />
+                    <Pencil size={14} />
                   </button>
                 </div>
               )}
             </div>
           );
         })}
-
-        <label
-          className={`flex cursor-pointer items-center gap-3 rounded-md border p-3 transition-all duration-300 ease-in-out ${
-            useNewAddress
-              ? "border-gold bg-cream"
-              : "border-border hover:border-gold"
-          }`}
-        >
-          <input
-            type="radio"
-            name="addressSelect"
-            checked={useNewAddress}
-            onChange={() => {
-              setValue("useNewAddress", true, {
-                shouldValidate: true,
-              });
-            }}
-            className="h-4 w-4 accent-gold"
-          />
-          <span className="text-sm font-medium text-ink">
-            Use a different address
-          </span>
-        </label>
+        {useNewAddress && (
+          <div className="rounded-[8px] border border-gold bg-gold-soft px-3 py-2 text-sm font-semibold text-navy">
+            New address form is selected.
+          </div>
+        )}
         {errors.selectedAddressId && (
           <p className="text-xs text-red-600  mt-1">
             {errors.selectedAddressId.message}
