@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, KeyRound } from "lucide-react";
+import { Mail } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -46,11 +46,12 @@ export default function ForgotPasswordPage() {
     <>
       <Seo title="Forgot Password | Sam Global" />
       <AuthCard
-        eyebrow="Password recovery"
-        title="Forgot your password?"
-        subtitle="Enter your registered email and we'll send you a one-time password to reset your account."
-        icon="/image/png/person.png"
+        title="Password Recovery"
+        subtitle="Enter your email to recover your password."
+        image="/image/png/authImage.png"
+        icon="/image/png/done.png"
         maxWidth="max-w-[60rem]"
+        maxHeight="h-[600px]"
       >
         <form className="grid gap-4" onSubmit={handleSubmit(submit)} noValidate>
           <FormField

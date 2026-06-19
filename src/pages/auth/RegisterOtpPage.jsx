@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Smartphone, UserPlus } from "lucide-react";
+import { Smartphone } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -61,13 +61,14 @@ export default function RegisterOtpPage() {
   return (
     <>
       <Seo title="Register with OTP | Sam Global" />
-      
+
       <AuthCard
-        eyebrow="New account"
         title="Create account with OTP"
         subtitle="Create your password now, then verify your email with a one-time code."
+        image="/image/png/authImg1.png"
         icon="/image/png/person.png"
-        maxWidth="max-w-[1120px]"
+        maxWidth="max-w-[1000px]"
+        maxHeight="h-[780px]"
       >
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -129,7 +130,7 @@ export default function RegisterOtpPage() {
               placeholder="••••••••"
               disabled={loading}
             />
-            
+
             <FormField
               id="confirmPassword"
               label="Confirm password"
@@ -169,7 +170,7 @@ export default function RegisterOtpPage() {
               Login
             </Link>
           </p>
-          
+
           <p className="text-center text-[0.8rem] text-muted">
             Prefer password?{" "}
             <Link

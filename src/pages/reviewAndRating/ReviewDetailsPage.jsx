@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useMemo, useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { ChevronLeft, Star, ThumbsUp, UserCircle } from "lucide-react";
+import { reviews as fallbackReviews } from "../../data/review";
 import {
-  fetchProductReviews,
-  markReviewHelpful,
-} from "../../features/review/reviewSlice";
-import { fetchProductById } from "../../features/product/productSlice";
+  getImageFallbackSrc,
+  getProductImage,
+  getProductMrp,
+  getProductPrice,
+  getProductTitle,
+} from "../../utils/ecommerce";
 
 const LIMIT = 10;
 
@@ -18,7 +20,9 @@ function StarRow({ rating, size = 14 }) {
         <Star
           key={n}
           size={size}
-          className={n <= filled ? "fill-gold text-gold" : "fill-border text-border"}
+          className={
+            n <= filled ? "fill-gold text-gold" : "fill-border text-border"
+          }
         />
       ))}
     </div>
@@ -28,26 +32,35 @@ function StarRow({ rating, size = 14 }) {
 function RatingBar({ star, count, total }) {
   const pct = total > 0 ? Math.round((count / total) * 100) : 0;
   return (
-    <div className="grid grid-cols-[18px_1fr_32px] items-center gap-2">
-      <span className="text-[11px] font-semibold text-muted">{star}</span>
-      <div className="h-1.5 overflow-hidden rounded-full bg-border">
-        <div className="h-full rounded-full bg-gold transition-all" style={{ width: `${pct}%` }} />
+    <div className="grid grid-cols-[32px_1fr_40px] items-center gap-2 text-xs font-semibold text-muted">
+      <span>{star} ★</span>
+      <div className="h-2 overflow-hidden rounded-full bg-cream">
+        <span
+          className="block h-full rounded-full bg-gold"
+          style={{ width: `${pct}%` }}
+        />
       </div>
-      <span className="text-right text-[10px] font-semibold text-muted">{count}</span>
+      <span className="text-right">{count}</span>
     </div>
   );
 }
 
 function ReviewCard({ review, currentUserId, onHelpful }) {
-  const isOwn = currentUserId && String(review.buyerId) === String(currentUserId);
-  const alreadyVoted = (review.helpfulVotedBy || []).includes(String(currentUserId || ""));
+  const isOwn =
+    currentUserId && String(review.buyerId) === String(currentUserId);
+  const alreadyVoted = (review.helpfulVotedBy || []).includes(
+    String(currentUserId || ""),
+  );
   const name = review.buyerName || review.name || "Verified Buyer";
   const text = review.reviewText || review.text;
-  const media = review.media || review.images || [];
   const helpfulVotes = review.helpfulVotes ?? review.helpful ?? 0;
   const reviewId = review._id || review.id;
   const dateStr = review.createdAt
-    ? new Date(review.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
+    ? new Date(review.createdAt).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
     : review.date || "";
 
   return (
@@ -74,7 +87,7 @@ function ReviewCard({ review, currentUserId, onHelpful }) {
 
       {text && <p className="text-sm leading-relaxed text-ink">{text}</p>}
 
-      {media.length > 0 && (
+      {/* {media.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
           {media.slice(0, 5).map((img, i) => (
             <img
@@ -85,7 +98,7 @@ function ReviewCard({ review, currentUserId, onHelpful }) {
             />
           ))}
         </div>
-      )}
+      )} */}
 
       <button
         type="button"
@@ -100,89 +113,128 @@ function ReviewCard({ review, currentUserId, onHelpful }) {
   );
 }
 
-function getProductInfo(product) {
-  if (!product) return null;
+function getProductDisplay(product) {
+  const title = getProductTitle(product, "Product");
+  const category =
+    product?.category?.name ||
+    (typeof product?.category === "string" ? product.category : "") ||
+    product?.subcategory?.name ||
+    "";
+  const price = getProductPrice(product) ?? product?.salePrice ?? "";
+  const mrp = getProductMrp(product) ?? product?.originalPrice ?? "";
+  const discount =
+    mrp && price && Number(mrp) > Number(price)
+      ? `${Math.round(((Number(mrp) - Number(price)) / Number(mrp)) * 100)}% off`
+      : product?.discount || "";
+
   return {
-    title: product.title || product.name || "Product",
-    category:
-      product.category?.name ||
-      (typeof product.category === "string" ? product.category : "") ||
-      product.subcategory?.name ||
-      "",
-    price: product.salePrice ?? product.price ?? product.sellingPrice ?? null,
-    mrp: product.mrp ?? product.originalPrice ?? product.compareAtPrice ?? null,
-    image:
-      (Array.isArray(product.images) ? product.images[0] : null) ||
-      product.thumbnail ||
-      product.image ||
-      "",
+    title,
+    category,
+    price,
+    mrp,
+    discount,
+    image: getProductImage(product) || getImageFallbackSrc(title, category),
   };
 }
 
 export default function ReviewDetailsPage() {
   const { productId } = useParams();
-  const dispatch = useDispatch();
-
-  const currentUser = useSelector((s) => s.auth.current);
-  const userId = currentUser?.id || currentUser?._id;
-
-  const productEntities = useSelector((s) => s.product.entities || {});
-  const productCurrent = useSelector((s) => s.product.current);
-  const rawProduct =
-    productEntities[productId] ||
-    (productCurrent?.id === productId || productCurrent?._id === productId
-      ? productCurrent
-      : null);
-  const product = getProductInfo(rawProduct);
-
-  const reviewState = useSelector((s) => s.review);
-  const bucket = reviewState.reviewsByProduct[productId] || {};
-  const stats = reviewState.statsByProduct[productId] || null;
-  const reviews = bucket.items || [];
-  const total = bucket.total || 0;
-  const loading = bucket.loading ?? false;
-  const error = bucket.error || null;
-
-  const [page, setPage] = useState(1);
+  const { state } = useLocation();
+  const product = getProductDisplay(state?.product);
+  const [ratingFilter, setRatingFilter] = useState(null);
   const [sort, setSort] = useState("newest");
-  const [ratingFilter, setRatingFilter] = useState(0);
+  const [page, setPage] = useState(1);
+  const loading = false;
+  const error = "";
+  const userId = null;
+  const allReviews = useMemo(
+    () => [
+      ...fallbackReviews,
+      ...fallbackReviews.map((review, index) => ({
+        ...review,
+        id: `copy-a-${index}`,
+        name: ["Ankita", "Mythra Customer"][index % 2],
+        date: ["13 Feb 2026", "2 June 2026", "20 May 2026", "15 May 2026"][
+          index % 4
+        ],
+        helpful: index,
+      })),
+      ...fallbackReviews.map((review, index) => ({
+        ...review,
+        id: `copy-b-${index}`,
+        name: ["Priti", "Neha", "Divya", "Palavi"][index % 4],
+        date: ["25 Mar 2026", "2 June 2026", "19 Mar 2026", "20 May 2026"][
+          index % 4
+        ],
+        text: [
+          "Quality is too good. Soft and comfortable.",
+          "Very soft and comfortable. Must buy.",
+        ][index % 4],
+        helpful: 0,
+      })),
+    ],
+    [],
+  );
+  const ratingDist = useMemo(
+    () =>
+      allReviews.reduce((acc, review) => {
+        const rating = Math.round(Number(review.rating || 0));
+        if (rating >= 1 && rating <= 5) {
+          acc[rating] = (acc[rating] || 0) + 1;
+        }
+        return acc;
+      }, {}),
+    [allReviews],
+  );
+  const reviewCount = allReviews.length;
+  const avgRating =
+    reviewCount > 0
+      ? allReviews.reduce(
+          (sum, review) => sum + Number(review.rating || 0),
+          0,
+        ) / reviewCount
+      : 0;
+  const filteredReviews = useMemo(() => {
+    const nextReviews = ratingFilter
+      ? allReviews.filter(
+          (review) => Math.round(Number(review.rating || 0)) === ratingFilter,
+        )
+      : [...allReviews];
 
-  useEffect(() => {
-    if (productId) dispatch(fetchProductById({ productId }));
-  }, [dispatch, productId]);
+    nextReviews.sort((a, b) => {
+      if (sort === "helpful") {
+        return (
+          (b.helpfulVotes ?? b.helpful ?? 0) -
+          (a.helpfulVotes ?? a.helpful ?? 0)
+        );
+      }
+      if (sort === "highest")
+        return Number(b.rating || 0) - Number(a.rating || 0);
+      if (sort === "lowest")
+        return Number(a.rating || 0) - Number(b.rating || 0);
+      return (
+        new Date(b.createdAt || b.date || 0) -
+        new Date(a.createdAt || a.date || 0)
+      );
+    });
 
-  useEffect(() => {
-    if (!productId) return;
-    dispatch(
-      fetchProductReviews({
-        productId,
-        page,
-        limit: LIMIT,
-        sort,
-        rating: ratingFilter || undefined,
-      }),
-    );
-  }, [dispatch, productId, page, sort, ratingFilter]);
-
-  const handleHelpful = (reviewId) => {
-    if (!currentUser) return;
-    dispatch(markReviewHelpful({ productId, reviewId }));
-  };
-
+    return nextReviews;
+  }, [allReviews, ratingFilter, sort]);
+  const total = filteredReviews.length;
+  const totalPages = Math.max(1, Math.ceil(total / LIMIT));
+  const visibleReviews = filteredReviews.slice(
+    (page - 1) * LIMIT,
+    page * LIMIT,
+  );
   const handleFilter = (star) => {
-    setRatingFilter((prev) => (prev === star ? 0 : star));
+    setRatingFilter((current) => (current === star ? null : star));
     setPage(1);
   };
-
   const handleSort = (value) => {
     setSort(value);
     setPage(1);
   };
-
-  const avgRating = stats?.avgRating ?? stats?.averageRating ?? 0;
-  const reviewCount = stats?.count ?? stats?.totalCount ?? total;
-  const ratingDist = stats?.distribution || stats?.ratingDistribution || {};
-  const totalPages = Math.ceil(total / LIMIT);
+  const handleHelpful = () => {};
 
   return (
     <main className="bg-white">
@@ -195,41 +247,37 @@ export default function ReviewDetailsPage() {
           >
             <ChevronLeft size={16} /> Back to product
           </Link>
-
-          {product ? (
-            <>
-              <img
-                src={product.image}
-                alt={product.title}
-                className="aspect-[3/4] w-full rounded-[4px] bg-cream object-cover"
-              />
-              <div className="mt-4">
-                <h1 className="text-base font-bold uppercase text-ink">{product.title}</h1>
-                {product.category && (
-                  <p className="mt-1 text-sm text-muted">{product.category}</p>
-                )}
-                {product.price != null && (
-                  <p className="mt-4 text-sm font-bold text-ink">
-                    ₹{Number(product.price).toLocaleString("en-IN")}
-                    {product.mrp != null && Number(product.mrp) > Number(product.price) && (
-                      <span className="ml-2 font-medium text-muted line-through">
-                        ₹{Number(product.mrp).toLocaleString("en-IN")}
-                      </span>
-                    )}
-                  </p>
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="aspect-[3/4] w-full animate-pulse rounded-[4px] bg-cream" />
-          )}
+          <img
+            src={product.image}
+            alt={product.title}
+            className="aspect-[3/4]  w-full rounded-[4px] bg-[var(--customer-cream)] object-cover"
+          />
+          <div className="mt-4">
+            <h1 className="text-base font-bold uppercase text-[var(--customer-ink)]">
+              {product.title}
+            </h1>
+            <p className="mt-1 text-sm text-[var(--customer-muted)]">
+              {product.category}
+            </p>
+            <p className="mt-5 text-sm font-bold text-[var(--customer-ink)]">
+              Rs. {product.price}
+              <span className="ml-2 font-medium text-[var(--customer-muted)] line-through">
+                Rs. {product.mrp}
+              </span>
+              <span className="ml-2 font-bold text-[var(--customer-gold-dark)]">
+                ({product.discount})
+              </span>
+            </p>
+          </div>
         </aside>
 
         {/* ── Main content ── */}
         <section className="min-w-0">
           {/* Rating summary */}
           <div className="border-b border-border pb-6">
-            <h2 className="text-sm font-bold uppercase text-ink">Ratings &amp; Reviews</h2>
+            <h2 className="text-sm font-bold uppercase text-ink">
+              Ratings &amp; Reviews
+            </h2>
             <div className="mt-5 grid max-w-[540px] grid-cols-[120px_1fr] gap-8">
               <div>
                 <div className="text-4xl font-bold text-ink">
@@ -239,7 +287,9 @@ export default function ReviewDetailsPage() {
                   <StarRow rating={avgRating} size={16} />
                 </div>
                 <p className="mt-2 text-xs font-semibold text-blue-600">
-                  {reviewCount > 0 ? `${reviewCount.toLocaleString("en-IN")} verified buyer${reviewCount !== 1 ? "s" : ""}` : "No reviews yet"}
+                  {reviewCount > 0
+                    ? `${reviewCount.toLocaleString("en-IN")} verified buyer${reviewCount !== 1 ? "s" : ""}`
+                    : "No reviews yet"}
                 </p>
               </div>
 
@@ -262,32 +312,20 @@ export default function ReviewDetailsPage() {
             </div>
           </div>
 
-          {/* Customer photos */}
-          {reviews.some((r) => (r.media || r.images || []).length > 0) && (
-            <div className="border-b border-border py-5">
-              <h3 className="text-sm font-bold text-ink">Customer photos</h3>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {reviews
-                  .flatMap((r) => r.media || r.images || [])
-                  .slice(0, 12)
-                  .map((img, i) => (
-                    <img
-                      key={i}
-                      src={typeof img === "string" ? img : img?.url || img?.src || ""}
-                      alt=""
-                      className="h-[70px] w-[70px] rounded-[4px] border border-border object-cover"
-                    />
-                  ))}
-              </div>
-            </div>
-          )}
+          {/* <div className="border-b border-[var(--customer-border)] py-5">
+            <h3 className="text-sm font-bold text-[var(--customer-ink)]">
+              Customer Photos (33)
+            </h3>
+          </div> */}
 
           {/* Sort + review list */}
           <div className="py-5">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <h3 className="text-sm font-bold text-ink">
                 Customer reviews
-                {total > 0 && <span className="ml-1 font-normal text-muted">({total})</span>}
+                {total > 0 && (
+                  <span className="ml-1 font-normal text-muted">({total})</span>
+                )}
               </h3>
               <select
                 value={sort}
@@ -301,10 +339,13 @@ export default function ReviewDetailsPage() {
               </select>
             </div>
 
-            {loading && reviews.length === 0 && (
+            {loading && visibleReviews.length === 0 && (
               <div className="space-y-5">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="animate-pulse border-b border-border py-5">
+                  <div
+                    key={n}
+                    className="animate-pulse border-b border-border py-5"
+                  >
                     <div className="mb-3 flex items-center gap-2">
                       <div className="h-6 w-6 rounded-full bg-cream" />
                       <div className="h-3 w-24 rounded bg-cream" />
@@ -322,7 +363,7 @@ export default function ReviewDetailsPage() {
               </p>
             )}
 
-            {!loading && !error && reviews.length === 0 && (
+            {!loading && !error && visibleReviews.length === 0 && (
               <div className="rounded-[8px] border border-dashed border-border bg-cream px-4 py-8 text-center text-sm text-muted">
                 {ratingFilter
                   ? `No ${ratingFilter}-star reviews yet.`
@@ -330,7 +371,7 @@ export default function ReviewDetailsPage() {
               </div>
             )}
 
-            {reviews.map((review) => (
+            {visibleReviews.map((review) => (
               <ReviewCard
                 key={review._id || review.id}
                 review={review}
