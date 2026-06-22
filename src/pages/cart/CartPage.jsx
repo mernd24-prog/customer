@@ -21,9 +21,19 @@ import {
   normalizeCartPayloadForWrite,
   wishlistPayload,
 } from "../../utils/ecommerce";
+import {
+  formatMoney,
+  calcMRPSubtotal,
+  calcSellingSubtotal,
+  calcShippingTotal,
+  calcTotalSavings,
+  toNum,
+} from "../../utils/ecommerce/money";
+
 import { ConfirmModal } from "../../components/common";
 import { OutlineSmallButton } from "../../components/dynamicComponent/button/static";
 import { FaAngleRight } from "react-icons/fa6";
+import OrderPaymentSummary from "../orders/components/OrderPaymentSummary";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 const SAVED_FOR_LATER_STORAGE_KEY = "sam_global_saved_for_later_items";
@@ -190,7 +200,7 @@ function cartLineKey(item) {
   const defaultVariant =
     !item.variantId && !item.variantSku && Array.isArray(product?.variants)
       ? product.variants.find((variant) => variant.isDefault) ||
-        product.variants[0]
+      product.variants[0]
       : null;
   const variantKey =
     item.variantId ||
@@ -279,6 +289,7 @@ export default function CartPage() {
   const latestRef = useRef({ rawItems: [], wishlist: [], localQuantities: {} });
   const updateTimerRef = useRef(null);
 
+
   useEffect(() => {
     dispatch(fetchCart());
   }, [dispatch]);
@@ -315,7 +326,7 @@ export default function CartPage() {
     missingIds.forEach((id) => fetchedIdsRef.current.add(id));
 
     missingIds.forEach((productId) => {
-      dispatch(fetchProductById({ productId })).catch(() => {});
+      dispatch(fetchProductById({ productId })).catch(() => { });
     });
   }, [dispatch, wishlist, productEntities]);
 
@@ -330,6 +341,36 @@ export default function CartPage() {
       }),
     [rawItems, localQuantities],
   );
+
+  const mrpSubtotal = calcMRPSubtotal(items);
+  const sellingSubtotal = calcSellingSubtotal(items);
+  const shippingTotal = calcShippingTotal(items);
+  const productSavings = calcTotalSavings(items);
+  const extraCoupon = 0;
+  const extraWallet = 0;
+  const extraTaxPayable = 0;
+  const totalBeforeTax =
+    sellingSubtotal + shippingTotal - extraCoupon - extraWallet;
+  const totalPayable = Math.max(0, totalBeforeTax + extraTaxPayable);
+  const totalSavings = productSavings + extraCoupon + extraWallet;
+  const fmt = (n) => formatMoney(n, currency);
+  const hasMRP = mrpSubtotal > sellingSubtotal;
+  const hasDiscount = totalSavings > 0;
+  const shippingFree = shippingTotal === 0;
+  const rowClass = "";
+
+  const sellerGroups = useMemo(() => {
+    const groups = new Map();
+    items.forEach((item) => {
+      const key = item.seller || "other";
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(item);
+    });
+    return [...groups.entries()].map(([sellerName, groupItems]) => ({
+      sellerName: sellerName === "other" ? null : sellerName,
+      items: groupItems,
+    }));
+  }, [items]);
 
   const hasCartItems = items.length > 0;
   const hasSavedItems = savedForLaterItems.length > 0 || wishlist.length > 0;
@@ -361,13 +402,13 @@ export default function CartPage() {
         savedSelectedItemIds === null
           ? currentItemIds
           : Array.from(
-              new Set([
-                ...savedSelectedItemIds.filter((id) =>
-                  currentItemIdsSet.has(id),
-                ),
-                ...newlyAddedItemIds,
-              ]),
-            );
+            new Set([
+              ...savedSelectedItemIds.filter((id) =>
+                currentItemIdsSet.has(id),
+              ),
+              ...newlyAddedItemIds,
+            ]),
+          );
 
       setSelectedItemIds(nextSelectedItemIds);
       writeSelectedCheckoutItemIds(nextSelectedItemIds);
@@ -797,7 +838,7 @@ export default function CartPage() {
 
               {hasCartItems && (
                 <div className="w-full">
-                  <CartSummary
+                  {/* <CartSummary
                     items={selectedItems}
                     shippingLabel="Shipping"
                     shippingLocation=""
@@ -816,6 +857,36 @@ export default function CartPage() {
                         SELECTED_CHECKOUT_STORAGE_KEY,
                         JSON.stringify(selectedItemIds),
                       );
+                      navigate("/checkout");
+                    }}
+                  /> */}
+                  <OrderPaymentSummary
+                    variant="cart"
+                    mrpSubtotal={mrpSubtotal}
+                    subtotal={sellingSubtotal}
+                    productDiscount={productSavings}
+                    couponDiscount={extraCoupon}
+                    walletDiscount={extraWallet}
+                    shipping={shippingTotal}
+                    customerAmount={totalPayable}
+                    totalSavings={totalSavings}
+                    itemCount={selectedItems.length}
+                    currency="INR"
+                    formatMoney={formatMoney}
+                    asNumber={toNum}
+                    buttonText={
+                      selectedItems.length
+                        ? "Proceed to Checkout"
+                        : "Select products to checkout"
+                    }
+                    onCheckout={() => {
+                      if (!selectedItems.length) return;
+
+                      window.sessionStorage.setItem(
+                        SELECTED_CHECKOUT_STORAGE_KEY,
+                        JSON.stringify(selectedItemIds)
+                      );
+
                       navigate("/checkout");
                     }}
                   />

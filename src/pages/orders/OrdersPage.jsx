@@ -11,6 +11,7 @@ import {
   CreditCard,
   Download,
   FileText,
+  Headphones,
   Package,
   ReceiptText,
   RefreshCw,
@@ -20,12 +21,22 @@ import {
   XCircle,
 } from "lucide-react";
 
+ 
+
 import ApiState from "../../components/common/ApiState";
 import Seo from "../../components/common/Seo";
 import Button from "../../components/ui/Button";
 import ConfirmModal from "../../components/common/overlay/ConfirmModal";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import vectorImage from "/image/png/SuccessVector .png";
+import OrderDetailInfoGrid from "./components/OrderDetailInfoGrid";
+import OrderDetailLayout, {
+  OrderDetailAside,
+} from "./components/OrderDetailLayout";
+import OrderDetailSectionCard from "./components/OrderDetailSectionCard";
+import OrderItemsSection from "./components/OrderItemsSection";
+import OrderPaymentSummary from "./components/OrderPaymentSummary";
+import OrderProgress from "./components/OrderProgress";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { notify } from "../../utils/notify";
 import {
@@ -44,7 +55,6 @@ import { downloadAuthDocument } from "../../utils/downloadAuthDocument";
 import { openRazorpayCheckout } from "../../utils/razorpay";
 import { endpoints } from "../../api/endpoints";
 import {
-  COMPACT_STATUS_BADGE,
   INFO_TILE_TONES,
   items,
   ORDER_BREADCRUMBS,
@@ -111,7 +121,6 @@ const getItemProduct = (item) =>
   item?.productId && typeof item.productId === "object"
     ? item.productId
     : item?.product;
-
 const getItemImage = (item) => {
   const product = getItemProduct(item);
   const images = item?.images || item?.variant?.images || product?.images;
@@ -145,7 +154,6 @@ const getProductTitle = (item) =>
   item?.title ||
   item?.name ||
   "Product";
-
 const getItemAttributes = (item) => {
   const attributes =
     item?.attributes && typeof item.attributes === "object"
@@ -351,157 +359,6 @@ const asNumber = (value) => {
 const humanize = (value, fallback = "N/A") =>
   value ? String(value).replace(/_/g, " ") : fallback;
 
-function InfoTile({ icon, label, value, tone = "yellow" }) {
-  return (
-    <div className="relative min-h-[127px] rounded-[15px] border border-[#CE9F2D66] bg-[#FFFDF8] px-[20px] py-[25px]">
-      <div
-        className={`absolute  right-0 top-0 flex h-[60px] w-[60px] items-center justify-center rounded-tr-[15px] rounded-bl-[15px] p-[12px] ${INFO_TILE_TONES[tone] || INFO_TILE_TONES.yellow}`}
-      >
-        {icon}
-      </div>
-      {/* <div className="pr-8"> */}
-      <p className="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]">
-        {label}
-      </p>
-      <p className="mt-3 break-words font-bold text-[#1B1D60] capitalize leading-[100%] text-[18px] sm:text-[22px] lg:text-[26px]">
-        {value || "N/A"}
-      </p>
-      {/* </div> */}
-    </div>
-  );
-}
-
-function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
-  const activeIndex = Math.max(
-    0,
-    steps.indexOf(normalizeProgressStatus(activeStatus)),
-  );
-  const progressWidth =
-    steps.length <= 1 ? 0 : (activeIndex / (steps.length - 1)) * 100;
-  return (
-    <div
-      className="relative grid min-w-[720px] gap-2 px-1 py-3 lg:min-w-0"
-      style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
-    >
-      <span
-        className="absolute top-[3rem] h-0.5 overflow-hidden bg-border"
-        style={{
-          left: `calc(100% / ${steps.length} / 2)`,
-          right: `calc(100% / ${steps.length} / 2)`,
-        }}
-      >
-        <span
-          className={`block h-full transition-all duration-500 ease-out ${colorClass}`}
-          style={{ width: `${progressWidth}%` }}
-        />
-      </span>
-      {steps.map((step, index) => {
-        const done = activeIndex >= index;
-        const current = activeIndex === index;
-        return (
-          <div
-            key={step}
-            className="relative min-w-0 flex flex-col items-center"
-          >
-            {/* STEP NODE */}
-            <div className="relative flex items-center justify-center">
-              {/* OUTER CIRCLE */}
-              <div
-                className={`h-[70px] w-[70px] rounded-full ${done ? "bg-[#B88200]" : "bg-[#83858C]"} flex items-center justify-center`}
-              >
-                {/* INNER CIRCLE */}
-                <div
-                  className={`h-[50px] w-[50px] rounded-full flex items-center justify-center ${
-                    done ? "bg-[#CE9F2D]" : "bg-[#8A8C92]"
-                  }`}
-                >
-                  <img src={vectorImage} alt="done" className="w-5 h-5" />
-                </div>
-              </div>
-            </div>
-
-            {/* LABEL */}
-            <p
-              className={`mt-3 flex h-[26px] w-[92px] items-center justify-center font-sans text-[20px] font-semibold leading-[26px] text-center ${
-                current || done ? "text-[#CE9F2D]" : "text-muted"
-              }`}
-            >
-              {step === "pending_payment" ? "Payment" : TRACKING_LABELS[step]}
-            </p>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function OrderProgress({ status, order }) {
-  const isCancelled = status === "cancelled";
-  const isFailed = status === "payment_failed";
-  const inReturnFlow = RETURN_STEPS.includes(status);
-  const activeIndex = ORDER_STEPS.indexOf(inReturnFlow ? "fulfilled" : status);
-  const visibleSteps =
-    isCancelled || isFailed
-      ? [
-          {
-            status: "confirmed",
-            label: TRACKING_LABELS.confirmed,
-            note: "Your order update has been recorded.",
-            done: true,
-          },
-          {
-            status,
-            label: TRACKING_LABELS[status],
-            note: isCancelled
-              ? "Your cancellation request is being processed."
-              : "Payment could not be completed for this order.",
-            done: true,
-            danger: isCancelled,
-            warning: isFailed,
-          },
-        ]
-      : ORDER_STEPS.map((step, index) => ({
-          status: step,
-          label: TRACKING_LABELS[step],
-          done: activeIndex >= index,
-          current: activeIndex === index,
-        }));
-
-  const currentStep =
-    visibleSteps.find((step) => step.current) ||
-    visibleSteps[visibleSteps.length - 1];
-
-  return (
-    <div className="space-y-4">
-      <StepBar
-        steps={ORDER_STEPS}
-        activeStatus={inReturnFlow ? "fulfilled" : status}
-        colorClass="border-gold bg-gold"
-      />
-      {inReturnFlow && (
-        <div className="rounded-[8px] border border-amber-200 bg-amber-50 p-4">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-amber-700">
-            Return &amp; refund progress
-          </p>
-          <StepBar
-            steps={RETURN_STEPS}
-            activeStatus={status}
-            colorClass="border-amber-500 bg-amber-500"
-          />
-        </div>
-      )}
-      {(isCancelled || isFailed) && (
-        <div className="rounded-[8px]  border border-border bg-white px-4 py-3 text-sm">
-          <p className="font-semibold capitalize text-ink">
-            {currentStep?.label || "Status update"}
-          </p>
-          <p className="mt-1 text-xs text-muted">{currentStep?.note}</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
 // ─── Order Detail ──────────────────────────────────────────────────────────────
 
 function OrderDetail({ orderId, track }) {
@@ -533,11 +390,9 @@ function OrderDetail({ orderId, track }) {
     ? order.relations.cancellations
     : [];
 
-  const getInvoiceUrl = (order) =>
-    order?.invoice_url ||
-    order?.invoiceUrl ||
-    order?.relations?.invoice?.url ||
-    null;
+    const getInvoiceUrl = (order) =>
+  order?.invoice_url || order?.invoiceUrl || order?.relations?.invoice?.url || null;
+
 
   const shippingAddress =
     order?.shipping_address || order?.shippingAddress || {};
@@ -555,7 +410,6 @@ function OrderDetail({ orderId, track }) {
   const paymentStatus = getPaymentStatus(order);
   const deliveryStatus = getDeliveryStatus(order);
   const paymentMethod = getPaymentMethod(order);
-
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "My Order", href: "/orders" },
@@ -689,7 +543,7 @@ function OrderDetail({ orderId, track }) {
                   </h1>
                 </div>
 
-                <div className="flex w-full  flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center md:w-auto md:justify-end">
+                <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center md:w-auto md:justify-end">
                   {!track && (
                     <Link
                       to={`/returns/request/${orderId}`}
@@ -697,7 +551,7 @@ function OrderDetail({ orderId, track }) {
                     >
                       <Button className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] bg-[#CE9F2D] px-[24px] py-[15px] text-white hover:bg-[#B88200]">
                         <RotateCcw size={18} />
-                        <span className="text-center text-[14px] sm:text-[16px] font-semibold leading-[20px] sm:leading-[24px] text-white">
+                        <span className="text-center text-[14px] sm:text-[15px] font-semibold leading-[20px] sm:leading-[24px] text-white">
                           Request Return
                         </span>
                       </Button>
@@ -740,292 +594,94 @@ function OrderDetail({ orderId, track }) {
                 </div>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2 lg:gap-5 xl:grid-cols-4 2xl:gap-[36px]">
-                <InfoTile
-                  icon={<CalendarDays size={14} />}
-                  label="Placed on"
-                  value={formatOrderDate(order?.created_at || order?.createdAt)}
-                  tone="blue"
-                />
-                <InfoTile
-                  icon={<CreditCard size={14} />}
-                  label="Payment"
-                  value={`${humanize(paymentMethod)} · ${humanize(paymentStatus)}`}
-                  tone="green"
-                />
-                <InfoTile
-                  icon={<Truck size={14} />}
-                  label="Delivery"
-                  value={humanize(deliveryStatus || status)}
-                  tone="purple"
-                />
-                <InfoTile
-                  icon={<ReceiptText size={14} />}
-                  label="Order amount"
-                  value={formatMoney(customerAmount, currency)}
-                  tone="yellow"
-                />
-              </div>
+              <OrderDetailInfoGrid
+                items={[
+                  {
+                    icon: <CalendarDays size={14} />,
+                    label: "Placed on",
+                    value: formatOrderDate(order?.created_at || order?.createdAt),
+                    tone: "blue",
+                  },
+                  {
+                    icon: <CreditCard size={14} />,
+                    label: "Payment",
+                    value: `${humanize(paymentMethod)} · ${humanize(paymentStatus)}`,
+                    tone: "green",
+                  },
+                  {
+                    icon: <Truck size={14} />,
+                    label: "Delivery",
+                    value: humanize(deliveryStatus || status),
+                    tone: "purple",
+                  },
+                  {
+                    icon: <ReceiptText size={14} />,
+                    label: "Order amount",
+                    value: formatMoney(customerAmount, currency),
+                    tone: "yellow",
+                  },
+                ]}
+              />
 
               {hasKnownStatus(order) && (
-                <div className="overflow-hidden rounded-[15px] border border-[#CE9F2D80] bg-white">
-                  <div className="flex justify-between px-[20px] py-[25px] rounded-t-[15px] bg-[#CE9F2D33]">
-                    <h2 className="font-bold text-[24px] leading-[100%] text-[#2E2E2E]">
-                      Order Progress
-                    </h2>
-                  </div>
-                  <div className="overflow-x-auto px-4 py-5 sm:px-8">
-                    <OrderProgress status={status} />
-                  </div>
-                </div>
+                <OrderDetailSectionCard
+                  title="Order Progress"
+                  bodyClassName="overflow-x-auto px-4 py-5 sm:px-8"
+                  titleClassName="font-bold leading-[100%]"
+                >
+                  <OrderProgress status={status} />
+                </OrderDetailSectionCard>
               )}
             </section>
 
             {!track && (
-              //  <section className="grid gap-5 lg:grid-cols-[1161px_565px]">
-              <section className="grid xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)] gap-7">
-                <div className="w-full rounded-[15px] border border-[#CE9F2D66] bg-white">
-                  {/* HEADER */}
-                  <div className="flex h-[81px] items-center justify-between rounded-t-[15px] bg-[#CE9F2D33] px-[20px] py-[25px]">
-                    <h2 className="font-sans text-[24px] font-bold leading-none text-[#2E2E2E]">
-                      Item
-                    </h2>
-                  </div>
+              <OrderDetailLayout>
+                <OrderItemsSection
+                  items={items}
+                  currency={currency}
+                  getItemImage={getItemImage}
+                  getProductTitle={getProductTitle}
+                  getOrderItemColor = {getOrderItemColor}
+                  getItemLineTotal={getItemLineTotal}
+                  formatMoney={formatMoney}
+                />
 
-                  {/* BODY */}
-                  <div className="grid gap-4 p-4 sm:p-5 lg:p-6">
-                    {items.map((item, i) => (
-                      <div
-                        key={i}
-                        className="flex w-full flex-col gap-4 sm:flex-row sm:gap-5 lg:gap-[36px]"
-                      >
-                        {/* PRODUCT IMAGE */}
-                        <div className="flex aspect-[252/210] w-full shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[#CE9F2D33] bg-white sm:w-[180px] lg:w-[220px] 2xl:w-[252px]">
-                          {getItemImage(item) ? (
-                            <img
-                              src={getItemImage(item)}
-                              alt={getProductTitle(item)}
-                              className="h-full w-full object-contain"
-                            />
-                          ) : (
-                            <Package size={28} />
-                          )}
-                        </div>
-
-                        {/* DETAILS */}
-                        <div className="flex min-w-0 flex-1 flex-col justify-center">
-                          {/* TITLE */}
-                          <p className="line-clamp-2 break-words font-semibold text-[18px] leading-[26px] text-[#2E2E2E] sm:text-[22px] sm:leading-[32px] md:text-[26px] md:leading-[38px]">
-                            {getProductTitle(item)}
-                          </p>
-
-                          {/* COLOR + QTY */}
-                          <div className="my-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink sm:my-6">
-                            <span className="text-[18px] font-medium leading-[100%] text-[#2E2E2E]">
-                              Color:{" "}
-                              <span className="text-[#1B1D60] font-semibold">
-                                {/* {getVariantTitle(item)} */}
-                                Hello
-                              </span>
-                            </span>
-
-                            <span className="text-[18px] font-medium leading-[100%] text-[#2E2E2E]">
-                              Quantity:{" "}
-                              <span className="text-[#1B1D60] font-semibold">
-                                {String(item.quantity || 1).padStart(2, "0")}
-                              </span>
-                            </span>
-                          </div>
-
-                          {/* PRICE (Figma: BELOW details) */}
-                          <div className="mt-2 gap-[5px] sm:mt-4">
-                            <p className="text-[20px] sm:text-[26px] md:text-[34px] font-extrabold leading-[28px] sm:leading-[38px] md:leading-[46px] text-[#1B1D60]">
-                              {formatMoney(getItemLineTotal(item), currency)}
-                            </p>
-                            <p className="text-[14px] sm:text-[16px] md:text-[18px] font-medium leading-[100%] text-[#2E2E2E]">
-                              Inclusive of all taxes
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <aside className="grid gap-4 self-start">
+                <OrderDetailAside>
                   {(subtotal !== undefined || items.length > 0) && (
-                    <div className="h-full w-full overflow-hidden rounded-[15px] border border-[#CE9F2D66] bg-white gap">
-                      <div className="flex h-[81px] items-center justify-between rounded-t-[15px] bg-[#CE9F2D33] px-[20px] py-[25px]">
-                        <h2 className="font-sans text-[24px] font-bold leading-none text-[#2E2E2E]">
-                          Payment Summary
-                        </h2>
-                      </div>
-                      <div className="grid gap-3 px-4 py-4 text-sm">
-                        {subtotal !== undefined && (
-                          <div className="flex w-full max-w-[515px] h-[58px] items-center justify-between border-b border-[#04258626]">
-                            <span className="text-[14px] sm:text-[16px] md:text-[18px] font-semibold leading-[20px] sm:leading-[24px] md:leading-[28px] text-[#2E2E2E]">
-                              Subtotal
-                            </span>
-                            <span className="text-[14px] sm:text-[16px] md:text-[18px] font-bold leading-[20px] sm:leading-[24px] md:leading-[28px] text-[#1B1D60]">
-                              {formatMoney(subtotal, currency)}
-                            </span>
-                          </div>
-                        )}
-                        {asNumber(discount) > 0 && (
-                          <div className="flex w-full max-w-[515px] h-[58px] items-center justify-between border-b border-[#04258626]">
-                            <span className="text-[14px] sm:text-[16px] md:text-[18px] font-semibold leading-[20px] sm:leading-[24px] md:leading-[28px] text-[#2E2E2E]">
-                              Discount
-                            </span>
-                            <span className="text-[14px] sm:text-[16px] md:text-[18px] font-bold leading-[20px] sm:leading-[24px] md:leading-[28px] text-[#1B1D60]">
-                              {formatMoney(discount, currency)}
-                            </span>
-                          </div>
-                        )}
-                        {asNumber(walletDiscount) > 0 && (
-                          <div className="flex w-full max-w-[515px] h-[58px] items-center justify-between border-b border-[#04258626]">
-                            <span className="text-[14px] sm:text-[16px] md:text-[18px] font-semibold leading-[20px] sm:leading-[24px] md:leading-[28px] text-[#2E2E2E]">
-                              Wallet discount
-                            </span>
-                            <span className="text-[14px] sm:text-[16px] md:text-[18px] font-bold leading-[20px] sm:leading-[24px] md:leading-[28px] text-[#1B1D60]">
-                              {formatMoney(walletDiscount, currency)}
-                            </span>
-                          </div>
-                        )}
-                        {asNumber(shipping) > 0 && (
-                          <div className="flex w-full max-w-[515px] h-[58px] items-center justify-between border-b border-[#04258626]">
-                            <span className="text-[14px] sm:text-[16px] md:text-[18px] font-semibold leading-[20px] sm:leading-[24px] md:leading-[28px] text-[#2E2E2E]">
-                              Shipping
-                            </span>
-                            <span className="text-[14px] sm:text-[16px] md:text-[18px] font-bold leading-[20px] sm:leading-[24px] md:leading-[28px] text-[#1B1D60]">
-                              {formatMoney(shipping, currency)}
-                            </span>
-                          </div>
-                        )}
-                        <div className="flex w-full max-w-[515px] h-[58px] items-center justify-between border-b border-[#04258626]">
-                          <span className="text-[14px] sm:text-[16px] md:text-[18px] font-semibold leading-[20px] sm:leading-[24px] md:leading-[28px] text-[#2E2E2E]">
-                            Order amount
-                          </span>
-                          <span className="text-[14px] sm:text-[16px] md:text-[18px] font-bold leading-[20px] sm:leading-[24px] md:leading-[28px] text-[#1B1D60]">
-                            {formatMoney(customerAmount, currency)}
-                          </span>
-                        </div>
-                        {(taxBreakup || tax !== undefined) && (
-                          <div className="flex w-full max-w-[515px] flex-col items-start border-b border-[#04258626] py-3">
-                            <span className="text-[14px] sm:text-[16px] md:text-[18px] font-semibold leading-[20px] sm:leading-[24px] md:leading-[28px] text-[#2E2E2E]">
-                              GST invoice breakup
-                            </span>
-                            <div className="mt-2 grid gap-1 text-[14px] font-medium leading-[20px] text-[#1B1D60] sm:text-[16px] sm:leading-[26px] md:text-[18px] md:leading-[30px]">
-                              {taxBreakup && (
-                                <p>
-                                  Tax mode:{" "}
-                                  {(
-                                    taxBreakup.taxMode ||
-                                    taxBreakup.tax_mode ||
-                                    "N/A"
-                                  )
-                                    .toString()
-                                    .toUpperCase()}
-                                </p>
-                              )}
-                              {taxPayable > 0 && (
-                                <p>
-                                  GST added to payable:{" "}
-                                  {formatMoney(taxPayable, currency)}
-                                </p>
-                              )}
-                              {taxIncluded > 0 && (
-                                <p>
-                                  GST included in item price:{" "}
-                                  {formatMoney(taxIncluded, currency)}
-                                </p>
-                              )}
-                              {tax !== undefined &&
-                                taxPayable === 0 &&
-                                taxIncluded === 0 && (
-                                  <p>
-                                    GST breakup: {formatMoney(tax, currency)}
-                                  </p>
-                                )}
-                            </div>
-                          </div>
-                        )}
-                        {hasShippingAddress(shippingAddress) && (
-                          <div className="flex w-full max-w-[515px] flex-col items-start py-3">
-                            <span className="text-[14px] sm:text-[16px] md:text-[18px] font-semibold leading-[20px] sm:leading-[24px] md:leading-[28px] text-[#2E2E2E]">
-                              Shipping Address
-                            </span>
-                            <div className="mt-2 w-full break-words text-[14px] font-medium  leading-[20px] text-[#1B1D60] sm:text-[16px] sm:leading-[26px] md:text-[18px] md:leading-[30px]">
-                              {getAddressValue(
-                                shippingAddress,
-                                "fullName",
-                                "full_name",
-                              ) && (
-                                <p className="font-semibold">
-                                  {getAddressValue(
-                                    shippingAddress,
-                                    "fullName",
-                                    "full_name",
-                                  )}
-                                </p>
-                              )}
-                              {[
-                                shippingAddress.line1,
-                                shippingAddress.line2,
-                              ].filter(Boolean).length > 0 && (
-                                <p>
-                                  {[
-                                    shippingAddress.line1,
-                                    shippingAddress.line2,
-                                  ]
-                                    .filter(Boolean)
-                                    .join(", ")}
-                                </p>
-                              )}
-                              {[
-                                shippingAddress.city,
-                                shippingAddress.state,
-                                getAddressValue(
-                                  shippingAddress,
-                                  "postalCode",
-                                  "postal_code",
-                                ),
-                                shippingAddress.country,
-                              ].filter(Boolean).length > 0 && (
-                                <p>
-                                  {[
-                                    shippingAddress.city,
-                                    shippingAddress.state,
-                                    getAddressValue(
-                                      shippingAddress,
-                                      "postalCode",
-                                      "postal_code",
-                                    ),
-                                    shippingAddress.country,
-                                  ]
-                                    .filter(Boolean)
-                                    .join(", ")}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    <OrderPaymentSummary
+                      subtotal={subtotal}
+                      discount={discount}
+                      walletDiscount={walletDiscount}
+                      shipping={shipping}
+                      customerAmount={customerAmount}
+                      tax={tax}
+                      taxBreakup={taxBreakup}
+                      taxIncluded={taxIncluded}
+                      taxPayable={taxPayable}
+                      shippingAddress={shippingAddress}
+                      currency={currency}
+                      formatMoney={formatMoney}
+                      asNumber={asNumber}
+                      hasShippingAddress={hasShippingAddress}
+                      getAddressValue={getAddressValue}
+                    />
                   )}
-                </aside>
-              </section>
+                </OrderDetailAside>
+              </OrderDetailLayout>
             )}
 
-            {(invoices?.sellerInvoices?.length > 0 ||
-              invoices?.orderInvoice) && (
-              <section className="overflow-hidden rounded-[15px] border border-[#CE9F2D66] bg-white">
-                <div className="flex min-h-[72px] items-center justify-between rounded-t-[15px] bg-[#CE9F2D33] px-[20px] py-[20px]">
+            {(invoices?.sellerInvoices?.length > 0 || invoices?.orderInvoice) && (
+              <OrderDetailSectionCard
+                borderClassName="border-[#CE9F2D66]"
+                headerClassName="min-h-[72px] py-[20px]"
+                bodyClassName="grid gap-3 p-4 sm:p-5"
+                headerContent={
                   <h2 className="flex items-center gap-2 font-sans text-[20px] font-bold leading-none text-[#2E2E2E] sm:text-[22px] lg:text-[24px]">
                     <FileText size={18} className="text-[#1B1D60]" /> Invoices
                     &amp; documents
                   </h2>
-                </div>
-                <div className="grid gap-3 p-4 sm:p-5">
+                }
+              >
                   {invoices.orderInvoice && (
                     <div className="flex flex-col gap-3 rounded-[10px] border border-[#CE9F2D33] bg-[#FFFDF8] px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex min-w-0 items-center gap-3">
@@ -1108,8 +764,7 @@ function OrderDetail({ orderId, track }) {
                       </div>
                     );
                   })}
-                </div>
-              </section>
+              </OrderDetailSectionCard>
             )}
 
             {cancellations.length > 0 && (
