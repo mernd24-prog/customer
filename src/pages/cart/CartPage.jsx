@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Store } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import CartItemCard from "../../components/cart/CartItemCard";
 import CartSummary from "../../components/cart/CartSummary";
 import BrandButton from "../../components/ui/BrandButton";
-import { ProductCard } from "../../components/ecommerce";
+import { Breadcrumbs, ProductCard } from "../../components/ecommerce";
 import { fetchCart, updateCart } from "../../features/cart/cartSlice";
 import { fetchProductById } from "../../features/product/productSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
@@ -23,7 +22,6 @@ import {
   wishlistPayload,
 } from "../../utils/ecommerce";
 import { ConfirmModal } from "../../components/common";
-import { ChevronRight } from "lucide-react";
 import { OutlineSmallButton } from "../../components/dynamicComponent/button/static";
 import { FaAngleRight } from "react-icons/fa6";
 
@@ -89,7 +87,9 @@ function writeCheckoutCartItemIds(itemIds) {
 }
 
 function getNumericValue(...values) {
-  const value = values.find((entry) => entry !== undefined && entry !== null && entry !== "");
+  const value = values.find(
+    (entry) => entry !== undefined && entry !== null && entry !== "",
+  );
   if (value === undefined) return null;
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
@@ -99,7 +99,8 @@ function getCartItemStock(item = {}, product = {}) {
   const variants = Array.isArray(product?.variants) ? product.variants : [];
   const matchingVariant = variants.find(
     (variant) =>
-      String(variant?._id || variant?.id || "") === String(item.variantId || "") ||
+      String(variant?._id || variant?.id || "") ===
+        String(item.variantId || "") ||
       String(variant?.sku || "") === String(item.variantSku || ""),
   );
 
@@ -154,7 +155,6 @@ function adaptItemForCard(item) {
     product.reviewCount ??
     product.reviewsCount ??
     product.numReviews;
-  
 
   return {
     id: [productId, variantKey].filter(Boolean).join(":"),
@@ -283,6 +283,11 @@ export default function CartPage() {
     dispatch(fetchCart());
   }, [dispatch]);
 
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Cart", href: "/cart" },
+  ];
+
   useEffect(() => {
     latestRef.current = {
       rawItems,
@@ -325,19 +330,6 @@ export default function CartPage() {
       }),
     [rawItems, localQuantities],
   );
-
-  const sellerGroups = useMemo(() => {
-    const groups = new Map();
-    items.forEach((item) => {
-      const key = item.seller || "other";
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key).push(item);
-    });
-    return [...groups.entries()].map(([sellerName, groupItems]) => ({
-      sellerName: sellerName === "other" ? null : sellerName,
-      items: groupItems,
-    }));
-  }, [items]);
 
   const hasCartItems = items.length > 0;
   const hasSavedItems = savedForLaterItems.length > 0 || wishlist.length > 0;
@@ -562,7 +554,6 @@ export default function CartPage() {
 
   return (
     <>
-
       <ConfirmModal
         open={showLimitModal}
         title="Maximum Quantity Reached"
@@ -579,24 +570,14 @@ export default function CartPage() {
 
       <section className="bg-white px-3 py-6 min-[375px]:px-4 sm:px-6 sm:py-8 lg:px-10 2xl:px-0">
         <div className="mx-auto w-full max-w-[1900px]">
-          <div className="mb-7 flex flex-col gap-4 sm:mb-8 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <nav
-                aria-label="Breadcrumb"
-                className="mb-4 flex items-center gap-2 text-sm font-medium text-[#2d2d2d] min-[375px]:text-base sm:mb-5 sm:gap-3 sm:text-lg"
-              >
-                <Link to="/" className="transition hover:text-[#1B1D60]">
-                  Home
-                </Link>
-                <span className="text-[#2d2d2d]">›</span>
-                <span className="text-[#CE9F2D]">Cart</span>
-              </nav>
-
-              <h1 className="text-2xl font-black leading-tight text-[#3F4095] min-[375px]:text-3xl sm:text-4xl">
-                Shopping Cart
-              </h1>
-            </div>
-          </div>
+          <Breadcrumbs
+            items={breadcrumbItems}
+            className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
+            linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
+            currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
+            separatorClassName="text-[#2E2E2E]"
+            heading="Shopping Cart"
+          />
 
           <ApiState
             loading={cartState.loading && !cart.items}
@@ -651,6 +632,7 @@ export default function CartPage() {
                           onRemove={handleRemove}
                           onSaveForLater={handleSaveForLater}
                           onBuyNow={handleBuyNow}
+                          showCheckbox={true}
                         />
                       </div>
                     ))}

@@ -3,6 +3,7 @@ import { applyImageFallback, formatMoney } from "../../utils/ecommerce";
 import { calculateDiscountPercent } from "../../utils/ecommerce/money";
 import { Link } from "react-router-dom";
 import { AlertTriangle, Heart, Trash2 } from "lucide-react";
+import { FaShoppingCart } from "react-icons/fa";
 
 const LOW_STOCK_THRESHOLD = 5;
 
@@ -15,8 +16,10 @@ export default function CartItemCard({
   onBuyNow,
   selected = true,
   onSelect,
+  saveForLaterLabel = "Move to Wishlist",
+  removeLabel = "Remove Item",
+  showCheckbox,
 }) {
-  const shippingAmount = Number(item?.shipping || 0);
   const productPath = item?.productId ? `/products/${item.productId}` : "";
   const price = Number(item?.price || 0);
   const oldPrice = Number(item?.oldPrice || 0);
@@ -47,19 +50,26 @@ export default function CartItemCard({
       : "Non-returnable";
 
   return (
-    <article className="relative w-full p-3 min-[375px]:p-4 sm:p-5 lg:p-6 xl:min-h-[433px] xl:max-w-[1161px] xl:p-[25px]">
-      <div className="grid gap-5 sm:gap-6 lg:grid-cols-[minmax(220px,320px)_1fr] xl:grid-cols-[minmax(220px,399px)_1fr] xl:gap-9">
+    <article className="relative w-full  p-3 min-[375px]:p-4 sm:p-5 lg:p-6 xl:min-h-[433px] xl:max-w-[1161px] xl:p-[25px]">
+      <div className="grid gap-5 sm:gap-6 lg:grid-cols-[minmax(220px,320px)_1fr] xl:grid-cols-[minmax(220px,399px)_1fr] xl:gap-9 ">
         {item?.image && (
-          <div className="relative mx-auto flex aspect-[399/383] w-full max-w-[399px] items-center justify-center overflow-hidden rounded-[10px] border border-[#F0E6D2] bg-white lg:h-auto lg:max-w-[320px] xl:h-[383px] xl:w-[399px] xl:max-w-[399px]">
-            <label className="absolute left-3 top-3 z-10 flex items-center justify-center sm:left-4 sm:top-4 xl:left-5 xl:top-5">
-              <input
-                type="checkbox"
-                checked={selected}
-                onChange={(event) => onSelect?.(item?.id, event.target.checked)}
-                className="h-[18px] w-[18px] rounded-[4px] border-[#A9B4D8] accent-[#3F4095]"
-              />
-              <span className="sr-only">Select {item?.title} for checkout</span>
-            </label>
+          <div className=" relative mx-auto flex aspect-[399/383] w-full max-w-[399px] items-center justify-center overflow-hidden rounded-[12px] border border-[#F0E6D2]  bg-white lg:h-auto lg:max-w-[320px] xl:h-[383px] xl:w-[399px] xl:max-w-[399px]">
+            {showCheckbox && (
+              <label className=" absolute left-3 top-3 z-10 flex items-center justify-center sm:left-4 sm:top-4 xl:left-5 xl:top-5">
+                <input
+                  type="checkbox"
+                  checked={selected}
+                  onChange={(event) =>
+                    onSelect?.(item?.id, event.target.checked)
+                  }
+                  className="h-[18px] w-[18px] rounded-[4px] border-[#A9B4D8] accent-[#3F4095]"
+                />
+                <span className="sr-only">
+                  Select {item?.title} for checkout
+                </span>
+              </label>
+            )}
+
             {productPath ? (
               <Link
                 to={productPath}
@@ -117,11 +127,11 @@ export default function CartItemCard({
               </span>
             )}
 
-            {item?.color && (
+            {/* {item?.color && (
               <span className="rounded-full bg-[#F2F1F8] px-3 py-1 text-xs font-semibold text-[#1B1D60]">
                 Color: {item.color}
               </span>
-            )}
+            )} */}
 
             {item?.size && (
               <span className="rounded-full bg-[#F2F1F8] px-3 py-1 text-xs font-semibold text-[#1B1D60]">
@@ -134,14 +144,14 @@ export default function CartItemCard({
               .map(([key, value]) => (
                 <span
                   key={key}
-                  className="rounded-full bg-[#F2F1F8] px-3 py-1 text-xs font-semibold capitalize text-[#1B1D60]"
+                  className="rounded-full  bg-[#F2F1F8] px-3 py-1 text-xs font-semibold capitalize text-[#1B1D60]"
                 >
                   {key.replace(/_/g, " ")}: {String(value)}
                 </span>
               ))}
           </div>
 
-          <div className="mt-3 sm:mt-4">
+          <div className="mt-3">
             {stock !== null && stock > 0 && (
               <p className="mb-3 flex items-center gap-2 text-sm font-bold text-[#078B24] sm:text-base">
                 <span className="h-3 w-3 rounded-full bg-[#078B24]" />
@@ -187,7 +197,7 @@ export default function CartItemCard({
               </p>
             )}
 
-            {returnsText && (
+            {/* {returnsText && (
               <p
                 className={`mt-1 text-[13px] font-medium ${
                   returnsAccepted
@@ -197,45 +207,56 @@ export default function CartItemCard({
               >
                 {returnsText}
               </p>
-            )}
+            )} */}
 
-            <p className="mt-1 text-[13px] font-medium text-[var(--customer-muted)]">
+            {/* <p className="mt-1 text-[13px] font-medium text-[var(--customer-muted)]">
               {shippingAmount > 0
                 ? `+ ${formatMoney(shippingAmount)} shipping`
                 : "Free shipping"}
-            </p>
+            </p> */}
           </div>
 
           <div className="mt-5 sm:mt-7">
-              <QuantitySelector
-                quantity={item.quantity}
-                onIncrease={() => onIncrease(item.id)}
-                onDecrease={() => onDecrease(item.id)}
-                increaseDisabled={item.increaseDisabled}
-                increaseDisabledLabel={item.stockMessage || undefined}
-              />
-              {item.stockMessage ? (
-                <p className="mt-1 text-xs font-semibold text-red-600">
-                  {item.stockMessage}
-                </p>
-              ) : null}
-            </div>
+            <QuantitySelector
+              quantity={item.quantity}
+              onIncrease={() => onIncrease(item.id)}
+              onDecrease={() => onDecrease(item.id)}
+              increaseDisabled={item.increaseDisabled}
+              increaseDisabledLabel={item.stockMessage || undefined}
+            />
+            {item.stockMessage ? (
+              <p className="mt-1 text-xs font-semibold text-red-600">
+                {item.stockMessage}
+              </p>
+            ) : null}
+          </div>
 
           <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 sm:mt-7 sm:gap-x-8">
-            {quantity > 1 && price > 0 && (
+            {/* {quantity > 1 && price > 0 && (
               <span className="basis-full text-sm font-semibold text-[#1B1D60]">
                 Subtotal: {formatMoney(price * quantity)}
               </span>
-            )}
+            )} */}
 
-            <button
-              type="button"
-              onClick={() => onSaveForLater?.(item?.id)}
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#1B1D60] min-[375px]:text-base sm:gap-3 sm:text-lg"
-            >
-              <Heart size={22} className="text-[#1B1D60] sm:size-[25px]" />
-              Move to Wishlist
-            </button>
+            {saveForLaterLabel === "Move to Wishlist" ? (
+              <button
+                type="button"
+                onClick={() => onSaveForLater?.(item?.id)}
+                className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#1B1D60] min-[375px]:text-base sm:gap-3 sm:text-lg"
+              >
+                <Heart size={22} className="text-[#1B1D60] sm:size-[25px]" />
+                {saveForLaterLabel}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => onSaveForLater?.(item?.id)}
+                className="inline-flex items-center gap-2 font-medium rounded-lg bg-[#CE9F2D] text-white px-20 py-2.5 transition hover:bg-[#b8891f] active:scale-95"
+              >
+                <FaShoppingCart />
+                {saveForLaterLabel}
+              </button>
+            )}
 
             <button
               type="button"
@@ -243,7 +264,7 @@ export default function CartItemCard({
               className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#FF3B35] min-[375px]:text-base sm:gap-3 sm:text-lg"
             >
               <Trash2 size={19} className="text-[#FF3B35] sm:size-[22px]" />
-              Remove Item
+              {removeLabel}
             </button>
 
             {onBuyNow && (

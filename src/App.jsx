@@ -22,6 +22,21 @@ import CategoryListingPage from "./pages/category/CategoryListingPage";
 import DownloadApp from "./pages/downloadApp/DownloadApp";
 import PolicyPage from "./pages/policiesPage/PoliciesPages";
 import Loader from "./components/common/Loader";
+
+const CART_STORAGE_KEYS = [
+  "sam_global_saved_for_later_items", // localStorage
+];
+const CART_SESSION_KEYS = [
+  "sam_global_selected_checkout_item_ids", // sessionStorage
+  "sam_global_checkout_cart_item_ids", // sessionStorage
+  "sam_global_buy_now_items", // sessionStorage
+];
+
+function clearCartStorage() {
+  CART_STORAGE_KEYS.forEach((key) => window.localStorage.removeItem(key));
+  CART_SESSION_KEYS.forEach((key) => window.sessionStorage.removeItem(key));
+}
+
 const lazyNamed = (loader, exportName) =>
   lazy(() => loader().then((module) => ({ default: module[exportName] })));
 
@@ -63,7 +78,7 @@ const HomePage = lazyNamed(
   () => import("./pages/customer/HomePage"),
   "HomePage",
 );
-const WatchlistPage = lazy(() => import("./pages/customer/WatchlistPage"));
+const WatchlistPage = lazy(() => import("./pages/watchList/WatchListPage"));
 const SearchPage = lazy(() => import("./pages/search/SearchPage"));
 const ProductsPage = lazy(() => import("./pages/products/ProductsPage"));
 const ProductDetailPage = lazy(
@@ -184,7 +199,10 @@ export default function App() {
   const [sessionReady, setSessionReady] = useState(false);
 
   useEffect(() => {
-    const handler = () => dispatch(logout());
+    const handler = () => {
+      clearCartStorage();
+      dispatch(logout());
+    };
     window.addEventListener("auth:logout", handler);
     return () => window.removeEventListener("auth:logout", handler);
   }, [dispatch]);
@@ -207,7 +225,10 @@ export default function App() {
 
     dispatch(checkAuthStatus())
       .unwrap()
-      .catch(() => dispatch(logout()))
+      .catch(() => {
+        clearCartStorage();
+        dispatch(logout());
+      })
       .finally(() => {
         if (isDone) return;
         isDone = true;

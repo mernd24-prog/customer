@@ -24,8 +24,10 @@ const cartUiSlice = createSlice({
       state.addedModalOpen = false;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase("auth/logout", () => initialState);
+  },
 });
 
 export const { openAddedToCartModal, closeAddedToCartModal } = cartUiSlice.actions;
 export default cartUiSlice.reducer;
-

@@ -34,6 +34,15 @@ const authSlice = createSlice({
   reducers: {
     logout: () => {
       tokenStorage.clear();
+      // Wipe cart data so the next user starts with a clean slate
+      [
+        "sam_global_saved_for_later_items",
+      ].forEach((k) => window.localStorage.removeItem(k));
+      [
+        "sam_global_selected_checkout_item_ids",
+        "sam_global_checkout_cart_item_ids",
+        "sam_global_buy_now_items",
+      ].forEach((k) => window.sessionStorage.removeItem(k));
       return defaultInitialState;
     },
     clearError: (state) => {
