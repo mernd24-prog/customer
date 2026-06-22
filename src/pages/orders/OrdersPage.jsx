@@ -55,6 +55,7 @@ import { downloadAuthDocument } from "../../utils/downloadAuthDocument";
 import { openRazorpayCheckout } from "../../utils/razorpay";
 import { endpoints } from "../../api/endpoints";
 import {
+  COMPACT_STATUS_BADGE,
   INFO_TILE_TONES,
   items,
   ORDER_BREADCRUMBS,

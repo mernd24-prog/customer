@@ -82,7 +82,7 @@ export const ORDER_FILTERS = [
   { label: "Payment failed", value: "payment_failed" },
 ];
 
-export const COMPACT_STATUS_BADG = {
+export const COMPACT_STATUS_BADGE = {
   delivered: "bg-[#0C9F45] text-white",
   fulfilled: "bg-[#0C9F45] text-white",
   partially_delivered: "bg-[#0C9F45] text-white",

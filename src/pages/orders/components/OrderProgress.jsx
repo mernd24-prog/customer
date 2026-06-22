@@ -12,23 +12,37 @@ const normalizeProgressStatus = (status) => {
 };
 
 function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
+  const normalizedSteps = steps.map((step) =>
+    typeof step === "string"
+      ? { status: step, label: TRACKING_LABELS[step] }
+      : step,
+  );
+
   const activeIndex = Math.max(
     0,
-    steps.indexOf(normalizeProgressStatus(activeStatus)),
+    normalizedSteps.findIndex(
+      (step) =>
+        normalizeProgressStatus(step.status) ===
+        normalizeProgressStatus(activeStatus),
+    ),
   );
   const progressWidth =
-    steps.length <= 1 ? 0 : (activeIndex / (steps.length - 1)) * 100;
+    normalizedSteps.length <= 1
+      ? 0
+      : (activeIndex / (normalizedSteps.length - 1)) * 100;
 
   return (
     <div
       className="relative grid min-w-[720px] gap-2 px-1 py-3 lg:min-w-0"
-      style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
+      style={{
+        gridTemplateColumns: `repeat(${normalizedSteps.length}, minmax(0, 1fr))`,
+      }}
     >
       <span
         className="absolute top-[3rem] h-0.5 overflow-hidden bg-border"
         style={{
-          left: `calc(100% / ${steps.length} / 2)`,
-          right: `calc(100% / ${steps.length} / 2)`,
+          left: `calc(100% / ${normalizedSteps.length} / 2)`,
+          right: `calc(100% / ${normalizedSteps.length} / 2)`,
         }}
       >
         <span
@@ -36,12 +50,19 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
           style={{ width: `${progressWidth}%` }}
         />
       </span>
-      {steps.map((step, index) => {
+      {normalizedSteps.map((step, index) => {
         const done = activeIndex >= index;
         const current = activeIndex === index;
+        const label =
+          step.status === "pending_payment"
+            ? "Payment"
+            : step.label || TRACKING_LABELS[step.status] || String(step.status);
 
         return (
-          <div key={step} className="relative flex min-w-0 flex-col items-center">
+          <div
+            key={`${step.status}-${index}`}
+            className="relative flex min-w-0 flex-col items-center"
+          >
             <div className="relative flex items-center justify-center">
               <div
                 className={`flex h-[70px] w-[70px] items-center justify-center rounded-full ${
@@ -62,8 +83,13 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
                 current || done ? "text-[#CE9F2D]" : "text-muted"
               }`}
             >
-              {step === "pending_payment" ? "Payment" : TRACKING_LABELS[step]}
+              {label}
             </p>
+            {step.note ? (
+              <p className="mt-1 w-[92px] text-center text-[18px] font-medium leading-5 text-muted">
+                {step.note}
+              </p>
+            ) : null}
           </div>
         );
       })}
@@ -71,11 +97,23 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
   );
 }
 
-function OrderProgress({ status }) {
+function OrderProgress({ status, steps = ORDER_STEPS }) {
   const isCancelled = status === "cancelled";
   const isFailed = status === "payment_failed";
   const inReturnFlow = RETURN_STEPS.includes(status);
-  const activeIndex = ORDER_STEPS.indexOf(inReturnFlow ? "fulfilled" : status);
+  const normalizedSteps = steps.map((step) =>
+    typeof step === "string"
+      ? { status: step, label: TRACKING_LABELS[step] }
+      : step,
+  );
+  const activeIndex = Math.max(
+    0,
+    normalizedSteps.findIndex(
+      (step) =>
+        normalizeProgressStatus(step.status) ===
+        normalizeProgressStatus(inReturnFlow ? "fulfilled" : status),
+    ),
+  );
   const visibleSteps =
     isCancelled || isFailed
       ? [
@@ -90,8 +128,8 @@ function OrderProgress({ status }) {
               : "Payment could not be completed for this order.",
           },
         ]
-      : ORDER_STEPS.map((step, index) => ({
-          label: TRACKING_LABELS[step],
+      : normalizedSteps.map((step, index) => ({
+          label: step.label || TRACKING_LABELS[step.status],
           current: activeIndex === index,
         }));
 
@@ -102,7 +140,7 @@ function OrderProgress({ status }) {
   return (
     <div className="space-y-4">
       <StepBar
-        steps={ORDER_STEPS}
+        steps={normalizedSteps}
         activeStatus={inReturnFlow ? "fulfilled" : status}
         colorClass="border-gold bg-gold"
       />
