@@ -56,6 +56,14 @@ const getOrderItems = (order) => {
     order?.line_items;
   return Array.isArray(items) ? items : [];
 };
+const asNumber = (value) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+};
+const getItemProduct = (item) =>
+  item?.productId && typeof item.productId === "object"
+    ? item.productId
+    : item?.product;
 const getItemProductId = (item) =>
   item?.product_id ||
   (typeof item?.productId === "object"
@@ -71,17 +79,56 @@ const getItemTitle = (item) =>
     ? item.productId?.title || item.productId?.name
     : null) ||
   "Product";
-const getItemUnitPrice = (item) =>
-  item?.unit_price ??
-  item?.unitPrice ??
-  item?.sale_price ??
-  item?.salePrice ??
-  item?.price ??
-  0;
+const getItemQuantity = (item) => Math.max(1, asNumber(item?.quantity || 1));
+const getItemLineTotal = (item) =>
+  item?.line_total ??
+  item?.lineTotal ??
+  item?.total_price ??
+  item?.totalPrice ??
+  item?.amount ??
+  item?.total ??
+  null;
+const getItemUnitPrice = (item) => {
+  const product = getItemProduct(item);
+  const unitPrice =
+    item?.unit_price ??
+    item?.unitPrice ??
+    item?.sale_price ??
+    item?.salePrice ??
+    item?.price ??
+    item?.variant?.price ??
+    product?.salePrice ??
+    product?.sale_price ??
+    product?.price;
+
+  if (unitPrice !== undefined && unitPrice !== null && unitPrice !== "") {
+    return asNumber(unitPrice);
+  }
+
+  const lineTotal = getItemLineTotal(item);
+  if (lineTotal !== undefined && lineTotal !== null && lineTotal !== "") {
+    return asNumber(lineTotal) / getItemQuantity(item);
+  }
+
+  return 0;
+};
+const getDisplayItemPrice = (item) => {
+  const lineTotal = getItemLineTotal(item);
+  if (lineTotal !== undefined && lineTotal !== null && lineTotal !== "") {
+    return asNumber(lineTotal);
+  }
+
+  return getItemUnitPrice(item) * getItemQuantity(item);
+};
 const getItemImage = (item) => {
+  const product = getItemProduct(item);
   const images =
     item?.images ||
-    (typeof item?.productId === "object" ? item.productId?.images : null);
+    item?.image ||
+    item?.imageUrl ||
+    product?.images ||
+    product?.image ||
+    product?.imageUrl;
   return Array.isArray(images) ? images[0] : images || null;
 };
 const getItemVariantSku = (item) => item?.variant_sku || item?.variantSku || "";
@@ -199,7 +246,7 @@ function ReturnRequestPage({ orderId }) {
                     const pid = getItemProductId(item);
                     const title = getItemTitle(item);
                     const img = getItemImage(item);
-                    const price = getItemUnitPrice(item);
+                    const price = getDisplayItemPrice(item);
                     const lineKey =
                       getItemId(item) || `${pid}:${getItemVariantSku(item)}`;
                     const isSelected = selectedProductId === lineKey;

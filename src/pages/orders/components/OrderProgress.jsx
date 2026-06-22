@@ -1,4 +1,9 @@
-import { ORDER_STEPS, RETURN_STEPS, TRACKING_LABELS } from "../../../data/orderPage";
+import {
+  ORDER_STEPS,
+  REFUND_STEPS,
+  RETURN_STEPS,
+  TRACKING_LABELS,
+} from "../../../data/orderPage";
 import vectorImage from "/image/png/SuccessVector .png";
 
 const normalizeProgressStatus = (status) => {
@@ -41,7 +46,10 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
         const current = activeIndex === index;
 
         return (
-          <div key={step} className="relative flex min-w-0 flex-col items-center">
+          <div
+            key={step}
+            className="relative flex min-w-0 flex-col items-center"
+          >
             <div className="relative flex items-center justify-center">
               <div
                 className={`flex h-[70px] w-[70px] items-center justify-center rounded-full ${
@@ -71,11 +79,69 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
   );
 }
 
-function OrderProgress({ status }) {
+const normalizeRefundStatus = (status) => {
+  if (status === "pending") return "refund_pending";
+  if (status === "initiated" || status === "processing")
+    return "refund_initiated";
+  if (status === "completed") return "refund_completed";
+  if (status === "refunded") return "refund_completed";
+  return status;
+};
+
+const getReturnStatus = (returns = [], status) => {
+  if (RETURN_STEPS.includes(status)) return status;
+  if (status === "partially_returned") return "returned";
+  const latestReturn = returns.find(Boolean);
+  const returnStatus =
+    latestReturn?.status ||
+    latestReturn?.return_status ||
+    latestReturn?.returnStatus;
+  if (returnStatus === "approved") return "return_approved";
+  if (returnStatus === "requested") return "return_requested";
+  if (returnStatus === "pickup_scheduled") return "pickup_scheduled";
+  if (returnStatus === "pickup_completed") return "pickup_completed";
+  if (returnStatus === "received" || returnStatus === "returned")
+    return "returned";
+  return RETURN_STEPS.includes(returnStatus) ? returnStatus : null;
+};
+
+const getRefundStatus = ({ returns = [], cancellations = [], status }) => {
+  if (REFUND_STEPS.includes(status)) return status;
+  if (status === "refunded") return "refund_completed";
+
+  const records = [...returns, ...cancellations].filter(Boolean);
+  for (const record of records) {
+    const refundStatus =
+      record?.refund?.status ||
+      record?.refund_status ||
+      record?.refundStatus ||
+      record?.status;
+    const normalized = normalizeRefundStatus(refundStatus);
+    if (REFUND_STEPS.includes(normalized)) return normalized;
+  }
+
+  return null;
+};
+
+function OrderProgress({ status, cancellations = [], returns = [] }) {
   const isCancelled = status === "cancelled";
   const isFailed = status === "payment_failed";
-  const inReturnFlow = RETURN_STEPS.includes(status);
-  const activeIndex = ORDER_STEPS.indexOf(inReturnFlow ? "fulfilled" : status);
+  const returnStatus = getReturnStatus(returns, status);
+  const refundStatus = getRefundStatus({ returns, cancellations, status });
+  const cancelStatus =
+    isCancelled || cancellations.length > 0 ? "cancelled" : null;
+  const progressSteps = cancelStatus
+    ? ["pending_payment", "confirmed", "cancelled"]
+    : refundStatus
+      ? [...ORDER_STEPS, ...RETURN_STEPS, ...REFUND_STEPS]
+      : returnStatus
+        ? [...ORDER_STEPS, ...RETURN_STEPS]
+        : isFailed
+          ? ["pending_payment", "payment_failed"]
+          : ORDER_STEPS;
+  const activeStatus =
+    cancelStatus || refundStatus || returnStatus || status;
+  const activeIndex = progressSteps.indexOf(normalizeProgressStatus(activeStatus));
   const visibleSteps =
     isCancelled || isFailed
       ? [
@@ -90,7 +156,7 @@ function OrderProgress({ status }) {
               : "Payment could not be completed for this order.",
           },
         ]
-      : ORDER_STEPS.map((step, index) => ({
+      : progressSteps.map((step, index) => ({
           label: TRACKING_LABELS[step],
           current: activeIndex === index,
         }));
@@ -100,24 +166,12 @@ function OrderProgress({ status }) {
     visibleSteps[visibleSteps.length - 1];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 ">
       <StepBar
-        steps={ORDER_STEPS}
-        activeStatus={inReturnFlow ? "fulfilled" : status}
+        steps={progressSteps}
+        activeStatus={activeStatus}
         colorClass="border-gold bg-gold"
       />
-      {inReturnFlow && (
-        <div className="rounded-[8px] border border-amber-200 bg-amber-50 p-4">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-amber-700">
-            Return &amp; refund progress
-          </p>
-          <StepBar
-            steps={RETURN_STEPS}
-            activeStatus={status}
-            colorClass="border-amber-500 bg-amber-500"
-          />
-        </div>
-      )}
       {(isCancelled || isFailed) && (
         <div className="rounded-[8px] border border-border bg-white px-4 py-3 text-sm">
           <p className="font-semibold capitalize text-ink">
