@@ -121,6 +121,11 @@ export default function BrandOutletPage() {
     [sidebarBrands],
   );
 
+  const brandGridClass =
+    "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5";
+  const stateContainerClass = "rounded-[12px] p-6 text-center";
+  
+
   return (
     <>
       <Seo
@@ -158,7 +163,7 @@ export default function BrandOutletPage() {
               </h1>
 
               {loading ? (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5">
+                <div className={brandGridClass}>
                   {Array.from({ length: 10 }).map((_, index) => (
                     <div
                       key={index}
@@ -166,12 +171,13 @@ export default function BrandOutletPage() {
                     />
                   ))}
                 </div>
-              ) : error ? (
-                <div className="rounded-[12px] border border-red-200 bg-red-50 p-6 text-center">
-                  <p className="text-sm font-semibold text-red-700">{error}</p>
-                </div>
+              ) : error ? (<div
+                className={`${stateContainerClass} border border-red-200 bg-red-50`}
+              >
+                <p className="text-sm font-semibold text-red-700">{error}</p>
+              </div>
               ) : brands.length ? (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5">
+                <div className={brandGridClass}>
                   {brands.map((brand) => (
                     <BrandCard
                       key={brand.routeKey}
@@ -184,7 +190,9 @@ export default function BrandOutletPage() {
                   ))}
                 </div>
               ) : (
-                <div className="rounded-[12px] border border-[var(--customer-border)] bg-[var(--customer-cream)] p-6 text-center">
+                <div
+                  className={`${stateContainerClass} border border-[var(--customer-border)] bg-[var(--customer-cream)]`}
+                >
                   <p className="text-sm font-semibold text-[var(--customer-ink)]">
                     No brands available right now.
                   </p>

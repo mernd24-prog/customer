@@ -80,6 +80,11 @@ export default function AccountPage({ tab = "profile" }) {
     });
   };
 
+  const fadeOverlayClass =
+    "pointer-events-none absolute inset-y-0 z-10 w-10 transition-opacity duration-200 lg:hidden";
+  const scrollButtonClass =
+    "absolute top-1/2 z-20 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-[#25256F] shadow-[0_6px_18px_rgba(37,37,111,0.18)] transition-all duration-200 lg:hidden";
+
   return (
     <>
       <Seo
@@ -90,25 +95,22 @@ export default function AccountPage({ tab = "profile" }) {
         <div className="w-full lg:w-[30%]">
           <div className="relative lg:sticky lg:top-24 lg:ml-auto lg:max-h-[calc(100vh-7rem)] lg:w-full lg:overflow-y-auto lg:pr-2 2xl:w-[85%]">
             <div
-              className={`pointer-events-none absolute inset-y-0 left-0 z-10 w-10 rounded-l-[12px] bg-gradient-to-r from-[#F7F8FC] to-transparent transition-opacity duration-200 lg:hidden ${
-                canScrollLeft ? "opacity-100" : "opacity-0"
-              }`}
+              className={`${fadeOverlayClass} left-0 rounded-l-[12px] bg-gradient-to-r from-[#F7F8FC] to-transparent ${canScrollLeft ? "opacity-100" : "opacity-0"
+                }`}
             />
             <div
-              className={`pointer-events-none absolute inset-y-0 right-0 z-10 w-10 rounded-r-[12px] bg-gradient-to-l from-[#F7F8FC] to-transparent transition-opacity duration-200 lg:hidden ${
-                canScrollRight ? "opacity-100" : "opacity-0"
-              }`}
+              className={`${fadeOverlayClass} right-0 rounded-r-[12px] bg-gradient-to-l from-[#F7F8FC] to-transparent ${canScrollRight ? "opacity-100" : "opacity-0"
+                }`}
             />
 
             <button
               type="button"
               onClick={() => scrollTabs("left")}
               aria-label="Scroll account tabs left"
-              className={`absolute left-1 top-1/2 z-20 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-[#25256F] shadow-[0_6px_18px_rgba(37,37,111,0.18)] transition-all duration-200 lg:hidden ${
-                canScrollLeft
+              className={`${scrollButtonClass} left-1 ${canScrollLeft
                   ? "pointer-events-auto opacity-100"
                   : "pointer-events-none opacity-0"
-              }`}
+                }`}
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -117,15 +119,13 @@ export default function AccountPage({ tab = "profile" }) {
               type="button"
               onClick={() => scrollTabs("right")}
               aria-label="Scroll account tabs right"
-              className={`absolute right-1 top-1/2 z-20 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-[#25256F] shadow-[0_6px_18px_rgba(37,37,111,0.18)] transition-all duration-200 lg:hidden ${
-                canScrollRight
+              className={`${scrollButtonClass} right-1 ${canScrollRight
                   ? "pointer-events-auto opacity-100"
                   : "pointer-events-none opacity-0"
-              }`}
+                }`}
             >
               <ChevronRight className="size-4" />
             </button>
-
             <div
               ref={tabsRef}
               className="hide-scrollbar flex w-full gap-2 overflow-x-auto overflow-y-hidden whitespace-nowrap rounded-[12px] p-1.5 sm:p-2 lg:flex-col lg:gap-3 lg:overflow-visible lg:whitespace-normal lg:p-3"
@@ -137,28 +137,24 @@ export default function AccountPage({ tab = "profile" }) {
                   <Link
                     key={id}
                     to={path}
-                    className={`relative flex h-[46px] min-w-[120px] shrink-0 items-center justify-center gap-2 rounded-[10px] border px-3 text-sm font-medium transition-colors duration-200 sm:h-[50px] sm:min-w-[138px] sm:px-4 md:text-base lg:h-[74px] lg:w-full lg:min-w-0 lg:justify-start lg:gap-4 lg:rounded-[14px] lg:px-5 xl:text-[18px] ${
-                      isActive
-                        ? "border-[#25256F] bg-[#25256F] text-white"
-                        : "border-transparent bg-transparent text-[#2E2E2E] "
-                    }`}
+                    className={`relative flex h-[46px] min-w-[120px] shrink-0 items-center justify-center gap-2 rounded-[10px] border px-3 text-sm font-medium transition-colors duration-200 sm:h-[50px] sm:min-w-[138px] sm:px-4 md:text-base lg:h-[74px] lg:w-full lg:min-w-0 lg:justify-start lg:gap-4 lg:rounded-[14px] lg:px-5 xl:text-[18px] ${isActive
+                      ? "border-[#25256F] bg-[#25256F] text-white"
+                      : "border-transparent bg-transparent text-[#2E2E2E] "
+                      }`}
                   >
                     <span
-                      className={`absolute bottom-0 left-1/2 h-[3px] w-[70%] -translate-x-1/2 rounded-full bg-[#25256F] transition-opacity duration-200 lg:hidden ${
-                        isActive ? "opacity-100" : "opacity-0"
-                      }`}
+                      className={`absolute bottom-0 left-1/2 h-[3px] w-[70%] -translate-x-1/2 rounded-full bg-[#25256F] transition-opacity duration-200 lg:hidden ${isActive ? "opacity-100" : "opacity-0"
+                        }`}
                     />
 
                     <span
-                      className={`absolute left-0 top-1/2 hidden h-[38px] w-[4px] -translate-y-1/2 rounded-r-full bg-[#E0A91B] transition-opacity duration-200 lg:block ${
-                        isActive ? "opacity-100" : "opacity-0"
-                      }`}
+                      className={`absolute left-0 top-1/2 hidden h-[38px] w-[4px] -translate-y-1/2 rounded-r-full bg-[#E0A91B] transition-opacity duration-200 lg:block ${isActive ? "opacity-100" : "opacity-0"
+                        }`}
                     />
 
                     <Icon
-                      className={`size-4 shrink-0 transition-colors duration-200 lg:size-5 ${
-                        isActive ? "text-white" : "text-[#2564EB]"
-                      }`}
+                      className={`size-4 shrink-0 transition-colors duration-200 lg:size-5 ${isActive ? "text-white" : "text-[#2564EB]"
+                        }`}
                     />
 
                     <span className="block leading-none tracking-wide">

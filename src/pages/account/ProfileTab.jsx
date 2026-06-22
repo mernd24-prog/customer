@@ -136,6 +136,11 @@ export default function ProfileTab({ user }) {
     return run(dispatch, updateMe({ profile }), "Profile updated");
   };
 
+  const readonlyFieldClass = "grid gap-1.5";
+  const readonlyLabelClass = "text-sm font-medium text-ink";
+  const readonlyValueClass =
+  "flex min-h-11 items-center rounded-[8px] border border-border bg-surface-soft px-3 py-2 text-sm text-muted";
+
   return (
     <form className="grid gap-3 " onSubmit={handleSubmit(submit)} noValidate>
       {/* Profile Header */}
@@ -209,16 +214,16 @@ export default function ProfileTab({ user }) {
 
       {/* Contact Fields — read-only; email/phone are changed via account settings */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="grid gap-1.5">
-          <label className="text-sm font-medium text-ink">Email</label>
-          <div className="flex min-h-11 items-center rounded-[8px] border border-border bg-surface-soft px-3 py-2 text-sm text-muted">
+        <div className= {readonlyFieldClass}>
+          <label className = {readonlyLabelClass}>Email</label>
+          <div className= {readonlyValueClass}>
             {user?.email || "—"}
           </div>
         </div>
 
-        <div className="grid gap-1.5">
-          <label className="text-sm font-medium text-ink">Phone</label>
-          <div className="flex min-h-11 items-center rounded-[8px] border border-border bg-surface-soft px-3 py-2 text-sm text-muted">
+        <div className= {readonlyFieldClass}>
+          <label className={readonlyLabelClass}>Phone</label>
+          <div className= {readonlyValueClass}>
             {user?.phone || "—"}
           </div>
         </div>
