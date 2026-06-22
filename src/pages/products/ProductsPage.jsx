@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid2X2, List } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import PageHeader from "../../components/common/PageHeader";
 import {
+  CheckboxListFilter,
   CollectionToolbar,
   OptionFilter,
   PriceRangeFilter,
@@ -17,6 +18,12 @@ import {
   fetchCategories,
   fetchBrands,
 } from "../../features/catalog/catalogSlice";
+import {
+  buildFacetCountMap,
+  buildRatingCountMap,
+  getProductBrandName,
+  isProductInStock,
+} from "../../utils/ecommerce";
 
 const SORT_OPTIONS = [
   { value: "", label: "Sort By" },
@@ -25,6 +32,18 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High to Low" },
   { value: "rating", label: "Top Rated" },
 ];
+
+function parseMultiValue(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function serializeMultiValue(values) {
+  const uniqueValues = [...new Set((values || []).map(String).map((item) => item.trim()).filter(Boolean))];
+  return uniqueValues.length ? uniqueValues.join(",") : undefined;
+}
 
 export default function ProductsPage() {
   const dispatch = useDispatch();
@@ -45,10 +64,38 @@ export default function ProductsPage() {
 
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+  const selectedBrands = useMemo(
+    () => parseMultiValue(searchParams.get("brand")),
+    [searchParams],
+  );
+  const selectedRatings = useMemo(
+    () => parseMultiValue(searchParams.get("rating")),
+    [searchParams],
+  );
 
   const products = items;
   const totalPages = pageInfo.totalPages || 1;
   const currentPage = pageInfo.page || 1;
+  const availabilityCounts = useMemo(
+    () =>
+      products.reduce(
+        (counts, product) => {
+          if (isProductInStock(product)) {
+            counts.inStock += 1;
+          } else {
+            counts.outOfStock += 1;
+          }
+          return counts;
+        },
+        { inStock: 0, outOfStock: 0 },
+      ),
+    [products],
+  );
+  const brandCounts = useMemo(
+    () => buildFacetCountMap(products, (product) => getProductBrandName(product)),
+    [products],
+  );
+  const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
 
   const getParams = useCallback(
     (pageOverride) => ({
@@ -71,6 +118,12 @@ export default function ProductsPage() {
       shade: searchParams.get("shade") || undefined,
       minRating: searchParams.get("rating") || undefined,
       inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
+      outOfStock:
+        searchParams.get("outOfStock") === "true" ? "true" : undefined,
+      expressDelivery:
+        searchParams.get("expressDelivery") === "true" ? "true" : undefined,
+      freeDelivery:
+        searchParams.get("freeDelivery") === "true" ? "true" : undefined,
       page: pageOverride || 1,
       limit: Number(searchParams.get("limit") || 12),
     }),
@@ -187,12 +240,19 @@ export default function ProductsPage() {
     });
   };
 
-  const removeFilter = (key) => {
+  const removeFilter = (key, filter) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       if (key === "price") {
         next.delete("minPrice");
         next.delete("maxPrice");
+      } else if (filter?.groupKey) {
+        const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+          (value) => value !== filter.value,
+        );
+        const serialized = serializeMultiValue(nextValues);
+        if (serialized) next.set(filter.groupKey, serialized);
+        else next.delete(filter.groupKey);
       } else next.delete(key);
       next.delete("page");
       return next;
@@ -216,19 +276,35 @@ export default function ProductsPage() {
       key: "category",
       label: `Category: ${searchParams.get("category")}`,
     },
-    searchParams.get("brand") && {
-      key: "brand",
-      label: `Brand: ${searchParams.get("brand")}`,
-    },
+    ...selectedBrands.map((brand) => ({
+      key: `brand:${brand}`,
+      groupKey: "brand",
+      value: brand,
+      label: `Brand: ${brand}`,
+    })),
     searchParams.get("productFamilyCode") && {
       key: "productFamilyCode",
       label: `Family: ${searchParams.get("productFamilyCode")}`,
     },
-    searchParams.get("rating") && {
-      key: "rating",
-      label: `Rating: ${searchParams.get("rating")}★ & up`,
-    },
+    ...selectedRatings.map((rating) => ({
+      key: `rating:${rating}`,
+      groupKey: "rating",
+      value: rating,
+      label: `Rating: ${rating}★ & up`,
+    })),
     searchParams.get("inStock") === "true" && { key: "inStock", label: "In Stock Only" },
+    searchParams.get("outOfStock") === "true" && {
+      key: "outOfStock",
+      label: "Out of Stock",
+    },
+    searchParams.get("expressDelivery") === "true" && {
+      key: "expressDelivery",
+      label: "Express Delivery",
+    },
+    searchParams.get("freeDelivery") === "true" && {
+      key: "freeDelivery",
+      label: "Free Delivery",
+    },
     ["color", "size", "material", "fit", "storage", "skinType", "shade"]
       .map(
         (key) =>
@@ -279,9 +355,13 @@ export default function ProductsPage() {
       content: (
         <OptionFilter
           name="brand"
-          options={brandList}
-          selected={searchParams.get("brand")}
-          onChange={(value) => updateParam("brand", value)}
+          options={brandList.map((brand) => ({
+            ...brand,
+            count: brandCounts[String(brand.value)] || 0,
+          }))}
+          selected={selectedBrands}
+          multiple
+          onChange={(values) => updateParam("brand", serializeMultiValue(values))}
         />
       ),
     },
@@ -301,8 +381,39 @@ export default function ProductsPage() {
       title: "Rating",
       content: (
         <RatingFilter
-          selected={searchParams.get("rating")}
-          onChange={(v) => updateParam("rating", v)}
+          selected={selectedRatings}
+          multiple
+          counts={ratingCounts}
+          onChange={(values) =>
+            updateParam("rating", serializeMultiValue(values))
+          }
+        />
+      ),
+    },
+    {
+      key: "delivery",
+      title: "Delivery",
+      content: (
+        <CheckboxListFilter
+          name="delivery"
+          options={[
+            { value: "expressDelivery", label: "Express Delivery" },
+            { value: "freeDelivery", label: "Free Delivery" },
+          ]}
+          selected={["expressDelivery", "freeDelivery"].filter(
+            (value) => searchParams.get(value) === "true",
+          )}
+          onChange={(values) => {
+            const selectedValues = new Set(values);
+            updateParam(
+              "expressDelivery",
+              selectedValues.has("expressDelivery") ? "true" : undefined,
+            );
+            updateParam(
+              "freeDelivery",
+              selectedValues.has("freeDelivery") ? "true" : undefined,
+            );
+          }}
         />
       ),
     },
@@ -310,17 +421,35 @@ export default function ProductsPage() {
       key: "inStock",
       title: "Availability",
       content: (
-        <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
-          <input
-            type="checkbox"
-            checked={searchParams.get("inStock") === "true"}
-            onChange={(e) =>
-              updateParam("inStock", e.target.checked ? "true" : undefined)
-            }
-            className="h-3.5 w-3.5 accent-gold"
-          />
-          In Stock Only
-        </label>
+        <CheckboxListFilter
+          name="availability"
+          options={[
+            {
+              value: "inStock",
+              label: "In Stock",
+              count: availabilityCounts.inStock,
+            },
+            {
+              value: "outOfStock",
+              label: "Out of Stock",
+              count: availabilityCounts.outOfStock,
+            },
+          ]}
+          selected={["inStock", "outOfStock"].filter(
+            (value) => searchParams.get(value) === "true",
+          )}
+          onChange={(values) => {
+            const selectedValues = new Set(values);
+            updateParam(
+              "inStock",
+              selectedValues.has("inStock") ? "true" : undefined,
+            );
+            updateParam(
+              "outOfStock",
+              selectedValues.has("outOfStock") ? "true" : undefined,
+            );
+          }}
+        />
       ),
     },
   ].filter(Boolean);

@@ -33,6 +33,7 @@ import {
   getProductImage,
   getProductTitle,
 } from "../../utils/ecommerce";
+import { normalizeId } from "../../utils/ecommerce/cart";
 import { normalizeDialCode } from "../../lib/utils";
 import {
   checkoutAddressSchema,
@@ -357,6 +358,24 @@ const getPaymentStatus = (payment = {}) =>
   payment?.status || payment?.payment_status || "";
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 const SELECTED_CHECKOUT_STORAGE_KEY = "sam_global_selected_checkout_item_ids";
+const normalizeCartItemId = (value) => {
+  if (!value) return "";
+
+  if (typeof value === "string") {
+    const [rawProductId, ...variantParts] = value.split(":");
+    const productId = normalizeId(rawProductId);
+    const variantId = normalizeId(variantParts.join(":"));
+    return [productId, variantId].filter(Boolean).join(":");
+  }
+
+  const productId = normalizeId(value.productId || value.product);
+  const variantId = normalizeId(value.variantId || value.variantSku || "");
+  return [productId, variantId].filter(Boolean).join(":");
+};
+const normalizeCartItemIds = (values = []) =>
+  Array.from(
+    new Set(values.map((value) => normalizeCartItemId(value)).filter(Boolean)),
+  );
 const getBuyNowItems = () => {
   try {
     const parsed = JSON.parse(
@@ -374,18 +393,17 @@ const getSelectedCheckoutItemIds = () => {
     );
     if (storedValue === null) return null;
     const parsed = JSON.parse(storedValue);
-    return Array.isArray(parsed) ? parsed : null;
+    return Array.isArray(parsed) ? normalizeCartItemIds(parsed) : null;
   } catch {
     return null;
   }
 };
 const getCartLineKey = (item = {}) =>
-  [
-    getProductId(item.productId || item.product),
-    item.variantId || item.variantSku || "",
-  ]
-    .filter(Boolean)
-    .join(":");
+  normalizeCartItemId({
+    productId: getProductId(item.productId || item.product),
+    variantId: item.variantId,
+    variantSku: item.variantSku,
+  });
 const getPaymentProviderLabel = (provider = "") =>
   String(provider || "")
     .replace(/_/g, " ")

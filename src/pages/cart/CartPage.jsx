@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Store } from "lucide-react";
+// import { Store } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import CartItemCard from "../../components/cart/CartItemCard";
@@ -23,14 +23,51 @@ import {
   wishlistPayload,
 } from "../../utils/ecommerce";
 import { ConfirmModal } from "../../components/common";
-import { ChevronRight } from "lucide-react";
+// import { ChevronRight } from "lucide-react";
 import { OutlineSmallButton } from "../../components/dynamicComponent/button/static";
 import { FaAngleRight } from "react-icons/fa6";
-
+import { normalizeId } from "../../utils/ecommerce/cart";
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 const SAVED_FOR_LATER_STORAGE_KEY = "sam_global_saved_for_later_items";
 const SELECTED_CHECKOUT_STORAGE_KEY = "sam_global_selected_checkout_item_ids";
 const CHECKOUT_CART_ITEM_IDS_STORAGE_KEY = "sam_global_checkout_cart_item_ids";
+
+function normalizeCartItemId(value) {
+  if (!value) return "";
+
+  if (typeof value === "string") {
+    const [rawProductId, ...variantParts] = value.split(":");
+    const productId = normalizeId(rawProductId);
+    const variantId = normalizeId(variantParts.join(":"));
+    return [productId, variantId].filter(Boolean).join(":");
+  }
+
+  if (typeof value === "object") {
+    const productId = normalizeId(
+      value.productId ||
+        value.product ||
+        value._raw?.productId ||
+        value.id ||
+        value,
+    );
+    const variantId = normalizeId(
+      value.variantId ||
+        value.variantSku ||
+        value._raw?.variantId ||
+        value._raw?.variantSku ||
+        "",
+    );
+    return [productId, variantId].filter(Boolean).join(":");
+  }
+
+  return normalizeId(value);
+}
+
+function normalizeCartItemIds(values = []) {
+  return Array.from(
+    new Set(values.map((value) => normalizeCartItemId(value)).filter(Boolean)),
+  );
+}
 
 function readSavedForLaterItems() {
   try {
@@ -57,7 +94,7 @@ function readSelectedCheckoutItemIds() {
     );
     if (storedValue === null) return null;
     const parsed = JSON.parse(storedValue);
-    return Array.isArray(parsed) ? parsed : null;
+    return Array.isArray(parsed) ? normalizeCartItemIds(parsed) : null;
   } catch {
     return null;
   }
@@ -75,7 +112,7 @@ function readCheckoutCartItemIds() {
     const parsed = JSON.parse(
       window.sessionStorage.getItem(CHECKOUT_CART_ITEM_IDS_STORAGE_KEY) || "[]",
     );
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) ? normalizeCartItemIds(parsed) : [];
   } catch {
     return [];
   }
@@ -89,7 +126,9 @@ function writeCheckoutCartItemIds(itemIds) {
 }
 
 function getNumericValue(...values) {
-  const value = values.find((entry) => entry !== undefined && entry !== null && entry !== "");
+  const value = values.find(
+    (entry) => entry !== undefined && entry !== null && entry !== "",
+  );
   if (value === undefined) return null;
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
@@ -99,7 +138,8 @@ function getCartItemStock(item = {}, product = {}) {
   const variants = Array.isArray(product?.variants) ? product.variants : [];
   const matchingVariant = variants.find(
     (variant) =>
-      String(variant?._id || variant?.id || "") === String(item.variantId || "") ||
+      String(variant?._id || variant?.id || "") ===
+        String(item.variantId || "") ||
       String(variant?.sku || "") === String(item.variantSku || ""),
   );
 
@@ -154,10 +194,13 @@ function adaptItemForCard(item) {
     product.reviewCount ??
     product.reviewsCount ??
     product.numReviews;
-  
 
   return {
-    id: [productId, variantKey].filter(Boolean).join(":"),
+    id: normalizeCartItemId({
+      productId,
+      variantId: item.variantId,
+      variantSku: variantKey,
+    }),
     productId,
     variantId: item.variantId,
     variantSku: item.variantSku,
@@ -175,7 +218,6 @@ function adaptItemForCard(item) {
     reviewCount,
     stock,
     attributes,
-    stock,
     stockMessage,
     increaseDisabled: outOfStock || stockLimitReached,
     _raw: item,
@@ -187,20 +229,21 @@ function cartLineKey(item) {
     item.productId && typeof item.productId === "object"
       ? item.productId
       : item.product;
-  const productId = getProductId(item.productId || item.product);
+  const productId = normalizeId(item.productId || item.product);
   const defaultVariant =
     !item.variantId && !item.variantSku && Array.isArray(product?.variants)
       ? product.variants.find((variant) => variant.isDefault) ||
         product.variants[0]
       : null;
-  const variantKey =
-    item.variantId ||
-    item.variantSku ||
-    defaultVariant?._id ||
-    defaultVariant?.id ||
-    defaultVariant?.sku ||
-    "";
-  return [productId, variantKey].filter(Boolean).join(":");
+  return normalizeCartItemId({
+    productId,
+    variantId:
+      item.variantId ||
+      defaultVariant?._id ||
+      defaultVariant?.id ||
+      "",
+    variantSku: item.variantSku || defaultVariant?.sku || "",
+  });
 }
 
 function mergeDisplayCartItems(items = []) {
@@ -342,41 +385,48 @@ export default function CartPage() {
 
   const hasCartItems = items.length > 0;
   const hasSavedItems = savedForLaterItems.length > 0 || wishlist.length > 0;
+  const normalizedSelectedItemIds = useMemo(
+    () => normalizeCartItemIds(selectedItemIds),
+    [selectedItemIds],
+  );
   const selectedItems = items.filter((item) =>
-    selectedItemIds.includes(item.id),
+    normalizedSelectedItemIds.includes(normalizeCartItemId(item)),
   );
 
   useEffect(() => {
-    const currentItemIds = items.map((item) => item.id);
+    const currentItemIds = normalizeCartItemIds(
+      items.map((item) => normalizeCartItemId(item)),
+    );
     const currentItemIdsSet = new Set(currentItemIds);
 
     if (!items.length) {
-      setSelectedItemIds([]);
-      window.sessionStorage.removeItem(SELECTED_CHECKOUT_STORAGE_KEY);
-      window.sessionStorage.removeItem(CHECKOUT_CART_ITEM_IDS_STORAGE_KEY);
-      hasInitializedRef.current = false;
+      if (hasInitializedRef.current) {
+        setSelectedItemIds([]);
+        window.sessionStorage.removeItem(SELECTED_CHECKOUT_STORAGE_KEY);
+        window.sessionStorage.removeItem(CHECKOUT_CART_ITEM_IDS_STORAGE_KEY);
+        hasInitializedRef.current = false;
+      }
       prevItemIdsRef.current = currentItemIdsSet;
       return;
     }
 
     if (!hasInitializedRef.current) {
-      const savedSelectedItemIds = readSelectedCheckoutItemIds();
-      const savedCartItemIds = readCheckoutCartItemIds();
+      const storedSelectedItemIds = readSelectedCheckoutItemIds();
+      const savedSelectedItemIds = normalizeCartItemIds(
+        storedSelectedItemIds || [],
+      );
+      const savedCartItemIds = normalizeCartItemIds(readCheckoutCartItemIds());
       const savedCartItemIdsSet = new Set(savedCartItemIds);
       const newlyAddedItemIds = currentItemIds.filter(
         (id) => !savedCartItemIdsSet.has(id),
       );
       const nextSelectedItemIds =
-        savedSelectedItemIds === null
+        storedSelectedItemIds === null
           ? currentItemIds
-          : Array.from(
-              new Set([
-                ...savedSelectedItemIds.filter((id) =>
-                  currentItemIdsSet.has(id),
-                ),
-                ...newlyAddedItemIds,
-              ]),
-            );
+          : normalizeCartItemIds([
+              ...savedSelectedItemIds.filter((id) => currentItemIdsSet.has(id)),
+              ...newlyAddedItemIds,
+            ]);
 
       setSelectedItemIds(nextSelectedItemIds);
       writeSelectedCheckoutItemIds(nextSelectedItemIds);
@@ -390,17 +440,20 @@ export default function CartPage() {
 
       setSelectedItemIds((current) => {
         // Filter out any selected items that are no longer in the cart
-        const nextFiltered = current.filter((id) => currentItemIdsSet.has(id));
+        const nextFiltered = normalizeCartItemIds(current).filter((id) =>
+          currentItemIdsSet.has(id),
+        );
         // Add any newly added items
-        const next = [...nextFiltered, ...newIds];
+        const next = normalizeCartItemIds([...nextFiltered, ...newIds]);
 
         // Only update state if selection actually changed
+        const normalizedCurrent = normalizeCartItemIds(current);
         const isSame =
-          next.length === current.length &&
-          next.every((id, idx) => id === current[idx]);
+          next.length === normalizedCurrent.length &&
+          next.every((id, idx) => id === normalizedCurrent[idx]);
         if (!isSame) writeSelectedCheckoutItemIds(next);
         writeCheckoutCartItemIds(currentItemIds);
-        return isSame ? current : next;
+        return isSame ? normalizedCurrent : next;
       });
     }
 
@@ -471,28 +524,40 @@ export default function CartPage() {
   };
 
   const handleSelectItem = (id, selected) => {
+    const normalizedId = normalizeCartItemId(id);
+
     setSelectedItemIds((current) => {
+      const normalizedCurrent = normalizeCartItemIds(current);
       const next = selected
-        ? Array.from(new Set([...current, id]))
-        : current.filter((itemId) => itemId !== id);
+        ? normalizeCartItemIds([...normalizedCurrent, normalizedId])
+        : normalizedCurrent.filter((itemId) => itemId !== normalizedId);
       writeSelectedCheckoutItemIds(next);
       return next;
     });
   };
 
   const handleSelectAll = (selected) => {
-    const next = selected ? items.map((item) => item.id) : [];
-    writeSelectedCheckoutItemIds(next);
+    const next = selected
+      ? normalizeCartItemIds(items.map((item) => normalizeCartItemId(item)))
+      : [];
     setSelectedItemIds(next);
+    writeSelectedCheckoutItemIds(next);
   };
 
   const handleSaveForLater = (id) => {
-    const itemToSave = rawItems.find((ci) => cartLineKey(ci) === id);
-    const itemView = items.find((item) => item.id === id);
+    const normalizedId = normalizeCartItemId(id);
+    const itemToSave = rawItems.find(
+      (ci) => normalizeCartItemId(ci) === normalizedId,
+    );
+    const itemView = items.find(
+      (item) => normalizeCartItemId(item) === normalizedId,
+    );
 
     if (!itemToSave) return;
 
-    const remainingItems = rawItems.filter((ci) => cartLineKey(ci) !== id);
+    const remainingItems = rawItems.filter(
+      (ci) => normalizeCartItemId(ci) !== normalizedId,
+    );
     const savedLine = {
       ...itemToSave,
       title: itemToSave.title || itemView?.title,
@@ -503,7 +568,9 @@ export default function CartPage() {
 
     persistSavedForLater([
       savedLine,
-      ...savedForLaterItems.filter((item) => cartLineKey(item) !== id),
+      ...savedForLaterItems.filter(
+        (item) => normalizeCartItemId(item) !== normalizedId,
+      ),
     ]);
     run(
       dispatch,
@@ -534,9 +601,10 @@ export default function CartPage() {
   };
 
   const handleMoveSavedLineToCart = (savedItem) => {
+    const normalizedSavedItemId = normalizeCartItemId(savedItem);
     persistSavedForLater(
       savedForLaterItems.filter(
-        (item) => cartLineKey(item) !== cartLineKey(savedItem),
+        (item) => normalizeCartItemId(item) !== normalizedSavedItemId,
       ),
     );
     run(
@@ -563,7 +631,6 @@ export default function CartPage() {
 
   return (
     <>
-
       <ConfirmModal
         open={showLimitModal}
         title="Maximum Quantity Reached"
@@ -608,7 +675,7 @@ export default function CartPage() {
             emptyActionLabel="Continue Shopping"
             onEmptyAction={() => navigate("/")}
           >
-            <div className="grid grid-cols-1 gap-6 sm:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(360px,563px)] xl:gap-9">
+            <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-1 xl:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_563px] lg:gap-9">
               <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8">
                 {hasCartItems && (
                   <div className="flex items-center justify-between">
@@ -645,7 +712,9 @@ export default function CartPage() {
                       >
                         <CartItemCard
                           item={item}
-                          selected={selectedItemIds.includes(item.id)}
+                          selected={normalizedSelectedItemIds.includes(
+                            normalizeCartItemId(item),
+                          )}
                           onSelect={handleSelectItem}
                           onIncrease={handleIncrease}
                           onDecrease={handleDecrease}
@@ -815,7 +884,7 @@ export default function CartPage() {
               </div>
 
               {hasCartItems && (
-                <div className="w-full">
+                <div className="w-full lg:sticky lg:top-[calc(var(--customer-header-height,0px)+24px)] lg:self-start lg:h-fit">
                   <CartSummary
                     items={selectedItems}
                     shippingLabel="Shipping"
@@ -824,16 +893,12 @@ export default function CartPage() {
                     protectionText="Purchase protected by"
                     protectionLinkText="Sam Global Money Back Guarantee"
                     protectionLink="/"
-                    buttonText={
-                      selectedItems.length
-                        ? "Proceed to Checkout"
-                        : "Select products to checkout"
-                    }
+                    buttonText="Proceed to Checkout"
                     onCheckout={() => {
                       if (!selectedItems.length) return;
                       window.sessionStorage.setItem(
                         SELECTED_CHECKOUT_STORAGE_KEY,
-                        JSON.stringify(selectedItemIds),
+                        JSON.stringify(normalizedSelectedItemIds),
                       );
                       navigate("/checkout");
                     }}

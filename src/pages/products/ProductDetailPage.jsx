@@ -66,7 +66,7 @@ import {
   firstMoneyValue,
   buildCartItem,
 } from "../../utils/ecommerce";
-
+import { formatPageTitle } from "../../lib/utils";
 import ProductReviewsSection from "../../components/ecommerce/ProductReviewsSection";
 import CUSTOMER_ROUTES from "../../constants/routes";
 
@@ -1060,7 +1060,7 @@ export default function ProductDetailPage() {
                           key={key}
                           className="grid grid-cols-1 gap-1 px-4 py-3 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]"
                         >
-                          <dt className="font-medium text-ink">{key}</dt>
+                          <dt className="font-medium text-ink">  {formatPageTitle(key)}</dt>
                           <dd className="text-left font-bold text-navy sm:text-right">
                             {Array.isArray(value)
                               ? value.join(", ")
@@ -1104,6 +1104,7 @@ export default function ProductDetailPage() {
                         Specification
                       </h2>
                     </div>
+
                     <dl className="divide-y divide-border">
                       {Object.entries(attributes).length > 0 ? (
                         Object.entries(attributes).map(([key, value]) => (
@@ -1111,7 +1112,10 @@ export default function ProductDetailPage() {
                             key={key}
                             className="grid grid-cols-1 gap-1 px-4 py-3 text-[12px] sm:grid-cols-[220px_minmax(0,1fr)]"
                           >
-                            <dt className="font-medium text-ink">{key}</dt>
+                            <dt className="font-medium text-ink">
+                              {formatPageTitle(key)}
+                            </dt>
+
                             <dd className="text-left font-bold text-navy sm:text-right">
                               {Array.isArray(value)
                                 ? value.join(", ")
@@ -1120,7 +1124,7 @@ export default function ProductDetailPage() {
                           </div>
                         ))
                       ) : (
-                        <div className="px-4 py-4 text-lg  text-black/90 whitespace-pre-line">
+                        <div className="whitespace-pre-line px-4 py-4 text-lg text-black/90">
                           No specifications available.
                         </div>
                       )}

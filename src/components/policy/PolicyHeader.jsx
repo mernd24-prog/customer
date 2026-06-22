@@ -10,7 +10,7 @@ const PolicyHeader = ({ title }) => {
       }}
     >
       <div className="relative z-10">
-        <h1 className="text-2xl  md:text-3xl lg:text-4xl font-bold text-white ">
+        <h1 className="text-heading-md md:text-heading-lg lg:text-heading-xl font-bold text-white">
           {title}
         </h1>
       </div>

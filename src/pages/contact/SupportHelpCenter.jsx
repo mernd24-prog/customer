@@ -163,7 +163,7 @@ function TopicCard({ topic }) {
       >
         <Icon size={24} />
       </span>
-      <span className="text-base font-semibold">{topic.title}</span>
+      <span className="text-body-md font-semibold">{topic.title}</span>
     </Button>
   );
 }
@@ -179,7 +179,7 @@ function OptionCard({ option }) {
       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-navy-soft text-blue">
         <Icon size={25} fill="currentColor" strokeWidth={1.7} />
       </span>
-      <span className="text-lg font-bold leading-snug">{option.title}</span>
+      <span className="text-subheading-md font-bold leading-snug">{option.title}</span>
     </Button>
   );
 }
@@ -226,7 +226,7 @@ export default function SupportHelpCenter() {
           description={pageDescription}
         />
         <section className="w-container py-8 sm:py-10">
-          <h1 className="mb-8 text-2xl font-bold text-ink sm:text-3xl">
+          <h1 className="mb-8 text-heading-sm font-bold text-ink sm:text-heading-md">
             {pageTitle || "Customer Support"}
           </h1>
           <ApiState

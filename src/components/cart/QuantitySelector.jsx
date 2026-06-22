@@ -3,9 +3,7 @@ export default function QuantitySelector({
   onIncrease,
   onDecrease,
   max,
-  disabled = false,
-  increaseDisabled = false,
-  increaseDisabledLabel = "Increase quantity unavailable",
+  disabled,
 }) {
   const atMax = max != null && quantity >= max;
 
@@ -35,7 +33,7 @@ export default function QuantitySelector({
           onClick={onIncrease}
           disabled={disabled || atMax}
           className="flex h-[32px] w-[32px] items-center justify-center rounded-full bg-[#1B1D60] text-[24px] font-light leading-none text-white disabled:cursor-not-allowed disabled:opacity-50 min-[375px]:h-[36px] min-[375px]:w-[36px] min-[375px]:text-[28px] sm:h-[40px] sm:w-[40px] sm:text-[32px]"
-          aria-label={disabled || increaseDisabled ? increaseDisabledLabel : "Increase quantity"}
+          aria-label="Increase quantity"
         >
           +
         </button>

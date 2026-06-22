@@ -129,7 +129,7 @@ export default function BrandOutletPage() {
       />
 
       <main className="bg-white text-[var(--customer-ink)]">
-        <div className="customer-container grid w-full grid-cols-1 gap-6 py-5 sm:py-6 lg:grid-cols-[288px_minmax(0,1fr)] lg:items-start lg:gap-10">
+        <div className="customer-container grid w-full  grid-cols-1 gap-6 py-5 sm:py-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-8 xl:grid-cols-[392px_minmax(0,1fr)] xl:gap-10">
           <ProductFilterSidebar
             sections={sidebarSections}
             className="hidden lg:block lg:w-full"
@@ -139,7 +139,7 @@ export default function BrandOutletPage() {
             <div className="mb-6 grid gap-3 lg:hidden">
               <h2 className="text-sm font-bold sm:text-base">Shop by brand</h2>
 
-              <div className="flex max-w-full gap-2 overflow-x-auto pb-1 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
+              <div className="flex max-w-full  gap-2 overflow-x-auto pb-1 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
                 {sidebarBrands.slice(0, 24).map((brand) => (
                   <Link
                     key={brand.key}

@@ -47,10 +47,10 @@ export default function CartItemCard({
       : "Non-returnable";
 
   return (
-    <article className="relative w-full p-3 min-[375px]:p-4 sm:p-5 lg:p-6 xl:min-h-[433px] xl:max-w-[1161px] xl:p-[25px]">
+    <article className="relative w-full p-3 min-[375px]:p-4 sm:p-5 lg:p-6 xl:min-h-[433px] xl:p-[25px]">
       <div className="grid gap-5 sm:gap-6 lg:grid-cols-[minmax(220px,320px)_1fr] xl:grid-cols-[minmax(220px,399px)_1fr] xl:gap-9">
         {item?.image && (
-          <div className="relative mx-auto flex aspect-[399/383] w-full max-w-[399px] items-center justify-center overflow-hidden rounded-[10px] border border-[#F0E6D2] bg-white lg:h-auto lg:max-w-[320px] xl:h-[383px] xl:w-[399px] xl:max-w-[399px]">
+          <div className="relative mx-auto flex aspect-[399/383] w-full max-w-[399px] items-center justify-center overflow-hidden rounded-[10px] border border-[#F0E6D2] bg-white lg:h-auto lg:max-w-[320px] xl:w-full xl:max-w-[399px]">
             <label className="absolute left-3 top-3 z-10 flex items-center justify-center sm:left-4 sm:top-4 xl:left-5 xl:top-5">
               <input
                 type="checkbox"
@@ -150,12 +150,12 @@ export default function CartItemCard({
             )}
 
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
-              <span className="text-xl font-sans font-extrabold text-[#1B1D60] min-[375px]:text-2xl  sm:text-[28px]">
+              <span className="text-xl font-sans font-extrabold text-[#1B1D60] min-[375px]:text-2xl sm:text-[28px] break-words">
                 {formatMoney(price)}
               </span>
 
               {oldPrice > 0 && oldPrice > price && (
-                <span className="text-lg font-bold text-[#8C8C8C] line-through min-[375px]:text-xl sm:text-2xl">
+                <span className="text-lg font-bold text-[#8C8C8C] line-through min-[375px]:text-xl sm:text-2xl break-words">
                   {formatMoney(oldPrice)}
                 </span>
               )}
@@ -187,7 +187,7 @@ export default function CartItemCard({
               </p>
             )}
 
-            {returnsText && (
+            {/* {returnsText && (
               <p
                 className={`mt-1 text-[13px] font-medium ${
                   returnsAccepted
@@ -203,7 +203,7 @@ export default function CartItemCard({
               {shippingAmount > 0
                 ? `+ ${formatMoney(shippingAmount)} shipping`
                 : "Free shipping"}
-            </p>
+            </p> */}
           </div>
 
           <div className="mt-5 sm:mt-7">
@@ -231,26 +231,26 @@ export default function CartItemCard({
             <button
               type="button"
               onClick={() => onSaveForLater?.(item?.id)}
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#1B1D60] min-[375px]:text-base sm:gap-3 sm:text-lg"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#1B1D60] min-[375px]:text-base sm:gap-3 sm:text-lg text-left"
             >
-              <Heart size={22} className="text-[#1B1D60] sm:size-[25px]" />
-              Move to Wishlist
+              <Heart size={22} className="shrink-0 text-[#1B1D60] sm:size-[25px]" />
+              <span className="break-words">Move to Wishlist</span>
             </button>
 
             <button
               type="button"
               onClick={() => onRemove?.(item?.id)}
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#FF3B35] min-[375px]:text-base sm:gap-3 sm:text-lg"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#FF3B35] min-[375px]:text-base sm:gap-3 sm:text-lg text-left"
             >
-              <Trash2 size={19} className="text-[#FF3B35] sm:size-[22px]" />
-              Remove Item
+              <Trash2 size={19} className="shrink-0 text-[#FF3B35] sm:size-[22px]" />
+              <span className="break-words">Remove Item</span>
             </button>
 
             {onBuyNow && (
               <button
                 type="button"
                 onClick={() => onBuyNow(item?.id)}
-                className="inline-flex items-center text-sm font-medium text-[#1B1D60] transition hover:text-[#CE9F2D] min-[375px]:text-base sm:text-lg"
+                className="inline-flex items-center text-sm font-medium text-[#1B1D60] transition hover:text-[#CE9F2D] min-[375px]:text-base sm:text-lg break-words text-left"
               >
                 Buy Now
               </button>

@@ -32,10 +32,10 @@ export default function Label({
     <span
       className={cn(
         "inline-flex items-center gap-2 rounded-full whitespace-nowrap font-dm-sans align-middle",
-        "px-3 py-1 text-[10px] leading-[100%]",
-        "sm:text-[11px]",
-        "md:text-[12px]",
-        "lg:text-[12px]",
+        "px-3 py-1 text-label-xs leading-none",
+        "sm:text-label-xs",
+        "md:text-label-sm",
+        "lg:text-label-sm",
         variants[variant],
         className,
       )}

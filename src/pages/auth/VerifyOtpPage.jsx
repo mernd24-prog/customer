@@ -76,7 +76,7 @@ export default function VerifyOtpPage() {
           <div className="flex justify-end">
             <button
               type="button"
-              className=" text-sm font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
+              className=" text-label-md font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
               onClick={() => {
                 const email = watch("email");
                 if (!email) return;
@@ -87,7 +87,7 @@ export default function VerifyOtpPage() {
             </button>
           </div>
 
-          <label className=" text-sm font-semibold text-ink">OTP code</label>
+          <label className=" text-label-md font-semibold text-ink">OTP code</label>
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}
@@ -109,7 +109,7 @@ export default function VerifyOtpPage() {
           <Button
             type="submit"
             loading={loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark  text-[0.9rem] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-label-md font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={!isValid || loading}
           >
             <ShieldCheck size={18} /> Verify &amp; sign in
