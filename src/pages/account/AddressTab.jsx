@@ -125,10 +125,10 @@ export default function AddressTab({ user }) {
   const addDialCodes = addCountryObj?.dialCode
     ? [normalizeDialCode(addCountryObj.dialCode)]
     : Array.from(
-        new Set(
-          countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
-        ),
-      ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
+      new Set(
+        countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
+      ),
+    ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   // Clear state and city if they don't match the selected country for Add Form
   useEffect(() => {
@@ -213,10 +213,10 @@ export default function AddressTab({ user }) {
   const editDialCodes = editCountryObj?.dialCode
     ? [normalizeDialCode(editCountryObj.dialCode)]
     : Array.from(
-        new Set(
-          countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
-        ),
-      ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
+      new Set(
+        countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
+      ),
+    ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   // Clear state and city if they don't match the selected country for Edit Form
   useEffect(() => {
@@ -367,6 +367,13 @@ export default function AddressTab({ user }) {
     dispatch(fetchMe());
   };
 
+  const formActionsClass = "flex flex-col gap-3 sm:flex-row";
+  const responsiveButtonClass = "w-full sm:w-auto";
+  const sectionHeaderClass =
+    "flex items-center gap-2 text-sm font-semibold text-ink";
+  const actionIconButtonClass =
+    "inline-flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2";
+
   return (
     <>
       <div className="grid gap-5  ">
@@ -395,7 +402,7 @@ export default function AddressTab({ user }) {
             onSubmit={addForm.handleSubmit(handleAdd)}
             noValidate
           >
-            <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+            <div className={sectionHeaderClass}>
               <MapPin size={16} className="text-gold" />
               New address
             </div>
@@ -413,11 +420,11 @@ export default function AddressTab({ user }) {
               selectedPostalCode={addPostalCode}
               addressLabels={addressLabels}
             />
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className={formActionsClass}>
               <Button
                 type="submit"
                 loading={loading}
-                className="w-full sm:w-auto"
+                className={responsiveButtonClass}
               >
                 Save address
               </Button>
@@ -425,7 +432,7 @@ export default function AddressTab({ user }) {
                 type="button"
                 variant="secondary"
                 onClick={() => setShowAddForm(false)}
-                className="w-full sm:w-auto"
+                className={responsiveButtonClass}
               >
                 Cancel
               </Button>
@@ -449,7 +456,7 @@ export default function AddressTab({ user }) {
                       onSubmit={editForm.handleSubmit(handleUpdate)}
                       noValidate
                     >
-                      <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+                      <div className={sectionHeaderClass}>
                         <Pencil size={16} className="text-gold" />
                         Edit address
                       </div>
@@ -467,11 +474,11 @@ export default function AddressTab({ user }) {
                         selectedPostalCode={editPostalCode}
                         addressLabels={addressLabels}
                       />
-                      <div className="flex flex-col gap-3 sm:flex-row">
+                      <div className={formActionsClass}>
                         <Button
                           type="submit"
                           loading={loading}
-                          className="w-full sm:w-auto"
+                          className={responsiveButtonClass}
                         >
                           Save changes
                         </Button>
@@ -479,7 +486,7 @@ export default function AddressTab({ user }) {
                           type="button"
                           variant="secondary"
                           onClick={cancelEdit}
-                          className="w-full sm:w-auto"
+                          className={responsiveButtonClass}
                         >
                           Cancel
                         </Button>
@@ -496,16 +503,14 @@ export default function AddressTab({ user }) {
                         <button
                           type="button"
                           onClick={() => startEdit(addr)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted transition-all duration-300 ease-in-out hover:border-gold hover:bg-cream hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30"
-                          aria-label="Edit address"
+                          className={`${actionIconButtonClass} border border-border text-muted hover:border-gold hover:bg-cream hover:text-ink focus-visible:ring-gold/30`}
                         >
                           <Pencil size={15} />
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDelete(addrId)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-red-100 text-red-500 transition-all duration-300 ease-in-out hover:bg-red-50 hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
-                          aria-label="Delete address"
+                          className={`${actionIconButtonClass} border border-red-100 text-red-500 hover:bg-red-50 hover:text-red-700 focus-visible:ring-red-200`}
                         >
                           <Trash2 size={15} />
                         </button>

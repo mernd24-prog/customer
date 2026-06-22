@@ -11,6 +11,7 @@ import {
   CreditCard,
   Download,
   FileText,
+
   Headphones,
   Package,
   ReceiptText,
@@ -21,19 +22,17 @@ import {
   XCircle,
 } from "lucide-react";
 
- 
-
 import ApiState from "../../components/common/ApiState";
 import Seo from "../../components/common/Seo";
 import Button from "../../components/ui/Button";
 import ConfirmModal from "../../components/common/overlay/ConfirmModal";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
-import vectorImage from "/image/png/SuccessVector .png";
 import OrderDetailInfoGrid from "./components/OrderDetailInfoGrid";
 import OrderDetailLayout, {
   OrderDetailAside,
 } from "./components/OrderDetailLayout";
 import OrderDetailSectionCard from "./components/OrderDetailSectionCard";
+import OrderItemMetaList from "./components/OrderItemMeta";
 import OrderItemsSection from "./components/OrderItemsSection";
 import OrderPaymentSummary from "./components/OrderPaymentSummary";
 import OrderProgress from "./components/OrderProgress";
@@ -55,6 +54,7 @@ import { downloadAuthDocument } from "../../utils/downloadAuthDocument";
 import { openRazorpayCheckout } from "../../utils/razorpay";
 import { endpoints } from "../../api/endpoints";
 import {
+  COMPACT_STATUS_BADGE,
   INFO_TILE_TONES,
   items,
   ORDER_BREADCRUMBS,
@@ -682,8 +682,8 @@ function OrderDetail({ orderId, track }) {
                   </h2>
                 }
               >
-                  {invoices.orderInvoice && (
-                    <div className="flex flex-col gap-3 rounded-[10px] border border-[#CE9F2D33] bg-[#FFFDF8] px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+                {invoices.orderInvoice && (
+                  <div className="flex flex-col gap-3 rounded-[10px] border border-[#CE9F2D33] bg-[#FFFDF8] px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex min-w-0 items-center gap-3">
                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#CE9F2D1A] text-[#1B1D60]">
                           <FileText size={18} />
@@ -722,15 +722,15 @@ function OrderDetail({ orderId, track }) {
                       </Button>
                     </div>
                   )}
-                  {(invoices.sellerInvoices || []).map((inv) => {
-                    const invId = inv.id || inv._id;
-                    const sellerName =
-                      inv.sellerName ||
-                      inv.seller_name ||
-                      `Seller ${String(invId).slice(0, 6)}`;
-                    const dlPath = endpoints.tax.invoiceDownload(invId);
-                    return (
-                      <div
+                {(invoices.sellerInvoices || []).map((inv) => {
+                  const invId = inv.id || inv._id;
+                  const sellerName =
+                    inv.sellerName ||
+                    inv.seller_name ||
+                    `Seller ${String(invId).slice(0, 6)}`;
+                  const dlPath = endpoints.tax.invoiceDownload(invId);
+                  return (
+                     <div
                         key={invId}
                         className="flex flex-col gap-3 rounded-[10px] border border-[#CE9F2D33] bg-[#FFFDF8] px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
                       >
@@ -1040,17 +1040,13 @@ function OrderSummaryCard({ order }) {
             {title}
           </Link>
 
-          <div className="my-6  flex flex-wrap gap-x-5 gap-y-1 text-lg font-semibold text-ink">
-            <span>
-              Color :{" "}
-              <strong className="font-bold text-[#25247B]">
-                {getOrderItemColor(item)}
-              </strong>
-            </span>
-            <span>
-              Quantity : <strong className="font-bold">{quantity}</strong>
-            </span>
-          </div>
+          <OrderItemMetaList
+            className="my-6 gap-x-5 gap-y-1"
+            items={[
+              { label: "Color", value: getOrderItemColor(item) },
+              { label: "Quantity", value: quantity },
+            ]}
+          />
 
           <p className="mt-3  text-xl lg:text-[34px] font-extrabold text-[#1B1D60]">
             {formatMoney(amount, currency)}

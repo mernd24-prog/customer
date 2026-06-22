@@ -14,6 +14,8 @@ import {
 import Loader from "../../components/common/Loader";
 
 const PAGE_SIZE = 20;
+const categoryGridClass =
+  "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5";
 
 function getCategoryListFromResponse(data) {
   if (Array.isArray(data)) return data;
@@ -216,7 +218,7 @@ function CategoryTile({ category }) {
 
 function CategoryGridSkeleton() {
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5">
+    <div className={categoryGridClass}>
       {Array.from({ length: 10 }).map((_, index) => (
         <div key={index} className="animate-pulse">
           <div className="aspect-square rounded-[14px] bg-surface-soft" />
@@ -433,7 +435,7 @@ export default function CategoryListingPage() {
                 <CategoryGridSkeleton />
               ) : categories.length ? (
                 <>
-                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5">
+                  <div className={categoryGridClass}>
                     {categories.map((category) => (
                       <CategoryTile key={category.id} category={category} />
                     ))}
