@@ -1,11 +1,11 @@
 import { cn } from "../../../utils/classNames";
 
 const sizeMap = {
-  xs: "text-[11px] min-h-[24px] px-2.5 py-1",
-  sm: "text-xs min-h-[30px] px-3 py-1.5",
-  md: "text-sm min-h-[38px] px-4 py-2",
-  lg: "text-sm md:text-base min-h-[44px] px-5 py-2.5",
-  xl: "text-base min-h-[50px] px-6 py-3",
+  xs: "text-label-xs min-h-[24px] px-2.5 py-1",
+  sm: "text-label-sm min-h-[30px] px-3 py-1.5",
+  md: "text-label-md min-h-[38px] px-4 py-2",
+  lg: "text-label-md md:text-label-lg min-h-[44px] px-5 py-2.5",
+  xl: "text-label-lg min-h-[50px] px-6 py-3",
 };
 
 const variantMap = {

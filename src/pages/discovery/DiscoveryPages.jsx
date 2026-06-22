@@ -28,11 +28,11 @@ function ProductGridPage({
       <section className="w-container py-8">
         <div className="mb-5 flex items-center justify-between gap-3">
           <div>
-            <h1 className=" text-2xl font-semibold text-ink">{title}</h1>
-            <p className="mt-1 text-sm text-muted">{description}</p>
+            <h1 className="text-heading-md font-semibold text-ink">{title}</h1>
+            <p className="mt-1 text-caption-md text-muted">{description}</p>
           </div>
           {sourceLink && (
-            <Link to={sourceLink} className=" text-sm font-medium text-gold">
+            <Link to={sourceLink} className="text-label-md font-medium text-gold">
               {sourceText || "Explore more"} →
             </Link>
           )}

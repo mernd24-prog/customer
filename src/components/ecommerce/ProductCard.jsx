@@ -225,7 +225,7 @@ export default function ProductCard({
   return (
     <article
       className={cn(
-        ` ${!isInStock ? "opacity-50 " : ""}  group relative min-w-0 overflow-hidden  rounded-[20px] border border-[#CE9F2D66]/50 bg-white transition-all duration-300 ease-in-out hover:shadow-[0_16px_40px_rgba(17,24,39,0.12)]`,
+        ` ${!isInStock ? "opacity-50 " : ""} group relative flex min-w-0 flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D66]/50 bg-white transition-all duration-300 ease-in-out hover:shadow-[0_16px_40px_rgba(17,24,39,0.12)]`,
         className,
       )}
     >
@@ -274,33 +274,33 @@ export default function ProductCard({
         )}
       </div>
 
-      <Link to={to} className="block">
-        <div className="overflow-hidden bg-[var(--customer-cream)]">
+      <Link to={to} className="flex flex-1 flex-col">
+        <div className="flex h-[262px] items-center justify-center overflow-hidden bg-[var(--customer-cream)] p-4">
           {image ? (
             <img
               src={image}
               alt={title}
-              className="mx-auto aspect-[1.28/1] w-full h-full object-cover transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
+              className="h-full w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
               loading="lazy"
               decoding="async"
               onError={handleImageError}
             />
           ) : (
-            <div className="flex aspect-[1.28/1] items-center justify-center text-[var(--customer-border-strong)]">
+            <div className="flex h-full w-full items-center justify-center text-[var(--customer-border-strong)]">
               <ShoppingCart size={48} strokeWidth={1.4} />
             </div>
           )}
         </div>
 
-        <div className="px-4 pb-4 pt-6">
+        <div className="flex flex-1 flex-col px-4 pb-4 pt-6">
           <div
-            className="flex items-center gap-2  text-[14px] font-medium text-[#242424] my-[6px]"
+            className="my-[6px] flex items-center gap-2 text-[14px] font-medium text-[#242424]"
             aria-label={`${rating || 0} out of 5 stars`}
           >
-            <span className=" text-[14px]  font-medium  text-[#2E2E2E]">
+            <span className="text-[14px] font-medium text-[#2E2E2E]">
               {Number(rating || 0).toFixed(1)}
             </span>
-            <span className="flex  h-[14px] w-[84px] items-center gap-0.5 text-[#F58220]">
+            <span className="flex h-[14px] w-[84px] items-center gap-0.5 text-[#F58220]">
               {Array.from({ length: 5 }, (_, index) => (
                 <Star
                   key={index}
@@ -313,14 +313,13 @@ export default function ProductCard({
                 />
               ))}
             </span>
-            <span className=" text-[16px] font-medium  text-[#2E2E2E]">
-              {"(2.4k)"}
+            <span className="text-[16px] font-medium text-[#2E2E2E]">
+              {ratingCount != null ? `(${ratingCount})` : "(2.4k)"}
             </span>
-            {ratingCount != null && <span>({ratingCount})</span>}
           </div>
 
           <h3
-            className="mt-4  text-[14px] font-semibold    text-[#2E2E2E] sm:text-[18px] lg:text-[20px]"
+            className="mt-4 line-clamp-2 min-h-[3.5rem] text-[14px] font-semibold text-[#2E2E2E] sm:min-h-[4rem] sm:text-[18px] lg:text-[20px]"
             title={title}
           >
             {title}
@@ -330,21 +329,21 @@ export default function ProductCard({
             price={price}
             oldPrice={oldPrice}
             currency={currency || cardProduct?.currency}
-            className="my-3 gap-3"
-            priceClassName=" text-[16px] font-extrabold   text-[#1B1D60] sm:text-[18px] lg:text-[22px]"
-            oldPriceClassName=" text-[16px] font-semibold  text-[#949494] line-through sm:text-[18px] lg:text-[22px]"
+            className="mb-0 mt-3 gap-3"
+            priceClassName="text-[16px] font-extrabold text-[#1B1D60] sm:text-[18px] lg:text-[22px]"
+            oldPriceClassName="text-[16px] font-semibold text-[#949494] line-through sm:text-[18px] lg:text-[22px]"
           />
         </div>
       </Link>
 
       {showActions && (
-        <div className="flex  items-center gap-8 my-4 px-2">
+        <div className="mt-auto flex items-center gap-4 px-2 pb-4">
           <PillButton
             disabled={!isInStock}
             onClick={handleAddToCart}
             rightIcon={<ShoppingCart size={19} strokeWidth={2.4} />}
             className={cn(
-              "w-full gap-[15px]  text-[15px] font-semibold  focus-visible:outline-[#1B1D60]",
+              "w-full gap-[15px] text-[15px] font-semibold focus-visible:outline-[#1B1D60]",
               !isInStock && "cursor-not-allowed opacity-60",
             )}
           >

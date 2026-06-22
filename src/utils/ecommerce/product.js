@@ -101,6 +101,77 @@ export function getProductImage(product) {
   );
 }
 
+export function getProductBrandName(product) {
+  return (
+    product?.brand ||
+    product?.brandName ||
+    product?.manufacturer ||
+    product?.vendor ||
+    ""
+  );
+}
+
+export function getProductRatingValue(product) {
+  return Number(
+    product?.rating ??
+      product?.averageRating ??
+      product?.avgRating ??
+      product?.reviewsAverage ??
+      0,
+  );
+}
+
+export function buildFacetCountMap(products, resolver) {
+  return (products || []).reduce((counts, product) => {
+    const rawValue = resolver?.(product);
+    const values = Array.isArray(rawValue) ? rawValue : [rawValue];
+
+    values
+      .map((value) => String(value || "").trim())
+      .filter(Boolean)
+      .forEach((value) => {
+        counts[value] = (counts[value] || 0) + 1;
+      });
+
+    return counts;
+  }, {});
+}
+
+export function buildRatingCountMap(products) {
+  return [5, 4, 3, 2, 1].reduce((counts, stars) => {
+    counts[String(stars)] = (products || []).filter(
+      (product) => getProductRatingValue(product) >= stars,
+    ).length;
+    return counts;
+  }, {});
+}
+
+export function isProductInStock(product) {
+  const stockValues = [
+    product?.stock,
+    product?.quantity,
+    product?.inventory,
+    product?.availableStock,
+    product?.totalStock,
+  ].filter((value) => value != null && value !== "");
+  const variantStockValues = Array.isArray(product?.variants)
+    ? product.variants
+        .map((variant) => variant?.stock)
+        .filter((value) => value != null && value !== "")
+    : [];
+  const hasStockQuantity =
+    stockValues.length > 0 || variantStockValues.length > 0;
+  const stockQty = [...stockValues, ...variantStockValues].reduce(
+    (total, value) => total + (Number(value) || 0),
+    0,
+  );
+
+  if (typeof product?.inStock === "boolean") return product.inStock;
+  if (typeof product?.isInStock === "boolean") return product.isInStock;
+  if (hasStockQuantity) return stockQty > 0;
+  return true;
+}
+
 const FALLBACK_PALETTES = [
   ["#12343B", "#E1B866"],
   ["#5B2A3E", "#E8C7B7"],

@@ -6,6 +6,7 @@ import { SocialIcons } from "../components/common";
 import { Link } from "react-router-dom";
 import { CUSTOMER_ROUTES } from "../constants/routes";
 
+
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
 
@@ -14,6 +15,7 @@ const getCategoryKey = (item = {}) =>
   item?.key ||
   item?.slug ||
   buildCategorySlug(item?.title || item?.name);
+
 
 const normalizeForMatch = (value = "") =>
   String(value || "")

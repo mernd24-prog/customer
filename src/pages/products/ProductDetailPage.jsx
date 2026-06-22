@@ -51,7 +51,7 @@ import {
   firstMoneyValue,
   buildCartItem,
 } from "../../utils/ecommerce";
-
+import { formatPageTitle } from "../../lib/utils";
 import ProductReviewsSection from "../../components/ecommerce/ProductReviewsSection";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import StarRating from "./components/starRating";

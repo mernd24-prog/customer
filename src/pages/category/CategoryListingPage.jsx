@@ -397,7 +397,7 @@ export default function CategoryListingPage() {
       />
 
       <main className="bg-white text-ink">
-        <div className="customer-container grid w-full grid-cols-1 gap-6 py-5 sm:py-6 lg:grid-cols-[288px_minmax(0,1fr)] lg:items-start lg:gap-10">
+        <div className="customer-container grid w-full grid-cols-1 gap-6 py-5 sm:py-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-8 xl:grid-cols-[392px_minmax(0,1fr)] xl:gap-10">
           <ProductFilterSidebar
             sections={sidebarSections}
             className="hidden lg:block lg:w-full"

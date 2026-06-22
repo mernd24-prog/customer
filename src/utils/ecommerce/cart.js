@@ -1,6 +1,6 @@
 import { getProductId, getProductPrice, getVariantPrice } from "./product";
 
-function normalizeId(value) {
+export function normalizeId(value) {
   return getProductId(value);
 }
 

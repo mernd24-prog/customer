@@ -33,11 +33,9 @@ function StarRow({ rating, size = 14 }) {
 
 function RatingBar({ star, count, total }) {
   const pct = total > 0 ? Math.round((count / total) * 100) : 0;
-
   return (
-    <div className="grid grid-cols-[32px_1fr_40px] items-center  gap-2 text-xs font-semibold text-muted">
+    <div className="grid grid-cols-[32px_1fr_40px] items-center gap-2 text-xs font-semibold text-muted">
       <span>{star} ★</span>
-
       <div className="h-2 overflow-hidden rounded-full bg-cream">
         <span
           className="block h-full rounded-full bg-gold"
@@ -220,7 +218,7 @@ function ReviewCard({ review, currentUserId, onHelpful }) {
         <span className="text-sm text-muted">{dateStr}</span>
       </div>
 
-      {text && <p className="text-base   text-ink">{text}</p>}
+      {text && <p className="text-sm leading-relaxed text-ink">{text}</p>}
 
       <button
         type="button"
@@ -458,16 +456,22 @@ export default function ReviewDetailsPage() {
     page * LIMIT,
   );
 
+    return nextReviews;
+  }, [allReviews, ratingFilter, sort]);
+  const total = filteredReviews.length;
+  const totalPages = Math.max(1, Math.ceil(total / LIMIT));
+  const visibleReviews = filteredReviews.slice(
+    (page - 1) * LIMIT,
+    page * LIMIT,
+  );
   const handleFilter = (star) => {
     setRatingFilter((current) => (current === star ? null : star));
     setPage(1);
   };
-
   const handleSort = (value) => {
     setSort(value);
     setPage(1);
   };
-
   const handleHelpful = () => {};
 
   return (

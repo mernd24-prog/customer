@@ -9,6 +9,7 @@ import FilterDrawer from "../../components/common/overlay/Drawer";
 import PageHeader from "../../components/common/PageHeader";
 import BrandButton from "../../components/ui/BrandButton";
 import {
+  CheckboxListFilter,
   CollectionToolbar,
   OptionFilter,
   Pagination,
@@ -17,6 +18,10 @@ import {
   ProductFilterSidebar,
   RatingFilter,
 } from "../../components/ecommerce";
+import {
+  buildRatingCountMap,
+  isProductInStock,
+} from "../../utils/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import {
   clearSearch,
@@ -32,6 +37,18 @@ const SORT_OPTIONS = [
   { value: "newest", label: "Newest First" },
   { value: "rating", label: "Top Rated" },
 ];
+
+function parseMultiValue(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function serializeMultiValue(values) {
+  const uniqueValues = [...new Set((values || []).map(String).map((item) => item.trim()).filter(Boolean))];
+  return uniqueValues.length ? uniqueValues.join(",") : undefined;
+}
 
 function flattenCategoryList(data) {
   const source = Array.isArray(data)
@@ -73,6 +90,22 @@ export default function SearchPage() {
     () => (Array.isArray(searchState.hits) ? searchState.hits : []),
     [searchState.hits],
   );
+  const availabilityCounts = useMemo(
+    () =>
+      hits.reduce(
+        (counts, product) => {
+          if (isProductInStock(product)) {
+            counts.inStock += 1;
+          } else {
+            counts.outOfStock += 1;
+          }
+          return counts;
+        },
+        { inStock: 0, outOfStock: 0 },
+      ),
+    [hits],
+  );
+  const ratingCounts = useMemo(() => buildRatingCountMap(hits), [hits]);
   const categories = useMemo(
     () => flattenCategoryList(categoriesRaw),
     [categoriesRaw],
@@ -86,7 +119,14 @@ export default function SearchPage() {
   const minPrice = searchParams.get("minPrice") || "";
   const maxPrice = searchParams.get("maxPrice") || "";
   const minRating = searchParams.get("minRating") || "";
+  const selectedRatings = useMemo(
+    () => parseMultiValue(minRating),
+    [minRating],
+  );
   const inStock = searchParams.get("inStock") === "true";
+  const outOfStock = searchParams.get("outOfStock") === "true";
+  const expressDelivery = searchParams.get("expressDelivery") === "true";
+  const freeDelivery = searchParams.get("freeDelivery") === "true";
   const sort = searchParams.get("sort") || "";
   const limit = Number(searchParams.get("limit") || 20);
   const categoryValue =
@@ -124,6 +164,9 @@ export default function SearchPage() {
       maxPrice: maxPrice || undefined,
       minRating: minRating || undefined,
       inStock: inStock ? "true" : undefined,
+      outOfStock: outOfStock ? "true" : undefined,
+      expressDelivery: expressDelivery ? "true" : undefined,
+      freeDelivery: freeDelivery ? "true" : undefined,
       sort: sort || undefined,
       page: currentPage,
       limit,
@@ -131,11 +174,14 @@ export default function SearchPage() {
     [
       categoryValue,
       currentPage,
+      expressDelivery,
+      freeDelivery,
       inStock,
       limit,
       maxPrice,
       minPrice,
       minRating,
+      outOfStock,
       q,
       sort,
     ],
@@ -302,6 +348,15 @@ export default function SearchPage() {
     dispatch(clearSuggestions());
   };
 
+  const handleClearFilters = () => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams();
+      const query = prev.get("q") || "";
+      if (query) next.set("q", query);
+      return next;
+    });
+  };
+
   const activeFilters = [
     categoryValue && {
       key: "categoryId",
@@ -311,23 +366,44 @@ export default function SearchPage() {
       key: "price",
       label: `Price: ₹${minPrice || "0"} – ₹${maxPrice || "∞"}`,
     },
-    minRating && {
-      key: "minRating",
-      label: `${minRating}★ & up`,
-    },
+    ...selectedRatings.map((rating) => ({
+      key: `minRating:${rating}`,
+      groupKey: "minRating",
+      value: rating,
+      label: `${rating}★ & up`,
+    })),
     inStock && {
       key: "inStock",
       label: "In Stock Only",
     },
+    (searchParams.get("outOfStock") === "true") && {
+      key: "outOfStock",
+      label: "Out of Stock",
+    },
+    (searchParams.get("expressDelivery") === "true") && {
+      key: "expressDelivery",
+      label: "Express Delivery",
+    },
+    (searchParams.get("freeDelivery") === "true") && {
+      key: "freeDelivery",
+      label: "Free Delivery",
+    },
   ].filter(Boolean);
 
-  const removeFilter = (key) => {
+  const removeFilter = (key, filter) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
 
       if (key === "price") {
         next.delete("minPrice");
         next.delete("maxPrice");
+      } else if (filter?.groupKey) {
+        const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+          (value) => value !== filter.value,
+        );
+        const serialized = serializeMultiValue(nextValues);
+        if (serialized) next.set(filter.groupKey, serialized);
+        else next.delete(filter.groupKey);
       } else if (key === "categoryId" || key === "category") {
         next.delete("category");
         next.delete("categoryId");
@@ -380,8 +456,40 @@ export default function SearchPage() {
       title: "Min. Rating",
       content: (
         <RatingFilter
-          selected={minRating}
-          onChange={(value) => updateParam("minRating", value)}
+          selected={selectedRatings}
+          multiple
+          counts={ratingCounts}
+          onChange={(values) =>
+            updateParam("minRating", serializeMultiValue(values))
+          }
+        />
+      ),
+    },
+    {
+      key: "delivery",
+      title: "Delivery",
+      defaultOpen: false,
+      content: (
+        <CheckboxListFilter
+          name="delivery"
+          options={[
+            { value: "expressDelivery", label: "Express Delivery" },
+            { value: "freeDelivery", label: "Free Delivery" },
+          ]}
+          selected={["expressDelivery", "freeDelivery"].filter(
+            (value) => searchParams.get(value) === "true",
+          )}
+          onChange={(values) => {
+            const selectedValues = new Set(values);
+            updateParam(
+              "expressDelivery",
+              selectedValues.has("expressDelivery") ? "true" : undefined,
+            );
+            updateParam(
+              "freeDelivery",
+              selectedValues.has("freeDelivery") ? "true" : undefined,
+            );
+          }}
         />
       ),
     },
@@ -390,17 +498,35 @@ export default function SearchPage() {
       title: "Availability",
       defaultOpen: false,
       content: (
-        <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
-          <input
-            type="checkbox"
-            checked={inStock}
-            onChange={(event) =>
-              updateParam("inStock", event.target.checked ? "true" : undefined)
-            }
-            className="h-3.5 w-3.5 accent-gold"
-          />
-          In Stock Only
-        </label>
+        <CheckboxListFilter
+          name="availability"
+          options={[
+            {
+              value: "inStock",
+              label: "In Stock",
+              count: availabilityCounts.inStock,
+            },
+            {
+              value: "outOfStock",
+              label: "Out of Stock",
+              count: availabilityCounts.outOfStock,
+            },
+          ]}
+          selected={["inStock", "outOfStock"].filter(
+            (value) => searchParams.get(value) === "true",
+          )}
+          onChange={(values) => {
+            const selectedValues = new Set(values);
+            updateParam(
+              "inStock",
+              selectedValues.has("inStock") ? "true" : undefined,
+            );
+            updateParam(
+              "outOfStock",
+              selectedValues.has("outOfStock") ? "true" : undefined,
+            );
+          }}
+        />
       ),
     },
   ].filter(Boolean);
@@ -508,26 +634,25 @@ export default function SearchPage() {
         <ActiveFilterChips
           filters={activeFilters}
           onRemove={removeFilter}
-          onClear={() =>
-            setSearchParams((prev) => {
-              const next = new URLSearchParams();
-              const query = prev.get("q") || "";
-              if (query) next.set("q", query);
-              return next;
-            })
-          }
+          onClear={handleClearFilters}
         />
 
         <div className="flex gap-6">
           <div className="hidden lg:block">
-            <ProductFilterSidebar sections={filterSections} />
+            <ProductFilterSidebar
+              sections={filterSections}
+              onClearAll={handleClearFilters}
+            />
           </div>
 
           <FilterDrawer
             open={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
           >
-            <ProductFilterSidebar sections={filterSections} />
+            <ProductFilterSidebar
+              sections={filterSections}
+              onClearAll={handleClearFilters}
+            />
           </FilterDrawer>
 
           <div className="min-w-0 flex-1">

@@ -1,17 +1,22 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Store } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import {
   BrandProductPage,
+  CheckboxListFilter,
   PriceRangeFilter,
   RatingFilter,
 } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
 import { fetchBrands } from "../../features/catalog/catalogSlice";
-import { getImageUrlFromValue } from "../../utils/ecommerce";
+import {
+  buildRatingCountMap,
+  getImageUrlFromValue,
+  isProductInStock,
+} from "../../utils/ecommerce";
 
 const SORT_OPTIONS = [
   { value: "", label: "Sort By" },
@@ -22,6 +27,18 @@ const SORT_OPTIONS = [
 ];
 
 const PAGE_SIZES = [12, 24, 48];
+
+function parseMultiValue(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function serializeMultiValue(values) {
+  const uniqueValues = [...new Set((values || []).map(String).map((item) => item.trim()).filter(Boolean))];
+  return uniqueValues.length ? uniqueValues.join(",") : undefined;
+}
 
 function slugToBrandName(slug = "") {
   return decodeURIComponent(slug)
@@ -71,9 +88,29 @@ export default function BrandPage() {
   const sentinelRef = useRef(null);
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+  const selectedRatings = useMemo(
+    () => parseMultiValue(searchParams.get("rating")),
+    [searchParams],
+  );
 
   const totalPages = pageInfo.totalPages || 1;
   const currentPage = pageInfo.page || 1;
+  const availabilityCounts = useMemo(
+    () =>
+      items.reduce(
+        (counts, product) => {
+          if (isProductInStock(product)) {
+            counts.inStock += 1;
+          } else {
+            counts.outOfStock += 1;
+          }
+          return counts;
+        },
+        { inStock: 0, outOfStock: 0 },
+      ),
+    [items],
+  );
+  const ratingCounts = useMemo(() => buildRatingCountMap(items), [items]);
 
   // Fetch brand info by matching slug against all brands
   useEffect(() => {
@@ -140,6 +177,12 @@ export default function BrandPage() {
       sort: searchParams.get("sort") || undefined,
       minRating: searchParams.get("rating") || undefined,
       inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
+      outOfStock:
+        searchParams.get("outOfStock") === "true" ? "true" : undefined,
+      expressDelivery:
+        searchParams.get("expressDelivery") === "true" ? "true" : undefined,
+      freeDelivery:
+        searchParams.get("freeDelivery") === "true" ? "true" : undefined,
       page: pageOverride || 1,
       limit: Number(searchParams.get("limit") || 20),
     }),
@@ -232,12 +275,19 @@ export default function BrandPage() {
     });
   };
 
-  const removeFilter = (key) => {
+  const removeFilter = (key, filter) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       if (key === "price") {
         next.delete("minPrice");
         next.delete("maxPrice");
+      } else if (filter?.groupKey) {
+        const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+          (value) => value !== filter.value,
+        );
+        const serialized = serializeMultiValue(nextValues);
+        if (serialized) next.set(filter.groupKey, serialized);
+        else next.delete(filter.groupKey);
       } else next.delete(key);
       next.delete("page");
       return next;
@@ -258,11 +308,25 @@ export default function BrandPage() {
       key: "sort",
       label: `Sort: ${SORT_OPTIONS.find((o) => o.value === searchParams.get("sort"))?.label || searchParams.get("sort")}`,
     },
-    searchParams.get("rating") && {
-      key: "rating",
-      label: `Rating: ${searchParams.get("rating")}★ & up`,
-    },
+    ...selectedRatings.map((rating) => ({
+      key: `rating:${rating}`,
+      groupKey: "rating",
+      value: rating,
+      label: `Rating: ${rating}★ & up`,
+    })),
     searchParams.get("inStock") === "true" && { key: "inStock", label: "In Stock Only" },
+    searchParams.get("outOfStock") === "true" && {
+      key: "outOfStock",
+      label: "Out of Stock",
+    },
+    searchParams.get("expressDelivery") === "true" && {
+      key: "expressDelivery",
+      label: "Express Delivery",
+    },
+    searchParams.get("freeDelivery") === "true" && {
+      key: "freeDelivery",
+      label: "Free Delivery",
+    },
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
       label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,
@@ -286,8 +350,39 @@ export default function BrandPage() {
       title: "Rating",
       content: (
         <RatingFilter
-          selected={searchParams.get("rating")}
-          onChange={(v) => updateParam("rating", v)}
+          selected={selectedRatings}
+          multiple
+          counts={ratingCounts}
+          onChange={(values) =>
+            updateParam("rating", serializeMultiValue(values))
+          }
+        />
+      ),
+    },
+    {
+      key: "delivery",
+      title: "Delivery",
+      content: (
+        <CheckboxListFilter
+          name="delivery"
+          options={[
+            { value: "expressDelivery", label: "Express Delivery" },
+            { value: "freeDelivery", label: "Free Delivery" },
+          ]}
+          selected={["expressDelivery", "freeDelivery"].filter(
+            (value) => searchParams.get(value) === "true",
+          )}
+          onChange={(values) => {
+            const selectedValues = new Set(values);
+            updateParam(
+              "expressDelivery",
+              selectedValues.has("expressDelivery") ? "true" : undefined,
+            );
+            updateParam(
+              "freeDelivery",
+              selectedValues.has("freeDelivery") ? "true" : undefined,
+            );
+          }}
         />
       ),
     },
@@ -295,17 +390,35 @@ export default function BrandPage() {
       key: "inStock",
       title: "Availability",
       content: (
-        <label className="flex cursor-pointer items-center gap-2  text-sm text-ink">
-          <input
-            type="checkbox"
-            checked={searchParams.get("inStock") === "true"}
-            onChange={(e) =>
-              updateParam("inStock", e.target.checked ? "true" : undefined)
-            }
-            className="h-3.5 w-3.5 accent-gold"
-          />
-          In Stock Only
-        </label>
+        <CheckboxListFilter
+          name="availability"
+          options={[
+            {
+              value: "inStock",
+              label: "In Stock",
+              count: availabilityCounts.inStock,
+            },
+            {
+              value: "outOfStock",
+              label: "Out of Stock",
+              count: availabilityCounts.outOfStock,
+            },
+          ]}
+          selected={["inStock", "outOfStock"].filter(
+            (value) => searchParams.get(value) === "true",
+          )}
+          onChange={(values) => {
+            const selectedValues = new Set(values);
+            updateParam(
+              "inStock",
+              selectedValues.has("inStock") ? "true" : undefined,
+            );
+            updateParam(
+              "outOfStock",
+              selectedValues.has("outOfStock") ? "true" : undefined,
+            );
+          }}
+        />
       ),
     },
   ];

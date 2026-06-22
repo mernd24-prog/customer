@@ -7,6 +7,7 @@ import NotFoundPage from "../NotFoundPage";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import {
   Breadcrumbs,
+  CheckboxListFilter,
   CollectionToolbar,
   OptionFilter,
   PriceRangeFilter,
@@ -20,7 +21,13 @@ import {
   fetchCategories,
   fetchBrands,
 } from "../../features/catalog/catalogSlice";
-import { applyImageFallback } from "../../utils/ecommerce";
+import {
+  applyImageFallback,
+  buildFacetCountMap,
+  buildRatingCountMap,
+  getProductBrandName,
+  isProductInStock,
+} from "../../utils/ecommerce";
 import { isNotFoundApiError } from "../../utils/apiErrors";
 import categoryBannerImage from "/image/png/CategoryBanner.png"
 
@@ -31,6 +38,53 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High to Low" },
   { value: "rating", label: "Top Rated" },
 ];
+
+function parseMultiValue(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function serializeMultiValue(values) {
+  const uniqueValues = [...new Set((values || []).map(String).map((item) => item.trim()).filter(Boolean))];
+  return uniqueValues.length ? uniqueValues.join(",") : undefined;
+}
+
+function getAttributeValues(product, key) {
+  const directValue = product?.[key];
+  if (Array.isArray(directValue)) return directValue;
+  if (directValue != null && directValue !== "") return [directValue];
+
+  const attributeSources = [
+    product?.attributes,
+    product?.specifications,
+    product?.attributeValues,
+  ].filter(Boolean);
+
+  for (const source of attributeSources) {
+    if (Array.isArray(source)) {
+      const matching = source.filter(
+        (item) =>
+          item?.key === key ||
+          item?.name === key ||
+          item?.attributeKey === key,
+      );
+      const values = matching.flatMap((item) =>
+        Array.isArray(item?.value) ? item.value : [item?.value ?? item?.label],
+      );
+      if (values.length) return values;
+    }
+
+    if (typeof source === "object") {
+      const sourceValue = source[key];
+      if (Array.isArray(sourceValue)) return sourceValue;
+      if (sourceValue != null && sourceValue !== "") return [sourceValue];
+    }
+  }
+
+  return [];
+}
 
 // ── Sub-category card in top strip ──────────────────────────────────────────
 function SubCategoryCard({ sub, isActive, onClick }) {
@@ -128,7 +182,7 @@ function CategoryPageSkeleton() {
         <div className="h-8 w-40 rounded bg-[var(--customer-border)]" />
         <div className="h-8 w-28 rounded bg-[var(--customer-border)]" />
       </div>
-      <div className="mt-6 grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[392px_minmax(0,1fr)]">
         <div className="hidden space-y-3 lg:block">
           {Array.from({ length: 5 }).map((_, index) => (
             <div key={index} className="h-10 rounded bg-[var(--customer-border)]" />
@@ -170,8 +224,48 @@ export default function CategoryPage() {
   const sentinelRef = useRef(null);
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
-
+  const selectedBrands = useMemo(
+    () => parseMultiValue(searchParams.get("brand")),
+    [searchParams],
+  );
+  const selectedRatings = useMemo(
+    () => parseMultiValue(searchParams.get("rating")),
+    [searchParams],
+  );
   const products = items;
+  const availabilityCounts = useMemo(
+    () =>
+      products.reduce(
+        (counts, product) => {
+          if (isProductInStock(product)) {
+            counts.inStock += 1;
+          } else {
+            counts.outOfStock += 1;
+          }
+          return counts;
+        },
+        { inStock: 0, outOfStock: 0 },
+      ),
+    [products],
+  );
+  const brandCounts = useMemo(
+    () => buildFacetCountMap(products, (product) => getProductBrandName(product)),
+    [products],
+  );
+  const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
+  const attributeCountMaps = useMemo(() => {
+    const schema = Array.isArray(categoryData?.attributeSchema)
+      ? categoryData.attributeSchema
+      : [];
+
+    return schema.reduce((maps, attribute) => {
+      maps[attribute.key] = buildFacetCountMap(products, (product) =>
+        getAttributeValues(product, attribute.key),
+      );
+      return maps;
+    }, {});
+  }, [categoryData?.attributeSchema, products]);
+
   const meta = productState.meta;
   const totalPages = pageInfo.totalPages || meta?.totalPages || 1;
   const currentPage = pageInfo.page || Number(searchParams.get("page") || 1);
@@ -188,6 +282,9 @@ export default function CategoryPage() {
         productFamilyCode: searchParams.get("productFamilyCode") || searchParams.get("family") || undefined,
         rating: searchParams.get("rating") || undefined,
         inStock: searchParams.get("inStock") || undefined,
+        outOfStock: searchParams.get("outOfStock") || undefined,
+        expressDelivery: searchParams.get("expressDelivery") || undefined,
+        freeDelivery: searchParams.get("freeDelivery") || undefined,
         page: pageOverride || 1,
         limit: Number(searchParams.get("limit") || 20),
       };
@@ -320,10 +417,18 @@ export default function CategoryPage() {
     });
   };
 
-  const removeFilter = (key) => {
+  const removeFilter = (key, filter) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       if (key === "price") { next.delete("minPrice"); next.delete("maxPrice"); }
+      else if (filter?.groupKey) {
+        const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+          (value) => value !== filter.value,
+        );
+        const serialized = serializeMultiValue(nextValues);
+        if (serialized) next.set(filter.groupKey, serialized);
+        else next.delete(filter.groupKey);
+      }
       else next.delete(key);
       next.delete("page");
       return next;
@@ -399,9 +504,16 @@ export default function CategoryPage() {
           content: (
             <OptionFilter
               name={`attr_${attribute.key}`}
-              options={attribute.options.map((o) => ({ value: String(o), label: String(o) }))}
-              selected={searchParams.get(`attr_${attribute.key}`)}
-              onChange={(value) => updateParam(`attr_${attribute.key}`, value)}
+              options={attribute.options.map((o) => ({
+                value: String(o),
+                label: String(o),
+                count: attributeCountMaps[attribute.key]?.[String(o)] || 0,
+              }))}
+              selected={parseMultiValue(searchParams.get(`attr_${attribute.key}`))}
+              multiple
+              onChange={(values) =>
+                updateParam(`attr_${attribute.key}`, serializeMultiValue(values))
+              }
             />
           ),
         }))
@@ -412,9 +524,13 @@ export default function CategoryPage() {
       content: (
         <OptionFilter
           name="brand"
-          options={brandList}
-          selected={searchParams.get("brand")}
-          onChange={(value) => updateParam("brand", value)}
+          options={brandList.map((brand) => ({
+            ...brand,
+            count: brandCounts[String(brand.value)] || 0,
+          }))}
+          selected={selectedBrands}
+          multiple
+          onChange={(values) => updateParam("brand", serializeMultiValue(values))}
         />
       ),
     },
@@ -434,8 +550,39 @@ export default function CategoryPage() {
       title: "Rating",
       content: (
         <RatingFilter
-          selected={searchParams.get("rating")}
-          onChange={(v) => updateParam("rating", v)}
+          selected={selectedRatings}
+          multiple
+          counts={ratingCounts}
+          onChange={(values) =>
+            updateParam("rating", serializeMultiValue(values))
+          }
+        />
+      ),
+    },
+    {
+      key: "delivery",
+      title: "Delivery",
+      content: (
+        <CheckboxListFilter
+          name="delivery"
+          options={[
+            { value: "expressDelivery", label: "Express Delivery" },
+            { value: "freeDelivery", label: "Free Delivery" },
+          ]}
+          selected={["expressDelivery", "freeDelivery"].filter(
+            (value) => searchParams.get(value) === "true",
+          )}
+          onChange={(values) => {
+            const selectedValues = new Set(values);
+            updateParam(
+              "expressDelivery",
+              selectedValues.has("expressDelivery") ? "true" : undefined,
+            );
+            updateParam(
+              "freeDelivery",
+              selectedValues.has("freeDelivery") ? "true" : undefined,
+            );
+          }}
         />
       ),
     },
@@ -443,32 +590,81 @@ export default function CategoryPage() {
       key: "inStock",
       title: "Availability",
       content: (
-        <label className="flex cursor-pointer items-center gap-2 text-sm text-ink">
-          <input
-            type="checkbox"
-            checked={searchParams.get("inStock") === "true"}
-            onChange={(e) => updateParam("inStock", e.target.checked ? "true" : undefined)}
-            className="h-3.5 w-3.5 accent-gold"
-          />
-          In Stock Only
-        </label>
+        <CheckboxListFilter
+          name="availability"
+          options={[
+            {
+              value: "inStock",
+              label: "In Stock",
+              count: availabilityCounts.inStock,
+            },
+            {
+              value: "outOfStock",
+              label: "Out of Stock",
+              count: availabilityCounts.outOfStock,
+            },
+          ]}
+          selected={["inStock", "outOfStock"].filter(
+            (value) => searchParams.get(value) === "true",
+          )}
+          onChange={(values) => {
+            const selectedValues = new Set(values);
+            updateParam(
+              "inStock",
+              selectedValues.has("inStock") ? "true" : undefined,
+            );
+            updateParam(
+              "outOfStock",
+              selectedValues.has("outOfStock") ? "true" : undefined,
+            );
+          }}
+        />
       ),
     },
   ].flat().filter(Boolean), [
-    subCategories, categoryKey, activeSubKey, categoryTitle, categoryData, brandList, searchParams,
+    subCategories, categoryKey, activeSubKey, categoryTitle, categoryData, brandList, searchParams, availabilityCounts, brandCounts, ratingCounts, attributeCountMaps, handlePriceChange, selectedBrands, selectedRatings, updateParam,
   ]);
 
   // ── Active filter chips ──────────────────────────────────────────────────
   const activeFilters = [
-    searchParams.get("brand") && { key: "brand", label: `Brand: ${searchParams.get("brand")}` },
-    searchParams.get("rating") && { key: "rating", label: `Rating: ${searchParams.get("rating")}★ & up` },
+    ...selectedBrands.map((brand) => ({
+      key: `brand:${brand}`,
+      groupKey: "brand",
+      value: brand,
+      label: `Brand: ${brand}`,
+    })),
+    ...selectedRatings.map((rating) => ({
+      key: `rating:${rating}`,
+      groupKey: "rating",
+      value: rating,
+      label: `Rating: ${rating}★ & up`,
+    })),
     searchParams.get("inStock") && { key: "inStock", label: "In Stock Only" },
+    searchParams.get("outOfStock") === "true" && {
+      key: "outOfStock",
+      label: "Out of Stock",
+    },
+    searchParams.get("expressDelivery") === "true" && {
+      key: "expressDelivery",
+      label: "Express Delivery",
+    },
+    searchParams.get("freeDelivery") === "true" && {
+      key: "freeDelivery",
+      label: "Free Delivery",
+    },
     ["color", "size", "material", "fit", "storage", "skinType", "shade", "finish", "room", "sport", "concern"]
       .map((key) => searchParams.get(key) && { key, label: `${key}: ${searchParams.get(key)}` })
       .filter(Boolean),
     ...Array.from(searchParams.entries())
       .filter(([key, value]) => key.startsWith("attr_") && value)
-      .map(([key, value]) => ({ key, label: `${key.replace(/^attr_/, "")}: ${value}` })),
+      .flatMap(([key, value]) =>
+        parseMultiValue(value).map((item) => ({
+          key: `${key}:${item}`,
+          groupKey: key,
+          value: item,
+          label: `${key.replace(/^attr_/, "")}: ${item}`,
+        })),
+      ),
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
       label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,

@@ -160,12 +160,12 @@ export default function CartItemCard({
             )}
 
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
-              <span className="text-xl font-sans font-extrabold text-[#1B1D60] min-[375px]:text-2xl  sm:text-[28px]">
+              <span className="text-xl font-sans font-extrabold text-[#1B1D60] min-[375px]:text-2xl sm:text-[28px] break-words">
                 {formatMoney(price)}
               </span>
 
               {oldPrice > 0 && oldPrice > price && (
-                <span className="text-lg font-bold text-[#8C8C8C] line-through min-[375px]:text-xl sm:text-2xl">
+                <span className="text-lg font-bold text-[#8C8C8C] line-through min-[375px]:text-xl sm:text-2xl break-words">
                   {formatMoney(oldPrice)}
                 </span>
               )}
@@ -261,7 +261,7 @@ export default function CartItemCard({
             <button
               type="button"
               onClick={() => onRemove?.(item?.id)}
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#FF3B35] min-[375px]:text-base sm:gap-3 sm:text-lg"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#FF3B35] min-[375px]:text-base sm:gap-3 sm:text-lg text-left"
             >
               <Trash2 size={19} className="text-[#FF3B35] sm:size-[22px]" />
               {removeLabel}
@@ -271,7 +271,7 @@ export default function CartItemCard({
               <button
                 type="button"
                 onClick={() => onBuyNow(item?.id)}
-                className="inline-flex items-center text-sm font-medium text-[#1B1D60] transition hover:text-[#CE9F2D] min-[375px]:text-base sm:text-lg"
+                className="inline-flex items-center text-sm font-medium text-[#1B1D60] transition hover:text-[#CE9F2D] min-[375px]:text-base sm:text-lg break-words text-left"
               >
                 Buy Now
               </button>
