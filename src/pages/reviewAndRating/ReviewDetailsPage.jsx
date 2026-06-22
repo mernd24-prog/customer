@@ -456,13 +456,6 @@ export default function ReviewDetailsPage() {
     page * LIMIT,
   );
 
-   
-  const total = filteredReviews.length;
-  const totalPages = Math.max(1, Math.ceil(total / LIMIT));
-  const visibleReviews = filteredReviews.slice(
-    (page - 1) * LIMIT,
-    page * LIMIT,
-  );
   const handleFilter = (star) => {
     setRatingFilter((current) => (current === star ? null : star));
     setPage(1);

@@ -4,7 +4,7 @@ import { FaAngleRight } from "react-icons/fa6";
 import Label from "../common/label/Label";
 import { TextGoldButton } from "../dynamicComponent/button/static";
 import { applyImageFallback } from "../../utils/ecommerce";
-import { cn } from "../../utils/classNames";
+import { cn } from "../../lib/utils";
 
 export default function CategoryCard({
   image,

@@ -1,4 +1,4 @@
-import { cn } from "../../../utils/classNames";
+import { cn } from "../../../lib/utils";
 
 const sizeMap = {
   xs: "text-label-xs min-h-[24px] px-2.5 py-1",

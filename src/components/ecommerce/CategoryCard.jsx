@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Grid2X2 } from "lucide-react";
-import { cn } from "../../utils/classNames";
+import { cn } from "../../lib/utils";
 import { applyImageFallback } from "../../utils/ecommerce";
 
 export default function CategoryCard({

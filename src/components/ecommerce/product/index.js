@@ -1,9 +1,0 @@
-export { default as ProductCard } from "../ProductCard";
-export { default as ProductGrid } from "../ProductGrid";
-export { default as ProductSection } from "../ProductSection";
-export { default as Price } from "../Price";
-export { default as Rating } from "../Rating";
-export { default as AddToCartButton } from "../AddToCartButton";
-export { default as WishlistButton } from "../WishlistButton";
-export { default as Pagination } from "../Pagination";
-export { default as CollectionToolbar } from "../CollectionToolbar";

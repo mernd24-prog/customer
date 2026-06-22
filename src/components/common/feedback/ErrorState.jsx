@@ -1,5 +1,5 @@
 import { AlertTriangle } from "lucide-react";
-import { cn } from "../../../utils/classNames";
+import { cn } from "../../../lib/utils";
 import { isNotFoundApiError } from "../../../utils/apiErrors";
 
 const getMessage = (message) => {

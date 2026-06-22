@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "../../utils/classNames";
+import { cn } from "../../lib/utils";
 
 function getVisiblePages(currentPage, totalPages, maxPages) {
   if (totalPages <= maxPages) {

@@ -1,4 +1,4 @@
-import { cn } from "../../../utils/classNames";
+import { cn } from "../../../lib/utils";
 
 const sizeMap = {
   xs: "h-6 w-6",

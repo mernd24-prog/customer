@@ -15,7 +15,7 @@ import {
   getProductTitle,
   applyImageFallback,
 } from "../../utils/ecommerce";
-import { cn } from "../../utils/classNames";
+import { cn } from "../../lib/utils";
 
 export default function ProductCard({
   product,

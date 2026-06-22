@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { cn } from "../../../utils/classNames";
+import { cn } from "../../../lib/utils";
 import { sanitizeSearchQuery } from "../../../validations";
 
 export default function SearchInput({

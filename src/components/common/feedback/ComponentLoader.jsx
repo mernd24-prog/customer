@@ -1,4 +1,4 @@
-import { cn } from "../../../utils/classNames";
+import { cn } from "../../../lib/utils";
 
 export default function ComponentLoader({ className = "", size = "md" }) {
   const sizeMap = {

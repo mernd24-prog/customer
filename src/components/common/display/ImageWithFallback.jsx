@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { cn } from "../../../utils/classNames";
+import { cn } from "../../../lib/utils";
 
 export default function ImageWithFallback({
   src,

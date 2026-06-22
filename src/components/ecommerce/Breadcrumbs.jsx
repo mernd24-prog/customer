@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { cn } from "../../utils/classNames";
+import { cn } from "../../lib/utils";
 import { IoIosArrowForward } from "react-icons/io";
 
 export default function Breadcrumbs({

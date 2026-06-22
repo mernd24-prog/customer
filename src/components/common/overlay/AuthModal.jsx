@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
-import { cn } from "../../../utils/classNames";
+import { cn } from "../../../lib/utils";
 import { AUTH_ROUTES } from "../../../features/auth/authRoutes";
 
 function LockIcon() {
