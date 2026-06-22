@@ -50,10 +50,10 @@ export default function CartItemCard({
       : "Non-returnable";
 
   return (
-    <article className="relative w-full  p-3 min-[375px]:p-4 sm:p-5 lg:p-6 xl:min-h-[433px] xl:max-w-[1161px] xl:p-[25px]">
+    <article className="relative w-full p-3 min-[375px]:p-4 sm:p-5 lg:p-6 xl:min-h-[433px] xl:max-w-[1161px] xl:p-[25px]">
       <div className="grid gap-5 sm:gap-6 lg:grid-cols-[minmax(220px,320px)_1fr] xl:grid-cols-[minmax(220px,399px)_1fr] xl:gap-9 ">
         {item?.image && (
-          <div className=" relative mx-auto flex aspect-[399/383] w-full max-w-[399px] items-center justify-center overflow-hidden rounded-[12px] border border-[#F0E6D2]  bg-white lg:h-auto lg:max-w-[320px] xl:h-[383px] xl:w-[399px] xl:max-w-[399px]">
+          <div className=" relative mx-auto flex aspect-[399/383] w-full max-w-[399px] items-center justify-center overflow-hidden rounded-[12px] border border-[#F0E6D2] bg-white lg:h-auto lg:max-w-[320px] xl:h-[383px] xl:w-[399px] xl:max-w-[399px]">
             {showCheckbox && (
               <label className=" absolute left-3 top-3 z-10 flex items-center justify-center sm:left-4 sm:top-4 xl:left-5 xl:top-5">
                 <input
@@ -127,11 +127,11 @@ export default function CartItemCard({
               </span>
             )}
 
-            {/* {item?.color && (
+            {item?.color && (
               <span className="rounded-full bg-[#F2F1F8] px-3 py-1 text-xs font-semibold text-[#1B1D60]">
                 Color: {item.color}
               </span>
-            )} */}
+            )}
 
             {item?.size && (
               <span className="rounded-full bg-[#F2F1F8] px-3 py-1 text-xs font-semibold text-[#1B1D60]">
@@ -144,7 +144,7 @@ export default function CartItemCard({
               .map(([key, value]) => (
                 <span
                   key={key}
-                  className="rounded-full  bg-[#F2F1F8] px-3 py-1 text-xs font-semibold capitalize text-[#1B1D60]"
+                  className="rounded-full bg-[#F2F1F8] px-3 py-1 text-xs font-semibold capitalize text-[#1B1D60]"
                 >
                   {key.replace(/_/g, " ")}: {String(value)}
                 </span>
@@ -160,12 +160,12 @@ export default function CartItemCard({
             )}
 
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
-              <span className="text-xl font-sans font-extrabold text-[#1B1D60] min-[375px]:text-2xl sm:text-[28px] break-words">
+              <span className="text-xl font-sans font-extrabold text-[#1B1D60] min-[375px]:text-2xl sm:text-[28px]">
                 {formatMoney(price)}
               </span>
 
               {oldPrice > 0 && oldPrice > price && (
-                <span className="text-lg font-bold text-[#8C8C8C] line-through min-[375px]:text-xl sm:text-2xl break-words">
+                <span className="text-lg font-bold text-[#8C8C8C] line-through min-[375px]:text-xl sm:text-2xl">
                   {formatMoney(oldPrice)}
                 </span>
               )}
@@ -181,15 +181,15 @@ export default function CartItemCard({
               Inclusive of all taxes
             </p>
 
-            {isOutOfStock ? (
+            {/* {isOutOfStock ? (
               <p className="mt-1 flex items-center gap-1 text-[13px] font-semibold text-red-600">
-                <AlertTriangle size={12} /> Out of stock
+              <AlertTriangle size={12} /> Out of stock
               </p>
-            ) : isLowStock ? (
+              ) : isLowStock ? (
               <p className="mt-1 flex items-center gap-1 text-[13px] font-semibold text-amber-600">
-                <AlertTriangle size={12} /> Only {stock} left in stock
+              <AlertTriangle size={12} /> Only {stock} left in stock
               </p>
-            ) : null}
+              ) : null} */}
 
             {atMaxQty && !isOutOfStock && (
               <p className="mt-1 text-[13px] font-medium text-[var(--customer-muted)]">
@@ -198,22 +198,22 @@ export default function CartItemCard({
             )}
 
             {/* {returnsText && (
-              <p
-                className={`mt-1 text-[13px] font-medium ${
-                  returnsAccepted
+                <p
+                    className={`mt-1 text-[13px] font-medium ${
+                    returnsAccepted
                     ? "text-[var(--customer-muted)]"
                     : "text-amber-700"
                 }`}
-              >
-                {returnsText}
-              </p>
-            )} */}
+                >
+                    {returnsText}
+                </p>
+                )} */}
 
             {/* <p className="mt-1 text-[13px] font-medium text-[var(--customer-muted)]">
-              {shippingAmount > 0
+                {shippingAmount > 0
                 ? `+ ${formatMoney(shippingAmount)} shipping`
-                : "Free shipping"}
-            </p> */}
+               : "Free shipping"}
+              </p> */}
           </div>
 
           <div className="mt-5 sm:mt-7">
@@ -232,12 +232,6 @@ export default function CartItemCard({
           </div>
 
           <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 sm:mt-7 sm:gap-x-8">
-            {/* {quantity > 1 && price > 0 && (
-              <span className="basis-full text-sm font-semibold text-[#1B1D60]">
-                Subtotal: {formatMoney(price * quantity)}
-              </span>
-            )} */}
-
             {saveForLaterLabel === "Move to Wishlist" ? (
               <button
                 type="button"
@@ -261,7 +255,7 @@ export default function CartItemCard({
             <button
               type="button"
               onClick={() => onRemove?.(item?.id)}
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#FF3B35] min-[375px]:text-base sm:gap-3 sm:text-lg text-left"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#FF3B35] min-[375px]:text-base sm:gap-3 sm:text-lg"
             >
               <Trash2 size={19} className="text-[#FF3B35] sm:size-[22px]" />
               {removeLabel}
@@ -271,7 +265,7 @@ export default function CartItemCard({
               <button
                 type="button"
                 onClick={() => onBuyNow(item?.id)}
-                className="inline-flex items-center text-sm font-medium text-[#1B1D60] transition hover:text-[#CE9F2D] min-[375px]:text-base sm:text-lg break-words text-left"
+                className="inline-flex items-center text-sm font-medium text-[#1B1D60] transition hover:text-[#CE9F2D] min-[375px]:text-base sm:text-lg"
               >
                 Buy Now
               </button>

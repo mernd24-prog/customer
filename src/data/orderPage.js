@@ -1,6 +1,7 @@
 import { FiBox } from "react-icons/fi";
 import { Headphones } from "lucide-react";
 import { Truck } from "lucide-react";
+
 export const STATUS_BADGE = {
   pending_payment: "bg-amber-100 text-amber-700",
   payment_failed: "bg-red-100 text-red-700",
@@ -39,7 +40,6 @@ export const ORDER_BREADCRUMBS = [
   { label: "My Order", href: "/orders" },
 ];
 
-
 export const TRACKING_LABELS = {
   pending_payment: "Payment pending",
   payment_failed: "Payment failed",
@@ -50,9 +50,18 @@ export const TRACKING_LABELS = {
   delivered: "Delivered",
   fulfilled: "Completed",
   return_requested: "Return requested",
+  return_approved: "Return approved",
+  return_rejected: "Return rejected",
+  pickup_scheduled: "Pickup scheduled",
+  pickup_completed: "Pickup completed",
   partially_returned: "Partially returned",
   returned: "Returned",
   cancelled: "Cancelled",
+  refund_pending: "Refund pending",
+  refund_initiated: "Refund initiated",
+  partially_refunded: "Partially refunded",
+  refund_completed: "Refund completed",
+  refunded: "Refunded",
 };
 
 export const RETURN_STEPS = [
@@ -60,7 +69,13 @@ export const RETURN_STEPS = [
   "return_approved",
   "pickup_scheduled",
   "pickup_completed",
+  "returned",
+];
+
+export const REFUND_STEPS = [
+  "refund_pending",
   "refund_initiated",
+  "partially_refunded",
   "refund_completed",
 ];
 
@@ -82,7 +97,7 @@ export const ORDER_FILTERS = [
   { label: "Payment failed", value: "payment_failed" },
 ];
 
-export const COMPACT_STATUS_BADG = {
+export const COMPACT_STATUS_BADGE = {
   delivered: "bg-[#0C9F45] text-white",
   fulfilled: "bg-[#0C9F45] text-white",
   partially_delivered: "bg-[#0C9F45] text-white",

@@ -31,7 +31,7 @@ import {
 } from "../../utils/ecommerce/money";
 
 import { ConfirmModal } from "../../components/common";
- 
+
 import OrderPaymentSummary from "../orders/components/OrderPaymentSummary";
 
 // import { ChevronRight } from "lucide-react";
@@ -244,15 +244,12 @@ function cartLineKey(item) {
   const defaultVariant =
     !item.variantId && !item.variantSku && Array.isArray(product?.variants)
       ? product.variants.find((variant) => variant.isDefault) ||
-      product.variants[0]
+        product.variants[0]
       : null;
   return normalizeCartItemId({
     productId,
     variantId:
-      item.variantId ||
-      defaultVariant?._id ||
-      defaultVariant?.id ||
-      "",
+      item.variantId || defaultVariant?._id || defaultVariant?.id || "",
     variantSku: item.variantSku || defaultVariant?.sku || "",
   });
 }
@@ -334,7 +331,6 @@ export default function CartPage() {
   const latestRef = useRef({ rawItems: [], wishlist: [], localQuantities: {} });
   const updateTimerRef = useRef(null);
 
-
   useEffect(() => {
     dispatch(fetchCart());
   }, [dispatch]);
@@ -371,7 +367,7 @@ export default function CartPage() {
     missingIds.forEach((id) => fetchedIdsRef.current.add(id));
 
     missingIds.forEach((productId) => {
-      dispatch(fetchProductById({ productId })).catch(() => { });
+      dispatch(fetchProductById({ productId })).catch(() => {});
     });
   }, [dispatch, wishlist, productEntities]);
 
@@ -592,29 +588,19 @@ export default function CartPage() {
     const remainingItems = rawItems.filter(
       (ci) => normalizeCartItemId(ci) !== normalizedId,
     );
-    const savedLine = {
-      ...itemToSave,
-      title: itemToSave.title || itemView?.title,
-      image: itemToSave.image || itemView?.image,
-      price: itemToSave.price ?? itemView?.price,
-      savedAt: Date.now(),
-    };
+    const productToWishlist =
+      itemToSave.productId && typeof itemToSave.productId === "object"
+        ? itemToSave.productId
+        : itemToSave.product || itemToSave._raw || itemView?._raw || itemToSave;
+    const nextCart = normalizeCartPayloadForWrite({
+      items: remainingItems,
+      wishlist: cart.wishlist || [],
+    });
 
-    persistSavedForLater([
-      savedLine,
-      ...savedForLaterItems.filter(
-        (item) => normalizeCartItemId(item) !== normalizedId,
-      ),
-    ]);
     run(
       dispatch,
-      updateCart(
-        normalizeCartPayloadForWrite({
-          items: remainingItems,
-          wishlist: cart.wishlist || [],
-        }),
-      ),
-      "Saved for later",
+      updateCart(wishlistPayload(nextCart, productToWishlist, false)),
+      "Moved to wishlist",
     );
   };
 
@@ -910,24 +896,6 @@ export default function CartPage() {
 
               {hasCartItems && (
                 <div className="w-full">
-                  {/* <CartSummary
-                    items={selectedItems}
-                    shippingLabel="Shipping"
-                    shippingLocation=""
-                    showInfoIcon={false}
-                    protectionText="Purchase protected by"
-                    protectionLinkText="Sam Global Money Back Guarantee"
-                    protectionLink="/"
-                    buttonText="Proceed to Checkout"
-                    onCheckout={() => {
-                      if (!selectedItems.length) return;
-                      window.sessionStorage.setItem(
-                        SELECTED_CHECKOUT_STORAGE_KEY,
-                        JSON.stringify(normalizedSelectedItemIds),
-                      );
-                      navigate("/checkout");
-                    }}
-                  /> */}
                   <OrderPaymentSummary
                     variant="cart"
                     mrpSubtotal={mrpSubtotal}
@@ -952,7 +920,7 @@ export default function CartPage() {
 
                       window.sessionStorage.setItem(
                         SELECTED_CHECKOUT_STORAGE_KEY,
-                        JSON.stringify(selectedItemIds)
+                        JSON.stringify(selectedItemIds),
                       );
 
                       navigate("/checkout");

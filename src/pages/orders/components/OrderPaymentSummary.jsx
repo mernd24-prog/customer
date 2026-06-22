@@ -1,7 +1,5 @@
 import OrderDetailSectionCard from "./OrderDetailSectionCard";
-import {
-  formatMoney,
-} from "../../../utils/ecommerce/money";
+import { formatMoney } from "../../../utils/ecommerce/money";
 
 function SummaryRow({ label, value, savings = false }) {
   return (
@@ -79,7 +77,9 @@ function TaxBreakupBlock({
           <p>GST added to payable: {formatMoney(taxPayable, currency)}</p>
         )}
         {taxIncluded > 0 && (
-          <p>GST included in item price: {formatMoney(taxIncluded, currency)}</p>
+          <p>
+            GST included in item price: {formatMoney(taxIncluded, currency)}
+          </p>
         )}
         {tax !== undefined && taxPayable === 0 && taxIncluded === 0 && (
           <p>GST breakup: {formatMoney(tax, currency)}</p>
@@ -88,7 +88,6 @@ function TaxBreakupBlock({
     </div>
   );
 }
-
 
 function OrderPaymentSummary({
   // Order Detail Props
@@ -124,40 +123,38 @@ function OrderPaymentSummary({
   return (
     <OrderDetailSectionCard
       title="Payment Summary"
-      className="h-full w-full"
+      className="h-auto w-full"
       borderClassName="border-[#CE9F2D66]"
-      bodyClassName="grid gap-3 px-4 py-4 text-sm"
+      bodyClassName="grid gap-3 px-4 py-4 text-sm "
     >
       {/* Cart MRP */}
       {variant === "cart" && asNumber?.(mrpSubtotal) > 0 && (
-        <div >
+        <div>
           <SummaryRow
-            label={`MRP (${itemCount || 0} ${itemCount === 1 ? "item" : "items"
-              })`}
+            label={`MRP (${itemCount || 0} ${
+              itemCount === 1 ? "item" : "items"
+            })`}
             value={formatMoney(mrpSubtotal, currency)}
           />
         </div>
       )}
 
-  {/* Cart Price */}
-{variant === "cart" && subtotal !== undefined && (
-  <div className="border-t border-[#04258626] pt-2">
-    <SummaryRow
-      label="Price"
-      value={formatMoney(subtotal, currency)}
-    />
-  </div>
-)}
+      {/* Cart Price */}
+      {variant === "cart" && subtotal !== undefined && (
+        <div className="border-t border-[#04258626] pt-2">
+          <SummaryRow label="Price" value={formatMoney(subtotal, currency)} />
+        </div>
+      )}
 
-{/* Order Subtotal */}
-{variant === "order" && subtotal !== undefined && (
-  <div >
-    <SummaryRow
-      label="Subtotal"
-      value={formatMoney(subtotal, currency)}
-    />
-  </div>
-)}
+      {/* Order Subtotal */}
+      {variant === "order" && subtotal !== undefined && (
+        <div>
+          <SummaryRow
+            label="Subtotal"
+            value={formatMoney(subtotal, currency)}
+          />
+        </div>
+      )}
       {/* Product Discount */}
       {variant === "cart" && asNumber?.(productDiscount) > 0 && (
         <div className="border-t border-[#04258626] pt-2">
@@ -237,15 +234,14 @@ function OrderPaymentSummary({
       )}
 
       {/* Address Section */}
-      {variant === "order" &&
-        hasShippingAddress?.(shippingAddress) && (
-          <div className="border-t border-[#04258626] pt-3">
-            <AddressBlock
-              shippingAddress={shippingAddress}
-              getAddressValue={getAddressValue}
-            />
-          </div>
-        )}
+      {variant === "order" && hasShippingAddress?.(shippingAddress) && (
+        <div className="border-t border-[#04258626] pt-3">
+          <AddressBlock
+            shippingAddress={shippingAddress}
+            getAddressValue={getAddressValue}
+          />
+        </div>
+      )}
 
       {/* Cart Savings Box */}
       {variant === "cart" && asNumber?.(totalSavings) > 0 && (
@@ -271,11 +267,8 @@ function OrderPaymentSummary({
         </button>
       )}
     </OrderDetailSectionCard>
-
-
   );
 }
-
 
 export { SummaryRow };
 export default OrderPaymentSummary;

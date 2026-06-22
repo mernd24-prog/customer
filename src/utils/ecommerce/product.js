@@ -1,7 +1,17 @@
 export function getProductId(product) {
-  return (
-    product?.id || product?._id || product?.productId || product?.sku || product
-  );
+  if (!product) return "";
+
+  if (typeof product !== "object") return product;
+
+  const directId = product.id || product._id || product.sku;
+  if (directId) return directId;
+
+  const nestedProduct = product.productId || product.product;
+  if (nestedProduct && nestedProduct !== product) {
+    return getProductId(nestedProduct);
+  }
+
+  return "";
 }
 
 export function getProductTitle(product, fallback = "Untitled product") {

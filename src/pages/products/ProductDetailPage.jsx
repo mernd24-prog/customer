@@ -535,8 +535,8 @@ function VariantSelector({
                     }
                     className={`h-[80px]  w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 sm:h-[95px] sm:w-[95px] ${
                       isSelected
-                        ? "border-gold shadow-sm"
-                        : "border-[#E7D9B8] hover:border-gold"
+                        ? "border border-gold"
+                        : "border border-gold/20 "
                     }`}
                     title={value}
                   >
@@ -557,10 +557,8 @@ function VariantSelector({
                   onClick={() =>
                     matchingVariant && setSelectedVariant(matchingVariant)
                   }
-                  className={`min-h-10  min-w-12 rounded-[8px]  px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40  border border-gold ${
-                    isSelected
-                      ? " bg-white text-ink shadow-sm"
-                      : " bg-white text-ink "
+                  className={`min-h-10  min-w-12 rounded-[8px]  px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40  ${
+                    isSelected ? "border border-gold" : "border border-gold/20 "
                   }`}
                 >
                   {value}
@@ -705,7 +703,7 @@ function DetailRows({
     <dl className="divide-y divide-border">
       {rows.map(([key, value]) => (
         <div key={key} className={rowClassName}>
-          <dt className={labelClassName}>{key}</dt>
+          <dt className={labelClassName}>{formatPageTitle(key)}</dt>
           <dd className={valueClassName}>
             {Array.isArray(value) ? value.join(", ") : String(value)}
           </dd>
@@ -745,7 +743,7 @@ function ProductInfoSection({
             {warranty && (
               <div className="grid grid-cols-1 gap-1 px-4 py-3 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]">
                 <dt className="font-medium text-ink">Warranty</dt>
-                <dd className="text-left font-bold text-[#1B1D60] sm:text-right">
+                <dd className="text-left  font-bold text-[#1B1D60] sm:text-right">
                   {warranty.period ||
                     warranty.duration ||
                     warranty.type ||
@@ -773,9 +771,12 @@ function ProductInfoSection({
               Object.entries(attributes).map(([key, value]) => (
                 <div
                   key={key}
-                  className="grid grid-cols-1 gap-1 px-4 py-3 text-sm md:text-lg sm:grid-cols-[220px_minmax(0,1fr)]"
+                  className="grid grid-cols-1  gap-1 px-4 py-3 text-sm md:text-lg sm:grid-cols-[220px_minmax(0,1fr)]"
                 >
-                  <dt className="font-medium text-ink">{key}</dt>
+                  <dt className="font-medium text-ink ">
+                    {" "}
+                    {formatPageTitle(key)}
+                  </dt>
                   <dd className="text-left font-bold text-navy md:text-right">
                     {Array.isArray(value) ? value.join(", ") : String(value)}
                   </dd>
@@ -943,6 +944,36 @@ export default function ProductDetailPage() {
     dispatch(fetchDynamicPrice({ productId, quantity })).catch(() => {});
   }, [dispatch, loadedProductId, productId, quantity]);
 
+  const selectedVariantKey = selectedVariant?._id || selectedVariant?.sku || "";
+
+  useEffect(() => {
+    if (!loadedProductId || String(loadedProductId) !== String(productId)) {
+      return;
+    }
+
+    const requestKey = `${productId}:${selectedVariantKey}:${quantity}`;
+
+    if (dynamicPriceRequestKey.current === requestKey) return;
+
+    dynamicPriceRequestKey.current = requestKey;
+
+    dispatch(
+      fetchDynamicPrice({
+        productId,
+        variantId: selectedVariant?._id,
+        sku: selectedVariant?.sku,
+        quantity,
+      }),
+    ).catch(() => {});
+  }, [
+    dispatch,
+    loadedProductId,
+    productId,
+    quantity,
+    selectedVariant?._id,
+    selectedVariant?.sku,
+  ]);
+
   const variants = useMemo(() => product?.variants || [], [product?.variants]);
 
   const variantOptions = useMemo(() => {
@@ -1039,8 +1070,8 @@ export default function ProductDetailPage() {
       : undefined;
 
   const price = firstMoneyValue(
-    safeDynamicPrice,
     selectedVariantPrice,
+    safeDynamicPrice,
     productPrice,
   );
 
