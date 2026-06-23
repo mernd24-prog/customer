@@ -12,7 +12,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Bell,
   Banknote,
-  CalendarDays,
   CheckCircle2,
   CreditCard,
   Eye,
@@ -20,7 +19,6 @@ import {
   Gift,
   Heart,
   MapPin,
-  Package,
   Phone,
   ShieldCheck,
   Star,
@@ -84,7 +82,7 @@ import {
 } from "../features/notification/notificationSlice";
 import {
   fetchLoyaltyProfile,
-  fetchLoyaltyBenefits,
+  // fetchLoyaltyBenefits,
   fetchLoyaltyHistory,
   redeemLoyaltyPoints,
 } from "../features/loyalty/loyaltySlice";
@@ -292,8 +290,10 @@ const getOrderAmount = (order = {}, key) => {
     }[key] || [];
 
   for (const field of [key, snakeKey, ...aliases]) {
-    if (field && order.summary?.[field] !== undefined) return order.summary[field];
-    if (field && order.amounts?.[field] !== undefined) return order.amounts[field];
+    if (field && order.summary?.[field] !== undefined)
+      return order.summary[field];
+    if (field && order.amounts?.[field] !== undefined)
+      return order.amounts[field];
     if (field && order[field] !== undefined) return order[field];
   }
 
@@ -348,13 +348,13 @@ const getOrderAddressValue = (address = {}, camelKey, snakeKey = camelKey) =>
 const hasOrderShippingAddress = (address = {}) =>
   Boolean(
     getOrderAddressValue(address, "fullName", "full_name") ||
-      address.phone ||
-      address.line1 ||
-      address.line2 ||
-      address.city ||
-      address.state ||
-      getOrderAddressValue(address, "postalCode", "postal_code") ||
-      address.country,
+    address.phone ||
+    address.line1 ||
+    address.line2 ||
+    address.city ||
+    address.state ||
+    getOrderAddressValue(address, "postalCode", "postal_code") ||
+    address.country,
   );
 const formatOrderId = (id = "") => String(id).slice(0, 8).toUpperCase();
 
@@ -364,8 +364,6 @@ const formatOrderDate = (value) =>
         day: "numeric",
         month: "short",
         year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
       })
     : "";
 
@@ -389,7 +387,9 @@ const getExpectedDeliveryDate = (order = {}) => {
     ),
   );
   if (days > 0) {
-    const base = new Date(firstDefined(order.created_at, order.createdAt, Date.now()));
+    const base = new Date(
+      firstDefined(order.created_at, order.createdAt, Date.now()),
+    );
     if (!Number.isNaN(base.getTime())) {
       base.setDate(base.getDate() + days);
       return base.toISOString();
@@ -405,7 +405,9 @@ const normalizeOrderResponse = (payload) => {
   if (!order || typeof order !== "object") return null;
   return {
     ...order,
-    items: getOrderItems(order).length ? getOrderItems(order) : getOrderItems(wrapper),
+    items: getOrderItems(order).length
+      ? getOrderItems(order)
+      : getOrderItems(wrapper),
     amounts: order.amounts || wrapper.amounts,
     summary: order.summary || wrapper.summary,
     shipping_address: order.shipping_address || wrapper.shipping_address,
@@ -419,13 +421,17 @@ const findFetchedOrder = (state, orderId) => {
   const candidates = [
     normalizeOrderResponse(state.current),
     normalizeOrderResponse(state.entities?.[orderId]),
-    ...((Array.isArray(state.list) ? state.list : []).map(normalizeOrderResponse)),
+    ...(Array.isArray(state.list) ? state.list : []).map(
+      normalizeOrderResponse,
+    ),
   ].filter(Boolean);
 
   return (
     candidates.find(
       (item) => String(getOrderId(item) || "") === String(orderId || ""),
-    ) || candidates[0] || null
+    ) ||
+    candidates[0] ||
+    null
   );
 };
 
@@ -741,11 +747,7 @@ export function AccountPage({ tab = "profile" }) {
         <Link to="/account/security">Security</Link>
         <Link to="/account/kyc">KYC</Link>
       </div>
-      <ApiState
-        loading={user.loading}
-        error={user.error}
-        empty={!user.current}
-      >
+      <ApiState loading={user.loading} error={user.error} empty={!user.current}>
         {tab === "profile" && (
           <form className="panel" onSubmit={handleSubmit(submitProfile)}>
             <input
@@ -1513,7 +1515,7 @@ export function PaymentResultPage({ failed = false }) {
         ) : (
           <div className="mx-auto flex min-h-[60vh] w-full max-w-md items-center px-4 py-12">
             <div className="w-full rounded-[var(--customer-radius)] border border-border bg-white p-8 text-center">
-              <CheckCircle2 className="mx-auto mb-4 h-12 w-12 text-gold" />
+              <CheckCircle2 className="mx-auto mb-4 h-[160px] w-[156px] " />
               <h1 className="text-2xl font-bold text-ink">Order Placed!</h1>
               <p className="mt-2 text-sm text-muted">
                 Your order has been placed successfully.
@@ -1552,103 +1554,123 @@ export function PaymentResultPage({ failed = false }) {
             : "Payment Successful | Sam Global"
         }
       />
-      <div className="mx-auto w-full max-w-[1740px] px-4 py-5 sm:px-6 sm:py-8 lg:px-10">
+      <div className="!main-container py-4 min-[375px]:py-5 sm:py-6 lg:py-8">
         <ApiState
           loading={orderState.loading && !order}
           error={orderState.error}
           empty={!order}
         >
-          <div className="grid gap-6 lg:gap-8">
-            <section className="grid gap-4">
+          <div className="grid gap-6">
+            <section className="grid">
               <Breadcrumbs
                 items={breadcrumbItems}
+                title={null}
                 className="text-[#2E2E2E]"
                 linkClassName="text-[#2E2E2E]"
                 currentClassName="text-[#CE9F2D]"
                 separatorClassName="text-[#2E2E2E]"
               />
-
-              <section className="overflow-hidden rounded-[20px] border border-[#CE9F2D4D] bg-white shadow-[0_24px_60px_rgba(27,29,96,0.06)]">
-                <div className="bg-[linear-gradient(135deg,#FFFCF3_0%,#FFFFFF_100%)] px-5 py-6 sm:px-8 sm:py-8">
-                  <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
-                    <div className="flex h-[92px] w-[92px] shrink-0 items-center justify-center rounded-full bg-[#0A8C37] text-white shadow-[0_16px_30px_rgba(10,140,55,0.2)]">
-                      <CheckCircle2 className="h-12 w-12" strokeWidth={3} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h1 className="text-[28px] font-bold leading-tight text-[#3E4093] sm:text-[36px]">
-                        Order Placed Successfully!
-                      </h1>
-                      <p className="mt-2 max-w-3xl text-sm leading-6 text-[#2E2E2E] sm:text-base">
-                        Thank you for shopping with Sam Global. Your order has
-                        been received and is being prepared for shipment.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-3 bg-[#E5E3F1] px-5 py-4 text-sm font-semibold text-[#1B1D60] sm:flex-row sm:items-center sm:justify-between sm:px-8">
-                  <span>
-                    Order ID : #
-                    {formatOrderId(getOrderNumber(order) || orderId)}
-                  </span>
-                  <span>
-                    Order Date :{" "}
-                    {placedAt
-                      ? formatOrderDate(placedAt)
-                      : "Order date unavailable"}
-                  </span>
-                </div>
-              </section>
-
-              <OrderDetailSectionCard
-                title="Order Status"
-                borderClassName="border-[#CE9F2D66]"
-                bodyClassName="overflow-x-auto px-4 py-5 sm:px-8"
-              >
-                <OrderProgress
-                  status={status}
-                  steps={[
-                    {
-                      status: "confirmed",
-                      label: "Order placed",
-                      note: "Get help with your orders",
-                    },
-                    {
-                      status: "packed",
-                      note: "Get help with your orders",
-                    },
-                    {
-                      status: "shipped",
-                      note: "Get help with your orders",
-                    },
-                    {
-                      status: "delivered",
-                      note: "Get help with your orders",
-                    },
-                  ]}
-                />
-              </OrderDetailSectionCard>
             </section>
 
             <OrderDetailLayout>
-              <div className="grid gap-5">
-                <OrderItemsSection
-                
-                  items={items}
-                  currency={currency}
-                  getItemImage={getOrderItemImage}
-                  getProductTitle={getOrderProductTitle}
-                  getOrderItemColor={getOrderItemColor}
-                  getItemLineTotal={getOrderItemLineTotal}
-                  formatMoney={formatMoney}
-                />
+              <div className="grid gap-4 min-[425px]:gap-5 lg:gap-6">
+                <section className="w-full flex flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D]/40 bg-white">
+                  <div className="flex flex-col gap-4 bg-[linear-gradient(135deg,#FFFCF3_0%,#FFFFFF_100%)] px-4 py-5 sm:px-7 md:px-8">
+                    <div className="flex flex-col items-center gap-4 text-center sm:gap-5 md:flex-row md:items-center md:text-left">
+                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#0A8C37] text-white shadow-[0_16px_30px_rgba(10,140,55,0.2)] min-[375px]:h-[72px] min-[375px]:w-[72px] min-[425px]:h-20 min-[425px]:w-20 sm:h-[84px] sm:w-[84px] lg:h-[92px] lg:w-[92px]">
+                        <CheckCircle2
+                          className="h-8 w-8 min-[375px]:h-9 min-[375px]:w-9 min-[425px]:h-10 min-[425px]:w-10 lg:h-12 lg:w-12"
+                          strokeWidth={3}
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h1 className="text-[24px] font-bold leading-[1.1] text-[#3E4093] min-[375px]:text-[28px] min-[425px]:text-[32px] sm:text-[40px] lg:text-[48px] xl:text-[56px]">
+                          Order Placed Successfully !
+                        </h1>
+                        <p className="mt-2 max-w-3xl text-[13px] font-medium leading-6 text-[#2E2E2E] min-[375px]:text-sm min-[425px]:text-[15px] sm:text-[17px] sm:leading-7 lg:text-[20px] lg:leading-[30px]">
+                          Thank you for shopping with Sam Global.
+                          <br className="hidden sm:block" />
+                          Your order has been received and is being prepared for
+                          shipment.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-auto flex flex-col gap-2 bg-[#BBBBCB] px-4 py-3 text-[13px] font-semibold text-[#1B1D60] min-[375px]:px-5 min-[375px]:text-sm min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-4 sm:text-[17px] md:px-8 lg:text-[18px]">
+                    <span>
+                      Order ID : #
+                      {formatOrderId(getOrderNumber(order) || orderId)}
+                    </span>
+                    <span>
+                      Estimated Delivery :{" "}
+                      {expectedDelivery
+                        ? formatOrderDate(expectedDelivery)
+                        : "To be confirmed"}
+                    </span>
+                  </div>
+                </section>
+
+                <OrderDetailSectionCard
+                  className="w-full rounded-[20px] bg-[#FFFDF8]"
+                  borderClassName="border border-[#CE9F2D80]"
+                  bodyClassName="flex items-center overflow-hidden px-4 py-4 min-[425px]:px-5 sm:px-6 md:px-8 lg:px-[35px] lg:py-[25px]"
+                >
+                  <div className="w-full">
+                    <OrderProgress
+                    noteClassName="text-center font-medium text-[18px] leading-none tracking-normal text-[#6F7480] "
+                      status={status}
+                      steps={[
+                        {
+                          status: "confirmed",
+                          label: "Order Placed",
+                          note: "Get help with your orders",
+                        },
+                        {
+                          status: "packed",
+                          label: "Packed",
+                          note: "Get help with your orders",
+                        },
+                        {
+                          status: "shipped",
+                          label: "Shipped",
+                          note: "Get help with your orders",
+                        },
+                        {
+                          status: "delivered",
+                          label: "Delivered",
+                          note: "Get help with your orders",
+                        },
+                      ]}
+                    />
+                  </div>
+                </OrderDetailSectionCard>
+
+                <div className="w-full">
+                  <OrderItemsSection
+                    items={items}
+                    title={null}
+                    borderClassName="border-[#CE9F2D]"
+                    bodyClassName="grid divide-y divide-[#E9E9EF] p-4 min-[375px]:p-5 min-[425px]:p-6 lg:p-[25px]"
+                    itemClassName="py-3 first:pt-0 last:pb-0 min-[375px]:py-4 lg:py-5 lg:gap-6"
+                    currency={currency}
+                    getItemImage={getOrderItemImage}
+                    getProductTitle={getOrderProductTitle}
+                    getOrderItemColor={getOrderItemColor}
+                    getItemLineTotal={getOrderItemLineTotal}
+                    formatMoney={formatMoney}
+                  />
+                </div>
               </div>
 
-              <OrderDetailAside className="gap-5">
+              <OrderDetailAside className="gap-4 min-[425px]:gap-5 lg:gap-6 lg:self-start lg:sticky lg:top-28 w-full">
                 <OrderDetailSectionCard
                   title="Order Summary"
+                  className="w-full rounded-[20px]"
+                  headerClassName="min-h-[64px] px-4 py-4 min-[375px]:px-5 sm:min-h-[72px] sm:px-6 lg:px-[20px] lg:py-[25px]"
+                  titleClassName="text-[18px] leading-tight min-[375px]:text-[20px] sm:text-[22px] lg:text-[24px]"
                   borderClassName="border-[#CE9F2D66]"
-                  bodyClassName="grid gap-0 px-4 py-3"
+                  bodyClassName="grid gap-0 px-4 py-3 min-[375px]:px-5 min-[425px]:py-4 sm:px-6 lg:px-4"
                 >
                   <SummaryRow
                     label={`${items.length.toString().padStart(2, "0")} Item(s)`}
@@ -1683,16 +1705,17 @@ export function PaymentResultPage({ failed = false }) {
                     />
                   </div>
 
-                  <div className="mt-3 rounded-[14px] border border-[#CE9F2D33] bg-[#FFF9EB] px-4 py-4">
+                  <div className="mt-3 rounded-[14px]  px-3 py-3 min-[375px]:px-4 min-[375px]:py-4">
                     <div className="flex items-start gap-3">
-                      <span className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full border border-[#CE9F2D66] bg-white text-[#CE9F2D]">
-                        <Truck className="h-5 w-5" />
+                      <span className="mt-0.5 flex h-[70px] w-[70px] items-center justify-center rounded-full border border-[#CE9F2D66] bg-white text-[#CE9F2D]">
+                        <Truck className="h-[50px] w-[50px]" />
                       </span>
-                      <div>
-                        <p className="text-sm font-medium text-[#2E2E2E]">
+                      <div className="flex flex-col gap-3">
+                        <p className="text-xs font-semibold text-[#2E2E2E] min-[375px]:text-[20px]">
                           Expected Delivery
                         </p>
-                        <p className="text-xl font-bold leading-tight text-[#CE9F2D]">
+
+                        <p className="text-lg font-bold leading-tight text-[#CE9F2D] min-[375px]:text-[30px]">
                           {expectedDelivery
                             ? formatOrderDate(expectedDelivery)
                             : "To be confirmed"}
@@ -1701,21 +1724,15 @@ export function PaymentResultPage({ failed = false }) {
                     </div>
                   </div>
 
-                  <div className="mt-4 grid gap-3">
-                    <Link to={orderLink}>
-                      <BrandButton
-                        variant="primary"
-                        rounded
-                        label="Track Order"
-                        className="h-12 w-full text-sm font-semibold"
-                      />
-                    </Link>
-                    <Link to="/">
+                  <div className="mt-4 grid gap-[10px]">
+                  
+
+                    <Link to="/" className="w-full">
                       <BrandButton
                         variant="secondary"
                         rounded
                         label="Continue Shopping"
-                        className="h-12 w-full text-sm"
+                        className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
                       />
                     </Link>
                   </div>
@@ -1724,26 +1741,31 @@ export function PaymentResultPage({ failed = false }) {
                 {hasOrderShippingAddress(shippingAddress) && (
                   <OrderDetailSectionCard
                     title="Delivery Address"
+                    className="w-full rounded-[20px]"
+                    headerClassName="min-h-[64px] px-4 py-4 min-[375px]:px-5 sm:min-h-[72px] sm:px-6 lg:px-[20px] lg:py-[25px]"
+                    titleClassName="text-[18px] leading-tight min-[375px]:text-[20px] sm:text-[22px] lg:text-[24px]"
                     borderClassName="border-[#CE9F2D66]"
-                    bodyClassName="grid gap-4 px-5 py-5"
+                    bodyClassName="grid gap-4 px-4 py-4 min-[375px]:px-5 min-[375px]:py-5 sm:px-6"
                   >
-                    <div className="inline-flex w-fit rounded-full bg-[#CE9F2D] px-3 py-1 text-xs font-semibold text-white">
+                    <div className="inline-flex w-[81px] h-[37px] items-center rounded-full bg-[#CE9F2D] px-3 py-1 text-[18px] font-semibold text-white">
                       Home
                     </div>
                     <div className="grid gap-3 text-[#2E2E2E]">
-                      <p className="text-[28px] font-bold leading-tight text-[#2E2E2E]">
+                      <p className="text-[22px] font-bold leading-tight text-[#2E2E2E] min-[375px]:text-[24px] sm:text-[28px]">
                         {getOrderAddressValue(
                           shippingAddress,
                           "fullName",
                           "full_name",
                         )}
                       </p>
-                      <div className="flex items-start gap-2 text-sm leading-6">
-                        <Phone className="mt-1 h-4 w-4 shrink-0 text-[#CE9F2D]" />
-                        <span>{shippingAddress.phone || "Phone unavailable"}</span>
+                      <div className="flex items-start gap-2 text-[13px] leading-6 min-[375px]:text-[20px] font-medium">
+                        <Phone className="mt-1 h-[18px] w-[18px] shrink-0 text-[#CE9F2D]" />
+                        <span>
+                          {shippingAddress.phone || "Phone unavailable"}
+                        </span>
                       </div>
-                      <div className="flex items-start gap-2 text-sm leading-6">
-                        <MapPin className="mt-1 h-4 w-4 shrink-0 text-[#CE9F2D]" />
+                      <div className="flex items-start gap-2 text-[13px] leading-6 min-[375px]:text-[20px] font-medium ">
+                        <MapPin className="mt-1 h-[18px] w-[18px] shrink-0 text-[#CE9F2D]" />
                         <span>
                           {[
                             shippingAddress.line1,
@@ -1764,7 +1786,6 @@ export function PaymentResultPage({ failed = false }) {
                     </div>
                   </OrderDetailSectionCard>
                 )}
-
               </OrderDetailAside>
             </OrderDetailLayout>
           </div>
@@ -1805,11 +1826,7 @@ export function OrdersPage({ detail = false, track = false }) {
     return (
       <section>
         <Seo title={`Order ${orderId} | Sam Global`} />
-        <ApiState
-          loading={state.loading}
-          error={state.error}
-          empty={!order}
-        >
+        <ApiState loading={state.loading} error={state.error} empty={!order}>
           <div className="panel">
             <h1>Order {orderId}</h1>
             <StatusTimeline status={order?.status || order?.orderStatus} />
@@ -2082,9 +2099,7 @@ export function SimpleApiPage({ title, selector, thunk, action }) {
     <>
       <Seo title={`${title} | Sam Global`} />
       <div className="w-container py-8">
-        <h1 className="mb-6  text-2xl font-bold text-ink">
-          {title}
-        </h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">{title}</h1>
         <ApiState
           loading={state.loading}
           error={state.error}
@@ -2135,14 +2150,10 @@ export function SubscriptionPage() {
                 <h2 className=" text-lg font-semibold text-ink">
                   {plan.title}
                 </h2>
-                <p className="mt-1  text-sm text-muted">
-                  {plan.description}
-                </p>
+                <p className="mt-1  text-sm text-muted">{plan.description}</p>
                 <p className="mt-4  text-2xl font-bold text-gold">
                   {formatMoney(plan.monthlyPrice, plan.currency || "INR")}
-                  <span className=" text-sm font-normal text-gray">
-                    /mo
-                  </span>
+                  <span className=" text-sm font-normal text-gray">/mo</span>
                 </p>
                 <div className="mt-auto pt-5">
                   <BrandButton
@@ -2218,11 +2229,7 @@ export function PreferencesPage() {
         <h1 className="mb-6  text-2xl font-bold text-ink">
           Notification Preferences
         </h1>
-        <ApiState
-          loading={state.loading}
-          error={state.error}
-          empty={false}
-        >
+        <ApiState loading={state.loading} error={state.error} empty={false}>
           <form
             className="rounded-[12px] border border-border bg-white p-6 sm:p-8"
             onSubmit={handleSubmit((v) =>
@@ -2266,9 +2273,7 @@ export function PreferencesPage() {
                   key={key}
                   className="flex cursor-pointer items-center justify-between gap-3 rounded-[10px] border border-border px-4 py-3"
                 >
-                  <span className=" text-sm font-medium text-ink">
-                    {label}
-                  </span>
+                  <span className=" text-sm font-medium text-ink">{label}</span>
                   <input
                     type="checkbox"
                     {...register(key)}
@@ -2279,9 +2284,7 @@ export function PreferencesPage() {
             </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <label className="grid gap-1.5">
-                <span className=" text-sm font-medium text-ink">
-                  Frequency
-                </span>
+                <span className=" text-sm font-medium text-ink">Frequency</span>
                 <select
                   {...register("frequency")}
                   className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5  text-sm text-ink outline-none focus:border-gold"
@@ -2291,9 +2294,7 @@ export function PreferencesPage() {
                 </select>
               </label>
               <label className="grid gap-1.5">
-                <span className=" text-sm font-medium text-ink">
-                  Timezone
-                </span>
+                <span className=" text-sm font-medium text-ink">Timezone</span>
                 <input
                   {...register("timezone")}
                   className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5  text-sm text-ink outline-none focus:border-gold"
@@ -2340,9 +2341,7 @@ export function LoyaltyPage() {
     <>
       <Seo title="Loyalty Rewards | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6  text-2xl font-bold text-ink">
-          Loyalty Rewards
-        </h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">Loyalty Rewards</h1>
         <ApiState
           loading={loyaltyState.loading && !profile}
           error={loyaltyState.error}
@@ -2559,9 +2558,7 @@ export function WarrantyPage({ detail = false }) {
                       <p className=" text-sm font-medium text-ink">
                         {w.type || "Warranty"}
                       </p>
-                      <p className=" text-xs text-gray">
-                        {w.period}
-                      </p>
+                      <p className=" text-xs text-gray">{w.period}</p>
                     </div>
                   </div>
                   <Link to={`/warranty/${w.id}`}>
@@ -2671,9 +2668,7 @@ export function WalletPage() {
     <>
       <Seo title="My Wallet | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6  text-2xl font-bold text-ink">
-          My Wallet
-        </h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">My Wallet</h1>
         <ApiState
           loading={walletState.loading && !wallet}
           error={walletState.error}
@@ -2719,9 +2714,7 @@ export function PaymentsPage() {
     <>
       <Seo title="Payment History | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6  text-2xl font-bold text-ink">
-          Payment History
-        </h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">Payment History</h1>
         <ApiState
           loading={paymentState.loading && !payments.length}
           error={paymentState.error}
@@ -2797,9 +2790,7 @@ export function NotificationsPage() {
     <>
       <Seo title="Notifications | Sam Global" />
       <div className="w-container py-8">
-        <h1 className="mb-6  text-2xl font-bold text-ink">
-          Notifications
-        </h1>
+        <h1 className="mb-6  text-2xl font-bold text-ink">Notifications</h1>
         <ApiState
           loading={notifState.loading && !notifications.length}
           error={notifState.error}

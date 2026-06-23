@@ -33,7 +33,7 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
 
   return (
     <div
-      className="relative grid min-w-[720px] gap-2 px-1 py-3 lg:min-w-0"
+      className="relative grid min-w-0 gap-2 px-1 py-3"
       style={{
         gridTemplateColumns: `repeat(${normalizedSteps.length}, minmax(0, 1fr))`,
       }}
@@ -61,7 +61,7 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
         return (
           <div
             key={`${step.status}-${index}`}
-            className="relative flex min-w-0 flex-col items-center"
+            className="relative flex min-w-0 flex-col items-center gap-2"
           >
             <div className="relative flex items-center justify-center">
               <div
@@ -79,14 +79,14 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
               </div>
             </div>
             <p
-              className={`mt-3 flex h-[26px] w-[92px] items-center justify-center text-center font-sans text-[20px] font-semibold leading-[26px] ${
+              className={`mt-3 min-h-[26px] w-full max-w-[140px] text-center font-sans text-[20px] font-semibold leading-[26px] ${
                 current || done ? "text-[#CE9F2D]" : "text-muted"
               }`}
             >
               {label}
             </p>
             {step.note ? (
-              <p className="mt-1 w-[92px] text-center text-[18px] font-medium leading-5 text-muted">
+              <p className="mt-1 w-full max-w-[160px] text-center text-[18px] font-medium leading-5 text-muted">
                 {step.note}
               </p>
             ) : null}

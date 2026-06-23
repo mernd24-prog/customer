@@ -6,11 +6,11 @@ function OrderDetailSectionCard({
   bodyClassName = "",
   titleClassName = "",
   headerContent,
-  borderClassName = "border-[#CE9F2D80]",
+  borderClassName = "border border-[#CE9F2D]/50",
 }) {
   return (
     <section
-      className={`overflow-hidden rounded-[15px] border ${borderClassName} bg-white ${className}`}
+      className={`overflow-hidden rounded-[15px]  border ${borderClassName} bg-white ${className}`}
     >
       {title || headerContent ? (
         <div

@@ -10,9 +10,12 @@ function OrderItemCard({
   getItemLineTotal,
   getOrderItemColor,
   formatMoney,
+  className = "",
 }) {
   return (
-    <div className="flex w-full flex-col gap-4 sm:flex-row sm:gap-5 lg:gap-[36px]">
+    <div
+      className={`flex w-full flex-col gap-4 sm:flex-row sm:items-start sm:gap-5 lg:gap-[36px] ${className}`}
+    >
       <div className="flex aspect-[252/210] w-full shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[#CE9F2D33] bg-white sm:w-[180px] lg:w-[220px] 2xl:w-[252px]">
         {getItemImage(item) ? (
           <img
@@ -59,17 +62,25 @@ function OrderItemCard({
   );
 }
 
-function OrderItemsSection({ items, ...itemProps }) {
+function OrderItemsSection({
+  items,
+  title = "Item",
+  borderClassName = "border-[#CE9F2D66]",
+  bodyClassName = "grid gap-4 p-4 sm:p-5 lg:p-6",
+  itemClassName = "",
+  ...itemProps
+}) {
   return (
     <OrderDetailSectionCard
-      title="Item"
-      borderClassName="border-[#CE9F2D66]"
-      bodyClassName="grid gap-4 p-4 sm:p-5 lg:p-6"
+      title={title}
+      borderClassName={borderClassName}
+      bodyClassName={bodyClassName}
     >
       {items.map((item, index) => (
         <OrderItemCard
           key={item.id || item._id || index}
           item={item}
+          className={itemClassName}
           {...itemProps}
         />
       ))}
