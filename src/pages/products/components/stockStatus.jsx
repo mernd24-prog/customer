@@ -11,7 +11,7 @@ export default function ProductStockStatus({
 
   return (
     <div className="flex items-center gap-2 my-1">
-      <div className="relative z-0 w-3 h-3 rounded-full bg-success animate-pulse" />
+      <div className="relative z-0 w-3 h-3 rounded-full bg-success " />
       <p className="text-sm lg:text-[20px] font-bold text-success">
         {selectedVariant?.stock ?? product?.stock ?? 52} in stock
       </p>

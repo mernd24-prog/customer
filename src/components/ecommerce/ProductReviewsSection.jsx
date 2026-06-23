@@ -411,9 +411,9 @@ export default function ProductReviewsSection({ productId, product }) {
     <section id="reviews" className="w-full overflow-hidden">
       <div className="flex  flex-col gap-4 lg:gap-12 lg:flex-row">
         <aside className=" lg:sticky lg:top-20   lg:self-start">
-          <div className="w-full lg:w-[580px]  rounded-xl  border border-[#CE9F2D66] bg-white">
+          <div className="w-full lg:w-[420px] xl:w-[580px]  rounded-xl  border border-[#CE9F2D66] bg-white">
             <div className=" px-4 py-6  rounded-xl bg-[#CE9F2D33] sm:px-5">
-              <h2 className="text-lg md:text-[24px] font-bold text-[#2E2E2E]">
+              <h2 className="text-lg lg:text-[24px] font-bold text-[#2E2E2E]">
                 Product Ratings & Reviews
               </h2>
             </div>

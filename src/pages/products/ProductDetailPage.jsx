@@ -105,7 +105,7 @@ function IconActionButton({ title, onClick, children, className = "" }) {
     <button
       type="button"
       onClick={onClick}
-      className={`flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-all duration-300 ease-in-out hover:scale-110 hover:bg-white sm:h-10 sm:w-10 ${className}`}
+      className={`flex h-9 w-9 items-center justify-center bg-[#F5F8FB] rounded-full border border-blue/60    hover:scale-110  sm:h-12 sm:w-12 ${className}`}
       title={title}
     >
       {children}
@@ -184,15 +184,15 @@ function ProductGallery({
 
   return (
     <div
-      className={`flex min-w-0 flex-col gap-4 overflow-hidden ${
+      className={`flex min-w-0 flex-col gap-4  overflow-hidden ${
         isModal ? "h-full w-full" : "h-auto w-full xl:h-[560px] 2xl:h-[620px]"
       }`}
     >
-      <div className="flex min-w-0 flex-col gap-4 overflow-hidden xl:h-full xl:flex-row">
-        <div className="order-2 h-[90px]  w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[85px]">
+      <div className="flex min-w-0 flex-col gap-6 overflow-hidden xl:h-full xl:flex-row">
+        <div className="order-2 h-[90px]   w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[85px]">
           <Swiper
             onSwiper={setThumbsSwiper}
-            spaceBetween={10}
+            spaceBetween={20}
             slidesPerView="auto"
             freeMode
             watchSlidesProgress
@@ -203,7 +203,7 @@ function ProductGallery({
             {images.map((img, i) => (
               <SwiperSlide
                 key={i}
-                className="!h-[90px] !w-[90px] xl:!h-[78px]  xl:!w-full"
+                className="!h-[90px] !w-[90px] xl:!h-[90px]  xl:!w-[85px]"
               >
                 <button
                   type="button"
@@ -216,16 +216,16 @@ function ProductGallery({
                     setActiveIndex(i);
                     mainSwiper?.slideTo(i);
                   }}
-                  className={`h-full w-full overflow-hidden rounded-[8px] border   transition-colors duration-200 ${
+                  className={`h-full w-full overflow-hidden rounded-[15px]  border   transition-colors duration-200 ${
                     activeIndex === i
-                      ? "border-gold shadow-sm"
+                      ? "border-gold shadow-sm bg-gradient-to-t from-[#1B1D60]/65 to-transparent"
                       : "border-border"
                   }`}
                 >
                   <img
                     src={img}
                     alt=""
-                    className="h-full p-2 w-full object-cover"
+                    className="h-full p-2  w-full object-contain"
                     onError={(event) =>
                       applyImageFallback(event, fallbackLabel, "product")
                     }
@@ -237,10 +237,8 @@ function ProductGallery({
         </div>
 
         <div
-          className={`relative order-1 min-w-0  overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-transparent xl:order-2 ${
-            isModal
-              ? "h-full"
-              : "h-[360px] sm:h-[400px] md:h-[460px]  lg:h-[600px] xl:h-full"
+          className={`relative order-1 min-w-0  overflow-hidden border border-gold rounded-[20px]  bg-transparent xl:order-2 ${
+            isModal ? "h-full" : "aspect-square lg:h-[600px] xl:h-full w-full"
           }`}
         >
           <Swiper
@@ -260,7 +258,7 @@ function ProductGallery({
             {images.map((img, i) => (
               <SwiperSlide key={i} className="!h-full bg-transparent">
                 <div
-                  className={`relative h-full w-full overflow-hidden bg-transparent ${
+                  className={`relative   h-full w-full overflow-hidden bg-transparent ${
                     isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
                   }`}
                   onMouseMove={handleMouseMove}
@@ -271,7 +269,7 @@ function ProductGallery({
                     src={img}
                     alt=""
                     draggable={false}
-                    className={`h-full w-full select-none object-contain transition-transform duration-300 ease-out ${
+                    className={`h-full w-full select-none  object-contain transition-transform duration-300 ease-out ${
                       isZoomed
                         ? isModal
                           ? "scale-[1.5]"
@@ -339,10 +337,10 @@ function ImageGallery({
   }, [onShareClose, shareOpen]);
 
   return (
-    <div className="relative w-full min-w-0 overflow-hidden">
+    <div className="relative w-full  min-w-0 overflow-hidden">
       <ProductGallery images={images} fallbackLabel={fallbackLabel} />
 
-      <div className="absolute right-3 top-3 z-20 flex flex-col gap-2 sm:right-4 sm:top-4">
+      <div className="absolute right-3  top-3 z-20 flex flex-col gap-2 sm:right-4 sm:top-4">
         <IconActionButton
           title="Zoom image"
           onClick={() => {
@@ -498,18 +496,25 @@ function VariantSelector({
   product,
 }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-wrap gap-4">
       {variantOptions.map((option) => (
-        <div key={option.slug}>
+        <div
+          key={option.slug}
+          className={
+            option.displayType === "color_swatch"
+              ? "order-2 w-full"
+              : "order-1 flex-none"
+          }
+        >
           <p
             className={`mb-3 font-semibold capitalize text-ink ${
-              option.displayType === "color_swatch" ? "text-xl" : "text-[11px]"
+              option.displayType === "color_swatch" ? "text-xl" : "text-[20px]"
             }`}
           >
             {option.displayType === "color_swatch" ? "Colour" : option.name}:
           </p>
 
-          <div className="flex  flex-wrap gap-4">
+          <div className="flex  w-fit flex-wrap gap-4">
             {option.values.map((value, valueIndex) => {
               const isSelected =
                 String(selectedAttributes[option.slug]) === String(value);
@@ -541,9 +546,9 @@ function VariantSelector({
                     onClick={() =>
                       matchingVariant && setSelectedVariant(matchingVariant)
                     }
-                    className={`h-[80px]  w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 sm:h-[95px] sm:w-[95px] ${
+                    className={`h-[80px]  w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out  sm:h-[95px] sm:w-[95px] ${
                       isSelected
-                        ? "border border-gold"
+                        ? "border border-gold bg-gradient-to-t from-[#1B1D60]/65 to-transparent"
                         : "border border-gold/20 "
                     }`}
                     title={value}
@@ -565,8 +570,10 @@ function VariantSelector({
                   onClick={() =>
                     matchingVariant && setSelectedVariant(matchingVariant)
                   }
-                  className={`min-h-10  min-w-12 rounded-[8px]  px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40  ${
-                    isSelected ? "border border-gold" : "border border-gold/20 "
+                  className={`min-h-10  min-w-12 rounded-[8px]  px-3 py-1 text-xs font-bold transition-all duration-300  ease-in-out disabled:cursor-not-allowed disabled:opacity-40  ${
+                    isSelected
+                      ? "border border-gold bg-gradient-to-t from-[#1B1D60]/25 to-transparent"
+                      : "border border-gold/20 "
                   }`}
                 >
                   {value}
@@ -1150,15 +1157,15 @@ export default function ProductDetailPage() {
       />
 
       <div className=" ">
-        <nav className=" flex  my-6 flex-wrap items-center gap-1 text-sm lg:text-lg text-[#2E2E2E]">
+        <nav className=" flex  mt-8 lg:mt-12 flex-wrap items-center gap-1 text-sm lg:text-lg text-[#2E2E2E]">
           <Link
             to="/"
-            className="hover:text-ink text-[#2E2E2E] transition-all duration-300 ease-in-out"
+            className="hover:text-ink font-medium text-[#2E2E2E] transition-all duration-300 ease-in-out"
           >
             Home
           </Link>
 
-          <span>/</span>
+          <span>{">"}</span>
 
           {product?.parentCategory && (
             <>
@@ -1168,7 +1175,7 @@ export default function ProductDetailPage() {
               >
                 {(product.parentCategory || "").replace(/-/g, " ")}
               </Link>
-              <span>/</span>
+              <span>{">"}</span>
             </>
           )}
 
@@ -1176,15 +1183,15 @@ export default function ProductDetailPage() {
             <>
               <Link
                 to={CUSTOMER_ROUTES.category(product.category)}
-                className="capitalize text-[#2E2E2E] hover:text-ink transition-all duration-300 ease-in-out"
+                className="capitalize font-medium text-[#2E2E2E] hover:text-ink transition-all duration-300 ease-in-out"
               >
                 {(product.category || "").replace(/-/g, " ")}
               </Link>
-              <span>/</span>
+              <span>{">"}</span>
             </>
           )}
 
-          <span className="line-clamp-1  text-gold-dark">
+          <span className="line-clamp-1 font-medium text-gold">
             {getProductTitle(product) || "Product"}
           </span>
         </nav>
@@ -1198,7 +1205,7 @@ export default function ProductDetailPage() {
         >
           {product && (
             <>
-              <div className="grid min-w-0 items-start gap-2 xl:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] md:gap-7">
+              <div className="grid min-w-0 mt-8 lg:mt-14 items-start gap-2 xl:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] md:gap-10">
                 <div className="min-w-0">
                   <ImageGallery
                     images={images}

@@ -394,24 +394,6 @@ export default function CartPage() {
     sellingSubtotal + shippingTotal - extraCoupon - extraWallet;
   const totalPayable = Math.max(0, totalBeforeTax + extraTaxPayable);
   const totalSavings = productSavings + extraCoupon + extraWallet;
-  const fmt = (n) => formatMoney(n, currency);
-  const hasMRP = mrpSubtotal > sellingSubtotal;
-  const hasDiscount = totalSavings > 0;
-  const shippingFree = shippingTotal === 0;
-  const rowClass = "";
-
-  const sellerGroups = useMemo(() => {
-    const groups = new Map();
-    items.forEach((item) => {
-      const key = item.seller || "other";
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key).push(item);
-    });
-    return [...groups.entries()].map(([sellerName, groupItems]) => ({
-      sellerName: sellerName === "other" ? null : sellerName,
-      items: groupItems,
-    }));
-  }, [items]);
 
   const hasCartItems = items.length > 0;
   const hasSavedItems = savedForLaterItems.length > 0 || wishlist.length > 0;

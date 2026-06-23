@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronUp, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
+import { ChevronUp, MapPin, Pencil, Phone, Plus, Trash2 } from "lucide-react";
 import Button from "../../components/ui/Button";
-import AddressLabel from "../../components/ui/AddressLabel";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
 } from "../../components/address/AddressFormFields";
@@ -125,10 +124,10 @@ export default function AddressTab({ user }) {
   const addDialCodes = addCountryObj?.dialCode
     ? [normalizeDialCode(addCountryObj.dialCode)]
     : Array.from(
-      new Set(
-        countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
-      ),
-    ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
+        new Set(
+          countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
+        ),
+      ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   // Clear state and city if they don't match the selected country for Add Form
   useEffect(() => {
@@ -213,10 +212,10 @@ export default function AddressTab({ user }) {
   const editDialCodes = editCountryObj?.dialCode
     ? [normalizeDialCode(editCountryObj.dialCode)]
     : Array.from(
-      new Set(
-        countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
-      ),
-    ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
+        new Set(
+          countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
+        ),
+      ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   // Clear state and city if they don't match the selected country for Edit Form
   useEffect(() => {
@@ -371,34 +370,23 @@ export default function AddressTab({ user }) {
   const responsiveButtonClass = "w-full sm:w-auto";
   const sectionHeaderClass =
     "flex items-center gap-2 text-sm font-semibold text-ink";
-  const actionIconButtonClass =
-    "inline-flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2";
-
   return (
     <>
       <div className="grid gap-5  ">
-        <div className="flex flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className=" text-base font-semibold text-ink">Saved addresses</p>
-            <p className=" text-sm text-muted">
-              {addresses.length
-                ? `${addresses.length} address${addresses.length === 1 ? "" : "es"} saved`
-                : "Add a delivery address for faster checkout."}
-            </p>
-          </div>
+        <div className="flex  flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row  sm:justify-end">
           <button
             type="button"
             onClick={() => setShowAddForm((value) => !value)}
-            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4  text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
+            className="inline-flex min-h-10 items-center  justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4  text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
           >
             {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
-            {showAddForm ? "Close form" : "Add address"}
+            {showAddForm ? "Close form" : "Add New Address"}
           </button>
         </div>
 
         {showAddForm && (
           <form
-            className="grid gap-4 rounded-[10px] border border-border bg-surface-soft p-4 sm:p-5"
+            className="grid gap-4  rounded-[10px] border border-border bg-surface-soft p-4 sm:p-5"
             onSubmit={addForm.handleSubmit(handleAdd)}
             noValidate
           >
@@ -441,14 +429,14 @@ export default function AddressTab({ user }) {
         )}
 
         {addresses.length > 0 ? (
-          <div className="grid gap-3">
+          <div className="grid gap-3  ">
             {addresses.map((addr) => {
               const addrId = addr._id || addr.id;
               const isEditing = editingId === addrId;
               return (
                 <div
                   key={addrId}
-                  className="rounded-[10px] border border-border bg-white p-4 transition-all duration-300 ease-in-out hover:border-gold/40 hover:shadow-sm sm:p-5"
+                  className="w-full   overflow-hidden rounded-[12px] border border-gold bg-white"
                 >
                   {isEditing ? (
                     <form
@@ -457,7 +445,7 @@ export default function AddressTab({ user }) {
                       noValidate
                     >
                       <div className={sectionHeaderClass}>
-                        <Pencil size={16} className="text-gold" />
+                        <Pencil size={16} className="text-gold " />
                         Edit address
                       </div>
                       <AddressFormFields
@@ -493,27 +481,56 @@ export default function AddressTab({ user }) {
                       </div>
                     </form>
                   ) : (
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                      <AddressLabel
-                        address={addr}
-                        showIcon={true}
-                        className="min-w-0"
-                      />
-                      <div className="flex shrink-0 gap-2 sm:self-start">
-                        <button
-                          type="button"
-                          onClick={() => startEdit(addr)}
-                          className={`${actionIconButtonClass} border border-border text-muted hover:border-gold hover:bg-cream hover:text-ink focus-visible:ring-gold/30`}
-                        >
-                          <Pencil size={15} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(addrId)}
-                          className={`${actionIconButtonClass} border border-red-100 text-red-500 hover:bg-red-50 hover:text-red-700 focus-visible:ring-red-200`}
-                        >
-                          <Trash2 size={15} />
-                        </button>
+                    <div>
+                      <div className="flex items-center justify-between gap-3 bg-[#CE9F2D33] px-4 py-8">
+                        <p className="text-sm lg:text-[24px] font-bold capitalize text-[#2E2E2E]">
+                          {addr.label || "Address"}
+                        </p>
+                        {addr.isDefault && (
+                          <span className="rounded-full  bg-[#D4A428] px-2.5 py-1 text-[10px] font-semibold text-white">
+                            Default Address
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="p-4">
+                        <p className="text-lg lg:text-2xl font-bold text-[#2E2E2E]">
+                          {addr.fullName || "—"}
+                        </p>
+                        {addr.phone && (
+                          <p className="mt-6 flex items-center  font-medium gap-2 text-sm lg:text-[20px] text-[#2E2E2E]">
+                            <Phone className="size-6 text-[#D4A428]" />
+                            {addr.phone}
+                          </p>
+                        )}
+                        <p className="mt-3 flex items-start font-medium gap-2 text-sm lg:text-[20px] text-[#2E2E2E]">
+                          <MapPin className="mt-0.5 size-6 shrink-0 text-[#D4A428]" />
+                          <span>
+                            {addr.line1}
+                            {addr.line2 ? `, ${addr.line2}` : ""}, {addr.city},{" "}
+                            {addr.state}{" "}
+                            {addr.postalCode || addr.postal_code || ""},{" "}
+                            {addr.country || "India"}
+                          </span>
+                        </p>
+
+                        <div className="mt-6 flex flex-wrap items-center gap-8">
+                          <button
+                            type="button"
+                            onClick={() => startEdit(addr)}
+                            className="inline-flex min-h-9 items-center justify-center gap-2 rounded-[6px] bg-[#D4A428] px-8 text-sm font-semibold text-white"
+                          >
+                            <Pencil className="size-4" /> Edit Address
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(addrId)}
+                            className="inline-flex min-h-9 items-center gap-2 text-sm font-medium text-[#2E2E2E]"
+                          >
+                            <Trash2 className="size-4 text-red-500" /> Remove
+                            Address
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
