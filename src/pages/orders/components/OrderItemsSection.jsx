@@ -1,6 +1,5 @@
 import { Package } from "lucide-react";
 
-import OrderItemMetaList from "./OrderItemMeta";
 import OrderDetailSectionCard from "./OrderDetailSectionCard";
 
 function OrderItemCard({
@@ -31,16 +30,21 @@ function OrderItemCard({
           {getProductTitle(item)}
         </p>
 
-        <OrderItemMetaList
-          className="my-4 sm:my-6"
-          items={[
-            { label: "Color", value: getOrderItemColor(item) },
-            {
-              label: "Quantity",
-              value: String(item.quantity || 1).padStart(2, "0"),
-            },
-          ]}
-        />
+        <div className="my-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink sm:my-6">
+          <span className="text-[18px] font-medium leading-[100%] text-[#2E2E2E]">
+            Color: <span className="font-semibold text-[#1B1D60]">
+              <strong className="font-bold text-[#25247B]">
+                {getOrderItemColor(item)}
+              </strong>
+            </span>
+          </span>
+          <span className="text-[18px] font-medium leading-[100%] text-[#2E2E2E]">
+            Quantity:{" "}
+          <strong className="font-bold text-[#25247B]">
+              {String(item.quantity || 1).padStart(2, "0")}
+            </strong>
+          </span>
+        </div>
 
         <div className="mt-2 gap-[5px] sm:mt-4">
           <p className="text-[20px] font-extrabold leading-[28px] text-[#1B1D60] sm:text-[26px] sm:leading-[38px] md:text-[34px] md:leading-[46px]">

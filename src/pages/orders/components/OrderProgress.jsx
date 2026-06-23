@@ -17,23 +17,37 @@ const normalizeProgressStatus = (status) => {
 };
 
 function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
+  const normalizedSteps = steps.map((step) =>
+    typeof step === "string"
+      ? { status: step, label: TRACKING_LABELS[step] }
+      : step,
+  );
+
   const activeIndex = Math.max(
     0,
-    steps.indexOf(normalizeProgressStatus(activeStatus)),
+    normalizedSteps.findIndex(
+      (step) =>
+        normalizeProgressStatus(step.status) ===
+        normalizeProgressStatus(activeStatus),
+    ),
   );
   const progressWidth =
-    steps.length <= 1 ? 0 : (activeIndex / (steps.length - 1)) * 100;
+    normalizedSteps.length <= 1
+      ? 0
+      : (activeIndex / (normalizedSteps.length - 1)) * 100;
 
   return (
     <div
-      className="relative grid min-w-[720px] gap-2 px-1 py-3 lg:min-w-0"
-      style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
+      className="relative grid min-w-0 gap-2 px-1 py-3"
+      style={{
+        gridTemplateColumns: `repeat(${normalizedSteps.length}, minmax(0, 1fr))`,
+      }}
     >
       <span
         className="absolute top-[3rem] h-0.5 overflow-hidden bg-border"
         style={{
-          left: `calc(100% / ${steps.length} / 2)`,
-          right: `calc(100% / ${steps.length} / 2)`,
+          left: `calc(100% / ${normalizedSteps.length} / 2)`,
+          right: `calc(100% / ${normalizedSteps.length} / 2)`,
         }}
       >
         <span
@@ -41,9 +55,13 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
           style={{ width: `${progressWidth}%` }}
         />
       </span>
-      {steps.map((step, index) => {
+      {normalizedSteps.map((step, index) => {
         const done = activeIndex >= index;
         const current = activeIndex === index;
+        const label =
+          step.status === "pending_payment"
+            ? "Payment"
+            : step.label || TRACKING_LABELS[step.status] || String(step.status);
 
         return (
           <div
@@ -66,12 +84,17 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
               </div>
             </div>
             <p
-              className={`mt-3 flex h-[26px] w-[92px] items-center justify-center text-center font-sans text-[20px] font-semibold leading-[26px] ${
+              className={`mt-3 min-h-[26px] w-full max-w-[140px] text-center font-sans text-[20px] font-semibold leading-[26px] ${
                 current || done ? "text-[#CE9F2D]" : "text-muted"
               }`}
             >
-              {step === "pending_payment" ? "Payment" : TRACKING_LABELS[step]}
+              {label}
             </p>
+            {step.note ? (
+              <p className="mt-1 w-full max-w-[160px] text-center text-[18px] font-medium leading-5 text-muted">
+                {step.note}
+              </p>
+            ) : null}
           </div>
         );
       })}
