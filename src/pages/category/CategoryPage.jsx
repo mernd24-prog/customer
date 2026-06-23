@@ -30,14 +30,7 @@ import {
 } from "../../utils/ecommerce";
 import { isNotFoundApiError } from "../../utils/apiErrors";
 import categoryBannerImage from "/image/png/CategoryBanner.png"
-
-const SORT_OPTIONS = [
-  { value: "", label: "Sort By" },
-  { value: "newest", label: "Latest" },
-  { value: "price_asc", label: "Price: Low to High" },
-  { value: "price_desc", label: "Price: High to Low" },
-  { value: "rating", label: "Top Rated" },
-];
+import { SORT_OPTIONS } from "../../data/constant";
 
 function parseMultiValue(value) {
   return String(value || "")
@@ -138,14 +131,22 @@ function SubCategoryCard({ sub, isActive, onClick }) {
 // ── Child category chips below active sub ────────────────────────────────────
 function ChildChips({ children, selectedKey, onSelect }) {
   if (!children?.length) return null;
+
+  const categoryChipBaseClasses =
+    "rounded-full border px-3 py-1 text-xs font-semibold transition-colors";
+  const categoryChipActiveClasses =
+    "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-white";
+  const categoryChipInactiveClasses =
+    "border-[var(--customer-border)] bg-white text-[var(--customer-ink)] hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold)]";
+
   return (
     <div className="flex flex-wrap gap-2 pt-2">
       <button
         type="button"
         onClick={() => onSelect("")}
-        className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${!selectedKey
-          ? "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-white"
-          : "border-[var(--customer-border)] bg-white text-[var(--customer-ink)] hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold)]"
+        className={`${categoryChipBaseClasses} ${!selectedKey
+          ? categoryChipActiveClasses
+          : categoryChipInactiveClasses
           }`}
       >
         All
@@ -157,9 +158,9 @@ function ChildChips({ children, selectedKey, onSelect }) {
           <Link
             key={k}
             to={CUSTOMER_ROUTES.category(k)}
-            className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${selectedKey === k
-              ? "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-white"
-              : "border-[var(--customer-border)] bg-white text-[var(--customer-ink)] hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold)]"
+            className={`${categoryChipBaseClasses} ${selectedKey === k
+              ? categoryChipActiveClasses
+              : categoryChipInactiveClasses
               }`}
           >
             {n}

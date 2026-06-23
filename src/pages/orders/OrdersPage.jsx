@@ -56,6 +56,7 @@ import {
   ORDER_BREADCRUMBS,
   ORDER_FILTERS,
 } from "../../data/orderPage";
+import { CANCEL_REASON_OPTIONS } from "../../data/constant";
 
 const getOrderId = (order) =>
   order?.id || order?._id || order?.orderId || order?.order_id;
@@ -302,11 +303,11 @@ const getCustomerOrderAmount = (order) => {
     Math.max(
       0,
       asNumber(subtotal) -
-        asNumber(discount) +
-        asNumber(shipping) +
-        asNumber(taxPayable) +
-        asNumber(codCharge) -
-        asNumber(walletDiscount),
+      asNumber(discount) +
+      asNumber(shipping) +
+      asNumber(taxPayable) +
+      asNumber(codCharge) -
+      asNumber(walletDiscount),
     ).toFixed(2),
   );
 
@@ -320,7 +321,7 @@ const getCustomerOrderAmount = (order) => {
     const payableAmount = Math.max(
       0,
       asNumber(order.summary.customerTotalAmount) -
-        asNumber(order.summary.walletDiscountAmount),
+      asNumber(order.summary.walletDiscountAmount),
     );
     return payableAmount > 0 || calculatedAmount <= 0
       ? payableAmount
@@ -331,26 +332,26 @@ const getCustomerOrderAmount = (order) => {
 const getTaxIncludedAmount = (order, taxBreakup = {}) =>
   asNumber(
     order?.summary?.taxIncludedAmount ??
-      taxBreakup?.taxIncludedAmount ??
-      taxBreakup?.tax_included_amount ??
-      0,
+    taxBreakup?.taxIncludedAmount ??
+    taxBreakup?.tax_included_amount ??
+    0,
   );
 const getTaxPayableAmount = (order, taxBreakup = {}) =>
   asNumber(
     order?.summary?.taxPayableAmount ??
-      taxBreakup?.taxPayableAmount ??
-      taxBreakup?.tax_payable_amount ??
-      0,
+    taxBreakup?.taxPayableAmount ??
+    taxBreakup?.tax_payable_amount ??
+    0,
   );
 const formatOrderDate = (value) =>
   value
     ? new Date(value).toLocaleString("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
     : "";
 const formatOrderId = (id = "") => String(id).slice(0, 8).toUpperCase();
 const getApiOrderId = (order) => String(getOrderNumber(order) || "").trim();
@@ -455,7 +456,7 @@ function OrderDetail({ orderId, track }) {
     dispatch(fetchMarketplaceInvoices({ orderId }))
       .unwrap()
       .then((result) => setInvoices(result?.data || result))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setInvoicesLoading(false));
   }, [dispatch, invoiceDownloadAvailable, orderId]);
 
@@ -589,25 +590,25 @@ function OrderDetail({ orderId, track }) {
                       loading={
                         invoices?.orderInvoice &&
                         downloadingId ===
-                          endpoints.tax.invoiceDownload(
-                            invoices.orderInvoice.id ||
-                              invoices.orderInvoice._id,
-                          )
+                        endpoints.tax.invoiceDownload(
+                          invoices.orderInvoice.id ||
+                          invoices.orderInvoice._id,
+                        )
                       }
                       onClick={() =>
                         invoices?.orderInvoice
                           ? handleDownload(
-                              endpoints.tax.invoiceDownload(
-                                invoices.orderInvoice.id ||
-                                  invoices.orderInvoice._id,
-                              ),
-                              `invoice-${getOrderNumber(order)}.pdf`,
-                            )
+                            endpoints.tax.invoiceDownload(
+                              invoices.orderInvoice.id ||
+                              invoices.orderInvoice._id,
+                            ),
+                            `invoice-${getOrderNumber(order)}.pdf`,
+                          )
                           : window.open(
-                              getInvoiceUrl(order),
-                              "_blank",
-                              "noopener,noreferrer",
-                            )
+                            getInvoiceUrl(order),
+                            "_blank",
+                            "noopener,noreferrer",
+                          )
                       }
                       className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[24px] py-[15px] text-[#3E4093] hover:border-[#3E4093] hover:bg-white"
                     >
@@ -704,78 +705,29 @@ function OrderDetail({ orderId, track }) {
 
             {(invoices?.sellerInvoices?.length > 0 ||
               invoices?.orderInvoice) && (
-              <OrderDetailSectionCard
-                borderClassName="border-[#CE9F2D66]"
-                headerClassName="min-h-[72px] py-[20px]"
-                bodyClassName="grid gap-3 p-4 sm:p-5"
-                headerContent={
-                  <h2 className="flex items-center gap-2 font-sans text-[20px] font-bold leading-none text-[#2E2E2E] sm:text-[22px] lg:text-[24px]">
-                    <FileText size={18} className="text-[#1B1D60]" /> Invoices
-                    &amp; documents
-                  </h2>
-                }
-              >
-                {invoices.orderInvoice && (
-                  <div className="flex flex-col gap-3 rounded-[10px] border border-[#CE9F2D33] bg-[#FFFDF8] px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#CE9F2D1A] text-[#1B1D60]">
-                        <FileText size={18} />
-                      </span>
-                      <div className="min-w-0">
-                        <p className="font-sans text-[16px] font-semibold leading-[24px] text-[#2E2E2E]">
-                          Order invoice
-                        </p>
-                        <p className="break-all text-[13px] font-medium leading-[20px] text-[#1B1D60]">
-                          #{formatOrderId(getOrderNumber(order))}
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
-                      loading={
-                        downloadingId ===
-                        endpoints.tax.invoiceDownload(
-                          invoices.orderInvoice.id || invoices.orderInvoice._id,
-                        )
-                      }
-                      onClick={() =>
-                        handleDownload(
-                          endpoints.tax.invoiceDownload(
-                            invoices.orderInvoice.id ||
-                              invoices.orderInvoice._id,
-                          ),
-                          `invoice-${getOrderNumber(order)}.pdf`,
-                        )
-                      }
-                    >
-                      <Download size={13} /> Download
-                    </Button>
-                  </div>
-                )}
-                {(invoices.sellerInvoices || []).map((inv) => {
-                  const invId = inv.id || inv._id;
-                  const sellerName =
-                    inv.sellerName ||
-                    inv.seller_name ||
-                    `Seller ${String(invId).slice(0, 6)}`;
-                  const dlPath = endpoints.tax.invoiceDownload(invId);
-                  return (
-                    <div
-                      key={invId}
-                      className="flex flex-col gap-3 rounded-[10px] border border-[#CE9F2D33] bg-[#FFFDF8] px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
-                    >
+                <OrderDetailSectionCard
+                  borderClassName="border-[#CE9F2D66]"
+                  headerClassName="min-h-[72px] py-[20px]"
+                  bodyClassName="grid gap-3 p-4 sm:p-5"
+                  headerContent={
+                    <h2 className="flex items-center gap-2 font-sans text-[20px] font-bold leading-none text-[#2E2E2E] sm:text-[22px] lg:text-[24px]">
+                      <FileText size={18} className="text-[#1B1D60]" /> Invoices
+                      &amp; documents
+                    </h2>
+                  }
+                >
+                  {invoices.orderInvoice && (
+                    <div className="flex flex-col gap-3 rounded-[10px] border border-[#CE9F2D33] bg-[#FFFDF8] px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex min-w-0 items-center gap-3">
                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#CE9F2D1A] text-[#1B1D60]">
                           <FileText size={18} />
                         </span>
                         <div className="min-w-0">
-                          <p className="truncate font-sans text-[16px] font-semibold leading-[24px] text-[#2E2E2E]">
-                            {sellerName}
+                          <p className="font-sans text-[16px] font-semibold leading-[24px] text-[#2E2E2E]">
+                            Order invoice
                           </p>
-                          <p className="text-[13px] font-medium leading-[20px] text-[#1B1D60]">
-                            Seller invoice
+                          <p className="break-all text-[13px] font-medium leading-[20px] text-[#1B1D60]">
+                            #{formatOrderId(getOrderNumber(order))}
                           </p>
                         </div>
                       </div>
@@ -783,21 +735,70 @@ function OrderDetail({ orderId, track }) {
                         variant="secondary"
                         size="sm"
                         className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
-                        loading={downloadingId === dlPath}
+                        loading={
+                          downloadingId ===
+                          endpoints.tax.invoiceDownload(
+                            invoices.orderInvoice.id || invoices.orderInvoice._id,
+                          )
+                        }
                         onClick={() =>
                           handleDownload(
-                            dlPath,
-                            `invoice-${sellerName}-${getOrderNumber(order)}.pdf`,
+                            endpoints.tax.invoiceDownload(
+                              invoices.orderInvoice.id ||
+                              invoices.orderInvoice._id,
+                            ),
+                            `invoice-${getOrderNumber(order)}.pdf`,
                           )
                         }
                       >
                         <Download size={13} /> Download
                       </Button>
                     </div>
-                  );
-                })}
-              </OrderDetailSectionCard>
-            )}
+                  )}
+                  {(invoices.sellerInvoices || []).map((inv) => {
+                    const invId = inv.id || inv._id;
+                    const sellerName =
+                      inv.sellerName ||
+                      inv.seller_name ||
+                      `Seller ${String(invId).slice(0, 6)}`;
+                    const dlPath = endpoints.tax.invoiceDownload(invId);
+                    return (
+                      <div
+                        key={invId}
+                        className="flex flex-col gap-3 rounded-[10px] border border-[#CE9F2D33] bg-[#FFFDF8] px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
+                      >
+                        <div className="flex min-w-0 items-center gap-3">
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#CE9F2D1A] text-[#1B1D60]">
+                            <FileText size={18} />
+                          </span>
+                          <div className="min-w-0">
+                            <p className="truncate font-sans text-[16px] font-semibold leading-[24px] text-[#2E2E2E]">
+                              {sellerName}
+                            </p>
+                            <p className="text-[13px] font-medium leading-[20px] text-[#1B1D60]">
+                              Seller invoice
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
+                          loading={downloadingId === dlPath}
+                          onClick={() =>
+                            handleDownload(
+                              dlPath,
+                              `invoice-${sellerName}-${getOrderNumber(order)}.pdf`,
+                            )
+                          }
+                        >
+                          <Download size={13} /> Download
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </OrderDetailSectionCard>
+              )}
 
             {cancellations.length > 0 && (
               <section className="rounded-[8px] border border-border bg-white px-4 py-4 sm:px-6">
@@ -864,14 +865,14 @@ function OrderDetail({ orderId, track }) {
                 <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                   {(status === "pending_payment" ||
                     status === "payment_failed") && (
-                    <Button
-                      className="min-h-[38px] w-full sm:w-auto"
-                      loading={retrying}
-                      onClick={handleRetryPayment}
-                    >
-                      <RefreshCw size={15} /> Retry payment
-                    </Button>
-                  )}
+                      <Button
+                        className="min-h-[38px] w-full sm:w-auto"
+                        loading={retrying}
+                        onClick={handleRetryPayment}
+                      >
+                        <RefreshCw size={15} /> Retry payment
+                      </Button>
+                    )}
                   {canCancelOrder(order) && (
                     <Button
                       variant="secondary"
@@ -926,16 +927,15 @@ function OrderDetail({ orderId, track }) {
           <label className="text-sm font-medium text-ink">
             Reason
             <select
-              className="mt-1 w-full focus:outline-none  rounded-[6px] border border-border bg-white px-3 py-2 "
+              className="mt-1 w-full rounded-[6px] border border-border bg-white px-3 py-2 focus:outline-none"
               value={cancelReasonCode}
               onChange={(event) => setCancelReasonCode(event.target.value)}
             >
-              <option value="changed_mind">Changed my mind</option>
-              <option value="ordered_by_mistake">Ordered by mistake</option>
-              <option value="address_issue">Address issue</option>
-              <option value="payment_issue">Payment issue</option>
-              <option value="delivery_delay">Delivery delay</option>
-              <option value="other">Other</option>
+              {CANCEL_REASON_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </label>
           <textarea
@@ -1154,17 +1154,17 @@ function OrderList() {
 
   const statusOrders = activeFilter
     ? allOrders.filter((o) => {
-        const s = getOrderStatus(o);
-        if (activeFilter === "return_requested") {
-          return (
-            s === "return_requested" ||
-            s === "return_approved" ||
-            s === "partially_returned" ||
-            s === "returned"
-          );
-        }
-        return s === activeFilter;
-      })
+      const s = getOrderStatus(o);
+      if (activeFilter === "return_requested") {
+        return (
+          s === "return_requested" ||
+          s === "return_approved" ||
+          s === "partially_returned" ||
+          s === "returned"
+        );
+      }
+      return s === activeFilter;
+    })
     : allOrders;
   const orders = useMemo(() => {
     let term = query.trim().toLowerCase();
