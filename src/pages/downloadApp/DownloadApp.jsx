@@ -1,21 +1,6 @@
-import { BadgeCheck, RotateCcw, ShieldCheck } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import { footerData } from "../../data/footer";
-
-const benefits = [
-  {
-    label: "Genuine Products",
-    icon: BadgeCheck,
-  },
-  {
-    label: "Secure Shopping",
-    icon: ShieldCheck,
-  },
-  {
-    label: "Hassle-free Returns",
-    icon: RotateCcw,
-  },
-];
+import { BENEFITS } from "../../data/constant";
 
 export default function DownloadApp() {
   return (
@@ -47,7 +32,7 @@ export default function DownloadApp() {
               </p>
 
               <div className="mt-6  lg:mt-10 grid w-full max-w-[760px] grid-cols-1 gap-4 sm:grid-cols-3">
-                {benefits.map(({ label, icon: Icon }) => (
+                {BENEFITS.map(({ label, icon: Icon }) => (
                   <div
                     key={label}
                     className="flex min-h-[58px] items-center justify-center gap-3 rounded-[8px] border border-white/10 bg-white/[0.08] px-3 py-3 text-xs xl:text-sm font-medium text-white sm:justify-start"

@@ -1,12 +1,9 @@
 import { useMemo } from "react";
 import {
-  Handshake,
   Mail,
   MapPin,
   Phone,
   ScrollText,
-  Store,
-  WalletCards,
 } from "lucide-react";
 
 import Seo from "../../components/common/Seo";
@@ -14,27 +11,7 @@ import ApiState from "../../components/common/ApiState";
 import Button from "../../components/common/buttons/Button";
 import FAQHeroSection from "../../components/faq/FAQHeroSection";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
-
-const SUPPORT_ICON_MAP = {
-  general: ScrollText,
-  brand: Handshake,
-  partnership: Handshake,
-  store: Store,
-  retail: Store,
-  customer: WalletCards,
-  order: ScrollText,
-  payment: WalletCards,
-  return: Store,
-  seller: Handshake,
-};
-
-const CONTACT_ICON_MAP = {
-  email: Mail,
-  call: Phone,
-  phone: Phone,
-  address: MapPin,
-  location: MapPin,
-};
+import { CONTACT_ICON_MAP, SUPPORT_ICON_MAP } from "../../data/constant";
 
 function getSupportIcon(title = "") {
   const n = title.toLowerCase();
@@ -177,9 +154,8 @@ function FramedPanel({
 
   return (
     <section
-      className={`relative overflow-hidden border bg-white px-6 py-9 text-center  sm:px-10 ${
-        isBlue ? "border-border" : "border-gold"
-      }`}
+      className={`relative overflow-hidden border bg-white px-6 py-9 text-center  sm:px-10 ${isBlue ? "border-border" : "border-gold"
+        }`}
     >
       <h3 className="text-subheading-lg font-bold text-blue sm:text-heading-sm">{title}</h3>
       <p className="mx-auto mt-5 max-w-md text-body-sm leading-relaxed text-muted">
@@ -192,11 +168,10 @@ function FramedPanel({
           onClick={() => {
             window.location.href = href;
           }}
-          className={`mt-6 min-w-[250px] ${
-            isBlue
+          className={`mt-6 min-w-[250px] ${isBlue
               ? "!bg-blue !text-white hover:!bg-navy-dark"
               : "!bg-gold !text-white hover:!bg-gold-dark"
-          }`}
+            }`}
           icon={
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white">
               <Icon size={21} className={isBlue ? "text-blue" : "text-gold"} />
@@ -280,19 +255,19 @@ export default function ContactUs() {
   const visitBtn = visitCta?.label || visitSec?.points?.[0]?.description || "";
   const hasPageContent = Boolean(
     page &&
-      (heroTitle ||
-        description ||
-        intro?.heading ||
-        intro?.description ||
-        supportSection ||
-        reasons.length ||
-        contactInfoSec ||
-        contactItems.length ||
-        businessTitle ||
-        visitTitle ||
-        commitmentSec ||
-        closingSec ||
-        page?.cta?.url),
+    (heroTitle ||
+      description ||
+      intro?.heading ||
+      intro?.description ||
+      supportSection ||
+      reasons.length ||
+      contactInfoSec ||
+      contactItems.length ||
+      businessTitle ||
+      visitTitle ||
+      commitmentSec ||
+      closingSec ||
+      page?.cta?.url),
   );
   const isPageLoading = loading && !page;
 

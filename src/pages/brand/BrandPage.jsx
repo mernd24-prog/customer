@@ -17,60 +17,16 @@ import {
   getImageUrlFromValue,
   isProductInStock,
 } from "../../utils/ecommerce";
+import { brandToSlug, parseMultiValue, serializeMultiValue, slugToBrandName } from "../../utils/ecommerce/brand";
+import LoadingSkeleton from "../../components/ecommerce/BrandLoadingSkeleton";
+import { useSearchParamHelper } from "../../hooks/useSearchParamsHelper";
+import { PAGE_SIZES, SORT_OPTIONS } from "../../data/constant";
 
-const SORT_OPTIONS = [
-  { value: "", label: "Sort By" },
-  { value: "newest", label: "Latest" },
-  { value: "price_asc", label: "Price: Low to High" },
-  { value: "price_desc", label: "Price: High to Low" },
-  { value: "rating", label: "Top Rated" },
-];
-
-const PAGE_SIZES = [12, 24, 48];
-
-function parseMultiValue(value) {
-  return String(value || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-function serializeMultiValue(values) {
-  const uniqueValues = [...new Set((values || []).map(String).map((item) => item.trim()).filter(Boolean))];
-  return uniqueValues.length ? uniqueValues.join(",") : undefined;
-}
-
-function slugToBrandName(slug = "") {
-  return decodeURIComponent(slug)
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function brandToSlug(name = "") {
-  return name
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "");
-}
-
-function LoadingSkeleton() {
-  return (
-    <div className="animate-pulse">
-      <div className="mb-6 h-44 w-full rounded-[var(--customer-radius)] bg-gray-200" />
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="h-72 rounded-xl bg-gray-200" />
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export default function BrandPage() {
   const { brandSlug } = useParams();
   const decodedBrandSlug = decodeURIComponent(brandSlug || "");
   const dispatch = useDispatch();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [brand, setBrand] = useState(null);
@@ -78,6 +34,7 @@ export default function BrandPage() {
   const [brandError, setBrandError] = useState(null);
 
   const [items, setItems] = useState([]);
+  const { updateSearchParams } = useSearchParamHelper(setSearchParams);
   const [pageInfo, setPageInfo] = useState({
     page: 1,
     totalPages: 1,
@@ -253,55 +210,56 @@ export default function BrandPage() {
     isLoadingMore,
   ]);
 
-  const updateParam = (key, value) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (value == null || value === "") next.delete(key);
-      else next.set(key, value);
-      next.delete("page");
-      return next;
-    });
-  };
+ const updateParam = (key, value) => {
+  updateSearchParams((next) => {
+    if (value == null || value === "") {
+      next.delete(key);
+    } else {
+      next.set(key, value);
+    }
+  });
+};
 
   const handlePriceChange = ({ minPrice, maxPrice }) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (minPrice) next.set("minPrice", minPrice);
-      else next.delete("minPrice");
-      if (maxPrice) next.set("maxPrice", maxPrice);
-      else next.delete("maxPrice");
-      next.delete("page");
-      return next;
-    });
-  };
+  updateSearchParams((next) => {
+    if (minPrice) next.set("minPrice", minPrice);
+    else next.delete("minPrice");
+
+    if (maxPrice) next.set("maxPrice", maxPrice);
+    else next.delete("maxPrice");
+  });
+};
 
   const removeFilter = (key, filter) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (key === "price") {
-        next.delete("minPrice");
-        next.delete("maxPrice");
-      } else if (filter?.groupKey) {
-        const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
-          (value) => value !== filter.value,
-        );
-        const serialized = serializeMultiValue(nextValues);
-        if (serialized) next.set(filter.groupKey, serialized);
-        else next.delete(filter.groupKey);
-      } else next.delete(key);
-      next.delete("page");
-      return next;
-    });
-  };
+  updateSearchParams((next) => {
+    if (key === "price") {
+      next.delete("minPrice");
+      next.delete("maxPrice");
+    } else if (filter?.groupKey) {
+      const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+        (value) => value !== filter.value,
+      );
+      const serialized = serializeMultiValue(nextValues);
+      if (serialized) {
+        next.set(filter.groupKey, serialized);
+      } else {
+        next.delete(filter.groupKey);
+      }
+    } else {
+      next.delete(key);
+    }
+  });
+};
 
-  const setPage = (p) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
+const setPage = (p) => {
+  updateSearchParams(
+    (next) => {
       next.set("page", p);
-      return next;
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+    },
+    false
+  );
+window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
   const activeFilters = [
     searchParams.get("sort") && {

@@ -37,135 +37,9 @@ import OrderPaymentSummary from "../orders/components/OrderPaymentSummary";
 // import { ChevronRight } from "lucide-react";
 import { OutlineSmallButton } from "../../components/dynamicComponent/button/static";
 import { FaAngleRight } from "react-icons/fa6";
-import { normalizeId } from "../../utils/ecommerce/cart";
-const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
-const SAVED_FOR_LATER_STORAGE_KEY = "sam_global_saved_for_later_items";
-const SELECTED_CHECKOUT_STORAGE_KEY = "sam_global_selected_checkout_item_ids";
-const CHECKOUT_CART_ITEM_IDS_STORAGE_KEY = "sam_global_checkout_cart_item_ids";
+import { buildSavedProductView, cartLineKey, getCartItemStock, mergeDisplayCartItems, normalizeCartItemId, normalizeCartItemIds, normalizeId, readCheckoutCartItemIds, readSavedForLaterItems, readSelectedCheckoutItemIds, writeCheckoutCartItemIds, writeSavedForLaterItems, writeSelectedCheckoutItemIds } from "../../utils/ecommerce/cart";
+import { BUY_NOW_STORAGE_KEY, CHECKOUT_CART_ITEM_IDS_STORAGE_KEY, SELECTED_CHECKOUT_STORAGE_KEY } from "../../constants";
 
-function normalizeCartItemId(value) {
-  if (!value) return "";
-
-  if (typeof value === "string") {
-    const [rawProductId, ...variantParts] = value.split(":");
-    const productId = normalizeId(rawProductId);
-    const variantId = normalizeId(variantParts.join(":"));
-    return [productId, variantId].filter(Boolean).join(":");
-  }
-
-  if (typeof value === "object") {
-    const productId = normalizeId(
-      value.productId ||
-        value.product ||
-        value._raw?.productId ||
-        value.id ||
-        value,
-    );
-    const variantId = normalizeId(
-      value.variantId ||
-        value.variantSku ||
-        value._raw?.variantId ||
-        value._raw?.variantSku ||
-        "",
-    );
-    return [productId, variantId].filter(Boolean).join(":");
-  }
-
-  return normalizeId(value);
-}
-
-function normalizeCartItemIds(values = []) {
-  return Array.from(
-    new Set(values.map((value) => normalizeCartItemId(value)).filter(Boolean)),
-  );
-}
-
-function readSavedForLaterItems() {
-  try {
-    const parsed = JSON.parse(
-      window.localStorage.getItem(SAVED_FOR_LATER_STORAGE_KEY) || "[]",
-    );
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeSavedForLaterItems(items) {
-  window.localStorage.setItem(
-    SAVED_FOR_LATER_STORAGE_KEY,
-    JSON.stringify(items),
-  );
-}
-
-function readSelectedCheckoutItemIds() {
-  try {
-    const storedValue = window.sessionStorage.getItem(
-      SELECTED_CHECKOUT_STORAGE_KEY,
-    );
-    if (storedValue === null) return null;
-    const parsed = JSON.parse(storedValue);
-    return Array.isArray(parsed) ? normalizeCartItemIds(parsed) : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeSelectedCheckoutItemIds(itemIds) {
-  window.sessionStorage.setItem(
-    SELECTED_CHECKOUT_STORAGE_KEY,
-    JSON.stringify(itemIds),
-  );
-}
-
-function readCheckoutCartItemIds() {
-  try {
-    const parsed = JSON.parse(
-      window.sessionStorage.getItem(CHECKOUT_CART_ITEM_IDS_STORAGE_KEY) || "[]",
-    );
-    return Array.isArray(parsed) ? normalizeCartItemIds(parsed) : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeCheckoutCartItemIds(itemIds) {
-  window.sessionStorage.setItem(
-    CHECKOUT_CART_ITEM_IDS_STORAGE_KEY,
-    JSON.stringify(itemIds),
-  );
-}
-
-function getNumericValue(...values) {
-  const value = values.find(
-    (entry) => entry !== undefined && entry !== null && entry !== "",
-  );
-  if (value === undefined) return null;
-  const number = Number(value);
-  return Number.isFinite(number) ? number : null;
-}
-
-function getCartItemStock(item = {}, product = {}) {
-  const variants = Array.isArray(product?.variants) ? product.variants : [];
-  const matchingVariant = variants.find(
-    (variant) =>
-      String(variant?._id || variant?.id || "") ===
-        String(item.variantId || "") ||
-      String(variant?.sku || "") === String(item.variantSku || ""),
-  );
-
-  return getNumericValue(
-    item.stock,
-    item.availableStock,
-    item.inventory,
-    item.variant?.stock,
-    matchingVariant?.stock,
-    product.stock,
-    product.availableStock,
-    product.inventory,
-    product.totalStock,
-  );
-}
 
 function adaptItemForCard(item) {
   const product = item.productId || {};
@@ -235,73 +109,7 @@ function adaptItemForCard(item) {
   };
 }
 
-function cartLineKey(item) {
-  const product =
-    item.productId && typeof item.productId === "object"
-      ? item.productId
-      : item.product;
-  const productId = normalizeId(item.productId || item.product);
-  const defaultVariant =
-    !item.variantId && !item.variantSku && Array.isArray(product?.variants)
-      ? product.variants.find((variant) => variant.isDefault) ||
-        product.variants[0]
-      : null;
-  return normalizeCartItemId({
-    productId,
-    variantId:
-      item.variantId || defaultVariant?._id || defaultVariant?.id || "",
-    variantSku: item.variantSku || defaultVariant?.sku || "",
-  });
-}
 
-function mergeDisplayCartItems(items = []) {
-  const byKey = new Map();
-
-  items.forEach((item) => {
-    const key = cartLineKey(item);
-    if (!key) return;
-    const existing = byKey.get(key);
-    if (!existing) {
-      byKey.set(key, item);
-      return;
-    }
-
-    byKey.set(key, {
-      ...existing,
-      ...item,
-      productId:
-        typeof existing.productId === "object"
-          ? existing.productId
-          : item.productId,
-      image: existing.image || item.image,
-      title: existing.title || item.title,
-      quantity: Number(existing.quantity || 0) + Number(item.quantity || 0),
-    });
-  });
-
-  return [...byKey.values()];
-}
-
-function buildSavedProductView(wishlistProduct, resolvedProduct) {
-  const product =
-    resolvedProduct ||
-    (typeof wishlistProduct === "object" ? wishlistProduct : null);
-  const id = getProductId(product || wishlistProduct);
-  const title = product
-    ? getProductTitle(product, "Saved product")
-    : "Saved product";
-  const image = product ? getProductImage(product) : "";
-
-  return {
-    id,
-    title,
-    image: image || getImageFallbackSrc(title, "saved"),
-    price: product?.price ?? product?.sellingPrice ?? product?.salePrice,
-    brand:
-      product?.brand?.name || product?.brand || product?.seller?.name || "",
-    productForCart: product || wishlistProduct,
-  };
-}
 
 export default function CartPage() {
   const dispatch = useDispatch();
@@ -631,6 +439,23 @@ export default function CartPage() {
     navigate("/checkout");
   };
 
+  const savedCardClass =
+  "relative overflow-hidden rounded-[18px] border border-border bg-white px-4 py-4 shadow-[0_12px_32px_rgba(31,36,48,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_18px_45px_rgba(31,36,48,0.1)] sm:px-5";
+  const savedCardStripClass =
+  "absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-gold to-gold-dark";
+  const savedCardContentClass =
+  "flex min-w-0 flex-col gap-4 pl-2 sm:flex-row sm:items-center sm:justify-between";
+  const savedCardInfoClass =
+  "flex min-w-0 items-center gap-4";
+  const savedCardImageWrapperClass =
+  "flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[14px] bg-cream ring-1 ring-border sm:h-20 sm:w-20";
+  const savedCardActionClass =
+  "flex shrink-0 flex-col items-stretch gap-2 sm:min-w-[150px] sm:items-end";
+  const savedCardLabelClass =
+  "hidden text-xs font-semibold uppercase text-muted sm:block";
+  const moveToCartButtonClass =
+  "h-9 w-full border-gold/40 px-4 text-xs font-bold text-ink sm:w-auto";
+
   return (
     <>
       <ConfirmModal
@@ -734,12 +559,12 @@ export default function CartPage() {
                         return (
                           <div
                             key={savedItemView.id}
-                            className="relative overflow-hidden rounded-[18px] border border-border bg-white px-4 py-4 shadow-[0_12px_32px_rgba(31,36,48,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_18px_45px_rgba(31,36,48,0.1)] sm:px-5"
+                            className={savedCardClass}
                           >
-                            <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-gold to-gold-dark" />
-                            <div className="flex min-w-0 flex-col gap-4 pl-2 sm:flex-row sm:items-center sm:justify-between">
-                              <div className="flex min-w-0 items-center gap-4">
-                                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[14px] bg-cream ring-1 ring-border sm:h-20 sm:w-20">
+                            <div className={savedCardStripClass}/>
+                            <div className={savedCardContentClass}>
+                              <div className={savedCardInfoClass}>
+                                <div className={savedCardImageWrapperClass}>
                                   <img
                                     src={savedItemView.image}
                                     alt={savedItemView.title}
@@ -771,8 +596,8 @@ export default function CartPage() {
                                 </div>
                               </div>
 
-                              <div className="flex shrink-0 flex-col items-stretch gap-2 sm:min-w-[150px] sm:items-end">
-                                <p className="hidden text-xs font-semibold uppercase text-muted sm:block">
+                              <div className={savedCardActionClass}>
+                                <p className={savedCardLabelClass}>
                                   Saved item
                                 </p>
                                 <BrandButton
@@ -780,7 +605,7 @@ export default function CartPage() {
                                   rounded
                                   size="sm"
                                   label="Move to cart"
-                                  className="h-9 w-full border-gold/40 px-4 text-xs font-bold text-ink sm:w-auto"
+                                  className={moveToCartButtonClass}
                                   onClick={() =>
                                     handleMoveSavedLineToCart(savedItem)
                                   }
@@ -802,12 +627,12 @@ export default function CartPage() {
                         return (
                           <div
                             key={wishlistId}
-                            className="relative overflow-hidden rounded-[18px] border border-border bg-white px-4 py-4 shadow-[0_12px_32px_rgba(31,36,48,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_18px_45px_rgba(31,36,48,0.1)] sm:px-5"
+                            className={savedCardClass}
                           >
-                            <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-gold to-gold-dark" />
-                            <div className="flex min-w-0 flex-col gap-4 pl-2 sm:flex-row sm:items-center sm:justify-between">
-                              <div className="flex min-w-0 items-center gap-4">
-                                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[14px] bg-cream ring-1 ring-border sm:h-20 sm:w-20">
+                            <div className={savedCardStripClass}/>
+                            <div className={savedCardContentClass}>
+                              <div className={savedCardInfoClass}>
+                                <div className={savedCardImageWrapperClass}>
                                   <img
                                     src={savedProduct.image}
                                     alt={savedProduct.title}
@@ -843,8 +668,8 @@ export default function CartPage() {
                                 </div>
                               </div>
 
-                              <div className="flex shrink-0 flex-col items-stretch gap-2 sm:min-w-[150px] sm:items-end">
-                                <p className="hidden text-xs font-semibold uppercase text-muted sm:block">
+                              <div className={savedCardActionClass}>
+                                <p className={savedCardLabelClass}>
                                   Saved item
                                 </p>
                                 <BrandButton
@@ -852,7 +677,7 @@ export default function CartPage() {
                                   rounded
                                   size="sm"
                                   label="Move to cart"
-                                  className="h-9 w-full border-gold/40 px-4 text-xs font-bold text-ink sm:w-auto"
+                                  className={moveToCartButtonClass}
                                   onClick={() =>
                                     handleMoveWishlistToCart(savedProduct)
                                   }
