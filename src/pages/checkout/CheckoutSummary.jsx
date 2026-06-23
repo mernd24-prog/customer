@@ -70,6 +70,16 @@ export default function CheckoutSummary({
   const codCharge = Number(
     quoteSummary.codChargeAmount ?? quoteAmounts.codChargeAmount ?? 0,
   );
+  const customerPlatformFee = Number(
+    quoteSummary.customerPlatformFeeAmount ??
+      quoteAmounts.customerPlatformFeeAmount ??
+      0,
+  );
+  const customerPlatformFeeTax = Number(
+    quoteSummary.customerPlatformFeeTaxAmount ??
+      quoteAmounts.customerPlatformFeeTaxAmount ??
+      0,
+  );
   const quoteShipping = Number(
     quoteSummary.deliveryChargeAmount ??
       quoteSummary.shippingFeeAmount ??
@@ -80,6 +90,16 @@ export default function CheckoutSummary({
   const quotedPayable = Number(
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
   );
+  const deliverySellers =
+    quote?.deliveryChargeBreakup?.sellers ||
+    quote?.deliveryChargeBreakup?.breakup?.sellers ||
+    [];
+  const deliveryEta = deliverySellers
+    .map((seller) => seller.estimatedDeliveryDays)
+    .filter(Boolean)[0];
+  const deliveryMethod = deliverySellers
+    .map((seller) => [seller.shippingPartner, seller.shippingMethod].filter(Boolean).join(" · "))
+    .filter(Boolean)[0];
 
   return (
     <aside className="min-w-0">
@@ -147,10 +167,32 @@ export default function CheckoutSummary({
               <span className="font-bold text-navy">{formatMoney(taxIncluded, "INR")}</span>
             </div>
           ) : null}
+          {customerPlatformFee > 0 ? (
+            <div className="flex justify-between py-2 text-sm text-ink">
+              <span>Platform fee</span>
+              <span className="font-bold text-navy">{formatMoney(customerPlatformFee, "INR")}</span>
+            </div>
+          ) : null}
+          {customerPlatformFeeTax > 0 ? (
+            <div className="flex justify-between py-2 text-sm text-ink">
+              <span>Platform fee GST</span>
+              <span className="font-bold text-navy">{formatMoney(customerPlatformFeeTax, "INR")}</span>
+            </div>
+          ) : null}
           {codCharge > 0 ? (
             <div className="flex justify-between py-2 text-sm text-ink">
               <span>COD charge</span>
               <span className="font-bold text-navy">{formatMoney(codCharge, "INR")}</span>
+            </div>
+          ) : null}
+          {(deliveryEta || deliveryMethod) ? (
+            <div className="rounded-[8px] bg-cream px-3 py-2 text-xs text-muted">
+              {deliveryMethod ? <p>Delivery: {deliveryMethod}</p> : null}
+              {deliveryEta ? (
+                <p>
+                  ETA: {[deliveryEta.minDays, deliveryEta.maxDays].filter((value) => value !== null && value !== undefined).join("–") || "Available"} days
+                </p>
+              ) : null}
             </div>
           ) : null}
           {quoteWallet > 0 ? (

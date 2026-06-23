@@ -432,6 +432,17 @@ function DeliveryChecker({ productId }) {
       setLoading(false);
     }
   };
+  const sellerDelivery = result?.deliveryChargeBreakup?.sellers?.[0] || {};
+  const eta = sellerDelivery.estimatedDeliveryDays || result?.estimatedDeliveryDays || null;
+  const etaText = eta
+    ? [eta.minDays, eta.maxDays]
+        .filter((value) => value !== null && value !== undefined)
+        .join("-")
+    : "";
+  const deliveryCharge = Number(result?.sellerDeliveryChargeAmount ?? sellerDelivery.chargeAmount ?? 0);
+  const chargeText = deliveryCharge > 0
+    ? ` · Delivery ${new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(deliveryCharge)}`
+    : " · Free delivery";
 
   return (
     <div>
@@ -470,11 +481,7 @@ function DeliveryChecker({ productId }) {
           }`}
         >
           {result.serviceable
-            ? `✓ Delivery by ${
-                result.estimatedDelivery ||
-                result.estimatedDate ||
-                "2–5 business days"
-              }`
+            ? `✓ Delivery available${etaText ? ` in ${etaText} days` : ""}${chargeText}`
             : "Delivery not available to this pincode."}
         </p>
       )}

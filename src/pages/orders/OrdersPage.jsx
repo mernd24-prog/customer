@@ -244,6 +244,8 @@ const getAmount = (order, key) => {
     walletDiscount: "wallet_discount_amount",
     payable: "payable_amount",
     platformFee: "platform_fee_amount",
+    customerPlatformFee: "customer_platform_fee_amount",
+    customerPlatformFeeTax: "customer_platform_fee_tax_amount",
     shipping: "shipping_fee_amount",
   }[key];
 
@@ -256,6 +258,8 @@ const getAmount = (order, key) => {
       walletDiscount: ["walletDiscountAmount", "walletDiscount"],
       payable: ["payableAmount", "payable", "amountPayable", "totalAmount"],
       platformFee: ["platformFeeAmount", "platformFee"],
+      customerPlatformFee: ["customerPlatformFeeAmount", "customerPlatformFee"],
+      customerPlatformFeeTax: ["customerPlatformFeeTaxAmount", "customerPlatformFeeTax"],
       shipping: [
         "shippingFeeAmount",
         "shippingFee",
@@ -286,6 +290,8 @@ const getCustomerOrderAmount = (order) => {
   const discount = getAmount(order, "discount") ?? 0;
   const walletDiscount = getAmount(order, "walletDiscount") ?? 0;
   const shipping = getAmount(order, "shipping") ?? 0;
+  const customerPlatformFee = getAmount(order, "customerPlatformFee") ?? 0;
+  const customerPlatformFeeTax = getAmount(order, "customerPlatformFeeTax") ?? 0;
   const taxPayable =
     order?.summary?.taxPayableAmount ??
     order?.summary?.tax_payable_amount ??
@@ -305,7 +311,9 @@ const getCustomerOrderAmount = (order) => {
         asNumber(discount) +
         asNumber(shipping) +
         asNumber(taxPayable) +
-        asNumber(codCharge) -
+        asNumber(codCharge) +
+        asNumber(customerPlatformFee) +
+        asNumber(customerPlatformFeeTax) -
         asNumber(walletDiscount),
     ).toFixed(2),
   );
@@ -428,6 +436,8 @@ function OrderDetail({ orderId, track }) {
   const tax = getAmount(order, "tax");
   const walletDiscount = getAmount(order, "walletDiscount");
   const shipping = getAmount(order, "shipping");
+  const customerPlatformFee = getAmount(order, "customerPlatformFee");
+  const customerPlatformFeeTax = getAmount(order, "customerPlatformFeeTax");
   const customerAmount = getCustomerOrderAmount(order);
   const taxIncluded = getTaxIncludedAmount(order, taxBreakup);
   const taxPayable = getTaxPayableAmount(order, taxBreakup);
@@ -685,6 +695,8 @@ function OrderDetail({ orderId, track }) {
                       discount={discount}
                       walletDiscount={walletDiscount}
                       shipping={shipping}
+                      customerPlatformFee={customerPlatformFee}
+                      customerPlatformFeeTax={customerPlatformFeeTax}
                       customerAmount={customerAmount}
                       tax={tax}
                       taxBreakup={taxBreakup}

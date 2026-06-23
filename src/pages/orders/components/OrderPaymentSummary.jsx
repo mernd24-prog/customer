@@ -95,6 +95,8 @@ function OrderPaymentSummary({
   discount,
   walletDiscount,
   shipping,
+  customerPlatformFee,
+  customerPlatformFeeTax,
   customerAmount,
   tax,
   taxBreakup,
@@ -210,6 +212,24 @@ function OrderPaymentSummary({
           }
         />
       </div>
+
+      {asNumber?.(customerPlatformFee) > 0 && (
+        <div className="border-t border-[#04258626] pt-2">
+          <SummaryRow
+            label="Platform Fee"
+            value={formatMoney(customerPlatformFee, currency)}
+          />
+        </div>
+      )}
+
+      {asNumber?.(customerPlatformFeeTax) > 0 && (
+        <div className="border-t border-[#04258626] pt-2">
+          <SummaryRow
+            label="Platform Fee GST"
+            value={formatMoney(customerPlatformFeeTax, currency)}
+          />
+        </div>
+      )}
 
       {/* Total */}
       <div className="border-t border-dashed border-[#04258626] pt-4">
