@@ -60,6 +60,7 @@ export default function VerifyOtpPage() {
         title="Verify your identity"
         subtitle="Enter the OTP sent to your email to sign in to your account."
         icon="/image/png/person.png"
+        image="/image/png/authImg1.png"
         maxWidth="max-w-[60rem]"
       >
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
@@ -87,7 +88,9 @@ export default function VerifyOtpPage() {
             </button>
           </div>
 
-          <label className=" text-label-md font-semibold text-ink">OTP code</label>
+          <label className=" text-label-md font-semibold text-ink">
+            OTP code
+          </label>
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}

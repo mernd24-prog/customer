@@ -10,7 +10,7 @@ function OrderDetailSectionCard({
 }) {
   return (
     <section
-      className={`overflow-hidden rounded-[15px] border ${borderClassName} bg-white ${className}`}
+      className={`overflow-hidden rounded-[15px]  border ${borderClassName} bg-white ${className}`}
     >
       {title || headerContent ? (
         <div

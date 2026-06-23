@@ -5,13 +5,13 @@ export default function ProductPriceBlock({
   mrp,
   currency,
   discount,
-  safeDynamicPrice,
-  dynamicState,
+  safeDynamicPrice = null,
+  dynamicState = {},
 }) {
   return (
     <>
       <div>
-        <div className="flex  flex-wrap my-2 items-center gap-3">
+        <div className="flex  flex-wrap my-4 items-center gap-3">
           <span className="text-xl lg:text-[36px] font-bold leading-none text-navy">
             {formatMoney(price, currency)}
           </span>

@@ -1,48 +1,294 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  ChevronLeft,
-  ChevronRight,
-  KeyRound,
-  MapPin,
-  Shield,
-  User,
-} from "lucide-react";
+import { ChevronDown, Pencil } from "lucide-react";
+import { CgMail } from "react-icons/cg";
+import { MdOutlineLocalPhone } from "react-icons/md";
+
 import ApiState from "../../components/common/ApiState";
 import Seo from "../../components/common/Seo";
 import { fetchMe } from "../../features/user/userSlice";
 
-// Import the separated tab components
 import ProfileTab from "./ProfileTab";
 import AddressTab from "./AddressTab";
 import SecurityTab from "./SecurityTab";
-import KycTab from "./Kyc";
 
-const TABS = [
-  { id: "profile", label: "Profile", icon: User, path: "/account/profile" },
+const fallbackAvatar = "/image/png/person.png";
+
+const MENU_ITEMS = [
+  {
+    id: "orders",
+    label: "My Orders",
+    description: "Track and manage your orders.",
+    icon: "/image/png/order.png",
+    path: "/orders",
+  },
+  {
+    id: "wishlist",
+    label: "Wishlist",
+    description: "View and manage your saved items.",
+    icon: "/image/png/wishList.png",
+    path: "/watchlist",
+  },
   {
     id: "addresses",
-    label: "Addresses",
-    icon: MapPin,
+    label: "Saved Addresses",
+    description: "Manage your delivery addresses.",
+    icon: "/image/png/location.png",
     path: "/account/addresses",
   },
   {
     id: "security",
     label: "Security",
-    icon: KeyRound,
+    description: "Manage your password and account security.",
+    icon: "/image/png/security.png",
     path: "/account/security",
   },
-  // { id: "kyc", label: "KYC", icon: Shield, path: "/account/kyc" },
 ];
+
+const normalizeAvatarPreview = (avatarUrl) =>
+  typeof avatarUrl === "string" &&
+  avatarUrl &&
+  !avatarUrl.startsWith("data:image/")
+    ? avatarUrl
+    : fallbackAvatar;
+
+function AccountProfileCard({
+  user,
+  name,
+  avatar,
+  avatarError,
+  fileInputRef,
+  onAvatarChange,
+}) {
+  return (
+    <div className="rounded-[20px] border border-gold bg-[#FFFDF8] p-6 2xl:p-8">
+      <div className="grid grid-cols-[48px_minmax(0,1fr)] items-start gap-3 sm:flex sm:items-center sm:gap-4">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={onAvatarChange}
+          className="hidden"
+        />
+
+        <button
+          type="button"
+          onClick={(event) => {
+            event.preventDefault();
+            fileInputRef.current?.click();
+          }}
+          className="group relative shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1B1D60]/40"
+          aria-label="Change profile image"
+        >
+          <img
+            src={avatar}
+            alt="Profile avatar"
+            className="size-12 rounded-full border-2 border-[#1B1D60] object-cover md:size-[80px] lg:size-[100px] 2xl:size-[150px]"
+            onError={(event) => {
+              event.currentTarget.src = fallbackAvatar;
+            }}
+          />
+
+          <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+            <Pencil className="size-5 text-white" />
+          </span>
+        </button>
+
+        <span className="min-w-0 flex-1">
+          <span className="text-lg font-bold text-[#3E4093] sm:text-[24px] 2xl:text-[34px]">
+            {name}
+          </span>
+
+          <div className="mt-4">
+            <span className="flex break-all items-center gap-2 text-sm font-medium text-[#2E2E2E] sm:text-[18px] 2xl:text-[20px]">
+              <CgMail /> {user?.email || "—"}
+            </span>
+
+            <span className="flex break-all items-center gap-2 py-2 text-sm font-medium text-[#2E2E2E] sm:text-[18px] 2xl:text-[20px]">
+              <MdOutlineLocalPhone /> {user?.phone || ""}
+            </span>
+          </div>
+        </span>
+
+        <Link
+          to="/account/profile"
+          className="col-span-2 ml-auto inline-flex shrink-0 gap-2 rounded-full border border-[#343B91] bg-[#F3F1F0] px-3 py-2 text-xs font-semibold text-[#1B1D60] hover:!bg-[#F3F1F0] hover:!text-[#1B1D60] sm:col-auto sm:mb-auto sm:ml-auto sm:px-4 sm:text-sm 2xl:text-base"
+        >
+          <Pencil className="size-3 my-auto" />
+          Edit Profile
+        </Link>
+      </div>
+
+      {avatarError && (
+        <p className="mt-2 text-xs font-medium text-red-500">{avatarError}</p>
+      )}
+    </div>
+  );
+}
+
+function AccountMenuItem({ item, variant = "desktop", onClick }) {
+  const isMobile = variant === "mobile";
+
+  return (
+    <Link
+      to={item.path}
+      onClick={onClick}
+      className={
+        isMobile
+          ? "flex w-full items-start gap-3 border-b border-[#04258626] p-4 text-[#2E2E2E] hover:!bg-transparent hover:!text-[#2E2E2E] last:border-b-0"
+          : "flex w-full items-center gap-3 border-b border-[#04258626] px-3 py-3 text-[#2E2E2E] hover:!bg-transparent hover:!text-[#2E2E2E] last:border-b-0 sm:gap-4 sm:px-4 sm:py-4"
+      }
+    >
+      <span
+        className={
+          isMobile
+            ? "flex size-11 shrink-0 items-center justify-center rounded-full bg-[#FFC82E]"
+            : "flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FFC82E] text-[#1B1D60] sm:size-[70px]"
+        }
+      >
+        <img
+          src={item.icon}
+          alt={isMobile ? "" : item.label}
+          className={
+            isMobile
+              ? "size-4 object-contain"
+              : "size-4 object-contain sm:size-5"
+          }
+        />
+      </span>
+
+      <span className="min-w-0">
+        <span
+          className={
+            isMobile
+              ? "block text-base font-semibold"
+              : "block text-lg font-semibold text-[#2E2E2E] sm:text-2xl"
+          }
+        >
+          {item.label}
+        </span>
+
+        <span
+          className={
+            isMobile
+              ? "mt-0.5 block text-xs text-[#4E4E4E]"
+              : "mt-0.5 block text-sm text-[#4E4E4E] sm:text-lg"
+          }
+        >
+          {item.description}
+        </span>
+      </span>
+    </Link>
+  );
+}
+
+function AccountMobileMenu({
+  items,
+  activeMenuItem,
+  isOpen,
+  onToggle,
+  onClose,
+}) {
+  return (
+    <div className="relative xl:hidden">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        className="flex w-full items-center justify-between rounded-[14px] border border-gold bg-white px-4 py-3 text-left font-semibold text-[#2E2E2E]"
+      >
+        <span>{activeMenuItem?.label || "Account menu"}</span>
+
+        <ChevronDown
+          className={`size-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {isOpen && (
+        <nav className="absolute left-0 top-[calc(100%+6px)] z-20 flex w-full flex-col items-start overflow-hidden rounded-[14px] border border-gold bg-white shadow-lg">
+          {items.map((item) => (
+            <AccountMenuItem
+              key={item.id}
+              item={item}
+              variant="mobile"
+              onClick={onClose}
+            />
+          ))}
+        </nav>
+      )}
+    </div>
+  );
+}
+
+function AccountDesktopMenu({ items }) {
+  return (
+    <nav className="hidden w-full flex-col items-start rounded-[20px] border border-gold py-4 xl:flex">
+      {items.map((item) => (
+        <AccountMenuItem key={item.id} item={item} variant="desktop" />
+      ))}
+    </nav>
+  );
+}
+
+function AccountSidebar({
+  user,
+  name,
+  avatar,
+  avatarError,
+  fileInputRef,
+  onAvatarChange,
+  activeMenuItem,
+  isMobileMenuOpen,
+  setIsMobileMenuOpen,
+}) {
+  return (
+    <aside className="min-w-0 space-y-5 lg:sticky lg:top-24 lg:self-start">
+      <AccountProfileCard
+        user={user}
+        name={name}
+        avatar={avatar}
+        avatarError={avatarError}
+        fileInputRef={fileInputRef}
+        onAvatarChange={onAvatarChange}
+      />
+
+      <div>
+        <AccountMobileMenu
+          items={MENU_ITEMS}
+          activeMenuItem={activeMenuItem}
+          isOpen={isMobileMenuOpen}
+          onToggle={() => setIsMobileMenuOpen((open) => !open)}
+          onClose={() => setIsMobileMenuOpen(false)}
+        />
+
+        <AccountDesktopMenu items={MENU_ITEMS} />
+      </div>
+    </aside>
+  );
+}
+
+function AccountTabContent({ tab, user, avatarFile }) {
+  return (
+    <div className="animate-[fadeIn_180ms_ease-out]">
+      {tab === "profile" && <ProfileTab user={user} avatarFile={avatarFile} />}
+      {tab === "addresses" && <AddressTab user={user} />}
+      {tab === "security" && <SecurityTab />}
+    </div>
+  );
+}
 
 export default function AccountPage({ tab = "profile" }) {
   const dispatch = useDispatch();
   const userState = useSelector((s) => s.user);
   const user = userState.current;
-  const tabsRef = useRef(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const fileInputRef = useRef(null);
+
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(fallbackAvatar);
+  const [avatarError, setAvatarError] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -51,136 +297,85 @@ export default function AccountPage({ tab = "profile" }) {
   }, [dispatch, user]);
 
   useEffect(() => {
-    const node = tabsRef.current;
-    if (!node) return undefined;
+    setAvatarPreview(
+      normalizeAvatarPreview(user?.profile?.avatarUrl || user?.profile?.avatar),
+    );
+    setAvatarFile(null);
+    setAvatarError("");
+  }, [user]);
 
-    const updateScrollState = () => {
-      const maxScrollLeft = node.scrollWidth - node.clientWidth;
-      setCanScrollLeft(node.scrollLeft > 8);
-      setCanScrollRight(maxScrollLeft - node.scrollLeft > 8);
-    };
+  useEffect(
+    () => () => {
+      if (avatarPreview.startsWith("blob:")) {
+        globalThis.URL.revokeObjectURL(avatarPreview);
+      }
+    },
+    [avatarPreview],
+  );
 
-    updateScrollState();
-    node.addEventListener("scroll", updateScrollState, { passive: true });
-    window.addEventListener("resize", updateScrollState);
+  const handleAvatarChange = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
 
-    return () => {
-      node.removeEventListener("scroll", updateScrollState);
-      window.removeEventListener("resize", updateScrollState);
-    };
-  }, []);
+    if (!file) return;
 
-  const scrollTabs = (direction) => {
-    const node = tabsRef.current;
-    if (!node) return;
+    if (!file.type.startsWith("image/")) {
+      setAvatarError("Please select a valid image file.");
+      return;
+    }
 
-    node.scrollBy({
-      left: direction === "left" ? -180 : 180,
-      behavior: "smooth",
-    });
+    if (file.size > 2 * 1024 * 1024) {
+      setAvatarError("Profile image must be 2 MB or smaller.");
+      return;
+    }
+
+    setAvatarError("");
+    setAvatarFile(file);
+    setAvatarPreview(globalThis.URL.createObjectURL(file));
   };
 
-  const fadeOverlayClass =
-    "pointer-events-none absolute inset-y-0 z-10 w-10 transition-opacity duration-200 lg:hidden";
-  const scrollButtonClass =
-    "absolute top-1/2 z-20 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-[#25256F] shadow-[0_6px_18px_rgba(37,37,111,0.18)] transition-all duration-200 lg:hidden";
+  const profile = user?.profile || {};
+
+  const name =
+    [profile.firstName, profile.lastName].filter(Boolean).join(" ") ||
+    user?.name ||
+    "Your account";
+
+  const activeMenuItem = MENU_ITEMS.find((item) => item.id === tab);
 
   return (
     <>
       <Seo
-        title={`Account — ${tab.charAt(0).toUpperCase() + tab.slice(1)} | Sam Global`}
+        title={`Account — ${
+          tab.charAt(0).toUpperCase() + tab.slice(1)
+        } | Sam Global`}
       />
-      <div className="flex flex-col gap-4 py-2 sm:gap-5 sm:py-8 lg:flex-row lg:gap-6 lg:py-10">
-        {/* Sidebar Navigation */}
-        <div className="w-full lg:w-[30%]">
-          <div className="relative lg:sticky lg:top-24 lg:ml-auto lg:max-h-[calc(100vh-7rem)] lg:w-full lg:overflow-y-auto lg:pr-2 2xl:w-[85%]">
-            <div
-              className={`${fadeOverlayClass} left-0 rounded-l-[12px] bg-gradient-to-r from-[#F7F8FC] to-transparent ${canScrollLeft ? "opacity-100" : "opacity-0"
-                }`}
-            />
-            <div
-              className={`${fadeOverlayClass} right-0 rounded-r-[12px] bg-gradient-to-l from-[#F7F8FC] to-transparent ${canScrollRight ? "opacity-100" : "opacity-0"
-                }`}
-            />
 
-            <button
-              type="button"
-              onClick={() => scrollTabs("left")}
-              aria-label="Scroll account tabs left"
-              className={`${scrollButtonClass} left-1 ${canScrollLeft
-                  ? "pointer-events-auto opacity-100"
-                  : "pointer-events-none opacity-0"
-                }`}
-            >
-              <ChevronLeft className="size-4" />
-            </button>
+      <div className="grid gap-5 py-4 sm:py-8 xl:grid-cols-[minmax(280px,0.72fr)_minmax(0,1fr)] lg:gap-5 lg:py-10">
+        <AccountSidebar
+          user={user}
+          name={name}
+          avatar={avatarPreview}
+          avatarError={avatarError}
+          fileInputRef={fileInputRef}
+          onAvatarChange={handleAvatarChange}
+          activeMenuItem={activeMenuItem}
+          isMobileMenuOpen={isMobileMenuOpen}
+          setIsMobileMenuOpen={setIsMobileMenuOpen}
+        />
 
-            <button
-              type="button"
-              onClick={() => scrollTabs("right")}
-              aria-label="Scroll account tabs right"
-              className={`${scrollButtonClass} right-1 ${canScrollRight
-                  ? "pointer-events-auto opacity-100"
-                  : "pointer-events-none opacity-0"
-                }`}
-            >
-              <ChevronRight className="size-4" />
-            </button>
-            <div
-              ref={tabsRef}
-              className="hide-scrollbar flex w-full gap-2 overflow-x-auto overflow-y-hidden whitespace-nowrap rounded-[12px] p-1.5 sm:p-2 lg:flex-col lg:gap-3 lg:overflow-visible lg:whitespace-normal lg:p-3"
-            >
-              {TABS.map(({ id, label, icon: Icon, path }) => {
-                const isActive = tab === id;
-
-                return (
-                  <Link
-                    key={id}
-                    to={path}
-                    className={`relative flex h-[46px] min-w-[120px] shrink-0 items-center justify-center gap-2 rounded-[10px] border px-3 text-sm font-medium transition-colors duration-200 sm:h-[50px] sm:min-w-[138px] sm:px-4 md:text-base lg:h-[74px] lg:w-full lg:min-w-0 lg:justify-start lg:gap-4 lg:rounded-[14px] lg:px-5 xl:text-[18px] ${isActive
-                      ? "border-[#25256F] bg-[#25256F] text-white"
-                      : "border-transparent bg-transparent text-[#2E2E2E] "
-                      }`}
-                  >
-                    <span
-                      className={`absolute bottom-0 left-1/2 h-[3px] w-[70%] -translate-x-1/2 rounded-full bg-[#25256F] transition-opacity duration-200 lg:hidden ${isActive ? "opacity-100" : "opacity-0"
-                        }`}
-                    />
-
-                    <span
-                      className={`absolute left-0 top-1/2 hidden h-[38px] w-[4px] -translate-y-1/2 rounded-r-full bg-[#E0A91B] transition-opacity duration-200 lg:block ${isActive ? "opacity-100" : "opacity-0"
-                        }`}
-                    />
-
-                    <Icon
-                      className={`size-4 shrink-0 transition-colors duration-200 lg:size-5 ${isActive ? "text-white" : "text-[#2564EB]"
-                        }`}
-                    />
-
-                    <span className="block leading-none tracking-wide">
-                      {label}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Tab content */}
-        <div className="w-full flex-1 lg:w-[70%]">
-          <div className="min-h-[560px] w-full rounded-[12px] border border-[#CE9F2D66] bg-[#F7F8FC] p-4 shadow-sm  sm:p-6  lg:p-8 2xl:w-[85%]">
+        <div className="min-w-0">
+          <div className="min-h-full w-full rounded-[14px] border border-gold bg-[#F8F9FF] p-4 shadow-sm sm:p-6 lg:p-7">
             <ApiState
               loading={userState.loading && !user}
               error={userState.error}
               empty={false}
             >
-              <div className="animate-[fadeIn_180ms_ease-out]">
-                {tab === "profile" && <ProfileTab user={user} />}
-                {tab === "addresses" && <AddressTab user={user} />}
-                {tab === "security" && <SecurityTab />}
-                {tab === "kyc" && <KycTab user={user} />}
-              </div>
+              <AccountTabContent
+                tab={tab}
+                user={user}
+                avatarFile={avatarFile}
+              />
             </ApiState>
           </div>
         </div>

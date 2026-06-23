@@ -1071,7 +1071,7 @@ function OrderSummaryCard({ order }) {
             {title}
           </Link>
 
-          <div className="my-6  flex flex-wrap gap-x-5 gap-y-1 text-lg font-semibold text-ink">
+          <div className="my-6  flex flex-wrap gap-x-5 gap-y-1 text-lg font-medium text-ink">
             <span>
               Color :{" "}
               <strong className="font-bold text-[#25247B]">
@@ -1083,7 +1083,7 @@ function OrderSummaryCard({ order }) {
             </span>
           </div>
 
-          <p className="mt-3  text-xl lg:text-[34px] font-extrabold text-[#1B1D60]">
+          <p className="mt-8  text-xl lg:text-[34px] font-extrabold text-[#1B1D60]">
             {formatMoney(amount, currency)}
           </p>
           <p className="text-lg my-2 font-medium text-ink">
@@ -1198,7 +1198,8 @@ function OrderList() {
         formattedId.includes(term) ||
         itemText.includes(term) ||
         visibleOrderIdText.includes(term) ||
-        (Boolean(normalizedTerm) && normalizedOrderText.includes(normalizedTerm))
+        (Boolean(normalizedTerm) &&
+          normalizedOrderText.includes(normalizedTerm))
       );
     });
   }, [query, statusOrders]);
@@ -1233,14 +1234,14 @@ function OrderList() {
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Search by product name or Order ID..."
-                    className="h-12 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
+                    className="h-14 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
                   />
                 </label>
 
                 <select
                   value={activeFilter}
                   onChange={(event) => setActiveFilter(event.target.value)}
-                  className="h-12 lg:w-fit w-full appearance-none rounded-[10px] border border-[#2564EB] bg-white pl-3 pr-10 text-base font-semibold text-[#2564EB] focus:outline-none"
+                  className="h-14 lg:w-fit w-full appearance-none rounded-[10px] border border-[#2564EB] bg-white pl-3 pr-10 text-base font-semibold text-[#2564EB] focus:outline-none"
                   style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9L12 15L18 9' stroke='%232564EB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
                   }}

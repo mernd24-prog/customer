@@ -1,11 +1,11 @@
 import QuantitySelector from "./QuantitySelector";
-import { applyImageFallback, formatMoney } from "../../utils/ecommerce";
+import { applyImageFallback } from "../../utils/ecommerce";
 import { calculateDiscountPercent } from "../../utils/ecommerce/money";
 import { Link } from "react-router-dom";
-import { AlertTriangle, Heart, Trash2 } from "lucide-react";
+import { Heart, Trash2 } from "lucide-react";
 import { FaShoppingCart } from "react-icons/fa";
-
-const LOW_STOCK_THRESHOLD = 5;
+import ProductPriceBlock from "../../pages/products/components/oldAndNewPrice";
+import ProductStockStatus from "../../pages/products/components/stockStatus";
 
 export default function CartItemCard({
   item,
@@ -25,6 +25,8 @@ export default function CartItemCard({
   const oldPrice = Number(item?.oldPrice || 0);
   const stock =
     item?.stock ?? item?.stockQuantity ?? item?.availableQty ?? null;
+  const selectedVariant = item?.selectedVariant ?? item?.variant ?? null;
+  const product = item;
   const maxQty = item?.maxQuantity ?? item?.max_quantity ?? null;
   const quantity = Number(item?.quantity || 1);
   const rating = item?.rating ?? item?.averageRating ?? item?._raw?.rating;
@@ -33,21 +35,8 @@ export default function CartItemCard({
     item?.reviewCount ?? item?.reviewsCount ?? item?._raw?.reviewCount;
 
   const discountPct = calculateDiscountPercent(price, oldPrice);
-  const isLowStock =
-    stock !== null && stock > 0 && stock <= LOW_STOCK_THRESHOLD;
   const isOutOfStock = stock !== null && stock === 0;
   const atMaxQty = maxQty !== null && quantity >= maxQty;
-
-  const returnsAccepted =
-    item?.returnsAccepted ?? item?.returns_accepted ?? true;
-  const returnDays = item?.returnDays ?? item?.return_days ?? null;
-  const returnsText = isOutOfStock
-    ? null
-    : returnsAccepted
-      ? returnDays
-        ? `${returnDays}-day returns`
-        : "Returns accepted"
-      : "Non-returnable";
 
   return (
     <article className="relative w-full p-3 min-[375px]:p-4 sm:p-5 lg:p-6 xl:min-h-[433px] xl:max-w-[1161px] xl:p-[25px]">
@@ -102,18 +91,18 @@ export default function CartItemCard({
           {productPath ? (
             <Link
               to={productPath}
-              className="line-clamp-2 block text-lg font-semibold leading-snug text-[#2d2d2d] transition hover:text-[#1B1D60] min-[375px]:text-xl sm:text-2xl"
+              className="line-clamp-2 block text-lg font-semibold leading-snug text-[#2d2d2d] transition hover:text-[#1B1D60] min-[375px]:text-xl sm:text-[26px]"
             >
               {item?.title}
             </Link>
           ) : (
-            <h3 className="line-clamp-2 text-lg font-bold leading-snug text-[#2d2d2d] min-[375px]:text-xl sm:text-2xl">
+            <h3 className="line-clamp-2 text-lg font-bold leading-snug text-[#2d2d2d] min-[375px]:text-xl sm:text-[26px]">
               {item?.title}
             </h3>
           )}
 
           {Number.isFinite(ratingValue) && (
-            <div className="mt-3 flex flex-wrap items-center gap-1.5 text-sm text-[#2d2d2d] min-[375px]:text-base sm:gap-2 sm:text-lg">
+            <div className="mt-3 flex flex-wrap items-center gap-1.5 text-sm text-[#2d2d2d] min-[375px]:text-base sm:gap-2 sm:text-[20px]">
               <span>{ratingValue.toFixed(1)}</span>
               <span className="tracking-wide text-[#FF7A1A]">★★★★★</span>
               {reviewCount != null && <span>({reviewCount} reviews)</span>}
@@ -151,69 +140,25 @@ export default function CartItemCard({
               ))}
           </div>
 
-          <div className="mt-3">
-            {stock !== null && stock > 0 && (
-              <p className="mb-3 flex items-center gap-2 text-sm font-bold text-[#078B24] sm:text-base">
-                <span className="h-3 w-3 rounded-full bg-[#078B24]" />
-                {stock} in Stock
-              </p>
-            )}
+          <div className="mt-6 ">
+            <ProductStockStatus
+              inStock={stock}
+              selectedVariant={selectedVariant}
+              product={product}
+            />
 
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
-              <span className="text-xl font-sans font-extrabold text-[#1B1D60] min-[375px]:text-2xl sm:text-[28px]">
-                {formatMoney(price)}
-              </span>
-
-              {oldPrice > 0 && oldPrice > price && (
-                <span className="text-lg font-bold text-[#8C8C8C] line-through min-[375px]:text-xl sm:text-2xl">
-                  {formatMoney(oldPrice)}
-                </span>
-              )}
-
-              {discountPct > 0 && (
-                <span className="rounded-full bg-[#FF3D31] px-3 py-1.5 text-xs font-bold text-[#FFFFFF] min-[375px]:text-sm sm:px-5 sm:py-2 sm:text-base">
-                  {discountPct}% Off
-                </span>
-              )}
-            </div>
-
-            <p className="mt-2 text-sm font-medium text-[#2d2d2d] min-[375px]:text-base sm:mt-3 sm:text-lg">
-              Inclusive of all taxes
-            </p>
-
-            {/* {isOutOfStock ? (
-              <p className="mt-1 flex items-center gap-1 text-[13px] font-semibold text-red-600">
-              <AlertTriangle size={12} /> Out of stock
-              </p>
-              ) : isLowStock ? (
-              <p className="mt-1 flex items-center gap-1 text-[13px] font-semibold text-amber-600">
-              <AlertTriangle size={12} /> Only {stock} left in stock
-              </p>
-              ) : null} */}
+            <ProductPriceBlock
+              price={price}
+              mrp={oldPrice}
+              currency={item?.currency ?? item?._raw?.currency}
+              discount={discountPct}
+            />
 
             {atMaxQty && !isOutOfStock && (
               <p className="mt-1 text-[13px] font-medium text-[var(--customer-muted)]">
                 Max {maxQty} per order
               </p>
             )}
-
-            {/* {returnsText && (
-                <p
-                    className={`mt-1 text-[13px] font-medium ${
-                    returnsAccepted
-                    ? "text-[var(--customer-muted)]"
-                    : "text-amber-700"
-                }`}
-                >
-                    {returnsText}
-                </p>
-                )} */}
-
-            {/* <p className="mt-1 text-[13px] font-medium text-[var(--customer-muted)]">
-                {shippingAmount > 0
-                ? `+ ${formatMoney(shippingAmount)} shipping`
-               : "Free shipping"}
-              </p> */}
           </div>
 
           <div className="mt-5 sm:mt-7">

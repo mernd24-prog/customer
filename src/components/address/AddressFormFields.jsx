@@ -29,9 +29,7 @@ export const buildPostalOptions = (postalCodes = []) => {
           z.value ||
           z.label
         : z;
-    const zip = normalizePostalCodeValue(
-      rawZip,
-    );
+    const zip = normalizePostalCodeValue(rawZip);
     const area =
       z && typeof z === "object"
         ? z.areaName || z.area || z.locality || z.name
@@ -70,7 +68,7 @@ export default function AddressFormFields({
 
   return (
     <>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4   sm:grid-cols-2">
         {showLabel && (
           <SelectField
             id={`${idPrefix}-label`}
