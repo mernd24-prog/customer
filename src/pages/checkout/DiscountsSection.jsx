@@ -8,7 +8,7 @@ export default function DiscountsSection({ register, errors, walletBalance }) {
       <div className="bg-cream-strong px-4 py-3 sm:px-5">
         <h2 className="text-base font-bold text-ink">Discounts</h2>
       </div>
-      <div className="grid gap-4 px-4 py-4 sm:grid-cols-2 sm:px-5">
+      <div className="grid gap-4 px-4 py-4 sm:grid-cols-2 sm:px-5 ">
         <FormField
           id="couponCode"
           label="Coupon code"
