@@ -1,13 +1,32 @@
 import { Star } from "lucide-react";
+
+const formatRatingCount = (count) => {
+  const value = Number(count);
+
+  if (!Number.isFinite(value) || value <= 0) return "";
+
+  if (value >= 1000000) {
+    return `${(value / 1000000).toFixed(value % 1000000 === 0 ? 0 : 1)}m`;
+  }
+
+  if (value >= 1000) {
+    return `${(value / 1000).toFixed(value % 1000 === 0 ? 0 : 1)}k`;
+  }
+
+  return value.toLocaleString();
+};
+
 export default function StarRating({ rating, count }) {
-  const stars = Math.round(rating || 0);
+  const ratingValue = Number(rating || 0);
+  const stars = Math.round(Math.max(0, Math.min(ratingValue, 5)));
+  const formattedCount = formatRatingCount(count);
 
   return (
-    <div className="flex items-center  gap-3 my-2">
-      <div className="flex items-center gap-1 ">
+    <div className="my-2 flex items-center gap-2">
+      <div className="flex items-center gap-1">
         {rating != null && (
-          <span className=" text-sm lg:text-[20px]  font-medium text-ink">
-            {Number(rating).toFixed(1)}
+          <span className="text-sm font-medium text-ink lg:text-lg">
+            {ratingValue.toFixed(1)}
           </span>
         )}
 
@@ -24,9 +43,9 @@ export default function StarRating({ rating, count }) {
         ))}
       </div>
 
-      {count != null && (
-        <span className="text-sm lg:text-[20px]  font-medium text-[#2E2E2E]">
-          ({count.toLocaleString()} reviews)
+      {formattedCount && (
+        <span className="text-sm font-medium text-[#2E2E2E] lg:text-lg">
+          ({formattedCount})
         </span>
       )}
     </div>

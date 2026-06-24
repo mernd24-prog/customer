@@ -14,7 +14,7 @@ function OrderDetailSectionCard({
     >
       {title || headerContent ? (
         <div
-          className={`flex min-h-[81px] items-center justify-between rounded-t-[15px] bg-[#CE9F2D33] px-[20px] py-[25px] ${headerClassName}`}
+          className={`flex  min-h-[81px] items-center justify-between rounded-t-[15px] bg-[#CE9F2D33] px-[20px] py-[25px] ${headerClassName}`}
         >
           {title ? (
             <h2

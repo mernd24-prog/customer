@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, ListFilter, SlidersHorizontal } from "lucide-react";
 
-{/* DROPDOWN COMPONENT */}
+{
+  /* DROPDOWN COMPONENT */
+}
 function ToolbarDropdown({ value = "", options = [], onChange }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-  
+
   const selectedOption = options.find(
-    (option) => String(option.value) === String(value)
+    (option) => String(option.value) === String(value),
   );
 
   useEffect(() => {
@@ -75,7 +77,9 @@ function ToolbarDropdown({ value = "", options = [], onChange }) {
     </div>
   );
 }
-{/* MAIN TOOLBAR */}
+{
+  /* MAIN TOOLBAR */
+}
 export default function CollectionToolbar({
   countText,
   sortValue = "",
@@ -100,11 +104,11 @@ export default function CollectionToolbar({
   return (
     <div className={shellClassName}>
       {countText && (
-        <p className="text-sm font-semibold text-[var(--customer-muted)]">
+        <p className="text-sm  font-semibold text-[var(--customer-muted)]">
           {countText}
         </p>
       )}
-      
+
       <div className="flex flex-wrap items-center gap-3">
         {/* Sort Trigger */}
         {!!sortOptions.length && (

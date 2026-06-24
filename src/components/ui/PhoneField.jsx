@@ -36,11 +36,7 @@ const getDialCodeOptions = (countries, dialCodes) => {
         return {
           value: code,
           flag,
-          name:
-            country.name ||
-            country.countryName ||
-            country.label ||
-            "",
+          name: country.name || country.countryName || country.label || "",
           label: [flag, code].filter(Boolean).join(" "),
         };
       })
@@ -78,12 +74,13 @@ export default function PhoneField({
   const defaultDialCode =
     preferredDialCode ||
     (dialCodeValues.includes("+91") ? "+91" : dialCodeValues[0] || "+91");
-  const defaultOption =
-    dialCodeOptions.find((option) => option.value === defaultDialCode) || {
-      value: defaultDialCode,
-      flag: "",
-      label: defaultDialCode,
-    };
+  const defaultOption = dialCodeOptions.find(
+    (option) => option.value === defaultDialCode,
+  ) || {
+    value: defaultDialCode,
+    flag: "",
+    label: defaultDialCode,
+  };
   const [selectedDialCode, setSelectedDialCode] = useState(defaultDialCode);
   const [isDialCodeOpen, setIsDialCodeOpen] = useState(false);
   const dialCodeDropdownRef = useRef(null);
@@ -137,13 +134,12 @@ export default function PhoneField({
 
   return (
     <label
-      className="grid gap-1.5 text-sm font-medium text-ink"
+      className="grid gap-1.5 text-sm lg:text-lg font-medium text-ink"
       htmlFor={id}
     >
       <span>{label}</span>
 
       <div className="relative flex h-11 w-full min-w-0 rounded-[8px] border border-[var(--customer-border)] bg-white shadow-sm transition-colors duration-200 ease-out focus-within:border-[var(--customer-gold)]/70  ">
-
         {dialCodeOptions.length > 1 ? (
           <div
             ref={dialCodeDropdownRef}
@@ -172,18 +168,20 @@ export default function PhoneField({
               <ChevronDown
                 size={14}
                 aria-hidden="true"
-                className={`pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[var(--customer-muted)] transition-transform duration-300 ease-in-out min-[375px]:right-2 ${isDialCodeOpen ? "rotate-180" : "rotate-0"
-                  }`}
+                className={`pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[var(--customer-muted)] transition-transform duration-300 ease-in-out min-[375px]:right-2 ${
+                  isDialCodeOpen ? "rotate-180" : "rotate-0"
+                }`}
               />
             </button>
 
             <div
               id={`${id}-dialCode-options`}
               role="listbox"
-              className={`absolute left-0 top-[calc(100%+6px)] z-50 max-h-60 w-[min(78vw,220px)] overflow-y-auto rounded-[8px] border border-[var(--customer-border)] bg-white py-1 shadow-[0_12px_30px_rgba(3,1,77,0.14)] transition-all duration-200 ease-out [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin] sm:w-[220px] ${isDialCodeOpen
+              className={`absolute left-0 top-[calc(100%+6px)] z-50 max-h-60 w-[min(78vw,220px)] overflow-y-auto rounded-[8px] border border-[var(--customer-border)] bg-white py-1 shadow-[0_12px_30px_rgba(3,1,77,0.14)] transition-all duration-200 ease-out [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin] sm:w-[220px] ${
+                isDialCodeOpen
                   ? "visible translate-y-0 opacity-100"
                   : "invisible -translate-y-1 opacity-0"
-                }`}
+              }`}
             >
               {dialCodeOptions.map((option, index) => (
                 <button
@@ -191,12 +189,17 @@ export default function PhoneField({
                   type="button"
                   role="option"
                   aria-selected={option.value === selectedDialCode}
-                  className={`flex min-h-9 w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-semibold text-[var(--customer-ink)] transition-colors duration-150 hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] sm:text-sm ${option.value === selectedDialCode ? "bg-[var(--customer-gold-soft)] text-[var(--customer-navy)]" : ""
-                    }`}
+                  className={`flex min-h-9 w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-semibold text-[var(--customer-ink)] transition-colors duration-150 hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] sm:text-sm ${
+                    option.value === selectedDialCode
+                      ? "bg-[var(--customer-gold-soft)] text-[var(--customer-navy)]"
+                      : ""
+                  }`}
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => updateDialCode(option.value)}
                 >
-                  {option.flag ? <span aria-hidden="true">{option.flag}</span> : null}
+                  {option.flag ? (
+                    <span aria-hidden="true">{option.flag}</span>
+                  ) : null}
                   <span className="min-w-0 truncate">
                     ({option.value}) {option.name}
                   </span>

@@ -7,7 +7,9 @@ function OrderDetailLayout({ children }) {
 }
 
 function OrderDetailAside({ children, className = "" }) {
-  return <aside className={`grid gap-4 self-start ${className}`}>{children}</aside>;
+  return (
+    <aside className={`grid gap-4 self-start  ${className}`}>{children}</aside>
+  );
 }
 
 export { OrderDetailAside };

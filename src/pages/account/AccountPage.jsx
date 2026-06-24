@@ -84,7 +84,7 @@ function AccountProfileCard({
           <img
             src={avatar}
             alt="Profile avatar"
-            className="size-12 rounded-full border-2 border-[#1B1D60] object-cover md:size-[80px] lg:size-[100px] 2xl:size-[150px]"
+            className="size-12 rounded-full border-2 border-[#1B1D60] object-cover md:size-[80px] lg:size-[100px] 2xl:size-[100px]"
             onError={(event) => {
               event.currentTarget.src = fallbackAvatar;
             }}
@@ -96,7 +96,7 @@ function AccountProfileCard({
         </button>
 
         <span className="min-w-0 flex-1">
-          <span className="text-lg font-bold text-[#3E4093] sm:text-[24px] 2xl:text-[34px]">
+          <span className="text-lg font-bold text-[#3E4093] sm:text-[24px] 2xl:text-[30px]">
             {name}
           </span>
 
@@ -144,7 +144,7 @@ function AccountMenuItem({ item, variant = "desktop", onClick }) {
         className={
           isMobile
             ? "flex size-11 shrink-0 items-center justify-center rounded-full bg-[#FFC82E]"
-            : "flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FFC82E] text-[#1B1D60] sm:size-[70px]"
+            : "flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FFC82E] text-[#1B1D60] sm:size-[60px]"
         }
       >
         <img
@@ -163,7 +163,7 @@ function AccountMenuItem({ item, variant = "desktop", onClick }) {
           className={
             isMobile
               ? "block text-base font-semibold"
-              : "block text-lg font-semibold text-[#2E2E2E] sm:text-2xl"
+              : "block text-lg font-semibold text-[#2E2E2E] sm:text-xl"
           }
         >
           {item.label}
