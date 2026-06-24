@@ -42,12 +42,13 @@ import {
   validatePostalCodeForCountry,
 } from "../../validations";
 import { ADDRESS_LABEL_OPTIONS } from "../../components/address/AddressFormFields";
-
-// Import reusable checkout subcomponents
-import AddressSelection from "./AddressSelection";
-import ShippingAddressForm from "./ShippingAddressForm";
-import DiscountsSection from "./DiscountsSection";
-import CheckoutSummary from "./CheckoutSummary";
+import OrderDetailLayout, {
+  OrderDetailAside,
+} from "../orders/components/OrderDetailLayout";
+import ShippingAddressForm from "./components/ShippingAddressForm";
+import AddressSelection from "./components/AddressSelection";
+import DiscountsSection from "./components/DiscountsSection";
+import CheckoutSummary from "./components/CheckoutSummary";
 
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
@@ -254,13 +255,13 @@ const getCartItemPrice = (item = {}) => {
       : item.product || {};
   return asNumber(
     item.price ??
-      item.unitPrice ??
-      item.unit_price ??
-      item.salePrice ??
-      product.price ??
-      product.sellingPrice ??
-      product.salePrice ??
-      0,
+    item.unitPrice ??
+    item.unit_price ??
+    item.salePrice ??
+    product.price ??
+    product.sellingPrice ??
+    product.salePrice ??
+    0,
   );
 };
 const getCartItemShipping = (item = {}) =>
@@ -529,8 +530,8 @@ const openRazorpayCheckout = async ({
         reject,
         new Error(
           response?.error?.description ||
-            response?.error?.reason ||
-            "Payment failed. Please try again.",
+          response?.error?.reason ||
+          "Payment failed. Please try again.",
         ),
       );
     });
@@ -564,8 +565,8 @@ export default function CheckoutPage() {
         ? buyNowItems
         : selectedCheckoutItemIds !== null
           ? (cart.items || []).filter((item) =>
-              selectedCheckoutItemIds.includes(getCartLineKey(item)),
-            )
+            selectedCheckoutItemIds.includes(getCartLineKey(item)),
+          )
           : cart.items || [],
     [buyNowItems, cart.items, isBuyNowCheckout, selectedCheckoutItemIds],
   );
@@ -662,10 +663,10 @@ export default function CheckoutPage() {
   const checkoutDialCodes = countryObj?.dialCode
     ? [normalizeDialCode(countryObj.dialCode)]
     : Array.from(
-        new Set(
-          countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
-        ),
-      ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
+      new Set(
+        countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
+      ),
+    ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   useEffect(() => {
     if (!countryId) {
@@ -836,10 +837,10 @@ export default function CheckoutPage() {
       const product = getCartItemProduct(item);
       const sellerId = String(
         item.sellerId ||
-          item.seller_id ||
-          product.sellerId ||
-          product.seller_id ||
-          "",
+        item.seller_id ||
+        product.sellerId ||
+        product.seller_id ||
+        "",
       ).trim();
       if (!sellerId) return;
       sellerOrderAmounts[sellerId] =
@@ -880,7 +881,7 @@ export default function CheckoutPage() {
           ? JSON.stringify(paymentSellerContext.sellerOrderAmounts)
           : undefined,
       }),
-    ).catch(() => {});
+    ).catch(() => { });
   }, [
     dispatch,
     paymentSellerContext,
@@ -1022,6 +1023,61 @@ export default function CheckoutPage() {
       postalCode: addressValues.postalCode,
       country: addressValues.country || "",
     };
+  };
+
+  const handleSaveShippingAddressOnly = async () => {
+    const addressResult = checkoutAddressSchema.safeParse({
+      fullName: watchedFullName,
+      dialCode: watchedDialCode,
+      phone: watchedPhone,
+      line1: watchedLine1,
+      line2: watchedLine2,
+      city: selectedCity,
+      state: selectedState,
+      postalCode: watchedPostalCode,
+      country: selectedCountry,
+      couponCode: "",
+      walletAmount: 0,
+    });
+
+    if (!addressResult.success) {
+      addressResult.error.issues.forEach((issue) => {
+        const field = issue.path[0];
+        if (field) {
+          setError(String(field), {
+            type: "manual",
+            message: issue.message,
+          });
+        }
+      });
+      return;
+    }
+
+    const addressValues = addressResult.data;
+    const getFormLabel = () => {
+      const labelValue = document.querySelector('input[name="label"]')?.value;
+      return labelValue || "home";
+    };
+
+    await run(
+      dispatch,
+      addAddress({
+        label: getFormLabel(),
+        fullName: addressValues.fullName,
+        phone: addressValues.phone,
+        line1: addressValues.line1,
+        line2: addressValues.line2 || "",
+        city: addressValues.city,
+        state: addressValues.state,
+        postalCode: addressValues.postalCode,
+        country: addressValues.country || "",
+        isDefault: false,
+      }),
+      "Address saved successfully",
+    );
+
+    await dispatch(fetchMe());
+    setValue("useNewAddress", false, { shouldValidate: true });
   };
 
   const submit = async (values) => {
@@ -1199,12 +1255,12 @@ export default function CheckoutPage() {
                 { label: "Cart", href: "/cart" },
                 { label: "Checkout" },
               ]}
-              className="mb-3 gap-1.5 text-[11px] sm:gap-2"
-              linkClassName="!text-[11px] !leading-4 text-muted hover:text-navy sm:!text-[11px] lg:!text-[11px]"
-              currentClassName="!text-[11px] !leading-4 text-gold-dark sm:!text-[11px] lg:!text-[11px]"
-              separatorClassName="text-muted"
+              className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
+              linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
+              currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
+              separatorClassName="text-[#2E2E2E]"
             />
-            <h1 className="text-2xl font-bold leading-tight text-navy sm:text-3xl">
+            <h1 className="break-words font-bold text-[#3E4093] leading-[100%] tracking-[0px] text-[28px] sm:text-[32px] lg:text-[38px]">
               Checkout
             </h1>
           </div>
@@ -1224,9 +1280,9 @@ export default function CheckoutPage() {
               value={selectedAddressId || ""}
               {...register("selectedAddressId")}
             />
-            <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,360px)]">
+            <OrderDetailLayout>
               {/* Left column: shipping + payment */}
-              <div className="grid gap-6">
+              <div className="flex flex-col gap-6">
                 {/* Saved addresses */}
                 {addresses.length > 0 && (
                   <AddressSelection
@@ -1256,6 +1312,9 @@ export default function CheckoutPage() {
                     postalCodes={postalCodes}
                     showSavedAddressFields={true}
                     addressLabels={addressLabels}
+                    loading={loading}
+                    onCancel={() => setValue("useNewAddress", false)}
+                    onSave={handleSaveShippingAddressOnly}
                   />
                 )}
 
@@ -1268,24 +1327,26 @@ export default function CheckoutPage() {
               </div>
 
               {/* Right column: order summary */}
-              <CheckoutSummary
-                items={items}
-                subtotal={subtotal}
-                shipping={shipping}
-                total={total}
-                quote={quoteData}
-                quoteLoading={quoteLoading}
-                quoteError={quoteError}
-                loading={loading}
-                paymentOptions={paymentOptions}
-                paymentOptionsLoading={
-                  paymentState.loading && !paymentOptions.length
-                }
-                selectedPaymentProvider={paymentProvider}
-                onPaymentProviderChange={setPaymentProvider}
-                getPaymentProviderLabel={getPaymentProviderLabel}
-              />
-            </div>
+              <OrderDetailAside>
+                <CheckoutSummary
+                  items={items}
+                  subtotal={subtotal}
+                  shipping={shipping}
+                  total={total}
+                  quote={quoteData}
+                  quoteLoading={quoteLoading}
+                  quoteError={quoteError}
+                  loading={loading}
+                  paymentOptions={paymentOptions}
+                  paymentOptionsLoading={
+                    paymentState.loading && !paymentOptions.length
+                  }
+                  selectedPaymentProvider={paymentProvider}
+                  onPaymentProviderChange={setPaymentProvider}
+                  getPaymentProviderLabel={getPaymentProviderLabel}
+                />
+              </OrderDetailAside>
+            </OrderDetailLayout>
           </form>
         </ApiState>
       </div>
