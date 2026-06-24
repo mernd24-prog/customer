@@ -401,7 +401,7 @@ function ImageGallery({
   );
 }
 
-function DeliveryChecker({ productId }) {
+function DeliveryChecker({ productId, shipping = {} }) {
   const dispatch = useDispatch();
   const [pincode, setPincode] = useState("");
   const [result, setResult] = useState(null);
@@ -411,19 +411,14 @@ function DeliveryChecker({ productId }) {
   const check = async (e) => {
     e.preventDefault();
     const pin = pincode.trim();
-
     if (!/^\d{6}$/.test(pin)) {
       setError("Enter a valid 6-digit pincode");
       return;
     }
-
     setError("");
     setLoading(true);
-
     try {
-      const action = await dispatch(
-        checkServiceability({ pincode: pin, productId }),
-      );
+      const action = await dispatch(checkServiceability({ pincode: pin, productId }));
       setResult(action?.payload?.data || action?.payload);
     } catch {
       setError("Could not check delivery. Try again.");
@@ -431,58 +426,99 @@ function DeliveryChecker({ productId }) {
       setLoading(false);
     }
   };
+
   const sellerDelivery = result?.deliveryChargeBreakup?.sellers?.[0] || {};
   const eta = sellerDelivery.estimatedDeliveryDays || result?.estimatedDeliveryDays || null;
   const etaText = eta
-    ? [eta.minDays, eta.maxDays]
-        .filter((value) => value !== null && value !== undefined)
-        .join("-")
+    ? [eta.minDays, eta.maxDays].filter((v) => v !== null && v !== undefined).join("–")
     : "";
   const deliveryCharge = Number(result?.sellerDeliveryChargeAmount ?? sellerDelivery.chargeAmount ?? 0);
-  const chargeText = deliveryCharge > 0
-    ? ` · Delivery ${new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(deliveryCharge)}`
-    : " · Free delivery";
+  const resultCodAvailable = result?.codAvailable;
+
+  // Static info from product.shipping (shown before pincode check)
+  const staticIsFree = Boolean(shipping.freeShipping);
+  const staticCharge = Number(shipping.shippingCharge ?? shipping.additionalCost ?? 0);
+  const staticEtaMin = shipping.estimatedDaysMin ?? shipping.processingDays;
+  const staticEtaMax = shipping.estimatedDaysMax ?? shipping.processingDays;
+  const productCodDisabled = shipping.codAvailable === false;
 
   return (
-    <div>
-      <div>
-        <span className="text-base lg:text-[20px] font-semibold text-ink">
-          Check Delivery
-        </span>
-      </div>
+    <div className="space-y-3">
+      {/* Static shipping chips (before pincode check) */}
+      {!result && (
+        <div className="flex flex-wrap gap-2">
+          {staticIsFree ? (
+            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+              <Truck size={11} /> Free Shipping
+            </span>
+          ) : staticCharge > 0 ? (
+            <span className="inline-flex items-center gap-1 rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
+              <Truck size={11} />
+              {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(staticCharge)} Delivery
+            </span>
+          ) : null}
+          {(staticEtaMin || staticEtaMax) && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
+              Ships in {[staticEtaMin, staticEtaMax].filter(Boolean).join("–")} days
+            </span>
+          )}
+          {productCodDisabled && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600">
+              COD not available
+            </span>
+          )}
+        </div>
+      )}
 
-      <form onSubmit={check} className="flex h-13  w-[360px]    gap-0">
+      {/* Pincode check label */}
+      <span className="text-base lg:text-[20px] font-semibold text-ink">
+        Check Delivery
+      </span>
+
+      <form onSubmit={check} className="flex h-11 w-full max-w-[360px] overflow-hidden rounded-full border border-border">
         <input
           type="text"
           value={pincode}
-          onChange={(e) =>
-            setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))
-          }
+          onChange={(e) => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))}
           placeholder="Enter 6-digit pincode"
-          className="flex-1 focus:outline-none  text-[#4E4E4E]  text-sm lg:text-lg rounded-l-full"
+          className="flex-1 min-w-0 bg-transparent px-4 text-sm text-[#4E4E4E] focus:outline-none"
         />
-
         <button
           type="submit"
           disabled={loading}
-          className="flex w-16 items-center  justify-center rounded-r-full bg-navy text-xs font-semibold text-white"
+          className="flex w-14 shrink-0 items-center justify-center bg-navy text-white disabled:opacity-60"
         >
-          <IoIosSearch className="text-xl" />
+          {loading ? (
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            <IoIosSearch className="text-xl" />
+          )}
         </button>
       </form>
 
-      {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-red-600">{error}</p>}
 
       {result && (
-        <p
-          className={`mt-2  text-sm font-medium ${
-            result.serviceable ? "success" : "text-red-600"
-          }`}
-        >
-          {result.serviceable
-            ? `✓ Delivery available${etaText ? ` in ${etaText} days` : ""}${chargeText}`
-            : "Delivery not available to this pincode."}
-        </p>
+        <div className="space-y-1.5">
+          {result.serviceable ? (
+            <p className="text-sm font-medium text-emerald-700">
+              ✓ Deliverable to {pincode}
+              {etaText ? ` · Ships in ${etaText} days` : ""}
+              {deliveryCharge > 0
+                ? ` · ${new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(deliveryCharge)} delivery`
+                : " · Free delivery"}
+            </p>
+          ) : (
+            <p className="text-sm font-medium text-red-600">
+              ✗ Delivery not available to {pincode}.
+            </p>
+          )}
+          {result.serviceable && resultCodAvailable !== undefined && (
+            <p className={`text-xs font-medium ${resultCodAvailable ? "text-emerald-600" : "text-red-500"}`}>
+              {resultCodAvailable ? "✓ Cash on Delivery available" : "✗ COD not available for this pincode"}
+            </p>
+          )}
+        </div>
       )}
     </div>
   );
@@ -1266,7 +1302,7 @@ export default function ProductDetailPage() {
                       />
                     </div>
 
-                    <DeliveryChecker productId={productId} />
+                    <DeliveryChecker productId={productId} shipping={product?.shipping || {}} />
                   </div>
 
                   {variants.length > 0 && variantOptions.length > 0 && (

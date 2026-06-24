@@ -62,6 +62,10 @@ export default function ProductCard({
   const brand = brandProp || cardProduct?.brand;
   const to = href || `/products/${id}`;
   const isListVariant = variant === "list" || variant === "compact";
+  const isFeatured =
+    cardProduct?.metadata?.featured === true ||
+    cardProduct?.isFeatured === true ||
+    cardProduct?.markAsFeatured === true;
   const badgeText =
     badge || (discountPercent > 0 ? `${discountPercent}% OFF` : "");
   const currentPriceNumber = Number(String(price || 0).replace(/[^\d.-]/g, ""));
@@ -238,19 +242,21 @@ export default function ProductCard({
       )}
 
       <div className="absolute  left-4 top-4 z-20 flex max-w-[calc(100%-2rem)] flex-wrap items-center gap-2">
-        <Label
-          variant="featured"
-          className="
-            flex  items-center justify-center
-            rounded-[50px]
-            bg-[#CE9F2D]
-            text-[12px] font-semibold
-            text-white
-            sm:text-[14px]
-          "
-        >
-          {badgeText || "Featured"}
-        </Label>
+        {isFeatured && (
+          <Label
+            variant="featured"
+            className="
+              flex  items-center justify-center
+              rounded-[50px]
+              bg-[#CE9F2D]
+              text-[12px] font-semibold
+              text-white
+              sm:text-[14px]
+            "
+          >
+            Featured
+          </Label>
+        )}
         {discountLabel && (
           <Label
             variant="success"

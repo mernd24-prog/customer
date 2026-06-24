@@ -179,13 +179,13 @@ export default function CheckoutSummary({
             {taxIncluded > 0 ? (
               <SummaryRow
                 label="GST included"
-                value={formatMoney(taxPayable, "INR")}
+                value={formatMoney(taxIncluded, "INR")}
               />
             ) : null}
             {codCharge > 0 ? (
               <SummaryRow
                 label="COD charge"
-                value={formatMoney(taxPayable, "INR")}
+                value={formatMoney(codCharge, "INR")}
               />
             ) : null}
             {quoteWallet > 0 ? (
@@ -224,35 +224,40 @@ export default function CheckoutSummary({
                   const Icon = PAYMENT_ICONS[option.provider] || CreditCard;
                   const isSelected = selectedPaymentProvider === option.provider;
                   return (
-                    <label
-                      key={option.provider}
-                      className={`flex cursor-pointer items-center gap-2 text-sm text-ink transition ${option.enabled ? "" : "cursor-not-allowed opacity-50"
-                        }`}
-                    >
-                      <input
-                        type="radio"
-                        name="paymentProvider"
-                        value={option.provider}
-                        checked={isSelected}
-                        disabled={!option.enabled}
-                        onChange={(event) =>
-                          onPaymentProviderChange?.(event.target.value)
-                        }
-                        className="h-4 w-4 accent-navy"
-                      />
-                      <Icon size={14} className="shrink-0 text-muted" />
-                      <span className="min-w-0 flex-1">
-                        <span className="block font-medium">
-                          {option.label ||
-                            getPaymentProviderLabel?.(option.provider)}
-                        </span>
-                        {Number(option.chargeAmount || 0) > 0 ? (
-                          <span className="block text-xs text-muted">
-                            Charge: {formatMoney(option.chargeAmount, "INR")}
+                    <div key={option.provider}>
+                      <label
+                        className={`flex cursor-pointer items-center gap-2 text-sm text-ink transition ${option.enabled ? "" : "cursor-not-allowed opacity-50"}`}
+                      >
+                        <input
+                          type="radio"
+                          name="paymentProvider"
+                          value={option.provider}
+                          checked={isSelected}
+                          disabled={!option.enabled}
+                          onChange={(event) =>
+                            onPaymentProviderChange?.(event.target.value)
+                          }
+                          className="h-4 w-4 accent-navy"
+                        />
+                        <Icon size={14} className="shrink-0 text-muted" />
+                        <span className="min-w-0 flex-1">
+                          <span className="block font-medium">
+                            {option.label ||
+                              getPaymentProviderLabel?.(option.provider)}
                           </span>
-                        ) : null}
-                      </span>
-                    </label>
+                          {Number(option.chargeAmount || 0) > 0 ? (
+                            <span className="block text-xs text-muted">
+                              Charge: {formatMoney(option.chargeAmount, "INR")}
+                            </span>
+                          ) : null}
+                        </span>
+                      </label>
+                      {!option.enabled && option.disabledReason && (
+                        <p className="mt-1 ml-6 text-xs text-red-500">
+                          {option.disabledReason}
+                        </p>
+                      )}
+                    </div>
                   );
                 })}
               </div>
