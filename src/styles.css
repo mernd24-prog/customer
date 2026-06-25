@@ -640,7 +640,7 @@ nav a,
 nav a.active,
 .tabs a:hover,
 nav a:hover {
-  background: var(--customer-gold-soft);
+  /* background: var(--customer-gold-soft); */
   color: var(--customer-navy);
 }
 

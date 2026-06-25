@@ -1,20 +1,37 @@
 import OrderDetailSectionCard from "./OrderDetailSectionCard";
 import { formatMoney } from "../../../utils/ecommerce/money";
 
-function SummaryRow({ label, value, savings = false }) {
+function SummaryRow({
+  label,
+  value,
+  savings = false,
+  className = "",
+  labelClassName = "",
+  valueClassName = "",
+}) {
   return (
-    <div className="flex h-[58px] w-full max-w-[515px] items-center justify-between">
-      <span className="text-[14px] font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px]">
-        {label}
-      </span>
+<div
+  className={`flex w-full items-center justify-between gap-3 py-3 ${className}`}
+>
+  <span
+    className={`flex-1 text-[14px] font-semibold leading-[20px] text-[#2E2E2E]
+      sm:text-[16px] sm:leading-[24px]
+      md:text-[18px] md:leading-[28px]
+      ${labelClassName}`}
+  >
+    {label}
+  </span>
 
-      <span
-        className={`text-[14px] font-bold leading-[20px] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px]
-        ${savings ? "text-[#008425]" : "text-[#1B1D60]"}`}
-      >
-        {value}
-      </span>
-    </div>
+  <span
+    className={`shrink-0 text-right text-[14px] font-bold leading-[20px]
+      sm:text-[16px] sm:leading-[24px]
+      md:text-[18px] md:leading-[28px]
+      ${savings ? "text-[#008425]" : "text-[#1B1D60]"}
+      ${valueClassName}`}
+  >
+    {value}
+  </span>
+</div>
   );
 }
 
@@ -117,25 +134,59 @@ function OrderPaymentSummary({
   hasShippingAddress,
   getAddressValue,
 
+  title = "Payment Summary",
+
   // Controls
-  variant = "order", // order | cart
+  variant = "", // order | cart | checkout
   buttonText,
   onCheckout,
+
+  // Checkout Props
+  items = [],
+  paymentMethods = [],
+  selectedPaymentProvider,
+  onPaymentProviderChange,
+  loading,
+  selectedLabel,
 }) {
   return (
     <OrderDetailSectionCard
-      title="Payment Summary"
+      title={title}
       className="h-auto w-full"
       borderClassName="border-[#CE9F2D66]"
       bodyClassName="grid gap-3 px-4 py-4 text-sm "
     >
+      {variant === "checkout" && (
+        <>
+          <p className="mb-2 text-[18px] font-bold leading-[28px] text-ink">
+            {String(items.length).padStart(2, "0")} Item(s)
+          </p>
+
+          {/* <div className="grid divide-y divide-border "> */}
+          {items.map((item) => (
+            <div
+              key={item._lineKey}
+              className="flex h-[58px] border-t border-[#04258626] pt-2 w-full items-center justify-between "
+            >
+              <span className="truncate text-[18px] font-semibold leading-[28px] text-[#2E2E2E]">
+                {item.quantity} x {item._safeTitle}
+              </span>
+
+              <span className="shrink-0 text-[18px] font-bold leading-[28px] text-[#1B1D60]">
+                {formatMoney(item._lineTotal, currency)}
+              </span>
+            </div>
+          ))}
+          {/* </div> */}
+        </>
+      )}
       {/* Cart MRP */}
+
       {variant === "cart" && asNumber?.(mrpSubtotal) > 0 && (
         <div>
           <SummaryRow
-            label={`MRP (${itemCount || 0} ${
-              itemCount === 1 ? "item" : "items"
-            })`}
+            label={`MRP (${itemCount || 0} ${itemCount === 1 ? "item" : "items"
+              })`}
             value={formatMoney(mrpSubtotal, currency)}
           />
         </div>
@@ -176,6 +227,12 @@ function OrderPaymentSummary({
             value={`-${formatMoney(discount, currency)}`}
             savings
           />
+        </div>
+      )}
+
+      {variant === "checkout" && asNumber?.(subtotal) >= 0 && (
+        <div className="border-t border-[#04258626] pt-2">
+          <SummaryRow label="Item Total" value={formatMoney(subtotal, currency)} />
         </div>
       )}
 
@@ -234,10 +291,47 @@ function OrderPaymentSummary({
       {/* Total */}
       <div className="border-t border-dashed border-[#04258626] pt-4">
         <SummaryRow
-          label={variant === "cart" ? "Total Amount" : "Order Amount"}
+          label={
+            variant === "checkout"
+              ? "Total Payable"
+              : variant === "cart"
+                ? "Total Amount"
+                : "Order Amount"
+          }
           value={formatMoney(customerAmount || 0, currency)}
         />
       </div>
+
+      {variant === "checkout" && paymentMethods.length > 0 && (
+        <div className="pt-4">
+          <h3 className="text-[14px] font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px] ">
+            Payment Method
+          </h3>
+
+          <div className="flex flex-col mt-2">
+            {paymentMethods.map((option) => (
+              <label
+                key={option.provider}
+                className="flex cursor-pointer items-center gap-3 rounded-[10px] px-3 py-3 text-sm transition hover:border-[#CE9F2D]"
+              >
+                <input
+                  type="radio"
+                  value={option.provider}
+                  checked={selectedPaymentProvider === option.provider}
+                  onChange={(e) =>
+                    onPaymentProviderChange?.(e.target.value)
+                  }
+                  className="h-[18px] w-[18px] accent-[#3E4093]"
+                />
+
+                <span className="text-[18px] font-medium leading-[28px] text-[#2E2E2E]">
+                  {option.label}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Tax Section */}
       {variant === "order" && (taxBreakup || tax !== undefined) && (
@@ -285,6 +379,24 @@ function OrderPaymentSummary({
         >
           {buttonText}
         </button>
+      )}
+      {variant === "checkout" && buttonText && (
+        <>
+         <button
+  type="submit"
+  disabled={loading}
+  className="mt-6 h-[54px] w-full rounded-[10px] bg-[#CE9F2D] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:bg-[#C9961F]"
+>
+  {buttonText}
+</button>
+        
+
+          {selectedLabel && (
+           <p className="mt-3 text-center text-[16px] font-medium leading-[24px] text-[#2E2E2E] sm:text-[18px] sm:leading-[28px]">
+  Selected Method: {selectedLabel}
+</p>
+          )}
+        </>
       )}
     </OrderDetailSectionCard>
   );
