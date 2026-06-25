@@ -13,17 +13,18 @@ export default function ProductGrid({
   renderProduct,
   className = "",
 }) {
-  const gridVariant = variant === "list" || cardVariant === "list" ? "list" : "products";
+  const gridVariant =
+    variant === "list" || cardVariant === "list" ? "list" : "products";
   const resolvedCardVariant = cardVariant || variant;
 
   return (
-    <ResponsiveGrid variant={gridVariant} className={className}>
+    <ResponsiveGrid variant={gridVariant} className={`${className} `}>
       {products.map((product, index) =>
         renderProduct ? (
           renderProduct(product)
         ) : (
           <ProductCard
-            key={`${getKey(product) ?? "product"}-${index}`}
+            key={`${getKey(product) ?? "product "}-${index} `}
             product={product}
             variant={resolvedCardVariant}
             onAddToCart={onAddToCart}

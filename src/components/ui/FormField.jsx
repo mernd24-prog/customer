@@ -29,26 +29,26 @@ export default function FormField({
     id?.toLowerCase().includes("city") ||
     registration?.name?.toLowerCase().includes("city");
 
- const handleChange = (e) => {
-  if (isWallet) {
-    e.target.value = e.target.value
-      .replace(/[^0-9.]/g, "")    
-      .replace(/(\..*)\./g, "$1"); 
-  } else if (isPhone) {
-    e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
-  } else if (isPostalCode) {
-    e.target.value = e.target.value.replace(/\D/g, "");
-  } else if (isTextOnly) {
-    e.target.value = e.target.value.replace(/[^A-Za-z\s'.-]/g, "");
-  }
+  const handleChange = (e) => {
+    if (isWallet) {
+      e.target.value = e.target.value
+        .replace(/[^0-9.]/g, "")
+        .replace(/(\..*)\./g, "$1");
+    } else if (isPhone) {
+      e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+    } else if (isPostalCode) {
+      e.target.value = e.target.value.replace(/\D/g, "");
+    } else if (isTextOnly) {
+      e.target.value = e.target.value.replace(/[^A-Za-z\s'.-]/g, "");
+    }
 
-  registration?.onChange?.(e);
-  props.onChange?.(e);
-};
+    registration?.onChange?.(e);
+    props.onChange?.(e);
+  };
 
   return (
     <label
-      className="grid gap-1.5 text-lg font-medium text-[var(--customer-ink)]"
+      className="grid gap-1.5 text-md lg:text-lg font-medium text-[var(--customer-ink)]"
       htmlFor={id}
     >
       <span>{label}</span>

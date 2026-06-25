@@ -17,26 +17,24 @@ export default function MothersDayCarousel({
 
   if (!cards.length) return null;
 
-  // If heading is the default fallback, render the exact UI text from design:
-  // "Special Gifts For This Month"
   const isDefaultHeading = heading === "SAM-Special Gifts For Mother's Day";
 
   return (
     <section className="my-8 full-banner relative bg-[#1B1E5C] w-full py-12 lg:py-4 ">
-      <div className="max-w-[1760px]   mx-auto px-4 xl:px-8 grid grid-cols-1 lg:grid-cols-4 gap-8 items-center">
+      <div className="max-w-[1760px]   mx-auto px-4 xl:px-8 grid grid-cols-1 xl:grid-cols-4 gap-8 items-center">
         {/* Left Text Block */}
 
-        <div className=" flex flex-col items-center text-center lg:items-start lg:text-left text-white p-2 2xl:p-5">
+        <div className=" flex flex-col items-center text-center xl:items-start xl:text-left text-white p-2 2xl:p-5">
           <img
             src="/image/png/backgroundImg.png"
             alt="decorative ring"
             aria-hidden="true"
             className="absolute top-0 left-0 lg:block hidden"
           />
-          <h2 className="relative z-10 text-2xl xl:text-4xl 2xl:text-[44px] font-bold">
+          <h2 className="relative  z-10  text-2xl lg:text-4xl 2xl:text-[44px] font-bold">
             {isDefaultHeading ? (
               <>
-                Special Gifts <br className="hidden lg:block" />
+                Special Gifts <br className="hidden lg:block mt-4 d" />
                 For{" "}
                 <span className="text-[#D6A323] font-extrabold">
                   This Month

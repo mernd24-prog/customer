@@ -475,31 +475,31 @@ export default function ProductsPage() {
         description="Browse products with filters, sort, and pagination."
       />
 
-      <div className="w-container py-6 sm:py-8">
-        <div className="mb-4 flex flex-wrap items-end justify-end gap-3">
+      <div className="my-8 md:my-16 ">
+        <div className="mb-4  flex flex-wrap items-end justify-end gap-3">
           <CollectionToolbar
             sortValue={searchParams.get("sort") || ""}
             sortOptions={SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
             onOpenFilters={() => setSidebarOpen(true)}
-            viewControls={
-              <div className="hidden items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
-                <button
-                  type="button"
-                  onClick={() => setViewMode("grid")}
-                  className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
-                >
-                  <Grid2X2 size={15} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode("list")}
-                  className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
-                >
-                  <List size={15} />
-                </button>
-              </div>
-            }
+            // viewControls={
+            //   <div className="hidden  items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
+            //     <button
+            //       type="button"
+            //       onClick={() => setViewMode("grid")}
+            //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
+            //     >
+            //       <Grid2X2 size={15} />
+            //     </button>
+            //     <button
+            //       type="button"
+            //       onClick={() => setViewMode("list")}
+            //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
+            //     >
+            //       <List size={15} />
+            //     </button>
+            //   </div>
+            // }
           />
         </div>
 

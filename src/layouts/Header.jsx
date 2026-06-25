@@ -108,7 +108,6 @@ const CATEGORY_MENU_OPEN_DELAY_MS = 350;
 const CATEGORY_MENU_CLOSE_DELAY_MS = 160;
 const HEADER_HEIGHT_VAR = "--customer-header-height";
 
-
 function getHeaderHeight() {
   if (typeof window === "undefined") return 0;
 
@@ -325,8 +324,8 @@ export const TopHeader = () => {
             filteredTopLinks.length
               ? filteredTopLinks
               : DEFAULT_TOP_NAV_LINKS.filter(
-                (l) => l.name !== "Help & Contact",
-              ),
+                  (l) => l.name !== "Help & Contact",
+                ),
           ).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
@@ -398,15 +397,15 @@ export const Navbar = ({ icons: propIcons }) => {
     ...baseAccountMenuItems,
     ...(isAdminRole(currentRole)
       ? [
-        {
-          label: "Admin Products",
-          path: "/admin/products",
-          icon: "settings",
-        },
-        { label: "Admin Catalog", path: "/admin/catalog", icon: "settings" },
-        { label: "Admin Brands", path: "/admin/brands", icon: "settings" },
-        { label: "Admin RBAC", path: "/admin/rbac", icon: "settings" },
-      ]
+          {
+            label: "Admin Products",
+            path: "/admin/products",
+            icon: "settings",
+          },
+          { label: "Admin Catalog", path: "/admin/catalog", icon: "settings" },
+          { label: "Admin Brands", path: "/admin/brands", icon: "settings" },
+          { label: "Admin RBAC", path: "/admin/rbac", icon: "settings" },
+        ]
       : []),
   ]);
   const cartItemCount = cartItems.reduce(
@@ -427,9 +426,9 @@ export const Navbar = ({ icons: propIcons }) => {
     const trimmedQuery = nextQuery.trim();
     const categoryKey = category
       ? category.categoryKey ||
-      category.key ||
-      category.slug ||
-      buildCategorySlug(textOr(category?.title, category?.name))
+        category.key ||
+        category.slug ||
+        buildCategorySlug(textOr(category?.title, category?.name))
       : "";
 
     if (!trimmedQuery && categoryKey) {
@@ -457,8 +456,8 @@ export const Navbar = ({ icons: propIcons }) => {
 
   return (
     <header className="customer-container w-full">
-      <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4 lg:h-[90px] lg:flex-nowrap lg:gap-5">
-        <div className="order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
+      <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4  lg:h-[90px] lg:flex-nowrap lg:gap-5">
+        <div className="order-1  flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
           <Link to="/" aria-label="Sam Global home">
             <img
               src="/image/png/logo.png"
@@ -466,16 +465,7 @@ export const Navbar = ({ icons: propIcons }) => {
               className="h-auto w-[82px] object-contain min-[375px]:w-[100px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
             />
           </Link>
-          {/* <div className="hidden h-10 w-px bg-[var(--customer-border)] lg:block" /> */}
-          {/* <HeaderIconButton
-            className="hidden lg:flex h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent p-0"
-            aria-label="Menu"
-          >
-            {/* <img
-              src="/image/png/list.png"
-              alt="Menu"
-              className="h-[40px] w-[40px] object-contain"
-            /> */}
+
           <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
             Menu
           </span>
@@ -493,12 +483,12 @@ export const Navbar = ({ icons: propIcons }) => {
           placeholder="Search for products, brands and categories..."
           micIcon={icons.Mic}
           showButtonLabel={false}
-          className="order-3 w-full min-w-0 lg:order-2 lg:w-auto lg:max-w-[720px] lg:flex-1"
+          className="order-3  w-full min-w-0 lg:order-2 my-2 lg:my-0 lg:w-auto lg:max-w-[720px] lg:flex-1"
         />
 
         {/* Actions */}
-        <div className="order-2 flex  shrink-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
-          <div className=" items-center gap-5 flex">
+        <div className="order-2 flex  mt-auto lg:mt-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
+          <div className=" items-center  gap-5 flex">
             {utilityIcons.map((item, iconIndex) => (
               <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
                 <HeaderIconButton
@@ -508,10 +498,11 @@ export const Navbar = ({ icons: propIcons }) => {
                   <img
                     src={item?.img}
                     alt={getNavbarIconLabel(item)}
-                    className={`object-contain ${item?.name === "IN"
-                      ? "h-[22px] w-[24px]"
-                      : "h-[17px] w-[17px]"
-                      }`}
+                    className={`object-contain ${
+                      item?.name === "IN"
+                        ? "h-[22px] w-[24px]"
+                        : "h-[17px] w-[17px]"
+                    }`}
                   />
 
                   <span className="pointer-events-none   absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
@@ -545,10 +536,6 @@ export const Navbar = ({ icons: propIcons }) => {
                   {cartItemsLength > 99 ? "99+" : cartItemsLength}
                 </span>
               )}
-
-              {/* <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-                Cart ({cartItemCount})
-              </span> */}
             </HeaderIconButton>
           </div>
 
@@ -557,7 +544,7 @@ export const Navbar = ({ icons: propIcons }) => {
               label={accountLabel}
               icon={<User size={16} className="shrink-0 text-[#1B1D60]" />}
               path="/account/profile"
-              className="h-[34px] max-w-[145px] rounded-[4px]  px-2.5 text-[11px] font-semibold !text-[#1B1D60] hover:!text-[#1B1D60] min-[375px]:h-[36px] min-[375px]:max-w-[160px] min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:max-w-[175px] sm:h-[41px] sm:max-w-[220px] sm:px-4 sm:text-[14px]"
+              className="h-[34px]  max-w-[145px]  rounded-[4px]  md:px-2.5 text-[11px] font-semibold !text-[#1B1D60] hover:!text-[#1B1D60] min-[375px]:h-[36px] min-[375px]:max-w-[160px] min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:max-w-[175px] sm:h-[41px] sm:max-w-[220px] sm:px-4 sm:text-[14px]"
               chevronClassName="!text-[#1B1D60]"
             >
               <MenuDropdown title="My Account" items={accountMenuItems} />
@@ -653,33 +640,6 @@ export const CategoryBar = ({ headerData }) => {
     };
   }, []);
 
-  const handleCategoryMouseEnter = (item) => {
-    if (window.innerWidth < 1024) return;
-
-    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-
-    openTimeoutRef.current = setTimeout(() => {
-      setActiveMenu(item);
-    }, CATEGORY_MENU_OPEN_DELAY_MS);
-  };
-
-  const handleCategoryMouseLeave = () => {
-    if (window.innerWidth < 1024) return;
-
-    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-
-    closeTimeoutRef.current = setTimeout(() => {
-      setActiveMenu(null);
-    }, CATEGORY_MENU_CLOSE_DELAY_MS);
-  };
-
-  const keepCategoryMenuOpen = () => {
-    if (window.innerWidth < 1024) return;
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-  };
-
   const catalogTree = useMemo(
     () => buildCategoryTree(catalogCategories),
     [catalogCategories],
@@ -726,7 +686,7 @@ export const CategoryBar = ({ headerData }) => {
       <div className="absolute inset-0 bg-[#CE9F2D33]  z-10  " />
 
       <div className="w-full relative z-20">
-        <div className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5  lg:justify-center lg:gap-5">
+        <div className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5  2xl:justify-center lg:gap-5">
           {visibleCategories.map((item, index) => {
             // Always use categoryKey first — it's the canonical route key from the DB
             const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
@@ -739,16 +699,16 @@ export const CategoryBar = ({ headerData }) => {
               <div
                 key={keyOr(item?.name, `category-${index}`)}
                 className="relative"
-              // onMouseEnter={() => handleCategoryMouseEnter(item)}
-              // onMouseLeave={handleCategoryMouseLeave}
+                // onMouseEnter={() => handleCategoryMouseEnter(item)}
+                // onMouseLeave={handleCategoryMouseLeave}
               >
                 <Link
                   to={categoryHref}
                   aria-expanded={isActive}
                   aria-controls="category-mega-menu"
-                  className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
+                  className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px]  flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
-                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px] lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform">
+                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform">
                     {item?.img ? (
                       <ImageSkeleton
                         src={item?.img}
@@ -790,10 +750,11 @@ export const CategoryBar = ({ headerData }) => {
       <nav
         aria-label="Sticky category navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
-        className={`fixed left-0 z-40 w-full bg-white/95 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur transition-all duration-300 ease-out will-change-transform ${isPinned
-          ? "pointer-events-auto translate-y-0 opacity-100"
-          : "pointer-events-none -translate-y-full opacity-0"
-          }`}
+        className={`fixed left-0 z-40 w-full bg-white/95 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur transition-all duration-300 ease-out will-change-transform ${
+          isPinned
+            ? "pointer-events-auto translate-y-0 opacity-100"
+            : "pointer-events-none -translate-y-full opacity-0"
+        }`}
       >
         <div className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-2 sm:gap-7 lg:h-[46px] lg:justify-center">
           {visibleCategories.map((item, index) => {
@@ -807,32 +768,36 @@ export const CategoryBar = ({ headerData }) => {
               <Link
                 key={keyOr(item?.name, `sticky-category-${index}`)}
                 to={categoryHref}
-                className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
-                  }`}
+                className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                  isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
+                }`}
               >
                 <span className="max-w-[140px] truncate">
                   {textOr(item?.name, "Category")}
                 </span>
                 <span
-                  className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${isActive ? "w-full opacity-100" : "w-0 opacity-0"
-                    }`}
+                  className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
+                    isActive ? "w-full opacity-100" : "w-0 opacity-0"
+                  }`}
                 />
               </Link>
             );
           })}
           <Link
             to="/categories"
-            className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${location.pathname === "/categories"
-              ? "text-[#03014D]"
-              : "text-[#2E2E2E]"
-              }`}
+            className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+              location.pathname === "/categories"
+                ? "text-[#03014D]"
+                : "text-[#2E2E2E]"
+            }`}
           >
             More
             <span
-              className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${location.pathname === "/categories"
-                ? "w-full opacity-100"
-                : "w-0 opacity-0"
-                }`}
+              className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
+                location.pathname === "/categories"
+                  ? "w-full opacity-100"
+                  : "w-0 opacity-0"
+              }`}
             />
           </Link>
         </div>

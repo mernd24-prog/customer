@@ -237,7 +237,7 @@ function ProductGallery({
 
         <div
           className={`relative order-1 min-w-0  overflow-hidden border border-gold rounded-[20px]  bg-transparent xl:order-2 ${
-            isModal ? "h-full" : "aspect-square lg:h-[600px] xl:h-full w-full"
+            isModal ? "h-full" : "aspect-auto lg:h-[500px] xl:h-full w-full"
           }`}
         >
           <Swiper
@@ -271,8 +271,8 @@ function ProductGallery({
                     className={`h-full w-full select-none  object-contain transition-transform duration-300 ease-out ${
                       isZoomed
                         ? isModal
-                          ? "scale-[1.5]"
-                          : "scale-[1.6]"
+                          ? "scale-[2.0]"
+                          : "scale-[1.9]"
                         : "scale-95"
                     }`}
                     style={{
@@ -346,7 +346,7 @@ function ImageGallery({
             if (onModalOpen) onModalOpen();
             setIsModalOpen(true);
           }}
-          className="text-ink"
+          className="hidden text-ink md:flex"
         >
           <ZoomIn size={18} />
         </IconActionButton>
@@ -386,7 +386,7 @@ function ImageGallery({
               <X size={28} />
             </button>
 
-            <div className="flex h-[90vh] w-full max-w-[1200px] items-center justify-center bg-white">
+            <div className="flex h-[90vh]  w-full max-w-[1200px] items-center justify-center bg-white">
               <ProductGallery
                 images={images}
                 isModal={true}
@@ -417,7 +417,9 @@ function DeliveryChecker({ productId, shipping = {} }) {
     setError("");
     setLoading(true);
     try {
-      const action = await dispatch(checkServiceability({ pincode: pin, productId }));
+      const action = await dispatch(
+        checkServiceability({ pincode: pin, productId }),
+      );
       setResult(action?.payload?.data || action?.payload);
     } catch {
       setError("Could not check delivery. Try again.");
@@ -432,58 +434,76 @@ function DeliveryChecker({ productId, shipping = {} }) {
     result?.estimatedDeliveryDays ||
     null;
   const etaText = eta
-    ? [eta.minDays, eta.maxDays].filter((v) => v !== null && v !== undefined).join("–")
+    ? [eta.minDays, eta.maxDays]
+        .filter((v) => v !== null && v !== undefined)
+        .join("–")
     : "";
-  const deliveryCharge = Number(result?.sellerDeliveryChargeAmount ?? sellerDelivery.chargeAmount ?? 0);
+  const deliveryCharge = Number(
+    result?.sellerDeliveryChargeAmount ?? sellerDelivery.chargeAmount ?? 0,
+  );
   const resultCodAvailable = result?.codAvailable;
 
   // Static info from product.shipping (shown before pincode check)
   const staticIsFree = Boolean(shipping.freeShipping);
-  const staticCharge = Number(shipping.shippingCharge ?? shipping.additionalCost ?? 0);
+  const staticCharge = Number(
+    shipping.shippingCharge ?? shipping.additionalCost ?? 0,
+  );
   const staticEtaMin = shipping.estimatedDaysMin ?? shipping.processingDays;
   const staticEtaMax = shipping.estimatedDaysMax ?? shipping.processingDays;
   const productCodDisabled = shipping.codAvailable === false;
 
   return (
     <div className="space-y-3">
-      {/* Static shipping chips (before pincode check) */}
-      {!result && (
-        <div className="flex flex-wrap gap-2">
-          {staticIsFree ? (
-            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
-              <Truck size={11} /> Free Shipping
-            </span>
-          ) : staticCharge > 0 ? (
-            <span className="inline-flex items-center gap-1 rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
-              <Truck size={11} />
-              {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(staticCharge)} Delivery
-            </span>
-          ) : null}
-          {(staticEtaMin || staticEtaMax) && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
-              Ships in {[staticEtaMin, staticEtaMax].filter(Boolean).join("–")} days
-            </span>
-          )}
-          {productCodDisabled && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600">
-              COD not available
-            </span>
-          )}
-        </div>
-      )}
-
       {/* Pincode check label */}
-      <span className="text-base lg:text-[20px] font-semibold text-ink">
-        Check Delivery
-      </span>
+      <div className="flex max-w-[360px] flex-wrap items-center gap-2">
+        <span className="text-base lg:text-[20px] font-semibold text-ink">
+          Check Delivery
+        </span>
 
-      <form onSubmit={check} className="flex h-11 w-full max-w-[360px] overflow-hidden rounded-full border border-border">
+        {!result && (
+          <>
+            {staticIsFree ? (
+              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                <Truck size={11} /> Free Shipping
+              </span>
+            ) : staticCharge > 0 ? (
+              <span className="inline-flex items-center gap-1 rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
+                <Truck size={11} />
+                {new Intl.NumberFormat("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                  maximumFractionDigits: 0,
+                }).format(staticCharge)}{" "}
+                Delivery
+              </span>
+            ) : null}
+            {(staticEtaMin || staticEtaMax) && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
+                Ships in{" "}
+                {[staticEtaMin, staticEtaMax].filter(Boolean).join("–")} days
+              </span>
+            )}
+            {productCodDisabled && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600">
+                COD not available
+              </span>
+            )}
+          </>
+        )}
+      </div>
+
+      <form
+        onSubmit={check}
+        className="flex h-[50px] w-full max-w-[360px] overflow-hidden rounded-full border border-[#1B1D604D]"
+      >
         <input
           type="text"
           value={pincode}
-          onChange={(e) => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+          onChange={(e) =>
+            setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))
+          }
           placeholder="Enter 6-digit pincode"
-          className="flex-1 min-w-0 bg-transparent px-4 text-sm text-[#4E4E4E] focus:outline-none"
+          className="flex-1 min-w-0 bg-transparent border border-none focus:outline-none px-8 text-sm text-[#4E4E4E] "
         />
         <button
           type="submit"
@@ -516,8 +536,12 @@ function DeliveryChecker({ productId, shipping = {} }) {
             </p>
           )}
           {result.serviceable && resultCodAvailable !== undefined && (
-            <p className={`text-xs font-medium ${resultCodAvailable ? "text-emerald-600" : "text-red-500"}`}>
-              {resultCodAvailable ? "✓ Cash on Delivery available" : "✗ COD not available for this pincode"}
+            <p
+              className={`text-xs font-medium ${resultCodAvailable ? "text-emerald-600" : "text-red-500"}`}
+            >
+              {resultCodAvailable
+                ? "✓ Cash on Delivery available"
+                : "✗ COD not available for this pincode"}
             </p>
           )}
         </div>
@@ -748,7 +772,7 @@ function InfoCard({ title, children, roundedClass = "rounded-[8px]" }) {
 function DetailRows({
   rows,
   children,
-  rowClassName = "grid grid-cols-1 gap-1 px-4 py-3 text-sm md:text-lg sm:grid-cols-[220px_minmax(0,1fr)]",
+  rowClassName = "grid grid-cols-1 gap-1 px-4 py-3 d text-sm md:text-lg sm:grid-cols-[220px_minmax(0,1fr)]",
   labelClassName = "font-medium text-ink",
   valueClassName = "text-left font-bold text-navy md:text-right",
 }) {
@@ -791,12 +815,12 @@ function ProductInfoSection({
             rows={detailRows
               .slice(0, 8)
               .map(([key, value]) => [formatPageTitle(key), value])}
-            rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[18px] sm:grid-cols-[220px_minmax(0,1fr)]"
+            rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]"
             labelClassName="font-medium text-[#2E2E2E]"
             valueClassName="text-left font-bold text-navy sm:text-right"
           >
             {warranty && (
-              <div className="grid grid-cols-1 gap-1 px-4 py-3 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]">
+              <div className="grid grid-cols-1 gap-1 px-4 py-3  text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]">
                 <dt className="font-medium text-ink">
                   {" "}
                   {formatPageTitle("warranty")}
@@ -885,7 +909,7 @@ function ProductRecommendationSection({
   addToCart,
   toggleWishlist,
   isWishlisted,
-  className = "mt-12",
+  className = "mt-12 ",
 }) {
   if (!products.length) return null;
 
@@ -904,7 +928,7 @@ function ProductRecommendationSection({
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-4  sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4  sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-8">
         {products.slice(0, 4).map((p) => (
           <ProductCard
             key={getProductId(p)}
@@ -1310,7 +1334,10 @@ export default function ProductDetailPage() {
                       />
                     </div>
 
-                    <DeliveryChecker productId={productId} shipping={product?.shipping || {}} />
+                    <DeliveryChecker
+                      productId={productId}
+                      shipping={product?.shipping || {}}
+                    />
                   </div>
 
                   {variants.length > 0 && variantOptions.length > 0 && (
@@ -1346,7 +1373,7 @@ export default function ProductDetailPage() {
                 attributes={attributes}
               />
 
-              <div className="my-4">
+              <div className="my-4 ">
                 <ProductReviewsSection
                   productId={productId}
                   product={product}

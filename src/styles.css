@@ -801,7 +801,7 @@ nav a:hover {
 .icon-button,
 .chip {
   border: 1px solid var(--customer-gold);
-  background: var(--customer-gold);
+  /* background: var(--customer-gold); */
   color: var(--customer-navy);
   border-radius: var(--customer-radius-sm);
   padding: 10px 14px;
@@ -817,7 +817,7 @@ nav a:hover {
 .button.secondary,
 .icon-button,
 .chip {
-  background: var(--customer-surface);
+  /* background: var(--customer-surface); */
   color: var(--customer-navy);
   border-color: var(--customer-border);
 }

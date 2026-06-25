@@ -155,7 +155,7 @@ export default function ProductCard({
             className="block overflow-hidden  rounded-[var(--customer-radius)] bg-[var(--customer-cream)]"
           >
             {image ? (
-              <div className="group flex aspect-square w-full items-center justify-center overflow-hidden p-4">
+              <div className="group  flex aspect-square w-full items-center justify-center overflow-hidden p-4">
                 <img
                   src={image}
                   alt={title}
@@ -316,7 +316,7 @@ export default function ProductCard({
             price={price}
             oldPrice={oldPrice}
             currency={currency || cardProduct?.currency}
-            className="mb-0 gap-3 lg:my-4"
+            className="mb-0 gap-3 my-2 lg:my-4"
             priceClassName="text-[20px] font-extrabold text-[#1B1D60] sm:text-[18px] lg:text-[24px]"
             oldPriceClassName="text-[20px] font-semibold text-[#949494] line-through sm:text-[18px] lg:text-[24px]"
           />

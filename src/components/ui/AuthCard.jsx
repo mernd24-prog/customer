@@ -9,9 +9,9 @@ export default function AuthCard({
   maxHeight,
 }) {
   return (
-    <section className="mt-6">
+    <section className="mt-10 md:mt-8 mx-1">
       <div
-        className={`mx-auto w-full ${maxWidth}   bg-[#F7F8FC]  rounded-xl border border-[#EAEFF3] p-4 lg:p-6 shadow-sm`}
+        className={`mx-auto w-full ${maxWidth}  shadow-xl  bg-[#F7F8FC]  rounded-xl border border-[#EAEFF3] p-4 lg:p-6 md:shadow-sm`}
       >
         <div className="flex flex-col md:flex-row items-stretch gap-6">
           {/* Left image - visible on md+ */}
@@ -28,10 +28,10 @@ export default function AuthCard({
           </div>
 
           {/* Right content */}
-          <div className="flex w-full flex-col justify-center lg:w-1/2">
+          <div className="flex w-full  flex-col justify-center lg:w-1/2">
             <div className="w-full">
               <div className="mb-3 text-center ">
-                <div className="mx-auto   mb-2 flex h-[80px] w-[80px] items-center justify-center rounded-full text-gold">
+                <div className="mx-auto   mb-2 flex w-[60px] h-[60px] lg:h-[80px] lg:w-[80px] items-center justify-center rounded-full text-gold">
                   {icon ? (
                     <img
                       src={icon}
@@ -86,13 +86,13 @@ export default function AuthCard({
                 )}
 
                 {title && (
-                  <h1 className="text-2xl font-semibold text-[#2E2E2E] py-3">
+                  <h1 className="text-xl lg:text-2xl font-semibold text-[#2E2E2E] pt-2 lg:py-3">
                     {title}
                   </h1>
                 )}
 
                 {subtitle && (
-                  <p className="mx-auto  max-w-md   text-base text-muted">
+                  <p className="mx-auto  max-w-md  text-sm lg:text-base text-muted">
                     {subtitle}
                   </p>
                 )}

@@ -39,8 +39,8 @@ export default function ProductResultsLayout({
         onClear={onClearFilters}
       />
 
-      <div className="flex items-start gap-6 lg:sticky lg:top-[calc(var(--customer-header-height,0px)+24px)]  lg:self-start lg:h-fit w-full ">
-        <div className="hidden lg:block">
+      <div className="flex  mt-8 items-start gap-8 lg:sticky lg:top-[calc(var(--customer-header-height,0px)+24px)]  lg:self-start lg:h-fit w-full ">
+        <div className="hidden lg:block ">
           <ProductFilterSidebar
             sections={filterSections}
             onClearAll={onClearFilters}
@@ -54,7 +54,7 @@ export default function ProductResultsLayout({
           />
         </FilterDrawer>
 
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 dflex-1 ">
           {children || (
             <ApiState
               loading={loading}
@@ -63,6 +63,9 @@ export default function ProductResultsLayout({
               emptyTitle={emptyTitle}
               emptyText={emptyText}
             >
+              <h4 className="text-xl md:text-[24px] mb-6 lg:mb-12">
+                Showing 1–30 of 85 results
+              </h4>
               <ProductGrid
                 products={products}
                 variant={viewMode}
