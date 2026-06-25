@@ -9,9 +9,8 @@ import { MdOutlineShoppingCart } from "react-icons/md";
 import {
   ChevronRight,
   Download,
+  IndianRupee,
   FileText,
-
-  Headphones,
   Package,
   ReceiptText,
   RefreshCw,
@@ -876,7 +875,7 @@ function getOrderItemColor(item) {
 
 function OrderSummaryCard({ order }) {
   const id = getOrderId(order);
-  const orderNumber = getOrderNumber(order);
+  const apiOrderId = getOrderId(order);
   const status = getOrderStatus(order);
   const createdAt = order.created_at || order.createdAt;
   const item = getOrderItems(order)[0] || {};
@@ -905,8 +904,8 @@ function OrderSummaryCard({ order }) {
       <div className="flex flex-col gap-3 border-b border-[#E7D9B8] bg-[#CE9F2D33] px-3 py-4 md:flex-row md:items-center md:justify-between md:gap-4 md:px-4 md:py-6  text-sm md:text-base 2xl:text-[20px] font-semibold text-ink">
         <div className="flex items-center justify-between w-full md:contents">
           <span className="inline-flex items-center gap-1.5">
-            <FaShoppingCart className="text-[#2564EB] text-sm lg:text-xl" />
-            Order ID : #{formatOrderId(orderNumber || id)}
+            <FaShoppingCart className="text-[#2564EB] text-sm lg:text-xl " />#
+            {apiOrderId}
             <button
               type="button"
               onClick={handleCopyOrderId}
@@ -1103,7 +1102,7 @@ function OrderList() {
         <div>
           <Breadcrumbs
             items={ORDER_BREADCRUMBS}
-            className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
+            className="mb-2 flex flex-wrap  items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
             linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
             currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
             separatorClassName="text-[#2E2E2E]"
