@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import CartItemCard from "../../components/cart/CartItemCard";
-import CartSummary from "../../components/cart/CartSummary";
+// import CartSummary from "../../components/cart/CartSummary";
 import BrandButton from "../../components/ui/BrandButton";
 import { Breadcrumbs, ProductCard } from "../../components/ecommerce";
 import { fetchCart, updateCart } from "../../features/cart/cartSlice";
@@ -37,9 +37,25 @@ import OrderPaymentSummary from "../orders/components/OrderPaymentSummary";
 // import { ChevronRight } from "lucide-react";
 import { OutlineSmallButton } from "../../components/dynamicComponent/button/static";
 import { FaAngleRight } from "react-icons/fa6";
-import { buildSavedProductView, cartLineKey, getCartItemStock, mergeDisplayCartItems, normalizeCartItemId, normalizeCartItemIds, normalizeId, readCheckoutCartItemIds, readSavedForLaterItems, readSelectedCheckoutItemIds, writeCheckoutCartItemIds, writeSavedForLaterItems, writeSelectedCheckoutItemIds } from "../../utils/ecommerce/cart";
-import { BUY_NOW_STORAGE_KEY, CHECKOUT_CART_ITEM_IDS_STORAGE_KEY, SELECTED_CHECKOUT_STORAGE_KEY } from "../../constants";
-
+import {
+  buildSavedProductView,
+  cartLineKey,
+  getCartItemStock,
+  mergeDisplayCartItems,
+  normalizeCartItemId,
+  normalizeCartItemIds,
+  readCheckoutCartItemIds,
+  readSavedForLaterItems,
+  readSelectedCheckoutItemIds,
+  writeCheckoutCartItemIds,
+  writeSavedForLaterItems,
+  writeSelectedCheckoutItemIds,
+} from "../../utils/ecommerce/cart";
+import {
+  BUY_NOW_STORAGE_KEY,
+  CHECKOUT_CART_ITEM_IDS_STORAGE_KEY,
+  SELECTED_CHECKOUT_STORAGE_KEY,
+} from "../../constants";
 
 function adaptItemForCard(item) {
   const product = item.productId || {};
@@ -108,8 +124,6 @@ function adaptItemForCard(item) {
     _raw: item,
   };
 }
-
-
 
 export default function CartPage() {
   const dispatch = useDispatch();
@@ -440,21 +454,20 @@ export default function CartPage() {
   };
 
   const savedCardClass =
-  "relative overflow-hidden rounded-[18px] border border-border bg-white px-4 py-4 shadow-[0_12px_32px_rgba(31,36,48,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_18px_45px_rgba(31,36,48,0.1)] sm:px-5";
+    "relative overflow-hidden rounded-[18px] border border-border bg-white px-4 py-4 shadow-[0_12px_32px_rgba(31,36,48,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_18px_45px_rgba(31,36,48,0.1)] sm:px-5";
   const savedCardStripClass =
-  "absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-gold to-gold-dark";
+    "absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-gold to-gold-dark";
   const savedCardContentClass =
-  "flex min-w-0 flex-col gap-4 pl-2 sm:flex-row sm:items-center sm:justify-between";
-  const savedCardInfoClass =
-  "flex min-w-0 items-center gap-4";
+    "flex min-w-0 flex-col gap-4 pl-2 sm:flex-row sm:items-center sm:justify-between";
+  const savedCardInfoClass = "flex min-w-0 items-center gap-4";
   const savedCardImageWrapperClass =
-  "flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[14px] bg-cream ring-1 ring-border sm:h-20 sm:w-20";
+    "flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[14px] bg-cream ring-1 ring-border sm:h-20 sm:w-20";
   const savedCardActionClass =
-  "flex shrink-0 flex-col items-stretch gap-2 sm:min-w-[150px] sm:items-end";
+    "flex shrink-0 flex-col items-stretch gap-2 sm:min-w-[150px] sm:items-end";
   const savedCardLabelClass =
-  "hidden text-xs font-semibold uppercase text-muted sm:block";
+    "hidden text-xs font-semibold uppercase text-muted sm:block";
   const moveToCartButtonClass =
-  "h-9 w-full border-gold/40 px-4 text-xs font-bold text-ink sm:w-auto";
+    "h-9 w-full border-gold/40 px-4 text-xs font-bold text-ink sm:w-auto";
 
   return (
     <>
@@ -546,7 +559,7 @@ export default function CartPage() {
                 )}
 
                 {hasSavedItems && (
-                  <div className="panel">
+                  <div className=" md:border md:border-[#e4ddcf] rounded-xl bg-[#ffffff] md:p-10">
                     <h3 className="mb-4  text-[16px] font-semibold text-ink">
                       Saved for later (
                       {savedForLaterItems.length + wishlist.length})
@@ -561,7 +574,7 @@ export default function CartPage() {
                             key={savedItemView.id}
                             className={savedCardClass}
                           >
-                            <div className={savedCardStripClass}/>
+                            <div className={savedCardStripClass} />
                             <div className={savedCardContentClass}>
                               <div className={savedCardInfoClass}>
                                 <div className={savedCardImageWrapperClass}>
@@ -625,11 +638,8 @@ export default function CartPage() {
                         );
 
                         return (
-                          <div
-                            key={wishlistId}
-                            className={savedCardClass}
-                          >
-                            <div className={savedCardStripClass}/>
+                          <div key={wishlistId} className={savedCardClass}>
+                            <div className={savedCardStripClass} />
                             <div className={savedCardContentClass}>
                               <div className={savedCardInfoClass}>
                                 <div className={savedCardImageWrapperClass}>
@@ -691,10 +701,11 @@ export default function CartPage() {
                   </div>
                 )}
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 ">
                   <OutlineSmallButton
                     to="/products"
                     rightIcon={<FaAngleRight className="text-[10px]" />}
+                    className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold  transition-all duration-300 ease-in-out"
                   >
                     Continue Shopping
                   </OutlineSmallButton>
@@ -749,13 +760,15 @@ export default function CartPage() {
                       Multiple widgets available in the product designer
                     </p>
                   </div>
+                  <div className="flex items-center gap-3 ">
                   <OutlineSmallButton
                     to="/products"
                     rightIcon={<FaAngleRight className="text-[10px]" />}
-                    className="self-start sm:self-center"
+                    className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold  transition-all duration-300 ease-in-out"
                   >
                     Browse All Products
                   </OutlineSmallButton>
+                  </div>
                 </div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 lg:gap-6">
                   {recentViewedItems.map((item) => (

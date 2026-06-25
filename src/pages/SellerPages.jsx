@@ -26,7 +26,7 @@ export function SellerStatusPage() {
         empty={!status}
       >
         <div className="split">
-          <div className="panel">
+          <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
             <h2>{status?.profile?.displayName || status?.email}</h2>
             <p>
               Account: <strong>{status?.accountStatus}</strong>
@@ -39,7 +39,7 @@ export function SellerStatusPage() {
             </p>
             <p>Mode: read-only status and tracking.</p>
           </div>
-          <div className="panel">
+          <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
             <h2>Onboarding checklist</h2>
             {Object.entries(status?.onboarding?.checklist || {}).map(
               ([key, done]) => (
@@ -56,7 +56,7 @@ export function SellerStatusPage() {
           </div>
         </div>
         <div className="state-box">
-          Seller actions are available only in the dedicated seller admin panel.
+          Seller actions are available only in the dedicated seller admin border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10.
           This web app intentionally hides product, profile, bank, sub-admin,
           payout, order status, and e-way bill actions.
         </div>
@@ -82,7 +82,7 @@ export function SellerTrackingPage() {
         error={state.error}
         empty={!orders.length}
       >
-        <div className="panel">
+        <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
           <h2>Summary</h2>
           <pre className="json">
             {JSON.stringify(state.current?.summary || {}, null, 2)}
@@ -124,7 +124,7 @@ export function SellerTrackingDetailPage() {
         error={state.error}
         empty={!order}
       >
-        <div className="panel">
+        <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
           <h2>{order?.orderId || orderId}</h2>
           <StatusTimeline status={order?.orderStatus} />
           <p>

@@ -560,7 +560,7 @@ export function AuthFormPage({ mode }) {
   return (
     <section className="narrow">
       <Seo title={`${title} | Sam Global`} />
-      <form className="panel" onSubmit={handleSubmit(submit)}>
+      <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submit)}>
         <h1>{title}</h1>
         {(mode === "register" || mode === "register-otp") && (
           <>
@@ -772,7 +772,7 @@ export function AccountPage({ tab = "profile" }) {
       </div>
       <ApiState loading={user.loading} error={user.error} empty={!user.current}>
         {tab === "profile" && (
-          <form className="panel" onSubmit={handleSubmit(submitProfile)}>
+          <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submitProfile)}>
             <input
               placeholder="First name"
               defaultValue={user.current?.profile?.firstName}
@@ -789,7 +789,7 @@ export function AccountPage({ tab = "profile" }) {
           </form>
         )}
         {tab === "addresses" && (
-          <form className="panel" onSubmit={handleSubmit(submitAddress)}>
+          <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submitAddress)}>
             <input
               placeholder="Label"
               {...register("label", { required: true })}
@@ -841,7 +841,7 @@ export function AccountPage({ tab = "profile" }) {
         )}
         {tab === "security" && (
           <form
-            className="panel"
+            className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10"
             onSubmit={handleSubmit((values) =>
               run(dispatch, changePassword(values), "Password changed"),
             )}
@@ -884,7 +884,7 @@ export function AccountPage({ tab = "profile" }) {
           </form>
         )}
         {tab === "kyc" && (
-          <form className="panel" onSubmit={handleSubmit(submitKyc)}>
+          <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submitKyc)}>
             <input
               placeholder="Legal name"
               {...register("legalName", { required: true })}
@@ -992,7 +992,7 @@ export function ProductsPage({ search = false }) {
 
 export function CategoryPage() {
   const { categoryKey } = useParams();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const category = useFetch(
     fetchCategoryByKey,
     { categoryKey },
@@ -1090,7 +1090,7 @@ export function ProductDetailPage() {
               <div className="empty-media">No image</div>
             )}
           </div>
-          <div className="panel">
+          <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
             <h1>{product?.title}</h1>
             <p>{product?.description}</p>
             <strong>
@@ -1191,7 +1191,7 @@ export function CartPage() {
         empty={!items.length && !(cart.wishlist || []).length}
       >
         <div className="split">
-          <div className="panel">
+          <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
             <h2>Items</h2>
             {items.map((item) => (
               <div className="line-item" key={getProductId(item)}>
@@ -1233,7 +1233,7 @@ export function CartPage() {
               Checkout
             </Link>
           </div>
-          <div className="panel">
+          <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
             <h2>Wishlist</h2>
             {(cart.wishlist || []).map((id) => (
               <div className="line-item" key={id}>
@@ -1334,7 +1334,7 @@ export function CheckoutPage() {
         emptyTitle="Your cart is empty"
       >
         <div className="split">
-          <form className="panel" onSubmit={handleSubmit(submit)}>
+          <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submit)}>
             <h2>Delivery address</h2>
             <input
               placeholder="Line 1"
@@ -1377,7 +1377,7 @@ export function CheckoutPage() {
             </button>
           </form>
 
-          <aside className="panel">
+          <aside className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
             <h2>Payment option</h2>
             <div className="payment-options">
               {paymentOptions.map((option) => (
@@ -1431,35 +1431,37 @@ export function CheckoutPage() {
     </section>
   );
 }
-
 export function PaymentResultPage({ failed = false }) {
   const dispatch = useDispatch();
   const orderState = useSelector((state) => state.order);
   const [searchParams] = useSearchParams();
+
   const orderId = searchParams.get("orderId");
-  const orderLink = orderId ? `/orders/${orderId}` : "/orders";
   const order = findFetchedOrder(orderState, orderId);
+
   const items = getOrderItems(order || {});
   const currency = getOrderCurrency(order || {});
   const shippingAddress =
     order?.shipping_address || order?.shippingAddress || {};
+
   const discount = getOrderAmount(order || {}, "discount");
   const shipping = getOrderAmount(order || {}, "shipping");
   const customerAmount = getCustomerOrderAmount(order || {});
   const status = firstDefined(order?.status, order?.orderStatus, "confirmed");
-  const placedAt = firstDefined(order?.created_at, order?.createdAt);
   const expectedDelivery = getExpectedDeliveryDate(order || {});
+
+  useEffect(() => {
+    if (orderId) {
+      dispatch(fetchOrderById({ orderId }));
+    }
+  }, [dispatch, orderId]);
+
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "Cart", href: "/cart" },
-    { label: "Checkout" },
+    { label: "Checkout", href: "/checkout" },
+    { label: failed ? "Payment Failed" : "Order Placed" },
   ];
-
-  useEffect(() => {
-    if (!failed && orderId) {
-      dispatch(fetchOrderById({ orderId }));
-    }
-  }, [dispatch, failed, orderId]);
 
   const failureCard = (
     <div className="mx-auto w-full max-w-[760px] px-4 py-10 sm:px-6 lg:px-8">
@@ -1560,7 +1562,7 @@ export function PaymentResultPage({ failed = false }) {
             <section className="grid !sm:mt-10">
               <Breadcrumbs
                 items={breadcrumbItems}
-                className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px] "
+                className="sm:mt-6 xl:mt-2  flex flex-wrap items-center gap-[10px]  sm:gap-[12px] lg:gap-[15px] "
                 linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
                 currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
                 separatorClassName="text-[#2E2E2E]"
@@ -1569,9 +1571,9 @@ export function PaymentResultPage({ failed = false }) {
 
             <OrderDetailLayout>
               <div className="grid gap-3 min-[375px]:gap-4 min-[425px]:gap-5 md:gap-6 xl:gap-12 ">
-                <section className="flex w-full flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D]/40 bg-white ">
+                <section className="flex w-full flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D]/40 bg-[#fffcf6] ">
                   <div className="flex flex-col  gap-4  px-6 py-5 sm:px-7 md:px-8 xl:mt-5  min-[375px]:gap-5 min-[375px]:px-5 min-[425px]:gap-6 sm:py-6 xl:px-[57px]">
-                    <div className="flex  flex-col items-center !gap-10  text-center !sm:gap-2 md:flex-row md:items-center md:text-left">
+                    <div className="flex  flex-col items-center !gap-10  text-center !sm:gap-[1.25rem] md:flex-row md:items-center md:text-left">
                       <div>
                         <img
                           src="/image/png/Group.png"
@@ -1590,7 +1592,7 @@ export function PaymentResultPage({ failed = false }) {
                       </div>
 
                       <div className="min-w-0  flex-1">
-                        <h1 className="break-words text-[24px] font-bold leading-[2.1] text-[#3E4093] min-[375px]:text-[28px] min-[425px]:text-[24px] sm:text-[40px] xl:text-[36px]">
+                        <h1 className="break-words text-[24px] font-bold leading-[1.3] xl:leading-[2.1] text-[#3E4093] min-[375px]:text-[28px] min-[425px]:text-[24px] sm:text-[40px] xl:text-[36px]">
                           Order Placed Successfully !
                         </h1>
 
@@ -1604,7 +1606,7 @@ export function PaymentResultPage({ failed = false }) {
                     </div>
                   </div>
 
-                  <div className="mt-auto flex flex-col gap-2 bg-[#BBBBCB] px-4 py-3 text-[13px] font-semibold text-[#1B1D60] min-[375px]:px-5 min-[375px]:text-sm min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-4 sm:text-[17px] md:px-8 xl:text-[18px]">
+                  <div className="mt-auto flex flex-col gap-2 bg-[#BBBBCB] px-4 py-3 text-[13px] font-semibold text-[#1B1D60] min-[375px]:px-5 min-[375px]:text-sm min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-4 sm:text-[17px] md:px-8 xl:text-[20px]">
                     <span className="break-words">
                       Order ID : #
                       {formatOrderId(getOrderNumber(order) || orderId)}
@@ -1626,24 +1628,24 @@ export function PaymentResultPage({ failed = false }) {
                   <OrderProgress status={status} />
                 </OrderDetailSectionCard>
 
-                <div className="w-full text- ">
+                <div className="w-full  ">
                   <OrderItemsSection
                     items={items}
                     title={null}
                     currency={currency}
                     getItemImage={getItemImage}
-                    getProductTitle={getProductTitle}
+                    getProductTitle={getOrderProductTitle}
                     getOrderItemColor={getOrderItemColor}
                     getItemLineTotal={getItemLineTotal}
                     formatMoney={formatMoney}
-                    className="rounded-[20px] border border-[#CE9F2D66] bg-white"
-                    bodyClassName="px-4 py-5 sm:px-6 !leading-[1.2]"
-                    itemClassName="py-4"
+                    className="md:text-[18px] font-bold"
+                  
+                  
                   />
                 </div>
               </div>
 
-              <OrderDetailAside className="w-full  gap-4 min-[425px]:gap-5 xl:sticky xl:top-28 xl:self-start xl:gap-6">
+              <OrderDetailAside className="w-full  gap-4 min-[425px]:gap-5 xl:sticky xl:top-28 xl:self-start xl:gap-6 ">
                 <OrderDetailSectionCard
                   title="Order Summary"
                   className="w-full rounded-[20px]"
@@ -1691,7 +1693,7 @@ export function PaymentResultPage({ failed = false }) {
 
                   <div className="mt-3 rounded-[14px] px-3 py-3 min-[375px]:px-4 min-[375px]:py-4">
                     <div className="flex items-start gap-3">
-                      <span className="mt-0.5 flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-full border border-[#CE9F2D66] bg-white text-[#CE9F2D] sm:h-[70px] sm:w-[70px]">
+                      <span className="mt-0.5 flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-full border border-[#CE9F2D66] bg- text-[#CE9F2D] sm:h-[70px] sm:w-[70px]">
                         <img src="/public/image/png/Frame1.png" alt="" />
                       </span>
 
@@ -1746,7 +1748,8 @@ export function PaymentResultPage({ failed = false }) {
                       <div className="flex items-start gap-2 text-[13px] font-medium leading-6 min-[375px]:text-[16px] sm:text-[20px]">
                         <Phone className="mt-1 h-[18px] w-[18px] shrink-0 text-[#CE9F2D]" />
                         <span className="break-words">
-                          {shippingAddress.phone || "Phone unavailable"}
+                          {getOrderPhone(shippingAddress) ||
+                            "Phone unavailable"}
                         </span>
                       </div>
 
@@ -1813,7 +1816,7 @@ export function OrdersPage({ detail = false, track = false }) {
       <section>
         <Seo title={`Order ${orderId} | Sam Global`} />
         <ApiState loading={state.loading} error={state.error} empty={!order}>
-          <div className="panel">
+          <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
             <h1>Order {orderId}</h1>
             <StatusTimeline status={order?.status || order?.orderStatus} />
             <p>
@@ -1871,7 +1874,7 @@ export function OrdersPage({ detail = false, track = false }) {
                 </strong>
               </div>
             </div>
-            <div className="panel nested-panel">
+            <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10 nested-border">
               <h2>Invoice</h2>
               {taxState.loading && <p>Loading invoice...</p>}
               {!taxState.loading && invoiceVisible && invoice ? (
@@ -2008,7 +2011,7 @@ export function ReturnsPage({ request = false }) {
       <section>
         <Seo title="Request return" />
         <form
-          className="panel"
+          className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10"
           onSubmit={handleSubmit((values) =>
             run(
               dispatch,

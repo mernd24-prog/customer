@@ -839,7 +839,6 @@ nav a:hover {
 
 .product-card,
 .card,
-.panel,
 .state-box {
   background: var(--customer-surface);
   border: 1px solid var(--customer-border);
@@ -1137,7 +1136,8 @@ nav a:hover {
   }
 }
 
-.panel,
+
+
 .card,
 .state-box {
   padding: 18px;
@@ -1348,7 +1348,7 @@ small {
   border-bottom: 0;
 }
 
-.nested-panel {
+.nested-border panel {
   margin-top: 14px;
   background: var(--customer-surface);
 }

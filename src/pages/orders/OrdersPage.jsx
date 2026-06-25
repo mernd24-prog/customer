@@ -1083,7 +1083,7 @@ function OrderSummaryCard({ order }) {
             </span>
           </div>
 
-          <p className="mt-3  text-xl lg:text-[34px] font-extrabold text-[#1B1D60]">
+          <p className="mt-3  text-xl lg:text-[24px] font-extrabold text-[#1B1D60]">
             {formatMoney(amount, currency)}
           </p>
           <p className="text-lg my-2 font-medium text-ink">
