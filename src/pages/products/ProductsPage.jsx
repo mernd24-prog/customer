@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid2X2, List } from "lucide-react";
 import Seo from "../../components/common/Seo";
-import PageHeader from "../../components/common/PageHeader";
+
 import {
   CheckboxListFilter,
   CollectionToolbar,
@@ -41,7 +41,14 @@ function parseMultiValue(value) {
 }
 
 function serializeMultiValue(values) {
-  const uniqueValues = [...new Set((values || []).map(String).map((item) => item.trim()).filter(Boolean))];
+  const uniqueValues = [
+    ...new Set(
+      (values || [])
+        .map(String)
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  ];
   return uniqueValues.length ? uniqueValues.join(",") : undefined;
 }
 
@@ -92,7 +99,8 @@ export default function ProductsPage() {
     [products],
   );
   const brandCounts = useMemo(
-    () => buildFacetCountMap(products, (product) => getProductBrandName(product)),
+    () =>
+      buildFacetCountMap(products, (product) => getProductBrandName(product)),
     [products],
   );
   const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
@@ -144,7 +152,8 @@ export default function ProductsPage() {
         data.items ||
         data.list ||
         (Array.isArray(data) ? data : []);
-      const meta = result?.meta?.pagination || result?.pagination || result?.meta || {};
+      const meta =
+        result?.meta?.pagination || result?.pagination || result?.meta || {};
       setPageInfo({
         page: Number(meta.page || meta.currentPage || params.page || 1),
         totalPages: Number(meta.totalPages || meta.pages || 1),
@@ -292,7 +301,10 @@ export default function ProductsPage() {
       value: rating,
       label: `Rating: ${rating}★ & up`,
     })),
-    searchParams.get("inStock") === "true" && { key: "inStock", label: "In Stock Only" },
+    searchParams.get("inStock") === "true" && {
+      key: "inStock",
+      label: "In Stock Only",
+    },
     searchParams.get("outOfStock") === "true" && {
       key: "outOfStock",
       label: "Out of Stock",
@@ -361,7 +373,9 @@ export default function ProductsPage() {
           }))}
           selected={selectedBrands}
           multiple
-          onChange={(values) => updateParam("brand", serializeMultiValue(values))}
+          onChange={(values) =>
+            updateParam("brand", serializeMultiValue(values))
+          }
         />
       ),
     },
@@ -462,11 +476,7 @@ export default function ProductsPage() {
       />
 
       <div className="w-container py-6 sm:py-8">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <PageHeader title={pageTitle} className="mb-0" />
-            <p className="mt-0.5  text-sm text-muted">{(pageInfo.total || products.length).toLocaleString()} products</p>
-          </div>
+        <div className="mb-4 flex flex-wrap items-end justify-end gap-3">
           <CollectionToolbar
             sortValue={searchParams.get("sort") || ""}
             sortOptions={SORT_OPTIONS}
@@ -477,14 +487,14 @@ export default function ProductsPage() {
                 <button
                   type="button"
                   onClick={() => setViewMode("grid")}
-                  className={`rounded p-1.5 transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
+                  className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
                 >
                   <Grid2X2 size={15} />
                 </button>
                 <button
                   type="button"
                   onClick={() => setViewMode("list")}
-                  className={`rounded p-1.5 transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
+                  className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
                 >
                   <List size={15} />
                 </button>

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ShoppingCart, Star } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
 import Label from "../common/label/Label";
 import {
@@ -16,6 +16,7 @@ import {
   applyImageFallback,
 } from "../../utils/ecommerce";
 import { cn } from "../../lib/utils";
+import StarRating from "../../pages/products/components/starRating";
 
 export default function ProductCard({
   product,
@@ -56,7 +57,13 @@ export default function ProductCard({
   const rating =
     ratingProp ?? cardProduct?.rating ?? cardProduct?.averageRating ?? 0;
   const ratingCount =
-    ratingCountProp ?? cardProduct?.ratingCount ?? cardProduct?.reviewsCount;
+    ratingCountProp ??
+    cardProduct?.ratingCount ??
+    cardProduct?.reviewsCount ??
+    cardProduct?.reviewCount ??
+    cardProduct?.totalReviews ??
+    cardProduct?.totalReviewCount ??
+    0;
   const discountPercent =
     discountPercentProp ?? cardProduct?.discountPercent ?? 0;
   const brand = brandProp || cardProduct?.brand;
@@ -80,9 +87,6 @@ export default function ProductCard({
   const discountLabel = computedDiscountPercent
     ? `${computedDiscountPercent}% Off`
     : "";
-  const roundedRating = Math.round(
-    Math.max(0, Math.min(Number(rating || 0), 5)),
-  );
 
   const stockValues = [
     cardProduct?.stock,
@@ -145,7 +149,7 @@ export default function ProductCard({
           className,
         )}
       >
-        <div className="grid gap-4   sm:grid-cols-[180px_1fr_auto]  sm:items-center">
+        <div className="grid gap-4   sm:grid-cols-[180px_1fr_auto]   sm:items-center">
           <Link
             to={to}
             className="block overflow-hidden  rounded-[var(--customer-radius)] bg-[var(--customer-cream)]"
@@ -173,7 +177,7 @@ export default function ProductCard({
               <button
                 type="button"
                 onClick={handleBrandClick}
-                className=" text-left text-[11px] font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
+                className=" text-left text-[11px]  font-medium uppercase text-[var(--customer-muted)] hover:text-[var(--customer-gold-dark)]"
               >
                 {brand}
               </button>
@@ -229,7 +233,7 @@ export default function ProductCard({
   return (
     <article
       className={cn(
-        ` ${!isInStock ? "opacity-50 " : ""} group relative flex min-w-0 flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D66]/50 bg-white transition-all duration-300 ease-in-out hover:shadow-[0_16px_40px_rgba(17,24,39,0.12)]`,
+        ` ${!isInStock ? "opacity-50 " : ""} group relative flex min-w-0 flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out `,
         className,
       )}
     >
@@ -281,7 +285,7 @@ export default function ProductCard({
       </div>
 
       <Link to={to} className="flex flex-1 flex-col">
-        <div className="flex h-[262px] items-center justify-center overflow-hidden bg-[var(--customer-cream)] p-4">
+        <div className="flex h-[262px]  items-center justify-center overflow-hidden">
           {image ? (
             <img
               src={image}
@@ -298,34 +302,11 @@ export default function ProductCard({
           )}
         </div>
 
-        <div className="flex flex-1 flex-col px-4 pb-4 pt-6">
-          <div
-            className="my-[6px] flex items-center gap-2 text-[14px] font-medium text-[#242424]"
-            aria-label={`${rating || 0} out of 5 stars`}
-          >
-            <span className="text-[14px] font-medium text-[#2E2E2E]">
-              {Number(rating || 0).toFixed(1)}
-            </span>
-            <span className="flex h-[14px] w-[84px] items-center gap-0.5 text-[#F58220]">
-              {Array.from({ length: 5 }, (_, index) => (
-                <Star
-                  key={index}
-                  size={16}
-                  className={
-                    index < roundedRating
-                      ? "fill-[#F58220] text-[#F58220]"
-                      : "fill-[#E5E7EB] text-[#E5E7EB]"
-                  }
-                />
-              ))}
-            </span>
-            <span className="text-[16px] font-medium text-[#2E2E2E]">
-              {ratingCount != null ? `(${ratingCount})` : "(2.4k)"}
-            </span>
-          </div>
+        <div className="flex min-w-0 flex-1 flex-col px-4 pb-4 pt-4 lg:pt-6">
+          <StarRating rating={rating} count={ratingCount} />
 
           <h3
-            className="mt-4 line-clamp-2 min-h-[3.5rem] text-[14px] font-semibold text-[#2E2E2E] sm:min-h-[4rem] sm:text-[18px] lg:text-[20px]"
+            className=" w-full truncate text-[20px] font-semibold text-[#2E2E2E] sm:text-[18px]  lg:text-[20px]"
             title={title}
           >
             {title}
@@ -335,21 +316,21 @@ export default function ProductCard({
             price={price}
             oldPrice={oldPrice}
             currency={currency || cardProduct?.currency}
-            className="mb-0 mt-3 gap-3"
-            priceClassName="text-[16px] font-extrabold text-[#1B1D60] sm:text-[18px] lg:text-[22px]"
-            oldPriceClassName="text-[16px] font-semibold text-[#949494] line-through sm:text-[18px] lg:text-[22px]"
+            className="mb-0 gap-3 lg:my-4"
+            priceClassName="text-[20px] font-extrabold text-[#1B1D60] sm:text-[18px] lg:text-[24px]"
+            oldPriceClassName="text-[20px] font-semibold text-[#949494] line-through sm:text-[18px] lg:text-[24px]"
           />
         </div>
       </Link>
 
       {showActions && (
-        <div className="mt-auto flex items-center gap-4 px-2 pb-4">
+        <div className="mt-auto  flex items-center gap-8  px-4 pb-4">
           <PillButton
             disabled={!isInStock}
             onClick={handleAddToCart}
             rightIcon={<ShoppingCart size={19} strokeWidth={2.4} />}
             className={cn(
-              "w-full gap-[15px] text-[15px] font-semibold focus-visible:outline-[#1B1D60]",
+              "w-full gap-[15px] text-[15px]  font-semibold focus-visible:outline-[#1B1D60]",
               !isInStock && "cursor-not-allowed opacity-60",
             )}
           >
@@ -364,16 +345,16 @@ export default function ProductCard({
             }
             onClick={handleWishlist}
             className={cn(
-              "focus-visible:outline-none",
+              "hover:border-[#CE9F2D]",
               isWishlisted
-                ? "border-[#1B1D60] text-[#1B1D60] hover:border-[#1B1D60] hover:text-[#1B1D60]"
-                : "border-[#1B1D60] text-[#1B1D60] hover:border-[#1B1D60] hover:text-[#1B1D60]",
+                ? "border-[#FF3D31] text-[#FF3D31]"
+                : "border-[#CE9F2D] text-[##CE9F2D]",
             )}
           >
             <Heart
               size={19}
-              fill={isWishlisted ? "#1B1D60" : "none"}
-              stroke={isWishlisted ? "#1B1D60" : " #1B1D60"}
+              fill={isWishlisted ? "#FF3D31" : "none"}
+              stroke={isWishlisted ? "#FF3D31" : " #CE9F2D"}
             />
           </IconCircleButton>
         </div>

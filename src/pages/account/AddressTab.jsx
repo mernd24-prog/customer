@@ -38,6 +38,69 @@ async function fetchFullList(dispatch, thunkAction, params = {}) {
   return res.data || res.list || res || [];
 }
 
+function AddressViewCard({ addr, addrId, startEdit, handleDelete }) {
+  return (
+    <div className="flex h-full flex-col">
+      <div className="flex items-center justify-between gap-3 bg-[#CE9F2D33] px-4 py-5">
+        <p className="text-sm font-bold capitalize text-[#2E2E2E] lg:text-[20px] ">
+          {addr.label || "Address"}
+        </p>
+
+        {addr.isDefault && (
+          <span className="rounded-full bg-[#D4A428] px-2.5 py-1 text-[14px] font-semibold text-white">
+            Default Address
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col justify-between p-4">
+        <div>
+          <p className="text-lg  font-bold text-[#2E2E2E] lg:text-xl">
+            {addr.fullName || "—"}
+          </p>
+
+          {addr.phone && (
+            <p className="mt-5 flex items-center gap-2 text-sm font-medium text-[#2E2E2E] lg:text-[20px]">
+              <Phone className="size-6 shrink-0 text-[#D4A428]" />
+              <span>{addr.phone}</span>
+            </p>
+          )}
+
+          <p className="mt-3 flex items-start gap-2 text-sm font-medium text-[#2E2E2E] lg:text-[20px]">
+            <MapPin className="mt-0.5 size-6 shrink-0 text-[#D4A428]" />
+            <span>
+              {addr.line1}
+              {addr.line2 ? `, ${addr.line2}` : ""}, {addr.city}, {addr.state}{" "}
+              {addr.postalCode || addr.postal_code || ""},{" "}
+              {addr.country || "India"}
+            </span>
+          </p>
+        </div>
+
+        <div className="mt-6 flex flex-wrap items-center gap-5">
+          <button
+            type="button"
+            onClick={() => startEdit(addr)}
+            className="inline-flex min-h-9 items-center justify-center gap-2 rounded-[6px] bg-[#D4A428] px-8 text-sm font-semibold text-white"
+          >
+            <Pencil className="size-4" />
+            Edit Address
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleDelete(addrId)}
+            className="inline-flex min-h-9 items-center gap-2 text-sm font-medium text-[#2E2E2E]"
+          >
+            <Trash2 className="size-4 text-red-500" />
+            Remove Address
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AddressTab({ user }) {
   const dispatch = useDispatch();
   const run = useToastThunk();
@@ -429,25 +492,29 @@ export default function AddressTab({ user }) {
         )}
 
         {addresses.length > 0 ? (
-          <div className="grid gap-3  ">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             {addresses.map((addr) => {
               const addrId = addr._id || addr.id;
               const isEditing = editingId === addrId;
+
               return (
                 <div
                   key={addrId}
-                  className="w-full   overflow-hidden rounded-[12px] border border-gold bg-white"
+                  className={`w-full overflow-hidden rounded-[12px] border border-gold bg-white ${
+                    isEditing ? "xl:col-span-2" : ""
+                  }`}
                 >
                   {isEditing ? (
                     <form
-                      className="grid gap-4"
+                      className="grid gap-4 p-6"
                       onSubmit={editForm.handleSubmit(handleUpdate)}
                       noValidate
                     >
                       <div className={sectionHeaderClass}>
-                        <Pencil size={16} className="text-gold " />
+                        <Pencil size={16} className="text-gold" />
                         Edit address
                       </div>
+
                       <AddressFormFields
                         form={editForm}
                         idPrefix={`edit-${addrId}`}
@@ -462,6 +529,7 @@ export default function AddressTab({ user }) {
                         selectedPostalCode={editPostalCode}
                         addressLabels={addressLabels}
                       />
+
                       <div className={formActionsClass}>
                         <Button
                           type="submit"
@@ -470,6 +538,7 @@ export default function AddressTab({ user }) {
                         >
                           Save changes
                         </Button>
+
                         <Button
                           type="button"
                           variant="secondary"
@@ -481,58 +550,12 @@ export default function AddressTab({ user }) {
                       </div>
                     </form>
                   ) : (
-                    <div>
-                      <div className="flex items-center justify-between gap-3 bg-[#CE9F2D33] px-4 py-8">
-                        <p className="text-sm lg:text-[24px] font-bold capitalize text-[#2E2E2E]">
-                          {addr.label || "Address"}
-                        </p>
-                        {addr.isDefault && (
-                          <span className="rounded-full  bg-[#D4A428] px-2.5 py-1 text-[10px] font-semibold text-white">
-                            Default Address
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="p-4">
-                        <p className="text-lg lg:text-2xl font-bold text-[#2E2E2E]">
-                          {addr.fullName || "—"}
-                        </p>
-                        {addr.phone && (
-                          <p className="mt-6 flex items-center  font-medium gap-2 text-sm lg:text-[20px] text-[#2E2E2E]">
-                            <Phone className="size-6 text-[#D4A428]" />
-                            {addr.phone}
-                          </p>
-                        )}
-                        <p className="mt-3 flex items-start font-medium gap-2 text-sm lg:text-[20px] text-[#2E2E2E]">
-                          <MapPin className="mt-0.5 size-6 shrink-0 text-[#D4A428]" />
-                          <span>
-                            {addr.line1}
-                            {addr.line2 ? `, ${addr.line2}` : ""}, {addr.city},{" "}
-                            {addr.state}{" "}
-                            {addr.postalCode || addr.postal_code || ""},{" "}
-                            {addr.country || "India"}
-                          </span>
-                        </p>
-
-                        <div className="mt-6 flex flex-wrap items-center gap-8">
-                          <button
-                            type="button"
-                            onClick={() => startEdit(addr)}
-                            className="inline-flex min-h-9 items-center justify-center gap-2 rounded-[6px] bg-[#D4A428] px-8 text-sm font-semibold text-white"
-                          >
-                            <Pencil className="size-4" /> Edit Address
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(addrId)}
-                            className="inline-flex min-h-9 items-center gap-2 text-sm font-medium text-[#2E2E2E]"
-                          >
-                            <Trash2 className="size-4 text-red-500" /> Remove
-                            Address
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    <AddressViewCard
+                      addr={addr}
+                      addrId={addrId}
+                      startEdit={startEdit}
+                      handleDelete={handleDelete}
+                    />
                   )}
                 </div>
               );

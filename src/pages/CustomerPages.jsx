@@ -1618,7 +1618,7 @@ export function PaymentResultPage({ failed = false }) {
                 >
                   <div className="w-full">
                     <OrderProgress
-                    noteClassName="text-center font-medium text-[18px] leading-none tracking-normal text-[#6F7480] "
+                      noteClassName="text-center font-medium text-[18px] leading-none tracking-normal text-[#6F7480] "
                       status={status}
                       steps={[
                         {
@@ -1646,12 +1646,12 @@ export function PaymentResultPage({ failed = false }) {
                   </div>
                 </OrderDetailSectionCard>
 
-                <div className="w-full">
+                <div className="w-full ">
                   <OrderItemsSection
                     items={items}
                     title={null}
                     borderClassName="border-[#CE9F2D]"
-                    bodyClassName="grid divide-y divide-[#E9E9EF] p-4 min-[375px]:p-5 min-[425px]:p-6 lg:p-[25px]"
+                    bodyClassName="grid  divide-y divide-[#E9E9EF] p-4 min-[375px]:p-5 min-[425px]:p-6 lg:p-[25px]"
                     itemClassName="py-3 first:pt-0 last:pb-0 min-[375px]:py-4 lg:py-5 lg:gap-6"
                     currency={currency}
                     getItemImage={getOrderItemImage}
@@ -1725,8 +1725,6 @@ export function PaymentResultPage({ failed = false }) {
                   </div>
 
                   <div className="mt-4 grid gap-[10px]">
-                  
-
                     <Link to="/" className="w-full">
                       <BrandButton
                         variant="secondary"

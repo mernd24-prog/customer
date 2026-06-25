@@ -110,21 +110,9 @@ export default function BrandOutletPage() {
     [brands],
   );
 
-  const sidebarSections = useMemo(
-    () => [
-      {
-        key: "brands",
-        title: "Shop by brand",
-        content: <OutletBrandList brands={sidebarBrands} />,
-      },
-    ],
-    [sidebarBrands],
-  );
-
   const brandGridClass =
     "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5";
   const stateContainerClass = "rounded-[12px] p-6 text-center";
-  
 
   return (
     <>
@@ -134,29 +122,13 @@ export default function BrandOutletPage() {
       />
 
       <main className="bg-white text-[var(--customer-ink)]">
-        <div className="customer-container grid w-full  grid-cols-1 gap-6 py-5 sm:py-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-8 xl:grid-cols-[392px_minmax(0,1fr)] xl:gap-10">
-          <ProductFilterSidebar
+        <div className=" w-full  ">
+          {/* <ProductFilterSidebar
             sections={sidebarSections}
             className="hidden lg:block lg:w-full"
-          />
+          /> */}
 
-          <div className="min-w-0 w-full">
-            <div className="mb-6 grid gap-3 lg:hidden">
-              <h2 className="text-sm font-bold sm:text-base">Shop by brand</h2>
-
-              <div className="flex max-w-full  gap-2 overflow-x-auto pb-1 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
-                {sidebarBrands.slice(0, 24).map((brand) => (
-                  <Link
-                    key={brand.key}
-                    to={CUSTOMER_ROUTES.brand(brand.key)}
-                    className="shrink-0 rounded-full border border-[var(--customer-border)] px-3 py-1.5 text-xs font-semibold text-[var(--customer-ink)] transition-colors duration-200 hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)] sm:px-4 sm:py-2 sm:text-sm"
-                  >
-                    {brand.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
+          <div className="mt-6 lg:mt-10">
             <section className="pb-7">
               <h1 className="mb-4 text-[20px] font-bold leading-tight text-[var(--customer-ink)] sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">
                 Shop brands available now
@@ -171,11 +143,12 @@ export default function BrandOutletPage() {
                     />
                   ))}
                 </div>
-              ) : error ? (<div
-                className={`${stateContainerClass} border border-red-200 bg-red-50`}
-              >
-                <p className="text-sm font-semibold text-red-700">{error}</p>
-              </div>
+              ) : error ? (
+                <div
+                  className={`${stateContainerClass} border border-red-200 bg-red-50`}
+                >
+                  <p className="text-sm font-semibold text-red-700">{error}</p>
+                </div>
               ) : brands.length ? (
                 <div className={brandGridClass}>
                   {brands.map((brand) => (

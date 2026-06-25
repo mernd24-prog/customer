@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import { ChevronDown, Star } from "lucide-react";
-import BrandButton from "../ui/BrandButton";
 
 function FilterTick({ checked }) {
   return (
     <span
       aria-hidden="true"
-      className={`inline-flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-[5px] border transition-colors duration-200 ${
+      className={`inline-flex h-[19px] w-[19px]  shrink-0 items-center justify-center rounded-[5px] border transition-colors duration-200 ${
         checked
-          ? "border-[#5960B8] bg-[#5960B8]"
-          : "border-[#8F95D9] bg-transparent"
+          ? "border-[#3E4093] bg-[#3E4093]"
+          : "border-[#3E4093] bg-transparent"
       }`}
     >
       <span
@@ -33,7 +32,7 @@ export function FilterSection({ title, children, defaultOpen = true }) {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center justify-between gap-3 text-left font-dm-sans text-[24px] font-bold leading-none tracking-normal text-[#2D347D] transition-colors duration-200 sm:text-[26px]"
+        className="flex w-full items-center justify-between gap-3 text-left font-dm-sans text-[24px] font-semibold leading-none tracking-normal text-[#2D347D] transition-colors duration-200 sm:text-[20px]"
       >
         {title}
         <ChevronDown
@@ -169,7 +168,7 @@ export function PriceRangeFilter({ min, max, onChange }) {
   };
 
   return (
-    <form className="grid gap-5 pt-1" onSubmit={handleSubmit}>
+    <form className="grid gap-5 pt-1 " onSubmit={handleSubmit}>
       <div className="relative h-8">
         <div className="absolute left-0 right-0 top-1/2 h-[4px] -translate-y-1/2 rounded-full bg-[#D9D3C8]" />
 
@@ -202,9 +201,9 @@ export function PriceRangeFilter({ min, max, onChange }) {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-3 block text-[18px] font-medium leading-none text-[#373737] sm:text-[19px]">
+          <label className="mb-3 block text-[18px] font-medium leading-none text-[#373737] sm:text-[16px]">
             Min
           </label>
           <input
@@ -213,12 +212,12 @@ export function PriceRangeFilter({ min, max, onChange }) {
             value={minInput}
             onChange={handleMinInputChange}
             onBlur={handleMinInputBlur}
-            className="h-[50px] w-full rounded-[12px] border border-[#C9CBEB] bg-[#F7F7FB] px-6 text-[18px] font-medium text-[#6F7480] outline-none ring-0 transition-none placeholder:text-[#8A8FA3] focus:border-[#C9CBEB] focus:outline-none focus:ring-0"
+            className="h-[50px] w-full rounded-[12px] border border-[#C9CBEB] bg-[#F7F7FB]  text-[18px] font-medium text-[#6F7480] outline-none ring-0 transition-none placeholder:text-[#8A8FA3] focus:border-[#C9CBEB] focus:outline-none focus:ring-0"
           />
         </div>
 
         <div>
-          <label className="mb-3 block text-[18px] font-medium leading-none text-[#373737] sm:text-[19px]">
+          <label className="mb-3 block text-[18px] font-medium leading-none text-[#373737] sm:text-[16px]">
             Max
           </label>
           <input
@@ -227,19 +226,19 @@ export function PriceRangeFilter({ min, max, onChange }) {
             value={maxInput}
             onChange={handleMaxInputChange}
             onBlur={handleMaxInputBlur}
-            className="h-[50px] w-full rounded-[12px] border border-[#C9CBEB] bg-[#F7F7FB] px-6 text-[18px] font-medium text-[#6F7480] outline-none ring-0 transition-none placeholder:text-[#8A8FA3] focus:border-[#C9CBEB] focus:outline-none focus:ring-0"
+            className="h-[50px] w-full rounded-[12px] border border-[#C9CBEB] bg-[#F7F7FB]  text-[18px] font-medium text-[#6F7480] outline-none ring-0 transition-none placeholder:text-[#8A8FA3] focus:border-[#C9CBEB] focus:outline-none focus:ring-0"
           />
         </div>
       </div>
 
-      <BrandButton
+      {/* <BrandButton
         variant="primary"
         rounded
         size="sm"
         label="Apply"
         type="submit"
         className="h-[50px] w-full rounded-full text-sm font-bold shadow-none"
-      />
+      /> */}
 
       {(min || max) && (
         <button
@@ -308,10 +307,8 @@ export function OptionFilter({
                 key={value}
                 type="button"
                 onClick={() => onChange?.(checked ? undefined : String(value))}
-                className={`w-full py-2 text-left text-[15px] font-medium leading-7 transition-colors duration-200 ${
-                  checked
-                    ? "text-[#2D347D]"
-                    : "text-[#434343] hover:text-[#2D347D]"
+                className={`w-full py-2  text-left text-[16px] font-semibold  transition-colors duration-200 ${
+                  checked ? "text-[#2D347D]" : "text-[#2E2E2E]"
                 }`}
               >
                 {label}
@@ -322,7 +319,7 @@ export function OptionFilter({
           return (
             <label
               key={value}
-              className="flex min-w-0 cursor-pointer items-center gap-3 py-3 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[19px]"
+              className="flex min-w-0 cursor-pointer items-center gap-3 py-2 text-[18px] font-medium leading-none   text-[#434343] transition-colors duration-200 hover:text-[#2D347D]  sm:text-[16px]"
             >
               <input
                 type="checkbox"
@@ -340,17 +337,17 @@ export function OptionFilter({
                     : [...selectedValues, String(value)];
                   onChange?.(nextValues);
                 }}
-                className="sr-only"
+                className="sr-only "
               />
 
-              <FilterTick checked={checked} />
+              <FilterTick checked={checked} className="" />
 
               <span className="min-w-0 flex-1 truncate leading-normal">
                 {label}
               </span>
 
               {count != null && (
-                <span className="shrink-0 text-[18px] font-medium leading-none text-[#373737] sm:text-[19px]">
+                <span className="shrink-0  font-medium leading-none text-[#373737] text-[14px]">
                   ( {count} )
                 </span>
               )}
@@ -363,7 +360,7 @@ export function OptionFilter({
         <button
           type="button"
           onClick={() => setExpanded((value) => !value)}
-          className="pt-3 text-left text-[16px] font-semibold leading-none text-[#5960B8] transition-colors duration-200 hover:text-[#2D347D] sm:text-[18px]"
+          className="pt-3 text-left text-[16px] font-semibold leading-none text-[#5960B8] transition-colors duration-200 hover:text-[#2D347D]"
         >
           {expanded ? "View Less" : "View More"}
         </button>
@@ -407,7 +404,7 @@ export function CheckboxListFilter({
         return (
           <label
             key={value}
-            className="flex min-w-0 cursor-pointer items-center gap-3 py-3 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[19px]"
+            className="flex min-w-0 cursor-pointer items-center gap-3 py-2 text-[18px] font-medium leading-none  text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[16px]"
           >
             <input
               type="checkbox"
@@ -430,7 +427,7 @@ export function CheckboxListFilter({
             </span>
 
             {count != null && (
-              <span className="shrink-0 text-[18px] font-medium leading-none text-[#373737] sm:text-[19px]">
+              <span className="shrink-0  font-medium leading-none text-[#373737] text-[14px]">
                 ( {count} )
               </span>
             )}
@@ -468,7 +465,7 @@ export function RatingFilter({
         return (
           <label
             key={stars}
-            className="flex min-w-0 cursor-pointer items-center gap-3 py-3 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[19px]"
+            className="flex min-w-0 cursor-pointer items-center gap-3 py-2 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[16px]"
           >
             <input
               type="checkbox"
@@ -497,7 +494,7 @@ export function RatingFilter({
             </span>
 
             {counts[String(stars)] != null && (
-              <span className="shrink-0 text-[18px] font-medium leading-none text-[#373737] sm:text-[19px]">
+              <span className="shrink-0  font-medium leading-none text-[#373737] text-[14px]">
                 ( {counts[String(stars)]} )
               </span>
             )}
@@ -515,11 +512,11 @@ export default function ProductFilterSidebar({
 }) {
   return (
     <aside
-      className={`w-full overflow-x-hidden lg:sticky lg:top-24 lg:w-[320px] lg:shrink-0 lg:self-start xl:w-[392px] ${className}`}
+      className={`w-full overflow-x-hidden lg:sticky lg:top-24 lg:w-[320px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
     >
       <div className="w-full overflow-hidden rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] shadow-none">
         <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-5 min-[375px]:px-5 sm:px-6 sm:py-6">
-          <h3 className="font-dm-sans text-[26px] font-bold leading-none tracking-normal text-[#373737] sm:text-[30px]">
+          <h3 className="font-dm-sans text-[26px] font-semibold  text-[#373737] sm:text-[30px]">
             Filters
           </h3>
 
@@ -527,13 +524,13 @@ export default function ProductFilterSidebar({
             type="button"
             onClick={onClearAll}
             disabled={!onClearAll}
-            className="inline-flex h-[52px] shrink-0 items-center justify-center rounded-[14px] border border-[#C9CBEB] bg-white px-4 text-[14px] font-semibold text-[#5960B8] transition-colors duration-200 hover:bg-[#F7F7FB] sm:px-6 sm:text-[16px]"
+            className="inline-flex h-[52px] shrink-0 items-center justify-center rounded-[14px]   text-[14px] font-semibold text-[#5960B8]  sm:text-[16px]"
           >
             Clear all
           </button>
         </div>
 
-        <div className="px-4 min-[375px]:px-5 sm:px-6">
+        <div className="px-4  min-[375px]:px-5 sm:px-6">
           {sections.map((section) => (
             <FilterSection
               key={section.key || section.title}

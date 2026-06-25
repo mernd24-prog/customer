@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Grid2X2 } from "lucide-react";
 
 import Seo from "../../components/common/Seo";
-import ProductFilterSidebar from "../../components/ecommerce/ProductFilterSidebar";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
 import {
@@ -157,22 +156,6 @@ function getRootCategories(list = []) {
         Number(category.level || 0) === 0,
     )
     .sort(sortByOrder);
-}
-
-function CategoryLinkList({ items }) {
-  return (
-    <nav className="custom-scrollbar grid max-h-[calc(100vh-11rem)] gap-1 overflow-y-auto overflow-x-hidden pr-2">
-      {items.map((item) => (
-        <Link
-          key={item.key}
-          to={CUSTOMER_ROUTES.category(item.key)}
-          className="rounded-lg px-2 py-2 text-sm font-medium leading-snug text-[var(--customer-ink)] transition-colors duration-200 hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-gold-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]"
-        >
-          {item.label}
-        </Link>
-      ))}
-    </nav>
-  );
 }
 
 function CategoryTile({ category }) {
@@ -380,17 +363,6 @@ export default function CategoryListingPage() {
     [categories],
   );
 
-  const sidebarSections = useMemo(
-    () => [
-      {
-        key: "categories",
-        title: "Shop by category",
-        content: <CategoryLinkList items={sidebarCategories} />,
-      },
-    ],
-    [sidebarCategories],
-  );
-
   return (
     <>
       <Seo
@@ -398,34 +370,9 @@ export default function CategoryListingPage() {
         description="Browse Sam Global categories and collections."
       />
 
-      <main className="bg-white text-ink">
-        <div className="customer-container grid w-full grid-cols-1 gap-6 py-5 sm:py-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-8 xl:grid-cols-[392px_minmax(0,1fr)] xl:gap-10">
-          <ProductFilterSidebar
-            sections={sidebarSections}
-            className="hidden lg:block lg:w-full"
-          />
-
+      <main className="bg-white text-ink  my-6 lg:mt-14">
+        <div>
           <div className="min-w-0 w-full">
-            {sidebarCategories.length > 0 && (
-              <div className="mb-6 grid gap-2 lg:hidden">
-                <h2 className="text-sm font-bold sm:text-base">
-                  Shop by category
-                </h2>
-
-                <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
-                  {sidebarCategories.map((category) => (
-                    <Link
-                      key={category.key}
-                      to={CUSTOMER_ROUTES.category(category.key)}
-                      className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm"
-                    >
-                      {category.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
             <section className="pb-7">
               <h1 className="mb-4 text-[20px] font-bold leading-tight text-ink sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">
                 Shop all categories

@@ -59,7 +59,6 @@ import ShareProductPopover from "./components/socialMediaShare";
 import ProductPriceBlock from "./components/oldAndNewPrice";
 import ProductStockStatus from "./components/stockStatus";
 
-
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
 const isImageSource = (src) => {
@@ -428,7 +427,10 @@ function DeliveryChecker({ productId, shipping = {} }) {
   };
 
   const sellerDelivery = result?.deliveryChargeBreakup?.sellers?.[0] || {};
-  const eta = sellerDelivery.estimatedDeliveryDays || result?.estimatedDeliveryDays || null;
+  const eta =
+    sellerDelivery.estimatedDeliveryDays ||
+    result?.estimatedDeliveryDays ||
+    null;
   const etaText = eta
     ? [eta.minDays, eta.maxDays].filter((v) => v !== null && v !== undefined).join("–")
     : "";
@@ -786,16 +788,19 @@ function ProductInfoSection({
       {activeInfoTab === "details" && detailRows.length > 0 && (
         <InfoCard title="Product Details" roundedClass="rounded-xl">
           <DetailRows
-            rows={detailRows.slice(0, 8).map(([key, value]) => (
-              [formatPageTitle(key), value]
-            ))}
+            rows={detailRows
+              .slice(0, 8)
+              .map(([key, value]) => [formatPageTitle(key), value])}
             rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[18px] sm:grid-cols-[220px_minmax(0,1fr)]"
             labelClassName="font-medium text-[#2E2E2E]"
             valueClassName="text-left font-bold text-navy sm:text-right"
           >
             {warranty && (
               <div className="grid grid-cols-1 gap-1 px-4 py-3 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]">
-              <dt className="font-medium text-ink">  {formatPageTitle("warranty")}</dt>
+                <dt className="font-medium text-ink">
+                  {" "}
+                  {formatPageTitle("warranty")}
+                </dt>
                 <dd className="text-left font-bold text-[#1B1D60] sm:text-right">
                   {warranty.period ||
                     warranty.duration ||
@@ -826,7 +831,10 @@ function ProductInfoSection({
                   key={key}
                   className="grid grid-cols-1  gap-1 px-4 py-3 text-sm md:text-lg sm:grid-cols-[220px_minmax(0,1fr)]"
                 >
-                  <dt className="font-medium text-ink"> {formatPageTitle(key)}</dt>
+                  <dt className="font-medium text-ink">
+                    {" "}
+                    {formatPageTitle(key)}
+                  </dt>
                   <dd className="text-left font-bold text-navy md:text-right">
                     {Array.isArray(value) ? value.join(", ") : String(value)}
                   </dd>
@@ -1291,8 +1299,8 @@ export default function ProductDetailPage() {
                     dynamicState={dynamicState}
                   />
 
-                  <div className="flex my-4 flex-col md:flex-row gap-6 md:items-center ">
-                    <div className="w-full md:w-fit">
+                  <div className="flex my-4  flex-col md:flex-row gap-6  ">
+                    <div className="w-full  md:w-fit">
                       <QuantitySelector
                         quantity={quantity}
                         onIncrease={() => setQuantity((q) => q + 1)}

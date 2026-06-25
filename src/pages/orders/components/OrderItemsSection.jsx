@@ -12,7 +12,7 @@ function OrderItemCard({
   formatMoney,
 }) {
   return (
-    <div className="flex w-full flex-col gap-4 sm:flex-row sm:gap-5 lg:gap-[36px]">
+    <div className="flex w-full flex-col gap-4  sm:flex-row sm:gap-5 lg:gap-[36px]">
       <div className="flex aspect-[252/210] w-full shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[#CE9F2D33] bg-white sm:w-[180px] lg:w-[220px] 2xl:w-[252px]">
         {getItemImage(item) ? (
           <img
@@ -32,7 +32,8 @@ function OrderItemCard({
 
         <div className="my-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink sm:my-6">
           <span className="text-[18px] font-medium leading-[100%] text-[#2E2E2E]">
-            Color: <span className="font-semibold text-[#1B1D60]">
+            Color:{" "}
+            <span className="font-semibold text-[#1B1D60]">
               <strong className="font-bold text-[#25247B]">
                 {getOrderItemColor(item)}
               </strong>
@@ -40,7 +41,7 @@ function OrderItemCard({
           </span>
           <span className="text-[18px] font-medium leading-[100%] text-[#2E2E2E]">
             Quantity:{" "}
-          <strong className="font-bold text-[#25247B]">
+            <strong className="font-bold text-[#25247B]">
               {String(item.quantity || 1).padStart(2, "0")}
             </strong>
           </span>
@@ -63,7 +64,7 @@ function OrderItemsSection({ items, ...itemProps }) {
   return (
     <OrderDetailSectionCard
       title="Item"
-      borderClassName="border-[#CE9F2D66]"
+      borderClassName="border-[#CE9F2D66]  h-fit "
       bodyClassName="grid gap-4 p-4 sm:p-5 lg:p-6"
     >
       {items.map((item, index) => (

@@ -5,14 +5,11 @@ import { MdContentCopy } from "react-icons/md";
 import { FaShoppingCart } from "react-icons/fa";
 import { BsCreditCardFill } from "react-icons/bs";
 import { MdDateRange } from "react-icons/md";
+import { MdOutlineShoppingCart } from "react-icons/md";
 import {
-  CalendarDays,
   ChevronRight,
-  CreditCard,
   Download,
-  FileText,
-
-  Headphones,
+  IndianRupee,
   Package,
   ReceiptText,
   RefreshCw,
@@ -32,7 +29,6 @@ import OrderDetailLayout, {
   OrderDetailAside,
 } from "./components/OrderDetailLayout";
 import OrderDetailSectionCard from "./components/OrderDetailSectionCard";
-import OrderItemMetaList from "./components/OrderItemMeta";
 import OrderItemsSection from "./components/OrderItemsSection";
 import OrderPaymentSummary from "./components/OrderPaymentSummary";
 import OrderProgress from "./components/OrderProgress";
@@ -55,25 +51,10 @@ import { openRazorpayCheckout } from "../../utils/razorpay";
 import { endpoints } from "../../api/endpoints";
 import {
   COMPACT_STATUS_BADGE,
-  INFO_TILE_TONES,
   items,
   ORDER_BREADCRUMBS,
   ORDER_FILTERS,
-  ORDER_STEPS,
-  RETURN_STEPS,
-  TRACKING_LABELS,
 } from "../../data/orderPage";
-import { CANCEL_REASON_OPTIONS } from "../../data/constant";
-
-const normalizeProgressStatus = (status) => {
-  if (status === "out_for_delivery" || status === "partially_delivered") {
-    return "delivered";
-  }
-  if (status === "order_closed") {
-    return "fulfilled";
-  }
-  return status;
-};
 
 const getOrderId = (order) =>
   order?.id || order?._id || order?.orderId || order?.order_id;
@@ -122,10 +103,38 @@ const getItemProduct = (item) =>
   item?.productId && typeof item.productId === "object"
     ? item.productId
     : item?.product;
+
 const getItemImage = (item) => {
   const product = getItemProduct(item);
-  const images = item?.images || item?.variant?.images || product?.images;
-  return Array.isArray(images) ? images[0] : images;
+  const candidateImages = [
+    item?.image,
+    item?.imageUrl,
+    item?.images,
+    item?.thumbnail,
+    item?.thumbnailUrl,
+    item?.product_image,
+    item?.productImage,
+    item?.product_image_url,
+    item?.productImageUrl,
+    item?.product_thumbnail,
+    item?.productThumbnail,
+    item?.variant?.image,
+    item?.variant?.images,
+    item?.variant?.imageUrl,
+    item?.variant?.thumbnail,
+    item?.variant?.thumbnailUrl,
+    product?.image,
+    product?.images,
+    product?.imageUrl,
+    product?.thumbnail,
+    product?.thumbnailUrl,
+  ];
+
+  for (const candidate of candidateImages) {
+    const url = getImageUrlFromValue(candidate);
+    if (url) return url;
+  }
+  return "";
 };
 
 const getOrderCurrency = (order) => {
@@ -292,11 +301,11 @@ const getCustomerOrderAmount = (order) => {
     Math.max(
       0,
       asNumber(subtotal) -
-      asNumber(discount) +
-      asNumber(shipping) +
-      asNumber(taxPayable) +
-      asNumber(codCharge) -
-      asNumber(walletDiscount),
+        asNumber(discount) +
+        asNumber(shipping) +
+        asNumber(taxPayable) +
+        asNumber(codCharge) -
+        asNumber(walletDiscount),
     ).toFixed(2),
   );
 
@@ -310,7 +319,7 @@ const getCustomerOrderAmount = (order) => {
     const payableAmount = Math.max(
       0,
       asNumber(order.summary.customerTotalAmount) -
-      asNumber(order.summary.walletDiscountAmount),
+        asNumber(order.summary.walletDiscountAmount),
     );
     return payableAmount > 0 || calculatedAmount <= 0
       ? payableAmount
@@ -321,28 +330,34 @@ const getCustomerOrderAmount = (order) => {
 const getTaxIncludedAmount = (order, taxBreakup = {}) =>
   asNumber(
     order?.summary?.taxIncludedAmount ??
-    taxBreakup?.taxIncludedAmount ??
-    taxBreakup?.tax_included_amount ??
-    0,
+      taxBreakup?.taxIncludedAmount ??
+      taxBreakup?.tax_included_amount ??
+      0,
   );
 const getTaxPayableAmount = (order, taxBreakup = {}) =>
   asNumber(
     order?.summary?.taxPayableAmount ??
-    taxBreakup?.taxPayableAmount ??
-    taxBreakup?.tax_payable_amount ??
-    0,
+      taxBreakup?.taxPayableAmount ??
+      taxBreakup?.tax_payable_amount ??
+      0,
   );
 const formatOrderDate = (value) =>
   value
     ? new Date(value).toLocaleString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
     : "";
 const formatOrderId = (id = "") => String(id).slice(0, 8).toUpperCase();
+const getApiOrderId = (order) => String(getOrderNumber(order) || "").trim();
+const normalizeOrderSearchText = (value = "") =>
+  String(value)
+    .toLowerCase()
+    .replace(/order\s*id/g, "")
+    .replace(/[^a-z0-9]+/g, "");
 const getOrderRelations = (order) => order?.relations || {};
 const getPaymentMethod = (order) => {
   const payment = getOrderRelations(order).payments?.[0];
@@ -390,10 +405,19 @@ function OrderDetail({ orderId, track }) {
   const cancellations = Array.isArray(order?.relations?.cancellations)
     ? order.relations.cancellations
     : [];
+  const returns = Array.isArray(order?.relations?.returns)
+    ? order.relations.returns
+    : Array.isArray(order?.returns)
+      ? order.returns
+      : Array.isArray(order?.returnRequests)
+        ? order.returnRequests
+        : [];
 
-    const getInvoiceUrl = (order) =>
-  order?.invoice_url || order?.invoiceUrl || order?.relations?.invoice?.url || null;
-
+  const getInvoiceUrl = (order) =>
+    order?.invoice_url ||
+    order?.invoiceUrl ||
+    order?.relations?.invoice?.url ||
+    null;
 
   const shippingAddress =
     order?.shipping_address || order?.shippingAddress || {};
@@ -408,13 +432,11 @@ function OrderDetail({ orderId, track }) {
   const taxPayable = getTaxPayableAmount(order, taxBreakup);
   const status = getOrderStatus(order);
   const invoiceDownloadAvailable = ["delivered", "fulfilled"].includes(status);
-  const paymentStatus = getPaymentStatus(order);
-  const deliveryStatus = getDeliveryStatus(order);
-  const paymentMethod = getPaymentMethod(order);
+
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "My Order", href: "/orders" },
-    { label: `#${formatOrderId(getOrderNumber(order))}` },
+    { label: `#${getOrderId(order)}` },
   ];
 
   useEffect(() => {
@@ -430,7 +452,7 @@ function OrderDetail({ orderId, track }) {
     dispatch(fetchMarketplaceInvoices({ orderId }))
       .unwrap()
       .then((result) => setInvoices(result?.data || result))
-      .catch(() => { })
+      .catch(() => {})
       .finally(() => setInvoicesLoading(false));
   }, [dispatch, invoiceDownloadAvailable, orderId]);
 
@@ -530,8 +552,8 @@ function OrderDetail({ orderId, track }) {
         >
           <div className="grid gap-5 sm:gap-6 lg:gap-9">
             <section className="grid gap-4 sm:gap-8">
-              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                <div className="min-w-0 mb-7">
+              <div className="flex flex-col gap-4  mt-8 md:flex-row md:items-start md:justify-between">
+                <div>
                   <Breadcrumbs
                     items={breadcrumbItems}
                     className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
@@ -539,9 +561,6 @@ function OrderDetail({ orderId, track }) {
                     currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
                     separatorClassName="text-[#2E2E2E]"
                   />
-                  <h1 className="break-words font-bold text-[#3E4093] leading-[100%] tracking-[0px] text-[28px] sm:text-[32px] lg:text-[38px]">
-                    #{formatOrderId(getOrderNumber(order))}
-                  </h1>
                 </div>
 
                 <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center md:w-auto md:justify-end">
@@ -564,59 +583,49 @@ function OrderDetail({ orderId, track }) {
                       loading={
                         invoices?.orderInvoice &&
                         downloadingId ===
-                        endpoints.tax.invoiceDownload(
-                          invoices.orderInvoice.id ||
-                          invoices.orderInvoice._id,
-                        )
+                          endpoints.tax.invoiceDownload(
+                            invoices.orderInvoice.id ||
+                              invoices.orderInvoice._id,
+                          )
                       }
                       onClick={() =>
                         invoices?.orderInvoice
                           ? handleDownload(
-                            endpoints.tax.invoiceDownload(
-                              invoices.orderInvoice.id ||
-                              invoices.orderInvoice._id,
-                            ),
-                            `invoice-${getOrderNumber(order)}.pdf`,
-                          )
+                              endpoints.tax.invoiceDownload(
+                                invoices.orderInvoice.id ||
+                                  invoices.orderInvoice._id,
+                              ),
+                              `invoice-${getOrderNumber(order)}.pdf`,
+                            )
                           : window.open(
-                            getInvoiceUrl(order),
-                            "_blank",
-                            "noopener,noreferrer",
-                          )
+                              getInvoiceUrl(order),
+                              "_blank",
+                              "noopener,noreferrer",
+                            )
                       }
                       className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[24px] py-[15px] text-[#3E4093] hover:border-[#3E4093] hover:bg-white"
                     >
                       <Download size={18} />
-                      <span className="text-center text-[14px] sm:text-[16px] font-semibold leading-[20px] sm:leading-[24px] text-[#3E4093]">
-                        Download Invoice
+                      <span className="text-center text-[14px] sm:text-[16px] font-semibold leading-[20px] sm:leading-[24px] text-nowrap text-[#3E4093]">
+                        Invoice
                       </span>
                     </Button>
                   )}
                 </div>
               </div>
-
               <OrderDetailInfoGrid
                 items={[
                   {
-                    icon: <CalendarDays size={14} />,
+                    icon: <MdOutlineShoppingCart size={20} />,
                     label: "Placed on",
-                    value: formatOrderDate(order?.created_at || order?.createdAt),
+                    value: formatOrderDate(
+                      order?.created_at || order?.createdAt,
+                    ),
                     tone: "blue",
                   },
+
                   {
-                    icon: <CreditCard size={14} />,
-                    label: "Payment",
-                    value: `${humanize(paymentMethod)} · ${humanize(paymentStatus)}`,
-                    tone: "green",
-                  },
-                  {
-                    icon: <Truck size={14} />,
-                    label: "Delivery",
-                    value: humanize(deliveryStatus || status),
-                    tone: "purple",
-                  },
-                  {
-                    icon: <ReceiptText size={14} />,
+                    icon: <IndianRupee size={20} />,
                     label: "Order amount",
                     value: formatMoney(customerAmount, currency),
                     tone: "yellow",
@@ -630,7 +639,11 @@ function OrderDetail({ orderId, track }) {
                   bodyClassName="overflow-x-auto px-4 py-5 sm:px-8"
                   titleClassName="font-bold leading-[100%]"
                 >
-                  <OrderProgress status={status} />
+                  <OrderProgress
+                    status={status}
+                    cancellations={cancellations}
+                    returns={returns}
+                  />
                 </OrderDetailSectionCard>
               )}
             </section>
@@ -642,7 +655,7 @@ function OrderDetail({ orderId, track }) {
                   currency={currency}
                   getItemImage={getItemImage}
                   getProductTitle={getProductTitle}
-                  getOrderItemColor = {getOrderItemColor}
+                  getOrderItemColor={getOrderItemColor}
                   getItemLineTotal={getItemLineTotal}
                   formatMoney={formatMoney}
                 />
@@ -670,103 +683,6 @@ function OrderDetail({ orderId, track }) {
                 </OrderDetailAside>
               </OrderDetailLayout>
             )}
-
-            {(invoices?.sellerInvoices?.length > 0 ||
-              invoices?.orderInvoice) && (
-                <OrderDetailSectionCard
-                  borderClassName="border-[#CE9F2D66]"
-                  headerClassName="min-h-[72px] py-[20px]"
-                  bodyClassName="grid gap-3 p-4 sm:p-5"
-                  headerContent={
-                    <h2 className="flex items-center gap-2 font-sans text-[20px] font-bold leading-none text-[#2E2E2E] sm:text-[22px] lg:text-[24px]">
-                      <FileText size={18} className="text-[#1B1D60]" /> Invoices
-                      &amp; documents
-                    </h2>
-                  }
-                >
-                  {invoices.orderInvoice && (
-                    <div className="flex flex-col gap-3 rounded-[10px] border border-[#CE9F2D33] bg-[#FFFDF8] px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#CE9F2D1A] text-[#1B1D60]">
-                          <FileText size={18} />
-                        </span>
-                        <div className="min-w-0">
-                          <p className="font-sans text-[16px] font-semibold leading-[24px] text-[#2E2E2E]">
-                            Order invoice
-                          </p>
-                          <p className="break-all text-[13px] font-medium leading-[20px] text-[#1B1D60]">
-                            #{formatOrderId(getOrderNumber(order))}
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
-                        loading={
-                          downloadingId ===
-                          endpoints.tax.invoiceDownload(
-                            invoices.orderInvoice.id || invoices.orderInvoice._id,
-                          )
-                        }
-                        onClick={() =>
-                          handleDownload(
-                            endpoints.tax.invoiceDownload(
-                              invoices.orderInvoice.id ||
-                              invoices.orderInvoice._id,
-                            ),
-                            `invoice-${getOrderNumber(order)}.pdf`,
-                          )
-                        }
-                      >
-                        <Download size={13} /> Download
-                      </Button>
-                    </div>
-                  )}
-                  {(invoices.sellerInvoices || []).map((inv) => {
-                    const invId = inv.id || inv._id;
-                    const sellerName =
-                      inv.sellerName ||
-                      inv.seller_name ||
-                      `Seller ${String(invId).slice(0, 6)}`;
-                    const dlPath = endpoints.tax.invoiceDownload(invId);
-                    return (
-                      <div
-                        key={invId}
-                        className="flex flex-col gap-3 rounded-[10px] border border-[#CE9F2D33] bg-[#FFFDF8] px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
-                      >
-                        <div className="flex min-w-0 items-center gap-3">
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] bg-[#CE9F2D1A] text-[#1B1D60]">
-                            <FileText size={18} />
-                          </span>
-                          <div className="min-w-0">
-                            <p className="truncate font-sans text-[16px] font-semibold leading-[24px] text-[#2E2E2E]">
-                              {sellerName}
-                            </p>
-                            <p className="text-[13px] font-medium leading-[20px] text-[#1B1D60]">
-                              Seller invoice
-                            </p>
-                          </div>
-                        </div>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
-                          loading={downloadingId === dlPath}
-                          onClick={() =>
-                            handleDownload(
-                              dlPath,
-                              `invoice-${sellerName}-${getOrderNumber(order)}.pdf`,
-                            )
-                          }
-                        >
-                          <Download size={13} /> Download
-                        </Button>
-                      </div>
-                    );
-                  })}
-                </OrderDetailSectionCard>
-              )}
 
             {cancellations.length > 0 && (
               <section className="rounded-[8px] border border-border bg-white px-4 py-4 sm:px-6">
@@ -833,14 +749,14 @@ function OrderDetail({ orderId, track }) {
                 <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                   {(status === "pending_payment" ||
                     status === "payment_failed") && (
-                      <Button
-                        className="min-h-[38px] w-full sm:w-auto"
-                        loading={retrying}
-                        onClick={handleRetryPayment}
-                      >
-                        <RefreshCw size={15} /> Retry payment
-                      </Button>
-                    )}
+                    <Button
+                      className="min-h-[38px] w-full sm:w-auto"
+                      loading={retrying}
+                      onClick={handleRetryPayment}
+                    >
+                      <RefreshCw size={15} /> Retry payment
+                    </Button>
+                  )}
                   {canCancelOrder(order) && (
                     <Button
                       variant="secondary"
@@ -895,15 +811,16 @@ function OrderDetail({ orderId, track }) {
           <label className="text-sm font-medium text-ink">
             Reason
             <select
-              className="mt-1 w-full rounded-[6px] border border-border bg-white px-3 py-2 focus:outline-none"
+              className="mt-1 w-full focus:outline-none  rounded-[6px] border border-border bg-white px-3 py-2 "
               value={cancelReasonCode}
               onChange={(event) => setCancelReasonCode(event.target.value)}
             >
-              {CANCEL_REASON_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
+              <option value="changed_mind">Changed my mind</option>
+              <option value="ordered_by_mistake">Ordered by mistake</option>
+              <option value="address_issue">Address issue</option>
+              <option value="payment_issue">Payment issue</option>
+              <option value="delivery_delay">Delivery delay</option>
+              <option value="other">Other</option>
             </select>
           </label>
           <textarea
@@ -956,7 +873,7 @@ function getOrderItemColor(item) {
 
 function OrderSummaryCard({ order }) {
   const id = getOrderId(order);
-  const orderNumber = getOrderNumber(order);
+  const apiOrderId = getOrderId(order);
   const status = getOrderStatus(order);
   const createdAt = order.created_at || order.createdAt;
   const item = getOrderItems(order)[0] || {};
@@ -970,11 +887,10 @@ function OrderSummaryCard({ order }) {
   const handleCopyOrderId = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const formattedId = formatOrderId(orderNumber || id);
     navigator.clipboard
-      .writeText(formattedId)
+      .writeText(apiOrderId)
       .then(() => {
-        notify.success(`Order ID #${formattedId} copied to clipboard!`);
+        notify.success(`Order ID #${apiOrderId} copied to clipboard!`);
       })
       .catch((err) => {
         console.error("Failed to copy order ID:", err);
@@ -986,8 +902,8 @@ function OrderSummaryCard({ order }) {
       <div className="flex flex-col gap-3 border-b border-[#E7D9B8] bg-[#CE9F2D33] px-3 py-4 md:flex-row md:items-center md:justify-between md:gap-4 md:px-4 md:py-6  text-sm md:text-base 2xl:text-[20px] font-semibold text-ink">
         <div className="flex items-center justify-between w-full md:contents">
           <span className="inline-flex items-center gap-1.5">
-            <FaShoppingCart className="text-[#2564EB] text-sm lg:text-xl" />
-            Order ID : #{formatOrderId(orderNumber || id)}
+            <FaShoppingCart className="text-[#2564EB] text-sm lg:text-xl " />#
+            {apiOrderId}
             <button
               type="button"
               onClick={handleCopyOrderId}
@@ -1025,7 +941,7 @@ function OrderSummaryCard({ order }) {
             <img
               src={image}
               alt={title}
-              className="h-full w-full object-contain p-3"
+              className="aspect-[3/2]  w-full object-contain p-3"
             />
           ) : (
             <Package size={42} className="text-[#D9CBAE]" />
@@ -1040,15 +956,19 @@ function OrderSummaryCard({ order }) {
             {title}
           </Link>
 
-          <OrderItemMetaList
-            className="my-6 gap-x-5 gap-y-1"
-            items={[
-              { label: "Color", value: getOrderItemColor(item) },
-              { label: "Quantity", value: quantity },
-            ]}
-          />
+          <div className="my-6  flex flex-wrap gap-x-5 gap-y-1 text-lg font-semibold text-ink">
+            <span>
+              Color :{" "}
+              <strong className="font-bold text-[#25247B]">
+                {getOrderItemColor(item)}
+              </strong>
+            </span>
+            <span>
+              Quantity : <strong className="font-bold">{quantity}</strong>
+            </span>
+          </div>
 
-          <p className="mt-8  text-xl lg:text-[34px] font-extrabold text-[#1B1D60]">
+          <p className="mt-3  text-xl lg:text-[34px] font-extrabold text-[#1B1D60]">
             {formatMoney(amount, currency)}
           </p>
           <p className="text-lg my-2 font-medium text-ink">
@@ -1065,7 +985,7 @@ function OrderSummaryCard({ order }) {
             </Link>
             <Link
               to={`/orders/${id}`}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] px-2 text-sm lg:text-[15px] font-bold text-gold-dark transition-colors hover:bg-gold-soft"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] px-2 text-sm lg:text-[15px]  font-bold text-gold-dark transition-colors hover:bg-gold-soft"
             >
               <Download size={13} />
               Download Invoice
@@ -1119,20 +1039,21 @@ function OrderList() {
 
   const statusOrders = activeFilter
     ? allOrders.filter((o) => {
-      const s = getOrderStatus(o);
-      if (activeFilter === "return_requested") {
-        return (
-          s === "return_requested" ||
-          s === "return_approved" ||
-          s === "partially_returned" ||
-          s === "returned"
-        );
-      }
-      return s === activeFilter;
-    })
+        const s = getOrderStatus(o);
+        if (activeFilter === "return_requested") {
+          return (
+            s === "return_requested" ||
+            s === "return_approved" ||
+            s === "partially_returned" ||
+            s === "returned"
+          );
+        }
+        return s === activeFilter;
+      })
     : allOrders;
   const orders = useMemo(() => {
     let term = query.trim().toLowerCase();
+    const normalizedTerm = normalizeOrderSearchText(query);
     if (!term) return statusOrders;
 
     // Strip leading '#' if present since it's only a visual prefix
@@ -1142,7 +1063,8 @@ function OrderList() {
 
     return statusOrders.filter((order) => {
       const id = String(getOrderId(order) || "").toLowerCase();
-      const orderNumber = String(getOrderNumber(order) || "").toLowerCase();
+      const apiOrderId = getApiOrderId(order);
+      const orderNumber = String(apiOrderId || "").toLowerCase();
       const formattedId = String(
         formatOrderId(orderNumber || id),
       ).toLowerCase();
@@ -1150,6 +1072,10 @@ function OrderList() {
         .map((item) => getProductTitle(item))
         .join(" ")
         .toLowerCase();
+      const visibleOrderIdText = `order id #${apiOrderId}`.toLowerCase();
+      const normalizedOrderText = normalizeOrderSearchText(
+        [id, apiOrderId, formattedId, visibleOrderIdText, itemText].join(" "),
+      );
 
       return (
         id.includes(term) ||
@@ -1175,7 +1101,7 @@ function OrderList() {
         <div>
           <Breadcrumbs
             items={ORDER_BREADCRUMBS}
-            className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
+            className="mb-2 flex flex-wrap  items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
             linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
             currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
             separatorClassName="text-[#2E2E2E]"
@@ -1193,14 +1119,14 @@ function OrderList() {
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Search by product name or Order ID..."
-                    className="h-14 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
+                    className="h-12 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
                   />
                 </label>
 
                 <select
                   value={activeFilter}
                   onChange={(event) => setActiveFilter(event.target.value)}
-                  className="h-14 lg:w-fit w-full appearance-none rounded-[10px] border border-[#2564EB] bg-white pl-3 pr-10 text-base font-semibold text-[#2564EB] focus:outline-none"
+                  className="h-12 lg:w-fit w-full appearance-none rounded-[10px] border border-[#2564EB] bg-white pl-3 pr-10 text-base font-semibold text-[#2564EB] focus:outline-none"
                   style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9L12 15L18 9' stroke='%232564EB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
                   }}

@@ -16,7 +16,7 @@ const buttonStyles = {
     "h-[36px] min-h-[36px] min-w-[120px] rounded-[5px] bg-[#CE9F2D] px-3 text-label-xs font-semibold text-[#03014D] hover:brightness-95 hover:shadow-md sm:h-[41px] sm:min-h-[41px] sm:min-w-[153px] sm:px-4 sm:text-label-md",
   headerIcon:
     "group relative h-10 w-10 rounded-full border border-[var(--customer-border)] bg-white p-0 hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]",
-  pill: "inline-flex min-w-[110px] sm:min-w-[130px] h-[36px] sm:h-[40px] items-center justify-center gap-2 sm:gap-[15px] md:gap-0 rounded-full bg-[#CE9F2D] px-4 sm:px-[25px] py-2 text-label-sm sm:text-label-md font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[#bd9025]",
+  pill: "inline-flex min-w-[110px] sm:min-w-[130px] h-[36px] sm:h-[40px] items-center justify-center gap-2 sm:gap-[15px] md:gap-2 rounded-full bg-[#CE9F2D] px-4 sm:px-[34px] py-2 text-label-sm sm:text-label-md font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[#bd9025]",
   ghostPill:
     "rounded-full border border-[#CE9F2D4D] bg-[#CE9F2D4D] px-4 py-2 text-label-sm font-semibold text-[#D6A323] hover:bg-black/60 xl:text-label-lg",
   textGold:

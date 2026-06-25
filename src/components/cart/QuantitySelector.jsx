@@ -8,12 +8,12 @@ export default function QuantitySelector({
   const atMax = max != null && quantity >= max;
 
   return (
-    <div className="flex w-full flex-col  gap-2 md:w-fit">
+    <div className="flex w-full flex-col  gap-2  md:w-fit">
       <p className="font-dm-sans text-[15px]  font-bold leading-none text-[#2E2E2E] min-[375px]:text-[16px] sm:text-[20px]">
         Quantity
       </p>
 
-      <div className="flex   h-[44px] w-full items-center justify-between rounded-full border border-[#1B1D60]/60 bg-[#D9D9E3]  p-[6px]  min-[375px]:h-[46px] min-[375px]:p-[7px] sm:h-[54px] sm:w-[180px]">
+      <div className="flex mt-2  h-[44px] w-full items-center justify-between rounded-full border border-[#1B1D60]/60 bg-[#D9D9E3]  p-[6px]  min-[375px]:h-[46px] min-[375px]:p-[7px] sm:h-[54px] sm:w-[180px]">
         <button
           type="button"
           onClick={onDecrease}
