@@ -1,6 +1,6 @@
 function OrderDetailLayout({ children }) {
   return (
-    <section className="grid grid-cols-1 gap-7 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
+    <section className="grid w-full gap-4 md:gap-6 xl:grid-cols-[minmax(0,68%)_minmax(320px,30%)] xl:gap-8">
       {children}
     </section>
   );

@@ -27,12 +27,18 @@ export default function CheckoutSummary({
   const sellerDeliveryBreakup = (() => {
     const settlements = quote?.sellerSettlements || [];
     const sellers = settlements.filter(
-      (s) => Number(s.sellerDeliveryChargeAmount || s.deliveryChargeAmount || 0) > 0,
+      (s) =>
+        Number(s.sellerDeliveryChargeAmount || s.deliveryChargeAmount || 0) > 0,
     );
     if (sellers.length <= 1) return null;
     return sellers.map((s) => ({
-      name: s.sellerName || s.seller_name || `Seller ${String(s.sellerId || "").slice(0, 6)}`,
-      amount: Number(s.sellerDeliveryChargeAmount || s.deliveryChargeAmount || 0),
+      name:
+        s.sellerName ||
+        s.seller_name ||
+        `Seller ${String(s.sellerId || "").slice(0, 6)}`,
+      amount: Number(
+        s.sellerDeliveryChargeAmount || s.deliveryChargeAmount || 0,
+      ),
     }));
   })();
   const selectedOption = paymentOptions.find(
@@ -82,10 +88,10 @@ export default function CheckoutSummary({
   );
   const quoteShipping = Number(
     quoteSummary.deliveryChargeAmount ??
-    quoteSummary.shippingFeeAmount ??
-    quoteAmounts.deliveryChargeAmount ??
-    quoteAmounts.shippingFeeAmount ??
-    shipping,
+      quoteSummary.shippingFeeAmount ??
+      quoteAmounts.deliveryChargeAmount ??
+      quoteAmounts.shippingFeeAmount ??
+      shipping,
   );
   const quotedPayable = Number(
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
@@ -98,7 +104,11 @@ export default function CheckoutSummary({
     .map((seller) => seller.estimatedDeliveryDays)
     .filter(Boolean)[0];
   const deliveryMethod = deliverySellers
-    .map((seller) => [seller.shippingPartner, seller.shippingMethod].filter(Boolean).join(" · "))
+    .map((seller) =>
+      [seller.shippingPartner, seller.shippingMethod]
+        .filter(Boolean)
+        .join(" · "),
+    )
     .filter(Boolean)[0];
 
   const SummaryRow = ({
@@ -114,7 +124,7 @@ export default function CheckoutSummary({
   );
 
   return (
-    <aside className="min-w-0 d">
+    <aside className="min-w-0 ">
       <div className="sticky top-4 w-full overflow-hidden rounded-[8px] border border-border bg-white">
         <div className="bg-cream-strong px-4 py-3 sm:px-5">
           <h2 className="text-base font-bold text-ink">Order Summary</h2>
@@ -155,15 +165,16 @@ export default function CheckoutSummary({
             <SummaryRow
               label="Delivery"
               value={
-                quoteShipping > 0
-                  ? formatMoney(quoteShipping, "INR")
-                  : "FREE"
+                quoteShipping > 0 ? formatMoney(quoteShipping, "INR") : "FREE"
               }
             />
             {sellerDeliveryBreakup && (
               <div className="ml-3 grid gap-0.5 pb-1">
                 {sellerDeliveryBreakup.map((s) => (
-                  <div key={s.name} className="flex justify-between text-xs text-muted">
+                  <div
+                    key={s.name}
+                    className="flex justify-between text-xs text-muted"
+                  >
                     <span className="truncate">{s.name}</span>
                     <span>{formatMoney(s.amount, "INR")}</span>
                   </div>
@@ -189,20 +200,20 @@ export default function CheckoutSummary({
               />
             ) : null}
             {quoteWallet > 0 ? (
-               <SummaryRow
-               className="flex justify-between py-2 text-sm text-emerald-700"
-               valueClassName="font-bold"
+              <SummaryRow
+                className="flex justify-between py-2 text-sm text-emerald-700"
+                valueClassName="font-bold"
                 label="Wallet Discount"
                 value={formatMoney(quoteWallet, "INR")}
               />
             ) : null}
-           
-             <SummaryRow
-               className="mt-2 flex justify-between border-t border-dashed border-border pt-4 font-bold text-ink"
-               valueClassName="text-lg text-navy"
-                label="Total Payable"
-                value={formatMoney(quotedPayable, "INR")}
-              />
+
+            <SummaryRow
+              className="mt-2 flex justify-between border-t border-dashed border-border pt-4 font-bold text-ink"
+              valueClassName="text-lg text-navy"
+              label="Total Payable"
+              value={formatMoney(quotedPayable, "INR")}
+            />
             {quoteLoading ? (
               <p className="mt-2 text-xs text-gray">
                 Calculating final order amount...
@@ -222,7 +233,8 @@ export default function CheckoutSummary({
               <div className="grid gap-2">
                 {paymentOptions.map((option) => {
                   const Icon = PAYMENT_ICONS[option.provider] || CreditCard;
-                  const isSelected = selectedPaymentProvider === option.provider;
+                  const isSelected =
+                    selectedPaymentProvider === option.provider;
                   return (
                     <div key={option.provider}>
                       <label

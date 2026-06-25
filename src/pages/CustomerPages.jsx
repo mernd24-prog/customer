@@ -12,7 +12,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Bell,
   Banknote,
-  CheckCircle2,
   CreditCard,
   Eye,
   EyeOff,
@@ -22,19 +21,19 @@ import {
   Phone,
   ShieldCheck,
   Star,
-  Truck,
   Wallet,
 } from "lucide-react";
 import { notify } from "../utils/notify";
 import ApiState from "../components/common/ApiState";
+import Breadcrumbs from "../components/ecommerce/Breadcrumbs";
 import Seo from "../components/common/Seo";
 import BrandButton from "../components/ui/BrandButton";
 import StatusTimeline from "../components/common/display/StatusTimeline";
 import { ProductCard } from "../components/ecommerce";
-import Breadcrumbs from "../components/ecommerce/Breadcrumbs";
 import { useToastThunk } from "../hooks/useToastThunk";
 import { addRecentlyViewed } from "../utils/recentlyViewed";
-import { formatMoney } from "../utils/ecommerce";
+import { formatMoney, getImageUrlFromValue } from "../utils/ecommerce";
+// import { formatAddress, formatPhone } from "../utils/formatters";
 import { useProductActions } from "../hooks/useProductActions";
 import {
   loginUser,
@@ -82,7 +81,6 @@ import {
 } from "../features/notification/notificationSlice";
 import {
   fetchLoyaltyProfile,
-  // fetchLoyaltyBenefits,
   fetchLoyaltyHistory,
   redeemLoyaltyPoints,
 } from "../features/loyalty/loyaltySlice";
@@ -105,12 +103,13 @@ import {
 } from "../features/user/userSlice";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
 import { useFetch, itemsFrom } from "./customer/helpers";
-import OrderDetailLayout, {
-  OrderDetailAside,
-} from "./orders/components/OrderDetailLayout";
+import OrderDetailLayout from "./orders/components/OrderDetailLayout";
+import { OrderDetailAside } from "./orders/components/OrderDetailLayout";
 import OrderDetailSectionCard from "./orders/components/OrderDetailSectionCard";
 import OrderItemsSection from "./orders/components/OrderItemsSection";
 import OrderProgress from "./orders/components/OrderProgress";
+// import OrderPaymentSummary from "./orders/components/OrderPaymentSummary";
+
 import { SummaryRow } from "./orders/components/OrderPaymentSummary";
 import {
   loginSchema,
@@ -126,6 +125,303 @@ const firstDefined = (...values) =>
   values.find((value) => value !== undefined && value !== null && value !== "");
 
 const displayLabel = (value = "") => String(value || "N/A").replace(/_/g, " ");
+
+const getOrderId = (order) =>
+  order?.id || order?._id || order?.orderId || order?.order_id;
+const getOrderNumber = (order) =>
+  order?.order_number || order?.orderNumber || getOrderId(order);
+const getOrderItems = (order) => {
+  const items =
+    order?.items ||
+    order?.orderItems ||
+    order?.order_items ||
+    order?.lineItems ||
+    order?.line_items ||
+    order?.products;
+  return Array.isArray(items) ? items : [];
+};
+const getItemProduct = (item) =>
+  item?.productId && typeof item.productId === "object"
+    ? item.productId
+    : item?.product;
+const getItemImage = (item) => {
+  const product = getItemProduct(item);
+  const candidateImages = [
+    item?.image,
+    item?.imageUrl,
+    item?.images,
+    item?.thumbnail,
+    item?.thumbnailUrl,
+    item?.product_image,
+    item?.productImage,
+    item?.product_image_url,
+    item?.productImageUrl,
+    item?.product_thumbnail,
+    item?.productThumbnail,
+    item?.variant?.image,
+    item?.variant?.images,
+    item?.variant?.imageUrl,
+    item?.variant?.thumbnail,
+    item?.variant?.thumbnailUrl,
+    product?.image,
+    product?.images,
+    product?.imageUrl,
+    product?.thumbnail,
+    product?.thumbnailUrl,
+  ];
+
+  for (const candidate of candidateImages) {
+    const url = getImageUrlFromValue(candidate);
+    if (url) return url;
+  }
+  return "";
+};
+const getItemUnitPrice = (item) =>
+  item?.unit_price ??
+  item?.unitPrice ??
+  item?.sale_price ??
+  item?.salePrice ??
+  item?.price ??
+  item?.variant?.price ??
+  getItemProduct(item)?.salePrice ??
+  getItemProduct(item)?.sale_price ??
+  getItemProduct(item)?.price ??
+  0;
+const getItemLineTotal = (item) =>
+  item?.line_total ??
+  item?.lineTotal ??
+  item?.total_price ??
+  item?.totalPrice ??
+  asNumber(getItemUnitPrice(item)) * asNumber(item?.quantity || 1);
+const getOrderProductTitle = (item) =>
+  getItemProduct(item)?.title ||
+  getItemProduct(item)?.name ||
+  item?.product_title ||
+  item?.productTitle ||
+  item?.title ||
+  item?.name ||
+  "Product";
+const getOrderItemColor = (item) => {
+  const attributes =
+    item?.attributes && typeof item.attributes === "object"
+      ? item.attributes
+      : {};
+  const found = Object.entries(attributes).find(([key]) =>
+    String(key).toLowerCase().includes("color"),
+  );
+  return found?.[1] || item?.color || item?.selectedColor || "N/A";
+};
+const asNumber = (value) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+};
+const getOrderItemLineTotal = (item) => {
+  const unitPrice =
+    item?.unit_price ??
+    item?.unitPrice ??
+    item?.sale_price ??
+    item?.salePrice ??
+    item?.price ??
+    item?.variant?.price ??
+    getItemProduct(item)?.salePrice ??
+    getItemProduct(item)?.sale_price ??
+    getItemProduct(item)?.price ??
+    0;
+  const quantity = asNumber(item?.quantity || 1);
+  return (
+    item?.line_total ??
+    item?.lineTotal ??
+    item?.total_price ??
+    item?.totalPrice ??
+    asNumber(unitPrice) * quantity
+  );
+};
+const getOrderCurrency = (order) => {
+  const firstItem = getOrderItems(order)[0];
+  const firstProduct = getItemProduct(firstItem);
+  return order?.currency || firstProduct?.currency || "INR";
+};
+const getAddressValue = (address, camelKey, snakeKey = camelKey) =>
+  address?.[camelKey] || address?.[snakeKey];
+const getOrderAddressValue = getAddressValue;
+const getOrderPhone = (address) =>
+  address?.phone ||
+  address?.mobile ||
+  address?.contact ||
+  address?.telephone ||
+  address?.mobileNumber ||
+  address?.mobile_number;
+const hasOrderShippingAddress = (address) =>
+  Boolean(
+    getOrderAddressValue(address, "fullName", "full_name") ||
+    address?.name ||
+    address?.receiverName ||
+    address?.receiver_name ||
+    getOrderPhone(address) ||
+    address?.line1 ||
+    address?.address_line1 ||
+    address?.line2 ||
+    address?.address_line2 ||
+    address?.city ||
+    address?.state ||
+    getOrderAddressValue(address, "postalCode", "postal_code") ||
+    address?.pincode ||
+    address?.zip ||
+    address?.country,
+  );
+const getOrderAmount = (order, key) => {
+  const snakeKey = {
+    subtotal: "subtotal_amount",
+    discount: "discount_amount",
+    tax: "tax_amount",
+    total: "total_amount",
+    walletDiscount: "wallet_discount_amount",
+    payable: "payable_amount",
+    platformFee: "platform_fee_amount",
+    shipping: "shipping_fee_amount",
+  }[key];
+
+  const aliases =
+    {
+      subtotal: ["subtotalAmount", "subTotal", "subtotal"],
+      discount: ["discountAmount", "discount"],
+      tax: ["taxAmount", "totalTaxAmount", "tax"],
+      total: ["totalAmount", "orderTotal", "grandTotal", "total"],
+      walletDiscount: ["walletDiscountAmount", "walletDiscount"],
+      payable: ["payableAmount", "payable", "amountPayable", "totalAmount"],
+      platformFee: ["platformFeeAmount", "platformFee"],
+      shipping: [
+        "shippingFeeAmount",
+        "shippingFee",
+        "shippingAmount",
+        "shipping",
+      ],
+    }[key] || [];
+
+  for (const field of [key, snakeKey, ...aliases]) {
+    if (field && order?.summary?.[field] !== undefined)
+      return order.summary[field];
+    if (field && order?.amounts?.[field] !== undefined)
+      return order.amounts[field];
+    if (field && order?.[field] !== undefined) return order[field];
+  }
+
+  if (
+    ["subtotal", "total", "payable"].includes(key) &&
+    getOrderItems(order).length
+  ) {
+    return getOrderItems(order).reduce(
+      (total, item) => total + asNumber(getOrderItemLineTotal(item)),
+      0,
+    );
+  }
+
+  return undefined;
+};
+const getCustomerOrderAmount = (order) => {
+  const subtotal =
+    getOrderAmount(order, "subtotal") ??
+    getOrderItems(order).reduce(
+      (sum, item) => sum + asNumber(getOrderItemLineTotal(item)),
+      0,
+    );
+  const discount = getOrderAmount(order, "discount") ?? 0;
+  const walletDiscount = getOrderAmount(order, "walletDiscount") ?? 0;
+  const shipping = getOrderAmount(order, "shipping") ?? 0;
+  const taxPayable =
+    order?.summary?.taxPayableAmount ??
+    order?.summary?.tax_payable_amount ??
+    order?.taxBreakup?.taxPayableAmount ??
+    order?.tax_breakup?.tax_payable_amount ??
+    0;
+  const codCharge =
+    order?.summary?.codChargeAmount ??
+    order?.summary?.cod_charge_amount ??
+    order?.amounts?.codChargeAmount ??
+    order?.amounts?.cod_charge_amount ??
+    0;
+  const calculatedAmount = Number(
+    Math.max(
+      0,
+      asNumber(subtotal) -
+        asNumber(discount) +
+        asNumber(shipping) +
+        asNumber(taxPayable) +
+        asNumber(codCharge) -
+        asNumber(walletDiscount),
+    ).toFixed(2),
+  );
+
+  if (order?.summary?.customerPayableAmount !== undefined) {
+    const payableAmount = asNumber(order.summary.customerPayableAmount);
+    return payableAmount > 0 || calculatedAmount <= 0
+      ? payableAmount
+      : calculatedAmount;
+  }
+  if (order?.summary?.customerTotalAmount !== undefined) {
+    const payableAmount = Math.max(
+      0,
+      asNumber(order.summary.customerTotalAmount) -
+        asNumber(order.summary.walletDiscountAmount),
+    );
+    return payableAmount > 0 || calculatedAmount <= 0
+      ? payableAmount
+      : calculatedAmount;
+  }
+  return calculatedAmount;
+};
+const formatOrderDate = (value) =>
+  value
+    ? new Date(value).toLocaleString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : "";
+const formatOrderId = (id = "") => String(id).slice(0, 8).toUpperCase();
+const getExpectedDeliveryDate = (order) =>
+  order?.expected_delivery ||
+  order?.expectedDelivery ||
+  order?.delivery_date ||
+  order?.deliveryDate ||
+  order?.shipping?.expectedDelivery ||
+  order?.shipmentDate ||
+  null;
+const unwrapOrder = (value) => {
+  const wrapper = value?.data?.order ? value.data : value;
+  const order = wrapper?.order || wrapper;
+
+  if (wrapper?.order && typeof wrapper.order === "object") {
+    return {
+      ...wrapper.order,
+      items: getOrderItems(wrapper.order).length
+        ? getOrderItems(wrapper.order)
+        : getOrderItems(wrapper),
+      amounts: wrapper.order.amounts || wrapper.amounts,
+      shipping_address:
+        wrapper.order.shipping_address || wrapper.shipping_address,
+      shippingAddress: wrapper.order.shippingAddress || wrapper.shippingAddress,
+      tax_breakup: wrapper.order.tax_breakup || wrapper.tax_breakup,
+      taxBreakup: wrapper.order.taxBreakup || wrapper.taxBreakup,
+    };
+  }
+
+  return order;
+};
+const idsMatch = (left, right) => String(left || "") === String(right || "");
+const findFetchedOrder = (orderState, orderId) => {
+  if (!orderId) return null;
+  const currentOrder = unwrapOrder(orderState.current);
+  if (idsMatch(getOrderId(currentOrder), orderId)) return currentOrder;
+
+  const entityOrder = unwrapOrder(orderState.entities?.[orderId]);
+  if (idsMatch(getOrderId(entityOrder), orderId)) return entityOrder;
+
+  const listOrder = Array.isArray(orderState.list)
+    ? orderState.list.find((item) => idsMatch(getOrderId(item), orderId))
+    : null;
+  return listOrder ? unwrapOrder(listOrder) : null;
+};
 
 const getProductId = (item = {}) => {
   const product = item.productId || item.product_id || item.product || item;
@@ -161,279 +457,6 @@ const cartEstimate = (items = []) =>
     );
     return sum + unit * Number(item.quantity || 0);
   }, 0);
-
-const asNumber = (value) => {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : 0;
-};
-
-const normalizeOrder = (order) => order || {};
-
-const getOrderId = (order) => {
-  const normalized = normalizeOrder(order);
-  return firstDefined(
-    normalized.id,
-    normalized._id,
-    normalized.orderId,
-    normalized.order_id,
-  );
-};
-
-const getOrderNumber = (order) => {
-  const normalized = normalizeOrder(order);
-  return firstDefined(
-    normalized.order_number,
-    normalized.orderNumber,
-    getOrderId(normalized),
-  );
-};
-
-const getOrderItems = (order = {}) => {
-  const items = firstDefined(
-    order.items,
-    order.orderItems,
-    order.order_items,
-    order.lineItems,
-    order.line_items,
-    order.products,
-  );
-  return Array.isArray(items) ? items : [];
-};
-
-const getOrderItemProduct = (item = {}) => {
-  const product = item.productId || item.product_id || item.product || item;
-  return typeof product === "object" ? product : {};
-};
-
-const getOrderCurrency = (order = {}) => {
-  const item = getOrderItems(order)[0] || {};
-  const product = getOrderItemProduct(item);
-  return firstDefined(order.currency, product.currency, "INR");
-};
-
-const getOrderItemImage = (item = {}) => {
-  const product = getOrderItemProduct(item);
-  const images = item.images || item.variant?.images || product.images;
-  return Array.isArray(images) ? images[0] : images;
-};
-
-const getOrderProductTitle = (item = {}) =>
-  firstDefined(
-    getOrderItemProduct(item).title,
-    getOrderItemProduct(item).name,
-    item.product_title,
-    item.productTitle,
-    item.title,
-    item.name,
-    "Product",
-  );
-
-const getOrderItemColor = (item = {}) => {
-  const attributes =
-    item.attributes && typeof item.attributes === "object"
-      ? item.attributes
-      : {};
-  const colorEntry = Object.entries(attributes).find(([key]) =>
-    String(key).toLowerCase().includes("color"),
-  );
-  return firstDefined(colorEntry?.[1], item.color, item.selectedColor, "N/A");
-};
-
-const getOrderItemUnitPrice = (item = {}) =>
-  firstDefined(
-    item.unit_price,
-    item.unitPrice,
-    item.sale_price,
-    item.salePrice,
-    item.price,
-    item.variant?.price,
-    getOrderItemProduct(item).salePrice,
-    getOrderItemProduct(item).sale_price,
-    getOrderItemProduct(item).price,
-    0,
-  );
-
-const getOrderItemLineTotal = (item = {}) =>
-  firstDefined(
-    item.line_total,
-    item.lineTotal,
-    item.total_price,
-    item.totalPrice,
-    asNumber(getOrderItemUnitPrice(item)) * asNumber(item.quantity || 1),
-  );
-
-const getOrderAmount = (order = {}, key) => {
-  const snakeKey = {
-    subtotal: "subtotal_amount",
-    discount: "discount_amount",
-    shipping: "shipping_fee_amount",
-    walletDiscount: "wallet_discount_amount",
-    tax: "tax_amount",
-    total: "total_amount",
-    payable: "payable_amount",
-  }[key];
-
-  const aliases =
-    {
-      subtotal: ["subtotalAmount", "subTotal", "subtotal"],
-      discount: ["discountAmount", "discount", "couponDiscountAmount"],
-      shipping: [
-        "shippingFeeAmount",
-        "shippingFee",
-        "shippingAmount",
-        "shipping",
-      ],
-      walletDiscount: ["walletDiscountAmount", "walletDiscount"],
-      tax: ["taxAmount", "totalTaxAmount", "tax"],
-      total: ["totalAmount", "grandTotal", "total"],
-      payable: ["payableAmount", "payable", "amountPayable", "totalAmount"],
-    }[key] || [];
-
-  for (const field of [key, snakeKey, ...aliases]) {
-    if (field && order.summary?.[field] !== undefined)
-      return order.summary[field];
-    if (field && order.amounts?.[field] !== undefined)
-      return order.amounts[field];
-    if (field && order[field] !== undefined) return order[field];
-  }
-
-  if (["subtotal", "total", "payable"].includes(key)) {
-    return getOrderItems(order).reduce(
-      (sum, item) => sum + asNumber(getOrderItemLineTotal(item)),
-      0,
-    );
-  }
-
-  return undefined;
-};
-
-const getCustomerOrderAmount = (order = {}) => {
-  const subtotal = asNumber(getOrderAmount(order, "subtotal"));
-  const discount = asNumber(getOrderAmount(order, "discount"));
-  const shipping = asNumber(getOrderAmount(order, "shipping"));
-  const walletDiscount = asNumber(getOrderAmount(order, "walletDiscount"));
-  const taxPayable = asNumber(
-    firstDefined(
-      order.summary?.taxPayableAmount,
-      order.summary?.tax_payable_amount,
-      order.taxBreakup?.taxPayableAmount,
-      order.tax_breakup?.tax_payable_amount,
-      0,
-    ),
-  );
-  const codCharge = asNumber(
-    firstDefined(
-      order.summary?.codChargeAmount,
-      order.summary?.cod_charge_amount,
-      order.amounts?.codChargeAmount,
-      order.amounts?.cod_charge_amount,
-      0,
-    ),
-  );
-  const explicit = firstDefined(
-    order.summary?.customerPayableAmount,
-    order.summary?.customerTotalAmount,
-    getOrderAmount(order, "payable"),
-  );
-  if (explicit !== undefined) return Math.max(0, asNumber(explicit));
-  return Math.max(
-    0,
-    subtotal - discount + shipping + taxPayable + codCharge - walletDiscount,
-  );
-};
-
-const getOrderAddressValue = (address = {}, camelKey, snakeKey = camelKey) =>
-  firstDefined(address?.[camelKey], address?.[snakeKey]);
-
-const hasOrderShippingAddress = (address = {}) =>
-  Boolean(
-    getOrderAddressValue(address, "fullName", "full_name") ||
-    address.phone ||
-    address.line1 ||
-    address.line2 ||
-    address.city ||
-    address.state ||
-    getOrderAddressValue(address, "postalCode", "postal_code") ||
-    address.country,
-  );
-const formatOrderId = (id = "") => String(id).slice(0, 8).toUpperCase();
-
-const formatOrderDate = (value) =>
-  value
-    ? new Date(value).toLocaleString("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      })
-    : "";
-
-const getExpectedDeliveryDate = (order = {}) => {
-  const direct = firstDefined(
-    order.expected_delivery_date,
-    order.expectedDeliveryDate,
-    order.estimated_delivery_date,
-    order.estimatedDeliveryDate,
-    order.delivery_date,
-    order.deliveryDate,
-  );
-  if (direct) return direct;
-
-  const days = asNumber(
-    firstDefined(
-      order.delivery_eta_days,
-      order.deliveryEtaDays,
-      order.estimated_delivery_days,
-      order.estimatedDeliveryDays,
-    ),
-  );
-  if (days > 0) {
-    const base = new Date(
-      firstDefined(order.created_at, order.createdAt, Date.now()),
-    );
-    if (!Number.isNaN(base.getTime())) {
-      base.setDate(base.getDate() + days);
-      return base.toISOString();
-    }
-  }
-
-  return null;
-};
-
-const normalizeOrderResponse = (payload) => {
-  const wrapper = payload?.data?.order ? payload.data : payload;
-  const order = wrapper?.order || wrapper;
-  if (!order || typeof order !== "object") return null;
-  return {
-    ...order,
-    items: getOrderItems(order).length
-      ? getOrderItems(order)
-      : getOrderItems(wrapper),
-    amounts: order.amounts || wrapper.amounts,
-    summary: order.summary || wrapper.summary,
-    shipping_address: order.shipping_address || wrapper.shipping_address,
-    shippingAddress: order.shippingAddress || wrapper.shippingAddress,
-    tax_breakup: order.tax_breakup || wrapper.tax_breakup,
-    taxBreakup: order.taxBreakup || wrapper.taxBreakup,
-  };
-};
-
-const findFetchedOrder = (state, orderId) => {
-  const candidates = [
-    normalizeOrderResponse(state.current),
-    normalizeOrderResponse(state.entities?.[orderId]),
-    ...(Array.isArray(state.list) ? state.list : []).map(
-      normalizeOrderResponse,
-    ),
-  ].filter(Boolean);
-
-  return (
-    candidates.find(
-      (item) => String(getOrderId(item) || "") === String(orderId || ""),
-    ) ||
-    candidates[0] ||
-    null
-  );
-};
 
 export function AuthFormPage({ mode }) {
   const dispatch = useDispatch();
@@ -537,7 +560,7 @@ export function AuthFormPage({ mode }) {
   return (
     <section className="narrow">
       <Seo title={`${title} | Sam Global`} />
-      <form className="panel" onSubmit={handleSubmit(submit)}>
+      <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submit)}>
         <h1>{title}</h1>
         {(mode === "register" || mode === "register-otp") && (
           <>
@@ -749,7 +772,7 @@ export function AccountPage({ tab = "profile" }) {
       </div>
       <ApiState loading={user.loading} error={user.error} empty={!user.current}>
         {tab === "profile" && (
-          <form className="panel" onSubmit={handleSubmit(submitProfile)}>
+          <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submitProfile)}>
             <input
               placeholder="First name"
               defaultValue={user.current?.profile?.firstName}
@@ -766,7 +789,7 @@ export function AccountPage({ tab = "profile" }) {
           </form>
         )}
         {tab === "addresses" && (
-          <form className="panel" onSubmit={handleSubmit(submitAddress)}>
+          <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submitAddress)}>
             <input
               placeholder="Label"
               {...register("label", { required: true })}
@@ -818,7 +841,7 @@ export function AccountPage({ tab = "profile" }) {
         )}
         {tab === "security" && (
           <form
-            className="panel"
+            className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10"
             onSubmit={handleSubmit((values) =>
               run(dispatch, changePassword(values), "Password changed"),
             )}
@@ -861,7 +884,7 @@ export function AccountPage({ tab = "profile" }) {
           </form>
         )}
         {tab === "kyc" && (
-          <form className="panel" onSubmit={handleSubmit(submitKyc)}>
+          <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submitKyc)}>
             <input
               placeholder="Legal name"
               {...register("legalName", { required: true })}
@@ -969,7 +992,7 @@ export function ProductsPage({ search = false }) {
 
 export function CategoryPage() {
   const { categoryKey } = useParams();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const category = useFetch(
     fetchCategoryByKey,
     { categoryKey },
@@ -1067,7 +1090,7 @@ export function ProductDetailPage() {
               <div className="empty-media">No image</div>
             )}
           </div>
-          <div className="panel">
+          <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
             <h1>{product?.title}</h1>
             <p>{product?.description}</p>
             <strong>
@@ -1168,7 +1191,7 @@ export function CartPage() {
         empty={!items.length && !(cart.wishlist || []).length}
       >
         <div className="split">
-          <div className="panel">
+          <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
             <h2>Items</h2>
             {items.map((item) => (
               <div className="line-item" key={getProductId(item)}>
@@ -1210,7 +1233,7 @@ export function CartPage() {
               Checkout
             </Link>
           </div>
-          <div className="panel">
+          <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
             <h2>Wishlist</h2>
             {(cart.wishlist || []).map((id) => (
               <div className="line-item" key={id}>
@@ -1311,7 +1334,7 @@ export function CheckoutPage() {
         emptyTitle="Your cart is empty"
       >
         <div className="split">
-          <form className="panel" onSubmit={handleSubmit(submit)}>
+          <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submit)}>
             <h2>Delivery address</h2>
             <input
               placeholder="Line 1"
@@ -1354,7 +1377,7 @@ export function CheckoutPage() {
             </button>
           </form>
 
-          <aside className="panel">
+          <aside className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
             <h2>Payment option</h2>
             <div className="payment-options">
               {paymentOptions.map((option) => (
@@ -1408,35 +1431,37 @@ export function CheckoutPage() {
     </section>
   );
 }
-
 export function PaymentResultPage({ failed = false }) {
   const dispatch = useDispatch();
   const orderState = useSelector((state) => state.order);
   const [searchParams] = useSearchParams();
+
   const orderId = searchParams.get("orderId");
-  const orderLink = orderId ? `/orders/${orderId}` : "/orders";
   const order = findFetchedOrder(orderState, orderId);
+
   const items = getOrderItems(order || {});
   const currency = getOrderCurrency(order || {});
   const shippingAddress =
     order?.shipping_address || order?.shippingAddress || {};
+
   const discount = getOrderAmount(order || {}, "discount");
   const shipping = getOrderAmount(order || {}, "shipping");
   const customerAmount = getCustomerOrderAmount(order || {});
   const status = firstDefined(order?.status, order?.orderStatus, "confirmed");
-  const placedAt = firstDefined(order?.created_at, order?.createdAt);
   const expectedDelivery = getExpectedDeliveryDate(order || {});
+
+  useEffect(() => {
+    if (orderId) {
+      dispatch(fetchOrderById({ orderId }));
+    }
+  }, [dispatch, orderId]);
+
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "Cart", href: "/cart" },
-    { label: "Checkout" },
+    { label: "Checkout", href: "/checkout" },
+    { label: failed ? "Payment Failed" : "Order Placed" },
   ];
-
-  useEffect(() => {
-    if (!failed && orderId) {
-      dispatch(fetchOrderById({ orderId }));
-    }
-  }, [dispatch, failed, orderId]);
 
   const failureCard = (
     <div className="mx-auto w-full max-w-[760px] px-4 py-10 sm:px-6 lg:px-8">
@@ -1478,19 +1503,11 @@ export function PaymentResultPage({ failed = false }) {
         </div>
         <div className="border-t border-red-100 px-6 py-5 sm:px-10">
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link to={orderLink} className="w-full sm:w-auto">
-              <BrandButton
-                variant="primary"
-                rounded
-                label="View Orders"
-                className="h-12 w-full min-w-[220px] text-sm font-semibold"
-              />
-            </Link>
             <Link to="/" className="w-full sm:w-auto">
               <BrandButton
                 variant="secondary"
                 rounded
-                label="Continue Shopping"
+                label="Download Invoice"
                 className="h-12 w-full min-w-[220px] text-sm"
               />
             </Link>
@@ -1515,29 +1532,10 @@ export function PaymentResultPage({ failed = false }) {
         ) : (
           <div className="mx-auto flex min-h-[60vh] w-full max-w-md items-center px-4 py-12">
             <div className="w-full rounded-[var(--customer-radius)] border border-border bg-white p-8 text-center">
-              <CheckCircle2 className="mx-auto mb-4 h-[160px] w-[156px] " />
               <h1 className="text-2xl font-bold text-ink">Order Placed!</h1>
               <p className="mt-2 text-sm text-muted">
                 Your order has been placed successfully.
               </p>
-              <div className="mt-6 flex flex-col gap-3">
-                <Link to="/orders">
-                  <BrandButton
-                    variant="primary"
-                    rounded
-                    label="View Orders"
-                    className="h-11 w-full text-sm font-semibold"
-                  />
-                </Link>
-                <Link to="/">
-                  <BrandButton
-                    variant="secondary"
-                    rounded
-                    label="Continue Shopping"
-                    className="h-11 w-full text-sm"
-                  />
-                </Link>
-              </div>
             </div>
           </div>
         )}
@@ -1554,40 +1552,51 @@ export function PaymentResultPage({ failed = false }) {
             : "Payment Successful | Sam Global"
         }
       />
-      <div className="!main-container py-4 min-[375px]:py-5 sm:py-6 lg:py-8">
+      <div className="!main-container py-4 min-[375px]:py-10 sm:py-2 lg:py-[3rem]  ">
         <ApiState
           loading={orderState.loading && !order}
           error={orderState.error}
           empty={!order}
         >
-          <div className="grid gap-6">
-            <section className="grid">
+          <div className="grid gap-2">
+            <section className="grid !sm:mt-10">
               <Breadcrumbs
                 items={breadcrumbItems}
-                title={null}
-                className="text-[#2E2E2E]"
-                linkClassName="text-[#2E2E2E]"
-                currentClassName="text-[#CE9F2D]"
+                className="sm:mt-6 xl:mt-2  flex flex-wrap items-center gap-[10px]  sm:gap-[12px] lg:gap-[15px] "
+                linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
+                currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
                 separatorClassName="text-[#2E2E2E]"
               />
             </section>
 
             <OrderDetailLayout>
-              <div className="grid gap-4 min-[425px]:gap-5 lg:gap-6">
-                <section className="w-full flex flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D]/40 bg-white">
-                  <div className="flex flex-col gap-4 bg-[linear-gradient(135deg,#FFFCF3_0%,#FFFFFF_100%)] px-4 py-5 sm:px-7 md:px-8">
-                    <div className="flex flex-col items-center gap-4 text-center sm:gap-5 md:flex-row md:items-center md:text-left">
-                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#0A8C37] text-white shadow-[0_16px_30px_rgba(10,140,55,0.2)] min-[375px]:h-[72px] min-[375px]:w-[72px] min-[425px]:h-20 min-[425px]:w-20 sm:h-[84px] sm:w-[84px] lg:h-[92px] lg:w-[92px]">
-                        <CheckCircle2
-                          className="h-8 w-8 min-[375px]:h-9 min-[375px]:w-9 min-[425px]:h-10 min-[425px]:w-10 lg:h-12 lg:w-12"
-                          strokeWidth={3}
+              <div className="grid gap-3 min-[375px]:gap-4 min-[425px]:gap-5 md:gap-6 xl:gap-12 ">
+                <section className="flex w-full flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D]/40 bg-[#fffcf6] ">
+                  <div className="flex flex-col  gap-4  px-6 py-5 sm:px-7 md:px-8 xl:mt-5  min-[375px]:gap-5 min-[375px]:px-5 min-[425px]:gap-6 sm:py-6 xl:px-[57px]">
+                    <div className="flex  flex-col items-center !gap-10  text-center !sm:gap-[1.25rem] md:flex-row md:items-center md:text-left">
+                      <div>
+                        <img
+                          src="/image/png/Group.png"
+                          alt="Order placed successfully"
+                          className="
+    h-32 w-32
+    min-[375px]:h-28 min-[375px]:w-28
+    min-[425px]:h-32 min-[425px]:w-32
+    sm:h-20 sm:w-20
+    md:h-24 md:w-24
+    lg:h-28 lg:w-28
+    xl:h-[160px] xl:w-[157px]
+    object-contain
+  "
                         />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <h1 className="text-[24px] font-bold leading-[1.1] text-[#3E4093] min-[375px]:text-[28px] min-[425px]:text-[32px] sm:text-[40px] lg:text-[48px] xl:text-[56px]">
+
+                      <div className="min-w-0  flex-1">
+                        <h1 className="break-words text-[24px] font-bold leading-[1.3] xl:leading-[2.1] text-[#3E4093] min-[375px]:text-[28px] min-[425px]:text-[24px] sm:text-[40px] xl:text-[36px]">
                           Order Placed Successfully !
                         </h1>
-                        <p className="mt-2 max-w-3xl text-[13px] font-medium leading-6 text-[#2E2E2E] min-[375px]:text-sm min-[425px]:text-[15px] sm:text-[17px] sm:leading-7 lg:text-[20px] lg:leading-[30px]">
+
+                        <p className="mt-2 max-w-3xl text-[13px] font-medium leading-6 text-[#2E2E2E] min-[375px]:text-sm min-[425px]:text-[15px] sm:text-[17px] sm:leading-7 xl:text-[18px] xl:leading-[30px]">
                           Thank you for shopping with Sam Global.
                           <br className="hidden sm:block" />
                           Your order has been received and is being prepared for
@@ -1597,12 +1606,13 @@ export function PaymentResultPage({ failed = false }) {
                     </div>
                   </div>
 
-                  <div className="mt-auto flex flex-col gap-2 bg-[#BBBBCB] px-4 py-3 text-[13px] font-semibold text-[#1B1D60] min-[375px]:px-5 min-[375px]:text-sm min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-4 sm:text-[17px] md:px-8 lg:text-[18px]">
-                    <span>
+                  <div className="mt-auto flex flex-col gap-2 bg-[#BBBBCB] px-4 py-3 text-[13px] font-semibold text-[#1B1D60] min-[375px]:px-5 min-[375px]:text-sm min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-4 sm:text-[17px] md:px-8 xl:text-[20px]">
+                    <span className="break-words">
                       Order ID : #
                       {formatOrderId(getOrderNumber(order) || orderId)}
                     </span>
-                    <span>
+
+                    <span className="break-words">
                       Estimated Delivery :{" "}
                       {expectedDelivery
                         ? formatOrderDate(expectedDelivery)
@@ -1612,10 +1622,10 @@ export function PaymentResultPage({ failed = false }) {
                 </section>
 
                 <OrderDetailSectionCard
-                  className="w-full rounded-[20px] bg-[#FFFDF8]"
-                  borderClassName="border border-[#CE9F2D80]"
-                  bodyClassName="flex items-center overflow-hidden px-4 py-4 min-[425px]:px-5 sm:px-6 md:px-8 lg:px-[35px] lg:py-[25px]"
+                  bodyClassName="overflow-x-auto  !px-4 py-3 sm:px-8"
+                  titleClassName="font-bold leading-[100%]"
                 >
+<<<<<<< HEAD
                   <div className="w-full">
                     <OrderProgress
                       noteClassName="text-center font-medium text-[18px] leading-none tracking-normal text-[#6F7480] "
@@ -1653,29 +1663,42 @@ export function PaymentResultPage({ failed = false }) {
                     borderClassName="border-[#CE9F2D]"
                     bodyClassName="grid  divide-y divide-[#E9E9EF] p-4 min-[375px]:p-5 min-[425px]:p-6 lg:p-[25px]"
                     itemClassName="py-3 first:pt-0 last:pb-0 min-[375px]:py-4 lg:py-5 lg:gap-6"
+=======
+                  <OrderProgress status={status} />
+                </OrderDetailSectionCard>
+
+                <div className="w-full  ">
+                  <OrderItemsSection
+                    items={items}
+                    title={null}
+>>>>>>> origin/reeta-dev-2
                     currency={currency}
-                    getItemImage={getOrderItemImage}
+                    getItemImage={getItemImage}
                     getProductTitle={getOrderProductTitle}
                     getOrderItemColor={getOrderItemColor}
-                    getItemLineTotal={getOrderItemLineTotal}
+                    getItemLineTotal={getItemLineTotal}
                     formatMoney={formatMoney}
+                    className="md:text-[18px] font-bold"
+                  
+                  
                   />
                 </div>
               </div>
 
-              <OrderDetailAside className="gap-4 min-[425px]:gap-5 lg:gap-6 lg:self-start lg:sticky lg:top-28 w-full">
+              <OrderDetailAside className="w-full  gap-4 min-[425px]:gap-5 xl:sticky xl:top-28 xl:self-start xl:gap-6 ">
                 <OrderDetailSectionCard
                   title="Order Summary"
                   className="w-full rounded-[20px]"
-                  headerClassName="min-h-[64px] px-4 py-4 min-[375px]:px-5 sm:min-h-[72px] sm:px-6 lg:px-[20px] lg:py-[25px]"
-                  titleClassName="text-[18px] leading-tight min-[375px]:text-[20px] sm:text-[22px] lg:text-[24px]"
+                  headerClassName="min-h-[64px] px-4 py-4 min-[375px]:px-5 sm:min-h-[72px] sm:px-6 xl:px-[20px] xl:py-[25px]"
+                  titleClassName="text-[18px] leading-tight min-[375px]:text-[20px] sm:text-[22px] xl:text-[24px]"
                   borderClassName="border-[#CE9F2D66]"
-                  bodyClassName="grid gap-0 px-4 py-3 min-[375px]:px-5 min-[425px]:py-4 sm:px-6 lg:px-4"
+                  bodyClassName="grid gap-4 px-4 py-4 min-[375px]:px-5 min-[375px]:py-5 sm:px-6"
                 >
                   <SummaryRow
                     label={`${items.length.toString().padStart(2, "0")} Item(s)`}
                     value=""
                   />
+
                   {items.map((item, index) => (
                     <SummaryRow
                       key={`${getOrderProductTitle(item)}-${index}`}
@@ -1683,6 +1706,7 @@ export function PaymentResultPage({ failed = false }) {
                       value={formatMoney(getOrderItemLineTotal(item), currency)}
                     />
                   ))}
+
                   {asNumber(discount) > 0 && (
                     <SummaryRow
                       label="Discount"
@@ -1690,6 +1714,7 @@ export function PaymentResultPage({ failed = false }) {
                       savings
                     />
                   )}
+
                   <SummaryRow
                     label="Delivery"
                     value={
@@ -1698,6 +1723,7 @@ export function PaymentResultPage({ failed = false }) {
                         : formatMoney(shipping, currency)
                     }
                   />
+
                   <div className="border-t border-dashed border-[#04258626] pt-3">
                     <SummaryRow
                       label="Total Payable"
@@ -1705,17 +1731,18 @@ export function PaymentResultPage({ failed = false }) {
                     />
                   </div>
 
-                  <div className="mt-3 rounded-[14px]  px-3 py-3 min-[375px]:px-4 min-[375px]:py-4">
+                  <div className="mt-3 rounded-[14px] px-3 py-3 min-[375px]:px-4 min-[375px]:py-4">
                     <div className="flex items-start gap-3">
-                      <span className="mt-0.5 flex h-[70px] w-[70px] items-center justify-center rounded-full border border-[#CE9F2D66] bg-white text-[#CE9F2D]">
-                        <Truck className="h-[50px] w-[50px]" />
+                      <span className="mt-0.5 flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-full border border-[#CE9F2D66] bg- text-[#CE9F2D] sm:h-[70px] sm:w-[70px]">
+                        <img src="/public/image/png/Frame1.png" alt="" />
                       </span>
-                      <div className="flex flex-col gap-3">
-                        <p className="text-xs font-semibold text-[#2E2E2E] min-[375px]:text-[20px]">
+
+                      <div className="min-w-0 flex flex-col gap-2 sm:gap-3">
+                        <p className="text-[14px] font-semibold text-[#2E2E2E] sm:text-[20px]">
                           Expected Delivery
                         </p>
 
-                        <p className="text-lg font-bold leading-tight text-[#CE9F2D] min-[375px]:text-[30px]">
+                        <p className="break-words text-[20px] font-bold leading-tight text-[#CE9F2D] sm:text-[30px]">
                           {expectedDelivery
                             ? formatOrderDate(expectedDelivery)
                             : "To be confirmed"}
@@ -1729,7 +1756,7 @@ export function PaymentResultPage({ failed = false }) {
                       <BrandButton
                         variant="secondary"
                         rounded
-                        label="Continue Shopping"
+                        label="Download invoice"
                         className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
                       />
                     </Link>
@@ -1740,31 +1767,35 @@ export function PaymentResultPage({ failed = false }) {
                   <OrderDetailSectionCard
                     title="Delivery Address"
                     className="w-full rounded-[20px]"
-                    headerClassName="min-h-[64px] px-4 py-4 min-[375px]:px-5 sm:min-h-[72px] sm:px-6 lg:px-[20px] lg:py-[25px]"
-                    titleClassName="text-[18px] leading-tight min-[375px]:text-[20px] sm:text-[22px] lg:text-[24px]"
+                    headerClassName="min-h-[64px] px-4 py-4 min-[375px]:px-5 sm:min-h-[72px] sm:px-6 xl:px-[20px] xl:py-[25px]"
+                    titleClassName="text-[18px] leading-tight min-[375px]:text-[20px] sm:text-[22px] xl:text-[24px]"
                     borderClassName="border-[#CE9F2D66]"
                     bodyClassName="grid gap-4 px-4 py-4 min-[375px]:px-5 min-[375px]:py-5 sm:px-6"
                   >
-                    <div className="inline-flex w-[81px] h-[37px] items-center rounded-full bg-[#CE9F2D] px-3 py-1 text-[18px] font-semibold text-white">
+                    <div className="inline-flex h-[37px] w-[81px] items-center rounded-full bg-[#CE9F2D] px-3 py-1 text-[18px] font-semibold text-white">
                       Home
                     </div>
+
                     <div className="grid gap-3 text-[#2E2E2E]">
-                      <p className="text-[22px] font-bold leading-tight text-[#2E2E2E] min-[375px]:text-[24px] sm:text-[28px]">
+                      <p className="break-words text-[22px] font-bold leading-tight text-[#2E2E2E] min-[375px]:text-[24px] sm:text-[28px]">
                         {getOrderAddressValue(
                           shippingAddress,
                           "fullName",
                           "full_name",
                         )}
                       </p>
-                      <div className="flex items-start gap-2 text-[13px] leading-6 min-[375px]:text-[20px] font-medium">
+
+                      <div className="flex items-start gap-2 text-[13px] font-medium leading-6 min-[375px]:text-[16px] sm:text-[20px]">
                         <Phone className="mt-1 h-[18px] w-[18px] shrink-0 text-[#CE9F2D]" />
-                        <span>
-                          {shippingAddress.phone || "Phone unavailable"}
+                        <span className="break-words">
+                          {getOrderPhone(shippingAddress) ||
+                            "Phone unavailable"}
                         </span>
                       </div>
-                      <div className="flex items-start gap-2 text-[13px] leading-6 min-[375px]:text-[20px] font-medium ">
+
+                      <div className="flex items-start gap-2 text-[13px] font-medium leading-6 min-[375px]:text-[16px] sm:text-[20px]">
                         <MapPin className="mt-1 h-[18px] w-[18px] shrink-0 text-[#CE9F2D]" />
-                        <span>
+                        <span className="break-words">
                           {[
                             shippingAddress.line1,
                             shippingAddress.line2,
@@ -1825,7 +1856,7 @@ export function OrdersPage({ detail = false, track = false }) {
       <section>
         <Seo title={`Order ${orderId} | Sam Global`} />
         <ApiState loading={state.loading} error={state.error} empty={!order}>
-          <div className="panel">
+          <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
             <h1>Order {orderId}</h1>
             <StatusTimeline status={order?.status || order?.orderStatus} />
             <p>
@@ -1883,7 +1914,7 @@ export function OrdersPage({ detail = false, track = false }) {
                 </strong>
               </div>
             </div>
-            <div className="panel nested-panel">
+            <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10 nested-border">
               <h2>Invoice</h2>
               {taxState.loading && <p>Loading invoice...</p>}
               {!taxState.loading && invoiceVisible && invoice ? (
@@ -2020,7 +2051,7 @@ export function ReturnsPage({ request = false }) {
       <section>
         <Seo title="Request return" />
         <form
-          className="panel"
+          className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10"
           onSubmit={handleSubmit((values) =>
             run(
               dispatch,

@@ -285,12 +285,12 @@ export default function ProductCard({
       </div>
 
       <Link to={to} className="flex flex-1 flex-col">
-        <div className="flex h-[262px]  items-center justify-center overflow-hidden">
+        <div className="flex justify-center overflow-hidden  h-[260px] items-center   w-auto rounded-t-[20px]  transition-all duration-300 ease-in-out group-hover:scale-[1.01]">
           {image ? (
             <img
               src={image}
               alt={title}
-              className="h-full w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
+              className="h-full w-auto object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
               loading="lazy"
               decoding="async"
               onError={handleImageError}

@@ -148,7 +148,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="panel flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10 flex flex-col gap-4">
       <h3 className="text-base font-bold text-ink">Write a Review</h3>
 
       {deliveredOrders.length > 1 && (

@@ -25,7 +25,7 @@ function OrderItemCard({
         )}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col justify-center">
+      <div className="flex min-w-0 flex-1 flex-col  justify-center ">
         <p className="line-clamp-2 break-words text-[18px] font-semibold leading-[26px] text-[#2E2E2E] sm:text-[22px] sm:leading-[32px] md:text-[26px] md:leading-[38px]">
           {getProductTitle(item)}
         </p>
@@ -47,8 +47,8 @@ function OrderItemCard({
           </span>
         </div>
 
-        <div className="mt-2 gap-[5px] sm:mt-4">
-          <p className="text-[20px] font-extrabold leading-[28px] text-[#1B1D60] sm:text-[26px] sm:leading-[38px] md:text-[34px] md:leading-[46px]">
+        <div className="mt-2 gap-[5px] sm:mt-4 lg:mt-0">
+          <p className="text-[20px] font-extrabold leading-[28px] text-[#1B1D60] sm:text-[26px] sm:leading-[38px] md:text-[24px] md:leading-[46px] ">
             {formatMoney(getItemLineTotal(item), currency)}
           </p>
           <p className="text-[14px] font-medium leading-[100%] text-[#2E2E2E] sm:text-[16px] md:text-[18px]">
@@ -60,7 +60,7 @@ function OrderItemCard({
   );
 }
 
-function OrderItemsSection({ items, ...itemProps }) {
+function OrderItemsSection({ items, title, ...itemProps }) {
   return (
     <OrderDetailSectionCard
       title="Item"

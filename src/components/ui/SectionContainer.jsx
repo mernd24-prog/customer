@@ -63,7 +63,7 @@ export default function SectionContainer({
               <OutlineSmallButton
                 to={actionHref}
                 rightIcon={<FaAngleRight className="text-[10px]" />}
-                className="self-start text-[12px] sm:self-center"
+                className="self-start font-sans xl:font-semibold  xl:text-[18px] sm:text-[10px] sm:self-center"
               >
                 {actionLabel}
               </OutlineSmallButton>
@@ -73,7 +73,7 @@ export default function SectionContainer({
               <OutlineSmallButton
                 onClick={onAction}
                 rightIcon={<FaAngleRight className="text-[10px]" />}
-                className="self-start text-[12px] sm:self-center"
+                className="self-start font-sans xl:font-semibold  xl:text-[18px] sm:text-[10px] sm:self-center"
               >
                 {actionLabel}
               </OutlineSmallButton>
