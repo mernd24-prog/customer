@@ -873,6 +873,7 @@ function getOrderItemColor(item) {
 }
 
 function OrderSummaryCard({ order }) {
+  const navigate = useNavigate();
   const id = getOrderId(order);
   const apiOrderId = getOrderId(order);
   const status = getOrderStatus(order);
@@ -898,8 +899,25 @@ function OrderSummaryCard({ order }) {
       });
   };
 
+  const handleOpenOrder = () => {
+    navigate(`/orders/${id}`);
+  };
+
+  const handleOpenOrderKeyDown = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleOpenOrder();
+    }
+  };
+
   return (
-    <article className="overflow-hidden rounded-xl mt-6 border border-[#E7D9B8]  bg-[#FFFCF6]">
+    <article
+      className="cursor-pointer overflow-hidden rounded-xl mt-6 border border-[#E7D9B8] bg-[#FFFCF6]"
+      onClick={handleOpenOrder}
+      onKeyDown={handleOpenOrderKeyDown}
+      role="link"
+      tabIndex={0}
+    >
       <div className="flex flex-col gap-3 border-b border-[#E7D9B8] bg-[#CE9F2D33] px-3 py-4 md:flex-row md:items-center md:justify-between md:gap-4 md:px-4 md:py-6  text-sm md:text-base 2xl:text-[20px] font-semibold text-ink">
         <div className="flex items-center justify-between w-full md:contents">
           <span className="inline-flex items-center gap-1.5">
@@ -979,6 +997,7 @@ function OrderSummaryCard({ order }) {
           <div className="my-4 flex flex-wrap items-center gap-3">
             <Link
               to={`/orders/${id}/track`}
+              onClick={(event) => event.stopPropagation()}
               className="inline-flex h-11 min-w-[160px] items-center justify-center gap-2 rounded-[10px] bg-gold px-20  text-sm lg:text-[15px] font-bold text-white transition-colors"
             >
               <Truck size={18} />
@@ -986,6 +1005,7 @@ function OrderSummaryCard({ order }) {
             </Link>
             <Link
               to={`/orders/${id}`}
+              onClick={(event) => event.stopPropagation()}
               className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] px-2 text-sm lg:text-[15px]  font-bold text-gold-dark transition-colors hover:bg-gold-soft"
             >
               <Download size={13} />

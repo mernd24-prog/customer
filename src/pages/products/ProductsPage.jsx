@@ -83,6 +83,7 @@ export default function ProductsPage() {
   const products = items;
   const totalPages = pageInfo.totalPages || 1;
   const currentPage = pageInfo.page || 1;
+  const pageSize = Number(searchParams.get("limit") || 12);
   const availabilityCounts = useMemo(
     () =>
       products.reduce(
@@ -186,7 +187,7 @@ export default function ProductsPage() {
             : data?.list || [];
         setCategoryList(list);
       })
-      .catch(() => {});
+      .catch(() => { });
 
     dispatch(fetchBrands({ limit: 100 }))
       .then((action) => {
@@ -206,7 +207,7 @@ export default function ProductsPage() {
             .filter(Boolean),
         );
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [dispatch]);
 
   useEffect(() => {
@@ -223,7 +224,7 @@ export default function ProductsPage() {
       (entries) => {
         const [entry] = entries;
         if (!entry?.isIntersecting) return;
-        loadProducts({ page: currentPage + 1, append: true }).catch(() => {});
+        loadProducts({ page: currentPage + 1, append: true }).catch(() => { });
       },
       { threshold: 0.2, rootMargin: "0px 0px 300px 0px" },
     );
@@ -482,28 +483,29 @@ export default function ProductsPage() {
             sortOptions={SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
             onOpenFilters={() => setSidebarOpen(true)}
-            // viewControls={
-            //   <div className="hidden  items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
-            //     <button
-            //       type="button"
-            //       onClick={() => setViewMode("grid")}
-            //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
-            //     >
-            //       <Grid2X2 size={15} />
-            //     </button>
-            //     <button
-            //       type="button"
-            //       onClick={() => setViewMode("list")}
-            //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
-            //     >
-            //       <List size={15} />
-            //     </button>
-            //   </div>
-            // }
+          // viewControls={
+          //   <div className="hidden  items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
+          //     <button
+          //       type="button"
+          //       onClick={() => setViewMode("grid")}
+          //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
+          //     >
+          //       <Grid2X2 size={15} />
+          //     </button>
+          //     <button
+          //       type="button"
+          //       onClick={() => setViewMode("list")}
+          //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
+          //     >
+          //       <List size={15} />
+          //     </button>
+          //   </div>
+          // }
           />
         </div>
-
         <ProductResultsLayout
+          totalResults={pageInfo.total}
+          pageSize={pageSize}
           filterSections={filterSections}
           filters={activeFilters}
           onRemoveFilter={removeFilter}

@@ -7,6 +7,8 @@ import Pagination from "./Pagination";
 import Loader from "../common/Loader";
 
 export default function ProductResultsLayout({
+  totalResults = 0,
+  pageSize = 12,
   filterSections = [],
   filters = [],
   onRemoveFilter,
@@ -31,6 +33,21 @@ export default function ProductResultsLayout({
   sentinelRef,
   children,
 }) {
+  const productCount = products.length;
+  const totalCount = Number(totalResults) || productCount;
+  const perPage = Number(pageSize) || productCount || 1;
+  const page = Number(currentPage) || 1;
+  const rangeStart = productCount
+    ? showPagination
+      ? (page - 1) * perPage + 1
+      : 1
+    : 0;
+  const rangeEnd = productCount
+    ? showPagination
+      ? Math.min(rangeStart + productCount - 1, totalCount)
+      : Math.min(productCount, totalCount)
+    : 0;
+
   return (
     <>
       <ActiveFilterChips
@@ -54,7 +71,7 @@ export default function ProductResultsLayout({
           />
         </FilterDrawer>
 
-        <div className="min-w-0 dflex-1 ">
+        <div className="min-w-0 flex-1 ">
           {children || (
             <ApiState
               loading={loading}
@@ -64,7 +81,7 @@ export default function ProductResultsLayout({
               emptyText={emptyText}
             >
               <h4 className="text-xl md:text-[24px] mb-6 lg:mb-12">
-                Showing 1–30 of 85 results
+                Showing {rangeStart}-{rangeEnd} of {totalCount} results
               </h4>
               <ProductGrid
                 products={products}

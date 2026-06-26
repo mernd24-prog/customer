@@ -14,6 +14,7 @@ export default function CartItemCard({
   onRemove,
   onSaveForLater,
   onBuyNow,
+  isLastItem = false,
   selected = true,
   onSelect,
   saveForLaterLabel = "Move to Wishlist",
@@ -29,18 +30,29 @@ export default function CartItemCard({
   const product = item;
   const maxQty = item?.maxQuantity ?? item?.max_quantity ?? null;
   const quantity = Number(item?.quantity || 1);
+  const stockQuantity = stock == null ? null : Number(stock);
+  const hasStockQuantity = Number.isFinite(stockQuantity);
   const rating = item?.rating ?? item?.averageRating ?? item?._raw?.rating;
   const ratingValue = Number(rating);
   const reviewCount =
     item?.reviewCount ?? item?.reviewsCount ?? item?._raw?.reviewCount;
 
   const discountPct = calculateDiscountPercent(price, oldPrice);
-  const isOutOfStock = stock !== null && stock === 0;
+  const isOutOfStock = hasStockQuantity && stockQuantity <= 0;
   const atMaxQty = maxQty !== null && quantity >= maxQty;
+  const quantityMax =
+    hasStockQuantity && stockQuantity > 0
+      ? maxQty !== null
+        ? Math.min(stockQuantity, Number(maxQty))
+        : stockQuantity
+      : maxQty;
 
   return (
     <article className="relative w-full p-3 min-[375px]:p-4 sm:p-5 lg:p-6 xl:min-h-[433px] xl:max-w-[1161px] xl:p-[25px]">
-      <div className="grid gap-5 sm:gap-6 lg:grid-cols-[minmax(220px,320px)_1fr] xl:grid-cols-[minmax(220px,399px)_1fr] xl:gap-9 ">
+      <div
+        className={`grid gap-5 sm:gap-6 lg:grid-cols-[minmax(220px,320px)_1fr] xl:grid-cols-[minmax(220px,399px)_1fr] xl:gap-9 pb-7 ${!isLastItem ? "border-b border-[#CE9F2D4D]" : ""
+          }`}
+      >
         {item?.image && (
           <div className=" relative mx-auto flex aspect-[399/383] w-full max-w-[399px] items-center justify-center overflow-hidden rounded-[12px] border border-[#F0E6D2] bg-white lg:h-auto lg:max-w-[320px] xl:h-[383px] xl:w-[399px] xl:max-w-[399px]">
             {showCheckbox && (
@@ -166,6 +178,7 @@ export default function CartItemCard({
               quantity={item.quantity}
               onIncrease={() => onIncrease(item.id)}
               onDecrease={() => onDecrease(item.id)}
+              max={quantityMax}
               increaseDisabled={item.increaseDisabled}
               increaseDisabledLabel={item.stockMessage || undefined}
             />
@@ -190,7 +203,9 @@ export default function CartItemCard({
               <button
                 type="button"
                 onClick={() => onSaveForLater?.(item?.id)}
-                className="inline-flex items-center gap-2 font-medium rounded-lg bg-[#CE9F2D] text-white px-20 py-2.5 transition hover:bg-[#b8891f] active:scale-95"
+                disabled={isOutOfStock}
+                className="inline-flex items-center gap-2 font-medium rounded-lg bg-[#CE9F2D] text-white px-20 py-2.5 transition hover:bg-[#b8891f] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#CE9F2D] disabled:active:scale-100"
+                title={isOutOfStock ? "Out of stock" : undefined}
               >
                 <FaShoppingCart />
                 {saveForLaterLabel}

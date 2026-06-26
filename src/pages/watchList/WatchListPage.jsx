@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Seo from "../../components/common/Seo";
+import {  EmptyState, Seo } from "../../components/common";
 import CartItemCard from "../../components/cart/CartItemCard";
-import BrandButton from "../../components/ui/BrandButton";
 import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
@@ -32,6 +31,16 @@ function adaptProductToItem(product, quantity = 1) {
     product?.inventory ??
     product?.totalStock ??
     null;
+  const stockQuantity = stock == null ? null : Number(stock);
+  const hasStockQuantity = Number.isFinite(stockQuantity);
+  const outOfStock = hasStockQuantity && stockQuantity <= 0;
+  const stockLimitReached =
+    hasStockQuantity && stockQuantity > 0 && quantity >= stockQuantity;
+  const stockMessage = outOfStock
+    ? "Out of stock"
+    : stockLimitReached
+      ? `Only ${stockQuantity} in stock`
+      : "";
   const rating =
     product?.rating ??
     product?.averageRating ??
@@ -55,12 +64,12 @@ function adaptProductToItem(product, quantity = 1) {
     seller: product?.seller?.name || product?.seller || product?.brand || "",
     color: product?.color || product?.selectedColor || null,
     size: product?.size || product?.selectedSize || null,
-    stock,
+    stock: hasStockQuantity ? stockQuantity : null,
     rating,
     reviewCount,
     attributes: {},
-    increaseDisabled: stock !== null && stock <= 0,
-    stockMessage: stock !== null && stock <= 0 ? "Out of stock" : "",
+    increaseDisabled: outOfStock || stockLimitReached,
+    stockMessage,
     _raw: product,
   };
 }
@@ -84,10 +93,19 @@ export default function WatchlistPage() {
   };
 
   const handleIncrease = (id) => {
-    setLocalQuantities((prev) => ({
-      ...prev,
-      [id]: (prev[id] ?? 1) + 1,
-    }));
+    setLocalQuantities((prev) => {
+      const product = products.find((p) => getProductId(p) === id);
+      const item = product
+        ? adaptProductToItem(product, prev[id] ?? 1)
+        : null;
+
+      if (item?.increaseDisabled) return prev;
+
+      return {
+        ...prev,
+        [id]: (prev[id] ?? 1) + 1,
+      };
+    });
   };
 
   const handleDecrease = (id) => {
@@ -132,7 +150,7 @@ export default function WatchlistPage() {
           />
 
           {products.length > 0 ? (
-            <div className=" rounded-[16px]  bg-[#FFFDF8] sm:rounded-[20px]">
+            <div className=" rounded-[16px] border border-[#CE9F2D80] bg-[#FFFDF8] sm:rounded-[20px]">
               {products.map((product, index) => {
                 const id = getProductId(product);
                 const item = adaptProductToItem(
@@ -143,15 +161,11 @@ export default function WatchlistPage() {
                 return (
                   <div
                     key={id}
-                    className={
-                      index !== products.length - 1
-                        ? ""
-                        : "border border-[#CE9F2D80]/50 rounded-[18px]"
-                    }
                   >
                     <CartItemCard
                       item={item}
                       selected={false}
+                      isLastItem={index === products.length - 1}
                       onSelect={() => {}}
                       onIncrease={handleIncrease}
                       onDecrease={handleDecrease}
@@ -166,21 +180,12 @@ export default function WatchlistPage() {
               })}
             </div>
           ) : (
-            <div className="rounded-[var(--customer-radius)] border border-border bg-white px-4 py-10 text-center sm:px-6 sm:py-20 lg:py-24">
-              <h2 className="text-[22px] font-bold leading-tight text-ink sm:text-[28px] lg:text-[30px]">
-                Your watchlist is empty
-              </h2>
-              <p className="mt-3 text-[14px] text-muted sm:text-[16px]">
-                Save items you love to buy later.
-              </p>
-              <BrandButton
-                variant="gradient"
-                rounded
-                label="Continue Shopping"
-                className="mx-auto mt-6 h-[42px] w-full max-w-[210px] px-5 text-[13px] font-bold sm:h-[52px] sm:max-w-[240px] sm:px-8 sm:text-[15px]"
-                onClick={() => navigate("/")}
-              />
-            </div>
+            <EmptyState
+              title="Your watchlist is empty"
+              description="Save items you love to buy later."
+              actionLabel="Continue Shopping"
+              onAction={() => navigate("/")}
+            />
           )}
 
           {/* RECENTLY VIEWED SECTION */}

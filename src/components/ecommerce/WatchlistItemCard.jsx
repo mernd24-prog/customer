@@ -37,10 +37,16 @@ export function WatchlistItemCard({
           )}
         </Link>
 
-        <div className="flex flex-1 flex-col justify-between pr-5">
-          <div>
-            <h4 className="line-clamp-2  text-[13px] font-semibold text-ink transition-all duration-300 ease-in-out group-hover:text-gold">
-              <Link to={`/products/${id}`}>{title}</Link>
+        <div className="flex min-w-0 flex-1 flex-col justify-between pr-5">
+          <div className="min-w-0">
+            <h4 className="truncate text-[13px] font-semibold text-ink transition-all duration-300 ease-in-out group-hover:text-gold">
+              <Link
+                to={`/products/${id}`}
+                className="block min-w-0 truncate"
+                title={title}
+              >
+                {title}
+              </Link>
             </h4>
             <p className="mt-1  text-[12px] font-bold text-ink">{price}</p>
           </div>

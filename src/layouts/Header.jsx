@@ -337,7 +337,7 @@ export const TopHeader = () => {
           ))}
         </div>
 
-        <div className="flex h-full items-center gap-[20px]">
+        <div className="flex h-full items-center  gap-[20px]">
           {dropdowns.map((dropdown) => (
             <HeaderDropdown
               key={dropdown.type}

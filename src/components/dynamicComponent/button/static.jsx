@@ -29,6 +29,8 @@ const buttonStyles = {
     "h-[40px] w-[40px] rounded-full border border-[#DC2626] bg-[#1B1D600D] p-[10px] text-[#1B1D60] hover:border-[#DC2626] hover:text-[#CE9F2D] text-[#CE9F2D]",
   categoryMore:
     "group flex h-auto min-h-0 min-w-[80px] flex-col items-center rounded-md bg-transparent px-0 py-0 text-inherit shadow-none outline-none transition-all duration-300 ease-in-out hover:bg-transparent focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2 sm:min-w-[100px] lg:min-w-[140px]",
+  continueShopping:
+    "mx-auto mt-6 h-[42px] w-full max-w-[210px] rounded-full bg-gradient-to-r from-[#B8891F] to-[#CE9F2D] px-5 text-[13px] font-bold text-[#1B1D60] shadow-sm transition-all duration-300 hover:shadow-md sm:h-[52px] sm:max-w-[240px] sm:px-8 sm:text-[15px]",
 };
 
 export const PrimaryGradientButton = ({ children, ...props }) => (
@@ -180,6 +182,20 @@ export const CategoryMoreButton = ({
     </DynamicButton>
   );
 };
+
+export const ContinueShoppingButton = ({
+  children = "Continue Shopping",
+  className = "",
+  ...props
+}) => (
+  <DynamicButton
+    variant="unstyled"
+    className={cn(buttonStyles.continueShopping, className)}
+    {...props}
+  >
+    {children}
+  </DynamicButton>
+);
 
 export const RegisterButton = ({ children, ...props }) => (
   <DynamicButton

@@ -197,10 +197,9 @@ export default function CartPage() {
     () =>
       rawItems.map((item) => {
         const key = cartLineKey(item);
-        const adapted = adaptItemForCard(item);
         return localQuantities[key] != null
-          ? { ...adapted, quantity: localQuantities[key] }
-          : adapted;
+          ? adaptItemForCard({ ...item, quantity: localQuantities[key] })
+          : adaptItemForCard(item);
       }),
     [rawItems, localQuantities],
   );
@@ -328,6 +327,11 @@ export default function CartPage() {
     setLocalQuantities((prev) => {
       const item = rawItems.find((ci) => cartLineKey(ci) === id);
       const current = prev[id] ?? item?.quantity ?? 1;
+      const product = item?.productId || {};
+      const stock = item ? getCartItemStock(item, product) : null;
+
+      if (stock !== null && current >= stock) return prev;
+
       return { ...prev, [id]: current + 1 };
     });
     scheduleCartUpdate();
@@ -454,7 +458,7 @@ export default function CartPage() {
   };
 
   const savedCardClass =
-    "relative overflow-hidden rounded-[18px] border border-border bg-white px-4 py-4 shadow-[0_12px_32px_rgba(31,36,48,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_18px_45px_rgba(31,36,48,0.1)] sm:px-5";
+    "relative cursor-pointer overflow-hidden rounded-[18px] border border-border bg-white px-4 py-4 shadow-[0_12px_32px_rgba(31,36,48,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_18px_45px_rgba(31,36,48,0.1)] sm:px-5";
   const savedCardStripClass =
     "absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-gold to-gold-dark";
   const savedCardContentClass =
@@ -638,7 +642,19 @@ export default function CartPage() {
                         );
 
                         return (
-                          <div key={wishlistId} className={savedCardClass}>
+                          <div
+                            key={wishlistId}
+                            className={savedCardClass}
+                            onClick={() => navigate(`/products/${savedProduct.id}`)}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                navigate(`/products/${savedProduct.id}`);
+                              }
+                            }}
+                            role="link"
+                            tabIndex={0}
+                          >
                             <div className={savedCardStripClass} />
                             <div className={savedCardContentClass}>
                               <div className={savedCardInfoClass}>
@@ -688,9 +704,10 @@ export default function CartPage() {
                                   size="sm"
                                   label="Move to cart"
                                   className={moveToCartButtonClass}
-                                  onClick={() =>
-                                    handleMoveWishlistToCart(savedProduct)
-                                  }
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleMoveWishlistToCart(savedProduct);
+                                  }}
                                 />
                               </div>
                             </div>

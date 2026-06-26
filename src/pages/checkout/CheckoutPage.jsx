@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -598,6 +598,8 @@ export default function CheckoutPage() {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [postalCodes, setPostalCodes] = useState([]);
+  const newAddressFormRef = useRef(null);
+  const shouldScrollToNewAddressRef = useRef(false);
 
   useEffect(() => {
     dispatch(fetchCart());
@@ -774,6 +776,25 @@ export default function CheckoutPage() {
       setValue("useNewAddress", true);
     }
   }, [addresses, selectedAddressId, setValue]);
+
+  const handleAddNewAddress = () => {
+    shouldScrollToNewAddressRef.current = true;
+    setValue("useNewAddress", true, { shouldValidate: true });
+  };
+
+  useEffect(() => {
+    if (!useNewAddress || !shouldScrollToNewAddressRef.current) return;
+
+    const frameId = window.requestAnimationFrame(() => {
+      newAddressFormRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      shouldScrollToNewAddressRef.current = false;
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [useNewAddress]);
 
   const quoteShippingAddress = useMemo(() => {
     if (!useNewAddress && selectedAddressId) {
@@ -1292,30 +1313,33 @@ export default function CheckoutPage() {
                     setValue={setValue}
                     errors={errors}
                     countries={countries}
+                    onAddNewAddress={handleAddNewAddress}
                   />
                 )}
 
                 {/* New address form */}
                 {(useNewAddress || addresses.length === 0) && (
-                  <ShippingAddressForm
-                    register={register}
-                    errors={errors}
-                    checkoutDialCodes={checkoutDialCodes}
-                    countries={countries}
-                    selectedCountry={selectedCountry}
-                    states={states}
-                    selectedState={selectedState}
-                    cities={cities}
-                    selectedCity={selectedCity}
-                    watchedPostalCode={watchedPostalCode}
-                    setValue={setValue}
-                    postalCodes={postalCodes}
-                    showSavedAddressFields={true}
-                    addressLabels={addressLabels}
-                    loading={loading}
-                    onCancel={() => setValue("useNewAddress", false)}
-                    onSave={handleSaveShippingAddressOnly}
-                  />
+                  <div ref={newAddressFormRef} className="scroll-mt-24">
+                    <ShippingAddressForm
+                      register={register}
+                      errors={errors}
+                      checkoutDialCodes={checkoutDialCodes}
+                      countries={countries}
+                      selectedCountry={selectedCountry}
+                      states={states}
+                      selectedState={selectedState}
+                      cities={cities}
+                      selectedCity={selectedCity}
+                      watchedPostalCode={watchedPostalCode}
+                      setValue={setValue}
+                      postalCodes={postalCodes}
+                      showSavedAddressFields={true}
+                      addressLabels={addressLabels}
+                      loading={loading}
+                      onCancel={() => setValue("useNewAddress", false)}
+                      onSave={handleSaveShippingAddressOnly}
+                    />
+                  </div>
                 )}
 
                 {/* Coupons & wallet */}
