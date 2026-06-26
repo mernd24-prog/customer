@@ -7,7 +7,7 @@ const buttonStyles = {
   solidSmall:
     "h-[35px] rounded-[6px] bg-[#CE9F2D] px-[14px] py-[7px] text-label-md font-semibold text-[#1F2430] hover:bg-[#bd9025]",
   outlineSmall:
-    "inline-flex h-[40px] sm:h-[45px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-transparent px-4 sm:px-5 py-[10px] font-dm-sans text-label-md sm:text-label-lg lg:text-body-sm font-semibold leading-none tracking-normal align-middle text-[#3E4093] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]",
+    "inline-flex h-fit py-4 md:py-2 items-center justify-center gap-[1px] rounded-[10px] border border-[#3E409380] bg-transparent    text-base lg:text-lg font-semibold leading-none tracking-normal align-middle text-[#3E4093] transition-all duration-300 ",
   outlineLight:
     "border border-white/50 bg-transparent text-white hover:bg-white/10",
   solidLarge:
@@ -16,11 +16,13 @@ const buttonStyles = {
     "h-[36px] min-h-[36px] min-w-[120px] rounded-[5px] bg-[#CE9F2D] px-3 text-label-xs font-semibold text-[#03014D] hover:brightness-95 hover:shadow-md sm:h-[41px] sm:min-h-[41px] sm:min-w-[153px] sm:px-4 sm:text-label-md",
   headerIcon:
     "group relative h-10 w-10 rounded-full border border-[var(--customer-border)] bg-white p-0 hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]",
-  pill: "inline-flex min-w-[110px] sm:min-w-[130px] h-[36px] sm:h-[40px] items-center justify-center gap-2 sm:gap-[15px] md:gap-2 rounded-full bg-[#CE9F2D] px-4 sm:px-[34px] py-2 text-label-sm sm:text-label-md font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[#bd9025]",
+
+  pill: "inline-flex min-w-[110px] sm:min-w-[130px] h-[36px] sm:h-[40px] items-center justify-center gap-2 sm:gap-[15px] md:gap-2 rounded-full bg-[#CE9F2D] px-4 sm:px-[34px] py-2  font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[#bd9025]",
+
   ghostPill:
     "rounded-full border border-[#CE9F2D4D] bg-[#CE9F2D4D] px-4 py-2 text-label-sm font-semibold text-[#D6A323] hover:bg-black/60 xl:text-label-lg",
   textGold:
-    "h-auto justify-start rounded-none bg-transparent p-0 text-label-md font-semibold text-[#CE9F2D] hover:text-[#bd9025]",
+    "h-auto  justify-start rounded-none bg-transparent p-0 text-label-md font-semibold text-[#CE9F2D] hover:text-[#bd9025]",
   textWhite:
     "h-auto justify-start rounded-none bg-transparent p-0 text-label-sm font-medium text-white hover:text-white/80",
   iconCircle:

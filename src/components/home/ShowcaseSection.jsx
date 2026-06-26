@@ -46,7 +46,7 @@ export default function ShowcaseSection({
           wrapperClass={skeletonWrapperClass}
         />
       ) : (
-        <div className={gridClassName + ` py-4`}>
+        <div className={`  mt-4 ${gridClassName}`}>
           {asArray(items).map((item, index) => (
             <CardComponent
               key={keyOr(item?.id, `item-${index}`)}

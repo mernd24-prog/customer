@@ -29,7 +29,7 @@ import {
   isProductInStock,
 } from "../../utils/ecommerce";
 import { isNotFoundApiError } from "../../utils/apiErrors";
-import categoryBannerImage from "/image/png/CategoryBanner.png"
+import categoryBannerImage from "/image/png/CategoryBanner.png";
 import { SORT_OPTIONS } from "../../data/constant";
 
 function parseMultiValue(value) {
@@ -40,7 +40,14 @@ function parseMultiValue(value) {
 }
 
 function serializeMultiValue(values) {
-  const uniqueValues = [...new Set((values || []).map(String).map((item) => item.trim()).filter(Boolean))];
+  const uniqueValues = [
+    ...new Set(
+      (values || [])
+        .map(String)
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  ];
   return uniqueValues.length ? uniqueValues.join(",") : undefined;
 }
 
@@ -59,9 +66,7 @@ function getAttributeValues(product, key) {
     if (Array.isArray(source)) {
       const matching = source.filter(
         (item) =>
-          item?.key === key ||
-          item?.name === key ||
-          item?.attributeKey === key,
+          item?.key === key || item?.name === key || item?.attributeKey === key,
       );
       const values = matching.flatMap((item) =>
         Array.isArray(item?.value) ? item.value : [item?.value ?? item?.label],
@@ -90,14 +95,16 @@ function SubCategoryCard({ sub, isActive, onClick }) {
     <Link
       to={CUSTOMER_ROUTES.category(key)}
       onClick={onClick}
-      className={`group flex min-w-[100px] max-w-[130px] flex-col items-center gap-2 rounded-xl p-3 text-center transition-all duration-200 ${isActive
-        ? "bg-[var(--customer-gold)] text-white shadow-md"
-        : "bg-white hover:bg-[var(--customer-gold-soft)] border border-[var(--customer-border)]"
-        }`}
+      className={`group flex min-w-[100px] max-w-[130px] flex-col items-center gap-2 rounded-xl p-3 text-center transition-all duration-200 ${
+        isActive
+          ? "bg-[var(--customer-gold)] text-white shadow-md"
+          : "bg-white hover:bg-[var(--customer-gold-soft)] border border-[var(--customer-border)]"
+      }`}
     >
       <div
-        className={`flex h-12 w-12 items-center justify-center overflow-hidden rounded-full ${isActive ? "bg-white/20" : "bg-[var(--customer-surface-soft)]"
-          }`}
+        className={`flex h-12 w-12 items-center justify-center overflow-hidden rounded-full ${
+          isActive ? "bg-white/20" : "bg-[var(--customer-surface-soft)]"
+        }`}
       >
         {image ? (
           <img
@@ -107,19 +114,24 @@ function SubCategoryCard({ sub, isActive, onClick }) {
             onError={(e) => applyImageFallback(e, name, "category")}
           />
         ) : (
-          <LayoutGrid size={20} className={isActive ? "text-white" : "text-[var(--customer-muted)]"} />
+          <LayoutGrid
+            size={20}
+            className={isActive ? "text-white" : "text-[var(--customer-muted)]"}
+          />
         )}
       </div>
       <span
-        className={`line-clamp-2 text-[11px] font-semibold leading-tight ${isActive ? "text-white" : "text-[var(--customer-ink)]"
-          }`}
+        className={`line-clamp-2 text-[11px] font-semibold leading-tight ${
+          isActive ? "text-white" : "text-[var(--customer-ink)]"
+        }`}
       >
         {name}
       </span>
       {childCount > 0 && (
         <span
-          className={`text-[10px] font-medium ${isActive ? "text-white/80" : "text-[var(--customer-muted)]"
-            }`}
+          className={`text-[10px] font-medium ${
+            isActive ? "text-white/80" : "text-[var(--customer-muted)]"
+          }`}
         >
           {childCount} sub-types
         </span>
@@ -144,10 +156,9 @@ function ChildChips({ children, selectedKey, onSelect }) {
       <button
         type="button"
         onClick={() => onSelect("")}
-        className={`${categoryChipBaseClasses} ${!selectedKey
-          ? categoryChipActiveClasses
-          : categoryChipInactiveClasses
-          }`}
+        className={`${categoryChipBaseClasses} ${
+          !selectedKey ? categoryChipActiveClasses : categoryChipInactiveClasses
+        }`}
       >
         All
       </button>
@@ -158,10 +169,11 @@ function ChildChips({ children, selectedKey, onSelect }) {
           <Link
             key={k}
             to={CUSTOMER_ROUTES.category(k)}
-            className={`${categoryChipBaseClasses} ${selectedKey === k
-              ? categoryChipActiveClasses
-              : categoryChipInactiveClasses
-              }`}
+            className={`${categoryChipBaseClasses} ${
+              selectedKey === k
+                ? categoryChipActiveClasses
+                : categoryChipInactiveClasses
+            }`}
           >
             {n}
           </Link>
@@ -186,7 +198,10 @@ function CategoryPageSkeleton() {
       <div className="mt-6 grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[392px_minmax(0,1fr)]">
         <div className="hidden space-y-3 lg:block">
           {Array.from({ length: 5 }).map((_, index) => (
-            <div key={index} className="h-10 rounded bg-[var(--customer-border)]" />
+            <div
+              key={index}
+              className="h-10 rounded bg-[var(--customer-border)]"
+            />
           ))}
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
@@ -213,7 +228,11 @@ export default function CategoryPage() {
   const [categoryData, setCategoryData] = useState(null);
   const [subCategories, setSubCategories] = useState([]);
   const [items, setItems] = useState([]);
-  const [pageInfo, setPageInfo] = useState({ page: 1, totalPages: 1, total: 0 });
+  const [pageInfo, setPageInfo] = useState({
+    page: 1,
+    totalPages: 1,
+    total: 0,
+  });
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [categoryError, setCategoryError] = useState(null);
@@ -250,7 +269,8 @@ export default function CategoryPage() {
     [products],
   );
   const brandCounts = useMemo(
-    () => buildFacetCountMap(products, (product) => getProductBrandName(product)),
+    () =>
+      buildFacetCountMap(products, (product) => getProductBrandName(product)),
     [products],
   );
   const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
@@ -280,7 +300,10 @@ export default function CategoryPage() {
         minPrice: searchParams.get("minPrice") || undefined,
         maxPrice: searchParams.get("maxPrice") || undefined,
         sort: searchParams.get("sort") || undefined,
-        productFamilyCode: searchParams.get("productFamilyCode") || searchParams.get("family") || undefined,
+        productFamilyCode:
+          searchParams.get("productFamilyCode") ||
+          searchParams.get("family") ||
+          undefined,
         rating: searchParams.get("rating") || undefined,
         inStock: searchParams.get("inStock") || undefined,
         outOfStock: searchParams.get("outOfStock") || undefined,
@@ -292,7 +315,19 @@ export default function CategoryPage() {
       searchParams.forEach((value, key) => {
         if (key.startsWith("attr_")) params[key] = value;
       });
-      ["color", "size", "material", "fit", "storage", "skinType", "shade", "finish", "room", "sport", "concern"].forEach((key) => {
+      [
+        "color",
+        "size",
+        "material",
+        "fit",
+        "storage",
+        "skinType",
+        "shade",
+        "finish",
+        "room",
+        "sport",
+        "concern",
+      ].forEach((key) => {
         const value = searchParams.get(key);
         if (value) params[key] = value;
       });
@@ -309,7 +344,9 @@ export default function CategoryPage() {
       try {
         const result = await dispatch(fetchProducts(params)).unwrap();
         const data = result?.data;
-        const list = Array.isArray(data) ? data : data?.items || data?.list || [];
+        const list = Array.isArray(data)
+          ? data
+          : data?.items || data?.list || [];
         const m = result?.meta || {};
         setPageInfo({
           page: Number(m.page || m.currentPage || params.page || 1),
@@ -351,13 +388,17 @@ export default function CategoryPage() {
         dispatch(fetchCategories({ parentKey: categoryKey, limit: 200 }))
           .then((subAction) => {
             const subData = subAction?.payload?.data;
-            const subs = Array.isArray(subData) ? subData : subData?.items || subData?.list || [];
+            const subs = Array.isArray(subData)
+              ? subData
+              : subData?.items || subData?.list || [];
             setSubCategories(subs);
             if (subs.length) {
-              setCategoryData((prev) => prev ? { ...prev, children: subs } : prev);
+              setCategoryData((prev) =>
+                prev ? { ...prev, children: subs } : prev,
+              );
             }
           })
-          .catch(() => { });
+          .catch(() => {});
       })
       .catch((error) => {
         setCategoryError(error);
@@ -369,33 +410,51 @@ export default function CategoryPage() {
     dispatch(fetchBrands({ limit: 100 }))
       .then((action) => {
         const data = action?.payload?.data;
-        const list = Array.isArray(data) ? data : data?.items || data?.list || [];
+        const list = Array.isArray(data)
+          ? data
+          : data?.items || data?.list || [];
         setBrandList(
           list
             .map((brand) => {
-              const label = brand?.name || brand?.title || brand?.brandName || brand?.code;
-              return label ? { value: String(label), label: String(label) } : null;
+              const label =
+                brand?.name || brand?.title || brand?.brandName || brand?.code;
+              return label
+                ? { value: String(label), label: String(label) }
+                : null;
             })
             .filter(Boolean),
         );
       })
-      .catch(() => { });
+      .catch(() => {});
   }, [dispatch, categoryKey]);
 
   // ── Infinite scroll ──────────────────────────────────────────────────────
   useEffect(() => {
-    if (!sentinelRef.current || !firstLoadDone || productState.loading || isLoadingMore) return undefined;
+    if (
+      !sentinelRef.current ||
+      !firstLoadDone ||
+      productState.loading ||
+      isLoadingMore
+    )
+      return undefined;
     if (currentPage >= totalPages) return undefined;
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries[0]?.isIntersecting) return;
-        loadProducts({ page: currentPage + 1, append: true }).catch(() => { });
+        loadProducts({ page: currentPage + 1, append: true }).catch(() => {});
       },
       { threshold: 0.2, rootMargin: "0px 0px 300px 0px" },
     );
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
-  }, [currentPage, totalPages, firstLoadDone, loadProducts, productState.loading, isLoadingMore]);
+  }, [
+    currentPage,
+    totalPages,
+    firstLoadDone,
+    loadProducts,
+    productState.loading,
+    isLoadingMore,
+  ]);
 
   // ── Param helpers ────────────────────────────────────────────────────────
   const updateParam = (key, value) => {
@@ -411,8 +470,10 @@ export default function CategoryPage() {
   const handlePriceChange = ({ minPrice, maxPrice }) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      if (minPrice) next.set("minPrice", minPrice); else next.delete("minPrice");
-      if (maxPrice) next.set("maxPrice", maxPrice); else next.delete("maxPrice");
+      if (minPrice) next.set("minPrice", minPrice);
+      else next.delete("minPrice");
+      if (maxPrice) next.set("maxPrice", maxPrice);
+      else next.delete("maxPrice");
       next.delete("page");
       return next;
     });
@@ -421,210 +482,260 @@ export default function CategoryPage() {
   const removeFilter = (key, filter) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      if (key === "price") { next.delete("minPrice"); next.delete("maxPrice"); }
-      else if (filter?.groupKey) {
+      if (key === "price") {
+        next.delete("minPrice");
+        next.delete("maxPrice");
+      } else if (filter?.groupKey) {
         const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
           (value) => value !== filter.value,
         );
         const serialized = serializeMultiValue(nextValues);
         if (serialized) next.set(filter.groupKey, serialized);
         else next.delete(filter.groupKey);
-      }
-      else next.delete(key);
+      } else next.delete(key);
       next.delete("page");
       return next;
     });
   };
 
   // ── Derived data ─────────────────────────────────────────────────────────
-  const categoryTitle = categoryData?.title || categoryData?.name || (categoryKey || "").replace(/-/g, " ");
+  const categoryTitle =
+    categoryData?.title ||
+    categoryData?.name ||
+    (categoryKey || "").replace(/-/g, " ");
   const categoryDesc = categoryData?.description;
   const categoryImage = categoryData?.imageUrl || categoryData?.bannerUrl;
-  const bannerImage = categoryData?.bannerUrl || categoryBannerImage
+  const bannerImage = categoryData?.bannerUrl || categoryBannerImage;
 
   // Active sub + its children
   const activeSubData = useMemo(
-    () => subCategories.find((s) => (s?.categoryKey || s?.key) === activeSubKey) || null,
+    () =>
+      subCategories.find((s) => (s?.categoryKey || s?.key) === activeSubKey) ||
+      null,
     [subCategories, activeSubKey],
   );
   const activeSubChildren = activeSubData?.children || [];
 
   // Breadcrumb
-  const breadcrumbItems = useMemo(() => [
-    { label: "Home", href: "/" },
-    { label: "Categories", href: "/categories" },
-    { label: categoryTitle.replace(/\b\w/g, (c) => c.toUpperCase()) },
-  ], [categoryTitle]);
+  const breadcrumbItems = useMemo(
+    () => [
+      { label: "Home", href: "/" },
+      { label: "Categories", href: "/categories" },
+      { label: categoryTitle.replace(/\b\w/g, (c) => c.toUpperCase()) },
+    ],
+    [categoryTitle],
+  );
 
   // ── Filter sections for sidebar ──────────────────────────────────────────
-  const filterSections = useMemo(() => [
-    subCategories.length > 0 && {
-      key: "subcategories",
-      title: "Sub-Categories",
-      content: (
-        <div className="flex flex-col gap-0.5">
-          <Link
-            to={CUSTOMER_ROUTES.category(categoryKey)}
-            className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${!activeSubKey ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]" : "text-[var(--customer-ink)] hover:bg-gray-50"
-              }`}
-          >
-            <span>All in {categoryTitle}</span>
-          </Link>
-          {subCategories.map((sub) => {
-            const k = sub?.categoryKey || sub?.key || "";
-            const n = sub?.title || sub?.name || k.replace(/-/g, " ");
-            const childCount = (sub?.children || []).length;
-            const isAct = activeSubKey === k;
-            return (
+  const filterSections = useMemo(
+    () =>
+      [
+        subCategories.length > 0 && {
+          key: "subcategories",
+          title: "Sub-Categories",
+          content: (
+            <div className="flex flex-col gap-0.5">
               <Link
-                key={k}
-                to={CUSTOMER_ROUTES.category(k)}
-                className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${isAct ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]" : "text-[var(--customer-ink)] hover:bg-gray-50"
-                  }`}
+                to={CUSTOMER_ROUTES.category(categoryKey)}
+                className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
+                  !activeSubKey
+                    ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]"
+                    : "text-[var(--customer-ink)] hover:bg-gray-50"
+                }`}
               >
-                <span className="truncate">{n}</span>
-                <div className="flex items-center gap-1 shrink-0">
-                  {childCount > 0 && (
-                    <span className="text-[10px] text-[var(--customer-muted)]">{childCount}</span>
-                  )}
-                  <ChevronRight size={12} className="text-gray-300" />
-                </div>
+                <span>All in {categoryTitle}</span>
               </Link>
-            );
-          })}
-        </div>
-      ),
-    },
-    // Dynamic attribute filters
-    ...(Array.isArray(categoryData?.attributeSchema)
-      ? categoryData.attributeSchema
-        .filter((a) => a?.isFilterable !== false && Array.isArray(a?.options) && a.options.length)
-        .map((attribute) => ({
-          key: `attr_${attribute.key}`,
-          title: attribute.label || attribute.key,
+              {subCategories.map((sub) => {
+                const k = sub?.categoryKey || sub?.key || "";
+                const n = sub?.title || sub?.name || k.replace(/-/g, " ");
+                const childCount = (sub?.children || []).length;
+                const isAct = activeSubKey === k;
+                return (
+                  <Link
+                    key={k}
+                    to={CUSTOMER_ROUTES.category(k)}
+                    className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
+                      isAct
+                        ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]"
+                        : "text-[var(--customer-ink)] hover:bg-gray-50"
+                    }`}
+                  >
+                    <span className="truncate">{n}</span>
+                    <div className="flex items-center gap-1 shrink-0">
+                      {childCount > 0 && (
+                        <span className="text-[10px] text-[var(--customer-muted)]">
+                          {childCount}
+                        </span>
+                      )}
+                      <ChevronRight size={12} className="text-gray-300" />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ),
+        },
+        // Dynamic attribute filters
+        ...(Array.isArray(categoryData?.attributeSchema)
+          ? categoryData.attributeSchema
+              .filter(
+                (a) =>
+                  a?.isFilterable !== false &&
+                  Array.isArray(a?.options) &&
+                  a.options.length,
+              )
+              .map((attribute) => ({
+                key: `attr_${attribute.key}`,
+                title: attribute.label || attribute.key,
+                content: (
+                  <OptionFilter
+                    name={`attr_${attribute.key}`}
+                    options={attribute.options.map((o) => ({
+                      value: String(o),
+                      label: String(o),
+                      count:
+                        attributeCountMaps[attribute.key]?.[String(o)] || 0,
+                    }))}
+                    selected={parseMultiValue(
+                      searchParams.get(`attr_${attribute.key}`),
+                    )}
+                    multiple
+                    onChange={(values) =>
+                      updateParam(
+                        `attr_${attribute.key}`,
+                        serializeMultiValue(values),
+                      )
+                    }
+                  />
+                ),
+              }))
+          : []),
+        brandList.length > 0 && {
+          key: "brand",
+          title: "Brand",
           content: (
             <OptionFilter
-              name={`attr_${attribute.key}`}
-              options={attribute.options.map((o) => ({
-                value: String(o),
-                label: String(o),
-                count: attributeCountMaps[attribute.key]?.[String(o)] || 0,
+              name="brand"
+              options={brandList.map((brand) => ({
+                ...brand,
+                count: brandCounts[String(brand.value)] || 0,
               }))}
-              selected={parseMultiValue(searchParams.get(`attr_${attribute.key}`))}
+              selected={selectedBrands}
               multiple
               onChange={(values) =>
-                updateParam(`attr_${attribute.key}`, serializeMultiValue(values))
+                updateParam("brand", serializeMultiValue(values))
               }
             />
           ),
-        }))
-      : []),
-    brandList.length > 0 && {
-      key: "brand",
-      title: "Brand",
-      content: (
-        <OptionFilter
-          name="brand"
-          options={brandList.map((brand) => ({
-            ...brand,
-            count: brandCounts[String(brand.value)] || 0,
-          }))}
-          selected={selectedBrands}
-          multiple
-          onChange={(values) => updateParam("brand", serializeMultiValue(values))}
-        />
-      ),
-    },
-    {
-      key: "price",
-      title: "Price Range",
-      content: (
-        <PriceRangeFilter
-          min={searchParams.get("minPrice")}
-          max={searchParams.get("maxPrice")}
-          onChange={handlePriceChange}
-        />
-      ),
-    },
-    {
-      key: "rating",
-      title: "Rating",
-      content: (
-        <RatingFilter
-          selected={selectedRatings}
-          multiple
-          counts={ratingCounts}
-          onChange={(values) =>
-            updateParam("rating", serializeMultiValue(values))
-          }
-        />
-      ),
-    },
-    {
-      key: "delivery",
-      title: "Delivery",
-      content: (
-        <CheckboxListFilter
-          name="delivery"
-          options={[
-            { value: "expressDelivery", label: "Express Delivery" },
-            { value: "freeDelivery", label: "Free Delivery" },
-          ]}
-          selected={["expressDelivery", "freeDelivery"].filter(
-            (value) => searchParams.get(value) === "true",
-          )}
-          onChange={(values) => {
-            const selectedValues = new Set(values);
-            updateParam(
-              "expressDelivery",
-              selectedValues.has("expressDelivery") ? "true" : undefined,
-            );
-            updateParam(
-              "freeDelivery",
-              selectedValues.has("freeDelivery") ? "true" : undefined,
-            );
-          }}
-        />
-      ),
-    },
-    {
-      key: "inStock",
-      title: "Availability",
-      content: (
-        <CheckboxListFilter
-          name="availability"
-          options={[
-            {
-              value: "inStock",
-              label: "In Stock",
-              count: availabilityCounts.inStock,
-            },
-            {
-              value: "outOfStock",
-              label: "Out of Stock",
-              count: availabilityCounts.outOfStock,
-            },
-          ]}
-          selected={["inStock", "outOfStock"].filter(
-            (value) => searchParams.get(value) === "true",
-          )}
-          onChange={(values) => {
-            const selectedValues = new Set(values);
-            updateParam(
-              "inStock",
-              selectedValues.has("inStock") ? "true" : undefined,
-            );
-            updateParam(
-              "outOfStock",
-              selectedValues.has("outOfStock") ? "true" : undefined,
-            );
-          }}
-        />
-      ),
-    },
-  ].flat().filter(Boolean), [
-    subCategories, categoryKey, activeSubKey, categoryTitle, categoryData, brandList, searchParams, availabilityCounts, brandCounts, ratingCounts, attributeCountMaps, handlePriceChange, selectedBrands, selectedRatings, updateParam,
-  ]);
+        },
+        {
+          key: "price",
+          title: "Price Range",
+          content: (
+            <PriceRangeFilter
+              min={searchParams.get("minPrice")}
+              max={searchParams.get("maxPrice")}
+              onChange={handlePriceChange}
+            />
+          ),
+        },
+        {
+          key: "rating",
+          title: "Rating",
+          content: (
+            <RatingFilter
+              selected={selectedRatings}
+              multiple
+              counts={ratingCounts}
+              onChange={(values) =>
+                updateParam("rating", serializeMultiValue(values))
+              }
+            />
+          ),
+        },
+        {
+          key: "delivery",
+          title: "Delivery",
+          content: (
+            <CheckboxListFilter
+              name="delivery"
+              options={[
+                { value: "expressDelivery", label: "Express Delivery" },
+                { value: "freeDelivery", label: "Free Delivery" },
+              ]}
+              selected={["expressDelivery", "freeDelivery"].filter(
+                (value) => searchParams.get(value) === "true",
+              )}
+              onChange={(values) => {
+                const selectedValues = new Set(values);
+                updateParam(
+                  "expressDelivery",
+                  selectedValues.has("expressDelivery") ? "true" : undefined,
+                );
+                updateParam(
+                  "freeDelivery",
+                  selectedValues.has("freeDelivery") ? "true" : undefined,
+                );
+              }}
+            />
+          ),
+        },
+        {
+          key: "inStock",
+          title: "Availability",
+          content: (
+            <CheckboxListFilter
+              name="availability"
+              options={[
+                {
+                  value: "inStock",
+                  label: "In Stock",
+                  count: availabilityCounts.inStock,
+                },
+                {
+                  value: "outOfStock",
+                  label: "Out of Stock",
+                  count: availabilityCounts.outOfStock,
+                },
+              ]}
+              selected={["inStock", "outOfStock"].filter(
+                (value) => searchParams.get(value) === "true",
+              )}
+              onChange={(values) => {
+                const selectedValues = new Set(values);
+                updateParam(
+                  "inStock",
+                  selectedValues.has("inStock") ? "true" : undefined,
+                );
+                updateParam(
+                  "outOfStock",
+                  selectedValues.has("outOfStock") ? "true" : undefined,
+                );
+              }}
+            />
+          ),
+        },
+      ]
+        .flat()
+        .filter(Boolean),
+    [
+      subCategories,
+      categoryKey,
+      activeSubKey,
+      categoryTitle,
+      categoryData,
+      brandList,
+      searchParams,
+      availabilityCounts,
+      brandCounts,
+      ratingCounts,
+      attributeCountMaps,
+      handlePriceChange,
+      selectedBrands,
+      selectedRatings,
+      updateParam,
+    ],
+  );
 
   // ── Active filter chips ──────────────────────────────────────────────────
   const activeFilters = [
@@ -653,8 +764,26 @@ export default function CategoryPage() {
       key: "freeDelivery",
       label: "Free Delivery",
     },
-    ["color", "size", "material", "fit", "storage", "skinType", "shade", "finish", "room", "sport", "concern"]
-      .map((key) => searchParams.get(key) && { key, label: `${key}: ${searchParams.get(key)}` })
+    [
+      "color",
+      "size",
+      "material",
+      "fit",
+      "storage",
+      "skinType",
+      "shade",
+      "finish",
+      "room",
+      "sport",
+      "concern",
+    ]
+      .map(
+        (key) =>
+          searchParams.get(key) && {
+            key,
+            label: `${key}: ${searchParams.get(key)}`,
+          },
+      )
       .filter(Boolean),
     ...Array.from(searchParams.entries())
       .filter(([key, value]) => key.startsWith("attr_") && value)
@@ -670,7 +799,9 @@ export default function CategoryPage() {
       key: "price",
       label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,
     },
-  ].flat().filter(Boolean);
+  ]
+    .flat()
+    .filter(Boolean);
 
   if (categoryLoading && !categoryData && !firstLoadDone && !products.length) {
     return <CategoryPageSkeleton />;
@@ -680,14 +811,16 @@ export default function CategoryPage() {
     <>
       <Seo
         title={`${categoryTitle.replace(/\b\w/g, (c) => c.toUpperCase())} | Sam Global`}
-        description={categoryDesc || `Shop ${categoryTitle} products at best prices. Free delivery & easy returns.`}
+        description={
+          categoryDesc ||
+          `Shop ${categoryTitle} products at best prices. Free delivery & easy returns.`
+        }
       />
 
       {/* ── Hero banner ─────────────────────────────────────────────────── */}
       {bannerImage ? (
         <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
           <div className="grid gap-0 h-[320px] sm:h-[380px] md:h-[450px] lg:h-[500px] lg:grid-cols-[52%_48%]">
-
             {/* Mobile & Tablet Banner */}
             <div className="relative lg:hidden h-full">
               <img
@@ -734,7 +867,7 @@ export default function CategoryPage() {
                   className="mb-3 text-white/80"
                 />
 
-                <h1 className=" font-bold text-[65px] leading-[75px] text-white capitalize">
+                <h1 className=" font-bold text-5xl xl:text-[65px] leading-[75px] text-white capitalize">
                   {categoryTitle}
                 </h1>
 
@@ -767,29 +900,42 @@ export default function CategoryPage() {
         </div>
       ) : (
         <div className="mt-4 rounded-[var(--customer-radius-lg)] border border-[var(--customer-border)] bg-[var(--customer-cream)] px-5 py-5">
-          <Breadcrumbs items={breadcrumbItems} className="mb-2 text-[var(--customer-muted)]" />
+          <Breadcrumbs
+            items={breadcrumbItems}
+            className="mb-2 text-[var(--customer-muted)]"
+          />
           <h1 className="text-2xl font-extrabold text-[var(--customer-ink)] capitalize sm:text-3xl">
             {categoryTitle}
           </h1>
           {pageInfo.total > 0 && (
-            <p className="mt-1 text-sm text-[var(--customer-muted)]">{pageInfo.total.toLocaleString()} products</p>
+            <p className="mt-1 text-sm text-[var(--customer-muted)]">
+              {pageInfo.total.toLocaleString()} products
+            </p>
           )}
-          {categoryDesc && <p className="mt-1 max-w-2xl text-sm text-[var(--customer-muted)]">{categoryDesc}</p>}
+          {categoryDesc && (
+            <p className="mt-1 max-w-2xl text-sm text-[var(--customer-muted)]">
+              {categoryDesc}
+            </p>
+          )}
         </div>
       )}
 
       {categoryError && !isNotFoundApiError(categoryError) && (
         <div className="mt-4 rounded-[var(--customer-radius)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          Category details could not be loaded right now. Product results and filters are still available below.
+          Category details could not be loaded right now. Product results and
+          filters are still available below.
         </div>
       )}
 
       {/* ── Subcategory showcase strip ───────────────────────────────────── */}
       {subCategories.length > 0 && (
-        <div className="mt-4 rounded-[var(--customer-radius)] border border-[var(--customer-border)] bg-white p-4">
+        <div className="mt-10 rounded-[var(--customer-radius)] md:border md:border-[var(--customer-border)] bg-white md:p-4 lg:mt-8">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-bold text-[var(--customer-ink)]">
-              <Grid2X2 size={14} className="mr-1.5 inline text-[var(--customer-gold)]" />
+              <Grid2X2
+                size={14}
+                className="mr-1.5 inline text-[var(--customer-gold)]"
+              />
               Shop by Sub-Category
             </h2>
             <Link
@@ -809,7 +955,7 @@ export default function CategoryPage() {
                   key={k}
                   sub={sub}
                   isActive={activeSubKey === k}
-                  onClick={() => { }}
+                  onClick={() => {}}
                 />
               );
             })}
@@ -821,7 +967,7 @@ export default function CategoryPage() {
               <p className="mb-2 text-xs font-semibold text-[var(--customer-muted)] uppercase tracking-wide">
                 {activeSubData?.title || "Sub-types"}
               </p>
-              <ChildChips selectedKey="" onSelect={() => { }}>
+              <ChildChips selectedKey="" onSelect={() => {}}>
                 {activeSubChildren}
               </ChildChips>
             </div>
@@ -846,7 +992,10 @@ export default function CategoryPage() {
           onClearFilters={() => setSearchParams(new URLSearchParams())}
           sidebarOpen={sidebarOpen}
           onCloseSidebar={() => setSidebarOpen(false)}
-          loading={(productState.loading && !products.length) || (!firstLoadDone && !products.length)}
+          loading={
+            (productState.loading && !products.length) ||
+            (!firstLoadDone && !products.length)
+          }
           error={productState.error}
           empty={!products.length && !productState.loading && firstLoadDone}
           emptyTitle="No products found"

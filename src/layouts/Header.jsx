@@ -456,26 +456,8 @@ export const Navbar = ({ icons: propIcons }) => {
 
   return (
     <header className="customer-container w-full">
-      <div
-        className="
-flex
-flex-wrap
-items-center
-justify-between
-gap-x-2
-gap-y-3
-py-3
-
-min-[375px]:gap-x-3
-min-[425px]:gap-x-4
-
-sm:gap-4
-lg:h-[90px]
-lg:flex-nowrap
-lg:gap-5
-"
-      >
-        <div className="order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
+      <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4  lg:h-[90px] lg:flex-nowrap lg:gap-5">
+        <div className="order-1  flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
           <Link to="/" aria-label="Sam Global home">
             <img
               src="/image/png/logo.png"
@@ -483,16 +465,7 @@ lg:gap-5
               className="h-auto w-[82px] object-contain min-[375px]:w-[100px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
             />
           </Link>
-          {/* <div className="hidden h-10 w-px bg-[var(--customer-border)] lg:block" /> */}
-          {/* <HeaderIconButton
-            className="hidden lg:flex h-[40px] w-[40px] border-0 bg-transparent hover:border-0 hover:bg-transparent p-0"
-            aria-label="Menu"
-          >
-            {/* <img
-              src="/image/png/list.png"
-              alt="Menu"
-              className="h-[40px] w-[40px] object-contain"
-            /> */}
+
           <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
             Menu
           </span>
@@ -509,12 +482,12 @@ lg:gap-5
           autocompleteDebounceMs={1000}
           placeholder="Search for products, brands and categories..."
           showButtonLabel={false}
-          className="order-3 w-full min-w-0 lg:order-2 lg:w-auto lg:max-w-[720px] lg:flex-1"
+          className="order-3  w-full min-w-0 lg:order-2 my-2 lg:my-0 lg:w-auto lg:max-w-[720px] lg:flex-1"
         />
 
         {/* Actions */}
-        <div className="order-2 flex  shrink-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
-          <div className=" items-center gap-5 flex">
+        <div className="order-2 flex  mt-auto lg:mt-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
+          <div className=" items-center  gap-5 flex">
             {utilityIcons.map((item, iconIndex) => (
               <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
                 <HeaderIconButton
@@ -562,10 +535,6 @@ lg:gap-5
                   {cartItemsLength > 99 ? "99+" : cartItemsLength}
                 </span>
               )}
-
-              {/* <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
-                Cart ({cartItemCount})
-              </span> */}
             </HeaderIconButton>
           </div>
 
@@ -574,7 +543,7 @@ lg:gap-5
               label={accountLabel}
               icon={<User size={16} className="shrink-0 text-[#1B1D60]" />}
               path="/account/profile"
-              className="h-[34px] max-w-[145px] rounded-[4px]  px-2.5 text-[11px] font-semibold !text-[#1B1D60] hover:!text-[#1B1D60] min-[375px]:h-[36px] min-[375px]:max-w-[160px] min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:max-w-[175px] sm:h-[41px] sm:max-w-[220px] sm:px-4 sm:text-[14px]"
+              className="h-[34px]  max-w-[145px]  rounded-[4px]  md:px-2.5 text-[11px] font-semibold !text-[#1B1D60] hover:!text-[#1B1D60] min-[375px]:h-[36px] min-[375px]:max-w-[160px] min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:max-w-[175px] sm:h-[41px] sm:max-w-[220px] sm:px-4 sm:text-[14px]"
               chevronClassName="!text-[#1B1D60]"
             >
               <MenuDropdown title="My Account" items={accountMenuItems} />
@@ -670,33 +639,6 @@ export const CategoryBar = ({ headerData }) => {
     };
   }, []);
 
-  const handleCategoryMouseEnter = (item) => {
-    if (window.innerWidth < 1024) return;
-
-    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-
-    openTimeoutRef.current = setTimeout(() => {
-      setActiveMenu(item);
-    }, CATEGORY_MENU_OPEN_DELAY_MS);
-  };
-
-  const handleCategoryMouseLeave = () => {
-    if (window.innerWidth < 1024) return;
-
-    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-
-    closeTimeoutRef.current = setTimeout(() => {
-      setActiveMenu(null);
-    }, CATEGORY_MENU_CLOSE_DELAY_MS);
-  };
-
-  const keepCategoryMenuOpen = () => {
-    if (window.innerWidth < 1024) return;
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-  };
-
   const catalogTree = useMemo(
     () => buildCategoryTree(catalogCategories),
     [catalogCategories],
@@ -743,7 +685,7 @@ export const CategoryBar = ({ headerData }) => {
       <div className="absolute inset-0 bg-[#CE9F2D33]  z-10  " />
 
       <div className="w-full relative z-20">
-        <div className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5  lg:justify-center lg:gap-5">
+        <div className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5  2xl:justify-center lg:gap-5">
           {visibleCategories.map((item, index) => {
             // Always use categoryKey first — it's the canonical route key from the DB
             const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
@@ -763,9 +705,9 @@ export const CategoryBar = ({ headerData }) => {
                   to={categoryHref}
                   aria-expanded={isActive}
                   aria-controls="category-mega-menu"
-                  className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
+                  className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px]  flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
-                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px] lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform">
+                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform">
                     {item?.img ? (
                       <ImageSkeleton
                         src={item?.img}

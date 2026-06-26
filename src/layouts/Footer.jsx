@@ -6,7 +6,6 @@ import { SocialIcons } from "../components/common";
 import { Link } from "react-router-dom";
 import { CUSTOMER_ROUTES } from "../constants/routes";
 
-
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
 
@@ -15,7 +14,6 @@ const getCategoryKey = (item = {}) =>
   item?.key ||
   item?.slug ||
   buildCategorySlug(item?.title || item?.name);
-
 
 const normalizeForMatch = (value = "") =>
   String(value || "")
@@ -161,7 +159,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
           </div>
         ))}
       </div>
-      <div className="flex flex-wrap gap-4 py-10">
+      <div className="flex flex-wrap gap-4 py-6 lg:py-10">
         {socialLinks.map((social, index) => (
           <SocialIcons key={social?.label || `social-${index}`} data={social} />
         ))}
@@ -193,7 +191,7 @@ export function Footer({ data = footerData }) {
   const appDownloadLinks = asArray(appDownload.links);
 
   return (
-    <footer className="w-full bg-[#1C1C1C] text-white">
+    <footer className="w-full   bg-[#1C1C1C] h-auto text-white">
       {benefits.length > 0 && (
         <div className="xl:px-12 bg-[#F5F8FB] border-t-2 border-[#1B1D6033]">
           <div className="flex flex-col lg:flex-row justify-between py-3">
@@ -203,7 +201,7 @@ export function Footer({ data = footerData }) {
                 className="flex items-center gap-4 rounded-[var(--customer-radius)] px-4 py-3"
               >
                 <img
-                  className="h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12 2xl:h-16 2xl:w-16"
+                  className="h-10 w-10  shrink-0 object-contain sm:h-12 sm:w-12 2xl:h-[75px] 2xl:w-[75px]"
                   src={item?.icon}
                   alt={item?.alt || item?.title || "Benefit"}
                 />
@@ -220,12 +218,12 @@ export function Footer({ data = footerData }) {
           </div>
         </div>
       )}
-      <div className="pt-8 flex flex-col customer-container gap-2 md:gap-4 md:flex-row justify-between">
+      <div className="pt-8 flex flex-col max-w-[1760px] mx-auto px-4 md:px-8 gap-2 md:gap-16 lg:gap-4 md:flex-row justify-between">
         <div className="flex items-center gap-3">
           <img
-            src="/image/svg/logoWithName.svg"
+            src="/image/png/logoWithName.png"
             alt="Sam Global"
-            className="h-12 lg:h-16 lg:h-18 rounded p-1"
+            className="h-9 sm:h-12 lg:h-16 xl:h-20 rounded object-contain"
           />
         </div>
 
@@ -235,7 +233,7 @@ export function Footer({ data = footerData }) {
             <h2 className="max-w-sm lg:!w-full text-sm font-medium text-white/85">
               {appDownload.title}
             </h2>
-            <div className="my-4 flex flex-wrap gap-4 lg:my-6">
+            <div className="my-4 flex flex-wrap gap-6 lg:my-6">
               {appDownloadLinks.map((app, index) => (
                 <Link
                   key={app?.label || `app-link-${index}`}
@@ -243,7 +241,7 @@ export function Footer({ data = footerData }) {
                   aria-label={app?.label || "App link"}
                 >
                   <img
-                    className="h-10 md:h-12 w-auto"
+                    className="h-10 lg:h-[60px] w-auto"
                     src={app?.image}
                     alt={app?.alt || app?.label || "App"}
                   />
@@ -257,10 +255,10 @@ export function Footer({ data = footerData }) {
       <FooterLinkGroups groups={resolvedLinkGroups} socialLinks={socialLinks} />
 
       {/* Bottom Section with copyright and extra pages */}
-      <section className="bg-black py-4">
+      <section className="bg-black py-4   ">
         <div className="flex flex-col gap-2 lg:gap-10 text-white text-xs md:text-base lg:flex-row justify-center">
           <p className="text-center">{copyright}</p>
-          <div className="flex items-center justify-center gap-2 md:gap-4">
+          <div className="flex items-center justify-center gap-2 md:gap-8">
             {extraPages.map((item, index) => (
               <a
                 key={item?.labels || `extra-page-${index}`}

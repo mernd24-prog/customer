@@ -10,7 +10,6 @@ import {
   ChevronRight,
   Download,
   IndianRupee,
-  FileText,
   Package,
   ReceiptText,
   RefreshCw,
@@ -665,7 +664,6 @@ function OrderDetail({ orderId, track }) {
                 <OrderDetailAside>
                   {(subtotal !== undefined || items.length > 0) && (
                     <OrderPaymentSummary
-                      variant="order"
                       subtotal={subtotal}
                       discount={discount}
                       walletDiscount={walletDiscount}
@@ -1086,7 +1084,8 @@ function OrderList() {
         formattedId.includes(term) ||
         itemText.includes(term) ||
         visibleOrderIdText.includes(term) ||
-        (Boolean(normalizedTerm) && normalizedOrderText.includes(normalizedTerm))
+        (Boolean(normalizedTerm) &&
+          normalizedOrderText.includes(normalizedTerm))
       );
     });
   }, [query, statusOrders]);

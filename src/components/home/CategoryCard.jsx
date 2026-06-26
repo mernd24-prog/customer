@@ -20,7 +20,7 @@ export default function CategoryCard({
   const content = (
     <article
       className={cn(
-        "group h-[421px]   overflow-hidden rounded-[14px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_14px_34px_rgba(17,24,39,0.1)]",
+        "group  h-[400px]    md:h-[421px]   overflow-hidden rounded-lg  lg:rounded-[20px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_14px_34px_rgba(17,24,39,0.1)]",
         active && "ring-2 ring-[#33368F]/40",
         className,
       )}
@@ -64,9 +64,9 @@ export default function CategoryCard({
         )}
       </div>
 
-      <div className="px-4 py-6">
-        <div className="flex flex-col gap-3">
-          <h3 className="mt-3 line-clamp-1 font-dmSans text-2xl font-semibold leading-none text-[#2E2E2E]">
+      <div className="pt-4 lg:py-4 px-4">
+        <div className="flex flex-col gap-3 ">
+          <h3 className=" line-clamp-1 text-xl  lg:text-2xl font-semibold leading-none text-[#2E2E2E]">
             {title}
           </h3>
 
@@ -77,12 +77,11 @@ export default function CategoryCard({
           ) : null}
         </div>
 
-        {/* <div className="my-3 h-px w-full bg-[#CE9F2D33]" /> */}
-
-        <div className="mt-[17px] h-[36px] border-t border-[#CE9F2D4D] pt-[15px]">
+        <div className="  mt-6 lg:mt-9  h-[36px] border-t border-[#CE9F2D4D]">
           <TextGoldButton
             as="span"
-            rightIcon={<FaAngleRight className="text-[10px]" />}
+            className="my-2"
+            rightIcon={<FaAngleRight className="text-[12px] mt-1 " />}
           >
             {ctaLabel}
           </TextGoldButton>
@@ -93,7 +92,7 @@ export default function CategoryCard({
 
   if (href) {
     return (
-      <Link to={href} onClick={onClick} className="block h-full">
+      <Link to={href} onClick={onClick} className="block h-full ">
         {content}
       </Link>
     );
@@ -103,7 +102,7 @@ export default function CategoryCard({
     <button
       type="button"
       onClick={onClick}
-      className="block h-full w-full text-left"
+      className="block h-full w-full text-left hover:bg-transparent  "
     >
       {content}
     </button>

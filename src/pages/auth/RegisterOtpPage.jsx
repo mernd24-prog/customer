@@ -70,7 +70,11 @@ export default function RegisterOtpPage() {
         maxWidth="max-w-[1000px]"
         maxHeight="h-[780px]"
       >
-        <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
+        <form
+          className="grid gap-3 sm:gap-5"
+          onSubmit={handleSubmit(submit)}
+          noValidate
+        >
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField
               placeholder="Enter first name"

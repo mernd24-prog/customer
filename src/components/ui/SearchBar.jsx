@@ -54,7 +54,9 @@ const getCategoryLabel = (category) =>
   getCategoryId(category);
 
 const isCategoryLike = (category) =>
-  Boolean(category && typeof category === "object" && getCategoryLabel(category));
+  Boolean(
+    category && typeof category === "object" && getCategoryLabel(category),
+  );
 
 const textValue = (value) => {
   if (!value) return "";
@@ -93,7 +95,6 @@ const getCategoryContextLabel = (category) => {
 
   return context === "Categories" ? label : context;
 };
-
 
 const getSuggestionLabel = (suggestion) => {
   if (typeof suggestion === "string") return suggestion;
@@ -177,8 +178,9 @@ const SearchBar = ({
         .filter(isCategoryLike)
         .filter(
           (category, index, list) =>
-            list.findIndex((item) => getCategoryId(item) === getCategoryId(category)) ===
-            index,
+            list.findIndex(
+              (item) => getCategoryId(item) === getCategoryId(category),
+            ) === index,
         ),
     [categoriesRaw],
   );
@@ -500,7 +502,7 @@ const SearchBar = ({
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex h-full w-[92px] min-w-0 items-center gap-1 rounded-l-full pl-2 pr-1.5 text-[9px] font-medium text-[var(--customer-ink)] !outline-none transition-all duration-300 ease-in-out hover:bg-black/[0.02] hover:text-[#03014D] focus:!outline-none focus-visible:!outline-none min-[375px]:w-[100px] min-[375px]:pl-2.5 min-[375px]:pr-2 min-[375px]:text-[10px] min-[425px]:w-[108px] sm:w-auto sm:max-w-none sm:gap-2 sm:pl-6 sm:pr-4 sm:text-sm"
+                  className="flex h-full w-[92px] min-w-0 items-center gap-1 rounded-l-full pl-2 pr-1.5 text-[11px] font-medium text-[var(--customer-ink)] !outline-none transition-all duration-300  ease-in-out hover:bg-black/[0.02] hover:text-[#03014D] focus:!outline-none focus-visible:!outline-none min-[375px]:w-[100px] min-[375px]:pl-2.5 min-[375px]:pr-2 min-[375px]:text-[12px] min-[425px]:w-[108px] sm:w-auto sm:max-w-none sm:gap-2 sm:pl-6 sm:pr-4 sm:text-sm"
                 >
                   <span className="truncate">
                     {selectedCategory
@@ -517,10 +519,11 @@ const SearchBar = ({
                 </button>
 
                 <div
-                  className={`absolute left-0 top-[calc(100%+10px)] z-50 max-h-[280px] w-[220px] max-w-[calc(100vw-32px)] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_18px_45px_rgba(3,1,77,0.14)] transition-all duration-300 ease-in-out sm:left-2 sm:max-h-[320px] sm:min-w-[260px] sm:w-auto sm:max-w-none ${isDropdownOpen
-                    ? "visible translate-y-0 opacity-100"
-                    : "invisible -translate-y-2 opacity-0 pointer-events-none"
-                    }`}
+                  className={`absolute left-0 top-[calc(100%+10px)] z-50 max-h-[280px] w-[220px] max-w-[calc(100vw-32px)] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_18px_45px_rgba(3,1,77,0.14)] transition-all duration-300 ease-in-out sm:left-2 sm:max-h-[320px] sm:min-w-[260px] sm:w-auto sm:max-w-none ${
+                    isDropdownOpen
+                      ? "visible translate-y-0 opacity-100"
+                      : "invisible -translate-y-2 opacity-0 pointer-events-none"
+                  }`}
                 >
                   <div className="max-h-[280px] overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin] sm:max-h-[320px]">
                     {categories.map((category) => {
@@ -542,10 +545,11 @@ const SearchBar = ({
                           key={key}
                           type="button"
                           onClick={() => handleSelectCategory(category)}
-                          className={`w-full rounded-xl px-3 py-2.5 text-left text-[13px] leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none sm:px-4 sm:py-3 sm:text-sm ${isSelected
-                            ? "font-semibold text-[#03014D]"
-                            : "font-medium text-[var(--customer-ink)]"
-                            } hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7]`}
+                          className={`w-full rounded-xl px-3 py-2.5 text-left text-[13px] leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none sm:px-4 sm:py-3 sm:text-sm ${
+                            isSelected
+                              ? "font-semibold text-[#03014D]"
+                              : "font-medium text-[var(--customer-ink)]"
+                          } hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7]`}
                         >
                           {label}
                         </button>
@@ -577,8 +581,12 @@ const SearchBar = ({
             placeholder={placeholder}
             aria-label="Search products"
             aria-autocomplete={enableAutocomplete ? "list" : undefined}
-            aria-expanded={enableAutocomplete ? shouldShowSuggestions : undefined}
-            aria-controls={enableAutocomplete ? "search-suggestions" : undefined}
+            aria-expanded={
+              enableAutocomplete ? shouldShowSuggestions : undefined
+            }
+            aria-controls={
+              enableAutocomplete ? "search-suggestions" : undefined
+            }
             className="h-full min-w-0 w-full flex-1 border-none bg-transparent pl-2 pr-2 text-[11px] font-medium leading-[16px] tracking-[0%] text-[#2E2E2E] outline-none ring-0 placeholder:text-[#2E2E2E] focus:ring-0 focus-visible:outline-none min-[375px]:pl-2.5 min-[375px]:text-[12px] min-[425px]:text-[13px] sm:px-4 sm:text-[15px]"
           />
 
@@ -615,8 +623,9 @@ const SearchBar = ({
                 onMouseDown={(event) => event.preventDefault()}
                 onMouseEnter={() => setActiveSuggestionIndex(index)}
                 onClick={() => handleSuggestionSelect(suggestion)}
-                className={`flex min-h-[56px] w-full items-center gap-3 px-4 py-2 text-left transition-colors hover:bg-[#CE9F2D]/10 ${isActive ? "bg-[#CE9F2D]/10" : ""
-                  }`}
+                className={`flex min-h-[56px] w-full items-center gap-3 px-4 py-2 text-left transition-colors hover:bg-[#CE9F2D]/10 ${
+                  isActive ? "bg-[#CE9F2D]/10" : ""
+                }`}
               >
                 {image ? (
                   <img

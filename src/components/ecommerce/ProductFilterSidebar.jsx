@@ -32,7 +32,7 @@ export function FilterSection({ title, children, defaultOpen = true }) {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center justify-between gap-3 text-left font-dm-sans text-[24px] font-semibold leading-none tracking-normal text-[#2D347D] transition-colors duration-200 sm:text-[20px]"
+        className="flex w-full items-center justify-between gap-3 text-left font-dm-sans text-xl font-semibold leading-none tracking-normal text-[#2D347D] transition-colors duration-200 sm:text-[20px]"
       >
         {title}
         <ChevronDown
@@ -404,7 +404,7 @@ export function CheckboxListFilter({
         return (
           <label
             key={value}
-            className="flex min-w-0 cursor-pointer items-center gap-3 py-2 text-[18px] font-medium leading-none  text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[16px]"
+            className="flex min-w-0 cursor-pointer items-center gap-3 py-2 text-[18px] font-medium leading-none   text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[16px]"
           >
             <input
               type="checkbox"
@@ -422,7 +422,7 @@ export function CheckboxListFilter({
 
             <FilterTick checked={checked} />
 
-            <span className="min-w-0 flex-1 truncate leading-normal">
+            <span className="min-w-0  flex-1 truncate leading-normal">
               {label}
             </span>
 
@@ -512,11 +512,11 @@ export default function ProductFilterSidebar({
 }) {
   return (
     <aside
-      className={`w-full overflow-x-hidden lg:sticky lg:top-24 lg:w-[320px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
+      className={`w-full  overflow-x-hidden lg:sticky lg:top-24 lg:w-[320px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
     >
       <div className="w-full overflow-hidden rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] shadow-none">
         <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-5 min-[375px]:px-5 sm:px-6 sm:py-6">
-          <h3 className="font-dm-sans text-[26px] font-semibold  text-[#373737] sm:text-[30px]">
+          <h3 className="font-dm-sans text-[24px] font-semibold  text-[#373737] sm:text-[30px]">
             Filters
           </h3>
 

@@ -30,14 +30,14 @@ export default function NewArrivalCard({
           <TextWhiteButton
             to={seeAllLink}
             rightIcon={<IoArrowForwardOutline className="text-[12px]" />}
-            className="font-dmSans text-[14px] font-medium leading-none tracking-[0%] text-[#FFFFFF]"
+            className=" text-[14px]  text-[#FFFFFF]"
           >
             See all
           </TextWhiteButton>
         </div>
 
         {/* Card Title */}
-        <h3 className="mt-4 text-left font-dm-sans text-[18px] font-bold leading-[100%] tracking-[0%] align-middle text-[#FFFFFF]  sm:text-[20px] xl:text-[24px]">
+        <h3 className="mt-4 text-left  line-clamp-1  text-[18px] font-bold leading-[100%] tracking-[0%] align-middle text-[#FFFFFF]  sm:text-[20px] xl:text-[24px]">
           {formatPageTitle(title)}
         </h3>
       </div>
@@ -61,7 +61,7 @@ export default function NewArrivalCard({
             <div className="flex  flex-col min-w-0 flex-grow text-left">
               {/* Product Title */}
               <h4
-                className="truncate font-dm-sans text-[15px] font-semibold leading-[100%] tracking-[0%] align-middle text-[#2E2E2E] transition-colors duration-200 hover:text-[var(--customer-navy)] sm:text-[16px] lg:text-[18px]"
+                className="truncate  font-dm-sans text-[15px] font-semibold leading-[100%] tracking-[0%] align-middle text-[#2E2E2E] transition-colors duration-200 hover:text-[var(--customer-navy)] sm:text-[16px] lg:text-[18px]"
                 title={prod.title}
               >
                 {prod.title}

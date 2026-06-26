@@ -28,7 +28,7 @@ function ToolbarDropdown({ value = "", options = [], onChange }) {
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
-        className="flex min-h-10 w-[180px] items-center justify-between gap-3 rounded-[var(--customer-radius-sm)] border border-[#1B1D604D] bg-white px-3 py-2 text-left text-sm font-medium text-[#03014D] shadow-sm transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[#F8F3E7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/30"
+        className="flex min-h-10 w-[180px] items-center justify-between gap-3 rounded-[var(--customer-radius-sm)] border border-[#1B1D604D] bg-white px-3 py-3 text-left text-base md:text-lg font-medium text-[#03014D] shadow-sm transition-all duration-300 ease-in-out"
       >
         <span className="flex items-center gap-2 truncate">
           <ListFilter size={16} className="shrink-0 text-[#03014D]" />
@@ -50,7 +50,7 @@ function ToolbarDropdown({ value = "", options = [], onChange }) {
             : "invisible -translate-y-2 opacity-0"
         }`}
       >
-        <div className="max-h-[320px] overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
+        <div className="max-h-[320px]  overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
           {options.map((option) => {
             const isSelected = String(option.value) === String(value);
 
@@ -62,7 +62,7 @@ function ToolbarDropdown({ value = "", options = [], onChange }) {
                   onChange?.(option.value);
                   setIsOpen(false);
                 }}
-                className={`w-full whitespace-nowrap rounded-xl px-4 py-2.5 text-left text-sm leading-snug transition-all duration-300 ease-in-out hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7] focus-visible:outline-none ${
+                className={`w-full  whitespace-nowrap rounded-xl px-4 py-2.5 text-left text-sm leading-snug transition-all duration-300 ease-in-out hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7] focus-visible:outline-none ${
                   isSelected
                     ? "font-semibold text-[#03014D]"
                     : "font-medium text-[var(--customer-ink)]"
@@ -109,7 +109,7 @@ export default function CollectionToolbar({
         </p>
       )}
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex  flex-wrap items-center gap-3">
         {/* Sort Trigger */}
         {!!sortOptions.length && (
           <ToolbarDropdown
@@ -136,7 +136,7 @@ export default function CollectionToolbar({
           <button
             type="button"
             onClick={onOpenFilters}
-            className="flex min-h-10 items-center gap-1.5 rounded-[var(--customer-radius-sm)] border border-[#1B1D604D] bg-white px-3 py-2 text-sm font-semibold text-[#03014D] shadow-sm transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[#F8F3E7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/30 lg:hidden"
+            className="flex min-h-10  items-center gap-1.5 rounded-[var(--customer-radius-sm)] border border-[#1B1D604D] bg-white px-3 py-4  text-sm font-semibold text-[#03014D] shadow-sm transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[#F8F3E7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/30 lg:hidden"
           >
             <SlidersHorizontal size={14} /> Filters
           </button>

@@ -55,7 +55,7 @@ export default function Breadcrumbs({
           );
         })}
       </nav>
-      <h1 className="text-2xl pt-2 pb-10 font-black leading-tight text-[#3F4095] min-[375px]:text-3xl sm:text-4xl">
+      <h1 className="text-2xl pt-2 pb-3 font-black leading-tight text-[#3F4095] min-[375px]:text-3xl sm:pb-10 sm:text-4xl">
         {heading}
       </h1>
     </>

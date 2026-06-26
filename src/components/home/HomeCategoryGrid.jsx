@@ -73,7 +73,7 @@ export default function HomeCategoryGrid({
       actionLabel={actionLabel}
       actionHref={actionHref}
     >
-      <div className="grid grid-cols-1  gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 ">
+      <div className="grid grid-cols-1  gap-5 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 ">
         {displayCategories.map((item, idx) => (
           <CategoryCard
             key={
@@ -83,13 +83,7 @@ export default function HomeCategoryGrid({
                   ? item.categoryKey
                   : `idx-${idx}`
             }
-            image={
-              fallbackCategoryImages[idx % fallbackCategoryImages.length]
-              // item.imageUrl ||
-              // item.image ||
-              // item.thumbnailUrl ||
-              // item.coverImage ||
-            }
+            image={fallbackCategoryImages[idx % fallbackCategoryImages.length]}
             title={item.title || item.name || "Featured Collection"}
             stylesCount={
               item.stylesCount ||
