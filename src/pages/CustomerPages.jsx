@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Bell,
+  // Bell,
   Banknote,
   CreditCard,
   Eye,
@@ -22,6 +22,8 @@ import {
   ShieldCheck,
   Star,
   Wallet,
+  MoreVertical,
+  ChevronDown,
 } from "lucide-react";
 import { notify } from "../utils/notify";
 import ApiState from "../components/common/ApiState";
@@ -34,6 +36,8 @@ import { useToastThunk } from "../hooks/useToastThunk";
 import { addRecentlyViewed } from "../utils/recentlyViewed";
 import { formatMoney, getImageUrlFromValue } from "../utils/ecommerce";
 // import { formatAddress, formatPhone } from "../utils/formatters";
+import notificationIcons from "../data/notificationIcons";
+
 import { useProductActions } from "../hooks/useProductActions";
 import {
   loginUser,
@@ -560,7 +564,10 @@ export function AuthFormPage({ mode }) {
   return (
     <section className="narrow">
       <Seo title={`${title} | Sam Global`} />
-      <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submit)}>
+      <form
+        className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10"
+        onSubmit={handleSubmit(submit)}
+      >
         <h1>{title}</h1>
         {(mode === "register" || mode === "register-otp") && (
           <>
@@ -772,7 +779,10 @@ export function AccountPage({ tab = "profile" }) {
       </div>
       <ApiState loading={user.loading} error={user.error} empty={!user.current}>
         {tab === "profile" && (
-          <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submitProfile)}>
+          <form
+            className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10"
+            onSubmit={handleSubmit(submitProfile)}
+          >
             <input
               placeholder="First name"
               defaultValue={user.current?.profile?.firstName}
@@ -789,7 +799,10 @@ export function AccountPage({ tab = "profile" }) {
           </form>
         )}
         {tab === "addresses" && (
-          <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submitAddress)}>
+          <form
+            className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10"
+            onSubmit={handleSubmit(submitAddress)}
+          >
             <input
               placeholder="Label"
               {...register("label", { required: true })}
@@ -884,7 +897,10 @@ export function AccountPage({ tab = "profile" }) {
           </form>
         )}
         {tab === "kyc" && (
-          <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submitKyc)}>
+          <form
+            className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10"
+            onSubmit={handleSubmit(submitKyc)}
+          >
             <input
               placeholder="Legal name"
               {...register("legalName", { required: true })}
@@ -1334,7 +1350,10 @@ export function CheckoutPage() {
         emptyTitle="Your cart is empty"
       >
         <div className="split">
-          <form className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10" onSubmit={handleSubmit(submit)}>
+          <form
+            className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10"
+            onSubmit={handleSubmit(submit)}
+          >
             <h2>Delivery address</h2>
             <input
               placeholder="Line 1"
@@ -1625,7 +1644,6 @@ export function PaymentResultPage({ failed = false }) {
                   bodyClassName="overflow-x-auto  !px-4 py-3 sm:px-8"
                   titleClassName="font-bold leading-[100%]"
                 >
-<<<<<<< HEAD
                   <div className="w-full">
                     <OrderProgress
                       noteClassName="text-center font-medium text-[18px] leading-none tracking-normal text-[#6F7480] "
@@ -1663,15 +1681,6 @@ export function PaymentResultPage({ failed = false }) {
                     borderClassName="border-[#CE9F2D]"
                     bodyClassName="grid  divide-y divide-[#E9E9EF] p-4 min-[375px]:p-5 min-[425px]:p-6 lg:p-[25px]"
                     itemClassName="py-3 first:pt-0 last:pb-0 min-[375px]:py-4 lg:py-5 lg:gap-6"
-=======
-                  <OrderProgress status={status} />
-                </OrderDetailSectionCard>
-
-                <div className="w-full  ">
-                  <OrderItemsSection
-                    items={items}
-                    title={null}
->>>>>>> origin/reeta-dev-2
                     currency={currency}
                     getItemImage={getItemImage}
                     getProductTitle={getOrderProductTitle}
@@ -1679,8 +1688,6 @@ export function PaymentResultPage({ failed = false }) {
                     getItemLineTotal={getItemLineTotal}
                     formatMoney={formatMoney}
                     className="md:text-[18px] font-bold"
-                  
-                  
                   />
                 </div>
               </div>
@@ -2811,6 +2818,11 @@ export function NotificationsPage() {
   const notifState = useSelector((s) => s.notification);
   const notifications = Array.isArray(notifState.list) ? notifState.list : [];
 
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Notifications", href: "/notifications" },
+  ];
+
   useEffect(() => {
     dispatch(fetchNotifications());
   }, [dispatch]);
@@ -2818,8 +2830,58 @@ export function NotificationsPage() {
   return (
     <>
       <Seo title="Notifications | Sam Global" />
-      <div className="w-container py-8">
-        <h1 className="mb-6  text-2xl font-bold text-ink">Notifications</h1>
+
+      <div className="main-container py-6 sm:py-8">
+        <Breadcrumbs
+          items={breadcrumbItems}
+          heading={null}
+          className="mb-6 text-[#2E2E2E]"
+          linkClassName="text-[#2E2E2E]"
+          currentClassName="text-[#CE9F2D]"
+          separatorClassName="text-[#2E2E2E]"
+        />
+
+        <h1 className="mb-4 font-sans text-[28px] font-bold text-[#3E4093] min-[375px]:text-[30px] min-[425px]:text-[32px] sm:text-[34px] lg:text-[38px]">
+          Notifications
+        </h1>
+
+        <p className="mb-6 max-w-[600px] font-sans text-[13px] font-medium leading-[20px] text-[#2E2E2E] min-[375px]:text-[14px] min-[375px]:leading-[22px] sm:text-[16px] sm:leading-[24px] xl:text-[20px] xl:leading-[30px]">
+          Stay updated with your orders, offers and account activity.
+        </p>
+
+        {/* Tabs */}
+        <div className="mb-6 h-[58px] w-full overflow-hidden rounded-[12px] border border-[#E7D9B8] bg-white sm:h-[72px] md:h-[90px] xl:h-[115px] xl:rounded-[20px]">
+          <div className="grid h-full grid-cols-3 gap-[4px] sm:gap-[6px] xl:gap-[10px]">
+            {[
+              { label: "Active Returns", count: 2 },
+              { label: "Refunds", count: 1 },
+              { label: "Return History", count: 6 },
+            ].map((tab, index) => {
+              const active = index === 0;
+
+              return (
+                <button
+                  key={tab.label}
+                  type="button"
+                  className="relative flex h-full items-center justify-center gap-1 px-1 sm:gap-2 md:px-3 xl:gap-[8px]"
+                >
+                  <span className="truncate font-sans text-[11px] font-semibold leading-none text-[#1B1D60] min-[375px]:text-[12px] sm:text-[15px] md:text-[18px] lg:text-[20px] xl:text-[24px]">
+                    {tab.label}
+                  </span>
+
+                  <span className="flex h-[14px] min-w-[14px] shrink-0 items-center justify-center rounded-full bg-[#F5E8C8] px-[4px] text-[8px] font-semibold leading-none text-[#1B1D60] sm:h-[16px] sm:min-w-[16px] sm:text-[9px] md:h-[18px] md:min-w-[18px] md:text-[10px]">
+                    {tab.count}
+                  </span>
+
+                  {active && (
+                    <span className="absolute bottom-0 left-0 h-[2px] w-full bg-[#1B1D60] md:h-[3px]" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <ApiState
           loading={notifState.loading && !notifications.length}
           error={notifState.error}
@@ -2827,41 +2889,86 @@ export function NotificationsPage() {
           emptyTitle="No notifications"
           emptyText="You're all caught up! Notifications will appear here."
         >
-          <div className="rounded-[12px] border border-border bg-white">
+          <div className="overflow-hidden rounded-[12px] border border-[#E7D9B8] bg-white">
             {notifications.map((notif, i) => {
               const isRead = notif.read || notif.isRead;
+
               return (
                 <div
                   key={notif.id || i}
-                  className={`flex gap-4 border-b border-border px-5 py-4 last:border-b-0 ${isRead ? "" : "bg-cream"}`}
+                  className="flex gap-3 border-b border-[#E7D9B8] px-3 py-4 last:border-b-0 sm:gap-5 sm:px-6 sm:py-5 lg:px-8"
                 >
-                  <div
-                    className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${isRead ? "bg-cream" : "bg-gold-soft"}`}
-                  >
-                    <Bell
-                      size={14}
-                      className={isRead ? "text-gray" : "text-gold"}
+                  {/* Icon */}
+                  <div className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full bg-[#FFC933] sm:h-[64px] sm:w-[64px] lg:h-[70px] lg:w-[70px]">
+                    <img
+                      src={notificationIcons[i]?.icon}
+                      alt={notif.title}
+                      className="h-[30px] w-[30px] object-contain sm:h-[38px] sm:w-[38px] lg:h-[42px] lg:w-[42px]"
                     />
                   </div>
-                  <div className="min-w-0">
-                    <p className=" text-sm font-medium text-ink">
-                      {notif.title || notif.subject || "Notification"}
+
+                  {/* Middle Content */}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                      <h3 className="font-sans text-[13px] font-bold leading-tight text-[#1B1D60] sm:text-[16px] lg:text-[18px]">
+                        {notif.title || notif.subject || "Notification"}
+                      </h3>
+
+                      {!isRead && (
+                        <span className="rounded-full bg-[#cacae2] px-2.5 py-0.5 text-[9px] font-medium text-[#1B1D60] sm:px-3 sm:py-1 sm:text-[10px]">
+                          New
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="mt-2 font-sans text-[11px] font-medium leading-[17px] text-[#2E2E2E] sm:text-[13px] sm:leading-[21px] lg:text-[14px] lg:leading-6">
+                      {notificationIcons[i]?.message ||
+                        notif.message ||
+                        notif.body ||
+                        ""}
+                      {/* {notif.message || notif.body || ""} */}
                     </p>
-                    <p className="mt-0.5  text-xs text-muted">
-                      {notif.message || notif.body || ""}
-                    </p>
-                    <p className="mt-1  text-xs text-gray">
+
+                    <button
+                      type="button"
+                      className="mt-2 font-sans text-[11px] font-semibold text-[#3E4093] hover:underline sm:text-[12px]"
+                    >
+                      {notificationIcons[i]?.action || "View Details"}
+                    </button>
+                  </div>
+
+                  {/* Right Side */}
+                  <div className="flex w-[72px] shrink-0 flex-col items-end sm:w-[105px]">
+                    <p className="mb-3 whitespace-nowrap font-sans text-[9px] font-medium text-[#2E2E2E] sm:text-[12px] lg:text-[13px]">
                       {notif.createdAt
                         ? new Date(notif.createdAt).toLocaleDateString("en-IN")
                         : ""}
                     </p>
+
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      {!isRead && (
+                        <span className="h-[6px] w-[6px] rounded-full bg-[#CE9F2D] sm:h-2 sm:w-2" />
+                      )}
+
+                      <button type="button" className="leading-none">
+                        <MoreVertical size={18} className="text-[#666666]" />
+                      </button>
+                    </div>
                   </div>
-                  {!isRead && (
-                    <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-gold" />
-                  )}
                 </div>
               );
             })}
+
+            {/* Load More */}
+            <div className="flex h-[60px] items-center justify-center bg-white sm:h-[76px]">
+              <button
+                type="button"
+                className="flex items-center gap-2 font-sans text-[13px] font-bold text-[#1B1D60] sm:text-[14px]"
+              >
+                Load More
+                <ChevronDown size={16} strokeWidth={3} />
+              </button>
+            </div>
           </div>
         </ApiState>
       </div>
