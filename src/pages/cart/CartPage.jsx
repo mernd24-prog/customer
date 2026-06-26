@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
+import { EmptyState } from "../../components/common";
 import CartItemCard from "../../components/cart/CartItemCard";
 // import CartSummary from "../../components/cart/CartSummary";
 import BrandButton from "../../components/ui/BrandButton";
@@ -503,12 +504,18 @@ export default function CartPage() {
           <ApiState
             loading={cartState.loading && !cart.items}
             error={cartState.error}
-            empty={!hasCartItems && !hasSavedItems && !cartState.loading}
-            emptyTitle="Your cart is empty"
-            emptyText="Add some products to continue shopping."
-            emptyActionLabel="Continue Shopping"
-            onEmptyAction={() => navigate("/")}
+            empty={false}
           >
+            {!hasCartItems && !cartState.loading && (
+              <EmptyState
+                title="Your cart is empty"
+                description="Add some products to continue shopping."
+                actionLabel="Continue Shopping"
+                onAction={() => navigate("/")}
+                className={hasSavedItems ? "mb-8" : ""}
+              />
+            )}
+
             <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-1 xl:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_563px] lg:gap-9">
               <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8">
                 {hasCartItems && (
@@ -718,15 +725,17 @@ export default function CartPage() {
                   </div>
                 )}
 
-                <div className="flex items-center gap-3 ">
-                  <OutlineSmallButton
-                    to="/products"
-                    rightIcon={<FaAngleRight className="text-[10px]" />}
-                    className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold  transition-all duration-300 ease-in-out"
-                  >
-                    Continue Shopping
-                  </OutlineSmallButton>
-                </div>
+                {hasCartItems && (
+                  <div className="flex items-center gap-3 ">
+                    <OutlineSmallButton
+                      to="/products"
+                      rightIcon={<FaAngleRight className="text-[10px]" />}
+                      className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
+                    >
+                      Continue Shopping
+                    </OutlineSmallButton>
+                  </div>
+                )}
               </div>
 
               {hasCartItems && (
