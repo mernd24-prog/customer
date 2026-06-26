@@ -255,13 +255,13 @@ const getCartItemPrice = (item = {}) => {
       : item.product || {};
   return asNumber(
     item.price ??
-    item.unitPrice ??
-    item.unit_price ??
-    item.salePrice ??
-    product.price ??
-    product.sellingPrice ??
-    product.salePrice ??
-    0,
+      item.unitPrice ??
+      item.unit_price ??
+      item.salePrice ??
+      product.price ??
+      product.sellingPrice ??
+      product.salePrice ??
+      0,
   );
 };
 const getCartItemShipping = (item = {}) =>
@@ -359,10 +359,14 @@ const getPaymentPayload = (result = {}) =>
 const getPaymentStatus = (payment = {}) =>
   payment?.status || payment?.payment_status || "";
 const getPaymentAmount = (payment = {}) =>
-  asOptionalNumber(payment?.amount ?? payment?.payableAmount ?? payment?.payable_amount);
+  asOptionalNumber(
+    payment?.amount ?? payment?.payableAmount ?? payment?.payable_amount,
+  );
 const getCheckoutAmount = (payment = {}) => {
   const amountInPaise = asOptionalNumber(payment?.checkout?.amount);
-  return amountInPaise === null ? null : Number((amountInPaise / 100).toFixed(2));
+  return amountInPaise === null
+    ? null
+    : Number((amountInPaise / 100).toFixed(2));
 };
 const amountsMatch = (left, right) =>
   Math.round(Number(left || 0) * 100) === Math.round(Number(right || 0) * 100);
@@ -431,7 +435,9 @@ const createCheckoutPricingKey = ({
 }) =>
   [
     baseKey,
-    String(couponCode || "NOCOUPON").trim().toUpperCase(),
+    String(couponCode || "NOCOUPON")
+      .trim()
+      .toUpperCase(),
     Number(walletAmount || 0).toFixed(2),
     paymentProvider || "razorpay",
     Number(payableAmount || 0).toFixed(2),
@@ -530,8 +536,8 @@ const openRazorpayCheckout = async ({
         reject,
         new Error(
           response?.error?.description ||
-          response?.error?.reason ||
-          "Payment failed. Please try again.",
+            response?.error?.reason ||
+            "Payment failed. Please try again.",
         ),
       );
     });
@@ -565,8 +571,8 @@ export default function CheckoutPage() {
         ? buyNowItems
         : selectedCheckoutItemIds !== null
           ? (cart.items || []).filter((item) =>
-            selectedCheckoutItemIds.includes(getCartLineKey(item)),
-          )
+              selectedCheckoutItemIds.includes(getCartLineKey(item)),
+            )
           : cart.items || [],
     [buyNowItems, cart.items, isBuyNowCheckout, selectedCheckoutItemIds],
   );
@@ -663,10 +669,10 @@ export default function CheckoutPage() {
   const checkoutDialCodes = countryObj?.dialCode
     ? [normalizeDialCode(countryObj.dialCode)]
     : Array.from(
-      new Set(
-        countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
-      ),
-    ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
+        new Set(
+          countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
+        ),
+      ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   useEffect(() => {
     if (!countryId) {
@@ -837,10 +843,10 @@ export default function CheckoutPage() {
       const product = getCartItemProduct(item);
       const sellerId = String(
         item.sellerId ||
-        item.seller_id ||
-        product.sellerId ||
-        product.seller_id ||
-        "",
+          item.seller_id ||
+          product.sellerId ||
+          product.seller_id ||
+          "",
       ).trim();
       if (!sellerId) return;
       sellerOrderAmounts[sellerId] =
@@ -881,7 +887,7 @@ export default function CheckoutPage() {
           ? JSON.stringify(paymentSellerContext.sellerOrderAmounts)
           : undefined,
       }),
-    ).catch(() => { });
+    ).catch(() => {});
   }, [
     dispatch,
     paymentSellerContext,
@@ -1240,7 +1246,7 @@ export default function CheckoutPage() {
     <>
       <Seo title="Checkout | Sam Global" />
 
-      <div className="w-container py-6 sm:py-8">
+      <div className=" py-6 sm:py-8">
         <ApiState
           loading={cartState.loading}
           error={cartState.error}
@@ -1257,12 +1263,10 @@ export default function CheckoutPage() {
               ]}
               className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
               linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
+              heading="Checkout"
               currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
               separatorClassName="text-[#2E2E2E]"
             />
-            <h1 className="break-words font-bold text-[#3E4093] leading-[100%] tracking-[0px] text-[28px] sm:text-[32px] lg:text-[38px]">
-              Checkout
-            </h1>
           </div>
           <form onSubmit={handleSubmit(submit)} noValidate>
             {errors.root?.message ? (

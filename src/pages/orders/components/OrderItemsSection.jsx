@@ -26,11 +26,11 @@ function OrderItemCard({
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col  justify-center ">
-        <p className="line-clamp-2 break-words text-[18px] font-semibold leading-[26px] text-[#2E2E2E] sm:text-[22px] sm:leading-[32px] md:text-[26px] md:leading-[38px]">
+        <p className="line-clamp-2 break-words text-[18px] font-semibold leading-[26px] text-[#2E2E2E] sm:text-[22px] sm:leading-[32px] lg:text-[26px] md:leading-[38px]">
           {getProductTitle(item)}
         </p>
 
-        <div className="my-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink sm:my-6">
+        <div className="my-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink xl:my-4">
           <span className="text-[18px] font-medium leading-[100%] text-[#2E2E2E]">
             Color:{" "}
             <span className="font-semibold text-[#1B1D60]">
@@ -65,7 +65,7 @@ function OrderItemsSection({ items, title, ...itemProps }) {
     <OrderDetailSectionCard
       title="Item"
       borderClassName="border-[#CE9F2D66]  h-fit "
-      bodyClassName="grid gap-4 p-4 sm:p-5 lg:p-6"
+      bodyClassName="grid gap-8 sm:gap-14 p-4 sm:p-5 lg:p-6"
     >
       {items.map((item, index) => (
         <OrderItemCard

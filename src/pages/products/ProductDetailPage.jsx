@@ -400,7 +400,7 @@ function ImageGallery({
   );
 }
 
-function DeliveryChecker({ productId, shipping = {} }) {
+function DeliveryChecker({ productId, onResultChange }) {
   const dispatch = useDispatch();
   const [pincode, setPincode] = useState("");
   const [result, setResult] = useState(null);
@@ -420,7 +420,9 @@ function DeliveryChecker({ productId, shipping = {} }) {
       const action = await dispatch(
         checkServiceability({ pincode: pin, productId }),
       );
-      setResult(action?.payload?.data || action?.payload);
+      const nextResult = action?.payload?.data || action?.payload;
+      setResult(nextResult);
+      onResultChange?.(nextResult);
     } catch {
       setError("Could not check delivery. Try again.");
     } finally {
@@ -443,15 +445,6 @@ function DeliveryChecker({ productId, shipping = {} }) {
   );
   const resultCodAvailable = result?.codAvailable;
 
-  // Static info from product.shipping (shown before pincode check)
-  const staticIsFree = Boolean(shipping.freeShipping);
-  const staticCharge = Number(
-    shipping.shippingCharge ?? shipping.additionalCost ?? 0,
-  );
-  const staticEtaMin = shipping.estimatedDaysMin ?? shipping.processingDays;
-  const staticEtaMax = shipping.estimatedDaysMax ?? shipping.processingDays;
-  const productCodDisabled = shipping.codAvailable === false;
-
   return (
     <div className="space-y-3">
       {/* Pincode check label */}
@@ -459,37 +452,6 @@ function DeliveryChecker({ productId, shipping = {} }) {
         <span className="text-base lg:text-[20px] font-semibold text-ink">
           Check Delivery
         </span>
-
-        {!result && (
-          <>
-            {staticIsFree ? (
-              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
-                <Truck size={11} /> Free Shipping
-              </span>
-            ) : staticCharge > 0 ? (
-              <span className="inline-flex items-center gap-1 rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
-                <Truck size={11} />
-                {new Intl.NumberFormat("en-IN", {
-                  style: "currency",
-                  currency: "INR",
-                  maximumFractionDigits: 0,
-                }).format(staticCharge)}{" "}
-                Delivery
-              </span>
-            ) : null}
-            {(staticEtaMin || staticEtaMax) && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
-                Ships in{" "}
-                {[staticEtaMin, staticEtaMax].filter(Boolean).join("–")} days
-              </span>
-            )}
-            {productCodDisabled && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600">
-                COD not available
-              </span>
-            )}
-          </>
-        )}
       </div>
 
       <form
@@ -970,6 +932,7 @@ export default function ProductDetailPage() {
     crossSellState.crossSellByProduct[productId]?.items || [];
 
   const [quantity, setQuantity] = useState(1);
+  const [deliveryResult, setDeliveryResult] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [zoomOpen, setZoomOpen] = useState(false);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
@@ -982,6 +945,7 @@ export default function ProductDetailPage() {
   useEffect(() => {
     dispatch(fetchProductById({ productId }));
     sideEffectsRanFor.current = null;
+    setDeliveryResult(null);
   }, [dispatch, productId]);
 
   useEffect(() => {
@@ -1163,6 +1127,19 @@ export default function ProductDetailPage() {
   );
 
   const currency = selectedVariant?.currency || product?.currency || "INR";
+  const shipping = product?.shipping || {};
+  const shippingEtaMin =
+    shipping.estimatedDaysMin ?? shipping.processingDays;
+  const shippingEtaMax =
+    shipping.estimatedDaysMax ?? shipping.processingDays;
+  const shippingEtaText = [shippingEtaMin, shippingEtaMax]
+    .filter((value) => value !== null && value !== undefined)
+    .join("–");
+  const staticIsFree = Boolean(shipping.freeShipping);
+  const staticCharge = Number(
+    shipping.shippingCharge ?? shipping.additionalCost ?? 0,
+  );
+  const productCodDisabled = shipping.codAvailable === false;
 
   const discount =
     mrp && price && mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
@@ -1336,9 +1313,39 @@ export default function ProductDetailPage() {
 
                     <DeliveryChecker
                       productId={productId}
-                      shipping={product?.shipping || {}}
+                      onResultChange={setDeliveryResult}
                     />
                   </div>
+
+                  {!deliveryResult && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      {shippingEtaText && (
+                        <span className="inline-flex items-center rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
+                          Ships in {shippingEtaText} days
+                        </span>
+                      )}
+                      {staticIsFree ? (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                          <Truck size={11} /> Free Shipping
+                        </span>
+                      ) : staticCharge > 0 ? (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
+                          <Truck size={11} />
+                          {new Intl.NumberFormat("en-IN", {
+                            style: "currency",
+                            currency: "INR",
+                            maximumFractionDigits: 0,
+                          }).format(staticCharge)}{" "}
+                          Delivery
+                        </span>
+                      ) : null}
+                      {productCodDisabled && (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600">
+                          COD not available
+                        </span>
+                      )}
+                    </div>
+                  )}
 
                   {variants.length > 0 && variantOptions.length > 0 && (
                     <VariantSelector

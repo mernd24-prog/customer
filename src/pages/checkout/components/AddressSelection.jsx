@@ -67,8 +67,10 @@ export default function AddressSelection({
   const editDialCodes = editCountryObj?.dialCode
     ? [normalizeDialCode(editCountryObj.dialCode)]
     : Array.from(
-      new Set(countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean)),
-    ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
+        new Set(
+          countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
+        ),
+      ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
 
   useEffect(() => {
     if (!editCountry) {
@@ -206,13 +208,13 @@ export default function AddressSelection({
     await dispatch(fetchMe());
   };
   const infoClass =
-  "flex items-start gap-2 text-[12px] font-medium leading-[18px] text-[#1B1D60] sm:text-[14px] sm:leading-[22px] md:text-[16px] md:leading-[26px] lg:text-[18px] lg:leading-[30px]";
+    "flex items-start gap-2  font-medium leading-[18px] text-[#1B1D60] text-[14px] sm:leading-[22px] md:text-[16px] md:leading-[26px] lg:text-[18px] lg:leading-[30px]";
 
   return (
     <OrderDetailSectionCard
       title="Delivery Address"
       className="w-full"
-      bodyClassName="flex flex-col w-full max-w-full gap-5 px-4 pb-0 sm:px-5 sm:pt-5 sm:pb-0 md:px-[25px] lg:pb-0"
+      bodyClassName="flex mt-4 sm:mt-0 flex-col w-full max-w-full gap-5 px-4 pb-0 sm:px-5 sm:pt-5 sm:pb-0 md:px-[25px] lg:pb-0"
       headerContent={
         <button
           type="button"
@@ -233,14 +235,15 @@ export default function AddressSelection({
         return (
           <div
             key={addrId}
-            className={`border-b  border-border  transition-all duration-300 ease-in-out last:border-b-0 ${selectedAddressId === addrId && !useNewAddress
-              ? "bg-white"
-              : "bg-white"
-              }`}
+            className={`border-b  border-border  transition-all duration-300 ease-in-out last:border-b-0 ${
+              selectedAddressId === addrId && !useNewAddress
+                ? "bg-white"
+                : "bg-white"
+            }`}
           >
             {isEditing ? (
-              <div className="grid gap-4">
-                <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+              <div className=" grid gap-4 py-4 sm:pb-8">
+                <div className="flex  items-center gap-2 text-sm font-semibold text-ink">
                   <Pencil size={16} className="text-gold" />
                   Edit address
                 </div>
@@ -278,15 +281,18 @@ export default function AddressSelection({
                 </div>
               </div>
             ) : (
-             <div className="flex w-full items-start gap-3 sm:gap-[15px] border-b border-[#CE9F2D4D] pt-5 sm:pt-[25px] pb-6 sm:pb-[30px]">
+              <div className="flex w-full items-start gap-3 sm:gap-[15px] border-b border-[#CE9F2D4D]">
                 <div className="min-w-0 flex-1">
                   <span
-                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1.5 text-[10px] font-bold capitalize text-white sm:px-[15px] sm:py-[7px] sm:text-[11px] ${label?.toLowerCase() === "work" ? "bg-[#1B1D60]" : "bg-[#CE9F2D]"
-                      }`}
+                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-bold capitalize text-white sm:px-[15px] sm:py-[7px] sm:text-[13px] ${
+                      label?.toLowerCase() === "work"
+                        ? "bg-[#1B1D60]"
+                        : "bg-[#CE9F2D]"
+                    }`}
                   >
                     {label}
                   </span>
-                 <label className="mt-3 flex w-full cursor-pointer items-start gap-2 sm:gap-3">
+                  <label className="my-6 flex w-full cursor-pointer items-start gap-2 sm:gap-3">
                     <input
                       type="radio"
                       name="addressSelect"
@@ -300,34 +306,40 @@ export default function AddressSelection({
                           shouldValidate: true,
                         });
                       }}
-                       className="mt-1 h-[18px] w-[18px] shrink-0 accent-[#3E4093] sm:h-5 sm:w-5"
+                      className="mt-1 h-fit w-[18px] shrink-0 accent-[#3E4093] sm:h-5 sm:w-5"
                     />
                     <span className="min-w-0">
-                    <span className="block text-[16px] font-bold leading-[24px] text-[#2E2E2E] sm:text-[18px] sm:leading-[28px] md:text-[20px] md:leading-[30px] lg:text-[24px] lg:leading-[36px]">
+                      <span className="block  font-bold leading-[24px] text-[#2E2E2E] text-[18px] sm:leading-[28px] md:text-[20px] md:leading-[30px] lg:text-[24px] lg:leading-[36px]">
                         {addr.fullName || "Address"}
                       </span>
                       <div className="mt-3 flex flex-col gap-2 sm:mt-4 sm:gap-[10px]">
-                      {addr.phone && (
+                        {addr.phone && (
+                          <span className={infoClass}>
+                            <Phone
+                              size={18}
+                              className="text-gold-dark mt-1 shrink-0"
+                            />
+                            {addr.phone}
+                          </span>
+                        )}
                         <span className={infoClass}>
-                          <Phone size={18} className="text-gold-dark mt-1 shrink-0" />
-                          {addr.phone}
+                          <MapPin
+                            size={18}
+                            className="text-gold-dark mt-1 shrink-0 items-center"
+                          />
+                          <span>
+                            {[
+                              addr.line1,
+                              addr.line2,
+                              addr.city,
+                              addr.state,
+                              postalCode,
+                              addr.country || "India",
+                            ]
+                              .filter(Boolean)
+                              .join(", ")}
+                          </span>
                         </span>
-                      )}
-                      <span className={infoClass}>
-                        <MapPin size={18} className="text-gold-dark mt-1 shrink-0 items-center" />
-                        <span>
-                          {[
-                            addr.line1,
-                            addr.line2,
-                            addr.city,
-                            addr.state,
-                            postalCode,
-                            addr.country || "India",
-                          ]
-                            .filter(Boolean)
-                            .join(", ")}
-                        </span>
-                      </span>
                       </div>
                     </span>
                   </label>
@@ -335,7 +347,7 @@ export default function AddressSelection({
                 <button
                   type="button"
                   onClick={() => startEdit(addr)}
-                 className="mt-4 sm:mt-8 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#1B1D6099] bg-[#1B1D600D] p-2.5 text-[#1B1D60] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]"
+                  className="inline-flex lg:h-10 lg:w-10 h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#1B1D6099] bg-[#1B1D600D] p-2.5 text-[#1B1D60] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]"
                 >
                   <Pencil size={14} />
                 </button>
@@ -344,11 +356,6 @@ export default function AddressSelection({
           </div>
         );
       })}
-      {useNewAddress && (
-        <div className="rounded-[8px] border border-gold bg-gold-soft px-3 py-2 text-sm font-semibold text-navy">
-          New address form is selected.
-        </div>
-      )}
       {errors.selectedAddressId && (
         <p className="text-xs text-red-600  mt-1">
           {errors.selectedAddressId.message}

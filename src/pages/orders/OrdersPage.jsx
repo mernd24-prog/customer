@@ -8,6 +8,7 @@ import { MdDateRange } from "react-icons/md";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import {
   ChevronRight,
+  ChevronDown,
   Download,
   IndianRupee,
   Package,
@@ -545,7 +546,7 @@ function OrderDetail({ orderId, track }) {
   return (
     <>
       <Seo title={`Order ${orderId} | Sam Global`} />
-      <div className="mx-auto w-full max-w-[1740px] px-4 py-5 sm:px-6 sm:py-8 lg:px-10">
+      <div className="mx-auto w-full max-w-[1740px]">
         <ApiState
           loading={state.loading && !order}
           error={state.error}
@@ -553,7 +554,7 @@ function OrderDetail({ orderId, track }) {
         >
           <div className="grid gap-5 sm:gap-6 lg:gap-9">
             <section className="grid gap-4 sm:gap-8">
-              <div className="flex flex-col gap-4  mt-8 md:flex-row md:items-start md:justify-between">
+              <div className="flex flex-col gap-4  items-center mt-8 md:flex-row  justify-between">
                 <div>
                   <Breadcrumbs
                     items={breadcrumbItems}
@@ -564,7 +565,7 @@ function OrderDetail({ orderId, track }) {
                   />
                 </div>
 
-                <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center md:w-auto md:justify-end">
+                <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap items-center md:w-auto md:justify-end">
                   {!track && (
                     <Link
                       to={`/returns/request/${orderId}`}
@@ -637,7 +638,7 @@ function OrderDetail({ orderId, track }) {
               {hasKnownStatus(order) && (
                 <OrderDetailSectionCard
                   title="Order Progress"
-                  bodyClassName="overflow-x-auto px-4 py-5 sm:px-8"
+                  bodyClassName="overflow-hidden px-4 sm:px-8"
                   titleClassName="font-bold leading-[100%]"
                 >
                   <OrderProgress
@@ -686,7 +687,7 @@ function OrderDetail({ orderId, track }) {
             )}
 
             {cancellations.length > 0 && (
-              <section className="rounded-[8px] border border-border bg-white px-4 py-4 sm:px-6">
+              <section className="rounded-[8px] md:border md:border-border bg-white px-4 py-4 sm:px-6">
                 <h2 className="text-sm font-semibold text-ink">
                   Cancellation and refund status
                 </h2>
@@ -746,12 +747,12 @@ function OrderDetail({ orderId, track }) {
             )}
 
             {hasKnownStatus(order) && (
-              <section className="rounded-[15px] border border-[#CE9F2D66] bg-white px-4 py-4 sm:px-5">
+              <section className="rounded-[15px] lg:border lg:border-[#CE9F2D66] bg-white py-4 sm:px-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                   {(status === "pending_payment" ||
                     status === "payment_failed") && (
                     <Button
-                      className="min-h-[38px] w-full sm:w-auto"
+                      className="min-h-[38px] w-full sm:w-auto text-white"
                       loading={retrying}
                       onClick={handleRetryPayment}
                     >
@@ -849,7 +850,7 @@ function OrderListStatusBadge({ status }) {
   const cls = COMPACT_STATUS_BADGE[status] || "bg-[#D7A522] text-white";
   return (
     <span
-      className={`inline-flex min-w-[74px] justify-center rounded-full px-3 py-2 text-xs  md:text-base  2xl:text-[18px] font-bold capitalize ${cls}`}
+      className={`mt-2 md:mt-0 inline-flex min-w-[74px] justify-center rounded-full px-3 py-2  text-sm  2xl:text-[18px] font-bold capitalize ${cls}`}
     >
       {humanize(status, "Processing")}
     </span>
@@ -899,31 +900,32 @@ function OrderSummaryCard({ order }) {
   };
 
   return (
-    <article className="overflow-hidden rounded-xl mt-6 border border-[#E7D9B8]  bg-[#FFFCF6]">
-      <div className="flex flex-col gap-3 border-b border-[#E7D9B8] bg-[#CE9F2D33] px-3 py-4 md:flex-row md:items-center md:justify-between md:gap-4 md:px-4 md:py-6  text-sm md:text-base 2xl:text-[20px] font-semibold text-ink">
-        <div className="flex items-center justify-between w-full md:contents">
-          <span className="inline-flex items-center gap-1.5">
-            <FaShoppingCart className="text-[#2564EB] text-sm lg:text-xl " />#
-            {apiOrderId}
+    <article className="overflow-hidden rounded-xl  border border-[#E7D9B8]  bg-[#FFFCF6]">
+      <div className="flex  flex-col gap-3 border-b border-[#E7D9B8] bg-[#CE9F2D33] px-3 py-4 md:flex-row md:items-center md:justify-between md:gap-4 md:px-4 md:py-6  text-sm md:text-base 2xl:text-[20px]  font-semibold text-ink">
+        <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between md:contents">
+          <span className="flex min-w-0 items-center gap-1.5">
+            <FaShoppingCart className="shrink-0 text-sm text-[#2564EB] lg:text-xl" />
+            <span className="shrink-0">#</span>
+            <span className="min-w-0 break-all">{apiOrderId}</span>
             <button
               type="button"
               onClick={handleCopyOrderId}
-              className="p-1 hover:bg-[#CE9F2D33] rounded-full transition-colors duration-200 flex items-center justify-center"
+              className="flex shrink-0 items-center justify-center rounded-full p-1 transition-colors duration-200 hover:bg-[#CE9F2D33]"
               title="Copy Order ID"
             >
               <MdContentCopy className="text-[#2E2E2E] text-sm lg:text-xl cursor-pointer" />
             </button>
           </span>
-          <span className="md:hidden">
+          <span className="self-start sm:hidden">
             <OrderListStatusBadge status={status} />
           </span>
         </div>
-        <div className="flex items-center justify-between w-full md:contents">
-          <span className="inline-flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center justify-between w-full md:contents">
+          <span className="lg:inline-flex items-center gap-1.5  hidden">
             <MdDateRange className="text-[#2564EB] text-sm lg:text-xl" />
             {formatOrderDate(createdAt)}
           </span>
-          <span className="inline-flex items-center gap-1.5">
+          <span className="lg:inline-flex items-center gap-1.5  hidden ">
             <BsCreditCardFill className="text-[#2564EB] text-sm lg:text-xl" />
             {paymentMethod}
           </span>
@@ -979,7 +981,7 @@ function OrderSummaryCard({ order }) {
           <div className="my-4 flex flex-wrap items-center gap-3">
             <Link
               to={`/orders/${id}/track`}
-              className="inline-flex h-11 min-w-[160px] items-center justify-center gap-2 rounded-[10px] bg-gold px-20  text-sm lg:text-[15px] font-bold text-white transition-colors"
+              className="inline-flex h-11 min-w-[160px] items-center justify-center gap-2 rounded-[10px] bg-gold px-8 lg:px-20  text-sm lg:text-[15px] font-bold text-white transition-colors"
             >
               <Truck size={18} />
               Track Order
@@ -1032,6 +1034,7 @@ function OrderList() {
   const dispatch = useDispatch();
   const state = useSelector((s) => s.order);
   const [activeFilter, setActiveFilter] = useState("");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [query, setQuery] = useState("");
 
   const allOrders = state.list.length
@@ -1089,6 +1092,11 @@ function OrderList() {
       );
     });
   }, [query, statusOrders]);
+  const selectedFilter = ORDER_FILTERS.find(
+    (filter) => filter.value === activeFilter,
+  );
+  const selectedFilterLabel =
+    selectedFilter?.label === "All" ? "All Status" : selectedFilter?.label;
 
   useEffect(() => {
     dispatch(fetchMyOrders());
@@ -1108,8 +1116,8 @@ function OrderList() {
             separatorClassName="text-[#2E2E2E]"
             heading="My Order"
           />
-          <div className="grid  mt-4  gap-8 grid-cols-1 xl:grid-cols-[minmax(0,1fr)_400px] 2xl:grid-cols-[minmax(0,1fr)_413px]">
-            <div className="min-w-0 rounded-[8px] border border-[#E7D9B8] bg-white p-3  sm:p-4">
+          <div className="grid   gap-8 grid-cols-1 xl:grid-cols-[minmax(0,1fr)_400px] 2xl:grid-cols-[minmax(0,1fr)_413px]">
+            <div className="min-w-0 rounded-xl md:border md:border-[#E7D9B8] bg-white  sm:p-4">
               <div className="my-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <label className="relative block w-full sm:max-w-[450px]">
                   <Search
@@ -1124,20 +1132,63 @@ function OrderList() {
                   />
                 </label>
 
-                <select
-                  value={activeFilter}
-                  onChange={(event) => setActiveFilter(event.target.value)}
-                  className="h-12 lg:w-fit w-full appearance-none rounded-[10px] border border-[#2564EB] bg-white pl-3 pr-10 text-base font-semibold text-[#2564EB] focus:outline-none"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9L12 15L18 9' stroke='%232564EB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                <div
+                  className="relative w-full lg:w-[220px]"
+                  onBlur={(event) => {
+                    if (!event.currentTarget.contains(event.relatedTarget)) {
+                      setIsFilterOpen(false);
+                    }
                   }}
                 >
-                  {ORDER_FILTERS.map((filter) => (
-                    <option key={filter.value} value={filter.value}>
-                      {filter.label === "All" ? "All Status" : filter.label}
-                    </option>
-                  ))}
-                </select>
+                  <button
+                    type="button"
+                    onClick={() => setIsFilterOpen((open) => !open)}
+                    className="flex h-10 w-full items-center justify-between rounded-[10px] border border-[#2564EB] bg-white px-3 text-left text-sm font-semibold text-[#2564EB] focus:outline-none"
+                    aria-expanded={isFilterOpen}
+                    aria-haspopup="menu"
+                  >
+                    <span>{selectedFilterLabel || "All Status"}</span>
+                    <ChevronDown
+                      size={18}
+                      className={`transition-transform ${isFilterOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+
+                  {isFilterOpen && (
+                    <div
+                      role="menu"
+                      className="absolute right-0 top-[calc(100%+6px)] z-30 w-full min-w-[220px] overflow-hidden rounded-[15px] border border-[#E7D9B8] bg-white shadow-[0_12px_32px_rgba(31,36,48,0.14)]"
+                    >
+                      <div className="py-1">
+                        {ORDER_FILTERS.map((filter) => {
+                          const label =
+                            filter.label === "All"
+                              ? "All Status"
+                              : filter.label;
+
+                          return (
+                            <button
+                              key={filter.value}
+                              type="button"
+                              role="menuitem"
+                              onClick={() => {
+                                setActiveFilter(filter.value);
+                                setIsFilterOpen(false);
+                              }}
+                              className={`block w-full px-4 py-2 text-left text-[13px] font-semibold transition-colors hover:bg-[#F8F1E2] ${
+                                activeFilter === filter.value
+                                  ? "bg-[#F8F1E2] text-[#1B1D60]"
+                                  : "text-[#2E2E2E]"
+                              }`}
+                            >
+                              {label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <ApiState

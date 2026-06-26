@@ -6,6 +6,7 @@ import { Heart, Trash2 } from "lucide-react";
 import { FaShoppingCart } from "react-icons/fa";
 import ProductPriceBlock from "../../pages/products/components/oldAndNewPrice";
 import ProductStockStatus from "../../pages/products/components/stockStatus";
+import StarRating from "../../pages/products/components/starRating";
 
 export default function CartItemCard({
   item,
@@ -19,6 +20,8 @@ export default function CartItemCard({
   saveForLaterLabel = "Move to Wishlist",
   removeLabel = "Remove Item",
   showCheckbox,
+  isLastItem = false,
+  fullWidth = false,
 }) {
   const productPath = item?.productId ? `/products/${item.productId}` : "";
   const price = Number(item?.price || 0);
@@ -39,10 +42,18 @@ export default function CartItemCard({
   const atMaxQty = maxQty !== null && quantity >= maxQty;
 
   return (
-    <article className="relative w-full p-3 min-[375px]:p-4 sm:p-5 lg:p-6 xl:min-h-[433px] xl:max-w-[1161px] xl:p-[25px]">
-      <div className="grid gap-5 sm:gap-6 lg:grid-cols-[minmax(220px,320px)_1fr] xl:grid-cols-[minmax(220px,399px)_1fr] xl:gap-9 ">
+    <article
+      className={`relative w-full p-3 min-[375px]:p-4 sm:p-5 lg:p-6 xl:min-h-[433px] xl:p-[25px] ${
+        fullWidth ? "xl:max-w-none" : "xl:max-w-[1161px]"
+      }`}
+    >
+      <div
+        className={`grid gap-5 sm:gap-6  lg:grid-cols-[minmax(220px,320px)_1fr] xl:grid-cols-[minmax(220px,399px)_1fr] xl:gap-9 pb-7 ${
+          !isLastItem ? " border-b border-[#CE9F2D4D]" : ""
+        }`}
+      >
         {item?.image && (
-          <div className=" relative mx-auto flex aspect-[399/383] w-full max-w-[399px] items-center justify-center overflow-hidden rounded-[12px] border border-[#F0E6D2] bg-white lg:h-auto lg:max-w-[320px] xl:h-[383px] xl:w-[399px] xl:max-w-[399px]">
+          <div className=" relative  mx-auto flex aspect-[399/383] w-full max-w-[399px] items-center justify-center overflow-hidden rounded-[12px]  border border-[#F0E6D2] bg-white lg:h-auto lg:max-w-[320px] xl:h-[383px] xl:w-[399px] xl:max-w-[399px]">
             {showCheckbox && (
               <label className=" absolute left-3 top-3 z-10 flex items-center justify-center sm:left-4 sm:top-4 xl:left-5 xl:top-5">
                 <input
@@ -91,25 +102,21 @@ export default function CartItemCard({
           {productPath ? (
             <Link
               to={productPath}
-              className="line-clamp-2 block text-lg font-semibold leading-snug text-[#2d2d2d] transition hover:text-[#1B1D60] min-[375px]:text-xl sm:text-[26px]"
+              className="line-clamp-2 block text-lg font-bold leading-snug text-[#2d2d2d] transition hover:text-[#1B1D60] min-[375px]:text-xl sm:text-[26px]"
             >
               {item?.title}
             </Link>
           ) : (
-            <h3 className="line-clamp-2 text-lg font-bold leading-snug text-[#2d2d2d] min-[375px]:text-xl sm:text-[26px]">
+            <h3 className="line-clamp-2  text-lg font-bold leading-snug text-[#2d2d2d] min-[375px]:text-xl sm:text-[26px]">
               {item?.title}
             </h3>
           )}
 
-          {Number.isFinite(ratingValue) && (
-            <div className="mt-3 flex flex-wrap items-center gap-1.5 text-sm text-[#2d2d2d] min-[375px]:text-base sm:gap-2 sm:text-[20px]">
-              <span>{ratingValue.toFixed(1)}</span>
-              <span className="tracking-wide text-[#FF7A1A]">★★★★★</span>
-              {reviewCount != null && <span>({reviewCount} reviews)</span>}
-            </div>
-          )}
+          <div className="my-4">
+            <StarRating rating={ratingValue} count={reviewCount} />
+          </div>
 
-          <div className="mt-3 flex flex-wrap gap-1.5 sm:mt-4 sm:gap-2">
+          <div className=" flex flex-wrap  gap-1.5  sm:gap-2">
             {item?.condition && (
               <span className="rounded-full bg-[#F2F1F8] px-3 py-1 text-xs font-semibold text-[#1B1D60]">
                 {item.condition}
@@ -140,7 +147,7 @@ export default function CartItemCard({
               ))}
           </div>
 
-          <div className="mt-6 ">
+          <div className="">
             <ProductStockStatus
               inStock={stock}
               selectedVariant={selectedVariant}
@@ -152,6 +159,9 @@ export default function CartItemCard({
               mrp={oldPrice}
               currency={item?.currency ?? item?._raw?.currency}
               discount={discountPct}
+              priceClassName="text-[20px] lg:text-[24px] font-extrabold text-[#001F3F]"
+              mrpClassName="text-[20px] lg:text-[24px] font-semibold text-[#949494]"
+              discountClassName=" text-xs lg:text-base font-semibold"
             />
 
             {atMaxQty && !isOutOfStock && (
@@ -190,7 +200,7 @@ export default function CartItemCard({
               <button
                 type="button"
                 onClick={() => onSaveForLater?.(item?.id)}
-                className="inline-flex items-center gap-2 font-medium rounded-lg bg-[#CE9F2D] text-white px-20 py-2.5 transition hover:bg-[#b8891f] active:scale-95"
+                className="inline-flex items-center gap-2 font-medium rounded-lg bg-[#CE9F2D] text-white px-14 lg:px-20  py-2 lg:py-3 transition hover:bg-[#b8891f] active:scale-95"
               >
                 <FaShoppingCart />
                 {saveForLaterLabel}

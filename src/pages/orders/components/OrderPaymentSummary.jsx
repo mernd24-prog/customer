@@ -10,28 +10,28 @@ function SummaryRow({
   valueClassName = "",
 }) {
   return (
-<div
-  className={`flex w-full items-center justify-between gap-3 py-3 ${className}`}
->
-  <span
-    className={`flex-1 text-[14px] font-semibold leading-[20px] text-[#2E2E2E]
+    <div
+      className={`flex w-full items-center justify-between gap-3 py-3 ${className}`}
+    >
+      <span
+        className={`flex-1 text-[14px] font-semibold leading-[20px] text-[#2E2E2E]
       sm:text-[16px] sm:leading-[24px]
       md:text-[18px] md:leading-[28px]
       ${labelClassName}`}
-  >
-    {label}
-  </span>
+      >
+        {label}
+      </span>
 
-  <span
-    className={`shrink-0 text-right text-[14px] font-bold leading-[20px]
+      <span
+        className={`shrink-0 text-right text-[14px] font-bold leading-[20px]
       sm:text-[16px] sm:leading-[24px]
       md:text-[18px] md:leading-[28px]
       ${savings ? "text-[#008425]" : "text-[#1B1D60]"}
       ${valueClassName}`}
-  >
-    {value}
-  </span>
-</div>
+      >
+        {value}
+      </span>
+    </div>
   );
 }
 
@@ -158,7 +158,7 @@ function OrderPaymentSummary({
     >
       {variant === "checkout" && (
         <>
-          <p className="mb-2 text-[18px] font-bold leading-[28px] text-ink">
+          <p className="mb-2  text-[18px] font-bold leading-[28px] text-ink">
             {String(items.length).padStart(2, "0")} Item(s)
           </p>
 
@@ -166,13 +166,13 @@ function OrderPaymentSummary({
           {items.map((item) => (
             <div
               key={item._lineKey}
-              className="flex h-[58px] border-t border-[#04258626] pt-2 w-full items-center justify-between "
+              className="flex h-[58px] w-full min-w-0 items-center justify-between gap-2 border-t border-[#04258626] pt-2"
             >
-              <span className="truncate text-[18px] font-semibold leading-[28px] text-[#2E2E2E]">
+              <span className="min-w-0 flex-1 truncate text-sm font-semibold leading-5 text-[#2E2E2E] sm:text-[18px] sm:leading-[28px]">
                 {item.quantity} x {item._safeTitle}
               </span>
 
-              <span className="shrink-0 text-[18px] font-bold leading-[28px] text-[#1B1D60]">
+              <span className="shrink-0 text-sm font-bold leading-5 text-[#1B1D60] sm:text-[18px] sm:leading-[28px]">
                 {formatMoney(item._lineTotal, currency)}
               </span>
             </div>
@@ -185,8 +185,9 @@ function OrderPaymentSummary({
       {variant === "cart" && asNumber?.(mrpSubtotal) > 0 && (
         <div>
           <SummaryRow
-            label={`MRP (${itemCount || 0} ${itemCount === 1 ? "item" : "items"
-              })`}
+            label={`MRP (${itemCount || 0} ${
+              itemCount === 1 ? "item" : "items"
+            })`}
             value={formatMoney(mrpSubtotal, currency)}
           />
         </div>
@@ -232,7 +233,10 @@ function OrderPaymentSummary({
 
       {variant === "checkout" && asNumber?.(subtotal) >= 0 && (
         <div className="border-t border-[#04258626] pt-2">
-          <SummaryRow label="Item Total" value={formatMoney(subtotal, currency)} />
+          <SummaryRow
+            label="Item Total"
+            value={formatMoney(subtotal, currency)}
+          />
         </div>
       )}
 
@@ -318,13 +322,11 @@ function OrderPaymentSummary({
                   type="radio"
                   value={option.provider}
                   checked={selectedPaymentProvider === option.provider}
-                  onChange={(e) =>
-                    onPaymentProviderChange?.(e.target.value)
-                  }
+                  onChange={(e) => onPaymentProviderChange?.(e.target.value)}
                   className="h-[18px] w-[18px] accent-[#3E4093]"
                 />
 
-                <span className="text-[18px] font-medium leading-[28px] text-[#2E2E2E]">
+                <span className="text-sm md:text-[18px] font-medium leading-[28px] text-[#2E2E2E]">
                   {option.label}
                 </span>
               </label>
@@ -382,19 +384,18 @@ function OrderPaymentSummary({
       )}
       {variant === "checkout" && buttonText && (
         <>
-         <button
-  type="submit"
-  disabled={loading}
-  className="mt-6 h-[54px] w-full rounded-[10px] bg-[#CE9F2D] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:bg-[#C9961F]"
->
-  {buttonText}
-</button>
-        
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-6 h-[54px] w-full rounded-[10px] bg-[#CE9F2D] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:bg-[#C9961F]"
+          >
+            {buttonText}
+          </button>
 
           {selectedLabel && (
-           <p className="mt-3 text-center text-[16px] font-medium leading-[24px] text-[#2E2E2E] sm:text-[18px] sm:leading-[28px]">
-  Selected Method: {selectedLabel}
-</p>
+            <p className="mt-3 text-center text-[16px] font-medium leading-[24px] text-[#2E2E2E] sm:text-[18px] sm:leading-[28px]">
+              Selected Method: {selectedLabel}
+            </p>
           )}
         </>
       )}

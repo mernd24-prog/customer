@@ -5,7 +5,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormField from "../../components/ui/FormField";
 import Button from "../../components/ui/Button";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { updateMe, uploadProfileImage } from "../../features/user/userSlice";
+import {
+  fetchMe,
+  updateMe,
+  uploadProfileImage,
+} from "../../features/user/userSlice";
 import { profileSchema } from "../../validations/validationSchemas";
 
 const getUploadedFileUrl = (uploadResult) => {
@@ -84,7 +88,13 @@ export default function ProfileTab({ user, avatarFile }) {
       profile.avatarUrl = avatarUrl;
     }
 
-    return run(dispatch, updateMe({ profile }), "Profile updated");
+    const updatedProfile = await run(
+      dispatch,
+      updateMe({ profile }),
+      "Profile updated",
+    );
+    await dispatch(fetchMe()).unwrap();
+    return updatedProfile;
   };
 
   const readonlyFieldClass = "grid gap-1.5";

@@ -101,11 +101,11 @@ function AccountProfileCard({
           </span>
 
           <div className="mt-4">
-            <span className="flex break-all items-center gap-2 text-sm font-medium text-[#2E2E2E] sm:text-[18px] 2xl:text-[20px]">
+            <span className="flex  gap-2 break-all text-sm font-medium text-[#2E2E2E] sm:justify-start sm:text-[18px] 2xl:text-[20px]">
               <CgMail /> {user?.email || "—"}
             </span>
 
-            <span className="flex break-all items-center gap-2 py-2 text-sm font-medium text-[#2E2E2E] sm:text-[18px] 2xl:text-[20px]">
+            <span className="flex gap-2 break-all py-2 text-sm font-medium text-[#2E2E2E] sm:justify-start sm:text-[18px] 2xl:text-[20px]">
               <MdOutlineLocalPhone /> {user?.phone || ""}
             </span>
           </div>
@@ -113,7 +113,7 @@ function AccountProfileCard({
 
         <Link
           to="/account/profile"
-          className="col-span-2 ml-auto inline-flex shrink-0 gap-2 rounded-full border border-[#343B91] bg-[#F3F1F0] px-3 py-2 text-xs font-semibold text-[#1B1D60] hover:!bg-[#F3F1F0] hover:!text-[#1B1D60] sm:col-auto sm:mb-auto sm:ml-auto sm:px-4 sm:text-sm 2xl:text-base"
+          className="col-span-2 inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-[#343B91] bg-[#F3F1F0] px-3 py-2 text-xs font-semibold text-[#1B1D60] hover:!bg-[#F3F1F0] hover:!text-[#1B1D60] sm:col-auto sm:mb-auto sm:ml-auto sm:px-4 sm:text-sm 2xl:text-base"
         >
           <Pencil className="size-3 my-auto" />
           Edit Profile
@@ -136,15 +136,15 @@ function AccountMenuItem({ item, variant = "desktop", onClick }) {
       onClick={onClick}
       className={
         isMobile
-          ? "flex w-full items-start gap-3 border-b border-[#04258626] p-4 text-[#2E2E2E] hover:!bg-transparent hover:!text-[#2E2E2E] last:border-b-0"
+          ? "flex w-full items-start gap-3 border-b border-[#04258626] lg:p-4 p-2 text-[#2E2E2E] hover:!bg-transparent hover:!text-[#2E2E2E] last:border-b-0"
           : "flex w-full items-center gap-3 border-b border-[#04258626] px-3 py-3 text-[#2E2E2E] hover:!bg-transparent hover:!text-[#2E2E2E] last:border-b-0 sm:gap-4 sm:px-4 sm:py-4"
       }
     >
       <span
         className={
           isMobile
-            ? "flex size-11 shrink-0 items-center justify-center rounded-full bg-[#FFC82E]"
-            : "flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FFC82E] text-[#1B1D60] sm:size-[60px]"
+            ? "flex lg:size-12 size-9 shrink-0 items-center justify-center rounded-full bg-[#FFC82E]"
+            : "flex lg:size-12 size-9 shrink-0 items-center justify-center rounded-full bg-[#FFC82E] text-[#1B1D60] xl:size-[60px]"
         }
       >
         <img
@@ -365,7 +365,7 @@ export default function AccountPage({ tab = "profile" }) {
         />
 
         <div className="min-w-0">
-          <div className="min-h-full w-full rounded-[14px] border border-gold bg-[#F8F9FF] p-4 shadow-sm sm:p-6 lg:p-7">
+          <div className="min-h-fit w-full rounded-[14px] border border-gold bg-[#F8F9FF] p-4 shadow-sm sm:p-6 lg:p-7">
             <ApiState
               loading={userState.loading && !user}
               error={userState.error}

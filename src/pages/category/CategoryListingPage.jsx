@@ -160,7 +160,7 @@ function getRootCategories(list = []) {
 
 function CategoryTile({ category }) {
   const count = getCategoryCount(category);
-  const imageSrc = category.imageUrl || category.displayImage;
+  const imageSrc = category.iconUrl || category.displayImage;
 
   return (
     <Link

@@ -78,7 +78,7 @@ export default function BrandProductPage({
         </div>
       </div>
 
-      <div className="w-container py-6 sm:py-8">
+      <div className=" py-6 sm:py-8">
         <CollectionToolbar
           countText={`Showing ${Number(shown || 0).toLocaleString()} of ${Number(total || 0).toLocaleString()} products`}
           sortValue={sortValue}

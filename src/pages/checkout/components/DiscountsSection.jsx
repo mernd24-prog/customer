@@ -3,14 +3,10 @@ import FormField from "../../../components/ui/FormField";
 import { formatMoney } from "../../../utils/ecommerce";
 import OrderDetailSectionCard from "../../orders/components/OrderDetailSectionCard";
 
-export default function DiscountsSection({
-  register,
-  errors,
-  walletBalance,
-}) {
+export default function DiscountsSection({ register, errors, walletBalance }) {
   return (
     <OrderDetailSectionCard title="Discounts">
-    <div className="flex flex-col gap-[36px] rounded-[20px] px-[25px] py-[30px] lg:flex-row">
+      <div className="flex flex-col gap-4 lg:gap-[36px] rounded-[20px] px-[15px] py-[20px] lg:px-[25px] lg:py-[30px] lg:flex-row">
         <div className="flex-1">
           <FormField
             id="couponCode"
