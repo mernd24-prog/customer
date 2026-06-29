@@ -1,7 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { ChevronLeft, Star, ThumbsUp, UserCircle } from "lucide-react";
-import { reviews as fallbackReviews } from "../../data/review";
+import {
+  fetchProductReviews,
+  fetchMyProductReview,
+  markReviewHelpful,
+} from "../../features/review/reviewSlice";
 import {
   getImageFallbackSrc,
   getProductImage,
@@ -169,7 +174,20 @@ function ReviewsHeader({ total, sort, onSort }) {
   );
 }
 
-function ReviewCard({ review, currentUserId, onHelpful }) {
+function getUserDisplayName(user = {}) {
+  const first = user.profile?.firstName || user.firstName || "";
+  const last = user.profile?.lastName || user.lastName || "";
+  return (
+    [first, last].filter(Boolean).join(" ").trim() ||
+    user.fullName ||
+    user.displayName ||
+    user.name ||
+    user.email ||
+    ""
+  );
+}
+
+function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
   const isOwn =
     currentUserId && String(review.buyerId) === String(currentUserId);
 
@@ -177,7 +195,11 @@ function ReviewCard({ review, currentUserId, onHelpful }) {
     String(currentUserId || ""),
   );
 
-  const name = review.buyerName || review.name || "Verified Buyer";
+  const name =
+    review.buyerName ||
+    review.name ||
+    (isOwn ? getUserDisplayName(currentUser) : "") ||
+    "Customer";
   const text = review.reviewText || review.text;
   const helpfulVotes = review.helpfulVotes ?? review.helpful ?? 0;
   const reviewId = review._id || review.id;
@@ -277,6 +299,7 @@ function ReviewList({
   visibleReviews,
   ratingFilter,
   userId,
+  currentUser,
   onHelpful,
 }) {
   if (loading && visibleReviews.length === 0) {
@@ -297,6 +320,7 @@ function ReviewList({
         <ReviewCard
           key={review._id || review.id}
           review={review}
+          currentUser={currentUser}
           currentUserId={userId}
           onHelpful={onHelpful}
         />
@@ -365,36 +389,38 @@ function getProductDisplay(product) {
 export default function ReviewDetailsPage() {
   const { productId } = useParams();
   const { state } = useLocation();
+  const dispatch = useDispatch();
 
   const product = getProductDisplay(state?.product);
+  const currentUser = useSelector((store) => store.auth.current);
+  const userId = currentUser?.id || currentUser?._id || currentUser?.userId || null;
+  const reviewState = useSelector((store) => store.review);
+  const bucket = reviewState.reviewsByProduct[productId] || {};
+  const stats = reviewState.statsByProduct[productId] || null;
+  const myReview = reviewState.myReviewByProduct[productId];
+  const allReviews = useMemo(() => {
+    const items = bucket.items || [];
+    if (myReview?.status !== "published") return items;
+    return [
+      myReview,
+      ...items.filter(
+        (review) =>
+          String(review._id || review.id) !== String(myReview._id || myReview.id),
+      ),
+    ];
+  }, [bucket.items, myReview]);
 
   const [ratingFilter, setRatingFilter] = useState(null);
   const [sort, setSort] = useState("newest");
   const [page, setPage] = useState(1);
 
-  const loading = false;
-  const error = "";
-  const userId = null;
-
-  const allReviews = useMemo(
-    () => [
-      ...fallbackReviews,
-      ...fallbackReviews.map((review, index) => ({
-        ...review,
-        id: `copy-a-${index}`,
-        name: ["Ankita", "Mythra Customer"][index % 2],
-        date: ["13 Feb 2026", "2 June 2026", "20 May 2026", "15 May 2026"][
-          index % 4
-        ],
-        helpful: index,
-      })),
-    ],
-    [],
-  );
+  const loading = Boolean(bucket.loading);
+  const error = bucket.error || "";
 
   const ratingDist = useMemo(
-    () =>
-      allReviews.reduce((acc, review) => {
+    () => {
+      if (stats?.distribution) return stats.distribution;
+      return allReviews.reduce((acc, review) => {
         const rating = Math.round(Number(review.rating || 0));
 
         if (rating >= 1 && rating <= 5) {
@@ -402,58 +428,64 @@ export default function ReviewDetailsPage() {
         }
 
         return acc;
-      }, {}),
-    [allReviews],
+      }, {});
+    },
+    [allReviews, stats],
   );
 
-  const reviewCount = allReviews.length;
+  const reviewCount = Number(stats?.count || bucket.total || allReviews.length || 0);
 
   const avgRating =
-    reviewCount > 0
+    stats?.avgRating ??
+    (reviewCount > 0
       ? allReviews.reduce(
           (sum, review) => sum + Number(review.rating || 0),
           0,
-        ) / reviewCount
-      : 0;
+        ) / Math.max(allReviews.length, 1)
+      : 0);
 
-  const filteredReviews = useMemo(() => {
-    const nextReviews = ratingFilter
-      ? allReviews.filter(
-          (review) => Math.round(Number(review.rating || 0)) === ratingFilter,
-        )
-      : [...allReviews];
+  useEffect(() => {
+    if (!productId) return;
+    dispatch(
+      fetchProductReviews({
+        productId,
+        page,
+        limit: LIMIT,
+        sort,
+        rating: ratingFilter || undefined,
+      }),
+    );
+  }, [dispatch, productId, page, sort, ratingFilter]);
 
-    nextReviews.sort((a, b) => {
-      if (sort === "helpful") {
-        return (
-          (b.helpfulVotes ?? b.helpful ?? 0) -
-          (a.helpfulVotes ?? a.helpful ?? 0)
-        );
-      }
+  useEffect(() => {
+    if (!productId || !userId) return;
+    dispatch(fetchMyProductReview({ productId }));
+  }, [dispatch, productId, userId]);
 
-      if (sort === "highest") {
-        return Number(b.rating || 0) - Number(a.rating || 0);
-      }
+  const filteredReviews = useMemo(
+    () =>
+      allReviews.reduce((acc, review) => {
+        const rating = Math.round(Number(review.rating || 0));
 
-      if (sort === "lowest") {
-        return Number(a.rating || 0) - Number(b.rating || 0);
-      }
+        if (!ratingFilter || rating === ratingFilter) {
+          acc.push(review);
+        }
 
-      return (
-        new Date(b.createdAt || b.date || 0) -
-        new Date(a.createdAt || a.date || 0)
-      );
-    });
-
-    return nextReviews;
-  }, [allReviews, ratingFilter, sort]);
-
-  const total = filteredReviews.length;
-  const totalPages = Math.max(1, Math.ceil(total / LIMIT));
-  const visibleReviews = filteredReviews.slice(
-    (page - 1) * LIMIT,
-    page * LIMIT,
+        return acc;
+      }, []),
+    [allReviews, ratingFilter],
   );
+
+  const total = Number(bucket.total || filteredReviews.length || 0);
+  const totalPages = Math.max(1, Math.ceil(total / LIMIT));
+  const visibleReviews = filteredReviews;
+  const ownReviewId = myReview?.status === "published" ? String(myReview._id || myReview.id) : "";
+  const pinnedVisibleReviews = ownReviewId
+    ? [
+        ...visibleReviews.filter((review) => String(review._id || review.id) === ownReviewId),
+        ...visibleReviews.filter((review) => String(review._id || review.id) !== ownReviewId),
+      ]
+    : visibleReviews;
   const handleFilter = (star) => {
     setRatingFilter((current) => (current === star ? null : star));
     setPage(1);
@@ -462,7 +494,10 @@ export default function ReviewDetailsPage() {
     setSort(value);
     setPage(1);
   };
-  const handleHelpful = () => {};
+  const handleHelpful = (reviewId) => {
+    if (!userId || !reviewId) return;
+    dispatch(markReviewHelpful({ productId, reviewId }));
+  };
 
   return (
     <main className="bg-white">
@@ -484,9 +519,10 @@ export default function ReviewDetailsPage() {
             <ReviewList
               loading={loading}
               error={error}
-              visibleReviews={visibleReviews}
+              visibleReviews={pinnedVisibleReviews}
               ratingFilter={ratingFilter}
               userId={userId}
+              currentUser={currentUser}
               onHelpful={handleHelpful}
             />
 

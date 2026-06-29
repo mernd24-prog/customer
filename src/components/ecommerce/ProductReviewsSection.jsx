@@ -12,10 +12,7 @@ import {
   resetSubmitState,
 } from "../../features/review/reviewSlice";
 import { fetchMyOrders } from "../../features/order/orderSlice";
-import {
-  ratingBreakdown as fallbackRatingBreakdown,
-  reviews as fallbackReviews,
-} from "../../data/review";
+import { ratingBreakdown as fallbackRatingBreakdown } from "../../data/review";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -54,7 +51,20 @@ function RatingPill({ rating }) {
   );
 }
 
-function ProductReviewCard({ review }) {
+function getUserDisplayName(user = {}) {
+  const first = user.profile?.firstName || user.firstName || "";
+  const last = user.profile?.lastName || user.lastName || "";
+  return (
+    [first, last].filter(Boolean).join(" ").trim() ||
+    user.fullName ||
+    user.displayName ||
+    user.name ||
+    user.email ||
+    ""
+  );
+}
+
+function ProductReviewCard({ review, currentUser }) {
   const dateStr = review.createdAt
     ? new Date(review.createdAt).toLocaleDateString("en-GB", {
         day: "numeric",
@@ -64,7 +74,13 @@ function ProductReviewCard({ review }) {
     : "";
 
   const rating = Number(review.rating || 0).toFixed(1);
-  const name = review.buyerName || review.name || "Verified Buyer";
+  const currentUserId = currentUser?.id || currentUser?._id || currentUser?.userId;
+  const isOwn = currentUserId && String(review.buyerId) === String(currentUserId);
+  const name =
+    review.buyerName ||
+    review.name ||
+    (isOwn ? getUserDisplayName(currentUser) : "") ||
+    "Customer";
   const text = review.reviewText || review.text;
 
   return (
@@ -319,7 +335,7 @@ export default function ProductReviewsSection({ productId, product }) {
   const allOrders = orderState.list || [];
   const deliveredOrders = allOrders.filter(
     (o) =>
-      ["delivered", "completed"].includes(o.status) &&
+      ["delivered", "fulfilled", "completed"].includes(o.status) &&
       (o.items || []).some(
         (item) =>
           String(item.productId || item.product_id) === String(productId),
@@ -384,24 +400,40 @@ export default function ProductReviewsSection({ productId, product }) {
 
   const totalPages = Math.ceil(total / LIMIT);
   const canWriteReview = isLoggedIn && deliveredOrders.length > 0 && !myReview;
-  const filteredFallbackReviews = useMemo(
-    () =>
-      ratingFilter
-        ? fallbackReviews.filter(
-            (review) => Math.round(getReviewRating(review)) === ratingFilter,
-          )
-        : fallbackReviews,
-    [ratingFilter],
-  );
   const hasApiReviews = items.length > 0;
-  const displayTotal = total || filteredFallbackReviews.length;
+  const displayTotal = total || items.length;
   const displayReviewCount = stats?.count || displayTotal;
-  const displayAvgRating = stats?.avgRating || 4;
+  const displayAvgRating =
+    stats?.avgRating ||
+    product?.rating ||
+    product?.averageRating ||
+    product?.reviewsAverage ||
+    0;
   const displayReviews = useMemo(() => {
     if (bucket.loading && items.length === 0) return [];
-    const sourceReviews = hasApiReviews ? items : filteredFallbackReviews;
-    return sortReviewsByOption(sourceReviews, sort);
-  }, [bucket.loading, filteredFallbackReviews, hasApiReviews, items, sort]);
+    const ownPublishedReview = myReview?.status === "published" ? myReview : null;
+    const sourceReviews = ownPublishedReview
+      ? [
+          ownPublishedReview,
+          ...items.filter(
+            (review) =>
+              String(review._id || review.id) !==
+              String(ownPublishedReview._id || ownPublishedReview.id),
+          ),
+        ]
+      : items;
+    if (!sourceReviews.length || (!hasApiReviews && !ownPublishedReview)) return [];
+    const sorted = sortReviewsByOption(sourceReviews, sort);
+    if (!ownPublishedReview) return sorted;
+    return [
+      ownPublishedReview,
+      ...sorted.filter(
+        (review) =>
+          String(review._id || review.id) !==
+          String(ownPublishedReview._id || ownPublishedReview.id),
+      ),
+    ];
+  }, [bucket.loading, hasApiReviews, items, myReview, sort]);
   const displayRatingBreakdown = getRatingBreakdown(stats);
   const selectedSortLabel =
     SORT_OPTIONS.find((option) => option.value === sort)?.label ||
@@ -569,12 +601,24 @@ export default function ProductReviewsSection({ productId, product }) {
                   `${review.name}-${review.date}-${index}`
                 }
                 review={review}
+                currentUser={currentUser}
                 currentUserId={userId}
                 onHelpful={handleHelpful}
                 onDelete={handleDelete}
               />
             ))}
           </div>
+
+          {!bucket.loading && displayReviews.length === 0 && (
+            <div className="mt-6 rounded-[8px] border border-[#CE9F2D66] bg-white px-5 py-8 text-center">
+              <p className="text-base font-bold text-[#1B1D60]">
+                No reviews yet
+              </p>
+              <p className="mt-1 text-sm font-medium text-[#5F6078]">
+                Published customer reviews will appear here.
+              </p>
+            </div>
+          )}
 
           {displayTotal > 0 && (
             <Link

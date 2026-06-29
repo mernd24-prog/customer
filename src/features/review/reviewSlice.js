@@ -45,8 +45,13 @@ const reviewSlice = createSlice({
         if (!pid) return;
         const data = action.payload?.data;
         const items = data?.items || data?.list || (Array.isArray(data) ? data : []);
-        const total = data?.pagination?.total ?? data?.total ?? items.length;
-        const stats = data?.stats || null;
+        const total =
+          action.payload?.meta?.pagination?.total ??
+          action.payload?.meta?.total ??
+          data?.pagination?.total ??
+          data?.total ??
+          items.length;
+        const stats = action.payload?.meta?.stats || data?.stats || null;
         state.reviewsByProduct[pid] = { items, total, loading: false, error: null };
         if (stats) state.statsByProduct[pid] = stats;
       })

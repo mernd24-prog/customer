@@ -654,6 +654,8 @@ function OrderDetail({ orderId, track }) {
               <OrderDetailLayout>
                 <OrderItemsSection
                   items={items}
+                  orderId={orderId}
+                  orderStatus={status}
                   currency={currency}
                   getItemImage={getItemImage}
                   getProductTitle={getProductTitle}

@@ -1411,6 +1411,7 @@ export const reviewThunks = {
   }),
   fetchMyProductReview: makeThunk("review/fetchMyProductReview", {
     url: ({ productId }) => endpoints.products.myReview(productId),
+    params: ({ productId: _productId, ...rest }) => rest,
   }),
   markReviewHelpful: makeThunk("review/markReviewHelpful", {
     method: "patch",
