@@ -36,7 +36,7 @@ import { useToastThunk } from "../hooks/useToastThunk";
 import { addRecentlyViewed } from "../utils/recentlyViewed";
 import { formatMoney, getImageUrlFromValue } from "../utils/ecommerce";
 // import { formatAddress, formatPhone } from "../utils/formatters";
-import notificationIcons from "../data/notificationIcons";
+import notificationData from "../data/notificationData";
 
 import { useProductActions } from "../hooks/useProductActions";
 import {
@@ -1590,32 +1590,23 @@ export function PaymentResultPage({ failed = false }) {
 
             <OrderDetailLayout>
               <div className="grid gap-3 min-[375px]:gap-4 min-[425px]:gap-5 md:gap-6 xl:gap-12 ">
-                <section className="flex w-full flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D]/40 bg-[#fffcf6] ">
-                  <div className="flex flex-col  gap-4  px-6 py-5 sm:px-7 md:px-8 xl:mt-5  min-[375px]:gap-5 min-[375px]:px-5 min-[425px]:gap-6 sm:py-6 xl:px-[57px]">
-                    <div className="flex  flex-col items-center !gap-10  text-center !sm:gap-[1.25rem] md:flex-row md:items-center md:text-left">
-                      <div>
+                <section className="flex w-full flex-col overflow-hidden rounded-[16px] border border-[#CE9F2D]/40 bg-[#fffcf6] sm:rounded-[18px] xl:rounded-[20px]">
+                  <div className="flex flex-col gap-4 px-4 py-5 min-[375px]:gap-5 min-[375px]:px-5 min-[425px]:gap-6 sm:px-7 sm:py-6 md:px-8 xl:mt-5 xl:px-[57px]">
+                    <div className="flex flex-col items-center gap-5 text-center min-[375px]:gap-6 sm:gap-7 md:flex-row md:items-center md:text-left xl:gap-10">
+                      <div className="shrink-0">
                         <img
                           src="/image/png/Group.png"
                           alt="Order placed successfully"
-                          className="
-    h-32 w-32
-    min-[375px]:h-28 min-[375px]:w-28
-    min-[425px]:h-32 min-[425px]:w-32
-    sm:h-20 sm:w-20
-    md:h-24 md:w-24
-    lg:h-28 lg:w-28
-    xl:h-[160px] xl:w-[157px]
-    object-contain
-  "
+                          className="h-20 w-20 object-contain min-[375px]:h-24 min-[375px]:w-24 min-[425px]:h-24 min-[425px]:w-24 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-28 lg:w-28 xl:h-[160px] xl:w-[157px]"
                         />
                       </div>
 
-                      <div className="min-w-0  flex-1">
-                        <h1 className="break-words text-[24px] font-bold leading-[1.3] xl:leading-[2.1] text-[#3E4093] min-[375px]:text-[28px] min-[425px]:text-[24px] sm:text-[40px] xl:text-[36px]">
+                      <div className="min-w-0 flex-1">
+                        <h1 className="break-words text-[18px] font-bold leading-[1.25] text-[#3E4093] min-[375px]:text-[20px] min-[425px]:text-[22px] sm:text-[24px] sm:leading-[1.25] md:text-[36px] xl:text-[36px] xl:leading-[2.1]">
                           Order Placed Successfully !
                         </h1>
 
-                        <p className="mt-2 max-w-3xl text-[13px] font-medium leading-6 text-[#2E2E2E] min-[375px]:text-sm min-[425px]:text-[15px] sm:text-[17px] sm:leading-7 xl:text-[18px] xl:leading-[30px]">
+                        <p className="mt-2 max-w-3xl text-[13px] font-medium leading-[21px] text-[#2E2E2E] min-[375px]:text-sm min-[375px]:leading-6 min-[425px]:text-[15px] sm:text-[15px] sm:leading-7 xl:text-[18px] xl:leading-[30px]">
                           Thank you for shopping with Sam Global.
                           <br className="hidden sm:block" />
                           Your order has been received and is being prepared for
@@ -1625,7 +1616,7 @@ export function PaymentResultPage({ failed = false }) {
                     </div>
                   </div>
 
-                  <div className="mt-auto flex flex-col gap-2 bg-[#BBBBCB] px-4 py-3 text-[13px] font-semibold text-[#1B1D60] min-[375px]:px-5 min-[375px]:text-sm min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-4 sm:text-[17px] md:px-8 xl:text-[20px]">
+                  <div className="mt-auto flex flex-col gap-2 bg-[#BBBBCB] px-4 py-3 text-[13px] font-semibold text-[#1B1D60] min-[375px]:px-5 min-[375px]:text-sm min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-4 sm:text-[12px] md:px-8 xl:text-[20px]">
                     <span className="break-words">
                       Order ID : #
                       {formatOrderId(getOrderNumber(order) || orderId)}
@@ -1697,9 +1688,9 @@ export function PaymentResultPage({ failed = false }) {
                   title="Order Summary"
                   className="w-full rounded-[20px]"
                   headerClassName="min-h-[64px] px-4 py-4 min-[375px]:px-5 sm:min-h-[72px] sm:px-6 xl:px-[20px] xl:py-[25px]"
-                  titleClassName="text-[18px] leading-tight min-[375px]:text-[20px] sm:text-[22px] xl:text-[24px]"
+                  titleClassName="text-[10px] leading-tight min-[375px]:text-[18px] sm:text-[22px] xl:text-[24px]"
                   borderClassName="border-[#CE9F2D66]"
-                  bodyClassName="grid gap-4 px-4 py-4 min-[375px]:px-5 min-[375px]:py-5 sm:px-6"
+                  bodyClassName="grid gap-2 px-4 py-4  sm:px-6"
                 >
                   <SummaryRow
                     label={`${items.length.toString().padStart(2, "0")} Item(s)`}
@@ -1738,18 +1729,39 @@ export function PaymentResultPage({ failed = false }) {
                     />
                   </div>
 
-                  <div className="mt-3 rounded-[14px] px-3 py-3 min-[375px]:px-4 min-[375px]:py-4">
+                  <div className="mt-3 rounded-[14px]  ">
                     <div className="flex items-start gap-3">
-                      <span className="mt-0.5 flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-full border border-[#CE9F2D66] bg- text-[#CE9F2D] sm:h-[70px] sm:w-[70px]">
-                        <img src="/public/image/png/Frame1.png" alt="" />
-                      </span>
+                      <img
+                        src="/image/png/Frame1.png"
+                        alt=""
+                        className="h-[50px] w-[50px] object-contain min-[375px]:h-[50px] min-[375px]:w-[50px] min-[425px]:h-[48px] min-[425px]:w-[48px] sm:h-[56px] sm:w-[56px] md:h-[64px] md:w-[64px] lg:h-[70px] lg:w-[70px]"
+                      />
 
                       <div className="min-w-0 flex flex-col gap-2 sm:gap-3">
-                        <p className="text-[14px] font-semibold text-[#2E2E2E] sm:text-[20px]">
+                        <p
+                          className="
+    font-semibold text-[#2E2E2E]
+    text-[14px]
+    min-[375px]:text-[15px]
+    min-[425px]:text-[16px]
+    sm:text-[19px]
+    md:text-[19px]
+    lg:text-[20px]
+  "
+                        >
                           Expected Delivery
                         </p>
 
-                        <p className="break-words text-[20px] font-bold leading-tight text-[#CE9F2D] sm:text-[30px]">
+                        <p
+                          className="break-words font-bold leading-tight text-[#CE9F2D]
+  text-[16px]
+  min-[375px]:text-[18px]
+  min-[425px]:text-[20px]
+  sm:text-[22px]
+  md:text-[24px]
+  lg:text-[26px]
+  xl:text-[30px]"
+                        >
                           {expectedDelivery
                             ? formatOrderDate(expectedDelivery)
                             : "To be confirmed"}
@@ -1777,7 +1789,7 @@ export function PaymentResultPage({ failed = false }) {
                     headerClassName="min-h-[64px] px-4 py-4 min-[375px]:px-5 sm:min-h-[72px] sm:px-6 xl:px-[20px] xl:py-[25px]"
                     titleClassName="text-[18px] leading-tight min-[375px]:text-[20px] sm:text-[22px] xl:text-[24px]"
                     borderClassName="border-[#CE9F2D66]"
-                    bodyClassName="grid gap-4 px-4 py-4 min-[375px]:px-5 min-[375px]:py-5 sm:px-6"
+                    bodyClassName="grid gap-4 px-4 py-4  sm:px-6"
                   >
                     <div className="inline-flex h-[37px] w-[81px] items-center rounded-full bg-[#CE9F2D] px-3 py-1 text-[18px] font-semibold text-white">
                       Home
@@ -2128,7 +2140,7 @@ export function ReturnsPage({ request = false }) {
 }
 
 export function SimpleApiPage({ title, selector, thunk, action }) {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const state = useFetch(thunk, action?.arg, selector);
   const list = itemsFrom(state);
   return (
@@ -2815,13 +2827,79 @@ export function PaymentsPage() {
 
 export function NotificationsPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const notifState = useSelector((s) => s.notification);
   const notifications = Array.isArray(notifState.list) ? notifState.list : [];
+
+  const [activeTab, setActiveTab] = useState("active");
+  const [visibleCount, setVisibleCount] = useState(5);
+
+  const handleNavigate = (path) => {
+    if (!path) return;
+    navigate(path);
+  };
+
+  const tabs = [
+    { id: "active", label: "Active Returns", count: 2 },
+    { id: "refunds", label: "Refunds", count: 1 },
+    { id: "history", label: "Return History", count: 6 },
+  ];
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "Notifications", href: "/notifications" },
   ];
+  const formatNotificationDate = (value) => {
+    if (!value) return "";
+
+    const date = new Date(value);
+    const now = new Date();
+
+    const diffMs = now.getTime() - date.getTime();
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    const time = date.toLocaleTimeString("en-IN", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    // Today
+    if (date.toDateString() === now.toDateString()) {
+      if (diffHours < 1) {
+        return diffMinutes <= 1 ? "Just now" : `${diffMinutes} minutes ago`;
+      }
+
+      if (diffHours < 3) {
+        return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+      }
+
+      return `Today, ${time}`;
+    }
+
+    // Yesterday
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+
+    if (date.toDateString() === yesterday.toDateString()) {
+      return `Yesterday, ${time}`;
+    }
+
+    // Last 7 days
+    if (diffDays < 7) {
+      return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+    }
+
+    // Older dates
+    return date.toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: now.getFullYear() !== date.getFullYear() ? "numeric" : undefined,
+    });
+  };
 
   useEffect(() => {
     dispatch(fetchNotifications());
@@ -2831,7 +2909,7 @@ export function NotificationsPage() {
     <>
       <Seo title="Notifications | Sam Global" />
 
-      <div className="main-container py-6 sm:py-8">
+      <div className="main-container overflow-visible py-6 sm:py-8">
         <Breadcrumbs
           items={breadcrumbItems}
           heading={null}
@@ -2849,36 +2927,44 @@ export function NotificationsPage() {
           Stay updated with your orders, offers and account activity.
         </p>
 
-        {/* Tabs */}
-        <div className="mb-6 h-[58px] w-full overflow-hidden rounded-[12px] border border-[#E7D9B8] bg-white sm:h-[72px] md:h-[90px] xl:h-[115px] xl:rounded-[20px]">
-          <div className="grid h-full grid-cols-3 gap-[4px] sm:gap-[6px] xl:gap-[10px]">
-            {[
-              { label: "Active Returns", count: 2 },
-              { label: "Refunds", count: 1 },
-              { label: "Return History", count: 6 },
-            ].map((tab, index) => {
-              const active = index === 0;
+        <div className="sticky top-0 z-[80] mb-6 bg-white py-2">
+          <div className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white shadow-sm xl:rounded-[20px]">
+            <div className="grid h-[58px] grid-cols-3 sm:h-[72px] md:h-[90px] xl:h-[115px]">
+              {tabs.map((tab) => {
+                const active = activeTab === tab.id;
 
-              return (
-                <button
-                  key={tab.label}
-                  type="button"
-                  className="relative flex h-full items-center justify-center gap-1 px-1 sm:gap-2 md:px-3 xl:gap-[8px]"
-                >
-                  <span className="truncate font-sans text-[11px] font-semibold leading-none text-[#1B1D60] min-[375px]:text-[12px] sm:text-[15px] md:text-[18px] lg:text-[20px] xl:text-[24px]">
-                    {tab.label}
-                  </span>
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className="relative flex h-full items-center justify-center gap-1 px-1 min-[375px]:px-2 sm:gap-2"
+                  >
+                    <span
+                      className={`truncate font-sans font-semibold ${
+                        active ? "text-[#1B1D60]" : "text-[#6B7280]"
+                      } text-[10px] min-[375px]:text-[11px] min-[425px]:text-[12px] sm:text-[16px] md:text-[18px] lg:text-[20px] xl:text-[24px]`}
+                    >
+                      {tab.label}
+                    </span>
 
-                  <span className="flex h-[14px] min-w-[14px] shrink-0 items-center justify-center rounded-full bg-[#F5E8C8] px-[4px] text-[8px] font-semibold leading-none text-[#1B1D60] sm:h-[16px] sm:min-w-[16px] sm:text-[9px] md:h-[18px] md:min-w-[18px] md:text-[10px]">
-                    {tab.count}
-                  </span>
+                    <span
+                      className={`flex items-center justify-center rounded-full text-[8px] font-semibold min-[375px]:text-[9px] lg:h-[25px] lg:w-[40px] ${
+                        active
+                          ? "bg-[#FFEFC8] text-[#1B1D60]"
+                          : "bg-[#EFEFF7] text-[#7A7A9D]"
+                      } h-[16px] min-w-[16px] px-[5px] sm:h-[18px] sm:min-w-[18px]`}
+                    >
+                      {tab.count}
+                    </span>
 
-                  {active && (
-                    <span className="absolute bottom-0 left-0 h-[2px] w-full bg-[#1B1D60] md:h-[3px]" />
-                  )}
-                </button>
-              );
-            })}
+                    {active && (
+                      <span className="absolute bottom-0 left-0 h-[3px] w-full bg-[#1B1D60]" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -2889,69 +2975,80 @@ export function NotificationsPage() {
           emptyTitle="No notifications"
           emptyText="You're all caught up! Notifications will appear here."
         >
-          <div className="overflow-hidden rounded-[12px] border border-[#E7D9B8] bg-white">
-            {notifications.map((notif, i) => {
+          <div className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white">
+            {notifications.slice(0, visibleCount).map((notif, i) => {
               const isRead = notif.read || notif.isRead;
+
+              const notificationItem =
+                notificationData[notif.payload?.eventName] ||
+                notificationData[notif.subject] ||
+                notificationData.default;
+
+              const orderId = notif.payload?.orderId;
+
+              const actionPath =
+                orderId && notificationItem.actionPath === "/orders"
+                  ? `${notificationItem.actionPath}/${orderId}`
+                  : notificationItem.actionPath;
 
               return (
                 <div
-                  key={notif.id || i}
-                  className="flex gap-3 border-b border-[#E7D9B8] px-3 py-4 last:border-b-0 sm:gap-5 sm:px-6 sm:py-5 lg:px-8"
+                  key={notif._id || notif.id || i}
+                  className="flex min-h-[150px] gap-3 border-b-[1.5px] border-[#CE9F2D]/50 bg-white px-3 py-5 last:border-b-0 min-[375px]:min-h-[170px] min-[375px]:px-4 min-[425px]:min-h-[180px] sm:min-h-[190px] sm:px-8 sm:py-8 lg:min-h-[190px] lg:gap-5 lg:px-8 lg:py-8 xl:min-h-[212px] xl:gap-[24px] xl:px-[48px] xl:py-[41px]"
                 >
-                  {/* Icon */}
-                  <div className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-full bg-[#FFC933] sm:h-[64px] sm:w-[64px] lg:h-[70px] lg:w-[70px]">
+                  <div className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full bg-[#FFC933] min-[375px]:h-[56px] min-[375px]:w-[56px] sm:h-[64px] sm:w-[64px] lg:h-[90px] lg:w-[90px] xl:h-[130px] xl:w-[130px]">
                     <img
-                      src={notificationIcons[i]?.icon}
-                      alt={notif.title}
-                      className="h-[30px] w-[30px] object-contain sm:h-[38px] sm:w-[38px] lg:h-[42px] lg:w-[42px]"
+                      src={notificationItem.icon}
+                      alt={notif.subject || "Notification"}
+                      className="h-[30px] w-[30px] object-contain sm:h-[38px] sm:w-[38px] lg:h-[52px] lg:w-[52px] xl:h-[72.81px] xl:w-[70.62px]"
                     />
                   </div>
 
-                  {/* Middle Content */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                      <h3 className="font-sans text-[13px] font-bold leading-tight text-[#1B1D60] sm:text-[16px] lg:text-[18px]">
+                  <div className="min-w-0 flex-1 py-1 min-[375px]:py-2 lg:py-2 xl:py-3">
+                    <div className="flex flex-wrap items-center !gap-4 sm:gap-3">
+                      <h3 className="font-sans text-[13px] font-bold leading-tight text-[#1B1D60] min-[375px]:text-[14px] sm:text-[16px] lg:text-[20px] xl:text-[24px]">
                         {notif.title || notif.subject || "Notification"}
                       </h3>
 
                       {!isRead && (
-                        <span className="rounded-full bg-[#cacae2] px-2.5 py-0.5 text-[9px] font-medium text-[#1B1D60] sm:px-3 sm:py-1 sm:text-[10px]">
+                        <span className="flex items-center justify-center rounded-[20px] bg-[#cacae2] px-2.5 py-0.5 text-[9px] font-medium text-[#1B1D60] min-[375px]:text-[10px] sm:px-3 sm:py-1 sm:text-[10px] lg:h-[26px] lg:w-[65px] lg:text-[13px] xl:h-[31px] xl:w-[79px] xl:text-[16px]">
                           New
                         </span>
                       )}
                     </div>
 
-                    <p className="mt-2 font-sans text-[11px] font-medium leading-[17px] text-[#2E2E2E] sm:text-[13px] sm:leading-[21px] lg:text-[14px] lg:leading-6">
-                      {notificationIcons[i]?.message ||
+                    <p className="mt-2 break-words font-sans text-[11px] font-medium leading-[17px] text-[#2E2E2E] min-[375px]:text-[12px] min-[375px]:leading-[19px] min-[425px]:text-[13px] min-[425px]:leading-[21px] sm:text-[13px] sm:leading-[21px] md:text-[14px] md:leading-[22px] lg:text-[16px] lg:leading-6 xl:text-[20px] xl:leading-10">
+                      {notif.template ||
                         notif.message ||
                         notif.body ||
+                        notificationItem.message ||
                         ""}
-                      {/* {notif.message || notif.body || ""} */}
                     </p>
 
                     <button
                       type="button"
-                      className="mt-2 font-sans text-[11px] font-semibold text-[#3E4093] hover:underline sm:text-[12px]"
+                      onClick={() => handleNavigate(actionPath)}
+                      className="mt-2 font-sans text-[11px] font-semibold text-[#1B1D60] hover:underline min-[375px]:text-[12px] sm:text-[16px]"
                     >
-                      {notificationIcons[i]?.action || "View Details"}
+                      {notificationItem.action || "View Details"}
                     </button>
                   </div>
 
-                  {/* Right Side */}
-                  <div className="flex w-[72px] shrink-0 flex-col items-end sm:w-[105px]">
-                    <p className="mb-3 whitespace-nowrap font-sans text-[9px] font-medium text-[#2E2E2E] sm:text-[12px] lg:text-[13px]">
-                      {notif.createdAt
-                        ? new Date(notif.createdAt).toLocaleDateString("en-IN")
-                        : ""}
+                  <div className="flex w-[68px] shrink-0 flex-col items-end min-[375px]:w-[72px] sm:w-[105px]">
+                    <p className="mb-3 whitespace-nowrap font-sans text-[8px] font-medium text-[#2E2E2E] min-[375px]:text-[9px] sm:text-[12px] lg:text-[14px] xl:text-[20px]">
+                      {formatNotificationDate(notif.createdAt)}
                     </p>
 
                     <div className="flex items-center gap-2 sm:gap-3">
                       {!isRead && (
-                        <span className="h-[6px] w-[6px] rounded-full bg-[#CE9F2D] sm:h-2 sm:w-2" />
+                        <span className="h-[6px] w-[6px] rounded-full bg-[#CE9F2D] sm:h-2 sm:w-2 lg:h-[10px] lg:w-[10px] xl:h-[15px] xl:w-[15px]" />
                       )}
 
                       <button type="button" className="leading-none">
-                        <MoreVertical size={18} className="text-[#666666]" />
+                        <MoreVertical
+                          size={18}
+                          className="text-[#666666] lg:h-[22px] lg:w-[22px] xl:h-[25px] xl:w-[25px]"
+                        />
                       </button>
                     </div>
                   </div>
@@ -2959,16 +3056,33 @@ export function NotificationsPage() {
               );
             })}
 
-            {/* Load More */}
-            <div className="flex h-[60px] items-center justify-center bg-white sm:h-[76px]">
-              <button
-                type="button"
-                className="flex items-center gap-2 font-sans text-[13px] font-bold text-[#1B1D60] sm:text-[14px]"
-              >
-                Load More
-                <ChevronDown size={16} strokeWidth={3} />
-              </button>
-            </div>
+            {notifications.length > 5 && (
+              <div className="flex h-[60px] items-center justify-center bg-white sm:h-[76px]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (visibleCount >= notifications.length) {
+                      setVisibleCount(5);
+                    } else {
+                      setVisibleCount((prev) => prev + 5);
+                    }
+                  }}
+                  className="flex items-center gap-2 text-[13px] font-bold text-[#1B1D60] sm:text-[14px] lg:text-[18px] xl:text-[24px]"
+                >
+                  {visibleCount >= notifications.length
+                    ? "Show Less"
+                    : "Load More"}
+
+                  <ChevronDown
+                    size={16}
+                    strokeWidth={3}
+                    className={
+                      visibleCount >= notifications.length ? "rotate-180" : ""
+                    }
+                  />
+                </button>
+              </div>
+            )}
           </div>
         </ApiState>
       </div>
