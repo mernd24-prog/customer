@@ -6,6 +6,7 @@ export default function ImageWithFallback({
   alt = "",
   fallbackSrc = "/images/placeholder.png",
   className = "",
+  imgClassName = "",
   skeletonClass = "",
   showSkeleton = true,
   ...props
@@ -31,7 +32,11 @@ export default function ImageWithFallback({
         alt={alt}
         onLoad={() => setLoading(false)}
         onError={handleError}
-        className={cn("h-full w-full object-cover transition-all duration-300 ease-in-out", loading ? "opacity-0" : "opacity-100")}
+        className={cn(
+          "h-full w-full object-cover transition-all duration-300 ease-in-out",
+          loading ? "opacity-0" : "opacity-100",
+          imgClassName,
+        )}
         {...props}
       />
     </div>

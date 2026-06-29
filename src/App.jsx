@@ -125,6 +125,9 @@ const PaymentResultPage = lazyNamed(
 );
 const OrdersPage = lazy(() => import("./pages/orders/OrdersPage"));
 const ReturnsPage = lazy(() => import("./pages/returns/ReturnsPage"));
+const ReturnsRefundsPage = lazy(
+  () => import("./pages/returnRefund/ReturnsRefunds.jsx"),
+);
 const WalletPage = lazyNamed(
   () => import("./pages/CustomerPages"),
   "WalletPage",
@@ -459,6 +462,11 @@ export default function App() {
                   <Route
                     path="/returns/request/:orderId"
                     element={<ReturnsPage request />}
+                  />
+                  {/* Returns & Refunds */}
+                  <Route
+                    path="/returns-refunds"
+                    element={<ReturnsRefundsPage />}
                   />
 
                   {/* Financial */}

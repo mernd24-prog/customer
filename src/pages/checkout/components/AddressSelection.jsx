@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,11 +18,11 @@ import { useToastThunk } from "../../../hooks/useToastThunk";
 import { normalizeDialCode } from "../../../lib/utils";
 import { addressSchema } from "../../../validations/validationSchemas";
 import { validatePostalCodeForCountry } from "../../../validations";
-
+ 
 const getAddressId = (addr) => addr?._id || addr?.id || "";
-
+ 
 const addressLabels = ADDRESS_LABEL_OPTIONS;
-
+ 
 async function fetchFullList(dispatch, thunkAction, params = {}) {
   const res = await dispatch(thunkAction({ params })).unwrap();
   const total = res.meta?.total || 20;
@@ -35,20 +35,12 @@ async function fetchFullList(dispatch, thunkAction, params = {}) {
   }
   return res.data || res.list || res || [];
 }
-
+ 
 const normalizeLabelValue = (value) => {
   const normalized = String(value || "").toLowerCase();
   return ["home", "work", "other"].includes(normalized) ? normalized : "home";
 };
-
-const getLocationValue = (item) =>
-  String(item?.name || item?.value || item?.label || item?.id || item?._id || item || "");
-
-const getLocationId = (item) => item?._id || item?.id || item?.value || "";
-
-const findLocationOption = (options, value) =>
-  options.find((option) => getLocationValue(option) === String(value));
-
+ 
 export default function AddressSelection({
   addresses,
   selectedAddressId,
@@ -56,7 +48,6 @@ export default function AddressSelection({
   setValue,
   errors,
   countries = [],
-  onAddNewAddress,
 }) {
   const dispatch = useDispatch();
   const run = useToastThunk();
@@ -66,14 +57,12 @@ export default function AddressSelection({
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [postalCodes, setPostalCodes] = useState([]);
-  const updateAddressFormRef = useRef(null);
-  const shouldScrollToUpdateFormRef = useRef(false);
-
+ 
   const editCountry = editForm.watch("country");
   const editState = editForm.watch("state");
   const editCity = editForm.watch("city");
   const editPostalCode = editForm.watch("postalCode");
-
+ 
   const editCountryObj = countries.find((c) => (c.name || c) === editCountry);
   const editDialCodes = editCountryObj?.dialCode
     ? [normalizeDialCode(editCountryObj.dialCode)]
@@ -82,77 +71,77 @@ export default function AddressSelection({
           countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
         ),
       ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
-
+ 
   useEffect(() => {
     if (!editCountry) {
       setStates([]);
       return;
     }
-
-    const countryObj = findLocationOption(countries, editCountry);
-    const countryId = getLocationId(countryObj);
+ 
+    const countryObj = countries.find((c) => (c.name || c) === editCountry);
+    const countryId = countryObj?._id || countryObj?.id;
     if (!countryId) {
       setStates([]);
       return;
     }
-
+ 
     fetchFullList(dispatch, fetchStates, { countryId })
       .then((list) => setStates(list))
       .catch(() => setStates([]));
   }, [editCountry, countries, dispatch]);
-
+ 
   useEffect(() => {
-    if (editCountry && editState && states.length > 0) {
-      const isValid = states.some((state) => getLocationValue(state) === String(editState));
+    if (editCountry && editState) {
+      const isValid = states.some((s) => (s.name || s) === editState);
       if (!isValid) {
         editForm.setValue("state", "");
         editForm.setValue("city", "");
       }
     }
   }, [editCountry, states, editState, editForm]);
-
+ 
   useEffect(() => {
     if (!editState) {
       setCities([]);
       return;
     }
-
-    const stateObj = findLocationOption(states, editState);
-    const stateId = getLocationId(stateObj);
+ 
+    const stateObj = states.find((s) => (s.name || s) === editState);
+    const stateId = stateObj?._id || stateObj?.id;
     if (!stateId) {
       setCities([]);
       return;
     }
-
+ 
     fetchFullList(dispatch, fetchCities, { stateId })
       .then((list) => setCities(list))
       .catch(() => setCities([]));
   }, [editState, states, dispatch]);
-
+ 
   useEffect(() => {
     if (!editCity) {
       setPostalCodes([]);
       return;
     }
-
-    const cityObj = findLocationOption(cities, editCity);
-    const cityId = getLocationId(cityObj);
+ 
+    const cityObj = cities.find((c) => (c.name || c) === editCity);
+    const cityId = cityObj?._id || cityObj?.id;
     if (!cityId) {
       setPostalCodes([]);
       return;
     }
-
+ 
     fetchFullList(dispatch, fetchZipCodes, { cityId })
       .then((list) => setPostalCodes(list))
       .catch(() => setPostalCodes([]));
   }, [editCity, cities, dispatch]);
-
+ 
   useEffect(() => {
     const isValid =
       editPostalCode &&
       validatePostalCodeForCountry(editPostalCode, editCountry).valid;
     if (!isValid) return undefined;
-
+ 
     const timer = setTimeout(() => {
       dispatch(fetchZipCodes({ params: { zip: editPostalCode } }))
         .unwrap()
@@ -170,30 +159,16 @@ export default function AddressSelection({
         })
         .catch((err) => console.error("Error fetching zip code:", err));
     }, 500);
-
+ 
     return () => clearTimeout(timer);
   }, [editForm, editPostalCode, editCountry, dispatch]);
-
+ 
   useEffect(() => {
     if (editCountry && editCountryObj?.dialCode) {
       editForm.setValue("dialCode", normalizeDialCode(editCountryObj.dialCode));
     }
   }, [editCountry, editCountryObj, editForm]);
-
-  useEffect(() => {
-    if (!editingId || !shouldScrollToUpdateFormRef.current) return;
-
-    const frameId = window.requestAnimationFrame(() => {
-      updateAddressFormRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-      shouldScrollToUpdateFormRef.current = false;
-    });
-
-    return () => window.cancelAnimationFrame(frameId);
-  }, [editingId]);
-
+ 
   const startEdit = (addr) => {
     const addrId = getAddressId(addr);
     let dialCode = addr.dialCode;
@@ -201,27 +176,21 @@ export default function AddressSelection({
       const country = countries.find((c) => (c.name || c) === addr.country);
       if (country?.dialCode) dialCode = country.dialCode;
     }
-
-    shouldScrollToUpdateFormRef.current = true;
-    setValue("useNewAddress", false, { shouldValidate: true });
+ 
     setEditingId(addrId);
     editForm.reset({
       ...addr,
       label: normalizeLabelValue(addr.label),
-      country: addr.country || addr.countryName || "",
-      state: addr.state || addr.stateName || "",
-      city: addr.city || addr.cityName || "",
-      postalCode: addr.postalCode || addr.postal_code || addr.zipCode || addr.pincode || "",
       dialCode,
       isDefault: Boolean(addr.isDefault),
     });
   };
-
+ 
   const cancelEdit = () => {
     setEditingId(null);
     editForm.reset();
   };
-
+ 
   const handleUpdate = async (values) => {
     const addressFields = Object.fromEntries(
       Object.entries(values).filter(([key]) => key !== "dialCode"),
@@ -240,7 +209,7 @@ export default function AddressSelection({
   };
   const infoClass =
     "flex items-start gap-2  font-medium leading-[18px] text-[#1B1D60] text-[14px] sm:leading-[22px] md:text-[16px] md:leading-[26px] lg:text-[18px] lg:leading-[30px]";
-
+ 
   return (
     <OrderDetailSectionCard
       title="Delivery Address"
@@ -249,14 +218,9 @@ export default function AddressSelection({
       headerContent={
         <button
           type="button"
-          onClick={() => {
-            cancelEdit();
-            if (onAddNewAddress) {
-              onAddNewAddress();
-              return;
-            }
-            setValue("useNewAddress", true, { shouldValidate: true });
-          }}
+          onClick={() =>
+            setValue("useNewAddress", true, { shouldValidate: true })
+          }
           className="inline-flex w-full sm:w-[150px] h-10 sm:h-6 items-center justify-center text-[#3E4093] text-center text-sm sm:text-base font-semibold leading-6 transition hover:opacity-90"
         >
           + Add New Address
@@ -335,7 +299,6 @@ export default function AddressSelection({
                       value={addrId}
                       checked={selectedAddressId === addrId && !useNewAddress}
                       onChange={() => {
-                        cancelEdit();
                         setValue("selectedAddressId", addrId, {
                           shouldValidate: true,
                         });
@@ -389,49 +352,7 @@ export default function AddressSelection({
                   <Pencil size={14} />
                 </button>
               </div>
-              {isEditing && (
-                <div
-                  ref={updateAddressFormRef}
-                  className="my-7 scroll-mt-24 grid w-full gap-4 rounded-[10px] border border-border bg-surface-soft p-4 sm:p-5"
-                >
-                  <div className="flex items-center gap-2 text-sm font-semibold text-ink">
-                    <Pencil size={16} className="text-gold" />
-                    Update address
-                  </div>
-                  <AddressFormFields
-                    form={editForm}
-                    idPrefix={`checkout-edit-${editingId}`}
-                    countries={countries}
-                    states={states}
-                    cities={cities}
-                    postalCodes={postalCodes}
-                    dialCodes={editDialCodes}
-                    selectedCountry={editCountry}
-                    selectedState={editState}
-                    selectedCity={editCity}
-                    selectedPostalCode={editPostalCode}
-                    addressLabels={addressLabels}
-                  />
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <Button
-                      type="button"
-                      loading={loading}
-                      onClick={editForm.handleSubmit(handleUpdate)}
-                      className="w-full sm:w-auto"
-                    >
-                      Save changes
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={cancelEdit}
-                      className="w-full sm:w-auto"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              )}
+            )}
           </div>
         );
       })}
