@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,14 +41,6 @@ const normalizeLabelValue = (value) => {
   return ["home", "work", "other"].includes(normalized) ? normalized : "home";
 };
 
-const getLocationValue = (item) =>
-  String(item?.name || item?.value || item?.label || item?.id || item?._id || item || "");
-
-const getLocationId = (item) => item?._id || item?.id || item?.value || "";
-
-const findLocationOption = (options, value) =>
-  options.find((option) => getLocationValue(option) === String(value));
-
 export default function AddressSelection({
   addresses,
   selectedAddressId,
@@ -56,7 +48,6 @@ export default function AddressSelection({
   setValue,
   errors,
   countries = [],
-  onAddNewAddress,
 }) {
   const dispatch = useDispatch();
   const run = useToastThunk();
@@ -66,8 +57,6 @@ export default function AddressSelection({
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [postalCodes, setPostalCodes] = useState([]);
-  const updateAddressFormRef = useRef(null);
-  const shouldScrollToUpdateFormRef = useRef(false);
 
   const editCountry = editForm.watch("country");
   const editState = editForm.watch("state");
@@ -89,8 +78,8 @@ export default function AddressSelection({
       return;
     }
 
-    const countryObj = findLocationOption(countries, editCountry);
-    const countryId = getLocationId(countryObj);
+    const countryObj = countries.find((c) => (c.name || c) === editCountry);
+    const countryId = countryObj?._id || countryObj?.id;
     if (!countryId) {
       setStates([]);
       return;
@@ -102,8 +91,8 @@ export default function AddressSelection({
   }, [editCountry, countries, dispatch]);
 
   useEffect(() => {
-    if (editCountry && editState && states.length > 0) {
-      const isValid = states.some((state) => getLocationValue(state) === String(editState));
+    if (editCountry && editState) {
+      const isValid = states.some((s) => (s.name || s) === editState);
       if (!isValid) {
         editForm.setValue("state", "");
         editForm.setValue("city", "");
@@ -117,8 +106,8 @@ export default function AddressSelection({
       return;
     }
 
-    const stateObj = findLocationOption(states, editState);
-    const stateId = getLocationId(stateObj);
+    const stateObj = states.find((s) => (s.name || s) === editState);
+    const stateId = stateObj?._id || stateObj?.id;
     if (!stateId) {
       setCities([]);
       return;
@@ -135,8 +124,8 @@ export default function AddressSelection({
       return;
     }
 
-    const cityObj = findLocationOption(cities, editCity);
-    const cityId = getLocationId(cityObj);
+    const cityObj = cities.find((c) => (c.name || c) === editCity);
+    const cityId = cityObj?._id || cityObj?.id;
     if (!cityId) {
       setPostalCodes([]);
       return;
@@ -180,20 +169,6 @@ export default function AddressSelection({
     }
   }, [editCountry, editCountryObj, editForm]);
 
-  useEffect(() => {
-    if (!editingId || !shouldScrollToUpdateFormRef.current) return;
-
-    const frameId = window.requestAnimationFrame(() => {
-      updateAddressFormRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-      shouldScrollToUpdateFormRef.current = false;
-    });
-
-    return () => window.cancelAnimationFrame(frameId);
-  }, [editingId]);
-
   const startEdit = (addr) => {
     const addrId = getAddressId(addr);
     let dialCode = addr.dialCode;
@@ -202,16 +177,10 @@ export default function AddressSelection({
       if (country?.dialCode) dialCode = country.dialCode;
     }
 
-    shouldScrollToUpdateFormRef.current = true;
-    setValue("useNewAddress", false, { shouldValidate: true });
     setEditingId(addrId);
     editForm.reset({
       ...addr,
       label: normalizeLabelValue(addr.label),
-      country: addr.country || addr.countryName || "",
-      state: addr.state || addr.stateName || "",
-      city: addr.city || addr.cityName || "",
-      postalCode: addr.postalCode || addr.postal_code || addr.zipCode || addr.pincode || "",
       dialCode,
       isDefault: Boolean(addr.isDefault),
     });
@@ -249,14 +218,9 @@ export default function AddressSelection({
       headerContent={
         <button
           type="button"
-          onClick={() => {
-            cancelEdit();
-            if (onAddNewAddress) {
-              onAddNewAddress();
-              return;
-            }
-            setValue("useNewAddress", true, { shouldValidate: true });
-          }}
+          onClick={() =>
+            setValue("useNewAddress", true, { shouldValidate: true })
+          }
           className="inline-flex w-full sm:w-[150px] h-10 sm:h-6 items-center justify-center text-[#3E4093] text-center text-sm sm:text-base font-semibold leading-6 transition hover:opacity-90"
         >
           + Add New Address
@@ -295,7 +259,6 @@ export default function AddressSelection({
                       value={addrId}
                       checked={selectedAddressId === addrId && !useNewAddress}
                       onChange={() => {
-                        cancelEdit();
                         setValue("selectedAddressId", addrId, {
                           shouldValidate: true,
                         });
@@ -349,49 +312,7 @@ export default function AddressSelection({
                   <Pencil size={14} />
                 </button>
               </div>
-              {isEditing && (
-                <div
-                  ref={updateAddressFormRef}
-                  className="my-7 scroll-mt-24 grid w-full gap-4 rounded-[10px] border border-border bg-surface-soft p-4 sm:p-5"
-                >
-                  <div className="flex items-center gap-2 text-sm font-semibold text-ink">
-                    <Pencil size={16} className="text-gold" />
-                    Update address
-                  </div>
-                  <AddressFormFields
-                    form={editForm}
-                    idPrefix={`checkout-edit-${editingId}`}
-                    countries={countries}
-                    states={states}
-                    cities={cities}
-                    postalCodes={postalCodes}
-                    dialCodes={editDialCodes}
-                    selectedCountry={editCountry}
-                    selectedState={editState}
-                    selectedCity={editCity}
-                    selectedPostalCode={editPostalCode}
-                    addressLabels={addressLabels}
-                  />
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <Button
-                      type="button"
-                      loading={loading}
-                      onClick={editForm.handleSubmit(handleUpdate)}
-                      className="w-full sm:w-auto"
-                    >
-                      Save changes
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={cancelEdit}
-                      className="w-full sm:w-auto"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              )}
+            )}
           </div>
         );
       })}

@@ -13,6 +13,7 @@ import {
   // Bell,
   Banknote,
   CreditCard,
+  Download,
   Eye,
   EyeOff,
   Gift,
@@ -96,6 +97,7 @@ import {
   claimWarranty,
 } from "../features/warranty/warrantySlice";
 import { fetchOrderInvoice } from "../features/tax/taxSlice";
+import { fetchMarketplaceInvoices } from "../features/tax/taxSlice";
 import { trackRecommendationInteraction } from "../features/recommendation/recommendationSlice";
 import { trackAnalyticsEvent } from "../features/analytics/analyticsSlice";
 import { fetchDynamicPrice } from "../features/dynamicPricing/dynamicPricingSlice";
@@ -115,6 +117,8 @@ import OrderProgress from "./orders/components/OrderProgress";
 // import OrderPaymentSummary from "./orders/components/OrderPaymentSummary";
 
 import { SummaryRow } from "./orders/components/OrderPaymentSummary";
+import { endpoints } from "../api/endpoints";
+import { downloadAuthDocument } from "../utils/downloadAuthDocument";
 import {
   loginSchema,
   emailSchema,
@@ -248,19 +252,57 @@ const getOrderCurrency = (order) => {
 const getAddressValue = (address, camelKey, snakeKey = camelKey) =>
   address?.[camelKey] || address?.[snakeKey];
 const getOrderAddressValue = getAddressValue;
-const getOrderPhone = (address) =>
-  address?.phone ||
-  address?.mobile ||
-  address?.contact ||
-  address?.telephone ||
-  address?.mobileNumber ||
-  address?.mobile_number;
-const hasOrderShippingAddress = (address) =>
-  Boolean(
+const getOrderAddressName = (address) => {
+  const source = address?.user || address?.customer || address?.data || address;
+  if (source && source !== address) return getOrderAddressName(source);
+
+  const firstName = address?.firstName || address?.first_name;
+  const lastName = address?.lastName || address?.last_name;
+  const joinedName = [firstName, lastName].filter(Boolean).join(" ");
+
+  return (
     getOrderAddressValue(address, "fullName", "full_name") ||
     address?.name ||
+    address?.displayName ||
+    address?.display_name ||
+    address?.userName ||
+    address?.user_name ||
+    address?.username ||
+    address?.customerName ||
+    address?.customer_name ||
+    address?.recipientName ||
+    address?.recipient_name ||
     address?.receiverName ||
     address?.receiver_name ||
+    address?.contactName ||
+    address?.contact_name ||
+    joinedName
+  );
+};
+const getOrderPhone = (address) => {
+  const source = address?.user || address?.customer || address?.data || address;
+  if (source && source !== address) return getOrderPhone(source);
+
+  return (
+    address?.phone ||
+    address?.phoneNumber ||
+    address?.phone_number ||
+    address?.mobile ||
+    address?.mobileNo ||
+    address?.mobile_no ||
+    address?.contact ||
+    address?.contactNumber ||
+    address?.contact_number ||
+    address?.telephone ||
+    address?.telephoneNumber ||
+    address?.telephone_number ||
+    address?.mobileNumber ||
+    address?.mobile_number
+  );
+};
+const hasOrderShippingAddress = (address) =>
+  Boolean(
+    getOrderAddressName(address) ||
     getOrderPhone(address) ||
     address?.line1 ||
     address?.address_line1 ||
@@ -382,7 +424,7 @@ const formatOrderDate = (value) =>
         year: "numeric",
       })
     : "";
-const formatOrderId = (id = "") => String(id).slice(0, 8).toUpperCase();
+const formatOrderId = (id = "") => String(id);
 const getExpectedDeliveryDate = (order) =>
   order?.expected_delivery ||
   order?.expectedDelivery ||
@@ -1453,10 +1495,15 @@ export function CheckoutPage() {
 export function PaymentResultPage({ failed = false }) {
   const dispatch = useDispatch();
   const orderState = useSelector((state) => state.order);
+  const userState = useSelector((state) => state.user);
+  const [invoices, setInvoices] = useState(null);
+  const [downloadingId, setDownloadingId] = useState(null);
   const [searchParams] = useSearchParams();
 
   const orderId = searchParams.get("orderId");
+
   const order = findFetchedOrder(orderState, orderId);
+  const currentUser = userState.current || userState.data || {};
 
   const items = getOrderItems(order || {});
   const currency = getOrderCurrency(order || {});
@@ -1468,12 +1515,89 @@ export function PaymentResultPage({ failed = false }) {
   const customerAmount = getCustomerOrderAmount(order || {});
   const status = firstDefined(order?.status, order?.orderStatus, "confirmed");
   const expectedDelivery = getExpectedDeliveryDate(order || {});
+  const orderCustomer =
+    order?.customer ||
+    order?.user ||
+    order?.buyer ||
+    order?.relations?.customer ||
+    order?.relations?.user ||
+    order?.relations?.buyer ||
+    {};
+
+  const displayName =
+    orderCustomer.profile?.firstName + " " + orderCustomer.profile?.lastName;
+
+  const deliveryPhone =
+    getOrderPhone(shippingAddress) ||
+    getOrderPhone(orderCustomer) ||
+    getOrderPhone(currentUser);
+  const getInvoiceUrl = (order) =>
+    order?.invoice_url ||
+    order?.invoiceUrl ||
+    order?.relations?.invoice?.url ||
+    null;
+  const orderInvoiceId =
+    invoices?.orderInvoice?.id || invoices?.orderInvoice?._id;
+  const invoiceDownloadPath = orderInvoiceId
+    ? endpoints.tax.invoiceDownload(orderInvoiceId)
+    : "";
+  const fallbackInvoiceUrl = getInvoiceUrl(order);
 
   useEffect(() => {
     if (orderId) {
       dispatch(fetchOrderById({ orderId }));
     }
   }, [dispatch, orderId]);
+
+  useEffect(() => {
+    if (!orderId) {
+      setInvoices(null);
+      return;
+    }
+    dispatch(fetchMarketplaceInvoices({ orderId }))
+      .unwrap()
+      .then((result) => setInvoices(result?.data || result))
+      .catch(() => setInvoices(null));
+  }, [dispatch, orderId]);
+
+  useEffect(() => {
+    if (!currentUser?.id && !currentUser?._id && !userState.loading) {
+      dispatch(fetchMe());
+    }
+  }, [currentUser?._id, currentUser?.id, dispatch, userState.loading]);
+
+  const handleDownload = async (apiPath, filename) => {
+    setDownloadingId(apiPath);
+    try {
+      await downloadAuthDocument(apiPath, filename);
+    } catch {
+      notify.error("Invoice download failed. Please try again.");
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
+  const handleInvoiceDownload = () => {
+    if (!orderId) {
+      notify.error("Order ID is missing, so invoice cannot be downloaded.");
+      return;
+    }
+
+    if (invoiceDownloadPath) {
+      handleDownload(
+        invoiceDownloadPath,
+        `invoice-${getOrderNumber(order)}.pdf`,
+      );
+      return;
+    }
+
+    if (fallbackInvoiceUrl) {
+      window.open(fallbackInvoiceUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    notify.error("Invoice is not available yet.");
+  };
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -1522,14 +1646,15 @@ export function PaymentResultPage({ failed = false }) {
         </div>
         <div className="border-t border-red-100 px-6 py-5 sm:px-10">
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link to="/" className="w-full sm:w-auto">
-              <BrandButton
-                variant="secondary"
-                rounded
-                label="Download Invoice"
-                className="h-12 w-full min-w-[220px] text-sm"
-              />
-            </Link>
+            <BrandButton
+              variant="secondary"
+              rounded
+              loading={downloadingId === invoiceDownloadPath}
+              onClick={handleInvoiceDownload}
+              icon={<Download size={18} />}
+              label="Download Invoice"
+              className="h-12 w-full min-w-[220px] text-sm sm:w-auto"
+            />
           </div>
         </div>
       </section>
@@ -1617,10 +1742,7 @@ export function PaymentResultPage({ failed = false }) {
                   </div>
 
                   <div className="mt-auto flex flex-col gap-2 bg-[#BBBBCB] px-4 py-3 text-[13px] font-semibold text-[#1B1D60] min-[375px]:px-5 min-[375px]:text-sm min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-4 sm:text-[12px] md:px-8 xl:text-[20px]">
-                    <span className="break-words">
-                      Order ID : #
-                      {formatOrderId(getOrderNumber(order) || orderId)}
-                    </span>
+                    <span className="break-words">Order ID : # {orderId}</span>
 
                     <span className="break-words">
                       Estimated Delivery :{" "}
@@ -1730,7 +1852,7 @@ export function PaymentResultPage({ failed = false }) {
                   </div>
 
                   <div className="mt-3 rounded-[14px]  ">
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start  gap-3">
                       <img
                         src="/image/png/Frame1.png"
                         alt=""
@@ -1740,27 +1862,27 @@ export function PaymentResultPage({ failed = false }) {
                       <div className="min-w-0 flex flex-col gap-2 sm:gap-3">
                         <p
                           className="
-    font-semibold text-[#2E2E2E]
-    text-[14px]
-    min-[375px]:text-[15px]
-    min-[425px]:text-[16px]
-    sm:text-[19px]
-    md:text-[19px]
-    lg:text-[20px]
-  "
+                          font-semibold text-[#2E2E2E]
+                          text-[14px]
+                          min-[375px]:text-[15px]
+                          min-[425px]:text-[16px]
+                          sm:text-[19px]
+                          md:text-[19px]
+                          lg:text-[20px]
+                        "
                         >
                           Expected Delivery
                         </p>
 
                         <p
                           className="break-words font-bold leading-tight text-[#CE9F2D]
-  text-[16px]
-  min-[375px]:text-[18px]
-  min-[425px]:text-[20px]
-  sm:text-[22px]
-  md:text-[24px]
-  lg:text-[26px]
-  xl:text-[30px]"
+                          text-[16px]
+                          min-[375px]:text-[18px]
+                          min-[425px]:text-[20px]
+                          sm:text-[22px]
+                          md:text-[24px]
+                          lg:text-[26px]
+                          xl:text-[30px]"
                         >
                           {expectedDelivery
                             ? formatOrderDate(expectedDelivery)
@@ -1771,14 +1893,15 @@ export function PaymentResultPage({ failed = false }) {
                   </div>
 
                   <div className="mt-4 grid gap-[10px]">
-                    <Link to="/" className="w-full">
-                      <BrandButton
-                        variant="secondary"
-                        rounded
-                        label="Download invoice"
-                        className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
-                      />
-                    </Link>
+                    <BrandButton
+                      variant="secondary"
+                      rounded
+                      loading={downloadingId === invoiceDownloadPath}
+                      onClick={handleInvoiceDownload}
+                      icon={<Download size={18} />}
+                      label="Download invoice"
+                      className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
+                    />
                   </div>
                 </OrderDetailSectionCard>
 
@@ -1796,19 +1919,16 @@ export function PaymentResultPage({ failed = false }) {
                     </div>
 
                     <div className="grid gap-3 text-[#2E2E2E]">
-                      <p className="break-words text-[22px] font-bold leading-tight text-[#2E2E2E] min-[375px]:text-[24px] sm:text-[28px]">
-                        {getOrderAddressValue(
-                          shippingAddress,
-                          "fullName",
-                          "full_name",
-                        )}
-                      </p>
+                      {displayName && (
+                        <p className="break-words text-[22px] font-bold leading-tight text-[#2E2E2E] min-[375px]:text-[24px] sm:text-[26px]">
+                          {displayName}
+                        </p>
+                      )}
 
-                      <div className="flex items-start gap-2 text-[13px] font-medium leading-6 min-[375px]:text-[16px] sm:text-[20px]">
+                      <div className="flex  items-start gap-2 text-[13px] font-medium leading-6 min-[375px]:text-[16px] sm:text-[20px]">
                         <Phone className="mt-1 h-[18px] w-[18px] shrink-0 text-[#CE9F2D]" />
                         <span className="break-words">
-                          {getOrderPhone(shippingAddress) ||
-                            "Phone unavailable"}
+                          {deliveryPhone || "Phone unavailable"}
                         </span>
                       </div>
 
@@ -1816,8 +1936,12 @@ export function PaymentResultPage({ failed = false }) {
                         <MapPin className="mt-1 h-[18px] w-[18px] shrink-0 text-[#CE9F2D]" />
                         <span className="break-words">
                           {[
-                            shippingAddress.line1,
-                            shippingAddress.line2,
+                            shippingAddress.line1 ||
+                              shippingAddress.addressLine1 ||
+                              shippingAddress.address_line1,
+                            shippingAddress.line2 ||
+                              shippingAddress.addressLine2 ||
+                              shippingAddress.address_line2,
                             shippingAddress.city,
                             shippingAddress.state,
                             getOrderAddressValue(

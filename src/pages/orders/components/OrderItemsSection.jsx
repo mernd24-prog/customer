@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Package } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
 import BaseModal from "../../../components/common/overlay/BaseModal";
 import OrderDetailSectionCard from "./OrderDetailSectionCard";
@@ -159,6 +160,29 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
   );
 }
 
+const getOrderItemProductId = (item) => {
+  const product =
+    item?.productId && typeof item.productId === "object"
+      ? item.productId
+      : item?.product;
+
+  return (
+    product?._id ||
+    product?.id ||
+    (typeof product?.productId === "string" ? product.productId : "") ||
+    (typeof item?.productId === "string" ? item.productId : "") ||
+    item?.product_id ||
+    item?.productId?._id ||
+    item?.productId?.id ||
+    ""
+  );
+};
+
+const getOrderItemProductPath = (item) => {
+  const productId = getOrderItemProductId(item);
+  return productId ? `/products/${productId}` : "";
+};
+
 function OrderItemCard({
   item,
   orderId,
@@ -169,19 +193,33 @@ function OrderItemCard({
   currency,
   getItemImage,
   getProductTitle,
+  getItemProductPath,
   getItemLineTotal,
   getOrderItemColor,
   formatMoney,
 }) {
+  const productPath =
+    getItemProductPath?.(item) || getOrderItemProductPath(item);
+
   return (
     <div className="flex w-full flex-col gap-4  sm:flex-row sm:gap-5 lg:gap-[36px]">
-      <div className="flex aspect-[252/210] w-full shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[#CE9F2D33] bg-white sm:w-[180px] lg:w-[220px] 2xl:w-[252px]">
+      <div className="flex aspect-[252/210] w-full shrink-0 items-center justify-center overflow-hidden rounded-[10px] border  border-[#CE9F2D33] bg-white sm:w-[180px] lg:w-[220px] 2xl:w-[252px]">
         {getItemImage(item) ? (
-          <img
-            src={getItemImage(item)}
-            alt={getProductTitle(item)}
-            className="h-full w-full object-contain"
-          />
+          productPath ? (
+            <Link to={productPath}>
+              <img
+                src={getItemImage(item)}
+                alt={getProductTitle(item)}
+                className="h-full  w-full object-contain"
+              />
+            </Link>
+          ) : (
+            <img
+              src={getItemImage(item)}
+              alt={getProductTitle(item)}
+              className="h-full  w-full object-contain"
+            />
+          )
         ) : (
           <Package size={28} />
         )}
@@ -245,49 +283,7 @@ function OrderItemCard({
   );
 }
 
-function OrderItemsSection({ items, title, orderId, orderStatus, ...itemProps }) {
-  const dispatch = useDispatch();
-  const [reviewByItem, setReviewByItem] = useState({});
-  const [checkedReviewKeys, setCheckedReviewKeys] = useState({});
-  const [reviewTarget, setReviewTarget] = useState(null);
-  const canReviewOrder = DELIVERED_STATUSES.has(String(orderStatus || "").toLowerCase());
-
-  const reviewableItems = useMemo(
-    () => (canReviewOrder ? items.filter((item) => getReviewProductId(item)) : []),
-    [canReviewOrder, items],
-  );
-
-  useEffect(() => {
-    if (!orderId || !reviewableItems.length) return;
-    let active = true;
-    reviewableItems.forEach((item) => {
-      const key = reviewKeyForItem(orderId, item);
-      const productId = getReviewProductId(item);
-      const orderItemId = getReviewOrderItemId(item);
-      dispatch(fetchMyProductReview({ productId, orderId, orderItemId }))
-        .unwrap()
-        .then((result) => {
-          if (!active) return;
-          setReviewByItem((current) => ({ ...current, [key]: result?.data || null }));
-          setCheckedReviewKeys((current) => ({ ...current, [key]: true }));
-        })
-        .catch(() => {
-          if (!active) return;
-          setCheckedReviewKeys((current) => ({ ...current, [key]: true }));
-        });
-    });
-    return () => {
-      active = false;
-    };
-  }, [dispatch, orderId, reviewableItems]);
-
-  const handleSubmitted = (review) => {
-    const key = reviewKeyForItem(orderId, reviewTarget);
-    setReviewByItem((current) => ({ ...current, [key]: review || true }));
-    setCheckedReviewKeys((current) => ({ ...current, [key]: true }));
-    setReviewTarget(null);
-  };
-
+function OrderItemsSection({ items, ...itemProps }) {
   return (
     <>
       <OrderDetailSectionCard

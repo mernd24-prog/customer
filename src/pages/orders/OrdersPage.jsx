@@ -106,6 +106,25 @@ const getItemProduct = (item) =>
     ? item.productId
     : item?.product;
 
+const getItemProductId = (item) => {
+  const product = getItemProduct(item);
+  return (
+    product?._id ||
+    product?.id ||
+    (typeof product?.productId === "string" ? product.productId : "") ||
+    (typeof item?.productId === "string" ? item.productId : "") ||
+    item?.product_id ||
+    item?.productId?._id ||
+    item?.productId?.id ||
+    ""
+  );
+};
+
+const getItemProductPath = (item) => {
+  const productId = getItemProductId(item);
+  return productId ? `/products/${productId}` : "";
+};
+
 const getItemImage = (item) => {
   const product = getItemProduct(item);
   const candidateImages = [
@@ -659,6 +678,7 @@ function OrderDetail({ orderId, track }) {
                   currency={currency}
                   getItemImage={getItemImage}
                   getProductTitle={getProductTitle}
+                  getItemProductPath={getItemProductPath}
                   getOrderItemColor={getOrderItemColor}
                   getItemLineTotal={getItemLineTotal}
                   formatMoney={formatMoney}
