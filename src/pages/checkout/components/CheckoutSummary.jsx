@@ -1,8 +1,8 @@
 import { Banknote, Building2, CreditCard, Smartphone } from "lucide-react";
-import Button from "../../../components/ui/Button";
-import { formatMoney } from "../../../utils/ecommerce";
-import OrderDetailSectionCard from "../../orders/components/OrderDetailSectionCard";
-import OrderPaymentSummary, { SummaryRow } from "../../orders/components/OrderPaymentSummary";
+
+import OrderPaymentSummary, {
+  SummaryRow,
+} from "../../orders/components/OrderPaymentSummary";
 
 const PAYMENT_ICONS = {
   razorpay: CreditCard,
@@ -29,12 +29,18 @@ export default function CheckoutSummary({
   const sellerDeliveryBreakup = (() => {
     const settlements = quote?.sellerSettlements || [];
     const sellers = settlements.filter(
-      (s) => Number(s.sellerDeliveryChargeAmount || s.deliveryChargeAmount || 0) > 0,
+      (s) =>
+        Number(s.sellerDeliveryChargeAmount || s.deliveryChargeAmount || 0) > 0,
     );
     if (sellers.length <= 1) return null;
     return sellers.map((s) => ({
-      name: s.sellerName || s.seller_name || `Seller ${String(s.sellerId || "").slice(0, 6)}`,
-      amount: Number(s.sellerDeliveryChargeAmount || s.deliveryChargeAmount || 0),
+      name:
+        s.sellerName ||
+        s.seller_name ||
+        `Seller ${String(s.sellerId || "").slice(0, 6)}`,
+      amount: Number(
+        s.sellerDeliveryChargeAmount || s.deliveryChargeAmount || 0,
+      ),
     }));
   })();
   const selectedOption = paymentOptions.find(
@@ -79,11 +85,22 @@ export default function CheckoutSummary({
   const codCharge = Number(
     quoteSummary.codChargeAmount ?? quoteAmounts.codChargeAmount ?? 0,
   );
-  const customerPlatformFee = Number(
+  const customerSpecificPlatformFee = Number(
     quoteSummary.customerPlatformFeeAmount ??
       quoteAmounts.customerPlatformFeeAmount ??
       0,
   );
+  const quotedPlatformFee = Number(
+    quoteSummary.platformFeeAmount ??
+      quoteSummary.platform_fee_amount ??
+      quoteAmounts.platformFeeAmount ??
+      quoteAmounts.platform_fee_amount ??
+      0,
+  );
+  const customerPlatformFee =
+    customerSpecificPlatformFee > 0
+      ? customerSpecificPlatformFee
+      : quotedPlatformFee;
   const customerPlatformFeeTax = Number(
     quoteSummary.customerPlatformFeeTaxAmount ??
       quoteAmounts.customerPlatformFeeTaxAmount ??
@@ -91,10 +108,10 @@ export default function CheckoutSummary({
   );
   const quoteShipping = Number(
     quoteSummary.deliveryChargeAmount ??
-    quoteSummary.shippingFeeAmount ??
-    quoteAmounts.deliveryChargeAmount ??
-    quoteAmounts.shippingFeeAmount ??
-    shipping,
+      quoteSummary.shippingFeeAmount ??
+      quoteAmounts.deliveryChargeAmount ??
+      quoteAmounts.shippingFeeAmount ??
+      shipping,
   );
   const quotedPayable = Number(
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
@@ -107,7 +124,11 @@ export default function CheckoutSummary({
     .map((seller) => seller.estimatedDeliveryDays)
     .filter(Boolean)[0];
   const deliveryMethod = deliverySellers
-    .map((seller) => [seller.shippingPartner, seller.shippingMethod].filter(Boolean).join(" · "))
+    .map((seller) =>
+      [seller.shippingPartner, seller.shippingMethod]
+        .filter(Boolean)
+        .join(" · "),
+    )
     .filter(Boolean)[0];
 
   return (

@@ -1,25 +1,63 @@
 import { Package } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import OrderDetailSectionCard from "./OrderDetailSectionCard";
+
+const getOrderItemProductId = (item) => {
+  const product =
+    item?.productId && typeof item.productId === "object"
+      ? item.productId
+      : item?.product;
+
+  return (
+    product?._id ||
+    product?.id ||
+    (typeof product?.productId === "string" ? product.productId : "") ||
+    (typeof item?.productId === "string" ? item.productId : "") ||
+    item?.product_id ||
+    item?.productId?._id ||
+    item?.productId?.id ||
+    ""
+  );
+};
+
+const getOrderItemProductPath = (item) => {
+  const productId = getOrderItemProductId(item);
+  return productId ? `/products/${productId}` : "";
+};
 
 function OrderItemCard({
   item,
   currency,
   getItemImage,
   getProductTitle,
+  getItemProductPath,
   getItemLineTotal,
   getOrderItemColor,
   formatMoney,
 }) {
+  const productPath =
+    getItemProductPath?.(item) || getOrderItemProductPath(item);
+
   return (
     <div className="flex w-full flex-col gap-4  sm:flex-row sm:gap-5 lg:gap-[36px]">
-      <div className="flex aspect-[252/210] w-full shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[#CE9F2D33] bg-white sm:w-[180px] lg:w-[220px] 2xl:w-[252px]">
+      <div className="flex aspect-[252/210] w-full shrink-0 items-center justify-center overflow-hidden rounded-[10px] border  border-[#CE9F2D33] bg-white sm:w-[180px] lg:w-[220px] 2xl:w-[252px]">
         {getItemImage(item) ? (
-          <img
-            src={getItemImage(item)}
-            alt={getProductTitle(item)}
-            className="h-full w-full object-contain"
-          />
+          productPath ? (
+            <Link to={productPath}>
+              <img
+                src={getItemImage(item)}
+                alt={getProductTitle(item)}
+                className="h-full  w-full object-contain"
+              />
+            </Link>
+          ) : (
+            <img
+              src={getItemImage(item)}
+              alt={getProductTitle(item)}
+              className="h-full  w-full object-contain"
+            />
+          )
         ) : (
           <Package size={28} />
         )}
@@ -60,7 +98,7 @@ function OrderItemCard({
   );
 }
 
-function OrderItemsSection({ items, title, ...itemProps }) {
+function OrderItemsSection({ items, ...itemProps }) {
   return (
     <OrderDetailSectionCard
       title="Item"

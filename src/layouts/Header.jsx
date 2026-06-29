@@ -198,6 +198,7 @@ function withIcons(items) {
 
 export const TopHeader = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const currentUser = useSelector((s) => s.auth.current);
 
   const { page: dealsPage } = useCmsRecord("deals");
@@ -314,7 +315,10 @@ export const TopHeader = () => {
               hover:bg-gray-50
               hover:shadow-md
             "
-              onClick={() => dispatch(logout())}
+              onClick={() => {
+                dispatch(logout());
+                navigate("/", { replace: true });
+              }}
             >
               Sign Out
             </HeaderGoldButton>

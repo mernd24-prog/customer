@@ -11,7 +11,7 @@ function SummaryRow({
 }) {
   return (
     <div
-      className={`flex w-full items-center justify-between gap-3 py-3 ${className}`}
+      className={`flex  w-full items-center justify-between gap-3 py-3 ${className}`}
     >
       <span
         className={`flex-1 text-[14px] font-semibold leading-[20px] text-[#2E2E2E]
@@ -166,7 +166,7 @@ function OrderPaymentSummary({
           {items.map((item) => (
             <div
               key={item._lineKey}
-              className="flex h-[58px] w-full min-w-0 items-center justify-between gap-2 border-t border-[#04258626] pt-2"
+              className="flex h-[58px]  w-full min-w-0 items-center justify-between gap-2 border-t border-[#04258626] pt-2"
             >
               <span className="min-w-0 flex-1 truncate text-sm font-semibold leading-5 text-[#2E2E2E] sm:text-[18px] sm:leading-[28px]">
                 {item.quantity} x {item._safeTitle}
@@ -211,7 +211,7 @@ function OrderPaymentSummary({
       )}
       {/* Product Discount */}
       {variant === "cart" && asNumber?.(productDiscount) > 0 && (
-        <div className="border-t border-[#04258626] pt-2">
+        <div className="border-t  border-[#04258626] pt-2">
           <SummaryRow
             label="Product Discount"
             value={`-${formatMoney(productDiscount, currency)}`}

@@ -23,17 +23,23 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
   );
   const progressWidth =
     steps.length <= 1 ? 0 : (activeIndex / (steps.length - 1)) * 100;
+  const compact = steps.length > 8;
+  const columnWidth = compact ? 88 : 112;
+  const lineTop = compact ? 50 : 58;
 
   return (
     <div
-      className="relative grid min-w-0 gap-2 px-1 py-8"
-      style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
+      className="relative grid min-w-full gap-0 px-2 pb-7 pt-5"
+      style={{
+        gridTemplateColumns: `repeat(${steps.length}, minmax(${columnWidth}px, 1fr))`,
+      }}
     >
       <span
-        className="absolute top-[67px] h-0.5 overflow-hidden bg-border"
+        className="absolute h-0.5 overflow-hidden bg-border"
         style={{
           left: `calc(100% / ${steps.length} / 2)`,
           right: `calc(100% / ${steps.length} / 2)`,
+          top: `${lineTop}px`,
         }}
       >
         <span
@@ -52,23 +58,27 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
           >
             <div className="relative flex items-center justify-center">
               <div
-                className={`flex h-[70px] w-[70px] items-center justify-center rounded-full ${
+                className={`flex items-center justify-center rounded-full ${
                   done ? "bg-[#B88200]" : "bg-[#83858C]"
-                }`}
+                } ${compact ? "h-12 w-12" : "h-16 w-16"}`}
               >
                 <div
-                  className={`flex h-[50px] w-[50px] items-center justify-center rounded-full ${
+                  className={`flex items-center justify-center rounded-full ${
                     done ? "bg-[#CE9F2D]" : "bg-[#8A8C92]"
-                  }`}
+                  } ${compact ? "h-9 w-9" : "h-12 w-12"}`}
                 >
-                  <img src={vectorImage} alt="done" className="h-5 w-5" />
+                  <img
+                    src={vectorImage}
+                    alt="done"
+                    className={compact ? "h-4 w-4" : "h-5 w-5"}
+                  />
                 </div>
               </div>
             </div>
             <p
-              className={`mt-3 flex h-[26px] w-[92px] items-center justify-center text-center font-sans text-[20px] font-semibold leading-[26px] ${
+              className={`mt-3 flex min-h-[38px] w-full max-w-[92px] items-start justify-center px-1 text-center font-sans font-semibold leading-tight ${
                 current || done ? "text-[#CE9F2D]" : "text-muted"
-              }`}
+              } ${compact ? "text-[13px] 2xl:text-[14px]" : "text-[16px] 2xl:text-[18px]"}`}
             >
               {step === "pending_payment" ? "Payment" : TRACKING_LABELS[step]}
             </p>

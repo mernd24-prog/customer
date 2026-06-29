@@ -67,9 +67,8 @@ export default function Button({
         sizeMap[size] || sizeMap.md,
         rounded ? "rounded-full" : "rounded-[var(--customer-radius-sm)]",
         fullWidth ? "w-full" : "",
-        isDisabled
-          ? "cursor-not-allowed opacity-60"
-          : variantMap[variant] || variantMap.primary,
+        variantMap[variant] || variantMap.primary,
+        isDisabled ? "cursor-not-allowed opacity-60" : "",
         className,
       )}
       {...rest}
