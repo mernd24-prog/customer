@@ -139,8 +139,8 @@ export default function WatchlistPage() {
     <>
       <Seo title="My Watchlist | Sam Global" />
 
-      <section className="min-h-screen  py-3 sm:py-6 lg:py-8 ">
-        <div className="w-container">
+      <section className="min-h-screen  py-3 sm:py-6 lg:py-8 mt-8 lg:mt-0">
+        <div>
           <Breadcrumbs
             items={breadcrumbItems}
             className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
@@ -150,7 +150,7 @@ export default function WatchlistPage() {
           />
 
           {products.length > 0 ? (
-            <div className=" rounded-[16px] border border-[#CE9F2D80] bg-[#FFFDF8] sm:rounded-[20px]">
+            <div className="mt-8 lg:mt-10 rounded-[16px] border border-gold/50 bg-[#FFFDF8] sm:rounded-[20px]">
               {products.map((product, index) => {
                 const id = getProductId(product);
                 const item = adaptProductToItem(
@@ -159,13 +159,12 @@ export default function WatchlistPage() {
                 );
 
                 return (
-                  <div
-                    key={id}
-                  >
+                  <div key={id}>
                     <CartItemCard
                       item={item}
                       selected={false}
                       isLastItem={index === products.length - 1}
+                      fullWidth
                       onSelect={() => {}}
                       onIncrease={handleIncrease}
                       onDecrease={handleDecrease}
@@ -190,7 +189,7 @@ export default function WatchlistPage() {
 
           {/* RECENTLY VIEWED SECTION */}
           {recentViewedItems && recentViewedItems.length > 0 && (
-            <div className="mt-12 lg:mt-16">
+            <div className="mt-8 lg:mt-16">
               <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:mb-8">
                 <div>
                   <h2 className="text-xl font-bold text-[#3F4095] sm:text-2xl lg:text-[38px]">

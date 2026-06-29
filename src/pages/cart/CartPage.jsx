@@ -68,7 +68,11 @@ function adaptItemForCard(item) {
     item.image ||
     getImageFallbackSrc(title, "cart");
   const price = item.price ?? product.price ?? product.sellingPrice ?? 0;
-  const oldPrice = item.oldPrice ?? product.mrp ?? product.originalPrice;
+  const oldPrice =
+    item.oldPrice ??
+    item.mrp ??
+    product.mrp ??
+    product.originalPrice;
   const shipping = item.shipping ?? 0;
   const quantity = item.quantity || 1;
   const seller = item.seller || product.seller?.name || product.brand;
@@ -490,7 +494,7 @@ export default function CartPage() {
         description="Review items in your shopping cart."
       />
 
-      <section className="bg-white px-3 py-6 min-[375px]:px-4 sm:px-6 sm:py-8 lg:px-10 2xl:px-0">
+      <section className="bg-white mt-8">
         <div className="mx-auto w-full max-w-[1900px]">
           <Breadcrumbs
             items={breadcrumbItems}
@@ -516,7 +520,8 @@ export default function CartPage() {
               />
             )}
 
-            <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-1 xl:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_563px] lg:gap-9">
+      
+            <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:gap-9 min-[1366px]:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_563px]">
               <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8">
                 {hasCartItems && (
                   <div className="flex items-center justify-between">
@@ -542,15 +547,8 @@ export default function CartPage() {
 
                 {hasCartItems && (
                   <div className="rounded-[16px] border border-[#F0E6D2] bg-[#FFFDF8] sm:rounded-[20px]">
-                    {items.map((item, index) => (
-                      <div
-                        key={item.id}
-                        className={
-                          index !== items.length - 1
-                            ? "border-b border-[#F0E6D2]"
-                            : ""
-                        }
-                      >
+                    {items.map((item) => (
+                      <div key={item.id}>
                         <CartItemCard
                           item={item}
                           selected={normalizedSelectedItemIds.includes(
@@ -752,6 +750,7 @@ export default function CartPage() {
                     totalSavings={totalSavings}
                     itemCount={selectedItems.length}
                     currency="INR"
+                    title="Order Summary"
                     formatMoney={formatMoney}
                     asNumber={toNum}
                     buttonText={
@@ -776,7 +775,7 @@ export default function CartPage() {
 
             {/* RECENTLY VIEWED SECTION */}
             {recentViewedItems && recentViewedItems.length > 0 && (
-              <div className="mt-12 lg:mt-16">
+              <div className="mt-8 lg:mt-16">
                 <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:mb-8">
                   <div>
                     <h2 className="text-xl font-bold text-[#3F4095] sm:text-2xl lg:text-[28px]">
@@ -787,13 +786,13 @@ export default function CartPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-3 ">
-                  <OutlineSmallButton
-                    to="/products"
-                    rightIcon={<FaAngleRight className="text-[10px]" />}
-                    className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold  transition-all duration-300 ease-in-out"
-                  >
-                    Browse All Products
-                  </OutlineSmallButton>
+                    <OutlineSmallButton
+                      to="/products"
+                      rightIcon={<FaAngleRight className="text-[10px]" />}
+                      className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold  transition-all duration-300 ease-in-out"
+                    >
+                      Browse All Products
+                    </OutlineSmallButton>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 lg:gap-6">

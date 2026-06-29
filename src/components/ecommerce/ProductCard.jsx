@@ -330,7 +330,7 @@ export default function ProductCard({
             onClick={handleAddToCart}
             rightIcon={<ShoppingCart size={19} strokeWidth={2.4} />}
             className={cn(
-              "w-full gap-[15px] text-[15px]  font-semibold focus-visible:outline-[#1B1D60]",
+              "w-full   gap-[15px] text-[15px]  font-semibold focus-visible:outline-[#1B1D60]",
               !isInStock && "cursor-not-allowed opacity-60",
             )}
           >

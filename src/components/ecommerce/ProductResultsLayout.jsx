@@ -71,10 +71,16 @@ export default function ProductResultsLayout({
           />
         </FilterDrawer>
 
-        <div className="min-w-0 flex-1 ">
-          {children || (
+ 
+        <div className="min-w-0 w-full flex-1">
+          {children ||
+            (loading ? (
+              <div className="flex min-h-[360px] w-full items-center justify-center">
+                <Loader size="lg" />
+              </div>
+            ) : (
             <ApiState
-              loading={loading}
+              loading={false}
               error={error}
               empty={empty}
               emptyTitle={emptyTitle}
@@ -106,7 +112,7 @@ export default function ProductResultsLayout({
               )}
               {sentinelRef && <div ref={sentinelRef} className="h-8 w-full" />}
             </ApiState>
-          )}
+            ))}
         </div>
       </div>
     </>

@@ -7,7 +7,7 @@ const buttonStyles = {
   solidSmall:
     "h-[35px] rounded-[6px] bg-[#CE9F2D] px-[14px] py-[7px] text-label-md font-semibold text-[#1F2430] hover:bg-[#bd9025]",
   outlineSmall:
-    "inline-flex h-fit py-4 md:py-2 items-center justify-center gap-[1px] rounded-[10px] border border-[#3E409380] bg-transparent    text-base lg:text-lg font-semibold leading-none tracking-normal align-middle text-[#3E4093] transition-all duration-300 ",
+    "inline-flex h-fit py-3 items-center justify-center gap-[1px] rounded-[10px] border border-[#3E409380] bg-transparent    text-base lg:text-lg font-semibold leading-none tracking-normal align-middle text-[#3E4093] transition-all duration-300 ",
   outlineLight:
     "border border-white/50 bg-transparent text-white hover:bg-white/10",
   solidLarge:
@@ -17,7 +17,7 @@ const buttonStyles = {
   headerIcon:
     "group relative h-10 w-10 rounded-full border border-[var(--customer-border)] bg-white p-0 hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]",
 
-  pill: "inline-flex min-w-[110px] sm:min-w-[130px] h-[36px] sm:h-[40px] items-center justify-center gap-2 sm:gap-[15px] md:gap-2 rounded-full bg-[#CE9F2D] px-4 sm:px-[34px] py-2  font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[#bd9025]",
+  pill: "inline-flex min-w-[110px]  sm:min-w-[130px] h-[36px] sm:h-[40px] items-center justify-center gap-2 sm:gap-[15px] md:gap-2 rounded-full bg-[#CE9F2D] px-4 sm:px-[34px] py-2  font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[#bd9025]",
 
   ghostPill:
     "rounded-full border border-[#CE9F2D4D] bg-[#CE9F2D4D] px-4 py-2 text-label-sm font-semibold text-[#D6A323] hover:bg-black/60 xl:text-label-lg",

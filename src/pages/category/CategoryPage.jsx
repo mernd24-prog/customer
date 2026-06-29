@@ -875,11 +875,6 @@ export default function CategoryPage() {
                   {categoryDesc ||
                     `Explore our wide range of woman's with the latest features, premium quality, and the best offers available for every need.`}
                 </p>
-                {/* {pageInfo.total > 0 && (
-                  <p className="mt-4 text-white/70">
-                    {pageInfo.total.toLocaleString()} Products
-                  </p>
-                )} */}
               </div>
             </div>
 

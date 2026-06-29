@@ -10,6 +10,9 @@ export default function HeaderDropdown({
   children,
   className = "",
   chevronClassName = "",
+  iconOnly = false,
+  showChevron = false,
+  ariaLabel = label,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const hasDropdown = Boolean(children);
@@ -52,19 +55,22 @@ export default function HeaderDropdown({
           )}
           aria-expanded={isOpen}
           aria-haspopup="true"
+          aria-label={ariaLabel}
           onClick={() => setIsOpen((open) => !open)}
         >
           {icon && <span className="flex  items-center shrink-0">{icon}</span>}
-          <span>{label}</span>
-          <ChevronDown
-            size={16}
-            aria-hidden="true"
-            className={cn(
-              "transition-all duration-300 ease-in-out text-[var(--customer-gold)]",
-              chevronClassName,
-              isOpen && "rotate-180",
-            )}
-          />
+          {!iconOnly && <span className="min-w-0 truncate">{label}</span>}
+          {(!iconOnly || showChevron) && (
+            <ChevronDown
+              size={16}
+              aria-hidden="true"
+              className={cn(
+                "transition-all duration-300 ease-in-out text-[var(--customer-gold)]",
+                chevronClassName,
+                isOpen && "rotate-180",
+              )}
+            />
+          )}
         </button>
       ) : path ? (
         isExternal ? (
@@ -82,7 +88,7 @@ export default function HeaderDropdown({
             {icon && (
               <span className="flex  items-center shrink-0">{icon}</span>
             )}
-            <span>{label}</span>
+            <span className="min-w-0 truncate">{label}</span>
             <ChevronDown
               size={16}
               aria-hidden="true"
@@ -106,7 +112,7 @@ export default function HeaderDropdown({
             {icon && (
               <span className="flex  items-center shrink-0">{icon}</span>
             )}
-            <span>{label}</span>
+            <span className="min-w-0 truncate">{label}</span>
             <ChevronDown
               size={16}
               aria-hidden="true"
@@ -129,7 +135,7 @@ export default function HeaderDropdown({
           aria-haspopup="true"
         >
           {icon && <span className="flex  items-center shrink-0">{icon}</span>}
-          <span>{label}</span>
+          <span className="min-w-0 truncate">{label}</span>
           <ChevronDown
             size={16}
             aria-hidden="true"

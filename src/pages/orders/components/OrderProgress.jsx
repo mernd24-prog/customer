@@ -26,11 +26,11 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
 
   return (
     <div
-      className="relative grid min-w-[720px] gap-2 px-1 py-3 lg:min-w-0"
+      className="relative grid min-w-0 gap-2 px-1 py-8"
       style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
     >
       <span
-        className="absolute top-[3rem] h-0.5 overflow-hidden bg-border"
+        className="absolute top-[67px] h-0.5 overflow-hidden bg-border"
         style={{
           left: `calc(100% / ${steps.length} / 2)`,
           right: `calc(100% / ${steps.length} / 2)`,
@@ -75,6 +75,73 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+function MobileStepBar({ steps, activeStatus }) {
+  const activeIndex = Math.max(
+    0,
+    steps.indexOf(normalizeProgressStatus(activeStatus)),
+  );
+
+  return (
+    <div className="rounded-xl  bg-white  xl:hidden">
+      <div className="space-y-0">
+        {steps.map((step, index) => {
+          const done = activeIndex >= index;
+          const current = activeIndex === index;
+          const label =
+            step === "pending_payment"
+              ? "Payment"
+              : TRACKING_LABELS[step] || step.replace(/_/g, " ");
+
+          return (
+            <div key={step} className="relative flex min-h-12 gap-3">
+              {index < steps.length - 1 && (
+                <span
+                  className={`absolute bottom-0 left-[15px] top-8 w-0.5 ${
+                    done && activeIndex > index
+                      ? "bg-[#CE9F2D]"
+                      : "bg-[#D7D7D7]"
+                  }`}
+                />
+              )}
+              <span
+                className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 ${
+                  done
+                    ? "border-[#B88200] bg-[#CE9F2D]"
+                    : "border-[#A9A9A9] bg-white"
+                }`}
+              >
+                {done ? (
+                  <img
+                    src={vectorImage}
+                    alt="Completed"
+                    className="h-3.5 w-3.5"
+                  />
+                ) : (
+                  <span className="h-2 w-2 rounded-full bg-[#A9A9A9]" />
+                )}
+              </span>
+              <div className="min-w-0 pb-5 pt-1">
+                <p
+                  className={`text-sm font-semibold capitalize leading-5 ${
+                    current || done ? "text-[#B88200]" : "text-muted"
+                  }`}
+                >
+                  {label}
+                </p>
+                {current && (
+                  <p className="mt-0.5 text-xs leading-4 text-muted">
+                    Current order status
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -167,15 +234,18 @@ function OrderProgress({ status, cancellations = [], returns = [] }) {
     visibleSteps[visibleSteps.length - 1];
 
   return (
-    <div className="space-y-4  ">
-      <StepBar
-        steps={progressSteps}
-        activeStatus={activeStatus}
-        colorClass="border-gold bg-gold"
-      />
+    <div className="space-y-6   mb-6 ">
+      <div className="hidden  xl:block">
+        <StepBar
+          steps={progressSteps}
+          activeStatus={activeStatus}
+          colorClass="border-gold bg-gold"
+        />
+      </div>
+      <MobileStepBar steps={progressSteps} activeStatus={activeStatus} />
       {(isCancelled || isFailed) && (
-        <div className="rounded-[8px]  border border-border bg-white px-4 py-3 text-sm">
-          <p className="font-semibold d capitalize text-ink">
+        <div className="rounded-[8px]   md:border md:border-border bg-white px-4 py-3 text-sm">
+          <p className="font-semibold  capitalize text-ink">
             {currentStep?.label || "Status update"}
           </p>
           <p className="mt-1 text-xs text-muted">{currentStep?.note}</p>

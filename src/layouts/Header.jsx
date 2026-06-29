@@ -1,11 +1,4 @@
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
-} from "react";
+import { Fragment, useEffect, useMemo, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -33,11 +26,10 @@ import {
 import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
 import SellDropdown from "./header/SellDropdown";
-import WatchlistDropdown from "./header/WatchlistDropdown";
 import { icons, navbarIcons as navData } from "../constants/image.constant";
-import { useProductActions } from "../hooks/useProductActions";
 import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
 import { logout } from "../features/auth/authSlice";
+import { fetchMe } from "../features/user/userSlice";
 import { getRole, isAdminRole } from "../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
 import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
@@ -207,7 +199,6 @@ function withIcons(items) {
 export const TopHeader = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((s) => s.auth.current);
-  const currentRole = getRole(currentUser);
 
   const { page: dealsPage } = useCmsRecord("deals");
   const { page: brandOutletPage } = useCmsRecord("brand-outlet");
@@ -217,31 +208,12 @@ export const TopHeader = () => {
 
   const sellDropdownCms = getCmsPayload(headerSellPage, DEFAULT_SELL_DROPDOWN);
   const topLinks = [
-    //{ name: dealsPage?.title || "Deals", path: "/deals" },
     { name: brandOutletPage?.title || "Brand Outlet", path: "/brand-outlet" },
     { name: helpContactPage?.title || "Help & Contact", path: "/help-contact" },
   ];
   const filteredTopLinks = topLinks.filter(
     (link) =>
       link.name !== "Help & Contact" && link.name !== helpContactPage?.title,
-  );
-
-  const { removeFromWishlist } = useProductActions();
-  const {
-    products: wishlistedProducts,
-    hideFallbackProduct,
-    isUsingFallback,
-  } = useWatchlistProducts();
-
-  const handleRemoveWatchlist = useCallback(
-    (product) => {
-      if (isUsingFallback) {
-        hideFallbackProduct(product);
-        return;
-      }
-      removeFromWishlist(product);
-    },
-    [hideFallbackProduct, isUsingFallback, removeFromWishlist],
   );
 
   const dropdowns = useMemo(
@@ -258,16 +230,6 @@ export const TopHeader = () => {
           ),
         },
       },
-      {
-        type: "watchlist",
-        label: `Watchlist (${wishlistedProducts.length})`,
-        path: "/watchlist",
-        icon: <Heart size={16} className="text-[#CE9F2D] shrink-0" />,
-        title: "My Watchlist",
-        items: wishlistedProducts,
-        onRemove: handleRemoveWatchlist,
-      },
-
       {
         type: "more",
         label: "More",
@@ -286,28 +248,13 @@ export const TopHeader = () => {
         ]),
       },
     ],
-    [
-      currentRole,
-      currentUser,
-      helpContactPage?.title,
-      sellDropdownCms,
-      wishlistedProducts,
-      handleRemoveWatchlist,
-    ],
+    [helpContactPage?.title, sellDropdownCms],
   );
 
   const renderDropdown = (dropdown) => {
     switch (dropdown.type) {
       case "sell":
         return <SellDropdown data={dropdown.data} />;
-      case "watchlist":
-        return (
-          <WatchlistDropdown
-            title={dropdown.title}
-            items={dropdown.items}
-            onRemove={dropdown.onRemove}
-          />
-        );
       case "menu":
       case "more":
         return <MenuDropdown title={dropdown.title} items={dropdown.items} />;
@@ -380,19 +327,26 @@ export const TopHeader = () => {
 
 export const Navbar = ({ icons: propIcons }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const prevPathnameRef = useRef(location.pathname);
   const currentUser = useSelector((s) => s.auth.current);
+  const profileUser = useSelector((s) => s.user.current) || currentUser;
   const currentRole = getRole(currentUser);
   const cartItems = useSelector((s) => s.cart.current?.items || []);
+  const { products: wishlistedProducts } = useWatchlistProducts();
   const displayIcons = propIcons || navData;
   const utilityIcons = asArray(displayIcons).filter(
     (item) => !["IN", "Word", "Account", "Cart"].includes(item?.name),
   );
   const [searchQuery, setSearchQuery] = useState("");
-  const accountLabel = currentUser?.profile?.firstName
-    ? `${currentUser.profile.firstName} ${currentUser.profile.lastName || ""}`.trim()
-    : currentUser?.firstName || currentUser?.email?.split("@")[0] || "My Sam";
+  const accountLabel = profileUser?.profile?.firstName
+    ? `${profileUser.profile.firstName} ${profileUser.profile.lastName || ""}`.trim()
+    : profileUser?.firstName || profileUser?.email?.split("@")[0] || "My Sam";
+  const profileAvatar =
+    profileUser?.profile?.avatarUrl ||
+    profileUser?.profile?.avatar ||
+    "/image/png/person.png";
   const accountMenuItems = withIcons([
     ...baseAccountMenuItems,
     ...(isAdminRole(currentRole)
@@ -415,6 +369,13 @@ export const Navbar = ({ icons: propIcons }) => {
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
   const cartItemsLength = useMemo(() => cart.items?.length || 0, [cart.items]);
+
+  useEffect(() => {
+    if (currentUser) {
+      dispatch(fetchMe());
+    }
+  }, [currentUser?.id, currentUser?._id, dispatch]);
+
   useEffect(() => {
     if (location.pathname === "/" && prevPathnameRef.current !== "/") {
       setSearchQuery("");
@@ -462,7 +423,7 @@ export const Navbar = ({ icons: propIcons }) => {
             <img
               src="/image/png/logo.png"
               alt="Sam Global"
-              className="h-auto w-[82px] object-contain min-[375px]:w-[100px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
+              className="h-auto w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
             />
           </Link>
 
@@ -486,8 +447,8 @@ export const Navbar = ({ icons: propIcons }) => {
         />
 
         {/* Actions */}
-        <div className="order-2 flex  mt-auto lg:mt-0 items-center gap-2 sm:gap-3 lg:order-3 lg:gap-4">
-          <div className=" items-center  gap-5 flex">
+        <div className="order-2 flex items-center gap-1.5 min-[375px]:gap-2 sm:gap-3 lg:order-3 lg:gap-4">
+          <div className="flex items-center gap-2 sm:gap-5">
             {utilityIcons.map((item, iconIndex) => (
               <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
                 <HeaderIconButton
@@ -520,6 +481,21 @@ export const Navbar = ({ icons: propIcons }) => {
             )}
 
             <HeaderIconButton
+              to="/watchlist"
+              className="relative h-8 w-8 overflow-visible border-[#1B1D60] bg-[#1B1D600D] text-[#1B1D60]  min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
+              aria-label={`Watchlist with ${wishlistedProducts.length} ${wishlistedProducts.length === 1 ? "item" : "items"}`}
+            >
+              <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
+              {wishlistedProducts.length > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[12px] font-bold text-white shadow-sm">
+                  {wishlistedProducts.length > 99
+                    ? "99+"
+                    : wishlistedProducts.length}
+                </span>
+              )}
+            </HeaderIconButton>
+
+            <HeaderIconButton
               to="/cart"
               className="relative h-8 w-8 overflow-visible border-0 bg-transparent hover:border-0 hover:bg-transparent min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
               aria-label={`Cart with ${cartItemCount} ${cartItemCount === 1 ? "item" : "items"}`}
@@ -531,7 +507,7 @@ export const Navbar = ({ icons: propIcons }) => {
               />
 
               {cartItemsLength > 0 && (
-                <span className="absolute  -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1  text-[18px] font-bold  text-white shadow-sm">
+                <span className="absolute  -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1  text-[12px] font-bold  text-white shadow-sm">
                   {cartItemsLength > 99 ? "99+" : cartItemsLength}
                 </span>
               )}
@@ -541,10 +517,32 @@ export const Navbar = ({ icons: propIcons }) => {
           {currentUser ? (
             <HeaderDropdown
               label={accountLabel}
-              icon={<User size={16} className="shrink-0 text-[#1B1D60]" />}
+              ariaLabel="Open account menu"
+              iconOnly
+              showChevron
+              icon={
+                <div className="flex items-center gap-2.5">
+                  <img
+                    src={profileAvatar}
+                    alt=""
+                    className="h-8 w-8 rounded-full object-cover min-[375px]:h-9 min-[375px]:w-9 md:h-12 md:w-12"
+                    onError={(event) => {
+                      event.currentTarget.src = "/image/png/person.png";
+                    }}
+                  />
+                  <span className="hidden min-w-0 flex-col text-left leading-tight lg:flex">
+                    <span className="max-w-[130px] truncate text-[16px] font-bold text-[#2E2E2E]">
+                      {accountLabel}
+                    </span>
+                    <span className="max-w-[160px] truncate text-[15px] font-medium text-[#2E2E2E]">
+                      {profileUser?.email || ""}
+                    </span>
+                  </span>
+                </div>
+              }
               path="/account/profile"
-              className="h-[34px]  max-w-[145px]  rounded-[4px]  md:px-2.5 text-[11px] font-semibold !text-[#1B1D60] hover:!text-[#1B1D60] min-[375px]:h-[36px] min-[375px]:max-w-[160px] min-[375px]:text-[12px] min-[425px]:h-[38px] min-[425px]:max-w-[175px] sm:h-[41px] sm:max-w-[220px] sm:px-4 sm:text-[14px]"
-              chevronClassName="!text-[#1B1D60]"
+              className="h-8 w-8 overflow-hidden rounded-full border-2 border-[#1B1D60] bg-white p-0 hover:border-[#CE9F2D] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 lg:h-auto lg:w-auto lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent"
+              chevronClassName="hidden !text-[#1B1D60] lg:block lg:self-top"
             >
               <MenuDropdown title="My Account" items={accountMenuItems} />
             </HeaderDropdown>

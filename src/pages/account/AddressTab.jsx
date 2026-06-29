@@ -60,13 +60,13 @@ function AddressViewCard({ addr, addrId, startEdit, handleDelete }) {
           </p>
 
           {addr.phone && (
-            <p className="mt-5 flex items-center gap-2 text-sm font-medium text-[#2E2E2E] lg:text-[20px]">
+            <p className="mt-5 flex items-center gap-2 text-sm font-medium text-[#2E2E2E] lg:text-[18px]">
               <Phone className="size-6 shrink-0 text-[#D4A428]" />
               <span>{addr.phone}</span>
             </p>
           )}
 
-          <p className="mt-3 flex items-start gap-2 text-sm font-medium text-[#2E2E2E] lg:text-[20px]">
+          <p className="mt-3 flex items-start gap-2 text-sm font-medium text-[#2E2E2E] lg:text-[18px]">
             <MapPin className="mt-0.5 size-6 shrink-0 text-[#D4A428]" />
             <span>
               {addr.line1}
@@ -77,11 +77,11 @@ function AddressViewCard({ addr, addrId, startEdit, handleDelete }) {
           </p>
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center gap-5">
+        <div className="mt-6 flex flex-wrap gap-2 items-center lg:gap-5">
           <button
             type="button"
             onClick={() => startEdit(addr)}
-            className="inline-flex min-h-9 items-center justify-center gap-2 rounded-[6px] bg-[#D4A428] px-8 text-sm font-semibold text-white"
+            className="inline-flex  min-h-9 items-center justify-center gap-2 rounded-[6px] bg-[#D4A428] px-2 md:px-8 text-sm font-semibold text-white"
           >
             <Pencil className="size-4" />
             Edit Address

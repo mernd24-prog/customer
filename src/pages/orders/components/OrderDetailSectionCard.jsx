@@ -15,11 +15,11 @@ function OrderDetailSectionCard({
     >
       {title || headerContent ? (
         <div
-          className={`flex  min-h-[81px] items-center justify-between rounded-t-[15px] bg-[#CE9F2D33] px-[20px] py-[25px] ${headerClassName}`}
+          className={`flex  min-h-[81px] items-center justify-between rounded-t-[15px] bg-[#CE9F2D33] px-[20px] md:py-[25px] ${headerClassName}`}
         >
           {title ? (
             <TitleTag
-              className={`font-sans text-[24px] font-bold leading-none text-[#2E2E2E] ${titleClassName}`}
+              className={`font-sans  text-lg lg:text-[24px] font-bold leading-none text-[#2E2E2E] ${titleClassName}`}
             >
               {title}
             </TitleTag>
