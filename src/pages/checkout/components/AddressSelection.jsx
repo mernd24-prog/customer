@@ -277,47 +277,7 @@ export default function AddressSelection({
                 : "bg-white"
             }`}
           >
-            {isEditing ? (
-              <div className=" grid gap-4 py-4 sm:pb-8">
-                <div className="flex  items-center gap-2 text-sm font-semibold text-ink">
-                  <Pencil size={16} className="text-gold" />
-                  Edit address
-                </div>
-                <AddressFormFields
-                  form={editForm}
-                  idPrefix={`checkout-edit-${addrId}`}
-                  countries={countries}
-                  states={states}
-                  cities={cities}
-                  postalCodes={postalCodes}
-                  dialCodes={editDialCodes}
-                  selectedCountry={editCountry}
-                  selectedState={editState}
-                  selectedCity={editCity}
-                  selectedPostalCode={editPostalCode}
-                  addressLabels={addressLabels}
-                />
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <Button
-                    type="button"
-                    loading={loading}
-                    onClick={editForm.handleSubmit(handleUpdate)}
-                    className="w-full sm:w-auto"
-                  >
-                    Save changes
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={cancelEdit}
-                    className="w-full sm:w-auto"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex w-full items-start gap-3 sm:gap-[15px] border-b border-[#CE9F2D4D]">
+             <div className="flex w-full items-start gap-3 sm:gap-[15px] border-b border-[#CE9F2D4D] pt-5 sm:pt-[25px] pb-6 sm:pb-[30px]">
                 <div className="min-w-0 flex-1">
                   <span
                     className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-bold capitalize text-white sm:px-[15px] sm:py-[7px] sm:text-[13px] ${
@@ -435,6 +395,11 @@ export default function AddressSelection({
           </div>
         );
       })}
+      {useNewAddress && (
+        <div className="rounded-[8px] border border-gold bg-gold-soft px-3 py-2 text-sm font-semibold text-navy mb-5">
+          New address form is selected.
+        </div>
+      )}
       {errors.selectedAddressId && (
         <p className="text-xs text-red-600  mt-1">
           {errors.selectedAddressId.message}
