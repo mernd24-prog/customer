@@ -344,12 +344,11 @@ export default function ProductCard({
                 : `Add ${title} to wishlist`
             }
             onClick={handleWishlist}
-            className={cn(
-              "hover:border-[#CE9F2D]",
+            className={
               isWishlisted
-                ? "border-[#FF3D31] text-[#FF3D31]"
-                : "border-[#CE9F2D] text-[##CE9F2D]",
-            )}
+                ? "border-[#FF3D31] text-[#FF3D31] hover:border-[#FF3D31]"
+                : "border-[#CE9F2D] text-[##CE9F2D] hover:border-[#CE9F2D]"
+            }
           >
             <Heart
               size={19}

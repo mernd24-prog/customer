@@ -797,7 +797,7 @@ export default function CategoryPage() {
       ),
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
-      label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,
+      label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
     },
   ]
     .flat()

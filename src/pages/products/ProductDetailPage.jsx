@@ -1009,6 +1009,7 @@ export default function ProductDetailPage() {
     loadedProductId,
     productId,
     quantity,
+    selectedVariantKey,
     selectedVariant?._id,
     selectedVariant?.sku,
   ]);
@@ -1157,14 +1158,34 @@ export default function ProductDetailPage() {
 
   const attributes = product?.attributes || product?.specifications || {};
 
+  const stockValue = selectedVariant?.stock ?? product?.stock;
+  const availableStock =
+    stockValue != null && Number.isFinite(Number(stockValue))
+      ? Math.max(0, Math.floor(Number(stockValue)))
+      : null;
+
   const inStock =
-    selectedVariant?.stock != null
-      ? selectedVariant.stock > 0
+    availableStock != null
+      ? availableStock > 0
       : typeof product?.inStock === "boolean"
         ? product.inStock
-        : product?.stock != null
-          ? product.stock > 0
-          : true;
+        : true;
+
+  const quantityAtStockLimit =
+    availableStock != null && quantity >= availableStock;
+  const quantityStockMessage = !inStock
+    ? "Out of stock"
+    : quantityAtStockLimit
+      ? `Only ${availableStock} in stock`
+      : "";
+
+  useEffect(() => {
+    setQuantity((currentQuantity) =>
+      availableStock == null
+        ? currentQuantity
+        : Math.max(1, Math.min(currentQuantity, availableStock)),
+    );
+  }, [availableStock, selectedVariantKey]);
 
   const categoryLabel = product?.category
     ? (product.category || "")
@@ -1297,11 +1318,28 @@ export default function ProductDetailPage() {
                     <div className="w-full  md:w-fit">
                       <QuantitySelector
                         quantity={quantity}
-                        onIncrease={() => setQuantity((q) => q + 1)}
-                        onDecrease={() =>
-                          setQuantity((q) => Math.max(1, q - 1))
+                        onIncrease={() =>
+                          setQuantity((currentQuantity) => {
+                            if (!inStock || quantityAtStockLimit) {
+                              return currentQuantity;
+                            }
+                            return currentQuantity + 1;
+                          })
                         }
+                        onDecrease={() =>
+                          setQuantity((currentQuantity) =>
+                            Math.max(1, currentQuantity - 1),
+                          )
+                        }
+                        max={availableStock ?? undefined}
+                        increaseDisabled={!inStock || quantityAtStockLimit}
+                        increaseDisabledLabel={quantityStockMessage || undefined}
                       />
+                      {quantityStockMessage ? (
+                        <p className="mt-1 text-xs font-semibold text-red-600">
+                          {quantityStockMessage}
+                        </p>
+                      ) : null}
                     </div>
 
                     <DeliveryChecker

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown, Star } from "lucide-react";
 
 function FilterTick({ checked }) {
@@ -58,8 +58,9 @@ export function FilterSection({ title, children, defaultOpen = true }) {
 
 const MIN_LIMIT = 0;
 const MAX_LIMIT = 150000;
-const DEFAULT_MIN_PRICE = 5000;
+const DEFAULT_MIN_PRICE = MIN_LIMIT;
 const DEFAULT_MAX_PRICE = 150000;
+const PRICE_STEP = 1000;
 
 function formatPriceInput(value) {
   return `₹${Number(value || 0).toLocaleString("en-IN")}`;
@@ -71,6 +72,12 @@ function parsePriceInput(value) {
 }
 
 export function PriceRangeFilter({ min, max, onChange }) {
+  const applyTimerRef = useRef(null);
+  const activeThumbRef = useRef(null);
+  const rangeValuesRef = useRef({
+    min: Number(min || DEFAULT_MIN_PRICE),
+    max: Number(max || DEFAULT_MAX_PRICE),
+  });
   const [localMin, setLocalMin] = useState(min || DEFAULT_MIN_PRICE);
   const [localMax, setLocalMax] = useState(max || DEFAULT_MAX_PRICE);
   const [minInput, setMinInput] = useState(
@@ -82,12 +89,14 @@ export function PriceRangeFilter({ min, max, onChange }) {
 
   useEffect(() => {
     const nextMin = min || DEFAULT_MIN_PRICE;
+    rangeValuesRef.current.min = Number(nextMin);
     setLocalMin(nextMin);
     setMinInput(formatPriceInput(nextMin));
   }, [min]);
 
   useEffect(() => {
     const nextMax = max || DEFAULT_MAX_PRICE;
+    rangeValuesRef.current.max = Number(nextMax);
     setLocalMax(nextMax);
     setMaxInput(formatPriceInput(nextMax));
   }, [max]);
@@ -95,16 +104,43 @@ export function PriceRangeFilter({ min, max, onChange }) {
   const minPercent = ((localMin - MIN_LIMIT) / (MAX_LIMIT - MIN_LIMIT)) * 100;
   const maxPercent = ((localMax - MIN_LIMIT) / (MAX_LIMIT - MIN_LIMIT)) * 100;
 
+  useEffect(
+    () => () => {
+      if (applyTimerRef.current) clearTimeout(applyTimerRef.current);
+    },
+    [],
+  );
+
+  const applyValues = (nextMin, nextMax) => {
+    if (applyTimerRef.current) clearTimeout(applyTimerRef.current);
+    applyTimerRef.current = null;
+    onChange?.({
+      minPrice: nextMin > MIN_LIMIT ? nextMin : undefined,
+      maxPrice: nextMax < MAX_LIMIT ? nextMax : undefined,
+    });
+  };
+
+  const scheduleApply = (nextMin, nextMax) => {
+    if (applyTimerRef.current) clearTimeout(applyTimerRef.current);
+    applyTimerRef.current = setTimeout(() => {
+      applyValues(nextMin, nextMax);
+    }, 400);
+  };
+
   const handleMinChange = (event) => {
     const value = Math.min(Number(event.target.value), localMax - 1000);
+    rangeValuesRef.current.min = value;
     setLocalMin(value);
     setMinInput(formatPriceInput(value));
+    scheduleApply(value, localMax);
   };
 
   const handleMaxChange = (event) => {
     const value = Math.max(Number(event.target.value), localMin + 1000);
+    rangeValuesRef.current.max = value;
     setLocalMax(value);
     setMaxInput(formatPriceInput(value));
+    scheduleApply(localMin, value);
   };
 
   const handleMinInputChange = (event) => {
@@ -118,7 +154,9 @@ export function PriceRangeFilter({ min, max, onChange }) {
       MIN_LIMIT,
       Math.min(parsedValue, localMax - 1000),
     );
+    rangeValuesRef.current.min = clampedValue;
     setLocalMin(clampedValue);
+    scheduleApply(clampedValue, localMax);
   };
 
   const handleMaxInputChange = (event) => {
@@ -132,27 +170,102 @@ export function PriceRangeFilter({ min, max, onChange }) {
       MAX_LIMIT,
       Math.max(parsedValue, localMin + 1000),
     );
+    rangeValuesRef.current.max = clampedValue;
     setLocalMax(clampedValue);
+    scheduleApply(localMin, clampedValue);
   };
 
   const handleMinInputBlur = () => {
     setMinInput(formatPriceInput(localMin));
+    applyValues(localMin, localMax);
   };
 
   const handleMaxInputBlur = () => {
     setMaxInput(formatPriceInput(localMax));
+    applyValues(localMin, localMax);
+  };
+
+  const getPointerPrice = (clientX, element) => {
+    const bounds = element.getBoundingClientRect();
+    const thumbRadius = 11;
+    const usableWidth = Math.max(bounds.width - thumbRadius * 2, 1);
+    const position = Math.min(
+      Math.max(clientX - bounds.left - thumbRadius, 0),
+      usableWidth,
+    );
+    const rawValue = MIN_LIMIT + (position / usableWidth) * (MAX_LIMIT - MIN_LIMIT);
+    return Math.round(rawValue / PRICE_STEP) * PRICE_STEP;
+  };
+
+  const updateThumbFromPointer = (thumb, value) => {
+    const currentMin = rangeValuesRef.current.min;
+    const currentMax = rangeValuesRef.current.max;
+
+    if (thumb === "min") {
+      const nextMin = Math.max(
+        MIN_LIMIT,
+        Math.min(value, currentMax - PRICE_STEP),
+      );
+      rangeValuesRef.current.min = nextMin;
+      setLocalMin(nextMin);
+      setMinInput(formatPriceInput(nextMin));
+      scheduleApply(nextMin, currentMax);
+      return;
+    }
+
+    const nextMax = Math.min(
+      MAX_LIMIT,
+      Math.max(value, currentMin + PRICE_STEP),
+    );
+    rangeValuesRef.current.max = nextMax;
+    setLocalMax(nextMax);
+    setMaxInput(formatPriceInput(nextMax));
+    scheduleApply(currentMin, nextMax);
+  };
+
+  const handleRangePointerDown = (event) => {
+    event.preventDefault();
+    const value = getPointerPrice(event.clientX, event.currentTarget);
+    const explicitThumb = event.target.getAttribute?.("data-price-thumb");
+    const { min: currentMin, max: currentMax } = rangeValuesRef.current;
+    const thumb =
+      explicitThumb ||
+      (Math.abs(value - currentMin) <= Math.abs(value - currentMax)
+        ? "min"
+        : "max");
+
+    activeThumbRef.current = thumb;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    updateThumbFromPointer(thumb, value);
+  };
+
+  const handleRangePointerMove = (event) => {
+    if (!activeThumbRef.current) return;
+    const value = getPointerPrice(event.clientX, event.currentTarget);
+    updateThumbFromPointer(activeThumbRef.current, value);
+  };
+
+  const stopRangePointer = (event) => {
+    if (!activeThumbRef.current) return;
+    activeThumbRef.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
   };
 
   const apply = () => {
-    onChange?.({
-      minPrice: localMin || undefined,
-      maxPrice: localMax || undefined,
-    });
+    applyValues(localMin, localMax);
   };
 
   const clear = () => {
+    if (applyTimerRef.current) clearTimeout(applyTimerRef.current);
+    applyTimerRef.current = null;
     setLocalMin(DEFAULT_MIN_PRICE);
     setLocalMax(DEFAULT_MAX_PRICE);
+    rangeValuesRef.current = {
+      min: DEFAULT_MIN_PRICE,
+      max: DEFAULT_MAX_PRICE,
+    };
     setMinInput(formatPriceInput(DEFAULT_MIN_PRICE));
     setMaxInput(formatPriceInput(DEFAULT_MAX_PRICE));
 
@@ -169,24 +282,34 @@ export function PriceRangeFilter({ min, max, onChange }) {
 
   return (
     <form className="grid gap-5 pt-1 " onSubmit={handleSubmit}>
-      <div className="relative h-8">
-        <div className="absolute left-0 right-0 top-1/2 h-[4px] -translate-y-1/2 rounded-full bg-[#D9D3C8]" />
-
-        <div
-          className="absolute top-1/2 h-[4px] -translate-y-1/2 rounded-full bg-[#CE9F2D]"
-          style={{
-            left: `${minPercent}%`,
-            right: `${100 - maxPercent}%`,
-          }}
-        />
+      <div
+        className="relative h-8 cursor-pointer touch-none"
+        onPointerDown={handleRangePointerDown}
+        onPointerMove={handleRangePointerMove}
+        onPointerUp={stopRangePointer}
+        onPointerCancel={stopRangePointer}
+        role="presentation"
+      >
+        <div className="absolute left-[11px] right-[11px] top-1/2 h-[4px] -translate-y-1/2">
+          <div className="absolute inset-0 rounded-full bg-[#D9D3C8]" />
+          <div
+            className="absolute top-0 h-[4px] rounded-full bg-[#CE9F2D]"
+            style={{
+              left: `${minPercent}%`,
+              right: `${100 - maxPercent}%`,
+            }}
+          />
+        </div>
 
         <input
           type="range"
           min={MIN_LIMIT}
           max={MAX_LIMIT}
-          step="1000"
+          step={PRICE_STEP}
           value={localMin}
           onChange={handleMinChange}
+          data-price-thumb="min"
+          aria-label="Minimum price"
           className="price-range-input"
         />
 
@@ -194,9 +317,11 @@ export function PriceRangeFilter({ min, max, onChange }) {
           type="range"
           min={MIN_LIMIT}
           max={MAX_LIMIT}
-          step="1000"
+          step={PRICE_STEP}
           value={localMax}
           onChange={handleMaxChange}
+          data-price-thumb="max"
+          aria-label="Maximum price"
           className="price-range-input"
         />
       </div>
@@ -212,7 +337,8 @@ export function PriceRangeFilter({ min, max, onChange }) {
             value={minInput}
             onChange={handleMinInputChange}
             onBlur={handleMinInputBlur}
-            className="h-[50px] w-full rounded-[12px] border border-[#C9CBEB] bg-[#F7F7FB]  text-[18px] font-medium text-[#6F7480] outline-none ring-0 transition-none placeholder:text-[#8A8FA3] focus:border-[#C9CBEB] focus:outline-none focus:ring-0"
+            aria-label="Minimum price"
+            className="h-[50px] w-full rounded-[12px] border border-[#C9CBEB] bg-[#F7F7FB] px-3 text-[16px] font-medium text-[#6F7480] outline-none ring-0 transition-none placeholder:text-[#8A8FA3] focus:border-[#CE9F2D] focus:outline-none focus:ring-0"
           />
         </div>
 
@@ -226,7 +352,8 @@ export function PriceRangeFilter({ min, max, onChange }) {
             value={maxInput}
             onChange={handleMaxInputChange}
             onBlur={handleMaxInputBlur}
-            className="h-[50px] w-full rounded-[12px] border border-[#C9CBEB] bg-[#F7F7FB]  text-[18px] font-medium text-[#6F7480] outline-none ring-0 transition-none placeholder:text-[#8A8FA3] focus:border-[#C9CBEB] focus:outline-none focus:ring-0"
+            aria-label="Maximum price"
+            className="h-[50px] w-full rounded-[12px] border border-[#C9CBEB] bg-[#F7F7FB] px-3 text-[16px] font-medium text-[#6F7480] outline-none ring-0 transition-none placeholder:text-[#8A8FA3] focus:border-[#CE9F2D] focus:outline-none focus:ring-0"
           />
         </div>
       </div>

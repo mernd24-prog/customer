@@ -329,7 +329,7 @@ export default function ProductsPage() {
       .filter(Boolean),
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
-      label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,
+      label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
     },
     searchParams.get("q") && {
       key: "q",

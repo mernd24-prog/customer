@@ -18,11 +18,11 @@ import { useToastThunk } from "../../../hooks/useToastThunk";
 import { normalizeDialCode } from "../../../lib/utils";
 import { addressSchema } from "../../../validations/validationSchemas";
 import { validatePostalCodeForCountry } from "../../../validations";
-
+ 
 const getAddressId = (addr) => addr?._id || addr?.id || "";
-
+ 
 const addressLabels = ADDRESS_LABEL_OPTIONS;
-
+ 
 async function fetchFullList(dispatch, thunkAction, params = {}) {
   const res = await dispatch(thunkAction({ params })).unwrap();
   const total = res.meta?.total || 20;
@@ -31,16 +31,61 @@ async function fetchFullList(dispatch, thunkAction, params = {}) {
     const allRes = await dispatch(
       thunkAction({ params: { ...params, limit: total } }),
     ).unwrap();
-    return allRes.data || allRes.list || allRes || [];
+    return extractList(allRes);
   }
-  return res.data || res.list || res || [];
+  return extractList(res);
 }
 
+const extractList = (response = {}) => {
+  const data = response?.data ?? response;
+  if (Array.isArray(data)) return data;
+  return (
+    data?.items ||
+    data?.states ||
+    data?.cities ||
+    data?.pincodes ||
+    data?.results ||
+    data?.list ||
+    []
+  );
+};
+ 
 const normalizeLabelValue = (value) => {
   const normalized = String(value || "").toLowerCase();
   return ["home", "work", "other"].includes(normalized) ? normalized : "home";
 };
 
+const getLocationValue = (item) => {
+  if (item == null) return "";
+  if (typeof item !== "object") return String(item);
+  return String(
+    item.name ||
+      item.value ||
+      item.label ||
+      item.countryName ||
+      item.stateName ||
+      item.cityName ||
+      "",
+  );
+};
+
+const getLocationId = (item) =>
+  typeof item === "object" && item
+    ? item._id || item.id || item.value || ""
+    : "";
+
+const normalizeForMatch = (value) =>
+  getLocationValue(value).trim().toLowerCase();
+
+const findLocationOption = (options, value) => {
+  const normalizedValue = normalizeForMatch(value);
+  return options.find(
+    (option) =>
+      normalizeForMatch(option) === normalizedValue ||
+      String(getLocationId(option)) === String(value),
+  );
+};
+ 
 export default function AddressSelection({
   addresses,
   selectedAddressId,
@@ -48,6 +93,7 @@ export default function AddressSelection({
   setValue,
   errors,
   countries = [],
+  onAddNewAddress,
 }) {
   const dispatch = useDispatch();
   const run = useToastThunk();
@@ -57,13 +103,13 @@ export default function AddressSelection({
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [postalCodes, setPostalCodes] = useState([]);
-
+ 
   const editCountry = editForm.watch("country");
   const editState = editForm.watch("state");
   const editCity = editForm.watch("city");
   const editPostalCode = editForm.watch("postalCode");
-
-  const editCountryObj = countries.find((c) => (c.name || c) === editCountry);
+ 
+  const editCountryObj = findLocationOption(countries, editCountry);
   const editDialCodes = editCountryObj?.dialCode
     ? [normalizeDialCode(editCountryObj.dialCode)]
     : Array.from(
@@ -71,77 +117,85 @@ export default function AddressSelection({
           countries.map((c) => normalizeDialCode(c.dialCode)).filter(Boolean),
         ),
       ).sort((a, b) => Number(a.replace("+", "")) - Number(b.replace("+", "")));
-
+ 
   useEffect(() => {
     if (!editCountry) {
       setStates([]);
       return;
     }
-
-    const countryObj = countries.find((c) => (c.name || c) === editCountry);
-    const countryId = countryObj?._id || countryObj?.id;
+ 
+    const countryObj = findLocationOption(countries, editCountry);
+    const countryId = getLocationId(countryObj);
     if (!countryId) {
       setStates([]);
       return;
     }
-
+ 
     fetchFullList(dispatch, fetchStates, { countryId })
       .then((list) => setStates(list))
       .catch(() => setStates([]));
   }, [editCountry, countries, dispatch]);
-
+ 
   useEffect(() => {
-    if (editCountry && editState) {
-      const isValid = states.some((s) => (s.name || s) === editState);
-      if (!isValid) {
-        editForm.setValue("state", "");
-        editForm.setValue("city", "");
-      }
+    if (!editState || states.length === 0) return;
+    const stateOption = findLocationOption(states, editState);
+    const stateValue = getLocationValue(stateOption);
+    if (stateValue && stateValue !== editState) {
+      editForm.setValue("state", stateValue);
     }
-  }, [editCountry, states, editState, editForm]);
-
+  }, [states, editState, editForm]);
+ 
   useEffect(() => {
     if (!editState) {
       setCities([]);
       return;
     }
-
-    const stateObj = states.find((s) => (s.name || s) === editState);
-    const stateId = stateObj?._id || stateObj?.id;
+ 
+    const stateObj = findLocationOption(states, editState);
+    const stateId = getLocationId(stateObj);
     if (!stateId) {
       setCities([]);
       return;
     }
-
+ 
     fetchFullList(dispatch, fetchCities, { stateId })
       .then((list) => setCities(list))
       .catch(() => setCities([]));
   }, [editState, states, dispatch]);
 
   useEffect(() => {
+    if (!editCity || cities.length === 0) return;
+    const cityOption = findLocationOption(cities, editCity);
+    const cityValue = getLocationValue(cityOption);
+    if (cityValue && cityValue !== editCity) {
+      editForm.setValue("city", cityValue);
+    }
+  }, [cities, editCity, editForm]);
+ 
+  useEffect(() => {
     if (!editCity) {
       setPostalCodes([]);
       return;
     }
-
-    const cityObj = cities.find((c) => (c.name || c) === editCity);
-    const cityId = cityObj?._id || cityObj?.id;
+ 
+    const cityObj = findLocationOption(cities, editCity);
+    const cityId = getLocationId(cityObj);
     if (!cityId) {
       setPostalCodes([]);
       return;
     }
-
+ 
     fetchFullList(dispatch, fetchZipCodes, { cityId })
       .then((list) => setPostalCodes(list))
       .catch(() => setPostalCodes([]));
   }, [editCity, cities, dispatch]);
-
+ 
   useEffect(() => {
     const isValid =
       editPostalCode &&
       validatePostalCodeForCountry(editPostalCode, editCountry).valid;
     if (!isValid) return undefined;
-
+ 
     const timer = setTimeout(() => {
       dispatch(fetchZipCodes({ params: { zip: editPostalCode } }))
         .unwrap()
@@ -159,38 +213,48 @@ export default function AddressSelection({
         })
         .catch((err) => console.error("Error fetching zip code:", err));
     }, 500);
-
+ 
     return () => clearTimeout(timer);
   }, [editForm, editPostalCode, editCountry, dispatch]);
-
+ 
   useEffect(() => {
     if (editCountry && editCountryObj?.dialCode) {
       editForm.setValue("dialCode", normalizeDialCode(editCountryObj.dialCode));
     }
   }, [editCountry, editCountryObj, editForm]);
-
+ 
   const startEdit = (addr) => {
     const addrId = getAddressId(addr);
     let dialCode = addr.dialCode;
-    if (!dialCode && addr.country && countries.length > 0) {
-      const country = countries.find((c) => (c.name || c) === addr.country);
+    const countryValue = getLocationValue(addr.country || addr.countryName);
+    if (!dialCode && countryValue && countries.length > 0) {
+      const country = findLocationOption(countries, countryValue);
       if (country?.dialCode) dialCode = country.dialCode;
     }
-
+ 
     setEditingId(addrId);
     editForm.reset({
       ...addr,
       label: normalizeLabelValue(addr.label),
+      country: countryValue,
+      state: getLocationValue(addr.state || addr.stateName),
+      city: getLocationValue(addr.city || addr.cityName),
+      postalCode:
+        addr.postalCode ||
+        addr.postal_code ||
+        addr.zipCode ||
+        addr.pincode ||
+        "",
       dialCode,
       isDefault: Boolean(addr.isDefault),
     });
   };
-
+ 
   const cancelEdit = () => {
     setEditingId(null);
     editForm.reset();
   };
-
+ 
   const handleUpdate = async (values) => {
     const addressFields = Object.fromEntries(
       Object.entries(values).filter(([key]) => key !== "dialCode"),
@@ -209,7 +273,7 @@ export default function AddressSelection({
   };
   const infoClass =
     "flex items-start gap-2  font-medium leading-[18px] text-[#1B1D60] text-[14px] sm:leading-[22px] md:text-[16px] md:leading-[26px] lg:text-[18px] lg:leading-[30px]";
-
+ 
   return (
     <OrderDetailSectionCard
       title="Delivery Address"
@@ -218,9 +282,7 @@ export default function AddressSelection({
       headerContent={
         <button
           type="button"
-          onClick={() =>
-            setValue("useNewAddress", true, { shouldValidate: true })
-          }
+          onClick={onAddNewAddress}
           className="inline-flex w-full sm:w-[150px] h-10 sm:h-6 items-center justify-center text-[#3E4093] text-center text-sm sm:text-base font-semibold leading-6 transition hover:opacity-90"
         >
           + Add New Address
@@ -241,7 +303,47 @@ export default function AddressSelection({
                 : "bg-white"
             }`}
           >
-             <div className="flex w-full items-start gap-3 sm:gap-[15px] border-b border-[#CE9F2D4D] pt-5 sm:pt-[25px] pb-6 sm:pb-[30px]">
+            {isEditing ? (
+              <div className=" grid gap-4 py-4 sm:pb-8">
+                <div className="flex  items-center gap-2 text-sm font-semibold text-ink">
+                  <Pencil size={16} className="text-gold" />
+                  Edit address
+                </div>
+                <AddressFormFields
+                  form={editForm}
+                  idPrefix={`checkout-edit-${addrId}`}
+                  countries={countries}
+                  states={states}
+                  cities={cities}
+                  postalCodes={postalCodes}
+                  dialCodes={editDialCodes}
+                  selectedCountry={editCountry}
+                  selectedState={editState}
+                  selectedCity={editCity}
+                  selectedPostalCode={editPostalCode}
+                  addressLabels={addressLabels}
+                />
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <Button
+                    type="button"
+                    loading={loading}
+                    onClick={editForm.handleSubmit(handleUpdate)}
+                    className="w-full sm:w-auto"
+                  >
+                    Save changes
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={cancelEdit}
+                    className="w-full sm:w-auto"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex w-full items-start gap-3 sm:gap-[15px] border-b border-[#CE9F2D4D]">
                 <div className="min-w-0 flex-1">
                   <span
                     className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-bold capitalize text-white sm:px-[15px] sm:py-[7px] sm:text-[13px] ${
@@ -316,11 +418,6 @@ export default function AddressSelection({
           </div>
         );
       })}
-      {useNewAddress && (
-        <div className="rounded-[8px] border border-gold bg-gold-soft px-3 py-2 text-sm font-semibold text-navy mb-5">
-          New address form is selected.
-        </div>
-      )}
       {errors.selectedAddressId && (
         <p className="text-xs text-red-600  mt-1">
           {errors.selectedAddressId.message}
@@ -329,3 +426,5 @@ export default function AddressSelection({
     </OrderDetailSectionCard>
   );
 }
+ 
+ 

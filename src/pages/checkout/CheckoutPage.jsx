@@ -784,6 +784,14 @@ export default function CheckoutPage() {
   }, [addresses, selectedAddressId, setValue]);
 
   const handleAddNewAddress = () => {
+    if (useNewAddress && newAddressFormRef.current) {
+      newAddressFormRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      return;
+    }
+
     shouldScrollToNewAddressRef.current = true;
     setValue("useNewAddress", true, { shouldValidate: true });
   };

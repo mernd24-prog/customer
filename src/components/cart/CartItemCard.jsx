@@ -210,9 +210,8 @@ export default function CartItemCard({
                 type="button"
                 onClick={() => onSaveForLater?.(item?.id)}
                 disabled={isOutOfStock}
-                className="inline-flex items-center gap-2 font-medium rounded-lg bg-[#CE9F2D] text-white px-20 py-2.5 transition hover:bg-[#b8891f] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#CE9F2D] disabled:active:scale-100"
                 title={isOutOfStock ? "Out of stock" : undefined}
-                className="inline-flex items-center gap-2 font-medium rounded-lg bg-[#CE9F2D] text-white px-14 lg:px-20  py-2 lg:py-3 transition hover:bg-[#b8891f] active:scale-95"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#CE9F2D] px-14 py-2 font-medium text-white transition hover:bg-[#b8891f] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#CE9F2D] disabled:active:scale-100 lg:px-20 lg:py-3"
               >
                 <FaShoppingCart />
                 {saveForLaterLabel}
