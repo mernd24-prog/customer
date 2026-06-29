@@ -364,7 +364,7 @@ export default function SearchPage() {
     },
     (minPrice || maxPrice) && {
       key: "price",
-      label: `Price: ₹${minPrice || "0"} – ₹${maxPrice || "∞"}`,
+      label: `Price: ₹${Number(minPrice || 0).toLocaleString("en-IN")} – ₹${Number(maxPrice || 150000).toLocaleString("en-IN")}`,
     },
     ...selectedRatings.map((rating) => ({
       key: `minRating:${rating}`,

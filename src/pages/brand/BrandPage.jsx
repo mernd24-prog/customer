@@ -32,6 +32,7 @@ export default function BrandPage() {
   const [brand, setBrand] = useState(null);
   const [brandLoading, setBrandLoading] = useState(true);
   const [brandError, setBrandError] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [items, setItems] = useState([]);
   const { updateSearchParams } = useSearchParamHelper(setSearchParams);
@@ -287,7 +288,7 @@ window.scrollTo({ top: 0, behavior: "smooth" });
     },
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
-      label: `Price: ₹${searchParams.get("minPrice") || "0"} – ₹${searchParams.get("maxPrice") || "∞"}`,
+      label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
     },
   ].filter(Boolean);
 
