@@ -38,6 +38,7 @@ import { addRecentlyViewed } from "../utils/recentlyViewed";
 import { formatMoney, getImageUrlFromValue } from "../utils/ecommerce";
 // import { formatAddress, formatPhone } from "../utils/formatters";
 import notificationData from "../data/notificationData";
+import Tabs from "../components/ui/Tabs";
 
 import { useProductActions } from "../hooks/useProductActions";
 import {
@@ -1702,7 +1703,7 @@ export function PaymentResultPage({ failed = false }) {
           error={orderState.error}
           empty={!order}
         >
-          <div className="grid gap-2">
+          <div className="grid xl:gap-12 gap-6">
             <section className="grid !sm:mt-10">
               <Breadcrumbs
                 items={breadcrumbItems}
@@ -1761,28 +1762,6 @@ export function PaymentResultPage({ failed = false }) {
                     <OrderProgress
                       noteClassName="text-center font-medium text-[18px] leading-none tracking-normal text-[#6F7480] "
                       status={status}
-                      steps={[
-                        {
-                          status: "confirmed",
-                          label: "Order Placed",
-                          note: "Get help with your orders",
-                        },
-                        {
-                          status: "packed",
-                          label: "Packed",
-                          note: "Get help with your orders",
-                        },
-                        {
-                          status: "shipped",
-                          label: "Shipped",
-                          note: "Get help with your orders",
-                        },
-                        {
-                          status: "delivered",
-                          label: "Delivered",
-                          note: "Get help with your orders",
-                        },
-                      ]}
                     />
                   </div>
                 </OrderDetailSectionCard>
@@ -1914,7 +1893,7 @@ export function PaymentResultPage({ failed = false }) {
                     borderClassName="border-[#CE9F2D66]"
                     bodyClassName="grid gap-4 px-4 py-4  sm:px-6"
                   >
-                    <div className="inline-flex h-[37px] w-[81px] items-center rounded-full bg-[#CE9F2D] px-3 py-1 text-[18px] font-semibold text-white">
+                    <div className="inline-flex h-[30px] w-[65px] items-center justify-center rounded-full bg-[#CE9F2D] px-2 py-1 text-[14px] font-semibold text-white sm:h-[37px] sm:w-[81px] sm:px-3 sm:text-[18px]">
                       Home
                     </div>
 
@@ -3042,56 +3021,18 @@ export function NotificationsPage() {
           currentClassName="text-[#CE9F2D]"
           separatorClassName="text-[#2E2E2E]"
         />
-
         <h1 className="mb-4 font-sans text-[28px] font-bold text-[#3E4093] min-[375px]:text-[30px] min-[425px]:text-[32px] sm:text-[34px] lg:text-[38px]">
           Notifications
         </h1>
-
         <p className="mb-6 max-w-[600px] font-sans text-[13px] font-medium leading-[20px] text-[#2E2E2E] min-[375px]:text-[14px] min-[375px]:leading-[22px] sm:text-[16px] sm:leading-[24px] xl:text-[20px] xl:leading-[30px]">
           Stay updated with your orders, offers and account activity.
         </p>
-
-        <div className="sticky top-0 z-[80] mb-6 bg-white py-2">
-          <div className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white shadow-sm xl:rounded-[20px]">
-            <div className="grid h-[58px] grid-cols-3 sm:h-[72px] md:h-[90px] xl:h-[115px]">
-              {tabs.map((tab) => {
-                const active = activeTab === tab.id;
-
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveTab(tab.id)}
-                    className="relative flex h-full items-center justify-center gap-1 px-1 min-[375px]:px-2 sm:gap-2"
-                  >
-                    <span
-                      className={`truncate font-sans font-semibold ${
-                        active ? "text-[#1B1D60]" : "text-[#6B7280]"
-                      } text-[10px] min-[375px]:text-[11px] min-[425px]:text-[12px] sm:text-[16px] md:text-[18px] lg:text-[20px] xl:text-[24px]`}
-                    >
-                      {tab.label}
-                    </span>
-
-                    <span
-                      className={`flex items-center justify-center rounded-full text-[8px] font-semibold min-[375px]:text-[9px] lg:h-[25px] lg:w-[40px] ${
-                        active
-                          ? "bg-[#FFEFC8] text-[#1B1D60]"
-                          : "bg-[#EFEFF7] text-[#7A7A9D]"
-                      } h-[16px] min-w-[16px] px-[5px] sm:h-[18px] sm:min-w-[18px]`}
-                    >
-                      {tab.count}
-                    </span>
-
-                    {active && (
-                      <span className="absolute bottom-0 left-0 h-[3px] w-full bg-[#1B1D60]" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
+        <Tabs
+          tabs={tabs}
+          activeTab={activeTab}
+          onChange={setActiveTab}
+          sticky
+        />
         <ApiState
           loading={notifState.loading && !notifications.length}
           error={notifState.error}

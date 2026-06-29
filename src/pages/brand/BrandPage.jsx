@@ -25,6 +25,7 @@ import { PAGE_SIZES, SORT_OPTIONS } from "../../data/constant";
 
 export default function BrandPage() {
   const { brandSlug } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const decodedBrandSlug = decodeURIComponent(brandSlug || "");
   const dispatch = useDispatch();
   const [sidebarOpen, setSidebarOpen] = useState(false);

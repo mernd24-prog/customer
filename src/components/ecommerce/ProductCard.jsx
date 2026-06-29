@@ -73,8 +73,8 @@ export default function ProductCard({
     cardProduct?.metadata?.featured === true ||
     cardProduct?.isFeatured === true ||
     cardProduct?.markAsFeatured === true;
-  const badgeText =
-    badge || (discountPercent > 0 ? `${discountPercent}% OFF` : "");
+
+  badge || (discountPercent > 0 ? `${discountPercent}% OFF` : "");
   const currentPriceNumber = Number(String(price || 0).replace(/[^\d.-]/g, ""));
   const oldPriceNumber = Number(String(oldPrice || 0).replace(/[^\d.-]/g, ""));
   const computedDiscountPercent =
