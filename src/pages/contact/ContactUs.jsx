@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import {
   Mail,
   MapPin,
-  Phone,
+  // Phone,
   ScrollText,
 } from "lucide-react";
 
