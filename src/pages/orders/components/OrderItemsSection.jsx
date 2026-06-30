@@ -283,44 +283,63 @@ function OrderItemCard({
   );
 }
 
-function OrderItemsSection({ items, orderId, orderStatus, ...itemProps }) {
+function OrderItemsSection({
+  items = [],
+  orderId,
+  orderStatus,
+  ...itemProps
+}) {
   const dispatch = useDispatch();
   const [reviewTarget, setReviewTarget] = useState(null);
   const [reviewByItem, setReviewByItem] = useState({});
   const [checkedReviewKeys, setCheckedReviewKeys] = useState({});
-  const dispatchedKeysRef = useRef(new Set());
+  const canReviewOrder = DELIVERED_STATUSES.has(
+    String(orderStatus || "").toLowerCase(),
+  );
 
-  const canReviewOrder = DELIVERED_STATUSES.has(String(orderStatus || "").toLowerCase());
+  const reviewableItems = useMemo(
+    () =>
+      canReviewOrder && orderId
+        ? items.filter((item) => getReviewProductId(item))
+        : [],
+    [canReviewOrder, items, orderId],
+  );
 
   useEffect(() => {
-    if (!canReviewOrder || !orderId || !items.length) return;
+    if (!orderId || !canReviewOrder || !reviewableItems.length) return;
 
-    items.forEach((item) => {
-      const productId = getReviewProductId(item);
-      if (!productId) return;
+    reviewableItems.forEach((item) => {
       const key = reviewKeyForItem(orderId, item);
-      if (dispatchedKeysRef.current.has(key)) return;
-      dispatchedKeysRef.current.add(key);
+      if (checkedReviewKeys[key]) return;
 
-      dispatch(fetchMyProductReview({ productId, orderId }))
+      dispatch(
+        fetchMyProductReview({
+          productId: getReviewProductId(item),
+          orderId,
+          orderItemId: getReviewOrderItemId(item),
+        }),
+      )
         .unwrap()
-        .then((result) => {
-          const review = result?.data || result || null;
-          setReviewByItem((prev) => ({ ...prev, [key]: review }));
+        .then((response) => {
+          setReviewByItem((current) => ({
+            ...current,
+            [key]: response?.data || null,
+          }));
         })
         .catch(() => {
-          setReviewByItem((prev) => ({ ...prev, [key]: null }));
+          setReviewByItem((current) => ({ ...current, [key]: null }));
         })
         .finally(() => {
-          setCheckedReviewKeys((prev) => ({ ...prev, [key]: true }));
+          setCheckedReviewKeys((current) => ({ ...current, [key]: true }));
         });
     });
-  }, [canReviewOrder, orderId, items, dispatch]);
+  }, [canReviewOrder, checkedReviewKeys, dispatch, orderId, reviewableItems]);
 
-  const handleSubmitted = (reviewData) => {
+  const handleSubmitted = (review) => {
     if (!reviewTarget) return;
     const key = reviewKeyForItem(orderId, reviewTarget);
-    setReviewByItem((prev) => ({ ...prev, [key]: reviewData }));
+    setReviewByItem((current) => ({ ...current, [key]: review || true }));
+    setCheckedReviewKeys((current) => ({ ...current, [key]: true }));
     setReviewTarget(null);
   };
 

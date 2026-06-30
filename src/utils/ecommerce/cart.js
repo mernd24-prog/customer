@@ -1,5 +1,18 @@
-import { CHECKOUT_CART_ITEM_IDS_STORAGE_KEY, SELECTED_CHECKOUT_STORAGE_KEY } from "../../constants";
-import { getImageFallbackSrc, getProductId, getProductImage, getProductPrice, getProductTitle, getVariantPrice } from "./product";
+import {
+  CHECKOUT_CART_ITEM_IDS_STORAGE_KEY,
+  SAVED_FOR_LATER_STORAGE_KEY,
+  SELECTED_CHECKOUT_STORAGE_KEY,
+} from "../../constants";
+import {
+  getAvailableStock,
+  getImageFallbackSrc,
+  getProductAvailableStock,
+  getProductId,
+  getProductImage,
+  getProductPrice,
+  getProductTitle,
+  getVariantPrice,
+} from "./product";
 
 export function normalizeId(value) {
   return getProductId(value);
@@ -189,15 +202,11 @@ export function getCartItemStock(item = {}, product = {}) {
   );
 
   return getNumericValue(
-    item.stock,
+    getAvailableStock(item.variant),
+    getAvailableStock(matchingVariant),
+    getProductAvailableStock(product),
+    getAvailableStock(item),
     item.availableStock,
-    item.inventory,
-    item.variant?.stock,
-    matchingVariant?.stock,
-    product.stock,
-    product.availableStock,
-    product.inventory,
-    product.totalStock,
   );
 }
 

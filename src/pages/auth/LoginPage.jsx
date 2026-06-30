@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,10 +11,45 @@ import FormField from "../../components/ui/FormField";
 import Seo from "../../components/common/Seo";
 
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
-import { loginUser, clearError } from "../../features/auth/authSlice";
+import { loginUser, socialLogin, clearError } from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { notify } from "../../utils/notify";
 import { loginSchema } from "../../validations/validationSchemas";
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+const GOOGLE_SCRIPT_SRC = "https://accounts.google.com/gsi/client";
+
+let googleScriptPromise;
+
+function loadGoogleIdentityScript() {
+  if (window.google?.accounts?.id) {
+    return Promise.resolve();
+  }
+
+  if (!googleScriptPromise) {
+    googleScriptPromise = new Promise((resolve, reject) => {
+      const existingScript = document.querySelector(
+        `script[src="${GOOGLE_SCRIPT_SRC}"]`,
+      );
+
+      if (existingScript) {
+        existingScript.addEventListener("load", resolve, { once: true });
+        existingScript.addEventListener("error", reject, { once: true });
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = GOOGLE_SCRIPT_SRC;
+      script.async = true;
+      script.defer = true;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  return googleScriptPromise;
+}
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -23,6 +58,7 @@ export default function LoginPage() {
   const run = useToastThunk();
 
   const { loading, error } = useSelector((s) => s.auth);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const from = location.state?.from || AUTH_ROUTES.home;
 
   useEffect(() => {
@@ -55,12 +91,60 @@ export default function LoginPage() {
     navigate(from, { replace: true });
   };
 
-  const handleGoogleLogin = () => {
-    notify.info({
-      title: "Google sign-in unavailable",
-      message: "Google sign-in requires Firebase authentication integration.",
-      tone: "notification",
-    });
+  const handleGoogleLogin = async () => {
+    if (!GOOGLE_CLIENT_ID) {
+      notify.error({
+        title: "Google sign-in is not configured",
+        message: "Set VITE_GOOGLE_CLIENT_ID in customer/.env and restart the customer app.",
+      });
+      return;
+    }
+
+    setGoogleLoading(true);
+    try {
+      await loadGoogleIdentityScript();
+
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: async (response) => {
+          if (!response?.credential) {
+            notify.error("Google did not return a sign-in token.");
+            setGoogleLoading(false);
+            return;
+          }
+
+          try {
+            await run(
+              dispatch,
+              socialLogin({
+                provider: "google",
+                idToken: response.credential,
+                role: "buyer",
+              }),
+              "Welcome!",
+            );
+            navigate(from, { replace: true });
+          } finally {
+            setGoogleLoading(false);
+          }
+        },
+      });
+
+      window.google.accounts.id.prompt((notification) => {
+        if (
+          notification.isNotDisplayed?.() ||
+          notification.isSkippedMoment?.()
+        ) {
+          setGoogleLoading(false);
+        }
+      });
+    } catch {
+      setGoogleLoading(false);
+      notify.error({
+        title: "Google sign-in failed",
+        message: "Unable to load Google sign-in. Please try again.",
+      });
+    }
   };
 
   return (
@@ -152,6 +236,8 @@ export default function LoginPage() {
             type="button"
             variant="google"
             onClick={handleGoogleLogin}
+            loading={googleLoading}
+            disabled={loading || googleLoading}
             className="h-12 w-full rounded-[8px] border-border bg-white text-label-md font-semibold tracking-normal text-ink shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:bg-white hover:text-ink hover:shadow-md active:translate-y-0 active:scale-[0.98] active:bg-navy-soft"
           >
             <img

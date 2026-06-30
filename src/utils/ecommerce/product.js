@@ -102,6 +102,58 @@ export function getProductMrp(product) {
   );
 }
 
+function normalizeStockNumber(value) {
+  if (value === null || value === undefined || value === "") return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+export function getAvailableStock(source) {
+  if (!source || typeof source !== "object") return null;
+
+  const explicitAvailable = normalizeStockNumber(
+    source.availableStock ??
+      source.available_stock ??
+      source.sellableStock ??
+      source.sellable_stock,
+  );
+  if (explicitAvailable !== null) {
+    return Math.max(0, Math.floor(explicitAvailable));
+  }
+
+  const stock = normalizeStockNumber(
+    source.stock ?? source.quantity ?? source.inventory ?? source.totalStock,
+  );
+  if (stock === null) return null;
+
+  const reserved = normalizeStockNumber(
+    source.reservedStock ?? source.reserved_stock,
+  );
+
+  return Math.max(0, Math.floor(stock - (reserved || 0)));
+}
+
+export function getProductAvailableStock(product) {
+  if (!product || typeof product !== "object") return null;
+
+  const variants = Array.isArray(product.variants) ? product.variants : [];
+  if (variants.length) {
+    const variantStocks = variants
+      .filter(
+        (variant) =>
+          variant?.status !== "inactive" && variant?.status !== "out_of_stock",
+      )
+      .map(getAvailableStock)
+      .filter((value) => value !== null);
+
+    if (variantStocks.length) {
+      return variantStocks.reduce((total, value) => total + value, 0);
+    }
+  }
+
+  return getAvailableStock(product);
+}
+
 export function getImageUrlFromValue(value) {
   if (!value) return "";
   if (typeof value === "string") return value;
@@ -185,28 +237,11 @@ export function buildRatingCountMap(products) {
 }
 
 export function isProductInStock(product) {
-  const stockValues = [
-    product?.stock,
-    product?.quantity,
-    product?.inventory,
-    product?.availableStock,
-    product?.totalStock,
-  ].filter((value) => value != null && value !== "");
-  const variantStockValues = Array.isArray(product?.variants)
-    ? product.variants
-        .map((variant) => variant?.stock)
-        .filter((value) => value != null && value !== "")
-    : [];
-  const hasStockQuantity =
-    stockValues.length > 0 || variantStockValues.length > 0;
-  const stockQty = [...stockValues, ...variantStockValues].reduce(
-    (total, value) => total + (Number(value) || 0),
-    0,
-  );
+  const availableStock = getProductAvailableStock(product);
 
   if (typeof product?.inStock === "boolean") return product.inStock;
   if (typeof product?.isInStock === "boolean") return product.isInStock;
-  if (hasStockQuantity) return stockQty > 0;
+  if (availableStock !== null) return availableStock > 0;
   return true;
 }
 
