@@ -487,14 +487,14 @@ textarea {
 
 .customer-container,
 .w-container {
-  width: min(100% - 32px, 1760px);
+  width: min(100% - 32px, 1460px);
   margin-inline: auto;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .customer-container,
   .w-container {
-    width: min(100% - 48px, 1760px);
+    width: min(100% - 48px, 1660px);
   }
 }
 
@@ -981,8 +981,6 @@ nav a:hover {
     background-color: rgba(214, 163, 35, 0.9);
   }
 }
-
-
 
 .card,
 .state-box {

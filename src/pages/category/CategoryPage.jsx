@@ -467,6 +467,18 @@ export default function CategoryPage() {
     });
   };
 
+  const updateParams = (entries) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      entries.forEach(([key, value]) => {
+        if (value == null || value === "") next.delete(key);
+        else next.set(key, value);
+      });
+      next.delete("page");
+      return next;
+    });
+  };
+
   const handlePriceChange = ({ minPrice, maxPrice }) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
@@ -668,14 +680,16 @@ export default function CategoryPage() {
               )}
               onChange={(values) => {
                 const selectedValues = new Set(values);
-                updateParam(
-                  "expressDelivery",
-                  selectedValues.has("expressDelivery") ? "true" : undefined,
-                );
-                updateParam(
-                  "freeDelivery",
-                  selectedValues.has("freeDelivery") ? "true" : undefined,
-                );
+                updateParams([
+                  [
+                    "expressDelivery",
+                    selectedValues.has("expressDelivery") ? "true" : undefined,
+                  ],
+                  [
+                    "freeDelivery",
+                    selectedValues.has("freeDelivery") ? "true" : undefined,
+                  ],
+                ]);
               }}
             />
           ),
@@ -703,14 +717,16 @@ export default function CategoryPage() {
               )}
               onChange={(values) => {
                 const selectedValues = new Set(values);
-                updateParam(
-                  "inStock",
-                  selectedValues.has("inStock") ? "true" : undefined,
-                );
-                updateParam(
-                  "outOfStock",
-                  selectedValues.has("outOfStock") ? "true" : undefined,
-                );
+                updateParams([
+                  [
+                    "inStock",
+                    selectedValues.has("inStock") ? "true" : undefined,
+                  ],
+                  [
+                    "outOfStock",
+                    selectedValues.has("outOfStock") ? "true" : undefined,
+                  ],
+                ]);
               }}
             />
           ),
@@ -734,6 +750,7 @@ export default function CategoryPage() {
       selectedBrands,
       selectedRatings,
       updateParam,
+      updateParams,
     ],
   );
 

@@ -233,17 +233,17 @@ export default function ProductCard({
   return (
     <article
       className={cn(
-        ` ${!isInStock ? "opacity-50 " : ""} group relative flex min-w-0 flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out `,
+        `  group relative flex min-w-0 flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out `,
         className,
       )}
     >
-      {!isInStock && (
+      {/* {!isInStock && (
         <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">
           <span className="rounded-full border border-red-800 bg-white px-3 py-1 text-sm font-bold text-red-800 shadow-lg">
             Out of Stock
           </span>
         </div>
-      )}
+      )} */}
 
       <div className="absolute  left-4 top-4 z-20 flex max-w-[calc(100%-2rem)] flex-wrap items-center gap-2">
         {isFeatured && (

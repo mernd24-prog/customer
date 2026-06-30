@@ -183,8 +183,9 @@ function ProductGallery({
 
   return (
     <div
-      className={`flex min-w-0 flex-col gap-4  overflow-hidden ${isModal ? "h-full w-full" : "h-auto w-full xl:h-[560px] 2xl:h-[620px]"
-        }`}
+      className={`flex min-w-0 flex-col gap-4  overflow-hidden ${
+        isModal ? "h-full w-full" : "h-auto w-full xl:h-[560px] 2xl:h-[620px]"
+      }`}
     >
       <div className="flex min-w-0 flex-col gap-6 overflow-hidden xl:h-full xl:flex-row">
         <div className="order-2 h-[90px]   w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[85px]">
@@ -214,10 +215,11 @@ function ProductGallery({
                     setActiveIndex(i);
                     mainSwiper?.slideTo(i);
                   }}
-                  className={`h-full w-full overflow-hidden rounded-[15px]  border   transition-colors duration-200 ${activeIndex === i
+                  className={`h-full w-full overflow-hidden rounded-[15px]  border   transition-colors duration-200 ${
+                    activeIndex === i
                       ? "border-gold shadow-sm bg-gradient-to-t from-[#1B1D60]/65 to-transparent"
                       : "border-border"
-                    }`}
+                  }`}
                 >
                   <img
                     src={img}
@@ -234,8 +236,9 @@ function ProductGallery({
         </div>
 
         <div
-          className={`relative order-1 min-w-0  overflow-hidden border border-gold rounded-[20px]  bg-transparent xl:order-2 ${isModal ? "h-full" : "aspect-auto lg:h-[500px] xl:h-full w-full"
-            }`}
+          className={`relative order-1 min-w-0  overflow-hidden border border-gold rounded-[20px]  bg-transparent xl:order-2 ${
+            isModal ? "h-full" : "aspect-auto lg:h-[500px] xl:h-full w-full"
+          }`}
         >
           <Swiper
             onSwiper={setMainSwiper}
@@ -254,8 +257,9 @@ function ProductGallery({
             {images.map((img, i) => (
               <SwiperSlide key={i} className="!h-full bg-transparent">
                 <div
-                  className={`relative   h-full w-full overflow-hidden bg-transparent ${isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
-                    }`}
+                  className={`relative   h-full w-full overflow-hidden bg-transparent ${
+                    isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
+                  }`}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
                   onClick={handleImageClick}
@@ -264,12 +268,13 @@ function ProductGallery({
                     src={img}
                     alt=""
                     draggable={false}
-                    className={`h-full w-full select-none  object-contain transition-transform duration-300 ease-out ${isZoomed
+                    className={`h-full w-full select-none  object-contain transition-transform duration-300 ease-out ${
+                      isZoomed
                         ? isModal
                           ? "scale-[2.0]"
                           : "scale-[1.9]"
                         : "scale-95"
-                      }`}
+                    }`}
                     style={{
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
                       willChange: "transform",
@@ -432,8 +437,8 @@ function DeliveryChecker({ productId, onResultChange }) {
     null;
   const etaText = eta
     ? [eta.minDays, eta.maxDays]
-      .filter((v) => v !== null && v !== undefined)
-      .join("–")
+        .filter((v) => v !== null && v !== undefined)
+        .join("–")
     : "";
   const deliveryCharge = Number(
     result?.sellerDeliveryChargeAmount ?? sellerDelivery.chargeAmount ?? 0,
@@ -526,8 +531,9 @@ function VariantSelector({
           }
         >
           <p
-            className={`mb-3 font-semibold capitalize text-ink ${option.displayType === "color_swatch" ? "text-xl" : "text-[20px]"
-              }`}
+            className={`mb-3 font-semibold capitalize text-ink ${
+              option.displayType === "color_swatch" ? "text-xl" : "text-[20px]"
+            }`}
           >
             {option.displayType === "color_swatch" ? "Colour" : option.name}:
           </p>
@@ -547,12 +553,12 @@ function VariantSelector({
               const swatchImage =
                 option.displayType === "color_swatch"
                   ? getColorSwatchImage({
-                    option,
-                    value,
-                    matchingVariant,
-                    product,
-                    index: valueIndex,
-                  })
+                      option,
+                      value,
+                      matchingVariant,
+                      product,
+                      index: valueIndex,
+                    })
                   : "";
 
               if (option.displayType === "color_swatch") {
@@ -564,10 +570,11 @@ function VariantSelector({
                     onClick={() =>
                       matchingVariant && setSelectedVariant(matchingVariant)
                     }
-                    className={`h-[80px]  w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out  sm:h-[95px] sm:w-[95px] ${isSelected
+                    className={`h-[80px]  w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out  sm:h-[95px] sm:w-[95px] ${
+                      isSelected
                         ? "border border-gold bg-gradient-to-t from-[#1B1D60]/65 to-transparent"
                         : "border border-gold/20 "
-                      }`}
+                    }`}
                     title={value}
                   >
                     <img
@@ -587,10 +594,11 @@ function VariantSelector({
                   onClick={() =>
                     matchingVariant && setSelectedVariant(matchingVariant)
                   }
-                  className={`min-h-10  min-w-12 rounded-[8px]  px-3 py-1 text-xs font-bold transition-all duration-300  ease-in-out disabled:cursor-not-allowed disabled:opacity-40  ${isSelected
+                  className={`min-h-10  min-w-12 rounded-[8px]  px-3 py-1 text-xs font-bold transition-all duration-300  ease-in-out disabled:cursor-not-allowed disabled:opacity-40  ${
+                    isSelected
                       ? "border border-gold bg-gradient-to-t from-[#1B1D60]/25 to-transparent"
                       : "border border-gold/20 "
-                    }`}
+                  }`}
                 >
                   {value}
                 </button>
@@ -696,10 +704,11 @@ function InfoTabs({ tabs, activeTab, onChange }) {
           key={tab.key}
           type="button"
           onClick={() => onChange(tab.key)}
-          className={`min-w-max px-5  lg:py-4 py-2 text-base lg:text-[24px] font-medium ${activeTab === tab.key
+          className={`min-w-max px-5  lg:py-4 py-2 text-base lg:text-[24px] font-medium ${
+            activeTab === tab.key
               ? "border-b-2 border-navy font-semibold bg-gradient-to-t from-[#1B1D6033] to-transparent text-navy"
               : "text-[#2E2E2E]"
-            }`}
+          }`}
         >
           {tab.label}
         </button>
@@ -781,11 +790,12 @@ function ProductInfoSection({
                 <dd className="text-left font-bold text-[#1B1D60] sm:text-right">
                   {formatPageTitle(
                     warranty.period ||
-                    warranty.duration ||
-                    warranty.type ||
-                    "Warranty available"
+                      warranty.duration ||
+                      warranty.type ||
+                      "Warranty available",
                   )}
-                  {warranty.coverage && ` · ${formatPageTitle(warranty.coverage)}`}
+                  {warranty.coverage &&
+                    ` · ${formatPageTitle(warranty.coverage)}`}
                 </dd>
               </div>
             )}
@@ -796,7 +806,8 @@ function ProductInfoSection({
       {activeInfoTab === "description" && (
         <InfoCard title="Description">
           <p className="px-4 py-4 text-sm lg:text-lg  text-black/90 whitespace-pre-line">
-            {formatPageTitle(product.description) || "No description available."}
+            {formatPageTitle(product.description) ||
+              "No description available."}
           </p>
         </InfoCard>
       )}
@@ -877,7 +888,7 @@ function ProductRecommendationSection({
 
         <Link
           to="/products"
-          className="text-sm font-medium text-gold hover:text-gold-dark transition-all duration-300 ease-in-out"
+          className="text-base lg:text-xl font-medium text-gold hover:text-gold-dark transition-all duration-300 ease-in-out"
         >
           {linkText}
         </Link>
@@ -949,24 +960,24 @@ export default function ProductDetailPage() {
 
     addRecentlyViewed(product);
 
-    dispatch(fetchProductWarranty({ productId })).catch(() => { });
-    dispatch(fetchRelatedProducts({ productId })).catch(() => { });
-    dispatch(fetchCrossSellProducts({ productId })).catch(() => { });
-    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => { });
+    dispatch(fetchProductWarranty({ productId })).catch(() => {});
+    dispatch(fetchRelatedProducts({ productId })).catch(() => {});
+    dispatch(fetchCrossSellProducts({ productId })).catch(() => {});
+    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
 
     dispatch(
       trackAnalyticsEvent({
         eventName: "product_view",
         metadata: { productId },
       }),
-    ).catch(() => { });
+    ).catch(() => {});
 
     dispatch(
       trackRecommendationInteraction({
         productId,
         interactionType: "viewed",
       }),
-    ).catch(() => { });
+    ).catch(() => {});
   }, [dispatch, product, productId]);
 
   useEffect(() => {
@@ -980,7 +991,7 @@ export default function ProductDetailPage() {
 
     dynamicPriceRequestKey.current = requestKey;
 
-    dispatch(fetchDynamicPrice({ productId, quantity })).catch(() => { });
+    dispatch(fetchDynamicPrice({ productId, quantity })).catch(() => {});
   }, [dispatch, loadedProductId, productId, quantity]);
 
   const selectedVariantKey = selectedVariant?._id || selectedVariant?.sku || "";
@@ -1003,7 +1014,7 @@ export default function ProductDetailPage() {
         sku: selectedVariant?.sku,
         quantity,
       }),
-    ).catch(() => { });
+    ).catch(() => {});
   }, [
     dispatch,
     loadedProductId,
@@ -1066,10 +1077,10 @@ export default function ProductDetailPage() {
 
     setSelectedVariant((current) =>
       current &&
-        variants.some(
-          (variant) =>
-            (variant._id || variant.sku) === (current._id || current.sku),
-        )
+      variants.some(
+        (variant) =>
+          (variant._id || variant.sku) === (current._id || current.sku),
+      )
         ? current
         : defaultVariant,
     );
@@ -1103,9 +1114,9 @@ export default function ProductDetailPage() {
 
   const safeDynamicPrice =
     dynamicPrice &&
-      baseDisplayPrice &&
-      dynamicPrice >= baseDisplayPrice * 0.5 &&
-      dynamicPrice <= baseDisplayPrice * 2
+    baseDisplayPrice &&
+    dynamicPrice >= baseDisplayPrice * 0.5 &&
+    dynamicPrice <= baseDisplayPrice * 2
       ? dynamicPrice
       : undefined;
 
@@ -1122,10 +1133,8 @@ export default function ProductDetailPage() {
 
   const currency = selectedVariant?.currency || product?.currency || "INR";
   const shipping = product?.shipping || {};
-  const shippingEtaMin =
-    shipping.estimatedDaysMin ?? shipping.processingDays;
-  const shippingEtaMax =
-    shipping.estimatedDaysMax ?? shipping.processingDays;
+  const shippingEtaMin = shipping.estimatedDaysMin ?? shipping.processingDays;
+  const shippingEtaMax = shipping.estimatedDaysMax ?? shipping.processingDays;
   const shippingEtaText = [shippingEtaMin, shippingEtaMax]
     .filter((value) => value !== null && value !== undefined)
     .join("–");
@@ -1189,8 +1198,8 @@ export default function ProductDetailPage() {
 
   const categoryLabel = product?.category
     ? (product.category || "")
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase())
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase())
     : null;
 
   const detailRows = Object.entries({
@@ -1333,7 +1342,9 @@ export default function ProductDetailPage() {
                         }
                         max={availableStock ?? undefined}
                         increaseDisabled={!inStock || quantityAtStockLimit}
-                        increaseDisabledLabel={quantityStockMessage || undefined}
+                        increaseDisabledLabel={
+                          quantityStockMessage || undefined
+                        }
                       />
                       {quantityStockMessage ? (
                         <p className="mt-1 text-xs font-semibold text-red-600">

@@ -18,12 +18,17 @@ const reviewKeyForItem = (orderId, item) =>
   [
     orderId,
     item?.id || item?._id || item?.orderItemId || item?.order_item_id || "",
-    item?.product_id || item?.productId || item?.product?.id || item?.product?._id || "",
+    item?.product_id ||
+      item?.productId ||
+      item?.product?.id ||
+      item?.product?._id ||
+      "",
   ].join(":");
 
 const getReviewProductId = (item) => {
   const productId = item?.product_id || item?.productId;
-  if (productId && typeof productId === "object") return productId.id || productId._id;
+  if (productId && typeof productId === "object")
+    return productId.id || productId._id;
   return productId || item?.product?.id || item?.product?._id || "";
 };
 
@@ -106,7 +111,9 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
           <span className="text-sm font-semibold text-[#2E2E2E]">Rating</span>
           <StarInput
             value={form.rating}
-            onChange={(rating) => setForm((current) => ({ ...current, rating }))}
+            onChange={(rating) =>
+              setForm((current) => ({ ...current, rating }))
+            }
           />
         </div>
 
@@ -129,7 +136,10 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
           <textarea
             value={form.reviewText}
             onChange={(event) =>
-              setForm((current) => ({ ...current, reviewText: event.target.value }))
+              setForm((current) => ({
+                ...current,
+                reviewText: event.target.value,
+              }))
             }
             maxLength={2000}
             rows={5}
@@ -283,7 +293,61 @@ function OrderItemCard({
   );
 }
 
-function OrderItemsSection({ items, ...itemProps }) {
+function OrderItemsSection({ items = [], orderId, orderStatus, ...itemProps }) {
+  const dispatch = useDispatch();
+  const [reviewTarget, setReviewTarget] = useState(null);
+  const [reviewByItem, setReviewByItem] = useState({});
+  const [checkedReviewKeys, setCheckedReviewKeys] = useState({});
+  const canReviewOrder = DELIVERED_STATUSES.has(
+    String(orderStatus || "").toLowerCase(),
+  );
+
+  const reviewableItems = useMemo(
+    () =>
+      canReviewOrder && orderId
+        ? items.filter((item) => getReviewProductId(item))
+        : [],
+    [canReviewOrder, items, orderId],
+  );
+
+  useEffect(() => {
+    if (!orderId || !canReviewOrder || !reviewableItems.length) return;
+
+    reviewableItems.forEach((item) => {
+      const key = reviewKeyForItem(orderId, item);
+      if (checkedReviewKeys[key]) return;
+
+      dispatch(
+        fetchMyProductReview({
+          productId: getReviewProductId(item),
+          orderId,
+          orderItemId: getReviewOrderItemId(item),
+        }),
+      )
+        .unwrap()
+        .then((response) => {
+          setReviewByItem((current) => ({
+            ...current,
+            [key]: response?.data || null,
+          }));
+        })
+        .catch(() => {
+          setReviewByItem((current) => ({ ...current, [key]: null }));
+        })
+        .finally(() => {
+          setCheckedReviewKeys((current) => ({ ...current, [key]: true }));
+        });
+    });
+  }, [canReviewOrder, checkedReviewKeys, dispatch, orderId, reviewableItems]);
+
+  const handleSubmitted = (review) => {
+    if (!reviewTarget) return;
+    const key = reviewKeyForItem(orderId, reviewTarget);
+    setReviewByItem((current) => ({ ...current, [key]: review || true }));
+    setCheckedReviewKeys((current) => ({ ...current, [key]: true }));
+    setReviewTarget(null);
+  };
+
   return (
     <>
       <OrderDetailSectionCard
@@ -298,7 +362,9 @@ function OrderItemsSection({ items, ...itemProps }) {
             orderId={orderId}
             canReview={canReviewOrder && Boolean(getReviewProductId(item))}
             existingReview={reviewByItem[reviewKeyForItem(orderId, item)]}
-            reviewChecked={Boolean(checkedReviewKeys[reviewKeyForItem(orderId, item)])}
+            reviewChecked={Boolean(
+              checkedReviewKeys[reviewKeyForItem(orderId, item)],
+            )}
             onReviewClick={setReviewTarget}
             {...itemProps}
           />

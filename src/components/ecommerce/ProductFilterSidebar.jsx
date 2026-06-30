@@ -5,7 +5,7 @@ function FilterTick({ checked }) {
   return (
     <span
       aria-hidden="true"
-      className={`inline-flex h-[19px] w-[19px]  shrink-0 items-center justify-center rounded-[5px] border transition-colors duration-200 ${
+      className={`inline-flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-[5px] border transition-colors duration-200 ${
         checked
           ? "border-[#3E4093] bg-[#3E4093]"
           : "border-[#3E4093] bg-transparent"
@@ -193,7 +193,8 @@ export function PriceRangeFilter({ min, max, onChange }) {
       Math.max(clientX - bounds.left - thumbRadius, 0),
       usableWidth,
     );
-    const rawValue = MIN_LIMIT + (position / usableWidth) * (MAX_LIMIT - MIN_LIMIT);
+    const rawValue =
+      MIN_LIMIT + (position / usableWidth) * (MAX_LIMIT - MIN_LIMIT);
     return Math.round(rawValue / PRICE_STEP) * PRICE_STEP;
   };
 
@@ -531,7 +532,7 @@ export function CheckboxListFilter({
         return (
           <label
             key={value}
-            className="flex min-w-0 cursor-pointer items-center gap-3 py-2 text-[18px] font-medium leading-none   text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[16px]"
+            className="flex min-w-0 cursor-pointer items-center gap-3 py-2 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[16px]"
           >
             <input
               type="checkbox"

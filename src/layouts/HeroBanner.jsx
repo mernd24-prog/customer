@@ -24,13 +24,13 @@ const heroContent = [
     primaryButton: "Shop Now",
     secondaryButton: "Explore Categories",
     primaryLink: "/products",
-    secondaryLink: "/products",
+    secondaryLink: "/categories",
   },
 ];
 
 const HeroBanner = ({ content = heroContent }) => {
   return (
-    <section className="  relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[480px] w-screen items-center overflow-hidden bg-[#1B1D60] sm:h-[520px] md:h-[620px] lg:h-[750px]">
+    <section className="  relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[480px] w-screen items-center overflow-hidden bg-[#1B1D60] sm:h-[520px] md:h-[620px] lg:h-[650px]">
       <Swiper
         spaceBetween={0}
         centeredSlides={false}

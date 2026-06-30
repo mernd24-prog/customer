@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-
 import Seo from "../../components/common/Seo";
 import { BrandCard } from "../../components/ecommerce";
-import ProductFilterSidebar from "../../components/ecommerce/ProductFilterSidebar";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import { fetchBrands } from "../../features/catalog/catalogSlice";
 import { getImageUrlFromValue } from "../../utils/ecommerce";
@@ -50,22 +48,6 @@ function getBrandLogo(brand = {}) {
   );
 }
 
-function OutletBrandList({ brands }) {
-  return (
-    <nav className="grid max-h-72 gap-2 overflow-y-auto pr-1 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
-      {brands.map((brand) => (
-        <Link
-          key={brand.key}
-          to={CUSTOMER_ROUTES.brand(brand.key)}
-          className="block truncate text-sm font-medium text-[var(--customer-ink)] transition-colors duration-200 hover:text-[var(--customer-gold-dark)]"
-        >
-          {brand.label}
-        </Link>
-      ))}
-    </nav>
-  );
-}
-
 export default function BrandOutletPage() {
   const dispatch = useDispatch();
   const [brandList, setBrandList] = useState([]);
@@ -101,15 +83,6 @@ export default function BrandOutletPage() {
     [brandList],
   );
 
-  const sidebarBrands = useMemo(
-    () =>
-      brands.map((brand) => ({
-        label: brand.displayName,
-        key: brand.routeKey,
-      })),
-    [brands],
-  );
-
   const brandGridClass =
     "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5";
   const stateContainerClass = "rounded-[12px] p-6 text-center";
@@ -123,11 +96,6 @@ export default function BrandOutletPage() {
 
       <main className="bg-white text-[var(--customer-ink)]">
         <div className=" w-full  ">
-          {/* <ProductFilterSidebar
-            sections={sidebarSections}
-            className="hidden lg:block lg:w-full"
-          /> */}
-
           <div className="mt-6 lg:mt-10">
             <section className="pb-7">
               <h1 className="mb-4 text-[20px] font-bold leading-tight text-[var(--customer-ink)] sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">
