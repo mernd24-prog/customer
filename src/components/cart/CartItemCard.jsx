@@ -157,9 +157,10 @@ export default function CartItemCard({
 
           <div className="">
             <ProductStockStatus
-              inStock={stock}
+              inStock={!isOutOfStock}
               selectedVariant={selectedVariant}
               product={product}
+              availableStock={hasStockQuantity ? stockQuantity : undefined}
             />
 
             <ProductPriceBlock

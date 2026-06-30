@@ -14,6 +14,7 @@ import {
   getProductImage,
   getProductTitle,
   applyImageFallback,
+  getProductAvailableStock,
 } from "../../utils/ecommerce";
 import { cn } from "../../lib/utils";
 import StarRating from "../../pages/products/components/starRating";
@@ -88,24 +89,7 @@ export default function ProductCard({
     ? `${computedDiscountPercent}% Off`
     : "";
 
-  const stockValues = [
-    cardProduct?.stock,
-    cardProduct?.quantity,
-    cardProduct?.inventory,
-    cardProduct?.availableStock,
-    cardProduct?.totalStock,
-  ].filter((value) => value != null && value !== "");
-  const variantStockValues = Array.isArray(cardProduct?.variants)
-    ? cardProduct.variants
-        .map((variant) => variant?.stock)
-        .filter((value) => value != null && value !== "")
-    : [];
-  const hasStockQuantity =
-    stockValues.length > 0 || variantStockValues.length > 0;
-  const stockQty = [...stockValues, ...variantStockValues].reduce(
-    (total, value) => total + (Number(value) || 0),
-    0,
-  );
+  const availableStock = getProductAvailableStock(cardProduct);
 
   const isInStock =
     inStock !== undefined
@@ -113,9 +97,9 @@ export default function ProductCard({
       : typeof cardProduct?.inStock === "boolean"
         ? cardProduct.inStock
         : typeof cardProduct?.isInStock === "boolean"
-          ? cardProduct.isInStock
-          : hasStockQuantity
-            ? stockQty > 0
+        ? cardProduct.isInStock
+          : availableStock !== null
+            ? availableStock > 0
             : true;
 
   const handleWishlist = (event) => {

@@ -50,6 +50,7 @@ import {
   getImageUrlFromValue,
   firstMoneyValue,
   buildCartItem,
+  getAvailableStock,
 } from "../../utils/ecommerce";
 import { formatPageTitle } from "../../lib/utils";
 import ProductReviewsSection from "../../components/ecommerce/ProductReviewsSection";
@@ -1158,11 +1159,8 @@ export default function ProductDetailPage() {
 
   const attributes = product?.attributes || product?.specifications || {};
 
-  const stockValue = selectedVariant?.stock ?? product?.stock;
   const availableStock =
-    stockValue != null && Number.isFinite(Number(stockValue))
-      ? Math.max(0, Math.floor(Number(stockValue)))
-      : null;
+    getAvailableStock(selectedVariant) ?? getAvailableStock(product);
 
   const inStock =
     availableStock != null
@@ -1303,6 +1301,7 @@ export default function ProductDetailPage() {
                     inStock={inStock}
                     selectedVariant={selectedVariant}
                     product={product}
+                    availableStock={availableStock}
                   />
 
                   <ProductPriceBlock

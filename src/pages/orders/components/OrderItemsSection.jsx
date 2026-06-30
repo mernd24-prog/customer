@@ -283,7 +283,66 @@ function OrderItemCard({
   );
 }
 
-function OrderItemsSection({ items, ...itemProps }) {
+function OrderItemsSection({
+  items = [],
+  orderId,
+  orderStatus,
+  ...itemProps
+}) {
+  const dispatch = useDispatch();
+  const [reviewTarget, setReviewTarget] = useState(null);
+  const [reviewByItem, setReviewByItem] = useState({});
+  const [checkedReviewKeys, setCheckedReviewKeys] = useState({});
+  const canReviewOrder = DELIVERED_STATUSES.has(
+    String(orderStatus || "").toLowerCase(),
+  );
+
+  const reviewableItems = useMemo(
+    () =>
+      canReviewOrder && orderId
+        ? items.filter((item) => getReviewProductId(item))
+        : [],
+    [canReviewOrder, items, orderId],
+  );
+
+  useEffect(() => {
+    if (!orderId || !canReviewOrder || !reviewableItems.length) return;
+
+    reviewableItems.forEach((item) => {
+      const key = reviewKeyForItem(orderId, item);
+      if (checkedReviewKeys[key]) return;
+
+      dispatch(
+        fetchMyProductReview({
+          productId: getReviewProductId(item),
+          orderId,
+          orderItemId: getReviewOrderItemId(item),
+        }),
+      )
+        .unwrap()
+        .then((response) => {
+          setReviewByItem((current) => ({
+            ...current,
+            [key]: response?.data || null,
+          }));
+        })
+        .catch(() => {
+          setReviewByItem((current) => ({ ...current, [key]: null }));
+        })
+        .finally(() => {
+          setCheckedReviewKeys((current) => ({ ...current, [key]: true }));
+        });
+    });
+  }, [canReviewOrder, checkedReviewKeys, dispatch, orderId, reviewableItems]);
+
+  const handleSubmitted = (review) => {
+    if (!reviewTarget) return;
+    const key = reviewKeyForItem(orderId, reviewTarget);
+    setReviewByItem((current) => ({ ...current, [key]: review || true }));
+    setCheckedReviewKeys((current) => ({ ...current, [key]: true }));
+    setReviewTarget(null);
+  };
+
   return (
     <>
       <OrderDetailSectionCard
