@@ -91,7 +91,7 @@ const DEFAULT_SELL_DROPDOWN = {
     { icon: "truck", text: "Easy shipping and local pickup" },
   ],
   buttons: [
-    { label: "List an item", path: "/seller/status" },
+    { label: "List an item", path: "/products" },
     { label: "Download the app", path: "/mobile-app" },
   ],
 };
@@ -202,9 +202,7 @@ export const TopHeader = () => {
   const navigate = useNavigate();
   const currentUser = useSelector((s) => s.auth.current);
 
-  const { page: dealsPage } = useCmsRecord("deals");
   const { page: brandOutletPage } = useCmsRecord("brand-outlet");
-  const { page: giftCardsPage } = useCmsRecord("gift-cards");
   const { page: helpContactPage } = useCmsRecord("help-contact");
   const { page: headerSellPage } = useCmsRecord("header-sell-dropdown");
 
@@ -266,7 +264,7 @@ export const TopHeader = () => {
   };
 
   return (
-    <div className="hidden h-[60px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
+    <div className="hidden h-[40px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
       <div className="customer-container flex h-full items-center justify-between">
         <div className="flex flex-1 items-center gap-8 text-[#FFFFFF]">
           {asArray(
@@ -303,12 +301,12 @@ export const TopHeader = () => {
               leftIcon={<LogOut size={14} />}
               className="
               inline-flex items-center justify-center gap-2
-              h-[36px] sm:h-[38px] lg:h-[41px]
-              min-w-[105px] sm:min-w-[115px] lg:min-w-[121px]
+              h-[30px] lg:h-[32px]
+              min-w-[90px] lg:min-w-[100px]
               rounded-[5px]
-              px-3 sm:px-4
+              px-3
               py-0
-              text-[13px] sm:text-[14px]
+              text-[12px] lg:text-[13px]
               font-semibold
               leading-none
               whitespace-nowrap
@@ -452,7 +450,7 @@ export const Navbar = ({ icons: propIcons }) => {
         />
 
         {/* Actions */}
-        <div className="order-2 flex items-center gap-1.5 min-[375px]:gap-2 sm:gap-3 lg:order-3 lg:gap-4">
+        <div className="order-2 flex  items-center gap-1.5 min-[375px]:gap-2 sm:gap-3 lg:order-3 lg:gap-4">
           <div className="flex items-center gap-2 sm:gap-5">
             {utilityIcons.map((item, iconIndex) => (
               <Fragment key={keyOr(item?.name, `icon-${iconIndex}`)}>
@@ -470,13 +468,13 @@ export const Navbar = ({ icons: propIcons }) => {
                     }`}
                   />
 
-                  <span className=" pointer-events-none   absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
+                  <span className=" pointer-events-none    absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-[#FFFFFF] opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
                     {getNavbarIconLabel(item)}
                   </span>
                 </HeaderIconButton>
 
                 {iconIndex < utilityIcons.length - 1 && (
-                  <div className="hidden h-6 w-px bg-[var(--customer-border)]  lg:block" />
+                  <div className="hidden  h-6 w-px bg-[var(--customer-border)]  lg:block" />
                 )}
               </Fragment>
             ))}
@@ -499,10 +497,10 @@ export const Navbar = ({ icons: propIcons }) => {
             </HeaderIconButton>
             <HeaderIconButton
               to="/watchlist"
-              className="relative h-8 w-8 overflow-visible border-[#1B1D60] bg-[#1B1D600D] text-[#1B1D60]  min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
+              className="relative h-8 w-8 overflow-visible border border-[#1B1D6099] bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
               aria-label={`Watchlist with ${wishlistedProducts.length} ${wishlistedProducts.length === 1 ? "item" : "items"}`}
             >
-              <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
+              <Heart className="h-4 w-4 fill-current md:h-5 md:w-5 " />
               {wishlistedProducts.length > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[12px] font-bold text-white shadow-sm">
                   {wishlistedProducts.length > 99
@@ -540,7 +538,7 @@ export const Navbar = ({ icons: propIcons }) => {
                 </div>
               }
               path="/account/profile"
-              className="h-8 w-8 overflow-hidden rounded-full border-2 border-[#1B1D60] bg-white p-0 hover:border-[#CE9F2D] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 lg:h-auto lg:w-auto lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent"
+              className="h-8 w-8 overflow-hidden rounded-full  bg-white p-0  min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 lg:h-auto lg:w-auto lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent"
               chevronClassName="hidden !text-[#1B1D60] lg:block lg:self-top"
             >
               <MenuDropdown title="My Account" items={accountMenuItems} />
@@ -666,7 +664,7 @@ export const CategoryBar = ({ headerData }) => {
   return (
     <header
       ref={categoryBarRef}
-      className="relative left-1/2 right-1/2  -ml-[50vw] -mr-[50vw] w-screen h-[130px] sm:h-[150px] lg:h-[220px] flex items-center"
+      className="relative left-1/2 right-1/2  -ml-[50vw] -mr-[50vw] w-screen h-[130px] sm:h-[150px] lg:h-[167px] flex items-center"
     >
       {/* Split Background Images */}
       <div
@@ -682,7 +680,7 @@ export const CategoryBar = ({ headerData }) => {
       <div className="absolute inset-0 bg-[#CE9F2D33]  z-10  " />
 
       <div className="w-full relative z-20">
-        <div className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5  2xl:justify-center lg:gap-5">
+        <div className=" hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5  2xl:justify-center lg:gap-5">
           {visibleCategories.map((item, index) => {
             // Always use categoryKey first — it's the canonical route key from the DB
             const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
@@ -704,7 +702,7 @@ export const CategoryBar = ({ headerData }) => {
                   aria-controls="category-mega-menu"
                   className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px]  flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
-                  <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[90px] lg:w-[90px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform">
+                  <div className="mx-auto flex h-[50px]  w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out  group-hover:-translate-y-0.5 will-change-transform">
                     {item?.img ? (
                       <ImageSkeleton
                         src={item?.img}
@@ -712,7 +710,7 @@ export const CategoryBar = ({ headerData }) => {
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center rounded-full bg-[#f6efde] text-[var(--customer-navy)]">
-                        <ShoppingBag className="w-5 h-5 sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
+                        <ShoppingBag className="w-5 h-5  sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
                       </div>
                     )}
                   </div>

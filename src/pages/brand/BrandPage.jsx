@@ -17,15 +17,18 @@ import {
   getImageUrlFromValue,
   isProductInStock,
 } from "../../utils/ecommerce";
-import { brandToSlug, parseMultiValue, serializeMultiValue, slugToBrandName } from "../../utils/ecommerce/brand";
+import {
+  brandToSlug,
+  parseMultiValue,
+  serializeMultiValue,
+  slugToBrandName,
+} from "../../utils/ecommerce/brand";
 import LoadingSkeleton from "../../components/ecommerce/BrandLoadingSkeleton";
 import { useSearchParamHelper } from "../../hooks/useSearchParamsHelper";
 import { PAGE_SIZES, SORT_OPTIONS } from "../../data/constant";
 
-
 export default function BrandPage() {
   const { brandSlug } = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
   const decodedBrandSlug = decodeURIComponent(brandSlug || "");
   const dispatch = useDispatch();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -71,7 +74,6 @@ export default function BrandPage() {
   );
   const ratingCounts = useMemo(() => buildRatingCountMap(items), [items]);
 
-  // Fetch brand info by matching slug against all brands
   useEffect(() => {
     setBrandLoading(true);
     setBrandError(null);
@@ -161,7 +163,8 @@ export default function BrandPage() {
         data.items ||
         data.list ||
         (Array.isArray(data) ? data : []);
-      const meta = result?.meta?.pagination || result?.pagination || result?.meta || {};
+      const meta =
+        result?.meta?.pagination || result?.pagination || result?.meta || {};
       setPageInfo({
         page: Number(meta.page || meta.currentPage || params.page || 1),
         totalPages: Number(meta.totalPages || meta.pages || 1),
@@ -212,56 +215,65 @@ export default function BrandPage() {
     isLoadingMore,
   ]);
 
- const updateParam = (key, value) => {
-  updateSearchParams((next) => {
-    if (value == null || value === "") {
-      next.delete(key);
-    } else {
-      next.set(key, value);
-    }
-  });
-};
+  const updateParam = (key, value) => {
+    updateSearchParams((next) => {
+      if (value == null || value === "") {
+        next.delete(key);
+      } else {
+        next.set(key, value);
+      }
+    });
+  };
+
+  const updateParams = (entries) => {
+    updateSearchParams((next) => {
+      entries.forEach(([key, value]) => {
+        if (value == null || value === "") {
+          next.delete(key);
+        } else {
+          next.set(key, value);
+        }
+      });
+    });
+  };
 
   const handlePriceChange = ({ minPrice, maxPrice }) => {
-  updateSearchParams((next) => {
-    if (minPrice) next.set("minPrice", minPrice);
-    else next.delete("minPrice");
+    updateSearchParams((next) => {
+      if (minPrice) next.set("minPrice", minPrice);
+      else next.delete("minPrice");
 
-    if (maxPrice) next.set("maxPrice", maxPrice);
-    else next.delete("maxPrice");
-  });
-};
+      if (maxPrice) next.set("maxPrice", maxPrice);
+      else next.delete("maxPrice");
+    });
+  };
 
   const removeFilter = (key, filter) => {
-  updateSearchParams((next) => {
-    if (key === "price") {
-      next.delete("minPrice");
-      next.delete("maxPrice");
-    } else if (filter?.groupKey) {
-      const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
-        (value) => value !== filter.value,
-      );
-      const serialized = serializeMultiValue(nextValues);
-      if (serialized) {
-        next.set(filter.groupKey, serialized);
+    updateSearchParams((next) => {
+      if (key === "price") {
+        next.delete("minPrice");
+        next.delete("maxPrice");
+      } else if (filter?.groupKey) {
+        const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+          (value) => value !== filter.value,
+        );
+        const serialized = serializeMultiValue(nextValues);
+        if (serialized) {
+          next.set(filter.groupKey, serialized);
+        } else {
+          next.delete(filter.groupKey);
+        }
       } else {
-        next.delete(filter.groupKey);
+        next.delete(key);
       }
-    } else {
-      next.delete(key);
-    }
-  });
-};
+    });
+  };
 
-const setPage = (p) => {
-  updateSearchParams(
-    (next) => {
+  const setPage = (p) => {
+    updateSearchParams((next) => {
       next.set("page", p);
-    },
-    false
-  );
-window.scrollTo({ top: 0, behavior: "smooth" });
-};
+    }, false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const activeFilters = [
     searchParams.get("sort") && {
@@ -274,7 +286,10 @@ window.scrollTo({ top: 0, behavior: "smooth" });
       value: rating,
       label: `Rating: ${rating}★ & up`,
     })),
-    searchParams.get("inStock") === "true" && { key: "inStock", label: "In Stock Only" },
+    searchParams.get("inStock") === "true" && {
+      key: "inStock",
+      label: "In Stock Only",
+    },
     searchParams.get("outOfStock") === "true" && {
       key: "outOfStock",
       label: "Out of Stock",
@@ -334,14 +349,16 @@ window.scrollTo({ top: 0, behavior: "smooth" });
           )}
           onChange={(values) => {
             const selectedValues = new Set(values);
-            updateParam(
-              "expressDelivery",
-              selectedValues.has("expressDelivery") ? "true" : undefined,
-            );
-            updateParam(
-              "freeDelivery",
-              selectedValues.has("freeDelivery") ? "true" : undefined,
-            );
+            updateParams([
+              [
+                "expressDelivery",
+                selectedValues.has("expressDelivery") ? "true" : undefined,
+              ],
+              [
+                "freeDelivery",
+                selectedValues.has("freeDelivery") ? "true" : undefined,
+              ],
+            ]);
           }}
         />
       ),
@@ -369,14 +386,13 @@ window.scrollTo({ top: 0, behavior: "smooth" });
           )}
           onChange={(values) => {
             const selectedValues = new Set(values);
-            updateParam(
-              "inStock",
-              selectedValues.has("inStock") ? "true" : undefined,
-            );
-            updateParam(
-              "outOfStock",
-              selectedValues.has("outOfStock") ? "true" : undefined,
-            );
+            updateParams([
+              ["inStock", selectedValues.has("inStock") ? "true" : undefined],
+              [
+                "outOfStock",
+                selectedValues.has("outOfStock") ? "true" : undefined,
+              ],
+            ]);
           }}
         />
       ),

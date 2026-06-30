@@ -187,7 +187,7 @@ export default function ProductsPage() {
             : data?.list || [];
         setCategoryList(list);
       })
-      .catch(() => { });
+      .catch(() => {});
 
     dispatch(fetchBrands({ limit: 100 }))
       .then((action) => {
@@ -207,7 +207,7 @@ export default function ProductsPage() {
             .filter(Boolean),
         );
       })
-      .catch(() => { });
+      .catch(() => {});
   }, [dispatch]);
 
   useEffect(() => {
@@ -224,7 +224,7 @@ export default function ProductsPage() {
       (entries) => {
         const [entry] = entries;
         if (!entry?.isIntersecting) return;
-        loadProducts({ page: currentPage + 1, append: true }).catch(() => { });
+        loadProducts({ page: currentPage + 1, append: true }).catch(() => {});
       },
       { threshold: 0.2, rootMargin: "0px 0px 300px 0px" },
     );
@@ -245,6 +245,18 @@ export default function ProductsPage() {
       const next = new URLSearchParams(prev);
       if (value == null || value === "") next.delete(key);
       else next.set(key, value);
+      next.delete("page");
+      return next;
+    });
+  };
+
+  const updateParams = (entries) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      entries.forEach(([key, value]) => {
+        if (value == null || value === "") next.delete(key);
+        else next.set(key, value);
+      });
       next.delete("page");
       return next;
     });
@@ -420,14 +432,16 @@ export default function ProductsPage() {
           )}
           onChange={(values) => {
             const selectedValues = new Set(values);
-            updateParam(
-              "expressDelivery",
-              selectedValues.has("expressDelivery") ? "true" : undefined,
-            );
-            updateParam(
-              "freeDelivery",
-              selectedValues.has("freeDelivery") ? "true" : undefined,
-            );
+            updateParams([
+              [
+                "expressDelivery",
+                selectedValues.has("expressDelivery") ? "true" : undefined,
+              ],
+              [
+                "freeDelivery",
+                selectedValues.has("freeDelivery") ? "true" : undefined,
+              ],
+            ]);
           }}
         />
       ),
@@ -455,14 +469,13 @@ export default function ProductsPage() {
           )}
           onChange={(values) => {
             const selectedValues = new Set(values);
-            updateParam(
-              "inStock",
-              selectedValues.has("inStock") ? "true" : undefined,
-            );
-            updateParam(
-              "outOfStock",
-              selectedValues.has("outOfStock") ? "true" : undefined,
-            );
+            updateParams([
+              ["inStock", selectedValues.has("inStock") ? "true" : undefined],
+              [
+                "outOfStock",
+                selectedValues.has("outOfStock") ? "true" : undefined,
+              ],
+            ]);
           }}
         />
       ),
@@ -483,24 +496,24 @@ export default function ProductsPage() {
             sortOptions={SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
             onOpenFilters={() => setSidebarOpen(true)}
-          // viewControls={
-          //   <div className="hidden  items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
-          //     <button
-          //       type="button"
-          //       onClick={() => setViewMode("grid")}
-          //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
-          //     >
-          //       <Grid2X2 size={15} />
-          //     </button>
-          //     <button
-          //       type="button"
-          //       onClick={() => setViewMode("list")}
-          //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
-          //     >
-          //       <List size={15} />
-          //     </button>
-          //   </div>
-          // }
+            // viewControls={
+            //   <div className="hidden  items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
+            //     <button
+            //       type="button"
+            //       onClick={() => setViewMode("grid")}
+            //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
+            //     >
+            //       <Grid2X2 size={15} />
+            //     </button>
+            //     <button
+            //       type="button"
+            //       onClick={() => setViewMode("list")}
+            //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
+            //     >
+            //       <List size={15} />
+            //     </button>
+            //   </div>
+            // }
           />
         </div>
         <ProductResultsLayout

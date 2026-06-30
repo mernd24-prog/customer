@@ -1806,6 +1806,8 @@ export function PaymentResultPage({ failed = false }) {
                 <div className="w-full ">
                   <OrderItemsSection
                     items={items}
+                    orderId={orderId}
+                    orderStatus={status}
                     title={null}
                     borderClassName="border-[#CE9F2D]"
                     bodyClassName="grid  divide-y divide-[#E9E9EF] p-4 min-[375px]:p-5 min-[425px]:p-6 lg:p-[25px]"
@@ -1934,7 +1936,7 @@ export function PaymentResultPage({ failed = false }) {
 
                     <div className="grid gap-3 text-[#2E2E2E]">
                       {displayName && (
-                        <p className="break-words text-[22px] font-bold leading-tight text-[#2E2E2E] min-[375px]:text-[24px] sm:text-[26px]">
+                        <p className="break-words text-[18px] font-bold leading-tight text-[#2E2E2E] sm:text-[26px]">
                           {displayName}
                         </p>
                       )}

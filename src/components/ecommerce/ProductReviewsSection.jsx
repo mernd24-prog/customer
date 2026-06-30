@@ -74,8 +74,10 @@ function ProductReviewCard({ review, currentUser }) {
     : "";
 
   const rating = Number(review.rating || 0).toFixed(1);
-  const currentUserId = currentUser?.id || currentUser?._id || currentUser?.userId;
-  const isOwn = currentUserId && String(review.buyerId) === String(currentUserId);
+  const currentUserId =
+    currentUser?.id || currentUser?._id || currentUser?.userId;
+  const isOwn =
+    currentUserId && String(review.buyerId) === String(currentUserId);
   const name =
     review.buyerName ||
     review.name ||
@@ -164,7 +166,10 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10 flex flex-col gap-4">
+    <form
+      onSubmit={handleSubmit}
+      className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10 flex flex-col gap-4"
+    >
       <h3 className="text-base font-bold text-ink">Write a Review</h3>
 
       {deliveredOrders.length > 1 && (
@@ -411,7 +416,8 @@ export default function ProductReviewsSection({ productId, product }) {
     0;
   const displayReviews = useMemo(() => {
     if (bucket.loading && items.length === 0) return [];
-    const ownPublishedReview = myReview?.status === "published" ? myReview : null;
+    const ownPublishedReview =
+      myReview?.status === "published" ? myReview : null;
     const sourceReviews = ownPublishedReview
       ? [
           ownPublishedReview,
@@ -422,7 +428,8 @@ export default function ProductReviewsSection({ productId, product }) {
           ),
         ]
       : items;
-    if (!sourceReviews.length || (!hasApiReviews && !ownPublishedReview)) return [];
+    if (!sourceReviews.length || (!hasApiReviews && !ownPublishedReview))
+      return [];
     const sorted = sortReviewsByOption(sourceReviews, sort);
     if (!ownPublishedReview) return sorted;
     return [
@@ -441,7 +448,7 @@ export default function ProductReviewsSection({ productId, product }) {
 
   return (
     <section id="reviews" className="w-full overflow-hidden">
-      <div className="flex  flex-col gap-4 lg:gap-12 lg:flex-row">
+      <div className="flex mt-4 lg:mt-8 flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-12">
         <aside className=" lg:sticky lg:top-20   lg:self-start">
           <div className="w-full lg:w-[420px] xl:w-[580px]  rounded-xl  border border-[#CE9F2D66] bg-white">
             <div className=" px-4 py-6  rounded-xl bg-[#CE9F2D33] sm:px-5">
@@ -525,7 +532,7 @@ export default function ProductReviewsSection({ productId, product }) {
           </div>
         </aside>
 
-        <div className="min-w-0">
+        <div className="flex min-w-0 flex-1 flex-col">
           {showForm && canWriteReview && (
             <div className="mb-6">
               <WriteReviewForm
@@ -610,13 +617,23 @@ export default function ProductReviewsSection({ productId, product }) {
           </div>
 
           {!bucket.loading && displayReviews.length === 0 && (
-            <div className="mt-6 rounded-[8px] border border-[#CE9F2D66] bg-white px-5 py-8 text-center">
-              <p className="text-base font-bold text-[#1B1D60]">
-                No reviews yet
-              </p>
-              <p className="mt-1 text-sm font-medium text-[#5F6078]">
-                Published customer reviews will appear here.
-              </p>
+            <div className="flex flex-1  items-center justify-center rounded-[10px] border border-[#CE9F2D66] bg-[#FFFDF8] px-4 py-8 text-center sm:min-h-[340px] lg:min-h-0">
+              <div className="mx-auto flex w-full max-w-[420px] flex-col items-center">
+                <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-[#CE9F2D1F] sm:h-36 sm:w-36 lg:h-44 lg:w-44">
+                  <img
+                    src="/image/png/noReview.png"
+                    alt="No reviews yet"
+                    className="h-full w-full object-contain"
+                    loading="lazy"
+                  />
+                </div>
+                <p className="mt-5 text-lg font-bold text-[#1B1D60] sm:text-xl">
+                  No reviews yet
+                </p>
+                <p className="mt-2 max-w-[320px] text-sm font-medium leading-6 text-[#5F6078] sm:text-base">
+                  Published customer reviews will appear here.
+                </p>
+              </div>
             </div>
           )}
 

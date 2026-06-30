@@ -71,7 +71,6 @@ export default function ProductResultsLayout({
           />
         </FilterDrawer>
 
- 
         <div className="min-w-0 w-full flex-1">
           {children ||
             (loading ? (
@@ -79,39 +78,41 @@ export default function ProductResultsLayout({
                 <Loader size="lg" />
               </div>
             ) : (
-            <ApiState
-              loading={false}
-              error={error}
-              empty={empty}
-              emptyTitle={emptyTitle}
-              emptyText={emptyText}
-            >
-              <h4 className="text-xl md:text-[24px] mb-6 lg:mb-12">
-                Showing {rangeStart}-{rangeEnd} of {totalCount} results
-              </h4>
-              <ProductGrid
-                products={products}
-                variant={viewMode}
-                onAddToCart={onAddToCart}
-                onWishlist={onWishlist}
-                isWishlisted={isWishlisted}
-              />
-
-              {showPagination && (
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={onPageChange}
+              <ApiState
+                loading={false}
+                error={error}
+                empty={empty}
+                emptyTitle={emptyTitle}
+                emptyText={emptyText}
+              >
+                <h4 className="text-xl md:text-[24px] mb-6 lg:mb-12">
+                  Showing {rangeStart}-{rangeEnd} of {totalCount} results
+                </h4>
+                <ProductGrid
+                  products={products}
+                  variant={viewMode}
+                  onAddToCart={onAddToCart}
+                  onWishlist={onWishlist}
+                  isWishlisted={isWishlisted}
                 />
-              )}
 
-              {loadingMore && (
-                <div className="mt-8 flex items-center justify-center   text-sm text-muted ">
-                  <Loader size="lg" />
-                </div>
-              )}
-              {sentinelRef && <div ref={sentinelRef} className="h-8 w-full" />}
-            </ApiState>
+                {showPagination && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={onPageChange}
+                  />
+                )}
+
+                {loadingMore && (
+                  <div className="mt-8 flex items-center justify-center   text-sm text-muted ">
+                    <Loader size="lg" />
+                  </div>
+                )}
+                {sentinelRef && (
+                  <div ref={sentinelRef} className="h-8 w-full" />
+                )}
+              </ApiState>
             ))}
         </div>
       </div>

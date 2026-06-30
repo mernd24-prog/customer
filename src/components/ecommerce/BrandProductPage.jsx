@@ -41,9 +41,14 @@ export default function BrandProductPage({
 
   return (
     <>
-      <div className="mt-6 rounded-[var(--customer-radius-lg)] border border-border bg-gradient-to-br from-slate-50 to-cream px-4 py-8 sm:px-6">
+      <div className="mt-6 rounded-[var(--customer-radius-lg)] border border-border bg-gradient-to-br from-slate-50 to-cream px-4 py-8 sm:px-6 ">
         <div className="w-container">
-          <Breadcrumbs items={breadcrumbs} className="mb-4 text-gray" />
+          <Breadcrumbs
+            items={breadcrumbs}
+            linkClassName="text-black"
+            separatorClassName="text-black"
+            className="mb-4"
+          />
           <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
             {brandImage ? (
               <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[var(--customer-radius)] border border-border bg-white p-2 shadow-sm sm:h-28 sm:w-28">

@@ -394,9 +394,16 @@ function OrderPaymentSummary({
           <button
             type="submit"
             disabled={loading}
-            className="mt-6 h-[54px] w-full rounded-[10px] bg-[#CE9F2D] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:bg-[#C9961F]"
+            className="mt-6 flex h-[54px] w-full items-center justify-center gap-2 rounded-[10px] bg-[#CE9F2D] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:bg-[#C9961F] disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {buttonText}
+            {loading ? (
+              <>
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                Please wait...
+              </>
+            ) : (
+              buttonText
+            )}
           </button>
 
           {selectedLabel && (

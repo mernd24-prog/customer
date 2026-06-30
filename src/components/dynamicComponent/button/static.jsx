@@ -13,9 +13,9 @@ const buttonStyles = {
   solidLarge:
     "h-[48px] rounded-[6px] bg-[#CE9F2D] px-[22px] py-[10px] text-label-md font-semibold text-[#1F2430] hover:bg-[#bd9025]",
   headerGold:
-    "h-[36px] min-h-[36px] min-w-[120px] rounded-[5px] bg-[#CE9F2D] px-3 text-label-xs font-semibold text-[#03014D] hover:brightness-95 hover:shadow-md sm:h-[41px] sm:min-h-[41px] sm:min-w-[153px] sm:px-4 sm:text-label-md",
+    "h-[36px] min-w-[120px] rounded-[5px] bg-[#CE9F2D] px-3 text-label-xs font-semibold text-[#03014D] hover:brightness-95 hover:shadow-md sm:h-[41px] sm:min-w-[153px] sm:px-4 sm:text-label-md",
   headerIcon:
-    "group relative h-10 w-10 rounded-full border border-[var(--customer-border)] bg-white p-0 hover:border-[var(--customer-gold)] hover:bg-[var(--customer-gold-soft)]",
+    "group relative h-10 w-10 rounded-full bg-transparent p-0 shadow-none",
 
   pill: "inline-flex min-w-[110px]  sm:min-w-[130px] h-[36px] sm:h-[40px] items-center justify-center gap-2 sm:gap-[15px] md:gap-2 rounded-full bg-[#CE9F2D] px-4 sm:px-[34px] py-2  font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[#bd9025]",
 
@@ -163,7 +163,7 @@ export const CategoryMoreButton = ({
       {...props}
     >
       {/* ICON */}
-      <span className="mx-auto flex h-[50px] w-[50px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 shadow-sm transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform sm:h-[65px] sm:w-[65px] sm:p-2 lg:h-[90px] lg:w-[90px]">
+      <span className="mx-auto flex h-[50px] w-[50px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 shadow-sm transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform sm:h-[65px] sm:w-[65px] sm:p-2 lg:h-[75px] lg:w-[75px]">
         <img
           src={icon}
           alt={label}

@@ -312,10 +312,7 @@ export default function App() {
                 path="/who-we-are"
                 element={<CmsPage slugOverride="who-we-are" />}
               />
-              {/* <Route
-            path="/about-us"
-            element={<CmsPage slugOverride="about-us" />}
-          /> */}
+
               <Route path="/mobile-app" element={<DownloadApp />} />
               <Route
                 path="/seller-policies"
