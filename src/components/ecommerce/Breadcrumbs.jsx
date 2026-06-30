@@ -5,7 +5,7 @@ import { IoIosArrowForward } from "react-icons/io";
 export default function Breadcrumbs({
   items = [],
   className = "",
-  linkClassName = "text-white",
+  linkClassName = "",
   currentClassName = "text-[#CE9F2D]",
   separatorClassName = "text-white",
   heading,

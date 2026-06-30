@@ -8,6 +8,7 @@ import {
   Lock,
   LogOut,
   Settings,
+  ShoppingCart,
   ShoppingBag,
   Store,
   Truck,
@@ -483,7 +484,19 @@ export const Navbar = ({ icons: propIcons }) => {
             {utilityIcons.length > 0 && (
               <div className="hidden h-6 w-px bg-[var(--customer-border)]  lg:block" />
             )}
+            <HeaderIconButton
+              to="/cart"
+              className="relative h-8 w-8 overflow-visible border-[#1B1D60] bg-[#1B1D600D] text-[#1B1D60]  min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
+              aria-label={`Cart with ${cartItemCount} ${cartItemCount === 1 ? "item" : "items"}`}
+            >
+              <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
+              {cartItemsLength > 0 && (
+                <span className="absolute  -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1  text-[12px] font-bold  text-white shadow-sm">
+                  {cartItemsLength > 99 ? "99+" : cartItemsLength}
+                </span>
+              )}
+            </HeaderIconButton>
             <HeaderIconButton
               to="/watchlist"
               className="relative h-8 w-8 overflow-visible border-[#1B1D60] bg-[#1B1D600D] text-[#1B1D60]  min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
@@ -495,24 +508,6 @@ export const Navbar = ({ icons: propIcons }) => {
                   {wishlistedProducts.length > 99
                     ? "99+"
                     : wishlistedProducts.length}
-                </span>
-              )}
-            </HeaderIconButton>
-
-            <HeaderIconButton
-              to="/cart"
-              className="relative h-8 w-8 overflow-visible border-0 bg-transparent hover:border-0 hover:bg-transparent min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
-              aria-label={`Cart with ${cartItemCount} ${cartItemCount === 1 ? "item" : "items"}`}
-            >
-              <img
-                src="/image/png/cart.png "
-                alt="Cart"
-                className="h-8 w-8  md:h-[40px]  md:w-[40px]  object-contain"
-              />
-
-              {cartItemsLength > 0 && (
-                <span className="absolute  -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1  text-[12px] font-bold  text-white shadow-sm">
-                  {cartItemsLength > 99 ? "99+" : cartItemsLength}
                 </span>
               )}
             </HeaderIconButton>
@@ -571,8 +566,8 @@ export const CategoryBar = ({ headerData }) => {
     () => getCategoryListFromResponse(catalogCategoryList),
     [catalogCategoryList],
   );
-  const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
-  const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
+  // const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
+  // const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
   const [activeMenu, setActiveMenu] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
   const categoryBarRef = useRef(null);
