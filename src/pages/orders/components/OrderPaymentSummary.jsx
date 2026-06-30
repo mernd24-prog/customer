@@ -149,6 +149,21 @@ function OrderPaymentSummary({
   loading,
   selectedLabel,
 }) {
+  const availablePaymentMethods = paymentMethods.filter((option) => {
+  // Hide COD if it is disabled
+  if (option.provider === "cod" && !option.enabled) {
+    return false;
+  }
+
+  // Hide COD if any seller doesn't allow it
+  if (option.provider === "cod") {
+    return option.config?.sellerRules?.every(
+      (rule) => rule.allowed
+    );
+  }
+
+  return true;
+});
   return (
     <OrderDetailSectionCard
       title={title}
@@ -313,7 +328,7 @@ function OrderPaymentSummary({
           </h3>
 
           <div className="flex flex-col mt-2">
-            {paymentMethods.map((option) => (
+            {availablePaymentMethods.map((option) => (
               <label
                 key={option.provider}
                 className="flex cursor-pointer items-center gap-3 rounded-[10px] px-3 py-3 text-sm transition hover:border-[#CE9F2D]"

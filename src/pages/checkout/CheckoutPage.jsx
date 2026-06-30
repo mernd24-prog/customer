@@ -37,6 +37,10 @@ import {
 import { normalizeId } from "../../utils/ecommerce/cart";
 import { normalizeDialCode } from "../../lib/utils";
 import {
+  scrollToFirstFormError,
+  scrollToFormField,
+} from "../../utils/formErrors";
+import {
   checkoutAddressSchema,
   optionalMoneyField,
   validatePostalCodeForCountry,
@@ -640,6 +644,7 @@ export default function CheckoutPage() {
   } = useForm({
     resolver: zodResolver(checkoutFormSchema),
     mode: "onTouched",
+    shouldFocusError: false,
     defaultValues: {
       useNewAddress: false,
       selectedAddressId: "",
@@ -665,6 +670,16 @@ export default function CheckoutPage() {
   const watchedPhone = watch("phone");
   const watchedLine1 = watch("line1");
   const watchedLine2 = watch("line2");
+
+  const handleInvalidCheckout = (validationErrors) => {
+    scrollToFirstFormError(validationErrors, {
+      idPrefix: "shipping",
+      fieldSelectors: {
+        selectedAddressId: 'input[name="addressSelect"]',
+      },
+      fallbackRef: newAddressFormRef,
+    });
+  };
 
   const countryObj = countries.find((c) => (c.name || c) === selectedCountry);
   const countryId = countryObj?._id || countryObj?.id;
@@ -1085,6 +1100,14 @@ export default function CheckoutPage() {
           });
         }
       });
+      const firstIssue = addressResult.error.issues[0];
+      const firstField = firstIssue?.path?.[0];
+      if (firstField) {
+        scrollToFormField(String(firstField), undefined, {
+          idPrefix: "shipping",
+          fallbackRef: newAddressFormRef,
+        });
+      }
       return;
     }
 
@@ -1297,7 +1320,10 @@ export default function CheckoutPage() {
               separatorClassName="text-[#2E2E2E]"
             />
           </div>
-          <form onSubmit={handleSubmit(submit)} noValidate>
+          <form
+            onSubmit={handleSubmit(submit, handleInvalidCheckout)}
+            noValidate
+          >
             {errors.root?.message ? (
               <div className="mb-4 rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {errors.root.message}

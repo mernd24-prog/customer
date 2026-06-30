@@ -17,7 +17,11 @@ export default function SecurityTab() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(securitySchema) });
+  } = useForm({
+    resolver: zodResolver(securitySchema),
+    mode: "onBlur",
+    reValidateMode: "onChange",
+  });
 
   const submit = async (values) => {
     await run(
