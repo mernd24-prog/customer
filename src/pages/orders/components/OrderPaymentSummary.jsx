@@ -149,6 +149,13 @@ function OrderPaymentSummary({
   loading,
   selectedLabel,
 }) {
+  const visiblePaymentMethods =
+    variant === "checkout"
+      ? paymentMethods.filter(
+          (option) => option.provider !== "cod" || option.enabled !== false,
+        )
+      : paymentMethods;
+
   return (
     <OrderDetailSectionCard
       title={title}
@@ -306,14 +313,14 @@ function OrderPaymentSummary({
         />
       </div>
 
-      {variant === "checkout" && paymentMethods.length > 0 && (
+      {variant === "checkout" && visiblePaymentMethods.length > 0 && (
         <div className="pt-4">
           <h3 className="text-[14px] font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px] ">
             Payment Method
           </h3>
 
           <div className="flex flex-col mt-2">
-            {paymentMethods.map((option) => (
+            {visiblePaymentMethods.map((option) => (
               <label
                 key={option.provider}
                 className="flex cursor-pointer items-center gap-3 rounded-[10px] px-3 py-3 text-sm transition hover:border-[#CE9F2D]"

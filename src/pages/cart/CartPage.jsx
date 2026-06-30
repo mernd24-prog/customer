@@ -73,7 +73,17 @@ function adaptItemForCard(item) {
     item.mrp ??
     product.mrp ??
     product.originalPrice;
-  const shipping = item.shipping ?? 0;
+  const productShippingInfo =
+    product.shipping && typeof product.shipping === "object"
+      ? product.shipping
+      : {};
+  const shipping =
+    typeof item.shipping === "number"
+      ? item.shipping
+      : productShippingInfo.freeShipping
+        ? 0
+        : Number(productShippingInfo.shippingCharge ?? productShippingInfo.additionalCost ?? 0) +
+          Number(productShippingInfo.handlingCharge ?? 0);
   const quantity = item.quantity || 1;
   const seller = item.seller || product.seller?.name || product.brand;
   const condition = item.condition;

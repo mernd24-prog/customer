@@ -264,9 +264,24 @@ const getCartItemPrice = (item = {}) => {
       0,
   );
 };
-const getCartItemShipping = (item = {}) =>
-  asNumber(item.shipping ?? item.shippingFee ?? 0) *
-  asNumber(item.quantity || 1);
+const getCartItemShipping = (item = {}) => {
+  const product =
+    item.productId && typeof item.productId === "object" ? item.productId : {};
+  const productShipping =
+    product.shipping && typeof product.shipping === "object"
+      ? product.shipping
+      : {};
+  const perUnit =
+    typeof item.shipping === "number"
+      ? item.shipping
+      : typeof item.shippingFee === "number"
+        ? item.shippingFee
+        : productShipping.freeShipping
+          ? 0
+          : asNumber(productShipping.shippingCharge ?? productShipping.additionalCost ?? 0) +
+            asNumber(productShipping.handlingCharge ?? 0);
+  return perUnit * asNumber(item.quantity || 1);
+};
 const getCartItemProduct = (item = {}) =>
   item?.productId && typeof item.productId === "object"
     ? item.productId
@@ -585,10 +600,14 @@ export default function CheckoutPage() {
   const total = subtotal + shipping;
   const [paymentProvider, setPaymentProvider] = useState("razorpay");
   const paymentOptions = useMemo(
-    () =>
-      Array.isArray(paymentState.current?.providers)
+    () => {
+      const providers = Array.isArray(paymentState.current?.providers)
         ? paymentState.current.providers
-        : [],
+        : [];
+      return providers.filter(
+        (option) => option.provider !== "cod" || option.enabled !== false,
+      );
+    },
     [paymentState],
   );
   const quotePayableAmount = getQuotePayableAmount(quoteData);
@@ -868,6 +887,7 @@ export default function CheckoutPage() {
   const orderItems = useMemo(() => buildOrderItems(items), [items]);
   const paymentSellerContext = useMemo(() => {
     const sellerOrderAmounts = {};
+    let productCodDisabled = false;
     items.forEach((item) => {
       const product = getCartItemProduct(item);
       const sellerId = String(
@@ -877,13 +897,22 @@ export default function CheckoutPage() {
           product.seller_id ||
           "",
       ).trim();
-      if (!sellerId) return;
-      sellerOrderAmounts[sellerId] =
-        asNumber(sellerOrderAmounts[sellerId]) + asNumber(item._lineTotal);
+      if (sellerId) {
+        sellerOrderAmounts[sellerId] =
+          asNumber(sellerOrderAmounts[sellerId]) + asNumber(item._lineTotal);
+      }
+      const productShipping =
+        product.shipping && typeof product.shipping === "object"
+          ? product.shipping
+          : {};
+      if (productShipping.codAvailable === false) {
+        productCodDisabled = true;
+      }
     });
     return {
       sellerIds: Object.keys(sellerOrderAmounts),
       sellerOrderAmounts,
+      productCodDisabled,
     };
   }, [items]);
   const quotePayload = useMemo(() => {
@@ -915,6 +944,7 @@ export default function CheckoutPage() {
         sellerOrderAmounts: sellerIds
           ? JSON.stringify(paymentSellerContext.sellerOrderAmounts)
           : undefined,
+        productCodDisabled: paymentSellerContext.productCodDisabled || undefined,
       }),
     ).catch(() => {});
   }, [

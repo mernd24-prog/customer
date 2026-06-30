@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import QuantitySelector from "../../components/cart/QuantitySelector";
 import { IoIosSearch } from "react-icons/io";
 import {
+  Banknote,
   Heart,
   RefreshCw,
   Share2,
@@ -50,6 +51,7 @@ import {
   getImageUrlFromValue,
   firstMoneyValue,
   buildCartItem,
+  isProductCodAvailable,
 } from "../../utils/ecommerce";
 import { formatPageTitle } from "../../lib/utils";
 import ProductReviewsSection from "../../components/ecommerce/ProductReviewsSection";
@@ -1133,7 +1135,14 @@ export default function ProductDetailPage() {
   const staticCharge = Number(
     shipping.shippingCharge ?? shipping.additionalCost ?? 0,
   );
-  const productCodDisabled = shipping.codAvailable === false;
+  const productCodAvailable = isProductCodAvailable(product);
+  const productCodDisabled =
+    !productCodAvailable &&
+    (
+      shipping.codAvailable === false ||
+      product?.metadata?.codAvailable === false ||
+      product?.codAvailable === false
+    );
 
   const discount =
     mrp && price && mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
@@ -1370,6 +1379,11 @@ export default function ProductDetailPage() {
                           Delivery
                         </span>
                       ) : null}
+                      {productCodAvailable && (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                          <Banknote size={11} /> COD Available
+                        </span>
+                      )}
                       {productCodDisabled && (
                         <span className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600">
                           COD not available

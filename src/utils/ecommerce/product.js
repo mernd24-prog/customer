@@ -18,6 +18,34 @@ export function getProductTitle(product, fallback = "Untitled product") {
   return product?.title || product?.name || product?.productName || fallback;
 }
 
+function normalizeBooleanFlag(value) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (["true", "1", "yes"].includes(normalized)) return true;
+    if (["false", "0", "no"].includes(normalized)) return false;
+  }
+  return undefined;
+}
+
+export function isProductCodAvailable(product = {}) {
+  const shippingCod = normalizeBooleanFlag(
+    product?.shipping?.codAvailable ?? product?.shipping?.cod_available,
+  );
+  if (shippingCod !== undefined) return shippingCod;
+
+  const metadataCod = normalizeBooleanFlag(
+    product?.metadata?.codAvailable ?? product?.metadata?.cod_available,
+  );
+  if (metadataCod !== undefined) return metadataCod;
+
+  return (
+    normalizeBooleanFlag(
+      product?.codAvailable ?? product?.cod_available ?? product?.cod,
+    ) === true
+  );
+}
+
 export function normalizeMoneyNumber(value) {
   if (typeof value === "number") {
     return Number.isFinite(value) ? value : undefined;

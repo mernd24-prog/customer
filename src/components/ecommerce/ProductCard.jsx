@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Banknote, Heart, ShoppingCart } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
 import Label from "../common/label/Label";
 import {
@@ -13,6 +13,7 @@ import {
   getProductId,
   getProductImage,
   getProductTitle,
+  isProductCodAvailable,
   applyImageFallback,
 } from "../../utils/ecommerce";
 import { cn } from "../../lib/utils";
@@ -73,6 +74,7 @@ export default function ProductCard({
     cardProduct?.metadata?.featured === true ||
     cardProduct?.isFeatured === true ||
     cardProduct?.markAsFeatured === true;
+  const codAvailable = isProductCodAvailable(cardProduct);
 
   badge || (discountPercent > 0 ? `${discountPercent}% OFF` : "");
   const currentPriceNumber = Number(String(price || 0).replace(/[^\d.-]/g, ""));
@@ -200,6 +202,11 @@ export default function ProductCard({
               showValue
               className="mt-3"
             />
+            {codAvailable && (
+              <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                <Banknote size={12} /> COD Available
+              </span>
+            )}
           </Link>
 
           <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
@@ -280,6 +287,28 @@ export default function ProductCard({
               "
           >
             {discountLabel}
+          </Label>
+        )}
+        {codAvailable && (
+          <Label
+            variant="success"
+            className="
+              flex h-[24px] items-center justify-center gap-1
+              rounded-[50px]
+              border border-emerald-200
+              bg-emerald-50
+              px-[12px] py-[5px]
+              font-dmSans
+              text-[12px] font-semibold
+              leading-none
+              tracking-[0%]
+              text-emerald-700
+              sm:h-[28px]
+              sm:px-[15px]
+              sm:text-[14px]
+              "
+          >
+            <Banknote size={12} /> COD Available
           </Label>
         )}
       </div>

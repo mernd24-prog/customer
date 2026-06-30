@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Package } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import { useDispatch } from "react-redux";
@@ -283,7 +283,47 @@ function OrderItemCard({
   );
 }
 
-function OrderItemsSection({ items, ...itemProps }) {
+function OrderItemsSection({ items, orderId, orderStatus, ...itemProps }) {
+  const dispatch = useDispatch();
+  const [reviewTarget, setReviewTarget] = useState(null);
+  const [reviewByItem, setReviewByItem] = useState({});
+  const [checkedReviewKeys, setCheckedReviewKeys] = useState({});
+  const dispatchedKeysRef = useRef(new Set());
+
+  const canReviewOrder = DELIVERED_STATUSES.has(String(orderStatus || "").toLowerCase());
+
+  useEffect(() => {
+    if (!canReviewOrder || !orderId || !items.length) return;
+
+    items.forEach((item) => {
+      const productId = getReviewProductId(item);
+      if (!productId) return;
+      const key = reviewKeyForItem(orderId, item);
+      if (dispatchedKeysRef.current.has(key)) return;
+      dispatchedKeysRef.current.add(key);
+
+      dispatch(fetchMyProductReview({ productId, orderId }))
+        .unwrap()
+        .then((result) => {
+          const review = result?.data || result || null;
+          setReviewByItem((prev) => ({ ...prev, [key]: review }));
+        })
+        .catch(() => {
+          setReviewByItem((prev) => ({ ...prev, [key]: null }));
+        })
+        .finally(() => {
+          setCheckedReviewKeys((prev) => ({ ...prev, [key]: true }));
+        });
+    });
+  }, [canReviewOrder, orderId, items, dispatch]);
+
+  const handleSubmitted = (reviewData) => {
+    if (!reviewTarget) return;
+    const key = reviewKeyForItem(orderId, reviewTarget);
+    setReviewByItem((prev) => ({ ...prev, [key]: reviewData }));
+    setReviewTarget(null);
+  };
+
   return (
     <>
       <OrderDetailSectionCard

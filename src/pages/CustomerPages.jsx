@@ -426,6 +426,27 @@ const formatOrderDate = (value) =>
       })
     : "";
 const formatOrderId = (id = "") => String(id);
+
+const getDeliveryEtaDays = (order = {}) => {
+  const metadata =
+    order.metadata && typeof order.metadata === "object" ? order.metadata : {};
+  const sellers = Array.isArray(metadata.deliveryCharge?.sellers)
+    ? metadata.deliveryCharge.sellers
+    : [];
+  const etas = sellers.map((s) => s.estimatedDeliveryDays).filter(Boolean);
+  if (!etas.length) return null;
+  const minDays = Math.min(...etas.map((e) => Number(e.minDays ?? e.maxDays ?? 0)));
+  const maxDays = Math.max(...etas.map((e) => Number(e.maxDays ?? e.minDays ?? 0)));
+  if (!maxDays) return null;
+  return { minDays: minDays > 0 ? minDays : null, maxDays };
+};
+
+const addDays = (base, days) => {
+  const d = new Date(base);
+  d.setDate(d.getDate() + days);
+  return d;
+};
+
 const getExpectedDeliveryDate = (order) =>
   order?.expected_delivery ||
   order?.expectedDelivery ||
@@ -433,7 +454,21 @@ const getExpectedDeliveryDate = (order) =>
   order?.deliveryDate ||
   order?.shipping?.expectedDelivery ||
   order?.shipmentDate ||
+  order?.relations?.shipments?.[0]?.expected_delivery_at ||
+  order?.relations?.shipments?.[0]?.expectedDeliveryAt ||
   null;
+
+const getDeliveryDateRange = (order = {}) => {
+  const explicit = getExpectedDeliveryDate(order);
+  if (explicit) return { minDate: null, maxDate: new Date(explicit) };
+  const eta = getDeliveryEtaDays(order);
+  if (!eta) return null;
+  const base = order.created_at || order.createdAt || new Date();
+  return {
+    minDate: eta.minDays ? addDays(base, eta.minDays) : null,
+    maxDate: addDays(base, eta.maxDays),
+  };
+};
 const unwrapOrder = (value) => {
   const wrapper = value?.data?.order ? value.data : value;
   const order = wrapper?.order || wrapper;
@@ -1515,7 +1550,12 @@ export function PaymentResultPage({ failed = false }) {
   const shipping = getOrderAmount(order || {}, "shipping");
   const customerAmount = getCustomerOrderAmount(order || {});
   const status = firstDefined(order?.status, order?.orderStatus, "confirmed");
-  const expectedDelivery = getExpectedDeliveryDate(order || {});
+  const deliveryDateRange = getDeliveryDateRange(order || {});
+  const deliveryLabel = deliveryDateRange
+    ? deliveryDateRange.minDate
+      ? `${formatOrderDate(deliveryDateRange.minDate)} – ${formatOrderDate(deliveryDateRange.maxDate)}`
+      : formatOrderDate(deliveryDateRange.maxDate)
+    : "To be confirmed";
   const orderCustomer =
     order?.customer ||
     order?.user ||
@@ -1746,10 +1786,7 @@ export function PaymentResultPage({ failed = false }) {
                     <span className="break-words">Order ID : # {orderId}</span>
 
                     <span className="break-words">
-                      Estimated Delivery :{" "}
-                      {expectedDelivery
-                        ? formatOrderDate(expectedDelivery)
-                        : "To be confirmed"}
+                      Estimated Delivery : {deliveryLabel}
                     </span>
                   </div>
                 </section>
@@ -1863,9 +1900,7 @@ export function PaymentResultPage({ failed = false }) {
                           lg:text-[26px]
                           xl:text-[30px]"
                         >
-                          {expectedDelivery
-                            ? formatOrderDate(expectedDelivery)
-                            : "To be confirmed"}
+                          {deliveryLabel}
                         </p>
                       </div>
                     </div>
