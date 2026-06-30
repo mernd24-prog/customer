@@ -18,6 +18,7 @@ import { useToastThunk } from "../../../hooks/useToastThunk";
 import { normalizeDialCode } from "../../../lib/utils";
 import { addressSchema } from "../../../validations/validationSchemas";
 import { validatePostalCodeForCountry } from "../../../validations";
+import { scrollToFirstFormError } from "../../../utils/formErrors";
  
 const getAddressId = (addr) => addr?._id || addr?.id || "";
  
@@ -98,7 +99,10 @@ export default function AddressSelection({
   const dispatch = useDispatch();
   const run = useToastThunk();
   const { loading } = useSelector((s) => s.user);
-  const editForm = useForm({ resolver: zodResolver(addressSchema) });
+  const editForm = useForm({
+    resolver: zodResolver(addressSchema),
+    shouldFocusError: false,
+  });
   const [editingId, setEditingId] = useState(null);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -271,6 +275,13 @@ export default function AddressSelection({
     setEditingId(null);
     await dispatch(fetchMe());
   };
+
+  const handleInvalidEdit = (validationErrors) => {
+    scrollToFirstFormError(validationErrors, {
+      idPrefix: `checkout-edit-${editingId}`,
+    });
+  };
+
   const infoClass =
     "flex items-start gap-2  font-medium leading-[18px] text-[#1B1D60] text-[14px] sm:leading-[22px] md:text-[16px] md:leading-[26px] lg:text-[18px] lg:leading-[30px]";
  
@@ -327,7 +338,10 @@ export default function AddressSelection({
                   <Button
                     type="button"
                     loading={loading}
-                    onClick={editForm.handleSubmit(handleUpdate)}
+                    onClick={editForm.handleSubmit(
+                      handleUpdate,
+                      handleInvalidEdit,
+                    )}
                     className="w-full sm:w-auto"
                   >
                     Save changes

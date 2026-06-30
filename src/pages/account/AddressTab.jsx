@@ -12,6 +12,7 @@ import { useToastThunk } from "../../hooks/useToastThunk";
 import { normalizeDialCode } from "../../lib/utils";
 import { addressSchema } from "../../validations/validationSchemas";
 import { validatePostalCodeForCountry } from "../../validations";
+import { scrollToFirstFormError } from "../../utils/formErrors";
 import {
   fetchMe,
   addAddress,
@@ -114,6 +115,7 @@ export default function AddressTab({ user }) {
 
   const addForm = useForm({
     resolver: zodResolver(addressSchema),
+    shouldFocusError: false,
     defaultValues: {
       country: "",
       dialCode: "+91",
@@ -121,7 +123,10 @@ export default function AddressTab({ user }) {
       isDefault: false,
     },
   });
-  const editForm = useForm({ resolver: zodResolver(addressSchema) });
+  const editForm = useForm({
+    resolver: zodResolver(addressSchema),
+    shouldFocusError: false,
+  });
 
   const normalizeLabelValue = (value) => {
     const normalized = String(value || "").toLowerCase();
@@ -414,6 +419,16 @@ export default function AddressTab({ user }) {
     dispatch(fetchMe());
   };
 
+  const handleInvalidAdd = (validationErrors) => {
+    scrollToFirstFormError(validationErrors, { idPrefix: "add" });
+  };
+
+  const handleInvalidEdit = (validationErrors) => {
+    scrollToFirstFormError(validationErrors, {
+      idPrefix: `edit-${editingId}`,
+    });
+  };
+
   const handleDelete = (addressId) => {
     setDeleteAddressId(addressId);
   };
@@ -443,14 +458,14 @@ export default function AddressTab({ user }) {
             className="inline-flex min-h-10 items-center  justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4  text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
           >
             {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
-            {showAddForm ? "Close form" : "Add New Address"}
+            {showAddForm ? "Close Form" : "Add New Address"}
           </button>
         </div>
 
         {showAddForm && (
           <form
             className="grid gap-4  rounded-[10px] border border-border bg-surface-soft p-4 sm:p-5"
-            onSubmit={addForm.handleSubmit(handleAdd)}
+            onSubmit={addForm.handleSubmit(handleAdd, handleInvalidAdd)}
             noValidate
           >
             <div className={sectionHeaderClass}>
@@ -507,7 +522,10 @@ export default function AddressTab({ user }) {
                   {isEditing ? (
                     <form
                       className="grid gap-4 p-6"
-                      onSubmit={editForm.handleSubmit(handleUpdate)}
+                      onSubmit={editForm.handleSubmit(
+                        handleUpdate,
+                        handleInvalidEdit,
+                      )}
                       noValidate
                     >
                       <div className={sectionHeaderClass}>

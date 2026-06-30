@@ -50,9 +50,11 @@ export default function ProfileTab({ user, avatarFile }) {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(profileSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       firstName: user?.profile?.firstName || "",
       lastName: user?.profile?.lastName || "",
@@ -112,6 +114,8 @@ export default function ProfileTab({ user, avatarFile }) {
           registration={register("firstName")}
           error={errors.firstName}
           autoComplete="given-name"
+          placeholder="Enter first name"
+          disabled={loading}
         />
 
         <FormField
@@ -120,6 +124,8 @@ export default function ProfileTab({ user, avatarFile }) {
           registration={register("lastName")}
           error={errors.lastName}
           autoComplete="family-name"
+          placeholder="Enter last name" 
+          disabled={loading}
         />
       </div>
 
@@ -136,19 +142,11 @@ export default function ProfileTab({ user, avatarFile }) {
         </div>
       </div>
 
-      {/* Role */}
-      <FormField
-        id="role"
-        label="Role"
-        value={user?.role || "buyer"}
-        disabled
-        readOnly
-      />
-
       {/* Submit Button */}
       <Button
         type="submit"
         loading={loading}
+        disabled={!isValid || loading}
         className="w-full text-white sm:w-auto font-semibold "
         size="xl"
       >
