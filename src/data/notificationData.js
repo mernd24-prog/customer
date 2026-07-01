@@ -23,6 +23,24 @@ const notificationData = {
     actionPath: "/orders",
   },
 
+  "shipment.delivery_otp_generated.v1": {
+    icon: "/image/png/Order Confirmed.png",
+    action: "Track Delivery",
+    actionPath: "/orders/:orderId/track",
+  },
+
+  "shipment.tracking_updated.v1": {
+    icon: "/image/png/Order Confirmed.png",
+    action: "Track Delivery",
+    actionPath: "/orders/:orderId/track",
+  },
+
+  "shipment.delivered.v1": {
+    icon: "/image/png/Order Confirmed.png",
+    action: "View Order",
+    actionPath: "/orders",
+  },
+
   default: {
     icon: "/image/png/Store Announcement.png",
     action: "View Details",

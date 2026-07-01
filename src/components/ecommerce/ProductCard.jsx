@@ -77,7 +77,15 @@ export default function ProductCard({
     cardProduct?.markAsFeatured === true;
   const codAvailable = isProductCodAvailable(cardProduct);
 
-  badge || (discountPercent > 0 ? `${discountPercent}% OFF` : "");
+  const resolvedBadgeLabel =
+    badge ||
+    (Array.isArray(cardProduct?.badges) && cardProduct.badges.length > 0
+      ? cardProduct.badges[0]?.label
+      : null);
+  const resolvedBadgeStyle =
+    Array.isArray(cardProduct?.badges) && cardProduct.badges.length > 0
+      ? { color: cardProduct.badges[0]?.color, bgColor: cardProduct.badges[0]?.bgColor }
+      : null;
   const currentPriceNumber = Number(String(price || 0).replace(/[^\d.-]/g, ""));
   const oldPriceNumber = Number(String(oldPrice || 0).replace(/[^\d.-]/g, ""));
   const computedDiscountPercent =
@@ -294,6 +302,18 @@ export default function ProductCard({
           >
             <Banknote size={12} /> COD Available
           </Label>
+        )}
+        {resolvedBadgeLabel && (
+          <span
+            className="flex h-[24px] items-center justify-center rounded-[50px] px-[12px] py-[5px] text-[11px] font-bold uppercase tracking-wide sm:h-[28px] sm:px-[15px] sm:text-[12px]"
+            style={{
+              color: resolvedBadgeStyle?.color || "#E53E3E",
+              backgroundColor: resolvedBadgeStyle?.bgColor || "#FFF5F5",
+              border: `1px solid ${resolvedBadgeStyle?.color || "#E53E3E"}40`,
+            }}
+          >
+            {resolvedBadgeLabel}
+          </span>
         )}
       </div>
 

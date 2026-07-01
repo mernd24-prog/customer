@@ -2972,7 +2972,7 @@ export function NotificationsPage() {
   const notifState = useSelector((s) => s.notification);
   const notifications = Array.isArray(notifState.list) ? notifState.list : [];
 
-  const [activeTab, setActiveTab] = useState("active");
+  const [activeTab, setActiveTab] = useState("all");
   const [visibleCount, setVisibleCount] = useState(5);
 
   const handleNavigate = (path) => {
@@ -2980,11 +2980,26 @@ export function NotificationsPage() {
     navigate(path);
   };
 
+  const categoryOf = (notification) => {
+    const eventName = String(notification.payload?.eventName || notification.subject || "").toLowerCase();
+    if (["return", "refund", "cancellation", "credit_note"].some((term) => eventName.includes(term))) return "returns";
+    if (["order", "shipment", "delivery", "payment", "invoice"].some((term) => eventName.includes(term))) return "orders";
+    return "account";
+  };
+  const categoryCounts = notifications.reduce((counts, notification) => {
+    const category = categoryOf(notification);
+    counts[category] += 1;
+    return counts;
+  }, { orders: 0, returns: 0, account: 0 });
   const tabs = [
-    { id: "active", label: "Active Returns", count: 2 },
-    { id: "refunds", label: "Refunds", count: 1 },
-    { id: "history", label: "Return History", count: 6 },
+    { id: "all", label: "All", count: notifications.length },
+    { id: "orders", label: "Orders & Delivery", count: categoryCounts.orders },
+    { id: "returns", label: "Returns & Refunds", count: categoryCounts.returns },
+    { id: "account", label: "Account", count: categoryCounts.account },
   ];
+  const filteredNotifications = activeTab === "all"
+    ? notifications
+    : notifications.filter((notification) => categoryOf(notification) === activeTab);
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -3045,6 +3060,10 @@ export function NotificationsPage() {
     dispatch(fetchNotifications());
   }, [dispatch]);
 
+  useEffect(() => {
+    setVisibleCount(5);
+  }, [activeTab]);
+
   return (
     <>
       <Seo title="Notifications | Sam Global" />
@@ -3073,12 +3092,12 @@ export function NotificationsPage() {
         <ApiState
           loading={notifState.loading && !notifications.length}
           error={notifState.error}
-          empty={!notifications.length && !notifState.loading}
+          empty={!filteredNotifications.length && !notifState.loading}
           emptyTitle="No notifications"
           emptyText="You're all caught up! Notifications will appear here."
         >
           <div className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white">
-            {notifications.slice(0, visibleCount).map((notif, i) => {
+            {filteredNotifications.slice(0, visibleCount).map((notif, i) => {
               const isRead = notif.read || notif.isRead;
 
               const notificationItem =
@@ -3088,10 +3107,13 @@ export function NotificationsPage() {
 
               const orderId = notif.payload?.orderId;
 
-              const actionPath =
-                orderId && notificationItem.actionPath === "/orders"
-                  ? `${notificationItem.actionPath}/${orderId}`
-                  : notificationItem.actionPath;
+              const actionPath = orderId
+                ? notificationItem.actionPath === "/orders/:orderId/track"
+                  ? `/orders/${orderId}/track`
+                  : notificationItem.actionPath === "/orders"
+                    ? `/orders/${orderId}`
+                    : notificationItem.actionPath
+                : notificationItem.actionPath;
 
               return (
                 <div
@@ -3158,12 +3180,12 @@ export function NotificationsPage() {
               );
             })}
 
-            {notifications.length > 5 && (
+            {filteredNotifications.length > 5 && (
               <div className="flex h-[60px] items-center justify-center bg-white sm:h-[76px]">
                 <button
                   type="button"
                   onClick={() => {
-                    if (visibleCount >= notifications.length) {
+                    if (visibleCount >= filteredNotifications.length) {
                       setVisibleCount(5);
                     } else {
                       setVisibleCount((prev) => prev + 5);
@@ -3171,7 +3193,7 @@ export function NotificationsPage() {
                   }}
                   className="flex items-center gap-2 text-[13px] font-bold text-[#1B1D60] sm:text-[14px] lg:text-[18px] xl:text-[24px]"
                 >
-                  {visibleCount >= notifications.length
+                  {visibleCount >= filteredNotifications.length
                     ? "Show Less"
                     : "Load More"}
 
@@ -3179,7 +3201,7 @@ export function NotificationsPage() {
                     size={16}
                     strokeWidth={3}
                     className={
-                      visibleCount >= notifications.length ? "rotate-180" : ""
+                      visibleCount >= filteredNotifications.length ? "rotate-180" : ""
                     }
                   />
                 </button>

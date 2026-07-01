@@ -33,6 +33,7 @@ import OrderDetailSectionCard from "./components/OrderDetailSectionCard";
 import OrderItemsSection from "./components/OrderItemsSection";
 import OrderPaymentSummary from "./components/OrderPaymentSummary";
 import OrderProgress from "./components/OrderProgress";
+import ShipmentTrackingPanel from "./components/ShipmentTrackingPanel";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { notify } from "../../utils/notify";
 import {
@@ -46,6 +47,7 @@ import {
   verifyPayment,
 } from "../../features/payment/paymentSlice";
 import { fetchMarketplaceInvoices } from "../../features/tax/taxSlice";
+import { fetchNotifications } from "../../features/notification/notificationSlice";
 import { formatMoney, getImageUrlFromValue } from "../../utils/ecommerce";
 import { downloadAuthDocument } from "../../utils/downloadAuthDocument";
 import { openRazorpayCheckout } from "../../utils/razorpay";
@@ -412,6 +414,7 @@ function OrderDetail({ orderId, track }) {
   const [retrying, setRetrying] = useState(false);
   const state = useSelector((s) => s.order);
   const userState = useSelector((s) => s.user);
+  const notificationState = useSelector((s) => s.notification);
   const orders = getOrderCollection(state.current).length
     ? getOrderCollection(state.current)
     : state.list;
@@ -433,6 +436,9 @@ function OrderDetail({ orderId, track }) {
       : Array.isArray(order?.returnRequests)
         ? order.returnRequests
         : [];
+  const shipments = Array.isArray(order?.relations?.shipments)
+    ? order.relations.shipments
+    : [];
 
   const getInvoiceUrl = (order) =>
     order?.invoice_url ||
@@ -452,17 +458,24 @@ function OrderDetail({ orderId, track }) {
   const taxIncluded = getTaxIncludedAmount(order, taxBreakup);
   const taxPayable = getTaxPayableAmount(order, taxBreakup);
   const status = getOrderStatus(order);
+  const canRequestReturn = ["delivered", "fulfilled", "partially_returned"].includes(status);
   const invoiceDownloadAvailable = ["delivered", "fulfilled"].includes(status);
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "My Order", href: "/orders" },
-    { label: `#${getOrderId(order)}` },
+    { label: `#${getOrderNumber(order) || "Order"}` },
   ];
 
   useEffect(() => {
     dispatch(fetchOrderById({ orderId }));
   }, [dispatch, orderId]);
+
+  useEffect(() => {
+    if (track || shipments.some((shipment) => shipment.status === "out_for_delivery")) {
+      dispatch(fetchNotifications());
+    }
+  }, [dispatch, shipments, track]);
 
   useEffect(() => {
     if (!orderId || !invoiceDownloadAvailable) {
@@ -564,7 +577,7 @@ function OrderDetail({ orderId, track }) {
 
   return (
     <>
-      <Seo title={`Order ${orderId} | Sam Global`} />
+      <Seo title={`Order ${getOrderNumber(order) || "Details"} | Sam Global`} />
       <div className="mx-auto w-full max-w-[1740px]">
         <ApiState
           loading={state.loading && !order}
@@ -585,7 +598,7 @@ function OrderDetail({ orderId, track }) {
                 </div>
 
                 <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap items-center md:w-auto md:justify-end">
-                  {!track && (
+                  {!track && canRequestReturn && (
                     <Link
                       to={`/returns/request/${orderId}`}
                       className="block w-full sm:w-auto"
@@ -666,6 +679,13 @@ function OrderDetail({ orderId, track }) {
                     returns={returns}
                   />
                 </OrderDetailSectionCard>
+              )}
+
+              {(track || shipments.length > 0) && (
+                <ShipmentTrackingPanel
+                  shipments={shipments}
+                  notifications={Array.isArray(notificationState.list) ? notificationState.list : []}
+                />
               )}
             </section>
 

@@ -200,6 +200,11 @@ export const endpoints = {
     history: `${API_PREFIX}/loyalty/history`,
     redeem: `${API_PREFIX}/loyalty/redeem`,
   },
+  badges: {
+    list: `${API_PREFIX}/platform/badges`,
+    active: `${API_PREFIX}/platform/badges/active`,
+    detail: (badgeId) => `${API_PREFIX}/platform/badges/${badgeId}`,
+  },
   recommendations: {
     list: `${API_PREFIX}/recommendations`,
     interact: (productId) =>

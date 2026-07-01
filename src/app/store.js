@@ -31,6 +31,7 @@ import tax from "../features/tax/taxSlice";
 import fraud from "../features/fraud/fraudSlice";
 import review from "../features/review/reviewSlice";
 import relatedProducts from "../features/product/relatedProductsSlice";
+import badges from "../features/badges/badgeSlice";
 
 export const store = configureStore({
   reducer: {
@@ -66,5 +67,6 @@ export const store = configureStore({
     fraud,
     review,
     relatedProducts,
+    badges,
   }
 });

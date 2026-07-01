@@ -7,8 +7,8 @@ import {
 import vectorImage from "/image/png/SuccessVector .png";
 
 const normalizeProgressStatus = (status) => {
-  if (status === "out_for_delivery" || status === "partially_delivered") {
-    return "delivered";
+  if (status === "partially_delivered") {
+    return "out_for_delivery";
   }
   if (status === "order_closed") {
     return "fulfilled";
