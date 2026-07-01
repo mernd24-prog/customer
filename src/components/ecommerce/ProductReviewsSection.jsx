@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ThumbsUp } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import {
   fetchProductReviews,
@@ -13,6 +13,7 @@ import {
 } from "../../features/review/reviewSlice";
 import { fetchMyOrders } from "../../features/order/orderSlice";
 import { ratingBreakdown as fallbackRatingBreakdown } from "../../data/review";
+import ReviewImageUploader from "./ReviewImageUploader";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -64,7 +65,7 @@ function getUserDisplayName(user = {}) {
   );
 }
 
-function ProductReviewCard({ review, currentUser }) {
+function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
   const dateStr = review.createdAt
     ? new Date(review.createdAt).toLocaleDateString("en-GB", {
         day: "numeric",
@@ -74,22 +75,31 @@ function ProductReviewCard({ review, currentUser }) {
     : "";
 
   const rating = Number(review.rating || 0).toFixed(1);
-  const currentUserId =
-    currentUser?.id || currentUser?._id || currentUser?.userId;
   const isOwn =
     currentUserId && String(review.buyerId) === String(currentUserId);
+  const alreadyVoted = (review.helpfulVotedBy || []).includes(
+    String(currentUserId || ""),
+  );
   const name =
     review.buyerName ||
     review.name ||
     (isOwn ? getUserDisplayName(currentUser) : "") ||
     "Customer";
   const text = review.reviewText || review.text;
+  const reviewId = review._id || review.id;
+  const helpfulVotes = review.helpfulVotes ?? review.helpful ?? 0;
+  const media = Array.isArray(review.media) ? review.media.filter(Boolean) : [];
+  const buyerImage = review.buyerImage || review.buyerAvatarUrl || "";
 
   return (
     <article className="border-b  border-[var(--customer-border)] last:border-b-0 sm:pb-4 mb-4 lg:mb-6">
       <div className="mb-2  flex min-w-0 items-center gap-2.5">
         <span className="w-8 h-8 lg:w-10 lg:h-10">
-          <img src="/image/png/person.png" alt="Person Image" />
+          <img
+            src={buyerImage || "/image/png/person.png"}
+            alt={name}
+            className="h-full w-full rounded-full object-cover"
+          />
         </span>
         <span className="text-base lg:text-2xl font-bold text-[#2E2E2E]">
           {name}
@@ -115,6 +125,26 @@ function ProductReviewCard({ review, currentUser }) {
         </p>
       )}
 
+      {media.length > 0 && (
+        <div className="mb-4 mt-3 flex flex-wrap gap-2">
+          {media.slice(0, 5).map((url, index) => (
+            <a
+              key={`${url}-${index}`}
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              className="block size-20 overflow-hidden rounded-[8px] border border-[#CE9F2D33] bg-[#FFFDF8] sm:size-24"
+            >
+              <img
+                src={url}
+                alt={`Review media ${index + 1}`}
+                className="h-full w-full object-cover"
+              />
+            </a>
+          ))}
+        </div>
+      )}
+
       {review.adminReply?.text && (
         <div className="mt-4 rounded-[6px] border-l-2 border-[var(--customer-gold)] bg-[var(--customer-cream)] p-3">
           <p className="mb-1 text-xs font-bold text-[var(--customer-gold-dark)]">
@@ -125,6 +155,20 @@ function ProductReviewCard({ review, currentUser }) {
           </p>
         </div>
       )}
+
+      <button
+        type="button"
+        onClick={() => onHelpful?.(reviewId)}
+        disabled={!reviewId || isOwn}
+        className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+          alreadyVoted
+            ? "bg-[#CE9F2D1A] text-[#1B1D60]"
+            : "text-[#949494] hover:bg-[#F7F7FA] hover:text-[#1B1D60]"
+        }`}
+      >
+        <ThumbsUp size={13} className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""} />
+        Helpful ({helpfulVotes})
+      </button>
     </article>
   );
 }
@@ -143,6 +187,8 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
     title: "",
     reviewText: "",
   });
+  const [reviewImages, setReviewImages] = useState([]);
+  const isUploadingImages = reviewImages.some((image) => image.status === "uploading");
 
   useEffect(() => {
     if (submitSuccess) {
@@ -153,7 +199,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.rating) return;
+    if (!form.rating || !form.title.trim() || !form.reviewText.trim()) return;
     dispatch(
       submitProductReview({
         productId,
@@ -161,6 +207,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
         rating: form.rating,
         title: form.title.trim(),
         reviewText: form.reviewText.trim(),
+        media: reviewImages.map((image) => image.url).filter(Boolean),
       }),
     );
   };
@@ -215,6 +262,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
           value={form.title}
           onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
           maxLength={200}
+          required
           placeholder="Summarise your review"
           className="w-full border border-border-strong rounded-[6px] px-3 py-2 text-sm"
         />
@@ -231,6 +279,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
             setForm((f) => ({ ...f, reviewText: e.target.value }))
           }
           maxLength={2000}
+          required
           placeholder="Share your experience with this product…"
           className="w-full border border-border-strong rounded-[6px] px-3 py-2 text-sm resize-none"
         />
@@ -238,6 +287,12 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
           {form.reviewText.length}/2000
         </p>
       </div>
+
+      <ReviewImageUploader
+        value={reviewImages}
+        onChange={setReviewImages}
+        disabled={submitting}
+      />
 
       {submitError && (
         <p className="text-xs text-red-600 rounded-lg bg-red-50 px-3 py-2">
@@ -247,10 +302,17 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
 
       <button
         type="submit"
-        disabled={submitting || !form.rating || !form.orderId}
+        disabled={
+          submitting ||
+          isUploadingImages ||
+          !form.rating ||
+          !form.orderId ||
+          !form.title.trim() ||
+          !form.reviewText.trim()
+        }
         className="w-full h-11 rounded-full bg-gold text-white font-semibold text-sm hover:bg-gold-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {submitting ? "Submitting…" : "Submit Review"}
+        {submitting ? "Submitting…" : isUploadingImages ? "Uploading…" : "Submit Review"}
       </button>
     </form>
   );

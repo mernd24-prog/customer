@@ -245,10 +245,14 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
       <button
         type="button"
         onClick={() => onHelpful(reviewId)}
-        disabled={alreadyVoted || isOwn}
-        className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted transition hover:text-ink disabled:opacity-50"
+        disabled={!reviewId || isOwn}
+        className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+          alreadyVoted
+            ? "bg-gold/10 text-gold-dark"
+            : "text-muted hover:bg-surface-soft hover:text-ink"
+        }`}
       >
-        <ThumbsUp size={12} />
+        <ThumbsUp size={12} className={alreadyVoted ? "fill-gold text-gold" : ""} />
         Helpful ({helpfulVotes})
       </button>
     </article>
