@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Package } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
+import ReviewImageUploader from "../../../components/ecommerce/ReviewImageUploader";
 import BaseModal from "../../../components/common/overlay/BaseModal";
 import OrderDetailSectionCard from "./OrderDetailSectionCard";
 import {
@@ -58,17 +59,100 @@ function StarInput({ value, onChange }) {
   );
 }
 
+function ReviewRating({ rating = 0 }) {
+  const value = Math.round(Number(rating) || 0);
+  return (
+    <div className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <IoIosStar
+          key={star}
+          size={16}
+          className={
+            star <= value
+              ? "fill-[#CE9F2D] text-[#CE9F2D]"
+              : "fill-[#D7D7E0] text-[#D7D7E0]"
+          }
+        />
+      ))}
+    </div>
+  );
+}
+
+function ExistingReviewCard({ review }) {
+  const media = Array.isArray(review?.media) ? review.media.filter(Boolean) : [];
+  const status = String(review?.status || "pending").replace(/_/g, " ");
+  const reviewText = review?.reviewText || review?.text || "";
+
+  return (
+    <div className="mt-5 rounded-[10px] border border-[#37B44633] bg-[#37B4460D] p-3 sm:p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <ReviewRating rating={review?.rating} />
+          <span className="text-sm font-bold text-[#21812C]">
+            Your review
+          </span>
+        </div>
+        <span className="rounded-full bg-white px-2.5 py-1 text-xs font-bold capitalize text-[#21812C]">
+          {status}
+        </span>
+      </div>
+
+      {review?.title && (
+        <p className="mt-3 text-sm font-bold text-[#1B1D60]">
+          {review.title}
+        </p>
+      )}
+
+      {reviewText && (
+        <p className="mt-1 line-clamp-3 text-sm font-medium leading-6 text-[#2E2E2E]">
+          {reviewText}
+        </p>
+      )}
+
+      {media.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {media.slice(0, 5).map((url, index) => (
+            <a
+              key={`${url}-${index}`}
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              className="block size-14 overflow-hidden rounded-[8px] border border-[#CE9F2D33] bg-white sm:size-16"
+            >
+              <img
+                src={url}
+                alt={`Review image ${index + 1}`}
+                className="h-full w-full object-cover"
+              />
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
   const dispatch = useDispatch();
   const [form, setForm] = useState({ rating: 0, title: "", reviewText: "" });
+  const [reviewImages, setReviewImages] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const productId = getReviewProductId(item);
   const orderItemId = getReviewOrderItemId(item);
+  const isUploadingImages = reviewImages.some((image) => image.status === "uploading");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!form.rating) {
       notify.warning("Please select a rating.");
+      return;
+    }
+    if (!form.title.trim()) {
+      notify.warning("Please enter a review title.");
+      return;
+    }
+    if (!form.reviewText.trim()) {
+      notify.warning("Please write your review.");
       return;
     }
     setSubmitting(true);
@@ -81,6 +165,7 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
           rating: form.rating,
           title: form.title.trim(),
           reviewText: form.reviewText.trim(),
+          media: reviewImages.map((image) => image.url).filter(Boolean),
         }),
       ).unwrap();
       notify.success("Review submitted for approval.");
@@ -119,6 +204,7 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
               setForm((current) => ({ ...current, title: event.target.value }))
             }
             maxLength={200}
+            required
             className="h-11 rounded-[8px] border border-[#CE9F2D66] px-3 text-sm font-medium outline-none focus:border-[#CE9F2D]"
             placeholder="Summarise your experience"
           />
@@ -133,10 +219,17 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
             }
             maxLength={2000}
             rows={5}
+            required
             className="resize-none rounded-[8px] border border-[#CE9F2D66] px-3 py-2 text-sm font-medium outline-none focus:border-[#CE9F2D]"
             placeholder="Share product quality, delivery condition, and fit."
           />
         </label>
+
+        <ReviewImageUploader
+          value={reviewImages}
+          onChange={setReviewImages}
+          disabled={submitting}
+        />
 
         <div className="flex flex-wrap justify-end gap-3">
           <button
@@ -150,9 +243,15 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
           <button
             type="submit"
             className="rounded-[8px] bg-[#CE9F2D] px-5 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={submitting || !form.rating}
+            disabled={
+              submitting ||
+              isUploadingImages ||
+              !form.rating ||
+              !form.title.trim() ||
+              !form.reviewText.trim()
+            }
           >
-            {submitting ? "Submitting..." : "Submit Review"}
+            {submitting ? "Submitting..." : isUploadingImages ? "Uploading..." : "Submit Review"}
           </button>
         </div>
       </form>
@@ -263,9 +362,7 @@ function OrderItemCard({
                 Checking review...
               </span>
             ) : existingReview ? (
-              <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#37B44633] bg-[#37B44612] px-4 text-sm font-bold text-[#21812C]">
-                Review submitted
-              </span>
+              <ExistingReviewCard review={existingReview} />
             ) : (
               <button
                 type="button"
