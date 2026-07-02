@@ -587,7 +587,7 @@ const SearchBar = ({
             aria-controls={
               enableAutocomplete ? "search-suggestions" : undefined
             }
-            className="h-full min-w-0 w-full flex-1 border-none bg-transparent pl-2 pr-2 text-[11px] font-medium leading-[16px] tracking-[0%] text-[#2E2E2E] outline-none ring-0 placeholder:text-[#2E2E2E] focus:ring-0 focus-visible:outline-none min-[375px]:pl-2.5 min-[375px]:text-[12px] min-[425px]:text-[13px] sm:px-4 sm:text-[15px]"
+            className="h-full min-w-0 w-full flex-1 border-none bg-transparent pl-2 pr-2 text-[11px] font-medium leading-[16px] tracking-[0%] text-[#2E2E2E] outline-none ring-0 placeholder:text-[#2E2E2E] focus:ring-0 focus-visible:outline-none min-[375px]:pl-2.5 min-[375px]:text-[12px] min-[425px]:text-[13px] sm:px-4 xl:text-[15px]"
           />
 
           {/* Search Button */}

@@ -14,7 +14,7 @@ export default function QuantitySelector({
   return (
     <div className="flex w-full flex-col  gap-2  md:w-fit">
       <div className="flex flex-wrap items-center gap-2">
-        <p className="font-dm-sans text-[15px] font-semibold leading-none text-[#2E2E2E] min-[375px]:text-[16px] sm:text-[20px]">
+        <p className=" font-semibold text-extaSmall text-[#2E2E2E] ">
           Quantity
         </p>
         {labelAccessory}

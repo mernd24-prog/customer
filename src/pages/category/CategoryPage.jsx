@@ -102,7 +102,7 @@ function SubCategoryCard({ sub, isActive, onClick }) {
       }`}
     >
       <div
-        className={`flex h-12 w-12 items-center justify-center overflow-hidden rounded-full ${
+        className={`flex h-10 w-10 items-center justify-center overflow-hidden rounded-full ${
           isActive ? "bg-white/20" : "bg-[var(--customer-surface-soft)]"
         }`}
       >
@@ -121,7 +121,7 @@ function SubCategoryCard({ sub, isActive, onClick }) {
         )}
       </div>
       <span
-        className={`line-clamp-2 text-[11px] font-semibold leading-tight ${
+        className={`line-clamp-2  text-sm lg:text-[14px] my-2  font-semibold leading-tight ${
           isActive ? "text-white" : "text-[var(--customer-ink)]"
         }`}
       >
@@ -837,7 +837,7 @@ export default function CategoryPage() {
       {/* ── Hero banner ─────────────────────────────────────────────────── */}
       {bannerImage ? (
         <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
-          <div className="grid gap-0 h-[320px] sm:h-[380px] md:h-[450px] lg:h-[500px] lg:grid-cols-[52%_48%]">
+          <div className="grid gap-0 h-[320px] sm:h-[380px] md:h-[371px] xl:h-[500px] lg:grid-cols-[52%_48%]">
             {/* Mobile & Tablet Banner */}
             <div className="relative lg:hidden h-full">
               <img
@@ -852,13 +852,16 @@ export default function CategoryPage() {
               <div className="absolute inset-0 bg-black/30" />
 
               <div className="absolute inset-0 flex items-center px-5 sm:px-8">
-                <div className="max-w-md">
+                <div className="max-w-md ">
                   <Breadcrumbs
+                    linkClassName="!text-white"
+                    currentClassName="!text-[#CE9F2D]"
+                    separatorClassName="!text-gold"
                     items={breadcrumbItems}
-                    className="mb-2 text-white/80"
+                    className="mb-2"
                   />
 
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white capitalize">
+                  <h1 className="text-h1  font-bold text-white capitalize">
                     {categoryTitle}
                   </h1>
 
@@ -881,14 +884,17 @@ export default function CategoryPage() {
               <div className="max-w-xl">
                 <Breadcrumbs
                   items={breadcrumbItems}
-                  className="mb-3 text-white/80"
+                  linkClassName="!text-white"
+                  currentClassName="!text-[#CE9F2D]"
+                  separatorClassName="!text-white"
+                  className="mb-3"
                 />
 
-                <h1 className=" font-bold text-5xl xl:text-[65px] leading-[75px] text-white capitalize">
+                <h1 className=" font-bold text-h1 py-4  text-white capitalize">
                   {categoryTitle}
                 </h1>
 
-                <p className="mt-4 font-normal text-[18px] leading-[18px] text-white/80">
+                <p className="mt-4 font-normal text-p  text-white/80">
                   {categoryDesc ||
                     `Explore our wide range of woman's with the latest features, premium quality, and the best offers available for every need.`}
                 </p>
@@ -941,25 +947,25 @@ export default function CategoryPage() {
 
       {/* ── Subcategory showcase strip ───────────────────────────────────── */}
       {subCategories.length > 0 && (
-        <div className="mt-10 rounded-[var(--customer-radius)] md:border md:border-[var(--customer-border)] bg-white md:p-4 lg:mt-8">
+        <div className="mt-10 rounded-[var(--customer-radius)] md:border md:border-[var(--customer-border)] bg-white md:p-6 lg:mt-8">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-bold text-[var(--customer-ink)]">
+            <h2 className="text-base font-bold text-[var(--customer-ink)]">
               <Grid2X2
-                size={14}
-                className="mr-1.5 inline text-[var(--customer-gold)]"
+                size={10}
+                className="mr-1.5  inline text-[var(--customer-gold)]"
               />
               Shop by Sub-Category
             </h2>
             <Link
               to={CUSTOMER_ROUTES.category(categoryKey)}
-              className="text-xs text-[var(--customer-gold)] hover:underline"
+              className="text-sm text-[var(--customer-gold)] hover:underline"
             >
               View All
             </Link>
           </div>
 
           {/* Horizontal scroll strip of sub-category cards */}
-          <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-1">
+          <div className="hide-scrollbar flex gap-3 mt-4  overflow-x-auto pb-1">
             {subCategories.map((sub) => {
               const k = sub?.categoryKey || sub?.key || "";
               return (

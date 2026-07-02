@@ -6,8 +6,11 @@ import DynamicButton from "./button";
 const buttonStyles = {
   solidSmall:
     "h-[35px] rounded-[6px] bg-[#CE9F2D] px-[14px] py-[7px] text-label-md font-semibold text-[#1F2430] hover:bg-[#bd9025]",
+
   outlineSmall:
-    "inline-flex h-fit py-3 items-center justify-center gap-[1px] rounded-[10px] border border-[#3E409380] bg-transparent    text-base lg:text-lg font-semibold leading-none tracking-normal align-middle text-[#3E4093] transition-all duration-300 ",
+    "inline-flex h-fit py-3 items-center justify-center gap-[1px] rounded-[10px] border border-[#3E409380] bg-transparent    text-sm lg:text-base font-semibold leading-none tracking-normal align-middle text-[#3E4093] transition-all duration-300 ",
+
+
   outlineLight:
     "border border-white/50 bg-transparent text-white hover:bg-white/10",
   solidLarge:
@@ -22,7 +25,7 @@ const buttonStyles = {
   ghostPill:
     "rounded-full border border-[#CE9F2D4D] bg-[#CE9F2D4D] px-4 py-2 text-label-sm font-semibold text-[#D6A323] hover:bg-black/60 xl:text-label-lg",
   textGold:
-    "h-auto  justify-start rounded-none bg-transparent p-0 text-label-md font-semibold text-[#CE9F2D] hover:text-[#bd9025]",
+    "h-auto  justify-start rounded-none bg-transparent p-0  md:text-base text-sm font-semibold text-[#CE9F2D] hover:text-[#bd9025]",
   textWhite:
     "h-auto justify-start rounded-none bg-transparent p-0 text-label-sm font-medium text-white hover:text-white/80",
   iconCircle:

@@ -2,6 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .banner-heading {
+    @apply text-2xl  md:text-[48px] 2xl:text-[62px]  leading-[1.1];
+  }
+
+  .text-h1 {
+    @apply text-2xl  md:text-[42px] 2xl:text-[48px];
+  }
+
+  .text-h2 {
+    @apply text-xl  md:text-[30px]   2xl:text-[34px];
+  }
+
+  .text-h3 {
+    @apply text-lg  md:text-[20px]   2xl:text-[26px];
+  }
+
+  .text-h4 {
+    @apply text-base  md:text-[18px]   2xl:text-[22px];
+  }
+
+  .text-h5 {
+    @apply text-base  md:text-[18px]   2xl:text-[20px];
+  }
+
+  .text-h6 {
+  }
+
+  .text-p {
+    @apply text-[12px] md:text-[14px] 2xl:text-[16px];
+  }
+
+  .text-small {
+    @apply text-[14px] md:text-[16px] 2xl:text-[18px];
+  }
+
+  .text-extaSmall {
+    @apply text-[14px] 2xl:text-[16px];
+  }
+}
+
 /* ============================= */
 /* GLOBAL FONT CONFIGURATION     */
 /* ============================= */
@@ -33,36 +74,6 @@
   header,
   .header {
     font-family: "DM Sans", var(--font-sans);
-  }
-
-  /* Default heading styles */
-  h1 {
-    @apply text-display-lg md:text-display-xl font-bold;
-  }
-
-  h2 {
-    @apply text-heading-lg md:text-heading-xl font-bold;
-  }
-
-  h3 {
-    @apply text-heading-md md:text-heading-lg font-bold;
-  }
-
-  h4 {
-    @apply text-heading-sm font-semibold;
-  }
-
-  h5 {
-    @apply text-subheading-lg font-semibold;
-  }
-
-  h6 {
-    @apply text-subheading-md font-semibold;
-  }
-
-  /* Link default */
-  a {
-    @apply transition-colors duration-300 ease-in-out;
   }
 }
 

@@ -644,7 +644,7 @@ export default function ProductFilterSidebar({
     >
       <div className="w-full overflow-hidden rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] shadow-none">
         <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-5 min-[375px]:px-5 sm:px-6 sm:py-6">
-          <h3 className="font-dm-sans text-[24px] font-semibold  text-[#373737] sm:text-[30px]">
+          <h3 className="text-h4 font-semibold  text-[#373737] ">
             Filters
           </h3>
 

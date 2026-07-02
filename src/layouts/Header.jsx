@@ -716,7 +716,7 @@ export const CategoryBar = ({ headerData }) => {
                   </div>
 
                   <span
-                    className={`mt-1  lg:mt-2 line-clamp-1 w-full max-w-[80px] sm:max-w-[100px] lg:max-w-[140px] text-center text-[11px] sm:text-[13px] lg:text-[20px] font-medium leading-none tracking-[0.2px] text-[#2E2E2E]`}
+                    className={`mt-1  lg:mt-2 line-clamp-1 w-full max-w-[80px] sm:max-w-[100px] lg:max-w-[140px] text-center   text-small  text-[#2E2E2E]`}
                   >
                     {textOr(item?.name, "Category")}
                   </span>
@@ -762,7 +762,7 @@ export const CategoryBar = ({ headerData }) => {
               <Link
                 key={keyOr(item?.name, `sticky-category-${index}`)}
                 to={categoryHref}
-                className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                className={`relative  flex h-full shrink-0 items-center text-[13px] transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
                   isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
                 }`}
               >
@@ -779,7 +779,7 @@ export const CategoryBar = ({ headerData }) => {
           })}
           <Link
             to="/categories"
-            className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+            className={`relative flex  h-full shrink-0 text-small items-center  transition-all duration-200 ease-in-out hover:text-[#03014D]  ${
               location.pathname === "/categories"
                 ? "text-[#03014D]"
                 : "text-[#2E2E2E]"

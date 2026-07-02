@@ -28,7 +28,7 @@ function ToolbarDropdown({ value = "", options = [], onChange }) {
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
-        className="flex min-h-10 w-[180px] items-center justify-between gap-3 rounded-[var(--customer-radius-sm)] border border-[#1B1D604D] bg-white px-3 py-3 text-left text-base md:text-lg font-medium text-[#03014D] shadow-sm transition-all duration-300 ease-in-out"
+        className="flex min-h-10  w-[180px] items-center justify-between gap-3 rounded-[var(--customer-radius-sm)] border border-[#1B1D604D] bg-white px-3 py-3 text-left text-sm 2xl:text-lg font-medium text-[#03014D] shadow-sm transition-all duration-300 ease-in-out"
       >
         <span className="flex items-center gap-2 truncate">
           <ListFilter size={16} className="shrink-0 text-[#03014D]" />

@@ -14,7 +14,7 @@ export default function Breadcrumbs({
     <>
       <nav
         className={cn(
-          "flex flex-wrap items-center gap-2 pb-3  sm:gap-3 lg:gap-[15px]  text-[12px] sm:text-[13px] lg:text-[14px] font-normal leading-[20px] lg:leading-[23px]",
+          "flex flex-wrap items-center gap-2 pb-3  sm:gap-3 lg:gap-[15px]  text-[12px] sm:text-[13px] lg:text-[14px]  font-normal leading-[20px] lg:leading-[23px]",
           className,
         )}
         aria-label="Breadcrumb"
@@ -30,7 +30,7 @@ export default function Breadcrumbs({
                 <Link
                   to={item.href}
                   className={cn(
-                    "font-medium text-[14px]   leading-[100%] sm:text-[16px] lg:text-[18px]",
+                    "font-medium text-[14px]  hover:text-white  sm:text-[16px] lg:text-[18px]",
                     linkClassName,
                   )}
                 >
@@ -39,7 +39,7 @@ export default function Breadcrumbs({
               ) : (
                 <span
                   className={cn(
-                    "font-medium text-[14px]  leading-[100%] sm:text-[16px] lg:text-[18px]",
+                    "font-medium text-[14px]    sm:text-[16px] lg:text-[18px]",
                     currentClassName,
                   )}
                 >

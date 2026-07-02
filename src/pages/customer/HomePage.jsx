@@ -158,7 +158,7 @@ export function HomePage() {
           skeletonCount={3}
           className="mt-8"
           actionLabel="View Shop"
-          onAction={() => navigate("/products")}
+          actionHref="/products"
         />
       </section>
 

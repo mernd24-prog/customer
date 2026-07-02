@@ -18,7 +18,7 @@ function CollageImage({ src, title, link, label }) {
           <span className="absolute bottom-[14px] left-[14px]">
             <Label
               variant="imageLabel"
-              className="text-[11px]  font-medium sm:text-[12px]"
+              className="  font-medium text-[12px]"
             >
               {imageLabel}
             </Label>
@@ -32,13 +32,13 @@ function CollageCard({ section }) {
   return (
     <article className="overflow-hidden rounded-[24px] border border-[#E8B84B] bg-[#F8EFD8]">
       <div className="flex min-h-[76px] items-center justify-between gap-3 px-4 py-4 sm:px-5 sm:py-5 lg:px-6">
-        <h2 className="min-w-0  flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-dm-sans text-[14px] font-bold leading-[100%] tracking-[0%] align-middle text-[#2E2E2E] min-[375px]:text-[15px] sm:text-[16px] md:text-[17px] lg:max-w-[calc(100%-96px)] lg:text-[16px] xl:text-[18px]">
+        <h2 className="min-w-0  flex-1 overflow-hidden line-clamp-1 text-extaSmall font-bold text-[#2E2E2E]">
           {section.title}
         </h2>
 
         <Label
           variant="sectionLabel"
-          className="shrink-0  text-xs xs:text-[14px]  font-medium  md:text-[12px]"
+          className="shrink-0  text-[12px]   font-medium  "
         >
           {section.label}
         </Label>

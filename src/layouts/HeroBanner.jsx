@@ -88,7 +88,7 @@ const HeroBanner = ({ content = heroContent }) => {
                       {item.badge}
                     </Label>
 
-                    <h2 className=" max-w-[681px] font-sans text-2xl font-bold leading-[35px] tracking-normal sm:text-5xl sm:leading-[58px] lg:max-w-[800px] lg:text-[48px] lg:leading-[58px] xl:text-[54px] xl:leading-[64px] 2xl:text-[65px] 2xl:leading-[75px]">
+                    <h2 className="banner-heading mt-4 md:mt-0 max-w-[681px] lg:max-w-[800px]  font-bold">
                       {" "}
                       {item.title} <br />{" "}
                       <span className="text-[#CE9F2D]">
@@ -99,24 +99,12 @@ const HeroBanner = ({ content = heroContent }) => {
 
                   <p
                     className="
-                    max-w-[290px]
+                    max-w-xl
+                    lg:max-w-2xl
+                    font-medium
                     text-center
-                    font-sans
-                    text-[11px]
-                    font-normal
-                    leading-[18px]
-                    tracking-normal
+                    text-sm md:text-base xl:text-lg
                     text-white/80
-                    min-[375px]:max-w-[330px]
-                    min-[375px]:text-[12px]
-                    min-[375px]:leading-[20px]
-                    sm:max-w-[500px]
-                    sm:text-sm
-                    md:max-w-[600px]
-                    md:text-base
-                    lg:max-w-[681px]
-                    lg:text-[18px]
-                    lg:leading-[28px]
                     lg:text-left
                   "
                   >
@@ -126,14 +114,14 @@ const HeroBanner = ({ content = heroContent }) => {
                   <div className="flex flex-wrap items-center justify-center gap-3 pt-1 md:pt-3 lg:justify-start">
                     <SolidLargeButton
                       to={item.primaryLink}
-                      className="h-[40px] min-w-[116px] rounded-[8px] px-4 !text-[16px] xl:font-semibold shadow-none hover:scale-105 sm:h-[44px] sm:min-w-[128px] sm:px-5 sm:text-base lg:h-[48px] lg:w-[141px] lg:min-w-0 lg:rounded-[10px] lg:px-[22px]"
+                      className="h-[40px] min-w-[116px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold shadow-none hover:scale-105 sm:h-[44px] sm:min-w-[128px] sm:px-5 sm:text-base lg:h-[48px] lg:w-[141px] lg:min-w-0 lg:rounded-[10px] lg:px-[22px]"
                     >
                       {item.primaryButton}
                     </SolidLargeButton>
 
                     <OutlineLightButton
                       to={item.secondaryLink}
-                      className="h-[42px] min-w-[156px] rounded-[8px] px-4 !text-[16px] xl:font-semibold hover:scale-105 sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-[10px]"
+                      className="h-[42px] min-w-[156px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold hover:scale-105 sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-[10px]"
                     >
                       {item.secondaryButton}
                     </OutlineLightButton>
