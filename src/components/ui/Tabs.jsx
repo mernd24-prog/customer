@@ -70,7 +70,12 @@ export default function Tabs({
         style={fixedStyle || undefined}
       >
         <div className="no-scrollbar overflow-x-auto rounded-xl border border-[#E7D9B8] bg-white shadow-sm xl:rounded-[20px]">
-          <div className="grid h-[58px] min-w-[440px] grid-cols-3 sm:h-[72px] sm:min-w-[520px] md:h-[90px] md:min-w-0 xl:h-[115px]">
+          <div
+            className="grid h-[58px] min-w-[440px] sm:h-[72px] sm:min-w-[520px] md:h-[90px] md:min-w-0 xl:h-[115px]"
+            style={{
+              gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))`,
+            }}
+          >
             {tabs.map((tab) => {
               const active = activeTab === tab.id;
 

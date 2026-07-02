@@ -13,6 +13,7 @@ import {
 import { checkAuthStatus, logout } from "./features/auth/authSlice";
 import { fetchCart } from "./features/cart/cartSlice";
 import { fetchCategories } from "./features/catalog/catalogSlice";
+import { fetchCmsPages } from "./features/cms/cmsSlice";
 import { AUTH_ROUTES } from "./features/auth/authRoutes";
 import { tokenStorage } from "./api/tokenStorage";
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
@@ -247,6 +248,7 @@ export default function App() {
 
   useEffect(() => {
     dispatch(fetchCategories()).catch(() => {});
+    dispatch(fetchCmsPages({ limit: 100 })).catch(() => {});
   }, [dispatch]);
 
   useEffect(() => {

@@ -27,13 +27,15 @@ import {
 import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
 import SellDropdown from "./header/SellDropdown";
-import { icons, navbarIcons as navData } from "../constants/image.constant";
+import { CategoryMegaMenu } from "../components/ecommerce";
+import {navbarIcons as navData } from "../constants/image.constant";
 import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
 import { logout } from "../features/auth/authSlice";
 import { fetchMe } from "../features/user/userSlice";
 import { getRole, isAdminRole } from "../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
 import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
+import { fetchCategories } from "../features/catalog/catalogSlice";
 
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
@@ -557,21 +559,77 @@ export const Navbar = ({ icons: propIcons }) => {
   );
 };
 
-export const CategoryBar = ({ headerData }) => {
+export const CategoryBar = ({ headerData, compact = false }) => {
+  const dispatch = useDispatch();
   const location = useLocation();
   const catalogCategoryList = useSelector((state) => state.catalog.list || []);
+  const [categoriesList, setCategoriesList] = useState([]);
+
+  // Sync with Redux list when it contains actual category items
+  useEffect(() => {
+    const list = getCategoryListFromResponse(catalogCategoryList);
+    const actualCategories = list.filter(item => item && (item.categoryKey || item.parentKey));
+    if (actualCategories.length > 0) {
+      setCategoriesList(actualCategories);
+    }
+  }, [catalogCategoryList]);
+
+  // If we don't have categories yet, fetch them
+  useEffect(() => {
+    if (categoriesList.length === 0) {
+      dispatch(fetchCategories())
+        .unwrap()
+        .then((result) => {
+          const data = result?.data || result;
+          const list = getCategoryListFromResponse(data);
+          const actualCategories = list.filter(item => item && (item.categoryKey || item.parentKey));
+          if (actualCategories.length > 0) {
+            setCategoriesList(actualCategories);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [dispatch, categoriesList.length]);
+
   const catalogCategories = useMemo(
-    () => getCategoryListFromResponse(catalogCategoryList),
-    [catalogCategoryList],
+    () => categoriesList,
+    [categoriesList],
   );
-  // const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
-  // const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
+  const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
+  const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
   const [activeMenu, setActiveMenu] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
   const categoryBarRef = useRef(null);
   const isPinnedRef = useRef(false);
   const openTimeoutRef = useRef(null);
   const closeTimeoutRef = useRef(null);
+
+  const handleCategoryMouseEnter = (item) => {
+    if (window.innerWidth < 1024) return;
+
+    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+
+    openTimeoutRef.current = setTimeout(() => {
+      setActiveMenu(item);
+    }, CATEGORY_MENU_OPEN_DELAY_MS);
+  };
+
+  const handleCategoryMouseLeave = () => {
+    if (window.innerWidth < 1024) return;
+
+    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+
+    closeTimeoutRef.current = setTimeout(() => {
+      setActiveMenu(null);
+    }, CATEGORY_MENU_CLOSE_DELAY_MS);
+  };
+
+  const keepCategoryMenuOpen = () => {
+    if (window.innerWidth < 1024) return;
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+  };
 
   useEffect(() => {
     setActiveMenu(null);
@@ -661,6 +719,82 @@ export const CategoryBar = ({ headerData }) => {
 
   if (!categories.length) return null;
 
+  /* ── Compact mode: text-only bar for non-homepage pages ──────────── */
+  if (compact) {
+    return (
+      <nav
+        ref={categoryBarRef}
+        aria-label="Category navigation"
+        style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
+        className="fixed left-0 z-40 w-full bg-white/95 shadow-[0_2px_8px_rgba(17,24,39,0.06)] backdrop-blur !block"
+      >
+        <div className="relative w-full">
+          <div 
+            className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px] lg:justify-center"
+            style={{ justifyContent: "safe center" }}
+          >
+            {visibleCategories.map((item, index) => {
+              const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
+              const isActive =
+                activeMenu?.categoryKey === item?.categoryKey ||
+                location.pathname === categoryHref ||
+                location.pathname.startsWith(categoryHref + "/");
+
+              return (
+                <Link
+                  key={keyOr(item?.name, `compact-category-${index}`)}
+                  to={categoryHref}
+                  onMouseEnter={() => handleCategoryMouseEnter(item)}
+                  onMouseLeave={handleCategoryMouseLeave}
+                  className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                    isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
+                  }`}
+                >
+                  <span className="max-w-[140px] truncate">
+                    {textOr(item?.name, "Category")}
+                  </span>
+                  <span
+                    className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
+                      isActive ? "w-full opacity-100" : "w-0 opacity-0"
+                    }`}
+                  />
+                </Link>
+              );
+            })}
+            <Link
+              to="/categories"
+              className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                location.pathname === "/categories"
+                  ? "text-[#03014D]"
+                  : "text-[#2E2E2E]"
+              }`}
+            >
+              More
+              <span
+                className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
+                  location.pathname === "/categories"
+                    ? "w-full opacity-100"
+                    : "w-0 opacity-0"
+                }`}
+              />
+            </Link>
+          </div>
+          {activeMenu && (
+            <div
+              id="compact-category-mega-menu"
+              className="absolute left-0 top-full z-[9999] w-full"
+              onMouseEnter={keepCategoryMenuOpen}
+              onMouseLeave={handleCategoryMouseLeave}
+            >
+              <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
+            </div>
+          )}
+        </div>
+      </nav>
+    );
+  }
+
+  /* ── Full mode: visual header with icons (homepage) ─────────────── */
   return (
     <header
       ref={categoryBarRef}
@@ -680,7 +814,10 @@ export const CategoryBar = ({ headerData }) => {
       <div className="absolute inset-0 bg-[#CE9F2D33]  z-10  " />
 
       <div className="w-full relative z-20">
-        <div className=" hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5  2xl:justify-center lg:gap-5">
+        <div 
+          className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:gap-5 lg:justify-center"
+          style={{ justifyContent: "safe center" }}
+        >
           {visibleCategories.map((item, index) => {
             // Always use categoryKey first — it's the canonical route key from the DB
             const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
@@ -693,8 +830,8 @@ export const CategoryBar = ({ headerData }) => {
               <div
                 key={keyOr(item?.name, `category-${index}`)}
                 className="relative"
-                // onMouseEnter={() => handleCategoryMouseEnter(item)}
-                // onMouseLeave={handleCategoryMouseLeave}
+                onMouseEnter={() => handleCategoryMouseEnter(item)}
+                onMouseLeave={handleCategoryMouseLeave}
               >
                 <Link
                   to={categoryHref}
@@ -730,7 +867,7 @@ export const CategoryBar = ({ headerData }) => {
             icon={moreImage}
           />
         </div>
-        {/* {activeMenu && (
+        {activeMenu && (
           <div
             id="category-mega-menu"
             className="absolute left-0 top-[calc(100%-2px)] z-[9999] w-full"
@@ -739,61 +876,78 @@ export const CategoryBar = ({ headerData }) => {
           >
             <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
           </div>
-        )} */}
+        )}
       </div>
       <nav
         aria-label="Sticky category navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
-        className={`fixed left-0 z-40 w-full bg-white/95 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur transition-all duration-300 ease-out will-change-transform ${
+        className={`fixed left-0 z-40 w-full bg-white/95 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur transition-all duration-300 ease-out will-change-transform !block ${
           isPinned
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-full opacity-0"
         }`}
       >
-        <div className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-2 sm:gap-7 lg:h-[46px] lg:justify-center">
-          {visibleCategories.map((item, index) => {
-            const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
-            const isActive =
-              activeMenu?.categoryKey === item?.categoryKey ||
-              location.pathname === categoryHref ||
-              location.pathname.startsWith(categoryHref + "/");
-
-            return (
-              <Link
-                key={keyOr(item?.name, `sticky-category-${index}`)}
-                to={categoryHref}
-                className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-                  isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
-                }`}
-              >
-                <span className="max-w-[140px] truncate">
-                  {textOr(item?.name, "Category")}
-                </span>
-                <span
-                  className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
-                    isActive ? "w-full opacity-100" : "w-0 opacity-0"
-                  }`}
-                />
-              </Link>
-            );
-          })}
-          <Link
-            to="/categories"
-            className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-              location.pathname === "/categories"
-                ? "text-[#03014D]"
-                : "text-[#2E2E2E]"
-            }`}
+        <div className="relative w-full">
+          <div 
+            className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px] lg:justify-center"
+            style={{ justifyContent: "safe center" }}
           >
-            More
-            <span
-              className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
+            {visibleCategories.map((item, index) => {
+              const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
+              const isActive =
+                activeMenu?.categoryKey === item?.categoryKey ||
+                location.pathname === categoryHref ||
+                location.pathname.startsWith(categoryHref + "/");
+
+              return (
+                <Link
+                  key={keyOr(item?.name, `sticky-category-${index}`)}
+                  to={categoryHref}
+                  onMouseEnter={() => handleCategoryMouseEnter(item)}
+                  onMouseLeave={handleCategoryMouseLeave}
+                  className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                    isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
+                  }`}
+                >
+                  <span className="max-w-[140px] truncate">
+                    {textOr(item?.name, "Category")}
+                  </span>
+                  <span
+                    className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
+                      isActive ? "w-full opacity-100" : "w-0 opacity-0"
+                    }`}
+                  />
+                </Link>
+              );
+            })}
+            <Link
+              to="/categories"
+              className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
                 location.pathname === "/categories"
-                  ? "w-full opacity-100"
-                  : "w-0 opacity-0"
+                  ? "text-[#03014D]"
+                  : "text-[#2E2E2E]"
               }`}
-            />
-          </Link>
+            >
+              More
+              <span
+                className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
+                  location.pathname === "/categories"
+                    ? "w-full opacity-100"
+                    : "w-0 opacity-0"
+                }`}
+              />
+            </Link>
+          </div>
+          {activeMenu && isPinned && (
+            <div
+              id="sticky-category-mega-menu"
+              className="absolute left-0 top-full z-[9999] w-full"
+              onMouseEnter={keepCategoryMenuOpen}
+              onMouseLeave={handleCategoryMouseLeave}
+            >
+              <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
+            </div>
+          )}
         </div>
       </nav>
     </header>

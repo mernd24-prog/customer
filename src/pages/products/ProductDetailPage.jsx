@@ -1148,11 +1148,9 @@ export default function ProductDetailPage() {
   const productCodAvailable = isProductCodAvailable(product);
   const productCodDisabled =
     !productCodAvailable &&
-    (
-      shipping.codAvailable === false ||
+    (shipping.codAvailable === false ||
       product?.metadata?.codAvailable === false ||
-      product?.codAvailable === false
-    );
+      product?.codAvailable === false);
 
   const discount =
     mrp && price && mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
@@ -1423,7 +1421,7 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
-              <ProductFeatureGrid />
+              {/* <ProductFeatureGrid /> */}
 
               <ProductInfoSection
                 infoTabs={infoTabs}

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronLeft, Star, ThumbsUp, UserCircle } from "lucide-react";
+import { useAuthModal } from "../../context/AuthModalContext";
 import {
   fetchProductReviews,
   fetchMyProductReview,
@@ -394,6 +395,7 @@ export default function ReviewDetailsPage() {
   const { productId } = useParams();
   const { state } = useLocation();
   const dispatch = useDispatch();
+  const { openAuthModal } = useAuthModal();
 
   const product = getProductDisplay(state?.product);
   const currentUser = useSelector((store) => store.auth.current);
@@ -499,7 +501,11 @@ export default function ReviewDetailsPage() {
     setPage(1);
   };
   const handleHelpful = (reviewId) => {
-    if (!userId || !reviewId) return;
+    if (!userId) {
+      openAuthModal();
+      return;
+    }
+    if (!reviewId) return;
     dispatch(markReviewHelpful({ productId, reviewId }));
   };
 
