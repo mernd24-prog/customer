@@ -26,7 +26,7 @@ export default function CategoryCard({
       )}
     >
       <div className="relative overflow-hidden bg-[var(--customer-cream)]">
-        {badge ? (
+        {/* {badge ? (
           <Label
             variant="featured"
             className="
@@ -46,7 +46,7 @@ export default function CategoryCard({
           >
             {badge}
           </Label>
-        ) : null}
+        ) : null} */}
 
         {image ? (
           <img
@@ -66,18 +66,18 @@ export default function CategoryCard({
 
       <div className="pt-4 lg:py-4 px-4">
         <div className="flex flex-col gap-3 ">
-          <h3 className=" line-clamp-1 text-xl  lg:text-2xl font-semibold leading-none text-[#2E2E2E]">
+          <h3 className=" line-clamp-1 text-h3 font-semibold  text-[#2E2E2E]">
             {title}
           </h3>
 
           {stylesCount ? (
-            <p className="font-medium text-[16px] leading-none text-[#2E2E2E] font-sans  ">
+            <p className="font-medium  text-extaSmall text-[#2E2E2E]">
               {stylesCount}
             </p>
           ) : null}
         </div>
 
-        <div className="  mt-6 lg:mt-9  h-[36px] border-t border-[#CE9F2D4D]">
+        <div className="  mt-4 md:mt-9  h-[36px] border-t border-[#CE9F2D4D]">
           <TextGoldButton
             as="span"
             className="my-2"

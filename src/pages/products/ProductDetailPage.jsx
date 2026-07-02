@@ -452,7 +452,7 @@ function DeliveryChecker({ productId, onResultChange }) {
     <div className="space-y-3">
       {/* Pincode check label */}
       <div className="flex max-w-[360px] flex-wrap items-center gap-2">
-        <span className="text-base lg:text-[20px] font-semibold text-ink">
+        <span className="text-extaSmall font-semibold text-ink">
           Check Delivery
         </span>
       </div>
@@ -659,55 +659,55 @@ function ProductActionButtons({
   );
 }
 
-function ProductFeatureGrid() {
-  const features = [
-    {
-      icon: <ShieldCheck size={20} className="text-gold" />,
-      label: "100% Secure Payments",
-    },
-    {
-      icon: <Truck size={20} className="text-gold font-medium" />,
-      label: "Free Shipping",
-    },
-    {
-      icon: <RefreshCw size={20} className="text-gold" />,
-      label: "Easy Returns",
-    },
-    {
-      icon: <ShieldCheck size={20} className="text-gold" />,
-      label: "24/7 Support",
-    },
-  ];
+// function ProductFeatureGrid() {
+//   const features = [
+//     {
+//       icon: <ShieldCheck size={20} className="text-gold" />,
+//       label: "100% Secure Payments",
+//     },
+//     {
+//       icon: <Truck size={20} className="text-gold font-medium" />,
+//       label: "Free Shipping",
+//     },
+//     {
+//       icon: <RefreshCw size={20} className="text-gold" />,
+//       label: "Easy Returns",
+//     },
+//     {
+//       icon: <ShieldCheck size={20} className="text-gold" />,
+//       label: "24/7 Support",
+//     },
+//   ];
 
-  return (
-    <div className="mt-8 lg:mt-16 grid grid-cols-1 gap-4  lg:gap-8 sm:grid-cols-2 lg:grid-cols-4">
-      {features.map((item) => (
-        <div
-          key={item.label}
-          className="flex py-2  lg:py-5  flex-col items-center justify-center gap-2 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8]  text-center"
-        >
-          <span className="flex w-10 h-10 md:h-16  md:w-16 items-center justify-center my-2 rounded-full border border-[#E7D9B8] bg-[#FFF8E8]">
-            {item.icon}
-          </span>
+//   return (
+//     <div className="mt-8 lg:mt-16 grid grid-cols-1 gap-4  lg:gap-8 sm:grid-cols-2 lg:grid-cols-4">
+//       {features.map((item) => (
+//         <div
+//           key={item.label}
+//           className="flex py-2  lg:py-5  flex-col items-center justify-center gap-2 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8]  text-center"
+//         >
+//           <span className="flex w-10 h-10 md:h-16  md:w-16 items-center justify-center my-2 rounded-full border border-[#E7D9B8] bg-[#FFF8E8]">
+//             {item.icon}
+//           </span>
 
-          <p className="text-base  md:text-2xl font-bold text-navy">
-            {item.label}
-          </p>
-        </div>
-      ))}
-    </div>
-  );
-}
+//           <p className="text-base  md:text-2xl font-bold text-navy">
+//             {item.label}
+//           </p>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// }
 
 function InfoTabs({ tabs, activeTab, onChange }) {
   return (
-    <div className="flex overflow-x-auto border-b border-border">
+    <div className="flex  overflow-x-auto border-b border-border">
       {tabs.map((tab) => (
         <button
           key={tab.key}
           type="button"
           onClick={() => onChange(tab.key)}
-          className={`min-w-max px-5  lg:py-4 py-2 text-base lg:text-[24px] font-medium ${
+          className={`min-w-max px-5  lg:py-4 py-2 text-h5 font-medium ${
             activeTab === tab.key
               ? "border-b-2 border-navy font-semibold bg-gradient-to-t from-[#1B1D6033] to-transparent text-navy"
               : "text-[#2E2E2E]"
@@ -1148,11 +1148,9 @@ export default function ProductDetailPage() {
   const productCodAvailable = isProductCodAvailable(product);
   const productCodDisabled =
     !productCodAvailable &&
-    (
-      shipping.codAvailable === false ||
+    (shipping.codAvailable === false ||
       product?.metadata?.codAvailable === false ||
-      product?.codAvailable === false
-    );
+      product?.codAvailable === false);
 
   const discount =
     mrp && price && mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
@@ -1302,7 +1300,7 @@ export default function ProductDetailPage() {
                 <div className="flex min-w-0 flex-col gap-3">
                   <div className="flex min-w-0 items-start justify-between gap-3 ">
                     <div className="min-w-0">
-                      <h1 className="break-words text-[15px] font-semibold  text-ink sm:text-[17px] lg:text-[26px]">
+                      <h1 className="break-words text-h3 leading-tight   font-semibold  text-ink ">
                         {getProductTitle(product)}
                       </h1>
                     </div>
@@ -1325,6 +1323,8 @@ export default function ProductDetailPage() {
                   <ProductPriceBlock
                     price={price}
                     mrp={mrp}
+                    priceClassName="text-h3"
+                    mrpClassName="text-h3"
                     currency={currency}
                     discount={discount}
                     safeDynamicPrice={safeDynamicPrice}
@@ -1423,7 +1423,7 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
-              <ProductFeatureGrid />
+              {/* <ProductFeatureGrid /> */}
 
               <ProductInfoSection
                 infoTabs={infoTabs}

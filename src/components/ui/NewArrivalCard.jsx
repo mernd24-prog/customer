@@ -8,6 +8,7 @@ export default function NewArrivalCard({
   badgeText = "New",
 
   title = "",
+ 
   seeAllLink = "/products",
   products = [],
 }) {
@@ -21,7 +22,7 @@ export default function NewArrivalCard({
           {/* Badge */}
           <Label
             variant="featured"
-            className="text-sm font-semibold"
+            className="text-sm font-semibold "
             leftIcon="✦"
           >
             {badgeText}
@@ -37,7 +38,7 @@ export default function NewArrivalCard({
         </div>
 
         {/* Card Title */}
-        <h3 className="mt-4 text-left  line-clamp-1  text-[18px] font-bold leading-[100%] tracking-[0%] align-middle text-[#FFFFFF]  sm:text-[20px] xl:text-[24px]">
+        <h3 className="mt-4 text-left text-h3  line-clamp-1   font-bold text-[#FFFFFF]  ">
           {formatPageTitle(title)}
         </h3>
       </div>

@@ -9,41 +9,115 @@ export default {
       },
       fontSize: {
         // Display/Hero Sizes
-        "display-xl": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
-        "display-lg": ["40px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700" }],
-        "display-md": ["36px", { lineHeight: "44px", letterSpacing: "-0.02em", fontWeight: "700" }],
+        "display-xl": [
+          "48px",
+          { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" },
+        ],
+        "display-lg": [
+          "40px",
+          { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700" },
+        ],
+        "display-md": [
+          "36px",
+          { lineHeight: "44px", letterSpacing: "-0.02em", fontWeight: "700" },
+        ],
 
         // Heading Sizes
-        "heading-xl": ["32px", { lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "700" }],
-        "heading-lg": ["28px", { lineHeight: "36px", letterSpacing: "-0.01em", fontWeight: "700" }],
-        "heading-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "700" }],
-        "heading-sm": ["20px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }],
-        "heading-xs": ["18px", { lineHeight: "26px", letterSpacing: "0", fontWeight: "600" }],
+        "heading-xl": [
+          "32px",
+          { lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "700" },
+        ],
+        "heading-lg": [
+          "28px",
+          { lineHeight: "36px", letterSpacing: "-0.01em", fontWeight: "700" },
+        ],
+        "heading-md": [
+          "24px",
+          { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "700" },
+        ],
+        "heading-sm": [
+          "20px",
+          { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" },
+        ],
+        "heading-xs": [
+          "18px",
+          { lineHeight: "26px", letterSpacing: "0", fontWeight: "600" },
+        ],
 
         // Subheading/Section Title
-        "subheading-lg": ["18px", { lineHeight: "26px", letterSpacing: "0", fontWeight: "600" }],
-        "subheading-md": ["16px", { lineHeight: "24px", letterSpacing: "0", fontWeight: "600" }],
-        "subheading-sm": ["14px", { lineHeight: "22px", letterSpacing: "0", fontWeight: "600" }],
+        "subheading-lg": [
+          "18px",
+          { lineHeight: "26px", letterSpacing: "0", fontWeight: "600" },
+        ],
+        "subheading-md": [
+          "16px",
+          { lineHeight: "24px", letterSpacing: "0", fontWeight: "600" },
+        ],
+        "subheading-sm": [
+          "14px",
+          { lineHeight: "22px", letterSpacing: "0", fontWeight: "600" },
+        ],
 
         // Body Text
-        "body-lg": ["18px", { lineHeight: "28px", letterSpacing: "0", fontWeight: "400" }],
-        "body-md": ["16px", { lineHeight: "24px", letterSpacing: "0", fontWeight: "400" }],
-        "body-sm": ["14px", { lineHeight: "22px", letterSpacing: "0", fontWeight: "400" }],
-        "body-xs": ["13px", { lineHeight: "20px", letterSpacing: "0", fontWeight: "400" }],
+        "body-lg": [
+          "18px",
+          { lineHeight: "28px", letterSpacing: "0", fontWeight: "400" },
+        ],
+        "body-md": [
+          "16px",
+          { lineHeight: "24px", letterSpacing: "0", fontWeight: "400" },
+        ],
+        "body-sm": [
+          "14px",
+          { lineHeight: "22px", letterSpacing: "0", fontWeight: "400" },
+        ],
+        "body-xs": [
+          "13px",
+          { lineHeight: "20px", letterSpacing: "0", fontWeight: "400" },
+        ],
 
         // Small Text
-        "caption-lg": ["14px", { lineHeight: "22px", letterSpacing: "0", fontWeight: "500" }],
-        "caption-md": ["13px", { lineHeight: "20px", letterSpacing: "0", fontWeight: "500" }],
-        "caption-sm": ["12px", { lineHeight: "18px", letterSpacing: "0", fontWeight: "500" }],
+        "caption-lg": [
+          "14px",
+          { lineHeight: "22px", letterSpacing: "0", fontWeight: "500" },
+        ],
+        "caption-md": [
+          "13px",
+          { lineHeight: "20px", letterSpacing: "0", fontWeight: "500" },
+        ],
+        "caption-sm": [
+          "12px",
+          { lineHeight: "18px", letterSpacing: "0", fontWeight: "500" },
+        ],
 
         // Label/Badge/Button Text
-        "label-lg": ["14px", { lineHeight: "20px", letterSpacing: "0.5px", fontWeight: "600" }],
-        "label-md": ["13px", { lineHeight: "20px", letterSpacing: "0.5px", fontWeight: "600" }],
-        "label-sm": ["12px", { lineHeight: "18px", letterSpacing: "0.5px", fontWeight: "600" }],
-        "label-xs": ["11px", { lineHeight: "16px", letterSpacing: "0.5px", fontWeight: "600" }],
+        "label-lg": [
+          "14px",
+          { lineHeight: "20px", letterSpacing: "0.5px", fontWeight: "600" },
+        ],
+        "label-md": [
+          "13px",
+          { lineHeight: "20px", letterSpacing: "0.5px", fontWeight: "600" },
+        ],
+        "label-sm": [
+          "12px",
+          { lineHeight: "18px", letterSpacing: "0.5px", fontWeight: "600" },
+        ],
+        "label-xs": [
+          "11px",
+          { lineHeight: "16px", letterSpacing: "0.5px", fontWeight: "600" },
+        ],
 
         // Overline/Tag
-        "overline": ["12px", { lineHeight: "16px", letterSpacing: "1px", fontWeight: "600", textTransform: "uppercase" }],
+        overline: [
+          "12px",
+          {
+            lineHeight: "16px",
+            letterSpacing: "1px",
+            fontWeight: "600",
+            textTransform: "uppercase",
+          },
+        ],
 
         // Preserve legacy sizes for backwards compatibility
         paragraph: ["18px", "28px"],

@@ -77,15 +77,15 @@ export default function ProductCard({
     cardProduct?.markAsFeatured === true;
   const codAvailable = isProductCodAvailable(cardProduct);
 
-  const resolvedBadgeLabel =
-    badge ||
-    (Array.isArray(cardProduct?.badges) && cardProduct.badges.length > 0
-      ? cardProduct.badges[0]?.label
-      : null);
-  const resolvedBadgeStyle =
-    Array.isArray(cardProduct?.badges) && cardProduct.badges.length > 0
-      ? { color: cardProduct.badges[0]?.color, bgColor: cardProduct.badges[0]?.bgColor }
-      : null;
+  // const resolvedBadgeLabel =
+  //   badge ||
+  //   (Array.isArray(cardProduct?.badges) && cardProduct.badges.length > 0
+  //     ? cardProduct.badges[0]?.label
+  //     : null);
+  // const resolvedBadgeStyle =
+  //   Array.isArray(cardProduct?.badges) && cardProduct.badges.length > 0
+  //     ? { color: cardProduct.badges[0]?.color, bgColor: cardProduct.badges[0]?.bgColor }
+  //     : null;
   const currentPriceNumber = Number(String(price || 0).replace(/[^\d.-]/g, ""));
   const oldPriceNumber = Number(String(oldPrice || 0).replace(/[^\d.-]/g, ""));
   const computedDiscountPercent =
@@ -194,11 +194,11 @@ export default function ProductCard({
               showValue
               className="mt-3"
             />
-            {codAvailable && (
+            {/* {codAvailable && (
               <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
                 <Banknote size={12} /> COD Available
               </span>
-            )}
+            )} */}
           </Link>
 
           <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
@@ -236,14 +236,7 @@ export default function ProductCard({
         className,
       )}
     >
-      {/* {!isInStock && (
-        <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">
-          <span className="rounded-full border border-red-800 bg-white px-3 py-1 text-sm font-bold text-red-800 shadow-lg">
-            Out of Stock
-          </span>
-        </div>
-      )} */}
-
+     
       <div className="absolute  left-4 top-4 z-20 flex max-w-[calc(100%-2rem)] flex-wrap items-center gap-2">
         {isFeatured && (
           <Label
@@ -281,7 +274,7 @@ export default function ProductCard({
             {discountLabel}
           </Label>
         )}
-        {codAvailable && (
+        {/* {codAvailable && (
           <Label
             variant="success"
             className="
@@ -302,8 +295,8 @@ export default function ProductCard({
           >
             <Banknote size={12} /> COD Available
           </Label>
-        )}
-        {resolvedBadgeLabel && (
+        )} */}
+        {/* {resolvedBadgeLabel && (
           <span
             className="flex h-[24px] items-center justify-center rounded-[50px] px-[12px] py-[5px] text-[11px] font-bold uppercase tracking-wide sm:h-[28px] sm:px-[15px] sm:text-[12px]"
             style={{
@@ -314,7 +307,7 @@ export default function ProductCard({
           >
             {resolvedBadgeLabel}
           </span>
-        )}
+        )} */}
       </div>
 
       <Link to={to} className="flex flex-1 flex-col">
@@ -339,7 +332,7 @@ export default function ProductCard({
           <StarRating rating={rating} count={ratingCount} />
 
           <h3
-            className=" w-full truncate text-[20px] font-semibold text-[#2E2E2E] sm:text-[18px]  lg:text-[20px]"
+            className=" w-full text-base md:text-small line-clamp-1 font-semibold text-[#2E2E2E] "
             title={title}
           >
             {title}
@@ -350,7 +343,7 @@ export default function ProductCard({
             oldPrice={oldPrice}
             currency={currency || cardProduct?.currency}
             className="mb-0 gap-3 my-2 lg:my-4"
-            priceClassName="text-[20px] font-extrabold text-[#1B1D60] sm:text-[18px] lg:text-[24px]"
+            priceClassName="text-[20px] font-extrabold text-[#1B1D60] sm:text-[18px] lg:text-[22px]"
             oldPriceClassName="text-[20px] font-semibold text-[#949494] line-through sm:text-[18px] lg:text-[24px]"
           />
         </div>

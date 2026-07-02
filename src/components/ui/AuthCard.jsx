@@ -31,7 +31,7 @@ export default function AuthCard({
           <div className="flex w-full  flex-col justify-center lg:w-1/2">
             <div className="w-full">
               <div className="mb-3 text-center ">
-                <div className="mx-auto   mb-2 flex w-[60px] h-[60px] lg:h-[80px] lg:w-[80px] items-center justify-center rounded-full text-gold">
+                <div className="mx-auto   mb-2 flex w-[60px] h-[60px] lg:h-[70px] lg:w-[70px] items-center justify-center rounded-full text-gold">
                   {icon ? (
                     <img
                       src={icon}
@@ -86,7 +86,7 @@ export default function AuthCard({
                 )}
 
                 {title && (
-                  <h1 className="text-xl lg:text-2xl font-semibold text-[#2E2E2E] pt-2 lg:py-3">
+                  <h1 className="text-h4 font-semibold text-[#2E2E2E] pt-2 lg:py-3">
                     {title}
                   </h1>
                 )}

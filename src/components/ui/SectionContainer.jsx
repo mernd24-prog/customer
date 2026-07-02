@@ -29,31 +29,13 @@ export default function SectionContainer({
             <div className="min-w-0 ">
               {title && (
                 <h2
-                  className="
-                    font-dm-sans
-                    text-[22px]
-                    font-bold
-                    leading-[110%]
-                    tracking-normal
-                    text-[#3E4093]
-
-                    min-[375px]:text-[24px]
-                    min-[425px]:text-[26px]
-
-                    sm:text-[30px]
-                    md:text-[34px]
-
-                    lg:text-[38px]
-                    xl:text-[42px]
-
-                    2xl:text-[38px]
-                  "
+                  className="font-bold text-h2 text-[#3E4093]"
                 >
                   {title}
                 </h2>
               )}
               {subtitle && (
-                <p className="py-4 font-dm-sans text-[14px] leading-[100%] tracking-[0%] align-middle text-[#2E2E2E] sm:text-[16px] md:text-[18px]">
+                <p className=" md:py-4 text-small  align-middle text-[#2E2E2E]">
                   {subtitle}
                 </p>
               )}

@@ -19,6 +19,7 @@ export default function ShowcaseSection({
   skeletonVariant = "top-deals",
   skeletonCount = 4,
   actionLabel,
+  actionHref,
   onAction,
 }) {
   const skeletonPreset =
@@ -36,6 +37,7 @@ export default function ShowcaseSection({
       bodybgColor={bodybgColor}
       className={className}
       actionLabel={actionLabel}
+      actionHref={actionHref}
       onAction={onAction}
     >
       {loading ? (

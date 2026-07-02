@@ -135,7 +135,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
   if (!groups.length) return null;
 
   return (
-    <div className="max-w-[1760px] mx-auto px-4 md:px-8">
+    <div className="max-w-[1760px] mx-auto px-4  md:px-8">
       <div className="grid grid-cols-2 gap-6 border-t border-white/25 pt-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         {groups.map((group, groupIndex) => (
           <div key={group?.title || `group-${groupIndex}`}>
@@ -201,12 +201,12 @@ export function Footer({ data = footerData }) {
                 className="flex items-center gap-4 rounded-[var(--customer-radius)] px-4 py-3"
               >
                 <img
-                  className="h-10 w-10  shrink-0 object-contain sm:h-12 sm:w-12 2xl:h-[75px] 2xl:w-[75px]"
+                  className="h-10 w-10  shrink-0 object-contain sm:h-12 sm:w-12 2xl:h-[60px] 2xl:w-[60px]"
                   src={item?.icon}
                   alt={item?.alt || item?.title || "Benefit"}
                 />
                 <div>
-                  <h2 className="mb-0 text-lg xl:text-2xl font-bold text-[#1B1D60]">
+                  <h2 className="mb-0 text-base xl:text-xl font-bold text-[#1B1D60]">
                     {item?.title}
                   </h2>
                   <p className="text-sm xl:text-lg font-light text-[#2E2E2E]">
@@ -223,7 +223,7 @@ export function Footer({ data = footerData }) {
           <img
             src="/image/png/logoWithName.png"
             alt="Sam Global"
-            className="h-9 sm:h-12 lg:h-16 xl:h-20 rounded object-contain"
+            className="h-9 sm:h-12 lg:h-16 xl:h-[75px]  rounded object-contain"
           />
         </div>
 

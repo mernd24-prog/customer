@@ -48,7 +48,7 @@ export default function FormField({
 
   return (
     <label
-      className="grid gap-1.5 text-md lg:text-lg font-medium text-[var(--customer-ink)]"
+      className="grid gap-1.5 text-sm lg:text-base font-medium text-[var(--customer-ink)]"
       htmlFor={id}
     >
       <span>{label}</span>
