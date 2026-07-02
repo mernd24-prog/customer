@@ -1,3 +1,16 @@
+const API_ASSET_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL || "http://45.195.90.183:4000"
+).replace(/\/+$/, "");
+
+function normalizeImageUrl(url = "") {
+  const value = String(url || "").trim();
+  if (!value) return "";
+  if (/^(https?:)?\/\//i.test(value) || /^(data|blob):/i.test(value)) {
+    return value;
+  }
+  return `${API_ASSET_BASE_URL}/${value.replace(/^\/+/, "")}`;
+}
+
 export function getProductId(product) {
   if (!product) return "";
 
@@ -156,7 +169,7 @@ export function getProductAvailableStock(product) {
 
 export function getImageUrlFromValue(value) {
   if (!value) return "";
-  if (typeof value === "string") return value;
+  if (typeof value === "string") return normalizeImageUrl(value);
   if (Array.isArray(value)) {
     return value.map(getImageUrlFromValue).find(Boolean) || "";
   }

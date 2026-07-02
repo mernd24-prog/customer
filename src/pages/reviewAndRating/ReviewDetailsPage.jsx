@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronLeft, Star, ThumbsUp, UserCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, ThumbsUp, UserCircle, X } from "lucide-react";
 import {
   fetchProductReviews,
   fetchMyProductReview,
@@ -13,6 +13,7 @@ import {
   getProductMrp,
   getProductPrice,
   getProductTitle,
+  getImageUrlFromValue,
 } from "../../utils/ecommerce";
 
 const LIMIT = 10;
@@ -90,6 +91,64 @@ function ProductReviewSidebar({ product, productId }) {
         </p>
       </div>
     </aside>
+  );
+}
+
+function ReviewMediaLightbox({ images = [], index = 0, onClose, onIndexChange }) {
+  if (!images.length) return null;
+  const safeIndex = Math.min(Math.max(index, 0), images.length - 1);
+  const currentImage = images[safeIndex];
+  const hasMany = images.length > 1;
+
+  return (
+    <div
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 p-4"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-[10px] bg-white shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <p className="text-sm font-bold text-ink">
+            Review Photos {hasMany ? `(${safeIndex + 1}/${images.length})` : ""}
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="grid h-9 w-9 place-items-center rounded-full text-muted transition hover:bg-surface-soft hover:text-ink"
+            aria-label="Close image preview"
+          >
+            <X size={18} />
+          </button>
+        </div>
+        <div className="relative flex min-h-[320px] items-center justify-center bg-[#111] p-3 sm:min-h-[520px]">
+          {hasMany && (
+            <button
+              type="button"
+              onClick={() => onIndexChange((safeIndex - 1 + images.length) % images.length)}
+              className="absolute left-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-md transition hover:bg-white"
+              aria-label="Previous review image"
+            >
+              <ChevronLeft size={20} />
+            </button>
+          )}
+          <img src={currentImage} alt={`Review media ${safeIndex + 1}`} className="max-h-[70vh] max-w-full rounded-[8px] object-contain" />
+          {hasMany && (
+            <button
+              type="button"
+              onClick={() => onIndexChange((safeIndex + 1) % images.length)}
+              className="absolute right-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-md transition hover:bg-white"
+              aria-label="Next review image"
+            >
+              <ChevronRight size={20} />
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -188,6 +247,7 @@ function getUserDisplayName(user = {}) {
 }
 
 function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
+  const [lightboxIndex, setLightboxIndex] = useState(null);
   const isOwn =
     currentUserId && String(review.buyerId) === String(currentUserId);
 
@@ -203,6 +263,9 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
   const text = review.reviewText || review.text;
   const helpfulVotes = review.helpfulVotes ?? review.helpful ?? 0;
   const reviewId = review._id || review.id;
+  const media = Array.isArray(review.media)
+    ? review.media.map(getImageUrlFromValue).filter(Boolean)
+    : [];
 
   const dateStr = review.createdAt
     ? new Date(review.createdAt).toLocaleDateString("en-IN", {
@@ -242,6 +305,21 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
 
       {text && <p className="text-sm leading-relaxed text-ink">{text}</p>}
 
+      {media.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {media.slice(0, 5).map((url, index) => (
+            <button
+              type="button"
+              key={`${url}-${index}`}
+              onClick={() => setLightboxIndex(index)}
+              className="block h-20 w-20 overflow-hidden rounded-[8px] border border-gold/20 bg-cream sm:h-24 sm:w-24"
+            >
+              <img src={url} alt={`Review media ${index + 1}`} className="h-full w-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+
       <button
         type="button"
         onClick={() => onHelpful(reviewId)}
@@ -255,6 +333,15 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         <ThumbsUp size={12} className={alreadyVoted ? "fill-gold text-gold" : ""} />
         Helpful ({helpfulVotes})
       </button>
+
+      {lightboxIndex !== null && (
+        <ReviewMediaLightbox
+          images={media}
+          index={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onIndexChange={setLightboxIndex}
+        />
+      )}
     </article>
   );
 }
