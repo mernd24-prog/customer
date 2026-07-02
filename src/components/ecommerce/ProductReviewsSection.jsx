@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, ThumbsUp, X } from "lucide-react";
+import { useAuthModal } from "../../context/AuthModalContext";
+import { ChevronRight, ThumbsUp } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import {
   fetchProductReviews,
@@ -476,6 +477,7 @@ function sortReviewsByOption(reviews, sort) {
 
 export default function ProductReviewsSection({ productId, product }) {
   const dispatch = useDispatch();
+  const { openAuthModal } = useAuthModal();
 
   const currentUser = useSelector((s) => s.auth.current);
   const userId = currentUser?.id || currentUser?._id || currentUser?.userId;
@@ -539,7 +541,10 @@ export default function ProductReviewsSection({ productId, product }) {
   }, [dispatch, productId, isLoggedIn]);
 
   const handleHelpful = (reviewId) => {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn) {
+      openAuthModal();
+      return;
+    }
     dispatch(markReviewHelpful({ productId, reviewId }));
   };
 
