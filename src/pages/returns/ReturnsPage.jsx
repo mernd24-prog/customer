@@ -1,21 +1,15 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Download, FileText, Package, RotateCcw } from "lucide-react";
-import ApiState from "../../components/common/ApiState";
+import { ArrowLeft, Package, RotateCcw } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import Button from "../../components/ui/Button";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import {
-  requestReturn,
-  fetchMyReturns,
-} from "../../features/returns/returnsSlice";
+import { requestReturn } from "../../features/returns/returnsSlice";
 import { fetchOrderById } from "../../features/order/orderSlice";
 import { returnSchema } from "../../validations/validationSchemas";
-import { downloadAuthDocument } from "../../utils/downloadAuthDocument";
-import { endpoints } from "../../api/endpoints";
 
 const RETURN_REASONS = [
   { value: "defective", label: "Defective / damaged" },
@@ -28,24 +22,6 @@ const RETURN_REASONS = [
   { value: "changed_mind", label: "Changed my mind" },
   { value: "other", label: "Other reason" },
 ];
-
-const STATUS_BADGE = {
-  requested: "bg-amber-100 text-amber-700",
-  approved: "bg-blue-100 text-blue-700",
-  reverse_pickup_scheduled: "bg-blue-100 text-blue-700",
-  in_reverse_transit: "bg-blue-100 text-blue-700",
-  received: "bg-violet-100 text-violet-700",
-  qc_passed: "bg-violet-100 text-violet-700",
-  qc_completed: "bg-violet-100 text-violet-700",
-  refund_pending: "bg-amber-100 text-amber-700",
-  refund_failed: "bg-red-100 text-red-700",
-  partially_refunded: "bg-sky-100 text-sky-700",
-  refunded: "bg-emerald-100 text-emerald-700",
-  replacement_pending: "bg-amber-100 text-amber-700",
-  replaced: "bg-emerald-100 text-emerald-700",
-  closed: "bg-gray-100 text-gray-700",
-  rejected: "bg-red-100 text-red-700",
-};
 
 const getOrderItems = (order) => {
   const items =
@@ -136,6 +112,7 @@ const getItemId = (item) => item?.id || item?._id || item?.orderItemId || "";
 
 function ReturnRequestPage({ orderId }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const run = useToastThunk();
   const { loading } = useSelector((s) => s.returns);
   const { current: order, loading: orderLoading } = useSelector((s) => s.order);
@@ -162,7 +139,8 @@ function ReturnRequestPage({ orderId }) {
 
   const watchedQty = watch("quantity");
   const estimatedRefund = selectedItem
-    ? Number(getItemUnitPrice(selectedItem) || 0) * Math.max(1, Number(watchedQty) || 1)
+    ? Number(getItemUnitPrice(selectedItem) || 0) *
+      Math.max(1, Number(watchedQty) || 1)
     : 0;
 
   const handleItemSelect = (item) => {
@@ -179,25 +157,30 @@ function ReturnRequestPage({ orderId }) {
       selectedItem ||
       orderItems.find((i) => getItemProductId(i) === values.productId);
     const unitPrice = item ? getItemUnitPrice(item) : 0;
-    await run(
-      dispatch,
-      requestReturn({
-        orderId,
-        items: [
-          {
-            orderItemId: getItemId(item),
-            productId: values.productId,
-            variantSku: getItemVariantSku(item),
-            quantity: Number(values.quantity),
-            unitPrice,
-          },
-        ],
-        reason: values.reason,
-        resolution: "refund",
-        description: values.description,
-      }),
-      "Return request submitted",
-    );
+    try {
+      await run(
+        dispatch,
+        requestReturn({
+          orderId,
+          items: [
+            {
+              orderItemId: getItemId(item),
+              productId: values.productId,
+              variantSku: getItemVariantSku(item),
+              quantity: Number(values.quantity),
+              unitPrice,
+            },
+          ],
+          reason: values.reason,
+          resolution: "refund",
+          description: values.description,
+        }),
+        "Return request submitted",
+      );
+      navigate("/returns-refunds");
+    } catch (e) {
+      // silent
+    }
   };
 
   return (
@@ -364,9 +347,15 @@ function ReturnRequestPage({ orderId }) {
 
                   {estimatedRefund > 0 && (
                     <div className="rounded-[8px] border border-emerald-200 bg-emerald-50 px-4 py-3">
-                      <p className="text-xs font-semibold text-emerald-700">Estimated refund</p>
+                      <p className="text-xs font-semibold text-emerald-700">
+                        Estimated refund
+                      </p>
                       <p className="mt-1 text-lg font-bold text-emerald-700">
-                        ₹{estimatedRefund.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        ₹
+                        {estimatedRefund.toLocaleString("en-IN", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </p>
                       <p className="mt-0.5 text-xs text-emerald-600">
                         Final refund amount is subject to review and QC.
@@ -387,115 +376,7 @@ function ReturnRequestPage({ orderId }) {
   );
 }
 
-function ReturnsListPage() {
-  const dispatch = useDispatch();
-  const state = useSelector((s) => s.returns);
-  const returns = Array.isArray(state.list) ? state.list : [];
-  const [downloadingId, setDownloadingId] = useState(null);
-
-  useEffect(() => {
-    dispatch(fetchMyReturns());
-  }, [dispatch]);
-
-  const handleDownload = async (apiPath, filename) => {
-    setDownloadingId(apiPath);
-    try {
-      await downloadAuthDocument(apiPath, filename);
-    } catch {
-      // silent
-    } finally {
-      setDownloadingId(null);
-    }
-  };
-
-  return (
-    <>
-      <Seo title="My Returns | Sam Global" />
-      <div className="w-container py-8 sm:py-10">
-        <h1 className="mb-6 text-2xl font-bold text-ink sm:text-3xl">
-          My Returns
-        </h1>
-
-        <ApiState
-          loading={state.loading && !returns.length}
-          error={state.error}
-          empty={!returns.length}
-          emptyTitle="No returns yet"
-          emptyText="Your return requests will appear here."
-        >
-          <div className="grid gap-3">
-            {returns.map((item) => {
-              const id = item._id || item.id || item.returnId;
-              const status = item.status || item.refundStatus;
-              const cls = STATUS_BADGE[status] || "bg-cream text-muted";
-              const trackingNumber =
-                item.reverseShipment?.trackingNumber ||
-                item.reverseShipment?.tracking_number ||
-                item.reverse_shipment?.tracking_number ||
-                null;
-              const refundAmount = item.refund?.amount ?? item.refundAmount ?? item.refund_amount ?? null;
-              const refundStatus = item.refund?.status ?? item.refundStatus ?? null;
-              const creditNoteId = item.creditNoteId || item.credit_note_id || item.refund?.creditNoteId;
-              const cnPath = creditNoteId ? endpoints.tax.creditNoteDownload(creditNoteId) : null;
-
-              return (
-                <div
-                  key={id}
-                  className="rounded-[12px] border border-border bg-white px-5 py-4"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-ink">
-                        Return #{String(id || "").slice(0, 8).toUpperCase()}
-                      </p>
-                      <p className="mt-0.5 font-mono text-xs text-muted">{id}</p>
-                      <p className="mt-1 text-xs capitalize text-muted">
-                        {item.reason?.replace(/_/g, " ")}
-                      </p>
-                      {trackingNumber && (
-                        <p className="mt-1 text-xs text-muted">
-                          Pickup tracking: {trackingNumber}
-                        </p>
-                      )}
-                      {refundAmount !== null && (
-                        <p className="mt-1 text-xs font-medium text-emerald-700">
-                          Refund: ₹{Number(refundAmount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                          {refundStatus && ` · ${String(refundStatus).replace(/_/g, " ")}`}
-                        </p>
-                      )}
-                    </div>
-                    <span
-                      className={`shrink-0 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${cls}`}
-                    >
-                      {status?.replace(/_/g, " ")}
-                    </span>
-                  </div>
-                  {cnPath && (
-                    <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
-                      <FileText size={13} className="text-muted" />
-                      <span className="flex-1 text-xs text-muted">Credit note available</span>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        loading={downloadingId === cnPath}
-                        onClick={() => handleDownload(cnPath, `credit-note-${String(id).slice(0, 8)}.pdf`)}
-                      >
-                        <Download size={12} /> Download
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </ApiState>
-      </div>
-    </>
-  );
-}
-
 export default function ReturnsPage({ request = false }) {
   const { orderId } = useParams();
   if (request) return <ReturnRequestPage orderId={orderId} />;
-  return <ReturnsListPage />;
 }

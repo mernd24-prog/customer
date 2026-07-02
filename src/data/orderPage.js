@@ -98,7 +98,7 @@ export const ORDER_FILTERS = [
 ];
 
 export const COMPACT_STATUS_BADGE = {
-  delivered: "bg[#008425] text-white",
+  delivered: "bg-[#008425] text-white",
   fulfilled: "bg-[#0C9F45] text-white",
   partially_delivered: "bg-[#0C9F45] text-white",
   shipped: "bg-[#1B1D60] text-white",

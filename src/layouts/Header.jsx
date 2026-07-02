@@ -242,7 +242,7 @@ export const TopHeader = () => {
           },
           {
             label: helpContactPage?.title || "Help & Contact",
-            path: "/help-contact",
+            path: "/support",
             icon: "lifeBuoy",
           },
         ]),

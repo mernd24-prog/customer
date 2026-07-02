@@ -92,7 +92,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
   const buyerImage = review.buyerImage || review.buyerAvatarUrl || "";
 
   return (
-    <article className="border-b  border-[var(--customer-border)] last:border-b-0 sm:pb-4 mb-4 lg:mb-6">
+    <article className="border-b  border-[var(--customer-border)] last:border-b-0 mb-4 lg:mb-6">
       <div className="mb-2  flex min-w-0 items-center gap-2.5">
         <span className="w-8 h-8 lg:w-10 lg:h-10">
           <img
@@ -120,9 +120,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         </p>
       )}
       {text && (
-        <p className="text-sm text-[#2E2E2E] sm:text-lg  my-4 lg:mt-8 ">
-          {text}
-        </p>
+        <p className="text-sm text-[#2E2E2E] sm:text-lg  my-4 ">{text}</p>
       )}
 
       {media.length > 0 && (
@@ -512,8 +510,8 @@ export default function ProductReviewsSection({ productId, product }) {
     <section id="reviews" className="w-full overflow-hidden">
       <div className="flex mt-4 lg:mt-8 flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-12">
         <aside className=" lg:sticky lg:top-20   lg:self-start">
-          <div className="w-full lg:w-[420px] xl:w-[580px]  rounded-xl  border border-[#CE9F2D66] bg-white">
-            <div className=" px-4 py-6  rounded-xl bg-[#CE9F2D33] sm:px-5">
+          <div className="w-full overflow-hidden lg:w-[420px] xl:w-[580px] rounded-xl border border-[#CE9F2D66] bg-white">
+            <div className=" px-4 py-6  bg-[#CE9F2D33]   sm:px-5">
               <h2 className="text-lg lg:text-[24px] font-bold text-[#2E2E2E]">
                 Product Ratings & Reviews
               </h2>
@@ -524,11 +522,11 @@ export default function ProductReviewsSection({ productId, product }) {
                 <span>
                   <IoIosStar className="text-xl lg:text-3xl" />
                 </span>
-                <span className="text-[28px] lg:text-[42px]">
+                <span className="text-[28px]  lg:text-[42px]">
                   {Number(displayAvgRating).toFixed(1)}
                 </span>
               </div>
-              <p className="text-base lg:text-lg  font-medium text-[#2E2E2E]">
+              <p className="text-base lg:text-lg mt-2  font-medium text-[#2E2E2E]">
                 {displayReviewCount} Ratings, {displayTotal} Reviews
               </p>
 
