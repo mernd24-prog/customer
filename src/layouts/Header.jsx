@@ -202,13 +202,12 @@ export const TopHeader = () => {
   const navigate = useNavigate();
   const currentUser = useSelector((s) => s.auth.current);
 
-  const { page: brandOutletPage } = useCmsRecord("brand-outlet");
   const { page: helpContactPage } = useCmsRecord("help-contact");
   const { page: headerSellPage } = useCmsRecord("header-sell-dropdown");
 
   const sellDropdownCms = getCmsPayload(headerSellPage, DEFAULT_SELL_DROPDOWN);
   const topLinks = [
-    { name: brandOutletPage?.title || "Brand Outlet", path: "/brand-outlet" },
+    { name: "Brand Outlet", path: "/brand-outlet" },
     { name: helpContactPage?.title || "Help & Contact", path: "/help-contact" },
   ];
   const filteredTopLinks = topLinks.filter(

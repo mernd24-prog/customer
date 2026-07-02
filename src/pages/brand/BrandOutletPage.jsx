@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Seo from "../../components/common/Seo";
 import { BrandCard } from "../../components/ecommerce";
@@ -14,6 +13,7 @@ function listFromPayload(payload) {
   if (Array.isArray(data?.list)) return data.list;
   if (Array.isArray(data?.brands)) return data.brands;
   if (Array.isArray(data?.results)) return data.results;
+  if (data?.data) return listFromPayload(data.data);
   return [];
 }
 
@@ -79,7 +79,12 @@ export default function BrandOutletPage() {
           routeKey: getBrandRouteKey(brand),
           displayLogo: getBrandLogo(brand),
         }))
-        .filter((brand) => brand.displayName && brand.routeKey),
+        .filter((brand) => brand.displayName && brand.routeKey)
+        .sort((a, b) =>
+          a.displayName.localeCompare(b.displayName, undefined, {
+            sensitivity: "base",
+          }),
+        ),
     [brandList],
   );
 
