@@ -20,12 +20,12 @@ export default function QuantitySelector({
         {labelAccessory}
       </div>
 
-      <div className="flex mt-2  h-[44px] w-full items-center justify-between rounded-full border border-[#1B1D60]/60 bg-[#D9D9E3]  p-[6px]  min-[375px]:h-[46px] min-[375px]:p-[7px] sm:h-[54px] sm:w-[180px]">
+      <div className="flex mt-2  h-[44px] w-full items-center justify-between rounded-full border border-[#1B1D60]/60 bg-[#D9D9E3]  p-[6px]  min-[375px]:h-[46px] min-[375px]:p-[7px] sm:h-[50px]  sm:w-[180px]">
         <button
           type="button"
           onClick={onDecrease}
           disabled={disabled || quantity <= 1}
-          className="flex h-[32px] w-[32px] items-center justify-center rounded-full bg-[#1B1D60] text-[24px] font-light leading-none text-white disabled:cursor-not-allowed disabled:opacity-50 min-[375px]:h-[36px] min-[375px]:w-[36px] min-[375px]:text-[28px] sm:h-[40px] sm:w-[40px] sm:text-[32px]"
+          className="flex h-[32px] w-[32px]  items-center justify-center rounded-full bg-[#1B1D60] text-[24px] font-light leading-none text-white disabled:cursor-not-allowed disabled:opacity-50 min-[375px]:h-[36px] min-[375px]:w-[36px] min-[375px]:text-[28px] sm:h-[35px] sm:w-[35px] sm:text-[28px]"
           aria-label="Decrease quantity"
         >
           −
@@ -42,7 +42,7 @@ export default function QuantitySelector({
             onIncrease?.();
           }}
           disabled={disableIncrease}
-          className="flex h-[32px] w-[32px] items-center justify-center rounded-full bg-[#1B1D60] text-[24px] font-light leading-none text-white disabled:cursor-not-allowed disabled:opacity-50 min-[375px]:h-[36px] min-[375px]:w-[36px] min-[375px]:text-[28px] sm:h-[40px] sm:w-[40px] sm:text-[32px]"
+          className="flex h-[32px] w-[32px] items-center justify-center rounded-full bg-[#1B1D60] text-[24px] font-light leading-none text-white disabled:cursor-not-allowed disabled:opacity-50 min-[375px]:h-[36px] min-[375px]:w-[36px] min-[375px]:text-[28px] sm:h-[35px] sm:w-[35px] sm:text-[28px]"
           aria-label={increaseDisabledLabel || "Increase quantity"}
           title={increaseDisabledLabel || undefined}
         >
