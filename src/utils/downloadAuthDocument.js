@@ -1,7 +1,7 @@
 import { tokenStorage } from "../api/tokenStorage";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://192.168.16.42:4000";
+  import.meta.env.VITE_API_BASE_URL || "http://45.195.90.183:4000";
 
 const buildUrl = (path = "") =>
   `${API_BASE_URL.replace(/\/+$/, "")}/${String(path).replace(/^\/+/, "")}`;
@@ -13,7 +13,9 @@ export async function downloadAuthDocument(apiPath, filename = "document") {
   const response = await fetch(buildUrl(apiPath), { headers });
 
   if (!response.ok) {
-    throw new Error(`Download failed: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Download failed: ${response.status} ${response.statusText}`,
+    );
   }
 
   const blob = await response.blob();

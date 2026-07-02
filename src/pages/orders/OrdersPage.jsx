@@ -872,7 +872,7 @@ function OrderListStatusBadge({ status }) {
   const cls = COMPACT_STATUS_BADGE[status] || "bg-[#D7A522] text-white";
   return (
     <span
-      className={`mt-2 md:mt-0 inline-flex min-w-[74px] justify-center rounded-full px-3 py-2  text-sm  2xl:text-[18px] font-bold capitalize ${cls}`}
+      className={`mt-2 md:mt-0  inline-flex min-w-[74px] justify-center rounded-full px-3 py-2  text-sm  2xl:text-[18px] font-bold capitalize ${cls}`}
     >
       {humanize(status, "Processing")}
     </span>

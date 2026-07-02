@@ -1,6 +1,5 @@
-import Button from "../common/buttons/Button";
-import { Badge, Divider } from "../common/display";
-import { formatMoney } from "../../utils/ecommerce/money";
+import { Badge, Button, Divider } from "../../../components/common";
+import { formatMoney } from "../../../utils/ecommerce";
 
 export default function RefundSummaryCard({
   amount,

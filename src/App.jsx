@@ -22,6 +22,7 @@ import CategoryListingPage from "./pages/category/CategoryListingPage";
 import DownloadApp from "./pages/downloadApp/DownloadApp";
 import PolicyPage from "./pages/policiesPage/PoliciesPages";
 import Loader from "./components/common/Loader";
+import ReturnsPage from "./pages/returns/ReturnsPage.jsx";
 
 const CART_STORAGE_KEYS = [
   "sam_global_saved_for_later_items", // localStorage
@@ -124,7 +125,6 @@ const PaymentResultPage = lazyNamed(
   "PaymentResultPage",
 );
 const OrdersPage = lazy(() => import("./pages/orders/OrdersPage"));
-const ReturnsPage = lazy(() => import("./pages/returns/ReturnsPage"));
 const ReturnsRefundsPage = lazy(
   () => import("./pages/returnRefund/ReturnsRefunds.jsx"),
 );
@@ -299,13 +299,13 @@ export default function App() {
                   element={<ResetPasswordPage />}
                 />
               </Route>
-              {/* ── Static / info pages (public) ──────────────────────────── */}
+
               <Route path="/faq" element={<FAQPage />} />
 
               {/* Not working */}
               <Route path="/support" element={<SupportHelpCenter />} />
 
-              <Route path="/help-contact" element={<ContactUs />} />
+              {/* <Route path="/help-contact" element={<ContactUs />} /> */}
               <Route path="/deals" element={<CmsPage slugOverride="deals" />} />
               <Route path="/brand-outlet" element={<BrandOutletPage />} />
               <Route
@@ -455,7 +455,7 @@ export default function App() {
                   />
 
                   {/* Returns */}
-                  <Route path="/returns" element={<ReturnsPage />} />
+                  {/* <Route path="/returns" element={<ReturnsPage />} /> */}
                   <Route
                     path="/returns/request/:orderId"
                     element={<ReturnsPage request />}

@@ -1,5 +1,3 @@
-import { ExternalLink } from "lucide-react";
-
 const steps = [
   {
     title: "Return Requested",
@@ -40,8 +38,9 @@ const steps = [
 export default function ReturnTrackingCard({
   title = "Return Tracking – Smart Watch",
   returnId = "RTN8745621",
-  policyHref = "/refund-policy",
+  steps: customSteps,
 }) {
+  const stepsToRender = customSteps || steps;
   return (
     <section className="rounded-xl rounded-t-none border border-[#E7D9B8] bg-white px-3 py-4 min-[375px]:px-4 sm:px-6 lg:px-6 lg:py-9  ">
       <h2 className="text-[16px] font-semibold leading-tight text-[#1B1D60] sm:text-[18px] md:text-[22px] lg:text-[26px] pb-2">
@@ -54,8 +53,8 @@ export default function ReturnTrackingCard({
       <div className="my-4 h-px bg-[#2E2E2E]/40" />
 
       <div>
-        {steps.map((step, index) => {
-          const isLast = index === steps.length - 1;
+        {stepsToRender.map((step, index) => {
+          const isLast = index === stepsToRender.length - 1;
 
           return (
             <div
@@ -112,16 +111,6 @@ export default function ReturnTrackingCard({
           );
         })}
       </div>
-
-      <div className="h-px bg-[#2E2E2E]/40" />
-
-      <a
-        href={policyHref}
-        className="mt-4 inline-flex items-center gap-2 text-[14px]  font-bold text-[#1B1D60] sm:text-[16px] lg:text-[24px] leading-[200%] "
-      >
-        View Return Policy
-        <ExternalLink size={18} />
-      </a>
     </section>
   );
 }

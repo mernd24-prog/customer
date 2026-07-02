@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 import { Package } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import { useDispatch } from "react-redux";
@@ -18,12 +18,17 @@ const reviewKeyForItem = (orderId, item) =>
   [
     orderId,
     item?.id || item?._id || item?.orderItemId || item?.order_item_id || "",
-    item?.product_id || item?.productId || item?.product?.id || item?.product?._id || "",
+    item?.product_id ||
+      item?.productId ||
+      item?.product?.id ||
+      item?.product?._id ||
+      "",
   ].join(":");
 
 const getReviewProductId = (item) => {
   const productId = item?.product_id || item?.productId;
-  if (productId && typeof productId === "object") return productId.id || productId._id;
+  if (productId && typeof productId === "object")
+    return productId.id || productId._id;
   return productId || item?.product?.id || item?.product?._id || "";
 };
 
@@ -106,7 +111,9 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
           <span className="text-sm font-semibold text-[#2E2E2E]">Rating</span>
           <StarInput
             value={form.rating}
-            onChange={(rating) => setForm((current) => ({ ...current, rating }))}
+            onChange={(rating) =>
+              setForm((current) => ({ ...current, rating }))
+            }
           />
         </div>
 
@@ -119,7 +126,7 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
               setForm((current) => ({ ...current, title: event.target.value }))
             }
             maxLength={200}
-            className="h-11 rounded-[8px] border border-[#CE9F2D66] px-3 text-sm font-medium outline-none focus:border-[#CE9F2D]"
+            className="h-11 rounded-[8px] border border-[#CE9F2D66] px-3 text-sm font-medium outline-none focus:border-transparent"
             placeholder="Summarise your experience"
           />
         </label>
@@ -129,11 +136,14 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
           <textarea
             value={form.reviewText}
             onChange={(event) =>
-              setForm((current) => ({ ...current, reviewText: event.target.value }))
+              setForm((current) => ({
+                ...current,
+                reviewText: event.target.value,
+              }))
             }
             maxLength={2000}
             rows={5}
-            className="resize-none rounded-[8px] border border-[#CE9F2D66] px-3 py-2 text-sm font-medium outline-none focus:border-[#CE9F2D]"
+            className="resize-none rounded-[8px] border border-[#CE9F2D66] px-3 py-2 text-sm font-medium outline-none focus:border-transparent"
             placeholder="Share product quality, delivery condition, and fit."
           />
         </label>
@@ -283,12 +293,7 @@ function OrderItemCard({
   );
 }
 
-function OrderItemsSection({
-  items = [],
-  orderId,
-  orderStatus,
-  ...itemProps
-}) {
+function OrderItemsSection({ items = [], orderId, orderStatus, ...itemProps }) {
   const dispatch = useDispatch();
   const [reviewTarget, setReviewTarget] = useState(null);
   const [reviewByItem, setReviewByItem] = useState({});
@@ -357,7 +362,9 @@ function OrderItemsSection({
             orderId={orderId}
             canReview={canReviewOrder && Boolean(getReviewProductId(item))}
             existingReview={reviewByItem[reviewKeyForItem(orderId, item)]}
-            reviewChecked={Boolean(checkedReviewKeys[reviewKeyForItem(orderId, item)])}
+            reviewChecked={Boolean(
+              checkedReviewKeys[reviewKeyForItem(orderId, item)],
+            )}
             onReviewClick={setReviewTarget}
             {...itemProps}
           />
