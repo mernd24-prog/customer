@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronLeft, Star, ThumbsUp, UserCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, ThumbsUp, UserCircle, X } from "lucide-react";
 import { useAuthModal } from "../../context/AuthModalContext";
 import {
   fetchProductReviews,

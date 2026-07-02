@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useAuthModal } from "../../context/AuthModalContext";
-import { ChevronRight, ThumbsUp } from "lucide-react";
+import { ChevronLeft, ChevronRight, ThumbsUp, X } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import {
   fetchProductReviews,
