@@ -459,7 +459,7 @@ function DeliveryChecker({ productId, onResultChange }) {
 
       <form
         onSubmit={check}
-        className="flex h-[50px] w-full max-w-[360px] overflow-hidden rounded-full border border-[#1B1D604D]"
+        className="flex h-[48px] w-full max-w-[360px] overflow-hidden rounded-full border border-[#1B1D604D]"
       >
         <input
           type="text"
@@ -535,7 +535,7 @@ function VariantSelector({
         >
           <p
             className={`mb-3 font-semibold capitalize text-ink ${
-              option.displayType === "color_swatch" ? "text-xl" : "text-[20px]"
+              option.displayType === "color_swatch" ? "text-lg" : "text-lg"
             }`}
           >
             {option.displayType === "color_swatch" ? "Colour" : option.name}:

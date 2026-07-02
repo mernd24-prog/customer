@@ -41,6 +41,10 @@
   .text-extaSmall {
     @apply text-[14px] 2xl:text-[16px];
   }
+
+  .small {
+    @apply text-sm sm:text-base;
+  }
 }
 
 /* ============================= */

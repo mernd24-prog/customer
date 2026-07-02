@@ -164,7 +164,10 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
             : "text-[#949494] hover:bg-[#F7F7FA] hover:text-[#1B1D60]"
         }`}
       >
-        <ThumbsUp size={13} className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""} />
+        <ThumbsUp
+          size={13}
+          className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
+        />
         Helpful ({helpfulVotes})
       </button>
     </article>
@@ -186,7 +189,9 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
     reviewText: "",
   });
   const [reviewImages, setReviewImages] = useState([]);
-  const isUploadingImages = reviewImages.some((image) => image.status === "uploading");
+  const isUploadingImages = reviewImages.some(
+    (image) => image.status === "uploading",
+  );
 
   useEffect(() => {
     if (submitSuccess) {
@@ -310,7 +315,11 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
         }
         className="w-full h-11 rounded-full bg-gold text-white font-semibold text-sm hover:bg-gold-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {submitting ? "Submitting…" : isUploadingImages ? "Uploading…" : "Submit Review"}
+        {submitting
+          ? "Submitting…"
+          : isUploadingImages
+            ? "Uploading…"
+            : "Submit Review"}
       </button>
     </form>
   );
@@ -512,7 +521,7 @@ export default function ProductReviewsSection({ productId, product }) {
         <aside className=" lg:sticky lg:top-20   lg:self-start">
           <div className="w-full overflow-hidden lg:w-[420px] xl:w-[580px] rounded-xl border border-[#CE9F2D66] bg-white">
             <div className=" px-4 py-6  bg-[#CE9F2D33]   sm:px-5">
-              <h2 className="text-lg lg:text-[24px] font-bold text-[#2E2E2E]">
+              <h2 className="text-h5 font-bold text-[#2E2E2E]">
                 Product Ratings & Reviews
               </h2>
             </div>
@@ -520,13 +529,13 @@ export default function ProductReviewsSection({ productId, product }) {
             <div className="p-3 lg:p-5">
               <div className="flex  items-center gap-2  font-bold  text-[#008425]">
                 <span>
-                  <IoIosStar className="text-xl lg:text-3xl" />
+                  <IoIosStar className="text-xl lg:text-2xl" />
                 </span>
-                <span className="text-[28px]  lg:text-[42px]">
+                <span className="text-[28px]  lg:text-[40px]">
                   {Number(displayAvgRating).toFixed(1)}
                 </span>
               </div>
-              <p className="text-base lg:text-lg mt-2  font-medium text-[#2E2E2E]">
+              <p className="text-sm lg:text-base mt-4  font-medium text-[#2E2E2E]">
                 {displayReviewCount} Ratings, {displayTotal} Reviews
               </p>
 
@@ -548,10 +557,10 @@ export default function ProductReviewsSection({ productId, product }) {
                       }`}
                     >
                       <div className="my-3 flex justify-between">
-                        <span className="  text-[11px]  font-medium text-[#2E2E2E] sm:text-lg">
+                        <span className="  small   font-medium text-[#2E2E2E] ">
                           {item.label}
                         </span>
-                        <span className="text-right  text-[11px] font-medium text-[#2E2E2E] sm:text-lg">
+                        <span className="text-right  small font-medium text-[#2E2E2E]">
                           {item.count}
                         </span>
                       </div>
@@ -632,7 +641,7 @@ export default function ProductReviewsSection({ productId, product }) {
                             setPage(1);
                             setSortOpen(false);
                           }}
-                          className={`block w-full px-3 py-2 text-left text-xs font-medium ${
+                          className={`block w-full  px-3 py-2 text-left text-xs font-medium ${
                             sort === option.value
                               ? "bg-[#1B1D60] text-white"
                               : "bg-white text-[var(--customer-gold-dark)] hover:bg-[#F8F3E7]"
