@@ -290,6 +290,29 @@ const getOrderItemProductPath = (item) => {
   return productId ? `/products/${productId}` : "";
 };
 
+const toTitle = (value = "") =>
+  String(value || "")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+const getItemShippingSummary = (item = {}) => {
+  const snapshot = item.productSnapshot || item.product_snapshot || {};
+  const shipping = item.shipping || snapshot.shipping || {};
+  const hasProfile = Boolean(shipping.shippingProfileId);
+  const method = shipping.shippingMethod || shipping.method || "";
+  const min = shipping.estimatedDaysMin ?? shipping.processingDays;
+  const max = shipping.estimatedDaysMax ?? shipping.processingDays;
+  const eta = min || max
+    ? `${min || max}${max && max !== min ? `-${max}` : ""} days`
+    : "";
+  if (!hasProfile && !method && !eta) return "";
+  return [
+    hasProfile ? "Seller delivery profile" : "Delivery",
+    method ? toTitle(method) : "",
+    eta ? `ETA ${eta}` : "",
+  ].filter(Boolean).join(" · ");
+};
+
 function OrderItemCard({
   item,
   orderId,
@@ -307,6 +330,7 @@ function OrderItemCard({
 }) {
   const productPath =
     getItemProductPath?.(item) || getOrderItemProductPath(item);
+  const shippingSummary = getItemShippingSummary(item);
 
   return (
     <div className="flex w-full flex-col gap-4  sm:flex-row sm:gap-5 lg:gap-[36px]">
@@ -353,6 +377,12 @@ function OrderItemCard({
             </strong>
           </span>
         </div>
+
+        {shippingSummary && (
+          <p className="mb-3 text-[14px] font-semibold leading-5 text-[#5F6078]">
+            {shippingSummary}
+          </p>
+        )}
 
         <div className="mt-2 gap-[5px] sm:mt-4 lg:mt-0">
           <p className="text-[20px] font-extrabold leading-[28px] text-[#1B1D60] sm:text-[26px] sm:leading-[38px] md:text-[24px] md:leading-[46px] ">
