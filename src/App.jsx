@@ -114,7 +114,7 @@ const BrandPage = lazy(() => import("./pages/brand/BrandPage"));
 const CategoryPage = lazy(() => import("./pages/category/CategoryPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const BackendGapNotes = lazyNamed(
-  () => import("./pages/CustomerPages"),
+  () => import("./pages/BackendGapNotes"),
   "BackendGapNotes",
 );
 
@@ -122,7 +122,7 @@ const AccountPage = lazy(() => import("./pages/account/AccountPage"));
 const CartPage = lazy(() => import("./pages/cart/CartPage"));
 const CheckoutPage = lazy(() => import("./pages/checkout/CheckoutPage"));
 const PaymentResultPage = lazyNamed(
-  () => import("./pages/CustomerPages"),
+  () => import("./pages/checkout/PaymentResultPage"),
   "PaymentResultPage",
 );
 const OrdersPage = lazy(() => import("./pages/orders/OrdersPage"));
@@ -130,35 +130,35 @@ const ReturnsRefundsPage = lazy(
   () => import("./pages/returnRefund/ReturnsRefunds.jsx"),
 );
 const WalletPage = lazyNamed(
-  () => import("./pages/CustomerPages"),
+  () => import("./pages/wallet/WalletPage"),
   "WalletPage",
 );
 const PaymentsPage = lazyNamed(
-  () => import("./pages/CustomerPages"),
+  () => import("./pages/payments/PaymentsPage"),
   "PaymentsPage",
 );
 const SubscriptionPage = lazyNamed(
-  () => import("./pages/CustomerPages"),
+  () => import("./pages/subscription/SubscriptionPage"),
   "SubscriptionPage",
 );
 const LoyaltyPage = lazyNamed(
-  () => import("./pages/CustomerPages"),
+  () => import("./pages/loyalty/LoyaltyPage"),
   "LoyaltyPage",
 );
 const SimpleApiPage = lazyNamed(
-  () => import("./pages/CustomerPages"),
+  () => import("./pages/SimpleApiPage"),
   "SimpleApiPage",
 );
 const WarrantyPage = lazyNamed(
-  () => import("./pages/CustomerPages"),
+  () => import("./pages/warranty/WarrantyPage"),
   "WarrantyPage",
 );
 const NotificationsPage = lazyNamed(
-  () => import("./pages/CustomerPages"),
+  () => import("./pages/notifications/NotificationsPage"),
   "NotificationsPage",
 );
 const PreferencesPage = lazyNamed(
-  () => import("./pages/CustomerPages"),
+  () => import("./pages/preferences/PreferencesPage"),
   "PreferencesPage",
 );
 
