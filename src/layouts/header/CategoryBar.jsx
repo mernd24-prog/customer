@@ -240,7 +240,10 @@ export const CategoryBar = ({ headerData, compact = false }) => {
           {visibleCategories.map((item, index) => {
             const categoryHref = `/categories/${
               item?.categoryKey ||
-              keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))
+              keyOr(
+                item?.slug,
+                buildCategorySlug(textOr(item?.name, "category")),
+              )
             }`;
             const isActive =
               activeMenu?.categoryKey === item?.categoryKey ||
@@ -306,11 +309,18 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       <nav
         aria-label="Sticky category navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
-        className={`fixed left-0 z-40 w-full bg-white/95 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur transition-all duration-300 ease-out will-change-transform !block ${
-          isPinned
-            ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-full opacity-0"
-        }`}
+        className={`fixed left-0 z-40 w-full
+    border-0 border-b border-gray-200
+    bg-white
+    shadow-none
+    transition-all duration-300 ease-out
+    will-change-transform
+    !block
+    ${
+      isPinned
+        ? "pointer-events-auto translate-y-0 opacity-100"
+        : "pointer-events-none -translate-y-full opacity-0"
+    }`}
       >
         <div className="relative w-full">
           <div
@@ -333,7 +343,10 @@ export const CategoryBar = ({ headerData, compact = false }) => {
               onMouseEnter={keepCategoryMenuOpen}
               onMouseLeave={handleCategoryMouseLeave}
             >
-              <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
+              <CategoryMegaMenu
+                data={megaMenuData}
+                activeCategory={activeMenu}
+              />
             </div>
           )}
         </div>

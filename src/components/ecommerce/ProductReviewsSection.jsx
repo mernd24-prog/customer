@@ -644,7 +644,7 @@ export default function ProductReviewsSection({ productId, product }) {
   return (
     <section id="reviews" className="w-full overflow-visible">
       <div className="flex mt-4 lg:mt-8 flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-12">
-        <aside className=" lg:sticky lg:top-20   lg:self-start">
+        <aside className="lg:sticky lg:top-[calc(var(--customer-header-height,95px)+54px)] lg:self-start">
           <div className="w-full overflow-hidden lg:w-[420px] xl:w-[580px] rounded-xl border border-[#CE9F2D66] bg-white">
             <div className=" px-4 py-6  bg-[#CE9F2D33]   sm:px-5">
               <h2 className="text-h6 font-bold text-[#2E2E2E]">

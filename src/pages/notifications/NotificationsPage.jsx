@@ -124,8 +124,14 @@ export function NotificationsPage() {
   };
 
   const breadcrumbItems = [
-    { label: "Home", href: "/" },
-    { label: "Notifications", href: "/notifications" },
+    {
+      label: "Home",
+      href: "/",
+    },
+    {
+      label: "Notifications",
+      href: "/notifications",
+    },
   ];
 
   useEffect(() => {
@@ -148,14 +154,65 @@ export function NotificationsPage() {
         />
 
         {/* Heading */}
-        <h1 className="mb-6 text-[26px] font-bold leading-tight text-[#3E4093] sm:text-[30px] lg:text-[32px]">
+        <h1
+          className="
+            mb-6
+            text-[26px]
+            font-bold
+            leading-tight
+            text-[#3E4093]
+            sm:text-[30px]
+            lg:text-[32px]
+          "
+        >
           Notifications
         </h1>
 
-        {/* Main Figma Layout */}
-        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(280px,0.95fr)] xl:grid-cols-[minmax(0,3.2fr)_minmax(300px,0.9fr)]">
-          {/* LEFT COLUMN */}
-          <section className="min-w-0">
+        {/* =========================================================
+            MAIN TWO COLUMN LAYOUT
+
+            Desktop:
+            - layout has viewport based height
+            - left column scrolls independently
+            - right Need Help stays in place
+
+            Mobile:
+            - normal page flow
+        ========================================================== */}
+        <div
+          className="
+            grid
+            grid-cols-1
+            items-start
+            gap-8
+
+            lg:h-[calc(100vh-280px)]
+            lg:min-h-[420px]
+            lg:grid-cols-[minmax(0,3fr)_minmax(280px,0.95fr)]
+            lg:gap-10
+
+            xl:grid-cols-[minmax(0,3.2fr)_minmax(300px,0.9fr)]
+            xl:gap-14
+          "
+        >
+          {/* =====================================================
+              LEFT COLUMN
+              Only this area scrolls on desktop
+          ====================================================== */}
+          <section
+            className="
+                min-w-0
+
+                lg:h-full
+                lg:min-h-0
+                lg:overflow-y-auto
+                lg:overscroll-contain
+
+                lg:[scrollbar-width:none]
+                lg:[-ms-overflow-style:none]
+                lg:[&::-webkit-scrollbar]:hidden
+              "
+          >
             <ApiState
               loading={notifState.loading && !notifications.length}
               error={notifState.error}
@@ -185,80 +242,224 @@ export function NotificationsPage() {
                   return (
                     <article
                       key={notif._id || notif.id || index}
-                      className="flex gap-3 border-b border-[#D9DDE8] py-5 last:border-b-0 sm:gap-4 sm:py-6"
+                      className="
+                          flex
+                          gap-4
+                          border-b
+                          border-[#D9DDE8]
+                          py-6
+                          last:border-b-0
+
+                          sm:gap-5
+                          sm:py-7
+
+                          lg:gap-6
+                        "
                     >
                       {/* Icon */}
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#CE9F2D] bg-white sm:h-12 sm:w-12">
+                      <div
+                        className="
+                            flex
+                            h-[56px]
+                            w-[56px]
+                            shrink-0
+                            items-center
+                            justify-center
+                            overflow-hidden
+                            rounded-full
+                            border
+                            border-[#CE9F2D]
+                            bg-white
+
+                            sm:h-[60px]
+                            sm:w-[60px]
+
+                            lg:h-[64px]
+                            lg:w-[64px]
+                          "
+                      >
                         <img
                           src={notificationItem.icon}
                           alt={notif.title || notif.subject || "Notification"}
-                          className="h-5 w-5 object-contain sm:h-6 sm:w-6"
+                          className="
+                              h-[30px]
+                              w-[30px]
+                              object-contain
+
+                              sm:h-[34px]
+                              sm:w-[34px]
+
+                              lg:h-[36px]
+                              lg:w-[36px]
+                            "
                         />
                       </div>
 
-                      {/* Main Content */}
+                      {/* Content */}
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-start justify-between gap-3">
-                          {/* Text */}
+                        <div
+                          className="
+                              flex
+                              items-start
+                              justify-between
+                              gap-4
+                              sm:gap-5
+                            "
+                        >
+                          {/* Left Text */}
                           <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
+                            {/* Title Row */}
+                            <div
+                              className="
+                                  flex
+                                  flex-wrap
+                                  items-center
+                                  gap-2
+                                "
+                            >
                               {!isRead && (
-                                <span className="h-2 w-2 shrink-0 rounded-full bg-[#1597D4]" />
+                                <span
+                                  className="
+                                      h-[8px]
+                                      w-[8px]
+                                      shrink-0
+                                      rounded-full
+                                      bg-[#1597D4]
+
+                                      sm:h-[9px]
+                                      sm:w-[9px]
+                                    "
+                                />
                               )}
 
-                              <h3 className="text-[14px] font-semibold leading-5 text-[#2E2E2E] sm:text-[15px] lg:text-[16px]">
+                              <h3
+                                className="
+                                    text-[20px]
+                                    font-semibold
+                                    leading-[26px]
+                                    text-[#2E2E2E]
+                                  "
+                              >
                                 {notif.title || notif.subject || "Notification"}
                               </h3>
                             </div>
 
-                            <p className="mt-1 max-w-[700px] break-words text-[12px] leading-[18px] text-[#4E4E4E] sm:text-[13px] sm:leading-5">
+                            {/* Description */}
+                            <p
+                              className="
+                                  mt-1.5
+                                  max-w-[700px]
+                                  break-words
+                                  text-[15px]
+                                  leading-[21px]
+                                  text-[#4E4E4E]
+
+                                  sm:text-[16px]
+                                  sm:leading-[23px]
+                                "
+                            >
                               {notif.template ||
                                 notif.message ||
                                 notif.body ||
                                 notificationItem.message ||
                                 ""}
                             </p>
+
+                            {/* Mobile Time */}
+                            <span
+                              className="
+                                  mt-2
+                                  block
+                                  text-[15px]
+                                  font-medium
+                                  leading-5
+                                  text-[#4E4E4E]
+
+                                  sm:hidden
+                                "
+                            >
+                              {formatNotificationDate(notif.createdAt)}
+                            </span>
+
+                            {/* Action */}
+                            {notificationItem.action && (
+                              <button
+                                type="button"
+                                onClick={() => handleNavigate(actionPath)}
+                                className="
+                                    mt-2.5
+                                    text-[14px]
+                                    font-semibold
+                                    text-[#1B1D60]
+                                    hover:underline
+                                  "
+                              >
+                                {notificationItem.action}
+                              </button>
+                            )}
                           </div>
 
                           {/* Time + Menu */}
-                          <div className="flex shrink-0 items-start gap-2 sm:gap-3">
-                            <span className="hidden whitespace-nowrap pt-0.5 text-[10px] font-medium text-[#4E4E4E] sm:block lg:text-[11px]">
+                          <div
+                            className="
+                                flex
+                                shrink-0
+                                items-start
+                                gap-3
+                              "
+                          >
+                            <span
+                              className="
+                                  hidden
+                                  whitespace-nowrap
+                                  pt-0.5
+                                  text-[14px]
+                                  font-medium
+                                  text-[#4E4E4E]
+
+                                  sm:block
+                                  lg:text-[15px]
+                                "
+                            >
                               {formatNotificationDate(notif.createdAt)}
                             </span>
 
                             <button
                               type="button"
                               aria-label="Notification options"
-                              className="flex h-7 w-7 items-center justify-center rounded-full text-[#2E2E2E] transition hover:bg-[#F3F3F7]"
+                              className="
+                                  flex
+                                  h-8
+                                  w-8
+                                  items-center
+                                  justify-center
+                                  rounded-full
+                                  text-[#2E2E2E]
+                                  transition
+
+                                  hover:bg-[#F3F3F7]
+                                "
                             >
-                              <MoreVertical size={17} />
+                              <MoreVertical
+                                size={21}
+                                className="
+                                    sm:h-[22px]
+                                    sm:w-[22px]
+                                  "
+                              />
                             </button>
                           </div>
                         </div>
-
-                        {/* Mobile Time */}
-                        <span className="mt-2 block text-[10px] text-[#666666] sm:hidden">
-                          {formatNotificationDate(notif.createdAt)}
-                        </span>
-
-                        {/* Existing action functionality */}
-                        {notificationItem.action && (
-                          <button
-                            type="button"
-                            onClick={() => handleNavigate(actionPath)}
-                            className="mt-2 text-[11px] font-semibold text-[#1B1D60] hover:underline sm:text-[12px]"
-                          >
-                            {notificationItem.action}
-                          </button>
-                        )}
                       </div>
                     </article>
                   );
                 })}
 
-                {/* Load More / Show Less */}
+                {/* =================================================
+                    LOAD MORE / SHOW LESS
+                ================================================== */}
                 {notifications.length > 4 && (
-                  <div className="flex justify-center pt-5">
+                  <div className="flex justify-center py-5">
                     <button
                       type="button"
                       onClick={() => {
@@ -270,7 +471,20 @@ export function NotificationsPage() {
                           );
                         }
                       }}
-                      className="flex items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-semibold text-[#25247B] transition hover:bg-[#F3F3F7]"
+                      className="
+                        flex
+                        items-center
+                        gap-1.5
+                        rounded-md
+                        px-4
+                        py-2
+                        text-[13px]
+                        font-semibold
+                        text-[#25247B]
+                        transition
+
+                        hover:bg-[#F3F3F7]
+                      "
                     >
                       {visibleCount >= notifications.length
                         ? "Show Less"
@@ -279,11 +493,15 @@ export function NotificationsPage() {
                       <ChevronDown
                         size={15}
                         strokeWidth={2.5}
-                        className={`transition-transform duration-200 ${
-                          visibleCount >= notifications.length
-                            ? "rotate-180"
-                            : ""
-                        }`}
+                        className={`
+                          transition-transform
+                          duration-200
+                          ${
+                            visibleCount >= notifications.length
+                              ? "rotate-180"
+                              : ""
+                          }
+                        `}
                       />
                     </button>
                   </div>
@@ -292,14 +510,27 @@ export function NotificationsPage() {
             </ApiState>
           </section>
 
-          {/* RIGHT COLUMN */}
-          <aside className="min-w-0">
+          {/* =====================================================
+              RIGHT COLUMN
+
+              No sticky.
+              No internal scroll.
+              It stays fixed because only LEFT column scrolls.
+          ====================================================== */}
+          <div
+            className="
+              min-w-0
+              self-start
+              lg:h-fit
+            "
+          >
             <NeedHelpPanel
               title="Need Help ?"
               items={NOTIFICATION_HELP_ITEMS}
               headerStyle="colored"
+              sticky={false}
             />
-          </aside>
+          </div>
         </div>
       </main>
     </>

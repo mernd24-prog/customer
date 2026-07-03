@@ -1162,8 +1162,39 @@ function OrderList() {
             separatorClassName="text-[#2E2E2E]"
             heading="My Order"
           />
-          <div className="grid  lg:mt-4 gap-8 grid-cols-1 xl:grid-cols-[minmax(0,1fr)_400px] 2xl:grid-cols-[minmax(0,1fr)_413px]">
-            <div className="min-w-0 rounded-xl md:border md:border-[#E7D9B8] bg-white  sm:p-4">
+          <div
+            className="
+              grid
+              gap-8
+              grid-cols-1
+              items-start
+              lg:mt-4
+
+              xl:h-[calc(100vh-260px)]
+              xl:min-h-[420px]
+              xl:grid-cols-[minmax(0,1fr)_400px]
+
+              2xl:grid-cols-[minmax(0,1fr)_413px]
+            "
+          >
+            <div
+              className="
+                min-w-0
+                rounded-xl
+                md:border md:border-[#E7D9B8]
+                bg-white
+                sm:p-4
+
+                xl:h-full
+                xl:min-h-0
+                xl:overflow-y-auto
+                xl:overscroll-contain
+
+                xl:[scrollbar-width:none]
+                xl:[-ms-overflow-style:none]
+                xl:[&::-webkit-scrollbar]:hidden
+              "
+            >
               <div className="my-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <label className="relative block w-full sm:max-w-[450px]">
                   <Search
@@ -1255,12 +1286,14 @@ function OrderList() {
                 </div>
               </ApiState>
             </div>
-            <NeedHelpPanel
-              title="Need Help ?"
-              items={orderHelpItems}
-              headerStyle="plain"
-              sticky
-            />{" "}
+            <div className="min-w-0 self-start xl:h-fit">
+              <NeedHelpPanel
+                title="Need Help ?"
+                items={orderHelpItems}
+                headerStyle="plain"
+                sticky={false}
+              />
+            </div>
           </div>
         </div>
       </section>
