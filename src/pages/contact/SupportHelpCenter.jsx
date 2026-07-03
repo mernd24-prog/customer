@@ -1,8 +1,7 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
- 
-  ChevronRight,
   ChevronDown,
   MessageSquare,
   Phone,
@@ -12,10 +11,53 @@ import {
 
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
-import Button from "../../components/common/buttons/Button";
 import SearchBar from "../../components/ui/SearchBar";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
+import { apiRequest } from "../../api/client";
+import { endpoints } from "../../api/endpoints";
+import { notify } from "../../utils/notify";
+import { getRole, isAdminRole, isSellerRole } from "../../utils/roles";
+
+const CUSTOMER_QUERY_CATEGORIES = [
+  { value: "DELIVERY_ISSUE", label: "Delivery Issue" },
+  { value: "ORDER_ISSUE", label: "Order Issue" },
+  { value: "PAYMENT_ISSUE", label: "Payment Issue" },
+  { value: "REFUND_RETURN_ISSUE", label: "Refund/Return Issue" },
+  { value: "PRODUCT_ISSUE", label: "Product Issue" },
+  { value: "ACCOUNT_ISSUE", label: "Account Issue" },
+  { value: "OTHER", label: "Other" },
+];
+
+const CUSTOMER_SUPPORT_INITIAL_FORM = {
+  category: "",
+  subject: "",
+  message: "",
+};
+
+function categoryLabel(value = "") {
+  return CUSTOMER_QUERY_CATEGORIES.find((item) => item.value === value)?.label ||
+    String(value || "N/A").replace(/_/g, " ");
+}
+
+function statusLabel(value = "") {
+  return String(value || "N/A")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function formatSupportDate(value) {
+  if (!value) return "N/A";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "N/A";
+  return date.toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 const topicImageByTitle = {
   order: "/image/png/track-order.png",
   track: "/image/png/track-order.png",
@@ -329,7 +371,19 @@ function StatusBadge({ status }) {
 
 export default function SupportHelpCenter() {
   const { page, loading } = useCmsRecord("support-center");
+  const currentUser = useSelector((state) => state.auth.current);
+  const currentRole = getRole(currentUser);
+  const canUseCustomerSupport =
+    Boolean(currentUser) &&
+    !isSellerRole(currentRole) &&
+    !isAdminRole(currentRole);
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
+  const [selectedSupportCategory, setSelectedSupportCategory] = useState("");
+  const [supportForm, setSupportForm] = useState(CUSTOMER_SUPPORT_INITIAL_FORM);
+  const [supportQueries, setSupportQueries] = useState([]);
+  const [supportLoading, setSupportLoading] = useState(false);
+  const [supportSubmitting, setSupportSubmitting] = useState(false);
+  const [supportError, setSupportError] = useState("");
 
   const pageTitle = page?.title || "";
   const pageDescription = page?.description || page?.excerpt || "";
@@ -426,22 +480,71 @@ export default function SupportHelpCenter() {
 
   const contactMethods = options.length > 0 ? options : fallbackOptions;
 
-  const mockTickets = [
-    {
-      id: "TK00345",
-      subject: "Refund not received",
-      category: "Refunds",
-      lastUpdated: "24 Jun 2026, 10:00 AM",
-      status: "Open",
-    },
-    {
-      id: "TK00346",
-      subject: "Wrong item received",
-      category: "Orders",
-      lastUpdated: "20 Jun 2026, 06:15 PM",
-      status: "Resolved",
-    },
-  ];
+  const fetchSupportQueries = useCallback(async () => {
+    if (!canUseCustomerSupport) {
+      setSupportQueries([]);
+      return;
+    }
+    try {
+      setSupportLoading(true);
+      setSupportError("");
+      const response = await apiRequest({
+        method: "get",
+        url: endpoints.support.queries,
+        params: { limit: 10, offset: 0 },
+      });
+      setSupportQueries(Array.isArray(response?.data) ? response.data : []);
+    } catch (error) {
+      const message = error?.message || "Failed to load support queries.";
+      setSupportError(message);
+      notify.error(message);
+    } finally {
+      setSupportLoading(false);
+    }
+  }, [canUseCustomerSupport]);
+
+  useEffect(() => {
+    fetchSupportQueries();
+  }, [fetchSupportQueries]);
+
+  const supportValidationError = useMemo(() => {
+    if (!supportForm.category) return "Please select a support category first.";
+    if (supportForm.subject.trim().length < 5) return "Subject must be at least 5 characters.";
+    if (supportForm.message.trim().length < 10) return "Message must be at least 10 characters.";
+    return "";
+  }, [supportForm]);
+
+  const submitSupportQuery = async (event) => {
+    event.preventDefault();
+    if (!canUseCustomerSupport) {
+      notify.info("Please login with a customer account to submit a support query.");
+      return;
+    }
+    if (supportValidationError) {
+      notify.warning(supportValidationError);
+      return;
+    }
+    try {
+      setSupportSubmitting(true);
+      await apiRequest({
+        method: "post",
+        url: endpoints.support.queries,
+        data: {
+          category: supportForm.category,
+          subject: supportForm.subject.trim(),
+          message: supportForm.message.trim(),
+        },
+      });
+      notify.success("Support query submitted successfully.");
+      setSelectedSupportCategory("");
+      setSupportForm(CUSTOMER_SUPPORT_INITIAL_FORM);
+      await fetchSupportQueries();
+    } catch (error) {
+      notify.error(error?.message || "Failed to submit support query.");
+    } finally {
+      setSupportSubmitting(false);
+    }
+  };
 
   if (isPageLoading) {
     return (
@@ -593,73 +696,210 @@ export default function SupportHelpCenter() {
             ))}
           </div>
         </div>
-        {/* Support Ticket History */}
+        {/* Support Query Flow */}
         <div className="mb-8 rounded-2xl border border-[#CE9F2D]/50 bg-white px-4 py-6 sm:px-6 sm:py-8">
-          <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-6">
             <h2 className="text-xl font-bold text-[#1B1D60] sm:text-2xl lg:text-[26px]">
-              Support Ticket History
+              Raise a Support Query
             </h2>
-
-            <Link
-              to="/profile?tab=tickets"
-              className="text-sm font-bold text-[#3E4093] transition-colors hover:text-[#CE9F2D] sm:text-base lg:text-[20px]"
-            >
-              View All
-            </Link>
+            <p className="mt-2 text-sm leading-6 text-[#666666] sm:text-base">
+              Select the query category first, then submit your message to our support team.
+            </p>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] border-collapse text-left lg:min-w-[900px]">
-              <thead>
-                <tr className="rounded-md bg-[#F0F3FB]">
-                  <th className="px-4 py-4 text-[15px] font-bold text-[#03014D]">
-                    Ticket ID
-                  </th>
-                  <th className="px-4 py-4 text-[15px] font-bold text-[#03014D]">
-                    Subject
-                  </th>
-                  <th className="px-4 py-4 text-[15px] font-bold text-[#03014D]">
-                    Category
-                  </th>
-                  <th className="px-4 py-4 text-[15px] font-bold text-[#03014D]">
-                    Last Updated
-                  </th>
-                  <th className="px-4 py-4 text-[15px] font-bold text-[#03014D]">
-                    Status
-                  </th>
-                  <th className="px-4 py-4"></th>
-                </tr>
-              </thead>
+          {!canUseCustomerSupport ? (
+            <div className="rounded-xl border border-[#CE9F2D]/40 bg-[#FDF8EA] p-5">
+              <p className="text-sm font-semibold text-[#1B1D60] sm:text-base">
+                Customer login is required to submit and track support queries.
+              </p>
+              <Link
+                to="/login"
+                className="mt-4 inline-flex rounded-lg bg-[#3E4093] px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#2B2D73]"
+              >
+                Login to Continue
+              </Link>
+            </div>
+          ) : (
+            <>
+              <div className="mb-6">
+                <h3 className="mb-3 text-base font-bold text-[#03014D]">
+                  1. Select Query Category
+                </h3>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  {CUSTOMER_QUERY_CATEGORIES.map((category) => (
+                    <button
+                      key={category.value}
+                      type="button"
+                      className={`rounded-xl border px-4 py-3 text-left text-sm font-bold transition ${
+                        selectedSupportCategory === category.value
+                          ? "border-[#3E4093] bg-[#3E4093] text-white"
+                          : "border-[#CE9F2D]/50 bg-[#F8F8FB] text-[#1B1D60] hover:border-[#3E4093]"
+                      }`}
+                      onClick={() => {
+                        setSelectedSupportCategory(category.value);
+                        setSupportForm((prev) => ({
+                          ...prev,
+                          category: category.value,
+                        }));
+                      }}
+                    >
+                      {category.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-              <tbody className="divide-y divide-[#CE9F2D]/50">
-                {mockTickets.map((ticket) => (
-                  <tr key={ticket.id}>
-                    <td className="px-4 py-6 text-[16px] font-medium text-[#2E2E2E]">
-                      {ticket.id}
-                    </td>
-                    <td className="px-4 py-6 text-[16px] font-medium text-[#2E2E2E]">
-                      {ticket.subject}
-                    </td>
-                    <td className="px-4 py-6 text-[16px] font-medium text-[#2E2E2E]">
-                      {ticket.category}
-                    </td>
-                    <td className="px-4 py-6 text-[16px] font-medium text-[#2E2E2E]">
-                      {ticket.lastUpdated}
-                    </td>
-                    <td className="px-4 py-6">
-                      <StatusBadge status={ticket.status} />
-                    </td>
-                    <td className="px-4 py-6 text-right">
-                      <button className="flex h-10 w-10 items-center justify-center rounded-full border border-[#3E4093]/70 transition-colors hover:bg-[#F0F3FB] focus:outline-none">
-                        <ChevronRight  className="text-[#3E4093]" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              <form onSubmit={submitSupportQuery} className="grid gap-4">
+                <h3 className="text-base font-bold text-[#03014D]">
+                  2. Submit Query Details
+                </h3>
+
+                <label className="block text-sm font-bold text-[#1B1D60]">
+                  Selected Category
+                  <input
+                    className="mt-2 w-full rounded-xl border border-[#CE9F2D]/50 bg-[#F8F8FB] px-4 py-3 text-sm text-[#03014D]"
+                    value={categoryLabel(supportForm.category)}
+                    readOnly
+                  />
+                </label>
+
+                <label className="block text-sm font-bold text-[#1B1D60]">
+                  Subject
+                  <input
+                    className="mt-2 w-full rounded-xl border border-[#CE9F2D]/50 px-4 py-3 text-sm text-[#03014D] outline-none focus:border-[#3E4093]"
+                    value={supportForm.subject}
+                    onChange={(event) =>
+                      setSupportForm((prev) => ({
+                        ...prev,
+                        subject: event.target.value,
+                      }))
+                    }
+                    maxLength={220}
+                    placeholder="Short summary of your issue"
+                  />
+                </label>
+
+                <label className="block text-sm font-bold text-[#1B1D60]">
+                  Message
+                  <textarea
+                    className="mt-2 min-h-[140px] w-full rounded-xl border border-[#CE9F2D]/50 px-4 py-3 text-sm leading-6 text-[#03014D] outline-none focus:border-[#3E4093]"
+                    value={supportForm.message}
+                    onChange={(event) =>
+                      setSupportForm((prev) => ({
+                        ...prev,
+                        message: event.target.value,
+                      }))
+                    }
+                    maxLength={5000}
+                    placeholder="Tell us what happened. Include order, payment, product, or return details if available."
+                  />
+                </label>
+
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={supportSubmitting}
+                    className="rounded-lg bg-[#3E4093] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#2B2D73] disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {supportSubmitting ? "Submitting..." : "Submit Query"}
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
         </div>
+
+        {/* Support Query History */}
+        {canUseCustomerSupport && (
+          <div className="mb-8 rounded-2xl border border-[#CE9F2D]/50 bg-white px-4 py-6 sm:px-6 sm:py-8">
+            <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+              <h2 className="text-xl font-bold text-[#1B1D60] sm:text-2xl lg:text-[26px]">
+                Your Support Queries
+              </h2>
+
+              <button
+                type="button"
+                onClick={fetchSupportQueries}
+                disabled={supportLoading}
+                className="text-sm font-bold text-[#3E4093] transition-colors hover:text-[#CE9F2D] disabled:opacity-70 sm:text-base lg:text-[20px]"
+              >
+                {supportLoading ? "Loading..." : "Refresh"}
+              </button>
+            </div>
+
+            {supportError && (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {supportError}
+              </div>
+            )}
+
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px] border-collapse text-left lg:min-w-[900px]">
+                <thead>
+                  <tr className="rounded-md bg-[#F0F3FB]">
+                    <th className="px-4 py-4 text-[15px] font-bold text-[#03014D]">
+                      Query ID
+                    </th>
+                    <th className="px-4 py-4 text-[15px] font-bold text-[#03014D]">
+                      Subject
+                    </th>
+                    <th className="px-4 py-4 text-[15px] font-bold text-[#03014D]">
+                      Category
+                    </th>
+                    <th className="px-4 py-4 text-[15px] font-bold text-[#03014D]">
+                      Created Date
+                    </th>
+                    <th className="px-4 py-4 text-[15px] font-bold text-[#03014D]">
+                      Status
+                    </th>
+                    <th className="px-4 py-4 text-[15px] font-bold text-[#03014D]">
+                      Message
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y divide-[#CE9F2D]/50">
+                  {supportLoading && supportQueries.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-8 text-center text-sm text-[#666666]">
+                        Loading support queries...
+                      </td>
+                    </tr>
+                  ) : supportQueries.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-8 text-center text-sm text-[#666666]">
+                        No support queries submitted yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    supportQueries.map((query) => (
+                      <tr key={query.queryId}>
+                        <td className="px-4 py-6 text-[16px] font-semibold text-[#2E2E2E]">
+                          {query.queryId}
+                        </td>
+                        <td className="px-4 py-6 text-[16px] font-medium text-[#2E2E2E]">
+                          {query.subject}
+                        </td>
+                        <td className="px-4 py-6 text-[16px] font-medium text-[#2E2E2E]">
+                          {categoryLabel(query.category)}
+                        </td>
+                        <td className="px-4 py-6 text-[16px] font-medium text-[#2E2E2E]">
+                          {formatSupportDate(query.createdAt)}
+                        </td>
+                        <td className="px-4 py-6">
+                          <StatusBadge status={statusLabel(query.status)} />
+                        </td>
+                        <td className="max-w-xs px-4 py-6 text-[15px] text-[#666666]">
+                          <span className="line-clamp-2">{query.messagePreview || query.message}</span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

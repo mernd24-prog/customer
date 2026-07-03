@@ -177,6 +177,10 @@ export const endpoints = {
     create: `${API_PREFIX}/notifications`,
     preferences: `${API_PREFIX}/notifications/preferences`,
   },
+  support: {
+    queries: `${API_PREFIX}/support/queries`,
+    query: (queryId) => `${API_PREFIX}/support/queries/${queryId}`,
+  },
   analytics: {
     overview: `${API_PREFIX}/analytics`,
     events: `${API_PREFIX}/analytics/events`,
