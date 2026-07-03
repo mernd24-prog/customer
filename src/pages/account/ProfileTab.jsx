@@ -100,9 +100,9 @@ export default function ProfileTab({ user, avatarFile }) {
   };
 
   const readonlyFieldClass = "grid gap-1.5";
-  const readonlyLabelClass = "text-lg font-medium text-ink";
+  const readonlyLabelClass = "text-sm font-medium text-ink lg:text-base";
   const readonlyValueClass =
-    "flex min-h-11 items-center rounded-[8px] border border-border bg-surface-soft px-3 py-2 text-lg text-muted";
+    "flex min-h-11 items-center rounded-[8px] border border-border bg-surface-soft px-3 py-2 text-base text-muted";
 
   return (
     <form className="grid gap-3 " onSubmit={handleSubmit(submit)} noValidate>

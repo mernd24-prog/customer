@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronRight, Grid2X2, LayoutGrid } from "lucide-react";
+import { ChevronRight, LayoutGrid } from "lucide-react";
 import Seo from "../../components/common/Seo";
-import NotFoundPage from "../NotFoundPage";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import {
   Breadcrumbs,
@@ -95,15 +94,18 @@ function SubCategoryCard({ sub, isActive, onClick }) {
     <Link
       to={CUSTOMER_ROUTES.category(key)}
       onClick={onClick}
-      className={`group flex min-w-[100px] max-w-[130px] flex-col items-center gap-2 rounded-xl p-3 text-center transition-all duration-200 ${
+      className={`group relative flex min-h-[112px] min-w-[108px] max-w-[126px] flex-1 flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border p-3 text-center transition-all duration-300 ${
         isActive
-          ? "bg-[var(--customer-gold)] text-white shadow-md"
-          : "bg-white hover:bg-[var(--customer-gold-soft)] border border-[var(--customer-border)]"
+          ? " border-[var(--customer-gold)] bg-[var(--customer-navy)]  text-white  "
+          : "border-[var(--customer-border)] bg-white/90 "
       }`}
     >
+      <span className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-[var(--customer-gold)] to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
       <div
-        className={`flex h-10 w-10 items-center justify-center overflow-hidden rounded-full ${
-          isActive ? "bg-white/20" : "bg-[var(--customer-surface-soft)]"
+        className={`flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl transition-transform duration-300 group-hover:scale-105 ${
+          isActive
+            ? "bg-white/15 ring-1 ring-white/20"
+            : "bg-gradient-to-br from-[var(--customer-gold-soft)] to-[var(--customer-cream)] ring-1 ring-[var(--customer-gold)]/10"
         }`}
       >
         {image ? (
@@ -116,12 +118,15 @@ function SubCategoryCard({ sub, isActive, onClick }) {
         ) : (
           <LayoutGrid
             size={20}
-            className={isActive ? "text-white" : "text-[var(--customer-muted)]"}
+            strokeWidth={1.7}
+            className={
+              isActive ? "text-white" : "text-[var(--customer-gold-dark)]"
+            }
           />
         )}
       </div>
       <span
-        className={`line-clamp-2  text-sm lg:text-[14px] my-2  font-semibold leading-tight ${
+        className={`line-clamp-2 text-xs font-bold leading-snug sm:text-[13px] ${
           isActive ? "text-white" : "text-[var(--customer-ink)]"
         }`}
       >
@@ -851,50 +856,52 @@ export default function CategoryPage() {
 
               <div className="absolute inset-0 bg-black/30" />
 
-              <div className="absolute inset-0 flex items-center px-5 sm:px-8">
-                <div className="max-w-md ">
-                  <Breadcrumbs
-                    linkClassName="!text-white"
-                    currentClassName="!text-[#CE9F2D]"
-                    separatorClassName="!text-gold"
-                    items={breadcrumbItems}
-                    className="mb-2"
-                  />
+              <div className="absolute inset-0 flex items-center">
+                <div className="customer-container">
+                  <div className="max-w-xl">
+                    <Breadcrumbs
+                      linkClassName="!text-white"
+                      currentClassName="!text-[#CE9F2D]"
+                      separatorClassName="!text-gold"
+                      items={breadcrumbItems}
+                      className="mb-5"
+                    />
 
-                  <h1 className="text-h1  font-bold text-white capitalize">
-                    {categoryTitle}
-                  </h1>
+                    <h1 className="text-h1 font-bold leading-tight text-white capitalize">
+                      {categoryTitle}
+                    </h1>
 
-                  <p className="mt-3 text-sm sm:text-base text-white">
-                    {categoryDesc ||
-                      `Explore our wide range of ${categoryTitle.toLowerCase()} with the latest features, premium quality, and the best offers available for every need.`}
-                  </p>
-
-                  {pageInfo.total > 0 && (
-                    <p className="mt-3 text-sm text-white">
-                      {pageInfo.total.toLocaleString()} Products
+                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
+                      {categoryDesc ||
+                        `Explore our wide range of ${categoryTitle.toLowerCase()} with the latest features, premium quality, and the best offers available for every need.`}
                     </p>
-                  )}
+
+                    {pageInfo.total > 0 && (
+                      <p className="mt-3 text-sm text-white">
+                        {pageInfo.total.toLocaleString()} Products
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Desktop Content */}
-            <div className="hidden lg:flex items-center px-8 xl:px-16">
+            <div className="hidden items-center pl-6 pr-10 lg:flex xl:pl-[max(3rem,calc((100vw-1559px)/2))]">
               <div className="max-w-xl">
                 <Breadcrumbs
                   items={breadcrumbItems}
                   linkClassName="!text-white"
                   currentClassName="!text-[#CE9F2D]"
                   separatorClassName="!text-white"
-                  className="mb-3"
+                  className="mb-5"
                 />
 
-                <h1 className=" font-bold text-h1 py-4  text-white capitalize">
+                <h1 className="text-h1 font-bold leading-tight text-white capitalize">
                   {categoryTitle}
                 </h1>
 
-                <p className="mt-4 font-normal text-p  text-white/80">
+                <p className="mt-3 max-w-xl font-normal leading-relaxed text-p text-white/80">
                   {categoryDesc ||
                     `Explore our wide range of woman's with the latest features, premium quality, and the best offers available for every need.`}
                 </p>
@@ -947,25 +954,20 @@ export default function CategoryPage() {
 
       {/* ── Subcategory showcase strip ───────────────────────────────────── */}
       {subCategories.length > 0 && (
-        <div className="mt-10 rounded-[var(--customer-radius)] md:border md:border-[var(--customer-border)] bg-white md:p-6 lg:mt-8">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold text-[var(--customer-ink)]">
-              <Grid2X2
-                size={10}
-                className="mr-1.5  inline text-[var(--customer-gold)]"
-              />
-              Shop by Sub-Category
-            </h2>
-            <Link
-              to={CUSTOMER_ROUTES.category(categoryKey)}
-              className="text-sm text-[var(--customer-gold)] hover:underline"
-            >
-              View All
-            </Link>
+        <div className="relative mt-8 overflow-hidden rounded-2xl p-2 md:p-4  lg:mt-8">
+          <div className="pointer-events-none absolute -right-20 -top-24 h-52 w-52 rounded-full " />
+          <div className="relative mb-3 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div>
+                <h2 className="text-sm font-bold text-[var(--customer-ink)] sm:text-base">
+                  Shop by Sub-Category
+                </h2>
+              </div>
+            </div>
           </div>
 
           {/* Horizontal scroll strip of sub-category cards */}
-          <div className="hide-scrollbar flex gap-3 mt-4  overflow-x-auto pb-1">
+          <div className="hide-scrollbar relative flex gap-3 overflow-x-auto px-0.5 pb-3 pt-1 sm:gap-4">
             {subCategories.map((sub) => {
               const k = sub?.categoryKey || sub?.key || "";
               return (

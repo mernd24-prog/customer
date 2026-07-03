@@ -458,7 +458,11 @@ function OrderDetail({ orderId, track }) {
   const taxIncluded = getTaxIncludedAmount(order, taxBreakup);
   const taxPayable = getTaxPayableAmount(order, taxBreakup);
   const status = getOrderStatus(order);
-  const canRequestReturn = ["delivered", "fulfilled", "partially_returned"].includes(status);
+  const canRequestReturn = [
+    "delivered",
+    "fulfilled",
+    "partially_returned",
+  ].includes(status);
   const invoiceDownloadAvailable = ["delivered", "fulfilled"].includes(status);
 
   const breadcrumbItems = [
@@ -472,7 +476,10 @@ function OrderDetail({ orderId, track }) {
   }, [dispatch, orderId]);
 
   useEffect(() => {
-    if (track || shipments.some((shipment) => shipment.status === "out_for_delivery")) {
+    if (
+      track ||
+      shipments.some((shipment) => shipment.status === "out_for_delivery")
+    ) {
       dispatch(fetchNotifications());
     }
   }, [dispatch, shipments, track]);
@@ -684,7 +691,11 @@ function OrderDetail({ orderId, track }) {
               {(track || shipments.length > 0) && (
                 <ShipmentTrackingPanel
                   shipments={shipments}
-                  notifications={Array.isArray(notificationState.list) ? notificationState.list : []}
+                  notifications={
+                    Array.isArray(notificationState.list)
+                      ? notificationState.list
+                      : []
+                  }
                 />
               )}
             </section>
@@ -892,7 +903,7 @@ function OrderListStatusBadge({ status }) {
   const cls = COMPACT_STATUS_BADGE[status] || "bg-[#D7A522] text-white";
   return (
     <span
-      className={`mt-2 md:mt-0  inline-flex min-w-[74px] justify-center rounded-full px-3 py-2  text-sm  2xl:text-[18px] font-bold capitalize ${cls}`}
+      className={`mt-2 md:mt-0  inline-flex min-w-[74px] small justify-center rounded-full px-3 py-2   font-bold capitalize ${cls}`}
     >
       {humanize(status, "Processing")}
     </span>
@@ -955,12 +966,12 @@ function OrderSummaryCard({ order }) {
 
   return (
     <article className="overflow-hidden rounded-xl  border border-[#E7D9B8]  bg-[#FFFCF6]">
-      <div className="flex  flex-col gap-3 border-b border-[#E7D9B8] bg-[#CE9F2D33] px-3 py-4 md:flex-row md:items-center md:justify-between md:gap-4 md:px-4 md:py-6  text-sm md:text-base 2xl:text-[20px]  font-semibold text-ink">
+      <div className="flex  flex-col gap-3 border-b border-[#E7D9B8] bg-[#CE9F2D33] px-3 py-4 md:flex-row md:items-center  md:justify-between md:gap-4 md:px-4 md:py-6  text-sm md:text-base 2xl:text-[20px]  font-semibold text-ink">
         <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between md:contents">
           <span className="flex min-w-0 items-center gap-1.5">
             <FaShoppingCart className="shrink-0 text-sm text-[#2564EB] lg:text-xl" />
             <span className="shrink-0">#</span>
-            <span className="min-w-0 break-all">{apiOrderId}</span>
+            <span className="min-w-0 break-all small">{apiOrderId}</span>
             <button
               type="button"
               onClick={handleCopyOrderId}
@@ -975,11 +986,11 @@ function OrderSummaryCard({ order }) {
           </span>
         </div>
         <div className="flex flex-wrap items-center justify-between w-full md:contents">
-          <span className="lg:inline-flex items-center gap-1.5  hidden">
+          <span className="lg:inline-flex  small  items-center gap-1.5  hidden">
             <MdDateRange className="text-[#2564EB] text-sm lg:text-xl" />
             {formatOrderDate(createdAt)}
           </span>
-          <span className="lg:inline-flex items-center gap-1.5  hidden ">
+          <span className="lg:inline-flex items-center small  gap-1.5  hidden ">
             <BsCreditCardFill className="text-[#2564EB] text-sm lg:text-xl" />
             {paymentMethod}
           </span>
@@ -1008,12 +1019,12 @@ function OrderSummaryCard({ order }) {
         <div className="min-w-0 ">
           <Link
             to={`/orders/${id}`}
-            className="line-clamp-2 text-xl lg:text-[26px] font-semibold text-[#2E2E2E] "
+            className="line-clamp-2 text-h4 font-semibold text-[#2E2E2E] "
           >
             {title}
           </Link>
 
-          <div className="my-6  flex flex-wrap gap-x-5 gap-y-1 text-lg font-semibold text-ink">
+          <div className="my-4 lg:my-6  flex flex-wrap gap-x-5 gap-y-1 text-lg font-semibold text-ink">
             <span>
               Color :{" "}
               <strong className="font-bold text-[#25247B]">
@@ -1025,17 +1036,17 @@ function OrderSummaryCard({ order }) {
             </span>
           </div>
 
-          <p className="mt-3  text-xl lg:text-[34px] font-extrabold text-[#1B1D60]">
+          <p className="mt-3 text-h3 font-extrabold text-[#1B1D60]">
             {formatMoney(amount, currency)}
           </p>
-          <p className="text-lg my-2 font-medium text-ink">
+          <p className="text-sm my-2 font-medium text-ink">
             Inclusive of all taxes
           </p>
 
           <div className="my-4 flex flex-wrap items-center gap-3">
             <Link
               to={`/orders/${id}/track`}
-              className="inline-flex h-11 min-w-[160px] items-center justify-center gap-2 rounded-[10px] bg-gold px-8 lg:px-20  text-sm lg:text-[15px] font-bold text-white transition-colors"
+              className="inline-flex h-11 w-full min-w-[160px] items-center justify-center gap-2 rounded-[10px] bg-gold px-8 text-sm font-bold text-white transition-colors sm:w-auto lg:px-18 lg:text-[15px]"
             >
               <Truck size={18} />
               Track Order
@@ -1043,7 +1054,7 @@ function OrderSummaryCard({ order }) {
             <Link
               to={`/orders/${id}`}
               onClick={(event) => event.stopPropagation()}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] px-2 text-sm lg:text-[15px]  font-bold text-gold-dark transition-colors hover:bg-gold-soft"
+              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[10px] px-2 text-center text-sm font-bold text-gold-dark transition-colors hover:bg-gold-soft sm:w-auto sm:text-left lg:text-[15px]"
             >
               <Download size={13} />
               Download Invoice
@@ -1058,7 +1069,7 @@ function OrderSummaryCard({ order }) {
 function OrderHelpPanel() {
   return (
     <aside className="h-fit rounded-xl border border-[#E7D9B8] bg-white p-6 lg:sticky lg:top-28">
-      <h2 className="text-2xl font-bold text-ink py-2">Need Help ?</h2>
+      <h2 className="text-xl font-bold text-ink py-2">Need Help ?</h2>
       <div className="mt-3 divide-y divide-[#EFE5D2]">
         {items.map(({ icon: Icon, title }, index) => (
           <Link
@@ -1066,14 +1077,14 @@ function OrderHelpPanel() {
             to="/contact"
             className="flex items-center gap-3 py-7 first:pt-2"
           >
-            <span className="flex w-10 h-10 lg:h-14  lg:w-14 shrink-0 items-center justify-center rounded-full border border-[#1B1D6099] bg-[#F3F3F7] text-[#25247B]">
+            <span className="flex w-10 h-10 lg:h-12  lg:w-12 shrink-0 items-center justify-center rounded-full border border-[#1B1D6099] bg-[#F3F3F7] text-[#25247B]">
               <Icon size={20} className="text-[#25247B]" />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block text-lg  lg:text-2xl font-semibold text-[#1B1D60]">
+              <span className="block text-h6 font-semibold text-[#1B1D60]">
                 {title}
               </span>
-              <span className="block text-base md:text-lg font-medium text-[#2E2E2E]">
+              <span className="block small font-medium text-[#2E2E2E]">
                 Get help with your orders
               </span>
             </span>
@@ -1161,7 +1172,7 @@ function OrderList() {
     <>
       <Seo title="My Orders | Sam Global" />
 
-      <section className="min-h-screen bg-white py-5 sm:py-8 lg:py-10">
+      <section className="min-h-screen bg-white  py-5 sm:py-8 lg:py-10">
         <div>
           <Breadcrumbs
             items={ORDER_BREADCRUMBS}
@@ -1171,7 +1182,7 @@ function OrderList() {
             separatorClassName="text-[#2E2E2E]"
             heading="My Order"
           />
-          <div className="grid   gap-8 grid-cols-1 xl:grid-cols-[minmax(0,1fr)_400px] 2xl:grid-cols-[minmax(0,1fr)_413px]">
+          <div className="grid  lg:mt-4 gap-8 grid-cols-1 xl:grid-cols-[minmax(0,1fr)_400px] 2xl:grid-cols-[minmax(0,1fr)_413px]">
             <div className="min-w-0 rounded-xl md:border md:border-[#E7D9B8] bg-white  sm:p-4">
               <div className="my-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <label className="relative block w-full sm:max-w-[450px]">
@@ -1182,8 +1193,8 @@ function OrderList() {
                   <input
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
-                    placeholder="Search by product name or Order ID..."
-                    className="h-12 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
+                    placeholder="Search by  product name or Order ID..."
+                    className="h-12 w-full  rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
                   />
                 </label>
 
@@ -1257,7 +1268,7 @@ function OrderList() {
                     : "Once you place an order, it will appear here."
                 }
               >
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4  ">
                   {orders.map((order) => (
                     <OrderSummaryCard key={getOrderId(order)} order={order} />
                   ))}

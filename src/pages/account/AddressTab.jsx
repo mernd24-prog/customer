@@ -43,7 +43,7 @@ function AddressViewCard({ addr, addrId, startEdit, handleDelete }) {
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between gap-3 bg-[#CE9F2D33] px-4 py-5">
-        <p className="text-sm font-bold capitalize text-[#2E2E2E] lg:text-[20px] ">
+        <p className="text-sm font-bold capitalize text-[#2E2E2E] lg:text-[18px] ">
           {addr.label || "Address"}
         </p>
 
@@ -56,18 +56,18 @@ function AddressViewCard({ addr, addrId, startEdit, handleDelete }) {
 
       <div className="flex flex-1 flex-col justify-between p-4">
         <div>
-          <p className="text-lg  font-bold text-[#2E2E2E] lg:text-xl">
+          <p className="text-h6 font-bold text-[#2E2E2E] ">
             {addr.fullName || "—"}
           </p>
 
           {addr.phone && (
-            <p className="mt-5 flex items-center gap-2 text-sm font-medium text-[#2E2E2E] lg:text-[18px]">
+            <p className="mt-5 flex items-center gap-2 text-sm font-medium text-[#2E2E2E] lg:text-[16px]">
               <Phone className="size-6 shrink-0 text-[#D4A428]" />
               <span>{addr.phone}</span>
             </p>
           )}
 
-          <p className="mt-3 flex items-start gap-2 text-sm font-medium text-[#2E2E2E] lg:text-[18px]">
+          <p className="mt-3 flex items-start gap-2 text-sm font-medium text-[#2E2E2E] lg:text-[16px]">
             <MapPin className="mt-0.5 size-6 shrink-0 text-[#D4A428]" />
             <span>
               {addr.line1}

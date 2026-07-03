@@ -66,7 +66,7 @@ export default function CategoryCard({
 
       <div className="pt-4 lg:py-4 px-4">
         <div className="flex flex-col gap-3 ">
-          <h3 className=" line-clamp-1 text-h3 font-semibold  text-[#2E2E2E]">
+          <h3 className=" line-clamp-1  text-h4 font-semibold  text-[#2E2E2E]">
             {title}
           </h3>
 

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ArrowRight, ShoppingBag, X } from "lucide-react";
 import ModalOverlay from "./ModalOverlay";
 import {
   formatMoney,
@@ -19,26 +20,33 @@ function CartLine({ item, onClose }) {
   const price = item?.price ?? product?.price ?? 0;
 
   return (
-    <div className="flex items-center gap-3 rounded-[var(--customer-radius)] border border-[var(--customer-border)] p-2">
-      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-[var(--customer-radius-sm)] bg-[var(--customer-cream)]">
+    <Link
+      to={`/products/${id}`}
+      onClick={onClose}
+      className="group flex items-center gap-3 rounded-xl border border-[var(--customer-border)] bg-white p-2.5 transition-all duration-300 "
+      aria-label={`View ${title}`}
+    >
+      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-[var(--customer-cream)] ring-1 ring-black/5">
         {image ? (
-          <img src={image} alt={title} className="h-full w-full object-cover" />
+          <img
+            src={image}
+            alt={title}
+            className="h-full w-full object-contain"
+          />
         ) : null}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="line-clamp-1  text-xs font-semibold text-[var(--customer-ink)]">{title}</p>
-        <p className=" text-xs text-[var(--customer-muted)]">
+        <p className="line-clamp-1 text-sm font-semibold text-[var(--customer-ink)]">
+          {title}
+        </p>
+        <p className="mt-1 text-xs text-[var(--customer-muted)]">
           Qty {quantity} • {formatMoney(price, product?.currency || "INR")}
         </p>
       </div>
-      <Link
-        to={`/products/${id}`}
-        onClick={onClose}
-        className=" text-[11px] font-semibold text-[var(--customer-gold-dark)] underline-offset-2 hover:underline"
-      >
-        View
-      </Link>
-    </div>
+      <span className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-bold text-[var(--customer-gold-dark)] transition-all group-hover:gap-2 group-hover:bg-[var(--customer-gold-soft)]">
+        View <ArrowRight size={12} aria-hidden="true" />
+      </span>
+    </Link>
   );
 }
 
@@ -52,6 +60,7 @@ export default function AddedToCartModal({
 
   const addedTitle = getProductTitle(addedProduct, "Item");
   const addedImage = getProductImage(addedProduct);
+  const addedProductId = getProductId(addedProduct);
   const subtotal = cartItems.reduce(
     (sum, item) =>
       sum +
@@ -64,59 +73,84 @@ export default function AddedToCartModal({
 
   return (
     <ModalOverlay onClose={onClose} showCloseButton={false}>
-      <div className="grid max-h-[90vh] grid-cols-1 overflow-y-auto rounded-[var(--customer-radius)] bg-white md:max-h-[80vh] md:grid-cols-[minmax(0,1fr)_360px] md:overflow-hidden">
+      <div className="relative grid max-h-[92vh] w-full grid-cols-1 overflow-y-auto rounded-2xl bg-white shadow-2xl md:max-h-[80vh] md:grid-cols-[minmax(0,1fr)_360px] md:overflow-hidden">
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[var(--customer-border)] bg-[var(--customer-cream)] text-lg font-bold leading-none text-[var(--customer-navy)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)]"
+          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[var(--customer-navy)] shadow-sm backdrop-blur transition-all duration-300 hover:rotate-90 hover:bg-[var(--customer-gold-soft)] sm:right-4 sm:top-4"
           aria-label="Close"
         >
-          ×
+          <X size={18} aria-hidden="true" />
         </button>
 
-        <div className="border-b border-[var(--customer-border)] p-5 md:border-b-0 md:border-r">
-          <h2 className=" text-xl font-bold text-[var(--customer-navy)]">Added to cart</h2>
-          <div className="mt-4 flex items-center gap-3 rounded-[var(--customer-radius)] bg-[var(--customer-cream)] p-3">
-            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[var(--customer-radius-sm)] bg-white">
+        <div className="relative overflow-hidden border-b border-[var(--customer-border)] bg-gradient-to-br from-white via-white to-[var(--customer-cream)] p-4 pt-5 sm:p-7 md:border-b-0 md:border-r">
+          <div className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-[var(--customer-gold-soft)]/60 blur-3xl" />
+          <div className="relative flex items-center gap-3 pr-10">
+            <div>
+              <h2 className="text-xl font-bold leading-tight text-[var(--customer-navy)] sm:text-2xl">
+                Added to your cart
+              </h2>
+              <p className="mt-0.5 text-xs text-[var(--customer-muted)]">
+                Your item is ready for checkout.
+              </p>
+            </div>
+          </div>
+          <Link
+            to={`/products/${addedProductId}`}
+            onClick={onClose}
+            className="group relative mt-5 flex items-center gap-4 rounded-2xl border border-white bg-white/80 p-3 shadow-sm backdrop-blur transition-all duration-300  sm:p-4"
+            aria-label={`View ${addedTitle}`}
+          >
+            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--customer-cream)] ring-1  ring-black/5 sm:h-24 sm:w-24">
               {addedImage ? (
                 <img
                   src={addedImage}
                   alt={addedTitle}
-                  className="h-full w-full object-cover"
+                  className="h-full  w-full object-contain"
                 />
               ) : null}
             </div>
-            <div>
-              <p className="line-clamp-2  text-sm font-semibold text-[var(--customer-ink)]">{addedTitle}</p>
-              <p className="mt-1  text-xs text-[var(--customer-muted)]">
-                Cart now has {cartItems.length} {cartItems.length === 1 ? "item" : "items"}
+            <div className="min-w-0">
+              <p className="line-clamp-2  text-sm font-bold leading-5 text-[var(--customer-ink)] sm:text-base">
+                {addedTitle}
+              </p>
+              <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-[var(--customer-cream)] px-2.5 py-1 text-xs font-medium text-[var(--customer-muted)]">
+                <ShoppingBag size={13} aria-hidden="true" />
+                Cart now has {cartItems.length}{" "}
+                {cartItems.length === 1 ? "item" : "items"}
               </p>
             </div>
-          </div>
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          </Link>
+          <div className="relative mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Link
               to="/cart"
               onClick={onClose}
-              className="button w-full text-center"
+              className="button w-full text-center shadow-sm transition-transform hover:-translate-y-0.5"
             >
               View Cart
             </Link>
             <Link
               to="/checkout"
               onClick={onClose}
-              className="button secondary w-full text-center"
+              className="button secondary w-full text-center transition-transform hover:-translate-y-0.5"
             >
               Checkout
             </Link>
           </div>
         </div>
 
-        <div className="flex flex-col p-5 md:max-h-[80vh]">
-          <div className="mb-3 flex items-center justify-between gap-4 pr-11">
-            <h3 className=" text-sm font-bold text-[var(--customer-ink)]">Cart Items</h3>
-            <span className="shrink-0  text-xs text-[var(--customer-muted)]">{formatMoney(subtotal, "INR")}</span>
+        <div className="flex flex-col bg-[#fcfcfb] p-4 sm:p-5 md:max-h-[80vh]">
+          <div className="mb-4 flex min-h-9 items-center justify-between gap-3 pr-12 sm:pr-14">
+            <div>
+              <h3 className="mt-0.5 text-base font-bold text-[var(--customer-ink)]">
+                Cart Items
+              </h3>
+            </div>
+            <span className="shrink-0 whitespace-nowrap text-right text-sm font-bold text-[var(--customer-navy)]">
+              {formatMoney(subtotal, "INR")}
+            </span>
           </div>
-          <div className="space-y-2 overflow-y-auto pr-1">
+          <div className="space-y-2.5  overflow-y-auto pr-1 [scrollbar-color:var(--customer-border)_transparent] [scrollbar-width:thin]">
             {cartItems.map((item, index) => (
               <CartLine
                 key={`${getProductId(item?.productId || item?.product || item)}-${index}`}
@@ -125,7 +159,16 @@ export default function AddedToCartModal({
               />
             ))}
             {cartItems.length === 0 && (
-              <p className=" text-xs text-[var(--customer-muted)]">No items in cart yet.</p>
+              <div className="rounded-xl border border-dashed border-[var(--customer-border)] bg-white p-6 text-center">
+                <ShoppingBag
+                  className="mx-auto mb-2 text-[var(--customer-muted)]"
+                  size={24}
+                  aria-hidden="true"
+                />
+                <p className="text-xs text-[var(--customer-muted)]">
+                  No items in cart yet.
+                </p>
+              </div>
             )}
           </div>
         </div>

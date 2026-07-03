@@ -814,7 +814,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
 
       <div className="w-full relative z-20">
         <div 
-          className="customer-container hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:gap-5 lg:justify-center"
+          className=" hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:gap-5 lg:justify-center"
           style={{ justifyContent: "safe center" }}
         >
           {visibleCategories.map((item, index) => {

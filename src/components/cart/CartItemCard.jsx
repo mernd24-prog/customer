@@ -110,12 +110,12 @@ export default function CartItemCard({
           {productPath ? (
             <Link
               to={productPath}
-              className="line-clamp-2 block text-lg font-bold leading-snug text-[#2d2d2d] transition hover:text-[#1B1D60] min-[375px]:text-xl sm:text-[26px]"
+              className="line-clamp-2 block font-bold text-h6 text-[#2d2d2d] transition hover:text-[#1B1D60]"
             >
               {item?.title}
             </Link>
           ) : (
-            <h3 className="line-clamp-2  text-lg font-bold leading-snug text-[#2d2d2d] min-[375px]:text-xl sm:text-[26px]">
+            <h3 className="line-clamp-2 block font-bold text-h6 text-[#2d2d2d]">
               {item?.title}
             </h3>
           )}

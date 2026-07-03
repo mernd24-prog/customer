@@ -60,12 +60,12 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
               <div
                 className={`flex items-center justify-center rounded-full ${
                   done ? "bg-[#B88200]" : "bg-[#83858C]"
-                } ${compact ? "h-12 w-12" : "h-16 w-16"}`}
+                } ${compact ? "h-10 w-10" : "h-16 w-16"}`}
               >
                 <div
                   className={`flex items-center justify-center rounded-full ${
                     done ? "bg-[#CE9F2D]" : "bg-[#8A8C92]"
-                  } ${compact ? "h-9 w-9" : "h-12 w-12"}`}
+                  } ${compact ? "h-8 w-8" : "h-10 w-10"}`}
                 >
                   <img
                     src={vectorImage}
@@ -76,9 +76,9 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
               </div>
             </div>
             <p
-              className={`mt-3 flex min-h-[38px] w-full max-w-[92px] items-start justify-center px-1 text-center font-sans font-semibold leading-tight ${
+              className={`mt-3 flex min-h-[38px] w-full max-w-[92px] items-start justify-center px-1 text-center font-sans font-semibold  ${
                 current || done ? "text-[#CE9F2D]" : "text-muted"
-              } ${compact ? "text-[13px] 2xl:text-[14px]" : "text-[16px] 2xl:text-[18px]"}`}
+              } ${compact ? "small" : "small"}`}
             >
               {step === "pending_payment" ? "Payment" : TRACKING_LABELS[step]}
             </p>

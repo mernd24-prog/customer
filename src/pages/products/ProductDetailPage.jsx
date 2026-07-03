@@ -94,12 +94,18 @@ const getColorSwatchImage = ({
     option?.imageUrls?.[value],
     option?.valueImages?.[value],
     option?.valueImageUrls?.[value],
-    option?.valueCodes?.[value],
     matchingVariant?.images,
+    matchingVariant?.imageUrls,
+    matchingVariant?.media?.images,
+    matchingVariant?.gallery,
     matchingVariant?.imageUrl,
     matchingVariant?.image,
     matchingVariant?.thumbnail,
     product?.images?.[index],
+    product?.images,
+    product?.imageUrl,
+    product?.image,
+    product?.thumbnail,
   );
 
 function IconActionButton({ title, onClick, children, className = "" }) {
@@ -240,7 +246,7 @@ function ProductGallery({
 
         <div
           className={`relative order-1 min-w-0  overflow-hidden border border-gold rounded-[20px]  bg-transparent xl:order-2 ${
-            isModal ? "h-full" : "aspect-auto lg:h-[500px] xl:h-full w-full"
+            isModal ? "h-full" : "h-[400px] lg:h-[500px] xl:h-full w-full"
           }`}
         >
           <Swiper
@@ -449,17 +455,17 @@ function DeliveryChecker({ productId, onResultChange }) {
   const resultCodAvailable = result?.codAvailable;
 
   return (
-    <div className="space-y-3">
+    <div className="flex w-full max-w-[360px] flex-col gap-2">
       {/* Pincode check label */}
-      <div className="flex max-w-[360px] flex-wrap items-center gap-2">
-        <span className="text-extaSmall font-semibold text-ink">
+      <div className="flex min-h-5 flex-wrap items-center gap-2">
+        <span className="text-extaSmall font-semibold leading-5 text-ink">
           Check Delivery
         </span>
       </div>
 
       <form
         onSubmit={check}
-        className="flex h-[48px] w-full max-w-[360px] overflow-hidden rounded-full border border-[#1B1D604D]"
+        className="flex h-12 w-full overflow-hidden rounded-full border border-[#1B1D604D] bg-white"
       >
         <input
           type="text"
@@ -563,6 +569,7 @@ function VariantSelector({
                       index: valueIndex,
                     })
                   : "";
+              const swatchColor = option?.valueCodes?.[value] || value;
 
               if (option.displayType === "color_swatch") {
                 return (
@@ -580,11 +587,32 @@ function VariantSelector({
                     }`}
                     title={value}
                   >
-                    <img
-                      src={swatchImage}
-                      alt={`${value} colour`}
-                      className="h-full w-full object-contain p-3"
-                    />
+                    {swatchImage ? (
+                      <img
+                        src={swatchImage}
+                        alt={`${value} colour`}
+                        className="h-full w-full object-contain p-3"
+                        onError={(event) =>
+                          applyImageFallback(event, value, "product")
+                        }
+                      />
+                    ) : (
+                      <span
+                        className="flex h-full w-full items-end justify-center p-2 text-center text-xs font-semibold text-[var(--customer-ink)]"
+                        style={{
+                          backgroundColor:
+                            typeof swatchColor === "string" &&
+                            (/^#([0-9a-f]{3,8})$/i.test(swatchColor) ||
+                              /^(rgb|hsl)a?\(/i.test(swatchColor))
+                              ? swatchColor
+                              : "var(--customer-cream)",
+                        }}
+                      >
+                        <span className="rounded bg-white/80 px-1.5 py-0.5 backdrop-blur-sm">
+                          {value}
+                        </span>
+                      </span>
+                    )}
                   </button>
                 );
               }
@@ -659,46 +687,6 @@ function ProductActionButtons({
   );
 }
 
-// function ProductFeatureGrid() {
-//   const features = [
-//     {
-//       icon: <ShieldCheck size={20} className="text-gold" />,
-//       label: "100% Secure Payments",
-//     },
-//     {
-//       icon: <Truck size={20} className="text-gold font-medium" />,
-//       label: "Free Shipping",
-//     },
-//     {
-//       icon: <RefreshCw size={20} className="text-gold" />,
-//       label: "Easy Returns",
-//     },
-//     {
-//       icon: <ShieldCheck size={20} className="text-gold" />,
-//       label: "24/7 Support",
-//     },
-//   ];
-
-//   return (
-//     <div className="mt-8 lg:mt-16 grid grid-cols-1 gap-4  lg:gap-8 sm:grid-cols-2 lg:grid-cols-4">
-//       {features.map((item) => (
-//         <div
-//           key={item.label}
-//           className="flex py-2  lg:py-5  flex-col items-center justify-center gap-2 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8]  text-center"
-//         >
-//           <span className="flex w-10 h-10 md:h-16  md:w-16 items-center justify-center my-2 rounded-full border border-[#E7D9B8] bg-[#FFF8E8]">
-//             {item.icon}
-//           </span>
-
-//           <p className="text-base  md:text-2xl font-bold text-navy">
-//             {item.label}
-//           </p>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// }
-
 function InfoTabs({ tabs, activeTab, onChange }) {
   return (
     <div className="flex  overflow-x-auto border-b border-border">
@@ -707,7 +695,7 @@ function InfoTabs({ tabs, activeTab, onChange }) {
           key={tab.key}
           type="button"
           onClick={() => onChange(tab.key)}
-          className={`min-w-max px-5  lg:py-4 py-2 text-h5 font-medium ${
+          className={`min-w-max px-5  lg:py-4 py-2 text-h6 font-medium ${
             activeTab === tab.key
               ? "border-b-2 border-navy font-semibold bg-gradient-to-t from-[#1B1D6033] to-transparent text-navy"
               : "text-[#2E2E2E]"
@@ -954,6 +942,21 @@ export default function ProductDetailPage() {
     sideEffectsRanFor.current = null;
     setDeliveryResult(null);
   }, [dispatch, productId]);
+
+  useEffect(() => {
+    if (!product || String(loadedProductId) !== String(productId)) return;
+
+    console.log("[ProductDetailPage] Product API response:", product);
+    console.table(
+      (product.variants || []).map((variant) => ({
+        id: variant._id || variant.id || variant.sku,
+        attributes: JSON.stringify(variant.attributes || {}),
+        images: variant.images,
+        imageUrls: variant.imageUrls,
+        imageUrl: variant.imageUrl,
+      })),
+    );
+  }, [loadedProductId, product, productId]);
 
   useEffect(() => {
     if (!product) return;
@@ -1278,7 +1281,7 @@ export default function ProductDetailPage() {
         >
           {product && (
             <>
-              <div className="grid min-w-0 mt-8 lg:mt-14 items-start gap-2 xl:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] md:gap-10">
+              <div className="grid min-w-0 mt-8 lg:mt-14 items-start gap-6 xl:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] md:gap-10">
                 <div className="min-w-0">
                   <ImageGallery
                     images={images}
@@ -1331,7 +1334,7 @@ export default function ProductDetailPage() {
                     dynamicState={dynamicState}
                   />
 
-                  <div className="flex my-4  flex-col md:flex-row gap-6  ">
+                  <div className="my-4 flex flex-col items-start gap-6 md:flex-row">
                     <div className="w-full  md:w-fit">
                       <QuantitySelector
                         quantity={quantity}

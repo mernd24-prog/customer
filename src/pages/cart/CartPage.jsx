@@ -69,10 +69,7 @@ function adaptItemForCard(item) {
     getImageFallbackSrc(title, "cart");
   const price = item.price ?? product.price ?? product.sellingPrice ?? 0;
   const oldPrice =
-    item.oldPrice ??
-    item.mrp ??
-    product.mrp ??
-    product.originalPrice;
+    item.oldPrice ?? item.mrp ?? product.mrp ?? product.originalPrice;
   const productShippingInfo =
     product.shipping && typeof product.shipping === "object"
       ? product.shipping
@@ -82,8 +79,11 @@ function adaptItemForCard(item) {
       ? item.shipping
       : productShippingInfo.freeShipping
         ? 0
-        : Number(productShippingInfo.shippingCharge ?? productShippingInfo.additionalCost ?? 0) +
-          Number(productShippingInfo.handlingCharge ?? 0);
+        : Number(
+            productShippingInfo.shippingCharge ??
+              productShippingInfo.additionalCost ??
+              0,
+          ) + Number(productShippingInfo.handlingCharge ?? 0);
   const quantity = item.quantity || 1;
   const seller = item.seller || product.seller?.name || product.brand;
   const condition = item.condition;
@@ -530,7 +530,6 @@ export default function CartPage() {
               />
             )}
 
-      
             <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:gap-9 min-[1366px]:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_563px]">
               <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8">
                 {hasCartItems && (
@@ -605,7 +604,7 @@ export default function CartPage() {
                                 </div>
 
                                 <div className="min-w-0">
-                                  <p className="line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
+                                  <p className="line-clamp-2  text-sm font-bold leading-5 text-ink sm:text-base">
                                     {savedItemView.title}
                                   </p>
 
@@ -660,7 +659,9 @@ export default function CartPage() {
                           <div
                             key={wishlistId}
                             className={savedCardClass}
-                            onClick={() => navigate(`/products/${savedProduct.id}`)}
+                            onClick={() =>
+                              navigate(`/products/${savedProduct.id}`)
+                            }
                             onKeyDown={(event) => {
                               if (event.key === "Enter" || event.key === " ") {
                                 event.preventDefault();
