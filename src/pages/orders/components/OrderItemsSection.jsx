@@ -84,45 +84,45 @@ function ReviewRating({ rating = 0 }) {
 }
 
 function ExistingReviewCard({ review }) {
-  const media = Array.isArray(review?.media) ? review.media.filter(Boolean) : [];
+  const media = Array.isArray(review?.media)
+    ? review.media.filter(Boolean)
+    : [];
   const status = String(review?.status || "pending").replace(/_/g, " ");
   const reviewText = review?.reviewText || review?.text || "";
 
   return (
-    <div className="mt-5 rounded-[10px] border border-[#37B44633] bg-[#37B4460D] p-3 sm:p-4">
+    <div className="mt-5 rounded-xl border border-[#37B44633] bg-[#37B4460D] p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <ReviewRating rating={review?.rating} />
-          <span className="text-sm font-bold text-[#21812C]">
-            Your review
-          </span>
+          <span className="text-sm font-bold text-[#21812C]">Your review</span>
         </div>
-        <span className="rounded-full bg-white px-2.5 py-1 text-xs font-bold capitalize text-[#21812C]">
+        <span className="rounded-full border border-[#37B44633] bg-white px-3 py-1 text-xs font-bold capitalize text-[#21812C] shadow-sm">
           {status}
         </span>
       </div>
 
       {review?.title && (
-        <p className="mt-3 text-sm font-bold text-[#1B1D60]">
+        <p className="mt-4 text-sm font-bold text-[#1B1D60] sm:text-base">
           {review.title}
         </p>
       )}
 
       {reviewText && (
-        <p className="mt-1 line-clamp-3 text-sm font-medium leading-6 text-[#2E2E2E]">
+        <p className="mt-1.5 line-clamp-3 text-sm font-medium leading-6 text-[#2E2E2E]">
           {reviewText}
         </p>
       )}
 
       {media.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2.5">
           {media.slice(0, 5).map((url, index) => (
             <a
               key={`${url}-${index}`}
               href={url}
               target="_blank"
               rel="noreferrer"
-              className="block size-14 overflow-hidden rounded-[8px] border border-[#CE9F2D33] bg-white sm:size-16"
+              className="block size-14 overflow-hidden rounded-lg border border-[#CE9F2D33] bg-white shadow-sm transition-shadow hover:shadow-md sm:size-16"
             >
               <img
                 src={url}
@@ -144,7 +144,9 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
   const [submitting, setSubmitting] = useState(false);
   const productId = getReviewProductId(item);
   const orderItemId = getReviewOrderItemId(item);
-  const isUploadingImages = reviewImages.some((image) => image.status === "uploading");
+  const isUploadingImages = reviewImages.some(
+    (image) => image.status === "uploading",
+  );
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -259,7 +261,11 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
               !form.reviewText.trim()
             }
           >
-            {submitting ? "Submitting..." : isUploadingImages ? "Uploading..." : "Submit Review"}
+            {submitting
+              ? "Submitting..."
+              : isUploadingImages
+                ? "Uploading..."
+                : "Submit Review"}
           </button>
         </div>
       </form>
@@ -302,15 +308,18 @@ const getItemShippingSummary = (item = {}) => {
   const method = shipping.shippingMethod || shipping.method || "";
   const min = shipping.estimatedDaysMin ?? shipping.processingDays;
   const max = shipping.estimatedDaysMax ?? shipping.processingDays;
-  const eta = min || max
-    ? `${min || max}${max && max !== min ? `-${max}` : ""} days`
-    : "";
+  const eta =
+    min || max
+      ? `${min || max}${max && max !== min ? `-${max}` : ""} days`
+      : "";
   if (!hasProfile && !method && !eta) return "";
   return [
     hasProfile ? "Seller delivery profile" : "Delivery",
     method ? toTitle(method) : "",
     eta ? `ETA ${eta}` : "",
-  ].filter(Boolean).join(" · ");
+  ]
+    .filter(Boolean)
+    .join(" · ");
 };
 
 function OrderItemCard({
@@ -333,8 +342,8 @@ function OrderItemCard({
   const shippingSummary = getItemShippingSummary(item);
 
   return (
-    <div className="flex w-full flex-col gap-4  sm:flex-row sm:gap-5 lg:gap-[36px]">
-      <div className="flex aspect-[252/210] w-full shrink-0 items-center justify-center overflow-hidden rounded-[10px] border  border-[#CE9F2D33] bg-white sm:w-[180px] lg:w-[220px] 2xl:w-[252px]">
+    <div className="flex w-full flex-col gap-5 sm:flex-row sm:items-start sm:gap-6 lg:gap-8">
+      <div className="flex  aspect-square w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#CE9F2D33] bg-white p-2 w-[180px] lg:w-[210px] 2xl:w-[220px]">
         {getItemImage(item) ? (
           productPath ? (
             <Link to={productPath}>
@@ -356,13 +365,13 @@ function OrderItemCard({
         )}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col  justify-center ">
-        <p className="line-clamp-2 break-words text-[18px] font-semibold leading-[26px] text-[#2E2E2E] sm:text-[22px] sm:leading-[32px] lg:text-[26px] md:leading-[38px]">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <p className="line-clamp-2 break-words text-h4 font-bold text-[#2E2E2E]">
           {getProductTitle(item)}
         </p>
 
-        <div className="my-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink xl:my-4">
-          <span className="text-[18px] font-medium leading-[100%] text-[#2E2E2E]">
+        <div className="my-3 flex flex-wrap gap-x-6 gap-y-2 text-ink sm:my-4">
+          <span className="text-sm font-medium text-[#2E2E2E] sm:text-base">
             Color:{" "}
             <span className="font-semibold text-[#1B1D60]">
               <strong className="font-bold text-[#25247B]">
@@ -370,7 +379,7 @@ function OrderItemCard({
               </strong>
             </span>
           </span>
-          <span className="text-[18px] font-medium leading-[100%] text-[#2E2E2E]">
+          <span className="text-sm font-medium text-[#2E2E2E] sm:text-base">
             Quantity:{" "}
             <strong className="font-bold text-[#25247B]">
               {String(item.quantity || 1).padStart(2, "0")}
@@ -384,17 +393,17 @@ function OrderItemCard({
           </p>
         )}
 
-        <div className="mt-2 gap-[5px] sm:mt-4 lg:mt-0">
-          <p className="text-[20px] font-extrabold leading-[28px] text-[#1B1D60] sm:text-[26px] sm:leading-[38px] md:text-[24px] md:leading-[46px] ">
+        <div className="mt-1">
+          <p className="text-xl font-extrabold leading-8 text-[#1B1D60] sm:text-2xl">
             {formatMoney(getItemLineTotal(item), currency)}
           </p>
-          <p className="text-[14px] font-medium leading-[100%] text-[#2E2E2E] sm:text-[16px] md:text-[18px]">
+          <p className="mt-0.5 text-sm font-medium text-[#2E2E2E] sm:text-base">
             Inclusive of all taxes
           </p>
         </div>
 
         {canReview && (
-          <div className="mt-5">
+          <div className="mt-4 sm:mt-5">
             {!reviewChecked ? (
               <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA] px-4 text-sm font-bold text-[#6B6B80]">
                 Checking review...
@@ -478,7 +487,7 @@ function OrderItemsSection({ items = [], orderId, orderStatus, ...itemProps }) {
       <OrderDetailSectionCard
         title="Item"
         borderClassName="border-[#CE9F2D66]  h-fit "
-        bodyClassName="grid gap-8 sm:gap-14 p-4 sm:p-5 lg:p-6"
+        bodyClassName="grid gap-8 p-4 sm:p-6 lg:p-7"
       >
         {items.map((item, index) => (
           <OrderItemCard

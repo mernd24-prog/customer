@@ -134,7 +134,7 @@ export default function PhoneField({
 
   return (
     <label
-      className="grid gap-1.5 text-sm lg:text-lg font-medium text-ink"
+      className="grid gap-1.5 text-sm font-medium text-ink lg:text-base"
       htmlFor={id}
     >
       <span>{label}</span>

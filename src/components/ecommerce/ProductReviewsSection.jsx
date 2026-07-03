@@ -2,7 +2,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useAuthModal } from "../../context/AuthModalContext";
-import { ChevronLeft, ChevronRight, ThumbsUp, X } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ThumbsUp,
+  X,
+} from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import {
   fetchProductReviews,
@@ -48,13 +54,18 @@ function StarInput({ value, onChange, size = 28 }) {
 
 function RatingPill({ rating }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-[#CE9F2D] px-2 py-1 text-[10px] font-bold text-white lg:text-base">
-      <IoIosStar className="text-[10px] lg:text-base" />({rating})
+    <span className="inline-flex items-center gap-1 rounded-full bg-[#CE9F2D] px-2 py-1 text-xs font-bold text-white ">
+      <IoIosStar className="text-xs" />({rating})
     </span>
   );
 }
 
-function ReviewMediaLightbox({ images = [], index = 0, onClose, onIndexChange }) {
+function ReviewMediaLightbox({
+  images = [],
+  index = 0,
+  onClose,
+  onIndexChange,
+}) {
   if (!images.length) return null;
   const safeIndex = Math.min(Math.max(index, 0), images.length - 1);
   const currentImage = images[safeIndex];
@@ -62,35 +73,38 @@ function ReviewMediaLightbox({ images = [], index = 0, onClose, onIndexChange })
 
   return (
     <div
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 p-4"
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-[#2E2E2E]/90 p-4"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
       <div
-        className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-[10px] bg-white shadow-2xl"
+        className="relative flex max-h-[78vh]  w-full max-w-xl flex-col overflow-hidden rounded-xl border border-[#CE9F2D4D] bg-white  shadow-xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <p className="text-sm font-bold text-ink">
-            Review Photos {images.length > 1 ? `(${safeIndex + 1}/${images.length})` : ""}
+        <div className="flex items-center justify-between border-b border-[#CE9F2D33] bg-[#FAFAFA]/60 px-4 py-2.5">
+          <p className="text-sm font-bold text-black ">
+            Review Photos{" "}
+            {images.length > 1 ? `(${safeIndex + 1}/${images.length})` : ""}
           </p>
           <button
             type="button"
             onClick={onClose}
-            className="grid h-9 w-9 place-items-center rounded-full text-muted transition hover:bg-surface-soft hover:text-ink"
+            className="grid h-8 w-8 place-items-center rounded-full text-black bg-white"
             aria-label="Close image preview"
           >
             <X size={18} />
           </button>
         </div>
 
-        <div className="relative flex min-h-[320px] items-center justify-center bg-[#111] p-3 sm:min-h-[520px]">
+        <div className="relative flex min-h-[220px] items-center justify-center bg-[#FAFAFA] p-3 sm:min-h-[320px] sm:p-4">
           {showNavigation && (
             <button
               type="button"
-              onClick={() => onIndexChange((safeIndex - 1 + images.length) % images.length)}
-              className="absolute left-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-md transition hover:bg-white"
+              onClick={() =>
+                onIndexChange((safeIndex - 1 + images.length) % images.length)
+              }
+              className="absolute left-2 top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-[#CE9F2D66] bg-white text-[#1B1D60] shadow-sm transition hover:bg-[#CE9F2D] hover:text-white sm:left-3"
               aria-label="Previous review image"
             >
               <ChevronLeft size={20} />
@@ -99,13 +113,13 @@ function ReviewMediaLightbox({ images = [], index = 0, onClose, onIndexChange })
           <img
             src={currentImage}
             alt={`Review media ${safeIndex + 1}`}
-            className="max-h-[70vh] max-w-full rounded-[8px] object-contain"
+            className="max-h-[44vh] max-w-[82%]  rounded-lg border border-[#E8DFC9] bg-white object-contain"
           />
           {showNavigation && (
             <button
               type="button"
               onClick={() => onIndexChange((safeIndex + 1) % images.length)}
-              className="absolute right-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-md transition hover:bg-white"
+              className="absolute right-2 top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-[#CE9F2D66] bg-white text-[#1B1D60] shadow-sm transition hover:bg-[#CE9F2D] hover:text-white sm:right-3"
               aria-label="Next review image"
             >
               <ChevronRight size={20} />
@@ -114,17 +128,23 @@ function ReviewMediaLightbox({ images = [], index = 0, onClose, onIndexChange })
         </div>
 
         {images.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto border-t border-border bg-white p-3">
+          <div className="flex justify-center gap-2 overflow-x-auto border-t border-[#CE9F2D33] bg-white p-2.5">
             {images.map((image, thumbIndex) => (
               <button
                 type="button"
                 key={`${image}-${thumbIndex}`}
                 onClick={() => onIndexChange(thumbIndex)}
-                className={`h-14 w-14 shrink-0 overflow-hidden rounded-[6px] border ${
-                  thumbIndex === safeIndex ? "border-gold ring-2 ring-gold/20" : "border-border"
+                className={`h-16 w-16 shrink-0   overflow-hidden rounded-md border bg-white p-0.5 transition ${
+                  thumbIndex === safeIndex
+                    ? "border-[#CE9F2D] "
+                    : "border-[#E8DFC9] opacity-70 hover:border-[#CE9F2D] hover:opacity-100"
                 }`}
               >
-                <img src={image} alt="" className="h-full w-full object-cover" />
+                <img
+                  src={image}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
               </button>
             ))}
           </div>
@@ -177,7 +197,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
   const buyerImage = review.buyerImage || review.buyerAvatarUrl || "";
 
   return (
-    <article className="border-b  border-[var(--customer-border)] last:border-b-0 mb-4 lg:mb-6">
+    <article className=" my-8">
       <div className="mb-2  flex min-w-0 items-center gap-2.5">
         <span className="w-8 h-8 lg:w-10 lg:h-10">
           <img
@@ -186,12 +206,10 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
             className="h-full w-full rounded-full object-cover"
           />
         </span>
-        <span className="text-base lg:text-2xl font-bold text-[#2E2E2E]">
-          {name}
-        </span>
+        <span className="text-h6 font-bold text-[#2E2E2E]">{name}</span>
       </div>
 
-      <div className="my-2 lg:my-4 flex flex-wrap items-center gap-2">
+      <div className="my-4 flex flex-wrap items-center gap-2">
         <RatingPill rating={rating} />
         <span className="text-base flex gap-2 font-medium text-[#949494]">
           <div className="w-1 h-1 my-auto rounded-full bg-[#949494]" />
@@ -204,9 +222,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
           {review.title}
         </p>
       )}
-      {text && (
-        <p className="text-sm text-[#2E2E2E] sm:text-lg  my-4 ">{text}</p>
-      )}
+      {text && <p className="small text-[#2E2E2E]  my-4 ">{text}</p>}
 
       {media.length > 0 && (
         <div className="mb-4 mt-3 flex flex-wrap gap-2">
@@ -215,7 +231,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
               type="button"
               key={`${url}-${index}`}
               onClick={() => setLightboxIndex(index)}
-              className="block size-20 overflow-hidden rounded-[8px] border border-[#CE9F2D33] bg-[#FFFDF8] sm:size-24"
+              className="block size-20  overflow-hidden rounded-[8px] border border-[#CE9F2D33] bg-[#FFFDF8] sm:size-24"
             >
               <img
                 src={url}
@@ -242,7 +258,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         type="button"
         onClick={() => onHelpful?.(reviewId)}
         disabled={!reviewId || isOwn}
-        className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+        className={` inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
           alreadyVoted
             ? "bg-[#CE9F2D1A] text-[#1B1D60]"
             : "text-[#949494] hover:bg-[#F7F7FA] hover:text-[#1B1D60]"
@@ -350,7 +366,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
       </div>
 
       <div>
-        <label className="text-xs font-semibold text-gray uppercase tracking-wide mb-1 block">
+        <label className="text-xs  font-semibold text-gray uppercase tracking-wide mb-1 block">
           Title
         </label>
         <input
@@ -569,7 +585,6 @@ export default function ProductReviewsSection({ productId, product }) {
     dispatch(fetchMyProductReview({ productId }));
   };
 
-  const totalPages = Math.ceil(total / LIMIT);
   const canWriteReview = isLoggedIn && deliveredOrders.length > 0 && !myReview;
   const hasApiReviews = items.length > 0;
   const displayTotal = total || items.length;
@@ -583,7 +598,10 @@ export default function ProductReviewsSection({ productId, product }) {
   const displayReviews = useMemo(() => {
     if (bucket.loading && items.length === 0) return [];
     const ownPublishedReview =
-      myReview?.status === "published" ? myReview : null;
+      myReview?.status === "published" &&
+      (!ratingFilter || getReviewRating(myReview) === ratingFilter)
+        ? myReview
+        : null;
     const sourceReviews = ownPublishedReview
       ? [
           ownPublishedReview,
@@ -597,7 +615,7 @@ export default function ProductReviewsSection({ productId, product }) {
     if (!sourceReviews.length || (!hasApiReviews && !ownPublishedReview))
       return [];
     const sorted = sortReviewsByOption(sourceReviews, sort);
-    if (!ownPublishedReview) return sorted;
+    if (!ownPublishedReview || sort !== "newest") return sorted;
     return [
       ownPublishedReview,
       ...sorted.filter(
@@ -606,19 +624,24 @@ export default function ProductReviewsSection({ productId, product }) {
           String(ownPublishedReview._id || ownPublishedReview.id),
       ),
     ];
-  }, [bucket.loading, hasApiReviews, items, myReview, sort]);
+  }, [bucket.loading, hasApiReviews, items, myReview, ratingFilter, sort]);
+  const hasOwnPublishedReview = myReview?.status === "published";
+  const previewReviews = displayReviews.slice(
+    0,
+    hasOwnPublishedReview && sort === "newest" ? 3 : 2,
+  );
   const displayRatingBreakdown = getRatingBreakdown(stats);
   const selectedSortLabel =
     SORT_OPTIONS.find((option) => option.value === sort)?.label ||
     "Most Recent";
 
   return (
-    <section id="reviews" className="w-full overflow-hidden">
+    <section id="reviews" className="w-full overflow-visible">
       <div className="flex mt-4 lg:mt-8 flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-12">
         <aside className=" lg:sticky lg:top-20   lg:self-start">
           <div className="w-full overflow-hidden lg:w-[420px] xl:w-[580px] rounded-xl border border-[#CE9F2D66] bg-white">
             <div className=" px-4 py-6  bg-[#CE9F2D33]   sm:px-5">
-              <h2 className="text-h5 font-bold text-[#2E2E2E]">
+              <h2 className="text-h6 font-bold text-[#2E2E2E]">
                 Product Ratings & Reviews
               </h2>
             </div>
@@ -717,36 +740,57 @@ export default function ProductReviewsSection({ productId, product }) {
                     {ratingFilter}★ only
                   </span>
                 )}
-                <div ref={sortMenuRef} className="relative">
+                <div
+                  ref={sortMenuRef}
+                  className="relative w-[190px]"
+                  onBlur={(event) => {
+                    if (!event.currentTarget.contains(event.relatedTarget)) {
+                      setSortOpen(false);
+                    }
+                  }}
+                >
                   <button
                     type="button"
                     onClick={() => setSortOpen((open) => !open)}
-                    className="flex min-h-9 min-w-[160px] items-center justify-between gap-3 rounded-[6px] border border-[var(--customer-border)] bg-white py-2 pl-3 pr-2 text-left text-xs font-bold text-[var(--customer-gold-dark)] focus:outline-none"
+                    className="flex h-10 w-full items-center justify-between rounded-[10px] border border-[#CE9F2D] bg-white px-3 text-left text-sm font-semibold text-[#1B1D60] transition-colors hover:bg-[#FFF9EA] focus:outline-none focus:ring-2 focus:ring-[#CE9F2D33]"
+                    aria-expanded={sortOpen}
+                    aria-haspopup="menu"
                   >
                     <span>{selectedSortLabel}</span>
-                    <span className="text-[10px] text-ink">▾</span>
+                    <ChevronDown
+                      size={18}
+                      className={`text-[#CE9F2D] transition-transform ${
+                        sortOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
 
                   {sortOpen && (
-                    <div className="absolute right-0 top-[calc(100%+4px)] z-50 w-[160px] overflow-hidden rounded-[6px] border border-[var(--customer-border)] bg-white">
-                      {SORT_OPTIONS.map((option) => (
-                        <button
-                          key={option.value}
-                          type="button"
-                          onClick={() => {
-                            setSort(option.value);
-                            setPage(1);
-                            setSortOpen(false);
-                          }}
-                          className={`block w-full  px-3 py-2 text-left text-xs font-medium ${
-                            sort === option.value
-                              ? "bg-[#1B1D60] text-white"
-                              : "bg-white text-[var(--customer-gold-dark)] hover:bg-[#F8F3E7]"
-                          }`}
-                        >
-                          {option.label}
-                        </button>
-                      ))}
+                    <div
+                      role="menu"
+                      className="absolute right-0 top-[calc(100%+6px)] z-[100] w-full overflow-hidden rounded-[12px] border border-[#E7D9B8] bg-white shadow-[0_12px_32px_rgba(31,36,48,0.14)]"
+                    >
+                      <div className="py-1">
+                        {SORT_OPTIONS.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            role="menuitem"
+                            onClick={() => {
+                              setSort(option.value);
+                              setPage(1);
+                              setSortOpen(false);
+                            }}
+                            className={`block w-full px-4 py-2.5 text-left text-[13px] font-semibold transition-colors  ${
+                              sort === option.value
+                                ? "bg-[#F8F1E2] text-[#1B1D60]"
+                                : "text-[#2E2E2E]"
+                            }`}
+                          >
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -766,7 +810,7 @@ export default function ProductReviewsSection({ productId, product }) {
           )}
 
           <div>
-            {displayReviews.map((review, index) => (
+            {previewReviews.map((review, index) => (
               <ProductReviewCard
                 key={
                   review._id ||
@@ -811,30 +855,6 @@ export default function ProductReviewsSection({ productId, product }) {
             >
               View all reviews <ChevronRight size={16} />
             </Link>
-          )}
-
-          {totalPages > 1 && (
-            <div className="mt-6 flex items-center justify-center gap-2">
-              <button
-                type="button"
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="rounded-full border border-border-strong px-4 py-2 text-xs transition-colors hover:bg-surface-soft disabled:opacity-40"
-              >
-                Previous
-              </button>
-              <span className="text-xs text-gray">
-                Page {page} of {totalPages}
-              </span>
-              <button
-                type="button"
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="rounded-full border border-border-strong px-4 py-2 text-xs transition-colors hover:bg-surface-soft disabled:opacity-40"
-              >
-                Next
-              </button>
-            </div>
           )}
         </div>
       </div>

@@ -13,7 +13,7 @@ function OrderDetailInfoTile({ icon, label, value, tone = "yellow" }) {
       <p className="text-[14px]  font-medium leading-[100%] text-[#2E2E2E] sm:text-[16px] lg:text-[18px]">
         {label}
       </p>
-      <p className="mt-6  break-words text-[18px] font-bold capitalize leading-[100%] text-[#1B1D60] sm:text-[22px] lg:text-[26px]">
+      <p className="mt-6  break-words text-h6 font-bold capitalize  text-[#1B1D60] ">
         {value || "N/A"}
       </p>
     </div>

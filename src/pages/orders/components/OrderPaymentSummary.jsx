@@ -14,18 +14,15 @@ function SummaryRow({
       className={`flex  w-full items-center justify-between gap-3 py-3 ${className}`}
     >
       <span
-        className={`flex-1 text-[14px] font-semibold leading-[20px] text-[#2E2E2E]
-      sm:text-[16px] sm:leading-[24px]
-      md:text-[18px] md:leading-[28px]
+        className={`flex-1 small  font-semibold text-[#2E2E2E]
+    
       ${labelClassName}`}
       >
         {label}
       </span>
 
       <span
-        className={`shrink-0 text-right text-[14px] font-bold leading-[20px]
-      sm:text-[16px] sm:leading-[24px]
-      md:text-[18px] md:leading-[28px]
+        className={`shrink-0 text-right small font-bold 
       ${savings ? "text-[#008425]" : "text-[#1B1D60]"}
       ${valueClassName}`}
       >
@@ -59,7 +56,7 @@ function AddressBlock({ shippingAddress, getAddressValue }) {
       <span className="text-[14px] font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px]">
         Shipping Address
       </span>
-      <div className="mt-2 w-full break-words text-[14px] font-medium leading-[20px] text-[#1B1D60] sm:text-[16px] sm:leading-[26px] md:text-[18px] md:leading-[30px]">
+      <div className="mt-2  w-full break-words text-[14px] font-medium leading-[20px] text-[#1B1D60] sm:text-[16px] sm:leading-[26px] md:text-[18px] md:leading-[30px]">
         {fullName && <p className="font-semibold">{fullName}</p>}
         {street && <p>{street}</p>}
         {cityLine && <p>{cityLine}</p>}

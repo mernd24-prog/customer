@@ -30,7 +30,7 @@ export default function Breadcrumbs({
                 <Link
                   to={item.href}
                   className={cn(
-                    "font-medium text-[14px]  hover:text-white  sm:text-[16px] lg:text-[18px]",
+                    "font-medium text-[14px]    sm:text-[16px] lg:text-[18px]",
                     linkClassName,
                   )}
                 >
@@ -56,7 +56,7 @@ export default function Breadcrumbs({
         })}
       </nav>
       {heading && (
-        <h1 className="text-2xl pt-2  pb-3  font-black leading-tight text-[#3F4095] min-[375px]:text-3xl  sm:text-4xl">
+        <h1 className=" pt-2 text-h2  pb-3  font-black  text-[#3F4095]">
           {heading}
         </h1>
       )}

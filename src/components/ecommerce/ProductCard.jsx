@@ -107,7 +107,7 @@ export default function ProductCard({
       : typeof cardProduct?.inStock === "boolean"
         ? cardProduct.inStock
         : typeof cardProduct?.isInStock === "boolean"
-        ? cardProduct.isInStock
+          ? cardProduct.isInStock
           : availableStock !== null
             ? availableStock > 0
             : true;
@@ -236,7 +236,6 @@ export default function ProductCard({
         className,
       )}
     >
-     
       <div className="absolute  left-4 top-4 z-20 flex max-w-[calc(100%-2rem)] flex-wrap items-center gap-2">
         {isFeatured && (
           <Label
@@ -316,7 +315,7 @@ export default function ProductCard({
             <img
               src={image}
               alt={title}
-              className="h-full w-auto object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
+              className="h-full w-full object-contain p-2 transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
               loading="lazy"
               decoding="async"
               onError={handleImageError}
@@ -332,7 +331,7 @@ export default function ProductCard({
           <StarRating rating={rating} count={ratingCount} />
 
           <h3
-            className=" w-full text-base md:text-small line-clamp-1 font-semibold text-[#2E2E2E] "
+            className=" w-full text-base  md:text-small line-clamp-1 font-semibold text-[#2E2E2E] "
             title={title}
           >
             {title}
@@ -343,8 +342,8 @@ export default function ProductCard({
             oldPrice={oldPrice}
             currency={currency || cardProduct?.currency}
             className="mb-0 gap-3 my-2 lg:my-4"
-            priceClassName="text-[20px] font-extrabold text-[#1B1D60] sm:text-[18px] lg:text-[22px]"
-            oldPriceClassName="text-[20px] font-semibold text-[#949494] line-through sm:text-[18px] lg:text-[24px]"
+            priceClassName="text-base font-extrabold text-[#1B1D60] md:text-lg 2xl:text-[20px]"
+            oldPriceClassName="text-base font-semibold text-[#949494] line-through md:text-lg 2xl:text-[20px]"
           />
         </div>
       </Link>

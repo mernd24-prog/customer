@@ -24,10 +24,11 @@
   }
 
   .text-h5 {
-    @apply text-base  md:text-[18px]   2xl:text-[20px];
+    @apply text-lg  md:text-[20px]   2xl:text-[24px];
   }
 
   .text-h6 {
+    @apply text-base  md:text-[18px]   2xl:text-[20px];
   }
 
   .text-p {
@@ -509,7 +510,7 @@ textarea {
 @media (min-width: 768px) {
   .customer-container,
   .w-container {
-    width: min(100% - 48px, 1660px);
+    width: min(100% - 48px, 1580px);
   }
 }
 
