@@ -1,0 +1,151 @@
+
+import { useMemo } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { LogOut } from "lucide-react";
+
+import { HeaderGoldButton } from "../../components/dynamicComponent/button/static";
+import HeaderDropdown from "./HeaderDropdown";
+import MenuDropdown from "./MenuDropdown";
+import SellDropdown from "./SellDropdown";
+
+import { logout } from "../../features/auth/authSlice";
+import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
+import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
+
+import {
+  DEFAULT_TOP_NAV_LINKS,
+  DEFAULT_SELL_DROPDOWN,
+} from "./constants";
+import { withIcons } from "./categoryHelpers";
+
+export const TopHeader = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const currentUser = useSelector((s) => s.auth.current);
+
+  const { page: brandOutletPage } = useCmsRecord("brand-outlet");
+  const { page: helpContactPage } = useCmsRecord("help-contact");
+  const { page: headerSellPage } = useCmsRecord("header-sell-dropdown");
+
+  const sellDropdownCms = getCmsPayload(headerSellPage, DEFAULT_SELL_DROPDOWN);
+
+  const topLinks = [
+    { name: brandOutletPage?.title || "Brand Outlet", path: "/brand-outlet" },
+    { name: helpContactPage?.title || "Help & Contact", path: "/help-contact" },
+  ];
+
+  const filteredTopLinks = topLinks.filter(
+    (link) =>
+      link.name !== "Help & Contact" && link.name !== helpContactPage?.title,
+  );
+
+  const dropdowns = useMemo(
+    () => [
+      {
+        type: "sell",
+        label: "Sell",
+        path: "/seller/status",
+        data: {
+          ...DEFAULT_SELL_DROPDOWN,
+          ...sellDropdownCms,
+          features: withIcons(
+            sellDropdownCms?.features || DEFAULT_SELL_DROPDOWN.features,
+          ),
+        },
+      },
+      {
+        type: "more",
+        label: "More",
+        title: "More",
+        items: withIcons([
+          {
+            label: "Seller Login",
+            path: "http://45.195.90.183:3000/login",
+            icon: "store",
+          },
+          {
+            label: helpContactPage?.title || "Help & Contact",
+            path: "/help-contact",
+            icon: "lifeBuoy",
+          },
+        ]),
+      },
+    ],
+    [helpContactPage?.title, sellDropdownCms],
+  );
+
+  const renderDropdown = (dropdown) => {
+    switch (dropdown.type) {
+      case "sell":
+        return <SellDropdown data={dropdown.data} />;
+      case "menu":
+      case "more":
+        return <MenuDropdown title={dropdown.title} items={dropdown.items} />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="hidden h-[40px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
+      <div className="customer-container flex h-full items-center justify-between">
+        <div className="flex flex-1 items-center gap-8 text-[#FFFFFF]">
+          {asArray(
+            filteredTopLinks.length
+              ? filteredTopLinks
+              : DEFAULT_TOP_NAV_LINKS.filter((l) => l.name !== "Help & Contact"),
+          ).map((link, index) => (
+            <Link
+              key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
+              to={hrefOr(link?.path)}
+              className="text-[#FFFFFF] transition-all duration-300 ease-in-out hover:text-[#FFFFFF]"
+            >
+              {textOr(link?.name, "Link")}
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex h-full items-center gap-[20px]">
+          {dropdowns.map((dropdown) => (
+            <HeaderDropdown
+              key={dropdown.type}
+              label={dropdown.label}
+              icon={dropdown.icon}
+              path={dropdown.path}
+            >
+              {renderDropdown(dropdown)}
+            </HeaderDropdown>
+          ))}
+
+          {currentUser ? (
+            <HeaderGoldButton
+              leftIcon={<LogOut size={14} />}
+              className="
+                inline-flex items-center justify-center gap-2
+                h-[30px] lg:h-[32px]
+                min-w-[90px] lg:min-w-[100px]
+                rounded-[5px]
+                px-3
+                py-0
+                text-[12px] lg:text-[13px]
+                font-semibold
+                leading-none
+                whitespace-nowrap
+                transition-all duration-300 ease-in-out
+                hover:bg-gray-50
+                hover:shadow-md
+              "
+              onClick={() => {
+                dispatch(logout());
+                navigate("/", { replace: true });
+              }}
+            >
+              Sign Out
+            </HeaderGoldButton>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+};
