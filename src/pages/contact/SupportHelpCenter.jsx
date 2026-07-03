@@ -7,6 +7,10 @@ import ApiState from "../../components/common/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import NeedHelpPanel from "../../components/ecommerce/NeedHelpPanel";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
+import { apiRequest } from "../../api/client";
+import { endpoints } from "../../api/endpoints";
+import { tokenStorage } from "../../api/tokenStorage";
+import { notify } from "../../utils/notify";
 
 import {
   SUPPORT_CONTACT_ITEMS,
@@ -15,6 +19,22 @@ import {
   SUPPORT_FALLBACK_FAQS,
   SUPPORT_FALLBACK_TOPICS,
 } from "../../data/supportPage";
+
+const CUSTOMER_SUPPORT_CATEGORIES = [
+  { value: "ORDER_ISSUE", label: "Order Issue" },
+  { value: "DELIVERY_ISSUE", label: "Delivery Issue" },
+  { value: "PAYMENT_ISSUE", label: "Payment Issue" },
+  { value: "REFUND_RETURN_ISSUE", label: "Return & Refund" },
+  { value: "PRODUCT_ISSUE", label: "Product Issue" },
+  { value: "ACCOUNT_ISSUE", label: "Account Issue" },
+  { value: "OTHER", label: "Other" },
+];
+
+const CUSTOMER_SUPPORT_INITIAL_FORM = {
+  category: "ORDER_ISSUE",
+  subject: "",
+  message: "",
+};
 
 function getTopicImage(title = "") {
   const normalized = title.toLowerCase();
@@ -124,6 +144,61 @@ function normalizeCommonQuestions(page) {
   );
 }
 
+function formatSupportCategory(category = "") {
+  return String(category || "")
+    .toLowerCase()
+    .split("_")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function formatSupportDate(value) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
+function normalizeSupportQueries(result) {
+  const items = Array.isArray(result?.items)
+    ? result.items
+    : Array.isArray(result)
+      ? result
+      : [];
+
+  return items.map((item) => ({
+    id: item.queryId || item.id,
+    subject: item.subject || "Support request",
+    category: item.category || "OTHER",
+    categoryLabel: formatSupportCategory(item.category || "OTHER"),
+    status: item.status || "pending",
+    updatedAt: formatSupportDate(item.updatedAt || item.createdAt),
+  }));
+}
+
+function SupportStatusBadge({ status }) {
+  const normalized = String(status || "pending").toLowerCase();
+  const className =
+    normalized === "resolved" || normalized === "closed"
+      ? "bg-[#E8F8F5] text-[#117A65]"
+      : normalized === "in_progress"
+        ? "bg-[#EEF2FF] text-[#3E4093]"
+        : "bg-[#FEF9E7] text-[#B7950B]";
+
+  return (
+    <span
+      className={`inline-flex rounded-full px-3 py-1 text-[12px] font-semibold capitalize ${className}`}
+    >
+      {normalized.replace(/_/g, " ")}
+    </span>
+  );
+}
+
 export default function SupportHelpCenter() {
   const { page, loading } = useCmsRecord("support-center");
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
@@ -152,6 +227,92 @@ export default function SupportHelpCenter() {
 
   const quickActions =
     topics.length > 0 ? topics.slice(0, 6) : SUPPORT_FALLBACK_TOPICS;
+
+  const isSignedIn = Boolean(tokenStorage.getAccessToken());
+
+  const loadSupportQueries = useCallback(async () => {
+    if (!isSignedIn) {
+      setSupportQueries([]);
+      setSupportError("");
+      return;
+    }
+
+    setSupportLoading(true);
+    setSupportError("");
+    try {
+      const result = await apiRequest({
+        method: "get",
+        url: endpoints.support.queries,
+        params: {
+          limit: 5,
+          ...(selectedSupportCategory
+            ? { category: selectedSupportCategory }
+            : {}),
+        },
+      });
+      setSupportQueries(normalizeSupportQueries(result.data));
+    } catch (error) {
+      setSupportError(error?.message || "Unable to load support tickets.");
+    } finally {
+      setSupportLoading(false);
+    }
+  }, [isSignedIn, selectedSupportCategory]);
+
+  useEffect(() => {
+    loadSupportQueries();
+  }, [loadSupportQueries]);
+
+  const handleSupportFieldChange = (event) => {
+    const { name, value } = event.target;
+    setSupportForm((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleSupportSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!isSignedIn) {
+      notify.info("Please login to chat with support.");
+      return;
+    }
+
+    const subject = supportForm.subject.trim();
+    const message = supportForm.message.trim();
+
+    if (subject.length < 5) {
+      notify.warning("Please enter a subject with at least 5 characters.");
+      return;
+    }
+
+    if (message.length < 10) {
+      notify.warning("Please describe your issue in at least 10 characters.");
+      return;
+    }
+
+    setSupportSubmitting(true);
+    try {
+      await apiRequest({
+        method: "post",
+        url: endpoints.support.queries,
+        data: {
+          category: supportForm.category,
+          subject,
+          message,
+          metadata: {
+            source: "customer_support_center",
+            channel: "chat",
+          },
+        },
+      });
+      notify.success("Support message sent successfully.");
+      setSupportForm(CUSTOMER_SUPPORT_INITIAL_FORM);
+      setSelectedSupportCategory("");
+      await loadSupportQueries();
+    } catch (error) {
+      notify.error(error?.message || "Failed to send support message.");
+    } finally {
+      setSupportSubmitting(false);
+    }
+  };
 
   if (isPageLoading) {
     return (
@@ -355,12 +516,146 @@ export default function SupportHelpCenter() {
           </div>
 
           {/* RIGHT COLUMN */}
-          <div className="min-w-0">
+          <div className="min-w-0 space-y-5">
             <NeedHelpPanel
               title="Contact Support"
               items={SUPPORT_CONTACT_ITEMS}
               headerStyle="colored"
             />
+
+            <section
+              id="support-chat"
+              className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white"
+            >
+              <div className="bg-[#F7EED8] px-5 py-4">
+                <h2 className="text-lg font-bold text-[#2E2E2E]">
+                  Chat With Support
+                </h2>
+              </div>
+
+              <form onSubmit={handleSupportSubmit} className="space-y-4 px-5 py-5">
+                <label className="block">
+                  <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
+                    Category
+                  </span>
+                  <select
+                    name="category"
+                    value={supportForm.category}
+                    onChange={handleSupportFieldChange}
+                    className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] outline-none focus:border-[#3E4093]"
+                  >
+                    {CUSTOMER_SUPPORT_CATEGORIES.map((category) => (
+                      <option key={category.value} value={category.value}>
+                        {category.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="block">
+                  <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
+                    Subject
+                  </span>
+                  <input
+                    name="subject"
+                    value={supportForm.subject}
+                    onChange={handleSupportFieldChange}
+                    placeholder="Example: Refund not received"
+                    className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] outline-none placeholder:text-[#9A9A9A] focus:border-[#3E4093]"
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
+                    Message
+                  </span>
+                  <textarea
+                    name="message"
+                    value={supportForm.message}
+                    onChange={handleSupportFieldChange}
+                    rows={4}
+                    placeholder="Write your issue here..."
+                    className="w-full resize-none rounded-lg border border-[#E7D9B8] bg-white px-3 py-3 text-sm leading-5 text-[#2E2E2E] outline-none placeholder:text-[#9A9A9A] focus:border-[#3E4093]"
+                  />
+                </label>
+
+                <button
+                  type="submit"
+                  disabled={supportSubmitting}
+                  className="h-11 w-full rounded-lg bg-[#3E4093] text-sm font-bold text-white transition hover:bg-[#303176] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {supportSubmitting ? "Sending..." : "Send Message"}
+                </button>
+
+                {!isSignedIn && (
+                  <p className="text-center text-xs font-medium text-[#666666]">
+                    Login is required to send a support message.
+                  </p>
+                )}
+              </form>
+            </section>
+
+            <section className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white">
+              <div className="flex items-center justify-between gap-3 bg-[#F7EED8] px-5 py-4">
+                <h2 className="text-lg font-bold text-[#2E2E2E]">
+                  Recent Tickets
+                </h2>
+                <select
+                  value={selectedSupportCategory}
+                  onChange={(event) =>
+                    setSelectedSupportCategory(event.target.value)
+                  }
+                  className="h-9 rounded-lg border border-[#E7D9B8] bg-white px-2 text-xs font-semibold text-[#2E2E2E] outline-none"
+                >
+                  <option value="">All</option>
+                  {CUSTOMER_SUPPORT_CATEGORIES.map((category) => (
+                    <option key={category.value} value={category.value}>
+                      {category.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="divide-y divide-[#EFE5D2] px-5">
+                {supportLoading && (
+                  <p className="py-5 text-sm font-medium text-[#666666]">
+                    Loading tickets...
+                  </p>
+                )}
+
+                {!supportLoading && supportError && (
+                  <p className="py-5 text-sm font-medium text-[#CB4335]">
+                    {supportError}
+                  </p>
+                )}
+
+                {!supportLoading && !supportError && supportQueries.length === 0 && (
+                  <p className="py-5 text-sm font-medium text-[#666666]">
+                    {isSignedIn
+                      ? "No support tickets found."
+                      : "Login to view your tickets."}
+                  </p>
+                )}
+
+                {!supportLoading &&
+                  !supportError &&
+                  supportQueries.map((ticket) => (
+                    <div key={ticket.id} className="py-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-bold text-[#1B1D60]">
+                            {ticket.subject}
+                          </p>
+                          <p className="mt-1 text-xs font-medium text-[#666666]">
+                            {ticket.id} · {ticket.categoryLabel} · {ticket.updatedAt}
+                          </p>
+                        </div>
+                        <SupportStatusBadge status={ticket.status} />
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </section>
           </div>
         </div>
       </main>
