@@ -510,7 +510,10 @@ export default function CategoryMegaMenu({
 
   const labels = useMemo(() => mergeLabels(labelsProp), [labelsProp]);
   const root = useMemo(() => (rootItem ? toNode(rootItem) : null), [rootItem]);
-  const subCategories = root?.children || EMPTY_ITEMS;
+  const subCategories = useMemo(
+    () => (root?.children || EMPTY_ITEMS).slice(0, 6),
+    [root],
+  );
   const promoData = promo || data?.promo;
   const rootTitle = root?.title || data?.leftSections?.[0]?.title;
   const rootHref = root ? getItemHref(root) : "#";
@@ -610,7 +613,7 @@ export default function CategoryMegaMenu({
       <div
         className={`customer-container hidden lg:block ${desktopContainerClassName}`}
       >
-        <div className="grid max-h-[calc(100vh-160px)] min-h-[300px] grid-cols-12 overflow-hidden rounded-b-2xl border-x border-border/70 bg-white">
+        <div className="grid max-h-[400px] min-h-[200px] grid-cols-12 overflow-hidden rounded-b-2xl border-x border-border/70 bg-white">
           {/* Column 1: Subcategories */}
           <div className="col-span-3">
             <SubCategoryColumn

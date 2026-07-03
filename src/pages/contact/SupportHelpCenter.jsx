@@ -88,7 +88,6 @@ function normalizeKey(value = "") {
 
 function getSection(page, names) {
   const sections = Array.isArray(page?.sections) ? page.sections : [];
-
   const normalizedNames = names.map(normalizeKey);
 
   return sections.find((section) => {
@@ -111,7 +110,6 @@ function mapCards(items = []) {
 
 function normalizeHelpTopics(page) {
   const section = getSection(page, ["All Help Topics"]);
-
   const points = Array.isArray(section?.points) ? section.points : [];
 
   if (points.length) {
@@ -124,7 +122,10 @@ function normalizeHelpTopics(page) {
 }
 
 function normalizeCommonQuestions(page) {
-  const section = getSection(page, ["Common Question", "Common Questions"]);
+  const section = getSection(page, [
+    "Common Question",
+    "Common Questions",
+  ]);
 
   const points = Array.isArray(section?.points) ? section.points : [];
 
@@ -138,10 +139,9 @@ function normalizeCommonQuestions(page) {
 
   const bodySections = parseBodySections(page?.body);
 
-  return mapCards(questionPoints.length ? questionPoints : bodySections).slice(
-    0,
-    6,
-  );
+  return mapCards(
+    questionPoints.length ? questionPoints : bodySections,
+  ).slice(0, 6);
 }
 
 function formatSupportCategory(category = "") {
@@ -155,8 +155,11 @@ function formatSupportCategory(category = "") {
 
 function formatSupportDate(value) {
   if (!value) return "-";
+
   const date = new Date(value);
+
   if (Number.isNaN(date.getTime())) return "-";
+
   return new Intl.DateTimeFormat("en-IN", {
     day: "2-digit",
     month: "short",
@@ -183,6 +186,7 @@ function normalizeSupportQueries(result) {
 
 function SupportStatusBadge({ status }) {
   const normalized = String(status || "pending").toLowerCase();
+
   const className =
     normalized === "resolved" || normalized === "closed"
       ? "bg-[#E8F8F5] text-[#117A65]"
@@ -201,32 +205,46 @@ function SupportStatusBadge({ status }) {
 
 export default function SupportHelpCenter() {
   const { page, loading } = useCmsRecord("support-center");
+
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
-  const [selectedSupportCategory, setSelectedSupportCategory] = useState("");
-  const [supportForm, setSupportForm] = useState(CUSTOMER_SUPPORT_INITIAL_FORM);
+  const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
+
+  const [selectedSupportCategory, setSelectedSupportCategory] =
+    useState("");
+
+  const [supportForm, setSupportForm] = useState(
+    CUSTOMER_SUPPORT_INITIAL_FORM,
+  );
+
   const [supportQueries, setSupportQueries] = useState([]);
   const [supportLoading, setSupportLoading] = useState(false);
   const [supportSubmitting, setSupportSubmitting] = useState(false);
   const [supportError, setSupportError] = useState("");
 
-  // Mobile Quick Actions dropdown state
-  const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
-
   const pageTitle = page?.title || "";
-
   const pageDescription = page?.description || page?.excerpt || "";
 
-  const topics = useMemo(() => normalizeHelpTopics(page), [page]);
+  const topics = useMemo(
+    () => normalizeHelpTopics(page),
+    [page],
+  );
 
-  const commonQuestions = useMemo(() => normalizeCommonQuestions(page), [page]);
+  const commonQuestions = useMemo(
+    () => normalizeCommonQuestions(page),
+    [page],
+  );
 
   const isPageLoading = loading && !page;
 
   const faqData =
-    commonQuestions.length > 0 ? commonQuestions : SUPPORT_FALLBACK_FAQS;
+    commonQuestions.length > 0
+      ? commonQuestions
+      : SUPPORT_FALLBACK_FAQS;
 
   const quickActions =
-    topics.length > 0 ? topics.slice(0, 6) : SUPPORT_FALLBACK_TOPICS;
+    topics.length > 0
+      ? topics.slice(0, 6)
+      : SUPPORT_FALLBACK_TOPICS;
 
   const isSignedIn = Boolean(tokenStorage.getAccessToken());
 
@@ -239,6 +257,7 @@ export default function SupportHelpCenter() {
 
     setSupportLoading(true);
     setSupportError("");
+
     try {
       const result = await apiRequest({
         method: "get",
@@ -250,9 +269,12 @@ export default function SupportHelpCenter() {
             : {}),
         },
       });
+
       setSupportQueries(normalizeSupportQueries(result.data));
     } catch (error) {
-      setSupportError(error?.message || "Unable to load support tickets.");
+      setSupportError(
+        error?.message || "Unable to load support tickets.",
+      );
     } finally {
       setSupportLoading(false);
     }
@@ -264,7 +286,11 @@ export default function SupportHelpCenter() {
 
   const handleSupportFieldChange = (event) => {
     const { name, value } = event.target;
-    setSupportForm((current) => ({ ...current, [name]: value }));
+
+    setSupportForm((current) => ({
+      ...current,
+      [name]: value,
+    }));
   };
 
   const handleSupportSubmit = async (event) => {
@@ -279,16 +305,21 @@ export default function SupportHelpCenter() {
     const message = supportForm.message.trim();
 
     if (subject.length < 5) {
-      notify.warning("Please enter a subject with at least 5 characters.");
+      notify.warning(
+        "Please enter a subject with at least 5 characters.",
+      );
       return;
     }
 
     if (message.length < 10) {
-      notify.warning("Please describe your issue in at least 10 characters.");
+      notify.warning(
+        "Please describe your issue in at least 10 characters.",
+      );
       return;
     }
 
     setSupportSubmitting(true);
+
     try {
       await apiRequest({
         method: "post",
@@ -303,12 +334,17 @@ export default function SupportHelpCenter() {
           },
         },
       });
+
       notify.success("Support message sent successfully.");
+
       setSupportForm(CUSTOMER_SUPPORT_INITIAL_FORM);
       setSelectedSupportCategory("");
+
       await loadSupportQueries();
     } catch (error) {
-      notify.error(error?.message || "Failed to send support message.");
+      notify.error(
+        error?.message || "Failed to send support message.",
+      );
     } finally {
       setSupportSubmitting(false);
     }
@@ -350,126 +386,123 @@ export default function SupportHelpCenter() {
       />
 
       <main className="main-container p-0 sm:px-6 sm:py-6 lg:px-0 lg:py-8">
-        {/* Breadcrumb */}
         <Breadcrumbs items={SUPPORT_BREADCRUMBS} />
 
-        {/* Page Heading */}
         <div className="mb-7 mt-4 sm:mt-5">
           <h1 className="text-[26px] font-bold leading-tight text-[#3E4093] sm:text-[30px] lg:text-[32px]">
             Help & Support
           </h1>
         </div>
 
-        {/* Main Layout */}
-        <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,2.1fr)_minmax(320px,1fr)] xl:grid-cols-[minmax(0,2fr)_minmax(340px,1fr)]">
-          {/* LEFT COLUMN */}
-          <div className="min-w-0 space-y-5">
-            {/* Quick Actions */}
-            {quickActions.length > 0 && (
-              <>
-                {/* MOBILE / SMALL VIEW */}
-                <section className="relative md:hidden">
-                  {/* Dropdown Button */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setIsQuickActionsOpen((open) => !open)
-                    }
-                    aria-expanded={isQuickActionsOpen}
-                    className="flex w-full items-center justify-between rounded-[14px] border border-[#D7A522] bg-white px-4 py-3 text-left font-semibold text-[#2E2E2E]"
+        {/* =====================================================
+            MOBILE QUICK ACTIONS
+            Separate from desktop grid
+        ====================================================== */}
+        {quickActions.length > 0 && (
+          <section className="relative mb-5 md:hidden">
+            <button
+              type="button"
+              onClick={() =>
+                setIsQuickActionsOpen((open) => !open)
+              }
+              aria-expanded={isQuickActionsOpen}
+              className="flex w-full items-center justify-between rounded-[14px] border border-[#D7A522] bg-white px-4 py-3 text-left font-semibold text-[#2E2E2E]"
+            >
+              <span>Quick Actions</span>
+
+              <ChevronDown
+                className={`size-5 shrink-0 transition-transform duration-200 ${
+                  isQuickActionsOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {isQuickActionsOpen && (
+              <nav className="absolute left-0 top-[calc(100%+6px)] z-30 flex w-full flex-col overflow-hidden rounded-[14px] border border-[#D7A522] bg-white shadow-lg">
+                {quickActions.map((topic, index) => (
+                  <Link
+                    key={`${topic.title}-${index}`}
+                    to={topic.path || "/contact"}
+                    onClick={() => setIsQuickActionsOpen(false)}
+                    className="flex w-full items-center gap-3 border-b border-[#04258626] p-2 text-[#2E2E2E] last:border-b-0"
                   >
-                    <span>Quick Actions</span>
+                    <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#FFC82E]">
+                      <img
+                        src={topic.image}
+                        alt=""
+                        className="size-5 object-contain"
+                      />
+                    </span>
 
-                    <ChevronDown
-                      className={`size-5 shrink-0 transition-transform duration-200 ${
-                        isQuickActionsOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-base font-semibold">
+                        {topic.title}
+                      </span>
 
-                  {/* Dropdown Content */}
-                  {isQuickActionsOpen && (
-                    <nav className="absolute left-0 top-[calc(100%+6px)] z-30 flex w-full flex-col overflow-hidden rounded-[14px] border border-[#D7A522] bg-white shadow-lg">
-                      {quickActions.map((topic, index) => (
-                        <Link
-                          key={`${topic.title}-${index}`}
-                          to={topic.path || "/contact"}
-                          onClick={() => setIsQuickActionsOpen(false)}
-                          className="flex w-full items-center gap-3 border-b border-[#04258626] p-2 text-[#2E2E2E] hover:!bg-transparent hover:!text-[#2E2E2E] last:border-b-0"
-                        >
-                          {/* Icon */}
-                          <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#FFC82E]">
-                            <img
-                              src={topic.image}
-                              alt=""
-                              className="size-5 object-contain"
-                            />
-                          </span>
-
-                          {/* Text */}
-                          <span className="min-w-0 flex-1">
-                            <span className="block text-base font-semibold">
-                              {topic.title}
-                            </span>
-
-                            {topic.description && (
-                              <span className="mt-0.5 block text-xs text-[#4E4E4E]">
-                                {topic.description}
-                              </span>
-                            )}
-                          </span>
-                        </Link>
-                      ))}
-                    </nav>
-                  )}
-                </section>
-
-                {/* TABLET / DESKTOP VIEW */}
-                <section className="hidden overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white md:block">
-                  {/* Header */}
-                  <div className="bg-[#F7EED8] px-4 py-3 sm:px-5">
-                    <h2 className="text-[16px] font-bold text-[#2E2E2E] sm:text-[18px]">
-                      Quick Actions
-                    </h2>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="grid grid-cols-3 gap-x-3 gap-y-5 px-4 py-5 sm:px-5 lg:grid-cols-6">
-                    {quickActions.map((topic, index) => (
-                      <Link
-                        key={`${topic.title}-${index}`}
-                        to={topic.path || "/contact"}
-                        className="group flex min-w-0 flex-col items-center text-center"
-                      >
-                        <div className="flex h-[58px] w-[58px] items-center justify-center overflow-hidden rounded-full bg-[#F5C72E] transition-transform duration-200 group-hover:scale-105 sm:h-[64px] sm:w-[64px]">
-                          <img
-                            src={topic.image}
-                            alt={topic.title}
-                            className="h-[36px] w-[36px] object-contain sm:h-[40px] sm:w-[40px]"
-                          />
-                        </div>
-
-                        <span className="mt-2 max-w-[90px] text-[12px] font-semibold leading-[15px] text-[#2E2E2E] sm:text-[13px]">
-                          {topic.title}
+                      {topic.description && (
+                        <span className="mt-0.5 block text-xs text-[#4E4E4E]">
+                          {topic.description}
                         </span>
-                      </Link>
-                    ))}
-                  </div>
-                </section>
-              </>
+                      )}
+                    </span>
+                  </Link>
+                ))}
+              </nav>
+            )}
+          </section>
+        )}
+
+        {/* =====================================================
+            DESKTOP MAIN GRID
+            Both columns start EXACTLY same row
+        ====================================================== */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)] lg:grid-cols-[minmax(0,2.1fr)_minmax(320px,1fr)] xl:grid-cols-[minmax(0,2fr)_minmax(340px,1fr)] items-start">
+
+          {/* ================= LEFT COLUMN ================= */}
+          <div className="min-w-0 space-y-5">
+
+            {/* DESKTOP QUICK ACTIONS */}
+            {quickActions.length > 0 && (
+              <section className="hidden overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white md:block">
+                <div className="bg-[#F7EED8] px-5 py-3">
+                  <h2 className="text-[18px] font-bold text-[#2E2E2E]">
+                    Quick Actions
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-3 gap-x-3 gap-y-5 px-5 py-5 lg:grid-cols-6">
+                  {quickActions.map((topic, index) => (
+                    <Link
+                      key={`${topic.title}-${index}`}
+                      to={topic.path || "/contact"}
+                      className="group flex min-w-0 flex-col items-center text-center"
+                    >
+                      <div className="flex h-[64px] w-[64px] items-center justify-center overflow-hidden rounded-full bg-[#F5C72E] transition-transform duration-200 group-hover:scale-105">
+                        <img
+                          src={topic.image}
+                          alt={topic.title}
+                          className="h-[40px] w-[40px] object-contain"
+                        />
+                      </div>
+
+                      <span className="mt-2 max-w-[90px] text-[13px] font-semibold leading-[15px] text-[#2E2E2E]">
+                        {topic.title}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
             )}
 
             {/* FAQ */}
             <section className="overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white">
-              {/* Header */}
-              <div className="bg-[#F7EED8] px-4 py-3 sm:px-5">
-                <h2 className="text-[16px] font-bold text-[#2E2E2E] sm:text-[18px]">
+              <div className="bg-[#F7EED8] px-5 py-3">
+                <h2 className="text-[18px] font-bold text-[#2E2E2E]">
                   Frequently Asked Questions
                 </h2>
               </div>
 
-              {/* FAQ Items */}
-              <div className="px-4 sm:px-5">
+              <div className="px-5">
                 {faqData.slice(0, 6).map((faq, index) => {
                   const isOpen = openFaqIndex === index;
 
@@ -481,7 +514,9 @@ export default function SupportHelpCenter() {
                       <button
                         type="button"
                         onClick={() =>
-                          setOpenFaqIndex(isOpen ? null : index)
+                          setOpenFaqIndex(
+                            isOpen ? null : index,
+                          )
                         }
                         className="flex w-full items-center justify-between gap-4 py-4 text-left focus:outline-none"
                       >
@@ -515,14 +550,17 @@ export default function SupportHelpCenter() {
             </section>
           </div>
 
-          {/* RIGHT COLUMN */}
-          <div className="min-w-0 space-y-5">
+          {/* ================= RIGHT COLUMN ================= */}
+          <div className="min-w-0 self-start space-y-5">
+
+            {/* SAME ROW AS QUICK ACTIONS */}
             <NeedHelpPanel
               title="Contact Support"
               items={SUPPORT_CONTACT_ITEMS}
               headerStyle="colored"
             />
 
+            {/* CHAT WITH SUPPORT */}
             <section
               id="support-chat"
               className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white"
@@ -533,22 +571,31 @@ export default function SupportHelpCenter() {
                 </h2>
               </div>
 
-              <form onSubmit={handleSupportSubmit} className="space-y-4 px-5 py-5">
+              <form
+                onSubmit={handleSupportSubmit}
+                className="space-y-4 px-5 py-5"
+              >
                 <label className="block">
                   <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
                     Category
                   </span>
+
                   <select
                     name="category"
                     value={supportForm.category}
                     onChange={handleSupportFieldChange}
                     className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] outline-none focus:border-[#3E4093]"
                   >
-                    {CUSTOMER_SUPPORT_CATEGORIES.map((category) => (
-                      <option key={category.value} value={category.value}>
-                        {category.label}
-                      </option>
-                    ))}
+                    {CUSTOMER_SUPPORT_CATEGORIES.map(
+                      (category) => (
+                        <option
+                          key={category.value}
+                          value={category.value}
+                        >
+                          {category.label}
+                        </option>
+                      ),
+                    )}
                   </select>
                 </label>
 
@@ -556,6 +603,7 @@ export default function SupportHelpCenter() {
                   <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
                     Subject
                   </span>
+
                   <input
                     name="subject"
                     value={supportForm.subject}
@@ -569,6 +617,7 @@ export default function SupportHelpCenter() {
                   <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
                     Message
                   </span>
+
                   <textarea
                     name="message"
                     value={supportForm.message}
@@ -584,7 +633,9 @@ export default function SupportHelpCenter() {
                   disabled={supportSubmitting}
                   className="h-11 w-full rounded-lg bg-[#3E4093] text-sm font-bold text-white transition hover:bg-[#303176] disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {supportSubmitting ? "Sending..." : "Send Message"}
+                  {supportSubmitting
+                    ? "Sending..."
+                    : "Send Message"}
                 </button>
 
                 {!isSignedIn && (
@@ -595,24 +646,34 @@ export default function SupportHelpCenter() {
               </form>
             </section>
 
+            {/* RECENT TICKETS */}
             <section className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white">
               <div className="flex items-center justify-between gap-3 bg-[#F7EED8] px-5 py-4">
                 <h2 className="text-lg font-bold text-[#2E2E2E]">
                   Recent Tickets
                 </h2>
+
                 <select
                   value={selectedSupportCategory}
                   onChange={(event) =>
-                    setSelectedSupportCategory(event.target.value)
+                    setSelectedSupportCategory(
+                      event.target.value,
+                    )
                   }
                   className="h-9 rounded-lg border border-[#E7D9B8] bg-white px-2 text-xs font-semibold text-[#2E2E2E] outline-none"
                 >
                   <option value="">All</option>
-                  {CUSTOMER_SUPPORT_CATEGORIES.map((category) => (
-                    <option key={category.value} value={category.value}>
-                      {category.label}
-                    </option>
-                  ))}
+
+                  {CUSTOMER_SUPPORT_CATEGORIES.map(
+                    (category) => (
+                      <option
+                        key={category.value}
+                        value={category.value}
+                      >
+                        {category.label}
+                      </option>
+                    ),
+                  )}
                 </select>
               </div>
 
@@ -629,28 +690,39 @@ export default function SupportHelpCenter() {
                   </p>
                 )}
 
-                {!supportLoading && !supportError && supportQueries.length === 0 && (
-                  <p className="py-5 text-sm font-medium text-[#666666]">
-                    {isSignedIn
-                      ? "No support tickets found."
-                      : "Login to view your tickets."}
-                  </p>
-                )}
+                {!supportLoading &&
+                  !supportError &&
+                  supportQueries.length === 0 && (
+                    <p className="py-5 text-sm font-medium text-[#666666]">
+                      {isSignedIn
+                        ? "No support tickets found."
+                        : "Login to view your tickets."}
+                    </p>
+                  )}
 
                 {!supportLoading &&
                   !supportError &&
                   supportQueries.map((ticket) => (
-                    <div key={ticket.id} className="py-4">
+                    <div
+                      key={ticket.id}
+                      className="py-4"
+                    >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <p className="truncate text-sm font-bold text-[#1B1D60]">
                             {ticket.subject}
                           </p>
+
                           <p className="mt-1 text-xs font-medium text-[#666666]">
-                            {ticket.id} · {ticket.categoryLabel} · {ticket.updatedAt}
+                            {ticket.id} ·{" "}
+                            {ticket.categoryLabel} ·{" "}
+                            {ticket.updatedAt}
                           </p>
                         </div>
-                        <SupportStatusBadge status={ticket.status} />
+
+                        <SupportStatusBadge
+                          status={ticket.status}
+                        />
                       </div>
                     </div>
                   ))}
