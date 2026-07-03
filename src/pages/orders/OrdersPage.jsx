@@ -36,6 +36,9 @@ import OrderProgress from "./components/OrderProgress";
 import ShipmentTrackingPanel from "./components/ShipmentTrackingPanel";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { notify } from "../../utils/notify";
+
+import NeedHelpPanel from "../../components/ecommerce/NeedHelpPanel";
+
 import {
   fetchMyOrders,
   fetchOrderById,
@@ -458,7 +461,11 @@ function OrderDetail({ orderId, track }) {
   const taxIncluded = getTaxIncludedAmount(order, taxBreakup);
   const taxPayable = getTaxPayableAmount(order, taxBreakup);
   const status = getOrderStatus(order);
-  const canRequestReturn = ["delivered", "fulfilled", "partially_returned"].includes(status);
+  const canRequestReturn = [
+    "delivered",
+    "fulfilled",
+    "partially_returned",
+  ].includes(status);
   const invoiceDownloadAvailable = ["delivered", "fulfilled"].includes(status);
 
   const breadcrumbItems = [
@@ -472,7 +479,10 @@ function OrderDetail({ orderId, track }) {
   }, [dispatch, orderId]);
 
   useEffect(() => {
-    if (track || shipments.some((shipment) => shipment.status === "out_for_delivery")) {
+    if (
+      track ||
+      shipments.some((shipment) => shipment.status === "out_for_delivery")
+    ) {
       dispatch(fetchNotifications());
     }
   }, [dispatch, shipments, track]);
@@ -684,7 +694,11 @@ function OrderDetail({ orderId, track }) {
               {(track || shipments.length > 0) && (
                 <ShipmentTrackingPanel
                   shipments={shipments}
-                  notifications={Array.isArray(notificationState.list) ? notificationState.list : []}
+                  notifications={
+                    Array.isArray(notificationState.list)
+                      ? notificationState.list
+                      : []
+                  }
                 />
               )}
             </section>
@@ -1055,35 +1069,12 @@ function OrderSummaryCard({ order }) {
   );
 }
 
-function OrderHelpPanel() {
-  return (
-    <aside className="h-fit rounded-xl border border-[#E7D9B8] bg-white p-6 lg:sticky lg:top-28">
-      <h2 className="text-2xl font-bold text-ink py-2">Need Help ?</h2>
-      <div className="mt-3 divide-y divide-[#EFE5D2]">
-        {items.map(({ icon: Icon, title }, index) => (
-          <Link
-            key={`${title}-${index}`}
-            to="/contact"
-            className="flex items-center gap-3 py-7 first:pt-2"
-          >
-            <span className="flex w-10 h-10 lg:h-14  lg:w-14 shrink-0 items-center justify-center rounded-full border border-[#1B1D6099] bg-[#F3F3F7] text-[#25247B]">
-              <Icon size={20} className="text-[#25247B]" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-lg  lg:text-2xl font-semibold text-[#1B1D60]">
-                {title}
-              </span>
-              <span className="block text-base md:text-lg font-medium text-[#2E2E2E]">
-                Get help with your orders
-              </span>
-            </span>
-            <ChevronRight size={18} className="text-[#25247B]" />
-          </Link>
-        ))}
-      </div>
-    </aside>
-  );
-}
+const orderHelpItems = items.map((item) => ({
+  icon: item.icon,
+  title: item.title,
+  description: "Get help with your orders",
+  path: "/contact",
+}));
 
 function OrderList() {
   const dispatch = useDispatch();
@@ -1264,8 +1255,12 @@ function OrderList() {
                 </div>
               </ApiState>
             </div>
-
-            <OrderHelpPanel />
+            <NeedHelpPanel
+              title="Need Help ?"
+              items={orderHelpItems}
+              headerStyle="plain"
+              sticky
+            />{" "}
           </div>
         </div>
       </section>

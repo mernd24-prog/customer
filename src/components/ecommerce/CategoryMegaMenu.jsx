@@ -99,15 +99,15 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
 }) {
   const location = useLocation();
   return (
-    <div className="flex h-full min-h-0 flex-col border-r border-border bg-cream/40 p-5">
-      <div className="mb-4 flex items-center gap-2 border-b border-border pb-3">
+    <div className="flex h-full min-h-0 flex-col border-r border-border bg-cream/40 p-3">
+      <div className="mb-2 flex items-center gap-2 border-b border-border pb-2">
         <Sparkles size={15} className="text-gold" />
         <h3 className=" text-[11px] font-black uppercase tracking-normal text-ink">
           {title}
         </h3>
       </div>
 
-      <div className="custom-scrollbar flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1">
+      <div className="custom-scrollbar flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto pr-1">
         {items.map((item) => {
           const isActive = activeKey === item.categoryKey;
           const itemHref = getItemHref(item);
@@ -115,9 +115,9 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
           return (
             <div
               key={item.categoryKey}
-              className={`group flex items-center justify-between rounded-xl px-4 py-3 text-left text-sm cursor-pointer transition-all duration-300 ease-in-out border-l-4 ${
+              className={`group flex items-center justify-between rounded-xl px-3 py-2 text-left text-sm cursor-pointer transition-all duration-300 ease-in-out border-l-4 ${
                 isActive
-                  ? "bg-white shadow-[0_4px_12px_rgba(206,159,45,0.06)] border-gold text-gold font-semibold translate-x-1"
+                  ? "bg-white shadow-[0_4px_12px_rgba(206,159,45,0.15)] border-gold text-gold font-semibold translate-x-1"
                   : "border-transparent text-ink/80 hover:bg-white/60 hover:text-gold hover:translate-x-0.5"
               }`}
               onMouseEnter={
@@ -148,7 +148,7 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
 
       <Link
         to={rootHref}
-        className="mt-4 flex items-center justify-center gap-1.5 rounded-lg bg-cream py-2.5 text-xs font-semibold text-gold transition-all duration-300 ease-in-out hover:bg-gold/10"
+        className="mt-2 flex items-center justify-center gap-1.5 rounded-lg border border-gold py-1.5 text-xs font-semibold text-gold transition-all duration-300 ease-in-out hover:bg-gold hover:text-white"
       >
         <span>{labels.shopAll}</span>
         <ArrowRight size={12} />
@@ -171,12 +171,15 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
 }) {
   const location = useLocation();
   return (
-    <div className="flex h-full min-h-0 flex-col border-r border-border bg-white p-5">
-      <h3 className="mb-4 border-b border-border pb-3  text-[11px] font-black uppercase tracking-normal text-gray">
-        {title}
-      </h3>
+    <div className="flex h-full min-h-0 flex-col border-r border-border bg-white p-3">
+      <div className="mb-2 flex items-center gap-2 border-b border-border pb-2">
+        <Sparkles size={13} className="text-gold shrink-0" />
+        <h3 className="text-[11px] font-black uppercase tracking-normal text-ink">
+          {title}
+        </h3>
+      </div>
 
-      <div className="custom-scrollbar flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1">
+      <div className="custom-scrollbar flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto pr-1">
         {items.length > 0 ? (
           items.map((item) => {
             const isActive = activeKey === item.categoryKey;
@@ -185,10 +188,10 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
             return (
               <div
                 key={item.categoryKey}
-                className={`group flex items-center justify-between rounded-xl px-4 py-2.5 text-left text-sm cursor-pointer transition-all duration-300 ease-in-out ${
+                className={`group flex items-center justify-between rounded-xl px-3 py-1.5 text-left text-sm cursor-pointer transition-all duration-300 ease-in-out border-l-2 ${
                   isActive
-                    ? "bg-cream text-gold-dark font-semibold"
-                    : "text-ink/70 hover:bg-cream/40 hover:text-gold"
+                    ? "bg-cream border-gold text-gold-dark font-semibold"
+                    : "border-transparent text-ink/70 hover:bg-cream/40 hover:text-gold"
                 }`}
                 onMouseEnter={
                   activeKey === item.categoryKey
@@ -240,12 +243,15 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
 }) {
   const location = useLocation();
   return (
-    <div className="flex h-full min-h-0 flex-col bg-white p-5">
-      <h3 className="mb-4 border-b border-border pb-3  text-[11px] font-black uppercase tracking-normal text-gray">
-        {title}
-      </h3>
+    <div className="flex h-full min-h-0 flex-col bg-white p-3">
+      <div className="mb-2 flex items-center gap-2 border-b border-border pb-2">
+        <Sparkles size={13} className="text-gold shrink-0" />
+        <h3 className="text-[11px] font-black uppercase tracking-normal text-ink">
+          {title}
+        </h3>
+      </div>
 
-      <div className="custom-scrollbar flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1">
+      <div className="custom-scrollbar flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto pr-1">
         {items.length > 0 ? (
           items.map((item) => {
             const itemHref = getItemHref(item);
@@ -255,12 +261,12 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
               <Link
                 key={item.categoryKey}
                 to={itemHref}
-                className={`group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold hover:pl-5 ${
+                className={`group flex items-center gap-2 rounded-xl px-3 py-1.5 text-left text-sm transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold hover:pl-5 ${
                   isCurrentLink ? "bg-cream font-bold text-gold" : "text-ink/70"
                 }`}
               >
                 <span
-                  className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ease-in-out ${isCurrentLink ? "bg-gold" : "bg-border group-hover:bg-gold"}`}
+                  className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ease-in-out ${isCurrentLink ? "bg-gold" : "bg-gold/30 group-hover:bg-gold"}`}
                 />
                 <span className="flex-1 truncate">{item.title}</span>
               </Link>
@@ -278,7 +284,7 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
                 to={getQuickLinkHref(item)}
                 className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm text-ink/70 transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold hover:pl-5"
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-border group-hover:bg-gold transition-all duration-300 ease-in-out" />
+                <span className="h-1.5 w-1.5 rounded-full bg-gold/30 group-hover:bg-gold transition-all duration-300 ease-in-out" />
                 <span className="flex-1 truncate">{item.name}</span>
               </Link>
             ))}
@@ -315,8 +321,8 @@ const PromotionBanner = memo(function PromotionBanner({
   const buttonText = promoData?.buttonText || labels.promoButton;
 
   return (
-    <div className="flex h-full flex-col justify-between border-l border-border bg-gradient-to-br from-cream/60 to-white p-4 xl:p-5">
-      <div className="group relative h-full min-h-[220px] w-full overflow-hidden rounded-[var(--customer-radius)] shadow-md transition-all duration-300 ease-in-out hover:shadow-xl">
+    <div className="flex h-full flex-col justify-between border-l border-border bg-gradient-to-br from-cream/60 to-white p-3 xl:p-3">
+      <div className="group relative h-full min-h-[150px] w-full overflow-hidden rounded-[var(--customer-radius)] shadow-md transition-all duration-300 ease-in-out hover:shadow-xl">
         <div className="absolute inset-0">
           <img
             src={image}
@@ -328,7 +334,7 @@ const PromotionBanner = memo(function PromotionBanner({
         </div>
 
         <div className="relative z-10 flex h-full flex-col items-start justify-end p-6">
-          <h2 className=" text-xl font-extrabold leading-tight text-white xl:text-2xl drop-shadow-sm">
+          <h2 className=" text-base font-extrabold leading-tight text-white xl:text-lg drop-shadow-sm">
             {title}
             {highlight && (
               <>
@@ -342,7 +348,7 @@ const PromotionBanner = memo(function PromotionBanner({
 
           <Link
             to={link}
-            className="mt-4 inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-l from-gold-dark to-gold px-5 py-2.5 text-xs font-bold text-white shadow-lg transition-all duration-300 ease-in-out hover:opacity-90 active:scale-95"
+            className="mt-3 inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-l from-gold-dark to-gold px-4 py-2 text-xs font-bold text-white shadow-lg transition-all duration-300 ease-in-out hover:opacity-90 active:scale-95"
           >
             <span>{buttonText}</span>
             <ChevronRight size={14} />
@@ -375,7 +381,7 @@ const MobileAccordionMenu = memo(function MobileAccordionMenu({
   }, []);
 
   return (
-    <div className="custom-scrollbar flex max-h-[75vh] w-full flex-col gap-3 overflow-y-auto border-t border-border bg-white p-4">
+    <div className="custom-scrollbar flex max-h-[60vh] w-full flex-col gap-2 overflow-y-auto border-t border-border bg-white p-3">
       <div className="flex items-center gap-2 border-b border-border pb-2">
         <Sparkles size={14} className="text-gold" />
         <span className=" text-[10px] font-black uppercase tracking-normal text-gold">
@@ -604,7 +610,7 @@ export default function CategoryMegaMenu({
       <div
         className={`customer-container hidden lg:block ${desktopContainerClassName}`}
       >
-        <div className="grid max-h-[70vh] min-h-[380px] grid-cols-12 overflow-hidden rounded-b-2xl border-x border-border/70 bg-white">
+        <div className="grid max-h-[calc(100vh-160px)] min-h-[300px] grid-cols-12 overflow-hidden rounded-b-2xl border-x border-border/70 bg-white">
           {/* Column 1: Subcategories */}
           <div className="col-span-3">
             <SubCategoryColumn

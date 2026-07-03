@@ -1,5 +1,4 @@
 import { Link, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import ApiState from "../components/common/ApiState";
 import Seo from "../components/common/Seo";
 import StatusTimeline from "../components/common/display/StatusTimeline";
@@ -13,7 +12,6 @@ export { useFetch };
 import { formatMoney } from "../utils/ecommerce";
 
 export function SellerStatusPage() {
-  const dispatch = useDispatch();
   const state = useFetch(fetchSellerWebStatus, undefined, (s) => s.seller);
   const status = state.current;
   return (
@@ -66,7 +64,6 @@ export function SellerStatusPage() {
 }
 
 export function SellerTrackingPage() {
-  const dispatch = useDispatch();
   const state = useFetch(
     fetchSellerWebTracking,
     { limit: 20, offset: 0 },
@@ -108,7 +105,6 @@ export function SellerTrackingPage() {
 
 export function SellerTrackingDetailPage() {
   const { orderId } = useParams();
-  const dispatch = useDispatch();
   const state = useFetch(
     fetchSellerWebTrackingOrder,
     { orderId },
