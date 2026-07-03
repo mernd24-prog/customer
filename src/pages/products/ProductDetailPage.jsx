@@ -558,6 +558,12 @@ function VariantSelector({
               );
 
               const disabled = !matchingVariant;
+              const matchingVariantStock = getAvailableStock(matchingVariant);
+              const isUnavailable =
+                Boolean(matchingVariant) &&
+                (matchingVariantStock === 0 ||
+                  matchingVariant?.inStock === false ||
+                  matchingVariant?.isAvailable === false);
 
               const swatchImage =
                 option.displayType === "color_swatch"
@@ -580,12 +586,12 @@ function VariantSelector({
                     onClick={() =>
                       matchingVariant && setSelectedVariant(matchingVariant)
                     }
-                    className={`h-[80px]  w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out  sm:h-[95px] sm:w-[95px] ${
+                    className={`relative h-[80px] w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
                       isSelected
                         ? "border border-gold bg-gradient-to-t from-[#1B1D60]/65 to-transparent"
                         : "border border-gold/20 "
-                    }`}
-                    title={value}
+                    } ${isUnavailable ? "opacity-55 grayscale" : ""}`}
+                    title={`${value}${isUnavailable ? " - Out of stock" : ""}`}
                   >
                     {swatchImage ? (
                       <img
@@ -613,6 +619,11 @@ function VariantSelector({
                         </span>
                       </span>
                     )}
+                    {isUnavailable && (
+                      <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-[10px] font-semibold text-white">
+                        Out of stock
+                      </span>
+                    )}
                   </button>
                 );
               }
@@ -625,13 +636,26 @@ function VariantSelector({
                   onClick={() =>
                     matchingVariant && setSelectedVariant(matchingVariant)
                   }
-                  className={`min-h-10  min-w-12 rounded-[8px]  px-3 py-1 text-xs font-bold transition-all duration-300  ease-in-out disabled:cursor-not-allowed disabled:opacity-40  ${
+                  aria-label={`${option.name} ${value}${isUnavailable ? ", out of stock" : ""}`}
+                  title={isUnavailable ? `${value} - Out of stock` : value}
+                  className={`min-h-10 min-w-12 rounded-[8px] px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 ${
                     isSelected
                       ? "border border-gold bg-gradient-to-t from-[#1B1D60]/25 to-transparent"
                       : "border border-gold/20 "
+                  } ${
+                    isUnavailable
+                      ? "border-red-200 bg-red-50 text-red-500"
+                      : ""
                   }`}
                 >
-                  {value}
+                  <span className={isUnavailable ? "line-through" : ""}>
+                    {value}
+                  </span>
+                  {isUnavailable && (
+                    <span className="mt-0.5 block whitespace-nowrap text-[9px] font-semibold leading-none no-underline">
+                      Out of stock
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -1438,12 +1462,10 @@ export default function ProductDetailPage() {
                 attributes={attributes}
               />
 
-              <div className="my-4 ">
-                <ProductReviewsSection
-                  productId={productId}
-                  product={product}
-                />
-              </div>
+              <ProductReviewsSection
+                productId={productId}
+                product={product}
+              />
 
               <ProductRecommendationSection
                 title="You May Also Like"

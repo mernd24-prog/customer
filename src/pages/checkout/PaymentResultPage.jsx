@@ -92,10 +92,7 @@ export function PaymentResultPage({ failed = false }) {
     getOrderPhone(currentUser);
 
   const getInvoiceUrl = (ord) =>
-    ord?.invoice_url ||
-    ord?.invoiceUrl ||
-    ord?.relations?.invoice?.url ||
-    null;
+    ord?.invoice_url || ord?.invoiceUrl || ord?.relations?.invoice?.url || null;
 
   const orderInvoiceId =
     invoices?.orderInvoice?.id || invoices?.orderInvoice?._id;
@@ -280,14 +277,14 @@ export function PaymentResultPage({ failed = false }) {
                         <img
                           src="/image/png/Group.png"
                           alt="Order placed successfully"
-                          className="h-20 w-20 object-contain min-[375px]:h-24 min-[375px]:w-24 min-[425px]:h-24 min-[425px]:w-24 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-28 lg:w-28 xl:h-[160px] xl:w-[157px]"
+                          className="size-24 object-contain "
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h1 className="break-words text-[18px] font-bold leading-[1.25] text-[#3E4093] min-[375px]:text-[20px] min-[425px]:text-[22px] sm:text-[24px] sm:leading-[1.25] md:text-[36px] xl:text-[36px] xl:leading-[2.1]">
+                        <h1 className="break-words text-h2 font-bold  text-[#3E4093]">
                           Order Placed Successfully !
                         </h1>
-                        <p className="mt-2 max-w-3xl text-[13px] font-medium leading-[21px] text-[#2E2E2E] min-[375px]:text-sm min-[375px]:leading-6 min-[425px]:text-[15px] sm:text-[15px] sm:leading-7 xl:text-[18px] xl:leading-[30px]">
+                        <p className="my-4 max-w-3xl text-small font-medium  text-[#2E2E2E] ">
                           Thank you for shopping with Sam Global.
                           <br className="hidden sm:block" />
                           Your order has been received and is being prepared for
@@ -297,7 +294,7 @@ export function PaymentResultPage({ failed = false }) {
                     </div>
                   </div>
 
-                  <div className="mt-auto flex flex-col gap-2 bg-[#BBBBCB] px-4 py-3 text-[13px] font-semibold text-[#1B1D60] min-[375px]:px-5 min-[375px]:text-sm min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-4 sm:text-[12px] md:px-8 xl:text-[20px]">
+                  <div className="mt-auto flex flex-col gap-2 bg-[#BBBBCB] px-4 py-3  font-semibold text-[#1B1D60] min-[375px]:px-5 text-small min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-4  md:px-8 ">
                     <span className="break-words">Order ID : # {orderId}</span>
                     <span className="break-words">
                       Estimated Delivery : {deliveryLabel}
@@ -384,13 +381,13 @@ export function PaymentResultPage({ failed = false }) {
                       <img
                         src="/image/png/Frame1.png"
                         alt=""
-                        className="h-[50px] w-[50px] object-contain min-[375px]:h-[50px] min-[375px]:w-[50px] min-[425px]:h-[48px] min-[425px]:w-[48px] sm:h-[56px] sm:w-[56px] md:h-[64px] md:w-[64px] lg:h-[70px] lg:w-[70px]"
+                        className="size-14 object-contain "
                       />
                       <div className="min-w-0 flex flex-col gap-2 sm:gap-3">
                         <p className="font-semibold text-[#2E2E2E] text-[14px] min-[375px]:text-[15px] min-[425px]:text-[16px] sm:text-[19px] md:text-[19px] lg:text-[20px]">
                           Expected Delivery
                         </p>
-                        <p className="break-words font-bold leading-tight text-[#CE9F2D] text-[16px] min-[375px]:text-[18px] min-[425px]:text-[20px] sm:text-[22px] md:text-[24px] lg:text-[26px] xl:text-[30px]">
+                        <p className="break-words font-bold leading-tight text-[#CE9F2D] small">
                           {deliveryLabel}
                         </p>
                       </div>
@@ -415,26 +412,26 @@ export function PaymentResultPage({ failed = false }) {
                     title="Delivery Address"
                     className="w-full rounded-[20px]"
                     headerClassName="min-h-[64px] px-4 py-4 min-[375px]:px-5 sm:min-h-[72px] sm:px-6 xl:px-[20px] xl:py-[25px]"
-                    titleClassName="text-[18px] leading-tight min-[375px]:text-[20px] sm:text-[22px] xl:text-[24px]"
+                    titleClassName=""
                     borderClassName="border-[#CE9F2D66]"
                     bodyClassName="grid gap-4 px-4 py-4 sm:px-6"
                   >
-                    <div className="inline-flex h-[30px] w-[65px] items-center justify-center rounded-full bg-[#CE9F2D] px-2 py-1 text-[14px] font-semibold text-white sm:h-[37px] sm:w-[81px] sm:px-3 sm:text-[18px]">
+                    <div className="inline-flex h-[30px] w-[65px] items-center justify-center rounded-full bg-[#CE9F2D] px-2 py-1  font-semibold text-white sm:h-[37px] sm:w-[81px] sm:px-3 small">
                       Home
                     </div>
                     <div className="grid gap-3 text-[#2E2E2E]">
                       {displayName && (
-                        <p className="break-words text-[18px] font-bold leading-tight text-[#2E2E2E] sm:text-[26px]">
+                        <p className="break-words text-h6 font-bold  text-[#2E2E2E] ">
                           {displayName}
                         </p>
                       )}
-                      <div className="flex items-start gap-2 text-[13px] font-medium leading-6 min-[375px]:text-[16px] sm:text-[20px]">
+                      <div className="flex items-start gap-2 small font-medium ">
                         <Phone className="mt-1 h-[18px] w-[18px] shrink-0 text-[#CE9F2D]" />
                         <span className="break-words">
                           {deliveryPhone || "Phone unavailable"}
                         </span>
                       </div>
-                      <div className="flex items-start gap-2 text-[13px] font-medium leading-6 min-[375px]:text-[16px] sm:text-[20px]">
+                      <div className="flex items-start gap-2 small font-medium ">
                         <MapPin className="mt-1 h-[18px] w-[18px] shrink-0 text-[#CE9F2D]" />
                         <span className="break-words">
                           {[

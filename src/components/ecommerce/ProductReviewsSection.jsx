@@ -4,10 +4,8 @@ import { Link } from "react-router-dom";
 import { useAuthModal } from "../../context/AuthModalContext";
 import {
   ChevronDown,
-  ChevronLeft,
   ChevronRight,
   ThumbsUp,
-  X,
 } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import {
@@ -19,8 +17,8 @@ import {
   resetSubmitState,
 } from "../../features/review/reviewSlice";
 import { fetchMyOrders } from "../../features/order/orderSlice";
-import { ratingBreakdown as fallbackRatingBreakdown } from "../../data/review";
 import ReviewImageUploader from "./ReviewImageUploader";
+import ReviewMediaLightbox from "./ReviewMediaLightbox";
 import { getImageUrlFromValue } from "../../utils/ecommerce";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -60,7 +58,7 @@ function RatingPill({ rating }) {
   );
 }
 
-function ReviewMediaLightbox({
+/*function ReviewMediaLightbox({
   images = [],
   index = 0,
   onClose,
@@ -152,7 +150,7 @@ function ReviewMediaLightbox({
       </div>
     </div>
   );
-}
+}*/
 
 function getUserDisplayName(user = {}) {
   const first = user.profile?.firstName || user.firstName || "";
@@ -446,8 +444,6 @@ const SORT_OPTIONS = [
 const EMPTY_REVIEWS = [];
 
 function getRatingBreakdown(stats) {
-  if (!stats?.distribution || !stats.count) return fallbackRatingBreakdown;
-
   const labels = ["Excellent", "Very Good", "Good", "Average", "Poor"];
   const colors = [
     "bg-[var(--customer-success)]",
@@ -458,8 +454,10 @@ function getRatingBreakdown(stats) {
   ];
 
   return [5, 4, 3, 2, 1].map((rating, index) => {
-    const count = stats.distribution[rating] || 0;
-    const width = `${Math.round((count / stats.count) * 100)}%`;
+    const count = stats?.distribution?.[rating] || 0;
+    const width = stats?.count
+      ? `${Math.round((count / stats.count) * 100)}%`
+      : "0%";
     return {
       label: labels[index],
       count,
@@ -634,6 +632,14 @@ export default function ProductReviewsSection({ productId, product }) {
   const selectedSortLabel =
     SORT_OPTIONS.find((option) => option.value === sort)?.label ||
     "Most Recent";
+
+  const hasPublishedReviews =
+    displayTotal > 0 ||
+    Number(stats?.count || 0) > 0 ||
+    displayReviews.length > 0 ||
+    hasOwnPublishedReview;
+
+  if (!hasPublishedReviews) return null;
 
   return (
     <section id="reviews" className="w-full overflow-visible">

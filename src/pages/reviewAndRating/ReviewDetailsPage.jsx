@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronLeft, ChevronRight, Star, ThumbsUp, UserCircle, X } from "lucide-react";
+import { ChevronDown, ChevronLeft, Star, ThumbsUp } from "lucide-react";
+import ReviewMediaLightbox from "../../components/ecommerce/ReviewMediaLightbox";
 import { useAuthModal } from "../../context/AuthModalContext";
 import {
   fetchProductReviews,
@@ -19,6 +20,31 @@ import {
 
 const LIMIT = 10;
 const STAR_VALUES = [5, 4, 3, 2, 1];
+
+function getReviewTime(review) {
+  const value = review?.createdAt || review?.updatedAt || review?.date;
+  const time = value ? new Date(value).getTime() : 0;
+  return Number.isFinite(time) ? time : 0;
+}
+
+function sortReviews(reviews, sort) {
+  return [...reviews].sort((a, b) => {
+    if (sort === "highest") {
+      return Number(b?.rating || 0) - Number(a?.rating || 0);
+    }
+    if (sort === "lowest") {
+      return Number(a?.rating || 0) - Number(b?.rating || 0);
+    }
+    if (sort === "helpful") {
+      return (
+        Number(b?.helpfulVotes ?? b?.helpful ?? 0) -
+        Number(a?.helpfulVotes ?? a?.helpful ?? 0)
+      );
+    }
+
+    return getReviewTime(b) - getReviewTime(a);
+  });
+}
 
 function StarRow({ rating, size = 14 }) {
   const filled = Math.round(Number(rating || 0));
@@ -73,7 +99,7 @@ function ProductReviewSidebar({ product, productId }) {
       />
 
       <div className="mt-4">
-        <h1 className="text-base  font-bold uppercase text-[var(--customer-ink)]">
+        <h1 className="text-base  font-bold  uppercase text-[var(--customer-ink)]">
           {product.title}
         </h1>
 
@@ -81,75 +107,19 @@ function ProductReviewSidebar({ product, productId }) {
           {product.category}
         </p>
 
-        <p className="mt-5 text-sm font-bold text-[var(--customer-ink)]">
+        <p className="mt-5  text-sm font-bold text-[var(--customer-ink)]">
           Rs. {product.price}
           <span className="ml-2 font-medium text-[var(--customer-muted)] line-through">
             Rs. {product.mrp}
           </span>
-          <span className="ml-2 font-bold text-[var(--customer-gold-dark)]">
-            ({product.discount})
-          </span>
+          {product.discount && (
+            <span className="ml-2 d font-bold text-[var(--customer-gold-dark)]">
+              ({product.discount})
+            </span>
+          )}
         </p>
       </div>
     </aside>
-  );
-}
-
-function ReviewMediaLightbox({ images = [], index = 0, onClose, onIndexChange }) {
-  if (!images.length) return null;
-  const safeIndex = Math.min(Math.max(index, 0), images.length - 1);
-  const currentImage = images[safeIndex];
-  const hasMany = images.length > 1;
-
-  return (
-    <div
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 p-4"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-    >
-      <div
-        className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-[10px] bg-white shadow-2xl"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <p className="text-sm font-bold text-ink">
-            Review Photos {hasMany ? `(${safeIndex + 1}/${images.length})` : ""}
-          </p>
-          <button
-            type="button"
-            onClick={onClose}
-            className="grid h-9 w-9 place-items-center rounded-full text-muted transition hover:bg-surface-soft hover:text-ink"
-            aria-label="Close image preview"
-          >
-            <X size={18} />
-          </button>
-        </div>
-        <div className="relative flex min-h-[320px] items-center justify-center bg-[#111] p-3 sm:min-h-[520px]">
-          {hasMany && (
-            <button
-              type="button"
-              onClick={() => onIndexChange((safeIndex - 1 + images.length) % images.length)}
-              className="absolute left-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-md transition hover:bg-white"
-              aria-label="Previous review image"
-            >
-              <ChevronLeft size={20} />
-            </button>
-          )}
-          <img src={currentImage} alt={`Review media ${safeIndex + 1}`} className="max-h-[70vh] max-w-full rounded-[8px] object-contain" />
-          {hasMany && (
-            <button
-              type="button"
-              onClick={() => onIndexChange((safeIndex + 1) % images.length)}
-              className="absolute right-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-ink shadow-md transition hover:bg-white"
-              aria-label="Next review image"
-            >
-              <ChevronRight size={20} />
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -211,6 +181,17 @@ function RatingSummary({
 }
 
 function ReviewsHeader({ total, sort, onSort }) {
+  const [isSortOpen, setIsSortOpen] = useState(false);
+
+  const sortOptions = [
+    { value: "newest", label: "Most Recent" },
+    { value: "helpful", label: "Most Helpful" },
+    { value: "highest", label: "Highest Rated" },
+    { value: "lowest", label: "Lowest Rated" },
+  ];
+  const selectedLabel =
+    sortOptions.find((option) => option.value === sort)?.label || "Most Recent";
+
   return (
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
       <h3 className="text-sm font-bold text-ink">
@@ -220,16 +201,58 @@ function ReviewsHeader({ total, sort, onSort }) {
         )}
       </h3>
 
-      <select
-        value={sort}
-        onChange={(e) => onSort(e.target.value)}
-        className="rounded-[6px] border border-border bg-white px-3 py-1.5 text-xs font-semibold text-ink focus:outline-none"
+      <div
+        className="relative z-30 w-[190px]"
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) {
+            setIsSortOpen(false);
+          }
+        }}
       >
-        <option value="newest">Most recent</option>
-        <option value="helpful">Most helpful</option>
-        <option value="highest">Highest rated</option>
-        <option value="lowest">Lowest rated</option>
-      </select>
+        <button
+          type="button"
+          onClick={() => setIsSortOpen((open) => !open)}
+          className="flex h-10 w-full items-center justify-between rounded-[10px] border border-[#CE9F2D] bg-white px-3 text-left text-sm font-semibold text-[#1B1D60] transition hover:bg-[#FFF9EA] focus:outline-none focus:ring-2 focus:ring-[#CE9F2D33]"
+          aria-expanded={isSortOpen}
+          aria-haspopup="menu"
+        >
+          <span>{selectedLabel}</span>
+          <ChevronDown
+            size={18}
+            className={`text-[#CE9F2D] transition-transform ${
+              isSortOpen ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+
+        {isSortOpen && (
+          <div
+            role="menu"
+            className="absolute  right-0 top-[calc(100%+6px)] z-[100] w-full overflow-hidden rounded-[12px] border border-[#E7D9B8] bg-white "
+          >
+            <div className="py-1">
+              {sortOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    onSort(option.value);
+                    setIsSortOpen(false);
+                  }}
+                  className={`block w-full px-4 py-2.5 text-left text-[13px] font-semibold transition-colors hover:bg-[#F8F1E2] ${
+                    sort === option.value
+                      ? "bg-[#F8F1E2] text-[#1B1D60]"
+                      : "text-[#2E2E2E]"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -262,6 +285,7 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
     (isOwn ? getUserDisplayName(currentUser) : "") ||
     "Customer";
   const text = review.reviewText || review.text;
+
   const helpfulVotes = review.helpfulVotes ?? review.helpful ?? 0;
   const reviewId = review._id || review.id;
   const media = Array.isArray(review.media)
@@ -279,7 +303,11 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
   return (
     <article className="border-b border-border py-5 last:border-b-0">
       <div className="mb-3 flex items-center gap-2">
-        <UserCircle size={22} className="shrink-0 text-black/70" />
+        <img
+          src={review.buyerImage || "/image/png/person.png"}
+          alt={name}
+          className="size-10 rounded-full object-cover"
+        />
 
         <span className="text-base font-bold text-black/70">{name}</span>
 
@@ -291,7 +319,7 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
       </div>
 
       <div className="mb-2 flex flex-wrap items-center gap-2">
-        <span className="inline-flex items-center gap-1 rounded-full  bg-gold px-2 py-0.5 text-[11px] font-bold text-white">
+        <span className="inline-flex   items-center gap-1 rounded-full  bg-gold px-2 py-0.5 text-[11px] font-bold text-white">
           {Number(review.rating || 0).toFixed(1)} ★
         </span>
 
@@ -313,9 +341,13 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
               type="button"
               key={`${url}-${index}`}
               onClick={() => setLightboxIndex(index)}
-              className="block h-20 w-20 overflow-hidden rounded-[8px] border border-gold/20 bg-cream sm:h-24 sm:w-24"
+              className="block h-20 w-20  overflow-hidden rounded-[8px] border border-gold/20 bg-cream sm:h-24 sm:w-24"
             >
-              <img src={url} alt={`Review media ${index + 1}`} className="h-full w-full object-cover" />
+              <img
+                src={url}
+                alt={`Review media ${index + 1}`}
+                className="h-full w-full object-cover"
+              />
             </button>
           ))}
         </div>
@@ -331,7 +363,10 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
             : "text-muted hover:bg-surface-soft hover:text-ink"
         }`}
       >
-        <ThumbsUp size={12} className={alreadyVoted ? "fill-gold text-gold" : ""} />
+        <ThumbsUp
+          size={12}
+          className={alreadyVoted ? "fill-gold text-gold" : ""}
+        />
         Helpful ({helpfulVotes})
       </button>
 
@@ -486,7 +521,8 @@ export default function ReviewDetailsPage() {
 
   const product = getProductDisplay(state?.product);
   const currentUser = useSelector((store) => store.auth.current);
-  const userId = currentUser?.id || currentUser?._id || currentUser?.userId || null;
+  const userId =
+    currentUser?.id || currentUser?._id || currentUser?.userId || null;
   const reviewState = useSelector((store) => store.review);
   const bucket = reviewState.reviewsByProduct[productId] || {};
   const stats = reviewState.statsByProduct[productId] || null;
@@ -498,7 +534,8 @@ export default function ReviewDetailsPage() {
       myReview,
       ...items.filter(
         (review) =>
-          String(review._id || review.id) !== String(myReview._id || myReview.id),
+          String(review._id || review.id) !==
+          String(myReview._id || myReview.id),
       ),
     ];
   }, [bucket.items, myReview]);
@@ -510,23 +547,22 @@ export default function ReviewDetailsPage() {
   const loading = Boolean(bucket.loading);
   const error = bucket.error || "";
 
-  const ratingDist = useMemo(
-    () => {
-      if (stats?.distribution) return stats.distribution;
-      return allReviews.reduce((acc, review) => {
-        const rating = Math.round(Number(review.rating || 0));
+  const ratingDist = useMemo(() => {
+    if (stats?.distribution) return stats.distribution;
+    return allReviews.reduce((acc, review) => {
+      const rating = Math.round(Number(review.rating || 0));
 
-        if (rating >= 1 && rating <= 5) {
-          acc[rating] = (acc[rating] || 0) + 1;
-        }
+      if (rating >= 1 && rating <= 5) {
+        acc[rating] = (acc[rating] || 0) + 1;
+      }
 
-        return acc;
-      }, {});
-    },
-    [allReviews, stats],
+      return acc;
+    }, {});
+  }, [allReviews, stats]);
+
+  const reviewCount = Number(
+    stats?.count || bucket.total || allReviews.length || 0,
   );
-
-  const reviewCount = Number(stats?.count || bucket.total || allReviews.length || 0);
 
   const avgRating =
     stats?.avgRating ??
@@ -557,7 +593,7 @@ export default function ReviewDetailsPage() {
 
   const filteredReviews = useMemo(
     () =>
-      allReviews.reduce((acc, review) => {
+      sortReviews(allReviews, sort).reduce((acc, review) => {
         const rating = Math.round(Number(review.rating || 0));
 
         if (!ratingFilter || rating === ratingFilter) {
@@ -566,19 +602,27 @@ export default function ReviewDetailsPage() {
 
         return acc;
       }, []),
-    [allReviews, ratingFilter],
+    [allReviews, ratingFilter, sort],
   );
 
-  const total = Number(bucket.total || filteredReviews.length || 0);
+  const total = ratingFilter
+    ? Number(bucket.total ?? filteredReviews.length)
+    : Number(bucket.total || filteredReviews.length || 0);
   const totalPages = Math.max(1, Math.ceil(total / LIMIT));
   const visibleReviews = filteredReviews;
-  const ownReviewId = myReview?.status === "published" ? String(myReview._id || myReview.id) : "";
-  const pinnedVisibleReviews = ownReviewId
-    ? [
-        ...visibleReviews.filter((review) => String(review._id || review.id) === ownReviewId),
-        ...visibleReviews.filter((review) => String(review._id || review.id) !== ownReviewId),
-      ]
-    : visibleReviews;
+  const ownReviewId =
+    myReview?.status === "published" ? String(myReview._id || myReview.id) : "";
+  const pinnedVisibleReviews =
+    ownReviewId && sort === "newest"
+      ? [
+          ...visibleReviews.filter(
+            (review) => String(review._id || review.id) === ownReviewId,
+          ),
+          ...visibleReviews.filter(
+            (review) => String(review._id || review.id) !== ownReviewId,
+          ),
+        ]
+      : visibleReviews;
   const handleFilter = (star) => {
     setRatingFilter((current) => (current === star ? null : star));
     setPage(1);

@@ -1,10 +1,11 @@
-import { useEffect, useRef, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Package } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 import ReviewImageUploader from "../../../components/ecommerce/ReviewImageUploader";
+import ReviewMediaLightbox from "../../../components/ecommerce/ReviewMediaLightbox";
 import BaseModal from "../../../components/common/overlay/BaseModal";
 import OrderDetailSectionCard from "./OrderDetailSectionCard";
 import {
@@ -84,6 +85,7 @@ function ReviewRating({ rating = 0 }) {
 }
 
 function ExistingReviewCard({ review }) {
+  const [lightboxIndex, setLightboxIndex] = useState(null);
   const media = Array.isArray(review?.media)
     ? review.media.filter(Boolean)
     : [];
@@ -91,47 +93,58 @@ function ExistingReviewCard({ review }) {
   const reviewText = review?.reviewText || review?.text || "";
 
   return (
-    <div className="mt-5 rounded-xl border border-[#37B44633] bg-[#37B4460D] p-4 sm:p-5">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <ReviewRating rating={review?.rating} />
-          <span className="text-sm font-bold text-[#21812C]">Your review</span>
+    <div className="mt-5 overflow-hidden rounded-xl border border-[#CE9F2D4D] bg-[#FFFDF8]">
+      <div className="p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <ReviewRating rating={review?.rating} />
+            <span className="text-xs font-bold text-[#21812C]">Your review</span>
+          </div>
+          <span className="rounded-full border border-[#37B44633] bg-white px-3 py-1 text-xs font-bold capitalize text-[#21812C]">
+            {status}
+          </span>
         </div>
-        <span className="rounded-full border border-[#37B44633] bg-white px-3 py-1 text-xs font-bold capitalize text-[#21812C] shadow-sm">
-          {status}
-        </span>
+
+        {review?.title && (
+          <p className="mt-3 text-sm font-bold text-[#1B1D60] sm:text-base">
+            {review.title}
+          </p>
+        )}
+
+        {reviewText && (
+          <p className="mt-1.5 line-clamp-3 text-sm font-medium leading-6 text-[#2E2E2E]">
+            {reviewText}
+          </p>
+        )}
+
+        {media.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2.5">
+            {media.slice(0, 5).map((url, index) => (
+              <button
+                type="button"
+                key={`${url}-${index}`}
+                onClick={() => setLightboxIndex(index)}
+                className="block size-14 overflow-hidden rounded-lg border border-[#CE9F2D33] bg-white shadow-sm transition-shadow hover:shadow-md sm:size-16"
+                aria-label={`Preview review image ${index + 1}`}
+              >
+                <img
+                  src={url}
+                  alt={`Review image ${index + 1}`}
+                  className="h-full w-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      {review?.title && (
-        <p className="mt-4 text-sm font-bold text-[#1B1D60] sm:text-base">
-          {review.title}
-        </p>
-      )}
-
-      {reviewText && (
-        <p className="mt-1.5 line-clamp-3 text-sm font-medium leading-6 text-[#2E2E2E]">
-          {reviewText}
-        </p>
-      )}
-
-      {media.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-2.5">
-          {media.slice(0, 5).map((url, index) => (
-            <a
-              key={`${url}-${index}`}
-              href={url}
-              target="_blank"
-              rel="noreferrer"
-              className="block size-14 overflow-hidden rounded-lg border border-[#CE9F2D33] bg-white shadow-sm transition-shadow hover:shadow-md sm:size-16"
-            >
-              <img
-                src={url}
-                alt={`Review image ${index + 1}`}
-                className="h-full w-full object-cover"
-              />
-            </a>
-          ))}
-        </div>
+      {lightboxIndex !== null && (
+        <ReviewMediaLightbox
+          images={media}
+          index={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onIndexChange={setLightboxIndex}
+        />
       )}
     </div>
   );

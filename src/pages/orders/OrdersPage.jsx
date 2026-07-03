@@ -471,7 +471,7 @@ function OrderDetail({ orderId, track }) {
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "My Order", href: "/orders" },
-    { label: `#${getOrderNumber(order) || "Order"}` },
+    { label: `#${orderId}` },
   ];
 
   useEffect(() => {
