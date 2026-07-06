@@ -179,6 +179,136 @@ function withIcons(items) {
   });
 }
 
+export const TopHeader = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const currentUser = useSelector((s) => s.auth.current);
+
+  const { page: helpContactPage } = useCmsRecord("help-contact");
+  const { page: headerSellPage } = useCmsRecord("header-sell-dropdown");
+
+  const sellDropdownCms = getCmsPayload(headerSellPage, DEFAULT_SELL_DROPDOWN);
+  const topLinks = [
+    { name: "Brand Outlet", path: "/brand-outlet" },
+    { name: helpContactPage?.title || "Help & Contact", path: "/help-contact" },
+  ];
+  const filteredTopLinks = topLinks.filter(
+    (link) =>
+      link.name !== "Help & Contact" && link.name !== helpContactPage?.title,
+  );
+
+  const dropdowns = useMemo(
+    () => [
+      {
+        type: "sell",
+        label: "Sell",
+        path: "/seller/status",
+        data: {
+          ...DEFAULT_SELL_DROPDOWN,
+          ...sellDropdownCms,
+          features: withIcons(
+            sellDropdownCms?.features || DEFAULT_SELL_DROPDOWN.features,
+          ),
+        },
+      },
+      {
+        type: "more",
+        label: "More",
+        title: "More",
+        items: withIcons([
+          {
+            label: "Seller Login",
+            path: "/become-a-seller",
+            icon: "store",
+          },
+          {
+            label: helpContactPage?.title || "Help & Contact",
+            path: "/support",
+            icon: "lifeBuoy",
+          },
+        ]),
+      },
+    ],
+    [helpContactPage?.title, sellDropdownCms],
+  );
+
+  const renderDropdown = (dropdown) => {
+    switch (dropdown.type) {
+      case "sell":
+        return <SellDropdown data={dropdown.data} />;
+      case "menu":
+      case "more":
+        return <MenuDropdown title={dropdown.title} items={dropdown.items} />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="hidden h-[40px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
+      <div className="customer-container flex h-full items-center justify-between">
+        <div className="flex flex-1 items-center gap-8 text-[#FFFFFF]">
+          {asArray(
+            filteredTopLinks.length
+              ? filteredTopLinks
+              : DEFAULT_TOP_NAV_LINKS.filter(
+                  (l) => l.name !== "Help & Contact",
+                ),
+          ).map((link, index) => (
+            <Link
+              key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
+              to={hrefOr(link?.path)}
+              className="text-[#FFFFFF] transition-all duration-300 ease-in-out hover:text-[#FFFFFF]"
+            >
+              {textOr(link?.name, "Link")}
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex h-full items-center  gap-[20px]">
+          {dropdowns.map((dropdown) => (
+            <HeaderDropdown
+              key={dropdown.type}
+              label={dropdown.label}
+              icon={dropdown.icon}
+              path={dropdown.path}
+            >
+              {renderDropdown(dropdown)}
+            </HeaderDropdown>
+          ))}
+
+          {currentUser ? (
+            <HeaderGoldButton
+              leftIcon={<LogOut size={14} />}
+              className="
+              inline-flex items-center justify-center gap-2
+              h-[30px] lg:h-[32px]
+              min-w-[90px] lg:min-w-[100px]
+              rounded-[5px]
+              px-3
+              py-0
+              text-[12px] lg:text-[13px]
+              font-semibold
+              leading-none
+              whitespace-nowrap
+              transition-all duration-300 ease-in-out
+              hover:bg-gray-50
+              hover:shadow-md
+            "
+              onClick={() => {
+                dispatch(logout());
+                navigate("/", { replace: true });
+              }}
+            >
+              Sign Out
+            </HeaderGoldButton>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const Navbar = ({ icons: propIcons }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -414,7 +544,6 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   const catalogCategoryList = useSelector((state) => state.catalog.list || []);
   const [categoriesList, setCategoriesList] = useState([]);
 
-  // Sync with Redux list when it contains actual category items
   useEffect(() => {
     const list = getCategoryListFromResponse(catalogCategoryList);
     const actualCategories = list.filter(
@@ -425,7 +554,6 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     }
   }, [catalogCategoryList]);
 
-  // If we don't have categories yet, fetch them
   useEffect(() => {
     if (categoriesList.length === 0) {
       dispatch(fetchCategories())
@@ -449,6 +577,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
   const [activeMenu, setActiveMenu] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
+
   const categoryBarRef = useRef(null);
   const isPinnedRef = useRef(false);
   const openTimeoutRef = useRef(null);
@@ -561,7 +690,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       children: asArray(cat?.children),
     }));
   }, [catalogTree, headerData]);
-  // Show up to 12 root categories in the bar; overflow accessible via "More" button
+
   const visibleCategories = useMemo(
     () => asArray(categories).slice(0, 10),
     [categories],
@@ -683,8 +812,8 @@ export const CategoryBar = ({ headerData, compact = false }) => {
               <div
                 key={keyOr(item?.name, `category-${index}`)}
                 className="relative"
-                onMouseEnter={() => handleCategoryMouseEnter(item)}
-                onMouseLeave={handleCategoryMouseLeave}
+                // onMouseEnter={() => handleCategoryMouseEnter(item)}
+                // onMouseLeave={handleCategoryMouseLeave}
               >
                 <Link
                   to={categoryHref}
@@ -692,10 +821,10 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                   aria-controls="category-mega-menu"
                   className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px]  flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
-                  <div className="mx-auto flex h-[50px]  w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out  group-hover:-translate-y-0.5 will-change-transform">
-                    {item?.img ? (
+                  <div className="mx-auto flex h-[50px]  w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out  group-hover:-translate-y-0.5  will-change-transform ">
+                    {item?.iconUrl ? (
                       <ImageSkeleton
-                        src={item?.img}
+                        src={item?.iconUrl}
                         alt={textOr(item?.name, "Category")}
                       />
                     ) : (

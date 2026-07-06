@@ -24,6 +24,7 @@ import DownloadApp from "./pages/downloadApp/DownloadApp";
 import PolicyPage from "./pages/policiesPage/PoliciesPages";
 import Loader from "./components/common/Loader";
 import ReturnsPage from "./pages/returns/ReturnsPage.jsx";
+import BecomeASeller from "./pages/becomeASeller/becomeASeller.jsx";
 
 const CART_STORAGE_KEYS = [
   "sam_global_saved_for_later_items", // localStorage
@@ -515,6 +516,9 @@ export default function App() {
                     }
                   />
                 </Route>
+
+                {/* Public seller introduction */}
+                <Route path="/become-a-seller" element={<BecomeASeller />} />
 
                 {/* ── Seller-only routes ─────────────────────────────────── */}
                 <Route element={<SellerOnlyRoute />}>

@@ -981,21 +981,6 @@ export default function ProductDetailPage() {
   }, [dispatch, productId]);
 
   useEffect(() => {
-    if (!product || String(loadedProductId) !== String(productId)) return;
-
-    console.log("[ProductDetailPage] Product API response:", product);
-    console.table(
-      (product.variants || []).map((variant) => ({
-        id: variant._id || variant.id || variant.sku,
-        attributes: JSON.stringify(variant.attributes || {}),
-        images: variant.images,
-        imageUrls: variant.imageUrls,
-        imageUrl: variant.imageUrl,
-      })),
-    );
-  }, [loadedProductId, product, productId]);
-
-  useEffect(() => {
     if (!product) return;
 
     if (sideEffectsRanFor.current === productId) return;

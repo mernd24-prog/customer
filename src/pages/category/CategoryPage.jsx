@@ -145,49 +145,6 @@ function SubCategoryCard({ sub, isActive, onClick }) {
   );
 }
 
-// ── Child category chips below active sub ────────────────────────────────────
-function ChildChips({ children, selectedKey, onSelect }) {
-  if (!children?.length) return null;
-
-  const categoryChipBaseClasses =
-    "rounded-full border px-3 py-1 text-xs font-semibold transition-colors";
-  const categoryChipActiveClasses =
-    "border-[var(--customer-gold)] bg-[var(--customer-gold)] text-white";
-  const categoryChipInactiveClasses =
-    "border-[var(--customer-border)] bg-white text-[var(--customer-ink)] hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold)]";
-
-  return (
-    <div className="flex flex-wrap gap-2 pt-2">
-      <button
-        type="button"
-        onClick={() => onSelect("")}
-        className={`${categoryChipBaseClasses} ${
-          !selectedKey ? categoryChipActiveClasses : categoryChipInactiveClasses
-        }`}
-      >
-        All
-      </button>
-      {children.map((child) => {
-        const k = child?.categoryKey || child?.key || "";
-        const n = child?.title || child?.name || k.replace(/-/g, " ");
-        return (
-          <Link
-            key={k}
-            to={CUSTOMER_ROUTES.category(k)}
-            className={`${categoryChipBaseClasses} ${
-              selectedKey === k
-                ? categoryChipActiveClasses
-                : categoryChipInactiveClasses
-            }`}
-          >
-            {n}
-          </Link>
-        );
-      })}
-    </div>
-  );
-}
-
 function CategoryPageSkeleton() {
   return (
     <div className="animate-pulse py-5 sm:py-7">
@@ -949,49 +906,6 @@ export default function CategoryPage() {
         <div className="mt-4 rounded-[var(--customer-radius)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           Category details could not be loaded right now. Product results and
           filters are still available below.
-        </div>
-      )}
-
-      {/* ── Subcategory showcase strip ───────────────────────────────────── */}
-      {subCategories.length > 0 && (
-        <div className="relative mt-8 overflow-hidden rounded-2xl p-2 md:p-4  lg:mt-8">
-          <div className="pointer-events-none absolute -right-20 -top-24 h-52 w-52 rounded-full " />
-          <div className="relative mb-3 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div>
-                <h2 className="text-sm font-bold text-[var(--customer-ink)] sm:text-base">
-                  Shop by Sub-Category
-                </h2>
-              </div>
-            </div>
-          </div>
-
-          {/* Horizontal scroll strip of sub-category cards */}
-          <div className="hide-scrollbar relative flex gap-3 overflow-x-auto px-0.5 pb-3 pt-1 sm:gap-4">
-            {subCategories.map((sub) => {
-              const k = sub?.categoryKey || sub?.key || "";
-              return (
-                <SubCategoryCard
-                  key={k}
-                  sub={sub}
-                  isActive={activeSubKey === k}
-                  onClick={() => {}}
-                />
-              );
-            })}
-          </div>
-
-          {/* If active sub has children, show child chips */}
-          {activeSubChildren.length > 0 && (
-            <div className="mt-3 border-t border-[var(--customer-border)] pt-3">
-              <p className="mb-2 text-xs font-semibold text-[var(--customer-muted)] uppercase tracking-wide">
-                {activeSubData?.title || "Sub-types"}
-              </p>
-              <ChildChips selectedKey="" onSelect={() => {}}>
-                {activeSubChildren}
-              </ChildChips>
-            </div>
-          )}
         </div>
       )}
 

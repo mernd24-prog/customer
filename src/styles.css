@@ -113,6 +113,24 @@
   transform-style: preserve-3d;
 }
 
+.seller-experience-swiper .swiper-pagination {
+  bottom: 0 !important;
+}
+
+.seller-experience-swiper .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: #b9b5d8;
+  opacity: 1;
+  transition: width 200ms ease, background-color 200ms ease;
+}
+
+.seller-experience-swiper .swiper-pagination-bullet-active {
+  width: 26px;
+  border-radius: 999px;
+  background: #3e4093;
+}
+
 .banner-full {
   width: 100vw;
   max-width: 100vw;

@@ -649,7 +649,7 @@ export default function SupportHelpCenter() {
                             value={supportForm.subject}
                             onChange={handleSupportFieldChange}
                             placeholder="Example: Refund not received"
-                            className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] placeholder:text-[#9A9A9A] focus:border-[#CE9F2D] focus:outline-none focus:ring-0 focus:shadow-none"
+                            className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] outline-none placeholder:text-[#9A9A9A] focus:border-[#3E4093]"
                           />
                         </label>
 

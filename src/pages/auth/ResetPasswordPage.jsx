@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyRound, Lock } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +16,7 @@ import {
   resendOtp,
 } from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { resetPasswordSchema } from "../../validations/validationSchemas";
+import { resetSchema } from "../../validations/validationSchemas";
 
 export default function ResetPasswordPage() {
   const dispatch = useDispatch();
@@ -24,6 +24,7 @@ export default function ResetPasswordPage() {
   const location = useLocation();
   const run = useToastThunk();
   const { loading, error } = useSelector((s) => s.auth);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     dispatch(clearError());
@@ -36,27 +37,38 @@ export default function ResetPasswordPage() {
     setValue,
     formState: { errors, isValid },
   } = useForm({
-    resolver: zodResolver(resetPasswordSchema),
+    resolver: zodResolver(resetSchema),
     mode: "onChange",
     defaultValues: {
       email: location.state?.email || "",
       otp: "",
       newPassword: "",
-      confirmPassword: "",
     },
   });
 
   const submit = async (values) => {
-    await run(
-      dispatch,
-      resetPassword({
-        email: values.email,
-        otp: values.otp,
-        newPassword: values.newPassword,
-      }),
-      "Password reset successfully",
-    );
-    navigate(AUTH_ROUTES.login, { state: { email: values.email } });
+    setSuccessMessage("");
+    try {
+      const response = await run(
+        dispatch,
+        resetPassword({
+          email: values.email,
+          otp: values.otp,
+          newPassword: values.newPassword,
+        }),
+        "Password reset successfully",
+      );
+      setSuccessMessage(
+        response?.message ||
+          response?.data?.message ||
+          "Your password has been reset successfully.",
+      );
+      window.setTimeout(() => {
+        navigate(AUTH_ROUTES.login, { state: { email: values.email } });
+      }, 1500);
+    } catch (requestError) {
+      console.log("[Reset password API error response]", requestError);
+    }
   };
 
   return (
@@ -68,10 +80,10 @@ export default function ResetPasswordPage() {
         icon="/image/png/done.png"
         image="/image/png/authImage.png"
         maxWidth="max-w-[65rem]"
-        maxHeight="h-[650px]"
+        maxHeight="min-h-[650px]"
       >
         <form className="grid gap-4" onSubmit={handleSubmit(submit)} noValidate>
-          {/* <FormField
+          <FormField
             id="email"
             label="Email address"
             type="email"
@@ -79,9 +91,9 @@ export default function ResetPasswordPage() {
             error={errors.email}
             autoComplete="email"
             placeholder="you@example.com"
-          /> */}
+          />
 
-          {/* <label className="text-sm font-semibold text-ink">OTP code</label>
+          <label className="text-sm font-semibold text-ink">OTP code</label>
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}
@@ -89,7 +101,7 @@ export default function ResetPasswordPage() {
               setValue("otp", otp, { shouldValidate: true, shouldDirty: true })
             }
             error={errors.otp?.message}
-          /> */}
+          />
 
           <FormField
             id="newPassword"
@@ -98,17 +110,7 @@ export default function ResetPasswordPage() {
             registration={register("newPassword")}
             error={errors.newPassword}
             autoComplete="new-password"
-            placeholder="••••••••"
-          />
-
-          <FormField
-            id="confirmPassword"
-            label="Confirm new password"
-            type="password"
-            registration={register("confirmPassword")}
-            error={errors.confirmPassword}
-            autoComplete="new-password"
-            placeholder="••••••••"
+            placeholder="Enter a strong new password"
           />
 
           {error && (

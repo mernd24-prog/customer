@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Package } from "lucide-react";
+import { BadgeCheck, Camera, Package } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
@@ -91,49 +91,92 @@ function ExistingReviewCard({ review }) {
     : [];
   const status = String(review?.status || "pending").replace(/_/g, " ");
   const reviewText = review?.reviewText || review?.text || "";
+  const rating = Math.round(Number(review?.rating) || 0);
+  const submittedAt = review?.createdAt || review?.created_at;
+  const submittedDateValue = submittedAt ? new Date(submittedAt) : null;
+  const submittedDate =
+    submittedDateValue && !Number.isNaN(submittedDateValue.getTime())
+      ? new Intl.DateTimeFormat("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }).format(submittedDateValue)
+      : "";
+  const isPublished = status.toLowerCase() === "published";
 
   return (
-    <div className="mt-5 overflow-hidden rounded-xl border border-[#CE9F2D4D] bg-[#FFFDF8]">
-      <div className="p-4 sm:p-5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <ReviewRating rating={review?.rating} />
-            <span className="text-xs font-bold text-[#21812C]">Your review</span>
+    <section
+      className="mt-5 overflow-hidden rounded-2xl border border-[#E2E3EA] bg-white shadow-[0_5px_18px_rgba(27,29,96,.06)]"
+      aria-label="Your product review"
+    >
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#ECECF1] bg-[#F8F8FB] px-4 py-3.5 sm:px-5">
+        <div className="flex items-center gap-3">
+          <span className="grid h-9 w-9 place-items-center rounded-full bg-[#E9F7ED] text-[#21812C]">
+            <BadgeCheck size={20} />
+          </span>
+          <div>
+            <h3 className="text-sm font-bold text-[#1B1D60] sm:text-base">
+              Your product review
+            </h3>
+            <p className="mt-0.5 text-xs text-[#6B6B80]">
+              {submittedDate
+                ? `Submitted on ${submittedDate}`
+                : "Thanks for sharing your experience"}
+            </p>
           </div>
-          <span className="rounded-full border border-[#37B44633] bg-white px-3 py-1 text-xs font-bold capitalize text-[#21812C]">
-            {status}
+        </div>
+        <span
+          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold capitalize ${isPublished ? "border-[#BFE5C6] bg-[#EFFAF1] text-[#21812C]" : "border-[#E7D39B] bg-[#FFF8E5] text-[#8B650B]"}`}
+        >
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${isPublished ? "bg-[#2DA33A]" : "bg-[#CE9F2D]"}`}
+          />
+          {status}
+        </span>
+      </div>
+
+      <div className="p-4 sm:p-5">
+        <div className="flex flex-wrap items-center gap-3">
+          <ReviewRating rating={rating} />
+          <span className="text-sm font-bold text-[#1B1D60]">
+            {rating}.0 out of 5
           </span>
         </div>
 
         {review?.title && (
-          <p className="mt-3 text-sm font-bold text-[#1B1D60] sm:text-base">
+          <h4 className="mt-4 text-base font-bold text-[#22232B] sm:text-lg">
             {review.title}
-          </p>
+          </h4>
         )}
 
         {reviewText && (
-          <p className="mt-1.5 line-clamp-3 text-sm font-medium leading-6 text-[#2E2E2E]">
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-[#4E505C] sm:text-[15px]">
             {reviewText}
           </p>
         )}
 
         {media.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2.5">
-            {media.slice(0, 5).map((url, index) => (
-              <button
-                type="button"
-                key={`${url}-${index}`}
-                onClick={() => setLightboxIndex(index)}
-                className="block size-14 overflow-hidden rounded-lg border border-[#CE9F2D33] bg-white shadow-sm transition-shadow hover:shadow-md sm:size-16"
-                aria-label={`Preview review image ${index + 1}`}
-              >
-                <img
-                  src={url}
-                  alt={`Review image ${index + 1}`}
-                  className="h-full w-full object-cover"
-                />
-              </button>
-            ))}
+          <div className="mt-5">
+            <p className="mb-2.5 flex items-center gap-2 text-xs font-bold uppercase tracking-[.08em] text-[#6B6B80]">
+              <Camera size={15} /> Photos from your review
+            </p>
+            <div className="flex flex-wrap gap-2.5">
+              {media.slice(0, 5).map((url, index) => (
+                <button
+                  type="button"
+                  key={`${url}-${index}`}
+                  onClick={() => setLightboxIndex(index)}
+                  className="group relative block size-16 overflow-hidden rounded-lg border border-[#DCDDE5] bg-[#F7F7FA] shadow-sm transition hover:border-[#CE9F2D] hover:shadow-md sm:size-20"
+                  aria-label={`Preview review image ${index + 1}`}
+                >
+                  <img
+                    src={url}
+                    alt={`Review image ${index + 1}`}
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                  />
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -146,7 +189,7 @@ function ExistingReviewCard({ review }) {
           onIndexChange={setLightboxIndex}
         />
       )}
-    </div>
+    </section>
   );
 }
 
@@ -355,7 +398,8 @@ function OrderItemCard({
   const shippingSummary = getItemShippingSummary(item);
 
   return (
-    <div className="flex w-full flex-col gap-5 sm:flex-row sm:items-start sm:gap-6 lg:gap-8">
+    <div className="w-full">
+      <div className="flex w-full flex-col gap-5 sm:flex-row sm:items-start sm:gap-6 lg:gap-8">
       <div className="flex  aspect-square w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#CE9F2D33] bg-white p-2 w-[180px] lg:w-[210px] 2xl:w-[220px]">
         {getItemImage(item) ? (
           productPath ? (
@@ -378,7 +422,7 @@ function OrderItemCard({
         )}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col ">
         <p className="line-clamp-2 break-words text-h4 font-bold text-[#2E2E2E]">
           {getProductTitle(item)}
         </p>
@@ -414,9 +458,11 @@ function OrderItemCard({
             Inclusive of all taxes
           </p>
         </div>
+      </div>
+      </div>
 
-        {canReview && (
-          <div className="mt-4 sm:mt-5">
+      {canReview && (
+          <div className="mt-5 w-full sm:mt-6">
             {!reviewChecked ? (
               <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA] px-4 text-sm font-bold text-[#6B6B80]">
                 Checking review...
@@ -434,8 +480,7 @@ function OrderItemCard({
               </button>
             )}
           </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }
