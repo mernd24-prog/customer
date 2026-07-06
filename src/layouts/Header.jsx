@@ -580,8 +580,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       >
         <div className="relative w-full">
           <div
-            className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px] lg:justify-center"
-            style={{ justifyContent: "safe center" }}
+            className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap sm:gap-7 lg:h-[46px]"
           >
             {visibleCategories.map((item, index) => {
               const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
@@ -600,7 +599,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                     isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
                   }`}
                 >
-                  <span className="max-w-[140px] truncate">
+                  <span>
                     {textOr(item?.name, "Category")}
                   </span>
                   <span
@@ -742,8 +741,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       >
         <div className="relative w-full">
           <div
-            className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px] lg:justify-center"
-            style={{ justifyContent: "safe center" }}
+            className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap sm:gap-7 lg:h-[46px]"
           >
             {visibleCategories.map((item, index) => {
               const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
@@ -762,7 +760,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                     isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
                   }`}
                 >
-                  <span className="max-w-[140px] truncate">
+                  <span>
                     {textOr(item?.name, "Category")}
                   </span>
                   <span

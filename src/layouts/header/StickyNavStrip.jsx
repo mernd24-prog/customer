@@ -62,7 +62,7 @@ export function StickyNavStrip({
       {/* "More" link always at the end */}
       <Link
         to="/categories"
-        className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ml-auto ${
+        className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
           pathname === "/categories" ? "text-[#03014D]" : "text-[#2E2E2E]"
         }`}
       >
