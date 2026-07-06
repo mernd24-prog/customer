@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Banknote, Heart, ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
 import Label from "../common/label/Label";
 import {
@@ -13,7 +13,6 @@ import {
   getProductId,
   getProductImage,
   getProductTitle,
-  isProductCodAvailable,
   applyImageFallback,
   getProductAvailableStock,
 } from "../../utils/ecommerce";
@@ -75,7 +74,14 @@ export default function ProductCard({
     cardProduct?.metadata?.featured === true ||
     cardProduct?.isFeatured === true ||
     cardProduct?.markAsFeatured === true;
-  const codAvailable = isProductCodAvailable(cardProduct);
+  const dealBadge =
+    badge ||
+    cardProduct?.deal?.badge ||
+    cardProduct?.metadata?.dealBadge ||
+    null;
+  const isDealProduct =
+    Boolean(cardProduct?.deal?.dealId) ||
+    cardProduct?.metadata?.isDealProduct === true;
 
   // const resolvedBadgeLabel =
   //   badge ||
@@ -176,6 +182,11 @@ export default function ProductCard({
                 {brand}
               </button>
             )}
+            {isDealProduct && dealBadge && (
+              <span className="mb-1 inline-flex w-fit rounded-full bg-[#1B1D60] px-2.5 py-1 text-[11px] font-semibold leading-none text-white">
+                {dealBadge}
+              </span>
+            )}
             <h3
               className="mt-1 line-clamp-2  text-sm font-semibold text-[var(--customer-ink)] sm:text-base"
               title={title}
@@ -271,6 +282,26 @@ export default function ProductCard({
               "
           >
             {discountLabel}
+          </Label>
+        )}
+        {isDealProduct && dealBadge && (
+          <Label
+            variant="success"
+            className="
+              flex h-[24px] items-center justify-center
+              rounded-[50px]
+              bg-[#1B1D60]
+              px-[12px] py-[5px]
+              font-dmSans
+              text-[12px] font-semibold
+              leading-none
+              text-white
+              sm:h-[28px]
+              sm:px-[15px]
+              sm:text-[14px]
+            "
+          >
+            {dealBadge}
           </Label>
         )}
         {/* {codAvailable && (

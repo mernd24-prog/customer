@@ -9,6 +9,7 @@ import {
   getProductAvailableStock,
   getProductId,
   getProductImage,
+  getProductMrp,
   getProductPrice,
   getProductTitle,
   getVariantPrice,
@@ -112,7 +113,9 @@ export function buildCartItem(product, quantity = 1) {
     variantTitle: variant?.title || "",
     attributes: variant?.attributes || {},
     quantity,
-    price: getVariantPrice(variant) ?? getProductPrice(product),
+    price: getProductPrice(product) ?? getVariantPrice(variant),
+    mrp: getProductMrp(product),
+    deal: product?.deal || null,
   };
 }
 

@@ -8,6 +8,7 @@ export default function ProductPriceBlock({
   discount,
   safeDynamicPrice = null,
   dynamicState = {},
+  dealBadge = "",
 
   priceClassName = "",
   mrpClassName = "",
@@ -16,6 +17,11 @@ export default function ProductPriceBlock({
   return (
     <>
       <div>
+        {dealBadge ? (
+          <span className="inline-flex rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-bold uppercase text-white">
+            {dealBadge}
+          </span>
+        ) : null}
         <div className="my-4 flex flex-wrap items-center gap-3">
           <span className={cn("    font-bold  text-navy", priceClassName)}>
             {formatMoney(price, currency)}

@@ -82,6 +82,21 @@ const isImageSource = (src) => {
 const firstImageSource = (...values) =>
   values.map(getImageUrlFromValue).find(isImageSource) || "";
 
+const getActiveDealPrice = (product = {}) =>
+  firstMoneyValue(
+    product?.deal?.dealPrice,
+    product?.dealPrice,
+    product?.metadata?.dealPrice,
+  );
+
+const getActiveDealOriginalPrice = (product = {}) =>
+  firstMoneyValue(
+    product?.deal?.originalPrice,
+    product?.originalPrice,
+    product?.compareAtPrice,
+    product?.mrp,
+  );
+
 const getColorSwatchImage = ({
   option,
   value,
@@ -1139,8 +1154,18 @@ export default function ProductDetailPage() {
 
   const selectedVariantPrice = getVariantPrice(selectedVariant);
   const productPrice = getProductPrice(product);
+  const activeDealPrice = getActiveDealPrice(product);
+  const activeDealOriginalPrice = getActiveDealOriginalPrice(product);
+  const activeDealBadge =
+    product?.deal?.badge ||
+    product?.metadata?.dealBadge ||
+    (activeDealPrice ? "Deal" : "");
 
-  const baseDisplayPrice = firstMoneyValue(selectedVariantPrice, productPrice);
+  const baseDisplayPrice = firstMoneyValue(
+    activeDealPrice,
+    selectedVariantPrice,
+    productPrice,
+  );
 
   const safeDynamicPrice =
     dynamicPrice &&
@@ -1151,13 +1176,15 @@ export default function ProductDetailPage() {
       : undefined;
 
   const price = firstMoneyValue(
-    selectedVariantPrice,
-    safeDynamicPrice,
+    activeDealPrice,
+    activeDealPrice ? undefined : selectedVariantPrice,
+    activeDealPrice ? undefined : safeDynamicPrice,
     productPrice,
   );
 
   const mrp = firstMoneyValue(
-    getProductMrp(selectedVariant),
+    activeDealOriginalPrice,
+    activeDealPrice ? undefined : getProductMrp(selectedVariant),
     getProductMrp(product),
   );
 
@@ -1356,6 +1383,7 @@ export default function ProductDetailPage() {
                     discount={discount}
                     safeDynamicPrice={safeDynamicPrice}
                     dynamicState={dynamicState}
+                    dealBadge={activeDealBadge}
                   />
 
                   <div className="my-4 flex flex-col items-start gap-6 md:flex-row">

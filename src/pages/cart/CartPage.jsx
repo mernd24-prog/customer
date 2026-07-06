@@ -18,6 +18,8 @@ import {
   getProductImage,
   getImageFallbackSrc,
   getProductTitle,
+  getProductMrp,
+  getProductPrice,
   addProductToCartPayload,
   normalizeCartPayloadForWrite,
   wishlistPayload,
@@ -67,9 +69,9 @@ function adaptItemForCard(item) {
     getProductImage(product) ||
     item.image ||
     getImageFallbackSrc(title, "cart");
-  const price = item.price ?? product.price ?? product.sellingPrice ?? 0;
+  const price = getProductPrice(product) ?? item.price ?? product.price ?? product.sellingPrice ?? 0;
   const oldPrice =
-    item.oldPrice ?? item.mrp ?? product.mrp ?? product.originalPrice;
+    item.oldPrice ?? item.mrp ?? getProductMrp(product) ?? product.mrp ?? product.originalPrice;
   const productShippingInfo =
     product.shipping && typeof product.shipping === "object"
       ? product.shipping

@@ -370,4 +370,8 @@ export const endpoints = {
     platformBatch: (batchId) =>
       `${API_PREFIX}/admin/platform/batches/${batchId}`,
   },
+  deals: {
+    publicProducts: `${API_PREFIX}/deals/public/products`,
+    publicPlacements: `${API_PREFIX}/deals/public/placements`,
+  },
 };

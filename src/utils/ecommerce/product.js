@@ -90,8 +90,17 @@ export function getVariantPrice(variant) {
   );
 }
 
+export function getProductDealPrice(product) {
+  return firstMoneyValue(
+    product?.deal?.dealPrice,
+    product?.dealPrice,
+    product?.metadata?.dealPrice,
+  );
+}
+
 export function getProductPrice(product) {
   return firstMoneyValue(
+    getProductDealPrice(product),
     product?.salePrice,
     product?.sale_price,
     product?.sellingPrice,
@@ -105,6 +114,7 @@ export function getProductPrice(product) {
 
 export function getProductMrp(product) {
   return firstMoneyValue(
+    product?.deal?.originalPrice,
     product?.mrp,
     product?.compareAtPrice,
     product?.compare_at_price,

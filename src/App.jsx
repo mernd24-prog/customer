@@ -60,7 +60,6 @@ const FAQPage = lazy(() => import("./pages/faq/FAQPage"));
 const SupportHelpCenter = lazy(
   () => import("./pages/contact/SupportHelpCenter"),
 );
-const ContactUs = lazy(() => import("./pages/contact/ContactUs"));
 const CmsPage = lazy(() => import("./pages/cms/CmsPage"));
 const BrandOutletPage = lazy(() => import("./pages/brand/BrandOutletPage"));
 const WhyChooseUsPage = lazyNamed(
@@ -83,6 +82,7 @@ const HomePage = lazyNamed(
 const WatchlistPage = lazy(() => import("./pages/watchList/WatchListPage"));
 const SearchPage = lazy(() => import("./pages/search/SearchPage"));
 const ProductsPage = lazy(() => import("./pages/products/ProductsPage"));
+const DealsPage = lazy(() => import("./pages/deals/DealsPage"));
 const ProductDetailPage = lazy(
   () => import("./pages/products/ProductDetailPage"),
 );
@@ -308,7 +308,7 @@ export default function App() {
               <Route path="/support" element={<SupportHelpCenter />} />
 
               {/* <Route path="/help-contact" element={<ContactUs />} /> */}
-              <Route path="/deals" element={<CmsPage slugOverride="deals" />} />
+              <Route path="/deals" element={<DealsPage />} />
               <Route path="/brand-outlet" element={<BrandOutletPage />} />
               <Route
                 path="/who-we-are"
