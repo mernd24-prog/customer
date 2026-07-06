@@ -50,7 +50,6 @@ export const baseAccountMenuItems = [
 export const DEFAULT_TOP_NAV_LINKS = [
   { name: "Deals", path: "/deals" },
   { name: "Brand Outlet", path: "/brand-outlet" },
-  { name: "Help & Contact", path: "/help-contact" },
 ];
 
 export const DEFAULT_SELL_DROPDOWN = {

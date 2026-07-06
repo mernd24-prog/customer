@@ -19,7 +19,7 @@ function OrderDetailInfoTile({ icon, label, value, tone = "yellow" }) {
     </div>
   );
 }
-
+  
 function OrderDetailInfoGrid({ items }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:gap-5 xl:grid-cols-4 2xl:gap-[36px]">

@@ -270,7 +270,7 @@ function getUserDisplayName(user = {}) {
   );
 }
 
-function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
+function ReviewCard({ review, currentUser, currentUserId, onHelpful, hasReviewed }) {
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const isOwn =
     currentUserId && String(review.buyerId) === String(currentUserId);
@@ -353,22 +353,24 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={() => onHelpful(reviewId)}
-        disabled={!reviewId || isOwn}
-        className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
-          alreadyVoted
-            ? "bg-gold/10 text-gold-dark"
-            : "text-muted hover:bg-surface-soft hover:text-ink"
-        }`}
-      >
-        <ThumbsUp
-          size={12}
-          className={alreadyVoted ? "fill-gold text-gold" : ""}
-        />
-        Helpful ({helpfulVotes})
-      </button>
+      {hasReviewed && !isOwn && (
+        <button
+          type="button"
+          onClick={() => onHelpful(reviewId)}
+          disabled={!reviewId || isOwn}
+          className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+            alreadyVoted
+              ? "bg-gold/10 text-gold-dark"
+              : "text-muted hover:bg-surface-soft hover:text-ink"
+          }`}
+        >
+          <ThumbsUp
+            size={12}
+            className={alreadyVoted ? "fill-gold text-gold" : ""}
+          />
+          Helpful ({helpfulVotes})
+        </button>
+      )}
 
       {lightboxIndex !== null && (
         <ReviewMediaLightbox
@@ -428,6 +430,7 @@ function ReviewList({
   userId,
   currentUser,
   onHelpful,
+  hasReviewed,
 }) {
   if (loading && visibleReviews.length === 0) {
     return <ReviewSkeletonList />;
@@ -450,6 +453,7 @@ function ReviewList({
           currentUser={currentUser}
           currentUserId={userId}
           onHelpful={onHelpful}
+          hasReviewed={hasReviewed}
         />
       ))}
     </>
@@ -665,6 +669,7 @@ export default function ReviewDetailsPage() {
               userId={userId}
               currentUser={currentUser}
               onHelpful={handleHelpful}
+              hasReviewed={myReview?.status === "published"}
             />
 
             <ReviewPagination

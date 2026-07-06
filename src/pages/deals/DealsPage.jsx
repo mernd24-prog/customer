@@ -52,7 +52,7 @@ function serializeMultiValue(values) {
   return uniqueValues.length ? uniqueValues.join(",") : undefined;
 }
 
-export default function ProductsPage() {
+export default function DealsPage() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState("grid");
@@ -108,6 +108,8 @@ export default function ProductsPage() {
 
   const getParams = useCallback(
     (pageOverride) => ({
+      isDeal: true,
+      hasDiscount: true,
       category: searchParams.get("category") || undefined,
       brand: searchParams.get("brand") || undefined,
       q: searchParams.get("q") || undefined,
@@ -351,13 +353,6 @@ export default function ProductsPage() {
     .flat()
     .filter(Boolean);
 
-  const isSearchMode = Boolean(searchParams.get("q"));
-  const pageTitle = isSearchMode
-    ? `Search: "${searchParams.get("q")}"`
-    : searchParams.get("category")
-      ? `${searchParams.get("category")} Products`
-      : "All Products";
-
   const filterSections = [
     categoryList.length > 0 && {
       key: "category",
@@ -485,35 +480,22 @@ export default function ProductsPage() {
   return (
     <>
       <Seo
-        title={`${pageTitle} | Sam Global`}
-        description="Browse products with filters, sort, and pagination."
+        title="Today's Deals | Sam Global"
+        description="Browse today's best deals on Sam Global."
       />
 
-      <div className="my-8 md:my-16 ">
-        <div className="mb-4  flex flex-wrap items-end justify-end gap-3">
+      <div className="my-8 md:my-16">
+        <div className="mb-8 bg-gradient-to-r from-[var(--gold)] to-[var(--dark-gold)] text-white p-8 rounded-lg shadow-lg">
+          <h1 className="text-4xl font-bold mb-4">Today's Best Deals</h1>
+          <p className="text-lg opacity-90">Discover our carefully curated selection of products at unbeatable prices. Shop now before they're gone!</p>
+        </div>
+        
+        <div className="mb-4 flex flex-wrap items-end justify-end gap-3">
           <CollectionToolbar
             sortValue={searchParams.get("sort") || ""}
             sortOptions={SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
             onOpenFilters={() => setSidebarOpen(true)}  
-            // viewControls={
-            //   <div className="hidden  items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
-            //     <button
-            //       type="button"
-            //       onClick={() => setViewMode("grid")}
-            //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
-            //     >
-            //       <Grid2X2 size={15} />
-            //     </button>
-            //     <button
-            //       type="button"
-            //       onClick={() => setViewMode("list")}
-            //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
-            //     >
-            //       <List size={15} />
-            //     </button>
-            //   </div>
-            // }
           />
         </div>
         <ProductResultsLayout
@@ -531,12 +513,8 @@ export default function ProductsPage() {
           }
           error={productState.error}
           empty={!products.length && !productState.loading && firstLoadDone}
-          emptyTitle={isSearchMode ? "No results found" : "No products found"}
-          emptyText={
-            isSearchMode
-              ? "Try different keywords or remove filters."
-              : "Try adjusting your filters or browse other categories."
-          }
+          emptyTitle="No deals found"
+          emptyText="Try adjusting your filters or browse other categories."
           products={products}
           viewMode={viewMode}
           onAddToCart={addToCart}

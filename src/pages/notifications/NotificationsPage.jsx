@@ -94,7 +94,7 @@ const NOTIFICATION_HELP_ITEMS = [
     icon: Bell,
     title: "Notification Setting",
     description: "Get help with your orders",
-    path: "/account",
+    path: "/notification-preferences",
   },
   {
     icon: Headphones,

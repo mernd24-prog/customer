@@ -1,20 +1,16 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronDown } from "lucide-react";
 
 export default function NeedHelpPanel({
   title = "Need Help ?",
   items = [],
   className = "",
-
-  // Optional:
-  // use only when a page specifically needs sticky behavior
   sticky = false,
-
-  // "plain" for Orders etc.
-  // "colored" for Support / Notification Figma
   headerStyle = "plain",
 }) {
   const hasColoredHeader = headerStyle === "colored";
+  const [expandedIndex, setExpandedIndex] = useState(null);
 
   return (
     <aside
@@ -24,11 +20,7 @@ export default function NeedHelpPanel({
         rounded-xl
         border border-[#E7D9B8]
         bg-white
-        ${
-          sticky
-            ? "lg:sticky lg:top-28"
-            : ""
-        }
+        ${sticky ? "lg:sticky lg:top-28" : ""}
         ${className}
       `}
     >
@@ -62,17 +54,8 @@ export default function NeedHelpPanel({
         {items.map((item, index) => {
           const Icon = item.icon;
 
-          return (
-            <Link
-              key={`${item.title}-${index}`}
-              to={item.path || "/contact"}
-              className="
-                flex min-w-0
-                items-center
-                gap-3
-                py-5
-              "
-            >
+          const content = (
+            <>
               {/* Icon */}
               <span
                 className="
@@ -84,16 +67,11 @@ export default function NeedHelpPanel({
                   text-[#25247B]
                 "
               >
-                {Icon && (
-                  <Icon
-                    size={18}
-                    className="text-[#25247B]"
-                  />
-                )}
+                {Icon && <Icon size={18} className="text-[#25247B]" />}
               </span>
 
               {/* Text */}
-              <span className="min-w-0 flex-1">
+              <span className="min-w-0 flex-1 text-left">
                 <span
                   className="
                     block
@@ -124,7 +102,7 @@ export default function NeedHelpPanel({
               </span>
 
               {/* Arrow */}
-              {item.showArrow !== false && (
+              {item.showArrow !== false && !item.expandableContent && (
                 <ChevronRight
                   size={17}
                   className="
@@ -133,7 +111,46 @@ export default function NeedHelpPanel({
                   "
                 />
               )}
-            </Link>
+              {item.expandableContent && (
+                <ChevronDown
+                  size={17}
+                  className={`shrink-0 text-[#25247B] transition-transform duration-300 ${
+                    expandedIndex === index ? "rotate-180" : "-rotate-90"
+                  }`}
+                />
+              )}
+            </>
+          );
+
+          return (
+            <div key={`${item.title}-${index}`} className="flex flex-col">
+              {item.expandableContent ? (
+                <button
+                  type="button"
+                  onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+                  className="flex min-w-0 items-center gap-3 py-5 focus:outline-none w-full"
+                >
+                  {content}
+                </button>
+              ) : (
+                <Link
+                  to={item.path || "/contact"}
+                  className="flex min-w-0 items-center gap-3 py-5"
+                >
+                  {content}
+                </Link>
+              )}
+
+              {item.expandableContent && (
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    expandedIndex === index ? "max-h-[1000px] opacity-100 pb-5" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  {item.expandableContent}
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
