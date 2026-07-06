@@ -76,16 +76,7 @@ export default function CheckoutSummary({
   const codCharge = Number(
     quoteSummary.codChargeAmount ?? quoteAmounts.codChargeAmount ?? 0,
   );
-  const customerPlatformFee = Number(
-    quoteSummary.customerPlatformFeeAmount ??
-      quoteAmounts.customerPlatformFeeAmount ??
-      0,
-  );
-  const customerPlatformFeeTax = Number(
-    quoteSummary.customerPlatformFeeTaxAmount ??
-      quoteAmounts.customerPlatformFeeTaxAmount ??
-      0,
-  );
+
   const quoteShipping = Number(
     quoteSummary.deliveryChargeAmount ??
       quoteSummary.shippingFeeAmount ??

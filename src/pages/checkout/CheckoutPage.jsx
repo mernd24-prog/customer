@@ -282,8 +282,11 @@ const getCartItemShipping = (item = {}) => {
         ? item.shippingFee
         : productShipping.freeShipping
           ? 0
-          : asNumber(productShipping.shippingCharge ?? productShipping.additionalCost ?? 0) +
-            asNumber(productShipping.handlingCharge ?? 0);
+          : asNumber(
+              productShipping.shippingCharge ??
+                productShipping.additionalCost ??
+                0,
+            ) + asNumber(productShipping.handlingCharge ?? 0);
   return perUnit * asNumber(item.quantity || 1);
 };
 const getCartItemProduct = (item = {}) =>
@@ -603,17 +606,14 @@ export default function CheckoutPage() {
   const shipping = items.reduce((sum, item) => sum + item._shippingTotal, 0);
   const total = subtotal + shipping;
   const [paymentProvider, setPaymentProvider] = useState("razorpay");
-  const paymentOptions = useMemo(
-    () => {
-      const providers = Array.isArray(paymentState.current?.providers)
-        ? paymentState.current.providers
-        : [];
-      return providers.filter(
-        (option) => option.provider !== "cod" || option.enabled !== false,
-      );
-    },
-    [paymentState],
-  );
+  const paymentOptions = useMemo(() => {
+    const providers = Array.isArray(paymentState.current?.providers)
+      ? paymentState.current.providers
+      : [];
+    return providers.filter(
+      (option) => option.provider !== "cod" || option.enabled !== false,
+    );
+  }, [paymentState]);
   const quotePayableAmount = getQuotePayableAmount(quoteData);
 
   const addresses = useMemo(
@@ -959,9 +959,10 @@ export default function CheckoutPage() {
         sellerOrderAmounts: sellerIds
           ? JSON.stringify(paymentSellerContext.sellerOrderAmounts)
           : undefined,
-        productCodDisabled: paymentSellerContext.productCodDisabled || undefined,
+        productCodDisabled:
+          paymentSellerContext.productCodDisabled || undefined,
       }),
-    ).catch(() => {});
+    );
   }, [
     dispatch,
     paymentSellerContext,
