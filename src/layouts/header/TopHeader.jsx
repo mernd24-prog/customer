@@ -54,8 +54,8 @@ export const TopHeader = () => {
             icon: "store",
           },
           {
-            label: helpContactPage?.title || "Help & Contact",
-            path: "/help-contact",
+            label: helpContactPage?.title || "Help and Support",
+            path: "/support",
             icon: "lifeBuoy",
           },
         ]),
