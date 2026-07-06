@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation } from "swiper/modules";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Tag } from "lucide-react";
 import { bannerData } from "../constants/image.constant";
 
@@ -30,18 +30,18 @@ const heroContent = [
 
 const HeroBanner = ({ content = heroContent }) => {
   return (
-    <section className="  relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[480px] w-screen items-center overflow-hidden bg-[#1B1D60] sm:h-[520px] md:h-[620px] lg:h-[650px]">
+    <section className="  relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[480px] w-screen items-center overflow-hidden  bg-[#1B1D60] sm:h-[520px] md:h-[620px] lg:h-[650px]">
       <Swiper
         spaceBetween={0}
         centeredSlides={false}
         autoplay={{
-          delay: 5000,
+          delay: 2000,
           disableOnInteraction: false,
         }}
-        pagination={false}
+        pagination={{ clickable: true }}
         navigation={false}
-        modules={[Autoplay, Navigation]}
-        className="banner-swiper h-full w-full"
+        modules={[Autoplay, Navigation, Pagination]}
+        className="seller-experience-swiper  h-full w-full"
       >
         {bannerData.map((slide, index) => {
           const item = content[index] || content[0];

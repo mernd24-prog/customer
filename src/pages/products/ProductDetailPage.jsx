@@ -643,9 +643,7 @@ function VariantSelector({
                       ? "border border-gold bg-gradient-to-t from-[#1B1D60]/25 to-transparent"
                       : "border border-gold/20 "
                   } ${
-                    isUnavailable
-                      ? "border-red-200 bg-red-50 text-red-500"
-                      : ""
+                    isUnavailable ? "border-red-200 bg-red-50 text-red-500" : ""
                   }`}
                 >
                   <span className={isUnavailable ? "line-through" : ""}>
@@ -966,21 +964,6 @@ export default function ProductDetailPage() {
     sideEffectsRanFor.current = null;
     setDeliveryResult(null);
   }, [dispatch, productId]);
-
-  useEffect(() => {
-    if (!product || String(loadedProductId) !== String(productId)) return;
-
-    console.log("[ProductDetailPage] Product API response:", product);
-    console.table(
-      (product.variants || []).map((variant) => ({
-        id: variant._id || variant.id || variant.sku,
-        attributes: JSON.stringify(variant.attributes || {}),
-        images: variant.images,
-        imageUrls: variant.imageUrls,
-        imageUrl: variant.imageUrl,
-      })),
-    );
-  }, [loadedProductId, product, productId]);
 
   useEffect(() => {
     if (!product) return;
@@ -1462,10 +1445,7 @@ export default function ProductDetailPage() {
                 attributes={attributes}
               />
 
-              <ProductReviewsSection
-                productId={productId}
-                product={product}
-              />
+              <ProductReviewsSection productId={productId} product={product} />
 
               <ProductRecommendationSection
                 title="You May Also Like"

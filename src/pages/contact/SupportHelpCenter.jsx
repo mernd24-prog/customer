@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
@@ -11,7 +11,6 @@ import { apiRequest } from "../../api/client";
 import { endpoints } from "../../api/endpoints";
 import { tokenStorage } from "../../api/tokenStorage";
 import { notify } from "../../utils/notify";
-
 import {
   SUPPORT_CONTACT_ITEMS,
   SUPPORT_BREADCRUMBS,
@@ -122,10 +121,7 @@ function normalizeHelpTopics(page) {
 }
 
 function normalizeCommonQuestions(page) {
-  const section = getSection(page, [
-    "Common Question",
-    "Common Questions",
-  ]);
+  const section = getSection(page, ["Common Question", "Common Questions"]);
 
   const points = Array.isArray(section?.points) ? section.points : [];
 
@@ -139,9 +135,10 @@ function normalizeCommonQuestions(page) {
 
   const bodySections = parseBodySections(page?.body);
 
-  return mapCards(
-    questionPoints.length ? questionPoints : bodySections,
-  ).slice(0, 6);
+  return mapCards(questionPoints.length ? questionPoints : bodySections).slice(
+    0,
+    6,
+  );
 }
 
 function formatSupportCategory(category = "") {
@@ -209,42 +206,33 @@ export default function SupportHelpCenter() {
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
 
-  const [selectedSupportCategory, setSelectedSupportCategory] =
-    useState("");
+  const [selectedSupportCategory, setSelectedSupportCategory] = useState("");
 
-  const [supportForm, setSupportForm] = useState(
-    CUSTOMER_SUPPORT_INITIAL_FORM,
-  );
+  const [supportForm, setSupportForm] = useState(CUSTOMER_SUPPORT_INITIAL_FORM);
 
   const [supportQueries, setSupportQueries] = useState([]);
   const [supportLoading, setSupportLoading] = useState(false);
   const [supportSubmitting, setSupportSubmitting] = useState(false);
   const [supportError, setSupportError] = useState("");
+  const [isCategoryFilterOpen, setIsCategoryFilterOpen] = useState(false);
+  const [isSupportCategoryOpen, setIsSupportCategoryOpen] = useState(false);
+  const categoryFilterRef = useRef(null);
+  const supportCategoryRef = useRef(null);
 
   const pageTitle = page?.title || "";
   const pageDescription = page?.description || page?.excerpt || "";
 
-  const topics = useMemo(
-    () => normalizeHelpTopics(page),
-    [page],
-  );
+  const topics = useMemo(() => normalizeHelpTopics(page), [page]);
 
-  const commonQuestions = useMemo(
-    () => normalizeCommonQuestions(page),
-    [page],
-  );
+  const commonQuestions = useMemo(() => normalizeCommonQuestions(page), [page]);
 
   const isPageLoading = loading && !page;
 
   const faqData =
-    commonQuestions.length > 0
-      ? commonQuestions
-      : SUPPORT_FALLBACK_FAQS;
+    commonQuestions.length > 0 ? commonQuestions : SUPPORT_FALLBACK_FAQS;
 
   const quickActions =
-    topics.length > 0
-      ? topics.slice(0, 6)
-      : SUPPORT_FALLBACK_TOPICS;
+    topics.length > 0 ? topics.slice(0, 6) : SUPPORT_FALLBACK_TOPICS;
 
   const isSignedIn = Boolean(tokenStorage.getAccessToken());
 
@@ -272,9 +260,7 @@ export default function SupportHelpCenter() {
 
       setSupportQueries(normalizeSupportQueries(result.data));
     } catch (error) {
-      setSupportError(
-        error?.message || "Unable to load support tickets.",
-      );
+      setSupportError(error?.message || "Unable to load support tickets.");
     } finally {
       setSupportLoading(false);
     }
@@ -305,16 +291,12 @@ export default function SupportHelpCenter() {
     const message = supportForm.message.trim();
 
     if (subject.length < 5) {
-      notify.warning(
-        "Please enter a subject with at least 5 characters.",
-      );
+      notify.warning("Please enter a subject with at least 5 characters.");
       return;
     }
 
     if (message.length < 10) {
-      notify.warning(
-        "Please describe your issue in at least 10 characters.",
-      );
+      notify.warning("Please describe your issue in at least 10 characters.");
       return;
     }
 
@@ -342,13 +324,42 @@ export default function SupportHelpCenter() {
 
       await loadSupportQueries();
     } catch (error) {
-      notify.error(
-        error?.message || "Failed to send support message.",
-      );
+      notify.error(error?.message || "Failed to send support message.");
     } finally {
       setSupportSubmitting(false);
     }
   };
+  useEffect(() => {
+    if (!isSupportCategoryOpen) return;
+
+    const handlePointerDown = (event) => {
+      if (supportCategoryRef.current?.contains(event.target)) return;
+
+      setIsSupportCategoryOpen(false);
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [isSupportCategoryOpen]);
+
+  const selectedSupportFormCategory =
+    CUSTOMER_SUPPORT_CATEGORIES.find(
+      (item) => item.value === supportForm.category,
+    )?.label || "Select Category";
+
+  useEffect(() => {
+    if (!isCategoryFilterOpen) return;
+
+    const handlePointerDown = (event) => {
+      if (categoryFilterRef.current?.contains(event.target)) return;
+      setIsCategoryFilterOpen(false);
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [isCategoryFilterOpen]);
 
   if (isPageLoading) {
     return (
@@ -377,7 +388,10 @@ export default function SupportHelpCenter() {
       </>
     );
   }
-
+  const selectedSupportCategoryLabel =
+    CUSTOMER_SUPPORT_CATEGORIES.find(
+      (item) => item.value === selectedSupportCategory,
+    )?.label || "All";
   return (
     <>
       <Seo
@@ -402,9 +416,7 @@ export default function SupportHelpCenter() {
           <section className="relative mb-5 md:hidden">
             <button
               type="button"
-              onClick={() =>
-                setIsQuickActionsOpen((open) => !open)
-              }
+              onClick={() => setIsQuickActionsOpen((open) => !open)}
               aria-expanded={isQuickActionsOpen}
               className="flex w-full items-center justify-between rounded-[14px] border border-[#D7A522] bg-white px-4 py-3 text-left font-semibold text-[#2E2E2E]"
             >
@@ -457,10 +469,8 @@ export default function SupportHelpCenter() {
             Both columns start EXACTLY same row
         ====================================================== */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)] lg:grid-cols-[minmax(0,2.1fr)_minmax(320px,1fr)] xl:grid-cols-[minmax(0,2fr)_minmax(340px,1fr)] items-start">
-
           {/* ================= LEFT COLUMN ================= */}
           <div className="min-w-0 space-y-5">
-
             {/* DESKTOP QUICK ACTIONS */}
             {quickActions.length > 0 && (
               <section className="hidden overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white md:block">
@@ -513,11 +523,7 @@ export default function SupportHelpCenter() {
                     >
                       <button
                         type="button"
-                        onClick={() =>
-                          setOpenFaqIndex(
-                            isOpen ? null : index,
-                          )
-                        }
+                        onClick={() => setOpenFaqIndex(isOpen ? null : index)}
                         className="flex w-full items-center justify-between gap-4 py-4 text-left focus:outline-none"
                       >
                         <span className="text-[15px] font-medium text-[#2E2E2E] sm:text-[18px] lg:text-[17px]">
@@ -552,129 +558,215 @@ export default function SupportHelpCenter() {
 
           {/* ================= RIGHT COLUMN ================= */}
           <div className="min-w-0 self-start space-y-5">
-
             {/* SAME ROW AS QUICK ACTIONS */}
             <NeedHelpPanel
               title="Contact Support"
-              items={SUPPORT_CONTACT_ITEMS}
+              items={SUPPORT_CONTACT_ITEMS.map((item) => {
+                if (item.title === "Raise a Ticket") {
+                  return {
+                    ...item,
+                    expandableContent: (
+                      <form
+                        onSubmit={handleSupportSubmit}
+                        className="space-y-4 px-1 py-2"
+                      >
+                        <label className="block">
+                          <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
+                            Category
+                          </span>
+
+                          <div
+                            ref={supportCategoryRef}
+                            className="relative"
+                            onBlur={(event) => {
+                              if (
+                                !event.currentTarget.contains(
+                                  event.relatedTarget,
+                                )
+                              ) {
+                                setIsSupportCategoryOpen(false);
+                              }
+                            }}
+                          >
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setIsSupportCategoryOpen((open) => !open)
+                              }
+                              className="flex h-11 w-full items-center justify-between rounded-lg border border-[#E7D9B8] bg-white px-3 text-left text-sm font-medium text-[#2E2E2E] transition hover:border-[#CE9F2D] focus:outline-none"
+                              aria-expanded={isSupportCategoryOpen}
+                            >
+                              <span>{selectedSupportFormCategory}</span>
+
+                              <ChevronDown
+                                size={18}
+                                className={`text-[#CE9F2D] transition-transform ${
+                                  isSupportCategoryOpen ? "rotate-180" : ""
+                                }`}
+                              />
+                            </button>
+
+                            {isSupportCategoryOpen && (
+                              <div className="absolute left-0 top-[calc(100%+6px)] z-30 w-full overflow-hidden rounded-xl border border-[#E7D9B8] bg-white shadow-[0_12px_32px_rgba(31,36,48,0.14)]">
+                                <div className="py-1">
+                                  {CUSTOMER_SUPPORT_CATEGORIES.map(
+                                    (category) => (
+                                      <button
+                                        key={category.value}
+                                        type="button"
+                                        onClick={() => {
+                                          setSupportForm((prev) => ({
+                                            ...prev,
+                                            category: category.value,
+                                          }));
+
+                                          setIsSupportCategoryOpen(false);
+                                        }}
+                                        className={`block w-full px-4 py-2.5 text-left text-[13px] font-semibold transition-colors hover:bg-[#F8F1E2] ${
+                                          supportForm.category ===
+                                          category.value
+                                            ? "bg-[#F8F1E2] text-[#1B1D60]"
+                                            : "text-[#2E2E2E]"
+                                        }`}
+                                      >
+                                        {category.label}
+                                      </button>
+                                    ),
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </label>
+
+                        <label className="block">
+                          <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
+                            Subject
+                          </span>
+
+                          <input
+                            name="subject"
+                            value={supportForm.subject}
+                            onChange={handleSupportFieldChange}
+                            placeholder="Example: Refund not received"
+                            className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] outline-none placeholder:text-[#9A9A9A] focus:border-[#3E4093]"
+                          />
+                        </label>
+
+                        <label className="block">
+                          <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
+                            Message
+                          </span>
+
+                          <textarea
+                            name="message"
+                            value={supportForm.message}
+                            onChange={handleSupportFieldChange}
+                            rows={4}
+                            placeholder="Write your issue here..."
+                            className="w-full resize-none rounded-lg border border-[#E7D9B8] bg-white px-3 py-3 text-sm leading-5 text-[#2E2E2E] outline-none placeholder:text-[#9A9A9A] focus:border-[#3E4093]"
+                          />
+                        </label>
+
+                        <button
+                          type="submit"
+                          disabled={supportSubmitting}
+                          className="h-11 w-full rounded-lg bg-[#3E4093] text-sm font-bold text-white transition hover:bg-[#303176] disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          {supportSubmitting ? "Sending..." : "Send Message"}
+                        </button>
+
+                        {!isSignedIn && (
+                          <p className="text-center text-xs font-medium text-[#666666]">
+                            Login is required to send a support message.
+                          </p>
+                        )}
+                      </form>
+                    ),
+                  };
+                }
+                return item;
+              })}
               headerStyle="colored"
             />
 
-            {/* CHAT WITH SUPPORT */}
-            <section
-              id="support-chat"
-              className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white"
-            >
-              <div className="bg-[#F7EED8] px-5 py-4">
-                <h2 className="text-lg font-bold text-[#2E2E2E]">
-                  Chat With Support
-                </h2>
-              </div>
-
-              <form
-                onSubmit={handleSupportSubmit}
-                className="space-y-4 px-5 py-5"
-              >
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
-                    Category
-                  </span>
-
-                  <select
-                    name="category"
-                    value={supportForm.category}
-                    onChange={handleSupportFieldChange}
-                    className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] outline-none focus:border-[#3E4093]"
-                  >
-                    {CUSTOMER_SUPPORT_CATEGORIES.map(
-                      (category) => (
-                        <option
-                          key={category.value}
-                          value={category.value}
-                        >
-                          {category.label}
-                        </option>
-                      ),
-                    )}
-                  </select>
-                </label>
-
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
-                    Subject
-                  </span>
-
-                  <input
-                    name="subject"
-                    value={supportForm.subject}
-                    onChange={handleSupportFieldChange}
-                    placeholder="Example: Refund not received"
-                    className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] outline-none placeholder:text-[#9A9A9A] focus:border-[#3E4093]"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
-                    Message
-                  </span>
-
-                  <textarea
-                    name="message"
-                    value={supportForm.message}
-                    onChange={handleSupportFieldChange}
-                    rows={4}
-                    placeholder="Write your issue here..."
-                    className="w-full resize-none rounded-lg border border-[#E7D9B8] bg-white px-3 py-3 text-sm leading-5 text-[#2E2E2E] outline-none placeholder:text-[#9A9A9A] focus:border-[#3E4093]"
-                  />
-                </label>
-
-                <button
-                  type="submit"
-                  disabled={supportSubmitting}
-                  className="h-11 w-full rounded-lg bg-[#3E4093] text-sm font-bold text-white transition hover:bg-[#303176] disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {supportSubmitting
-                    ? "Sending..."
-                    : "Send Message"}
-                </button>
-
-                {!isSignedIn && (
-                  <p className="text-center text-xs font-medium text-[#666666]">
-                    Login is required to send a support message.
-                  </p>
-                )}
-              </form>
-            </section>
-
             {/* RECENT TICKETS */}
-            <section className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white">
-              <div className="flex items-center justify-between gap-3 bg-[#F7EED8] px-5 py-4">
+            <section className="rounded-xl border border-[#E7D9B8] bg-white">
+              <div className="flex items-center justify-between gap-3 rounded-t-[11px] bg-[#F7EED8] px-5 py-4">
                 <h2 className="text-lg font-bold text-[#2E2E2E]">
                   Recent Tickets
                 </h2>
 
-                <select
-                  value={selectedSupportCategory}
-                  onChange={(event) =>
-                    setSelectedSupportCategory(
-                      event.target.value,
-                    )
-                  }
-                  className="h-9 rounded-lg border border-[#E7D9B8] bg-white px-2 text-xs font-semibold text-[#2E2E2E] outline-none"
+                <div
+                  ref={categoryFilterRef}
+                  className="relative w-[190px]"
+                  onBlur={(event) => {
+                    if (!event.currentTarget.contains(event.relatedTarget)) {
+                      setIsCategoryFilterOpen(false);
+                    }
+                  }}
                 >
-                  <option value="">All</option>
+                  <button
+                    type="button"
+                    onClick={() => setIsCategoryFilterOpen((open) => !open)}
+                    className="flex h-10 w-full items-center justify-between rounded-[10px] border border-[#CE9F2D] bg-white px-3 text-left text-sm font-semibold text-[#1B1D60] transition-colors hover:bg-[#FFF9EA] focus:outline-none"
+                    aria-expanded={isCategoryFilterOpen}
+                    aria-haspopup="menu"
+                  >
+                    <span>{selectedSupportCategoryLabel}</span>
 
-                  {CUSTOMER_SUPPORT_CATEGORIES.map(
-                    (category) => (
-                      <option
-                        key={category.value}
-                        value={category.value}
-                      >
-                        {category.label}
-                      </option>
-                    ),
+                    <ChevronDown
+                      size={18}
+                      className={`text-[#CE9F2D] transition-transform ${
+                        isCategoryFilterOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {isCategoryFilterOpen && (
+                    <div
+                      role="menu"
+                      className="absolute right-0 top-[calc(100%+6px)] z-30 w-full overflow-hidden rounded-[12px] border border-[#E7D9B8] bg-white shadow-[0_12px_32px_rgba(31,36,48,0.14)]"
+                    >
+                      <div className="py-1">
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => {
+                            setSelectedSupportCategory("");
+                            setIsCategoryFilterOpen(false);
+                          }}
+                          className={`block w-full px-4 py-2.5 text-left text-[13px] font-semibold transition-colors hover:bg-[#F8F1E2] ${
+                            selectedSupportCategory === ""
+                              ? "bg-[#F8F1E2] text-[#1B1D60]"
+                              : "text-[#2E2E2E]"
+                          }`}
+                        >
+                          All
+                        </button>
+
+                        {CUSTOMER_SUPPORT_CATEGORIES.map((category) => (
+                          <button
+                            key={category.value}
+                            type="button"
+                            role="menuitem"
+                            onClick={() => {
+                              setSelectedSupportCategory(category.value);
+                              setIsCategoryFilterOpen(false);
+                            }}
+                            className={`block w-full px-4 py-2.5 text-left text-[13px] font-semibold transition-colors hover:bg-[#F8F1E2] ${
+                              selectedSupportCategory === category.value
+                                ? "bg-[#F8F1E2] text-[#1B1D60]"
+                                : "text-[#2E2E2E]"
+                            }`}
+                          >
+                            {category.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   )}
-                </select>
+                </div>
               </div>
 
               <div className="divide-y divide-[#EFE5D2] px-5">
@@ -703,10 +795,7 @@ export default function SupportHelpCenter() {
                 {!supportLoading &&
                   !supportError &&
                   supportQueries.map((ticket) => (
-                    <div
-                      key={ticket.id}
-                      className="py-4"
-                    >
+                    <div key={ticket.id} className="py-4">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <p className="truncate text-sm font-bold text-[#1B1D60]">
@@ -714,15 +803,12 @@ export default function SupportHelpCenter() {
                           </p>
 
                           <p className="mt-1 text-xs font-medium text-[#666666]">
-                            {ticket.id} ·{" "}
-                            {ticket.categoryLabel} ·{" "}
+                            {ticket.id} · {ticket.categoryLabel} ·{" "}
                             {ticket.updatedAt}
                           </p>
                         </div>
 
-                        <SupportStatusBadge
-                          status={ticket.status}
-                        />
+                        <SupportStatusBadge status={ticket.status} />
                       </div>
                     </div>
                   ))}

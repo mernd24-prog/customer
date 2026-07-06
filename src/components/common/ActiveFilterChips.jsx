@@ -10,13 +10,13 @@ export default function ActiveFilterChips({
   if (!filters.length) return null;
 
   return (
-    <div className={`${className} flex flex-wrap gap-2`}>
+    <div className={`${className} flex  flex-wrap gap-2`}>
       {filters.map((filter) => (
         <button
           key={filter.key}
           type="button"
           onClick={() => onRemove?.(filter.key, filter)}
-          className="chip inline-flex items-center gap-1.5 text-xs font-medium"
+          className="chip  inline-flex items-center gap-1.5 text-xs font-medium"
         >
           {filter.label} <X size={10} />
         </button>

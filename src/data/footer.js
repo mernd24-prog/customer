@@ -41,8 +41,8 @@ export const footerData = {
     {
       title: "Sell",
       links: [
-        { label: "Become a Seller", href: "/seller/status" },
-        { label: "Seller Dashboard", href: "/seller/status" },
+        { label: "Become a Seller", href: "/become-a-seller" },
+        { label: "Seller Dashboard", href: "/become-a-seller" },
         { label: "Seller Policies", href: "/seller-policies" },
         { label: "Growth Support", href: "/growth-support" },
       ],

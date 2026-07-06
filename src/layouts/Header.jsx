@@ -28,7 +28,7 @@ import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
 import SellDropdown from "./header/SellDropdown";
 import { CategoryMegaMenu } from "../components/ecommerce";
-import {navbarIcons as navData } from "../constants/image.constant";
+import { navbarIcons as navData } from "../constants/image.constant";
 import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
 import { logout } from "../features/auth/authSlice";
 import { fetchMe } from "../features/user/userSlice";
@@ -238,7 +238,7 @@ export const TopHeader = () => {
         items: withIcons([
           {
             label: "Seller Login",
-            path: "http://45.195.90.183:3000/login",
+            path: "/become-a-seller",
             icon: "store",
           },
           {
@@ -564,40 +564,28 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   const catalogCategoryList = useSelector((state) => state.catalog.list || []);
   const [categoriesList, setCategoriesList] = useState([]);
 
-  // Sync with Redux list when it contains actual category items
   useEffect(() => {
     const list = getCategoryListFromResponse(catalogCategoryList);
-    const actualCategories = list.filter(item => item && (item.categoryKey || item.parentKey));
+    const actualCategories = list.filter(
+      (item) => item && (item.categoryKey || item.parentKey),
+    );
     if (actualCategories.length > 0) {
       setCategoriesList(actualCategories);
     }
   }, [catalogCategoryList]);
 
-  // If we don't have categories yet, fetch them
   useEffect(() => {
     if (categoriesList.length === 0) {
-      dispatch(fetchCategories())
-        .unwrap()
-        .then((result) => {
-          const data = result?.data || result;
-          const list = getCategoryListFromResponse(data);
-          const actualCategories = list.filter(item => item && (item.categoryKey || item.parentKey));
-          if (actualCategories.length > 0) {
-            setCategoriesList(actualCategories);
-          }
-        })
-        .catch(() => {});
+      dispatch(fetchCategories()).unwrap();
     }
   }, [dispatch, categoriesList.length]);
 
-  const catalogCategories = useMemo(
-    () => categoriesList,
-    [categoriesList],
-  );
+  const catalogCategories = useMemo(() => categoriesList, [categoriesList]);
   const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
   const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
   const [activeMenu, setActiveMenu] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
+
   const categoryBarRef = useRef(null);
   const isPinnedRef = useRef(false);
   const openTimeoutRef = useRef(null);
@@ -710,7 +698,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       children: asArray(cat?.children),
     }));
   }, [catalogTree, headerData]);
-  // Show up to 12 root categories in the bar; overflow accessible via "More" button
+
   const visibleCategories = useMemo(
     () => asArray(categories).slice(0, 10),
     [categories],
@@ -728,7 +716,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         className="fixed left-0 z-40 w-full bg-white/95 shadow-[0_2px_8px_rgba(17,24,39,0.06)] backdrop-blur !block"
       >
         <div className="relative w-full">
-          <div 
+          <div
             className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px] lg:justify-center"
             style={{ justifyContent: "safe center" }}
           >
@@ -785,7 +773,10 @@ export const CategoryBar = ({ headerData, compact = false }) => {
               onMouseEnter={keepCategoryMenuOpen}
               onMouseLeave={handleCategoryMouseLeave}
             >
-              <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
+              <CategoryMegaMenu
+                data={megaMenuData}
+                activeCategory={activeMenu}
+              />
             </div>
           )}
         </div>
@@ -813,7 +804,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       <div className="absolute inset-0 bg-[#CE9F2D33]  z-10  " />
 
       <div className="w-full relative z-20">
-        <div 
+        <div
           className="hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:gap-5 lg:justify-center"
           style={{ justifyContent: "safe center" }}
         >
@@ -829,8 +820,8 @@ export const CategoryBar = ({ headerData, compact = false }) => {
               <div
                 key={keyOr(item?.name, `category-${index}`)}
                 className="relative"
-                onMouseEnter={() => handleCategoryMouseEnter(item)}
-                onMouseLeave={handleCategoryMouseLeave}
+                // onMouseEnter={() => handleCategoryMouseEnter(item)}
+                // onMouseLeave={handleCategoryMouseLeave}
               >
                 <Link
                   to={categoryHref}
@@ -838,10 +829,10 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                   aria-controls="category-mega-menu"
                   className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px]  flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
-                  <div className="mx-auto flex h-[50px]  w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out  group-hover:-translate-y-0.5 will-change-transform">
-                    {item?.img ? (
+                  <div className="mx-auto flex h-[50px]  w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out  group-hover:-translate-y-0.5  will-change-transform ">
+                    {item?.iconUrl ? (
                       <ImageSkeleton
-                        src={item?.img}
+                        src={item?.iconUrl}
                         alt={textOr(item?.name, "Category")}
                       />
                     ) : (
@@ -886,8 +877,8 @@ export const CategoryBar = ({ headerData, compact = false }) => {
             : "pointer-events-none -translate-y-full opacity-0"
         }`}
       >
-        <div className="relative w-full">
-          <div 
+        <div className="relative w-full ">
+          <div
             className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px] lg:justify-center"
             style={{ justifyContent: "safe center" }}
           >
@@ -944,7 +935,10 @@ export const CategoryBar = ({ headerData, compact = false }) => {
               onMouseEnter={keepCategoryMenuOpen}
               onMouseLeave={handleCategoryMouseLeave}
             >
-              <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
+              <CategoryMegaMenu
+                data={megaMenuData}
+                activeCategory={activeMenu}
+              />
             </div>
           )}
         </div>

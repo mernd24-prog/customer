@@ -2,12 +2,6 @@ import { MessageSquare, Phone, Mail, Ticket } from "lucide-react";
 
 export const SUPPORT_CONTACT_ITEMS = [
   {
-    icon: MessageSquare,
-    title: "Live Chat",
-    description: "Message our support team",
-    path: "/support#support-chat",
-  },
-  {
     icon: Phone,
     title: "+91 1234567890",
     description: "Call Us",
