@@ -320,7 +320,7 @@ function OrderPaymentSummary({
             {visiblePaymentMethods.map((option) => (
               <label
                 key={option.provider}
-                className="flex cursor-pointer items-center gap-3 rounded-[10px] px-3 py-3 text-sm transition hover:border-[#CE9F2D]"
+                className="flex cursor-pointer  items-center gap-3 rounded-[10px] px-3 py-3 text-sm transition hover:border-[#CE9F2D]"
               >
                 <input
                   type="radio"
@@ -330,7 +330,7 @@ function OrderPaymentSummary({
                   className="h-[18px] w-[18px] accent-[#3E4093]"
                 />
 
-                <span className="text-sm md:text-[18px] font-medium leading-[28px] text-[#2E2E2E]">
+                <span className="text-sm md:text-[18px]   font-medium leading-[28px] text-[#2E2E2E]">
                   {option.label}
                 </span>
               </label>

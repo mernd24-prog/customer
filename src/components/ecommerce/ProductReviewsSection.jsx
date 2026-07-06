@@ -252,22 +252,24 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={() => onHelpful?.(reviewId)}
-        disabled={!reviewId || isOwn}
-        className={` inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
-          alreadyVoted
-            ? "bg-[#CE9F2D1A] text-[#1B1D60]"
-            : "text-[#949494] hover:bg-[#F7F7FA] hover:text-[#1B1D60]"
-        }`}
-      >
-        <ThumbsUp
-          size={13}
-          className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
-        />
-        Helpful ({helpfulVotes})
-      </button>
+      {!isOwn && (
+        <button
+          type="button"
+          onClick={() => onHelpful?.(reviewId)}
+          disabled={!reviewId}
+          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+            alreadyVoted
+              ? "bg-[#CE9F2D1A] text-[#1B1D60]"
+              : "text-[#949494] hover:bg-[#F7F7FA] hover:text-[#1B1D60]"
+          }`}
+        >
+          <ThumbsUp
+            size={13}
+            className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
+          />
+          Helpful ({helpfulVotes})
+        </button>
+      )}
 
       {lightboxIndex !== null && (
         <ReviewMediaLightbox

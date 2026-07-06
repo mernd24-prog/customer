@@ -113,7 +113,7 @@ function ProductReviewSidebar({ product, productId }) {
             Rs. {product.mrp}
           </span>
           {product.discount && (
-            <span className="ml-2 d font-bold text-[var(--customer-gold-dark)]">
+            <span className="ml-2  font-bold text-[var(--customer-gold-dark)]">
               ({product.discount})
             </span>
           )}
