@@ -42,6 +42,7 @@ import {
 } from "../../utils/formErrors";
 import {
   checkoutAddressSchema,
+  couponCodeField,
   optionalMoneyField,
   validatePostalCodeForCountry,
 } from "../../validations";
@@ -149,7 +150,7 @@ const checkoutFormSchema = z
     postalCode: z.string().optional(),
     country: z.string().optional(),
     isDefault: z.coerce.boolean().optional(),
-    // couponCode: couponCodeField,
+    couponCode: couponCodeField,
     walletAmount: optionalMoneyField("Wallet amount"),
   })
   .superRefine((data, ctx) => {

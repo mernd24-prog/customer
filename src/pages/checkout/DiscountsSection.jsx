@@ -11,10 +11,10 @@ export default function DiscountsSection({ register, errors, walletBalance }) {
       <div className="grid gap-4 px-4 py-4 sm:grid-cols-2 sm:px-5 ">
         <FormField
           id="couponCode"
-          label="Coupon code"
+          label="Coupon or influencer code"
           registration={register("couponCode")}
           error={errors.couponCode}
-          placeholder="Enter Coupon code"
+          placeholder="Enter coupon or influencer code"
         />
         <label className="grid gap-1.5 text-sm font-medium text-slate-800">
           <span className="flex items-center gap-1.5">

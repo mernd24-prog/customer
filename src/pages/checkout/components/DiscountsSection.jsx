@@ -1,4 +1,3 @@
-import { Wallet } from "lucide-react";
 import FormField from "../../../components/ui/FormField";
 import { formatMoney } from "../../../utils/ecommerce";
 import OrderDetailSectionCard from "../../orders/components/OrderDetailSectionCard";
@@ -10,8 +9,8 @@ export default function DiscountsSection({ register, errors, walletBalance }) {
         <div className="flex-1">
           <FormField
             id="couponCode"
-            label="Coupon Code"
-            placeholder="Enter coupon code"
+            label="Coupon or Influencer Code"
+            placeholder="Enter coupon or influencer code"
             registration={register("couponCode")}
             error={errors.couponCode}
           />
