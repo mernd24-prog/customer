@@ -24,21 +24,10 @@ export const TopHeader = () => {
   const navigate = useNavigate();
   const currentUser = useSelector((s) => s.auth.current);
 
-  const { page: brandOutletPage } = useCmsRecord("brand-outlet");
   const { page: helpContactPage } = useCmsRecord("help-contact");
   const { page: headerSellPage } = useCmsRecord("header-sell-dropdown");
 
   const sellDropdownCms = getCmsPayload(headerSellPage, DEFAULT_SELL_DROPDOWN);
-
-  const topLinks = [
-    { name: brandOutletPage?.title || "Brand Outlet", path: "/brand-outlet" },
-    { name: helpContactPage?.title || "Help & Contact", path: "/help-contact" },
-  ];
-
-  const filteredTopLinks = topLinks.filter(
-    (link) =>
-      link.name !== "Help & Contact" && link.name !== helpContactPage?.title,
-  );
 
   const dropdowns = useMemo(
     () => [
@@ -91,11 +80,7 @@ export const TopHeader = () => {
     <div className="hidden h-[40px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
       <div className="customer-container flex h-full items-center justify-between">
         <div className="flex flex-1 items-center gap-8 text-[#FFFFFF]">
-          {asArray(
-            filteredTopLinks.length
-              ? filteredTopLinks
-              : DEFAULT_TOP_NAV_LINKS.filter((l) => l.name !== "Help & Contact"),
-          ).map((link, index) => (
+          {asArray(DEFAULT_TOP_NAV_LINKS).map((link, index) => (
             <Link
               key={keyOr(link?.name, keyOr(link?.path, `top-link-${index}`))}
               to={hrefOr(link?.path)}

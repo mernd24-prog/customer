@@ -115,7 +115,7 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
           return (
             <div
               key={item.categoryKey}
-              className={`group flex items-center justify-between rounded-xl px-3 py-2 text-left text-sm cursor-pointer transition-all duration-300 ease-in-out border-l-4 ${
+              className={`group flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm cursor-pointer transition-all duration-300 ease-in-out border-l-4 ${
                 isActive
                   ? "bg-white shadow-[0_4px_12px_rgba(206,159,45,0.15)] border-gold text-gold font-semibold translate-x-1"
                   : "border-transparent text-ink/80 hover:bg-white/60 hover:text-gold hover:translate-x-0.5"
@@ -188,7 +188,7 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
             return (
               <div
                 key={item.categoryKey}
-                className={`group flex items-center justify-between rounded-xl px-3 py-1.5 text-left text-sm cursor-pointer transition-all duration-300 ease-in-out border-l-2 ${
+                className={`group flex items-center justify-between rounded-lg px-3 py-1.5 text-left text-sm cursor-pointer transition-all duration-300 ease-in-out border-l-2 ${
                   isActive
                     ? "bg-cream border-gold text-gold-dark font-semibold"
                     : "border-transparent text-ink/70 hover:bg-cream/40 hover:text-gold"
@@ -511,7 +511,7 @@ export default function CategoryMegaMenu({
   const labels = useMemo(() => mergeLabels(labelsProp), [labelsProp]);
   const root = useMemo(() => (rootItem ? toNode(rootItem) : null), [rootItem]);
   const subCategories = useMemo(
-    () => (root?.children || EMPTY_ITEMS).slice(0, 6),
+    () => (root?.children || EMPTY_ITEMS),
     [root],
   );
   const promoData = promo || data?.promo;
@@ -613,7 +613,7 @@ export default function CategoryMegaMenu({
       <div
         className={`customer-container hidden lg:block ${desktopContainerClassName}`}
       >
-        <div className="grid max-h-[400px] min-h-[200px] grid-cols-12 overflow-hidden rounded-b-2xl border-x border-border/70 bg-white">
+        <div className="grid max-h-[600px] min-h-[400px] grid-cols-12 overflow-hidden rounded-b-2xl border-x border-border/70 bg-white">
           {/* Column 1: Subcategories */}
           <div className="col-span-3">
             <SubCategoryColumn

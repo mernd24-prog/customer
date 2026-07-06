@@ -658,9 +658,7 @@ function VariantSelector({
                       ? "border border-gold bg-gradient-to-t from-[#1B1D60]/25 to-transparent"
                       : "border border-gold/20 "
                   } ${
-                    isUnavailable
-                      ? "border-red-200 bg-red-50 text-red-500"
-                      : ""
+                    isUnavailable ? "border-red-200 bg-red-50 text-red-500" : ""
                   }`}
                 >
                   <span className={isUnavailable ? "line-through" : ""}>
@@ -734,7 +732,7 @@ function InfoTabs({ tabs, activeTab, onChange }) {
           key={tab.key}
           type="button"
           onClick={() => onChange(tab.key)}
-          className={`min-w-max px-5  lg:py-4 py-2 text-h6 font-medium ${
+          className={`min-w-max px-5  lg:py-4 py-2 text-lg font-medium ${
             activeTab === tab.key
               ? "border-b-2 border-navy font-semibold bg-gradient-to-t from-[#1B1D6033] to-transparent text-navy"
               : "text-[#2E2E2E]"
@@ -753,7 +751,7 @@ function InfoCard({ title, children, roundedClass = "rounded-[8px]" }) {
       className={`mt-5 overflow-hidden ${roundedClass} border border-[#E7D9B8] bg-white`}
     >
       <div className="bg-[#CE9F2D33] px-4 py-6">
-        <h2 className="text-sm md:text-xl font-bold text-[#2E2E2E]">{title}</h2>
+        <h2 className="text-sm md:text-lg font-bold text-[#2E2E2E]">{title}</h2>
       </div>
 
       {children}
@@ -1490,10 +1488,7 @@ export default function ProductDetailPage() {
                 attributes={attributes}
               />
 
-              <ProductReviewsSection
-                productId={productId}
-                product={product}
-              />
+              <ProductReviewsSection productId={productId} product={product} />
 
               <ProductRecommendationSection
                 title="You May Also Like"

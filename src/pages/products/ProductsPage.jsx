@@ -495,7 +495,7 @@ export default function ProductsPage() {
             sortValue={searchParams.get("sort") || ""}
             sortOptions={SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
-            onOpenFilters={() => setSidebarOpen(true)}
+            onOpenFilters={() => setSidebarOpen(true)}  
             // viewControls={
             //   <div className="hidden  items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
             //     <button

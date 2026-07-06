@@ -121,6 +121,7 @@ const BackendGapNotes = lazyNamed(
 const AccountPage = lazy(() => import("./pages/account/AccountPage"));
 const CartPage = lazy(() => import("./pages/cart/CartPage"));
 const CheckoutPage = lazy(() => import("./pages/checkout/CheckoutPage"));
+const DealsPage = lazy(() => import("./pages/deals/DealsPage"));
 const PaymentResultPage = lazyNamed(
   () => import("./pages/checkout/PaymentResultPage"),
   "PaymentResultPage",

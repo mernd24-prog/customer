@@ -2,11 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useAuthModal } from "../../context/AuthModalContext";
-import {
-  ChevronDown,
-  ChevronRight,
-  ThumbsUp,
-} from "lucide-react";
+import { ChevronDown, ChevronRight, ThumbsUp } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import {
   fetchProductReviews,
@@ -165,7 +161,13 @@ function getUserDisplayName(user = {}) {
   );
 }
 
-function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
+function ProductReviewCard({
+  review,
+  currentUser,
+  currentUserId,
+  onHelpful,
+  hasReviewed,
+}) {
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const dateStr = review.createdAt
     ? new Date(review.createdAt).toLocaleDateString("en-GB", {
@@ -252,7 +254,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         </div>
       )}
 
-      {!isOwn && (
+      {hasReviewed && !isOwn && (
         <button
           type="button"
           onClick={() => onHelpful?.(reviewId)}
@@ -829,6 +831,7 @@ export default function ProductReviewsSection({ productId, product }) {
                 currentUser={currentUser}
                 currentUserId={userId}
                 onHelpful={handleHelpful}
+                hasReviewed={hasOwnPublishedReview}
                 onDelete={handleDelete}
               />
             ))}

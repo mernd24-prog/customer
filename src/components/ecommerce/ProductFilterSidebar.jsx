@@ -62,15 +62,6 @@ const DEFAULT_MIN_PRICE = MIN_LIMIT;
 const DEFAULT_MAX_PRICE = 150000;
 const PRICE_STEP = 1000;
 
-function formatPriceInput(value) {
-  return `₹${Number(value || 0).toLocaleString("en-IN")}`;
-}
-
-function parsePriceInput(value) {
-  const parsed = Number(String(value || "").replace(/[^\d]/g, ""));
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
 export function PriceRangeFilter({ min, max, onChange }) {
   const applyTimerRef = useRef(null);
   const activeThumbRef = useRef(null);
@@ -80,25 +71,17 @@ export function PriceRangeFilter({ min, max, onChange }) {
   });
   const [localMin, setLocalMin] = useState(min || DEFAULT_MIN_PRICE);
   const [localMax, setLocalMax] = useState(max || DEFAULT_MAX_PRICE);
-  const [minInput, setMinInput] = useState(
-    formatPriceInput(min || DEFAULT_MIN_PRICE),
-  );
-  const [maxInput, setMaxInput] = useState(
-    formatPriceInput(max || DEFAULT_MAX_PRICE),
-  );
 
   useEffect(() => {
     const nextMin = min || DEFAULT_MIN_PRICE;
     rangeValuesRef.current.min = Number(nextMin);
     setLocalMin(nextMin);
-    setMinInput(formatPriceInput(nextMin));
   }, [min]);
 
   useEffect(() => {
     const nextMax = max || DEFAULT_MAX_PRICE;
     rangeValuesRef.current.max = Number(nextMax);
     setLocalMax(nextMax);
-    setMaxInput(formatPriceInput(nextMax));
   }, [max]);
 
   const minPercent = ((localMin - MIN_LIMIT) / (MAX_LIMIT - MIN_LIMIT)) * 100;
@@ -131,7 +114,6 @@ export function PriceRangeFilter({ min, max, onChange }) {
     const value = Math.min(Number(event.target.value), localMax - 1000);
     rangeValuesRef.current.min = value;
     setLocalMin(value);
-    setMinInput(formatPriceInput(value));
     scheduleApply(value, localMax);
   };
 
@@ -139,50 +121,7 @@ export function PriceRangeFilter({ min, max, onChange }) {
     const value = Math.max(Number(event.target.value), localMin + 1000);
     rangeValuesRef.current.max = value;
     setLocalMax(value);
-    setMaxInput(formatPriceInput(value));
     scheduleApply(localMin, value);
-  };
-
-  const handleMinInputChange = (event) => {
-    const nextValue = event.target.value;
-    setMinInput(nextValue);
-
-    const parsedValue = parsePriceInput(nextValue);
-    if (parsedValue == null) return;
-
-    const clampedValue = Math.max(
-      MIN_LIMIT,
-      Math.min(parsedValue, localMax - 1000),
-    );
-    rangeValuesRef.current.min = clampedValue;
-    setLocalMin(clampedValue);
-    scheduleApply(clampedValue, localMax);
-  };
-
-  const handleMaxInputChange = (event) => {
-    const nextValue = event.target.value;
-    setMaxInput(nextValue);
-
-    const parsedValue = parsePriceInput(nextValue);
-    if (parsedValue == null) return;
-
-    const clampedValue = Math.min(
-      MAX_LIMIT,
-      Math.max(parsedValue, localMin + 1000),
-    );
-    rangeValuesRef.current.max = clampedValue;
-    setLocalMax(clampedValue);
-    scheduleApply(localMin, clampedValue);
-  };
-
-  const handleMinInputBlur = () => {
-    setMinInput(formatPriceInput(localMin));
-    applyValues(localMin, localMax);
-  };
-
-  const handleMaxInputBlur = () => {
-    setMaxInput(formatPriceInput(localMax));
-    applyValues(localMin, localMax);
   };
 
   const getPointerPrice = (clientX, element) => {
@@ -209,7 +148,6 @@ export function PriceRangeFilter({ min, max, onChange }) {
       );
       rangeValuesRef.current.min = nextMin;
       setLocalMin(nextMin);
-      setMinInput(formatPriceInput(nextMin));
       scheduleApply(nextMin, currentMax);
       return;
     }
@@ -220,7 +158,6 @@ export function PriceRangeFilter({ min, max, onChange }) {
     );
     rangeValuesRef.current.max = nextMax;
     setLocalMax(nextMax);
-    setMaxInput(formatPriceInput(nextMax));
     scheduleApply(currentMin, nextMax);
   };
 
@@ -267,8 +204,6 @@ export function PriceRangeFilter({ min, max, onChange }) {
       min: DEFAULT_MIN_PRICE,
       max: DEFAULT_MAX_PRICE,
     };
-    setMinInput(formatPriceInput(DEFAULT_MIN_PRICE));
-    setMaxInput(formatPriceInput(DEFAULT_MAX_PRICE));
 
     onChange?.({
       minPrice: undefined,
@@ -282,97 +217,90 @@ export function PriceRangeFilter({ min, max, onChange }) {
   };
 
   return (
-    <form className="grid gap-5 pt-1 " onSubmit={handleSubmit}>
-      <div
-        className="relative h-8 cursor-pointer touch-none"
-        onPointerDown={handleRangePointerDown}
-        onPointerMove={handleRangePointerMove}
-        onPointerUp={stopRangePointer}
-        onPointerCancel={stopRangePointer}
-        role="presentation"
-      >
-        <div className="absolute left-[11px] right-[11px] top-1/2 h-[4px] -translate-y-1/2">
-          <div className="absolute inset-0 rounded-full bg-[#D9D3C8]" />
+    <form className="space-y-3 pt-1" onSubmit={handleSubmit}>
+      <div>
+        <p className="mb-5 text-sm font-bold uppercase tracking-wide text-[#2E2E2E]">
+          PRICE
+        </p>
+
+        {/* Slider */}
+        <div
+          className="relative mx-auto h-8 w-[180px] touch-none"
+          onPointerDown={handleRangePointerDown}
+          onPointerMove={handleRangePointerMove}
+          onPointerUp={stopRangePointer}
+          onPointerCancel={stopRangePointer}
+        >
+          {/* Background Track */}
+          <div className="absolute left-[8px] right-[8px] top-1/2 -translate-y-1/2">
+            <div className="h-[3px] rounded-full bg-[#E6E1D8]" />
+
+            {/* Active Track */}
+            <div
+              className="absolute top-0 h-[3px] rounded-full bg-[#CE9F2D]"
+              style={{
+                left: `${minPercent}%`,
+                right: `${100 - maxPercent}%`,
+              }}
+            />
+          </div>
+
+          {/* Hidden Inputs */}
+          <input
+            type="range"
+            min={MIN_LIMIT}
+            max={MAX_LIMIT}
+            step={PRICE_STEP}
+            value={localMin}
+            onChange={handleMinChange}
+            data-price-thumb="min"
+            className="absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0 pointer-events-none focus:outline-none"
+          />
+
+          <input
+            type="range"
+            min={MIN_LIMIT}
+            max={MAX_LIMIT}
+            step={PRICE_STEP}
+            value={localMax}
+            onChange={handleMaxChange}
+            data-price-thumb="max"
+            className="absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0 pointer-events-none focus:outline-none"
+          />
+
+          {/* Left Thumb */}
           <div
-            className="absolute top-0 h-[4px] rounded-full bg-[#CE9F2D]"
+            className="absolute top-1/2 z-10 h-[18px] w-[18px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-[#CE9F2D] bg-white"
             style={{
-              left: `${minPercent}%`,
-              right: `${100 - maxPercent}%`,
+              left: `calc(8px + (${minPercent} * (164px / 100)))`,
+            }}
+          />
+
+          {/* Right Thumb */}
+          <div
+            className="absolute top-1/2 z-10 h-[18px] w-[18px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-[#CE9F2D] bg-white"
+            style={{
+              left: `calc(8px + (${maxPercent} * (164px / 100)))`,
             }}
           />
         </div>
 
-        <input
-          type="range"
-          min={MIN_LIMIT}
-          max={MAX_LIMIT}
-          step={PRICE_STEP}
-          value={localMin}
-          onChange={handleMinChange}
-          data-price-thumb="min"
-          aria-label="Minimum price"
-          className="price-range-input"
-        />
-
-        <input
-          type="range"
-          min={MIN_LIMIT}
-          max={MAX_LIMIT}
-          step={PRICE_STEP}
-          value={localMax}
-          onChange={handleMaxChange}
-          data-price-thumb="max"
-          aria-label="Maximum price"
-          className="price-range-input"
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="mb-3 block text-[18px] font-medium leading-none text-[#373737] sm:text-[16px]">
-            Min
-          </label>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={minInput}
-            onChange={handleMinInputChange}
-            onBlur={handleMinInputBlur}
-            aria-label="Minimum price"
-            className="h-[50px] w-full rounded-[12px] border border-[#C9CBEB] bg-[#F7F7FB] px-3 text-[16px] font-medium text-[#6F7480] outline-none ring-0 transition-none placeholder:text-[#8A8FA3] focus:border-[#CE9F2D] focus:outline-none focus:ring-0"
-          />
-        </div>
-
-        <div>
-          <label className="mb-3 block text-[18px] font-medium leading-none text-[#373737] sm:text-[16px]">
-            Max
-          </label>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={maxInput}
-            onChange={handleMaxInputChange}
-            onBlur={handleMaxInputBlur}
-            aria-label="Maximum price"
-            className="h-[50px] w-full rounded-[12px] border border-[#C9CBEB] bg-[#F7F7FB] px-3 text-[16px] font-medium text-[#6F7480] outline-none ring-0 transition-none placeholder:text-[#8A8FA3] focus:border-[#CE9F2D] focus:outline-none focus:ring-0"
-          />
+        {/* Price */}
+        <div className="mt-5 text-center">
+          <span className="text-lg font-bold text-[#111111]">
+            ₹{localMin.toLocaleString("en-IN")} – ₹
+            {localMax >= MAX_LIMIT
+              ? `${localMax.toLocaleString("en-IN")}+`
+              : localMax.toLocaleString("en-IN")}
+          </span>
         </div>
       </div>
-
-      {/* <BrandButton
-        variant="primary"
-        rounded
-        size="sm"
-        label="Apply"
-        type="submit"
-        className="h-[50px] w-full rounded-full text-sm font-bold shadow-none"
-      /> */}
 
       {(min || max) && (
         <button
           type="button"
           onClick={clear}
-          className="text-xs font-medium text-red-500 underline-offset-2 hover:text-red-600 hover:underline"
+          className="block mx-auto text-xs font-semibold text-[#CE9F2D] hover:underline"
         >
           Clear price filter
         </button>
@@ -644,9 +572,7 @@ export default function ProductFilterSidebar({
     >
       <div className="w-full overflow-hidden rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] shadow-none">
         <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-5 min-[375px]:px-5 sm:px-6 sm:py-6">
-          <h3 className="text-h4 font-semibold  text-[#373737] ">
-            Filters
-          </h3>
+          <h3 className="text-h4 font-semibold  text-[#373737] ">Filters</h3>
 
           <button
             type="button"

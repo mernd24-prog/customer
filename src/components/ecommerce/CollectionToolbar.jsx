@@ -18,39 +18,45 @@ function ToolbarDropdown({ value = "", options = [], onChange }) {
         setIsOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
-    <div ref={dropdownRef} className="relative inline-block text-left">
-      {/* Trigger Button */}
+    <div ref={dropdownRef} className="relative inline-block flex-1 sm:flex-none">
+      {/* Trigger */}
       <button
         type="button"
-        onClick={() => setIsOpen((current) => !current)}
-        className="flex min-h-10  w-[180px] items-center justify-between gap-3 rounded-[var(--customer-radius-sm)] border border-[#1B1D604D] bg-white px-3 py-3 text-left text-sm 2xl:text-lg font-medium text-[#03014D] shadow-sm transition-all duration-300 ease-in-out"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="flex h-10 sm:h-11 w-full sm:w-[220px] items-center justify-between rounded-xl border border-[#1B1D604D] bg-white px-3 sm:px-4 text-[13px] sm:text-[14px] font-medium text-[#03014D] shadow-sm transition hover:border-[#CE9F2D] focus:outline-none"
       >
-        <span className="flex items-center gap-2 truncate">
-          <ListFilter size={16} className="shrink-0 text-[#03014D]" />
-          {selectedOption?.label || options[0]?.label || "Select"}
+        <span className="flex min-w-0 flex-1 items-center gap-1.5 sm:gap-2">
+          <ListFilter size={16} className="shrink-0 text-[#03014D] hidden sm:block" />
+
+          <span className="truncate">
+            {selectedOption?.label || options[0]?.label || "Select"}
+          </span>
         </span>
+
         <ChevronDown
           size={16}
-          className={`shrink-0 text-[var(--customer-muted)] transition-transform duration-200 ${
+          className={`ml-1.5 sm:ml-3 shrink-0 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
           }`}
         />
       </button>
 
-      {/* Popover Menu - Fixed size & strict dropdown positioning */}
+      {/* Dropdown */}
       <div
-        className={`absolute -right-3.5  top-full z-50 mt-1 w-[200px] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_12px_30px_rgba(3,1,77,0.08)] transition-all duration-300 ease-in-out ${
+        className={`absolute right-0 top-[calc(100%+8px)] z-30 w-[200px] sm:w-[240px] overflow-hidden rounded-2xl border border-[#E7D9B8] bg-white shadow-[0_12px_32px_rgba(0,0,0,.12)] transition-all duration-200 ${
           isOpen
             ? "visible translate-y-0 opacity-100"
             : "invisible -translate-y-2 opacity-0"
         }`}
       >
-        <div className="max-h-[320px]  overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
+        <div className="py-2">
           {options.map((option) => {
             const isSelected = String(option.value) === String(value);
 
@@ -59,13 +65,13 @@ function ToolbarDropdown({ value = "", options = [], onChange }) {
                 key={option.value}
                 type="button"
                 onClick={() => {
-                  onChange?.(option.value);
+                  onChange(option.value);
                   setIsOpen(false);
                 }}
-                className={`w-full  whitespace-nowrap rounded-xl px-4 py-2.5 text-left text-sm leading-snug transition-all duration-300 ease-in-out hover:bg-[#F8F3E7] hover:text-[#03014D] focus-visible:bg-[#F8F3E7] focus-visible:outline-none ${
+                className={`block w-full px-4 sm:px-5 py-2.5 sm:py-3 text-left text-[13px] sm:text-[14px] transition-colors hover:bg-[#F8F3E7] ${
                   isSelected
-                    ? "font-semibold text-[#03014D]"
-                    : "font-medium text-[var(--customer-ink)]"
+                    ? "bg-[#F8F3E7] font-semibold text-[#03014D]"
+                    : "font-medium text-[#444]"
                 }`}
               >
                 {option.label}
@@ -77,9 +83,7 @@ function ToolbarDropdown({ value = "", options = [], onChange }) {
     </div>
   );
 }
-{
-  /* MAIN TOOLBAR */
-}
+
 export default function CollectionToolbar({
   countText,
   sortValue = "",
@@ -93,8 +97,8 @@ export default function CollectionToolbar({
   className = "",
 }) {
   const shellClassName = countText
-    ? `mb-4 flex flex-wrap items-center justify-between gap-3 ${className}`
-    : `flex flex-wrap items-center gap-3 ${className}`;
+    ? `mb-4 flex flex-col-reverse sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 ${className}`
+    : `flex flex-col-reverse sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 ${className}`;
 
   const pageSizeOptions = pageSizes.map((size) => ({
     value: size,
@@ -104,12 +108,12 @@ export default function CollectionToolbar({
   return (
     <div className={shellClassName}>
       {countText && (
-        <p className="text-sm  font-semibold text-[var(--customer-muted)]">
+        <p className="text-sm font-semibold text-[var(--customer-muted)]">
           {countText}
         </p>
       )}
 
-      <div className="flex  flex-wrap items-center gap-3">
+      <div className="flex w-full sm:w-auto items-center gap-2 sm:gap-3">
         {/* Sort Trigger */}
         {!!sortOptions.length && (
           <ToolbarDropdown
@@ -136,9 +140,10 @@ export default function CollectionToolbar({
           <button
             type="button"
             onClick={onOpenFilters}
-            className="flex min-h-10  items-center gap-1.5 rounded-[var(--customer-radius-sm)] border border-[#1B1D604D] bg-white px-3 py-4  text-sm font-semibold text-[#03014D] shadow-sm transition-all duration-300 ease-in-out hover:border-[var(--customer-gold)] hover:bg-[#F8F3E7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/30 lg:hidden"
+            className="flex flex-1 sm:flex-none h-10 sm:h-11 justify-center items-center gap-1.5 sm:gap-2 rounded-xl border border-[#1B1D604D] bg-white px-3 sm:px-4 text-[13px] sm:text-[14px] font-medium text-[#03014D] shadow-sm transition hover:border-[#CE9F2D] hover:bg-[#F8F3E7] lg:hidden focus:outline-none"
           >
-            <SlidersHorizontal size={14} /> Filters
+            <SlidersHorizontal size={16} className="hidden sm:block" />
+            Filters
           </button>
         )}
       </div>

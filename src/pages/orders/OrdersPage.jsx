@@ -1073,7 +1073,7 @@ const orderHelpItems = items.map((item) => ({
   icon: item.icon,
   title: item.title,
   description: "Get help with your orders",
-  path: "/contact",
+  path: "#",
 }));
 
 function OrderList() {

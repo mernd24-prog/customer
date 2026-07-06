@@ -257,13 +257,13 @@ export function Footer({ data = footerData }) {
       {/* Bottom Section with copyright and extra pages */}
       <section className="bg-black py-2   ">
         <div className="flex flex-col gap-2 lg:gap-10 text-white text-xs md:text-base lg:flex-row justify-center">
-          <p className="text-center">{copyright}</p>
+          <p className="text-center ">{copyright}</p>
           <div className="flex items-center justify-center gap-2 md:gap-8">
             {extraPages.map((item, index) => (
               <a
                 key={item?.labels || `extra-page-${index}`}
                 href={hrefOr(item?.links)}
-                className=""
+                className="transition-colors duration-300 hover:text-[#CE9F2D]"
               >
                 {item.labels}
               </a>
