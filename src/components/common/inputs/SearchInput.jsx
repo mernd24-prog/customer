@@ -19,7 +19,7 @@ export default function SearchInput({
   queryParam = "q",
   autoFocus = false,
 }) {
-  const [internal, setInternal] = useState("");
+  const [internal, setInternal] = useState(""); 
   const navigate = useNavigate();
   const query = value ?? internal;
 
@@ -64,7 +64,7 @@ export default function SearchInput({
 
   return (
     <div className={cn("group w-full", className)}>
-      <div className="rounded-full border border-[var(--customer-border)] bg-white shadow-sm focus-within:border-[var(--customer-gold)] focus-within:ring-2 focus-within:ring-[var(--customer-gold)]/15">
+      <div className="rounded-full border border-[var(--customer-border)] bg-white shadow-sm focus-within:border-[var(--customer-gold)]">
         <div
           className={cn(
             "flex w-full items-center overflow-hidden rounded-full bg-white pl-4 pr-1",

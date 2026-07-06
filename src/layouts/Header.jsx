@@ -28,7 +28,7 @@ import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
 import { TopHeader } from "./header/TopHeader";
 import { CategoryMegaMenu } from "../components/ecommerce";
-import {navbarIcons as navData } from "../constants/image.constant";
+import { navbarIcons as navData } from "../constants/image.constant";
 import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
 import { logout } from "../features/auth/authSlice";
 import { fetchMe } from "../features/user/userSlice";
@@ -77,8 +77,6 @@ const baseAccountMenuItems = [
   { label: "Notifications", path: "/notifications", icon: "bell" },
   { label: "Settings", path: "/notification-preferences", icon: "settings" },
 ];
-
-
 
 const DEFAULT_FASHION_MENU = { leftSections: [], promo: null };
 const CATEGORY_MENU_OPEN_DELAY_MS = 350;
@@ -180,8 +178,6 @@ function withIcons(items) {
     return { ...item, icon: Icon ? <Icon size={18} /> : null };
   });
 }
-
-
 
 export const Navbar = ({ icons: propIcons }) => {
   const navigate = useNavigate();
@@ -421,7 +417,9 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   // Sync with Redux list when it contains actual category items
   useEffect(() => {
     const list = getCategoryListFromResponse(catalogCategoryList);
-    const actualCategories = list.filter(item => item && (item.categoryKey || item.parentKey));
+    const actualCategories = list.filter(
+      (item) => item && (item.categoryKey || item.parentKey),
+    );
     if (actualCategories.length > 0) {
       setCategoriesList(actualCategories);
     }
@@ -435,7 +433,9 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         .then((result) => {
           const data = result?.data || result;
           const list = getCategoryListFromResponse(data);
-          const actualCategories = list.filter(item => item && (item.categoryKey || item.parentKey));
+          const actualCategories = list.filter(
+            (item) => item && (item.categoryKey || item.parentKey),
+          );
           if (actualCategories.length > 0) {
             setCategoriesList(actualCategories);
           }
@@ -444,10 +444,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     }
   }, [dispatch, categoriesList.length]);
 
-  const catalogCategories = useMemo(
-    () => categoriesList,
-    [categoriesList],
-  );
+  const catalogCategories = useMemo(() => categoriesList, [categoriesList]);
   const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
   const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
   const [activeMenu, setActiveMenu] = useState(null);
@@ -582,7 +579,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         className="fixed left-0 z-40 w-full bg-white/95 shadow-[0_2px_8px_rgba(17,24,39,0.06)] backdrop-blur !block"
       >
         <div className="relative w-full">
-          <div 
+          <div
             className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px] lg:justify-center"
             style={{ justifyContent: "safe center" }}
           >
@@ -639,7 +636,10 @@ export const CategoryBar = ({ headerData, compact = false }) => {
               onMouseEnter={keepCategoryMenuOpen}
               onMouseLeave={handleCategoryMouseLeave}
             >
-              <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
+              <CategoryMegaMenu
+                data={megaMenuData}
+                activeCategory={activeMenu}
+              />
             </div>
           )}
         </div>
@@ -667,7 +667,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       <div className="absolute inset-0 bg-[#CE9F2D33]  z-10  " />
 
       <div className="w-full relative z-20">
-        <div 
+        <div
           className="hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:gap-5 lg:justify-center"
           style={{ justifyContent: "safe center" }}
         >
@@ -741,7 +741,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         }`}
       >
         <div className="relative w-full">
-          <div 
+          <div
             className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px] lg:justify-center"
             style={{ justifyContent: "safe center" }}
           >
@@ -798,7 +798,10 @@ export const CategoryBar = ({ headerData, compact = false }) => {
               onMouseEnter={keepCategoryMenuOpen}
               onMouseLeave={handleCategoryMouseLeave}
             >
-              <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
+              <CategoryMegaMenu
+                data={megaMenuData}
+                activeCategory={activeMenu}
+              />
             </div>
           )}
         </div>

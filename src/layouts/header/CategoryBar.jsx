@@ -189,10 +189,9 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     }));
   }, [catalogTree, headerData]);
 
-  // Show up to 10 root categories; overflow via "More" button
   const visibleCategories = useMemo(
-    () => asArray(categories).slice(0, 10),
-    [categories],
+    () => asArray(categories).slice(0, 11),
+    [categories]
   );
 
   if (!categories.length) return null;
@@ -323,10 +322,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     }`}
       >
         <div className="relative w-full">
-          <div
-            className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px] lg:justify-center"
-            style={{ justifyContent: "safe center" }}
-          >
+          <div className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap sm:gap-7 lg:h-[46px]">
             <StickyNavStrip
               categories={visibleCategories}
               activeMenuKey={activeMenu?.categoryKey ?? null}

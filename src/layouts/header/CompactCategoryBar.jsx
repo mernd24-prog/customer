@@ -22,10 +22,7 @@ export function CompactCategoryBar({
       className="fixed left-0 z-40 w-full bg-white/95 shadow-[0_2px_8px_rgba(17,24,39,0.06)] backdrop-blur !block"
     >
       <div className="relative w-full">
-        <div
-          className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px] lg:justify-center"
-          style={{ justifyContent: "safe center" }}
-        >
+        <div className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap sm:gap-7 lg:h-[46px]">
           <StickyNavStrip
             categories={visibleCategories}
             activeMenuKey={activeMenu?.categoryKey ?? null}

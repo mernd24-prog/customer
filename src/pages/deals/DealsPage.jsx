@@ -1,13 +1,29 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { BadgePercent, Clock3 } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import {
+  Breadcrumbs,
   CollectionToolbar,
+  OptionFilter,
   ProductResultsLayout,
+  CheckboxListFilter,
+  PriceRangeFilter,
+  RatingFilter,
 } from "../../components/ecommerce";
+import SearchInput from "../../components/common/inputs/SearchInput";
 import { useProductActions } from "../../hooks/useProductActions";
 import { getPublicDealProducts } from "../../api/deals";
+import { fetchCategories, fetchBrands } from "../../features/catalog/catalogSlice";
+import { 
+  applyImageFallback,
+  buildFacetCountMap,
+  buildRatingCountMap,
+  getProductBrandName,
+  isProductInStock,
+} from "../../utils/ecommerce";
+import bannerImage from "/image/png/ShoppingBanner.png";
 
 const SORT_OPTIONS = [
   { value: "ending_soon", label: "Ending Soon" },
@@ -16,6 +32,25 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High to Low" },
   { value: "newest", label: "Newest Deals" },
 ];
+
+function parseMultiValue(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function serializeMultiValue(values) {
+  const uniqueValues = [
+    ...new Set(
+      (values || [])
+        .map(String)
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  ];
+  return uniqueValues.length ? uniqueValues.join(",") : undefined;
+}
 
 const unwrapProducts = (response = {}) => {
   const data = response?.data ?? response;
@@ -30,6 +65,7 @@ const getPagination = (response = {}, fallback = {}) =>
   fallback;
 
 export default function DealsPage() {
+  const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [pageInfo, setPageInfo] = useState({
@@ -41,8 +77,46 @@ export default function DealsPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
   const [firstLoadDone, setFirstLoadDone] = useState(false);
+  
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [categoryList, setCategoryList] = useState([]);
+  const [brandList, setBrandList] = useState([]);
+
   const sentinelRef = useRef(null);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+
+  const selectedBrands = useMemo(
+    () => parseMultiValue(searchParams.get("brand")),
+    [searchParams],
+  );
+  
+  const selectedRatings = useMemo(
+    () => parseMultiValue(searchParams.get("rating")),
+    [searchParams],
+  );
+
+  const availabilityCounts = useMemo(
+    () =>
+      products.reduce(
+        (counts, product) => {
+          if (isProductInStock(product)) {
+            counts.inStock += 1;
+          } else {
+            counts.outOfStock += 1;
+          }
+          return counts;
+        },
+        { inStock: 0, outOfStock: 0 },
+      ),
+    [products],
+  );
+  
+  const brandCounts = useMemo(
+    () => buildFacetCountMap(products, (product) => getProductBrandName(product)),
+    [products],
+  );
+  
+  const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
 
   const pageSize = Number(searchParams.get("limit") || 12);
   const currentPage = Number(pageInfo.page || 1);
@@ -56,6 +130,13 @@ export default function DealsPage() {
       category: searchParams.get("category") || undefined,
       brand: searchParams.get("brand") || undefined,
       sort: searchParams.get("sort") || "ending_soon",
+      minPrice: searchParams.get("minPrice") || undefined,
+      maxPrice: searchParams.get("maxPrice") || undefined,
+      minRating: searchParams.get("rating") || undefined,
+      inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
+      outOfStock: searchParams.get("outOfStock") === "true" ? "true" : undefined,
+      expressDelivery: searchParams.get("expressDelivery") === "true" ? "true" : undefined,
+      freeDelivery: searchParams.get("freeDelivery") === "true" ? "true" : undefined,
     }),
     [pageSize, searchParams],
   );
@@ -103,6 +184,40 @@ export default function DealsPage() {
   }, [loadDeals, searchParams]);
 
   useEffect(() => {
+    dispatch(fetchCategories())
+      .then((action) => {
+        const data = action?.payload?.data;
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.items)
+            ? data.items
+            : data?.list || [];
+        setCategoryList(list);
+      })
+      .catch(() => {});
+
+    dispatch(fetchBrands({ limit: 100 }))
+      .then((action) => {
+        const data = action?.payload?.data;
+        const list = Array.isArray(data)
+          ? data
+          : data?.items || data?.list || [];
+        setBrandList(
+          list
+            .map((brand) => {
+              const label =
+                brand?.name || brand?.title || brand?.brandName || brand?.code;
+              return label
+                ? { value: String(label), label: String(label) }
+                : null;
+            })
+            .filter(Boolean),
+        );
+      })
+      .catch(() => {});
+  }, [dispatch]);
+
+  useEffect(() => {
     if (
       !sentinelRef.current ||
       !firstLoadDone ||
@@ -135,7 +250,52 @@ export default function DealsPage() {
     });
   };
 
-  const filters = useMemo(
+  const updateParams = (entries) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      entries.forEach(([key, value]) => {
+        if (value == null || value === "") next.delete(key);
+        else next.set(key, value);
+      });
+      next.delete("page");
+      return next;
+    });
+  };
+
+  const handlePriceChange = ({ minPrice, maxPrice }) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (minPrice) next.set("minPrice", minPrice);
+      else next.delete("minPrice");
+      if (maxPrice) next.set("maxPrice", maxPrice);
+      else next.delete("maxPrice");
+      next.delete("page");
+      return next;
+    });
+  };
+
+  const removeFilter = (key, filter) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (key === "price") {
+        next.delete("minPrice");
+        next.delete("maxPrice");
+      } else if (filter?.groupKey) {
+        const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+          (value) => value !== filter.value,
+        );
+        const serialized = serializeMultiValue(nextValues);
+        if (serialized) next.set(filter.groupKey, serialized);
+        else next.delete(filter.groupKey);
+      } else {
+        next.delete(key);
+      }
+      next.delete("page");
+      return next;
+    });
+  };
+
+  const activeFilters = useMemo(
     () =>
       [
         searchParams.get("q") && {
@@ -144,17 +304,172 @@ export default function DealsPage() {
         },
         searchParams.get("category") && {
           key: "category",
-          label: `Category: ${searchParams.get("category")}`,
+          label: `Category: ${categoryList.find((c) => (c.categoryKey || c.id || c._id) === searchParams.get("category"))?.title || categoryList.find((c) => (c.categoryKey || c.id || c._id) === searchParams.get("category"))?.name || searchParams.get("category")}`,
         },
-        searchParams.get("brand") && {
-          key: "brand",
-          label: `Brand: ${searchParams.get("brand")}`,
+        ...selectedBrands.map((brand) => ({
+          key: `brand:${brand}`,
+          groupKey: "brand",
+          value: brand,
+          label: `Brand: ${brand}`,
+        })),
+        ...selectedRatings.map((rating) => ({
+          key: `rating:${rating}`,
+          groupKey: "rating",
+          value: rating,
+          label: `Rating: ${rating}★ & up`,
+        })),
+        searchParams.get("inStock") === "true" && {
+          key: "inStock",
+          label: "In Stock Only",
+        },
+        searchParams.get("outOfStock") === "true" && {
+          key: "outOfStock",
+          label: "Out of Stock",
+        },
+        searchParams.get("expressDelivery") === "true" && {
+          key: "expressDelivery",
+          label: "Express Delivery",
+        },
+        searchParams.get("freeDelivery") === "true" && {
+          key: "freeDelivery",
+          label: "Free Delivery",
+        },
+        (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
+          key: "price",
+          label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
         },
       ].filter(Boolean),
-    [searchParams],
+    [searchParams, categoryList, selectedBrands, selectedRatings],
   );
 
-  const removeFilter = (key) => updateParam(key, "");
+  const filterSections = [
+    categoryList.length > 0 && {
+      key: "category",
+      title: "Category",
+      content: (
+        <OptionFilter
+          name="category"
+          options={categoryList.map((cat) => ({
+            value: cat.categoryKey || cat.id || cat._id,
+            label: cat.title || cat.name,
+          }))}
+          selected={searchParams.get("category")}
+          onChange={(value) => updateParam("category", value)}
+        />
+      ),
+    },
+    brandList.length > 0 && {
+      key: "brand",
+      title: "Brand",
+      content: (
+        <OptionFilter
+          name="brand"
+          options={brandList.map((brand) => ({
+            ...brand,
+            count: brandCounts[String(brand.value)] || 0,
+          }))}
+          selected={selectedBrands}
+          multiple
+          onChange={(values) =>
+            updateParam("brand", serializeMultiValue(values))
+          }
+        />
+      ),
+    },
+    {
+      key: "price",
+      title: "Price Range",
+      content: (
+        <PriceRangeFilter
+          min={searchParams.get("minPrice")}
+          max={searchParams.get("maxPrice")}
+          onChange={handlePriceChange}
+        />
+      ),
+    },
+    {
+      key: "rating",
+      title: "Rating",
+      content: (
+        <RatingFilter
+          selected={selectedRatings}
+          multiple
+          counts={ratingCounts}
+          onChange={(values) =>
+            updateParam("rating", serializeMultiValue(values))
+          }
+        />
+      ),
+    },
+    {
+      key: "delivery",
+      title: "Delivery",
+      content: (
+        <CheckboxListFilter
+          name="delivery"
+          options={[
+            { value: "expressDelivery", label: "Express Delivery" },
+            { value: "freeDelivery", label: "Free Delivery" },
+          ]}
+          selected={["expressDelivery", "freeDelivery"].filter(
+            (value) => searchParams.get(value) === "true",
+          )}
+          onChange={(values) => {
+            const selectedValues = new Set(values);
+            updateParams([
+              [
+                "expressDelivery",
+                selectedValues.has("expressDelivery") ? "true" : undefined,
+              ],
+              [
+                "freeDelivery",
+                selectedValues.has("freeDelivery") ? "true" : undefined,
+              ],
+            ]);
+          }}
+        />
+      ),
+    },
+    {
+      key: "inStock",
+      title: "Availability",
+      content: (
+        <CheckboxListFilter
+          name="availability"
+          options={[
+            {
+              value: "inStock",
+              label: "In Stock",
+              count: availabilityCounts.inStock,
+            },
+            {
+              value: "outOfStock",
+              label: "Out of Stock",
+              count: availabilityCounts.outOfStock,
+            },
+          ]}
+          selected={["inStock", "outOfStock"].filter(
+            (value) => searchParams.get(value) === "true",
+          )}
+          onChange={(values) => {
+            const selectedValues = new Set(values);
+            updateParams([
+              ["inStock", selectedValues.has("inStock") ? "true" : undefined],
+              [
+                "outOfStock",
+                selectedValues.has("outOfStock") ? "true" : undefined,
+              ],
+            ]);
+          }}
+        />
+      ),
+    },
+  ].filter(Boolean);
+
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Deals" },
+  ];
 
   return (
     <>
@@ -163,54 +478,112 @@ export default function DealsPage() {
         description="Shop active deal products with special prices, deal badges, and limited-time offers."
       />
 
-      <div className="my-8 md:my-16">
-        <section className="mb-8 overflow-hidden rounded-[24px] border border-[#CE9F2D40] bg-[#FFF8E8] px-5 py-6 md:px-8">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
+      <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
+        <div className="grid gap-0 h-[320px] sm:h-[380px] md:h-[371px] xl:h-[500px] lg:grid-cols-[52%_48%]">
+          {/* Mobile & Tablet Banner */}
+          <div className="relative lg:hidden h-full">
+            <img
+              src={bannerImage}
+              alt="Deals"
+              className="absolute inset-0 h-full w-full object-cover"
+              onError={(event) => applyImageFallback(event, "Deals", "category")}
+            />
+            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0 flex items-center">
+              <div className="customer-container">
+                <div className="max-w-xl">
+                  <Breadcrumbs
+                    linkClassName="!text-white"
+                    currentClassName="!text-[#CE9F2D]"
+                    separatorClassName="!text-gold"
+                    items={breadcrumbItems}
+                    className="mb-5"
+                  />
+                  <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#9A6A00]">
+                    <BadgePercent size={15} /> Live Deals
+                  </div>
+                  <h1 className="text-h1 font-bold leading-tight text-white capitalize">
+                    Deal Products
+                  </h1>
+                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
+                    Products promoted by admin with special deal price, original price, deal badge, and limited-time availability.
+                  </p>
+                  <div className="mt-3 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1B1D60]">
+                    <Clock3 size={16} /> Prices restore after deal expiry
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Content */}
+          <div className="hidden items-center pl-6 pr-10 lg:flex xl:pl-[max(3rem,calc((100vw-1559px)/2))]">
+            <div className="max-w-xl">
+              <Breadcrumbs
+                items={breadcrumbItems}
+                linkClassName="!text-white"
+                currentClassName="!text-[#CE9F2D]"
+                separatorClassName="!text-white"
+                className="mb-5"
+              />
               <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#9A6A00]">
                 <BadgePercent size={15} /> Live Deals
               </div>
-              <h1 className="text-2xl font-bold text-[#1B1D60] md:text-4xl">
+              <h1 className="text-h1 font-bold leading-tight text-white capitalize">
                 Deal Products
               </h1>
-              <p className="mt-2 max-w-2xl text-sm text-[#5F5F75] md:text-base">
+              <p className="mt-3 max-w-xl font-normal leading-relaxed text-p text-white/80">
                 Products promoted by admin with special deal price, original price, deal badge, and limited-time availability.
               </p>
-            </div>
-            <div className="inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1B1D60]">
-              <Clock3 size={16} /> Prices restore after deal expiry
+              <div className="mt-3 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1B1D60]">
+                <Clock3 size={16} /> Prices restore after deal expiry
+              </div>
             </div>
           </div>
-        </section>
 
+          {/* Desktop Image */}
+          <div className="relative hidden lg:block overflow-hidden -ml-px">
+            <img
+              src={bannerImage}
+              alt="Deals"
+              className="h-full w-full object-cover object-right"
+              onError={(event) => applyImageFallback(event, "Deals", "category")}
+            />
+            <div className="absolute inset-y-0 -left-px right-0 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/20 to-transparent" />
+          </div>
+        </div>
+      </div>
+
+      <div className="my-8 md:my-16">
         <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div className="w-full md:max-w-md">
-            <label className="mb-1 block text-xs font-semibold uppercase text-[#777]">
-              Search Deals
-            </label>
-            <input
+            <SearchInput
               value={searchParams.get("q") || ""}
-              onChange={(event) => updateParam("q", event.target.value)}
+              onChange={(e) => updateParam("q", e.target.value)}
               placeholder="Search deal products..."
-              className="w-full rounded-lg border border-[#DDD5C1] bg-white px-4 py-2 text-sm outline-none focus:border-[#CE9F2D]"
+              onClear={() => updateParam("q", "")}
+              inputClassName="!outline-none !border-none !ring-0 !shadow-none"
+              style={{ textDecoration: 'none' }}
             />
           </div>
           <CollectionToolbar
+            countText={`${pageInfo.total} deals`}
             sortValue={searchParams.get("sort") || "ending_soon"}
             sortOptions={SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
+            onOpenFilters={() => setSidebarOpen(true)}
           />
         </div>
 
         <ProductResultsLayout
           totalResults={pageInfo.total}
           pageSize={pageSize}
-          filterSections={[]}
-          filters={filters}
+          filterSections={filterSections}
+          filters={activeFilters}
           onRemoveFilter={removeFilter}
           onClearFilters={() => setSearchParams(new URLSearchParams())}
-          sidebarOpen={false}
-          onCloseSidebar={() => {}}
+          sidebarOpen={sidebarOpen}
+          onCloseSidebar={() => setSidebarOpen(false)}
           loading={loading && !products.length}
           error={error}
           empty={!products.length && !loading && firstLoadDone}
