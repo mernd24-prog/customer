@@ -115,10 +115,10 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
           return (
             <div
               key={item.categoryKey}
-              className={`group flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm cursor-pointer transition-all duration-300 ease-in-out border-l-4 ${
+              className={`group flex items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium cursor-pointer transition-all duration-300 ease-in-out border-l-4 ${
                 isActive
-                  ? "bg-white shadow-[0_4px_12px_rgba(206,159,45,0.15)] border-gold text-gold font-semibold translate-x-1"
-                  : "border-transparent text-ink/80 hover:bg-white/60 hover:text-gold hover:translate-x-0.5"
+                  ? "bg-white shadow-[0_4px_12px_rgba(206,159,45,0.15)] border-gold text-gold translate-x-0.5"
+                  : "border-transparent text-ink/80 hover:bg-white/60 hover:text-gold"
               }`}
               onMouseEnter={
                 activeKey === item.categoryKey
@@ -137,8 +137,8 @@ const SubCategoryColumn = memo(function SubCategoryColumn({
                 size={14}
                 className={`transition-all duration-300 ease-in-out ${
                   isActive
-                    ? "opacity-100 translate-x-0.5"
-                    : "opacity-0 -translate-x-1 group-hover:opacity-60"
+                    ? "opacity-100"
+                    : "opacity-0 group-hover:opacity-60"
                 }`}
               />
             </div>
@@ -188,9 +188,9 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
             return (
               <div
                 key={item.categoryKey}
-                className={`group flex items-center justify-between rounded-lg px-3 py-1.5 text-left text-sm cursor-pointer transition-all duration-300 ease-in-out border-l-2 ${
+                className={`group flex items-center justify-between rounded-lg px-3 py-1.5 text-left text-sm font-medium cursor-pointer transition-all duration-300 ease-in-out border-l-2 ${
                   isActive
-                    ? "bg-cream border-gold text-gold-dark font-semibold"
+                    ? "bg-cream border-gold text-gold-dark translate-x-0.5"
                     : "border-transparent text-ink/70 hover:bg-cream/40 hover:text-gold"
                 }`}
                 onMouseEnter={
@@ -211,7 +211,7 @@ const ChildCategoryColumn = memo(function ChildCategoryColumn({
                   item.children.length > 0 && (
                     <ChevronRight
                       size={12}
-                      className={`opacity-40 transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:translate-x-0.5 ${
+                      className={`opacity-40 transition-all duration-300 ease-in-out group-hover:opacity-100 ${
                         isActive ? "opacity-100 text-gold-dark" : ""
                       }`}
                     />
@@ -261,8 +261,8 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
               <Link
                 key={item.categoryKey}
                 to={itemHref}
-                className={`group flex items-center gap-2 rounded-xl px-3 py-1.5 text-left text-sm transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold hover:pl-5 ${
-                  isCurrentLink ? "bg-cream font-bold text-gold" : "text-ink/70"
+                className={`group flex items-center gap-2 rounded-xl px-3 py-1.5 text-left text-sm font-medium transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold hover:translate-x-0.5 ${
+                  isCurrentLink ? "bg-cream text-gold" : "text-ink/70"
                 }`}
               >
                 <span
@@ -282,7 +282,7 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
               <Link
                 key={item.name}
                 to={getQuickLinkHref(item)}
-                className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm text-ink/70 transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold hover:pl-5"
+                className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm font-medium text-ink/70 transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold hover:translate-x-0.5"
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-gold/30 group-hover:bg-gold transition-all duration-300 ease-in-out" />
                 <span className="flex-1 truncate">{item.name}</span>
