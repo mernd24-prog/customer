@@ -1,5 +1,11 @@
-import { useState, useEffect, useRef } from "react";
-import { ChevronDown, Star } from "lucide-react";
+import {
+  cloneElement,
+  isValidElement,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
+import { ChevronDown, Search, Star, X } from "lucide-react";
 
 function FilterTick({ checked }) {
   return (
@@ -22,26 +28,90 @@ function FilterTick({ checked }) {
 
 export function FilterSection({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef(null);
+  const searchable = ["brand", "category"].some((item) =>
+    String(title || "")
+      .toLowerCase()
+      .includes(item),
+  );
 
   useEffect(() => {
     setOpen(defaultOpen);
   }, [defaultOpen, title]);
 
+  useEffect(() => {
+    if (!searchOpen) {
+      setSearchQuery("");
+      return;
+    }
+
+    setOpen(true);
+    window.requestAnimationFrame(() => searchInputRef.current?.focus());
+  }, [searchOpen]);
+
+  const content = isValidElement(children)
+    ? cloneElement(children, { searchQuery })
+    : children;
+  const closeSearch = () => {
+    setSearchQuery("");
+    setSearchOpen(false);
+  };
+
   return (
     <div className="border-b border-[#EEDFB9] py-6 last:border-b-0 sm:py-7">
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center justify-between gap-3 text-left font-dm-sans text-xl font-semibold leading-none tracking-normal text-[#2D347D] transition-colors duration-200 sm:text-[20px]"
-      >
-        {title}
-        <ChevronDown
-          size={18}
-          className={`shrink-0 text-[#3E4093] transition-transform duration-300 ease-in-out ${
-            open ? "rotate-180" : ""
-          }`}
-        />
-      </button>
+      {searchOpen ? (
+        <div className="flex h-9 w-full items-center gap-2 rounded-full bg-[#F4F4F6] px-3">
+          <Search size={16} className="shrink-0 text-[#6F7480]" />
+          <input
+            ref={searchInputRef}
+            type="text"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") closeSearch();
+            }}
+            placeholder={`Search ${title.toLowerCase()}`}
+            className="min-w-0 flex-1 bg-transparent border-none border focus:outline-none text-sm font-semibold text-[#2E2E2E] outline-none placeholder:text-[#8D8F98]"
+          />
+          <button
+            type="button"
+            onClick={closeSearch}
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[#5960B8] transition-colors duration-200 hover:bg-white hover:text-[#2D347D]"
+            aria-label={`Close ${title} search`}
+          >
+            <X size={15} />
+          </button>
+        </div>
+      ) : (
+        <div className="flex w-full items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => setOpen((value) => !value)}
+            className="flex min-w-0 flex-1 items-center justify-between gap-3 text-left font-dm-sans text-xl font-semibold leading-none tracking-normal text-[#2D347D] transition-colors duration-200 sm:text-[20px]"
+          >
+            <span className="truncate">{title}</span>
+            <ChevronDown
+              size={18}
+              className={`shrink-0 text-[#3E4093] transition-transform duration-300 ease-in-out ${
+                open ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+
+          {searchable && (
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F4F4F6] text-[#6F7480] transition-colors duration-200 hover:bg-[#ECECF0] hover:text-[#2D347D]"
+              aria-label={`Search ${title}`}
+            >
+              <Search size={17} />
+            </button>
+          )}
+        </div>
+      )}
 
       <div
         className={`grid transition-all duration-300 ease-in-out ${
@@ -50,7 +120,7 @@ export function FilterSection({ title, children, defaultOpen = true }) {
             : "grid-rows-[0fr] opacity-0"
         }`}
       >
-        <div className="overflow-hidden">{children}</div>
+        <div className="overflow-hidden">{content}</div>
       </div>
     </div>
   );
@@ -316,9 +386,9 @@ export function OptionFilter({
   onChange,
   emptyText = "Loading...",
   multiple = false,
+  searchQuery = "",
 }) {
   const isCategoryList = name?.toLowerCase().includes("category");
-  const allowViewMore = (options?.length || 0) > 5;
   const [expanded, setExpanded] = useState(false);
   const selectedValues = Array.isArray(selected)
     ? selected.map(String)
@@ -336,9 +406,22 @@ export function OptionFilter({
     return <p className="text-sm text-[#6f7480]">{emptyText}</p>;
   }
 
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+  const filteredOptions = normalizedSearchQuery
+    ? options.filter((option) => {
+        const value =
+          option.value ?? option.id ?? option._id ?? option.categoryKey;
+        const label = option.label ?? option.title ?? option.name ?? value;
+
+        return String(label).toLowerCase().includes(normalizedSearchQuery);
+      })
+    : options;
+  const allowViewMoreForFiltered = (filteredOptions?.length || 0) > 5;
   const visibleOptions =
-    allowViewMore && !expanded ? options.slice(0, 5) : options;
-  const shouldScroll = allowViewMore && expanded;
+    allowViewMoreForFiltered && !expanded
+      ? filteredOptions.slice(0, 5)
+      : filteredOptions;
+  const shouldScroll = allowViewMoreForFiltered && expanded;
 
   return (
     <div className="grid gap-1">
@@ -410,9 +493,14 @@ export function OptionFilter({
             </label>
           );
         })}
+        {!visibleOptions.length && (
+          <p className="py-2 text-sm font-medium text-[#6f7480]">
+            No matching options
+          </p>
+        )}
       </div>
 
-      {allowViewMore && (
+      {allowViewMoreForFiltered && (
         <button
           type="button"
           onClick={() => setExpanded((value) => !value)}

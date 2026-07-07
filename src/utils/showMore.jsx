@@ -68,6 +68,7 @@ export function ShowMoreText({
   buttonClassName = "",
   ellipsis = "...",
   defaultExpanded = false,
+  collapsedPaddingRight,
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [hasLineOverflow, setHasLineOverflow] = useState(false);
@@ -78,6 +79,11 @@ export function ShowMoreText({
   );
   const safeLineLimit = Number(limit || DEFAULT_LIMITS.lines);
   const isLineMode = mode === "lines";
+  const lineButtonSpace = collapsedPaddingRight ?? `${moreLabel.length}ch`;
+  const resolvedButtonClassName =
+    typeof buttonClassName === "function"
+      ? buttonClassName({ expanded })
+      : buttonClassName;
 
   useEffect(() => {
     if (!isLineMode || !lineTextRef.current) {
@@ -114,11 +120,17 @@ export function ShowMoreText({
             expanded
               ? undefined
               : {
-                  display: "-webkit-box",
+                  display: "-webkit-inline-box",
                   WebkitBoxOrient: "vertical",
                   WebkitLineClamp: safeLineLimit,
                   overflow: "hidden",
-                  paddingRight: hasLineOverflow ? `${moreLabel.length}ch` : undefined,
+                  width: hasLineOverflow
+                    ? `calc(100% - ${lineButtonSpace})`
+                    : undefined,
+                  verticalAlign: "bottom",
+                  paddingRight: hasLineOverflow
+                    ? "0"
+                    : undefined,
                 }
           }
         >
@@ -129,10 +141,10 @@ export function ShowMoreText({
             type="button"
             onClick={() => setExpanded((value) => !value)}
             className={
-              buttonClassName ||
+              resolvedButtonClassName ||
               (expanded
                 ? "mt-1 inline whitespace-nowrap font-semibold text-black/50 hover:underline"
-                : "absolute bottom-0 right-0 inline whitespace-nowrap bg-white pl-0.5 font-semibold text-black/50 hover:underline")
+                : "inline whitespace-nowrap bg-white font-semibold text-black/50 hover:underline")
             }
           >
             {expanded ? lessLabel : moreLabel}
@@ -155,7 +167,7 @@ export function ShowMoreText({
           type="button"
           onClick={() => setExpanded((value) => !value)}
           className={
-            buttonClassName ||
+            resolvedButtonClassName ||
             "ml-0.5 inline font-semibold text-[#0B63F6] hover:underline"
           }
         >

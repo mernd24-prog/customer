@@ -4,16 +4,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import QuantitySelector from "../../components/cart/QuantitySelector";
 import { IoIosSearch } from "react-icons/io";
-import {
-  Banknote,
-  Heart,
-  RefreshCw,
-  Share2,
-  ShieldCheck,
-  Truck,
-  ZoomIn,
-  X,
-} from "lucide-react";
+import { Banknote, Heart, Share2, Truck, ZoomIn, X } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, FreeMode } from "swiper/modules";
 import "swiper/css";
@@ -61,6 +52,7 @@ import StarRating from "./components/starRating";
 import ShareProductPopover from "./components/socialMediaShare";
 import ProductPriceBlock from "./components/oldAndNewPrice";
 import ProductStockStatus from "./components/stockStatus";
+import ShowMoreText from "../../utils/showMore";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
@@ -1354,10 +1346,10 @@ export default function ProductDetailPage() {
                   />
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-3">
+                <div className="flex min-w-0 flex-col  gap-3">
                   <div className="flex min-w-0 items-start justify-between gap-3 ">
                     <div className="min-w-0">
-                      <h1 className="break-words text-h3 leading-tight   font-semibold  text-ink ">
+                      <h1 className="break-words text-h3  font-semibold  text-ink ">
                         {getProductTitle(product)}
                       </h1>
                     </div>
