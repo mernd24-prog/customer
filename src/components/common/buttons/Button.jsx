@@ -1,11 +1,11 @@
 import { cn } from "../../../lib/utils";
 
 const sizeMap = {
-  xs: "text-label-xs min-h-[24px] px-2.5 py-1",
-  sm: "text-label-sm min-h-[30px] px-3 py-1.5",
-  md: "text-label-md min-h-[38px] px-4 py-2",
-  lg: "text-label-md md:text-label-lg min-h-[44px] px-5 py-2.5",
-  xl: "text-label-lg min-h-[50px] px-6 py-3",
+  xs: "text-[11px] leading-[16px] tracking-[0.5px] min-h-[24px] px-2.5 py-1",
+  sm: "text-[12px] leading-[18px] tracking-[0.5px] min-h-[30px] px-3 py-1.5",
+  md: "text-[13px] leading-[20px] tracking-[0.5px] min-h-[38px] px-4 py-2",
+  lg: "text-[13px] leading-[20px] tracking-[0.5px] md:text-[14px] md:leading-[20px] md:tracking-[0.5px] min-h-[44px] px-5 py-2.5",
+  xl: "text-[14px] leading-[20px] tracking-[0.5px] min-h-[50px] px-6 py-3",
 };
 
 const variantMap = {

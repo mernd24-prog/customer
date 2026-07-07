@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { BadgePercent, Clock3 } from "lucide-react";
+import { BadgePercent } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import {
   Breadcrumbs,
@@ -15,8 +15,11 @@ import {
 import SearchInput from "../../components/common/inputs/SearchInput";
 import { useProductActions } from "../../hooks/useProductActions";
 import { getPublicDealProducts } from "../../api/deals";
-import { fetchCategories, fetchBrands } from "../../features/catalog/catalogSlice";
-import { 
+import {
+  fetchCategories,
+  fetchBrands,
+} from "../../features/catalog/catalogSlice";
+import {
   applyImageFallback,
   buildFacetCountMap,
   buildRatingCountMap,
@@ -64,6 +67,71 @@ const getPagination = (response = {}, fallback = {}) =>
   response?.meta ||
   fallback;
 
+const getResponseFacets = (response = {}) => {
+  const data = response?.data ?? response;
+  return (
+    data?.filters ||
+    data?.facets ||
+    data?.aggregations ||
+    response?.filters ||
+    response?.facets ||
+    response?.meta?.filters ||
+    response?.meta?.facets ||
+    {}
+  );
+};
+
+const getFacetList = (facets = {}, keys = []) => {
+  for (const key of keys) {
+    const value = facets?.[key];
+    if (Array.isArray(value)) return value;
+    if (Array.isArray(value?.items)) return value.items;
+    if (Array.isArray(value?.options)) return value.options;
+    if (value && typeof value === "object") {
+      return Object.entries(value).map(([entryKey, entryValue]) => ({
+        value: entryKey,
+        label: entryKey,
+        count:
+          typeof entryValue === "number"
+            ? entryValue
+            : entryValue?.count || entryValue?.doc_count,
+      }));
+    }
+  }
+  return [];
+};
+
+const normalizeFacetOption = (option = {}) => {
+  const value =
+    option.value ??
+    option.id ??
+    option._id ??
+    option.key ??
+    option.slug ??
+    option.categoryKey ??
+    option.category_id ??
+    option.brand_id ??
+    option.name ??
+    option.title;
+  const label =
+    option.label ??
+    option.name ??
+    option.title ??
+    option.brandName ??
+    option.categoryName ??
+    option.category_name ??
+    option.brand_name ??
+    value;
+
+  return value
+    ? {
+        value: String(value),
+        label: String(label),
+        count: option.count ?? option.doc_count ?? option.total,
+      }
+    : null;
+};
+
 export default function DealsPage() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -77,19 +145,54 @@ export default function DealsPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
   const [firstLoadDone, setFirstLoadDone] = useState(false);
-  
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [categoryList, setCategoryList] = useState([]);
   const [brandList, setBrandList] = useState([]);
+  const [dealFacets, setDealFacets] = useState({});
+  const currentSearchQuery = searchParams.get("q") || "";
+  const [searchQuery, setSearchQuery] = useState(currentSearchQuery);
 
   const sentinelRef = useRef(null);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+
+  // const dealEndInfo = useMemo(() => {
+  //   const endDates = products
+  //     .map(getDealEndDateValue)
+  //     .map((value) => ({ value, time: new Date(value).getTime() }))
+  //     .filter(({ time }) => !Number.isNaN(time))
+  //     .sort((a, b) => a.time - b.time);
+
+  //   const metaEndValue = getDealMetaEndDateValue(dealMeta);
+  //   const metaEndTime = new Date(metaEndValue).getTime();
+  //   const selectedEndDate = !Number.isNaN(metaEndTime)
+  //     ? { value: metaEndValue, time: metaEndTime }
+  //     : endDates[0];
+  //   const formattedEndDate = formatDealEndDate(selectedEndDate?.value);
+  //   const isEnded =
+  //     isEndedStatus(
+  //       dealMeta?.status ||
+  //         dealMeta?.dealStatus ||
+  //         dealMeta?.deal_status ||
+  //         dealMeta?.state,
+  //     ) ||
+  //     Boolean(dealMeta?.isEnded || dealMeta?.isExpired || dealMeta?.expired) ||
+  //     (Boolean(selectedEndDate?.time) && selectedEndDate.time <= Date.now());
+
+  //   return {
+  //     isEnded,
+  //     formattedEndDate,
+  //     label: formattedEndDate
+  //       ? `Deals end at: ${formattedEndDate}`
+  //       : "Prices restore after deal expiry",
+  //   };
+  // }, [dealMeta, products]);
 
   const selectedBrands = useMemo(
     () => parseMultiValue(searchParams.get("brand")),
     [searchParams],
   );
-  
+
   const selectedRatings = useMemo(
     () => parseMultiValue(searchParams.get("rating")),
     [searchParams],
@@ -110,13 +213,62 @@ export default function DealsPage() {
       ),
     [products],
   );
-  
+
   const brandCounts = useMemo(
-    () => buildFacetCountMap(products, (product) => getProductBrandName(product)),
+    () =>
+      buildFacetCountMap(products, (product) => getProductBrandName(product)),
     [products],
   );
-  
+
   const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
+
+  const dealCategoryOptions = useMemo(
+    () =>
+      getFacetList(dealFacets, ["categories", "category"])
+        .map(normalizeFacetOption)
+        .filter(Boolean),
+    [dealFacets],
+  );
+
+  const dealBrandOptions = useMemo(
+    () =>
+      getFacetList(dealFacets, ["brands", "brand"])
+        .map(normalizeFacetOption)
+        .filter(Boolean),
+    [dealFacets],
+  );
+
+  const dealRatingCounts = useMemo(() => {
+    const ratings = getFacetList(dealFacets, ["ratings", "rating"]);
+    return ratings.reduce((counts, option) => {
+      const value =
+        option.value ?? option.rating ?? option.stars ?? option.key ?? "";
+      if (value) counts[String(value)] = option.count ?? option.doc_count ?? 0;
+      return counts;
+    }, {});
+  }, [dealFacets]);
+
+  const categoryOptions = dealCategoryOptions.length
+    ? dealCategoryOptions
+    : categoryList
+        .map((cat) =>
+          normalizeFacetOption({
+            value: cat.categoryKey || cat.id || cat._id,
+            label: cat.title || cat.name,
+          }),
+        )
+        .filter(Boolean);
+
+  const brandOptions = dealBrandOptions.length
+    ? dealBrandOptions
+    : brandList.map((brand) => ({
+        ...brand,
+        count: brandCounts[String(brand.value)] || 0,
+      }));
+
+  const effectiveRatingCounts = Object.keys(dealRatingCounts).length
+    ? dealRatingCounts
+    : ratingCounts;
 
   const pageSize = Number(searchParams.get("limit") || 12);
   const currentPage = Number(pageInfo.page || 1);
@@ -132,11 +284,14 @@ export default function DealsPage() {
       sort: searchParams.get("sort") || "ending_soon",
       minPrice: searchParams.get("minPrice") || undefined,
       maxPrice: searchParams.get("maxPrice") || undefined,
-      minRating: searchParams.get("rating") || undefined,
+      rating: searchParams.get("rating") || undefined,
       inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
-      outOfStock: searchParams.get("outOfStock") === "true" ? "true" : undefined,
-      expressDelivery: searchParams.get("expressDelivery") === "true" ? "true" : undefined,
-      freeDelivery: searchParams.get("freeDelivery") === "true" ? "true" : undefined,
+      outOfStock:
+        searchParams.get("outOfStock") === "true" ? "true" : undefined,
+      expressDelivery:
+        searchParams.get("expressDelivery") === "true" ? "true" : undefined,
+      freeDelivery:
+        searchParams.get("freeDelivery") === "true" ? "true" : undefined,
     }),
     [pageSize, searchParams],
   );
@@ -159,6 +314,7 @@ export default function DealsPage() {
         });
 
         setProducts((current) => (append ? [...current, ...list] : list));
+        setDealFacets(getResponseFacets(response));
         setPageInfo({
           page: Number(pagination.page || page),
           totalPages: Number(pagination.totalPages || pagination.pages || 1),
@@ -182,6 +338,27 @@ export default function DealsPage() {
   useEffect(() => {
     loadDeals({ page: Number(searchParams.get("page") || 1), append: false });
   }, [loadDeals, searchParams]);
+
+  useEffect(() => {
+    setSearchQuery(currentSearchQuery);
+  }, [currentSearchQuery]);
+
+  useEffect(() => {
+    if (searchQuery === currentSearchQuery) return undefined;
+
+    const debounceTimer = setTimeout(() => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        const nextQuery = searchQuery.trim();
+        if (nextQuery) next.set("q", nextQuery);
+        else next.delete("q");
+        next.delete("page");
+        return next;
+      });
+    }, 500);
+
+    return () => clearTimeout(debounceTimer);
+  }, [currentSearchQuery, searchQuery, setSearchParams]);
 
   useEffect(() => {
     dispatch(fetchCategories())
@@ -304,7 +481,7 @@ export default function DealsPage() {
         },
         searchParams.get("category") && {
           key: "category",
-          label: `Category: ${categoryList.find((c) => (c.categoryKey || c.id || c._id) === searchParams.get("category"))?.title || categoryList.find((c) => (c.categoryKey || c.id || c._id) === searchParams.get("category"))?.name || searchParams.get("category")}`,
+          label: `Category: ${categoryOptions.find((category) => category.value === searchParams.get("category"))?.label || searchParams.get("category")}`,
         },
         ...selectedBrands.map((brand) => ({
           key: `brand:${brand}`,
@@ -339,35 +516,29 @@ export default function DealsPage() {
           label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
         },
       ].filter(Boolean),
-    [searchParams, categoryList, selectedBrands, selectedRatings],
+    [searchParams, categoryOptions, selectedBrands, selectedRatings],
   );
 
   const filterSections = [
-    categoryList.length > 0 && {
+    categoryOptions.length > 0 && {
       key: "category",
       title: "Category",
       content: (
         <OptionFilter
           name="category"
-          options={categoryList.map((cat) => ({
-            value: cat.categoryKey || cat.id || cat._id,
-            label: cat.title || cat.name,
-          }))}
+          options={categoryOptions}
           selected={searchParams.get("category")}
           onChange={(value) => updateParam("category", value)}
         />
       ),
     },
-    brandList.length > 0 && {
+    brandOptions.length > 0 && {
       key: "brand",
       title: "Brand",
       content: (
         <OptionFilter
           name="brand"
-          options={brandList.map((brand) => ({
-            ...brand,
-            count: brandCounts[String(brand.value)] || 0,
-          }))}
+          options={brandOptions}
           selected={selectedBrands}
           multiple
           onChange={(values) =>
@@ -394,7 +565,7 @@ export default function DealsPage() {
         <RatingFilter
           selected={selectedRatings}
           multiple
-          counts={ratingCounts}
+          counts={effectiveRatingCounts}
           onChange={(values) =>
             updateParam("rating", serializeMultiValue(values))
           }
@@ -466,10 +637,7 @@ export default function DealsPage() {
     },
   ].filter(Boolean);
 
-  const breadcrumbItems = [
-    { label: "Home", href: "/" },
-    { label: "Deals" },
-  ];
+  const breadcrumbItems = [{ label: "Home", href: "/" }, { label: "Deals" }];
 
   return (
     <>
@@ -486,7 +654,9 @@ export default function DealsPage() {
               src={bannerImage}
               alt="Deals"
               className="absolute inset-0 h-full w-full object-cover"
-              onError={(event) => applyImageFallback(event, "Deals", "category")}
+              onError={(event) =>
+                applyImageFallback(event, "Deals", "category")
+              }
             />
             <div className="absolute inset-0 bg-black/30" />
             <div className="absolute inset-0 flex items-center">
@@ -506,11 +676,9 @@ export default function DealsPage() {
                     Deal Products
                   </h1>
                   <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
-                    Products promoted by admin with special deal price, original price, deal badge, and limited-time availability.
+                    Products promoted by admin with special deal price, original
+                    price, deal badge, and limited-time availability.
                   </p>
-                  <div className="mt-3 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1B1D60]">
-                    <Clock3 size={16} /> Prices restore after deal expiry
-                  </div>
                 </div>
               </div>
             </div>
@@ -533,11 +701,12 @@ export default function DealsPage() {
                 Deal Products
               </h1>
               <p className="mt-3 max-w-xl font-normal leading-relaxed text-p text-white/80">
-                Products promoted by admin with special deal price, original price, deal badge, and limited-time availability.
+                Products promoted by admin with special deal price, original
+                price, deal badge, and limited-time availability.
               </p>
-              <div className="mt-3 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1B1D60]">
-                <Clock3 size={16} /> Prices restore after deal expiry
-              </div>
+              {/* <div className="mt-3 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1B1D60]">
+                <Clock3 size={16} /> {dealEndInfo.label}
+              </div> */}
             </div>
           </div>
 
@@ -547,7 +716,9 @@ export default function DealsPage() {
               src={bannerImage}
               alt="Deals"
               className="h-full w-full object-cover object-right"
-              onError={(event) => applyImageFallback(event, "Deals", "category")}
+              onError={(event) =>
+                applyImageFallback(event, "Deals", "category")
+              }
             />
             <div className="absolute inset-y-0 -left-px right-0 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/20 to-transparent" />
           </div>
@@ -555,15 +726,15 @@ export default function DealsPage() {
       </div>
 
       <div className="my-8 md:my-16">
-        <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div className="mb-4 flex flex-col  gap-3 md:flex-row md:items-end md:justify-between">
           <div className="w-full md:max-w-md">
             <SearchInput
-              value={searchParams.get("q") || ""}
-              onChange={(e) => updateParam("q", e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search deal products..."
-              onClear={() => updateParam("q", "")}
+              onClear={() => setSearchQuery("")}
               inputClassName="!outline-none !border-none !ring-0 !shadow-none"
-              style={{ textDecoration: 'none' }}
+              style={{ textDecoration: "none" }}
             />
           </div>
           <CollectionToolbar
@@ -574,6 +745,26 @@ export default function DealsPage() {
             onOpenFilters={() => setSidebarOpen(true)}
           />
         </div>
+
+        {/* {dealEndInfo.isEnded && (
+          <div className="mb-6 rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] px-5 py-4 shadow-sm sm:px-6">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-[18px] font-semibold text-[#1B1D60]">
+                  This deal has ended
+                </p>
+                <p className="mt-1 text-[14px] font-medium text-[#6F7480]">
+                  Prices have restored after deal expiry.
+                </p>
+              </div>
+              {dealEndInfo.formattedEndDate && (
+                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#F0F1FF] px-3 py-2 text-[13px] font-semibold text-[#1B1D60]">
+                  <Clock3 size={15} /> Ended at: {dealEndInfo.formattedEndDate}
+                </span>
+              )}
+            </div>
+          </div>
+        )} */}
 
         <ProductResultsLayout
           totalResults={pageInfo.total}

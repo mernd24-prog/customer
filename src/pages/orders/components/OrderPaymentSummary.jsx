@@ -208,7 +208,7 @@ function OrderPaymentSummary({
       {variant === "order" && subtotal !== undefined && (
         <div>
           <SummaryRow
-            label="Subtotal"
+            label="Price"
             value={formatMoney(subtotal, currency)}
           />
         </div>

@@ -106,10 +106,10 @@ function ExistingReviewCard({ review }) {
 
   return (
     <section
-      className="mt-5 overflow-hidden rounded-2xl border border-[#E2E3EA] bg-white shadow-[0_5px_18px_rgba(27,29,96,.06)]"
+      className="mt-5 overflow-hidden rounded-2xl border border-[#E2E3EA] bg-white "
       aria-label="Your product review"
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#ECECF1] bg-[#F8F8FB] px-4 py-3.5 sm:px-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#ECECF1] bg-[#F5ECD5] px-4 py-3.5 sm:px-5">
         <div className="flex items-center gap-3">
           <span className="grid h-9 w-9 place-items-center rounded-full bg-[#E9F7ED] text-[#21812C]">
             <BadgeCheck size={20} />
@@ -352,39 +352,8 @@ const getOrderItemProductPath = (item) => {
   return productId ? `/products/${productId}` : "";
 };
 
-const toTitle = (value = "") =>
-  String(value || "")
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (char) => char.toUpperCase());
-
-const getItemShippingSummary = (item = {}) => {
-  const snapshot = item.productSnapshot || item.product_snapshot || {};
-  const shipping = item.shipping || snapshot.shipping || {};
-  const hasProfile = Boolean(shipping.shippingProfileId);
-  const method = shipping.shippingMethod || shipping.method || "";
-  const min = shipping.estimatedDaysMin ?? shipping.processingDays;
-  const max = shipping.estimatedDaysMax ?? shipping.processingDays;
-  const eta =
-    min || max
-      ? `${min || max}${max && max !== min ? `-${max}` : ""} days`
-      : "";
-  if (!hasProfile && !method && !eta) return "";
-  return [
-    hasProfile ? "Seller delivery profile" : "Delivery",
-    method ? toTitle(method) : "",
-    eta ? `ETA ${eta}` : "",
-  ]
-    .filter(Boolean)
-    .join(" · ");
-};
-
 function OrderItemCard({
   item,
-  orderId,
-  canReview,
-  existingReview,
-  reviewChecked,
-  onReviewClick,
   currency,
   getItemImage,
   getProductTitle,
@@ -395,91 +364,108 @@ function OrderItemCard({
 }) {
   const productPath =
     getItemProductPath?.(item) || getOrderItemProductPath(item);
-  const shippingSummary = getItemShippingSummary(item);
+
+  const eta = item.product_snapshot.shipping.processingDays;
+  const itemColor = getOrderItemColor(item);
+  const shouldShowColor =
+    itemColor != null && String(itemColor).trim().toLowerCase() !== "n/a";
 
   return (
     <div className="w-full">
       <div className="flex w-full flex-col gap-5 sm:flex-row sm:items-start sm:gap-6 lg:gap-8">
-      <div className="flex  aspect-square w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#CE9F2D33] bg-white p-2 w-[180px] lg:w-[210px] 2xl:w-[220px]">
-        {getItemImage(item) ? (
-          productPath ? (
-            <Link to={productPath}>
+        <div className="flex aspect-square w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#CE9F2D33] bg-white p-2 w-[180px] lg:w-[210px] 2xl:w-[220px]">
+          {getItemImage(item) ? (
+            productPath ? (
+              <Link to={productPath}>
+                <img
+                  src={getItemImage(item)}
+                  alt={getProductTitle(item)}
+                  className="h-full w-full object-contain"
+                />
+              </Link>
+            ) : (
               <img
                 src={getItemImage(item)}
                 alt={getProductTitle(item)}
-                className="h-full  w-full object-contain"
+                className="h-full w-full object-contain"
               />
-            </Link>
+            )
           ) : (
-            <img
-              src={getItemImage(item)}
-              alt={getProductTitle(item)}
-              className="h-full  w-full object-contain"
-            />
-          )
-        ) : (
-          <Package size={28} />
-        )}
-      </div>
+            <Package size={28} />
+          )}
+        </div>
 
-      <div className="flex min-w-0 flex-1 flex-col ">
-        <p className="line-clamp-2 break-words text-h4 font-bold text-[#2E2E2E]">
-          {getProductTitle(item)}
-        </p>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <p className="line-clamp-2 break-words text-h4 font-bold text-[#2E2E2E]">
+            {getProductTitle(item)}
+          </p>
 
-        <div className="my-3 flex flex-wrap gap-x-6 gap-y-2 text-ink sm:my-4">
-          <span className="text-sm font-medium text-[#2E2E2E] sm:text-base">
-            Color:{" "}
-            <span className="font-semibold text-[#1B1D60]">
+          <div className="my-3 flex flex-wrap gap-x-6 gap-y-2 text-ink sm:my-4">
+            {shouldShowColor && (
+              <span className="text-sm font-medium text-[#2E2E2E] sm:text-base">
+                Color:{" "}
+                <span className="font-semibold text-[#1B1D60]">
+                  <strong className="font-bold text-[#25247B]">
+                    {itemColor}
+                  </strong>
+                </span>
+              </span>
+            )}
+            <span className="text-sm font-medium text-[#2E2E2E] sm:text-base">
+              Quantity:{" "}
               <strong className="font-bold text-[#25247B]">
-                {getOrderItemColor(item)}
+                {String(item.quantity || 1).padStart(2, "0")}
               </strong>
             </span>
-          </span>
-          <span className="text-sm font-medium text-[#2E2E2E] sm:text-base">
-            Quantity:{" "}
-            <strong className="font-bold text-[#25247B]">
-              {String(item.quantity || 1).padStart(2, "0")}
-            </strong>
-          </span>
-        </div>
-
-        {shippingSummary && (
-          <p className="mb-3 text-[14px] font-semibold leading-5 text-[#5F6078]">
-            {shippingSummary}
-          </p>
-        )}
-
-        <div className="mt-1">
-          <p className="text-xl font-extrabold leading-8 text-[#1B1D60] sm:text-2xl">
-            {formatMoney(getItemLineTotal(item), currency)}
-          </p>
-          <p className="mt-0.5 text-sm font-medium text-[#2E2E2E] sm:text-base">
-            Inclusive of all taxes
-          </p>
-        </div>
-      </div>
-      </div>
-
-      {canReview && (
-          <div className="mt-5 w-full sm:mt-6">
-            {!reviewChecked ? (
-              <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA] px-4 text-sm font-bold text-[#6B6B80]">
-                Checking review...
-              </span>
-            ) : existingReview ? (
-              <ExistingReviewCard review={existingReview} />
-            ) : (
-              <button
-                type="button"
-                className="inline-flex min-h-9 items-center rounded-[8px] border border-[#CE9F2D] bg-[#CE9F2D12] px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#CE9F2D22]"
-                onClick={() => onReviewClick(item)}
-                disabled={!orderId}
-              >
-                Write Review
-              </button>
-            )}
           </div>
+
+          {eta && (
+            <p className="mb-3 text-[14px]  font-semibold leading-5 text-[#5F6078]">
+              Estimated Delivery : {eta}
+            </p>
+          )}
+
+          <div className="mt-1">
+            <p className="text-xl font-extrabold leading-8 text-[#1B1D60] sm:text-2xl">
+              {formatMoney(getItemLineTotal(item), currency)}
+            </p>
+            <p className="mt-0.5 text-sm font-medium text-[#2E2E2E] sm:text-base">
+              Inclusive of all taxes
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OrderItemReviewAction({
+  item,
+  orderId,
+  canReview,
+  existingReview,
+  reviewChecked,
+  onReviewClick,
+}) {
+  if (!canReview) return null;
+
+  return (
+    <div className="w-full">
+      {!reviewChecked ? (
+        <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA] px-4 text-sm font-bold text-[#6B6B80]">
+          Checking review...
+        </span>
+      ) : existingReview ? (
+        <ExistingReviewCard review={existingReview} />
+      ) : (
+        <button
+          type="button"
+          className="inline-flex min-h-9 items-center rounded-[8px] border border-[#CE9F2D] bg-[#CE9F2D12] px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#CE9F2D22]"
+          onClick={() => onReviewClick(item)}
+          disabled={!orderId}
+        >
+          Write Review
+        </button>
       )}
     </div>
   );
@@ -541,7 +527,7 @@ function OrderItemsSection({ items = [], orderId, orderStatus, ...itemProps }) {
   };
 
   return (
-    <>
+    <section className="grid gap-5">
       <OrderDetailSectionCard
         title="Item"
         borderClassName="border-[#CE9F2D66]  h-fit "
@@ -551,17 +537,27 @@ function OrderItemsSection({ items = [], orderId, orderStatus, ...itemProps }) {
           <OrderItemCard
             key={item.id || item._id || index}
             item={item}
-            orderId={orderId}
-            canReview={canReviewOrder && Boolean(getReviewProductId(item))}
-            existingReview={reviewByItem[reviewKeyForItem(orderId, item)]}
-            reviewChecked={Boolean(
-              checkedReviewKeys[reviewKeyForItem(orderId, item)],
-            )}
-            onReviewClick={setReviewTarget}
             {...itemProps}
           />
         ))}
       </OrderDetailSectionCard>
+
+      <div className="grid gap-5">
+        {items.map((item, index) => {
+          const reviewKey = reviewKeyForItem(orderId, item);
+          return (
+            <OrderItemReviewAction
+              key={`review-${item.id || item._id || index}`}
+              item={item}
+              orderId={orderId}
+              canReview={canReviewOrder && Boolean(getReviewProductId(item))}
+              existingReview={reviewByItem[reviewKey]}
+              reviewChecked={Boolean(checkedReviewKeys[reviewKey])}
+              onReviewClick={setReviewTarget}
+            />
+          );
+        })}
+      </div>
 
       {reviewTarget && (
         <ReviewModal
@@ -572,7 +568,7 @@ function OrderItemsSection({ items = [], orderId, orderStatus, ...itemProps }) {
           onSubmitted={handleSubmitted}
         />
       )}
-    </>
+    </section>
   );
 }
 

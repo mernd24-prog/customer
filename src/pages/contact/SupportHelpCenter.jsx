@@ -374,7 +374,7 @@ export default function SupportHelpCenter() {
             <Breadcrumbs items={SUPPORT_BREADCRUMBS} />
           </div>
 
-          <h1 className="mb-8 text-heading-sm font-bold text-ink sm:text-heading-md">
+          <h1 className="mb-8 text-[20px] leading-[28px] tracking-[-0.01em] font-bold text-ink sm:text-[24px] sm:leading-[32px] sm:tracking-[-0.01em]">
             {pageTitle || "Customer Support"}
           </h1>
 
