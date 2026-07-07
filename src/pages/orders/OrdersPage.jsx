@@ -479,7 +479,7 @@ function OrderDetail({ orderId, track }) {
     "fulfilled",
     "partially_returned",
   ].includes(status);
-  const invoiceDownloadAvailable = ["delivered", "fulfilled"].includes(status);
+  const invoiceDownloadAvailable = status === "fulfilled";
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -634,7 +634,8 @@ function OrderDetail({ orderId, track }) {
                       </Button>
                     </Link>
                   )}
-                  {(invoices?.orderInvoice || getInvoiceUrl(order)) && (
+                  {invoiceDownloadAvailable &&
+                    (invoices?.orderInvoice || getInvoiceUrl(order)) && (
                     <Button
                       variant="secondary"
                       loading={
@@ -948,6 +949,7 @@ function OrderSummaryCard({ order }) {
   const id = getOrderId(order);
   const apiOrderId = getOrderId(order);
   const status = getOrderStatus(order);
+  const invoiceDownloadAvailable = status === "fulfilled";
   const createdAt = order.created_at || order.createdAt;
   const item = getOrderItems(order)[0] || {};
   const title = getProductTitle(item);
@@ -1068,14 +1070,16 @@ function OrderSummaryCard({ order }) {
               <Truck size={18} />
               Track Order
             </Link>
-            <Link
-              to={`/orders/${id}`}
-              onClick={(event) => event.stopPropagation()}
-              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[10px] px-2 text-center text-sm font-bold text-gold-dark transition-colors hover:bg-gold-soft sm:w-auto sm:text-left lg:text-[15px]"
-            >
-              <Download size={13} />
-              Download Invoice
-            </Link>
+            {invoiceDownloadAvailable && (
+              <Link
+                to={`/orders/${id}`}
+                onClick={(event) => event.stopPropagation()}
+                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[10px] px-2 text-center text-sm font-bold text-gold-dark transition-colors hover:bg-gold-soft sm:w-auto sm:text-left lg:text-[15px]"
+              >
+                <Download size={13} />
+                Download Invoice
+              </Link>
+            )}
           </div>
         </div>
       </div>
