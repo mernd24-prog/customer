@@ -4,6 +4,7 @@ import Breadcrumbs from "./Breadcrumbs";
 import CollectionToolbar from "./CollectionToolbar";
 import ProductResultsLayout from "./ProductResultsLayout";
 import { applyImageFallback } from "../../utils/ecommerce";
+import bannerImage from "/image/png/CategoryBanner.png";
 
 export default function BrandProductPage({
   brandName,
@@ -41,44 +42,72 @@ export default function BrandProductPage({
 
   return (
     <>
-      <div className="mt-6 rounded-[var(--customer-radius-lg)] border border-border bg-gradient-to-br from-slate-50 to-cream px-4 py-8 sm:px-6 ">
-        <div className="w-container">
-          <Breadcrumbs
-            items={breadcrumbs}
-            linkClassName="text-black"
-            separatorClassName="text-black"
-            className="mb-4"
-          />
-          <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
-            {brandImage ? (
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[var(--customer-radius)] border border-border bg-white p-2 shadow-sm sm:h-28 sm:w-28">
-                <img
-                  src={brandImage}
-                  alt={brandName}
-                  className="h-full w-full object-contain"
-                  onError={(event) =>
-                    applyImageFallback(event, brandName, "brand")
-                  }
-                />
+      <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
+        <div className="grid gap-0 h-[320px] sm:h-[380px] md:h-[371px] xl:h-[500px] lg:grid-cols-[52%_48%]">
+          {/* Mobile & Tablet Banner */}
+          <div className="relative lg:hidden h-full">
+            <img
+              src={brandImage || bannerImage}
+              alt={brandName}
+              className="absolute inset-0 h-full w-full object-cover"
+              onError={(event) => applyImageFallback(event, brandName, "brand")}
+            />
+            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0 flex items-center">
+              <div className="customer-container">
+                <div className="max-w-xl">
+                  <Breadcrumbs
+                    linkClassName="!text-white"
+                    currentClassName="!text-[#CE9F2D]"
+                    separatorClassName="!text-gold"
+                    items={breadcrumbs}
+                    className="mb-5"
+                  />
+                  <h1 className="text-h1 font-bold leading-tight text-white capitalize">
+                    {brandName}
+                  </h1>
+                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
+                    {brandDescription || `Shop ${brandName} products at Sam Global`}
+                  </p>
+                  <p className="mt-3 text-sm text-white">
+                    {Number(total || 0).toLocaleString()} products
+                  </p>
+                </div>
               </div>
-            ) : (
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[var(--customer-radius)] bg-slate-100 sm:h-28 sm:w-28">
-                <Store size={32} className="text-slate-400" />
-              </div>
-            )}
-            <div>
-              <h1 className=" text-3xl font-bold text-ink sm:text-4xl">
+            </div>
+          </div>
+
+          {/* Desktop Content */}
+          <div className="hidden items-center pl-6 pr-10 lg:flex xl:pl-[max(3rem,calc((100vw-1559px)/2))]">
+            <div className="max-w-xl">
+              <Breadcrumbs
+                items={breadcrumbs}
+                linkClassName="!text-white"
+                currentClassName="!text-[#CE9F2D]"
+                separatorClassName="!text-white"
+                className="mb-5"
+              />
+              <h1 className="text-h1 font-bold leading-tight text-white capitalize">
                 {brandName}
               </h1>
-              {brandDescription && (
-                <p className="mt-2 max-w-2xl  text-sm leading-relaxed text-muted">
-                  {brandDescription}
-                </p>
-              )}
-              <p className="mt-2  text-sm text-gray">
+              <p className="mt-3 max-w-xl font-normal leading-relaxed text-p text-white/80">
+                {brandDescription || `Shop ${brandName} products at Sam Global`}
+              </p>
+              <p className="mt-3 text-sm text-white">
                 {Number(total || 0).toLocaleString()} products
               </p>
             </div>
+          </div>
+
+          {/* Desktop Image */}
+          <div className="relative hidden lg:block overflow-hidden -ml-px">
+            <img
+              src={brandImage || bannerImage}
+              alt={brandName}
+              className="h-full w-full object-cover object-right"
+              onError={(event) => applyImageFallback(event, brandName, "brand")}
+            />
+            <div className="absolute inset-y-0 -left-px right-0 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/20 to-transparent" />
           </div>
         </div>
       </div>

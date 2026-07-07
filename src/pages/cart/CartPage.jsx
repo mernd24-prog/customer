@@ -221,18 +221,6 @@ export default function CartPage() {
     [rawItems, localQuantities],
   );
 
-  const mrpSubtotal = calcMRPSubtotal(items);
-  const sellingSubtotal = calcSellingSubtotal(items);
-  const shippingTotal = calcShippingTotal(items);
-  const productSavings = calcTotalSavings(items);
-  const extraCoupon = 0;
-  const extraWallet = 0;
-  const extraTaxPayable = 0;
-  const totalBeforeTax =
-    sellingSubtotal + shippingTotal - extraCoupon - extraWallet;
-  const totalPayable = Math.max(0, totalBeforeTax + extraTaxPayable);
-  const totalSavings = productSavings + extraCoupon + extraWallet;
-
   const hasCartItems = items.length > 0;
   const hasSavedItems = savedForLaterItems.length > 0 || wishlist.length > 0;
   const normalizedSelectedItemIds = useMemo(
@@ -242,6 +230,20 @@ export default function CartPage() {
   const selectedItems = items.filter((item) =>
     normalizedSelectedItemIds.includes(normalizeCartItemId(item)),
   );
+
+  const mrpSubtotal = calcMRPSubtotal(selectedItems);
+  const sellingSubtotal = calcSellingSubtotal(selectedItems);
+  const shippingTotal = calcShippingTotal(selectedItems);
+  const productSavings = calcTotalSavings(selectedItems);
+  const extraCoupon = 0;
+  const extraWallet = 0;
+  const extraTaxPayable = 0;
+  const totalBeforeTax =
+    sellingSubtotal + shippingTotal - extraCoupon - extraWallet;
+  const totalPayable = Math.max(0, totalBeforeTax + extraTaxPayable);
+  const totalSavings = productSavings + extraCoupon + extraWallet;
+
+
 
   useEffect(() => {
     const currentItemIds = normalizeCartItemIds(
@@ -532,8 +534,8 @@ export default function CartPage() {
               />
             )}
 
-            <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:gap-9 min-[1366px]:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_563px]">
-              <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8">
+            <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:gap-9 min-[1366px]:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_563px] min-[1366px]:h-[calc(100vh-250px)] min-[1366px]:min-h-[500px]">
+              <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8 min-[1366px]:h-full min-[1366px]:min-h-0 min-[1366px]:overflow-y-auto min-[1366px]:overscroll-contain min-[1366px]:[scrollbar-width:none] min-[1366px]:[-ms-overflow-style:none] min-[1366px]:[&::-webkit-scrollbar]:hidden">
                 {hasCartItems && (
                   <div className="flex items-center justify-between">
                     <label className="flex items-center gap-2 text-sm font-bold text-[#2d2d2d] sm:text-[15px]">
@@ -581,7 +583,7 @@ export default function CartPage() {
                 {hasSavedItems && (
                   <div className=" md:border md:border-[#e4ddcf] rounded-xl bg-[#ffffff] md:p-10">
                     <h3 className="mb-4  text-[16px] font-semibold text-ink">
-                      Saved for later (
+                      Wishlist (
                       {savedForLaterItems.length + wishlist.length})
                     </h3>
 
@@ -649,18 +651,28 @@ export default function CartPage() {
                         );
                       })}
 
-                      {wishlist.map((wishlistProduct) => {
-                        const wishlistId = getProductId(wishlistProduct);
+                      {wishlist
+                        .map((wishlistProduct) => {
+                          const wishlistId = getProductId(wishlistProduct);
+                          const entity = productEntities[wishlistId];
+                          const isPopulated = typeof wishlistProduct === "object" && wishlistProduct !== null && wishlistProduct.title;
 
-                        const savedProduct = buildSavedProductView(
-                          wishlistProduct,
-                          productEntities[wishlistId],
-                        );
+                          // If product is deleted (we only have ID and fetch failed/not found), don't render it
+                          if (!isPopulated && !entity) return null;
 
-                        return (
-                          <div
-                            key={wishlistId}
-                            className={savedCardClass}
+                          const savedProduct = buildSavedProductView(
+                            wishlistProduct,
+                            entity
+                          );
+                          
+                          return { wishlistId, savedProduct };
+                        })
+                        .filter(Boolean)
+                        .map(({ wishlistId, savedProduct }) => {
+                          return (
+                            <div
+                              key={wishlistId}
+                              className={savedCardClass}
                             onClick={() =>
                               navigate(`/products/${savedProduct.id}`)
                             }
@@ -750,7 +762,7 @@ export default function CartPage() {
               </div>
 
               {hasCartItems && (
-                <div className="w-full">
+                <div className="w-full min-w-0 self-start min-[1366px]:h-fit">
                   <OrderPaymentSummary
                     variant="cart"
                     mrpSubtotal={mrpSubtotal}

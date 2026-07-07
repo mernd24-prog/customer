@@ -297,7 +297,7 @@ export const Navbar = ({ icons: propIcons }) => {
           autocompleteDebounceMs={1000}
           placeholder="Search for products, brands and categories..."
           showButtonLabel={false}
-          className="order-3  w-full min-w-0 lg:order-2 my-2 lg:my-0 lg:w-auto lg:max-w-[720px] lg:flex-1"
+          className="order-3 w-full min-w-0 lg:order-2 my-2 lg:my-0 lg:flex-1"
         />
 
         {/* Actions */}
@@ -335,7 +335,11 @@ export const Navbar = ({ icons: propIcons }) => {
             )}
             <HeaderIconButton
               to="/cart"
-              className="relative h-8 w-8 overflow-visible border-[#1B1D60] bg-[#1B1D600D] text-[#1B1D60]  min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
+              className={`relative h-8 w-8 overflow-visible bg-[#1B1D600D] text-[#1B1D60]  min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-all ${
+                location.pathname === "/cart"
+                  ? "border border-[#1B1D6099]"
+                  : "border border-transparent"
+              }`}
               aria-label={`Cart with ${cartItemCount} ${cartItemCount === 1 ? "item" : "items"}`}
             >
               <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
@@ -348,7 +352,11 @@ export const Navbar = ({ icons: propIcons }) => {
             </HeaderIconButton>
             <HeaderIconButton
               to="/watchlist"
-              className="relative h-8 w-8 overflow-visible border border-[#1B1D6099] bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
+              className={`relative h-8 w-8 overflow-visible bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-all ${
+                location.pathname === "/watchlist"
+                  ? "border border-[#1B1D6099]"
+                  : "border border-transparent"
+              }`}
               aria-label={`Watchlist with ${wishlistedProducts.length} ${wishlistedProducts.length === 1 ? "item" : "items"}`}
             >
               <Heart className="h-4 w-4 fill-current md:h-5 md:w-5 " />
@@ -373,7 +381,7 @@ export const Navbar = ({ icons: propIcons }) => {
                   <img
                     src={profileAvatar}
                     alt=""
-                    className="h-8 w-8 rounded-full object-cover min-[375px]:h-9 min-[375px]:w-9 md:h-12 md:w-12"
+                    className="h-8 w-8 rounded-full object-cover min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
                     onError={(event) => {
                       event.currentTarget.src = "/image/png/person.png";
                     }}
@@ -411,7 +419,9 @@ export const Navbar = ({ icons: propIcons }) => {
 export const CategoryBar = ({ headerData, compact = false }) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const catalogCategoryList = useSelector((state) => state.catalog.list || []);
+  const catalogCategoryList = useSelector(
+    (state) => state.catalog.globalCategories || state.catalog.list || [],
+  );
   const [categoriesList, setCategoriesList] = useState([]);
 
   useEffect(() => {
@@ -578,10 +588,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         className="fixed left-0 z-40 w-full bg-white/95 shadow-[0_2px_8px_rgba(17,24,39,0.06)] backdrop-blur !block"
       >
         <div className="relative w-full">
-          <div
-            className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px] lg:justify-center"
-            style={{ justifyContent: "safe center" }}
-          >
+          <div className="customer-container hide-scrollbar flex h-[44px] items-center justify-center gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px]">
             {visibleCategories.map((item, index) => {
               const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
               const isActive =
@@ -599,7 +606,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                     isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
                   }`}
                 >
-                  <span className="max-w-[140px] truncate">
+                  <span className="max-w-[250px] xl:max-w-none truncate">
                     {textOr(item?.name, "Category")}
                   </span>
                   <span
@@ -667,8 +674,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
 
       <div className="w-full relative z-20">
         <div
-          className="hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:gap-5 lg:justify-center"
-          style={{ justifyContent: "safe center" }}
+          className="hide-scrollbar flex justify-center gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:gap-5"
         >
           {visibleCategories.map((item, index) => {
             // Always use categoryKey first — it's the canonical route key from the DB
@@ -740,10 +746,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         }`}
       >
         <div className="relative w-full">
-          <div
-            className="customer-container hide-scrollbar flex h-[44px] items-center justify-start gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px] lg:justify-center"
-            style={{ justifyContent: "safe center" }}
-          >
+          <div className="customer-container hide-scrollbar flex h-[44px] items-center justify-center gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px]">
             {visibleCategories.map((item, index) => {
               const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
               const isActive =
@@ -761,7 +764,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                     isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
                   }`}
                 >
-                  <span className="max-w-[140px] truncate">
+                  <span className="max-w-[250px] xl:max-w-none truncate">
                     {textOr(item?.name, "Category")}
                   </span>
                   <span

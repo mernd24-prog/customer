@@ -1181,7 +1181,6 @@ function OrderList() {
               className="
                 min-w-0
                 rounded-xl
-                md:border md:border-[#E7D9B8]
                 bg-white
                 sm:p-4
 
@@ -1220,14 +1219,14 @@ function OrderList() {
                   <button
                     type="button"
                     onClick={() => setIsFilterOpen((open) => !open)}
-                    className="flex h-10 w-full items-center justify-between rounded-[10px] border border-[#2564EB] bg-white px-3 text-left text-sm font-semibold text-[#2564EB] focus:outline-none"
+                    className="flex h-12 w-full items-center justify-between rounded-[10px] border border-[#1B1D604D] bg-white px-3 text-left text-sm font-semibold text-ink focus:outline-none"
                     aria-expanded={isFilterOpen}
                     aria-haspopup="menu"
                   >
                     <span>{selectedFilterLabel || "All Status"}</span>
                     <ChevronDown
                       size={18}
-                      className={`transition-transform ${isFilterOpen ? "rotate-180" : ""}`}
+                      className={`text-[#1B1D604D] transition-transform ${isFilterOpen ? "rotate-180" : ""}`}
                     />
                   </button>
 

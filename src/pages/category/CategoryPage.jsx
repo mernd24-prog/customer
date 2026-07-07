@@ -256,9 +256,10 @@ export default function CategoryPage() {
   // ── Build product fetch params ───────────────────────────────────────────
   const getParams = useCallback(
     (pageOverride) => {
+      const brandVal = searchParams.get("brand");
       const params = {
         category: categoryKey,
-        brand: searchParams.get("brand") || undefined,
+        brand: brandVal ? (brandVal.includes(",") ? brandVal.split(",") : brandVal) : undefined,
         minPrice: searchParams.get("minPrice") || undefined,
         maxPrice: searchParams.get("maxPrice") || undefined,
         sort: searchParams.get("sort") || undefined,
@@ -266,7 +267,7 @@ export default function CategoryPage() {
           searchParams.get("productFamilyCode") ||
           searchParams.get("family") ||
           undefined,
-        rating: searchParams.get("rating") || undefined,
+        rating: searchParams.get("rating") ? (searchParams.get("rating").includes(",") ? searchParams.get("rating").split(",") : searchParams.get("rating")) : undefined,
         inStock: searchParams.get("inStock") || undefined,
         outOfStock: searchParams.get("outOfStock") || undefined,
         expressDelivery: searchParams.get("expressDelivery") || undefined,

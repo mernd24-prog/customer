@@ -38,7 +38,7 @@ import { StickyNavStrip } from "./StickyNavStrip";
 export const CategoryBar = ({ headerData, compact = false }) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const catalogCategoryList = useSelector((state) => state.catalog.list || []);
+  const catalogCategoryList = useSelector((state) => state.catalog.globalCategories || state.catalog.list || []);
   const [categoriesList, setCategoriesList] = useState([]);
 
   // Sync with Redux list when it contains actual category items

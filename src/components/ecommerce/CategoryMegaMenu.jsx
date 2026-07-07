@@ -44,6 +44,7 @@ const isActiveHref = (pathname, href) =>
 const mergeLabels = (labels) => ({ ...DEFAULT_LABELS, ...labels });
 const getCategoryImage = (item = {}) =>
   getImageUrlFromValue([
+    item?.bannerUrl,
     item?.img,
     item?.imageUrl,
     item?.image,
@@ -306,18 +307,21 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
 const PromotionBanner = memo(function PromotionBanner({
   promoData,
   rootData,
+  activeNode,
   getItemHref,
   imageFallbackType,
   labels,
   onImageError,
 }) {
-  const title = rootData.title || promoData?.title || labels.promoTitle;
+  const node = activeNode || rootData;
+  const title = promoData?.title || node?.title || labels.promoTitle;
   const image =
     getImageUrlFromValue(promoData?.image) ||
+    getImageUrlFromValue(node?.image) ||
     getImageUrlFromValue(rootData?.image) ||
     getImageFallbackSrc(title, imageFallbackType);
   const highlight = promoData?.highlight || "";
-  const link = promoData?.link || getItemHref(rootData);
+  const link = promoData?.link || getItemHref(node);
   const buttonText = promoData?.buttonText || labels.promoButton;
 
   return (
@@ -327,7 +331,7 @@ const PromotionBanner = memo(function PromotionBanner({
           <img
             src={image}
             alt={title}
-            className="h-full w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105"
+            className="h-full w-full object-cover object-right transition-all duration-300 ease-in-out group-hover:scale-105"
             onError={(event) => onImageError(event, title, imageFallbackType)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
@@ -659,6 +663,7 @@ export default function CategoryMegaMenu({
             <PromotionBanner
               promoData={promoData}
               rootData={root}
+              activeNode={activeSubSubCategory || activeSubCategory || root}
               getItemHref={getItemHref}
               imageFallbackType={imageFallbackType}
               labels={labels}

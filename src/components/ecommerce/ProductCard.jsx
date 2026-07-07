@@ -75,9 +75,9 @@ export default function ProductCard({
     cardProduct?.isFeatured === true ||
     cardProduct?.markAsFeatured === true;
   const dealBadge =
-    badge ||
     cardProduct?.deal?.badge ||
     cardProduct?.metadata?.dealBadge ||
+    badge ||
     null;
   const isDealProduct =
     Boolean(cardProduct?.deal?.dealId) ||

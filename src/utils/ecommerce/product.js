@@ -314,10 +314,18 @@ export function getImageFallbackSrc(label = "Sam Global", context = "") {
 
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
-    
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${from}" />
+          <stop offset="100%" stop-color="${to}" />
+        </linearGradient>
+      </defs>
       <rect width="800" height="800" fill="url(#bg)"/>
       <circle cx="650" cy="140" r="150" fill="#ffffff" opacity=".16"/>
       <circle cx="100" cy="690" r="180" fill="#ffffff" opacity=".12"/>
+      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="72" font-weight="bold">
+        ${tspans}
+      </text>
     </svg>
   `;
 

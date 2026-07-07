@@ -88,8 +88,7 @@ export default function HomeCategoryGrid({
             stylesCount={
               item.stylesCount ||
               item.productCountLabel ||
-              item.countLabel ||
-              "3,200+ styles"
+              item.countLabel
             }
             href={
               item.categoryKey

@@ -24,7 +24,7 @@ export default function SectionContainer({
           className={`text-[var(--customer-ink)] ${headerbgColor || "bg-white"}`}
         >
           <div
-            className={`mb-2 flex flex-col gap-2  sm:gap-4 sm:flex-row sm:items-start sm:justify-between ${headerClassName}`}
+            className={`mb-2 flex flex-col gap-2  sm:gap-4 sm:flex-row sm:items-center sm:justify-between ${headerClassName}`}
           >
             <div className="min-w-0 ">
               {title && (
