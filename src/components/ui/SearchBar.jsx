@@ -656,6 +656,20 @@ const SearchBar = ({
             <div className="px-4 py-3 text-sm font-medium text-[var(--customer-muted)]">
               Searching...
             </div>
+          ) : !autocompleteLoading && suggestions.length === 0 && sanitizedQuery.length >= autocompleteMinLength ? (
+            <div className="flex flex-col items-center justify-center p-6 text-center">
+              <img
+                src="/image/png/NoProductFound.png"
+                alt="No products found"
+                className="mb-3 h-20 w-20 object-contain"
+              />
+              <p className="text-sm font-medium text-[var(--customer-ink)]">
+                No results found for "{sanitizedQuery}"
+              </p>
+              <p className="mt-1 text-xs text-[var(--customer-muted)]">
+                Try a different search term or category.
+              </p>
+            </div>
           ) : null}
         </div>
       )}

@@ -13,4 +13,15 @@ export const {
   fetchBrands,
   fetchBrandById,
 } = catalogThunks;
-export default createApiSlice({ name: "catalog", thunks: catalogThunks }).reducer;
+const catalogSlice = createApiSlice({
+  name: "catalog",
+  thunks: catalogThunks,
+  reducers: {
+    setGlobalCategories: (state, action) => {
+      state.globalCategories = action.payload;
+    },
+  },
+});
+
+export const { setGlobalCategories } = catalogSlice.actions;
+export default catalogSlice.reducer;

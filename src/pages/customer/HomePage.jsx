@@ -61,16 +61,35 @@ const buildNewArrivalItems = (products) => {
   }
 
   const categories = Object.keys(grouped).slice(0, 3);
-  const badges = ["New", "Trending", "Popular"];
 
-  return categories.map((cat, index) => ({
-    id: `arrivals-${index}`,
-    badgeText: badges[index] || "New",
-    badgeType: ["new", "trending", "luxe"][index] || "new",
-    title: cat === "Uncategorized" ? "New Arrivals" : cat,
-    seeAllLink: `/products?category=${encodeURIComponent(cat)}`,
-    products: grouped[cat].map(toNewArrivalProduct),
-  }));
+  return categories.map((cat, index) => {
+    const categoryProducts = grouped[cat];
+    let dynamicBadge = "";
+    
+    // Find the first available badge from the products in this category
+    for (const p of categoryProducts) {
+      const b = p?.badge || p?.deal?.badge || p?.metadata?.badge || p?.metadata?.dealBadge || (p?.isFeatured ? "Featured" : "");
+      if (b) {
+        dynamicBadge = b;
+        break;
+      }
+    }
+
+    // Fallback if no dynamic badge is found
+    if (!dynamicBadge) {
+      const fallbacks = ["New", "Trending", "Popular"];
+      dynamicBadge = fallbacks[index] || "New";
+    }
+
+    return {
+      id: `arrivals-${index}`,
+      badgeText: dynamicBadge,
+      badgeType: "new",
+      title: cat === "Uncategorized" ? "New Arrivals" : cat,
+      seeAllLink: `/products?category=${encodeURIComponent(cat)}`,
+      products: categoryProducts.map(toNewArrivalProduct),
+    };
+  });
 };
 
 export function HomePage() {

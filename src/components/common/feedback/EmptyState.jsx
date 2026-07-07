@@ -2,6 +2,7 @@ import { ContinueShoppingButton } from "../../dynamicComponent/button/static";
 
 export default function EmptyState({
   icon: Icon,
+  imageSrc = "/image/png/NoProductFound.png",
   title = "Nothing here yet",
   description = "Once data is available, it will appear here.",
   actionLabel,
@@ -27,8 +28,8 @@ export default function EmptyState({
         </div>
       ) : (
         <img
-          src="/image/png/NoProductFound.png"
-          alt="No products found"
+          src={imageSrc}
+          alt={title}
           className="h-28 w-28 object-contain xs:h-32 xs:w-32 sm:h-40 sm:w-40 md:h-44 md:w-44 lg:h-52 lg:w-52 xl:h-60 xl:w-60"
         />
       )}

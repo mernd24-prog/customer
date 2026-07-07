@@ -9,7 +9,7 @@ import { cn } from "../../lib/utils";
 export default function CategoryCard({
   image,
   title,
-  stylesCount = "3,200+ styles",
+  stylesCount,
   href,
   badge = "Featured",
   ctaLabel = "Shop Now",
@@ -20,7 +20,7 @@ export default function CategoryCard({
   const content = (
     <article
       className={cn(
-        "group  h-[400px]    md:h-[421px]   overflow-hidden rounded-lg  lg:rounded-[20px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_14px_34px_rgba(17,24,39,0.1)]",
+        "group h-[375px] md:h-[390px] overflow-hidden rounded-lg lg:rounded-[20px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_14px_34px_rgba(17,24,39,0.1)]",
         active && "ring-2 ring-[#33368F]/40",
         className,
       )}
@@ -65,23 +65,23 @@ export default function CategoryCard({
       </div>
 
       <div className="pt-4 lg:py-4 px-4">
-        <div className="flex flex-col gap-3 ">
-          <h3 className=" line-clamp-1  text-h4 font-semibold  text-[#2E2E2E]">
+        <div className="flex flex-col gap-2">
+          <h3 className="line-clamp-1 text-h6 font-semibold text-[#2E2E2E]">
             {title}
           </h3>
 
           {stylesCount ? (
-            <p className="font-medium  text-extaSmall text-[#2E2E2E]">
+            <p className="font-medium text-extaSmall text-[#2E2E2E]">
               {stylesCount}
             </p>
           ) : null}
         </div>
 
-        <div className="  mt-4 md:mt-9  h-[36px] border-t border-[#CE9F2D4D]">
+        <div className="mt-4 md:mt-6 h-[36px] border-t border-[#CE9F2D4D] pt-2">
           <TextGoldButton
             as="span"
-            className="my-2"
-            rightIcon={<FaAngleRight className="text-[12px] mt-1 " />}
+            className="my-1"
+            rightIcon={<FaAngleRight className="text-[12px] mt-1" />}
           >
             {ctaLabel}
           </TextGoldButton>

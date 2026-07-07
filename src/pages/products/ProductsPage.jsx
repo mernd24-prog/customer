@@ -107,35 +107,38 @@ export default function ProductsPage() {
   const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
 
   const getParams = useCallback(
-    (pageOverride) => ({
-      category: searchParams.get("category") || undefined,
-      brand: searchParams.get("brand") || undefined,
-      q: searchParams.get("q") || undefined,
-      minPrice: searchParams.get("minPrice") || undefined,
-      maxPrice: searchParams.get("maxPrice") || undefined,
-      sort: searchParams.get("sort") || undefined,
-      productFamilyCode:
-        searchParams.get("productFamilyCode") ||
-        searchParams.get("family") ||
-        undefined,
-      color: searchParams.get("color") || undefined,
-      size: searchParams.get("size") || undefined,
-      material: searchParams.get("material") || undefined,
-      fit: searchParams.get("fit") || undefined,
-      storage: searchParams.get("storage") || undefined,
-      skinType: searchParams.get("skinType") || undefined,
-      shade: searchParams.get("shade") || undefined,
-      minRating: searchParams.get("rating") || undefined,
-      inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
-      outOfStock:
-        searchParams.get("outOfStock") === "true" ? "true" : undefined,
-      expressDelivery:
-        searchParams.get("expressDelivery") === "true" ? "true" : undefined,
-      freeDelivery:
-        searchParams.get("freeDelivery") === "true" ? "true" : undefined,
-      page: pageOverride || 1,
-      limit: Number(searchParams.get("limit") || 12),
-    }),
+    (pageOverride) => {
+      const parseArray = (val) => (val ? (val.includes(",") ? val.split(",") : val) : undefined);
+      return {
+        category: searchParams.get("category") || undefined,
+        brand: parseArray(searchParams.get("brand")),
+        q: searchParams.get("q") || undefined,
+        minPrice: searchParams.get("minPrice") || undefined,
+        maxPrice: searchParams.get("maxPrice") || undefined,
+        sort: searchParams.get("sort") || undefined,
+        productFamilyCode:
+          searchParams.get("productFamilyCode") ||
+          searchParams.get("family") ||
+          undefined,
+        color: parseArray(searchParams.get("color")),
+        size: parseArray(searchParams.get("size")),
+        material: parseArray(searchParams.get("material")),
+        fit: parseArray(searchParams.get("fit")),
+        storage: parseArray(searchParams.get("storage")),
+        skinType: parseArray(searchParams.get("skinType")),
+        shade: parseArray(searchParams.get("shade")),
+        rating: parseArray(searchParams.get("rating")),
+        inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
+        outOfStock:
+          searchParams.get("outOfStock") === "true" ? "true" : undefined,
+        expressDelivery:
+          searchParams.get("expressDelivery") === "true" ? "true" : undefined,
+        freeDelivery:
+          searchParams.get("freeDelivery") === "true" ? "true" : undefined,
+        page: pageOverride || 1,
+        limit: Number(searchParams.get("limit") || 12),
+      };
+    },
     [searchParams],
   );
 

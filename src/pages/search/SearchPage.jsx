@@ -261,6 +261,26 @@ export default function SearchPage() {
     );
   }, [searchKey, searchParams]);
 
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (skipInitialSearch.current) return;
+      const sanitized = sanitizeSearchQuery(queryInput);
+      if (sanitized !== q && queryInput !== (searchParams.get("q") || "")) {
+        setSearchParams((prev) => {
+          const next = new URLSearchParams(prev);
+          if (sanitized) {
+            next.set("q", sanitized);
+          } else {
+            next.delete("q");
+          }
+          next.delete("page");
+          return next;
+        }, { replace: true });
+      }
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [queryInput, q, searchParams, setSearchParams]);
+
   useEffect(
     () => () => {
       dispatch(clearSearch());
@@ -574,6 +594,12 @@ export default function SearchPage() {
                   setQueryInput(e.target.value);
                   if (!e.target.value.trim()) dispatch(clearSuggestions());
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSearch(e);
+                  }
+                }}
                 placeholder="Search products, brands, categories..."
                 className="
     h-10 sm:h-11 lg:h-12
@@ -611,13 +637,7 @@ export default function SearchPage() {
               ) : null}
             </div>
 
-            <BrandButton
-              variant="primary"
-              rounded
-              label="Search"
-              type="submit"
-              className="h-12 px-7 text-sm font-semibold shadow-[0_8px_18px_rgba(206,159,45,0.25)] sm:min-w-[130px]"
-            />
+
           </div>
         </form>
 
