@@ -16,6 +16,7 @@ import { fetchMyOrders } from "../../features/order/orderSlice";
 import ReviewImageUploader from "./ReviewImageUploader";
 import ReviewMediaLightbox from "./ReviewMediaLightbox";
 import { getImageUrlFromValue } from "../../utils/ecommerce";
+import ShowMoreText from "../../utils/showMore";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -53,100 +54,6 @@ function RatingPill({ rating }) {
     </span>
   );
 }
-
-/*function ReviewMediaLightbox({
-  images = [],
-  index = 0,
-  onClose,
-  onIndexChange,
-}) {
-  if (!images.length) return null;
-  const safeIndex = Math.min(Math.max(index, 0), images.length - 1);
-  const currentImage = images[safeIndex];
-  const showNavigation = images.length > 1;
-
-  return (
-    <div
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-[#2E2E2E]/90 p-4"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-    >
-      <div
-        className="relative flex max-h-[78vh]  w-full max-w-xl flex-col overflow-hidden rounded-xl border border-[#CE9F2D4D] bg-white  shadow-xl"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-[#CE9F2D33] bg-[#FAFAFA]/60 px-4 py-2.5">
-          <p className="text-sm font-bold text-black ">
-            Review Photos{" "}
-            {images.length > 1 ? `(${safeIndex + 1}/${images.length})` : ""}
-          </p>
-          <button
-            type="button"
-            onClick={onClose}
-            className="grid h-8 w-8 place-items-center rounded-full text-black bg-white"
-            aria-label="Close image preview"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        <div className="relative flex min-h-[220px] items-center justify-center bg-[#FAFAFA] p-3 sm:min-h-[320px] sm:p-4">
-          {showNavigation && (
-            <button
-              type="button"
-              onClick={() =>
-                onIndexChange((safeIndex - 1 + images.length) % images.length)
-              }
-              className="absolute left-2 top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-[#CE9F2D66] bg-white text-[#1B1D60] shadow-sm transition hover:bg-[#CE9F2D] hover:text-white sm:left-3"
-              aria-label="Previous review image"
-            >
-              <ChevronLeft size={20} />
-            </button>
-          )}
-          <img
-            src={currentImage}
-            alt={`Review media ${safeIndex + 1}`}
-            className="max-h-[44vh] max-w-[82%]  rounded-lg border border-[#E8DFC9] bg-white object-contain"
-          />
-          {showNavigation && (
-            <button
-              type="button"
-              onClick={() => onIndexChange((safeIndex + 1) % images.length)}
-              className="absolute right-2 top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-[#CE9F2D66] bg-white text-[#1B1D60] shadow-sm transition hover:bg-[#CE9F2D] hover:text-white sm:right-3"
-              aria-label="Next review image"
-            >
-              <ChevronRight size={20} />
-            </button>
-          )}
-        </div>
-
-        {images.length > 1 && (
-          <div className="flex justify-center gap-2 overflow-x-auto border-t border-[#CE9F2D33] bg-white p-2.5">
-            {images.map((image, thumbIndex) => (
-              <button
-                type="button"
-                key={`${image}-${thumbIndex}`}
-                onClick={() => onIndexChange(thumbIndex)}
-                className={`h-16 w-16 shrink-0   overflow-hidden rounded-md border bg-white p-0.5 transition ${
-                  thumbIndex === safeIndex
-                    ? "border-[#CE9F2D] "
-                    : "border-[#E8DFC9] opacity-70 hover:border-[#CE9F2D] hover:opacity-100"
-                }`}
-              >
-                <img
-                  src={image}
-                  alt=""
-                  className="h-full w-full object-cover"
-                />
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}*/
 
 function getUserDisplayName(user = {}) {
   const first = user.profile?.firstName || user.firstName || "";
@@ -186,8 +93,7 @@ function ProductReviewCard({
   const name =
     review.buyerName ||
     review.name ||
-    (isOwn ? getUserDisplayName(currentUser) : "") ||
-    "Customer";
+    (isOwn ? getUserDisplayName(currentUser) : "");
   const text = review.reviewText || review.text;
   const reviewId = review._id || review.id;
   const helpfulVotes = review.helpfulVotes ?? review.helpful ?? 0;
@@ -206,7 +112,7 @@ function ProductReviewCard({
             className="h-full w-full rounded-full object-cover"
           />
         </span>
-        <span className="text-h6 font-bold text-[#2E2E2E]">{name}</span>
+        <span className="text-h6 font-bold  text-[#2E2E2E]">{name}</span>
       </div>
 
       <div className="my-4 flex flex-wrap items-center gap-2">
@@ -222,7 +128,11 @@ function ProductReviewCard({
           {review.title}
         </p>
       )}
-      {text && <p className="small text-[#2E2E2E]  my-4 ">{text}</p>}
+      {text && (
+        <p className="small my-4 text-[#2E2E2E]">
+          <ShowMoreText text={text} mode="lines" limit={2} />
+        </p>
+      )}
 
       {media.length > 0 && (
         <div className="mb-4 mt-3 flex flex-wrap gap-2">
@@ -632,6 +542,7 @@ export default function ProductReviewsSection({ productId, product }) {
     0,
     hasOwnPublishedReview && sort === "newest" ? 3 : 2,
   );
+
   const displayRatingBreakdown = getRatingBreakdown(stats);
   const selectedSortLabel =
     SORT_OPTIONS.find((option) => option.value === sort)?.label ||
@@ -718,7 +629,7 @@ export default function ProductReviewsSection({ productId, product }) {
             </div>
           </div>
 
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-3 ">
             {canWriteReview && (
               <button
                 type="button"
@@ -731,7 +642,7 @@ export default function ProductReviewsSection({ productId, product }) {
           </div>
         </aside>
 
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-w-0 flex-1 flex-col ">
           {showForm && canWriteReview && (
             <div className="mb-6">
               <WriteReviewForm
@@ -743,7 +654,7 @@ export default function ProductReviewsSection({ productId, product }) {
           )}
 
           {displayTotal > 0 && (
-            <div className="flex flex-col gap-3  mt-2 lg:mt-6 sm:flex-row items-end justify-end ">
+            <div className="flex flex-col gap-3   mt-2 lg:mt-6 sm:flex-row items-end justify-end ">
               <div className="flex flex-wrap items-center gap-2">
                 {ratingFilter > 0 && (
                   <span className="rounded-full bg-gold-soft px-2 py-1 text-xs text-gold-dark">

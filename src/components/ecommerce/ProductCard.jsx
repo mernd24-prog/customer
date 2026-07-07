@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Clock3, Heart, ShoppingCart } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
 import Label from "../common/label/Label";
 import {
@@ -18,6 +18,34 @@ import {
 } from "../../utils/ecommerce";
 import { cn } from "../../lib/utils";
 import StarRating from "../../pages/products/components/starRating";
+
+const getDealEndDateValue = (product = {}) =>
+  product?.deal?.endAt ||
+  product?.deal?.end_at ||
+  product?.deal?.endDate ||
+  product?.deal?.end_date ||
+  product?.dealEndAt ||
+  product?.deal_end_at ||
+  product?.endAt ||
+  product?.end_at ||
+  product?.endDate ||
+  product?.end_date ||
+  product?.metadata?.dealEndAt ||
+  product?.metadata?.deal_end_at ||
+  "";
+
+const formatDealEndDate = (value) => {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+};
 
 export default function ProductCard({
   product,
@@ -79,9 +107,11 @@ export default function ProductCard({
     cardProduct?.metadata?.dealBadge ||
     badge ||
     null;
+  const dealEndDate = formatDealEndDate(getDealEndDateValue(cardProduct));
   const isDealProduct =
     Boolean(cardProduct?.deal?.dealId) ||
-    cardProduct?.metadata?.isDealProduct === true;
+    cardProduct?.metadata?.isDealProduct === true ||
+    Boolean(dealEndDate);
 
   // const resolvedBadgeLabel =
   //   badge ||
@@ -376,6 +406,17 @@ export default function ProductCard({
             priceClassName="text-base font-extrabold text-[#1B1D60] md:text-lg 2xl:text-[20px]"
             oldPriceClassName="text-base font-semibold text-[#949494] line-through md:text-lg 2xl:text-[20px]"
           />
+
+          {isDealProduct && dealEndDate && (
+            <div className="mt-auto flex items-center justify-between gap-3 rounded-[12px] border border-[#EEDFB9] bg-[#FFFDF8] px-3 py-2">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.5px] text-[#9A6A00]">
+                <Clock3 size={13} /> Deal ends
+              </span>
+              <span className="truncate text-[12px] font-bold text-[#1B1D60]">
+                {dealEndDate}
+              </span>
+            </div>
+          )}
         </div>
       </Link>
 

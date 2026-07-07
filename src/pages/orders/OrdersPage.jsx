@@ -7,7 +7,6 @@ import { BsCreditCardFill } from "react-icons/bs";
 import { MdDateRange } from "react-icons/md";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import {
-  ChevronRight,
   ChevronDown,
   Download,
   IndianRupee,
@@ -61,7 +60,6 @@ import {
   ORDER_BREADCRUMBS,
   ORDER_FILTERS,
 } from "../../data/orderPage";
-import { CANCEL_REASON_OPTIONS } from "../../data/constant";
 
 const getOrderId = (order) =>
   order?.id || order?._id || order?.orderId || order?.order_id;
@@ -323,6 +321,7 @@ const getCustomerOrderAmount = (order) => {
   const discount = getAmount(order, "discount") ?? 0;
   const walletDiscount = getAmount(order, "walletDiscount") ?? 0;
   const shipping = getAmount(order, "shipping") ?? 0;
+  const platformFee = getAmount(order, "platformFee") ?? 0;
   const taxPayable =
     order?.summary?.taxPayableAmount ??
     order?.summary?.tax_payable_amount ??
@@ -341,6 +340,7 @@ const getCustomerOrderAmount = (order) => {
       asNumber(subtotal) -
         asNumber(discount) +
         asNumber(shipping) +
+        asNumber(platformFee) +
         asNumber(taxPayable) +
         asNumber(codCharge) -
         asNumber(walletDiscount),
@@ -378,6 +378,27 @@ const getTaxPayableAmount = (order, taxBreakup = {}) =>
       taxBreakup?.taxPayableAmount ??
       taxBreakup?.tax_payable_amount ??
       0,
+  );
+const getCustomerPlatformFeeAmount = (order) => {
+  const customerSpecificFee = asNumber(
+    order?.summary?.customerPlatformFeeAmount ??
+      order?.summary?.customer_platform_fee_amount ??
+      order?.amounts?.customerPlatformFeeAmount ??
+      order?.amounts?.customer_platform_fee_amount ??
+      order?.customerPlatformFeeAmount ??
+      order?.customer_platform_fee_amount,
+  );
+  const platformFee = asNumber(getAmount(order, "platformFee"));
+  return customerSpecificFee > 0 ? customerSpecificFee : platformFee;
+};
+const getCustomerPlatformFeeTaxAmount = (order) =>
+  asNumber(
+    order?.summary?.customerPlatformFeeTaxAmount ??
+      order?.summary?.customer_platform_fee_tax_amount ??
+      order?.amounts?.customerPlatformFeeTaxAmount ??
+      order?.amounts?.customer_platform_fee_tax_amount ??
+      order?.customerPlatformFeeTaxAmount ??
+      order?.customer_platform_fee_tax_amount,
   );
 const formatOrderDate = (value) =>
   value
@@ -430,15 +451,20 @@ function OrderDetail({ orderId, track }) {
   const state = useSelector((s) => s.order);
   const userState = useSelector((s) => s.user);
   const notificationState = useSelector((s) => s.notification);
+
   const orders = getOrderCollection(state.current).length
     ? getOrderCollection(state.current)
     : state.list;
+
   const order = getMatchingOrder({
     current: state.current,
     entities: state.entities,
     orders,
     orderId,
   });
+
+  console.log("Order details from order page :", order);
+
   const currency = getOrderCurrency(order);
   const items = getOrderItems(order);
   const cancellations = Array.isArray(order?.relations?.cancellations)
@@ -469,6 +495,8 @@ function OrderDetail({ orderId, track }) {
   const tax = getAmount(order, "tax");
   const walletDiscount = getAmount(order, "walletDiscount");
   const shipping = getAmount(order, "shipping");
+  const customerPlatformFee = getCustomerPlatformFeeAmount(order);
+  const customerPlatformFeeTax = getCustomerPlatformFeeTaxAmount(order);
   const customerAmount = getCustomerOrderAmount(order);
   const taxIncluded = getTaxIncludedAmount(order, taxBreakup);
   const taxPayable = getTaxPayableAmount(order, taxBreakup);
@@ -539,7 +567,6 @@ function OrderDetail({ orderId, track }) {
       });
       navigate(`/payment/success?orderId=${orderId}`);
     } catch {
-      // openRazorpayCheckout throws on dismiss/failure; order stays pending
     } finally {
       setRetrying(false);
       dispatch(fetchOrderById({ orderId }));
@@ -694,8 +721,9 @@ function OrderDetail({ orderId, track }) {
               {hasKnownStatus(order) && (
                 <OrderDetailSectionCard
                   title="Order Progress"
-                  bodyClassName="overflow-hidden px-4 sm:px-8"
-                  titleClassName="font-bold leading-[100%]"
+                  headerClassName="!min-h-[56px] !py-4"
+                  bodyClassName="overflow-hidden px-4"
+                  titleClassName="text-lg font-bold leading-none"
                 >
                   <OrderProgress
                     status={progressStatus}
@@ -736,21 +764,16 @@ function OrderDetail({ orderId, track }) {
                 <OrderDetailAside>
                   {(subtotal !== undefined || items.length > 0) && (
                     <OrderPaymentSummary
+                      variant="order"
                       subtotal={subtotal}
                       discount={discount}
                       walletDiscount={walletDiscount}
                       shipping={shipping}
+                      customerPlatformFee={customerPlatformFee}
                       customerAmount={customerAmount}
-                      tax={tax}
-                      taxBreakup={taxBreakup}
-                      taxIncluded={taxIncluded}
-                      taxPayable={taxPayable}
-                      shippingAddress={shippingAddress}
                       currency={currency}
                       formatMoney={formatMoney}
                       asNumber={asNumber}
-                      hasShippingAddress={hasShippingAddress}
-                      getAddressValue={getAddressValue}
                     />
                   )}
                 </OrderDetailAside>
@@ -958,6 +981,9 @@ function OrderSummaryCard({ order }) {
   const amount = getCustomerOrderAmount(order);
   const quantity = item?.quantity || 1;
   const paymentMethod = humanize(getPaymentMethod(order), "N/A");
+  const itemColor = getOrderItemColor(item);
+  const shouldShowColor =
+    itemColor != null && String(itemColor).trim().toLowerCase() !== "n/a";
 
   const handleCopyOrderId = (e) => {
     e.preventDefault();
@@ -1043,13 +1069,15 @@ function OrderSummaryCard({ order }) {
             {title}
           </Link>
 
-          <div className="my-4 lg:my-6  flex flex-wrap gap-x-5 gap-y-1 text-lg font-semibold text-ink">
-            <span>
-              Color :{" "}
-              <strong className="font-bold text-[#25247B]">
-                {getOrderItemColor(item)}
-              </strong>
-            </span>
+          <div className="my-4 lg:my-6   flex flex-wrap gap-x-5 gap-y-1 text-lg font-semibold text-ink">
+            {shouldShowColor && (
+              <span>
+                Color :{" "}
+                <strong className="font-bold  text-[#25247B]">
+                  {itemColor}
+                </strong>
+              </span>
+            )}
             <span>
               Quantity : <strong className="font-bold">{quantity}</strong>
             </span>

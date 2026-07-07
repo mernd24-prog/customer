@@ -21,13 +21,13 @@ const PolicySection = ({ title, points, description, footer }) => {
   return (
     <section className="py-1 first:pt-0">
       {title && (
-        <h2 className="mb-3 text-heading-sm md:text-heading-md font-bold leading-tight text-ink lg:text-heading-lg">
+        <h2 className="mb-3 text-[20px] leading-[28px] tracking-[-0.01em] md:text-[24px] md:leading-[32px] md:tracking-[-0.01em] font-bold leading-tight text-ink lg:text-[28px] lg:leading-[36px] lg:tracking-[-0.01em]">
           {title}
         </h2>
       )}
 
       {description && (
-        <p className="mb-8 text-body-sm leading-relaxed tracking-normal text-muted md:text-body-lg">
+        <p className="mb-8 text-[14px] leading-[22px] leading-relaxed tracking-normal text-muted md:text-[18px] md:leading-[28px]">
           {description}
         </p>
       )}
@@ -37,7 +37,7 @@ const PolicySection = ({ title, points, description, footer }) => {
           {visiblePoints.map((point, pIdx) => (
             <div key={pIdx}>
               {point.title && (
-                <h3 className="mb-3 text-heading-sm md:text-heading-md font-bold leading-tight text-ink lg:text-heading-lg">
+                <h3 className="mb-3 text-[20px] leading-[28px] tracking-[-0.01em] md:text-[24px] md:leading-[32px] md:tracking-[-0.01em] font-bold leading-tight text-ink lg:text-[28px] lg:leading-[36px] lg:tracking-[-0.01em]">
                   {point.title}
                 </h3>
               )}
@@ -51,7 +51,7 @@ const PolicySection = ({ title, points, description, footer }) => {
                         alt=""
                         className="my-auto h-3 w-3 flex-shrink-0 object-contain md:h-3.5 md:w-3.5"
                       />
-                      <span className="text-body-sm leading-relaxed tracking-normal text-muted md:text-body-lg">
+                      <span className="text-[14px] leading-[22px] leading-relaxed tracking-normal text-muted md:text-[18px] md:leading-[28px]">
                         {line}
                       </span>
                     </li>
@@ -61,7 +61,7 @@ const PolicySection = ({ title, points, description, footer }) => {
                 getTextLines(point.description).map((line, lineIdx) => (
                   <p
                     key={lineIdx}
-                    className="text-caption-md leading-relaxed tracking-normal text-muted md:text-caption-lg"
+                    className="text-[13px] leading-[20px] leading-relaxed tracking-normal text-muted md:text-[14px] md:leading-[22px]"
                   >
                     {line}
                   </p>
@@ -74,7 +74,7 @@ const PolicySection = ({ title, points, description, footer }) => {
 
       {footer && (
         <div className="mt-8">
-          <p className="text-caption-md leading-relaxed tracking-normal text-muted md:text-caption-lg">
+          <p className="text-[13px] leading-[20px] leading-relaxed tracking-normal text-muted md:text-[14px] md:leading-[22px]">
             {footer}
           </p>
         </div>

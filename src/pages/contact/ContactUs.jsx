@@ -70,9 +70,9 @@ function normalizeContactItems(sections) {
 export function SectionIntro({ title, description, className = "" }) {
   return (
     <div className={`mx-auto max-w-4xl text-center  ${className}`}>
-      <h2 className="text-heading-sm font-bold text-ink sm:text-heading-md">{title}</h2>
+      <h2 className="text-[20px] leading-[28px] tracking-[-0.01em] font-bold text-ink sm:text-[24px] sm:leading-[32px] sm:tracking-[-0.01em]">{title}</h2>
       {description && (
-        <p className="mt-4 text-body-sm leading-relaxed text-muted sm:text-body-md">
+        <p className="mt-4 text-[14px] leading-[22px] leading-relaxed text-muted sm:text-[16px] sm:leading-[24px]">
           {description}
         </p>
       )}
@@ -102,11 +102,11 @@ export function ReasonCard({ item, showDivider }) {
         <span className="absolute left-0 top-8 hidden h-[112px] w-px bg-border lg:block" />
       )}
       <CircleIcon icon={item.icon} />
-      <h3 className="mt-6 max-w-[270px] text-subheading-md font-bold leading-snug text-ink sm:text-subheading-lg">
+      <h3 className="mt-6 max-w-[270px] text-[16px] leading-[24px] font-bold leading-snug text-ink sm:text-[18px] sm:leading-[26px]">
         {item.title}
       </h3>
       {item.description && (
-        <p className="mt-2 max-w-[220px] text-caption-md leading-relaxed text-muted">
+        <p className="mt-2 max-w-[220px] text-[13px] leading-[20px] leading-relaxed text-muted">
           {item.description}
         </p>
       )}
@@ -124,16 +124,16 @@ function ContactInfoCard({ item, showDivider }) {
         <item.icon size={27} fill="currentColor" strokeWidth={1.8} />
       </span>
       <div>
-        <p className="text-label-md font-semibold text-blue">{item.label}</p>
+        <p className="text-[13px] leading-[20px] tracking-[0.5px] font-semibold text-blue">{item.label}</p>
         {item.href ? (
           <a
             href={item.href}
-            className="mt-1 block text-body-md font-bold text-ink transition-all duration-300 ease-in-out hover:text-gold"
+            className="mt-1 block text-[16px] leading-[24px] font-bold text-ink transition-all duration-300 ease-in-out hover:text-gold"
           >
             {item.value}
           </a>
         ) : (
-          <p className="mt-1 max-w-[320px] text-caption-md font-medium leading-relaxed text-ink">
+          <p className="mt-1 max-w-[320px] text-[13px] leading-[20px] font-medium leading-relaxed text-ink">
             {item.value}
           </p>
         )}
@@ -157,8 +157,8 @@ function FramedPanel({
       className={`relative overflow-hidden border bg-white px-6 py-9 text-center  sm:px-10 ${isBlue ? "border-border" : "border-gold"
         }`}
     >
-      <h3 className="text-subheading-lg font-bold text-blue sm:text-heading-sm">{title}</h3>
-      <p className="mx-auto mt-5 max-w-md text-body-sm leading-relaxed text-muted">
+      <h3 className="text-[18px] leading-[26px] font-bold text-blue sm:text-[20px] sm:leading-[28px] sm:tracking-[-0.01em]">{title}</h3>
+      <p className="mx-auto mt-5 max-w-md text-[14px] leading-[22px] leading-relaxed text-muted">
         {description}
       </p>
       {href && (
@@ -198,9 +198,9 @@ function CommitmentBand({
       <div className="grid min-h-[145px]  lg:grid-cols-2">
         {commitmentTitle && (
           <div className="bg-navy-soft px-[7%] py-9">
-            <h3 className="text-subheading-lg font-bold text-blue">{commitmentTitle}</h3>
+            <h3 className="text-[18px] leading-[26px] font-bold text-blue">{commitmentTitle}</h3>
             {commitmentDescription && (
-              <p className="mt-5 text-body-sm leading-relaxed text-muted">
+              <p className="mt-5 text-[14px] leading-[22px] leading-relaxed text-muted">
                 {commitmentDescription}
               </p>
             )}
@@ -208,7 +208,7 @@ function CommitmentBand({
         )}
         {closingTitle && (
           <div className="bg-cream px-[7%] py-9">
-            <p className="text-heading-sm font-bold leading-snug text-gold-dark sm:text-heading-md">
+            <p className="text-[20px] leading-[28px] tracking-[-0.01em] font-bold leading-snug text-gold-dark sm:text-[24px] sm:leading-[32px] sm:tracking-[-0.01em]">
               {closingTitle}
             </p>
           </div>

@@ -25,15 +25,21 @@ function ToolbarDropdown({ value = "", options = [], onChange }) {
   }, []);
 
   return (
-    <div ref={dropdownRef} className="relative inline-block flex-1 sm:flex-none">
+    <div
+      ref={dropdownRef}
+      className="relative inline-block flex-1 sm:flex-none"
+    >
       {/* Trigger */}
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
-        className="flex min-h-9 w-[160px] items-center justify-between gap-2 rounded-[var(--customer-radius-sm)] border border-[#E7D9B8] bg-white px-3 py-2 text-left text-[13px] sm:text-[14px] font-medium text-[#03014D] transition-all duration-300 ease-in-out hover:border-[#CE9F2D] focus:outline-none"
+        className="flex min-h-10 focus:outline-none w-[180px] items-center justify-between gap-3 rounded-[var(--customer-radius-sm)] border border-[#1B1D604D] bg-white px-3 py-3 text-left small font-medium text-[#03014D] shadow-sm transition-all duration-300 ease-in-out"
       >
         <span className="flex min-w-0 flex-1 items-center gap-1.5 sm:gap-2">
-          <ListFilter size={16} className="shrink-0 text-[#03014D] hidden sm:block" />
+          <ListFilter
+            size={16}
+            className="shrink-0 text-[#03014D] hidden sm:block"
+          />
 
           <span className="truncate">
             {selectedOption?.label || options[0]?.label || "Select"}
@@ -140,7 +146,7 @@ export default function CollectionToolbar({
           <button
             type="button"
             onClick={onOpenFilters}
-            className="flex flex-1 sm:flex-none h-10 sm:h-11 justify-center items-center gap-1.5 sm:gap-2 rounded-xl border border-[#1B1D604D] bg-white px-3 sm:px-4 text-[13px] sm:text-[14px] font-medium text-[#03014D] shadow-sm transition hover:border-[#CE9F2D] hover:bg-[#F8F3E7] lg:hidden focus:outline-none"
+            className="flex  flex-1 sm:flex-none h-10 sm:h-11 justify-center items-center gap-1.5 sm:gap-2 rounded-xl border border-[#1B1D604D] bg-white px-3 sm:px-4 text-[13px] sm:text-[14px] font-medium text-[#03014D] shadow-sm transition hover:border-[#CE9F2D] hover:bg-[#F8F3E7] lg:hidden focus:outline-none"
           >
             <SlidersHorizontal size={16} className="hidden sm:block" />
             Filters

@@ -296,7 +296,7 @@ function ProductGallery({
                       isZoomed
                         ? isModal
                           ? "scale-[2.0]"
-                          : "scale-[1.9]"
+                          : "scale-[2.4]"
                         : "scale-95"
                     }`}
                     style={{

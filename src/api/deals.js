@@ -4,7 +4,7 @@ import { endpoints } from "./endpoints";
 /**
  * Fetch public deals/placements for customers
  * Shows active deals and promotional placements
- * 
+ *
  * @param {Object} params - Query parameters
  * @param {string} params.placement_type - Type of placement (e.g., 'banner', 'featured', 'sponsored')
  * @param {string} params.category_id - Filter by category ID (optional)
@@ -20,24 +20,59 @@ export const getPublicDeals = async (params = {}) => {
       ...params,
     },
   });
+
   return response.data;
 };
 
 export const getPublicDealProducts = async (params = {}) => {
+  const normalizedParams = {
+    page: params.page || 1,
+    limit: params.limit || 12,
+    q: params.q,
+    sort: params.sort,
+  };
+  if (params.category && !normalizedParams.category_id) {
+    normalizedParams.category_id = params.category;
+  }
+  if (params.brand && !normalizedParams.brand_id) {
+    normalizedParams.brand_id = params.brand;
+  }
+  if (params.minPrice && !normalizedParams.min_price) {
+    normalizedParams.min_price = params.minPrice;
+  }
+  if (params.maxPrice && !normalizedParams.max_price) {
+    normalizedParams.max_price = params.maxPrice;
+  }
+  if (params.rating && !normalizedParams.min_rating) {
+    normalizedParams.min_rating = params.rating;
+  }
+  if (params.minRating && !normalizedParams.min_rating) {
+    normalizedParams.min_rating = params.minRating;
+  }
+  if (params.inStock && !normalizedParams.in_stock) {
+    normalizedParams.in_stock = params.inStock;
+  }
+  if (params.outOfStock && !normalizedParams.out_of_stock) {
+    normalizedParams.out_of_stock = params.outOfStock;
+  }
+  if (params.expressDelivery && !normalizedParams.express_delivery) {
+    normalizedParams.express_delivery = params.expressDelivery;
+  }
+  if (params.freeDelivery && !normalizedParams.free_delivery) {
+    normalizedParams.free_delivery = params.freeDelivery;
+  }
+
   const response = await api.get(endpoints.deals.publicProducts, {
-    params: {
-      page: params.page || 1,
-      limit: params.limit || 12,
-      ...params,
-    },
+    params: normalizedParams,
   });
+
   return response.data;
 };
 
 /**
  * Fetch all public products
  * Shows products available for customers to browse and purchase
- * 
+ *
  * @param {Object} params - Query parameters
  * @param {number} params.limit - Number of results per page (default: 20)
  * @param {number} params.offset - Pagination offset (default: 0)
@@ -61,7 +96,7 @@ export const getProducts = async (params = {}) => {
 
 /**
  * Get product details
- * 
+ *
  * @param {string} productId - Product ID
  * @returns {Promise<Object>} Product details
  */
@@ -72,7 +107,7 @@ export const getProductDetail = async (productId) => {
 
 /**
  * Search products
- * 
+ *
  * @param {string} searchQuery - Search query string
  * @param {Object} params - Additional search parameters
  * @param {number} params.limit - Number of results (default: 20)
@@ -93,7 +128,7 @@ export const searchProducts = async (searchQuery, params = {}) => {
 
 /**
  * Get related products
- * 
+ *
  * @param {string} productId - Product ID
  * @returns {Promise<Object>} Related products
  */
@@ -104,7 +139,7 @@ export const getRelatedProducts = async (productId) => {
 
 /**
  * Get product reviews
- * 
+ *
  * @param {string} productId - Product ID
  * @param {Object} params - Query parameters
  * @param {number} params.limit - Number of reviews

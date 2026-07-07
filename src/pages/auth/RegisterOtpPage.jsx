@@ -165,7 +165,7 @@ export default function RegisterOtpPage() {
             <Smartphone size={18} /> Send OTP &amp; register
           </Button>
 
-          <p className="text-center text-caption-md text-muted">
+          <p className="text-center text-[13px] leading-[20px] text-muted">
             Already have an account?{" "}
             <Link
               to={AUTH_ROUTES.login}

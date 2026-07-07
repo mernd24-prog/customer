@@ -27,15 +27,12 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
   const progressWidth =
     steps.length <= 1 ? 0 : (activeIndex / (steps.length - 1)) * 100;
   const compact = steps.length > 8;
-  const columnWidth = compact ? 88 : 112;
-  const lineTop = compact ? 50 : 58;
+  const lineTop = compact ? 32 : 36;
 
   return (
     <div
-      className="relative grid min-w-full gap-0 px-2 pb-7 pt-5"
-      style={{
-        gridTemplateColumns: `repeat(${steps.length}, minmax(${columnWidth}px, 1fr))`,
-      }}
+      className="relative grid w-full max-w-[760px] py-3"
+      style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
     >
       <span
         className="absolute h-0.5 overflow-hidden bg-border"
@@ -63,25 +60,25 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
               <div
                 className={`flex items-center justify-center rounded-full ${
                   done ? "bg-[#B88200]" : "bg-[#83858C]"
-                } ${compact ? "h-10 w-10" : "h-16 w-16"}`}
+                } ${compact ? "h-9 w-9" : "h-12 w-12"}`}
               >
                 <div
                   className={`flex items-center justify-center rounded-full ${
                     done ? "bg-[#CE9F2D]" : "bg-[#8A8C92]"
-                  } ${compact ? "h-8 w-8" : "h-10 w-10"}`}
+                  } ${compact ? "h-7 w-7" : "h-8 w-8"}`}
                 >
                   <img
                     src={vectorImage}
                     alt="done"
-                    className={compact ? "h-4 w-4" : "h-5 w-5"}
+                    className={compact ? "h-3.5 w-3.5" : "h-4 w-4"}
                   />
                 </div>
               </div>
             </div>
             <p
-              className={`mt-3 flex min-h-[38px] w-full max-w-[92px] items-start justify-center px-1 text-center font-sans font-semibold  ${
+              className={`mt-2 flex min-h-[32px] w-full items-start justify-center px-1 text-center font-sans text-xs font-semibold leading-4 ${
                 current || done ? "text-[#CE9F2D]" : "text-muted"
-              } ${compact ? "small" : "small"}`}
+              }`}
             >
               {step === "pending_payment" ? "Payment" : TRACKING_LABELS[step]}
             </p>
@@ -247,7 +244,7 @@ function OrderProgress({ status, cancellations = [], returns = [] }) {
     visibleSteps[visibleSteps.length - 1];
 
   return (
-    <div className="space-y-6   mb-6 ">
+    <div className="">
       <div className="hidden  xl:block">
         <StepBar
           steps={progressSteps}
