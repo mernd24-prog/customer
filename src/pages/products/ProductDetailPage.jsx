@@ -29,7 +29,7 @@ import { fetchProductWarranty } from "../../features/warranty/warrantySlice";
 import { checkServiceability } from "../../features/delivery/deliverySlice";
 import { fetchDynamicPrice } from "../../features/dynamicPricing/dynamicPricingSlice";
 import {
-  fetchTrendingProducts,
+  fetchRecommendations,
   trackRecommendationInteraction,
 } from "../../features/recommendation/recommendationSlice";
 import {
@@ -950,6 +950,7 @@ export default function ProductDetailPage() {
   const dynamicState = useSelector((s) => s.dynamicPricing);
   const relatedState = useSelector((s) => s.relatedProducts);
   const crossSellState = useSelector((s) => s.relatedProducts);
+  const recommendationList = useSelector((s) => s.recommendation.list);
 
   const warranty = warrantyState.current;
 
@@ -962,6 +963,19 @@ export default function ProductDetailPage() {
 
   const crossSellProducts =
     crossSellState.crossSellByProduct[productId]?.items || [];
+
+  const recommendedProducts = useMemo(() => {
+    const seen = new Set([String(productId || "")]);
+
+    return (Array.isArray(recommendationList) ? recommendationList : []).filter(
+      (recommendedProduct) => {
+        const id = String(getProductId(recommendedProduct) || "");
+        if (!id || seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      },
+    );
+  }, [productId, recommendationList]);
 
   const [quantity, setQuantity] = useState(1);
   const [deliveryResult, setDeliveryResult] = useState(null);
@@ -991,7 +1005,13 @@ export default function ProductDetailPage() {
     dispatch(fetchProductWarranty({ productId })).catch(() => {});
     dispatch(fetchRelatedProducts({ productId })).catch(() => {});
     dispatch(fetchCrossSellProducts({ productId })).catch(() => {});
-    dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
+    dispatch(
+      fetchRecommendations({
+        category: product.category,
+        period: "week",
+        limit: 8,
+      }),
+    ).catch(() => {});
 
     dispatch(
       trackAnalyticsEvent({
@@ -1474,6 +1494,16 @@ export default function ProductDetailPage() {
               />
 
               <ProductReviewsSection productId={productId} product={product} />
+
+              <ProductRecommendationSection
+                title="Recommended For You"
+                linkText="View all →"
+                products={recommendedProducts}
+                addToCart={addToCart}
+                toggleWishlist={toggleWishlist}
+                isWishlisted={isWishlisted}
+                className="mt-12"
+              />
 
               <ProductRecommendationSection
                 title="You May Also Like"

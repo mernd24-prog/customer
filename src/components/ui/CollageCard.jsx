@@ -57,21 +57,69 @@ function CollageCard({ section }) {
     </article>
   );
 }
+const getImageUrl = (image) =>
+  typeof image === "string"
+    ? image
+    : image?.url || image?.image || image?.imageUrl || image?.src || image?.coverImage || "";
+
+const getLinkUrl = (item = {}, fallback = "/products") =>
+  item.link || item.url || item.href || item.cta?.url || fallback;
+
+const toCollageImage = (item = {}, fallbackLink = "/products") => ({
+  image: getImageUrl(item.image || item),
+  link: getLinkUrl(item, fallbackLink),
+  label: item.label || item.title || item.alt || "Featured",
+});
+
 function toCollageSections(cmsPages = []) {
   const sections = (Array.isArray(cmsPages) ? cmsPages : [])
     .filter((page) => String(page?.pageType || "") === "homepage-slide")
+    .sort((a, b) => Number(a?.sortOrder || 0) - Number(b?.sortOrder || 0))
     .slice(0, 4)
-    .map((page) => ({
-      title: page?.title || "Featured",
-      label: page?.metadata?.badge || "Trending",
-      images: [
-        {
-          image: page?.coverImage || page?.metadata?.coverImage || "",
-          link: page?.metadata?.ctaLink || `/cms/${page?.slug || ""}`,
-          label: page?.metadata?.label || page?.title || "Featured",
-        },
-      ].filter((img) => img.image),
-    }))
+    .map((page) => {
+      const metadata = page?.metadata || {};
+      const metadataData = metadata?.data || {};
+      const fallbackLink =
+        metadata?.ctaLink ||
+        metadataData?.ctaLink ||
+        page?.cta?.url ||
+        `/cms/${page?.slug || ""}`;
+      const sectionImages = (Array.isArray(page?.sections) ? page.sections : [])
+        .flatMap((section) => [
+          section?.image,
+          ...(Array.isArray(section?.gallery) ? section.gallery : []),
+          ...(Array.isArray(section?.points) ? section.points.map((point) => ({
+            image: point?.image,
+            label: point?.title,
+            link: point?.cta?.url,
+          })) : []),
+        ]);
+      const metadataImages =
+        metadata?.images ||
+        metadataData?.images ||
+        metadata?.cards ||
+        metadataData?.cards ||
+        [];
+      const galleryImages = [
+        ...(Array.isArray(page?.gallery) ? page.gallery : []),
+        ...(Array.isArray(page?.galleryImages) ? page.galleryImages : []),
+      ];
+      const sourceImages = [
+        ...(Array.isArray(metadataImages) ? metadataImages : []),
+        ...sectionImages,
+        ...galleryImages,
+        page?.coverImage || page?.metadata?.coverImage || page?.image,
+      ];
+
+      return {
+        title: page?.title || metadataData?.title || "Featured",
+        label: metadata?.badge || metadataData?.badge || "Trending",
+        images: sourceImages
+          .map((item) => toCollageImage(item, fallbackLink))
+          .filter((img) => img.image)
+          .slice(0, 4),
+      };
+    })
     .filter((section) => section.images.length > 0);
   return sections;
 }

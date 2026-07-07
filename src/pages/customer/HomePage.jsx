@@ -81,6 +81,9 @@ export function HomePage() {
 
   const productList = useSelector((s) => s.product.list);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
+  const cmsPages = useSelector((s) =>
+    Array.isArray(s.cms.list) ? s.cms.list : [],
+  );
   const products = Array.isArray(productList) ? productList : [];
 
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
@@ -130,7 +133,7 @@ export function HomePage() {
         className="text-[#3E4093] font-regular text-[18px] "
       />
 
-      <CollageMainSection />
+      <CollageMainSection cmsPages={cmsPages} />
 
       <ShoppingMadeEasyBanner
         title="Shopping Made Easy"

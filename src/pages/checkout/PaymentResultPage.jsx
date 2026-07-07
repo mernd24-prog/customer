@@ -68,6 +68,7 @@ export function PaymentResultPage({ failed = false }) {
   const shipping = getOrderAmount(order || {}, "shipping");
   const customerAmount = getCustomerOrderAmount(order || {});
   const status = firstDefined(order?.status, order?.orderStatus, "confirmed");
+  const invoiceDownloadAvailable = status === "fulfilled";
   const deliveryDateRange = getDeliveryDateRange(order || {});
   const deliveryLabel = deliveryDateRange
     ? deliveryDateRange.minDate
@@ -108,7 +109,7 @@ export function PaymentResultPage({ failed = false }) {
   }, [dispatch, orderId]);
 
   useEffect(() => {
-    if (!orderId) {
+    if (!orderId || !invoiceDownloadAvailable) {
       setInvoices(null);
       return;
     }
@@ -116,7 +117,7 @@ export function PaymentResultPage({ failed = false }) {
       .unwrap()
       .then((result) => setInvoices(result?.data || result))
       .catch(() => setInvoices(null));
-  }, [dispatch, orderId]);
+  }, [dispatch, invoiceDownloadAvailable, orderId]);
 
   useEffect(() => {
     if (!currentUser?.id && !currentUser?._id && !userState.loading) {
@@ -136,6 +137,10 @@ export function PaymentResultPage({ failed = false }) {
   };
 
   const handleInvoiceDownload = () => {
+    if (!invoiceDownloadAvailable) {
+      notify.error("Invoice will be available after the order is fulfilled.");
+      return;
+    }
     if (!orderId) {
       notify.error("Order ID is missing, so invoice cannot be downloaded.");
       return;
@@ -201,15 +206,17 @@ export function PaymentResultPage({ failed = false }) {
         </div>
         <div className="border-t border-red-100 px-6 py-5 sm:px-10">
           <div className="flex flex-col gap-3 sm:flex-row">
-            <BrandButton
-              variant="secondary"
-              rounded
-              loading={downloadingId === invoiceDownloadPath}
-              onClick={handleInvoiceDownload}
-              icon={<Download size={18} />}
-              label="Download Invoice"
-              className="h-12 w-full min-w-[220px] text-sm sm:w-auto"
-            />
+            {invoiceDownloadAvailable && (
+              <BrandButton
+                variant="secondary"
+                rounded
+                loading={downloadingId === invoiceDownloadPath}
+                onClick={handleInvoiceDownload}
+                icon={<Download size={18} />}
+                label="Download Invoice"
+                className="h-12 w-full min-w-[220px] text-sm sm:w-auto"
+              />
+            )}
           </div>
         </div>
       </section>
@@ -394,17 +401,19 @@ export function PaymentResultPage({ failed = false }) {
                     </div>
                   </div>
 
-                  <div className="mt-4 grid gap-[10px]">
-                    <BrandButton
-                      variant="secondary"
-                      rounded
-                      loading={downloadingId === invoiceDownloadPath}
-                      onClick={handleInvoiceDownload}
-                      icon={<Download size={18} />}
-                      label="Download invoice"
-                      className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
-                    />
-                  </div>
+                  {invoiceDownloadAvailable && (
+                    <div className="mt-4 grid gap-[10px]">
+                      <BrandButton
+                        variant="secondary"
+                        rounded
+                        loading={downloadingId === invoiceDownloadPath}
+                        onClick={handleInvoiceDownload}
+                        icon={<Download size={18} />}
+                        label="Download invoice"
+                        className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
+                      />
+                    </div>
+                  )}
                 </OrderDetailSectionCard>
 
                 {hasOrderShippingAddress(shippingAddress) && (
