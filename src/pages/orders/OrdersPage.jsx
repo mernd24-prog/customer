@@ -73,6 +73,18 @@ const getPaymentStatus = (order) =>
   order?.payment_status || order?.paymentStatus || "unknown";
 const getDeliveryStatus = (order) =>
   order?.delivery_status || order?.deliveryStatus || null;
+const getProgressStatus = (order) => {
+  const status = getOrderStatus(order);
+  const deliveryStatus = getDeliveryStatus(order);
+  if (deliveryStatus === "delivered_verified") return "delivered_verified";
+  if (deliveryStatus === "delivered" && !["fulfilled", "cancelled"].includes(status)) {
+    return "delivered";
+  }
+  if (deliveryStatus === "out_for_delivery" && ["confirmed", "packed", "shipped"].includes(status)) {
+    return "out_for_delivery";
+  }
+  return status;
+};
 const hasKnownStatus = (order) => getOrderStatus(order) !== "unknown";
 const canCancelOrder = (order) => {
   const status = getOrderStatus(order);
@@ -461,6 +473,7 @@ function OrderDetail({ orderId, track }) {
   const taxIncluded = getTaxIncludedAmount(order, taxBreakup);
   const taxPayable = getTaxPayableAmount(order, taxBreakup);
   const status = getOrderStatus(order);
+  const progressStatus = getProgressStatus(order);
   const canRequestReturn = [
     "delivered",
     "fulfilled",
@@ -684,7 +697,7 @@ function OrderDetail({ orderId, track }) {
                   titleClassName="font-bold leading-[100%]"
                 >
                   <OrderProgress
-                    status={status}
+                    status={progressStatus}
                     cancellations={cancellations}
                     returns={returns}
                   />
@@ -694,6 +707,7 @@ function OrderDetail({ orderId, track }) {
               {(track || shipments.length > 0) && (
                 <ShipmentTrackingPanel
                   shipments={shipments}
+                  orderDeliveryStatus={getDeliveryStatus(order)}
                   notifications={
                     Array.isArray(notificationState.list)
                       ? notificationState.list

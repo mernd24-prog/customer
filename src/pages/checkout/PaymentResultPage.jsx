@@ -157,7 +157,7 @@ export function PaymentResultPage({ failed = false }) {
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "Cart", href: "/cart" },
-    { label: "Checkout", href: "/checkout" },
+    { label: "Checkout" },
     { label: failed ? "Payment Failed" : "Order Placed" },
   ];
 

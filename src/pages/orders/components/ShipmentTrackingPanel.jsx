@@ -1,6 +1,12 @@
 import { Clock3, Package, Phone, ShieldCheck, Truck } from "lucide-react";
 
-const label = (value = "") => String(value || "Not available").replace(/_/g, " ");
+const STATUS_LABELS = {
+  delivered_verified: "Delivered Verified",
+  out_for_delivery: "Out For Delivery",
+};
+
+const label = (value = "") =>
+  STATUS_LABELS[value] || String(value || "Not available").replace(/_/g, " ");
 const dateTime = (value) => value ? new Date(value).toLocaleString("en-IN", {
   day: "numeric",
   month: "short",
@@ -22,7 +28,11 @@ const latestOtpForShipment = (notifications = [], shipment = {}) => {
 const otpFromNotification = (notification) =>
   String(notification?.template || notification?.message || "").match(/\b\d{6}\b/)?.[0] || "";
 
-export default function ShipmentTrackingPanel({ shipments = [], notifications = [] }) {
+export default function ShipmentTrackingPanel({
+  shipments = [],
+  notifications = [],
+  orderDeliveryStatus = null,
+}) {
   if (!shipments.length) {
     return (
       <section className="rounded-xl border border-[#CE9F2D66] bg-white p-5">
@@ -39,11 +49,26 @@ export default function ShipmentTrackingPanel({ shipments = [], notifications = 
         <p className="mt-1 text-sm text-[#6F7480]">Each seller package may move separately.</p>
       </div>
       {shipments.map((shipment, index) => {
-        const events = [...(shipment.trackingEvents || [])].sort(
-          (left, right) => new Date(right.event_time || right.created_at || 0) - new Date(left.event_time || left.created_at || 0),
-        );
         const agent = shipment.delivery_agent_snapshot || {};
         const verification = shipment.verification || {};
+        const displayStatus = verification.verifiedAt || orderDeliveryStatus === "delivered_verified"
+          ? "delivered_verified"
+          : orderDeliveryStatus === "delivered" && shipment.status === "out_for_delivery"
+            ? "delivered"
+          : shipment.status;
+        const sourceEvents = [...(shipment.trackingEvents || [])];
+        if (
+          ["delivered", "delivered_verified"].includes(displayStatus) &&
+          !sourceEvents.some((event) => event.status === displayStatus)
+        ) {
+          sourceEvents.unshift({
+            status: displayStatus,
+            event_time: verification.verifiedAt || shipment.delivered_verified_at || shipment.updated_at,
+          });
+        }
+        const events = sourceEvents.sort(
+          (left, right) => new Date(right.event_time || right.created_at || 0) - new Date(left.event_time || left.created_at || 0),
+        );
         const otpNotification = latestOtpForShipment(notifications, shipment);
         const otp = otpFromNotification(otpNotification);
         const trackingNumber = shipment.tracking_number || shipment.awb_number;
@@ -58,7 +83,7 @@ export default function ShipmentTrackingPanel({ shipments = [], notifications = 
                   <p className="text-xs text-[#6F7480]">{shipment.seller?.displayName || shipment.seller?.businessName || "Marketplace seller"}</p>
                 </div>
               </div>
-              <span className="rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-semibold capitalize text-white">{label(shipment.status)}</span>
+              <span className="rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-semibold text-white">{label(displayStatus)}</span>
             </div>
 
             <div className="grid gap-4 p-4 sm:p-6 lg:grid-cols-2">
@@ -72,7 +97,7 @@ export default function ShipmentTrackingPanel({ shipments = [], notifications = 
               <div className="rounded-lg border border-[#E7D9B8] p-4">
                 <h4 className="font-semibold text-[#1B1D60]">Latest movement</h4>
                 <div className="mt-3 space-y-3">
-                  {(events.length ? events : [{ status: shipment.status, event_time: shipment.updated_at }]).map((event, eventIndex) => (
+                  {(events.length ? events : [{ status: displayStatus, event_time: shipment.updated_at }]).map((event, eventIndex) => (
                     <div key={event.id || eventIndex} className="relative border-l-2 border-[#CE9F2D66] pl-4 last:border-transparent">
                       <span className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-[#CE9F2D]" />
                       <p className="text-sm font-semibold capitalize text-[#2E2E2E]">{label(event.status)}</p>

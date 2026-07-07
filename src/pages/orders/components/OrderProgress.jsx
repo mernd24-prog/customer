@@ -13,6 +13,9 @@ const normalizeProgressStatus = (status) => {
   if (status === "order_closed") {
     return "fulfilled";
   }
+  if (status === "delivered_verified") {
+    return "fulfilled";
+  }
   return status;
 };
 

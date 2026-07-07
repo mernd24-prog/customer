@@ -395,6 +395,9 @@ const amountsMatch = (left, right) =>
   Math.round(Number(left || 0) * 100) === Math.round(Number(right || 0) * 100);
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 const SELECTED_CHECKOUT_STORAGE_KEY = "sam_global_selected_checkout_item_ids";
+const CHECKOUT_CART_ITEM_IDS_STORAGE_KEY = "sam_global_checkout_cart_item_ids";
+const COMPLETED_CHECKOUT_STORAGE_KEY = "sam_global_completed_checkout";
+const CHECKOUT_IDEMPOTENCY_STORAGE_KEY = "sam_global_checkout_idempotency";
 const normalizeCartItemId = (value) => {
   if (!value) return "";
 
@@ -434,6 +437,73 @@ const getSelectedCheckoutItemIds = () => {
   } catch {
     return null;
   }
+};
+const getCompletedCheckout = () => {
+  try {
+    const parsed = JSON.parse(
+      window.sessionStorage.getItem(COMPLETED_CHECKOUT_STORAGE_KEY) || "null",
+    );
+    return parsed && typeof parsed === "object" ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+const setCompletedCheckout = (orderId) => {
+  if (!orderId) return;
+  window.sessionStorage.setItem(
+    COMPLETED_CHECKOUT_STORAGE_KEY,
+    JSON.stringify({ orderId, completedAt: Date.now() }),
+  );
+};
+const clearCompletedCheckout = () => {
+  window.sessionStorage.removeItem(COMPLETED_CHECKOUT_STORAGE_KEY);
+};
+const clearCheckoutIdempotency = () => {
+  window.sessionStorage.removeItem(CHECKOUT_IDEMPOTENCY_STORAGE_KEY);
+};
+const hasActiveCheckoutStorage = () =>
+  Boolean(window.sessionStorage.getItem(BUY_NOW_STORAGE_KEY)) ||
+  Boolean(window.sessionStorage.getItem(SELECTED_CHECKOUT_STORAGE_KEY)) ||
+  Boolean(window.sessionStorage.getItem(CHECKOUT_CART_ITEM_IDS_STORAGE_KEY));
+const getCheckoutFingerprint = ({
+  isBuyNowCheckout,
+  selectedCheckoutItemIds,
+  orderItems,
+}) => {
+  const itemKeys = orderItems
+    .map((item) =>
+      [
+        normalizeId(item.productId),
+        normalizeId(item.variantId || item.variantSku || ""),
+        Number(item.quantity || 1),
+      ].join(":"),
+    )
+    .sort();
+
+  return JSON.stringify({
+    source: isBuyNowCheckout ? "buy_now" : "cart",
+    selected: selectedCheckoutItemIds || [],
+    items: itemKeys,
+  });
+};
+const getCheckoutIdempotencyBaseKey = (fingerprint) => {
+  try {
+    const stored = JSON.parse(
+      window.sessionStorage.getItem(CHECKOUT_IDEMPOTENCY_STORAGE_KEY) || "null",
+    );
+    if (stored?.fingerprint === fingerprint && stored?.key) {
+      return stored.key;
+    }
+  } catch {
+    // Ignore malformed session data and replace it below.
+  }
+
+  const key = createCheckoutIdempotencyKey();
+  window.sessionStorage.setItem(
+    CHECKOUT_IDEMPOTENCY_STORAGE_KEY,
+    JSON.stringify({ fingerprint, key, createdAt: Date.now() }),
+  );
+  return key;
 };
 const getCartLineKey = (item = {}) =>
   normalizeCartItemId({
@@ -585,7 +655,6 @@ export default function CheckoutPage() {
 
   const buyNowItems = useMemo(getBuyNowItems, []);
   const selectedCheckoutItemIds = useMemo(getSelectedCheckoutItemIds, []);
-  const checkoutIdempotencyBaseKey = useMemo(createCheckoutIdempotencyKey, []);
   const isBuyNowCheckout = buyNowItems.length > 0;
   const cart = cartState.current || {};
   const checkoutSourceItems = useMemo(
@@ -630,6 +699,8 @@ export default function CheckoutPage() {
   const [postalCodes, setPostalCodes] = useState([]);
   const newAddressFormRef = useRef(null);
   const shouldScrollToNewAddressRef = useRef(false);
+  const orderSubmitRef = useRef(false);
+  const [submittingOrder, setSubmittingOrder] = useState(false);
 
   useEffect(() => {
     dispatch(fetchCart());
@@ -641,6 +712,23 @@ export default function CheckoutPage() {
       })
       .catch((err) => console.error("Error fetching countries:", err));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (cartState.loading) return;
+
+    const completedCheckout = getCompletedCheckout();
+    if (!completedCheckout?.orderId) return;
+
+    if (hasActiveCheckoutStorage() || (cart.items || []).length > 0) {
+      clearCompletedCheckout();
+      return;
+    }
+
+    clearCompletedCheckout();
+    navigate(`/payment/success?orderId=${completedCheckout.orderId}`, {
+      replace: true,
+    });
+  }, [cart.items, cartState.loading, navigate]);
 
   useEffect(() => {
     if (!paymentOptions.length) return;
@@ -901,6 +989,19 @@ export default function CheckoutPage() {
   ]);
 
   const orderItems = useMemo(() => buildOrderItems(items), [items]);
+  const checkoutFingerprint = useMemo(
+    () =>
+      getCheckoutFingerprint({
+        isBuyNowCheckout,
+        selectedCheckoutItemIds,
+        orderItems,
+      }),
+    [isBuyNowCheckout, orderItems, selectedCheckoutItemIds],
+  );
+  const checkoutIdempotencyBaseKey = useMemo(
+    () => getCheckoutIdempotencyBaseKey(checkoutFingerprint),
+    [checkoutFingerprint],
+  );
   const paymentSellerContext = useMemo(() => {
     const sellerOrderAmounts = {};
     let productCodDisabled = false;
@@ -1011,7 +1112,8 @@ export default function CheckoutPage() {
     cartState.loading ||
     walletState.loading ||
     orderState.loading ||
-    paymentState.loading;
+    paymentState.loading ||
+    submittingOrder;
 
   const saveCheckoutAddress = async (values) => {
     const addressResult = checkoutAddressSchema.safeParse({
@@ -1171,159 +1273,175 @@ export default function CheckoutPage() {
   };
 
   const submit = async (values) => {
-    let shippingAddress;
-    if (!values.useNewAddress && values.selectedAddressId) {
-      const saved = addresses.find(
-        (a) => getAddressId(a) === String(values.selectedAddressId),
-      );
-      if (!saved) {
-        setError("selectedAddressId", {
-          type: "manual",
-          message: "Select a delivery address",
-        });
-        return;
-      }
+    if (orderSubmitRef.current) return;
+    orderSubmitRef.current = true;
+    setSubmittingOrder(true);
+    let shouldReleaseSubmitLock = true;
 
-      shippingAddress = {
-        fullName: saved.fullName,
-        dialCode: saved.dialCode,
-        phone: saved.phone,
-        line1: saved.line1,
-        line2: saved.line2 || "",
-        city: saved.city,
-        state: saved.state,
-        postalCode: saved.postalCode,
-        country: saved.country || "",
-      };
-    } else {
-      shippingAddress = await saveCheckoutAddress(values);
-      if (!shippingAddress) return;
-    }
-
-    const walletAmount = Number(values.walletAmount || 0);
-    if (walletAmount > walletBalance) {
-      setError("walletAmount", {
-        type: "manual",
-        message: "Wallet amount cannot exceed your available balance",
-      });
-      return;
-    }
-
-    if (!orderItems.length) {
-      return;
-    }
-
-    const order = await run(
-      dispatch,
-      createOrder({
-        currency: "INR",
-        couponCode: values.couponCode || undefined,
-        walletAmount,
-        paymentProvider,
-        idempotencyKey: createCheckoutPricingKey({
-          baseKey: checkoutIdempotencyBaseKey,
-          couponCode: values.couponCode,
-          walletAmount,
-          paymentProvider,
-          payableAmount: quotePayableAmount,
-        }),
-        shippingAddress,
-        items: orderItems,
-      }),
-      "Order created",
-    );
-
-    const createdOrder = getCreatedOrder(order);
-    const orderId =
-      createdOrder?.id || createdOrder?.orderId || createdOrder?.order_id;
-    if (!orderId) return;
-
-    let paymentOrder = createdOrder;
-    let payableAmount = getOrderPayableAmount(paymentOrder);
-    if (payableAmount === null) {
-      const orderDetail = await dispatch(fetchOrderById({ orderId })).unwrap();
-      paymentOrder = getCreatedOrder(orderDetail);
-      payableAmount = getOrderPayableAmount(paymentOrder);
-    }
-
-    if (payableAmount === null) {
-      setError("root", {
-        type: "manual",
-        message:
-          "Payment amount is missing from order details. Please try again.",
-      });
-      return;
-    }
-
-    if (payableAmount <= 0) {
+    const completeCheckout = (orderId) => {
+      setCompletedCheckout(orderId);
       if (isBuyNowCheckout) {
         window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
       }
       window.sessionStorage.removeItem(SELECTED_CHECKOUT_STORAGE_KEY);
+      window.sessionStorage.removeItem(CHECKOUT_CART_ITEM_IDS_STORAGE_KEY);
+      clearCheckoutIdempotency();
       dispatch(fetchCart());
-      navigate(`/payment/success?orderId=${orderId}`);
-      return;
-    }
+      navigate(`/payment/success?orderId=${orderId}`, { replace: true });
+      shouldReleaseSubmitLock = false;
+    };
 
-    const initiatedPaymentResult = await run(
-      dispatch,
-      initiatePayment({
-        orderId,
-        provider: paymentProvider,
-        amount: payableAmount,
-        currency: paymentOrder?.currency || createdOrder?.currency || "INR",
-        notes: { source: "web_checkout", paymentProvider },
-      }),
-      paymentProvider === "cod" ? "COD order confirmed" : null,
-    );
-    const initiatedPayment = getPaymentPayload(initiatedPaymentResult);
-    const paymentAmount = getPaymentAmount(initiatedPayment);
-    const checkoutAmount = getCheckoutAmount(initiatedPayment);
-    if (
-      (paymentAmount !== null && !amountsMatch(paymentAmount, payableAmount)) ||
-      (checkoutAmount !== null && !amountsMatch(checkoutAmount, payableAmount))
-    ) {
-      const message = `Payment amount mismatch. Checkout payable is ₹${Number(payableAmount).toLocaleString("en-IN")} but payment gateway returned ₹${Number(paymentAmount ?? checkoutAmount ?? 0).toLocaleString("en-IN")}. Please refresh checkout and try again.`;
-      setError("root", { type: "manual", message });
-      notify.error({
-        title: "Payment amount mismatch",
-        message,
-      });
-      return;
-    }
-
-    if (paymentProvider === "razorpay") {
-      if (getPaymentStatus(initiatedPayment) !== "captured") {
-        try {
-          await openRazorpayCheckout({
-            dispatch,
-            run,
-            order: paymentOrder || createdOrder,
-            orderId,
-            payment: initiatedPayment,
-            user: userState.current,
-          });
-        } catch (error) {
-          const message =
-            error?.message ||
-            "Payment was not completed. Your order is still pending payment.";
-          setError("root", { type: "manual", message });
-          notify.error({
-            title: "Payment failed",
-            message,
+    try {
+      let shippingAddress;
+      if (!values.useNewAddress && values.selectedAddressId) {
+        const saved = addresses.find(
+          (a) => getAddressId(a) === String(values.selectedAddressId),
+        );
+        if (!saved) {
+          setError("selectedAddressId", {
+            type: "manual",
+            message: "Select a delivery address",
           });
           return;
         }
+
+        shippingAddress = {
+          fullName: saved.fullName,
+          dialCode: saved.dialCode,
+          phone: saved.phone,
+          line1: saved.line1,
+          line2: saved.line2 || "",
+          city: saved.city,
+          state: saved.state,
+          postalCode: saved.postalCode,
+          country: saved.country || "",
+        };
+      } else {
+        shippingAddress = await saveCheckoutAddress(values);
+        if (!shippingAddress) return;
+      }
+
+      const walletAmount = Number(values.walletAmount || 0);
+      if (walletAmount > walletBalance) {
+        setError("walletAmount", {
+          type: "manual",
+          message: "Wallet amount cannot exceed your available balance",
+        });
+        return;
+      }
+
+      if (!orderItems.length) {
+        return;
+      }
+
+      const order = await run(
+        dispatch,
+        createOrder({
+          currency: "INR",
+          couponCode: values.couponCode || undefined,
+          walletAmount,
+          paymentProvider,
+          idempotencyKey: createCheckoutPricingKey({
+            baseKey: checkoutIdempotencyBaseKey,
+            couponCode: values.couponCode,
+            walletAmount,
+            paymentProvider,
+            payableAmount: quotePayableAmount,
+          }),
+          shippingAddress,
+          items: orderItems,
+        }),
+        "Order created",
+      );
+
+      const createdOrder = getCreatedOrder(order);
+      const orderId =
+        createdOrder?.id || createdOrder?.orderId || createdOrder?.order_id;
+      if (!orderId) return;
+
+      let paymentOrder = createdOrder;
+      let payableAmount = getOrderPayableAmount(paymentOrder);
+      if (payableAmount === null) {
+        const orderDetail = await dispatch(fetchOrderById({ orderId })).unwrap();
+        paymentOrder = getCreatedOrder(orderDetail);
+        payableAmount = getOrderPayableAmount(paymentOrder);
+      }
+
+      if (payableAmount === null) {
+        setError("root", {
+          type: "manual",
+          message:
+            "Payment amount is missing from order details. Please try again.",
+        });
+        return;
+      }
+
+      if (payableAmount <= 0) {
+        completeCheckout(orderId);
+        return;
+      }
+
+      const initiatedPaymentResult = await run(
+        dispatch,
+        initiatePayment({
+          orderId,
+          provider: paymentProvider,
+          amount: payableAmount,
+          currency: paymentOrder?.currency || createdOrder?.currency || "INR",
+          notes: { source: "web_checkout", paymentProvider },
+        }),
+        paymentProvider === "cod" ? "COD order confirmed" : null,
+      );
+      const initiatedPayment = getPaymentPayload(initiatedPaymentResult);
+      const paymentAmount = getPaymentAmount(initiatedPayment);
+      const checkoutAmount = getCheckoutAmount(initiatedPayment);
+      if (
+        (paymentAmount !== null &&
+          !amountsMatch(paymentAmount, payableAmount)) ||
+        (checkoutAmount !== null &&
+          !amountsMatch(checkoutAmount, payableAmount))
+      ) {
+        const message = `Payment amount mismatch. Checkout payable is ₹${Number(payableAmount).toLocaleString("en-IN")} but payment gateway returned ₹${Number(paymentAmount ?? checkoutAmount ?? 0).toLocaleString("en-IN")}. Please refresh checkout and try again.`;
+        setError("root", { type: "manual", message });
+        notify.error({
+          title: "Payment amount mismatch",
+          message,
+        });
+        return;
+      }
+
+      if (paymentProvider === "razorpay") {
+        if (getPaymentStatus(initiatedPayment) !== "captured") {
+          try {
+            await openRazorpayCheckout({
+              dispatch,
+              run,
+              order: paymentOrder || createdOrder,
+              orderId,
+              payment: initiatedPayment,
+              user: userState.current,
+            });
+          } catch (error) {
+            const message =
+              error?.message ||
+              "Payment was not completed. Your order is still pending payment.";
+            setError("root", { type: "manual", message });
+            notify.error({
+              title: "Payment failed",
+              message,
+            });
+            return;
+          }
+        }
+      }
+
+      completeCheckout(orderId);
+    } finally {
+      if (shouldReleaseSubmitLock) {
+        orderSubmitRef.current = false;
+        setSubmittingOrder(false);
       }
     }
-
-    if (isBuyNowCheckout) {
-      window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
-    }
-    window.sessionStorage.removeItem(SELECTED_CHECKOUT_STORAGE_KEY);
-    dispatch(fetchCart());
-
-    navigate(`/payment/success?orderId=${orderId}`);
   };
 
   return (
