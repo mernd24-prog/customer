@@ -52,6 +52,57 @@ function serializeMultiValue(values) {
   return uniqueValues.length ? uniqueValues.join(",") : undefined;
 }
 
+const getFacetList = (facets = {}, keys = []) => {
+  for (const key of keys) {
+    const value = facets?.[key];
+    if (Array.isArray(value)) return value;
+    if (Array.isArray(value?.items)) return value.items;
+    if (Array.isArray(value?.options)) return value.options;
+    if (value && typeof value === "object") {
+      return Object.entries(value).map(([entryKey, entryValue]) => ({
+        value: entryKey,
+        label: entryKey,
+        count:
+          typeof entryValue === "number"
+            ? entryValue
+            : entryValue?.count || entryValue?.doc_count,
+      }));
+    }
+  }
+  return [];
+};
+
+const normalizeFacetOption = (option = {}) => {
+  const value =
+    option.value ??
+    option.id ??
+    option._id ??
+    option.key ??
+    option.slug ??
+    option.categoryKey ??
+    option.category_id ??
+    option.brand_id ??
+    option.name ??
+    option.title;
+  const label =
+    option.label ??
+    option.name ??
+    option.title ??
+    option.brandName ??
+    option.categoryName ??
+    option.category_name ??
+    option.brand_name ??
+    value;
+
+  return value
+    ? {
+        value: String(value),
+        label: String(label),
+        count: option.count ?? option.doc_count ?? option.total,
+      }
+    : null;
+};
+
 export default function ProductsPage() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -60,6 +111,7 @@ export default function ProductsPage() {
   const [brandList, setBrandList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [items, setItems] = useState([]);
+  const [productFacets, setProductFacets] = useState({});
   const [pageInfo, setPageInfo] = useState({
     page: 1,
     totalPages: 1,
@@ -86,18 +138,23 @@ export default function ProductsPage() {
   const pageSize = Number(searchParams.get("limit") || 12);
   const availabilityCounts = useMemo(
     () =>
-      products.reduce(
-        (counts, product) => {
-          if (isProductInStock(product)) {
-            counts.inStock += 1;
-          } else {
-            counts.outOfStock += 1;
+      productFacets?.availability && typeof productFacets.availability === "object"
+        ? {
+            inStock: Number(productFacets.availability.inStock || productFacets.availability.in_stock || 0),
+            outOfStock: Number(productFacets.availability.outOfStock || productFacets.availability.out_of_stock || 0),
           }
-          return counts;
-        },
-        { inStock: 0, outOfStock: 0 },
-      ),
-    [products],
+        : products.reduce(
+            (counts, product) => {
+              if (isProductInStock(product)) {
+                counts.inStock += 1;
+              } else {
+                counts.outOfStock += 1;
+              }
+              return counts;
+            },
+            { inStock: 0, outOfStock: 0 },
+          ),
+    [productFacets, products],
   );
   const brandCounts = useMemo(
     () =>
@@ -105,13 +162,55 @@ export default function ProductsPage() {
     [products],
   );
   const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
+  const facetCategoryOptions = useMemo(
+    () =>
+      getFacetList(productFacets, ["categories", "category"])
+        .map(normalizeFacetOption)
+        .filter(Boolean),
+    [productFacets],
+  );
+  const facetBrandOptions = useMemo(
+    () =>
+      getFacetList(productFacets, ["brands", "brand"])
+        .map(normalizeFacetOption)
+        .filter(Boolean),
+    [productFacets],
+  );
+  const facetRatingCounts = useMemo(() => {
+    const ratings = getFacetList(productFacets, ["ratings", "rating"]);
+    return ratings.reduce((counts, option) => {
+      const value =
+        option.value ?? option.rating ?? option.stars ?? option.key ?? "";
+      if (value) counts[String(value)] = option.count ?? option.doc_count ?? 0;
+      return counts;
+    }, {});
+  }, [productFacets]);
+  const effectiveRatingCounts = Object.keys(facetRatingCounts).length
+    ? facetRatingCounts
+    : ratingCounts;
+  const categoryOptions = facetCategoryOptions.length
+    ? facetCategoryOptions
+    : categoryList
+        .map((cat) =>
+          normalizeFacetOption({
+            value: cat.categoryKey || cat.id || cat._id,
+            label: cat.title || cat.name,
+          }),
+        )
+        .filter(Boolean);
+  const brandOptions = facetBrandOptions.length
+    ? facetBrandOptions
+    : brandList.map((brand) => ({
+        ...brand,
+        count: brandCounts[String(brand.value)] || 0,
+      }));
 
   const getParams = useCallback(
     (pageOverride) => {
-      const parseArray = (val) => (val ? (val.includes(",") ? val.split(",") : val) : undefined);
+      const parseMultiParam = (val) => val || undefined;
       return {
         category: searchParams.get("category") || undefined,
-        brand: parseArray(searchParams.get("brand")),
+        brand: parseMultiParam(searchParams.get("brand")),
         q: searchParams.get("q") || undefined,
         minPrice: searchParams.get("minPrice") || undefined,
         maxPrice: searchParams.get("maxPrice") || undefined,
@@ -120,14 +219,14 @@ export default function ProductsPage() {
           searchParams.get("productFamilyCode") ||
           searchParams.get("family") ||
           undefined,
-        color: parseArray(searchParams.get("color")),
-        size: parseArray(searchParams.get("size")),
-        material: parseArray(searchParams.get("material")),
-        fit: parseArray(searchParams.get("fit")),
-        storage: parseArray(searchParams.get("storage")),
-        skinType: parseArray(searchParams.get("skinType")),
-        shade: parseArray(searchParams.get("shade")),
-        rating: parseArray(searchParams.get("rating")),
+        color: parseMultiParam(searchParams.get("color")),
+        size: parseMultiParam(searchParams.get("size")),
+        material: parseMultiParam(searchParams.get("material")),
+        fit: parseMultiParam(searchParams.get("fit")),
+        storage: parseMultiParam(searchParams.get("storage")),
+        skinType: parseMultiParam(searchParams.get("skinType")),
+        shade: parseMultiParam(searchParams.get("shade")),
+        rating: parseMultiParam(searchParams.get("rating")),
         inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
         outOfStock:
           searchParams.get("outOfStock") === "true" ? "true" : undefined,
@@ -163,6 +262,7 @@ export default function ProductsPage() {
         totalPages: Number(meta.totalPages || meta.pages || 1),
         total: Number(meta.total || meta.count || list.length || 0),
       });
+      setProductFacets(result?.meta?.facets || result?.meta?.filters || {});
       setItems((prev) => (append ? [...prev, ...list] : list));
       setFirstLoadDone(true);
       setIsLoadingMore(false);
@@ -362,31 +462,25 @@ export default function ProductsPage() {
       : "All Products";
 
   const filterSections = [
-    categoryList.length > 0 && {
+    categoryOptions.length > 0 && {
       key: "category",
       title: "Category",
       content: (
         <OptionFilter
           name="category"
-          options={categoryList.map((cat) => ({
-            value: cat.categoryKey || cat.id || cat._id,
-            label: cat.title || cat.name,
-          }))}
+          options={categoryOptions}
           selected={searchParams.get("category")}
           onChange={(value) => updateParam("category", value)}
         />
       ),
     },
-    brandList.length > 0 && {
+    brandOptions.length > 0 && {
       key: "brand",
       title: "Brand",
       content: (
         <OptionFilter
           name="brand"
-          options={brandList.map((brand) => ({
-            ...brand,
-            count: brandCounts[String(brand.value)] || 0,
-          }))}
+          options={brandOptions}
           selected={selectedBrands}
           multiple
           onChange={(values) =>
@@ -413,7 +507,7 @@ export default function ProductsPage() {
         <RatingFilter
           selected={selectedRatings}
           multiple
-          counts={ratingCounts}
+          counts={effectiveRatingCounts}
           onChange={(values) =>
             updateParam("rating", serializeMultiValue(values))
           }

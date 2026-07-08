@@ -30,6 +30,17 @@ export const getPublicDealProducts = async (params = {}) => {
     limit: params.limit || 12,
     q: params.q,
     sort: params.sort,
+    category: params.category,
+    category_id: params.category_id,
+    brand: params.brand,
+    brand_id: params.brand_id,
+    min_price: params.min_price,
+    max_price: params.max_price,
+    min_rating: params.min_rating,
+    in_stock: params.in_stock,
+    out_of_stock: params.out_of_stock,
+    express_delivery: params.express_delivery,
+    free_delivery: params.free_delivery,
   };
   if (params.category && !normalizedParams.category_id) {
     normalizedParams.category_id = params.category;

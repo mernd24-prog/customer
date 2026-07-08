@@ -3,10 +3,38 @@ import { useEffect, useState } from "react";
 import { SKELETON_PRESETS, SkeletonLoader } from "../common/skeleton";
 import { collageCard } from "../../constants/image.constant";
 import Label from "../common/label/Label";
-function CollageImage({ src, title, link, label }) {
+import { apiRequest } from "../../api/client";
+import { endpoints } from "../../api/endpoints";
+
+const loadCollageSections = () => {
+  return apiRequest({
+    url: endpoints.home.collectionCollages,
+    params: { limit: 4, itemsPerSection: 4, v: 8, ts: Date.now() },
+  });
+};
+
+const collageImageHeightClass = (count, index) => {
+  if (count === 1) return "h-[200px] sm:h-[320px] lg:h-[300px] xl:h-[300px] col-span-2";
+  if (count === 2) return "h-[200px] sm:h-[320px] lg:h-[300px] xl:h-[300px]";
+  if (count === 3 && index === 2) return "h-[100px] sm:h-[160px] lg:h-[150px] xl:h-[150px] col-span-2";
+  return "h-[100px] sm:h-[160px] lg:h-[150px] xl:h-[150px]";
+};
+
+const compactLabel = (value = "", max = 16) => {
+  const text = String(value || "").trim();
+  return text.length > max ? `${text.slice(0, max).trim()}...` : text;
+};
+
+const collageLabelWidthClass = (count, index) => {
+  if (count === 1 || (count === 3 && index === 2)) return "max-w-[72%]";
+  return "max-w-[82%]";
+};
+
+function CollageImage({ src, title, link, label, count, index }) {
   const imageLabel = label || title;
+  const displayLabel = compactLabel(imageLabel);
   return (
-    <div className="relative h-[100px] w-full overflow-hidden bg-[var(--customer-cream)] sm:h-[160px] lg:h-[150px] xl:h-[150px]">
+    <div className={`relative w-full overflow-hidden bg-[var(--customer-cream)] ${collageImageHeightClass(count, index)}`}>
       <Link to={link}>
         <img
           src={src}
@@ -15,13 +43,13 @@ function CollageImage({ src, title, link, label }) {
           loading="lazy"
         />
         {imageLabel && (
-          <span className="absolute bottom-[14px] left-[14px]">
-            <Label
-              variant="imageLabel"
-              className="  font-medium text-[12px]"
-            >
-              {imageLabel}
-            </Label>
+          <span
+            className={`absolute bottom-[14px] left-1/2 flex min-h-[29px] -translate-x-1/2 items-center justify-center rounded-[25px] border border-[#FFFFFF80] bg-[#FFFFFF66] px-3 py-[5px] text-white shadow-[0px_4px_16px_rgba(0,0,0,0.12)] backdrop-blur-[20px] ${collageLabelWidthClass(count, index)}`}
+            title={imageLabel}
+          >
+            <span className="block min-w-0 truncate font-dm-sans text-[12px] font-medium leading-[16px]">
+              {displayLabel}
+            </span>
           </span>
         )}
       </Link>
@@ -29,6 +57,7 @@ function CollageImage({ src, title, link, label }) {
   );
 }
 function CollageCard({ section }) {
+  const images = (section.images || []).filter((item) => item?.image).slice(0, 4);
   return (
     <article className="overflow-hidden rounded-[24px] border border-[#E8B84B] bg-[#F8EFD8]">
       <div className="flex min-h-[76px] items-center justify-between gap-3 px-4 py-4 sm:px-5 sm:py-5 lg:px-6">
@@ -44,13 +73,15 @@ function CollageCard({ section }) {
         </Label>
       </div>
       <div className="grid grid-cols-2 gap-0">
-        {section.images.map((ele, idx) => (
+        {images.map((ele, idx) => (
           <CollageImage
             key={idx}
             src={ele.image}
             link={ele.link}
             title={ele.title || ele.label}
             label={ele.label}
+            count={images.length}
+            index={idx}
           />
         ))}
       </div>
@@ -123,17 +154,68 @@ function toCollageSections(cmsPages = []) {
     .filter((section) => section.images.length > 0);
   return sections;
 }
+
+const hasImages = (section = {}) =>
+  Array.isArray(section.images) && section.images.some((item) => item?.image);
+
+const completeSection = (section = {}) => ({
+  ...section,
+  images: (section.images || []).filter((item) => item?.image).slice(0, 4),
+});
+
+const resolveVisibleSections = (apiSections = [], cmsSections = [], fallbackSections = []) => {
+  const realApiSections = apiSections.filter(hasImages).map(completeSection);
+  if (realApiSections.length) return realApiSections.slice(0, 4);
+
+  const byKeyOrTitle = (items = []) => {
+    const map = new Map();
+    items.forEach((section) => {
+      if (section.key) map.set(section.key, section);
+      if (section.title) map.set(section.title, section);
+    });
+    return map;
+  };
+  const apiMap = byKeyOrTitle(apiSections);
+  const cmsMap = byKeyOrTitle(cmsSections);
+
+  return fallbackSections.map((fallback) => {
+    const apiSection = apiMap.get(fallback.key) || apiMap.get(fallback.title);
+    if (hasImages(apiSection)) return completeSection(apiSection);
+    const cmsSection = cmsMap.get(fallback.key) || cmsMap.get(fallback.title);
+    if (hasImages(cmsSection)) return completeSection(cmsSection);
+    return completeSection(fallback);
+  });
+};
+
 export default function CollageMainSection({ cmsPages = [] }) {
   const [loading, setLoading] = useState(true);
+  const [apiSections, setApiSections] = useState([]);
+  const [apiFailed, setApiFailed] = useState(false);
   useEffect(() => {
-    const timer = setTimeout(() => {
+    let active = true;
+
+    const minDelay = new Promise((resolve) => setTimeout(resolve, 1000));
+    const request = loadCollageSections().catch(() => {
+      if (active) setApiFailed(true);
+      return { data: [] };
+    });
+
+    Promise.all([request, minDelay]).then(([response]) => {
+      if (!active) return;
+      const sections = Array.isArray(response?.data) ? response.data : [];
+      if (!sections.length) setApiFailed(true);
+      setApiSections(sections);
       setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+    });
+
+    return () => {
+      active = false;
+    };
   }, []);
   const sections = toCollageSections(cmsPages);
   const fallbackSections = [
     {
+      key: "mens-best-sellers",
       title: "Best Sellers in Men's Fashion",
       label: "Trending",
       images: [
@@ -156,6 +238,7 @@ export default function CollageMainSection({ cmsPages = [] }) {
       ],
     },
     {
+      key: "home-lifestyle-deals",
       title: "Up to 60% Off Home & Lifestyle",
       label: "Hot Deal",
       images: [
@@ -182,6 +265,7 @@ export default function CollageMainSection({ cmsPages = [] }) {
       ],
     },
     {
+      key: "womens-trending",
       title: "Trending in Women's Fashion",
       label: "New In",
       images: [
@@ -208,6 +292,7 @@ export default function CollageMainSection({ cmsPages = [] }) {
       ],
     },
     {
+      key: "kids-popular",
       title: "Top Picks in Kids Fashion",
       label: "Popular",
       images: [
@@ -226,7 +311,9 @@ export default function CollageMainSection({ cmsPages = [] }) {
       ],
     },
   ];
-  const visibleSections = sections.length ? sections : fallbackSections;
+  const visibleSections = apiFailed
+    ? resolveVisibleSections(apiSections, sections, fallbackSections)
+    : apiSections.filter(hasImages).map(completeSection).slice(0, 4);
   return (
     <section className="my-6 overflow-hidden sm:my-7 md:my-8">
       {loading ? (

@@ -15,6 +15,7 @@ import {
   getProductTitle,
   applyImageFallback,
   getProductAvailableStock,
+  getProductPrice,
 } from "../../utils/ecommerce";
 import { cn } from "../../lib/utils";
 import StarRating from "../../pages/products/components/starRating";
@@ -80,7 +81,7 @@ export default function ProductCard({
     cardProduct?.category ||
     cardProduct?.brand ||
     "";
-  const price = priceProp ?? cardProduct?.salePrice ?? cardProduct?.price ?? 0;
+  const price = priceProp ?? getProductPrice(cardProduct) ?? 0;
   const oldPrice =
     oldPriceProp ?? cardProduct?.mrp ?? cardProduct?.compareAtPrice ?? 0;
   const rating =
