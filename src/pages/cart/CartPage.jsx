@@ -21,6 +21,7 @@ import {
   getProductTitle,
   getProductMrp,
   getProductPrice,
+  getVariantPrice,
   addProductToCartPayload,
   normalizeCartPayloadForWrite,
   wishlistPayload,
@@ -61,18 +62,32 @@ import {
   SELECTED_CHECKOUT_STORAGE_KEY,
 } from "../../constants";
 
-function adaptItemForCard(item) {
-  const product = item.productId || {};
-  const productId = item.productId?._id || getProductId(product);
+function adaptItemForCard(item, fullProduct = null) {
+  const product = fullProduct || item.productId || {};
+  const productId = item.productId?._id || getProductId(item.productId || {});
   const variantKey = item.variantId || item.variantSku || "";
   const title = getProductTitle(product, item.title || "Product");
   const image =
     getProductImage(product) ||
     item.image ||
     getImageFallbackSrc(title, "cart");
-  const price = getProductPrice(product) ?? item.price ?? product.price ?? product.sellingPrice ?? 0;
-  const oldPrice =
-    item.oldPrice ?? item.mrp ?? getProductMrp(product) ?? product.mrp ?? product.originalPrice;
+    
+  const fallbackProduct = item.productId || {};
+  
+  let livePrice = getProductPrice(fullProduct);
+  let liveMrp = getProductMrp(fullProduct);
+  
+  const variantId = item.variantId || item.variantSku;
+  if (variantId && fullProduct?.variants?.length) {
+    const variant = fullProduct.variants.find(v => v._id === variantId || v.id === variantId || v.sku === variantId);
+    if (variant) {
+      livePrice = getVariantPrice(variant) ?? livePrice;
+      liveMrp = variant.mrp ?? variant.oldPrice ?? liveMrp;
+    }
+  }
+
+  let price = livePrice ?? item.price ?? item.unitPrice ?? item.unit_price ?? item.salePrice ?? getProductPrice(fallbackProduct) ?? fallbackProduct.price ?? fallbackProduct.sellingPrice ?? 0;
+  const oldPrice = liveMrp ?? item.oldPrice ?? item.mrp ?? getProductMrp(fallbackProduct) ?? fallbackProduct.mrp ?? fallbackProduct.originalPrice;
   const productShippingInfo =
     product.shipping && typeof product.shipping === "object"
       ? product.shipping
@@ -198,7 +213,10 @@ export default function CartPage() {
 
   useEffect(() => {
     const wishlistIds = wishlist.map(getProductId).filter(Boolean);
-    const missingIds = wishlistIds.filter(
+    const cartItemIds = rawItems.map((item) => getProductId(item.productId || {})).filter(Boolean);
+    const allIds = Array.from(new Set([...wishlistIds, ...cartItemIds]));
+    
+    const missingIds = allIds.filter(
       (id) => !productEntities[id] && !fetchedIdsRef.current.has(id),
     );
 
@@ -209,17 +227,20 @@ export default function CartPage() {
     missingIds.forEach((productId) => {
       dispatch(fetchProductById({ productId })).catch(() => {});
     });
-  }, [dispatch, wishlist, productEntities]);
+  }, [dispatch, wishlist, rawItems, productEntities]);
 
   const items = useMemo(
     () =>
       rawItems.map((item) => {
         const key = cartLineKey(item);
+        const productId = item.productId?._id || getProductId(item.productId || {});
+        const fullProduct = productEntities[productId] || null;
+        
         return localQuantities[key] != null
-          ? adaptItemForCard({ ...item, quantity: localQuantities[key] })
-          : adaptItemForCard(item);
+          ? adaptItemForCard({ ...item, quantity: localQuantities[key] }, fullProduct)
+          : adaptItemForCard(item, fullProduct);
       }),
-    [rawItems, localQuantities],
+    [rawItems, localQuantities, productEntities],
   );
 
   const hasCartItems = items.length > 0;
@@ -792,6 +813,7 @@ export default function CartPage() {
                     onCheckout={() => {
                       if (!selectedItems.length) return;
 
+                      window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
                       window.sessionStorage.setItem(
                         SELECTED_CHECKOUT_STORAGE_KEY,
                         JSON.stringify(selectedItemIds),

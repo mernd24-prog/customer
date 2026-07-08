@@ -597,7 +597,7 @@ export default function CategoryMegaMenu({
       : EMPTY_ITEMS;
   }, [data, quickLinksProp]);
 
-  if (!root) return null;
+  if (!root || !subCategories || subCategories.length === 0) return null;
 
   return (
     <div
