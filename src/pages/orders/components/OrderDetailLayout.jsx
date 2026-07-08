@@ -1,14 +1,26 @@
+import React from 'react';
+import StickySidebarLayout from "../../../components/common/layouts/StickySidebarLayout";
+
 function OrderDetailLayout({ children }) {
+  const childrenArray = React.Children.toArray(children);
+  const mainContent = childrenArray[0];
+  const sidebarContent = childrenArray.slice(1);
+
   return (
-    <section className="grid w-full gap-4 md:gap-6 xl:grid-cols-[minmax(0,68%)_minmax(320px,30%)] xl:gap-8">
-      {children}
-    </section>
+    <StickySidebarLayout
+      sidebarPosition="right"
+      containerClass="flex flex-col xl:flex-row gap-4 md:gap-6 xl:gap-8"
+      sidebarClass="w-full xl:w-[380px] 2xl:w-[420px]"
+      mainContent={mainContent}
+      sidebarContent={sidebarContent}
+    />
   );
 }
 
 function OrderDetailAside({ children, className = "" }) {
+  const cleanClassName = className.replace(/xl:sticky\s+|xl:top-\w+\s+|xl:self-start\s+/g, '');
   return (
-    <aside className={`grid gap-4 self-start  ${className}`}>{children}</aside>
+    <aside className={`grid gap-4 w-full ${cleanClassName}`}>{children}</aside>
   );
 }
 

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import { EmptyState } from "../../components/common";
+import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
 import CartItemCard from "../../components/cart/CartItemCard";
 // import CartSummary from "../../components/cart/CartSummary";
 import BrandButton from "../../components/ui/BrandButton";
@@ -534,8 +535,12 @@ export default function CartPage() {
               />
             )}
 
-            <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:gap-9 min-[1366px]:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_563px] min-[1366px]:h-[calc(100vh-250px)] min-[1366px]:min-h-[500px]">
-              <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8 min-[1366px]:h-full min-[1366px]:min-h-0 min-[1366px]:overflow-y-auto min-[1366px]:overscroll-contain min-[1366px]:[scrollbar-width:none] min-[1366px]:[-ms-overflow-style:none] min-[1366px]:[&::-webkit-scrollbar]:hidden">
+            <StickySidebarLayout
+              sidebarPosition="right"
+              containerClass="flex flex-col xl:flex-row gap-6 sm:gap-8 lg:gap-9"
+              sidebarClass="w-full xl:w-[420px] 2xl:w-[563px] transition-[top] duration-300 ease-in-out"
+              mainContent={
+                <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8">
                 {hasCartItems && (
                   <div className="flex items-center justify-between">
                     <label className="flex items-center gap-2 text-sm font-bold text-[#2d2d2d] sm:text-[15px]">
@@ -759,10 +764,11 @@ export default function CartPage() {
                     </OutlineSmallButton>
                   </div>
                 )}
-              </div>
-
-              {hasCartItems && (
-                <div className="w-full min-w-0 self-start min-[1366px]:h-fit">
+                </div>
+              }
+              sidebarContent={
+                hasCartItems && (
+                  <div className="w-full min-w-0">
                   <OrderPaymentSummary
                     variant="cart"
                     mrpSubtotal={mrpSubtotal}
@@ -795,8 +801,9 @@ export default function CartPage() {
                     }}
                   />
                 </div>
-              )}
-            </div>
+                )
+              }
+            />
 
             {/* RECENTLY VIEWED SECTION */}
             {recentViewedItems && recentViewedItems.length > 0 && (

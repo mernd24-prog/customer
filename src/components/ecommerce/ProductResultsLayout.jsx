@@ -56,7 +56,7 @@ export default function ProductResultsLayout({
         onClear={onClearFilters}
       />
 
-      <div className="flex  mt-8 items-start gap-8 lg:sticky lg:top-[calc(var(--customer-header-height,0px)+24px)]  lg:self-start lg:h-fit w-full ">
+      <div className="flex  mt-8 items-start gap-8 lg:sticky lg:top-[calc(var(--customer-header-height,95px)+80px)]  lg:self-start lg:h-fit w-full ">
         <div className="hidden lg:block ">
           <ProductFilterSidebar
             sections={filterSections}

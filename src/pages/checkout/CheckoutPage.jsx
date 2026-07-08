@@ -33,6 +33,7 @@ import {
   getProductId,
   getProductImage,
   getProductTitle,
+  getProductPrice,
 } from "../../utils/ecommerce";
 import { normalizeId } from "../../utils/ecommerce/cart";
 import { normalizeDialCode } from "../../lib/utils";
