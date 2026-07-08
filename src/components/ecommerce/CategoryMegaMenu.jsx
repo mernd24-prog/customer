@@ -632,17 +632,19 @@ export default function CategoryMegaMenu({
           </div>
 
           {/* Column 2: Child Categories */}
-          <div className={hasDeeperCategories ? "col-span-3" : "col-span-4"}>
-            <ChildCategoryColumn
-              items={subSubCategories}
-              activeKey={activeChildKey}
-              onHover={handleChildCategoryHover}
-              title={activeSubCategory?.title || labels.childTitle}
-              showChevron={hasDeeperCategories}
-              getItemHref={getItemHref}
-              labels={labels}
-            />
-          </div>
+          {subSubCategories.length > 0 && (
+            <div className={hasDeeperCategories ? "col-span-3" : "col-span-4"}>
+              <ChildCategoryColumn
+                items={subSubCategories}
+                activeKey={activeChildKey}
+                onHover={handleChildCategoryHover}
+                title={activeSubCategory?.title || labels.childTitle}
+                showChevron={hasDeeperCategories}
+                getItemHref={getItemHref}
+                labels={labels}
+              />
+            </div>
+          )}
 
           {/* Column 3: Inner Categories (Optional) */}
           {hasDeeperCategories && (
@@ -659,7 +661,13 @@ export default function CategoryMegaMenu({
           )}
 
           {/* Column 4: Promo Banner */}
-          <div className={hasDeeperCategories ? "col-span-3" : "col-span-5"}>
+          <div className={
+            subSubCategories.length === 0 
+              ? "col-span-9" 
+              : hasDeeperCategories 
+                ? "col-span-3" 
+                : "col-span-5"
+          }>
             <PromotionBanner
               promoData={promoData}
               rootData={root}

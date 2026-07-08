@@ -750,7 +750,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
           />
         </div>
       </div>
-      {activeMenu && (
+      {activeMenu && !isPinned && (
         <div
           id="category-mega-menu"
           className="absolute left-0 top-full z-[9999] w-full"
