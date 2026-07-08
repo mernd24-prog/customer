@@ -90,6 +90,29 @@ export function getVariantPrice(variant) {
   );
 }
 
+export function getDefaultVariant(product) {
+  const variants = Array.isArray(product?.variants) ? product.variants : [];
+  if (!variants.length) return null;
+  return (
+    variants.find((variant) => variant?.isDefault === true) ||
+    variants.find((variant) => variant?.status !== "inactive") ||
+    variants[0] ||
+    null
+  );
+}
+
+export function getVariantMrp(variant) {
+  return firstMoneyValue(
+    variant?.mrp,
+    variant?.compareAtPrice,
+    variant?.compare_at_price,
+    variant?.originalPrice,
+    variant?.original_price,
+    variant?.regularPrice,
+    variant?.regular_price,
+  );
+}
+
 export function getProductDealPrice(product) {
   return firstMoneyValue(
     product?.deal?.dealPrice,
@@ -99,8 +122,10 @@ export function getProductDealPrice(product) {
 }
 
 export function getProductPrice(product) {
+  const defaultVariant = getDefaultVariant(product);
   return firstMoneyValue(
     getProductDealPrice(product),
+    getVariantPrice(defaultVariant),
     product?.salePrice,
     product?.sale_price,
     product?.sellingPrice,
@@ -113,8 +138,10 @@ export function getProductPrice(product) {
 }
 
 export function getProductMrp(product) {
+  const defaultVariant = getDefaultVariant(product);
   return firstMoneyValue(
     product?.deal?.originalPrice,
+    getVariantMrp(defaultVariant),
     product?.mrp,
     product?.compareAtPrice,
     product?.compare_at_price,

@@ -13,6 +13,8 @@ import {
   getProductId,
   getProductImage,
   getProductTitle,
+  getProductPrice,
+  getProductMrp,
   applyImageFallback,
   getProductAvailableStock,
 } from "../../utils/ecommerce";
@@ -80,9 +82,9 @@ export default function ProductCard({
     cardProduct?.category ||
     cardProduct?.brand ||
     "";
-  const price = priceProp ?? cardProduct?.salePrice ?? cardProduct?.price ?? 0;
+  const price = priceProp ?? getProductPrice(cardProduct) ?? 0;
   const oldPrice =
-    oldPriceProp ?? cardProduct?.mrp ?? cardProduct?.compareAtPrice ?? 0;
+    oldPriceProp ?? getProductMrp(cardProduct) ?? 0;
   const rating =
     ratingProp ?? cardProduct?.rating ?? cardProduct?.averageRating ?? 0;
   const ratingCount =
