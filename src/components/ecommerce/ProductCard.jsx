@@ -17,7 +17,6 @@ import {
   getProductMrp,
   applyImageFallback,
   getProductAvailableStock,
-  getProductPrice,
 } from "../../utils/ecommerce";
 import { cn } from "../../lib/utils";
 import StarRating from "../../pages/products/components/starRating";
