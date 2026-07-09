@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
+import { useParams, useSearchParams, Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronRight, LayoutGrid } from "lucide-react";
 import Seo from "../../components/common/Seo";
@@ -182,6 +182,7 @@ function CategoryPageSkeleton() {
 
 export default function CategoryPage() {
   const { categoryKey } = useParams();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode] = useState("grid");
@@ -307,9 +308,14 @@ export default function CategoryPage() {
       try {
         const result = await dispatch(fetchProducts(params)).unwrap();
         const data = result?.data;
-        const list = Array.isArray(data)
+        let list = Array.isArray(data)
           ? data
           : data?.items || data?.list || [];
+          
+        if (list.length === 0 && location.state?.fallbackProducts && page === 1) {
+          list = location.state.fallbackProducts;
+        }
+
         const m = result?.meta || {};
         setPageInfo({
           page: Number(m.page || m.currentPage || params.page || 1),

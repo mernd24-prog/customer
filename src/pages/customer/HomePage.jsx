@@ -15,7 +15,7 @@ import { tokenStorage } from "../../api/tokenStorage";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import Banner from "../../layouts/HeroBanner";
 import { CategoryBar } from "../../layouts/Header";
-import CollageMainSection from "../../components/ui/CollageCard";
+import CollageSection from "../../components/home/CollageSection";
 import ShowcaseSection from "../../components/home/ShowcaseSection";
 import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import { mothersDayData } from "../../data/special";
@@ -152,7 +152,7 @@ export function HomePage() {
         className="text-[#3E4093] font-regular text-[18px] "
       />
 
-      <CollageMainSection cmsPages={cmsPages} />
+      <CollageSection cmsPages={cmsPages} />
 
       <ShoppingMadeEasyBanner
         title="Shopping Made Easy"
