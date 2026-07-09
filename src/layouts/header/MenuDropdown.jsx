@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import DropdownHeader from "./DropdownHeader";
 
 function MenuItem({ item }) {
-  const isExternal = item.path && (item.path.startsWith("http://") || item.path.startsWith("https://"));
+  const isExternal =
+    item.path &&
+    (item.path.startsWith("http://") || item.path.startsWith("https://"));
 
   if (isExternal) {
     return (
@@ -13,7 +15,9 @@ function MenuItem({ item }) {
         rel="noreferrer"
         className="flex items-center gap-3 px-4 py-3 text-[13px] font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)]"
       >
-        {item.icon && <span className="text-[var(--customer-gold-dark)]">{item.icon}</span>}
+        {item.icon && (
+          <span className="text-[var(--customer-gold-dark)]">{item.icon}</span>
+        )}
         <span>{item.label}</span>
       </a>
     );
@@ -24,7 +28,9 @@ function MenuItem({ item }) {
       to={item.path || "#"}
       className="flex items-center gap-3 px-4 py-3 text-[13px] font-semibold text-[var(--customer-ink)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)]"
     >
-      {item.icon && <span className="text-[var(--customer-gold-dark)]">{item.icon}</span>}
+      {item.icon && (
+        <span className="text-[var(--customer-gold-dark)]">{item.icon}</span>
+      )}
       <span>{item.label}</span>
     </Link>
   );

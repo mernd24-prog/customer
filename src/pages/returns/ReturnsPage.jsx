@@ -196,8 +196,8 @@ function ReturnRequestPage({ orderId }) {
 
         <div className="overflow-hidden rounded-xl  border border-border bg-white p-4 sm:p-6 lg:p-8">
           <div className="mb-6">
-            <h1 className="text-xl font-bold text-ink">Request a return</h1>
-            <p className="mt-1 text-sm text-muted">
+            <h1 className="text-xl  font-bold text-ink">Request a return</h1>
+            <p className="mt-1 text-sm  text-muted">
               Select the item you want to return from this order.
             </p>
           </div>

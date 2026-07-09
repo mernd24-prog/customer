@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronDown, ChevronLeft, Star, ThumbsUp } from "lucide-react";
+import { ChevronLeft, Star, ThumbsUp } from "lucide-react";
+import CustomDropdown from "../../components/ui/CustomDropdown";
 import ReviewMediaLightbox from "../../components/ecommerce/ReviewMediaLightbox";
 import { useAuthModal } from "../../context/AuthModalContext";
 import {
@@ -181,16 +182,12 @@ function RatingSummary({
 }
 
 function ReviewsHeader({ total, sort, onSort }) {
-  const [isSortOpen, setIsSortOpen] = useState(false);
-
   const sortOptions = [
     { value: "newest", label: "Most Recent" },
     { value: "helpful", label: "Most Helpful" },
     { value: "highest", label: "Highest Rated" },
     { value: "lowest", label: "Lowest Rated" },
   ];
-  const selectedLabel =
-    sortOptions.find((option) => option.value === sort)?.label || "Most Recent";
 
   return (
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -201,58 +198,14 @@ function ReviewsHeader({ total, sort, onSort }) {
         )}
       </h3>
 
-      <div
-        className="relative z-30 w-[190px]"
-        onBlur={(event) => {
-          if (!event.currentTarget.contains(event.relatedTarget)) {
-            setIsSortOpen(false);
-          }
-        }}
-      >
-        <button
-          type="button"
-          onClick={() => setIsSortOpen((open) => !open)}
-          className="flex h-10 w-full items-center justify-between rounded-[10px] border border-[#CE9F2D] bg-white px-3 text-left text-sm font-semibold text-[#1B1D60] transition hover:bg-[#FFF9EA] focus:outline-none focus:ring-2 focus:ring-[#CE9F2D33]"
-          aria-expanded={isSortOpen}
-          aria-haspopup="menu"
-        >
-          <span>{selectedLabel}</span>
-          <ChevronDown
-            size={18}
-            className={`text-[#CE9F2D] transition-transform ${
-              isSortOpen ? "rotate-180" : ""
-            }`}
-          />
-        </button>
-
-        {isSortOpen && (
-          <div
-            role="menu"
-            className="absolute  right-0 top-[calc(100%+6px)] z-[100] w-full overflow-hidden rounded-[12px] border border-[#E7D9B8] bg-white "
-          >
-            <div className="py-1">
-              {sortOptions.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    onSort(option.value);
-                    setIsSortOpen(false);
-                  }}
-                  className={`block w-full px-4 py-2.5 text-left text-[13px] font-semibold transition-colors hover:bg-[#F8F1E2] ${
-                    sort === option.value
-                      ? "bg-[#F8F1E2] text-[#1B1D60]"
-                      : "text-[#2E2E2E]"
-                  }`}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      <CustomDropdown
+        className="z-30 w-[190px]"
+        buttonClassName="h-10 rounded-[10px] border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] focus:ring-2 focus:ring-[#CE9F2D33]"
+        options={sortOptions}
+        value={sort}
+        onChange={onSort}
+        placeholder="Most Recent"
+      />
     </div>
   );
 }

@@ -8,9 +8,15 @@ export default function NeedHelpPanel({
   className = "",
   sticky = false,
   headerStyle = "plain",
+  expandedIndex: controlledExpandedIndex,
+  onExpandedIndexChange,
 }) {
   const hasColoredHeader = headerStyle === "colored";
-  const [expandedIndex, setExpandedIndex] = useState(null);
+  const [internalExpandedIndex, setInternalExpandedIndex] = useState(null);
+
+  const isControlled = controlledExpandedIndex !== undefined;
+  const expandedIndex = isControlled ? controlledExpandedIndex : internalExpandedIndex;
+  const setExpandedIndex = isControlled ? onExpandedIndexChange : setInternalExpandedIndex;
 
   return (
     <aside

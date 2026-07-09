@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useAuthModal } from "../../context/AuthModalContext";
-import { ChevronDown, ChevronRight, ThumbsUp } from "lucide-react";
+import { ChevronRight, ThumbsUp } from "lucide-react";
+import CustomDropdown from "../ui/CustomDropdown";
 import { IoIosStar } from "react-icons/io";
 import {
   fetchProductReviews,
@@ -442,21 +443,7 @@ export default function ProductReviewsSection({ productId, product }) {
   const [sort, setSort] = useState("newest");
   const [ratingFilter, setRatingFilter] = useState(0);
   const [showForm, setShowForm] = useState(false);
-  const [sortOpen, setSortOpen] = useState(false);
-  const sortMenuRef = useRef(null);
   const LIMIT = 5;
-
-  useEffect(() => {
-    if (!sortOpen) return undefined;
-
-    const handlePointerDown = (event) => {
-      if (sortMenuRef.current?.contains(event.target)) return;
-      setSortOpen(false);
-    };
-
-    document.addEventListener("pointerdown", handlePointerDown);
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, [sortOpen]);
 
   useEffect(() => {
     dispatch(
@@ -544,10 +531,6 @@ export default function ProductReviewsSection({ productId, product }) {
   );
 
   const displayRatingBreakdown = getRatingBreakdown(stats);
-  const selectedSortLabel =
-    SORT_OPTIONS.find((option) => option.value === sort)?.label ||
-    "Most Recent";
-
   const hasPublishedReviews =
     displayTotal > 0 ||
     Number(stats?.count || 0) > 0 ||
@@ -661,60 +644,17 @@ export default function ProductReviewsSection({ productId, product }) {
                     {ratingFilter}★ only
                   </span>
                 )}
-                <div
-                  ref={sortMenuRef}
-                  className="relative w-[190px]"
-                  onBlur={(event) => {
-                    if (!event.currentTarget.contains(event.relatedTarget)) {
-                      setSortOpen(false);
-                    }
+                <CustomDropdown
+                  className="w-[190px]"
+                  buttonClassName="h-10 rounded-[10px] border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] focus:ring-2 focus:ring-[#CE9F2D33]"
+                  options={SORT_OPTIONS}
+                  value={sort}
+                  onChange={(val) => {
+                    setSort(val);
+                    setPage(1);
                   }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setSortOpen((open) => !open)}
-                    className="flex h-10 w-full items-center justify-between rounded-[10px] border border-[#CE9F2D] bg-white px-3 text-left text-sm font-semibold text-[#1B1D60] transition-colors hover:bg-[#FFF9EA] focus:outline-none focus:ring-2 focus:ring-[#CE9F2D33]"
-                    aria-expanded={sortOpen}
-                    aria-haspopup="menu"
-                  >
-                    <span>{selectedSortLabel}</span>
-                    <ChevronDown
-                      size={18}
-                      className={`text-[#CE9F2D] transition-transform ${
-                        sortOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-
-                  {sortOpen && (
-                    <div
-                      role="menu"
-                      className="absolute right-0 top-[calc(100%+6px)] z-[100] w-full overflow-hidden rounded-[12px] border border-[#E7D9B8] bg-white shadow-[0_12px_32px_rgba(31,36,48,0.14)]"
-                    >
-                      <div className="py-1">
-                        {SORT_OPTIONS.map((option) => (
-                          <button
-                            key={option.value}
-                            type="button"
-                            role="menuitem"
-                            onClick={() => {
-                              setSort(option.value);
-                              setPage(1);
-                              setSortOpen(false);
-                            }}
-                            className={`block w-full px-4 py-2.5 text-left text-[13px] font-semibold transition-colors  ${
-                              sort === option.value
-                                ? "bg-[#F8F1E2] text-[#1B1D60]"
-                                : "text-[#2E2E2E]"
-                            }`}
-                          >
-                            {option.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  placeholder="Most Recent"
+                />
               </div>
             </div>
           )}

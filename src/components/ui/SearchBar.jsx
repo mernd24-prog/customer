@@ -519,7 +519,7 @@ const SearchBar = ({
                 </button>
 
                 <div
-                  className={`absolute left-0 top-[calc(100%+10px)] z-50 max-h-[280px] w-[220px] max-w-[calc(100vw-32px)] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white shadow-[0_18px_45px_rgba(3,1,77,0.14)] transition-all duration-300 ease-in-out sm:left-2 sm:max-h-[320px] sm:min-w-[260px] sm:w-auto sm:max-w-none ${
+                  className={`absolute  left-0 top-[calc(100%+10px)] z-50 max-h-[280px] w-[220px] max-w-[calc(100vw-32px)] overflow-hidden rounded-2xl border border-[#1B1D601A] bg-white  transition-all duration-300 ease-in-out sm:left-2 sm:max-h-[320px] sm:min-w-[260px] sm:w-auto sm:max-w-none ${
                     isDropdownOpen
                       ? "visible translate-y-0 opacity-100"
                       : "invisible -translate-y-2 opacity-0 pointer-events-none"
@@ -545,7 +545,7 @@ const SearchBar = ({
                           key={key}
                           type="button"
                           onClick={() => handleSelectCategory(category)}
-                          className={`w-full rounded-xl px-3 py-2.5 text-left text-[13px] leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none sm:px-4 sm:py-3 sm:text-sm ${
+                          className={`w-full  rounded-xl px-3 py-2.5 text-left text-[13px] leading-snug transition-all duration-300 ease-in-out !outline-none focus:!outline-none focus-visible:!outline-none sm:px-4 sm:py-3 sm:text-sm ${
                             isSelected
                               ? "font-semibold text-[#03014D]"
                               : "font-medium text-[var(--customer-ink)]"
@@ -656,7 +656,9 @@ const SearchBar = ({
             <div className="px-4 py-3 text-sm font-medium text-[var(--customer-muted)]">
               Searching...
             </div>
-          ) : !autocompleteLoading && suggestions.length === 0 && sanitizedQuery.length >= autocompleteMinLength ? (
+          ) : !autocompleteLoading &&
+            suggestions.length === 0 &&
+            sanitizedQuery.length >= autocompleteMinLength ? (
             <div className="flex flex-col items-center justify-center p-6 text-center">
               <img
                 src="/image/png/NoProductFound.png"

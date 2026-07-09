@@ -3,6 +3,7 @@ import {
   isValidElement,
   useState,
   useEffect,
+  useMemo,
   useRef,
 } from "react";
 import { ChevronDown, Search, Star, X } from "lucide-react";
@@ -30,6 +31,7 @@ export function FilterSection({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchCloseRequest, setSearchCloseRequest] = useState(null);
   const searchInputRef = useRef(null);
   const searchable = ["brand", "category"].some((item) =>
     String(title || "")
@@ -52,9 +54,13 @@ export function FilterSection({ title, children, defaultOpen = true }) {
   }, [searchOpen]);
 
   const content = isValidElement(children)
-    ? cloneElement(children, { searchQuery })
+    ? cloneElement(children, { searchQuery, searchCloseRequest })
     : children;
   const closeSearch = () => {
+    const query = searchQuery.trim();
+    if (query) {
+      setSearchCloseRequest({ query, requestedAt: Date.now() });
+    }
     setSearchQuery("");
     setSearchOpen(false);
   };
@@ -387,20 +393,63 @@ export function OptionFilter({
   emptyText = "Loading...",
   multiple = false,
   searchQuery = "",
+  searchCloseRequest,
 }) {
   const isCategoryList = name?.toLowerCase().includes("category");
   const [expanded, setExpanded] = useState(false);
-  const selectedValues = Array.isArray(selected)
-    ? selected.map(String)
-    : selected != null
-      ? [String(selected)]
-      : [];
+  const selectedValues = useMemo(
+    () =>
+      Array.isArray(selected)
+        ? selected.map(String)
+        : selected != null
+          ? [String(selected)]
+          : [],
+    [selected],
+  );
   const isMultiSelect = multiple || Array.isArray(selected);
-  const selectedSet = new Set(selectedValues);
+  const selectedSet = useMemo(() => new Set(selectedValues), [selectedValues]);
 
   useEffect(() => {
     setExpanded(false);
   }, [name, options]);
+
+  useEffect(() => {
+    const query = searchCloseRequest?.query?.trim().toLowerCase();
+    if (!query || !selectedValues.length || !options?.length) return;
+
+    const valuesToClear = options
+      .filter((option) => {
+        const value =
+          option.value ?? option.id ?? option._id ?? option.categoryKey;
+        const label = option.label ?? option.title ?? option.name ?? value;
+        return (
+          String(label).trim().toLowerCase() === query ||
+          String(value).trim().toLowerCase() === query
+        );
+      })
+      .map((option) =>
+        String(option.value ?? option.id ?? option._id ?? option.categoryKey),
+      )
+      .filter((value) => selectedSet.has(value));
+
+    if (!valuesToClear.length) return;
+
+    if (!isMultiSelect) {
+      onChange?.(undefined);
+      return;
+    }
+
+    const clearSet = new Set(valuesToClear);
+    onChange?.(selectedValues.filter((value) => !clearSet.has(value)));
+  }, [
+    isMultiSelect,
+    onChange,
+    options,
+    searchCloseRequest?.query,
+    searchCloseRequest?.requestedAt,
+    selectedSet,
+    selectedValues,
+  ]);
 
   if (!options?.length) {
     return <p className="text-sm text-[#6f7480]">{emptyText}</p>;

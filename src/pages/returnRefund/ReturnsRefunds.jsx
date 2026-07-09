@@ -307,7 +307,7 @@ function ReturnsRefundsPage() {
 
   const renderReturnsList = (list) => {
     return (
-      <div className="flex flex-col gap-y-14">
+      <div className="flex flex-col  gap-y-14">
         {list.map((ret) => {
           const returnId =
             ret._id || ret.id || ret.returnId || ret.returnNumber;
@@ -393,10 +393,10 @@ function ReturnsRefundsPage() {
           linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
           separatorClassName="text-[#2E2E2E]"
         />
-        <h1 className="lg:mb-4 lg:mt-5 font-sans text-[20px] font-bold text-[#3E4093] min-[375px]:text-[20px] min-[425px]:text-[24px] sm:text-[34px] lg:text-[38px]">
+        <h1 className="lg:mb-4 lg:mt-5 text-h2 font-bold text-[#3E4093] ">
           Returns & Refunds
         </h1>
-        <p className="mb-4 max-w-[600px] font-sans text-[13px] font-medium leading-[20px] text-[#2E2E2E] min-[375px]:text-[14px] min-[375px]:leading-[22px] sm:text-[16px] sm:leading-[24px] xl:text-[20px] xl:leading-[30px]">
+        <p className="mb-4 max-w-[600px] font-sans text-small font-medium text-[#2E2E2E] ">
           Manage your return requests and track refund status.
         </p>
 

@@ -10,7 +10,7 @@ export default function SellDropdown({ data }) {
   const buttons = asArray(data?.buttons);
 
   return (
-    <div className="w-[340px] overflow-hidden rounded-[var(--customer-radius)] border border-[var(--customer-border)] bg-white shadow-[var(--customer-shadow-strong)]">
+    <div className="w-[340px] overflow-hidden rounded-[var(--customer-radius)] border border-[var(--customer-border)]  bg-white shadow-[var(--customer-shadow-strong)]">
       <div className="p-6">
         <h2 className="text-[22px] font-bold leading-tight text-[var(--customer-navy)]">
           {textOr(data?.title, "Sell with us")}
@@ -21,8 +21,13 @@ export default function SellDropdown({ data }) {
 
         <div className="mt-6 flex flex-col gap-4">
           {features.map((feature, index) => (
-            <div key={keyOr(feature?.text, `feature-${index}`)} className="flex items-start gap-4">
-              <div className="mt-0.5 text-[var(--customer-gold-dark)]">{feature.icon}</div>
+            <div
+              key={keyOr(feature?.text, `feature-${index}`)}
+              className="flex items-start gap-4"
+            >
+              <div className="mt-0.5 text-[var(--customer-gold-dark)]">
+                {feature.icon}
+              </div>
               <p className="text-[13px] font-semibold leading-tight text-[var(--customer-ink)]">
                 {feature.text}
               </p>
@@ -33,7 +38,9 @@ export default function SellDropdown({ data }) {
         <div className="mt-8 flex flex-col gap-3">
           {buttons.map((button, index) => {
             const btnPath = hrefOr(button?.path, "/seller/status");
-            const isExternal = btnPath && (btnPath.startsWith("http://") || btnPath.startsWith("https://"));
+            const isExternal =
+              btnPath &&
+              (btnPath.startsWith("http://") || btnPath.startsWith("https://"));
             return (
               <HeaderGoldButton
                 key={keyOr(button?.label, `button-${index}`)}

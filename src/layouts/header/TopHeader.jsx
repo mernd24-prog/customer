@@ -1,4 +1,3 @@
-
 import { useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,10 +12,7 @@ import { logout } from "../../features/auth/authSlice";
 import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 
-import {
-  DEFAULT_TOP_NAV_LINKS,
-  DEFAULT_SELL_DROPDOWN,
-} from "./constants";
+import { DEFAULT_TOP_NAV_LINKS, DEFAULT_SELL_DROPDOWN } from "./constants";
 import { withIcons } from "./categoryHelpers";
 
 export const TopHeader = () => {
@@ -50,7 +46,7 @@ export const TopHeader = () => {
         items: withIcons([
           {
             label: "Seller Login",
-            path: "http://45.195.90.183:3000/login",
+            path: "/become-a-seller",
             icon: "store",
           },
           {

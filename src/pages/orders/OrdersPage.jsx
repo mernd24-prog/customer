@@ -7,7 +7,6 @@ import { BsCreditCardFill } from "react-icons/bs";
 import { MdDateRange } from "react-icons/md";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import {
-  ChevronDown,
   Download,
   IndianRupee,
   Package,
@@ -35,6 +34,7 @@ import { useToastThunk } from "../../hooks/useToastThunk";
 import { notify } from "../../utils/notify";
 
 import NeedHelpPanel from "../../components/ecommerce/NeedHelpPanel";
+import CustomDropdown from "../../components/ui/CustomDropdown";
 
 import {
   fetchMyOrders,
@@ -1128,7 +1128,6 @@ function OrderList() {
   const dispatch = useDispatch();
   const state = useSelector((s) => s.order);
   const [activeFilter, setActiveFilter] = useState("");
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [query, setQuery] = useState("");
 
   const allOrders = state.list.length
@@ -1149,6 +1148,7 @@ function OrderList() {
         return s === activeFilter;
       })
     : allOrders;
+
   const orders = useMemo(() => {
     let term = query.trim().toLowerCase();
     const normalizedTerm = normalizeOrderSearchText(query);
@@ -1186,11 +1186,6 @@ function OrderList() {
       );
     });
   }, [query, statusOrders]);
-  const selectedFilter = ORDER_FILTERS.find(
-    (filter) => filter.value === activeFilter,
-  );
-  const selectedFilterLabel =
-    selectedFilter?.label === "All" ? "All Status" : selectedFilter?.label;
 
   useEffect(() => {
     dispatch(fetchMyOrders());
@@ -1230,63 +1225,19 @@ function OrderList() {
                     />
                   </label>
 
-                  <div
-                    className="relative w-full lg:w-[220px]"
-                    onBlur={(event) => {
-                      if (!event.currentTarget.contains(event.relatedTarget)) {
-                        setIsFilterOpen(false);
-                      }
+                  <CustomDropdown
+                    className="w-full lg:w-[220px]"
+                    buttonClassName="h-12 rounded-[10px] border-[#1B1D604D] font-semibold text-ink"
+                    options={ORDER_FILTERS.map((f) => ({
+                      value: f.value,
+                      label: f.label === "All" ? "All Status" : f.label,
+                    }))}
+                    value={activeFilter}
+                    onChange={(val) => {
+                      setActiveFilter(val);
                     }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setIsFilterOpen((open) => !open)}
-                      className="flex h-12 w-full items-center justify-between rounded-[10px] border border-[#1B1D604D] bg-white px-3 text-left text-sm font-semibold text-ink focus:outline-none"
-                      aria-expanded={isFilterOpen}
-                      aria-haspopup="menu"
-                    >
-                      <span>{selectedFilterLabel || "All Status"}</span>
-                      <ChevronDown
-                        size={18}
-                        className={`text-[#1B1D604D] transition-transform ${isFilterOpen ? "rotate-180" : ""}`}
-                      />
-                    </button>
-
-                    {isFilterOpen && (
-                      <div
-                        role="menu"
-                        className="absolute right-0 top-[calc(100%+6px)] z-30 w-full min-w-[220px] overflow-hidden rounded-[15px] border border-[#E7D9B8] bg-white shadow-[0_12px_32px_rgba(31,36,48,0.14)]"
-                      >
-                        <div className="py-1">
-                          {ORDER_FILTERS.map((filter) => {
-                            const label =
-                              filter.label === "All"
-                                ? "All Status"
-                                : filter.label;
-
-                            return (
-                              <button
-                                key={filter.value}
-                                type="button"
-                                role="menuitem"
-                                onClick={() => {
-                                  setActiveFilter(filter.value);
-                                  setIsFilterOpen(false);
-                                }}
-                                className={`block w-full px-4 py-2 text-left text-[13px] font-semibold transition-colors hover:bg-[#F8F1E2] ${
-                                  activeFilter === filter.value
-                                    ? "bg-[#F8F1E2] text-[#1B1D60]"
-                                    : "text-[#2E2E2E]"
-                                }`}
-                              >
-                                {label}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                    placeholder="All Status"
+                  />
                 </div>
 
                 <ApiState
