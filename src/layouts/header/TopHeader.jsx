@@ -27,6 +27,7 @@ export const TopHeader = () => {
 
   const dropdowns = useMemo(
     () => [
+      /*
       {
         type: "sell",
         label: "Sell",
@@ -39,6 +40,7 @@ export const TopHeader = () => {
           ),
         },
       },
+      */
       {
         type: "more",
         label: "More",
@@ -88,6 +90,13 @@ export const TopHeader = () => {
         </div>
 
         <div className="flex h-full items-center gap-[20px]">
+          <Link
+            to="/become-a-seller"
+            className="text-[#FFFFFF] text-[14px] font-medium transition-all duration-300 ease-in-out hover:text-gray-300"
+          >
+            Become a seller
+          </Link>
+
           {dropdowns.map((dropdown) => (
             <HeaderDropdown
               key={dropdown.type}

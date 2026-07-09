@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Grid2X2 } from "lucide-react";
 import { FaAngleRight } from "react-icons/fa6";
-import Label from "../common/label/Label";
 import { TextGoldButton } from "../dynamicComponent/button/static";
 import { applyImageFallback } from "../../utils/ecommerce";
 import { cn } from "../../lib/utils";
@@ -11,7 +10,6 @@ export default function CategoryCard({
   title,
   stylesCount,
   href,
-  badge = "Featured",
   ctaLabel = "Shop Now",
   active = false,
   onClick,

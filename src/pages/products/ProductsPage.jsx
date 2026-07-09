@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid2X2, List } from "lucide-react";
 import Seo from "../../components/common/Seo";
@@ -106,12 +106,15 @@ const normalizeFacetOption = (option = {}) => {
 export default function ProductsPage() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const [viewMode, setViewMode] = useState("grid");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [brandList, setBrandList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [items, setItems] = useState([]);
   const [productFacets, setProductFacets] = useState({});
+  const [seenCategories, setSeenCategories] = useState(new Map());
+  const [seenBrands, setSeenBrands] = useState(new Map());
   const [pageInfo, setPageInfo] = useState({
     page: 1,
     totalPages: 1,
@@ -188,22 +191,53 @@ export default function ProductsPage() {
   const effectiveRatingCounts = Object.keys(facetRatingCounts).length
     ? facetRatingCounts
     : ratingCounts;
-  const categoryOptions = facetCategoryOptions.length
-    ? facetCategoryOptions
-    : categoryList
-        .map((cat) =>
-          normalizeFacetOption({
-            value: cat.categoryKey || cat.id || cat._id,
-            label: cat.title || cat.name,
-          }),
-        )
-        .filter(Boolean);
-  const brandOptions = facetBrandOptions.length
-    ? facetBrandOptions
-    : brandList.map((brand) => ({
-        ...brand,
-        count: brandCounts[String(brand.value)] || 0,
-      }));
+  const categoryCounts = useMemo(() => {
+    const counts = {};
+    facetCategoryOptions.forEach(opt => counts[opt.value] = opt.count);
+    return counts;
+  }, [facetCategoryOptions]);
+
+  const brandCountsObj = useMemo(() => {
+    const counts = {};
+    facetBrandOptions.forEach(opt => counts[opt.value] = opt.count);
+    return counts;
+  }, [facetBrandOptions]);
+
+  useEffect(() => {
+    if (facetCategoryOptions.length > 0) {
+      setSeenCategories(prev => {
+        const next = new Map(prev);
+        facetCategoryOptions.forEach(c => {
+          if (!next.has(c.value)) next.set(c.value, c.label);
+        });
+        return next;
+      });
+    }
+  }, [facetCategoryOptions]);
+
+  useEffect(() => {
+    if (facetBrandOptions.length > 0) {
+      setSeenBrands(prev => {
+        const next = new Map(prev);
+        facetBrandOptions.forEach(c => {
+          if (!next.has(c.value)) next.set(c.value, c.label);
+        });
+        return next;
+      });
+    }
+  }, [facetBrandOptions]);
+
+  const categoryOptions = Array.from(seenCategories.entries()).map(([value, label]) => ({
+    value,
+    label,
+    count: categoryCounts[value] || 0,
+  }));
+
+  const brandOptions = Array.from(seenBrands.entries()).map(([value, label]) => ({
+    value,
+    label,
+    count: brandCountsObj[value] || 0,
+  }));
 
   const getParams = useCallback(
     (pageOverride) => {
@@ -230,10 +264,7 @@ export default function ProductsPage() {
         inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
         outOfStock:
           searchParams.get("outOfStock") === "true" ? "true" : undefined,
-        expressDelivery:
-          searchParams.get("expressDelivery") === "true" ? "true" : undefined,
-        freeDelivery:
-          searchParams.get("freeDelivery") === "true" ? "true" : undefined,
+
         page: pageOverride || 1,
         limit: Number(searchParams.get("limit") || 12),
       };
@@ -248,13 +279,30 @@ export default function ProductsPage() {
       const result = await dispatch(fetchProducts(params)).unwrap();
 
       const data = result?.data || {};
-      const list =
+      let list =
         data.hits ||
         data.products ||
         data.results ||
         data.items ||
         data.list ||
         (Array.isArray(data) ? data : []);
+
+      if (list.length === 0 && location.state?.fallbackProducts && page === 1) {
+        let fallbacks = location.state.fallbackProducts;
+        const selectedCategory = searchParams.get("category");
+        if (selectedCategory) {
+          const normalizeCat = (c) => String(c || "").toLowerCase().replace(/[^a-z0-9]/g, '');
+          const targetCat = normalizeCat(selectedCategory);
+          fallbacks = fallbacks.filter((p) => {
+            const cat = p.category;
+            if (!cat) return false;
+            const catId = typeof cat === "object" ? (cat.slug || cat.key || cat.id || cat._id || cat.name) : cat;
+            return normalizeCat(catId) === targetCat || normalizeCat(catId).includes(targetCat) || targetCat.includes(normalizeCat(catId));
+          });
+        }
+        list = fallbacks;
+      }
+
       const meta =
         result?.meta?.pagination || result?.pagination || result?.meta || {};
       setPageInfo({
@@ -425,6 +473,7 @@ export default function ProductsPage() {
       key: "outOfStock",
       label: "Out of Stock",
     },
+    /*
     searchParams.get("expressDelivery") === "true" && {
       key: "expressDelivery",
       label: "Express Delivery",
@@ -433,6 +482,7 @@ export default function ProductsPage() {
       key: "freeDelivery",
       label: "Free Delivery",
     },
+    */
     ["color", "size", "material", "fit", "storage", "skinType", "shade"]
       .map(
         (key) =>
@@ -469,8 +519,9 @@ export default function ProductsPage() {
         <OptionFilter
           name="category"
           options={categoryOptions}
-          selected={searchParams.get("category")}
-          onChange={(value) => updateParam("category", value)}
+          selected={parseMultiValue(searchParams.get("category"))}
+          multiple
+          onChange={(values) => updateParam("category", serializeMultiValue(values))}
         />
       ),
     },
@@ -514,6 +565,7 @@ export default function ProductsPage() {
         />
       ),
     },
+    /*
     {
       key: "delivery",
       title: "Delivery",
@@ -543,6 +595,7 @@ export default function ProductsPage() {
         />
       ),
     },
+    */
     {
       key: "inStock",
       title: "Availability",

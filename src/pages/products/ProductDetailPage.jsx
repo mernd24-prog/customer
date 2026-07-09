@@ -536,14 +536,14 @@ function VariantSelector({
   product,
 }) {
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-col gap-6">
       {variantOptions.map((option) => (
         <div
           key={option.slug}
           className={
             option.displayType === "color_swatch"
               ? "order-2 w-full"
-              : "order-1 flex-none"
+              : "order-1 w-full"
           }
         >
           <p

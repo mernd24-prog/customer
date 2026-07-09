@@ -353,6 +353,8 @@ export default function App() {
                 path="/terms-of-use"
                 element={<PolicyPage slugOverride="terms-of-use" />}
               />
+              <Route path="/become-a-seller" element={<BecomeASeller />} />
+
               {/* ── Public buyer routes ────────────────────────────────────── */}
               <Route element={<BuyerOnlyRoute />}>
                 <Route index element={<HomePage />} />
@@ -517,8 +519,6 @@ export default function App() {
                   />
                 </Route>
 
-                {/* Public seller introduction */}
-                <Route path="/become-a-seller" element={<BecomeASeller />} />
 
                 {/* ── Seller-only routes ─────────────────────────────────── */}
                 <Route element={<SellerOnlyRoute />}>

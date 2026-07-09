@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
+import { useParams, useSearchParams, Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronRight, LayoutGrid } from "lucide-react";
 import Seo from "../../components/common/Seo";
@@ -182,6 +182,7 @@ function CategoryPageSkeleton() {
 
 export default function CategoryPage() {
   const { categoryKey } = useParams();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode] = useState("grid");
@@ -270,8 +271,9 @@ export default function CategoryPage() {
         rating: searchParams.get("rating") ? (searchParams.get("rating").includes(",") ? searchParams.get("rating").split(",") : searchParams.get("rating")) : undefined,
         inStock: searchParams.get("inStock") || undefined,
         outOfStock: searchParams.get("outOfStock") || undefined,
-        expressDelivery: searchParams.get("expressDelivery") || undefined,
-        freeDelivery: searchParams.get("freeDelivery") || undefined,
+        // expressDelivery: searchParams.get("expressDelivery") || undefined,
+        // freeDelivery: searchParams.get("freeDelivery") || undefined,
+
         page: pageOverride || 1,
         limit: Number(searchParams.get("limit") || 20),
       };
@@ -307,9 +309,29 @@ export default function CategoryPage() {
       try {
         const result = await dispatch(fetchProducts(params)).unwrap();
         const data = result?.data;
-        const list = Array.isArray(data)
+        let list = Array.isArray(data)
           ? data
           : data?.items || data?.list || [];
+          
+        if (list.length === 0 && location.state?.fallbackProducts && page === 1) {
+          const normalizeCat = (c) => String(c || "").toLowerCase().replace(/[^a-z0-9-]/g, "");
+          const targetCat = normalizeCat(categoryKey);
+          const targetTokens = targetCat.split("-").filter(Boolean);
+          list = location.state.fallbackProducts.filter((p) => {
+            const cat = p.category;
+            if (!cat) return false;
+            const catId = typeof cat === "object" ? (cat.slug || cat.key || cat.id || cat._id || cat.name) : cat;
+            const pCat = normalizeCat(catId);
+            
+            if (pCat === targetCat || pCat.includes(targetCat) || targetCat.includes(pCat)) return true;
+
+            const pTokens = pCat.split("-").filter(Boolean);
+            return targetTokens.some(token => 
+              pTokens.some(pToken => token.includes(pToken) || pToken.includes(token))
+            );
+          });
+        }
+
         const m = result?.meta || {};
         setPageInfo({
           page: Number(m.page || m.currentPage || params.page || 1),
@@ -376,7 +398,7 @@ export default function CategoryPage() {
         const list = Array.isArray(data)
           ? data
           : data?.items || data?.list || [];
-        setBrandList(
+        setBrandList( 
           list
             .map((brand) => {
               const label =
@@ -628,6 +650,7 @@ export default function CategoryPage() {
             />
           ),
         },
+        /*
         {
           key: "delivery",
           title: "Delivery",
@@ -657,6 +680,7 @@ export default function CategoryPage() {
             />
           ),
         },
+        */
         {
           key: "inStock",
           title: "Availability",
@@ -736,6 +760,7 @@ export default function CategoryPage() {
       key: "outOfStock",
       label: "Out of Stock",
     },
+    /*
     searchParams.get("expressDelivery") === "true" && {
       key: "expressDelivery",
       label: "Express Delivery",
@@ -744,6 +769,7 @@ export default function CategoryPage() {
       key: "freeDelivery",
       label: "Free Delivery",
     },
+    */
     [
       "color",
       "size",
