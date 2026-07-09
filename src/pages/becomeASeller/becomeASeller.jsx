@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import {
   ArrowLeft,
   ArrowRight,
@@ -205,6 +205,7 @@ export default function BecomeASeller() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
+                target="_blank"
                 href={SELLER_LOGIN_URL}
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#d6a323] px-7 font-bold text-[#17145f] transition hover:-translate-y-0.5 hover:bg-[#e5b738]"
               >
@@ -260,12 +261,7 @@ export default function BecomeASeller() {
           </div>
           <div className="seller-experience-swiper  mt-10 ">
             <Swiper
-              modules={[Autoplay, Navigation, Pagination]}
-              autoplay={{
-                delay: 5000,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true,
-              }}
+              modules={[Navigation, Pagination]}
               navigation={{
                 prevEl: ".seller-story-prev",
                 nextEl: ".seller-story-next",
@@ -373,6 +369,7 @@ export default function BecomeASeller() {
           </div>
           <div className="mt-12 text-center">
             <a
+              target="_blank"
               href={SELLER_LOGIN_URL}
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#d6a323] px-8 font-bold text-[#17145f] transition hover:-translate-y-0.5 hover:bg-[#e5b738]"
             >

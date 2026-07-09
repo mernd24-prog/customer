@@ -10,7 +10,7 @@ export default function DropdownHeader({ title, actionText, actionPath }) {
       {actionText ? (
         <Link
           to={actionPath}
-          className="text-[12px] font-semibold text-[var(--customer-gold-dark)] underline-offset-2 hover:underline"
+          className="text-[12px]  font-semibold text-[var(--customer-gold-dark)] underline-offset-2 hover:underline"
         >
           {actionText}
         </Link>

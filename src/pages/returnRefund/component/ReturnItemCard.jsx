@@ -36,8 +36,8 @@ export default function ReturnItemCard({
             className="mx-auto h-[110px] w-[110px] shrink-0 bg-white min-[375px]:h-[120px] min-[375px]:w-[120px] sm:mx-0 sm:h-[125px] sm:w-[125px] md:h-[135px] md:w-[135px] lg:h-auto lg:w-auto"
           />
 
-          <div className="min-w-0 space-y-1.5 text-[13px] font-medium  text-[#454545] min-[375px]:text-sm sm:space-y-2 sm:text-[15px] md:text-[16px] lg:text-[20px] ">
-            <h2 className="line-clamp-2 text-[17px] py-2 font-semibold  text-[#1B1D60] min-[375px]:text-[18px] sm:text-[20px] md:text-[22px] lg:text-[26px] max-w-2xl lg:font-bold ">
+          <div className="min-w-0 space-y-1.5 text-small font-medium  text-[#454545]  sm:space-y-2  ">
+            <h2 className="line-clamp-1 text-h3 py-2 font-semibold  text-[#1B1D60]  max-w-2xl lg:font-bold ">
               {title}
             </h2>
 
@@ -45,7 +45,7 @@ export default function ReturnItemCard({
             <p className="py-2">QTY : {quantity}</p>
             <p>Sold by {seller}</p>
 
-            <p className="py-2 text-[16px] font-bold text-[#1B1D60] sm:text-[18px] md:text-[20px] lg:text-[24px] lg:font-extrabold lg:leading-[36px]">
+            <p className="py-2 text-h5 font-bold text-[#1B1D60]  lg:font-extrabold ">
               {formatMoney(price, currency)}
             </p>
           </div>
@@ -61,14 +61,14 @@ export default function ReturnItemCard({
 
           <div>
             <div>Requested On</div>
-            <div className="mt-1 text-[16px] font-bold text-[#1B1D60] sm:text-[18px] md:text-[20px] lg:text-[24px] lg:font-extrabold lg:leading-[36px]">
+            <div className="mt-1 text-small font-bold text-[#1B1D60]">
               {requestedOn}
             </div>
           </div>
 
           <div>
             <div>Return ID</div>
-            <div className="mt-1 break-words text-[16px] font-bold text-[#1B1D60] sm:text-[18px] md:text-[20px] lg:text-[20px] lg:font-extrabold ">
+            <div className="mt-1 break-words text-small font-bold text-[#1B1D60]  lg:font-extrabold ">
               {returnId}
             </div>
           </div>
@@ -90,7 +90,7 @@ export default function ReturnItemCard({
           variant="secondary"
           size="sm"
           onClick={onTrackRequest}
-          className="h-9 w-full border-[#A9ACD1] px-4 text-sm font-semibold md:h-10 lg:h-[45px] lg:w-[220px] lg:min-w-[220px] lg:rounded-[10px] lg:border lg:px-[25px] lg:py-[10px] lg:text-[20px] lg:font-medium"
+          className="h-9 w-full border-[#A9ACD1] px-4 text-sm font-semibold md:h-10 lg:h-[45px] lg:w-[220px] lg:min-w-[220px] lg:rounded-[10px] lg:border lg:px-[25px] lg:py-[10px] lg:text-[16px] lg:font-medium"
         >
           {trackLabel}
         </Button>
@@ -102,11 +102,9 @@ export default function ReturnItemCard({
 function ReturnInfo({ label, children }) {
   return (
     <div className="min-w-0">
-      <p className="text-[13px] font-medium text-[#454545] sm:text-sm md:text-[16px] lg:text-[20px] lg:leading-[100%]">
-        {label}
-      </p>
+      <p className="text-h6 font-medium  text-[#454545] ">{label}</p>
 
-      <p className="mt-2 break-words text-[16px] font-bold text-[#1B1D60] sm:text-[18px] md:text-[20px] lg:text-[24px] lg:font-extrabold lg:leading-[36px]">
+      <p className="mt-2 break-words text-small font-bold text-[#1B1D60] lg:font-extrabold">
         {children}
       </p>
     </div>

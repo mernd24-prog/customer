@@ -35,7 +35,10 @@ import { fetchMe } from "../features/user/userSlice";
 import { getRole, isAdminRole } from "../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
 import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
-import { fetchCategories, setGlobalCategories } from "../features/catalog/catalogSlice";
+import {
+  fetchCategories,
+  setGlobalCategories,
+} from "../features/catalog/catalogSlice";
 
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
@@ -419,9 +422,7 @@ export const Navbar = ({ icons: propIcons }) => {
 export const CategoryBar = ({ headerData, compact = false }) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const catalogCategoryList = useSelector(
-    (state) => state.catalog.list || [],
-  );
+  const catalogCategoryList = useSelector((state) => state.catalog.list || []);
   const [categoriesList, setCategoriesList] = useState([]);
 
   useEffect(() => {
@@ -434,10 +435,15 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     }
   }, [catalogCategoryList]);
 
-  const globalCategories = useSelector((state) => state.catalog.globalCategories);
+  const globalCategories = useSelector(
+    (state) => state.catalog.globalCategories,
+  );
 
   useEffect(() => {
-    if (!globalCategories || (Array.isArray(globalCategories) && globalCategories.length === 0)) {
+    if (
+      !globalCategories ||
+      (Array.isArray(globalCategories) && globalCategories.length === 0)
+    ) {
       dispatch(fetchCategories())
         .unwrap()
         .then((result) => {
@@ -580,7 +586,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     return catalogTree.map((cat) => {
       const globalNode = findInTree(fullTree, cat.categoryKey);
       const catChildren =
-        (Array.isArray(globalNode?.children) && globalNode.children.length > 0)
+        Array.isArray(globalNode?.children) && globalNode.children.length > 0
           ? globalNode.children
           : asArray(cat?.children);
 
@@ -660,19 +666,16 @@ export const CategoryBar = ({ headerData, compact = false }) => {
             </Link>
           </div>
         </div>
-        {activeMenu && (
+        {/* {activeMenu && (
           <div
-            id="compact-category-mega-menu"
+            id="compact-category-mega-menu "
             className="absolute left-0 top-full z-[9999] w-full"
             onMouseEnter={keepCategoryMenuOpen}
             onMouseLeave={handleCategoryMouseLeave}
           >
-            <CategoryMegaMenu
-              data={megaMenuData}
-              activeCategory={activeMenu}
-            />
+            <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
           </div>
-        )}
+        )} */}
       </nav>
     );
   }
@@ -697,9 +700,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       <div className="absolute inset-0 bg-[#CE9F2D33]  z-10  " />
 
       <div className="w-full relative z-20 overflow-x-auto hide-scrollbar">
-        <div
-          className="flex w-max mx-auto gap-4 px-2 py-3 sm:gap-5 lg:gap-5"
-        >
+        <div className="flex w-max mx-auto gap-4 px-2 py-3 sm:gap-5 lg:gap-5">
           {visibleCategories.map((item, index) => {
             // Always use categoryKey first — it's the canonical route key from the DB
             const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
@@ -719,7 +720,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                   to={categoryHref}
                   aria-expanded={isActive}
                   aria-controls="category-mega-menu"
-                  className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px]  flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
+                  className="group dflex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px]  flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
                   <div className="mx-auto flex h-[50px]  w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out  group-hover:-translate-y-0.5  will-change-transform ">
                     {item?.iconUrl ? (
@@ -750,7 +751,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
           />
         </div>
       </div>
-      {activeMenu && !isPinned && (
+      {/* {activeMenu && !isPinned && (
         <div
           id="category-mega-menu"
           className="absolute left-0 top-full z-[9999] w-full"
@@ -759,7 +760,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         >
           <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
         </div>
-      )}
+      )} */}
       <nav
         aria-label="Sticky category navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
@@ -818,19 +819,16 @@ export const CategoryBar = ({ headerData, compact = false }) => {
             </Link>
           </div>
         </div>
-        {activeMenu && isPinned && (
+        {/* {activeMenu && isPinned && (
           <div
             id="sticky-category-mega-menu"
             className="absolute left-0 top-full z-[9999] w-full"
             onMouseEnter={keepCategoryMenuOpen}
             onMouseLeave={handleCategoryMouseLeave}
           >
-            <CategoryMegaMenu
-              data={megaMenuData}
-              activeCategory={activeMenu}
-            />
+            <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
           </div>
-        )}
+        )} */}
       </nav>
     </header>
   );

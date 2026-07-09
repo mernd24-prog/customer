@@ -31,7 +31,7 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
 
   return (
     <div
-      className="relative grid w-full max-w-[760px] py-3"
+      className="relative grid w-full  py-3"
       style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
     >
       <span

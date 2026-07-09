@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+import { CheckCircle2, ChevronDown } from "lucide-react";
+import BaseModal from "../../components/common/overlay/BaseModal";
+import CustomDropdown from "../../components/ui/CustomDropdown";
 
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
@@ -215,10 +217,9 @@ export default function SupportHelpCenter() {
   const [supportLoading, setSupportLoading] = useState(false);
   const [supportSubmitting, setSupportSubmitting] = useState(false);
   const [supportError, setSupportError] = useState("");
-  const [isCategoryFilterOpen, setIsCategoryFilterOpen] = useState(false);
-  const [isSupportCategoryOpen, setIsSupportCategoryOpen] = useState(false);
-  const categoryFilterRef = useRef(null);
-  const supportCategoryRef = useRef(null);
+  const [helpPanelExpandedIndex, setHelpPanelExpandedIndex] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [submittedTicketId, setSubmittedTicketId] = useState("");
 
   const pageTitle = page?.title || "";
   const pageDescription = page?.description || page?.excerpt || "";
@@ -304,7 +305,7 @@ export default function SupportHelpCenter() {
     setSupportSubmitting(true);
 
     try {
-      await apiRequest({
+      const response = await apiRequest({
         method: "post",
         url: endpoints.support.queries,
         data: {
@@ -318,10 +319,13 @@ export default function SupportHelpCenter() {
         },
       });
 
-      notify.success("Support message sent successfully.");
+      const ticketId = response?.data?.queryId || response?.data?.id || "";
+      setSubmittedTicketId(ticketId);
 
       setSupportForm(CUSTOMER_SUPPORT_INITIAL_FORM);
       setSelectedSupportCategory("");
+      setHelpPanelExpandedIndex(null);
+      setShowSuccessModal(true);
 
       await loadSupportQueries();
     } catch (error) {
@@ -330,37 +334,6 @@ export default function SupportHelpCenter() {
       setSupportSubmitting(false);
     }
   };
-  useEffect(() => {
-    if (!isSupportCategoryOpen) return;
-
-    const handlePointerDown = (event) => {
-      if (supportCategoryRef.current?.contains(event.target)) return;
-
-      setIsSupportCategoryOpen(false);
-    };
-
-    document.addEventListener("pointerdown", handlePointerDown);
-
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, [isSupportCategoryOpen]);
-
-  const selectedSupportFormCategory =
-    CUSTOMER_SUPPORT_CATEGORIES.find(
-      (item) => item.value === supportForm.category,
-    )?.label || "Select Category";
-
-  useEffect(() => {
-    if (!isCategoryFilterOpen) return;
-
-    const handlePointerDown = (event) => {
-      if (categoryFilterRef.current?.contains(event.target)) return;
-      setIsCategoryFilterOpen(false);
-    };
-
-    document.addEventListener("pointerdown", handlePointerDown);
-
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, [isCategoryFilterOpen]);
 
   if (isPageLoading) {
     return (
@@ -402,13 +375,11 @@ export default function SupportHelpCenter() {
 
       <main className="main-container p-0 sm:px-6 sm:py-6 lg:px-0 lg:py-8">
         <Breadcrumbs items={SUPPORT_BREADCRUMBS} />
-
         <div className="mb-7 mt-4 sm:mt-5">
           <h1 className="text-[26px] font-bold leading-tight text-[#3E4093] sm:text-[30px] lg:text-[32px]">
             Help & Support
           </h1>
         </div>
-
         {/* =====================================================
             MOBILE QUICK ACTIONS
             Separate from desktop grid
@@ -464,7 +435,6 @@ export default function SupportHelpCenter() {
             )}
           </section>
         )}
-
         {/* =====================================================
             DESKTOP MAIN GRID
             Both columns start EXACTLY same row
@@ -565,6 +535,8 @@ export default function SupportHelpCenter() {
               {/* SAME ROW AS QUICK ACTIONS */}
               <NeedHelpPanel
                 title="Contact Support"
+                expandedIndex={helpPanelExpandedIndex}
+                onExpandedIndexChange={setHelpPanelExpandedIndex}
                 items={SUPPORT_CONTACT_ITEMS.map((item) => {
                   if (item.title === "Raise a Ticket") {
                     return {
@@ -574,74 +546,18 @@ export default function SupportHelpCenter() {
                           onSubmit={handleSupportSubmit}
                           className="space-y-4 px-1 py-2"
                         >
-                          <label className="block">
-                            <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
-                              Category
-                            </span>
-
-                            <div
-                              ref={supportCategoryRef}
-                              className="relative"
-                              onBlur={(event) => {
-                                if (
-                                  !event.currentTarget.contains(
-                                    event.relatedTarget,
-                                  )
-                                ) {
-                                  setIsSupportCategoryOpen(false);
-                                }
-                              }}
-                            >
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setIsSupportCategoryOpen((open) => !open)
-                                }
-                                className="flex h-11 w-full items-center justify-between rounded-lg border border-[#E7D9B8] bg-white px-3 text-left text-sm font-medium text-[#2E2E2E] transition hover:border-[#CE9F2D] focus:outline-none"
-                                aria-expanded={isSupportCategoryOpen}
-                              >
-                                <span>{selectedSupportFormCategory}</span>
-
-                                <ChevronDown
-                                  size={18}
-                                  className={`text-[#CE9F2D] transition-transform ${
-                                    isSupportCategoryOpen ? "rotate-180" : ""
-                                  }`}
-                                />
-                              </button>
-
-                              {isSupportCategoryOpen && (
-                                <div className="absolute left-0 top-[calc(100%+6px)] z-30 w-full overflow-hidden rounded-xl border border-[#E7D9B8] bg-white shadow-[0_12px_32px_rgba(31,36,48,0.14)]">
-                                  <div className="py-1">
-                                    {CUSTOMER_SUPPORT_CATEGORIES.map(
-                                      (category) => (
-                                        <button
-                                          key={category.value}
-                                          type="button"
-                                          onClick={() => {
-                                            setSupportForm((prev) => ({
-                                              ...prev,
-                                              category: category.value,
-                                            }));
-
-                                            setIsSupportCategoryOpen(false);
-                                          }}
-                                          className={`block w-full px-4 py-2.5 text-left text-[13px] font-semibold transition-colors hover:bg-[#F8F1E2] ${
-                                            supportForm.category ===
-                                            category.value
-                                              ? "bg-[#F8F1E2] text-[#1B1D60]"
-                                              : "text-[#2E2E2E]"
-                                          }`}
-                                        >
-                                          {category.label}
-                                        </button>
-                                      ),
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </label>
+                          <CustomDropdown
+                            label="Category"
+                            options={CUSTOMER_SUPPORT_CATEGORIES}
+                            value={supportForm.category}
+                            onChange={(val) =>
+                              setSupportForm((prev) => ({
+                                ...prev,
+                                category: val,
+                              }))
+                            }
+                            placeholder="Select Category"
+                          />
 
                           <label className="block">
                             <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
@@ -653,7 +569,7 @@ export default function SupportHelpCenter() {
                               value={supportForm.subject}
                               onChange={handleSupportFieldChange}
                               placeholder="Example: Refund not received"
-                              className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] outline-none placeholder:text-[#9A9A9A] focus:border-[#3E4093]"
+                              className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] focus:outline-none placeholder:text-[#9A9A9A] focus:border-gold"
                             />
                           </label>
 
@@ -701,76 +617,17 @@ export default function SupportHelpCenter() {
                     Recent Tickets
                   </h2>
 
-                  <div
-                    ref={categoryFilterRef}
-                    className="relative w-[190px]"
-                    onBlur={(event) => {
-                      if (!event.currentTarget.contains(event.relatedTarget)) {
-                        setIsCategoryFilterOpen(false);
-                      }
-                    }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setIsCategoryFilterOpen((open) => !open)}
-                      className="flex h-10 w-full items-center justify-between rounded-[10px] border border-[#CE9F2D] bg-white px-3 text-left text-sm font-semibold text-[#1B1D60] transition-colors hover:bg-[#FFF9EA] focus:outline-none"
-                      aria-expanded={isCategoryFilterOpen}
-                      aria-haspopup="menu"
-                    >
-                      <span>{selectedSupportCategoryLabel}</span>
-
-                      <ChevronDown
-                        size={18}
-                        className={`text-[#CE9F2D] transition-transform ${
-                          isCategoryFilterOpen ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-
-                    {isCategoryFilterOpen && (
-                      <div
-                        role="menu"
-                        className="absolute right-0 top-[calc(100%+6px)] z-30 w-full overflow-hidden rounded-[12px] border border-[#E7D9B8] bg-white shadow-[0_12px_32px_rgba(31,36,48,0.14)]"
-                      >
-                        <div className="py-1">
-                          <button
-                            type="button"
-                            role="menuitem"
-                            onClick={() => {
-                              setSelectedSupportCategory("");
-                              setIsCategoryFilterOpen(false);
-                            }}
-                            className={`block w-full px-4 py-2.5 text-left text-[13px] font-semibold transition-colors hover:bg-[#F8F1E2] ${
-                              selectedSupportCategory === ""
-                                ? "bg-[#F8F1E2] text-[#1B1D60]"
-                                : "text-[#2E2E2E]"
-                            }`}
-                          >
-                            All
-                          </button>
-
-                          {CUSTOMER_SUPPORT_CATEGORIES.map((category) => (
-                            <button
-                              key={category.value}
-                              type="button"
-                              role="menuitem"
-                              onClick={() => {
-                                setSelectedSupportCategory(category.value);
-                                setIsCategoryFilterOpen(false);
-                              }}
-                              className={`block w-full px-4 py-2.5 text-left text-[13px] font-semibold transition-colors hover:bg-[#F8F1E2] ${
-                                selectedSupportCategory === category.value
-                                  ? "bg-[#F8F1E2] text-[#1B1D60]"
-                                  : "text-[#2E2E2E]"
-                              }`}
-                            >
-                              {category.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  <CustomDropdown
+                    className="w-[190px]"
+                    buttonClassName="h-10 rounded-[10px] border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA]"
+                    options={[
+                      { value: "", label: "All" },
+                      ...CUSTOMER_SUPPORT_CATEGORIES,
+                    ]}
+                    value={selectedSupportCategory}
+                    onChange={(val) => setSelectedSupportCategory(val)}
+                    placeholder="All"
+                  />
                 </div>
 
                 <div className="divide-y divide-[#EFE5D2] px-5">
@@ -820,7 +677,43 @@ export default function SupportHelpCenter() {
               </section>
             </div>
           }
-        />  </main>
+        />{" "}
+      </main>
+
+      {showSuccessModal && (
+        <BaseModal
+          onClose={() => setShowSuccessModal(false)}
+          maxWidth="max-w-md"
+        >
+          <div className="flex flex-col items-center px-6 py-10 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#E8F8F5] text-[#117A65] mb-5">
+              <CheckCircle2 size={40} strokeWidth={2.5} />
+            </div>
+
+            <h3 className="text-xl font-bold text-[#1B1D60] mb-2">
+              Ticket Raised Successfully!
+            </h3>
+
+            <p className="text-sm text-[#4E4E4E] leading-relaxed mb-6">
+              Thank you for contacting us. Your ticket has been logged and our
+              support team will get back to you shortly.
+              {submittedTicketId && (
+                <span className="block mt-2 font-semibold text-[#3E4093]">
+                  Ticket ID: #{submittedTicketId}
+                </span>
+              )}
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setShowSuccessModal(false)}
+              className="w-full h-11 rounded-lg bg-[#3E4093] text-sm font-bold text-white transition hover:bg-[#303176] active:scale-[0.98]"
+            >
+              Done
+            </button>
+          </div>
+        </BaseModal>
+      )}
     </>
   );
 }

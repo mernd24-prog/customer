@@ -34,7 +34,7 @@ export default function HeaderDropdown({
 
   return (
     <div
-      className="relative inline-flex items-center"
+      className="relative  inline-flex items-center"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       // onMouseEnter={() => setIsOpen(true)}
@@ -128,7 +128,7 @@ export default function HeaderDropdown({
         <button
           type="button"
           className={cn(
-            "flex items-center gap-1.5 text-white/85 transition-all duration-300 ease-in-out hover:text-white",
+            "flex items-center gap-1.5 d text-white/85 transition-all duration-300 ease-in-out hover:text-white",
             className,
           )}
           aria-expanded={isOpen}

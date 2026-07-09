@@ -1,11 +1,3 @@
-/**
- * CategoryBar.jsx
- * State & logic owner for the category navigation area.
- *
- * - Owns: categoriesList, activeMenu, isPinned, all refs & useEffects
- * - Renders: <CompactCategoryBar> (non-homepage) or full visual bar (homepage)
- * - Both branches share hover state, mega-menu, and sticky overlay
- */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,7 +30,9 @@ import { StickyNavStrip } from "./StickyNavStrip";
 export const CategoryBar = ({ headerData, compact = false }) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const catalogCategoryList = useSelector((state) => state.catalog.globalCategories || state.catalog.list || []);
+  const catalogCategoryList = useSelector(
+    (state) => state.catalog.globalCategories || state.catalog.list || [],
+  );
   const [categoriesList, setCategoriesList] = useState([]);
 
   // Sync with Redux list when it contains actual category items
@@ -191,7 +185,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
 
   const visibleCategories = useMemo(
     () => asArray(categories).slice(0, 11),
-    [categories]
+    [categories],
   );
 
   if (!categories.length) return null;

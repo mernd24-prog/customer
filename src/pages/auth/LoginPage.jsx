@@ -11,7 +11,12 @@ import FormField from "../../components/ui/FormField";
 import Seo from "../../components/common/Seo";
 
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
-import { loginUser, socialLogin, clearError } from "../../features/auth/authSlice";
+import {
+  checkAuthStatus,
+  loginUser,
+  socialLogin,
+  clearError,
+} from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { notify } from "../../utils/notify";
 import { loginSchema } from "../../validations/validationSchemas";
@@ -86,8 +91,8 @@ export default function LoginPage() {
         email: values.email,
         password: values.password,
       }),
-      "Welcome back!",
     );
+    await run(dispatch, checkAuthStatus(), "Welcome back!");
     navigate(from, { replace: true });
   };
 
@@ -121,8 +126,8 @@ export default function LoginPage() {
                 idToken: response.credential,
                 role: "buyer",
               }),
-              "Welcome!",
             );
+            await run(dispatch, checkAuthStatus(), "Welcome!");
             navigate(from, { replace: true });
           } finally {
             setGoogleLoading(false);
