@@ -618,7 +618,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         className="fixed left-0 z-40 w-full bg-white/95 shadow-[0_2px_8px_rgba(17,24,39,0.06)] backdrop-blur !block"
       >
         <div className="relative w-full overflow-x-auto hide-scrollbar">
-          <div className="customer-container flex h-[44px] w-max mx-auto items-center gap-5 whitespace-nowrap px-4 sm:gap-7 lg:h-[46px]">
+          <div className="flex h-[44px] w-max mx-auto items-center gap-5 whitespace-nowrap px-4 sm:gap-7 lg:h-[46px]">
             {visibleCategories.map((item, index) => {
               const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
               const isActive =
@@ -647,7 +647,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                 </Link>
               );
             })}
-            <Link
+            {/* <Link
               to="/categories"
               className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
                 location.pathname === "/categories"
@@ -663,7 +663,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                     : "w-0 opacity-0"
                 }`}
               />
-            </Link>
+            </Link> */}
           </div>
         </div>
         {/* {activeMenu && (
@@ -771,7 +771,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         }`}
       >
         <div className="relative w-full overflow-x-auto hide-scrollbar">
-          <div className="customer-container flex h-[44px] w-max mx-auto items-center gap-5 whitespace-nowrap px-4 sm:gap-7 lg:h-[46px]">
+          <div className="flex h-[44px] w-max mx-auto items-center gap-5 whitespace-nowrap px-4 sm:gap-7 lg:h-[46px]">
             {visibleCategories.map((item, index) => {
               const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
               const isActive =

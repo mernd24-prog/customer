@@ -47,9 +47,7 @@ export function StickyNavStrip({
               isActive ? "text-[#03014D]" : "text-[#2E2E2E]"
             }`}
           >
-            <span>
-              {textOr(item?.name, "Category")}
-            </span>
+            <span>{textOr(item?.name, "Category")}</span>
             <span
               className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
                 isActive ? "w-full opacity-100" : "w-0 opacity-0"
@@ -59,7 +57,7 @@ export function StickyNavStrip({
         );
       })}
 
-      {/* "More" link always at the end */}
+      {/* "More" link always at the end
       <Link
         to="/categories"
         className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
@@ -72,7 +70,7 @@ export function StickyNavStrip({
             pathname === "/categories" ? "w-full opacity-100" : "w-0 opacity-0"
           }`}
         />
-      </Link>
+      </Link> */}
     </>
   );
 }

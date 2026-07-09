@@ -47,7 +47,7 @@ export default function CollageCard({ section }) {
     rating: img.rating,
     reviewCount: img.reviewCount,
     image: img.image,
-    category: img.category,
+    category: img.category || section.category,
     source: img.source,
     inStock: true
   })).filter(p => {
