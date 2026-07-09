@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import { EmptyState } from "../../components/common";
+import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
 import CartItemCard from "../../components/cart/CartItemCard";
 // import CartSummary from "../../components/cart/CartSummary";
 import BrandButton from "../../components/ui/BrandButton";
@@ -20,6 +21,7 @@ import {
   getProductTitle,
   getProductMrp,
   getProductPrice,
+  getVariantPrice,
   addProductToCartPayload,
   normalizeCartPayloadForWrite,
   wishlistPayload,
@@ -60,18 +62,32 @@ import {
   SELECTED_CHECKOUT_STORAGE_KEY,
 } from "../../constants";
 
-function adaptItemForCard(item) {
-  const product = item.productId || {};
-  const productId = item.productId?._id || getProductId(product);
+function adaptItemForCard(item, fullProduct = null) {
+  const product = fullProduct || item.productId || {};
+  const productId = item.productId?._id || getProductId(item.productId || {});
   const variantKey = item.variantId || item.variantSku || "";
   const title = getProductTitle(product, item.title || "Product");
   const image =
     getProductImage(product) ||
     item.image ||
     getImageFallbackSrc(title, "cart");
-  const price = getProductPrice(product) ?? item.price ?? product.price ?? product.sellingPrice ?? 0;
-  const oldPrice =
-    item.oldPrice ?? item.mrp ?? getProductMrp(product) ?? product.mrp ?? product.originalPrice;
+    
+  const fallbackProduct = item.productId || {};
+  
+  let livePrice = getProductPrice(fullProduct);
+  let liveMrp = getProductMrp(fullProduct);
+  
+  const variantId = item.variantId || item.variantSku;
+  if (variantId && fullProduct?.variants?.length) {
+    const variant = fullProduct.variants.find(v => v._id === variantId || v.id === variantId || v.sku === variantId);
+    if (variant) {
+      livePrice = getVariantPrice(variant) ?? livePrice;
+      liveMrp = variant.mrp ?? variant.oldPrice ?? liveMrp;
+    }
+  }
+
+  let price = livePrice ?? item.price ?? item.unitPrice ?? item.unit_price ?? item.salePrice ?? getProductPrice(fallbackProduct) ?? fallbackProduct.price ?? fallbackProduct.sellingPrice ?? 0;
+  const oldPrice = liveMrp ?? item.oldPrice ?? item.mrp ?? getProductMrp(fallbackProduct) ?? fallbackProduct.mrp ?? fallbackProduct.originalPrice;
   const productShippingInfo =
     product.shipping && typeof product.shipping === "object"
       ? product.shipping
@@ -197,7 +213,10 @@ export default function CartPage() {
 
   useEffect(() => {
     const wishlistIds = wishlist.map(getProductId).filter(Boolean);
-    const missingIds = wishlistIds.filter(
+    const cartItemIds = rawItems.map((item) => getProductId(item.productId || {})).filter(Boolean);
+    const allIds = Array.from(new Set([...wishlistIds, ...cartItemIds]));
+    
+    const missingIds = allIds.filter(
       (id) => !productEntities[id] && !fetchedIdsRef.current.has(id),
     );
 
@@ -208,17 +227,20 @@ export default function CartPage() {
     missingIds.forEach((productId) => {
       dispatch(fetchProductById({ productId })).catch(() => {});
     });
-  }, [dispatch, wishlist, productEntities]);
+  }, [dispatch, wishlist, rawItems, productEntities]);
 
   const items = useMemo(
     () =>
       rawItems.map((item) => {
         const key = cartLineKey(item);
+        const productId = item.productId?._id || getProductId(item.productId || {});
+        const fullProduct = productEntities[productId] || null;
+        
         return localQuantities[key] != null
-          ? adaptItemForCard({ ...item, quantity: localQuantities[key] })
-          : adaptItemForCard(item);
+          ? adaptItemForCard({ ...item, quantity: localQuantities[key] }, fullProduct)
+          : adaptItemForCard(item, fullProduct);
       }),
-    [rawItems, localQuantities],
+    [rawItems, localQuantities, productEntities],
   );
 
   const hasCartItems = items.length > 0;
@@ -534,8 +556,12 @@ export default function CartPage() {
               />
             )}
 
-            <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:gap-9 min-[1366px]:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_563px] min-[1366px]:h-[calc(100vh-250px)] min-[1366px]:min-h-[500px]">
-              <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8 min-[1366px]:h-full min-[1366px]:min-h-0 min-[1366px]:overflow-y-auto min-[1366px]:overscroll-contain min-[1366px]:[scrollbar-width:none] min-[1366px]:[-ms-overflow-style:none] min-[1366px]:[&::-webkit-scrollbar]:hidden">
+            <StickySidebarLayout
+              sidebarPosition="right"
+              containerClass="flex flex-col xl:flex-row gap-6 sm:gap-8 lg:gap-9"
+              sidebarClass="w-full xl:w-[420px] 2xl:w-[563px] transition-[top] duration-300 ease-in-out"
+              mainContent={
+                <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8">
                 {hasCartItems && (
                   <div className="flex items-center justify-between">
                     <label className="flex items-center gap-2 text-sm font-bold text-[#2d2d2d] sm:text-[15px]">
@@ -759,10 +785,11 @@ export default function CartPage() {
                     </OutlineSmallButton>
                   </div>
                 )}
-              </div>
-
-              {hasCartItems && (
-                <div className="w-full min-w-0 self-start min-[1366px]:h-fit">
+                </div>
+              }
+              sidebarContent={
+                hasCartItems && (
+                  <div className="w-full min-w-0">
                   <OrderPaymentSummary
                     variant="cart"
                     mrpSubtotal={mrpSubtotal}
@@ -786,6 +813,7 @@ export default function CartPage() {
                     onCheckout={() => {
                       if (!selectedItems.length) return;
 
+                      window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
                       window.sessionStorage.setItem(
                         SELECTED_CHECKOUT_STORAGE_KEY,
                         JSON.stringify(selectedItemIds),
@@ -795,8 +823,9 @@ export default function CartPage() {
                     }}
                   />
                 </div>
-              )}
-            </div>
+                )
+              }
+            />
 
             {/* RECENTLY VIEWED SECTION */}
             {recentViewedItems && recentViewedItems.length > 0 && (

@@ -144,7 +144,7 @@ export default function CartSummary({
   }
 
   return (
-    <aside className="w-full max-w-full lg:sticky lg:top-[calc(var(--customer-header-height,0px)+24px)] lg:h-fit lg:self-start overflow-hidden rounded-[20px] border border-[#F0E6D2] bg-[#FFFDF8]">
+    <aside className="w-full max-w-full overflow-hidden rounded-[20px] border border-[#F0E6D2] bg-[#FFFDF8]">
       <div className="bg-[#F8EFD8] px-4 py-5 min-[375px]:px-5 sm:px-6 sm:py-6 md:px-8">
         <h2 className="text-dm-sans text-[21px] font-bold leading-none tracking-normal text-[#2E2E2E] sm:text-[24px]">
           Order Summary

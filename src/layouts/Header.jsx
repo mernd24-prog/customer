@@ -35,7 +35,7 @@ import { fetchMe } from "../features/user/userSlice";
 import { getRole, isAdminRole } from "../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
 import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
-import { fetchCategories } from "../features/catalog/catalogSlice";
+import { fetchCategories, setGlobalCategories } from "../features/catalog/catalogSlice";
 
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
@@ -420,7 +420,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const catalogCategoryList = useSelector(
-    (state) => state.catalog.globalCategories || state.catalog.list || [],
+    (state) => state.catalog.list || [],
   );
   const [categoriesList, setCategoriesList] = useState([]);
 
@@ -434,8 +434,10 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     }
   }, [catalogCategoryList]);
 
+  const globalCategories = useSelector((state) => state.catalog.globalCategories);
+
   useEffect(() => {
-    if (categoriesList.length === 0) {
+    if (!globalCategories || (Array.isArray(globalCategories) && globalCategories.length === 0)) {
       dispatch(fetchCategories())
         .unwrap()
         .then((result) => {
@@ -446,11 +448,12 @@ export const CategoryBar = ({ headerData, compact = false }) => {
           );
           if (actualCategories.length > 0) {
             setCategoriesList(actualCategories);
+            dispatch(setGlobalCategories(data));
           }
         })
         .catch(() => {});
     }
-  }, [dispatch, categoriesList.length]);
+  }, [dispatch, globalCategories]);
 
   const catalogCategories = useMemo(() => categoriesList, [categoriesList]);
   const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
@@ -561,15 +564,36 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     if (headerCategories.length) return buildCategoryTree(headerCategories);
     if (!catalogTree.length) return [];
 
-    return catalogTree.map((cat) => ({
-      ...cat,
-      name: textOr(cat?.name, textOr(cat?.title, "Category")),
-      img: cat?.imageUrl || cat?.image || cat?.img,
-      slug: keyOr(cat?.slug, getCategoryKey(cat)),
-      categoryKey: getCategoryKey(cat),
-      children: asArray(cat?.children),
-    }));
-  }, [catalogTree, headerData]);
+    const fullTree = buildCategoryTree(globalCategories || []);
+    const findInTree = (nodes, key) => {
+      if (!Array.isArray(nodes)) return null;
+      for (const n of nodes) {
+        if (n.categoryKey === key) return n;
+        if (n.children && n.children.length > 0) {
+          const found = findInTree(n.children, key);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    return catalogTree.map((cat) => {
+      const globalNode = findInTree(fullTree, cat.categoryKey);
+      const catChildren =
+        (Array.isArray(globalNode?.children) && globalNode.children.length > 0)
+          ? globalNode.children
+          : asArray(cat?.children);
+
+      return {
+        ...cat,
+        name: textOr(cat?.name, textOr(cat?.title, "Category")),
+        img: cat?.imageUrl || cat?.image || cat?.img,
+        slug: keyOr(cat?.slug, getCategoryKey(cat)),
+        categoryKey: getCategoryKey(cat),
+        children: catChildren,
+      };
+    });
+  }, [catalogTree, headerData, globalCategories]);
 
   const visibleCategories = useMemo(
     () => asArray(categories).slice(0, 10),
@@ -587,8 +611,8 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
         className="fixed left-0 z-40 w-full bg-white/95 shadow-[0_2px_8px_rgba(17,24,39,0.06)] backdrop-blur !block"
       >
-        <div className="relative w-full">
-          <div className="customer-container hide-scrollbar flex h-[44px] items-center justify-center gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px]">
+        <div className="relative w-full overflow-x-auto hide-scrollbar">
+          <div className="customer-container flex h-[44px] w-max mx-auto items-center gap-5 whitespace-nowrap px-4 sm:gap-7 lg:h-[46px]">
             {visibleCategories.map((item, index) => {
               const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
               const isActive =
@@ -635,20 +659,20 @@ export const CategoryBar = ({ headerData, compact = false }) => {
               />
             </Link>
           </div>
-          {activeMenu && (
-            <div
-              id="compact-category-mega-menu"
-              className="absolute left-0 top-full z-[9999] w-full"
-              onMouseEnter={keepCategoryMenuOpen}
-              onMouseLeave={handleCategoryMouseLeave}
-            >
-              <CategoryMegaMenu
-                data={megaMenuData}
-                activeCategory={activeMenu}
-              />
-            </div>
-          )}
         </div>
+        {activeMenu && (
+          <div
+            id="compact-category-mega-menu"
+            className="absolute left-0 top-full z-[9999] w-full"
+            onMouseEnter={keepCategoryMenuOpen}
+            onMouseLeave={handleCategoryMouseLeave}
+          >
+            <CategoryMegaMenu
+              data={megaMenuData}
+              activeCategory={activeMenu}
+            />
+          </div>
+        )}
       </nav>
     );
   }
@@ -672,9 +696,9 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       {/* Golden Overlay */}
       <div className="absolute inset-0 bg-[#CE9F2D33]  z-10  " />
 
-      <div className="w-full relative z-20">
+      <div className="w-full relative z-20 overflow-x-auto hide-scrollbar">
         <div
-          className="hide-scrollbar flex justify-center gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:gap-5"
+          className="flex w-max mx-auto gap-4 px-2 py-3 sm:gap-5 lg:gap-5"
         >
           {visibleCategories.map((item, index) => {
             // Always use categoryKey first — it's the canonical route key from the DB
@@ -688,8 +712,8 @@ export const CategoryBar = ({ headerData, compact = false }) => {
               <div
                 key={keyOr(item?.name, `category-${index}`)}
                 className="relative"
-                // onMouseEnter={() => handleCategoryMouseEnter(item)}
-                // onMouseLeave={handleCategoryMouseLeave}
+                onMouseEnter={() => handleCategoryMouseEnter(item)}
+                onMouseLeave={handleCategoryMouseLeave}
               >
                 <Link
                   to={categoryHref}
@@ -725,17 +749,17 @@ export const CategoryBar = ({ headerData, compact = false }) => {
             icon={moreImage}
           />
         </div>
-        {activeMenu && (
-          <div
-            id="category-mega-menu"
-            className="absolute left-0 top-[calc(100%-2px)] z-[9999] w-full"
-            onMouseEnter={keepCategoryMenuOpen}
-            onMouseLeave={handleCategoryMouseLeave}
-          >
-            <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
-          </div>
-        )}
       </div>
+      {activeMenu && !isPinned && (
+        <div
+          id="category-mega-menu"
+          className="absolute left-0 top-full z-[9999] w-full"
+          onMouseEnter={keepCategoryMenuOpen}
+          onMouseLeave={handleCategoryMouseLeave}
+        >
+          <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
+        </div>
+      )}
       <nav
         aria-label="Sticky category navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
@@ -745,8 +769,8 @@ export const CategoryBar = ({ headerData, compact = false }) => {
             : "pointer-events-none -translate-y-full opacity-0"
         }`}
       >
-        <div className="relative w-full">
-          <div className="customer-container hide-scrollbar flex h-[44px] items-center justify-center gap-5 overflow-x-auto whitespace-nowrap px-4 sm:gap-7 lg:h-[46px]">
+        <div className="relative w-full overflow-x-auto hide-scrollbar">
+          <div className="customer-container flex h-[44px] w-max mx-auto items-center gap-5 whitespace-nowrap px-4 sm:gap-7 lg:h-[46px]">
             {visibleCategories.map((item, index) => {
               const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
               const isActive =
@@ -793,20 +817,20 @@ export const CategoryBar = ({ headerData, compact = false }) => {
               />
             </Link>
           </div>
-          {activeMenu && isPinned && (
-            <div
-              id="sticky-category-mega-menu"
-              className="absolute left-0 top-full z-[9999] w-full"
-              onMouseEnter={keepCategoryMenuOpen}
-              onMouseLeave={handleCategoryMouseLeave}
-            >
-              <CategoryMegaMenu
-                data={megaMenuData}
-                activeCategory={activeMenu}
-              />
-            </div>
-          )}
         </div>
+        {activeMenu && isPinned && (
+          <div
+            id="sticky-category-mega-menu"
+            className="absolute left-0 top-full z-[9999] w-full"
+            onMouseEnter={keepCategoryMenuOpen}
+            onMouseLeave={handleCategoryMouseLeave}
+          >
+            <CategoryMegaMenu
+              data={megaMenuData}
+              activeCategory={activeMenu}
+            />
+          </div>
+        )}
       </nav>
     </header>
   );

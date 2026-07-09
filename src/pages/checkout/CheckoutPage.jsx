@@ -10,6 +10,7 @@ import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { notify } from "../../utils/notify";
 import { fetchCart } from "../../features/cart/cartSlice";
+import { fetchProductById } from "../../features/product/productSlice";
 import { fetchWallet } from "../../features/wallet/walletSlice";
 import { fetchMe, addAddress } from "../../features/user/userSlice";
 import {
@@ -33,6 +34,8 @@ import {
   getProductId,
   getProductImage,
   getProductTitle,
+  getProductPrice,
+  getVariantPrice,
 } from "../../utils/ecommerce";
 import { normalizeId } from "../../utils/ecommerce/cart";
 import { normalizeDialCode } from "../../lib/utils";
@@ -253,20 +256,32 @@ const getOrderAmount = (order = {}, key) => {
 
   return undefined;
 };
-const getCartItemPrice = (item = {}) => {
-  const product =
-    item.productId && typeof item.productId === "object"
-      ? item.productId
-      : item.product || {};
+const getCartItemPrice = (item = {}, fullProduct = null) => {
+  const fallbackProduct = item.productId && typeof item.productId === "object"
+    ? item.productId
+    : item.product || {};
+
+  let livePrice = getProductPrice(fullProduct);
+  
+  const variantId = item.variantId || item.variantSku;
+  if (variantId && fullProduct?.variants?.length) {
+    const variant = fullProduct.variants.find(v => v._id === variantId || v.id === variantId || v.sku === variantId);
+    if (variant) {
+      livePrice = getVariantPrice(variant) ?? livePrice;
+    }
+  }
+
   return asNumber(
+    livePrice ??
     item.price ??
-      item.unitPrice ??
-      item.unit_price ??
-      item.salePrice ??
-      product.price ??
-      product.sellingPrice ??
-      product.salePrice ??
-      0,
+    item.unitPrice ??
+    item.unit_price ??
+    item.salePrice ??
+    getProductPrice(fallbackProduct) ??
+    fallbackProduct.price ??
+    fallbackProduct.sellingPrice ??
+    fallbackProduct.salePrice ??
+    0
   );
 };
 const getCartItemShipping = (item = {}) => {
@@ -308,8 +323,8 @@ const getCartItemAttributes = (item = {}) =>
   ).filter(
     ([, value]) => value !== null && value !== undefined && value !== "",
   );
-const adaptCheckoutItem = (item = {}, index = 0) => {
-  const product = getCartItemProduct(item);
+const adaptCheckoutItem = (item = {}, index = 0, fullProduct = null) => {
+  const product = fullProduct || getCartItemProduct(item);
   const productId = getProductId(product || item.productId || item.id);
   const variantKey = item.variantId || item.variantSku || "";
   const title = getCartItemTitle(item);
@@ -317,7 +332,7 @@ const adaptCheckoutItem = (item = {}, index = 0) => {
     getProductImage(product) ||
     item.image ||
     getImageFallbackSrc(title, "checkout");
-  const price = getCartItemPrice(item);
+  const price = getCartItemPrice(item, fullProduct);
   const quantity = asNumber(item.quantity || 1) || 1;
 
   return {
@@ -546,6 +561,7 @@ const buildOrderItems = (items = []) =>
         variantSku,
         variantTitle,
         attributes,
+        price,
       }) => ({
         productId:
           typeof productId === "object" ? _safeId : productId || _safeId,
@@ -554,6 +570,7 @@ const buildOrderItems = (items = []) =>
         variantTitle: variantTitle || undefined,
         attributes: attributes || {},
         quantity: Number(quantity || 1),
+        price: price ? Number(price) : undefined,
       }),
     )
     .filter((item) => Boolean(item.productId));
@@ -649,6 +666,9 @@ export default function CheckoutPage() {
   const userState = useSelector((s) => s.user);
   const orderState = useSelector((s) => s.order);
   const paymentState = useSelector((s) => s.payment);
+  const productEntities = useSelector((s) => s.product?.entities || {});
+  const fetchedIdsRef = useRef(new Set());
+  
   const [quoteData, setQuoteData] = useState(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState("");
@@ -668,9 +688,27 @@ export default function CheckoutPage() {
           : cart.items || [],
     [buyNowItems, cart.items, isBuyNowCheckout, selectedCheckoutItemIds],
   );
+  useEffect(() => {
+    const itemProductIds = checkoutSourceItems.map((item) => getProductId(item.productId || item.product || {})).filter(Boolean);
+    const missingIds = itemProductIds.filter(
+      (id) => !productEntities[id] && !fetchedIdsRef.current.has(id),
+    );
+
+    if (!missingIds.length) return;
+
+    missingIds.forEach((id) => fetchedIdsRef.current.add(id));
+    missingIds.forEach((productId) => {
+      dispatch(fetchProductById({ productId })).catch(() => {});
+    });
+  }, [dispatch, checkoutSourceItems, productEntities]);
+
   const items = useMemo(
-    () => checkoutSourceItems.map(adaptCheckoutItem),
-    [checkoutSourceItems],
+    () => checkoutSourceItems.map((item, i) => {
+      const productId = getProductId(item.productId || item.product || {});
+      const fullProduct = productEntities[productId] || null;
+      return adaptCheckoutItem(item, i, fullProduct);
+    }),
+    [checkoutSourceItems, productEntities],
   );
   const subtotal = items.reduce((sum, item) => sum + item._lineTotal, 0);
   const shipping = items.reduce((sum, item) => sum + item._shippingTotal, 0);

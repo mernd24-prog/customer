@@ -83,7 +83,7 @@ function RatingBar({ star, count, total }) {
 
 function ProductReviewSidebar({ product, productId }) {
   return (
-    <aside className="lg:sticky lg:top-[calc(var(--customer-header-height,0px)+24px)] lg:self-start">
+    <aside className="lg:sticky lg:top-[calc(var(--customer-header-height,95px)+80px)] lg:self-start">
       <Link
         to={productId ? `/products/${productId}` : "/products"}
         className="mb-4 inline-flex items-center gap-1 text-xs font-bold uppercase text-gold-dark"

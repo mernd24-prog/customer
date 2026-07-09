@@ -25,9 +25,7 @@ import Button from "../../components/ui/Button";
 import ConfirmModal from "../../components/common/overlay/ConfirmModal";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import OrderDetailInfoGrid from "./components/OrderDetailInfoGrid";
-import OrderDetailLayout, {
-  OrderDetailAside,
-} from "./components/OrderDetailLayout";
+import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
 import OrderDetailSectionCard from "./components/OrderDetailSectionCard";
 import OrderItemsSection from "./components/OrderItemsSection";
 import OrderPaymentSummary from "./components/OrderPaymentSummary";
@@ -747,22 +745,26 @@ function OrderDetail({ orderId, track }) {
             </section>
 
             {!track && (
-              <OrderDetailLayout>
-                <OrderItemsSection
-                  items={items}
-                  orderId={orderId}
-                  orderStatus={status}
-                  currency={currency}
-                  getItemImage={getItemImage}
-                  getProductTitle={getProductTitle}
-                  getItemProductPath={getItemProductPath}
-                  getOrderItemColor={getOrderItemColor}
-                  getItemLineTotal={getItemLineTotal}
-                  formatMoney={formatMoney}
-                />
-
-                <OrderDetailAside>
-                  {(subtotal !== undefined || items.length > 0) && (
+              <StickySidebarLayout
+                sidebarPosition="right"
+                containerClass="flex flex-col xl:flex-row gap-4 md:gap-6 xl:gap-8"
+                sidebarClass="w-full xl:w-[320px] 2xl:w-[380px]"
+                mainContent={
+                  <OrderItemsSection
+                    items={items}
+                    orderId={orderId}
+                    orderStatus={status}
+                    currency={currency}
+                    getItemImage={getItemImage}
+                    getProductTitle={getProductTitle}
+                    getItemProductPath={getItemProductPath}
+                    getOrderItemColor={getOrderItemColor}
+                    getItemLineTotal={getItemLineTotal}
+                    formatMoney={formatMoney}
+                  />
+                }
+                sidebarContent={
+                  (subtotal !== undefined || items.length > 0) && (
                     <OrderPaymentSummary
                       variant="order"
                       subtotal={subtotal}
@@ -775,9 +777,9 @@ function OrderDetail({ orderId, track }) {
                       formatMoney={formatMoney}
                       asNumber={asNumber}
                     />
-                  )}
-                </OrderDetailAside>
-              </OrderDetailLayout>
+                  )
+                }
+              />
             )}
 
             {cancellations.length > 0 && (
@@ -1208,138 +1210,115 @@ function OrderList() {
             separatorClassName="text-[#2E2E2E]"
             heading="My Order"
           />
-          <div
-            className="
-              grid
-              gap-8
-              grid-cols-1
-              items-start
-              lg:mt-4
-
-              xl:h-[calc(100vh-260px)]
-              xl:min-h-[420px]
-              xl:grid-cols-[minmax(0,1fr)_400px]
-
-              2xl:grid-cols-[minmax(0,1fr)_413px]
-            "
-          >
-            <div
-              className="
-                min-w-0
-                rounded-xl
-                bg-white
-                sm:p-4
-
-                xl:h-full
-                xl:min-h-0
-                xl:overflow-y-auto
-                xl:overscroll-contain
-
-                xl:[scrollbar-width:none]
-                xl:[-ms-overflow-style:none]
-                xl:[&::-webkit-scrollbar]:hidden
-              "
-            >
-              <div className="my-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <label className="relative block w-full sm:max-w-[450px]">
-                  <Search
-                    size={15}
-                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
-                  />
-                  <input
-                    value={query}
-                    onChange={(event) => setQuery(event.target.value)}
-                    placeholder="Search by  product name or Order ID..."
-                    className="h-12 w-full  rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
-                  />
-                </label>
-
-                <div
-                  className="relative w-full lg:w-[220px]"
-                  onBlur={(event) => {
-                    if (!event.currentTarget.contains(event.relatedTarget)) {
-                      setIsFilterOpen(false);
-                    }
-                  }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setIsFilterOpen((open) => !open)}
-                    className="flex h-12 w-full items-center justify-between rounded-[10px] border border-[#1B1D604D] bg-white px-3 text-left text-sm font-semibold text-ink focus:outline-none"
-                    aria-expanded={isFilterOpen}
-                    aria-haspopup="menu"
-                  >
-                    <span>{selectedFilterLabel || "All Status"}</span>
-                    <ChevronDown
-                      size={18}
-                      className={`text-[#1B1D604D] transition-transform ${isFilterOpen ? "rotate-180" : ""}`}
+          <StickySidebarLayout
+            sidebarPosition="right"
+            containerClass="flex flex-col xl:flex-row gap-6 sm:gap-8 lg:gap-9 lg:mt-4"
+            sidebarClass="w-full xl:w-[400px] 2xl:w-[413px] transition-[top] duration-300 ease-in-out"
+            mainContent={
+              <div className="min-w-0 rounded-xl bg-white sm:p-4">
+                <div className="my-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <label className="relative block w-full sm:max-w-[450px]">
+                    <Search
+                      size={15}
+                      className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
                     />
-                  </button>
+                    <input
+                      value={query}
+                      onChange={(event) => setQuery(event.target.value)}
+                      placeholder="Search by  product name or Order ID..."
+                      className="h-12 w-full  rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
+                    />
+                  </label>
 
-                  {isFilterOpen && (
-                    <div
-                      role="menu"
-                      className="absolute right-0 top-[calc(100%+6px)] z-30 w-full min-w-[220px] overflow-hidden rounded-[15px] border border-[#E7D9B8] bg-white shadow-[0_12px_32px_rgba(31,36,48,0.14)]"
+                  <div
+                    className="relative w-full lg:w-[220px]"
+                    onBlur={(event) => {
+                      if (!event.currentTarget.contains(event.relatedTarget)) {
+                        setIsFilterOpen(false);
+                      }
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setIsFilterOpen((open) => !open)}
+                      className="flex h-12 w-full items-center justify-between rounded-[10px] border border-[#1B1D604D] bg-white px-3 text-left text-sm font-semibold text-ink focus:outline-none"
+                      aria-expanded={isFilterOpen}
+                      aria-haspopup="menu"
                     >
-                      <div className="py-1">
-                        {ORDER_FILTERS.map((filter) => {
-                          const label =
-                            filter.label === "All"
-                              ? "All Status"
-                              : filter.label;
+                      <span>{selectedFilterLabel || "All Status"}</span>
+                      <ChevronDown
+                        size={18}
+                        className={`text-[#1B1D604D] transition-transform ${isFilterOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
 
-                          return (
-                            <button
-                              key={filter.value}
-                              type="button"
-                              role="menuitem"
-                              onClick={() => {
-                                setActiveFilter(filter.value);
-                                setIsFilterOpen(false);
-                              }}
-                              className={`block w-full px-4 py-2 text-left text-[13px] font-semibold transition-colors hover:bg-[#F8F1E2] ${
-                                activeFilter === filter.value
-                                  ? "bg-[#F8F1E2] text-[#1B1D60]"
-                                  : "text-[#2E2E2E]"
-                              }`}
-                            >
-                              {label}
-                            </button>
-                          );
-                        })}
+                    {isFilterOpen && (
+                      <div
+                        role="menu"
+                        className="absolute right-0 top-[calc(100%+6px)] z-30 w-full min-w-[220px] overflow-hidden rounded-[15px] border border-[#E7D9B8] bg-white shadow-[0_12px_32px_rgba(31,36,48,0.14)]"
+                      >
+                        <div className="py-1">
+                          {ORDER_FILTERS.map((filter) => {
+                            const label =
+                              filter.label === "All"
+                                ? "All Status"
+                                : filter.label;
+
+                            return (
+                              <button
+                                key={filter.value}
+                                type="button"
+                                role="menuitem"
+                                onClick={() => {
+                                  setActiveFilter(filter.value);
+                                  setIsFilterOpen(false);
+                                }}
+                                className={`block w-full px-4 py-2 text-left text-[13px] font-semibold transition-colors hover:bg-[#F8F1E2] ${
+                                  activeFilter === filter.value
+                                    ? "bg-[#F8F1E2] text-[#1B1D60]"
+                                    : "text-[#2E2E2E]"
+                                }`}
+                              >
+                                {label}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              <ApiState
-                loading={state.loading && !allOrders.length}
-                error={state.error}
-                empty={!orders.length && !state.loading}
-                emptyTitle={activeFilter ? "No orders found" : "No orders yet"}
-                emptyText={
-                  activeFilter || query
-                    ? "Try a different filter."
-                    : "Once you place an order, it will appear here."
-                }
-              >
-                <div className="flex flex-col gap-4  ">
-                  {orders.map((order) => (
-                    <OrderSummaryCard key={getOrderId(order)} order={order} />
-                  ))}
-                </div>
-              </ApiState>
-            </div>
-            <div className="min-w-0 self-start xl:h-fit">
-              <NeedHelpPanel
-                title="Need Help ?"
-                items={orderHelpItems}
-                headerStyle="plain"
-                sticky={false}
-              />
-            </div>
-          </div>
+                <ApiState
+                  loading={state.loading && !allOrders.length}
+                  error={state.error}
+                  empty={!orders.length && !state.loading}
+                  emptyTitle={activeFilter ? "No orders found" : "No orders yet"}
+                  emptyText={
+                    activeFilter || query
+                      ? "Try a different filter."
+                      : "Once you place an order, it will appear here."
+                  }
+                >
+                  <div className="flex flex-col gap-4  ">
+                    {orders.map((order) => (
+                      <OrderSummaryCard key={getOrderId(order)} order={order} />
+                    ))}
+                  </div>
+                </ApiState>
+              </div>
+            }
+            sidebarContent={
+              <div className="min-w-0 self-start xl:h-fit">
+                <NeedHelpPanel
+                  title="Need Help ?"
+                  items={orderHelpItems}
+                  headerStyle="plain"
+                  sticky={false}
+                />
+              </div>
+            }
+          />
         </div>
       </section>
     </>

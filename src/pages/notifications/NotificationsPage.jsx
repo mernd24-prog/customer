@@ -7,6 +7,7 @@ import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import NeedHelpPanel from "../../components/ecommerce/NeedHelpPanel";
+import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
 import { fetchNotifications } from "../../features/notification/notificationSlice";
 import notificationData from "../../data/notificationData";
 
@@ -168,51 +169,11 @@ export function NotificationsPage() {
           Notifications
         </h1>
 
-        {/* =========================================================
-            MAIN TWO COLUMN LAYOUT
-
-            Desktop:
-            - layout has viewport based height
-            - left column scrolls independently
-            - right Need Help stays in place
-
-            Mobile:
-            - normal page flow
-        ========================================================== */}
-        <div
-          className="
-            grid
-            grid-cols-1
-            items-start
-            gap-8
-
-            lg:h-[calc(100vh-280px)]
-            lg:min-h-[420px]
-            lg:grid-cols-[minmax(0,3fr)_minmax(280px,0.95fr)]
-            lg:gap-10
-
-            xl:grid-cols-[minmax(0,3.2fr)_minmax(300px,0.9fr)]
-            xl:gap-14
-          "
-        >
-          {/* =====================================================
-              LEFT COLUMN
-              Only this area scrolls on desktop
-          ====================================================== */}
-          <section
-            className="
-                min-w-0
-
-                lg:h-full
-                lg:min-h-0
-                lg:overflow-y-auto
-                lg:overscroll-contain
-
-                lg:[scrollbar-width:none]
-                lg:[-ms-overflow-style:none]
-                lg:[&::-webkit-scrollbar]:hidden
-              "
-          >
+        <StickySidebarLayout
+          sidebarPosition="right"
+          containerClass="flex flex-col xl:flex-row gap-8 lg:gap-10 xl:gap-14"
+          sidebarClass="w-full xl:w-[300px]"
+          mainContent={
             <ApiState
               loading={notifState.loading && !notifications.length}
               error={notifState.error}
@@ -508,30 +469,18 @@ export function NotificationsPage() {
                 )}
               </div>
             </ApiState>
-          </section>
-
-          {/* =====================================================
-              RIGHT COLUMN
-
-              No sticky.
-              No internal scroll.
-              It stays fixed because only LEFT column scrolls.
-          ====================================================== */}
-          <div
-            className="
-              min-w-0
-              self-start
-              lg:h-fit
-            "
-          >
-            <NeedHelpPanel
-              title="Need Help ?"
-              items={NOTIFICATION_HELP_ITEMS}
-              headerStyle="colored"
-              sticky={false}
-            />
-          </div>
-        </div>
+          }
+          sidebarContent={
+            <div className="min-w-0 self-start xl:h-fit">
+              <NeedHelpPanel
+                title="Need Help ?"
+                items={NOTIFICATION_HELP_ITEMS}
+                headerStyle="colored"
+                sticky={false}
+              />
+            </div>
+          }
+        />
       </main>
     </>
   );
