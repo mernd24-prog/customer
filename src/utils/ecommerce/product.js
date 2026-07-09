@@ -78,10 +78,15 @@ export function firstMoneyValue(...values) {
   return undefined;
 }
 
+function optionalDiscountPrice(value) {
+  const normalized = normalizeMoneyNumber(value);
+  return normalized && normalized > 0 ? normalized : undefined;
+}
+
 export function getVariantPrice(variant) {
   return firstMoneyValue(
-    variant?.salePrice,
-    variant?.sale_price,
+    optionalDiscountPrice(variant?.salePrice),
+    optionalDiscountPrice(variant?.sale_price),
     variant?.sellingPrice,
     variant?.selling_price,
     variant?.price,
@@ -126,8 +131,8 @@ export function getProductPrice(product) {
   return firstMoneyValue(
     getProductDealPrice(product),
     getVariantPrice(defaultVariant),
-    product?.salePrice,
-    product?.sale_price,
+    optionalDiscountPrice(product?.salePrice),
+    optionalDiscountPrice(product?.sale_price),
     product?.sellingPrice,
     product?.selling_price,
     product?.price,
