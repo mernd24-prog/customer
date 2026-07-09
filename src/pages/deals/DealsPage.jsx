@@ -200,18 +200,31 @@ export default function DealsPage() {
 
   const availabilityCounts = useMemo(
     () =>
-      products.reduce(
-        (counts, product) => {
-          if (isProductInStock(product)) {
-            counts.inStock += 1;
-          } else {
-            counts.outOfStock += 1;
+      dealFacets?.availability && typeof dealFacets.availability === "object"
+        ? {
+            inStock: Number(
+              dealFacets.availability.inStock ||
+                dealFacets.availability.in_stock ||
+                0,
+            ),
+            outOfStock: Number(
+              dealFacets.availability.outOfStock ||
+                dealFacets.availability.out_of_stock ||
+                0,
+            ),
           }
-          return counts;
-        },
-        { inStock: 0, outOfStock: 0 },
-      ),
-    [products],
+        : products.reduce(
+            (counts, product) => {
+              if (isProductInStock(product)) {
+                counts.inStock += 1;
+              } else {
+                counts.outOfStock += 1;
+              }
+              return counts;
+            },
+            { inStock: 0, outOfStock: 0 },
+          ),
+    [dealFacets, products],
   );
 
   const brandCounts = useMemo(
