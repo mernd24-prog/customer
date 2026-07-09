@@ -309,7 +309,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         aria-label="Sticky category navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
         className={`fixed left-0 z-40 w-full
-    border-0 border-b border-gray-200
+    border-0
     bg-white
     shadow-none
     transition-all duration-300 ease-out

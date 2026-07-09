@@ -140,10 +140,11 @@ export default function BrandPage() {
       inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
       outOfStock:
         searchParams.get("outOfStock") === "true" ? "true" : undefined,
-      expressDelivery:
-        searchParams.get("expressDelivery") === "true" ? "true" : undefined,
-      freeDelivery:
-        searchParams.get("freeDelivery") === "true" ? "true" : undefined,
+      // expressDelivery:
+      //   searchParams.get("expressDelivery") === "true" ? "true" : undefined,
+      // freeDelivery:
+      //   searchParams.get("freeDelivery") === "true" ? "true" : undefined,
+
       page: pageOverride || 1,
       limit: Number(searchParams.get("limit") || 20),
     }),
@@ -294,6 +295,7 @@ export default function BrandPage() {
       key: "outOfStock",
       label: "Out of Stock",
     },
+    /*
     searchParams.get("expressDelivery") === "true" && {
       key: "expressDelivery",
       label: "Express Delivery",
@@ -302,6 +304,8 @@ export default function BrandPage() {
       key: "freeDelivery",
       label: "Free Delivery",
     },
+    */
+
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
       label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
@@ -334,6 +338,7 @@ export default function BrandPage() {
         />
       ),
     },
+    /*
     {
       key: "delivery",
       title: "Delivery",
@@ -363,6 +368,8 @@ export default function BrandPage() {
         />
       ),
     },
+    */
+
     {
       key: "inStock",
       title: "Availability",

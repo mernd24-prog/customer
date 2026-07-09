@@ -271,8 +271,9 @@ export default function CategoryPage() {
         rating: searchParams.get("rating") ? (searchParams.get("rating").includes(",") ? searchParams.get("rating").split(",") : searchParams.get("rating")) : undefined,
         inStock: searchParams.get("inStock") || undefined,
         outOfStock: searchParams.get("outOfStock") || undefined,
-        expressDelivery: searchParams.get("expressDelivery") || undefined,
-        freeDelivery: searchParams.get("freeDelivery") || undefined,
+        // expressDelivery: searchParams.get("expressDelivery") || undefined,
+        // freeDelivery: searchParams.get("freeDelivery") || undefined,
+
         page: pageOverride || 1,
         limit: Number(searchParams.get("limit") || 20),
       };
@@ -313,7 +314,22 @@ export default function CategoryPage() {
           : data?.items || data?.list || [];
           
         if (list.length === 0 && location.state?.fallbackProducts && page === 1) {
-          list = location.state.fallbackProducts;
+          const normalizeCat = (c) => String(c || "").toLowerCase().replace(/[^a-z0-9-]/g, "");
+          const targetCat = normalizeCat(categoryKey);
+          const targetTokens = targetCat.split("-").filter(Boolean);
+          list = location.state.fallbackProducts.filter((p) => {
+            const cat = p.category;
+            if (!cat) return false;
+            const catId = typeof cat === "object" ? (cat.slug || cat.key || cat.id || cat._id || cat.name) : cat;
+            const pCat = normalizeCat(catId);
+            
+            if (pCat === targetCat || pCat.includes(targetCat) || targetCat.includes(pCat)) return true;
+
+            const pTokens = pCat.split("-").filter(Boolean);
+            return targetTokens.some(token => 
+              pTokens.some(pToken => token.includes(pToken) || pToken.includes(token))
+            );
+          });
         }
 
         const m = result?.meta || {};
@@ -382,7 +398,7 @@ export default function CategoryPage() {
         const list = Array.isArray(data)
           ? data
           : data?.items || data?.list || [];
-        setBrandList(
+        setBrandList( 
           list
             .map((brand) => {
               const label =
@@ -634,6 +650,7 @@ export default function CategoryPage() {
             />
           ),
         },
+        /*
         {
           key: "delivery",
           title: "Delivery",
@@ -663,6 +680,7 @@ export default function CategoryPage() {
             />
           ),
         },
+        */
         {
           key: "inStock",
           title: "Availability",
@@ -742,6 +760,7 @@ export default function CategoryPage() {
       key: "outOfStock",
       label: "Out of Stock",
     },
+    /*
     searchParams.get("expressDelivery") === "true" && {
       key: "expressDelivery",
       label: "Express Delivery",
@@ -750,6 +769,7 @@ export default function CategoryPage() {
       key: "freeDelivery",
       label: "Free Delivery",
     },
+    */
     [
       "color",
       "size",

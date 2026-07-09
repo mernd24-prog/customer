@@ -11,7 +11,7 @@ export const Header = () => {
 
   useEffect(() => {
     const updateHeaderHeight = () => {
-      const height = headerRef.current?.offsetHeight || 0;
+      const height = headerRef.current?.getBoundingClientRect().height || 0;
       document.documentElement.style.setProperty(
         HEADER_HEIGHT_VAR,
         `${height}px`,

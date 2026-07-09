@@ -81,6 +81,7 @@ export default function SearchPage() {
   const [queryInput, setQueryInput] = useState(
     resetInitialSearch.current ? "" : searchParams.get("q") || "",
   );
+  const [seenCategories, setSeenCategories] = useState(new Map());
 
   const searchState = useSelector((s) => s.search);
   const categoriesRaw = useSelector((s) => s.catalog.list || []);
@@ -125,8 +126,9 @@ export default function SearchPage() {
   );
   const inStock = searchParams.get("inStock") === "true";
   const outOfStock = searchParams.get("outOfStock") === "true";
-  const expressDelivery = searchParams.get("expressDelivery") === "true";
-  const freeDelivery = searchParams.get("freeDelivery") === "true";
+  // const expressDelivery = searchParams.get("expressDelivery") === "true";
+  // const freeDelivery = searchParams.get("freeDelivery") === "true";
+
   const sort = searchParams.get("sort") || "";
   const limit = Number(searchParams.get("limit") || 20);
   const categoryValue =
@@ -165,8 +167,9 @@ export default function SearchPage() {
       minRating: minRating || undefined,
       inStock: inStock ? "true" : undefined,
       outOfStock: outOfStock ? "true" : undefined,
-      expressDelivery: expressDelivery ? "true" : undefined,
-      freeDelivery: freeDelivery ? "true" : undefined,
+      // expressDelivery: expressDelivery ? "true" : undefined,
+      // freeDelivery: freeDelivery ? "true" : undefined,
+
       sort: sort || undefined,
       page: currentPage,
       limit,
@@ -174,8 +177,8 @@ export default function SearchPage() {
     [
       categoryValue,
       currentPage,
-      expressDelivery,
-      freeDelivery,
+      // expressDelivery,
+      // freeDelivery,
       inStock,
       limit,
       maxPrice,
@@ -417,6 +420,7 @@ export default function SearchPage() {
       key: "outOfStock",
       label: "Out of Stock",
     },
+    /*
     (searchParams.get("expressDelivery") === "true") && {
       key: "expressDelivery",
       label: "Express Delivery",
@@ -425,6 +429,8 @@ export default function SearchPage() {
       key: "freeDelivery",
       label: "Free Delivery",
     },
+    */
+
   ].filter(Boolean);
 
   const removeFilter = (key, filter) => {
@@ -455,13 +461,39 @@ export default function SearchPage() {
     });
   };
 
-  const facetCategories = (facets?.category || facets?.categories || [])
-    .map((category) => ({
-      value: category.key || category.value || category._id,
-      label: category.label || category.title || category.key || category.value,
-      count: category.count || category.doc_count || 0,
-    }))
-    .filter((category) => category.value && category.label);
+  const facetCategories = useMemo(() => {
+    return (facets?.category || facets?.categories || [])
+      .map((category) => ({
+        value: category.key || category.value || category._id,
+        label: category.label || category.title || category.key || category.value,
+        count: category.count || category.doc_count || 0,
+      }))
+      .filter((category) => category.value && category.label);
+  }, [facets?.category, facets?.categories]);
+
+  useEffect(() => {
+    if (facetCategories.length > 0) {
+      setSeenCategories(prev => {
+        const next = new Map(prev);
+        facetCategories.forEach(c => {
+          if (!next.has(c.value)) next.set(c.value, c.label);
+        });
+        return next;
+      });
+    }
+  }, [facetCategories]);
+
+  const categoryCounts = useMemo(() => {
+    const counts = {};
+    facetCategories.forEach(opt => counts[opt.value] = opt.count);
+    return counts;
+  }, [facetCategories]);
+
+  const categoryOptions = Array.from(seenCategories.entries()).map(([value, label]) => ({
+    value,
+    label,
+    count: categoryCounts[value] || 0,
+  }));
 
   const filterSections = [
     facetCategories.length > 0 && {
@@ -470,9 +502,10 @@ export default function SearchPage() {
       content: (
         <OptionFilter
           name="categoryId"
-          options={facetCategories}
-          selected={searchParams.get("categoryId")}
-          onChange={(value) => updateParam("categoryId", value)}
+          options={categoryOptions}
+          selected={parseMultiValue(searchParams.get("categoryId"))}
+          multiple
+          onChange={(values) => updateParam("categoryId", serializeMultiValue(values))}
           emptyText="No categories"
         />
       ),
@@ -502,6 +535,7 @@ export default function SearchPage() {
         />
       ),
     },
+    /*
     {
       key: "delivery",
       title: "Delivery",
@@ -532,6 +566,7 @@ export default function SearchPage() {
         />
       ),
     },
+    */
     {
       key: "availability",
       title: "Availability",

@@ -29,8 +29,13 @@ function CollageImage({ src, title, label, count, index }) {
 
 export default function CollageCard({ section }) {
   const images = (section.images || []).filter((item) => item?.image).slice(0, 4);
+  
   const cardLink = section.category ? `/categories/${section.category}` : "/products";
   
+  const normalizeCat = (c) => String(c || "").toLowerCase().replace(/[^a-z0-9-]/g, "");
+  const sectionCat = normalizeCat(section.category);
+  const sectionTokens = sectionCat.split("-").filter(Boolean);
+
   const fallbackProducts = images.map((img) => ({
     _id: img.productId || img._id || img.id,
     id: img.productId || img._id || img.id,
@@ -45,7 +50,21 @@ export default function CollageCard({ section }) {
     category: img.category,
     source: img.source,
     inStock: true
-  }));
+  })).filter(p => {
+    if (!section.category) return true;
+    const cat = p.category;
+    if (!cat) return false;
+    const catId = typeof cat === "object" ? (cat.slug || cat.key || cat.id || cat._id || cat.name) : cat;
+    const pCat = normalizeCat(catId);
+    
+    if (pCat === sectionCat || pCat.includes(sectionCat) || sectionCat.includes(pCat)) return true;
+
+    // Partial word match (e.g. "mens-fashion" and "mens-watches" share "mens", "womens-fashion" and "...women" share "women")
+    const pTokens = pCat.split("-").filter(Boolean);
+    return sectionTokens.some(token => 
+      pTokens.some(pToken => token.includes(pToken) || pToken.includes(token))
+    );
+  });
 
   return (
     <Link to={cardLink} state={{ fallbackProducts }} className="block transition-transform hover:-translate-y-1">

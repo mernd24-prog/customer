@@ -12,7 +12,8 @@ import {
   PriceRangeFilter,
   RatingFilter,
 } from "../../components/ecommerce";
-import SearchInput from "../../components/common/inputs/SearchInput";
+// import SearchInput from "../../components/common/inputs/SearchInput";
+
 import { useProductActions } from "../../hooks/useProductActions";
 import { getPublicDealProducts } from "../../api/deals";
 import {
@@ -150,8 +151,10 @@ export default function DealsPage() {
   const [categoryList, setCategoryList] = useState([]);
   const [brandList, setBrandList] = useState([]);
   const [dealFacets, setDealFacets] = useState({});
-  const currentSearchQuery = searchParams.get("q") || "";
-  const [searchQuery, setSearchQuery] = useState(currentSearchQuery);
+  const [seenCategories, setSeenCategories] = useState(new Map());
+  const [seenBrands, setSeenBrands] = useState(new Map());
+  // const currentSearchQuery = searchParams.get("q") || "";
+  // const [searchQuery, setSearchQuery] = useState(currentSearchQuery);
 
   const sentinelRef = useRef(null);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
@@ -261,23 +264,57 @@ export default function DealsPage() {
     }, {});
   }, [dealFacets]);
 
-  const categoryOptions = dealCategoryOptions.length
-    ? dealCategoryOptions
-    : categoryList
-        .map((cat) =>
-          normalizeFacetOption({
-            value: cat.categoryKey || cat.id || cat._id,
-            label: cat.title || cat.name,
-          }),
-        )
-        .filter(Boolean);
+  const categoryCounts = useMemo(() => {
+    const counts = {};
+    dealCategoryOptions.forEach((opt) => (counts[opt.value] = opt.count));
+    return counts;
+  }, [dealCategoryOptions]);
 
-  const brandOptions = dealBrandOptions.length
-    ? dealBrandOptions
-    : brandList.map((brand) => ({
-        ...brand,
-        count: brandCounts[String(brand.value)] || 0,
-      }));
+  const brandCountsObj = useMemo(() => {
+    const counts = {};
+    dealBrandOptions.forEach((opt) => (counts[opt.value] = opt.count));
+    return counts;
+  }, [dealBrandOptions]);
+
+  useEffect(() => {
+    if (dealCategoryOptions.length > 0) {
+      setSeenCategories((prev) => {
+        const next = new Map(prev);
+        dealCategoryOptions.forEach((c) => {
+          if (!next.has(c.value)) next.set(c.value, c.label);
+        });
+        return next;
+      });
+    }
+  }, [dealCategoryOptions]);
+
+  useEffect(() => {
+    if (dealBrandOptions.length > 0) {
+      setSeenBrands((prev) => {
+        const next = new Map(prev);
+        dealBrandOptions.forEach((c) => {
+          if (!next.has(c.value)) next.set(c.value, c.label);
+        });
+        return next;
+      });
+    }
+  }, [dealBrandOptions]);
+
+  const categoryOptions = Array.from(seenCategories.entries()).map(
+    ([value, label]) => ({
+      value,
+      label,
+      count: categoryCounts[value] || 0,
+    }),
+  );
+
+  const brandOptions = Array.from(seenBrands.entries()).map(
+    ([value, label]) => ({
+      value,
+      label,
+      count: brandCountsObj[value] || 0,
+    }),
+  );
 
   const effectiveRatingCounts = Object.keys(dealRatingCounts).length
     ? dealRatingCounts
@@ -291,7 +328,7 @@ export default function DealsPage() {
     (pageOverride) => ({
       page: pageOverride || 1,
       limit: pageSize,
-      q: searchParams.get("q") || undefined,
+      // q: searchParams.get("q") || undefined,
       category: searchParams.get("category") || undefined,
       brand: searchParams.get("brand") || undefined,
       sort: searchParams.get("sort") || "ending_soon",
@@ -301,10 +338,10 @@ export default function DealsPage() {
       inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
       outOfStock:
         searchParams.get("outOfStock") === "true" ? "true" : undefined,
-      expressDelivery:
-        searchParams.get("expressDelivery") === "true" ? "true" : undefined,
-      freeDelivery:
-        searchParams.get("freeDelivery") === "true" ? "true" : undefined,
+      // expressDelivery:
+      //   searchParams.get("expressDelivery") === "true" ? "true" : undefined,
+      // freeDelivery:
+      //   searchParams.get("freeDelivery") === "true" ? "true" : undefined,
     }),
     [pageSize, searchParams],
   );
@@ -352,6 +389,7 @@ export default function DealsPage() {
     loadDeals({ page: Number(searchParams.get("page") || 1), append: false });
   }, [loadDeals, searchParams]);
 
+  /*
   useEffect(() => {
     setSearchQuery(currentSearchQuery);
   }, [currentSearchQuery]);
@@ -372,6 +410,7 @@ export default function DealsPage() {
 
     return () => clearTimeout(debounceTimer);
   }, [currentSearchQuery, searchQuery, setSearchParams]);
+  */
 
   useEffect(() => {
     dispatch(fetchCategories())
@@ -516,6 +555,7 @@ export default function DealsPage() {
           key: "outOfStock",
           label: "Out of Stock",
         },
+        /*
         searchParams.get("expressDelivery") === "true" && {
           key: "expressDelivery",
           label: "Express Delivery",
@@ -524,6 +564,7 @@ export default function DealsPage() {
           key: "freeDelivery",
           label: "Free Delivery",
         },
+        */
         (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
           key: "price",
           label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
@@ -540,8 +581,11 @@ export default function DealsPage() {
         <OptionFilter
           name="category"
           options={categoryOptions}
-          selected={searchParams.get("category")}
-          onChange={(value) => updateParam("category", value)}
+          selected={parseMultiValue(searchParams.get("category"))}
+          multiple
+          onChange={(values) =>
+            updateParam("category", serializeMultiValue(values))
+          }
         />
       ),
     },
@@ -585,6 +629,7 @@ export default function DealsPage() {
         />
       ),
     },
+    /*
     {
       key: "delivery",
       title: "Delivery",
@@ -614,6 +659,7 @@ export default function DealsPage() {
         />
       ),
     },
+    */
     {
       key: "inStock",
       title: "Availability",
@@ -738,8 +784,9 @@ export default function DealsPage() {
         </div>
       </div>
 
-      <div className="my-8 md:my-16">
-        <div className="mb-4 flex flex-col  gap-3 md:flex-row md:items-end md:justify-between">
+      <div className="my-3 md:my-6">
+        <div className=" flex flex-col gap-3 md:flex-row md:items-end md:justify-end">
+          {/*
           <div className="w-full md:max-w-md">
             <SearchInput
               value={searchQuery}
@@ -750,6 +797,7 @@ export default function DealsPage() {
               style={{ textDecoration: "none" }}
             />
           </div>
+          */}
           <CollectionToolbar
             countText={`${pageInfo.total} deals`}
             sortValue={searchParams.get("sort") || "ending_soon"}

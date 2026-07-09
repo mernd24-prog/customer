@@ -388,7 +388,6 @@ export function OptionFilter({
   multiple = false,
   searchQuery = "",
 }) {
-  const isCategoryList = name?.toLowerCase().includes("category");
   const [expanded, setExpanded] = useState(false);
   const selectedValues = Array.isArray(selected)
     ? selected.map(String)
@@ -440,20 +439,7 @@ export function OptionFilter({
 
           const checked = selectedSet.has(String(value));
 
-          if (isCategoryList) {
-            return (
-              <button
-                key={value}
-                type="button"
-                onClick={() => onChange?.(checked ? undefined : String(value))}
-                className={`w-full py-2  text-left text-[16px] font-semibold  transition-colors duration-200 ${
-                  checked ? "text-[#2D347D]" : "text-[#2E2E2E]"
-                }`}
-              >
-                {label}
-              </button>
-            );
-          }
+
 
           return (
             <label

@@ -32,8 +32,10 @@ const HeroBanner = ({ content = heroContent }) => {
   return (
     <section className="  relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[480px] w-screen items-center overflow-hidden  bg-[#1B1D60] sm:h-[520px] md:h-[620px] lg:h-[650px]">
       <Swiper
+        key="hero-swiper"
         spaceBetween={0}
         centeredSlides={false}
+        loop={true}
         autoplay={{
           delay: 2000,
           disableOnInteraction: false,
