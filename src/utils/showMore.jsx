@@ -12,9 +12,11 @@ const splitWords = (text) => text.trim().split(/\s+/).filter(Boolean);
 
 export function getShowMoreText(value, options = {}) {
   const text = normalizeText(value);
+
   const mode = options.mode || "characters";
+
   const limit = Number(
-    options.limit || DEFAULT_LIMITS[mode] || DEFAULT_LIMITS.characters,
+    options.limit ?? DEFAULT_LIMITS[mode] ?? DEFAULT_LIMITS.characters,
   );
 
   if (!text || limit <= 0) {
@@ -27,6 +29,7 @@ export function getShowMoreText(value, options = {}) {
 
   if (mode === "words") {
     const words = splitWords(text);
+
     const isTruncated = words.length > limit;
 
     return {
@@ -38,6 +41,7 @@ export function getShowMoreText(value, options = {}) {
 
   if (mode === "lines") {
     const lines = text.split(/\r?\n/);
+
     const isTruncated = lines.length > limit;
 
     return {
@@ -48,11 +52,22 @@ export function getShowMoreText(value, options = {}) {
   }
 
   const characters = Array.from(text);
+
   const isTruncated = characters.length > limit;
+
+  let preview = text;
+
+  if (isTruncated) {
+    const slicedText = characters.slice(0, limit).join("").trimEnd();
+
+    preview = slicedText.includes(" ")
+      ? slicedText.substring(0, slicedText.lastIndexOf(" "))
+      : slicedText;
+  }
 
   return {
     text,
-    preview: isTruncated ? characters.slice(0, limit).join("").trimEnd() : text,
+    preview,
     isTruncated,
   };
 }
@@ -128,9 +143,7 @@ export function ShowMoreText({
                     ? `calc(100% - ${lineButtonSpace})`
                     : undefined,
                   verticalAlign: "bottom",
-                  paddingRight: hasLineOverflow
-                    ? "0"
-                    : undefined,
+                  paddingRight: hasLineOverflow ? "0" : undefined,
                 }
           }
         >
@@ -162,7 +175,7 @@ export function ShowMoreText({
       : `${showMore.preview}${ellipsis}`;
 
   return (
-    <span className={className}>    
+    <span className={className}>
       <span className={textClassName}>{displayText}</span>
       {showMore.isTruncated && (
         <button

@@ -56,6 +56,7 @@ import StarRating from "./components/starRating";
 import ShareProductPopover from "./components/socialMediaShare";
 import ProductPriceBlock from "./components/oldAndNewPrice";
 import ProductStockStatus from "./components/stockStatus";
+import ShowMoreText, { getShowMoreText } from "../../utils/showMore";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
@@ -1286,6 +1287,14 @@ export default function ProductDetailPage() {
       value != null && value !== "" && key.toLowerCase() !== "warranty",
   );
 
+  const productTitle = getProductTitle(product);
+
+  const { preview: productTitlePreview, isTruncated: isProductTitleTruncated } =
+    getShowMoreText(productTitle, {
+      mode: "characters",
+      limit: 35,
+    });
+
   const infoTabs = [
     { key: "details", label: "Product Details" },
     { key: "description", label: "Description" },
@@ -1303,10 +1312,10 @@ export default function ProductDetailPage() {
       />
 
       <div className=" ">
-        <nav className=" flex  mt-8 lg:mt-12 flex-wrap items-center gap-1 text-sm lg:text-lg text-[#2E2E2E]">
+        <nav className="mt-8 flex flex-wrap items-center gap-1 text-sm text-[#2E2E2E] lg:mt-12 lg:text-lg">
           <Link
             to="/"
-            className="hover:text-ink font-medium text-[#2E2E2E] transition-all duration-300 ease-in-out"
+            className="font-medium text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-ink"
           >
             Home
           </Link>
@@ -1317,10 +1326,11 @@ export default function ProductDetailPage() {
             <>
               <Link
                 to={CUSTOMER_ROUTES.category(product.parentCategory)}
-                className="capitalize hover:text-ink transition-all duration-300 ease-in-out"
+                className="capitalize transition-all duration-300 ease-in-out hover:text-ink"
               >
                 {(product.parentCategory || "").replace(/-/g, " ")}
               </Link>
+
               <span>{">"}</span>
             </>
           )}
@@ -1329,16 +1339,19 @@ export default function ProductDetailPage() {
             <>
               <Link
                 to={CUSTOMER_ROUTES.category(product.category)}
-                className="capitalize font-medium text-[#2E2E2E] hover:text-ink transition-all duration-300 ease-in-out"
+                className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-ink"
               >
                 {(product.category || "").replace(/-/g, " ")}
               </Link>
+
               <span>{">"}</span>
             </>
           )}
 
-          <span className="line-clamp-1 font-medium text-gold">
-            {getProductTitle(product) || "Product"}
+          <span title={productTitle} className="font-medium text-gold">
+            {isProductTitleTruncated
+              ? `${productTitlePreview}...`
+              : productTitle}
           </span>
         </nav>
 
@@ -1376,9 +1389,9 @@ export default function ProductDetailPage() {
                       <h1 className="break-words text-h3 font-semibold text-ink leading-snug">
                         <ShowMoreText
                           text={getProductTitle(product)}
-                          mode="characters"
-                          limit={65}
-                          buttonClassName="ml-1 text-sm font-semibold text-black/50 hover:underline"
+                          mode="character"
+                          limit={90}
+                          buttonClassName="ml-1  text-xs  font-semibold text-black/80 hover:underline"
                         />
                       </h1>
                     </div>
