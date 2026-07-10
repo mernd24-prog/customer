@@ -1349,7 +1349,7 @@ export default function ProductDetailPage() {
                 <div className="flex min-w-0 flex-col  gap-3">
                   <div className="flex min-w-0 items-start justify-between gap-3 ">
                     <div className="min-w-0">
-                      <h1 className="break-words text-h3  font-semibold  text-ink ">
+                      <h1 className="break-words text-h3  font-semibold  text-ink line-clamp-2 leading-snug ">
                         {getProductTitle(product)}
                       </h1>
                     </div>

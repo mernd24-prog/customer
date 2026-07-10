@@ -31,6 +31,7 @@ export default function ProductResultsLayout({
   showPagination = true,
   loadingMore,
   sentinelRef,
+  sidebarTopContent,
   children,
 }) {
   const productCount = products.length;
@@ -61,6 +62,7 @@ export default function ProductResultsLayout({
           <ProductFilterSidebar
             sections={filterSections}
             onClearAll={onClearFilters}
+            topContent={sidebarTopContent}
           />
         </div>
 
@@ -68,6 +70,7 @@ export default function ProductResultsLayout({
           <ProductFilterSidebar
             sections={filterSections}
             onClearAll={onClearFilters}
+            topContent={sidebarTopContent}
           />
         </FilterDrawer>
 

@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams, useSearchParams, Link, useLocation } from "react-router-dom";
+import {
+  useParams,
+  useSearchParams,
+  Link,
+  useLocation,
+} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronRight, LayoutGrid } from "lucide-react";
+import { ChevronRight, Grid2X2 } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import {
-  Breadcrumbs,
   CheckboxListFilter,
   CollectionToolbar,
   OptionFilter,
@@ -24,11 +28,11 @@ import {
   applyImageFallback,
   buildFacetCountMap,
   buildRatingCountMap,
+  getImageUrlFromValue,
   getProductBrandName,
   isProductInStock,
 } from "../../utils/ecommerce";
 import { isNotFoundApiError } from "../../utils/apiErrors";
-import categoryBannerImage from "/image/png/CategoryBanner.png";
 import { SORT_OPTIONS } from "../../data/constant";
 
 function parseMultiValue(value) {
@@ -83,65 +87,155 @@ function getAttributeValues(product, key) {
   return [];
 }
 
-// ── Sub-category card in top strip ──────────────────────────────────────────
-function SubCategoryCard({ sub, isActive, onClick }) {
-  const key = sub?.categoryKey || sub?.key || "";
-  const name = sub?.title || sub?.name || key.replace(/-/g, " ");
-  const image = sub?.imageUrl || sub?.image || sub?.iconUrl || "";
-  const childCount = (sub?.children || []).length;
+function slugifyCategory(value = "") {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function getCategoryLabel(category = {}) {
+  return (
+    category.title ||
+    category.name ||
+    category.label ||
+    category.categoryName ||
+    category.categoryKey ||
+    category.key ||
+    ""
+  );
+}
+
+function getCategoryKey(category = {}) {
+  return (
+    category.categoryKey ||
+    category.key ||
+    category.slug ||
+    slugifyCategory(getCategoryLabel(category))
+  );
+}
+
+function getCategoryImage(category = {}) {
+  return (
+    getImageUrlFromValue(category.iconUrl) ||
+    getImageUrlFromValue(category.icon) ||
+    getImageUrlFromValue(category.imageUrl) ||
+    getImageUrlFromValue(category.image) ||
+    getImageUrlFromValue(category.thumbnailUrl) ||
+    getImageUrlFromValue(category.thumbnail) ||
+    getImageUrlFromValue(category.bannerUrl) ||
+    getImageUrlFromValue(category.coverImage)
+  );
+}
+
+function getCategoryCount(category = {}) {
+  return (
+    category.productCount ??
+    category.productsCount ??
+    category.totalProducts ??
+    category.count
+  );
+}
+
+function SubCategoryStrip({ categories = [] }) {
+  const visibleCategories = categories
+    .map((category) => ({
+      key: getCategoryKey(category),
+      name: getCategoryLabel(category),
+      image: getCategoryImage(category),
+      count: getCategoryCount(category),
+    }))
+    .filter((category) => category.key && category.name);
+
+  if (!visibleCategories.length) return null;
 
   return (
-    <Link
-      to={CUSTOMER_ROUTES.category(key)}
-      onClick={onClick}
-      className={`group relative flex min-h-[112px] min-w-[108px] max-w-[126px] flex-1 flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border p-3 text-center transition-all duration-300 ${
-        isActive
-          ? " border-[var(--customer-gold)] bg-[var(--customer-navy)]  text-white  "
-          : "border-[var(--customer-border)] bg-white/90 "
-      }`}
-    >
-      <span className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-[var(--customer-gold)] to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-      <div
-        className={`flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl transition-transform duration-300 group-hover:scale-105 ${
-          isActive
-            ? "bg-white/15 ring-1 ring-white/20"
-            : "bg-gradient-to-br from-[var(--customer-gold-soft)] to-[var(--customer-cream)] ring-1 ring-[var(--customer-gold)]/10"
-        }`}
-      >
-        {image ? (
-          <img
-            src={image}
-            alt={name}
-            className="h-full w-full object-cover"
-            onError={(e) => applyImageFallback(e, name, "category")}
-          />
-        ) : (
-          <LayoutGrid
-            size={20}
-            strokeWidth={1.7}
-            className={
-              isActive ? "text-white" : "text-[var(--customer-gold-dark)]"
-            }
-          />
-        )}
+    <section className="mb-5 overflow-hidden bg-white pt-4">
+      <div className="flex gap-4 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {visibleCategories.map((category) => (
+          <Link
+            key={category.key}
+            to={CUSTOMER_ROUTES.category(category.key)}
+            className="group w-[92px] shrink-0 text-center sm:w-[104px]"
+          >
+            <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[10px] bg-[var(--customer-surface-soft)] p-2 transition-colors group-hover:bg-[var(--customer-gold-soft)]">
+              {category.image ? (
+                <img
+                  src={category.image}
+                  alt={category.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                  onError={(event) =>
+                    applyImageFallback(event, category.name, "category")
+                  }
+                />
+              ) : (
+                <Grid2X2
+                  size={32}
+                  strokeWidth={1.5}
+                  className="text-[var(--customer-border-strong)]"
+                />
+              )}
+            </div>
+            <p className="mt-2 line-clamp-2 min-h-[32px] text-xs font-semibold leading-4 text-[var(--customer-ink)]">
+              {category.name}
+            </p>
+            {category.count !== undefined &&
+            category.count !== null &&
+            category.count !== "" ? (
+              <span className="mt-1 inline-flex rounded bg-cyan-100 px-1.5 py-0.5 text-[10px] font-bold text-cyan-700">
+                {Number(category.count).toLocaleString()}
+              </span>
+            ) : null}
+          </Link>
+        ))}
       </div>
-      <span
-        className={`line-clamp-2 text-xs font-bold leading-snug sm:text-[13px] ${
-          isActive ? "text-white" : "text-[var(--customer-ink)]"
-        }`}
-      >
-        {name}
-      </span>
-      {childCount > 0 && (
-        <span
-          className={`text-[10px] font-medium ${
-            isActive ? "text-white/80" : "text-[var(--customer-muted)]"
-          }`}
-        >
-          {childCount} sub-types
-        </span>
-      )}
-    </Link>
+    </section>
+  );
+}
+
+function CategorySidebarNav({ categoryTitle, categories = [], activeKey = "" }) {
+  const visibleCategories = categories
+    .map((category) => ({
+      key: getCategoryKey(category),
+      name: getCategoryLabel(category),
+    }))
+    .filter((category) => category.key && category.name);
+
+  if (!visibleCategories.length) return null;
+
+  return (
+    <div className="border-b border-[#EEDFB9] px-4 py-5 min-[375px]:px-5 sm:px-6">
+      <h3 className="mb-4 text-xs font-bold uppercase tracking-wide text-[#111827]">
+        Categories
+      </h3>
+      <div className="space-y-3">
+        <p className="flex items-center gap-1.5 text-sm font-bold text-[#111827]">
+          <ChevronRight size={15} className="rotate-90 text-[#111827]" />
+          <span className="line-clamp-2">{categoryTitle}</span>
+        </p>
+        <div className="space-y-3 pl-6">
+          {visibleCategories.map((category) => {
+            const isActive = category.key === activeKey;
+            return (
+              <Link
+                key={category.key}
+                to={CUSTOMER_ROUTES.category(category.key)}
+                className={`block text-sm font-medium leading-5 transition-colors hover:text-[var(--customer-gold)] ${
+                  isActive
+                    ? "font-bold text-[var(--customer-gold)]"
+                    : "text-[#111827]"
+                }`}
+              >
+                {category.name}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -189,6 +283,7 @@ export default function CategoryPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [brandList, setBrandList] = useState([]);
   const [categoryData, setCategoryData] = useState(null);
+  const [sidebarCategory, setSidebarCategory] = useState(null);
   const [subCategories, setSubCategories] = useState([]);
   const [items, setItems] = useState([]);
   const [pageInfo, setPageInfo] = useState({
@@ -200,9 +295,6 @@ export default function CategoryPage() {
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [categoryError, setCategoryError] = useState(null);
   const [categoryLoading, setCategoryLoading] = useState(true);
-
-  // active sub-category key for the top strip highlight
-  const activeSubKey = searchParams.get("sub") || "";
 
   const sentinelRef = useRef(null);
   const productState = useSelector((s) => s.product);
@@ -260,7 +352,11 @@ export default function CategoryPage() {
       const brandVal = searchParams.get("brand");
       const params = {
         category: categoryKey,
-        brand: brandVal ? (brandVal.includes(",") ? brandVal.split(",") : brandVal) : undefined,
+        brand: brandVal
+          ? brandVal.includes(",")
+            ? brandVal.split(",")
+            : brandVal
+          : undefined,
         minPrice: searchParams.get("minPrice") || undefined,
         maxPrice: searchParams.get("maxPrice") || undefined,
         sort: searchParams.get("sort") || undefined,
@@ -268,7 +364,11 @@ export default function CategoryPage() {
           searchParams.get("productFamilyCode") ||
           searchParams.get("family") ||
           undefined,
-        rating: searchParams.get("rating") ? (searchParams.get("rating").includes(",") ? searchParams.get("rating").split(",") : searchParams.get("rating")) : undefined,
+        rating: searchParams.get("rating")
+          ? searchParams.get("rating").includes(",")
+            ? searchParams.get("rating").split(",")
+            : searchParams.get("rating")
+          : undefined,
         inStock: searchParams.get("inStock") || undefined,
         outOfStock: searchParams.get("outOfStock") || undefined,
         // expressDelivery: searchParams.get("expressDelivery") || undefined,
@@ -309,25 +409,40 @@ export default function CategoryPage() {
       try {
         const result = await dispatch(fetchProducts(params)).unwrap();
         const data = result?.data;
-        let list = Array.isArray(data)
-          ? data
-          : data?.items || data?.list || [];
-          
-        if (list.length === 0 && location.state?.fallbackProducts && page === 1) {
-          const normalizeCat = (c) => String(c || "").toLowerCase().replace(/[^a-z0-9-]/g, "");
+        let list = Array.isArray(data) ? data : data?.items || data?.list || [];
+
+        if (
+          list.length === 0 &&
+          location.state?.fallbackProducts &&
+          page === 1
+        ) {
+          const normalizeCat = (c) =>
+            String(c || "")
+              .toLowerCase()
+              .replace(/[^a-z0-9-]/g, "");
           const targetCat = normalizeCat(categoryKey);
           const targetTokens = targetCat.split("-").filter(Boolean);
           list = location.state.fallbackProducts.filter((p) => {
             const cat = p.category;
             if (!cat) return false;
-            const catId = typeof cat === "object" ? (cat.slug || cat.key || cat.id || cat._id || cat.name) : cat;
+            const catId =
+              typeof cat === "object"
+                ? cat.slug || cat.key || cat.id || cat._id || cat.name
+                : cat;
             const pCat = normalizeCat(catId);
-            
-            if (pCat === targetCat || pCat.includes(targetCat) || targetCat.includes(pCat)) return true;
+
+            if (
+              pCat === targetCat ||
+              pCat.includes(targetCat) ||
+              targetCat.includes(pCat)
+            )
+              return true;
 
             const pTokens = pCat.split("-").filter(Boolean);
-            return targetTokens.some(token => 
-              pTokens.some(pToken => token.includes(pToken) || pToken.includes(token))
+            return targetTokens.some((token) =>
+              pTokens.some(
+                (pToken) => token.includes(pToken) || pToken.includes(token),
+              ),
             );
           });
         }
@@ -359,6 +474,7 @@ export default function CategoryPage() {
     setItems([]);
     setFirstLoadDone(false);
     setCategoryData(null);
+    setSidebarCategory(null);
     setSubCategories([]);
     setCategoryError(null);
     setCategoryLoading(true);
@@ -376,6 +492,31 @@ export default function CategoryPage() {
             const subs = Array.isArray(subData)
               ? subData
               : subData?.items || subData?.list || [];
+            if (!subs.length && d?.parentKey) {
+              dispatch(fetchCategoryByKey({ categoryKey: d.parentKey }))
+                .unwrap()
+                .then((parentResult) => {
+                  const parent = parentResult?.data || parentResult;
+                  setSidebarCategory(parent || d);
+                  return dispatch(
+                    fetchCategories({ parentKey: d.parentKey, limit: 200 }),
+                  );
+                })
+                .then((siblingAction) => {
+                  const siblingData = siblingAction?.payload?.data;
+                  const siblings = Array.isArray(siblingData)
+                    ? siblingData
+                    : siblingData?.items || siblingData?.list || [];
+                  setSubCategories(siblings);
+                })
+                .catch(() => {
+                  setSidebarCategory(d);
+                  setSubCategories([]);
+                });
+              return;
+            }
+
+            setSidebarCategory(d);
             setSubCategories(subs);
             if (subs.length) {
               setCategoryData((prev) =>
@@ -398,7 +539,7 @@ export default function CategoryPage() {
         const list = Array.isArray(data)
           ? data
           : data?.items || data?.list || [];
-        setBrandList( 
+        setBrandList(
           list
             .map((brand) => {
               const label =
@@ -500,78 +641,20 @@ export default function CategoryPage() {
     categoryData?.title ||
     categoryData?.name ||
     (categoryKey || "").replace(/-/g, " ");
+  const sidebarCategoryTitle =
+    sidebarCategory?.title || sidebarCategory?.name || categoryTitle;
   const categoryDesc = categoryData?.description;
-  const categoryImage = categoryData?.imageUrl || categoryData?.bannerUrl;
-  const bannerImage = categoryData?.bannerUrl || categoryBannerImage;
-
-  // Active sub + its children
-  const activeSubData = useMemo(
-    () =>
-      subCategories.find((s) => (s?.categoryKey || s?.key) === activeSubKey) ||
-      null,
-    [subCategories, activeSubKey],
-  );
-  const activeSubChildren = activeSubData?.children || [];
-
-  // Breadcrumb
-  const breadcrumbItems = useMemo(
-    () => [
-      { label: "Home", href: "/" },
-      { label: "Categories", href: "/categories" },
-      { label: categoryTitle.replace(/\b\w/g, (c) => c.toUpperCase()) },
-    ],
-    [categoryTitle],
-  );
+  const isRootCategory =
+    sidebarCategory?.parentKey === null ||
+    sidebarCategory?.parentKey === undefined ||
+    Number(sidebarCategory?.level || 0) === 0;
+  const showSubCategoryStrip = isRootCategory && subCategories.length > 0;
+  const showCategorySidebar = !isRootCategory && subCategories.length > 0;
 
   // ── Filter sections for sidebar ──────────────────────────────────────────
   const filterSections = useMemo(
     () =>
       [
-        subCategories.length > 0 && {
-          key: "subcategories",
-          title: "Sub-Categories",
-          content: (
-            <div className="flex flex-col gap-0.5">
-              <Link
-                to={CUSTOMER_ROUTES.category(categoryKey)}
-                className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
-                  !activeSubKey
-                    ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]"
-                    : "text-[var(--customer-ink)] hover:bg-gray-50"
-                }`}
-              >
-                <span>All in {categoryTitle}</span>
-              </Link>
-              {subCategories.map((sub) => {
-                const k = sub?.categoryKey || sub?.key || "";
-                const n = sub?.title || sub?.name || k.replace(/-/g, " ");
-                const childCount = (sub?.children || []).length;
-                const isAct = activeSubKey === k;
-                return (
-                  <Link
-                    key={k}
-                    to={CUSTOMER_ROUTES.category(k)}
-                    className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
-                      isAct
-                        ? "bg-[var(--customer-gold-soft)] font-semibold text-[var(--customer-gold)]"
-                        : "text-[var(--customer-ink)] hover:bg-gray-50"
-                    }`}
-                  >
-                    <span className="truncate">{n}</span>
-                    <div className="flex items-center gap-1 shrink-0">
-                      {childCount > 0 && (
-                        <span className="text-[10px] text-[var(--customer-muted)]">
-                          {childCount}
-                        </span>
-                      )}
-                      <ChevronRight size={12} className="text-gray-300" />
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          ),
-        },
         // Dynamic attribute filters
         ...(Array.isArray(categoryData?.attributeSchema)
           ? categoryData.attributeSchema
@@ -722,10 +805,6 @@ export default function CategoryPage() {
         .flat()
         .filter(Boolean),
     [
-      subCategories,
-      categoryKey,
-      activeSubKey,
-      categoryTitle,
       categoryData,
       brandList,
       searchParams,
@@ -823,112 +902,6 @@ export default function CategoryPage() {
         }
       />
 
-      {/* ── Hero banner ─────────────────────────────────────────────────── */}
-      {bannerImage ? (
-        <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
-          <div className="grid gap-0 h-[320px] sm:h-[380px] md:h-[371px] xl:h-[500px] lg:grid-cols-[52%_48%]">
-            {/* Mobile & Tablet Banner */}
-            <div className="relative lg:hidden h-full">
-              <img
-                src={bannerImage}
-                alt={categoryTitle}
-                className="absolute inset-0 h-full w-full object-cover"
-                onError={(event) =>
-                  applyImageFallback(event, categoryTitle, "category")
-                }
-              />
-
-              <div className="absolute inset-0 bg-black/30" />
-
-              <div className="absolute inset-0 flex items-center">
-                <div className="customer-container">
-                  <div className="max-w-xl">
-                    <Breadcrumbs
-                      linkClassName="!text-white"
-                      currentClassName="!text-[#CE9F2D]"
-                      separatorClassName="!text-gold"
-                      items={breadcrumbItems}
-                      className="mb-5"
-                    />
-
-                    <h1 className="text-h1 font-bold leading-tight text-white capitalize">
-                      {categoryTitle}
-                    </h1>
-
-                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
-                      {categoryDesc ||
-                        `Explore our wide range of ${categoryTitle.toLowerCase()} with the latest features, premium quality, and the best offers available for every need.`}
-                    </p>
-
-                    {pageInfo.total > 0 && (
-                      <p className="mt-3 text-sm text-white">
-                        {pageInfo.total.toLocaleString()} Products
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Desktop Content */}
-            <div className="hidden items-center pl-6 pr-10 lg:flex xl:pl-[max(3rem,calc((100vw-1559px)/2))]">
-              <div className="max-w-xl">
-                <Breadcrumbs
-                  items={breadcrumbItems}
-                  linkClassName="!text-white"
-                  currentClassName="!text-[#CE9F2D]"
-                  separatorClassName="!text-white"
-                  className="mb-5"
-                />
-
-                <h1 className="text-h1 font-bold leading-tight text-white capitalize">
-                  {categoryTitle}
-                </h1>
-
-                <p className="mt-3 max-w-xl font-normal leading-relaxed text-p text-white/80">
-                  {categoryDesc ||
-                    `Explore our wide range of woman's with the latest features, premium quality, and the best offers available for every need.`}
-                </p>
-              </div>
-            </div>
-
-            {/* Desktop Image */}
-            <div className="relative hidden lg:block overflow-hidden -ml-px">
-              <img
-                src={bannerImage}
-                alt={categoryTitle}
-                className="h-full w-full object-cover object-right"
-                onError={(event) =>
-                  applyImageFallback(event, categoryTitle, "category")
-                }
-              />
-
-              <div className="absolute inset-y-0 -left-px right-0 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/20 to-transparent" />
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="mt-4 rounded-[var(--customer-radius-lg)] border border-[var(--customer-border)] bg-[var(--customer-cream)] px-5 py-5">
-          <Breadcrumbs
-            items={breadcrumbItems}
-            className="mb-2 text-[var(--customer-muted)]"
-          />
-          <h1 className="text-2xl font-extrabold text-[var(--customer-ink)] capitalize sm:text-3xl">
-            {categoryTitle}
-          </h1>
-          {pageInfo.total > 0 && (
-            <p className="mt-1 text-sm text-[var(--customer-muted)]">
-              {pageInfo.total.toLocaleString()} products
-            </p>
-          )}
-          {categoryDesc && (
-            <p className="mt-1 max-w-2xl text-sm text-[var(--customer-muted)]">
-              {categoryDesc}
-            </p>
-          )}
-        </div>
-      )}
-
       {categoryError && !isNotFoundApiError(categoryError) && (
         <div className="mt-4 rounded-[var(--customer-radius)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           Category details could not be loaded right now. Product results and
@@ -938,6 +911,8 @@ export default function CategoryPage() {
 
       {/* ── Product listing with sidebar filters ────────────────────────── */}
       <div className="py-5 sm:py-7">
+        {showSubCategoryStrip && <SubCategoryStrip categories={subCategories} />}
+
         <CollectionToolbar
           countText={`${(pageInfo.total || meta?.total || products.length).toLocaleString()} products`}
           sortValue={searchParams.get("sort") || ""}
@@ -948,6 +923,15 @@ export default function CategoryPage() {
 
         <ProductResultsLayout
           filterSections={filterSections}
+          sidebarTopContent={
+            showCategorySidebar ? (
+              <CategorySidebarNav
+                categoryTitle={sidebarCategoryTitle}
+                categories={subCategories}
+                activeKey={categoryKey}
+              />
+            ) : null
+          }
           filters={activeFilters}
           onRemoveFilter={removeFilter}
           onClearFilters={() => setSearchParams(new URLSearchParams())}

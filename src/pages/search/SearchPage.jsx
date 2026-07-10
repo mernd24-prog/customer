@@ -18,10 +18,7 @@ import {
   ProductFilterSidebar,
   RatingFilter,
 } from "../../components/ecommerce";
-import {
-  buildRatingCountMap,
-  isProductInStock,
-} from "../../utils/ecommerce";
+import { buildRatingCountMap, isProductInStock } from "../../utils/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import {
   clearSearch,
@@ -46,7 +43,14 @@ function parseMultiValue(value) {
 }
 
 function serializeMultiValue(values) {
-  const uniqueValues = [...new Set((values || []).map(String).map((item) => item.trim()).filter(Boolean))];
+  const uniqueValues = [
+    ...new Set(
+      (values || [])
+        .map(String)
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  ];
   return uniqueValues.length ? uniqueValues.join(",") : undefined;
 }
 
@@ -269,16 +273,19 @@ export default function SearchPage() {
       if (skipInitialSearch.current) return;
       const sanitized = sanitizeSearchQuery(queryInput);
       if (sanitized !== q && queryInput !== (searchParams.get("q") || "")) {
-        setSearchParams((prev) => {
-          const next = new URLSearchParams(prev);
-          if (sanitized) {
-            next.set("q", sanitized);
-          } else {
-            next.delete("q");
-          }
-          next.delete("page");
-          return next;
-        }, { replace: true });
+        setSearchParams(
+          (prev) => {
+            const next = new URLSearchParams(prev);
+            if (sanitized) {
+              next.set("q", sanitized);
+            } else {
+              next.delete("q");
+            }
+            next.delete("page");
+            return next;
+          },
+          { replace: true },
+        );
       }
     }, 500);
     return () => clearTimeout(handler);
@@ -416,7 +423,7 @@ export default function SearchPage() {
       key: "inStock",
       label: "In Stock Only",
     },
-    (searchParams.get("outOfStock") === "true") && {
+    searchParams.get("outOfStock") === "true" && {
       key: "outOfStock",
       label: "Out of Stock",
     },
@@ -430,7 +437,6 @@ export default function SearchPage() {
       label: "Free Delivery",
     },
     */
-
   ].filter(Boolean);
 
   const removeFilter = (key, filter) => {
@@ -465,7 +471,8 @@ export default function SearchPage() {
     return (facets?.category || facets?.categories || [])
       .map((category) => ({
         value: category.key || category.value || category._id,
-        label: category.label || category.title || category.key || category.value,
+        label:
+          category.label || category.title || category.key || category.value,
         count: category.count || category.doc_count || 0,
       }))
       .filter((category) => category.value && category.label);
@@ -473,9 +480,9 @@ export default function SearchPage() {
 
   useEffect(() => {
     if (facetCategories.length > 0) {
-      setSeenCategories(prev => {
+      setSeenCategories((prev) => {
         const next = new Map(prev);
-        facetCategories.forEach(c => {
+        facetCategories.forEach((c) => {
           if (!next.has(c.value)) next.set(c.value, c.label);
         });
         return next;
@@ -485,15 +492,17 @@ export default function SearchPage() {
 
   const categoryCounts = useMemo(() => {
     const counts = {};
-    facetCategories.forEach(opt => counts[opt.value] = opt.count);
+    facetCategories.forEach((opt) => (counts[opt.value] = opt.count));
     return counts;
   }, [facetCategories]);
 
-  const categoryOptions = Array.from(seenCategories.entries()).map(([value, label]) => ({
-    value,
-    label,
-    count: categoryCounts[value] || 0,
-  }));
+  const categoryOptions = Array.from(seenCategories.entries()).map(
+    ([value, label]) => ({
+      value,
+      label,
+      count: categoryCounts[value] || 0,
+    }),
+  );
 
   const filterSections = [
     facetCategories.length > 0 && {
@@ -505,7 +514,9 @@ export default function SearchPage() {
           options={categoryOptions}
           selected={parseMultiValue(searchParams.get("categoryId"))}
           multiple
-          onChange={(values) => updateParam("categoryId", serializeMultiValue(values))}
+          onChange={(values) =>
+            updateParam("categoryId", serializeMultiValue(values))
+          }
           emptyText="No categories"
         />
       ),
@@ -612,70 +623,6 @@ export default function SearchPage() {
       />
 
       <div className="w-container py-6 sm:py-8">
-        <form
-          onSubmit={handleSearch}
-          className="mb-6 rounded-[14px]  p-3 sm:p-4"
-        >
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <div className="group relative flex-1">
-              <Search
-                size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted transition-all duration-300 ease-in-out group-focus-within:text-gold"
-              />
-              <input
-                type="text"
-                value={queryInput}
-                onChange={(e) => {
-                  setQueryInput(e.target.value);
-                  if (!e.target.value.trim()) dispatch(clearSuggestions());
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleSearch(e);
-                  }
-                }}
-                placeholder="Search products, brands, categories..."
-                className="
-    h-10 sm:h-11 lg:h-12
-    w-full
-    rounded-[10px]
-    border
-    border-border-strong
-    bg-white
-    pl-10 pr-10 sm:pl-11 sm:pr-11
-    text-xs sm:text-sm
-    text-ink
-    placeholder:text-muted
-    outline-none
-    ring-0
-    focus:outline-none
-    focus:ring-0
-    focus:border-gold
-    focus:shadow-[0_0_0_3px_rgba(191,155,83,0.15)]
-    hover:border-gold
-    transition-all
-    duration-300
-    ease-in-out
-  "
-              />
-
-              {queryInput ? (
-                <button
-                  type="button"
-                  onClick={handleClearSearch}
-                  className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-muted transition-all duration-300 ease-in-out hover:bg-cream hover:text-ink"
-                  aria-label="Clear search"
-                >
-                  <X size={15} />
-                </button>
-              ) : null}
-            </div>
-
-
-          </div>
-        </form>
-
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             {(q || categoryValue) && (

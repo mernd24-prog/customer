@@ -66,7 +66,7 @@ export function FilterSection({ title, children, defaultOpen = true }) {
   };
 
   return (
-    <div className="border-b border-[#EEDFB9] py-6 last:border-b-0 sm:py-7">
+    <div className="border-b  border-[#EEDFB9] py-6 last:border-b-0 sm:py-7 ">
       {searchOpen ? (
         <div className="flex h-9 w-full items-center gap-2 rounded-full bg-[#F4F4F6] px-3">
           <Search size={16} className="shrink-0 text-[#6F7480]" />
@@ -488,8 +488,6 @@ export function OptionFilter({
 
           const checked = selectedSet.has(String(value));
 
-
-
           return (
             <label
               key={value}
@@ -688,10 +686,11 @@ export default function ProductFilterSidebar({
   sections = [],
   className = "",
   onClearAll,
+  topContent,
 }) {
   return (
     <aside
-      className={`w-full  overflow-x-hidden lg:sticky lg:top-24 lg:w-[320px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
+      className={`w-full [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]  overflow-x-hidden lg:sticky lg:top-24 lg:w-[320px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
     >
       <div className="w-full overflow-hidden rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] shadow-none">
         <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-5 min-[375px]:px-5 sm:px-6 sm:py-6">
@@ -706,6 +705,8 @@ export default function ProductFilterSidebar({
             Clear all
           </button>
         </div>
+
+        {topContent}
 
         <div className="px-4  min-[375px]:px-5 sm:px-6">
           {sections.map((section) => (
