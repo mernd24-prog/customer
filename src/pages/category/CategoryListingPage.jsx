@@ -174,10 +174,14 @@ function CategoryTile({ category }) {
             alt={category.displayName}
             loading="lazy"
             decoding="async"
-            onError={(event) =>
-              applyImageFallback(event, category.displayName, "category")
-            }
-            className="h-full w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-[1.03]"
+            // onError={(event) =>
+            //   applyImageFallback(event, category.displayName, "category")
+            // }
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/image/png/favicon.png";
+            }}
+            className="h-20 md:h-1/2 w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.03]"
           />
         ) : (
           <Grid2X2

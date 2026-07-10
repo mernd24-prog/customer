@@ -34,7 +34,7 @@ export default function BrandCard({
         className,
       )}
     >
-      <div className="relative flex h-28 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-cream p-4">
+      <div className="relative flex h-24  shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-cream p-4">
         {displayImage ? (
           <img
             src={displayImage}
@@ -42,7 +42,9 @@ export default function BrandCard({
             className="max-h-full max-w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.04]"
             loading="lazy"
             decoding="async"
-            onError={(event) => applyImageFallback(event, name, "brand")}
+            onError={(e) => {
+              e.currentTarget.src = "/image/png/favicon.png";
+            }}
           />
         ) : (
           <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-white text-center  text-lg font-bold text-gold shadow-sm">

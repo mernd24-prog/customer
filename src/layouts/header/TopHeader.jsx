@@ -94,7 +94,7 @@ export const TopHeader = () => {
             to="/become-a-seller"
             className="text-[#FFFFFF] text-[14px] font-medium transition-all duration-300 ease-in-out hover:text-gray-300"
           >
-            Become a seller
+            Become a Seller
           </Link>
 
           {dropdowns.map((dropdown) => (
