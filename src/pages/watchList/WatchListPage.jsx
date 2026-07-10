@@ -11,6 +11,9 @@ import {
   getProductImage,
   getProductTitle,
   getImageFallbackSrc,
+  getProductAvailableStock,
+  getProductMrp,
+  getProductPrice,
 } from "../../utils/ecommerce";
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import { OutlineSmallButton } from "../../components/dynamicComponent/button/static";
@@ -21,16 +24,9 @@ function adaptProductToItem(product, quantity = 1) {
   const title = getProductTitle(product, "Product");
   const image =
     getProductImage(product) || getImageFallbackSrc(title, "watchlist");
-  const price =
-    product?.price ?? product?.sellingPrice ?? product?.salePrice ?? 0;
-  const oldPrice =
-    product?.mrp ?? product?.originalPrice ?? product?.compareAtPrice;
-  const stock =
-    product?.stock ??
-    product?.availableStock ??
-    product?.inventory ??
-    product?.totalStock ??
-    null;
+  const price = getProductPrice(product) ?? 0;
+  const oldPrice = getProductMrp(product);
+  const stock = getProductAvailableStock(product);
   const stockQuantity = stock == null ? null : Number(stock);
   const hasStockQuantity = Number.isFinite(stockQuantity);
   const outOfStock = hasStockQuantity && stockQuantity <= 0;
@@ -62,7 +58,7 @@ function adaptProductToItem(product, quantity = 1) {
     quantity,
     shipping: 0,
     seller: product?.seller?.name || product?.seller || product?.brand || "",
-    color: product?.color || product?.selectedColor || null,
+    color: product?.selectedVariant?.attributes?.color || product?.color || product?.selectedColor || null,
     size: product?.size || product?.selectedSize || null,
     stock: hasStockQuantity ? stockQuantity : null,
     rating,

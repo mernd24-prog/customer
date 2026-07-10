@@ -1372,6 +1372,24 @@ export default function CheckoutPage() {
         return;
       }
 
+      if (quoteLoading) {
+        setError("root", {
+          type: "manual",
+          message: "Please wait while we check delivery and shipping charges.",
+        });
+        return;
+      }
+
+      if (quoteError) {
+        setError("root", {
+          type: "manual",
+          message: typeof quoteError === "string"
+            ? quoteError
+            : "Delivery is not available for the selected address.",
+        });
+        return;
+      }
+
       const order = await run(
         dispatch,
         createOrder({

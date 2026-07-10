@@ -203,6 +203,7 @@ const getRefundStatus = ({ returns = [], cancellations = [], status }) => {
 function OrderProgress({ status, cancellations = [], returns = [] }) {
   const isCancelled = status === "cancelled";
   const isFailed = status === "payment_failed";
+  const isDeliveryFailed = status === "failed_delivery";
   const returnStatus = getReturnStatus(returns, status);
   const refundStatus = getRefundStatus({ returns, cancellations, status });
   const cancelStatus =
@@ -213,15 +214,17 @@ function OrderProgress({ status, cancellations = [], returns = [] }) {
       ? [...ORDER_STEPS, ...RETURN_STEPS, ...REFUND_STEPS]
       : returnStatus
         ? [...ORDER_STEPS, ...RETURN_STEPS]
-        : isFailed
+    : isFailed
           ? ["pending_payment", "payment_failed"]
+          : isDeliveryFailed
+            ? [...ORDER_STEPS.slice(0, ORDER_STEPS.indexOf("out_for_delivery") + 1), "failed_delivery"]
           : ORDER_STEPS;
   const activeStatus = cancelStatus || refundStatus || returnStatus || status;
   const activeIndex = progressSteps.indexOf(
     normalizeProgressStatus(activeStatus),
   );
   const visibleSteps =
-    isCancelled || isFailed
+    isCancelled || isFailed || isDeliveryFailed
       ? [
           {
             label: TRACKING_LABELS.confirmed,
@@ -231,7 +234,9 @@ function OrderProgress({ status, cancellations = [], returns = [] }) {
             label: TRACKING_LABELS[status],
             note: isCancelled
               ? "Your cancellation request is being processed."
-              : "Payment could not be completed for this order.",
+              : isDeliveryFailed
+                ? "Delivery could not be completed. We will update you with the next step."
+                : "Payment could not be completed for this order.",
           },
         ]
       : progressSteps.map((step, index) => ({

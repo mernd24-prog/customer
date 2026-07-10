@@ -14,7 +14,6 @@ const PAYMENT_ICONS = {
 export default function CheckoutSummary({
   items,
   subtotal,
-  shipping,
   total,
   quote,
   quoteLoading = false,
@@ -106,13 +105,23 @@ export default function CheckoutSummary({
       quoteAmounts.customerPlatformFeeTaxAmount ??
       0,
   );
-  const quoteShipping = Number(
-    quoteSummary.deliveryChargeAmount ??
-      quoteSummary.shippingFeeAmount ??
-      quoteAmounts.deliveryChargeAmount ??
-      quoteAmounts.shippingFeeAmount ??
-      shipping,
-  );
+  const hasQuoteShipping =
+    quoteSummary.deliveryChargeAmount !== undefined ||
+    quoteSummary.shippingFeeAmount !== undefined ||
+    quoteAmounts.deliveryChargeAmount !== undefined ||
+    quoteAmounts.shippingFeeAmount !== undefined;
+  // Only the server quote reflects the seller's actual delivery-charge
+  // settings; the client-side `shipping` estimate is derived from the
+  // product's own (often stale/unrelated) shipping metadata and must never
+  // be shown as if it were the real charge.
+  const quoteShipping = hasQuoteShipping
+    ? Number(
+        quoteSummary.deliveryChargeAmount ??
+          quoteSummary.shippingFeeAmount ??
+          quoteAmounts.deliveryChargeAmount ??
+          quoteAmounts.shippingFeeAmount,
+      )
+    : 0;
   const quotedPayable = Number(
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
   );
@@ -132,27 +141,36 @@ export default function CheckoutSummary({
     .filter(Boolean)[0];
 
   return (
-    <OrderPaymentSummary
-      title="Order Summary"
-      variant="checkout"
-      items={items}
-      subtotal={quoteSubtotal}
-      discount={quoteDiscount}
-      walletDiscount={quoteWallet}
-      shipping={quoteShipping}
-      customerPlatformFee={customerPlatformFee}
-      customerPlatformFeeTax={customerPlatformFeeTax}
-      couponDiscount={quoteCouponDiscount}
-      customerAmount={quotedPayable}
-      currency="INR"
-      asNumber={Number}
-      paymentMethods={paymentOptions}
-      selectedPaymentProvider={selectedPaymentProvider}
-      onPaymentProviderChange={onPaymentProviderChange}
-      buttonText={buttonLabel}
-      loading={loading}
-      selectedLabel={selectedLabel}
-      onCheckout={() => {}}
-    />
+    <div className="grid gap-3">
+      <OrderPaymentSummary
+        title="Order Summary"
+        variant="checkout"
+        items={items}
+        subtotal={quoteSubtotal}
+        discount={quoteDiscount}
+        walletDiscount={quoteWallet}
+        shipping={quoteShipping}
+        shippingLoading={!hasQuoteShipping}
+        customerPlatformFee={customerPlatformFee}
+        customerPlatformFeeTax={customerPlatformFeeTax}
+        couponDiscount={quoteCouponDiscount}
+        customerAmount={quotedPayable}
+        currency="INR"
+        asNumber={Number}
+        paymentMethods={paymentOptions}
+        selectedPaymentProvider={selectedPaymentProvider}
+        onPaymentProviderChange={onPaymentProviderChange}
+        buttonText={quoteLoading ? "Checking delivery..." : buttonLabel}
+        loading={loading || quoteLoading}
+        disabled={Boolean(quoteError)}
+        selectedLabel={selectedLabel}
+        onCheckout={() => {}}
+      />
+      {quoteError && (
+        <div className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {typeof quoteError === "string" ? quoteError : "Delivery is not available for the selected address."}
+        </div>
+      )}
+    </div>
   );
 }

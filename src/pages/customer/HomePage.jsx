@@ -21,9 +21,10 @@ import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import { mothersDayData } from "../../data/special";
 import ShoppingMadeEasyBanner from "../../components/home/ShoppingBanner";
 import FeaturedProductsSection from "../../components/home/FeaturedProductsSection";
+import { getProductImage as getVariantProductImage, getProductMrp, getProductPrice } from "../../utils/ecommerce";
 
 const formatPrice = (product) => {
-  const price = Number(product?.salePrice || product?.price || 0);
+  const price = Number(getProductPrice(product) || 0);
   return `₹${price.toLocaleString("en-IN")}`;
 };
 
@@ -33,7 +34,7 @@ const getProductLink = (product) => {
 };
 
 const getProductImage = (product) =>
-  product?.images?.[0] || product?.image || product?.thumbnail || "";
+  getVariantProductImage(product) || product?.image || product?.thumbnail || "";
 
 const toNewArrivalProduct = (product) => ({
   id: String(product?._id || product?.id || ""),
@@ -41,8 +42,8 @@ const toNewArrivalProduct = (product) => ({
   image: getProductImage(product),
   price: formatPrice(product),
   oldPrice:
-    product?.mrp || product?.price
-      ? `₹${Number(product.mrp || product.price || 0).toLocaleString("en-IN")}`
+    getProductMrp(product) || getProductPrice(product)
+      ? `₹${Number(getProductMrp(product) || getProductPrice(product) || 0).toLocaleString("en-IN")}`
       : undefined,
   rating: Number(product?.rating || 0).toFixed(1),
   reviewsCount: product?.reviewCount || 0,

@@ -260,7 +260,11 @@ export const getOrderAmount = (order, key) => {
       platformFee: ["platformFeeAmount", "platformFee"],
       shipping: [
         "shippingFeeAmount",
+        "deliveryChargeAmount",
+        "delivery_charge_amount",
         "shippingFee",
+        "deliveryCharge",
+        "delivery_charge",
         "shippingAmount",
         "shipping",
       ],

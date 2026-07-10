@@ -191,19 +191,9 @@ export function getAvailableStock(source) {
 export function getProductAvailableStock(product) {
   if (!product || typeof product !== "object") return null;
 
-  const variants = Array.isArray(product.variants) ? product.variants : [];
-  if (variants.length) {
-    const variantStocks = variants
-      .filter(
-        (variant) =>
-          variant?.status !== "inactive" && variant?.status !== "out_of_stock",
-      )
-      .map(getAvailableStock)
-      .filter((value) => value !== null);
-
-    if (variantStocks.length) {
-      return variantStocks.reduce((total, value) => total + value, 0);
-    }
+  const defaultVariant = getDefaultVariant(product);
+  if (defaultVariant) {
+    return getAvailableStock(defaultVariant);
   }
 
   return getAvailableStock(product);
@@ -238,6 +228,7 @@ export function getImageUrlFromValue(value) {
 
 export function getProductImage(product) {
   return (
+    getImageUrlFromValue(getDefaultVariant(product)?.images) ||
     getImageUrlFromValue(product?.images) ||
     getImageUrlFromValue(product?.image) ||
     getImageUrlFromValue(product?.imageUrl) ||

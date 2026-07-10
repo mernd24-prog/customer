@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getPublicDeals, getProducts, searchProducts } from "@/api/deals";
+import { getProductImage, getProductMrp, getProductPrice, getProductTitle } from "@/utils/ecommerce";
 
 /**
  * Example component showing how to fetch and display deals and products
@@ -135,25 +136,25 @@ export const DealsAndProductsShowcase = () => {
                 key={product.id}
                 className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
               >
-                {product.images && product.images[0] && (
+                {getProductImage(product) && (
                   <img
-                    src={product.images[0].url}
-                    alt={product.name}
+                    src={getProductImage(product)}
+                    alt={getProductTitle(product)}
                     className="w-full h-48 object-cover"
                   />
                 )}
                 <div className="p-4">
-                  <h3 className="font-bold truncate">{product.name}</h3>
+                  <h3 className="font-bold truncate">{getProductTitle(product)}</h3>
                   <p className="text-gray-600 text-sm mb-2">
                     {product.description}
                   </p>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-2xl font-bold">
-                      ₹{product.pricing?.selling_price || product.price}
+                      ₹{getProductPrice(product) || 0}
                     </span>
-                    {product.pricing?.cost_price && (
+                    {getProductMrp(product) && (
                       <span className="text-gray-500 line-through">
-                        ₹{product.pricing.cost_price}
+                        ₹{getProductMrp(product)}
                       </span>
                     )}
                   </div>

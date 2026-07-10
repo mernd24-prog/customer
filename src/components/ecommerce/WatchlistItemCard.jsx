@@ -6,6 +6,7 @@ import {
   formatMoney,
   getProductId,
   getProductImage,
+  getProductPrice,
   getProductTitle,
 } from "../../utils/ecommerce";
 
@@ -18,7 +19,7 @@ export function WatchlistItemCard({
   const id = getProductId(product);
   const title = getProductTitle(product);
   const image = getProductImage(product);
-  const price = formatMoney(product?.price, product?.currency);
+  const price = formatMoney(getProductPrice(product), product?.currency);
 
   if (compact) {
     return (

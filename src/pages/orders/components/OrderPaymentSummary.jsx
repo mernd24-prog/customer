@@ -109,6 +109,7 @@ function OrderPaymentSummary({
   discount,
   walletDiscount,
   shipping,
+  shippingLoading = false,
   customerPlatformFee,
   customerPlatformFeeTax,
   customerAmount,
@@ -137,6 +138,7 @@ function OrderPaymentSummary({
   variant = "", // order | cart | checkout
   buttonText,
   onCheckout,
+  disabled = false,
 
   // Checkout Props
   items = [],
@@ -271,9 +273,11 @@ function OrderPaymentSummary({
         <SummaryRow
           label="Shipping"
           value={
-            asNumber?.(shipping) === 0
-              ? "FREE"
-              : formatMoney(shipping || 0, currency)
+            shippingLoading
+              ? "Calculating..."
+              : asNumber?.(shipping) === 0
+                ? "FREE"
+                : formatMoney(shipping || 0, currency)
           }
         />
       </div>
@@ -390,7 +394,7 @@ function OrderPaymentSummary({
         <>
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || disabled}
             className="mt-6 flex h-[54px] w-full items-center justify-center gap-2 rounded-[10px] bg-[#CE9F2D] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:bg-[#C9961F] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {loading ? (
