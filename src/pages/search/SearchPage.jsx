@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigationType, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import ActiveFilterChips from "../../components/common/ActiveFilterChips";
@@ -82,9 +82,9 @@ export default function SearchPage() {
   const skipInitialSearch = useRef(
     resetInitialSearch.current && Boolean(initialSearch.current),
   );
-  const [queryInput, setQueryInput] = useState(
-    resetInitialSearch.current ? "" : searchParams.get("q") || "",
-  );
+  // const [queryInput, setQueryInput] = useState(
+  //   resetInitialSearch.current ? "" : searchParams.get("q") || "",
+  // );
   const [seenCategories, setSeenCategories] = useState(new Map());
 
   const searchState = useSelector((s) => s.search);
@@ -257,6 +257,7 @@ export default function SearchPage() {
     setSearchParams,
   ]);
 
+  /*
   useEffect(() => {
     if (skipInitialSearch.current && searchKey === initialSearch.current) {
       return;
@@ -290,6 +291,7 @@ export default function SearchPage() {
     }, 500);
     return () => clearTimeout(handler);
   }, [queryInput, q, searchParams, setSearchParams]);
+  */
 
   useEffect(
     () => () => {
@@ -371,6 +373,7 @@ export default function SearchPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  /*
   const handleSearch = (e) => {
     e.preventDefault();
 
@@ -394,6 +397,7 @@ export default function SearchPage() {
     dispatch(clearSearch());
     dispatch(clearSuggestions());
   };
+  */
 
   const handleClearFilters = () => {
     setSearchParams((prev) => {
@@ -405,6 +409,10 @@ export default function SearchPage() {
   };
 
   const activeFilters = [
+    q && {
+      key: "q",
+      label: `Search: "${q}"`,
+    },
     categoryValue && {
       key: "categoryId",
       label: `Category: ${categoryLabel}`,
@@ -427,6 +435,7 @@ export default function SearchPage() {
       key: "outOfStock",
       label: "Out of Stock",
     },
+<<<<<<< HEAD
     /*
     (searchParams.get("expressDelivery") === "true") && {
       key: "expressDelivery",
@@ -437,13 +446,18 @@ export default function SearchPage() {
       label: "Free Delivery",
     },
     */
+=======
+>>>>>>> origin/dev-hiteshvari
   ].filter(Boolean);
 
   const removeFilter = (key, filter) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
 
-      if (key === "price") {
+      if (key === "q") {
+        next.delete("q");
+        // setQueryInput("");
+      } else if (key === "price") {
         next.delete("minPrice");
         next.delete("maxPrice");
       } else if (filter?.groupKey) {

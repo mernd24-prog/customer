@@ -141,10 +141,19 @@ export default function ProductsPage() {
   const pageSize = Number(searchParams.get("limit") || 12);
   const availabilityCounts = useMemo(
     () =>
-      productFacets?.availability && typeof productFacets.availability === "object"
+      productFacets?.availability &&
+      typeof productFacets.availability === "object"
         ? {
-            inStock: Number(productFacets.availability.inStock || productFacets.availability.in_stock || 0),
-            outOfStock: Number(productFacets.availability.outOfStock || productFacets.availability.out_of_stock || 0),
+            inStock: Number(
+              productFacets.availability.inStock ||
+                productFacets.availability.in_stock ||
+                0,
+            ),
+            outOfStock: Number(
+              productFacets.availability.outOfStock ||
+                productFacets.availability.out_of_stock ||
+                0,
+            ),
           }
         : products.reduce(
             (counts, product) => {
@@ -193,21 +202,21 @@ export default function ProductsPage() {
     : ratingCounts;
   const categoryCounts = useMemo(() => {
     const counts = {};
-    facetCategoryOptions.forEach(opt => counts[opt.value] = opt.count);
+    facetCategoryOptions.forEach((opt) => (counts[opt.value] = opt.count));
     return counts;
   }, [facetCategoryOptions]);
 
   const brandCountsObj = useMemo(() => {
     const counts = {};
-    facetBrandOptions.forEach(opt => counts[opt.value] = opt.count);
+    facetBrandOptions.forEach((opt) => (counts[opt.value] = opt.count));
     return counts;
   }, [facetBrandOptions]);
 
   useEffect(() => {
     if (facetCategoryOptions.length > 0) {
-      setSeenCategories(prev => {
+      setSeenCategories((prev) => {
         const next = new Map(prev);
-        facetCategoryOptions.forEach(c => {
+        facetCategoryOptions.forEach((c) => {
           if (!next.has(c.value)) next.set(c.value, c.label);
         });
         return next;
@@ -217,9 +226,9 @@ export default function ProductsPage() {
 
   useEffect(() => {
     if (facetBrandOptions.length > 0) {
-      setSeenBrands(prev => {
+      setSeenBrands((prev) => {
         const next = new Map(prev);
-        facetBrandOptions.forEach(c => {
+        facetBrandOptions.forEach((c) => {
           if (!next.has(c.value)) next.set(c.value, c.label);
         });
         return next;
@@ -227,17 +236,21 @@ export default function ProductsPage() {
     }
   }, [facetBrandOptions]);
 
-  const categoryOptions = Array.from(seenCategories.entries()).map(([value, label]) => ({
-    value,
-    label,
-    count: categoryCounts[value] || 0,
-  }));
+  const categoryOptions = Array.from(seenCategories.entries()).map(
+    ([value, label]) => ({
+      value,
+      label,
+      count: categoryCounts[value] || 0,
+    }),
+  );
 
-  const brandOptions = Array.from(seenBrands.entries()).map(([value, label]) => ({
-    value,
-    label,
-    count: brandCountsObj[value] || 0,
-  }));
+  const brandOptions = Array.from(seenBrands.entries()).map(
+    ([value, label]) => ({
+      value,
+      label,
+      count: brandCountsObj[value] || 0,
+    }),
+  );
 
   const getParams = useCallback(
     (pageOverride) => {
@@ -291,13 +304,23 @@ export default function ProductsPage() {
         let fallbacks = location.state.fallbackProducts;
         const selectedCategory = searchParams.get("category");
         if (selectedCategory) {
-          const normalizeCat = (c) => String(c || "").toLowerCase().replace(/[^a-z0-9]/g, '');
+          const normalizeCat = (c) =>
+            String(c || "")
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, "");
           const targetCat = normalizeCat(selectedCategory);
           fallbacks = fallbacks.filter((p) => {
             const cat = p.category;
             if (!cat) return false;
-            const catId = typeof cat === "object" ? (cat.slug || cat.key || cat.id || cat._id || cat.name) : cat;
-            return normalizeCat(catId) === targetCat || normalizeCat(catId).includes(targetCat) || targetCat.includes(normalizeCat(catId));
+            const catId =
+              typeof cat === "object"
+                ? cat.slug || cat.key || cat.id || cat._id || cat.name
+                : cat;
+            return (
+              normalizeCat(catId) === targetCat ||
+              normalizeCat(catId).includes(targetCat) ||
+              targetCat.includes(normalizeCat(catId))
+            );
           });
         }
         list = fallbacks;
@@ -521,7 +544,9 @@ export default function ProductsPage() {
           options={categoryOptions}
           selected={parseMultiValue(searchParams.get("category"))}
           multiple
-          onChange={(values) => updateParam("category", serializeMultiValue(values))}
+          onChange={(values) =>
+            updateParam("category", serializeMultiValue(values))
+          }
         />
       ),
     },
@@ -639,13 +664,13 @@ export default function ProductsPage() {
         description="Browse products with filters, sort, and pagination."
       />
 
-      <div className="my-8 md:my-16 ">
-        <div className="mb-4  flex flex-wrap items-end justify-end gap-3">
+      <div className="my-3 md:my-6 ">
+        <div className="flex flex-wrap items-end justify-end gap-3">
           <CollectionToolbar
             sortValue={searchParams.get("sort") || ""}
             sortOptions={SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
-            onOpenFilters={() => setSidebarOpen(true)}  
+            onOpenFilters={() => setSidebarOpen(true)}
             // viewControls={
             //   <div className="hidden  items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
             //     <button
