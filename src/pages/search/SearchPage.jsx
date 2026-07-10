@@ -7,7 +7,6 @@ import ApiState from "../../components/common/ApiState";
 import ActiveFilterChips from "../../components/common/ActiveFilterChips";
 import FilterDrawer from "../../components/common/overlay/Drawer";
 import PageHeader from "../../components/common/PageHeader";
-import BrandButton from "../../components/ui/BrandButton";
 import {
   CheckboxListFilter,
   CollectionToolbar,
@@ -435,19 +434,6 @@ export default function SearchPage() {
       key: "outOfStock",
       label: "Out of Stock",
     },
-<<<<<<< HEAD
-    /*
-    (searchParams.get("expressDelivery") === "true") && {
-      key: "expressDelivery",
-      label: "Express Delivery",
-    },
-    (searchParams.get("freeDelivery") === "true") && {
-      key: "freeDelivery",
-      label: "Free Delivery",
-    },
-    */
-=======
->>>>>>> origin/dev-hiteshvari
   ].filter(Boolean);
 
   const removeFilter = (key, filter) => {

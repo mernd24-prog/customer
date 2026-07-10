@@ -15,21 +15,17 @@ import {
   OptionFilter,
   PriceRangeFilter,
   ProductResultsLayout,
-  RatingFilter,
 } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
 import {
   fetchCategoryByKey,
   fetchCategories,
-  fetchBrands,
 } from "../../features/catalog/catalogSlice";
 import {
   applyImageFallback,
   buildFacetCountMap,
-  buildRatingCountMap,
   getImageUrlFromValue,
-  getProductBrandName,
   isProductInStock,
 } from "../../utils/ecommerce";
 import { isNotFoundApiError } from "../../utils/apiErrors";
@@ -85,6 +81,30 @@ function getAttributeValues(product, key) {
   }
 
   return [];
+}
+
+function getCategoryAttributeSchema(category = {}) {
+  return Array.isArray(category?.attributeSchema) ? category.attributeSchema : [];
+}
+
+function isSchemaAttributeFilterable(attribute = {}) {
+  return attribute.filterable === true || attribute.isFilterable === true;
+}
+
+function getSchemaAttributeKey(attribute = {}) {
+  return attribute.key || attribute.attributeKey || attribute.name || "";
+}
+
+function getSchemaAttributeOptions(attribute = {}) {
+  const options = Array.isArray(attribute.options) ? attribute.options : [];
+  return options
+    .map((option) =>
+      typeof option === "object"
+        ? option.value ?? option.name ?? option.label ?? option.code
+        : option,
+    )
+    .filter((option) => option !== undefined && option !== null && option !== "")
+    .map(String);
 }
 
 function slugifyCategory(value = "") {
@@ -281,7 +301,6 @@ export default function CategoryPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode] = useState("grid");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [brandList, setBrandList] = useState([]);
   const [categoryData, setCategoryData] = useState(null);
   const [sidebarCategory, setSidebarCategory] = useState(null);
   const [subCategories, setSubCategories] = useState([]);
@@ -299,14 +318,6 @@ export default function CategoryPage() {
   const sentinelRef = useRef(null);
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
-  const selectedBrands = useMemo(
-    () => parseMultiValue(searchParams.get("brand")),
-    [searchParams],
-  );
-  const selectedRatings = useMemo(
-    () => parseMultiValue(searchParams.get("rating")),
-    [searchParams],
-  );
   const products = items;
   const availabilityCounts = useMemo(
     () =>
@@ -323,24 +334,30 @@ export default function CategoryPage() {
       ),
     [products],
   );
-  const brandCounts = useMemo(
+  const filterableAttributes = useMemo(
     () =>
-      buildFacetCountMap(products, (product) => getProductBrandName(product)),
-    [products],
+      getCategoryAttributeSchema(categoryData)
+        .filter(isSchemaAttributeFilterable)
+        .map((attribute) => ({
+          ...attribute,
+          key: getSchemaAttributeKey(attribute),
+          options: getSchemaAttributeOptions(attribute),
+        }))
+        .filter((attribute) => attribute.key && attribute.options.length),
+    [categoryData],
   );
-  const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
+  const supportedAttributeKeys = useMemo(
+    () => new Set(filterableAttributes.map((attribute) => attribute.key)),
+    [filterableAttributes],
+  );
   const attributeCountMaps = useMemo(() => {
-    const schema = Array.isArray(categoryData?.attributeSchema)
-      ? categoryData.attributeSchema
-      : [];
-
-    return schema.reduce((maps, attribute) => {
+    return filterableAttributes.reduce((maps, attribute) => {
       maps[attribute.key] = buildFacetCountMap(products, (product) =>
         getAttributeValues(product, attribute.key),
       );
       return maps;
     }, {});
-  }, [categoryData?.attributeSchema, products]);
+  }, [filterableAttributes, products]);
 
   const meta = productState.meta;
   const totalPages = pageInfo.totalPages || meta?.totalPages || 1;
@@ -349,56 +366,27 @@ export default function CategoryPage() {
   // ── Build product fetch params ───────────────────────────────────────────
   const getParams = useCallback(
     (pageOverride) => {
-      const brandVal = searchParams.get("brand");
       const params = {
         category: categoryKey,
-        brand: brandVal
-          ? brandVal.includes(",")
-            ? brandVal.split(",")
-            : brandVal
-          : undefined,
         minPrice: searchParams.get("minPrice") || undefined,
         maxPrice: searchParams.get("maxPrice") || undefined,
         sort: searchParams.get("sort") || undefined,
-        productFamilyCode:
-          searchParams.get("productFamilyCode") ||
-          searchParams.get("family") ||
-          undefined,
-        rating: searchParams.get("rating")
-          ? searchParams.get("rating").includes(",")
-            ? searchParams.get("rating").split(",")
-            : searchParams.get("rating")
-          : undefined,
         inStock: searchParams.get("inStock") || undefined,
         outOfStock: searchParams.get("outOfStock") || undefined,
-        // expressDelivery: searchParams.get("expressDelivery") || undefined,
-        // freeDelivery: searchParams.get("freeDelivery") || undefined,
 
         page: pageOverride || 1,
         limit: Number(searchParams.get("limit") || 20),
       };
       searchParams.forEach((value, key) => {
-        if (key.startsWith("attr_")) params[key] = value;
-      });
-      [
-        "color",
-        "size",
-        "material",
-        "fit",
-        "storage",
-        "skinType",
-        "shade",
-        "finish",
-        "room",
-        "sport",
-        "concern",
-      ].forEach((key) => {
-        const value = searchParams.get(key);
-        if (value) params[key] = value;
+        if (!key.startsWith("attr_") || !value) return;
+        const attributeKey = key.replace(/^attr_/, "");
+        if (!supportedAttributeKeys.has(attributeKey)) return;
+        params[key] = value;
+        params[attributeKey] = value;
       });
       return params;
     },
-    [searchParams, categoryKey],
+    [searchParams, categoryKey, supportedAttributeKeys],
   );
 
   // ── Load products (append = infinite scroll page) ──────────────────────
@@ -459,7 +447,7 @@ export default function CategoryPage() {
         if (append) setIsLoadingMore(false);
       }
     },
-    [dispatch, getParams],
+    [categoryKey, dispatch, getParams, location.state?.fallbackProducts],
   );
 
   useEffect(() => {
@@ -468,6 +456,42 @@ export default function CategoryPage() {
       setIsLoadingMore(false);
     });
   }, [loadProducts]);
+
+  useEffect(() => {
+    if (!categoryData) return;
+    const globalFilterKeys = new Set([
+      "minPrice",
+      "maxPrice",
+      "inStock",
+      "outOfStock",
+      "sort",
+      "limit",
+    ]);
+    let changed = false;
+
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      Array.from(next.keys()).forEach((key) => {
+        if (key === "page") {
+          next.delete(key);
+          changed = true;
+          return;
+        }
+
+        if (globalFilterKeys.has(key)) return;
+
+        if (key.startsWith("attr_")) {
+          const attributeKey = key.replace(/^attr_/, "");
+          if (supportedAttributeKeys.has(attributeKey)) return;
+        }
+
+        next.delete(key);
+        changed = true;
+      });
+
+      return changed ? next : prev;
+    });
+  }, [categoryData, supportedAttributeKeys, setSearchParams]);
 
   // ── Load category meta + subcategories ──────────────────────────────────
   useEffect(() => {
@@ -532,26 +556,6 @@ export default function CategoryPage() {
       .finally(() => {
         setCategoryLoading(false);
       });
-
-    dispatch(fetchBrands({ limit: 100 }))
-      .then((action) => {
-        const data = action?.payload?.data;
-        const list = Array.isArray(data)
-          ? data
-          : data?.items || data?.list || [];
-        setBrandList(
-          list
-            .map((brand) => {
-              const label =
-                brand?.name || brand?.title || brand?.brandName || brand?.code;
-              return label
-                ? { value: String(label), label: String(label) }
-                : null;
-            })
-            .filter(Boolean),
-        );
-      })
-      .catch(() => {});
   }, [dispatch, categoryKey]);
 
   // ── Infinite scroll ──────────────────────────────────────────────────────
@@ -583,7 +587,7 @@ export default function CategoryPage() {
   ]);
 
   // ── Param helpers ────────────────────────────────────────────────────────
-  const updateParam = (key, value) => {
+  const updateParam = useCallback((key, value) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       if (value == null || value === "") next.delete(key);
@@ -591,9 +595,9 @@ export default function CategoryPage() {
       next.delete("page");
       return next;
     });
-  };
+  }, [setSearchParams]);
 
-  const updateParams = (entries) => {
+  const updateParams = useCallback((entries) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       entries.forEach(([key, value]) => {
@@ -603,9 +607,9 @@ export default function CategoryPage() {
       next.delete("page");
       return next;
     });
-  };
+  }, [setSearchParams]);
 
-  const handlePriceChange = ({ minPrice, maxPrice }) => {
+  const handlePriceChange = useCallback(({ minPrice, maxPrice }) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       if (minPrice) next.set("minPrice", minPrice);
@@ -615,9 +619,9 @@ export default function CategoryPage() {
       next.delete("page");
       return next;
     });
-  };
+  }, [setSearchParams]);
 
-  const removeFilter = (key, filter) => {
+  const removeFilter = useCallback((key, filter) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       if (key === "price") {
@@ -634,7 +638,7 @@ export default function CategoryPage() {
       next.delete("page");
       return next;
     });
-  };
+  }, [setSearchParams]);
 
   // ── Derived data ─────────────────────────────────────────────────────────
   const categoryTitle =
@@ -653,61 +657,8 @@ export default function CategoryPage() {
 
   // ── Filter sections for sidebar ──────────────────────────────────────────
   const filterSections = useMemo(
-    () =>
-      [
-        // Dynamic attribute filters
-        ...(Array.isArray(categoryData?.attributeSchema)
-          ? categoryData.attributeSchema
-              .filter(
-                (a) =>
-                  a?.isFilterable !== false &&
-                  Array.isArray(a?.options) &&
-                  a.options.length,
-              )
-              .map((attribute) => ({
-                key: `attr_${attribute.key}`,
-                title: attribute.label || attribute.key,
-                content: (
-                  <OptionFilter
-                    name={`attr_${attribute.key}`}
-                    options={attribute.options.map((o) => ({
-                      value: String(o),
-                      label: String(o),
-                      count:
-                        attributeCountMaps[attribute.key]?.[String(o)] || 0,
-                    }))}
-                    selected={parseMultiValue(
-                      searchParams.get(`attr_${attribute.key}`),
-                    )}
-                    multiple
-                    onChange={(values) =>
-                      updateParam(
-                        `attr_${attribute.key}`,
-                        serializeMultiValue(values),
-                      )
-                    }
-                  />
-                ),
-              }))
-          : []),
-        brandList.length > 0 && {
-          key: "brand",
-          title: "Brand",
-          content: (
-            <OptionFilter
-              name="brand"
-              options={brandList.map((brand) => ({
-                ...brand,
-                count: brandCounts[String(brand.value)] || 0,
-              }))}
-              selected={selectedBrands}
-              multiple
-              onChange={(values) =>
-                updateParam("brand", serializeMultiValue(values))
-              }
-            />
-          ),
-        },
+    () => {
+      const globalFilters = [
         {
           key: "price",
           title: "Price Range",
@@ -719,51 +670,6 @@ export default function CategoryPage() {
             />
           ),
         },
-        {
-          key: "rating",
-          title: "Rating",
-          content: (
-            <RatingFilter
-              selected={selectedRatings}
-              multiple
-              counts={ratingCounts}
-              onChange={(values) =>
-                updateParam("rating", serializeMultiValue(values))
-              }
-            />
-          ),
-        },
-        /*
-        {
-          key: "delivery",
-          title: "Delivery",
-          content: (
-            <CheckboxListFilter
-              name="delivery"
-              options={[
-                { value: "expressDelivery", label: "Express Delivery" },
-                { value: "freeDelivery", label: "Free Delivery" },
-              ]}
-              selected={["expressDelivery", "freeDelivery"].filter(
-                (value) => searchParams.get(value) === "true",
-              )}
-              onChange={(values) => {
-                const selectedValues = new Set(values);
-                updateParams([
-                  [
-                    "expressDelivery",
-                    selectedValues.has("expressDelivery") ? "true" : undefined,
-                  ],
-                  [
-                    "freeDelivery",
-                    selectedValues.has("freeDelivery") ? "true" : undefined,
-                  ],
-                ]);
-              }}
-            />
-          ),
-        },
-        */
         {
           key: "inStock",
           title: "Availability",
@@ -801,92 +707,85 @@ export default function CategoryPage() {
             />
           ),
         },
-      ]
-        .flat()
-        .filter(Boolean),
+      ];
+
+      const categoryFilters = filterableAttributes.map((attribute) => ({
+        key: `attr_${attribute.key}`,
+        title: attribute.label || attribute.key,
+        content: (
+          <OptionFilter
+            name={`attr_${attribute.key}`}
+            options={attribute.options.map((option) => ({
+              value: option,
+              label: option,
+              count: attributeCountMaps[attribute.key]?.[option] || 0,
+            }))}
+            selected={parseMultiValue(searchParams.get(`attr_${attribute.key}`))}
+            multiple
+            onChange={(values) =>
+              updateParam(`attr_${attribute.key}`, serializeMultiValue(values))
+            }
+          />
+        ),
+      }));
+
+      const finalFilters = [...globalFilters, ...categoryFilters];
+
+      return finalFilters.flat().filter(Boolean);
+    },
     [
-      categoryData,
-      brandList,
+      filterableAttributes,
       searchParams,
       availabilityCounts,
-      brandCounts,
-      ratingCounts,
       attributeCountMaps,
       handlePriceChange,
-      selectedBrands,
-      selectedRatings,
       updateParam,
       updateParams,
     ],
   );
 
   // ── Active filter chips ──────────────────────────────────────────────────
-  const activeFilters = [
-    ...selectedBrands.map((brand) => ({
-      key: `brand:${brand}`,
-      groupKey: "brand",
-      value: brand,
-      label: `Brand: ${brand}`,
-    })),
-    ...selectedRatings.map((rating) => ({
-      key: `rating:${rating}`,
-      groupKey: "rating",
-      value: rating,
-      label: `Rating: ${rating}★ & up`,
-    })),
-    searchParams.get("inStock") && { key: "inStock", label: "In Stock Only" },
-    searchParams.get("outOfStock") === "true" && {
-      key: "outOfStock",
-      label: "Out of Stock",
-    },
-    /*
-    searchParams.get("expressDelivery") === "true" && {
-      key: "expressDelivery",
-      label: "Express Delivery",
-    },
-    searchParams.get("freeDelivery") === "true" && {
-      key: "freeDelivery",
-      label: "Free Delivery",
-    },
-    */
-    [
-      "color",
-      "size",
-      "material",
-      "fit",
-      "storage",
-      "skinType",
-      "shade",
-      "finish",
-      "room",
-      "sport",
-      "concern",
+  const activeFilters = useMemo(() => {
+    const attributeLabelByKey = new Map(
+      filterableAttributes.map((attribute) => [
+        attribute.key,
+        attribute.label || attribute.key,
+      ]),
+    );
+
+    return [
+      searchParams.get("inStock") === "true" && {
+        key: "inStock",
+        label: "In Stock Only",
+      },
+      searchParams.get("outOfStock") === "true" && {
+        key: "outOfStock",
+        label: "Out of Stock",
+      },
+      ...Array.from(searchParams.entries())
+        .filter(([key, value]) => {
+          if (!key.startsWith("attr_") || !value) return false;
+          const attributeKey = key.replace(/^attr_/, "");
+          return supportedAttributeKeys.has(attributeKey);
+        })
+        .flatMap(([key, value]) => {
+          const attributeKey = key.replace(/^attr_/, "");
+          const label = attributeLabelByKey.get(attributeKey) || attributeKey;
+          return parseMultiValue(value).map((item) => ({
+            key: `${key}:${item}`,
+            groupKey: key,
+            value: item,
+            label: `${label}: ${item}`,
+          }));
+        }),
+      (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
+        key: "price",
+        label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
+      },
     ]
-      .map(
-        (key) =>
-          searchParams.get(key) && {
-            key,
-            label: `${key}: ${searchParams.get(key)}`,
-          },
-      )
-      .filter(Boolean),
-    ...Array.from(searchParams.entries())
-      .filter(([key, value]) => key.startsWith("attr_") && value)
-      .flatMap(([key, value]) =>
-        parseMultiValue(value).map((item) => ({
-          key: `${key}:${item}`,
-          groupKey: key,
-          value: item,
-          label: `${key.replace(/^attr_/, "")}: ${item}`,
-        })),
-      ),
-    (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
-      key: "price",
-      label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
-    },
-  ]
-    .flat()
-    .filter(Boolean);
+      .flat()
+      .filter(Boolean);
+  }, [filterableAttributes, searchParams, supportedAttributeKeys]);
 
   if (categoryLoading && !categoryData && !firstLoadDone && !products.length) {
     return <CategoryPageSkeleton />;

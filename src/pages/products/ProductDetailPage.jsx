@@ -29,7 +29,11 @@ import {
 } from "../../features/product/relatedProductsSlice";
 import { trackAnalyticsEvent } from "../../features/analytics/analyticsSlice";
 import { useProductActions } from "../../hooks/useProductActions";
-import { addRecentlyViewed, getRecentlyViewed } from "../../utils/recentlyViewed";
+import {
+  addRecentlyViewed,
+  getRecentlyViewed,
+} from "../../utils/recentlyViewed";
+import { tokenStorage } from "../../api/tokenStorage";
 import {
   applyImageFallback,
   getProductId,
@@ -52,7 +56,6 @@ import StarRating from "./components/starRating";
 import ShareProductPopover from "./components/socialMediaShare";
 import ProductPriceBlock from "./components/oldAndNewPrice";
 import ProductStockStatus from "./components/stockStatus";
-import ShowMoreText from "../../utils/showMore";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
@@ -944,6 +947,10 @@ export default function ProductDetailPage() {
   const crossSellState = useSelector((s) => s.relatedProducts);
   const recommendationList = useSelector((s) => s.recommendation.list);
   const user = useSelector((s) => s.auth.current);
+  const userId = user?.id || user?._id || user?.userId || user?.email;
+  const isLoggedIn = Boolean(
+    userId && (tokenStorage.getAccessToken() || tokenStorage.getRefreshToken()),
+  );
 
   const warranty = warrantyState.current;
 
@@ -994,13 +1001,6 @@ export default function ProductDetailPage() {
     if (sideEffectsRanFor.current === productId) return;
     sideEffectsRanFor.current = productId;
 
-    addRecentlyViewed(product);
-    setRecentlyViewedList(
-      getRecentlyViewed().filter(
-        (p) => String(getProductId(p)) !== String(productId)
-      )
-    );
-
     dispatch(fetchProductWarranty({ productId })).catch(() => {});
     dispatch(fetchRelatedProducts({ productId })).catch(() => {});
     dispatch(fetchCrossSellProducts({ productId })).catch(() => {});
@@ -1026,6 +1026,20 @@ export default function ProductDetailPage() {
       }),
     ).catch(() => {});
   }, [dispatch, product, productId]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !product) {
+      setRecentlyViewedList([]);
+      return;
+    }
+
+    addRecentlyViewed(product);
+    setRecentlyViewedList(
+      getRecentlyViewed().filter(
+        (p) => String(getProductId(p)) !== String(productId),
+      ),
+    );
+  }, [isLoggedIn, product, productId]);
 
   useEffect(() => {
     if (!loadedProductId || String(loadedProductId) !== String(productId)) {
@@ -1494,7 +1508,7 @@ export default function ProductDetailPage() {
 
               <ProductReviewsSection productId={productId} product={product} />
 
-              <ProductRecommendationSection
+              {/* <ProductRecommendationSection
                 title="Recommended For You"
                 linkText="View all →"
                 products={recommendedProducts}
@@ -1502,7 +1516,7 @@ export default function ProductDetailPage() {
                 toggleWishlist={toggleWishlist}
                 isWishlisted={isWishlisted}
                 className="mt-12"
-              />
+              /> */}
 
               <ProductRecommendationSection
                 title="You May Also Like"
@@ -1523,7 +1537,7 @@ export default function ProductDetailPage() {
                 className="mt-10"
               />
 
-              {user && (
+              {isLoggedIn && (
                 <ProductRecommendationSection
                   title="Recently Viewed"
                   linkText="View history →"
