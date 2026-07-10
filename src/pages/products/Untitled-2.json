@@ -1,0 +1,4264 @@
+{
+  "success": true,
+  "data": [
+    {
+      "id": "3f1ade67-ad5d-42eb-b810-d8e635ddbebb",
+      "buyer_id": "6a4b37453ecf74d6920eeb39",
+      "status": "pending_payment",
+      "currency": "INR",
+      "subtotal_amount": "43000.00",
+      "discount_amount": "0.00",
+      "tax_amount": "6559.32",
+      "total_amount": "43050.00",
+      "shipping_address": {
+        "city": "Rewa",
+        "line1": "indore mp",
+        "line2": "indore mp",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "postalCode": "486006"
+      },
+      "coupon_code": null,
+      "wallet_discount_amount": "0.00",
+      "payable_amount": "43050.00",
+      "tax_breakup": {
+        "items": [
+          {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 43000,
+            "productId": "6a46628503ebd21cc58ed763",
+            "taxAmount": 6559.32,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 36440.68,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 6559.32,
+            "discountedLineTotal": 43000
+          }
+        ],
+        "taxMode": "igst",
+        "cessAmount": 0,
+        "cgstAmount": 0,
+        "igstAmount": 6559.32,
+        "sgstAmount": 0,
+        "taxableAmount": 36440.68,
+        "totalTaxAmount": 6559.32,
+        "taxPayableAmount": 0,
+        "taxIncludedAmount": 6559.32
+      },
+      "platform_fee_amount": "50.00",
+      "created_at": "2026-07-08T09:48:48.500Z",
+      "updated_at": "2026-07-08T09:48:48.500Z",
+      "order_number": "ORD-20260708-13B3B710ED",
+      "payment_status": "initiated",
+      "delivery_status": null,
+      "created_by": "6a4b37453ecf74d6920eeb39",
+      "updated_by": "6a4b37453ecf74d6920eeb39",
+      "payment_provider": "razorpay",
+      "cod_charge_amount": "0.00",
+      "cancellation_status": null,
+      "cancelled_amount": "0.00",
+      "shipping_fee_amount": "0.00",
+      "summary": {
+        "itemAmount": 43000,
+        "subtotalAmount": 43000,
+        "discountAmount": 0,
+        "walletDiscountAmount": 0,
+        "taxAmount": 6559.32,
+        "taxIncludedAmount": 6559.32,
+        "taxPayableAmount": 0,
+        "platformFeeAmount": 50,
+        "sellerPlatformFeeAmount": 0,
+        "customerPlatformFeeAmount": 50,
+        "customerPlatformFeeTaxAmount": 0,
+        "codChargeAmount": 0,
+        "deliveryChargeAmount": 0,
+        "shippingFeeAmount": 0,
+        "customerTotalAmount": 43050,
+        "customerPayableAmount": 43050,
+        "sellerPayoutAmount": 43000,
+        "platformFeeChargedToCustomer": true
+      },
+      "items": [
+        {
+          "id": "17bef72f-9685-4eff-84a9-3075f8468d48",
+          "order_id": "3f1ade67-ad5d-42eb-b810-d8e635ddbebb",
+          "product_id": "6a46628503ebd21cc58ed763",
+          "variant_id": "6a47b0bc3ecf74d6920ea1b3",
+          "variant_sku": "SKU-1782997022586-4",
+          "variant_title": "512GB / 16GB",
+          "attributes": {
+            "ram": "16GB",
+            "storage": "512GB"
+          },
+          "seller_id": "6a4607f740d0b5533ff07f2b",
+          "quantity": 1,
+          "unit_price": "43000.00",
+          "line_total": "43000.00",
+          "created_at": "2026-07-08T09:48:48.500Z",
+          "product_title": "Acer Aspire 3 Intel Core I3 12th Gen 1215u",
+          "product_slug": "acer-aspire-3-intel-core-i3-12th-gen-1215u-1782997637519",
+          "product_sku": "SKU-1782997022586-4",
+          "product_image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1782997509/ecommerce/uploads/product/image-1-13dea4d2-24a6-4ee3-985f-583b2725c768.webp",
+          "brand": "Acer",
+          "category": "computers-laptops-workstation-laptops",
+          "hsn_code": "8443",
+          "gst_rate": "18.00",
+          "discount_amount": "0.00",
+          "tax_amount": "6559.32",
+          "tax_breakup": {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 43000,
+            "productId": "6a46628503ebd21cc58ed763",
+            "taxAmount": 6559.32,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 36440.68,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 6559.32,
+            "discountedLineTotal": 43000
+          },
+          "product_snapshot": {
+            "sku": "SKU-1782997022586-4",
+            "slug": "acer-aspire-3-intel-core-i3-12th-gen-1215u-1782997637519",
+            "brand": "Acer",
+            "image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1782997509/ecommerce/uploads/product/image-1-13dea4d2-24a6-4ee3-985f-583b2725c768.webp",
+            "title": "Acer Aspire 3 Intel Core I3 12th Gen 1215u",
+            "dealId": null,
+            "gstRate": 18,
+            "hsnCode": "8443",
+            "storeId": null,
+            "category": "computers-laptops-workstation-laptops",
+            "shipping": {
+              "cities": [],
+              "states": [],
+              "regions": [],
+              "codAvailable": false,
+              "freeShipping": false,
+              "allowPincodes": [],
+              "blockPincodes": [],
+              "additionalCost": 0,
+              "dangerousGoods": false,
+              "handlingCharge": 0,
+              "processingDays": 1,
+              "shippingMethod": "standard",
+              "requiresColdChain": false,
+              "shippingProfileId": "77e89fb7-855d-40df-a819-38e71c700bc3",
+              "serviceabilityMode": "inherit",
+              "serviceablePincodes": []
+            },
+            "warranty": {
+              "type": "manufacturer",
+              "period": 1,
+              "periodUnit": "years",
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              },
+              "serviceableCountries": []
+            },
+            "dealNumber": null,
+            "warehouseId": null,
+            "gstInclusive": true,
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "eligible": true,
+              "restockingFee": 0
+            },
+            "variantTitle": "512GB / 16GB",
+            "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+            "commercialPolicy": {
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              }
+            }
+          },
+          "deal_id": null,
+          "deal_snapshot": {},
+          "fulfillment_snapshot": {},
+          "cancelled_quantity": 0,
+          "cancellation_status": null,
+          "cancellation_snapshot": {},
+          "organization_id": "a1617be8-259b-401f-9950-3f20a3c28507",
+          "store_id": null,
+          "warehouse_id": null,
+          "seller": {
+            "name": "Classy Closet"
+          }
+        }
+      ],
+      "relations": {
+        "buyer": {
+          "id": "6a4b37453ecf74d6920eeb39",
+          "displayName": "ittu prajapat",
+          "fullName": "ittu prajapat",
+          "firstName": "ittu",
+          "lastName": "prajapat",
+          "businessName": null,
+          "email": "ittu@gmail.com",
+          "phone": "6265095792",
+          "role": "buyer",
+          "profile": {
+            "firstName": "ittu",
+            "lastName": "prajapat"
+          },
+          "accountStatus": "active",
+          "ownerSellerId": null,
+          "parentSellerId": null,
+          "sellerProfile": {
+            "displayName": null,
+            "businessName": null,
+            "legalBusinessName": null,
+            "supportEmail": null,
+            "supportPhone": null,
+            "kycStatus": null,
+            "bankVerificationStatus": null,
+            "goLiveStatus": null
+          }
+        },
+        "sellers": [
+          {
+            "displayName": "Vishal Malviya",
+            "businessName": "Classy Closet",
+            "supportEmail": "classyCloset@gmail.com",
+            "supportPhone": "7657876534"
+          }
+        ],
+        "payments": [
+          {
+            "provider": "razorpay",
+            "status": "initiated",
+            "amount": "43050.00",
+            "currency": "INR",
+            "created_at": "2026-07-08T09:48:50.514Z"
+          }
+        ],
+        "invoice": null,
+        "invoices": [],
+        "shipments": [],
+        "sellerFulfillmentGroups": [
+          {
+            "sellerName": "Classy Closet",
+            "organizationSnapshot": {
+              "pan": "ABCDE2224F",
+              "gstin": "23ABCDE1234F1Z5",
+              "sellerId": "6a4607f740d0b5533ff07f2b",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE2224F",
+                "gstin": "23ABCDE1234F1Z5",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "ready",
+              "supportEmail": "classyCloset@gmail.com",
+              "supportPhone": "7657876534",
+              "pickupAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Classy Closet",
+              "legalBusinessName": "Classy Closet",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "itemCount": 1,
+            "quantity": 1,
+            "deliveryStatus": null,
+            "expectedDeliveryAt": null,
+            "latestTrackingEvent": null,
+            "requiresVerification": false,
+            "verificationComplete": null
+          }
+        ],
+        "eWayBill": null,
+        "cancellations": []
+      }
+    },
+    {
+      "id": "0c455cc8-570b-4e31-b95d-a32d38061096",
+      "buyer_id": "6a4b37453ecf74d6920eeb39",
+      "status": "pending_payment",
+      "currency": "INR",
+      "subtotal_amount": "33295.00",
+      "discount_amount": "55.00",
+      "tax_amount": "5070.51",
+      "total_amount": "33340.00",
+      "shipping_address": {
+        "city": "Rewa",
+        "line1": "indore mp",
+        "line2": "indore mp",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "postalCode": "486006"
+      },
+      "coupon_code": "PARENT001",
+      "wallet_discount_amount": "0.00",
+      "payable_amount": "33340.00",
+      "tax_breakup": {
+        "items": [
+          {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 25795,
+            "productId": "6a474b1b26dcda73561f658a",
+            "taxAmount": 3928.33,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 21824.06,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 3928.33,
+            "discountedLineTotal": 25752.39
+          },
+          {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 7500,
+            "productId": "6a45042429b795d8a4ee5853",
+            "taxAmount": 1142.18,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 6345.43,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 1142.18,
+            "discountedLineTotal": 7487.61
+          }
+        ],
+        "taxMode": "igst",
+        "cessAmount": 0,
+        "cgstAmount": 0,
+        "igstAmount": 5070.51,
+        "sgstAmount": 0,
+        "taxableAmount": 28169.49,
+        "totalTaxAmount": 5070.51,
+        "taxPayableAmount": 0,
+        "taxIncludedAmount": 5070.51
+      },
+      "platform_fee_amount": "100.00",
+      "created_at": "2026-07-08T09:22:33.485Z",
+      "updated_at": "2026-07-08T09:22:33.485Z",
+      "order_number": "ORD-20260708-C7CDBCE577",
+      "payment_status": "initiated",
+      "delivery_status": null,
+      "created_by": "6a4b37453ecf74d6920eeb39",
+      "updated_by": "6a4b37453ecf74d6920eeb39",
+      "payment_provider": "razorpay",
+      "cod_charge_amount": "0.00",
+      "cancellation_status": null,
+      "cancelled_amount": "0.00",
+      "shipping_fee_amount": "0.00",
+      "summary": {
+        "itemAmount": 33295,
+        "subtotalAmount": 33295,
+        "discountAmount": 55,
+        "walletDiscountAmount": 0,
+        "taxAmount": 5070.51,
+        "taxIncludedAmount": 5070.51,
+        "taxPayableAmount": 0,
+        "platformFeeAmount": 100,
+        "sellerPlatformFeeAmount": 0,
+        "customerPlatformFeeAmount": 100,
+        "customerPlatformFeeTaxAmount": 0,
+        "codChargeAmount": 0,
+        "deliveryChargeAmount": 0,
+        "shippingFeeAmount": 0,
+        "customerTotalAmount": 33340,
+        "customerPayableAmount": 33340,
+        "sellerPayoutAmount": 33240,
+        "platformFeeChargedToCustomer": true
+      },
+      "items": [
+        {
+          "id": "80eea45f-627f-4fd9-a12f-2f1f1103d4fb",
+          "order_id": "0c455cc8-570b-4e31-b95d-a32d38061096",
+          "product_id": "6a45042429b795d8a4ee5853",
+          "variant_id": "6a465eaf3ecf74d6920d72d1",
+          "variant_sku": "SKU-1782908753914-1",
+          "variant_title": "Black",
+          "attributes": {
+            "color": "Black"
+          },
+          "seller_id": "6a44d934eb92e02af2e6945f",
+          "quantity": 1,
+          "unit_price": "7500.00",
+          "line_total": "7500.00",
+          "created_at": "2026-07-08T09:22:33.485Z",
+          "product_title": "Eume Carbonis 20l Laptop Backpack For Men",
+          "product_slug": "urban-jungle-by-safari-citystride-messenger-bag-or-water-resistant-and-premium-fabric-or-laptop-satchel-with-trolley-sleeve-1782907940115",
+          "product_sku": "SKU-1782908753914-1",
+          "product_image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1782908773/ecommerce/uploads/product/image-2-4282f834-744f-47fe-8c0f-a1b4c463bdd3.jpg",
+          "brand": "Samsung",
+          "category": "electronics-computer-peripherals-drawing-tablets",
+          "hsn_code": "8504",
+          "gst_rate": "18.00",
+          "discount_amount": "12.39",
+          "tax_amount": "1142.18",
+          "tax_breakup": {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 7500,
+            "productId": "6a45042429b795d8a4ee5853",
+            "taxAmount": 1142.18,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 6345.43,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 1142.18,
+            "discountedLineTotal": 7487.61
+          },
+          "product_snapshot": {
+            "sku": "SKU-1782908753914-1",
+            "slug": "urban-jungle-by-safari-citystride-messenger-bag-or-water-resistant-and-premium-fabric-or-laptop-satchel-with-trolley-sleeve-1782907940115",
+            "brand": "Samsung",
+            "image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1782908773/ecommerce/uploads/product/image-2-4282f834-744f-47fe-8c0f-a1b4c463bdd3.jpg",
+            "title": "Eume Carbonis 20l Laptop Backpack For Men",
+            "dealId": null,
+            "gstRate": 18,
+            "hsnCode": "8504",
+            "storeId": null,
+            "category": "electronics-computer-peripherals-drawing-tablets",
+            "shipping": {
+              "cities": [],
+              "states": [],
+              "regions": [],
+              "codAvailable": true,
+              "freeShipping": false,
+              "allowPincodes": [],
+              "blockPincodes": [],
+              "additionalCost": 0,
+              "dangerousGoods": false,
+              "handlingCharge": 0,
+              "processingDays": 1,
+              "shippingMethod": "standard",
+              "requiresColdChain": false,
+              "shippingProfileId": "010d105f-ad81-4db4-ab79-e054baa0c91f",
+              "serviceabilityMode": "inherit",
+              "serviceablePincodes": []
+            },
+            "warranty": {
+              "type": "manufacturer",
+              "period": 6,
+              "provider": "TechNova Retail",
+              "periodUnit": "months",
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              },
+              "serviceableCountries": []
+            },
+            "dealNumber": null,
+            "warehouseId": null,
+            "gstInclusive": true,
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "eligible": true,
+              "restockingFee": 0
+            },
+            "variantTitle": "Black",
+            "organizationId": "ae5633c9-08af-49a5-a364-a5b05823879c",
+            "commercialPolicy": {
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              }
+            }
+          },
+          "deal_id": null,
+          "deal_snapshot": {},
+          "fulfillment_snapshot": {},
+          "cancelled_quantity": 0,
+          "cancellation_status": null,
+          "cancellation_snapshot": {},
+          "organization_id": "ae5633c9-08af-49a5-a364-a5b05823879c",
+          "store_id": null,
+          "warehouse_id": null,
+          "seller": {
+            "name": "Krishna Soni"
+          }
+        },
+        {
+          "id": "c77086b1-fe4f-4822-b2c7-c7268cb2cbb6",
+          "order_id": "0c455cc8-570b-4e31-b95d-a32d38061096",
+          "product_id": "6a474b1b26dcda73561f658a",
+          "variant_id": "6a47bcb93ecf74d6920ed0e2",
+          "variant_sku": "SKU-1783056676305-1",
+          "variant_title": "Blue",
+          "attributes": {
+            "color": "Blue"
+          },
+          "seller_id": "6a4607f740d0b5533ff07f2b",
+          "quantity": 1,
+          "unit_price": "25795.00",
+          "line_total": "25795.00",
+          "created_at": "2026-07-08T09:22:33.485Z",
+          "product_title": "Titan Vintage Concealed Automatic  Watch",
+          "product_slug": "watch-1783057179741",
+          "product_sku": "SKU-1783056676305-1",
+          "product_image": "https://rukminim2.flixcart.com/image/1920/1920/xif0q/watch/t/x/h/-watermarked-original-imahh7vk4mny3mb4.jpeg?q=90",
+          "brand": "Titan",
+          "category": "mens-watches",
+          "hsn_code": "9102",
+          "gst_rate": "18.00",
+          "discount_amount": "42.61",
+          "tax_amount": "3928.33",
+          "tax_breakup": {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 25795,
+            "productId": "6a474b1b26dcda73561f658a",
+            "taxAmount": 3928.33,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 21824.06,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 3928.33,
+            "discountedLineTotal": 25752.39
+          },
+          "product_snapshot": {
+            "sku": "SKU-1783056676305-1",
+            "slug": "watch-1783057179741",
+            "brand": "Titan",
+            "image": "https://rukminim2.flixcart.com/image/1920/1920/xif0q/watch/t/x/h/-watermarked-original-imahh7vk4mny3mb4.jpeg?q=90",
+            "title": "Titan Vintage Concealed Automatic  Watch",
+            "dealId": null,
+            "gstRate": 18,
+            "hsnCode": "9102",
+            "storeId": null,
+            "category": "mens-watches",
+            "shipping": {
+              "cities": [],
+              "states": [],
+              "regions": [],
+              "codAvailable": false,
+              "freeShipping": false,
+              "allowPincodes": [],
+              "blockPincodes": [],
+              "additionalCost": 0,
+              "dangerousGoods": false,
+              "handlingCharge": 0,
+              "processingDays": 1,
+              "shippingMethod": "standard",
+              "requiresColdChain": false,
+              "shippingProfileId": "77e89fb7-855d-40df-a819-38e71c700bc3",
+              "serviceabilityMode": "inherit",
+              "serviceablePincodes": []
+            },
+            "warranty": {
+              "type": "manufacturer",
+              "period": 2,
+              "periodUnit": "years",
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              },
+              "serviceableCountries": []
+            },
+            "dealNumber": null,
+            "warehouseId": null,
+            "gstInclusive": true,
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "eligible": true,
+              "restockingFee": 0
+            },
+            "variantTitle": "Blue",
+            "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+            "commercialPolicy": {
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              }
+            }
+          },
+          "deal_id": null,
+          "deal_snapshot": {},
+          "fulfillment_snapshot": {},
+          "cancelled_quantity": 0,
+          "cancellation_status": null,
+          "cancellation_snapshot": {},
+          "organization_id": "a1617be8-259b-401f-9950-3f20a3c28507",
+          "store_id": null,
+          "warehouse_id": null,
+          "seller": {
+            "name": "Classy Closet"
+          }
+        }
+      ],
+      "relations": {
+        "buyer": {
+          "id": "6a4b37453ecf74d6920eeb39",
+          "displayName": "ittu prajapat",
+          "fullName": "ittu prajapat",
+          "firstName": "ittu",
+          "lastName": "prajapat",
+          "businessName": null,
+          "email": "ittu@gmail.com",
+          "phone": "6265095792",
+          "role": "buyer",
+          "profile": {
+            "firstName": "ittu",
+            "lastName": "prajapat"
+          },
+          "accountStatus": "active",
+          "ownerSellerId": null,
+          "parentSellerId": null,
+          "sellerProfile": {
+            "displayName": null,
+            "businessName": null,
+            "legalBusinessName": null,
+            "supportEmail": null,
+            "supportPhone": null,
+            "kycStatus": null,
+            "bankVerificationStatus": null,
+            "goLiveStatus": null
+          }
+        },
+        "sellers": [
+          {
+            "displayName": "Krishna Soni",
+            "businessName": "Krishna Enterprises",
+            "supportEmail": "krishnaEnterprises@gmail.com",
+            "supportPhone": "7234567890"
+          },
+          {
+            "displayName": "Vishal Malviya",
+            "businessName": "Classy Closet",
+            "supportEmail": "classyCloset@gmail.com",
+            "supportPhone": "7657876534"
+          }
+        ],
+        "payments": [
+          {
+            "provider": "razorpay",
+            "status": "initiated",
+            "amount": "33340.00",
+            "currency": "INR",
+            "created_at": "2026-07-08T09:22:35.734Z"
+          }
+        ],
+        "invoice": null,
+        "invoices": [],
+        "shipments": [],
+        "sellerFulfillmentGroups": [
+          {
+            "sellerName": "Krishna Soni",
+            "organizationSnapshot": {
+              "pan": "ABCDE1224F",
+              "gstin": "27ABCDE1224F1Z5",
+              "sellerId": "6a44d934eb92e02af2e6945f",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE1224F",
+                "gstin": "27ABCDE1224F1Z5",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "ready",
+              "supportEmail": "krishnaenterprises@gmail.com",
+              "supportPhone": "7234567890",
+              "pickupAddress": {
+                "city": "Ratlam",
+                "line1": "Bedia, Khargone",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "457007"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Khandwa",
+                "line1": "Bedia, Khargone",
+                "line2": "asdfs",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "450008"
+              },
+              "organizationId": "ae5633c9-08af-49a5-a364-a5b05823879c",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Krishna Soni",
+              "legalBusinessName": "Krishna Soni",
+              "registrationNumber": "12",
+              "bankVerificationStatus": "verified"
+            },
+            "itemCount": 1,
+            "quantity": 1,
+            "deliveryStatus": null,
+            "expectedDeliveryAt": null,
+            "latestTrackingEvent": null,
+            "requiresVerification": false,
+            "verificationComplete": null
+          },
+          {
+            "sellerName": "Classy Closet",
+            "organizationSnapshot": {
+              "pan": "ABCDE2224F",
+              "gstin": "23ABCDE1234F1Z5",
+              "sellerId": "6a4607f740d0b5533ff07f2b",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE2224F",
+                "gstin": "23ABCDE1234F1Z5",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "ready",
+              "supportEmail": "classyCloset@gmail.com",
+              "supportPhone": "7657876534",
+              "pickupAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Classy Closet",
+              "legalBusinessName": "Classy Closet",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "itemCount": 1,
+            "quantity": 1,
+            "deliveryStatus": null,
+            "expectedDeliveryAt": null,
+            "latestTrackingEvent": null,
+            "requiresVerification": false,
+            "verificationComplete": null
+          }
+        ],
+        "eWayBill": null,
+        "cancellations": []
+      }
+    },
+    {
+      "id": "06a8a16b-3e65-4c7a-b011-aebe880858e2",
+      "buyer_id": "6a4b37453ecf74d6920eeb39",
+      "status": "confirmed",
+      "currency": "INR",
+      "subtotal_amount": "599.00",
+      "discount_amount": "0.00",
+      "tax_amount": "91.37",
+      "total_amount": "649.00",
+      "shipping_address": {
+        "city": "Rewa",
+        "line1": "indore mp",
+        "line2": "indore mp",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "postalCode": "486006"
+      },
+      "coupon_code": null,
+      "wallet_discount_amount": "0.00",
+      "payable_amount": "649.00",
+      "tax_breakup": {
+        "items": [
+          {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 599,
+            "productId": "6a474fbe26dcda73561f6b59",
+            "taxAmount": 91.37,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 507.63,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 91.37,
+            "discountedLineTotal": 599
+          }
+        ],
+        "taxMode": "igst",
+        "cessAmount": 0,
+        "cgstAmount": 0,
+        "igstAmount": 91.37,
+        "sgstAmount": 0,
+        "taxableAmount": 507.63,
+        "totalTaxAmount": 91.37,
+        "taxPayableAmount": 0,
+        "taxIncludedAmount": 91.37
+      },
+      "platform_fee_amount": "50.00",
+      "created_at": "2026-07-08T09:10:24.170Z",
+      "updated_at": "2026-07-08T09:11:12.712Z",
+      "order_number": "ORD-20260708-C69738FBCA",
+      "payment_status": "captured",
+      "delivery_status": null,
+      "created_by": "6a4b37453ecf74d6920eeb39",
+      "updated_by": "6a4b37453ecf74d6920eeb39",
+      "payment_provider": "razorpay",
+      "cod_charge_amount": "0.00",
+      "cancellation_status": null,
+      "cancelled_amount": "0.00",
+      "shipping_fee_amount": "0.00",
+      "summary": {
+        "itemAmount": 599,
+        "subtotalAmount": 599,
+        "discountAmount": 0,
+        "walletDiscountAmount": 0,
+        "taxAmount": 91.37,
+        "taxIncludedAmount": 91.37,
+        "taxPayableAmount": 0,
+        "platformFeeAmount": 50,
+        "sellerPlatformFeeAmount": 0,
+        "customerPlatformFeeAmount": 50,
+        "customerPlatformFeeTaxAmount": 0,
+        "codChargeAmount": 0,
+        "deliveryChargeAmount": 0,
+        "shippingFeeAmount": 0,
+        "customerTotalAmount": 649,
+        "customerPayableAmount": 649,
+        "sellerPayoutAmount": 599,
+        "platformFeeChargedToCustomer": true
+      },
+      "items": [
+        {
+          "id": "2e87593c-ebcc-40f1-9f7e-4a71b93e97ac",
+          "order_id": "06a8a16b-3e65-4c7a-b011-aebe880858e2",
+          "product_id": "6a474fbe26dcda73561f6b59",
+          "variant_id": null,
+          "variant_sku": null,
+          "variant_title": null,
+          "attributes": {},
+          "seller_id": "6a4607f740d0b5533ff07f2b",
+          "quantity": 1,
+          "unit_price": "599.00",
+          "line_total": "599.00",
+          "created_at": "2026-07-08T09:10:24.170Z",
+          "product_title": "Vanesa Dream Perfume |Premium & Long Lasting| Eau De Parfum - 100 Ml (For Women)",
+          "product_slug": "vanesa-dream-perfume-orpremium-and-long-lastingor-eau-de-parfum-100-ml-for-women-1783058366149",
+          "product_sku": "CAN-LAV-SM",
+          "product_image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783058331/ecommerce/uploads/products/image-1-bf3e4a34-9434-40d9-8839-d30446aaa502.webp",
+          "brand": "Vaseline",
+          "category": "beauty-fragrances-perfumes-women",
+          "hsn_code": "3301",
+          "gst_rate": "18.00",
+          "discount_amount": "0.00",
+          "tax_amount": "91.37",
+          "tax_breakup": {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 599,
+            "productId": "6a474fbe26dcda73561f6b59",
+            "taxAmount": 91.37,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 507.63,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 91.37,
+            "discountedLineTotal": 599
+          },
+          "product_snapshot": {
+            "sku": "CAN-LAV-SM",
+            "slug": "vanesa-dream-perfume-orpremium-and-long-lastingor-eau-de-parfum-100-ml-for-women-1783058366149",
+            "brand": "Vaseline",
+            "image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783058331/ecommerce/uploads/products/image-1-bf3e4a34-9434-40d9-8839-d30446aaa502.webp",
+            "title": "Vanesa Dream Perfume |Premium & Long Lasting| Eau De Parfum - 100 Ml (For Women)",
+            "dealId": "afe9a225-4460-4104-99f5-5b29d87fd81c",
+            "gstRate": 18,
+            "hsnCode": "3301",
+            "storeId": null,
+            "category": "beauty-fragrances-perfumes-women",
+            "shipping": {
+              "cities": [],
+              "states": [],
+              "regions": [],
+              "codAvailable": true,
+              "freeShipping": false,
+              "allowPincodes": [],
+              "blockPincodes": [],
+              "additionalCost": 0,
+              "dangerousGoods": false,
+              "handlingCharge": 0,
+              "processingDays": 1,
+              "shippingMethod": "standard",
+              "requiresColdChain": false,
+              "shippingProfileId": null,
+              "serviceabilityMode": "inherit",
+              "serviceablePincodes": []
+            },
+            "warranty": {
+              "type": "manufacturer",
+              "periodUnit": "months",
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              },
+              "serviceableCountries": []
+            },
+            "dealNumber": "DL-20260707-DF54A1ED",
+            "warehouseId": null,
+            "gstInclusive": true,
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "eligible": true,
+              "restockingFee": 0
+            },
+            "variantTitle": "",
+            "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+            "commercialPolicy": {
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              }
+            }
+          },
+          "deal_id": "afe9a225-4460-4104-99f5-5b29d87fd81c",
+          "deal_snapshot": {
+            "endAt": "2026-07-31T10:40:00.000Z",
+            "title": "Vanesa Dream Perfume |Premium & Long Lasting| Eau De Parfum  -  100 Ml (For Women) Deal",
+            "dealId": "afe9a225-4460-4104-99f5-5b29d87fd81c",
+            "startAt": "2026-07-07T10:40:00.000Z",
+            "dealType": "fixed_price",
+            "sellerId": "6a4607f740d0b5533ff07f2b",
+            "dealPrice": 599,
+            "productId": "6a474fbe26dcda73561f6b59",
+            "variantId": null,
+            "dealNumber": "DL-20260707-DF54A1ED",
+            "variantSku": null,
+            "soldQuantity": 1,
+            "originalPrice": 656,
+            "discountPercent": 8.69,
+            "reservedQuantity": 0,
+            "allocatedQuantity": 36,
+            "fulfillmentSnapshot": {
+              "dealId": "afe9a225-4460-4104-99f5-5b29d87fd81c",
+              "fulfillmentModel": "seller_fulfilled",
+              "deliveryVerificationMethods": [],
+              "deliveryVerificationRequired": false
+            },
+            "maxQuantityPerOrder": null,
+            "commissionRuleSnapshot": {}
+          },
+          "fulfillment_snapshot": {
+            "dealId": "afe9a225-4460-4104-99f5-5b29d87fd81c",
+            "fulfillmentModel": "seller_fulfilled",
+            "deliveryVerificationMethods": [],
+            "deliveryVerificationRequired": false
+          },
+          "cancelled_quantity": 0,
+          "cancellation_status": null,
+          "cancellation_snapshot": {},
+          "organization_id": "a1617be8-259b-401f-9950-3f20a3c28507",
+          "store_id": null,
+          "warehouse_id": null,
+          "seller": {
+            "name": "Classy Closet"
+          }
+        }
+      ],
+      "relations": {
+        "buyer": {
+          "id": "6a4b37453ecf74d6920eeb39",
+          "displayName": "ittu prajapat",
+          "fullName": "ittu prajapat",
+          "firstName": "ittu",
+          "lastName": "prajapat",
+          "businessName": null,
+          "email": "ittu@gmail.com",
+          "phone": "6265095792",
+          "role": "buyer",
+          "profile": {
+            "firstName": "ittu",
+            "lastName": "prajapat"
+          },
+          "accountStatus": "active",
+          "ownerSellerId": null,
+          "parentSellerId": null,
+          "sellerProfile": {
+            "displayName": null,
+            "businessName": null,
+            "legalBusinessName": null,
+            "supportEmail": null,
+            "supportPhone": null,
+            "kycStatus": null,
+            "bankVerificationStatus": null,
+            "goLiveStatus": null
+          }
+        },
+        "sellers": [
+          {
+            "displayName": "Vishal Malviya",
+            "businessName": "Classy Closet",
+            "supportEmail": "classyCloset@gmail.com",
+            "supportPhone": "7657876534"
+          }
+        ],
+        "payments": [
+          {
+            "provider": "razorpay",
+            "status": "captured",
+            "amount": "649.00",
+            "currency": "INR",
+            "created_at": "2026-07-08T09:10:26.334Z"
+          }
+        ],
+        "invoice": {
+          "id": "20f4ca50-d562-4ea1-aa99-a3fd9be0e7b2",
+          "invoice_number": "GST-202607-000050",
+          "order_id": "06a8a16b-3e65-4c7a-b011-aebe880858e2",
+          "buyer_id": "6a4b37453ecf74d6920eeb39",
+          "taxable_amount": "507.63",
+          "tax_amount": "91.37",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "91.37",
+          "tcs_amount": "5.08",
+          "total_amount": "649.00",
+          "currency": "INR",
+          "tax_mode": "igst",
+          "gstin_marketplace": null,
+          "gstin_seller": null,
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-08T09:11:09.748Z",
+          "metadata": {
+            "items": [
+              {
+                "gstRate": 18,
+                "hsnCode": "3301",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a4607f740d0b5533ff07f2b",
+                "lineTotal": 599,
+                "productId": "6a474fbe26dcda73561f6b59",
+                "taxAmount": 91.37,
+                "unitPrice": 599,
+                "variantId": null,
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "CAN-LAV-SM",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 18,
+                  "taxMode": "igst",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 599,
+                  "productId": "6a474fbe26dcda73561f6b59",
+                  "taxAmount": 91.37,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 507.63,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 91.37,
+                  "discountedLineTotal": 599
+                },
+                "variantSku": null,
+                "orderItemId": "2e87593c-ebcc-40f1-9f7e-4a71b93e97ac",
+                "warehouseId": null,
+                "productTitle": "Vanesa Dream Perfume |Premium & Long Lasting| Eau De Parfum - 100 Ml (For Women)",
+                "taxableAmount": 507.63,
+                "discountAmount": 0,
+                "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                "taxPayableAmount": 0
+              }
+            ],
+            "amounts": {
+              "discountAmount": 0,
+              "codChargeAmount": 0,
+              "grossSalesAmount": 599,
+              "finalPayableAmount": 649,
+              "deliveryChargeAmount": 0,
+              "productTaxableAmount": 507.63,
+              "shippingChargeAmount": 0,
+              "walletDiscountAmount": 0,
+              "sellerPlatformFeeAmount": 50,
+              "customerPlatformFeeAmount": 50,
+              "sellerOrganizationDetails": [
+                {
+                  "pan": "ABCDE2224F",
+                  "gstin": "23ABCDE1234F1Z5",
+                  "sellerId": "6a4607f740d0b5533ff07f2b",
+                  "kycStatus": "verified",
+                  "taxSettings": {
+                    "pan": "ABCDE2224F",
+                    "gstin": "23ABCDE1234F1Z5",
+                    "state": "Madhya Pradesh"
+                  },
+                  "businessType": "individual",
+                  "goLiveStatus": "ready",
+                  "supportEmail": "classyCloset@gmail.com",
+                  "supportPhone": "7657876534",
+                  "pickupAddress": {
+                    "city": "Bhopal",
+                    "line1": "Vijay Nagar Squre",
+                    "line2": "",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "462019"
+                  },
+                  "approvalStatus": "approved",
+                  "billingAddress": {
+                    "city": "Bhopal",
+                    "line1": "Vijay Nagar Squre",
+                    "line2": "",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "462019"
+                  },
+                  "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                  "payoutSettings": {
+                    "payoutSchedule": "weekly"
+                  },
+                  "invoiceSettings": {
+                    "state": "Madhya Pradesh",
+                    "invoicePrefix": "INV"
+                  },
+                  "storeDisplayName": "Classy Closet",
+                  "legalBusinessName": "Classy Closet",
+                  "registrationNumber": null,
+                  "bankVerificationStatus": "verified"
+                }
+              ],
+              "customerPlatformFeeTaxAmount": 0
+            },
+            "generatedBy": "tax-service",
+            "invoiceType": "order_customer",
+            "orderNumber": "ORD-20260708-C69738FBCA",
+            "orderStatus": "confirmed",
+            "generatedByRole": "system"
+          },
+          "created_at": "2026-07-08T09:11:09.748Z",
+          "updated_at": "2026-07-08T09:11:09.748Z",
+          "created_by": null,
+          "updated_by": null,
+          "invoice_type": "order_customer",
+          "seller_id": null,
+          "issuer_type": "platform",
+          "recipient_type": "buyer",
+          "reference_type": "order",
+          "reference_id": "06a8a16b-3e65-4c7a-b011-aebe880858e2",
+          "parent_invoice_id": null,
+          "organization_id": null,
+          "organization_snapshot": {}
+        },
+        "invoices": [
+          {
+            "id": "20f4ca50-d562-4ea1-aa99-a3fd9be0e7b2",
+            "invoice_number": "GST-202607-000050",
+            "order_id": "06a8a16b-3e65-4c7a-b011-aebe880858e2",
+            "buyer_id": "6a4b37453ecf74d6920eeb39",
+            "taxable_amount": "507.63",
+            "tax_amount": "91.37",
+            "cgst_amount": "0.00",
+            "sgst_amount": "0.00",
+            "igst_amount": "91.37",
+            "tcs_amount": "5.08",
+            "total_amount": "649.00",
+            "currency": "INR",
+            "tax_mode": "igst",
+            "gstin_marketplace": null,
+            "gstin_seller": null,
+            "place_of_supply": "Madhya Pradesh",
+            "issued_at": "2026-07-08T09:11:09.748Z",
+            "metadata": {
+              "items": [
+                {
+                  "gstRate": 18,
+                  "hsnCode": "3301",
+                  "storeId": null,
+                  "quantity": 1,
+                  "sellerId": "6a4607f740d0b5533ff07f2b",
+                  "lineTotal": 599,
+                  "productId": "6a474fbe26dcda73561f6b59",
+                  "taxAmount": 91.37,
+                  "unitPrice": 599,
+                  "variantId": null,
+                  "cgstAmount": 0,
+                  "igstAmount": 0,
+                  "productSku": "CAN-LAV-SM",
+                  "sgstAmount": 0,
+                  "taxBreakup": {
+                    "gstRate": 18,
+                    "taxMode": "igst",
+                    "taxType": "gst",
+                    "cessRate": 0,
+                    "lineTotal": 599,
+                    "productId": "6a474fbe26dcda73561f6b59",
+                    "taxAmount": 91.37,
+                    "cessAmount": 0,
+                    "gstInclusive": true,
+                    "taxableAmount": 507.63,
+                    "taxPayableAmount": 0,
+                    "taxIncludedAmount": 91.37,
+                    "discountedLineTotal": 599
+                  },
+                  "variantSku": null,
+                  "orderItemId": "2e87593c-ebcc-40f1-9f7e-4a71b93e97ac",
+                  "warehouseId": null,
+                  "productTitle": "Vanesa Dream Perfume |Premium & Long Lasting| Eau De Parfum - 100 Ml (For Women)",
+                  "taxableAmount": 507.63,
+                  "discountAmount": 0,
+                  "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                  "taxPayableAmount": 0
+                }
+              ],
+              "amounts": {
+                "discountAmount": 0,
+                "codChargeAmount": 0,
+                "grossSalesAmount": 599,
+                "finalPayableAmount": 649,
+                "deliveryChargeAmount": 0,
+                "productTaxableAmount": 507.63,
+                "shippingChargeAmount": 0,
+                "walletDiscountAmount": 0,
+                "sellerPlatformFeeAmount": 50,
+                "customerPlatformFeeAmount": 50,
+                "sellerOrganizationDetails": [
+                  {
+                    "pan": "ABCDE2224F",
+                    "gstin": "23ABCDE1234F1Z5",
+                    "sellerId": "6a4607f740d0b5533ff07f2b",
+                    "kycStatus": "verified",
+                    "taxSettings": {
+                      "pan": "ABCDE2224F",
+                      "gstin": "23ABCDE1234F1Z5",
+                      "state": "Madhya Pradesh"
+                    },
+                    "businessType": "individual",
+                    "goLiveStatus": "ready",
+                    "supportEmail": "classyCloset@gmail.com",
+                    "supportPhone": "7657876534",
+                    "pickupAddress": {
+                      "city": "Bhopal",
+                      "line1": "Vijay Nagar Squre",
+                      "line2": "",
+                      "state": "Madhya Pradesh",
+                      "country": "India",
+                      "postalCode": "462019"
+                    },
+                    "approvalStatus": "approved",
+                    "billingAddress": {
+                      "city": "Bhopal",
+                      "line1": "Vijay Nagar Squre",
+                      "line2": "",
+                      "state": "Madhya Pradesh",
+                      "country": "India",
+                      "postalCode": "462019"
+                    },
+                    "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                    "payoutSettings": {
+                      "payoutSchedule": "weekly"
+                    },
+                    "invoiceSettings": {
+                      "state": "Madhya Pradesh",
+                      "invoicePrefix": "INV"
+                    },
+                    "storeDisplayName": "Classy Closet",
+                    "legalBusinessName": "Classy Closet",
+                    "registrationNumber": null,
+                    "bankVerificationStatus": "verified"
+                  }
+                ],
+                "customerPlatformFeeTaxAmount": 0
+              },
+              "generatedBy": "tax-service",
+              "invoiceType": "order_customer",
+              "orderNumber": "ORD-20260708-C69738FBCA",
+              "orderStatus": "confirmed",
+              "generatedByRole": "system"
+            },
+            "created_at": "2026-07-08T09:11:09.748Z",
+            "updated_at": "2026-07-08T09:11:09.748Z",
+            "created_by": null,
+            "updated_by": null,
+            "invoice_type": "order_customer",
+            "seller_id": null,
+            "issuer_type": "platform",
+            "recipient_type": "buyer",
+            "reference_type": "order",
+            "reference_id": "06a8a16b-3e65-4c7a-b011-aebe880858e2",
+            "parent_invoice_id": null,
+            "organization_id": null,
+            "organization_snapshot": {}
+          }
+        ],
+        "shipments": [],
+        "sellerFulfillmentGroups": [
+          {
+            "sellerName": "Classy Closet",
+            "organizationSnapshot": {
+              "pan": "ABCDE2224F",
+              "gstin": "23ABCDE1234F1Z5",
+              "sellerId": "6a4607f740d0b5533ff07f2b",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE2224F",
+                "gstin": "23ABCDE1234F1Z5",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "ready",
+              "supportEmail": "classyCloset@gmail.com",
+              "supportPhone": "7657876534",
+              "pickupAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Classy Closet",
+              "legalBusinessName": "Classy Closet",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "itemCount": 1,
+            "quantity": 1,
+            "deliveryStatus": null,
+            "expectedDeliveryAt": null,
+            "latestTrackingEvent": null,
+            "requiresVerification": false,
+            "verificationComplete": null
+          }
+        ],
+        "eWayBill": null,
+        "cancellations": []
+      }
+    },
+    {
+      "id": "38311ae8-39fb-4df2-8719-dd5983db12a8",
+      "buyer_id": "6a4b37453ecf74d6920eeb39",
+      "status": "pending_payment",
+      "currency": "INR",
+      "subtotal_amount": "4672.00",
+      "discount_amount": "0.00",
+      "tax_amount": "500.57",
+      "total_amount": "4722.00",
+      "shipping_address": {
+        "city": "Rewa",
+        "line1": "indore mp",
+        "line2": "indore mp",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "postalCode": "486006"
+      },
+      "coupon_code": null,
+      "wallet_discount_amount": "0.00",
+      "payable_amount": "4722.00",
+      "tax_breakup": {
+        "items": [
+          {
+            "gstRate": 12,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 4672,
+            "productId": "6a47526a26dcda73561f6d88",
+            "taxAmount": 500.57,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 4171.43,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 500.57,
+            "discountedLineTotal": 4672
+          }
+        ],
+        "taxMode": "igst",
+        "cessAmount": 0,
+        "cgstAmount": 0,
+        "igstAmount": 500.57,
+        "sgstAmount": 0,
+        "taxableAmount": 4171.43,
+        "totalTaxAmount": 500.57,
+        "taxPayableAmount": 0,
+        "taxIncludedAmount": 500.57
+      },
+      "platform_fee_amount": "50.00",
+      "created_at": "2026-07-08T05:59:26.896Z",
+      "updated_at": "2026-07-08T05:59:26.896Z",
+      "order_number": "ORD-20260708-F7191C9A5F",
+      "payment_status": "initiated",
+      "delivery_status": null,
+      "created_by": "6a4b37453ecf74d6920eeb39",
+      "updated_by": "6a4b37453ecf74d6920eeb39",
+      "payment_provider": "razorpay",
+      "cod_charge_amount": "0.00",
+      "cancellation_status": null,
+      "cancelled_amount": "0.00",
+      "shipping_fee_amount": "0.00",
+      "summary": {
+        "itemAmount": 4672,
+        "subtotalAmount": 4672,
+        "discountAmount": 0,
+        "walletDiscountAmount": 0,
+        "taxAmount": 500.57,
+        "taxIncludedAmount": 500.57,
+        "taxPayableAmount": 0,
+        "platformFeeAmount": 50,
+        "sellerPlatformFeeAmount": 0,
+        "customerPlatformFeeAmount": 50,
+        "customerPlatformFeeTaxAmount": 0,
+        "codChargeAmount": 0,
+        "deliveryChargeAmount": 0,
+        "shippingFeeAmount": 0,
+        "customerTotalAmount": 4722,
+        "customerPayableAmount": 4722,
+        "sellerPayoutAmount": 4672,
+        "platformFeeChargedToCustomer": true
+      },
+      "items": [
+        {
+          "id": "a7ca98bc-cc19-48df-aab0-4723f5db9998",
+          "order_id": "38311ae8-39fb-4df2-8719-dd5983db12a8",
+          "product_id": "6a47526a26dcda73561f6d88",
+          "variant_id": "6a4753e93ecf74d6920dd668",
+          "variant_sku": "SKU-1783059039051-1",
+          "variant_title": "6",
+          "attributes": {
+            "shoe_size": "6"
+          },
+          "seller_id": "6a4607f740d0b5533ff07f2b",
+          "quantity": 1,
+          "unit_price": "4672.00",
+          "line_total": "4672.00",
+          "created_at": "2026-07-08T05:59:26.896Z",
+          "product_title": "408 Sneakers For Men",
+          "product_slug": "408-sneakers-for-men-1783059050805",
+          "product_sku": "SKU-1783059039051-1",
+          "product_image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783058882/ecommerce/uploads/products/image-1-60cb61b9-6cc2-4ddc-858d-0830f59baa1f.webp",
+          "brand": "New Balance",
+          "category": "mens-shoes",
+          "hsn_code": "6401",
+          "gst_rate": "12.00",
+          "discount_amount": "0.00",
+          "tax_amount": "500.57",
+          "tax_breakup": {
+            "gstRate": 12,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 4672,
+            "productId": "6a47526a26dcda73561f6d88",
+            "taxAmount": 500.57,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 4171.43,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 500.57,
+            "discountedLineTotal": 4672
+          },
+          "product_snapshot": {
+            "sku": "SKU-1783059039051-1",
+            "slug": "408-sneakers-for-men-1783059050805",
+            "brand": "New Balance",
+            "image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783058882/ecommerce/uploads/products/image-1-60cb61b9-6cc2-4ddc-858d-0830f59baa1f.webp",
+            "title": "408 Sneakers For Men",
+            "dealId": null,
+            "gstRate": 12,
+            "hsnCode": "6401",
+            "storeId": null,
+            "category": "mens-shoes",
+            "shipping": {
+              "cities": [],
+              "states": [],
+              "regions": [],
+              "codAvailable": true,
+              "freeShipping": false,
+              "allowPincodes": [],
+              "blockPincodes": [],
+              "additionalCost": 0,
+              "dangerousGoods": false,
+              "handlingCharge": 0,
+              "processingDays": 1,
+              "shippingMethod": "standard",
+              "requiresColdChain": false,
+              "shippingProfileId": "77e89fb7-855d-40df-a819-38e71c700bc3",
+              "serviceabilityMode": "inherit",
+              "serviceablePincodes": []
+            },
+            "warranty": {
+              "type": "manufacturer",
+              "periodUnit": "months",
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              },
+              "serviceableCountries": []
+            },
+            "dealNumber": null,
+            "warehouseId": null,
+            "gstInclusive": true,
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "eligible": true,
+              "restockingFee": 0
+            },
+            "variantTitle": "6",
+            "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+            "commercialPolicy": {
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              }
+            }
+          },
+          "deal_id": null,
+          "deal_snapshot": {},
+          "fulfillment_snapshot": {},
+          "cancelled_quantity": 0,
+          "cancellation_status": null,
+          "cancellation_snapshot": {},
+          "organization_id": "a1617be8-259b-401f-9950-3f20a3c28507",
+          "store_id": null,
+          "warehouse_id": null,
+          "seller": {
+            "name": "Classy Closet"
+          }
+        }
+      ],
+      "relations": {
+        "buyer": {
+          "id": "6a4b37453ecf74d6920eeb39",
+          "displayName": "ittu prajapat",
+          "fullName": "ittu prajapat",
+          "firstName": "ittu",
+          "lastName": "prajapat",
+          "businessName": null,
+          "email": "ittu@gmail.com",
+          "phone": "6265095792",
+          "role": "buyer",
+          "profile": {
+            "firstName": "ittu",
+            "lastName": "prajapat"
+          },
+          "accountStatus": "active",
+          "ownerSellerId": null,
+          "parentSellerId": null,
+          "sellerProfile": {
+            "displayName": null,
+            "businessName": null,
+            "legalBusinessName": null,
+            "supportEmail": null,
+            "supportPhone": null,
+            "kycStatus": null,
+            "bankVerificationStatus": null,
+            "goLiveStatus": null
+          }
+        },
+        "sellers": [
+          {
+            "displayName": "Vishal Malviya",
+            "businessName": "Classy Closet",
+            "supportEmail": "classyCloset@gmail.com",
+            "supportPhone": "7657876534"
+          }
+        ],
+        "payments": [
+          {
+            "provider": "razorpay",
+            "status": "initiated",
+            "amount": "4722.00",
+            "currency": "INR",
+            "created_at": "2026-07-08T05:59:28.603Z"
+          }
+        ],
+        "invoice": null,
+        "invoices": [],
+        "shipments": [],
+        "sellerFulfillmentGroups": [
+          {
+            "sellerName": "Classy Closet",
+            "organizationSnapshot": {
+              "pan": "ABCDE2224F",
+              "gstin": "23ABCDE1234F1Z5",
+              "sellerId": "6a4607f740d0b5533ff07f2b",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE2224F",
+                "gstin": "23ABCDE1234F1Z5",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "ready",
+              "supportEmail": "classyCloset@gmail.com",
+              "supportPhone": "7657876534",
+              "pickupAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Classy Closet",
+              "legalBusinessName": "Classy Closet",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "itemCount": 1,
+            "quantity": 1,
+            "deliveryStatus": null,
+            "expectedDeliveryAt": null,
+            "latestTrackingEvent": null,
+            "requiresVerification": false,
+            "verificationComplete": null
+          }
+        ],
+        "eWayBill": null,
+        "cancellations": []
+      }
+    },
+    {
+      "id": "1296c1b6-1710-4572-87a6-b9fb84b607af",
+      "buyer_id": "6a4b37453ecf74d6920eeb39",
+      "status": "confirmed",
+      "currency": "INR",
+      "subtotal_amount": "599.00",
+      "discount_amount": "0.00",
+      "tax_amount": "91.37",
+      "total_amount": "649.00",
+      "shipping_address": {
+        "city": "Rewa",
+        "line1": "indore mp",
+        "line2": "indore mp",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "postalCode": "486006"
+      },
+      "coupon_code": null,
+      "wallet_discount_amount": "0.00",
+      "payable_amount": "649.00",
+      "tax_breakup": {
+        "items": [
+          {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 599,
+            "productId": "6a474fbe26dcda73561f6b59",
+            "taxAmount": 91.37,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 507.63,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 91.37,
+            "discountedLineTotal": 599
+          }
+        ],
+        "taxMode": "igst",
+        "cessAmount": 0,
+        "cgstAmount": 0,
+        "igstAmount": 91.37,
+        "sgstAmount": 0,
+        "taxableAmount": 507.63,
+        "totalTaxAmount": 91.37,
+        "taxPayableAmount": 0,
+        "taxIncludedAmount": 91.37
+      },
+      "platform_fee_amount": "50.00",
+      "created_at": "2026-07-08T05:55:24.063Z",
+      "updated_at": "2026-07-08T05:55:57.871Z",
+      "order_number": "ORD-20260708-987C88BCE2",
+      "payment_status": "captured",
+      "delivery_status": null,
+      "created_by": "6a4b37453ecf74d6920eeb39",
+      "updated_by": "6a4b37453ecf74d6920eeb39",
+      "payment_provider": "razorpay",
+      "cod_charge_amount": "0.00",
+      "cancellation_status": null,
+      "cancelled_amount": "0.00",
+      "shipping_fee_amount": "0.00",
+      "summary": {
+        "itemAmount": 599,
+        "subtotalAmount": 599,
+        "discountAmount": 0,
+        "walletDiscountAmount": 0,
+        "taxAmount": 91.37,
+        "taxIncludedAmount": 91.37,
+        "taxPayableAmount": 0,
+        "platformFeeAmount": 50,
+        "sellerPlatformFeeAmount": 0,
+        "customerPlatformFeeAmount": 50,
+        "customerPlatformFeeTaxAmount": 0,
+        "codChargeAmount": 0,
+        "deliveryChargeAmount": 0,
+        "shippingFeeAmount": 0,
+        "customerTotalAmount": 649,
+        "customerPayableAmount": 649,
+        "sellerPayoutAmount": 599,
+        "platformFeeChargedToCustomer": true
+      },
+      "items": [
+        {
+          "id": "fa3ce981-9176-4b17-a48c-87f3a0e868fe",
+          "order_id": "1296c1b6-1710-4572-87a6-b9fb84b607af",
+          "product_id": "6a474fbe26dcda73561f6b59",
+          "variant_id": null,
+          "variant_sku": null,
+          "variant_title": null,
+          "attributes": {},
+          "seller_id": "6a4607f740d0b5533ff07f2b",
+          "quantity": 1,
+          "unit_price": "599.00",
+          "line_total": "599.00",
+          "created_at": "2026-07-08T05:55:24.063Z",
+          "product_title": "Vanesa Dream Perfume |Premium & Long Lasting| Eau De Parfum - 100 Ml (For Women)",
+          "product_slug": "vanesa-dream-perfume-orpremium-and-long-lastingor-eau-de-parfum-100-ml-for-women-1783058366149",
+          "product_sku": "CAN-LAV-SM",
+          "product_image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783058331/ecommerce/uploads/products/image-1-bf3e4a34-9434-40d9-8839-d30446aaa502.webp",
+          "brand": "Vaseline",
+          "category": "beauty-fragrances-perfumes-women",
+          "hsn_code": "3301",
+          "gst_rate": "18.00",
+          "discount_amount": "0.00",
+          "tax_amount": "91.37",
+          "tax_breakup": {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 599,
+            "productId": "6a474fbe26dcda73561f6b59",
+            "taxAmount": 91.37,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 507.63,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 91.37,
+            "discountedLineTotal": 599
+          },
+          "product_snapshot": {
+            "sku": "CAN-LAV-SM",
+            "slug": "vanesa-dream-perfume-orpremium-and-long-lastingor-eau-de-parfum-100-ml-for-women-1783058366149",
+            "brand": "Vaseline",
+            "image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783058331/ecommerce/uploads/products/image-1-bf3e4a34-9434-40d9-8839-d30446aaa502.webp",
+            "title": "Vanesa Dream Perfume |Premium & Long Lasting| Eau De Parfum - 100 Ml (For Women)",
+            "dealId": "afe9a225-4460-4104-99f5-5b29d87fd81c",
+            "gstRate": 18,
+            "hsnCode": "3301",
+            "storeId": null,
+            "category": "beauty-fragrances-perfumes-women",
+            "shipping": {
+              "cities": [],
+              "states": [],
+              "regions": [],
+              "codAvailable": true,
+              "freeShipping": false,
+              "allowPincodes": [],
+              "blockPincodes": [],
+              "additionalCost": 0,
+              "dangerousGoods": false,
+              "handlingCharge": 0,
+              "processingDays": 1,
+              "shippingMethod": "standard",
+              "requiresColdChain": false,
+              "shippingProfileId": null,
+              "serviceabilityMode": "inherit",
+              "serviceablePincodes": []
+            },
+            "warranty": {
+              "type": "manufacturer",
+              "periodUnit": "months",
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              },
+              "serviceableCountries": []
+            },
+            "dealNumber": "DL-20260707-DF54A1ED",
+            "warehouseId": null,
+            "gstInclusive": true,
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "eligible": true,
+              "restockingFee": 0
+            },
+            "variantTitle": "",
+            "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+            "commercialPolicy": {
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              }
+            }
+          },
+          "deal_id": "afe9a225-4460-4104-99f5-5b29d87fd81c",
+          "deal_snapshot": {
+            "endAt": "2026-07-31T10:40:00.000Z",
+            "title": "Vanesa Dream Perfume |Premium & Long Lasting| Eau De Parfum  -  100 Ml (For Women) Deal",
+            "dealId": "afe9a225-4460-4104-99f5-5b29d87fd81c",
+            "startAt": "2026-07-07T10:40:00.000Z",
+            "dealType": "fixed_price",
+            "sellerId": "6a4607f740d0b5533ff07f2b",
+            "dealPrice": 599,
+            "productId": "6a474fbe26dcda73561f6b59",
+            "variantId": null,
+            "dealNumber": "DL-20260707-DF54A1ED",
+            "variantSku": null,
+            "soldQuantity": 0,
+            "originalPrice": 656,
+            "discountPercent": 8.69,
+            "reservedQuantity": 0,
+            "allocatedQuantity": 36,
+            "fulfillmentSnapshot": {
+              "dealId": "afe9a225-4460-4104-99f5-5b29d87fd81c",
+              "fulfillmentModel": "seller_fulfilled",
+              "deliveryVerificationMethods": [],
+              "deliveryVerificationRequired": false
+            },
+            "maxQuantityPerOrder": null,
+            "commissionRuleSnapshot": {}
+          },
+          "fulfillment_snapshot": {
+            "dealId": "afe9a225-4460-4104-99f5-5b29d87fd81c",
+            "fulfillmentModel": "seller_fulfilled",
+            "deliveryVerificationMethods": [],
+            "deliveryVerificationRequired": false
+          },
+          "cancelled_quantity": 0,
+          "cancellation_status": null,
+          "cancellation_snapshot": {},
+          "organization_id": "a1617be8-259b-401f-9950-3f20a3c28507",
+          "store_id": null,
+          "warehouse_id": null,
+          "seller": {
+            "name": "Classy Closet"
+          }
+        }
+      ],
+      "relations": {
+        "buyer": {
+          "id": "6a4b37453ecf74d6920eeb39",
+          "displayName": "ittu prajapat",
+          "fullName": "ittu prajapat",
+          "firstName": "ittu",
+          "lastName": "prajapat",
+          "businessName": null,
+          "email": "ittu@gmail.com",
+          "phone": "6265095792",
+          "role": "buyer",
+          "profile": {
+            "firstName": "ittu",
+            "lastName": "prajapat"
+          },
+          "accountStatus": "active",
+          "ownerSellerId": null,
+          "parentSellerId": null,
+          "sellerProfile": {
+            "displayName": null,
+            "businessName": null,
+            "legalBusinessName": null,
+            "supportEmail": null,
+            "supportPhone": null,
+            "kycStatus": null,
+            "bankVerificationStatus": null,
+            "goLiveStatus": null
+          }
+        },
+        "sellers": [
+          {
+            "displayName": "Vishal Malviya",
+            "businessName": "Classy Closet",
+            "supportEmail": "classyCloset@gmail.com",
+            "supportPhone": "7657876534"
+          }
+        ],
+        "payments": [
+          {
+            "provider": "razorpay",
+            "status": "captured",
+            "amount": "649.00",
+            "currency": "INR",
+            "created_at": "2026-07-08T05:55:26.626Z"
+          }
+        ],
+        "invoice": {
+          "id": "3996ee60-034d-47c6-b1e8-347d34000963",
+          "invoice_number": "GST-202607-000049",
+          "order_id": "1296c1b6-1710-4572-87a6-b9fb84b607af",
+          "buyer_id": "6a4b37453ecf74d6920eeb39",
+          "taxable_amount": "507.63",
+          "tax_amount": "91.37",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "91.37",
+          "tcs_amount": "5.08",
+          "total_amount": "649.00",
+          "currency": "INR",
+          "tax_mode": "igst",
+          "gstin_marketplace": null,
+          "gstin_seller": null,
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-08T05:55:59.854Z",
+          "metadata": {
+            "items": [
+              {
+                "gstRate": 18,
+                "hsnCode": "3301",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a4607f740d0b5533ff07f2b",
+                "lineTotal": 599,
+                "productId": "6a474fbe26dcda73561f6b59",
+                "taxAmount": 91.37,
+                "unitPrice": 599,
+                "variantId": null,
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "CAN-LAV-SM",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 18,
+                  "taxMode": "igst",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 599,
+                  "productId": "6a474fbe26dcda73561f6b59",
+                  "taxAmount": 91.37,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 507.63,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 91.37,
+                  "discountedLineTotal": 599
+                },
+                "variantSku": null,
+                "orderItemId": "fa3ce981-9176-4b17-a48c-87f3a0e868fe",
+                "warehouseId": null,
+                "productTitle": "Vanesa Dream Perfume |Premium & Long Lasting| Eau De Parfum - 100 Ml (For Women)",
+                "taxableAmount": 507.63,
+                "discountAmount": 0,
+                "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                "taxPayableAmount": 0
+              }
+            ],
+            "amounts": {
+              "discountAmount": 0,
+              "codChargeAmount": 0,
+              "grossSalesAmount": 599,
+              "finalPayableAmount": 649,
+              "deliveryChargeAmount": 0,
+              "productTaxableAmount": 507.63,
+              "shippingChargeAmount": 0,
+              "walletDiscountAmount": 0,
+              "sellerPlatformFeeAmount": 50,
+              "customerPlatformFeeAmount": 50,
+              "sellerOrganizationDetails": [
+                {
+                  "pan": "ABCDE2224F",
+                  "gstin": "23ABCDE1234F1Z5",
+                  "sellerId": "6a4607f740d0b5533ff07f2b",
+                  "kycStatus": "verified",
+                  "taxSettings": {
+                    "pan": "ABCDE2224F",
+                    "gstin": "23ABCDE1234F1Z5",
+                    "state": "Madhya Pradesh"
+                  },
+                  "businessType": "individual",
+                  "goLiveStatus": "ready",
+                  "supportEmail": "classyCloset@gmail.com",
+                  "supportPhone": "7657876534",
+                  "pickupAddress": {
+                    "city": "Bhopal",
+                    "line1": "Vijay Nagar Squre",
+                    "line2": "",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "462019"
+                  },
+                  "approvalStatus": "approved",
+                  "billingAddress": {
+                    "city": "Bhopal",
+                    "line1": "Vijay Nagar Squre",
+                    "line2": "",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "462019"
+                  },
+                  "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                  "payoutSettings": {
+                    "payoutSchedule": "weekly"
+                  },
+                  "invoiceSettings": {
+                    "state": "Madhya Pradesh",
+                    "invoicePrefix": "INV"
+                  },
+                  "storeDisplayName": "Classy Closet",
+                  "legalBusinessName": "Classy Closet",
+                  "registrationNumber": null,
+                  "bankVerificationStatus": "verified"
+                }
+              ],
+              "customerPlatformFeeTaxAmount": 0
+            },
+            "generatedBy": "tax-service",
+            "invoiceType": "order_customer",
+            "orderNumber": "ORD-20260708-987C88BCE2",
+            "orderStatus": "confirmed",
+            "generatedByRole": "system"
+          },
+          "created_at": "2026-07-08T05:55:59.854Z",
+          "updated_at": "2026-07-08T05:55:59.854Z",
+          "created_by": null,
+          "updated_by": null,
+          "invoice_type": "order_customer",
+          "seller_id": null,
+          "issuer_type": "platform",
+          "recipient_type": "buyer",
+          "reference_type": "order",
+          "reference_id": "1296c1b6-1710-4572-87a6-b9fb84b607af",
+          "parent_invoice_id": null,
+          "organization_id": null,
+          "organization_snapshot": {}
+        },
+        "invoices": [
+          {
+            "id": "3996ee60-034d-47c6-b1e8-347d34000963",
+            "invoice_number": "GST-202607-000049",
+            "order_id": "1296c1b6-1710-4572-87a6-b9fb84b607af",
+            "buyer_id": "6a4b37453ecf74d6920eeb39",
+            "taxable_amount": "507.63",
+            "tax_amount": "91.37",
+            "cgst_amount": "0.00",
+            "sgst_amount": "0.00",
+            "igst_amount": "91.37",
+            "tcs_amount": "5.08",
+            "total_amount": "649.00",
+            "currency": "INR",
+            "tax_mode": "igst",
+            "gstin_marketplace": null,
+            "gstin_seller": null,
+            "place_of_supply": "Madhya Pradesh",
+            "issued_at": "2026-07-08T05:55:59.854Z",
+            "metadata": {
+              "items": [
+                {
+                  "gstRate": 18,
+                  "hsnCode": "3301",
+                  "storeId": null,
+                  "quantity": 1,
+                  "sellerId": "6a4607f740d0b5533ff07f2b",
+                  "lineTotal": 599,
+                  "productId": "6a474fbe26dcda73561f6b59",
+                  "taxAmount": 91.37,
+                  "unitPrice": 599,
+                  "variantId": null,
+                  "cgstAmount": 0,
+                  "igstAmount": 0,
+                  "productSku": "CAN-LAV-SM",
+                  "sgstAmount": 0,
+                  "taxBreakup": {
+                    "gstRate": 18,
+                    "taxMode": "igst",
+                    "taxType": "gst",
+                    "cessRate": 0,
+                    "lineTotal": 599,
+                    "productId": "6a474fbe26dcda73561f6b59",
+                    "taxAmount": 91.37,
+                    "cessAmount": 0,
+                    "gstInclusive": true,
+                    "taxableAmount": 507.63,
+                    "taxPayableAmount": 0,
+                    "taxIncludedAmount": 91.37,
+                    "discountedLineTotal": 599
+                  },
+                  "variantSku": null,
+                  "orderItemId": "fa3ce981-9176-4b17-a48c-87f3a0e868fe",
+                  "warehouseId": null,
+                  "productTitle": "Vanesa Dream Perfume |Premium & Long Lasting| Eau De Parfum - 100 Ml (For Women)",
+                  "taxableAmount": 507.63,
+                  "discountAmount": 0,
+                  "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                  "taxPayableAmount": 0
+                }
+              ],
+              "amounts": {
+                "discountAmount": 0,
+                "codChargeAmount": 0,
+                "grossSalesAmount": 599,
+                "finalPayableAmount": 649,
+                "deliveryChargeAmount": 0,
+                "productTaxableAmount": 507.63,
+                "shippingChargeAmount": 0,
+                "walletDiscountAmount": 0,
+                "sellerPlatformFeeAmount": 50,
+                "customerPlatformFeeAmount": 50,
+                "sellerOrganizationDetails": [
+                  {
+                    "pan": "ABCDE2224F",
+                    "gstin": "23ABCDE1234F1Z5",
+                    "sellerId": "6a4607f740d0b5533ff07f2b",
+                    "kycStatus": "verified",
+                    "taxSettings": {
+                      "pan": "ABCDE2224F",
+                      "gstin": "23ABCDE1234F1Z5",
+                      "state": "Madhya Pradesh"
+                    },
+                    "businessType": "individual",
+                    "goLiveStatus": "ready",
+                    "supportEmail": "classyCloset@gmail.com",
+                    "supportPhone": "7657876534",
+                    "pickupAddress": {
+                      "city": "Bhopal",
+                      "line1": "Vijay Nagar Squre",
+                      "line2": "",
+                      "state": "Madhya Pradesh",
+                      "country": "India",
+                      "postalCode": "462019"
+                    },
+                    "approvalStatus": "approved",
+                    "billingAddress": {
+                      "city": "Bhopal",
+                      "line1": "Vijay Nagar Squre",
+                      "line2": "",
+                      "state": "Madhya Pradesh",
+                      "country": "India",
+                      "postalCode": "462019"
+                    },
+                    "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                    "payoutSettings": {
+                      "payoutSchedule": "weekly"
+                    },
+                    "invoiceSettings": {
+                      "state": "Madhya Pradesh",
+                      "invoicePrefix": "INV"
+                    },
+                    "storeDisplayName": "Classy Closet",
+                    "legalBusinessName": "Classy Closet",
+                    "registrationNumber": null,
+                    "bankVerificationStatus": "verified"
+                  }
+                ],
+                "customerPlatformFeeTaxAmount": 0
+              },
+              "generatedBy": "tax-service",
+              "invoiceType": "order_customer",
+              "orderNumber": "ORD-20260708-987C88BCE2",
+              "orderStatus": "confirmed",
+              "generatedByRole": "system"
+            },
+            "created_at": "2026-07-08T05:55:59.854Z",
+            "updated_at": "2026-07-08T05:55:59.854Z",
+            "created_by": null,
+            "updated_by": null,
+            "invoice_type": "order_customer",
+            "seller_id": null,
+            "issuer_type": "platform",
+            "recipient_type": "buyer",
+            "reference_type": "order",
+            "reference_id": "1296c1b6-1710-4572-87a6-b9fb84b607af",
+            "parent_invoice_id": null,
+            "organization_id": null,
+            "organization_snapshot": {}
+          }
+        ],
+        "shipments": [],
+        "sellerFulfillmentGroups": [
+          {
+            "sellerName": "Classy Closet",
+            "organizationSnapshot": {
+              "pan": "ABCDE2224F",
+              "gstin": "23ABCDE1234F1Z5",
+              "sellerId": "6a4607f740d0b5533ff07f2b",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE2224F",
+                "gstin": "23ABCDE1234F1Z5",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "ready",
+              "supportEmail": "classyCloset@gmail.com",
+              "supportPhone": "7657876534",
+              "pickupAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Classy Closet",
+              "legalBusinessName": "Classy Closet",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "itemCount": 1,
+            "quantity": 1,
+            "deliveryStatus": null,
+            "expectedDeliveryAt": null,
+            "latestTrackingEvent": null,
+            "requiresVerification": false,
+            "verificationComplete": null
+          }
+        ],
+        "eWayBill": null,
+        "cancellations": []
+      }
+    },
+    {
+      "id": "7912d10f-7b0b-4cc3-ba6d-dd1ec0ac7511",
+      "buyer_id": "6a4b37453ecf74d6920eeb39",
+      "status": "confirmed",
+      "currency": "INR",
+      "subtotal_amount": "25795.00",
+      "discount_amount": "0.00",
+      "tax_amount": "3934.83",
+      "total_amount": "25845.00",
+      "shipping_address": {
+        "city": "Rewa",
+        "line1": "indore mp",
+        "line2": "indore mp",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "postalCode": "486006"
+      },
+      "coupon_code": null,
+      "wallet_discount_amount": "0.00",
+      "payable_amount": "25845.00",
+      "tax_breakup": {
+        "items": [
+          {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 25795,
+            "productId": "6a474b1b26dcda73561f658a",
+            "taxAmount": 3934.83,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 21860.17,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 3934.83,
+            "discountedLineTotal": 25795
+          }
+        ],
+        "taxMode": "igst",
+        "cessAmount": 0,
+        "cgstAmount": 0,
+        "igstAmount": 3934.83,
+        "sgstAmount": 0,
+        "taxableAmount": 21860.17,
+        "totalTaxAmount": 3934.83,
+        "taxPayableAmount": 0,
+        "taxIncludedAmount": 3934.83
+      },
+      "platform_fee_amount": "50.00",
+      "created_at": "2026-07-08T05:29:11.587Z",
+      "updated_at": "2026-07-08T05:29:49.008Z",
+      "order_number": "ORD-20260708-644B7C9AFD",
+      "payment_status": "captured",
+      "delivery_status": null,
+      "created_by": "6a4b37453ecf74d6920eeb39",
+      "updated_by": "6a4b37453ecf74d6920eeb39",
+      "payment_provider": "razorpay",
+      "cod_charge_amount": "0.00",
+      "cancellation_status": null,
+      "cancelled_amount": "0.00",
+      "shipping_fee_amount": "0.00",
+      "summary": {
+        "itemAmount": 25795,
+        "subtotalAmount": 25795,
+        "discountAmount": 0,
+        "walletDiscountAmount": 0,
+        "taxAmount": 3934.83,
+        "taxIncludedAmount": 3934.83,
+        "taxPayableAmount": 0,
+        "platformFeeAmount": 50,
+        "sellerPlatformFeeAmount": 0,
+        "customerPlatformFeeAmount": 50,
+        "customerPlatformFeeTaxAmount": 0,
+        "codChargeAmount": 0,
+        "deliveryChargeAmount": 0,
+        "shippingFeeAmount": 0,
+        "customerTotalAmount": 25845,
+        "customerPayableAmount": 25845,
+        "sellerPayoutAmount": 25795,
+        "platformFeeChargedToCustomer": true
+      },
+      "items": [
+        {
+          "id": "da187bbd-ce42-44ba-9fad-192904074863",
+          "order_id": "7912d10f-7b0b-4cc3-ba6d-dd1ec0ac7511",
+          "product_id": "6a474b1b26dcda73561f658a",
+          "variant_id": "6a47bcb93ecf74d6920ed0e2",
+          "variant_sku": "SKU-1783056676305-1",
+          "variant_title": "Blue",
+          "attributes": {
+            "color": "Blue"
+          },
+          "seller_id": "6a4607f740d0b5533ff07f2b",
+          "quantity": 1,
+          "unit_price": "25795.00",
+          "line_total": "25795.00",
+          "created_at": "2026-07-08T05:29:11.587Z",
+          "product_title": "Titan Vintage Concealed Automatic  Watch",
+          "product_slug": "watch-1783057179741",
+          "product_sku": "SKU-1783056676305-1",
+          "product_image": "https://rukminim2.flixcart.com/image/1920/1920/xif0q/watch/t/x/h/-watermarked-original-imahh7vk4mny3mb4.jpeg?q=90",
+          "brand": "Titan",
+          "category": "mens-watches",
+          "hsn_code": "9102",
+          "gst_rate": "18.00",
+          "discount_amount": "0.00",
+          "tax_amount": "3934.83",
+          "tax_breakup": {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 25795,
+            "productId": "6a474b1b26dcda73561f658a",
+            "taxAmount": 3934.83,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 21860.17,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 3934.83,
+            "discountedLineTotal": 25795
+          },
+          "product_snapshot": {
+            "sku": "SKU-1783056676305-1",
+            "slug": "watch-1783057179741",
+            "brand": "Titan",
+            "image": "https://rukminim2.flixcart.com/image/1920/1920/xif0q/watch/t/x/h/-watermarked-original-imahh7vk4mny3mb4.jpeg?q=90",
+            "title": "Titan Vintage Concealed Automatic  Watch",
+            "dealId": null,
+            "gstRate": 18,
+            "hsnCode": "9102",
+            "storeId": null,
+            "category": "mens-watches",
+            "shipping": {
+              "cities": [],
+              "states": [],
+              "regions": [],
+              "codAvailable": false,
+              "freeShipping": false,
+              "allowPincodes": [],
+              "blockPincodes": [],
+              "additionalCost": 0,
+              "dangerousGoods": false,
+              "handlingCharge": 0,
+              "processingDays": 1,
+              "shippingMethod": "standard",
+              "requiresColdChain": false,
+              "shippingProfileId": "77e89fb7-855d-40df-a819-38e71c700bc3",
+              "serviceabilityMode": "inherit",
+              "serviceablePincodes": []
+            },
+            "warranty": {
+              "type": "manufacturer",
+              "period": 2,
+              "periodUnit": "years",
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              },
+              "serviceableCountries": []
+            },
+            "dealNumber": null,
+            "warehouseId": null,
+            "gstInclusive": true,
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "eligible": true,
+              "restockingFee": 0
+            },
+            "variantTitle": "Blue",
+            "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+            "commercialPolicy": {
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              }
+            }
+          },
+          "deal_id": null,
+          "deal_snapshot": {},
+          "fulfillment_snapshot": {},
+          "cancelled_quantity": 0,
+          "cancellation_status": null,
+          "cancellation_snapshot": {},
+          "organization_id": "a1617be8-259b-401f-9950-3f20a3c28507",
+          "store_id": null,
+          "warehouse_id": null,
+          "seller": {
+            "name": "Classy Closet"
+          }
+        }
+      ],
+      "relations": {
+        "buyer": {
+          "id": "6a4b37453ecf74d6920eeb39",
+          "displayName": "ittu prajapat",
+          "fullName": "ittu prajapat",
+          "firstName": "ittu",
+          "lastName": "prajapat",
+          "businessName": null,
+          "email": "ittu@gmail.com",
+          "phone": "6265095792",
+          "role": "buyer",
+          "profile": {
+            "firstName": "ittu",
+            "lastName": "prajapat"
+          },
+          "accountStatus": "active",
+          "ownerSellerId": null,
+          "parentSellerId": null,
+          "sellerProfile": {
+            "displayName": null,
+            "businessName": null,
+            "legalBusinessName": null,
+            "supportEmail": null,
+            "supportPhone": null,
+            "kycStatus": null,
+            "bankVerificationStatus": null,
+            "goLiveStatus": null
+          }
+        },
+        "sellers": [
+          {
+            "displayName": "Vishal Malviya",
+            "businessName": "Classy Closet",
+            "supportEmail": "classyCloset@gmail.com",
+            "supportPhone": "7657876534"
+          }
+        ],
+        "payments": [
+          {
+            "provider": "razorpay",
+            "status": "captured",
+            "amount": "25845.00",
+            "currency": "INR",
+            "created_at": "2026-07-08T05:29:13.753Z"
+          }
+        ],
+        "invoice": {
+          "id": "08fb9e0d-7076-4a8c-9114-08c25ee8d463",
+          "invoice_number": "GST-202607-000048",
+          "order_id": "7912d10f-7b0b-4cc3-ba6d-dd1ec0ac7511",
+          "buyer_id": "6a4b37453ecf74d6920eeb39",
+          "taxable_amount": "21860.17",
+          "tax_amount": "3934.83",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "3934.83",
+          "tcs_amount": "218.60",
+          "total_amount": "25845.00",
+          "currency": "INR",
+          "tax_mode": "igst",
+          "gstin_marketplace": null,
+          "gstin_seller": null,
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-08T05:29:51.058Z",
+          "metadata": {
+            "items": [
+              {
+                "gstRate": 18,
+                "hsnCode": "9102",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a4607f740d0b5533ff07f2b",
+                "lineTotal": 25795,
+                "productId": "6a474b1b26dcda73561f658a",
+                "taxAmount": 3934.83,
+                "unitPrice": 25795,
+                "variantId": "6a47bcb93ecf74d6920ed0e2",
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "SKU-1783056676305-1",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 18,
+                  "taxMode": "igst",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 25795,
+                  "productId": "6a474b1b26dcda73561f658a",
+                  "taxAmount": 3934.83,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 21860.17,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 3934.83,
+                  "discountedLineTotal": 25795
+                },
+                "variantSku": "SKU-1783056676305-1",
+                "orderItemId": "da187bbd-ce42-44ba-9fad-192904074863",
+                "warehouseId": null,
+                "productTitle": "Titan Vintage Concealed Automatic  Watch",
+                "taxableAmount": 21860.17,
+                "discountAmount": 0,
+                "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                "taxPayableAmount": 0
+              }
+            ],
+            "amounts": {
+              "discountAmount": 0,
+              "codChargeAmount": 0,
+              "grossSalesAmount": 25795,
+              "finalPayableAmount": 25845,
+              "deliveryChargeAmount": 0,
+              "productTaxableAmount": 21860.17,
+              "shippingChargeAmount": 0,
+              "walletDiscountAmount": 0,
+              "sellerPlatformFeeAmount": 50,
+              "customerPlatformFeeAmount": 50,
+              "sellerOrganizationDetails": [
+                {
+                  "pan": "ABCDE2224F",
+                  "gstin": "23ABCDE1234F1Z5",
+                  "sellerId": "6a4607f740d0b5533ff07f2b",
+                  "kycStatus": "verified",
+                  "taxSettings": {
+                    "pan": "ABCDE2224F",
+                    "gstin": "23ABCDE1234F1Z5",
+                    "state": "Madhya Pradesh"
+                  },
+                  "businessType": "individual",
+                  "goLiveStatus": "ready",
+                  "supportEmail": "classyCloset@gmail.com",
+                  "supportPhone": "7657876534",
+                  "pickupAddress": {
+                    "city": "Bhopal",
+                    "line1": "Vijay Nagar Squre",
+                    "line2": "",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "462019"
+                  },
+                  "approvalStatus": "approved",
+                  "billingAddress": {
+                    "city": "Bhopal",
+                    "line1": "Vijay Nagar Squre",
+                    "line2": "",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "462019"
+                  },
+                  "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                  "payoutSettings": {
+                    "payoutSchedule": "weekly"
+                  },
+                  "invoiceSettings": {
+                    "state": "Madhya Pradesh",
+                    "invoicePrefix": "INV"
+                  },
+                  "storeDisplayName": "Classy Closet",
+                  "legalBusinessName": "Classy Closet",
+                  "registrationNumber": null,
+                  "bankVerificationStatus": "verified"
+                }
+              ],
+              "customerPlatformFeeTaxAmount": 0
+            },
+            "generatedBy": "tax-service",
+            "invoiceType": "order_customer",
+            "orderNumber": "ORD-20260708-644B7C9AFD",
+            "orderStatus": "confirmed",
+            "generatedByRole": "system"
+          },
+          "created_at": "2026-07-08T05:29:51.058Z",
+          "updated_at": "2026-07-08T05:29:51.058Z",
+          "created_by": null,
+          "updated_by": null,
+          "invoice_type": "order_customer",
+          "seller_id": null,
+          "issuer_type": "platform",
+          "recipient_type": "buyer",
+          "reference_type": "order",
+          "reference_id": "7912d10f-7b0b-4cc3-ba6d-dd1ec0ac7511",
+          "parent_invoice_id": null,
+          "organization_id": null,
+          "organization_snapshot": {}
+        },
+        "invoices": [
+          {
+            "id": "08fb9e0d-7076-4a8c-9114-08c25ee8d463",
+            "invoice_number": "GST-202607-000048",
+            "order_id": "7912d10f-7b0b-4cc3-ba6d-dd1ec0ac7511",
+            "buyer_id": "6a4b37453ecf74d6920eeb39",
+            "taxable_amount": "21860.17",
+            "tax_amount": "3934.83",
+            "cgst_amount": "0.00",
+            "sgst_amount": "0.00",
+            "igst_amount": "3934.83",
+            "tcs_amount": "218.60",
+            "total_amount": "25845.00",
+            "currency": "INR",
+            "tax_mode": "igst",
+            "gstin_marketplace": null,
+            "gstin_seller": null,
+            "place_of_supply": "Madhya Pradesh",
+            "issued_at": "2026-07-08T05:29:51.058Z",
+            "metadata": {
+              "items": [
+                {
+                  "gstRate": 18,
+                  "hsnCode": "9102",
+                  "storeId": null,
+                  "quantity": 1,
+                  "sellerId": "6a4607f740d0b5533ff07f2b",
+                  "lineTotal": 25795,
+                  "productId": "6a474b1b26dcda73561f658a",
+                  "taxAmount": 3934.83,
+                  "unitPrice": 25795,
+                  "variantId": "6a47bcb93ecf74d6920ed0e2",
+                  "cgstAmount": 0,
+                  "igstAmount": 0,
+                  "productSku": "SKU-1783056676305-1",
+                  "sgstAmount": 0,
+                  "taxBreakup": {
+                    "gstRate": 18,
+                    "taxMode": "igst",
+                    "taxType": "gst",
+                    "cessRate": 0,
+                    "lineTotal": 25795,
+                    "productId": "6a474b1b26dcda73561f658a",
+                    "taxAmount": 3934.83,
+                    "cessAmount": 0,
+                    "gstInclusive": true,
+                    "taxableAmount": 21860.17,
+                    "taxPayableAmount": 0,
+                    "taxIncludedAmount": 3934.83,
+                    "discountedLineTotal": 25795
+                  },
+                  "variantSku": "SKU-1783056676305-1",
+                  "orderItemId": "da187bbd-ce42-44ba-9fad-192904074863",
+                  "warehouseId": null,
+                  "productTitle": "Titan Vintage Concealed Automatic  Watch",
+                  "taxableAmount": 21860.17,
+                  "discountAmount": 0,
+                  "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                  "taxPayableAmount": 0
+                }
+              ],
+              "amounts": {
+                "discountAmount": 0,
+                "codChargeAmount": 0,
+                "grossSalesAmount": 25795,
+                "finalPayableAmount": 25845,
+                "deliveryChargeAmount": 0,
+                "productTaxableAmount": 21860.17,
+                "shippingChargeAmount": 0,
+                "walletDiscountAmount": 0,
+                "sellerPlatformFeeAmount": 50,
+                "customerPlatformFeeAmount": 50,
+                "sellerOrganizationDetails": [
+                  {
+                    "pan": "ABCDE2224F",
+                    "gstin": "23ABCDE1234F1Z5",
+                    "sellerId": "6a4607f740d0b5533ff07f2b",
+                    "kycStatus": "verified",
+                    "taxSettings": {
+                      "pan": "ABCDE2224F",
+                      "gstin": "23ABCDE1234F1Z5",
+                      "state": "Madhya Pradesh"
+                    },
+                    "businessType": "individual",
+                    "goLiveStatus": "ready",
+                    "supportEmail": "classyCloset@gmail.com",
+                    "supportPhone": "7657876534",
+                    "pickupAddress": {
+                      "city": "Bhopal",
+                      "line1": "Vijay Nagar Squre",
+                      "line2": "",
+                      "state": "Madhya Pradesh",
+                      "country": "India",
+                      "postalCode": "462019"
+                    },
+                    "approvalStatus": "approved",
+                    "billingAddress": {
+                      "city": "Bhopal",
+                      "line1": "Vijay Nagar Squre",
+                      "line2": "",
+                      "state": "Madhya Pradesh",
+                      "country": "India",
+                      "postalCode": "462019"
+                    },
+                    "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                    "payoutSettings": {
+                      "payoutSchedule": "weekly"
+                    },
+                    "invoiceSettings": {
+                      "state": "Madhya Pradesh",
+                      "invoicePrefix": "INV"
+                    },
+                    "storeDisplayName": "Classy Closet",
+                    "legalBusinessName": "Classy Closet",
+                    "registrationNumber": null,
+                    "bankVerificationStatus": "verified"
+                  }
+                ],
+                "customerPlatformFeeTaxAmount": 0
+              },
+              "generatedBy": "tax-service",
+              "invoiceType": "order_customer",
+              "orderNumber": "ORD-20260708-644B7C9AFD",
+              "orderStatus": "confirmed",
+              "generatedByRole": "system"
+            },
+            "created_at": "2026-07-08T05:29:51.058Z",
+            "updated_at": "2026-07-08T05:29:51.058Z",
+            "created_by": null,
+            "updated_by": null,
+            "invoice_type": "order_customer",
+            "seller_id": null,
+            "issuer_type": "platform",
+            "recipient_type": "buyer",
+            "reference_type": "order",
+            "reference_id": "7912d10f-7b0b-4cc3-ba6d-dd1ec0ac7511",
+            "parent_invoice_id": null,
+            "organization_id": null,
+            "organization_snapshot": {}
+          }
+        ],
+        "shipments": [],
+        "sellerFulfillmentGroups": [
+          {
+            "sellerName": "Classy Closet",
+            "organizationSnapshot": {
+              "pan": "ABCDE2224F",
+              "gstin": "23ABCDE1234F1Z5",
+              "sellerId": "6a4607f740d0b5533ff07f2b",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE2224F",
+                "gstin": "23ABCDE1234F1Z5",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "ready",
+              "supportEmail": "classyCloset@gmail.com",
+              "supportPhone": "7657876534",
+              "pickupAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Classy Closet",
+              "legalBusinessName": "Classy Closet",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "itemCount": 1,
+            "quantity": 1,
+            "deliveryStatus": null,
+            "expectedDeliveryAt": null,
+            "latestTrackingEvent": null,
+            "requiresVerification": false,
+            "verificationComplete": null
+          }
+        ],
+        "eWayBill": null,
+        "cancellations": []
+      }
+    },
+    {
+      "id": "97a715d5-6584-410c-bca9-0cc591fa2726",
+      "buyer_id": "6a4b37453ecf74d6920eeb39",
+      "status": "confirmed",
+      "currency": "INR",
+      "subtotal_amount": "43000.00",
+      "discount_amount": "0.00",
+      "tax_amount": "6559.32",
+      "total_amount": "43050.00",
+      "shipping_address": {
+        "city": "Rewa",
+        "line1": "indore mp",
+        "line2": "indore mp",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "postalCode": "486006"
+      },
+      "coupon_code": null,
+      "wallet_discount_amount": "0.00",
+      "payable_amount": "43050.00",
+      "tax_breakup": {
+        "items": [
+          {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 43000,
+            "productId": "6a46628503ebd21cc58ed763",
+            "taxAmount": 6559.32,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 36440.68,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 6559.32,
+            "discountedLineTotal": 43000
+          }
+        ],
+        "taxMode": "igst",
+        "cessAmount": 0,
+        "cgstAmount": 0,
+        "igstAmount": 6559.32,
+        "sgstAmount": 0,
+        "taxableAmount": 36440.68,
+        "totalTaxAmount": 6559.32,
+        "taxPayableAmount": 0,
+        "taxIncludedAmount": 6559.32
+      },
+      "platform_fee_amount": "50.00",
+      "created_at": "2026-07-07T13:44:05.103Z",
+      "updated_at": "2026-07-07T13:44:38.096Z",
+      "order_number": "ORD-20260707-B254AEF03D",
+      "payment_status": "captured",
+      "delivery_status": null,
+      "created_by": "6a4b37453ecf74d6920eeb39",
+      "updated_by": "6a4b37453ecf74d6920eeb39",
+      "payment_provider": "razorpay",
+      "cod_charge_amount": "0.00",
+      "cancellation_status": null,
+      "cancelled_amount": "0.00",
+      "shipping_fee_amount": "0.00",
+      "summary": {
+        "itemAmount": 43000,
+        "subtotalAmount": 43000,
+        "discountAmount": 0,
+        "walletDiscountAmount": 0,
+        "taxAmount": 6559.32,
+        "taxIncludedAmount": 6559.32,
+        "taxPayableAmount": 0,
+        "platformFeeAmount": 50,
+        "sellerPlatformFeeAmount": 0,
+        "customerPlatformFeeAmount": 50,
+        "customerPlatformFeeTaxAmount": 0,
+        "codChargeAmount": 0,
+        "deliveryChargeAmount": 0,
+        "shippingFeeAmount": 0,
+        "customerTotalAmount": 43050,
+        "customerPayableAmount": 43050,
+        "sellerPayoutAmount": 43000,
+        "platformFeeChargedToCustomer": true
+      },
+      "items": [
+        {
+          "id": "785d914f-f313-46ef-be38-2474cd49511c",
+          "order_id": "97a715d5-6584-410c-bca9-0cc591fa2726",
+          "product_id": "6a46628503ebd21cc58ed763",
+          "variant_id": "6a47b0bc3ecf74d6920ea1b3",
+          "variant_sku": "SKU-1782997022586-4",
+          "variant_title": "512GB / 16GB",
+          "attributes": {
+            "ram": "16GB",
+            "storage": "512GB"
+          },
+          "seller_id": "6a4607f740d0b5533ff07f2b",
+          "quantity": 1,
+          "unit_price": "43000.00",
+          "line_total": "43000.00",
+          "created_at": "2026-07-07T13:44:05.103Z",
+          "product_title": "Acer Aspire 3 Intel Core I3 12th Gen 1215u",
+          "product_slug": "acer-aspire-3-intel-core-i3-12th-gen-1215u-1782997637519",
+          "product_sku": "SKU-1782997022586-4",
+          "product_image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1782997509/ecommerce/uploads/product/image-1-13dea4d2-24a6-4ee3-985f-583b2725c768.webp",
+          "brand": "Acer",
+          "category": "computers-laptops-workstation-laptops",
+          "hsn_code": "8443",
+          "gst_rate": "18.00",
+          "discount_amount": "0.00",
+          "tax_amount": "6559.32",
+          "tax_breakup": {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 43000,
+            "productId": "6a46628503ebd21cc58ed763",
+            "taxAmount": 6559.32,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 36440.68,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 6559.32,
+            "discountedLineTotal": 43000
+          },
+          "product_snapshot": {
+            "sku": "SKU-1782997022586-4",
+            "slug": "acer-aspire-3-intel-core-i3-12th-gen-1215u-1782997637519",
+            "brand": "Acer",
+            "image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1782997509/ecommerce/uploads/product/image-1-13dea4d2-24a6-4ee3-985f-583b2725c768.webp",
+            "title": "Acer Aspire 3 Intel Core I3 12th Gen 1215u",
+            "dealId": null,
+            "gstRate": 18,
+            "hsnCode": "8443",
+            "storeId": null,
+            "category": "computers-laptops-workstation-laptops",
+            "shipping": {
+              "cities": [],
+              "states": [],
+              "regions": [],
+              "codAvailable": false,
+              "freeShipping": false,
+              "allowPincodes": [],
+              "blockPincodes": [],
+              "additionalCost": 0,
+              "dangerousGoods": false,
+              "handlingCharge": 0,
+              "processingDays": 1,
+              "shippingMethod": "standard",
+              "requiresColdChain": false,
+              "shippingProfileId": "77e89fb7-855d-40df-a819-38e71c700bc3",
+              "serviceabilityMode": "inherit",
+              "serviceablePincodes": []
+            },
+            "warranty": {
+              "type": "manufacturer",
+              "period": 1,
+              "periodUnit": "years",
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              },
+              "serviceableCountries": []
+            },
+            "dealNumber": null,
+            "warehouseId": null,
+            "gstInclusive": true,
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "eligible": true,
+              "restockingFee": 0
+            },
+            "variantTitle": "512GB / 16GB",
+            "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+            "commercialPolicy": {
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              }
+            }
+          },
+          "deal_id": null,
+          "deal_snapshot": {},
+          "fulfillment_snapshot": {},
+          "cancelled_quantity": 0,
+          "cancellation_status": null,
+          "cancellation_snapshot": {},
+          "organization_id": "a1617be8-259b-401f-9950-3f20a3c28507",
+          "store_id": null,
+          "warehouse_id": null,
+          "seller": {
+            "name": "Classy Closet"
+          }
+        }
+      ],
+      "relations": {
+        "buyer": {
+          "id": "6a4b37453ecf74d6920eeb39",
+          "displayName": "ittu prajapat",
+          "fullName": "ittu prajapat",
+          "firstName": "ittu",
+          "lastName": "prajapat",
+          "businessName": null,
+          "email": "ittu@gmail.com",
+          "phone": "6265095792",
+          "role": "buyer",
+          "profile": {
+            "firstName": "ittu",
+            "lastName": "prajapat"
+          },
+          "accountStatus": "active",
+          "ownerSellerId": null,
+          "parentSellerId": null,
+          "sellerProfile": {
+            "displayName": null,
+            "businessName": null,
+            "legalBusinessName": null,
+            "supportEmail": null,
+            "supportPhone": null,
+            "kycStatus": null,
+            "bankVerificationStatus": null,
+            "goLiveStatus": null
+          }
+        },
+        "sellers": [
+          {
+            "displayName": "Vishal Malviya",
+            "businessName": "Classy Closet",
+            "supportEmail": "classyCloset@gmail.com",
+            "supportPhone": "7657876534"
+          }
+        ],
+        "payments": [
+          {
+            "provider": "razorpay",
+            "status": "captured",
+            "amount": "43050.00",
+            "currency": "INR",
+            "created_at": "2026-07-07T13:44:07.029Z"
+          }
+        ],
+        "invoice": {
+          "id": "9854b2e9-93af-4a52-a79b-6794f7c40a8c",
+          "invoice_number": "GST-202607-000047",
+          "order_id": "97a715d5-6584-410c-bca9-0cc591fa2726",
+          "buyer_id": "6a4b37453ecf74d6920eeb39",
+          "taxable_amount": "36440.68",
+          "tax_amount": "6559.32",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "6559.32",
+          "tcs_amount": "364.41",
+          "total_amount": "43050.00",
+          "currency": "INR",
+          "tax_mode": "igst",
+          "gstin_marketplace": null,
+          "gstin_seller": null,
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-07T13:44:35.977Z",
+          "metadata": {
+            "items": [
+              {
+                "gstRate": 18,
+                "hsnCode": "8443",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a4607f740d0b5533ff07f2b",
+                "lineTotal": 43000,
+                "productId": "6a46628503ebd21cc58ed763",
+                "taxAmount": 6559.32,
+                "unitPrice": 43000,
+                "variantId": "6a47b0bc3ecf74d6920ea1b3",
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "SKU-1782997022586-4",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 18,
+                  "taxMode": "igst",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 43000,
+                  "productId": "6a46628503ebd21cc58ed763",
+                  "taxAmount": 6559.32,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 36440.68,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 6559.32,
+                  "discountedLineTotal": 43000
+                },
+                "variantSku": "SKU-1782997022586-4",
+                "orderItemId": "785d914f-f313-46ef-be38-2474cd49511c",
+                "warehouseId": null,
+                "productTitle": "Acer Aspire 3 Intel Core I3 12th Gen 1215u",
+                "taxableAmount": 36440.68,
+                "discountAmount": 0,
+                "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                "taxPayableAmount": 0
+              }
+            ],
+            "amounts": {
+              "discountAmount": 0,
+              "codChargeAmount": 0,
+              "grossSalesAmount": 43000,
+              "finalPayableAmount": 43050,
+              "deliveryChargeAmount": 0,
+              "productTaxableAmount": 36440.68,
+              "shippingChargeAmount": 0,
+              "walletDiscountAmount": 0,
+              "sellerPlatformFeeAmount": 50,
+              "customerPlatformFeeAmount": 50,
+              "sellerOrganizationDetails": [
+                {
+                  "pan": "ABCDE2224F",
+                  "gstin": "23ABCDE1234F1Z5",
+                  "sellerId": "6a4607f740d0b5533ff07f2b",
+                  "kycStatus": "verified",
+                  "taxSettings": {
+                    "pan": "ABCDE2224F",
+                    "gstin": "23ABCDE1234F1Z5",
+                    "state": "Madhya Pradesh"
+                  },
+                  "businessType": "individual",
+                  "goLiveStatus": "ready",
+                  "supportEmail": "classyCloset@gmail.com",
+                  "supportPhone": "7657876534",
+                  "pickupAddress": {
+                    "city": "Bhopal",
+                    "line1": "Vijay Nagar Squre",
+                    "line2": "",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "462019"
+                  },
+                  "approvalStatus": "approved",
+                  "billingAddress": {
+                    "city": "Bhopal",
+                    "line1": "Vijay Nagar Squre",
+                    "line2": "",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "462019"
+                  },
+                  "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                  "payoutSettings": {
+                    "payoutSchedule": "weekly"
+                  },
+                  "invoiceSettings": {
+                    "state": "Madhya Pradesh",
+                    "invoicePrefix": "INV"
+                  },
+                  "storeDisplayName": "Classy Closet",
+                  "legalBusinessName": "Classy Closet",
+                  "registrationNumber": null,
+                  "bankVerificationStatus": "verified"
+                }
+              ],
+              "customerPlatformFeeTaxAmount": 0
+            },
+            "generatedBy": "tax-service",
+            "invoiceType": "order_customer",
+            "orderNumber": "ORD-20260707-B254AEF03D",
+            "orderStatus": "confirmed",
+            "generatedByRole": "system"
+          },
+          "created_at": "2026-07-07T13:44:35.977Z",
+          "updated_at": "2026-07-07T13:44:35.977Z",
+          "created_by": null,
+          "updated_by": null,
+          "invoice_type": "order_customer",
+          "seller_id": null,
+          "issuer_type": "platform",
+          "recipient_type": "buyer",
+          "reference_type": "order",
+          "reference_id": "97a715d5-6584-410c-bca9-0cc591fa2726",
+          "parent_invoice_id": null,
+          "organization_id": null,
+          "organization_snapshot": {}
+        },
+        "invoices": [
+          {
+            "id": "9854b2e9-93af-4a52-a79b-6794f7c40a8c",
+            "invoice_number": "GST-202607-000047",
+            "order_id": "97a715d5-6584-410c-bca9-0cc591fa2726",
+            "buyer_id": "6a4b37453ecf74d6920eeb39",
+            "taxable_amount": "36440.68",
+            "tax_amount": "6559.32",
+            "cgst_amount": "0.00",
+            "sgst_amount": "0.00",
+            "igst_amount": "6559.32",
+            "tcs_amount": "364.41",
+            "total_amount": "43050.00",
+            "currency": "INR",
+            "tax_mode": "igst",
+            "gstin_marketplace": null,
+            "gstin_seller": null,
+            "place_of_supply": "Madhya Pradesh",
+            "issued_at": "2026-07-07T13:44:35.977Z",
+            "metadata": {
+              "items": [
+                {
+                  "gstRate": 18,
+                  "hsnCode": "8443",
+                  "storeId": null,
+                  "quantity": 1,
+                  "sellerId": "6a4607f740d0b5533ff07f2b",
+                  "lineTotal": 43000,
+                  "productId": "6a46628503ebd21cc58ed763",
+                  "taxAmount": 6559.32,
+                  "unitPrice": 43000,
+                  "variantId": "6a47b0bc3ecf74d6920ea1b3",
+                  "cgstAmount": 0,
+                  "igstAmount": 0,
+                  "productSku": "SKU-1782997022586-4",
+                  "sgstAmount": 0,
+                  "taxBreakup": {
+                    "gstRate": 18,
+                    "taxMode": "igst",
+                    "taxType": "gst",
+                    "cessRate": 0,
+                    "lineTotal": 43000,
+                    "productId": "6a46628503ebd21cc58ed763",
+                    "taxAmount": 6559.32,
+                    "cessAmount": 0,
+                    "gstInclusive": true,
+                    "taxableAmount": 36440.68,
+                    "taxPayableAmount": 0,
+                    "taxIncludedAmount": 6559.32,
+                    "discountedLineTotal": 43000
+                  },
+                  "variantSku": "SKU-1782997022586-4",
+                  "orderItemId": "785d914f-f313-46ef-be38-2474cd49511c",
+                  "warehouseId": null,
+                  "productTitle": "Acer Aspire 3 Intel Core I3 12th Gen 1215u",
+                  "taxableAmount": 36440.68,
+                  "discountAmount": 0,
+                  "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                  "taxPayableAmount": 0
+                }
+              ],
+              "amounts": {
+                "discountAmount": 0,
+                "codChargeAmount": 0,
+                "grossSalesAmount": 43000,
+                "finalPayableAmount": 43050,
+                "deliveryChargeAmount": 0,
+                "productTaxableAmount": 36440.68,
+                "shippingChargeAmount": 0,
+                "walletDiscountAmount": 0,
+                "sellerPlatformFeeAmount": 50,
+                "customerPlatformFeeAmount": 50,
+                "sellerOrganizationDetails": [
+                  {
+                    "pan": "ABCDE2224F",
+                    "gstin": "23ABCDE1234F1Z5",
+                    "sellerId": "6a4607f740d0b5533ff07f2b",
+                    "kycStatus": "verified",
+                    "taxSettings": {
+                      "pan": "ABCDE2224F",
+                      "gstin": "23ABCDE1234F1Z5",
+                      "state": "Madhya Pradesh"
+                    },
+                    "businessType": "individual",
+                    "goLiveStatus": "ready",
+                    "supportEmail": "classyCloset@gmail.com",
+                    "supportPhone": "7657876534",
+                    "pickupAddress": {
+                      "city": "Bhopal",
+                      "line1": "Vijay Nagar Squre",
+                      "line2": "",
+                      "state": "Madhya Pradesh",
+                      "country": "India",
+                      "postalCode": "462019"
+                    },
+                    "approvalStatus": "approved",
+                    "billingAddress": {
+                      "city": "Bhopal",
+                      "line1": "Vijay Nagar Squre",
+                      "line2": "",
+                      "state": "Madhya Pradesh",
+                      "country": "India",
+                      "postalCode": "462019"
+                    },
+                    "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+                    "payoutSettings": {
+                      "payoutSchedule": "weekly"
+                    },
+                    "invoiceSettings": {
+                      "state": "Madhya Pradesh",
+                      "invoicePrefix": "INV"
+                    },
+                    "storeDisplayName": "Classy Closet",
+                    "legalBusinessName": "Classy Closet",
+                    "registrationNumber": null,
+                    "bankVerificationStatus": "verified"
+                  }
+                ],
+                "customerPlatformFeeTaxAmount": 0
+              },
+              "generatedBy": "tax-service",
+              "invoiceType": "order_customer",
+              "orderNumber": "ORD-20260707-B254AEF03D",
+              "orderStatus": "confirmed",
+              "generatedByRole": "system"
+            },
+            "created_at": "2026-07-07T13:44:35.977Z",
+            "updated_at": "2026-07-07T13:44:35.977Z",
+            "created_by": null,
+            "updated_by": null,
+            "invoice_type": "order_customer",
+            "seller_id": null,
+            "issuer_type": "platform",
+            "recipient_type": "buyer",
+            "reference_type": "order",
+            "reference_id": "97a715d5-6584-410c-bca9-0cc591fa2726",
+            "parent_invoice_id": null,
+            "organization_id": null,
+            "organization_snapshot": {}
+          }
+        ],
+        "shipments": [],
+        "sellerFulfillmentGroups": [
+          {
+            "sellerName": "Classy Closet",
+            "organizationSnapshot": {
+              "pan": "ABCDE2224F",
+              "gstin": "23ABCDE1234F1Z5",
+              "sellerId": "6a4607f740d0b5533ff07f2b",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE2224F",
+                "gstin": "23ABCDE1234F1Z5",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "ready",
+              "supportEmail": "classyCloset@gmail.com",
+              "supportPhone": "7657876534",
+              "pickupAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Bhopal",
+                "line1": "Vijay Nagar Squre",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "462019"
+              },
+              "organizationId": "a1617be8-259b-401f-9950-3f20a3c28507",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Classy Closet",
+              "legalBusinessName": "Classy Closet",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "itemCount": 1,
+            "quantity": 1,
+            "deliveryStatus": null,
+            "expectedDeliveryAt": null,
+            "latestTrackingEvent": null,
+            "requiresVerification": false,
+            "verificationComplete": null
+          }
+        ],
+        "eWayBill": null,
+        "cancellations": []
+      }
+    },
+    {
+      "id": "5cdcab53-e860-4721-8e35-d176a79d5106",
+      "buyer_id": "6a4b37453ecf74d6920eeb39",
+      "status": "fulfilled",
+      "currency": "INR",
+      "subtotal_amount": "7500.00",
+      "discount_amount": "0.00",
+      "tax_amount": "1144.07",
+      "total_amount": "7550.00",
+      "shipping_address": {
+        "city": "Rewa",
+        "line1": "indore mp",
+        "line2": "indore mp",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "postalCode": "486006"
+      },
+      "coupon_code": null,
+      "wallet_discount_amount": "0.00",
+      "payable_amount": "7550.00",
+      "tax_breakup": {
+        "items": [
+          {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 7500,
+            "productId": "6a45042429b795d8a4ee5853",
+            "taxAmount": 1144.07,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 6355.93,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 1144.07,
+            "discountedLineTotal": 7500
+          }
+        ],
+        "taxMode": "igst",
+        "cessAmount": 0,
+        "cgstAmount": 0,
+        "igstAmount": 1144.07,
+        "sgstAmount": 0,
+        "taxableAmount": 6355.93,
+        "totalTaxAmount": 1144.07,
+        "taxPayableAmount": 0,
+        "taxIncludedAmount": 1144.07
+      },
+      "platform_fee_amount": "50.00",
+      "created_at": "2026-07-07T13:18:32.886Z",
+      "updated_at": "2026-07-08T12:54:10.519Z",
+      "order_number": "ORD-20260707-5A691C6DA5",
+      "payment_status": "captured",
+      "delivery_status": "delivered",
+      "created_by": "6a4b37453ecf74d6920eeb39",
+      "updated_by": "6a44d934eb92e02af2e6945f",
+      "payment_provider": "razorpay",
+      "cod_charge_amount": "0.00",
+      "cancellation_status": null,
+      "cancelled_amount": "0.00",
+      "shipping_fee_amount": "0.00",
+      "summary": {
+        "itemAmount": 7500,
+        "subtotalAmount": 7500,
+        "discountAmount": 0,
+        "walletDiscountAmount": 0,
+        "taxAmount": 1144.07,
+        "taxIncludedAmount": 1144.07,
+        "taxPayableAmount": 0,
+        "platformFeeAmount": 50,
+        "sellerPlatformFeeAmount": 0,
+        "customerPlatformFeeAmount": 50,
+        "customerPlatformFeeTaxAmount": 0,
+        "codChargeAmount": 0,
+        "deliveryChargeAmount": 0,
+        "shippingFeeAmount": 0,
+        "customerTotalAmount": 7550,
+        "customerPayableAmount": 7550,
+        "sellerPayoutAmount": 7500,
+        "platformFeeChargedToCustomer": true
+      },
+      "items": [
+        {
+          "id": "e457940a-59b8-45cd-8407-0266952023f6",
+          "order_id": "5cdcab53-e860-4721-8e35-d176a79d5106",
+          "product_id": "6a45042429b795d8a4ee5853",
+          "variant_id": "6a465eaf3ecf74d6920d72d1",
+          "variant_sku": "SKU-1782908753914-1",
+          "variant_title": "Black",
+          "attributes": {
+            "color": "Black"
+          },
+          "seller_id": "6a44d934eb92e02af2e6945f",
+          "quantity": 1,
+          "unit_price": "7500.00",
+          "line_total": "7500.00",
+          "created_at": "2026-07-07T13:18:32.886Z",
+          "product_title": "Eume Carbonis 20l Laptop Backpack For Men",
+          "product_slug": "urban-jungle-by-safari-citystride-messenger-bag-or-water-resistant-and-premium-fabric-or-laptop-satchel-with-trolley-sleeve-1782907940115",
+          "product_sku": "SKU-1782908753914-1",
+          "product_image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1782908773/ecommerce/uploads/product/image-2-4282f834-744f-47fe-8c0f-a1b4c463bdd3.jpg",
+          "brand": "Samsung",
+          "category": "electronics-computer-peripherals-drawing-tablets",
+          "hsn_code": "8504",
+          "gst_rate": "18.00",
+          "discount_amount": "0.00",
+          "tax_amount": "1144.07",
+          "tax_breakup": {
+            "gstRate": 18,
+            "taxMode": "igst",
+            "taxType": "gst",
+            "cessRate": 0,
+            "lineTotal": 7500,
+            "productId": "6a45042429b795d8a4ee5853",
+            "taxAmount": 1144.07,
+            "cessAmount": 0,
+            "gstInclusive": true,
+            "taxableAmount": 6355.93,
+            "taxPayableAmount": 0,
+            "taxIncludedAmount": 1144.07,
+            "discountedLineTotal": 7500
+          },
+          "product_snapshot": {
+            "sku": "SKU-1782908753914-1",
+            "slug": "urban-jungle-by-safari-citystride-messenger-bag-or-water-resistant-and-premium-fabric-or-laptop-satchel-with-trolley-sleeve-1782907940115",
+            "brand": "Samsung",
+            "image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1782908773/ecommerce/uploads/product/image-2-4282f834-744f-47fe-8c0f-a1b4c463bdd3.jpg",
+            "title": "Eume Carbonis 20l Laptop Backpack For Men",
+            "dealId": null,
+            "gstRate": 18,
+            "hsnCode": "8504",
+            "storeId": null,
+            "category": "electronics-computer-peripherals-drawing-tablets",
+            "shipping": {
+              "cities": [],
+              "states": [],
+              "regions": [],
+              "codAvailable": true,
+              "freeShipping": false,
+              "allowPincodes": [],
+              "blockPincodes": [],
+              "additionalCost": 0,
+              "dangerousGoods": false,
+              "handlingCharge": 0,
+              "processingDays": 1,
+              "shippingMethod": "standard",
+              "requiresColdChain": false,
+              "shippingProfileId": "010d105f-ad81-4db4-ab79-e054baa0c91f",
+              "serviceabilityMode": "inherit",
+              "serviceablePincodes": []
+            },
+            "warranty": {
+              "type": "manufacturer",
+              "period": 6,
+              "provider": "TechNova Retail",
+              "periodUnit": "months",
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              },
+              "serviceableCountries": []
+            },
+            "dealNumber": null,
+            "warehouseId": null,
+            "gstInclusive": true,
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "eligible": true,
+              "restockingFee": 0
+            },
+            "variantTitle": "Black",
+            "organizationId": "ae5633c9-08af-49a5-a364-a5b05823879c",
+            "commercialPolicy": {
+              "returnPolicy": {
+                "days": 7,
+                "type": "standard",
+                "eligible": true,
+                "restockingFee": 0
+              }
+            }
+          },
+          "deal_id": null,
+          "deal_snapshot": {},
+          "fulfillment_snapshot": {},
+          "cancelled_quantity": 0,
+          "cancellation_status": null,
+          "cancellation_snapshot": {},
+          "organization_id": "ae5633c9-08af-49a5-a364-a5b05823879c",
+          "store_id": null,
+          "warehouse_id": null,
+          "seller": {
+            "name": "Krishna Soni"
+          }
+        }
+      ],
+      "relations": {
+        "buyer": {
+          "id": "6a4b37453ecf74d6920eeb39",
+          "displayName": "ittu prajapat",
+          "fullName": "ittu prajapat",
+          "firstName": "ittu",
+          "lastName": "prajapat",
+          "businessName": null,
+          "email": "ittu@gmail.com",
+          "phone": "6265095792",
+          "role": "buyer",
+          "profile": {
+            "firstName": "ittu",
+            "lastName": "prajapat"
+          },
+          "accountStatus": "active",
+          "ownerSellerId": null,
+          "parentSellerId": null,
+          "sellerProfile": {
+            "displayName": null,
+            "businessName": null,
+            "legalBusinessName": null,
+            "supportEmail": null,
+            "supportPhone": null,
+            "kycStatus": null,
+            "bankVerificationStatus": null,
+            "goLiveStatus": null
+          }
+        },
+        "sellers": [
+          {
+            "displayName": "Krishna Soni",
+            "businessName": "Krishna Enterprises",
+            "supportEmail": "krishnaEnterprises@gmail.com",
+            "supportPhone": "7234567890"
+          }
+        ],
+        "payments": [
+          {
+            "provider": "razorpay",
+            "status": "captured",
+            "amount": "7550.00",
+            "currency": "INR",
+            "created_at": "2026-07-07T13:18:34.971Z"
+          }
+        ],
+        "invoice": {
+          "id": "9a392e5c-5400-43ba-acac-4e056ed093e8",
+          "invoice_number": "GST-202607-000046",
+          "order_id": "5cdcab53-e860-4721-8e35-d176a79d5106",
+          "buyer_id": "6a4b37453ecf74d6920eeb39",
+          "taxable_amount": "6355.93",
+          "tax_amount": "1144.07",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "1144.07",
+          "tcs_amount": "63.56",
+          "total_amount": "7550.00",
+          "currency": "INR",
+          "tax_mode": "igst",
+          "gstin_marketplace": null,
+          "gstin_seller": null,
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-07T13:19:03.687Z",
+          "metadata": {
+            "items": [
+              {
+                "gstRate": 18,
+                "hsnCode": "8504",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a44d934eb92e02af2e6945f",
+                "lineTotal": 7500,
+                "productId": "6a45042429b795d8a4ee5853",
+                "taxAmount": 1144.07,
+                "unitPrice": 7500,
+                "variantId": "6a465eaf3ecf74d6920d72d1",
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "SKU-1782908753914-1",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 18,
+                  "taxMode": "igst",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 7500,
+                  "productId": "6a45042429b795d8a4ee5853",
+                  "taxAmount": 1144.07,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 6355.93,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 1144.07,
+                  "discountedLineTotal": 7500
+                },
+                "variantSku": "SKU-1782908753914-1",
+                "orderItemId": "e457940a-59b8-45cd-8407-0266952023f6",
+                "warehouseId": null,
+                "productTitle": "Eume Carbonis 20l Laptop Backpack For Men",
+                "taxableAmount": 6355.93,
+                "discountAmount": 0,
+                "organizationId": "ae5633c9-08af-49a5-a364-a5b05823879c",
+                "taxPayableAmount": 0
+              }
+            ],
+            "amounts": {
+              "discountAmount": 0,
+              "codChargeAmount": 0,
+              "grossSalesAmount": 7500,
+              "finalPayableAmount": 7550,
+              "deliveryChargeAmount": 0,
+              "productTaxableAmount": 6355.93,
+              "shippingChargeAmount": 0,
+              "walletDiscountAmount": 0,
+              "sellerPlatformFeeAmount": 50,
+              "customerPlatformFeeAmount": 50,
+              "sellerOrganizationDetails": [
+                {
+                  "pan": "ABCDE1224F",
+                  "gstin": "27ABCDE1224F1Z5",
+                  "sellerId": "6a44d934eb92e02af2e6945f",
+                  "kycStatus": "verified",
+                  "taxSettings": {
+                    "pan": "ABCDE1224F",
+                    "gstin": "27ABCDE1224F1Z5",
+                    "state": "Madhya Pradesh"
+                  },
+                  "businessType": "individual",
+                  "goLiveStatus": "ready",
+                  "supportEmail": "krishnaenterprises@gmail.com",
+                  "supportPhone": "7234567890",
+                  "pickupAddress": {
+                    "city": "Ratlam",
+                    "line1": "Bedia, Khargone",
+                    "line2": "",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "457007"
+                  },
+                  "approvalStatus": "approved",
+                  "billingAddress": {
+                    "city": "Khandwa",
+                    "line1": "Bedia, Khargone",
+                    "line2": "asdfs",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "450008"
+                  },
+                  "organizationId": "ae5633c9-08af-49a5-a364-a5b05823879c",
+                  "payoutSettings": {
+                    "payoutSchedule": "weekly"
+                  },
+                  "invoiceSettings": {
+                    "state": "Madhya Pradesh",
+                    "invoicePrefix": "INV"
+                  },
+                  "storeDisplayName": "Krishna Soni",
+                  "legalBusinessName": "Krishna Soni",
+                  "registrationNumber": "12",
+                  "bankVerificationStatus": "verified"
+                }
+              ],
+              "customerPlatformFeeTaxAmount": 0
+            },
+            "generatedBy": "tax-service",
+            "invoiceType": "order_customer",
+            "orderNumber": "ORD-20260707-5A691C6DA5",
+            "orderStatus": "confirmed",
+            "generatedByRole": "system"
+          },
+          "created_at": "2026-07-07T13:19:03.687Z",
+          "updated_at": "2026-07-07T13:19:03.687Z",
+          "created_by": null,
+          "updated_by": null,
+          "invoice_type": "order_customer",
+          "seller_id": null,
+          "issuer_type": "platform",
+          "recipient_type": "buyer",
+          "reference_type": "order",
+          "reference_id": "5cdcab53-e860-4721-8e35-d176a79d5106",
+          "parent_invoice_id": null,
+          "organization_id": null,
+          "organization_snapshot": {}
+        },
+        "invoices": [
+          {
+            "id": "9a392e5c-5400-43ba-acac-4e056ed093e8",
+            "invoice_number": "GST-202607-000046",
+            "order_id": "5cdcab53-e860-4721-8e35-d176a79d5106",
+            "buyer_id": "6a4b37453ecf74d6920eeb39",
+            "taxable_amount": "6355.93",
+            "tax_amount": "1144.07",
+            "cgst_amount": "0.00",
+            "sgst_amount": "0.00",
+            "igst_amount": "1144.07",
+            "tcs_amount": "63.56",
+            "total_amount": "7550.00",
+            "currency": "INR",
+            "tax_mode": "igst",
+            "gstin_marketplace": null,
+            "gstin_seller": null,
+            "place_of_supply": "Madhya Pradesh",
+            "issued_at": "2026-07-07T13:19:03.687Z",
+            "metadata": {
+              "items": [
+                {
+                  "gstRate": 18,
+                  "hsnCode": "8504",
+                  "storeId": null,
+                  "quantity": 1,
+                  "sellerId": "6a44d934eb92e02af2e6945f",
+                  "lineTotal": 7500,
+                  "productId": "6a45042429b795d8a4ee5853",
+                  "taxAmount": 1144.07,
+                  "unitPrice": 7500,
+                  "variantId": "6a465eaf3ecf74d6920d72d1",
+                  "cgstAmount": 0,
+                  "igstAmount": 0,
+                  "productSku": "SKU-1782908753914-1",
+                  "sgstAmount": 0,
+                  "taxBreakup": {
+                    "gstRate": 18,
+                    "taxMode": "igst",
+                    "taxType": "gst",
+                    "cessRate": 0,
+                    "lineTotal": 7500,
+                    "productId": "6a45042429b795d8a4ee5853",
+                    "taxAmount": 1144.07,
+                    "cessAmount": 0,
+                    "gstInclusive": true,
+                    "taxableAmount": 6355.93,
+                    "taxPayableAmount": 0,
+                    "taxIncludedAmount": 1144.07,
+                    "discountedLineTotal": 7500
+                  },
+                  "variantSku": "SKU-1782908753914-1",
+                  "orderItemId": "e457940a-59b8-45cd-8407-0266952023f6",
+                  "warehouseId": null,
+                  "productTitle": "Eume Carbonis 20l Laptop Backpack For Men",
+                  "taxableAmount": 6355.93,
+                  "discountAmount": 0,
+                  "organizationId": "ae5633c9-08af-49a5-a364-a5b05823879c",
+                  "taxPayableAmount": 0
+                }
+              ],
+              "amounts": {
+                "discountAmount": 0,
+                "codChargeAmount": 0,
+                "grossSalesAmount": 7500,
+                "finalPayableAmount": 7550,
+                "deliveryChargeAmount": 0,
+                "productTaxableAmount": 6355.93,
+                "shippingChargeAmount": 0,
+                "walletDiscountAmount": 0,
+                "sellerPlatformFeeAmount": 50,
+                "customerPlatformFeeAmount": 50,
+                "sellerOrganizationDetails": [
+                  {
+                    "pan": "ABCDE1224F",
+                    "gstin": "27ABCDE1224F1Z5",
+                    "sellerId": "6a44d934eb92e02af2e6945f",
+                    "kycStatus": "verified",
+                    "taxSettings": {
+                      "pan": "ABCDE1224F",
+                      "gstin": "27ABCDE1224F1Z5",
+                      "state": "Madhya Pradesh"
+                    },
+                    "businessType": "individual",
+                    "goLiveStatus": "ready",
+                    "supportEmail": "krishnaenterprises@gmail.com",
+                    "supportPhone": "7234567890",
+                    "pickupAddress": {
+                      "city": "Ratlam",
+                      "line1": "Bedia, Khargone",
+                      "line2": "",
+                      "state": "Madhya Pradesh",
+                      "country": "India",
+                      "postalCode": "457007"
+                    },
+                    "approvalStatus": "approved",
+                    "billingAddress": {
+                      "city": "Khandwa",
+                      "line1": "Bedia, Khargone",
+                      "line2": "asdfs",
+                      "state": "Madhya Pradesh",
+                      "country": "India",
+                      "postalCode": "450008"
+                    },
+                    "organizationId": "ae5633c9-08af-49a5-a364-a5b05823879c",
+                    "payoutSettings": {
+                      "payoutSchedule": "weekly"
+                    },
+                    "invoiceSettings": {
+                      "state": "Madhya Pradesh",
+                      "invoicePrefix": "INV"
+                    },
+                    "storeDisplayName": "Krishna Soni",
+                    "legalBusinessName": "Krishna Soni",
+                    "registrationNumber": "12",
+                    "bankVerificationStatus": "verified"
+                  }
+                ],
+                "customerPlatformFeeTaxAmount": 0
+              },
+              "generatedBy": "tax-service",
+              "invoiceType": "order_customer",
+              "orderNumber": "ORD-20260707-5A691C6DA5",
+              "orderStatus": "confirmed",
+              "generatedByRole": "system"
+            },
+            "created_at": "2026-07-07T13:19:03.687Z",
+            "updated_at": "2026-07-07T13:19:03.687Z",
+            "created_by": null,
+            "updated_by": null,
+            "invoice_type": "order_customer",
+            "seller_id": null,
+            "issuer_type": "platform",
+            "recipient_type": "buyer",
+            "reference_type": "order",
+            "reference_id": "5cdcab53-e860-4721-8e35-d176a79d5106",
+            "parent_invoice_id": null,
+            "organization_id": null,
+            "organization_snapshot": {}
+          }
+        ],
+        "shipments": [
+          {
+            "id": "05cdbb3e-29b9-463b-b5c5-0192b0e9ddec",
+            "order_id": "5cdcab53-e860-4721-8e35-d176a79d5106",
+            "provider": "manual",
+            "courier_name": null,
+            "awb_number": null,
+            "tracking_number": null,
+            "status": "delivered",
+            "shipping_mode": "standard",
+            "cod": false,
+            "package_snapshot": {},
+            "pickup_address_snapshot": {},
+            "ship_to_snapshot": {
+              "city": "Rewa",
+              "line1": "indore mp",
+              "line2": "indore mp",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "486006"
+            },
+            "rate_snapshot": {},
+            "label_data": {},
+            "manifest_id": null,
+            "delivery_exception": null,
+            "expected_delivery_at": null,
+            "idempotency_key": "order-status:5cdcab53-e860-4721-8e35-d176a79d5106:6a44d934eb92e02af2e6945f",
+            "created_at": "2026-07-08T12:50:41.534Z",
+            "updated_at": "2026-07-08T12:54:11.281Z",
+            "verification_required": false,
+            "verification_methods": [],
+            "delivery_otp_expires_at": null,
+            "delivered_verified_at": null,
+            "verified_by": null,
+            "deal_id": null,
+            "fulfillment_model": null,
+            "shipment_type": "forward",
+            "direction": "forward",
+            "return_id": null,
+            "delivery_agent_snapshot": {},
+            "order_number": "ORD-20260707-5A691C6DA5",
+            "buyer": {
+              "id": "6a4b37453ecf74d6920eeb39",
+              "displayName": "ittu prajapat",
+              "fullName": "ittu prajapat",
+              "firstName": "ittu",
+              "lastName": "prajapat",
+              "businessName": null,
+              "email": "ittu@gmail.com",
+              "phone": "6265095792",
+              "role": "buyer",
+              "profile": {
+                "firstName": "ittu",
+                "lastName": "prajapat"
+              },
+              "accountStatus": "active",
+              "ownerSellerId": null,
+              "parentSellerId": null,
+              "sellerProfile": {
+                "displayName": null,
+                "businessName": null,
+                "legalBusinessName": null,
+                "supportEmail": null,
+                "supportPhone": null,
+                "kycStatus": null,
+                "bankVerificationStatus": null,
+                "goLiveStatus": null
+              }
+            },
+            "seller": {
+              "displayName": "Krishna Soni",
+              "businessName": "Krishna Enterprises",
+              "supportEmail": "krishnaEnterprises@gmail.com",
+              "supportPhone": "7234567890"
+            },
+            "trackingEvents": [
+              {
+                "id": "8b10ad98-af87-4a5d-8193-8cf4239a4152",
+                "shipment_id": "05cdbb3e-29b9-463b-b5c5-0192b0e9ddec",
+                "order_id": "5cdcab53-e860-4721-8e35-d176a79d5106",
+                "status": "initiated",
+                "event_time": "2026-07-08T12:50:41.534Z",
+                "location": null,
+                "note": "Order moved to packed",
+                "source": "order_status_sync",
+                "created_at": "2026-07-08T12:50:41.396Z",
+                "idempotency_key": "order-status:5cdcab53-e860-4721-8e35-d176a79d5106:6a44d934eb92e02af2e6945f:initiated"
+              },
+              {
+                "id": "baff8aff-637f-4c70-836c-887109f824f7",
+                "shipment_id": "05cdbb3e-29b9-463b-b5c5-0192b0e9ddec",
+                "order_id": "5cdcab53-e860-4721-8e35-d176a79d5106",
+                "status": "in_transit",
+                "event_time": "2026-07-08T12:50:55.395Z",
+                "location": null,
+                "note": "Order moved to shipped",
+                "source": "order_status_sync",
+                "created_at": "2026-07-08T12:50:55.258Z",
+                "idempotency_key": "order-status:5cdcab53-e860-4721-8e35-d176a79d5106:6a44d934eb92e02af2e6945f:in_transit"
+              },
+              {
+                "id": "d67398ba-d3fb-4b02-912e-34cf2ba629a6",
+                "shipment_id": "05cdbb3e-29b9-463b-b5c5-0192b0e9ddec",
+                "order_id": "5cdcab53-e860-4721-8e35-d176a79d5106",
+                "status": "out_for_delivery",
+                "event_time": "2026-07-08T12:53:33.747Z",
+                "location": null,
+                "note": null,
+                "source": "manual",
+                "created_at": "2026-07-08T12:53:33.295Z",
+                "idempotency_key": null
+              },
+              {
+                "id": "c9b12cfb-d00f-4606-aee7-b0bcb30953bb",
+                "shipment_id": "05cdbb3e-29b9-463b-b5c5-0192b0e9ddec",
+                "order_id": "5cdcab53-e860-4721-8e35-d176a79d5106",
+                "status": "delivered",
+                "event_time": "2026-07-08T12:53:46.150Z",
+                "location": null,
+                "note": null,
+                "source": "manual",
+                "created_at": "2026-07-08T12:53:45.922Z",
+                "idempotency_key": null
+              }
+            ],
+            "verification": {
+              "required": false,
+              "methods": [],
+              "verifiedAt": null,
+              "otpExpiresAt": null
+            }
+          }
+        ],
+        "sellerFulfillmentGroups": [
+          {
+            "sellerName": "Krishna Soni",
+            "organizationSnapshot": {
+              "pan": "ABCDE1224F",
+              "gstin": "27ABCDE1224F1Z5",
+              "sellerId": "6a44d934eb92e02af2e6945f",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE1224F",
+                "gstin": "27ABCDE1224F1Z5",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "ready",
+              "supportEmail": "krishnaenterprises@gmail.com",
+              "supportPhone": "7234567890",
+              "pickupAddress": {
+                "city": "Ratlam",
+                "line1": "Bedia, Khargone",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "457007"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Khandwa",
+                "line1": "Bedia, Khargone",
+                "line2": "asdfs",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "450008"
+              },
+              "organizationId": "ae5633c9-08af-49a5-a364-a5b05823879c",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Krishna Soni",
+              "legalBusinessName": "Krishna Soni",
+              "registrationNumber": "12",
+              "bankVerificationStatus": "verified"
+            },
+            "itemCount": 1,
+            "quantity": 1,
+            "deliveryStatus": "delivered",
+            "expectedDeliveryAt": null,
+            "latestTrackingEvent": null,
+            "requiresVerification": false,
+            "verificationComplete": null
+          },
+          {
+            "sellerName": "Krishna Soni",
+            "organizationSnapshot": {},
+            "itemCount": 0,
+            "quantity": 0,
+            "deliveryStatus": "delivered",
+            "expectedDeliveryAt": null,
+            "latestTrackingEvent": {
+              "id": "c9b12cfb-d00f-4606-aee7-b0bcb30953bb",
+              "shipment_id": "05cdbb3e-29b9-463b-b5c5-0192b0e9ddec",
+              "order_id": "5cdcab53-e860-4721-8e35-d176a79d5106",
+              "status": "delivered",
+              "event_time": "2026-07-08T12:53:46.150Z",
+              "location": null,
+              "note": null,
+              "source": "manual",
+              "created_at": "2026-07-08T12:53:45.922Z",
+              "idempotency_key": null
+            },
+            "requiresVerification": false,
+            "verificationComplete": null
+          }
+        ],
+        "eWayBill": null,
+        "cancellations": []
+      }
+    }
+  ],
+  "message": "Orders fetched successfully"
+}
+
+
+
+http://192.168.16.42:4000/api/v1/warranty/products/6a46628503ebd21cc58ed763/warranty
+
+{
+    "success": true,
+    "data": {
+        "returnPolicy": {
+            "eligible": true,
+            "days": 7,
+            "type": "standard",
+            "restockingFee": 0
+        },
+        "period": 1,
+        "periodUnit": "years",
+        "type": "manufacturer",
+        "serviceableCountries": []
+    }
+}

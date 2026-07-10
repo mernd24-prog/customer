@@ -798,9 +798,10 @@ function ProductInfoSection({
       {activeInfoTab === "details" && detailRows.length > 0 && (
         <InfoCard title="Product Details" roundedClass="rounded-xl">
           <DetailRows
-            rows={detailRows
-              .slice(0, 8)
-              .map(([key, value]) => [formatPageTitle(key), value])}
+            rows={detailRows.map(([key, value]) => [
+              formatPageTitle(key),
+              value,
+            ])}
             rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]"
             labelClassName="font-medium text-[#2E2E2E]"
             valueClassName="text-left font-bold text-navy sm:text-right"
@@ -833,33 +834,6 @@ function ProductInfoSection({
             {formatPageTitle(product.description) ||
               "No description available."}
           </p>
-        </InfoCard>
-      )}
-
-      {activeInfoTab === "specification" && (
-        <InfoCard title="Specification">
-          <dl className="divide-y divide-border">
-            {Object.entries(attributes).length > 0 ? (
-              Object.entries(attributes).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="grid grid-cols-1  gap-1 px-4 py-3 text-sm md:text-lg sm:grid-cols-[220px_minmax(0,1fr)]"
-                >
-                  <dt className="font-medium text-ink">
-                    {" "}
-                    {formatPageTitle(key)}
-                  </dt>
-                  <dd className="text-left font-bold text-navy md:text-right">
-                    {Array.isArray(value) ? value.join(", ") : String(value)}
-                  </dd>
-                </div>
-              ))
-            ) : (
-              <div className="px-4 py-4 text-sm lg:text-lg  text-black/90 whitespace-pre-line">
-                No specifications available.
-              </div>
-            )}
-          </dl>
         </InfoCard>
       )}
 
@@ -1278,13 +1252,22 @@ export default function ProductDetailPage() {
         .replace(/\b\w/g, (c) => c.toUpperCase())
     : null;
 
-  const detailRows = Object.entries({
+  const rawDetails = {
     Brand: product?.brand,
     Category: categoryLabel,
     ...attributes,
-  }).filter(
-    ([key, value]) =>
-      value != null && value !== "" && key.toLowerCase() !== "warranty",
+  };
+
+  const detailRows = Object.values(
+    Object.entries(rawDetails).reduce((acc, [key, value]) => {
+      if (value != null && value !== "") {
+        const normalizedKey = key.toLowerCase().trim();
+        if (!acc[normalizedKey]) {
+          acc[normalizedKey] = [key, value];
+        }
+      }
+      return acc;
+    }, {}),
   );
 
   const productTitle = getProductTitle(product);
@@ -1298,7 +1281,6 @@ export default function ProductDetailPage() {
   const infoTabs = [
     { key: "details", label: "Product Details" },
     { key: "description", label: "Description" },
-    { key: "specification", label: "Specification" },
     { key: "seller", label: "Seller Info" },
   ];
 
