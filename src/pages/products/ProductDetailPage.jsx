@@ -798,8 +798,10 @@ function ProductInfoSection({
       {activeInfoTab === "details" && detailRows.length > 0 && (
         <InfoCard title="Product Details" roundedClass="rounded-xl">
           <DetailRows
-            rows={detailRows
-              .map(([key, value]) => [formatPageTitle(key), value])}
+            rows={detailRows.map(([key, value]) => [
+              formatPageTitle(key),
+              value,
+            ])}
             rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]"
             labelClassName="font-medium text-[#2E2E2E]"
             valueClassName="text-left font-bold text-navy sm:text-right"
@@ -834,8 +836,6 @@ function ProductInfoSection({
           </p>
         </InfoCard>
       )}
-
-
 
       {activeInfoTab === "seller" && (
         <InfoCard title="Seller Info">
@@ -1267,7 +1267,7 @@ export default function ProductDetailPage() {
         }
       }
       return acc;
-    }, {})
+    }, {}),
   );
 
   const infoTabs = [
@@ -1359,8 +1359,8 @@ export default function ProductDetailPage() {
                       <h1 className="break-words text-h3 font-semibold text-ink leading-snug">
                         <ShowMoreText
                           text={getProductTitle(product)}
-                          mode="characters"
-                          limit={65}
+                          mode="lines"
+                          limit={2}
                           buttonClassName="ml-1 text-sm font-semibold text-black/50 hover:underline"
                         />
                       </h1>
