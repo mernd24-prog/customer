@@ -15,7 +15,6 @@ import {
   PriceRangeFilter,
   ProductGrid,
   ProductFilterSidebar,
-  RatingFilter,
 } from "../../components/ecommerce";
 import { buildRatingCountMap, isProductInStock } from "../../utils/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
@@ -84,7 +83,6 @@ export default function SearchPage() {
   // const [queryInput, setQueryInput] = useState(
   //   resetInitialSearch.current ? "" : searchParams.get("q") || "",
   // );
-  const [seenCategories, setSeenCategories] = useState(new Map());
 
   const searchState = useSelector((s) => s.search);
   const categoriesRaw = useSelector((s) => s.catalog.list || []);
@@ -110,6 +108,33 @@ export default function SearchPage() {
     [hits],
   );
   const ratingCounts = useMemo(() => buildRatingCountMap(hits), [hits]);
+  const ratingOptions = useMemo(
+    () =>
+      [5, 4, 3, 2, 1]
+        .map((stars) => ({
+          value: String(stars),
+          label: stars === 5 ? "5" : `${stars} & Above`,
+          count: ratingCounts[String(stars)] || 0,
+        }))
+        .filter((option) => option.count > 0),
+    [ratingCounts],
+  );
+  const availabilityOptions = useMemo(
+    () =>
+      [
+        {
+          value: "inStock",
+          label: "In Stock",
+          count: availabilityCounts.inStock,
+        },
+        {
+          value: "outOfStock",
+          label: "Out of Stock",
+          count: availabilityCounts.outOfStock,
+        },
+      ].filter((option) => option.count > 0),
+    [availabilityCounts],
+  );
   const categories = useMemo(
     () => flattenCategoryList(categoriesRaw),
     [categoriesRaw],
@@ -475,34 +500,53 @@ export default function SearchPage() {
           category.label || category.title || category.key || category.value,
         count: category.count || category.doc_count || 0,
       }))
-      .filter((category) => category.value && category.label);
+      .filter(
+        (category) => category.value && category.label && category.count > 0,
+      );
   }, [facets?.category, facets?.categories]);
+  const categoryOptions = facetCategories;
 
   useEffect(() => {
-    if (facetCategories.length > 0) {
-      setSeenCategories((prev) => {
-        const next = new Map(prev);
-        facetCategories.forEach((c) => {
-          if (!next.has(c.value)) next.set(c.value, c.label);
-        });
-        return next;
-      });
+    if (!hits.length) return;
+    const validRatings = new Set(ratingOptions.map((option) => option.value));
+    const nextRatings = selectedRatings.filter((rating) =>
+      validRatings.has(String(rating)),
+    );
+    const shouldRemoveInStock = inStock && availabilityCounts.inStock <= 0;
+    const shouldRemoveOutOfStock =
+      outOfStock && availabilityCounts.outOfStock <= 0;
+
+    if (
+      nextRatings.length === selectedRatings.length &&
+      !shouldRemoveInStock &&
+      !shouldRemoveOutOfStock
+    ) {
+      return;
     }
-  }, [facetCategories]);
 
-  const categoryCounts = useMemo(() => {
-    const counts = {};
-    facetCategories.forEach((opt) => (counts[opt.value] = opt.count));
-    return counts;
-  }, [facetCategories]);
-
-  const categoryOptions = Array.from(seenCategories.entries()).map(
-    ([value, label]) => ({
-      value,
-      label,
-      count: categoryCounts[value] || 0,
-    }),
-  );
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        const serializedRatings = serializeMultiValue(nextRatings);
+        if (serializedRatings) next.set("minRating", serializedRatings);
+        else next.delete("minRating");
+        if (shouldRemoveInStock) next.delete("inStock");
+        if (shouldRemoveOutOfStock) next.delete("outOfStock");
+        next.delete("page");
+        return next;
+      },
+      { replace: true },
+    );
+  }, [
+    availabilityCounts.inStock,
+    availabilityCounts.outOfStock,
+    hits.length,
+    inStock,
+    outOfStock,
+    ratingOptions,
+    selectedRatings,
+    setSearchParams,
+  ]);
 
   const filterSections = [
     facetCategories.length > 0 && {
@@ -521,7 +565,7 @@ export default function SearchPage() {
         />
       ),
     },
-    {
+    hits.length > 0 && {
       key: "price",
       title: "Price Range",
       content: (
@@ -532,14 +576,15 @@ export default function SearchPage() {
         />
       ),
     },
-    {
+    ratingOptions.length > 0 && {
       key: "rating",
       title: "Min. Rating",
       content: (
-        <RatingFilter
+        <OptionFilter
+          name="minRating"
+          options={ratingOptions}
           selected={selectedRatings}
           multiple
-          counts={ratingCounts}
           onChange={(values) =>
             updateParam("minRating", serializeMultiValue(values))
           }
@@ -578,25 +623,14 @@ export default function SearchPage() {
       ),
     },
     */
-    {
+    availabilityOptions.length > 0 && {
       key: "availability",
       title: "Availability",
       defaultOpen: false,
       content: (
         <CheckboxListFilter
           name="availability"
-          options={[
-            {
-              value: "inStock",
-              label: "In Stock",
-              count: availabilityCounts.inStock,
-            },
-            {
-              value: "outOfStock",
-              label: "Out of Stock",
-              count: availabilityCounts.outOfStock,
-            },
-          ]}
+          options={availabilityOptions}
           selected={["inStock", "outOfStock"].filter(
             (value) => searchParams.get(value) === "true",
           )}
