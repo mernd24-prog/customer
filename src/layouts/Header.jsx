@@ -602,7 +602,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   }, [catalogTree, headerData, globalCategories]);
 
   const visibleCategories = useMemo(
-    () => asArray(categories).slice(0, 10),
+    () => asArray(categories).slice(0, 9),
     [categories],
   );
 
@@ -617,8 +617,9 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
         className="fixed left-0 z-40 w-full bg-white/95 shadow-[0_2px_8px_rgba(17,24,39,0.06)] backdrop-blur !block"
       >
-        <div className="relative w-full overflow-x-auto hide-scrollbar">
-          <div className="flex h-[44px] w-max mx-auto items-center gap-5 whitespace-nowrap px-4 sm:gap-7 lg:h-[46px]">
+        <div className="customer-container mx-auto w-full relative">
+          <div className="w-full overflow-x-auto hide-scrollbar">
+            <div className="flex h-[44px] w-max items-center gap-5 whitespace-nowrap sm:gap-7 lg:h-[46px]">
             {visibleCategories.map((item, index) => {
               const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
               const isActive =
@@ -666,6 +667,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
             </Link> */}
           </div>
         </div>
+      </div>
         {/* {activeMenu && (
           <div
             id="compact-category-mega-menu "
@@ -699,8 +701,9 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       {/* Golden Overlay */}
       <div className="absolute inset-0 bg-[#CE9F2D33]  z-10  " />
 
-      <div className="w-full relative z-20 overflow-x-auto hide-scrollbar">
-        <div className="flex w-max mx-auto gap-4 px-2 py-3 sm:gap-5 lg:gap-5">
+      <div className="customer-container mx-auto w-full relative z-20">
+        <div className="w-full overflow-x-auto hide-scrollbar">
+          <div className="flex w-max gap-4 py-3 sm:gap-5 lg:gap-5">
           {visibleCategories.map((item, index) => {
             // Always use categoryKey first — it's the canonical route key from the DB
             const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
@@ -720,9 +723,9 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                   to={categoryHref}
                   aria-expanded={isActive}
                   aria-controls="category-mega-menu"
-                  className="group dflex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px]  flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
+                  className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px]  flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
-                  <div className="mx-auto flex h-[50px]  w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out  group-hover:-translate-y-0.5  will-change-transform ">
+                  <div className={`mx-auto flex h-[50px]  w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full p-1.5 sm:p-2 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform ${isActive ? "bg-[#CE9F2D] shadow-md ring-2 ring-[#03014D] ring-offset-2" : "bg-[#FBCC39]"}`}>
                     {item?.iconUrl ? (
                       <ImageSkeleton
                         src={item?.iconUrl}
@@ -736,7 +739,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                   </div>
 
                   <span
-                    className={`mt-1  lg:mt-2 line-clamp-1 w-full max-w-[80px] sm:max-w-[100px] lg:max-w-[140px] text-center   text-small  text-[#2E2E2E]`}
+                    className={`mt-1 lg:mt-2 line-clamp-1 w-full max-w-[80px] sm:max-w-[100px] lg:max-w-[140px] text-center text-small transition-colors duration-200 ${isActive ? "text-[#03014D] font-bold" : "text-[#2E2E2E] font-medium"}`}
                   >
                     {textOr(item?.name, "Category")}
                   </span>
@@ -750,6 +753,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
             icon={moreImage}
           />
         </div>
+      </div>
       </div>
       {/* {activeMenu && !isPinned && (
         <div
@@ -770,8 +774,9 @@ export const CategoryBar = ({ headerData, compact = false }) => {
             : "pointer-events-none -translate-y-full opacity-0"
         }`}
       >
-        <div className="relative w-full overflow-x-auto hide-scrollbar">
-          <div className="flex h-[44px] w-max mx-auto items-center gap-5 whitespace-nowrap px-4 sm:gap-7 lg:h-[46px]">
+        <div className="customer-container mx-auto w-full relative">
+          <div className="w-full overflow-x-auto hide-scrollbar">
+            <div className="flex h-[44px] w-max items-center gap-5 whitespace-nowrap sm:gap-7 lg:h-[46px]">
             {visibleCategories.map((item, index) => {
               const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
               const isActive =
@@ -819,6 +824,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
             </Link>
           </div>
         </div>
+      </div>
         {/* {activeMenu && isPinned && (
           <div
             id="sticky-category-mega-menu"

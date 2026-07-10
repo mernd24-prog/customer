@@ -1371,9 +1371,9 @@ export default function ProductDetailPage() {
                       <h1 className="break-words text-h3 font-semibold text-ink leading-snug">
                         <ShowMoreText
                           text={getProductTitle(product)}
-                          mode="character"
-                          limit={90}
-                          buttonClassName="ml-1  text-xs  font-semibold text-black/80 hover:underline"
+                          mode="lines"
+                          limit={2}
+                          buttonClassName="ml-1 text-sm font-semibold text-black/50 hover:underline"
                         />
                       </h1>
                     </div>

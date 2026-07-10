@@ -133,8 +133,8 @@ function ProductReviewCard({
         <p className="small my-4 text-[#2E2E2E]">
           <ShowMoreText
             text={text}
-            mode="words"
-            limit={40}
+            mode="lines"
+            limit={3}
             buttonClassName="inline whitespace-nowrap text-xs font-semibold text-black/50 hover:underline"
           />
         </p>
