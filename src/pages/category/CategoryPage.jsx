@@ -310,6 +310,7 @@ export default function CategoryPage() {
     totalPages: 1,
     total: 0,
   });
+  const [productFacets, setProductFacets] = useState({});
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [categoryError, setCategoryError] = useState(null);
@@ -399,39 +400,15 @@ export default function CategoryPage() {
         const data = result?.data;
         let list = Array.isArray(data) ? data : data?.items || data?.list || [];
 
-        if (
-          list.length === 0 &&
-          location.state?.fallbackProducts &&
-          page === 1
-        ) {
-          const normalizeCat = (c) =>
-            String(c || "")
-              .toLowerCase()
-              .replace(/[^a-z0-9-]/g, "");
-          const targetCat = normalizeCat(categoryKey);
-          const targetTokens = targetCat.split("-").filter(Boolean);
-          list = location.state.fallbackProducts.filter((p) => {
-            const cat = p.category;
+        if (categoryKey) {
+          const targetCat = String(categoryKey).toLowerCase().replace(/[^a-z0-9]/g, "");
+          list = list.filter((p) => {
+            const cat = p.categoryId || p.category;
             if (!cat) return false;
-            const catId =
-              typeof cat === "object"
-                ? cat.slug || cat.key || cat.id || cat._id || cat.name
-                : cat;
-            const pCat = normalizeCat(catId);
-
-            if (
-              pCat === targetCat ||
-              pCat.includes(targetCat) ||
-              targetCat.includes(pCat)
-            )
-              return true;
-
-            const pTokens = pCat.split("-").filter(Boolean);
-            return targetTokens.some((token) =>
-              pTokens.some(
-                (pToken) => token.includes(pToken) || pToken.includes(token),
-              ),
-            );
+            const catStr = String(typeof cat === "object" ? cat.slug || cat.key || cat.id || cat.name : cat)
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, "");
+            return catStr === targetCat || catStr.includes(targetCat) || targetCat.includes(catStr);
           });
         }
 
@@ -441,6 +418,7 @@ export default function CategoryPage() {
           totalPages: Number(m.totalPages || m.pages || 1),
           total: Number(m.total || m.count || list.length || 0),
         });
+        setProductFacets(m.facets || m.filters || {});
         setItems((prev) => (append ? [...prev, ...list] : list));
         setFirstLoadDone(true);
       } finally {
@@ -666,6 +644,8 @@ export default function CategoryPage() {
             <PriceRangeFilter
               min={searchParams.get("minPrice")}
               max={searchParams.get("maxPrice")}
+              minLimit={productFacets?.price?.min}
+              maxLimit={productFacets?.price?.max}
               onChange={handlePriceChange}
             />
           ),
@@ -741,6 +721,7 @@ export default function CategoryPage() {
       handlePriceChange,
       updateParam,
       updateParams,
+      productFacets,
     ],
   );
 
@@ -780,12 +761,12 @@ export default function CategoryPage() {
         }),
       (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
         key: "price",
-        label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
+        label: `Price: ₹${Number(searchParams.get("minPrice") || productFacets?.price?.min || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || productFacets?.price?.max || 150000).toLocaleString("en-IN")}`,
       },
     ]
       .flat()
       .filter(Boolean);
-  }, [filterableAttributes, searchParams, supportedAttributeKeys]);
+  }, [filterableAttributes, searchParams, supportedAttributeKeys, productFacets]);
 
   if (categoryLoading && !categoryData && !firstLoadDone && !products.length) {
     return <CategoryPageSkeleton />;
@@ -840,7 +821,7 @@ export default function CategoryPage() {
             (productState.loading && !products.length) ||
             (!firstLoadDone && !products.length)
           }
-          error={productState.error}
+          error={products.length === 0 ? productState.error : null}
           empty={!products.length && !productState.loading && firstLoadDone}
           emptyTitle="No products found"
           emptyText="Try adjusting your filters or browse other categories."
