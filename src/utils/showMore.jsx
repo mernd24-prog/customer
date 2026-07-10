@@ -139,12 +139,14 @@ export function ShowMoreText({
         {hasLineOverflow && (
           <button
             type="button"
-            onClick={() => setExpanded((value) => !value)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setExpanded((value) => !value);
+            }}
             className={
               resolvedButtonClassName ||
-              (expanded
-                ? "mt-1 inline whitespace-nowrap font-semibold text-black/50 hover:underline"
-                : "inline whitespace-nowrap bg-white font-semibold text-black/50 hover:underline")
+              "inline whitespace-nowrap font-semibold text-black/50 hover:underline bg-white"
             }
           >
             {expanded ? lessLabel : moreLabel}
@@ -160,12 +162,16 @@ export function ShowMoreText({
       : `${showMore.preview}${ellipsis}`;
 
   return (
-    <span className={className}>
+    <span className={className}>    
       <span className={textClassName}>{displayText}</span>
       {showMore.isTruncated && (
         <button
           type="button"
-          onClick={() => setExpanded((value) => !value)}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setExpanded((value) => !value);
+          }}
           className={
             resolvedButtonClassName ||
             "ml-0.5 inline font-semibold text-[#0B63F6] hover:underline"

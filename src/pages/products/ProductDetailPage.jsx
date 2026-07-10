@@ -29,7 +29,10 @@ import {
 } from "../../features/product/relatedProductsSlice";
 import { trackAnalyticsEvent } from "../../features/analytics/analyticsSlice";
 import { useProductActions } from "../../hooks/useProductActions";
-import { addRecentlyViewed, getRecentlyViewed } from "../../utils/recentlyViewed";
+import {
+  addRecentlyViewed,
+  getRecentlyViewed,
+} from "../../utils/recentlyViewed";
 import {
   applyImageFallback,
   getProductId,
@@ -997,8 +1000,8 @@ export default function ProductDetailPage() {
     addRecentlyViewed(product);
     setRecentlyViewedList(
       getRecentlyViewed().filter(
-        (p) => String(getProductId(p)) !== String(productId)
-      )
+        (p) => String(getProductId(p)) !== String(productId),
+      ),
     );
 
     dispatch(fetchProductWarranty({ productId })).catch(() => {});
@@ -1267,7 +1270,10 @@ export default function ProductDetailPage() {
     Brand: product?.brand,
     Category: categoryLabel,
     ...attributes,
-  }).filter(([, value]) => value != null && value !== "");
+  }).filter(
+    ([key, value]) =>
+      value != null && value !== "" && key.toLowerCase() !== "warranty",
+  );
 
   const infoTabs = [
     { key: "details", label: "Product Details" },
@@ -1355,9 +1361,14 @@ export default function ProductDetailPage() {
 
                 <div className="flex min-w-0 flex-col  gap-3">
                   <div className="flex min-w-0 items-start justify-between gap-3 ">
-                    <div className="min-w-0">
-                      <h1 className="break-words text-h3  font-semibold  text-ink line-clamp-2 leading-snug ">
-                        {getProductTitle(product)}
+                    <div className="min-w-0 w-full">
+                      <h1 className="break-words text-h3 font-semibold text-ink leading-snug">
+                        <ShowMoreText
+                          text={getProductTitle(product)}
+                          mode="characters"
+                          limit={65}
+                          buttonClassName="ml-1 text-sm font-semibold text-black/50 hover:underline"
+                        />
                       </h1>
                     </div>
                   </div>

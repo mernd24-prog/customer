@@ -7,6 +7,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import ProductPriceBlock from "../../pages/products/components/oldAndNewPrice";
 import ProductStockStatus from "../../pages/products/components/stockStatus";
 import StarRating from "../../pages/products/components/starRating";
+import ShowMoreText from "../../utils/showMore";
 
 export default function CartItemCard({
   item,
@@ -110,9 +111,17 @@ export default function CartItemCard({
           {productPath ? (
             <Link
               to={productPath}
-              className="line-clamp-2 block font-bold  text-h6 text-[#2d2d2d] transition hover:text-[#1B1D60]"
+              className="block font-bold text-h6 text-[#2d2d2d] transition hover:text-[#1B1D60]"
             >
-              {item?.title}
+              <ShowMoreText
+                text={item?.title}
+                mode="characters"
+                limit={65}
+                moreLabel="more"
+                lessLabel="less"
+                textClassName="inline"
+                buttonClassName="ml-1 text-sm font-semibold text-[#1B1D60] hover:underline"
+              />
             </Link>
           ) : (
             <h3 className="line-clamp-2 block font-bold text-h6 text-[#2d2d2d]">
