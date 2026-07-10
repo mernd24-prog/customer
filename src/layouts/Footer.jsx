@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { asArray, hrefOr } from "../utils/content";
 import { footerData } from "../data/footer";
 import { SocialIcons } from "../components/common";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { CUSTOMER_ROUTES } from "../constants/routes";
 
 const buildCategorySlug = (name = "category") =>
@@ -132,6 +132,8 @@ function resolveFooterLinkGroups(groups, categories) {
 
 // Inline Footer Link Groups Component
 function FooterLinkGroups({ groups = [], socialLinks = [] }) {
+  const location = useLocation();
+
   if (!groups.length) return null;
 
   return (
@@ -144,16 +146,27 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
             </h2>
             <ul className="grid gap-1 md:gap-3">
               {(Array.isArray(group?.links) ? group.links : []).map(
-                (link, linkIndex) => (
-                  <li key={link?.label || `link-${linkIndex}`}>
-                    <Link
-                      to={hrefOr(link?.href)}
-                      className="text-sm md:text-base text-white/70 text-white transition-all duration-300 ease-in-out font-medium hover:text-white"
-                    >
-                      {link?.label}
-                    </Link>
-                  </li>
-                ),
+                (link, linkIndex) => {
+                  const toPath = hrefOr(link?.href);
+                  return (
+                    <li key={link?.label || `link-${linkIndex}`}>
+                      <Link
+                        to={toPath}
+                        onClick={() => {
+                          if (location.pathname === toPath) {
+                            window.scrollTo({
+                              top: 0,
+                              behavior: "smooth",
+                            });
+                          }
+                        }}
+                        className="text-sm md:text-base text-white/70 text-white transition-all duration-300 ease-in-out font-medium hover:text-white"
+                      >
+                        {link?.label}
+                      </Link>
+                    </li>
+                  );
+                },
               )}
             </ul>
           </div>
@@ -169,6 +182,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
 }
 
 export function Footer({ data = footerData }) {
+  const location = useLocation();
   const catalogCategoryList = useSelector((state) => state.catalog.globalCategories || state.catalog.list || []);
   const footer = data || footerData;
   const {
@@ -234,19 +248,27 @@ export function Footer({ data = footerData }) {
               {appDownload.title}
             </h2>
             <div className="my-4 flex flex-wrap gap-6 lg:my-6 ">
-              {appDownloadLinks.map((app, index) => (
-                <Link
-                  key={app?.label || `app-link-${index}`}
-                  to={hrefOr(app?.href)}
-                  aria-label={app?.label || "App link"}
-                >
-                  <img
-                    className="h-10 lg:h-[50px] w-auto"
-                    src={app?.image}
-                    alt={app?.alt || app?.label || "App"}
-                  />
-                </Link>
-              ))}
+              {appDownloadLinks.map((app, index) => {
+                const toPath = hrefOr(app?.href);
+                return (
+                  <Link
+                    key={app?.label || `app-link-${index}`}
+                    to={toPath}
+                    onClick={() => {
+                      if (location.pathname === toPath) {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }
+                    }}
+                    aria-label={app?.label || "App link"}
+                  >
+                    <img
+                      className="h-10 lg:h-[50px] w-auto"
+                      src={app?.image}
+                      alt={app?.alt || app?.label || "App"}
+                    />
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}
@@ -259,15 +281,23 @@ export function Footer({ data = footerData }) {
         <div className="flex flex-col gap-2 lg:gap-10 text-white text-xs md:text-base lg:flex-row justify-center">
           <p className="text-center ">{copyright}</p>
           <div className="flex items-center justify-center gap-2 md:gap-8">
-            {extraPages.map((item, index) => (
-              <a
-                key={item?.labels || `extra-page-${index}`}
-                href={hrefOr(item?.links)}
-                className="transition-colors duration-300 hover:text-[#CE9F2D]"
-              >
-                {item.labels}
-              </a>
-            ))}
+            {extraPages.map((item, index) => {
+              const toPath = hrefOr(item?.links);
+              return (
+                <Link
+                  key={item?.labels || `extra-page-${index}`}
+                  to={toPath}
+                  onClick={() => {
+                    if (location.pathname === toPath) {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }
+                  }}
+                  className="transition-colors duration-300 hover:text-[#CE9F2D]"
+                >
+                  {item.labels}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

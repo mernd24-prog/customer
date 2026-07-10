@@ -29,7 +29,7 @@ import {
 } from "../../features/product/relatedProductsSlice";
 import { trackAnalyticsEvent } from "../../features/analytics/analyticsSlice";
 import { useProductActions } from "../../hooks/useProductActions";
-import { addRecentlyViewed } from "../../utils/recentlyViewed";
+import { addRecentlyViewed, getRecentlyViewed } from "../../utils/recentlyViewed";
 import {
   applyImageFallback,
   getProductId,
@@ -943,6 +943,7 @@ export default function ProductDetailPage() {
   const relatedState = useSelector((s) => s.relatedProducts);
   const crossSellState = useSelector((s) => s.relatedProducts);
   const recommendationList = useSelector((s) => s.recommendation.list);
+  const user = useSelector((s) => s.auth.current);
 
   const warranty = warrantyState.current;
 
@@ -976,6 +977,7 @@ export default function ProductDetailPage() {
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const [shareOpen, setShareOpen] = useState(false);
   const [activeInfoTab, setActiveInfoTab] = useState("details");
+  const [recentlyViewedList, setRecentlyViewedList] = useState([]);
 
   const sideEffectsRanFor = useRef(null);
   const dynamicPriceRequestKey = useRef(null);
@@ -993,6 +995,11 @@ export default function ProductDetailPage() {
     sideEffectsRanFor.current = productId;
 
     addRecentlyViewed(product);
+    setRecentlyViewedList(
+      getRecentlyViewed().filter(
+        (p) => String(getProductId(p)) !== String(productId)
+      )
+    );
 
     dispatch(fetchProductWarranty({ productId })).catch(() => {});
     dispatch(fetchRelatedProducts({ productId })).catch(() => {});
@@ -1506,7 +1513,6 @@ export default function ProductDetailPage() {
                 isWishlisted={isWishlisted}
                 className="mt-12"
               />
-
               <ProductRecommendationSection
                 title="Complete the Look"
                 linkText="Explore more →"
@@ -1516,6 +1522,18 @@ export default function ProductDetailPage() {
                 isWishlisted={isWishlisted}
                 className="mt-10"
               />
+
+              {user && (
+                <ProductRecommendationSection
+                  title="Recently Viewed"
+                  linkText="View history →"
+                  products={recentlyViewedList}
+                  addToCart={addToCart}
+                  toggleWishlist={toggleWishlist}
+                  isWishlisted={isWishlisted}
+                  className="mt-10"
+                />
+              )}
             </>
           )}
         </ApiState>
