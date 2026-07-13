@@ -16,6 +16,7 @@ const HIDE_CATEGORY_BAR_ROUTES = [
   "/login",
   "/register",
   "/checkout",
+  "/categories",
 ];
 
 export default function AppLayout() {

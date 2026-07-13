@@ -48,6 +48,18 @@ function getBrandLogo(brand = {}) {
   );
 }
 
+function getBrandProductCount(brand = {}) {
+  if (typeof brand === "string") return 0;
+  const count =
+    brand.productCount ??
+    brand.productsCount ??
+    brand.product_count ??
+    brand.products_count ??
+    brand.counts?.products ??
+    brand.meta?.productCount;
+  return Number(count) || 0;
+}
+
 export default function BrandOutletPage() {
   const dispatch = useDispatch();
   const [brandList, setBrandList] = useState([]);
@@ -78,8 +90,12 @@ export default function BrandOutletPage() {
           displayName: getBrandName(brand),
           routeKey: getBrandRouteKey(brand),
           displayLogo: getBrandLogo(brand),
+          productCount: getBrandProductCount(brand),
         }))
-        .filter((brand) => brand.displayName && brand.routeKey)
+        .filter(
+          (brand) =>
+            brand.displayName && brand.routeKey && brand.productCount > 0,
+        )
         .sort((a, b) =>
           a.displayName.localeCompare(b.displayName, undefined, {
             sensitivity: "base",
@@ -100,7 +116,7 @@ export default function BrandOutletPage() {
       />
 
       <main className="bg-white text-[var(--customer-ink)]">
-        <div className=" w-full  ">
+        <div className=" w-full ">
           <div className="mt-6 lg:mt-10">
             <section className="pb-7">
               <h1 className="mb-4 text-[20px] font-bold leading-tight text-[var(--customer-ink)] sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">

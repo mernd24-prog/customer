@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigationType, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import ActiveFilterChips from "../../components/common/ActiveFilterChips";
 import FilterDrawer from "../../components/common/overlay/Drawer";
 import PageHeader from "../../components/common/PageHeader";
-import BrandButton from "../../components/ui/BrandButton";
 import {
   CheckboxListFilter,
   CollectionToolbar,
@@ -16,12 +15,8 @@ import {
   PriceRangeFilter,
   ProductGrid,
   ProductFilterSidebar,
-  RatingFilter,
 } from "../../components/ecommerce";
-import {
-  buildRatingCountMap,
-  isProductInStock,
-} from "../../utils/ecommerce";
+import { buildRatingCountMap, isProductInStock } from "../../utils/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import {
   clearSearch,
@@ -46,7 +41,14 @@ function parseMultiValue(value) {
 }
 
 function serializeMultiValue(values) {
-  const uniqueValues = [...new Set((values || []).map(String).map((item) => item.trim()).filter(Boolean))];
+  const uniqueValues = [
+    ...new Set(
+      (values || [])
+        .map(String)
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  ];
   return uniqueValues.length ? uniqueValues.join(",") : undefined;
 }
 
@@ -78,10 +80,9 @@ export default function SearchPage() {
   const skipInitialSearch = useRef(
     resetInitialSearch.current && Boolean(initialSearch.current),
   );
-  const [queryInput, setQueryInput] = useState(
-    resetInitialSearch.current ? "" : searchParams.get("q") || "",
-  );
-  const [seenCategories, setSeenCategories] = useState(new Map());
+  // const [queryInput, setQueryInput] = useState(
+  //   resetInitialSearch.current ? "" : searchParams.get("q") || "",
+  // );
 
   const searchState = useSelector((s) => s.search);
   const categoriesRaw = useSelector((s) => s.catalog.list || []);
@@ -107,6 +108,33 @@ export default function SearchPage() {
     [hits],
   );
   const ratingCounts = useMemo(() => buildRatingCountMap(hits), [hits]);
+  const ratingOptions = useMemo(
+    () =>
+      [5, 4, 3, 2, 1]
+        .map((stars) => ({
+          value: String(stars),
+          label: stars === 5 ? "5" : `${stars} & Above`,
+          count: ratingCounts[String(stars)] || 0,
+        }))
+        .filter((option) => option.count > 0),
+    [ratingCounts],
+  );
+  const availabilityOptions = useMemo(
+    () =>
+      [
+        {
+          value: "inStock",
+          label: "In Stock",
+          count: availabilityCounts.inStock,
+        },
+        {
+          value: "outOfStock",
+          label: "Out of Stock",
+          count: availabilityCounts.outOfStock,
+        },
+      ].filter((option) => option.count > 0),
+    [availabilityCounts],
+  );
   const categories = useMemo(
     () => flattenCategoryList(categoriesRaw),
     [categoriesRaw],
@@ -253,6 +281,7 @@ export default function SearchPage() {
     setSearchParams,
   ]);
 
+  /*
   useEffect(() => {
     if (skipInitialSearch.current && searchKey === initialSearch.current) {
       return;
@@ -269,20 +298,24 @@ export default function SearchPage() {
       if (skipInitialSearch.current) return;
       const sanitized = sanitizeSearchQuery(queryInput);
       if (sanitized !== q && queryInput !== (searchParams.get("q") || "")) {
-        setSearchParams((prev) => {
-          const next = new URLSearchParams(prev);
-          if (sanitized) {
-            next.set("q", sanitized);
-          } else {
-            next.delete("q");
-          }
-          next.delete("page");
-          return next;
-        }, { replace: true });
+        setSearchParams(
+          (prev) => {
+            const next = new URLSearchParams(prev);
+            if (sanitized) {
+              next.set("q", sanitized);
+            } else {
+              next.delete("q");
+            }
+            next.delete("page");
+            return next;
+          },
+          { replace: true },
+        );
       }
     }, 500);
     return () => clearTimeout(handler);
   }, [queryInput, q, searchParams, setSearchParams]);
+  */
 
   useEffect(
     () => () => {
@@ -364,6 +397,7 @@ export default function SearchPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  /*
   const handleSearch = (e) => {
     e.preventDefault();
 
@@ -387,6 +421,7 @@ export default function SearchPage() {
     dispatch(clearSearch());
     dispatch(clearSuggestions());
   };
+  */
 
   const handleClearFilters = () => {
     setSearchParams((prev) => {
@@ -398,6 +433,10 @@ export default function SearchPage() {
   };
 
   const activeFilters = [
+    q && {
+      key: "q",
+      label: `Search: "${q}"`,
+    },
     categoryValue && {
       key: "categoryId",
       label: `Category: ${categoryLabel}`,
@@ -416,28 +455,20 @@ export default function SearchPage() {
       key: "inStock",
       label: "In Stock Only",
     },
-    (searchParams.get("outOfStock") === "true") && {
+    searchParams.get("outOfStock") === "true" && {
       key: "outOfStock",
       label: "Out of Stock",
     },
-    /*
-    (searchParams.get("expressDelivery") === "true") && {
-      key: "expressDelivery",
-      label: "Express Delivery",
-    },
-    (searchParams.get("freeDelivery") === "true") && {
-      key: "freeDelivery",
-      label: "Free Delivery",
-    },
-    */
-
   ].filter(Boolean);
 
   const removeFilter = (key, filter) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
 
-      if (key === "price") {
+      if (key === "q") {
+        next.delete("q");
+        // setQueryInput("");
+      } else if (key === "price") {
         next.delete("minPrice");
         next.delete("maxPrice");
       } else if (filter?.groupKey) {
@@ -465,35 +496,57 @@ export default function SearchPage() {
     return (facets?.category || facets?.categories || [])
       .map((category) => ({
         value: category.key || category.value || category._id,
-        label: category.label || category.title || category.key || category.value,
+        label:
+          category.label || category.title || category.key || category.value,
         count: category.count || category.doc_count || 0,
       }))
-      .filter((category) => category.value && category.label);
+      .filter(
+        (category) => category.value && category.label && category.count > 0,
+      );
   }, [facets?.category, facets?.categories]);
+  const categoryOptions = facetCategories;
 
   useEffect(() => {
-    if (facetCategories.length > 0) {
-      setSeenCategories(prev => {
-        const next = new Map(prev);
-        facetCategories.forEach(c => {
-          if (!next.has(c.value)) next.set(c.value, c.label);
-        });
-        return next;
-      });
+    if (!hits.length) return;
+    const validRatings = new Set(ratingOptions.map((option) => option.value));
+    const nextRatings = selectedRatings.filter((rating) =>
+      validRatings.has(String(rating)),
+    );
+    const shouldRemoveInStock = inStock && availabilityCounts.inStock <= 0;
+    const shouldRemoveOutOfStock =
+      outOfStock && availabilityCounts.outOfStock <= 0;
+
+    if (
+      nextRatings.length === selectedRatings.length &&
+      !shouldRemoveInStock &&
+      !shouldRemoveOutOfStock
+    ) {
+      return;
     }
-  }, [facetCategories]);
 
-  const categoryCounts = useMemo(() => {
-    const counts = {};
-    facetCategories.forEach(opt => counts[opt.value] = opt.count);
-    return counts;
-  }, [facetCategories]);
-
-  const categoryOptions = Array.from(seenCategories.entries()).map(([value, label]) => ({
-    value,
-    label,
-    count: categoryCounts[value] || 0,
-  }));
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        const serializedRatings = serializeMultiValue(nextRatings);
+        if (serializedRatings) next.set("minRating", serializedRatings);
+        else next.delete("minRating");
+        if (shouldRemoveInStock) next.delete("inStock");
+        if (shouldRemoveOutOfStock) next.delete("outOfStock");
+        next.delete("page");
+        return next;
+      },
+      { replace: true },
+    );
+  }, [
+    availabilityCounts.inStock,
+    availabilityCounts.outOfStock,
+    hits.length,
+    inStock,
+    outOfStock,
+    ratingOptions,
+    selectedRatings,
+    setSearchParams,
+  ]);
 
   const filterSections = [
     facetCategories.length > 0 && {
@@ -505,12 +558,14 @@ export default function SearchPage() {
           options={categoryOptions}
           selected={parseMultiValue(searchParams.get("categoryId"))}
           multiple
-          onChange={(values) => updateParam("categoryId", serializeMultiValue(values))}
+          onChange={(values) =>
+            updateParam("categoryId", serializeMultiValue(values))
+          }
           emptyText="No categories"
         />
       ),
     },
-    {
+    hits.length > 0 && {
       key: "price",
       title: "Price Range",
       content: (
@@ -521,14 +576,15 @@ export default function SearchPage() {
         />
       ),
     },
-    {
+    ratingOptions.length > 0 && {
       key: "rating",
       title: "Min. Rating",
       content: (
-        <RatingFilter
+        <OptionFilter
+          name="minRating"
+          options={ratingOptions}
           selected={selectedRatings}
           multiple
-          counts={ratingCounts}
           onChange={(values) =>
             updateParam("minRating", serializeMultiValue(values))
           }
@@ -567,25 +623,14 @@ export default function SearchPage() {
       ),
     },
     */
-    {
+    availabilityOptions.length > 0 && {
       key: "availability",
       title: "Availability",
       defaultOpen: false,
       content: (
         <CheckboxListFilter
           name="availability"
-          options={[
-            {
-              value: "inStock",
-              label: "In Stock",
-              count: availabilityCounts.inStock,
-            },
-            {
-              value: "outOfStock",
-              label: "Out of Stock",
-              count: availabilityCounts.outOfStock,
-            },
-          ]}
+          options={availabilityOptions}
           selected={["inStock", "outOfStock"].filter(
             (value) => searchParams.get(value) === "true",
           )}
@@ -612,70 +657,6 @@ export default function SearchPage() {
       />
 
       <div className="w-container py-6 sm:py-8">
-        <form
-          onSubmit={handleSearch}
-          className="mb-6 rounded-[14px]  p-3 sm:p-4"
-        >
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <div className="group relative flex-1">
-              <Search
-                size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted transition-all duration-300 ease-in-out group-focus-within:text-gold"
-              />
-              <input
-                type="text"
-                value={queryInput}
-                onChange={(e) => {
-                  setQueryInput(e.target.value);
-                  if (!e.target.value.trim()) dispatch(clearSuggestions());
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleSearch(e);
-                  }
-                }}
-                placeholder="Search products, brands, categories..."
-                className="
-    h-10 sm:h-11 lg:h-12
-    w-full
-    rounded-[10px]
-    border
-    border-border-strong
-    bg-white
-    pl-10 pr-10 sm:pl-11 sm:pr-11
-    text-xs sm:text-sm
-    text-ink
-    placeholder:text-muted
-    outline-none
-    ring-0
-    focus:outline-none
-    focus:ring-0
-    focus:border-gold
-    focus:shadow-[0_0_0_3px_rgba(191,155,83,0.15)]
-    hover:border-gold
-    transition-all
-    duration-300
-    ease-in-out
-  "
-              />
-
-              {queryInput ? (
-                <button
-                  type="button"
-                  onClick={handleClearSearch}
-                  className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-muted transition-all duration-300 ease-in-out hover:bg-cream hover:text-ink"
-                  aria-label="Clear search"
-                >
-                  <X size={15} />
-                </button>
-              ) : null}
-            </div>
-
-
-          </div>
-        </form>
-
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             {(q || categoryValue) && (

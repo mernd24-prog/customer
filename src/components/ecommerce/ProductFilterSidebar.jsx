@@ -66,7 +66,7 @@ export function FilterSection({ title, children, defaultOpen = true }) {
   };
 
   return (
-    <div className="border-b border-[#EEDFB9] py-6 last:border-b-0 sm:py-7">
+    <div className="border-b  border-[#EEDFB9] py-6 last:border-b-0 sm:py-7 ">
       {searchOpen ? (
         <div className="flex h-9 w-full items-center gap-2 rounded-full bg-[#F4F4F6] px-3">
           <Search size={16} className="shrink-0 text-[#6F7480]" />
@@ -138,30 +138,30 @@ const DEFAULT_MIN_PRICE = MIN_LIMIT;
 const DEFAULT_MAX_PRICE = 150000;
 const PRICE_STEP = 1000;
 
-export function PriceRangeFilter({ min, max, onChange }) {
+export function PriceRangeFilter({ min, max, minLimit = 0, maxLimit = 150000, onChange }) {
   const applyTimerRef = useRef(null);
   const activeThumbRef = useRef(null);
   const rangeValuesRef = useRef({
-    min: Number(min || DEFAULT_MIN_PRICE),
-    max: Number(max || DEFAULT_MAX_PRICE),
+    min: Number(min || minLimit),
+    max: Number(max || maxLimit),
   });
-  const [localMin, setLocalMin] = useState(min || DEFAULT_MIN_PRICE);
-  const [localMax, setLocalMax] = useState(max || DEFAULT_MAX_PRICE);
+  const [localMin, setLocalMin] = useState(min || minLimit);
+  const [localMax, setLocalMax] = useState(max || maxLimit);
 
   useEffect(() => {
-    const nextMin = min || DEFAULT_MIN_PRICE;
+    const nextMin = min || minLimit;
     rangeValuesRef.current.min = Number(nextMin);
     setLocalMin(nextMin);
-  }, [min]);
+  }, [min, minLimit]);
 
   useEffect(() => {
-    const nextMax = max || DEFAULT_MAX_PRICE;
+    const nextMax = max || maxLimit;
     rangeValuesRef.current.max = Number(nextMax);
     setLocalMax(nextMax);
-  }, [max]);
+  }, [max, maxLimit]);
 
-  const minPercent = ((localMin - MIN_LIMIT) / (MAX_LIMIT - MIN_LIMIT)) * 100;
-  const maxPercent = ((localMax - MIN_LIMIT) / (MAX_LIMIT - MIN_LIMIT)) * 100;
+  const minPercent = ((localMin - minLimit) / Math.max(maxLimit - minLimit, 1)) * 100;
+  const maxPercent = ((localMax - minLimit) / Math.max(maxLimit - minLimit, 1)) * 100;
 
   useEffect(
     () => () => {
@@ -174,8 +174,8 @@ export function PriceRangeFilter({ min, max, onChange }) {
     if (applyTimerRef.current) clearTimeout(applyTimerRef.current);
     applyTimerRef.current = null;
     onChange?.({
-      minPrice: nextMin > MIN_LIMIT ? nextMin : undefined,
-      maxPrice: nextMax < MAX_LIMIT ? nextMax : undefined,
+      minPrice: nextMin > minLimit ? nextMin : undefined,
+      maxPrice: nextMax < maxLimit ? nextMax : undefined,
     });
   };
 
@@ -186,15 +186,17 @@ export function PriceRangeFilter({ min, max, onChange }) {
     }, 400);
   };
 
+  const PRICE_STEP = Math.max(1, Math.floor((maxLimit - minLimit) / 100));
+
   const handleMinChange = (event) => {
-    const value = Math.min(Number(event.target.value), localMax - 1000);
+    const value = Math.min(Number(event.target.value), localMax - PRICE_STEP);
     rangeValuesRef.current.min = value;
     setLocalMin(value);
     scheduleApply(value, localMax);
   };
 
   const handleMaxChange = (event) => {
-    const value = Math.max(Number(event.target.value), localMin + 1000);
+    const value = Math.max(Number(event.target.value), localMin + PRICE_STEP);
     rangeValuesRef.current.max = value;
     setLocalMax(value);
     scheduleApply(localMin, value);
@@ -209,7 +211,7 @@ export function PriceRangeFilter({ min, max, onChange }) {
       usableWidth,
     );
     const rawValue =
-      MIN_LIMIT + (position / usableWidth) * (MAX_LIMIT - MIN_LIMIT);
+      minLimit + (position / usableWidth) * (maxLimit - minLimit);
     return Math.round(rawValue / PRICE_STEP) * PRICE_STEP;
   };
 
@@ -219,7 +221,7 @@ export function PriceRangeFilter({ min, max, onChange }) {
 
     if (thumb === "min") {
       const nextMin = Math.max(
-        MIN_LIMIT,
+        minLimit,
         Math.min(value, currentMax - PRICE_STEP),
       );
       rangeValuesRef.current.min = nextMin;
@@ -229,7 +231,7 @@ export function PriceRangeFilter({ min, max, onChange }) {
     }
 
     const nextMax = Math.min(
-      MAX_LIMIT,
+      maxLimit,
       Math.max(value, currentMin + PRICE_STEP),
     );
     rangeValuesRef.current.max = nextMax;
@@ -274,11 +276,11 @@ export function PriceRangeFilter({ min, max, onChange }) {
   const clear = () => {
     if (applyTimerRef.current) clearTimeout(applyTimerRef.current);
     applyTimerRef.current = null;
-    setLocalMin(DEFAULT_MIN_PRICE);
-    setLocalMax(DEFAULT_MAX_PRICE);
+    setLocalMin(minLimit);
+    setLocalMax(maxLimit);
     rangeValuesRef.current = {
-      min: DEFAULT_MIN_PRICE,
-      max: DEFAULT_MAX_PRICE,
+      min: minLimit,
+      max: maxLimit,
     };
 
     onChange?.({
@@ -324,8 +326,8 @@ export function PriceRangeFilter({ min, max, onChange }) {
           {/* Hidden Inputs */}
           <input
             type="range"
-            min={MIN_LIMIT}
-            max={MAX_LIMIT}
+            min={minLimit}
+            max={maxLimit}
             step={PRICE_STEP}
             value={localMin}
             onChange={handleMinChange}
@@ -335,8 +337,8 @@ export function PriceRangeFilter({ min, max, onChange }) {
 
           <input
             type="range"
-            min={MIN_LIMIT}
-            max={MAX_LIMIT}
+            min={minLimit}
+            max={maxLimit}
             step={PRICE_STEP}
             value={localMax}
             onChange={handleMaxChange}
@@ -365,7 +367,7 @@ export function PriceRangeFilter({ min, max, onChange }) {
         <div className="mt-5 text-center">
           <span className="text-lg font-bold text-[#111111]">
             ₹{localMin.toLocaleString("en-IN")} – ₹
-            {localMax >= MAX_LIMIT
+            {localMax >= maxLimit
               ? `${localMax.toLocaleString("en-IN")}+`
               : localMax.toLocaleString("en-IN")}
           </span>
@@ -487,8 +489,6 @@ export function OptionFilter({
           const count = option.count ?? option.doc_count;
 
           const checked = selectedSet.has(String(value));
-
-
 
           return (
             <label
@@ -688,10 +688,11 @@ export default function ProductFilterSidebar({
   sections = [],
   className = "",
   onClearAll,
+  topContent,
 }) {
   return (
     <aside
-      className={`w-full  overflow-x-hidden lg:sticky lg:top-24 lg:w-[320px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
+      className={`w-full [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]  overflow-x-hidden lg:sticky lg:top-24 lg:w-[320px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
     >
       <div className="w-full overflow-hidden rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] shadow-none">
         <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-5 min-[375px]:px-5 sm:px-6 sm:py-6">
@@ -706,6 +707,8 @@ export default function ProductFilterSidebar({
             Clear all
           </button>
         </div>
+
+        {topContent}
 
         <div className="px-4  min-[375px]:px-5 sm:px-6">
           {sections.map((section) => (

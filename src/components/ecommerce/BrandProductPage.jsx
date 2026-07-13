@@ -43,15 +43,15 @@ export default function BrandProductPage({
   return (
     <>
       <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
-        <div className="grid gap-0 h-[320px] sm:h-[380px] md:h-[371px] xl:h-[500px] lg:grid-cols-[52%_48%]">
+        <div className="grid  gap-0 h-[320px] sm:h-[380px] md:h-[371px] xl:h-[500px] lg:grid-cols-[52%_48%]">
           {/* Mobile & Tablet Banner */}
           <div className="relative lg:hidden h-full">
-            <img
+            {/* <img
               src={brandImage || bannerImage}
               alt={brandName}
               className="absolute inset-0 h-full w-full object-cover"
               onError={(event) => applyImageFallback(event, brandName, "brand")}
-            />
+            /> */}
             <div className="absolute inset-0 bg-black/30" />
             <div className="absolute inset-0 flex items-center">
               <div className="customer-container">
@@ -67,7 +67,8 @@ export default function BrandProductPage({
                     {brandName}
                   </h1>
                   <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
-                    {brandDescription || `Shop ${brandName} products at Sam Global`}
+                    {brandDescription ||
+                      `Shop ${brandName} products at Sam Global`}
                   </p>
                   <p className="mt-3 text-sm text-white">
                     {Number(total || 0).toLocaleString()} products
@@ -97,17 +98,6 @@ export default function BrandProductPage({
                 {Number(total || 0).toLocaleString()} products
               </p>
             </div>
-          </div>
-
-          {/* Desktop Image */}
-          <div className="relative hidden lg:block overflow-hidden -ml-px">
-            <img
-              src={brandImage || bannerImage}
-              alt={brandName}
-              className="h-full w-full object-cover object-right"
-              onError={(event) => applyImageFallback(event, brandName, "brand")}
-            />
-            <div className="absolute inset-y-0 -left-px right-0 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/20 to-transparent" />
           </div>
         </div>
       </div>

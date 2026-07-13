@@ -29,7 +29,11 @@ import {
 } from "../../features/product/relatedProductsSlice";
 import { trackAnalyticsEvent } from "../../features/analytics/analyticsSlice";
 import { useProductActions } from "../../hooks/useProductActions";
-import { addRecentlyViewed } from "../../utils/recentlyViewed";
+import {
+  addRecentlyViewed,
+  getRecentlyViewed,
+} from "../../utils/recentlyViewed";
+import { tokenStorage } from "../../api/tokenStorage";
 import {
   applyImageFallback,
   getProductId,
@@ -52,7 +56,7 @@ import StarRating from "./components/starRating";
 import ShareProductPopover from "./components/socialMediaShare";
 import ProductPriceBlock from "./components/oldAndNewPrice";
 import ProductStockStatus from "./components/stockStatus";
-import ShowMoreText from "../../utils/showMore";
+import ShowMoreText, { getShowMoreText } from "../../utils/showMore";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
@@ -794,9 +798,10 @@ function ProductInfoSection({
       {activeInfoTab === "details" && detailRows.length > 0 && (
         <InfoCard title="Product Details" roundedClass="rounded-xl">
           <DetailRows
-            rows={detailRows
-              .slice(0, 8)
-              .map(([key, value]) => [formatPageTitle(key), value])}
+            rows={detailRows.map(([key, value]) => [
+              formatPageTitle(key),
+              value,
+            ])}
             rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]"
             labelClassName="font-medium text-[#2E2E2E]"
             valueClassName="text-left font-bold text-navy sm:text-right"
@@ -829,33 +834,6 @@ function ProductInfoSection({
             {formatPageTitle(product.description) ||
               "No description available."}
           </p>
-        </InfoCard>
-      )}
-
-      {activeInfoTab === "specification" && (
-        <InfoCard title="Specification">
-          <dl className="divide-y divide-border">
-            {Object.entries(attributes).length > 0 ? (
-              Object.entries(attributes).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="grid grid-cols-1  gap-1 px-4 py-3 text-sm md:text-lg sm:grid-cols-[220px_minmax(0,1fr)]"
-                >
-                  <dt className="font-medium text-ink">
-                    {" "}
-                    {formatPageTitle(key)}
-                  </dt>
-                  <dd className="text-left font-bold text-navy md:text-right">
-                    {Array.isArray(value) ? value.join(", ") : String(value)}
-                  </dd>
-                </div>
-              ))
-            ) : (
-              <div className="px-4 py-4 text-sm lg:text-lg  text-black/90 whitespace-pre-line">
-                No specifications available.
-              </div>
-            )}
-          </dl>
         </InfoCard>
       )}
 
@@ -943,6 +921,11 @@ export default function ProductDetailPage() {
   const relatedState = useSelector((s) => s.relatedProducts);
   const crossSellState = useSelector((s) => s.relatedProducts);
   const recommendationList = useSelector((s) => s.recommendation.list);
+  const user = useSelector((s) => s.auth.current);
+  const userId = user?.id || user?._id || user?.userId || user?.email;
+  const isLoggedIn = Boolean(
+    userId && (tokenStorage.getAccessToken() || tokenStorage.getRefreshToken()),
+  );
 
   const warranty = warrantyState.current;
 
@@ -976,6 +959,7 @@ export default function ProductDetailPage() {
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const [shareOpen, setShareOpen] = useState(false);
   const [activeInfoTab, setActiveInfoTab] = useState("details");
+  const [recentlyViewedList, setRecentlyViewedList] = useState([]);
 
   const sideEffectsRanFor = useRef(null);
   const dynamicPriceRequestKey = useRef(null);
@@ -991,8 +975,6 @@ export default function ProductDetailPage() {
 
     if (sideEffectsRanFor.current === productId) return;
     sideEffectsRanFor.current = productId;
-
-    addRecentlyViewed(product);
 
     dispatch(fetchProductWarranty({ productId })).catch(() => {});
     dispatch(fetchRelatedProducts({ productId })).catch(() => {});
@@ -1019,6 +1001,20 @@ export default function ProductDetailPage() {
       }),
     ).catch(() => {});
   }, [dispatch, product, productId]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !product) {
+      setRecentlyViewedList([]);
+      return;
+    }
+
+    addRecentlyViewed(product);
+    setRecentlyViewedList(
+      getRecentlyViewed().filter(
+        (p) => String(getProductId(p)) !== String(productId),
+      ),
+    );
+  }, [isLoggedIn, product, productId]);
 
   useEffect(() => {
     if (!loadedProductId || String(loadedProductId) !== String(productId)) {
@@ -1256,16 +1252,35 @@ export default function ProductDetailPage() {
         .replace(/\b\w/g, (c) => c.toUpperCase())
     : null;
 
-  const detailRows = Object.entries({
+  const rawDetails = {
     Brand: product?.brand,
     Category: categoryLabel,
     ...attributes,
-  }).filter(([, value]) => value != null && value !== "");
+  };
+
+  const detailRows = Object.values(
+    Object.entries(rawDetails).reduce((acc, [key, value]) => {
+      if (value != null && value !== "") {
+        const normalizedKey = key.toLowerCase().trim();
+        if (!acc[normalizedKey]) {
+          acc[normalizedKey] = [key, value];
+        }
+      }
+      return acc;
+    }, {}),
+  );
+
+  const productTitle = getProductTitle(product);
+
+  const { preview: productTitlePreview, isTruncated: isProductTitleTruncated } =
+    getShowMoreText(productTitle, {
+      mode: "characters",
+      limit: 35,
+    });
 
   const infoTabs = [
     { key: "details", label: "Product Details" },
     { key: "description", label: "Description" },
-    { key: "specification", label: "Specification" },
     { key: "seller", label: "Seller Info" },
   ];
 
@@ -1279,10 +1294,10 @@ export default function ProductDetailPage() {
       />
 
       <div className=" ">
-        <nav className=" flex  mt-8 lg:mt-12 flex-wrap items-center gap-1 text-sm lg:text-lg text-[#2E2E2E]">
+        <nav className="mt-8 flex flex-wrap items-center gap-1 text-sm text-[#2E2E2E] lg:mt-12 lg:text-lg">
           <Link
             to="/"
-            className="hover:text-ink font-medium text-[#2E2E2E] transition-all duration-300 ease-in-out"
+            className="font-medium text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-ink"
           >
             Home
           </Link>
@@ -1293,10 +1308,11 @@ export default function ProductDetailPage() {
             <>
               <Link
                 to={CUSTOMER_ROUTES.category(product.parentCategory)}
-                className="capitalize hover:text-ink transition-all duration-300 ease-in-out"
+                className="capitalize transition-all duration-300 ease-in-out hover:text-ink"
               >
                 {(product.parentCategory || "").replace(/-/g, " ")}
               </Link>
+
               <span>{">"}</span>
             </>
           )}
@@ -1305,16 +1321,19 @@ export default function ProductDetailPage() {
             <>
               <Link
                 to={CUSTOMER_ROUTES.category(product.category)}
-                className="capitalize font-medium text-[#2E2E2E] hover:text-ink transition-all duration-300 ease-in-out"
+                className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-ink"
               >
                 {(product.category || "").replace(/-/g, " ")}
               </Link>
+
               <span>{">"}</span>
             </>
           )}
 
-          <span className="line-clamp-1 font-medium text-gold">
-            {getProductTitle(product) || "Product"}
+          <span title={productTitle} className="font-medium text-gold">
+            {isProductTitleTruncated
+              ? `${productTitlePreview}...`
+              : productTitle}
           </span>
         </nav>
 
@@ -1348,9 +1367,14 @@ export default function ProductDetailPage() {
 
                 <div className="flex min-w-0 flex-col  gap-3">
                   <div className="flex min-w-0 items-start justify-between gap-3 ">
-                    <div className="min-w-0">
-                      <h1 className="break-words text-h3  font-semibold  text-ink ">
-                        {getProductTitle(product)}
+                    <div className="min-w-0 w-full">
+                      <h1 className="break-words text-h3 font-semibold text-ink leading-snug">
+                        <ShowMoreText
+                          text={getProductTitle(product)}
+                          mode="lines"
+                          limit={2}
+                          buttonClassName="ml-1 text-sm font-semibold text-black/50 hover:underline"
+                        />
                       </h1>
                     </div>
                   </div>
@@ -1487,7 +1511,7 @@ export default function ProductDetailPage() {
 
               <ProductReviewsSection productId={productId} product={product} />
 
-              <ProductRecommendationSection
+              {/* <ProductRecommendationSection
                 title="Recommended For You"
                 linkText="View all →"
                 products={recommendedProducts}
@@ -1495,7 +1519,7 @@ export default function ProductDetailPage() {
                 toggleWishlist={toggleWishlist}
                 isWishlisted={isWishlisted}
                 className="mt-12"
-              />
+              /> */}
 
               <ProductRecommendationSection
                 title="You May Also Like"
@@ -1506,7 +1530,6 @@ export default function ProductDetailPage() {
                 isWishlisted={isWishlisted}
                 className="mt-12"
               />
-
               <ProductRecommendationSection
                 title="Complete the Look"
                 linkText="Explore more →"
@@ -1516,6 +1539,18 @@ export default function ProductDetailPage() {
                 isWishlisted={isWishlisted}
                 className="mt-10"
               />
+
+              {isLoggedIn && (
+                <ProductRecommendationSection
+                  title="Recently Viewed"
+                  linkText="View history →"
+                  products={recentlyViewedList}
+                  addToCart={addToCart}
+                  toggleWishlist={toggleWishlist}
+                  isWishlisted={isWishlisted}
+                  className="mt-10"
+                />
+              )}
             </>
           )}
         </ApiState>

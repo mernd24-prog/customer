@@ -1,0 +1,437 @@
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "6a50a5c6ba1e00723b5c77c5",
+      "sellerId": "6a4f77185625cea43c5cd40b",
+      "organizationId": "4ee916b4-d243-427b-9453-87b8d84619b9",
+      "storeId": null,
+      "warehouseId": null,
+      "organizationSnapshot": {
+        "organizationId": "4ee916b4-d243-427b-9453-87b8d84619b9",
+        "sellerId": "6a4f77185625cea43c5cd40b",
+        "legalBusinessName": "John Doe",
+        "storeDisplayName": "John Doe",
+        "businessType": "individual",
+        "registrationNumber": null,
+        "supportEmail": "johndoe@gmail.com",
+        "supportPhone": "6263329472",
+        "gstin": "22AAAAA0000A1Z0",
+        "pan": "ABCDE1234G",
+        "billingAddress": {
+          "city": "Bhopal",
+          "line1": "sdfgsdf",
+          "line2": "",
+          "state": "Madhya Pradesh",
+          "country": "India",
+          "postalCode": "462013"
+        },
+        "pickupAddress": {
+          "city": "Sagar",
+          "line1": "sdfgsdf",
+          "line2": "",
+          "state": "Madhya Pradesh",
+          "country": "India",
+          "postalCode": "470008"
+        },
+        "taxSettings": {
+          "pan": "ABCDE1234G",
+          "gstin": "22AAAAA0000A1Z0",
+          "state": "Madhya Pradesh"
+        },
+        "invoiceSettings": {
+          "state": "Madhya Pradesh",
+          "invoicePrefix": "INV"
+        },
+        "payoutSettings": {
+          "payoutSchedule": "weekly"
+        },
+        "approvalStatus": "approved",
+        "kycStatus": "verified",
+        "bankVerificationStatus": "verified",
+        "goLiveStatus": "live"
+      },
+      "title": "Realme Gt 7t   | Mediatek D8400 Max | Strongest Battery Combo 7000mah + 120w | Ai 4k 60fps Travel Camera | 360° Cooling Icesense Design With Graphene | 6000 Nits Display",
+      "slug": "realme-gt-7t-or-mediatek-d8400-max-or-strongest-battery-combo-7000mah-120w-or-ai-4k-60fps-travel-camera-or-360-cooling-icesense-design-with-graphene-or-6000-nits-display-1783670214777",
+      "productType": "variable",
+      "visibility": "public",
+      "categoryId": "electronics-smartphones-android-phones",
+      "category": "electronics-smartphones-android-phones",
+      "brand": "Realme",
+      "productFamilyCode": "FAMILY-SMARTPHONE-ANDROID",
+      "tags": [],
+      "price": 32875,
+      "mrp": 39999,
+      "salePrice": 30000,
+      "currency": "INR",
+      "gstRate": 18,
+      "hsnCode": "8504",
+      "sku": "SKU-1783670051906-1",
+      "color": "Black",
+      "variantAxes": [
+        "storage",
+        "ram",
+        "color"
+      ],
+      "hasVariants": true,
+      "variants": [
+        {
+          "sku": "SKU-1783670051906-1",
+          "title": "128GB / 8GB / Black",
+          "price": 32875,
+          "mrp": 39999,
+          "salePrice": 30000,
+          "gstRate": 18,
+          "stock": 20,
+          "reservedStock": 0,
+          "barcode": "",
+          "weightUnit": "kg",
+          "dimensions": {
+            "unit": "cm"
+          },
+          "attributes": {
+            "storage": "128GB",
+            "ram": "8GB",
+            "color": "Black"
+          },
+          "images": [
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670336/ecommerce/uploads/product/image-1-91e24fbe-4125-4dc1-83e2-0b95f9bc9a0a.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670336/ecommerce/uploads/product/image-2-11617b45-afaa-4a60-8773-83483f976254.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670337/ecommerce/uploads/product/image-3-3913741d-050e-464c-8df7-81f481f440e2.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670337/ecommerce/uploads/product/image-4-fc3bdff6-2f4c-4c7a-ae81-fb3a9fdcb2c0.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670337/ecommerce/uploads/product/image-5-7ffcd8bd-1893-4215-9582-1a87775d01ad.jpg"
+          ],
+          "status": "active",
+          "isDefault": true,
+          "sortOrder": 0,
+          "_id": "6a50b6f0ba1e00723b5cdd7b"
+        },
+        {
+          "sku": "SKU-1783670051906-11",
+          "title": "256GB / 12GB / Royal Blue",
+          "price": 32875,
+          "mrp": 39999,
+          "gstRate": 18,
+          "stock": 10,
+          "reservedStock": 0,
+          "barcode": "",
+          "weightUnit": "kg",
+          "dimensions": {
+            "unit": "cm"
+          },
+          "attributes": {
+            "storage": "256GB",
+            "ram": "12GB",
+            "color": "Royal Blue"
+          },
+          "images": [
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670469/ecommerce/uploads/product/image-1-f8502615-324e-40d3-8cdc-16bb2ead4f45.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670470/ecommerce/uploads/product/image-2-9c8c10c2-bae9-49e6-9765-1846116f352e.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670471/ecommerce/uploads/product/image-3-cb606671-32a9-46bd-a82e-9c83535f087d.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670471/ecommerce/uploads/product/image-4-7a3d7017-742a-4e48-ae98-361ed6546064.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670470/ecommerce/uploads/product/image-5-e3c1a439-e90c-4ad4-b0f5-23ff46bfd30f.jpg"
+          ],
+          "status": "active",
+          "isDefault": false,
+          "sortOrder": 10,
+          "_id": "6a50b6f0ba1e00723b5cdd7c"
+        },
+        {
+          "sku": "SKU-1783670051906-12",
+          "title": "256GB / 12GB / Yellow",
+          "price": 32875,
+          "mrp": 39999,
+          "gstRate": 18,
+          "stock": 10,
+          "reservedStock": 0,
+          "barcode": "",
+          "weightUnit": "kg",
+          "dimensions": {
+            "unit": "cm"
+          },
+          "attributes": {
+            "storage": "256GB",
+            "ram": "12GB",
+            "color": "Yellow"
+          },
+          "images": [
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670479/ecommerce/uploads/product/image-1-9c64bd45-3ac7-4bf9-9908-1d5efbe36759.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670479/ecommerce/uploads/product/image-2-26391da7-c413-415c-80d9-34cd35270276.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670479/ecommerce/uploads/product/image-3-b0dc0f3c-acfe-4ab7-8081-517b7e0cbe32.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670479/ecommerce/uploads/product/image-4-41b54d74-6922-4e84-8ccc-c3a5bcd39aa7.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670479/ecommerce/uploads/product/image-5-dc9f5bc9-507f-4c8a-abde-c99512e0c44f.jpg"
+          ],
+          "status": "active",
+          "isDefault": false,
+          "sortOrder": 11,
+          "_id": "6a50b6f0ba1e00723b5cdd7d"
+        },
+        {
+          "sku": "SKU-1783670051906-16",
+          "title": "512GB / 12GB / Black",
+          "price": 32875,
+          "mrp": 39999,
+          "gstRate": 18,
+          "stock": 10,
+          "reservedStock": 0,
+          "barcode": "",
+          "weightUnit": "kg",
+          "dimensions": {
+            "unit": "cm"
+          },
+          "attributes": {
+            "storage": "512GB",
+            "ram": "12GB",
+            "color": "Black"
+          },
+          "images": [
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670491/ecommerce/uploads/product/image-1-6a3886d2-6d27-43d5-8586-27070ea8e5aa.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670490/ecommerce/uploads/product/image-2-c14294c1-54fc-4542-8e98-60612291137b.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670491/ecommerce/uploads/product/image-3-48725e7f-5251-41b4-8dff-e4a53d98359f.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670490/ecommerce/uploads/product/image-4-c67f65ac-9a80-4049-9b90-8ddaaa88abbd.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670491/ecommerce/uploads/product/image-5-1d775304-f530-46b4-b76f-a986964f3a8b.jpg"
+          ],
+          "status": "active",
+          "isDefault": false,
+          "sortOrder": 15,
+          "_id": "6a50b6f0ba1e00723b5cdd7e"
+        },
+        {
+          "sku": "SKU-1783670051906-17",
+          "title": "512GB / 12GB / Royal Blue",
+          "price": 32875,
+          "mrp": 39999,
+          "gstRate": 18,
+          "stock": 10,
+          "reservedStock": 0,
+          "barcode": "",
+          "weightUnit": "kg",
+          "dimensions": {
+            "unit": "cm"
+          },
+          "attributes": {
+            "storage": "512GB",
+            "ram": "12GB",
+            "color": "Royal Blue"
+          },
+          "images": [
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670498/ecommerce/uploads/product/image-1-4666e1a0-9f04-4e8e-9249-2666c3ea79f3.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670498/ecommerce/uploads/product/image-2-4fb49c7c-3468-4928-852c-c5e79e7859c2.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670498/ecommerce/uploads/product/image-3-f7006054-4f16-4adf-98f0-f2549f94204e.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670498/ecommerce/uploads/product/image-4-4c1d24e1-9a48-4db5-9228-1d9567811ef9.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670499/ecommerce/uploads/product/image-5-d14cd279-f589-4d66-9f13-8fafa47e20f4.jpg"
+          ],
+          "status": "active",
+          "isDefault": false,
+          "sortOrder": 16,
+          "_id": "6a50b6f0ba1e00723b5cdd7f"
+        },
+        {
+          "sku": "SKU-1783670051906-18",
+          "title": "512GB / 12GB / Yellow",
+          "price": 32875,
+          "mrp": 39999,
+          "gstRate": 18,
+          "stock": 13,
+          "reservedStock": 0,
+          "barcode": "",
+          "weightUnit": "kg",
+          "dimensions": {
+            "unit": "cm"
+          },
+          "attributes": {
+            "storage": "512GB",
+            "ram": "12GB",
+            "color": "Yellow"
+          },
+          "images": [
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670504/ecommerce/uploads/product/image-1-8c2476d4-da74-4153-921e-b6b545e94b61.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670504/ecommerce/uploads/product/image-2-9b704d73-b54a-44c8-8915-15967fb6bab0.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670504/ecommerce/uploads/product/image-3-3e9d3833-cb04-4bb3-a13e-c437412d219e.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670504/ecommerce/uploads/product/image-4-e2c066db-43aa-4f63-ac3e-61a93cb6609f.jpg",
+            "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670504/ecommerce/uploads/product/image-5-e9ef847c-b7b0-41a4-b750-5575d76c67ba.jpg"
+          ],
+          "status": "active",
+          "isDefault": false,
+          "sortOrder": 17,
+          "_id": "6a50b6f0ba1e00723b5cdd80"
+        }
+      ],
+      "images": [
+        "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670336/ecommerce/uploads/product/image-1-91e24fbe-4125-4dc1-83e2-0b95f9bc9a0a.jpg",
+        "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670336/ecommerce/uploads/product/image-2-11617b45-afaa-4a60-8773-83483f976254.jpg",
+        "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670337/ecommerce/uploads/product/image-3-3913741d-050e-464c-8df7-81f481f440e2.jpg",
+        "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670337/ecommerce/uploads/product/image-4-fc3bdff6-2f4c-4c7a-ae81-fb3a9fdcb2c0.jpg",
+        "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670337/ecommerce/uploads/product/image-5-7ffcd8bd-1893-4215-9582-1a87775d01ad.jpg"
+      ],
+      "stock": 20,
+      "reservedStock": 0,
+      "inventorySettings": {
+        "trackInventory": true,
+        "allowBackorder": false,
+        "lowStockThreshold": 5,
+        "manageVariantInventory": true
+      },
+      "shipping": {
+        "freeShipping": false,
+        "additionalCost": 79,
+        "shippingCharge": 79,
+        "processingDays": 0,
+        "codAvailable": true,
+        "estimatedDaysMin": 0,
+        "estimatedDaysMax": 10,
+        "shippingMethod": "same_day"
+      },
+      "rating": 0,
+      "reviewCount": 0,
+      "metadata": {
+        "featured": false,
+        "isDealProduct": true,
+        "codAvailable": true,
+        "dealBadge": "Flash Sale",
+        "dealSource": "admin_direct"
+      },
+      "status": "active",
+      "revisionStatus": "change_pending",
+      "analytics": {
+        "views": 234,
+        "uniqueViews": 0,
+        "impressions": 0,
+        "cartAdds": 0,
+        "wishlistAdds": 0,
+        "purchases": 0,
+        "revenue": 0,
+        "conversionRate": 0,
+        "lastViewedAt": "2026-07-10T12:52:38.899Z"
+      },
+      "createdAt": "2026-07-10T07:56:54.808Z",
+      "updatedAt": "2026-07-10T12:52:38.902Z",
+      "origin": {},
+      "pendingRevisionId": "6a50b729b95eb92abd174e4a",
+      "availableStock": 20,
+      "image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1783670336/ecommerce/uploads/product/image-1-91e24fbe-4125-4dc1-83e2-0b95f9bc9a0a.jpg"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 100,
+    "total": 1,
+    "totalPages": 1
+  },
+  "meta": {
+    "facets": {
+      "total": 1,
+      "categories": [
+        {
+          "value": "electronics-smartphones-android-phones",
+          "label": "Android Phones",
+          "count": 1
+        }
+      ],
+      "brands": [
+        {
+          "value": "Realme",
+          "label": "Realme",
+          "count": 1
+        }
+      ],
+      "ratings": [
+        {
+          "value": "5",
+          "label": "5★ & up",
+          "count": 0
+        },
+        {
+          "value": "4",
+          "label": "4★ & up",
+          "count": 0
+        },
+        {
+          "value": "3",
+          "label": "3★ & up",
+          "count": 0
+        },
+        {
+          "value": "2",
+          "label": "2★ & up",
+          "count": 0
+        },
+        {
+          "value": "1",
+          "label": "1★ & up",
+          "count": 0
+        }
+      ],
+      "availability": {
+        "inStock": 1,
+        "outOfStock": 0
+      },
+      "price": {
+        "min": 30000,
+        "max": 30000
+      }
+    },
+    "filters": {
+      "total": 1,
+      "categories": [
+        {
+          "value": "electronics-smartphones-android-phones",
+          "label": "Android Phones",
+          "count": 1
+        }
+      ],
+      "brands": [
+        {
+          "value": "Realme",
+          "label": "Realme",
+          "count": 1
+        }
+      ],
+      "ratings": [
+        {
+          "value": "5",
+          "label": "5★ & up",
+          "count": 0
+        },
+        {
+          "value": "4",
+          "label": "4★ & up",
+          "count": 0
+        },
+        {
+          "value": "3",
+          "label": "3★ & up",
+          "count": 0
+        },
+        {
+          "value": "2",
+          "label": "2★ & up",
+          "count": 0
+        },
+        {
+          "value": "1",
+          "label": "1★ & up",
+          "count": 0
+        }
+      ],
+      "availability": {
+        "inStock": 1,
+        "outOfStock": 0
+      },
+      "price": {
+        "min": 30000,
+        "max": 30000
+      }
+    },
+    "page": 1,
+    "limit": 100,
+    "total": 1,
+    "totalPages": 1,
+    "pagination": {
+      "page": 1,
+      "limit": 100,
+      "total": 1,
+      "totalPages": 1
+    }
+  }
+}
