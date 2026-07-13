@@ -23,6 +23,7 @@ import {
   buildRatingCountMap,
   getProductBrandName,
   isProductInStock,
+  getProductPrice,
 } from "../../utils/ecommerce";
 
 const SORT_OPTIONS = [
@@ -211,6 +212,59 @@ export default function ProductsPage() {
     facetBrandOptions.forEach((opt) => (counts[opt.value] = opt.count));
     return counts;
   }, [facetBrandOptions]);
+
+  const currentContextKey = useMemo(() => {
+    const p = new URLSearchParams(searchParams);
+    p.delete("minPrice");
+    p.delete("maxPrice");
+    p.delete("page");
+    return p.toString();
+  }, [searchParams]);
+
+  const [absolutePriceLimits, setAbsolutePriceLimits] = useState({ min: null, max: null, key: '' });
+
+  useEffect(() => {
+    let backendMin = productFacets?.price?.min;
+    let backendMax = productFacets?.price?.max;
+    
+    let currentMin = backendMin;
+    let currentMax = backendMax;
+
+    if (currentMin == null || currentMax == null || currentMin >= currentMax) {
+      if (products.length > 0) {
+        const prices = products
+          .map((p) => Number(getProductPrice(p) || 0))
+          .filter((price) => price > 0);
+          
+        if (prices.length > 0) {
+          currentMin = Math.min(...prices);
+          currentMax = Math.max(...prices);
+        }
+      }
+    }
+
+    if (currentMin != null && currentMax != null) {
+      setAbsolutePriceLimits(prev => {
+        if (prev.key !== currentContextKey) {
+            return { min: currentMin, max: currentMax, key: currentContextKey };
+        }
+        const newMin = prev.min == null ? currentMin : Math.min(prev.min, currentMin);
+        const newMax = prev.max == null ? currentMax : Math.max(prev.max, currentMax);
+        
+        if (newMin !== prev.min || newMax !== prev.max) {
+          return { min: newMin, max: newMax, key: currentContextKey };
+        }
+        return prev;
+      });
+    }
+  }, [productFacets?.price, products, currentContextKey]);
+
+  const priceLimits = useMemo(() => {
+    return {
+      min: absolutePriceLimits.min ?? 0,
+      max: absolutePriceLimits.max ?? 150000,
+    };
+  }, [absolutePriceLimits]);
 
   useEffect(() => {
     if (facetCategoryOptions.length > 0) {
@@ -569,8 +623,8 @@ export default function ProductsPage() {
         <PriceRangeFilter
           min={searchParams.get("minPrice")}
           max={searchParams.get("maxPrice")}
-          minLimit={productFacets?.price?.min}
-          maxLimit={productFacets?.price?.max}
+          minLimit={priceLimits.min}
+          maxLimit={priceLimits.max}
           onChange={handlePriceChange}
         />
       ),

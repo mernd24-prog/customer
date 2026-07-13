@@ -725,7 +725,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                   aria-controls="category-mega-menu"
                   className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px]  flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
-                  <div className={`mx-auto flex h-[50px]  w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full p-1.5 sm:p-2 shadow-sm transition-all duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform ${isActive ? "bg-[#CE9F2D] shadow-md ring-2 ring-[#03014D] ring-offset-2" : "bg-[#FBCC39]"}`}>
+                  <div className="mx-auto flex h-[50px]  w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out  group-hover:-translate-y-0.5  will-change-transform ">
                     {item?.iconUrl ? (
                       <ImageSkeleton
                         src={item?.iconUrl}
@@ -739,7 +739,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                   </div>
 
                   <span
-                    className={`mt-1 lg:mt-2 line-clamp-1 w-full max-w-[80px] sm:max-w-[100px] lg:max-w-[140px] text-center text-small transition-colors duration-200 ${isActive ? "text-[#03014D] font-bold" : "text-[#2E2E2E] font-medium"}`}
+                    className="mt-1  lg:mt-2 line-clamp-1 w-full max-w-[80px] sm:max-w-[100px] lg:max-w-[140px] text-center   text-small  text-[#2E2E2E]"
                   >
                     {textOr(item?.name, "Category")}
                   </span>
