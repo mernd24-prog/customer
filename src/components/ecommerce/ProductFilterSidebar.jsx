@@ -138,30 +138,40 @@ const DEFAULT_MIN_PRICE = MIN_LIMIT;
 const DEFAULT_MAX_PRICE = 150000;
 const PRICE_STEP = 1000;
 
-export function PriceRangeFilter({ min, max, minLimit = 0, maxLimit = 150000, onChange }) {
+export function PriceRangeFilter({
+  min,
+  max,
+  minLimit = 0,
+  maxLimit = 150000,
+  onChange,
+}) {
   const applyTimerRef = useRef(null);
   const activeThumbRef = useRef(null);
+  const safeMin = min ?? minLimit ?? 0;
+  const safeMax = max ?? maxLimit ?? 150000;
   const rangeValuesRef = useRef({
-    min: Number(min || minLimit),
-    max: Number(max || maxLimit),
+    min: Number(safeMin),
+    max: Number(safeMax),
   });
-  const [localMin, setLocalMin] = useState(min || minLimit);
-  const [localMax, setLocalMax] = useState(max || maxLimit);
+  const [localMin, setLocalMin] = useState(Number(safeMin));
+  const [localMax, setLocalMax] = useState(Number(safeMax));
 
   useEffect(() => {
-    const nextMin = min || minLimit;
+    const nextMin = min ?? minLimit ?? 0;
     rangeValuesRef.current.min = Number(nextMin);
-    setLocalMin(nextMin);
+    setLocalMin(Number(nextMin));
   }, [min, minLimit]);
 
   useEffect(() => {
-    const nextMax = max || maxLimit;
+    const nextMax = max ?? maxLimit ?? 150000;
     rangeValuesRef.current.max = Number(nextMax);
-    setLocalMax(nextMax);
+    setLocalMax(Number(nextMax));
   }, [max, maxLimit]);
 
-  const minPercent = ((localMin - minLimit) / Math.max(maxLimit - minLimit, 1)) * 100;
-  const maxPercent = ((localMax - minLimit) / Math.max(maxLimit - minLimit, 1)) * 100;
+  const minPercent =
+    ((localMin - minLimit) / Math.max(maxLimit - minLimit, 1)) * 100;
+  const maxPercent =
+    ((localMax - minLimit) / Math.max(maxLimit - minLimit, 1)) * 100;
 
   useEffect(
     () => () => {
