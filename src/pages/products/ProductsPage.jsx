@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams, useLocation } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { buildCategoryTree } from "../../layouts/header/categoryHelpers";
 import { useDispatch, useSelector } from "react-redux";
-import { Grid2X2, List } from "lucide-react";
 import Seo from "../../components/common/Seo";
 
 import {
@@ -20,9 +19,7 @@ import {
   fetchBrands,
 } from "../../features/catalog/catalogSlice";
 import {
-  buildFacetCountMap,
   buildRatingCountMap,
-  getProductBrandName,
   isProductInStock,
   getProductPrice,
 } from "../../utils/ecommerce";
@@ -100,7 +97,13 @@ const normalizeFacetOption = (option = {}) => {
     ? {
         value: String(value),
         label: String(label),
-        count: option.count ?? option.doc_count ?? option.total,
+        count:
+          option.count ??
+          option.doc_count ??
+          option.total ??
+          option.productCount ??
+          option.productsCount ??
+          option.totalProducts,
       }
     : null;
 };
@@ -139,15 +142,17 @@ function getMatchingCategoryKeys(targetCats, categoryTree) {
 export default function ProductsPage() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const location = useLocation();
-  const [viewMode, setViewMode] = useState("grid");
+  const [viewMode] = useState("grid");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [brandList, setBrandList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [items, setItems] = useState([]);
   const [productFacets, setProductFacets] = useState({});
   const [seenCategories, setSeenCategories] = useState(new Map());
+  const [seenCategoryCounts, setSeenCategoryCounts] = useState(new Map());
   const [seenBrands, setSeenBrands] = useState(new Map());
+  const [seenBrandCounts, setSeenBrandCounts] = useState(new Map());
+  const [seenRatingCounts, setSeenRatingCounts] = useState({});
   const [pageInfo, setPageInfo] = useState({
     page: 1,
     totalPages: 1,
@@ -237,11 +242,6 @@ export default function ProductsPage() {
           ),
     [productFacets, products],
   );
-  const brandCounts = useMemo(
-    () =>
-      buildFacetCountMap(products, (product) => getProductBrandName(product)),
-    [products],
-  );
   const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
   const facetCategoryOptions = useMemo(
     () =>
@@ -266,9 +266,20 @@ export default function ProductsPage() {
       return counts;
     }, {});
   }, [productFacets]);
-  const effectiveRatingCounts = Object.keys(facetRatingCounts).length
+  const currentRatingCounts = Object.keys(facetRatingCounts).length
     ? facetRatingCounts
     : ratingCounts;
+  const effectiveRatingCounts = useMemo(() => {
+    return [1, 2, 3, 4, 5].reduce((counts, rating) => {
+      const key = String(rating);
+      counts[key] = Math.max(
+        Number(currentRatingCounts[key] || 0),
+        Number(seenRatingCounts[key] || 0),
+        Number(ratingCounts[key] || 0),
+      );
+      return counts;
+    }, {});
+  }, [currentRatingCounts, ratingCounts, seenRatingCounts]);
   const categoryCounts = useMemo(() => {
     const counts = {};
     facetCategoryOptions.forEach((opt) => (counts[opt.value] = opt.count));
@@ -343,8 +354,34 @@ export default function ProductsPage() {
         });
         return next;
       });
+      setSeenCategoryCounts((prev) => {
+        const next = new Map(prev);
+        facetCategoryOptions.forEach((c) => {
+          const count = Number(c.count || 0);
+          const previousCount = Number(next.get(c.value) || 0);
+          if (count > previousCount) next.set(c.value, count);
+        });
+        return next;
+      });
     }
   }, [facetCategoryOptions]);
+
+  useEffect(() => {
+    setSeenRatingCounts((prev) => {
+      const next = { ...prev };
+      let changed = false;
+      [1, 2, 3, 4, 5].forEach((rating) => {
+        const key = String(rating);
+        const count = Number(currentRatingCounts[key] || 0);
+        const previousCount = Number(next[key] || 0);
+        if (count > previousCount) {
+          next[key] = count;
+          changed = true;
+        }
+      });
+      return changed ? next : prev;
+    });
+  }, [currentRatingCounts]);
 
   useEffect(() => {
     if (facetBrandOptions.length > 0) {
@@ -355,24 +392,78 @@ export default function ProductsPage() {
         });
         return next;
       });
+      setSeenBrandCounts((prev) => {
+        const next = new Map(prev);
+        facetBrandOptions.forEach((c) => {
+          const count = Number(c.count || 0);
+          const previousCount = Number(next.get(c.value) || 0);
+          if (count > previousCount) next.set(c.value, count);
+        });
+        return next;
+      });
     }
   }, [facetBrandOptions]);
 
-  const categoryOptions = Array.from(seenCategories.entries()).map(
-    ([value, label]) => ({
-      value,
-      label,
-      count: categoryCounts[value] || 0,
-    }),
-  );
+  const categoryOptions = useMemo(() => {
+    const selectedCategories = parseMultiValue(searchParams.get("category"));
+    const optionMap = new Map(seenCategories);
+    const catalogCategoryCounts = new Map();
+    const catalogCategoryOptions = categoryList
+      .map(normalizeFacetOption)
+      .filter(Boolean);
 
-  const brandOptions = Array.from(seenBrands.entries()).map(
-    ([value, label]) => ({
+    catalogCategoryOptions.forEach((category) => {
+      if (!optionMap.has(category.value)) {
+        optionMap.set(category.value, category.label);
+      }
+      const count = Number(category.count || 0);
+      if (count > 0) catalogCategoryCounts.set(category.value, count);
+    });
+
+    selectedCategories.forEach((category) => {
+      if (!optionMap.has(category)) optionMap.set(category, category);
+    });
+
+    return Array.from(optionMap.entries()).map(([value, label]) => ({
       value,
       label,
-      count: brandCountsObj[value] || 0,
-    }),
-  );
+      count:
+        categoryCounts[value] ||
+        seenCategoryCounts.get(value) ||
+        catalogCategoryCounts.get(value) ||
+        0,
+    }));
+  }, [
+    categoryCounts,
+    categoryList,
+    searchParams,
+    seenCategories,
+    seenCategoryCounts,
+  ]);
+
+  const brandOptions = useMemo(() => {
+    const optionMap = new Map(seenBrands);
+    const catalogBrandCounts = new Map();
+
+    brandList.forEach((brand) => {
+      if (!optionMap.has(brand.value)) optionMap.set(brand.value, brand.label);
+      const count = Number(brand.count || 0);
+      if (count > 0) catalogBrandCounts.set(brand.value, count);
+    });
+    selectedBrands.forEach((brand) => {
+      if (!optionMap.has(brand)) optionMap.set(brand, brand);
+    });
+
+    return Array.from(optionMap.entries()).map(([value, label]) => ({
+      value,
+      label,
+      count:
+        brandCountsObj[value] ||
+        seenBrandCounts.get(value) ||
+        catalogBrandCounts.get(value) ||
+        0,
+    }));
+  }, [brandCountsObj, brandList, selectedBrands, seenBrands, seenBrandCounts]);
 
   const getParams = useCallback(
     (pageOverride) => {
@@ -470,11 +561,11 @@ export default function ProductsPage() {
         setBrandList(
           list
             .map((brand) => {
+              const option = normalizeFacetOption(brand);
+              if (option) return option;
               const label =
                 brand?.name || brand?.title || brand?.brandName || brand?.code;
-              return label
-                ? { value: String(label), label: String(label) }
-                : null;
+              return label ? { value: String(label), label: String(label) } : null;
             })
             .filter(Boolean),
         );
