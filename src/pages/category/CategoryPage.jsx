@@ -4,6 +4,7 @@ import {
   useSearchParams,
   Link,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronRight, Grid2X2 } from "lucide-react";
@@ -50,10 +51,12 @@ function serializeMultiValue(values) {
   return uniqueValues.length ? uniqueValues.join(",") : undefined;
 }
 
-function getAttributeValues(product, key) {
-  const directValue = product?.[key];
-  if (Array.isArray(directValue)) return directValue;
-  if (directValue != null && directValue !== "") return [directValue];
+function getAttributeValues(product, attribute) {
+  const normalizedKeys = getAttributeLookupKeys(attribute);
+  const values = [];
+  const directValue = getObjectValueByNormalizedKeys(product, normalizedKeys);
+  if (Array.isArray(directValue)) values.push(...directValue);
+  else if (directValue != null && directValue !== "") values.push(directValue);
 
   const attributeSources = [
     product?.attributes,
@@ -65,22 +68,97 @@ function getAttributeValues(product, key) {
     if (Array.isArray(source)) {
       const matching = source.filter(
         (item) =>
-          item?.key === key || item?.name === key || item?.attributeKey === key,
+          normalizedKeys.has(normalizeAttributeKey(item?.key)) ||
+          normalizedKeys.has(normalizeAttributeKey(item?.name)) ||
+          normalizedKeys.has(normalizeAttributeKey(item?.attributeKey)),
       );
-      const values = matching.flatMap((item) =>
-        Array.isArray(item?.value) ? item.value : [item?.value ?? item?.label],
+      values.push(
+        ...matching.flatMap((item) =>
+          Array.isArray(item?.value)
+            ? item.value
+            : [item?.value ?? item?.label],
+        ),
       );
-      if (values.length) return values;
+      continue;
     }
 
     if (typeof source === "object") {
-      const sourceValue = source[key];
-      if (Array.isArray(sourceValue)) return sourceValue;
-      if (sourceValue != null && sourceValue !== "") return [sourceValue];
+      const sourceValue = getObjectValueByNormalizedKeys(
+        source,
+        normalizedKeys,
+      );
+      if (Array.isArray(sourceValue)) values.push(...sourceValue);
+      else if (sourceValue != null && sourceValue !== "") {
+        values.push(sourceValue);
+      }
     }
   }
 
-  return [];
+  const variants = Array.isArray(product?.variants) ? product.variants : [];
+  variants.forEach((variant) => {
+    const variantValue = getObjectValueByNormalizedKeys(
+      variant?.attributes,
+      normalizedKeys,
+    );
+    if (Array.isArray(variantValue)) values.push(...variantValue);
+    else if (variantValue != null && variantValue !== "") {
+      values.push(variantValue);
+    }
+  });
+
+  return Array.from(
+    new Set(
+      values
+        .map((value) => String(value || "").trim())
+        .filter(Boolean),
+    ),
+  );
+}
+
+function normalizeAttributeKey(value = "") {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+function getAttributeLookupKeys(attribute) {
+  const source =
+    attribute && typeof attribute === "object"
+      ? [
+          attribute.key,
+          attribute.attributeKey,
+          attribute.name,
+          attribute.label,
+          attribute.slug,
+        ]
+      : [attribute];
+  const keys = new Set(source.map(normalizeAttributeKey).filter(Boolean));
+  const keyText = Array.from(keys).join(" ");
+
+  if (keyText.includes("storage")) {
+    keys.add("storage");
+    keys.add("internalstorage");
+  }
+
+  if (keyText.includes("ram") || keyText.includes("memory")) {
+    keys.add("ram");
+  }
+
+  if (keyText.includes("color") || keyText.includes("colour")) {
+    keys.add("color");
+    keys.add("colour");
+  }
+
+  return keys;
+}
+
+function getObjectValueByNormalizedKeys(source, normalizedKeys) {
+  if (!source || typeof source !== "object") return undefined;
+  const matchingKey = Object.keys(source).find(
+    (key) => normalizedKeys.has(normalizeAttributeKey(key)),
+  );
+  return matchingKey ? source[matchingKey] : undefined;
 }
 
 function getCategoryAttributeSchema(category = {}) {
@@ -105,6 +183,21 @@ function getSchemaAttributeOptions(attribute = {}) {
     )
     .filter((option) => option !== undefined && option !== null && option !== "")
     .map(String);
+}
+
+function normalizeFacetValue(value = "") {
+  return String(value).trim().toLowerCase();
+}
+
+function getFacetOptionCount(countMap = {}, option = "") {
+  const directCount = countMap[option];
+  if (directCount != null) return directCount;
+
+  const normalizedOption = normalizeFacetValue(option);
+  const matchingKey = Object.keys(countMap).find(
+    (key) => normalizeFacetValue(key) === normalizedOption,
+  );
+  return matchingKey ? countMap[matchingKey] : 0;
 }
 
 function slugifyCategory(value = "") {
@@ -243,13 +336,27 @@ function CategorySidebarNav({ categoryTitle, categories = [], activeKey = "" }) 
               <Link
                 key={category.key}
                 to={CUSTOMER_ROUTES.category(category.key)}
-                className={`block text-sm font-medium leading-5 transition-colors hover:text-[var(--customer-gold)] ${
+                className={`flex items-start gap-2 text-sm font-medium leading-5 transition-colors hover:text-[var(--customer-gold)] ${
                   isActive
                     ? "font-bold text-[var(--customer-gold)]"
                     : "text-[#111827]"
                 }`}
               >
-                {category.name}
+                <span
+                  aria-hidden="true"
+                  className={`mt-0.5 inline-flex h-[17px] w-[17px] shrink-0 items-center justify-center rounded-[4px] border transition-colors ${
+                    isActive
+                      ? "border-[#3E4093] bg-[#3E4093]"
+                      : "border-[#3E4093] bg-transparent"
+                  }`}
+                >
+                  <span
+                    className={`h-[7px] w-[7px] rounded-[2px] bg-white transition-opacity ${
+                      isActive ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                </span>
+                <span className="min-w-0">{category.name}</span>
               </Link>
             );
           })}
@@ -297,6 +404,7 @@ function CategoryPageSkeleton() {
 export default function CategoryPage() {
   const { categoryKey } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode] = useState("grid");
@@ -354,7 +462,7 @@ export default function CategoryPage() {
   const attributeCountMaps = useMemo(() => {
     return filterableAttributes.reduce((maps, attribute) => {
       maps[attribute.key] = buildFacetCountMap(products, (product) =>
-        getAttributeValues(product, attribute.key),
+        getAttributeValues(product, attribute),
       );
       return maps;
     }, {});
@@ -600,6 +708,11 @@ export default function CategoryPage() {
   }, [setSearchParams]);
 
   const removeFilter = useCallback((key, filter) => {
+    if (key === "category" && filter?.href) {
+      navigate(filter.href);
+      return;
+    }
+
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       if (key === "price") {
@@ -616,7 +729,7 @@ export default function CategoryPage() {
       next.delete("page");
       return next;
     });
-  }, [setSearchParams]);
+  }, [navigate, setSearchParams]);
 
   // ── Derived data ─────────────────────────────────────────────────────────
   const categoryTitle =
@@ -632,10 +745,36 @@ export default function CategoryPage() {
     Number(sidebarCategory?.level || 0) === 0;
   const showSubCategoryStrip = isRootCategory && subCategories.length > 0;
   const showCategorySidebar = !isRootCategory && subCategories.length > 0;
+  const categoryFilter = useMemo(() => {
+    if (!categoryData || isRootCategory) return null;
+    const parentKey =
+      sidebarCategory && getCategoryKey(sidebarCategory) !== categoryKey
+        ? getCategoryKey(sidebarCategory)
+        : categoryData.parentKey;
+
+    return {
+      key: "category",
+      label: getCategoryLabel(categoryData) || categoryTitle,
+      href: parentKey ? CUSTOMER_ROUTES.category(parentKey) : "/products",
+    };
+  }, [categoryData, categoryKey, categoryTitle, isRootCategory, sidebarCategory]);
 
   // ── Filter sections for sidebar ──────────────────────────────────────────
   const filterSections = useMemo(
     () => {
+      const availabilityOptions = [
+        {
+          value: "inStock",
+          label: "In Stock",
+          count: availabilityCounts.inStock,
+        },
+        {
+          value: "outOfStock",
+          label: "Out of Stock",
+          count: availabilityCounts.outOfStock,
+        },
+      ].filter((option) => option.count >= 1);
+
       const globalFilters = [
         {
           key: "price",
@@ -656,18 +795,7 @@ export default function CategoryPage() {
           content: (
             <CheckboxListFilter
               name="availability"
-              options={[
-                {
-                  value: "inStock",
-                  label: "In Stock",
-                  count: availabilityCounts.inStock,
-                },
-                {
-                  value: "outOfStock",
-                  label: "Out of Stock",
-                  count: availabilityCounts.outOfStock,
-                },
-              ]}
+              options={availabilityOptions}
               selected={["inStock", "outOfStock"].filter(
                 (value) => searchParams.get(value) === "true",
               )}
@@ -687,27 +815,47 @@ export default function CategoryPage() {
             />
           ),
         },
-      ];
+      ].filter(
+        (filter) => filter.key !== "inStock" || availabilityOptions.length,
+      );
 
-      const categoryFilters = filterableAttributes.map((attribute) => ({
-        key: `attr_${attribute.key}`,
-        title: attribute.label || attribute.key,
-        content: (
-          <OptionFilter
-            name={`attr_${attribute.key}`}
-            options={attribute.options.map((option) => ({
+      const categoryFilters = filterableAttributes
+        .map((attribute) => {
+          const options = attribute.options
+            .map((option) => ({
               value: option,
               label: option,
-              count: attributeCountMaps[attribute.key]?.[option] || 0,
-            }))}
-            selected={parseMultiValue(searchParams.get(`attr_${attribute.key}`))}
-            multiple
-            onChange={(values) =>
-              updateParam(`attr_${attribute.key}`, serializeMultiValue(values))
-            }
-          />
-        ),
-      }));
+              count: getFacetOptionCount(
+                attributeCountMaps[attribute.key],
+                option,
+              ),
+            }))
+            .filter((option) => option.count >= 1);
+
+          if (!options.length) return null;
+
+          return {
+            key: `attr_${attribute.key}`,
+            title: attribute.label || attribute.key,
+            content: (
+              <OptionFilter
+                name={`attr_${attribute.key}`}
+                options={options}
+                selected={parseMultiValue(
+                  searchParams.get(`attr_${attribute.key}`),
+                )}
+                multiple
+                onChange={(values) =>
+                  updateParam(
+                    `attr_${attribute.key}`,
+                    serializeMultiValue(values),
+                  )
+                }
+              />
+            ),
+          };
+        })
+        .filter(Boolean);
 
       const finalFilters = [...globalFilters, ...categoryFilters];
 
@@ -735,6 +883,7 @@ export default function CategoryPage() {
     );
 
     return [
+      categoryFilter,
       searchParams.get("inStock") === "true" && {
         key: "inStock",
         label: "In Stock Only",
@@ -766,7 +915,13 @@ export default function CategoryPage() {
     ]
       .flat()
       .filter(Boolean);
-  }, [filterableAttributes, searchParams, supportedAttributeKeys, productFacets]);
+  }, [
+    categoryFilter,
+    filterableAttributes,
+    searchParams,
+    supportedAttributeKeys,
+    productFacets,
+  ]);
 
   if (categoryLoading && !categoryData && !firstLoadDone && !products.length) {
     return <CategoryPageSkeleton />;

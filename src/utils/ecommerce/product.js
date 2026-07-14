@@ -210,8 +210,12 @@ export function getImageUrlFromValue(value) {
       [
         value.url,
         value.src,
+        value.image,
         value.imageUrl,
+        value.image_url,
         value.thumbnailUrl,
+        value.thumbnail,
+        value.thumbnail_url,
         value.path,
         value.secure_url,
         value.original,
