@@ -32,6 +32,7 @@ import {
 } from "../../utils/ecommerce";
 import { isNotFoundApiError } from "../../utils/apiErrors";
 import { SORT_OPTIONS } from "../../data/constant";
+import { buildCategoryTree } from "../../layouts/header/categoryHelpers";
 
 function parseMultiValue(value) {
   return String(value || "")
@@ -265,46 +266,48 @@ function SubCategoryStrip({ categories = [] }) {
   if (!visibleCategories.length) return null;
 
   return (
-    <section className="mb-5 overflow-hidden bg-white pt-4">
-      <div className="flex gap-4 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {visibleCategories.map((category) => (
-          <Link
-            key={category.key}
-            to={CUSTOMER_ROUTES.category(category.key)}
-            className="group w-[92px] shrink-0 text-center sm:w-[104px]"
-          >
-            <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[10px] bg-[var(--customer-surface-soft)] p-2 transition-colors group-hover:bg-[var(--customer-gold-soft)]">
-              {category.image ? (
-                <img
-                  src={category.image}
-                  alt={category.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
-                  onError={(event) =>
-                    applyImageFallback(event, category.name, "category")
-                  }
-                />
-              ) : (
-                <Grid2X2
-                  size={32}
-                  strokeWidth={1.5}
-                  className="text-[var(--customer-border-strong)]"
-                />
-              )}
-            </div>
-            <p className="mt-2 line-clamp-2 min-h-[32px] text-xs font-semibold leading-4 text-[var(--customer-ink)]">
-              {category.name}
-            </p>
-            {category.count !== undefined &&
-            category.count !== null &&
-            category.count !== "" ? (
-              <span className="mt-1 inline-flex rounded bg-cyan-100 px-1.5 py-0.5 text-[10px] font-bold text-cyan-700">
-                {Number(category.count).toLocaleString()}
-              </span>
-            ) : null}
-          </Link>
-        ))}
+    <section className="mb-5 bg-white pt-4">
+      <div className="w-full overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex w-max gap-4 px-4 sm:px-0">
+          {visibleCategories.map((category) => (
+            <Link
+              key={category.key}
+              to={CUSTOMER_ROUTES.category(category.key)}
+              className="group w-[92px] shrink-0 text-center sm:w-[104px]"
+            >
+              <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[10px] bg-[var(--customer-surface-soft)] p-2 transition-colors group-hover:bg-[var(--customer-gold-soft)]">
+                {category.image ? (
+                  <img
+                    src={category.image}
+                    alt={category.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                    onError={(event) =>
+                      applyImageFallback(event, category.name, "category")
+                    }
+                  />
+                ) : (
+                  <Grid2X2
+                    size={32}
+                    strokeWidth={1.5}
+                    className="text-[var(--customer-border-strong)]"
+                  />
+                )}
+              </div>
+              <p className="mt-2 line-clamp-2 min-h-[32px] text-xs font-semibold leading-4 text-[var(--customer-ink)]">
+                {category.name}
+              </p>
+              {category.count !== undefined &&
+              category.count !== null &&
+              category.count !== "" ? (
+                <span className="mt-1 inline-flex rounded bg-cyan-100 px-1.5 py-0.5 text-[10px] font-bold text-cyan-700">
+                  {Number(category.count).toLocaleString()}
+                </span>
+              ) : null}
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -402,6 +405,36 @@ function CategoryPageSkeleton() {
   );
 }
 
+
+function getMatchingCategoryKeys(targetCats, categoryTree) {
+  const keys = new Set();
+  
+  const addNodeAndChildren = (node) => {
+    if (!node) return;
+    keys.add(String(node.categoryKey || node.key).toLowerCase().replace(/[^a-z0-9]/g, ""));
+    const children = [...(node.children || []), ...(node.subs || [])];
+    children.forEach(addNodeAndChildren);
+  };
+
+  const findAndAdd = (nodes) => {
+    if (!nodes) return;
+    for (const node of nodes) {
+      const nodeKey = String(node.categoryKey || node.key).toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (targetCats.some(tc => tc === nodeKey || nodeKey.includes(tc) || tc.includes(nodeKey))) {
+        addNodeAndChildren(node);
+      } else {
+        const children = [...(node.children || []), ...(node.subs || [])];
+        if (children.length > 0) {
+          findAndAdd(children);
+        }
+      }
+    }
+  };
+
+  findAndAdd(categoryTree);
+  return keys;
+}
+
 export default function CategoryPage() {
   const { categoryKey } = useParams();
   const location = useLocation();
@@ -428,7 +461,37 @@ export default function CategoryPage() {
   const sentinelRef = useRef(null);
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
-  const products = items;
+  const catalogCategoryList = useSelector((state) => state.catalog?.globalCategories || state.catalog?.list || []);
+  const categoryTree = useMemo(() => buildCategoryTree(catalogCategoryList), [catalogCategoryList]);
+  
+  const products = useMemo(() => {
+    if (!categoryKey) return items;
+    const targetCats = [String(categoryKey).toLowerCase().replace(/[^a-z0-9]/g, "")];
+    const validKeys = getMatchingCategoryKeys(targetCats, categoryTree);
+    
+    return items.filter((p) => {
+      const cat = p.categoryId || p.category;
+      if (!cat) return false;
+      const catStr = String(
+        typeof cat === "object"
+          ? cat.slug || cat.key || cat.id || cat.name
+          : cat,
+      )
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "");
+        
+      if (validKeys.size > 0 && validKeys.has(catStr)) {
+        return true;
+      }
+        
+      return targetCats.some(
+        (targetCat) =>
+          catStr === targetCat ||
+          catStr.includes(targetCat) ||
+          targetCat.includes(catStr)
+      );
+    });
+  }, [items, categoryKey, categoryTree]);
   const availabilityCounts = useMemo(
     () =>
       products.reduce(
@@ -562,17 +625,7 @@ export default function CategoryPage() {
         const data = result?.data;
         let list = Array.isArray(data) ? data : data?.items || data?.list || [];
 
-        if (categoryKey) {
-          const targetCat = String(categoryKey).toLowerCase().replace(/[^a-z0-9]/g, "");
-          list = list.filter((p) => {
-            const cat = p.categoryId || p.category;
-            if (!cat) return false;
-            const catStr = String(typeof cat === "object" ? cat.slug || cat.key || cat.id || cat.name : cat)
-              .toLowerCase()
-              .replace(/[^a-z0-9]/g, "");
-            return catStr === targetCat || catStr.includes(targetCat) || targetCat.includes(catStr);
-          });
-        }
+
 
         const m = result?.meta || {};
         setPageInfo({

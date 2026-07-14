@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams, useLocation } from "react-router-dom";
+import { buildCategoryTree } from "../../layouts/header/categoryHelpers";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid2X2, List } from "lucide-react";
 import Seo from "../../components/common/Seo";
@@ -104,6 +105,37 @@ const normalizeFacetOption = (option = {}) => {
     : null;
 };
 
+
+function getMatchingCategoryKeys(targetCats, categoryTree) {
+  const keys = new Set();
+  
+  const addNodeAndChildren = (node) => {
+    if (!node) return;
+    keys.add(String(node.categoryKey || node.key).toLowerCase().replace(/[^a-z0-9]/g, ""));
+    const children = [...(node.children || []), ...(node.subs || [])];
+    children.forEach(addNodeAndChildren);
+  };
+
+  const findAndAdd = (nodes) => {
+    if (!nodes) return;
+    for (const node of nodes) {
+      const nodeKey = String(node.categoryKey || node.key).toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (targetCats.some(tc => tc === nodeKey || nodeKey.includes(tc) || tc.includes(nodeKey))) {
+        addNodeAndChildren(node);
+      } else {
+        const children = [...(node.children || []), ...(node.subs || [])];
+        if (children.length > 0) {
+          findAndAdd(children);
+        }
+      }
+    }
+  };
+
+  findAndAdd(categoryTree);
+  return keys;
+}
+
+
 export default function ProductsPage() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -124,6 +156,9 @@ export default function ProductsPage() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
+  const catalogCategoryList = useSelector((state) => state.catalog?.globalCategories || state.catalog?.list || []);
+  const categoryTree = useMemo(() => buildCategoryTree(catalogCategoryList), [catalogCategoryList]);
+
 
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
@@ -136,7 +171,40 @@ export default function ProductsPage() {
     [searchParams],
   );
 
-  const products = items;
+
+  const products = useMemo(() => {
+    const selectedCategory = searchParams.get("category");
+    if (!selectedCategory) return items;
+    
+    const targetCats = parseMultiValue(selectedCategory).map((c) =>
+      String(c).toLowerCase().replace(/[^a-z0-9]/g, "")
+    );
+    const validKeys = getMatchingCategoryKeys(targetCats, categoryTree);
+    
+    return items.filter((p) => {
+      const cat = p.categoryId || p.category;
+      if (!cat) return false;
+      const catStr = String(
+        typeof cat === "object"
+          ? cat.slug || cat.key || cat.id || cat.name
+          : cat,
+      )
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "");
+        
+      if (validKeys.size > 0 && validKeys.has(catStr)) {
+        return true;
+      }
+        
+      return targetCats.some(
+        (targetCat) =>
+          catStr === targetCat ||
+          catStr.includes(targetCat) ||
+          targetCat.includes(catStr)
+      );
+    });
+  }, [items, searchParams, categoryTree]);
+
   const totalPages = pageInfo.totalPages || 1;
   const currentPage = pageInfo.page || 1;
   const pageSize = Number(searchParams.get("limit") || 12);
@@ -354,28 +422,7 @@ export default function ProductsPage() {
         data.list ||
         (Array.isArray(data) ? data : []);
 
-      const selectedCategory = searchParams.get("category");
-      if (selectedCategory) {
-        const targetCat = String(selectedCategory)
-          .toLowerCase()
-          .replace(/[^a-z0-9]/g, "");
-        list = list.filter((p) => {
-          const cat = p.categoryId || p.category;
-          if (!cat) return false;
-          const catStr = String(
-            typeof cat === "object"
-              ? cat.slug || cat.key || cat.id || cat.name
-              : cat,
-          )
-            .toLowerCase()
-            .replace(/[^a-z0-9]/g, "");
-          return (
-            catStr === targetCat ||
-            catStr.includes(targetCat) ||
-            targetCat.includes(catStr)
-          );
-        });
-      }
+
 
       const meta =
         result?.meta?.pagination || result?.pagination || result?.meta || {};
