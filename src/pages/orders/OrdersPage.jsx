@@ -510,11 +510,13 @@ function OrderDetail({ orderId, track }) {
   const taxPayable = getTaxPayableAmount(order, taxBreakup);
   const status = getOrderStatus(order);
   const progressStatus = getProgressStatus(order);
+  const returnEligibleUntil = order?.return_eligible_until || order?.returnEligibleUntil || order?.return_policy_snapshot?.eligibleUntil || order?.returnPolicySnapshot?.eligibleUntil || null;
+  const returnWindowOpen = returnEligibleUntil ? new Date(returnEligibleUntil).getTime() >= Date.now() : true;
   const canRequestReturn = [
     "delivered",
     "fulfilled",
     "partially_returned",
-  ].includes(status);
+  ].includes(status) && returnWindowOpen;
   const invoiceDownloadAvailable = status === "fulfilled";
 
   const breadcrumbItems = [
@@ -724,8 +726,18 @@ function OrderDetail({ orderId, track }) {
                     value: formatMoney(customerAmount, currency),
                     tone: "yellow",
                   },
+                  ...(returnEligibleUntil ? [{
+                    icon: <RotateCcw size={20} />,
+                    label: returnWindowOpen ? "Return available until" : "Return window closed",
+                    value: formatOrderDate(returnEligibleUntil),
+                    tone: returnWindowOpen ? "blue" : "yellow",
+                  }] : []),
                 ]}
               />
+
+              {!track && ["delivered", "fulfilled", "partially_returned"].includes(status) && !returnWindowOpen && (
+                <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">The return window for this order closed on {formatOrderDate(returnEligibleUntil)}.</p>
+              )}
 
               {hasKnownStatus(order) && (
                 <OrderDetailSectionCard
