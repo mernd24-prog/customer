@@ -46,6 +46,7 @@ import {
   initiatePayment,
   verifyPayment,
 } from "../../features/payment/paymentSlice";
+import { fetchReturnByOrder } from "../../features/returns/returnsSlice";
 import { fetchMarketplaceInvoices } from "../../features/tax/taxSlice";
 import { fetchNotifications } from "../../features/notification/notificationSlice";
 import { formatMoney, getImageUrlFromValue } from "../../utils/ecommerce";
@@ -453,6 +454,7 @@ function OrderDetail({ orderId, track }) {
   const state = useSelector((s) => s.order);
   const userState = useSelector((s) => s.user);
   const notificationState = useSelector((s) => s.notification);
+  const returnsState = useSelector((s) => s.returns);
 
   const orders = getOrderCollection(state.current).length
     ? getOrderCollection(state.current)
@@ -472,13 +474,17 @@ function OrderDetail({ orderId, track }) {
   const cancellations = Array.isArray(order?.relations?.cancellations)
     ? order.relations.cancellations
     : [];
-  const returns = Array.isArray(order?.relations?.returns)
+  const embeddedReturns = Array.isArray(order?.relations?.returns)
     ? order.relations.returns
     : Array.isArray(order?.returns)
       ? order.returns
       : Array.isArray(order?.returnRequests)
         ? order.returnRequests
         : [];
+  const fetchedReturns = Array.isArray(returnsState.list)
+    ? returnsState.list.filter((returnRequest) => String(returnRequest.orderId || returnRequest.order_id || "") === String(orderId))
+    : [];
+  const returns = fetchedReturns.length ? fetchedReturns : embeddedReturns;
   const shipments = Array.isArray(order?.relations?.shipments)
     ? order.relations.shipments
     : [];
@@ -519,6 +525,7 @@ function OrderDetail({ orderId, track }) {
 
   useEffect(() => {
     dispatch(fetchOrderById({ orderId }));
+    dispatch(fetchReturnByOrder({ orderId }));
   }, [dispatch, orderId]);
 
   useEffect(() => {
@@ -756,10 +763,13 @@ function OrderDetail({ orderId, track }) {
                 mainContent={
                   <OrderItemsSection
                     items={items}
-                    orderId={orderId}
-                    orderStatus={status}
-                    currency={currency}
-                    getItemImage={getItemImage}
+                  orderId={orderId}
+                  orderStatus={status}
+                  shipments={shipments}
+                  sellerFulfillmentGroups={order?.relations?.sellerFulfillmentGroups || []}
+                  returns={returns}
+                  currency={currency}
+                  getItemImage={getItemImage}
                     getProductTitle={getProductTitle}
                     getItemProductPath={getItemProductPath}
                     getOrderItemColor={getOrderItemColor}
