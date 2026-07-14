@@ -7,7 +7,7 @@ import { ArrowLeft, Package, RotateCcw } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import Button from "../../components/ui/Button";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { requestReturn } from "../../features/returns/returnsSlice";
+import { fetchReturnByOrder, requestReturn } from "../../features/returns/returnsSlice";
 import { fetchOrderById } from "../../features/order/orderSlice";
 import { returnSchema } from "../../validations/validationSchemas";
 
@@ -109,20 +109,48 @@ const getItemImage = (item) => {
 };
 const getItemVariantSku = (item) => item?.variant_sku || item?.variantSku || "";
 const getItemId = (item) => item?.id || item?._id || item?.orderItemId || "";
+const getItemReturnPolicy = (item = {}) => {
+  const snapshot = item.product_snapshot || item.productSnapshot || {};
+  const policy = snapshot.returnPolicy || snapshot.return_policy || snapshot.commercialPolicy?.returnPolicy || {};
+  return {
+    returnable: policy.returnable ?? policy.eligible ?? true,
+    days: Number(policy.returnWindowDays || policy.windowDays || policy.days || 0),
+    requiresImages: Boolean(policy.requiresImages || policy.requires_images),
+    inspectionRequired: policy.inspectionRequired ?? policy.requiresQc ?? true,
+  };
+};
+const getReturnForItem = (returns = [], item = {}) => {
+  const itemId = String(getItemId(item) || "");
+  return returns.find((returnRequest) =>
+    (returnRequest.items || []).some((returnItem) => String(returnItem.orderItemId || "") === itemId),
+  );
+};
 
 function ReturnRequestPage({ orderId }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const run = useToastThunk();
-  const { loading } = useSelector((s) => s.returns);
+  const { loading, list: returnList = [] } = useSelector((s) => s.returns);
   const { current: order, loading: orderLoading } = useSelector((s) => s.order);
   const [selectedProductId, setSelectedProductId] = useState(null);
 
   useEffect(() => {
-    if (orderId) dispatch(fetchOrderById({ orderId }));
+    if (orderId) {
+      dispatch(fetchOrderById({ orderId }));
+      dispatch(fetchReturnByOrder({ orderId }));
+    }
   }, [dispatch, orderId]);
 
   const orderItems = getOrderItems(order);
+  const fetchedReturns = Array.isArray(returnList)
+    ? returnList.filter((returnRequest) => String(returnRequest.orderId || returnRequest.order_id || "") === String(orderId))
+    : [];
+  const embeddedReturns = Array.isArray(order?.relations?.returns)
+    ? order.relations.returns
+    : Array.isArray(order?.returns)
+      ? order.returns
+      : [];
+  const existingReturns = fetchedReturns.length ? fetchedReturns : embeddedReturns;
   const selectedItem =
     orderItems.find((item) => getItemId(item) === selectedProductId) || null;
 
@@ -144,6 +172,9 @@ function ReturnRequestPage({ orderId }) {
     : 0;
 
   const handleItemSelect = (item) => {
+    const policy = getItemReturnPolicy(item);
+    const existingReturn = getReturnForItem(existingReturns, item);
+    if (!policy.returnable || existingReturn) return;
     const pid = getItemProductId(item);
     setSelectedProductId(
       getItemId(item) || `${pid}:${getItemVariantSku(item)}`,
@@ -233,14 +264,20 @@ function ReturnRequestPage({ orderId }) {
                     const lineKey =
                       getItemId(item) || `${pid}:${getItemVariantSku(item)}`;
                     const isSelected = selectedProductId === lineKey;
+                    const policy = getItemReturnPolicy(item);
+                    const existingReturn = getReturnForItem(existingReturns, item);
+                    const disabled = !policy.returnable || Boolean(existingReturn);
                     return (
                       <button
                         key={lineKey || title}
                         type="button"
                         onClick={() => handleItemSelect(item)}
+                        disabled={disabled}
                         className={`flex w-full min-w-0 items-center gap-3 rounded-lg border p-3 text-left transition-all duration-200 ${
                           isSelected
                             ? "border-gold bg-cream outline-none"
+                            : disabled
+                              ? "cursor-not-allowed border-border bg-stone-50 opacity-70"
                             : "border-border bg-white hover:border-gold/40"
                         }`}
                       >
@@ -269,6 +306,13 @@ function ReturnRequestPage({ orderId }) {
                               ₹{Number(price).toLocaleString("en-IN")}
                             </p>
                           )}
+                          <p className={`mt-1 text-xs font-semibold ${policy.returnable && !existingReturn ? "text-emerald-700" : "text-red-700"}`}>
+                            {existingReturn
+                              ? `Return already ${String(existingReturn.status || "requested").replace(/_/g, " ")}`
+                              : policy.returnable
+                                ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}${policy.inspectionRequired ? " · QC required" : ""}`
+                                : "This item is not returnable"}
+                          </p>
                         </div>
 
                         <span

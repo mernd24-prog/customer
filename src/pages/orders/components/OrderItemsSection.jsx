@@ -352,6 +352,37 @@ const getOrderItemProductPath = (item) => {
   return productId ? `/products/${productId}` : "";
 };
 
+const label = (value = "") => String(value || "Not available").replace(/_/g, " ");
+
+const formatDate = (value) => {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+};
+
+const sellerGroupKey = (sellerId, organizationId = null) =>
+  `${String(sellerId || "platform")}:${organizationId || "default"}`;
+
+const getItemSellerGroupKey = (item = {}) =>
+  sellerGroupKey(
+    item.seller_id || item.sellerId || item.seller?.id || item.seller?._id || "platform",
+    item.organization_id || item.organizationId || item.organization?.id || item.organization?._id || null,
+  );
+
+const getItemReturnPolicy = (item = {}) => {
+  const snapshot = item.product_snapshot || item.productSnapshot || {};
+  const policy = snapshot.returnPolicy || snapshot.return_policy || snapshot.commercialPolicy?.returnPolicy || {};
+  return {
+    returnable: policy.returnable ?? policy.eligible ?? true,
+    days: Number(policy.returnWindowDays || policy.windowDays || policy.days || 0),
+  };
+};
+
 function OrderItemCard({
   item,
   currency,
@@ -471,7 +502,15 @@ function OrderItemReviewAction({
   );
 }
 
-function OrderItemsSection({ items = [], orderId, orderStatus, ...itemProps }) {
+function OrderItemsSection({
+  items = [],
+  orderId,
+  orderStatus,
+  shipments = [],
+  sellerFulfillmentGroups = [],
+  returns = [],
+  ...itemProps
+}) {
   const dispatch = useDispatch();
   const [reviewTarget, setReviewTarget] = useState(null);
   const [reviewByItem, setReviewByItem] = useState({});
@@ -518,6 +557,52 @@ function OrderItemsSection({ items = [], orderId, orderStatus, ...itemProps }) {
     });
   }, [canReviewOrder, checkedReviewKeys, dispatch, orderId, reviewableItems]);
 
+  const packageGroups = useMemo(() => {
+    const shipmentByGroup = new Map();
+    shipments
+      .filter((shipment) => String(shipment.direction || "forward") !== "reverse")
+      .forEach((shipment) => {
+        const metadata = shipment.metadata || {};
+        const key = sellerGroupKey(
+          shipment.seller_id || shipment.sellerId,
+          shipment.organization_id || shipment.organizationId || metadata.organizationId || null,
+        );
+        if (!shipmentByGroup.has(key)) shipmentByGroup.set(key, []);
+        shipmentByGroup.get(key).push(shipment);
+      });
+
+    const fulfillmentByGroup = new Map();
+    sellerFulfillmentGroups.forEach((group) => {
+      fulfillmentByGroup.set(sellerGroupKey(group.sellerId || group.seller_id, group.organizationId || group.organization_id), group);
+    });
+
+    const returnByItem = new Map();
+    returns.forEach((returnRequest) => {
+      (returnRequest.items || []).forEach((returnItem) => {
+        if (returnItem.orderItemId) returnByItem.set(String(returnItem.orderItemId), returnRequest);
+      });
+    });
+
+    const grouped = new Map();
+    items.forEach((item) => {
+      const key = getItemSellerGroupKey(item);
+      if (!grouped.has(key)) {
+        const fulfillment = fulfillmentByGroup.get(key) || {};
+        const groupShipments = shipmentByGroup.get(key) || [];
+        grouped.set(key, {
+          key,
+          sellerName: fulfillment.sellerName || item.sellerName || item.seller?.displayName || item.seller?.businessName || "Marketplace seller",
+          status: fulfillment.deliveryStatus || fulfillment.shipmentStatus || groupShipments[0]?.status || "preparing",
+          expectedDeliveryAt: fulfillment.expectedDeliveryAt || groupShipments[0]?.expected_delivery_at || groupShipments[0]?.expectedDeliveryAt,
+          items: [],
+          returnByItem,
+        });
+      }
+      grouped.get(key).items.push(item);
+    });
+    return Array.from(grouped.values());
+  }, [items, returns, sellerFulfillmentGroups, shipments]);
+
   const handleSubmitted = (review) => {
     if (!reviewTarget) return;
     const key = reviewKeyForItem(orderId, reviewTarget);
@@ -529,16 +614,45 @@ function OrderItemsSection({ items = [], orderId, orderStatus, ...itemProps }) {
   return (
     <section className="grid gap-5">
       <OrderDetailSectionCard
-        title="Item"
+        title={packageGroups.length > 1 ? "Packages" : "Item"}
         borderClassName="border-[#CE9F2D66]  h-fit "
         bodyClassName="grid gap-8 p-4 sm:p-6 lg:p-7"
       >
-        {items.map((item, index) => (
-          <OrderItemCard
-            key={item.id || item._id || index}
-            item={item}
-            {...itemProps}
-          />
+        {packageGroups.map((group, packageIndex) => (
+          <div key={group.key} className="grid gap-5 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="font-bold text-[#1B1D60]">Package {packageIndex + 1}</h3>
+                <p className="mt-0.5 text-sm text-[#6F7480]">{group.sellerName}</p>
+              </div>
+              <div className="text-right text-sm">
+                <span className="rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-semibold capitalize text-white">{label(group.status)}</span>
+                {group.expectedDeliveryAt && <p className="mt-1 text-xs text-[#6F7480]">Expected {formatDate(group.expectedDeliveryAt)}</p>}
+              </div>
+            </div>
+            {group.items.map((item, index) => {
+              const policy = getItemReturnPolicy(item);
+              const returnRequest = group.returnByItem.get(String(item.id || item._id || item.orderItemId || ""));
+              return (
+                <div key={item.id || item._id || index} className="grid gap-3 border-t border-[#E7D9B8] pt-5 first:border-t-0 first:pt-0">
+                  <OrderItemCard
+                    item={item}
+                    {...itemProps}
+                  />
+                  <div className="flex flex-wrap gap-2 text-xs font-semibold">
+                    <span className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+                      {policy.returnable ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}` : "Non-returnable"}
+                    </span>
+                    {returnRequest && (
+                      <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">
+                        Return {label(returnRequest.status)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         ))}
       </OrderDetailSectionCard>
 
