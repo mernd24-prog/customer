@@ -10,8 +10,11 @@ import {
 } from "../utils/cache";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://45.195.90.183:4000/";
-const API_TIMEOUT_MS = Number(import.meta.env.VITE_API_TIMEOUT_MS || 15000);
+  import.meta.env.VITE_API_BASE_URL || "http://192.168.16.47:4000";
+const API_TIMEOUT_MS = Number(import.meta.env.VITE_API_TIMEOUT_MS || 30000);
+const API_RETRY_DELAY_MS = Number(
+  import.meta.env.VITE_API_RETRY_DELAY_MS || 500,
+);
 const buildApiUrl = (path = "") =>
   `${API_BASE_URL.replace(/\/+$/, "")}/${String(path).replace(/^\/+/, "")}`;
 
@@ -92,6 +95,31 @@ const isPublicAuthEndpoint = (url = "") =>
     endpoints.auth.forgotPassword,
     endpoints.auth.resetPassword,
   ].some((endpoint) => String(url || "").includes(endpoint));
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const isRetriableReadError = (error) =>
+  error?.code === "ECONNABORTED" ||
+  error?.code === "ERR_NETWORK" ||
+  (!error?.response && Boolean(error?.request));
+
+const requestWithReadRetry = async (config) => {
+  try {
+    return await api.request(config);
+  } catch (error) {
+    const method = String(config?.method || "get").toLowerCase();
+    if (
+      method !== "get" ||
+      config?._retryRead ||
+      !isRetriableReadError(error)
+    ) {
+      throw error;
+    }
+
+    await wait(API_RETRY_DELAY_MS);
+    return api.request({ ...config, _retryRead: true });
+  }
+};
 
 api.interceptors.request.use((config) => {
   const token = tokenStorage.getAccessToken();
@@ -184,7 +212,7 @@ export async function apiRequest({
   }
 
   try {
-    const response = await api.request({ method, url, data, params });
+    const response = await requestWithReadRetry({ method, url, data, params });
     const result = normalizeApiResponse(response);
 
     if (shouldCache) {

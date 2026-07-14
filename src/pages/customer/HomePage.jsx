@@ -21,7 +21,11 @@ import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import { mothersDayData } from "../../data/special";
 import ShoppingMadeEasyBanner from "../../components/home/ShoppingBanner";
 import FeaturedProductsSection from "../../components/home/FeaturedProductsSection";
-import { getProductImage as getVariantProductImage, getProductMrp, getProductPrice } from "../../utils/ecommerce";
+import {
+  getProductImage as getVariantProductImage,
+  getProductMrp,
+  getProductPrice,
+} from "../../utils/ecommerce";
 
 const formatPrice = (product) => {
   const price = Number(getProductPrice(product) || 0);
@@ -66,10 +70,15 @@ const buildNewArrivalItems = (products) => {
   return categories.map((cat, index) => {
     const categoryProducts = grouped[cat];
     let dynamicBadge = "";
-    
+
     // Find the first available badge from the products in this category
     for (const p of categoryProducts) {
-      const b = p?.badge || p?.deal?.badge || p?.metadata?.badge || p?.metadata?.dealBadge || (p?.isFeatured ? "Featured" : "");
+      const b =
+        p?.badge ||
+        p?.deal?.badge ||
+        p?.metadata?.badge ||
+        p?.metadata?.dealBadge ||
+        (p?.isFeatured ? "Featured" : "");
       if (b) {
         dynamicBadge = b;
         break;
@@ -133,6 +142,8 @@ export function HomePage() {
     () => buildNewArrivalItems(products.slice(0, 12)),
     [products],
   );
+
+  console.log(featuredProducts);
 
   return (
     <>
