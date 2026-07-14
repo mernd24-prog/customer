@@ -51,6 +51,233 @@ function serializeMultiValue(values) {
   return uniqueValues.length ? uniqueValues.join(",") : undefined;
 }
 
+const ATTRIBUTE_PARAM_PREFIX = "attr_";
+const STATIC_ATTRIBUTE_KEYS = [
+  "color",
+  "colour",
+  "size",
+  "material",
+  "finish",
+  "fit",
+  "storage",
+  "skinType",
+  "shade",
+  "ram",
+];
+const DIRECT_ATTRIBUTE_KEYS = [
+  ...STATIC_ATTRIBUTE_KEYS,
+  "capacity",
+  "memory",
+  "screenSize",
+  "displaySize",
+  "processor",
+];
+const ATTRIBUTE_SOURCE_KEYS = [
+  "attributes",
+  "specifications",
+  "attributeValues",
+  "attribute_values",
+];
+const RESERVED_ATTRIBUTE_KEYS = new Set([
+  "id",
+  "_id",
+  "sku",
+  "slug",
+  "name",
+  "title",
+  "price",
+  "mrp",
+  "stock",
+  "quantity",
+  "inventory",
+  "images",
+  "image",
+  "status",
+  "isDefault",
+]);
+
+function toTitleCase(value = "") {
+  return String(value)
+    .replace(/[_-]+/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .trim()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function normalizeAttributeKey(value = "") {
+  return String(value)
+    .trim()
+    .replace(/^attr_/, "")
+    .replace(/[^a-zA-Z0-9]+(.)/g, (_, char) => char.toUpperCase())
+    .replace(/^[A-Z]/, (char) => char.toLowerCase());
+}
+
+function getAttributeParamKey(attributeKey = "") {
+  return `${ATTRIBUTE_PARAM_PREFIX}${normalizeAttributeKey(attributeKey)}`;
+}
+
+function getAttributeParamValue(searchParams, attributeKey) {
+  const key = normalizeAttributeKey(attributeKey);
+  return searchParams.get(getAttributeParamKey(key)) || searchParams.get(key);
+}
+
+function getObjectValueByAttributeKey(source, attributeKey) {
+  if (!source || typeof source !== "object") return undefined;
+  const normalizedKey = normalizeAttributeKey(attributeKey);
+  const matchingKey = Object.keys(source).find(
+    (key) => normalizeAttributeKey(key) === normalizedKey,
+  );
+  return matchingKey ? source[matchingKey] : undefined;
+}
+
+function readAttributeRow(row, callback) {
+  if (!row || typeof row !== "object" || Array.isArray(row)) return false;
+
+  const rawKey =
+    row.key ?? row.name ?? row.attributeKey ?? row.attribute_key ?? row.code;
+  const rawValue =
+    row.value ?? row.values ?? row.label ?? row.optionValue ?? row.option_value;
+
+  if (!rawKey || rawValue === undefined || rawValue === null || rawValue === "") {
+    return false;
+  }
+
+  forEachAttributeValue({ [rawKey]: rawValue }, callback);
+  return true;
+}
+
+function forEachAttributeValue(source, callback) {
+  if (!source || typeof source !== "object" || Array.isArray(source)) return;
+
+  Object.entries(source).forEach(([rawKey, rawValue]) => {
+    const key = normalizeAttributeKey(rawKey);
+    if (!key || RESERVED_ATTRIBUTE_KEYS.has(key)) return;
+
+    const values = Array.isArray(rawValue) ? rawValue : [rawValue];
+    values
+      .map((value) =>
+        value && typeof value === "object"
+          ? value.value ?? value.name ?? value.label ?? value.title
+          : value,
+      )
+      .map((value) => String(value ?? "").trim())
+      .filter(Boolean)
+      .forEach((value) => callback(key, value));
+  });
+}
+
+function readAttributeSource(source, callback) {
+  if (!source) return;
+
+  if (Array.isArray(source)) {
+    source.forEach((row) => readAttributeRow(row, callback));
+    return;
+  }
+
+  forEachAttributeValue(source, callback);
+}
+
+function readDirectAttributeFields(source, callback) {
+  if (!source || typeof source !== "object") return;
+
+  DIRECT_ATTRIBUTE_KEYS.forEach((key) => {
+    const value = source[key];
+    if (value === undefined || value === null || value === "") return;
+    callback(normalizeAttributeKey(key), value);
+  });
+}
+
+function getProductVariantList(product = {}) {
+  return [
+    product?.variants,
+    product?.productVariants,
+    product?.product_variants,
+    product?.variantDetails,
+    product?.variant_details,
+    product?.variantOptions,
+    product?.variant_options,
+  ].find(Array.isArray) || [];
+}
+
+function readKnownAttributeContainers(source, callback) {
+  if (!source || typeof source !== "object") return;
+  ATTRIBUTE_SOURCE_KEYS.forEach((key) => readAttributeSource(source[key], callback));
+  readAttributeSource(source?.metadata?.attributes, callback);
+}
+
+function readOptionRows(source, callback) {
+  if (!Array.isArray(source)) return;
+  source.forEach((row) => readAttributeRow(row, callback));
+}
+
+function collectProductAttributeEntries(product, callback) {
+  if (!product || typeof product !== "object") return;
+
+  const nestedProduct = product.product || product.productId;
+  if (nestedProduct && typeof nestedProduct === "object" && nestedProduct !== product) {
+    collectProductAttributeEntries(nestedProduct, callback);
+  }
+
+  const variantAxes = Array.isArray(product?.variantAxes)
+    ? product.variantAxes.map(normalizeAttributeKey).filter(Boolean)
+    : [];
+  const variants = getProductVariantList(product);
+
+  if (variantAxes.length) {
+    variantAxes.forEach((axis) => {
+      const directValue = getObjectValueByAttributeKey(product, axis);
+      if (directValue !== undefined && directValue !== null && directValue !== "") {
+        callback(axis, directValue);
+      }
+    });
+
+    variants.forEach((variant) => {
+      const titleParts = String(variant?.title || "")
+        .split("/")
+        .map((part) => part.trim())
+        .filter(Boolean);
+
+      variantAxes.forEach((axis, index) => {
+        const value =
+          getObjectValueByAttributeKey(variant?.attributes, axis) ??
+          getObjectValueByAttributeKey(variant, axis) ??
+          titleParts[index];
+
+        if (value !== undefined && value !== null && value !== "") {
+          callback(axis, value);
+        }
+      });
+    });
+
+    return;
+  }
+
+  readDirectAttributeFields(product, callback);
+  readKnownAttributeContainers(product, callback);
+  readOptionRows(product?.options, callback);
+
+  variants.forEach((variant) => {
+    readDirectAttributeFields(variant, callback);
+    readKnownAttributeContainers(variant, callback);
+    readOptionRows(variant?.options, callback);
+  });
+}
+
+function getProductBrandLabel(product = {}) {
+  const nestedProduct = product.product || product.productId;
+  return (
+    product?.brand ||
+    product?.brandName ||
+    product?.brand_name ||
+    product?.manufacturer ||
+    product?.vendor ||
+    product?.metadata?.brand ||
+    (nestedProduct && typeof nestedProduct === "object"
+      ? getProductBrandLabel(nestedProduct)
+      : "")
+  );
+}
+
 const getFacetList = (facets = {}, keys = []) => {
   for (const key of keys) {
     const value = facets?.[key];
@@ -153,6 +380,7 @@ export default function ProductsPage() {
   const [seenBrands, setSeenBrands] = useState(new Map());
   const [seenBrandCounts, setSeenBrandCounts] = useState(new Map());
   const [seenRatingCounts, setSeenRatingCounts] = useState({});
+  const [seenAttributeOptions, setSeenAttributeOptions] = useState({});
   const [pageInfo, setPageInfo] = useState({
     page: 1,
     totalPages: 1,
@@ -292,6 +520,70 @@ export default function ProductsPage() {
     return counts;
   }, [facetBrandOptions]);
 
+  const productBrandCounts = useMemo(() => {
+    return products.reduce((counts, product) => {
+      const brand = String(getProductBrandLabel(product) || "").trim();
+      if (brand) counts[brand] = (counts[brand] || 0) + 1;
+      return counts;
+    }, {});
+  }, [products]);
+
+  const visibleAttributeOptionGroups = useMemo(() => {
+    const groups = new Map();
+
+    products.forEach((product) => {
+      const productValues = new Map();
+
+      collectProductAttributeEntries(product, (key, value) => {
+        if (!productValues.has(key)) productValues.set(key, new Set());
+        productValues.get(key).add(value);
+      });
+
+      productValues.forEach((values, key) => {
+        if (!groups.has(key)) {
+          groups.set(key, {
+            key,
+            title: toTitleCase(key),
+            values: new Map(),
+          });
+        }
+
+        const group = groups.get(key);
+        values.forEach((value) => {
+          group.values.set(value, (group.values.get(value) || 0) + 1);
+        });
+      });
+    });
+
+    const result = Array.from(groups.values()).map((group) => ({
+      key: group.key,
+      title: group.title,
+      options: Array.from(group.values.entries())
+        .map(([value, count]) => ({
+          value,
+          label: value,
+          count,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    }));
+
+    console.log("[Products filters] attribute sources", {
+      products: products.map((product) => ({
+        id: product?._id || product?.id,
+        title: product?.title || product?.name,
+        color: product?.color,
+        brand: getProductBrandLabel(product),
+        variantCount: getProductVariantList(product).length,
+        variantColors: getProductVariantList(product)
+          .map((variant) => variant?.attributes?.color || variant?.color)
+          .filter(Boolean),
+      })),
+      filters: result,
+    });
+
+    return result;
+  }, [products]);
+
   const currentContextKey = useMemo(() => {
     const p = new URLSearchParams(searchParams);
     p.delete("minPrice");
@@ -404,6 +696,45 @@ export default function ProductsPage() {
     }
   }, [facetBrandOptions]);
 
+  useEffect(() => {
+    if (!visibleAttributeOptionGroups.length) return;
+
+    setSeenAttributeOptions((prev) => {
+      const next = { ...prev };
+      let changed = false;
+
+      visibleAttributeOptionGroups.forEach((group) => {
+        const existingGroup = next[group.key] || {
+          title: group.title,
+          options: {},
+        };
+        const nextOptions = { ...existingGroup.options };
+        let groupChanged = false;
+
+        group.options.forEach((option) => {
+          const previousCount = Number(nextOptions[option.value]?.count || 0);
+          if (!nextOptions[option.value] || option.count > previousCount) {
+            nextOptions[option.value] = {
+              label: option.label,
+              count: option.count,
+            };
+            groupChanged = true;
+          }
+        });
+
+        if (groupChanged || !next[group.key]) {
+          next[group.key] = {
+            title: existingGroup.title || group.title,
+            options: nextOptions,
+          };
+          changed = true;
+        }
+      });
+
+      return changed ? next : prev;
+    });
+  }, [visibleAttributeOptionGroups]);
+
   const categoryOptions = useMemo(() => {
     const selectedCategories = parseMultiValue(searchParams.get("category"));
     const optionMap = new Map(seenCategories);
@@ -450,6 +781,9 @@ export default function ProductsPage() {
       const count = Number(brand.count || 0);
       if (count > 0) catalogBrandCounts.set(brand.value, count);
     });
+    Object.keys(productBrandCounts).forEach((brand) => {
+      if (!optionMap.has(brand)) optionMap.set(brand, brand);
+    });
     selectedBrands.forEach((brand) => {
       if (!optionMap.has(brand)) optionMap.set(brand, brand);
     });
@@ -459,16 +793,107 @@ export default function ProductsPage() {
       label,
       count:
         brandCountsObj[value] ||
+        productBrandCounts[value] ||
         seenBrandCounts.get(value) ||
         catalogBrandCounts.get(value) ||
         0,
     }));
-  }, [brandCountsObj, brandList, selectedBrands, seenBrands, seenBrandCounts]);
+  }, [
+    brandCountsObj,
+    brandList,
+    productBrandCounts,
+    selectedBrands,
+    seenBrands,
+    seenBrandCounts,
+  ]);
+
+  const attributeFilterGroups = useMemo(() => {
+    const groupMap = new Map();
+
+    visibleAttributeOptionGroups.forEach((group) => {
+      groupMap.set(group.key, {
+        key: group.key,
+        title: group.title,
+        options: new Map(
+          group.options.map((option) => [
+            option.value,
+            {
+              value: option.value,
+              label: option.label,
+              count: option.count,
+            },
+          ]),
+        ),
+      });
+    });
+
+    Object.entries(seenAttributeOptions).forEach(([key, group]) => {
+      if (!groupMap.has(key)) {
+        groupMap.set(key, {
+          key,
+          title: group.title || toTitleCase(key),
+          options: new Map(),
+        });
+      }
+
+      const targetGroup = groupMap.get(key);
+      Object.entries(group.options || {}).forEach(([value, option]) => {
+        const current = targetGroup.options.get(value);
+        const count = Math.max(
+          Number(current?.count || 0),
+          Number(option?.count || 0),
+        );
+        targetGroup.options.set(value, {
+          value,
+          label: current?.label || option?.label || value,
+          count,
+        });
+      });
+    });
+
+    Array.from(searchParams.entries()).forEach(([paramKey, paramValue]) => {
+      if (!paramValue) return;
+      const isAttributeParam =
+        paramKey.startsWith(ATTRIBUTE_PARAM_PREFIX) ||
+        STATIC_ATTRIBUTE_KEYS.includes(paramKey);
+      if (!isAttributeParam) return;
+
+      const key = normalizeAttributeKey(paramKey);
+      if (!groupMap.has(key)) {
+        groupMap.set(key, {
+          key,
+          title: toTitleCase(key),
+          options: new Map(),
+        });
+      }
+
+      const targetGroup = groupMap.get(key);
+      parseMultiValue(paramValue).forEach((value) => {
+        if (!targetGroup.options.has(value)) {
+          targetGroup.options.set(value, {
+            value,
+            label: value,
+            count: 0,
+          });
+        }
+      });
+    });
+
+    return Array.from(groupMap.values())
+      .map((group) => ({
+        key: group.key,
+        title: group.title,
+        options: Array.from(group.options.values()).sort((a, b) =>
+          a.label.localeCompare(b.label),
+        ),
+      }))
+      .filter((group) => group.options.length);
+  }, [searchParams, seenAttributeOptions, visibleAttributeOptionGroups]);
 
   const getParams = useCallback(
     (pageOverride) => {
       const parseMultiParam = (val) => val || undefined;
-      return {
+      const params = {
         category: searchParams.get("category") || undefined,
         brand: parseMultiParam(searchParams.get("brand")),
         q: searchParams.get("q") || undefined,
@@ -490,10 +915,28 @@ export default function ProductsPage() {
         inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
         outOfStock:
           searchParams.get("outOfStock") === "true" ? "true" : undefined,
+        includeVariants: true,
+        include_variants: true,
+        includeAttributes: true,
+        include_attributes: true,
 
         page: pageOverride || 1,
         limit: Number(searchParams.get("limit") || 12),
       };
+
+      searchParams.forEach((value, key) => {
+        if (!value) return;
+        const isAttributeParam =
+          key.startsWith(ATTRIBUTE_PARAM_PREFIX) ||
+          STATIC_ATTRIBUTE_KEYS.includes(key);
+        if (!isAttributeParam) return;
+
+        const attributeKey = normalizeAttributeKey(key);
+        params[attributeKey] = value;
+        params[getAttributeParamKey(attributeKey)] = value;
+      });
+
+      return params;
     },
     [searchParams],
   );
@@ -695,15 +1138,16 @@ export default function ProductsPage() {
       label: "Free Delivery",
     },
     */
-    ["color", "size", "material", "fit", "storage", "skinType", "shade"]
-      .map(
-        (key) =>
-          searchParams.get(key) && {
-            key,
-            label: `${key}: ${searchParams.get(key)}`,
-          },
-      )
-      .filter(Boolean),
+    attributeFilterGroups.flatMap((group) =>
+      parseMultiValue(getAttributeParamValue(searchParams, group.key)).map(
+        (value) => ({
+          key: `${getAttributeParamKey(group.key)}:${value}`,
+          groupKey: getAttributeParamKey(group.key),
+          value,
+          label: `${group.title}: ${value}`,
+        }),
+      ),
+    ),
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
       label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
@@ -781,6 +1225,23 @@ export default function ProductsPage() {
         />
       ),
     },
+    ...attributeFilterGroups.map((group) => ({
+      key: `attribute:${group.key}`,
+      title: group.title,
+      content: (
+        <OptionFilter
+          name={getAttributeParamKey(group.key)}
+          options={group.options}
+          selected={parseMultiValue(
+            getAttributeParamValue(searchParams, group.key),
+          )}
+          multiple
+          onChange={(values) =>
+            updateParam(getAttributeParamKey(group.key), serializeMultiValue(values))
+          }
+        />
+      ),
+    })),
     /*
     {
       key: "delivery",
