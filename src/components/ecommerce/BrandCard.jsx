@@ -18,6 +18,13 @@ export default function BrandCard({
   const to =
     href ||
     `/brands/${encodeURIComponent((name || "").toLowerCase().replace(/\s+/g, "-"))}`;
+  const initials = String(name || "Brand")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
 
   const content = (
     <article
@@ -28,16 +35,28 @@ export default function BrandCard({
       )}
     >
       <div className="relative flex h-24  shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-cream p-4">
-        <img
-          src={displayImage || "/image/png/favicon.png"}
-          alt={name}
-          className="max-h-full max-w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.04]"
-          loading="lazy"
-          decoding="async"
-          onError={(e) => {
-            e.currentTarget.src = "/image/png/favicon.png";
-          }}
-        />
+        {displayImage ? (
+          <img
+            src={displayImage}
+            alt={name}
+            className="max-h-full max-w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.04]"
+            loading="lazy"
+            decoding="async"
+            onError={(e) => {
+              e.currentTarget.src = "/image/png/favicon.png";
+            }}
+          />
+        ) : (
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-white text-center  text-lg font-bold text-gold shadow-sm">
+            {initials || (
+              <Store
+                size={30}
+                strokeWidth={1.4}
+                className="text-border-strong"
+              />
+            )}
+          </div>
+        )}
         <span
           aria-hidden="true"
           className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-white/90 text-gold-dark opacity-0 shadow-sm transition-all duration-300 ease-in-out group-hover:opacity-100"
