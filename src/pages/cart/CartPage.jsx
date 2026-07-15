@@ -56,6 +56,7 @@ import {
   writeSavedForLaterItems,
   writeSelectedCheckoutItemIds,
 } from "../../utils/ecommerce/cart";
+import { debugCartPricing } from "../../utils/ecommerce/debugPricing";
 import {
   BUY_NOW_STORAGE_KEY,
   CHECKOUT_CART_ITEM_IDS_STORAGE_KEY,
@@ -242,6 +243,11 @@ export default function CartPage() {
       }),
     [rawItems, localQuantities, productEntities],
   );
+
+  // Debugging utility: Log prices to console whenever items change
+  useEffect(() => {
+    debugCartPricing(items);
+  }, [items]);
 
   const hasCartItems = items.length > 0;
   const hasSavedItems = savedForLaterItems.length > 0 || wishlist.length > 0;

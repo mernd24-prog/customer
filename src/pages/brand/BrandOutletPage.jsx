@@ -94,7 +94,11 @@ export default function BrandOutletPage() {
         }))
         .filter(
           (brand) =>
-            brand.displayName && brand.routeKey && brand.productCount > 0,
+            brand.displayName &&
+            brand.routeKey &&
+            brand.productCount > 0 &&
+            brand.active !== false &&
+            brand.approvalStatus !== "pending",
         )
         .sort((a, b) =>
           a.displayName.localeCompare(b.displayName, undefined, {
