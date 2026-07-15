@@ -164,7 +164,7 @@ export const catalogThunks = {
 
 export const searchThunks = {
   searchCatalog: makeThunk("search/searchCatalog", {
-    url: endpoints.search.main,
+    url: endpoints.products.discover,
     params: q,
     cache: true,
     cacheTtl: 120000,
@@ -179,7 +179,7 @@ export const searchThunks = {
 
 export const productThunks = {
   fetchProducts: makeThunk("product/fetchProducts", {
-    url: endpoints.products.list,
+    url: endpoints.products.discover,
     params: q,
   }),
   fetchSellerProducts: makeThunk("product/fetchSellerProducts", {

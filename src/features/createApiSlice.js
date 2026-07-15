@@ -73,6 +73,7 @@ export function createApiSlice({
   thunks = {},
   extraReducers,
   reducers = {},
+  setCurrentFromList = true,
 }) {
   const slice = createSlice({
     name,
@@ -120,7 +121,9 @@ export function createApiSlice({
                 data.list ||
                 [];
               state.list = list;
-              state.current = data;
+              if (setCurrentFromList) {
+                state.current = data;
+              }
               state.entities = Object.fromEntries(
                 list.map((item, index) => [idOf(item) ?? index, item]),
               );

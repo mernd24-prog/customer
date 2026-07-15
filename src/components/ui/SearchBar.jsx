@@ -3,7 +3,6 @@ import { Search, ChevronDown } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { sanitizeSearchQuery } from "../../validations";
-import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { getImageUrlFromValue } from "../../utils/ecommerce/product";
 import {
   clearSuggestions,
@@ -147,8 +146,6 @@ const normalizeSuggestion = (suggestion, source = "api") => ({
   source,
 });
 
-let categoriesRequestStarted = false;
-
 const SearchBar = ({
   placeholder = "Search for products, brands and categories...",
   className = "",
@@ -166,8 +163,9 @@ const SearchBar = ({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const categoriesRaw = useSelector((state) => state.catalog.list || []);
-  const categoriesLoading = useSelector((state) => state.catalog.loading);
+  const categoriesRaw = useSelector(
+    (state) => state.catalog.globalCategories || [],
+  );
   const suggestionsRaw = useSelector((state) => state.search.suggestions || []);
   const autocompleteLoading = useSelector(
     (state) => state.search.autocompleteLoading,
@@ -194,7 +192,6 @@ const SearchBar = ({
   const searchBarRef = useRef(null);
   const categoryDropdownRef = useRef(null);
   const searchDropdownRef = useRef(null);
-  const categoriesRequestedRef = useRef(false);
   const searchQuery = value ?? internalQuery;
   const debouncedSearchQuery = useDebouncedValue(
     searchQuery,
@@ -234,34 +231,6 @@ const SearchBar = ({
     searchParams.get("categoryId") ||
     searchParams.get("category") ||
     searchParams.get("categorySlug");
-
-  // Fetch categories if not loaded
-  useEffect(() => {
-    let ignore = false;
-
-    if (
-      enableCategoryDropdown &&
-      !categories.length &&
-      !categoriesLoading &&
-      !categoriesRequestedRef.current &&
-      !categoriesRequestStarted
-    ) {
-      categoriesRequestedRef.current = true;
-      categoriesRequestStarted = true;
-      dispatch(fetchCategories({ tree: true, active: true, maxDepth: 3 }))
-        .then(() => {
-          if (ignore) return;
-        })
-        .catch(() => {})
-        .finally(() => {
-          categoriesRequestStarted = false;
-        });
-    }
-
-    return () => {
-      ignore = true;
-    };
-  }, [dispatch, enableCategoryDropdown, categories.length, categoriesLoading]);
 
   useEffect(() => {
     if (!enableAutocomplete) return;

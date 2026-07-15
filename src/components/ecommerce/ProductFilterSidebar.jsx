@@ -647,7 +647,9 @@ export function RatingFilter({
         multiple ? "filter-scrollbar overflow-y-auto pr-2" : ""
       }`}
     >
-      {[5, 4, 3, 2, 1].map((stars) => {
+      {[5, 4, 3, 2, 1]
+        .filter((stars) => Number(counts[String(stars)] || 0) > 0)
+        .map((stars) => {
         const value = String(stars);
         const isSelected = selectedSet.has(value);
 
@@ -689,7 +691,7 @@ export function RatingFilter({
             )}
           </label>
         );
-      })}
+        })}
     </div>
   );
 }

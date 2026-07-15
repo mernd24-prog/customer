@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import { BrandCard } from "../../components/ecommerce";
 import CUSTOMER_ROUTES from "../../constants/routes";
@@ -62,6 +62,10 @@ function getBrandProductCount(brand = {}) {
 
 export default function BrandOutletPage() {
   const dispatch = useDispatch();
+  const availableBrands = useSelector(
+    (state) => state.catalog.globalBrands || [],
+  );
+  const discoveryLoading = useSelector((state) => state.product?.loading);
   const [brandList, setBrandList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -84,14 +88,23 @@ export default function BrandOutletPage() {
 
   const brands = useMemo(
     () =>
-      brandList
-        .map((brand) => ({
-          ...brand,
-          displayName: getBrandName(brand),
-          routeKey: getBrandRouteKey(brand),
-          displayLogo: getBrandLogo(brand),
-          productCount: getBrandProductCount(brand),
-        }))
+      availableBrands
+        .map((facetBrand) => {
+          const facetName = getBrandName(facetBrand);
+          const masterBrand = brandList.find(
+            (brand) =>
+              getBrandName(brand).trim().toLowerCase() ===
+              facetName.trim().toLowerCase(),
+          );
+          const brand = { ...(masterBrand || {}), ...facetBrand };
+          return {
+            ...brand,
+            displayName: facetName,
+            routeKey: getBrandRouteKey(masterBrand || facetBrand),
+            displayLogo: getBrandLogo(masterBrand || facetBrand),
+            productCount: Number(facetBrand.count || 0),
+          };
+        })
         .filter(
           (brand) =>
             brand.displayName && brand.routeKey && brand.productCount > 0,
@@ -101,7 +114,7 @@ export default function BrandOutletPage() {
             sensitivity: "base",
           }),
         ),
-    [brandList],
+    [availableBrands, brandList],
   );
 
   const brandGridClass =
@@ -123,7 +136,7 @@ export default function BrandOutletPage() {
                 Shop brands available now
               </h1>
 
-              {loading ? (
+              {loading || discoveryLoading ? (
                 <div className={brandGridClass}>
                   {Array.from({ length: 10 }).map((_, index) => (
                     <div

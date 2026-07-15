@@ -10,7 +10,6 @@ import {
 } from "../../features/recommendation/recommendationSlice";
 import { fetchCmsPages } from "../../features/cms/cmsSlice";
 import { fetchProducts } from "../../features/product/productSlice";
-import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { tokenStorage } from "../../api/tokenStorage";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import Banner from "../../layouts/HeroBanner";
@@ -105,7 +104,7 @@ const buildNewArrivalItems = (products) => {
 export function HomePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const categoryList = useSelector((s) => s.catalog.list);
+  const categoryList = useSelector((s) => s.catalog.globalCategories || []);
   const categories = Array.isArray(categoryList) ? categoryList : [];
 
   const productList = useSelector((s) => s.product.list);
@@ -118,7 +117,6 @@ export function HomePage() {
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
 
   useEffect(() => {
-    dispatch(fetchCategories()).catch(() => {});
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
     if (tokenStorage.getAccessToken()) {
       dispatch(fetchRecommendations({ limit: 10 })).catch(() => {});

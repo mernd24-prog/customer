@@ -63,7 +63,7 @@ export function RecentlyUploadedPage() {
     Array.isArray(s.product.list) ? s.product.list : [],
   );
   useEffect(() => {
-    dispatch(fetchProducts({ sort: "newest", page: 1, limit: 48 })).catch(
+    dispatch(fetchProducts({ newArrival: "true", sort: "newest", page: 1, limit: 48 })).catch(
       () => {},
     );
   }, [dispatch]);
@@ -72,7 +72,7 @@ export function RecentlyUploadedPage() {
       title="Recently Uploaded"
       description="Freshly added products uploaded by sellers."
       items={products}
-      sourceLink="/products?sort=newest"
+      sourceLink="/products?newArrival=true&sort=newest"
       sourceText="All recent products"
     />
   );
@@ -84,7 +84,7 @@ export function NewArrivalsPage() {
     Array.isArray(s.product.list) ? s.product.list : [],
   );
   useEffect(() => {
-    dispatch(fetchProducts({ sort: "newest", page: 1, limit: 48 })).catch(
+    dispatch(fetchProducts({ newArrival: "true", sort: "newest", page: 1, limit: 48 })).catch(
       () => {},
     );
   }, [dispatch]);
@@ -93,7 +93,7 @@ export function NewArrivalsPage() {
       title="New Arrivals"
       description="Latest arrivals curated for fast discovery."
       items={products}
-      sourceLink="/products?sort=newest"
+      sourceLink="/products?newArrival=true&sort=newest"
       sourceText="View all arrivals"
     />
   );

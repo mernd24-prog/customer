@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams, useLocation } from "react-router-dom";
-import { buildCategoryTree } from "../../layouts/header/categoryHelpers";
+import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid2X2, List } from "lucide-react";
 import Seo from "../../components/common/Seo";
@@ -15,10 +14,6 @@ import {
 } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
-import {
-  fetchCategories,
-  fetchBrands,
-} from "../../features/catalog/catalogSlice";
 import {
   buildFacetCountMap,
   buildRatingCountMap,
@@ -106,48 +101,13 @@ const normalizeFacetOption = (option = {}) => {
 };
 
 
-function getMatchingCategoryKeys(targetCats, categoryTree) {
-  const keys = new Set();
-  
-  const addNodeAndChildren = (node) => {
-    if (!node) return;
-    keys.add(String(node.categoryKey || node.key).toLowerCase().replace(/[^a-z0-9]/g, ""));
-    const children = [...(node.children || []), ...(node.subs || [])];
-    children.forEach(addNodeAndChildren);
-  };
-
-  const findAndAdd = (nodes) => {
-    if (!nodes) return;
-    for (const node of nodes) {
-      const nodeKey = String(node.categoryKey || node.key).toLowerCase().replace(/[^a-z0-9]/g, "");
-      if (targetCats.some(tc => tc === nodeKey || nodeKey.includes(tc) || tc.includes(nodeKey))) {
-        addNodeAndChildren(node);
-      } else {
-        const children = [...(node.children || []), ...(node.subs || [])];
-        if (children.length > 0) {
-          findAndAdd(children);
-        }
-      }
-    }
-  };
-
-  findAndAdd(categoryTree);
-  return keys;
-}
-
-
 export default function ProductsPage() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const location = useLocation();
   const [viewMode, setViewMode] = useState("grid");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [brandList, setBrandList] = useState([]);
-  const [categoryList, setCategoryList] = useState([]);
   const [items, setItems] = useState([]);
   const [productFacets, setProductFacets] = useState({});
-  const [seenCategories, setSeenCategories] = useState(new Map());
-  const [seenBrands, setSeenBrands] = useState(new Map());
   const [pageInfo, setPageInfo] = useState({
     page: 1,
     totalPages: 1,
@@ -156,10 +116,7 @@ export default function ProductsPage() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
-  const catalogCategoryList = useSelector((state) => state.catalog?.globalCategories || state.catalog?.list || []);
-  const categoryTree = useMemo(() => buildCategoryTree(catalogCategoryList), [catalogCategoryList]);
-
-
+  const requestSequenceRef = useRef(0);
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const selectedBrands = useMemo(
@@ -172,38 +129,7 @@ export default function ProductsPage() {
   );
 
 
-  const products = useMemo(() => {
-    const selectedCategory = searchParams.get("category");
-    if (!selectedCategory) return items;
-    
-    const targetCats = parseMultiValue(selectedCategory).map((c) =>
-      String(c).toLowerCase().replace(/[^a-z0-9]/g, "")
-    );
-    const validKeys = getMatchingCategoryKeys(targetCats, categoryTree);
-    
-    return items.filter((p) => {
-      const cat = p.categoryId || p.category;
-      if (!cat) return false;
-      const catStr = String(
-        typeof cat === "object"
-          ? cat.slug || cat.key || cat.id || cat.name
-          : cat,
-      )
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, "");
-        
-      if (validKeys.size > 0 && validKeys.has(catStr)) {
-        return true;
-      }
-        
-      return targetCats.some(
-        (targetCat) =>
-          catStr === targetCat ||
-          catStr.includes(targetCat) ||
-          targetCat.includes(catStr)
-      );
-    });
-  }, [items, searchParams, categoryTree]);
+  const products = items;
 
   const totalPages = pageInfo.totalPages || 1;
   const currentPage = pageInfo.page || 1;
@@ -237,11 +163,6 @@ export default function ProductsPage() {
           ),
     [productFacets, products],
   );
-  const brandCounts = useMemo(
-    () =>
-      buildFacetCountMap(products, (product) => getProductBrandName(product)),
-    [products],
-  );
   const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
   const facetCategoryOptions = useMemo(
     () =>
@@ -269,17 +190,33 @@ export default function ProductsPage() {
   const effectiveRatingCounts = Object.keys(facetRatingCounts).length
     ? facetRatingCounts
     : ratingCounts;
-  const categoryCounts = useMemo(() => {
-    const counts = {};
-    facetCategoryOptions.forEach((opt) => (counts[opt.value] = opt.count));
-    return counts;
-  }, [facetCategoryOptions]);
-
-  const brandCountsObj = useMemo(() => {
-    const counts = {};
-    facetBrandOptions.forEach((opt) => (counts[opt.value] = opt.count));
-    return counts;
-  }, [facetBrandOptions]);
+  const attributeFacets = useMemo(
+    () =>
+      (productFacets.attributes || [])
+        .map((attribute) => ({
+          key: String(attribute.key || ""),
+          label: attribute.label || attribute.key,
+          values: (attribute.values || []).filter(
+            (option) => option.value && Number(option.count || 0) > 0,
+          ),
+        }))
+        .filter((attribute) => attribute.key && attribute.values.length),
+    [productFacets.attributes],
+  );
+  const collectionOptions = useMemo(
+    () =>
+      (productFacets.collections || []).filter(
+        (option) => option.value && Number(option.count || 0) > 0,
+      ),
+    [productFacets.collections],
+  );
+  const tagOptions = useMemo(
+    () =>
+      (productFacets.tags || []).filter(
+        (option) => option.value && Number(option.count || 0) > 0,
+      ),
+    [productFacets.tags],
+  );
 
   const currentContextKey = useMemo(() => {
     const p = new URLSearchParams(searchParams);
@@ -334,50 +271,17 @@ export default function ProductsPage() {
     };
   }, [absolutePriceLimits]);
 
-  useEffect(() => {
-    if (facetCategoryOptions.length > 0) {
-      setSeenCategories((prev) => {
-        const next = new Map(prev);
-        facetCategoryOptions.forEach((c) => {
-          if (!next.has(c.value)) next.set(c.value, c.label);
-        });
-        return next;
-      });
-    }
-  }, [facetCategoryOptions]);
-
-  useEffect(() => {
-    if (facetBrandOptions.length > 0) {
-      setSeenBrands((prev) => {
-        const next = new Map(prev);
-        facetBrandOptions.forEach((c) => {
-          if (!next.has(c.value)) next.set(c.value, c.label);
-        });
-        return next;
-      });
-    }
-  }, [facetBrandOptions]);
-
-  const categoryOptions = Array.from(seenCategories.entries()).map(
-    ([value, label]) => ({
-      value,
-      label,
-      count: categoryCounts[value] || 0,
-    }),
+  const categoryOptions = facetCategoryOptions.filter(
+    (option) => Number(option.count || 0) > 0,
   );
-
-  const brandOptions = Array.from(seenBrands.entries()).map(
-    ([value, label]) => ({
-      value,
-      label,
-      count: brandCountsObj[value] || 0,
-    }),
+  const brandOptions = facetBrandOptions.filter(
+    (option) => Number(option.count || 0) > 0,
   );
 
   const getParams = useCallback(
     (pageOverride) => {
       const parseMultiParam = (val) => val || undefined;
-      return {
+      const params = {
         category: searchParams.get("category") || undefined,
         brand: parseMultiParam(searchParams.get("brand")),
         q: searchParams.get("q") || undefined,
@@ -396,6 +300,11 @@ export default function ProductsPage() {
         skinType: parseMultiParam(searchParams.get("skinType")),
         shade: parseMultiParam(searchParams.get("shade")),
         rating: parseMultiParam(searchParams.get("rating")),
+        tags: parseMultiParam(searchParams.get("tags")),
+        collectionIds: parseMultiParam(searchParams.get("collectionIds")),
+        featured: searchParams.get("featured") || undefined,
+        bestSeller: searchParams.get("bestSeller") || undefined,
+        newArrival: searchParams.get("newArrival") || undefined,
         inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
         outOfStock:
           searchParams.get("outOfStock") === "true" ? "true" : undefined,
@@ -403,6 +312,10 @@ export default function ProductsPage() {
         page: pageOverride || 1,
         limit: Number(searchParams.get("limit") || 12),
       };
+      searchParams.forEach((value, key) => {
+        if (key.startsWith("attr_") && value) params[key] = value;
+      });
+      return params;
     },
     [searchParams],
   );
@@ -410,8 +323,12 @@ export default function ProductsPage() {
   const loadProducts = useCallback(
     async ({ page = 1, append = false } = {}) => {
       const params = getParams(page);
+      const requestSequence = append
+        ? requestSequenceRef.current
+        : ++requestSequenceRef.current;
       if (append) setIsLoadingMore(true);
       const result = await dispatch(fetchProducts(params)).unwrap();
+      if (requestSequence !== requestSequenceRef.current) return [];
 
       const data = result?.data || {};
       let list =
@@ -447,40 +364,6 @@ export default function ProductsPage() {
       setIsLoadingMore(false);
     });
   }, [loadProducts, searchParams]);
-
-  useEffect(() => {
-    dispatch(fetchCategories())
-      .then((action) => {
-        const data = action?.payload?.data;
-        const list = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.items)
-            ? data.items
-            : data?.list || [];
-        setCategoryList(list);
-      })
-      .catch(() => {});
-
-    dispatch(fetchBrands({ limit: 100 }))
-      .then((action) => {
-        const data = action?.payload?.data;
-        const list = Array.isArray(data)
-          ? data
-          : data?.items || data?.list || [];
-        setBrandList(
-          list
-            .map((brand) => {
-              const label =
-                brand?.name || brand?.title || brand?.brandName || brand?.code;
-              return label
-                ? { value: String(label), label: String(label) }
-                : null;
-            })
-            .filter(Boolean),
-        );
-      })
-      .catch(() => {});
-  }, [dispatch]);
 
   useEffect(() => {
     if (
@@ -663,7 +546,60 @@ export default function ProductsPage() {
         />
       ),
     },
-    {
+    collectionOptions.length > 0 && {
+      key: "collectionIds",
+      title: "Collections",
+      content: (
+        <OptionFilter
+          name="collectionIds"
+          options={collectionOptions}
+          selected={parseMultiValue(searchParams.get("collectionIds"))}
+          multiple
+          onChange={(values) =>
+            updateParam("collectionIds", serializeMultiValue(values))
+          }
+        />
+      ),
+    },
+    tagOptions.length > 0 && {
+      key: "tags",
+      title: "Tags",
+      content: (
+        <OptionFilter
+          name="tags"
+          options={tagOptions}
+          selected={parseMultiValue(searchParams.get("tags"))}
+          multiple
+          onChange={(values) => updateParam("tags", serializeMultiValue(values))}
+        />
+      ),
+    },
+    Object.values(productFacets.merchandising || {}).some((count) => Number(count) > 0) && {
+      key: "merchandising",
+      title: "Discover",
+      content: (
+        <CheckboxListFilter
+          name="merchandising"
+          options={[
+            { value: "featured", label: "Featured", count: productFacets.merchandising?.featured },
+            { value: "bestSeller", label: "Best Seller", count: productFacets.merchandising?.bestSeller },
+            { value: "newArrival", label: "New Arrival", count: productFacets.merchandising?.newArrival },
+          ].filter((option) => Number(option.count || 0) > 0)}
+          selected={["featured", "bestSeller", "newArrival"].filter(
+            (value) => searchParams.get(value) === "true",
+          )}
+          onChange={(values) => {
+            const selectedValues = new Set(values);
+            updateParams([
+              ["featured", selectedValues.has("featured") ? "true" : undefined],
+              ["bestSeller", selectedValues.has("bestSeller") ? "true" : undefined],
+              ["newArrival", selectedValues.has("newArrival") ? "true" : undefined],
+            ]);
+          }}
+        />
+      ),
+    },
+    productFacets.price?.min != null && productFacets.price?.max != null && {
       key: "price",
       title: "Price Range",
       content: (
@@ -676,7 +612,7 @@ export default function ProductsPage() {
         />
       ),
     },
-    {
+    Object.values(effectiveRatingCounts).some((count) => Number(count) > 0) && {
       key: "rating",
       title: "Rating",
       content: (
@@ -690,6 +626,21 @@ export default function ProductsPage() {
         />
       ),
     },
+    ...attributeFacets.map((attribute) => ({
+      key: `attr_${attribute.key}`,
+      title: attribute.label,
+      content: (
+        <OptionFilter
+          name={`attr_${attribute.key}`}
+          options={attribute.values}
+          selected={parseMultiValue(searchParams.get(`attr_${attribute.key}`))}
+          multiple
+          onChange={(values) =>
+            updateParam(`attr_${attribute.key}`, serializeMultiValue(values))
+          }
+        />
+      ),
+    })),
     /*
     {
       key: "delivery",
@@ -721,7 +672,7 @@ export default function ProductsPage() {
       ),
     },
     */
-    {
+    availabilityCounts.inStock > 0 || availabilityCounts.outOfStock > 0 ? {
       key: "inStock",
       title: "Availability",
       content: (
@@ -738,7 +689,7 @@ export default function ProductsPage() {
               label: "Out of Stock",
               count: availabilityCounts.outOfStock,
             },
-          ]}
+          ].filter((option) => Number(option.count || 0) > 0)}
           selected={["inStock", "outOfStock"].filter(
             (value) => searchParams.get(value) === "true",
           )}
@@ -754,7 +705,7 @@ export default function ProductsPage() {
           }}
         />
       ),
-    },
+    } : false,
   ].filter(Boolean);
 
   return (

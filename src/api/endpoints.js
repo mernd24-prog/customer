@@ -61,6 +61,7 @@ export const endpoints = {
   },
   products: {
     list: `${API_PREFIX}/products`,
+    discover: `${API_PREFIX}/products/discover`,
     sellerMe: `${API_PREFIX}/products/seller/me`,
     detail: (productId) => `${API_PREFIX}/products/${productId}`,
     create: `${API_PREFIX}/products`,

@@ -459,6 +459,7 @@ export default function CategoryPage() {
   const [categoryLoading, setCategoryLoading] = useState(true);
 
   const sentinelRef = useRef(null);
+  const requestSequenceRef = useRef(0);
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const catalogCategoryList = useSelector((state) => state.catalog?.globalCategories || state.catalog?.list || []);
@@ -509,15 +510,17 @@ export default function CategoryPage() {
   );
   const filterableAttributes = useMemo(
     () =>
-      getCategoryAttributeSchema(categoryData)
-        .filter(isSchemaAttributeFilterable)
+      (productFacets.attributes || [])
         .map((attribute) => ({
           ...attribute,
-          key: getSchemaAttributeKey(attribute),
-          options: getSchemaAttributeOptions(attribute),
+          key: String(attribute.key || ""),
+          label: attribute.label || attribute.key,
+          options: (attribute.values || [])
+            .filter((option) => Number(option.count || 0) > 0)
+            .map((option) => String(option.value)),
         }))
         .filter((attribute) => attribute.key && attribute.options.length),
-    [categoryData],
+    [productFacets.attributes],
   );
   const supportedAttributeKeys = useMemo(
     () => new Set(filterableAttributes.map((attribute) => attribute.key)),
@@ -525,12 +528,18 @@ export default function CategoryPage() {
   );
   const attributeCountMaps = useMemo(() => {
     return filterableAttributes.reduce((maps, attribute) => {
-      maps[attribute.key] = buildFacetCountMap(products, (product) =>
-        getAttributeValues(product, attribute),
+      const facet = (productFacets.attributes || []).find(
+        (item) => String(item.key) === String(attribute.key),
+      );
+      maps[attribute.key] = Object.fromEntries(
+        (facet?.values || []).map((option) => [
+          String(option.value),
+          Number(option.count || 0),
+        ]),
       );
       return maps;
     }, {});
-  }, [filterableAttributes, products]);
+  }, [filterableAttributes, productFacets.attributes]);
 
   const currentContextKey = useMemo(() => {
     const p = new URLSearchParams(searchParams);
@@ -619,11 +628,17 @@ export default function CategoryPage() {
   const loadProducts = useCallback(
     async ({ page = 1, append = false } = {}) => {
       const params = getParams(page);
+      const requestSequence = append
+        ? requestSequenceRef.current
+        : ++requestSequenceRef.current;
       if (append) setIsLoadingMore(true);
       try {
         const result = await dispatch(fetchProducts(params)).unwrap();
+        if (requestSequence !== requestSequenceRef.current) return [];
         const data = result?.data;
-        let list = Array.isArray(data) ? data : data?.items || data?.list || [];
+        let list = Array.isArray(data)
+          ? data
+          : data?.products || data?.items || data?.list || [];
 
 
 
@@ -850,8 +865,16 @@ export default function CategoryPage() {
     sidebarCategory?.parentKey === null ||
     sidebarCategory?.parentKey === undefined ||
     Number(sidebarCategory?.level || 0) === 0;
-  const showSubCategoryStrip = isRootCategory && subCategories.length > 0;
-  const showCategorySidebar = !isRootCategory && subCategories.length > 0;
+  const visibleCategoryKeys = new Set(
+    (productFacets.categories || [])
+      .filter((category) => Number(category.count || 0) > 0)
+      .map((category) => String(category.value || category.key || "")),
+  );
+  const visibleSubCategories = subCategories.filter((category) =>
+    visibleCategoryKeys.has(String(getCategoryKey(category))),
+  );
+  const showSubCategoryStrip = isRootCategory && visibleSubCategories.length > 0;
+  const showCategorySidebar = !isRootCategory && visibleSubCategories.length > 0;
   const categoryFilter = useMemo(() => {
     if (!categoryData || isRootCategory) return null;
     const parentKey =
@@ -1053,7 +1076,7 @@ export default function CategoryPage() {
 
       {/* ── Product listing with sidebar filters ────────────────────────── */}
       <div className="py-5 sm:py-7">
-        {showSubCategoryStrip && <SubCategoryStrip categories={subCategories} />}
+        {showSubCategoryStrip && <SubCategoryStrip categories={visibleSubCategories} />}
 
         <CollectionToolbar
           countText={`${(pageInfo.total || meta?.total || products.length).toLocaleString()} products`}
@@ -1069,7 +1092,7 @@ export default function CategoryPage() {
             showCategorySidebar ? (
               <CategorySidebarNav
                 categoryTitle={sidebarCategoryTitle}
-                categories={subCategories}
+                categories={visibleSubCategories}
                 activeKey={categoryKey}
               />
             ) : null

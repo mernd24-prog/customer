@@ -35,10 +35,7 @@ import { fetchMe } from "../features/user/userSlice";
 import { getRole, isAdminRole } from "../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
 import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
-import {
-  fetchCategories,
-  setGlobalCategories,
-} from "../features/catalog/catalogSlice";
+import { fetchProducts } from "../features/product/productSlice";
 
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
@@ -422,44 +419,33 @@ export const Navbar = ({ icons: propIcons }) => {
 export const CategoryBar = ({ headerData, compact = false }) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const catalogCategoryList = useSelector((state) => state.catalog.list || []);
+  const globalCategories = useSelector(
+    (state) => state.catalog.globalCategories || [],
+  );
+  const discoveryNavigationLoaded = useSelector((state) =>
+    Boolean(state.catalog.discoveryNavigationLoaded),
+  );
+  const discoveryNavigationLoading = useSelector((state) =>
+    Boolean(state.catalog.discoveryNavigationLoading),
+  );
   const [categoriesList, setCategoriesList] = useState([]);
 
   useEffect(() => {
-    const list = getCategoryListFromResponse(catalogCategoryList);
+    const list = getCategoryListFromResponse(globalCategories);
     const actualCategories = list.filter(
       (item) => item && (item.categoryKey || item.parentKey),
     );
-    if (actualCategories.length > 0) {
-      setCategoriesList(actualCategories);
-    }
-  }, [catalogCategoryList]);
-
-  const globalCategories = useSelector(
-    (state) => state.catalog.globalCategories,
-  );
+    setCategoriesList(actualCategories);
+  }, [globalCategories]);
 
   useEffect(() => {
-    if (
-      !globalCategories ||
-      (Array.isArray(globalCategories) && globalCategories.length === 0)
-    ) {
-      dispatch(fetchCategories())
-        .unwrap()
-        .then((result) => {
-          const data = result?.data || result;
-          const list = getCategoryListFromResponse(data);
-          const actualCategories = list.filter(
-            (item) => item && (item.categoryKey || item.parentKey),
-          );
-          if (actualCategories.length > 0) {
-            setCategoriesList(actualCategories);
-            dispatch(setGlobalCategories(data));
-          }
-        })
-        .catch(() => {});
-    }
-  }, [dispatch, globalCategories]);
+    if (discoveryNavigationLoaded || discoveryNavigationLoading)
+      return undefined;
+    const fallbackTimer = window.setTimeout(() => {
+      dispatch(fetchProducts({ page: 1, limit: 1 })).catch(() => {});
+    }, 250);
+    return () => window.clearTimeout(fallbackTimer);
+  }, [dispatch, discoveryNavigationLoaded, discoveryNavigationLoading]);
 
   const catalogCategories = useMemo(() => categoriesList, [categoriesList]);
   const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
@@ -539,7 +525,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       if (currentScrollY > lastScrollYRef.current && currentScrollY > 50) {
         setIsScrollingUp(false);
       } else if (currentScrollY < lastScrollYRef.current) {
@@ -627,7 +613,9 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         aria-label="Category navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
         className={`fixed left-0 z-40 w-full bg-white/60 backdrop-blur-md transition-transform duration-300 ease-out will-change-transform ${
-          isScrollingUp ? "translate-y-0" : "-translate-y-full pointer-events-none"
+          isScrollingUp
+            ? "translate-y-0"
+            : "-translate-y-full pointer-events-none"
         }`}
       >
         <div className="customer-container mx-auto w-full relative">

@@ -356,7 +356,19 @@ export default function CategoryListingPage() {
     loadCategories,
   ]);
 
-  const categories = useMemo(() => categoryList, [categoryList]);
+  const categories = useMemo(() => {
+    const available = getRootCategories(
+      catalogState.globalCategories || [],
+    ).filter((category) => Number(category.productCount || 0) > 0);
+    const masterByKey = new Map(
+      categoryList.map((category) => [category.routeKey, category]),
+    );
+    return available.map((category) => ({
+      ...(masterByKey.get(category.routeKey) || {}),
+      ...category,
+      productCount: Number(category.productCount || 0),
+    }));
+  }, [catalogState.globalCategories, categoryList]);
 
   const sidebarCategories = useMemo(
     () =>

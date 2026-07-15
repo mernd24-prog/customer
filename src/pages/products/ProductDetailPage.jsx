@@ -913,7 +913,11 @@ export default function ProductDetailPage() {
   const navigate = useNavigate();
 
   const productState = useSelector((s) => s.product);
-  const product = productState.current;
+  const currentProduct = productState.current;
+  const product =
+    String(getProductId(currentProduct) || "") === String(productId || "")
+      ? currentProduct
+      : null;
   const loadedProductId = getProductId(product);
 
   const warrantyState = useSelector((s) => s.warranty);
@@ -987,20 +991,22 @@ export default function ProductDetailPage() {
       }),
     ).catch(() => {});
 
-    dispatch(
-      trackAnalyticsEvent({
-        eventName: "product_view",
-        metadata: { productId },
-      }),
-    ).catch(() => {});
+    if (isLoggedIn) {
+      dispatch(
+        trackAnalyticsEvent({
+          eventName: "product_view",
+          metadata: { productId },
+        }),
+      ).catch(() => {});
 
-    dispatch(
-      trackRecommendationInteraction({
-        productId,
-        interactionType: "viewed",
-      }),
-    ).catch(() => {});
-  }, [dispatch, product, productId]);
+      dispatch(
+        trackRecommendationInteraction({
+          productId,
+          interactionType: "viewed",
+        }),
+      ).catch(() => {});
+    }
+  }, [dispatch, isLoggedIn, product, productId]);
 
   useEffect(() => {
     if (!isLoggedIn || !product) {

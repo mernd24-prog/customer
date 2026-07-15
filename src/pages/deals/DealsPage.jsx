@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { BadgePercent } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import {
@@ -16,10 +15,6 @@ import {
 
 import { useProductActions } from "../../hooks/useProductActions";
 import { getPublicDealProducts } from "../../api/deals";
-import {
-  fetchCategories,
-  fetchBrands,
-} from "../../features/catalog/catalogSlice";
 import {
   applyImageFallback,
   buildFacetCountMap,
@@ -134,7 +129,6 @@ const normalizeFacetOption = (option = {}) => {
 };
 
 export default function DealsPage() {
-  const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [pageInfo, setPageInfo] = useState({
@@ -148,11 +142,7 @@ export default function DealsPage() {
   const [firstLoadDone, setFirstLoadDone] = useState(false);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [categoryList, setCategoryList] = useState([]);
-  const [brandList, setBrandList] = useState([]);
   const [dealFacets, setDealFacets] = useState({});
-  const [seenCategories, setSeenCategories] = useState(new Map());
-  const [seenBrands, setSeenBrands] = useState(new Map());
   // const currentSearchQuery = searchParams.get("q") || "";
   // const [searchQuery, setSearchQuery] = useState(currentSearchQuery);
 
@@ -264,56 +254,11 @@ export default function DealsPage() {
     }, {});
   }, [dealFacets]);
 
-  const categoryCounts = useMemo(() => {
-    const counts = {};
-    dealCategoryOptions.forEach((opt) => (counts[opt.value] = opt.count));
-    return counts;
-  }, [dealCategoryOptions]);
-
-  const brandCountsObj = useMemo(() => {
-    const counts = {};
-    dealBrandOptions.forEach((opt) => (counts[opt.value] = opt.count));
-    return counts;
-  }, [dealBrandOptions]);
-
-  useEffect(() => {
-    if (dealCategoryOptions.length > 0) {
-      setSeenCategories((prev) => {
-        const next = new Map(prev);
-        dealCategoryOptions.forEach((c) => {
-          if (!next.has(c.value)) next.set(c.value, c.label);
-        });
-        return next;
-      });
-    }
-  }, [dealCategoryOptions]);
-
-  useEffect(() => {
-    if (dealBrandOptions.length > 0) {
-      setSeenBrands((prev) => {
-        const next = new Map(prev);
-        dealBrandOptions.forEach((c) => {
-          if (!next.has(c.value)) next.set(c.value, c.label);
-        });
-        return next;
-      });
-    }
-  }, [dealBrandOptions]);
-
-  const categoryOptions = Array.from(seenCategories.entries()).map(
-    ([value, label]) => ({
-      value,
-      label,
-      count: categoryCounts[value] || 0,
-    }),
+  const categoryOptions = dealCategoryOptions.filter(
+    (option) => Number(option.count || 0) > 0,
   );
-
-  const brandOptions = Array.from(seenBrands.entries()).map(
-    ([value, label]) => ({
-      value,
-      label,
-      count: brandCountsObj[value] || 0,
-    }),
+  const brandOptions = dealBrandOptions.filter(
+    (option) => Number(option.count || 0) > 0,
   );
 
   const effectiveRatingCounts = Object.keys(dealRatingCounts).length
@@ -411,40 +356,6 @@ export default function DealsPage() {
     return () => clearTimeout(debounceTimer);
   }, [currentSearchQuery, searchQuery, setSearchParams]);
   */
-
-  useEffect(() => {
-    dispatch(fetchCategories())
-      .then((action) => {
-        const data = action?.payload?.data;
-        const list = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.items)
-            ? data.items
-            : data?.list || [];
-        setCategoryList(list);
-      })
-      .catch(() => {});
-
-    dispatch(fetchBrands({ limit: 100 }))
-      .then((action) => {
-        const data = action?.payload?.data;
-        const list = Array.isArray(data)
-          ? data
-          : data?.items || data?.list || [];
-        setBrandList(
-          list
-            .map((brand) => {
-              const label =
-                brand?.name || brand?.title || brand?.brandName || brand?.code;
-              return label
-                ? { value: String(label), label: String(label) }
-                : null;
-            })
-            .filter(Boolean),
-        );
-      })
-      .catch(() => {});
-  }, [dispatch]);
 
   useEffect(() => {
     if (
@@ -604,18 +515,20 @@ export default function DealsPage() {
         />
       ),
     },
-    {
+    dealFacets.price?.min != null && dealFacets.price?.max != null && {
       key: "price",
       title: "Price Range",
       content: (
         <PriceRangeFilter
           min={searchParams.get("minPrice")}
           max={searchParams.get("maxPrice")}
+          minLimit={dealFacets.price.min}
+          maxLimit={dealFacets.price.max}
           onChange={handlePriceChange}
         />
       ),
     },
-    {
+    Object.values(effectiveRatingCounts).some((count) => Number(count) > 0) && {
       key: "rating",
       title: "Rating",
       content: (
@@ -630,7 +543,7 @@ export default function DealsPage() {
       ),
     },
     /*
-    {
+    availabilityCounts.inStock > 0 || availabilityCounts.outOfStock > 0 ? {
       key: "delivery",
       title: "Delivery",
       content: (
@@ -639,7 +552,7 @@ export default function DealsPage() {
           options={[
             { value: "expressDelivery", label: "Express Delivery" },
             { value: "freeDelivery", label: "Free Delivery" },
-          ]}
+          ].filter((option) => Number(option.count || 0) > 0)}
           selected={["expressDelivery", "freeDelivery"].filter(
             (value) => searchParams.get(value) === "true",
           )}
@@ -658,7 +571,7 @@ export default function DealsPage() {
           }}
         />
       ),
-    },
+    } : false,
     */
     {
       key: "inStock",
