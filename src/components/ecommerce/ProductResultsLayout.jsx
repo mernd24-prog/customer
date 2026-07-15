@@ -54,7 +54,6 @@ export default function ProductResultsLayout({
       <ActiveFilterChips
         filters={filters}
         onRemove={onRemoveFilter}
-        onClear={onClearFilters}
       />
 
       <div className="flex  mt-8 items-start gap-8 lg:sticky lg:top-[calc(var(--customer-header-height,95px)+80px)]  lg:self-start lg:h-fit w-full ">

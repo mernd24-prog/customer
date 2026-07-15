@@ -141,8 +141,6 @@ export function HomePage() {
     [products],
   );
 
-  console.log(featuredProducts);
-
   return (
     <>
       <Seo
