@@ -109,11 +109,7 @@ function getAttributeValues(product, attribute) {
   });
 
   return Array.from(
-    new Set(
-      values
-        .map((value) => String(value || "").trim())
-        .filter(Boolean),
-    ),
+    new Set(values.map((value) => String(value || "").trim()).filter(Boolean)),
   );
 }
 
@@ -157,14 +153,16 @@ function getAttributeLookupKeys(attribute) {
 
 function getObjectValueByNormalizedKeys(source, normalizedKeys) {
   if (!source || typeof source !== "object") return undefined;
-  const matchingKey = Object.keys(source).find(
-    (key) => normalizedKeys.has(normalizeAttributeKey(key)),
+  const matchingKey = Object.keys(source).find((key) =>
+    normalizedKeys.has(normalizeAttributeKey(key)),
   );
   return matchingKey ? source[matchingKey] : undefined;
 }
 
 function getCategoryAttributeSchema(category = {}) {
-  return Array.isArray(category?.attributeSchema) ? category.attributeSchema : [];
+  return Array.isArray(category?.attributeSchema)
+    ? category.attributeSchema
+    : [];
 }
 
 function isSchemaAttributeFilterable(attribute = {}) {
@@ -180,10 +178,12 @@ function getSchemaAttributeOptions(attribute = {}) {
   return options
     .map((option) =>
       typeof option === "object"
-        ? option.value ?? option.name ?? option.label ?? option.code
+        ? (option.value ?? option.name ?? option.label ?? option.code)
         : option,
     )
-    .filter((option) => option !== undefined && option !== null && option !== "")
+    .filter(
+      (option) => option !== undefined && option !== null && option !== "",
+    )
     .map(String);
 }
 
@@ -313,7 +313,11 @@ function SubCategoryStrip({ categories = [] }) {
   );
 }
 
-function CategorySidebarNav({ categoryTitle, categories = [], activeKey = "" }) {
+function CategorySidebarNav({
+  categoryTitle,
+  categories = [],
+  activeKey = "",
+}) {
   const visibleCategories = categories
     .map((category) => ({
       key: getCategoryKey(category),
@@ -405,13 +409,16 @@ function CategoryPageSkeleton() {
   );
 }
 
-
 function getMatchingCategoryKeys(targetCats, categoryTree) {
   const keys = new Set();
-  
+
   const addNodeAndChildren = (node) => {
     if (!node) return;
-    keys.add(String(node.categoryKey || node.key).toLowerCase().replace(/[^a-z0-9]/g, ""));
+    keys.add(
+      String(node.categoryKey || node.key)
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, ""),
+    );
     const children = [...(node.children || []), ...(node.subs || [])];
     children.forEach(addNodeAndChildren);
   };
@@ -419,8 +426,15 @@ function getMatchingCategoryKeys(targetCats, categoryTree) {
   const findAndAdd = (nodes) => {
     if (!nodes) return;
     for (const node of nodes) {
-      const nodeKey = String(node.categoryKey || node.key).toLowerCase().replace(/[^a-z0-9]/g, "");
-      if (targetCats.some(tc => tc === nodeKey || nodeKey.includes(tc) || tc.includes(nodeKey))) {
+      const nodeKey = String(node.categoryKey || node.key)
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "");
+      if (
+        targetCats.some(
+          (tc) =>
+            tc === nodeKey || nodeKey.includes(tc) || tc.includes(nodeKey),
+        )
+      ) {
         addNodeAndChildren(node);
       } else {
         const children = [...(node.children || []), ...(node.subs || [])];
@@ -462,14 +476,23 @@ export default function CategoryPage() {
   const requestSequenceRef = useRef(0);
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
-  const catalogCategoryList = useSelector((state) => state.catalog?.globalCategories || state.catalog?.list || []);
-  const categoryTree = useMemo(() => buildCategoryTree(catalogCategoryList), [catalogCategoryList]);
-  
+  const catalogCategoryList = useSelector(
+    (state) => state.catalog?.globalCategories || state.catalog?.list || [],
+  );
+  const categoryTree = useMemo(
+    () => buildCategoryTree(catalogCategoryList),
+    [catalogCategoryList],
+  );
+
   const products = useMemo(() => {
     if (!categoryKey) return items;
-    const targetCats = [String(categoryKey).toLowerCase().replace(/[^a-z0-9]/g, "")];
+    const targetCats = [
+      String(categoryKey)
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, ""),
+    ];
     const validKeys = getMatchingCategoryKeys(targetCats, categoryTree);
-    
+
     return items.filter((p) => {
       const cat = p.categoryId || p.category;
       if (!cat) return false;
@@ -480,16 +503,16 @@ export default function CategoryPage() {
       )
         .toLowerCase()
         .replace(/[^a-z0-9]/g, "");
-        
+
       if (validKeys.size > 0 && validKeys.has(catStr)) {
         return true;
       }
-        
+
       return targetCats.some(
         (targetCat) =>
           catStr === targetCat ||
           catStr.includes(targetCat) ||
-          targetCat.includes(catStr)
+          targetCat.includes(catStr),
       );
     });
   }, [items, categoryKey, categoryTree]);
@@ -515,11 +538,12 @@ export default function CategoryPage() {
           ...attribute,
           key: String(attribute.key || ""),
           label: attribute.label || attribute.key,
+          searchable: attribute.searchable === true,
           options: (attribute.values || [])
             .filter((option) => Number(option.count || 0) > 0)
             .map((option) => String(option.value)),
         }))
-        .filter((attribute) => attribute.key && attribute.options.length),
+        .filter((attribute) => attribute.key && attribute.options.length > 1),
     [productFacets.attributes],
   );
   const supportedAttributeKeys = useMemo(
@@ -549,12 +573,16 @@ export default function CategoryPage() {
     return `${categoryKey}_${p.toString()}`;
   }, [searchParams, categoryKey]);
 
-  const [absolutePriceLimits, setAbsolutePriceLimits] = useState({ min: null, max: null, key: '' });
+  const [absolutePriceLimits, setAbsolutePriceLimits] = useState({
+    min: null,
+    max: null,
+    key: "",
+  });
 
   useEffect(() => {
     let backendMin = productFacets?.price?.min;
     let backendMax = productFacets?.price?.max;
-    
+
     let currentMin = backendMin;
     let currentMax = backendMax;
 
@@ -563,7 +591,7 @@ export default function CategoryPage() {
         const prices = products
           .map((p) => Number(getProductPrice(p) || 0))
           .filter((price) => price > 0);
-          
+
         if (prices.length > 0) {
           currentMin = Math.min(...prices);
           currentMax = Math.max(...prices);
@@ -572,13 +600,15 @@ export default function CategoryPage() {
     }
 
     if (currentMin != null && currentMax != null) {
-      setAbsolutePriceLimits(prev => {
+      setAbsolutePriceLimits((prev) => {
         if (prev.key !== currentContextKey) {
-            return { min: currentMin, max: currentMax, key: currentContextKey };
+          return { min: currentMin, max: currentMax, key: currentContextKey };
         }
-        const newMin = prev.min == null ? currentMin : Math.min(prev.min, currentMin);
-        const newMax = prev.max == null ? currentMax : Math.max(prev.max, currentMax);
-        
+        const newMin =
+          prev.min == null ? currentMin : Math.min(prev.min, currentMin);
+        const newMax =
+          prev.max == null ? currentMax : Math.max(prev.max, currentMax);
+
         if (newMin !== prev.min || newMax !== prev.max) {
           return { min: newMin, max: newMax, key: currentContextKey };
         }
@@ -639,8 +669,6 @@ export default function CategoryPage() {
         let list = Array.isArray(data)
           ? data
           : data?.products || data?.items || data?.list || [];
-
-
 
         const m = result?.meta || {};
         setPageInfo({
@@ -795,63 +823,75 @@ export default function CategoryPage() {
   ]);
 
   // ── Param helpers ────────────────────────────────────────────────────────
-  const updateParam = useCallback((key, value) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (value == null || value === "") next.delete(key);
-      else next.set(key, value);
-      next.delete("page");
-      return next;
-    });
-  }, [setSearchParams]);
-
-  const updateParams = useCallback((entries) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      entries.forEach(([key, value]) => {
+  const updateParam = useCallback(
+    (key, value) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
         if (value == null || value === "") next.delete(key);
         else next.set(key, value);
+        next.delete("page");
+        return next;
       });
-      next.delete("page");
-      return next;
-    });
-  }, [setSearchParams]);
+    },
+    [setSearchParams],
+  );
 
-  const handlePriceChange = useCallback(({ minPrice, maxPrice }) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (minPrice) next.set("minPrice", minPrice);
-      else next.delete("minPrice");
-      if (maxPrice) next.set("maxPrice", maxPrice);
-      else next.delete("maxPrice");
-      next.delete("page");
-      return next;
-    });
-  }, [setSearchParams]);
+  const updateParams = useCallback(
+    (entries) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        entries.forEach(([key, value]) => {
+          if (value == null || value === "") next.delete(key);
+          else next.set(key, value);
+        });
+        next.delete("page");
+        return next;
+      });
+    },
+    [setSearchParams],
+  );
 
-  const removeFilter = useCallback((key, filter) => {
-    if (key === "category" && filter?.href) {
-      navigate(filter.href);
-      return;
-    }
+  const handlePriceChange = useCallback(
+    ({ minPrice, maxPrice }) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        if (minPrice) next.set("minPrice", minPrice);
+        else next.delete("minPrice");
+        if (maxPrice) next.set("maxPrice", maxPrice);
+        else next.delete("maxPrice");
+        next.delete("page");
+        return next;
+      });
+    },
+    [setSearchParams],
+  );
 
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (key === "price") {
-        next.delete("minPrice");
-        next.delete("maxPrice");
-      } else if (filter?.groupKey) {
-        const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
-          (value) => value !== filter.value,
-        );
-        const serialized = serializeMultiValue(nextValues);
-        if (serialized) next.set(filter.groupKey, serialized);
-        else next.delete(filter.groupKey);
-      } else next.delete(key);
-      next.delete("page");
-      return next;
-    });
-  }, [navigate, setSearchParams]);
+  const removeFilter = useCallback(
+    (key, filter) => {
+      if (key === "category" && filter?.href) {
+        navigate(filter.href);
+        return;
+      }
+
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        if (key === "price") {
+          next.delete("minPrice");
+          next.delete("maxPrice");
+        } else if (filter?.groupKey) {
+          const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+            (value) => value !== filter.value,
+          );
+          const serialized = serializeMultiValue(nextValues);
+          if (serialized) next.set(filter.groupKey, serialized);
+          else next.delete(filter.groupKey);
+        } else next.delete(key);
+        next.delete("page");
+        return next;
+      });
+    },
+    [navigate, setSearchParams],
+  );
 
   // ── Derived data ─────────────────────────────────────────────────────────
   const categoryTitle =
@@ -873,8 +913,10 @@ export default function CategoryPage() {
   const visibleSubCategories = subCategories.filter((category) =>
     visibleCategoryKeys.has(String(getCategoryKey(category))),
   );
-  const showSubCategoryStrip = isRootCategory && visibleSubCategories.length > 0;
-  const showCategorySidebar = !isRootCategory && visibleSubCategories.length > 0;
+  const showSubCategoryStrip =
+    isRootCategory && visibleSubCategories.length > 0;
+  const showCategorySidebar =
+    !isRootCategory && visibleSubCategories.length > 0;
   const categoryFilter = useMemo(() => {
     if (!categoryData || isRootCategory) return null;
     const parentKey =
@@ -887,121 +929,122 @@ export default function CategoryPage() {
       label: getCategoryLabel(categoryData) || categoryTitle,
       href: parentKey ? CUSTOMER_ROUTES.category(parentKey) : "/products",
     };
-  }, [categoryData, categoryKey, categoryTitle, isRootCategory, sidebarCategory]);
+  }, [
+    categoryData,
+    categoryKey,
+    categoryTitle,
+    isRootCategory,
+    sidebarCategory,
+  ]);
 
   // ── Filter sections for sidebar ──────────────────────────────────────────
-  const filterSections = useMemo(
-    () => {
-      const availabilityOptions = [
-        {
-          value: "inStock",
-          label: "In Stock",
-          count: availabilityCounts.inStock,
-        },
-        {
-          value: "outOfStock",
-          label: "Out of Stock",
-          count: availabilityCounts.outOfStock,
-        },
-      ].filter((option) => option.count >= 1);
+  const filterSections = useMemo(() => {
+    const availabilityOptions = [
+      {
+        value: "inStock",
+        label: "In Stock",
+        count: availabilityCounts.inStock,
+      },
+      {
+        value: "outOfStock",
+        label: "Out of Stock",
+        count: availabilityCounts.outOfStock,
+      },
+    ].filter((option) => option.count >= 1);
 
-      const globalFilters = [
-        {
-          key: "price",
-          title: "Price Range",
-          content: (
-            <PriceRangeFilter
-              min={searchParams.get("minPrice")}
-              max={searchParams.get("maxPrice")}
-              minLimit={priceLimits.min}
-              maxLimit={priceLimits.max}
-              onChange={handlePriceChange}
-            />
-          ),
-        },
-        {
-          key: "inStock",
-          title: "Availability",
-          content: (
-            <CheckboxListFilter
-              name="availability"
-              options={availabilityOptions}
-              selected={["inStock", "outOfStock"].filter(
-                (value) => searchParams.get(value) === "true",
-              )}
-              onChange={(values) => {
-                const selectedValues = new Set(values);
-                updateParams([
-                  [
-                    "inStock",
-                    selectedValues.has("inStock") ? "true" : undefined,
-                  ],
-                  [
-                    "outOfStock",
-                    selectedValues.has("outOfStock") ? "true" : undefined,
-                  ],
-                ]);
-              }}
-            />
-          ),
-        },
-      ].filter(
-        (filter) => filter.key !== "inStock" || availabilityOptions.length,
-      );
+    const globalFilters = [
+      {
+        key: "price",
+        title: "Price Range",
+        content: (
+          <PriceRangeFilter
+            min={searchParams.get("minPrice")}
+            max={searchParams.get("maxPrice")}
+            minLimit={priceLimits.min}
+            maxLimit={priceLimits.max}
+            onChange={handlePriceChange}
+          />
+        ),
+      },
+      {
+        key: "inStock",
+        title: "Availability",
+        content: (
+          <CheckboxListFilter
+            name="availability"
+            options={availabilityOptions}
+            selected={["inStock", "outOfStock"].filter(
+              (value) => searchParams.get(value) === "true",
+            )}
+            onChange={(values) => {
+              const selectedValues = new Set(values);
+              updateParams([
+                ["inStock", selectedValues.has("inStock") ? "true" : undefined],
+                [
+                  "outOfStock",
+                  selectedValues.has("outOfStock") ? "true" : undefined,
+                ],
+              ]);
+            }}
+          />
+        ),
+      },
+    ].filter(
+      (filter) => filter.key !== "inStock" || availabilityOptions.length,
+    );
 
-      const categoryFilters = filterableAttributes
-        .map((attribute) => {
-          const options = attribute.options
-            .map((option) => ({
-              value: option,
-              label: option,
-              count: getFacetOptionCount(
-                attributeCountMaps[attribute.key],
-                option,
-              ),
-            }))
-            .filter((option) => option.count >= 1);
-
-          if (!options.length) return null;
-
-          return {
-            key: `attr_${attribute.key}`,
-            title: attribute.label || attribute.key,
-            content: (
-              <OptionFilter
-                name={`attr_${attribute.key}`}
-                options={options}
-                selected={parseMultiValue(
-                  searchParams.get(`attr_${attribute.key}`),
-                )}
-                multiple
-                onChange={(values) =>
-                  updateParam(
-                    `attr_${attribute.key}`,
-                    serializeMultiValue(values),
-                  )
-                }
-              />
+    const categoryFilters = filterableAttributes
+      .map((attribute) => {
+        const options = attribute.options
+          .map((option) => ({
+            value: option,
+            label: option,
+            count: getFacetOptionCount(
+              attributeCountMaps[attribute.key],
+              option,
             ),
-          };
-        })
-        .filter(Boolean);
+          }))
+          .filter((option) => option.count >= 1);
 
-      const finalFilters = [...globalFilters, ...categoryFilters];
+        if (!options.length) return null;
 
-      return finalFilters.flat().filter(Boolean);
-    },
-    [
-      filterableAttributes,
-      searchParams,
-      availabilityCounts,
-      attributeCountMaps,
-      handlePriceChange,
-      updateParam,
-      updateParams,
-      productFacets,
-    ],
-  );
+        return {
+          key: `attr_${attribute.key}`,
+          title: attribute.label || attribute.key,
+          searchable: attribute.searchable && options.length > 6,
+          content: (
+            <OptionFilter
+              name={`attr_${attribute.key}`}
+              options={options}
+              selected={parseMultiValue(
+                searchParams.get(`attr_${attribute.key}`),
+              )}
+              multiple
+              onChange={(values) =>
+                updateParam(
+                  `attr_${attribute.key}`,
+                  serializeMultiValue(values),
+                )
+              }
+            />
+          ),
+        };
+      })
+      .filter(Boolean);
+
+    const finalFilters = [...globalFilters, ...categoryFilters];
+
+    return finalFilters.flat().filter(Boolean);
+  }, [
+    filterableAttributes,
+    searchParams,
+    availabilityCounts,
+    attributeCountMaps,
+    handlePriceChange,
+    updateParam,
+    updateParams,
+    productFacets,
+  ]);
 
   // ── Active filter chips ──────────────────────────────────────────────────
   const activeFilters = useMemo(() => {
@@ -1076,7 +1119,9 @@ export default function CategoryPage() {
 
       {/* ── Product listing with sidebar filters ────────────────────────── */}
       <div className="py-5 sm:py-7">
-        {showSubCategoryStrip && <SubCategoryStrip categories={visibleSubCategories} />}
+        {showSubCategoryStrip && (
+          <SubCategoryStrip categories={visibleSubCategories} />
+        )}
 
         <CollectionToolbar
           countText={`${(pageInfo.total || meta?.total || products.length).toLocaleString()} products`}

@@ -27,17 +27,24 @@ function FilterTick({ checked }) {
   );
 }
 
-export function FilterSection({ title, children, defaultOpen = true }) {
+export function FilterSection({
+  title,
+  children,
+  defaultOpen = true,
+  searchable: searchableOverride,
+}) {
   const [open, setOpen] = useState(defaultOpen);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchCloseRequest, setSearchCloseRequest] = useState(null);
   const searchInputRef = useRef(null);
-  const searchable = ["brand", "category"].some((item) =>
-    String(title || "")
-      .toLowerCase()
-      .includes(item),
-  );
+  const searchable =
+    searchableOverride ??
+    ["brand", "category"].some((item) =>
+      String(title || "")
+        .toLowerCase()
+        .includes(item),
+    );
 
   useEffect(() => {
     setOpen(defaultOpen);
@@ -650,47 +657,47 @@ export function RatingFilter({
       {[5, 4, 3, 2, 1]
         .filter((stars) => Number(counts[String(stars)] || 0) > 0)
         .map((stars) => {
-        const value = String(stars);
-        const isSelected = selectedSet.has(value);
+          const value = String(stars);
+          const isSelected = selectedSet.has(value);
 
-        return (
-          <label
-            key={stars}
-            className="flex min-w-0 cursor-pointer items-center gap-3 py-2 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[16px]"
-          >
-            <input
-              type="checkbox"
-              name="rating"
-              value={stars}
-              checked={isSelected}
-              onChange={() => {
-                if (!isMultiSelect) {
-                  onChange?.(isSelected ? undefined : value);
-                  return;
-                }
+          return (
+            <label
+              key={stars}
+              className="flex min-w-0 cursor-pointer items-center gap-3 py-2 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[16px]"
+            >
+              <input
+                type="checkbox"
+                name="rating"
+                value={stars}
+                checked={isSelected}
+                onChange={() => {
+                  if (!isMultiSelect) {
+                    onChange?.(isSelected ? undefined : value);
+                    return;
+                  }
 
-                const nextValues = isSelected
-                  ? selectedValues.filter((item) => item !== value)
-                  : [...selectedValues, value];
-                onChange?.(nextValues);
-              }}
-              className="sr-only"
-            />
+                  const nextValues = isSelected
+                    ? selectedValues.filter((item) => item !== value)
+                    : [...selectedValues, value];
+                  onChange?.(nextValues);
+                }}
+                className="sr-only"
+              />
 
-            <FilterTick checked={isSelected} />
+              <FilterTick checked={isSelected} />
 
-            <span className="flex min-w-0 flex-1 items-center gap-1.5 leading-normal">
-              <Star size={16} className="fill-[#D4A025] text-[#D4A025]" />
-              <span>{stars === 5 ? "(5)" : `(${stars} & Above)`}</span>
-            </span>
-
-            {counts[String(stars)] != null && (
-              <span className="shrink-0  font-medium leading-none text-[#373737] text-[14px]">
-                ( {counts[String(stars)]} )
+              <span className="flex min-w-0 flex-1 items-center gap-1.5 leading-normal">
+                <Star size={16} className="fill-[#D4A025] text-[#D4A025]" />
+                <span>{stars === 5 ? "(5)" : `(${stars} & Above)`}</span>
               </span>
-            )}
-          </label>
-        );
+
+              {counts[String(stars)] != null && (
+                <span className="shrink-0  font-medium leading-none text-[#373737] text-[14px]">
+                  ( {counts[String(stars)]} )
+                </span>
+              )}
+            </label>
+          );
         })}
     </div>
   );
@@ -728,6 +735,7 @@ export default function ProductFilterSidebar({
               key={section.key || section.title}
               title={section.title}
               defaultOpen={section.defaultOpen}
+              searchable={section.searchable}
             >
               {section.content}
             </FilterSection>

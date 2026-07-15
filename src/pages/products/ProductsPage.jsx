@@ -100,7 +100,6 @@ const normalizeFacetOption = (option = {}) => {
     : null;
 };
 
-
 export default function ProductsPage() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -127,7 +126,6 @@ export default function ProductsPage() {
     () => parseMultiValue(searchParams.get("rating")),
     [searchParams],
   );
-
 
   const products = items;
 
@@ -196,11 +194,12 @@ export default function ProductsPage() {
         .map((attribute) => ({
           key: String(attribute.key || ""),
           label: attribute.label || attribute.key,
+          searchable: attribute.searchable === true,
           values: (attribute.values || []).filter(
             (option) => option.value && Number(option.count || 0) > 0,
           ),
         }))
-        .filter((attribute) => attribute.key && attribute.values.length),
+        .filter((attribute) => attribute.key && attribute.values.length > 1),
     [productFacets.attributes],
   );
   const collectionOptions = useMemo(
@@ -226,12 +225,16 @@ export default function ProductsPage() {
     return p.toString();
   }, [searchParams]);
 
-  const [absolutePriceLimits, setAbsolutePriceLimits] = useState({ min: null, max: null, key: '' });
+  const [absolutePriceLimits, setAbsolutePriceLimits] = useState({
+    min: null,
+    max: null,
+    key: "",
+  });
 
   useEffect(() => {
     let backendMin = productFacets?.price?.min;
     let backendMax = productFacets?.price?.max;
-    
+
     let currentMin = backendMin;
     let currentMax = backendMax;
 
@@ -240,7 +243,7 @@ export default function ProductsPage() {
         const prices = products
           .map((p) => Number(getProductPrice(p) || 0))
           .filter((price) => price > 0);
-          
+
         if (prices.length > 0) {
           currentMin = Math.min(...prices);
           currentMax = Math.max(...prices);
@@ -249,13 +252,15 @@ export default function ProductsPage() {
     }
 
     if (currentMin != null && currentMax != null) {
-      setAbsolutePriceLimits(prev => {
+      setAbsolutePriceLimits((prev) => {
         if (prev.key !== currentContextKey) {
-            return { min: currentMin, max: currentMax, key: currentContextKey };
+          return { min: currentMin, max: currentMax, key: currentContextKey };
         }
-        const newMin = prev.min == null ? currentMin : Math.min(prev.min, currentMin);
-        const newMax = prev.max == null ? currentMax : Math.max(prev.max, currentMax);
-        
+        const newMin =
+          prev.min == null ? currentMin : Math.min(prev.min, currentMin);
+        const newMax =
+          prev.max == null ? currentMax : Math.max(prev.max, currentMax);
+
         if (newMin !== prev.min || newMax !== prev.max) {
           return { min: newMin, max: newMax, key: currentContextKey };
         }
@@ -338,8 +343,6 @@ export default function ProductsPage() {
         data.items ||
         data.list ||
         (Array.isArray(data) ? data : []);
-
-
 
       const meta =
         result?.meta?.pagination || result?.pagination || result?.meta || {};
@@ -570,20 +573,36 @@ export default function ProductsPage() {
           options={tagOptions}
           selected={parseMultiValue(searchParams.get("tags"))}
           multiple
-          onChange={(values) => updateParam("tags", serializeMultiValue(values))}
+          onChange={(values) =>
+            updateParam("tags", serializeMultiValue(values))
+          }
         />
       ),
     },
-    Object.values(productFacets.merchandising || {}).some((count) => Number(count) > 0) && {
+    Object.values(productFacets.merchandising || {}).some(
+      (count) => Number(count) > 0,
+    ) && {
       key: "merchandising",
       title: "Discover",
       content: (
         <CheckboxListFilter
           name="merchandising"
           options={[
-            { value: "featured", label: "Featured", count: productFacets.merchandising?.featured },
-            { value: "bestSeller", label: "Best Seller", count: productFacets.merchandising?.bestSeller },
-            { value: "newArrival", label: "New Arrival", count: productFacets.merchandising?.newArrival },
+            {
+              value: "featured",
+              label: "Featured",
+              count: productFacets.merchandising?.featured,
+            },
+            {
+              value: "bestSeller",
+              label: "Best Seller",
+              count: productFacets.merchandising?.bestSeller,
+            },
+            {
+              value: "newArrival",
+              label: "New Arrival",
+              count: productFacets.merchandising?.newArrival,
+            },
           ].filter((option) => Number(option.count || 0) > 0)}
           selected={["featured", "bestSeller", "newArrival"].filter(
             (value) => searchParams.get(value) === "true",
@@ -592,26 +611,33 @@ export default function ProductsPage() {
             const selectedValues = new Set(values);
             updateParams([
               ["featured", selectedValues.has("featured") ? "true" : undefined],
-              ["bestSeller", selectedValues.has("bestSeller") ? "true" : undefined],
-              ["newArrival", selectedValues.has("newArrival") ? "true" : undefined],
+              [
+                "bestSeller",
+                selectedValues.has("bestSeller") ? "true" : undefined,
+              ],
+              [
+                "newArrival",
+                selectedValues.has("newArrival") ? "true" : undefined,
+              ],
             ]);
           }}
         />
       ),
     },
-    productFacets.price?.min != null && productFacets.price?.max != null && {
-      key: "price",
-      title: "Price Range",
-      content: (
-        <PriceRangeFilter
-          min={searchParams.get("minPrice")}
-          max={searchParams.get("maxPrice")}
-          minLimit={priceLimits.min}
-          maxLimit={priceLimits.max}
-          onChange={handlePriceChange}
-        />
-      ),
-    },
+    productFacets.price?.min != null &&
+      productFacets.price?.max != null && {
+        key: "price",
+        title: "Price Range",
+        content: (
+          <PriceRangeFilter
+            min={searchParams.get("minPrice")}
+            max={searchParams.get("maxPrice")}
+            minLimit={priceLimits.min}
+            maxLimit={priceLimits.max}
+            onChange={handlePriceChange}
+          />
+        ),
+      },
     Object.values(effectiveRatingCounts).some((count) => Number(count) > 0) && {
       key: "rating",
       title: "Rating",
@@ -629,6 +655,7 @@ export default function ProductsPage() {
     ...attributeFacets.map((attribute) => ({
       key: `attr_${attribute.key}`,
       title: attribute.label,
+      searchable: attribute.searchable && attribute.values.length > 6,
       content: (
         <OptionFilter
           name={`attr_${attribute.key}`}
@@ -672,40 +699,45 @@ export default function ProductsPage() {
       ),
     },
     */
-    availabilityCounts.inStock > 0 || availabilityCounts.outOfStock > 0 ? {
-      key: "inStock",
-      title: "Availability",
-      content: (
-        <CheckboxListFilter
-          name="availability"
-          options={[
-            {
-              value: "inStock",
-              label: "In Stock",
-              count: availabilityCounts.inStock,
-            },
-            {
-              value: "outOfStock",
-              label: "Out of Stock",
-              count: availabilityCounts.outOfStock,
-            },
-          ].filter((option) => Number(option.count || 0) > 0)}
-          selected={["inStock", "outOfStock"].filter(
-            (value) => searchParams.get(value) === "true",
-          )}
-          onChange={(values) => {
-            const selectedValues = new Set(values);
-            updateParams([
-              ["inStock", selectedValues.has("inStock") ? "true" : undefined],
-              [
-                "outOfStock",
-                selectedValues.has("outOfStock") ? "true" : undefined,
-              ],
-            ]);
-          }}
-        />
-      ),
-    } : false,
+    availabilityCounts.inStock > 0 || availabilityCounts.outOfStock > 0
+      ? {
+          key: "inStock",
+          title: "Availability",
+          content: (
+            <CheckboxListFilter
+              name="availability"
+              options={[
+                {
+                  value: "inStock",
+                  label: "In Stock",
+                  count: availabilityCounts.inStock,
+                },
+                {
+                  value: "outOfStock",
+                  label: "Out of Stock",
+                  count: availabilityCounts.outOfStock,
+                },
+              ].filter((option) => Number(option.count || 0) > 0)}
+              selected={["inStock", "outOfStock"].filter(
+                (value) => searchParams.get(value) === "true",
+              )}
+              onChange={(values) => {
+                const selectedValues = new Set(values);
+                updateParams([
+                  [
+                    "inStock",
+                    selectedValues.has("inStock") ? "true" : undefined,
+                  ],
+                  [
+                    "outOfStock",
+                    selectedValues.has("outOfStock") ? "true" : undefined,
+                  ],
+                ]);
+              }}
+            />
+          ),
+        }
+      : false,
   ].filter(Boolean);
 
   return (
