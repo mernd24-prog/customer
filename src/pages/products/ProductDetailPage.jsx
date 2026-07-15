@@ -830,10 +830,16 @@ function ProductInfoSection({
 
       {activeInfoTab === "description" && (
         <InfoCard title="Description">
-          <p className="px-4 py-4 text-sm lg:text-lg  text-black/90 whitespace-pre-line">
-            {formatPageTitle(product.description) ||
-              "No description available."}
-          </p>
+          {product?.description ? (
+            <div
+              className="px-4 py-4 text-sm lg:text-lg text-black/90 whitespace-pre-line"
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
+          ) : (
+            <p className="px-4 py-4 text-sm lg:text-lg text-black/90 whitespace-pre-line">
+              No description available.
+            </p>
+          )}
         </InfoCard>
       )}
 
@@ -934,10 +940,20 @@ export default function ProductDetailPage() {
       ? firstMoneyValue(dynamicState.current?.price)
       : undefined;
 
-  const relatedProducts = relatedState.relatedByProduct[productId]?.items || [];
+  const allProducts = Array.isArray(productState.list) ? productState.list : [];
 
-  const crossSellProducts =
+  const relatedProductsRaw = relatedState.relatedByProduct[productId]?.items || [];
+  const relatedProducts = relatedProductsRaw.map((p) => {
+    const full = allProducts.find((ap) => getProductId(ap) === getProductId(p));
+    return full ? { ...p, ...full } : p;
+  });
+
+  const crossSellProductsRaw =
     crossSellState.crossSellByProduct[productId]?.items || [];
+  const crossSellProducts = crossSellProductsRaw.map((p) => {
+    const full = allProducts.find((ap) => getProductId(ap) === getProductId(p));
+    return full ? { ...p, ...full } : p;
+  });
 
   const recommendedProducts = useMemo(() => {
     const seen = new Set([String(productId || "")]);

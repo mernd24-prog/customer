@@ -466,11 +466,8 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
   const [activeMenu, setActiveMenu] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
-  const [isScrollingUp, setIsScrollingUp] = useState(true);
-
   const categoryBarRef = useRef(null);
   const isPinnedRef = useRef(false);
-  const lastScrollYRef = useRef(0);
   const openTimeoutRef = useRef(null);
   const closeTimeoutRef = useRef(null);
 
@@ -538,14 +535,6 @@ export const CategoryBar = ({ headerData, compact = false }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY > lastScrollYRef.current && currentScrollY > 50) {
-        setIsScrollingUp(false);
-      } else if (currentScrollY < lastScrollYRef.current) {
-        setIsScrollingUp(true);
-      }
-      lastScrollYRef.current = currentScrollY;
 
       if (!categoryBarRef.current) return;
 
@@ -626,9 +615,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         ref={categoryBarRef}
         aria-label="Category navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
-        className={`fixed left-0 z-40 w-full bg-white/60 backdrop-blur-md transition-transform duration-300 ease-out will-change-transform ${
-          isScrollingUp ? "translate-y-0" : "-translate-y-full pointer-events-none"
-        }`}
+        className="fixed left-0 z-40 w-full bg-white border-b border-[var(--customer-border)]"
       >
         <div className="customer-container mx-auto w-full relative">
           <div className="w-full overflow-x-auto hide-scrollbar">
@@ -661,23 +648,25 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                   </Link>
                 );
               })}
-              {/* <Link
-              to="/categories"
-              className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-                location.pathname === "/categories"
-                  ? "text-[#03014D]"
-                  : "text-[#2E2E2E]"
-              }`}
-            >
-              More
-              <span
-                className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
-                  location.pathname === "/categories"
-                    ? "w-full opacity-100"
-                    : "w-0 opacity-0"
-                }`}
-              />
-            </Link> */}
+              {categories.length > 10 && (
+                <Link
+                  to="/categories"
+                  className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
+                    location.pathname === "/categories"
+                      ? "text-[#03014D]"
+                      : "text-[#2E2E2E]"
+                  }`}
+                >
+                  More
+                  <span
+                    className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
+                      location.pathname === "/categories"
+                        ? "w-full opacity-100"
+                        : "w-0 opacity-0"
+                    }`}
+                  />
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -758,11 +747,13 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                 </div>
               );
             })}
-            <CategoryMoreButton
-              to="/categories"
-              active={location.pathname === "/categories"}
-              icon={moreImage}
-            />
+            {categories.length > 10 && (
+              <CategoryMoreButton
+                to="/categories"
+                active={location.pathname === "/categories"}
+                icon={moreImage}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -779,8 +770,8 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       <nav
         aria-label="Sticky category navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
-        className={`fixed left-0 z-40 w-full bg-white/60 shadow-[0_8px_18px_rgba(17,24,39,0.08)] backdrop-blur-md transition-all duration-300 ease-out will-change-transform !block ${
-          isPinned && isScrollingUp
+        className={`fixed left-0 z-40 w-full bg-white shadow-[0_8px_18px_rgba(17,24,39,0.08)] transition-all duration-300 ease-in-out !block ${
+          isPinned
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-full opacity-0"
         }`}
@@ -816,23 +807,25 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                   </Link>
                 );
               })}
-              <Link
-                to="/categories"
-                className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
-                  location.pathname === "/categories"
-                    ? "text-[#03014D]"
-                    : "text-[#2E2E2E]"
-                }`}
-              >
-                More
-                <span
-                  className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
+              {categories.length > 10 && (
+                <Link
+                  to="/categories"
+                  className={`relative flex h-full shrink-0 items-center text-[13px] font-semibold transition-all duration-200 ease-in-out hover:text-[#03014D] sm:text-[14px] ${
                     location.pathname === "/categories"
-                      ? "w-full opacity-100"
-                      : "w-0 opacity-0"
+                      ? "text-[#03014D]"
+                      : "text-[#2E2E2E]"
                   }`}
-                />
-              </Link>
+                >
+                  More
+                  <span
+                    className={`absolute bottom-0 left-0 h-[3px] rounded-full bg-[#CE9F2D] transition-all duration-300 ${
+                      location.pathname === "/categories"
+                        ? "w-full opacity-100"
+                        : "w-0 opacity-0"
+                    }`}
+                  />
+                </Link>
+              )}
             </div>
           </div>
         </div>

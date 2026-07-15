@@ -16,6 +16,7 @@ import {
   getProductPrice,
   getProductMrp,
   applyImageFallback,
+  getImageFallbackSrc,
   getProductAvailableStock,
 } from "../../utils/ecommerce";
 import { cn } from "../../lib/utils";
@@ -75,7 +76,7 @@ export default function ProductCard({
   const cardProduct = product || {};
   const id = getProductId(cardProduct);
   const title = titleProp || getProductTitle(cardProduct);
-  const image = imageProp || getProductImage(cardProduct);
+  const image = imageProp || getProductImage(cardProduct) || getImageFallbackSrc(title, cardProduct?.category || brand);
   const subtitle =
     subtitleProp ||
     cardProduct?.description ||
@@ -83,8 +84,7 @@ export default function ProductCard({
     cardProduct?.brand ||
     "";
   const price = priceProp ?? getProductPrice(cardProduct) ?? 0;
-  const oldPrice =
-    oldPriceProp ?? getProductMrp(cardProduct) ?? 0;
+  const oldPrice = oldPriceProp ?? getProductMrp(cardProduct) ?? 0;
   const rating =
     ratingProp ?? cardProduct?.rating ?? cardProduct?.averageRating ?? 0;
   const ratingCount =
@@ -445,14 +445,14 @@ export default function ProductCard({
             onClick={handleWishlist}
             className={
               isWishlisted
-                ? "border-[#FF3D31] text-[#FF3D31] hover:border-[#FF3D31]"
-                : "border-[#CE9F2D] text-[##CE9F2D] hover:border-[#CE9F2D]"
+                ? "border-[#CE9F2D] text-[#CE9F2D] hover:border-[#CE9F2D]"
+                : "border-[#CE9F2D] text-[#CE9F2D] hover:border-[#CE9F2D]"
             }
           >
             <Heart
               size={19}
-              fill={isWishlisted ? "#FF3D31" : "none"}
-              stroke={isWishlisted ? "#FF3D31" : " #CE9F2D"}
+              fill={isWishlisted ? "#CE9F2D" : "none"}
+              stroke={isWishlisted ? "#CE9F2D" : " #CE9F2D"}
             />
           </IconCircleButton>
         </div>
