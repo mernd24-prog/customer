@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Grid2X2, List } from "lucide-react";
 import Seo from "../../components/common/Seo";
 
 import {
@@ -15,9 +14,7 @@ import {
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
 import {
-  buildFacetCountMap,
   buildRatingCountMap,
-  getProductBrandName,
   isProductInStock,
   getProductPrice,
 } from "../../utils/ecommerce";
@@ -104,7 +101,7 @@ const normalizeFacetOption = (option = {}) => {
 export default function ProductsPage() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [viewMode, setViewMode] = useState("grid");
+  const [viewMode] = useState("grid");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [items, setItems] = useState([]);
   const [productFacets, setProductFacets] = useState({});
@@ -755,6 +752,7 @@ export default function ProductsPage() {
             (productState.loading && !products.length) ||
             (!firstLoadDone && !products.length)
           }
+          refreshing={productState.loading && products.length > 0 && !isLoadingMore}
           error={products.length === 0 ? productState.error : null}
           empty={!products.length && !productState.loading && firstLoadDone}
           emptyTitle={isSearchMode ? "No results found" : "No products found"}

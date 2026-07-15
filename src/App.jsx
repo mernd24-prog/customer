@@ -82,7 +82,7 @@ const HomePage = lazyNamed(
 const WatchlistPage = lazy(() => import("./pages/watchList/WatchListPage"));
 const SearchPage = lazy(() => import("./pages/search/SearchPage"));
 const ProductsPage = lazy(() => import("./pages/products/ProductsPage"));
-const DealsPage = lazy(() => import("./pages/deals/DealsPage"));
+// const DealsPage = lazy(() => import("./pages/deals/DealsPage"));
 const ProductDetailPage = lazy(
   () => import("./pages/products/ProductDetailPage"),
 );
@@ -307,7 +307,7 @@ export default function App() {
               <Route path="/support" element={<SupportHelpCenter />} />
 
               {/* <Route path="/help-contact" element={<ContactUs />} /> */}
-              <Route path="/deals" element={<DealsPage />} />
+              {/* <Route path="/deals" element={<DealsPage />} /> */}
               <Route path="/brand-outlet" element={<BrandOutletPage />} />
               <Route
                 path="/who-we-are"
@@ -516,7 +516,6 @@ export default function App() {
                     }
                   />
                 </Route>
-
 
                 {/* ── Seller-only routes ─────────────────────────────────── */}
                 <Route element={<SellerOnlyRoute />}>

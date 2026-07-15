@@ -48,7 +48,7 @@ export const baseAccountMenuItems = [
 ];
 
 export const DEFAULT_TOP_NAV_LINKS = [
-  { name: "Deals", path: "/deals" },
+  // { name: "Deals", path: "/deals" },
   { name: "Shop by Brand", path: "/brand-outlet" },
 ];
 

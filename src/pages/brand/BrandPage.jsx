@@ -73,6 +73,10 @@ export default function BrandPage() {
     [items],
   );
   const ratingCounts = useMemo(() => buildRatingCountMap(items), [items]);
+  const hasRatingFilter = useMemo(
+    () => Object.values(ratingCounts).some((count) => Number(count) > 0),
+    [ratingCounts],
+  );
 
   useEffect(() => {
     setBrandLoading(true);
@@ -324,7 +328,7 @@ export default function BrandPage() {
         />
       ),
     },
-    {
+    hasRatingFilter && {
       key: "rating",
       title: "Rating",
       content: (
@@ -404,7 +408,7 @@ export default function BrandPage() {
         />
       ),
     },
-  ];
+  ].filter(Boolean);
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -446,6 +450,7 @@ export default function BrandPage() {
     getImageUrlFromValue(brand?.logoUrl) ||
     getImageUrlFromValue(brand?.logo);
   const brandDescription = brand?.description || brand?.about;
+  const showPageSizeSelector = Number(pageInfo.total || 0) >= 12;
 
   return (
     <>
@@ -467,7 +472,7 @@ export default function BrandPage() {
         sortOptions={SORT_OPTIONS}
         onSortChange={(value) => updateParam("sort", value)}
         pageSizeValue={searchParams.get("limit") || "20"}
-        pageSizes={PAGE_SIZES}
+        pageSizes={showPageSizeSelector ? PAGE_SIZES : []}
         onPageSizeChange={(value) => updateParam("limit", value)}
         onOpenFilters={() => setSidebarOpen(true)}
         resultsProps={{
@@ -480,6 +485,7 @@ export default function BrandPage() {
           loading:
             (productState.loading && !items.length) ||
             (!firstLoadDone && !items.length && !!brand),
+          refreshing: productState.loading && items.length > 0 && !isLoadingMore,
           error: productState.error,
           empty: !items.length && !productState.loading && firstLoadDone,
           emptyTitle: `No products from ${brandName}`,

@@ -16,6 +16,7 @@ export default function ProductResultsLayout({
   sidebarOpen,
   onCloseSidebar,
   loading,
+  refreshing = false,
   error,
   empty,
   emptyTitle,
@@ -75,7 +76,7 @@ export default function ProductResultsLayout({
 
         <div className="min-w-0 w-full flex-1">
           {children ||
-            (loading ? (
+            (loading || refreshing ? (
               <div className="flex min-h-[360px] w-full items-center justify-center">
                 <Loader size="lg" />
               </div>
