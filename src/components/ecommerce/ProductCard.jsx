@@ -76,7 +76,15 @@ export default function ProductCard({
   const cardProduct = product || {};
   const id = getProductId(cardProduct);
   const title = titleProp || getProductTitle(cardProduct);
-  const image = imageProp || getProductImage(cardProduct) || getImageFallbackSrc(title, cardProduct?.category || brand);
+  const rawBrand = brandProp || cardProduct?.brand;
+  const brand =
+    typeof rawBrand === "object"
+      ? rawBrand?.name || rawBrand?.title || rawBrand?.label || ""
+      : rawBrand || "";
+  const image =
+    imageProp ||
+    getProductImage(cardProduct) ||
+    getImageFallbackSrc(title, cardProduct?.category || brand);
   const subtitle =
     subtitleProp ||
     cardProduct?.description ||
@@ -97,7 +105,6 @@ export default function ProductCard({
     0;
   const discountPercent =
     discountPercentProp ?? cardProduct?.discountPercent ?? 0;
-  const brand = brandProp || cardProduct?.brand;
   const to = href || `/products/${id}`;
   const isListVariant = variant === "list" || variant === "compact";
   const isFeatured =
