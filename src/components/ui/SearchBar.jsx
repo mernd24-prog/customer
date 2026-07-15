@@ -46,6 +46,20 @@ const getCategoryId = (category) =>
   category?.key ||
   category?.slug;
 
+const categoryMatchesParam = (category, value) => {
+  if (!category || !value) return false;
+  return [
+    category.categoryId,
+    category.categoryKey,
+    category.key,
+    category.slug,
+    category._id,
+    category.id,
+  ]
+    .filter(Boolean)
+    .some((item) => String(item) === String(value));
+};
+
 const getCategoryLabel = (category) =>
   category?.title ||
   category?.name ||
@@ -79,20 +93,6 @@ const formatCategorySubtitle = (value) => {
   const text = textValue(value);
   if (!text) return "";
   return /^in\s+/i.test(text) ? text : `in ${text}`;
-};
-
-const getCategoryContextLabel = (category) => {
-  const label = getCategoryLabel(category);
-  const context =
-    textValue(category?.parentCategory) ||
-    textValue(category?.parent) ||
-    textValue(category?.parentCategoryName) ||
-    textValue(category?.parentName) ||
-    textValue(category?.categoryName) ||
-    textValue(category?.category) ||
-    label;
-
-  return context === "Categories" ? label : context;
 };
 
 const getSuggestionLabel = (suggestion) => {
@@ -222,7 +222,6 @@ const SearchBar = ({
   }, [
     autocompleteLimit,
     autocompleteMinLength,
-    categories,
     sanitizedQuery,
     suggestionsRaw,
   ]);
@@ -263,25 +262,23 @@ const SearchBar = ({
   // Sync selectedCategory with query params
   useEffect(() => {
     if (!enableCategoryDropdown) {
-      setSelectedCategory(null);
+      setSelectedCategory((current) => (current ? null : current));
       return;
     }
+
+    let nextCategory = null;
     if (catParam && categories.length) {
-      const found = categories.find(
-        (c) =>
-          (c.categoryId && c.categoryId === catParam) ||
-          (c.categoryKey && c.categoryKey === catParam) ||
-          (c.key && c.key === catParam) ||
-          (c.slug && c.slug === catParam) ||
-          (c._id && c._id === catParam) ||
-          (c.id && c.id === catParam),
-      );
-      if (found) {
-        setSelectedCategory(found);
-        return;
-      }
+      nextCategory =
+        categories.find((category) => categoryMatchesParam(category, catParam)) ||
+        null;
     }
-    setSelectedCategory(null);
+
+    setSelectedCategory((current) => {
+      if (!nextCategory) return current ? null : current;
+      return categoryMatchesParam(current, getCategoryId(nextCategory))
+        ? current
+        : nextCategory;
+    });
   }, [catParam, categories, enableCategoryDropdown]);
 
   // Handle outside clicks to close dropdown
@@ -635,7 +632,7 @@ const SearchBar = ({
                 className="mb-3 h-20 w-20 object-contain"
               />
               <p className="text-sm font-medium text-[var(--customer-ink)]">
-                No results found for "{sanitizedQuery}"
+                No results found for &quot;{sanitizedQuery}&quot;
               </p>
               <p className="mt-1 text-xs text-[var(--customer-muted)]">
                 Try a different search term or category.

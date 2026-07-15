@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Seo from "../../components/common/Seo";
 import { BrandCard } from "../../components/ecommerce";
 import CUSTOMER_ROUTES from "../../constants/routes";
@@ -51,6 +51,7 @@ function getBrandLogo(brand = {}) {
 function getBrandProductCount(brand = {}) {
   if (typeof brand === "string") return 0;
   const count =
+    brand.count ??
     brand.productCount ??
     brand.productsCount ??
     brand.product_count ??
@@ -62,10 +63,6 @@ function getBrandProductCount(brand = {}) {
 
 export default function BrandOutletPage() {
   const dispatch = useDispatch();
-  const availableBrands = useSelector(
-    (state) => state.catalog.globalBrands || [],
-  );
-  const discoveryLoading = useSelector((state) => state.product?.loading);
   const [brandList, setBrandList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -76,7 +73,13 @@ export default function BrandOutletPage() {
 
     dispatch(fetchBrands({ params: { limit: 100 } }))
       .then((result) => {
-        setBrandList(listFromPayload(result?.payload));
+        const brands = listFromPayload(result?.payload);
+        console.log("[BrandOutletPage] fetchBrands response", {
+          result,
+          payload: result?.payload,
+          brands,
+        });
+        setBrandList(brands);
       })
       .catch((err) => {
         setError(String(err?.message || err || "Failed to load brands"));
@@ -88,21 +91,15 @@ export default function BrandOutletPage() {
 
   const brands = useMemo(
     () =>
-      availableBrands
-        .map((facetBrand) => {
-          const facetName = getBrandName(facetBrand);
-          const masterBrand = brandList.find(
-            (brand) =>
-              getBrandName(brand).trim().toLowerCase() ===
-              facetName.trim().toLowerCase(),
-          );
-          const brand = { ...(masterBrand || {}), ...facetBrand };
+      brandList
+        .map((brand) => {
+          const brandName = getBrandName(brand);
           return {
             ...brand,
-            displayName: facetName,
-            routeKey: getBrandRouteKey(masterBrand || facetBrand),
-            displayLogo: getBrandLogo(masterBrand || facetBrand),
-            productCount: Number(facetBrand.count || 0),
+            displayName: brandName,
+            routeKey: getBrandRouteKey(brand),
+            displayLogo: getBrandLogo(brand),
+            productCount: getBrandProductCount(brand),
           };
         })
         .filter(
@@ -114,7 +111,7 @@ export default function BrandOutletPage() {
             sensitivity: "base",
           }),
         ),
-    [availableBrands, brandList],
+    [brandList],
   );
 
   const brandGridClass =
@@ -136,7 +133,7 @@ export default function BrandOutletPage() {
                 Shop brands available now
               </h1>
 
-              {loading || discoveryLoading ? (
+              {loading ? (
                 <div className={brandGridClass}>
                   {Array.from({ length: 10 }).map((_, index) => (
                     <div

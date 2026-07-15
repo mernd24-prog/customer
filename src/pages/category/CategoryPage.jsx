@@ -3,7 +3,6 @@ import {
   useParams,
   useSearchParams,
   Link,
-  useLocation,
   useNavigate,
 } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,7 +24,6 @@ import {
 } from "../../features/catalog/catalogSlice";
 import {
   applyImageFallback,
-  buildFacetCountMap,
   getImageUrlFromValue,
   isProductInStock,
   getProductPrice,
@@ -51,140 +49,6 @@ function serializeMultiValue(values) {
     ),
   ];
   return uniqueValues.length ? uniqueValues.join(",") : undefined;
-}
-
-function getAttributeValues(product, attribute) {
-  const normalizedKeys = getAttributeLookupKeys(attribute);
-  const values = [];
-  const directValue = getObjectValueByNormalizedKeys(product, normalizedKeys);
-  if (Array.isArray(directValue)) values.push(...directValue);
-  else if (directValue != null && directValue !== "") values.push(directValue);
-
-  const attributeSources = [
-    product?.attributes,
-    product?.specifications,
-    product?.attributeValues,
-  ].filter(Boolean);
-
-  for (const source of attributeSources) {
-    if (Array.isArray(source)) {
-      const matching = source.filter(
-        (item) =>
-          normalizedKeys.has(normalizeAttributeKey(item?.key)) ||
-          normalizedKeys.has(normalizeAttributeKey(item?.name)) ||
-          normalizedKeys.has(normalizeAttributeKey(item?.attributeKey)),
-      );
-      values.push(
-        ...matching.flatMap((item) =>
-          Array.isArray(item?.value)
-            ? item.value
-            : [item?.value ?? item?.label],
-        ),
-      );
-      continue;
-    }
-
-    if (typeof source === "object") {
-      const sourceValue = getObjectValueByNormalizedKeys(
-        source,
-        normalizedKeys,
-      );
-      if (Array.isArray(sourceValue)) values.push(...sourceValue);
-      else if (sourceValue != null && sourceValue !== "") {
-        values.push(sourceValue);
-      }
-    }
-  }
-
-  const variants = Array.isArray(product?.variants) ? product.variants : [];
-  variants.forEach((variant) => {
-    const variantValue = getObjectValueByNormalizedKeys(
-      variant?.attributes,
-      normalizedKeys,
-    );
-    if (Array.isArray(variantValue)) values.push(...variantValue);
-    else if (variantValue != null && variantValue !== "") {
-      values.push(variantValue);
-    }
-  });
-
-  return Array.from(
-    new Set(values.map((value) => String(value || "").trim()).filter(Boolean)),
-  );
-}
-
-function normalizeAttributeKey(value = "") {
-  return String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "");
-}
-
-function getAttributeLookupKeys(attribute) {
-  const source =
-    attribute && typeof attribute === "object"
-      ? [
-          attribute.key,
-          attribute.attributeKey,
-          attribute.name,
-          attribute.label,
-          attribute.slug,
-        ]
-      : [attribute];
-  const keys = new Set(source.map(normalizeAttributeKey).filter(Boolean));
-  const keyText = Array.from(keys).join(" ");
-
-  if (keyText.includes("storage")) {
-    keys.add("storage");
-    keys.add("internalstorage");
-  }
-
-  if (keyText.includes("ram") || keyText.includes("memory")) {
-    keys.add("ram");
-  }
-
-  if (keyText.includes("color") || keyText.includes("colour")) {
-    keys.add("color");
-    keys.add("colour");
-  }
-
-  return keys;
-}
-
-function getObjectValueByNormalizedKeys(source, normalizedKeys) {
-  if (!source || typeof source !== "object") return undefined;
-  const matchingKey = Object.keys(source).find((key) =>
-    normalizedKeys.has(normalizeAttributeKey(key)),
-  );
-  return matchingKey ? source[matchingKey] : undefined;
-}
-
-function getCategoryAttributeSchema(category = {}) {
-  return Array.isArray(category?.attributeSchema)
-    ? category.attributeSchema
-    : [];
-}
-
-function isSchemaAttributeFilterable(attribute = {}) {
-  return attribute.filterable === true || attribute.isFilterable === true;
-}
-
-function getSchemaAttributeKey(attribute = {}) {
-  return attribute.key || attribute.attributeKey || attribute.name || "";
-}
-
-function getSchemaAttributeOptions(attribute = {}) {
-  const options = Array.isArray(attribute.options) ? attribute.options : [];
-  return options
-    .map((option) =>
-      typeof option === "object"
-        ? (option.value ?? option.name ?? option.label ?? option.code)
-        : option,
-    )
-    .filter(
-      (option) => option !== undefined && option !== null && option !== "",
-    )
-    .map(String);
 }
 
 function normalizeFacetValue(value = "") {
@@ -451,7 +315,6 @@ function getMatchingCategoryKeys(targetCats, categoryTree) {
 
 export default function CategoryPage() {
   const { categoryKey } = useParams();
-  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -645,13 +508,12 @@ export default function CategoryPage() {
       searchParams.forEach((value, key) => {
         if (!key.startsWith("attr_") || !value) return;
         const attributeKey = key.replace(/^attr_/, "");
-        if (!supportedAttributeKeys.has(attributeKey)) return;
         params[key] = value;
         params[attributeKey] = value;
       });
       return params;
     },
-    [searchParams, categoryKey, supportedAttributeKeys],
+    [searchParams, categoryKey],
   );
 
   // ── Load products (append = infinite scroll page) ──────────────────────
@@ -683,7 +545,7 @@ export default function CategoryPage() {
         if (append) setIsLoadingMore(false);
       }
     },
-    [categoryKey, dispatch, getParams, location.state?.fallbackProducts],
+    [dispatch, getParams],
   );
 
   useEffect(() => {
@@ -1043,7 +905,8 @@ export default function CategoryPage() {
     handlePriceChange,
     updateParam,
     updateParams,
-    productFacets,
+    priceLimits.min,
+    priceLimits.max,
   ]);
 
   // ── Active filter chips ──────────────────────────────────────────────────
@@ -1093,7 +956,8 @@ export default function CategoryPage() {
     filterableAttributes,
     searchParams,
     supportedAttributeKeys,
-    productFacets,
+    priceLimits.min,
+    priceLimits.max,
   ]);
 
   if (categoryLoading && !categoryData && !firstLoadDone && !products.length) {
@@ -1151,6 +1015,7 @@ export default function CategoryPage() {
             (productState.loading && !products.length) ||
             (!firstLoadDone && !products.length)
           }
+          refreshing={productState.loading && products.length > 0 && !isLoadingMore}
           error={products.length === 0 ? productState.error : null}
           empty={!products.length && !productState.loading && firstLoadDone}
           emptyTitle="No products found"
