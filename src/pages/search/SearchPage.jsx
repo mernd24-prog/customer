@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigationType, useSearchParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Search } from "lucide-react";
 import Seo from "../../components/common/Seo";
@@ -71,18 +71,10 @@ function flattenCategoryList(data) {
 
 export default function SearchPage() {
   const dispatch = useDispatch();
-  const navigationType = useNavigationType();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchKey = searchParams.toString();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const initialSearch = useRef(searchKey);
-  const resetInitialSearch = useRef(navigationType === "POP");
-  const skipInitialSearch = useRef(
-    resetInitialSearch.current && Boolean(initialSearch.current),
-  );
-  // const [queryInput, setQueryInput] = useState(
-  //   resetInitialSearch.current ? "" : searchParams.get("q") || "",
-  // );
+  const navigate = useNavigate();
 
   const searchState = useSelector((s) => s.search);
   const categoriesRaw = useSelector((s) => s.catalog.list || []);
@@ -238,26 +230,11 @@ export default function SearchPage() {
   ]);
 
   useEffect(() => {
-    if (!resetInitialSearch.current) return;
-
-    dispatch(clearSearch());
-    dispatch(clearSuggestions());
-
-    if (initialSearch.current) {
-      setSearchParams({}, { replace: true });
-    }
-  }, [dispatch, setSearchParams]);
-
-  useEffect(() => {
-    if (skipInitialSearch.current) {
-      if (searchKey === initialSearch.current) return;
-      skipInitialSearch.current = false;
-    }
-
     if (hasLegacyCategoryParams) return;
 
     if (!params.q && !params.categoryId) {
       dispatch(clearSearch());
+      navigate("/products", { replace: true });
       return;
     }
 
@@ -270,9 +247,6 @@ export default function SearchPage() {
   }, [dispatch, hasLegacyCategoryParams, params, searchKey]);
 
   useEffect(() => {
-    if (skipInitialSearch.current && searchKey === initialSearch.current) {
-      return;
-    }
 
     if (!categoryValue) return;
     if (
@@ -443,12 +417,7 @@ export default function SearchPage() {
   */
 
   const handleClearFilters = () => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams();
-      const query = prev.get("q") || "";
-      if (query) next.set("q", query);
-      return next;
-    });
+    setSearchParams(new URLSearchParams());
   };
 
   const activeFilters = [

@@ -369,6 +369,8 @@ const SearchBar = ({
         if (catName) url += `&categoryName=${encodeURIComponent(catName)}`;
       }
       navigate(url);
+    } else {
+      navigate("/products");
     }
   };
 

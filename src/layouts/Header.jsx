@@ -231,11 +231,15 @@ export const Navbar = ({ icons: propIcons }) => {
   }, [currentUser?.id, currentUser?._id, dispatch]);
 
   useEffect(() => {
-    if (location.pathname === "/" && prevPathnameRef.current !== "/") {
+    const urlParams = new URLSearchParams(location.search);
+    const q = urlParams.get("q") || "";
+    if (location.pathname === "/search") {
+      setSearchQuery(q);
+    } else if (location.pathname === "/" && prevPathnameRef.current !== "/") {
       setSearchQuery("");
     }
     prevPathnameRef.current = location.pathname;
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   const handleSearch = (nextQuery = searchQuery, category = null) => {
     const trimmedQuery = nextQuery.trim();
@@ -266,6 +270,8 @@ export const Navbar = ({ icons: propIcons }) => {
     }
     if (trimmedQuery || category) {
       navigate(url);
+    } else {
+      navigate("/products");
     }
   };
 
