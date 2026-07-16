@@ -1059,19 +1059,11 @@ export default function ProductDetailPage() {
 
   const allProducts = Array.isArray(productState.list) ? productState.list : [];
 
-  const relatedProductsRaw =
+  const relatedProducts =
     relatedState.relatedByProduct[productId]?.items || [];
-  const relatedProducts = relatedProductsRaw.map((p) => {
-    const full = allProducts.find((ap) => getProductId(ap) === getProductId(p));
-    return full ? { ...p, ...full } : p;
-  });
 
-  const crossSellProductsRaw =
+  const crossSellProducts =
     crossSellState.crossSellByProduct[productId]?.items || [];
-  const crossSellProducts = crossSellProductsRaw.map((p) => {
-    const full = allProducts.find((ap) => getProductId(ap) === getProductId(p));
-    return full ? { ...p, ...full } : p;
-  });
 
   const [quantity, setQuantity] = useState(1);
   const [deliveryResult, setDeliveryResult] = useState(null);
