@@ -32,19 +32,23 @@ export const footerData = {
     {
       title: "Buy",
       links: [
-        { label: "Men", href: "/categories/mens-fashion" },
-        { label: "Women", href: "/categories/womens-fashion" },
-        { label: "Kids", href: "/categories/kids-fashion" },
-        { label: "Footwear", href: "/categories/footwear" },
+        { label: "Electronic", href: "/categories/electronics" },
+        { label: "Beauty & Personal Care", href: "/categories/beauty" },
+        { label: "Food & Beverages", href: "/categories/food-beverages" },
+        { label: "Home Appliances", href: "/categories/appliances" },
       ],
     },
     {
       title: "Sell",
       links: [
         { label: "Become a Seller", href: "/become-a-seller" },
-        { label: "Seller Dashboard", href: "/become-a-seller" },
-        { label: "Seller Policies", href: "/seller-policies" },
-        { label: "Growth Support", href: "/growth-support" },
+        {
+          label: "Seller Dashboard",
+          href: "http://45.195.90.183:3000/login",
+          target: "_blank",
+        },
+        // { label: "Seller Policies", href: "/seller-policies" },
+        // { label: "Growth Support", href: "/growth-support" },
       ],
     },
     {
@@ -53,36 +57,37 @@ export const footerData = {
         { label: "Who We Are", href: "/about-us#who-we-are" },
         { label: "Why Choose Us", href: "/about-us#why-choose-us" },
         { label: "Our Values", href: "/about-us#our-values" },
-        { label: "Careers", href: "/features" },
+        // { label: "Careers", href: "/features" },
       ],
     },
-    {
-      title: "Tools & apps",
-      links: [
-        { label: "Mobile App", href: "/mobile-app" },
-        { label: "Seller Tools", href: "/seller/status" },
-        { label: "Analytics Dashboard", href: "/seller/tracking" },
-      ],
-    },
+    // {
+    //   title: "Tools & apps",
+    //   links: [
+    //     { label: "Mobile App", href: "/mobile-app" },
+    //     { label: "Seller Tools", href: "/seller/status" },
+    //     { label: "Analytics Dashboard", href: "/seller/tracking" },
+    //   ],
+    // },
     {
       title: "Help & Contact",
       links: [
         { label: "Customer Support", href: "/support" },
-        { label: "FAQs", href: "/faq" },
+        { label: "Mobile App", href: "/mobile-app" },
+        // { label: "FAQs", href: "/faq" },
         { label: "Shipping & Delivery Policy", href: "/shipping-policy" },
         { label: "Return & Refund Policy", href: "/refund-policy" },
 
         // Added policy routes
       ],
     },
-    {
-      title: "Community",
-      links: [
-        { label: "Blog", href: "/blog" },
-        { label: "Updates", href: "/updates" },
-        { label: "Announcements", href: "/announcements" },
-      ],
-    },
+    // {
+    //   title: "Community",
+    //   links: [
+    //     { label: "Blog", href: "/blog" },
+    //     { label: "Updates", href: "/updates" },
+    //     { label: "Announcements", href: "/announcements" },
+    //   ],
+    // },
   ],
   actionLinks: [
     {
@@ -128,14 +133,14 @@ export const footerData = {
       labels: "Terms of Use",
       links: "/terms-of-use",
     },
-    {
-      labels: "Cookie Settings",
-      links: "/cookie-settings",
-    },
-    {
-      labels: "Sitemap",
-      links: "#",
-    },
+    // {
+    //   labels: "Cookie Settings",
+    //   links: "/cookie-settings",
+    // },
+    // {
+    //   labels: "Sitemap",
+    //   links: "#",
+    // },
   ],
   socialLinks: [
     {

@@ -204,7 +204,7 @@ function ProductGallery({
   return (
     <div
       className={`flex min-w-0 flex-col gap-4  overflow-hidden ${
-        isModal ? "h-full w-full" : "h-auto w-full xl:h-[560px] 2xl:h-[620px]"
+        isModal ? "h-full w-full" : "h-auto w-full xl:h-[480px] 2xl:h-[560px]"
       }`}
     >
       <div className="flex min-w-0 flex-col gap-6 overflow-hidden xl:h-full xl:flex-row">
@@ -257,7 +257,7 @@ function ProductGallery({
 
         <div
           className={`relative order-1 min-w-0  overflow-hidden border border-gold rounded-[20px]  bg-transparent xl:order-2 ${
-            isModal ? "h-full" : "h-[400px] lg:h-[500px] xl:h-full w-full"
+            isModal ? "h-full" : "h-[324px] md:h-[440px] xl:h-full w-full"
           }`}
         >
           <Swiper
@@ -374,7 +374,7 @@ function ImageGallery({
         <IconActionButton
           title="Add to Wishlist"
           onClick={onWishlist}
-          className={isWishlisted ? "text-[#1B1D60]" : "text-ink"}
+          className={isWishlisted ? "text-red-500" : "text-ink"}
         >
           <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
         </IconActionButton>
@@ -423,9 +423,20 @@ function ImageGallery({
 function DeliveryChecker({ productId, onResultChange }) {
   const dispatch = useDispatch();
   const [pincode, setPincode] = useState("");
+  const [lastCheckedPincode, setLastCheckedPincode] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (result) {
+      const timer = setTimeout(() => {
+        setResult(null);
+        onResultChange?.(null);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [result, onResultChange]);
 
   const check = async (e) => {
     e.preventDefault();
@@ -443,6 +454,10 @@ function DeliveryChecker({ productId, onResultChange }) {
       const nextResult = action?.payload?.data || action?.payload;
       setResult(nextResult);
       onResultChange?.(nextResult);
+      if (nextResult) {
+        setLastCheckedPincode(pin);
+        setPincode("");
+      }
     } catch {
       setError("Could not check delivery. Try again.");
     } finally {
@@ -481,9 +496,10 @@ function DeliveryChecker({ productId, onResultChange }) {
         <input
           type="text"
           value={pincode}
-          onChange={(e) =>
-            setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))
-          }
+          onChange={(e) => {
+            setError("");
+            setPincode(e.target.value.replace(/\D/g, "").slice(0, 6));
+          }}
           placeholder="Enter 6-digit pincode"
           className="flex-1 min-w-0 bg-transparent border border-none focus:outline-none px-8 text-sm text-[#4E4E4E] "
         />
@@ -503,28 +519,90 @@ function DeliveryChecker({ productId, onResultChange }) {
       {error && <p className="text-xs text-red-600">{error}</p>}
 
       {result && (
-        <div className="space-y-1.5">
+        <div className="relative mt-3 p-4 rounded-xl border border-gray-100 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-all duration-300 overflow-hidden">
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={() => {
+              setResult(null);
+              onResultChange?.(null);
+            }}
+            className="absolute top-3 right-3 text-[#2E2E2E]/40 hover:text-[#2E2E2E]/80 transition-colors"
+          >
+            <X size={16} />
+          </button>
+
           {result.serviceable ? (
-            <p className="text-sm font-medium text-emerald-700">
-              ✓ Deliverable to {pincode}
-              {etaText ? ` · Ships in ${etaText} days` : ""}
-              {deliveryCharge > 0
-                ? ` · ${new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(deliveryCharge)} delivery`
-                : " · Free delivery"}
-            </p>
+            <div className="space-y-3">
+              {/* Header */}
+              <div className="flex items-center gap-2 text-emerald-700 font-bold text-sm">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-800 text-xs">
+                  ✓
+                </span>
+                <span>Deliverable to {lastCheckedPincode}</span>
+              </div>
+
+              {/* Grid of info */}
+              <div className="grid grid-cols-1 gap-2 pt-2 border-t border-gray-100 text-xs text-[#4E4E4E]">
+                {etaText && (
+                  <div className="flex items-center gap-2.5">
+                    <Truck size={14} className="text-[#1B1D60]/75 shrink-0" />
+                    <span>
+                      Estimated delivery: <strong>{etaText} days</strong>
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-[10px] font-bold text-emerald-700 shrink-0">
+                    ₹
+                  </span>
+                  <span>
+                    Shipping Charge:{" "}
+                    <strong>
+                      {deliveryCharge > 0
+                        ? `${new Intl.NumberFormat("en-IN", {
+                            style: "currency",
+                            currency: "INR",
+                            maximumFractionDigits: 0,
+                          }).format(deliveryCharge)}`
+                        : "Free Delivery"}
+                    </strong>
+                  </span>
+                </div>
+                {resultCodAvailable !== undefined && (
+                  <div className="flex items-center gap-2.5">
+                    <Banknote
+                      size={14}
+                      className={`${resultCodAvailable ? "text-emerald-600" : "text-red-500"} shrink-0`}
+                    />
+                    <span>
+                      Cash on Delivery:{" "}
+                      <strong
+                        className={
+                          resultCodAvailable
+                            ? "text-emerald-700"
+                            : "text-red-600"
+                        }
+                      >
+                        {resultCodAvailable ? "Available" : "Not Available"}
+                      </strong>
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
           ) : (
-            <p className="text-sm font-medium text-red-600">
-              ✗ Delivery not available to {pincode}.
-            </p>
-          )}
-          {result.serviceable && resultCodAvailable !== undefined && (
-            <p
-              className={`text-xs font-medium ${resultCodAvailable ? "text-emerald-600" : "text-red-500"}`}
-            >
-              {resultCodAvailable
-                ? "✓ Cash on Delivery available"
-                : "✗ COD not available for this pincode"}
-            </p>
+            <div className="flex items-start gap-2.5">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-100 text-red-800 text-xs shrink-0 font-bold mt-0.5">
+                ✗
+              </span>
+              <div className="text-sm font-medium text-red-600">
+                <span>Delivery not available to {lastCheckedPincode}.</span>
+                <p className="text-xs text-[#7E7E7E] mt-0.5">
+                  Please check another pincode.
+                </p>
+              </div>
+            </div>
           )}
         </div>
       )}
@@ -535,224 +613,179 @@ function DeliveryChecker({ productId, onResultChange }) {
 function VariantSelector({
   variantOptions,
   selectedAttributes,
+  findVariantForSelection,
   setSelectedVariant,
-  variants,
   product,
 }) {
+  const variants = product?.variants || [];
+
   return (
     <div className="flex flex-col gap-6">
-      {variantOptions.map((option, optionIndex) => {
-        const previousOptions = variantOptions.slice(0, optionIndex);
-
-        return (
-          <div
-            key={option.slug}
-            className={
-              option.displayType === "color_swatch"
-                ? "order-2 w-full"
-                : "order-1 w-full"
-            }
+      {variantOptions.map((option) => (
+        <div
+          key={option.slug}
+          className={
+            option.displayType === "color_swatch"
+              ? "order-2 w-full"
+              : "order-1 w-full"
+          }
+        >
+          <p
+            className={`mb-3 font-semibold capitalize text-ink ${
+              option.displayType === "color_swatch" ? "text-lg" : "text-lg"
+            }`}
           >
-            <p
-              className={`mb-3 font-semibold capitalize text-ink ${
-                option.displayType === "color_swatch" ? "text-lg" : "text-lg"
-              }`}
-            >
-              {option.displayType === "color_swatch" ? "Colour" : option.name}:
-            </p>
+            {option.displayType === "color_swatch" ? "Colour" : option.name}:
+          </p>
 
-            <div className="flex  w-fit flex-wrap gap-4">
-              {option.values.map((value, valueIndex) => {
-                const isSelected =
-                  String(selectedAttributes[option.slug]) === String(value);
+          <div className="flex  w-fit flex-wrap gap-4">
+            {option.values.map((value, valueIndex) => {
+              const isSelected =
+                String(selectedAttributes[option.slug]) === String(value);
 
-                let matchingVariants = variants.filter(
-                  (v) => String(v.attributes?.[option.slug]) === String(value)
-                );
+              const matchingVariant = findVariantForSelection(
+                option.slug,
+                value,
+              );
 
-                if (optionIndex > 0) {
-                  matchingVariants = matchingVariants.filter((v) => {
-                    return previousOptions.every(
-                      (prevOption) =>
-                        String(v.attributes?.[prevOption.slug]) ===
-                        String(selectedAttributes[prevOption.slug])
-                    );
-                  });
-                }
+              // Check if this exact combination exists
+              const exactVariant = variants.find((variant) =>
+                Object.entries({
+                  ...selectedAttributes,
+                  [option.slug]: value,
+                }).every(
+                  ([key, selectedVal]) =>
+                    String(variant.attributes?.[key]) === String(selectedVal),
+                ),
+              );
 
-                const isValidCombination = matchingVariants.length > 0;
-                const disabled = !isValidCombination;
+              // Storage row should not show slashes/Not Available states, but RAM and Color should.
+              const isComboAvailable =
+                option.slug === "storage" ? true : Boolean(exactVariant);
 
-                const isOutOfStock =
-                  isValidCombination &&
-                  !matchingVariants.some((v) => {
-                    const stock = getAvailableStock(v);
-                    return stock > 0 && v.inStock !== false && v.isAvailable !== false;
-                  });
+              const disabled = !matchingVariant;
+              const matchingVariantStock = getAvailableStock(matchingVariant);
+              const isUnavailable =
+                Boolean(matchingVariant) &&
+                (matchingVariantStock === 0 ||
+                  matchingVariant?.inStock === false ||
+                  matchingVariant?.isAvailable === false);
 
-                let variantToSelect = null;
-                if (isValidCombination) {
-                  const exactMatch = matchingVariants.find((v) => {
-                    return variantOptions.every((opt) =>
-                      opt.slug === option.slug
-                        ? true
-                        : String(v.attributes?.[opt.slug]) ===
-                          String(selectedAttributes[opt.slug])
-                    );
-                  });
-                  if (exactMatch) {
-                    variantToSelect = exactMatch;
-                  } else {
-                    const inStockVariant = matchingVariants.find((v) => {
-                      const stock = getAvailableStock(v) ?? 0;
-                      return (
-                        stock > 0 &&
-                        v.inStock !== false &&
-                        v.isAvailable !== false
-                      );
-                    });
-                    variantToSelect = inStockVariant || matchingVariants[0];
-                  }
-                }
+              const swatchImage =
+                option.displayType === "color_swatch"
+                  ? getColorSwatchImage({
+                      option,
+                      value,
+                      matchingVariant,
+                      product,
+                      index: valueIndex,
+                    })
+                  : "";
+              const swatchColor = option?.valueCodes?.[value] || value;
 
-                const swatchImageVariant =
-                  variantToSelect ||
-                  variants.find(
-                    (v) => String(v.attributes?.[option.slug]) === String(value)
-                  );
-
-                const swatchImage =
-                  option.displayType === "color_swatch"
-                    ? getColorSwatchImage({
-                        option,
-                        value,
-                        matchingVariant: swatchImageVariant,
-                        product,
-                        index: valueIndex,
-                      })
-                    : "";
-                const swatchColor = option?.valueCodes?.[value] || value;
-
-                if (option.displayType === "color_swatch") {
-                  return (
-                    <button
-                      key={value}
-                      type="button"
-                      disabled={disabled}
-                      onClick={() =>
-                        variantToSelect && setSelectedVariant(variantToSelect)
-                      }
-                      className={`relative h-[80px] w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
-                        isSelected
-                          ? "border border-gold bg-gradient-to-t from-[#1B1D60]/65 to-transparent"
-                          : "border border-gold/20 hover:border-gold"
-                      } ${
-                        disabled || isOutOfStock ? "opacity-55 grayscale" : ""
-                      }`}
-                      title={`${value}${
-                        disabled
-                          ? " - Not Available"
-                          : isOutOfStock
-                          ? " - Out of stock"
-                          : ""
-                      }`}
-                    >
-                      {swatchImage ? (
-                        <img
-                          src={swatchImage}
-                          alt={`${value} colour`}
-                          className="h-full w-full object-contain p-3"
-                          onError={(event) =>
-                            applyImageFallback(event, value, "product")
-                          }
-                        />
-                      ) : (
-                        <span
-                          className="flex h-full w-full items-end justify-center p-2 text-center text-xs font-semibold text-[var(--customer-ink)]"
-                          style={{
-                            backgroundColor:
-                              typeof swatchColor === "string" &&
-                              (/^#([0-9a-f]{3,8})$/i.test(swatchColor) ||
-                                /^(rgb|hsl)a?\(/i.test(swatchColor))
-                                ? swatchColor
-                                : "var(--customer-cream)",
-                          }}
-                        >
-                          <span className="rounded bg-white/80 px-1.5 py-0.5 backdrop-blur-sm">
-                            {value}
-                          </span>
-                        </span>
-                      )}
-                      {disabled ? (
-                        <span className="absolute inset-x-0 bottom-0 bg-gray-600 px-1 py-1 text-[10px] font-semibold text-white">
-                          Not Available
-                        </span>
-                      ) : isOutOfStock ? (
-                        <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-[10px] font-semibold text-white">
-                          Out of stock
-                        </span>
-                      ) : null}
-                    </button>
-                  );
-                }
-
+              if (option.displayType === "color_swatch") {
                 return (
                   <button
                     key={value}
                     type="button"
-                    disabled={disabled}
+                    disabled={!isComboAvailable}
                     onClick={() =>
-                      variantToSelect && setSelectedVariant(variantToSelect)
+                      matchingVariant && setSelectedVariant(matchingVariant)
                     }
-                    aria-label={`${option.name} ${value}${
-                      disabled
-                        ? ", not available"
-                        : isOutOfStock
-                        ? ", out of stock"
-                        : ""
-                    }`}
-                    title={
-                      disabled
-                        ? `${value} - Not Available`
-                        : isOutOfStock
-                        ? `${value} - Out of stock`
-                        : value
-                    }
-                    className={`relative min-h-10 min-w-12 rounded-[8px] px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed ${
+                    className={`relative h-[80px] w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
                       isSelected
-                        ? "border border-gold bg-gradient-to-t from-[#1B1D60]/25 to-transparent text-ink"
-                        : "border border-gold/20 hover:border-gold text-ink"
-                    } ${
-                      disabled
-                        ? "border-gray-200 bg-gray-50 text-gray-400 opacity-60"
-                        : isOutOfStock
-                        ? "border-red-200 bg-red-50 text-red-500"
-                        : ""
+                        ? "border border-gold bg-gradient-to-t from-[#1B1D60]/65 to-transparent"
+                        : "border border-gold/20 "
+                    } ${isUnavailable ? "opacity-55 grayscale" : ""} ${
+                      !isComboAvailable ? "opacity-40   cursor-not-allowed" : ""
+                    }`}
+                    title={`${value}${
+                      !isComboAvailable
+                        ? " - Not available in this combination"
+                        : isUnavailable
+                          ? " - Out of stock"
+                          : ""
                     }`}
                   >
-                    <span
-                      className={
-                        disabled || isOutOfStock ? "line-through" : ""
-                      }
-                    >
-                      {value}
-                    </span>
-                    {disabled ? (
-                      <span className="mt-0.5 block whitespace-nowrap text-[9px] font-semibold leading-none no-underline text-gray-500">
-                        Not Available
+                    {swatchImage ? (
+                      <img
+                        src={swatchImage}
+                        alt={`${value} colour`}
+                        className="h-full w-full object-contain p-3"
+                        onError={(event) =>
+                          applyImageFallback(event, value, "product")
+                        }
+                      />
+                    ) : (
+                      <span
+                        className="flex h-full w-full items-end justify-center p-2 text-center text-xs font-semibold text-[var(--customer-ink)]"
+                        style={{
+                          backgroundColor:
+                            typeof swatchColor === "string" &&
+                            (/^#([0-9a-f]{3,8})$/i.test(swatchColor) ||
+                              /^(rgb|hsl)a?\(/i.test(swatchColor))
+                              ? swatchColor
+                              : "var(--customer-cream)",
+                        }}
+                      >
+                        <span className="rounded bg-white/80 px-1.5 py-0.5 ">
+                          {value}
+                        </span>
                       </span>
-                    ) : isOutOfStock ? (
-                      <span className="mt-0.5 block whitespace-nowrap text-[9px] font-semibold leading-none no-underline text-red-500">
+                    )}
+                    {isUnavailable && (
+                      <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-[10px] font-semibold text-white">
                         Out of stock
                       </span>
-                    ) : null}
+                    )}
                   </button>
                 );
-              })}
-            </div>
+              }
+
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  disabled={!isComboAvailable}
+                  onClick={() =>
+                    matchingVariant && setSelectedVariant(matchingVariant)
+                  }
+                  aria-label={`${option.name} ${value}${!isComboAvailable ? ", not available in this combination" : isUnavailable ? ", out of stock" : ""}`}
+                  title={
+                    !isComboAvailable
+                      ? `${value} - Not available in this combination`
+                      : isUnavailable
+                        ? `${value} - Out of stock`
+                        : value
+                  }
+                  className={`relative min-h-10 min-w-12 rounded-[8px] px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed ${
+                    isSelected
+                      ? "border border-gold bg-gradient-to-t from-[#1B1D60]/25 to-transparent"
+                      : "border border-gold/20 "
+                  } ${
+                    isUnavailable ? "border-red-200 bg-red-50 text-red-500" : ""
+                  } ${!isComboAvailable ? "opacity-40" : ""}`}
+                >
+                  <span
+                    className={
+                      isUnavailable || !isComboAvailable
+                        ? "line-through text-gray-400"
+                        : ""
+                    }
+                  >
+                    {value}
+                  </span>
+                  {isUnavailable && (
+                    <span className="mt-0.5 block whitespace-nowrap text-[9px] font-semibold leading-none no-underline">
+                      Out of stock
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
-        );
-      })}
+        </div>
+      ))}
     </div>
   );
 }
@@ -867,7 +900,6 @@ function ProductInfoSection({
   detailRows,
   warranty,
   product,
-  attributes,
 }) {
   return (
     <div className="relative  z-10  mt-8 lg:mt-24 bg-white">
@@ -887,7 +919,26 @@ function ProductInfoSection({
             rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]"
             labelClassName="font-medium text-[#2E2E2E]"
             valueClassName="text-left font-bold text-navy sm:text-right"
-          />
+          >
+            {warranty && (
+              <div className="grid grid-cols-1 gap-1 px-4 py-3  text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]">
+                <dt className="font-medium text-ink">
+                  {" "}
+                  {formatPageTitle("warranty")}
+                </dt>
+                <dd className="text-left font-bold text-[#1B1D60] sm:text-right">
+                  {formatPageTitle(
+                    warranty.period ||
+                      warranty.duration ||
+                      warranty.type ||
+                      "Warranty available",
+                  )}
+                  {warranty.coverage &&
+                    ` · ${formatPageTitle(warranty.coverage)}`}
+                </dd>
+              </div>
+            )}
+          </DetailRows>
         </InfoCard>
       )}
 
@@ -993,7 +1044,6 @@ export default function ProductDetailPage() {
   const dynamicState = useSelector((s) => s.dynamicPricing);
   const relatedState = useSelector((s) => s.relatedProducts);
   const crossSellState = useSelector((s) => s.relatedProducts);
-  const recommendationList = useSelector((s) => s.recommendation.list);
   const user = useSelector((s) => s.auth.current);
   const userId = user?.id || user?._id || user?.userId || user?.email;
   const isLoggedIn = Boolean(
@@ -1009,7 +1059,8 @@ export default function ProductDetailPage() {
 
   const allProducts = Array.isArray(productState.list) ? productState.list : [];
 
-  const relatedProductsRaw = relatedState.relatedByProduct[productId]?.items || [];
+  const relatedProductsRaw =
+    relatedState.relatedByProduct[productId]?.items || [];
   const relatedProducts = relatedProductsRaw.map((p) => {
     const full = allProducts.find((ap) => getProductId(ap) === getProductId(p));
     return full ? { ...p, ...full } : p;
@@ -1021,19 +1072,6 @@ export default function ProductDetailPage() {
     const full = allProducts.find((ap) => getProductId(ap) === getProductId(p));
     return full ? { ...p, ...full } : p;
   });
-
-  const recommendedProducts = useMemo(() => {
-    const seen = new Set([String(productId || "")]);
-
-    return (Array.isArray(recommendationList) ? recommendationList : []).filter(
-      (recommendedProduct) => {
-        const id = String(getProductId(recommendedProduct) || "");
-        if (!id || seen.has(id)) return false;
-        seen.add(id);
-        return true;
-      },
-    );
-  }, [productId, recommendationList]);
 
   const [quantity, setQuantity] = useState(1);
   const [deliveryResult, setDeliveryResult] = useState(null);
@@ -1164,7 +1202,7 @@ export default function ProductDetailPage() {
               .toLowerCase()
               .replace(/[^a-z0-9]+/g, "_")
               .replace(/^_+|_+$/g, ""),
-          values: Array.from(new Set((option.values) || [].filter(Boolean))),
+          values: Array.from(new Set((option.values || []).filter(Boolean))),
         }))
         .filter((option) => option.slug && option.values.length);
     }
@@ -1209,7 +1247,24 @@ export default function ProductDetailPage() {
 
   const selectedAttributes = selectedVariant?.attributes || {};
 
+  const findVariantForSelection = (axis, value) => {
+    const nextSelection = {
+      ...selectedAttributes,
+      [axis]: value,
+    };
 
+    return (
+      variants.find((variant) =>
+        Object.entries(nextSelection).every(
+          ([key, selectedValue]) =>
+            String(variant.attributes?.[key]) === String(selectedValue),
+        ),
+      ) ||
+      variants.find(
+        (variant) => String(variant.attributes?.[axis]) === String(value),
+      )
+    );
+  };
 
   const selectedVariantPrice = getVariantPrice(selectedVariant);
   const productPrice = getProductPrice(product);
@@ -1414,7 +1469,7 @@ export default function ProductDetailPage() {
         >
           {product && (
             <>
-              <div className="grid min-w-0 mt-8 lg:mt-14 items-start gap-6 xl:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] md:gap-10">
+              <div className="grid min-w-0 mt-8 lg:mt-14 items-start gap-6 lg:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] md:gap-10">
                 <div className="min-w-0">
                   <ImageGallery
                     images={images}
@@ -1433,7 +1488,7 @@ export default function ProductDetailPage() {
                   />
                 </div>
 
-                <div className="flex min-w-0 flex-col  gap-3">
+                <div className="flex min-w-0 flex-col gap-3">
                   <div className="flex min-w-0 items-start justify-between gap-3 ">
                     <div className="min-w-0 w-full">
                       <h1 className="break-words text-h3 font-semibold text-ink leading-snug">
@@ -1548,8 +1603,8 @@ export default function ProductDetailPage() {
                     <VariantSelector
                       variantOptions={variantOptions}
                       selectedAttributes={selectedAttributes}
+                      findVariantForSelection={findVariantForSelection}
                       setSelectedVariant={setSelectedVariant}
-                      variants={variants}
                       product={product}
                     />
                   )}
@@ -1574,7 +1629,6 @@ export default function ProductDetailPage() {
                 detailRows={detailRows}
                 warranty={warranty}
                 product={product}
-                attributes={attributes}
               />
 
               <ProductReviewsSection productId={productId} product={product} />

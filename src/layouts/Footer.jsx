@@ -119,6 +119,8 @@ function resolveFooterLinkGroups(groups, categories) {
     return {
       ...group,
       links: asArray(group?.links).map((link) => {
+        if (link?.href) return link;
+
         const category = findCategoryForFooterLink(link, categories);
         const categoryKey = category ? getCategoryKey(category) : "";
 
@@ -144,7 +146,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
             <h2 className="mb-4 border-l-2 font-semibold text-lg md:text-2xl pl-2 border-[var(--customer-gold)] text-white">
               {group?.title}
             </h2>
-            <ul className="grid gap-1 md:gap-3">
+            <ul className="grid gap-1  md:gap-3">
               {(Array.isArray(group?.links) ? group.links : []).map(
                 (link, linkIndex) => {
                   const toPath = hrefOr(link?.href);
@@ -152,6 +154,12 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
                     <li key={link?.label || `link-${linkIndex}`}>
                       <Link
                         to={toPath}
+                        target={link?.target}
+                        rel={
+                          link?.target === "_blank"
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
                         onClick={() => {
                           if (location.pathname === toPath) {
                             window.scrollTo({
@@ -183,7 +191,9 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
 
 export function Footer({ data = footerData }) {
   const location = useLocation();
-  const catalogCategoryList = useSelector((state) => state.catalog.globalCategories || state.catalog.list) || [];
+  const catalogCategoryList = useSelector(
+    (state) => state.catalog.globalCategories || state.catalog.list || [],
+  );
   const footer = data || footerData;
   const {
     copyright = footerData.copyright,
@@ -232,13 +242,15 @@ export function Footer({ data = footerData }) {
           </div>
         </div>
       )}
-      <div className="pt-2 flex  flex-col max-w-[1760px] mx-auto px-4 md:px-8 gap-2 md:gap-16 lg:gap-4 md:flex-row justify-between">
-        <div className="flex  items-center gap-3">
-          <img
-            src="/image/png/logoWithName.png"
-            alt="Sam Global"
-            className="h-9 sm:h-12 lg:h-16 xl:h-[60px]  rounded object-contain"
-          />
+      <div className="pt-4 sm:pt-0 flex  flex-col max-w-[1760px] mx-auto px-4 md:px-8 gap-2 md:gap-16 lg:gap-4 md:flex-row justify-between">
+        <div className="flex  items-center gap-3 ">
+          <Link to="/">
+            <img
+              src="/image/png/logoWithName.png"
+              alt="Sam Global"
+              className="h-9 sm:h-12 lg:h-16 xl:h-[60px]  rounded object-contain"
+            />
+          </Link>
         </div>
 
         {/* App download Section */}
@@ -276,7 +288,6 @@ export function Footer({ data = footerData }) {
 
       <FooterLinkGroups groups={resolvedLinkGroups} socialLinks={socialLinks} />
 
-      {/* Bottom Section with copyright and extra pages */}
       <section className="bg-black py-2   ">
         <div className="flex flex-col gap-2 lg:gap-10 text-white text-xs md:text-base lg:flex-row justify-center">
           <p className="text-center ">{copyright}</p>

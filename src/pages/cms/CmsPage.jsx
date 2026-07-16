@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Calendar, Clock, Tag } from "lucide-react";
@@ -18,15 +18,63 @@ function CmsContent({ body }) {
   );
 }
 
+const cmsRecordKey = (item) =>
+  item?.slug ||
+  item?.cmsKey ||
+  item?.metadata?.cmsKey ||
+  item?.metadata?.data?.cmsKey ||
+  item?.data?.cmsKey ||
+  item?.metadata?.routePath?.replace(/^\//, "") ||
+  item?.routePath?.replace(/^\//, "");
+
+const getCmsPayload = (page) =>
+  page?.metadata?.data ||
+  page?.metadata?.content ||
+  page?.data ||
+  page?.content ||
+  page;
+
 export default function CmsPage({ slugOverride = "" }) {
   const { slug: slugFromParams } = useParams();
   const slug = slugOverride || slugFromParams;
   const dispatch = useDispatch();
   const cmsState = useSelector((s) => s.cms);
-  const page = cmsState.current;
+  const {
+    current: currentPage,
+    entities = {},
+    list = [],
+    loading: cmsLoading,
+    error: cmsError,
+  } = cmsState;
+  const page = useMemo(() => {
+    if (!slug) return null;
+
+    const pageList = Array.isArray(list) ? list : [];
+    const candidates = [
+      entities[slug],
+      currentPage,
+      ...pageList,
+    ].filter(Boolean);
+
+    const matchedPage =
+      candidates.find((item) => cmsRecordKey(item) === slug) ||
+      candidates.find((item) => cmsRecordKey(getCmsPayload(item)) === slug) ||
+      null;
+
+    return getCmsPayload(matchedPage);
+  }, [currentPage, entities, list, slug]);
 
   useEffect(() => {
-    dispatch(fetchCmsPageBySlug({ slug }));
+    if (!slug) return;
+
+    dispatch(fetchCmsPageBySlug({ slug }))
+      .unwrap()
+      .then((response) => {
+        console.log("[CMS page response]", { slug, response });
+      })
+      .catch((error) => {
+        console.error("[CMS page error]", { slug, error });
+      });
   }, [dispatch, slug]);
 
   const title = page?.metadata?.seoTitle || page?.title || slug;
@@ -49,8 +97,8 @@ export default function CmsPage({ slugOverride = "" }) {
   const readTime = page?.readTime || page?.metadata?.readTime;
   const pageUnavailable =
     !page &&
-    !cmsState.loading &&
-    (!cmsState.error || isNotFoundApiError(cmsState.error));
+    !cmsLoading &&
+    (!cmsError || isNotFoundApiError(cmsError));
 
   return (
     <>
@@ -77,8 +125,8 @@ export default function CmsPage({ slugOverride = "" }) {
 
       <div className="w-container  py-8">
         <ApiState
-          loading={cmsState.loading && !page}
-          error={pageUnavailable ? null : cmsState.error}
+          loading={cmsLoading && !page}
+          error={pageUnavailable ? null : cmsError}
           empty={pageUnavailable}
           emptyTitle="Coming soon"
           emptyText="This content page is being prepared and will be available soon."
