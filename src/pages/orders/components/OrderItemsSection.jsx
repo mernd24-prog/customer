@@ -150,7 +150,7 @@ function ExistingReviewCard({ review }) {
         )}
 
         {reviewText && (
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-[#4E505C] sm:text-[15px]">
+          <p className="mt-2 max-full text-sm leading-6 text-[#4E505C] sm:text-[14px]">
             {reviewText}
           </p>
         )}

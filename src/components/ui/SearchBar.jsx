@@ -163,10 +163,8 @@ const SearchBar = ({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const categoriesRaw = useSelector(
-    (state) => state.catalog.globalCategories || [],
-  );
-  const suggestionsRaw = useSelector((state) => state.search.suggestions || []);
+  const categoriesRaw = useSelector((state) => state.catalog.globalCategories) || [];
+  const suggestionsRaw = useSelector((state) => state.search.suggestions) || [];
   const autocompleteLoading = useSelector(
     (state) => state.search.autocompleteLoading,
   );

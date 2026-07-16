@@ -168,11 +168,11 @@ export default function CartPage() {
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
   const rawItems = useMemo(
-    () => mergeDisplayCartItems(cart.items || []),
+    () => mergeDisplayCartItems(cart.items) || [],
     [cart.items],
   );
   const wishlist = useMemo(() => cart.wishlist || [], [cart.wishlist]);
-  const productEntities = useSelector((state) => state.product.entities || {});
+  const productEntities = useSelector((state) => state.product.entities) || {};
   const fetchedIdsRef = useRef(new Set());
   const hasInitializedRef = useRef(false);
   const prevItemIdsRef = useRef(new Set());

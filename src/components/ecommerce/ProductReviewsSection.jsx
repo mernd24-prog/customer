@@ -205,8 +205,7 @@ function ProductReviewCard({
 
 function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
   const dispatch = useDispatch();
-  const { submitting, submitError, submitSuccess } = useSelector(
-    (s) => s.review,
+  const { submitting, submitError, submitSuccess } = useSelector((s) => s.review,
   );
 
   const [form, setForm] = useState({
@@ -438,7 +437,7 @@ export default function ProductReviewsSection({ productId, product }) {
   const deliveredOrders = allOrders.filter(
     (o) =>
       ["delivered", "fulfilled", "completed"].includes(o.status) &&
-      (o.items || []).some(
+      (o.items) || [].some(
         (item) =>
           String(item.productId || item.product_id) === String(productId),
       ),

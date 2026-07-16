@@ -61,7 +61,7 @@ const buildNewArrivalItems = (products) => {
   for (const product of products) {
     const cat = product?.category || "Uncategorized";
     if (!grouped[cat]) grouped[cat] = [];
-    if (grouped[cat].length < 4) grouped[cat].push(product);
+    if (grouped[cat].length < 3) grouped[cat].push(product);
   }
 
   const categories = Object.keys(grouped).slice(0, 3);
@@ -104,14 +104,13 @@ const buildNewArrivalItems = (products) => {
 export function HomePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const categoryList = useSelector((s) => s.catalog.globalCategories || []);
+  const categoryList = useSelector((s) => s.catalog.globalCategories);
   const categories = Array.isArray(categoryList) ? categoryList : [];
 
   const productList = useSelector((s) => s.product.list);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
-  const cmsPages = useSelector((s) =>
-    Array.isArray(s.cms.list) ? s.cms.list : [],
-  );
+  const cmsList = useSelector((s) => s.cms.list);
+  const cmsPages = Array.isArray(cmsList) ? cmsList : [];
   const products = Array.isArray(productList) ? productList : [];
 
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];

@@ -59,7 +59,7 @@ export function PaymentResultPage({ failed = false }) {
   const order = findFetchedOrder(orderState, orderId);
   const currentUser = userState.current || userState.data || {};
 
-  const items = getOrderItems(order || {});
+  const items = getOrderItems(order) || {};
   const currency = getOrderCurrency(order || {});
   const shippingAddress =
     order?.shipping_address || order?.shippingAddress || {};

@@ -4,41 +4,41 @@ import CategoryCard from "./CategoryCard";
 import SectionContainer from "../ui/SectionContainer";
 import CUSTOMER_ROUTES from "../../constants/routes";
 
-const fallbackCategoryImages = [
-  "/image/png/electronics.png",
-  "/image/png/computerLaptop.png",
-  "/image/jpg/tv.jpg",
-  "/image/png/manFashion.png",
-  "/image/jpg/womanFashion.jpg",
-];
+// const fallbackCategoryImages = [
+//   "/image/png/electronics.png",
+//   "/image/png/computerLaptop.png",
+//   "/image/jpg/tv.jpg",
+//   "/image/png/manFashion.png",
+//   "/image/jpg/womanFashion.jpg",
+// ];
 
-const defaultHomeCategories = [
-  {
-    title: "Women's Fashion",
-    image: "/image/jpg/stylish-girls.jpg",
-    categoryKey: "womens-fashion",
-  },
-  {
-    title: "Men's Fashion",
-    image: "/image/png/men-fashion.png",
-    categoryKey: "mens-fashion",
-  },
-  {
-    title: "Kids' Fashion",
-    image: "/image/jpg/kids-fashion.jpg",
-    categoryKey: "kids-fashion",
-  },
-  {
-    title: "Electronics",
-    image: "/image/jpg/electronics.jpg",
-    categoryKey: "electronics",
-  },
-  {
-    title: "Home & Kitchen",
-    image: "/image/jpg/home-decor.jpg",
-    categoryKey: "home-kitchen",
-  },
-];
+// const defaultHomeCategories = [
+//   {
+//     title: "Women's Fashion",
+//     image: "/image/jpg/stylish-girls.jpg",
+//     categoryKey: "womens-fashion",
+//   },
+//   {
+//     title: "Men's Fashion",
+//     image: "/image/png/men-fashion.png",
+//     categoryKey: "mens-fashion",
+//   },
+//   {
+//     title: "Kids' Fashion",
+//     image: "/image/jpg/kids-fashion.jpg",
+//     categoryKey: "kids-fashion",
+//   },
+//   {
+//     title: "Electronics",
+//     image: "/image/jpg/electronics.jpg",
+//     categoryKey: "electronics",
+//   },
+//   {
+//     title: "Home & Kitchen",
+//     image: "/image/jpg/home-decor.jpg",
+//     categoryKey: "home-kitchen",
+//   },
+// ];
 
 export default function HomeCategoryGrid({
   categories = [],
@@ -53,7 +53,7 @@ export default function HomeCategoryGrid({
   const [activeId, setActiveId] = useState(null);
   const displayCategories = categories.length
     ? categories.slice(0, 5)
-    : defaultHomeCategories;
+    : []; // defaultHomeCategories;
 
   if (loading) {
     return (
@@ -83,12 +83,11 @@ export default function HomeCategoryGrid({
                   ? item.categoryKey
                   : `idx-${idx}`
             }
-            image={fallbackCategoryImages[idx % fallbackCategoryImages.length]}
+            // image={fallbackCategoryImages[idx % fallbackCategoryImages.length]}
+            image={item.bannerUrl || item.image || item.thumbnail}
             title={item.title || item.name || "Featured Collection"}
             stylesCount={
-              item.stylesCount ||
-              item.productCountLabel ||
-              item.countLabel
+              item.stylesCount || item.productCountLabel || item.countLabel
             }
             href={
               item.categoryKey

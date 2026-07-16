@@ -358,8 +358,7 @@ export default function CategoryListingPage() {
 
   const categories = useMemo(() => {
     const available = getRootCategories(
-      catalogState.globalCategories || [],
-    ).filter((category) => Number(category.productCount || 0) > 0);
+      catalogState.globalCategories) || [].filter((category) => Number(category.productCount || 0) > 0);
     const masterByKey = new Map(
       categoryList.map((category) => [category.routeKey, category]),
     );

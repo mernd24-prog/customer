@@ -374,7 +374,7 @@ function ImageGallery({
         <IconActionButton
           title="Add to Wishlist"
           onClick={onWishlist}
-          className={isWishlisted ? "text-red-500" : "text-ink"}
+          className={isWishlisted ? "text-[#1B1D60]" : "text-ink"}
         >
           <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
         </IconActionButton>
@@ -535,142 +535,224 @@ function DeliveryChecker({ productId, onResultChange }) {
 function VariantSelector({
   variantOptions,
   selectedAttributes,
-  findVariantForSelection,
   setSelectedVariant,
+  variants,
   product,
 }) {
   return (
     <div className="flex flex-col gap-6">
-      {variantOptions.map((option) => (
-        <div
-          key={option.slug}
-          className={
-            option.displayType === "color_swatch"
-              ? "order-2 w-full"
-              : "order-1 w-full"
-          }
-        >
-          <p
-            className={`mb-3 font-semibold capitalize text-ink ${
-              option.displayType === "color_swatch" ? "text-lg" : "text-lg"
-            }`}
+      {variantOptions.map((option, optionIndex) => {
+        const previousOptions = variantOptions.slice(0, optionIndex);
+
+        return (
+          <div
+            key={option.slug}
+            className={
+              option.displayType === "color_swatch"
+                ? "order-2 w-full"
+                : "order-1 w-full"
+            }
           >
-            {option.displayType === "color_swatch" ? "Colour" : option.name}:
-          </p>
+            <p
+              className={`mb-3 font-semibold capitalize text-ink ${
+                option.displayType === "color_swatch" ? "text-lg" : "text-lg"
+              }`}
+            >
+              {option.displayType === "color_swatch" ? "Colour" : option.name}:
+            </p>
 
-          <div className="flex  w-fit flex-wrap gap-4">
-            {option.values.map((value, valueIndex) => {
-              const isSelected =
-                String(selectedAttributes[option.slug]) === String(value);
+            <div className="flex  w-fit flex-wrap gap-4">
+              {option.values.map((value, valueIndex) => {
+                const isSelected =
+                  String(selectedAttributes[option.slug]) === String(value);
 
-              const matchingVariant = findVariantForSelection(
-                option.slug,
-                value,
-              );
+                let matchingVariants = variants.filter(
+                  (v) => String(v.attributes?.[option.slug]) === String(value)
+                );
 
-              const disabled = !matchingVariant;
-              const matchingVariantStock = getAvailableStock(matchingVariant);
-              const isUnavailable =
-                Boolean(matchingVariant) &&
-                (matchingVariantStock === 0 ||
-                  matchingVariant?.inStock === false ||
-                  matchingVariant?.isAvailable === false);
+                if (optionIndex > 0) {
+                  matchingVariants = matchingVariants.filter((v) => {
+                    return previousOptions.every(
+                      (prevOption) =>
+                        String(v.attributes?.[prevOption.slug]) ===
+                        String(selectedAttributes[prevOption.slug])
+                    );
+                  });
+                }
 
-              const swatchImage =
-                option.displayType === "color_swatch"
-                  ? getColorSwatchImage({
-                      option,
-                      value,
-                      matchingVariant,
-                      product,
-                      index: valueIndex,
-                    })
-                  : "";
-              const swatchColor = option?.valueCodes?.[value] || value;
+                const isValidCombination = matchingVariants.length > 0;
+                const disabled = !isValidCombination;
 
-              if (option.displayType === "color_swatch") {
+                const isOutOfStock =
+                  isValidCombination &&
+                  !matchingVariants.some((v) => {
+                    const stock = getAvailableStock(v);
+                    return stock > 0 && v.inStock !== false && v.isAvailable !== false;
+                  });
+
+                let variantToSelect = null;
+                if (isValidCombination) {
+                  const exactMatch = matchingVariants.find((v) => {
+                    return variantOptions.every((opt) =>
+                      opt.slug === option.slug
+                        ? true
+                        : String(v.attributes?.[opt.slug]) ===
+                          String(selectedAttributes[opt.slug])
+                    );
+                  });
+                  if (exactMatch) {
+                    variantToSelect = exactMatch;
+                  } else {
+                    const inStockVariant = matchingVariants.find((v) => {
+                      const stock = getAvailableStock(v) ?? 0;
+                      return (
+                        stock > 0 &&
+                        v.inStock !== false &&
+                        v.isAvailable !== false
+                      );
+                    });
+                    variantToSelect = inStockVariant || matchingVariants[0];
+                  }
+                }
+
+                const swatchImageVariant =
+                  variantToSelect ||
+                  variants.find(
+                    (v) => String(v.attributes?.[option.slug]) === String(value)
+                  );
+
+                const swatchImage =
+                  option.displayType === "color_swatch"
+                    ? getColorSwatchImage({
+                        option,
+                        value,
+                        matchingVariant: swatchImageVariant,
+                        product,
+                        index: valueIndex,
+                      })
+                    : "";
+                const swatchColor = option?.valueCodes?.[value] || value;
+
+                if (option.displayType === "color_swatch") {
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      disabled={disabled}
+                      onClick={() =>
+                        variantToSelect && setSelectedVariant(variantToSelect)
+                      }
+                      className={`relative h-[80px] w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
+                        isSelected
+                          ? "border border-gold bg-gradient-to-t from-[#1B1D60]/65 to-transparent"
+                          : "border border-gold/20 hover:border-gold"
+                      } ${
+                        disabled || isOutOfStock ? "opacity-55 grayscale" : ""
+                      }`}
+                      title={`${value}${
+                        disabled
+                          ? " - Not Available"
+                          : isOutOfStock
+                          ? " - Out of stock"
+                          : ""
+                      }`}
+                    >
+                      {swatchImage ? (
+                        <img
+                          src={swatchImage}
+                          alt={`${value} colour`}
+                          className="h-full w-full object-contain p-3"
+                          onError={(event) =>
+                            applyImageFallback(event, value, "product")
+                          }
+                        />
+                      ) : (
+                        <span
+                          className="flex h-full w-full items-end justify-center p-2 text-center text-xs font-semibold text-[var(--customer-ink)]"
+                          style={{
+                            backgroundColor:
+                              typeof swatchColor === "string" &&
+                              (/^#([0-9a-f]{3,8})$/i.test(swatchColor) ||
+                                /^(rgb|hsl)a?\(/i.test(swatchColor))
+                                ? swatchColor
+                                : "var(--customer-cream)",
+                          }}
+                        >
+                          <span className="rounded bg-white/80 px-1.5 py-0.5 backdrop-blur-sm">
+                            {value}
+                          </span>
+                        </span>
+                      )}
+                      {disabled ? (
+                        <span className="absolute inset-x-0 bottom-0 bg-gray-600 px-1 py-1 text-[10px] font-semibold text-white">
+                          Not Available
+                        </span>
+                      ) : isOutOfStock ? (
+                        <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-[10px] font-semibold text-white">
+                          Out of stock
+                        </span>
+                      ) : null}
+                    </button>
+                  );
+                }
+
                 return (
                   <button
                     key={value}
                     type="button"
                     disabled={disabled}
                     onClick={() =>
-                      matchingVariant && setSelectedVariant(matchingVariant)
+                      variantToSelect && setSelectedVariant(variantToSelect)
                     }
-                    className={`relative h-[80px] w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
+                    aria-label={`${option.name} ${value}${
+                      disabled
+                        ? ", not available"
+                        : isOutOfStock
+                        ? ", out of stock"
+                        : ""
+                    }`}
+                    title={
+                      disabled
+                        ? `${value} - Not Available`
+                        : isOutOfStock
+                        ? `${value} - Out of stock`
+                        : value
+                    }
+                    className={`relative min-h-10 min-w-12 rounded-[8px] px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed ${
                       isSelected
-                        ? "border border-gold bg-gradient-to-t from-[#1B1D60]/65 to-transparent"
-                        : "border border-gold/20 "
-                    } ${isUnavailable ? "opacity-55 grayscale" : ""}`}
-                    title={`${value}${isUnavailable ? " - Out of stock" : ""}`}
+                        ? "border border-gold bg-gradient-to-t from-[#1B1D60]/25 to-transparent text-ink"
+                        : "border border-gold/20 hover:border-gold text-ink"
+                    } ${
+                      disabled
+                        ? "border-gray-200 bg-gray-50 text-gray-400 opacity-60"
+                        : isOutOfStock
+                        ? "border-red-200 bg-red-50 text-red-500"
+                        : ""
+                    }`}
                   >
-                    {swatchImage ? (
-                      <img
-                        src={swatchImage}
-                        alt={`${value} colour`}
-                        className="h-full w-full object-contain p-3"
-                        onError={(event) =>
-                          applyImageFallback(event, value, "product")
-                        }
-                      />
-                    ) : (
-                      <span
-                        className="flex h-full w-full items-end justify-center p-2 text-center text-xs font-semibold text-[var(--customer-ink)]"
-                        style={{
-                          backgroundColor:
-                            typeof swatchColor === "string" &&
-                            (/^#([0-9a-f]{3,8})$/i.test(swatchColor) ||
-                              /^(rgb|hsl)a?\(/i.test(swatchColor))
-                              ? swatchColor
-                              : "var(--customer-cream)",
-                        }}
-                      >
-                        <span className="rounded bg-white/80 px-1.5 py-0.5 backdrop-blur-sm">
-                          {value}
-                        </span>
+                    <span
+                      className={
+                        disabled || isOutOfStock ? "line-through" : ""
+                      }
+                    >
+                      {value}
+                    </span>
+                    {disabled ? (
+                      <span className="mt-0.5 block whitespace-nowrap text-[9px] font-semibold leading-none no-underline text-gray-500">
+                        Not Available
                       </span>
-                    )}
-                    {isUnavailable && (
-                      <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-[10px] font-semibold text-white">
+                    ) : isOutOfStock ? (
+                      <span className="mt-0.5 block whitespace-nowrap text-[9px] font-semibold leading-none no-underline text-red-500">
                         Out of stock
                       </span>
-                    )}
+                    ) : null}
                   </button>
                 );
-              }
-
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  disabled={disabled}
-                  onClick={() =>
-                    matchingVariant && setSelectedVariant(matchingVariant)
-                  }
-                  aria-label={`${option.name} ${value}${isUnavailable ? ", out of stock" : ""}`}
-                  title={isUnavailable ? `${value} - Out of stock` : value}
-                  className={`min-h-10 min-w-12 rounded-[8px] px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed disabled:opacity-40 ${
-                    isSelected
-                      ? "border border-gold bg-gradient-to-t from-[#1B1D60]/25 to-transparent"
-                      : "border border-gold/20 "
-                  } ${
-                    isUnavailable ? "border-red-200 bg-red-50 text-red-500" : ""
-                  }`}
-                >
-                  <span className={isUnavailable ? "line-through" : ""}>
-                    {value}
-                  </span>
-                  {isUnavailable && (
-                    <span className="mt-0.5 block whitespace-nowrap text-[9px] font-semibold leading-none no-underline">
-                      Out of stock
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -805,26 +887,7 @@ function ProductInfoSection({
             rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]"
             labelClassName="font-medium text-[#2E2E2E]"
             valueClassName="text-left font-bold text-navy sm:text-right"
-          >
-            {warranty && (
-              <div className="grid grid-cols-1 gap-1 px-4 py-3  text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]">
-                <dt className="font-medium text-ink">
-                  {" "}
-                  {formatPageTitle("warranty")}
-                </dt>
-                <dd className="text-left font-bold text-[#1B1D60] sm:text-right">
-                  {formatPageTitle(
-                    warranty.period ||
-                      warranty.duration ||
-                      warranty.type ||
-                      "Warranty available",
-                  )}
-                  {warranty.coverage &&
-                    ` · ${formatPageTitle(warranty.coverage)}`}
-                </dd>
-              </div>
-            )}
-          </DetailRows>
+          />
         </InfoCard>
       )}
 
@@ -1101,7 +1164,7 @@ export default function ProductDetailPage() {
               .toLowerCase()
               .replace(/[^a-z0-9]+/g, "_")
               .replace(/^_+|_+$/g, ""),
-          values: Array.from(new Set((option.values || []).filter(Boolean))),
+          values: Array.from(new Set((option.values) || [].filter(Boolean))),
         }))
         .filter((option) => option.slug && option.values.length);
     }
@@ -1146,24 +1209,7 @@ export default function ProductDetailPage() {
 
   const selectedAttributes = selectedVariant?.attributes || {};
 
-  const findVariantForSelection = (axis, value) => {
-    const nextSelection = {
-      ...selectedAttributes,
-      [axis]: value,
-    };
 
-    return (
-      variants.find((variant) =>
-        Object.entries(nextSelection).every(
-          ([key, selectedValue]) =>
-            String(variant.attributes?.[key]) === String(selectedValue),
-        ),
-      ) ||
-      variants.find(
-        (variant) => String(variant.attributes?.[axis]) === String(value),
-      )
-    );
-  };
 
   const selectedVariantPrice = getVariantPrice(selectedVariant);
   const productPrice = getProductPrice(product);
@@ -1502,8 +1548,8 @@ export default function ProductDetailPage() {
                     <VariantSelector
                       variantOptions={variantOptions}
                       selectedAttributes={selectedAttributes}
-                      findVariantForSelection={findVariantForSelection}
                       setSelectedVariant={setSelectedVariant}
+                      variants={variants}
                       product={product}
                     />
                   )}

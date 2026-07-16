@@ -340,8 +340,7 @@ export default function CategoryPage() {
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const catalogCategoryList = useSelector(
-    (state) => state.catalog?.globalCategories || state.catalog?.list || [],
-  );
+    (state) => state.catalog?.globalCategories || state.catalog?.list) || [];
   const categoryTree = useMemo(
     () => buildCategoryTree(catalogCategoryList),
     [catalogCategoryList],
