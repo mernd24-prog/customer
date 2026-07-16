@@ -14,22 +14,30 @@ function cleanPolicyText(value = "") {
     .trim();
 }
 
-const PolicyPage = ({ slugOverride = "" }) => {
+const getPolicyPayload = (page) =>
+  page?.metadata?.data ||
+  page?.metadata?.content ||
+  page?.data ||
+  page?.content ||
+  page;
+
+const PolicyPage = ({ slugOverride = "", fallbackData = null }) => {
   const { slug } = useParams();
   const cmsSlug = slugOverride || slug || "";
 
   const { page: cmsPolicy, loading } = useCmsRecord(cmsSlug);
+  const policy = getPolicyPayload(cmsPolicy) || fallbackData;
 
-  console.log("cmsPolicy", cmsPolicy);
+  console.log("policyPage", { slug: cmsSlug, cmsPolicy, fallbackData, policy });
 
-  const title = cmsPolicy?.metadata?.data?.title || "";
-  const description = cmsPolicy?.metadata?.data?.description || "";
+  const title = policy?.title || "";
+  const description = policy?.description || "";
 
   const sections = useMemo(() => {
-    if (!cmsPolicy) return null;
+    if (!policy) return null;
 
-    const sectionList = Array.isArray(cmsPolicy?.metadata?.data?.sections)
-      ? cmsPolicy.metadata.data.sections
+    const sectionList = Array.isArray(policy?.sections)
+      ? policy.sections
       : [];
 
     return sectionList
@@ -57,7 +65,7 @@ const PolicyPage = ({ slugOverride = "" }) => {
         sortOrder: section.sortOrder || 0,
       }))
       .sort((a, b) => a.sortOrder - b.sortOrder);
-  }, [cmsPolicy]);
+  }, [policy]);
 
   const emptyText = "";
 

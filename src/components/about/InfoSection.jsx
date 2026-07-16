@@ -9,7 +9,7 @@ const InfoSection = ({ data }) => {
   return (
     <section className="relative my-8 lg:my-16">
       {/* Golden Top Card */}
-      {helpSection && (
+      {/* {helpSection && (
         <div className="relative z-20 mx-auto mb-[-60px] max-w-[1550px] px-4 lg:px-10">
           <NeedHelpSection
             heading1={helpSection.heading1}
@@ -21,7 +21,7 @@ const InfoSection = ({ data }) => {
             layout="row"
           />
         </div>
-      )}
+      )} */}
 
       {/* Main Blue Section */}
       <section className="relative left-1/2 right-1/2 w-[100vw] -ml-[50vw] -mr-[50vw] overflow-hidden rounded-[var(--customer-radius)] bg-gradient-to-r from-navy to-navy-dark pt-[100px] pb-10 lg:pb-0">

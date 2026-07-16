@@ -21,6 +21,7 @@ import ScrollToTop from "./components/common/ScrollToTop";
 import CategoryListingPage from "./pages/category/CategoryListingPage";
 import DownloadApp from "./pages/downloadApp/DownloadApp";
 import PolicyPage from "./pages/policiesPage/PoliciesPages";
+import policyFallbackData from "./data/policyFallbackData.json";
 import Loader from "./components/common/Loader";
 import ReturnsPage from "./pages/returns/ReturnsPage.jsx";
 import BecomeASeller from "./pages/becomeASeller/becomeASeller.jsx";
@@ -315,7 +316,7 @@ export default function App() {
               />
 
               <Route path="/mobile-app" element={<DownloadApp />} />
-              <Route
+              {/* <Route
                 path="/seller-policies"
                 element={<CmsPage slugOverride="seller-policies" />}
               />
@@ -335,22 +336,40 @@ export default function App() {
               <Route
                 path="/announcements"
                 element={<CmsPage slugOverride="announcements" />}
-              />
+              /> */}
               <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
               <Route path="/our-commitment" element={<OurCommitmentPage />} />
               <Route path="/features" element={<FeaturesPage />} />
+
               <Route
                 path="/shipping-policy"
-                element={<PolicyPage slugOverride="shipping-delivery-policy" />}
+                element={
+                  <PolicyPage
+                    fallbackData={policyFallbackData.shippingDeliveryPolicy}
+                    slugOverride="shipping-delivery-policy"
+                  />
+                }
               />
+
               <Route
                 path="/refund-policy"
-                element={<PolicyPage slugOverride="return-refund-policy" />}
+                element={
+                  <PolicyPage
+                    fallbackData={policyFallbackData.returnRefundPolicy}
+                    slugOverride="return-refund-policy"
+                  />
+                }
               />
               <Route
                 path="/terms-of-use"
-                element={<PolicyPage slugOverride="terms-of-use" />}
+                element={
+                  <PolicyPage
+                    fallbackData={policyFallbackData.termsOfUse}
+                    slugOverride="terms-of-use"
+                  />
+                }
               />
+
               <Route path="/become-a-seller" element={<BecomeASeller />} />
 
               {/* ── Public buyer routes ────────────────────────────────────── */}

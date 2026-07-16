@@ -1,12 +1,11 @@
-import { useMemo } from "react";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
-import Seo from "../../components/common/Seo";
 import AboutBanner from "../../components/about/AboutBanner";
 import InfoSection from "../../components/about/InfoSection";
 import OurStory from "../../components/about/OurStory";
 import ValuesSection from "../../components/about/ValuesSection";
 import BrandCarousel from "../../components/about/BrandSection";
 import WhyChooseSection from "../../components/about/WhyChooseSection";
+import aboutPageFallbackData from "../../data/aboutPageFallbackData";
 
 const normalizeSectionType = (type = "") =>
   String(type).trim().toLowerCase().replace(/\s+/g, "-");
@@ -19,7 +18,14 @@ const getSectionByType = (sections, type) =>
 export default function AboutPage() {
   const { page: cmsAboutPage } = useCmsRecord("about-us-details");
 
-  const sections = cmsAboutPage?.data?.sections || cmsAboutPage?.sections || [];
+  const cmsSections =
+    cmsAboutPage?.metadata?.data?.sections ||
+    cmsAboutPage?.data?.sections ||
+    cmsAboutPage?.sections ||
+    [];
+  const sections = cmsSections.length
+    ? cmsSections
+    : aboutPageFallbackData.sections;
 
   const bannerSection = getSectionByType(sections, "about-banner");
   const aboutSamGlobalSection = getSectionByType(sections, "about-sam-global");
@@ -32,7 +38,9 @@ export default function AboutPage() {
     <>
       {/* <Seo title={pageTitle} description={pageDescription} /> */}
 
-      <AboutBanner image={bannerSection?.image?.url} />
+      <AboutBanner
+        image={bannerSection?.image?.url ?? "/image/png/aboutBanner"}
+      />
 
       <main className="w-full">
         <div>
