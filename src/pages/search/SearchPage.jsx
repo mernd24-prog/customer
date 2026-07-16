@@ -493,17 +493,39 @@ export default function SearchPage() {
       );
   }, [facets?.category, facets?.categories]);
   const categoryOptions = facetCategories;
-  const brandOptions = useMemo(
-    () =>
-      (facets.brands || [])
-        .map((option) => ({
-          value: String(option.value || option.key || ""),
-          label: option.label || option.value || option.key,
-          count: Number(option.count || 0),
-        }))
-        .filter((option) => option.value && option.label && option.count > 0),
-    [facets.brands],
-  );
+  const brandContextKey = useMemo(() => {
+    const p = new URLSearchParams(searchParams);
+    p.delete("brand");
+    p.delete("page");
+    return p.toString();
+  }, [searchParams]);
+
+  const brandOptionsRef = useRef({ context: "", options: [] });
+  const brandOptions = useMemo(() => {
+    const currentSelected = parseMultiValue(searchParams.get("brand"));
+    const rawOptions = (facets.brands || [])
+      .map((option) => ({
+        value: String(option.value || option.key || ""),
+        label: option.label || option.value || option.key,
+        count: Number(option.count || 0),
+      }))
+      .filter((option) => option.value && option.label && option.count > 0);
+
+    if (brandContextKey !== brandOptionsRef.current.context) {
+      brandOptionsRef.current = { context: brandContextKey, options: rawOptions };
+    } else if (currentSelected.length === 0) {
+      brandOptionsRef.current = { context: brandContextKey, options: rawOptions };
+    }
+
+    if (currentSelected.length > 0 && brandOptionsRef.current.options.length > 0) {
+      const mergedMap = new Map();
+      brandOptionsRef.current.options.forEach(opt => mergedMap.set(opt.value, { ...opt, count: 0 }));
+      rawOptions.forEach(opt => mergedMap.set(opt.value, opt));
+      return Array.from(mergedMap.values());
+    }
+
+    return brandOptionsRef.current.options;
+  }, [facets.brands, searchParams, brandContextKey]);
   const attributeFacets = useMemo(
     () =>
       (facets.attributes || [])

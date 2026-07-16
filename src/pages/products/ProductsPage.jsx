@@ -271,9 +271,35 @@ export default function ProductsPage() {
   const categoryOptions = facetCategoryOptions.filter(
     (option) => Number(option.count || 0) > 0,
   );
-  const brandOptions = facetBrandOptions.filter(
-    (option) => Number(option.count || 0) > 0,
-  );
+  const brandContextKey = useMemo(() => {
+    const p = new URLSearchParams(searchParams);
+    p.delete("brand");
+    p.delete("page");
+    return p.toString();
+  }, [searchParams]);
+
+  const brandOptionsRef = useRef({ context: "", options: [] });
+  const brandOptions = useMemo(() => {
+    const currentSelected = parseMultiValue(searchParams.get("brand"));
+    const rawOptions = facetBrandOptions.filter(
+      (option) => Number(option.count || 0) > 0,
+    );
+
+    if (brandContextKey !== brandOptionsRef.current.context) {
+      brandOptionsRef.current = { context: brandContextKey, options: rawOptions };
+    } else if (currentSelected.length === 0) {
+      brandOptionsRef.current = { context: brandContextKey, options: rawOptions };
+    }
+
+    if (currentSelected.length > 0 && brandOptionsRef.current.options.length > 0) {
+      const mergedMap = new Map();
+      brandOptionsRef.current.options.forEach(opt => mergedMap.set(opt.value, { ...opt, count: 0 }));
+      rawOptions.forEach(opt => mergedMap.set(opt.value, opt));
+      return Array.from(mergedMap.values());
+    }
+
+    return brandOptionsRef.current.options;
+  }, [facetBrandOptions, searchParams, brandContextKey]);
 
   const getParams = useCallback(
     (pageOverride) => {
