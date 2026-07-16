@@ -189,7 +189,7 @@ export default function ProductsPage() {
     : ratingCounts;
   const attributeFacets = useMemo(
     () =>
-      (productFacets.attributes || [])
+      (productFacets.attributes) || []
         .map((attribute) => ({
           key: String(attribute.key || ""),
           label: attribute.label || attribute.key,

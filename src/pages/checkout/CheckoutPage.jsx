@@ -666,7 +666,7 @@ export default function CheckoutPage() {
   const userState = useSelector((s) => s.user);
   const orderState = useSelector((s) => s.order);
   const paymentState = useSelector((s) => s.payment);
-  const productEntities = useSelector((s) => s.product?.entities || {});
+  const productEntities = useSelector((s) => s.product?.entities) || {};
   const fetchedIdsRef = useRef(new Set());
   
   const [quoteData, setQuoteData] = useState(null);

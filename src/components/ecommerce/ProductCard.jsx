@@ -452,14 +452,14 @@ export default function ProductCard({
             onClick={handleWishlist}
             className={
               isWishlisted
-                ? "border-[#CE9F2D] text-[#CE9F2D] hover:border-[#CE9F2D]"
-                : "border-[#CE9F2D] text-[#CE9F2D] hover:border-[#CE9F2D]"
+                ? "border-[#1B1D60] text-[#1B1D60] hover:border-[#1B1D60]"
+                : "border-[#1B1D60] text-[#1B1D60] hover:border-[#1B1D60]"
             }
           >
             <Heart
               size={19}
-              fill={isWishlisted ? "#CE9F2D" : "none"}
-              stroke={isWishlisted ? "#CE9F2D" : " #CE9F2D"}
+              fill={isWishlisted ? "#1B1D60" : "none"}
+              stroke={isWishlisted ? "#1B1D60" : "#1B1D60"}
             />
           </IconCircleButton>
         </div>

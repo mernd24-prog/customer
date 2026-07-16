@@ -14,6 +14,7 @@ import {
   Truck,
   User,
   LifeBuoy,
+  RefreshCcw,
 } from "lucide-react";
 
 import moreImage from "/image/png/MoreImage.png";
@@ -51,6 +52,7 @@ const dropdownIconMap = {
   truck: Truck,
   user: User,
   lifeBuoy: LifeBuoy,
+  refreshCcw: RefreshCcw,
 };
 
 const navbarIconLabels = {
@@ -73,6 +75,7 @@ const getNavbarIconLabel = (item = {}) =>
 const baseAccountMenuItems = [
   { label: "My Profile", path: "/account/profile", icon: "user" },
   { label: "My Orders", path: "/orders", icon: "shoppingBag" },
+  { label: "Returns & Refunds", path: "/returns-refunds", icon: "refreshCcw" },
   { label: "Wallet", path: "/wallet", icon: "lock" },
   { label: "Notifications", path: "/notifications", icon: "bell" },
   { label: "Settings", path: "/notification-preferences", icon: "settings" },
@@ -187,7 +190,7 @@ export const Navbar = ({ icons: propIcons }) => {
   const currentUser = useSelector((s) => s.auth.current);
   const profileUser = useSelector((s) => s.user.current) || currentUser;
   const currentRole = getRole(currentUser);
-  const cartItems = useSelector((s) => s.cart.current?.items || []);
+  const cartItems = useSelector((s) => s.cart.current?.items) || [];
   const { products: wishlistedProducts } = useWatchlistProducts();
   const displayIcons = propIcons || navData;
   const utilityIcons = asArray(displayIcons).filter(
@@ -426,7 +429,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const globalCategories = useSelector(
-    (state) => state.catalog.globalCategories || [],
+    (state) => state.catalog.globalCategories
   );
   const discoveryNavigationLoaded = useSelector((state) =>
     Boolean(state.catalog.discoveryNavigationLoaded),
@@ -561,7 +564,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     if (headerCategories.length) return buildCategoryTree(headerCategories);
     if (!catalogTree.length) return [];
 
-    const fullTree = buildCategoryTree(globalCategories || []);
+    const fullTree = buildCategoryTree(globalCategories) || [];
     const findInTree = (nodes, key) => {
       if (!Array.isArray(nodes)) return null;
       for (const n of nodes) {

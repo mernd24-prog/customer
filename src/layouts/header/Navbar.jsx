@@ -43,7 +43,7 @@ export const Navbar = ({ icons: propIcons }) => {
   const profileUser = useSelector((s) => s.user.current) || currentUser;
   const currentRole = getRole(currentUser);
 
-  const cartItems = useSelector((s) => s.cart.current?.items || []);
+  const cartItems = useSelector((s) => s.cart.current?.items) || [];
   const { products: wishlistedProducts } = useWatchlistProducts();
 
   const displayIcons = propIcons || navData;

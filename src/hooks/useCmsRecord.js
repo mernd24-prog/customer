@@ -16,7 +16,7 @@ const cmsRecordKey = (item) =>
 
 export function useCmsRecord(cmsKey) {
   const dispatch = useDispatch();
-  const entities = useSelector((state) => state.cms.entities || {});
+  const entities = useSelector((state) => state.cms.entities) || {};
   const list = useSelector((state) => state.cms.list);
   const current = useSelector((state) => state.cms.current);
   const loading = useSelector((state) => state.cms.loading);

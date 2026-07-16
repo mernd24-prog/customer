@@ -70,7 +70,7 @@ export const TopHeader = () => {
       case "more":
         return <MenuDropdown title={dropdown.title} items={dropdown.items} />;
       default:
-        return null;
+        return null;  
     }
   };
 

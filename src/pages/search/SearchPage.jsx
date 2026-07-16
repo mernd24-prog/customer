@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Search } from "lucide-react";
@@ -77,7 +77,7 @@ export default function SearchPage() {
   const navigate = useNavigate();
 
   const searchState = useSelector((s) => s.search);
-  const categoriesRaw = useSelector((s) => s.catalog.list || []);
+  const categoriesRaw = useSelector((s) => s.catalog.list) || [];
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const facets = searchState.facets || {};
 
@@ -247,7 +247,6 @@ export default function SearchPage() {
   }, [dispatch, hasLegacyCategoryParams, params, searchKey]);
 
   useEffect(() => {
-
     if (!categoryValue) return;
     if (
       searchParams.get("categoryId") === categoryValue &&
@@ -512,15 +511,26 @@ export default function SearchPage() {
       .filter((option) => option.value && option.label && option.count > 0);
 
     if (brandContextKey !== brandOptionsRef.current.context) {
-      brandOptionsRef.current = { context: brandContextKey, options: rawOptions };
+      brandOptionsRef.current = {
+        context: brandContextKey,
+        options: rawOptions,
+      };
     } else if (currentSelected.length === 0) {
-      brandOptionsRef.current = { context: brandContextKey, options: rawOptions };
+      brandOptionsRef.current = {
+        context: brandContextKey,
+        options: rawOptions,
+      };
     }
 
-    if (currentSelected.length > 0 && brandOptionsRef.current.options.length > 0) {
+    if (
+      currentSelected.length > 0 &&
+      brandOptionsRef.current.options.length > 0
+    ) {
       const mergedMap = new Map();
-      brandOptionsRef.current.options.forEach(opt => mergedMap.set(opt.value, { ...opt, count: 0 }));
-      rawOptions.forEach(opt => mergedMap.set(opt.value, opt));
+      brandOptionsRef.current.options.forEach((opt) =>
+        mergedMap.set(opt.value, { ...opt, count: 0 }),
+      );
+      rawOptions.forEach((opt) => mergedMap.set(opt.value, opt));
       return Array.from(mergedMap.values());
     }
 

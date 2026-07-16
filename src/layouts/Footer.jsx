@@ -183,7 +183,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
 
 export function Footer({ data = footerData }) {
   const location = useLocation();
-  const catalogCategoryList = useSelector((state) => state.catalog.globalCategories || state.catalog.list || []);
+  const catalogCategoryList = useSelector((state) => state.catalog.globalCategories || state.catalog.list) || [];
   const footer = data || footerData;
   const {
     copyright = footerData.copyright,

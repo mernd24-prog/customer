@@ -13,6 +13,7 @@ import {
   Truck,
   User,
   LifeBuoy,
+  RefreshCcw,
 } from "lucide-react";
 
 export const CATEGORY_MENU_OPEN_DELAY_MS = 350;
@@ -30,6 +31,7 @@ export const dropdownIconMap = {
   truck: Truck,
   user: User,
   lifeBuoy: LifeBuoy,
+  refreshCcw: RefreshCcw,
 };
 
 export const navbarIconLabels = {
@@ -42,6 +44,7 @@ export const navbarIconLabels = {
 export const baseAccountMenuItems = [
   { label: "My Profile", path: "/account/profile", icon: "user" },
   { label: "My Orders", path: "/orders", icon: "shoppingBag" },
+  { label: "Returns & Refunds", path: "/returns-refunds", icon: "refreshCcw" },
   { label: "Wallet", path: "/wallet", icon: "lock" },
   { label: "Notifications", path: "/notifications", icon: "bell" },
   { label: "Settings", path: "/notification-preferences", icon: "settings" },

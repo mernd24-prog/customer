@@ -13,8 +13,8 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
     () => Array.from(new Set((Array.isArray(wishlist) ? wishlist : []).map((item) => getProductId(item)).filter(Boolean))),
     [wishlist],
   );
-  const productEntities = useSelector((state) => state.product.entities || {});
-  const allProducts = useSelector((state) => state.product.list || []);
+  const productEntities = useSelector((state) => state.product.entities) || {};
+  const allProducts = useSelector((state) => state.product.list) || [];
 
   useEffect(() => {
     const missingIds = wishlistIds.filter(

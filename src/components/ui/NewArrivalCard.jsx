@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { IoStar, IoArrowForwardOutline } from "react-icons/io5";
+import { Star } from "lucide-react";
+import { IoArrowForwardOutline } from "react-icons/io5";
 import Label from "../common/label/Label";
 import { TextWhiteButton } from "../dynamicComponent/button/static";
 import { formatPageTitle } from "../../lib/utils";
@@ -18,15 +19,15 @@ export default function NewArrivalCard({
     <article className="flex flex-col h-full overflow-hidden rounded-[20px] border border-[#1B1D6066] bg-white shadow-sm hover:shadow-md transition-shadow duration-300 ">
       {/* Card Header (Navy Blue background) */}
       <div className="bg-[#1B1D60] p-5 flex  flex-col justify-between">
-        <div className="flex items-center justify-between w-full">
-          {/* Badge */}
+        <div className="flex items-center justify-end w-full">
+          {/* Badge
           <Label
             variant="featured"
             className="text-sm font-semibold "
             leftIcon="✦"
           >
             {badgeText}
-          </Label>
+          </Label> */}
           {/* See all Link */}
           <TextWhiteButton
             to={seeAllLink}
@@ -85,12 +86,21 @@ export default function NewArrivalCard({
                 <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
                   {prod.rating || "0.0"}
                 </span>
-                <div className="flex text-[#F58220] text-base gap-0.5">
-                  <IoStar />
-                  <IoStar />
-                  <IoStar />
-                  <IoStar />
-                  <IoStar />
+                <div className="flex gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => {
+                    const stars = Math.round(Math.max(0, Math.min(Number(prod.rating || 0), 5)));
+                    return (
+                      <Star
+                        key={i}
+                        size={16}
+                        className={
+                          i < stars
+                            ? "fill-[#F58220] text-[#F58220]"
+                            : "fill-border text-border"
+                        }
+                      />
+                    );
+                  })}
                 </div>
                 <span className="ml-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
                   ({prod.reviewsCount || "0"})

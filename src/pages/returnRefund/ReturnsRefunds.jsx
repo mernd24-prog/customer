@@ -230,7 +230,7 @@ function StatusDropdown({ value, onChange }) {
       <button
         type="button"
         onClick={() => setOpen((p) => !p)}
-        className="flex w-full items-center justify-between gap-2 rounded-[10px] border border-[#CE9F2D66] bg-white px-4 py-3 text-left font-sans text-[14px] font-semibold text-[#1B1D60] shadow-sm transition-all duration-200 hover:border-[#CE9F2D] focus:outline-none sm:text-[16px] lg:py-3.5 lg:text-[18px]"
+        className="flex w-full items-center justify-between gap-2 rounded-[10px] border border-[#CE9F2D66] bg-white px-4 py-3 text-left font-sans text-[13px] font-semibold text-[#1B1D60] shadow-sm transition-all duration-200 hover:border-[#CE9F2D] focus:outline-none sm:text-[14px] lg:py-3.5 lg:text-[16px]"
       >
         <span className="truncate">{activeLabel}</span>
         <ChevronDown
@@ -251,7 +251,7 @@ function StatusDropdown({ value, onChange }) {
                     onChange(opt.value);
                     setOpen(false);
                   }}
-                  className={`flex w-full items-center gap-2 px-4 py-2.5 text-left font-sans text-[13px] font-medium transition-colors sm:text-[15px] lg:text-[16px] ${
+                  className={`flex w-full items-center gap-2 px-4 py-2.5 text-left font-sans text-[12px] font-medium transition-colors sm:text-[13px] lg:text-[14px] ${
                     isActive
                       ? "bg-[#FFEFC8]/60 text-[#1B1D60]"
                       : "text-[#454545] hover:bg-[#F9F5EB]"
@@ -390,13 +390,13 @@ function ReturnsRefundsPage() {
       <div className="py-6 sm:py-8">
         <Breadcrumbs
           items={breadcrumbItems}
-          linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
+          linkClassName="font-medium text-[12px] sm:text-[14px] lg:text-[16px] leading-[100%] text-[#2E2E2E]"
           separatorClassName="text-[#2E2E2E]"
         />
-        <h1 className="lg:mb-4 lg:mt-5 text-h2 font-bold text-[#3E4093] ">
+        <h1 className="lg:mb-4 lg:mt-5 text-[24px] sm:text-[28px] lg:text-[32px] font-bold text-[#3E4093] ">
           Returns & Refunds
         </h1>
-        <p className="mb-4 max-w-[600px] font-sans text-small font-medium text-[#2E2E2E] ">
+        <p className="mb-4 max-w-[600px] font-sans text-[14px] sm:text-[16px] font-medium text-[#2E2E2E] ">
           Manage your return requests and track refund status.
         </p>
 
@@ -409,7 +409,7 @@ function ReturnsRefundsPage() {
         >
           {/* ── Filter row ─────────────────────────────────────────── */}
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="font-sans text-[14px] font-semibold text-[#1B1D60] sm:text-[16px] lg:text-[20px]">
+            <p className="font-sans text-[14px] font-semibold text-[#1B1D60] sm:text-[15px] lg:text-[18px]">
               {filteredReturns.length}{" "}
               {filteredReturns.length === 1 ? "Return" : "Returns"}
               {statusFilter !== "all" && (
