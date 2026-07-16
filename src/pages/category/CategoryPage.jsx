@@ -507,9 +507,7 @@ export default function CategoryPage() {
       };
       searchParams.forEach((value, key) => {
         if (!key.startsWith("attr_") || !value) return;
-        const attributeKey = key.replace(/^attr_/, "");
         params[key] = value;
-        params[attributeKey] = value;
       });
       return params;
     },

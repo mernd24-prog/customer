@@ -187,7 +187,7 @@ const SearchBar = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [manualSelectedCategory, setManualSelectedCategory] = useState(null);
 
   const searchBarRef = useRef(null);
   const categoryDropdownRef = useRef(null);
@@ -230,6 +230,16 @@ const SearchBar = ({
     searchParams.get("categoryId") ||
     searchParams.get("category") ||
     searchParams.get("categorySlug");
+  const selectedCategory = useMemo(() => {
+    if (!enableCategoryDropdown) return null;
+    if (catParam && categories.length) {
+      return (
+        categories.find((category) => categoryMatchesParam(category, catParam)) ||
+        null
+      );
+    }
+    return manualSelectedCategory;
+  }, [catParam, categories, enableCategoryDropdown, manualSelectedCategory]);
 
   useEffect(() => {
     if (!enableAutocomplete) return;
@@ -258,28 +268,6 @@ const SearchBar = ({
   useEffect(() => {
     setActiveSuggestionIndex(-1);
   }, [sanitizedQuery, suggestions.length]);
-
-  // Sync selectedCategory with query params
-  useEffect(() => {
-    if (!enableCategoryDropdown) {
-      setSelectedCategory((current) => (current ? null : current));
-      return;
-    }
-
-    let nextCategory = null;
-    if (catParam && categories.length) {
-      nextCategory =
-        categories.find((category) => categoryMatchesParam(category, catParam)) ||
-        null;
-    }
-
-    setSelectedCategory((current) => {
-      if (!nextCategory) return current ? null : current;
-      return categoryMatchesParam(current, getCategoryId(nextCategory))
-        ? current
-        : nextCategory;
-    });
-  }, [catParam, categories, enableCategoryDropdown]);
 
   // Handle outside clicks to close dropdown
   useEffect(() => {
@@ -396,7 +384,7 @@ const SearchBar = ({
   };
 
   const handleSelectCategory = (category) => {
-    setSelectedCategory(category);
+    setManualSelectedCategory(category);
     setIsDropdownOpen(false);
     // Trigger search immediately upon category selection
     handleSearch(category);
