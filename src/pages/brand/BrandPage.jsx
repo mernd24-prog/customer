@@ -81,7 +81,7 @@ export default function BrandPage() {
     setItems([]);
     setFirstLoadDone(false);
 
-    dispatch(fetchBrands({ limit: 100 }))
+    dispatch(fetchBrands({ limit: 500 }))
       .then((action) => {
         const data = action?.payload?.data;
         const list = Array.isArray(data)

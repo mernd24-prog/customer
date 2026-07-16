@@ -74,7 +74,7 @@ export default function BrandOutletPage() {
     setLoading(true);
     setError("");
 
-    dispatch(fetchBrands({ params: { limit: 100 } }))
+    dispatch(fetchBrands({ params: { limit: 500 } }))
       .then((result) => {
         setBrandList(listFromPayload(result?.payload));
       })
