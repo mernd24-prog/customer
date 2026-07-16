@@ -458,7 +458,7 @@ export default function App() {
                   />
 
                   {/* Returns */}
-                  {/* <Route path="/returns" element={<ReturnsPage />} /> */}
+                  <Route path="/returns" element={<ReturnsPage />} />
                   <Route
                     path="/returns/request/:orderId"
                     element={<ReturnsPage request />}

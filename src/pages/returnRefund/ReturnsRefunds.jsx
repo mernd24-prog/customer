@@ -91,12 +91,12 @@ const buildTrackingSteps = (ret) => {
     },
     {
       title: "Pickup Scheduled",
-      description: "Pickup has been scheduled with our delivery partner.",
+      description: "Your return pickup has been scheduled.",
       statuses: ["reverse_pickup_scheduled"],
     },
     {
       title: "Product Picked Up",
-      description: "Your item has been picked up by the delivery partner.",
+      description: "Your item has been picked up for return.",
       statuses: ["in_reverse_transit"],
     },
     {

@@ -13,10 +13,18 @@ const normalizeProgressStatus = (status) => {
   if (status === "order_closed") {
     return "fulfilled";
   }
-  if (status === "delivered_verified") {
-    return "fulfilled";
-  }
   return status;
+};
+
+const PROGRESS_MESSAGES = {
+  confirmed: "Your order is confirmed and waiting for seller packing.",
+  processing: "The seller is preparing your items.",
+  packed: "Your package is packed and ready for shipment details.",
+  ready_to_ship: "Your package is ready to be handed to the courier.",
+  shipped: "Your package has shipped. Use shipment tracking for courier updates.",
+  out_for_delivery: "Your order has active delivery progress. Packages may arrive separately.",
+  delivered: "Your order has been delivered. Item return windows are now active.",
+  fulfilled: "The return window has closed and this order is complete.",
 };
 
 function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
@@ -258,6 +266,11 @@ function OrderProgress({ status, cancellations = [], returns = [] }) {
         />
       </div>
       <MobileStepBar steps={progressSteps} activeStatus={activeStatus} />
+      {!isCancelled && !isFailed && !isDeliveryFailed && PROGRESS_MESSAGES[normalizeProgressStatus(activeStatus)] && (
+        <p className="mx-3 mb-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+          {PROGRESS_MESSAGES[normalizeProgressStatus(activeStatus)]}
+        </p>
+      )}
       {(isCancelled || isFailed) && (
         <div className="rounded-[8px]   md:border md:border-border bg-white px-4 py-3 text-sm">
           <p className="font-semibold  capitalize text-ink">

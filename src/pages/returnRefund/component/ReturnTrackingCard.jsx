@@ -7,13 +7,13 @@ const steps = [
   },
   {
     title: "Pickup Scheduled",
-    description: "Pickup has been scheduled with our delivery partner.",
+    description: "Your return pickup has been scheduled.",
     time: "25 Jun 2026, 09:15 AM",
     completed: true,
   },
   {
     title: "Product Picked Up",
-    description: "Your item has been picked up by the delivery partner.",
+    description: "Your item has been picked up for return.",
     time: "25 Jun 2026, 04:45 PM",
     completed: true,
   },

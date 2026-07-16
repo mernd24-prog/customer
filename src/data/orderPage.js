@@ -57,7 +57,6 @@ export const TRACKING_LABELS = {
   out_for_delivery: "Out For Delivery",
   delivered: "Delivered",
   failed_delivery: "Failed Delivery",
-  delivered_verified: "Delivered Verified",
   fulfilled: "Completed",
   return_requested: "Return requested",
   return_approved: "Return approved",
@@ -112,7 +111,6 @@ export const ORDER_FILTERS = [
 
 export const COMPACT_STATUS_BADGE = {
   delivered: "bg-[#008425] text-white",
-  delivered_verified: "bg-[#008425] text-white",
   fulfilled: "bg-[#0C9F45] text-white",
   partially_delivered: "bg-[#0C9F45] text-white",
   shipped: "bg-[#1B1D60] text-white",

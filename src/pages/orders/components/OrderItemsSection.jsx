@@ -376,10 +376,11 @@ const getItemSellerGroupKey = (item = {}) =>
 
 const getItemReturnPolicy = (item = {}) => {
   const snapshot = item.product_snapshot || item.productSnapshot || {};
-  const policy = snapshot.returnPolicy || snapshot.return_policy || snapshot.commercialPolicy?.returnPolicy || {};
+  const policy = item.return_policy_snapshot || item.returnPolicySnapshot || snapshot.returnPolicy || snapshot.return_policy || snapshot.commercialPolicy?.returnPolicy || {};
   return {
-    returnable: policy.returnable ?? policy.eligible ?? true,
-    days: Number(policy.returnWindowDays || policy.windowDays || policy.days || 0),
+    returnable: item.returnable ?? policy.returnable ?? policy.eligible ?? true,
+    days: Number(item.return_window_days ?? policy.returnWindowDays ?? policy.windowDays ?? policy.days ?? 0),
+    eligibleUntil: item.return_eligible_until || item.returnEligibleUntil || policy.eligibleUntil || null,
   };
 };
 
@@ -643,6 +644,11 @@ function OrderItemsSection({
                     <span className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
                       {policy.returnable ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}` : "Non-returnable"}
                     </span>
+                    {policy.returnable && policy.eligibleUntil && (
+                      <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-700">
+                        Return until {formatDate(policy.eligibleUntil)}
+                      </span>
+                    )}
                     {returnRequest && (
                       <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">
                         Return {label(returnRequest.status)}

@@ -73,10 +73,10 @@ const getDeliveryStatus = (order) =>
 const getProgressStatus = (order) => {
   const status = getOrderStatus(order);
   const deliveryStatus = getDeliveryStatus(order);
-  if (deliveryStatus === "delivered_verified") return "delivered_verified";
   if (deliveryStatus === "delivered" && !["fulfilled", "cancelled"].includes(status)) {
     return "delivered";
   }
+  if (deliveryStatus === "partially_delivered") return "out_for_delivery";
   if (deliveryStatus === "out_for_delivery" && ["confirmed", "packed", "shipped"].includes(status)) {
     return "out_for_delivery";
   }
@@ -467,8 +467,6 @@ function OrderDetail({ orderId, track }) {
     orderId,
   });
 
-  console.log("Order details from order page :", order);
-
   const currency = getOrderCurrency(order);
   const items = getOrderItems(order);
   const cancellations = Array.isArray(order?.relations?.cancellations)
@@ -510,13 +508,25 @@ function OrderDetail({ orderId, track }) {
   const taxPayable = getTaxPayableAmount(order, taxBreakup);
   const status = getOrderStatus(order);
   const progressStatus = getProgressStatus(order);
-  const returnEligibleUntil = order?.return_eligible_until || order?.returnEligibleUntil || order?.return_policy_snapshot?.eligibleUntil || order?.returnPolicySnapshot?.eligibleUntil || null;
-  const returnWindowOpen = returnEligibleUntil ? new Date(returnEligibleUntil).getTime() >= Date.now() : true;
+  const returnableItems = items.filter((item) => {
+    const snapshot = item.return_policy_snapshot || item.returnPolicySnapshot || item.product_snapshot?.returnPolicy || {};
+    return (item.returnable ?? snapshot.returnable ?? snapshot.eligible ?? true) === true;
+  });
+  const itemReturnDeadlines = returnableItems
+    .map((item) => item.return_eligible_until || item.returnEligibleUntil || item.return_policy_snapshot?.eligibleUntil || item.returnPolicySnapshot?.eligibleUntil)
+    .filter(Boolean);
+  const returnEligibleUntil = itemReturnDeadlines.length
+    ? itemReturnDeadlines.reduce((latest, value) => new Date(value).getTime() > new Date(latest).getTime() ? value : latest)
+    : null;
+  const returnWindowOpen = returnableItems.some((item) => {
+    const deadline = item.return_eligible_until || item.returnEligibleUntil || item.return_policy_snapshot?.eligibleUntil || item.returnPolicySnapshot?.eligibleUntil;
+    return !deadline || new Date(deadline).getTime() >= Date.now();
+  });
   const canRequestReturn = [
     "delivered",
     "fulfilled",
     "partially_returned",
-  ].includes(status) && returnWindowOpen;
+  ].includes(status) && returnWindowOpen && returnableItems.length > 0;
   const invoiceDownloadAvailable = status === "fulfilled";
 
   const breadcrumbItems = [
@@ -728,7 +738,7 @@ function OrderDetail({ orderId, track }) {
                   },
                   ...(returnEligibleUntil ? [{
                     icon: <RotateCcw size={20} />,
-                    label: returnWindowOpen ? "Return available until" : "Return window closed",
+                    label: returnWindowOpen ? "Latest item return deadline" : "All return windows closed",
                     value: formatOrderDate(returnEligibleUntil),
                     tone: returnWindowOpen ? "blue" : "yellow",
                   }] : []),
@@ -736,7 +746,11 @@ function OrderDetail({ orderId, track }) {
               />
 
               {!track && ["delivered", "fulfilled", "partially_returned"].includes(status) && !returnWindowOpen && (
-                <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">The return window for this order closed on {formatOrderDate(returnEligibleUntil)}.</p>
+                <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">All eligible item return windows closed by {formatOrderDate(returnEligibleUntil)}.</p>
+              )}
+
+              {getDeliveryStatus(order) === "partially_delivered" && (
+                <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">Part of your order has been delivered. Remaining seller packages are still being prepared or shipped.</p>
               )}
 
               {hasKnownStatus(order) && (
