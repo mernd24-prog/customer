@@ -269,7 +269,7 @@ function OrderPaymentSummary({
       )}
 
       {/* Shipping */}
-      <div className="border-t border-[#04258626] pt-2">
+      {/* <div className="border-t border-[#04258626] pt-2">
         <SummaryRow
           label="Shipping"
           value={
@@ -280,7 +280,7 @@ function OrderPaymentSummary({
                 : formatMoney(shipping || 0, currency)
           }
         />
-      </div>
+      </div> */}
 
       {asNumber?.(customerPlatformFee) > 0 && (
         <div className="border-t border-[#04258626] pt-2">

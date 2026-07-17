@@ -87,7 +87,11 @@ function ProductReviewCard({
 
   const rating = Number(review.rating || 0).toFixed(1);
   const isOwn =
-    currentUserId && String(review.buyerId) === String(currentUserId);
+    currentUserId &&
+    (String(review.buyerId) === String(currentUserId) ||
+      String(review.userId) === String(currentUserId) ||
+      String(review.user?._id || review.user?.id || review.user) ===
+        String(currentUserId));
   const alreadyVoted = (review.helpfulVotedBy || []).includes(
     String(currentUserId || ""),
   );
