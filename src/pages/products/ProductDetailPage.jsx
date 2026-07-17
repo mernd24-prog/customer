@@ -901,6 +901,12 @@ function ProductInfoSection({
   warranty,
   product,
 }) {
+  const effectiveWarranty = warranty?.warrantyDetails || warranty || product?.warranty || {};
+  const warrantyPeriod = [effectiveWarranty.period, effectiveWarranty.periodUnit]
+    .filter((value) => value !== null && value !== undefined && value !== "")
+    .join(" ");
+  const returnPolicy = effectiveWarranty.returnPolicy || {};
+
   return (
     <div className="relative  z-10  mt-8 lg:mt-24 bg-white">
       <InfoTabs
@@ -960,6 +966,63 @@ function ProductInfoSection({
               No description available.
             </p>
           )}
+        </InfoCard>
+      )}
+
+      {activeInfoTab === "warranty" && (
+        <InfoCard title="Warranty Information" roundedClass="rounded-xl">
+          <div className="space-y-5 px-4 py-5 text-sm text-black/90 lg:text-lg">
+            {(warrantyPeriod || effectiveWarranty.type || effectiveWarranty.provider) && (
+              <dl className="grid gap-3 rounded-lg border border-[#E7D9B8] bg-[#FFF9EB] p-4 sm:grid-cols-3">
+                {warrantyPeriod && (
+                  <div><dt className="text-xs font-medium uppercase tracking-wide text-muted">Period</dt><dd className="mt-1 font-semibold text-navy">{warrantyPeriod}</dd></div>
+                )}
+                {effectiveWarranty.type && (
+                  <div><dt className="text-xs font-medium uppercase tracking-wide text-muted">Type</dt><dd className="mt-1 font-semibold text-navy">{effectiveWarranty.type}</dd></div>
+                )}
+                {effectiveWarranty.provider && (
+                  <div><dt className="text-xs font-medium uppercase tracking-wide text-muted">Provider</dt><dd className="mt-1 font-semibold text-navy">{effectiveWarranty.provider}</dd></div>
+                )}
+              </dl>
+            )}
+
+            {effectiveWarranty.terms ? (
+              <div className="prose prose-sm max-w-none text-black/90 lg:prose-base" dangerouslySetInnerHTML={{ __html: effectiveWarranty.terms }} />
+            ) : (
+              <p>No warranty description or rules have been provided for this product.</p>
+            )}
+
+            {Object.keys(returnPolicy).length > 0 && (
+              <div className="border-t border-border pt-4">
+                <h3 className="mb-3 font-semibold text-ink">Related return rules</h3>
+                <div className="flex flex-wrap gap-2 text-xs lg:text-sm">
+                  <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
+                    {returnPolicy.returnable === false ? "Non-returnable" : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 0}-day return window`}
+                  </span>
+                  {returnPolicy.resolution && <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">{formatPageTitle(returnPolicy.resolution)}</span>}
+                  {returnPolicy.inspectionRequired !== false && <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">Inspection required</span>}
+                </div>
+              </div>
+            )}
+          </div>
+        </InfoCard>
+      )}
+
+      {activeInfoTab === "common-images" && product.commonImages?.length > 0 && (
+        <InfoCard title="Common Product Images" roundedClass="rounded-xl">
+          <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {product.commonImages.map((image, index) => (
+              <div key={`${image}-${index}`} className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white">
+                <img
+                  src={getImageUrlFromValue(image)}
+                  alt={`${getProductTitle(product)} detail ${index + 1}`}
+                  className="aspect-square h-full w-full object-contain p-3"
+                  loading="lazy"
+                  onError={(event) => { event.currentTarget.style.display = "none"; }}
+                />
+              </div>
+            ))}
+          </div>
         </InfoCard>
       )}
 
@@ -1325,19 +1388,16 @@ export default function ProductDetailPage() {
     getProductImage(product) ||
     getImageFallbackSrc(getProductTitle(product), product?.category);
 
-  const variantImages = selectedVariant?.images?.length
+  const variantImages = Array.isArray(selectedVariant?.images)
     ? selectedVariant.images
     : [];
-
-  const images = variantImages.length
-    ? variantImages
-    : product?.images?.length
-      ? product.images
-      : product?.imageUrl
-        ? [product.imageUrl]
-        : fallbackProductImage
-          ? [fallbackProductImage]
-          : [];
+  const productImages = Array.isArray(product?.images)
+    ? product.images
+    : product?.imageUrl
+      ? [product.imageUrl]
+      : [];
+  const images = Array.from(new Set((variantImages.length ? variantImages : productImages).filter(Boolean)));
+  if (!images.length && fallbackProductImage) images.push(fallbackProductImage);
 
   const attributes = product?.attributes || product?.specifications || {};
 
@@ -1402,6 +1462,10 @@ export default function ProductDetailPage() {
   const infoTabs = [
     { key: "details", label: "Product Details" },
     { key: "description", label: "Description" },
+    ...(product?.commonImages?.length
+      ? [{ key: "common-images", label: "Common Images" }]
+      : []),
+    { key: "warranty", label: "Warranty" },
     { key: "seller", label: "Seller Info" },
   ];
 
