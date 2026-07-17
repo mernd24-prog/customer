@@ -14,8 +14,19 @@ function CartLine({ item, onClose }) {
       ? item.productId
       : item?.product || {};
   const id = getProductId(product) || item?.productId || item?._id;
-  const title = getProductTitle(product, "Product");
-  const image = getProductImage(product);
+  const baseTitle = getProductTitle(product, "Product");
+  const title = item?.variantTitle && item.variantTitle !== "Default Title" && item.variantTitle !== baseTitle
+    ? `${baseTitle} - ${item.variantTitle}`
+    : baseTitle;
+
+  let image = getProductImage(product);
+  const variantId = item?.variantId || item?.variantSku;
+  if (variantId && product?.variants?.length) {
+    const variant = product.variants.find(v => v._id === variantId || v.id === variantId || v.sku === variantId);
+    if (variant && (variant.images?.length > 0 || variant.image || variant.imageUrl)) {
+      image = getProductImage({ ...product, selectedVariant: variant }) || image;
+    }
+  }
   const quantity = item?.quantity || 1;
   const price = item?.price ?? product?.price ?? 0;
 
@@ -57,6 +68,7 @@ export default function AddedToCartModal({
   cartItems = [],
 }) {
   if (!open) return null;
+  console.log(addedProduct);
 
   const addedTitle = getProductTitle(addedProduct, "Item");
   const addedImage = getProductImage(addedProduct);

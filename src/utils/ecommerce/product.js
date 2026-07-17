@@ -28,7 +28,13 @@ export function getProductId(product) {
 }
 
 export function getProductTitle(product, fallback = "Untitled product") {
-  return product?.title || product?.name || product?.productName || fallback;
+  const baseTitle = product?.title || product?.name || product?.productName || fallback;
+  const variantTitle = product?.selectedVariant?.title;
+
+  if (variantTitle && variantTitle !== baseTitle && variantTitle !== "Default Title") {
+    return `${baseTitle} - ${variantTitle}`;
+  }
+  return baseTitle;
 }
 
 function normalizeBooleanFlag(value) {
@@ -232,6 +238,7 @@ export function getImageUrlFromValue(value) {
 
 export function getProductImage(product) {
   return (
+    getImageUrlFromValue(product?.selectedVariant?.images) ||
     getImageUrlFromValue(getDefaultVariant(product)?.images) ||
     getImageUrlFromValue(product?.images) ||
     getImageUrlFromValue(product?.image) ||
