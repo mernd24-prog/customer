@@ -306,7 +306,6 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful, hasReviewed
         </div>
       )}
 
-      {hasReviewed && !isOwn && (
         <button
           type="button"
           onClick={() => onHelpful(reviewId)}
@@ -323,7 +322,6 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful, hasReviewed
           />
           Helpful ({helpfulVotes})
         </button>
-      )}
 
       {lightboxIndex !== null && (
         <ReviewMediaLightbox

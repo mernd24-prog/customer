@@ -405,21 +405,21 @@ function OrderItemCard({
   return (
     <div className="w-full">
       <div className="flex w-full flex-col gap-5 sm:flex-row sm:items-start sm:gap-6 lg:gap-8">
-        <div className="flex aspect-square w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#CE9F2D33] bg-white p-2 w-[180px] lg:w-[210px] 2xl:w-[220px]">
+        <div className=" aspect-square w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#CE9F2D33] bg-white p-2 w-[180px] lg:w-[210px] 2xl:w-[220px]">
           {getItemImage(item) ? (
             productPath ? (
               <Link to={productPath}>
                 <img
                   src={getItemImage(item)}
                   alt={getProductTitle(item)}
-                  className="h-full w-full object-contain"
+                  className="h-full w-full object-contain  "
                 />
               </Link>
             ) : (
               <img
                 src={getItemImage(item)}
                 alt={getProductTitle(item)}
-                className="h-full w-full object-contain"
+                className="h-full w-full object-contain  "
               />
             )
           ) : (

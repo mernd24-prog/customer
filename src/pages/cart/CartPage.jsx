@@ -66,23 +66,29 @@ function adaptItemForCard(item, fullProduct = null) {
   const product = fullProduct || item.productId || {};
   const productId = item.productId?._id || getProductId(item.productId || {});
   const variantKey = item.variantId || item.variantSku || "";
-  const title = getProductTitle(product, item.title || "Product");
-  const image =
+  const baseTitle = getProductTitle(product, item.title || "Product");
+  const title = item.variantTitle && item.variantTitle !== "Default Title" && item.variantTitle !== baseTitle
+    ? `${baseTitle} - ${item.variantTitle}`
+    : baseTitle;
+  let image =
     getProductImage(product) ||
     item.image ||
     getImageFallbackSrc(title, "cart");
     
   const fallbackProduct = item.productId || {};
   
-  let livePrice = getProductPrice(fullProduct);
-  let liveMrp = getProductMrp(fullProduct);
+  let livePrice = getProductPrice(product);
+  let liveMrp = getProductMrp(product);
   
   const variantId = item.variantId || item.variantSku;
-  if (variantId && fullProduct?.variants?.length) {
-    const variant = fullProduct.variants.find(v => v._id === variantId || v.id === variantId || v.sku === variantId);
+  if (variantId && product?.variants?.length) {
+    const variant = product.variants.find(v => v._id === variantId || v.id === variantId || v.sku === variantId);
     if (variant) {
       livePrice = getVariantPrice(variant) ?? livePrice;
       liveMrp = variant.mrp ?? variant.oldPrice ?? liveMrp;
+      if (variant.images?.length > 0 || variant.image || variant.imageUrl) {
+        image = getProductImage({ ...product, selectedVariant: variant }) || image;
+      }
     }
   }
 

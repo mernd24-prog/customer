@@ -87,7 +87,11 @@ function ProductReviewCard({
 
   const rating = Number(review.rating || 0).toFixed(1);
   const isOwn =
-    currentUserId && String(review.buyerId) === String(currentUserId);
+    currentUserId &&
+    (String(review.buyerId) === String(currentUserId) ||
+      String(review.userId) === String(currentUserId) ||
+      String(review.user?._id || review.user?.id || review.user) ===
+        String(currentUserId));
   const alreadyVoted = (review.helpfulVotedBy || []).includes(
     String(currentUserId || ""),
   );
@@ -170,11 +174,10 @@ function ProductReviewCard({
         </div>
       )}
 
-      {hasReviewed && !isOwn && (
         <button
           type="button"
           onClick={() => onHelpful?.(reviewId)}
-          disabled={!reviewId}
+          disabled={!reviewId || isOwn}
           className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
             alreadyVoted
               ? "bg-[#CE9F2D1A] text-[#1B1D60]"
@@ -187,7 +190,6 @@ function ProductReviewCard({
           />
           Helpful ({helpfulVotes})
         </button>
-      )}
 
       {lightboxIndex !== null && (
         <ReviewMediaLightbox
