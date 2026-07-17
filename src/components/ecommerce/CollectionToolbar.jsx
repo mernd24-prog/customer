@@ -34,9 +34,9 @@ export default function CollectionToolbar({
         {/* Sort Trigger */}
         {!!sortOptions.length && (
           <CustomDropdown
-            className="flex-1 sm:flex-none w-full sm:w-[180px]"
+            className="flex-1 sm:flex-none w-full  sm:w-[180px]"
             buttonClassName="min-h-10 w-full sm:w-[180px] rounded-[var(--customer-radius-sm)] border-[#1B1D604D] font-medium text-[#03014D] shadow-sm"
-            optionsClassName="w-[200px] sm:w-[240px] rounded-2xl"
+            optionsClassName="w-[200px] sm:w-[190px] rounded-lg  xl:rounded-2xl"
             options={sortOptions}
             value={sortValue}
             onChange={onSortChange}
@@ -47,7 +47,7 @@ export default function CollectionToolbar({
         {/* Page Size Trigger */}
         {!!pageSizes.length && (
           <CustomDropdown
-            className="flex-1 sm:flex-none w-full sm:w-[180px]"
+            className="flex-1  sm:flex-none w-full sm:w-[180px]"
             buttonClassName="min-h-10 w-full sm:w-[180px] rounded-[var(--customer-radius-sm)] border-[#1B1D604D] font-medium text-[#03014D] shadow-sm"
             optionsClassName="w-[200px] sm:w-[240px] rounded-2xl"
             options={pageSizeOptions}
