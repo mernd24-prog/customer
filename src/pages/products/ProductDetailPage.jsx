@@ -1057,7 +1057,7 @@ export default function ProductDetailPage() {
       ? firstMoneyValue(dynamicState.current?.price)
       : undefined;
 
-  const allProducts = Array.isArray(productState.list) ? productState.list : [];
+  // const allProducts = Array.isArray(productState.list) ? productState.list : [];
 
   const relatedProducts =
     relatedState.relatedByProduct[productId]?.items || [];
