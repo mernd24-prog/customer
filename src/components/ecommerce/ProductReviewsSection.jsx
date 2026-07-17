@@ -95,10 +95,12 @@ function ProductReviewCard({
   const alreadyVoted = (review.helpfulVotedBy || []).includes(
     String(currentUserId || ""),
   );
-  const name =
-    review.buyerName ||
-    review.name ||
-    (isOwn ? getUserDisplayName(currentUser) : "");
+  const isAdminReview = review.orderId?.startsWith("admin:");
+  const name = isAdminReview
+    ? "Unknown"
+    : review.buyerName ||
+      review.name ||
+      (isOwn ? getUserDisplayName(currentUser) : "");
   const text = review.reviewText || review.text;
   const reviewId = review._id || review.id;
   const helpfulVotes = review.helpfulVotes ?? review.helpful ?? 0;

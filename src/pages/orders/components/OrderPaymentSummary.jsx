@@ -269,18 +269,20 @@ function OrderPaymentSummary({
       )}
 
       {/* Shipping */}
-      {/* <div className="border-t border-[#04258626] pt-2">
-        <SummaryRow
-          label="Shipping"
-          value={
-            shippingLoading
-              ? "Calculating..."
-              : asNumber?.(shipping) === 0
-                ? "FREE"
-                : formatMoney(shipping || 0, currency)
-          }
-        />
-      </div> */}
+      {variant !== "cart" && (
+        <div className="border-t border-[#04258626] pt-2">
+          <SummaryRow
+            label="Shipping"
+            value={
+              shippingLoading
+                ? "Calculating..."
+                : asNumber?.(shipping) === 0
+                  ? "FREE"
+                  : formatMoney(shipping || 0, currency)
+            }
+          />
+        </div>
+      )}
 
       {asNumber?.(customerPlatformFee) > 0 && (
         <div className="border-t border-[#04258626] pt-2">

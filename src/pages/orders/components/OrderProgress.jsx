@@ -267,9 +267,14 @@ function OrderProgress({ status, cancellations = [], returns = [] }) {
       </div>
       <MobileStepBar steps={progressSteps} activeStatus={activeStatus} />
       {!isCancelled && !isFailed && !isDeliveryFailed && PROGRESS_MESSAGES[normalizeProgressStatus(activeStatus)] && (
-        <p className="mx-3 mb-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-          {PROGRESS_MESSAGES[normalizeProgressStatus(activeStatus)]}
-        </p>
+        <div className="mx-3 mb-3 flex items-center gap-3 rounded-lg bg-[#F8F9FA] px-4 py-3">
+          <svg className="h-5 w-5 shrink-0 text-[#83858C]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p className="text-sm font-medium text-[#333333]">
+            {PROGRESS_MESSAGES[normalizeProgressStatus(activeStatus)]}
+          </p>
+        </div>
       )}
       {(isCancelled || isFailed) && (
         <div className="rounded-[8px]   md:border md:border-border bg-white px-4 py-3 text-sm">
