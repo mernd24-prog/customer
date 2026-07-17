@@ -77,17 +77,17 @@ function adaptItemForCard(item, fullProduct = null) {
     
   const fallbackProduct = item.productId || {};
   
-  let livePrice = getProductPrice(fullProduct);
-  let liveMrp = getProductMrp(fullProduct);
+  let livePrice = getProductPrice(product);
+  let liveMrp = getProductMrp(product);
   
   const variantId = item.variantId || item.variantSku;
-  if (variantId && fullProduct?.variants?.length) {
-    const variant = fullProduct.variants.find(v => v._id === variantId || v.id === variantId || v.sku === variantId);
+  if (variantId && product?.variants?.length) {
+    const variant = product.variants.find(v => v._id === variantId || v.id === variantId || v.sku === variantId);
     if (variant) {
       livePrice = getVariantPrice(variant) ?? livePrice;
       liveMrp = variant.mrp ?? variant.oldPrice ?? liveMrp;
       if (variant.images?.length > 0 || variant.image || variant.imageUrl) {
-        image = getProductImage({ ...fullProduct, selectedVariant: variant }) || image;
+        image = getProductImage({ ...product, selectedVariant: variant }) || image;
       }
     }
   }
