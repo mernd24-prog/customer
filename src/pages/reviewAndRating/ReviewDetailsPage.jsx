@@ -232,11 +232,13 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful, hasReviewed
     String(currentUserId || ""),
   );
 
-  const name =
-    review.buyerName ||
-    review.name ||
-    (isOwn ? getUserDisplayName(currentUser) : "") ||
-    "Customer";
+  const isAdminReview = review.orderId?.startsWith("admin:");
+  const name = isAdminReview
+    ? "Unknown"
+    : review.buyerName ||
+      review.name ||
+      (isOwn ? getUserDisplayName(currentUser) : "") ||
+      "Customer";
   const text = review.reviewText || review.text;
 
   const helpfulVotes = review.helpfulVotes ?? review.helpful ?? 0;
