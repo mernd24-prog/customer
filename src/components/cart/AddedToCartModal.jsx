@@ -68,7 +68,6 @@ export default function AddedToCartModal({
   cartItems = [],
 }) {
   if (!open) return null;
-  console.log(addedProduct);
 
   const addedTitle = getProductTitle(addedProduct, "Item");
   const addedImage = getProductImage(addedProduct);

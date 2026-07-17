@@ -909,36 +909,42 @@ function ProductInfoSection({
         onChange={setActiveInfoTab}
       />
 
-      {activeInfoTab === "details" && detailRows.length > 0 && (
+      {activeInfoTab === "details" && (
         <InfoCard title="Product Details" roundedClass="rounded-xl">
-          <DetailRows
-            rows={detailRows.map(([key, value]) => [
-              formatPageTitle(key),
-              value,
-            ])}
-            rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]"
-            labelClassName="font-medium text-[#2E2E2E]"
-            valueClassName="text-left font-bold text-navy sm:text-right"
-          >
-            {warranty && (
-              <div className="grid grid-cols-1 gap-1 px-4 py-3  text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]">
-                <dt className="font-medium text-ink">
-                  {" "}
-                  {formatPageTitle("warranty")}
-                </dt>
-                <dd className="text-left font-bold text-[#1B1D60] sm:text-right">
-                  {formatPageTitle(
-                    warranty.period ||
-                      warranty.duration ||
-                      warranty.type ||
-                      "Warranty available",
-                  )}
-                  {warranty.coverage &&
-                    ` · ${formatPageTitle(warranty.coverage)}`}
-                </dd>
-              </div>
-            )}
-          </DetailRows>
+          {detailRows.length > 0 || warranty ? (
+            <DetailRows
+              rows={detailRows.map(([key, value]) => [
+                formatPageTitle(key),
+                value,
+              ])}
+              rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]"
+              labelClassName="font-medium text-[#2E2E2E]"
+              valueClassName="text-left font-bold text-navy sm:text-right"
+            >
+              {warranty && (
+                <div className="grid grid-cols-1 gap-1 px-4 py-3  text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]">
+                  <dt className="font-medium text-ink">
+                    {" "}
+                    {formatPageTitle("warranty")}
+                  </dt>
+                  <dd className="text-left font-bold text-[#1B1D60] sm:text-right">
+                    {formatPageTitle(
+                      warranty.period ||
+                        warranty.duration ||
+                        warranty.type ||
+                        "Warranty available",
+                    )}
+                    {warranty.coverage &&
+                      ` · ${formatPageTitle(warranty.coverage)}`}
+                  </dd>
+                </div>
+              )}
+            </DetailRows>
+          ) : (
+            <p className="px-4 py-4 text-sm lg:text-lg text-black/90 whitespace-pre-line">
+              No product details available.
+            </p>
+          )}
         </InfoCard>
       )}
 
@@ -1283,13 +1289,13 @@ export default function ProductDetailPage() {
 
   const price = firstMoneyValue(
     activeDealPrice,
-    activeDealPrice ? undefined : selectedVariantPrice,
     activeDealPrice ? undefined : safeDynamicPrice,
+    activeDealPrice ? undefined : selectedVariantPrice,
     productPrice,
   );
 
   const mrp = firstMoneyValue(
-    activeDealOriginalPrice,
+    activeDealPrice ? activeDealOriginalPrice : undefined,
     activeDealPrice ? undefined : getProductMrp(selectedVariant),
     getProductMrp(product),
   );
