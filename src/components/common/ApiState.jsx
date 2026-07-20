@@ -1,6 +1,8 @@
 import { SkeletonLoader } from "./skeleton";
 import EmptyState from "./feedback/EmptyState";
 import ErrorState from "./feedback/ErrorState";
+import NotFoundPage from "../../pages/NotFoundPage";
+import { isNotFoundApiError } from "../../utils/apiErrors";
 
 const API_STATE_SKELETON = [
   { type: "box", height: "18px", width: "42%", className: "mb-3" },
@@ -43,6 +45,9 @@ export default function ApiState({
   }
 
   if (error) {
+    if (isNotFoundApiError(error)) {
+      return <NotFoundPage />;
+    }
     return <ErrorState message={error} />;
   }
 
