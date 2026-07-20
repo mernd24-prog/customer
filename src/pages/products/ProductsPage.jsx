@@ -185,6 +185,7 @@ export default function ProductsPage() {
   const effectiveRatingCounts = Object.keys(facetRatingCounts).length
     ? facetRatingCounts
     : ratingCounts;
+
   const attributeFacets = useMemo(
     () =>
       (productFacets.attributes || [])
@@ -199,19 +200,13 @@ export default function ProductsPage() {
         .filter((attribute) => attribute.key && attribute.values.length),
     [productFacets.attributes],
   );
+
   const collectionOptions = useMemo(
     () =>
       (productFacets.collections || []).filter(
         (option) => option.value && Number(option.count || 0) > 0,
       ),
     [productFacets.collections],
-  );
-  const tagOptions = useMemo(
-    () =>
-      (productFacets.tags || []).filter(
-        (option) => option.value && Number(option.count || 0) > 0,
-      ),
-    [productFacets.tags],
   );
 
   const currentContextKey = useMemo(() => {
@@ -515,15 +510,15 @@ export default function ProductsPage() {
       label: "Out of Stock",
     },
     /*
-    searchParams.get("expressDelivery") === "true" && {
-      key: "expressDelivery",
-      label: "Express Delivery",
-    },
-    searchParams.get("freeDelivery") === "true" && {
-      key: "freeDelivery",
-      label: "Free Delivery",
-    },
-    */
+searchParams.get("expressDelivery") === "true" && {
+key: "expressDelivery",
+label: "Express Delivery",
+},
+searchParams.get("freeDelivery") === "true" && {
+key: "freeDelivery",
+label: "Free Delivery",
+},
+*/
     ["color", "size", "material", "fit", "storage", "skinType", "shade"]
       .map(
         (key) =>
@@ -599,19 +594,19 @@ export default function ProductsPage() {
       ),
     },
     // tagOptions.length > 0 && {
-    //   key: "tags",
-    //   title: "Tags",
-    //   content: (
-    //     <OptionFilter
-    //       name="tags"
-    //       options={tagOptions}
-    //       selected={parseMultiValue(searchParams.get("tags"))}
-    //       multiple
-    //       onChange={(values) =>
-    //         updateParam("tags", serializeMultiValue(values))
-    //       }
-    //     />
-    //   ),
+    // key: "tags",
+    // title: "Tags",
+    // content: (
+    // <OptionFilter
+    // name="tags"
+    // options={tagOptions}
+    // selected={parseMultiValue(searchParams.get("tags"))}
+    // multiple
+    // onChange={(values) =>
+    // updateParam("tags", serializeMultiValue(values))
+    // }
+    // />
+    // ),
     // },
     Object.values(productFacets.merchandising || {}).some(
       (count) => Number(count) > 0,
@@ -758,22 +753,22 @@ export default function ProductsPage() {
             onSortChange={(value) => updateParam("sort", value)}
             onOpenFilters={() => setSidebarOpen(true)}
             // viewControls={
-            //   <div className="hidden  items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
-            //     <button
-            //       type="button"
-            //       onClick={() => setViewMode("grid")}
-            //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
-            //     >
-            //       <Grid2X2 size={15} />
-            //     </button>
-            //     <button
-            //       type="button"
-            //       onClick={() => setViewMode("list")}
-            //       className={`rounded p-1.5  transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
-            //     >
-            //       <List size={15} />
-            //     </button>
-            //   </div>
+            // <div className="hidden items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
+            // <button
+            // type="button"
+            // onClick={() => setViewMode("grid")}
+            // className={`rounded p-1.5 transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
+            // >
+            // <Grid2X2 size={15} />
+            // </button>
+            // <button
+            // type="button"
+            // onClick={() => setViewMode("list")}
+            // className={`rounded p-1.5 transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
+            // >
+            // <List size={15} />
+            // </button>
+            // </div>
             // }
           />
         </div>

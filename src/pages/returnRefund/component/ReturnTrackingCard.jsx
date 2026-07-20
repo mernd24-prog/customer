@@ -43,7 +43,7 @@ export default function ReturnTrackingCard({
   const stepsToRender = customSteps || steps;
   return (
     <section className="rounded-xl rounded-t-none border border-[#E7D9B8] bg-white px-3 py-4 min-[375px]:px-4 sm:px-6 lg:px-6 lg:py-9  ">
-      <h2 className="text-[16px] font-semibold leading-tight text-[#1B1D60] sm:text-[18px] md:text-[22px] lg:text-[26px] pb-2">
+      <h2 className="text-[16px]  font-semibold leading-tight text-[#1B1D60] sm:text-[18px] md:text-[20px] lg:text-[22px] pb-2">
         {title}{" "}
         <span className="text-[13px] font-semibold text-[#555] sm:text-[15px] md:text-[20px] lg:text-[20px]">
           ({returnId})
@@ -66,13 +66,13 @@ export default function ReturnTrackingCard({
               )}
 
               <span
-                className={`relative z-10 flex items-center justify-center rounded-full border font-semibold ${
+                className={`relative  z-10 flex items-center justify-center rounded-full border font-semibold ${
                   step.completed
                     ? "border-[#E0B84C] bg-[#FFF4D7] text-[#CE9F2D]"
                     : step.active
                       ? "border-[#1B1D60] bg-[#E9EAFB] text-[#1B1D60]"
                       : "border-[#BDBDBD] bg-[#E5E5E5] text-[#555]"
-                } h-7 w-7 text-[12px] sm:h-8 sm:w-8 sm:text-[13px] lg:h-[50px] lg:w-[50px] lg:text-[18px]`}
+                } h-7 w-7 text-[12px] sm:h-8 sm:w-8 sm:text-[13px] lg:h-[40px] lg:w-[40px] lg:text-[16px]`}
               >
                 {step.completed ? (
                   <svg
@@ -95,16 +95,16 @@ export default function ReturnTrackingCard({
               </span>
 
               <div className="min-w-0">
-                <h3 className="text-[15px] font-bold leading-tight text-[#1B1D60] sm:text-[17px] md:text-[20px] lg:text-[24px]">
+                <h3 className="text-h4 font-bold leading-tight text-[#1B1D60] ">
                   {step.title}
                 </h3>
 
-                <p className="mt-1 text-[12px] leading-snug text-[#2E2E2E] sm:text-sm md:text-base lg:text-[18px]">
+                <p className="mt-1 small leading-snug text-[#2E2E2E]">
                   {step.description}
                 </p>
               </div>
 
-              <p className="col-start-2 text-[12px] text-[#2E2E2E] sm:col-start-auto sm:text-right sm:text-sm md:text-base font-medium lg:text-[22px]">
+              <p className="col-start-2 text-[12px]  text-[#2E2E2E] sm:col-start-auto sm:text-right sm:text-sm md:text-base font-medium lg:text-[20px]">
                 {step.time}
               </p>
             </div>

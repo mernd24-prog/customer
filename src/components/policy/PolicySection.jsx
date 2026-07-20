@@ -72,13 +72,13 @@ const PolicySection = ({ title, points, description, footer }) => {
         </div>
       )}
 
-      {footer && (
+      {/* {footer && (
         <div className="mt-8">
-          <p className="text-[13px] leading-[20px] leading-relaxed tracking-normal text-muted md:text-[14px] md:leading-[22px]">
+          <p className="text-[13px] d leading-[20px] leading-relaxed tracking-normal text-muted md:text-[14px] md:leading-[22px]">
             {footer}
           </p>
         </div>
-      )}
+      )} */}
     </section>
   );
 };

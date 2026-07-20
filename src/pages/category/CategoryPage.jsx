@@ -339,12 +339,18 @@ export default function CategoryPage() {
   const requestSequenceRef = useRef(0);
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
-  const catalogCategoryList = useSelector(
-    (state) => state.catalog?.globalCategories || state.catalog?.list) || [];
+  const catalogCategoryList =
+    useSelector(
+      (state) => state.catalog?.globalCategories || state.catalog?.list,
+    ) || [];
   const categoryTree = useMemo(
     () => buildCategoryTree(catalogCategoryList),
     [catalogCategoryList],
   );
+
+  const allBrands = useMemo(() => {
+    return productFacets?.brands || [];
+  }, [productFacets]);
 
   const products = useMemo(() => {
     if (!categoryKey) return items;
@@ -396,6 +402,7 @@ export default function CategoryPage() {
   const filterableAttributes = useMemo(
     () =>
       (productFacets.attributes || [])
+        .filter((attribute) => attribute.variant === true)
         .map((attribute) => ({
           ...attribute,
           key: String(attribute.key || ""),
@@ -405,7 +412,7 @@ export default function CategoryPage() {
             .filter((option) => Number(option.count || 0) > 0)
             .map((option) => String(option.value)),
         }))
-        .filter((attribute) => attribute.key && attribute.options.length > 1),
+        .filter((attribute) => attribute.key && attribute.options.length > 0),
     [productFacets.attributes],
   );
   const supportedAttributeKeys = useMemo(
@@ -495,6 +502,7 @@ export default function CategoryPage() {
     (pageOverride) => {
       const params = {
         category: categoryKey,
+        brand: searchParams.get("brand") || undefined,
         minPrice: searchParams.get("minPrice") || undefined,
         maxPrice: searchParams.get("maxPrice") || undefined,
         sort: searchParams.get("sort") || undefined,
@@ -536,6 +544,7 @@ export default function CategoryPage() {
           total: Number(m.total || m.count || list.length || 0),
         });
         setProductFacets(m.facets || m.filters || {});
+
         setItems((prev) => (append ? [...prev, ...list] : list));
         setFirstLoadDone(true);
       } finally {
@@ -555,6 +564,7 @@ export default function CategoryPage() {
   useEffect(() => {
     if (!categoryData) return;
     const globalFilterKeys = new Set([
+      "brand",
       "minPrice",
       "maxPrice",
       "inStock",
@@ -811,6 +821,14 @@ export default function CategoryPage() {
       },
     ].filter((option) => option.count >= 1);
 
+    const brandOptions = allBrands
+      .map((brand) => ({
+        value: String(brand.value),
+        label: String(brand.value),
+        count: Number(brand.count || 0),
+      }))
+      .filter((brand) => brand.count > 0);
+
     const globalFilters = [
       {
         key: "price",
@@ -822,6 +840,21 @@ export default function CategoryPage() {
             minLimit={priceLimits.min}
             maxLimit={priceLimits.max}
             onChange={handlePriceChange}
+          />
+        ),
+      },
+      brandOptions.length > 0 && {
+        key: "brand",
+        title: "Brand",
+        content: (
+          <OptionFilter
+            name="brand"
+            options={brandOptions}
+            selected={parseMultiValue(searchParams.get("brand"))}
+            multiple
+            onChange={(values) =>
+              updateParam("brand", serializeMultiValue(values))
+            }
           />
         ),
       },
@@ -925,6 +958,14 @@ export default function CategoryPage() {
         key: "outOfStock",
         label: "Out of Stock",
       },
+
+      ...parseMultiValue(searchParams.get("brand")).map((brand) => ({
+        key: `brand:${brand}`,
+        groupKey: "brand",
+        value: brand,
+        label: `Brand: ${brand}`,
+      })),
+
       ...Array.from(searchParams.entries())
         .filter(([key, value]) => {
           if (!key.startsWith("attr_") || !value) return false;
@@ -1012,7 +1053,9 @@ export default function CategoryPage() {
             (productState.loading && !products.length) ||
             (!firstLoadDone && !products.length)
           }
-          refreshing={productState.loading && products.length > 0 && !isLoadingMore}
+          refreshing={
+            productState.loading && products.length > 0 && !isLoadingMore
+          }
           error={products.length === 0 ? productState.error : null}
           empty={!products.length && !productState.loading && firstLoadDone}
           emptyTitle="No products found"

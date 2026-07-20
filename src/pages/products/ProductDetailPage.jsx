@@ -1216,6 +1216,7 @@ export default function ProductDetailPage() {
   const dynamicState = useSelector((s) => s.dynamicPricing);
   const relatedState = useSelector((s) => s.relatedProducts);
   const crossSellState = useSelector((s) => s.relatedProducts);
+  const recommendationState = useSelector((s) => s.recommendation);
   const user = useSelector((s) => s.auth.current);
   const userId = user?.id || user?._id || user?.userId || user?.email;
   const isLoggedIn = Boolean(
@@ -1223,6 +1224,9 @@ export default function ProductDetailPage() {
   );
 
   const warranty = warrantyState.current;
+  const recommendedProducts = (recommendationState?.list || []).filter(
+    (p) => String(getProductId(p) || "") !== String(productId || ""),
+  );
 
   const dynamicPrice =
     String(dynamicState.current?.productId || "") === String(productId || "")
@@ -1807,17 +1811,19 @@ export default function ProductDetailPage() {
 
               <ProductReviewsSection productId={productId} product={product} />
 
-              {/* <ProductRecommendationSection
-                title="Recommended For You"
-                linkText="View all →"
-                products={recommendedProducts}
-                addToCart={addToCart}
-                toggleWishlist={toggleWishlist}
-                isWishlisted={isWishlisted}
-                className="mt-12"
-              /> */}
+              {recommendedProducts.length > 0 && (
+                <ProductRecommendationSection
+                  title="Recommended For You"
+                  linkText="View all →"
+                  products={recommendedProducts}
+                  addToCart={addToCart}
+                  toggleWishlist={toggleWishlist}
+                  isWishlisted={isWishlisted}
+                  className="mt-12"
+                />
+              )}
 
-              <ProductRecommendationSection
+              {/* <ProductRecommendationSection
                 title="You May Also Like"
                 linkText="View all →"
                 products={relatedProducts}
@@ -1825,7 +1831,7 @@ export default function ProductDetailPage() {
                 toggleWishlist={toggleWishlist}
                 isWishlisted={isWishlisted}
                 className="mt-12"
-              />
+              /> */}
               <ProductRecommendationSection
                 title="Complete the Look"
                 linkText="Explore more →"

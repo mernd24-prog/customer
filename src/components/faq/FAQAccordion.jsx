@@ -8,6 +8,8 @@ export default function FAQAccordion({ faqs = [] }) {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  console.log("Accordion faqs", faqs);
+
   return (
     <section className="w-full">
       <div className="w-full space-y-3">
@@ -62,9 +64,7 @@ export default function FAQAccordion({ faqs = [] }) {
             );
           })
         ) : (
-          <p className="py-10 text-center  text-muted">
-            No FAQs found.
-          </p>
+          <p className="py-10 text-center  text-muted">No FAQs found.</p>
         )}
       </div>
     </section>

@@ -5,59 +5,33 @@ import OurStory from "../../components/about/OurStory";
 import ValuesSection from "../../components/about/ValuesSection";
 import BrandCarousel from "../../components/about/BrandSection";
 import WhyChooseSection from "../../components/about/WhyChooseSection";
-import aboutPageFallbackData from "../../data/aboutPageFallbackData";
-
-const normalizeSectionType = (type = "") =>
-  String(type).trim().toLowerCase().replace(/\s+/g, "-");
-
-const getSectionByType = (sections, type) =>
-  Array.isArray(sections)
-    ? sections.find((section) => normalizeSectionType(section?.type) === type)
-    : null;
 
 export default function AboutPage() {
-  const { page: cmsAboutPage } = useCmsRecord("about-us-details");
+  const { page: bannerPage } = useCmsRecord("about-banner");
+  const { page: storyPage } = useCmsRecord("about-sam-global");
+  const { page: valuesPage } = useCmsRecord("our-values");
+  const { page: brandsPage } = useCmsRecord("indian-brand");
+  const { page: missionPage } = useCmsRecord("our-mission");
+  const { page: choosePage } = useCmsRecord("why-choose-us");
 
-  const cmsSections =
-    cmsAboutPage?.metadata?.data?.sections ||
-    cmsAboutPage?.data?.sections ||
-    cmsAboutPage?.sections ||
-    [];
-  const sections = cmsSections.length
-    ? cmsSections
-    : aboutPageFallbackData.sections;
-
-  const bannerSection = getSectionByType(sections, "about-banner");
-  const aboutSamGlobalSection = getSectionByType(sections, "about-sam-global");
-  const valuesSection = getSectionByType(sections, "our-values");
-  const brandSection = getSectionByType(sections, "indian-brand");
-  const missionSection = getSectionByType(sections, "our-mission");
-  const chooseSection = getSectionByType(sections, "why-choose-us");
+  const bannerSection = bannerPage?.sections?.[0];
+  const aboutSamGlobalSection = storyPage?.sections?.[0];
+  const valuesSection = valuesPage?.sections?.[0];
+  const brandSection = brandsPage?.sections?.[0];
+  const missionSection = missionPage?.sections?.[0];
+  const chooseSection = choosePage?.sections?.[0];
 
   return (
     <>
-      {/* <Seo title={pageTitle} description={pageDescription} /> */}
-
       <AboutBanner
-        image={bannerSection?.image?.url ?? "/image/png/aboutBanner"}
+        image={bannerSection?.image?.url ?? "/image/png/aboutBanner.png"}
       />
 
-      <main className="w-full">
-        <div>
-          <div id="who-we-are" className="scroll-mt-28">
-            <OurStory data={aboutSamGlobalSection} />
-          </div>
-          <div id="our-values" className="scroll-mt-20">
-            <ValuesSection data={valuesSection} />
-          </div>
-
-          <BrandCarousel data={brandSection} />
-          <InfoSection data={missionSection} />
-          <div id="why-choose-us" className="scroll-mt-34">
-            <WhyChooseSection data={chooseSection} />
-          </div>
-        </div>
-      </main>
+      <OurStory data={aboutSamGlobalSection} />
+      <ValuesSection data={valuesSection} />
+      <BrandCarousel data={brandSection} />
+      <InfoSection data={missionSection} />
+      <WhyChooseSection data={chooseSection} />
     </>
   );
 }
