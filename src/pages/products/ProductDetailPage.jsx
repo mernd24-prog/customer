@@ -918,8 +918,12 @@ function ProductInfoSection({
     };
   }, [isModalOpen]);
 
-  const effectiveWarranty = warranty?.warrantyDetails || warranty || product?.warranty || {};
-  const warrantyPeriod = [effectiveWarranty.period, effectiveWarranty.periodUnit]
+  const effectiveWarranty =
+    warranty?.warrantyDetails || warranty || product?.warranty || {};
+  const warrantyPeriod = [
+    effectiveWarranty.period,
+    effectiveWarranty.periodUnit,
+  ]
     .filter((value) => value !== null && value !== undefined && value !== "")
     .join(" ");
   const returnPolicy = effectiveWarranty.returnPolicy || {};
@@ -989,7 +993,11 @@ function ProductInfoSection({
       {activeInfoTab === "warranty" && (
         <InfoCard title="Warranty Information" roundedClass="rounded-xl">
           <div className="space-y-6 px-4 py-5 text-sm text-black/90 lg:text-base">
-            {(effectiveWarranty.summary || effectiveWarranty.warrantySummary || warrantyPeriod || effectiveWarranty.type || effectiveWarranty.provider) && (
+            {(effectiveWarranty.summary ||
+              effectiveWarranty.warrantySummary ||
+              warrantyPeriod ||
+              effectiveWarranty.type ||
+              effectiveWarranty.provider) && (
               <div>
                 <h3 className="text-base font-bold text-ink">Warranty Summary</h3>
                 <div className="mt-2 text-sm text-[#4E4E4E] whitespace-pre-line">
@@ -1035,13 +1043,25 @@ function ProductInfoSection({
 
             {Object.keys(returnPolicy).length > 0 && (
               <div className="border-t border-border pt-4">
-                <h3 className="mb-3 font-semibold text-ink">Related return rules</h3>
+                <h3 className="mb-3 font-semibold text-ink">
+                  Related return rules
+                </h3>
                 <div className="flex flex-wrap gap-2 text-xs lg:text-sm">
                   <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
-                    {returnPolicy.returnable === false ? "Non-returnable" : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 0}-day return window`}
+                    {returnPolicy.returnable === false
+                      ? "Non-returnable"
+                      : `${returnPolicy.returnWindowDays ?? returnPolicy.days ?? 0}-day return window`}
                   </span>
-                  {returnPolicy.resolution && <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">{formatPageTitle(returnPolicy.resolution)}</span>}
-                  {returnPolicy.inspectionRequired !== false && <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">Inspection required</span>}
+                  {returnPolicy.resolution && (
+                    <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
+                      {formatPageTitle(returnPolicy.resolution)}
+                    </span>
+                  )}
+                  {returnPolicy.inspectionRequired !== false && (
+                    <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
+                      Inspection required
+                    </span>
+                  )}
                 </div>
               </div>
             )}
@@ -1049,27 +1069,41 @@ function ProductInfoSection({
         </InfoCard>
       )}
 
-      {activeInfoTab === "common-images" && product.commonImages?.length > 0 && (
-        <InfoCard title="Common Product Images" roundedClass="rounded-xl">
-          <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {product.commonImages.map((image, index) => (
-              <div 
-                key={`${image}-${index}`} 
-                className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white cursor-pointer transition-colors hover:border-gold"
-                onClick={() => setIsModalOpen(true)}
-              >
-                <img
-                  src={getImageUrlFromValue(image)}
-                  alt={`${getProductTitle(product)} detail ${index + 1}`}
-                  className="aspect-square h-full w-full object-contain p-3"
-                  loading="lazy"
-                  onError={(event) => { event.currentTarget.style.display = "none"; }}
-                />
-              </div>
-            ))}
-          </div>
-        </InfoCard>
-      )}
+      {activeInfoTab === "common-images" &&
+        product.commonImages?.length > 0 && (
+          <InfoCard title="Common Product Images" roundedClass="rounded-xl">
+            <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {product.commonImages.slice(0, 4).map((image, index) => {
+                const isLast = index === 3;
+                const hasMore = product.commonImages.length > 4;
+                const extraCount = product.commonImages.length - 4;
+
+                return (
+                  <div
+                    key={`${image}-${index}`}
+                    className="relative overflow-hidden rounded-xl border border-[#E7D9B8] bg-white cursor-pointer transition-colors hover:border-gold"
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    <img
+                      src={getImageUrlFromValue(image)}
+                      alt={`${getProductTitle(product)} detail ${index + 1}`}
+                      className="aspect-square h-full w-full object-contain p-3"
+                      loading="lazy"
+                      onError={(event) => {
+                        event.currentTarget.style.display = "none";
+                      }}
+                    />
+                    {isLast && hasMore && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white text-3xl font-bold">
+                        +{extraCount}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </InfoCard>
+        )}
 
       {activeInfoTab === "seller" && (
         <InfoCard title="Seller Info">
@@ -1470,7 +1504,11 @@ export default function ProductDetailPage() {
     : product?.imageUrl
       ? [product.imageUrl]
       : [];
-  const images = Array.from(new Set((variantImages.length ? variantImages : productImages).filter(Boolean)));
+  const images = Array.from(
+    new Set(
+      (variantImages.length ? variantImages : productImages).filter(Boolean),
+    ),
+  );
   if (!images.length && fallbackProductImage) images.push(fallbackProductImage);
 
   const attributes = product?.attributes || product?.specifications || {};
