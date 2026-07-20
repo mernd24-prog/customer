@@ -122,15 +122,6 @@ export default function ProductCard({
     cardProduct?.metadata?.isDealProduct === true ||
     Boolean(dealEndDate);
 
-  // const resolvedBadgeLabel =
-  //   badge ||
-  //   (Array.isArray(cardProduct?.badges) && cardProduct.badges.length > 0
-  //     ? cardProduct.badges[0]?.label
-  //     : null);
-  // const resolvedBadgeStyle =
-  //   Array.isArray(cardProduct?.badges) && cardProduct.badges.length > 0
-  //     ? { color: cardProduct.badges[0]?.color, bgColor: cardProduct.badges[0]?.bgColor }
-  //     : null;
   const currentPriceNumber = Number(String(price || 0).replace(/[^\d.-]/g, ""));
   const oldPriceNumber = Number(String(oldPrice || 0).replace(/[^\d.-]/g, ""));
   const computedDiscountPercent =

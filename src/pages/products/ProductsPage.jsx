@@ -97,7 +97,6 @@ const normalizeFacetOption = (option = {}) => {
     : null;
 };
 
-
 export default function ProductsPage() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -124,7 +123,6 @@ export default function ProductsPage() {
     () => parseMultiValue(searchParams.get("rating")),
     [searchParams],
   );
-
 
   const products = items;
 
@@ -189,7 +187,8 @@ export default function ProductsPage() {
     : ratingCounts;
   const attributeFacets = useMemo(
     () =>
-      (productFacets.attributes) || []
+      (productFacets.attributes || [])
+        .filter((attribute) => attribute.variant === true) // Only variant attributes
         .map((attribute) => ({
           key: String(attribute.key || ""),
           label: attribute.label || attribute.key,
@@ -223,12 +222,16 @@ export default function ProductsPage() {
     return p.toString();
   }, [searchParams]);
 
-  const [absolutePriceLimits, setAbsolutePriceLimits] = useState({ min: null, max: null, key: '' });
+  const [absolutePriceLimits, setAbsolutePriceLimits] = useState({
+    min: null,
+    max: null,
+    key: "",
+  });
 
   useEffect(() => {
     let backendMin = productFacets?.price?.min;
     let backendMax = productFacets?.price?.max;
-    
+
     let currentMin = backendMin;
     let currentMax = backendMax;
 
@@ -237,7 +240,7 @@ export default function ProductsPage() {
         const prices = products
           .map((p) => Number(getProductPrice(p) || 0))
           .filter((price) => price > 0);
-          
+
         if (prices.length > 0) {
           currentMin = Math.min(...prices);
           currentMax = Math.max(...prices);
@@ -246,13 +249,15 @@ export default function ProductsPage() {
     }
 
     if (currentMin != null && currentMax != null) {
-      setAbsolutePriceLimits(prev => {
+      setAbsolutePriceLimits((prev) => {
         if (prev.key !== currentContextKey) {
-            return { min: currentMin, max: currentMax, key: currentContextKey };
+          return { min: currentMin, max: currentMax, key: currentContextKey };
         }
-        const newMin = prev.min == null ? currentMin : Math.min(prev.min, currentMin);
-        const newMax = prev.max == null ? currentMax : Math.max(prev.max, currentMax);
-        
+        const newMin =
+          prev.min == null ? currentMin : Math.min(prev.min, currentMin);
+        const newMax =
+          prev.max == null ? currentMax : Math.max(prev.max, currentMax);
+
         if (newMin !== prev.min || newMax !== prev.max) {
           return { min: newMin, max: newMax, key: currentContextKey };
         }
@@ -286,15 +291,26 @@ export default function ProductsPage() {
     );
 
     if (brandContextKey !== brandOptionsRef.current.context) {
-      brandOptionsRef.current = { context: brandContextKey, options: rawOptions };
+      brandOptionsRef.current = {
+        context: brandContextKey,
+        options: rawOptions,
+      };
     } else if (currentSelected.length === 0) {
-      brandOptionsRef.current = { context: brandContextKey, options: rawOptions };
+      brandOptionsRef.current = {
+        context: brandContextKey,
+        options: rawOptions,
+      };
     }
 
-    if (currentSelected.length > 0 && brandOptionsRef.current.options.length > 0) {
+    if (
+      currentSelected.length > 0 &&
+      brandOptionsRef.current.options.length > 0
+    ) {
       const mergedMap = new Map();
-      brandOptionsRef.current.options.forEach(opt => mergedMap.set(opt.value, { ...opt, count: 0 }));
-      rawOptions.forEach(opt => mergedMap.set(opt.value, opt));
+      brandOptionsRef.current.options.forEach((opt) =>
+        mergedMap.set(opt.value, { ...opt, count: 0 }),
+      );
+      rawOptions.forEach((opt) => mergedMap.set(opt.value, opt));
       return Array.from(mergedMap.values());
     }
 
@@ -361,8 +377,6 @@ export default function ProductsPage() {
         data.items ||
         data.list ||
         (Array.isArray(data) ? data : []);
-
-
 
       const meta =
         result?.meta?.pagination || result?.pagination || result?.meta || {};
@@ -584,29 +598,45 @@ export default function ProductsPage() {
         />
       ),
     },
-    tagOptions.length > 0 && {
-      key: "tags",
-      title: "Tags",
-      content: (
-        <OptionFilter
-          name="tags"
-          options={tagOptions}
-          selected={parseMultiValue(searchParams.get("tags"))}
-          multiple
-          onChange={(values) => updateParam("tags", serializeMultiValue(values))}
-        />
-      ),
-    },
-    Object.values(productFacets.merchandising || {}).some((count) => Number(count) > 0) && {
+    // tagOptions.length > 0 && {
+    //   key: "tags",
+    //   title: "Tags",
+    //   content: (
+    //     <OptionFilter
+    //       name="tags"
+    //       options={tagOptions}
+    //       selected={parseMultiValue(searchParams.get("tags"))}
+    //       multiple
+    //       onChange={(values) =>
+    //         updateParam("tags", serializeMultiValue(values))
+    //       }
+    //     />
+    //   ),
+    // },
+    Object.values(productFacets.merchandising || {}).some(
+      (count) => Number(count) > 0,
+    ) && {
       key: "merchandising",
       title: "Discover",
       content: (
         <CheckboxListFilter
           name="merchandising"
           options={[
-            { value: "featured", label: "Featured", count: productFacets.merchandising?.featured },
-            { value: "bestSeller", label: "Best Seller", count: productFacets.merchandising?.bestSeller },
-            { value: "newArrival", label: "New Arrival", count: productFacets.merchandising?.newArrival },
+            {
+              value: "featured",
+              label: "Featured",
+              count: productFacets.merchandising?.featured,
+            },
+            {
+              value: "bestSeller",
+              label: "Best Seller",
+              count: productFacets.merchandising?.bestSeller,
+            },
+            {
+              value: "newArrival",
+              label: "New Arrival",
+              count: productFacets.merchandising?.newArrival,
+            },
           ].filter((option) => Number(option.count || 0) > 0)}
           selected={["featured", "bestSeller", "newArrival"].filter(
             (value) => searchParams.get(value) === "true",
@@ -615,26 +645,33 @@ export default function ProductsPage() {
             const selectedValues = new Set(values);
             updateParams([
               ["featured", selectedValues.has("featured") ? "true" : undefined],
-              ["bestSeller", selectedValues.has("bestSeller") ? "true" : undefined],
-              ["newArrival", selectedValues.has("newArrival") ? "true" : undefined],
+              [
+                "bestSeller",
+                selectedValues.has("bestSeller") ? "true" : undefined,
+              ],
+              [
+                "newArrival",
+                selectedValues.has("newArrival") ? "true" : undefined,
+              ],
             ]);
           }}
         />
       ),
     },
-    productFacets.price?.min != null && productFacets.price?.max != null && {
-      key: "price",
-      title: "Price Range",
-      content: (
-        <PriceRangeFilter
-          min={searchParams.get("minPrice")}
-          max={searchParams.get("maxPrice")}
-          minLimit={priceLimits.min}
-          maxLimit={priceLimits.max}
-          onChange={handlePriceChange}
-        />
-      ),
-    },
+    productFacets.price?.min != null &&
+      productFacets.price?.max != null && {
+        key: "price",
+        title: "Price Range",
+        content: (
+          <PriceRangeFilter
+            min={searchParams.get("minPrice")}
+            max={searchParams.get("maxPrice")}
+            minLimit={priceLimits.min}
+            maxLimit={priceLimits.max}
+            onChange={handlePriceChange}
+          />
+        ),
+      },
     Object.values(effectiveRatingCounts).some((count) => Number(count) > 0) && {
       key: "rating",
       title: "Rating",
@@ -664,71 +701,46 @@ export default function ProductsPage() {
         />
       ),
     })),
-    /*
-    {
-      key: "delivery",
-      title: "Delivery",
-      content: (
-        <CheckboxListFilter
-          name="delivery"
-          options={[
-            { value: "expressDelivery", label: "Express Delivery" },
-            { value: "freeDelivery", label: "Free Delivery" },
-          ]}
-          selected={["expressDelivery", "freeDelivery"].filter(
-            (value) => searchParams.get(value) === "true",
-          )}
-          onChange={(values) => {
-            const selectedValues = new Set(values);
-            updateParams([
-              [
-                "expressDelivery",
-                selectedValues.has("expressDelivery") ? "true" : undefined,
-              ],
-              [
-                "freeDelivery",
-                selectedValues.has("freeDelivery") ? "true" : undefined,
-              ],
-            ]);
-          }}
-        />
-      ),
-    },
-    */
-    availabilityCounts.inStock > 0 || availabilityCounts.outOfStock > 0 ? {
-      key: "inStock",
-      title: "Availability",
-      content: (
-        <CheckboxListFilter
-          name="availability"
-          options={[
-            {
-              value: "inStock",
-              label: "In Stock",
-              count: availabilityCounts.inStock,
-            },
-            {
-              value: "outOfStock",
-              label: "Out of Stock",
-              count: availabilityCounts.outOfStock,
-            },
-          ].filter((option) => Number(option.count || 0) > 0)}
-          selected={["inStock", "outOfStock"].filter(
-            (value) => searchParams.get(value) === "true",
-          )}
-          onChange={(values) => {
-            const selectedValues = new Set(values);
-            updateParams([
-              ["inStock", selectedValues.has("inStock") ? "true" : undefined],
-              [
-                "outOfStock",
-                selectedValues.has("outOfStock") ? "true" : undefined,
-              ],
-            ]);
-          }}
-        />
-      ),
-    } : false,
+
+    availabilityCounts.inStock > 0 || availabilityCounts.outOfStock > 0
+      ? {
+          key: "inStock",
+          title: "Availability",
+          content: (
+            <CheckboxListFilter
+              name="availability"
+              options={[
+                {
+                  value: "inStock",
+                  label: "In Stock",
+                  count: availabilityCounts.inStock,
+                },
+                {
+                  value: "outOfStock",
+                  label: "Out of Stock",
+                  count: availabilityCounts.outOfStock,
+                },
+              ].filter((option) => Number(option.count || 0) > 0)}
+              selected={["inStock", "outOfStock"].filter(
+                (value) => searchParams.get(value) === "true",
+              )}
+              onChange={(values) => {
+                const selectedValues = new Set(values);
+                updateParams([
+                  [
+                    "inStock",
+                    selectedValues.has("inStock") ? "true" : undefined,
+                  ],
+                  [
+                    "outOfStock",
+                    selectedValues.has("outOfStock") ? "true" : undefined,
+                  ],
+                ]);
+              }}
+            />
+          ),
+        }
+      : false,
   ].filter(Boolean);
 
   return (
@@ -778,7 +790,9 @@ export default function ProductsPage() {
             (productState.loading && !products.length) ||
             (!firstLoadDone && !products.length)
           }
-          refreshing={productState.loading && products.length > 0 && !isLoadingMore}
+          refreshing={
+            productState.loading && products.length > 0 && !isLoadingMore
+          }
           error={products.length === 0 ? productState.error : null}
           empty={!products.length && !productState.loading && firstLoadDone}
           emptyTitle={isSearchMode ? "No results found" : "No products found"}

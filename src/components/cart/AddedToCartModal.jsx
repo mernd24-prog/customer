@@ -15,20 +15,40 @@ function CartLine({ item, onClose }) {
       : item?.product || {};
   const id = getProductId(product) || item?.productId || item?._id;
   const baseTitle = getProductTitle(product, "Product");
-  const title = item?.variantTitle && item.variantTitle !== "Default Title" && item.variantTitle !== baseTitle
-    ? `${baseTitle} - ${item.variantTitle}`
-    : baseTitle;
+  const title =
+    item?.variantTitle &&
+    item.variantTitle !== "Default Title" &&
+    item.variantTitle !== baseTitle
+      ? `${baseTitle} - ${item.variantTitle}`
+      : baseTitle;
 
   let image = getProductImage(product);
   const variantId = item?.variantId || item?.variantSku;
   if (variantId && product?.variants?.length) {
-    const variant = product.variants.find(v => v._id === variantId || v.id === variantId || v.sku === variantId);
-    if (variant && (variant.images?.length > 0 || variant.image || variant.imageUrl)) {
-      image = getProductImage({ ...product, selectedVariant: variant }) || image;
+    const variant = product.variants.find(
+      (v) => v._id === variantId || v.id === variantId || v.sku === variantId,
+    );
+    if (
+      variant &&
+      (variant.images?.length > 0 || variant.image || variant.imageUrl)
+    ) {
+      image =
+        getProductImage({ ...product, selectedVariant: variant }) || image;
     }
   }
+
+  const getDisplayPrice = (item, product) => {
+    const salePrice = item?.salePrice || product?.salePrice || 0;
+
+    const price = item?.price > 0 ? item.price : product?.price || 0;
+
+    return salePrice > 0 ? salePrice : price;
+  };
+
   const quantity = item?.quantity || 1;
-  const price = item?.price ?? product?.price ?? 0;
+  const price = getDisplayPrice(item, product);
+
+  console.log(price);
 
   return (
     <Link
@@ -50,7 +70,7 @@ function CartLine({ item, onClose }) {
         <p className="line-clamp-1 text-sm font-semibold text-[var(--customer-ink)]">
           {title}
         </p>
-        <p className="mt-1 text-xs text-[var(--customer-muted)]">
+        <p className="mt-1  text-xs text-[var(--customer-muted)]">
           Qty {quantity} • {formatMoney(price, product?.currency || "INR")}
         </p>
       </div>
@@ -72,15 +92,17 @@ export default function AddedToCartModal({
   const addedTitle = getProductTitle(addedProduct, "Item");
   const addedImage = getProductImage(addedProduct);
   const addedProductId = getProductId(addedProduct);
-  const subtotal = cartItems.reduce(
-    (sum, item) =>
-      sum +
-      (item?.price ??
-        (typeof item?.productId === "object" ? item.productId?.price : 0) ??
-        0) *
-        (item?.quantity || 1),
-    0,
-  );
+  const subtotal = cartItems.reduce((sum, item) => {
+    const product = typeof item.productId === "object" ? item.productId : {};
+
+    const salePrice = item.salePrice > 0 ? item.salePrice : product.salePrice;
+
+    const price = item.price > 0 ? item.price : product.price;
+
+    const finalPrice = salePrice > 0 ? salePrice : price;
+
+    return sum + finalPrice * (item.quantity || 1);
+  }, 0);
 
   return (
     <ModalOverlay onClose={onClose} showCloseButton={false}>
@@ -88,7 +110,7 @@ export default function AddedToCartModal({
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[var(--customer-navy)] shadow-sm backdrop-blur transition-all duration-300 hover:rotate-90 hover:bg-[var(--customer-gold-soft)] sm:right-4 sm:top-4"
+          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[var(--customer-navy)] shadow-sm backdrop-blur transition-all duration-300  hover:bg-[var(--customer-gold-soft)] sm:right-4 sm:top-4"
           aria-label="Close"
         >
           <X size={18} aria-hidden="true" />
@@ -161,7 +183,7 @@ export default function AddedToCartModal({
               {formatMoney(subtotal, "INR")}
             </span>
           </div>
-          <div className="space-y-2.5  overflow-y-auto pr-1 [scrollbar-color:var(--customer-border)_transparent] [scrollbar-width:thin]">
+          <div className="space-y-2.5  h-[16rem] overflow-y-auto pr-1 [scrollbar-color:var(--customer-border)_transparent] [scrollbar-width:thin]">
             {cartItems.map((item, index) => (
               <CartLine
                 key={`${getProductId(item?.productId || item?.product || item)}-${index}`}
