@@ -140,7 +140,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
 
   return (
     <div className="max-w-[1760px] mx-auto px-4  md:px-8">
-      <div className="grid grid-cols-2 gap-6 border-t border-white/25 pt-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-6  md:gap-10 xl:gap-24 border-t border-white/25 pt-8 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
         {groups.map((group, groupIndex) => (
           <div key={group?.title || `group-${groupIndex}`}>
             <h2 className="mb-4 border-l-2 font-semibold text-lg md:text-2xl pl-2 border-[var(--customer-gold)] text-white">
@@ -243,7 +243,7 @@ export function Footer({ data = footerData }) {
         </div>
       )}
       <div className="pt-4 sm:pt-0 flex  flex-col max-w-[1760px] mx-auto px-4 md:px-8 gap-2 md:gap-16 lg:gap-4 md:flex-row justify-between">
-        <div className="flex  items-center gap-3 ">
+        <div className="flex my-2 items-center gap-3 ">
           <Link to="/">
             <img
               src="/image/png/logoWithName.png"

@@ -39,6 +39,16 @@ export const footerData = {
       ],
     },
     {
+      title: "Brands",
+      links: [
+        { label: "Apple", href: "/brands/apple" },
+        { label: "Asus", href: "/brands/asus" },
+        { label: "Acer", href: "/brands/acer" },
+        { label: "Haier", href: "/brands/haier" },
+        // { label: "Careers", href: "/features" },
+      ],
+    },
+    {
       title: "Sell",
       links: [
         { label: "Become a Seller", href: "/become-a-seller" },
@@ -60,14 +70,7 @@ export const footerData = {
         // { label: "Careers", href: "/features" },
       ],
     },
-    // {
-    //   title: "Tools & apps",
-    //   links: [
-    //     { label: "Mobile App", href: "/mobile-app" },
-    //     { label: "Seller Tools", href: "/seller/status" },
-    //     { label: "Analytics Dashboard", href: "/seller/tracking" },
-    //   ],
-    // },
+
     {
       title: "Help & Contact",
       links: [

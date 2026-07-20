@@ -176,22 +176,22 @@ function ProductReviewCard({
         </div>
       )}
 
-        <button
-          type="button"
-          onClick={() => onHelpful?.(reviewId)}
-          disabled={!reviewId || isOwn}
-          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
-            alreadyVoted
-              ? "bg-[#CE9F2D1A] text-[#1B1D60]"
-              : "text-[#949494] hover:bg-[#F7F7FA] hover:text-[#1B1D60]"
-          }`}
-        >
-          <ThumbsUp
-            size={13}
-            className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
-          />
-          Helpful ({helpfulVotes})
-        </button>
+      <button
+        type="button"
+        onClick={() => onHelpful?.(reviewId)}
+        disabled={!reviewId || isOwn}
+        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+          alreadyVoted
+            ? "bg-[#CE9F2D1A] text-[#1B1D60]"
+            : "text-[#949494] hover:bg-[#F7F7FA] hover:text-[#1B1D60]"
+        }`}
+      >
+        <ThumbsUp
+          size={13}
+          className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
+        />
+        Helpful ({helpfulVotes})
+      </button>
 
       {lightboxIndex !== null && (
         <ReviewMediaLightbox
@@ -209,7 +209,8 @@ function ProductReviewCard({
 
 function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
   const dispatch = useDispatch();
-  const { submitting, submitError, submitSuccess } = useSelector((s) => s.review,
+  const { submitting, submitError, submitSuccess } = useSelector(
+    (s) => s.review,
   );
 
   const [form, setForm] = useState({
@@ -440,8 +441,8 @@ export default function ProductReviewsSection({ productId, product }) {
   const allOrders = orderState.list || [];
   const deliveredOrders = allOrders.filter(
     (o) =>
-      ["delivered", "fulfilled", "completed"].includes(o.status) &&
-      (o.items) || [].some(
+      (["delivered", "fulfilled", "completed"].includes(o.status) && o.items) ||
+      [].some(
         (item) =>
           String(item.productId || item.product_id) === String(productId),
       ),
@@ -618,18 +619,6 @@ export default function ProductReviewsSection({ productId, product }) {
                 </button>
               )}
             </div>
-          </div>
-
-          <div className="mt-4 space-y-3 ">
-            {canWriteReview && (
-              <button
-                type="button"
-                onClick={() => setShowForm((v) => !v)}
-                className="button w-full px-5 py-2 text-sm font-semibold text-[#1B1D60]"
-              >
-                {showForm ? "Cancel" : "Write a Review"}
-              </button>
-            )}
           </div>
         </aside>
 

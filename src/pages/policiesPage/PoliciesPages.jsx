@@ -28,17 +28,13 @@ const PolicyPage = ({ slugOverride = "", fallbackData = null }) => {
   const { page: cmsPolicy, loading } = useCmsRecord(cmsSlug);
   const policy = getPolicyPayload(cmsPolicy) || fallbackData;
 
-  console.log("policyPage", { slug: cmsSlug, cmsPolicy, fallbackData, policy });
-
   const title = policy?.title || "";
   const description = policy?.description || "";
 
   const sections = useMemo(() => {
     if (!policy) return null;
 
-    const sectionList = Array.isArray(policy?.sections)
-      ? policy.sections
-      : [];
+    const sectionList = Array.isArray(policy?.sections) ? policy.sections : [];
 
     return sectionList
       .filter(
@@ -67,8 +63,6 @@ const PolicyPage = ({ slugOverride = "", fallbackData = null }) => {
       .sort((a, b) => a.sortOrder - b.sortOrder);
   }, [policy]);
 
-  const emptyText = "";
-
   const data = useMemo(() => {
     if (!sections) return null;
     return {
@@ -81,39 +75,31 @@ const PolicyPage = ({ slugOverride = "", fallbackData = null }) => {
     <main className="w-full bg-white  pb-20">
       <Seo title={title} description={description} />
 
-      <ApiState
-        loading={loading && !sections}
-        error={null}
-        empty={!sections?.length && !loading}
-        emptyTitle="Coming soon"
-        emptyText={emptyText || "This policy page is being prepared."}
-      >
-        {data && (
-          <>
-            <PolicyHeader title={data.title} />
+      {data && (
+        <>
+          <PolicyHeader title={data.title} />
 
-            <div className="mx-auto mt-10 w-full   md:mt-12 md:px-12">
-              {data.sections?.length > 0 && (
-                <div className="space-y-10 md:space-y-12">
-                  {data.sections.map((section, index) => (
-                    <PolicySection
-                      key={`${section.type}-${index}`}
-                      index={index}
-                      title={section.title}
-                      description={section.description}
-                      points={section.points}
-                      footer={section.footer}
-                      image={section.image}
-                      gallery={section.gallery}
-                      cta={section.cta}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </>
-        )}
-      </ApiState>
+          <div className="mx-auto mt-10 w-full   md:mt-12 md:px-12">
+            {data.sections?.length > 0 && (
+              <div className="space-y-10 md:space-y-12">
+                {data.sections.map((section, index) => (
+                  <PolicySection
+                    key={`${section.type}-${index}`}
+                    index={index}
+                    title={section.title}
+                    description={section.description}
+                    points={section.points}
+                    footer={section.footer}
+                    image={section.image}
+                    gallery={section.gallery}
+                    cta={section.cta}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </main>
   );
 };
