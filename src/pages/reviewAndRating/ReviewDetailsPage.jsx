@@ -226,19 +226,32 @@ function getUserDisplayName(user = {}) {
 function ReviewCard({ review, currentUser, currentUserId, onHelpful, hasReviewed }) {
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const isOwn =
-    currentUserId && String(review.buyerId) === String(currentUserId);
+    currentUserId &&
+    (String(review.buyerId) === String(currentUserId) ||
+      String(review.userId) === String(currentUserId) ||
+      String(review.user?._id || review.user?.id || review.user) ===
+        String(currentUserId));
 
   const alreadyVoted = (review.helpfulVotedBy || []).includes(
     String(currentUserId || ""),
   );
 
   const isAdminReview = review.orderId?.startsWith("admin:");
-  const name = isAdminReview
-    ? "Unknown"
-    : review.buyerName ||
-      review.name ||
-      (isOwn ? getUserDisplayName(currentUser) : "") ||
-      "Customer";
+  
+  let reviewerName = "";
+  if (isOwn) {
+    reviewerName = getUserDisplayName(currentUser);
+  } else if (review.user && typeof review.user === "object") {
+    reviewerName = getUserDisplayName(review.user);
+  }
+  if (!reviewerName || reviewerName === "Unknown") {
+    reviewerName = review.buyerName || review.name || "";
+  }
+  if (reviewerName === "Unknown" && !isAdminReview) {
+    reviewerName = "Customer";
+  }
+
+  const name = isAdminReview ? "Unknown" : reviewerName || "Customer";
   const text = review.reviewText || review.text;
 
   const helpfulVotes = review.helpfulVotes ?? review.helpful ?? 0;

@@ -50,7 +50,7 @@ export const SUPPORT_FALLBACK_FAQS = [
     description:
       "You can cancel your order directly from the My Orders section of your profile before the item is shipped.",
   },
-  {
+  { 
     title: "When will i receive my refund ?",
     description:
       "Refunds are processed within 5-7 business days after we receive and inspect the returned item.",
@@ -91,12 +91,12 @@ export const SUPPORT_FALLBACK_TOPICS = [
   {
     title: "Payment Issues",
     image: "/image/png/Payment-issues.png",
-    path: "/contact",
+    path: "/payments",
   },
   {
     title: "Seller Support",
     image: "/image/png/Seller-support.png",
-    path: "/contact",
+    path: "/orders",
   },
   {
     title: "Rewards Help",
@@ -106,6 +106,6 @@ export const SUPPORT_FALLBACK_TOPICS = [
   {
     title: "Account Security",
     image: "/image/png/Account-security.png",
-    path: "/contact",
+    path: "/account/profile",
   },
 ];

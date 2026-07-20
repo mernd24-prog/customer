@@ -663,7 +663,7 @@ function VariantSelector({
               const isComboAvailable =
                 option.slug === "storage" ? true : Boolean(exactVariant);
 
-              const disabled = !matchingVariant;
+              // const disabled = !matchingVariant;
               const matchingVariantStock = getAvailableStock(matchingVariant);
               const isUnavailable =
                 Boolean(matchingVariant) &&
@@ -901,6 +901,23 @@ function ProductInfoSection({
   warranty,
   product,
 }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+      document.documentElement.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+      document.documentElement.style.overflow = "unset";
+    };
+  }, [isModalOpen]);
+
   const effectiveWarranty = warranty?.warrantyDetails || warranty || product?.warranty || {};
   const warrantyPeriod = [effectiveWarranty.period, effectiveWarranty.periodUnit]
     .filter((value) => value !== null && value !== undefined && value !== "")
@@ -971,25 +988,49 @@ function ProductInfoSection({
 
       {activeInfoTab === "warranty" && (
         <InfoCard title="Warranty Information" roundedClass="rounded-xl">
-          <div className="space-y-5 px-4 py-5 text-sm text-black/90 lg:text-lg">
-            {(warrantyPeriod || effectiveWarranty.type || effectiveWarranty.provider) && (
-              <dl className="grid gap-3 rounded-lg border border-[#E7D9B8] bg-[#FFF9EB] p-4 sm:grid-cols-3">
-                {warrantyPeriod && (
-                  <div><dt className="text-xs font-medium uppercase tracking-wide text-muted">Period</dt><dd className="mt-1 font-semibold text-navy">{warrantyPeriod}</dd></div>
-                )}
-                {effectiveWarranty.type && (
-                  <div><dt className="text-xs font-medium uppercase tracking-wide text-muted">Type</dt><dd className="mt-1 font-semibold text-navy">{effectiveWarranty.type}</dd></div>
-                )}
-                {effectiveWarranty.provider && (
-                  <div><dt className="text-xs font-medium uppercase tracking-wide text-muted">Provider</dt><dd className="mt-1 font-semibold text-navy">{effectiveWarranty.provider}</dd></div>
-                )}
-              </dl>
+          <div className="space-y-6 px-4 py-5 text-sm text-black/90 lg:text-base">
+            {(effectiveWarranty.summary || effectiveWarranty.warrantySummary || warrantyPeriod || effectiveWarranty.type || effectiveWarranty.provider) && (
+              <div>
+                <h3 className="text-base font-bold text-ink">Warranty Summary</h3>
+                <div className="mt-2 text-sm text-[#4E4E4E] whitespace-pre-line">
+                  {effectiveWarranty.summary || effectiveWarranty.warrantySummary || (
+                    <div className="space-y-1 text-base">
+                      {warrantyPeriod && (
+                        <div>
+                          <span className="font-medium text-ink">Period:</span>{" "}
+                          {warrantyPeriod}
+                        </div>
+                      )}
+                      {effectiveWarranty.type && (
+                        <div>
+                          <span className="font-medium text-ink">Type:</span>{" "}
+                          {effectiveWarranty.type}
+                        </div>
+                      )}
+                      {effectiveWarranty.provider && (
+                        <div>
+                          <span className="font-medium text-ink">Provider:</span>{" "}
+                          {effectiveWarranty.provider}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
 
-            {effectiveWarranty.terms ? (
-              <div className="prose prose-sm max-w-none text-black/90 lg:prose-base" dangerouslySetInnerHTML={{ __html: effectiveWarranty.terms }} />
-            ) : (
-              <p>No warranty description or rules have been provided for this product.</p>
+            {(effectiveWarranty.coveredInWarranty || effectiveWarranty.terms) && (
+              <div>
+                <h3 className="text-base font-bold text-ink">Covered in Warranty</h3>
+                <div className="mt-2 prose prose-sm max-w-none text-[#4E4E4E] lg:prose-base" dangerouslySetInnerHTML={{ __html: effectiveWarranty.coveredInWarranty || effectiveWarranty.terms }} />
+              </div>
+            )}
+
+            {effectiveWarranty.notCoveredInWarranty && (
+              <div>
+                <h3 className="text-base font-bold text-ink">Not Covered in Warranty</h3>
+                <div className="mt-2 prose prose-sm max-w-none text-[#4E4E4E] lg:prose-base" dangerouslySetInnerHTML={{ __html: effectiveWarranty.notCoveredInWarranty }} />
+              </div>
             )}
 
             {Object.keys(returnPolicy).length > 0 && (
@@ -1012,7 +1053,11 @@ function ProductInfoSection({
         <InfoCard title="Common Product Images" roundedClass="rounded-xl">
           <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {product.commonImages.map((image, index) => (
-              <div key={`${image}-${index}`} className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white">
+              <div 
+                key={`${image}-${index}`} 
+                className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white cursor-pointer transition-colors hover:border-gold"
+                onClick={() => setIsModalOpen(true)}
+              >
                 <img
                   src={getImageUrlFromValue(image)}
                   alt={`${getProductTitle(product)} detail ${index + 1}`}
@@ -1494,9 +1539,6 @@ export default function ProductDetailPage() {
       : []),
     { key: "details", label: "Product Details" },
     { key: "description", label: "Description" },
-    ...(product?.commonImages?.length
-      ? [{ key: "common-images", label: "Common Images" }]
-      : []),
     { key: "warranty", label: "Warranty" },
     { key: "seller", label: "Seller Info" },
   ];

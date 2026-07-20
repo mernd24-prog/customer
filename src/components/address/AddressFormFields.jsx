@@ -143,12 +143,10 @@ export default function AddressFormFields({
         />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <SelectField
+        <FormField
           id={`${idPrefix}-city`}
           label="City"
-          placeholder="Select City"
-          options={cities}
-          value={selectedCity}
+          placeholder="Enter City"
           registration={register("city", {
             onChange: () => {
               setValue("postalCode", "");
@@ -156,13 +154,12 @@ export default function AddressFormFields({
           })}
           error={errors.city}
           disabled={!selectedState}
+          autoComplete="address-level2"
         />
-        <SelectField
+        <FormField
           id={`${idPrefix}-postalCode`}
           label="Postal code"
-          placeholder="Select Postal code"
-          options={buildPostalOptions(postalCodes)}
-          value={selectedPostalCode}
+          placeholder="Enter Postal code"
           registration={register("postalCode", {
             setValueAs: normalizePostalCodeValue,
             onChange: (event) => {
@@ -172,6 +169,7 @@ export default function AddressFormFields({
           })}
           error={errors.postalCode}
           disabled={!selectedCity}
+          autoComplete="postal-code"
         />
       </div>
       {showDefault && (
