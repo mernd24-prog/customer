@@ -463,6 +463,7 @@ export const subscriptionThunks = {
 export const notificationThunks = {
   fetchNotifications: makeThunk("notification/fetchNotifications", {
     url: endpoints.notifications.me,
+    params: q,
   }),
   createNotification: makeThunk("notification/createNotification", {
     method: "post",

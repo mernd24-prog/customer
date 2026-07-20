@@ -557,7 +557,7 @@ export default function CartPage() {
                 title="Your cart is empty"
                 description="Add some products to continue shopping."
                 actionLabel="Continue Shopping"
-                onAction={() => navigate("/")}
+                onAction={() => navigate("/products")}
                 className={hasSavedItems ? "mb-8" : ""}
               />
             )}

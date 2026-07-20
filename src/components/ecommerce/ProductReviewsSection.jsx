@@ -96,11 +96,21 @@ function ProductReviewCard({
     String(currentUserId || ""),
   );
   const isAdminReview = review.orderId?.startsWith("admin:");
-  const name = isAdminReview
-    ? "Unknown"
-    : review.buyerName ||
-      review.name ||
-      (isOwn ? getUserDisplayName(currentUser) : "");
+  
+  let reviewerName = "";
+  if (isOwn) {
+    reviewerName = getUserDisplayName(currentUser);
+  } else if (review.user && typeof review.user === "object") {
+    reviewerName = getUserDisplayName(review.user);
+  }
+  if (!reviewerName || reviewerName === "Unknown") {
+    reviewerName = review.buyerName || review.name || "";
+  }
+  if (reviewerName === "Unknown" && !isAdminReview) {
+    reviewerName = "Customer";
+  }
+
+  const name = isAdminReview ? "Unknown" : reviewerName || "Customer";
   const text = review.reviewText || review.text;
   const reviewId = review._id || review.id;
   const helpfulVotes = review.helpfulVotes ?? review.helpful ?? 0;

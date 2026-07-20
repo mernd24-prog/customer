@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Bell, ChevronDown, Headphones, MoreVertical } from "lucide-react";
+import { Bell, ChevronDown, Headphones } from "lucide-react";
 
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
@@ -116,8 +116,11 @@ export function NotificationsPage() {
   const notifState = useSelector((state) => state.notification);
 
   const notifications = Array.isArray(notifState.list) ? notifState.list : [];
+  const meta = notifState.meta || {};
+  const totalPages = meta.totalPages || 1;
 
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [page, setPage] = useState(1);
+  const limit = 4; // Number of items per page
 
   const handleNavigate = (path) => {
     if (!path) return;
@@ -136,8 +139,21 @@ export function NotificationsPage() {
   ];
 
   useEffect(() => {
-    dispatch(fetchNotifications());
+    dispatch(fetchNotifications({ params: { page: 1, limit } }));
   }, [dispatch]);
+
+  const handleLoadMore = () => {
+    if (notifState.loading) return;
+    const nextPage = page + 1;
+    setPage(nextPage);
+    dispatch(fetchNotifications({ params: { page: nextPage, limit } }));
+  };
+
+  const handleShowLess = () => {
+    if (notifState.loading) return;
+    setPage(1);
+    dispatch(fetchNotifications({ params: { page: 1, limit } }));
+  };
 
   return (
     <>
@@ -182,7 +198,7 @@ export function NotificationsPage() {
               emptyText="You're all caught up! Notifications will appear here."
             >
               <div>
-                {notifications.slice(0, visibleCount).map((notif, index) => {
+                {notifications.map((notif, index) => {
                   const isRead = notif.read || notif.isRead;
 
                   const notificationItem =
@@ -385,6 +401,7 @@ export function NotificationsPage() {
                               {formatNotificationDate(notif.createdAt)}
                             </span>
 
+                            {/* 
                             <button
                               type="button"
                               aria-label="Notification options"
@@ -409,6 +426,7 @@ export function NotificationsPage() {
                                   "
                               />
                             </button>
+                            */}
                           </div>
                         </div>
                       </div>
@@ -419,19 +437,12 @@ export function NotificationsPage() {
                 {/* =================================================
                     LOAD MORE / SHOW LESS
                 ================================================== */}
-                {notifications.length > 4 && (
+                {totalPages > 1 && (
                   <div className="flex justify-center py-5">
                     <button
                       type="button"
-                      onClick={() => {
-                        if (visibleCount >= notifications.length) {
-                          setVisibleCount(4);
-                        } else {
-                          setVisibleCount((prev) =>
-                            Math.min(prev + 4, notifications.length),
-                          );
-                        }
-                      }}
+                      onClick={page >= totalPages ? handleShowLess : handleLoadMore}
+                      disabled={notifState.loading}
                       className="
                         flex
                         items-center
@@ -443,27 +454,28 @@ export function NotificationsPage() {
                         font-semibold
                         text-[#25247B]
                         transition
-
+                        disabled:opacity-50
+                        disabled:cursor-not-allowed
                         hover:bg-[#F3F3F7]
                       "
                     >
-                      {visibleCount >= notifications.length
-                        ? "Show Less"
-                        : "Load More"}
+                      {notifState.loading
+                        ? "Loading..."
+                        : page >= totalPages
+                          ? "Show Less"
+                          : "Load More"}
 
-                      <ChevronDown
-                        size={15}
-                        strokeWidth={2.5}
-                        className={`
-                          transition-transform
-                          duration-200
-                          ${
-                            visibleCount >= notifications.length
-                              ? "rotate-180"
-                              : ""
-                          }
-                        `}
-                      />
+                      {!notifState.loading && (
+                        <ChevronDown
+                          size={15}
+                          strokeWidth={2.5}
+                          className={`
+                            transition-transform
+                            duration-200
+                            ${page >= totalPages ? "rotate-180" : ""}
+                          `}
+                        />
+                      )}
                     </button>
                   </div>
                 )}

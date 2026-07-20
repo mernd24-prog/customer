@@ -179,7 +179,7 @@ export default function WatchlistPage() {
               title="Your watchlist is empty"
               description="Save items you love to buy later."
               actionLabel="Continue Shopping"
-              onAction={() => navigate("/")}
+              onAction={() => navigate("/products")}
             />
           )}
 
