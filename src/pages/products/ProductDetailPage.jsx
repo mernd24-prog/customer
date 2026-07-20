@@ -1051,6 +1051,30 @@ function ProductInfoSection({
           )}
         </InfoCard>
       )}
+
+      {isModalOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4 animate-fadeIn sm:p-6">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-6 right-6 z-[10000] w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out"
+            >
+              <X size={28} />
+            </button>
+
+            <div className="flex h-[90vh]  w-full max-w-[1200px] items-center justify-center bg-white">
+              <ProductGallery
+                images={product.commonImages.map((img) =>
+                  getImageUrlFromValue(img),
+                )}
+                isModal={true}
+                fallbackLabel={getProductTitle(product)}
+              />
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
@@ -1126,10 +1150,9 @@ export default function ProductDetailPage() {
       ? firstMoneyValue(dynamicState.current?.price)
       : undefined;
 
-   //const allProducts = Array.isArray(productState.list) ? productState.list : [];
+  //const allProducts = Array.isArray(productState.list) ? productState.list : [];
 
-  const relatedProducts =
-    relatedState.relatedByProduct[productId]?.items || [];
+  const relatedProducts = relatedState.relatedByProduct[productId]?.items || [];
 
   const crossSellProducts =
     crossSellState.crossSellByProduct[productId]?.items || [];
@@ -1142,6 +1165,12 @@ export default function ProductDetailPage() {
   const [shareOpen, setShareOpen] = useState(false);
   const [activeInfoTab, setActiveInfoTab] = useState("details");
   const [recentlyViewedList, setRecentlyViewedList] = useState([]);
+
+  useEffect(() => {
+    setActiveInfoTab(
+      product?.commonImages?.length ? "common-images" : "details",
+    );
+  }, [product?._id, product?.id, product?.commonImages?.length]);
 
   const sideEffectsRanFor = useRef(null);
   const dynamicPriceRequestKey = useRef(null);
@@ -1460,6 +1489,9 @@ export default function ProductDetailPage() {
     });
 
   const infoTabs = [
+    ...(product?.commonImages?.length
+      ? [{ key: "common-images", label: "Common Images" }]
+      : []),
     { key: "details", label: "Product Details" },
     { key: "description", label: "Description" },
     ...(product?.commonImages?.length
