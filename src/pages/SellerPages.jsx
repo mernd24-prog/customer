@@ -56,7 +56,7 @@ export function SellerStatusPage() {
         <div className="state-box">
           Seller actions are available only in the dedicated seller admin border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10.
           This web app intentionally hides product, profile, bank, sub-admin,
-          payout, order status, and e-way bill actions.
+          payout and order status actions.
         </div>
       </ApiState>
     </section>

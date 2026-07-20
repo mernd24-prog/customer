@@ -274,19 +274,6 @@ export const deliveryThunks = {
     url: endpoints.delivery.serviceability,
     params: q,
   }),
-  fetchEwayBillByOrder: makeThunk("delivery/fetchEwayBillByOrder", {
-    url: ({ orderId }) => endpoints.delivery.ewayBillByOrder(orderId),
-  }),
-  createEwayBill: makeThunk("delivery/createEwayBill", {
-    method: "post",
-    url: ({ orderId }) => endpoints.delivery.ewayBillByOrder(orderId),
-    data: body,
-  }),
-  updateEwayBillStatus: makeThunk("delivery/updateEwayBillStatus", {
-    method: "patch",
-    url: ({ ewayBillId }) => endpoints.delivery.ewayBillStatus(ewayBillId),
-    data: body,
-  }),
 };
 
 export const returnsThunks = {

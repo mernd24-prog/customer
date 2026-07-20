@@ -98,10 +98,6 @@ export const endpoints = {
   },
   delivery: {
     serviceability: `${API_PREFIX}/delivery/serviceability`,
-    ewayBillByOrder: (orderId) =>
-      `${API_PREFIX}/delivery/orders/${orderId}/eway-bill`,
-    ewayBillStatus: (ewayBillId) =>
-      `${API_PREFIX}/delivery/eway-bills/${ewayBillId}/status`,
   },
   returns: {
     create: `${API_PREFIX}/returns`,
