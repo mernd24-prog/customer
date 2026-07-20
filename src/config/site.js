@@ -3,7 +3,7 @@ export const SITE_CONFIG = {
   titleTemplate: "%s | Sam Global",
   defaultTitle: "Sam Global | Shop products, deals, orders & rewardsffff",
   description:
-    "Shop smarter with Sam Global. Discover products, deals, order tracking, returns, loyalty rewards, wallet, warranties, and subscriptions in one ecommerce experience.",
+    "Shop smarter with Sam Global. Discover products, deals, order tracking, returns, wallet, warranties, and subscriptions in one ecommerce experience.",
   url: import.meta.env.VITE_SITE_URL || "https://samglobal.com",
   locale: "en_IN",
   image: "/image/png/logo.png",
