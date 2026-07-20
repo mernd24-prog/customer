@@ -26,8 +26,7 @@ export { WalletPage } from "./wallet/WalletPage";
 export { PaymentsPage } from "./payments/PaymentsPage";
 export { SubscriptionPage } from "./subscription/SubscriptionPage";
 
-// Loyalty & rewards
-export { LoyaltyPage } from "./loyalty/LoyaltyPage";
+
 
 // Warranty
 export { WarrantyPage } from "./warranty/WarrantyPage";

@@ -16,7 +16,7 @@ import { fetchCmsPages } from "./features/cms/cmsSlice";
 import { AUTH_ROUTES } from "./features/auth/authRoutes";
 import { tokenStorage } from "./api/tokenStorage";
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
-import { fetchLoyaltyBenefits } from "./features/loyalty/loyaltySlice";
+
 import ScrollToTop from "./components/common/ScrollToTop";
 import CategoryListingPage from "./pages/category/CategoryListingPage";
 import DownloadApp from "./pages/downloadApp/DownloadApp";
@@ -142,10 +142,7 @@ const SubscriptionPage = lazyNamed(
   () => import("./pages/subscription/SubscriptionPage"),
   "SubscriptionPage",
 );
-const LoyaltyPage = lazyNamed(
-  () => import("./pages/loyalty/LoyaltyPage"),
-  "LoyaltyPage",
-);
+
 const SimpleApiPage = lazyNamed(
   () => import("./pages/SimpleApiPage"),
   "SimpleApiPage",
@@ -493,18 +490,7 @@ export default function App() {
                   <Route path="/payments" element={<PaymentsPage />} />
                   <Route path="/subscriptions" element={<SubscriptionPage />} />
 
-                  {/* Loyalty & rewards */}
-                  <Route path="/loyalty" element={<LoyaltyPage />} />
-                  <Route
-                    path="/loyalty/benefits"
-                    element={
-                      <SimpleApiPage
-                        title="Loyalty benefits"
-                        selector={(s) => s.loyalty}
-                        thunk={fetchLoyaltyBenefits}
-                      />
-                    }
-                  />
+
 
                   {/* Warranty */}
                   <Route path="/warranty" element={<WarrantyPage />} />
