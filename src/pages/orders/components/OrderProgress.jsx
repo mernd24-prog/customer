@@ -13,16 +13,20 @@ const normalizeProgressStatus = (status) => {
   if (status === "order_closed") {
     return "fulfilled";
   }
+  if (status === "requested") return "return_requested";
+  if (status === "approved") return "return_approved";
+  if (status === "rejected") return "return_rejected";
   return status;
 };
 
 const PROGRESS_MESSAGES = {
+  initiated: "Your order has been initiated.",
   confirmed: "Your order is confirmed and waiting for seller packing.",
   processing: "The seller is preparing your items.",
-  packed: "Your package is packed and ready for shipment details.",
-  ready_to_ship: "Your package is ready to be handed to the courier.",
-  shipped: "Your package has shipped. Use shipment tracking for courier updates.",
-  out_for_delivery: "Your order has active delivery progress. Packages may arrive separately.",
+  packed: "Your order is packed and ready for shipment details.",
+  ready_to_ship: "Your order is ready to be handed to the courier.",
+  shipped: "Your order has shipped. Use shipment tracking for courier updates.",
+  out_for_delivery: "Your order has active delivery progress. Orders may arrive separately.",
   delivered: "Your order has been delivered. Item return windows are now active.",
   fulfilled: "The return window has closed and this order is complete.",
 };
@@ -208,7 +212,7 @@ const getRefundStatus = ({ returns = [], cancellations = [], status }) => {
   return null;
 };
 
-function OrderProgress({ status, cancellations = [], returns = [] }) {
+function OrderProgress({ status, cancellations = [], returns = [], timeline = [] }) {
   const isCancelled = status === "cancelled";
   const isFailed = status === "payment_failed";
   const isDeliveryFailed = status === "failed_delivery";
@@ -216,7 +220,8 @@ function OrderProgress({ status, cancellations = [], returns = [] }) {
   const refundStatus = getRefundStatus({ returns, cancellations, status });
   const cancelStatus =
     isCancelled || cancellations.length > 0 ? "cancelled" : null;
-  const progressSteps = cancelStatus
+
+  let progressSteps = cancelStatus
     ? ["pending_payment", "confirmed", "cancelled"]
     : refundStatus
       ? [...ORDER_STEPS, ...RETURN_STEPS, ...REFUND_STEPS]
@@ -227,6 +232,29 @@ function OrderProgress({ status, cancellations = [], returns = [] }) {
           : isDeliveryFailed
             ? [...ORDER_STEPS.slice(0, ORDER_STEPS.indexOf("out_for_delivery") + 1), "failed_delivery"]
           : ORDER_STEPS;
+
+  const mergedTimeline = [...(timeline || [])];
+  if (returns && Array.isArray(returns)) {
+    returns.forEach((ret) => {
+      if (ret.timeline && Array.isArray(ret.timeline)) {
+        mergedTimeline.push(...ret.timeline);
+      }
+    });
+  }
+  mergedTimeline.sort((a, b) => new Date(a.created_at || a.at).getTime() - new Date(b.created_at || b.at).getTime());
+
+  if (mergedTimeline.length > 0) {
+    const timelineSteps = Array.from(
+      new Set(
+        mergedTimeline
+          .map((t) => normalizeProgressStatus(t.to_status || t.status))
+          .filter(Boolean)
+      )
+    );
+    if (timelineSteps.length > 0) {
+      progressSteps = timelineSteps;
+    }
+  }
   const activeStatus = cancelStatus || refundStatus || returnStatus || status;
   const activeIndex = progressSteps.indexOf(
     normalizeProgressStatus(activeStatus),

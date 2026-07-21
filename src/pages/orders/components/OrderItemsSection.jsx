@@ -471,38 +471,6 @@ function OrderItemCard({
   );
 }
 
-function OrderItemReviewAction({
-  item,
-  orderId,
-  canReview,
-  existingReview,
-  reviewChecked,
-  onReviewClick,
-}) {
-  if (!canReview) return null;
-
-  return (
-    <div className="w-full">
-      {!reviewChecked ? (
-        <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA] px-4 text-sm font-bold text-[#6B6B80]">
-          Checking review...
-        </span>
-      ) : existingReview ? (
-        <ExistingReviewCard review={existingReview} />
-      ) : (
-        <button
-          type="button"
-          className="inline-flex min-h-9 items-center rounded-[8px] border border-[#CE9F2D] bg-[#CE9F2D12] px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#CE9F2D22]"
-          onClick={() => onReviewClick(item)}
-          disabled={!orderId}
-        >
-          Write Review
-        </button>
-      )}
-    </div>
-  );
-}
-
 function OrderItemsSection({
   items = [],
   orderId,
@@ -615,16 +583,21 @@ function OrderItemsSection({
   return (
     <section className="grid gap-5">
       <OrderDetailSectionCard
-        title={packageGroups.length > 1 ? "Packages" : "Item"}
+        title={packageGroups.length > 1 ? "Orders" : "Item"}
         borderClassName="border-[#CE9F2D66]  h-fit "
         bodyClassName="grid gap-8 p-4 sm:p-6 lg:p-7"
       >
         {packageGroups.map((group, packageIndex) => (
           <div key={group.key} className="grid gap-5 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h3 className="font-bold text-[#1B1D60]">Package {packageIndex + 1}</h3>
-                <p className="mt-0.5 text-sm text-[#6F7480]">{group.sellerName}</p>
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#CE9F2D] text-white">
+                  <Package size={20} />
+                </span>
+                <div>
+                  <h3 className="font-bold text-[#1B1D60]">Order {packageIndex + 1}</h3>
+                  <p className="mt-0.5 text-sm text-[#6F7480]">{group.sellerName}</p>
+                </div>
               </div>
               <div className="text-right text-sm">
                 <span className="rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-semibold capitalize text-white">{label(group.status)}</span>
@@ -634,50 +607,61 @@ function OrderItemsSection({
             {group.items.map((item, index) => {
               const policy = getItemReturnPolicy(item);
               const returnRequest = group.returnByItem.get(String(item.id || item._id || item.orderItemId || ""));
+              const reviewKey = reviewKeyForItem(orderId, item);
+              const canReview = canReviewOrder && Boolean(getReviewProductId(item));
+              const reviewChecked = Boolean(checkedReviewKeys[reviewKey]);
+              const existingReview = reviewByItem[reviewKey];
+
               return (
                 <div key={item.id || item._id || index} className="grid gap-3 border-t border-[#E7D9B8] pt-5 first:border-t-0 first:pt-0">
                   <OrderItemCard
                     item={item}
                     {...itemProps}
                   />
-                  <div className="flex flex-wrap gap-2 text-xs font-semibold">
-                    <span className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
-                      {policy.returnable ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}` : "Non-returnable"}
-                    </span>
-                    {policy.returnable && policy.eligibleUntil && (
-                      <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-700">
-                        Return until {formatDate(policy.eligibleUntil)}
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex flex-wrap gap-2 text-xs font-semibold">
+                      <span className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+                        {policy.returnable ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}` : "Non-returnable"}
                       </span>
-                    )}
-                    {returnRequest && (
-                      <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">
-                        Return {label(returnRequest.status)}
-                      </span>
+                      {policy.returnable && policy.eligibleUntil && (
+                        <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-700">
+                          Return until {formatDate(policy.eligibleUntil)}
+                        </span>
+                      )}
+                      {returnRequest && (
+                        <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">
+                          Return {label(returnRequest.status)}
+                        </span>
+                      )}
+                    </div>
+                    {canReview && (
+                      <div className="shrink-0">
+                        {!reviewChecked ? (
+                          <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA] px-4 text-sm font-bold text-[#6B6B80]">
+                            Checking review...
+                          </span>
+                        ) : !existingReview ? (
+                          <button
+                            type="button"
+                            className="inline-flex min-h-9 items-center rounded-[8px] border border-[#CE9F2D] bg-[#CE9F2D12] px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#CE9F2D22]"
+                            onClick={() => setReviewTarget(item)}
+                            disabled={!orderId}
+                          >
+                            Write Review
+                          </button>
+                        ) : null}
+                      </div>
                     )}
                   </div>
+                  {canReview && reviewChecked && existingReview && (
+                    <ExistingReviewCard review={existingReview} />
+                  )}
                 </div>
               );
             })}
           </div>
         ))}
       </OrderDetailSectionCard>
-
-      <div className="grid gap-5">
-        {items.map((item, index) => {
-          const reviewKey = reviewKeyForItem(orderId, item);
-          return (
-            <OrderItemReviewAction
-              key={`review-${item.id || item._id || index}`}
-              item={item}
-              orderId={orderId}
-              canReview={canReviewOrder && Boolean(getReviewProductId(item))}
-              existingReview={reviewByItem[reviewKey]}
-              reviewChecked={Boolean(checkedReviewKeys[reviewKey])}
-              onReviewClick={setReviewTarget}
-            />
-          );
-        })}
-      </div>
 
       {reviewTarget && (
         <ReviewModal

@@ -515,13 +515,18 @@ function OrderDetail({ orderId, track }) {
   const itemReturnDeadlines = returnableItems
     .map((item) => item.return_eligible_until || item.returnEligibleUntil || item.return_policy_snapshot?.eligibleUntil || item.returnPolicySnapshot?.eligibleUntil)
     .filter(Boolean);
-  const returnEligibleUntil = itemReturnDeadlines.length
-    ? itemReturnDeadlines.reduce((latest, value) => new Date(value).getTime() > new Date(latest).getTime() ? value : latest)
-    : null;
+
   const returnWindowOpen = returnableItems.some((item) => {
     const deadline = item.return_eligible_until || item.returnEligibleUntil || item.return_policy_snapshot?.eligibleUntil || item.returnPolicySnapshot?.eligibleUntil;
     return !deadline || new Date(deadline).getTime() >= Date.now();
   });
+
+  const activeDeadlines = itemReturnDeadlines.filter(date => new Date(date).getTime() >= Date.now());
+  const expiredDeadlines = itemReturnDeadlines.filter(date => new Date(date).getTime() < Date.now());
+
+  const returnEligibleUntil = returnWindowOpen 
+    ? (activeDeadlines.length ? activeDeadlines.reduce((earliest, value) => new Date(value).getTime() < new Date(earliest).getTime() ? value : earliest) : null)
+    : (expiredDeadlines.length ? expiredDeadlines.reduce((latest, value) => new Date(value).getTime() > new Date(latest).getTime() ? value : latest) : null);
   const canRequestReturn = [
     "delivered",
     "fulfilled",
@@ -587,7 +592,6 @@ function OrderDetail({ orderId, track }) {
         verifyPayment,
       });
       navigate(`/payment/success?orderId=${orderId}`);
-    } catch {
     } finally {
       setRetrying(false);
       dispatch(fetchOrderById({ orderId }));
@@ -736,24 +740,16 @@ function OrderDetail({ orderId, track }) {
                     value: formatMoney(customerAmount, currency),
                     tone: "yellow",
                   },
-                  ...(returnEligibleUntil ? [{
-                    icon: <RotateCcw size={20} />,
-                    label: returnWindowOpen ? "Latest item return deadline" : "All return windows closed",
-                    value: formatOrderDate(returnEligibleUntil),
-                    tone: returnWindowOpen ? "blue" : "yellow",
-                  }] : []),
+
                 ]}
               />
 
-              {!track && ["delivered", "fulfilled", "partially_returned"].includes(status) && !returnWindowOpen && (
-                <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">All eligible item return windows closed by {formatOrderDate(returnEligibleUntil)}.</p>
-              )}
 
               {getDeliveryStatus(order) === "partially_delivered" && (
-                <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">Part of your order has been delivered. Remaining seller packages are still being prepared or shipped.</p>
+                <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">Part of your order has been delivered. Remaining seller orders are still being prepared or shipped.</p>
               )}
 
-              {hasKnownStatus(order) && (
+              {hasKnownStatus(order) && ( 
                 <OrderDetailSectionCard
                   title="Order Progress"
                   headerClassName="!min-h-[56px] !py-4"
@@ -764,6 +760,7 @@ function OrderDetail({ orderId, track }) {
                     status={progressStatus}
                     cancellations={cancellations}
                     returns={returns}
+                    timeline={order?.timeline || []}
                   />
                 </OrderDetailSectionCard>
               )}
