@@ -15,6 +15,7 @@ const STATUS_FILTERS = [
   { value: "approved", label: "Approved" },
   { value: "rejected", label: "Rejected" },
   { value: "received", label: "Received" },
+  { value: "issue", label: "Action Required" },
   { value: "refunded", label: "Refunded" },
 ];
 
@@ -23,20 +24,21 @@ const statusToBucket = (status) => {
   if (!status) return "all";
   if (status === "requested") return "requested";
   if (
-    ["approved", "reverse_pickup_scheduled", "in_reverse_transit"].includes(
+    ["approved", "reverse_pickup_scheduled", "manual_ship_back", "shipped_back", "in_reverse_transit"].includes(
       status,
     )
   )
     return "approved";
   if (status === "rejected") return "rejected";
-  if (["received", "qc_passed", "qc_completed"].includes(status))
+  if (["received", "qc_passed", "qc_completed", "replacement_requested", "replacement_pending", "replacement_created", "replacement_shipped", "replacement_delivered"].includes(status))
     return "received";
+  if (["pickup_failed", "qc_failed", "refund_failed"].includes(status))
+    return "issue";
   if (
     [
       "refunded",
       "partially_refunded",
       "refund_pending",
-      "refund_failed",
       "replaced",
       "closed",
     ].includes(status)
@@ -92,33 +94,61 @@ const buildTrackingSteps = (ret) => {
     {
       title: "Pickup Scheduled",
       description: "Your return pickup has been scheduled.",
-      statuses: ["reverse_pickup_scheduled"],
+      statuses: ["reverse_pickup_scheduled", "manual_ship_back"],
     },
     {
-      title: "Product Picked Up",
-      description: "Your item has been picked up for return.",
-      statuses: ["in_reverse_transit"],
+      title: currentStatus === "pickup_failed" ? "Pickup Failed" : "Product Shipped Back",
+      description: currentStatus === "pickup_failed"
+        ? "The pickup could not be completed. A new pickup will be arranged."
+        : "Your item is on its way back to the seller.",
+      statuses: ["pickup_failed", "shipped_back", "in_reverse_transit"],
     },
     {
-      title: "Quality Check",
-      description: "We are checking the returned item at our facility.",
-      statuses: ["received", "qc_passed", "qc_completed"],
+      title: currentStatus === "qc_failed" ? "Quality Check Failed" : "Quality Check",
+      description: currentStatus === "qc_failed"
+        ? "The returned item did not pass quality inspection."
+        : "We are checking the returned item at our facility.",
+      statuses: ["received", "qc_passed", "qc_completed", "qc_failed"],
     },
   ];
 
   if (resolution === "replacement") {
-    stepsDef.push(
+    const replacementSteps = [
       {
-        title: "Replacement Initiated",
-        description: "Replacement item will be shipped soon.",
-        statuses: ["replacement_pending"],
+        title: "Replacement Requested",
+        description: ret.replacement?.metadata?.doorstepExchange
+          ? "Your doorstep exchange has been approved."
+          : "Your replacement is awaiting approval.",
+        statuses: ["replacement_requested", "replacement_pending"],
+      },
+      {
+        title: "Replacement Order Created",
+        description: ret.replacement?.metadata?.doorstepExchange
+          ? "Your ₹0 replacement order is reserved for the doorstep exchange."
+          : "A linked replacement order has been created at no additional charge.",
+        statuses: ["replacement_created"],
+      },
+      {
+        title: "Replacement Shipped",
+        description: "Your replacement product is on its way.",
+        statuses: ["replacement_shipped"],
+      },
+      {
+        title: "Replacement Delivered",
+        description: "Your replacement product has been delivered.",
+        statuses: ["replacement_delivered"],
       },
       {
         title: "Replacement Completed",
         description: "The replacement item has been delivered.",
         statuses: ["replaced"],
       },
-    );
+    ];
+    if (ret.replacement?.metadata?.doorstepExchange) {
+      stepsDef.splice(3, 0, ...replacementSteps);
+    } else {
+      stepsDef.push(...replacementSteps);
+    }
   } else {
     stepsDef.push(
       {
@@ -283,11 +313,21 @@ function ReturnsRefundsPage() {
   const [expandedReturnId, setExpandedReturnId] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchMyReturns())
+    const refreshReturns = () => dispatch(fetchMyReturns())
       .unwrap()
       .catch((error) => {
         console.log("Returns API error:", error);
       });
+
+    refreshReturns();
+    const intervalId = window.setInterval(refreshReturns, 30000);
+    const refreshOnFocus = () => refreshReturns();
+    window.addEventListener("focus", refreshOnFocus);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", refreshOnFocus);
+    };
   }, [dispatch]);
 
   /* filtered list */
