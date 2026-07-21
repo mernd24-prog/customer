@@ -1013,16 +1013,10 @@ function OrderSummaryCard({ order }) {
   const status = getOrderStatus(order);
   const invoiceDownloadAvailable = status === "fulfilled";
   const createdAt = order.created_at || order.createdAt;
-  const item = getOrderItems(order)[0] || {};
-  const title = getProductTitle(item);
-  const image = getOrderCardImage(item);
+  const items = getOrderItems(order);
   const currency = getOrderCurrency(order);
   const amount = getCustomerOrderAmount(order);
-  const quantity = item?.quantity || 1;
   const paymentMethod = humanize(getPaymentMethod(order), "N/A");
-  const itemColor = getOrderItemColor(item);
-  const shouldShowColor =
-    itemColor != null && String(itemColor).trim().toLowerCase() !== "n/a";
 
   const handleCopyOrderId = (e) => {
     e.preventDefault();
@@ -1084,71 +1078,84 @@ function OrderSummaryCard({ order }) {
         </span>
       </div>
 
-      <div className="grid   gap-6 p-3 grid-cols-1 md:grid-cols-[40%_70%] 2xl:grid-cols-[399px_1fr] sm:p-6">
-        <Link
-          to={`/orders/${id}`}
-          className="flex h-56 md:h-auto items-center justify-center overflow-hidden rounded-md border border-[#EFE5D2]  bg-white"
-        >
-          {image ? (
-            <img
-              src={image}
-              alt={title}
-              className="aspect-[3/2]  w-full object-contain p-3"
-            />
-          ) : (
-            <Package size={42} className="text-[#D9CBAE]" />
-          )}
-        </Link>
+      <div className="divide-y divide-[#E7D9B8]">
+        {items.map((item, index) => {
+          const title = getProductTitle(item);
+          const image = getOrderCardImage(item);
+          const quantity = item?.quantity || 1;
+          const itemColor = getOrderItemColor(item);
+          const shouldShowColor =
+            itemColor != null && String(itemColor).trim().toLowerCase() !== "n/a";
 
-        <div className="min-w-0 ">
-          <Link
-            to={`/orders/${id}`}
-            className="line-clamp-2 text-h4 font-semibold text-[#2E2E2E] "
-          >
-            {title}
-          </Link>
-
-          <div className="my-4 lg:my-6   flex flex-wrap gap-x-5 gap-y-1 text-lg font-semibold text-ink">
-            {shouldShowColor && (
-              <span>
-                Color :{" "}
-                <strong className="font-bold  text-[#25247B]">
-                  {itemColor}
-                </strong>
-              </span>
-            )}
-            <span>
-              Quantity : <strong className="font-bold">{quantity}</strong>
-            </span>
-          </div>
-
-          <p className="mt-3 text-h3 font-extrabold text-[#1B1D60]">
-            {formatMoney(amount, currency)}
-          </p>
-          <p className="text-sm my-2 font-medium text-ink">
-            Inclusive of all taxes
-          </p>
-
-          <div className="my-4 flex flex-wrap items-center gap-3">
-            <Link
-              to={`/orders/${id}/track`}
-              className="inline-flex h-11 w-full min-w-[160px] items-center justify-center gap-2 rounded-[10px] bg-gold px-8 text-sm font-bold text-white transition-colors sm:w-auto lg:px-18 lg:text-[15px]"
-            >
-              <Truck size={18} />
-              Track Order
-            </Link>
-            {invoiceDownloadAvailable && (
+          return (
+            <div key={item.id || item._id || index} className="grid gap-6 p-3 grid-cols-1 md:grid-cols-[40%_70%] 2xl:grid-cols-[399px_1fr] sm:p-6">
               <Link
                 to={`/orders/${id}`}
-                onClick={(event) => event.stopPropagation()}
-                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[10px] px-2 text-center text-sm font-bold text-gold-dark transition-colors hover:bg-gold-soft sm:w-auto sm:text-left lg:text-[15px]"
+                className="flex h-56 md:h-auto items-center justify-center overflow-hidden rounded-md border border-[#EFE5D2]  bg-white"
               >
-                <Download size={13} />
-                Download Invoice
+                {image ? (
+                  <img
+                    src={image}
+                    alt={title}
+                    className="aspect-[3/2]  w-full object-contain p-3"
+                  />
+                ) : (
+                  <Package size={42} className="text-[#D9CBAE]" />
+                )}
               </Link>
-            )}
-          </div>
-        </div>
+
+              <div className="min-w-0 ">
+                <Link
+                  to={`/orders/${id}`}
+                  className="line-clamp-2 text-h4 font-semibold text-[#2E2E2E] "
+                >
+                  {title}
+                </Link>
+
+                <div className="my-4 lg:my-6 flex flex-wrap gap-x-5 gap-y-1 text-lg font-semibold text-ink">
+                  {shouldShowColor && (
+                    <span>
+                      Color :{" "}
+                      <strong className="font-bold  text-[#25247B]">
+                        {itemColor}
+                      </strong>
+                    </span>
+                  )}
+                  <span>
+                    Quantity : <strong className="font-bold">{quantity}</strong>
+                  </span>
+                </div>
+
+                <p className="mt-3 text-h3 font-extrabold text-[#1B1D60]">
+                  {formatMoney(items.length > 1 ? getItemLineTotal(item) : amount, currency)}
+                </p>
+                <p className="text-sm my-2 font-medium text-ink">
+                  Inclusive of all taxes
+                </p>
+
+                <div className="my-4 flex flex-wrap items-center gap-3">
+                  <Link
+                    to={`/orders/${id}/track`}
+                    className="inline-flex h-11 w-full min-w-[160px] items-center justify-center gap-2 rounded-[10px] bg-gold px-8 text-sm font-bold text-white transition-colors sm:w-auto lg:px-18 lg:text-[15px]"
+                  >
+                    <Truck size={18} />
+                    Track Order
+                  </Link>
+                  {invoiceDownloadAvailable && (
+                    <Link
+                      to={`/orders/${id}`}
+                      onClick={(event) => event.stopPropagation()}
+                      className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[10px] px-2 text-center text-sm font-bold text-gold-dark transition-colors hover:bg-gold-soft sm:w-auto sm:text-left lg:text-[15px]"
+                    >
+                      <Download size={13} />
+                      Download Invoice
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </article>
   );

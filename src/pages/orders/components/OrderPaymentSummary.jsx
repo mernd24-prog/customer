@@ -151,7 +151,7 @@ function OrderPaymentSummary({
   const visiblePaymentMethods =
     variant === "checkout"
       ? paymentMethods.filter(
-          (option) => option.provider !== "cod" || option.enabled !== false,
+          (option) => option.provider !== "cod" // || option.enabled !== false,
         )
       : paymentMethods;
 

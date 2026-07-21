@@ -719,7 +719,7 @@ export default function CheckoutPage() {
       ? paymentState.current.providers
       : [];
     return providers.filter(
-      (option) => option.provider !== "cod" || option.enabled !== false,
+      (option) => option.provider !== "cod" // || option.enabled !== false,
     );
   }, [paymentState]);
   const quotePayableAmount = getQuotePayableAmount(quoteData);

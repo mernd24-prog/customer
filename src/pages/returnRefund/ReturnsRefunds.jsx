@@ -45,17 +45,64 @@ const statusToBucket = (status) => {
   return "all";
 };
 
-/* ─── Tracking-step builder (unchanged) ───────────────────────────────── */
 const buildTrackingSteps = (ret) => {
-  if (!ret) return [];
-  const timeline = ret.timeline || [];
-  const currentStatus = ret.status;
-  const resolution = ret.resolution || "refund";
+  if (!ret || !ret.timeline || ret.timeline.length === 0) return [];
 
-  const getTimelineTime = (statuses) => {
-    const entry = timeline.find((t) => statuses.includes(t.status));
-    if (!entry) return null;
-    return new Date(entry.at).toLocaleString("en-IN", {
+  const sortedTimeline = [...ret.timeline].sort(
+    (a, b) => new Date(a.at).getTime() - new Date(b.at).getTime()
+  );
+
+  const STATUS_LABELS = {
+    requested: "Return Requested",
+    approved: "Return Approved",
+    rejected: "Return Rejected",
+    reverse_pickup_scheduled: "Pickup Scheduled",
+    in_reverse_transit: "Product Picked Up",
+    received: "Quality Check",
+    qc_passed: "Quality Check Passed",
+    qc_completed: "Quality Check Completed",
+    qc_failed: "Quality Check Failed",
+    replacement_pending: "Replacement Initiated",
+    replaced: "Replacement Completed",
+    refund_pending: "Refund Initiated",
+    refund_failed: "Refund Failed",
+    refunded: "Refund Completed",
+    partially_refunded: "Refund Completed (Partial)",
+    closed: "Return Closed",
+  };
+
+  const DEFAULT_DESCRIPTIONS = {
+    requested: "Your return request has been submitted successfully.",
+    approved: "Your return request has been approved.",
+    rejected: "Your return request has been rejected.",
+    reverse_pickup_scheduled: "Your return pickup has been scheduled.",
+    in_reverse_transit: "Your item has been picked up for return.",
+    received: "We are checking the returned item at our facility.",
+    qc_passed: "Quality check passed.",
+    qc_failed: "Quality check failed.",
+    replacement_pending: "Replacement item will be shipped soon.",
+    replaced: "The replacement item has been delivered.",
+    refund_pending: "Refund will be initiated once the item is approved.",
+    refund_failed: "Refund attempt failed. We will retry.",
+    refunded: "The refund amount will be credited to your account.",
+    closed: "The return request has been closed.",
+  };
+
+  return sortedTimeline.map((event, index) => {
+    const isLast = index === sortedTimeline.length - 1;
+    const title =
+      STATUS_LABELS[event.status] ||
+      event.status
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (l) => l.toUpperCase());
+
+    const description =
+      event.note ||
+      event.reason ||
+      DEFAULT_DESCRIPTIONS[event.status] ||
+      "Status updated.";
+
+    const time = new Date(event.at).toLocaleString("en-IN", {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -63,125 +110,15 @@ const buildTrackingSteps = (ret) => {
       minute: "2-digit",
       hour12: true,
     });
-  };
 
-  const hasStatus = (statuses) => {
-    return (
-      statuses.includes(currentStatus) ||
-      timeline.some((t) => statuses.includes(t.status))
-    );
-  };
-
-  const getTimelineDetail = (statuses) => {
-    const entry = timeline.find((t) => statuses.includes(t.status));
-    if (!entry) return "";
-    return entry.note || entry.reason || "";
-  };
-
-  const stepsDef = [
-    {
-      title: "Return Requested",
-      description: "Your return request has been submitted successfully.",
-      statuses: ["requested"],
-    },
-    {
-      title: "Return Approved",
-      description: "Your return request has been approved.",
-      statuses: ["approved"],
-    },
-    {
-      title: "Pickup Scheduled",
-      description: "Your return pickup has been scheduled.",
-      statuses: ["reverse_pickup_scheduled"],
-    },
-    {
-      title: "Product Picked Up",
-      description: "Your item has been picked up for return.",
-      statuses: ["in_reverse_transit"],
-    },
-    {
-      title: "Quality Check",
-      description: "We are checking the returned item at our facility.",
-      statuses: ["received", "qc_passed", "qc_completed"],
-    },
-  ];
-
-  if (resolution === "replacement") {
-    stepsDef.push(
-      {
-        title: "Replacement Initiated",
-        description: "Replacement item will be shipped soon.",
-        statuses: ["replacement_pending"],
-      },
-      {
-        title: "Replacement Completed",
-        description: "The replacement item has been delivered.",
-        statuses: ["replaced"],
-      },
-    );
-  } else {
-    stepsDef.push(
-      {
-        title: "Refund Initiated",
-        description:
-          currentStatus === "refund_failed"
-            ? "Refund attempt failed. We will retry."
-            : "Refund will be initiated once the item is approved.",
-        statuses: ["refund_pending", "refund_failed"],
-      },
-      {
-        title: "Refund Completed",
-        description: "The refund amount will be credited to your account.",
-        statuses: ["refunded", "partially_refunded"],
-      },
-    );
-  }
-
-  if (currentStatus === "rejected") {
-    stepsDef.push({
-      title: "Return Rejected",
-      description: "Your return request has been rejected.",
-      statuses: ["rejected"],
-    });
-  } else if (
-    currentStatus === "closed" &&
-    !hasStatus(["refunded", "replaced"])
-  ) {
-    stepsDef.push({
-      title: "Return Closed",
-      description: "The return request has been closed.",
-      statuses: ["closed"],
-    });
-  }
-
-  let lastCompletedIndex = -1;
-  const mappedSteps = stepsDef.map((def, idx) => {
-    const time = getTimelineTime(def.statuses);
-    const hasBeenRecorded = hasStatus(def.statuses);
-    if (hasBeenRecorded) {
-      lastCompletedIndex = idx;
-    }
     return {
-      title: def.title,
-      description: getTimelineDetail(def.statuses) || def.description,
-      time: time || "—",
-      completed: false,
-      active: false,
-      hasBeenRecorded,
+      title,
+      description,
+      time,
+      completed: true,
+      active: isLast,
     };
   });
-
-  mappedSteps.forEach((step, idx) => {
-    if (step.hasBeenRecorded) {
-      if (idx === lastCompletedIndex) {
-        step.active = true;
-      } else {
-        step.completed = true;
-      }
-    }
-  });
-
-  return mappedSteps;
 };
 
 /* ─── Expected-date helper (unchanged) ────────────────────────────────── */

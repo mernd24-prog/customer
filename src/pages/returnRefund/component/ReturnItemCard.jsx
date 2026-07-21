@@ -37,7 +37,7 @@ export default function ReturnItemCard({
           />
 
           <div className="min-w-0 space-y-1.5 text-small font-medium  text-[#454545]  sm:space-y-2  ">
-            <h2 className="line-clamp-1 text-h4 py-2 font-semibold  text-[#1B1D60]  max-w-2xl lg:font-bold ">
+            <h2 className="text-h4 py-2 font-semibold  text-[#1B1D60]  max-w-2xl lg:font-bold ">
               {title}
             </h2>
 
