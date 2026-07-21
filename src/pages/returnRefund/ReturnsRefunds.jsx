@@ -373,7 +373,7 @@ function ReturnsRefundsPage() {
             >
               {ret.items?.map((item, idx) => {
                 const title = item.productTitle || "Product";
-                const image = item.productImage || "/image/png/watch.png";
+                const image = item.productImage;
                 const orderId = ret.orderId;
                 const quantity = item.quantity || item.requestedQuantity || 1;
                 const seller = item.sellerName || "Sam Global Seller";
@@ -386,7 +386,7 @@ function ReturnsRefundsPage() {
                   month: "short",
                   year: "numeric",
                 });
-                const reason = ret.reason?.replace(/_/g, " ");
+                const reason = ret.description;
 
                 return (
                   <ReturnItemCard
@@ -401,7 +401,7 @@ function ReturnsRefundsPage() {
                     requestedOn={requestedOn}
                     returnId={ret.returnNumber || returnId}
                     reason={reason}
-                    refundAmount={refundAmount}
+                    refundAmount={price}
                     expectedDate={expectedDate}
                     onTrackRequest={() => toggleTracking(returnId)}
                     trackLabel={isExpanded ? "Hide Tracking" : "Track Order"}

@@ -76,7 +76,7 @@ export default function Breadcrumbs({
       </nav>
 
       {heading && (
-        <h1 className="pb-3 pt-2 text-h2 font-black text-[#3F4095]">
+        <h1 className="pb-6  pt-2 text-h2 font-black text-[#3F4095]">
           {heading}
         </h1>
       )}

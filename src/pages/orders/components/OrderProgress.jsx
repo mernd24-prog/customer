@@ -13,17 +13,23 @@ const normalizeProgressStatus = (status) => {
   if (status === "order_closed") {
     return "fulfilled";
   }
+  if (status === "requested") return "return_requested";
+  if (status === "approved") return "return_approved";
+  if (status === "rejected") return "return_rejected";
   return status;
 };
 
 const PROGRESS_MESSAGES = {
+  initiated: "Your order has been initiated.",
   confirmed: "Your order is confirmed and waiting for seller packing.",
   processing: "The seller is preparing your items.",
-  packed: "Your package is packed and ready for shipment details.",
-  ready_to_ship: "Your package is ready to be handed to the courier.",
-  shipped: "Your package has shipped. Use shipment tracking for courier updates.",
-  out_for_delivery: "Your order has active delivery progress. Packages may arrive separately.",
-  delivered: "Your order has been delivered. Item return windows are now active.",
+  packed: "Your order is packed and ready for shipment details.",
+  ready_to_ship: "Your order is ready to be handed to the courier.",
+  shipped: "Your order has shipped. Use shipment tracking for courier updates.",
+  out_for_delivery:
+    "Your order has active delivery progress. Orders may arrive separately.",
+  delivered:
+    "Your order has been delivered. Item return windows are now active.",
   fulfilled: "The return window has closed and this order is complete.",
 };
 
@@ -208,7 +214,12 @@ const getRefundStatus = ({ returns = [], cancellations = [], status }) => {
   return null;
 };
 
-function OrderProgress({ status, cancellations = [], returns = [] }) {
+function OrderProgress({
+  status,
+  cancellations = [],
+  returns = [],
+  timeline = [],
+}) {
   const isCancelled = status === "cancelled";
   const isFailed = status === "payment_failed";
   const isDeliveryFailed = status === "failed_delivery";
@@ -216,17 +227,51 @@ function OrderProgress({ status, cancellations = [], returns = [] }) {
   const refundStatus = getRefundStatus({ returns, cancellations, status });
   const cancelStatus =
     isCancelled || cancellations.length > 0 ? "cancelled" : null;
-  const progressSteps = cancelStatus
+
+  let progressSteps = cancelStatus
     ? ["pending_payment", "confirmed", "cancelled"]
     : refundStatus
       ? [...ORDER_STEPS, ...RETURN_STEPS, ...REFUND_STEPS]
       : returnStatus
         ? [...ORDER_STEPS, ...RETURN_STEPS]
-    : isFailed
+        : isFailed
           ? ["pending_payment", "payment_failed"]
           : isDeliveryFailed
-            ? [...ORDER_STEPS.slice(0, ORDER_STEPS.indexOf("out_for_delivery") + 1), "failed_delivery"]
-          : ORDER_STEPS;
+            ? [
+                ...ORDER_STEPS.slice(
+                  0,
+                  ORDER_STEPS.indexOf("out_for_delivery") + 1,
+                ),
+                "failed_delivery",
+              ]
+            : ORDER_STEPS;
+
+  const mergedTimeline = [...(timeline || [])];
+  if (returns && Array.isArray(returns)) {
+    returns.forEach((ret) => {
+      if (ret.timeline && Array.isArray(ret.timeline)) {
+        mergedTimeline.push(...ret.timeline);
+      }
+    });
+  }
+  mergedTimeline.sort(
+    (a, b) =>
+      new Date(a.created_at || a.at).getTime() -
+      new Date(b.created_at || b.at).getTime(),
+  );
+
+  if (mergedTimeline.length > 0) {
+    const timelineSteps = Array.from(
+      new Set(
+        mergedTimeline
+          .map((t) => normalizeProgressStatus(t.to_status || t.status))
+          .filter(Boolean),
+      ),
+    );
+    if (timelineSteps.length > 0) {
+      progressSteps = timelineSteps;
+    }
+  }
   const activeStatus = cancelStatus || refundStatus || returnStatus || status;
   const activeIndex = progressSteps.indexOf(
     normalizeProgressStatus(activeStatus),
@@ -266,24 +311,29 @@ function OrderProgress({ status, cancellations = [], returns = [] }) {
         />
       </div>
       <MobileStepBar steps={progressSteps} activeStatus={activeStatus} />
-      {!isCancelled && !isFailed && !isDeliveryFailed && PROGRESS_MESSAGES[normalizeProgressStatus(activeStatus)] && (
-        <div className="mx-3 mb-3 flex items-center gap-3 rounded-lg bg-[#F8F9FA] px-4 py-3">
-          <svg className="h-5 w-5 shrink-0 text-[#83858C]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <p className="text-sm font-medium text-[#333333]">
-            {PROGRESS_MESSAGES[normalizeProgressStatus(activeStatus)]}
-          </p>
-        </div>
-      )}
-      {(isCancelled || isFailed) && (
-        <div className="rounded-[8px]   md:border md:border-border bg-white px-4 py-3 text-sm">
-          <p className="font-semibold  capitalize text-ink">
-            {currentStep?.label || "Status update"}
-          </p>
-          <p className="mt-1 text-xs text-muted">{currentStep?.note}</p>
-        </div>
-      )}
+      {!isCancelled &&
+        !isFailed &&
+        !isDeliveryFailed &&
+        PROGRESS_MESSAGES[normalizeProgressStatus(activeStatus)] && (
+          <div className="mx-3 mb-3 flex items-center gap-3 rounded-lg bg-[#F8F9FA] px-4 py-3">
+            <svg
+              className="h-5 w-5 shrink-0 text-[#83858C]"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <p className="text-sm font-medium text-[#333333]">
+              {PROGRESS_MESSAGES[normalizeProgressStatus(activeStatus)]}
+            </p>
+          </div>
+        )}
     </div>
   );
 }
