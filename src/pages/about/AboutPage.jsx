@@ -26,12 +26,18 @@ export default function AboutPage() {
       <AboutBanner
         image={bannerSection?.image?.url ?? "/image/png/aboutBanner.png"}
       />
+      <div id="who-we-are">
+        <OurStory data={aboutSamGlobalSection} />
+      </div>
+      <div id="our-values">
+        <ValuesSection data={valuesSection} />
+      </div>
 
-      <OurStory data={aboutSamGlobalSection} />
-      <ValuesSection data={valuesSection} />
       <BrandCarousel data={brandSection} />
       <InfoSection data={missionSection} />
-      <WhyChooseSection data={chooseSection} />
+      <div id="why-choose-us">
+        <WhyChooseSection data={chooseSection} />
+      </div>
     </>
   );
 }

@@ -73,11 +73,17 @@ const getDeliveryStatus = (order) =>
 const getProgressStatus = (order) => {
   const status = getOrderStatus(order);
   const deliveryStatus = getDeliveryStatus(order);
-  if (deliveryStatus === "delivered" && !["fulfilled", "cancelled"].includes(status)) {
+  if (
+    deliveryStatus === "delivered" &&
+    !["fulfilled", "cancelled"].includes(status)
+  ) {
     return "delivered";
   }
   if (deliveryStatus === "partially_delivered") return "out_for_delivery";
-  if (deliveryStatus === "out_for_delivery" && ["confirmed", "packed", "shipped"].includes(status)) {
+  if (
+    deliveryStatus === "out_for_delivery" &&
+    ["confirmed", "packed", "shipped"].includes(status)
+  ) {
     return "out_for_delivery";
   }
   return status;
@@ -480,7 +486,11 @@ function OrderDetail({ orderId, track }) {
         ? order.returnRequests
         : [];
   const fetchedReturns = Array.isArray(returnsState.list)
-    ? returnsState.list.filter((returnRequest) => String(returnRequest.orderId || returnRequest.order_id || "") === String(orderId))
+    ? returnsState.list.filter(
+        (returnRequest) =>
+          String(returnRequest.orderId || returnRequest.order_id || "") ===
+          String(orderId),
+      )
     : [];
   const returns = fetchedReturns.length ? fetchedReturns : embeddedReturns;
   const shipments = Array.isArray(order?.relations?.shipments)
@@ -509,24 +519,61 @@ function OrderDetail({ orderId, track }) {
   const status = getOrderStatus(order);
   const progressStatus = getProgressStatus(order);
   const returnableItems = items.filter((item) => {
-    const snapshot = item.return_policy_snapshot || item.returnPolicySnapshot || item.product_snapshot?.returnPolicy || {};
-    return (item.returnable ?? snapshot.returnable ?? snapshot.eligible ?? true) === true;
+    const snapshot =
+      item.return_policy_snapshot ||
+      item.returnPolicySnapshot ||
+      item.product_snapshot?.returnPolicy ||
+      {};
+    return (
+      (item.returnable ?? snapshot.returnable ?? snapshot.eligible ?? true) ===
+      true
+    );
   });
   const itemReturnDeadlines = returnableItems
-    .map((item) => item.return_eligible_until || item.returnEligibleUntil || item.return_policy_snapshot?.eligibleUntil || item.returnPolicySnapshot?.eligibleUntil)
+    .map(
+      (item) =>
+        item.return_eligible_until ||
+        item.returnEligibleUntil ||
+        item.return_policy_snapshot?.eligibleUntil ||
+        item.returnPolicySnapshot?.eligibleUntil,
+    )
     .filter(Boolean);
-  const returnEligibleUntil = itemReturnDeadlines.length
-    ? itemReturnDeadlines.reduce((latest, value) => new Date(value).getTime() > new Date(latest).getTime() ? value : latest)
-    : null;
+
   const returnWindowOpen = returnableItems.some((item) => {
-    const deadline = item.return_eligible_until || item.returnEligibleUntil || item.return_policy_snapshot?.eligibleUntil || item.returnPolicySnapshot?.eligibleUntil;
+    const deadline =
+      item.return_eligible_until ||
+      item.returnEligibleUntil ||
+      item.return_policy_snapshot?.eligibleUntil ||
+      item.returnPolicySnapshot?.eligibleUntil;
     return !deadline || new Date(deadline).getTime() >= Date.now();
   });
-  const canRequestReturn = [
-    "delivered",
-    "fulfilled",
-    "partially_returned",
-  ].includes(status) && returnWindowOpen && returnableItems.length > 0;
+
+  const activeDeadlines = itemReturnDeadlines.filter(
+    (date) => new Date(date).getTime() >= Date.now(),
+  );
+  const expiredDeadlines = itemReturnDeadlines.filter(
+    (date) => new Date(date).getTime() < Date.now(),
+  );
+
+  const returnEligibleUntil = returnWindowOpen
+    ? activeDeadlines.length
+      ? activeDeadlines.reduce((earliest, value) =>
+          new Date(value).getTime() < new Date(earliest).getTime()
+            ? value
+            : earliest,
+        )
+      : null
+    : expiredDeadlines.length
+      ? expiredDeadlines.reduce((latest, value) =>
+          new Date(value).getTime() > new Date(latest).getTime()
+            ? value
+            : latest,
+        )
+      : null;
+  const canRequestReturn =
+    ["delivered", "fulfilled", "partially_returned"].includes(status) &&
+    returnWindowOpen &&
+    returnableItems.length > 0;
   const invoiceDownloadAvailable = status === "fulfilled";
 
   const breadcrumbItems = [
@@ -587,7 +634,6 @@ function OrderDetail({ orderId, track }) {
         verifyPayment,
       });
       navigate(`/payment/success?orderId=${orderId}`);
-    } catch {
     } finally {
       setRetrying(false);
       dispatch(fetchOrderById({ orderId }));
@@ -684,39 +730,39 @@ function OrderDetail({ orderId, track }) {
                   )}
                   {invoiceDownloadAvailable &&
                     (invoices?.orderInvoice || getInvoiceUrl(order)) && (
-                    <Button
-                      variant="secondary"
-                      loading={
-                        invoices?.orderInvoice &&
-                        downloadingId ===
-                          endpoints.tax.invoiceDownload(
-                            invoices.orderInvoice.id ||
-                              invoices.orderInvoice._id,
-                          )
-                      }
-                      onClick={() =>
-                        invoices?.orderInvoice
-                          ? handleDownload(
-                              endpoints.tax.invoiceDownload(
-                                invoices.orderInvoice.id ||
-                                  invoices.orderInvoice._id,
-                              ),
-                              `invoice-${getOrderNumber(order)}.pdf`,
+                      <Button
+                        variant="secondary"
+                        loading={
+                          invoices?.orderInvoice &&
+                          downloadingId ===
+                            endpoints.tax.invoiceDownload(
+                              invoices.orderInvoice.id ||
+                                invoices.orderInvoice._id,
                             )
-                          : window.open(
-                              getInvoiceUrl(order),
-                              "_blank",
-                              "noopener,noreferrer",
-                            )
-                      }
-                      className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[24px] py-[15px] text-[#3E4093] hover:border-[#3E4093] hover:bg-white"
-                    >
-                      <Download size={18} />
-                      <span className="text-center text-[14px] sm:text-[16px] font-semibold leading-[20px] sm:leading-[24px] text-nowrap text-[#3E4093]">
-                        Invoice
-                      </span>
-                    </Button>
-                  )}
+                        }
+                        onClick={() =>
+                          invoices?.orderInvoice
+                            ? handleDownload(
+                                endpoints.tax.invoiceDownload(
+                                  invoices.orderInvoice.id ||
+                                    invoices.orderInvoice._id,
+                                ),
+                                `invoice-${getOrderNumber(order)}.pdf`,
+                              )
+                            : window.open(
+                                getInvoiceUrl(order),
+                                "_blank",
+                                "noopener,noreferrer",
+                              )
+                        }
+                        className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[24px] py-[15px] text-[#3E4093] hover:border-[#3E4093] hover:bg-white"
+                      >
+                        <Download size={18} />
+                        <span className="text-center text-[14px] sm:text-[16px] font-semibold leading-[20px] sm:leading-[24px] text-nowrap text-[#3E4093]">
+                          Invoice
+                        </span>
+                      </Button>
+                    )}
                 </div>
               </div>
               <OrderDetailInfoGrid
@@ -736,21 +782,14 @@ function OrderDetail({ orderId, track }) {
                     value: formatMoney(customerAmount, currency),
                     tone: "yellow",
                   },
-                  ...(returnEligibleUntil ? [{
-                    icon: <RotateCcw size={20} />,
-                    label: returnWindowOpen ? "Latest item return deadline" : "All return windows closed",
-                    value: formatOrderDate(returnEligibleUntil),
-                    tone: returnWindowOpen ? "blue" : "yellow",
-                  }] : []),
                 ]}
               />
 
-              {!track && ["delivered", "fulfilled", "partially_returned"].includes(status) && !returnWindowOpen && (
-                <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">All eligible item return windows closed by {formatOrderDate(returnEligibleUntil)}.</p>
-              )}
-
               {getDeliveryStatus(order) === "partially_delivered" && (
-                <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">Part of your order has been delivered. Remaining seller packages are still being prepared or shipped.</p>
+                <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+                  Part of your order has been delivered. Remaining seller orders
+                  are still being prepared or shipped.
+                </p>
               )}
 
               {hasKnownStatus(order) && (
@@ -764,6 +803,7 @@ function OrderDetail({ orderId, track }) {
                     status={progressStatus}
                     cancellations={cancellations}
                     returns={returns}
+                    timeline={order?.timeline || []}
                   />
                 </OrderDetailSectionCard>
               )}
@@ -789,13 +829,15 @@ function OrderDetail({ orderId, track }) {
                 mainContent={
                   <OrderItemsSection
                     items={items}
-                  orderId={orderId}
-                  orderStatus={status}
-                  shipments={shipments}
-                  sellerFulfillmentGroups={order?.relations?.sellerFulfillmentGroups || []}
-                  returns={returns}
-                  currency={currency}
-                  getItemImage={getItemImage}
+                    orderId={orderId}
+                    orderStatus={status}
+                    shipments={shipments}
+                    sellerFulfillmentGroups={
+                      order?.relations?.sellerFulfillmentGroups || []
+                    }
+                    returns={returns}
+                    currency={currency}
+                    getItemImage={getItemImage}
                     getProductTitle={getProductTitle}
                     getItemProductPath={getItemProductPath}
                     getOrderItemColor={getOrderItemColor}
@@ -1284,7 +1326,9 @@ function OrderList() {
                   loading={state.loading && !allOrders.length}
                   error={state.error}
                   empty={!orders.length && !state.loading}
-                  emptyTitle={activeFilter ? "No orders found" : "No orders yet"}
+                  emptyTitle={
+                    activeFilter ? "No orders found" : "No orders yet"
+                  }
                   emptyText={
                     activeFilter || query
                       ? "Try a different filter."

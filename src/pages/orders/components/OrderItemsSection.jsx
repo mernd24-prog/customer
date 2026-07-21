@@ -352,7 +352,8 @@ const getOrderItemProductPath = (item) => {
   return productId ? `/products/${productId}` : "";
 };
 
-const label = (value = "") => String(value || "Not available").replace(/_/g, " ");
+const label = (value = "") =>
+  String(value || "Not available").replace(/_/g, " ");
 
 const formatDate = (value) => {
   if (!value) return "";
@@ -370,17 +371,41 @@ const sellerGroupKey = (sellerId, organizationId = null) =>
 
 const getItemSellerGroupKey = (item = {}) =>
   sellerGroupKey(
-    item.seller_id || item.sellerId || item.seller?.id || item.seller?._id || "platform",
-    item.organization_id || item.organizationId || item.organization?.id || item.organization?._id || null,
+    item.seller_id ||
+      item.sellerId ||
+      item.seller?.id ||
+      item.seller?._id ||
+      "platform",
+    item.organization_id ||
+      item.organizationId ||
+      item.organization?.id ||
+      item.organization?._id ||
+      null,
   );
 
 const getItemReturnPolicy = (item = {}) => {
   const snapshot = item.product_snapshot || item.productSnapshot || {};
-  const policy = item.return_policy_snapshot || item.returnPolicySnapshot || snapshot.returnPolicy || snapshot.return_policy || snapshot.commercialPolicy?.returnPolicy || {};
+  const policy =
+    item.return_policy_snapshot ||
+    item.returnPolicySnapshot ||
+    snapshot.returnPolicy ||
+    snapshot.return_policy ||
+    snapshot.commercialPolicy?.returnPolicy ||
+    {};
   return {
     returnable: item.returnable ?? policy.returnable ?? policy.eligible ?? true,
-    days: Number(item.return_window_days ?? policy.returnWindowDays ?? policy.windowDays ?? policy.days ?? 0),
-    eligibleUntil: item.return_eligible_until || item.returnEligibleUntil || policy.eligibleUntil || null,
+    days: Number(
+      item.return_window_days ??
+        policy.returnWindowDays ??
+        policy.windowDays ??
+        policy.days ??
+        0,
+    ),
+    eligibleUntil:
+      item.return_eligible_until ||
+      item.returnEligibleUntil ||
+      policy.eligibleUntil ||
+      null,
   };
 };
 
@@ -561,12 +586,17 @@ function OrderItemsSection({
   const packageGroups = useMemo(() => {
     const shipmentByGroup = new Map();
     shipments
-      .filter((shipment) => String(shipment.direction || "forward") !== "reverse")
+      .filter(
+        (shipment) => String(shipment.direction || "forward") !== "reverse",
+      )
       .forEach((shipment) => {
         const metadata = shipment.metadata || {};
         const key = sellerGroupKey(
           shipment.seller_id || shipment.sellerId,
-          shipment.organization_id || shipment.organizationId || metadata.organizationId || null,
+          shipment.organization_id ||
+            shipment.organizationId ||
+            metadata.organizationId ||
+            null,
         );
         if (!shipmentByGroup.has(key)) shipmentByGroup.set(key, []);
         shipmentByGroup.get(key).push(shipment);
@@ -574,13 +604,20 @@ function OrderItemsSection({
 
     const fulfillmentByGroup = new Map();
     sellerFulfillmentGroups.forEach((group) => {
-      fulfillmentByGroup.set(sellerGroupKey(group.sellerId || group.seller_id, group.organizationId || group.organization_id), group);
+      fulfillmentByGroup.set(
+        sellerGroupKey(
+          group.sellerId || group.seller_id,
+          group.organizationId || group.organization_id,
+        ),
+        group,
+      );
     });
 
     const returnByItem = new Map();
     returns.forEach((returnRequest) => {
       (returnRequest.items || []).forEach((returnItem) => {
-        if (returnItem.orderItemId) returnByItem.set(String(returnItem.orderItemId), returnRequest);
+        if (returnItem.orderItemId)
+          returnByItem.set(String(returnItem.orderItemId), returnRequest);
       });
     });
 
@@ -592,9 +629,21 @@ function OrderItemsSection({
         const groupShipments = shipmentByGroup.get(key) || [];
         grouped.set(key, {
           key,
-          sellerName: fulfillment.sellerName || item.sellerName || item.seller?.displayName || item.seller?.businessName || "Marketplace seller",
-          status: fulfillment.deliveryStatus || fulfillment.shipmentStatus || groupShipments[0]?.status || "preparing",
-          expectedDeliveryAt: fulfillment.expectedDeliveryAt || groupShipments[0]?.expected_delivery_at || groupShipments[0]?.expectedDeliveryAt,
+          sellerName:
+            fulfillment.sellerName ||
+            item.seller?.businessName ||
+            item.sellerName ||
+            item.seller?.displayName ||
+            "Marketplace seller",
+          status:
+            fulfillment.deliveryStatus ||
+            fulfillment.shipmentStatus ||
+            groupShipments[0]?.status ||
+            "preparing",
+          expectedDeliveryAt:
+            fulfillment.expectedDeliveryAt ||
+            groupShipments[0]?.expected_delivery_at ||
+            groupShipments[0]?.expectedDeliveryAt,
           items: [],
           returnByItem,
         });
@@ -603,6 +652,8 @@ function OrderItemsSection({
     });
     return Array.from(grouped.values());
   }, [items, returns, sellerFulfillmentGroups, shipments]);
+
+  console.log("packageGroups", packageGroups);
 
   const handleSubmitted = (review) => {
     if (!reviewTarget) return;
@@ -620,29 +671,48 @@ function OrderItemsSection({
         bodyClassName="grid gap-8 p-4 sm:p-6 lg:p-7"
       >
         {packageGroups.map((group, packageIndex) => (
-          <div key={group.key} className="grid gap-5 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] p-4">
+          <div
+            key={group.key}
+            className="grid gap-5 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] p-4"
+          >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="font-bold text-[#1B1D60]">Package {packageIndex + 1}</h3>
-                <p className="mt-0.5 text-sm text-[#6F7480]">{group.sellerName}</p>
+                <h3 className="font-bold text-[#1B1D60]">
+                  Order {packageIndex + 1}
+                </h3>
+                <p className="mt-0.5 text-sm  text-[#6F7480]">
+                  {group.sellerName}
+                </p>
               </div>
               <div className="text-right text-sm">
-                <span className="rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-semibold capitalize text-white">{label(group.status)}</span>
-                {group.expectedDeliveryAt && <p className="mt-1 text-xs text-[#6F7480]">Expected {formatDate(group.expectedDeliveryAt)}</p>}
+                <span className="rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-semibold capitalize text-white">
+                  {label(group.status)}
+                </span>
+                {group.expectedDeliveryAt && (
+                  <p className="mt-1  text-xs text-[#6F7480]">
+                    Expected {formatDate(group.expectedDeliveryAt)}
+                  </p>
+                )}
               </div>
             </div>
             {group.items.map((item, index) => {
               const policy = getItemReturnPolicy(item);
-              const returnRequest = group.returnByItem.get(String(item.id || item._id || item.orderItemId || ""));
+              const returnRequest = group.returnByItem.get(
+                String(item.id || item._id || item.orderItemId || ""),
+              );
               return (
-                <div key={item.id || item._id || index} className="grid gap-3 border-t border-[#E7D9B8] pt-5 first:border-t-0 first:pt-0">
-                  <OrderItemCard
-                    item={item}
-                    {...itemProps}
-                  />
+                <div
+                  key={item.id || item._id || index}
+                  className="grid  gap-3 border-t border-[#E7D9B8] pt-5 first:border-t-0 first:pt-0"
+                >
+                  <OrderItemCard item={item} {...itemProps} />
                   <div className="flex flex-wrap gap-2 text-xs font-semibold">
-                    <span className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
-                      {policy.returnable ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}` : "Non-returnable"}
+                    <span
+                      className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}
+                    >
+                      {policy.returnable
+                        ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}`
+                        : "Non-returnable"}
                     </span>
                     {policy.returnable && policy.eligibleUntil && (
                       <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-700">

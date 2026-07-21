@@ -33,7 +33,7 @@ export default function ReturnItemCard({
           <ImageWithFallback
             src={image}
             alt={title}
-            className="mx-auto h-[110px] w-[110px] shrink-0 bg-white min-[375px]:h-[120px] min-[375px]:w-[120px] sm:mx-0 sm:h-[125px] sm:w-[125px] md:h-[135px] md:w-[135px] lg:h-auto lg:w-auto"
+            className="mx-auto  h-[110px] w-[110px] shrink-0 bg-white min-[375px]:h-[120px] min-[375px]:w-[120px] sm:mx-0 sm:h-[125px] sm:w-[125px] md:h-[135px] md:w-[135px] lg:h-auto lg:w-auto"
           />
 
           <div className="min-w-0 space-y-1.5 text-small font-medium  text-[#454545]  sm:space-y-2  ">
