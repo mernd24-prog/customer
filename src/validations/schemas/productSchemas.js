@@ -43,6 +43,7 @@ export const productVariantSchema = z.object({
 
 export const returnSchema = z.object({
   productId: requiredString("Product"),
+  resolution: z.enum(["refund", "replacement"]),
   quantity: quantityField("Quantity", { min: 1, max: 99 }),
   reason: z.enum([
     "defective",

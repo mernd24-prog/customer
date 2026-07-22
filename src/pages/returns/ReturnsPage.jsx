@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -111,12 +111,14 @@ const getItemVariantSku = (item) => item?.variant_sku || item?.variantSku || "";
 const getItemId = (item) => item?.id || item?._id || item?.orderItemId || "";
 const getItemReturnPolicy = (item = {}) => {
   const snapshot = item.product_snapshot || item.productSnapshot || {};
-  const policy = snapshot.returnPolicy || snapshot.return_policy || snapshot.commercialPolicy?.returnPolicy || {};
+  const storedPolicy = item.return_policy_snapshot || item.returnPolicySnapshot || {};
+  const policy = snapshot.returnPolicy || snapshot.return_policy || snapshot.commercialPolicy?.returnPolicy || storedPolicy;
   return {
     returnable: policy.returnable ?? policy.eligible ?? true,
     days: Number(policy.returnWindowDays || policy.windowDays || policy.days || 0),
     requiresImages: Boolean(policy.requiresImages || policy.requires_images),
     inspectionRequired: policy.inspectionRequired ?? policy.requiresQc ?? true,
+    eligibleUntil: item.return_eligible_until || item.returnEligibleUntil || policy.eligibleUntil || null,
   };
 };
 const getReturnForItem = (returns = [], item = {}) => {
@@ -125,14 +127,32 @@ const getReturnForItem = (returns = [], item = {}) => {
     (returnRequest.items || []).some((returnItem) => String(returnItem.orderItemId || "") === itemId),
   );
 };
+const isDeliveredStatus = (status) =>
+  ["delivered", "fulfilled", "completed"].includes(String(status || "").toLowerCase());
+const isItemDelivered = (order = {}, item = {}) => {
+  if (item.delivered_at || item.deliveredAt || isDeliveredStatus(item.delivery_status || item.deliveryStatus)) return true;
+  const itemId = String(getItemId(item));
+  const shipments = order?.relations?.shipments || [];
+  const shipment = shipments.find((entry) => {
+    const ids = entry.orderItemIds || entry.order_item_ids || [];
+    return ids.map(String).includes(itemId);
+  });
+  if (shipment) return isDeliveredStatus(shipment.status);
+  const groups = order?.relations?.sellerFulfillmentGroups || [];
+  const group = groups.find((entry) => (entry.orderItemIds || entry.itemIds || []).map(String).includes(itemId));
+  if (group) return isDeliveredStatus(group.deliveryStatus || group.shipmentStatus);
+  return isDeliveredStatus(order?.status);
+};
 
 function ReturnRequestPage({ orderId }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const run = useToastThunk();
   const { loading, list: returnList = [] } = useSelector((s) => s.returns);
   const { current: order, loading: orderLoading } = useSelector((s) => s.order);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [deepLinkApplied, setDeepLinkApplied] = useState(false);
 
   useEffect(() => {
     if (orderId) {
@@ -162,7 +182,7 @@ function ReturnRequestPage({ orderId }) {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(returnSchema),
-    defaultValues: { productId: "", reason: "defective", quantity: 1 },
+    defaultValues: { productId: "", resolution: "refund", reason: "defective", quantity: 1 },
   });
 
   const watchedQty = watch("quantity");
@@ -174,7 +194,8 @@ function ReturnRequestPage({ orderId }) {
   const handleItemSelect = (item) => {
     const policy = getItemReturnPolicy(item);
     const existingReturn = getReturnForItem(existingReturns, item);
-    if (!policy.returnable || existingReturn) return;
+    const expired = policy.eligibleUntil && new Date(policy.eligibleUntil).getTime() < Date.now();
+    if (!isItemDelivered(order, item) || !policy.returnable || expired || existingReturn) return;
     const pid = getItemProductId(item);
     setSelectedProductId(
       getItemId(item) || `${pid}:${getItemVariantSku(item)}`,
@@ -182,6 +203,16 @@ function ReturnRequestPage({ orderId }) {
     setValue("productId", pid, { shouldValidate: true });
     setValue("quantity", 1, { shouldValidate: true });
   };
+
+  useEffect(() => {
+    if (deepLinkApplied || !orderItems.length) return;
+    const requestedItemId = searchParams.get("orderItemId");
+    if (requestedItemId) {
+      const requestedItem = orderItems.find((item) => String(getItemId(item)) === String(requestedItemId));
+      if (requestedItem) handleItemSelect(requestedItem);
+    }
+    setDeepLinkApplied(true);
+  }, [deepLinkApplied, orderItems, searchParams]);
 
   const submit = async (values) => {
     const item =
@@ -203,7 +234,7 @@ function ReturnRequestPage({ orderId }) {
             },
           ],
           reason: values.reason,
-          resolution: "refund",
+          resolution: values.resolution,
           description: values.description,
         }),
         "Return request submitted",
@@ -266,7 +297,9 @@ function ReturnRequestPage({ orderId }) {
                     const isSelected = selectedProductId === lineKey;
                     const policy = getItemReturnPolicy(item);
                     const existingReturn = getReturnForItem(existingReturns, item);
-                    const disabled = !policy.returnable || Boolean(existingReturn);
+                    const delivered = isItemDelivered(order, item);
+                    const expired = policy.eligibleUntil && new Date(policy.eligibleUntil).getTime() < Date.now();
+                    const disabled = !delivered || !policy.returnable || Boolean(expired) || Boolean(existingReturn);
                     return (
                       <button
                         key={lineKey || title}
@@ -306,9 +339,13 @@ function ReturnRequestPage({ orderId }) {
                               ₹{Number(price).toLocaleString("en-IN")}
                             </p>
                           )}
-                          <p className={`mt-1 text-xs font-semibold ${policy.returnable && !existingReturn ? "text-emerald-700" : "text-red-700"}`}>
+                          <p className={`mt-1 text-xs font-semibold ${!disabled ? "text-emerald-700" : "text-red-700"}`}>
                             {existingReturn
                               ? `Return already ${String(existingReturn.status || "requested").replace(/_/g, " ")}`
+                              : !delivered
+                                ? "Return available after this item is delivered"
+                              : expired
+                                ? "Return window has closed"
                               : policy.returnable
                                 ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}${policy.inspectionRequired ? " · QC required" : ""}`
                                 : "This item is not returnable"}
@@ -333,6 +370,16 @@ function ReturnRequestPage({ orderId }) {
 
               {selectedItem && (
                 <>
+                  <label className="grid gap-1.5 text-sm font-medium text-ink">
+                    <span>Preferred resolution</span>
+                    <select
+                      {...register("resolution")}
+                      className="min-h-11 rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none"
+                    >
+                      <option value="refund">Return for refund</option>
+                      <option value="replacement">Replace this item</option>
+                    </select>
+                  </label>
                   <div className="grid gap-1.5 ">
                     <label
                       htmlFor="quantity"

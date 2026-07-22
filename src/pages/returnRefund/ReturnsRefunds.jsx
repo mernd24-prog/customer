@@ -15,6 +15,7 @@ const STATUS_FILTERS = [
   { value: "approved", label: "Approved" },
   { value: "rejected", label: "Rejected" },
   { value: "received", label: "Received" },
+  { value: "issue", label: "Action Required" },
   { value: "refunded", label: "Refunded" },
 ];
 
@@ -23,20 +24,21 @@ const statusToBucket = (status) => {
   if (!status) return "all";
   if (status === "requested") return "requested";
   if (
-    ["approved", "reverse_pickup_scheduled", "in_reverse_transit"].includes(
+    ["approved", "reverse_pickup_scheduled", "manual_ship_back", "shipped_back", "in_reverse_transit"].includes(
       status,
     )
   )
     return "approved";
   if (status === "rejected") return "rejected";
-  if (["received", "qc_passed", "qc_completed"].includes(status))
+  if (["received", "qc_passed", "qc_completed", "replacement_requested", "replacement_pending", "replacement_created", "replacement_shipped", "replacement_delivered"].includes(status))
     return "received";
+  if (["pickup_failed", "qc_failed", "refund_failed"].includes(status))
+    return "issue";
   if (
     [
       "refunded",
       "partially_refunded",
       "refund_pending",
-      "refund_failed",
       "replaced",
       "closed",
     ].includes(status)
@@ -45,64 +47,17 @@ const statusToBucket = (status) => {
   return "all";
 };
 
+/* ─── Tracking-step builder (unchanged) ───────────────────────────────── */
 const buildTrackingSteps = (ret) => {
-  if (!ret || !ret.timeline || ret.timeline.length === 0) return [];
+  if (!ret) return [];
+  const timeline = ret.timeline || [];
+  const currentStatus = ret.status;
+  const resolution = ret.resolution || "refund";
 
-  const sortedTimeline = [...ret.timeline].sort(
-    (a, b) => new Date(a.at).getTime() - new Date(b.at).getTime()
-  );
-
-  const STATUS_LABELS = {
-    requested: "Return Requested",
-    approved: "Return Approved",
-    rejected: "Return Rejected",
-    reverse_pickup_scheduled: "Pickup Scheduled",
-    in_reverse_transit: "Product Picked Up",
-    received: "Quality Check",
-    qc_passed: "Quality Check Passed",
-    qc_completed: "Quality Check Completed",
-    qc_failed: "Quality Check Failed",
-    replacement_pending: "Replacement Initiated",
-    replaced: "Replacement Completed",
-    refund_pending: "Refund Initiated",
-    refund_failed: "Refund Failed",
-    refunded: "Refund Completed",
-    partially_refunded: "Refund Completed (Partial)",
-    closed: "Return Closed",
-  };
-
-  const DEFAULT_DESCRIPTIONS = {
-    requested: "Your return request has been submitted successfully.",
-    approved: "Your return request has been approved.",
-    rejected: "Your return request has been rejected.",
-    reverse_pickup_scheduled: "Your return pickup has been scheduled.",
-    in_reverse_transit: "Your item has been picked up for return.",
-    received: "We are checking the returned item at our facility.",
-    qc_passed: "Quality check passed.",
-    qc_failed: "Quality check failed.",
-    replacement_pending: "Replacement item will be shipped soon.",
-    replaced: "The replacement item has been delivered.",
-    refund_pending: "Refund will be initiated once the item is approved.",
-    refund_failed: "Refund attempt failed. We will retry.",
-    refunded: "The refund amount will be credited to your account.",
-    closed: "The return request has been closed.",
-  };
-
-  return sortedTimeline.map((event, index) => {
-    const isLast = index === sortedTimeline.length - 1;
-    const title =
-      STATUS_LABELS[event.status] ||
-      event.status
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, (l) => l.toUpperCase());
-
-    const description =
-      event.note ||
-      event.reason ||
-      DEFAULT_DESCRIPTIONS[event.status] ||
-      "Status updated.";
-
-    const time = new Date(event.at).toLocaleString("en-IN", {
+  const getTimelineTime = (statuses) => {
+    const entry = timeline.find((t) => statuses.includes(t.status));
+    if (!entry) return null;
+    return new Date(entry.at).toLocaleString("en-IN", {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -110,15 +65,153 @@ const buildTrackingSteps = (ret) => {
       minute: "2-digit",
       hour12: true,
     });
+  };
 
+  const hasStatus = (statuses) => {
+    return (
+      statuses.includes(currentStatus) ||
+      timeline.some((t) => statuses.includes(t.status))
+    );
+  };
+
+  const getTimelineDetail = (statuses) => {
+    const entry = timeline.find((t) => statuses.includes(t.status));
+    if (!entry) return "";
+    return entry.note || entry.reason || "";
+  };
+
+  const stepsDef = [
+    {
+      title: "Return Requested",
+      description: "Your return request has been submitted successfully.",
+      statuses: ["requested"],
+    },
+    {
+      title: "Return Approved",
+      description: "Your return request has been approved.",
+      statuses: ["approved"],
+    },
+    {
+      title: "Pickup Scheduled",
+      description: "Your return pickup has been scheduled.",
+      statuses: ["reverse_pickup_scheduled", "manual_ship_back"],
+    },
+    {
+      title: currentStatus === "pickup_failed" ? "Pickup Failed" : "Product Shipped Back",
+      description: currentStatus === "pickup_failed"
+        ? "The pickup could not be completed. A new pickup will be arranged."
+        : "Your item is on its way back to the seller.",
+      statuses: ["pickup_failed", "shipped_back", "in_reverse_transit"],
+    },
+    {
+      title: currentStatus === "qc_failed" ? "Quality Check Failed" : "Quality Check",
+      description: currentStatus === "qc_failed"
+        ? "The returned item did not pass quality inspection."
+        : "We are checking the returned item at our facility.",
+      statuses: ["received", "qc_passed", "qc_completed", "qc_failed"],
+    },
+  ];
+
+  if (resolution === "replacement") {
+    const replacementSteps = [
+      {
+        title: "Replacement Requested",
+        description: ret.replacement?.metadata?.doorstepExchange
+          ? "Your doorstep exchange has been approved."
+          : "Your replacement is awaiting approval.",
+        statuses: ["replacement_requested", "replacement_pending"],
+      },
+      {
+        title: "Replacement Order Created",
+        description: ret.replacement?.metadata?.doorstepExchange
+          ? "Your ₹0 replacement order is reserved for the doorstep exchange."
+          : "A linked replacement order has been created at no additional charge.",
+        statuses: ["replacement_created"],
+      },
+      {
+        title: "Replacement Shipped",
+        description: "Your replacement product is on its way.",
+        statuses: ["replacement_shipped"],
+      },
+      {
+        title: "Replacement Delivered",
+        description: "Your replacement product has been delivered.",
+        statuses: ["replacement_delivered"],
+      },
+      {
+        title: "Replacement Completed",
+        description: "The replacement item has been delivered.",
+        statuses: ["replaced"],
+      },
+    ];
+    if (ret.replacement?.metadata?.doorstepExchange) {
+      stepsDef.splice(3, 0, ...replacementSteps);
+    } else {
+      stepsDef.push(...replacementSteps);
+    }
+  } else {
+    stepsDef.push(
+      {
+        title: "Refund Initiated",
+        description:
+          currentStatus === "refund_failed"
+            ? "Refund attempt failed. We will retry."
+            : "Refund will be initiated once the item is approved.",
+        statuses: ["refund_pending", "refund_failed"],
+      },
+      {
+        title: "Refund Completed",
+        description: "The refund amount will be credited to your account.",
+        statuses: ["refunded", "partially_refunded"],
+      },
+    );
+  }
+
+  if (currentStatus === "rejected") {
+    stepsDef.push({
+      title: "Return Rejected",
+      description: "Your return request has been rejected.",
+      statuses: ["rejected"],
+    });
+  } else if (
+    currentStatus === "closed" &&
+    !hasStatus(["refunded", "replaced"])
+  ) {
+    stepsDef.push({
+      title: "Return Closed",
+      description: "The return request has been closed.",
+      statuses: ["closed"],
+    });
+  }
+
+  let lastCompletedIndex = -1;
+  const mappedSteps = stepsDef.map((def, idx) => {
+    const time = getTimelineTime(def.statuses);
+    const hasBeenRecorded = hasStatus(def.statuses);
+    if (hasBeenRecorded) {
+      lastCompletedIndex = idx;
+    }
     return {
-      title,
-      description,
-      time,
-      completed: true,
-      active: isLast,
+      title: def.title,
+      description: getTimelineDetail(def.statuses) || def.description,
+      time: time || "—",
+      completed: false,
+      active: false,
+      hasBeenRecorded,
     };
   });
+
+  mappedSteps.forEach((step, idx) => {
+    if (step.hasBeenRecorded) {
+      if (idx === lastCompletedIndex) {
+        step.active = true;
+      } else {
+        step.completed = true;
+      }
+    }
+  });
+
+  return mappedSteps;
 };
 
 /* ─── Expected-date helper (unchanged) ────────────────────────────────── */
@@ -220,11 +313,21 @@ function ReturnsRefundsPage() {
   const [expandedReturnId, setExpandedReturnId] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchMyReturns())
+    const refreshReturns = () => dispatch(fetchMyReturns())
       .unwrap()
       .catch((error) => {
         console.log("Returns API error:", error);
       });
+
+    refreshReturns();
+    const intervalId = window.setInterval(refreshReturns, 30000);
+    const refreshOnFocus = () => refreshReturns();
+    window.addEventListener("focus", refreshOnFocus);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", refreshOnFocus);
+    };
   }, [dispatch]);
 
   /* filtered list */
@@ -270,7 +373,7 @@ function ReturnsRefundsPage() {
             >
               {ret.items?.map((item, idx) => {
                 const title = item.productTitle || "Product";
-                const image = item.productImage || "/image/png/watch.png";
+                const image = item.productImage;
                 const orderId = ret.orderId;
                 const quantity = item.quantity || item.requestedQuantity || 1;
                 const seller = item.sellerName || "Sam Global Seller";
@@ -283,7 +386,7 @@ function ReturnsRefundsPage() {
                   month: "short",
                   year: "numeric",
                 });
-                const reason = ret.reason?.replace(/_/g, " ");
+                const reason = ret.description;
 
                 return (
                   <ReturnItemCard
@@ -298,7 +401,7 @@ function ReturnsRefundsPage() {
                     requestedOn={requestedOn}
                     returnId={ret.returnNumber || returnId}
                     reason={reason}
-                    refundAmount={refundAmount}
+                    refundAmount={price}
                     expectedDate={expectedDate}
                     onTrackRequest={() => toggleTracking(returnId)}
                     trackLabel={isExpanded ? "Hide Tracking" : "Track Order"}

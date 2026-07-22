@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BadgeCheck, Camera, Package } from "lucide-react";
+import { BadgeCheck, Camera, Package, RotateCcw } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
@@ -384,6 +384,17 @@ const getItemReturnPolicy = (item = {}) => {
   };
 };
 
+const getItemId = (item = {}) =>
+  String(item.id || item._id || item.orderItemId || item.order_item_id || "");
+
+const isDeliveredStatus = (status) =>
+  DELIVERED_STATUSES.has(String(status || "").toLowerCase());
+
+const isClosedItemStatus = (status) =>
+  ["cancelled", "returned", "refunded", "replaced", "closed"].includes(
+    String(status || "").toLowerCase(),
+  );
+
 function OrderItemCard({
   item,
   currency,
@@ -471,6 +482,38 @@ function OrderItemCard({
   );
 }
 
+function OrderItemReviewAction({
+  item,
+  orderId,
+  canReview,
+  existingReview,
+  reviewChecked,
+  onReviewClick,
+}) {
+  if (!canReview) return null;
+
+  return (
+    <div className="w-full">
+      {!reviewChecked ? (
+        <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA] px-4 text-sm font-bold text-[#6B6B80]">
+          Checking review...
+        </span>
+      ) : existingReview ? (
+        <ExistingReviewCard review={existingReview} />
+      ) : (
+        <button
+          type="button"
+          className="inline-flex min-h-9 items-center rounded-[8px] border border-[#CE9F2D] bg-[#CE9F2D12] px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#CE9F2D22]"
+          onClick={() => onReviewClick(item)}
+          disabled={!orderId}
+        >
+          Write Review
+        </button>
+      )}
+    </div>
+  );
+}
+
 function OrderItemsSection({
   items = [],
   orderId,
@@ -484,20 +527,48 @@ function OrderItemsSection({
   const [reviewTarget, setReviewTarget] = useState(null);
   const [reviewByItem, setReviewByItem] = useState({});
   const [checkedReviewKeys, setCheckedReviewKeys] = useState({});
-  const canReviewOrder = DELIVERED_STATUSES.has(
-    String(orderStatus || "").toLowerCase(),
-  );
+
+  const itemFulfillment = useMemo(() => {
+    const result = new Map();
+    const forwardShipments = shipments.filter(
+      (shipment) => String(shipment.direction || "forward") !== "reverse",
+    );
+
+    items.forEach((item) => {
+      const itemId = getItemId(item);
+      const groupKey = getItemSellerGroupKey(item);
+      const fulfillment = sellerFulfillmentGroups.find(
+        (group) => sellerGroupKey(group.sellerId || group.seller_id, group.organizationId || group.organization_id) === groupKey,
+      );
+      const shipment = forwardShipments.find((candidate) => {
+        const ids = candidate.orderItemIds || candidate.order_item_ids || candidate.metadata?.orderItemIds || [];
+        if (ids.length) return ids.map(String).includes(itemId);
+        return sellerGroupKey(
+          candidate.seller_id || candidate.sellerId,
+          candidate.organization_id || candidate.organizationId || candidate.metadata?.organizationId,
+        ) === groupKey;
+      });
+      const status = item.delivery_status || item.deliveryStatus ||
+        shipment?.status || fulfillment?.deliveryStatus || fulfillment?.shipmentStatus || orderStatus || "preparing";
+      result.set(itemId, {
+        status,
+        delivered: isDeliveredStatus(status),
+        deliveredAt: item.delivered_at || item.deliveredAt || shipment?.delivered_at || shipment?.deliveredAt || null,
+      });
+    });
+    return result;
+  }, [items, orderStatus, sellerFulfillmentGroups, shipments]);
 
   const reviewableItems = useMemo(
     () =>
-      canReviewOrder && orderId
-        ? items.filter((item) => getReviewProductId(item))
+      orderId
+        ? items.filter((item) => itemFulfillment.get(getItemId(item))?.delivered && getReviewProductId(item))
         : [],
-    [canReviewOrder, items, orderId],
+    [itemFulfillment, items, orderId],
   );
 
   useEffect(() => {
-    if (!orderId || !canReviewOrder || !reviewableItems.length) return;
+    if (!orderId || !reviewableItems.length) return;
 
     reviewableItems.forEach((item) => {
       const key = reviewKeyForItem(orderId, item);
@@ -524,7 +595,7 @@ function OrderItemsSection({
           setCheckedReviewKeys((current) => ({ ...current, [key]: true }));
         });
     });
-  }, [canReviewOrder, checkedReviewKeys, dispatch, orderId, reviewableItems]);
+  }, [checkedReviewKeys, dispatch, orderId, reviewableItems]);
 
   const packageGroups = useMemo(() => {
     const shipmentByGroup = new Map();
@@ -583,21 +654,16 @@ function OrderItemsSection({
   return (
     <section className="grid gap-5">
       <OrderDetailSectionCard
-        title={packageGroups.length > 1 ? "Orders" : "Item"}
+        title={packageGroups.length > 1 ? "Packages" : "Item"}
         borderClassName="border-[#CE9F2D66]  h-fit "
         bodyClassName="grid gap-8 p-4 sm:p-6 lg:p-7"
       >
         {packageGroups.map((group, packageIndex) => (
           <div key={group.key} className="grid gap-5 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#CE9F2D] text-white">
-                  <Package size={20} />
-                </span>
-                <div>
-                  <h3 className="font-bold text-[#1B1D60]">Order {packageIndex + 1}</h3>
-                  <p className="mt-0.5 text-sm text-[#6F7480]">{group.sellerName}</p>
-                </div>
+              <div>
+                <h3 className="font-bold text-[#1B1D60]">Package {packageIndex + 1}</h3>
+                <p className="mt-0.5 text-sm text-[#6F7480]">{group.sellerName}</p>
               </div>
               <div className="text-right text-sm">
                 <span className="rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-semibold capitalize text-white">{label(group.status)}</span>
@@ -606,56 +672,55 @@ function OrderItemsSection({
             </div>
             {group.items.map((item, index) => {
               const policy = getItemReturnPolicy(item);
-              const returnRequest = group.returnByItem.get(String(item.id || item._id || item.orderItemId || ""));
-              const reviewKey = reviewKeyForItem(orderId, item);
-              const canReview = canReviewOrder && Boolean(getReviewProductId(item));
-              const reviewChecked = Boolean(checkedReviewKeys[reviewKey]);
-              const existingReview = reviewByItem[reviewKey];
-
+              const itemId = getItemId(item);
+              const fulfillment = itemFulfillment.get(itemId) || {};
+              const returnRequest = group.returnByItem.get(itemId);
+              const returnExpired = Boolean(policy.eligibleUntil) && new Date(policy.eligibleUntil).getTime() < Date.now();
+              const canReturn = fulfillment.delivered && policy.returnable && !returnExpired && !returnRequest && !isClosedItemStatus(item.status || item.item_status);
               return (
                 <div key={item.id || item._id || index} className="grid gap-3 border-t border-[#E7D9B8] pt-5 first:border-t-0 first:pt-0">
                   <OrderItemCard
                     item={item}
                     {...itemProps}
                   />
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex flex-wrap gap-2 text-xs font-semibold">
-                      <span className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
-                        {policy.returnable ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}` : "Non-returnable"}
+                  <div className="flex flex-wrap gap-2 text-xs font-semibold">
+                    <span className={`rounded-full px-3 py-1 capitalize ${fulfillment.delivered ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-700"}`}>
+                      {label(fulfillment.status)}
+                    </span>
+                    <span className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+                      {policy.returnable ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}` : "Non-returnable"}
+                    </span>
+                    {policy.returnable && policy.eligibleUntil && (
+                      <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-700">
+                        Return until {formatDate(policy.eligibleUntil)}
                       </span>
-                      {policy.returnable && policy.eligibleUntil && (
-                        <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-700">
-                          Return until {formatDate(policy.eligibleUntil)}
-                        </span>
-                      )}
-                      {returnRequest && (
-                        <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">
-                          Return {label(returnRequest.status)}
-                        </span>
-                      )}
-                    </div>
-                    {canReview && (
-                      <div className="shrink-0">
-                        {!reviewChecked ? (
-                          <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA] px-4 text-sm font-bold text-[#6B6B80]">
-                            Checking review...
-                          </span>
-                        ) : !existingReview ? (
-                          <button
-                            type="button"
-                            className="inline-flex min-h-9 items-center rounded-[8px] border border-[#CE9F2D] bg-[#CE9F2D12] px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#CE9F2D22]"
-                            onClick={() => setReviewTarget(item)}
-                            disabled={!orderId}
-                          >
-                            Write Review
-                          </button>
-                        ) : null}
-                      </div>
+                    )}
+                    {returnRequest && (
+                      <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">
+                        Return {label(returnRequest.status)}
+                      </span>
                     )}
                   </div>
-                  {canReview && reviewChecked && existingReview && (
-                    <ExistingReviewCard review={existingReview} />
-                  )}
+                  <div className="flex flex-wrap items-center gap-2">
+                    {fulfillment.delivered && Boolean(getReviewProductId(item)) && (
+                      <OrderItemReviewAction
+                        item={item}
+                        orderId={orderId}
+                        canReview
+                        existingReview={reviewByItem[reviewKeyForItem(orderId, item)]}
+                        reviewChecked={Boolean(checkedReviewKeys[reviewKeyForItem(orderId, item)])}
+                        onReviewClick={setReviewTarget}
+                      />
+                    )}
+                    {canReturn && (
+                      <Link
+                        to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(itemId)}`}
+                        className="inline-flex min-h-9 items-center gap-2 rounded-[8px] border border-[#CE9F2D] bg-white px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#FFF8E7]"
+                      >
+                        <RotateCcw size={15} /> Return or replace
+                      </Link>
+                    )}
+                  </div>
                 </div>
               );
             })}

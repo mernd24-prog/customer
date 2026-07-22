@@ -115,6 +115,29 @@ const getOrderItems = (order) => {
     order?.products;
   return Array.isArray(items) ? items : [];
 };
+const isDeliveredOrderItem = (item = {}) => Boolean(item.delivered_at || item.deliveredAt) ||
+  ["delivered", "fulfilled", "completed"].includes(
+    String(item.delivery_status || item.deliveryStatus || item.status || "").toLowerCase(),
+  );
+const hasDeliveredSellerPackage = (order = {}) => {
+  if (getOrderStatus(order) === "fulfilled") return true;
+  const fulfillmentGroups = order?.relations?.sellerFulfillmentGroups || [];
+  if (fulfillmentGroups.some((group) =>
+    ["delivered", "fulfilled", "completed"].includes(
+      String(group.deliveryStatus || group.delivery_status || group.shipmentStatus || "").toLowerCase(),
+    ),
+  )) return true;
+
+  const grouped = new Map();
+  getOrderItems(order).forEach((item) => {
+    const key = `${item.seller_id || item.sellerId || "platform"}:${item.organization_id || item.organizationId || "default"}`;
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(item);
+  });
+  return [...grouped.values()].some((sellerItems) =>
+    sellerItems.length > 0 && sellerItems.every(isDeliveredOrderItem),
+  );
+};
 const getItemProduct = (item) =>
   item?.productId && typeof item.productId === "object"
     ? item.productId
@@ -515,24 +538,33 @@ function OrderDetail({ orderId, track }) {
   const itemReturnDeadlines = returnableItems
     .map((item) => item.return_eligible_until || item.returnEligibleUntil || item.return_policy_snapshot?.eligibleUntil || item.returnPolicySnapshot?.eligibleUntil)
     .filter(Boolean);
-
+  const returnEligibleUntil = itemReturnDeadlines.length
+    ? itemReturnDeadlines.reduce((latest, value) => new Date(value).getTime() > new Date(latest).getTime() ? value : latest)
+    : null;
   const returnWindowOpen = returnableItems.some((item) => {
     const deadline = item.return_eligible_until || item.returnEligibleUntil || item.return_policy_snapshot?.eligibleUntil || item.returnPolicySnapshot?.eligibleUntil;
     return !deadline || new Date(deadline).getTime() >= Date.now();
   });
-
-  const activeDeadlines = itemReturnDeadlines.filter(date => new Date(date).getTime() >= Date.now());
-  const expiredDeadlines = itemReturnDeadlines.filter(date => new Date(date).getTime() < Date.now());
-
-  const returnEligibleUntil = returnWindowOpen 
-    ? (activeDeadlines.length ? activeDeadlines.reduce((earliest, value) => new Date(value).getTime() < new Date(earliest).getTime() ? value : earliest) : null)
-    : (expiredDeadlines.length ? expiredDeadlines.reduce((latest, value) => new Date(value).getTime() > new Date(latest).getTime() ? value : latest) : null);
   const canRequestReturn = [
     "delivered",
     "fulfilled",
     "partially_returned",
   ].includes(status) && returnWindowOpen && returnableItems.length > 0;
-  const invoiceDownloadAvailable = status === "fulfilled";
+  const invoiceDownloadAvailable = hasDeliveredSellerPackage(order);
+  const customerInvoices = Array.isArray(invoices?.sellerInvoices) && invoices.sellerInvoices.length
+    ? invoices.sellerInvoices
+    : invoices?.orderInvoice
+      ? [invoices.orderInvoice]
+      : [];
+
+  const invoiceSellerName = (invoice, index) => {
+    const metadata = invoice?.metadata || {};
+    const seller = metadata.seller || {};
+    const organization = metadata.organization || invoice?.organizationSnapshot || {};
+    return organization.legalBusinessName || organization.displayName ||
+      seller.legalBusinessName || seller.businessName || seller.displayName ||
+      `Seller ${index + 1}`;
+  };
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -592,6 +624,7 @@ function OrderDetail({ orderId, track }) {
         verifyPayment,
       });
       navigate(`/payment/success?orderId=${orderId}`);
+    } catch {
     } finally {
       setRetrying(false);
       dispatch(fetchOrderById({ orderId }));
@@ -686,39 +719,35 @@ function OrderDetail({ orderId, track }) {
                       </Button>
                     </Link>
                   )}
-                  {invoiceDownloadAvailable &&
-                    (invoices?.orderInvoice || getInvoiceUrl(order)) && (
+                  {invoiceDownloadAvailable && customerInvoices.map((invoice, index) => {
+                    const invoiceId = invoice.id || invoice._id;
+                    const downloadPath = endpoints.tax.invoiceDownload(invoiceId);
+                    return (
+                      <Button
+                        key={invoiceId}
+                        variant="secondary"
+                        loading={downloadingId === downloadPath}
+                        onClick={() => handleDownload(
+                          downloadPath,
+                          `${invoice.invoice_number || invoice.invoiceNumber || `invoice-${index + 1}`}.pdf`,
+                        )}
+                        title={`GST invoice from ${invoiceSellerName(invoice, index)}`}
+                        className="flex min-h-[54px] w-full sm:w-auto sm:min-w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[20px] py-[12px] text-[#3E4093] hover:border-[#3E4093] hover:bg-[#F7F7FF]"
+                      >
+                        <Download size={18} />
+                        <span className="max-w-[220px] truncate text-center text-[14px] font-semibold leading-[20px] text-[#3E4093]">
+                          Invoice · {invoiceSellerName(invoice, index)}
+                        </span>
+                      </Button>
+                    );
+                  })}
+                  {invoiceDownloadAvailable && !customerInvoices.length && getInvoiceUrl(order) && (
                     <Button
                       variant="secondary"
-                      loading={
-                        invoices?.orderInvoice &&
-                        downloadingId ===
-                          endpoints.tax.invoiceDownload(
-                            invoices.orderInvoice.id ||
-                              invoices.orderInvoice._id,
-                          )
-                      }
-                      onClick={() =>
-                        invoices?.orderInvoice
-                          ? handleDownload(
-                              endpoints.tax.invoiceDownload(
-                                invoices.orderInvoice.id ||
-                                  invoices.orderInvoice._id,
-                              ),
-                              `invoice-${getOrderNumber(order)}.pdf`,
-                            )
-                          : window.open(
-                              getInvoiceUrl(order),
-                              "_blank",
-                              "noopener,noreferrer",
-                            )
-                      }
-                      className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[24px] py-[15px] text-[#3E4093] hover:border-[#3E4093] hover:bg-white"
+                      onClick={() => window.open(getInvoiceUrl(order), "_blank", "noopener,noreferrer")}
+                      className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[24px] py-[15px] text-[#3E4093]"
                     >
-                      <Download size={18} />
-                      <span className="text-center text-[14px] sm:text-[16px] font-semibold leading-[20px] sm:leading-[24px] text-nowrap text-[#3E4093]">
-                        Invoice
-                      </span>
+                      <Download size={18} /> Invoice
                     </Button>
                   )}
                 </div>
@@ -740,16 +769,24 @@ function OrderDetail({ orderId, track }) {
                     value: formatMoney(customerAmount, currency),
                     tone: "yellow",
                   },
-
+                  ...(returnEligibleUntil ? [{
+                    icon: <RotateCcw size={20} />,
+                    label: returnWindowOpen ? "Latest item return deadline" : "All return windows closed",
+                    value: formatOrderDate(returnEligibleUntil),
+                    tone: returnWindowOpen ? "blue" : "yellow",
+                  }] : []),
                 ]}
               />
 
-
-              {getDeliveryStatus(order) === "partially_delivered" && (
-                <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">Part of your order has been delivered. Remaining seller orders are still being prepared or shipped.</p>
+              {!track && ["delivered", "fulfilled", "partially_returned"].includes(status) && !returnWindowOpen && (
+                <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">All eligible item return windows closed by {formatOrderDate(returnEligibleUntil)}.</p>
               )}
 
-              {hasKnownStatus(order) && ( 
+              {getDeliveryStatus(order) === "partially_delivered" && (
+                <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">Part of your order has been delivered. Remaining seller packages are still being prepared or shipped.</p>
+              )}
+
+              {hasKnownStatus(order) && (
                 <OrderDetailSectionCard
                   title="Order Progress"
                   headerClassName="!min-h-[56px] !py-4"
@@ -760,7 +797,6 @@ function OrderDetail({ orderId, track }) {
                     status={progressStatus}
                     cancellations={cancellations}
                     returns={returns}
-                    timeline={order?.timeline || []}
                   />
                 </OrderDetailSectionCard>
               )}
@@ -1011,11 +1047,43 @@ function OrderSummaryCard({ order }) {
   const id = getOrderId(order);
   const apiOrderId = getOrderId(order);
   const status = getOrderStatus(order);
-  const invoiceDownloadAvailable = status === "fulfilled";
+  const invoiceDownloadAvailable = hasDeliveredSellerPackage(order);
   const createdAt = order.created_at || order.createdAt;
-  const items = getOrderItems(order);
+  const orderItems = getOrderItems(order);
+  const fulfillmentGroups = order?.relations?.sellerFulfillmentGroups || [];
+  const sellerPackages = (() => {
+    const grouped = new Map();
+    orderItems.forEach((item) => {
+      const sellerId = item.seller_id || item.sellerId || "platform";
+      const organizationId = item.organization_id || item.organizationId || "default";
+      const key = `${sellerId}:${organizationId}`;
+      if (!grouped.has(key)) {
+        const fulfillment = fulfillmentGroups.find((group) =>
+          String(group.sellerId || group.seller_id || "platform") === String(sellerId) &&
+          String(group.organizationId || group.organization_id || "default") === String(organizationId),
+        ) || {};
+        const sellerSnapshot = item.seller_snapshot || item.sellerSnapshot || {};
+        const organization = item.organization_snapshot || item.organizationSnapshot || {};
+        grouped.set(key, {
+          key,
+          sellerName: fulfillment.sellerName || organization.displayName || organization.legalBusinessName ||
+            sellerSnapshot.displayName || sellerSnapshot.businessName || "Marketplace seller",
+          status: fulfillment.deliveryStatus || fulfillment.delivery_status || fulfillment.shipmentStatus || null,
+          items: [],
+        });
+      }
+      grouped.get(key).items.push(item);
+    });
+    return [...grouped.values()].map((sellerPackage) => ({
+      ...sellerPackage,
+      status: sellerPackage.status ||
+        (sellerPackage.items.every(isDeliveredOrderItem) ? "delivered" : status),
+    }));
+  })();
+  const previewItems = orderItems.slice(0, 4);
   const currency = getOrderCurrency(order);
   const amount = getCustomerOrderAmount(order);
+  const quantity = orderItems.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
   const paymentMethod = humanize(getPaymentMethod(order), "N/A");
 
   const handleCopyOrderId = (e) => {
@@ -1078,84 +1146,100 @@ function OrderSummaryCard({ order }) {
         </span>
       </div>
 
-      <div className="divide-y divide-[#E7D9B8]">
-        {items.map((item, index) => {
-          const title = getProductTitle(item);
-          const image = getOrderCardImage(item);
-          const quantity = item?.quantity || 1;
-          const itemColor = getOrderItemColor(item);
-          const shouldShowColor =
-            itemColor != null && String(itemColor).trim().toLowerCase() !== "n/a";
-
-          return (
-            <div key={item.id || item._id || index} className="grid gap-6 p-3 grid-cols-1 md:grid-cols-[40%_70%] 2xl:grid-cols-[399px_1fr] sm:p-6">
-              <Link
-                to={`/orders/${id}`}
-                className="flex h-56 md:h-auto items-center justify-center overflow-hidden rounded-md border border-[#EFE5D2]  bg-white"
-              >
-                {image ? (
-                  <img
-                    src={image}
-                    alt={title}
-                    className="aspect-[3/2]  w-full object-contain p-3"
-                  />
-                ) : (
-                  <Package size={42} className="text-[#D9CBAE]" />
-                )}
-              </Link>
-
-              <div className="min-w-0 ">
-                <Link
-                  to={`/orders/${id}`}
-                  className="line-clamp-2 text-h4 font-semibold text-[#2E2E2E] "
-                >
-                  {title}
-                </Link>
-
-                <div className="my-4 lg:my-6 flex flex-wrap gap-x-5 gap-y-1 text-lg font-semibold text-ink">
-                  {shouldShowColor && (
-                    <span>
-                      Color :{" "}
-                      <strong className="font-bold  text-[#25247B]">
-                        {itemColor}
-                      </strong>
-                    </span>
+      <div className="p-3 sm:p-5 lg:p-6">
+        <div className="grid gap-5 rounded-xl border border-[#EFE5D2] bg-white p-4 md:grid-cols-[220px_minmax(0,1fr)] md:p-5">
+          <Link
+            to={`/orders/${id}`}
+            className={`grid min-h-44 gap-2 overflow-hidden rounded-lg bg-[#FFFAEF] p-2 ${previewItems.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}
+          >
+            {previewItems.length ? previewItems.map((previewItem, index) => {
+              const image = getOrderCardImage(previewItem);
+              return (
+                <div key={previewItem.id || previewItem._id || index} className="relative flex min-h-20 items-center justify-center overflow-hidden rounded-md border border-[#EFE5D2] bg-white">
+                  {image ? <img src={image} alt={getProductTitle(previewItem)} className={`w-full object-contain p-2 ${previewItems.length === 1 ? "h-52" : "h-24"}`} /> : <Package size={30} className="text-[#D9CBAE]" />}
+                  {index === 3 && orderItems.length > 4 && (
+                    <span className="absolute inset-0 flex items-center justify-center bg-[#1B1D60D9] text-lg font-bold text-white">+{orderItems.length - 3}</span>
                   )}
-                  <span>
-                    Quantity : <strong className="font-bold">{quantity}</strong>
-                  </span>
                 </div>
+              );
+            }) : <Package size={42} className="m-auto text-[#D9CBAE]" />}
+          </Link>
 
-                <p className="mt-3 text-h3 font-extrabold text-[#1B1D60]">
-                  {formatMoney(items.length > 1 ? getItemLineTotal(item) : amount, currency)}
-                </p>
-                <p className="text-sm my-2 font-medium text-ink">
-                  Inclusive of all taxes
-                </p>
-
-                <div className="my-4 flex flex-wrap items-center gap-3">
-                  <Link
-                    to={`/orders/${id}/track`}
-                    className="inline-flex h-11 w-full min-w-[160px] items-center justify-center gap-2 rounded-[10px] bg-gold px-8 text-sm font-bold text-white transition-colors sm:w-auto lg:px-18 lg:text-[15px]"
-                  >
-                    <Truck size={18} />
-                    Track Order
-                  </Link>
-                  {invoiceDownloadAvailable && (
-                    <Link
-                      to={`/orders/${id}`}
-                      onClick={(event) => event.stopPropagation()}
-                      className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[10px] px-2 text-center text-sm font-bold text-gold-dark transition-colors hover:bg-gold-soft sm:w-auto sm:text-left lg:text-[15px]"
-                    >
-                      <Download size={13} />
-                      Download Invoice
-                    </Link>
-                  )}
+          <div className="flex min-w-0 flex-col justify-between gap-4">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#9A7A27]">Order overview</p>
+                <h3 className="mt-1 text-xl font-extrabold text-[#1B1D60]">
+                  {orderItems.length} product{orderItems.length === 1 ? "" : "s"} in {sellerPackages.length} package{sellerPackages.length === 1 ? "" : "s"}
+                </h3>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-[#5E6472]">
+                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">{quantity} total unit{quantity === 1 ? "" : "s"}</span>
+                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">{sellerPackages.length} seller shipment{sellerPackages.length === 1 ? "" : "s"}</span>
                 </div>
               </div>
+              <div className="shrink-0 sm:text-right">
+                <p className="text-xs font-bold uppercase tracking-wide text-[#6F7480]">Complete order total</p>
+                <p className="mt-1 text-2xl font-extrabold text-[#1B1D60]">{formatMoney(amount, currency)}</p>
+                <p className="mt-0.5 text-xs font-medium text-[#6F7480]">Inclusive of all taxes</p>
+              </div>
             </div>
-          );
-        })}
+
+            <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to={`/orders/${id}/track`}
+              className="inline-flex h-11 w-full min-w-[160px] items-center justify-center gap-2 rounded-lg bg-gold px-6 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:w-auto"
+            >
+              <Truck size={18} />
+              Track packages
+            </Link>
+            {invoiceDownloadAvailable && (
+              <Link
+                to={`/orders/${id}`}
+                onClick={(event) => event.stopPropagation()}
+                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#D6B45B] bg-white px-5 text-sm font-bold text-gold-dark transition hover:bg-gold-soft sm:w-auto"
+              >
+                <Download size={16} />
+                Seller invoices
+              </Link>
+            )}
+          </div>
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-4 xl:grid-cols-2">
+          {sellerPackages.map((sellerPackage, packageIndex) => (
+            <section key={sellerPackage.key} className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white shadow-[0_3px_14px_rgba(53,45,20,0.05)]">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EFE5D2] bg-[#FFF8E7] px-4 py-3">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#9A7A27]">Package {packageIndex + 1}</p>
+                  <h4 className="mt-0.5 text-sm font-bold text-[#1B1D60]">{sellerPackage.sellerName}</h4>
+                </div>
+                <span className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold capitalize ${COMPACT_STATUS_BADGE[sellerPackage.status] || "bg-[#D7A522] text-white"}`}>
+                  {humanize(sellerPackage.status, "Processing")}
+                </span>
+              </div>
+              <div className="divide-y divide-[#F1E8D5]">
+                {sellerPackage.items.map((packageItem, index) => {
+                  const itemStatus = packageItem.cancellation_status || packageItem.delivery_status || packageItem.deliveryStatus || sellerPackage.status;
+                  const itemImage = getOrderCardImage(packageItem);
+                  const itemTotal = packageItem.line_total ?? packageItem.lineTotal ?? (Number(packageItem.unit_price || packageItem.unitPrice || 0) * Number(packageItem.quantity || 0));
+                  return (
+                    <Link key={packageItem.id || packageItem._id || index} to={`/orders/${id}`} className="grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 transition hover:bg-[#FFFCF6]">
+                      <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-md border border-[#EFE5D2] bg-white">
+                        {itemImage ? <img src={itemImage} alt="" className="h-full w-full object-contain p-1" /> : <Package size={20} className="text-[#D9CBAE]" />}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-bold text-[#2E2E2E]">{getProductTitle(packageItem)}</span>
+                        <span className="mt-1 block text-xs font-medium text-[#6F7480]">Qty {Number(packageItem.quantity || 0)} · <span className="capitalize">{humanize(itemStatus, "Processing")}</span></span>
+                      </span>
+                      <span className="whitespace-nowrap text-sm font-extrabold text-[#1B1D60]">{formatMoney(itemTotal, currency)}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
+        </div>
       </div>
     </article>
   );
