@@ -114,6 +114,7 @@ export const endpoints = {
     refundRetry: (returnId) => `${API_PREFIX}/returns/${returnId}/refund/retry`,
     refundSync: (returnId) => `${API_PREFIX}/returns/${returnId}/refund/sync`,
     qc: (returnId) => `${API_PREFIX}/returns/${returnId}/qc`,
+    qcDispute: (returnId) => `${API_PREFIX}/returns/${returnId}/qc/dispute`,
     replacement: (returnId) => `${API_PREFIX}/returns/${returnId}/replacement`,
     close: (returnId) => `${API_PREFIX}/returns/${returnId}/close`,
   },

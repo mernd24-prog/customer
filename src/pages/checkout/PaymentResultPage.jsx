@@ -95,11 +95,22 @@ export function PaymentResultPage({ failed = false }) {
   const getInvoiceUrl = (ord) =>
     ord?.invoice_url || ord?.invoiceUrl || ord?.relations?.invoice?.url || null;
 
-  const customerInvoices = Array.isArray(invoices?.sellerInvoices) && invoices.sellerInvoices.length
+  const customerInvoices = Array.isArray(invoices?.sellerInvoices)
     ? invoices.sellerInvoices
-    : invoices?.orderInvoice
-      ? [invoices.orderInvoice]
-      : [];
+    : [];
+  const orderReceipt = invoices?.orderInvoice || null;
+  const customerFeeInvoice = invoices?.customerFeeInvoice || null;
+  const invoiceSellerName = (invoice, index) => {
+    const metadata = invoice?.metadata || {};
+    const seller = metadata.seller || {};
+    const organization = metadata.organization || invoice?.organizationSnapshot || {};
+    return organization.legalBusinessName || organization.storeDisplayName ||
+      seller.legalBusinessName || seller.businessName || seller.displayName ||
+      `Seller ${index + 1}`;
+  };
+  const invoiceItemCount = (invoice) => (
+    invoice?.metadata?.items || invoice?.metadata?.lineItems || []
+  ).length;
   const fallbackInvoiceUrl = getInvoiceUrl(order);
 
   useEffect(() => {
@@ -218,10 +229,28 @@ export function PaymentResultPage({ failed = false }) {
                 loading={downloadingId === downloadPath}
                 onClick={() => handleInvoiceDownload(invoice)}
                 icon={<Download size={18} />}
-                label={`Download invoice ${index + 1}`}
+                label={`Seller invoice · ${invoiceSellerName(invoice, index)} · ${invoiceItemCount(invoice)} item${invoiceItemCount(invoice) === 1 ? "" : "s"}`}
                 className="h-12 w-full min-w-[220px] text-sm sm:w-auto"
               />;
             })}
+            {invoiceDownloadAvailable && orderReceipt && <BrandButton
+              variant="secondary"
+              rounded
+              loading={downloadingId === endpoints.tax.invoiceDownload(orderReceipt.id || orderReceipt._id)}
+              onClick={() => handleInvoiceDownload(orderReceipt)}
+              icon={<Download size={18} />}
+              label="Order receipt"
+              className="h-12 w-full min-w-[220px] text-sm sm:w-auto"
+            />}
+            {invoiceDownloadAvailable && customerFeeInvoice && <BrandButton
+              variant="secondary"
+              rounded
+              loading={downloadingId === endpoints.tax.invoiceDownload(customerFeeInvoice.id || customerFeeInvoice._id)}
+              onClick={() => handleInvoiceDownload(customerFeeInvoice)}
+              icon={<Download size={18} />}
+              label="Platform fee invoice"
+              className="h-12 w-full min-w-[220px] text-sm sm:w-auto"
+            />}
           </div>
         </div>
       </section>
@@ -406,7 +435,7 @@ export function PaymentResultPage({ failed = false }) {
                     </div>
                   </div>
 
-                  {invoiceDownloadAvailable && customerInvoices.length > 0 && (
+                  {invoiceDownloadAvailable && (customerInvoices.length > 0 || orderReceipt || customerFeeInvoice) && (
                     <div className="mt-4 grid gap-[10px]">
                       {customerInvoices.map((invoice, index) => {
                         const invoiceId = invoice.id || invoice._id;
@@ -418,10 +447,28 @@ export function PaymentResultPage({ failed = false }) {
                           loading={downloadingId === downloadPath}
                           onClick={() => handleInvoiceDownload(invoice)}
                           icon={<Download size={18} />}
-                          label={`Download seller invoice ${index + 1}`}
+                          label={`Seller invoice · ${invoiceSellerName(invoice, index)} · ${invoiceItemCount(invoice)} item${invoiceItemCount(invoice) === 1 ? "" : "s"}`}
                           className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
                         />;
                       })}
+                      {orderReceipt && <BrandButton
+                        variant="secondary"
+                        rounded
+                        loading={downloadingId === endpoints.tax.invoiceDownload(orderReceipt.id || orderReceipt._id)}
+                        onClick={() => handleInvoiceDownload(orderReceipt)}
+                        icon={<Download size={18} />}
+                        label="Order receipt"
+                        className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
+                      />}
+                      {customerFeeInvoice && <BrandButton
+                        variant="secondary"
+                        rounded
+                        loading={downloadingId === endpoints.tax.invoiceDownload(customerFeeInvoice.id || customerFeeInvoice._id)}
+                        onClick={() => handleInvoiceDownload(customerFeeInvoice)}
+                        icon={<Download size={18} />}
+                        label="Platform fee invoice"
+                        className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
+                      />}
                     </div>
                   )}
                 </OrderDetailSectionCard>

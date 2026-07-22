@@ -14,6 +14,7 @@ export const {
   retryRefund,
   syncRefund,
   qcReturn,
+  disputeReturnQc,
   createReplacement,
   closeReturn,
 } = returnsThunks;

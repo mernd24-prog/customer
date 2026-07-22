@@ -551,11 +551,12 @@ function OrderDetail({ orderId, track }) {
     "partially_returned",
   ].includes(status) && returnWindowOpen && returnableItems.length > 0;
   const invoiceDownloadAvailable = hasDeliveredSellerPackage(order);
-  const customerInvoices = Array.isArray(invoices?.sellerInvoices) && invoices.sellerInvoices.length
+  const customerInvoices = Array.isArray(invoices?.sellerInvoices)
     ? invoices.sellerInvoices
-    : invoices?.orderInvoice
-      ? [invoices.orderInvoice]
-      : [];
+    : [];
+  const orderReceipt = invoices?.orderInvoice || null;
+  const customerFeeInvoice = invoices?.customerFeeInvoice || null;
+  const pendingSellerDocuments = invoices?.pendingSellerDocuments || [];
 
   const invoiceSellerName = (invoice, index) => {
     const metadata = invoice?.metadata || {};
@@ -564,6 +565,13 @@ function OrderDetail({ orderId, track }) {
     return organization.legalBusinessName || organization.displayName ||
       seller.legalBusinessName || seller.businessName || seller.displayName ||
       `Seller ${index + 1}`;
+  };
+  const invoiceItemSummary = (invoice) => {
+    const coveredItems = invoice?.metadata?.items || invoice?.metadata?.lineItems || [];
+    const titles = coveredItems.map((item) => item.productTitle || item.description).filter(Boolean);
+    if (!titles.length) return "Delivered seller items";
+    if (titles.length === 1) return titles[0];
+    return `${titles[0]} + ${titles.length - 1} more`;
   };
 
   const breadcrumbItems = [
@@ -587,7 +595,7 @@ function OrderDetail({ orderId, track }) {
   }, [dispatch, shipments, track]);
 
   useEffect(() => {
-    if (!orderId || !invoiceDownloadAvailable) {
+    if (!orderId) {
       setInvoices(null);
       return;
     }
@@ -597,7 +605,7 @@ function OrderDetail({ orderId, track }) {
       .then((result) => setInvoices(result?.data || result))
       .catch(() => {})
       .finally(() => setInvoicesLoading(false));
-  }, [dispatch, invoiceDownloadAvailable, orderId]);
+  }, [dispatch, orderId]);
 
   const handleRetryPayment = async () => {
     setRetrying(true);
@@ -731,16 +739,64 @@ function OrderDetail({ orderId, track }) {
                           downloadPath,
                           `${invoice.invoice_number || invoice.invoiceNumber || `invoice-${index + 1}`}.pdf`,
                         )}
-                        title={`GST invoice from ${invoiceSellerName(invoice, index)}`}
+                        title={`Covers: ${invoiceItemSummary(invoice)}`}
                         className="flex min-h-[54px] w-full sm:w-auto sm:min-w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[20px] py-[12px] text-[#3E4093] hover:border-[#3E4093] hover:bg-[#F7F7FF]"
                       >
                         <Download size={18} />
                         <span className="max-w-[220px] truncate text-center text-[14px] font-semibold leading-[20px] text-[#3E4093]">
-                          Invoice · {invoiceSellerName(invoice, index)}
+                          Seller invoice · {invoiceSellerName(invoice, index)} · {invoiceItemSummary(invoice)}
                         </span>
                       </Button>
                     );
                   })}
+                  {orderReceipt && (() => {
+                    const receiptId = orderReceipt.id || orderReceipt._id;
+                    const receiptPath = endpoints.tax.invoiceDownload(receiptId);
+                    return (
+                      <Button
+                        variant="secondary"
+                        loading={downloadingId === receiptPath}
+                        onClick={() => handleDownload(
+                          receiptPath,
+                          `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || `receipt-${orderId}`}.pdf`,
+                        )}
+                        title="Marketplace payment summary for the complete order"
+                        className="flex min-h-[54px] w-full sm:w-auto sm:min-w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[20px] py-[12px] text-[#3E4093] hover:border-[#3E4093] hover:bg-[#F7F7FF]"
+                      >
+                        <Download size={18} />
+                        <span className="text-center text-[14px] font-semibold leading-[20px] text-[#3E4093]">
+                          Order receipt
+                        </span>
+                      </Button>
+                    );
+                  })()}
+                  {customerFeeInvoice && (() => {
+                    const feeInvoiceId = customerFeeInvoice.id || customerFeeInvoice._id;
+                    const feeInvoicePath = endpoints.tax.invoiceDownload(feeInvoiceId);
+                    return (
+                      <Button
+                        variant="secondary"
+                        loading={downloadingId === feeInvoicePath}
+                        onClick={() => handleDownload(
+                          feeInvoicePath,
+                          `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
+                        )}
+                        title="Marketplace tax invoice for the customer platform fee"
+                        className="flex min-h-[54px] w-full sm:w-auto sm:min-w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[20px] py-[12px] text-[#3E4093] hover:border-[#3E4093] hover:bg-[#F7F7FF]"
+                      >
+                        <Download size={18} /> Platform fee invoice
+                      </Button>
+                    );
+                  })()}
+                  {pendingSellerDocuments.map((document, index) => (
+                    <div
+                      key={`${document.sellerName}-${index}`}
+                      className="flex min-h-[54px] w-full items-center rounded-[10px] border border-dashed border-[#D8D8E8] bg-[#FAFAFD] px-4 text-sm text-[#6B6B80] sm:w-auto"
+                      title={(document.productTitles || []).join(", ")}
+                    >
+                      {document.sellerName} invoice · Available after delivery
+                    </div>
+                  ))}
                   {invoiceDownloadAvailable && !customerInvoices.length && getInvoiceUrl(order) && (
                     <Button
                       variant="secondary"

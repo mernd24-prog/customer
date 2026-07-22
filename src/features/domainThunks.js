@@ -336,6 +336,11 @@ export const returnsThunks = {
     url: ({ returnId }) => endpoints.returns.qc(returnId),
     data: body,
   }),
+  disputeReturnQc: makeThunk("returns/disputeReturnQc", {
+    method: "post",
+    url: ({ returnId }) => endpoints.returns.qcDispute(returnId),
+    data: body,
+  }),
   createReplacement: makeThunk("returns/createReplacement", {
     method: "post",
     url: ({ returnId }) => endpoints.returns.replacement(returnId),
