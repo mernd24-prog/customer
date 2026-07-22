@@ -73,11 +73,17 @@ const getDeliveryStatus = (order) =>
 const getProgressStatus = (order) => {
   const status = getOrderStatus(order);
   const deliveryStatus = getDeliveryStatus(order);
-  if (deliveryStatus === "delivered" && !["fulfilled", "cancelled"].includes(status)) {
+  if (
+    deliveryStatus === "delivered" &&
+    !["fulfilled", "cancelled"].includes(status)
+  ) {
     return "delivered";
   }
   if (deliveryStatus === "partially_delivered") return "out_for_delivery";
-  if (deliveryStatus === "out_for_delivery" && ["confirmed", "packed", "shipped"].includes(status)) {
+  if (
+    deliveryStatus === "out_for_delivery" &&
+    ["confirmed", "packed", "shipped"].includes(status)
+  ) {
     return "out_for_delivery";
   }
   return status;
@@ -115,18 +121,29 @@ const getOrderItems = (order) => {
     order?.products;
   return Array.isArray(items) ? items : [];
 };
-const isDeliveredOrderItem = (item = {}) => Boolean(item.delivered_at || item.deliveredAt) ||
+const isDeliveredOrderItem = (item = {}) =>
+  Boolean(item.delivered_at || item.deliveredAt) ||
   ["delivered", "fulfilled", "completed"].includes(
-    String(item.delivery_status || item.deliveryStatus || item.status || "").toLowerCase(),
+    String(
+      item.delivery_status || item.deliveryStatus || item.status || "",
+    ).toLowerCase(),
   );
 const hasDeliveredSellerPackage = (order = {}) => {
   if (getOrderStatus(order) === "fulfilled") return true;
   const fulfillmentGroups = order?.relations?.sellerFulfillmentGroups || [];
-  if (fulfillmentGroups.some((group) =>
-    ["delivered", "fulfilled", "completed"].includes(
-      String(group.deliveryStatus || group.delivery_status || group.shipmentStatus || "").toLowerCase(),
-    ),
-  )) return true;
+  if (
+    fulfillmentGroups.some((group) =>
+      ["delivered", "fulfilled", "completed"].includes(
+        String(
+          group.deliveryStatus ||
+            group.delivery_status ||
+            group.shipmentStatus ||
+            "",
+        ).toLowerCase(),
+      ),
+    )
+  )
+    return true;
 
   const grouped = new Map();
   getOrderItems(order).forEach((item) => {
@@ -134,8 +151,9 @@ const hasDeliveredSellerPackage = (order = {}) => {
     if (!grouped.has(key)) grouped.set(key, []);
     grouped.get(key).push(item);
   });
-  return [...grouped.values()].some((sellerItems) =>
-    sellerItems.length > 0 && sellerItems.every(isDeliveredOrderItem),
+  return [...grouped.values()].some(
+    (sellerItems) =>
+      sellerItems.length > 0 && sellerItems.every(isDeliveredOrderItem),
   );
 };
 const getItemProduct = (item) =>
@@ -503,7 +521,11 @@ function OrderDetail({ orderId, track }) {
         ? order.returnRequests
         : [];
   const fetchedReturns = Array.isArray(returnsState.list)
-    ? returnsState.list.filter((returnRequest) => String(returnRequest.orderId || returnRequest.order_id || "") === String(orderId))
+    ? returnsState.list.filter(
+        (returnRequest) =>
+          String(returnRequest.orderId || returnRequest.order_id || "") ===
+          String(orderId),
+      )
     : [];
   const returns = fetchedReturns.length ? fetchedReturns : embeddedReturns;
   const shipments = Array.isArray(order?.relations?.shipments)
@@ -532,38 +554,63 @@ function OrderDetail({ orderId, track }) {
   const status = getOrderStatus(order);
   const progressStatus = getProgressStatus(order);
   const returnableItems = items.filter((item) => {
-    const snapshot = item.return_policy_snapshot || item.returnPolicySnapshot || item.product_snapshot?.returnPolicy || {};
-    return (item.returnable ?? snapshot.returnable ?? snapshot.eligible ?? true) === true;
+    const snapshot =
+      item.return_policy_snapshot ||
+      item.returnPolicySnapshot ||
+      item.product_snapshot?.returnPolicy ||
+      {};
+    return (
+      (item.returnable ?? snapshot.returnable ?? snapshot.eligible ?? true) ===
+      true
+    );
   });
   const itemReturnDeadlines = returnableItems
-    .map((item) => item.return_eligible_until || item.returnEligibleUntil || item.return_policy_snapshot?.eligibleUntil || item.returnPolicySnapshot?.eligibleUntil)
+    .map(
+      (item) =>
+        item.return_eligible_until ||
+        item.returnEligibleUntil ||
+        item.return_policy_snapshot?.eligibleUntil ||
+        item.returnPolicySnapshot?.eligibleUntil,
+    )
     .filter(Boolean);
   const returnEligibleUntil = itemReturnDeadlines.length
-    ? itemReturnDeadlines.reduce((latest, value) => new Date(value).getTime() > new Date(latest).getTime() ? value : latest)
+    ? itemReturnDeadlines.reduce((latest, value) =>
+        new Date(value).getTime() > new Date(latest).getTime() ? value : latest,
+      )
     : null;
   const returnWindowOpen = returnableItems.some((item) => {
-    const deadline = item.return_eligible_until || item.returnEligibleUntil || item.return_policy_snapshot?.eligibleUntil || item.returnPolicySnapshot?.eligibleUntil;
+    const deadline =
+      item.return_eligible_until ||
+      item.returnEligibleUntil ||
+      item.return_policy_snapshot?.eligibleUntil ||
+      item.returnPolicySnapshot?.eligibleUntil;
     return !deadline || new Date(deadline).getTime() >= Date.now();
   });
-  const canRequestReturn = [
-    "delivered",
-    "fulfilled",
-    "partially_returned",
-  ].includes(status) && returnWindowOpen && returnableItems.length > 0;
+  const canRequestReturn =
+    ["delivered", "fulfilled", "partially_returned"].includes(status) &&
+    returnWindowOpen &&
+    returnableItems.length > 0;
   const invoiceDownloadAvailable = hasDeliveredSellerPackage(order);
-  const customerInvoices = Array.isArray(invoices?.sellerInvoices) && invoices.sellerInvoices.length
-    ? invoices.sellerInvoices
-    : invoices?.orderInvoice
-      ? [invoices.orderInvoice]
-      : [];
+  const customerInvoices =
+    Array.isArray(invoices?.sellerInvoices) && invoices.sellerInvoices.length
+      ? invoices.sellerInvoices
+      : invoices?.orderInvoice
+        ? [invoices.orderInvoice]
+        : [];
 
   const invoiceSellerName = (invoice, index) => {
     const metadata = invoice?.metadata || {};
     const seller = metadata.seller || {};
-    const organization = metadata.organization || invoice?.organizationSnapshot || {};
-    return organization.legalBusinessName || organization.displayName ||
-      seller.legalBusinessName || seller.businessName || seller.displayName ||
-      `Seller ${index + 1}`;
+    const organization =
+      metadata.organization || invoice?.organizationSnapshot || {};
+    return (
+      organization.legalBusinessName ||
+      organization.displayName ||
+      seller.legalBusinessName ||
+      seller.businessName ||
+      seller.displayName ||
+      `Seller ${index + 1}`
+    );
   };
 
   const breadcrumbItems = [
@@ -719,37 +766,49 @@ function OrderDetail({ orderId, track }) {
                       </Button>
                     </Link>
                   )}
-                  {invoiceDownloadAvailable && customerInvoices.map((invoice, index) => {
-                    const invoiceId = invoice.id || invoice._id;
-                    const downloadPath = endpoints.tax.invoiceDownload(invoiceId);
-                    return (
+                  {invoiceDownloadAvailable &&
+                    customerInvoices.map((invoice, index) => {
+                      const invoiceId = invoice.id || invoice._id;
+                      const downloadPath =
+                        endpoints.tax.invoiceDownload(invoiceId);
+                      return (
+                        <Button
+                          key={invoiceId}
+                          variant="secondary"
+                          loading={downloadingId === downloadPath}
+                          onClick={() =>
+                            handleDownload(
+                              downloadPath,
+                              `${invoice.invoice_number || invoice.invoiceNumber || `invoice-${index + 1}`}.pdf`,
+                            )
+                          }
+                          title={`GST invoice from ${invoiceSellerName(invoice, index)}`}
+                          className="flex min-h-[54px] w-full sm:w-auto sm:min-w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[20px] py-[12px] text-[#3E4093] hover:border-[#3E4093] hover:bg-[#F7F7FF]"
+                        >
+                          <Download size={18} />
+                          <span className="max-w-[220px] truncate text-center text-[14px] font-semibold leading-[20px] text-[#3E4093]">
+                            Invoice · {invoiceSellerName(invoice, index)}
+                          </span>
+                        </Button>
+                      );
+                    })}
+                  {invoiceDownloadAvailable &&
+                    !customerInvoices.length &&
+                    getInvoiceUrl(order) && (
                       <Button
-                        key={invoiceId}
                         variant="secondary"
-                        loading={downloadingId === downloadPath}
-                        onClick={() => handleDownload(
-                          downloadPath,
-                          `${invoice.invoice_number || invoice.invoiceNumber || `invoice-${index + 1}`}.pdf`,
-                        )}
-                        title={`GST invoice from ${invoiceSellerName(invoice, index)}`}
-                        className="flex min-h-[54px] w-full sm:w-auto sm:min-w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[20px] py-[12px] text-[#3E4093] hover:border-[#3E4093] hover:bg-[#F7F7FF]"
+                        onClick={() =>
+                          window.open(
+                            getInvoiceUrl(order),
+                            "_blank",
+                            "noopener,noreferrer",
+                          )
+                        }
+                        className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[24px] py-[15px] text-[#3E4093]"
                       >
-                        <Download size={18} />
-                        <span className="max-w-[220px] truncate text-center text-[14px] font-semibold leading-[20px] text-[#3E4093]">
-                          Invoice · {invoiceSellerName(invoice, index)}
-                        </span>
+                        <Download size={18} /> Invoice
                       </Button>
-                    );
-                  })}
-                  {invoiceDownloadAvailable && !customerInvoices.length && getInvoiceUrl(order) && (
-                    <Button
-                      variant="secondary"
-                      onClick={() => window.open(getInvoiceUrl(order), "_blank", "noopener,noreferrer")}
-                      className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[24px] py-[15px] text-[#3E4093]"
-                    >
-                      <Download size={18} /> Invoice
-                    </Button>
-                  )}
+                    )}
                 </div>
               </div>
               <OrderDetailInfoGrid
@@ -769,21 +828,37 @@ function OrderDetail({ orderId, track }) {
                     value: formatMoney(customerAmount, currency),
                     tone: "yellow",
                   },
-                  ...(returnEligibleUntil ? [{
-                    icon: <RotateCcw size={20} />,
-                    label: returnWindowOpen ? "Latest item return deadline" : "All return windows closed",
-                    value: formatOrderDate(returnEligibleUntil),
-                    tone: returnWindowOpen ? "blue" : "yellow",
-                  }] : []),
+                  ...(returnEligibleUntil
+                    ? [
+                        {
+                          icon: <RotateCcw size={20} />,
+                          label: returnWindowOpen
+                            ? "Latest item return deadline"
+                            : "All return windows closed",
+                          value: formatOrderDate(returnEligibleUntil),
+                          tone: returnWindowOpen ? "blue" : "yellow",
+                        },
+                      ]
+                    : []),
                 ]}
               />
 
-              {!track && ["delivered", "fulfilled", "partially_returned"].includes(status) && !returnWindowOpen && (
-                <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">All eligible item return windows closed by {formatOrderDate(returnEligibleUntil)}.</p>
-              )}
+              {!track &&
+                ["delivered", "fulfilled", "partially_returned"].includes(
+                  status,
+                ) &&
+                !returnWindowOpen && (
+                  <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                    All eligible item return windows closed by{" "}
+                    {formatOrderDate(returnEligibleUntil)}.
+                  </p>
+                )}
 
               {getDeliveryStatus(order) === "partially_delivered" && (
-                <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">Part of your order has been delivered. Remaining seller packages are still being prepared or shipped.</p>
+                <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+                  Part of your order has been delivered. Remaining seller
+                  packages are still being prepared or shipped.
+                </p>
               )}
 
               {hasKnownStatus(order) && (
@@ -822,13 +897,15 @@ function OrderDetail({ orderId, track }) {
                 mainContent={
                   <OrderItemsSection
                     items={items}
-                  orderId={orderId}
-                  orderStatus={status}
-                  shipments={shipments}
-                  sellerFulfillmentGroups={order?.relations?.sellerFulfillmentGroups || []}
-                  returns={returns}
-                  currency={currency}
-                  getItemImage={getItemImage}
+                    orderId={orderId}
+                    orderStatus={status}
+                    shipments={shipments}
+                    sellerFulfillmentGroups={
+                      order?.relations?.sellerFulfillmentGroups || []
+                    }
+                    returns={returns}
+                    currency={currency}
+                    getItemImage={getItemImage}
                     getProductTitle={getProductTitle}
                     getItemProductPath={getItemProductPath}
                     getOrderItemColor={getOrderItemColor}
@@ -1055,20 +1132,37 @@ function OrderSummaryCard({ order }) {
     const grouped = new Map();
     orderItems.forEach((item) => {
       const sellerId = item.seller_id || item.sellerId || "platform";
-      const organizationId = item.organization_id || item.organizationId || "default";
+      const organizationId =
+        item.organization_id || item.organizationId || "default";
       const key = `${sellerId}:${organizationId}`;
       if (!grouped.has(key)) {
-        const fulfillment = fulfillmentGroups.find((group) =>
-          String(group.sellerId || group.seller_id || "platform") === String(sellerId) &&
-          String(group.organizationId || group.organization_id || "default") === String(organizationId),
-        ) || {};
-        const sellerSnapshot = item.seller_snapshot || item.sellerSnapshot || {};
-        const organization = item.organization_snapshot || item.organizationSnapshot || {};
+        const fulfillment =
+          fulfillmentGroups.find(
+            (group) =>
+              String(group.sellerId || group.seller_id || "platform") ===
+                String(sellerId) &&
+              String(
+                group.organizationId || group.organization_id || "default",
+              ) === String(organizationId),
+          ) || {};
+        const sellerSnapshot =
+          item.seller_snapshot || item.sellerSnapshot || {};
+        const organization =
+          item.organization_snapshot || item.organizationSnapshot || {};
         grouped.set(key, {
           key,
-          sellerName: fulfillment.sellerName || organization.displayName || organization.legalBusinessName ||
-            sellerSnapshot.displayName || sellerSnapshot.businessName || "Marketplace seller",
-          status: fulfillment.deliveryStatus || fulfillment.delivery_status || fulfillment.shipmentStatus || null,
+          sellerName:
+            fulfillment.sellerName ||
+            organization.displayName ||
+            organization.legalBusinessName ||
+            sellerSnapshot.displayName ||
+            sellerSnapshot.businessName ||
+            "Marketplace seller",
+          status:
+            fulfillment.deliveryStatus ||
+            fulfillment.delivery_status ||
+            fulfillment.shipmentStatus ||
+            null,
           items: [],
         });
       }
@@ -1076,14 +1170,20 @@ function OrderSummaryCard({ order }) {
     });
     return [...grouped.values()].map((sellerPackage) => ({
       ...sellerPackage,
-      status: sellerPackage.status ||
-        (sellerPackage.items.every(isDeliveredOrderItem) ? "delivered" : status),
+      status:
+        sellerPackage.status ||
+        (sellerPackage.items.every(isDeliveredOrderItem)
+          ? "delivered"
+          : status),
     }));
   })();
   const previewItems = orderItems.slice(0, 4);
   const currency = getOrderCurrency(order);
   const amount = getCustomerOrderAmount(order);
-  const quantity = orderItems.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+  const quantity = orderItems.reduce(
+    (sum, item) => sum + Number(item.quantity || 0),
+    0,
+  );
   const paymentMethod = humanize(getPaymentMethod(order), "N/A");
 
   const handleCopyOrderId = (e) => {
@@ -1152,87 +1252,159 @@ function OrderSummaryCard({ order }) {
             to={`/orders/${id}`}
             className={`grid min-h-44 gap-2 overflow-hidden rounded-lg bg-[#FFFAEF] p-2 ${previewItems.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}
           >
-            {previewItems.length ? previewItems.map((previewItem, index) => {
-              const image = getOrderCardImage(previewItem);
-              return (
-                <div key={previewItem.id || previewItem._id || index} className="relative flex min-h-20 items-center justify-center overflow-hidden rounded-md border border-[#EFE5D2] bg-white">
-                  {image ? <img src={image} alt={getProductTitle(previewItem)} className={`w-full object-contain p-2 ${previewItems.length === 1 ? "h-52" : "h-24"}`} /> : <Package size={30} className="text-[#D9CBAE]" />}
-                  {index === 3 && orderItems.length > 4 && (
-                    <span className="absolute inset-0 flex items-center justify-center bg-[#1B1D60D9] text-lg font-bold text-white">+{orderItems.length - 3}</span>
-                  )}
-                </div>
-              );
-            }) : <Package size={42} className="m-auto text-[#D9CBAE]" />}
+            {previewItems.length ? (
+              previewItems.map((previewItem, index) => {
+                const image = getOrderCardImage(previewItem);
+                return (
+                  <div
+                    key={previewItem.id || previewItem._id || index}
+                    className="relative flex min-h-20 items-center justify-center overflow-hidden rounded-md border border-[#EFE5D2] bg-white"
+                  >
+                    {image ? (
+                      <img
+                        src={image}
+                        alt={getProductTitle(previewItem)}
+                        className={`w-full object-contain p-2 ${previewItems.length === 1 ? "h-52" : "h-24"}`}
+                      />
+                    ) : (
+                      <Package size={30} className="text-[#D9CBAE]" />
+                    )}
+                    {index === 3 && orderItems.length > 4 && (
+                      <span className="absolute inset-0 flex items-center justify-center bg-[#1B1D60D9] text-lg font-bold text-white">
+                        +{orderItems.length - 3}
+                      </span>
+                    )}
+                  </div>
+                );
+              })
+            ) : (
+              <Package size={42} className="m-auto text-[#D9CBAE]" />
+            )}
           </Link>
 
           <div className="flex min-w-0 flex-col justify-between gap-4">
             <div className="flex flex-col justify-between gap-4 sm:flex-row">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#9A7A27]">Order overview</p>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#9A7A27]">
+                  Order overview
+                </p>
                 <h3 className="mt-1 text-xl font-extrabold text-[#1B1D60]">
-                  {orderItems.length} product{orderItems.length === 1 ? "" : "s"} in {sellerPackages.length} package{sellerPackages.length === 1 ? "" : "s"}
+                  {orderItems.length} product
+                  {orderItems.length === 1 ? "" : "s"} in{" "}
+                  {sellerPackages.length} package
+                  {sellerPackages.length === 1 ? "" : "s"}
                 </h3>
                 <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-[#5E6472]">
-                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">{quantity} total unit{quantity === 1 ? "" : "s"}</span>
-                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">{sellerPackages.length} seller shipment{sellerPackages.length === 1 ? "" : "s"}</span>
+                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">
+                    {quantity} total unit{quantity === 1 ? "" : "s"}
+                  </span>
+                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">
+                    {sellerPackages.length} seller shipment
+                    {sellerPackages.length === 1 ? "" : "s"}
+                  </span>
                 </div>
               </div>
               <div className="shrink-0 sm:text-right">
-                <p className="text-xs font-bold uppercase tracking-wide text-[#6F7480]">Complete order total</p>
-                <p className="mt-1 text-2xl font-extrabold text-[#1B1D60]">{formatMoney(amount, currency)}</p>
-                <p className="mt-0.5 text-xs font-medium text-[#6F7480]">Inclusive of all taxes</p>
+                <p className="text-xs font-bold uppercase tracking-wide text-[#6F7480]">
+                  Complete order total
+                </p>
+                <p className="mt-1 text-2xl font-extrabold text-[#1B1D60]">
+                  {formatMoney(amount, currency)}
+                </p>
+                <p className="mt-0.5 text-xs font-medium text-[#6F7480]">
+                  Inclusive of all taxes
+                </p>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-            <Link
-              to={`/orders/${id}/track`}
-              className="inline-flex h-11 w-full min-w-[160px] items-center justify-center gap-2 rounded-lg bg-gold px-6 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:w-auto"
-            >
-              <Truck size={18} />
-              Track packages
-            </Link>
-            {invoiceDownloadAvailable && (
               <Link
-                to={`/orders/${id}`}
-                onClick={(event) => event.stopPropagation()}
-                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#D6B45B] bg-white px-5 text-sm font-bold text-gold-dark transition hover:bg-gold-soft sm:w-auto"
+                to={`/orders/${id}/track`}
+                className="inline-flex h-11 w-full min-w-[160px] items-center justify-center gap-2 rounded-lg bg-gold px-6 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:w-auto"
               >
-                <Download size={16} />
-                Seller invoices
+                <Truck size={18} />
+                Track packages
               </Link>
-            )}
-          </div>
+              {invoiceDownloadAvailable && (
+                <Link
+                  to={`/orders/${id}`}
+                  onClick={(event) => event.stopPropagation()}
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#D6B45B] bg-white px-5 text-sm font-bold text-gold-dark transition hover:bg-gold-soft sm:w-auto"
+                >
+                  <Download size={16} />
+                  Seller invoices
+                </Link>
+              )}
+            </div>
           </div>
         </div>
 
         <div className="mt-4 grid gap-4 xl:grid-cols-2">
           {sellerPackages.map((sellerPackage, packageIndex) => (
-            <section key={sellerPackage.key} className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white shadow-[0_3px_14px_rgba(53,45,20,0.05)]">
+            <section
+              key={sellerPackage.key}
+              className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white shadow-[0_3px_14px_rgba(53,45,20,0.05)]"
+            >
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EFE5D2] bg-[#FFF8E7] px-4 py-3">
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#9A7A27]">Package {packageIndex + 1}</p>
-                  <h4 className="mt-0.5 text-sm font-bold text-[#1B1D60]">{sellerPackage.sellerName}</h4>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#9A7A27]">
+                    Package {packageIndex + 1}
+                  </p>
+                  <h4 className="mt-0.5 text-sm font-bold text-[#1B1D60]">
+                    {sellerPackage.sellerName}
+                  </h4>
                 </div>
-                <span className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold capitalize ${COMPACT_STATUS_BADGE[sellerPackage.status] || "bg-[#D7A522] text-white"}`}>
+                <span
+                  className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold capitalize ${COMPACT_STATUS_BADGE[sellerPackage.status] || "bg-[#D7A522] text-white"}`}
+                >
                   {humanize(sellerPackage.status, "Processing")}
                 </span>
               </div>
               <div className="divide-y divide-[#F1E8D5]">
                 {sellerPackage.items.map((packageItem, index) => {
-                  const itemStatus = packageItem.cancellation_status || packageItem.delivery_status || packageItem.deliveryStatus || sellerPackage.status;
+                  const itemStatus =
+                    packageItem.cancellation_status ||
+                    packageItem.delivery_status ||
+                    packageItem.deliveryStatus ||
+                    sellerPackage.status;
                   const itemImage = getOrderCardImage(packageItem);
-                  const itemTotal = packageItem.line_total ?? packageItem.lineTotal ?? (Number(packageItem.unit_price || packageItem.unitPrice || 0) * Number(packageItem.quantity || 0));
+                  const itemTotal =
+                    packageItem.line_total ??
+                    packageItem.lineTotal ??
+                    Number(
+                      packageItem.unit_price || packageItem.unitPrice || 0,
+                    ) * Number(packageItem.quantity || 0);
                   return (
-                    <Link key={packageItem.id || packageItem._id || index} to={`/orders/${id}`} className="grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 transition hover:bg-[#FFFCF6]">
+                    <Link
+                      key={packageItem.id || packageItem._id || index}
+                      to={`/orders/${id}`}
+                      className="grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 transition hover:bg-[#FFFCF6]"
+                    >
                       <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-md border border-[#EFE5D2] bg-white">
-                        {itemImage ? <img src={itemImage} alt="" className="h-full w-full object-contain p-1" /> : <Package size={20} className="text-[#D9CBAE]" />}
+                        {itemImage ? (
+                          <img
+                            src={itemImage}
+                            alt=""
+                            className="h-full w-full object-contain p-1"
+                          />
+                        ) : (
+                          <Package size={20} className="text-[#D9CBAE]" />
+                        )}
                       </span>
                       <span className="min-w-0">
-                        <span className="block truncate text-sm font-bold text-[#2E2E2E]">{getProductTitle(packageItem)}</span>
-                        <span className="mt-1 block text-xs font-medium text-[#6F7480]">Qty {Number(packageItem.quantity || 0)} · <span className="capitalize">{humanize(itemStatus, "Processing")}</span></span>
+                        <span className="block truncate text-sm font-bold text-[#2E2E2E]">
+                          {getProductTitle(packageItem)}
+                        </span>
+                        <span className="mt-1 block text-xs font-medium text-[#6F7480]">
+                          Qty {Number(packageItem.quantity || 0)} ·{" "}
+                          <span className="capitalize">
+                            {humanize(itemStatus, "Processing")}
+                          </span>
+                        </span>
                       </span>
-                      <span className="whitespace-nowrap text-sm font-extrabold text-[#1B1D60]">{formatMoney(itemTotal, currency)}</span>
+                      <span className="whitespace-nowrap text-sm font-extrabold text-[#1B1D60]">
+                        {formatMoney(itemTotal, currency)}
+                      </span>
                     </Link>
                   );
                 })}
@@ -1339,40 +1511,44 @@ function OrderList() {
             sidebarClass="w-full xl:w-[400px] 2xl:w-[413px] transition-[top] duration-300 ease-in-out"
             mainContent={
               <div className="min-w-0 rounded-xl bg-white sm:p-4">
-                <div className="my-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <label className="relative block w-full sm:max-w-[450px]">
-                    <Search
-                      size={15}
-                      className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
-                    />
-                    <input
-                      value={query}
-                      onChange={(event) => setQuery(event.target.value)}
-                      placeholder="Search by  product name or Order ID..."
-                      className="h-12 w-full  rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
-                    />
-                  </label>
+                {allOrders.length > 0 && (
+                  <div className="my-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <label className="relative block w-full sm:max-w-[450px]">
+                      <Search
+                        size={15}
+                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+                      />
+                      <input
+                        value={query}
+                        onChange={(event) => setQuery(event.target.value)}
+                        placeholder="Search by  product name or Order ID..."
+                        className="h-12 w-full  rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
+                      />
+                    </label>
 
-                  <CustomDropdown
-                    className="w-full lg:w-[220px]"
-                    buttonClassName="h-12 rounded-[10px] border-[#1B1D604D] font-semibold text-ink"
-                    options={ORDER_FILTERS.map((f) => ({
-                      value: f.value,
-                      label: f.label === "All" ? "All Status" : f.label,
-                    }))}
-                    value={activeFilter}
-                    onChange={(val) => {
-                      setActiveFilter(val);
-                    }}
-                    placeholder="All Status"
-                  />
-                </div>
+                    <CustomDropdown
+                      className="w-full lg:w-[220px]"
+                      buttonClassName="h-12 rounded-[10px] border-[#1B1D604D] font-semibold text-ink"
+                      options={ORDER_FILTERS.map((f) => ({
+                        value: f.value,
+                        label: f.label === "All" ? "All Status" : f.label,
+                      }))}
+                      value={activeFilter}
+                      onChange={(val) => {
+                        setActiveFilter(val);
+                      }}
+                      placeholder="All Status"
+                    />
+                  </div>
+                )}
 
                 <ApiState
                   loading={state.loading && !allOrders.length}
                   error={state.error}
                   empty={!orders.length && !state.loading}
-                  emptyTitle={activeFilter ? "No orders found" : "No orders yet"}
+                  emptyTitle={
+                    activeFilter ? "No orders found" : "No orders yet"
+                  }
                   emptyText={
                     activeFilter || query
                       ? "Try a different filter."
@@ -1387,16 +1563,16 @@ function OrderList() {
                 </ApiState>
               </div>
             }
-            sidebarContent={
-              <div className="min-w-0 self-start xl:h-fit">
-                <NeedHelpPanel
-                  title="Need Help ?"
-                  items={orderHelpItems}
-                  headerStyle="plain"
-                  sticky={false}
-                />
-              </div>
-            }
+            // sidebarContent={
+            //   <div className="min-w-0 self-start xl:h-fit">
+            //     <NeedHelpPanel
+            //       title="Need Help ?"
+            //       items={orderHelpItems}
+            //       headerStyle="plain"
+            //       sticky={false}
+            //     />
+            //   </div>
+            // }
           />
         </div>
       </section>
