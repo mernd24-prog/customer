@@ -90,7 +90,7 @@ export const Navbar = ({ icons: propIcons }) => {
     if (currentUser) {
       dispatch(fetchMe());
     }
-  }, [currentUser?.id, currentUser?._id, dispatch]);
+  }, [currentUser, dispatch]);
 
   // Clear search when navigating back to homepage
   useEffect(() => {

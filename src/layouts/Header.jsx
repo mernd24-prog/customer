@@ -231,7 +231,7 @@ export const Navbar = ({ icons: propIcons }) => {
     if (currentUser) {
       dispatch(fetchMe());
     }
-  }, [currentUser?.id, currentUser?._id, dispatch]);
+  }, [currentUser, dispatch]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
