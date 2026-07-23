@@ -154,8 +154,8 @@ export function PriceRangeFilter({
 }) {
   const applyTimerRef = useRef(null);
   const activeThumbRef = useRef(null);
-  const safeMin = min ?? minLimit ?? 0;
-  const safeMax = max ?? maxLimit ?? 150000;
+  const safeMin = min !== "" && min != null ? min : (minLimit ?? 0);
+  const safeMax = max !== "" && max != null ? max : (maxLimit ?? 150000);
   const rangeValuesRef = useRef({
     min: Number(safeMin),
     max: Number(safeMax),
@@ -164,13 +164,13 @@ export function PriceRangeFilter({
   const [localMax, setLocalMax] = useState(Number(safeMax));
 
   useEffect(() => {
-    const nextMin = min ?? minLimit ?? 0;
+    const nextMin = min !== "" && min != null ? min : (minLimit ?? 0);
     rangeValuesRef.current.min = Number(nextMin);
     setLocalMin(Number(nextMin));
   }, [min, minLimit]);
 
   useEffect(() => {
-    const nextMax = max ?? maxLimit ?? 150000;
+    const nextMax = max !== "" && max != null ? max : (maxLimit ?? 150000);
     rangeValuesRef.current.max = Number(nextMax);
     setLocalMax(Number(nextMax));
   }, [max, maxLimit]);

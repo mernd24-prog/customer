@@ -227,8 +227,8 @@ export default function ProductsPage() {
   useEffect(() => {
     if (currentContextKey !== facetsContextKey) return;
 
-    let backendMin = productFacets?.price?.min;
-    let backendMax = productFacets?.price?.max;
+    let backendMin = productFacets?.priceStats?.min ?? productFacets?.price?.min;
+    let backendMax = productFacets?.priceStats?.max ?? productFacets?.price?.max;
 
     let currentMin = backendMin;
     let currentMax = backendMax;
@@ -306,7 +306,7 @@ export default function ProductsPage() {
     ) {
       const mergedMap = new Map();
       brandOptionsRef.current.options.forEach((opt) =>
-        mergedMap.set(opt.value, { ...opt, count: 0 }),
+        mergedMap.set(opt.value, { ...opt }),
       );
       rawOptions.forEach((opt) => mergedMap.set(opt.value, opt));
       return Array.from(mergedMap.values());
@@ -663,16 +663,18 @@ label: "Free Delivery",
         />
       ),
     },
-    productFacets.price?.min != null &&
-      productFacets.price?.max != null && {
+    absolutePriceLimits.min != null &&
+      absolutePriceLimits.max != null &&
+      absolutePriceLimits.max > 0 &&
+      absolutePriceLimits.min < absolutePriceLimits.max && {
         key: "price",
         title: "Price Range",
         content: (
           <PriceRangeFilter
             min={searchParams.get("minPrice")}
             max={searchParams.get("maxPrice")}
-            minLimit={priceLimits.min}
-            maxLimit={priceLimits.max}
+            minLimit={absolutePriceLimits.min}
+            maxLimit={absolutePriceLimits.max}
             onChange={handlePriceChange}
           />
         ),
@@ -759,7 +761,7 @@ label: "Free Delivery",
         <div className="flex flex-wrap items-end justify-end gap-3">
           <CollectionToolbar
             sortValue={searchParams.get("sort") || ""}
-            sortOptions={SORT_OPTIONS}
+            sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
             onOpenFilters={() => setSidebarOpen(true)}
             // viewControls={

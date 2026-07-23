@@ -56,6 +56,7 @@ import StarRating from "./components/starRating";
 import ShareProductPopover from "./components/socialMediaShare";
 import ProductPriceBlock from "./components/oldAndNewPrice";
 import ProductStockStatus from "./components/stockStatus";
+import SizeChartSidebar from "./components/SizeChartSidebar";
 import ShowMoreText, { getShowMoreText } from "../../utils/showMore";
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
@@ -616,6 +617,7 @@ function VariantSelector({
   findVariantForSelection,
   setSelectedVariant,
   product,
+  onSizeChartClick,
 }) {
   const variants = product?.variants || [];
 
@@ -630,13 +632,25 @@ function VariantSelector({
               : "order-1 w-full"
           }
         >
-          <p
-            className={`mb-3 font-semibold capitalize text-ink ${
-              option.displayType === "color_swatch" ? "text-lg" : "text-lg"
-            }`}
-          >
-            {option.displayType === "color_swatch" ? "Colour" : option.name}:
-          </p>
+          <div className="flex items-center gap-4 mb-3">
+            <p
+              className={`font-semibold capitalize text-ink ${
+                option.displayType === "color_swatch" ? "text-lg" : "text-lg"
+              }`}
+            >
+              {option.displayType === "color_swatch" ? "Colour" : option.name}:
+            </p>
+            {option.name?.toLowerCase() === "size" &&
+              (product?.category?.toLowerCase().includes("fashion") || product?.parentCategory?.toLowerCase().includes("fashion")) && (
+                <button
+                  type="button"
+                  onClick={onSizeChartClick}
+                  className="text-sm font-bold text-gold hover:text-gold-dark hover:underline transition-colors"
+                >
+                  Size Chart
+                </button>
+              )}
+          </div>
 
           <div className="flex  w-fit flex-wrap gap-4">
             {option.values.map((value, valueIndex) => {
@@ -1248,6 +1262,7 @@ export default function ProductDetailPage() {
   const [shareOpen, setShareOpen] = useState(false);
   const [activeInfoTab, setActiveInfoTab] = useState("details");
   const [recentlyViewedList, setRecentlyViewedList] = useState([]);
+  const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
 
   useEffect(() => {
     setActiveInfoTab(
@@ -1784,6 +1799,7 @@ export default function ProductDetailPage() {
                       findVariantForSelection={findVariantForSelection}
                       setSelectedVariant={setSelectedVariant}
                       product={product}
+                      onSizeChartClick={() => setIsSizeChartOpen(true)}
                     />
                   )}
 
@@ -1857,6 +1873,14 @@ export default function ProductDetailPage() {
           )}
         </ApiState>
       </div>
+      
+      {product && (
+        <SizeChartSidebar 
+          isOpen={isSizeChartOpen} 
+          onClose={() => setIsSizeChartOpen(false)} 
+          productName={getProductTitle(product)} 
+        />
+      )}
     </>
   );
 }

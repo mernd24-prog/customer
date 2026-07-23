@@ -16,6 +16,7 @@ import { fetchCmsPages } from "./features/cms/cmsSlice";
 import { AUTH_ROUTES } from "./features/auth/authRoutes";
 import { tokenStorage } from "./api/tokenStorage";
 import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
+import ContactUs from "./pages/contact/ContactUs.jsx";
 
 import ScrollToTop from "./components/common/ScrollToTop";
 import CategoryListingPage from "./pages/category/CategoryListingPage";
@@ -141,6 +142,7 @@ const SubscriptionPage = lazyNamed(
   () => import("./pages/subscription/SubscriptionPage"),
   "SubscriptionPage",
 );
+
 
 const SimpleApiPage = lazyNamed(
   () => import("./pages/SimpleApiPage"),
@@ -297,6 +299,7 @@ export default function App() {
                   element={<ResetPasswordPage />}
                 />
               </Route>
+              <Route path="/contact-us" element={<ContactUs />} />
 
               <Route path="/faq" element={<FAQPage />} />
 
@@ -472,8 +475,6 @@ export default function App() {
                   <Route path="/wallet" element={<WalletPage />} />
                   <Route path="/payments" element={<PaymentsPage />} />
                   <Route path="/subscriptions" element={<SubscriptionPage />} />
-
-
 
                   {/* Warranty */}
                   <Route path="/warranty" element={<WarrantyPage />} />

@@ -469,7 +469,7 @@ export default function BrandPage() {
         total={pageInfo.total}
         shown={items.length}
         sortValue={searchParams.get("sort") || ""}
-        sortOptions={SORT_OPTIONS}
+        sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
         onSortChange={(value) => updateParam("sort", value)}
         pageSizeValue={searchParams.get("limit") || "20"}
         pageSizes={showPageSizeSelector ? PAGE_SIZES : []}

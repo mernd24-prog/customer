@@ -528,7 +528,7 @@ export default function SearchPage() {
     ) {
       const mergedMap = new Map();
       brandOptionsRef.current.options.forEach((opt) =>
-        mergedMap.set(opt.value, { ...opt, count: 0 }),
+        mergedMap.set(opt.value, { ...opt }),
       );
       rawOptions.forEach((opt) => mergedMap.set(opt.value, opt));
       return Array.from(mergedMap.values());
@@ -714,16 +714,18 @@ export default function SearchPage() {
         />
       ),
     },
-    facets.price?.min != null &&
-      facets.price?.max != null && {
+    (facets.priceStats?.min ?? facets.price?.min) != null &&
+      (facets.priceStats?.max ?? facets.price?.max) != null &&
+      (facets.priceStats?.max ?? facets.price?.max) > 0 &&
+      (facets.priceStats?.min ?? facets.price?.min) < (facets.priceStats?.max ?? facets.price?.max) && {
         key: "price",
         title: "Price Range",
         content: (
           <PriceRangeFilter
-            min={minPrice}
-            max={maxPrice}
-            minLimit={facets.price.min}
-            maxLimit={facets.price.max}
+            min={searchParams.get("minPrice") ?? undefined}
+            max={searchParams.get("maxPrice") ?? undefined}
+            minLimit={facets.priceStats?.min ?? facets.price?.min}
+            maxLimit={facets.priceStats?.max ?? facets.price?.max}
             onChange={handlePriceChange}
           />
         ),
@@ -847,7 +849,7 @@ export default function SearchPage() {
 
           <CollectionToolbar
             sortValue={sort}
-            sortOptions={SORT_OPTIONS}
+            sortOptions={meta.total <= 1 ? [] : SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
             onOpenFilters={() => setSidebarOpen(true)}
           />

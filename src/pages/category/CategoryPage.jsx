@@ -452,8 +452,8 @@ export default function CategoryPage() {
   useEffect(() => {
     if (currentContextKey !== facetsContextKey) return;
 
-    let backendMin = productFacets?.price?.min;
-    let backendMax = productFacets?.price?.max;
+    let backendMin = productFacets?.priceStats?.min ?? productFacets?.price?.min;
+    let backendMax = productFacets?.priceStats?.max ?? productFacets?.price?.max;
 
     let currentMin = backendMin;
     let currentMax = backendMax;
@@ -840,7 +840,10 @@ export default function CategoryPage() {
       .filter((brand) => brand.count > 0);
 
     const globalFilters = [
-      {
+      absolutePriceLimits.min != null &&
+      absolutePriceLimits.max != null &&
+      absolutePriceLimits.max > 0 &&
+      absolutePriceLimits.min < absolutePriceLimits.max && {
         key: "price",
         title: "Price Range",
         content: (
@@ -1038,7 +1041,7 @@ export default function CategoryPage() {
         <CollectionToolbar
           countText={`${(pageInfo.total || meta?.total || products.length).toLocaleString()} products`}
           sortValue={searchParams.get("sort") || ""}
-          sortOptions={SORT_OPTIONS}
+          sortOptions={(pageInfo.total || meta?.total || products.length) <= 1 ? [] : SORT_OPTIONS}
           onSortChange={(value) => updateParam("sort", value)}
           onOpenFilters={() => setSidebarOpen(true)}
         />
