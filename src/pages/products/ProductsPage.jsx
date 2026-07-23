@@ -111,6 +111,7 @@ export default function ProductsPage() {
   });
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
+  const [facetsContextKey, setFacetsContextKey] = useState("");
   const sentinelRef = useRef(null);
   const requestSequenceRef = useRef(0);
   const productState = useSelector((s) => s.product);
@@ -224,6 +225,8 @@ export default function ProductsPage() {
   });
 
   useEffect(() => {
+    if (currentContextKey !== facetsContextKey) return;
+
     let backendMin = productFacets?.price?.min;
     let backendMax = productFacets?.price?.max;
 
@@ -259,7 +262,7 @@ export default function ProductsPage() {
         return prev;
       });
     }
-  }, [productFacets?.price, products, currentContextKey]);
+  }, [productFacets?.price, products, currentContextKey, facetsContextKey]);
 
   const priceLimits = useMemo(() => {
     return {
@@ -373,6 +376,12 @@ export default function ProductsPage() {
         data.list ||
         (Array.isArray(data) ? data : []);
 
+      const p = new URLSearchParams(searchParams);
+      p.delete("minPrice");
+      p.delete("maxPrice");
+      p.delete("page");
+      const ctxKey = p.toString();
+
       const meta =
         result?.meta?.pagination || result?.pagination || result?.meta || {};
       setPageInfo({
@@ -381,6 +390,7 @@ export default function ProductsPage() {
         total: Number(meta.total || meta.count || list.length || 0),
       });
       setProductFacets(result?.meta?.facets || result?.meta?.filters || {});
+      setFacetsContextKey(ctxKey);
       setItems((prev) => (append ? [...prev, ...list] : list));
       setFirstLoadDone(true);
       setIsLoadingMore(false);

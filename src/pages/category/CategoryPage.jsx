@@ -330,6 +330,7 @@ export default function CategoryPage() {
     total: 0,
   });
   const [productFacets, setProductFacets] = useState({});
+  const [facetsContextKey, setFacetsContextKey] = useState("");
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [categoryError, setCategoryError] = useState(null);
@@ -449,6 +450,8 @@ export default function CategoryPage() {
   });
 
   useEffect(() => {
+    if (currentContextKey !== facetsContextKey) return;
+
     let backendMin = productFacets?.price?.min;
     let backendMax = productFacets?.price?.max;
 
@@ -484,7 +487,7 @@ export default function CategoryPage() {
         return prev;
       });
     }
-  }, [productFacets?.price, products, currentContextKey]);
+  }, [productFacets?.price, products, currentContextKey, facetsContextKey]);
 
   const priceLimits = useMemo(() => {
     return {
@@ -537,6 +540,12 @@ export default function CategoryPage() {
           ? data
           : data?.products || data?.items || data?.list || [];
 
+        const p = new URLSearchParams(searchParams);
+        p.delete("minPrice");
+        p.delete("maxPrice");
+        p.delete("page");
+        const ctxKey = `${categoryKey}_${p.toString()}`;
+
         const m = result?.meta || {};
         setPageInfo({
           page: Number(m.page || m.currentPage || params.page || 1),
@@ -544,6 +553,7 @@ export default function CategoryPage() {
           total: Number(m.total || m.count || list.length || 0),
         });
         setProductFacets(m.facets || m.filters || {});
+        setFacetsContextKey(ctxKey);
 
         setItems((prev) => (append ? [...prev, ...list] : list));
         setFirstLoadDone(true);
