@@ -10,8 +10,8 @@ export const ERROR_MESSAGES = Object.freeze({
   phone: "Enter a valid 10-digit Indian mobile number",
   safeText: "Only letters, numbers, spaces, and basic punctuation are allowed",
   name: (field) => `${field} can contain letters, spaces, apostrophes, dots, and hyphens only`,
-  firstName: "First name should contain only letters",
-  lastName: "Last name should contain only letters",
+  firstName: "First Name should contain only letters",
+  lastName: "Last Name should contain only letters",
   passwordMin: "Password must be at least 8 characters",
   passwordUppercase: "Password must contain at least one uppercase letter",
   passwordLowercase: "Password must contain at least one lowercase letter",
@@ -21,7 +21,7 @@ export const ERROR_MESSAGES = Object.freeze({
   passwordSameAsCurrent: "New password must be different from current password",
   otp: "Enter the 6-digit OTP",
   postalCode: "Enter a valid postal code",
-  indianPostalCode: "Enter PIN code",
+  indianPostalCode: "Enter a valid 6-digit PIN code",
   url: "Enter a valid URL",
 });
 
@@ -145,7 +145,7 @@ export const nameField = (field, options = {}) =>
   });
 
 export const firstNameField = (options = {}) =>
-  requiredString("First name", {
+  requiredString("First Name", {
     min: 2,
     max: 40,
     ...options,
@@ -154,7 +154,7 @@ export const firstNameField = (options = {}) =>
   });
 
 export const lastNameField = (options = {}) =>
-  requiredString("Last name", {
+  requiredString("Last Name", {
     min: 1,
     max: 50,
     ...options,
@@ -280,7 +280,7 @@ export const strongPasswordField = passwordField
 export const otpField = trimString.regex(REGEX.otp, ERROR_MESSAGES.otp);
 
 export const postalCodeField = trimString
-  .min(1, ERROR_MESSAGES.required("Postal code"))
+  .min(1, ERROR_MESSAGES.required("Postal Code"))
   .regex(REGEX.postalCode, ERROR_MESSAGES.postalCode);
 
 export const indianPostalCodeField = trimString

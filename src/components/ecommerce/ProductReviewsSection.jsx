@@ -96,7 +96,7 @@ function ProductReviewCard({
     String(currentUserId || ""),
   );
   const isAdminReview = review.orderId?.startsWith("admin:");
-  
+
   let reviewerName = "";
   if (isOwn) {
     reviewerName = getUserDisplayName(currentUser);
@@ -307,7 +307,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
           onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
           maxLength={200}
           required
-          placeholder="Summarise your review"
+          placeholder="Summarise Your Review"
           className="w-full border border-border-strong rounded-[6px] px-3 py-2 text-sm"
         />
       </div>
@@ -324,7 +324,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
           }
           maxLength={2000}
           required
-          placeholder="Share your experience with this product…"
+          placeholder="Share Your Experience with This Product…"
           className="w-full border border-border-strong rounded-[6px] px-3 py-2 text-sm resize-none"
         />
         <p className="text-xs text-gray text-right">
@@ -625,7 +625,7 @@ export default function ProductReviewsSection({ productId, product }) {
                   onClick={() => setRatingFilter(0)}
                   className="mt-4 text-xs font-bold text-[var(--customer-gold-dark)] hover:text-[var(--customer-gold)]"
                 >
-                  Clear filter
+                  Clear Filter
                 </button>
               )}
             </div>
@@ -648,7 +648,7 @@ export default function ProductReviewsSection({ productId, product }) {
               <div className="flex flex-wrap items-center gap-2">
                 {ratingFilter > 0 && (
                   <span className="rounded-full bg-gold-soft px-2 py-1 text-xs text-gold-dark">
-                    {ratingFilter}★ only
+                    {ratingFilter}★ Only
                   </span>
                 )}
                 <CustomDropdown
@@ -701,16 +701,16 @@ export default function ProductReviewsSection({ productId, product }) {
                 <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-[#CE9F2D1F] sm:h-36 sm:w-36 lg:h-44 lg:w-44">
                   <img
                     src="/image/png/noReview.png"
-                    alt="No reviews yet"
+                    alt="No Reviews Yet"
                     className="h-full w-full object-contain"
                     loading="lazy"
                   />
                 </div>
                 <p className="mt-5 text-lg font-bold text-[#1B1D60] sm:text-xl">
-                  No reviews yet
+                  No Reviews Yet
                 </p>
                 <p className="mt-2 max-w-[320px] text-sm font-medium leading-6 text-[#5F6078] sm:text-base">
-                  Published customer reviews will appear here.
+                  Published Customer Reviews Will Appear Here.
                 </p>
               </div>
             </div>
@@ -722,7 +722,7 @@ export default function ProductReviewsSection({ productId, product }) {
               state={{ product }}
               className=" flex w-full items-center gap-2 text-left text-sm lg:text-lg font-semibold  text-[#CE9F2D] transition-colors "
             >
-              View all reviews <ChevronRight size={16} />
+              View All Reviews <ChevronRight size={16} />
             </Link>
           )}
         </div>

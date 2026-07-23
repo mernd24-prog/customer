@@ -10,7 +10,7 @@ export default function DiscountsSection({ register, errors, walletBalance }) {
           <FormField
             id="couponCode"
             label="Coupon or Influencer Code"
-            placeholder="Enter coupon or influencer code"
+            placeholder="Enter Coupon or Influencer Code"
             registration={register("couponCode")}
             error={errors.couponCode}
           />
@@ -20,7 +20,7 @@ export default function DiscountsSection({ register, errors, walletBalance }) {
           <FormField
             id="walletAmount"
             label={`Wallet Amount (Available: ${formatMoney(walletBalance, "INR")})`}
-            placeholder="Enter wallet amount"
+            placeholder="Enter Wallet Amount"
             mode="wallet"
             registration={register("walletAmount")}
             error={errors.walletAmount}

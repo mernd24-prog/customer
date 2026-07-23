@@ -318,7 +318,7 @@ export default function AddressSelection({
               <div className=" grid gap-4 py-4 sm:pb-8">
                 <div className="flex  items-center gap-2 text-sm font-semibold text-ink">
                   <Pencil size={16} className="text-gold" />
-                  Edit address
+                  Edit Address
                 </div>
                 <AddressFormFields
                   form={editForm}
@@ -344,7 +344,7 @@ export default function AddressSelection({
                     )}
                     className="w-full sm:w-auto"
                   >
-                    Save changes
+                    Save Changes
                   </Button>
                   <Button
                     type="button"

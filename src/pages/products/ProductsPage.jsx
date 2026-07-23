@@ -800,7 +800,7 @@ label: "Free Delivery",
           }
           error={products.length === 0 ? productState.error : null}
           empty={!products.length && !productState.loading && firstLoadDone}
-          emptyTitle={isSearchMode ? "No results found" : "No products found"}
+          emptyTitle={isSearchMode ? "No results found" : "No Products Found"}
           emptyText={
             isSearchMode
               ? "Try different keywords or remove filters."

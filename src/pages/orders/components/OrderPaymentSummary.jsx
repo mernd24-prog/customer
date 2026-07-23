@@ -76,27 +76,27 @@ function TaxBreakupBlock({
   return (
     <div className="flex w-full max-w-[515px] flex-col items-start py-3">
       <span className="text-[14px] font-semibold leading-[20px] text-[#2E2E2E] sm:text-[16px] sm:leading-[24px] md:text-[18px] md:leading-[28px]">
-        GST invoice breakup
+        Gst Invoice Breakup
       </span>
       <div className="mt-2 grid gap-1 text-[14px] font-medium leading-[20px] text-[#1B1D60] sm:text-[16px] sm:leading-[26px] md:text-[18px] md:leading-[30px]">
         {taxBreakup && (
           <p>
-            Tax mode:{" "}
+            Tax Mode:{" "}
             {(taxBreakup.taxMode || taxBreakup.tax_mode || "N/A")
               .toString()
               .toUpperCase()}
           </p>
         )}
         {taxPayable > 0 && (
-          <p>GST added to payable: {formatMoney(taxPayable, currency)}</p>
+          <p>Gst Added to Payable: {formatMoney(taxPayable, currency)}</p>
         )}
         {taxIncluded > 0 && (
           <p>
-            GST included in item price: {formatMoney(taxIncluded, currency)}
+            Gst Included in Item Price: {formatMoney(taxIncluded, currency)}
           </p>
         )}
         {tax !== undefined && taxPayable === 0 && taxIncluded === 0 && (
-          <p>GST breakup: {formatMoney(tax, currency)}</p>
+          <p>Gst Breakup: {formatMoney(tax, currency)}</p>
         )}
       </div>
     </div>
@@ -151,7 +151,7 @@ function OrderPaymentSummary({
   const visiblePaymentMethods =
     variant === "checkout"
       ? paymentMethods.filter(
-          (option) => option.provider !== "cod" // || option.enabled !== false,
+          (option) => option.provider !== "cod", // || option.enabled !== false,
         )
       : paymentMethods;
 
@@ -209,10 +209,7 @@ function OrderPaymentSummary({
       {/* Order Subtotal */}
       {variant === "order" && subtotal !== undefined && (
         <div>
-          <SummaryRow
-            label="Price"
-            value={formatMoney(subtotal, currency)}
-          />
+          <SummaryRow label="Price" value={formatMoney(subtotal, currency)} />
         </div>
       )}
       {/* Product Discount */}
@@ -377,7 +374,7 @@ function OrderPaymentSummary({
             <span className="font-bold">
               {formatMoney(totalSavings, currency)}
             </span>{" "}
-            on this order
+            On This Order
           </p>
         </div>
       )}
@@ -402,7 +399,7 @@ function OrderPaymentSummary({
             {loading ? (
               <>
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                Please wait...
+                Please Wait...
               </>
             ) : (
               buttonText
@@ -422,4 +419,3 @@ function OrderPaymentSummary({
 
 export { SummaryRow };
 export default OrderPaymentSummary;
-  

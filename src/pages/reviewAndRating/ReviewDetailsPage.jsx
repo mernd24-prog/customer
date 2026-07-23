@@ -90,7 +90,7 @@ function ProductReviewSidebar({ product, productId }) {
         className="mb-4 inline-flex items-center gap-1 text-xs font-bold uppercase text-gold-dark"
       >
         <ChevronLeft size={16} />
-        Back to product
+        Back to Product
       </Link>
 
       <img
@@ -152,7 +152,7 @@ function RatingSummary({
               ? `${reviewCount.toLocaleString("en-IN")} verified buyer${
                   reviewCount !== 1 ? "s" : ""
                 }`
-              : "No reviews yet"}
+              : "No Reviews Yet"}
           </p>
         </div>
 
@@ -192,7 +192,7 @@ function ReviewsHeader({ total, sort, onSort }) {
   return (
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
       <h3 className="text-sm font-bold text-ink">
-        Customer reviews
+        Customer Reviews
         {total > 0 && (
           <span className="ml-1 font-normal text-muted">({total})</span>
         )}
@@ -223,7 +223,13 @@ function getUserDisplayName(user = {}) {
   );
 }
 
-function ReviewCard({ review, currentUser, currentUserId, onHelpful, hasReviewed }) {
+function ReviewCard({
+  review,
+  currentUser,
+  currentUserId,
+  onHelpful,
+  hasReviewed,
+}) {
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const isOwn =
     currentUserId &&
@@ -237,7 +243,7 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful, hasReviewed
   );
 
   const isAdminReview = review.orderId?.startsWith("admin:");
-  
+
   let reviewerName = "";
   if (isOwn) {
     reviewerName = getUserDisplayName(currentUser);
@@ -281,7 +287,7 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful, hasReviewed
 
         {isOwn && (
           <span className="rounded-full bg-gold/10 px-2 py-0.5 text-[10px] font-bold text-gold-dark">
-            Your review
+            Your Review
           </span>
         )}
       </div>
@@ -321,22 +327,22 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful, hasReviewed
         </div>
       )}
 
-        <button
-          type="button"
-          onClick={() => onHelpful(reviewId)}
-          disabled={!reviewId || isOwn}
-          className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
-            alreadyVoted
-              ? "bg-gold/10 text-gold-dark"
-              : "text-muted hover:bg-surface-soft hover:text-ink"
-          }`}
-        >
-          <ThumbsUp
-            size={12}
-            className={alreadyVoted ? "fill-gold text-gold" : ""}
-          />
-          Helpful ({helpfulVotes})
-        </button>
+      <button
+        type="button"
+        onClick={() => onHelpful(reviewId)}
+        disabled={!reviewId || isOwn}
+        className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+          alreadyVoted
+            ? "bg-gold/10 text-gold-dark"
+            : "text-muted hover:bg-surface-soft hover:text-ink"
+        }`}
+      >
+        <ThumbsUp
+          size={12}
+          className={alreadyVoted ? "fill-gold text-gold" : ""}
+        />
+        Helpful ({helpfulVotes})
+      </button>
 
       {lightboxIndex !== null && (
         <ReviewMediaLightbox
@@ -441,7 +447,7 @@ function ReviewPagination({ page, totalPages, onPrev, onNext }) {
       </button>
 
       <span className="text-xs text-muted">
-        Page {page} of {totalPages}
+        Page {page} Of {totalPages}
       </span>
 
       <button
@@ -470,7 +476,7 @@ function getProductDisplay(product) {
 
   const discount =
     mrp && price && Number(mrp) > Number(price)
-      ? `${Math.round(((Number(mrp) - Number(price)) / Number(mrp)) * 100)}% off`
+      ? `${Math.round(((Number(mrp) - Number(price)) / Number(mrp)) * 100)}% Off`
       : product?.discount || "";
 
   return {

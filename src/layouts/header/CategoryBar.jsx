@@ -298,7 +298,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
 
       {/* Sticky overlay nav (pins to top when scrolled past) */}
       <nav
-        aria-label="Sticky category navigation"
+        aria-label="Sticky Category Navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
         className={`fixed left-0 z-40 w-full
     border-0

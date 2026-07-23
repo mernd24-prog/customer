@@ -68,7 +68,7 @@ export function FaqPage() {
         />
 
         <CardGridSection
-          title="Top questions"
+          title="Top Questions"
           subtitle="Clear, easy answers to help you move faster."
           className="grid gap-4 md:grid-cols-2"
         >
@@ -109,24 +109,24 @@ export function SupportCenterPage() {
         >
           <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             <span className="rounded-3xl border border-white/15 bg-white/10 px-5 py-4 text-sm text-slate-200 shadow-sm backdrop-blur">
-              <strong className="block text-lg font-semibold">Live help</strong>
+              <strong className="block text-lg font-semibold">Live Help</strong>
               <span className="mt-1 block text-slate-300">
-                Available 24/7 for urgent order questions.
+                Available 24/7 for Urgent Order Questions.
               </span>
             </span>
             <span className="rounded-3xl border border-white/15 bg-white/10 px-5 py-4 text-sm text-slate-200 shadow-sm backdrop-blur">
               <strong className="block text-lg font-semibold">
-                Fast responses
+                Fast Responses
               </strong>
               <span className="mt-1 block text-slate-300">
-                We aim to resolve support requests within one business day.
+                We Aim to Resolve Support Requests Within One Business Day.
               </span>
             </span>
           </div>
         </PageHero>
 
         <CardGridSection
-          title="Instant support topics"
+          title="Instant Support Topics"
           subtitle="Choose the topic that best matches your request."
         >
           {topics.map((topic) => (
@@ -145,29 +145,29 @@ export function SupportCenterPage() {
         <section className="rounded-[var(--customer-radius)] bg-white p-8 shadow-sm shadow-border">
           <div className="grid gap-8 md:grid-cols-3">
             <div>
-              <h2 className="custom-h4 mb-3">Need real-time support?</h2>
+              <h2 className="custom-h4 mb-3">Need Real-time Support?</h2>
               <p className="custom-para text-muted">
-                Email us at{" "}
+                Email Us at{" "}
                 <a
                   href="mailto:support@samglobal.com"
                   className="text-accent underline"
                 >
                   support@samglobal.com
                 </a>{" "}
-                or visit the FAQ page for guided answers.
+                Or Visit the Faq Page for Guided Answers.
               </p>
             </div>
             <div className="grid gap-4">
               <InfoCard
                 icon={<Headphones size={24} />}
-                title="Contact support"
+                title="Contact Support"
                 description="Get help with orders, account updates, and returns."
                 to="/support"
                 actionLabel="Contact Support"
               />
               <InfoCard
                 icon={<ShieldCheck size={24} />}
-                title="Trust and safety"
+                title="Trust and Safety"
                 description="Learn about secure payments and fraud protection."
                 to="/features"
                 actionLabel="View features"
@@ -208,7 +208,7 @@ export function WhyChooseUsPage() {
         />
 
         <CardGridSection
-          title="What sets us apart"
+          title="What Sets Us Apart"
           subtitle="The reasons customers keep choosing Sam Global."
           className="grid gap-6 lg:grid-cols-2"
         >
@@ -254,7 +254,7 @@ export function OurCommitmentPage() {
         />
 
         <CardGridSection
-          title="Our commitment to you"
+          title="Our Commitment to You"
           subtitle="Meaningful service, clear policies, and quality first."
           className="grid gap-6 md:grid-cols-2"
         >
@@ -295,7 +295,7 @@ export function FeaturesPage() {
         />
 
         <CardGridSection
-          title="Platform features"
+          title="Platform Features"
           subtitle="Smart shopping features built to help you save time and shop confidently."
         >
           {items.map((item) => (
@@ -311,7 +311,7 @@ export function FeaturesPage() {
         <section className="rounded-[var(--customer-radius)] bg-white p-8 shadow-sm shadow-border">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h2 className="custom-h4">A smoother shopping experience</h2>
+              <h2 className="custom-h4">A Smoother Shopping Experience</h2>
               <p className="custom-para text-muted">
                 From search to checkout, every interaction is designed to feel
                 fast and effortless.

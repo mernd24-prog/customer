@@ -50,13 +50,13 @@ export default function CategoryCard({
           <img
             src={image}
             alt={title}
-            className="aspect-[284/160] h-[260px] object-cover transition-all duration-300 ease-in-out group-hover:scale-100"
+            className="aspect-[284/160] h-[260px] w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-100"
             loading="lazy"
             decoding="async"
             onError={(event) => applyImageFallback(event, title, "category")}
           />
         ) : (
-          <div className="flex aspect-[284/170] items-center justify-center text-[var(--customer-border-strong)]">
+          <div className="flex h-[260px] w-full items-center justify-center text-[var(--customer-border-strong)]">
             <Grid2X2 size={42} strokeWidth={1.4} />
           </div>
         )}

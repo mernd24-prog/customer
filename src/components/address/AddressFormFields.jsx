@@ -73,7 +73,7 @@ export default function AddressFormFields({
           <SelectField
             id={`${idPrefix}-label`}
             label="Label"
-            placeholder="Select label"
+            placeholder="Select Label"
             options={addressLabels}
             registration={register("label")}
             error={errors.label}
@@ -81,8 +81,8 @@ export default function AddressFormFields({
         )}
         <FormField
           id={`${idPrefix}-fullName`}
-          label="Full name"
-          placeholder="Enter your full name"
+          label="Full Name"
+          placeholder="Enter Your Full Name"
           registration={register("fullName")}
           error={errors.fullName}
           autoComplete="name"
@@ -98,14 +98,14 @@ export default function AddressFormFields({
       />
       <FormField
         id={`${idPrefix}-line1`}
-        label="Address line 1"
+        label="Address Line 1"
         registration={register("line1")}
         error={errors.line1}
         autoComplete="address-line1"
       />
       <FormField
         id={`${idPrefix}-line2`}
-        label="Address line 2 (optional)"
+        label="Address Line 2 (optional)"
         registration={register("line2")}
         error={errors.line2}
         autoComplete="address-line2"
@@ -158,8 +158,18 @@ export default function AddressFormFields({
         />
         <FormField
           id={`${idPrefix}-postalCode`}
-          label="Postal code"
-          placeholder="Enter Postal code"
+          label="Postal Code"
+          placeholder="Enter Postal Code"
+          maxLength={
+            ["india", "bharat", "in"].includes(
+              String(selectedCountry || "")
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z]/g, ""),
+            )
+              ? 6
+              : 12
+          }
           registration={register("postalCode", {
             setValueAs: normalizePostalCodeValue,
             onChange: (event) => {
@@ -175,7 +185,7 @@ export default function AddressFormFields({
       {showDefault && (
         <CheckboxField
           id={`${idPrefix}-isDefault`}
-          label="Set as default address"
+          label="Set as Default Address"
           registration={register("isDefault")}
         />
       )}

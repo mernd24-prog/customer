@@ -744,7 +744,7 @@ function OrderDetail({ orderId, track }) {
                       >
                         <Download size={18} />
                         <span className="max-w-[220px] truncate text-center text-[14px] font-semibold leading-[20px] text-[#3E4093]">
-                          Seller invoice · {invoiceSellerName(invoice, index)} · {invoiceItemSummary(invoice)}
+                          Seller Invoice ··· {invoiceSellerName(invoice, index)} · {invoiceItemSummary(invoice)}
                         </span>
                       </Button>
                     );
@@ -760,12 +760,12 @@ function OrderDetail({ orderId, track }) {
                           receiptPath,
                           `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || `receipt-${orderId}`}.pdf`,
                         )}
-                        title="Marketplace payment summary for the complete order"
+                        title="Marketplace Payment Summary for the Complete Order"
                         className="flex min-h-[54px] w-full sm:w-auto sm:min-w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[20px] py-[12px] text-[#3E4093] hover:border-[#3E4093] hover:bg-[#F7F7FF]"
                       >
                         <Download size={18} />
                         <span className="text-center text-[14px] font-semibold leading-[20px] text-[#3E4093]">
-                          Order receipt
+                          Order Receipt
                         </span>
                       </Button>
                     );
@@ -781,10 +781,10 @@ function OrderDetail({ orderId, track }) {
                           feeInvoicePath,
                           `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
                         )}
-                        title="Marketplace tax invoice for the customer platform fee"
+                        title="Marketplace Tax Invoice for the Customer Platform Fee"
                         className="flex min-h-[54px] w-full sm:w-auto sm:min-w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[20px] py-[12px] text-[#3E4093] hover:border-[#3E4093] hover:bg-[#F7F7FF]"
                       >
-                        <Download size={18} /> Platform fee invoice
+                        <Download size={18} /> Platform Fee Invoice
                       </Button>
                     );
                   })()}
@@ -794,7 +794,7 @@ function OrderDetail({ orderId, track }) {
                       className="flex min-h-[54px] w-full items-center rounded-[10px] border border-dashed border-[#D8D8E8] bg-[#FAFAFD] px-4 text-sm text-[#6B6B80] sm:w-auto"
                       title={(document.productTitles || []).join(", ")}
                     >
-                      {document.sellerName} invoice · Available after delivery
+                      {document.sellerName} Invoice ··· Available After Delivery
                     </div>
                   ))}
                   {invoiceDownloadAvailable && !customerInvoices.length && getInvoiceUrl(order) && (
@@ -835,11 +835,11 @@ function OrderDetail({ orderId, track }) {
               />
 
               {!track && ["delivered", "fulfilled", "partially_returned"].includes(status) && !returnWindowOpen && (
-                <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">All eligible item return windows closed by {formatOrderDate(returnEligibleUntil)}.</p>
+                <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">All Eligible Item Return Windows Closed by {formatOrderDate(returnEligibleUntil)}.</p>
               )}
 
               {getDeliveryStatus(order) === "partially_delivered" && (
-                <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">Part of your order has been delivered. Remaining seller packages are still being prepared or shipped.</p>
+                <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">Part of Your Order Has Been Delivered. Remaining Seller Packages Are Still Being Prepared or Shipped.</p>
               )}
 
               {hasKnownStatus(order) && (
@@ -914,7 +914,7 @@ function OrderDetail({ orderId, track }) {
             {cancellations.length > 0 && (
               <section className="rounded-[8px] md:border md:border-border bg-white px-4 py-4 sm:px-6">
                 <h2 className="text-sm font-semibold text-ink">
-                  Cancellation and refund status
+                  Cancellation and Refund Status
                 </h2>
                 <div className="mt-3 grid gap-3">
                   {cancellations.map((cancellation) => {
@@ -943,7 +943,7 @@ function OrderDetail({ orderId, track }) {
                             {formatMoney(cancellation.refund_amount, currency)}
                           </span>
                           <span>
-                            Refund status:{" "}
+                            Refund Status:{" "}
                             {String(
                               cancellation.refund_status || "pending",
                             ).replace(/_/g, " ")}
@@ -960,7 +960,7 @@ function OrderDetail({ orderId, track }) {
                                 )
                               }
                             >
-                              <Download size={12} /> Credit note
+                              <Download size={12} /> Credit Note
                             </Button>
                           )}
                         </div>
@@ -981,7 +981,7 @@ function OrderDetail({ orderId, track }) {
                       loading={retrying}
                       onClick={handleRetryPayment}
                     >
-                      <RefreshCw size={15} /> Retry payment
+                      <RefreshCw size={15} /> Retry Payment
                     </Button>
                   )}
                   {canCancelOrder(order) && (
@@ -990,7 +990,7 @@ function OrderDetail({ orderId, track }) {
                       className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
                       onClick={openCancellation}
                     >
-                      <XCircle size={15} /> Cancel order
+                      <XCircle size={15} /> Cancel Order
                     </Button>
                   )}
                   {!track && (
@@ -1002,7 +1002,7 @@ function OrderDetail({ orderId, track }) {
                         variant="secondary"
                         className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
                       >
-                        <Truck size={15} /> Track order
+                        <Truck size={15} /> Track Order
                       </Button>
                     </Link>
                   )}
@@ -1015,7 +1015,7 @@ function OrderDetail({ orderId, track }) {
                         variant="secondary"
                         className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
                       >
-                        <ReceiptText size={15} /> View order
+                        <ReceiptText size={15} /> View Order
                       </Button>
                     </Link>
                   )}
@@ -1027,7 +1027,7 @@ function OrderDetail({ orderId, track }) {
       </div>
       <ConfirmModal
         open={cancelModalOpen}
-        title="Cancel this order?"
+        title="Cancel This Order?"
         description="Your order will be cancelled and any reserved items will be released. If payment was already captured, the refund will be handled according to the payment method."
         confirmLabel={state.loading ? "Cancelling..." : "Cancel order"}
         cancelLabel="Keep order"
@@ -1042,11 +1042,11 @@ function OrderDetail({ orderId, track }) {
               value={cancelReasonCode}
               onChange={(event) => setCancelReasonCode(event.target.value)}
             >
-              <option value="changed_mind">Changed my mind</option>
-              <option value="ordered_by_mistake">Ordered by mistake</option>
-              <option value="address_issue">Address issue</option>
-              <option value="payment_issue">Payment issue</option>
-              <option value="delivery_delay">Delivery delay</option>
+              <option value="changed_mind">Changed My Mind</option>
+              <option value="ordered_by_mistake">Ordered by Mistake</option>
+              <option value="address_issue">Address Issue</option>
+              <option value="payment_issue">Payment Issue</option>
+              <option value="delivery_delay">Delivery Delay</option>
               <option value="other">Other</option>
             </select>
           </label>
@@ -1055,12 +1055,12 @@ function OrderDetail({ orderId, track }) {
             value={cancelReason}
             onChange={(event) => setCancelReason(event.target.value)}
             maxLength={500}
-            placeholder="Tell us why you are cancelling"
+            placeholder="Tell Us Why You Are Cancelling"
           />
 
           {cancelReason.trim().length > 0 && cancelReason.trim().length < 3 && (
             <p className="text-xs text-red-600">
-              Please enter at least 3 characters.
+              Please Enter at Least 3 Characters.
             </p>
           )}
         </div>
@@ -1224,19 +1224,19 @@ function OrderSummaryCard({ order }) {
           <div className="flex min-w-0 flex-col justify-between gap-4">
             <div className="flex flex-col justify-between gap-4 sm:flex-row">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#9A7A27]">Order overview</p>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#9A7A27]">Order Overview</p>
                 <h3 className="mt-1 text-xl font-extrabold text-[#1B1D60]">
-                  {orderItems.length} product{orderItems.length === 1 ? "" : "s"} in {sellerPackages.length} package{sellerPackages.length === 1 ? "" : "s"}
+                  {orderItems.length} Product{orderItems.length === 1 ? "" : "s"} In {sellerPackages.length} Package{sellerPackages.length === 1 ? "" : "s"}
                 </h3>
                 <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-[#5E6472]">
-                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">{quantity} total unit{quantity === 1 ? "" : "s"}</span>
-                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">{sellerPackages.length} seller shipment{sellerPackages.length === 1 ? "" : "s"}</span>
+                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">{quantity} Total Unit{quantity === 1 ? "" : "s"}</span>
+                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">{sellerPackages.length} Seller Shipment{sellerPackages.length === 1 ? "" : "s"}</span>
                 </div>
               </div>
               <div className="shrink-0 sm:text-right">
-                <p className="text-xs font-bold uppercase tracking-wide text-[#6F7480]">Complete order total</p>
+                <p className="text-xs font-bold uppercase tracking-wide text-[#6F7480]">Complete Order Total</p>
                 <p className="mt-1 text-2xl font-extrabold text-[#1B1D60]">{formatMoney(amount, currency)}</p>
-                <p className="mt-0.5 text-xs font-medium text-[#6F7480]">Inclusive of all taxes</p>
+                <p className="mt-0.5 text-xs font-medium text-[#6F7480]">Inclusive of All Taxes</p>
               </div>
             </div>
 
@@ -1246,7 +1246,7 @@ function OrderSummaryCard({ order }) {
               className="inline-flex h-11 w-full min-w-[160px] items-center justify-center gap-2 rounded-lg bg-gold px-6 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:w-auto"
             >
               <Truck size={18} />
-              Track packages
+              Track Packages
             </Link>
             {invoiceDownloadAvailable && (
               <Link
@@ -1255,7 +1255,7 @@ function OrderSummaryCard({ order }) {
                 className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#D6B45B] bg-white px-5 text-sm font-bold text-gold-dark transition hover:bg-gold-soft sm:w-auto"
               >
                 <Download size={16} />
-                Seller invoices
+                Seller Invoices
               </Link>
             )}
           </div>

@@ -9,7 +9,7 @@ const getMessage = (message) => {
 };
 
 export default function ErrorState({
-  title = "Something went wrong",
+  title = "Something Went Wrong",
   message,
   className = "",
 }) {

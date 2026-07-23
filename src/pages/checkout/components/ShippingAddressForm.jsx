@@ -34,7 +34,7 @@ export default function ShippingAddressForm({
     <div className="w-full grid gap-4 rounded-[10px] border border-border bg-surface-soft p-4 sm:p-5">
       <div className="flex items-center gap-2 text-sm font-semibold text-ink">
         <MapPin size={16} className="text-gold" />
-        Shipping address
+        Shipping Address
       </div>
       <AddressFormFields
         form={form}
@@ -59,7 +59,7 @@ export default function ShippingAddressForm({
           onClick={onSave}
           className={responsiveButtonClass}
         >
-          Save address
+          Save Address
         </Button>
         <Button
           type="button"

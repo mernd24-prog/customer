@@ -89,7 +89,7 @@ export const DealsAndProductsShowcase = () => {
       <section className="mb-8">
         <h2 className="text-2xl font-bold mb-4">Current Deals</h2>
         {loading ? (
-          <div>Loading deals...</div>
+          <div>Loading Deals...</div>
         ) : deals.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {deals.map((deal) => (
@@ -105,13 +105,13 @@ export const DealsAndProductsShowcase = () => {
                     : `₹${deal.discount_value} OFF`}
                 </div>
                 <p className="text-sm text-gray-500">
-                  Valid till {new Date(deal.end_date).toLocaleDateString()}
+                  Valid Till {new Date(deal.end_date).toLocaleDateString()}
                 </p>
               </div>
             ))}
           </div>
         ) : (
-          <p>No deals available</p>
+          <p>No Deals Available</p>
         )}
       </section>
 
@@ -121,14 +121,14 @@ export const DealsAndProductsShowcase = () => {
         <div className="mb-4">
           <input
             type="text"
-            placeholder="Search products..."
+            placeholder="Search Products..."
             className="w-full px-4 py-2 border rounded-lg"
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
 
         {loading ? (
-          <div>Loading products...</div>
+          <div>Loading Products...</div>
         ) : products.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {products.map((product) => (
@@ -160,7 +160,7 @@ export const DealsAndProductsShowcase = () => {
                   </div>
                   {product.rating && (
                     <p className="text-yellow-500 text-sm">
-                      ★ {product.rating.average} ({product.rating.count} reviews)
+                      ★ {product.rating.average} ({product.rating.count} Reviews)
                     </p>
                   )}
                 </div>
@@ -168,7 +168,7 @@ export const DealsAndProductsShowcase = () => {
             ))}
           </div>
         ) : (
-          <p>No products found</p>
+          <p>No Products Found</p>
         )}
       </section>
     </div>

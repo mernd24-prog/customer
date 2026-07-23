@@ -107,7 +107,7 @@ function ExistingReviewCard({ review }) {
   return (
     <section
       className="mt-5 overflow-hidden rounded-2xl border border-[#E2E3EA] bg-white "
-      aria-label="Your product review"
+      aria-label="Your Product Review"
     >
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#ECECF1] bg-[#F5ECD5] px-4 py-3.5 sm:px-5">
         <div className="flex items-center gap-3">
@@ -139,7 +139,7 @@ function ExistingReviewCard({ review }) {
         <div className="flex flex-wrap items-center gap-3">
           <ReviewRating rating={rating} />
           <span className="text-sm font-bold text-[#1B1D60]">
-            {rating}.0 out of 5
+            {rating}.0 Out of 5
           </span>
         </div>
 
@@ -158,7 +158,7 @@ function ExistingReviewCard({ review }) {
         {media.length > 0 && (
           <div className="mt-5">
             <p className="mb-2.5 flex items-center gap-2 text-xs font-bold uppercase tracking-[.08em] text-[#6B6B80]">
-              <Camera size={15} /> Photos from your review
+              <Camera size={15} /> Photos From Your Review
             </p>
             <div className="flex flex-wrap gap-2.5">
               {media.slice(0, 5).map((url, index) => (
@@ -270,7 +270,7 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
             }
             maxLength={200}
             className="h-11 rounded-[8px] border border-[#CE9F2D66] px-3 text-sm font-medium outline-none focus:border-transparent"
-            placeholder="Summarise your experience"
+            placeholder="Summarise Your Experience"
           />
         </label>
 
@@ -287,7 +287,7 @@ function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
             maxLength={2000}
             rows={5}
             className="resize-none rounded-[8px] border border-[#CE9F2D66] px-3 py-2 text-sm font-medium outline-none focus:border-transparent"
-            placeholder="Share product quality, delivery condition, and fit."
+            placeholder="Share Product Quality, Delivery Condition, and Fit."
           />
         </label>
 
@@ -473,7 +473,7 @@ function OrderItemCard({
               {formatMoney(getItemLineTotal(item), currency)}
             </p>
             <p className="mt-0.5 text-sm font-medium text-[#2E2E2E] sm:text-base">
-              Inclusive of all taxes
+              Inclusive of All Taxes
             </p>
           </div>
         </div>
@@ -496,7 +496,7 @@ function OrderItemReviewAction({
     <div className="w-full">
       {!reviewChecked ? (
         <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA] px-4 text-sm font-bold text-[#6B6B80]">
-          Checking review...
+          Checking Review...
         </span>
       ) : existingReview ? (
         <ExistingReviewCard review={existingReview} />
@@ -692,7 +692,7 @@ function OrderItemsSection({
                     </span>
                     {policy.returnable && policy.eligibleUntil && (
                       <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-700">
-                        Return until {formatDate(policy.eligibleUntil)}
+                        Return Until {formatDate(policy.eligibleUntil)}
                       </span>
                     )}
                     {returnRequest && (
@@ -717,7 +717,7 @@ function OrderItemsSection({
                         to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(itemId)}`}
                         className="inline-flex min-h-9 items-center gap-2 rounded-[8px] border border-[#CE9F2D] bg-white px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#FFF8E7]"
                       >
-                        <RotateCcw size={15} /> Return or replace
+                        <RotateCcw size={15} /> Return or Replace
                       </Link>
                     )}
                   </div>

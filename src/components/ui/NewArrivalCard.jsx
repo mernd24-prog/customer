@@ -28,13 +28,13 @@ export default function NewArrivalCard({
           >
             {badgeText}
           </Label> */}
-          {/* See all Link */}
+          {/* See All Link */}
           <TextWhiteButton
             to={seeAllLink}
             rightIcon={<IoArrowForwardOutline className="text-[12px]" />}
             className=" text-[14px]  text-[#FFFFFF]"
           >
-            See all
+            See All
           </TextWhiteButton>
         </div>
 

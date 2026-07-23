@@ -117,7 +117,7 @@ export default function BrandPage() {
           if (fuzzy) {
             setBrand(fuzzy);
           } else {
-            setBrandError("Brand coming soon");
+            setBrandError("Brand Coming Soon");
           }
         }
         setBrandLoading(false);
@@ -428,9 +428,9 @@ export default function BrandPage() {
     return (
       <div className="w-container py-16 text-center">
         <Store size={48} className="mx-auto mb-4 text-gray-300" />
-        <h2 className=" text-2xl font-bold text-ink">Brand coming soon</h2>
+        <h2 className=" text-2xl font-bold text-ink">Brand Coming Soon</h2>
         <p className="mt-2  text-sm text-muted">
-          This brand page is being prepared and will be available soon.
+          This Brand Page Is Being Prepared and Will Be Available Soon.
         </p>
         <Link
           to="/brand-outlet"
@@ -488,7 +488,7 @@ export default function BrandPage() {
           refreshing: productState.loading && items.length > 0 && !isLoadingMore,
           error: productState.error,
           empty: !items.length && !productState.loading && firstLoadDone,
-          emptyTitle: `No products from ${brandName}`,
+          emptyTitle: `No Products from ${brandName}`,
           emptyText: "Try adjusting your filters or check back later.",
           products: items,
           onAddToCart: addToCart,

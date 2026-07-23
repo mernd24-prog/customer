@@ -1068,7 +1068,7 @@ export default function CategoryPage() {
           }
           error={products.length === 0 ? productState.error : null}
           empty={!products.length && !productState.loading && firstLoadDone}
-          emptyTitle="No products found"
+          emptyTitle="No Products Found"
           emptyText="Try adjusting your filters or browse other categories."
           products={products}
           viewMode={viewMode}

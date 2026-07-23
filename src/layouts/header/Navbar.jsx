@@ -92,7 +92,7 @@ export const Navbar = ({ icons: propIcons }) => {
     }
   }, [currentUser, dispatch]);
 
-  // Clear search when navigating back to homepage
+  // Clear Search when navigating back to homepage
   useEffect(() => {
     if (location.pathname === "/" && prevPathnameRef.current !== "/") {
       setSearchQuery("");
@@ -137,7 +137,7 @@ export const Navbar = ({ icons: propIcons }) => {
       <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4 lg:h-[90px] lg:flex-nowrap lg:gap-5">
         {/* Logo */}
         <div className="order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
-          <Link to="/" aria-label="Sam Global home">
+          <Link to="/" aria-label="Sam Global Home">
             <img
               src="/image/png/logo.png"
               alt="Sam Global"
@@ -159,7 +159,7 @@ export const Navbar = ({ icons: propIcons }) => {
           autocompleteLimit={8}
           autocompleteMinLength={1}
           autocompleteDebounceMs={1000}
-          placeholder="Search for products, brands and categories..."
+          placeholder="Search for Products, Brands and Categories..."
           showButtonLabel={false}
           className="order-3 w-full min-w-0 lg:order-2 my-2 lg:my-0 lg:w-auto lg:max-w-[720px] lg:flex-1"
         />

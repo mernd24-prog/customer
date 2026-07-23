@@ -821,7 +821,7 @@ export default function SearchPage() {
     <>
       <Seo
         title={q ? `Search: "${q}" | Sam Global` : "Search | Sam Global"}
-        description="Search products at Sam Global"
+        description="Search Products at Sam Global"
       />
 
       <div className="w-container py-6 sm:py-8">
@@ -840,7 +840,7 @@ export default function SearchPage() {
 
             {meta.total != null && (
               <p className=" text-sm text-muted">
-                {meta.total.toLocaleString()} results
+                {meta.total.toLocaleString()} Results
               </p>
             )}
           </div>
@@ -883,11 +883,11 @@ export default function SearchPage() {
                 <Search size={48} className="mb-4 text-gray" />
 
                 <p className=" text-[18px] font-semibold text-ink">
-                  What are you looking for?
+                  What Are You Looking for?
                 </p>
 
                 <p className="mt-2  text-sm text-muted">
-                  Enter a search term above to find products.
+                  Enter a Search Term Above to Find Products.
                 </p>
               </div>
             ) : (

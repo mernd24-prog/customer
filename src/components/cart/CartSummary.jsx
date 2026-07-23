@@ -169,7 +169,7 @@ export default function CartSummary({
 
           {extraTaxIncluded > 0 && (
             <p className="text-xs text-[var(--customer-muted)]">
-              Inclusive of {fmt(extraTaxIncluded)} GST
+              Inclusive of {fmt(extraTaxIncluded)} Gst
             </p>
           )}
 
@@ -183,7 +183,7 @@ export default function CartSummary({
             <BadgeCheck size={28} className="shrink-0 sm:size-8" />
             <p className="text-base font-medium min-[375px]:text-lg sm:text-xl">
               You Saved <span className="font-bold">{fmt(totalSavings)}</span>{" "}
-              on this order
+              On This Order
             </p>
           </div>
         )}

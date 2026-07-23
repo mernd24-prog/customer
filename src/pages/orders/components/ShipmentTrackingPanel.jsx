@@ -24,7 +24,7 @@ export default function ShipmentTrackingPanel({
       <section className="rounded-xl border border-[#CE9F2D66] bg-white p-5">
         <div className="flex items-center gap-3 text-[#1B1D60]">
           <Package size={22} />
-          <h2 className="font-bold">Shipment tracking</h2>
+          <h2 className="font-bold">Shipment Tracking</h2>
         </div>
         <p className="mt-3 text-sm text-[#6F7480]">
           The seller is preparing your order. Courier and tracking details will
@@ -37,9 +37,9 @@ export default function ShipmentTrackingPanel({
   return (
     <section className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold text-[#1B1D60]">Shipment tracking</h2>
+        <h2 className="text-xl font-bold text-[#1B1D60]">Shipment Tracking</h2>
         <p className="mt-1 text-sm text-[#6F7480]">
-          Each seller package may move separately.
+          Each Seller Package May Move Separately.
         </p>
       </div>
       {shipments.map((shipment, index) => {
@@ -108,7 +108,7 @@ export default function ShipmentTrackingPanel({
                     size={18}
                   />
                   <div>
-                    <strong>Tracking number</strong>
+                    <strong>Tracking Number</strong>
                     <p>{trackingNumber || "Will be added after dispatch"}</p>
                   </div>
                 </div>
@@ -119,7 +119,7 @@ export default function ShipmentTrackingPanel({
                       size={18}
                     />
                     <div>
-                      <strong>Courier tracking</strong>
+                      <strong>Courier Tracking</strong>
                       <p>
                         <a
                           className="text-[#3E4093] underline"
@@ -127,7 +127,7 @@ export default function ShipmentTrackingPanel({
                           target="_blank"
                           rel="noreferrer"
                         >
-                          Track package
+                          Track Package
                         </a>
                       </p>
                     </div>
@@ -152,7 +152,7 @@ export default function ShipmentTrackingPanel({
                       size={18}
                     />
                     <div>
-                      <strong>Expected delivery</strong>
+                      <strong>Expected Delivery</strong>
                       <p>{dateTime(shipment.expected_delivery_at)}</p>
                     </div>
                   </div>
@@ -161,7 +161,7 @@ export default function ShipmentTrackingPanel({
 
               <div className="rounded-lg border border-[#E7D9B8] p-4">
                 <h4 className="font-semibold text-[#1B1D60]">
-                  Latest movement
+                  Latest Movement
                 </h4>
                 <div className="mt-3 space-y-3">
                   {(events.length

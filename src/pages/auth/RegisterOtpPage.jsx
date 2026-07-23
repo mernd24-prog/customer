@@ -63,7 +63,7 @@ export default function RegisterOtpPage() {
       <Seo title="Register with OTP | Sam Global" />
 
       <AuthCard
-        title="Create account with OTP"
+        title="Create Account with Otp"
         subtitle="Create your password now, then verify your email with a one-time code."
         image="/image/png/authImg1.png"
         icon="/image/png/person.png"
@@ -77,26 +77,26 @@ export default function RegisterOtpPage() {
         >
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField
-              placeholder="Enter first name"
+              placeholder="Enter First Name"
               id="firstName"
-              label="First name"
+              label="First Name"
               registration={register("firstName")}
               error={errors.firstName}
               autoComplete="given-name"
             />
             <FormField
               id="lastName"
-              label="Last name"
+              label="Last Name"
               registration={register("lastName")}
               error={errors.lastName}
               autoComplete="family-name"
-              placeholder="Enter last name"
+              placeholder="Enter Last Name"
             />
           </div>
 
           <FormField
             id="email"
-            label="Email address"
+            label="Email Address"
             type="email"
             registration={register("email")}
             error={errors.email}
@@ -106,17 +106,17 @@ export default function RegisterOtpPage() {
 
           <FormField
             id="phone"
-            label="Phone number"
+            label="Phone Number"
             type="tel"
             registration={register("phone")}
             error={errors.phone}
             autoComplete="tel"
-            placeholder="Enter phone number"
+            placeholder="Enter Phone Number"
           />
 
           <FormField
             id="referralCode"
-            label="Referral code"
+            label="Referral Code"
             registration={register("referralCode")}
             error={errors.referralCode}
             placeholder="Optional"
@@ -137,7 +137,7 @@ export default function RegisterOtpPage() {
 
             <FormField
               id="confirmPassword"
-              label="Confirm password"
+              label="Confirm Password"
               type="password"
               registration={register("confirmPassword")}
               error={errors.confirmPassword}
@@ -166,7 +166,7 @@ export default function RegisterOtpPage() {
           </Button>
 
           <p className="text-center text-[13px] leading-[20px] text-muted">
-            Already have an account?{" "}
+            Already Have an Account?{" "}
             <Link
               to={AUTH_ROUTES.login}
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
@@ -176,12 +176,12 @@ export default function RegisterOtpPage() {
           </p>
 
           <p className="text-center text-[0.8rem] text-muted">
-            Prefer password?{" "}
+            Prefer Password?{" "}
             <Link
               to={AUTH_ROUTES.register}
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
             >
-              Register with password
+              Register with Password
             </Link>
           </p>
         </form>

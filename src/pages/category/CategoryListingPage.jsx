@@ -196,7 +196,7 @@ function CategoryTile({ category }) {
       </h2>
       {count !== undefined && count !== null && count !== "" ? (
         <p className="mt-1 text-xs font-semibold text-muted">
-          {Number(count).toLocaleString()} products
+          {Number(count).toLocaleString()} Products
         </p>
       ) : null}
     </Link>
@@ -357,8 +357,9 @@ export default function CategoryListingPage() {
   ]);
 
   const categories = useMemo(() => {
-    const available = getRootCategories(
-      catalogState.globalCategories) || [].filter((category) => Number(category.productCount || 0) > 0);
+    const available =
+      getRootCategories(catalogState.globalCategories) ||
+      [].filter((category) => Number(category.productCount || 0) > 0);
     const masterByKey = new Map(
       categoryList.map((category) => [category.routeKey, category]),
     );
@@ -390,7 +391,7 @@ export default function CategoryListingPage() {
           <div className="min-w-0 w-full">
             <section className="pb-7">
               <h1 className="mb-4 text-[20px] font-bold leading-tight text-ink sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">
-                Shop all categories
+                Shop All Categories
               </h1>
 
               {loading && !categories.length ? (
@@ -414,7 +415,7 @@ export default function CategoryListingPage() {
               ) : (
                 <div className="rounded-[12px] border border-border bg-cream p-6 text-center">
                   <p className="text-sm font-semibold text-ink">
-                    No categories available right now.
+                    No Categories Available Right Now.
                   </p>
                 </div>
               )}

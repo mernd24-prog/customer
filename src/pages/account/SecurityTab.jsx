@@ -44,7 +44,7 @@ export default function SecurityTab() {
 
       <FormField
         id="currentPassword"
-        label="Current password"
+        label="Current Password"
         type="password"
         registration={register("currentPassword")}
         error={errors.currentPassword}
@@ -54,7 +54,7 @@ export default function SecurityTab() {
 
       <FormField
         id="newPassword"
-        label="New password"
+        label="New Password"
         type="password"
         registration={register("newPassword")}
         error={errors.newPassword}
@@ -64,7 +64,7 @@ export default function SecurityTab() {
 
       <FormField
         id="confirmPassword"
-        label="Confirm new password"
+        label="Confirm New Password"
         type="password"
         registration={register("confirmPassword")}
         error={errors.confirmPassword}
@@ -78,7 +78,7 @@ export default function SecurityTab() {
         className="w-full sm:w-auto font-semibold text-white"
         size="lg"
       >
-        <KeyRound size={16} /> Change password
+        <KeyRound size={16} /> Change Password
       </Button>
     </form>
   );

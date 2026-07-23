@@ -62,19 +62,19 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           id="firstName"
-          label="First name"
+          label="First Name"
           registration={register("firstName")}
           error={errors.firstName}
           autoComplete="given-name"
-          placeholder="Enter first name"
+          placeholder="Enter First Name"
         />
         <FormField
           id="lastName"
-          label="Last name"
+          label="Last Name"
           registration={register("lastName")}
           error={errors.lastName}
           autoComplete="family-name"
-          placeholder="Enter last name"
+          placeholder="Enter Last Name"
         />
       </div>
 
@@ -96,7 +96,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
           dialCodeRegistration={register("dialCode")}
           error={errors.phone || errors.dialCode}
           autoComplete="tel"
-          placeholder="Enter phone number"
+          placeholder="Enter Phone Number"
         />
       </div>
 
@@ -112,7 +112,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         />
         <FormField
           id="confirmPassword"
-          label="Confirm password"
+          label="Confirm Password"
           type="password"
           registration={register("confirmPassword")}
           error={errors.confirmPassword}
@@ -123,7 +123,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
 
       <FormField
         id="referralCode"
-        label="Referral code"
+        label="Referral Code"
         registration={register("referralCode")}
         error={errors.referralCode}
       />
@@ -143,11 +143,11 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         size="lg"
         type="submit"
       >
-        <UserPlus size={18} /> Register as buyer
+        <UserPlus size={18} /> Register as Buyer
       </Button>
 
       <p className="text-center  text-[0.8rem] text-muted">
-        Already have an account?{" "}
+        Already Have an Account?{" "}
         <Link
           className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
           to={AUTH_ROUTES.login}
@@ -156,7 +156,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         </Link>
       </p>
       <p className="text-center  text-[0.8rem] text-muted">
-        Prefer OTP registration?{" "}
+        Prefer Otp Registration?{" "}
         <Link
           className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
           to={AUTH_ROUTES.registerOtp}

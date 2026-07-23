@@ -5,7 +5,7 @@ import { cn } from "../../../lib/utils";
 import { sanitizeSearchQuery } from "../../../validations";
 
 export default function SearchInput({
-  placeholder = "Search products…",
+  placeholder = "Search Products…",
   value,
   onChange,
   onSearch,
@@ -93,7 +93,7 @@ export default function SearchInput({
               type="button"
               onClick={handleClear}
               className="mr-1 shrink-0 rounded-full p-1 text-[var(--customer-muted)] hover:text-[var(--customer-ink)]"
-              aria-label="Clear search"
+              aria-label="Clear Search"
             >
               <X size={14} />
             </button>

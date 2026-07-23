@@ -26,13 +26,13 @@ export default function WatchlistDropdown({ title, items, onRemove }) {
           <div className="flex flex-col items-center justify-center px-6 py-10">
             <Heart size={28} className="mb-3 text-[var(--customer-border-strong)]" aria-hidden="true" />
             <p className="text-center text-[13px] text-[var(--customer-muted)]">
-              You are not watching any items yet.
+              You Are Not Watching Any Items Yet.
             </p>
             <Button
               variant="gradient"
               rounded
               size="sm"
-              label="Start shopping"
+              label="Start Shopping"
               className="mt-4 px-6"
               onClick={() => navigate("/")}
             />

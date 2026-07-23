@@ -282,7 +282,7 @@ export const Navbar = ({ icons: propIcons }) => {
     <header className="customer-container w-full">
       <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4  lg:h-[90px] lg:flex-nowrap lg:gap-5">
         <div className="order-1  flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
-          <Link to="/" aria-label="Sam Global home">
+          <Link to="/" aria-label="Sam Global Home">
             <img
               src="/image/png/logo.png"
               alt="Sam Global"
@@ -304,7 +304,7 @@ export const Navbar = ({ icons: propIcons }) => {
           autocompleteLimit={8}
           autocompleteMinLength={1}
           autocompleteDebounceMs={1000}
-          placeholder="Search for products, brands and categories..."
+          placeholder="Search for Products, Brands and Categories..."
           showButtonLabel={false}
           className="order-3 w-full min-w-0 lg:order-2 my-2 lg:my-0 lg:flex-1"
         />
@@ -607,7 +607,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     return (
       <nav
         ref={categoryBarRef}
-        aria-label="Category navigation"
+        aria-label="Category Navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
         className="fixed left-0 z-40 w-full bg-white border-b border-[var(--customer-border)]"
       >
@@ -762,7 +762,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         </div>
       )} */}
       <nav
-        aria-label="Sticky category navigation"
+        aria-label="Sticky Category Navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
         className={`fixed left-0 z-40 w-full bg-white shadow-[0_8px_18px_rgba(17,24,39,0.08)] transition-all duration-300 ease-in-out !block ${
           isPinned

@@ -83,7 +83,7 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
                 >
                   <img
                     src={vectorImage}
-                    alt="done"
+                    alt="Done"
                     className={compact ? "h-3.5 w-3.5" : "h-4 w-4"}
                   />
                 </div>
@@ -158,7 +158,7 @@ function MobileStepBar({ steps, activeStatus }) {
                 </p>
                 {current && (
                   <p className="mt-0.5 text-xs leading-4 text-muted">
-                    Current order status
+                    Current Order Status
                   </p>
                 )}
               </div>

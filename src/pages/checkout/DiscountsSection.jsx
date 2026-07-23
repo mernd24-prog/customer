@@ -11,14 +11,14 @@ export default function DiscountsSection({ register, errors, walletBalance }) {
       <div className="grid gap-4 px-4 py-4 sm:grid-cols-2 sm:px-5 ">
         <FormField
           id="couponCode"
-          label="Coupon or influencer code"
+          label="Coupon or Influencer Code"
           registration={register("couponCode")}
           error={errors.couponCode}
-          placeholder="Enter coupon or influencer code"
+          placeholder="Enter Coupon or Influencer Code"
         />
         <label className="grid gap-1.5 text-sm font-medium text-slate-800">
           <span className="flex items-center gap-1.5">
-            <Wallet size={14} /> Wallet amount (balance:{" "}
+            <Wallet size={14} /> Wallet Amount (Balance:{" "}
             {formatMoney(walletBalance, "INR")})
           </span>
           <input

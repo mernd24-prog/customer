@@ -361,7 +361,7 @@ function ImageGallery({
 
       <div className="absolute right-3  top-3 z-20 flex flex-col gap-2 sm:right-4 sm:top-4">
         <IconActionButton
-          title="Zoom image"
+          title="Zoom Image"
           onClick={() => {
             if (onModalOpen) onModalOpen();
             setIsModalOpen(true);
@@ -500,7 +500,7 @@ function DeliveryChecker({ productId, onResultChange }) {
             setError("");
             setPincode(e.target.value.replace(/\D/g, "").slice(0, 6));
           }}
-          placeholder="Enter 6-digit pincode"
+          placeholder="Enter 6-digit Pincode"
           className="flex-1 min-w-0 bg-transparent border border-none focus:outline-none px-8 text-sm text-[#4E4E4E] "
         />
         <button
@@ -548,7 +548,7 @@ function DeliveryChecker({ productId, onResultChange }) {
                   <div className="flex items-center gap-2.5">
                     <Truck size={14} className="text-[#1B1D60]/75 shrink-0" />
                     <span>
-                      Estimated delivery: <strong>{etaText} days</strong>
+                      Estimated Delivery: <strong>{etaText} Days</strong>
                     </span>
                   </div>
                 )}
@@ -597,9 +597,9 @@ function DeliveryChecker({ productId, onResultChange }) {
                 ✗
               </span>
               <div className="text-sm font-medium text-red-600">
-                <span>Delivery not available to {lastCheckedPincode}.</span>
+                <span>Delivery Not Available to {lastCheckedPincode}.</span>
                 <p className="text-xs text-[#7E7E7E] mt-0.5">
-                  Please check another pincode.
+                  Please Check Another Pincode.
                 </p>
               </div>
             </div>
@@ -703,7 +703,7 @@ function VariantSelector({
                       !isComboAvailable
                         ? " - Not available in this combination"
                         : isUnavailable
-                          ? " - Out of stock"
+                          ? " - Out Of Stock"
                           : ""
                     }`}
                   >
@@ -735,7 +735,7 @@ function VariantSelector({
                     )}
                     {isUnavailable && (
                       <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-[10px] font-semibold text-white">
-                        Out of stock
+                        Out Of Stock
                       </span>
                     )}
                   </button>
@@ -750,12 +750,12 @@ function VariantSelector({
                   onClick={() =>
                     matchingVariant && setSelectedVariant(matchingVariant)
                   }
-                  aria-label={`${option.name} ${value}${!isComboAvailable ? ", not available in this combination" : isUnavailable ? ", out of stock" : ""}`}
+                  aria-label={`${option.name} ${value}${!isComboAvailable ? ", not available in this combination" : isUnavailable ? ", out Of Stock" : ""}`}
                   title={
                     !isComboAvailable
                       ? `${value} - Not available in this combination`
                       : isUnavailable
-                        ? `${value} - Out of stock`
+                        ? `${value} - Out Of stock`
                         : value
                   }
                   className={`relative min-h-10 min-w-12 rounded-[8px] px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed ${
@@ -777,7 +777,7 @@ function VariantSelector({
                   </span>
                   {isUnavailable && (
                     <span className="mt-0.5 block whitespace-nowrap text-[9px] font-semibold leading-none no-underline">
-                      Out of stock
+                      Out Of Stock
                     </span>
                   )}
                 </button>
@@ -969,7 +969,7 @@ function ProductInfoSection({
             </DetailRows>
           ) : (
             <p className="px-4 py-4 text-sm lg:text-lg text-black/90 whitespace-pre-line">
-              No product details available.
+              No Product Details Available.
             </p>
           )}
         </InfoCard>
@@ -984,7 +984,7 @@ function ProductInfoSection({
             />
           ) : (
             <p className="px-4 py-4 text-sm lg:text-lg text-black/90 whitespace-pre-line">
-              No description available.
+              No Description Available.
             </p>
           )}
         </InfoCard>
@@ -1044,7 +1044,7 @@ function ProductInfoSection({
             {Object.keys(returnPolicy).length > 0 && (
               <div className="border-t border-border pt-4">
                 <h3 className="mb-3 font-semibold text-ink">
-                  Related return rules
+                  Related Return Rules
                 </h3>
                 <div className="flex flex-wrap gap-2 text-xs lg:text-sm">
                   <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
@@ -1059,7 +1059,7 @@ function ProductInfoSection({
                   )}
                   {returnPolicy.inspectionRequired !== false && (
                     <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">
-                      Inspection required
+                      Inspection Required
                     </span>
                   )}
                 </div>
@@ -1125,7 +1125,7 @@ function ProductInfoSection({
             </div>
           ) : (
             <div className="px-4 py-4 text-sm lg:text-lg   text-black/90 whitespace-pre-line">
-              Seller information is not available.
+              Seller Information Is Not Available.
             </div>
           )}
         </InfoCard>
@@ -1530,7 +1530,7 @@ export default function ProductDetailPage() {
   const quantityAtStockLimit =
     availableStock != null && quantity >= availableStock;
   const quantityStockMessage = !inStock
-    ? "Out of stock"
+    ? "Out Of Stock"
     : quantityAtStockLimit
       ? `Only ${availableStock} in stock`
       : "";
@@ -1746,7 +1746,7 @@ export default function ProductDetailPage() {
                     <div className="flex flex-wrap items-center gap-2">
                       {shippingEtaText && (
                         <span className="inline-flex items-center rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
-                          Ships in {shippingEtaText} days
+                          Ships in {shippingEtaText} Days
                         </span>
                       )}
                       {staticIsFree ? (
@@ -1771,7 +1771,7 @@ export default function ProductDetailPage() {
                       )}
                       {productCodDisabled && (
                         <span className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600">
-                          COD not available
+                          Cod Not Available
                         </span>
                       )}
                     </div>

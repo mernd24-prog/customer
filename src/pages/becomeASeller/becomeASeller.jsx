@@ -184,7 +184,7 @@ export default function BecomeASeller() {
       <section className="relative isolate overflow-hidden bg-[#17145f] text-white">
         <img
           src="/image/png/sellerBanner.png"
-          alt="Sam Global seller growing his online business"
+          alt="Sam Global Seller Growing His Online Business"
           className="absolute inset-0 -z-20 h-full w-full object-cover  object-top "
         />
 
@@ -193,11 +193,11 @@ export default function BecomeASeller() {
           <div className="max-w-3xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium backdrop-blur-sm">
               <Sparkles size={16} className="text-[#efc75f]" />
-              Your next chapter starts here
+              Your Next Chapter Starts Here
             </div>
             <h1 className="banner-heading font-bold ">
-              Your products deserve a
-              <span className="block text-[#efc75f]">bigger marketplace.</span>
+              Your Products Deserve a
+              <span className="block text-[#efc75f]">Bigger Marketplace.</span>
             </h1>
             <p className="mt-6 max-w-xl text-base  text-white/75 sm:text-lg">
               Join Sam Global and turn your ambition into a business customers
@@ -209,7 +209,7 @@ export default function BecomeASeller() {
                 href={SELLER_LOGIN_URL}
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#d6a323] px-7 font-bold text-[#17145f] transition hover:-translate-y-0.5 hover:bg-[#e5b738]"
               >
-                Seller login <ArrowRight size={18} />
+                Seller Login <ArrowRight size={18} />
               </a>
             </div>
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/75">
@@ -233,11 +233,11 @@ export default function BecomeASeller() {
           <div className="flex flex-col  items-center justify-between gap-7 md:flex-row md:items-end">
             <div className="max-w-2xl  text-center md:text-left">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#f1e5c9] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8d5d08]">
-                <Sparkles size={14} /> Real seller stories
+                <Sparkles size={14} /> Real Seller Stories
               </span>
               <h2 className="mt-5 text-h2 font-bold leading-tight text-[#201b78] ">
-                Their growth is our{" "}
-                <span className="text-[#b17d15]">favourite story.</span>
+                Their Growth Is Our{" "}
+                <span className="text-[#b17d15]">Favourite Story.</span>
               </h2>
               <p className="mt-4 max-w-xl leading-7 text-[#6f7480]">
                 Meet the entrepreneurs building remarkable businesses with Sam
@@ -247,13 +247,13 @@ export default function BecomeASeller() {
             <div className="flex gap-3">
               <button
                 className="seller-story-prev grid h-12 w-12 place-items-center rounded-full border border-[#d9d1c3] bg-white text-[#201b78] shadow-sm transition hover:border-[#201b78] hover:bg-[#201b78] hover:text-white"
-                aria-label="Previous seller story"
+                aria-label="Previous Seller Story"
               >
                 <ArrowLeft size={19} />
               </button>
               <button
                 className="seller-story-next grid h-12 w-12 place-items-center rounded-full bg-[#201b78] text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#3e4093]"
-                aria-label="Next seller story"
+                aria-label="Next Seller Story"
               >
                 <ArrowRight size={19} />
               </button>
@@ -315,7 +315,7 @@ export default function BecomeASeller() {
         <div className="customer-container">
           <SectionHeading
             eyebrow="Made for sellers"
-            title="Why suppliers love Sam Global"
+            title="Why Suppliers Love Sam Global"
             text="A marketplace should do more than host your products. It should help your business move forward."
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -344,7 +344,7 @@ export default function BecomeASeller() {
           <SectionHeading
             light
             eyebrow="Four simple steps"
-            title="How selling on Sam Global works"
+            title="How Selling on Sam Global Works"
             text="From registration to your first payout, the path is refreshingly straightforward."
           />
           <div className="relative mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -373,7 +373,7 @@ export default function BecomeASeller() {
               href={SELLER_LOGIN_URL}
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#d6a323] px-8 font-bold text-[#17145f] transition hover:-translate-y-0.5 hover:bg-[#e5b738]"
             >
-              Open your seller account <ChevronRight size={18} />
+              Open Your Seller Account <ChevronRight size={18} />
             </a>
           </div>
         </div>

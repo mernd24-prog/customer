@@ -121,10 +121,10 @@ export default function AddedToCartModal({
           <div className="relative flex items-center gap-3 pr-10">
             <div>
               <h2 className="text-xl font-bold leading-tight text-[var(--customer-navy)] sm:text-2xl">
-                Added to your cart
+                Added to Your Cart
               </h2>
               <p className="mt-0.5 text-xs text-[var(--customer-muted)]">
-                Your item is ready for checkout.
+                Your Item Is Ready for Checkout.
               </p>
             </div>
           </div>
@@ -149,7 +149,7 @@ export default function AddedToCartModal({
               </p>
               <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-[var(--customer-cream)] px-2.5 py-1 text-xs font-medium text-[var(--customer-muted)]">
                 <ShoppingBag size={13} aria-hidden="true" />
-                Cart now has {cartItems.length}{" "}
+                Cart Now Has {cartItems.length}{" "}
                 {cartItems.length === 1 ? "item" : "items"}
               </p>
             </div>
@@ -199,7 +199,7 @@ export default function AddedToCartModal({
                   aria-hidden="true"
                 />
                 <p className="text-xs text-[var(--customer-muted)]">
-                  No items in cart yet.
+                  No Items in Cart Yet.
                 </p>
               </div>
             )}

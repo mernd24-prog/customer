@@ -13,7 +13,11 @@ export default function QuantityInput({
 }) {
   const sizeMap = {
     sm: { btn: "h-7 w-7 text-sm", count: "min-w-[32px] px-2 py-0.5 text-xs" },
-    md: { btn: "h-8 w-8 sm:h-9 sm:w-9 text-base sm:text-lg", count: "min-w-[40px] sm:min-w-[50px] px-3 sm:px-4 py-1 text-xs sm:text-sm" },
+    md: {
+      btn: "h-8 w-8 sm:h-9 sm:w-9 text-base sm:text-lg",
+      count:
+        "min-w-[40px] sm:min-w-[50px] px-3 sm:px-4 py-1 text-xs sm:text-sm",
+    },
     lg: { btn: "h-10 w-10 text-xl", count: "min-w-[52px] px-4 py-1.5 text-sm" },
   };
   const s = sizeMap[size] || sizeMap.md;
@@ -46,7 +50,7 @@ export default function QuantityInput({
         type="button"
         onClick={handleDecrease}
         disabled={atMin || disabled}
-        aria-label="Decrease quantity"
+        aria-label="Decrease Quantity"
         className={cn(
           "flex items-center justify-center font-semibold text-navy transition-all duration-300 ease-in-out hover:bg-gold-soft disabled:cursor-not-allowed disabled:text-gray disabled:hover:bg-white",
           s.btn,
@@ -66,7 +70,7 @@ export default function QuantityInput({
         type="button"
         onClick={handleIncrease}
         disabled={atMax || disabled}
-        aria-label="Increase quantity"
+        aria-label="Increase Quantity"
         className={cn(
           "flex items-center justify-center font-semibold text-navy transition-all duration-300 ease-in-out hover:bg-gold-soft disabled:cursor-not-allowed disabled:text-gray disabled:hover:bg-white",
           s.btn,

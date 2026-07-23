@@ -410,7 +410,7 @@ export default function ProductCard({
           {isDealProduct && dealEndDate && (
             <div className="mt-auto flex items-center justify-between gap-3 rounded-[12px] border border-[#EEDFB9] bg-[#FFFDF8] px-3 py-2">
               <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.5px] text-[#9A6A00]">
-                <Clock3 size={13} /> Deal ends
+                <Clock3 size={13} /> Deal Ends
               </span>
               <span className="truncate text-[12px] font-bold text-[#1B1D60]">
                 {dealEndDate}

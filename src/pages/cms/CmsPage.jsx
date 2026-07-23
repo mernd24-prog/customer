@@ -192,7 +192,7 @@ export default function CmsPage({ slugOverride = "" }) {
                 {readTime && (
                   <div className="flex items-center gap-1  text-xs text-gray">
                     <Clock size={13} />
-                    {readTime} min read
+                    {readTime} Min Read
                   </div>
                 )}
                 {updatedAt && updatedAt !== publishedAt && (
@@ -270,10 +270,10 @@ export default function CmsPage({ slugOverride = "" }) {
               {/* CTA block */}
               <div className="mt-10 rounded-[var(--customer-radius)] bg-ink px-8 py-10 text-center">
                 <p className=" text-xl font-bold text-white">
-                  Ready to start shopping?
+                  Ready to Start Shopping?
                 </p>
                 <p className="mt-1  text-sm text-gray">
-                  Discover thousands of products at Sam Global.
+                  Discover Thousands of Products at Sam Global.
                 </p>
                 <div className="mt-5 flex justify-center">
                   <Link to="/products">

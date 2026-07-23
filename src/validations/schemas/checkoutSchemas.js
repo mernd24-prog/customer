@@ -17,10 +17,10 @@ import {
 
 export const addressBaseSchema = z.object({
   label: z.enum(["home", "work", "other"]).optional(),
-  fullName: nameField("Full name", { max: 80 }),
+  fullName: nameField("Full Name", { max: 80 }),
   dialCode: optionalString(10),
   phone: phoneField,
-  line1: addressLineField("Address line 1"),
+  line1: addressLineField("Address Line 1"),
   line2: optionalAddressLineField(120),
   city: locationField("City"),
   state: locationField("State"),

@@ -83,7 +83,7 @@ export default function KycTab({ user }) {
         <div className="flex items-center gap-3">
           <BadgeCheck size={20} className="shrink-0 text-muted" />
           <div>
-            <p className="text-sm text-gray">KYC status</p>
+            <p className="text-sm text-gray">Kyc Status</p>
             <span
               className={`mt-0.5 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${statusColor}`}
             >
@@ -95,30 +95,30 @@ export default function KycTab({ user }) {
 
       {kyc?.status === "verified" ? (
         <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-          Your KYC is verified. No action needed.
+          Your Kyc Is Verified. No Action Needed.
         </div>
       ) : (
         <>
           <div className="grid gap-3 ">
             <FormField
               id="legalName"
-              label="Legal name (as on PAN)"
+              label="Legal Name (as on Pan)"
               registration={register("legalName")}
               error={errors.legalName}
-              placeholder="As it appears on your PAN card"
+              placeholder="As It Appears on Your Pan Card"
             />
             <FormField
               id="panNumber"
-              label="PAN number"
+              label="Pan Number"
               registration={register("panNumber")}
               error={errors.panNumber}
-              placeholder="ABCDE1234F"
+              placeholder="Abcde1234f"
               className="uppercase"
               maxLength={10}
             />
             <FormField
               id="aadhaarNumber"
-              label="Aadhaar number"
+              label="Aadhaar Number"
               registration={register("aadhaarNumber")}
               error={errors.aadhaarNumber}
               placeholder="12-digit Aadhaar"
@@ -157,7 +157,7 @@ export default function KycTab({ user }) {
 
           {kyc?.rejectionReason && (
             <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-              <strong>Rejection reason:</strong> {kyc.rejectionReason}
+              <strong>Rejection Reason:</strong> {kyc.rejectionReason}
             </div>
           )}
 

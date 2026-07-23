@@ -24,7 +24,7 @@ export default function DownloadApp() {
               </div>
 
               <h1 className="max-w-[760px] text-xl font-bold  sm:text-5xl xl:text-6xl">
-                INDIA'S SMART SHOPPING APP
+                India's Smart Shopping App
               </h1>
               <p className="mt-4 max-w-[620px] text-base font-medium  text-white/90 sm:text-2xl">
                 Fashion, brands, deals, orders, rewards, and returns in one Sam
@@ -66,7 +66,7 @@ export default function DownloadApp() {
             <div className="relative z-10  flex items-end justify-center self-end lg:h-full lg:justify-end">
               <img
                 src="/image/png/downloadApp.png"
-                alt="Sam Global mobile app preview"
+                alt="Sam Global Mobile App Preview"
                 className="w-full max-w-[330px] object-contain  sm:max-w-[430px] lg:max-w-[520px] xl:max-w-[570px]"
               />
             </div>

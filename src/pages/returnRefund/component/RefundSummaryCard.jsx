@@ -14,7 +14,7 @@ export default function RefundSummaryCard({
   return (
     <section
       className={`rounded-[12px] border border-[#CE9F2D66] bg-white px-3 py-4 min-[375px]:px-4 sm:rounded-[15px] sm:px-6 sm:py-5 lg:px-8  lg:py-6 ${className}`}
-      aria-label="Refund summary"
+      aria-label="Refund Summary"
     >
       <div className="flex items-center gap-2.5">
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#DADCF0] sm:h-8 sm:w-8 lg:h-[35px] lg:w-[35px]">

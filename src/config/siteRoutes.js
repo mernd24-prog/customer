@@ -16,7 +16,7 @@ export const SITE_ROUTES = [
   {
     path: "/search",
     title: "Search Products",
-    description: "Search products across Sam Global categories.",
+    description: "Search Products Across Sam Global categories.",
     changefreq: "daily",
     priority: 0.8,
   },

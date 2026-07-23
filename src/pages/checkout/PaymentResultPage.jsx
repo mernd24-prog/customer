@@ -239,7 +239,7 @@ export function PaymentResultPage({ failed = false }) {
               loading={downloadingId === endpoints.tax.invoiceDownload(orderReceipt.id || orderReceipt._id)}
               onClick={() => handleInvoiceDownload(orderReceipt)}
               icon={<Download size={18} />}
-              label="Order receipt"
+              label="Order Receipt"
               className="h-12 w-full min-w-[220px] text-sm sm:w-auto"
             />}
             {invoiceDownloadAvailable && customerFeeInvoice && <BrandButton
@@ -248,7 +248,7 @@ export function PaymentResultPage({ failed = false }) {
               loading={downloadingId === endpoints.tax.invoiceDownload(customerFeeInvoice.id || customerFeeInvoice._id)}
               onClick={() => handleInvoiceDownload(customerFeeInvoice)}
               icon={<Download size={18} />}
-              label="Platform fee invoice"
+              label="Platform Fee Invoice"
               className="h-12 w-full min-w-[220px] text-sm sm:w-auto"
             />}
           </div>
@@ -274,7 +274,7 @@ export function PaymentResultPage({ failed = false }) {
             <div className="w-full rounded-[var(--customer-radius)] border border-border bg-white p-8 text-center">
               <h1 className="text-2xl font-bold text-ink">Order Placed!</h1>
               <p className="mt-2 text-sm text-muted">
-                Your order has been placed successfully.
+                Your Order Has Been Placed Successfully.
               </p>
             </div>
           </div>
@@ -317,7 +317,7 @@ export function PaymentResultPage({ failed = false }) {
                       <div className="shrink-0">
                         <img
                           src="/image/png/Group.png"
-                          alt="Order placed successfully"
+                          alt="Order Placed Successfully"
                           className="size-24 object-contain "
                         />
                       </div>
@@ -326,7 +326,7 @@ export function PaymentResultPage({ failed = false }) {
                           Order Placed Successfully !
                         </h1>
                         <p className="my-4 max-w-3xl text-small font-medium  text-[#2E2E2E] ">
-                          Thank you for shopping with Sam Global.
+                          Thank You for Shopping with Sam Global.
                           <br className="hidden sm:block" />
                           Your order has been received and is being prepared for
                           shipment.
@@ -457,7 +457,7 @@ export function PaymentResultPage({ failed = false }) {
                         loading={downloadingId === endpoints.tax.invoiceDownload(orderReceipt.id || orderReceipt._id)}
                         onClick={() => handleInvoiceDownload(orderReceipt)}
                         icon={<Download size={18} />}
-                        label="Order receipt"
+                        label="Order Receipt"
                         className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
                       />}
                       {customerFeeInvoice && <BrandButton
@@ -466,7 +466,7 @@ export function PaymentResultPage({ failed = false }) {
                         loading={downloadingId === endpoints.tax.invoiceDownload(customerFeeInvoice.id || customerFeeInvoice._id)}
                         onClick={() => handleInvoiceDownload(customerFeeInvoice)}
                         icon={<Download size={18} />}
-                        label="Platform fee invoice"
+                        label="Platform Fee Invoice"
                         className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
                       />}
                     </div>

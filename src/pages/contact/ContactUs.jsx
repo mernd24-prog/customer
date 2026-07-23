@@ -182,7 +182,7 @@ function FramedPanel({
         </Button>
       )}
       <span className="pointer-events-none absolute -bottom-7 right-3 font-serif text-[92px] leading-none text-gold/10">
-        SG
+        Sg
       </span>
     </section>
   );

@@ -177,7 +177,7 @@ export default function ReviewImageUploader({
               className="absolute right-1 top-1 grid size-6 place-items-center rounded-full bg-white text-[#1B1D60] shadow-sm disabled:opacity-60"
               onClick={() => removeImage(index)}
               disabled={disabled || uploading}
-              aria-label="Remove image"
+              aria-label="Remove Image"
             >
               <X size={14} />
             </button>
@@ -190,7 +190,7 @@ export default function ReviewImageUploader({
             className="flex aspect-square flex-col items-center justify-center gap-1 rounded-[8px] border border-dashed border-[#CE9F2D] bg-[#CE9F2D0D] text-[#1B1D60] transition hover:bg-[#CE9F2D1A] disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => inputRef.current?.click()}
             disabled={uploadDisabled}
-            aria-label="Upload review images"
+            aria-label="Upload Review Images"
           >
             {uploading ? (
               <Loader2 size={22} className="animate-spin" />
@@ -205,7 +205,8 @@ export default function ReviewImageUploader({
       </div>
 
       <p className="text-xs font-medium text-[#777890]">
-        Add up to 5 clear product photos. JPG, PNG, WEBP or GIF, max 10 MB each.
+        Add Up to 5 Clear Product Photos. JPG, PNG, WEBP or GIF, Max 10 MB Each.
+      Add Up to 5 Clear Product Photos. Jpg, Png, Webp or Gif, Max 10 Mb Each.
       </p>
 
       <input

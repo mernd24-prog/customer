@@ -57,7 +57,7 @@ export default function VerifyOtpPage() {
       <Seo title="Verify OTP | Sam Global" />
       <AuthCard
         eyebrow="OTP login"
-        title="Verify your identity"
+        title="Verify Your Identity"
         subtitle="Enter the OTP sent to your email to sign in to your account."
         icon="/image/png/person.png"
         image="/image/png/authImg1.png"
@@ -66,7 +66,7 @@ export default function VerifyOtpPage() {
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
           <FormField
             id="email"
-            label="Email address"
+            label="Email Address"
             type="email"
             registration={register("email")}
             error={errors.email}
@@ -89,7 +89,7 @@ export default function VerifyOtpPage() {
           </div>
 
           <label className=" text-[13px] leading-[20px] tracking-[0.5px] font-semibold text-ink">
-            OTP code
+            Otp Code
           </label>
           <input type="hidden" {...register("otp")} />
           <OtpInput
@@ -123,7 +123,7 @@ export default function VerifyOtpPage() {
               to={AUTH_ROUTES.login}
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
             >
-              Back to login
+              Back to Login
             </Link>
           </p>
           <p className="text-center  text-[0.8rem] text-muted">

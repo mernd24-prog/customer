@@ -78,7 +78,7 @@ export default function BrandCard({
 
         {productCount != null && (
           <p className="mt-auto pt-2  text-[11px] font-medium text-muted">
-            {Number(productCount).toLocaleString()} products
+            {Number(productCount).toLocaleString()} <Param></Param>roducts
           </p>
         )}
       </div>

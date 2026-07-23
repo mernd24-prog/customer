@@ -144,7 +144,7 @@ export default function CustomDropdown({
               })
             ) : (
               <p className="px-4 py-3 text-sm text-gray-500">
-                No options available
+                No Options Available
               </p>
             )}
           </div>
