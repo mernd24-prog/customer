@@ -107,6 +107,10 @@ function OrderPaymentSummary({
   // Order Detail Props
   subtotal,
   discount,
+  discountFundingType,
+  marketplaceFundedDiscount,
+  paymentPartnerFundedDiscount,
+  sellerFundedDiscount,
   walletDiscount,
   shipping,
   shippingLoading = false,
@@ -230,10 +234,35 @@ function OrderPaymentSummary({
       {asNumber?.(discount) > 0 && (
         <div className="border-t border-[#04258626] pt-2">
           <SummaryRow
-            label="Discount"
+            label="Promotion discount"
             value={`-${formatMoney(discount, currency)}`}
             savings
           />
+          {variant === "order" && (
+            <p className="mt-1 text-xs leading-5 text-[#65718b]">
+              {asNumber?.(sellerFundedDiscount) > 0
+                ? `${formatMoney(sellerFundedDiscount, currency)} funded by seller`
+                : ""}
+              {asNumber?.(sellerFundedDiscount) > 0 &&
+              (asNumber?.(marketplaceFundedDiscount) > 0 || asNumber?.(paymentPartnerFundedDiscount) > 0)
+                ? " · "
+                : ""}
+              {asNumber?.(marketplaceFundedDiscount) > 0
+                ? `${formatMoney(marketplaceFundedDiscount, currency)} funded by marketplace`
+                : ""}
+              {asNumber?.(marketplaceFundedDiscount) > 0 && asNumber?.(paymentPartnerFundedDiscount) > 0
+                ? " · "
+                : ""}
+              {asNumber?.(paymentPartnerFundedDiscount) > 0
+                ? `${formatMoney(paymentPartnerFundedDiscount, currency)} funded by payment partner`
+                : ""}
+              {!asNumber?.(sellerFundedDiscount) &&
+              !asNumber?.(marketplaceFundedDiscount) &&
+              !asNumber?.(paymentPartnerFundedDiscount)
+                ? `Funding: ${String(discountFundingType || "promotion").replace(/_/g, " ")}`
+                : ""}
+            </p>
+          )}
         </div>
       )}
 
@@ -272,7 +301,7 @@ function OrderPaymentSummary({
       {variant !== "cart" && (
         <div className="border-t border-[#04258626] pt-2">
           <SummaryRow
-            label="Shipping"
+            label="Shipping (collected for seller)"
             value={
               shippingLoading
                 ? "Calculating..."
@@ -422,4 +451,3 @@ function OrderPaymentSummary({
 
 export { SummaryRow };
 export default OrderPaymentSummary;
-  

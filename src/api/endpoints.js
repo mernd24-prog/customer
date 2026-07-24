@@ -301,7 +301,6 @@ export const endpoints = {
       `${API_PREFIX}/admin/products/${productId}/moderate`,
     orders: `${API_PREFIX}/admin/orders`,
     payments: `${API_PREFIX}/admin/payments`,
-    payouts: `${API_PREFIX}/admin/payouts`,
     taxReports: `${API_PREFIX}/admin/tax/reports`,
     taxInvoice: (orderId) =>
       `${API_PREFIX}/admin/tax/orders/${orderId}/invoice`,

@@ -50,7 +50,7 @@ import { fetchReturnByOrder } from "../../features/returns/returnsSlice";
 import { fetchMarketplaceInvoices } from "../../features/tax/taxSlice";
 import { fetchNotifications } from "../../features/notification/notificationSlice";
 import { formatMoney, getImageUrlFromValue } from "../../utils/ecommerce";
-import { downloadAuthDocument } from "../../utils/downloadAuthDocument";
+import { downloadAuthDocument, getDocumentId } from "../../utils/downloadAuthDocument";
 import { openRazorpayCheckout } from "../../utils/razorpay";
 import { endpoints } from "../../api/endpoints";
 import {
@@ -526,6 +526,8 @@ function OrderDetail({ orderId, track }) {
   const shipping = getAmount(order, "shipping");
   const customerPlatformFee = getCustomerPlatformFeeAmount(order);
   const customerPlatformFeeTax = getCustomerPlatformFeeTaxAmount(order);
+  const pricingSummary =
+    order?.metadata?.pricingSummary || order?.metadata?.pricing_summary || {};
   const customerAmount = getCustomerOrderAmount(order);
   const taxIncluded = getTaxIncludedAmount(order, taxBreakup);
   const taxPayable = getTaxPayableAmount(order, taxBreakup);
@@ -643,8 +645,8 @@ function OrderDetail({ orderId, track }) {
     setDownloadingId(apiPath);
     try {
       await downloadAuthDocument(apiPath, filename);
-    } catch {
-      // silent — browser will show nothing; user can retry
+    } catch (error) {
+      notify.error(error?.message || "Document download failed. Please try again.");
     } finally {
       setDownloadingId(null);
     }
@@ -728,7 +730,8 @@ function OrderDetail({ orderId, track }) {
                     </Link>
                   )}
                   {invoiceDownloadAvailable && customerInvoices.map((invoice, index) => {
-                    const invoiceId = invoice.id || invoice._id;
+                    const invoiceId = getDocumentId(invoice);
+                    if (!invoiceId) return null;
                     const downloadPath = endpoints.tax.invoiceDownload(invoiceId);
                     return (
                       <Button
@@ -750,7 +753,8 @@ function OrderDetail({ orderId, track }) {
                     );
                   })}
                   {orderReceipt && (() => {
-                    const receiptId = orderReceipt.id || orderReceipt._id;
+                    const receiptId = getDocumentId(orderReceipt);
+                    if (!receiptId) return null;
                     const receiptPath = endpoints.tax.invoiceDownload(receiptId);
                     return (
                       <Button
@@ -771,7 +775,8 @@ function OrderDetail({ orderId, track }) {
                     );
                   })()}
                   {customerFeeInvoice && (() => {
-                    const feeInvoiceId = customerFeeInvoice.id || customerFeeInvoice._id;
+                    const feeInvoiceId = getDocumentId(customerFeeInvoice);
+                    if (!feeInvoiceId) return null;
                     const feeInvoicePath = endpoints.tax.invoiceDownload(feeInvoiceId);
                     return (
                       <Button
@@ -898,6 +903,10 @@ function OrderDetail({ orderId, track }) {
                       variant="order"
                       subtotal={subtotal}
                       discount={discount}
+                      discountFundingType={pricingSummary.discountFundingType}
+                      sellerFundedDiscount={pricingSummary.sellerFundedDiscountAmount}
+                      marketplaceFundedDiscount={pricingSummary.marketplaceFundedDiscountAmount}
+                      paymentPartnerFundedDiscount={pricingSummary.paymentPartnerFundedDiscountAmount}
                       walletDiscount={walletDiscount}
                       shipping={shipping}
                       customerPlatformFee={customerPlatformFee}

@@ -954,15 +954,6 @@ export const adminThunks = {
     url: endpoints.admin.payments,
     params: q,
   }),
-  createPayout: makeThunk("admin/createPayout", {
-    method: "post",
-    url: endpoints.admin.payouts,
-    data: body,
-  }),
-  fetchPayouts: makeThunk("admin/fetchPayouts", {
-    url: endpoints.admin.payouts,
-    params: q,
-  }),
   fetchAdminTaxReports: makeThunk("admin/fetchAdminTaxReports", {
     url: endpoints.admin.taxReports,
     params: q,

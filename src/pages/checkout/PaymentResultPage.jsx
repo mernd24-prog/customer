@@ -21,7 +21,7 @@ import { fetchMarketplaceInvoices } from "../../features/tax/taxSlice";
 import { fetchMe } from "../../features/user/userSlice";
 
 import { endpoints } from "../../api/endpoints";
-import { downloadAuthDocument } from "../../utils/downloadAuthDocument";
+import { downloadAuthDocument, getDocumentId } from "../../utils/downloadAuthDocument";
 import { formatMoney } from "../../utils/ecommerce";
 import { notify } from "../../utils/notify";
 import {
@@ -100,6 +100,8 @@ export function PaymentResultPage({ failed = false }) {
     : [];
   const orderReceipt = invoices?.orderInvoice || null;
   const customerFeeInvoice = invoices?.customerFeeInvoice || null;
+  const orderReceiptId = getDocumentId(orderReceipt);
+  const customerFeeInvoiceId = getDocumentId(customerFeeInvoice);
   const invoiceSellerName = (invoice, index) => {
     const metadata = invoice?.metadata || {};
     const seller = metadata.seller || {};
@@ -156,7 +158,7 @@ export function PaymentResultPage({ failed = false }) {
       notify.error("Order ID is missing, so invoice cannot be downloaded.");
       return;
     }
-    const invoiceId = invoice?.id || invoice?._id;
+    const invoiceId = getDocumentId(invoice);
     const invoiceDownloadPath = invoiceId ? endpoints.tax.invoiceDownload(invoiceId) : "";
     if (invoiceDownloadPath) {
       handleDownload(
@@ -220,7 +222,8 @@ export function PaymentResultPage({ failed = false }) {
         <div className="border-t border-red-100 px-6 py-5 sm:px-10">
           <div className="flex flex-col gap-3 sm:flex-row">
             {invoiceDownloadAvailable && customerInvoices.map((invoice, index) => {
-              const invoiceId = invoice.id || invoice._id;
+              const invoiceId = getDocumentId(invoice);
+              if (!invoiceId) return null;
               const downloadPath = endpoints.tax.invoiceDownload(invoiceId);
               return <BrandButton
                 key={invoiceId}
@@ -233,19 +236,19 @@ export function PaymentResultPage({ failed = false }) {
                 className="h-12 w-full min-w-[220px] text-sm sm:w-auto"
               />;
             })}
-            {invoiceDownloadAvailable && orderReceipt && <BrandButton
+            {invoiceDownloadAvailable && orderReceiptId && <BrandButton
               variant="secondary"
               rounded
-              loading={downloadingId === endpoints.tax.invoiceDownload(orderReceipt.id || orderReceipt._id)}
+              loading={downloadingId === endpoints.tax.invoiceDownload(orderReceiptId)}
               onClick={() => handleInvoiceDownload(orderReceipt)}
               icon={<Download size={18} />}
               label="Order receipt"
               className="h-12 w-full min-w-[220px] text-sm sm:w-auto"
             />}
-            {invoiceDownloadAvailable && customerFeeInvoice && <BrandButton
+            {invoiceDownloadAvailable && customerFeeInvoiceId && <BrandButton
               variant="secondary"
               rounded
-              loading={downloadingId === endpoints.tax.invoiceDownload(customerFeeInvoice.id || customerFeeInvoice._id)}
+              loading={downloadingId === endpoints.tax.invoiceDownload(customerFeeInvoiceId)}
               onClick={() => handleInvoiceDownload(customerFeeInvoice)}
               icon={<Download size={18} />}
               label="Platform fee invoice"
@@ -403,7 +406,7 @@ export function PaymentResultPage({ failed = false }) {
                     />
                   )}
                   <SummaryRow
-                    label="Delivery"
+                    label="Shipping (collected for seller)"
                     value={
                       asNumber(shipping) === 0
                         ? "FREE"
@@ -438,7 +441,8 @@ export function PaymentResultPage({ failed = false }) {
                   {invoiceDownloadAvailable && (customerInvoices.length > 0 || orderReceipt || customerFeeInvoice) && (
                     <div className="mt-4 grid gap-[10px]">
                       {customerInvoices.map((invoice, index) => {
-                        const invoiceId = invoice.id || invoice._id;
+                        const invoiceId = getDocumentId(invoice);
+                        if (!invoiceId) return null;
                         const downloadPath = endpoints.tax.invoiceDownload(invoiceId);
                         return <BrandButton
                           key={invoiceId}
@@ -451,19 +455,19 @@ export function PaymentResultPage({ failed = false }) {
                           className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
                         />;
                       })}
-                      {orderReceipt && <BrandButton
+                      {orderReceiptId && <BrandButton
                         variant="secondary"
                         rounded
-                        loading={downloadingId === endpoints.tax.invoiceDownload(orderReceipt.id || orderReceipt._id)}
+                        loading={downloadingId === endpoints.tax.invoiceDownload(orderReceiptId)}
                         onClick={() => handleInvoiceDownload(orderReceipt)}
                         icon={<Download size={18} />}
                         label="Order receipt"
                         className="h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
                       />}
-                      {customerFeeInvoice && <BrandButton
+                      {customerFeeInvoiceId && <BrandButton
                         variant="secondary"
                         rounded
-                        loading={downloadingId === endpoints.tax.invoiceDownload(customerFeeInvoice.id || customerFeeInvoice._id)}
+                        loading={downloadingId === endpoints.tax.invoiceDownload(customerFeeInvoiceId)}
                         onClick={() => handleInvoiceDownload(customerFeeInvoice)}
                         icon={<Download size={18} />}
                         label="Platform fee invoice"
