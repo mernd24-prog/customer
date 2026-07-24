@@ -22,14 +22,14 @@ const normalizeProgressStatus = (status) => {
 const PROGRESS_MESSAGES = {
   initiated: "Your order has been initiated.",
   confirmed: "Your order is confirmed and waiting for seller packing.",
-  processing: "The seller is preparing your items.",
-  packed: "Your order is packed and ready for shipment details.",
-  ready_to_ship: "Your order is ready to be handed to the courier.",
-  shipped: "Your order has shipped. Use shipment tracking for courier updates.",
+  processing: "The seller is preparing your item.",
+  packed: "Your item is packed and ready for shipment details.",
+  ready_to_ship: "Your item is ready to be handed to the courier.",
+  shipped: "Your item has shipped. Use shipment tracking for courier updates.",
   out_for_delivery:
-    "Your order has active delivery progress. Orders may arrive separately.",
+    "Your item is out for delivery and will arrive soon.",
   delivered:
-    "Your order has been delivered. Item return windows are now active.",
+    "Your item has been delivered. The return window is now active.",
   fulfilled: "The return window has closed and this order is complete.",
 };
 

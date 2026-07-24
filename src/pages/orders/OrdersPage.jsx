@@ -1,5 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { MdContentCopy } from "react-icons/md";
 import { FaShoppingCart } from "react-icons/fa";
@@ -23,7 +28,7 @@ import Seo from "../../components/common/Seo";
 import Button from "../../components/ui/Button";
 import ConfirmModal from "../../components/common/overlay/ConfirmModal";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
-import OrderDetailInfoGrid from "./components/OrderDetailInfoGrid";
+
 import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
 import OrderDetailSectionCard from "./components/OrderDetailSectionCard";
 import OrderItemsSection from "./components/OrderItemsSection";
@@ -73,11 +78,17 @@ const getDeliveryStatus = (order) =>
 const getProgressStatus = (order) => {
   const status = getOrderStatus(order);
   const deliveryStatus = getDeliveryStatus(order);
-  if (deliveryStatus === "delivered" && !["fulfilled", "cancelled"].includes(status)) {
+  if (
+    deliveryStatus === "delivered" &&
+    !["fulfilled", "cancelled"].includes(status)
+  ) {
     return "delivered";
   }
   if (deliveryStatus === "partially_delivered") return "out_for_delivery";
-  if (deliveryStatus === "out_for_delivery" && ["confirmed", "packed", "shipped"].includes(status)) {
+  if (
+    deliveryStatus === "out_for_delivery" &&
+    ["confirmed", "packed", "shipped"].includes(status)
+  ) {
     return "out_for_delivery";
   }
   return status;
@@ -115,18 +126,29 @@ const getOrderItems = (order) => {
     order?.products;
   return Array.isArray(items) ? items : [];
 };
-const isDeliveredOrderItem = (item = {}) => Boolean(item.delivered_at || item.deliveredAt) ||
+const isDeliveredOrderItem = (item = {}) =>
+  Boolean(item.delivered_at || item.deliveredAt) ||
   ["delivered", "fulfilled", "completed"].includes(
-    String(item.delivery_status || item.deliveryStatus || item.status || "").toLowerCase(),
+    String(
+      item.delivery_status || item.deliveryStatus || item.status || "",
+    ).toLowerCase(),
   );
 const hasDeliveredSellerPackage = (order = {}) => {
   if (getOrderStatus(order) === "fulfilled") return true;
   const fulfillmentGroups = order?.relations?.sellerFulfillmentGroups || [];
-  if (fulfillmentGroups.some((group) =>
-    ["delivered", "fulfilled", "completed"].includes(
-      String(group.deliveryStatus || group.delivery_status || group.shipmentStatus || "").toLowerCase(),
-    ),
-  )) return true;
+  if (
+    fulfillmentGroups.some((group) =>
+      ["delivered", "fulfilled", "completed"].includes(
+        String(
+          group.deliveryStatus ||
+            group.delivery_status ||
+            group.shipmentStatus ||
+            "",
+        ).toLowerCase(),
+      ),
+    )
+  )
+    return true;
 
   const grouped = new Map();
   getOrderItems(order).forEach((item) => {
@@ -134,8 +156,9 @@ const hasDeliveredSellerPackage = (order = {}) => {
     if (!grouped.has(key)) grouped.set(key, []);
     grouped.get(key).push(item);
   });
-  return [...grouped.values()].some((sellerItems) =>
-    sellerItems.length > 0 && sellerItems.every(isDeliveredOrderItem),
+  return [...grouped.values()].some(
+    (sellerItems) =>
+      sellerItems.length > 0 && sellerItems.every(isDeliveredOrderItem),
   );
 };
 const getItemProduct = (item) =>
@@ -465,6 +488,8 @@ const humanize = (value, fallback = "N/A") =>
 function OrderDetail({ orderId, track }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const targetItemId = searchParams.get("itemId");
   const run = useToastThunk();
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
@@ -491,7 +516,12 @@ function OrderDetail({ orderId, track }) {
   });
 
   const currency = getOrderCurrency(order);
-  const items = getOrderItems(order);
+  const allItems = getOrderItems(order);
+  const items = targetItemId
+    ? allItems.filter(
+        (item) => String(item.id || item._id) === String(targetItemId),
+      )
+    : allItems;
   const cancellations = Array.isArray(order?.relations?.cancellations)
     ? order.relations.cancellations
     : [];
@@ -503,12 +533,38 @@ function OrderDetail({ orderId, track }) {
         ? order.returnRequests
         : [];
   const fetchedReturns = Array.isArray(returnsState.list)
-    ? returnsState.list.filter((returnRequest) => String(returnRequest.orderId || returnRequest.order_id || "") === String(orderId))
+    ? returnsState.list.filter(
+        (returnRequest) =>
+          String(returnRequest.orderId || returnRequest.order_id || "") ===
+          String(orderId),
+      )
     : [];
   const returns = fetchedReturns.length ? fetchedReturns : embeddedReturns;
-  const shipments = Array.isArray(order?.relations?.shipments)
+  const allShipments = Array.isArray(order?.relations?.shipments)
     ? order.relations.shipments
     : [];
+  const shipments =
+    targetItemId && items.length === 1
+      ? allShipments.filter((shipment) => {
+          const ids =
+            shipment.orderItemIds ||
+            shipment.order_item_ids ||
+            shipment.metadata?.orderItemIds ||
+            [];
+          if (ids.length) return ids.map(String).includes(String(targetItemId));
+          const shipmentSellerKey =
+            String(shipment.seller_id || shipment.sellerId) +
+            "-" +
+            String(shipment.organization_id || shipment.organizationId);
+          const itemSellerKey =
+            String(
+              items[0].seller_id || items[0].sellerId || items[0].seller?.id,
+            ) +
+            "-" +
+            String(items[0].organization_id || items[0].organizationId);
+          return shipmentSellerKey === itemSellerKey;
+        })
+      : allShipments;
 
   const getInvoiceUrl = (order) =>
     order?.invoice_url ||
@@ -517,58 +573,151 @@ function OrderDetail({ orderId, track }) {
     null;
 
   const shippingAddress =
-    order?.shipping_address || order?.shippingAddress || {};
+    order?.shipping_address ||
+    order?.shippingAddress ||
+    order?.delivery_address ||
+    order?.deliveryAddress ||
+    order?.relations?.shippingAddress ||
+    {};
+  const billingAddress = 
+    order?.billing_address || 
+    order?.billingAddress || 
+    order?.relations?.invoice?.metadata?.seller?.billingAddress || 
+    order?.relations?.sellerFulfillmentGroups?.[0]?.organizationSnapshot?.billingAddress ||
+    order?.relations?.invoices?.[0]?.metadata?.seller?.billingAddress ||
+    {};
   const taxBreakup = order?.tax_breakup || order?.taxBreakup;
-  const subtotal = getAmount(order, "subtotal");
-  const discount = getAmount(order, "discount");
-  const tax = getAmount(order, "tax");
-  const walletDiscount = getAmount(order, "walletDiscount");
-  const shipping = getAmount(order, "shipping");
-  const customerPlatformFee = getCustomerPlatformFeeAmount(order);
-  const customerPlatformFeeTax = getCustomerPlatformFeeTaxAmount(order);
-  const customerAmount = getCustomerOrderAmount(order);
+  let subtotal = getAmount(order, "subtotal");
+  let discount = getAmount(order, "discount");
+  let tax = getAmount(order, "tax");
+  let walletDiscount = getAmount(order, "walletDiscount");
+  let shipping = getAmount(order, "shipping");
+  let customerPlatformFee = getCustomerPlatformFeeAmount(order);
+  let customerPlatformFeeTax = getCustomerPlatformFeeTaxAmount(order);
+  let customerAmount = getCustomerOrderAmount(order);
+
+  if (targetItemId && items.length === 1) {
+    const item = items[0];
+    subtotal = asNumber(
+      item.line_total ??
+        item.lineTotal ??
+        Number(item.unit_price || item.unitPrice || 0) *
+          Number(item.quantity || 0),
+    );
+    discount = 0;
+    walletDiscount = 0;
+    shipping = 0;
+    customerPlatformFee = 0;
+    customerPlatformFeeTax = 0;
+    customerAmount = subtotal;
+  }
   const taxIncluded = getTaxIncludedAmount(order, taxBreakup);
   const taxPayable = getTaxPayableAmount(order, taxBreakup);
   const status = getOrderStatus(order);
   const progressStatus = getProgressStatus(order);
   const returnableItems = items.filter((item) => {
-    const snapshot = item.return_policy_snapshot || item.returnPolicySnapshot || item.product_snapshot?.returnPolicy || {};
-    return (item.returnable ?? snapshot.returnable ?? snapshot.eligible ?? true) === true;
+    const snapshot =
+      item.return_policy_snapshot ||
+      item.returnPolicySnapshot ||
+      item.product_snapshot?.returnPolicy ||
+      {};
+    return (
+      (item.returnable ?? snapshot.returnable ?? snapshot.eligible ?? true) ===
+      true
+    );
   });
   const itemReturnDeadlines = returnableItems
-    .map((item) => item.return_eligible_until || item.returnEligibleUntil || item.return_policy_snapshot?.eligibleUntil || item.returnPolicySnapshot?.eligibleUntil)
+    .map(
+      (item) =>
+        item.return_eligible_until ||
+        item.returnEligibleUntil ||
+        item.return_policy_snapshot?.eligibleUntil ||
+        item.returnPolicySnapshot?.eligibleUntil,
+    )
     .filter(Boolean);
   const returnEligibleUntil = itemReturnDeadlines.length
-    ? itemReturnDeadlines.reduce((latest, value) => new Date(value).getTime() > new Date(latest).getTime() ? value : latest)
+    ? itemReturnDeadlines.reduce((latest, value) =>
+        new Date(value).getTime() > new Date(latest).getTime() ? value : latest,
+      )
     : null;
   const returnWindowOpen = returnableItems.some((item) => {
-    const deadline = item.return_eligible_until || item.returnEligibleUntil || item.return_policy_snapshot?.eligibleUntil || item.returnPolicySnapshot?.eligibleUntil;
+    const deadline =
+      item.return_eligible_until ||
+      item.returnEligibleUntil ||
+      item.return_policy_snapshot?.eligibleUntil ||
+      item.returnPolicySnapshot?.eligibleUntil;
     return !deadline || new Date(deadline).getTime() >= Date.now();
   });
-  const canRequestReturn = [
-    "delivered",
-    "fulfilled",
-    "partially_returned",
-  ].includes(status) && returnWindowOpen && returnableItems.length > 0;
+  const canRequestReturn =
+    ["delivered", "fulfilled", "partially_returned"].includes(status) &&
+    returnWindowOpen &&
+    returnableItems.length > 0;
   const invoiceDownloadAvailable = hasDeliveredSellerPackage(order);
-  const customerInvoices = Array.isArray(invoices?.sellerInvoices)
+  const rawCustomerInvoices = Array.isArray(invoices?.sellerInvoices)
     ? invoices.sellerInvoices
     : [];
+  const customerInvoices = targetItemId
+    ? rawCustomerInvoices.filter((inv) => {
+        const covered = inv?.metadata?.items || inv?.metadata?.lineItems || [];
+        if (!covered.length) {
+          const itemSellerKey =
+            String(
+              items[0]?.seller_id ||
+                items[0]?.sellerId ||
+                items[0]?.seller?.id ||
+                "",
+            ) +
+            "-" +
+            String(items[0]?.organization_id || items[0]?.organizationId || "");
+          const invSellerKey =
+            String(
+              inv?.metadata?.seller?.id || inv?.metadata?.seller?._id || "",
+            ) +
+            "-" +
+            String(
+              inv?.metadata?.organization?.id ||
+                inv?.metadata?.organization?._id ||
+                inv?.organizationSnapshot?.id ||
+                "",
+            );
+          return itemSellerKey === invSellerKey;
+        }
+        return covered.some(
+          (i) =>
+            String(i.orderItemId || i.id || i._id) === String(targetItemId),
+        );
+      })
+    : rawCustomerInvoices;
   const orderReceipt = invoices?.orderInvoice || null;
   const customerFeeInvoice = invoices?.customerFeeInvoice || null;
-  const pendingSellerDocuments = invoices?.pendingSellerDocuments || [];
+  const rawPendingSellerDocuments = invoices?.pendingSellerDocuments || [];
+  const pendingSellerDocuments = targetItemId
+    ? rawPendingSellerDocuments.filter((doc) => {
+        const currentTitle = getProductTitle(items[0]);
+        return (doc.productTitles || []).includes(currentTitle);
+      })
+    : rawPendingSellerDocuments;
 
   const invoiceSellerName = (invoice, index) => {
     const metadata = invoice?.metadata || {};
     const seller = metadata.seller || {};
-    const organization = metadata.organization || invoice?.organizationSnapshot || {};
-    return organization.legalBusinessName || organization.displayName ||
-      seller.legalBusinessName || seller.businessName || seller.displayName ||
-      `Seller ${index + 1}`;
+    const organization =
+      metadata.organization || invoice?.organizationSnapshot || {};
+    return (
+      organization.legalBusinessName ||
+      organization.displayName ||
+      seller.legalBusinessName ||
+      seller.businessName ||
+      seller.displayName ||
+      `Seller ${index + 1}`
+    );
   };
   const invoiceItemSummary = (invoice) => {
-    const coveredItems = invoice?.metadata?.items || invoice?.metadata?.lineItems || [];
-    const titles = coveredItems.map((item) => item.productTitle || item.description).filter(Boolean);
+    const coveredItems =
+      invoice?.metadata?.items || invoice?.metadata?.lineItems || [];
+    const titles = coveredItems
+      .map((item) => item.productTitle || item.description)
+      .filter(Boolean);
     if (!titles.length) return "Delivered seller items";
     if (titles.length === 1) return titles[0];
     return `${titles[0]} + ${titles.length - 1} more`;
@@ -585,14 +734,20 @@ function OrderDetail({ orderId, track }) {
     dispatch(fetchReturnByOrder({ orderId }));
   }, [dispatch, orderId]);
 
+  // Guard ref – fetch notifications at most once per mount to avoid
+  // an infinite loop caused by shipments being a new array reference on every render.
+  const notificationFetchedRef = useRef(false);
   useEffect(() => {
-    if (
-      track ||
-      shipments.some((shipment) => shipment.status === "out_for_delivery")
-    ) {
+    if (notificationFetchedRef.current) return;
+    const hasOutForDelivery = shipments.some(
+      (shipment) => shipment.status === "out_for_delivery",
+    );
+    if (track || hasOutForDelivery) {
+      notificationFetchedRef.current = true;
       dispatch(fetchNotifications());
     }
-  }, [dispatch, shipments, track]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, shipments.length, track]);
 
   useEffect(() => {
     if (!orderId) {
@@ -727,88 +882,9 @@ function OrderDetail({ orderId, track }) {
                       </Button>
                     </Link>
                   )}
-                  {invoiceDownloadAvailable && customerInvoices.map((invoice, index) => {
-                    const invoiceId = invoice.id || invoice._id;
-                    const downloadPath = endpoints.tax.invoiceDownload(invoiceId);
-                    return (
-                      <Button
-                        key={invoiceId}
-                        variant="secondary"
-                        loading={downloadingId === downloadPath}
-                        onClick={() => handleDownload(
-                          downloadPath,
-                          `${invoice.invoice_number || invoice.invoiceNumber || `invoice-${index + 1}`}.pdf`,
-                        )}
-                        title={`Covers: ${invoiceItemSummary(invoice)}`}
-                        className="flex min-h-[54px] w-full sm:w-auto sm:min-w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[20px] py-[12px] text-[#3E4093] hover:border-[#3E4093] hover:bg-[#F7F7FF]"
-                      >
-                        <Download size={18} />
-                        <span className="max-w-[220px] truncate text-center text-[14px] font-semibold leading-[20px] text-[#3E4093]">
-                          Seller Invoice ··· {invoiceSellerName(invoice, index)} · {invoiceItemSummary(invoice)}
-                        </span>
-                      </Button>
-                    );
-                  })}
-                  {orderReceipt && (() => {
-                    const receiptId = orderReceipt.id || orderReceipt._id;
-                    const receiptPath = endpoints.tax.invoiceDownload(receiptId);
-                    return (
-                      <Button
-                        variant="secondary"
-                        loading={downloadingId === receiptPath}
-                        onClick={() => handleDownload(
-                          receiptPath,
-                          `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || `receipt-${orderId}`}.pdf`,
-                        )}
-                        title="Marketplace Payment Summary for the Complete Order"
-                        className="flex min-h-[54px] w-full sm:w-auto sm:min-w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[20px] py-[12px] text-[#3E4093] hover:border-[#3E4093] hover:bg-[#F7F7FF]"
-                      >
-                        <Download size={18} />
-                        <span className="text-center text-[14px] font-semibold leading-[20px] text-[#3E4093]">
-                          Order Receipt
-                        </span>
-                      </Button>
-                    );
-                  })()}
-                  {customerFeeInvoice && (() => {
-                    const feeInvoiceId = customerFeeInvoice.id || customerFeeInvoice._id;
-                    const feeInvoicePath = endpoints.tax.invoiceDownload(feeInvoiceId);
-                    return (
-                      <Button
-                        variant="secondary"
-                        loading={downloadingId === feeInvoicePath}
-                        onClick={() => handleDownload(
-                          feeInvoicePath,
-                          `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
-                        )}
-                        title="Marketplace Tax Invoice for the Customer Platform Fee"
-                        className="flex min-h-[54px] w-full sm:w-auto sm:min-w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[20px] py-[12px] text-[#3E4093] hover:border-[#3E4093] hover:bg-[#F7F7FF]"
-                      >
-                        <Download size={18} /> Platform Fee Invoice
-                      </Button>
-                    );
-                  })()}
-                  {pendingSellerDocuments.map((document, index) => (
-                    <div
-                      key={`${document.sellerName}-${index}`}
-                      className="flex min-h-[54px] w-full items-center rounded-[10px] border border-dashed border-[#D8D8E8] bg-[#FAFAFD] px-4 text-sm text-[#6B6B80] sm:w-auto"
-                      title={(document.productTitles || []).join(", ")}
-                    >
-                      {document.sellerName} Invoice ··· Available After Delivery
-                    </div>
-                  ))}
-                  {invoiceDownloadAvailable && !customerInvoices.length && getInvoiceUrl(order) && (
-                    <Button
-                      variant="secondary"
-                      onClick={() => window.open(getInvoiceUrl(order), "_blank", "noopener,noreferrer")}
-                      className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] border border-[#3E409380] bg-white px-[24px] py-[15px] text-[#3E4093]"
-                    >
-                      <Download size={18} /> Invoice
-                    </Button>
-                  )}
                 </div>
               </div>
-              <OrderDetailInfoGrid
+              {/* <OrderDetailInfoGrid
                 items={[
                   {
                     icon: <MdOutlineShoppingCart size={20} />,
@@ -832,68 +908,48 @@ function OrderDetail({ orderId, track }) {
                     tone: returnWindowOpen ? "blue" : "yellow",
                   }] : []),
                 ]}
-              />
+              /> */}
 
-              {!track && ["delivered", "fulfilled", "partially_returned"].includes(status) && !returnWindowOpen && (
-                <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">All Eligible Item Return Windows Closed by {formatOrderDate(returnEligibleUntil)}.</p>
-              )}
+              {!track &&
+                ["delivered", "fulfilled", "partially_returned"].includes(
+                  status,
+                ) &&
+                !returnWindowOpen && (
+                  <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                    All Eligible Item Return Windows Closed by{" "}
+                    {formatOrderDate(returnEligibleUntil)}.
+                  </p>
+                )}
 
-              {getDeliveryStatus(order) === "partially_delivered" && (
+              {/* {getDeliveryStatus(order) === "partially_delivered" && (
                 <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">Part of Your Order Has Been Delivered. Remaining Seller Packages Are Still Being Prepared or Shipped.</p>
-              )}
-
-              {hasKnownStatus(order) && (
-                <OrderDetailSectionCard
-                  title="Order Progress"
-                  headerClassName="!min-h-[56px] !py-4"
-                  bodyClassName="overflow-hidden px-4"
-                  titleClassName="text-lg font-bold leading-none"
-                >
-                  <OrderProgress
-                    status={progressStatus}
-                    cancellations={cancellations}
-                    returns={returns}
-                  />
-                </OrderDetailSectionCard>
-              )}
-
-              {(track || shipments.length > 0) && (
-                <ShipmentTrackingPanel
-                  shipments={shipments}
-                  orderDeliveryStatus={getDeliveryStatus(order)}
-                  notifications={
-                    Array.isArray(notificationState.list)
-                      ? notificationState.list
-                      : []
-                  }
-                />
-              )}
+              )} */}
             </section>
 
             {!track && (
-              <StickySidebarLayout
-                sidebarPosition="right"
-                containerClass="flex flex-col xl:flex-row gap-4 md:gap-6 xl:gap-8"
-                sidebarClass="w-full xl:w-[320px] 2xl:w-[380px]"
-                mainContent={
+              <div className="flex flex-col xl:flex-row items-stretch gap-4 md:gap-6 xl:gap-8">
+                <div className="flex min-w-0 flex-1 flex-col h-full">
                   <OrderItemsSection
                     items={items}
-                  orderId={orderId}
-                  orderStatus={status}
-                  shipments={shipments}
-                  sellerFulfillmentGroups={order?.relations?.sellerFulfillmentGroups || []}
-                  returns={returns}
-                  currency={currency}
-                  getItemImage={getItemImage}
+                    orderId={orderId}
+                    orderStatus={status}
+                    shipments={shipments}
+                    sellerFulfillmentGroups={
+                      order?.relations?.sellerFulfillmentGroups || []
+                    }
+                    returns={returns}
+                    currency={currency}
+                    getItemImage={getItemImage}
                     getProductTitle={getProductTitle}
                     getItemProductPath={getItemProductPath}
                     getOrderItemColor={getOrderItemColor}
                     getItemLineTotal={getItemLineTotal}
                     formatMoney={formatMoney}
                   />
-                }
-                sidebarContent={
-                  (subtotal !== undefined || items.length > 0) && (
+                </div>
+
+                <div className="w-full xl:w-[320px] 2xl:w-[380px] h-full">
+                  {(subtotal !== undefined || items.length > 0) && (
                     <OrderPaymentSummary
                       variant="order"
                       subtotal={subtotal}
@@ -906,9 +962,57 @@ function OrderDetail({ orderId, track }) {
                       formatMoney={formatMoney}
                       asNumber={asNumber}
                     />
-                  )
+                  )}
+                </div>
+              </div>
+            )}
+
+            {(track || shipments.length > 0) && (
+              <ShipmentTrackingPanel
+                shipments={shipments}
+                orderDeliveryStatus={getDeliveryStatus(order)}
+                notifications={
+                  Array.isArray(notificationState.list)
+                    ? notificationState.list
+                    : []
                 }
               />
+            )}
+
+            {hasKnownStatus(order) && (
+              <OrderDetailSectionCard
+                title="Order Progress"
+                headerClassName="!min-h-[56px] !py-4"
+                bodyClassName="overflow-hidden px-4"
+                titleClassName="text-lg font-bold leading-none"
+              >
+                <OrderProgress
+                  status={progressStatus}
+                  cancellations={cancellations}
+                  returns={returns}
+                />
+              </OrderDetailSectionCard>
+            )}
+
+            {hasShippingAddress(shippingAddress) && (
+              <OrderDetailSectionCard
+                title="Shipping Address"
+                headerClassName="!min-h-[56px] !py-4"
+                bodyClassName="px-4 py-4"
+                titleClassName="text-lg font-bold leading-none"
+              >
+                <div className="text-[14px] sm:text-[15px] font-medium text-[#2E2E2E] leading-[1.6]">
+                  {shippingAddress.fullName && <p className="font-semibold">{shippingAddress.fullName}</p>}
+                  {shippingAddress.line1 && <p>{shippingAddress.line1}</p>}
+                  {shippingAddress.line2 && <p>{shippingAddress.line2}</p>}
+                  <p>
+                    {shippingAddress.city}{shippingAddress.city && (shippingAddress.state || shippingAddress.postalCode) ? ", " : ""}
+                    {shippingAddress.state} {shippingAddress.postalCode}
+                  </p>
+                  {shippingAddress.country && <p>{shippingAddress.country}</p>}
+                  {shippingAddress.phone && <p className="mt-1">Phone: {shippingAddress.phone}</p>}
+                </div>
+              </OrderDetailSectionCard>
             )}
 
             {cancellations.length > 0 && (
@@ -996,7 +1100,7 @@ function OrderDetail({ orderId, track }) {
                   {!track && (
                     <Link
                       to={`/orders/${orderId}/track`}
-                      className="block sm:inline-flex"
+                      className="block sm:inline-flex hidden"
                     >
                       <Button
                         variant="secondary"
@@ -1019,6 +1123,104 @@ function OrderDetail({ orderId, track }) {
                       </Button>
                     </Link>
                   )}
+
+                  {orderReceipt &&
+                    (() => {
+                      const receiptId = orderReceipt.id || orderReceipt._id;
+                      const receiptPath =
+                        endpoints.tax.invoiceDownload(receiptId);
+                      return (
+                        <Button
+                          variant="secondary"
+                          loading={downloadingId === receiptPath}
+                          onClick={() =>
+                            handleDownload(
+                              receiptPath,
+                              `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || `receipt-${orderId}`}.pdf`,
+                            )
+                          }
+                          title="Marketplace Payment Summary for the Complete Order"
+                          className="min-h-[38px] w-full sm:w-auto border-[#CE9F2D66] text-[#1B1D60]"
+                        >
+                          <Download size={15} /> Order Receipt
+                        </Button>
+                      );
+                    })()}
+                  {customerFeeInvoice &&
+                    (() => {
+                      const feeInvoiceId =
+                        customerFeeInvoice.id || customerFeeInvoice._id;
+                      const feeInvoicePath =
+                        endpoints.tax.invoiceDownload(feeInvoiceId);
+                      return (
+                        <Button
+                          variant="secondary"
+                          loading={downloadingId === feeInvoicePath}
+                          onClick={() =>
+                            handleDownload(
+                              feeInvoicePath,
+                              `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
+                            )
+                          }
+                          title="Marketplace Tax Invoice for the Customer Platform Fee"
+                          className="min-h-[38px] w-full sm:w-auto border-[#CE9F2D66] text-[#1B1D60]"
+                        >
+                          <Download size={15} /> Platform Fee Invoice
+                        </Button>
+                      );
+                    })()}
+                  {invoiceDownloadAvailable &&
+                    customerInvoices.map((invoice, index) => {
+                      const invoiceId = invoice.id || invoice._id;
+                      const downloadPath =
+                        endpoints.tax.invoiceDownload(invoiceId);
+                      return (
+                        <Button
+                          key={invoiceId}
+                          variant="secondary"
+                          loading={downloadingId === downloadPath}
+                          onClick={() =>
+                            handleDownload(
+                              downloadPath,
+                              `${invoice.invoice_number || invoice.invoiceNumber || `invoice-${index + 1}`}.pdf`,
+                            )
+                          }
+                          title={`Covers: ${invoiceItemSummary(invoice)}`}
+                          className="min-h-[38px] w-full sm:w-auto border-[#CE9F2D66] text-[#1B1D60]"
+                        >
+                          <Download size={15} />
+                          <span className="max-w-[220px] truncate text-center font-semibold text-[#1B1D60]">
+                            {invoiceSellerName(invoice, index)} Invoice
+                          </span>
+                        </Button>
+                      );
+                    })}
+                  {pendingSellerDocuments.map((document, index) => (
+                    <div
+                      key={`${document.sellerName}-${index}`}
+                      className="flex min-h-[38px] w-full items-center justify-center rounded-[8px] border border-dashed border-[#CE9F2D66] px-4 text-sm font-semibold text-[#1B1D60] sm:w-auto bg-white"
+                      title={(document.productTitles || []).join(", ")}
+                    >
+                      {document.sellerName} Invoice ··· Available After Delivery
+                    </div>
+                  ))}
+                  {invoiceDownloadAvailable &&
+                    !customerInvoices.length &&
+                    getInvoiceUrl(order) && (
+                      <Button
+                        variant="secondary"
+                        onClick={() =>
+                          window.open(
+                            getInvoiceUrl(order),
+                            "_blank",
+                            "noopener,noreferrer",
+                          )
+                        }
+                        className="min-h-[38px] w-full sm:w-auto border-[#CE9F2D66] text-[#1B1D60]"
+                      >
+                        <Download size={15} /> Invoice
+                      </Button>
+                    )}
                 </div>
               </section>
             )}
@@ -1098,49 +1300,26 @@ function getOrderItemColor(item) {
   return found?.[1] || item?.color || item?.selectedColor || "N/A";
 }
 
-function OrderSummaryCard({ order }) {
+function OrderItemSummaryCard({ order, item }) {
   const navigate = useNavigate();
   const id = getOrderId(order);
   const apiOrderId = getOrderId(order);
-  const status = getOrderStatus(order);
-  const invoiceDownloadAvailable = hasDeliveredSellerPackage(order);
   const createdAt = order.created_at || order.createdAt;
-  const orderItems = getOrderItems(order);
-  const fulfillmentGroups = order?.relations?.sellerFulfillmentGroups || [];
-  const sellerPackages = (() => {
-    const grouped = new Map();
-    orderItems.forEach((item) => {
-      const sellerId = item.seller_id || item.sellerId || "platform";
-      const organizationId = item.organization_id || item.organizationId || "default";
-      const key = `${sellerId}:${organizationId}`;
-      if (!grouped.has(key)) {
-        const fulfillment = fulfillmentGroups.find((group) =>
-          String(group.sellerId || group.seller_id || "platform") === String(sellerId) &&
-          String(group.organizationId || group.organization_id || "default") === String(organizationId),
-        ) || {};
-        const sellerSnapshot = item.seller_snapshot || item.sellerSnapshot || {};
-        const organization = item.organization_snapshot || item.organizationSnapshot || {};
-        grouped.set(key, {
-          key,
-          sellerName: fulfillment.sellerName || organization.displayName || organization.legalBusinessName ||
-            sellerSnapshot.displayName || sellerSnapshot.businessName || "Marketplace seller",
-          status: fulfillment.deliveryStatus || fulfillment.delivery_status || fulfillment.shipmentStatus || null,
-          items: [],
-        });
-      }
-      grouped.get(key).items.push(item);
-    });
-    return [...grouped.values()].map((sellerPackage) => ({
-      ...sellerPackage,
-      status: sellerPackage.status ||
-        (sellerPackage.items.every(isDeliveredOrderItem) ? "delivered" : status),
-    }));
-  })();
-  const previewItems = orderItems.slice(0, 4);
   const currency = getOrderCurrency(order);
-  const amount = getCustomerOrderAmount(order);
-  const quantity = orderItems.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+  const status = getOrderStatus(order);
   const paymentMethod = humanize(getPaymentMethod(order), "N/A");
+
+  const itemImage = getOrderCardImage(item);
+  const itemTotal =
+    item.line_total ??
+    item.lineTotal ??
+    Number(item.unit_price || item.unitPrice || 0) * Number(item.quantity || 0);
+  const itemStatus =
+    item.cancellation_status ||
+    item.delivery_status ||
+    item.deliveryStatus ||
+    status;
+  const invoiceDownloadAvailable = hasDeliveredSellerPackage(order);
 
   const handleCopyOrderId = (e) => {
     e.preventDefault();
@@ -1159,142 +1338,122 @@ function OrderSummaryCard({ order }) {
     navigate(`/orders/${id}`);
   };
 
-  const handleOpenOrderKeyDown = (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleOpenOrder();
-    }
-  };
-
   return (
-    <article className="overflow-hidden rounded-xl  border border-[#E7D9B8]  bg-[#FFFCF6]">
-      <div className="flex  flex-col gap-3 border-b border-[#E7D9B8] bg-[#CE9F2D33] px-3 py-4 md:flex-row md:items-center  md:justify-between md:gap-4 md:px-4 md:py-6  text-sm md:text-base 2xl:text-[20px]  font-semibold text-ink">
-        <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between md:contents">
-          <span className="flex min-w-0 items-center gap-1.5">
-            <FaShoppingCart className="shrink-0 text-sm text-[#2564EB] lg:text-xl" />
-            <span className="shrink-0">#</span>
-            <span className="min-w-0 break-all small">{apiOrderId}</span>
+    <article
+      className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-[#FFFCF6]"
+      onClick={handleOpenOrder}
+    >
+      <div className="flex flex-wrap items-center justify-between gap-y-3 gap-x-4 border-b border-[#E7D9B8] bg-[#F5EAD4] px-4 py-3 sm:px-6 sm:py-4 text-[14px] md:text-[15px] font-medium text-[#2E2E2E] hover:bg-[#EFE2C9] transition-colors rounded-t-xl cursor-pointer">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 flex-1">
+          <span className="flex items-center gap-2 font-semibold">
+            <FaShoppingCart className="text-[#2564EB] text-[18px]" />
+            <span>Order ID : #{apiOrderId}</span>
             <button
               type="button"
               onClick={handleCopyOrderId}
-              className="flex shrink-0 items-center justify-center rounded-full p-1 transition-colors duration-200 hover:bg-[#CE9F2D33]"
+              className="flex items-center justify-center p-1 rounded hover:bg-black/5 transition-colors"
               title="Copy Order ID"
             >
-              <MdContentCopy className="text-[#2E2E2E] text-sm lg:text-xl cursor-pointer" />
+              <MdContentCopy className="text-[#2E2E2E] text-[18px] cursor-pointer" />
             </button>
           </span>
-          <span className="self-start sm:hidden">
-            <OrderListStatusBadge status={status} />
+          <span className="flex items-center gap-2 font-semibold">
+            <MdDateRange className="text-[#2564EB] text-[18px]" />
+            <span>{formatOrderDate(createdAt)}</span>
+          </span>
+          <span className="flex items-center gap-2 font-semibold">
+            <BsCreditCardFill className="text-[#2564EB] text-[18px]" />
+            <span>{paymentMethod}</span>
           </span>
         </div>
-        <div className="flex flex-wrap items-center justify-between w-full md:contents">
-          <span className="lg:inline-flex  small  items-center gap-1.5  hidden">
-            <MdDateRange className="text-[#2564EB] text-sm lg:text-xl" />
-            {formatOrderDate(createdAt)}
+        <span className="shrink-0">
+          <span
+            className={`inline-flex min-w-[90px] items-center justify-center rounded-full px-4 py-1.5 text-[13px] font-bold capitalize ${status === "delivered" ? "bg-[#008A27] text-white" : COMPACT_STATUS_BADGE[status] || "bg-[#D7A522] text-white"}`}
+          >
+            {humanize(status, "Processing")}
           </span>
-          <span className="lg:inline-flex items-center small  gap-1.5  hidden ">
-            <BsCreditCardFill className="text-[#2564EB] text-sm lg:text-xl" />
-            {paymentMethod}
-          </span>
-        </div>
-        <span className="hidden md:inline-block">
-          <OrderListStatusBadge status={status} />
         </span>
       </div>
 
-      <div className="p-3 sm:p-5 lg:p-6">
-        <div className="grid gap-5 rounded-xl border border-[#EFE5D2] bg-white p-4 md:grid-cols-[220px_minmax(0,1fr)] md:p-5">
+      <div
+        className="p-4 sm:p-5 lg:p-6 cursor-default"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex flex-col sm:flex-row gap-5 md:gap-8 bg-white">
           <Link
-            to={`/orders/${id}`}
-            className={`grid min-h-44 gap-2 overflow-hidden rounded-lg bg-[#FFFAEF] p-2 ${previewItems.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}
+            to={`/orders/${id}?itemId=${item.id || item._id}`}
+            className="shrink-0"
           >
-            {previewItems.length ? previewItems.map((previewItem, index) => {
-              const image = getOrderCardImage(previewItem);
-              return (
-                <div key={previewItem.id || previewItem._id || index} className="relative flex min-h-20 items-center justify-center overflow-hidden rounded-md border border-[#EFE5D2] bg-white">
-                  {image ? <img src={image} alt={getProductTitle(previewItem)} className={`w-full object-contain p-2 ${previewItems.length === 1 ? "h-52" : "h-24"}`} /> : <Package size={30} className="text-[#D9CBAE]" />}
-                  {index === 3 && orderItems.length > 4 && (
-                    <span className="absolute inset-0 flex items-center justify-center bg-[#1B1D60D9] text-lg font-bold text-white">+{orderItems.length - 3}</span>
-                  )}
-                </div>
-              );
-            }) : <Package size={42} className="m-auto text-[#D9CBAE]" />}
+            <div className="relative flex h-[180px] w-[180px] items-center justify-center overflow-hidden rounded-xl border border-[#EFE5D2] bg-white p-2">
+              {itemImage ? (
+                <img
+                  src={itemImage}
+                  alt={getProductTitle(item)}
+                  className="h-full w-full object-contain"
+                />
+              ) : (
+                <Package size={42} className="text-[#D9CBAE]" />
+              )}
+            </div>
           </Link>
 
-          <div className="flex min-w-0 flex-col justify-between gap-4">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#9A7A27]">Order Overview</p>
-                <h3 className="mt-1 text-xl font-extrabold text-[#1B1D60]">
-                  {orderItems.length} Product{orderItems.length === 1 ? "" : "s"} In {sellerPackages.length} Package{sellerPackages.length === 1 ? "" : "s"}
-                </h3>
-                <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-[#5E6472]">
-                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">{quantity} Total Unit{quantity === 1 ? "" : "s"}</span>
-                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">{sellerPackages.length} Seller Shipment{sellerPackages.length === 1 ? "" : "s"}</span>
-                </div>
-              </div>
-              <div className="shrink-0 sm:text-right">
-                <p className="text-xs font-bold uppercase tracking-wide text-[#6F7480]">Complete Order Total</p>
-                <p className="mt-1 text-2xl font-extrabold text-[#1B1D60]">{formatMoney(amount, currency)}</p>
-                <p className="mt-0.5 text-xs font-medium text-[#6F7480]">Inclusive of All Taxes</p>
-              </div>
+          <div className="flex min-w-0 flex-col flex-1 py-1">
+            <h3 className="text-lg md:text-[20px] font-semibold text-[#1B1D60] line-clamp-2">
+              {getProductTitle(item)}
+            </h3>
+
+            <div className="mt-4 flex flex-wrap items-center gap-3 text-xs font-semibold text-[#5E6472]">
+              <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5 text-[#1B1D60]">
+                Qty {Number(item.quantity || 0)}
+              </span>
+              {getItemAttributes(item).map(([key, value]) => (
+                <span
+                  key={key}
+                  className="rounded-full bg-[#F4F6FA] px-3 py-1.5 text-[#1B1D60] capitalize"
+                >
+                  {humanize(key, key)}: {value}
+                </span>
+              ))}
+              {getOrderItemColor(item) !== "N/A" &&
+                !getItemAttributes(item).some(
+                  ([k]) => k.toLowerCase() === "color",
+                ) && (
+                  <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5 text-[#1B1D60]">
+                    Color: {getOrderItemColor(item)}
+                  </span>
+                )}
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-            <Link
-              to={`/orders/${id}/track`}
-              className="inline-flex h-11 w-full min-w-[160px] items-center justify-center gap-2 rounded-lg bg-gold px-6 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:w-auto"
-            >
-              <Truck size={18} />
-              Track Packages
-            </Link>
-            {invoiceDownloadAvailable && (
-              <Link
-                to={`/orders/${id}`}
-                onClick={(event) => event.stopPropagation()}
-                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#D6B45B] bg-white px-5 text-sm font-bold text-gold-dark transition hover:bg-gold-soft sm:w-auto"
-              >
-                <Download size={16} />
-                Seller Invoices
-              </Link>
-            )}
-          </div>
-          </div>
-        </div>
+            <div className="mt-5">
+              <p className="text-[22px] font-bold text-[#1B1D60]">
+                {formatMoney(itemTotal, currency)}
+              </p>
+              <p className="mt-1 text-[13px] font-medium text-[#5E6472]">
+                Inclusive of all taxes
+              </p>
+            </div>
 
-        <div className="mt-4 grid gap-4 xl:grid-cols-2">
-          {sellerPackages.map((sellerPackage, packageIndex) => (
-            <section key={sellerPackage.key} className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white shadow-[0_3px_14px_rgba(53,45,20,0.05)]">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EFE5D2] bg-[#FFF8E7] px-4 py-3">
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#9A7A27]">Package {packageIndex + 1}</p>
-                  <h4 className="mt-0.5 text-sm font-bold text-[#1B1D60]">{sellerPackage.sellerName}</h4>
-                </div>
-                <span className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold capitalize ${COMPACT_STATUS_BADGE[sellerPackage.status] || "bg-[#D7A522] text-white"}`}>
-                  {humanize(sellerPackage.status, "Processing")}
-                </span>
-              </div>
-              <div className="divide-y divide-[#F1E8D5]">
-                {sellerPackage.items.map((packageItem, index) => {
-                  const itemStatus = packageItem.cancellation_status || packageItem.delivery_status || packageItem.deliveryStatus || sellerPackage.status;
-                  const itemImage = getOrderCardImage(packageItem);
-                  const itemTotal = packageItem.line_total ?? packageItem.lineTotal ?? (Number(packageItem.unit_price || packageItem.unitPrice || 0) * Number(packageItem.quantity || 0));
-                  return (
-                    <Link key={packageItem.id || packageItem._id || index} to={`/orders/${id}`} className="grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 transition hover:bg-[#FFFCF6]">
-                      <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-md border border-[#EFE5D2] bg-white">
-                        {itemImage ? <img src={itemImage} alt="" className="h-full w-full object-contain p-1" /> : <Package size={20} className="text-[#D9CBAE]" />}
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block truncate text-sm font-bold text-[#2E2E2E]">{getProductTitle(packageItem)}</span>
-                        <span className="mt-1 block text-xs font-medium text-[#6F7480]">Qty {Number(packageItem.quantity || 0)} · <span className="capitalize">{humanize(itemStatus, "Processing")}</span></span>
-                      </span>
-                      <span className="whitespace-nowrap text-sm font-extrabold text-[#1B1D60]">{formatMoney(itemTotal, currency)}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </section>
-          ))}
+            <div className="mt-6 flex flex-wrap items-center gap-4">
+              <Link
+                to={`/orders/${id}/track?itemId=${item.id || item._id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex h-10 min-w-[140px] items-center justify-center gap-2 rounded-lg bg-[#DCA938] px-5 text-[14px] font-bold text-[#1B1D60] shadow-sm transition hover:bg-[#C59732]"
+              >
+                <Truck size={18} />
+                Track Order
+              </Link>
+              {invoiceDownloadAvailable && (
+                <Link
+                  to={`/orders/${id}?itemId=${item.id || item._id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex h-10 items-center justify-center gap-2 px-4 text-[14px] font-bold text-[#DCA938] transition hover:text-[#C59732]"
+                >
+                  <Download size={18} />
+                  Download Invoice
+                </Link>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </article>
@@ -1428,7 +1587,9 @@ function OrderList() {
                   loading={state.loading && !allOrders.length}
                   error={state.error}
                   empty={!orders.length && !state.loading}
-                  emptyTitle={activeFilter ? "No orders found" : "No orders yet"}
+                  emptyTitle={
+                    activeFilter ? "No orders found" : "No orders yet"
+                  }
                   emptyText={
                     activeFilter || query
                       ? "Try a different filter."
@@ -1436,9 +1597,16 @@ function OrderList() {
                   }
                 >
                   <div className="flex flex-col gap-4  ">
-                    {orders.map((order) => (
-                      <OrderSummaryCard key={getOrderId(order)} order={order} />
-                    ))}
+                    {orders.flatMap((order) => {
+                      const items = getOrderItems(order);
+                      return items.map((item, index) => (
+                        <OrderItemSummaryCard
+                          key={`${getOrderId(order)}-${item.id || item._id || index}`}
+                          order={order}
+                          item={item}
+                        />
+                      ));
+                    })}
                   </div>
                 </ApiState>
               </div>

@@ -158,9 +158,9 @@ function OrderPaymentSummary({
   return (
     <OrderDetailSectionCard
       title={title}
-      className="h-auto w-full"
+      className="h-full w-full"
       borderClassName="border-[#CE9F2D66]"
-      bodyClassName="grid gap-3 px-4 py-4 text-sm "
+      bodyClassName="flex flex-col gap-3 px-4 py-4 text-sm"
     >
       {variant === "checkout" && (
         <>

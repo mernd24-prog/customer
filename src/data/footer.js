@@ -29,25 +29,8 @@ export const footerData = {
     },
   ],
   linkGroups: [
-    {
-      title: "Buy",
-      links: [
-        { label: "Electronic", href: "/categories/electronics" },
-        { label: "Beauty & Personal Care", href: "/categories/beauty" },
-        { label: "Food & Beverages", href: "/categories/food-beverages" },
-        { label: "Home Appliances", href: "/categories/appliances" },
-      ],
-    },
-    {
-      title: "Brands",
-      links: [
-        { label: "Apple", href: "/brands/apple" },
-        { label: "Asus", href: "/brands/asus" },
-        { label: "Acer", href: "/brands/acer" },
-        { label: "Haier", href: "/brands/haier" },
-        // { label: "Careers", href: "/features" },
-      ],
-    },
+   
+   
     {
       title: "Sell",
       links: [

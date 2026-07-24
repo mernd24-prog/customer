@@ -20,15 +20,15 @@ function OrderDetailInfoTile({ icon, label, value, tone = "yellow" }) {
   );
 }
   
-function OrderDetailInfoGrid({ items }) {
-  return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:gap-5 xl:grid-cols-4 2xl:gap-[36px]">
-      {items.map((item) => (
-        <OrderDetailInfoTile key={item.label} {...item} />
-      ))}
-    </div>
-  );
-}
+// function OrderDetailInfoGrid({ items }) {
+//   return (
+//     <div className="grid gap-4 sm:grid-cols-2 lg:gap-5 xl:grid-cols-4 2xl:gap-[36px] d">
+//       {items.map((item) => (
+//         <OrderDetailInfoTile key={item.label} {...item} />
+//       ))}
+//     </div>
+//   );
+// }
 
 export { OrderDetailInfoTile };
-export default OrderDetailInfoGrid;
+// export default OrderDetailInfoGrid;
