@@ -24,6 +24,7 @@ import PolicyPage from "./pages/policiesPage/PoliciesPages";
 import Loader from "./components/common/Loader";
 import ReturnsPage from "./pages/returns/ReturnsPage.jsx";
 import BecomeASeller from "./pages/becomeASeller/becomeASeller.jsx";
+import ContactUs from "./pages/contact/ContactUs.jsx";
 
 const CART_STORAGE_KEYS = [
   "sam_global_saved_for_later_items", // localStorage
@@ -301,9 +302,10 @@ export default function App() {
               <Route path="/faq" element={<FAQPage />} />
 
               {/* Not working */}
+              <Route path="/contact-us" element={<ContactUs />} />
               <Route path="/support" element={<SupportHelpCenter />} />
 
-              {/* <Route path="/help-contact" element={<ContactUs />} /> */}
+           
               {/* <Route path="/deals" element={<DealsPage />} /> */}
               <Route path="/brand-outlet" element={<BrandOutletPage />} />
               <Route
@@ -472,8 +474,6 @@ export default function App() {
                   <Route path="/wallet" element={<WalletPage />} />
                   <Route path="/payments" element={<PaymentsPage />} />
                   <Route path="/subscriptions" element={<SubscriptionPage />} />
-
-
 
                   {/* Warranty */}
                   <Route path="/warranty" element={<WarrantyPage />} />

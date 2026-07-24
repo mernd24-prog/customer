@@ -448,13 +448,13 @@ export default function SupportHelpCenter() {
               {/* DESKTOP QUICK ACTIONS */}
               {quickActions.length > 0 && (
                 <section className="hidden overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white md:block">
-                  <div className="bg-[#F7EED8] px-5 py-3">
+                  <div className="bg-[#F7EED8] px-5  py-3">
                     <h2 className="text-[18px] font-bold text-[#2E2E2E]">
                       Quick Actions
                     </h2>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-x-3 gap-y-5 px-5 py-5 lg:grid-cols-6">
+                  <div className="grid grid-cols-3 gap-x-3 gap-y-5 px-5  py-5 lg:grid-cols-5">
                     {quickActions.map((topic, index) => (
                       <Link
                         key={`${topic.title}-${index}`}
@@ -659,7 +659,7 @@ export default function SupportHelpCenter() {
                       <div key={ticket.id} className="py-4">
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-bold text-[#1B1D60]">
+                            <p className=" text-sm font-bold text-[#1B1D60]">
                               {ticket.subject}
                             </p>
 

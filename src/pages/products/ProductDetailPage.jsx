@@ -999,45 +999,69 @@ function ProductInfoSection({
               effectiveWarranty.type ||
               effectiveWarranty.provider) && (
               <div>
-                <h3 className="text-base font-bold text-ink">Warranty Summary</h3>
+                <h3 className="text-base font-bold text-ink">
+                  Warranty Summary
+                </h3>
                 <div className="mt-2 text-sm text-[#4E4E4E] whitespace-pre-line">
-                  {effectiveWarranty.summary || effectiveWarranty.warrantySummary || (
-                    <div className="space-y-1 text-base">
-                      {warrantyPeriod && (
-                        <div>
-                          <span className="font-medium text-ink">Period:</span>{" "}
-                          {warrantyPeriod}
-                        </div>
-                      )}
-                      {effectiveWarranty.type && (
-                        <div>
-                          <span className="font-medium text-ink">Type:</span>{" "}
-                          {effectiveWarranty.type}
-                        </div>
-                      )}
-                      {effectiveWarranty.provider && (
-                        <div>
-                          <span className="font-medium text-ink">Provider:</span>{" "}
-                          {effectiveWarranty.provider}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  {effectiveWarranty.summary ||
+                    effectiveWarranty.warrantySummary || (
+                      <div className="space-y-1 text-base">
+                        {warrantyPeriod && (
+                          <div>
+                            <span className="font-medium text-ink">
+                              Period:
+                            </span>{" "}
+                            {warrantyPeriod}
+                          </div>
+                        )}
+                        {effectiveWarranty.type && (
+                          <div>
+                            <span className="font-medium text-ink">Type:</span>{" "}
+                            {effectiveWarranty.type}
+                          </div>
+                        )}
+                        {effectiveWarranty.provider && (
+                          <div>
+                            <span className="font-medium text-ink">
+                              Provider:
+                            </span>{" "}
+                            {effectiveWarranty.provider}
+                          </div>
+                        )}
+                      </div>
+                    )}
                 </div>
               </div>
             )}
 
-            {(effectiveWarranty.coveredInWarranty || effectiveWarranty.terms) && (
+            {(effectiveWarranty.coveredInWarranty ||
+              effectiveWarranty.terms) && (
               <div>
-                <h3 className="text-base font-bold text-ink">Covered in Warranty</h3>
-                <div className="mt-2 prose prose-sm max-w-none text-[#4E4E4E] lg:prose-base" dangerouslySetInnerHTML={{ __html: effectiveWarranty.coveredInWarranty || effectiveWarranty.terms }} />
+                <h3 className="text-base font-bold text-ink">
+                  Covered in Warranty
+                </h3>
+                <div
+                  className="mt-2 prose prose-sm max-w-none text-[#4E4E4E] lg:prose-base"
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      effectiveWarranty.coveredInWarranty ||
+                      effectiveWarranty.terms,
+                  }}
+                />
               </div>
             )}
 
             {effectiveWarranty.notCoveredInWarranty && (
               <div>
-                <h3 className="text-base font-bold text-ink">Not Covered in Warranty</h3>
-                <div className="mt-2 prose prose-sm max-w-none text-[#4E4E4E] lg:prose-base" dangerouslySetInnerHTML={{ __html: effectiveWarranty.notCoveredInWarranty }} />
+                <h3 className="text-base font-bold text-ink">
+                  Not Covered in Warranty
+                </h3>
+                <div
+                  className="mt-2 prose prose-sm max-w-none text-[#4E4E4E] lg:prose-base"
+                  dangerouslySetInnerHTML={{
+                    __html: effectiveWarranty.notCoveredInWarranty,
+                  }}
+                />
               </div>
             )}
 
@@ -1071,7 +1095,7 @@ function ProductInfoSection({
 
       {activeInfoTab === "common-images" &&
         product.commonImages?.length > 0 && (
-          <InfoCard title="Common Product Images" roundedClass="rounded-xl">
+          <InfoCard title="Catalogue Images" roundedClass="rounded-xl">
             <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {product.commonImages.slice(0, 4).map((image, index) => {
                 const isLast = index === 3;
@@ -1577,12 +1601,12 @@ export default function ProductDetailPage() {
 
   const infoTabs = [
     ...(product?.commonImages?.length
-      ? [{ key: "common-images", label: "Common Images" }]
+      ? [{ key: "common-images", label: " Catalogue Images" }]
       : []),
     { key: "details", label: "Product Details" },
     { key: "description", label: "Description" },
     { key: "warranty", label: "Warranty" },
-    { key: "seller", label: "Seller Info" },
+    { key: "seller", label: "Seller Information" },
   ];
 
   return (

@@ -121,12 +121,12 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         />
       </div>
 
-      <FormField
+      {/* <FormField
         id="referralCode"
         label="Referral code"
         registration={register("referralCode")}
         error={errors.referralCode}
-      />
+      /> */}
 
       {error && (
         <div
@@ -143,7 +143,7 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
         size="lg"
         type="submit"
       >
-        <UserPlus size={18} /> Register as buyer
+        <UserPlus size={18} /> Register
       </Button>
 
       <p className="text-center  text-[0.8rem] text-muted">

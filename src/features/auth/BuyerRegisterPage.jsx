@@ -43,7 +43,7 @@ export default function BuyerRegisterPage() {
         description="Create a Sam Global buyer account."
       />
       <AuthCard
-        eyebrow="Buyer registration"
+        eyebrow="Registration"
         title="Start shopping with a customer account."
         subtitle="Your role is locked to buyer on submit, so this form cannot accidentally create a seller or admin profile."
         icon="/image/png/person.png"

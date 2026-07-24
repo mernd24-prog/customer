@@ -1,136 +1,16 @@
-import { useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useMemo, useState, useEffect } from "react";
 import { asArray, hrefOr } from "../utils/content";
 import { footerData } from "../data/footer";
 import { SocialIcons } from "../components/common";
 import { Link, useLocation } from "react-router-dom";
 import { CUSTOMER_ROUTES } from "../constants/routes";
-
-const buildCategorySlug = (name = "category") =>
-  String(name).trim().toLowerCase().replace(/\s+/g, "-");
-
-const getCategoryKey = (item = {}) =>
-  item?.categoryKey ||
-  item?.key ||
-  item?.slug ||
-  buildCategorySlug(item?.title || item?.name);
-
-const normalizeForMatch = (value = "") =>
-  String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "");
-
-const getMatchTokens = (value = "") =>
-  String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/&/g, "and")
-    .split(/[^a-z0-9]+/)
-    .filter(Boolean);
-
-function getCategoryListFromResponse(data) {
-  if (Array.isArray(data)) return data;
-  if (!data || typeof data !== "object") return [];
-  if (Array.isArray(data?.items)) return data.items;
-  if (Array.isArray(data?.list)) return data.list;
-  if (Array.isArray(data?.categories)) return data.categories;
-  if (data?.category && typeof data.category === "object")
-    return [data.category];
-  if (data?.data) return getCategoryListFromResponse(data.data);
-  return [data];
-}
-
-function getRootCategories(categories = []) {
-  const byKey = new Map();
-
-  const visit = (category, parentKey = null) => {
-    if (!category || typeof category !== "object") return;
-
-    const categoryKey = getCategoryKey(category);
-    if (!categoryKey) return;
-
-    const normalized = {
-      ...category,
-      categoryKey,
-      parentKey: category?.parentKey ?? parentKey,
-    };
-
-    byKey.set(categoryKey, normalized);
-
-    asArray(category?.children).forEach((child) => visit(child, categoryKey));
-    asArray(category?.subCategories).forEach((child) =>
-      visit(child, categoryKey),
-    );
-  };
-
-  asArray(categories).forEach((category) =>
-    visit(category, category?.parentKey ?? null),
-  );
-
-  return Array.from(byKey.values()).filter(
-    (category) =>
-      category.parentKey === null ||
-      category.parentKey === undefined ||
-      !byKey.has(category.parentKey) ||
-      Number(category?.level ?? 0) === 0,
-  );
-}
-
-function findCategoryForFooterLink(link, categories) {
-  const labelKey = normalizeForMatch(link?.label);
-  const labelTokens = getMatchTokens(link?.label);
-  if (!labelKey) return null;
-
-  return categories.find((category) => {
-    const rawValues = [
-      category?.title,
-      category?.name,
-      category?.label,
-      category?.categoryKey,
-      category?.key,
-      category?.slug,
-    ];
-    const values = rawValues.map(normalizeForMatch);
-    const tokens = rawValues.flatMap(getMatchTokens);
-
-    return (
-      values.some((value) => value === labelKey) ||
-      labelTokens.some((labelToken) =>
-        tokens.some(
-          (token) =>
-            token === labelToken ||
-            token === `${labelToken}s` ||
-            `${token}s` === labelToken ||
-            token.startsWith(labelToken),
-        ),
-      )
-    );
-  });
-}
-
-function resolveFooterLinkGroups(groups, categories) {
-  if (!categories.length) return groups;
-
-  return groups.map((group) => {
-    if (String(group?.title || "").toLowerCase() !== "buy") return group;
-
-    return {
-      ...group,
-      links: asArray(group?.links).map((link) => {
-        if (link?.href) return link;
-
-        const category = findCategoryForFooterLink(link, categories);
-        const categoryKey = category ? getCategoryKey(category) : "";
-
-        return categoryKey
-          ? { ...link, href: CUSTOMER_ROUTES.category(categoryKey) }
-          : link;
-      }),
-    };
-  });
-}
+import { useDispatch } from "react-redux";
+import { fetchBrands } from "../features/catalog/catalogSlice";
+import {
+  getBrandName,
+  getBrandRouteKey,
+  listFromPayload,
+} from "../pages/brand/BrandOutletPage";
 
 // Inline Footer Link Groups Component
 function FooterLinkGroups({ groups = [], socialLinks = [] }) {
@@ -190,25 +70,65 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
 }
 
 export function Footer({ data = footerData }) {
+  const [footerBrands, setFooterBrands] = useState([]);
+
   const location = useLocation();
-  const catalogCategoryList = useSelector(
-    (state) => state.catalog.globalCategories || state.catalog.list || [],
-  );
+
+  const dispatch = useDispatch();
+
+  const brandLinks = useMemo(() => {
+    return footerBrands.slice(0, 5).map((brand) => ({
+      label: getBrandName(brand),
+      href: CUSTOMER_ROUTES.brand(getBrandRouteKey(brand)),
+    }));
+  }, [footerBrands]);
+
+  useEffect(() => {
+    dispatch(fetchBrands({ params: { limit: 500 } }))
+      .then((result) => {
+        const brands = listFromPayload(result?.payload);
+
+        const brandsWithProducts = brands.filter((brand) => {
+          const count =
+            brand.count ??
+            brand.productCount ??
+            brand.productsCount ??
+            brand.product_count ??
+            brand.products_count ??
+            brand.counts?.products ??
+            brand.meta?.productCount ??
+            0;
+
+          return Number(count) > 0;
+        });
+
+        setFooterBrands(brandsWithProducts.slice(0, 4));
+      })
+      .catch((err) => {
+        console.error("Failed to fetch footer brands", err);
+      });
+  }, [dispatch]);
+
   const footer = data || footerData;
   const {
     copyright = footerData.copyright,
     extrapages = footerData.extrapages,
   } = footer;
   const benefits = asArray(footer.benefits);
-  const linkGroups = asArray(footer.linkGroups);
-  const catalogCategories = useMemo(
-    () => getRootCategories(getCategoryListFromResponse(catalogCategoryList)),
-    [catalogCategoryList],
-  );
-  const resolvedLinkGroups = useMemo(
-    () => resolveFooterLinkGroups(linkGroups, catalogCategories),
-    [catalogCategories, linkGroups],
-  );
+
+  const resolvedLinkGroups = useMemo(() => {
+    return footer.linkGroups.map((group) => {
+      if (group.title === "Brands") {
+        return {
+          ...group,
+          links: brandLinks,
+        };
+      }
+
+      return group;
+    });
+  }, [footer.linkGroups, brandLinks]);
+
   const socialLinks = asArray(footer.socialLinks);
   const extraPages = asArray(extrapages);
   const appDownload = footer.appDownload || {};

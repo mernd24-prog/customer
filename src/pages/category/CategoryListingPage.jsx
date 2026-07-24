@@ -357,8 +357,9 @@ export default function CategoryListingPage() {
   ]);
 
   const categories = useMemo(() => {
-    const available = getRootCategories(
-      catalogState.globalCategories) || [].filter((category) => Number(category.productCount || 0) > 0);
+    const available =
+      getRootCategories(catalogState.globalCategories) ||
+      [].filter((category) => Number(category.productCount || 0) > 0);
     const masterByKey = new Map(
       categoryList.map((category) => [category.routeKey, category]),
     );
@@ -368,15 +369,6 @@ export default function CategoryListingPage() {
       productCount: Number(category.productCount || 0),
     }));
   }, [catalogState.globalCategories, categoryList]);
-
-  const sidebarCategories = useMemo(
-    () =>
-      categories.map((category) => ({
-        label: category.displayName,
-        key: category.routeKey,
-      })),
-    [categories],
-  );
 
   return (
     <>

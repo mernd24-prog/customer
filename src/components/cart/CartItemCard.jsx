@@ -20,7 +20,7 @@ export default function CartItemCard({
   selected = true,
   onSelect,
   saveForLaterLabel = "Move to Wishlist",
-  removeLabel = "Remove Item",
+  removeLabel = "Remove",
   showCheckbox,
   fullWidth = false,
 }) {

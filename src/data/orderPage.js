@@ -126,8 +126,4 @@ export const COMPACT_STATUS_BADGE = {
   cancelled: "bg-[#D93636] text-white",
 };
 
-export const items = [
-  { icon: Headphones, title: "Contact Support" },
-  { icon: FiBox, title: "Contact Support" },
-  { icon: Truck, title: "Contact Support" },
-];
+export const items = [{ icon: Headphones, title: "Contact Support" }];

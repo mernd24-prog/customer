@@ -6,7 +6,7 @@ import CUSTOMER_ROUTES from "../../constants/routes";
 import { fetchBrands } from "../../features/catalog/catalogSlice";
 import { getImageUrlFromValue } from "../../utils/ecommerce";
 
-function listFromPayload(payload) {
+export function listFromPayload(payload) {
   const data = payload?.data ?? payload;
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.items)) return data.items;
@@ -17,13 +17,13 @@ function listFromPayload(payload) {
   return [];
 }
 
-function getBrandName(brand = {}) {
+export function getBrandName(brand = {}) {
   return typeof brand === "string"
     ? brand
     : brand.name || brand.brandName || brand.title || brand.code || "";
 }
 
-function slugifyBrand(value = "") {
+export function slugifyBrand(value = "") {
   return String(value)
     .trim()
     .toLowerCase()
@@ -31,7 +31,7 @@ function slugifyBrand(value = "") {
     .replace(/^-+|-+$/g, "");
 }
 
-function getBrandRouteKey(brand = {}) {
+export function getBrandRouteKey(brand = {}) {
   if (typeof brand === "string") return slugifyBrand(brand);
   return brand.slug || brand.code || slugifyBrand(getBrandName(brand));
 }
