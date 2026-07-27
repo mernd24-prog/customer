@@ -23,7 +23,6 @@ import Seo from "../../components/common/Seo";
 import Button from "../../components/ui/Button";
 import ConfirmModal from "../../components/common/overlay/ConfirmModal";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
-import OrderDetailInfoGrid from "./components/OrderDetailInfoGrid";
 import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
 import OrderDetailSectionCard from "./components/OrderDetailSectionCard";
 import OrderItemsSection from "./components/OrderItemsSection";
@@ -59,6 +58,7 @@ import {
   ORDER_BREADCRUMBS,
   ORDER_FILTERS,
 } from "../../data/orderPage";
+import OrderDetailInfoGrid from "../../components/orderDetailInfoGrid/orderDetailInfoGrid";
 
 const getOrderId = (order) =>
   order?.id || order?._id || order?.orderId || order?.order_id;
