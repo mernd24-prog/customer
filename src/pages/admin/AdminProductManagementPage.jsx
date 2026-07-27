@@ -407,10 +407,10 @@ export default function AdminProductManagementPage() {
       <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
         <p className="font-semibold">Clear Product Flow</p>
         <ol className="mt-2 list-decimal space-y-1 pl-5">
-          <li>Choose Category (attributes come from category `attributeSchema`).</li>
+          <li>Choose Category (Attributes Come From Category `Attributeschema`).</li>
           <li>Choose Brand + Family + HSN + Batch.</li>
-          <li>Select category attributes, variant attributes, and values from Attribute Management.</li>
-          <li>Set dimensions and warranty, then save product.</li>
+          <li>Select Category Attributes, Variant Attributes, and Values From Attribute Management.</li>
+          <li>Set Dimensions and Warranty, Then Save Product.</li>
         </ol>
       </div>
 
@@ -425,8 +425,8 @@ export default function AdminProductManagementPage() {
             <textarea className="rounded border p-2" placeholder="Description" value={form.description} onChange={(e) => setForm((v) => ({ ...v, description: e.target.value }))} required />
 
             <div className="grid grid-cols-3 gap-2">
-              <input className="rounded border p-2" placeholder="Price (GST included)" type="number" value={form.price} onChange={(e) => setForm((v) => ({ ...v, price: e.target.value }))} required />
-              <input className="rounded border p-2" placeholder="MRP (GST included)" type="number" value={form.mrp} onChange={(e) => setForm((v) => ({ ...v, mrp: e.target.value }))} required />
+              <input className="rounded border p-2" placeholder="Price (Gst Included)" type="number" value={form.price} onChange={(e) => setForm((v) => ({ ...v, price: e.target.value }))} required />
+              <input className="rounded border p-2" placeholder="Mrp (Gst Included)" type="number" value={form.mrp} onChange={(e) => setForm((v) => ({ ...v, mrp: e.target.value }))} required />
               <input className="rounded border p-2" placeholder="Stock" type="number" value={form.stock} onChange={(e) => setForm((v) => ({ ...v, stock: e.target.value }))} required />
             </div>
 
@@ -478,9 +478,9 @@ export default function AdminProductManagementPage() {
             </div>
 
             <select className="rounded border p-2" value={form.status} onChange={(e) => setForm((v) => ({ ...v, status: e.target.value }))}>
-              <option value="draft">draft</option>
-              <option value="active">active</option>
-              <option value="inactive">inactive</option>
+              <option value="Draft">draft</option>
+              <option value="Active">active</option>
+              <option value="Inactive">inactive</option>
             </select>
 
             <div className="rounded border border-slate-200 p-3">
@@ -521,14 +521,14 @@ export default function AdminProductManagementPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-slate-500">Select a category to load selectable attributes.</p>
+                <p className="text-xs text-slate-500">Select a Category to Load Selectable Attributes.</p>
               )}
             </div>
 
             <div className="rounded border border-slate-200 p-3">
               <div className="mb-3 flex items-center justify-between">
                 <p className="text-xs font-semibold uppercase text-slate-500">Variants & Options</p>
-                <span className="text-xs text-slate-500">{formVariants.length} variants</span>
+                <span className="text-xs text-slate-500">{formVariants.length} Variants</span>
               </div>
               <div className="grid gap-3">
                 {(variantAttributeOptions.length ? variantAttributeOptions : []).map((option) => {
@@ -557,7 +557,7 @@ export default function AdminProductManagementPage() {
                               </button>
                             );
                           })}
-                          {!values.length && <span className="text-xs text-slate-500">No values found for this option.</span>}
+                          {!values.length && <span className="text-xs text-slate-500">No Values Found for This Option.</span>}
                         </div>
                       )}
                     </div>
@@ -565,7 +565,7 @@ export default function AdminProductManagementPage() {
                 })}
                 {!variantAttributeOptions.length && (
                   <p className="rounded border border-dashed border-slate-200 p-3 text-xs text-slate-500">
-                    Mark attributes as variant axes in Catalog Masters, Categories, or Families to generate variants.
+                    Mark Attributes as Variant Axes in Catalog Masters, Categories, or Families to Generate Variants.
                   </p>
                 )}
               </div>
@@ -576,9 +576,9 @@ export default function AdminProductManagementPage() {
                       <tr>
                         <th className="p-1">Default</th>
                         <th className="p-1">Variant</th>
-                        <th className="p-1">SKU</th>
+                        <th className="p-1">Sku</th>
                         <th className="p-1">Price</th>
-                        <th className="p-1">MRP</th>
+                        <th className="p-1">Mrp</th>
                         <th className="p-1">Stock</th>
                         <th className="p-1">Status</th>
                       </tr>
@@ -604,9 +604,9 @@ export default function AdminProductManagementPage() {
                           </td>
                           <td className="p-1">
                             <select className="rounded border p-1" value={variant.status || "active"} onChange={(e) => updateVariant(index, "status", e.target.value)}>
-                              <option value="active">active</option>
-                              <option value="inactive">inactive</option>
-                              <option value="out_of_stock">out of stock</option>
+                              <option value="Active">active</option>
+                              <option value="Inactive">inactive</option>
+                              <option value="out_of_stock">Out of Stock</option>
                             </select>
                           </td>
                         </tr>
@@ -621,7 +621,7 @@ export default function AdminProductManagementPage() {
               <p className="mb-2 text-xs font-semibold uppercase text-slate-500">Dimensions</p>
               <div className="grid gap-2 sm:grid-cols-5">
                 <select className="rounded border p-2 sm:col-span-2" value={form.dimensionPreset} onChange={(e) => setForm((v) => ({ ...v, dimensionPreset: e.target.value }))}>
-                  <option value="">No preset</option>
+                  <option value="">No Preset</option>
                   {dimensions.map((item) => (
                     <option key={idOf(item)} value={item.dimensions_value}>
                       {item.dimensions_value}
@@ -633,9 +633,9 @@ export default function AdminProductManagementPage() {
                 <input className="rounded border p-2" type="number" placeholder="H" value={form.dimensionHeight} onChange={(e) => setForm((v) => ({ ...v, dimensionHeight: e.target.value }))} />
               </div>
               <select className="mt-2 rounded border p-2" value={form.dimensionUnit} onChange={(e) => setForm((v) => ({ ...v, dimensionUnit: e.target.value }))}>
-                <option value="cm">cm</option>
-                <option value="mm">mm</option>
-                <option value="in">in</option>
+                <option value="Cm">cm</option>
+                <option value="Mm">mm</option>
+                <option value="In">in</option>
                 <option value="m">m</option>
               </select>
             </div>
@@ -644,7 +644,7 @@ export default function AdminProductManagementPage() {
               <p className="mb-2 text-xs font-semibold uppercase text-slate-500">Warranty</p>
               <div className="grid gap-2 sm:grid-cols-3">
                 <select className="rounded border p-2 sm:col-span-3" value={form.warrantyTemplateId} onChange={(e) => setForm((v) => ({ ...v, warrantyTemplateId: e.target.value, warrantyPeriod: "" }))}>
-                  <option value="">No warranty template</option>
+                  <option value="">No Warranty Template</option>
                   {warrantyTemplates.map((item) => (
                     <option key={idOf(item)} value={idOf(item)}>
                       {item.period}
@@ -653,14 +653,14 @@ export default function AdminProductManagementPage() {
                 </select>
                 <input className="rounded border p-2" type="number" placeholder="Period" value={form.warrantyPeriod} onChange={(e) => setForm((v) => ({ ...v, warrantyPeriod: e.target.value }))} />
                 <select className="rounded border p-2" value={form.warrantyPeriodUnit} onChange={(e) => setForm((v) => ({ ...v, warrantyPeriodUnit: e.target.value }))}>
-                  <option value="days">days</option>
-                  <option value="weeks">weeks</option>
-                  <option value="months">months</option>
-                  <option value="years">years</option>
+                  <option value="Days">days</option>
+                  <option value="Weeks">weeks</option>
+                  <option value="Months">months</option>
+                  <option value="Years">years</option>
                 </select>
               </div>
             </div>
-            <textarea className="rounded border p-2" placeholder="Images (one URL per line)" value={form.images} onChange={(e) => setForm((v) => ({ ...v, images: e.target.value }))} />
+            <textarea className="rounded border p-2" placeholder="Images (One Url Per Line)" value={form.images} onChange={(e) => setForm((v) => ({ ...v, images: e.target.value }))} />
 
             <div className="flex gap-2">
               <button className="rounded bg-slate-900 px-3 py-2 text-white" type="submit">
@@ -678,7 +678,7 @@ export default function AdminProductManagementPage() {
         <div className="rounded-lg border border-slate-200 bg-white p-4">
           <div className="mb-3 flex items-center justify-between gap-2">
             <p className="text-sm font-semibold text-slate-700">Products</p>
-            <input className="rounded border p-2 text-sm" placeholder="Search products" value={query} onChange={(e) => setQuery(sanitizeSearchQuery(e.target.value))} />
+            <input className="rounded border p-2 text-sm" placeholder="Search Products" value={query} onChange={(e) => setQuery(sanitizeSearchQuery(e.target.value))} />
           </div>
 
           <div className="max-h-[60vh] overflow-auto">

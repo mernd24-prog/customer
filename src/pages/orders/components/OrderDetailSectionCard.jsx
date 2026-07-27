@@ -1,7 +1,7 @@
 function OrderDetailSectionCard({
   title,
   children,
-  className = "",
+  className = "h-fit",
   headerClassName = "",
   bodyClassName = "",
   titleClassName = "",
@@ -11,7 +11,7 @@ function OrderDetailSectionCard({
 }) {
   return (
     <section
-      className={`overflow-hidden rounded-[15px] h-fit border ${borderClassName} bg-white ${className}`}
+      className={`flex flex-col overflow-hidden rounded-[15px] border ${borderClassName} bg-white ${className}`}
     >
       {title || headerContent ? (
         <div
@@ -27,7 +27,7 @@ function OrderDetailSectionCard({
           {headerContent}
         </div>
       ) : null}
-      <div className={`${bodyClassName}`}>{children} </div>
+      <div className={`flex-1 ${bodyClassName}`}>{children} </div>
     </section>
   );
 }

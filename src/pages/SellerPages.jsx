@@ -16,8 +16,8 @@ export function SellerStatusPage() {
   const status = state.current;
   return (
     <section>
-      <Seo title="Seller status | Sam Global" />
-      <h1>Seller status</h1>
+      <Seo title="Seller Status ||| Sam Global" />
+      <h1>Seller Status</h1>
       <ApiState
         loading={state.loading}
         error={state.error}
@@ -30,15 +30,15 @@ export function SellerStatusPage() {
               Account: <strong>{status?.accountStatus}</strong>
             </p>
             <p>
-              KYC:{" "}
+              Kyc:{" "}
               <strong>
                 {status?.kyc?.status || status?.onboarding?.kycStatus}
               </strong>
             </p>
-            <p>Mode: read-only status and tracking.</p>
+            <p>Mode: Read-only Status and Tracking.</p>
           </div>
           <div className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10">
-            <h2>Onboarding checklist</h2>
+            <h2>Onboarding Checklist</h2>
             {Object.entries(status?.onboarding?.checklist || {}).map(
               ([key, done]) => (
                 <div className="list-row" key={key}>
@@ -47,7 +47,7 @@ export function SellerStatusPage() {
                 </div>
               ),
             )}
-            <h3>Next steps</h3>
+            <h3>Next Steps</h3>
             {(status?.onboarding?.nextSteps || []).map((step) => (
               <p key={step}>{step}</p>
             ))}
@@ -72,8 +72,8 @@ export function SellerTrackingPage() {
   const orders = state.current?.orders || state.list || [];
   return (
     <section>
-      <Seo title="Seller tracking | Sam Global" />
-      <h1>Seller tracking</h1>
+      <Seo title="Seller Tracking ||| Sam Global" />
+      <h1>Seller Tracking</h1>
       <ApiState
         loading={state.loading}
         error={state.error}
@@ -114,7 +114,7 @@ export function SellerTrackingDetailPage() {
   return (
     <section>
       <Seo title={`Seller order ${orderId}`} />
-      <h1>Tracking detail</h1>
+      <h1>Tracking Detail</h1>
       <ApiState
         loading={state.loading}
         error={state.error}

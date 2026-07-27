@@ -105,14 +105,19 @@ export function PaymentResultPage({ failed = false }) {
   const invoiceSellerName = (invoice, index) => {
     const metadata = invoice?.metadata || {};
     const seller = metadata.seller || {};
-    const organization = metadata.organization || invoice?.organizationSnapshot || {};
-    return organization.legalBusinessName || organization.storeDisplayName ||
-      seller.legalBusinessName || seller.businessName || seller.displayName ||
-      `Seller ${index + 1}`;
+    const organization =
+      metadata.organization || invoice?.organizationSnapshot || {};
+    return (
+      organization.legalBusinessName ||
+      organization.storeDisplayName ||
+      seller.legalBusinessName ||
+      seller.businessName ||
+      seller.displayName ||
+      `Seller ${index + 1}`
+    );
   };
-  const invoiceItemCount = (invoice) => (
-    invoice?.metadata?.items || invoice?.metadata?.lineItems || []
-  ).length;
+  const invoiceItemCount = (invoice) =>
+    (invoice?.metadata?.items || invoice?.metadata?.lineItems || []).length;
   const fallbackInvoiceUrl = getInvoiceUrl(order);
 
   useEffect(() => {
@@ -229,10 +234,15 @@ export function PaymentResultPage({ failed = false }) {
                 key={invoiceId}
                 variant="secondary"
                 rounded
-                loading={downloadingId === downloadPath}
-                onClick={() => handleInvoiceDownload(invoice)}
+                loading={
+                  downloadingId ===
+                  endpoints.tax.invoiceDownload(
+                    orderReceipt.id || orderReceipt._id,
+                  )
+                }
+                onClick={() => handleInvoiceDownload(orderReceipt)}
                 icon={<Download size={18} />}
-                label={`Seller invoice · ${invoiceSellerName(invoice, index)} · ${invoiceItemCount(invoice)} item${invoiceItemCount(invoice) === 1 ? "" : "s"}`}
+                label="Order Receipt"
                 className="h-12 w-full min-w-[220px] text-sm sm:w-auto"
               />;
             })}
@@ -277,7 +287,7 @@ export function PaymentResultPage({ failed = false }) {
             <div className="w-full rounded-[var(--customer-radius)] border border-border bg-white p-8 text-center">
               <h1 className="text-2xl font-bold text-ink">Order Placed!</h1>
               <p className="mt-2 text-sm text-muted">
-                Your order has been placed successfully.
+                Your Order Has Been Placed Successfully.
               </p>
             </div>
           </div>
@@ -320,7 +330,7 @@ export function PaymentResultPage({ failed = false }) {
                       <div className="shrink-0">
                         <img
                           src="/image/png/Group.png"
-                          alt="Order placed successfully"
+                          alt="Order Placed Successfully"
                           className="size-24 object-contain "
                         />
                       </div>
@@ -329,7 +339,7 @@ export function PaymentResultPage({ failed = false }) {
                           Order Placed Successfully !
                         </h1>
                         <p className="my-4 max-w-3xl text-small font-medium  text-[#2E2E2E] ">
-                          Thank you for shopping with Sam Global.
+                          Thank You for Shopping with Sam Global.
                           <br className="hidden sm:block" />
                           Your order has been received and is being prepared for
                           shipment.
@@ -346,17 +356,17 @@ export function PaymentResultPage({ failed = false }) {
                   </div>
                 </section>
 
-                <OrderDetailSectionCard
-                  bodyClassName="overflow-x-auto !px-4 py-3 sm:px-8"
+                {/* <OrderDetailSectionCard
+                  bodyClassName="overflow-x-auto d !px-4 py-3 sm:px-8"
                   titleClassName="font-bold leading-[100%]"
                 >
-                  <div className="w-full">
+                  <div className="w-full ">
                     <OrderProgress
                       noteClassName="text-center font-medium text-[18px] leading-none tracking-normal text-[#6F7480]"
                       status={status}
                     />
                   </div>
-                </OrderDetailSectionCard>
+                </OrderDetailSectionCard> */}
 
                 <div className="w-full">
                   <OrderItemsSection

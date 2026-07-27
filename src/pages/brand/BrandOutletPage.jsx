@@ -6,7 +6,7 @@ import CUSTOMER_ROUTES from "../../constants/routes";
 import { fetchBrands } from "../../features/catalog/catalogSlice";
 import { getImageUrlFromValue } from "../../utils/ecommerce";
 
-function listFromPayload(payload) {
+export function listFromPayload(payload) {
   const data = payload?.data ?? payload;
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.items)) return data.items;
@@ -17,13 +17,13 @@ function listFromPayload(payload) {
   return [];
 }
 
-function getBrandName(brand = {}) {
+export function getBrandName(brand = {}) {
   return typeof brand === "string"
     ? brand
     : brand.name || brand.brandName || brand.title || brand.code || "";
 }
 
-function slugifyBrand(value = "") {
+export function slugifyBrand(value = "") {
   return String(value)
     .trim()
     .toLowerCase()
@@ -31,7 +31,7 @@ function slugifyBrand(value = "") {
     .replace(/^-+|-+$/g, "");
 }
 
-function getBrandRouteKey(brand = {}) {
+export function getBrandRouteKey(brand = {}) {
   if (typeof brand === "string") return slugifyBrand(brand);
   return brand.slug || brand.code || slugifyBrand(getBrandName(brand));
 }
@@ -130,7 +130,7 @@ export default function BrandOutletPage() {
           <div className="mt-6 lg:mt-10">
             <section className="pb-7">
               <h1 className="mb-4 text-[20px] font-bold leading-tight text-[var(--customer-ink)] sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">
-                Shop brands available now
+                Shop Brands Available Now
               </h1>
 
               {loading ? (
@@ -166,7 +166,7 @@ export default function BrandOutletPage() {
                   className={`${stateContainerClass} border border-[var(--customer-border)] bg-[var(--customer-cream)]`}
                 >
                   <p className="text-sm font-semibold text-[var(--customer-ink)]">
-                    No brands available right now.
+                    No Brands Available Right Now.
                   </p>
                 </div>
               )}

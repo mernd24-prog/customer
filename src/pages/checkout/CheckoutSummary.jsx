@@ -174,19 +174,19 @@ export default function CheckoutSummary({
             )}
             {taxPayable > 0 ? (
               <SummaryRow
-                label="GST added"
+                label="Gst Added"
                 value={formatMoney(taxPayable, "INR")}
               />
             ) : null}
             {taxIncluded > 0 ? (
               <SummaryRow
-                label="GST included"
+                label="Gst Included"
                 value={formatMoney(taxIncluded, "INR")}
               />
             ) : null}
             {codCharge > 0 ? (
               <SummaryRow
-                label="COD charge"
+                label="Cod Charge"
                 value={formatMoney(codCharge, "INR")}
               />
             ) : null}
@@ -207,7 +207,7 @@ export default function CheckoutSummary({
             />
             {quoteLoading ? (
               <p className="mt-2 text-xs text-gray">
-                Calculating final order amount...
+                Calculating Final Order Amount...
               </p>
             ) : null}
             {quoteError ? (
@@ -217,7 +217,7 @@ export default function CheckoutSummary({
 
           <div className="mt-6">
             <h3 className="mb-3 text-base font-bold text-ink">
-              Payment method
+              Payment Method
             </h3>
 
             {paymentOptions.length > 0 ? (
@@ -283,7 +283,7 @@ export default function CheckoutSummary({
           </Button>
 
           <p className="mt-3 text-center text-xs text-gray">
-            Selected method: {selectedLabel}
+            Selected Method: {selectedLabel}
           </p>
         </div>
       </div>

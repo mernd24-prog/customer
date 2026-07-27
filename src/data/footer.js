@@ -30,25 +30,6 @@ export const footerData = {
   ],
   linkGroups: [
     {
-      title: "Buy",
-      links: [
-        { label: "Electronic", href: "/categories/electronics" },
-        { label: "Beauty & Personal Care", href: "/categories/beauty" },
-        { label: "Food & Beverages", href: "/categories/food-beverages" },
-        { label: "Home Appliances", href: "/categories/appliances" },
-      ],
-    },
-    {
-      title: "Brands",
-      links: [
-        { label: "Apple", href: "/brands/apple" },
-        { label: "Asus", href: "/brands/asus" },
-        { label: "Acer", href: "/brands/acer" },
-        { label: "Haier", href: "/brands/haier" },
-        // { label: "Careers", href: "/features" },
-      ],
-    },
-    {
       title: "Sell",
       links: [
         { label: "Become a Seller", href: "/become-a-seller" },
@@ -57,7 +38,7 @@ export const footerData = {
           href: "http://45.195.90.183:3000/login",
           target: "_blank",
         },
-        // { label: "Seller Policies", href: "/seller-policies" },
+        { label: "Seller Policies", href: "/seller-policies" },
         // { label: "Growth Support", href: "/growth-support" },
       ],
     },

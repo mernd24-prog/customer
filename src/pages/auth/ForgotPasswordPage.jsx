@@ -56,7 +56,7 @@ export default function ForgotPasswordPage() {
         <form className="grid gap-4" onSubmit={handleSubmit(submit)} noValidate>
           <FormField
             id="email"
-            label="Email address"
+            label="Email Address"
             type="email"
             registration={register("email")}
             error={errors.email}
@@ -79,16 +79,16 @@ export default function ForgotPasswordPage() {
             disabled={!isValid || loading}
             className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-[13px] leading-[20px] tracking-[0.5px] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <Mail size={18} /> Send reset OTP
+            <Mail size={18} /> Send Reset Otp
           </Button>
 
           <p className="text-center  text-[0.8rem] text-muted">
-            Remember your password?{" "}
+            Remember Your Password?{" "}
             <Link
               to={AUTH_ROUTES.login}
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
             >
-              Back to login
+              Back to Login
             </Link>
           </p>
         </form>

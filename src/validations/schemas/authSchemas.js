@@ -54,16 +54,16 @@ export const registerOtpSchema = withMatchingFields(
 
 export const buyerRegisterSchema = registerOtpSchema;
 
-export const resetPasswordSchema = withMatchingFields(
-  z.object({
-    email: emailField,
-    otp: otpField,
-    newPassword: strongPasswordField,
-    confirmPassword: confirmPasswordField,
-  }),
-  "newPassword",
-  "confirmPassword",
-);
+// export const resetPasswordSchema = withMatchingFields(
+//   z.object({
+//     email: emailField,
+//     otp: otpField,
+//     newPassword: strongPasswordField,
+//     confirmPassword: confirmPasswordField,
+//   }),
+//   "newPassword",
+//   "confirmPassword",
+// );
 
 export const resetSchema = z.object({
   email: emailField,

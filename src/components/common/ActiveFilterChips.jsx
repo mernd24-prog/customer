@@ -4,7 +4,7 @@ export default function ActiveFilterChips({
   filters = [],
   onRemove,
   onClear,
-  clearLabel = "Clear all",
+  clearLabel = "Clear All",
   className = "mb-4",
 }) {
   if (!filters.length) return null;

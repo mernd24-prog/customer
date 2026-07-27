@@ -1,0 +1,4422 @@
+{
+  "success": true,
+  "data": {
+    "id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+    "buyer_id": "6a630534b920c81dcc69660c",
+    "status": "shipped",
+    "currency": "INR",
+    "subtotal_amount": "81288.99",
+    "discount_amount": "0.00",
+    "tax_amount": "10357.19",
+    "total_amount": "81309.99",
+    "shipping_address": {
+      "city": "Indore",
+      "line1": "Bapat Square",
+      "line2": "",
+      "state": "Madhya Pradesh",
+      "country": "India",
+      "postalCode": "402010"
+    },
+    "coupon_code": null,
+    "wallet_discount_amount": "0.00",
+    "payable_amount": "81309.99",
+    "tax_breakup": {
+      "items": [
+        {
+          "gstRate": 18,
+          "taxMode": "igst",
+          "taxType": "gst",
+          "cessRate": 0,
+          "lineTotal": 1789.99,
+          "productId": "6a60815a5360ee2cb953ec57",
+          "taxAmount": 273.05,
+          "cessAmount": 0,
+          "gstInclusive": true,
+          "taxableAmount": 1516.94,
+          "taxPayableAmount": 0,
+          "taxIncludedAmount": 273.05,
+          "discountedLineTotal": 1789.99,
+          "sellerFundedDiscountAmount": 0,
+          "customerDiscountedLineTotal": 1789.99,
+          "taxableAmountBeforeDiscount": 1516.94
+        },
+        {
+          "gstRate": 18,
+          "taxMode": "igst",
+          "taxType": "gst",
+          "cessRate": 0,
+          "lineTotal": 64000,
+          "productId": "6a5f6057425c9616349c9206",
+          "taxAmount": 9762.71,
+          "cessAmount": 0,
+          "gstInclusive": true,
+          "taxableAmount": 54237.29,
+          "taxPayableAmount": 0,
+          "taxIncludedAmount": 9762.71,
+          "discountedLineTotal": 64000,
+          "sellerFundedDiscountAmount": 0,
+          "customerDiscountedLineTotal": 64000,
+          "taxableAmountBeforeDiscount": 54237.29
+        },
+        {
+          "gstRate": 18,
+          "taxMode": "exempt",
+          "taxType": "gst",
+          "cessRate": 0,
+          "lineTotal": 12499,
+          "productId": "6a5f6786035a5eb5c69ca9a3",
+          "taxAmount": 0,
+          "cessAmount": 0,
+          "gstInclusive": true,
+          "taxableAmount": 12499,
+          "taxPayableAmount": 0,
+          "taxIncludedAmount": 0,
+          "discountedLineTotal": 12499,
+          "sellerFundedDiscountAmount": 0,
+          "customerDiscountedLineTotal": 12499,
+          "taxableAmountBeforeDiscount": 12499
+        },
+        {
+          "gstRate": 12,
+          "taxMode": "igst",
+          "taxType": "gst",
+          "cessRate": 0,
+          "lineTotal": 3000,
+          "productId": "6a5f657f035a5eb5c69ca490",
+          "taxAmount": 321.43,
+          "cessAmount": 0,
+          "gstInclusive": true,
+          "taxableAmount": 2678.57,
+          "taxPayableAmount": 0,
+          "taxIncludedAmount": 321.43,
+          "discountedLineTotal": 3000,
+          "sellerFundedDiscountAmount": 0,
+          "customerDiscountedLineTotal": 3000,
+          "taxableAmountBeforeDiscount": 2678.57
+        }
+      ],
+      "taxMode": "mixed",
+      "cessAmount": 0,
+      "cgstAmount": 0,
+      "igstAmount": 10357.19,
+      "sgstAmount": 0,
+      "taxableAmount": 70931.8,
+      "totalTaxAmount": 10357.19,
+      "taxPayableAmount": 0,
+      "taxIncludedAmount": 10357.19
+    },
+    "platform_fee_amount": "1646.78",
+    "created_at": "2026-07-24T06:39:25.236Z",
+    "updated_at": "2026-07-24T06:42:03.175Z",
+    "order_number": "ORD-20260724-37FE0C5375",
+    "payment_status": "captured",
+    "delivery_status": "in_transit",
+    "created_by": "6a630534b920c81dcc69660c",
+    "updated_by": "6a5f59b8035a5eb5c69c84c3",
+    "payment_provider": "razorpay",
+    "cod_charge_amount": "0.00",
+    "cancellation_status": null,
+    "cancelled_amount": "0.00",
+    "shipping_fee_amount": "0.00",
+    "return_window_days": 10,
+    "return_eligible_until": "2026-08-03T06:41:16.188Z",
+    "return_policy_snapshot": {
+      "source": "product_item_policies",
+      "shipmentId": "25742fbc-be11-472c-ada3-bb4482064159",
+      "deliveredAt": "2026-07-24T06:41:16.188Z",
+      "eligibleUntil": "2026-08-03T06:41:16.188Z",
+      "returnWindowDays": 10
+    },
+    "fulfillment_eligible_at": "2026-08-03T06:41:16.188Z",
+    "summary": {
+      "itemAmount": 81288.99,
+      "subtotalAmount": 81288.99,
+      "discountAmount": 0,
+      "walletDiscountAmount": 0,
+      "taxAmount": 10357.19,
+      "taxIncludedAmount": 10357.19,
+      "taxPayableAmount": 0,
+      "platformFeeAmount": 1646.78,
+      "sellerPlatformFeeAmount": 1625.78,
+      "customerPlatformFeeAmount": 21,
+      "customerPlatformFeeTaxAmount": 0,
+      "codChargeAmount": 0,
+      "deliveryChargeAmount": 0,
+      "shippingFeeAmount": 0,
+      "customerTotalAmount": 81309.99,
+      "customerPayableAmount": 81309.99,
+      "sellerPayoutAmount": 79015.91,
+      "platformFeeChargedToCustomer": true
+    },
+    "items": [
+      {
+        "id": "15abee3b-eddb-4f9c-bf23-961f8f01b731",
+        "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+        "product_id": "6a5f6786035a5eb5c69ca9a3",
+        "variant_id": "6a608f44035a5eb5c69dcfca",
+        "variant_sku": "SKU-1784636058960-1",
+        "variant_title": "7 / Grey / 1 Year",
+        "attributes": {
+          "color": "Grey",
+          "warranty": "1 Year",
+          "shoe_size": "7"
+        },
+        "seller_id": "6a5f560b035a5eb5c69c847d",
+        "quantity": 1,
+        "unit_price": "12499.00",
+        "line_total": "12499.00",
+        "created_at": "2026-07-24T06:39:25.236Z",
+        "product_title": "Asics Gel-nimbus 28 Running Shoes For Women",
+        "product_slug": "asics-gel-nimbus-28-running-shoes-for-women-1784637318742",
+        "product_sku": "SKU-1784636058960-1",
+        "product_image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1784636294/ecommerce/uploads/product/image-3-97255935-64c4-4845-bea8-11aec1ae7527.webp",
+        "brand": "ASICS",
+        "category": "fashion-womens-footwear-women-sports-shoes",
+        "hsn_code": "0101",
+        "gst_rate": "18.00",
+        "discount_amount": "0.00",
+        "tax_amount": "0.00",
+        "tax_breakup": {
+          "gstRate": 18,
+          "taxMode": "exempt",
+          "taxType": "gst",
+          "cessRate": 0,
+          "lineTotal": 12499,
+          "productId": "6a5f6786035a5eb5c69ca9a3",
+          "taxAmount": 0,
+          "cessAmount": 0,
+          "gstInclusive": true,
+          "taxableAmount": 12499,
+          "taxPayableAmount": 0,
+          "taxIncludedAmount": 0,
+          "discountedLineTotal": 12499,
+          "sellerFundedDiscountAmount": 0,
+          "customerDiscountedLineTotal": 12499,
+          "taxableAmountBeforeDiscount": 12499
+        },
+        "product_snapshot": {
+          "sku": "SKU-1784636058960-1",
+          "slug": "asics-gel-nimbus-28-running-shoes-for-women-1784637318742",
+          "brand": "ASICS",
+          "image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1784636294/ecommerce/uploads/product/image-3-97255935-64c4-4845-bea8-11aec1ae7527.webp",
+          "title": "Asics Gel-nimbus 28 Running Shoes For Women",
+          "dealId": null,
+          "gstRate": 18,
+          "hsnCode": "0101",
+          "storeId": null,
+          "category": "fashion-womens-footwear-women-sports-shoes",
+          "shipping": {
+            "cities": [],
+            "states": [],
+            "regions": [],
+            "codAvailable": true,
+            "freeShipping": true,
+            "allowPincodes": [],
+            "blockPincodes": [],
+            "additionalCost": 0,
+            "dangerousGoods": false,
+            "handlingCharge": 0,
+            "processingDays": 1,
+            "shippingMethod": "standard",
+            "requiresColdChain": false,
+            "shippingProfileId": null,
+            "serviceabilityMode": "inherit",
+            "serviceablePincodes": []
+          },
+          "warranty": {
+            "type": "Manufacturer Warranty",
+            "terms": "<ul><li>10-day <em>manufacturer warranty against manufacturing </em>defects only. Warranty is valid with a purchase invoice. It does not cover normal wear and tear, accidental damage, misuse, improper handling, w<em>ater damage, or unauthorize</em>d repairs.</li></ul>",
+            "period": 10,
+            "provider": "ASICS India Private Limited",
+            "periodUnit": "days",
+            "returnPolicy": {
+              "days": 10,
+              "type": "standard",
+              "eligible": true,
+              "resolution": "replacement",
+              "returnable": true,
+              "restockingFee": 0,
+              "requiresImages": true,
+              "shippingPaidBy": "seller",
+              "returnWindowDays": 10,
+              "inspectionRequired": true
+            },
+            "serviceableCountries": []
+          },
+          "dealNumber": null,
+          "warehouseId": null,
+          "gstInclusive": true,
+          "returnPolicy": {
+            "days": 10,
+            "type": "standard",
+            "source": "product_snapshot",
+            "eligible": true,
+            "resolution": "replacement",
+            "returnable": true,
+            "restockingFee": 0,
+            "requiresImages": true,
+            "shippingPaidBy": "seller",
+            "returnWindowDays": 10,
+            "inspectionRequired": true
+          },
+          "variantTitle": "7 / Grey / 1 Year",
+          "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+          "commercialPolicy": {
+            "returnPolicy": {
+              "days": 10,
+              "type": "standard",
+              "source": "product_snapshot",
+              "eligible": true,
+              "resolution": "replacement",
+              "returnable": true,
+              "restockingFee": 0,
+              "requiresImages": true,
+              "shippingPaidBy": "seller",
+              "returnWindowDays": 10,
+              "inspectionRequired": true
+            }
+          }
+        },
+        "deal_id": null,
+        "deal_snapshot": {},
+        "fulfillment_snapshot": {},
+        "cancelled_quantity": 0,
+        "cancellation_status": null,
+        "cancellation_snapshot": {},
+        "organization_id": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+        "store_id": null,
+        "warehouse_id": null,
+        "return_window_days": 10,
+        "return_eligible_until": "2026-08-03T06:41:16.188Z",
+        "return_policy_snapshot": {
+          "days": 10,
+          "type": "standard",
+          "source": "product_snapshot",
+          "eligible": true,
+          "resolution": "replacement",
+          "returnable": true,
+          "shipmentId": "25742fbc-be11-472c-ada3-bb4482064159",
+          "deliveredAt": "2026-07-24T06:41:16.188Z",
+          "eligibleUntil": "2026-08-03T06:41:16.188Z",
+          "restockingFee": 0,
+          "requiresImages": true,
+          "shippingPaidBy": "seller",
+          "returnWindowDays": 10,
+          "inspectionRequired": true
+        },
+        "delivered_at": "2026-07-24T06:41:16.188Z",
+        "returnable": true,
+        "payout_eligible_at": "2026-08-03T06:41:16.188Z",
+        "payout_status": "pending",
+        "payout_hold_reason": null,
+        "commission_id": "bedb5daa-b5e1-4271-b2a1-51d18ddf29e2",
+        "payout_id": null,
+        "seller": {
+          "name": "Vihan Footwear"
+        }
+      },
+      {
+        "id": "44fc0353-2d51-4a6f-b359-1e7ef5baf335",
+        "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+        "product_id": "6a60815a5360ee2cb953ec57",
+        "variant_id": "6a6083fa3a8c9fb5d9eed785",
+        "variant_sku": "SKU-1784709433346-1",
+        "variant_title": "Blue",
+        "attributes": {
+          "color": "Blue"
+        },
+        "seller_id": "6a5f5587126d3e552c899abd",
+        "quantity": 1,
+        "unit_price": "1789.99",
+        "line_total": "1789.99",
+        "created_at": "2026-07-24T06:39:25.236Z",
+        "product_title": "Apes Fusion Style Wireless Headphone,45mm Dynamic Drivers,50hrs Playtime,fast Charge Bluetooth Headset (Black Grey, On The Ear)",
+        "product_slug": "apes-fusion-style-wireless-headphone45mm-dynamic-drivers50hrs-playtimefast-charge-bluetooth-headset-black-grey-on-the-ear-1784709466144",
+        "product_sku": "SKU-1784709433346-1",
+        "product_image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1784709509/ecommerce/uploads/product/image-1-01743d7c-3340-4c61-b7e3-4718e7eb0d71.webp",
+        "brand": "Apes",
+        "category": "electronics-music-accessories-headsets",
+        "hsn_code": "8504",
+        "gst_rate": "18.00",
+        "discount_amount": "0.00",
+        "tax_amount": "273.05",
+        "tax_breakup": {
+          "gstRate": 18,
+          "taxMode": "igst",
+          "taxType": "gst",
+          "cessRate": 0,
+          "lineTotal": 1789.99,
+          "productId": "6a60815a5360ee2cb953ec57",
+          "taxAmount": 273.05,
+          "cessAmount": 0,
+          "gstInclusive": true,
+          "taxableAmount": 1516.94,
+          "taxPayableAmount": 0,
+          "taxIncludedAmount": 273.05,
+          "discountedLineTotal": 1789.99,
+          "sellerFundedDiscountAmount": 0,
+          "customerDiscountedLineTotal": 1789.99,
+          "taxableAmountBeforeDiscount": 1516.94
+        },
+        "product_snapshot": {
+          "sku": "SKU-1784709433346-1",
+          "slug": "apes-fusion-style-wireless-headphone45mm-dynamic-drivers50hrs-playtimefast-charge-bluetooth-headset-black-grey-on-the-ear-1784709466144",
+          "brand": "Apes",
+          "image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1784709509/ecommerce/uploads/product/image-1-01743d7c-3340-4c61-b7e3-4718e7eb0d71.webp",
+          "title": "Apes Fusion Style Wireless Headphone,45mm Dynamic Drivers,50hrs Playtime,fast Charge Bluetooth Headset (Black Grey, On The Ear)",
+          "dealId": null,
+          "gstRate": 18,
+          "hsnCode": "8504",
+          "storeId": null,
+          "category": "electronics-music-accessories-headsets",
+          "shipping": {
+            "cities": [],
+            "states": [],
+            "regions": [],
+            "codAvailable": true,
+            "freeShipping": false,
+            "allowPincodes": [],
+            "blockPincodes": [],
+            "additionalCost": 0,
+            "dangerousGoods": false,
+            "handlingCharge": 0,
+            "processingDays": 1,
+            "shippingMethod": "standard",
+            "requiresColdChain": false,
+            "shippingProfileId": null,
+            "serviceabilityMode": "inherit",
+            "serviceablePincodes": []
+          },
+          "warranty": {
+            "type": "manufacturer",
+            "terms": "<h2><strong>Warranty Summary</strong></h2><p>12 months from the date of purchase.</p><p><br></p><h2><strong>Covered in Warranty</strong></h2><p>The warranty covers your APES product, including accessories against manufacturing defects (if any)</p><p><br></p><h2><strong>Not Covered in Warranty</strong></h2><p>Unauthorized tampering, modifications or repairs of the product. Physical damage of the product on the account of abuse, handling, storage, installation or testing including any use that is not in accordance with the product manual or documentation, or any other instruction provided along with the APES product. For further information on product replacement/refund related queries, please refer to the terms and conditions mentioned in our online return policy section on www.apesaudio.com</p><p><br></p><h2><strong>Warranty Service Type</strong></h2><p>Only Replacement</p>",
+            "period": 12,
+            "provider": "Manufacturer",
+            "periodUnit": "months",
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "eligible": true,
+              "resolution": "refund_or_replacement",
+              "returnable": true,
+              "restockingFee": 0,
+              "requiresImages": true,
+              "shippingPaidBy": "seller",
+              "returnWindowDays": 7,
+              "inspectionRequired": true
+            },
+            "serviceableCountries": []
+          },
+          "dealNumber": null,
+          "warehouseId": null,
+          "gstInclusive": true,
+          "returnPolicy": {
+            "days": 7,
+            "type": "standard",
+            "source": "product_snapshot",
+            "eligible": true,
+            "resolution": "refund_or_replacement",
+            "returnable": true,
+            "restockingFee": 0,
+            "requiresImages": true,
+            "shippingPaidBy": "seller",
+            "returnWindowDays": 7,
+            "inspectionRequired": true
+          },
+          "variantTitle": "Blue",
+          "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+          "commercialPolicy": {
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "source": "product_snapshot",
+              "eligible": true,
+              "resolution": "refund_or_replacement",
+              "returnable": true,
+              "restockingFee": 0,
+              "requiresImages": true,
+              "shippingPaidBy": "seller",
+              "returnWindowDays": 7,
+              "inspectionRequired": true
+            }
+          }
+        },
+        "deal_id": null,
+        "deal_snapshot": {},
+        "fulfillment_snapshot": {},
+        "cancelled_quantity": 0,
+        "cancellation_status": null,
+        "cancellation_snapshot": {},
+        "organization_id": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+        "store_id": null,
+        "warehouse_id": null,
+        "return_window_days": 7,
+        "return_eligible_until": null,
+        "return_policy_snapshot": {
+          "days": 7,
+          "type": "standard",
+          "source": "product_snapshot",
+          "eligible": true,
+          "resolution": "refund_or_replacement",
+          "returnable": true,
+          "restockingFee": 0,
+          "requiresImages": true,
+          "shippingPaidBy": "seller",
+          "returnWindowDays": 7,
+          "inspectionRequired": true
+        },
+        "delivered_at": null,
+        "returnable": true,
+        "payout_eligible_at": null,
+        "payout_status": "pending",
+        "payout_hold_reason": null,
+        "commission_id": "fd551644-3dfe-4eeb-b1ed-1986c433a1a8",
+        "payout_id": null,
+        "seller": {
+          "name": "Neha Kapoor Enterprises"
+        }
+      },
+      {
+        "id": "768dc858-441d-4388-9221-892bbe8658b2",
+        "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+        "product_id": "6a5f657f035a5eb5c69ca490",
+        "variant_id": "6a5f6d33035a5eb5c69ccbe9",
+        "variant_sku": "SKU-1784635501493-7",
+        "variant_title": "Red / M",
+        "attributes": {
+          "size": "M",
+          "color": "Red"
+        },
+        "seller_id": "6a5f59b8035a5eb5c69c84c3",
+        "quantity": 1,
+        "unit_price": "3000.00",
+        "line_total": "3000.00",
+        "created_at": "2026-07-24T06:39:25.236Z",
+        "product_title": "Royal Export Floral Embroidered Straight Kurta With Palazzos & Dupatta",
+        "product_slug": "royal-export-floral-embroidered-straight-kurta-with-palazzos-and-dupatta-1784636799968",
+        "product_sku": "SKU-1784635501493-7",
+        "product_image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1784636216/ecommerce/uploads/product/image-1-3be25385-35c0-4934-9244-e05439ae52e8.jpg",
+        "brand": "Royal Export",
+        "category": "fashion-womens-ethnic-wear-kurtas",
+        "hsn_code": "6204",
+        "gst_rate": "12.00",
+        "discount_amount": "0.00",
+        "tax_amount": "321.43",
+        "tax_breakup": {
+          "gstRate": 12,
+          "taxMode": "igst",
+          "taxType": "gst",
+          "cessRate": 0,
+          "lineTotal": 3000,
+          "productId": "6a5f657f035a5eb5c69ca490",
+          "taxAmount": 321.43,
+          "cessAmount": 0,
+          "gstInclusive": true,
+          "taxableAmount": 2678.57,
+          "taxPayableAmount": 0,
+          "taxIncludedAmount": 321.43,
+          "discountedLineTotal": 3000,
+          "sellerFundedDiscountAmount": 0,
+          "customerDiscountedLineTotal": 3000,
+          "taxableAmountBeforeDiscount": 2678.57
+        },
+        "product_snapshot": {
+          "sku": "SKU-1784635501493-7",
+          "slug": "royal-export-floral-embroidered-straight-kurta-with-palazzos-and-dupatta-1784636799968",
+          "brand": "Royal Export",
+          "image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1784636216/ecommerce/uploads/product/image-1-3be25385-35c0-4934-9244-e05439ae52e8.jpg",
+          "title": "Royal Export Floral Embroidered Straight Kurta With Palazzos & Dupatta",
+          "dealId": null,
+          "gstRate": 12,
+          "hsnCode": "6204",
+          "storeId": null,
+          "category": "fashion-womens-ethnic-wear-kurtas",
+          "shipping": {
+            "cities": [],
+            "states": [],
+            "regions": [],
+            "codAvailable": true,
+            "freeShipping": true,
+            "allowPincodes": [],
+            "blockPincodes": [],
+            "additionalCost": 0,
+            "dangerousGoods": false,
+            "handlingCharge": 0,
+            "processingDays": 1,
+            "shippingMethod": "standard",
+            "requiresColdChain": false,
+            "shippingProfileId": null,
+            "serviceabilityMode": "inherit",
+            "serviceablePincodes": []
+          },
+          "warranty": {
+            "type": "No Manufacturer Warranty",
+            "terms": "<p>This product does not include any manufacturer warranty. The warranty does not cover normal wear and tear, improper washing, accidental damage, fabric shrinkage due to incorrect care, or color fading caused by harsh detergents. Please follow the recommended wash instructions to maintain product quality.</p>",
+            "period": 7,
+            "provider": "Royal Export",
+            "periodUnit": "days",
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "eligible": true,
+              "resolution": "refund_or_replacement",
+              "returnable": true,
+              "restockingFee": 0,
+              "requiresImages": true,
+              "shippingPaidBy": "seller",
+              "returnWindowDays": 7,
+              "inspectionRequired": true
+            },
+            "serviceableCountries": []
+          },
+          "dealNumber": null,
+          "warehouseId": null,
+          "gstInclusive": true,
+          "returnPolicy": {
+            "days": 7,
+            "type": "standard",
+            "source": "product_snapshot",
+            "eligible": true,
+            "resolution": "refund_or_replacement",
+            "returnable": true,
+            "restockingFee": 0,
+            "requiresImages": true,
+            "shippingPaidBy": "seller",
+            "returnWindowDays": 7,
+            "inspectionRequired": true
+          },
+          "variantTitle": "Red / M",
+          "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+          "commercialPolicy": {
+            "returnPolicy": {
+              "days": 7,
+              "type": "standard",
+              "source": "product_snapshot",
+              "eligible": true,
+              "resolution": "refund_or_replacement",
+              "returnable": true,
+              "restockingFee": 0,
+              "requiresImages": true,
+              "shippingPaidBy": "seller",
+              "returnWindowDays": 7,
+              "inspectionRequired": true
+            }
+          }
+        },
+        "deal_id": null,
+        "deal_snapshot": {},
+        "fulfillment_snapshot": {},
+        "cancelled_quantity": 0,
+        "cancellation_status": null,
+        "cancellation_snapshot": {},
+        "organization_id": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+        "store_id": null,
+        "warehouse_id": null,
+        "return_window_days": 7,
+        "return_eligible_until": null,
+        "return_policy_snapshot": {
+          "days": 7,
+          "type": "standard",
+          "source": "product_snapshot",
+          "eligible": true,
+          "resolution": "refund_or_replacement",
+          "returnable": true,
+          "restockingFee": 0,
+          "requiresImages": true,
+          "shippingPaidBy": "seller",
+          "returnWindowDays": 7,
+          "inspectionRequired": true
+        },
+        "delivered_at": null,
+        "returnable": true,
+        "payout_eligible_at": null,
+        "payout_status": "pending",
+        "payout_hold_reason": null,
+        "commission_id": "8ed6eb26-5607-4f8b-9264-5a421d8ade85",
+        "payout_id": null,
+        "seller": {
+          "name": "Shivani Rudraghate"
+        }
+      },
+      {
+        "id": "f3b840a7-42d5-4792-aac0-2028b655b0e2",
+        "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+        "product_id": "6a5f6057425c9616349c9206",
+        "variant_id": "6a5f649b425c9616349ca530",
+        "variant_sku": "SKU-1784635363615-1",
+        "variant_title": "Blue / 8GB / 128GB",
+        "attributes": {
+          "ram": "8GB",
+          "color": "Blue",
+          "storage": "128GB"
+        },
+        "seller_id": "6a5f55a9126d3e552c899ae7",
+        "quantity": 1,
+        "unit_price": "64000.00",
+        "line_total": "64000.00",
+        "created_at": "2026-07-24T06:39:25.236Z",
+        "product_title": "Google Pixel 10 5g",
+        "product_slug": "google-pixel-10-5g-1784635479053",
+        "product_sku": "SKU-1784635363615-1",
+        "product_image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1784635530/ecommerce/uploads/product/image-1-d0facd0e-f7d8-499f-8d93-99da0012e138.jpg",
+        "brand": "Google",
+        "category": "electronics-mobiles-5g-phones",
+        "hsn_code": "8504",
+        "gst_rate": "18.00",
+        "discount_amount": "0.00",
+        "tax_amount": "9762.71",
+        "tax_breakup": {
+          "gstRate": 18,
+          "taxMode": "igst",
+          "taxType": "gst",
+          "cessRate": 0,
+          "lineTotal": 64000,
+          "productId": "6a5f6057425c9616349c9206",
+          "taxAmount": 9762.71,
+          "cessAmount": 0,
+          "gstInclusive": true,
+          "taxableAmount": 54237.29,
+          "taxPayableAmount": 0,
+          "taxIncludedAmount": 9762.71,
+          "discountedLineTotal": 64000,
+          "sellerFundedDiscountAmount": 0,
+          "customerDiscountedLineTotal": 64000,
+          "taxableAmountBeforeDiscount": 54237.29
+        },
+        "product_snapshot": {
+          "sku": "SKU-1784635363615-1",
+          "slug": "google-pixel-10-5g-1784635479053",
+          "brand": "Google",
+          "image": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1784635530/ecommerce/uploads/product/image-1-d0facd0e-f7d8-499f-8d93-99da0012e138.jpg",
+          "title": "Google Pixel 10 5g",
+          "dealId": null,
+          "gstRate": 18,
+          "hsnCode": "8504",
+          "storeId": null,
+          "category": "electronics-mobiles-5g-phones",
+          "shipping": {
+            "cities": [],
+            "states": [],
+            "regions": [],
+            "codAvailable": true,
+            "freeShipping": true,
+            "allowPincodes": [],
+            "blockPincodes": [],
+            "additionalCost": 0,
+            "dangerousGoods": false,
+            "handlingCharge": 0,
+            "processingDays": 1,
+            "shippingMethod": "standard",
+            "requiresColdChain": false,
+            "shippingProfileId": null,
+            "serviceabilityMode": "inherit",
+            "serviceablePincodes": []
+          },
+          "warranty": {
+            "type": "Manufacturer",
+            "period": 2,
+            "provider": "Service Partner",
+            "periodUnit": "years",
+            "returnPolicy": {
+              "days": 1,
+              "type": "standard",
+              "eligible": true,
+              "resolution": "refund",
+              "returnable": true,
+              "restockingFee": 0,
+              "requiresImages": true,
+              "shippingPaidBy": "seller",
+              "returnWindowDays": 1,
+              "inspectionRequired": true
+            },
+            "serviceableCountries": []
+          },
+          "dealNumber": null,
+          "warehouseId": null,
+          "gstInclusive": true,
+          "returnPolicy": {
+            "days": 1,
+            "type": "standard",
+            "source": "product_snapshot",
+            "eligible": true,
+            "resolution": "refund",
+            "returnable": true,
+            "restockingFee": 0,
+            "requiresImages": true,
+            "shippingPaidBy": "seller",
+            "returnWindowDays": 1,
+            "inspectionRequired": true
+          },
+          "variantTitle": "Blue / 8GB / 128GB",
+          "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+          "commercialPolicy": {
+            "returnPolicy": {
+              "days": 1,
+              "type": "standard",
+              "source": "product_snapshot",
+              "eligible": true,
+              "resolution": "refund",
+              "returnable": true,
+              "restockingFee": 0,
+              "requiresImages": true,
+              "shippingPaidBy": "seller",
+              "returnWindowDays": 1,
+              "inspectionRequired": true
+            }
+          }
+        },
+        "deal_id": null,
+        "deal_snapshot": {},
+        "fulfillment_snapshot": {},
+        "cancelled_quantity": 0,
+        "cancellation_status": null,
+        "cancellation_snapshot": {},
+        "organization_id": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+        "store_id": null,
+        "warehouse_id": null,
+        "return_window_days": 1,
+        "return_eligible_until": null,
+        "return_policy_snapshot": {
+          "days": 1,
+          "type": "standard",
+          "source": "product_snapshot",
+          "eligible": true,
+          "resolution": "refund",
+          "returnable": true,
+          "restockingFee": 0,
+          "requiresImages": true,
+          "shippingPaidBy": "seller",
+          "returnWindowDays": 1,
+          "inspectionRequired": true
+        },
+        "delivered_at": null,
+        "returnable": true,
+        "payout_eligible_at": null,
+        "payout_status": "pending",
+        "payout_hold_reason": null,
+        "commission_id": "0a70b42b-d7fe-4a18-a129-9a17970ea306",
+        "payout_id": null,
+        "seller": {
+          "name": "Krishna Electronics"
+        }
+      }
+    ],
+    "timeline": [
+      {
+        "id": "f8e24113-bcef-4317-a7af-31713e76b3be",
+        "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+        "from_status": null,
+        "to_status": "pending_payment",
+        "actor_id": "6a630534b920c81dcc69660c",
+        "actor_role": "buyer",
+        "reason": "order_created",
+        "note": null,
+        "metadata": {
+          "orderNumber": "ORD-20260724-37FE0C5375",
+          "paymentStatus": "initiated"
+        },
+        "created_at": "2026-07-24T06:39:25.236Z"
+      },
+      {
+        "id": "f2061a84-ac8d-4507-b1f1-e27352f82b1d",
+        "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+        "from_status": "pending_payment",
+        "to_status": "confirmed",
+        "actor_id": "6a630534b920c81dcc69660c",
+        "actor_role": "buyer",
+        "reason": "payment_captured",
+        "note": null,
+        "metadata": {
+          "provider": "razorpay",
+          "paymentId": "b182e3cb-4cc6-4a9b-b801-df43618e90ca",
+          "providerOrderId": "order_THFBTlOhXuuP4H",
+          "providerPaymentId": "pay_THFBZv244Sm4Yn",
+          "verificationMethod": "signature"
+        },
+        "created_at": "2026-07-24T06:39:51.913Z"
+      },
+      {
+        "id": "8548dcd6-02c3-43ba-a913-8887cb1036e2",
+        "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+        "from_status": "confirmed",
+        "to_status": "confirmed",
+        "actor_id": null,
+        "actor_role": null,
+        "reason": null,
+        "note": null,
+        "metadata": {},
+        "created_at": "2026-07-24T06:39:53.244Z"
+      },
+      {
+        "id": "33bf120a-880b-47d4-b48f-5bee24980e5b",
+        "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+        "from_status": "confirmed",
+        "to_status": "shipped",
+        "actor_id": "6a5f560b035a5eb5c69c847d",
+        "actor_role": "seller",
+        "reason": "delivery_in_transit",
+        "note": null,
+        "metadata": {
+          "shipmentId": "25742fbc-be11-472c-ada3-bb4482064159"
+        },
+        "created_at": "2026-07-24T06:41:13.357Z"
+      },
+      {
+        "id": "52472ddb-b8a7-4fb6-a42c-61cbb18c1574",
+        "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+        "from_status": "shipped",
+        "to_status": "shipped",
+        "actor_id": "6a5f560b035a5eb5c69c847d",
+        "actor_role": "seller",
+        "reason": "delivery_partially_delivered",
+        "note": null,
+        "metadata": {
+          "shipmentId": "25742fbc-be11-472c-ada3-bb4482064159"
+        },
+        "created_at": "2026-07-24T06:41:16.229Z"
+      },
+      {
+        "id": "c4f651a3-eb70-4015-8211-dc9154df9e0f",
+        "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+        "from_status": "shipped",
+        "to_status": "shipped",
+        "actor_id": "6a5f59b8035a5eb5c69c84c3",
+        "actor_role": "seller",
+        "reason": "delivery_in_transit",
+        "note": null,
+        "metadata": {
+          "shipmentId": "cd4cf896-be46-49e2-9ced-9153d025fac4"
+        },
+        "created_at": "2026-07-24T06:42:03.175Z"
+      }
+    ],
+    "notes": [],
+    "relations": {
+      "buyer": {
+        "id": "6a630534b920c81dcc69660c",
+        "displayName": "Rohit Sharma",
+        "fullName": "Rohit Sharma",
+        "firstName": "Rohit",
+        "lastName": "Sharma",
+        "businessName": null,
+        "email": "rohit@gmail.com",
+        "phone": "8956471235",
+        "role": "buyer",
+        "profile": {
+          "firstName": "Rohit",
+          "lastName": "Sharma"
+        },
+        "accountStatus": "active",
+        "ownerSellerId": null,
+        "parentSellerId": null,
+        "sellerProfile": {
+          "displayName": null,
+          "businessName": null,
+          "legalBusinessName": null,
+          "supportEmail": null,
+          "supportPhone": null,
+          "kycStatus": null,
+          "bankVerificationStatus": null,
+          "goLiveStatus": null
+        }
+      },
+      "sellers": [
+        {
+          "displayName": "Hiteshavri prajapat",
+          "businessName": "Vihan Footwear",
+          "supportEmail": "ittu@gmail.com",
+          "supportPhone": "6969696969"
+        },
+        {
+          "displayName": "Neha Kapoor",
+          "businessName": "Neha Kapoor Enterprises",
+          "supportEmail": "neha.business2026@gmail.com",
+          "supportPhone": "9988776655"
+        },
+        {
+          "displayName": "Aditi Upadhyay",
+          "businessName": "Shivani Rudraghate",
+          "supportEmail": "aditi@gmail.com",
+          "supportPhone": "7879057867"
+        },
+        {
+          "displayName": "Rahul Sharma",
+          "businessName": "Krishna Electronics",
+          "supportEmail": "KrishnaElectronics@gmail.com",
+          "supportPhone": "8085662512"
+        }
+      ],
+      "payments": [
+        {
+          "provider": "razorpay",
+          "status": "captured",
+          "amount": "81309.99",
+          "currency": "INR",
+          "created_at": "2026-07-24T06:39:28.001Z"
+        }
+      ],
+      "invoice": {
+        "id": "30e36809-eed6-4917-81b1-2cf3c966ae14",
+        "invoice_number": "GST-C-202607-000042",
+        "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+        "buyer_id": "6a5f55a9126d3e552c899ae7",
+        "taxable_amount": "1280.00",
+        "tax_amount": "230.40",
+        "cgst_amount": "0.00",
+        "sgst_amount": "0.00",
+        "igst_amount": "230.40",
+        "tcs_amount": "0.00",
+        "total_amount": "1510.40",
+        "currency": "INR",
+        "tax_mode": "igst",
+        "gstin_marketplace": null,
+        "gstin_seller": "27AAACR5055K1Z7",
+        "place_of_supply": "Madhya Pradesh",
+        "issued_at": "2026-07-24T06:39:58.077Z",
+        "metadata": {
+          "buyer": {
+            "email": "rohit@gmail.com",
+            "phone": "8956471235",
+            "buyerId": "6a630534b920c81dcc69660c",
+            "profile": {
+              "lastName": "Sharma",
+              "firstName": "Rohit"
+            },
+            "shippingAddress": {
+              "city": "Indore",
+              "line1": "Bapat Square",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "402010"
+            }
+          },
+          "seller": {
+            "email": "Rahul_Seller@gmail.com",
+            "phone": "6232593834",
+            "sellerId": "6a5f55a9126d3e552c899ae7",
+            "gstNumber": "27AAACR5055K1Z7",
+            "panNumber": "ABCDE1234F",
+            "displayName": "Krishna Electronics",
+            "taxSettings": {
+              "pan": "ABCDE1234F",
+              "gstin": "27AAACR5055K1Z7",
+              "state": "Madhya Pradesh"
+            },
+            "businessName": "Krishna Electronics",
+            "pickupAddress": {
+              "city": "Vidisha",
+              "line1": "Maa hospital road mohangiri",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "464001"
+            },
+            "returnAddress": null,
+            "billingAddress": {
+              "city": "Vidisha",
+              "line1": "Ramlila Road Vidisha",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "464001"
+            },
+            "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "businessAddress": {
+              "city": "Vidisha",
+              "line1": "Ramlila Road Vidisha",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "464001"
+            },
+            "invoiceSettings": {
+              "state": "Madhya Pradesh",
+              "invoicePrefix": "INV"
+            },
+            "legalBusinessName": "Krishna Electronics",
+            "primaryContactName": "Rahul Sharma"
+          },
+          "amounts": {
+            "taxMode": "igst",
+            "taxAmount": 230.4,
+            "cgstAmount": 0,
+            "igstAmount": 230.4,
+            "sgstAmount": 0,
+            "sellerGstin": "27AAACR5055K1Z7",
+            "totalAmount": 1510.4,
+            "taxableAmount": 1280,
+            "marketplaceGstin": null
+          },
+          "orderId": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "lineItems": [
+            {
+              "taxAmount": 230.4,
+              "description": "Marketplace commission/service charge",
+              "totalAmount": 1510.4,
+              "taxableAmount": 1280
+            }
+          ],
+          "generatedBy": "tax-service",
+          "invoiceType": "platform_commission",
+          "orderNumber": "ORD-20260724-37FE0C5375",
+          "orderStatus": "confirmed",
+          "organization": {
+            "pan": "ABCDE1234F",
+            "gstin": "27AAACR5055K1Z7",
+            "sellerId": "6a5f55a9126d3e552c899ae7",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "ABCDE1234F",
+              "gstin": "27AAACR5055K1Z7",
+              "state": "Madhya Pradesh"
+            },
+            "businessType": "individual",
+            "goLiveStatus": "live",
+            "supportEmail": "krishnaelectronics@gmail.com",
+            "supportPhone": "8085662512",
+            "pickupAddress": {
+              "city": "Vidisha",
+              "line1": "Maa hospital road mohangiri",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "464001"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "Vidisha",
+              "line1": "Ramlila Road Vidisha",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "464001"
+            },
+            "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Madhya Pradesh",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Krishna Electronics",
+            "legalBusinessName": "Krishna Electronics",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          },
+          "itemReferences": [
+            {
+              "quantity": 1,
+              "productId": "6a5f6057425c9616349c9206",
+              "productSku": "SKU-1784635363615-1",
+              "orderItemId": "f3b840a7-42d5-4792-aac0-2028b655b0e2",
+              "productTitle": "Google Pixel 10 5g",
+              "commissionRate": 2,
+              "serviceSacCode": null,
+              "platformFeeAmount": 1280,
+              "platformFeeTaxRate": 18,
+              "platformFeeTaxAmount": 230.4
+            }
+          ],
+          "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+          "generatedByRole": "super-admin"
+        },
+        "created_at": "2026-07-24T06:39:58.077Z",
+        "updated_at": "2026-07-24T06:39:58.077Z",
+        "created_by": "tax-service",
+        "updated_by": "tax-service",
+        "invoice_type": "platform_commission",
+        "seller_id": "6a5f55a9126d3e552c899ae7",
+        "issuer_type": "platform",
+        "recipient_type": "seller",
+        "reference_type": "platform_commission",
+        "reference_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f55a9126d3e552c899ae7:8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+        "parent_invoice_id": "15618e84-478d-47dc-a3e9-d6e02a599dec",
+        "organization_id": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+        "organization_snapshot": {
+          "pan": "ABCDE1234F",
+          "gstin": "27AAACR5055K1Z7",
+          "sellerId": "6a5f55a9126d3e552c899ae7",
+          "kycStatus": "verified",
+          "taxSettings": {
+            "pan": "ABCDE1234F",
+            "gstin": "27AAACR5055K1Z7",
+            "state": "Madhya Pradesh"
+          },
+          "businessType": "individual",
+          "goLiveStatus": "live",
+          "supportEmail": "krishnaelectronics@gmail.com",
+          "supportPhone": "8085662512",
+          "pickupAddress": {
+            "city": "Vidisha",
+            "line1": "Maa hospital road mohangiri",
+            "line2": "",
+            "state": "Madhya Pradesh",
+            "country": "India",
+            "postalCode": "464001"
+          },
+          "approvalStatus": "approved",
+          "billingAddress": {
+            "city": "Vidisha",
+            "line1": "Ramlila Road Vidisha",
+            "line2": "",
+            "state": "Madhya Pradesh",
+            "country": "India",
+            "postalCode": "464001"
+          },
+          "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+          "payoutSettings": {
+            "payoutSchedule": "weekly"
+          },
+          "invoiceSettings": {
+            "state": "Madhya Pradesh",
+            "invoicePrefix": "INV"
+          },
+          "storeDisplayName": "Krishna Electronics",
+          "legalBusinessName": "Krishna Electronics",
+          "registrationNumber": null,
+          "bankVerificationStatus": "verified"
+        }
+      },
+      "invoices": [
+        {
+          "id": "30e36809-eed6-4917-81b1-2cf3c966ae14",
+          "invoice_number": "GST-C-202607-000042",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "buyer_id": "6a5f55a9126d3e552c899ae7",
+          "taxable_amount": "1280.00",
+          "tax_amount": "230.40",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "230.40",
+          "tcs_amount": "0.00",
+          "total_amount": "1510.40",
+          "currency": "INR",
+          "tax_mode": "igst",
+          "gstin_marketplace": null,
+          "gstin_seller": "27AAACR5055K1Z7",
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-24T06:39:58.077Z",
+          "metadata": {
+            "buyer": {
+              "email": "rohit@gmail.com",
+              "phone": "8956471235",
+              "buyerId": "6a630534b920c81dcc69660c",
+              "profile": {
+                "lastName": "Sharma",
+                "firstName": "Rohit"
+              },
+              "shippingAddress": {
+                "city": "Indore",
+                "line1": "Bapat Square",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "402010"
+              }
+            },
+            "seller": {
+              "email": "Rahul_Seller@gmail.com",
+              "phone": "6232593834",
+              "sellerId": "6a5f55a9126d3e552c899ae7",
+              "gstNumber": "27AAACR5055K1Z7",
+              "panNumber": "ABCDE1234F",
+              "displayName": "Krishna Electronics",
+              "taxSettings": {
+                "pan": "ABCDE1234F",
+                "gstin": "27AAACR5055K1Z7",
+                "state": "Madhya Pradesh"
+              },
+              "businessName": "Krishna Electronics",
+              "pickupAddress": {
+                "city": "Vidisha",
+                "line1": "Maa hospital road mohangiri",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "464001"
+              },
+              "returnAddress": null,
+              "billingAddress": {
+                "city": "Vidisha",
+                "line1": "Ramlila Road Vidisha",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "464001"
+              },
+              "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "businessAddress": {
+                "city": "Vidisha",
+                "line1": "Ramlila Road Vidisha",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "464001"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "legalBusinessName": "Krishna Electronics",
+              "primaryContactName": "Rahul Sharma"
+            },
+            "amounts": {
+              "taxMode": "igst",
+              "taxAmount": 230.4,
+              "cgstAmount": 0,
+              "igstAmount": 230.4,
+              "sgstAmount": 0,
+              "sellerGstin": "27AAACR5055K1Z7",
+              "totalAmount": 1510.4,
+              "taxableAmount": 1280,
+              "marketplaceGstin": null
+            },
+            "orderId": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+            "lineItems": [
+              {
+                "taxAmount": 230.4,
+                "description": "Marketplace commission/service charge",
+                "totalAmount": 1510.4,
+                "taxableAmount": 1280
+              }
+            ],
+            "generatedBy": "tax-service",
+            "invoiceType": "platform_commission",
+            "orderNumber": "ORD-20260724-37FE0C5375",
+            "orderStatus": "confirmed",
+            "organization": {
+              "pan": "ABCDE1234F",
+              "gstin": "27AAACR5055K1Z7",
+              "sellerId": "6a5f55a9126d3e552c899ae7",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE1234F",
+                "gstin": "27AAACR5055K1Z7",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "live",
+              "supportEmail": "krishnaelectronics@gmail.com",
+              "supportPhone": "8085662512",
+              "pickupAddress": {
+                "city": "Vidisha",
+                "line1": "Maa hospital road mohangiri",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "464001"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Vidisha",
+                "line1": "Ramlila Road Vidisha",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "464001"
+              },
+              "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Krishna Electronics",
+              "legalBusinessName": "Krishna Electronics",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "itemReferences": [
+              {
+                "quantity": 1,
+                "productId": "6a5f6057425c9616349c9206",
+                "productSku": "SKU-1784635363615-1",
+                "orderItemId": "f3b840a7-42d5-4792-aac0-2028b655b0e2",
+                "productTitle": "Google Pixel 10 5g",
+                "commissionRate": 2,
+                "serviceSacCode": null,
+                "platformFeeAmount": 1280,
+                "platformFeeTaxRate": 18,
+                "platformFeeTaxAmount": 230.4
+              }
+            ],
+            "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+            "generatedByRole": "super-admin"
+          },
+          "created_at": "2026-07-24T06:39:58.077Z",
+          "updated_at": "2026-07-24T06:39:58.077Z",
+          "created_by": "tax-service",
+          "updated_by": "tax-service",
+          "invoice_type": "platform_commission",
+          "seller_id": "6a5f55a9126d3e552c899ae7",
+          "issuer_type": "platform",
+          "recipient_type": "seller",
+          "reference_type": "platform_commission",
+          "reference_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f55a9126d3e552c899ae7:8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+          "parent_invoice_id": "15618e84-478d-47dc-a3e9-d6e02a599dec",
+          "organization_id": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+          "organization_snapshot": {
+            "pan": "ABCDE1234F",
+            "gstin": "27AAACR5055K1Z7",
+            "sellerId": "6a5f55a9126d3e552c899ae7",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "ABCDE1234F",
+              "gstin": "27AAACR5055K1Z7",
+              "state": "Madhya Pradesh"
+            },
+            "businessType": "individual",
+            "goLiveStatus": "live",
+            "supportEmail": "krishnaelectronics@gmail.com",
+            "supportPhone": "8085662512",
+            "pickupAddress": {
+              "city": "Vidisha",
+              "line1": "Maa hospital road mohangiri",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "464001"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "Vidisha",
+              "line1": "Ramlila Road Vidisha",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "464001"
+            },
+            "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Madhya Pradesh",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Krishna Electronics",
+            "legalBusinessName": "Krishna Electronics",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          }
+        },
+        {
+          "id": "15618e84-478d-47dc-a3e9-d6e02a599dec",
+          "invoice_number": "INV-202607-000042",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "buyer_id": "6a630534b920c81dcc69660c",
+          "taxable_amount": "54237.29",
+          "tax_amount": "9762.71",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "0.00",
+          "tcs_amount": "0.00",
+          "total_amount": "64000.00",
+          "currency": "INR",
+          "tax_mode": "cgst_sgst",
+          "gstin_marketplace": null,
+          "gstin_seller": "27AAACR5055K1Z7",
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-24T06:39:57.759Z",
+          "metadata": {
+            "buyer": {
+              "email": "rohit@gmail.com",
+              "phone": "8956471235",
+              "buyerId": "6a630534b920c81dcc69660c",
+              "profile": {
+                "lastName": "Sharma",
+                "firstName": "Rohit"
+              },
+              "shippingAddress": {
+                "city": "Indore",
+                "line1": "Bapat Square",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "402010"
+              }
+            },
+            "items": [
+              {
+                "gstRate": 18,
+                "hsnCode": "8504",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a5f55a9126d3e552c899ae7",
+                "lineTotal": 64000,
+                "productId": "6a5f6057425c9616349c9206",
+                "taxAmount": 9762.71,
+                "unitPrice": 64000,
+                "variantId": "6a5f649b425c9616349ca530",
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "SKU-1784635363615-1",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 18,
+                  "taxMode": "igst",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 64000,
+                  "productId": "6a5f6057425c9616349c9206",
+                  "taxAmount": 9762.71,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 54237.29,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 9762.71,
+                  "discountedLineTotal": 64000,
+                  "sellerFundedDiscountAmount": 0,
+                  "customerDiscountedLineTotal": 64000,
+                  "taxableAmountBeforeDiscount": 54237.29
+                },
+                "variantSku": "SKU-1784635363615-1",
+                "orderItemId": "f3b840a7-42d5-4792-aac0-2028b655b0e2",
+                "totalAmount": 64000,
+                "warehouseId": null,
+                "productTitle": "Google Pixel 10 5g",
+                "taxableAmount": 54237.29,
+                "discountAmount": 0,
+                "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+                "taxPayableAmount": 0,
+                "discountFundingType": "marketplace",
+                "customerDiscountAmount": 0,
+                "sellerFundedDiscountAmount": 0,
+                "marketplaceFundedDiscountAmount": 0,
+                "paymentPartnerFundedDiscountAmount": 0
+              }
+            ],
+            "seller": {
+              "email": "Rahul_Seller@gmail.com",
+              "phone": "6232593834",
+              "sellerId": "6a5f55a9126d3e552c899ae7",
+              "gstNumber": "27AAACR5055K1Z7",
+              "panNumber": "ABCDE1234F",
+              "displayName": "Krishna Electronics",
+              "taxSettings": {
+                "pan": "ABCDE1234F",
+                "gstin": "27AAACR5055K1Z7",
+                "state": "Madhya Pradesh"
+              },
+              "businessName": "Krishna Electronics",
+              "pickupAddress": {
+                "city": "Vidisha",
+                "line1": "Maa hospital road mohangiri",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "464001"
+              },
+              "returnAddress": null,
+              "billingAddress": {
+                "city": "Vidisha",
+                "line1": "Ramlila Road Vidisha",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "464001"
+              },
+              "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "businessAddress": {
+                "city": "Vidisha",
+                "line1": "Ramlila Road Vidisha",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "464001"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "legalBusinessName": "Krishna Electronics",
+              "primaryContactName": "Rahul Sharma"
+            },
+            "amounts": {
+              "taxMode": "cgst_sgst",
+              "taxAmount": 9762.71,
+              "cgstAmount": 0,
+              "igstAmount": 0,
+              "sgstAmount": 0,
+              "placeOfSupply": "Madhya Pradesh",
+              "taxableAmount": 54237.29,
+              "discountAmount": 0,
+              "grossSalesAmount": 64000,
+              "taxPayableAmount": 0,
+              "shippingTaxAmount": 0,
+              "customerFinalAmount": 64000,
+              "deliveryChargeAmount": 0,
+              "shippingTaxableAmount": 0,
+              "customerDiscountAmount": 0,
+              "sellerFundedDiscountAmount": 0,
+              "thirdPartyContributionAmount": 0,
+              "customerPaidTowardInvoiceAmount": 64000,
+              "marketplaceFundedDiscountAmount": 0,
+              "paymentPartnerFundedDiscountAmount": 0
+            },
+            "orderId": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+            "generatedBy": "tax-service",
+            "invoiceType": "seller_customer",
+            "orderNumber": "ORD-20260724-37FE0C5375",
+            "orderStatus": "confirmed",
+            "organization": {
+              "pan": "ABCDE1234F",
+              "gstin": "27AAACR5055K1Z7",
+              "sellerId": "6a5f55a9126d3e552c899ae7",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE1234F",
+                "gstin": "27AAACR5055K1Z7",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "live",
+              "supportEmail": "krishnaelectronics@gmail.com",
+              "supportPhone": "8085662512",
+              "pickupAddress": {
+                "city": "Vidisha",
+                "line1": "Maa hospital road mohangiri",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "464001"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Vidisha",
+                "line1": "Ramlila Road Vidisha",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "464001"
+              },
+              "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Krishna Electronics",
+              "legalBusinessName": "Krishna Electronics",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+            "generatedByRole": "super-admin",
+            "shippingAddress": {
+              "city": "Indore",
+              "line1": "Bapat Square",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "402010"
+            }
+          },
+          "created_at": "2026-07-24T06:39:57.759Z",
+          "updated_at": "2026-07-24T06:39:57.759Z",
+          "created_by": "tax-service",
+          "updated_by": "tax-service",
+          "invoice_type": "seller_customer",
+          "seller_id": "6a5f55a9126d3e552c899ae7",
+          "issuer_type": "seller",
+          "recipient_type": "buyer",
+          "reference_type": "seller_order",
+          "reference_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f55a9126d3e552c899ae7:8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+          "parent_invoice_id": "de74c5cb-c688-491e-9926-85b5d9768984",
+          "organization_id": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+          "organization_snapshot": {
+            "pan": "ABCDE1234F",
+            "gstin": "27AAACR5055K1Z7",
+            "sellerId": "6a5f55a9126d3e552c899ae7",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "ABCDE1234F",
+              "gstin": "27AAACR5055K1Z7",
+              "state": "Madhya Pradesh"
+            },
+            "businessType": "individual",
+            "goLiveStatus": "live",
+            "supportEmail": "krishnaelectronics@gmail.com",
+            "supportPhone": "8085662512",
+            "pickupAddress": {
+              "city": "Vidisha",
+              "line1": "Maa hospital road mohangiri",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "464001"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "Vidisha",
+              "line1": "Ramlila Road Vidisha",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "464001"
+            },
+            "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Madhya Pradesh",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Krishna Electronics",
+            "legalBusinessName": "Krishna Electronics",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          }
+        },
+        {
+          "id": "84fe052c-6851-4ebe-bd68-04286c449945",
+          "invoice_number": "GST-C-202607-000041",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "buyer_id": "6a5f59b8035a5eb5c69c84c3",
+          "taxable_amount": "60.00",
+          "tax_amount": "10.80",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "10.80",
+          "tcs_amount": "0.00",
+          "total_amount": "70.80",
+          "currency": "INR",
+          "tax_mode": "igst",
+          "gstin_marketplace": null,
+          "gstin_seller": "22AAAAA0000A1Z5",
+          "place_of_supply": "Odisha",
+          "issued_at": "2026-07-24T06:39:57.448Z",
+          "metadata": {
+            "buyer": {
+              "email": "rohit@gmail.com",
+              "phone": "8956471235",
+              "buyerId": "6a630534b920c81dcc69660c",
+              "profile": {
+                "lastName": "Sharma",
+                "firstName": "Rohit"
+              },
+              "shippingAddress": {
+                "city": "Indore",
+                "line1": "Bapat Square",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "402010"
+              }
+            },
+            "seller": {
+              "email": "aditi@gmail.com",
+              "phone": "7879057867",
+              "sellerId": "6a5f59b8035a5eb5c69c84c3",
+              "gstNumber": "22AAAAA0000A1Z5",
+              "panNumber": "ABCDE1234O",
+              "displayName": "Shivani Rudraghate",
+              "taxSettings": {
+                "pan": "ABCDE1234O",
+                "gstin": "22AAAAA0000A1Z5",
+                "state": "Odisha"
+              },
+              "businessName": "Shivani Rudraghate",
+              "pickupAddress": {
+                "city": "Jammu",
+                "line1": "24, Residency Road, Lal Chowk Srinagar, Jammu & Kashmir – 190001 India",
+                "line2": "",
+                "state": "Jammu and Kashmir",
+                "country": "India",
+                "postalCode": "180001"
+              },
+              "returnAddress": null,
+              "billingAddress": {
+                "city": "Bhubaneswar",
+                "line1": "Fashion Avenue Boutique Shop No. 12, Crystal Plaza M.P. Nagar, Zone-II Odisha",
+                "line2": "",
+                "state": "Odisha",
+                "country": "India",
+                "postalCode": "751001"
+              },
+              "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "businessAddress": {
+                "city": "Bhubaneswar",
+                "line1": "Fashion Avenue Boutique Shop No. 12, Crystal Plaza M.P. Nagar, Zone-II Odisha",
+                "line2": "",
+                "state": "Odisha",
+                "country": "India",
+                "postalCode": "751001"
+              },
+              "invoiceSettings": {
+                "state": "Odisha",
+                "invoicePrefix": "INV"
+              },
+              "legalBusinessName": "Shivani Rudraghate",
+              "primaryContactName": "Aditi Upadhyay"
+            },
+            "amounts": {
+              "taxMode": "igst",
+              "taxAmount": 10.8,
+              "cgstAmount": 0,
+              "igstAmount": 10.8,
+              "sgstAmount": 0,
+              "sellerGstin": "22AAAAA0000A1Z5",
+              "totalAmount": 70.8,
+              "taxableAmount": 60,
+              "marketplaceGstin": null
+            },
+            "orderId": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+            "lineItems": [
+              {
+                "taxAmount": 10.8,
+                "description": "Marketplace commission/service charge",
+                "totalAmount": 70.8,
+                "taxableAmount": 60
+              }
+            ],
+            "generatedBy": "tax-service",
+            "invoiceType": "platform_commission",
+            "orderNumber": "ORD-20260724-37FE0C5375",
+            "orderStatus": "confirmed",
+            "organization": {
+              "pan": "ABCDE1234O",
+              "gstin": "22AAAAA0000A1Z5",
+              "sellerId": "6a5f59b8035a5eb5c69c84c3",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE1234O",
+                "gstin": "22AAAAA0000A1Z5",
+                "state": "Odisha"
+              },
+              "businessType": "proprietorship",
+              "goLiveStatus": "ready",
+              "supportEmail": "aditi@gmail.com",
+              "supportPhone": "7879057867",
+              "pickupAddress": {
+                "city": "Jammu",
+                "line1": "24, Residency Road, Lal Chowk Srinagar, Jammu & Kashmir – 190001 India",
+                "line2": "",
+                "state": "Jammu and Kashmir",
+                "country": "India",
+                "postalCode": "180001"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Bhubaneswar",
+                "line1": "Fashion Avenue Boutique Shop No. 12, Crystal Plaza M.P. Nagar, Zone-II Odisha",
+                "line2": "",
+                "state": "Odisha",
+                "country": "India",
+                "postalCode": "751001"
+              },
+              "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Odisha",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Shivani Rudraghate",
+              "legalBusinessName": "Shivani Rudraghate",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "itemReferences": [
+              {
+                "quantity": 1,
+                "productId": "6a5f657f035a5eb5c69ca490",
+                "productSku": "SKU-1784635501493-7",
+                "orderItemId": "768dc858-441d-4388-9221-892bbe8658b2",
+                "productTitle": "Royal Export Floral Embroidered Straight Kurta With Palazzos & Dupatta",
+                "commissionRate": 2,
+                "serviceSacCode": null,
+                "platformFeeAmount": 60,
+                "platformFeeTaxRate": 18,
+                "platformFeeTaxAmount": 10.8
+              }
+            ],
+            "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+            "generatedByRole": "super-admin"
+          },
+          "created_at": "2026-07-24T06:39:57.448Z",
+          "updated_at": "2026-07-24T06:39:57.448Z",
+          "created_by": "tax-service",
+          "updated_by": "tax-service",
+          "invoice_type": "platform_commission",
+          "seller_id": "6a5f59b8035a5eb5c69c84c3",
+          "issuer_type": "platform",
+          "recipient_type": "seller",
+          "reference_type": "platform_commission",
+          "reference_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f59b8035a5eb5c69c84c3:d5a41054-9b74-4889-aa63-cd056a0883f1",
+          "parent_invoice_id": "ce3955df-15c8-4978-9192-edc35212acad",
+          "organization_id": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+          "organization_snapshot": {
+            "pan": "ABCDE1234O",
+            "gstin": "22AAAAA0000A1Z5",
+            "sellerId": "6a5f59b8035a5eb5c69c84c3",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "ABCDE1234O",
+              "gstin": "22AAAAA0000A1Z5",
+              "state": "Odisha"
+            },
+            "businessType": "proprietorship",
+            "goLiveStatus": "ready",
+            "supportEmail": "aditi@gmail.com",
+            "supportPhone": "7879057867",
+            "pickupAddress": {
+              "city": "Jammu",
+              "line1": "24, Residency Road, Lal Chowk Srinagar, Jammu & Kashmir – 190001 India",
+              "line2": "",
+              "state": "Jammu and Kashmir",
+              "country": "India",
+              "postalCode": "180001"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "Bhubaneswar",
+              "line1": "Fashion Avenue Boutique Shop No. 12, Crystal Plaza M.P. Nagar, Zone-II Odisha",
+              "line2": "",
+              "state": "Odisha",
+              "country": "India",
+              "postalCode": "751001"
+            },
+            "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Odisha",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Shivani Rudraghate",
+            "legalBusinessName": "Shivani Rudraghate",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          }
+        },
+        {
+          "id": "ce3955df-15c8-4978-9192-edc35212acad",
+          "invoice_number": "INV-202607-000041",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "buyer_id": "6a630534b920c81dcc69660c",
+          "taxable_amount": "2678.57",
+          "tax_amount": "321.43",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "0.00",
+          "tcs_amount": "0.00",
+          "total_amount": "3000.00",
+          "currency": "INR",
+          "tax_mode": "cgst_sgst",
+          "gstin_marketplace": null,
+          "gstin_seller": "22AAAAA0000A1Z5",
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-24T06:39:57.126Z",
+          "metadata": {
+            "buyer": {
+              "email": "rohit@gmail.com",
+              "phone": "8956471235",
+              "buyerId": "6a630534b920c81dcc69660c",
+              "profile": {
+                "lastName": "Sharma",
+                "firstName": "Rohit"
+              },
+              "shippingAddress": {
+                "city": "Indore",
+                "line1": "Bapat Square",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "402010"
+              }
+            },
+            "items": [
+              {
+                "gstRate": 12,
+                "hsnCode": "6204",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a5f59b8035a5eb5c69c84c3",
+                "lineTotal": 3000,
+                "productId": "6a5f657f035a5eb5c69ca490",
+                "taxAmount": 321.43,
+                "unitPrice": 3000,
+                "variantId": "6a5f6d33035a5eb5c69ccbe9",
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "SKU-1784635501493-7",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 12,
+                  "taxMode": "igst",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 3000,
+                  "productId": "6a5f657f035a5eb5c69ca490",
+                  "taxAmount": 321.43,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 2678.57,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 321.43,
+                  "discountedLineTotal": 3000,
+                  "sellerFundedDiscountAmount": 0,
+                  "customerDiscountedLineTotal": 3000,
+                  "taxableAmountBeforeDiscount": 2678.57
+                },
+                "variantSku": "SKU-1784635501493-7",
+                "orderItemId": "768dc858-441d-4388-9221-892bbe8658b2",
+                "totalAmount": 3000,
+                "warehouseId": null,
+                "productTitle": "Royal Export Floral Embroidered Straight Kurta With Palazzos & Dupatta",
+                "taxableAmount": 2678.57,
+                "discountAmount": 0,
+                "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+                "taxPayableAmount": 0,
+                "discountFundingType": "marketplace",
+                "customerDiscountAmount": 0,
+                "sellerFundedDiscountAmount": 0,
+                "marketplaceFundedDiscountAmount": 0,
+                "paymentPartnerFundedDiscountAmount": 0
+              }
+            ],
+            "seller": {
+              "email": "aditi@gmail.com",
+              "phone": "7879057867",
+              "sellerId": "6a5f59b8035a5eb5c69c84c3",
+              "gstNumber": "22AAAAA0000A1Z5",
+              "panNumber": "ABCDE1234O",
+              "displayName": "Shivani Rudraghate",
+              "taxSettings": {
+                "pan": "ABCDE1234O",
+                "gstin": "22AAAAA0000A1Z5",
+                "state": "Odisha"
+              },
+              "businessName": "Shivani Rudraghate",
+              "pickupAddress": {
+                "city": "Jammu",
+                "line1": "24, Residency Road, Lal Chowk Srinagar, Jammu & Kashmir – 190001 India",
+                "line2": "",
+                "state": "Jammu and Kashmir",
+                "country": "India",
+                "postalCode": "180001"
+              },
+              "returnAddress": null,
+              "billingAddress": {
+                "city": "Bhubaneswar",
+                "line1": "Fashion Avenue Boutique Shop No. 12, Crystal Plaza M.P. Nagar, Zone-II Odisha",
+                "line2": "",
+                "state": "Odisha",
+                "country": "India",
+                "postalCode": "751001"
+              },
+              "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "businessAddress": {
+                "city": "Bhubaneswar",
+                "line1": "Fashion Avenue Boutique Shop No. 12, Crystal Plaza M.P. Nagar, Zone-II Odisha",
+                "line2": "",
+                "state": "Odisha",
+                "country": "India",
+                "postalCode": "751001"
+              },
+              "invoiceSettings": {
+                "state": "Odisha",
+                "invoicePrefix": "INV"
+              },
+              "legalBusinessName": "Shivani Rudraghate",
+              "primaryContactName": "Aditi Upadhyay"
+            },
+            "amounts": {
+              "taxMode": "cgst_sgst",
+              "taxAmount": 321.43,
+              "cgstAmount": 0,
+              "igstAmount": 0,
+              "sgstAmount": 0,
+              "placeOfSupply": "Madhya Pradesh",
+              "taxableAmount": 2678.57,
+              "discountAmount": 0,
+              "grossSalesAmount": 3000,
+              "taxPayableAmount": 0,
+              "shippingTaxAmount": 0,
+              "customerFinalAmount": 3000,
+              "deliveryChargeAmount": 0,
+              "shippingTaxableAmount": 0,
+              "customerDiscountAmount": 0,
+              "sellerFundedDiscountAmount": 0,
+              "thirdPartyContributionAmount": 0,
+              "customerPaidTowardInvoiceAmount": 3000,
+              "marketplaceFundedDiscountAmount": 0,
+              "paymentPartnerFundedDiscountAmount": 0
+            },
+            "orderId": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+            "generatedBy": "tax-service",
+            "invoiceType": "seller_customer",
+            "orderNumber": "ORD-20260724-37FE0C5375",
+            "orderStatus": "confirmed",
+            "organization": {
+              "pan": "ABCDE1234O",
+              "gstin": "22AAAAA0000A1Z5",
+              "sellerId": "6a5f59b8035a5eb5c69c84c3",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE1234O",
+                "gstin": "22AAAAA0000A1Z5",
+                "state": "Odisha"
+              },
+              "businessType": "proprietorship",
+              "goLiveStatus": "ready",
+              "supportEmail": "aditi@gmail.com",
+              "supportPhone": "7879057867",
+              "pickupAddress": {
+                "city": "Jammu",
+                "line1": "24, Residency Road, Lal Chowk Srinagar, Jammu & Kashmir – 190001 India",
+                "line2": "",
+                "state": "Jammu and Kashmir",
+                "country": "India",
+                "postalCode": "180001"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Bhubaneswar",
+                "line1": "Fashion Avenue Boutique Shop No. 12, Crystal Plaza M.P. Nagar, Zone-II Odisha",
+                "line2": "",
+                "state": "Odisha",
+                "country": "India",
+                "postalCode": "751001"
+              },
+              "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Odisha",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Shivani Rudraghate",
+              "legalBusinessName": "Shivani Rudraghate",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+            "generatedByRole": "super-admin",
+            "shippingAddress": {
+              "city": "Indore",
+              "line1": "Bapat Square",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "402010"
+            }
+          },
+          "created_at": "2026-07-24T06:39:57.126Z",
+          "updated_at": "2026-07-24T06:39:57.126Z",
+          "created_by": "tax-service",
+          "updated_by": "tax-service",
+          "invoice_type": "seller_customer",
+          "seller_id": "6a5f59b8035a5eb5c69c84c3",
+          "issuer_type": "seller",
+          "recipient_type": "buyer",
+          "reference_type": "seller_order",
+          "reference_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f59b8035a5eb5c69c84c3:d5a41054-9b74-4889-aa63-cd056a0883f1",
+          "parent_invoice_id": "de74c5cb-c688-491e-9926-85b5d9768984",
+          "organization_id": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+          "organization_snapshot": {
+            "pan": "ABCDE1234O",
+            "gstin": "22AAAAA0000A1Z5",
+            "sellerId": "6a5f59b8035a5eb5c69c84c3",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "ABCDE1234O",
+              "gstin": "22AAAAA0000A1Z5",
+              "state": "Odisha"
+            },
+            "businessType": "proprietorship",
+            "goLiveStatus": "ready",
+            "supportEmail": "aditi@gmail.com",
+            "supportPhone": "7879057867",
+            "pickupAddress": {
+              "city": "Jammu",
+              "line1": "24, Residency Road, Lal Chowk Srinagar, Jammu & Kashmir – 190001 India",
+              "line2": "",
+              "state": "Jammu and Kashmir",
+              "country": "India",
+              "postalCode": "180001"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "Bhubaneswar",
+              "line1": "Fashion Avenue Boutique Shop No. 12, Crystal Plaza M.P. Nagar, Zone-II Odisha",
+              "line2": "",
+              "state": "Odisha",
+              "country": "India",
+              "postalCode": "751001"
+            },
+            "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Odisha",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Shivani Rudraghate",
+            "legalBusinessName": "Shivani Rudraghate",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          }
+        },
+        {
+          "id": "9fcc15ee-db4e-4f95-8808-092a897fabde",
+          "invoice_number": "GST-C-202607-000040",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "buyer_id": "6a5f5587126d3e552c899abd",
+          "taxable_amount": "35.80",
+          "tax_amount": "6.44",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "6.44",
+          "tcs_amount": "0.00",
+          "total_amount": "42.24",
+          "currency": "INR",
+          "tax_mode": "igst",
+          "gstin_marketplace": null,
+          "gstin_seller": "27ABCDE1234F1Z5",
+          "place_of_supply": "Maharashtra",
+          "issued_at": "2026-07-24T06:39:56.810Z",
+          "metadata": {
+            "buyer": {
+              "email": "rohit@gmail.com",
+              "phone": "8956471235",
+              "buyerId": "6a630534b920c81dcc69660c",
+              "profile": {
+                "lastName": "Sharma",
+                "firstName": "Rohit"
+              },
+              "shippingAddress": {
+                "city": "Indore",
+                "line1": "Bapat Square",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "402010"
+              }
+            },
+            "seller": {
+              "email": "neha@gmail.com",
+              "phone": "9988776655",
+              "sellerId": "6a5f5587126d3e552c899abd",
+              "gstNumber": "27ABCDE1234F1Z5",
+              "panNumber": "MDHDE1234F",
+              "displayName": "Neha Kapoor Enterprises",
+              "taxSettings": {
+                "pan": "MDHDE1234F",
+                "gstin": "27ABCDE1234F1Z5",
+                "state": "Maharashtra"
+              },
+              "businessName": "Neha Kapoor Enterprises",
+              "pickupAddress": {
+                "city": "Pune",
+                "line1": "Warehouse No. 12, Industrial Estate",
+                "line2": "Hadapsar",
+                "state": "Maharashtra",
+                "country": "India",
+                "postalCode": "411028"
+              },
+              "returnAddress": null,
+              "billingAddress": {
+                "city": "Pune",
+                "line1": "101, Shree Plaza",
+                "line2": "MG Road",
+                "state": "Maharashtra",
+                "country": "India",
+                "postalCode": "411001"
+              },
+              "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "businessAddress": {
+                "city": "Pune",
+                "line1": "101, Shree Plaza",
+                "line2": "MG Road",
+                "state": "Maharashtra",
+                "country": "India",
+                "postalCode": "411001"
+              },
+              "invoiceSettings": {
+                "state": "Maharashtra",
+                "invoicePrefix": "INV"
+              },
+              "legalBusinessName": "Neha Kapoor Enterprises",
+              "primaryContactName": "Neha Kapoor"
+            },
+            "amounts": {
+              "taxMode": "igst",
+              "taxAmount": 6.44,
+              "cgstAmount": 0,
+              "igstAmount": 6.44,
+              "sgstAmount": 0,
+              "sellerGstin": "27ABCDE1234F1Z5",
+              "totalAmount": 42.24,
+              "taxableAmount": 35.8,
+              "marketplaceGstin": null
+            },
+            "orderId": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+            "lineItems": [
+              {
+                "taxAmount": 6.44,
+                "description": "Marketplace commission/service charge",
+                "totalAmount": 42.24,
+                "taxableAmount": 35.8
+              }
+            ],
+            "generatedBy": "tax-service",
+            "invoiceType": "platform_commission",
+            "orderNumber": "ORD-20260724-37FE0C5375",
+            "orderStatus": "confirmed",
+            "organization": {
+              "pan": "MDHDE1234F",
+              "gstin": "27ABCDE1234F1Z5",
+              "sellerId": "6a5f5587126d3e552c899abd",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "MDHDE1234F",
+                "gstin": "27ABCDE1234F1Z5",
+                "state": "Maharashtra"
+              },
+              "businessType": "proprietorship",
+              "goLiveStatus": "ready",
+              "supportEmail": "neha.business2026@gmail.com",
+              "supportPhone": "9988776655",
+              "pickupAddress": {
+                "city": "Pune",
+                "line1": "Warehouse No. 12, Industrial Estate",
+                "line2": "Hadapsar",
+                "state": "Maharashtra",
+                "country": "India",
+                "postalCode": "411028"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Pune",
+                "line1": "101, Shree Plaza",
+                "line2": "MG Road",
+                "state": "Maharashtra",
+                "country": "India",
+                "postalCode": "411001"
+              },
+              "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Maharashtra",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Neha Kapoor Enterprises",
+              "legalBusinessName": "Neha Kapoor Enterprises",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "itemReferences": [
+              {
+                "quantity": 1,
+                "productId": "6a60815a5360ee2cb953ec57",
+                "productSku": "SKU-1784709433346-1",
+                "orderItemId": "44fc0353-2d51-4a6f-b359-1e7ef5baf335",
+                "productTitle": "Apes Fusion Style Wireless Headphone,45mm Dynamic Drivers,50hrs Playtime,fast Charge Bluetooth Headset (Black Grey, On The Ear)",
+                "commissionRate": 2,
+                "serviceSacCode": null,
+                "platformFeeAmount": 35.8,
+                "platformFeeTaxRate": 18,
+                "platformFeeTaxAmount": 6.44
+              }
+            ],
+            "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+            "generatedByRole": "super-admin"
+          },
+          "created_at": "2026-07-24T06:39:56.810Z",
+          "updated_at": "2026-07-24T06:39:56.810Z",
+          "created_by": "tax-service",
+          "updated_by": "tax-service",
+          "invoice_type": "platform_commission",
+          "seller_id": "6a5f5587126d3e552c899abd",
+          "issuer_type": "platform",
+          "recipient_type": "seller",
+          "reference_type": "platform_commission",
+          "reference_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f5587126d3e552c899abd:7fa06e04-18c6-476e-9690-6e45f95d90be",
+          "parent_invoice_id": "c7539762-d7c7-474c-bdb9-61007e0354c6",
+          "organization_id": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+          "organization_snapshot": {
+            "pan": "MDHDE1234F",
+            "gstin": "27ABCDE1234F1Z5",
+            "sellerId": "6a5f5587126d3e552c899abd",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "MDHDE1234F",
+              "gstin": "27ABCDE1234F1Z5",
+              "state": "Maharashtra"
+            },
+            "businessType": "proprietorship",
+            "goLiveStatus": "ready",
+            "supportEmail": "neha.business2026@gmail.com",
+            "supportPhone": "9988776655",
+            "pickupAddress": {
+              "city": "Pune",
+              "line1": "Warehouse No. 12, Industrial Estate",
+              "line2": "Hadapsar",
+              "state": "Maharashtra",
+              "country": "India",
+              "postalCode": "411028"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "Pune",
+              "line1": "101, Shree Plaza",
+              "line2": "MG Road",
+              "state": "Maharashtra",
+              "country": "India",
+              "postalCode": "411001"
+            },
+            "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Maharashtra",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Neha Kapoor Enterprises",
+            "legalBusinessName": "Neha Kapoor Enterprises",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          }
+        },
+        {
+          "id": "c7539762-d7c7-474c-bdb9-61007e0354c6",
+          "invoice_number": "INV-202607-000040",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "buyer_id": "6a630534b920c81dcc69660c",
+          "taxable_amount": "1516.94",
+          "tax_amount": "273.05",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "0.00",
+          "tcs_amount": "0.00",
+          "total_amount": "1789.99",
+          "currency": "INR",
+          "tax_mode": "cgst_sgst",
+          "gstin_marketplace": null,
+          "gstin_seller": "27ABCDE1234F1Z5",
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-24T06:39:56.481Z",
+          "metadata": {
+            "buyer": {
+              "email": "rohit@gmail.com",
+              "phone": "8956471235",
+              "buyerId": "6a630534b920c81dcc69660c",
+              "profile": {
+                "lastName": "Sharma",
+                "firstName": "Rohit"
+              },
+              "shippingAddress": {
+                "city": "Indore",
+                "line1": "Bapat Square",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "402010"
+              }
+            },
+            "items": [
+              {
+                "gstRate": 18,
+                "hsnCode": "8504",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a5f5587126d3e552c899abd",
+                "lineTotal": 1789.99,
+                "productId": "6a60815a5360ee2cb953ec57",
+                "taxAmount": 273.05,
+                "unitPrice": 1789.99,
+                "variantId": "6a6083fa3a8c9fb5d9eed785",
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "SKU-1784709433346-1",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 18,
+                  "taxMode": "igst",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 1789.99,
+                  "productId": "6a60815a5360ee2cb953ec57",
+                  "taxAmount": 273.05,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 1516.94,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 273.05,
+                  "discountedLineTotal": 1789.99,
+                  "sellerFundedDiscountAmount": 0,
+                  "customerDiscountedLineTotal": 1789.99,
+                  "taxableAmountBeforeDiscount": 1516.94
+                },
+                "variantSku": "SKU-1784709433346-1",
+                "orderItemId": "44fc0353-2d51-4a6f-b359-1e7ef5baf335",
+                "totalAmount": 1789.99,
+                "warehouseId": null,
+                "productTitle": "Apes Fusion Style Wireless Headphone,45mm Dynamic Drivers,50hrs Playtime,fast Charge Bluetooth Headset (Black Grey, On The Ear)",
+                "taxableAmount": 1516.94,
+                "discountAmount": 0,
+                "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+                "taxPayableAmount": 0,
+                "discountFundingType": "marketplace",
+                "customerDiscountAmount": 0,
+                "sellerFundedDiscountAmount": 0,
+                "marketplaceFundedDiscountAmount": 0,
+                "paymentPartnerFundedDiscountAmount": 0
+              }
+            ],
+            "seller": {
+              "email": "neha@gmail.com",
+              "phone": "9988776655",
+              "sellerId": "6a5f5587126d3e552c899abd",
+              "gstNumber": "27ABCDE1234F1Z5",
+              "panNumber": "MDHDE1234F",
+              "displayName": "Neha Kapoor Enterprises",
+              "taxSettings": {
+                "pan": "MDHDE1234F",
+                "gstin": "27ABCDE1234F1Z5",
+                "state": "Maharashtra"
+              },
+              "businessName": "Neha Kapoor Enterprises",
+              "pickupAddress": {
+                "city": "Pune",
+                "line1": "Warehouse No. 12, Industrial Estate",
+                "line2": "Hadapsar",
+                "state": "Maharashtra",
+                "country": "India",
+                "postalCode": "411028"
+              },
+              "returnAddress": null,
+              "billingAddress": {
+                "city": "Pune",
+                "line1": "101, Shree Plaza",
+                "line2": "MG Road",
+                "state": "Maharashtra",
+                "country": "India",
+                "postalCode": "411001"
+              },
+              "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "businessAddress": {
+                "city": "Pune",
+                "line1": "101, Shree Plaza",
+                "line2": "MG Road",
+                "state": "Maharashtra",
+                "country": "India",
+                "postalCode": "411001"
+              },
+              "invoiceSettings": {
+                "state": "Maharashtra",
+                "invoicePrefix": "INV"
+              },
+              "legalBusinessName": "Neha Kapoor Enterprises",
+              "primaryContactName": "Neha Kapoor"
+            },
+            "amounts": {
+              "taxMode": "cgst_sgst",
+              "taxAmount": 273.05,
+              "cgstAmount": 0,
+              "igstAmount": 0,
+              "sgstAmount": 0,
+              "placeOfSupply": "Madhya Pradesh",
+              "taxableAmount": 1516.94,
+              "discountAmount": 0,
+              "grossSalesAmount": 1789.99,
+              "taxPayableAmount": 0,
+              "shippingTaxAmount": 0,
+              "customerFinalAmount": 1789.99,
+              "deliveryChargeAmount": 0,
+              "shippingTaxableAmount": 0,
+              "customerDiscountAmount": 0,
+              "sellerFundedDiscountAmount": 0,
+              "thirdPartyContributionAmount": 0,
+              "customerPaidTowardInvoiceAmount": 1789.99,
+              "marketplaceFundedDiscountAmount": 0,
+              "paymentPartnerFundedDiscountAmount": 0
+            },
+            "orderId": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+            "generatedBy": "tax-service",
+            "invoiceType": "seller_customer",
+            "orderNumber": "ORD-20260724-37FE0C5375",
+            "orderStatus": "confirmed",
+            "organization": {
+              "pan": "MDHDE1234F",
+              "gstin": "27ABCDE1234F1Z5",
+              "sellerId": "6a5f5587126d3e552c899abd",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "MDHDE1234F",
+                "gstin": "27ABCDE1234F1Z5",
+                "state": "Maharashtra"
+              },
+              "businessType": "proprietorship",
+              "goLiveStatus": "ready",
+              "supportEmail": "neha.business2026@gmail.com",
+              "supportPhone": "9988776655",
+              "pickupAddress": {
+                "city": "Pune",
+                "line1": "Warehouse No. 12, Industrial Estate",
+                "line2": "Hadapsar",
+                "state": "Maharashtra",
+                "country": "India",
+                "postalCode": "411028"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "Pune",
+                "line1": "101, Shree Plaza",
+                "line2": "MG Road",
+                "state": "Maharashtra",
+                "country": "India",
+                "postalCode": "411001"
+              },
+              "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Maharashtra",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Neha Kapoor Enterprises",
+              "legalBusinessName": "Neha Kapoor Enterprises",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+            "generatedByRole": "super-admin",
+            "shippingAddress": {
+              "city": "Indore",
+              "line1": "Bapat Square",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "402010"
+            }
+          },
+          "created_at": "2026-07-24T06:39:56.481Z",
+          "updated_at": "2026-07-24T06:39:56.481Z",
+          "created_by": "tax-service",
+          "updated_by": "tax-service",
+          "invoice_type": "seller_customer",
+          "seller_id": "6a5f5587126d3e552c899abd",
+          "issuer_type": "seller",
+          "recipient_type": "buyer",
+          "reference_type": "seller_order",
+          "reference_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f5587126d3e552c899abd:7fa06e04-18c6-476e-9690-6e45f95d90be",
+          "parent_invoice_id": "de74c5cb-c688-491e-9926-85b5d9768984",
+          "organization_id": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+          "organization_snapshot": {
+            "pan": "MDHDE1234F",
+            "gstin": "27ABCDE1234F1Z5",
+            "sellerId": "6a5f5587126d3e552c899abd",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "MDHDE1234F",
+              "gstin": "27ABCDE1234F1Z5",
+              "state": "Maharashtra"
+            },
+            "businessType": "proprietorship",
+            "goLiveStatus": "ready",
+            "supportEmail": "neha.business2026@gmail.com",
+            "supportPhone": "9988776655",
+            "pickupAddress": {
+              "city": "Pune",
+              "line1": "Warehouse No. 12, Industrial Estate",
+              "line2": "Hadapsar",
+              "state": "Maharashtra",
+              "country": "India",
+              "postalCode": "411028"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "Pune",
+              "line1": "101, Shree Plaza",
+              "line2": "MG Road",
+              "state": "Maharashtra",
+              "country": "India",
+              "postalCode": "411001"
+            },
+            "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Maharashtra",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Neha Kapoor Enterprises",
+            "legalBusinessName": "Neha Kapoor Enterprises",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          }
+        },
+        {
+          "id": "41fbb7c7-13aa-483c-b2af-bcb6d7ba61e1",
+          "invoice_number": "GST-C-202607-000039",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "buyer_id": "6a5f560b035a5eb5c69c847d",
+          "taxable_amount": "249.98",
+          "tax_amount": "45.00",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "45.00",
+          "tcs_amount": "0.00",
+          "total_amount": "294.98",
+          "currency": "INR",
+          "tax_mode": "igst",
+          "gstin_marketplace": null,
+          "gstin_seller": "27ABCDE1234F1Z2",
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-24T06:39:56.162Z",
+          "metadata": {
+            "buyer": {
+              "email": "rohit@gmail.com",
+              "phone": "8956471235",
+              "buyerId": "6a630534b920c81dcc69660c",
+              "profile": {
+                "lastName": "Sharma",
+                "firstName": "Rohit"
+              },
+              "shippingAddress": {
+                "city": "Indore",
+                "line1": "Bapat Square",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "402010"
+              }
+            },
+            "seller": {
+              "email": "ittu@gmail.com",
+              "phone": "6969696969",
+              "sellerId": "6a5f560b035a5eb5c69c847d",
+              "gstNumber": "27ABCDE1234F1Z2",
+              "panNumber": "ABCDE1122F",
+              "displayName": "Vihan Footwear",
+              "taxSettings": {
+                "pan": "ABCDE1122F",
+                "gstin": "27ABCDE1234F1Z2",
+                "state": "Madhya Pradesh"
+              },
+              "businessName": "Vihan Footwear",
+              "pickupAddress": {
+                "city": "indore",
+                "line1": "Warehouse No. 12, Scheme No. 54",
+                "line2": "Near C21 Mall",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "452010"
+              },
+              "returnAddress": null,
+              "billingAddress": {
+                "city": "indore",
+                "line1": "145, MG Road",
+                "line2": "Near Vijay Nagar Square",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "452010"
+              },
+              "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "businessAddress": {
+                "city": "indore",
+                "line1": "145, MG Road",
+                "line2": "Near Vijay Nagar Square",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "452010"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "legalBusinessName": "Vihan Footwear",
+              "primaryContactName": "Hiteshavri prajapat"
+            },
+            "amounts": {
+              "taxMode": "igst",
+              "taxAmount": 45,
+              "cgstAmount": 0,
+              "igstAmount": 45,
+              "sgstAmount": 0,
+              "sellerGstin": "27ABCDE1234F1Z2",
+              "totalAmount": 294.98,
+              "taxableAmount": 249.98,
+              "marketplaceGstin": null
+            },
+            "orderId": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+            "lineItems": [
+              {
+                "taxAmount": 45,
+                "description": "Marketplace commission/service charge",
+                "totalAmount": 294.98,
+                "taxableAmount": 249.98
+              }
+            ],
+            "generatedBy": "tax-service",
+            "invoiceType": "platform_commission",
+            "orderNumber": "ORD-20260724-37FE0C5375",
+            "orderStatus": "confirmed",
+            "organization": {
+              "pan": "ABCDE1122F",
+              "gstin": "27ABCDE1234F1Z2",
+              "sellerId": "6a5f560b035a5eb5c69c847d",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE1122F",
+                "gstin": "27ABCDE1234F1Z2",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "live",
+              "supportEmail": "ittu@gmail.com",
+              "supportPhone": "6969696969",
+              "pickupAddress": {
+                "city": "indore",
+                "line1": "Warehouse No. 12, Scheme No. 54",
+                "line2": "Near C21 Mall",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "452010"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "indore",
+                "line1": "145, MG Road",
+                "line2": "Near Vijay Nagar Square",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "452010"
+              },
+              "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Vihan Footwear",
+              "legalBusinessName": "Vihan Footwear",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "itemReferences": [
+              {
+                "quantity": 1,
+                "productId": "6a5f6786035a5eb5c69ca9a3",
+                "productSku": "SKU-1784636058960-1",
+                "orderItemId": "15abee3b-eddb-4f9c-bf23-961f8f01b731",
+                "productTitle": "Asics Gel-nimbus 28 Running Shoes For Women",
+                "commissionRate": 2,
+                "serviceSacCode": null,
+                "platformFeeAmount": 249.98,
+                "platformFeeTaxRate": 18,
+                "platformFeeTaxAmount": 45
+              }
+            ],
+            "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+            "generatedByRole": "super-admin"
+          },
+          "created_at": "2026-07-24T06:39:56.162Z",
+          "updated_at": "2026-07-24T06:39:56.162Z",
+          "created_by": "tax-service",
+          "updated_by": "tax-service",
+          "invoice_type": "platform_commission",
+          "seller_id": "6a5f560b035a5eb5c69c847d",
+          "issuer_type": "platform",
+          "recipient_type": "seller",
+          "reference_type": "platform_commission",
+          "reference_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f560b035a5eb5c69c847d:6bb9bf0e-7384-404e-8fee-3304abea71fd",
+          "parent_invoice_id": "7afa1f96-0834-47cd-a28f-ea6566f4b180",
+          "organization_id": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+          "organization_snapshot": {
+            "pan": "ABCDE1122F",
+            "gstin": "27ABCDE1234F1Z2",
+            "sellerId": "6a5f560b035a5eb5c69c847d",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "ABCDE1122F",
+              "gstin": "27ABCDE1234F1Z2",
+              "state": "Madhya Pradesh"
+            },
+            "businessType": "individual",
+            "goLiveStatus": "live",
+            "supportEmail": "ittu@gmail.com",
+            "supportPhone": "6969696969",
+            "pickupAddress": {
+              "city": "indore",
+              "line1": "Warehouse No. 12, Scheme No. 54",
+              "line2": "Near C21 Mall",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "452010"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "indore",
+              "line1": "145, MG Road",
+              "line2": "Near Vijay Nagar Square",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "452010"
+            },
+            "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Madhya Pradesh",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Vihan Footwear",
+            "legalBusinessName": "Vihan Footwear",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          }
+        },
+        {
+          "id": "7afa1f96-0834-47cd-a28f-ea6566f4b180",
+          "invoice_number": "INV-202607-000039",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "buyer_id": "6a630534b920c81dcc69660c",
+          "taxable_amount": "12499.00",
+          "tax_amount": "0.00",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "0.00",
+          "tcs_amount": "0.00",
+          "total_amount": "12499.00",
+          "currency": "INR",
+          "tax_mode": "cgst_sgst",
+          "gstin_marketplace": null,
+          "gstin_seller": "27ABCDE1234F1Z2",
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-24T06:39:55.845Z",
+          "metadata": {
+            "buyer": {
+              "email": "rohit@gmail.com",
+              "phone": "8956471235",
+              "buyerId": "6a630534b920c81dcc69660c",
+              "profile": {
+                "lastName": "Sharma",
+                "firstName": "Rohit"
+              },
+              "shippingAddress": {
+                "city": "Indore",
+                "line1": "Bapat Square",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "402010"
+              }
+            },
+            "items": [
+              {
+                "gstRate": 18,
+                "hsnCode": "0101",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a5f560b035a5eb5c69c847d",
+                "lineTotal": 12499,
+                "productId": "6a5f6786035a5eb5c69ca9a3",
+                "taxAmount": 0,
+                "unitPrice": 12499,
+                "variantId": "6a608f44035a5eb5c69dcfca",
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "SKU-1784636058960-1",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 18,
+                  "taxMode": "exempt",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 12499,
+                  "productId": "6a5f6786035a5eb5c69ca9a3",
+                  "taxAmount": 0,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 12499,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 0,
+                  "discountedLineTotal": 12499,
+                  "sellerFundedDiscountAmount": 0,
+                  "customerDiscountedLineTotal": 12499,
+                  "taxableAmountBeforeDiscount": 12499
+                },
+                "variantSku": "SKU-1784636058960-1",
+                "orderItemId": "15abee3b-eddb-4f9c-bf23-961f8f01b731",
+                "totalAmount": 12499,
+                "warehouseId": null,
+                "productTitle": "Asics Gel-nimbus 28 Running Shoes For Women",
+                "taxableAmount": 12499,
+                "discountAmount": 0,
+                "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+                "taxPayableAmount": 0,
+                "discountFundingType": "marketplace",
+                "customerDiscountAmount": 0,
+                "sellerFundedDiscountAmount": 0,
+                "marketplaceFundedDiscountAmount": 0,
+                "paymentPartnerFundedDiscountAmount": 0
+              }
+            ],
+            "seller": {
+              "email": "ittu@gmail.com",
+              "phone": "6969696969",
+              "sellerId": "6a5f560b035a5eb5c69c847d",
+              "gstNumber": "27ABCDE1234F1Z2",
+              "panNumber": "ABCDE1122F",
+              "displayName": "Vihan Footwear",
+              "taxSettings": {
+                "pan": "ABCDE1122F",
+                "gstin": "27ABCDE1234F1Z2",
+                "state": "Madhya Pradesh"
+              },
+              "businessName": "Vihan Footwear",
+              "pickupAddress": {
+                "city": "indore",
+                "line1": "Warehouse No. 12, Scheme No. 54",
+                "line2": "Near C21 Mall",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "452010"
+              },
+              "returnAddress": null,
+              "billingAddress": {
+                "city": "indore",
+                "line1": "145, MG Road",
+                "line2": "Near Vijay Nagar Square",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "452010"
+              },
+              "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "businessAddress": {
+                "city": "indore",
+                "line1": "145, MG Road",
+                "line2": "Near Vijay Nagar Square",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "452010"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "legalBusinessName": "Vihan Footwear",
+              "primaryContactName": "Hiteshavri prajapat"
+            },
+            "amounts": {
+              "taxMode": "cgst_sgst",
+              "taxAmount": 0,
+              "cgstAmount": 0,
+              "igstAmount": 0,
+              "sgstAmount": 0,
+              "placeOfSupply": "Madhya Pradesh",
+              "taxableAmount": 12499,
+              "discountAmount": 0,
+              "grossSalesAmount": 12499,
+              "taxPayableAmount": 0,
+              "shippingTaxAmount": 0,
+              "customerFinalAmount": 12499,
+              "deliveryChargeAmount": 0,
+              "shippingTaxableAmount": 0,
+              "customerDiscountAmount": 0,
+              "sellerFundedDiscountAmount": 0,
+              "thirdPartyContributionAmount": 0,
+              "customerPaidTowardInvoiceAmount": 12499,
+              "marketplaceFundedDiscountAmount": 0,
+              "paymentPartnerFundedDiscountAmount": 0
+            },
+            "orderId": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+            "generatedBy": "tax-service",
+            "invoiceType": "seller_customer",
+            "orderNumber": "ORD-20260724-37FE0C5375",
+            "orderStatus": "confirmed",
+            "organization": {
+              "pan": "ABCDE1122F",
+              "gstin": "27ABCDE1234F1Z2",
+              "sellerId": "6a5f560b035a5eb5c69c847d",
+              "kycStatus": "verified",
+              "taxSettings": {
+                "pan": "ABCDE1122F",
+                "gstin": "27ABCDE1234F1Z2",
+                "state": "Madhya Pradesh"
+              },
+              "businessType": "individual",
+              "goLiveStatus": "live",
+              "supportEmail": "ittu@gmail.com",
+              "supportPhone": "6969696969",
+              "pickupAddress": {
+                "city": "indore",
+                "line1": "Warehouse No. 12, Scheme No. 54",
+                "line2": "Near C21 Mall",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "452010"
+              },
+              "approvalStatus": "approved",
+              "billingAddress": {
+                "city": "indore",
+                "line1": "145, MG Road",
+                "line2": "Near Vijay Nagar Square",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "452010"
+              },
+              "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+              "payoutSettings": {
+                "payoutSchedule": "weekly"
+              },
+              "invoiceSettings": {
+                "state": "Madhya Pradesh",
+                "invoicePrefix": "INV"
+              },
+              "storeDisplayName": "Vihan Footwear",
+              "legalBusinessName": "Vihan Footwear",
+              "registrationNumber": null,
+              "bankVerificationStatus": "verified"
+            },
+            "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+            "generatedByRole": "super-admin",
+            "shippingAddress": {
+              "city": "Indore",
+              "line1": "Bapat Square",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "402010"
+            }
+          },
+          "created_at": "2026-07-24T06:39:55.845Z",
+          "updated_at": "2026-07-24T06:39:55.845Z",
+          "created_by": "tax-service",
+          "updated_by": "tax-service",
+          "invoice_type": "seller_customer",
+          "seller_id": "6a5f560b035a5eb5c69c847d",
+          "issuer_type": "seller",
+          "recipient_type": "buyer",
+          "reference_type": "seller_order",
+          "reference_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f560b035a5eb5c69c847d:6bb9bf0e-7384-404e-8fee-3304abea71fd",
+          "parent_invoice_id": "de74c5cb-c688-491e-9926-85b5d9768984",
+          "organization_id": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+          "organization_snapshot": {
+            "pan": "ABCDE1122F",
+            "gstin": "27ABCDE1234F1Z2",
+            "sellerId": "6a5f560b035a5eb5c69c847d",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "ABCDE1122F",
+              "gstin": "27ABCDE1234F1Z2",
+              "state": "Madhya Pradesh"
+            },
+            "businessType": "individual",
+            "goLiveStatus": "live",
+            "supportEmail": "ittu@gmail.com",
+            "supportPhone": "6969696969",
+            "pickupAddress": {
+              "city": "indore",
+              "line1": "Warehouse No. 12, Scheme No. 54",
+              "line2": "Near C21 Mall",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "452010"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "indore",
+              "line1": "145, MG Road",
+              "line2": "Near Vijay Nagar Square",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "452010"
+            },
+            "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Madhya Pradesh",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Vihan Footwear",
+            "legalBusinessName": "Vihan Footwear",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          }
+        },
+        {
+          "id": "60b9c48c-8927-4a86-8f49-64b6b2407947",
+          "invoice_number": "GST-F-202607-000004",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "buyer_id": "6a630534b920c81dcc69660c",
+          "taxable_amount": "21.00",
+          "tax_amount": "0.00",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "0.00",
+          "tcs_amount": "0.00",
+          "total_amount": "21.00",
+          "currency": "INR",
+          "tax_mode": "igst",
+          "gstin_marketplace": null,
+          "gstin_seller": null,
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-24T06:39:55.586Z",
+          "metadata": {
+            "buyer": {
+              "email": "rohit@gmail.com",
+              "phone": "8956471235",
+              "buyerId": "6a630534b920c81dcc69660c",
+              "profile": {
+                "lastName": "Sharma",
+                "firstName": "Rohit"
+              },
+              "shippingAddress": {
+                "city": "Indore",
+                "line1": "Bapat Square",
+                "line2": "",
+                "state": "Madhya Pradesh",
+                "country": "India",
+                "postalCode": "402010"
+              }
+            },
+            "amounts": {
+              "taxAmount": 0,
+              "totalAmount": 21,
+              "taxableAmount": 21,
+              "taxPayableAmount": 0
+            },
+            "lineItems": [
+              {
+                "hsnCode": null,
+                "quantity": 1,
+                "taxAmount": 0,
+                "description": "Marketplace customer platform service fee",
+                "totalAmount": 21,
+                "taxableAmount": 21
+              }
+            ],
+            "generatedBy": "tax-service",
+            "invoiceType": "platform_customer_fee",
+            "orderNumber": "ORD-20260724-37FE0C5375",
+            "generatedByRole": "super-admin",
+            "shippingAddress": {
+              "city": "Indore",
+              "line1": "Bapat Square",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "402010"
+            }
+          },
+          "created_at": "2026-07-24T06:39:55.586Z",
+          "updated_at": "2026-07-24T06:39:55.586Z",
+          "created_by": "tax-service",
+          "updated_by": "tax-service",
+          "invoice_type": "platform_customer_fee",
+          "seller_id": null,
+          "issuer_type": "platform",
+          "recipient_type": "buyer",
+          "reference_type": "platform_customer_fee",
+          "reference_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "parent_invoice_id": "de74c5cb-c688-491e-9926-85b5d9768984",
+          "organization_id": null,
+          "organization_snapshot": {}
+        },
+        {
+          "id": "de74c5cb-c688-491e-9926-85b5d9768984",
+          "invoice_number": "GST-202607-000033",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "buyer_id": "6a630534b920c81dcc69660c",
+          "taxable_amount": "70931.80",
+          "tax_amount": "10357.19",
+          "cgst_amount": "0.00",
+          "sgst_amount": "0.00",
+          "igst_amount": "10357.19",
+          "tcs_amount": "0.00",
+          "total_amount": "81309.99",
+          "currency": "INR",
+          "tax_mode": "mixed",
+          "gstin_marketplace": null,
+          "gstin_seller": null,
+          "place_of_supply": "Madhya Pradesh",
+          "issued_at": "2026-07-24T06:39:55.301Z",
+          "metadata": {
+            "items": [
+              {
+                "gstRate": 18,
+                "hsnCode": "0101",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a5f560b035a5eb5c69c847d",
+                "lineTotal": 12499,
+                "productId": "6a5f6786035a5eb5c69ca9a3",
+                "taxAmount": 0,
+                "unitPrice": 12499,
+                "variantId": "6a608f44035a5eb5c69dcfca",
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "SKU-1784636058960-1",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 18,
+                  "taxMode": "exempt",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 12499,
+                  "productId": "6a5f6786035a5eb5c69ca9a3",
+                  "taxAmount": 0,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 12499,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 0,
+                  "discountedLineTotal": 12499,
+                  "sellerFundedDiscountAmount": 0,
+                  "customerDiscountedLineTotal": 12499,
+                  "taxableAmountBeforeDiscount": 12499
+                },
+                "variantSku": "SKU-1784636058960-1",
+                "orderItemId": "15abee3b-eddb-4f9c-bf23-961f8f01b731",
+                "totalAmount": 12499,
+                "warehouseId": null,
+                "productTitle": "Asics Gel-nimbus 28 Running Shoes For Women",
+                "taxableAmount": 12499,
+                "discountAmount": 0,
+                "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+                "taxPayableAmount": 0,
+                "discountFundingType": "marketplace",
+                "customerDiscountAmount": 0,
+                "sellerFundedDiscountAmount": 0,
+                "marketplaceFundedDiscountAmount": 0,
+                "paymentPartnerFundedDiscountAmount": 0
+              },
+              {
+                "gstRate": 18,
+                "hsnCode": "8504",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a5f5587126d3e552c899abd",
+                "lineTotal": 1789.99,
+                "productId": "6a60815a5360ee2cb953ec57",
+                "taxAmount": 273.05,
+                "unitPrice": 1789.99,
+                "variantId": "6a6083fa3a8c9fb5d9eed785",
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "SKU-1784709433346-1",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 18,
+                  "taxMode": "igst",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 1789.99,
+                  "productId": "6a60815a5360ee2cb953ec57",
+                  "taxAmount": 273.05,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 1516.94,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 273.05,
+                  "discountedLineTotal": 1789.99,
+                  "sellerFundedDiscountAmount": 0,
+                  "customerDiscountedLineTotal": 1789.99,
+                  "taxableAmountBeforeDiscount": 1516.94
+                },
+                "variantSku": "SKU-1784709433346-1",
+                "orderItemId": "44fc0353-2d51-4a6f-b359-1e7ef5baf335",
+                "totalAmount": 1789.99,
+                "warehouseId": null,
+                "productTitle": "Apes Fusion Style Wireless Headphone,45mm Dynamic Drivers,50hrs Playtime,fast Charge Bluetooth Headset (Black Grey, On The Ear)",
+                "taxableAmount": 1516.94,
+                "discountAmount": 0,
+                "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+                "taxPayableAmount": 0,
+                "discountFundingType": "marketplace",
+                "customerDiscountAmount": 0,
+                "sellerFundedDiscountAmount": 0,
+                "marketplaceFundedDiscountAmount": 0,
+                "paymentPartnerFundedDiscountAmount": 0
+              },
+              {
+                "gstRate": 12,
+                "hsnCode": "6204",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a5f59b8035a5eb5c69c84c3",
+                "lineTotal": 3000,
+                "productId": "6a5f657f035a5eb5c69ca490",
+                "taxAmount": 321.43,
+                "unitPrice": 3000,
+                "variantId": "6a5f6d33035a5eb5c69ccbe9",
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "SKU-1784635501493-7",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 12,
+                  "taxMode": "igst",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 3000,
+                  "productId": "6a5f657f035a5eb5c69ca490",
+                  "taxAmount": 321.43,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 2678.57,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 321.43,
+                  "discountedLineTotal": 3000,
+                  "sellerFundedDiscountAmount": 0,
+                  "customerDiscountedLineTotal": 3000,
+                  "taxableAmountBeforeDiscount": 2678.57
+                },
+                "variantSku": "SKU-1784635501493-7",
+                "orderItemId": "768dc858-441d-4388-9221-892bbe8658b2",
+                "totalAmount": 3000,
+                "warehouseId": null,
+                "productTitle": "Royal Export Floral Embroidered Straight Kurta With Palazzos & Dupatta",
+                "taxableAmount": 2678.57,
+                "discountAmount": 0,
+                "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+                "taxPayableAmount": 0,
+                "discountFundingType": "marketplace",
+                "customerDiscountAmount": 0,
+                "sellerFundedDiscountAmount": 0,
+                "marketplaceFundedDiscountAmount": 0,
+                "paymentPartnerFundedDiscountAmount": 0
+              },
+              {
+                "gstRate": 18,
+                "hsnCode": "8504",
+                "storeId": null,
+                "quantity": 1,
+                "sellerId": "6a5f55a9126d3e552c899ae7",
+                "lineTotal": 64000,
+                "productId": "6a5f6057425c9616349c9206",
+                "taxAmount": 9762.71,
+                "unitPrice": 64000,
+                "variantId": "6a5f649b425c9616349ca530",
+                "cgstAmount": 0,
+                "igstAmount": 0,
+                "productSku": "SKU-1784635363615-1",
+                "sgstAmount": 0,
+                "taxBreakup": {
+                  "gstRate": 18,
+                  "taxMode": "igst",
+                  "taxType": "gst",
+                  "cessRate": 0,
+                  "lineTotal": 64000,
+                  "productId": "6a5f6057425c9616349c9206",
+                  "taxAmount": 9762.71,
+                  "cessAmount": 0,
+                  "gstInclusive": true,
+                  "taxableAmount": 54237.29,
+                  "taxPayableAmount": 0,
+                  "taxIncludedAmount": 9762.71,
+                  "discountedLineTotal": 64000,
+                  "sellerFundedDiscountAmount": 0,
+                  "customerDiscountedLineTotal": 64000,
+                  "taxableAmountBeforeDiscount": 54237.29
+                },
+                "variantSku": "SKU-1784635363615-1",
+                "orderItemId": "f3b840a7-42d5-4792-aac0-2028b655b0e2",
+                "totalAmount": 64000,
+                "warehouseId": null,
+                "productTitle": "Google Pixel 10 5g",
+                "taxableAmount": 54237.29,
+                "discountAmount": 0,
+                "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+                "taxPayableAmount": 0,
+                "discountFundingType": "marketplace",
+                "customerDiscountAmount": 0,
+                "sellerFundedDiscountAmount": 0,
+                "marketplaceFundedDiscountAmount": 0,
+                "paymentPartnerFundedDiscountAmount": 0
+              }
+            ],
+            "amounts": {
+              "discountAmount": 0,
+              "codChargeAmount": 0,
+              "grossSalesAmount": 81288.99,
+              "finalPayableAmount": 81309.99,
+              "discountFundingType": "marketplace",
+              "deliveryChargeAmount": 0,
+              "productTaxableAmount": 70931.8,
+              "shippingChargeAmount": 0,
+              "walletDiscountAmount": 0,
+              "sellerPlatformFeeAmount": 1625.78,
+              "customerPlatformFeeAmount": 21,
+              "sellerOrganizationDetails": [
+                {
+                  "pan": "ABCDE1122F",
+                  "gstin": "27ABCDE1234F1Z2",
+                  "sellerId": "6a5f560b035a5eb5c69c847d",
+                  "kycStatus": "verified",
+                  "taxSettings": {
+                    "pan": "ABCDE1122F",
+                    "gstin": "27ABCDE1234F1Z2",
+                    "state": "Madhya Pradesh"
+                  },
+                  "businessType": "individual",
+                  "goLiveStatus": "live",
+                  "supportEmail": "ittu@gmail.com",
+                  "supportPhone": "6969696969",
+                  "pickupAddress": {
+                    "city": "indore",
+                    "line1": "Warehouse No. 12, Scheme No. 54",
+                    "line2": "Near C21 Mall",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "452010"
+                  },
+                  "approvalStatus": "approved",
+                  "billingAddress": {
+                    "city": "indore",
+                    "line1": "145, MG Road",
+                    "line2": "Near Vijay Nagar Square",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "452010"
+                  },
+                  "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+                  "payoutSettings": {
+                    "payoutSchedule": "weekly"
+                  },
+                  "invoiceSettings": {
+                    "state": "Madhya Pradesh",
+                    "invoicePrefix": "INV"
+                  },
+                  "storeDisplayName": "Vihan Footwear",
+                  "legalBusinessName": "Vihan Footwear",
+                  "registrationNumber": null,
+                  "bankVerificationStatus": "verified"
+                },
+                {
+                  "pan": "MDHDE1234F",
+                  "gstin": "27ABCDE1234F1Z5",
+                  "sellerId": "6a5f5587126d3e552c899abd",
+                  "kycStatus": "verified",
+                  "taxSettings": {
+                    "pan": "MDHDE1234F",
+                    "gstin": "27ABCDE1234F1Z5",
+                    "state": "Maharashtra"
+                  },
+                  "businessType": "proprietorship",
+                  "goLiveStatus": "ready",
+                  "supportEmail": "neha.business2026@gmail.com",
+                  "supportPhone": "9988776655",
+                  "pickupAddress": {
+                    "city": "Pune",
+                    "line1": "Warehouse No. 12, Industrial Estate",
+                    "line2": "Hadapsar",
+                    "state": "Maharashtra",
+                    "country": "India",
+                    "postalCode": "411028"
+                  },
+                  "approvalStatus": "approved",
+                  "billingAddress": {
+                    "city": "Pune",
+                    "line1": "101, Shree Plaza",
+                    "line2": "MG Road",
+                    "state": "Maharashtra",
+                    "country": "India",
+                    "postalCode": "411001"
+                  },
+                  "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+                  "payoutSettings": {
+                    "payoutSchedule": "weekly"
+                  },
+                  "invoiceSettings": {
+                    "state": "Maharashtra",
+                    "invoicePrefix": "INV"
+                  },
+                  "storeDisplayName": "Neha Kapoor Enterprises",
+                  "legalBusinessName": "Neha Kapoor Enterprises",
+                  "registrationNumber": null,
+                  "bankVerificationStatus": "verified"
+                },
+                {
+                  "pan": "ABCDE1234O",
+                  "gstin": "22AAAAA0000A1Z5",
+                  "sellerId": "6a5f59b8035a5eb5c69c84c3",
+                  "kycStatus": "verified",
+                  "taxSettings": {
+                    "pan": "ABCDE1234O",
+                    "gstin": "22AAAAA0000A1Z5",
+                    "state": "Odisha"
+                  },
+                  "businessType": "proprietorship",
+                  "goLiveStatus": "ready",
+                  "supportEmail": "aditi@gmail.com",
+                  "supportPhone": "7879057867",
+                  "pickupAddress": {
+                    "city": "Jammu",
+                    "line1": "24, Residency Road, Lal Chowk Srinagar, Jammu & Kashmir – 190001 India",
+                    "line2": "",
+                    "state": "Jammu and Kashmir",
+                    "country": "India",
+                    "postalCode": "180001"
+                  },
+                  "approvalStatus": "approved",
+                  "billingAddress": {
+                    "city": "Bhubaneswar",
+                    "line1": "Fashion Avenue Boutique Shop No. 12, Crystal Plaza M.P. Nagar, Zone-II Odisha",
+                    "line2": "",
+                    "state": "Odisha",
+                    "country": "India",
+                    "postalCode": "751001"
+                  },
+                  "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+                  "payoutSettings": {
+                    "payoutSchedule": "weekly"
+                  },
+                  "invoiceSettings": {
+                    "state": "Odisha",
+                    "invoicePrefix": "INV"
+                  },
+                  "storeDisplayName": "Shivani Rudraghate",
+                  "legalBusinessName": "Shivani Rudraghate",
+                  "registrationNumber": null,
+                  "bankVerificationStatus": "verified"
+                },
+                {
+                  "pan": "ABCDE1234F",
+                  "gstin": "27AAACR5055K1Z7",
+                  "sellerId": "6a5f55a9126d3e552c899ae7",
+                  "kycStatus": "verified",
+                  "taxSettings": {
+                    "pan": "ABCDE1234F",
+                    "gstin": "27AAACR5055K1Z7",
+                    "state": "Madhya Pradesh"
+                  },
+                  "businessType": "individual",
+                  "goLiveStatus": "live",
+                  "supportEmail": "krishnaelectronics@gmail.com",
+                  "supportPhone": "8085662512",
+                  "pickupAddress": {
+                    "city": "Vidisha",
+                    "line1": "Maa hospital road mohangiri",
+                    "line2": "",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "464001"
+                  },
+                  "approvalStatus": "approved",
+                  "billingAddress": {
+                    "city": "Vidisha",
+                    "line1": "Ramlila Road Vidisha",
+                    "line2": "",
+                    "state": "Madhya Pradesh",
+                    "country": "India",
+                    "postalCode": "464001"
+                  },
+                  "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+                  "payoutSettings": {
+                    "payoutSchedule": "weekly"
+                  },
+                  "invoiceSettings": {
+                    "state": "Madhya Pradesh",
+                    "invoicePrefix": "INV"
+                  },
+                  "storeDisplayName": "Krishna Electronics",
+                  "legalBusinessName": "Krishna Electronics",
+                  "registrationNumber": null,
+                  "bankVerificationStatus": "verified"
+                }
+              ],
+              "sellerFundedDiscountAmount": 0,
+              "customerPlatformFeeTaxAmount": 0,
+              "marketplaceFundedDiscountAmount": 0,
+              "paymentPartnerFundedDiscountAmount": 0
+            },
+            "generatedBy": "tax-service",
+            "invoiceType": "order_customer",
+            "orderNumber": "ORD-20260724-37FE0C5375",
+            "orderStatus": "confirmed",
+            "generatedByRole": "super-admin"
+          },
+          "created_at": "2026-07-24T06:39:55.301Z",
+          "updated_at": "2026-07-24T06:39:55.301Z",
+          "created_by": "tax-service",
+          "updated_by": "tax-service",
+          "invoice_type": "order_customer",
+          "seller_id": null,
+          "issuer_type": "platform",
+          "recipient_type": "buyer",
+          "reference_type": "order",
+          "reference_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "parent_invoice_id": null,
+          "organization_id": null,
+          "organization_snapshot": {}
+        }
+      ],
+      "shipments": [
+        {
+          "id": "0f004db7-a95d-4dff-9b9e-af6af6b40c0b",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "seller_id": "6a5f55a9126d3e552c899ae7",
+          "provider": "manual",
+          "courier_name": "manual",
+          "awb_number": null,
+          "tracking_number": null,
+          "status": "initiated",
+          "shipping_mode": "standard",
+          "cod": false,
+          "package_snapshot": {},
+          "pickup_address_snapshot": {},
+          "ship_to_snapshot": {
+            "city": "Indore",
+            "line1": "Bapat Square",
+            "line2": "",
+            "state": "Madhya Pradesh",
+            "country": "India",
+            "postalCode": "402010"
+          },
+          "rate_snapshot": {},
+          "label_data": {},
+          "manifest_id": null,
+          "delivery_exception": null,
+          "expected_delivery_at": null,
+          "idempotency_key": "order-shipment:ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f55a9126d3e552c899ae7:8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+          "created_at": "2026-07-24T06:39:26.925Z",
+          "updated_at": "2026-07-24T06:39:53.566Z",
+          "deal_id": null,
+          "fulfillment_model": null,
+          "shipment_type": "forward",
+          "direction": "forward",
+          "return_id": null,
+          "tracking_url": null,
+          "shipped_at": null,
+          "delivered_at": null,
+          "organization_id": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+          "order_number": "ORD-20260724-37FE0C5375",
+          "buyer": {
+            "id": "6a630534b920c81dcc69660c",
+            "displayName": "Rohit Sharma",
+            "fullName": "Rohit Sharma",
+            "firstName": "Rohit",
+            "lastName": "Sharma",
+            "businessName": null,
+            "email": "rohit@gmail.com",
+            "phone": "8956471235",
+            "role": "buyer",
+            "profile": {
+              "firstName": "Rohit",
+              "lastName": "Sharma"
+            },
+            "accountStatus": "active",
+            "ownerSellerId": null,
+            "parentSellerId": null,
+            "sellerProfile": {
+              "displayName": null,
+              "businessName": null,
+              "legalBusinessName": null,
+              "supportEmail": null,
+              "supportPhone": null,
+              "kycStatus": null,
+              "bankVerificationStatus": null,
+              "goLiveStatus": null
+            }
+          },
+          "seller": {
+            "displayName": "Rahul Sharma",
+            "businessName": "Krishna Electronics",
+            "supportEmail": "KrishnaElectronics@gmail.com",
+            "supportPhone": "8085662512"
+          },
+          "trackingEvents": [
+            {
+              "id": "4ed48351-184e-4a11-bc49-edf6f060749f",
+              "shipment_id": "0f004db7-a95d-4dff-9b9e-af6af6b40c0b",
+              "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+              "status": "initiated",
+              "event_time": "2026-07-24T06:39:26.925Z",
+              "location": null,
+              "note": "Shipment created for order order_created",
+              "source": "order_status_sync",
+              "created_at": "2026-07-24T06:39:26.853Z",
+              "idempotency_key": "order-shipment:ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f55a9126d3e552c899ae7:8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae:initiated"
+            }
+          ],
+          "sellerId": "6a5f55a9126d3e552c899ae7",
+          "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+          "orderItemIds": ["f3b840a7-42d5-4792-aac0-2028b655b0e2"]
+        },
+        {
+          "id": "cd4cf896-be46-49e2-9ced-9153d025fac4",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "seller_id": "6a5f59b8035a5eb5c69c84c3",
+          "provider": "manual",
+          "courier_name": "manual",
+          "awb_number": "manual",
+          "tracking_number": "manual",
+          "status": "in_transit",
+          "shipping_mode": "standard",
+          "cod": false,
+          "package_snapshot": {},
+          "pickup_address_snapshot": {},
+          "ship_to_snapshot": {
+            "city": "Indore",
+            "line1": "Bapat Square",
+            "line2": "",
+            "state": "Madhya Pradesh",
+            "country": "India",
+            "postalCode": "402010"
+          },
+          "rate_snapshot": {},
+          "label_data": {},
+          "manifest_id": null,
+          "delivery_exception": null,
+          "expected_delivery_at": null,
+          "idempotency_key": "order-shipment:ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f59b8035a5eb5c69c84c3:d5a41054-9b74-4889-aa63-cd056a0883f1",
+          "created_at": "2026-07-24T06:39:26.672Z",
+          "updated_at": "2026-07-24T06:42:03.170Z",
+          "deal_id": null,
+          "fulfillment_model": null,
+          "shipment_type": "forward",
+          "direction": "forward",
+          "return_id": null,
+          "tracking_url": "http://localhost:5173/payment/success?orderId=ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "shipped_at": "2026-07-09T15:14:00.000Z",
+          "delivered_at": null,
+          "organization_id": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+          "order_number": "ORD-20260724-37FE0C5375",
+          "buyer": {
+            "id": "6a630534b920c81dcc69660c",
+            "displayName": "Rohit Sharma",
+            "fullName": "Rohit Sharma",
+            "firstName": "Rohit",
+            "lastName": "Sharma",
+            "businessName": null,
+            "email": "rohit@gmail.com",
+            "phone": "8956471235",
+            "role": "buyer",
+            "profile": {
+              "firstName": "Rohit",
+              "lastName": "Sharma"
+            },
+            "accountStatus": "active",
+            "ownerSellerId": null,
+            "parentSellerId": null,
+            "sellerProfile": {
+              "displayName": null,
+              "businessName": null,
+              "legalBusinessName": null,
+              "supportEmail": null,
+              "supportPhone": null,
+              "kycStatus": null,
+              "bankVerificationStatus": null,
+              "goLiveStatus": null
+            }
+          },
+          "seller": {
+            "displayName": "Aditi Upadhyay",
+            "businessName": "Shivani Rudraghate",
+            "supportEmail": "aditi@gmail.com",
+            "supportPhone": "7879057867"
+          },
+          "trackingEvents": [
+            {
+              "id": "08e2b3b3-630e-4ea5-a113-f4080c793079",
+              "shipment_id": "cd4cf896-be46-49e2-9ced-9153d025fac4",
+              "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+              "status": "initiated",
+              "event_time": "2026-07-24T06:39:26.672Z",
+              "location": null,
+              "note": "Shipment created for order order_created",
+              "source": "order_status_sync",
+              "created_at": "2026-07-24T06:39:26.598Z",
+              "idempotency_key": "order-shipment:ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f59b8035a5eb5c69c84c3:d5a41054-9b74-4889-aa63-cd056a0883f1:initiated"
+            },
+            {
+              "id": "24da6a3c-2f52-4c57-86de-cadbfaf0c24f",
+              "shipment_id": "cd4cf896-be46-49e2-9ced-9153d025fac4",
+              "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+              "status": "in_transit",
+              "event_time": "2026-07-24T06:42:03.172Z",
+              "location": null,
+              "note": null,
+              "source": "seller_panel",
+              "created_at": "2026-07-24T06:42:03.170Z",
+              "idempotency_key": null
+            }
+          ],
+          "sellerId": "6a5f59b8035a5eb5c69c84c3",
+          "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+          "orderItemIds": ["768dc858-441d-4388-9221-892bbe8658b2"]
+        },
+        {
+          "id": "cceff806-53fc-496a-8795-fefff0209c88",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "seller_id": "6a5f5587126d3e552c899abd",
+          "provider": "manual",
+          "courier_name": "manual",
+          "awb_number": null,
+          "tracking_number": null,
+          "status": "initiated",
+          "shipping_mode": "standard",
+          "cod": false,
+          "package_snapshot": {},
+          "pickup_address_snapshot": {},
+          "ship_to_snapshot": {
+            "city": "Indore",
+            "line1": "Bapat Square",
+            "line2": "",
+            "state": "Madhya Pradesh",
+            "country": "India",
+            "postalCode": "402010"
+          },
+          "rate_snapshot": {},
+          "label_data": {},
+          "manifest_id": null,
+          "delivery_exception": null,
+          "expected_delivery_at": null,
+          "idempotency_key": "order-shipment:ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f5587126d3e552c899abd:7fa06e04-18c6-476e-9690-6e45f95d90be",
+          "created_at": "2026-07-24T06:39:26.413Z",
+          "updated_at": "2026-07-24T06:39:53.151Z",
+          "deal_id": null,
+          "fulfillment_model": null,
+          "shipment_type": "forward",
+          "direction": "forward",
+          "return_id": null,
+          "tracking_url": null,
+          "shipped_at": null,
+          "delivered_at": null,
+          "organization_id": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+          "order_number": "ORD-20260724-37FE0C5375",
+          "buyer": {
+            "id": "6a630534b920c81dcc69660c",
+            "displayName": "Rohit Sharma",
+            "fullName": "Rohit Sharma",
+            "firstName": "Rohit",
+            "lastName": "Sharma",
+            "businessName": null,
+            "email": "rohit@gmail.com",
+            "phone": "8956471235",
+            "role": "buyer",
+            "profile": {
+              "firstName": "Rohit",
+              "lastName": "Sharma"
+            },
+            "accountStatus": "active",
+            "ownerSellerId": null,
+            "parentSellerId": null,
+            "sellerProfile": {
+              "displayName": null,
+              "businessName": null,
+              "legalBusinessName": null,
+              "supportEmail": null,
+              "supportPhone": null,
+              "kycStatus": null,
+              "bankVerificationStatus": null,
+              "goLiveStatus": null
+            }
+          },
+          "seller": {
+            "displayName": "Neha Kapoor",
+            "businessName": "Neha Kapoor Enterprises",
+            "supportEmail": "neha.business2026@gmail.com",
+            "supportPhone": "9988776655"
+          },
+          "trackingEvents": [
+            {
+              "id": "dedabcee-3cdf-4cbe-bb5a-e831918ff67e",
+              "shipment_id": "cceff806-53fc-496a-8795-fefff0209c88",
+              "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+              "status": "initiated",
+              "event_time": "2026-07-24T06:39:26.413Z",
+              "location": null,
+              "note": "Shipment created for order order_created",
+              "source": "order_status_sync",
+              "created_at": "2026-07-24T06:39:26.338Z",
+              "idempotency_key": "order-shipment:ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f5587126d3e552c899abd:7fa06e04-18c6-476e-9690-6e45f95d90be:initiated"
+            }
+          ],
+          "sellerId": "6a5f5587126d3e552c899abd",
+          "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+          "orderItemIds": ["44fc0353-2d51-4a6f-b359-1e7ef5baf335"]
+        },
+        {
+          "id": "25742fbc-be11-472c-ada3-bb4482064159",
+          "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+          "seller_id": "6a5f560b035a5eb5c69c847d",
+          "provider": "manual",
+          "courier_name": "manual",
+          "awb_number": "Manual",
+          "tracking_number": "Manual",
+          "status": "delivered",
+          "shipping_mode": "standard",
+          "cod": false,
+          "package_snapshot": {},
+          "pickup_address_snapshot": {},
+          "ship_to_snapshot": {
+            "city": "Indore",
+            "line1": "Bapat Square",
+            "line2": "",
+            "state": "Madhya Pradesh",
+            "country": "India",
+            "postalCode": "402010"
+          },
+          "rate_snapshot": {},
+          "label_data": {},
+          "manifest_id": null,
+          "delivery_exception": null,
+          "expected_delivery_at": null,
+          "idempotency_key": "order-shipment:ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f560b035a5eb5c69c847d:6bb9bf0e-7384-404e-8fee-3304abea71fd",
+          "created_at": "2026-07-24T06:39:26.148Z",
+          "updated_at": "2026-07-24T06:41:16.187Z",
+          "deal_id": null,
+          "fulfillment_model": null,
+          "shipment_type": "forward",
+          "direction": "forward",
+          "return_id": null,
+          "tracking_url": null,
+          "shipped_at": "2026-07-17T12:11:00.000Z",
+          "delivered_at": "2026-07-24T06:41:16.188Z",
+          "organization_id": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+          "order_number": "ORD-20260724-37FE0C5375",
+          "buyer": {
+            "id": "6a630534b920c81dcc69660c",
+            "displayName": "Rohit Sharma",
+            "fullName": "Rohit Sharma",
+            "firstName": "Rohit",
+            "lastName": "Sharma",
+            "businessName": null,
+            "email": "rohit@gmail.com",
+            "phone": "8956471235",
+            "role": "buyer",
+            "profile": {
+              "firstName": "Rohit",
+              "lastName": "Sharma"
+            },
+            "accountStatus": "active",
+            "ownerSellerId": null,
+            "parentSellerId": null,
+            "sellerProfile": {
+              "displayName": null,
+              "businessName": null,
+              "legalBusinessName": null,
+              "supportEmail": null,
+              "supportPhone": null,
+              "kycStatus": null,
+              "bankVerificationStatus": null,
+              "goLiveStatus": null
+            }
+          },
+          "seller": {
+            "displayName": "Hiteshavri prajapat",
+            "businessName": "Vihan Footwear",
+            "supportEmail": "ittu@gmail.com",
+            "supportPhone": "6969696969"
+          },
+          "trackingEvents": [
+            {
+              "id": "33bc4710-fc10-4400-bedf-6955997bc234",
+              "shipment_id": "25742fbc-be11-472c-ada3-bb4482064159",
+              "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+              "status": "initiated",
+              "event_time": "2026-07-24T06:39:26.148Z",
+              "location": null,
+              "note": "Shipment created for order order_created",
+              "source": "order_status_sync",
+              "created_at": "2026-07-24T06:39:26.073Z",
+              "idempotency_key": "order-shipment:ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f560b035a5eb5c69c847d:6bb9bf0e-7384-404e-8fee-3304abea71fd:initiated"
+            },
+            {
+              "id": "d3e79a18-57c2-4c8e-819b-b3ac80911f1f",
+              "shipment_id": "25742fbc-be11-472c-ada3-bb4482064159",
+              "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+              "status": "in_transit",
+              "event_time": "2026-07-24T06:41:13.352Z",
+              "location": null,
+              "note": null,
+              "source": "seller_panel",
+              "created_at": "2026-07-24T06:41:13.349Z",
+              "idempotency_key": null
+            },
+            {
+              "id": "6797c204-8a70-4772-be0f-6dd775b6d522",
+              "shipment_id": "25742fbc-be11-472c-ada3-bb4482064159",
+              "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+              "status": "delivered",
+              "event_time": "2026-07-24T06:41:16.189Z",
+              "location": null,
+              "note": null,
+              "source": "seller_panel",
+              "created_at": "2026-07-24T06:41:16.187Z",
+              "idempotency_key": null
+            }
+          ],
+          "sellerId": "6a5f560b035a5eb5c69c847d",
+          "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+          "orderItemIds": ["15abee3b-eddb-4f9c-bf23-961f8f01b731"]
+        }
+      ],
+      "sellerFulfillmentGroups": [
+        {
+          "sellerId": "6a5f560b035a5eb5c69c847d",
+          "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+          "sellerName": "Vihan Footwear",
+          "organizationSnapshot": {
+            "pan": "ABCDE1122F",
+            "gstin": "27ABCDE1234F1Z2",
+            "sellerId": "6a5f560b035a5eb5c69c847d",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "ABCDE1122F",
+              "gstin": "27ABCDE1234F1Z2",
+              "state": "Madhya Pradesh"
+            },
+            "businessType": "individual",
+            "goLiveStatus": "live",
+            "supportEmail": "ittu@gmail.com",
+            "supportPhone": "6969696969",
+            "pickupAddress": {
+              "city": "indore",
+              "line1": "Warehouse No. 12, Scheme No. 54",
+              "line2": "Near C21 Mall",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "452010"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "indore",
+              "line1": "145, MG Road",
+              "line2": "Near Vijay Nagar Square",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "452010"
+            },
+            "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Madhya Pradesh",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Vihan Footwear",
+            "legalBusinessName": "Vihan Footwear",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          },
+          "itemIds": ["15abee3b-eddb-4f9c-bf23-961f8f01b731"],
+          "orderItemIds": ["15abee3b-eddb-4f9c-bf23-961f8f01b731"],
+          "shipmentIds": ["25742fbc-be11-472c-ada3-bb4482064159"],
+          "itemCount": 1,
+          "quantity": 1,
+          "deliveryStatus": "delivered",
+          "shipmentStatus": "delivered",
+          "expectedDeliveryAt": null,
+          "latestTrackingEvent": {
+            "id": "6797c204-8a70-4772-be0f-6dd775b6d522",
+            "shipment_id": "25742fbc-be11-472c-ada3-bb4482064159",
+            "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+            "status": "delivered",
+            "event_time": "2026-07-24T06:41:16.189Z",
+            "location": null,
+            "note": null,
+            "source": "seller_panel",
+            "created_at": "2026-07-24T06:41:16.187Z",
+            "idempotency_key": null
+          },
+          "returnLifecycle": {
+            "status": null,
+            "paymentStatus": "captured",
+            "refundedAmount": 0,
+            "returnedQuantity": 0,
+            "openReturnCount": 0,
+            "completedReturnCount": 0,
+            "returnIds": [],
+            "updatedAt": null
+          }
+        },
+        {
+          "sellerId": "6a5f5587126d3e552c899abd",
+          "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+          "sellerName": "Neha Kapoor Enterprises",
+          "organizationSnapshot": {
+            "pan": "MDHDE1234F",
+            "gstin": "27ABCDE1234F1Z5",
+            "sellerId": "6a5f5587126d3e552c899abd",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "MDHDE1234F",
+              "gstin": "27ABCDE1234F1Z5",
+              "state": "Maharashtra"
+            },
+            "businessType": "proprietorship",
+            "goLiveStatus": "ready",
+            "supportEmail": "neha.business2026@gmail.com",
+            "supportPhone": "9988776655",
+            "pickupAddress": {
+              "city": "Pune",
+              "line1": "Warehouse No. 12, Industrial Estate",
+              "line2": "Hadapsar",
+              "state": "Maharashtra",
+              "country": "India",
+              "postalCode": "411028"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "Pune",
+              "line1": "101, Shree Plaza",
+              "line2": "MG Road",
+              "state": "Maharashtra",
+              "country": "India",
+              "postalCode": "411001"
+            },
+            "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Maharashtra",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Neha Kapoor Enterprises",
+            "legalBusinessName": "Neha Kapoor Enterprises",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          },
+          "itemIds": ["44fc0353-2d51-4a6f-b359-1e7ef5baf335"],
+          "orderItemIds": ["44fc0353-2d51-4a6f-b359-1e7ef5baf335"],
+          "shipmentIds": ["cceff806-53fc-496a-8795-fefff0209c88"],
+          "itemCount": 1,
+          "quantity": 1,
+          "deliveryStatus": "initiated",
+          "shipmentStatus": "initiated",
+          "expectedDeliveryAt": null,
+          "latestTrackingEvent": {
+            "id": "dedabcee-3cdf-4cbe-bb5a-e831918ff67e",
+            "shipment_id": "cceff806-53fc-496a-8795-fefff0209c88",
+            "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+            "status": "initiated",
+            "event_time": "2026-07-24T06:39:26.413Z",
+            "location": null,
+            "note": "Shipment created for order order_created",
+            "source": "order_status_sync",
+            "created_at": "2026-07-24T06:39:26.338Z",
+            "idempotency_key": "order-shipment:ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f5587126d3e552c899abd:7fa06e04-18c6-476e-9690-6e45f95d90be:initiated"
+          },
+          "returnLifecycle": {
+            "status": null,
+            "paymentStatus": "captured",
+            "refundedAmount": 0,
+            "returnedQuantity": 0,
+            "openReturnCount": 0,
+            "completedReturnCount": 0,
+            "returnIds": [],
+            "updatedAt": null
+          }
+        },
+        {
+          "sellerId": "6a5f59b8035a5eb5c69c84c3",
+          "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+          "sellerName": "Shivani Rudraghate",
+          "organizationSnapshot": {
+            "pan": "ABCDE1234O",
+            "gstin": "22AAAAA0000A1Z5",
+            "sellerId": "6a5f59b8035a5eb5c69c84c3",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "ABCDE1234O",
+              "gstin": "22AAAAA0000A1Z5",
+              "state": "Odisha"
+            },
+            "businessType": "proprietorship",
+            "goLiveStatus": "ready",
+            "supportEmail": "aditi@gmail.com",
+            "supportPhone": "7879057867",
+            "pickupAddress": {
+              "city": "Jammu",
+              "line1": "24, Residency Road, Lal Chowk Srinagar, Jammu & Kashmir – 190001 India",
+              "line2": "",
+              "state": "Jammu and Kashmir",
+              "country": "India",
+              "postalCode": "180001"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "Bhubaneswar",
+              "line1": "Fashion Avenue Boutique Shop No. 12, Crystal Plaza M.P. Nagar, Zone-II Odisha",
+              "line2": "",
+              "state": "Odisha",
+              "country": "India",
+              "postalCode": "751001"
+            },
+            "organizationId": "d5a41054-9b74-4889-aa63-cd056a0883f1",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Odisha",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Shivani Rudraghate",
+            "legalBusinessName": "Shivani Rudraghate",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          },
+          "itemIds": ["768dc858-441d-4388-9221-892bbe8658b2"],
+          "orderItemIds": ["768dc858-441d-4388-9221-892bbe8658b2"],
+          "shipmentIds": ["cd4cf896-be46-49e2-9ced-9153d025fac4"],
+          "itemCount": 1,
+          "quantity": 1,
+          "deliveryStatus": "in_transit",
+          "shipmentStatus": "in_transit",
+          "expectedDeliveryAt": null,
+          "latestTrackingEvent": {
+            "id": "24da6a3c-2f52-4c57-86de-cadbfaf0c24f",
+            "shipment_id": "cd4cf896-be46-49e2-9ced-9153d025fac4",
+            "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+            "status": "in_transit",
+            "event_time": "2026-07-24T06:42:03.172Z",
+            "location": null,
+            "note": null,
+            "source": "seller_panel",
+            "created_at": "2026-07-24T06:42:03.170Z",
+            "idempotency_key": null
+          },
+          "returnLifecycle": {
+            "status": null,
+            "paymentStatus": "captured",
+            "refundedAmount": 0,
+            "returnedQuantity": 0,
+            "openReturnCount": 0,
+            "completedReturnCount": 0,
+            "returnIds": [],
+            "updatedAt": null
+          }
+        },
+        {
+          "sellerId": "6a5f55a9126d3e552c899ae7",
+          "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+          "sellerName": "Krishna Electronics",
+          "organizationSnapshot": {
+            "pan": "ABCDE1234F",
+            "gstin": "27AAACR5055K1Z7",
+            "sellerId": "6a5f55a9126d3e552c899ae7",
+            "kycStatus": "verified",
+            "taxSettings": {
+              "pan": "ABCDE1234F",
+              "gstin": "27AAACR5055K1Z7",
+              "state": "Madhya Pradesh"
+            },
+            "businessType": "individual",
+            "goLiveStatus": "live",
+            "supportEmail": "krishnaelectronics@gmail.com",
+            "supportPhone": "8085662512",
+            "pickupAddress": {
+              "city": "Vidisha",
+              "line1": "Maa hospital road mohangiri",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "464001"
+            },
+            "approvalStatus": "approved",
+            "billingAddress": {
+              "city": "Vidisha",
+              "line1": "Ramlila Road Vidisha",
+              "line2": "",
+              "state": "Madhya Pradesh",
+              "country": "India",
+              "postalCode": "464001"
+            },
+            "organizationId": "8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae",
+            "payoutSettings": {
+              "payoutSchedule": "weekly"
+            },
+            "invoiceSettings": {
+              "state": "Madhya Pradesh",
+              "invoicePrefix": "INV"
+            },
+            "storeDisplayName": "Krishna Electronics",
+            "legalBusinessName": "Krishna Electronics",
+            "registrationNumber": null,
+            "bankVerificationStatus": "verified"
+          },
+          "itemIds": ["f3b840a7-42d5-4792-aac0-2028b655b0e2"],
+          "orderItemIds": ["f3b840a7-42d5-4792-aac0-2028b655b0e2"],
+          "shipmentIds": ["0f004db7-a95d-4dff-9b9e-af6af6b40c0b"],
+          "itemCount": 1,
+          "quantity": 1,
+          "deliveryStatus": "initiated",
+          "shipmentStatus": "initiated",
+          "expectedDeliveryAt": null,
+          "latestTrackingEvent": {
+            "id": "4ed48351-184e-4a11-bc49-edf6f060749f",
+            "shipment_id": "0f004db7-a95d-4dff-9b9e-af6af6b40c0b",
+            "order_id": "ff0284cc-a334-4d4b-ae69-1457fa6a437d",
+            "status": "initiated",
+            "event_time": "2026-07-24T06:39:26.925Z",
+            "location": null,
+            "note": "Shipment created for order order_created",
+            "source": "order_status_sync",
+            "created_at": "2026-07-24T06:39:26.853Z",
+            "idempotency_key": "order-shipment:ff0284cc-a334-4d4b-ae69-1457fa6a437d:6a5f55a9126d3e552c899ae7:8e8d1c8e-2d46-448d-a0db-094f6eb2d2ae:initiated"
+          },
+          "returnLifecycle": {
+            "status": null,
+            "paymentStatus": "captured",
+            "refundedAmount": 0,
+            "returnedQuantity": 0,
+            "openReturnCount": 0,
+            "completedReturnCount": 0,
+            "returnIds": [],
+            "updatedAt": null
+          }
+        }
+      ],
+      "cancellations": []
+    }
+  },
+  "message": "Order details fetched successfully"
+}

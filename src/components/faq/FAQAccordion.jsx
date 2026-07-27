@@ -64,7 +64,7 @@ export default function FAQAccordion({ faqs = [] }) {
             );
           })
         ) : (
-          <p className="py-10 text-center  text-muted">No FAQs found.</p>
+          <p className="py-10 text-center  text-muted">No FAQs Found.</p>
         )}
       </div>
     </section>

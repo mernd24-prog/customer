@@ -67,7 +67,7 @@ export default function PriceRangeInput({
           onClick={clear}
           className=" text-xs text-red-500 underline-offset-2 hover:underline"
         >
-          Clear price filter
+          Clear Price Filter
         </button>
       )}
     </div>

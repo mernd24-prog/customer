@@ -154,8 +154,8 @@ export function PriceRangeFilter({
 }) {
   const applyTimerRef = useRef(null);
   const activeThumbRef = useRef(null);
-  const safeMin = min ?? minLimit ?? 0;
-  const safeMax = max ?? maxLimit ?? 150000;
+  const safeMin = min !== "" && min != null ? min : (minLimit ?? 0);
+  const safeMax = max !== "" && max != null ? max : (maxLimit ?? 150000);
   const rangeValuesRef = useRef({
     min: Number(safeMin),
     max: Number(safeMax),
@@ -164,13 +164,13 @@ export function PriceRangeFilter({
   const [localMax, setLocalMax] = useState(Number(safeMax));
 
   useEffect(() => {
-    const nextMin = min ?? minLimit ?? 0;
+    const nextMin = min !== "" && min != null ? min : (minLimit ?? 0);
     rangeValuesRef.current.min = Number(nextMin);
     setLocalMin(Number(nextMin));
   }, [min, minLimit]);
 
   useEffect(() => {
-    const nextMax = max ?? maxLimit ?? 150000;
+    const nextMax = max !== "" && max != null ? max : (maxLimit ?? 150000);
     rangeValuesRef.current.max = Number(nextMax);
     setLocalMax(Number(nextMax));
   }, [max, maxLimit]);
@@ -397,7 +397,7 @@ export function PriceRangeFilter({
           onClick={clear}
           className="block mx-auto text-xs font-semibold text-[#CE9F2D] hover:underline"
         >
-          Clear price filter
+          Clear Price Filter
         </button>
       )}
     </form>
@@ -547,7 +547,7 @@ export function OptionFilter({
         })}
         {!visibleOptions.length && (
           <p className="py-2 text-sm font-medium text-[#6f7480]">
-            No matching options
+            No Matching Options
           </p>
         )}
       </div>
@@ -570,7 +570,7 @@ export function CheckboxListFilter({
   options = [],
   selected = [],
   onChange,
-  emptyText = "No options available",
+  emptyText = "No Options Available",
 }) {
   const selectedValues = Array.isArray(selected)
     ? selected.map(String)
@@ -723,7 +723,7 @@ export default function ProductFilterSidebar({
             disabled={!onClearAll}
             className="inline-flex h-[52px] shrink-0 items-center justify-center rounded-[14px]   text-[14px] font-semibold text-[#5960B8]  sm:text-[16px]"
           >
-            Clear all
+            Clear All
           </button>
         </div>
 

@@ -332,10 +332,10 @@ export default function AdminCatalogManagementPage() {
     if (active.key === "category") {
       return (
         <>
-          <input className="rounded border p-2" placeholder="Category title" value={form.title} onChange={(e) => setForm((v) => ({ ...v, title: e.target.value, categoryKey: v.categoryKey || slugify(e.target.value) }))} />
-          <input className="rounded border p-2" placeholder="Category key" value={form.categoryKey} onChange={(e) => setField("categoryKey", e.target.value)} />
+          <input className="rounded border p-2" placeholder="Category Title" value={form.title} onChange={(e) => setForm((v) => ({ ...v, title: e.target.value, categoryKey: v.categoryKey || slugify(e.target.value) }))} />
+          <input className="rounded border p-2" placeholder="Category Key" value={form.categoryKey} onChange={(e) => setField("categoryKey", e.target.value)} />
           <select className="rounded border p-2" value={form.parentKey} onChange={(e) => setField("parentKey", e.target.value)}>
-            <option value="">No parent</option>
+            <option value="">No Parent</option>
             {masters.categories.filter((item) => item.categoryKey !== form.categoryKey).map((item) => (
               <option key={item.categoryKey} value={item.categoryKey}>{item.title}</option>
             ))}
@@ -360,7 +360,7 @@ export default function AdminCatalogManagementPage() {
                           <option value="text">Text</option>
                           <option value="number">Number</option>
                           <option value="select">Select</option>
-                          <option value="multi_select">Multi select</option>
+                          <option value="multi_select">Multi Select</option>
                           <option value="boolean">Boolean</option>
                           <option value="date">Date</option>
                         </select>
@@ -374,7 +374,7 @@ export default function AdminCatalogManagementPage() {
                         </label>
                         <label className="flex items-center gap-2 text-xs text-slate-600">
                           <input type="checkbox" checked={selected.isVariantAttribute === true} onChange={(e) => updateCategoryAttribute(key, { isVariantAttribute: e.target.checked })} />
-                          Variant axis
+                          Variant Axis
                         </label>
                       </div>
                     )}
@@ -382,7 +382,7 @@ export default function AdminCatalogManagementPage() {
                 );
               })}
               {!masters.options.length && (
-                <p className="text-xs text-slate-500">Create attributes in the Attributes tab first.</p>
+                <p className="text-xs text-slate-500">Create Attributes in the Attributes Tab First.</p>
               )}
             </div>
           </div>
@@ -393,7 +393,7 @@ export default function AdminCatalogManagementPage() {
     if (active.key === "brand") {
       return (
         <>
-          <input className="rounded border p-2" placeholder="Brand name" value={form.name} onChange={(e) => setForm((v) => ({ ...v, name: e.target.value, slug: v.slug || slugify(e.target.value) }))} />
+          <input className="rounded border p-2" placeholder="Brand Name" value={form.name} onChange={(e) => setForm((v) => ({ ...v, name: e.target.value, slug: v.slug || slugify(e.target.value) }))} />
           <input className="rounded border p-2" placeholder="Slug" value={form.slug} onChange={(e) => setField("slug", e.target.value)} />
           <textarea className="rounded border p-2" placeholder="Description" value={form.description} onChange={(e) => setField("description", e.target.value)} />
           <input className="rounded border p-2" placeholder="Logo URL" value={form.logo} onChange={(e) => setField("logo", e.target.value)} />
@@ -404,13 +404,13 @@ export default function AdminCatalogManagementPage() {
     if (active.key === "family") {
       return (
         <>
-          <input className="rounded border p-2" placeholder="Family title" value={form.title} onChange={(e) => setForm((v) => ({ ...v, title: e.target.value, familyCode: v.familyCode || slugify(e.target.value) }))} />
-          <input className="rounded border p-2" placeholder="Family code" value={form.familyCode} onChange={(e) => setField("familyCode", e.target.value)} />
+          <input className="rounded border p-2" placeholder="Family Title" value={form.title} onChange={(e) => setForm((v) => ({ ...v, title: e.target.value, familyCode: v.familyCode || slugify(e.target.value) }))} />
+          <input className="rounded border p-2" placeholder="Family Code" value={form.familyCode} onChange={(e) => setField("familyCode", e.target.value)} />
           <select className="rounded border p-2" value={form.category} onChange={(e) => setField("category", e.target.value)}>
-            <option value="">Select category</option>
+            <option value="">Select Category</option>
             {masters.categories.map((item) => <option key={item.categoryKey} value={item.categoryKey}>{item.title}</option>)}
           </select>
-          <input className="rounded border p-2" placeholder="Seller ID (platform by default)" value={form.sellerId} onChange={(e) => setField("sellerId", e.target.value)} />
+          <input className="rounded border p-2" placeholder="Seller Id (Platform by Default)" value={form.sellerId} onChange={(e) => setField("sellerId", e.target.value)} />
           <div className="rounded border border-slate-200 p-3">
             <p className="mb-2 text-xs font-semibold uppercase text-slate-500">Variant Axes</p>
             <div className="flex flex-wrap gap-2">
@@ -433,15 +433,15 @@ export default function AdminCatalogManagementPage() {
         </>
       );
     }
-    if (active.key === "dimension") return <input className="rounded border p-2" placeholder="Dimension value" value={form.dimensions_value} onChange={(e) => setField("dimensions_value", e.target.value)} />;
+    if (active.key === "dimension") return <input className="rounded border p-2" placeholder="Dimension Value" value={form.dimensions_value} onChange={(e) => setField("dimensions_value", e.target.value)} />;
     if (active.key === "hsn") {
       return (
         <>
-          <input className="rounded border p-2" placeholder="HSN code" value={form.code} onChange={(e) => setField("code", e.target.value)} />
+          <input className="rounded border p-2" placeholder="Hsn Code" value={form.code} onChange={(e) => setField("code", e.target.value)} />
           <input className="rounded border p-2" placeholder="Description" value={form.description} onChange={(e) => setField("description", e.target.value)} />
-          <input className="rounded border p-2" type="number" placeholder="GST rate" value={form.gstRate} onChange={(e) => setField("gstRate", e.target.value)} />
+          <input className="rounded border p-2" type="number" placeholder="Gst Rate" value={form.gstRate} onChange={(e) => setField("gstRate", e.target.value)} />
           <select className="rounded border p-2" value={form.category} onChange={(e) => setField("category", e.target.value)}>
-            <option value="">Any category</option>
+            <option value="">Any Category</option>
             {masters.categories.map((item) => <option key={item.categoryKey} value={item.categoryKey}>{item.title}</option>)}
           </select>
         </>
@@ -450,8 +450,8 @@ export default function AdminCatalogManagementPage() {
     if (active.key === "warranty") {
       return (
         <>
-          <input className="rounded border p-2" placeholder="Period, e.g. 12 months" value={form.period} onChange={(e) => setField("period", e.target.value)} />
-          <input className="rounded border p-2" type="number" placeholder="Duration months" value={form.durationMonths} onChange={(e) => setField("durationMonths", e.target.value)} />
+          <input className="rounded border p-2" placeholder="Period, E.g. 12 Months" value={form.period} onChange={(e) => setField("period", e.target.value)} />
+          <input className="rounded border p-2" type="number" placeholder="Duration Months" value={form.durationMonths} onChange={(e) => setField("durationMonths", e.target.value)} />
           <textarea className="rounded border p-2" placeholder="Terms" value={form.terms} onChange={(e) => setField("terms", e.target.value)} />
         </>
       );
@@ -459,21 +459,21 @@ export default function AdminCatalogManagementPage() {
     if (active.key === "batch") {
       return (
         <>
-          <input className="rounded border p-2" placeholder="Batch code" value={form.batchCode} onChange={(e) => setField("batchCode", e.target.value)} />
-          <input className="rounded border p-2" type="number" placeholder="Manufacture date timestamp" value={form.manufactureDate} onChange={(e) => setField("manufactureDate", e.target.value)} />
-          <input className="rounded border p-2" type="number" placeholder="Expiry date timestamp" value={form.expiryDate} onChange={(e) => setField("expiryDate", e.target.value)} />
+          <input className="rounded border p-2" placeholder="Batch Code" value={form.batchCode} onChange={(e) => setField("batchCode", e.target.value)} />
+          <input className="rounded border p-2" type="number" placeholder="Manufacture Date Timestamp" value={form.manufactureDate} onChange={(e) => setField("manufactureDate", e.target.value)} />
+          <input className="rounded border p-2" type="number" placeholder="Expiry Date Timestamp" value={form.expiryDate} onChange={(e) => setField("expiryDate", e.target.value)} />
         </>
       );
     }
     if (active.key === "option") {
       return (
         <>
-          <input className="rounded border p-2" placeholder="Option name, e.g. Color" value={form.name} onChange={(e) => setForm((v) => ({ ...v, name: e.target.value, slug: v.slug || slugify(e.target.value).replace(/-/g, "_") }))} />
+          <input className="rounded border p-2" placeholder="Option Name, E.g. Color" value={form.name} onChange={(e) => setForm((v) => ({ ...v, name: e.target.value, slug: v.slug || slugify(e.target.value).replace(/-/g, "_") }))} />
           <input className="rounded border p-2" placeholder="Slug" value={form.slug} onChange={(e) => setField("slug", e.target.value)} />
           <select className="rounded border p-2" value={form.displayType} onChange={(e) => setField("displayType", e.target.value)}>
             <option value="button">Button</option>
             <option value="dropdown">Dropdown</option>
-            <option value="color_swatch">Color swatch</option>
+            <option value="color_swatch">Color Swatch</option>
             <option value="radio">Radio</option>
             <option value="thumbnail">Thumbnail</option>
           </select>
@@ -484,12 +484,12 @@ export default function AdminCatalogManagementPage() {
     return (
       <>
         <select className="rounded border p-2" value={form.optionId} onChange={(e) => setField("optionId", e.target.value)}>
-          <option value="">Select product option</option>
+          <option value="">Select Product Option</option>
           {masters.options.map((item) => <option key={idOf(item)} value={idOf(item)}>{item.name}</option>)}
         </select>
-        <input className="rounded border p-2" placeholder="Value name, e.g. Black" value={form.name} onChange={(e) => setForm((v) => ({ ...v, name: e.target.value, valueCode: v.valueCode || slugify(e.target.value).replace(/-/g, "_") }))} />
-        <input className="rounded border p-2" placeholder="Value code" value={form.valueCode} onChange={(e) => setField("valueCode", e.target.value)} />
-        <input className="rounded border p-2" placeholder="Color hex (#111111)" value={form.colorHex} onChange={(e) => setField("colorHex", e.target.value)} />
+        <input className="rounded border p-2" placeholder="Value Name, E.g. Black" value={form.name} onChange={(e) => setForm((v) => ({ ...v, name: e.target.value, valueCode: v.valueCode || slugify(e.target.value).replace(/-/g, "_") }))} />
+        <input className="rounded border p-2" placeholder="Value Code" value={form.valueCode} onChange={(e) => setField("valueCode", e.target.value)} />
+        <input className="rounded border p-2" placeholder="Color Hex (#111111)" value={form.colorHex} onChange={(e) => setField("colorHex", e.target.value)} />
         <input className="rounded border p-2" placeholder="Image URL" value={form.imageUrl} onChange={(e) => setField("imageUrl", e.target.value)} />
       </>
     );
@@ -500,10 +500,10 @@ export default function AdminCatalogManagementPage() {
       <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
         <p className="font-semibold">Single Attribute Flow</p>
         <ol className="mt-2 list-decimal space-y-1 pl-5">
-          <li>Create attributes once in the Attributes tab.</li>
-          <li>Add selectable values in Attribute Values.</li>
-          <li>Select those attributes inside Categories and Families.</li>
-          <li>Create products from Product Management using the same attributes.</li>
+          <li>Create Attributes Once in the Attributes Tab.</li>
+          <li>Add Selectable Values in Attribute Values.</li>
+          <li>Select Those Attributes Inside Categories and Families.</li>
+          <li>Create Products From Product Management Using the Same Attributes.</li>
         </ol>
       </div>
 

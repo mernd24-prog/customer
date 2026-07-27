@@ -89,7 +89,7 @@ export default function ProductResultsLayout({
                 emptyText={emptyText}
               >
                 <h4 className="text-xl md:text-[24px] mb-6 lg:mb-12">
-                  Showing {rangeStart}-{rangeEnd} of {totalCount} results
+                  Showing {rangeStart}-{rangeEnd} Of {totalCount} Results
                 </h4>
                 <ProductGrid
                   products={products}

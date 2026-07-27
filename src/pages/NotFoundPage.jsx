@@ -6,7 +6,7 @@ export default function NotFoundPage() {
   return (
     <>
       <Seo
-        title="Page not found | Sam Global"
+        title="Page Not Found ||| Sam Global"
         description="The page you're looking for doesn't exist."
         robots="noindex,follow"
       />
@@ -32,14 +32,14 @@ export default function NotFoundPage() {
               className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-[var(--customer-gold)] bg-[var(--customer-gold)] px-5 py-2.5 text-[13px] leading-[20px] tracking-[0.5px] font-semibold text-[var(--customer-navy)] shadow-sm transition-all duration-300 hover:border-[var(--customer-gold-dark)] hover:bg-[var(--customer-gold-dark)]"
             >
               <Home size={17} />
-              Go to home
+              Go to Home
             </Link>
             <Link
               to="/categories"
               className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-[var(--customer-border)] bg-white px-5 py-2.5 text-[13px] leading-[20px] tracking-[0.5px] font-semibold text-[var(--customer-navy)] shadow-sm transition-all duration-300 hover:border-[var(--customer-gold)] hover:text-[var(--customer-gold-dark)]"
             >
               <Grid2X2 size={17} />
-              Browse categories
+              Browse Categories
             </Link>
           </div>
         </div>

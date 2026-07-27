@@ -27,7 +27,7 @@ export default function MothersDayCarousel({
         <div className=" flex flex-col items-center text-center xl:items-start xl:text-left text-white p-2 2xl:p-5">
           <img
             src="/image/png/backgroundImg.png"
-            alt="decorative ring"
+            alt="Decorative Ring"
             aria-hidden="true"
             className="absolute top-0 left-0 lg:block hidden"
           />
@@ -45,8 +45,8 @@ export default function MothersDayCarousel({
             )}
           </h2>
           <p className="relative z-10 mt-4 mb-8 text-sm md:text-base text-white/80 max-w-md">
-            Discover thoughtfully curated gifts for every occasion — from
-            birthdays to anniversaries and everything in between.
+            Discover Thoughtfully Curated Gifts for Every Occasion — From
+            Birthdays to Anniversaries and Everything in Between.
           </p>
           <SolidLargeButton
             onClick={onCtaClick}

@@ -24,10 +24,10 @@ export default class AppErrorBoundary extends React.Component {
         <main className="flex min-h-screen items-center justify-center bg-cream px-4">
           <div className="max-w-md text-center">
             <h1 className=" text-2xl font-bold text-ink">
-              Something went wrong
+              Something Went Wrong
             </h1>
             <p className="mt-2  text-sm text-muted">
-              We hit an unexpected issue while rendering this page.
+              We Hit an Unexpected Issue While Rendering This Page.
             </p>
             <button
               type="button"

@@ -26,7 +26,7 @@ export default function QuantitySelector({
           onClick={onDecrease}
           disabled={disabled || quantity <= 1}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1B1D60] text-2xl font-light leading-none text-white disabled:cursor-not-allowed disabled:opacity-50"
-          aria-label="Decrease quantity"
+          aria-label="Decrease Quantity"
         >
           −
         </button>
@@ -43,7 +43,7 @@ export default function QuantitySelector({
           }}
           disabled={disableIncrease}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1B1D60] text-2xl font-light leading-none text-white disabled:cursor-not-allowed disabled:opacity-50"
-          aria-label={increaseDisabledLabel || "Increase quantity"}
+          aria-label={increaseDisabledLabel || "Increase Quantity"}
           title={increaseDisabledLabel || undefined}
         >
           +

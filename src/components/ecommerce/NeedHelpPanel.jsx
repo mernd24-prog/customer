@@ -6,6 +6,7 @@ export default function NeedHelpPanel({
   title = "Need Help ?",
   items = [],
   className = "",
+  href,
   sticky = false,
   headerStyle = "plain",
   expandedIndex: controlledExpandedIndex,
@@ -15,8 +16,12 @@ export default function NeedHelpPanel({
   const [internalExpandedIndex, setInternalExpandedIndex] = useState(null);
 
   const isControlled = controlledExpandedIndex !== undefined;
-  const expandedIndex = isControlled ? controlledExpandedIndex : internalExpandedIndex;
-  const setExpandedIndex = isControlled ? onExpandedIndexChange : setInternalExpandedIndex;
+  const expandedIndex = isControlled
+    ? controlledExpandedIndex
+    : internalExpandedIndex;
+  const setExpandedIndex = isControlled
+    ? onExpandedIndexChange
+    : setInternalExpandedIndex;
 
   return (
     <aside
@@ -24,10 +29,10 @@ export default function NeedHelpPanel({
         h-fit w-full
         overflow-hidden
         rounded-xl
-        border border-[#E7D9B8]
+        border  border-[#E7D9B8]
         bg-white
         ${sticky ? "lg:sticky lg:top-28" : ""}
-        ${className}
+        ${className} 
       `}
     >
       {/* Header */}
@@ -50,11 +55,12 @@ export default function NeedHelpPanel({
       </div>
 
       {/* Items */}
+      <a></a>
       <div
         className={
           hasColoredHeader
-            ? "divide-y divide-[#EFE5D2] px-5"
-            : "mx-6 divide-y divide-[#EFE5D2]"
+            ? "divide-y  divide-[#EFE5D2] px-5"
+            : "mx-6 divide-y divide-[#EFE5D2] "
         }
       >
         {items.map((item, index) => {
@@ -65,7 +71,7 @@ export default function NeedHelpPanel({
               {/* Icon */}
               <span
                 className="
-                  flex h-11 w-11 shrink-0
+                  flex h-11 w-11 shrink-0 
                   items-center justify-center
                   rounded-full
                   border border-[#1B1D6099]
@@ -77,7 +83,7 @@ export default function NeedHelpPanel({
               </span>
 
               {/* Text */}
-              <span className="min-w-0 flex-1 text-left">
+              <span className="min-w-0  flex-1 text-left">
                 <span
                   className="
                     block
@@ -86,6 +92,7 @@ export default function NeedHelpPanel({
                     font-semibold
                     leading-5
                     text-[#1B1D60]
+                    
                   "
                 >
                   {item.title}
@@ -133,7 +140,9 @@ export default function NeedHelpPanel({
               {item.expandableContent ? (
                 <button
                   type="button"
-                  onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+                  onClick={() =>
+                    setExpandedIndex(expandedIndex === index ? null : index)
+                  }
                   className="flex min-w-0 items-center gap-3 py-5 focus:outline-none w-full"
                 >
                   {content}
@@ -150,7 +159,9 @@ export default function NeedHelpPanel({
               {item.expandableContent && (
                 <div
                   className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                    expandedIndex === index ? "max-h-[1000px] opacity-100 pb-5" : "max-h-0 opacity-0"
+                    expandedIndex === index
+                      ? "max-h-[1000px] opacity-100 pb-5"
+                      : "max-h-0 opacity-0"
                   }`}
                 >
                   {item.expandableContent}

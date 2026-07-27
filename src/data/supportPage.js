@@ -1,18 +1,17 @@
 import { MessageSquare, Phone, Mail, Ticket } from "lucide-react";
 
 export const SUPPORT_CONTACT_ITEMS = [
- 
   {
     icon: Phone,
     title: "+91 1234567890",
     description: "Call Us",
-    path: "#",
+    path: "/contact-us",
   },
   {
     icon: Mail,
     title: "support@samglobal.com",
     description: "Email Support",
-    path: "#",
+    path: "/contact-us",
   },
   {
     icon: Ticket,
@@ -50,7 +49,7 @@ export const SUPPORT_FALLBACK_FAQS = [
     description:
       "You can cancel your order directly from the My Orders section of your profile before the item is shipped.",
   },
-  { 
+  {
     title: "When will i receive my refund ?",
     description:
       "Refunds are processed within 5-7 business days after we receive and inspect the returned item.",
@@ -94,14 +93,9 @@ export const SUPPORT_FALLBACK_TOPICS = [
     path: "/payments",
   },
   {
-    title: "Seller Support",
-    image: "/image/png/Seller-support.png",
-    path: "/orders",
-  },
-  {
     title: "Rewards Help",
     image: "/image/png/Rewards-help.png",
-    path: "/contact",
+    path: "#",
   },
   {
     title: "Account Security",

@@ -48,7 +48,7 @@ function ProductGridPage({
           />
         ) : (
           <EmptyState
-            title="No products available"
+            title="No Products Available"
             description="Check back later or explore other sections."
           />
         )}

@@ -110,21 +110,21 @@ export default function ProfileTab({ user, avatarFile }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           id="firstName"
-          label="First name"
+          label="First Name"
           registration={register("firstName")}
           error={errors.firstName}
           autoComplete="given-name"
-          placeholder="Enter first name"
+          placeholder="Enter First Name"
           disabled={loading}
         />
 
         <FormField
           id="lastName"
-          label="Last name"
+          label="Last Name"
           registration={register("lastName")}
           error={errors.lastName}
           autoComplete="family-name"
-          placeholder="Enter last name" 
+          placeholder="Enter Last Name" 
           disabled={loading}
         />
       </div>
@@ -150,7 +150,7 @@ export default function ProfileTab({ user, avatarFile }) {
         className="w-full text-white sm:w-auto font-semibold "
         size="xl"
       >
-        Save profile
+        Save Profile
       </Button>
     </form>
   );

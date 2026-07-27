@@ -515,15 +515,18 @@ export default function DealsPage() {
         />
       ),
     },
-    dealFacets.price?.min != null && dealFacets.price?.max != null && {
+    (dealFacets.priceStats?.min ?? dealFacets.price?.min) != null &&
+      (dealFacets.priceStats?.max ?? dealFacets.price?.max) != null &&
+      (dealFacets.priceStats?.max ?? dealFacets.price?.max) > 0 &&
+      (dealFacets.priceStats?.min ?? dealFacets.price?.min) < (dealFacets.priceStats?.max ?? dealFacets.price?.max) && {
       key: "price",
       title: "Price Range",
       content: (
         <PriceRangeFilter
           min={searchParams.get("minPrice")}
           max={searchParams.get("maxPrice")}
-          minLimit={dealFacets.price.min}
-          maxLimit={dealFacets.price.max}
+          minLimit={dealFacets.priceStats?.min ?? dealFacets.price?.min}
+          maxLimit={dealFacets.priceStats?.max ?? dealFacets.price?.max}
           onChange={handlePriceChange}
         />
       ),
@@ -714,7 +717,7 @@ export default function DealsPage() {
           <CollectionToolbar
             countText={`${pageInfo.total} deals`}
             sortValue={searchParams.get("sort") || "ending_soon"}
-            sortOptions={SORT_OPTIONS}
+            sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
             onOpenFilters={() => setSidebarOpen(true)}
           />

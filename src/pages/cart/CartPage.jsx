@@ -67,33 +67,54 @@ function adaptItemForCard(item, fullProduct = null) {
   const productId = item.productId?._id || getProductId(item.productId || {});
   const variantKey = item.variantId || item.variantSku || "";
   const baseTitle = getProductTitle(product, item.title || "Product");
-  const title = item.variantTitle && item.variantTitle !== "Default Title" && item.variantTitle !== baseTitle
-    ? `${baseTitle} - ${item.variantTitle}`
-    : baseTitle;
+  const title =
+    item.variantTitle &&
+    item.variantTitle !== "Default Title" &&
+    item.variantTitle !== baseTitle
+      ? `${baseTitle} - ${item.variantTitle}`
+      : baseTitle;
   let image =
     getProductImage(product) ||
     item.image ||
     getImageFallbackSrc(title, "cart");
-    
+
   const fallbackProduct = item.productId || {};
-  
+
   let livePrice = getProductPrice(product);
   let liveMrp = getProductMrp(product);
-  
+
   const variantId = item.variantId || item.variantSku;
   if (variantId && product?.variants?.length) {
-    const variant = product.variants.find(v => v._id === variantId || v.id === variantId || v.sku === variantId);
+    const variant = product.variants.find(
+      (v) => v._id === variantId || v.id === variantId || v.sku === variantId,
+    );
     if (variant) {
       livePrice = getVariantPrice(variant) ?? livePrice;
       liveMrp = variant.mrp ?? variant.oldPrice ?? liveMrp;
       if (variant.images?.length > 0 || variant.image || variant.imageUrl) {
-        image = getProductImage({ ...product, selectedVariant: variant }) || image;
+        image =
+          getProductImage({ ...product, selectedVariant: variant }) || image;
       }
     }
   }
 
-  let price = livePrice ?? item.price ?? item.unitPrice ?? item.unit_price ?? item.salePrice ?? getProductPrice(fallbackProduct) ?? fallbackProduct.price ?? fallbackProduct.sellingPrice ?? 0;
-  const oldPrice = liveMrp ?? item.oldPrice ?? item.mrp ?? getProductMrp(fallbackProduct) ?? fallbackProduct.mrp ?? fallbackProduct.originalPrice;
+  let price =
+    livePrice ??
+    item.price ??
+    item.unitPrice ??
+    item.unit_price ??
+    item.salePrice ??
+    getProductPrice(fallbackProduct) ??
+    fallbackProduct.price ??
+    fallbackProduct.sellingPrice ??
+    0;
+  const oldPrice =
+    liveMrp ??
+    item.oldPrice ??
+    item.mrp ??
+    getProductMrp(fallbackProduct) ??
+    fallbackProduct.mrp ??
+    fallbackProduct.originalPrice;
   const productShippingInfo =
     product.shipping && typeof product.shipping === "object"
       ? product.shipping
@@ -219,9 +240,11 @@ export default function CartPage() {
 
   useEffect(() => {
     const wishlistIds = wishlist.map(getProductId).filter(Boolean);
-    const cartItemIds = rawItems.map((item) => getProductId(item.productId || {})).filter(Boolean);
+    const cartItemIds = rawItems
+      .map((item) => getProductId(item.productId || {}))
+      .filter(Boolean);
     const allIds = Array.from(new Set([...wishlistIds, ...cartItemIds]));
-    
+
     const missingIds = allIds.filter(
       (id) => !productEntities[id] && !fetchedIdsRef.current.has(id),
     );
@@ -239,11 +262,15 @@ export default function CartPage() {
     () =>
       rawItems.map((item) => {
         const key = cartLineKey(item);
-        const productId = item.productId?._id || getProductId(item.productId || {});
+        const productId =
+          item.productId?._id || getProductId(item.productId || {});
         const fullProduct = productEntities[productId] || null;
-        
+
         return localQuantities[key] != null
-          ? adaptItemForCard({ ...item, quantity: localQuantities[key] }, fullProduct)
+          ? adaptItemForCard(
+              { ...item, quantity: localQuantities[key] },
+              fullProduct,
+            )
           : adaptItemForCard(item, fullProduct);
       }),
     [rawItems, localQuantities, productEntities],
@@ -270,8 +297,6 @@ export default function CartPage() {
     sellingSubtotal + shippingTotal - extraCoupon - extraWallet;
   const totalPayable = Math.max(0, totalBeforeTax + extraTaxPayable);
   const totalSavings = productSavings + extraCoupon + extraWallet;
-
-
 
   useEffect(() => {
     const currentItemIds = normalizeCartItemIds(
@@ -554,7 +579,7 @@ export default function CartPage() {
           >
             {!hasCartItems && !cartState.loading && (
               <EmptyState
-                title="Your cart is empty"
+                title="Your Cart is Empty"
                 description="Add some products to continue shopping."
                 actionLabel="Continue Shopping"
                 onAction={() => navigate("/products")}
@@ -568,267 +593,272 @@ export default function CartPage() {
               sidebarClass="w-full xl:w-[420px] 2xl:w-[563px] transition-[top] duration-300 ease-in-out"
               mainContent={
                 <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8">
-                {hasCartItems && (
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 text-sm font-bold text-[#2d2d2d] sm:text-[15px]">
-                      <input
-                        type="checkbox"
-                        checked={
-                          selectedItems.length === items.length &&
-                          items.length > 0
-                        }
-                        onChange={(event) =>
-                          handleSelectAll(event.target.checked)
-                        }
-                        className="h-4 w-4 rounded-[4px] border-[#A9B4D8] accent-[#3F4095]"
-                      />
-                      Select All Items
-                    </label>
-                    <span className="text-sm font-bold text-[#2d2d2d] sm:text-[15px]">
-                      {selectedItems.length}/{items.length} Items selected
-                    </span>
-                  </div>
-                )}
-
-                {hasCartItems && (
-                  <div className="rounded-[16px] border border-[#F0E6D2] bg-[#FFFDF8] sm:rounded-[20px]">
-                    {items.map((item) => (
-                      <div key={item.id}>
-                        <CartItemCard
-                          item={item}
-                          selected={normalizedSelectedItemIds.includes(
-                            normalizeCartItemId(item),
-                          )}
-                          onSelect={handleSelectItem}
-                          onIncrease={handleIncrease}
-                          onDecrease={handleDecrease}
-                          onRemove={handleRemove}
-                          onSaveForLater={handleSaveForLater}
-                          onBuyNow={handleBuyNow}
-                          showCheckbox={true}
+                  {hasCartItems && (
+                    <div className="flex items-center justify-between">
+                      <label className="flex items-center gap-2 text-sm font-bold text-[#2d2d2d] sm:text-[15px]">
+                        <input
+                          type="checkbox"
+                          checked={
+                            selectedItems.length === items.length &&
+                            items.length > 0
+                          }
+                          onChange={(event) =>
+                            handleSelectAll(event.target.checked)
+                          }
+                          className="h-4 w-4 rounded-[4px] border-[#A9B4D8] accent-[#3F4095]"
                         />
-                      </div>
-                    ))}
-                  </div>
-                )}
+                        Select All Items
+                      </label>
+                      <span className="text-sm font-bold text-[#2d2d2d] sm:text-[15px]">
+                        {selectedItems.length}/{items.length} Items selected
+                      </span>
+                    </div>
+                  )}
 
-                {hasSavedItems && (
-                  <div className=" md:border md:border-[#e4ddcf] rounded-xl bg-[#ffffff] md:p-10">
-                    <h3 className="mb-4  text-[16px] font-semibold text-ink">
-                      Wishlist (
-                      {savedForLaterItems.length + wishlist.length})
-                    </h3>
+                  {hasCartItems && (
+                    <div className="rounded-[16px] border border-[#F0E6D2] bg-[#FFFDF8] sm:rounded-[20px]">
+                      {items.map((item) => (
+                        <div key={item.id}>
+                          <CartItemCard
+                            item={item}
+                            selected={normalizedSelectedItemIds.includes(
+                              normalizeCartItemId(item),
+                            )}
+                            onSelect={handleSelectItem}
+                            onIncrease={handleIncrease}
+                            onDecrease={handleDecrease}
+                            onRemove={handleRemove}
+                            onSaveForLater={handleSaveForLater}
+                            onBuyNow={handleBuyNow}
+                            showCheckbox={true}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
-                    <div className="grid gap-3">
-                      {savedForLaterItems.map((savedItem) => {
-                        const savedItemView = adaptItemForCard(savedItem);
+                  {hasSavedItems && (
+                    <div className=" md:border md:border-[#e4ddcf] rounded-xl bg-[#ffffff] md:p-10">
+                      <h3 className="mb-4  text-[16px] font-semibold text-ink">
+                        Wishlist ({savedForLaterItems.length + wishlist.length})
+                      </h3>
 
-                        return (
-                          <div
-                            key={savedItemView.id}
-                            className={savedCardClass}
-                          >
-                            <div className={savedCardStripClass} />
-                            <div className={savedCardContentClass}>
-                              <div className={savedCardInfoClass}>
-                                <div className={savedCardImageWrapperClass}>
-                                  <img
-                                    src={savedItemView.image}
-                                    alt={savedItemView.title}
-                                    className="h-full w-full object-cover"
-                                  />
-                                </div>
+                      <div className="grid gap-3">
+                        {savedForLaterItems.map((savedItem) => {
+                          const savedItemView = adaptItemForCard(savedItem);
 
-                                <div className="min-w-0">
-                                  <p className="line-clamp-2  text-sm font-bold leading-5 text-ink sm:text-base">
-                                    {savedItemView.title}
-                                  </p>
-
-                                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
-                                    {savedItemView.variantSku ? (
-                                      <span className="rounded-full bg-cream px-2.5 py-1 font-semibold text-gray">
-                                        {savedItemView.variantSku}
-                                      </span>
-                                    ) : null}
-                                    <span>
-                                      Qty {savedItemView.quantity} x{" "}
-                                      <span className="font-semibold text-ink">
-                                        ₹
-                                        {Number(
-                                          savedItemView.price || 0,
-                                        ).toLocaleString("en-IN")}
-                                      </span>
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className={savedCardActionClass}>
-                                <p className={savedCardLabelClass}>
-                                  Saved item
-                                </p>
-                                <BrandButton
-                                  variant="secondary"
-                                  rounded
-                                  size="sm"
-                                  label="Move to cart"
-                                  className={moveToCartButtonClass}
-                                  onClick={() =>
-                                    handleMoveSavedLineToCart(savedItem)
-                                  }
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-
-                      {wishlist
-                        .map((wishlistProduct) => {
-                          const wishlistId = getProductId(wishlistProduct);
-                          const entity = productEntities[wishlistId];
-                          const isPopulated = typeof wishlistProduct === "object" && wishlistProduct !== null && wishlistProduct.title;
-
-                          // If product is deleted (we only have ID and fetch failed/not found), don't render it
-                          if (!isPopulated && !entity) return null;
-
-                          const savedProduct = buildSavedProductView(
-                            wishlistProduct,
-                            entity
-                          );
-                          
-                          return { wishlistId, savedProduct };
-                        })
-                        .filter(Boolean)
-                        .map(({ wishlistId, savedProduct }) => {
                           return (
                             <div
-                              key={wishlistId}
+                              key={savedItemView.id}
                               className={savedCardClass}
-                            onClick={() =>
-                              navigate(`/products/${savedProduct.id}`)
-                            }
-                            onKeyDown={(event) => {
-                              if (event.key === "Enter" || event.key === " ") {
-                                event.preventDefault();
-                                navigate(`/products/${savedProduct.id}`);
-                              }
-                            }}
-                            role="link"
-                            tabIndex={0}
-                          >
-                            <div className={savedCardStripClass} />
-                            <div className={savedCardContentClass}>
-                              <div className={savedCardInfoClass}>
-                                <div className={savedCardImageWrapperClass}>
-                                  <img
-                                    src={savedProduct.image}
-                                    alt={savedProduct.title}
-                                    className="h-full w-full object-cover"
-                                  />
+                            >
+                              <div className={savedCardStripClass} />
+                              <div className={savedCardContentClass}>
+                                <div className={savedCardInfoClass}>
+                                  <div className={savedCardImageWrapperClass}>
+                                    <img
+                                      src={savedItemView.image}
+                                      alt={savedItemView.title}
+                                      className="h-full w-full object-cover"
+                                    />
+                                  </div>
+
+                                  <div className="min-w-0">
+                                    <p className="line-clamp-2  text-sm font-bold leading-5 text-ink sm:text-base">
+                                      {savedItemView.title}
+                                    </p>
+
+                                    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
+                                      {savedItemView.variantSku ? (
+                                        <span className="rounded-full bg-cream px-2.5 py-1 font-semibold text-gray">
+                                          {savedItemView.variantSku}
+                                        </span>
+                                      ) : null}
+                                      <span>
+                                        Qty {savedItemView.quantity} x{" "}
+                                        <span className="font-semibold text-ink">
+                                          ₹
+                                          {Number(
+                                            savedItemView.price || 0,
+                                          ).toLocaleString("en-IN")}
+                                        </span>
+                                      </span>
+                                    </div>
+                                  </div>
                                 </div>
 
-                                <div className="min-w-0">
-                                  <p className="line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
-                                    {savedProduct.title}
+                                <div className={savedCardActionClass}>
+                                  <p className={savedCardLabelClass}>
+                                    Saved item
                                   </p>
+                                  <BrandButton
+                                    variant="secondary"
+                                    rounded
+                                    size="sm"
+                                    label="Move to cart"
+                                    className={moveToCartButtonClass}
+                                    onClick={() =>
+                                      handleMoveSavedLineToCart(savedItem)
+                                    }
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
 
-                                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
-                                    {savedProduct.brand ? (
-                                      <span className="rounded-full bg-cream px-2.5 py-1 font-semibold text-gray">
-                                        {savedProduct.brand}
-                                      </span>
-                                    ) : null}
+                        {wishlist
+                          .map((wishlistProduct) => {
+                            const wishlistId = getProductId(wishlistProduct);
+                            const entity = productEntities[wishlistId];
+                            const isPopulated =
+                              typeof wishlistProduct === "object" &&
+                              wishlistProduct !== null &&
+                              wishlistProduct.title;
 
-                                    {savedProduct.price != null ? (
-                                      <span className="font-semibold text-ink">
-                                        ₹
-                                        {Number(
-                                          savedProduct.price,
-                                        ).toLocaleString("en-IN")}
-                                      </span>
-                                    ) : (
-                                      <span className="font-semibold text-muted">
-                                        Price not available
-                                      </span>
-                                    )}
+                            // If product is deleted (we only have ID and fetch failed/not found), don't render it
+                            if (!isPopulated && !entity) return null;
+
+                            const savedProduct = buildSavedProductView(
+                              wishlistProduct,
+                              entity,
+                            );
+
+                            return { wishlistId, savedProduct };
+                          })
+                          .filter(Boolean)
+                          .map(({ wishlistId, savedProduct }) => {
+                            return (
+                              <div
+                                key={wishlistId}
+                                className={savedCardClass}
+                                onClick={() =>
+                                  navigate(`/products/${savedProduct.id}`)
+                                }
+                                onKeyDown={(event) => {
+                                  if (
+                                    event.key === "Enter" ||
+                                    event.key === " "
+                                  ) {
+                                    event.preventDefault();
+                                    navigate(`/products/${savedProduct.id}`);
+                                  }
+                                }}
+                                role="link"
+                                tabIndex={0}
+                              >
+                                <div className={savedCardStripClass} />
+                                <div className={savedCardContentClass}>
+                                  <div className={savedCardInfoClass}>
+                                    <div className={savedCardImageWrapperClass}>
+                                      <img
+                                        src={savedProduct.image}
+                                        alt={savedProduct.title}
+                                        className="h-full w-full object-cover"
+                                      />
+                                    </div>
+
+                                    <div className="min-w-0">
+                                      <p className="line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
+                                        {savedProduct.title}
+                                      </p>
+
+                                      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
+                                        {savedProduct.brand ? (
+                                          <span className="rounded-full bg-cream px-2.5 py-1 font-semibold text-gray">
+                                            {savedProduct.brand}
+                                          </span>
+                                        ) : null}
+
+                                        {savedProduct.price != null ? (
+                                          <span className="font-semibold text-ink">
+                                            ₹
+                                            {Number(
+                                              savedProduct.price,
+                                            ).toLocaleString("en-IN")}
+                                          </span>
+                                        ) : (
+                                          <span className="font-semibold text-muted">
+                                            Price not available
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className={savedCardActionClass}>
+                                    <p className={savedCardLabelClass}>
+                                      Saved item
+                                    </p>
+                                    <BrandButton
+                                      variant="secondary"
+                                      rounded
+                                      size="sm"
+                                      label="Move to cart"
+                                      className={moveToCartButtonClass}
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        handleMoveWishlistToCart(savedProduct);
+                                      }}
+                                    />
                                   </div>
                                 </div>
                               </div>
-
-                              <div className={savedCardActionClass}>
-                                <p className={savedCardLabelClass}>
-                                  Saved item
-                                </p>
-                                <BrandButton
-                                  variant="secondary"
-                                  rounded
-                                  size="sm"
-                                  label="Move to cart"
-                                  className={moveToCartButtonClass}
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    handleMoveWishlistToCart(savedProduct);
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
+                            );
+                          })}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {hasCartItems && (
-                  <div className="flex items-center gap-3 ">
-                    <OutlineSmallButton
-                      to="/products"
-                      rightIcon={<FaAngleRight className="text-[10px]" />}
-                      className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
-                    >
-                      Continue Shopping
-                    </OutlineSmallButton>
-                  </div>
-                )}
+                  {hasCartItems && (
+                    <div className="flex items-center gap-3 ">
+                      <OutlineSmallButton
+                        to="/products"
+                        rightIcon={<FaAngleRight className="text-[10px]" />}
+                        className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
+                      >
+                        Continue Shopping
+                      </OutlineSmallButton>
+                    </div>
+                  )}
                 </div>
               }
               sidebarContent={
                 hasCartItems && (
                   <div className="w-full min-w-0">
-                  <OrderPaymentSummary
-                    variant="cart"
-                    mrpSubtotal={mrpSubtotal}
-                    subtotal={sellingSubtotal}
-                    productDiscount={productSavings}
-                    couponDiscount={extraCoupon}
-                    walletDiscount={extraWallet}
-                    shipping={shippingTotal}
-                    customerAmount={totalPayable}
-                    totalSavings={totalSavings}
-                    itemCount={selectedItems.length}
-                    currency="INR"
-                    title="Order Summary"
-                    formatMoney={formatMoney}
-                    asNumber={toNum}
-                    buttonText={
-                      selectedItems.length
-                        ? "Proceed to Checkout"
-                        : "Select products to checkout"
-                    }
-                    onCheckout={() => {
-                      if (!selectedItems.length) return;
+                    <OrderPaymentSummary
+                      variant="cart"
+                      mrpSubtotal={mrpSubtotal}
+                      subtotal={sellingSubtotal}
+                      productDiscount={productSavings}
+                      couponDiscount={extraCoupon}
+                      walletDiscount={extraWallet}
+                      shipping={shippingTotal}
+                      customerAmount={totalPayable}
+                      totalSavings={totalSavings}
+                      itemCount={selectedItems.length}
+                      currency="INR"
+                      title="Order Summary"
+                      formatMoney={formatMoney}
+                      asNumber={toNum}
+                      buttonText={
+                        selectedItems.length
+                          ? "Proceed to Checkout"
+                          : "Select products to checkout"
+                      }
+                      onCheckout={() => {
+                        if (!selectedItems.length) return;
 
-                      window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
-                      window.sessionStorage.setItem(
-                        SELECTED_CHECKOUT_STORAGE_KEY,
-                        JSON.stringify(selectedItemIds),
-                      );
+                        window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
+                        window.sessionStorage.setItem(
+                          SELECTED_CHECKOUT_STORAGE_KEY,
+                          JSON.stringify(selectedItemIds),
+                        );
 
-                      navigate("/checkout");
-                    }}
-                  />
-                </div>
+                        navigate("/checkout");
+                      }}
+                    />
+                  </div>
                 )
               }
             />

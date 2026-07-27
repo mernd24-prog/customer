@@ -141,15 +141,15 @@ export function AuthFormPage({ mode }) {
         <h1>{title}</h1>
         {(mode === "register" || mode === "register-otp") && (
           <>
-            <input placeholder="First name" {...register("firstName")} />
+            <input placeholder="First Name" {...register("firstName")} />
             <small>{errors.firstName?.message}</small>
-            <input placeholder="Last name" {...register("lastName")} />
+            <input placeholder="Last Name" {...register("lastName")} />
             <small>{errors.lastName?.message}</small>
             {(() => {
               const { onChange, ...rest } = register("phone");
               return (
                 <input
-                  placeholder="Enter phone number"
+                  placeholder="Enter Phone Number"
                   maxLength={10}
                   {...rest}
                   onChange={(e) => {
@@ -193,7 +193,7 @@ export function AuthFormPage({ mode }) {
           mode === "verify-otp" ||
           mode === "reset") && (
           <>
-            <input placeholder="OTP" {...register("otp")} />
+            <input placeholder="Otp" {...register("otp")} />
             <small>{errors.otp?.message}</small>
           </>
         )}
@@ -202,7 +202,7 @@ export function AuthFormPage({ mode }) {
             <span className="relative block">
               <input
                 className="w-full pr-10"
-                placeholder="New password"
+                placeholder="New Password"
                 type={showPassword ? "text" : "password"}
                 {...register("newPassword")}
               />
@@ -219,11 +219,11 @@ export function AuthFormPage({ mode }) {
           </>
         )}
         {(mode === "register" || mode === "register-otp") && (
-          <input placeholder="Referral code" {...register("referralCode")} />
+          <input placeholder="Referral Code" {...register("referralCode")} />
         )}
         {mode === "login" && (
           <input
-            placeholder="Google ID token for social login"
+            placeholder="Google Id Token for Social Login"
             {...register("socialIdToken")}
           />
         )}
@@ -261,14 +261,14 @@ export function AuthFormPage({ mode }) {
               Register
             </Link>
             <Link className="chip" to={AUTH_ROUTES.forgotPassword}>
-              Forgot password
+              Forgot Password
             </Link>
           </div>
         )}
         {mode === "register-otp" && (
           <div className="toolbar">
             <Link className="chip" to={AUTH_ROUTES.register}>
-              Register with password
+              Register with Password
             </Link>
             <Link className="chip" to={AUTH_ROUTES.login}>
               Login
@@ -278,14 +278,14 @@ export function AuthFormPage({ mode }) {
         {mode === "verify-registration" && (
           <div className="toolbar">
             <Link className="chip" to={AUTH_ROUTES.register}>
-              Back to register
+              Back to Register
             </Link>
           </div>
         )}
         {mode === "forgot" && (
           <div className="toolbar">
             <Link className="chip" to={AUTH_ROUTES.login}>
-              Back to login
+              Back to Login
             </Link>
           </div>
         )}

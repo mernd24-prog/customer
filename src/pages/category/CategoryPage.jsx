@@ -330,6 +330,7 @@ export default function CategoryPage() {
     total: 0,
   });
   const [productFacets, setProductFacets] = useState({});
+  const [facetsContextKey, setFacetsContextKey] = useState("");
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [categoryError, setCategoryError] = useState(null);
@@ -449,8 +450,10 @@ export default function CategoryPage() {
   });
 
   useEffect(() => {
-    let backendMin = productFacets?.price?.min;
-    let backendMax = productFacets?.price?.max;
+    if (currentContextKey !== facetsContextKey) return;
+
+    let backendMin = productFacets?.priceStats?.min ?? productFacets?.price?.min;
+    let backendMax = productFacets?.priceStats?.max ?? productFacets?.price?.max;
 
     let currentMin = backendMin;
     let currentMax = backendMax;
@@ -484,7 +487,7 @@ export default function CategoryPage() {
         return prev;
       });
     }
-  }, [productFacets?.price, products, currentContextKey]);
+  }, [productFacets?.price, products, currentContextKey, facetsContextKey]);
 
   const priceLimits = useMemo(() => {
     return {
@@ -537,6 +540,12 @@ export default function CategoryPage() {
           ? data
           : data?.products || data?.items || data?.list || [];
 
+        const p = new URLSearchParams(searchParams);
+        p.delete("minPrice");
+        p.delete("maxPrice");
+        p.delete("page");
+        const ctxKey = `${categoryKey}_${p.toString()}`;
+
         const m = result?.meta || {};
         setPageInfo({
           page: Number(m.page || m.currentPage || params.page || 1),
@@ -544,6 +553,7 @@ export default function CategoryPage() {
           total: Number(m.total || m.count || list.length || 0),
         });
         setProductFacets(m.facets || m.filters || {});
+        setFacetsContextKey(ctxKey);
 
         setItems((prev) => (append ? [...prev, ...list] : list));
         setFirstLoadDone(true);
@@ -830,7 +840,10 @@ export default function CategoryPage() {
       .filter((brand) => brand.count > 0);
 
     const globalFilters = [
-      {
+      absolutePriceLimits.min != null &&
+      absolutePriceLimits.max != null &&
+      absolutePriceLimits.max > 0 &&
+      absolutePriceLimits.min < absolutePriceLimits.max && {
         key: "price",
         title: "Price Range",
         content: (
@@ -1028,7 +1041,7 @@ export default function CategoryPage() {
         <CollectionToolbar
           countText={`${(pageInfo.total || meta?.total || products.length).toLocaleString()} products`}
           sortValue={searchParams.get("sort") || ""}
-          sortOptions={SORT_OPTIONS}
+          sortOptions={(pageInfo.total || meta?.total || products.length) <= 1 ? [] : SORT_OPTIONS}
           onSortChange={(value) => updateParam("sort", value)}
           onOpenFilters={() => setSidebarOpen(true)}
         />
@@ -1058,7 +1071,7 @@ export default function CategoryPage() {
           }
           error={products.length === 0 ? productState.error : null}
           empty={!products.length && !productState.loading && firstLoadDone}
-          emptyTitle="No products found"
+          emptyTitle="No Products Found"
           emptyText="Try adjusting your filters or browse other categories."
           products={products}
           viewMode={viewMode}

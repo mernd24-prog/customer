@@ -168,7 +168,9 @@ export default function CheckoutSummary({
       />
       {quoteError && (
         <div className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-          {typeof quoteError === "string" ? quoteError : "Delivery is not available for the selected address."}
+          {typeof quoteError === "string"
+            ? quoteError
+            : "Delivery is not available for the selected address."}
         </div>
       )}
     </div>

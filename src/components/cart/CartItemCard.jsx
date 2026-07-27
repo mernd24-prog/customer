@@ -20,7 +20,7 @@ export default function CartItemCard({
   selected = true,
   onSelect,
   saveForLaterLabel = "Move to Wishlist",
-  removeLabel = "Remove Item",
+  removeLabel = "Remove",
   showCheckbox,
   fullWidth = false,
 }) {
@@ -74,7 +74,7 @@ export default function CartItemCard({
                   className="h-[18px] w-[18px] rounded-[4px] border-[#A9B4D8] accent-[#3F4095]"
                 />
                 <span className="sr-only">
-                  Select {item?.title} for checkout
+                  Select {item?.title} For Checkout
                 </span>
               </label>
             )}
@@ -184,7 +184,7 @@ export default function CartItemCard({
 
             {atMaxQty && !isOutOfStock && (
               <p className="mt-1 text-[13px] font-medium text-[var(--customer-muted)]">
-                Max {maxQty} per order
+                Max {maxQty} Per Order
               </p>
             )}
           </div>

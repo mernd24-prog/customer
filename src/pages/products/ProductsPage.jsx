@@ -111,6 +111,7 @@ export default function ProductsPage() {
   });
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
+  const [facetsContextKey, setFacetsContextKey] = useState("");
   const sentinelRef = useRef(null);
   const requestSequenceRef = useRef(0);
   const productState = useSelector((s) => s.product);
@@ -224,8 +225,10 @@ export default function ProductsPage() {
   });
 
   useEffect(() => {
-    let backendMin = productFacets?.price?.min;
-    let backendMax = productFacets?.price?.max;
+    if (currentContextKey !== facetsContextKey) return;
+
+    let backendMin = productFacets?.priceStats?.min ?? productFacets?.price?.min;
+    let backendMax = productFacets?.priceStats?.max ?? productFacets?.price?.max;
 
     let currentMin = backendMin;
     let currentMax = backendMax;
@@ -259,7 +262,7 @@ export default function ProductsPage() {
         return prev;
       });
     }
-  }, [productFacets?.price, products, currentContextKey]);
+  }, [productFacets?.price, products, currentContextKey, facetsContextKey]);
 
   const priceLimits = useMemo(() => {
     return {
@@ -303,7 +306,7 @@ export default function ProductsPage() {
     ) {
       const mergedMap = new Map();
       brandOptionsRef.current.options.forEach((opt) =>
-        mergedMap.set(opt.value, { ...opt, count: 0 }),
+        mergedMap.set(opt.value, { ...opt }),
       );
       rawOptions.forEach((opt) => mergedMap.set(opt.value, opt));
       return Array.from(mergedMap.values());
@@ -373,6 +376,12 @@ export default function ProductsPage() {
         data.list ||
         (Array.isArray(data) ? data : []);
 
+      const p = new URLSearchParams(searchParams);
+      p.delete("minPrice");
+      p.delete("maxPrice");
+      p.delete("page");
+      const ctxKey = p.toString();
+
       const meta =
         result?.meta?.pagination || result?.pagination || result?.meta || {};
       setPageInfo({
@@ -381,6 +390,7 @@ export default function ProductsPage() {
         total: Number(meta.total || meta.count || list.length || 0),
       });
       setProductFacets(result?.meta?.facets || result?.meta?.filters || {});
+      setFacetsContextKey(ctxKey);
       setItems((prev) => (append ? [...prev, ...list] : list));
       setFirstLoadDone(true);
       setIsLoadingMore(false);
@@ -653,16 +663,18 @@ label: "Free Delivery",
         />
       ),
     },
-    productFacets.price?.min != null &&
-      productFacets.price?.max != null && {
+    absolutePriceLimits.min != null &&
+      absolutePriceLimits.max != null &&
+      absolutePriceLimits.max > 0 &&
+      absolutePriceLimits.min < absolutePriceLimits.max && {
         key: "price",
         title: "Price Range",
         content: (
           <PriceRangeFilter
             min={searchParams.get("minPrice")}
             max={searchParams.get("maxPrice")}
-            minLimit={priceLimits.min}
-            maxLimit={priceLimits.max}
+            minLimit={absolutePriceLimits.min}
+            maxLimit={absolutePriceLimits.max}
             onChange={handlePriceChange}
           />
         ),
@@ -749,7 +761,7 @@ label: "Free Delivery",
         <div className="flex flex-wrap items-end justify-end gap-3">
           <CollectionToolbar
             sortValue={searchParams.get("sort") || ""}
-            sortOptions={SORT_OPTIONS}
+            sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
             onOpenFilters={() => setSidebarOpen(true)}
             // viewControls={
@@ -790,7 +802,7 @@ label: "Free Delivery",
           }
           error={products.length === 0 ? productState.error : null}
           empty={!products.length && !productState.loading && firstLoadDone}
-          emptyTitle={isSearchMode ? "No results found" : "No products found"}
+          emptyTitle={isSearchMode ? "No results found" : "No Products Found"}
           emptyText={
             isSearchMode
               ? "Try different keywords or remove filters."

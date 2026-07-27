@@ -528,7 +528,7 @@ export default function SearchPage() {
     ) {
       const mergedMap = new Map();
       brandOptionsRef.current.options.forEach((opt) =>
-        mergedMap.set(opt.value, { ...opt, count: 0 }),
+        mergedMap.set(opt.value, { ...opt }),
       );
       rawOptions.forEach((opt) => mergedMap.set(opt.value, opt));
       return Array.from(mergedMap.values());
@@ -714,16 +714,18 @@ export default function SearchPage() {
         />
       ),
     },
-    facets.price?.min != null &&
-      facets.price?.max != null && {
+    (facets.priceStats?.min ?? facets.price?.min) != null &&
+      (facets.priceStats?.max ?? facets.price?.max) != null &&
+      (facets.priceStats?.max ?? facets.price?.max) > 0 &&
+      (facets.priceStats?.min ?? facets.price?.min) < (facets.priceStats?.max ?? facets.price?.max) && {
         key: "price",
         title: "Price Range",
         content: (
           <PriceRangeFilter
-            min={minPrice}
-            max={maxPrice}
-            minLimit={facets.price.min}
-            maxLimit={facets.price.max}
+            min={searchParams.get("minPrice") ?? undefined}
+            max={searchParams.get("maxPrice") ?? undefined}
+            minLimit={facets.priceStats?.min ?? facets.price?.min}
+            maxLimit={facets.priceStats?.max ?? facets.price?.max}
             onChange={handlePriceChange}
           />
         ),
@@ -821,7 +823,7 @@ export default function SearchPage() {
     <>
       <Seo
         title={q ? `Search: "${q}" | Sam Global` : "Search | Sam Global"}
-        description="Search products at Sam Global"
+        description="Search Products at Sam Global"
       />
 
       <div className="w-container py-6 sm:py-8">
@@ -840,14 +842,14 @@ export default function SearchPage() {
 
             {meta.total != null && (
               <p className=" text-sm text-muted">
-                {meta.total.toLocaleString()} results
+                {meta.total.toLocaleString()} Results
               </p>
             )}
           </div>
 
           <CollectionToolbar
             sortValue={sort}
-            sortOptions={SORT_OPTIONS}
+            sortOptions={meta.total <= 1 ? [] : SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
             onOpenFilters={() => setSidebarOpen(true)}
           />
@@ -883,11 +885,11 @@ export default function SearchPage() {
                 <Search size={48} className="mb-4 text-gray" />
 
                 <p className=" text-[18px] font-semibold text-ink">
-                  What are you looking for?
+                  What Are You Looking for?
                 </p>
 
                 <p className="mt-2  text-sm text-muted">
-                  Enter a search term above to find products.
+                  Enter a Search Term Above to Find Products.
                 </p>
               </div>
             ) : (

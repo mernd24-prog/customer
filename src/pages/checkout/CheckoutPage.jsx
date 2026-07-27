@@ -257,15 +257,18 @@ const getOrderAmount = (order = {}, key) => {
   return undefined;
 };
 const getCartItemPrice = (item = {}, fullProduct = null) => {
-  const fallbackProduct = item.productId && typeof item.productId === "object"
-    ? item.productId
-    : item.product || {};
+  const fallbackProduct =
+    item.productId && typeof item.productId === "object"
+      ? item.productId
+      : item.product || {};
 
   let livePrice = getProductPrice(fullProduct);
-  
+
   const variantId = item.variantId || item.variantSku;
   if (variantId && fullProduct?.variants?.length) {
-    const variant = fullProduct.variants.find(v => v._id === variantId || v.id === variantId || v.sku === variantId);
+    const variant = fullProduct.variants.find(
+      (v) => v._id === variantId || v.id === variantId || v.sku === variantId,
+    );
     if (variant) {
       livePrice = getVariantPrice(variant) ?? livePrice;
     }
@@ -273,15 +276,15 @@ const getCartItemPrice = (item = {}, fullProduct = null) => {
 
   return asNumber(
     livePrice ??
-    item.price ??
-    item.unitPrice ??
-    item.unit_price ??
-    item.salePrice ??
-    getProductPrice(fallbackProduct) ??
-    fallbackProduct.price ??
-    fallbackProduct.sellingPrice ??
-    fallbackProduct.salePrice ??
-    0
+      item.price ??
+      item.unitPrice ??
+      item.unit_price ??
+      item.salePrice ??
+      getProductPrice(fallbackProduct) ??
+      fallbackProduct.price ??
+      fallbackProduct.sellingPrice ??
+      fallbackProduct.salePrice ??
+      0,
   );
 };
 const getCartItemShipping = (item = {}) => {
@@ -668,7 +671,7 @@ export default function CheckoutPage() {
   const paymentState = useSelector((s) => s.payment);
   const productEntities = useSelector((s) => s.product?.entities) || {};
   const fetchedIdsRef = useRef(new Set());
-  
+
   const [quoteData, setQuoteData] = useState(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState("");
@@ -689,7 +692,9 @@ export default function CheckoutPage() {
     [buyNowItems, cart.items, isBuyNowCheckout, selectedCheckoutItemIds],
   );
   useEffect(() => {
-    const itemProductIds = checkoutSourceItems.map((item) => getProductId(item.productId || item.product || {})).filter(Boolean);
+    const itemProductIds = checkoutSourceItems
+      .map((item) => getProductId(item.productId || item.product || {}))
+      .filter(Boolean);
     const missingIds = itemProductIds.filter(
       (id) => !productEntities[id] && !fetchedIdsRef.current.has(id),
     );
@@ -703,11 +708,12 @@ export default function CheckoutPage() {
   }, [dispatch, checkoutSourceItems, productEntities]);
 
   const items = useMemo(
-    () => checkoutSourceItems.map((item, i) => {
-      const productId = getProductId(item.productId || item.product || {});
-      const fullProduct = productEntities[productId] || null;
-      return adaptCheckoutItem(item, i, fullProduct);
-    }),
+    () =>
+      checkoutSourceItems.map((item, i) => {
+        const productId = getProductId(item.productId || item.product || {});
+        const fullProduct = productEntities[productId] || null;
+        return adaptCheckoutItem(item, i, fullProduct);
+      }),
     [checkoutSourceItems, productEntities],
   );
   const subtotal = items.reduce((sum, item) => sum + item._lineTotal, 0);
@@ -719,7 +725,7 @@ export default function CheckoutPage() {
       ? paymentState.current.providers
       : [];
     return providers.filter(
-      (option) => option.provider !== "cod" // || option.enabled !== false,
+      (option) => option.provider !== "cod", // || option.enabled !== false,
     );
   }, [paymentState]);
   const quotePayableAmount = getQuotePayableAmount(quoteData);
@@ -1383,9 +1389,10 @@ export default function CheckoutPage() {
       if (quoteError) {
         setError("root", {
           type: "manual",
-          message: typeof quoteError === "string"
-            ? quoteError
-            : "Delivery is not available for the selected address.",
+          message:
+            typeof quoteError === "string"
+              ? quoteError
+              : "Delivery is not available for the selected address.",
         });
         return;
       }
@@ -1418,7 +1425,9 @@ export default function CheckoutPage() {
       let paymentOrder = createdOrder;
       let payableAmount = getOrderPayableAmount(paymentOrder);
       if (payableAmount === null) {
-        const orderDetail = await dispatch(fetchOrderById({ orderId })).unwrap();
+        const orderDetail = await dispatch(
+          fetchOrderById({ orderId }),
+        ).unwrap();
         paymentOrder = getCreatedOrder(orderDetail);
         payableAmount = getOrderPayableAmount(paymentOrder);
       }
@@ -1509,7 +1518,7 @@ export default function CheckoutPage() {
           loading={cartState.loading}
           error={cartState.error}
           empty={items.length === 0}
-          emptyTitle="Your cart is empty"
+          emptyTitle="Your Cart is Empty"
           emptyText="Add products to your cart before checking out."
         >
           <div className="mb-6">

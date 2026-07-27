@@ -10,7 +10,7 @@ export function BackendGapNotes() {
         </h1>
         <div className="rounded-[12px] border border-border bg-white p-6">
           <p className=" text-sm text-muted">
-            Wishlist uses{" "}
+            Wishlist Uses{" "}
             <code className="rounded bg-cream px-1.5 py-0.5 text-gold-dark">
               cart.wishlist
             </code>

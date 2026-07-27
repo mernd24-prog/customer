@@ -1,10 +1,14 @@
-import { useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { asArray, hrefOr } from "../utils/content";
 import { footerData } from "../data/footer";
 import { SocialIcons } from "../components/common";
 import { Link, useLocation } from "react-router-dom";
 import { CUSTOMER_ROUTES } from "../constants/routes";
+import { fetchCategories, fetchBrands } from "../features/catalog/catalogSlice";
+import { brandToSlug } from "../utils/ecommerce/brand";
+
+// ─── helpers ──────────────────────────────────────────────────────────────────
 
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
@@ -47,18 +51,14 @@ function getRootCategories(categories = []) {
 
   const visit = (category, parentKey = null) => {
     if (!category || typeof category !== "object") return;
-
     const categoryKey = getCategoryKey(category);
     if (!categoryKey) return;
-
     const normalized = {
       ...category,
       categoryKey,
       parentKey: category?.parentKey ?? parentKey,
     };
-
     byKey.set(categoryKey, normalized);
-
     asArray(category?.children).forEach((child) => visit(child, categoryKey));
     asArray(category?.subCategories).forEach((child) =>
       visit(child, categoryKey),
@@ -132,7 +132,8 @@ function resolveFooterLinkGroups(groups, categories) {
   });
 }
 
-// Inline Footer Link Groups Component
+// ─── FooterLinkGroups ─────────────────────────────────────────────────────────
+
 function FooterLinkGroups({ groups = [], socialLinks = [] }) {
   const location = useLocation();
 
@@ -189,30 +190,104 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
   );
 }
 
+// ─── Footer ───────────────────────────────────────────────────────────────────
+
 export function Footer({ data = footerData }) {
+  const dispatch = useDispatch();
   const location = useLocation();
+
+  // ── Redux state ─────────────────────────────────────────────────────────────
   const catalogCategoryList = useSelector(
     (state) => state.catalog.globalCategories || state.catalog.list || [],
   );
+  const globalBrands = useSelector((state) => state.catalog.globalBrands || []);
+
+  // ── Fetch if not yet loaded ──────────────────────────────────────────────────
+  useEffect(() => {
+    const categoryList = getCategoryListFromResponse(catalogCategoryList);
+    if (!categoryList.length) {
+      dispatch(fetchCategories()).catch(() => {});
+    }
+  }, [dispatch, catalogCategoryList]);
+
+  useEffect(() => {
+    if (!globalBrands.length) {
+      dispatch(fetchBrands()).catch(() => {});
+    }
+  }, [dispatch, globalBrands.length]);
+
+  // ── Static footer data ───────────────────────────────────────────────────────
   const footer = data || footerData;
   const {
     copyright = footerData.copyright,
     extrapages = footerData.extrapages,
   } = footer;
   const benefits = asArray(footer.benefits);
-  const linkGroups = asArray(footer.linkGroups);
-  const catalogCategories = useMemo(
-    () => getRootCategories(getCategoryListFromResponse(catalogCategoryList)),
-    [catalogCategoryList],
-  );
-  const resolvedLinkGroups = useMemo(
-    () => resolveFooterLinkGroups(linkGroups, catalogCategories),
-    [catalogCategories, linkGroups],
-  );
   const socialLinks = asArray(footer.socialLinks);
   const extraPages = asArray(extrapages);
   const appDownload = footer.appDownload || {};
   const appDownloadLinks = asArray(appDownload.links);
+
+  // ── Derive API-based catalog categories (root only) ──────────────────────────
+  const catalogCategories = useMemo(
+    () => getRootCategories(getCategoryListFromResponse(catalogCategoryList)),
+    [catalogCategoryList],
+  );
+
+  // ── Build dynamic "Categories" column from API (max 5) ─────────────────────────
+  const apiCategoryLinks = useMemo(
+    () =>
+      catalogCategories.slice(0, 5).map((cat) => ({
+        label: cat?.title || cat?.name || getCategoryKey(cat),
+        href: CUSTOMER_ROUTES.category(getCategoryKey(cat)),
+      })),
+    [catalogCategories],
+  );
+
+  // ── Build dynamic "Brands" column from API (max 5) ──────────────────────────────
+  const apiBrandLinks = useMemo(
+    () =>
+      asArray(globalBrands)
+        .slice(0, 5)
+        .map((brand) => {
+          const name = brand?.name || brand?.label || brand?.value || "";
+          const slug = brand?.slug || brand?.code || brandToSlug(name);
+          return {
+            label: name,
+            href: CUSTOMER_ROUTES.brand(slug),
+          };
+        }),
+    [globalBrands],
+  );
+
+  // ── Assemble link groups with enforced column order ──────────────────────────
+  // Col 1: Categories (API)  Col 2: Brands (API)  Col 3+: remaining static groups
+  const staticGroups = asArray(footer.linkGroups);
+
+  const resolvedLinkGroups = useMemo(() => {
+    // Static groups that are NOT Buy/Brands (those are replaced by API data)
+    const REPLACED_TITLES = new Set(["buy", "brands"]);
+    const remainingStatic = staticGroups.filter(
+      (g) => !REPLACED_TITLES.has(String(g?.title || "").toLowerCase()),
+    );
+
+    // Col 1 – Categories from API (fallback: empty group so heading still shows)
+    const categoriesGroup = {
+      title: "Categories",
+      links: apiCategoryLinks,
+    };
+
+    // Col 2 – Brands from API (fallback: empty group)
+    const brandsGroup = {
+      title: "Brands",
+      links: apiBrandLinks,
+    };
+
+    // Final order: Categories → Brands → Sell → About SAM → Help & Contact …
+    return [categoriesGroup, brandsGroup, ...remainingStatic];
+  }, [staticGroups, apiCategoryLinks, apiBrandLinks]);
+
+  // ─────────────────────────────────────────────────────────────────────────────
 
   return (
     <footer className="w-full   bg-[#1C1C1C] h-auto text-white">
