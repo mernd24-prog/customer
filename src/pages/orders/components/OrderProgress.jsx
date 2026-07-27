@@ -13,24 +13,139 @@ const normalizeProgressStatus = (status) => {
   if (status === "order_closed") {
     return "fulfilled";
   }
+  if (status === "created") return "initiated";
+  if (status === "paid") return "confirmed";
   if (status === "requested") return "return_requested";
   if (status === "approved") return "return_approved";
   if (status === "rejected") return "return_rejected";
+  if (status === "reverse_pickup_scheduled") return "pickup_scheduled";
+  if (status === "manual_ship_back") return "pickup_scheduled";
+  if (status === "shipped_back") return "pickup_completed";
+  if (status === "in_reverse_transit") return "pickup_completed";
+  if (status === "received") return "returned";
+  if (status === "qc_passed") return "returned";
+  if (status === "qc_completed") return "returned";
+  if (status === "refunded") return "refund_completed";
+  if (status === "completed") return "refund_completed";
+  if (status === "refund_failed") return "refund_pending";
   return status;
 };
 
+const CUSTOMER_PROGRESS_STEPS = [
+  "pending_payment",
+  "confirmed",
+  "processing",
+  "packed",
+  "ready_to_ship",
+  "shipped",
+  "out_for_delivery",
+  "delivered",
+  "return_requested",
+  "return_approved",
+  "pickup_scheduled",
+  "pickup_completed",
+  "returned",
+  "refund_pending",
+  "refund_initiated",
+  "partially_refunded",
+  "refund_completed",
+];
+
 const PROGRESS_MESSAGES = {
-  initiated: "Your order has been initiated.",
-  confirmed: "Your order is confirmed and waiting for seller packing.",
-  processing: "The seller is preparing your items.",
-  packed: "Your order is packed and ready for shipment details.",
-  ready_to_ship: "Your order is ready to be handed to the courier.",
-  shipped: "Your order has shipped. Use shipment tracking for courier updates.",
+  initiated: "We have received your order.",
+  confirmed: "Your order is confirmed.",
+  processing: "The seller is preparing this item.",
+  packed: "This item is packed.",
+  ready_to_ship: "This item is ready for courier pickup.",
+  shipped: "This item has been shipped.",
   out_for_delivery:
-    "Your order has active delivery progress. Orders may arrive separately.",
+    "This item is out for delivery.",
   delivered:
-    "Your order has been delivered. Item return windows are now active.",
-  fulfilled: "The return window has closed and this order is complete.",
+    "This item has been delivered.",
+  fulfilled: "This item is complete.",
+  return_requested: "Return request received for this item.",
+  return_approved: "Return approved. Follow the return instructions.",
+  pickup_scheduled: "Return pickup has been scheduled.",
+  pickup_completed: "Return pickup is complete.",
+  returned: "Returned item received.",
+  refund_pending: "Refund is waiting to be processed.",
+  refund_initiated: "Refund has been initiated.",
+  partially_refunded: "Partial refund has been processed.",
+  refund_completed: "Refund completed.",
+  refunded: "Refund completed.",
+};
+
+const CUSTOMER_LABELS = {
+  pending_payment: "Payment",
+  payment_failed: "Payment failed",
+  initiated: "Placed",
+  confirmed: "Confirmed",
+  processing: "Preparing",
+  packed: "Packed",
+  ready_to_ship: "Ready to ship",
+  shipped: "Shipped",
+  out_for_delivery: "Out for delivery",
+  delivered: "Delivered",
+  fulfilled: "Complete",
+  cancelled: "Cancelled",
+  failed_delivery: "Delivery issue",
+  return_requested: "Return requested",
+  return_approved: "Return approved",
+  return_rejected: "Return rejected",
+  pickup_scheduled: "Pickup scheduled",
+  pickup_completed: "Picked up",
+  returned: "Returned",
+  refund_pending: "Refund pending",
+  refund_initiated: "Refund started",
+  partially_refunded: "Partial refund",
+  refund_completed: "Refunded",
+  refunded: "Refunded",
+  replacement_requested: "Replacement requested",
+  replacement_pending: "Replacement pending",
+  replacement_created: "Replacement ready",
+  replacement_shipped: "Replacement shipped",
+  replacement_delivered: "Replacement delivered",
+  replaced: "Replaced",
+  closed: "Closed",
+};
+
+const customerLabel = (status = "") =>
+  CUSTOMER_LABELS[normalizeProgressStatus(status)] ||
+  TRACKING_LABELS[status] ||
+  String(status || "Status")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+const buildReadableProgressSteps = (baseSteps = [], timeline = [], activeStatus) => {
+  const normalizedBase = baseSteps.map(normalizeProgressStatus).filter(Boolean);
+  const normalizedTimeline = (timeline || [])
+    .map((entry) => normalizeProgressStatus(entry.to_status || entry.status))
+    .filter(Boolean);
+  const allKnownSteps = new Set([...normalizedBase, ...normalizedTimeline]);
+  const active = normalizeProgressStatus(activeStatus);
+  const hasReturnOrRefundStep = [...allKnownSteps, active].some(
+    (step) =>
+      RETURN_STEPS.includes(step) ||
+      REFUND_STEPS.includes(step) ||
+      step === "returned",
+  );
+
+  if (hasReturnOrRefundStep) {
+    allKnownSteps.delete("fulfilled");
+  }
+
+  if (active && !allKnownSteps.has(active)) {
+    allKnownSteps.add(active);
+  }
+
+  const orderedSteps = CUSTOMER_PROGRESS_STEPS.filter((step) =>
+    allKnownSteps.has(step),
+  );
+  const extraSteps = [...allKnownSteps].filter(
+    (step) => !CUSTOMER_PROGRESS_STEPS.includes(step),
+  );
+
+  return [...orderedSteps, ...extraSteps];
 };
 
 function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
@@ -94,7 +209,7 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
                 current || done ? "text-[#CE9F2D]" : "text-muted"
               }`}
             >
-              {step === "pending_payment" ? "Payment" : TRACKING_LABELS[step]}
+              {customerLabel(step)}
             </p>
           </div>
         );
@@ -116,9 +231,7 @@ function MobileStepBar({ steps, activeStatus }) {
           const done = activeIndex >= index;
           const current = activeIndex === index;
           const label =
-            step === "pending_payment"
-              ? "Payment"
-              : TRACKING_LABELS[step] || step.replace(/_/g, " ");
+            customerLabel(step);
 
           return (
             <div key={step} className="relative flex min-h-12 gap-3">
@@ -158,7 +271,7 @@ function MobileStepBar({ steps, activeStatus }) {
                 </p>
                 {current && (
                   <p className="mt-0.5 text-xs leading-4 text-muted">
-                    Current order status
+                    Current status
                   </p>
                 )}
               </div>
@@ -228,6 +341,8 @@ function OrderProgress({
   const cancelStatus =
     isCancelled || cancellations.length > 0 ? "cancelled" : null;
 
+  const activeStatus = cancelStatus || refundStatus || returnStatus || status;
+
   let progressSteps = cancelStatus
     ? ["pending_payment", "confirmed", "cancelled"]
     : refundStatus
@@ -260,19 +375,14 @@ function OrderProgress({
       new Date(b.created_at || b.at).getTime(),
   );
 
-  if (mergedTimeline.length > 0) {
-    const timelineSteps = Array.from(
-      new Set(
-        mergedTimeline
-          .map((t) => normalizeProgressStatus(t.to_status || t.status))
-          .filter(Boolean),
-      ),
+  if (!cancelStatus && !isFailed && !isDeliveryFailed) {
+    progressSteps = buildReadableProgressSteps(
+      progressSteps,
+      mergedTimeline,
+      activeStatus,
     );
-    if (timelineSteps.length > 0) {
-      progressSteps = timelineSteps;
-    }
   }
-  const activeStatus = cancelStatus || refundStatus || returnStatus || status;
+
   const activeIndex = progressSteps.indexOf(
     normalizeProgressStatus(activeStatus),
   );
@@ -280,11 +390,11 @@ function OrderProgress({
     isCancelled || isFailed || isDeliveryFailed
       ? [
           {
-            label: TRACKING_LABELS.confirmed,
+            label: customerLabel("confirmed"),
             note: "Your order update has been recorded.",
           },
           {
-            label: TRACKING_LABELS[status],
+            label: customerLabel(status),
             note: isCancelled
               ? "Your cancellation request is being processed."
               : isDeliveryFailed
@@ -293,7 +403,7 @@ function OrderProgress({
           },
         ]
       : progressSteps.map((step, index) => ({
-          label: TRACKING_LABELS[step],
+          label: customerLabel(step),
           current: activeIndex === index,
         }));
 
