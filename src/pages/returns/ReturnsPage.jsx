@@ -253,24 +253,24 @@ function ReturnRequestPage({ orderId }) {
           to="/orders"
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink transition-all duration-300 ease-in-out"
         >
-          <ArrowLeft size={14} /> Back to orders
+          <ArrowLeft size={14} /> Back to Orders
         </Link>
 
         <div className="overflow-hidden rounded-xl  border border-border bg-white p-4 sm:p-6 lg:p-8">
           <div className="mb-6">
-            <h1 className="text-xl  font-bold text-ink">Request a return</h1>
+            <h1 className="text-xl  font-bold text-ink">Request a Return</h1>
             <p className="mt-1 text-sm  text-muted">
-              Select the item you want to return from this order.
+              Select the Item You Want to Return From This Order.
             </p>
           </div>
 
           {orderLoading && !order ? (
             <div className="flex items-center justify-center py-10 text-sm text-muted">
-              Loading order…
+              Loading Order…
             </div>
           ) : !orderItems.length ? (
             <div className="rounded-[10px] border border-dashed border-border-strong bg-cream p-8 text-center text-sm text-muted">
-              No items found for this order.
+              No Items Found for This Order.
             </div>
           ) : (
             <form
@@ -284,7 +284,7 @@ function ReturnRequestPage({ orderId }) {
               {/* Item selector */}
               <div className="grid gap-1.5">
                 <span className="text-sm font-medium text-ink">
-                  Select item to return
+                  Select Item to Return
                 </span>
                 <div className="grid gap-3">
                   {orderItems.map((item) => {
@@ -371,13 +371,13 @@ function ReturnRequestPage({ orderId }) {
               {selectedItem && (
                 <>
                   <label className="grid gap-1.5 text-sm font-medium text-ink">
-                    <span>Preferred resolution</span>
+                    <span>Preferred Resolution</span>
                     <select
                       {...register("resolution")}
                       className="min-h-11 rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none"
                     >
-                      <option value="refund">Return for refund</option>
-                      <option value="replacement">Replace this item</option>
+                      <option value="refund">Return for Refund</option>
+                      <option value="replacement">Replace This Item</option>
                     </select>
                   </label>
                   <div className="grid gap-1.5 ">
@@ -403,7 +403,7 @@ function ReturnRequestPage({ orderId }) {
                   </div>
 
                   <label className="grid gap-1.5 text-sm font-medium text-ink">
-                    <span>Reason for return</span>
+                    <span>Reason for Return</span>
                     <select
                       {...register("reason")}
                       className="min-h-11 rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none transition-all duration-300 ease-in-out focus:outline-none"
@@ -426,7 +426,7 @@ function ReturnRequestPage({ orderId }) {
                     <textarea
                       {...register("description")}
                       rows={4}
-                      placeholder="Describe the issue in detail…"
+                      placeholder="Describe the Issue in Detail…"
                       className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none transition-all duration-300 ease-in-out placeholder:text-stone-400 focus:outline-none resize-none"
                     />
                     {errors.description && (
@@ -439,7 +439,7 @@ function ReturnRequestPage({ orderId }) {
                   {estimatedRefund > 0 && (
                     <div className="rounded-[8px] border border-emerald-200 bg-emerald-50 px-4 py-3">
                       <p className="text-xs font-semibold text-emerald-700">
-                        Estimated refund
+                        Estimated Refund
                       </p>
                       <p className="mt-1 text-lg font-bold text-emerald-700">
                         ₹
@@ -449,13 +449,13 @@ function ReturnRequestPage({ orderId }) {
                         })}
                       </p>
                       <p className="mt-0.5 text-xs text-emerald-600">
-                        Final refund amount is subject to review and QC.
+                        Final Refund Amount Is Subject to Review and Qc.
                       </p>
                     </div>
                   )}
 
                   <Button type="submit" loading={loading} className="w-full">
-                    <RotateCcw size={16} /> Submit return request
+                    <RotateCcw size={16} /> Submit Return Request
                   </Button>
                 </>
               )}

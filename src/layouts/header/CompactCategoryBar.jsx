@@ -17,7 +17,7 @@ export function CompactCategoryBar({
   return (
     <nav
       ref={categoryBarRef}
-      aria-label="Category navigation"
+      aria-label="Category Navigation"
       style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
       className="fixed left-0 z-40 w-full bg-white/95 backdrop-blur !block"
     >

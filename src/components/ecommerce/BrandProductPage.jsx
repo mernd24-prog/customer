@@ -26,9 +26,9 @@ export default function BrandProductPage({
     return (
       <div className="w-container py-16 text-center">
         <Store size={48} className="mx-auto mb-4 text-gray-300" />
-        <h2 className=" text-2xl font-bold text-ink">Brand coming soon</h2>
+        <h2 className=" text-2xl font-bold text-ink">Brand Coming Soon</h2>
         <p className="mt-2  text-sm text-muted">
-          This brand page is being prepared and will be available soon.
+          This Brand Page Is Being Prepared and Will Be Available Soon.
         </p>
         <Link
           to="/products"
@@ -71,7 +71,7 @@ export default function BrandProductPage({
                       `Shop ${brandName} products at Sam Global`}
                   </p>
                   <p className="mt-3 text-sm text-white">
-                    {Number(total || 0).toLocaleString()} products
+                    {Number(total || 0).toLocaleString()} Products
                   </p>
                 </div>
               </div>
@@ -95,7 +95,7 @@ export default function BrandProductPage({
                 {brandDescription || `Shop ${brandName} products at Sam Global`}
               </p>
               <p className="mt-3 text-sm text-white">
-                {Number(total || 0).toLocaleString()} products
+                {Number(total || 0).toLocaleString()} Products
               </p>
             </div>
           </div>

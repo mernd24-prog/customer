@@ -52,11 +52,16 @@ export function buildProductJsonLd(product = {}, url) {
     image: image ? [absoluteUrl(image)] : undefined,
     description: product.description || product.subtitle,
     sku: product.sku || product.id || product._id || product.productId,
-    brand: product.brand ? { "@type": "Brand", name: product.brand } : undefined,
+    brand: product.brand
+      ? { "@type": "Brand", name: product.brand }
+      : undefined,
     offers: product.price
       ? {
           "@type": "Offer",
-          url: absoluteUrl(url || `/products/${product.id || product._id || product.productId || ""}`),
+          url: absoluteUrl(
+            url ||
+              `/products/${product.id || product._id || product.productId || ""}`,
+          ),
           priceCurrency: product.currency || "INR",
           price: product.price,
           availability: "https://schema.org/InStock",
@@ -65,15 +70,15 @@ export function buildProductJsonLd(product = {}, url) {
   };
 }
 
-export function buildBreadcrumbJsonLd(items = []) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: item.name,
-      item: absoluteUrl(item.href),
-    })),
-  };
-}
+// export function buildBreadcrumbJsonLd(items = []) {
+//   return {
+//     "@context": "https://schema.org",
+//     "@type": "BreadcrumbList",
+//     itemListElement: items.map((item, index) => ({
+//       "@type": "ListItem",
+//       position: index + 1,
+//       name: item.name,
+//       item: absoluteUrl(item.href),
+//     })),
+//   };
+// }

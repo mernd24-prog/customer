@@ -55,7 +55,7 @@ export default function VerifyRegistrationPage() {
       <Seo title="Verify Registration | Sam Global" />
       <AuthCard
         eyebrow="Almost there"
-        title="Verify your email"
+        title="Verify Your Email"
         subtitle="Enter the 6-digit OTP sent to your email to activate your account."
         icon="/image/png/person.png"
         maxWidth="max-w-[65rem]"
@@ -63,7 +63,7 @@ export default function VerifyRegistrationPage() {
         <form className="grid gap-5" onSubmit={handleSubmit(submit)} noValidate>
           <FormField
             id="email"
-            label="Email address"
+            label="Email Address"
             type="email"
             registration={register("email")}
             error={errors.email}
@@ -71,7 +71,7 @@ export default function VerifyRegistrationPage() {
             placeholder="you@example.com"
           />
 
-          <label className=" text-sm font-semibold text-ink">OTP code</label>
+          <label className=" text-sm font-semibold text-ink">Otp Code</label>
           <input type="hidden" {...register("otp")} />
           <OtpInput
             value={watch("otp") || ""}

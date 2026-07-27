@@ -1,6 +1,4 @@
 import React from "react";
-import { infoSection } from "../../constants/image.constant";
-
 function getTextLines(value = "") {
   return String(value || "")
     .replace(/<li[^>]*>/gi, "\n")
@@ -47,7 +45,7 @@ const PolicySection = ({ title, points, description, footer }) => {
                   {getTextLines(point.description).map((line, lineIdx) => (
                     <li key={lineIdx} className="flex items-start gap-2  px-4">
                       <img
-                        src={infoSection.arrow}
+                        src="/image/png/arrow.png"
                         alt=""
                         className="my-auto h-3 w-3 flex-shrink-0 object-contain md:h-3.5 md:w-3.5"
                       />

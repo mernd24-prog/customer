@@ -39,12 +39,12 @@ export default function BuyerRegisterPage() {
   return (
     <>
       <Seo
-        title="Buyer registration | Sam Global"
+        title="Buyer Registration ||| Sam Global"
         description="Create a Sam Global buyer account."
       />
       <AuthCard
         eyebrow="Registration"
-        title="Start shopping with a customer account."
+        title="Start Shopping With a Customer A   ccount."
         subtitle="Your role is locked to buyer on submit, so this form cannot accidentally create a seller or admin profile."
         icon="/image/png/person.png"
         image="/image/png/authImg1.png"

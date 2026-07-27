@@ -118,8 +118,8 @@ export function PreferencesPage() {
                   {...register("frequency")}
                   className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5  text-sm text-ink outline-none focus:border-gold"
                 >
-                  <option value="real_time">Real time</option>
-                  <option value="daily">Daily digest</option>
+                  <option value="real_time">Real Time</option>
+                  <option value="daily">Daily Digest</option>
                 </select>
               </label>
               <label className="grid gap-1.5">
@@ -135,7 +135,7 @@ export function PreferencesPage() {
                 variant="primary"
                 rounded
                 type="submit"
-                label="Save preferences"
+                label="Save Preferences"
                 className="h-11 px-8 text-sm font-semibold"
               />
             </div>

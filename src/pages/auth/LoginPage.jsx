@@ -175,7 +175,7 @@ export default function LoginPage() {
           {/* EMAIL FIELD */}
           <FormField
             id="email"
-            label="Email address"
+            label="Email Address"
             type="email"
             registration={register("email")}
             error={errors.email}
@@ -203,7 +203,7 @@ export default function LoginPage() {
                 to={AUTH_ROUTES.forgotPassword}
                 className="text-xs font-medium text-muted underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold hover:underline"
               >
-                Forgot password?
+                Forgot Password?
               </Link>
             </div>
           </div>
@@ -232,7 +232,7 @@ export default function LoginPage() {
           {/* ACCESSIBLE DIVIDER */}
           <div className="relative flex items-center gap-3 py-0.5">
             <hr className="flex-1 border-border" />
-            <span className="text-xs text-gray">or</span>
+            <span className="text-xs text-gray">Or</span>
             <hr className="flex-1 border-border" />
           </div>
 
@@ -260,12 +260,12 @@ export default function LoginPage() {
               to={AUTH_ROUTES.register}
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
             >
-              Create account
+              Create Account
             </Link>
           </p>
 
           <p className="text-center text-[0.8rem] text-muted">
-            Seller account login?{" "}
+            Seller Account Login?{" "}
             <Link
               to={AUTH_ROUTES.verifyOtp}
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"

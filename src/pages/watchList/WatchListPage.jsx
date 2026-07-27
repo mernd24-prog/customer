@@ -167,7 +167,7 @@ export default function WatchlistPage() {
                       onRemove={handleRemove}
                       onSaveForLater={handleSaveForLater}
                       saveForLaterLabel="Add to Cart"
-                      removeLabel="Remove from Watchlist"
+                      removeLabel="Remove From Watchlist"
                       showCheckbox={false}
                     />
                   </div>
@@ -176,7 +176,7 @@ export default function WatchlistPage() {
             </div>
           ) : (
             <EmptyState
-              title="Your watchlist is empty"
+              title="Your Watchlist Is Empty"
               description="Save items you love to buy later."
               actionLabel="Continue Shopping"
               onAction={() => navigate("/products")}
@@ -192,7 +192,7 @@ export default function WatchlistPage() {
                     Recently Viewed
                   </h2>
                   <p className="mt-2 text-sm text-[#666] sm:text-lg">
-                    Multiple widgets available in the product designer
+                    Multiple Widgets Available in the Product Designer
                   </p>
                 </div>
                 <OutlineSmallButton

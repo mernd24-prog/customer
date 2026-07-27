@@ -154,7 +154,7 @@ export default function AdminRbacManagementPage() {
               />
               <input
                 className="rounded border p-2"
-                placeholder="Slug (module:action)"
+                placeholder="Slug (Module:action)"
                 value={permissionForm.slug}
                 onChange={(e) =>
                   setPermissionForm((v) => ({ ...v, slug: e.target.value }))

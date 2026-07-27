@@ -568,7 +568,7 @@ export default function SupportHelpCenter() {
                               name="subject"
                               value={supportForm.subject}
                               onChange={handleSupportFieldChange}
-                              placeholder="Example: Refund not received"
+                              placeholder="Example: Refund Not Received"
                               className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] focus:outline-none placeholder:text-[#9A9A9A] focus:border-gold"
                             />
                           </label>
@@ -583,7 +583,7 @@ export default function SupportHelpCenter() {
                               value={supportForm.message}
                               onChange={handleSupportFieldChange}
                               rows={4}
-                              placeholder="Write your issue here..."
+                              placeholder="Write Your Issue Here..."
                               className="w-full resize-none rounded-lg border border-[#E7D9B8] bg-white px-3 py-3 text-sm leading-5 text-[#2E2E2E] placeholder:text-[#9A9A9A] focus:border-[#CE9F2D] focus:outline-none focus:ring-0 focus:shadow-none"
                             />
                           </label>
@@ -598,7 +598,7 @@ export default function SupportHelpCenter() {
 
                           {!isSignedIn && (
                             <p className="text-center text-xs font-medium text-[#666666]">
-                              Login is required to send a support message.
+                              Login Is Required to Send a Support Message.
                             </p>
                           )}
                         </form>
@@ -633,7 +633,7 @@ export default function SupportHelpCenter() {
                 <div className="divide-y divide-[#EFE5D2] px-5">
                   {supportLoading && (
                     <p className="py-5 text-sm font-medium text-[#666666]">
-                      Loading tickets...
+                      Loading Tickets...
                     </p>
                   )}
 

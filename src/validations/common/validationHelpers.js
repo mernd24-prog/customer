@@ -9,9 +9,10 @@ export const ERROR_MESSAGES = Object.freeze({
   email: "Enter a valid email address",
   phone: "Enter a valid 10-digit Indian mobile number",
   safeText: "Only letters, numbers, spaces, and basic punctuation are allowed",
-  name: (field) => `${field} can contain letters, spaces, apostrophes, dots, and hyphens only`,
-  firstName: "First name should contain only letters",
-  lastName: "Last name should contain only letters",
+  name: (field) =>
+    `${field} can contain letters, spaces, apostrophes, dots, and hyphens only`,
+  firstName: "First Name should contain only letters",
+  lastName: "Last Name should contain only letters",
   passwordMin: "Password must be at least 8 characters",
   passwordUppercase: "Password must contain at least one uppercase letter",
   passwordLowercase: "Password must contain at least one lowercase letter",
@@ -21,30 +22,30 @@ export const ERROR_MESSAGES = Object.freeze({
   passwordSameAsCurrent: "New password must be different from current password",
   otp: "Enter the 6-digit OTP",
   postalCode: "Enter a valid postal code",
-  indianPostalCode: "Enter PIN code",
+  indianPostalCode: "Enter a valid 6-digit PIN code",
   url: "Enter a valid URL",
 });
 
-const normalizeCountry = (country = "") =>
-  String(country)
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z]/g, "");
+// const normalizeCountry = (country = "") =>
+//   String(country)
+//     .trim()
+//     .toLowerCase()
+//     .replace(/[^a-z]/g, "");
 
 // Only enforce Indian PIN validation for India; otherwise fallback to generic postal code validation.
-export const getPostalCodeRule = (country) => {
-  const normalizedCountry = normalizeCountry(country);
-  const indianCountries = ["india", "bharat", "in"];
+// export const getPostalCodeRule = (country) => {
+//   const normalizedCountry = normalizeCountry(country);
+//   const indianCountries = ["india", "bharat", "in"];
 
-  if (indianCountries.includes(normalizedCountry)) {
-    return {
-      pattern: REGEX.indianPostalCode,
-      message: ERROR_MESSAGES.indianPostalCode,
-    };
-  }
+//   if (indianCountries.includes(normalizedCountry)) {
+//     return {
+//       pattern: REGEX.indianPostalCode,
+//       message: ERROR_MESSAGES.indianPostalCode,
+//     };
+//   }
 
-  return undefined;
-};
+//   return undefined;
+// };
 
 export const validatePostalCodeForCountry = (postalCode, country) => {
   const value = String(postalCode || "").trim();
@@ -63,7 +64,8 @@ export const validatePostalCodeForCountry = (postalCode, country) => {
 
 export const trimString = z.string().trim();
 
-export const compactSpaces = (value = "") => String(value).replace(/\s+/g, " ").trim();
+export const compactSpaces = (value = "") =>
+  String(value).replace(/\s+/g, " ").trim();
 
 export const sanitizeTextInput = (value = "") =>
   compactSpaces(value)
@@ -87,7 +89,12 @@ export const isValidSearchQuery = (value = "", options = {}) => {
 };
 
 export const requiredString = (field, options = {}) => {
-  const { min = 1, max = 120, pattern, patternMessage = ERROR_MESSAGES.safeText } = options;
+  const {
+    min = 1,
+    max = 120,
+    pattern,
+    patternMessage = ERROR_MESSAGES.safeText,
+  } = options;
 
   let stringSchema = trimString.min(1, ERROR_MESSAGES.required(field));
 
@@ -130,7 +137,11 @@ export const safeTextField = (field, options = {}) =>
     patternMessage: options.patternMessage || ERROR_MESSAGES.safeText,
   });
 
-export const optionalSafeTextField = (max = 250, pattern = REGEX.safeText, message = ERROR_MESSAGES.safeText) =>
+export const optionalSafeTextField = (
+  max = 250,
+  pattern = REGEX.safeText,
+  message = ERROR_MESSAGES.safeText,
+) =>
   optionalString(max).refine((value) => !value || pattern.test(value), {
     message,
   });
@@ -145,7 +156,7 @@ export const nameField = (field, options = {}) =>
   });
 
 export const firstNameField = (options = {}) =>
-  requiredString("First name", {
+  requiredString("First Name", {
     min: 2,
     max: 40,
     ...options,
@@ -154,7 +165,7 @@ export const firstNameField = (options = {}) =>
   });
 
 export const lastNameField = (options = {}) =>
-  requiredString("Last name", {
+  requiredString("Last Name", {
     min: 1,
     max: 50,
     ...options,
@@ -172,9 +183,12 @@ export const addressLineField = (field, options = {}) =>
   });
 
 export const optionalAddressLineField = (max = 120) =>
-  optionalString(max).refine((value) => !value || REGEX.addressLine.test(value), {
-    message: "Enter a valid address line",
-  });
+  optionalString(max).refine(
+    (value) => !value || REGEX.addressLine.test(value),
+    {
+      message: "Enter a valid address line",
+    },
+  );
 
 export const locationField = (field, options = {}) =>
   requiredString(field, {
@@ -185,18 +199,21 @@ export const locationField = (field, options = {}) =>
     ...options,
   });
 
-export const couponCodeField = optionalString(30).transform((value) => value?.toUpperCase()).refine(
-  (value) => !value || REGEX.couponCode.test(value),
-  { message: "Enter a valid coupon code" },
-);
+export const couponCodeField = optionalString(30)
+  .transform((value) => value?.toUpperCase())
+  .refine((value) => !value || REGEX.couponCode.test(value), {
+    message: "Enter a valid coupon code",
+  });
 
-export const referralCodeField = optionalString(30).transform((value) => value?.toUpperCase()).refine(
-  (value) => !value || REGEX.couponCode.test(value),
-  { message: "Enter a valid referral code" },
-);
+export const referralCodeField = optionalString(30)
+  .transform((value) => value?.toUpperCase())
+  .refine((value) => !value || REGEX.couponCode.test(value), {
+    message: "Enter a valid referral code",
+  });
 
 export const panField = z.preprocess(
-  (value) => (typeof value === "string" ? sanitizeTextInput(value).toUpperCase() : value),
+  (value) =>
+    typeof value === "string" ? sanitizeTextInput(value).toUpperCase() : value,
   trimString
     .min(1, ERROR_MESSAGES.required("PAN number"))
     .regex(REGEX.pan, "Enter a valid PAN number"),
@@ -210,7 +227,8 @@ export const aadhaarField = z.preprocess(
 );
 
 export const skuField = z.preprocess(
-  (value) => (typeof value === "string" ? sanitizeTextInput(value).toUpperCase() : value),
+  (value) =>
+    typeof value === "string" ? sanitizeTextInput(value).toUpperCase() : value,
   trimString
     .min(3, ERROR_MESSAGES.min("SKU", 3))
     .max(40, ERROR_MESSAGES.max("SKU", 40))
@@ -237,10 +255,17 @@ export const emailField = trimString
 
     return domain
       .split(".")
-      .every((label) => label.length > 0 && label.length <= 63 && !label.startsWith("-") && !label.endsWith("-"));
+      .every(
+        (label) =>
+          label.length > 0 &&
+          label.length <= 63 &&
+          !label.startsWith("-") &&
+          !label.endsWith("-"),
+      );
   }, ERROR_MESSAGES.email);
 
-export const normalizePhoneNumber = (value = "") => String(value).replace(/\D/g, "").slice(0, 10);
+export const normalizePhoneNumber = (value = "") =>
+  String(value).replace(/\D/g, "").slice(0, 10);
 
 export const phoneField = z.preprocess(
   (value) => (typeof value === "string" ? normalizePhoneNumber(value) : value),
@@ -280,7 +305,7 @@ export const strongPasswordField = passwordField
 export const otpField = trimString.regex(REGEX.otp, ERROR_MESSAGES.otp);
 
 export const postalCodeField = trimString
-  .min(1, ERROR_MESSAGES.required("Postal code"))
+  .min(1, ERROR_MESSAGES.required("Postal Code"))
   .regex(REGEX.postalCode, ERROR_MESSAGES.postalCode);
 
 export const indianPostalCodeField = trimString
@@ -363,16 +388,23 @@ export const quantityField = (field = "Quantity", options = {}) => {
 };
 
 export const optionalUrlField = z.preprocess(
-  (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+  (value) =>
+    typeof value === "string" && value.trim() === "" ? undefined : value,
   trimString
     .refine(
-      (value) => value.startsWith("data:image/") || z.string().url().safeParse(value).success,
+      (value) =>
+        value.startsWith("data:image/") ||
+        z.string().url().safeParse(value).success,
       ERROR_MESSAGES.url,
     )
     .optional(),
 );
 
-export const matchFields = (leftField, rightField, message = ERROR_MESSAGES.passwordMatch) => ({
+export const matchFields = (
+  leftField,
+  rightField,
+  message = ERROR_MESSAGES.passwordMatch,
+) => ({
   message,
   path: [rightField],
   validate: (values) => values[leftField] === values[rightField],
@@ -389,7 +421,8 @@ export const withMatchingFields = (schema, leftField, rightField, message) => {
 
 export const createZodResolver = (schema) => zodResolver(schema);
 
-export const getFieldError = (errors, name) => name.split(".").reduce((value, key) => value?.[key], errors);
+export const getFieldError = (errors, name) =>
+  name.split(".").reduce((value, key) => value?.[key], errors);
 
 export const applyServerErrors = (setError, errors = {}) => {
   Object.entries(errors).forEach(([field, messages]) => {

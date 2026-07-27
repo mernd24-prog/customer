@@ -33,7 +33,7 @@ export function WatchlistItemCard({
             <img src={image} alt="" className="h-full w-full object-cover" />
           ) : (
             <span className="flex h-full items-center justify-center  text-xs text-gray">
-              No image
+              No Image
             </span>
           )}
         </Link>
@@ -56,7 +56,7 @@ export function WatchlistItemCard({
             to={`/products/${id}`}
             className="mt-1  text-[11px] font-medium text-gold hover:underline"
           >
-            View item
+            View Item
           </Link>
         </div>
 
@@ -84,7 +84,7 @@ export function WatchlistItemCard({
                 className="h-full w-full object-contain"
               />
             ) : (
-              <span className=" text-sm text-gray">No image</span>
+              <span className=" text-sm text-gray">No Image</span>
             )}
           </div>
 
@@ -127,7 +127,7 @@ export function WatchlistItemCard({
           <BrandButton
             variant="secondary"
             rounded
-            label="Remove from Watchlist"
+            label="Remove From Watchlist"
             className="h-[48px] text-[15px] font-medium  "
             onClick={() => onRemove?.(product)}
           />

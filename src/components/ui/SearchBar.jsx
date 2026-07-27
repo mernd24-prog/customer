@@ -533,7 +533,7 @@ const SearchBar = ({
               }
             }}
             placeholder={placeholder}
-            aria-label="Search products"
+            aria-label="Search Products"
             aria-autocomplete={enableAutocomplete ? "list" : undefined}
             aria-expanded={
               enableAutocomplete ? shouldShowSuggestions : undefined
@@ -616,14 +616,14 @@ const SearchBar = ({
             <div className="flex flex-col items-center justify-center p-6 text-center">
               <img
                 src="/image/png/NoProductFound.png"
-                alt="No products found"
+                alt="No Products Found"
                 className="mb-3 h-20 w-20 object-contain"
               />
               <p className="text-sm font-medium text-[var(--customer-ink)]">
                 No results found for &quot;{sanitizedQuery}&quot;
               </p>
               <p className="mt-1 text-xs text-[var(--customer-muted)]">
-                Try a different search term or category.
+                Try a Different Search Term or Category.
               </p>
             </div>
           ) : null}

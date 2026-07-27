@@ -445,44 +445,44 @@ function ReturnsRefundsPage() {
 
               {ret.status === "qc_failed" && (
                 <div className="border-t border-amber-200 bg-amber-50 p-4 sm:p-6">
-                  <h3 className="font-semibold text-amber-900">Quality check failed — marketplace review</h3>
-                  <p className="mt-1 text-sm text-amber-800">The seller reported that the returned product did not pass inspection. Your refund remains on hold until the evidence is reviewed.</p>
+                  <h3 className="font-semibold text-amber-900">Quality Check Failed ——— Marketplace Review</h3>
+                  <p className="mt-1 text-sm text-amber-800">The Seller Reported That the Returned Product Did Not Pass Inspection. Your Refund Remains on Hold Until the Evidence Is Reviewed.</p>
                   {(ret.qcReview?.sellerEvidence || []).map((evidence, index) => (
                     <div key={evidence.orderItemId || index} className="mt-3 rounded-lg bg-white p-3 text-sm text-[#454545]">
-                      <div className="font-medium">Seller finding: {String(evidence.result || "").replace(/_/g, " ")}</div>
+                      <div className="font-medium">Seller Finding: {String(evidence.result || "").replace(/_/g, " ")}</div>
                       <div>{evidence.notes || "No inspection note provided."}</div>
-                      {(evidence.photos || []).map((url) => <a key={url} href={url} target="_blank" rel="noreferrer" className="mr-3 text-blue-700 underline">View evidence</a>)}
+                      {(evidence.photos || []).map((url) => <a key={url} href={url} target="_blank" rel="noreferrer" className="mr-3 text-blue-700 underline">View Evidence</a>)}
                     </div>
                   ))}
                   {ret.qcReview?.customerDispute ? (
-                    <p className="mt-3 rounded-lg bg-blue-50 p-3 text-sm text-blue-800">Your dispute is under admin review: {ret.qcReview.customerDispute.reason}</p>
+                    <p className="mt-3 rounded-lg bg-blue-50 p-3 text-sm text-blue-800">Your Dispute Is Under Admin Review: {ret.qcReview.customerDispute.reason}</p>
                   ) : !qcDisputeOpen ? (
-                    <p className="mt-3 rounded-lg bg-stone-100 p-3 text-sm text-stone-700">The QC dispute window closed on {qcDisputeDeadline.toLocaleString("en-IN")}.</p>
+                    <p className="mt-3 rounded-lg bg-stone-100 p-3 text-sm text-stone-700">The Qc Dispute Window Closed on {qcDisputeDeadline.toLocaleString("en-IN")}.</p>
                   ) : qcDispute.returnId === returnId ? (
                     <div className="mt-4 space-y-3">
-                      <textarea className="w-full rounded-lg border border-amber-300 bg-white p-3 text-sm" rows={4} placeholder="Explain why you disagree with the QC result" value={qcDispute.reason} onChange={(event) => setQcDispute((current) => ({ ...current, reason: event.target.value }))} />
-                      <textarea className="w-full rounded-lg border border-amber-300 bg-white p-3 text-sm" rows={2} placeholder="Optional evidence image URLs, one per line" value={qcDispute.evidence} onChange={(event) => setQcDispute((current) => ({ ...current, evidence: event.target.value }))} />
+                      <textarea className="w-full rounded-lg border border-amber-300 bg-white p-3 text-sm" rows={4} placeholder="Explain Why You Disagree with the Qc Result" value={qcDispute.reason} onChange={(event) => setQcDispute((current) => ({ ...current, reason: event.target.value }))} />
+                      <textarea className="w-full rounded-lg border border-amber-300 bg-white p-3 text-sm" rows={2} placeholder="Optional Evidence Image Urls, One Per Line" value={qcDispute.evidence} onChange={(event) => setQcDispute((current) => ({ ...current, evidence: event.target.value }))} />
                       <div className="flex gap-2">
-                        <button type="button" disabled={qcDispute.submitting} onClick={submitQcDispute} className="rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Submit dispute</button>
+                        <button type="button" disabled={qcDispute.submitting} onClick={submitQcDispute} className="rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Submit Dispute</button>
                         <button type="button" onClick={() => setQcDispute({ returnId: null, reason: "", evidence: "", submitting: false })} className="rounded-lg border px-4 py-2 text-sm">Cancel</button>
                       </div>
                     </div>
                   ) : (
-                    <button type="button" onClick={() => setQcDispute({ returnId, reason: "", evidence: "", submitting: false })} className="mt-3 rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white">Dispute QC result</button>
+                    <button type="button" onClick={() => setQcDispute({ returnId, reason: "", evidence: "", submitting: false })} className="mt-3 rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white">Dispute Qc Result</button>
                   )}
                 </div>
               )}
 
               {ret.qcReview?.status === "resolved" && (
                 <div className="border-t border-blue-200 bg-blue-50 p-4 text-sm text-blue-900 sm:p-6">
-                  <strong>Marketplace decision:</strong> {String(ret.qcReview.adminDecision || "").replace(/_/g, " ")} — {ret.qcReview.decisionReason}
+                  <strong>Marketplace Decision:</strong> {String(ret.qcReview.adminDecision || "").replace(/_/g, " ")} — {ret.qcReview.decisionReason}
                 </div>
               )}
 
               {ret.returnToCustomer?.trackingNumber && (
                 <div className="border-t border-purple-200 bg-purple-50 p-4 text-sm text-purple-900 sm:p-6">
-                  <strong>Product returning to you:</strong> {ret.returnToCustomer.courierName} · {ret.returnToCustomer.trackingNumber} · {String(ret.returnToCustomer.status || "").replace(/_/g, " ")}
-                  {ret.returnToCustomer.trackingUrl && <a className="ml-3 underline" href={ret.returnToCustomer.trackingUrl} target="_blank" rel="noreferrer">Track shipment</a>}
+                  <strong>Product Returning to You:</strong> {ret.returnToCustomer.courierName} · {ret.returnToCustomer.trackingNumber} · {String(ret.returnToCustomer.status || "").replace(/_/g, " ")}
+                  {ret.returnToCustomer.trackingUrl && <a className="ml-3 underline" href={ret.returnToCustomer.trackingUrl} target="_blank" rel="noreferrer">Track Shipment</a>}
                 </div>
               )}
 
@@ -513,7 +513,7 @@ function ReturnsRefundsPage() {
           Returns & Refunds
         </h1>
         <p className="mb-4 max-w-[600px] font-sans text-[14px] sm:text-[16px] font-medium text-[#2E2E2E] ">
-          Manage your return requests and track refund status.
+          Manage Your Return Requests and Track Refund Status.
         </p>
 
         <ApiState
@@ -541,7 +541,7 @@ function ReturnsRefundsPage() {
           {/* ── Return cards ────────────────────────────────────────── */}
           {filteredReturns.length === 0 ? (
             <div className="rounded-[15px] border border-dashed border-[#CE9F2D66] bg-[#FFF4D7]/10 p-8 text-center text-[16px] font-medium text-[#454545]">
-              No returns found for this filter.
+              No Returns Found for This Filter.
             </div>
           ) : (
             renderReturnsList(filteredReturns)

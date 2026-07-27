@@ -75,7 +75,7 @@ export default function ShareProductPopover({ productTitle }) {
           Share Product
         </h3>
         <p className="mt-1 text-[11px] text-muted sm:text-xs">
-          Share this product with friends
+          Share This Product with Friends
         </p>
       </div>
 

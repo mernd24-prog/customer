@@ -51,7 +51,7 @@ export function WarrantyPage({ detail = false }) {
             })}
           >
             <h2 className="mb-3  text-sm font-semibold text-ink">
-              Look up by Order ID
+              Look Up by Order Id
             </h2>
             <div className="flex gap-3">
               <input
@@ -90,7 +90,7 @@ export function WarrantyPage({ detail = false }) {
                         {warranty.type || "Product Warranty"}
                       </p>
                       <p className=" text-xs text-gray">
-                        ID: {warranty.id || warrantyId}
+                        Id: {warranty.id || warrantyId}
                       </p>
                     </div>
                   </div>
@@ -195,7 +195,7 @@ export function WarrantyPage({ detail = false }) {
                 className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />
               <input
-                placeholder="Variant ID (optional)"
+                placeholder="Variant Id (Optional)"
                 {...registerForm.register("variantId")}
                 className="rounded-[8px] border border-border-strong px-3 py-2.5  text-sm outline-none focus:border-gold"
               />

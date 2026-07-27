@@ -130,7 +130,7 @@ export default function BrandOutletPage() {
           <div className="mt-6 lg:mt-10">
             <section className="pb-7">
               <h1 className="mb-4 text-[20px] font-bold leading-tight text-[var(--customer-ink)] sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">
-                Shop brands available now
+                Shop Brands Available Now
               </h1>
 
               {loading ? (
@@ -166,7 +166,7 @@ export default function BrandOutletPage() {
                   className={`${stateContainerClass} border border-[var(--customer-border)] bg-[var(--customer-cream)]`}
                 >
                   <p className="text-sm font-semibold text-[var(--customer-ink)]">
-                    No brands available right now.
+                    No Brands Available Right Now.
                   </p>
                 </div>
               )}

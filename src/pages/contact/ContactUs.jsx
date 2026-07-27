@@ -75,24 +75,13 @@ export default function ContactUs() {
   };
 
   return (
-    <section className="bg-[#faf8f3] py-8 mt-4 lg:py-16 px-4">
+    <section className=" py-16 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-h3 font-bold text-[#1d2377]">
-            We'd Love To Hear From You
-          </h1>
-
-          <p className="text-gray-500  mt-3 max-w-lg mx-auto">
-            Whether you have a question, feedback, or need assistance, our
-            support team is always ready to help.
-          </p>
-        </div>
-
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left */}
 
           <div className="bg-white rounded-3xl shadow-lg p-8">
-            <h2 className="text-xl font-bold mb-8 text-[#1d2377]">
+            <h2 className="text-2xl font-bold mb-8 text-[#1d2377]">
               Contact Information
             </h2>
 
@@ -116,12 +105,12 @@ export default function ContactUs() {
                 {
                   icon: MapPin,
                   title: "Office",
-                  value: "Sam Global Marketplace Pvt Ltd\nBhubaneswar",
+                  value: "Sam Global Marketplace Pvt Ltd\nBhubaneswar\nOdisha",
                 },
               ].map((item, index) => (
                 <div key={index} className="flex gap-4 group">
-                  <div className="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center  duration-300">
-                    <item.icon className="text-[#d4a12f]  " />
+                  <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center group-hover:bg-[#d4a12f] duration-300">
+                    <item.icon className="text-[#d4a12f] group-hover:text-white" />
                   </div>
 
                   <div>
@@ -139,7 +128,7 @@ export default function ContactUs() {
           {/* Right */}
 
           <div className="lg:col-span-2 bg-white rounded-3xl shadow-lg p-8">
-            <h2 className="text-xl font-bold text-[#1d2377] mb-8">
+            <h2 className="text-2xl font-bold text-[#1d2377] mb-8">
               Send us a Message
             </h2>
 
@@ -188,7 +177,7 @@ export default function ContactUs() {
                     value={form.name}
                     onChange={handleChange}
                     placeholder="Full Name"
-                    className="w-full border rounded-xl p-4 focus:outline-none outline-none"
+                    className="w-full border rounded-xl p-4 focus:border-[#d4a12f] outline-none"
                   />
 
                   {errors.name && (
@@ -202,7 +191,7 @@ export default function ContactUs() {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="Email"
-                    className="w-full border focus:outline-none rounded-xl p-4"
+                    className="w-full border rounded-xl p-4"
                   />
 
                   {errors.email && (
@@ -216,7 +205,7 @@ export default function ContactUs() {
                     value={form.phone}
                     onChange={handleChange}
                     placeholder="Phone Number"
-                    className="w-full border focus:outline-none rounded-xl p-4"
+                    className="w-full border rounded-xl p-4"
                   />
 
                   {errors.phone && (
@@ -229,7 +218,7 @@ export default function ContactUs() {
                     name="subject"
                     value={form.subject}
                     onChange={handleChange}
-                    className="w-full border focus:outline-none rounded-xl p-4"
+                    className="w-full border rounded-xl p-4"
                   >
                     <option value="">Select Subject</option>
                     <option>Order Issue</option>
@@ -253,7 +242,7 @@ export default function ContactUs() {
                     value={form.message}
                     onChange={handleChange}
                     placeholder="Write your message..."
-                    className="w-full focus:outline-none border rounded-xl p-4"
+                    className="w-full border rounded-xl p-4"
                   />
 
                   {errors.message && (

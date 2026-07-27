@@ -17,7 +17,7 @@ const TYPE_CONFIG = {
     Icon: Check,
   },
   error: {
-    title: "Something went wrong",
+    title: "Something Went Wrong",
     Icon: AlertCircle,
   },
   warning: {

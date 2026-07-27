@@ -51,7 +51,7 @@ export default function SelectField({
 
   return (
     <label
-      className="grid gap-1.5 text-sm font-medium text-[var(--customer-ink)] lg:text-base"
+      className="grid gap-1.5 text-sm  font-medium text-[var(--customer-ink)] lg:text-base"
       htmlFor={id}
     >
       <span>{label}</span>

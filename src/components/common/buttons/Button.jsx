@@ -90,7 +90,7 @@ export default function Button({
               d="M4 12a8 8 0 018-8v8H4z"
             />
           </svg>
-          Please wait…
+          Please Wait…
         </span>
       ) : (
         <>

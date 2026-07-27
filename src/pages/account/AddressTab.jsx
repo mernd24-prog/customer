@@ -117,7 +117,7 @@ export default function AddressTab({ user }) {
     resolver: zodResolver(addressSchema),
     shouldFocusError: false,
     defaultValues: {
-      country: "",
+      country: "India",
       dialCode: "+91",
       label: "home",
       isDefault: false,
@@ -156,6 +156,18 @@ export default function AddressTab({ user }) {
     fetchFullList(dispatch, fetchCountries)
       .then((list) => {
         setCountries(list);
+        // Auto-select India if the add form still has no country or has the placeholder
+        const currentCountry = addForm.getValues("country");
+        if (!currentCountry || currentCountry === "") {
+          const india = list.find(
+            (c) => String(c.name || c).toLowerCase() === "india",
+          );
+          if (india) {
+            addForm.setValue("country", india.name || india, {
+              shouldValidate: false,
+            });
+          }
+        }
       })
       .catch((err) => console.error("Error fetching countries:", err));
   }, [dispatch]);
@@ -397,7 +409,12 @@ export default function AddressTab({ user }) {
       addAddress({ ...addressFields, isDefault: Boolean(values.isDefault) }),
       "Address added",
     );
-    addForm.reset({ country: "", dialCode: "", isDefault: false });
+    addForm.reset({
+      country: "India",
+      dialCode: "+91",
+      label: "home",
+      isDefault: false,
+    });
     setShowAddForm(false);
     dispatch(fetchMe());
   };
@@ -492,7 +509,7 @@ export default function AddressTab({ user }) {
                 loading={loading}
                 className={responsiveButtonClass}
               >
-                Save address
+                Save Address
               </Button>
               <Button
                 type="button"
@@ -530,7 +547,7 @@ export default function AddressTab({ user }) {
                     >
                       <div className={sectionHeaderClass}>
                         <Pencil size={16} className="text-gold" />
-                        Edit address
+                        Edit Address
                       </div>
 
                       <AddressFormFields
@@ -554,7 +571,7 @@ export default function AddressTab({ user }) {
                           loading={loading}
                           className={responsiveButtonClass}
                         >
-                          Save changes
+                          Save Changes
                         </Button>
 
                         <Button
@@ -585,7 +602,7 @@ export default function AddressTab({ user }) {
               <MapPin size={24} />
             </span>
             <p className=" text-sm font-medium text-ink">
-              No addresses saved yet.
+              No Addresses Saved Yet.
             </p>
           </div>
         )}
@@ -593,7 +610,7 @@ export default function AddressTab({ user }) {
 
       <ConfirmModal
         open={Boolean(deleteAddressId)}
-        title="Delete this address?"
+        title="Delete This Address?"
         description="This saved address will be removed from your account. You can add it again later if needed."
         confirmLabel={loading ? "Deleting..." : "Delete address"}
         cancelLabel="Keep address"

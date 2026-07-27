@@ -6,6 +6,7 @@ export default function NeedHelpPanel({
   title = "Need Help ?",
   items = [],
   className = "",
+  href,
   sticky = false,
   headerStyle = "plain",
   expandedIndex: controlledExpandedIndex,
@@ -28,10 +29,10 @@ export default function NeedHelpPanel({
         h-fit w-full
         overflow-hidden
         rounded-xl
-        border border-[#E7D9B8]
+        border  border-[#E7D9B8]
         bg-white
         ${sticky ? "lg:sticky lg:top-28" : ""}
-        ${className}
+        ${className} 
       `}
     >
       {/* Header */}
@@ -54,11 +55,12 @@ export default function NeedHelpPanel({
       </div>
 
       {/* Items */}
+      <a></a>
       <div
         className={
           hasColoredHeader
-            ? "divide-y divide-[#EFE5D2] px-5"
-            : "mx-6 divide-y divide-[#EFE5D2]"
+            ? "divide-y  divide-[#EFE5D2] px-5"
+            : "mx-6 divide-y divide-[#EFE5D2] "
         }
       >
         {items.map((item, index) => {
@@ -69,7 +71,7 @@ export default function NeedHelpPanel({
               {/* Icon */}
               <span
                 className="
-                  flex h-11 w-11 shrink-0
+                  flex h-11 w-11 shrink-0 
                   items-center justify-center
                   rounded-full
                   border border-[#1B1D6099]
@@ -90,6 +92,7 @@ export default function NeedHelpPanel({
                     font-semibold
                     leading-5
                     text-[#1B1D60]
+                    
                   "
                 >
                   {item.title}

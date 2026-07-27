@@ -51,13 +51,13 @@ export default function ProductPriceBlock({
         </div>
 
         <p className="text-sm font-medium text-[#2E2E2E] lg:text-base">
-          Inclusive of all taxes
+          Inclusive of All Taxes
         </p>
       </div>
 
       {safeDynamicPrice && dynamicState.current?.loyalty && (
         <p className="inline-block w-fit rounded-full bg-gold-soft px-3 py-1 text-xs font-semibold text-gold-dark">
-          ✦ Loyalty price applied
+          ✦✦✦ Loyalty Price Applied
         </p>
       )}
     </>

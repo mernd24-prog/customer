@@ -158,7 +158,7 @@ export default function AuthModal({ open, onClose }) {
             "hover:bg-cream hover:text-ink",
             "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1",
           )}
-          aria-label="Close login prompt"
+          aria-label="Close Login Prompt"
         >
           <CloseIcon />
         </button>
@@ -193,8 +193,8 @@ export default function AuthModal({ open, onClose }) {
             id="auth-modal-desc"
             className="mt-2.5 text-center  text-[0.825rem] leading-relaxed text-muted"
           >
-            Please login to continue. You need to be authenticated to access
-            this feature and continue your shopping experience.
+            Please Login to Continue. You Need to Be Authenticated to Access
+            This Feature and Continue Your Shopping Experience.
           </p>
 
           {/* Divider */}
@@ -234,7 +234,7 @@ export default function AuthModal({ open, onClose }) {
 
           {/* Register nudge */}
           <p className="mt-5 text-center  text-[0.75rem] text-muted">
-            New here?{" "}
+            New Here?{" "}
             <button
               onClick={handleGoToRegister}
               className={cn(
@@ -243,7 +243,7 @@ export default function AuthModal({ open, onClose }) {
                 "focus:outline-none focus-visible:underline",
               )}
             >
-              Create a free account
+              Create a Free Account
             </button>
           </p>
         </div>

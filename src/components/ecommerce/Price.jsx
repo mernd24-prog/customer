@@ -71,7 +71,7 @@ export default function Price({
 
       {showDiscount && discountPct > 0 && (
         <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
-          {discountPct}% off
+          {discountPct}% Off
         </span>
       )}
 
