@@ -96,6 +96,108 @@ const getDisplayItemPrice = (item) => {
 
   return getItemUnitPrice(item) * getItemQuantity(item);
 };
+const getSnapshot = (value) => {
+  if (!value) return {};
+  if (typeof value === "string") {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return {};
+    }
+  }
+  return typeof value === "object" ? value : {};
+};
+const getItemDiscountAmount = (item) =>
+  asNumber(
+    item?.discount_amount ??
+      item?.discountAmount ??
+      getSnapshot(item?.pricing_snapshot || item?.pricingSnapshot)?.discountAmount ??
+      0,
+  );
+const getOrderSummary = (order = {}) => {
+  const metadata = getSnapshot(order?.metadata);
+  return order?.summary || metadata.pricingSummary || metadata.summary || {};
+};
+const getOrderMoney = (order = {}, keys = []) => {
+  const summary = getOrderSummary(order);
+  const metadata = getSnapshot(order?.metadata);
+  for (const key of keys) {
+    const value = order?.[key] ?? summary?.[key] ?? metadata?.[key];
+    if (value !== undefined && value !== null && value !== "") return asNumber(value);
+  }
+  return 0;
+};
+const shouldRefundComponent = (policy = {}, fullReturn = false) => {
+  if (!policy || typeof policy !== "object") return false;
+  if (!fullReturn && policy.partialReturn) return true;
+  return Boolean(policy.customerReturn);
+};
+const getRefundPolicy = (order = {}) => {
+  const metadata = getSnapshot(order?.metadata);
+  return metadata?.commerceSettings?.returns?.refundPolicy || order?.commerceSettings?.returns?.refundPolicy || {};
+};
+const calculateEstimatedRefundBreakup = (order = {}, item = null, quantity = 1) => {
+  if (!item) {
+    return { total: 0, rows: [], note: "" };
+  }
+  const qty = Math.max(1, asNumber(quantity) || 1);
+  const itemQty = getItemQuantity(item);
+  const ratio = Math.min(qty / itemQty, 1);
+  const orderItems = getOrderItems(order);
+  const itemGross = asNumber(getItemLineTotal(item) ?? getItemUnitPrice(item) * itemQty) * ratio;
+  const itemDiscount = getItemDiscountAmount(item) * ratio;
+  const productPaid = Math.max(0, itemGross - itemDiscount);
+  const orderSubtotal = getOrderMoney(order, ["subtotal_amount", "subtotalAmount"]) ||
+    orderItems.reduce((sum, orderItem) => sum + asNumber(getItemLineTotal(orderItem)), 0);
+  const proportion = orderSubtotal > 0 ? Math.min(itemGross / orderSubtotal, 1) : 0;
+  const policy = getRefundPolicy(order);
+  const fullReturn = orderItems.length === 1 && qty >= itemQty;
+  const shippingTotal = getOrderMoney(order, [
+    "shipping_fee_amount",
+    "shippingFeeAmount",
+    "deliveryChargeAmount",
+    "delivery_charge_amount",
+  ]);
+  const platformFeeTotal = getOrderMoney(order, [
+    "customer_platform_fee_amount",
+    "customerPlatformFeeAmount",
+    "customerPlatformFee",
+  ]);
+  const platformFeeTaxTotal = getOrderMoney(order, [
+    "customer_platform_fee_tax_amount",
+    "customerPlatformFeeTaxAmount",
+    "customerPlatformFeeGST",
+  ]);
+  const shippingRefundable = shouldRefundComponent(policy.shipping, fullReturn);
+  const platformFeeRefundable = shouldRefundComponent(policy.platformFee, fullReturn);
+  const shippingRefund = shippingRefundable ? shippingTotal * proportion : 0;
+  const platformFeeRefund = platformFeeRefundable ? platformFeeTotal * proportion : 0;
+  const platformFeeTaxRefund = platformFeeRefundable ? platformFeeTaxTotal * proportion : 0;
+  const total = Math.max(0, productPaid + shippingRefund + platformFeeRefund + platformFeeTaxRefund);
+
+  return {
+    total,
+    rows: [
+      { label: "Product amount paid", value: productPaid, tone: "credit" },
+      itemDiscount > 0 ? { label: "Discount not refunded as cash", value: -itemDiscount, tone: "muted" } : null,
+      shippingTotal > 0
+        ? {
+          label: shippingRefundable ? "Shipping refunded" : "Shipping not refundable",
+          value: shippingRefundable ? shippingRefund : 0,
+          tone: shippingRefundable ? "credit" : "muted",
+        }
+        : null,
+      platformFeeTotal + platformFeeTaxTotal > 0
+        ? {
+          label: platformFeeRefundable ? "Platform fee refunded" : "Platform fee not refundable",
+          value: platformFeeRefund + platformFeeTaxRefund,
+          tone: platformFeeRefundable ? "credit" : "muted",
+        }
+        : null,
+    ].filter(Boolean),
+    note: "Seller commission is not deducted from the customer refund. Seller payout is adjusted separately.",
+  };
+};
 const getItemImage = (item) => {
   const product = getItemProduct(item);
   const images =
@@ -186,10 +288,7 @@ function ReturnRequestPage({ orderId }) {
   });
 
   const watchedQty = watch("quantity");
-  const estimatedRefund = selectedItem
-    ? Number(getItemUnitPrice(selectedItem) || 0) *
-      Math.max(1, Number(watchedQty) || 1)
-    : 0;
+  const estimatedRefund = calculateEstimatedRefundBreakup(order, selectedItem, watchedQty);
 
   const handleItemSelect = (item) => {
     const policy = getItemReturnPolicy(item);
@@ -436,20 +535,39 @@ function ReturnRequestPage({ orderId }) {
                     )}
                   </label>
 
-                  {estimatedRefund > 0 && (
+                  {estimatedRefund.total > 0 && (
                     <div className="rounded-[8px] border border-emerald-200 bg-emerald-50 px-4 py-3">
                       <p className="text-xs font-semibold text-emerald-700">
                         Estimated Refund
                       </p>
                       <p className="mt-1 text-lg font-bold text-emerald-700">
                         ₹
-                        {estimatedRefund.toLocaleString("en-IN", {
+                        {estimatedRefund.total.toLocaleString("en-IN", {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}
                       </p>
+                      <div className="mt-3 space-y-1 rounded-md bg-white/70 px-3 py-2 text-xs">
+                        {estimatedRefund.rows.map((row) => (
+                          <div key={row.label} className="flex items-center justify-between gap-3">
+                            <span className={row.tone === "muted" ? "text-stone-500" : "text-emerald-700"}>
+                              {row.label}
+                            </span>
+                            <span className={row.tone === "muted" ? "font-semibold text-stone-500" : "font-semibold text-emerald-700"}>
+                              {row.value > 0 ? "+" : row.value < 0 ? "-" : ""}
+                              ₹{Math.abs(row.value).toLocaleString("en-IN", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="mt-2 text-xs text-emerald-700">
+                        {estimatedRefund.note}
+                      </p>
                       <p className="mt-0.5 text-xs text-emerald-600">
-                        Final Refund Amount Is Subject to Review and Qc.
+                        Final refund is subject to review and QC.
                       </p>
                     </div>
                   )}
