@@ -506,7 +506,24 @@ function OrderDetail({ orderId, track }) {
   const fetchedReturns = Array.isArray(returnsState.list)
     ? returnsState.list.filter((returnRequest) => String(returnRequest.orderId || returnRequest.order_id || "") === String(orderId))
     : [];
-  const returns = fetchedReturns.length ? fetchedReturns : embeddedReturns;
+  const returns = [...fetchedReturns, ...embeddedReturns].filter((returnRequest, index, list) => {
+    const id = String(
+      returnRequest.id ||
+      returnRequest._id ||
+      returnRequest.returnId ||
+      returnRequest.returnNumber ||
+      returnRequest.return_number ||
+      index,
+    );
+    return list.findIndex((candidate, candidateIndex) => String(
+      candidate.id ||
+      candidate._id ||
+      candidate.returnId ||
+      candidate.returnNumber ||
+      candidate.return_number ||
+      candidateIndex,
+    ) === id) === index;
+  });
   const shipments = Array.isArray(order?.relations?.shipments)
     ? order.relations.shipments
     : [];
@@ -517,7 +534,7 @@ function OrderDetail({ orderId, track }) {
   const selectedItemReturn = selectedOrderItem
     ? returns.find((returnRequest) =>
       (returnRequest.items || []).some((returnItem) =>
-        String(returnItem.orderItemId || returnItem.order_item_id || "") === getOrderItemId(selectedOrderItem),
+        returnItemMatchesOrderItem(returnItem, selectedOrderItem),
       ),
     )
     : null;
@@ -591,9 +608,34 @@ function OrderDetail({ orderId, track }) {
   const selectedItemReturnWindowOpen = selectedOrderItem
     ? (!selectedItemReturnDeadline || new Date(selectedItemReturnDeadline).getTime() >= Date.now())
     : false;
+  const selectedItemReturnedQuantity = selectedOrderItem
+    ? returns.reduce((sum, returnRequest) => {
+      const returnStatus = String(returnRequest.status || "").toLowerCase();
+      const refundStatus = String(returnRequest.refund?.status || returnRequest.refundStatus || returnRequest.refund_status || "").toLowerCase();
+      if (["rejected", "qc_failure_upheld"].includes(returnStatus)) return sum;
+      if (returnStatus === "closed" && !["completed", "not_required"].includes(refundStatus)) return sum;
+      return sum + (returnRequest.items || [])
+        .filter((returnItem) =>
+          returnItemMatchesOrderItem(returnItem, selectedOrderItem),
+        )
+        .reduce((itemSum, returnItem) => itemSum + Number(
+          returnItem.receivedQuantity ??
+          returnItem.received_quantity ??
+          returnItem.approvedQuantity ??
+          returnItem.approved_quantity ??
+          returnItem.requestedQuantity ??
+          returnItem.requested_quantity ??
+          returnItem.quantity ??
+          0,
+        ), 0);
+    }, 0)
+    : 0;
+  const selectedItemReturnableQuantity = selectedOrderItem
+    ? Math.max(0, Number(selectedOrderItem.quantity || 0) - selectedItemReturnedQuantity)
+    : 0;
   const selectedItemCanReturn = Boolean(
     selectedOrderItem &&
-    !selectedItemReturn &&
+    selectedItemReturnableQuantity > 0 &&
     selectedItemReturnWindowOpen &&
     (selectedOrderItem.returnable ?? selectedItemReturnPolicy.returnable ?? selectedItemReturnPolicy.eligible ?? true) === true &&
     ["delivered", "fulfilled", "completed"].includes(
@@ -624,8 +666,46 @@ function OrderDetail({ orderId, track }) {
     if (titles.length === 1) return titles[0];
     return `${titles[0]} + ${titles.length - 1} more`;
   };
+  const documentCoversSelectedItem = (document = {}) => {
+    if (!selectedOrderItem) return true;
+    const selectedItemId = getOrderItemId(selectedOrderItem);
+    if (!selectedItemId) return true;
+    const metadata = document.metadata || {};
+    const coveredItems = [
+      ...(Array.isArray(metadata.items) ? metadata.items : []),
+      ...(Array.isArray(metadata.lineItems) ? metadata.lineItems : []),
+    ];
+    const explicitIds = [
+      ...(Array.isArray(metadata.orderItemIds) ? metadata.orderItemIds : []),
+      ...(Array.isArray(metadata.order_item_ids) ? metadata.order_item_ids : []),
+    ].map(String);
+    if (explicitIds.includes(selectedItemId)) return true;
+    if (!coveredItems.length) return true;
+    return coveredItems.some((item) => String(
+      item.orderItemId ||
+      item.order_item_id ||
+      item.id ||
+      item._id ||
+      "",
+    ) === selectedItemId);
+  };
+  const returnCoversSelectedItem = (returnRequest = {}) => {
+    if (!selectedOrderItem) return true;
+    return (returnRequest.items || []).some((returnItem) =>
+      returnItemMatchesOrderItem(returnItem, selectedOrderItem),
+    );
+  };
+  const visibleReturns = selectedOrderItem
+    ? returns.filter(returnCoversSelectedItem)
+    : returns;
+  const visibleCustomerInvoices = selectedOrderItem
+    ? customerInvoices.filter(documentCoversSelectedItem)
+    : customerInvoices;
+  const visiblePendingSellerDocuments = selectedOrderItem
+    ? pendingSellerDocuments.filter(documentCoversSelectedItem)
+    : pendingSellerDocuments;
 
-  const returnReverseInvoices = returns
+  const returnReverseInvoices = visibleReturns
     .map((returnRequest) => {
       const creditNoteId =
         returnRequest.creditNoteId ||
@@ -664,7 +744,7 @@ function OrderDetail({ orderId, track }) {
     .filter(Boolean);
 
   const downloadableDocuments = [
-    ...customerInvoices.map((invoice, index) => {
+    ...visibleCustomerInvoices.map((invoice, index) => {
       const invoiceId = getDocumentId(invoice);
       if (!invoiceId) return null;
       return {
@@ -675,21 +755,21 @@ function OrderDetail({ orderId, track }) {
         filename: `${invoice.invoice_number || invoice.invoiceNumber || `invoice-${index + 1}`}.pdf`,
       };
     }),
-    orderReceipt && getDocumentId(orderReceipt) ? {
+    !selectedOrderItem && orderReceipt && getDocumentId(orderReceipt) ? {
       id: getDocumentId(orderReceipt),
       title: "Order receipt",
       subtitle: "Marketplace payment summary",
       downloadPath: endpoints.tax.invoiceDownload(getDocumentId(orderReceipt)),
       filename: `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || `receipt-${orderId}`}.pdf`,
     } : null,
-    customerFeeInvoice && getDocumentId(customerFeeInvoice) ? {
+    selectedOrderItem && customerFeeInvoice && getDocumentId(customerFeeInvoice) ? {
       id: getDocumentId(customerFeeInvoice),
       title: "Platform fee invoice",
       subtitle: "Marketplace tax invoice for platform fee",
       downloadPath: endpoints.tax.invoiceDownload(getDocumentId(customerFeeInvoice)),
       filename: `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
     } : null,
-    ...cancellationReverseInvoices,
+    ...(selectedOrderItem ? [] : cancellationReverseInvoices),
     ...returnReverseInvoices,
   ].filter(Boolean);
 
@@ -938,6 +1018,11 @@ function OrderDetail({ orderId, track }) {
                       <span className="ml-2 text-xs font-semibold text-[#6F7480]">
                         Showing progress/actions for this item only.
                       </span>
+                      {selectedItemReturnedQuantity > 0 && (
+                        <div className="mt-1 text-xs font-semibold text-[#7A5A00]">
+                          Returned/requested {selectedItemReturnedQuantity} of {Number(selectedOrderItem.quantity || 0)} · Returnable now {selectedItemReturnableQuantity}
+                        </div>
+                      )}
                     </div>
                   )}
                   <OrderProgress
@@ -964,9 +1049,13 @@ function OrderDetail({ orderId, track }) {
                 <section className="rounded-[8px] md:border md:border-border bg-white px-4 py-4 sm:px-6">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <h2 className="text-sm font-semibold text-ink">Order documents</h2>
+                      <h2 className="text-sm font-semibold text-ink">
+                        {selectedOrderItem ? "Selected item documents" : "Order documents"}
+                      </h2>
                       <p className="mt-1 text-xs text-muted">
-                        Invoices appear after seller delivery. Reverse invoices appear after cancellation or return refund.
+                        {selectedOrderItem
+                          ? "Only documents related to this item are shown here."
+                          : "Invoices appear after seller delivery. Reverse invoices appear after cancellation or return refund."}
                       </p>
                     </div>
                     <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-muted">
@@ -995,7 +1084,7 @@ function OrderDetail({ orderId, track }) {
                       </div>
                     ))}
 
-                    {pendingSellerDocuments.map((document, index) => (
+                    {visiblePendingSellerDocuments.map((document, index) => (
                       <div
                         key={`${document.sellerName}-${index}`}
                         className="rounded-[6px] border border-dashed border-border bg-surface px-3 py-3 text-sm"
@@ -1006,7 +1095,7 @@ function OrderDetail({ orderId, track }) {
                       </div>
                     ))}
 
-                    {!downloadableDocuments.length && !pendingSellerDocuments.length && (
+                    {!downloadableDocuments.length && !visiblePendingSellerDocuments.length && (
                       <div className="rounded-[6px] border border-dashed border-border bg-surface px-3 py-3 text-sm text-muted">
                         No documents are available yet.
                       </div>
@@ -1038,12 +1127,7 @@ function OrderDetail({ orderId, track }) {
                   orderStatus={status}
                   shipments={shipments}
                   sellerFulfillmentGroups={order?.relations?.sellerFulfillmentGroups || []}
-                  returns={returns}
-                  customerInvoices={customerInvoices}
-                  orderReceipt={orderReceipt}
-                  customerFeeInvoice={customerFeeInvoice}
-                  downloadingId={downloadingId}
-                  onDownloadDocument={handleDownload}
+                  returns={visibleReturns}
                   currency={currency}
                   getItemImage={getItemImage}
                     getProductTitle={getProductTitle}
@@ -1119,12 +1203,12 @@ function OrderDetail({ orderId, track }) {
               </section>
             )}
 
-            {returns.length > 0 && (
+            {visibleReturns.length > 0 && (
               <section className="rounded-[8px] md:border md:border-border bg-white px-4 py-4 sm:px-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h2 className="text-sm font-semibold text-ink">
-                      Return and refund status
+                      {selectedOrderItem ? "Selected item return and refund" : "Return and refund status"}
                     </h2>
                     <p className="mt-1 text-xs text-muted">
                       Return and payout changes are shown item-wise. Only returned items affect refund and settlement.
@@ -1139,7 +1223,7 @@ function OrderDetail({ orderId, track }) {
                 </div>
 
                 <div className="mt-3 grid gap-3">
-                  {returns.map((returnRequest) => {
+                  {visibleReturns.map((returnRequest) => {
                     const creditNoteId =
                       returnRequest.creditNoteId ||
                       returnRequest.credit_note_id ||
@@ -1148,7 +1232,11 @@ function OrderDetail({ orderId, track }) {
                       returnRequest.refund?.metadata?.creditNoteId ||
                       returnRequest.refund?.metadata?.credit_note_id;
                     const returnItems = Array.isArray(returnRequest.items)
-                      ? returnRequest.items
+                      ? selectedOrderItem
+                        ? returnRequest.items.filter((returnItem) =>
+                          returnItemMatchesOrderItem(returnItem, selectedOrderItem),
+                        )
+                        : returnRequest.items
                       : [];
 
                     return (
@@ -1228,14 +1316,14 @@ function OrderDetail({ orderId, track }) {
                   )}
                   {!track && (
                     <Link
-                      to={`/orders/${orderId}/track`}
+                      to={`/orders/${orderId}/track${selectedOrderItem ? `?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}` : ""}`}
                       className="block sm:inline-flex"
                     >
                       <Button
                         variant="secondary"
                         className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
                       >
-                        <Truck size={15} /> Track order
+                        <Truck size={15} /> {selectedOrderItem ? "Track selected item" : "Track order"}
                       </Button>
                     </Link>
                   )}
@@ -1344,6 +1432,62 @@ function getOrderItemColor(item) {
 
 const getOrderItemId = (item = {}) =>
   String(item.id || item._id || item.orderItemId || item.order_item_id || "");
+
+const getOrderItemVariantId = (item = {}) =>
+  item.variant_id || item.variantId || item.variant?._id || item.variant?.id || "";
+
+const getOrderItemVariantSku = (item = {}) =>
+  item.variant_sku || item.variantSku || item.sku || item.productSku || item.product_sku || "";
+
+const getReturnItemProductId = (returnItem = {}) =>
+  returnItem.productId ||
+  returnItem.product_id ||
+  returnItem.product?._id ||
+  returnItem.product?.id ||
+  "";
+
+const getReturnItemVariantId = (returnItem = {}) =>
+  returnItem.variantId ||
+  returnItem.variant_id ||
+  returnItem.variant?._id ||
+  returnItem.variant?.id ||
+  "";
+
+const getReturnItemVariantSku = (returnItem = {}) =>
+  returnItem.variantSku ||
+  returnItem.variant_sku ||
+  returnItem.sku ||
+  returnItem.productSku ||
+  returnItem.product_sku ||
+  "";
+
+const returnItemMatchesOrderItem = (returnItem = {}, item = {}) => {
+  const itemId = String(getOrderItemId(item) || "");
+  const returnOrderItemId = String(
+    returnItem.orderItemId ||
+      returnItem.order_item_id ||
+      returnItem.itemId ||
+      returnItem.item_id ||
+      returnItem.orderLineItemId ||
+      returnItem.order_line_item_id ||
+      "",
+  );
+  if (itemId && returnOrderItemId) return returnOrderItemId === itemId;
+
+  const productId = String(getItemProductId(item) || "");
+  const returnProductId = String(getReturnItemProductId(returnItem) || "");
+  if (!productId || !returnProductId || productId !== returnProductId) return false;
+
+  const variantId = String(getOrderItemVariantId(item) || "");
+  const returnVariantId = String(getReturnItemVariantId(returnItem) || "");
+  if (variantId || returnVariantId) return variantId === returnVariantId;
+
+  const variantSku = String(getOrderItemVariantSku(item) || "");
+  const returnVariantSku = String(getReturnItemVariantSku(returnItem) || "");
+  if (variantSku || returnVariantSku) return variantSku === returnVariantSku;
+
+  return true;
+};
 
 const getSellerGroupKey = (sellerId, organizationId = null) =>
   `${String(sellerId || "platform")}:${organizationId || "default"}`;

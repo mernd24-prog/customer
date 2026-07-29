@@ -301,6 +301,20 @@ export const getCustomerOrderAmount = (order) => {
   const discount = getOrderAmount(order, "discount") ?? 0;
   const walletDiscount = getOrderAmount(order, "walletDiscount") ?? 0;
   const shipping = getOrderAmount(order, "shipping") ?? 0;
+  const platformFee =
+    order?.summary?.customerPlatformFeeAmount ??
+    order?.summary?.customer_platform_fee_amount ??
+    order?.customerPlatformFeeAmount ??
+    order?.customer_platform_fee_amount ??
+    order?.metadata?.pricingSummary?.customerPlatformFeeAmount ??
+    0;
+  const platformFeeTax =
+    order?.summary?.customerPlatformFeeTaxAmount ??
+    order?.summary?.customer_platform_fee_tax_amount ??
+    order?.customerPlatformFeeTaxAmount ??
+    order?.customer_platform_fee_tax_amount ??
+    order?.metadata?.pricingSummary?.customerPlatformFeeTaxAmount ??
+    0;
   const taxPayable =
     order?.summary?.taxPayableAmount ??
     order?.summary?.tax_payable_amount ??
@@ -319,6 +333,8 @@ export const getCustomerOrderAmount = (order) => {
       asNumber(subtotal) -
         asNumber(discount) +
         asNumber(shipping) +
+        asNumber(platformFee) +
+        asNumber(platformFeeTax) +
         asNumber(taxPayable) +
         asNumber(codCharge) -
         asNumber(walletDiscount),

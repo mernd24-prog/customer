@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import BrandButton from "../../components/ui/BrandButton";
 import StatusTimeline from "../../components/common/display/StatusTimeline";
-import { Download, MapPin, Phone } from "lucide-react";
+import { Download, MapPin, Phone, Truck } from "lucide-react";
 
 import OrderDetailLayout from "../orders/components/OrderDetailLayout";
 import { OrderDetailAside } from "../orders/components/OrderDetailLayout";
@@ -48,6 +48,7 @@ import {
 
 export function PaymentResultPage({ failed = false }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const orderState = useSelector((state) => state.order);
   const userState = useSelector((state) => state.user);
   const [invoices, setInvoices] = useState(null);
@@ -66,6 +67,38 @@ export function PaymentResultPage({ failed = false }) {
 
   const discount = getOrderAmount(order || {}, "discount");
   const shipping = getOrderAmount(order || {}, "shipping");
+  const subtotal = getOrderAmount(order || {}, "subtotal");
+  const taxPayable = firstDefined(
+    order?.summary?.taxPayableAmount,
+    order?.summary?.tax_payable_amount,
+    order?.taxBreakup?.taxPayableAmount,
+    order?.tax_breakup?.tax_payable_amount,
+    0,
+  );
+  const taxIncluded = firstDefined(
+    order?.summary?.taxIncludedAmount,
+    order?.summary?.tax_included_amount,
+    order?.taxBreakup?.taxIncludedAmount,
+    order?.tax_breakup?.tax_included_amount,
+    0,
+  );
+  const customerPlatformFee = firstDefined(
+    order?.summary?.customerPlatformFeeAmount,
+    order?.summary?.customer_platform_fee_amount,
+    order?.customerPlatformFeeAmount,
+    order?.customer_platform_fee_amount,
+    order?.metadata?.pricingSummary?.customerPlatformFeeAmount,
+    0,
+  );
+  const customerPlatformFeeTax = firstDefined(
+    order?.summary?.customerPlatformFeeTaxAmount,
+    order?.summary?.customer_platform_fee_tax_amount,
+    order?.customerPlatformFeeTaxAmount,
+    order?.customer_platform_fee_tax_amount,
+    order?.metadata?.pricingSummary?.customerPlatformFeeTaxAmount,
+    0,
+  );
+  const walletDiscount = getOrderAmount(order || {}, "walletDiscount") || 0;
   const customerAmount = getCustomerOrderAmount(order || {});
   const status = firstDefined(order?.status, order?.orderStatus, "confirmed");
   const invoiceDownloadAvailable = status === "fulfilled";
@@ -185,6 +218,10 @@ export function PaymentResultPage({ failed = false }) {
     { label: "Checkout" },
     { label: failed ? "Payment Failed" : "Order Placed" },
   ];
+
+  const handleTrackOrder = () => {
+    navigate(`/orders/${encodeURIComponent(orderId)}/track`);
+  };
 
   const failureCard = (
     <div className="mx-auto w-full max-w-[760px] px-4 py-10 sm:px-6 lg:px-8">
@@ -344,6 +381,22 @@ export function PaymentResultPage({ failed = false }) {
                           Your order has been received and is being prepared for
                           shipment.
                         </p>
+                        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+                          <BrandButton
+                            rounded
+                            onClick={handleTrackOrder}
+                            icon={<Truck size={18} />}
+                            label="Track order"
+                            className="h-12 w-full min-w-[180px] text-sm sm:w-auto"
+                          />
+                          <BrandButton
+                            variant="secondary"
+                            rounded
+                            onClick={() => navigate(`/orders/${encodeURIComponent(orderId)}`)}
+                            label="View order details"
+                            className="h-12 w-full min-w-[180px] text-sm sm:w-auto"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -408,26 +461,69 @@ export function PaymentResultPage({ failed = false }) {
                       value={formatMoney(getOrderItemLineTotal(item), currency)}
                     />
                   ))}
-                  {asNumber(discount) > 0 && (
+
+                  <div className="mt-2 rounded-[14px] border border-[#CE9F2D33] bg-[#FFFCF6] p-3">
+                    <p className="mb-2 text-sm font-bold text-[#1B1D60]">
+                      How your total is calculated
+                    </p>
                     <SummaryRow
-                      label="Discount"
-                      value={`-${formatMoney(discount, currency)}`}
-                      savings
+                      label="Product total"
+                      value={formatMoney(firstDefined(subtotal, items.reduce((sum, item) => sum + asNumber(getOrderItemLineTotal(item)), 0)), currency)}
                     />
-                  )}
-                  <SummaryRow
-                    label="Shipping (collected for seller)"
-                    value={
-                      asNumber(shipping) === 0
-                        ? "FREE"
-                        : formatMoney(shipping, currency)
-                    }
-                  />
-                  <div className="border-t border-dashed border-[#04258626] pt-3">
+                    {asNumber(discount) > 0 && (
+                      <SummaryRow
+                        label="Discount"
+                        value={`-${formatMoney(discount, currency)}`}
+                        savings
+                      />
+                    )}
                     <SummaryRow
-                      label="Total Payable"
-                      value={formatMoney(customerAmount, currency)}
+                      label="Shipping collected for seller"
+                      value={
+                        asNumber(shipping) === 0
+                          ? "FREE"
+                          : formatMoney(shipping, currency)
+                      }
                     />
+                    {asNumber(customerPlatformFee) > 0 && (
+                      <SummaryRow
+                        label="Platform fee"
+                        value={formatMoney(customerPlatformFee, currency)}
+                      />
+                    )}
+                    {asNumber(customerPlatformFeeTax) > 0 && (
+                      <SummaryRow
+                        label="GST on platform fee"
+                        value={formatMoney(customerPlatformFeeTax, currency)}
+                      />
+                    )}
+                    {asNumber(taxPayable) > 0 && (
+                      <SummaryRow
+                        label="Additional tax"
+                        value={formatMoney(taxPayable, currency)}
+                      />
+                    )}
+                    {asNumber(walletDiscount) > 0 && (
+                      <SummaryRow
+                        label="Wallet used"
+                        value={`-${formatMoney(walletDiscount, currency)}`}
+                        savings
+                      />
+                    )}
+                    {asNumber(taxIncluded) > 0 && (
+                      <p className="mt-1 text-xs font-medium text-[#6F7480]">
+                        Product GST included in price: {formatMoney(taxIncluded, currency)}
+                      </p>
+                    )}
+                    <div className="mt-3 border-t border-dashed border-[#04258626] pt-3">
+                      <SummaryRow
+                        label="Total paid"
+                        value={formatMoney(customerAmount, currency)}
+                      />
+                    </div>
+                    <p className="mt-2 text-xs font-medium leading-5 text-[#6F7480]">
+                      Shipping is collected by Sam Global on behalf of the seller and settled to the seller.
+                    </p>
                   </div>
 
                   <div className="mt-3 rounded-[14px]">
@@ -447,6 +543,14 @@ export function PaymentResultPage({ failed = false }) {
                       </div>
                     </div>
                   </div>
+
+                  <BrandButton
+                    rounded
+                    onClick={handleTrackOrder}
+                    icon={<Truck size={18} />}
+                    label="Track order"
+                    className="mt-2 h-[54px] w-full !rounded-[10px] px-[15px] text-sm font-semibold"
+                  />
 
                   {invoiceDownloadAvailable && (customerInvoices.length > 0 || orderReceipt || customerFeeInvoice) && (
                     <div className="mt-4 grid gap-[10px]">

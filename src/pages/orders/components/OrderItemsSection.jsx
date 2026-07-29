@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BadgeCheck, Camera, Download, Package, RotateCcw } from "lucide-react";
+import { BadgeCheck, Camera, Package, RotateCcw } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { Link, useSearchParams } from "react-router-dom";
@@ -13,8 +13,6 @@ import {
   submitProductReview,
 } from "../../../features/review/reviewSlice";
 import { notify } from "../../../utils/notify";
-import { endpoints } from "../../../api/endpoints";
-import { getDocumentId } from "../../../utils/downloadAuthDocument";
 
 const DELIVERED_STATUSES = new Set(["delivered", "fulfilled", "completed"]);
 
@@ -389,6 +387,64 @@ const getItemReturnPolicy = (item = {}) => {
 const getItemId = (item = {}) =>
   String(item.id || item._id || item.orderItemId || item.order_item_id || "");
 
+const getItemQuantity = (item = {}) => Math.max(1, Number(item.quantity || item.qty || 1) || 1);
+
+const getItemVariantId = (item = {}) =>
+  item.variant_id || item.variantId || item.variant?._id || item.variant?.id || "";
+
+const getItemVariantSku = (item = {}) =>
+  item.variant_sku || item.variantSku || item.sku || item.productSku || item.product_sku || "";
+
+const getReturnItemProductId = (returnItem = {}) =>
+  returnItem.productId ||
+  returnItem.product_id ||
+  returnItem.product?._id ||
+  returnItem.product?.id ||
+  "";
+
+const getReturnItemVariantId = (returnItem = {}) =>
+  returnItem.variantId ||
+  returnItem.variant_id ||
+  returnItem.variant?._id ||
+  returnItem.variant?.id ||
+  "";
+
+const getReturnItemVariantSku = (returnItem = {}) =>
+  returnItem.variantSku ||
+  returnItem.variant_sku ||
+  returnItem.sku ||
+  returnItem.productSku ||
+  returnItem.product_sku ||
+  "";
+
+const returnItemMatchesOrderItem = (returnItem = {}, item = {}) => {
+  const itemId = String(getItemId(item) || "");
+  const returnOrderItemId = String(
+    returnItem.orderItemId ||
+      returnItem.order_item_id ||
+      returnItem.itemId ||
+      returnItem.item_id ||
+      returnItem.orderLineItemId ||
+      returnItem.order_line_item_id ||
+      "",
+  );
+  if (itemId && returnOrderItemId) return returnOrderItemId === itemId;
+
+  const productId = String(getOrderItemProductId(item) || "");
+  const returnProductId = String(getReturnItemProductId(returnItem) || "");
+  if (!productId || !returnProductId || productId !== returnProductId) return false;
+
+  const variantId = String(getItemVariantId(item) || "");
+  const returnVariantId = String(getReturnItemVariantId(returnItem) || "");
+  if (variantId || returnVariantId) return variantId === returnVariantId;
+
+  const variantSku = String(getItemVariantSku(item) || "");
+  const returnVariantSku = String(getReturnItemVariantSku(returnItem) || "");
+  if (variantSku || returnVariantSku) return variantSku === returnVariantSku;
+
+  return true;
+};
+
 const isDeliveredStatus = (status) =>
   DELIVERED_STATUSES.has(String(status || "").toLowerCase());
 
@@ -397,15 +453,47 @@ const isClosedItemStatus = (status) =>
     String(status || "").toLowerCase(),
   );
 
-const resolveReturnForItem = (returns = [], itemId = "") => {
+const resolveReturnForItem = (returns = [], item = {}) => {
   for (const returnRequest of returns) {
     const match = (returnRequest.items || []).find((returnItem) =>
-      String(returnItem.orderItemId || returnItem.order_item_id || "") === String(itemId),
+      returnItemMatchesOrderItem(returnItem, item),
     );
     if (match) return returnRequest;
   }
   return null;
 };
+
+const getReturnItemQuantity = (returnItem = {}) =>
+  Number(
+    returnItem.receivedQuantity ??
+      returnItem.received_quantity ??
+      returnItem.approvedQuantity ??
+      returnItem.approved_quantity ??
+      returnItem.requestedQuantity ??
+      returnItem.requested_quantity ??
+      returnItem.quantity ??
+      0,
+  ) || 0;
+
+const isReturnQuantityBlocking = (returnRequest = {}) => {
+  const status = String(returnRequest.status || "").toLowerCase();
+  const refundStatus = String(returnRequest.refund?.status || returnRequest.refundStatus || returnRequest.refund_status || "").toLowerCase();
+  if (["rejected", "qc_failure_upheld"].includes(status)) return false;
+  if (status === "closed" && !["completed", "not_required"].includes(refundStatus)) return false;
+  return true;
+};
+
+const getReturnedQuantityForItem = (returns = [], item = {}) =>
+  returns.reduce((sum, returnRequest) => {
+    if (!isReturnQuantityBlocking(returnRequest)) return sum;
+    const matchingItems = (returnRequest.items || []).filter((returnItem) =>
+      returnItemMatchesOrderItem(returnItem, item),
+    );
+    return sum + matchingItems.reduce((itemSum, returnItem) => itemSum + getReturnItemQuantity(returnItem), 0);
+  }, 0);
+
+const getReturnableQuantityForItem = (returns = [], item = {}) =>
+  Math.max(0, getItemQuantity(item) - getReturnedQuantityForItem(returns, item));
 
 const resolveItemStatus = ({ item = {}, shipment = null, fulfillment = {}, returnRequest = null, orderStatus = "" }) => {
   const cancellationStatus = item.cancellation_status || item.cancellationStatus;
@@ -432,77 +520,6 @@ const resolveItemTracking = (shipment = {}) => ({
   trackingNumber: shipment.tracking_number || shipment.trackingNumber || shipment.awb_number || shipment.awbNumber || "",
   trackingUrl: shipment.tracking_url || shipment.trackingUrl || "",
 });
-
-const getReturnCreditNoteId = (returnRequest = {}) =>
-  returnRequest.creditNoteId ||
-  returnRequest.credit_note_id ||
-  returnRequest.refund?.creditNoteId ||
-  returnRequest.refund?.credit_note_id ||
-  returnRequest.refund?.metadata?.creditNoteId ||
-  returnRequest.refund?.metadata?.credit_note_id ||
-  "";
-
-const documentCoversItem = (invoice = {}, item = {}) => {
-  const itemId = getItemId(item);
-  const productId = getOrderItemProductId(item);
-  const coveredItems = invoice?.metadata?.items || invoice?.metadata?.lineItems || [];
-  if (!coveredItems.length) return false;
-  return coveredItems.some((coveredItem) =>
-    String(coveredItem.orderItemId || coveredItem.order_item_id || "") === itemId ||
-    String(coveredItem.productId || coveredItem.product_id || "") === String(productId),
-  );
-};
-
-const buildItemDocuments = ({ item, returnRequest, customerInvoices = [], orderReceipt = null, customerFeeInvoice = null }) => {
-  const documents = [];
-  customerInvoices.forEach((invoice, index) => {
-    const invoiceId = getDocumentId(invoice);
-    if (!invoiceId || !documentCoversItem(invoice, item)) return;
-    documents.push({
-      id: invoiceId,
-      title: "Seller tax invoice",
-      subtitle: invoice.invoice_number || invoice.invoiceNumber || `Invoice ${index + 1}`,
-      downloadPath: endpoints.tax.invoiceDownload(invoiceId),
-      filename: `${invoice.invoice_number || invoice.invoiceNumber || `invoice-${index + 1}`}.pdf`,
-    });
-  });
-
-  const creditNoteId = getReturnCreditNoteId(returnRequest);
-  if (creditNoteId) {
-    const returnNumber = returnRequest.returnNumber || returnRequest.return_number || returnRequest.id || returnRequest._id || "return";
-    documents.push({
-      id: creditNoteId,
-      title: "Return reverse invoice",
-      subtitle: `For return ${returnNumber}`,
-      downloadPath: endpoints.tax.creditNoteDownload(creditNoteId),
-      filename: `reverse-invoice-${returnNumber}.pdf`,
-    });
-  }
-
-  const receiptId = getDocumentId(orderReceipt);
-  if (receiptId) {
-    documents.push({
-      id: receiptId,
-      title: "Order receipt",
-      subtitle: "Full order payment summary",
-      downloadPath: endpoints.tax.invoiceDownload(receiptId),
-      filename: `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || "order-receipt"}.pdf`,
-    });
-  }
-
-  const feeInvoiceId = getDocumentId(customerFeeInvoice);
-  if (feeInvoiceId) {
-    documents.push({
-      id: feeInvoiceId,
-      title: "Platform fee invoice",
-      subtitle: "Marketplace fee charged to customer",
-      downloadPath: endpoints.tax.invoiceDownload(feeInvoiceId),
-      filename: `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || "platform-fee"}.pdf`,
-    });
-  }
-
-  return documents;
-};
 
 function OrderItemCard({
   item,
@@ -630,11 +647,6 @@ function OrderItemsSection({
   shipments = [],
   sellerFulfillmentGroups = [],
   returns = [],
-  customerInvoices = [],
-  orderReceipt = null,
-  customerFeeInvoice = null,
-  downloadingId = null,
-  onDownloadDocument,
   ...itemProps
 }) {
   const dispatch = useDispatch();
@@ -664,7 +676,7 @@ function OrderItemsSection({
           candidate.organization_id || candidate.organizationId || candidate.metadata?.organizationId,
         ) === groupKey;
       });
-      const returnRequest = resolveReturnForItem(returns, itemId);
+      const returnRequest = resolveReturnForItem(returns, item);
       const status = resolveItemStatus({ item, shipment, fulfillment, returnRequest, orderStatus });
       result.set(itemId, {
         status,
@@ -751,7 +763,7 @@ function OrderItemsSection({
     const returnByItem = new Map();
     returns.forEach((returnRequest) => {
       (returnRequest.items || []).forEach((returnItem) => {
-        const orderItemId = returnItem.orderItemId || returnItem.order_item_id;
+        const orderItemId = returnItem.orderItemId || returnItem.order_item_id || returnItem.itemId || returnItem.item_id;
         if (orderItemId) returnByItem.set(String(orderItemId), returnRequest);
       });
     });
@@ -808,18 +820,13 @@ function OrderItemsSection({
               const policy = getItemReturnPolicy(item);
               const itemId = getItemId(item);
               const fulfillment = itemFulfillment.get(itemId) || {};
-              const returnRequest = group.returnByItem.get(itemId);
+              const returnRequest = group.returnByItem.get(itemId) || resolveReturnForItem(returns, item);
               const tracking = fulfillment.tracking || {};
               const expanded = expandedItemId === itemId;
-              const itemDocuments = buildItemDocuments({
-                item,
-                returnRequest,
-                customerInvoices,
-                orderReceipt,
-                customerFeeInvoice,
-              });
               const returnExpired = Boolean(policy.eligibleUntil) && new Date(policy.eligibleUntil).getTime() < Date.now();
-              const canReturn = fulfillment.delivered && policy.returnable && !returnExpired && !returnRequest && !isClosedItemStatus(item.status || item.item_status);
+              const returnedQuantity = getReturnedQuantityForItem(returns, item);
+              const returnableQuantity = getReturnableQuantityForItem(returns, item);
+              const canReturn = fulfillment.delivered && policy.returnable && !returnExpired && returnableQuantity > 0 && !isClosedItemStatus(item.status || item.item_status);
               return (
                 <div
                   id={`order-item-${itemId}`}
@@ -855,6 +862,16 @@ function OrderItemsSection({
                         {label(fulfillment.status)}
                       </span>
                     )}
+                    {returnedQuantity > 0 && (
+                      <span className="rounded-full bg-purple-50 px-3 py-1 text-purple-700">
+                        Returned/requested {returnedQuantity} of {getItemQuantity(item)}
+                      </span>
+                    )}
+                    {policy.returnable && returnableQuantity > 0 && (
+                      <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">
+                        Returnable now {returnableQuantity}
+                      </span>
+                    )}
                   </div>
                   {expanded && (
                     <div className="grid gap-3 rounded-xl border border-[#E7D9B8] bg-white p-4">
@@ -887,49 +904,25 @@ function OrderItemsSection({
                         )}
                       </div>
 
-                      <div className="grid gap-2 rounded-lg bg-[#FFF8E7] px-3 py-3 text-xs text-[#5E6472] sm:grid-cols-3">
-                        <span>
-                          <strong className="block text-[#1B1D60]">Return/refund</strong>
-                          {returnRequest ? label(returnRequest.status) : canReturn ? "Eligible" : "Not active"}
-                        </span>
-                        <span>
-                          <strong className="block text-[#1B1D60]">Refund status</strong>
-                          {returnRequest?.refund?.status ? label(returnRequest.refund.status) : "Not started"}
-                        </span>
-                        <span>
-                          <strong className="block text-[#1B1D60]">Refund amount</strong>
-                          {returnRequest?.refundAmount || returnRequest?.refundBreakup?.totalRefundAmount
-                            ? itemProps.formatMoney(returnRequest.refundAmount || returnRequest.refundBreakup?.totalRefundAmount, itemProps.currency)
-                            : "—"}
-                        </span>
-                      </div>
-
-                      <div>
-                        <h4 className="text-sm font-bold text-[#1B1D60]">Item documents</h4>
-                        <div className="mt-2 grid gap-2 md:grid-cols-2">
-                          {itemDocuments.length ? itemDocuments.map((document) => (
-                            <div key={`${itemId}-${document.title}-${document.id}`} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[#E7D9B8] bg-[#FFFCF6] px-3 py-2 text-xs">
-                              <span className="min-w-0">
-                                <strong className="block text-[#1B1D60]">{document.title}</strong>
-                                <span className="block truncate text-[#6F7480]">{document.subtitle}</span>
-                              </span>
-                              <button
-                                type="button"
-                                className="inline-flex items-center gap-1 rounded-md border border-[#3E409380] bg-white px-3 py-1.5 font-bold text-[#3E4093]"
-                                disabled={!onDownloadDocument}
-                                onClick={() => onDownloadDocument?.(document.downloadPath, document.filename)}
-                              >
-                                <Download size={12} />
-                                {downloadingId === document.downloadPath ? "Downloading..." : "Download"}
-                              </button>
-                            </div>
-                          )) : (
-                            <div className="rounded-lg border border-dashed border-[#E7D9B8] bg-[#FFFCF6] px-3 py-3 text-xs text-[#6F7480]">
-                              No item document is available yet.
-                            </div>
-                          )}
+                      {returnRequest && (
+                        <div className="grid gap-2 rounded-lg bg-[#FFF8E7] px-3 py-3 text-xs text-[#5E6472] sm:grid-cols-3">
+                          <span>
+                            <strong className="block text-[#1B1D60]">Return/refund</strong>
+                            {`${label(returnRequest.status)} · ${returnableQuantity > 0 ? `${returnableQuantity} left` : "No quantity left"}`}
+                          </span>
+                          <span>
+                            <strong className="block text-[#1B1D60]">Refund status</strong>
+                            {returnRequest?.refund?.status ? label(returnRequest.refund.status) : "Not started"}
+                          </span>
+                          <span>
+                            <strong className="block text-[#1B1D60]">Refund amount</strong>
+                            {returnRequest?.refundAmount || returnRequest?.refundBreakup?.totalRefundAmount
+                              ? itemProps.formatMoney(returnRequest.refundAmount || returnRequest.refundBreakup?.totalRefundAmount, itemProps.currency)
+                              : "—"}
+                          </span>
                         </div>
-                      </div>
+                      )}
+
                     </div>
                   )}
                   <div className="flex flex-wrap items-center gap-2">

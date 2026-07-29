@@ -10,6 +10,7 @@ import { useToastThunk } from "../../hooks/useToastThunk";
 import { fetchReturnByOrder, requestReturn } from "../../features/returns/returnsSlice";
 import { fetchOrderById } from "../../features/order/orderSlice";
 import { returnSchema } from "../../validations/validationSchemas";
+import { notify } from "../../utils/notify";
 
 const RETURN_REASONS = [
   { value: "defective", label: "Defective / damaged" },
@@ -134,7 +135,15 @@ const shouldRefundComponent = (policy = {}, fullReturn = false) => {
 };
 const getRefundPolicy = (order = {}) => {
   const metadata = getSnapshot(order?.metadata);
-  return metadata?.commerceSettings?.returns?.refundPolicy || order?.commerceSettings?.returns?.refundPolicy || {};
+  return (
+    order?.summary?.refundPolicySnapshot ||
+    order?.summary?.refund_policy_snapshot ||
+    metadata?.commerceSettings?.returns?.refundPolicy ||
+    metadata?.settings?.returns?.refundPolicy ||
+    order?.commerceSettings?.returns?.refundPolicy ||
+    order?.settings?.returns?.refundPolicy ||
+    {}
+  );
 };
 const calculateEstimatedRefundBreakup = (order = {}, item = null, quantity = 1) => {
   if (!item) {
@@ -178,12 +187,12 @@ const calculateEstimatedRefundBreakup = (order = {}, item = null, quantity = 1) 
   return {
     total,
     rows: [
-      { label: "Product amount paid", value: productPaid, tone: "credit" },
-      itemDiscount > 0 ? { label: "Discount not refunded as cash", value: -itemDiscount, tone: "muted" } : null,
+      { label: "Product amount paid by you", value: productPaid, tone: "credit" },
       shippingTotal > 0
         ? {
           label: shippingRefundable ? "Shipping refunded" : "Shipping not refundable",
           value: shippingRefundable ? shippingRefund : 0,
+          displayValue: shippingRefundable ? null : "Not refundable",
           tone: shippingRefundable ? "credit" : "muted",
         }
         : null,
@@ -191,11 +200,12 @@ const calculateEstimatedRefundBreakup = (order = {}, item = null, quantity = 1) 
         ? {
           label: platformFeeRefundable ? "Platform fee refunded" : "Platform fee not refundable",
           value: platformFeeRefund + platformFeeTaxRefund,
+          displayValue: platformFeeRefundable ? null : "Not refundable",
           tone: platformFeeRefundable ? "credit" : "muted",
         }
         : null,
     ].filter(Boolean),
-    note: "Seller commission is not deducted from the customer refund. Seller payout is adjusted separately.",
+    note: "Refund is based on the amount you paid for the returned quantity. Shipping and platform fee are added only if refundable as per policy.",
   };
 };
 const getItemImage = (item) => {
@@ -210,7 +220,54 @@ const getItemImage = (item) => {
   return Array.isArray(images) ? images[0] : images || null;
 };
 const getItemVariantSku = (item) => item?.variant_sku || item?.variantSku || "";
-const getItemId = (item) => item?.id || item?._id || item?.orderItemId || "";
+const getItemVariantId = (item) => item?.variant_id || item?.variantId || item?.variant?._id || item?.variant?.id || "";
+const getItemId = (item) => item?.id || item?._id || item?.orderItemId || item?.order_item_id || "";
+const getReturnItemProductId = (returnItem = {}) =>
+  returnItem.productId ||
+  returnItem.product_id ||
+  returnItem.product?._id ||
+  returnItem.product?.id ||
+  "";
+const getReturnItemVariantId = (returnItem = {}) =>
+  returnItem.variantId ||
+  returnItem.variant_id ||
+  returnItem.variant?._id ||
+  returnItem.variant?.id ||
+  "";
+const getReturnItemVariantSku = (returnItem = {}) =>
+  returnItem.variantSku ||
+  returnItem.variant_sku ||
+  returnItem.sku ||
+  returnItem.productSku ||
+  returnItem.product_sku ||
+  "";
+const returnItemMatchesOrderItem = (returnItem = {}, item = {}) => {
+  const itemId = String(getItemId(item) || "");
+  const returnOrderItemId = String(
+    returnItem.orderItemId ||
+      returnItem.order_item_id ||
+      returnItem.itemId ||
+      returnItem.item_id ||
+      returnItem.orderLineItemId ||
+      returnItem.order_line_item_id ||
+      "",
+  );
+  if (itemId && returnOrderItemId) return returnOrderItemId === itemId;
+
+  const productId = String(getItemProductId(item) || "");
+  const returnProductId = String(getReturnItemProductId(returnItem) || "");
+  if (!productId || !returnProductId || productId !== returnProductId) return false;
+
+  const variantId = String(getItemVariantId(item) || "");
+  const returnVariantId = String(getReturnItemVariantId(returnItem) || "");
+  if (variantId || returnVariantId) return variantId === returnVariantId;
+
+  const variantSku = String(getItemVariantSku(item) || "");
+  const returnVariantSku = String(getReturnItemVariantSku(returnItem) || "");
+  if (variantSku || returnVariantSku) return variantSku === returnVariantSku;
+
+  return true;
+};
 const getItemReturnPolicy = (item = {}) => {
   const snapshot = item.product_snapshot || item.productSnapshot || {};
   const storedPolicy = item.return_policy_snapshot || item.returnPolicySnapshot || {};
@@ -224,11 +281,39 @@ const getItemReturnPolicy = (item = {}) => {
   };
 };
 const getReturnForItem = (returns = [], item = {}) => {
-  const itemId = String(getItemId(item) || "");
   return returns.find((returnRequest) =>
-    (returnRequest.items || []).some((returnItem) => String(returnItem.orderItemId || "") === itemId),
+    (returnRequest.items || []).some((returnItem) => returnItemMatchesOrderItem(returnItem, item)),
   );
 };
+const getReturnItemQuantity = (returnItem = {}) =>
+  asNumber(
+    returnItem.receivedQuantity ??
+      returnItem.received_quantity ??
+      returnItem.approvedQuantity ??
+      returnItem.approved_quantity ??
+      returnItem.requestedQuantity ??
+      returnItem.requested_quantity ??
+      returnItem.quantity ??
+      0,
+  );
+const isReturnQuantityBlocking = (returnRequest = {}) => {
+  const status = String(returnRequest.status || "").toLowerCase();
+  const refundStatus = String(returnRequest.refund?.status || returnRequest.refundStatus || returnRequest.refund_status || "").toLowerCase();
+  if (["rejected", "qc_failure_upheld"].includes(status)) return false;
+  if (status === "closed" && !["completed", "not_required"].includes(refundStatus)) return false;
+  return true;
+};
+const getReturnedQuantityForItem = (returns = [], item = {}) => {
+  return returns.reduce((sum, returnRequest) => {
+    if (!isReturnQuantityBlocking(returnRequest)) return sum;
+    const matchingItems = (returnRequest.items || []).filter((returnItem) =>
+      returnItemMatchesOrderItem(returnItem, item),
+    );
+    return sum + matchingItems.reduce((itemSum, returnItem) => itemSum + getReturnItemQuantity(returnItem), 0);
+  }, 0);
+};
+const getReturnableQuantityForItem = (returns = [], item = {}) =>
+  Math.max(0, getItemQuantity(item) - getReturnedQuantityForItem(returns, item));
 const isDeliveredStatus = (status) =>
   ["delivered", "fulfilled", "completed"].includes(String(status || "").toLowerCase());
 const isItemDelivered = (order = {}, item = {}) => {
@@ -253,13 +338,16 @@ function ReturnRequestPage({ orderId }) {
   const run = useToastThunk();
   const { loading, list: returnList = [] } = useSelector((s) => s.returns);
   const { current: order, loading: orderLoading } = useSelector((s) => s.order);
-  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [selectedOrderItemId, setSelectedOrderItemId] = useState(null);
   const [deepLinkApplied, setDeepLinkApplied] = useState(false);
+  const [returnsChecked, setReturnsChecked] = useState(false);
 
   useEffect(() => {
     if (orderId) {
+      setReturnsChecked(false);
       dispatch(fetchOrderById({ orderId }));
-      dispatch(fetchReturnByOrder({ orderId }));
+      dispatch(fetchReturnByOrder({ orderId }))
+        .finally(() => setReturnsChecked(true));
     }
   }, [dispatch, orderId]);
 
@@ -272,9 +360,26 @@ function ReturnRequestPage({ orderId }) {
     : Array.isArray(order?.returns)
       ? order.returns
       : [];
-  const existingReturns = fetchedReturns.length ? fetchedReturns : embeddedReturns;
+  const existingReturns = [...fetchedReturns, ...embeddedReturns].filter((returnRequest, index, list) => {
+    const id = String(
+      returnRequest.id ||
+      returnRequest._id ||
+      returnRequest.returnId ||
+      returnRequest.returnNumber ||
+      returnRequest.return_number ||
+      index,
+    );
+    return list.findIndex((candidate, candidateIndex) => String(
+      candidate.id ||
+      candidate._id ||
+      candidate.returnId ||
+      candidate.returnNumber ||
+      candidate.return_number ||
+      candidateIndex,
+    ) === id) === index;
+  });
   const selectedItem =
-    orderItems.find((item) => getItemId(item) === selectedProductId) || null;
+    orderItems.find((item) => String(getItemId(item)) === String(selectedOrderItemId)) || null;
 
   const {
     register,
@@ -284,24 +389,49 @@ function ReturnRequestPage({ orderId }) {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(returnSchema),
-    defaultValues: { productId: "", resolution: "refund", reason: "defective", quantity: 1 },
+    defaultValues: { productId: "", orderItemId: "", resolution: "refund", reason: "defective", quantity: 1 },
   });
 
   const watchedQty = watch("quantity");
   const estimatedRefund = calculateEstimatedRefundBreakup(order, selectedItem, watchedQty);
+  const selectedReturnableQuantity = selectedItem
+    ? getReturnableQuantityForItem(existingReturns, selectedItem)
+    : 0;
+  const selectedReturnedQuantity = selectedItem
+    ? getReturnedQuantityForItem(existingReturns, selectedItem)
+    : 0;
+  const selectedOrderedQuantity = selectedItem ? getItemQuantity(selectedItem) : 0;
+  const watchedQuantityNumber = Number(watchedQty || 0);
+  const quantityExceedsRemaining = Boolean(
+    selectedItem &&
+    selectedReturnableQuantity > 0 &&
+    watchedQuantityNumber > selectedReturnableQuantity,
+  );
 
   const handleItemSelect = (item) => {
+    if (!returnsChecked) {
+      notify.info("Checking existing return requests for this item. Please wait a moment.");
+      return;
+    }
     const policy = getItemReturnPolicy(item);
-    const existingReturn = getReturnForItem(existingReturns, item);
+    const returnableQuantity = getReturnableQuantityForItem(existingReturns, item);
     const expired = policy.eligibleUntil && new Date(policy.eligibleUntil).getTime() < Date.now();
-    if (!isItemDelivered(order, item) || !policy.returnable || expired || existingReturn) return;
+    if (!isItemDelivered(order, item) || !policy.returnable || expired || returnableQuantity <= 0) return;
     const pid = getItemProductId(item);
-    setSelectedProductId(
-      getItemId(item) || `${pid}:${getItemVariantSku(item)}`,
-    );
+    const orderItemId = getItemId(item);
+    setSelectedOrderItemId(orderItemId);
     setValue("productId", pid, { shouldValidate: true });
-    setValue("quantity", 1, { shouldValidate: true });
+    setValue("orderItemId", orderItemId, { shouldValidate: true });
+    setValue("quantity", Math.min(1, returnableQuantity), { shouldValidate: true });
   };
+
+  useEffect(() => {
+    if (!selectedItem || selectedReturnableQuantity <= 0) return;
+    const currentQuantity = Number(watchedQty || 1);
+    if (currentQuantity > selectedReturnableQuantity) {
+      setValue("quantity", selectedReturnableQuantity, { shouldValidate: true });
+    }
+  }, [selectedItem, selectedReturnableQuantity, setValue, watchedQty]);
 
   useEffect(() => {
     if (deepLinkApplied || !orderItems.length) return;
@@ -316,8 +446,29 @@ function ReturnRequestPage({ orderId }) {
   const submit = async (values) => {
     const item =
       selectedItem ||
-      orderItems.find((i) => getItemProductId(i) === values.productId);
+      orderItems.find((i) => String(getItemId(i)) === String(values.orderItemId));
     const unitPrice = item ? getItemUnitPrice(item) : 0;
+    const returnableQuantity = item ? getReturnableQuantityForItem(existingReturns, item) : 0;
+    const requestedQuantity = Number(values.quantity);
+    const alreadyQueuedQuantity = item ? getReturnedQuantityForItem(existingReturns, item) : 0;
+    const orderedQuantity = item ? getItemQuantity(item) : 0;
+    if (!item || !getItemId(item)) {
+      notify.error("Please select the exact item/variant to return.");
+      return;
+    }
+    if (!returnsChecked) {
+      notify.error("Please wait while we check existing return requests for this item.");
+      return;
+    }
+    if (requestedQuantity < 1 || requestedQuantity > returnableQuantity) {
+      notify.error(
+        alreadyQueuedQuantity > 0
+          ? `${alreadyQueuedQuantity} of ${orderedQuantity} unit${orderedQuantity === 1 ? "" : "s"} already in return/refund queue. You can return only ${returnableQuantity} more unit${returnableQuantity === 1 ? "" : "s"} now.`
+          : `You can return up to ${returnableQuantity} unit${returnableQuantity === 1 ? "" : "s"} for this item.`,
+      );
+      setValue("quantity", Math.max(1, returnableQuantity), { shouldValidate: true });
+      return;
+    }
     try {
       await run(
         dispatch,
@@ -327,8 +478,9 @@ function ReturnRequestPage({ orderId }) {
             {
               orderItemId: getItemId(item),
               productId: values.productId,
+              variantId: getItemVariantId(item),
               variantSku: getItemVariantSku(item),
-              quantity: Number(values.quantity),
+              quantity: requestedQuantity,
               unitPrice,
             },
           ],
@@ -379,6 +531,7 @@ function ReturnRequestPage({ orderId }) {
             >
               {/* Hidden productId field */}
               <input type="hidden" {...register("productId")} />
+              <input type="hidden" {...register("orderItemId")} />
 
               {/* Item selector */}
               <div className="grid gap-1.5">
@@ -393,12 +546,14 @@ function ReturnRequestPage({ orderId }) {
                     const price = getDisplayItemPrice(item);
                     const lineKey =
                       getItemId(item) || `${pid}:${getItemVariantSku(item)}`;
-                    const isSelected = selectedProductId === lineKey;
+                    const isSelected = String(selectedOrderItemId) === String(lineKey);
                     const policy = getItemReturnPolicy(item);
                     const existingReturn = getReturnForItem(existingReturns, item);
+                    const returnedQuantity = getReturnedQuantityForItem(existingReturns, item);
+                    const returnableQuantity = getReturnableQuantityForItem(existingReturns, item);
                     const delivered = isItemDelivered(order, item);
                     const expired = policy.eligibleUntil && new Date(policy.eligibleUntil).getTime() < Date.now();
-                    const disabled = !delivered || !policy.returnable || Boolean(expired) || Boolean(existingReturn);
+                    const disabled = !returnsChecked || !delivered || !policy.returnable || Boolean(expired) || returnableQuantity <= 0;
                     return (
                       <button
                         key={lineKey || title}
@@ -438,9 +593,16 @@ function ReturnRequestPage({ orderId }) {
                               ₹{Number(price).toLocaleString("en-IN")}
                             </p>
                           )}
+                          <p className="mt-1 text-xs text-muted">
+                            Ordered: {getItemQuantity(item)}
+                            {returnedQuantity > 0 ? ` · Already in return/refund queue: ${returnedQuantity}` : ""}
+                            {returnsChecked ? ` · Returnable now: ${returnableQuantity}` : " · Checking return history…"}
+                          </p>
                           <p className={`mt-1 text-xs font-semibold ${!disabled ? "text-emerald-700" : "text-red-700"}`}>
-                            {existingReturn
-                              ? `Return already ${String(existingReturn.status || "requested").replace(/_/g, " ")}`
+                            {!returnsChecked
+                              ? "Checking existing return requests…"
+                              : returnableQuantity <= 0 && existingReturn
+                              ? `All units already ${String(existingReturn.status || "requested").replace(/_/g, " ")}`
                               : !delivered
                                 ? "Return available after this item is delivered"
                               : expired
@@ -490,10 +652,24 @@ function ReturnRequestPage({ orderId }) {
                       id="quantity"
                       type="number"
                       min="1"
-                      max={selectedItem?.quantity || 99}
+                      max={selectedReturnableQuantity || selectedItem?.quantity || 99}
                       {...register("quantity", { valueAsNumber: true })}
                       className="min-h-11 rounded-[8px] border border-border-strong bg-white px-3 py-2.5 text-ink outline-none transition-all duration-300 ease-in-out  focus:outline-none"
                     />
+                    <p className="text-xs text-muted">
+                      You can return up to {selectedReturnableQuantity} unit{selectedReturnableQuantity === 1 ? "" : "s"} for this exact order item/variant.
+                    </p>
+                    {selectedReturnedQuantity > 0 && (
+                      <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                        {selectedReturnedQuantity} of {selectedOrderedQuantity} unit{selectedOrderedQuantity === 1 ? "" : "s"} already in return/refund queue.
+                        You can return only {selectedReturnableQuantity} more unit{selectedReturnableQuantity === 1 ? "" : "s"} now.
+                      </div>
+                    )}
+                    {quantityExceedsRemaining && (
+                      <span className="text-xs font-semibold text-red-700">
+                        Quantity cannot be more than the remaining returnable quantity: {selectedReturnableQuantity}.
+                      </span>
+                    )}
                     {errors.quantity && (
                       <span className="text-xs text-red-700">
                         {errors.quantity.message}
@@ -554,11 +730,15 @@ function ReturnRequestPage({ orderId }) {
                               {row.label}
                             </span>
                             <span className={row.tone === "muted" ? "font-semibold text-stone-500" : "font-semibold text-emerald-700"}>
-                              {row.value > 0 ? "+" : row.value < 0 ? "-" : ""}
-                              ₹{Math.abs(row.value).toLocaleString("en-IN", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}
+                              {row.displayValue || (
+                                <>
+                                  {row.value > 0 ? "+" : row.value < 0 ? "-" : ""}
+                                  ₹{Math.abs(row.value).toLocaleString("en-IN", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  })}
+                                </>
+                              )}
                             </span>
                           </div>
                         ))}
@@ -572,7 +752,12 @@ function ReturnRequestPage({ orderId }) {
                     </div>
                   )}
 
-                  <Button type="submit" loading={loading} className="w-full">
+                  <Button
+                    type="submit"
+                    loading={loading}
+                    disabled={!returnsChecked || quantityExceedsRemaining || selectedReturnableQuantity <= 0}
+                    className="w-full"
+                  >
                     <RotateCcw size={16} /> Submit Return Request
                   </Button>
                 </>
