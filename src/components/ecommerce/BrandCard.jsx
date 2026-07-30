@@ -1,7 +1,21 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Store } from "lucide-react";
 import { cn } from "../../lib/utils";
-import { applyImageFallback } from "../../utils/ecommerce";
+
+export const getValidImage = (...images) => {
+  for (const image of images) {
+    if (
+      typeof image === "string" &&
+      image.trim() !== "" &&
+      image !== "null" &&
+      image !== "undefined"
+    ) {
+      return image.trim();
+    }
+  }
+
+  return null;
+};
 
 export default function BrandCard({
   image,
@@ -14,10 +28,12 @@ export default function BrandCard({
   active = false,
   className = "",
 }) {
-  const displayImage = logo || image;
+  const displayImage = getValidImage(logo, image);
+
   const to =
     href ||
     `/brands/${encodeURIComponent((name || "").toLowerCase().replace(/\s+/g, "-"))}`;
+
   const initials = String(name || "Brand")
     .split(/\s+/)
     .filter(Boolean)
@@ -29,34 +45,38 @@ export default function BrandCard({
   const content = (
     <article
       className={cn(
-        "group flex h-full  min-h-[188px] flex-col items-center  border-border bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-lg",
+        "group flex h-full min-h-[188px] flex-col items-center border-border bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-lg",
         active && "ring-2 ring-gold/50",
-        className,
+        className
       )}
     >
-      <div className="relative flex h-24  shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-cream p-4">
-        {displayImage ? (
-          <img
-            src={displayImage}
-            alt={name}
-            className="max-h-full max-w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.04]"
-            loading="lazy"
-            decoding="async"
-            onError={(e) => {
-              e.currentTarget.src = "/image/png/favicon.png";
-            }}
-          />
-        ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-white text-center  text-lg font-bold text-gold shadow-sm">
-            {initials || (
-              <Store
-                size={30}
-                strokeWidth={1.4}
-                className="text-border-strong"
-              />
-            )}
+      <div className="relative flex h-24 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-cream p-4">
+        <img
+          src={displayImage || "/image/png/favicon.png"}
+          alt={name}
+          className="max-h-full max-w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.04]"
+          loading="lazy"
+          decoding="async"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/image/png/favicon.png";
+          }}
+        />
+
+        {!displayImage && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span className="text-lg font-bold text-gold">
+              {initials || (
+                <Store
+                  size={30}
+                  strokeWidth={1.4}
+                  className="text-border-strong"
+                />
+              )}
+            </span>
           </div>
         )}
+
         <span
           aria-hidden="true"
           className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-white/90 text-gold-dark opacity-0 shadow-sm transition-all duration-300 ease-in-out group-hover:opacity-100"
@@ -66,19 +86,19 @@ export default function BrandCard({
       </div>
 
       <div className="mt-3 flex flex-1 flex-col">
-        <h3 className="line-clamp-1  text-[14px] font-semibold text-ink sm:text-[15px]">
+        <h3 className="line-clamp-1 text-[14px] font-semibold text-ink sm:text-[15px]">
           {name}
         </h3>
 
         {subtitle && (
-          <p className="mt-1 line-clamp-2  text-[12px] leading-5 text-muted">
+          <p className="mt-1 line-clamp-2 text-[12px] leading-5 text-muted">
             {subtitle}
           </p>
         )}
 
         {productCount != null && (
-          <p className="mt-auto pt-2  text-[11px] font-medium text-muted">
-            {Number(productCount).toLocaleString()} <Param></Param>roducts
+          <p className="mt-auto pt-2 text-[11px] font-medium text-muted">
+            {Number(productCount).toLocaleString()} Products
           </p>
         )}
       </div>

@@ -7,14 +7,13 @@ import { closeAddedToCartModal } from "../features/cart/cartUiSlice";
 import ScrollTopButton from "../components/common/ScrollTopButton";
 import { footerData } from "../data/footer";
 
+import { AUTH_ROUTES } from "../features/auth/authRoutes";
+
 const EMPTY_ITEMS = [];
 
-/** Pages where the CategoryBar should NOT render from the layout
- *  (homepage already has its own CategoryBar instance). */
+
 const HIDE_CATEGORY_BAR_ROUTES = [
-  "/",           // homepage renders its own CategoryBar
-  "/login",
-  "/register",
+  ...Object.values(AUTH_ROUTES),
   "/checkout",
   "/categories",
 ];

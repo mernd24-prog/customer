@@ -22,10 +22,10 @@ export default function WishlistButton({
     >
       <Heart
         size={18}
-        fill={active ? "var(--customer-danger)" : "none"}
+        fill={active ? "var(--customer-navy)" : "none"}
         className={
           active
-            ? "text-[var(--customer-danger)]"
+            ? "text-[var(--customer-navy)]"
             : "text-[var(--customer-navy)]"
         }
       />

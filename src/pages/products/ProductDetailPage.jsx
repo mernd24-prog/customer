@@ -375,7 +375,7 @@ function ImageGallery({
         <IconActionButton
           title="Add to Wishlist"
           onClick={onWishlist}
-          className={isWishlisted ? "text-red-500" : "text-ink"}
+          className={isWishlisted ? "text-navy" : "text-ink"}
         >
           <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
         </IconActionButton>
@@ -462,7 +462,9 @@ function DeliveryChecker({ productId, onResultChange }) {
     } catch (err) {
       setResult(null);
       onResultChange?.(null);
-      setError(typeof err === "string" ? err : "Could not check delivery. Try again.");
+      setError(
+        typeof err === "string" ? err : "Could not check delivery. Try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -985,7 +987,7 @@ function ProductInfoSection({
               )} */}
             </DetailRows>
           ) : (
-            <p className="px-4 py-4 text-sm lg:text-lg text-black/90 whitespace-pre-line">
+            <p className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line">
               No Product Details Available.
             </p>
           )}
@@ -996,11 +998,11 @@ function ProductInfoSection({
         <InfoCard title="Description">
           {product?.description ? (
             <div
-              className="px-4 py-4 text-sm lg:text-lg text-black/90 whitespace-pre-line"
+              className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line leading-relaxed"
               dangerouslySetInnerHTML={{ __html: product.description }}
             />
           ) : (
-            <p className="px-4 py-4 text-sm lg:text-lg text-black/90 whitespace-pre-line">
+            <p className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line">
               No Description Available.
             </p>
           )}
@@ -1009,7 +1011,7 @@ function ProductInfoSection({
 
       {activeInfoTab === "warranty" && (
         <InfoCard title="Warranty Information" roundedClass="rounded-xl">
-          <div className="space-y-6 px-4 py-5 text-sm text-black/90 lg:text-base">
+          <div className="space-y-6 px-4 py-5 text-sm lg:text-base text-[#4E4E4E] leading-relaxed">
             {(effectiveWarranty.summary ||
               effectiveWarranty.warrantySummary ||
               warrantyPeriod ||
@@ -1019,10 +1021,10 @@ function ProductInfoSection({
                 <h3 className="text-base font-bold text-ink">
                   Warranty Summary
                 </h3>
-                <div className="mt-2 text-sm text-[#4E4E4E] whitespace-pre-line">
+                <div className="mt-2 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line leading-relaxed">
                   {effectiveWarranty.summary ||
                     effectiveWarranty.warrantySummary || (
-                      <div className="space-y-1 text-base">
+                      <div className="space-y-1 text-sm lg:text-base text-[#4E4E4E]">
                         {warrantyPeriod && (
                           <div>
                             <span className="font-medium text-ink">
@@ -1084,7 +1086,7 @@ function ProductInfoSection({
 
             {Object.keys(returnPolicy).length > 0 && (
               <div className="border-t border-border pt-4">
-                <h3 className="mb-3 font-semibold text-ink">
+                <h3 className="mb-3 text-base font-bold text-ink">
                   Related Return Rules
                 </h3>
                 <div className="flex flex-wrap gap-2 text-xs lg:text-sm">
@@ -1113,7 +1115,7 @@ function ProductInfoSection({
       {activeInfoTab === "common-images" &&
         product.commonImages?.length > 0 && (
           <InfoCard title="Catalogue Images" roundedClass="rounded-xl">
-            <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="flex flex-wrap gap-4 p-4">
               {product.commonImages.slice(0, 4).map((image, index) => {
                 const isLast = index === 3;
                 const hasMore = product.commonImages.length > 4;
@@ -1122,13 +1124,13 @@ function ProductInfoSection({
                 return (
                   <div
                     key={`${image}-${index}`}
-                    className="relative overflow-hidden rounded-xl border border-[#E7D9B8] bg-white cursor-pointer transition-colors hover:border-gold"
+                    className="relative flex h-[140px] w-[140px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#E7D9B8] bg-white cursor-pointer transition-colors hover:border-gold sm:h-[180px] sm:w-[180px] md:h-[200px] md:w-[200px]"
                     onClick={() => setIsModalOpen(true)}
                   >
                     <img
                       src={getImageUrlFromValue(image)}
                       alt={`${getProductTitle(product)} detail ${index + 1}`}
-                      className="aspect-square h-full w-full object-contain p-3"
+                      className="h-full w-full object-contain p-2"
                       loading="lazy"
                       onError={(event) => {
                         event.currentTarget.style.display = "none";

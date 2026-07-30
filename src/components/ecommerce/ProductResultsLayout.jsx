@@ -52,10 +52,7 @@ export default function ProductResultsLayout({
 
   return (
     <>
-      <ActiveFilterChips
-        filters={filters}
-        onRemove={onRemoveFilter}
-      />
+      <ActiveFilterChips filters={filters} onRemove={onRemoveFilter} />
 
       <div className="flex  mt-8 items-start gap-8 lg:sticky lg:top-[calc(var(--customer-header-height,95px)+80px)]  lg:self-start lg:h-fit w-full ">
         <div className="hidden lg:block ">
@@ -90,7 +87,7 @@ export default function ProductResultsLayout({
                 emptyTitle={emptyTitle}
                 emptyText={emptyText}
               >
-                <h4 className="text-xl md:text-[24px] mb-6 lg:mb-12">
+                <h4 className="text-m md:text-[20px] lg:mb-8">
                   Showing {rangeStart}-{rangeEnd} Of {totalCount} Results
                 </h4>
                 <ProductGrid

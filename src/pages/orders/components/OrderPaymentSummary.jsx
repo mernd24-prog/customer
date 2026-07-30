@@ -14,17 +14,15 @@ function SummaryRow({
       className={`flex  w-full items-center justify-between gap-3 py-3 ${className}`}
     >
       <span
-        className={`flex-1 small  font-semibold text-[#2E2E2E]
-    
-      ${labelClassName}`}
+        className={`flex-1 small font-semibold text-[#2E2E2E] ${labelClassName}`}
       >
         {label}
       </span>
 
       <span
-        className={`shrink-0 text-right small font-bold 
-      ${savings ? "text-[#008425]" : "text-[#1B1D60]"}
-      ${valueClassName}`}
+        className={`shrink-0 text-right small font-bold ${
+          savings ? "text-[#008425]" : "text-[#1B1D60]"
+        } ${valueClassName}`}
       >
         {value}
       </span>
@@ -178,11 +176,11 @@ function OrderPaymentSummary({
               key={item._lineKey}
               className="flex h-[58px]  w-full min-w-0 items-center justify-between gap-2 border-t border-[#04258626] pt-2"
             >
-              <span className="min-w-0 flex-1 truncate text-sm font-semibold leading-5 text-[#2E2E2E] sm:text-[18px] sm:leading-[28px]">
+              <span className="min-w-0 flex-1 truncate small font-semibold text-[#2E2E2E]">
                 {item.quantity} x {item._safeTitle}
               </span>
 
-              <span className="shrink-0 text-sm font-bold leading-5 text-[#1B1D60] sm:text-[18px] sm:leading-[28px]">
+              <span className="shrink-0 text-right small font-bold text-[#1B1D60]">
                 {formatMoney(item._lineTotal, currency)}
               </span>
             </div>
@@ -241,13 +239,15 @@ function OrderPaymentSummary({
                 ? `${formatMoney(sellerFundedDiscount, currency)} funded by seller`
                 : ""}
               {asNumber?.(sellerFundedDiscount) > 0 &&
-              (asNumber?.(marketplaceFundedDiscount) > 0 || asNumber?.(paymentPartnerFundedDiscount) > 0)
+              (asNumber?.(marketplaceFundedDiscount) > 0 ||
+                asNumber?.(paymentPartnerFundedDiscount) > 0)
                 ? " · "
                 : ""}
               {asNumber?.(marketplaceFundedDiscount) > 0
                 ? `${formatMoney(marketplaceFundedDiscount, currency)} funded by marketplace`
                 : ""}
-              {asNumber?.(marketplaceFundedDiscount) > 0 && asNumber?.(paymentPartnerFundedDiscount) > 0
+              {asNumber?.(marketplaceFundedDiscount) > 0 &&
+              asNumber?.(paymentPartnerFundedDiscount) > 0
                 ? " · "
                 : ""}
               {asNumber?.(paymentPartnerFundedDiscount) > 0
