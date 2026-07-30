@@ -48,6 +48,8 @@ function CartLine({ item, onClose }) {
   const quantity = item?.quantity || 1;
   const price = getDisplayPrice(item, product);
 
+  console.log(price);
+
   return (
     <Link
       to={`/products/${id}`}

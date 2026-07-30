@@ -58,6 +58,8 @@ import AddressSelection from "./components/AddressSelection";
 import DiscountsSection from "./components/DiscountsSection";
 import CheckoutSummary from "./components/CheckoutSummary";
 import BaseModal from "../../components/common/overlay/BaseModal";
+import Button from "../../components/ui/Button";
+import AddressFormFields from "../../components/address/AddressFormFields";
 
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
@@ -1572,37 +1574,33 @@ export default function CheckoutPage() {
                 )}
 
                 {/* New address form */}
-                {addresses.length === 0 ? (
-                  <div ref={newAddressFormRef} className="scroll-mt-24">
-                    <ShippingAddressForm
-                      register={register}
-                      errors={errors}
-                      checkoutDialCodes={checkoutDialCodes}
-                      countries={countries}
-                      selectedCountry={selectedCountry}
-                      states={states}
-                      selectedState={selectedState}
-                      cities={cities}
-                      selectedCity={selectedCity}
-                      watchedPostalCode={watchedPostalCode}
-                      setValue={setValue}
-                      postalCodes={postalCodes}
-                      showSavedAddressFields={true}
-                      addressLabels={addressLabels}
-                      loading={loading}
-                      onCancel={() => setValue("useNewAddress", false)}
-                      onSave={handleSaveShippingAddressOnly}
-                    />
-                  </div>
-                ) : useNewAddress ? (
-                  <BaseModal
-                    onClose={() => setValue("useNewAddress", false)}
-                    maxWidth="max-w-2xl"
-                  >
-                    <div
-                      ref={newAddressFormRef}
-                      className="custom-scrollbar max-h-[75vh] w-full overflow-y-auto sm:max-h-[80vh]"
-                    >
+                {(useNewAddress || addresses.length === 0) &&
+                  (addresses.length > 0 ? (
+                    <BaseModal onClose={() => setValue("useNewAddress", false)}>
+                      <div className="w-full bg-surface p-4 sm:p-5 rounded-[10px] max-h-[75vh] overflow-y-auto [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
+                        <ShippingAddressForm
+                          register={register}
+                          errors={errors}
+                          checkoutDialCodes={checkoutDialCodes}
+                          countries={countries}
+                          selectedCountry={selectedCountry}
+                          states={states}
+                          selectedState={selectedState}
+                          cities={cities}
+                          selectedCity={selectedCity}
+                          watchedPostalCode={watchedPostalCode}
+                          setValue={setValue}
+                          postalCodes={postalCodes}
+                          showSavedAddressFields={true}
+                          addressLabels={addressLabels}
+                          loading={loading}
+                          onCancel={() => setValue("useNewAddress", false)}
+                          onSave={handleSaveShippingAddressOnly}
+                        />
+                      </div>
+                    </BaseModal>
+                  ) : (
+                    <div ref={newAddressFormRef} className="scroll-mt-24">
                       <ShippingAddressForm
                         register={register}
                         errors={errors}
@@ -1623,8 +1621,7 @@ export default function CheckoutPage() {
                         onSave={handleSaveShippingAddressOnly}
                       />
                     </div>
-                  </BaseModal>
-                ) : null}
+                  ))}
 
                 {/* Coupons & wallet */}
                 <DiscountsSection
