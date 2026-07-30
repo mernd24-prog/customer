@@ -16,12 +16,17 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
   const productEntities = useSelector((state) => state.product.entities) || {};
   const allProducts = useSelector((state) => state.product.list) || [];
 
-  useEffect(() => {
-    const missingIds = wishlistIds.filter(
+  const missingIds = useMemo(() => {
+    return wishlistIds.filter(
       (id) =>
         !productEntities[id] &&
         !Object.prototype.hasOwnProperty.call(fetchedProducts, id),
     );
+  }, [wishlistIds, productEntities, fetchedProducts]);
+
+  const isLoading = missingIds.length > 0;
+
+  useEffect(() => {
     if (!missingIds.length) return undefined;
 
     let cancelled = false;
@@ -51,7 +56,7 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
     return () => {
       cancelled = true;
     };
-  }, [wishlistIds, productEntities, fetchedProducts]);
+  }, [missingIds]);
 
   const { products, isUsingFallback } = useMemo(() => {
     const matchedProducts = wishlistIds
@@ -105,5 +110,6 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
     hideFallbackProduct,
     isUsingFallback,
     wishlistIds,
+    isLoading,
   };
 }

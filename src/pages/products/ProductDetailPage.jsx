@@ -641,7 +641,8 @@ function VariantSelector({
               {option.displayType === "color_swatch" ? "Colour" : option.name}:
             </p>
             {option.name?.toLowerCase() === "size" &&
-              (product?.category?.toLowerCase().includes("fashion") || product?.parentCategory?.toLowerCase().includes("fashion")) && (
+              (product?.category?.toLowerCase().includes("fashion") ||
+                product?.parentCategory?.toLowerCase().includes("fashion")) && (
                 <button
                   type="button"
                   onClick={onSizeChartClick}
@@ -962,13 +963,13 @@ function ProductInfoSection({
               labelClassName="font-medium text-[#2E2E2E]"
               valueClassName="text-left font-bold text-navy sm:text-right"
             >
-              {warranty && (
+              {/* {warranty && (
                 <div className="grid grid-cols-1 gap-1 px-4 py-3  text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]">
                   <dt className="font-medium text-ink">
                     {" "}
                     {formatPageTitle("warranty")}
                   </dt>
-                  <dd className="text-left font-bold text-[#1B1D60] sm:text-right">
+                  <dd className="text-left font-bold text-[#1B1D60] sm:text-right ">
                     {formatPageTitle(
                       warranty.period ||
                         warranty.duration ||
@@ -979,7 +980,7 @@ function ProductInfoSection({
                       ` · ${formatPageTitle(warranty.coverage)}`}
                   </dd>
                 </div>
-              )}
+              )} */}
             </DetailRows>
           ) : (
             <p className="px-4 py-4 text-sm lg:text-lg text-black/90 whitespace-pre-line">
@@ -1143,7 +1144,7 @@ function ProductInfoSection({
           </InfoCard>
         )}
 
-      {activeInfoTab === "seller" && (
+      {/* {activeInfoTab === "seller" && (
         <InfoCard title="Seller Info">
           {product.seller ? (
             <div className="flex items-center gap-3 px-4 py-4">
@@ -1167,7 +1168,7 @@ function ProductInfoSection({
             </div>
           )}
         </InfoCard>
-      )}
+      )} */}
 
       {isModalOpen &&
         createPortal(
@@ -1621,7 +1622,7 @@ export default function ProductDetailPage() {
     { key: "details", label: "Product Details" },
     { key: "description", label: "Description" },
     { key: "warranty", label: "Warranty" },
-    { key: "seller", label: "Seller Information" },
+    // { key: "seller", label: "Seller Information" },
   ];
 
   return (
@@ -1897,12 +1898,12 @@ export default function ProductDetailPage() {
           )}
         </ApiState>
       </div>
-      
+
       {product && (
-        <SizeChartSidebar 
-          isOpen={isSizeChartOpen} 
-          onClose={() => setIsSizeChartOpen(false)} 
-          productName={getProductTitle(product)} 
+        <SizeChartSidebar
+          isOpen={isSizeChartOpen}
+          onClose={() => setIsSizeChartOpen(false)}
+          productName={getProductTitle(product)}
         />
       )}
     </>

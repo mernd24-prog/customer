@@ -57,6 +57,7 @@ import ShippingAddressForm from "./components/ShippingAddressForm";
 import AddressSelection from "./components/AddressSelection";
 import DiscountsSection from "./components/DiscountsSection";
 import CheckoutSummary from "./components/CheckoutSummary";
+import BaseModal from "../../components/common/overlay/BaseModal";
 
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
@@ -801,7 +802,7 @@ export default function CheckoutPage() {
       useNewAddress: false,
       selectedAddressId: "",
       label: "home",
-      country: "",
+      country: "India",
       dialCode: "+91",
       isDefault: false,
       walletAmount: 0,
@@ -1571,7 +1572,7 @@ export default function CheckoutPage() {
                 )}
 
                 {/* New address form */}
-                {(useNewAddress || addresses.length === 0) && (
+                {addresses.length === 0 ? (
                   <div ref={newAddressFormRef} className="scroll-mt-24">
                     <ShippingAddressForm
                       register={register}
@@ -1593,7 +1594,37 @@ export default function CheckoutPage() {
                       onSave={handleSaveShippingAddressOnly}
                     />
                   </div>
-                )}
+                ) : useNewAddress ? (
+                  <BaseModal
+                    onClose={() => setValue("useNewAddress", false)}
+                    maxWidth="max-w-2xl"
+                  >
+                    <div
+                      ref={newAddressFormRef}
+                      className="custom-scrollbar max-h-[75vh] w-full overflow-y-auto sm:max-h-[80vh]"
+                    >
+                      <ShippingAddressForm
+                        register={register}
+                        errors={errors}
+                        checkoutDialCodes={checkoutDialCodes}
+                        countries={countries}
+                        selectedCountry={selectedCountry}
+                        states={states}
+                        selectedState={selectedState}
+                        cities={cities}
+                        selectedCity={selectedCity}
+                        watchedPostalCode={watchedPostalCode}
+                        setValue={setValue}
+                        postalCodes={postalCodes}
+                        showSavedAddressFields={true}
+                        addressLabels={addressLabels}
+                        loading={loading}
+                        onCancel={() => setValue("useNewAddress", false)}
+                        onSave={handleSaveShippingAddressOnly}
+                      />
+                    </div>
+                  </BaseModal>
+                ) : null}
 
                 {/* Coupons & wallet */}
                 <DiscountsSection

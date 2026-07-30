@@ -41,9 +41,8 @@ export default function ReturnItemCard({
               {title}
             </h2>
 
-
             <p>Order ID : {orderId}</p>
-            <p className="py-2">Qty ::: {quantity}</p>
+            <p className="py-2">Qty : {quantity}</p>
             <p>Sold by {seller}</p>
 
             <p className="py-2 text-h5 font-bold text-[#1B1D60]  lg:font-extrabold ">

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MapPin, Pencil, Phone } from "lucide-react";
+import { ChevronDown, ChevronUp, MapPin, Pencil, Phone } from "lucide-react";
 import Button from "../../../components/ui/Button";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
@@ -14,6 +14,7 @@ import {
   fetchZipCodes,
 } from "../../../features/global/globalSlice";
 import OrderDetailSectionCard from "../../orders/components/OrderDetailSectionCard";
+import BaseModal from "../../../components/common/overlay/BaseModal";
 import { useToastThunk } from "../../../hooks/useToastThunk";
 import { normalizeDialCode } from "../../../lib/utils";
 import { addressSchema } from "../../../validations/validationSchemas";
@@ -104,9 +105,27 @@ export default function AddressSelection({
     shouldFocusError: false,
   });
   const [editingId, setEditingId] = useState(null);
+  const [showAllAddresses, setShowAllAddresses] = useState(false);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [postalCodes, setPostalCodes] = useState([]);
+
+  let displayAddresses = [...addresses].sort((a, b) => {
+    if (a.isDefault && !b.isDefault) return -1;
+    if (!a.isDefault && b.isDefault) return 1;
+    return 0;
+  });
+
+  if (!showAllAddresses) {
+    const selectedIdx = displayAddresses.findIndex(
+      (a) => getAddressId(a) === selectedAddressId
+    );
+    if (selectedIdx > 1) {
+      const selected = displayAddresses[selectedIdx];
+      displayAddresses.splice(selectedIdx, 1);
+      displayAddresses.unshift(selected);
+    }
+  }
  
   const editCountry = editForm.watch("country");
   const editState = editForm.watch("state");
@@ -300,7 +319,8 @@ export default function AddressSelection({
         </button>
       }
     >
-      {addresses.map((addr) => {
+      <div className="flex flex-col gap-4">
+        {(showAllAddresses ? displayAddresses : displayAddresses.slice(0, 2)).map((addr) => {
         const addrId = getAddressId(addr);
         const isEditing = editingId === addrId;
         const postalCode = addr.postalCode || addr.postal_code || "";
@@ -314,124 +334,154 @@ export default function AddressSelection({
                 : "bg-white"
             }`}
           >
-            {isEditing ? (
-              <div className=" grid gap-4 py-4 sm:pb-8">
-                <div className="flex  items-center gap-2 text-sm font-semibold text-ink">
-                  <Pencil size={16} className="text-gold" />
-                  Edit address
-                </div>
-                <AddressFormFields
-                  form={editForm}
-                  idPrefix={`checkout-edit-${addrId}`}
-                  countries={countries}
-                  states={states}
-                  cities={cities}
-                  postalCodes={postalCodes}
-                  dialCodes={editDialCodes}
-                  selectedCountry={editCountry}
-                  selectedState={editState}
-                  selectedCity={editCity}
-                  selectedPostalCode={editPostalCode}
-                  addressLabels={addressLabels}
-                />
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <Button
-                    type="button"
-                    loading={loading}
-                    onClick={editForm.handleSubmit(
-                      handleUpdate,
-                      handleInvalidEdit,
-                    )}
-                    className="w-full sm:w-auto"
-                  >
-                    Save changes
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={cancelEdit}
-                    className="w-full sm:w-auto"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex w-full items-start gap-3 sm:gap-[15px] border-b border-[#CE9F2D4D]">
-                <div className="min-w-0 flex-1">
+            <div className="flex w-full items-start gap-3 sm:gap-[15px] border-b border-[#CE9F2D4D]">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
                   <span
-                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-bold capitalize text-white sm:px-[15px] sm:py-[7px] sm:text-[13px] ${
+                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-bold capitalize sm:text-[12px] ${
                       label?.toLowerCase() === "work"
-                        ? "bg-[#1B1D60]"
-                        : "bg-[#CE9F2D]"
+                        ? "bg-[#1B1D60] text-white"
+                        : "bg-[#CE9F2D] text-white"
                     }`}
                   >
                     {label}
                   </span>
-                  <label className="my-6 flex w-full cursor-pointer items-start gap-2 sm:gap-3">
-                    <input
-                      type="radio"
-                      name="addressSelect"
-                      value={addrId}
-                      checked={selectedAddressId === addrId && !useNewAddress}
-                      onChange={() => {
-                        setValue("selectedAddressId", addrId, {
-                          shouldValidate: true,
-                        });
-                        setValue("useNewAddress", false, {
-                          shouldValidate: true,
-                        });
-                      }}
-                      className="mt-1 h-fit w-[18px] shrink-0 accent-[#3E4093] sm:h-5 sm:w-5"
-                    />
-                    <span className="min-w-0">
-                      <span className="block  font-bold leading-[24px] text-[#2E2E2E] text-[18px] sm:leading-[28px] md:text-[20px] md:leading-[30px] lg:text-[24px] lg:leading-[36px]">
-                        {addr.fullName || "Address"}
-                      </span>
-                      <div className="mt-3 flex flex-col gap-2 sm:mt-4 sm:gap-[10px]">
-                        {addr.phone && (
-                          <span className={infoClass}>
-                            <Phone
-                              size={18}
-                              className="text-gold-dark mt-1 shrink-0"
-                            />
-                            {addr.phone}
-                          </span>
-                        )}
-                        <span className={infoClass}>
-                          <MapPin
-                            size={18}
-                            className="text-gold-dark mt-1 shrink-0 items-center"
-                          />
-                          <span>
-                            {[
-                              addr.line1,
-                              addr.line2,
-                              addr.city,
-                              addr.state,
-                              postalCode,
-                              addr.country || "India",
-                            ]
-                              .filter(Boolean)
-                              .join(", ")}
-                          </span>
-                        </span>
-                      </div>
-                    </span>
-                  </label>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => startEdit(addr)}
-                  className="inline-flex lg:h-10 lg:w-10 h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#1B1D6099] bg-[#1B1D600D] p-2.5 text-[#1B1D60] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]"
-                >
-                  <Pencil size={14} />
-                </button>
+                <label className="my-4 flex w-full cursor-pointer items-start gap-2 sm:gap-3">
+                  <input
+                    type="radio"
+                    name="addressSelect"
+                    value={addrId}
+                    checked={selectedAddressId === addrId && !useNewAddress}
+                    onChange={() => {
+                      setValue("selectedAddressId", addrId, {
+                        shouldValidate: true,
+                      });
+                      setValue("useNewAddress", false, {
+                        shouldValidate: true,
+                      });
+                    }}
+                    className="mt-1 h-fit w-[18px] shrink-0 accent-[#3E4093] sm:h-5 sm:w-5"
+                  />
+                  <span className="min-w-0">
+                    <span className="block  font-bold leading-[24px] text-[#2E2E2E] text-[18px] sm:leading-[28px] md:text-[20px] md:leading-[30px] lg:text-[24px] lg:leading-[36px]">
+                      {addr.fullName || "Address"}
+                    </span>
+                    <div className="mt-3 flex flex-col gap-2 sm:mt-4 sm:gap-[10px]">
+                      {addr.phone && (
+                        <span className={infoClass}>
+                          <Phone
+                            size={18}
+                            className="text-gold-dark mt-1 shrink-0"
+                          />
+                          {addr.phone}
+                        </span>
+                      )}
+                      <span className={infoClass}>
+                        <MapPin
+                          size={18}
+                          className="text-gold-dark mt-1 shrink-0 items-center"
+                        />
+                        <span>
+                          {[
+                            addr.line1,
+                            addr.line2,
+                            addr.city,
+                            addr.state,
+                            postalCode,
+                            addr.country || "India",
+                          ]
+                            .filter(Boolean)
+                            .join(", ")}
+                        </span>
+                      </span>
+                    </div>
+                  </span>
+                </label>
               </div>
+              <button
+                type="button"
+                onClick={() => startEdit(addr)}
+                className="inline-flex lg:h-10 lg:w-10 h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#1B1D6099] bg-[#1B1D600D] p-2.5 text-[#1B1D60] transition-all duration-300 hover:border-[#CE9F2D] hover:bg-[#CE9F2D1A]"
+              >
+                <Pencil size={14} />
+              </button>
+            </div>
+
+            {isEditing && (
+              <BaseModal onClose={cancelEdit} maxWidth="max-w-3xl">
+                <div
+                  className="flex flex-col max-h-[85vh] rounded-[10px] bg-white p-4 sm:p-6"
+                >
+                  <div className="mb-4 flex items-center gap-2 text-lg font-bold text-ink">
+                    <Pencil size={24} className="text-gold" />
+                    Edit Address
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="grid gap-4 pb-2">
+                      <AddressFormFields
+                        form={editForm}
+                        idPrefix={`checkout-edit-${addrId}`}
+                        countries={countries}
+                        states={states}
+                        cities={cities}
+                        postalCodes={postalCodes}
+                        dialCodes={editDialCodes}
+                        selectedCountry={editCountry}
+                        selectedState={editState}
+                        selectedCity={editCity}
+                        selectedPostalCode={editPostalCode}
+                        addressLabels={addressLabels}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={cancelEdit}
+                      className="w-full sm:w-auto"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={editForm.handleSubmit(handleUpdate, handleInvalidEdit)}
+                      loading={loading}
+                      className="w-full sm:w-auto"
+                    >
+                      Save Changes
+                    </Button>
+                  </div>
+                </div>
+              </BaseModal>
             )}
           </div>
         );
       })}
+      
+      {displayAddresses.length > 2 && (
+        <div className="flex justify-center w-full mt-2 mb-4">
+          <button
+            type="button"
+            onClick={() => setShowAllAddresses(!showAllAddresses)}
+            className="flex w-[90%] sm:w-[60%] max-w-[350px] items-center justify-center gap-2 rounded-full border border-gold px-6 py-2.5 text-sm font-semibold text-gold transition-colors hover:bg-gold-soft hover:text-gold-dark"
+          >
+            {showAllAddresses ? (
+              <>
+                Show Less <ChevronUp size={16} />
+              </>
+            ) : (
+              <>
+                Show More Addresses <ChevronDown size={16} />
+              </>
+            )}
+          </button>
+        </div>
+      )}
+      </div>
       {errors.selectedAddressId && (
         <p className="text-xs text-red-600  mt-1">
           {errors.selectedAddressId.message}

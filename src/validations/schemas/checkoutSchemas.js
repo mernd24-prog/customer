@@ -10,6 +10,7 @@ import {
   phoneField,
   postalCodeField,
 } from "../common/commonValidations";
+import { validatePostalCodeForCountry } from "../common/validationHelpers";
 
 export const addressBaseSchema = z.object({
   label: z.enum(["home", "work", "other"]).optional(),

@@ -51,10 +51,7 @@ export default function HomeCategoryGrid({
   ctaLabel = "Shop Now",
 }) {
   const [activeId, setActiveId] = useState(null);
-  const displayCategories = categories.length
-    ? categories.slice(0, 5)
-    : []; // defaultHomeCategories;
-
+  const displayCategories = categories.length ? categories.slice(0, 5) : []; // defaultHomeCategories;
   if (loading) {
     return (
       <SkeletonLoader

@@ -419,6 +419,29 @@ export default function SearchPage() {
     setSearchParams(new URLSearchParams());
   };
 
+  const hasOtherFilters = Array.from(searchParams.keys()).some(
+    (key) => {
+      const value = searchParams.get(key);
+      if (!value || value === "undefined" || value === "null") return false;
+      return [
+        "q",
+        "minPrice",
+        "maxPrice",
+        "minRating",
+        "inStock",
+        "outOfStock",
+        "brand",
+        "tags",
+        "collectionIds",
+        "featured",
+        "bestSeller",
+        "newArrival",
+      ].includes(key) || key.startsWith("attr_");
+    }
+  );
+
+  const clearFiltersAction = hasOtherFilters ? handleClearFilters : undefined;
+
   const activeFilters = [
     q && {
       key: "q",
@@ -858,14 +881,15 @@ export default function SearchPage() {
         <ActiveFilterChips
           filters={activeFilters}
           onRemove={removeFilter}
-          onClear={handleClearFilters}
+          onClear={clearFiltersAction}
         />
 
         <div className="flex gap-6">
           <div className="hidden lg:block">
             <ProductFilterSidebar
               sections={filterSections}
-              onClearAll={handleClearFilters}
+              onClearAll={clearFiltersAction}
+              loading={searchState.loading && filterSections.length === 0}
             />
           </div>
 
@@ -875,7 +899,8 @@ export default function SearchPage() {
           >
             <ProductFilterSidebar
               sections={filterSections}
-              onClearAll={handleClearFilters}
+              onClearAll={clearFiltersAction}
+              loading={searchState.loading && filterSections.length === 0}
             />
           </FilterDrawer>
 
