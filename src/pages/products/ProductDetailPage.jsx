@@ -449,18 +449,20 @@ function DeliveryChecker({ productId, onResultChange }) {
     setError("");
     setLoading(true);
     try {
-      const action = await dispatch(
+      const payload = await dispatch(
         checkServiceability({ pincode: pin, productId }),
-      );
-      const nextResult = action?.payload?.data || action?.payload;
+      ).unwrap();
+      const nextResult = payload?.data || payload;
       setResult(nextResult);
       onResultChange?.(nextResult);
       if (nextResult) {
         setLastCheckedPincode(pin);
         setPincode("");
       }
-    } catch {
-      setError("Could not check delivery. Try again.");
+    } catch (err) {
+      setResult(null);
+      onResultChange?.(null);
+      setError(typeof err === "string" ? err : "Could not check delivery. Try again.");
     } finally {
       setLoading(false);
     }

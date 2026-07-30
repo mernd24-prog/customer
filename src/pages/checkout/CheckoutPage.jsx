@@ -1649,6 +1649,7 @@ export default function CheckoutPage() {
                   selectedPaymentProvider={paymentProvider}
                   onPaymentProviderChange={setPaymentProvider}
                   getPaymentProviderLabel={getPaymentProviderLabel}
+                  deliveryPincode={quoteShippingAddress?.postalCode || watchedPostalCode || ""}
                 />
               </OrderDetailAside>
             </OrderDetailLayout>
