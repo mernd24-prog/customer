@@ -490,6 +490,30 @@ export default function ProductsPage() {
     });
   };
 
+  const handleClearFilters = useCallback(() => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams();
+      if (prev.has("category")) next.set("category", prev.get("category"));
+      if (prev.has("q")) next.set("q", prev.get("q"));
+      if (prev.has("collectionIds")) next.set("collectionIds", prev.get("collectionIds"));
+      return next;
+    });
+  }, [setSearchParams]);
+
+  const hasOtherFilters = Array.from(searchParams.keys()).some(
+    (key) =>
+      [
+        "q",
+        "category",
+        "collectionIds",
+        "page",
+        "sort",
+        "limit",
+      ].indexOf(key) === -1
+  );
+  
+  const clearFiltersAction = hasOtherFilters ? handleClearFilters : undefined;
+
   const activeFilters = [
     searchParams.get("category") && {
       key: "category",
@@ -790,7 +814,7 @@ label: "Free Delivery",
           filterSections={filterSections}
           filters={activeFilters}
           onRemoveFilter={removeFilter}
-          onClearFilters={() => setSearchParams(new URLSearchParams())}
+          onClearFilters={clearFiltersAction}
           sidebarOpen={sidebarOpen}
           onCloseSidebar={() => setSidebarOpen(false)}
           loading={

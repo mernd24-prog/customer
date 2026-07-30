@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronUp, MapPin, Pencil, Phone, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, MapPin, Pencil, Phone, Plus, Trash2 } from "lucide-react";
 import Button from "../../components/ui/Button";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
 } from "../../components/address/AddressFormFields";
 import ConfirmModal from "../../components/common/overlay/ConfirmModal";
+import BaseModal from "../../components/common/overlay/BaseModal";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { normalizeDialCode } from "../../lib/utils";
 import { addressSchema } from "../../validations/validationSchemas";
@@ -109,6 +110,7 @@ export default function AddressTab({ user }) {
   const [editingId, setEditingId] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [deleteAddressId, setDeleteAddressId] = useState(null);
+  const [showAllAddresses, setShowAllAddresses] = useState(false);
 
   const addresses = user?.addresses || [];
   const addressLabels = ADDRESS_LABEL_OPTIONS;
@@ -480,121 +482,152 @@ export default function AddressTab({ user }) {
         </div>
 
         {showAddForm && (
-          <form
-            className="grid gap-4  rounded-[10px] border border-border bg-surface-soft p-4 sm:p-5"
-            onSubmit={addForm.handleSubmit(handleAdd, handleInvalidAdd)}
-            noValidate
-          >
-            <div className={sectionHeaderClass}>
-              <MapPin size={16} className="text-gold" />
-              New address
-            </div>
-            <AddressFormFields
-              form={addForm}
-              idPrefix="add"
-              countries={countries}
-              states={addStates}
-              cities={addCities}
-              postalCodes={addPostalCodes}
-              dialCodes={addDialCodes}
-              selectedCountry={addCountry}
-              selectedState={addState}
-              selectedCity={addCity}
-              selectedPostalCode={addPostalCode}
-              addressLabels={addressLabels}
-            />
-            <div className={formActionsClass}>
-              <Button
-                type="submit"
-                loading={loading}
-                className={responsiveButtonClass}
-              >
-                Save Address
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => setShowAddForm(false)}
-                className={responsiveButtonClass}
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
+          <BaseModal onClose={() => setShowAddForm(false)} maxWidth="max-w-3xl">
+            <form
+              className="flex flex-col max-h-[85vh] rounded-[10px] bg-white p-4 sm:p-6"
+              onSubmit={addForm.handleSubmit(handleAdd, handleInvalidAdd)}
+              noValidate
+            >
+              <div className="mb-4 flex items-center gap-2 text-lg font-bold text-ink">
+                <MapPin size={24} className="text-gold" />
+                Add New Address
+              </div>
+              <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                <div className="grid gap-4 pb-2">
+                  <AddressFormFields
+                    form={addForm}
+                    idPrefix="add"
+                    countries={countries}
+                    states={addStates}
+                    cities={addCities}
+                    postalCodes={addPostalCodes}
+                    dialCodes={addDialCodes}
+                    selectedCountry={addCountry}
+                    selectedState={addState}
+                    selectedCity={addCity}
+                    selectedPostalCode={addPostalCode}
+                    addressLabels={addressLabels}
+                  />
+                </div>
+              </div>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setShowAddForm(false)}
+                  className="w-full sm:w-auto"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  loading={loading}
+                  className="w-full sm:w-auto"
+                >
+                  Save Address
+                </Button>
+              </div>
+            </form>
+          </BaseModal>
         )}
 
         {addresses.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-            {addresses.map((addr) => {
-              const addrId = addr._id || addr.id;
-              const isEditing = editingId === addrId;
+          <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+              {(showAllAddresses ? addresses : addresses.slice(0, 4)).map((addr) => {
+                const addrId = addr._id || addr.id;
+                const isEditing = editingId === addrId;
 
-              return (
-                <div
-                  key={addrId}
-                  className={`w-full overflow-hidden rounded-[12px] border border-gold bg-white ${
-                    isEditing ? "xl:col-span-2" : ""
-                  }`}
-                >
-                  {isEditing ? (
-                    <form
-                      className="grid gap-4 p-6"
-                      onSubmit={editForm.handleSubmit(
-                        handleUpdate,
-                        handleInvalidEdit,
-                      )}
-                      noValidate
-                    >
-                      <div className={sectionHeaderClass}>
-                        <Pencil size={16} className="text-gold" />
-                        Edit Address
-                      </div>
-
-                      <AddressFormFields
-                        form={editForm}
-                        idPrefix={`edit-${addrId}`}
-                        countries={countries}
-                        states={editStates}
-                        cities={editCities}
-                        postalCodes={editPostalCodes}
-                        dialCodes={editDialCodes}
-                        selectedCountry={editCountry}
-                        selectedState={editState}
-                        selectedCity={editCity}
-                        selectedPostalCode={editPostalCode}
-                        addressLabels={addressLabels}
-                      />
-
-                      <div className={formActionsClass}>
-                        <Button
-                          type="submit"
-                          loading={loading}
-                          className={responsiveButtonClass}
-                        >
-                          Save Changes
-                        </Button>
-
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          onClick={cancelEdit}
-                          className={responsiveButtonClass}
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                    </form>
-                  ) : (
+                return (
+                  <div
+                    key={addrId}
+                    className="w-full overflow-hidden rounded-[12px] border border-gold bg-white"
+                  >
                     <AddressViewCard
                       addr={addr}
                       addrId={addrId}
                       startEdit={startEdit}
                       handleDelete={handleDelete}
                     />
+                    
+                    {isEditing && (
+                      <BaseModal onClose={cancelEdit} maxWidth="max-w-3xl">
+                        <form
+                          className="flex flex-col max-h-[85vh] rounded-[10px] bg-white p-4 sm:p-6"
+                          onSubmit={editForm.handleSubmit(
+                            handleUpdate,
+                            handleInvalidEdit,
+                          )}
+                          noValidate
+                        >
+                          <div className="mb-4 flex items-center gap-2 text-lg font-bold text-ink">
+                            <Pencil size={24} className="text-gold" />
+                            Edit Address
+                          </div>
+
+                          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                            <div className="grid gap-4 pb-2">
+                              <AddressFormFields
+                                form={editForm}
+                                idPrefix={`edit-${addrId}`}
+                                countries={countries}
+                                states={editStates}
+                                cities={editCities}
+                                postalCodes={editPostalCodes}
+                                dialCodes={editDialCodes}
+                                selectedCountry={editCountry}
+                                selectedState={editState}
+                                selectedCity={editCity}
+                                selectedPostalCode={editPostalCode}
+                                addressLabels={addressLabels}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              onClick={cancelEdit}
+                              className="w-full sm:w-auto"
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              type="submit"
+                              loading={loading}
+                              className="w-full sm:w-auto"
+                            >
+                              Save Changes
+                            </Button>
+                          </div>
+                        </form>
+                      </BaseModal>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            
+            {addresses.length > 4 && (
+              <div className="flex justify-center w-full">
+                <button
+                  type="button"
+                  onClick={() => setShowAllAddresses(!showAllAddresses)}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-gold px-6 py-2.5 text-sm font-semibold text-gold transition-colors hover:bg-gold-soft hover:text-gold-dark"
+                >
+                  {showAllAddresses ? (
+                    <>
+                      Show Less <ChevronUp size={16} />
+                    </>
+                  ) : (
+                    <>
+                      Show {addresses.length - 4} More Addresses <ChevronDown size={16} />
+                    </>
                   )}
-                </div>
-              );
-            })}
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="rounded-[10px] border border-dashed border-border-strong bg-cream p-8 text-center">

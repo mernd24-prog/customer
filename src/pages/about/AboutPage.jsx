@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 import AboutBanner from "../../components/about/AboutBanner";
 import InfoSection from "../../components/about/InfoSection";
@@ -20,22 +22,36 @@ export default function AboutPage() {
   const brandSection = brandsPage?.sections?.[0];
   const missionSection = missionPage?.sections?.[0];
   const chooseSection = choosePage?.sections?.[0];
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const timeoutId = setTimeout(() => {
+        const id = location.hash.replace("#", "");
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 300);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [location.hash, aboutSamGlobalSection, valuesSection, chooseSection]);
 
   return (
     <>
       <AboutBanner
         image={bannerSection?.image?.url ?? "/image/png/aboutBanner.png"}
       />
-      <div id="who-we-are">
+      <div id="who-we-are" style={{ scrollMarginTop: "160px" }}>
         <OurStory data={aboutSamGlobalSection} />
       </div>
-      <div id="our-values">
+      <div id="our-values" style={{ scrollMarginTop: "160px" }}>
         <ValuesSection data={valuesSection} />
       </div>
 
       <BrandCarousel data={brandSection} />
       <InfoSection data={missionSection} />
-      <div id="why-choose-us">
+      <div id="why-choose-us" style={{ scrollMarginTop: "160px" }}>
         <WhyChooseSection data={chooseSection} />
       </div>
     </>

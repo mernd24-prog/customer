@@ -63,6 +63,7 @@ export default function ProductResultsLayout({
             sections={filterSections}
             onClearAll={onClearFilters}
             topContent={sidebarTopContent}
+            loading={loading && filterSections.length === 0}
           />
         </div>
 
@@ -71,6 +72,7 @@ export default function ProductResultsLayout({
             sections={filterSections}
             onClearAll={onClearFilters}
             topContent={sidebarTopContent}
+            loading={loading && filterSections.length === 0}
           />
         </FilterDrawer>
 

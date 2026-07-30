@@ -57,6 +57,9 @@ import ShippingAddressForm from "./components/ShippingAddressForm";
 import AddressSelection from "./components/AddressSelection";
 import DiscountsSection from "./components/DiscountsSection";
 import CheckoutSummary from "./components/CheckoutSummary";
+import BaseModal from "../../components/common/overlay/BaseModal";
+import Button from "../../components/ui/Button";
+import AddressFormFields from "../../components/address/AddressFormFields";
 
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
@@ -801,7 +804,7 @@ export default function CheckoutPage() {
       useNewAddress: false,
       selectedAddressId: "",
       label: "home",
-      country: "",
+      country: "India",
       dialCode: "+91",
       isDefault: false,
       walletAmount: 0,
@@ -1571,29 +1574,54 @@ export default function CheckoutPage() {
                 )}
 
                 {/* New address form */}
-                {(useNewAddress || addresses.length === 0) && (
-                  <div ref={newAddressFormRef} className="scroll-mt-24">
-                    <ShippingAddressForm
-                      register={register}
-                      errors={errors}
-                      checkoutDialCodes={checkoutDialCodes}
-                      countries={countries}
-                      selectedCountry={selectedCountry}
-                      states={states}
-                      selectedState={selectedState}
-                      cities={cities}
-                      selectedCity={selectedCity}
-                      watchedPostalCode={watchedPostalCode}
-                      setValue={setValue}
-                      postalCodes={postalCodes}
-                      showSavedAddressFields={true}
-                      addressLabels={addressLabels}
-                      loading={loading}
-                      onCancel={() => setValue("useNewAddress", false)}
-                      onSave={handleSaveShippingAddressOnly}
-                    />
-                  </div>
-                )}
+                {(useNewAddress || addresses.length === 0) &&
+                  (addresses.length > 0 ? (
+                    <BaseModal onClose={() => setValue("useNewAddress", false)}>
+                      <div className="w-full bg-surface p-4 sm:p-5 rounded-[10px] max-h-[75vh] overflow-y-auto [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
+                        <ShippingAddressForm
+                          register={register}
+                          errors={errors}
+                          checkoutDialCodes={checkoutDialCodes}
+                          countries={countries}
+                          selectedCountry={selectedCountry}
+                          states={states}
+                          selectedState={selectedState}
+                          cities={cities}
+                          selectedCity={selectedCity}
+                          watchedPostalCode={watchedPostalCode}
+                          setValue={setValue}
+                          postalCodes={postalCodes}
+                          showSavedAddressFields={true}
+                          addressLabels={addressLabels}
+                          loading={loading}
+                          onCancel={() => setValue("useNewAddress", false)}
+                          onSave={handleSaveShippingAddressOnly}
+                        />
+                      </div>
+                    </BaseModal>
+                  ) : (
+                    <div ref={newAddressFormRef} className="scroll-mt-24">
+                      <ShippingAddressForm
+                        register={register}
+                        errors={errors}
+                        checkoutDialCodes={checkoutDialCodes}
+                        countries={countries}
+                        selectedCountry={selectedCountry}
+                        states={states}
+                        selectedState={selectedState}
+                        cities={cities}
+                        selectedCity={selectedCity}
+                        watchedPostalCode={watchedPostalCode}
+                        setValue={setValue}
+                        postalCodes={postalCodes}
+                        showSavedAddressFields={true}
+                        addressLabels={addressLabels}
+                        loading={loading}
+                        onCancel={() => setValue("useNewAddress", false)}
+                        onSave={handleSaveShippingAddressOnly}
+                      />
+                    </div>
+                  ))}
 
                 {/* Coupons & wallet */}
                 <DiscountsSection

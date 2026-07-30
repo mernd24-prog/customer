@@ -74,11 +74,7 @@ export default function BrandOutletPage() {
     dispatch(fetchBrands({ params: { limit: 500 } }))
       .then((result) => {
         const brands = listFromPayload(result?.payload);
-        console.log("[BrandOutletPage] fetchBrands response", {
-          result,
-          payload: result?.payload,
-          brands,
-        });
+        
         setBrandList(brands);
       })
       .catch((err) => {

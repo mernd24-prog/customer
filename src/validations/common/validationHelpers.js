@@ -26,26 +26,26 @@ export const ERROR_MESSAGES = Object.freeze({
   url: "Enter a valid URL",
 });
 
-// const normalizeCountry = (country = "") =>
-//   String(country)
-//     .trim()
-//     .toLowerCase()
-//     .replace(/[^a-z]/g, "");
+const normalizeCountry = (country = "") =>
+  String(country)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z]/g, "");
 
-// Only enforce Indian PIN validation for India; otherwise fallback to generic postal code validation.
-// export const getPostalCodeRule = (country) => {
-//   const normalizedCountry = normalizeCountry(country);
-//   const indianCountries = ["india", "bharat", "in"];
 
-//   if (indianCountries.includes(normalizedCountry)) {
-//     return {
-//       pattern: REGEX.indianPostalCode,
-//       message: ERROR_MESSAGES.indianPostalCode,
-//     };
-//   }
+export const getPostalCodeRule = (country) => {
+  const normalizedCountry = normalizeCountry(country);
+  const indianCountries = ["india", "bharat", "in"];
 
-//   return undefined;
-// };
+  if (indianCountries.includes(normalizedCountry)) {
+    return {
+      pattern: REGEX.indianPostalCode,
+      message: ERROR_MESSAGES.indianPostalCode,
+    };
+  }
+
+  return undefined;
+};
 
 export const validatePostalCodeForCountry = (postalCode, country) => {
   const value = String(postalCode || "").trim();

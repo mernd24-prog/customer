@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
-import { Grid2X2 } from "lucide-react";
 import { FaAngleRight } from "react-icons/fa6";
 import { TextGoldButton } from "../dynamicComponent/button/static";
-import { applyImageFallback } from "../../utils/ecommerce";
+import { applyImageFallback, getImageFallbackSrc } from "../../utils/ecommerce";
 import { cn } from "../../lib/utils";
 
 export default function CategoryCard({
@@ -46,20 +45,14 @@ export default function CategoryCard({
           </Label>
         ) : null} */}
 
-        {image ? (
-          <img
-            src={image}
-            alt={title}
-            className="aspect-[284/160] h-[260px] w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-100"
-            loading="lazy"
-            decoding="async"
-            onError={(event) => applyImageFallback(event, title, "category")}
-          />
-        ) : (
-          <div className="flex h-[260px] w-full items-center justify-center text-[var(--customer-border-strong)]">
-            <Grid2X2 size={42} strokeWidth={1.4} />
-          </div>
-        )}
+        <img
+          src={image || getImageFallbackSrc(title, "category")}
+          alt={title}
+          className="aspect-[284/160] h-[260px] w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-100"
+          loading="lazy"
+          decoding="async"
+          onError={(event) => applyImageFallback(event, title, "category")}
+        />
       </div>
 
       <div className="pt-4 lg:py-4 px-4">
@@ -100,7 +93,7 @@ export default function CategoryCard({
     <button
       type="button"
       onClick={onClick}
-      className="block h-full w-full text-left hover:bg-transparent  "
+      className="block h-full w-full text-left hover:bg-transparent"
     >
       {content}
     </button>

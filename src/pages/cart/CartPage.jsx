@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
+import { SkeletonLoader } from "../../components/common/skeleton";
 import { EmptyState } from "../../components/common";
 import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
 import CartItemCard from "../../components/cart/CartItemCard";
@@ -13,6 +14,7 @@ import { fetchCart, updateCart } from "../../features/cart/cartSlice";
 import { fetchProductById } from "../../features/product/productSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { useProductActions } from "../../hooks/useProductActions";
+import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import {
   getProductId,
@@ -238,14 +240,15 @@ export default function CartPage() {
     return () => clearTimeout(updateTimerRef.current);
   }, []);
 
+  const { products: populatedWishlist, isLoading: wishlistLoading } =
+    useWatchlistProducts();
+
   useEffect(() => {
-    const wishlistIds = wishlist.map(getProductId).filter(Boolean);
     const cartItemIds = rawItems
       .map((item) => getProductId(item.productId || {}))
       .filter(Boolean);
-    const allIds = Array.from(new Set([...wishlistIds, ...cartItemIds]));
 
-    const missingIds = allIds.filter(
+    const missingIds = cartItemIds.filter(
       (id) => !productEntities[id] && !fetchedIdsRef.current.has(id),
     );
 
@@ -256,7 +259,7 @@ export default function CartPage() {
     missingIds.forEach((productId) => {
       dispatch(fetchProductById({ productId })).catch(() => {});
     });
-  }, [dispatch, wishlist, rawItems, productEntities]);
+  }, [dispatch, rawItems, productEntities]);
 
   const items = useMemo(
     () =>
@@ -531,8 +534,7 @@ export default function CartPage() {
 
   const savedCardClass =
     "relative cursor-pointer overflow-hidden rounded-[18px] border border-border bg-white px-4 py-4 shadow-[0_12px_32px_rgba(31,36,48,0.06)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-[0_18px_45px_rgba(31,36,48,0.1)] sm:px-5";
-  const savedCardStripClass =
-    "absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-gold to-gold-dark";
+  const savedCardStripClass = "absolute left-0 top-0 h-full w-1  ";
   const savedCardContentClass =
     "flex min-w-0 flex-col gap-4 pl-2 sm:flex-row sm:items-center sm:justify-between";
   const savedCardInfoClass = "flex min-w-0 items-center gap-4";
@@ -638,7 +640,7 @@ export default function CartPage() {
                   )}
 
                   {hasSavedItems && (
-                    <div className=" md:border md:border-[#e4ddcf] rounded-xl bg-[#ffffff] md:p-10">
+                    <div className="">
                       <h3 className="mb-4  text-[16px] font-semibold text-ink">
                         Wishlist ({savedForLaterItems.length + wishlist.length})
                       </h3>
@@ -707,105 +709,153 @@ export default function CartPage() {
                           );
                         })}
 
-                        {wishlist
-                          .map((wishlistProduct) => {
-                            const wishlistId = getProductId(wishlistProduct);
-                            const entity = productEntities[wishlistId];
-                            const isPopulated =
-                              typeof wishlistProduct === "object" &&
-                              wishlistProduct !== null &&
-                              wishlistProduct.title;
+                        {wishlistLoading ? (
+                          <div className="grid gap-3">
+                            <SkeletonLoader
+                              count={wishlist.length || 2}
+                              layout={[
+                                {
+                                  type: "row",
+                                  className:
+                                    "relative overflow-hidden rounded-[18px] border border-border bg-white px-4 py-4 shadow-[0_12px_32px_rgba(31,36,48,0.06)] sm:px-5 flex items-center justify-between",
+                                  children: [
+                                    {
+                                      type: "row",
+                                      className: "flex items-center gap-4",
+                                      children: [
+                                        {
+                                          type: "box",
+                                          width: "64px",
+                                          height: "64px",
+                                          rounded: "rounded-[14px]",
+                                          className: "sm:h-20 sm:w-20",
+                                        },
+                                        {
+                                          type: "col",
+                                          className: "gap-2",
+                                          children: [
+                                            {
+                                              type: "box",
+                                              width: "140px",
+                                              height: "16px",
+                                            },
+                                            {
+                                              type: "box",
+                                              width: "80px",
+                                              height: "14px",
+                                            },
+                                          ],
+                                        },
+                                      ],
+                                    },
+                                    {
+                                      type: "box",
+                                      width: "90px",
+                                      height: "36px",
+                                      rounded: "rounded-full",
+                                      className: "hidden sm:block",
+                                    },
+                                  ],
+                                },
+                              ]}
+                            />
+                          </div>
+                        ) : (
+                          populatedWishlist
+                            .map((wishlistProduct) => {
+                              const wishlistId = getProductId(wishlistProduct);
+                              const savedProduct = buildSavedProductView(
+                                wishlistProduct,
+                                wishlistProduct,
+                              );
 
-                            // If product is deleted (we only have ID and fetch failed/not found), don't render it
-                            if (!isPopulated && !entity) return null;
-
-                            const savedProduct = buildSavedProductView(
-                              wishlistProduct,
-                              entity,
-                            );
-
-                            return { wishlistId, savedProduct };
-                          })
-                          .filter(Boolean)
-                          .map(({ wishlistId, savedProduct }) => {
-                            return (
-                              <div
-                                key={wishlistId}
-                                className={savedCardClass}
-                                onClick={() =>
-                                  navigate(`/products/${savedProduct.id}`)
-                                }
-                                onKeyDown={(event) => {
-                                  if (
-                                    event.key === "Enter" ||
-                                    event.key === " "
-                                  ) {
-                                    event.preventDefault();
-                                    navigate(`/products/${savedProduct.id}`);
+                              return { wishlistId, savedProduct };
+                            })
+                            .filter(Boolean)
+                            .map(({ wishlistId, savedProduct }) => {
+                              return (
+                                <div
+                                  key={wishlistId}
+                                  className={savedCardClass}
+                                  onClick={() =>
+                                    navigate(`/products/${savedProduct.id}`)
                                   }
-                                }}
-                                role="link"
-                                tabIndex={0}
-                              >
-                                <div className={savedCardStripClass} />
-                                <div className={savedCardContentClass}>
-                                  <div className={savedCardInfoClass}>
-                                    <div className={savedCardImageWrapperClass}>
-                                      <img
-                                        src={savedProduct.image}
-                                        alt={savedProduct.title}
-                                        className="h-full w-full object-cover"
-                                      />
-                                    </div>
+                                  onKeyDown={(event) => {
+                                    if (
+                                      event.key === "Enter" ||
+                                      event.key === " "
+                                    ) {
+                                      event.preventDefault();
+                                      navigate(`/products/${savedProduct.id}`);
+                                    }
+                                  }}
+                                  role="link"
+                                  tabIndex={0}
+                                >
+                                  <div className={savedCardStripClass} />
+                                  <div className={savedCardContentClass}>
+                                    <div className={savedCardInfoClass}>
+                                      <div
+                                        className={savedCardImageWrapperClass}
+                                      >
+                                        <img
+                                          src={savedProduct.image}
+                                          alt={savedProduct.title}
+                                          className="h-full w-full object-cover"
+                                        />
+                                      </div>
 
-                                    <div className="min-w-0">
-                                      <p className="line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
-                                        {savedProduct.title}
-                                      </p>
+                                      <div className="min-w-0">
+                                        <p className="line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
+                                          {savedProduct.title}
+                                        </p>
 
-                                      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
-                                        {savedProduct.brand ? (
-                                          <span className="rounded-full bg-cream px-2.5 py-1 font-semibold text-gray">
-                                            {savedProduct.brand}
-                                          </span>
-                                        ) : null}
+                                        <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
+                                          {savedProduct.brand ? (
+                                            <span className="rounded-full bg-cream px-2.5 py-1 font-semibold text-gray">
+                                              {savedProduct.brand}
+                                            </span>
+                                          ) : null}
 
-                                        {savedProduct.price != null ? (
-                                          <span className="font-semibold text-ink">
-                                            ₹
-                                            {Number(
-                                              savedProduct.price,
-                                            ).toLocaleString("en-IN")}
-                                          </span>
-                                        ) : (
-                                          <span className="font-semibold text-muted">
-                                            Price not available
-                                          </span>
-                                        )}
+                                          {savedProduct.price != null ? (
+                                            <span className="font-semibold text-ink">
+                                              ₹
+                                              {Number(
+                                                savedProduct.price,
+                                              ).toLocaleString("en-IN")}
+                                            </span>
+                                          ) : (
+                                            <span className="font-semibold text-muted">
+                                              Price not available
+                                            </span>
+                                          )}
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
 
-                                  <div className={savedCardActionClass}>
-                                    <p className={savedCardLabelClass}>
-                                      Saved item
-                                    </p>
-                                    <BrandButton
-                                      variant="secondary"
-                                      rounded
-                                      size="sm"
-                                      label="Move to cart"
-                                      className={moveToCartButtonClass}
-                                      onClick={(event) => {
-                                        event.stopPropagation();
-                                        handleMoveWishlistToCart(savedProduct);
-                                      }}
-                                    />
+                                    <div className={savedCardActionClass}>
+                                      <p className={savedCardLabelClass}>
+                                        Saved item
+                                      </p>
+                                      <BrandButton
+                                        variant="secondary"
+                                        rounded
+                                        size="sm"
+                                        label="Move to cart"
+                                        className={moveToCartButtonClass}
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          handleMoveWishlistToCart(
+                                            savedProduct,
+                                          );
+                                        }}
+                                      />
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          })}
+                              );
+                            })
+                        )}
                       </div>
                     </div>
                   )}

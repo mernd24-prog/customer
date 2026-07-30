@@ -356,18 +356,38 @@ export default function CategoryListingPage() {
     loadCategories,
   ]);
 
+  useEffect(() => {
+    if (!catalogState.globalCategories || catalogState.globalCategories.length === 0) {
+      import("../../features/product/productSlice").then(({ fetchProducts }) => {
+        dispatch(fetchProducts({ limit: 1 })).catch(() => {});
+      });
+    }
+  }, [dispatch, catalogState.globalCategories]);
+
   const categories = useMemo(() => {
-    const available =
-      getRootCategories(catalogState.globalCategories) ||
-      [].filter((category) => Number(category.productCount || 0) > 0);
-    const masterByKey = new Map(
-      categoryList.map((category) => [category.routeKey, category]),
-    );
-    return available.map((category) => ({
-      ...(masterByKey.get(category.routeKey) || {}),
-      ...category,
-      productCount: Number(category.productCount || 0),
-    }));
+    const available = getRootCategories(catalogState.globalCategories);
+    
+    // If the homepage already loaded globalCategories, use them to enrich the data
+    if (available && available.length > 0) {
+      const masterByKey = new Map(
+        categoryList.map((category) => [category.routeKey, category]),
+      );
+      return available.map((category) => ({
+        ...(masterByKey.get(category.routeKey) || {}),
+        ...category,
+        productCount: Number(category.productCount || 0),
+      }));
+    }
+
+    // Otherwise, use the fallback list fetched by this page
+    // (If you want it to only show items with products, wait for globalCategories to populate)
+    return categoryList.filter((category) => {
+      // If we somehow have productCount, use it
+      if (category.productCount !== undefined && category.productCount !== null) {
+        return Number(category.productCount) > 0;
+      }
+      return true; // Fallback to returning all if count is unknown
+    });
   }, [catalogState.globalCategories, categoryList]);
 
   return (

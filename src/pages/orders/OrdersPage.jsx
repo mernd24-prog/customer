@@ -1859,6 +1859,7 @@ const orderHelpItems = items.map((item) => ({
 
 function OrderList() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const state = useSelector((s) => s.order);
   const [activeFilter, setActiveFilter] = useState("");
   const [query, setQuery] = useState("");
@@ -1986,6 +1987,8 @@ function OrderList() {
                       ? "Try a different filter."
                       : "Once you place an order, it will appear here."
                   }
+                  emptyActionLabel="Continue Shopping"
+                  onEmptyAction={() => navigate("/products")}
                 >
                   <div className="flex flex-col gap-4  ">
                     {orderItemsList.map(({ order, item }) => (

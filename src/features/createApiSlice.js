@@ -142,6 +142,8 @@ export function createApiSlice({
                 action.meta?.arg?.slug,
                 action.payload?.arg?.id,
                 action.meta?.arg?.id,
+                action.payload?.arg?.productId,
+                action.meta?.arg?.productId,
               ].filter((key) => key !== undefined && key !== null);
               keys.forEach((key) => {
                 state.entities[key] = data;

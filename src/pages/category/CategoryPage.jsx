@@ -117,7 +117,7 @@ function getCategoryCount(category = {}) {
   );
 }
 
-function SubCategoryStrip({ categories = [] }) {
+function SubCategoryStrip({ categories = [], loading }) {
   const visibleCategories = categories
     .map((category) => ({
       key: getCategoryKey(category),
@@ -127,13 +127,23 @@ function SubCategoryStrip({ categories = [] }) {
     }))
     .filter((category) => category.key && category.name);
 
-  if (!visibleCategories.length) return null;
+  if (!loading && !visibleCategories.length) return null;
 
   return (
     <section className="mb-5 bg-white pt-4">
       <div className="w-full overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="flex w-max gap-4 px-4 sm:px-0">
-          {visibleCategories.map((category) => (
+          {loading
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <div
+                  key={`skeleton-${index}`}
+                  className="group w-[92px] shrink-0 text-center sm:w-[104px]"
+                >
+                  <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[10px] bg-black/5 animate-pulse p-2" />
+                  <div className="mx-auto mt-3 h-3 w-3/4 rounded bg-black/5 animate-pulse" />
+                </div>
+              ))
+            : visibleCategories.map((category) => (
             <Link
               key={category.key}
               to={CUSTOMER_ROUTES.category(category.key)}
@@ -349,9 +359,34 @@ export default function CategoryPage() {
     [catalogCategoryList],
   );
 
+  const brandContextKey = useMemo(() => {
+    const p = new URLSearchParams(searchParams);
+    p.delete("brand");
+    p.delete("page");
+    return `${categoryKey}_${p.toString()}`;
+  }, [searchParams, categoryKey]);
+
+  const brandOptionsRef = useRef({ context: "", options: [] });
   const allBrands = useMemo(() => {
-    return productFacets?.brands || [];
-  }, [productFacets]);
+    const rawBrands = productFacets?.brands || [];
+    const currentSelected = parseMultiValue(searchParams.get("brand"));
+
+    if (brandContextKey !== brandOptionsRef.current.context || currentSelected.length === 0) {
+      brandOptionsRef.current = {
+        context: brandContextKey,
+        options: rawBrands,
+      };
+    }
+
+    if (currentSelected.length > 0 && brandOptionsRef.current.options.length > 0) {
+      const mergedMap = new Map();
+      brandOptionsRef.current.options.forEach((opt) => mergedMap.set(opt.value, { ...opt }));
+      rawBrands.forEach((opt) => mergedMap.set(opt.value, opt));
+      return Array.from(mergedMap.values());
+    }
+
+    return brandOptionsRef.current.options;
+  }, [productFacets?.brands, searchParams, brandContextKey]);
 
   const products = useMemo(() => {
     if (!categoryKey) return items;
@@ -400,9 +435,53 @@ export default function CategoryPage() {
       ),
     [products],
   );
+  const attributesContextKey = useMemo(() => {
+    const p = new URLSearchParams(searchParams);
+    Array.from(p.keys()).forEach(key => {
+        if (key.startsWith('attr_')) p.delete(key);
+    });
+    p.delete("page");
+    return `${categoryKey}_${p.toString()}`;
+  }, [searchParams, categoryKey]);
+
+  const attributesOptionsRef = useRef({ context: "", attributes: [] });
+  const allAttributes = useMemo(() => {
+    const rawAttributes = productFacets?.attributes || [];
+    const hasAnyAttrSelected = Array.from(searchParams.keys()).some(k => k.startsWith('attr_'));
+
+    if (attributesContextKey !== attributesOptionsRef.current.context || !hasAnyAttrSelected) {
+      attributesOptionsRef.current = {
+        context: attributesContextKey,
+        attributes: rawAttributes,
+      };
+    }
+
+    if (hasAnyAttrSelected && attributesOptionsRef.current.attributes.length > 0) {
+      const mergedAttributes = attributesOptionsRef.current.attributes.map(cachedAttr => {
+        const rawAttr = rawAttributes.find(ra => ra.key === cachedAttr.key);
+        if (!rawAttr) return cachedAttr;
+        const mergedValuesMap = new Map();
+        (cachedAttr.values || []).forEach(v => mergedValuesMap.set(v.value, { ...v }));
+        (rawAttr.values || []).forEach(v => mergedValuesMap.set(v.value, v));
+        return {
+          ...cachedAttr,
+          values: Array.from(mergedValuesMap.values())
+        };
+      });
+      rawAttributes.forEach(rawAttr => {
+        if (!mergedAttributes.find(ma => ma.key === rawAttr.key)) {
+          mergedAttributes.push(rawAttr);
+        }
+      });
+      return mergedAttributes;
+    }
+
+    return attributesOptionsRef.current.attributes;
+  }, [productFacets?.attributes, searchParams, attributesContextKey]);
+
   const filterableAttributes = useMemo(
     () =>
-      (productFacets.attributes || [])
+      (allAttributes || [])
         .filter((attribute) => attribute.variant === true)
         .map((attribute) => ({
           ...attribute,
@@ -414,7 +493,7 @@ export default function CategoryPage() {
             .map((option) => String(option.value)),
         }))
         .filter((attribute) => attribute.key && attribute.options.length > 0),
-    [productFacets.attributes],
+    [allAttributes],
   );
   const supportedAttributeKeys = useMemo(
     () => new Set(filterableAttributes.map((attribute) => attribute.key)),
@@ -422,7 +501,7 @@ export default function CategoryPage() {
   );
   const attributeCountMaps = useMemo(() => {
     return filterableAttributes.reduce((maps, attribute) => {
-      const facet = (productFacets.attributes || []).find(
+      const facet = (allAttributes || []).find(
         (item) => String(item.key) === String(attribute.key),
       );
       maps[attribute.key] = Object.fromEntries(
@@ -433,7 +512,7 @@ export default function CategoryPage() {
       );
       return maps;
     }, {});
-  }, [filterableAttributes, productFacets.attributes]);
+  }, [filterableAttributes, allAttributes]);
 
   const currentContextKey = useMemo(() => {
     const p = new URLSearchParams(searchParams);
@@ -772,6 +851,21 @@ export default function CategoryPage() {
     [navigate, setSearchParams],
   );
 
+  const hasOtherFilters = Array.from(searchParams.keys()).some(
+    (key) =>
+      [
+        "page",
+        "sort",
+        "limit",
+      ].indexOf(key) === -1
+  );
+
+  const handleClearFilters = useCallback(() => {
+    setSearchParams(new URLSearchParams());
+  }, [setSearchParams]);
+
+  const clearFiltersAction = hasOtherFilters ? handleClearFilters : undefined;
+
   // ── Derived data ─────────────────────────────────────────────────────────
   const categoryTitle =
     categoryData?.title ||
@@ -792,8 +886,12 @@ export default function CategoryPage() {
   const visibleSubCategories = subCategories.filter((category) =>
     visibleCategoryKeys.has(String(getCategoryKey(category))),
   );
+  const isInitialLoading =
+    (productState.loading && !products.length) ||
+    (!firstLoadDone && !products.length);
+
   const showSubCategoryStrip =
-    isRootCategory && visibleSubCategories.length > 0;
+    isRootCategory && (visibleSubCategories.length > 0 || isInitialLoading);
   const showCategorySidebar =
     !isRootCategory && visibleSubCategories.length > 0;
   const categoryFilter = useMemo(() => {
@@ -1035,7 +1133,7 @@ export default function CategoryPage() {
       {/* ── Product listing with sidebar filters ────────────────────────── */}
       <div className="py-5 sm:py-7">
         {showSubCategoryStrip && (
-          <SubCategoryStrip categories={visibleSubCategories} />
+          <SubCategoryStrip categories={visibleSubCategories} loading={isInitialLoading} />
         )}
 
         <CollectionToolbar
@@ -1059,7 +1157,7 @@ export default function CategoryPage() {
           }
           filters={activeFilters}
           onRemoveFilter={removeFilter}
-          onClearFilters={() => setSearchParams(new URLSearchParams())}
+          onClearFilters={clearFiltersAction}
           sidebarOpen={sidebarOpen}
           onCloseSidebar={() => setSidebarOpen(false)}
           loading={

@@ -8,7 +8,6 @@ export default function FAQAccordion({ faqs = [] }) {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  console.log("Accordion faqs", faqs);
 
   return (
     <section className="w-full">

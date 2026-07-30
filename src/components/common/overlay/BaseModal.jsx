@@ -1,4 +1,6 @@
 import { cn } from "../../../lib/utils";
+import { createPortal } from "react-dom";
+import { useEffect, useState } from "react";
 
 export default function BaseModal({
   children,
@@ -7,8 +9,19 @@ export default function BaseModal({
   className = "",
   showCloseButton = true,
 }) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 px-4 backdrop-blur-sm">
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    // Prevent background scrolling when modal is open
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
+  const modalContent = (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 px-4 backdrop-blur-sm">
       <div className={cn("customer-card relative w-full shadow-[var(--customer-shadow-strong)]", maxWidth, className)}>
         {children}
         {showCloseButton ? (
@@ -24,4 +37,8 @@ export default function BaseModal({
       </div>
     </div>
   );
+
+  if (!mounted) return null;
+
+  return createPortal(modalContent, document.body);
 }

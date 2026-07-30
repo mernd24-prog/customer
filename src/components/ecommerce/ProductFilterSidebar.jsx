@@ -703,11 +703,38 @@ export function RatingFilter({
   );
 }
 
+export function FilterSkeleton() {
+  return (
+    <div className="px-4 min-[375px]:px-5 sm:px-6">
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="border-b border-[#EEDFB9] py-6 last:border-b-0 sm:py-7"
+        >
+          <div className="mb-6 flex w-full items-center justify-between gap-3">
+            <div className="h-6 w-32 animate-pulse rounded bg-black/5"></div>
+            <div className="h-4 w-4 animate-pulse rounded bg-black/5"></div>
+          </div>
+          <div className="grid gap-4">
+            {[1, 2, 3, 4, 5].map((j) => (
+              <div key={j} className="flex items-center gap-3">
+                <div className="h-5 w-5 shrink-0 animate-pulse rounded-[5px] bg-black/5"></div>
+                <div className="h-4 w-48 animate-pulse rounded bg-black/5"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function ProductFilterSidebar({
   sections = [],
   className = "",
   onClearAll,
   topContent,
+  loading,
 }) {
   return (
     <aside
@@ -717,30 +744,35 @@ export default function ProductFilterSidebar({
         <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-5 min-[375px]:px-5 sm:px-6 sm:py-6">
           <h3 className="text-h4 font-semibold  text-[#373737] ">Filters</h3>
 
-          <button
-            type="button"
-            onClick={onClearAll}
-            disabled={!onClearAll}
-            className="inline-flex h-[52px] shrink-0 items-center justify-center rounded-[14px]   text-[14px] font-semibold text-[#5960B8]  sm:text-[16px]"
-          >
-            Clear All
-          </button>
+          {onClearAll && (
+            <button
+              type="button"
+              onClick={onClearAll}
+              className="inline-flex h-[52px] shrink-0 items-center justify-center rounded-[14px]   text-[14px] font-semibold text-[#5960B8]  sm:text-[16px]"
+            >
+              Clear All
+            </button>
+          )}
         </div>
 
         {topContent}
 
-        <div className="px-4  min-[375px]:px-5 sm:px-6">
-          {sections.map((section) => (
-            <FilterSection
-              key={section.key || section.title}
-              title={section.title}
-              defaultOpen={section.defaultOpen}
-              searchable={section.searchable}
-            >
-              {section.content}
-            </FilterSection>
-          ))}
-        </div>
+        {loading ? (
+          <FilterSkeleton />
+        ) : (
+          <div className="px-4  min-[375px]:px-5 sm:px-6">
+            {sections.map((section) => (
+              <FilterSection
+                key={section.key || section.title}
+                title={section.title}
+                defaultOpen={section.defaultOpen}
+                searchable={section.searchable}
+              >
+                {section.content}
+              </FilterSection>
+            ))}
+          </div>
+        )}
       </div>
     </aside>
   );
