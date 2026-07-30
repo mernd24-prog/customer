@@ -19,13 +19,13 @@ const PolicySection = ({ title, points, description, footer }) => {
   return (
     <section className="py-1 first:pt-0">
       {title && (
-        <h2 className="mb-3 text-[20px] leading-[28px] tracking-[-0.01em] md:text-[24px] md:leading-[32px] md:tracking-[-0.01em] font-bold leading-tight text-ink lg:text-[28px] lg:leading-[36px] lg:tracking-[-0.01em]">
+        <h2 className="mb-3 text-h3 font-bold text-ink">
           {title}
         </h2>
       )}
 
       {description && (
-        <p className="mb-8  text-[14px] leading-[22px] leading-relaxed tracking-normal text-muted md:text-[18px] md:leading-[28px]">
+        <p className="mb-8 text-[14px] md:text-base leading-relaxed text-muted">
           {description}
         </p>
       )}
@@ -35,7 +35,7 @@ const PolicySection = ({ title, points, description, footer }) => {
           {visiblePoints.map((point, pIdx) => (
             <div key={pIdx}>
               {point.title && (
-                <h3 className="mb-3  text-[20px]  tracking-[-0.01em] md:text-[24px] md:leading-[32px] md:tracking-[-0.01em] font-bold leading-tight text-ink lg:text-[28px] lg:leading-[36px] lg:tracking-[-0.01em]">
+                <h3 className="mb-3 text-h5 font-bold text-ink">
                   {point.title}
                 </h3>
               )}
@@ -43,13 +43,13 @@ const PolicySection = ({ title, points, description, footer }) => {
               {getTextLines(point.description).length > 1 ? (
                 <ul className="space-y-2">
                   {getTextLines(point.description).map((line, lineIdx) => (
-                    <li key={lineIdx} className="flex items-start gap-2  px-4">
+                    <li key={lineIdx} className="flex items-start gap-2 px-4">
                       <img
                         src="/image/png/arrow.png"
                         alt=""
                         className="my-auto h-3 w-3 flex-shrink-0 object-contain md:h-3.5 md:w-3.5"
                       />
-                      <span className="text-[14px] leading-[22px] leading-relaxed tracking-normal text-muted md:text-[18px] md:leading-[28px]">
+                      <span className="text-[14px] md:text-base leading-relaxed text-muted">
                         {line}
                       </span>
                     </li>
@@ -59,7 +59,7 @@ const PolicySection = ({ title, points, description, footer }) => {
                 getTextLines(point.description).map((line, lineIdx) => (
                   <p
                     key={lineIdx}
-                    className="text-[16px] text-muted md:text-[18px] "
+                    className="text-[14px] md:text-base text-muted"
                   >
                     {line}
                   </p>

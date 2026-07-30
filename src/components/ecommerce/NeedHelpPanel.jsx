@@ -137,7 +137,15 @@ export default function NeedHelpPanel({
 
           return (
             <div key={`${item.title}-${index}`} className="flex flex-col">
-              {item.expandableContent ? (
+              {item.onClick ? (
+                <button
+                  type="button"
+                  onClick={item.onClick}
+                  className="flex min-w-0 items-center gap-3 py-5 focus:outline-none w-full"
+                >
+                  {content}
+                </button>
+              ) : item.expandableContent ? (
                 <button
                   type="button"
                   onClick={() =>

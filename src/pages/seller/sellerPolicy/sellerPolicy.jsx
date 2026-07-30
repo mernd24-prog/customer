@@ -92,30 +92,32 @@ export default function SellerPolicy() {
   ];
 
   return (
-    <div className="">
+    <div 
+      className="w-[100vw] overflow-x-hidden" 
+      style={{ marginLeft: "calc(-50vw + 50%)" }}
+    >
       {/* ================= HERO ================= */}
 
-      <section className="relative mt-8 w-full overflow-hidden">
+      <section className="relative isolate w-full overflow-hidden bg-[#FAF8F3]">
         {/* Background Image */}
         <img
           src="/image/png/sellerPrivacy.png"
           alt="Seller Policy"
-          className="w-full h-full object-cover"
+          className="absolute inset-0 -z-20 h-full w-full object-cover object-right lg:object-center"
         />
 
         {/* Content Overlay */}
-        <div className="absolute inset-0 flex items-center">
-          <div className="mx-auto w-full max-w-7xl px-6">
+        <div className="mx-auto flex min-h-[570px] w-full max-w-7xl items-center px-6 py-16 lg:min-h-[780px] lg:py-20">
             <div className="max-w-xl">
               <span className="inline-flex items-center rounded-full border border-[#D4A52A]/30 bg-[#D4A52A]/15 px-4 py-2 text-sm font-medium text-[#18156D] backdrop-blur-sm">
                 Seller Guidelines
               </span>
 
-              <h1 className="mt-6 text-5xl font-bold leading-tight text-[#18156D] lg:text-6xl">
+              <h1 className="mt-6 text-[24px] font-bold leading-[32px] tracking-[-0.01em] text-[#18156D] md:text-[28px] md:leading-[36px] lg:text-[32px] lg:leading-[40px]">
                 Seller Policy
               </h1>
 
-              <p className="mt-6 text-lg leading-8 text-gray-700">
+              <p className="mt-6 text-[14px] leading-[22px] text-gray-700 md:text-[18px] md:leading-[28px]">
                 Our Seller Policy defines the standards, responsibilities, and
                 marketplace guidelines that help create a trusted experience for
                 both sellers and customers.
@@ -136,7 +138,6 @@ export default function SellerPolicy() {
               </div>
             </div>
           </div>
-        </div>
       </section>
 
       {/* ================= POLICY HIGHLIGHTS ================= */}
@@ -147,11 +148,11 @@ export default function SellerPolicy() {
               Policy Highlights
             </span>
 
-            <h2 className="mt-5 text-4xl font-bold text-[#18156D]">
+            <h2 className="mt-5 text-[20px] font-bold leading-[28px] tracking-[-0.01em] text-[#18156D] md:text-[24px] md:leading-[32px] lg:text-[28px] lg:leading-[36px]">
               Everything You Need To Sell Confidently
             </h2>
 
-            <p className="mt-4 max-w-2xl mx-auto text-gray-600">
+            <p className="mx-auto mt-4 max-w-2xl text-[14px] leading-[22px] text-gray-600 md:text-[18px] md:leading-[28px]">
               Our marketplace policies are designed to protect sellers,
               strengthen customer confidence and ensure smooth business
               operations.
@@ -171,11 +172,13 @@ export default function SellerPolicy() {
                     <Icon size={28} />
                   </div>
 
-                  <h3 className="mt-6 text-xl font-semibold text-[#18156D]">
+                  <h3 className="mt-6 text-[16px] font-bold leading-tight text-[#18156D] md:text-[18px] lg:text-[20px]">
                     {item.title}
                   </h3>
 
-                  <p className="mt-3 leading-7 text-gray-600">{item.desc}</p>
+                  <p className="mt-3 text-[14px] leading-[22px] text-gray-600 md:text-[16px] md:leading-[26px]">
+                    {item.desc}
+                  </p>
                 </div>
               );
             })}
@@ -192,11 +195,11 @@ export default function SellerPolicy() {
               Seller Responsibilities
             </span>
 
-            <h2 className="mt-5 text-4xl font-bold text-[#18156D]">
+            <h2 className="mt-5 text-[20px] font-bold leading-[28px] tracking-[-0.01em] text-[#18156D] md:text-[24px] md:leading-[32px] lg:text-[28px] lg:leading-[36px]">
               Your Commitment Matters
             </h2>
 
-            <p className="mt-4 max-w-2xl mx-auto text-gray-600 leading-7">
+            <p className="mx-auto mt-4 max-w-2xl text-[14px] leading-[22px] text-gray-600 md:text-[18px] md:leading-[28px]">
               Follow these essential responsibilities to deliver a trusted
               shopping experience and build long-term customer confidence.
             </p>
@@ -222,11 +225,11 @@ export default function SellerPolicy() {
                   </div>
 
                   {/* Content */}
-                  <h3 className="mt-6 text-lg font-semibold leading-snug text-[#18156D]">
+                  <h3 className="mt-6 text-[16px] font-bold leading-tight text-[#18156D] md:text-[18px] lg:text-[20px]">
                     {item.title}
                   </h3>
 
-                  <p className="mt-3 text-sm leading-7 text-gray-600">
+                  <p className="mt-3 text-[14px] leading-[22px] text-gray-600 md:text-[16px] md:leading-[26px]">
                     {item.desc}
                   </p>
 
@@ -246,11 +249,11 @@ export default function SellerPolicy() {
               Seller Account Compliance
             </span>
 
-            <h2 className="mt-5 text-4xl font-bold text-[#18156D]">
+            <h2 className="mt-5 text-[20px] font-bold leading-[28px] tracking-[-0.01em] text-[#18156D] md:text-[24px] md:leading-[32px] lg:text-[28px] lg:leading-[36px]">
               Maintain a Healthy Seller Account
             </h2>
 
-            <p className="mt-4 max-w-2xl mx-auto text-gray-600 leading-7">
+            <p className="mx-auto mt-4 max-w-2xl text-[14px] leading-[22px] text-gray-600 md:text-[18px] md:leading-[28px]">
               We regularly monitor seller performance to ensure customers
               receive a reliable and trustworthy shopping experience.
             </p>
@@ -278,7 +281,7 @@ export default function SellerPolicy() {
                   </div>
 
                   <h3
-                    className={`mt-6 text-2xl font-semibold ${
+                    className={`mt-6 text-[18px] md:text-[20px] lg:text-[24px] font-bold leading-tight ${
                       item.featured ? "text-white" : "text-[#18156D]"
                     }`}
                   >
@@ -286,7 +289,7 @@ export default function SellerPolicy() {
                   </h3>
 
                   <p
-                    className={`mt-4 leading-7 ${
+                    className={`mt-4 text-[14px] leading-[22px] md:text-[16px] md:leading-[26px] ${
                       item.featured ? "text-white/75" : "text-gray-600"
                     }`}
                   >

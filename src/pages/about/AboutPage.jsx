@@ -26,16 +26,25 @@ export default function AboutPage() {
 
   useEffect(() => {
     if (location.hash) {
-      const timeoutId = setTimeout(() => {
-        const id = location.hash.replace("#", "");
+      const id = location.hash.replace("#", "");
+      
+      const scrollToElement = () => {
         const element = document.getElementById(id);
         if (element) {
           element.scrollIntoView({ behavior: "smooth" });
         }
-      }, 300);
-      return () => clearTimeout(timeoutId);
+      };
+
+      // Fire once quickly for immediate response, and once later to correct layout shifts from loading images
+      const t1 = setTimeout(scrollToElement, 100);
+      const t2 = setTimeout(scrollToElement, 700);
+
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
     }
-  }, [location.hash, aboutSamGlobalSection, valuesSection, chooseSection]);
+  }, [location.hash, location.key, aboutSamGlobalSection, valuesSection, chooseSection]);
 
   return (
     <>

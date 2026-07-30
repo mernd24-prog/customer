@@ -9,6 +9,7 @@ import ApiState from "../../components/common/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import NeedHelpPanel from "../../components/ecommerce/NeedHelpPanel";
 import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
+import SupportTicketSidebar from "./components/SupportTicketSidebar";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 import { apiRequest } from "../../api/client";
 import { endpoints } from "../../api/endpoints";
@@ -177,9 +178,11 @@ function normalizeSupportQueries(result) {
   return items.map((item) => ({
     id: item.queryId || item.id,
     subject: item.subject || "Support request",
+    message: item.message || "",
     category: item.category || "OTHER",
     categoryLabel: formatSupportCategory(item.category || "OTHER"),
     status: item.status || "pending",
+    createdAt: formatSupportDate(item.createdAt),
     updatedAt: formatSupportDate(item.updatedAt || item.createdAt),
   }));
 }
@@ -220,6 +223,9 @@ export default function SupportHelpCenter() {
   const [helpPanelExpandedIndex, setHelpPanelExpandedIndex] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [submittedTicketId, setSubmittedTicketId] = useState("");
+
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [showRaiseTicketModal, setShowRaiseTicketModal] = useState(false);
 
   const pageTitle = page?.title || "";
   const pageDescription = page?.description || page?.excerpt || "";
@@ -325,6 +331,7 @@ export default function SupportHelpCenter() {
       setSupportForm(CUSTOMER_SUPPORT_INITIAL_FORM);
       setSelectedSupportCategory("");
       setHelpPanelExpandedIndex(null);
+      setShowRaiseTicketModal(false);
       setShowSuccessModal(true);
 
       await loadSupportQueries();
@@ -541,68 +548,7 @@ export default function SupportHelpCenter() {
                   if (item.title === "Raise a Ticket") {
                     return {
                       ...item,
-                      expandableContent: (
-                        <form
-                          onSubmit={handleSupportSubmit}
-                          className="space-y-4 px-1 py-2"
-                        >
-                          <CustomDropdown
-                            label="Category"
-                            options={CUSTOMER_SUPPORT_CATEGORIES}
-                            value={supportForm.category}
-                            onChange={(val) =>
-                              setSupportForm((prev) => ({
-                                ...prev,
-                                category: val,
-                              }))
-                            }
-                            placeholder="Select Category"
-                          />
-
-                          <label className="block">
-                            <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
-                              Subject
-                            </span>
-
-                            <input
-                              name="subject"
-                              value={supportForm.subject}
-                              onChange={handleSupportFieldChange}
-                              placeholder="Example: Refund Not Received"
-                              className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] focus:outline-none placeholder:text-[#9A9A9A] focus:border-gold"
-                            />
-                          </label>
-
-                          <label className="block">
-                            <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
-                              Message
-                            </span>
-
-                            <textarea
-                              name="message"
-                              value={supportForm.message}
-                              onChange={handleSupportFieldChange}
-                              rows={4}
-                              placeholder="Write Your Issue Here..."
-                              className="w-full resize-none rounded-lg border border-[#E7D9B8] bg-white px-3 py-3 text-sm leading-5 text-[#2E2E2E] placeholder:text-[#9A9A9A] focus:border-[#CE9F2D] focus:outline-none focus:ring-0 focus:shadow-none"
-                            />
-                          </label>
-
-                          <button
-                            type="submit"
-                            disabled={supportSubmitting}
-                            className="h-11 w-full rounded-lg bg-[#3E4093] text-sm font-bold text-white transition hover:bg-[#303176] disabled:cursor-not-allowed disabled:opacity-60"
-                          >
-                            {supportSubmitting ? "Sending..." : "Send Message"}
-                          </button>
-
-                          {!isSignedIn && (
-                            <p className="text-center text-xs font-medium text-[#666666]">
-                              Login Is Required to Send a Support Message.
-                            </p>
-                          )}
-                        </form>
-                      ),
+                      onClick: () => setShowRaiseTicketModal(true),
                     };
                   }
                   return item;
@@ -630,7 +576,7 @@ export default function SupportHelpCenter() {
                   />
                 </div>
 
-                <div className="divide-y divide-[#EFE5D2] px-5">
+                <div className="divide-y divide-[#EFE5D2] px-5 max-h-[225px] overflow-y-auto custom-scrollbar">
                   {supportLoading && (
                     <p className="py-5 text-sm font-medium text-[#666666]">
                       Loading Tickets...
@@ -656,22 +602,25 @@ export default function SupportHelpCenter() {
                   {!supportLoading &&
                     !supportError &&
                     supportQueries.map((ticket) => (
-                      <div key={ticket.id} className="py-4">
+                      <button
+                        key={ticket.id}
+                        onClick={() => setSelectedTicket(ticket)}
+                        className="w-full py-4 text-left  transition-colors cursor-pointer px-2 -mx-2 rounded-lg"
+                      >
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className=" text-sm font-bold text-[#1B1D60]">
+                            <p className=" text-sm font-bold text-[#1B1D60] truncate">
                               {ticket.subject}
                             </p>
 
-                            <p className="mt-1 text-xs font-medium text-[#666666]">
-                              {ticket.id} · {ticket.categoryLabel} ·{" "}
-                              {ticket.updatedAt}
+                            <p className="mt-1 text-xs font-medium text-[#666666] truncate">
+                              {ticket.categoryLabel} · {ticket.updatedAt}
                             </p>
                           </div>
 
                           <SupportStatusBadge status={ticket.status} />
                         </div>
-                      </div>
+                      </button>
                     ))}
                 </div>
               </section>
@@ -679,6 +628,76 @@ export default function SupportHelpCenter() {
           }
         />{" "}
       </main>
+
+      {showRaiseTicketModal && (
+        <BaseModal
+          onClose={() => setShowRaiseTicketModal(false)}
+          maxWidth="max-w-md"
+        >
+          <div className="p-6 sm:p-8">
+            <h3 className="text-xl font-bold text-[#1B1D60] mb-5">
+              Raise a Ticket
+            </h3>
+            <form onSubmit={handleSupportSubmit} className="space-y-4">
+              <CustomDropdown
+                label="Category"
+                options={CUSTOMER_SUPPORT_CATEGORIES}
+                value={supportForm.category}
+                onChange={(val) =>
+                  setSupportForm((prev) => ({
+                    ...prev,
+                    category: val,
+                  }))
+                }
+                placeholder="Select Category"
+              />
+
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
+                  Subject
+                </span>
+
+                <input
+                  name="subject"
+                  value={supportForm.subject}
+                  onChange={handleSupportFieldChange}
+                  placeholder="Example: Refund Not Received"
+                  className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] focus:outline-none placeholder:text-[#9A9A9A] focus:border-[#CE9F2D]"
+                />
+              </label>
+
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
+                  Message
+                </span>
+
+                <textarea
+                  name="message"
+                  value={supportForm.message}
+                  onChange={handleSupportFieldChange}
+                  rows={4}
+                  placeholder="Write Your Issue Here..."
+                  className="w-full resize-none rounded-lg border border-[#E7D9B8] bg-white px-3 py-3 text-sm leading-5 text-[#2E2E2E] placeholder:text-[#9A9A9A] focus:border-[#CE9F2D] focus:outline-none focus:ring-0 focus:shadow-none"
+                />
+              </label>
+
+              <button
+                type="submit"
+                disabled={supportSubmitting}
+                className="h-11 w-full rounded-lg bg-[#CE9F2D] text-sm font-bold text-white transition hover:bg-[#C9961F] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {supportSubmitting ? "Sending..." : "Send Message"}
+              </button>
+
+              {!isSignedIn && (
+                <p className="text-center text-xs font-medium text-[#666666]">
+                  Login Is Required to Send a Support Message.
+                </p>
+              )}
+            </form>
+          </div>
+        </BaseModal>
+      )}
 
       {showSuccessModal && (
         <BaseModal
@@ -707,13 +726,19 @@ export default function SupportHelpCenter() {
             <button
               type="button"
               onClick={() => setShowSuccessModal(false)}
-              className="w-full h-11 rounded-lg bg-[#3E4093] text-sm font-bold text-white transition hover:bg-[#303176] active:scale-[0.98]"
+              className="w-full h-11 rounded-lg bg-[#CE9F2D] text-sm font-bold text-white transition hover:bg-[#C9961F] active:scale-[0.98]"
             >
               Done
             </button>
           </div>
         </BaseModal>
       )}
+
+      <SupportTicketSidebar
+        isOpen={!!selectedTicket}
+        ticket={selectedTicket}
+        onClose={() => setSelectedTicket(null)}
+      />
     </>
   );
 }

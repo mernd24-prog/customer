@@ -119,6 +119,13 @@ export default function AddressTab({ user }) {
     resolver: zodResolver(addressSchema),
     shouldFocusError: false,
     defaultValues: {
+      fullName: "",
+      phone: "",
+      line1: "",
+      line2: "",
+      city: "",
+      state: "",
+      postalCode: "",
       country: "India",
       dialCode: "+91",
       label: "home",
@@ -213,7 +220,7 @@ export default function AddressTab({ user }) {
 
   // Clear state and city if they don't match the selected country for Add Form
   useEffect(() => {
-    if (addCountry && addState) {
+    if (addCountry && addState && addStates.length > 0) {
       const isValid = addStates.some((s) => (s.name || s) === addState);
       if (!isValid) {
         addForm.setValue("state", "");
@@ -301,7 +308,7 @@ export default function AddressTab({ user }) {
 
   // Clear state and city if they don't match the selected country for Edit Form
   useEffect(() => {
-    if (editCountry && editState) {
+    if (editCountry && editState && editStates.length > 0) {
       const isValid = editStates.some((s) => (s.name || s) === editState);
       if (!isValid) {
         editForm.setValue("state", "");
@@ -411,12 +418,7 @@ export default function AddressTab({ user }) {
       addAddress({ ...addressFields, isDefault: Boolean(values.isDefault) }),
       "Address added",
     );
-    addForm.reset({
-      country: "India",
-      dialCode: "+91",
-      label: "home",
-      isDefault: false,
-    });
+    addForm.reset();
     setShowAddForm(false);
     dispatch(fetchMe());
   };
@@ -473,7 +475,12 @@ export default function AddressTab({ user }) {
         <div className="flex  flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row  sm:justify-end">
           <button
             type="button"
-            onClick={() => setShowAddForm((value) => !value)}
+            onClick={() => {
+              if (!showAddForm) {
+                addForm.reset();
+              }
+              setShowAddForm((value) => !value);
+            }}
             className="inline-flex min-h-10 items-center  justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4  text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
           >
             {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
@@ -514,7 +521,10 @@ export default function AddressTab({ user }) {
                 <Button
                   type="button"
                   variant="secondary"
-                  onClick={() => setShowAddForm(false)}
+                  onClick={() => {
+                    setShowAddForm(false);
+                    addForm.reset();
+                  }}
                   className="w-full sm:w-auto"
                 >
                   Cancel

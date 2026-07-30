@@ -1134,15 +1134,28 @@ export default function CheckoutPage() {
     const timer = window.setTimeout(() => {
       setQuoteLoading(true);
       setQuoteError("");
+
       dispatch(quoteOrder(quotePayload))
         .unwrap()
         .then((result) => {
-          if (active) setQuoteData(result.data || null);
+          if (active) {
+            setQuoteData(result.data || null);
+            notify.success({
+              title: "Order Updated",
+              message: "Delivery charges updated successfully.",
+            });
+          }
         })
         .catch((error) => {
           if (!active) return;
           setQuoteData(null);
-          setQuoteError(error || "Unable to calculate order quote");
+          const errMsg = error || "Unable to calculate order quote";
+          setQuoteError(errMsg);
+          notify.error({
+            title: "Update Failed",
+            message:
+              "Delivery is not available for this address or an error occurred.",
+          });
         })
         .finally(() => {
           if (active) setQuoteLoading(false);
@@ -1649,7 +1662,9 @@ export default function CheckoutPage() {
                   selectedPaymentProvider={paymentProvider}
                   onPaymentProviderChange={setPaymentProvider}
                   getPaymentProviderLabel={getPaymentProviderLabel}
-                  deliveryPincode={quoteShippingAddress?.postalCode || watchedPostalCode || ""}
+                  deliveryPincode={
+                    quoteShippingAddress?.postalCode || watchedPostalCode || ""
+                  }
                 />
               </OrderDetailAside>
             </OrderDetailLayout>
