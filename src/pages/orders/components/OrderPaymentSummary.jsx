@@ -313,18 +313,28 @@ function OrderPaymentSummary({
       {asNumber?.(customerPlatformFee) > 0 && (
         <div className="border-t border-[#04258626] pt-2">
           <SummaryRow
-            label="Platform Fee"
+            label={asNumber?.(customerPlatformFeeTax) > 0 ? "Platform fee base" : "Platform Fee"}
             value={formatMoney(customerPlatformFee, currency)}
           />
+          {variant === "order" && (
+            <p className="mt-1 text-xs leading-5 text-[#65718b]">
+              Marketplace service fee charged by platform.
+            </p>
+          )}
         </div>
       )}
 
-      {asNumber?.(customerPlatformFeeTax) > 0 && (
+      {(asNumber?.(customerPlatformFeeTax) > 0 || (variant === "order" && asNumber?.(customerPlatformFee) > 0)) && (
         <div className="border-t border-[#04258626] pt-2">
           <SummaryRow
             label="Platform Fee GST"
-            value={formatMoney(customerPlatformFeeTax, currency)}
+            value={formatMoney(customerPlatformFeeTax || 0, currency)}
           />
+          {variant === "order" && asNumber?.(customerPlatformFeeTax) <= 0 && (
+            <p className="mt-1 text-xs leading-5 text-[#65718b]">
+              No GST charged or GST detail not available for this order.
+            </p>
+          )}
         </div>
       )}
 

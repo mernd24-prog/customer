@@ -412,7 +412,9 @@ const getCustomerPlatformFeeAmount = (order) => {
       order?.amounts?.customerPlatformFeeAmount ??
       order?.amounts?.customer_platform_fee_amount ??
       order?.customerPlatformFeeAmount ??
-      order?.customer_platform_fee_amount,
+      order?.customer_platform_fee_amount ??
+      order?.metadata?.pricingSummary?.customerPlatformFeeAmount ??
+      order?.metadata?.pricing_summary?.customer_platform_fee_amount,
   );
   const platformFee = asNumber(getAmount(order, "platformFee"));
   return customerSpecificFee > 0 ? customerSpecificFee : platformFee;
@@ -424,8 +426,35 @@ const getCustomerPlatformFeeTaxAmount = (order) =>
       order?.amounts?.customerPlatformFeeTaxAmount ??
       order?.amounts?.customer_platform_fee_tax_amount ??
       order?.customerPlatformFeeTaxAmount ??
-      order?.customer_platform_fee_tax_amount,
+      order?.customer_platform_fee_tax_amount ??
+      order?.metadata?.pricingSummary?.customerPlatformFeeTaxAmount ??
+      order?.metadata?.pricingSummary?.customerPlatformFeeGST ??
+      order?.metadata?.pricing_summary?.customer_platform_fee_tax_amount,
   );
+const getCustomerPlatformFeeTaxRate = (order) =>
+  asNumber(
+    order?.summary?.platformFeeTaxRate ??
+      order?.summary?.platform_fee_tax_rate ??
+      order?.amounts?.platformFeeTaxRate ??
+      order?.amounts?.platform_fee_tax_rate ??
+      order?.metadata?.pricingSummary?.platformFeeTaxRate ??
+      order?.metadata?.pricingSummary?.customerPlatformFeeTaxRate ??
+      order?.metadata?.pricing_summary?.platform_fee_tax_rate ??
+      18,
+  );
+const splitInclusivePlatformFee = (fee, taxAmount, taxRate = 18) => {
+  const gross = asNumber(fee);
+  const configuredTax = asNumber(taxAmount);
+  const rate = asNumber(taxRate);
+  if (gross <= 0) return { platformFeeBase: 0, platformFeeTax: 0 };
+  if (configuredTax > 0) return { platformFeeBase: gross, platformFeeTax: configuredTax };
+  if (rate <= 0) return { platformFeeBase: gross, platformFeeTax: 0 };
+  const platformFeeBase = Number((gross / (1 + rate / 100)).toFixed(2));
+  return {
+    platformFeeBase,
+    platformFeeTax: Number((gross - platformFeeBase).toFixed(2)),
+  };
+};
 const formatOrderDate = (value) =>
   value
     ? new Date(value).toLocaleString("en-IN", {
@@ -566,7 +595,14 @@ function OrderDetail({ orderId, track }) {
   const walletDiscount = getAmount(order, "walletDiscount");
   const shipping = getAmount(order, "shipping");
   const customerPlatformFee = getCustomerPlatformFeeAmount(order);
-  const customerPlatformFeeTax = getCustomerPlatformFeeTaxAmount(order);
+  const customerPlatformFeeTaxRate = getCustomerPlatformFeeTaxRate(order);
+  const customerPlatformFeeSplit = splitInclusivePlatformFee(
+    customerPlatformFee,
+    getCustomerPlatformFeeTaxAmount(order),
+    customerPlatformFeeTaxRate,
+  );
+  const customerPlatformFeeBase = customerPlatformFeeSplit.platformFeeBase;
+  const customerPlatformFeeTax = customerPlatformFeeSplit.platformFeeTax;
   const pricingSummary =
     order?.metadata?.pricingSummary || order?.metadata?.pricing_summary || {};
   const customerAmount = getCustomerOrderAmount(order);
@@ -648,7 +684,14 @@ function OrderDetail({ orderId, track }) {
     ? invoices.sellerInvoices
     : [];
   const orderReceipt = invoices?.orderInvoice || null;
-  const customerFeeInvoice = invoices?.customerFeeInvoice || null;
+  const relationInvoices = Array.isArray(order?.relations?.invoices)
+    ? order.relations.invoices
+    : [];
+  const getInvoiceType = (invoice = {}) =>
+    String(invoice.invoiceType || invoice.invoice_type || invoice.type || "").toLowerCase();
+  const customerFeeInvoice = invoices?.customerFeeInvoice ||
+    relationInvoices.find((invoice) => getInvoiceType(invoice) === "platform_customer_fee") ||
+    null;
   const pendingSellerDocuments = invoices?.pendingSellerDocuments || [];
 
   const invoiceSellerName = (invoice, index) => {
@@ -762,12 +805,18 @@ function OrderDetail({ orderId, track }) {
       downloadPath: endpoints.tax.invoiceDownload(getDocumentId(orderReceipt)),
       filename: `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || `receipt-${orderId}`}.pdf`,
     } : null,
-    selectedOrderItem && customerFeeInvoice && getDocumentId(customerFeeInvoice) ? {
+    customerFeeInvoice && getDocumentId(customerFeeInvoice) ? {
       id: getDocumentId(customerFeeInvoice),
       title: "Platform fee invoice",
       subtitle: "Marketplace tax invoice for platform fee",
       downloadPath: endpoints.tax.invoiceDownload(getDocumentId(customerFeeInvoice)),
       filename: `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
+    } : null,
+    !customerFeeInvoice && customerPlatformFee > 0 ? {
+      id: `pending-platform-fee-${orderId}`,
+      title: "Platform fee invoice",
+      subtitle: "Will be available after payment document is generated.",
+      pending: true,
     } : null,
     ...(selectedOrderItem ? [] : cancellationReverseInvoices),
     ...returnReverseInvoices,
@@ -1059,7 +1108,7 @@ function OrderDetail({ orderId, track }) {
                       </p>
                     </div>
                     <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-muted">
-                      {downloadableDocuments.length} available
+                      {downloadableDocuments.length} document{downloadableDocuments.length === 1 ? "" : "s"}
                     </span>
                   </div>
 
@@ -1073,14 +1122,20 @@ function OrderDetail({ orderId, track }) {
                           <strong>{document.title}</strong>
                           <div className="mt-1 truncate text-xs text-muted">{document.subtitle}</div>
                         </div>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          loading={downloadingId === document.downloadPath}
-                          onClick={() => handleDownload(document.downloadPath, document.filename)}
-                        >
-                          <Download size={12} /> Download
-                        </Button>
+                        {document.pending ? (
+                          <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-muted">
+                            Pending
+                          </span>
+                        ) : (
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            loading={downloadingId === document.downloadPath}
+                            onClick={() => handleDownload(document.downloadPath, document.filename)}
+                          >
+                            <Download size={12} /> Download
+                          </Button>
+                        )}
                       </div>
                     ))}
 
@@ -1149,7 +1204,8 @@ function OrderDetail({ orderId, track }) {
                       paymentPartnerFundedDiscount={pricingSummary.paymentPartnerFundedDiscountAmount}
                       walletDiscount={walletDiscount}
                       shipping={shipping}
-                      customerPlatformFee={customerPlatformFee}
+                      customerPlatformFee={customerPlatformFeeBase}
+                      customerPlatformFeeTax={customerPlatformFeeTax}
                       customerAmount={customerAmount}
                       currency={currency}
                       formatMoney={formatMoney}
