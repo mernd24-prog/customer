@@ -302,6 +302,20 @@ export const SKELETON_PRESETS = {
     },
   ],
 
+  // Checkout/Cart Order Summary 
+  ORDER_SUMMARY: [
+    { type: "box", width: "60%", height: "28px", className: "rounded-md mb-2" },
+    { type: "box", width: "100%", height: "24px", className: "rounded-md" },
+    { type: "box", width: "100%", height: "24px", className: "rounded-md" },
+    { type: "box", width: "100%", height: "24px", className: "rounded-md" },
+    { type: "box", width: "100%", height: "1px", className: "bg-[#EFE5D2] my-2" },
+    { type: "row", className: "justify-between", children: [
+        { type: "box", width: "40%", height: "28px", className: "rounded-md" },
+        { type: "box", width: "30%", height: "28px", className: "rounded-md" },
+    ]},
+    { type: "box", width: "100%", height: "48px", className: "rounded-[12px] mt-4" },
+  ],
+
   // 11. Social Icons
   SOCIAL_ICONS: [
     { type: "box", width: "40px", height: "40px", variant: "circle", count: 3 },

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import QuantitySelector from "./QuantitySelector";
 import { applyImageFallback } from "../../utils/ecommerce";
 import { calculateDiscountPercent } from "../../utils/ecommerce/money";
@@ -24,6 +25,7 @@ export default function CartItemCard({
   showCheckbox,
   fullWidth = false,
 }) {
+  const [isSaving, setIsSaving] = useState(false);
   const productPath = item?.productId ? `/products/${item.productId}` : "";
   const price = Number(item?.price || 0);
   const oldPrice = Number(item?.oldPrice || 0);
@@ -209,10 +211,13 @@ export default function CartItemCard({
             {saveForLaterLabel === "Move to Wishlist" ? (
               <button
                 type="button"
-                onClick={() => onSaveForLater?.(item?.id)}
+                onClick={() => {
+                  setIsSaving(true);
+                  onSaveForLater?.(item?.id);
+                }}
                 className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#1B1D60] min-[375px]:text-base sm:gap-3 sm:text-lg"
               >
-                <Heart size={22} className="text-[#1B1D60] sm:size-[25px]" />
+                <Heart size={22} className="text-[#1B1D60] sm:size-[25px]" fill={isSaving ? "currentColor" : "none"} />
                 {saveForLaterLabel}
               </button>
             ) : (

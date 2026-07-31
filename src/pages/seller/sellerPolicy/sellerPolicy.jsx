@@ -98,12 +98,13 @@ export default function SellerPolicy() {
     >
       {/* ================= HERO ================= */}
 
-      <section className="relative isolate w-full overflow-hidden bg-[#FAF8F3]">
+      <section className="relative isolate w-full
+       bg-[#FAF8F3]">
         {/* Background Image */}
         <img
           src="/image/png/sellerPrivacy.png"
           alt="Seller Policy"
-          className="absolute inset-0 -z-20 h-full w-full object-cover object-right lg:object-center"
+          className="absolute inset-0 -z-20 h-full w-full "
         />
 
         {/* Content Overlay */}

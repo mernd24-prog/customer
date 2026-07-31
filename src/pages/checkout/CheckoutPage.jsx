@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
+import { SKELETON_PRESETS } from "../../components/common/skeleton/skeletonPresets";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { notify } from "../../utils/notify";
@@ -60,6 +61,40 @@ import CheckoutSummary from "./components/CheckoutSummary";
 import BaseModal from "../../components/common/overlay/BaseModal";
 import Button from "../../components/ui/Button";
 import AddressFormFields from "../../components/address/AddressFormFields";
+
+const CHECKOUT_PAGE_SKELETON = [
+  {
+    type: "grid",
+    className: "grid-cols-1 xl:grid-cols-[minmax(0,1fr)_380px] gap-6 lg:gap-8 xl:gap-11",
+    children: [
+      {
+        type: "col",
+        className: "gap-4",
+        children: [
+          { type: "row", className: "w-full rounded-[12px] bg-white p-5 border border-[#EFE5D2] justify-between", children: [
+            { type: "box", width: "40%", height: "24px", className: "rounded-md" },
+            { type: "box", width: "80px", height: "24px", className: "rounded-md" },
+          ]},
+          { type: "col", className: "w-full rounded-[12px] bg-white p-5 border border-[#EFE5D2] gap-4", children: [
+            { type: "box", width: "30%", height: "24px", className: "rounded-md mb-2" },
+            { type: "box", width: "100%", height: "48px", className: "rounded-md" },
+            { type: "box", width: "100%", height: "48px", className: "rounded-md" },
+            { type: "box", width: "50%", height: "48px", className: "rounded-md" },
+          ]},
+          { type: "row", className: "w-full rounded-[12px] bg-white p-5 border border-[#EFE5D2] justify-between", children: [
+            { type: "box", width: "40%", height: "24px", className: "rounded-md" },
+            { type: "box", width: "80px", height: "24px", className: "rounded-md" },
+          ]},
+        ]
+      },
+      { 
+        type: "col", 
+        className: "w-full rounded-[15px] border border-[#EFE5D2] p-5 lg:p-7 bg-[#FFF8E7] gap-4",
+        children: SKELETON_PRESETS.ORDER_SUMMARY
+      }
+    ]
+  }
+];
 
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
@@ -1534,6 +1569,8 @@ export default function CheckoutPage() {
           loading={cartState.loading}
           error={cartState.error}
           empty={items.length === 0}
+          skeletonLayout={CHECKOUT_PAGE_SKELETON}
+          skeletonContainerClass="bg-transparent"
           emptyTitle="Your Cart is Empty"
           emptyText="Add products to your cart before checking out."
         >

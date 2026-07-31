@@ -351,8 +351,10 @@ const getOrderItemProductPath = (item) => {
   const productId = getOrderItemProductId(item);
   return productId ? `/products/${productId}` : "";
 };
-
-const label = (value = "") => String(value || "Not available").replace(/_/g, " ");
+const label = (value = "") => {
+  const text = String(value || "Not available").replace(/_/g, " ");
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};
 
 const formatDate = (value) => {
   if (!value) return "";
@@ -590,7 +592,7 @@ function OrderItemCard({
 
           {eta && (
             <p className="mb-3 text-[14px]  font-semibold leading-5 text-[#5F6078]">
-              Estimated Delivery : {eta}
+              Estimated Delivery : {eta} 
             </p>
           )}
 

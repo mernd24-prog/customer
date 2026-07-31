@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Store } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 export const getValidImage = (...images) => {
@@ -34,13 +34,6 @@ export default function BrandCard({
     href ||
     `/brands/${encodeURIComponent((name || "").toLowerCase().replace(/\s+/g, "-"))}`;
 
-  const initials = String(name || "Brand")
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
 
   const content = (
     <article
@@ -50,7 +43,7 @@ export default function BrandCard({
         className
       )}
     >
-      <div className="relative flex h-24 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-cream p-4">
+      <div className="relative flex h-24 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-cream p-4 w-full">
         <img
           src={displayImage || "/image/png/favicon.png"}
           alt={name}
@@ -63,19 +56,6 @@ export default function BrandCard({
           }}
         />
 
-        {!displayImage && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span className="text-lg font-bold text-gold">
-              {initials || (
-                <Store
-                  size={30}
-                  strokeWidth={1.4}
-                  className="text-border-strong"
-                />
-              )}
-            </span>
-          </div>
-        )}
 
         <span
           aria-hidden="true"
@@ -104,7 +84,7 @@ export default function BrandCard({
       </div>
     </article>
   );
-
+ 
   if (onClick && !href) {
     return (
       <button

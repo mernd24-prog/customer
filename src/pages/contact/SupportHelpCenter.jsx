@@ -15,6 +15,8 @@ import { apiRequest } from "../../api/client";
 import { endpoints } from "../../api/endpoints";
 import { tokenStorage } from "../../api/tokenStorage";
 import { notify } from "../../utils/notify";
+import { useAuthModal } from "../../context/AuthModalContext";
+import { useSelector } from "react-redux";
 import {
   SUPPORT_CONTACT_ITEMS,
   SUPPORT_BREADCRUMBS,
@@ -208,6 +210,8 @@ function SupportStatusBadge({ status }) {
 
 export default function SupportHelpCenter() {
   const { page, loading } = useCmsRecord("support-center");
+  const { openAuthModal } = useAuthModal();
+  const user = useSelector((state) => state.auth.current);
 
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
@@ -242,7 +246,7 @@ export default function SupportHelpCenter() {
   const quickActions =
     topics.length > 0 ? topics.slice(0, 6) : SUPPORT_FALLBACK_TOPICS;
 
-  const isSignedIn = Boolean(tokenStorage.getAccessToken());
+  const isSignedIn = Boolean(user);
 
   const loadSupportQueries = useCallback(async () => {
     if (!isSignedIn) {
@@ -291,9 +295,9 @@ export default function SupportHelpCenter() {
     event.preventDefault();
 
     if (!isSignedIn) {
-      notify.info("Please login to chat with support.");
-      return;
-    }
+  notify.error("Please login to raise a support ticket.");
+  return;
+}
 
     const subject = supportForm.subject.trim();
     const message = supportForm.message.trim();
@@ -548,7 +552,13 @@ export default function SupportHelpCenter() {
                   if (item.title === "Raise a Ticket") {
                     return {
                       ...item,
-                      onClick: () => setShowRaiseTicketModal(true),
+                      onClick: () => {
+                        if (!user) {
+                          openAuthModal();
+                        } else {
+                          setShowRaiseTicketModal(true);
+                        }
+                      },
                     };
                   }
                   return item;

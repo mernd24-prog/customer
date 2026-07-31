@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
-import { SkeletonLoader } from "../../components/common/skeleton";
+import { SkeletonLoader, SKELETON_PRESETS } from "../../components/common/skeleton";
 import { EmptyState } from "../../components/common";
 import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
 import CartItemCard from "../../components/cart/CartItemCard";
@@ -63,6 +63,44 @@ import {
   CHECKOUT_CART_ITEM_IDS_STORAGE_KEY,
   SELECTED_CHECKOUT_STORAGE_KEY,
 } from "../../constants";
+
+const CART_PAGE_SKELETON = [
+  {
+    type: "row",
+    className: "flex flex-col xl:flex-row gap-6 sm:gap-8 lg:gap-9 items-start",
+    children: [
+      {
+        type: "col",
+        className: "min-w-0 flex-1 space-y-5 sm:space-y-6 lg:space-y-8 w-full",
+        children: [
+          { 
+            type: "row", 
+            count: 2,
+            className: "w-full rounded-[15px] border border-[#EFE5D2] p-4 bg-white flex-col sm:flex-row",
+            children: [
+              { type: "box", width: "120px", height: "120px", className: "shrink-0 rounded-[12px] w-full sm:w-[120px]" },
+              { type: "col", className: "flex-1 justify-between w-full", children: [
+                  { type: "col", className: "gap-2 mb-4", children: [
+                    { type: "box", width: "90%", height: "20px", className: "rounded-md" },
+                    { type: "box", width: "50%", height: "16px", className: "rounded-md" },
+                  ]},
+                  { type: "row", className: "justify-between", children: [
+                    { type: "box", width: "120px", height: "36px", className: "rounded-full" },
+                    { type: "box", width: "40px", height: "40px", className: "rounded-[10px]" },
+                  ]}
+              ]}
+            ]
+          },
+        ]
+      },
+      { 
+        type: "col", 
+        className: "w-full xl:w-[420px] 2xl:w-[563px] rounded-[15px] border border-[#EFE5D2] p-5 lg:p-7 bg-[#FFF8E7] gap-4",
+        children: SKELETON_PRESETS.ORDER_SUMMARY
+      }
+    ]
+  }
+];
 
 function adaptItemForCard(item, fullProduct = null) {
   const product = fullProduct || item.productId || {};
@@ -539,7 +577,7 @@ export default function CartPage() {
     "flex min-w-0 flex-col gap-4 pl-2 sm:flex-row sm:items-center sm:justify-between";
   const savedCardInfoClass = "flex min-w-0 items-center gap-4";
   const savedCardImageWrapperClass =
-    "flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[14px] bg-cream ring-1 ring-border sm:h-20 sm:w-20";
+    "flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[14px] bg-cream ring-1 ring-border sm:h-20 sm:w-20 object-top";
   const savedCardActionClass =
     "flex shrink-0 flex-col items-stretch gap-2 sm:min-w-[150px] sm:items-end";
   const savedCardLabelClass =
@@ -578,6 +616,8 @@ export default function CartPage() {
             loading={cartState.loading && !cart.items}
             error={cartState.error}
             empty={false}
+            skeletonLayout={CART_PAGE_SKELETON}
+            skeletonContainerClass="bg-transparent"
           >
             {!hasCartItems && !cartState.loading && (
               <EmptyState
@@ -801,7 +841,7 @@ export default function CartPage() {
                                         <img
                                           src={savedProduct.image}
                                           alt={savedProduct.title}
-                                          className="h-full w-full object-cover"
+                                          className="h-full w-full object-cover object-top"
                                         />
                                       </div>
 

@@ -59,6 +59,54 @@ import ProductStockStatus from "./components/stockStatus";
 import SizeChartSidebar from "./components/SizeChartSidebar";
 import ShowMoreText, { getShowMoreText } from "../../utils/showMore";
 
+const PRODUCT_DETAIL_SKELETON = [
+  { type: "box", height: "24px", width: "30%", className: "mb-6 hidden md:block" },
+  {
+    type: "grid",
+    className: "grid-cols-1 md:grid-cols-2 gap-8 mb-12",
+    children: [
+      {
+        type: "col",
+        children: [
+          { type: "box", height: "450px", className: "w-full rounded-[12px] mb-4" },
+          { type: "grid", className: "grid-cols-5 gap-2", children: [
+            { type: "box", height: "80px", className: "rounded-[8px]" },
+            { type: "box", height: "80px", className: "rounded-[8px]" },
+            { type: "box", height: "80px", className: "rounded-[8px]" },
+            { type: "box", height: "80px", className: "rounded-[8px]" },
+            { type: "box", height: "80px", className: "rounded-[8px]" }
+          ]}
+        ]
+      },
+      {
+        type: "col",
+        children: [
+          { type: "box", height: "32px", width: "80%", className: "mb-4" },
+          { type: "box", height: "20px", width: "40%", className: "mb-6" },
+          { type: "box", height: "48px", width: "30%", className: "mb-6" },
+          { type: "box", height: "1px", width: "100%", className: "bg-[#EFE5D2] mb-6" },
+          { type: "box", height: "24px", width: "20%", className: "mb-4" },
+          { type: "grid", className: "grid-cols-6 gap-2 mb-6", children: [
+            { type: "box", height: "40px", className: "rounded-full" },
+            { type: "box", height: "40px", className: "rounded-full" },
+            { type: "box", height: "40px", className: "rounded-full" },
+          ]},
+          { type: "box", height: "24px", width: "20%", className: "mb-4" },
+          { type: "grid", className: "grid-cols-4 gap-2 mb-8", children: [
+            { type: "box", height: "40px", className: "rounded-[8px]" },
+            { type: "box", height: "40px", className: "rounded-[8px]" },
+            { type: "box", height: "40px", className: "rounded-[8px]" },
+          ]},
+          { type: "grid", className: "grid-cols-2 gap-4", children: [
+            { type: "box", height: "48px", className: "rounded-[8px]" },
+            { type: "box", height: "48px", className: "rounded-[8px]" },
+          ]}
+        ]
+      }
+    ]
+  }
+];
+
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
 const isImageSource = (src) => {
@@ -1686,6 +1734,8 @@ export default function ProductDetailPage() {
           loading={productState.loading && !product}
           error={productState.error}
           empty={!product && !productState.loading}
+          skeletonLayout={PRODUCT_DETAIL_SKELETON}
+          skeletonContainerClass="bg-transparent px-4 sm:px-6 lg:px-8 py-8"
           emptyTitle="Product coming soon"
           emptyText="This product page is being prepared or is temporarily unavailable."
         >
@@ -1808,7 +1858,7 @@ export default function ProductDetailPage() {
                           Delivery
                         </span>
                       ) : null}
-                      {productCodAvailable && (
+                      {/* {productCodAvailable && (
                         <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
                           <Banknote size={11} /> COD Available
                         </span>
@@ -1817,7 +1867,7 @@ export default function ProductDetailPage() {
                         <span className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600">
                           Cod Not Available
                         </span>
-                      )}
+                      )} */}
                     </div>
                   )}
 

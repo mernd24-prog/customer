@@ -5,6 +5,7 @@ import {
   ImageWithFallback,
 } from "../../../components/common";
 import { formatMoney } from "../../../utils/ecommerce";
+import ShowMoreText from "../../../utils/showMore";
 
 export default function ReturnItemCard({
   title,
@@ -37,8 +38,16 @@ export default function ReturnItemCard({
           />
 
           <div className="min-w-0 space-y-1.5 text-small font-medium  text-[#454545]  sm:space-y-2  ">
-            <h2 className="line-clamp-2 text-h4 py-2 font-semibold  text-[#1B1D60]  max-w-2xl lg:font-bold ">
-              {title}
+            <h2 className="text-h4 py-2 font-semibold text-[#1B1D60] max-w-2xl lg:font-bold">
+              <ShowMoreText
+                text={title}
+                mode="lines"
+                limit={2}   
+                moreLabel="more"
+                lessLabel="less"
+                textClassName="inline"
+                buttonClassName="ml-1 text-sm font-semibold text-[#1B1D60] hover:underline"
+              />
             </h2>
 
             <p>Order ID : {orderId}</p>

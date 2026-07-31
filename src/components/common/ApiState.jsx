@@ -30,6 +30,8 @@ export default function ApiState({
   error,
   empty,
   children,
+  skeletonLayout = API_STATE_SKELETON,
+  skeletonContainerClass = "rounded-[16px] border border-[var(--customer-border)] bg-[var(--customer-surface-soft)] p-4 shadow-sm sm:p-5",
   emptyTitle = "Nothing here yet",
   emptyText = "Once data is available, it will appear here.",
   emptyActionLabel,
@@ -38,8 +40,8 @@ export default function ApiState({
   if (loading) {
     return (
       <SkeletonLoader
-        layout={API_STATE_SKELETON}
-        containerClass="rounded-[16px] border border-[var(--customer-border)] bg-[var(--customer-surface-soft)] p-4 shadow-sm sm:p-5"
+        layout={skeletonLayout}
+        containerClass={skeletonContainerClass}
       />
     );
   }
