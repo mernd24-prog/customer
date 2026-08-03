@@ -143,7 +143,7 @@ export function HomePage() {
   return (
     <>
       <Seo
-        title="Sam Global ||| Shop Smarter"
+        title="Sam Global | Shop Smarter"
         description="Discover the best deals on fashion, electronics, home and more at Sam Global."
       />
       <Banner />

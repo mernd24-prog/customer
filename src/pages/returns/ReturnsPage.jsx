@@ -424,14 +424,13 @@ function ReturnRequestPage({ orderId }) {
     setValue("orderItemId", orderItemId, { shouldValidate: true });
     setValue("quantity", Math.min(1, returnableQuantity), { shouldValidate: true });
   };
-
   useEffect(() => {
-    if (!selectedItem || selectedReturnableQuantity <= 0) return;
-    const currentQuantity = Number(watchedQty || 1);
-    if (currentQuantity > selectedReturnableQuantity) {
-      setValue("quantity", selectedReturnableQuantity, { shouldValidate: true });
+    if (!selectedItem) return;
+    const currentQuantity = Number(watchedQty || 0);
+    if (currentQuantity > selectedOrderedQuantity) {
+      setValue("quantity", selectedOrderedQuantity, { shouldValidate: true });
     }
-  }, [selectedItem, selectedReturnableQuantity, setValue, watchedQty]);
+  }, [selectedItem, selectedOrderedQuantity, setValue, watchedQty]);
 
   useEffect(() => {
     if (deepLinkApplied || !orderItems.length) return;

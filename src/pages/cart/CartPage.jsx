@@ -953,7 +953,7 @@ export default function CartPage() {
               }
             />
 
-            {/* RECENTLY VIEWED SECTION */}
+            {/* RECENTLY VIEWED SECTION
             {recentViewedItems && recentViewedItems.length > 0 && (
               <div className="mt-8 lg:mt-16">
                 <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:mb-8">
@@ -987,7 +987,7 @@ export default function CartPage() {
                   ))}
                 </div>
               </div>
-            )}
+            )} */}
           </ApiState>
         </div>
       </section>

@@ -372,30 +372,64 @@ const sellerGroupKey = (sellerId, organizationId = null) =>
 
 const getItemSellerGroupKey = (item = {}) =>
   sellerGroupKey(
-    item.seller_id || item.sellerId || item.seller?.id || item.seller?._id || "platform",
-    item.organization_id || item.organizationId || item.organization?.id || item.organization?._id || null,
+    item.seller_id ||
+      item.sellerId ||
+      item.seller?.id ||
+      item.seller?._id ||
+      "platform",
+    item.organization_id ||
+      item.organizationId ||
+      item.organization?.id ||
+      item.organization?._id ||
+      null,
   );
 
 const getItemReturnPolicy = (item = {}) => {
   const snapshot = item.product_snapshot || item.productSnapshot || {};
-  const policy = item.return_policy_snapshot || item.returnPolicySnapshot || snapshot.returnPolicy || snapshot.return_policy || snapshot.commercialPolicy?.returnPolicy || {};
+  const policy =
+    item.return_policy_snapshot ||
+    item.returnPolicySnapshot ||
+    snapshot.returnPolicy ||
+    snapshot.return_policy ||
+    snapshot.commercialPolicy?.returnPolicy ||
+    {};
   return {
     returnable: item.returnable ?? policy.returnable ?? policy.eligible ?? true,
-    days: Number(item.return_window_days ?? policy.returnWindowDays ?? policy.windowDays ?? policy.days ?? 0),
-    eligibleUntil: item.return_eligible_until || item.returnEligibleUntil || policy.eligibleUntil || null,
+    days: Number(
+      item.return_window_days ??
+        policy.returnWindowDays ??
+        policy.windowDays ??
+        policy.days ??
+        0,
+    ),
+    eligibleUntil:
+      item.return_eligible_until ||
+      item.returnEligibleUntil ||
+      policy.eligibleUntil ||
+      null,
   };
 };
 
 const getItemId = (item = {}) =>
   String(item.id || item._id || item.orderItemId || item.order_item_id || "");
 
-const getItemQuantity = (item = {}) => Math.max(1, Number(item.quantity || item.qty || 1) || 1);
+const getItemQuantity = (item = {}) =>
+  Math.max(1, Number(item.quantity || item.qty || 1) || 1);
 
 const getItemVariantId = (item = {}) =>
-  item.variant_id || item.variantId || item.variant?._id || item.variant?.id || "";
+  item.variant_id ||
+  item.variantId ||
+  item.variant?._id ||
+  item.variant?.id ||
+  "";
 
 const getItemVariantSku = (item = {}) =>
-  item.variant_sku || item.variantSku || item.sku || item.productSku || item.product_sku || "";
+  item.variant_sku ||
+  item.variantSku ||
+  item.sku ||
+  item.productSku ||
+  item.product_sku ||
+  "";
 
 const getReturnItemProductId = (returnItem = {}) =>
   returnItem.productId ||
@@ -434,7 +468,8 @@ const returnItemMatchesOrderItem = (returnItem = {}, item = {}) => {
 
   const productId = String(getOrderItemProductId(item) || "");
   const returnProductId = String(getReturnItemProductId(returnItem) || "");
-  if (!productId || !returnProductId || productId !== returnProductId) return false;
+  if (!productId || !returnProductId || productId !== returnProductId)
+    return false;
 
   const variantId = String(getItemVariantId(item) || "");
   const returnVariantId = String(getReturnItemVariantId(returnItem) || "");
@@ -479,9 +514,18 @@ const getReturnItemQuantity = (returnItem = {}) =>
 
 const isReturnQuantityBlocking = (returnRequest = {}) => {
   const status = String(returnRequest.status || "").toLowerCase();
-  const refundStatus = String(returnRequest.refund?.status || returnRequest.refundStatus || returnRequest.refund_status || "").toLowerCase();
+  const refundStatus = String(
+    returnRequest.refund?.status ||
+      returnRequest.refundStatus ||
+      returnRequest.refund_status ||
+      "",
+  ).toLowerCase();
   if (["rejected", "qc_failure_upheld"].includes(status)) return false;
-  if (status === "closed" && !["completed", "not_required"].includes(refundStatus)) return false;
+  if (
+    status === "closed" &&
+    !["completed", "not_required"].includes(refundStatus)
+  )
+    return false;
   return true;
 };
 
@@ -491,35 +535,70 @@ const getReturnedQuantityForItem = (returns = [], item = {}) =>
     const matchingItems = (returnRequest.items || []).filter((returnItem) =>
       returnItemMatchesOrderItem(returnItem, item),
     );
-    return sum + matchingItems.reduce((itemSum, returnItem) => itemSum + getReturnItemQuantity(returnItem), 0);
+    return (
+      sum +
+      matchingItems.reduce(
+        (itemSum, returnItem) => itemSum + getReturnItemQuantity(returnItem),
+        0,
+      )
+    );
   }, 0);
 
 const getReturnableQuantityForItem = (returns = [], item = {}) =>
-  Math.max(0, getItemQuantity(item) - getReturnedQuantityForItem(returns, item));
+  Math.max(
+    0,
+    getItemQuantity(item) - getReturnedQuantityForItem(returns, item),
+  );
 
-const resolveItemStatus = ({ item = {}, shipment = null, fulfillment = {}, returnRequest = null, orderStatus = "" }) => {
-  const cancellationStatus = item.cancellation_status || item.cancellationStatus;
-  const payoutStatus = String(item.payout_status || item.payoutStatus || "").toLowerCase();
+const resolveItemStatus = ({
+  item = {},
+  shipment = null,
+  fulfillment = {},
+  returnRequest = null,
+  orderStatus = "",
+}) => {
+  const cancellationStatus =
+    item.cancellation_status || item.cancellationStatus;
+  const payoutStatus = String(
+    item.payout_status || item.payoutStatus || "",
+  ).toLowerCase();
   const orderStatusText = String(orderStatus || "").toLowerCase();
   if (cancellationStatus) return cancellationStatus;
-  if (returnRequest?.refund?.status === "completed" || returnRequest?.status === "refunded") {
+  if (
+    returnRequest?.refund?.status === "completed" ||
+    returnRequest?.status === "refunded"
+  ) {
     return "refunded";
   }
   if (returnRequest?.status) return `return_${returnRequest.status}`;
   if (payoutStatus === "refunded") return "refunded";
-  if (payoutStatus === "held" && orderStatusText.includes("return")) return "return_requested";
-  return item.delivery_status || item.deliveryStatus ||
-    item.status || item.item_status || item.itemStatus ||
+  if (payoutStatus === "held" && orderStatusText.includes("return"))
+    return "return_requested";
+  return (
+    item.delivery_status ||
+    item.deliveryStatus ||
+    item.status ||
+    item.item_status ||
+    item.itemStatus ||
     shipment?.status ||
-    fulfillment?.deliveryStatus || fulfillment?.delivery_status ||
-    fulfillment?.shipmentStatus || fulfillment?.shipment_status ||
+    fulfillment?.deliveryStatus ||
+    fulfillment?.delivery_status ||
+    fulfillment?.shipmentStatus ||
+    fulfillment?.shipment_status ||
     orderStatus ||
-    "preparing";
+    "preparing"
+  );
 };
 
 const resolveItemTracking = (shipment = {}) => ({
-  courier: shipment.courier_name || shipment.courierName || shipment.provider || "",
-  trackingNumber: shipment.tracking_number || shipment.trackingNumber || shipment.awb_number || shipment.awbNumber || "",
+  courier:
+    shipment.courier_name || shipment.courierName || shipment.provider || "",
+  trackingNumber:
+    shipment.tracking_number ||
+    shipment.trackingNumber ||
+    shipment.awb_number ||
+    shipment.awbNumber ||
+    "",
   trackingUrl: shipment.tracking_url || shipment.trackingUrl || "",
 });
 
@@ -591,8 +670,8 @@ function OrderItemCard({
           </div>
 
           {eta && (
-            <p className="mb-3 text-[14px]  font-semibold leading-5 text-[#5F6078]">
-              Estimated Delivery : {eta} 
+            <p className="mb-3 text-[14px] font-semibold leading-5 text-[#5F6078]">
+              Estimated Delivery: {eta} {Number(eta) === 1 ? "day" : "days"}
             </p>
           )}
 
@@ -668,22 +747,52 @@ function OrderItemsSection({
       const itemId = getItemId(item);
       const groupKey = getItemSellerGroupKey(item);
       const fulfillment = sellerFulfillmentGroups.find(
-        (group) => sellerGroupKey(group.sellerId || group.seller_id, group.organizationId || group.organization_id) === groupKey,
+        (group) =>
+          sellerGroupKey(
+            group.sellerId || group.seller_id,
+            group.organizationId || group.organization_id,
+          ) === groupKey,
       );
       const shipment = forwardShipments.find((candidate) => {
-        const ids = candidate.orderItemIds || candidate.order_item_ids || candidate.metadata?.orderItemIds || [];
+        const ids =
+          candidate.orderItemIds ||
+          candidate.order_item_ids ||
+          candidate.metadata?.orderItemIds ||
+          [];
         if (ids.length) return ids.map(String).includes(itemId);
-        return sellerGroupKey(
-          candidate.seller_id || candidate.sellerId,
-          candidate.organization_id || candidate.organizationId || candidate.metadata?.organizationId,
-        ) === groupKey;
+        return (
+          sellerGroupKey(
+            candidate.seller_id || candidate.sellerId,
+            candidate.organization_id ||
+              candidate.organizationId ||
+              candidate.metadata?.organizationId,
+          ) === groupKey
+        );
       });
       const returnRequest = resolveReturnForItem(returns, item);
-      const status = resolveItemStatus({ item, shipment, fulfillment, returnRequest, orderStatus });
+      const status = resolveItemStatus({
+        item,
+        shipment,
+        fulfillment,
+        returnRequest,
+        orderStatus,
+      });
       result.set(itemId, {
         status,
-        delivered: isDeliveredStatus(item.delivery_status || item.deliveryStatus || shipment?.status || fulfillment?.deliveryStatus || fulfillment?.shipmentStatus || status),
-        deliveredAt: item.delivered_at || item.deliveredAt || shipment?.delivered_at || shipment?.deliveredAt || null,
+        delivered: isDeliveredStatus(
+          item.delivery_status ||
+            item.deliveryStatus ||
+            shipment?.status ||
+            fulfillment?.deliveryStatus ||
+            fulfillment?.shipmentStatus ||
+            status,
+        ),
+        deliveredAt:
+          item.delivered_at ||
+          item.deliveredAt ||
+          shipment?.delivered_at ||
+          shipment?.deliveredAt ||
+          null,
         shipment,
         tracking: resolveItemTracking(shipment),
       });
@@ -694,7 +803,11 @@ function OrderItemsSection({
   const reviewableItems = useMemo(
     () =>
       orderId
-        ? items.filter((item) => itemFulfillment.get(getItemId(item))?.delivered && getReviewProductId(item))
+        ? items.filter(
+            (item) =>
+              itemFulfillment.get(getItemId(item))?.delivered &&
+              getReviewProductId(item),
+          )
         : [],
     [itemFulfillment, items, orderId],
   );
@@ -746,12 +859,17 @@ function OrderItemsSection({
   const packageGroups = useMemo(() => {
     const shipmentByGroup = new Map();
     shipments
-      .filter((shipment) => String(shipment.direction || "forward") !== "reverse")
+      .filter(
+        (shipment) => String(shipment.direction || "forward") !== "reverse",
+      )
       .forEach((shipment) => {
         const metadata = shipment.metadata || {};
         const key = sellerGroupKey(
           shipment.seller_id || shipment.sellerId,
-          shipment.organization_id || shipment.organizationId || metadata.organizationId || null,
+          shipment.organization_id ||
+            shipment.organizationId ||
+            metadata.organizationId ||
+            null,
         );
         if (!shipmentByGroup.has(key)) shipmentByGroup.set(key, []);
         shipmentByGroup.get(key).push(shipment);
@@ -759,13 +877,23 @@ function OrderItemsSection({
 
     const fulfillmentByGroup = new Map();
     sellerFulfillmentGroups.forEach((group) => {
-      fulfillmentByGroup.set(sellerGroupKey(group.sellerId || group.seller_id, group.organizationId || group.organization_id), group);
+      fulfillmentByGroup.set(
+        sellerGroupKey(
+          group.sellerId || group.seller_id,
+          group.organizationId || group.organization_id,
+        ),
+        group,
+      );
     });
 
     const returnByItem = new Map();
     returns.forEach((returnRequest) => {
       (returnRequest.items || []).forEach((returnItem) => {
-        const orderItemId = returnItem.orderItemId || returnItem.order_item_id || returnItem.itemId || returnItem.item_id;
+        const orderItemId =
+          returnItem.orderItemId ||
+          returnItem.order_item_id ||
+          returnItem.itemId ||
+          returnItem.item_id;
         if (orderItemId) returnByItem.set(String(orderItemId), returnRequest);
       });
     });
@@ -778,9 +906,21 @@ function OrderItemsSection({
         const groupShipments = shipmentByGroup.get(key) || [];
         grouped.set(key, {
           key,
-          sellerName: fulfillment.sellerName || item.sellerName || item.seller?.displayName || item.seller?.businessName || "Marketplace seller",
-          status: fulfillment.deliveryStatus || fulfillment.shipmentStatus || groupShipments[0]?.status || "preparing",
-          expectedDeliveryAt: fulfillment.expectedDeliveryAt || groupShipments[0]?.expected_delivery_at || groupShipments[0]?.expectedDeliveryAt,
+          sellerName:
+            fulfillment.sellerName ||
+            item.sellerName ||
+            item.seller?.displayName ||
+            item.seller?.businessName ||
+            "Marketplace seller",
+          status:
+            fulfillment.deliveryStatus ||
+            fulfillment.shipmentStatus ||
+            groupShipments[0]?.status ||
+            "preparing",
+          expectedDeliveryAt:
+            fulfillment.expectedDeliveryAt ||
+            groupShipments[0]?.expected_delivery_at ||
+            groupShipments[0]?.expectedDeliveryAt,
           shipments: groupShipments,
           items: [],
           returnByItem,
@@ -807,28 +947,56 @@ function OrderItemsSection({
         bodyClassName="grid gap-8 p-4 sm:p-6 lg:p-7"
       >
         {packageGroups.map((group, packageIndex) => (
-          <div key={group.key} className="grid gap-5 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] p-4">
+          <div
+            key={group.key}
+            className="grid gap-5 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] p-4"
+          >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="font-bold text-[#1B1D60]">Package {packageIndex + 1}</h3>
-                <p className="mt-0.5 text-sm text-[#6F7480]">{group.sellerName}</p>
+                <h3 className="font-bold text-[#1B1D60]">
+                  Package {packageIndex + 1}
+                </h3>
+                <p className="mt-0.5 text-sm text-[#6F7480]">
+                  {group.sellerName}
+                </p>
               </div>
               <div className="text-right text-sm">
-                <span className="rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-semibold capitalize text-white">{label(group.status)}</span>
-                {group.expectedDeliveryAt && <p className="mt-1 text-xs text-[#6F7480]">Expected {formatDate(group.expectedDeliveryAt)}</p>}
+                <span className="rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-semibold capitalize text-white">
+                  {label(group.status)}
+                </span>
+                {group.expectedDeliveryAt && (
+                  <p className="mt-1 text-xs text-[#6F7480]">
+                    Expected {formatDate(group.expectedDeliveryAt)}
+                  </p>
+                )}
               </div>
             </div>
             {group.items.map((item, index) => {
               const policy = getItemReturnPolicy(item);
               const itemId = getItemId(item);
               const fulfillment = itemFulfillment.get(itemId) || {};
-              const returnRequest = group.returnByItem.get(itemId) || resolveReturnForItem(returns, item);
+              const returnRequest =
+                group.returnByItem.get(itemId) ||
+                resolveReturnForItem(returns, item);
               const tracking = fulfillment.tracking || {};
               const expanded = expandedItemId === itemId;
-              const returnExpired = Boolean(policy.eligibleUntil) && new Date(policy.eligibleUntil).getTime() < Date.now();
-              const returnedQuantity = getReturnedQuantityForItem(returns, item);
-              const returnableQuantity = getReturnableQuantityForItem(returns, item);
-              const canReturn = fulfillment.delivered && policy.returnable && !returnExpired && returnableQuantity > 0 && !isClosedItemStatus(item.status || item.item_status);
+              const returnExpired =
+                Boolean(policy.eligibleUntil) &&
+                new Date(policy.eligibleUntil).getTime() < Date.now();
+              const returnedQuantity = getReturnedQuantityForItem(
+                returns,
+                item,
+              );
+              const returnableQuantity = getReturnableQuantityForItem(
+                returns,
+                item,
+              );
+              const canReturn =
+                fulfillment.delivered &&
+                policy.returnable &&
+                !returnExpired &&
+                returnableQuantity > 0 &&
+                !isClosedItemStatus(item.status || item.item_status);
               return (
                 <div
                   id={`order-item-${itemId}`}
@@ -837,22 +1005,29 @@ function OrderItemsSection({
                 >
                   <button
                     type="button"
-                    onClick={() => setExpandedItemId((current) => current === itemId ? "" : itemId)}
+                    onClick={() =>
+                      setExpandedItemId((current) =>
+                        current === itemId ? "" : itemId,
+                      )
+                    }
                     className={`rounded-xl text-left transition ${expanded ? "bg-white shadow-sm ring-1 ring-[#CE9F2D66]" : "hover:bg-white/70"}`}
                   >
                     <div className="p-2">
-                      <OrderItemCard
-                        item={item}
-                        {...itemProps}
-                      />
+                      <OrderItemCard item={item} {...itemProps} />
                     </div>
                   </button>
                   <div className="flex flex-wrap gap-2 text-xs font-semibold">
-                    <span className={`rounded-full px-3 py-1 capitalize ${fulfillment.delivered ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-700"}`}>
+                    <span
+                      className={`rounded-full px-3 py-1 capitalize ${fulfillment.delivered ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-700"}`}
+                    >
                       {label(fulfillment.status)}
                     </span>
-                    <span className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
-                      {policy.returnable ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}` : "Non-returnable"}
+                    <span
+                      className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}
+                    >
+                      {policy.returnable
+                        ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}`
+                        : "Non-returnable"}
                     </span>
                     {policy.returnable && policy.eligibleUntil && (
                       <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-700">
@@ -866,7 +1041,8 @@ function OrderItemsSection({
                     )}
                     {returnedQuantity > 0 && (
                       <span className="rounded-full bg-purple-50 px-3 py-1 text-purple-700">
-                        Returned/requested {returnedQuantity} of {getItemQuantity(item)}
+                        Returned/requested {returnedQuantity} of{" "}
+                        {getItemQuantity(item)}
                       </span>
                     )}
                     {policy.returnable && returnableQuantity > 0 && (
@@ -879,20 +1055,34 @@ function OrderItemsSection({
                     <div className="grid gap-3 rounded-xl border border-[#E7D9B8] bg-white p-4">
                       <div className="grid gap-2 rounded-lg bg-[#F8FAFC] px-3 py-3 text-xs text-[#5E6472] sm:grid-cols-2 lg:grid-cols-4">
                         <span>
-                          <strong className="block text-[#1B1D60]">Item status</strong>
-                          <span className="capitalize">{label(fulfillment.status)}</span>
+                          <strong className="block text-[#1B1D60]">
+                            Item status
+                          </strong>
+                          <span className="capitalize">
+                            {label(fulfillment.status)}
+                          </span>
                         </span>
                         <span>
-                          <strong className="block text-[#1B1D60]">Courier</strong>
-                          {tracking.courier ? label(tracking.courier) : "Not added yet"}
+                          <strong className="block text-[#1B1D60]">
+                            Courier
+                          </strong>
+                          {tracking.courier
+                            ? label(tracking.courier)
+                            : "Not added yet"}
                         </span>
                         <span>
-                          <strong className="block text-[#1B1D60]">Tracking / AWB</strong>
+                          <strong className="block text-[#1B1D60]">
+                            Tracking / AWB
+                          </strong>
                           {tracking.trackingNumber || "Not added yet"}
                         </span>
                         <span>
-                          <strong className="block text-[#1B1D60]">Delivered on</strong>
-                          {fulfillment.deliveredAt ? formatDate(fulfillment.deliveredAt) : "Pending"}
+                          <strong className="block text-[#1B1D60]">
+                            Delivered on
+                          </strong>
+                          {fulfillment.deliveredAt
+                            ? formatDate(fulfillment.deliveredAt)
+                            : "Pending"}
                         </span>
                         {tracking.trackingUrl && (
                           <a
@@ -909,35 +1099,53 @@ function OrderItemsSection({
                       {returnRequest && (
                         <div className="grid gap-2 rounded-lg bg-[#FFF8E7] px-3 py-3 text-xs text-[#5E6472] sm:grid-cols-3">
                           <span>
-                            <strong className="block text-[#1B1D60]">Return/refund</strong>
+                            <strong className="block text-[#1B1D60]">
+                              Return/refund
+                            </strong>
                             {`${label(returnRequest.status)} · ${returnableQuantity > 0 ? `${returnableQuantity} left` : "No quantity left"}`}
                           </span>
                           <span>
-                            <strong className="block text-[#1B1D60]">Refund status</strong>
-                            {returnRequest?.refund?.status ? label(returnRequest.refund.status) : "Not started"}
+                            <strong className="block text-[#1B1D60]">
+                              Refund status
+                            </strong>
+                            {returnRequest?.refund?.status
+                              ? label(returnRequest.refund.status)
+                              : "Not started"}
                           </span>
                           <span>
-                            <strong className="block text-[#1B1D60]">Refund amount</strong>
-                            {returnRequest?.refundAmount || returnRequest?.refundBreakup?.totalRefundAmount
-                              ? itemProps.formatMoney(returnRequest.refundAmount || returnRequest.refundBreakup?.totalRefundAmount, itemProps.currency)
+                            <strong className="block text-[#1B1D60]">
+                              Refund amount
+                            </strong>
+                            {returnRequest?.refundAmount ||
+                            returnRequest?.refundBreakup?.totalRefundAmount
+                              ? itemProps.formatMoney(
+                                  returnRequest.refundAmount ||
+                                    returnRequest.refundBreakup
+                                      ?.totalRefundAmount,
+                                  itemProps.currency,
+                                )
                               : "—"}
                           </span>
                         </div>
                       )}
-
                     </div>
                   )}
                   <div className="flex flex-wrap items-center gap-2">
-                    {fulfillment.delivered && Boolean(getReviewProductId(item)) && (
-                      <OrderItemReviewAction
-                        item={item}
-                        orderId={orderId}
-                        canReview
-                        existingReview={reviewByItem[reviewKeyForItem(orderId, item)]}
-                        reviewChecked={Boolean(checkedReviewKeys[reviewKeyForItem(orderId, item)])}
-                        onReviewClick={setReviewTarget}
-                      />
-                    )}
+                    {fulfillment.delivered &&
+                      Boolean(getReviewProductId(item)) && (
+                        <OrderItemReviewAction
+                          item={item}
+                          orderId={orderId}
+                          canReview
+                          existingReview={
+                            reviewByItem[reviewKeyForItem(orderId, item)]
+                          }
+                          reviewChecked={Boolean(
+                            checkedReviewKeys[reviewKeyForItem(orderId, item)],
+                          )}
+                          onReviewClick={setReviewTarget}
+                        />
+                      )}
                     {canReturn && (
                       <Link
                         to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(itemId)}`}

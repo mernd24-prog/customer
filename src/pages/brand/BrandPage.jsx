@@ -317,7 +317,7 @@ export default function BrandPage() {
   ].filter(Boolean);
 
   const filterSections = [
-    {
+    ((pageInfo.total || items.length) > 1 || searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
       title: "Price Range",
       content: (

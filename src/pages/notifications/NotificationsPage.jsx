@@ -10,6 +10,7 @@ import NeedHelpPanel from "../../components/ecommerce/NeedHelpPanel";
 import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
 import { fetchNotifications } from "../../features/notification/notificationSlice";
 import notificationData from "../../data/notificationData";
+import { SKELETON_PRESETS } from "../../components/common/skeleton/skeletonPresets";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -196,6 +197,8 @@ export function NotificationsPage() {
               empty={!notifications.length && !notifState.loading}
               emptyTitle="No notifications"
               emptyText="You're all caught up! Notifications will appear here."
+              skeletonLayout={SKELETON_PRESETS.NOTIFICATIONS_PAGE_SKELETON}
+              skeletonContainerClass="bg-transparent"
             >
               <div>
                 {notifications.map((notif, index) => {

@@ -1565,6 +1565,20 @@ export default function CheckoutPage() {
       <Seo title="Checkout | Sam Global" />
 
       <div className=" py-6 sm:py-8">
+        <div className="mb-6">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Cart", href: "/cart" },
+              { label: "Checkout" },
+            ]}
+            className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
+            linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
+            heading="Checkout"
+            currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
+            separatorClassName="text-[#2E2E2E]"
+          />
+        </div>
         <ApiState
           loading={cartState.loading}
           error={cartState.error}
@@ -1574,20 +1588,6 @@ export default function CheckoutPage() {
           emptyTitle="Your Cart is Empty"
           emptyText="Add products to your cart before checking out."
         >
-          <div className="mb-6">
-            <Breadcrumbs
-              items={[
-                { label: "Home", href: "/" },
-                { label: "Cart", href: "/cart" },
-                { label: "Checkout" },
-              ]}
-              className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
-              linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
-              heading="Checkout"
-              currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
-              separatorClassName="text-[#2E2E2E]"
-            />
-          </div>
           <form
             onSubmit={handleSubmit(submit, handleInvalidCheckout)}
             noValidate

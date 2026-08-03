@@ -425,4 +425,41 @@ export const SKELETON_PRESETS = {
       ],
     },
   ],
+
+  NOTIFICATIONS_PAGE_SKELETON: [
+    {
+      type: "col",
+      className: "w-full",
+      count: 4,
+      children: [
+        {
+          type: "row",
+          className: "flex gap-4 border-b border-[#D9DDE8] py-6 sm:gap-5 sm:py-7 lg:gap-6 items-start",
+          children: [
+            {
+              type: "box",
+              className: "shrink-0 h-[56px] w-[56px] sm:h-[60px] sm:w-[60px] lg:h-[64px] lg:w-[64px]",
+              rounded: "rounded-full"
+            },
+            {
+              type: "col",
+              className: "flex-1 min-w-0 gap-3 pt-1",
+              children: [
+                {
+                  type: "row",
+                  className: "justify-between gap-4 items-start",
+                  children: [
+                    { type: "box", width: "40%", height: "24px", rounded: "rounded-md" },
+                    { type: "box", width: "80px", height: "16px", rounded: "rounded-md", className: "hidden sm:block mt-1" }
+                  ]
+                },
+                { type: "box", width: "70%", height: "16px", rounded: "rounded-md", className: "mt-1" },
+                { type: "box", width: "100px", height: "14px", rounded: "rounded-md", className: "mt-2" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
 };
