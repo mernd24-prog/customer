@@ -1109,10 +1109,6 @@ export default function CategoryPage() {
     priceLimits.max,
   ]);
 
-  if (categoryLoading && !categoryData && !firstLoadDone && !products.length) {
-    return <CategoryPageSkeleton />;
-  }
-
   return (
     <>
       <Seo

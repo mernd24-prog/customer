@@ -1,5 +1,6 @@
 import OrderDetailSectionCard from "./OrderDetailSectionCard";
 import { formatMoney } from "../../../utils/ecommerce/money";
+import ShowMoreText from "../../../utils/showMore";
 
 function SummaryRow({
   label,
@@ -16,7 +17,19 @@ function SummaryRow({
       <span
         className={`flex-1 small font-semibold text-[#2E2E2E] ${labelClassName}`}
       >
-        {label}
+        {typeof label === "string" ? (
+          <ShowMoreText
+            text={label}
+            mode="lines"
+            limit={2}
+            moreLabel="more"
+            lessLabel="less"
+            textClassName="inline"
+            buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+          />
+        ) : (
+          label
+        )}
       </span>
 
       <span
@@ -174,11 +187,19 @@ function OrderPaymentSummary({
           {items.map((item) => (
             <div
               key={item._lineKey}
-              className="flex h-[58px]  w-full min-w-0 items-center justify-between gap-2 border-t border-[#04258626] pt-2"
+              className="flex w-full min-w-0 items-start justify-between gap-3 border-t border-[#04258626] pt-3 pb-2"
             >
-              <span className="min-w-0 flex-1 truncate small font-semibold text-[#2E2E2E]">
-                {item.quantity} x {item._safeTitle}
-              </span>
+              <div className="min-w-0 flex-1 small font-semibold text-[#2E2E2E]">
+                <ShowMoreText
+                  text={`${item.quantity} x ${item._safeTitle}`}
+                  mode="characters"
+                  limit={65}
+                  moreLabel="more"
+                  lessLabel="less"
+                  textClassName="inline"
+                  buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline whitespace-nowrap"
+                />
+              </div>
 
               <span className="shrink-0 text-right small font-bold text-[#1B1D60]">
                 {formatMoney(item._lineTotal, currency)}

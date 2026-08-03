@@ -1937,7 +1937,7 @@ export default function ProductDetailPage() {
                 className="mt-10"
               />
 
-              {isLoggedIn && (
+              {/* {isLoggedIn && (
                 <ProductRecommendationSection
                   title="Recently Viewed"
                   linkText="View history →"
@@ -1947,7 +1947,7 @@ export default function ProductDetailPage() {
                   isWishlisted={isWishlisted}
                   className="mt-10"
                 />
-              )}
+              )} */}
             </>
           )}
         </ApiState>

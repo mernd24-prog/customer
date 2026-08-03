@@ -86,8 +86,18 @@ export default function ReturnItemCard({
 
       <Divider className="my-4 border-[#8D8D8D] sm:my-5 lg:pt-2" />
 
-      <div className="grid gap-5 md:grid-cols-[1.1fr_1fr_1fr_220px]  mt-6 md:items-end lg:grid-cols-[1.1fr_1fr_1fr_220px] lg:gap-8">
-        <ReturnInfo label="Reason for Return">{reason}</ReturnInfo>
+      <div className="grid gap-5 md:grid-cols-[1.1fr_1fr_1fr_220px]  mt-6 md:items-end lg:grid-cols-[1.1fr_1fr_1fr_220px] lg:gap-8 ">
+        <ReturnInfo label="Reason for Return">
+          <ShowMoreText
+        label="Reason for Return"
+          text={reason}
+          mode="lines"
+          limit={2}
+          buttonClassName="ml-1 text-sm font-semibold text-[#1B1D60] hover:underline"
+          
+        /></ReturnInfo>
+        
+        
 
         <ReturnInfo label="Refund Amount">
           {formatMoney(refundAmount || 0, currency)}
