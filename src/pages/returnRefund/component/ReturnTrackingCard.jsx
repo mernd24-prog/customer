@@ -1,50 +1,23 @@
-const steps = [
-  {
-    title: "Return Requested",
-    description: "Your return request has been submitted successfully.",
-    time: "24 Jun 2026, 10:30 AM",
-    completed: true,
-  },
-  {
-    title: "Pickup Scheduled",
-    description: "Your return pickup has been scheduled.",
-    time: "25 Jun 2026, 09:15 AM",
-    completed: true,
-  },
-  {
-    title: "Product Picked Up",
-    description: "Your item has been picked up for return.",
-    time: "25 Jun 2026, 04:45 PM",
-    completed: true,
-  },
-  {
-    title: "Quality Check",
-    description: "We are checking the returned item at our facility.",
-    time: "26 Jun 2026, 11:25 AM",
-    active: true,
-  },
-  {
-    title: "Refund Initiated",
-    description: "Refund will be initiated once the item is approved.",
-    time: "—",
-  },
-  {
-    title: "Refund Completed",
-    description: "The refund amount will be credited to your account.",
-    time: "—",
-  },
-];
+import ShowMoreText from "../../../utils/showMore";
 
 export default function ReturnTrackingCard({
   title = "Return Tracking – Smart Watch",
   returnId = "RTN8745621",
   steps: customSteps,
 }) {
-  const stepsToRender = customSteps || steps;
+  const stepsToRender = customSteps || [];
   return (
     <section className="rounded-xl rounded-t-none border border-[#E7D9B8] bg-white px-3 py-4 min-[375px]:px-4 sm:px-6 lg:px-6 lg:py-9  ">
       <h2 className="text-[16px]  font-semibold leading-tight text-[#1B1D60] sm:text-[18px] md:text-[20px] lg:text-[22px] pb-2">
-        {title}{" "}
+        <ShowMoreText
+          text={title}
+          mode="words"
+          limit={14}
+          moreLabel="more"
+          lessLabel="less"
+          textClassName="inline"
+          buttonClassName="ml-1.5 text-xs sm:text-sm font-semibold text-[#3E4093] hover:underline cursor-pointer"
+        />{" "}
         <span className="text-[13px] font-semibold text-[#555] sm:text-[15px] md:text-[20px] lg:text-[20px]">
           ({returnId})
         </span>

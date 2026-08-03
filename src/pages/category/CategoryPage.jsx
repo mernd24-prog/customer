@@ -1133,9 +1133,9 @@ export default function CategoryPage() {
         )}
 
         <CollectionToolbar
-          countText={`${(pageInfo.total || meta?.total || products.length).toLocaleString()} products`}
+          countText={firstLoadDone ? `${(pageInfo.total || products.length).toLocaleString()} products` : ""}
           sortValue={searchParams.get("sort") || ""}
-          sortOptions={(pageInfo.total || meta?.total || products.length) <= 1 ? [] : SORT_OPTIONS}
+          sortOptions={firstLoadDone && (pageInfo.total || products.length) <= 1 ? [] : SORT_OPTIONS}
           onSortChange={(value) => updateParam("sort", value)}
           onOpenFilters={() => setSidebarOpen(true)}
         />

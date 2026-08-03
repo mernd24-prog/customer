@@ -42,7 +42,7 @@ export default function ReturnItemCard({
               <ShowMoreText
                 text={title}
                 mode="lines"
-                limit={2}   
+                limit={2}
                 moreLabel="more"
                 lessLabel="less"
                 textClassName="inline"
@@ -60,10 +60,10 @@ export default function ReturnItemCard({
           </div>
         </div>
 
-        <div className="flex flex-col space-y-4">
+        <div className="flex  flex-col space-y-4">
           <Badge
             variant="gold"
-            className="w-fit min-w-[120px] justify-center rounded-[10px] px-3 py-1.5 text-xs font-medium normal-case text-[#CE9F2D] sm:min-w-[140px] sm:py-2 md:w-full lg:h-[45px] lg:w-[220px] lg:min-w-[220px] lg:rounded-[15px] lg:border lg:border-[#CE9F2D] lg:px-[10px] lg:text-[20px] lg:font-medium"
+            className="w-fit min-w-[120px] justify-center rounded-[10px] px-3 py-1.5 text-xs font-medium normal-case text-[#CE9F2D] sm:min-w-[140px] sm:py-2 md:w-full lg:h-[45px] lg:w-[220px] lg:min-w-[220px] lg:rounded-[15px] lg:border lg:border-[#CE9F2D] lg:px-[10px] lg:text-[16px] lg:font-medium"
           >
             {status}
           </Badge>
@@ -89,15 +89,13 @@ export default function ReturnItemCard({
       <div className="grid gap-5 md:grid-cols-[1.1fr_1fr_1fr_220px]  mt-6 md:items-end lg:grid-cols-[1.1fr_1fr_1fr_220px] lg:gap-8 ">
         <ReturnInfo label="Reason for Return">
           <ShowMoreText
-        label="Reason for Return"
-          text={reason}
-          mode="lines"
-          limit={2}
-          buttonClassName="ml-1 text-sm font-semibold text-[#1B1D60] hover:underline"
-          
-        /></ReturnInfo>
-        
-        
+            label="Reason for Return"
+            text={reason}
+            mode="lines"
+            limit={2}
+            buttonClassName="ml-1 text-sm font-semibold text-[#1B1D60] hover:underline"
+          />
+        </ReturnInfo>
 
         <ReturnInfo label="Refund Amount">
           {formatMoney(refundAmount || 0, currency)}

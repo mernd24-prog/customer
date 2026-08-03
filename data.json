@@ -1,0 +1,1010 @@
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "6a7082a6eb387b7312df42be",
+      "returnNumber": "RMA-1785758374434-TFFAD",
+      "orderId": "fb2c61ab-8057-42f6-8daf-e6a273afca83",
+      "buyerId": "6a630534b920c81dcc69660c",
+      "sellerId": "6a5f560b035a5eb5c69c847d",
+      "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+      "reason": "defective",
+      "resolution": "refund",
+      "description": "Aszxs cdsxz sfdfv dfvd",
+      "items": [
+        {
+          "orderItemId": "82fdb813-6457-4e41-b656-bbf9aaccb593",
+          "productId": "6a699a464d04daa089af8e6e",
+          "productTitle": "Luxury Hanging Hammock Swing Chair With Stand For Adults | Steel Frame | Indoor & Outdoor Balcony Egg Chair | Black With Red Cushion",
+          "productSku": "SKU-1785304913972-1",
+          "productImage": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1785305087/ecommerce/uploads/product/image-1-65715b23-9e4a-40b6-8d5d-c450cb44e2fe.webp",
+          "sellerId": "6a5f560b035a5eb5c69c847d",
+          "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+          "variantId": "6a69a14a4d04daa089afb025",
+          "variantSku": "SKU-1785304913972-1",
+          "quantity": 1,
+          "requestedQuantity": 1,
+          "approvedQuantity": 1,
+          "receivedQuantity": 0,
+          "unitPrice": 8669,
+          "lineTotal": 8669,
+          "discountAmount": 0,
+          "taxAmount": 412.81,
+          "additionalTaxAmount": 0,
+          "eligibleRefundAmount": 8669,
+          "refundAmount": 8669,
+          "qcResult": "pending",
+          "qcPhotos": [],
+          "restockedQuantity": 0,
+          "damagedQuantity": 0,
+          "photos": [],
+          "policySnapshot": {
+            "days": 10,
+            "type": "standard",
+            "source": "product_snapshot",
+            "eligible": true,
+            "resolution": "refund_or_replacement",
+            "returnable": true,
+            "restockingFee": 0,
+            "requiresImages": true,
+            "shippingPaidBy": "seller",
+            "returnWindowDays": 10,
+            "inspectionRequired": true,
+            "eligibleUntil": "2026-08-13T11:57:43.145Z",
+            "deliveredAt": "2026-08-03T11:57:43.145Z"
+          },
+          "returnWindowDays": 10,
+          "returnEligibleUntil": "2026-08-13T11:57:43.145Z",
+          "requiresImages": true,
+          "inspectionRequired": true
+        }
+      ],
+      "status": "reverse_pickup_scheduled",
+      "refundAmount": 8669,
+      "refundBreakup": {
+        "itemSubtotal": 8669,
+        "discountReversal": 0,
+        "productPaidAmount": 8669,
+        "taxReversal": 0,
+        "shippingRefund": 0,
+        "platformFeeRefund": 0,
+        "platformFeeTaxRefund": 0,
+        "walletRefundAmount": 0,
+        "originalPaymentRefundAmount": 8669,
+        "totalRefundAmount": 8669,
+        "refundPolicySnapshot": {
+          "shipping": {
+            "fullCancellation": true,
+            "sellerCancellation": true,
+            "rtoDeliveryFailed": true,
+            "customerReturn": false,
+            "partialReturn": false
+          },
+          "platformFee": {
+            "fullCancellation": false,
+            "sellerCancellation": true,
+            "rtoDeliveryFailed": true,
+            "customerReturn": false,
+            "partialReturn": false
+          }
+        }
+      },
+      "policySnapshot": {
+        "returnable": true,
+        "returnWindowDays": 10,
+        "deliveredAt": "2026-08-03T11:57:43.215Z",
+        "eligibleUntil": "2026-08-13T11:57:43.145Z",
+        "shippingPaidBy": "seller",
+        "requiresQc": true,
+        "source": "product_item_policies"
+      },
+      "buyerSnapshot": {
+        "id": "6a630534b920c81dcc69660c",
+        "displayName": "Rohitiiii Sharma",
+        "fullName": "Rohitiiii Sharma",
+        "firstName": "Rohitiiii",
+        "lastName": "Sharma",
+        "businessName": null,
+        "email": "rohit@gmail.com",
+        "phone": "8956471235",
+        "role": "buyer",
+        "profile": {
+          "firstName": "Rohitiiii",
+          "lastName": "Sharma"
+        },
+        "accountStatus": "active",
+        "ownerSellerId": null,
+        "parentSellerId": null,
+        "sellerProfile": {
+          "displayName": null,
+          "businessName": null,
+          "legalBusinessName": null,
+          "supportEmail": null,
+          "supportPhone": null,
+          "kycStatus": null,
+          "bankVerificationStatus": null,
+          "goLiveStatus": null
+        }
+      },
+      "shipFromSnapshot": {
+        "city": "Indore",
+        "line1": "Bapat Square",
+        "line2": "",
+        "phone": "7879857914",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "fullName": "Aditi Upadhyay",
+        "postalCode": "402010"
+      },
+      "reverseShipment": {
+        "shipmentId": "374876cf-783d-43e5-a7ba-d0bc42a8a063",
+        "provider": "manual",
+        "courierName": "manual",
+        "awbNumber": "https://chatgpt.com/c/6a706d7c-d910-83ee-b80e-ee2eca874e3b",
+        "trackingNumber": "https://chatgpt.com/c/6a706d7c-d910-83ee-b80e-ee2eca874e3b",
+        "labelUrl": "",
+        "status": "initiated",
+        "pickupScheduledAt": "2026-08-05T17:34:00.000Z",
+        "pickupAddressSnapshot": {
+          "city": "Indore",
+          "line1": "Bapat Square",
+          "line2": "",
+          "phone": "7879857914",
+          "state": "Madhya Pradesh",
+          "country": "India",
+          "fullName": "Aditi Upadhyay",
+          "postalCode": "402010"
+        },
+        "cost": 0,
+        "events": [
+          {
+            "status": "initiated",
+            "note": "Reverse pickup scheduled",
+            "source": "return_service",
+            "actorId": "6a5f560b035a5eb5c69c847d",
+            "at": "2026-08-03T12:04:08.832Z"
+          }
+        ],
+        "metadata": {
+          "reason": "defective",
+          "returnNumber": "RMA-1785758374434-TFFAD",
+          "organizationId": null
+        }
+      },
+      "refund": {
+        "status": "not_started",
+        "requestedAmount": 8669,
+        "approvedAmount": 8669,
+        "refundedAmount": 0,
+        "walletAmount": 0,
+        "providerAmount": 0,
+        "attempts": []
+      },
+      "timeline": [
+        {
+          "status": "requested",
+          "actorId": "6a630534b920c81dcc69660c",
+          "actorRole": "buyer",
+          "reason": "defective",
+          "note": "Aszxs cdsxz sfdfv dfvd",
+          "metadata": {
+            "sellerId": "6a5f560b035a5eb5c69c847d",
+            "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+            "resolution": "refund"
+          },
+          "at": "2026-08-03T11:59:34.434Z",
+          "_id": "6a7082a6eb387b7312df42bf"
+        },
+        {
+          "status": "approved",
+          "actorId": "6a5f560b035a5eb5c69c847d",
+          "actorRole": "seller",
+          "reason": null,
+          "note": "accepted",
+          "metadata": {
+            "approvedAmount": 8669,
+            "approvedItems": [
+              {
+                "orderItemId": "82fdb813-6457-4e41-b656-bbf9aaccb593",
+                "approvedQuantity": 1
+              }
+            ]
+          },
+          "at": "2026-08-03T12:00:08.743Z",
+          "_id": "6a7082c8cfd4e864e528b228"
+        },
+        {
+          "status": "reverse_pickup_scheduled",
+          "actorId": "6a5f560b035a5eb5c69c847d",
+          "actorRole": "seller",
+          "reason": null,
+          "note": null,
+          "metadata": {
+            "shipmentId": "374876cf-783d-43e5-a7ba-d0bc42a8a063",
+            "trackingNumber": "https://chatgpt.com/c/6a706d7c-d910-83ee-b80e-ee2eca874e3b",
+            "mode": "reverse_pickup"
+          },
+          "at": "2026-08-03T12:04:08.833Z",
+          "_id": "6a7083b8cfd4e864e528d5d7"
+        }
+      ],
+      "photos": [],
+      "retryCount": 0,
+      "createdBy": "6a630534b920c81dcc69660c",
+      "updatedBy": "6a5f560b035a5eb5c69c847d",
+      "requestedAt": "2026-08-03T11:59:34.441Z",
+      "createdAt": "2026-08-03T11:59:34.444Z",
+      "updatedAt": "2026-08-03T12:04:08.836Z",
+      "__v": 2,
+      "approvedAt": "2026-08-03T12:00:08.743Z",
+      "trackingNumber": "https://chatgpt.com/c/6a706d7c-d910-83ee-b80e-ee2eca874e3b"
+    },
+    {
+      "_id": "6a705a4e91542ca88f7efba4",
+      "returnNumber": "RMA-1785748046302-FOZMT",
+      "orderId": "5b712365-fafa-4c25-aff7-2138ebeebc51",
+      "buyerId": "6a630534b920c81dcc69660c",
+      "sellerId": "6a5f560b035a5eb5c69c847d",
+      "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+      "reason": "defective",
+      "resolution": "refund",
+      "description": "xsdzdxszcfdsxvfgdgbfth",
+      "items": [
+        {
+          "orderItemId": "c3b4d667-4f0e-4249-bd98-b50c4422b379",
+          "productId": "6a699a464d04daa089af8e6e",
+          "productTitle": "Luxury Hanging Hammock Swing Chair With Stand For Adults | Steel Frame | Indoor & Outdoor Balcony Egg Chair | Black With Red Cushion",
+          "productSku": "SKU-1785304913972-1",
+          "productImage": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1785305087/ecommerce/uploads/product/image-1-65715b23-9e4a-40b6-8d5d-c450cb44e2fe.webp",
+          "sellerId": "6a5f560b035a5eb5c69c847d",
+          "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+          "variantId": "6a69a14a4d04daa089afb025",
+          "variantSku": "SKU-1785304913972-1",
+          "quantity": 1,
+          "requestedQuantity": 1,
+          "approvedQuantity": 0,
+          "receivedQuantity": 0,
+          "unitPrice": 8669,
+          "lineTotal": 8669,
+          "discountAmount": 0,
+          "taxAmount": 412.81,
+          "additionalTaxAmount": 0,
+          "eligibleRefundAmount": 8669,
+          "refundAmount": 8669,
+          "qcResult": "pending",
+          "qcPhotos": [],
+          "restockedQuantity": 0,
+          "damagedQuantity": 0,
+          "photos": [],
+          "policySnapshot": {
+            "days": 10,
+            "type": "standard",
+            "source": "product_snapshot",
+            "eligible": true,
+            "resolution": "refund_or_replacement",
+            "returnable": true,
+            "restockingFee": 0,
+            "requiresImages": true,
+            "shippingPaidBy": "seller",
+            "returnWindowDays": 10,
+            "inspectionRequired": true,
+            "eligibleUntil": "2026-08-13T08:58:26.525Z",
+            "deliveredAt": "2026-08-03T08:58:26.525Z"
+          },
+          "returnWindowDays": 10,
+          "returnEligibleUntil": "2026-08-13T08:58:26.525Z",
+          "requiresImages": true,
+          "inspectionRequired": true
+        }
+      ],
+      "status": "requested",
+      "refundAmount": 8669,
+      "refundBreakup": {
+        "itemSubtotal": 8669,
+        "discountReversal": 0,
+        "productPaidAmount": 8669,
+        "taxReversal": 0,
+        "shippingRefund": 0,
+        "platformFeeRefund": 0,
+        "platformFeeTaxRefund": 0,
+        "walletRefundAmount": 0,
+        "originalPaymentRefundAmount": 8669,
+        "totalRefundAmount": 8669,
+        "refundPolicySnapshot": {
+          "shipping": {
+            "fullCancellation": true,
+            "sellerCancellation": true,
+            "rtoDeliveryFailed": true,
+            "customerReturn": false,
+            "partialReturn": false
+          },
+          "platformFee": {
+            "fullCancellation": false,
+            "sellerCancellation": true,
+            "rtoDeliveryFailed": true,
+            "customerReturn": false,
+            "partialReturn": false
+          }
+        }
+      },
+      "policySnapshot": {
+        "returnable": true,
+        "returnWindowDays": 10,
+        "deliveredAt": "2026-08-03T08:58:26.562Z",
+        "eligibleUntil": "2026-08-13T08:58:26.525Z",
+        "shippingPaidBy": "seller",
+        "requiresQc": true,
+        "source": "product_item_policies"
+      },
+      "buyerSnapshot": {
+        "id": "6a630534b920c81dcc69660c",
+        "displayName": "Rohitiiii Sharma",
+        "fullName": "Rohitiiii Sharma",
+        "firstName": "Rohitiiii",
+        "lastName": "Sharma",
+        "businessName": null,
+        "email": "rohit@gmail.com",
+        "phone": "8956471235",
+        "role": "buyer",
+        "profile": {
+          "firstName": "Rohitiiii",
+          "lastName": "Sharma"
+        },
+        "accountStatus": "active",
+        "ownerSellerId": null,
+        "parentSellerId": null,
+        "sellerProfile": {
+          "displayName": null,
+          "businessName": null,
+          "legalBusinessName": null,
+          "supportEmail": null,
+          "supportPhone": null,
+          "kycStatus": null,
+          "bankVerificationStatus": null,
+          "goLiveStatus": null
+        }
+      },
+      "shipFromSnapshot": {
+        "city": "Indore",
+        "line1": "Bapat Square",
+        "line2": "",
+        "phone": "7879857914",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "fullName": "Aditi Upadhyay",
+        "postalCode": "402010"
+      },
+      "reverseShipment": {
+        "events": []
+      },
+      "refund": {
+        "status": "not_started",
+        "requestedAmount": 8669,
+        "approvedAmount": 0,
+        "refundedAmount": 0,
+        "walletAmount": 0,
+        "providerAmount": 0,
+        "attempts": []
+      },
+      "timeline": [
+        {
+          "status": "requested",
+          "actorId": "6a630534b920c81dcc69660c",
+          "actorRole": "buyer",
+          "reason": "defective",
+          "note": "xsdzdxszcfdsxvfgdgbfth",
+          "metadata": {
+            "sellerId": "6a5f560b035a5eb5c69c847d",
+            "organizationId": "6bb9bf0e-7384-404e-8fee-3304abea71fd",
+            "resolution": "refund"
+          },
+          "at": "2026-08-03T09:07:26.302Z",
+          "_id": "6a705a4e91542ca88f7efba5"
+        }
+      ],
+      "photos": [],
+      "retryCount": 0,
+      "createdBy": "6a630534b920c81dcc69660c",
+      "updatedBy": "6a630534b920c81dcc69660c",
+      "requestedAt": "2026-08-03T09:07:26.309Z",
+      "createdAt": "2026-08-03T09:07:26.312Z",
+      "updatedAt": "2026-08-03T09:07:26.312Z",
+      "__v": 0
+    },
+    {
+      "_id": "6a70594791542ca88f7ef4fd",
+      "returnNumber": "RMA-1785747783066-04BWS",
+      "orderId": "6da16a0b-92ba-496c-92e1-ed20bc0ec648",
+      "buyerId": "6a630534b920c81dcc69660c",
+      "sellerId": "6a5f5587126d3e552c899abd",
+      "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+      "reason": "defective",
+      "resolution": "refund",
+      "description": "Do not like the product anymore.",
+      "items": [
+        {
+          "orderItemId": "baad04f2-6295-462b-92f5-d5216b24d919",
+          "productId": "6a5f5fff425c9616349c903f",
+          "productTitle": "Fujifilm Instax Mini 11 Instant Camera",
+          "productSku": "SKU-1784634929299-1",
+          "productImage": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1784635177/ecommerce/uploads/product/image-1-2957f515-219f-4ec0-8432-7edda722d4a6.webp",
+          "sellerId": "6a5f5587126d3e552c899abd",
+          "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+          "variantId": "6a6870e34d04daa089af27bc",
+          "variantSku": "SKU-1784634929299-1",
+          "quantity": 1,
+          "requestedQuantity": 1,
+          "approvedQuantity": 1,
+          "receivedQuantity": 1,
+          "unitPrice": 5000,
+          "lineTotal": 5000,
+          "discountAmount": 0,
+          "taxAmount": 762.71,
+          "additionalTaxAmount": 0,
+          "eligibleRefundAmount": 5000,
+          "refundAmount": 5000,
+          "qcResult": "pending",
+          "qcPhotos": [],
+          "restockedQuantity": 0,
+          "damagedQuantity": 0,
+          "photos": [],
+          "policySnapshot": {
+            "days": 7,
+            "type": "standard",
+            "source": "product_snapshot",
+            "eligible": true,
+            "resolution": "refund_or_replacement",
+            "returnable": true,
+            "restockingFee": 0,
+            "requiresImages": true,
+            "shippingPaidBy": "seller",
+            "returnWindowDays": 7,
+            "inspectionRequired": true,
+            "eligibleUntil": "2026-08-10T09:02:20.954Z",
+            "deliveredAt": "2026-08-03T09:02:20.954Z"
+          },
+          "returnWindowDays": 7,
+          "returnEligibleUntil": "2026-08-10T09:02:20.954Z",
+          "requiresImages": true,
+          "inspectionRequired": true
+        }
+      ],
+      "status": "received",
+      "refundAmount": 5000,
+      "refundBreakup": {
+        "itemSubtotal": 5000,
+        "discountReversal": 0,
+        "productPaidAmount": 5000,
+        "taxReversal": 0,
+        "shippingRefund": 0,
+        "platformFeeRefund": 0,
+        "platformFeeTaxRefund": 0,
+        "walletRefundAmount": 0,
+        "originalPaymentRefundAmount": 5000,
+        "totalRefundAmount": 5000,
+        "refundPolicySnapshot": {
+          "shipping": {
+            "fullCancellation": true,
+            "sellerCancellation": true,
+            "rtoDeliveryFailed": true,
+            "customerReturn": false,
+            "partialReturn": false
+          },
+          "platformFee": {
+            "fullCancellation": false,
+            "sellerCancellation": true,
+            "rtoDeliveryFailed": true,
+            "customerReturn": false,
+            "partialReturn": false
+          }
+        }
+      },
+      "policySnapshot": {
+        "returnable": true,
+        "returnWindowDays": 7,
+        "deliveredAt": "2026-08-03T09:02:21.819Z",
+        "eligibleUntil": "2026-08-10T09:02:20.954Z",
+        "shippingPaidBy": "seller",
+        "requiresQc": true,
+        "source": "product_item_policies"
+      },
+      "buyerSnapshot": {
+        "id": "6a630534b920c81dcc69660c",
+        "displayName": "Rohitiiii Sharma",
+        "fullName": "Rohitiiii Sharma",
+        "firstName": "Rohitiiii",
+        "lastName": "Sharma",
+        "businessName": null,
+        "email": "rohit@gmail.com",
+        "phone": "8956471235",
+        "role": "buyer",
+        "profile": {
+          "firstName": "Rohitiiii",
+          "lastName": "Sharma"
+        },
+        "accountStatus": "active",
+        "ownerSellerId": null,
+        "parentSellerId": null,
+        "sellerProfile": {
+          "displayName": null,
+          "businessName": null,
+          "legalBusinessName": null,
+          "supportEmail": null,
+          "supportPhone": null,
+          "kycStatus": null,
+          "bankVerificationStatus": null,
+          "goLiveStatus": null
+        }
+      },
+      "shipFromSnapshot": {
+        "city": "Indore",
+        "line1": "Bapat Square",
+        "line2": "",
+        "phone": "7879857914",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "fullName": "Aditi Upadhyay",
+        "postalCode": "402010"
+      },
+      "reverseShipment": {
+        "shipmentId": "1425a994-4d39-4ab2-adba-d45d0ba7336c",
+        "provider": "manual",
+        "courierName": "098098",
+        "awbNumber": "drtd65",
+        "trackingNumber": "drtd65",
+        "labelUrl": "",
+        "status": "delivered",
+        "pickupScheduledAt": "2026-08-03T09:10:00.000Z",
+        "pickupAddressSnapshot": {
+          "city": "Indore",
+          "line1": "Bapat Square",
+          "line2": "",
+          "phone": "7879857914",
+          "state": "Madhya Pradesh",
+          "country": "India",
+          "fullName": "Aditi Upadhyay",
+          "postalCode": "402010"
+        },
+        "cost": 0,
+        "events": [
+          {
+            "status": "initiated",
+            "note": "Reverse pickup scheduled",
+            "source": "return_service",
+            "actorId": "6a5f5587126d3e552c899abd",
+            "at": "2026-08-03T09:10:20.726Z"
+          },
+          {
+            "status": "picked_up",
+            "location": null,
+            "note": null,
+            "source": "return_admin",
+            "actorId": "6a5f5587126d3e552c899abd",
+            "at": "2026-08-03T09:10:36.455Z"
+          },
+          {
+            "status": "delivered",
+            "location": null,
+            "note": null,
+            "source": "return_admin",
+            "actorId": "6a5f5587126d3e552c899abd",
+            "at": "2026-08-03T09:13:05.509Z"
+          }
+        ],
+        "metadata": {
+          "reason": "defective",
+          "returnNumber": "RMA-1785747783066-04BWS",
+          "organizationId": null
+        },
+        "pickedUpAt": "2026-08-03T09:10:36.455Z",
+        "deliveredToWarehouseAt": "2026-08-03T09:13:05.509Z"
+      },
+      "refund": {
+        "status": "not_started",
+        "requestedAmount": 5000,
+        "approvedAmount": 5000,
+        "refundedAmount": 0,
+        "walletAmount": 0,
+        "providerAmount": 0,
+        "attempts": []
+      },
+      "timeline": [
+        {
+          "status": "requested",
+          "actorId": "6a630534b920c81dcc69660c",
+          "actorRole": "buyer",
+          "reason": "defective",
+          "note": "Do not like the product anymore.",
+          "metadata": {
+            "sellerId": "6a5f5587126d3e552c899abd",
+            "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+            "resolution": "refund"
+          },
+          "at": "2026-08-03T09:03:03.066Z",
+          "_id": "6a70594791542ca88f7ef4fe"
+        },
+        {
+          "status": "approved",
+          "actorId": "6a5f5587126d3e552c899abd",
+          "actorRole": "seller",
+          "reason": null,
+          "note": "\n",
+          "metadata": {
+            "approvedAmount": 5000,
+            "approvedItems": [
+              {
+                "orderItemId": "baad04f2-6295-462b-92f5-d5216b24d919",
+                "approvedQuantity": 1
+              }
+            ]
+          },
+          "at": "2026-08-03T09:08:04.165Z",
+          "_id": "6a705a7491542ca88f7efca5"
+        },
+        {
+          "status": "reverse_pickup_scheduled",
+          "actorId": "6a5f5587126d3e552c899abd",
+          "actorRole": "seller",
+          "reason": null,
+          "note": null,
+          "metadata": {
+            "shipmentId": "1425a994-4d39-4ab2-adba-d45d0ba7336c",
+            "trackingNumber": "drtd65",
+            "mode": "reverse_pickup"
+          },
+          "at": "2026-08-03T09:10:20.729Z",
+          "_id": "6a705afc91542ca88f7f0303"
+        },
+        {
+          "status": "in_reverse_transit",
+          "actorId": "6a5f5587126d3e552c899abd",
+          "actorRole": "seller",
+          "reason": null,
+          "note": null,
+          "metadata": {
+            "shipmentId": "1425a994-4d39-4ab2-adba-d45d0ba7336c",
+            "shipmentStatus": "picked_up",
+            "location": null
+          },
+          "at": "2026-08-03T09:10:36.456Z",
+          "_id": "6a705b0c91542ca88f7f0344"
+        },
+        {
+          "status": "received",
+          "actorId": "6a5f5587126d3e552c899abd",
+          "actorRole": "seller",
+          "reason": null,
+          "note": null,
+          "metadata": {
+            "shipmentId": "1425a994-4d39-4ab2-adba-d45d0ba7336c",
+            "shipmentStatus": "delivered",
+            "location": null
+          },
+          "at": "2026-08-03T09:13:05.510Z",
+          "_id": "6a705ba191542ca88f7f120c"
+        }
+      ],
+      "photos": [],
+      "retryCount": 0,
+      "createdBy": "6a630534b920c81dcc69660c",
+      "updatedBy": "6a5f5587126d3e552c899abd",
+      "requestedAt": "2026-08-03T09:03:03.075Z",
+      "createdAt": "2026-08-03T09:03:03.079Z",
+      "updatedAt": "2026-08-03T09:13:05.512Z",
+      "__v": 4,
+      "approvedAt": "2026-08-03T09:08:04.165Z",
+      "trackingNumber": "drtd65",
+      "receivedAt": "2026-08-03T09:13:05.509Z"
+    },
+    {
+      "_id": "6a70496634d1319941547418",
+      "returnNumber": "RMA-1785743718180-5KKCD",
+      "orderId": "29d3885d-3355-4a49-b9b9-d3518c0546d5",
+      "buyerId": "6a630534b920c81dcc69660c",
+      "sellerId": "6a5f5587126d3e552c899abd",
+      "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+      "reason": "defective",
+      "resolution": "refund",
+      "description": "dcscfdx sdfvcdvg dvdcxsvdfc cfdxvdfr",
+      "items": [
+        {
+          "orderItemId": "e754b0f5-292f-4af8-8b07-63b796da374b",
+          "productId": "6a5f5fff425c9616349c903f",
+          "productTitle": "Fujifilm Instax Mini 11 Instant Camera",
+          "productSku": "SKU-1784634929299-3",
+          "productImage": "https://res.cloudinary.com/drp9ddo4b/image/upload/v1784635336/ecommerce/uploads/product/image-1-fb95f30e-3552-4e68-8878-b032cddf595e.webp",
+          "sellerId": "6a5f5587126d3e552c899abd",
+          "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+          "variantId": "6a6870e34d04daa089af27be",
+          "variantSku": "SKU-1784634929299-3",
+          "quantity": 1,
+          "requestedQuantity": 1,
+          "approvedQuantity": 1,
+          "receivedQuantity": 0,
+          "unitPrice": 5100,
+          "lineTotal": 5100,
+          "discountAmount": 0,
+          "taxAmount": 777.97,
+          "additionalTaxAmount": 0,
+          "eligibleRefundAmount": 5100,
+          "refundAmount": 5100,
+          "qcResult": "pending",
+          "qcPhotos": [],
+          "restockedQuantity": 0,
+          "damagedQuantity": 0,
+          "photos": [],
+          "policySnapshot": {
+            "days": 7,
+            "type": "standard",
+            "source": "product_snapshot",
+            "eligible": true,
+            "resolution": "refund_or_replacement",
+            "returnable": true,
+            "restockingFee": 0,
+            "requiresImages": true,
+            "shippingPaidBy": "seller",
+            "returnWindowDays": 7,
+            "inspectionRequired": true,
+            "eligibleUntil": "2026-08-10T07:34:45.784Z",
+            "deliveredAt": "2026-08-03T07:34:45.784Z"
+          },
+          "returnWindowDays": 7,
+          "returnEligibleUntil": "2026-08-10T07:34:45.784Z",
+          "requiresImages": true,
+          "inspectionRequired": true
+        }
+      ],
+      "status": "pickup_failed",
+      "refundAmount": 5100,
+      "refundBreakup": {
+        "itemSubtotal": 5100,
+        "discountReversal": 0,
+        "productPaidAmount": 5100,
+        "taxReversal": 0,
+        "shippingRefund": 0,
+        "platformFeeRefund": 0,
+        "platformFeeTaxRefund": 0,
+        "walletRefundAmount": 0,
+        "originalPaymentRefundAmount": 5100,
+        "totalRefundAmount": 5100,
+        "refundPolicySnapshot": {
+          "shipping": {
+            "fullCancellation": true,
+            "sellerCancellation": true,
+            "rtoDeliveryFailed": true,
+            "customerReturn": false,
+            "partialReturn": false
+          },
+          "platformFee": {
+            "fullCancellation": false,
+            "sellerCancellation": true,
+            "rtoDeliveryFailed": true,
+            "customerReturn": false,
+            "partialReturn": false
+          }
+        }
+      },
+      "policySnapshot": {
+        "returnable": true,
+        "returnWindowDays": 7,
+        "deliveredAt": "2026-08-03T07:34:46.663Z",
+        "eligibleUntil": "2026-08-10T07:34:45.784Z",
+        "shippingPaidBy": "seller",
+        "requiresQc": true,
+        "source": "product_item_policies"
+      },
+      "buyerSnapshot": {
+        "id": "6a630534b920c81dcc69660c",
+        "displayName": "Rohitiiii Sharma",
+        "fullName": "Rohitiiii Sharma",
+        "firstName": "Rohitiiii",
+        "lastName": "Sharma",
+        "businessName": null,
+        "email": "rohit@gmail.com",
+        "phone": "8956471235",
+        "role": "buyer",
+        "profile": {
+          "firstName": "Rohitiiii",
+          "lastName": "Sharma"
+        },
+        "accountStatus": "active",
+        "ownerSellerId": null,
+        "parentSellerId": null,
+        "sellerProfile": {
+          "displayName": null,
+          "businessName": null,
+          "legalBusinessName": null,
+          "supportEmail": null,
+          "supportPhone": null,
+          "kycStatus": null,
+          "bankVerificationStatus": null,
+          "goLiveStatus": null
+        }
+      },
+      "shipFromSnapshot": {
+        "city": "Indore",
+        "line1": "Bapat Square",
+        "line2": "",
+        "phone": "7879857914",
+        "state": "Madhya Pradesh",
+        "country": "India",
+        "fullName": "Aditi Upadhyay",
+        "postalCode": "402010"
+      },
+      "reverseShipment": {
+        "shipmentId": "19fa2d0f-a432-4dd3-80f6-cc23082c961a",
+        "provider": "manual",
+        "courierName": "asdfads",
+        "awbNumber": "545454",
+        "trackingNumber": "545454",
+        "labelUrl": "",
+        "status": "pickup_failed",
+        "pickupScheduledAt": "2026-08-04T09:32:00.000Z",
+        "pickupAddressSnapshot": {
+          "city": "Indore",
+          "line1": "Bapat Square",
+          "line2": "",
+          "phone": "7879857914",
+          "state": "Madhya Pradesh",
+          "country": "India",
+          "fullName": "Aditi Upadhyay",
+          "postalCode": "402010"
+        },
+        "cost": 0,
+        "events": [
+          {
+            "status": "pickup_failed",
+            "note": "Rescheduled Pickup",
+            "source": "return_service",
+            "actorId": "6a5f5587126d3e552c899abd",
+            "at": "2026-08-03T09:33:52.427Z"
+          },
+          {
+            "status": "in_transit",
+            "location": null,
+            "note": "On the way to the warehouse\n",
+            "source": "return_admin",
+            "actorId": "6a5f5587126d3e552c899abd",
+            "at": "2026-08-03T09:40:38.315Z"
+          },
+          {
+            "status": "pickup_failed",
+            "location": null,
+            "note": null,
+            "source": "return_admin",
+            "actorId": "6a5f5587126d3e552c899abd",
+            "at": "2026-08-03T09:52:34.498Z"
+          }
+        ],
+        "metadata": {
+          "reason": "defective",
+          "returnNumber": "RMA-1785743718180-5KKCD",
+          "organizationId": null
+        }
+      },
+      "refund": {
+        "status": "not_started",
+        "requestedAmount": 5100,
+        "approvedAmount": 5100,
+        "refundedAmount": 0,
+        "walletAmount": 0,
+        "providerAmount": 0,
+        "attempts": []
+      },
+      "timeline": [
+        {
+          "status": "requested",
+          "actorId": "6a630534b920c81dcc69660c",
+          "actorRole": "buyer",
+          "reason": "defective",
+          "note": "dcscfdx sdfvcdvg dvdcxsvdfc cfdxvdfr",
+          "metadata": {
+            "sellerId": "6a5f5587126d3e552c899abd",
+            "organizationId": "7fa06e04-18c6-476e-9690-6e45f95d90be",
+            "resolution": "refund"
+          },
+          "at": "2026-08-03T07:55:18.180Z",
+          "_id": "6a70496634d1319941547419"
+        },
+        {
+          "status": "approved",
+          "actorId": "6a5f5587126d3e552c899abd",
+          "actorRole": "seller",
+          "reason": null,
+          "note": "accepted",
+          "metadata": {
+            "approvedAmount": 5100,
+            "approvedItems": [
+              {
+                "orderItemId": "e754b0f5-292f-4af8-8b07-63b796da374b",
+                "approvedQuantity": 1
+              }
+            ]
+          },
+          "at": "2026-08-03T07:56:57.283Z",
+          "_id": "6a7049c9cfd4e864e527fb80"
+        },
+        {
+          "status": "reverse_pickup_scheduled",
+          "actorId": "6a5f5587126d3e552c899abd",
+          "actorRole": "seller",
+          "reason": null,
+          "note": null,
+          "metadata": {
+            "shipmentId": "19fa2d0f-a432-4dd3-80f6-cc23082c961a",
+            "trackingNumber": "545454",
+            "mode": "reverse_pickup"
+          },
+          "at": "2026-08-03T09:19:17.414Z",
+          "_id": "6a705d1591542ca88f7f4bf3"
+        },
+        {
+          "status": "pickup_failed",
+          "actorId": "6a5f5587126d3e552c899abd",
+          "actorRole": "seller",
+          "reason": null,
+          "note": null,
+          "metadata": {
+            "shipmentId": "19fa2d0f-a432-4dd3-80f6-cc23082c961a",
+            "shipmentStatus": "pickup_failed",
+            "location": null
+          },
+          "at": "2026-08-03T09:28:59.956Z",
+          "_id": "6a705f5b91542ca88f7f5a2a"
+        },
+        {
+          "status": "reverse_pickup_scheduled",
+          "actorId": "6a5f5587126d3e552c899abd",
+          "actorRole": "seller",
+          "reason": null,
+          "note": "Rescheduled Pickup",
+          "metadata": {
+            "shipmentId": "19fa2d0f-a432-4dd3-80f6-cc23082c961a",
+            "trackingNumber": "545454",
+            "mode": "reverse_pickup"
+          },
+          "at": "2026-08-03T09:33:52.429Z",
+          "_id": "6a70608091542ca88f7f5de8"
+        },
+        {
+          "status": "in_reverse_transit",
+          "actorId": "6a5f5587126d3e552c899abd",
+          "actorRole": "seller",
+          "reason": null,
+          "note": "On the way to the warehouse\n",
+          "metadata": {
+            "shipmentId": "19fa2d0f-a432-4dd3-80f6-cc23082c961a",
+            "shipmentStatus": "in_transit",
+            "location": null
+          },
+          "at": "2026-08-03T09:40:38.317Z",
+          "_id": "6a70621691542ca88f7f82ec"
+        },
+        {
+          "status": "pickup_failed",
+          "actorId": "6a5f5587126d3e552c899abd",
+          "actorRole": "seller",
+          "reason": null,
+          "note": null,
+          "metadata": {
+            "shipmentId": "19fa2d0f-a432-4dd3-80f6-cc23082c961a",
+            "shipmentStatus": "pickup_failed",
+            "location": null
+          },
+          "at": "2026-08-03T09:52:34.501Z",
+          "_id": "6a7064e291542ca88f7fba49"
+        }
+      ],
+      "photos": [],
+      "retryCount": 0,
+      "createdBy": "6a630534b920c81dcc69660c",
+      "updatedBy": "6a5f5587126d3e552c899abd",
+      "requestedAt": "2026-08-03T07:55:18.204Z",
+      "createdAt": "2026-08-03T07:55:18.213Z",
+      "updatedAt": "2026-08-03T09:52:34.505Z",
+      "__v": 6,
+      "approvedAt": "2026-08-03T07:56:57.283Z",
+      "trackingNumber": "545454"
+    }
+  ]
+}
