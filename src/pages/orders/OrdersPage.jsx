@@ -1390,7 +1390,7 @@ function OrderDetail({ orderId, track }) {
                       <XCircle size={15} /> {selectedOrderItem ? "Cancel selected item" : "Cancel order"}
                     </Button>
                   )}
-                  {!track && (
+                  {/* {!track && (
                     <Link
                       to={`/orders/${orderId}/track${selectedOrderItem ? `?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}` : ""}`}
                       className="block sm:inline-flex"
@@ -1415,7 +1415,7 @@ function OrderDetail({ orderId, track }) {
                         <ReceiptText size={15} /> View order
                       </Button>
                     </Link>
-                  )}
+                  )} */}
                 </div>
               </section>
             )}
@@ -1932,7 +1932,7 @@ const orderHelpItems = items.map((item) => ({
   icon: item.icon,
   title: item.title,
   description: "Get help with your orders",
-  path: "#",
+  path: "/contact-us",
 }));
 
 function OrderList() {

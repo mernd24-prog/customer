@@ -1135,7 +1135,7 @@ function ProductInfoSection({
             {Object.keys(returnPolicy).length > 0 && (
               <div className="border-t border-border pt-4">
                 <h3 className="mb-3 text-base font-bold text-ink">
-                  Related Return Rules
+                  Return Terms
                 </h3>
                 <div className="flex flex-wrap gap-2 text-xs lg:text-sm">
                   <span className="rounded-full bg-cream px-3 py-1.5 font-medium text-navy">

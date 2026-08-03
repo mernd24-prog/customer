@@ -837,12 +837,16 @@ export default function CategoryPage() {
           next.delete("minPrice");
           next.delete("maxPrice");
         } else if (filter?.groupKey) {
-          const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
-            (value) => value !== filter.value,
-          );
-          const serialized = serializeMultiValue(nextValues);
-          if (serialized) next.set(filter.groupKey, serialized);
-          else next.delete(filter.groupKey);
+          if (filter.value === undefined) {
+            next.delete(filter.groupKey);
+          } else {
+            const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+              (value) => value !== filter.value,
+            );
+            const serialized = serializeMultiValue(nextValues);
+            if (serialized) next.set(filter.groupKey, serialized);
+            else next.delete(filter.groupKey);
+          }
         } else next.delete(key);
         next.delete("page");
         return next;
@@ -851,20 +855,9 @@ export default function CategoryPage() {
     [navigate, setSearchParams],
   );
 
-  const hasOtherFilters = Array.from(searchParams.keys()).some(
-    (key) =>
-      [
-        "page",
-        "sort",
-        "limit",
-      ].indexOf(key) === -1
-  );
-
   const handleClearFilters = useCallback(() => {
     setSearchParams(new URLSearchParams());
   }, [setSearchParams]);
-
-  const clearFiltersAction = hasOtherFilters ? handleClearFilters : undefined;
 
   // ── Derived data ─────────────────────────────────────────────────────────
   const categoryTitle =
@@ -1070,12 +1063,11 @@ export default function CategoryPage() {
         label: "Out of Stock",
       },
 
-      ...parseMultiValue(searchParams.get("brand")).map((brand) => ({
-        key: `brand:${brand}`,
+      searchParams.get("brand") && {
+        key: "brand",
         groupKey: "brand",
-        value: brand,
-        label: `Brand: ${brand}`,
-      })),
+        label: `Brand: ${searchParams.get("brand").split(",").join(", ")}`,
+      },
 
       ...Array.from(searchParams.entries())
         .filter(([key, value]) => {
@@ -1083,15 +1075,14 @@ export default function CategoryPage() {
           const attributeKey = key.replace(/^attr_/, "");
           return supportedAttributeKeys.has(attributeKey);
         })
-        .flatMap(([key, value]) => {
+        .map(([key, value]) => {
           const attributeKey = key.replace(/^attr_/, "");
-          const label = attributeLabelByKey.get(attributeKey) || attributeKey;
-          return parseMultiValue(value).map((item) => ({
-            key: `${key}:${item}`,
+          const label = attributeLabelByKey.get(attributeKey) || attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1);
+          return {
+            key,
             groupKey: key,
-            value: item,
-            label: `${label}: ${item}`,
-          }));
+            label: `${label}: ${value.split(",").join(", ")}`,
+          };
         }),
       (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
         key: "price",
@@ -1108,6 +1099,8 @@ export default function CategoryPage() {
     priceLimits.min,
     priceLimits.max,
   ]);
+
+  const clearFiltersAction = activeFilters.length > 1 ? handleClearFilters : undefined;
 
   return (
     <>

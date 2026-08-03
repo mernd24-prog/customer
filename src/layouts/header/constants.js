@@ -48,6 +48,7 @@ export const baseAccountMenuItems = [
   { label: "Wallet", path: "/wallet", icon: "lock" },
   { label: "Notifications", path: "/notifications", icon: "bell" },
   { label: "Settings", path: "/notification-preferences", icon: "settings" },
+  { label: "Sign Out", path: "/sign-out", icon: "logOut" },
 ];
 
 export const DEFAULT_TOP_NAV_LINKS = [

@@ -421,12 +421,16 @@ export default function DealsPage() {
         next.delete("minPrice");
         next.delete("maxPrice");
       } else if (filter?.groupKey) {
-        const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
-          (value) => value !== filter.value,
-        );
-        const serialized = serializeMultiValue(nextValues);
-        if (serialized) next.set(filter.groupKey, serialized);
-        else next.delete(filter.groupKey);
+        if (filter.value === undefined) {
+          next.delete(filter.groupKey);
+        } else {
+          const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+            (value) => value !== filter.value,
+          );
+          const serialized = serializeMultiValue(nextValues);
+          if (serialized) next.set(filter.groupKey, serialized);
+          else next.delete(filter.groupKey);
+        }
       } else {
         next.delete(key);
       }
@@ -434,6 +438,10 @@ export default function DealsPage() {
       return next;
     });
   };
+
+  const handleClearFilters = useCallback(() => {
+    setSearchParams(new URLSearchParams());
+  }, [setSearchParams]);
 
   const activeFilters = useMemo(
     () =>
@@ -446,18 +454,16 @@ export default function DealsPage() {
           key: "category",
           label: `Category: ${categoryOptions.find((category) => category.value === searchParams.get("category"))?.label || searchParams.get("category")}`,
         },
-        ...selectedBrands.map((brand) => ({
-          key: `brand:${brand}`,
+        searchParams.get("brand") && {
+          key: "brand",
           groupKey: "brand",
-          value: brand,
-          label: `Brand: ${brand}`,
-        })),
-        ...selectedRatings.map((rating) => ({
-          key: `rating:${rating}`,
+          label: `Brand: ${searchParams.get("brand").split(",").join(", ")}`,
+        },
+        searchParams.get("rating") && {
+          key: "rating",
           groupKey: "rating",
-          value: rating,
-          label: `Rating: ${rating}★ & up`,
-        })),
+          label: `Rating: ${searchParams.get("rating").split(",").join(", ")}★ & up`,
+        },
         searchParams.get("inStock") === "true" && {
           key: "inStock",
           label: "In Stock Only",
@@ -483,6 +489,8 @@ export default function DealsPage() {
       ].filter(Boolean),
     [searchParams, categoryOptions, selectedBrands, selectedRatings],
   );
+
+  const clearFiltersAction = activeFilters.length > 1 ? handleClearFilters : undefined;
 
   const filterSections = [
     categoryOptions.length > 0 && {
@@ -593,7 +601,7 @@ export default function DealsPage() {
               label: "Out of Stock",
               count: availabilityCounts.outOfStock,
             },
-          ]}
+          ].filter((option) => Number(option.count || 0) > 0)}
           selected={["inStock", "outOfStock"].filter(
             (value) => searchParams.get(value) === "true",
           )}
@@ -749,7 +757,7 @@ export default function DealsPage() {
           filterSections={filterSections}
           filters={activeFilters}
           onRemoveFilter={removeFilter}
-          onClearFilters={() => setSearchParams(new URLSearchParams())}
+          onClearFilters={clearFiltersAction}
           sidebarOpen={sidebarOpen}
           onCloseSidebar={() => setSidebarOpen(false)}
           loading={loading && !products.length}

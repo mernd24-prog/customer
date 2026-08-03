@@ -630,18 +630,18 @@ function OrderItemCard({
                 <img
                   src={getItemImage(item)}
                   alt={getProductTitle(item)}
-                  className="h-full w-full object-contain  "
+                  className="h-full w-full object-contain"
                 />
               </Link>
             ) : (
               <img
                 src={getItemImage(item)}
                 alt={getProductTitle(item)}
-                className="h-full w-full object-contain  "
+                className="h-full w-full object-contain"
               />
             )
           ) : (
-            <Package size={28} />
+            <Package size={28} className="text-[#D9CBAE]" />
           )}
         </div>
 
@@ -941,12 +941,12 @@ function OrderItemsSection({
 
   return (
     <section className="grid gap-5">
-      <OrderDetailSectionCard
-        title={packageGroups.length > 1 ? "Packages" : "Item"}
+      {/* <OrderDetailSectionCard
+        title={packageGroups.length > 1 ? "Order" : "Order"}
         borderClassName="border-[#CE9F2D66]  h-fit "
-        bodyClassName="grid gap-8 p-4 sm:p-6 lg:p-7"
-      >
-        {packageGroups.map((group, packageIndex) => (
+        bodyClassName=" grid gap-8 p-4 sm:p-6 lg:p-7"
+      > */}
+        {packageGroups.map((group) => (
           <div
             key={group.key}
             className="grid gap-5 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] p-4"
@@ -954,7 +954,7 @@ function OrderItemsSection({
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h3 className="font-bold text-[#1B1D60]">
-                  Package {packageIndex + 1}
+                  Order 
                 </h3>
                 <p className="mt-0.5 text-sm text-[#6F7480]">
                   {group.sellerName}
@@ -1003,19 +1003,13 @@ function OrderItemsSection({
                   key={item.id || item._id || index}
                   className={`grid gap-3 border-t border-[#E7D9B8] pt-5 first:border-t-0 first:pt-0 ${expanded ? "rounded-xl bg-[#FFF8E7] p-3" : ""}`}
                 >
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setExpandedItemId((current) =>
-                        current === itemId ? "" : itemId,
-                      )
-                    }
-                    className={`rounded-xl text-left transition ${expanded ? "bg-white shadow-sm ring-1 ring-[#CE9F2D66]" : "hover:bg-white/70"}`}
+                  <div
+                    className={`rounded-xl text-left transition ${expanded ? "bg-white shadow-sm ring-1 ring-[#CE9F2D66]" : ""}`}
                   >
                     <div className="p-2">
                       <OrderItemCard item={item} {...itemProps} />
                     </div>
-                  </button>
+                  </div>
                   <div className="flex flex-wrap gap-2 text-xs font-semibold">
                     <span
                       className={`rounded-full px-3 py-1 capitalize ${fulfillment.delivered ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-700"}`}
@@ -1051,7 +1045,7 @@ function OrderItemsSection({
                       </span>
                     )}
                   </div>
-                  {expanded && (
+                  {/* {expanded && (
                     <div className="grid gap-3 rounded-xl border border-[#E7D9B8] bg-white p-4">
                       <div className="grid gap-2 rounded-lg bg-[#F8FAFC] px-3 py-3 text-xs text-[#5E6472] sm:grid-cols-2 lg:grid-cols-4">
                         <span>
@@ -1129,7 +1123,7 @@ function OrderItemsSection({
                         </div>
                       )}
                     </div>
-                  )}
+                  )} */}
                   <div className="flex flex-wrap items-center gap-2">
                     {fulfillment.delivered &&
                       Boolean(getReviewProductId(item)) && (
@@ -1160,7 +1154,7 @@ function OrderItemsSection({
             })}
           </div>
         ))}
-      </OrderDetailSectionCard>
+      {/* </OrderDetailSectionCard> */}
 
       {reviewTarget && (
         <ReviewModal

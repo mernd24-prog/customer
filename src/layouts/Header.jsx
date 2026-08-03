@@ -31,7 +31,7 @@ import { TopHeader } from "./header/TopHeader";
 //import { CategoryMegaMenu } from "../components/ecommerce";
 import { navbarIcons as navData } from "../constants/image.constant";
 import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
-//import { logout } from "../features/auth/authSlice";
+import { logout } from "../features/auth/authSlice";
 import { fetchMe } from "../features/user/userSlice";
 import { getRole, isAdminRole } from "../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
@@ -79,6 +79,9 @@ const baseAccountMenuItems = [
   { label: "Wallet", path: "/wallet", icon: "lock" },
   { label: "Notifications", path: "/notifications", icon: "bell" },
   { label: "Settings", path: "/notification-preferences", icon: "settings" },
+  { label: "Sign Out", path: "/sign-out", icon: "logOut" },
+
+
 ];
 
 const DEFAULT_FASHION_MENU = { leftSections: [], promo: null };
@@ -205,7 +208,19 @@ export const Navbar = ({ icons: propIcons }) => {
     profileUser?.profile?.avatar ||
     "/image/png/person.png";
   const accountMenuItems = withIcons([
-    ...baseAccountMenuItems,
+    ...baseAccountMenuItems.map((item) => {
+      if (item.path === "/sign-out" || item.label === "Sign Out") {
+        return {
+          ...item,
+          path: undefined,
+          action: () => {
+            dispatch(logout());
+            navigate("/", { replace: true });
+          },
+        };
+      }
+      return item;
+    }),
     ...(isAdminRole(currentRole)
       ? [
           {
