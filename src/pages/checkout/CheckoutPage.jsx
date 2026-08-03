@@ -616,6 +616,63 @@ const buildOrderItems = (items = []) =>
     )
     .filter((item) => Boolean(item.productId));
 
+const normalizePincode = (value) => String(value || "").trim();
+const normalizeServiceabilityMode = (value) => {
+  const mode = String(value || "inherit").trim().toLowerCase();
+  if (["all_pincodes", "all_india", "all_locations"].includes(mode)) return "all_pincodes";
+  if (["allowlist", "selected_pincodes", "serviceable_pincodes", "allow_pincodes"].includes(mode)) return "allowlist";
+  if (["regions", "selected_states", "selected_cities"].includes(mode)) return "regions";
+  if (mode === "disabled") return "disabled";
+  return "inherit";
+};
+const normalizeList = (value) =>
+  (Array.isArray(value) ? value : String(value || "").split(/[\n,]+/))
+    .map((item) => String(item || "").trim().toLowerCase())
+    .filter(Boolean);
+const listIncludes = (list, value) =>
+  normalizeList(list).includes(String(value || "").trim().toLowerCase());
+const getClientDeliverabilityBlockers = (items = [], address = {}) => {
+  const pincode = normalizePincode(
+    address?.postalCode || address?.postal_code || address?.pincode || address?.zip,
+  );
+  if (!pincode) return [];
+  return items
+    .map((item) => {
+      const product = getCartItemProduct(item);
+      const shipping = product?.shipping && typeof product.shipping === "object"
+        ? product.shipping
+        : {};
+      const mode = normalizeServiceabilityMode(shipping.serviceabilityMode);
+      const allowed = shipping.allowPincodes || shipping.serviceablePincodes || [];
+      const title = getCartItemTitle(item);
+
+      if (mode === "disabled") {
+        return { title, pincode, reason: "Delivery is disabled for this product." };
+      }
+      if (mode === "allowlist" && !listIncludes(allowed, pincode)) {
+        return { title, pincode, reason: `Not in this product's allowed pincode list.` };
+      }
+      if (mode === "regions") {
+        const regionAllowed =
+          !normalizeList(shipping.regions).length ||
+          listIncludes(shipping.regions, pincode) ||
+          listIncludes(shipping.regions, address?.state) ||
+          listIncludes(shipping.regions, address?.city);
+        const stateAllowed =
+          !normalizeList(shipping.states).length ||
+          listIncludes(shipping.states, address?.state);
+        const cityAllowed =
+          !normalizeList(shipping.cities).length ||
+          listIncludes(shipping.cities, address?.city);
+        if (!regionAllowed || !stateAllowed || !cityAllowed) {
+          return { title, pincode, reason: "Not in this product's delivery region." };
+        }
+      }
+      return null;
+    })
+    .filter(Boolean);
+};
+
 const openRazorpayCheckout = async ({
   dispatch,
   run,
@@ -762,9 +819,7 @@ export default function CheckoutPage() {
     const providers = Array.isArray(paymentState.current?.providers)
       ? paymentState.current.providers
       : [];
-    return providers.filter(
-      (option) => option.provider !== "cod", // || option.enabled !== false,
-    );
+    return providers.filter((option) => option.enabled !== false);
   }, [paymentState]);
   const quotePayableAmount = getQuotePayableAmount(quoteData);
 
@@ -1131,6 +1186,19 @@ export default function CheckoutPage() {
     watchedCouponCode,
     watchedWalletAmount,
   ]);
+  const deliverabilityBlockers = useMemo(
+    () => getClientDeliverabilityBlockers(items, quoteShippingAddress),
+    [items, quoteShippingAddress],
+  );
+  const deliverabilityError = useMemo(() => {
+    if (!deliverabilityBlockers.length) return "";
+    const first = deliverabilityBlockers[0];
+    const extra =
+      deliverabilityBlockers.length > 1
+        ? ` and ${deliverabilityBlockers.length - 1} more item(s)`
+        : "";
+    return `${first.title}${extra} cannot be delivered to ${first.pincode}. ${first.reason}`;
+  }, [deliverabilityBlockers]);
 
   useEffect(() => {
     const sellerIds = paymentSellerContext.sellerIds.join(",");
@@ -1161,6 +1229,13 @@ export default function CheckoutPage() {
     if (!quotePayload) {
       setQuoteData(null);
       setQuoteError("");
+      setQuoteLoading(false);
+      return undefined;
+    }
+
+    if (deliverabilityError) {
+      setQuoteData(null);
+      setQuoteError(deliverabilityError);
       setQuoteLoading(false);
       return undefined;
     }
@@ -1201,14 +1276,9 @@ export default function CheckoutPage() {
       active = false;
       window.clearTimeout(timer);
     };
-  }, [dispatch, quotePayload]);
+  }, [dispatch, quotePayload, deliverabilityError]);
 
-  const loading =
-    cartState.loading ||
-    walletState.loading ||
-    orderState.loading ||
-    paymentState.loading ||
-    submittingOrder;
+  const checkoutActionLoading = orderState.loading || submittingOrder;
 
   const saveCheckoutAddress = async (values) => {
     const addressResult = checkoutAddressSchema.safeParse({
@@ -1643,7 +1713,7 @@ export default function CheckoutPage() {
                           postalCodes={postalCodes}
                           showSavedAddressFields={true}
                           addressLabels={addressLabels}
-                          loading={loading}
+                          loading={checkoutActionLoading}
                           onCancel={() => setValue("useNewAddress", false)}
                           onSave={handleSaveShippingAddressOnly}
                         />
@@ -1666,7 +1736,7 @@ export default function CheckoutPage() {
                         postalCodes={postalCodes}
                         showSavedAddressFields={true}
                         addressLabels={addressLabels}
-                        loading={loading}
+                        loading={checkoutActionLoading}
                         onCancel={() => setValue("useNewAddress", false)}
                         onSave={handleSaveShippingAddressOnly}
                       />
@@ -1691,7 +1761,7 @@ export default function CheckoutPage() {
                   quote={quoteData}
                   quoteLoading={quoteLoading}
                   quoteError={quoteError}
-                  loading={loading}
+                  loading={checkoutActionLoading}
                   paymentOptions={paymentOptions}
                   paymentOptionsLoading={
                     paymentState.loading && !paymentOptions.length

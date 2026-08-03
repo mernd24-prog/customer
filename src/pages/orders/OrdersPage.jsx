@@ -1252,6 +1252,11 @@ function OrderDetail({ orderId, track }) {
                             <span>Reverse invoice: available in Order documents</span>
                           )}
                         </div>
+                        {isCodOrder && (
+                          <p className="mt-2 rounded-[6px] bg-[#FFF7E6] px-3 py-2 text-xs text-[#8A5A00]">
+                            COD refund: after approval, the refund is completed through the marketplace COD refund process. No Razorpay gateway refund is created for COD payment.
+                          </p>
+                        )}
                       </div>
                     );
                   })}
@@ -1333,6 +1338,11 @@ function OrderDetail({ orderId, track }) {
                             Reverse invoice: {creditNoteId ? "available in Order documents" : "pending"}
                           </span>
                         </div>
+                        {isCodOrder && (
+                          <p className="mt-2 rounded-[6px] bg-[#FFF7E6] px-3 py-2 text-xs text-[#8A5A00]">
+                            COD refund: after return approval and QC, refund is completed through wallet/bank/manual COD process according to marketplace policy.
+                          </p>
+                        )}
 
                         {returnItems.length > 0 && (
                           <div className="mt-3 grid gap-2">
@@ -1644,7 +1654,9 @@ function OrderSummaryCard({ order }) {
   const currency = getOrderCurrency(order);
   const amount = getCustomerOrderAmount(order);
   const quantity = orderItems.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
-  const paymentMethod = humanize(getPaymentMethod(order), "N/A");
+  const rawPaymentMethod = getPaymentMethod(order);
+  const isCodOrder = String(rawPaymentMethod || "").toLowerCase() === "cod";
+  const paymentMethod = humanize(rawPaymentMethod, "N/A");
 
   const handleCopyOrderId = (e) => {
     e.preventDefault();

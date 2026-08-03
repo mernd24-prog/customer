@@ -23,7 +23,11 @@ const buildApiUrl = (path = "") =>
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: API_TIMEOUT_MS,
-  headers: { "Content-Type": "application/json" },
+  headers: {
+    "Content-Type": "application/json",
+    "Cache-Control": "no-store",
+    Pragma: "no-cache",
+  },
 });
 
 let refreshPromise = null;
@@ -124,6 +128,9 @@ const requestWithReadRetry = async (config) => {
 };
 
 api.interceptors.request.use((config) => {
+  config.headers = config.headers || {};
+  config.headers["Cache-Control"] = "no-store";
+  config.headers.Pragma = "no-cache";
   const token = tokenStorage.getAccessToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
   if (

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Clock3, Heart, ShoppingCart } from "lucide-react";
+import { Banknote, Clock3, Heart, ShoppingCart } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
 import Label from "../common/label/Label";
 import {
@@ -18,6 +18,7 @@ import {
   applyImageFallback,
   getImageFallbackSrc,
   getProductAvailableStock,
+  isProductCodAvailable,
 } from "../../utils/ecommerce";
 import { cn } from "../../lib/utils";
 import StarRating from "../../pages/products/components/starRating";
@@ -136,6 +137,7 @@ export default function ProductCard({
     : "";
 
   const availableStock = getProductAvailableStock(cardProduct);
+  const codAvailable = isProductCodAvailable(cardProduct);
 
   const isInStock =
     inStock !== undefined
@@ -235,11 +237,11 @@ export default function ProductCard({
               showValue
               className="mt-3"
             />
-            {/* {codAvailable && (
+            {codAvailable && (
               <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
                 <Banknote size={12} /> COD Available
               </span>
-            )} */}
+            )}
           </Link>
 
           <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
@@ -334,7 +336,7 @@ export default function ProductCard({
             {dealBadge}
           </Label>
         )}
-        {/* {codAvailable && (
+        {codAvailable && (
           <Label
             variant="success"
             className="
@@ -355,7 +357,7 @@ export default function ProductCard({
           >
             <Banknote size={12} /> COD Available
           </Label>
-        )} */}
+        )}
         {/* {resolvedBadgeLabel && (
           <span
             className="flex h-[24px] items-center justify-center rounded-[50px] px-[12px] py-[5px] text-[11px] font-bold uppercase tracking-wide sm:h-[28px] sm:px-[15px] sm:text-[12px]"

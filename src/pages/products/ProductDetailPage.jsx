@@ -1858,7 +1858,7 @@ export default function ProductDetailPage() {
                           Delivery
                         </span>
                       ) : null}
-                      {/* {productCodAvailable && (
+                      {productCodAvailable && (
                         <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
                           <Banknote size={11} /> COD Available
                         </span>
@@ -1867,7 +1867,7 @@ export default function ProductDetailPage() {
                         <span className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600">
                           Cod Not Available
                         </span>
-                      )} */}
+                      )}
                     </div>
                   )}
 

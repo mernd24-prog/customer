@@ -145,6 +145,20 @@ const getRefundPolicy = (order = {}) => {
     {}
   );
 };
+const getPaymentMethod = (order = {}) => {
+  const relations = order?.relations || {};
+  const payment = Array.isArray(relations.payments) ? relations.payments[0] : null;
+  return String(
+    payment?.provider ||
+      payment?.method ||
+      order?.payment_provider ||
+      order?.paymentProvider ||
+      order?.payment_method ||
+      order?.paymentMethod ||
+      "",
+  ).toLowerCase();
+};
+const isCodOrder = (order = {}) => getPaymentMethod(order) === "cod";
 const calculateEstimatedRefundBreakup = (order = {}, item = null, quantity = 1) => {
   if (!item) {
     return { total: 0, rows: [], note: "" };
@@ -184,6 +198,8 @@ const calculateEstimatedRefundBreakup = (order = {}, item = null, quantity = 1) 
   const platformFeeTaxRefund = platformFeeRefundable ? platformFeeTaxTotal * proportion : 0;
   const total = Math.max(0, productPaid + shippingRefund + platformFeeRefund + platformFeeTaxRefund);
 
+  const cod = isCodOrder(order);
+
   return {
     total,
     rows: [
@@ -205,7 +221,10 @@ const calculateEstimatedRefundBreakup = (order = {}, item = null, quantity = 1) 
         }
         : null,
     ].filter(Boolean),
-    note: "Refund is based on the amount you paid for the returned quantity. Shipping and platform fee are added only if refundable as per policy.",
+    note: cod
+      ? "Refund is based on the COD amount payable for the returned quantity. After approval and QC, refund will be completed by wallet/bank/manual process according to the marketplace COD policy."
+      : "Refund is based on the amount you paid for the returned quantity. Shipping and platform fee are added only if refundable as per policy.",
+    cod,
   };
 };
 const getItemImage = (item) => {
@@ -745,6 +764,11 @@ function ReturnRequestPage({ orderId }) {
                       <p className="mt-2 text-xs text-emerald-700">
                         {estimatedRefund.note}
                       </p>
+                      {estimatedRefund.cod && (
+                        <p className="mt-1 rounded-md bg-emerald-100 px-2 py-1 text-xs text-emerald-800">
+                          COD order: no Razorpay gateway refund is created. Admin/seller will complete the approved refund through the configured COD refund process.
+                        </p>
+                      )}
                       <p className="mt-0.5 text-xs text-emerald-600">
                         Final refund is subject to review and QC.
                       </p>
