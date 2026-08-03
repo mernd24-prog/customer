@@ -17,6 +17,7 @@ import HeaderDropdown from "./HeaderDropdown";
 import MenuDropdown from "./MenuDropdown";
 
 import { fetchMe } from "../../features/user/userSlice";
+import { logout } from "../../features/auth/authSlice";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import { getRole, isAdminRole } from "../../utils/roles";
 import { asArray, keyOr, textOr } from "../../utils/content";
@@ -65,7 +66,19 @@ export const Navbar = ({ icons: propIcons }) => {
     "/image/png/person.png";
 
   const accountMenuItems = withIcons([
-    ...baseAccountMenuItems,
+    ...baseAccountMenuItems.map((item) => {
+      if (item.path === "/sign-out") {
+        return {
+          ...item,
+          path: undefined,
+          action: () => {
+            dispatch(logout());
+            navigate("/", { replace: true });
+          },
+        };
+      }
+      return item;
+    }),
     ...(isAdminRole(currentRole)
       ? [
           { label: "Admin Products", path: "/admin/products", icon: "settings" },

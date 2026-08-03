@@ -15,6 +15,7 @@ import { fetchBrands } from "../../features/catalog/catalogSlice";
 import {
   buildRatingCountMap,
   getImageUrlFromValue,
+  getProductPrice,
   isProductInStock,
 } from "../../utils/ecommerce";
 import {
@@ -39,6 +40,8 @@ export default function BrandPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [items, setItems] = useState([]);
+  const [productFacets, setProductFacets] = useState({});
+  const [facetsContextKey, setFacetsContextKey] = useState("");
   const { updateSearchParams } = useSearchParamHelper(setSearchParams);
   const [pageInfo, setPageInfo] = useState({
     page: 1,
@@ -78,6 +81,73 @@ export default function BrandPage() {
     [ratingCounts],
   );
 
+  const attributeFacets = useMemo(
+    () =>
+      (productFacets?.attributes || [])
+        .map((attribute) => ({
+          ...attribute,
+          values: (attribute.values || []).filter(
+            (val) => val.value && Number(val.count || 0) > 0,
+          ),
+        }))
+        .filter((attribute) => attribute.key && attribute.values.length > 1),
+    [productFacets?.attributes],
+  );
+
+  const currentContextKey = useMemo(() => {
+    const p = new URLSearchParams(searchParams);
+    p.delete("minPrice");
+    p.delete("maxPrice");
+    p.delete("page");
+    return p.toString();
+  }, [searchParams]);
+
+  const [absolutePriceLimits, setAbsolutePriceLimits] = useState({
+    min: null,
+    max: null,
+    key: "",
+  });
+
+  useEffect(() => {
+    if (currentContextKey !== facetsContextKey) return;
+
+    let backendMin = productFacets?.priceStats?.min ?? productFacets?.price?.min;
+    let backendMax = productFacets?.priceStats?.max ?? productFacets?.price?.max;
+
+    let currentMin = backendMin;
+    let currentMax = backendMax;
+
+    if (currentMin == null || currentMax == null || currentMin >= currentMax) {
+      if (items.length > 0) {
+        const prices = items
+          .map((p) => Number(getProductPrice(p) || 0))
+          .filter((price) => price > 0);
+
+        if (prices.length > 0) {
+          currentMin = Math.min(...prices);
+          currentMax = Math.max(...prices);
+        }
+      }
+    }
+
+    if (currentMin != null && currentMax != null) {
+      setAbsolutePriceLimits((prev) => {
+        if (prev.key !== currentContextKey) {
+          return { min: currentMin, max: currentMax, key: currentContextKey };
+        }
+        const newMin =
+          prev.min == null ? currentMin : Math.min(prev.min, currentMin);
+        const newMax =
+          prev.max == null ? currentMax : Math.max(prev.max, currentMax);
+
+        if (newMin !== prev.min || newMax !== prev.max) {
+          return { min: newMin, max: newMax, key: currentContextKey };
+        }
+        return prev;
+      });
+    }
+  }, [productFacets?.price, items, currentContextKey, facetsContextKey]);
+
   useEffect(() => {
     setBrandLoading(true);
     setBrandError(null);
@@ -88,7 +158,7 @@ export default function BrandPage() {
     dispatch(fetchBrands({ limit: 500 }))
       .then((action) => {
         const data = action?.payload?.data;
-        const list = Array.isArray(data)
+        const list = Array.isArray(data) 
           ? data
           : Array.isArray(data?.items)
             ? data.items
@@ -161,13 +231,20 @@ export default function BrandPage() {
       if (append) setIsLoadingMore(true);
       const result = await dispatch(fetchProducts(params)).unwrap();
       const data = result?.data || {};
-      const list =
+      let list =
         data.hits ||
         data.products ||
         data.results ||
         data.items ||
         data.list ||
         (Array.isArray(data) ? data : []);
+
+      const p = new URLSearchParams(searchParams);
+      p.delete("minPrice");
+      p.delete("maxPrice");
+      p.delete("page");
+      const ctxKey = p.toString();
+
       const meta =
         result?.meta?.pagination || result?.pagination || result?.meta || {};
       setPageInfo({
@@ -175,6 +252,8 @@ export default function BrandPage() {
         totalPages: Number(meta.totalPages || meta.pages || 1),
         total: Number(meta.total || meta.count || list.length || 0),
       });
+      setProductFacets(result?.meta?.facets || result?.meta?.filters || {});
+      setFacetsContextKey(ctxKey);
       setItems((prev) => (append ? [...prev, ...list] : list));
       setFirstLoadDone(true);
       setIsLoadingMore(false);
@@ -258,14 +337,18 @@ export default function BrandPage() {
         next.delete("minPrice");
         next.delete("maxPrice");
       } else if (filter?.groupKey) {
-        const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
-          (value) => value !== filter.value,
-        );
-        const serialized = serializeMultiValue(nextValues);
-        if (serialized) {
-          next.set(filter.groupKey, serialized);
-        } else {
+        if (filter.value === undefined) {
           next.delete(filter.groupKey);
+        } else {
+          const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+            (value) => value !== filter.value,
+          );
+          const serialized = serializeMultiValue(nextValues);
+          if (serialized) {
+            next.set(filter.groupKey, serialized);
+          } else {
+            next.delete(filter.groupKey);
+          }
         }
       } else {
         next.delete(key);
@@ -280,17 +363,20 @@ export default function BrandPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleClearFilters = useCallback(() => {
+    setSearchParams(new URLSearchParams());
+  }, [setSearchParams]);
+
   const activeFilters = [
     searchParams.get("sort") && {
       key: "sort",
       label: `Sort: ${SORT_OPTIONS.find((o) => o.value === searchParams.get("sort"))?.label || searchParams.get("sort")}`,
     },
-    ...selectedRatings.map((rating) => ({
-      key: `rating:${rating}`,
+    searchParams.get("rating") && {
+      key: "rating",
       groupKey: "rating",
-      value: rating,
-      label: `Rating: ${rating}★ & up`,
-    })),
+      label: `Rating: ${searchParams.get("rating").split(",").join(", ")}★ & up`,
+    },
     searchParams.get("inStock") === "true" && {
       key: "inStock",
       label: "In Stock Only",
@@ -312,18 +398,37 @@ export default function BrandPage() {
 
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
-      label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
+      label: `Price: ₹${Number(searchParams.get("minPrice") || absolutePriceLimits.min || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || absolutePriceLimits.max || 150000).toLocaleString("en-IN")}`,
     },
+    ...Array.from(searchParams.entries())
+      .filter(([key, value]) => key.startsWith("attr_") && value)
+      .map(([key, value]) => {
+        const attributeKey = key.replace(/^attr_/, "");
+        const label = attributeFacets?.find((a) => a.key === attributeKey)?.label || attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1);
+        return {
+          key,
+          groupKey: key,
+          label: `${label}: ${value.split(",").join(", ")}`,
+        };
+      }),
   ].filter(Boolean);
 
+  const clearFiltersAction = activeFilters.length > 1 ? handleClearFilters : undefined;
+
   const filterSections = [
-    ((pageInfo.total || items.length) > 1 || searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
+    ((pageInfo.total || items.length) > 1 || searchParams.get("minPrice") || searchParams.get("maxPrice")) &&
+      absolutePriceLimits.min != null &&
+      absolutePriceLimits.max != null &&
+      absolutePriceLimits.max > 0 &&
+      absolutePriceLimits.min < absolutePriceLimits.max && {
       key: "price",
       title: "Price Range",
       content: (
         <PriceRangeFilter
           min={searchParams.get("minPrice")}
           max={searchParams.get("maxPrice")}
+          minLimit={absolutePriceLimits.min}
+          maxLimit={absolutePriceLimits.max}
           onChange={handlePriceChange}
         />
       ),
@@ -342,6 +447,22 @@ export default function BrandPage() {
         />
       ),
     },
+    ...attributeFacets.map((attribute) => ({
+      key: `attr_${attribute.key}`,
+      title: attribute.label,
+      searchable: attribute.searchable && attribute.values.length > 6,
+      content: (
+        <OptionFilter
+          name={`attr_${attribute.key}`}
+          options={attribute.values}
+          selected={parseMultiValue(searchParams.get(`attr_${attribute.key}`))}
+          multiple
+          onChange={(values) =>
+            updateParam(`attr_${attribute.key}`, serializeMultiValue(values))
+          }
+        />
+      ),
+    })),
     /*
     {
       key: "delivery",
@@ -359,7 +480,7 @@ export default function BrandPage() {
           onChange={(values) => {
             const selectedValues = new Set(values);
             updateParams([
-              [
+              [ 
                 "expressDelivery",
                 selectedValues.has("expressDelivery") ? "true" : undefined,
               ],
@@ -374,40 +495,45 @@ export default function BrandPage() {
     },
     */
 
-    {
-      key: "inStock",
-      title: "Availability",
-      content: (
-        <CheckboxListFilter
-          name="availability"
-          options={[
-            {
-              value: "inStock",
-              label: "In Stock",
-              count: availabilityCounts.inStock,
-            },
-            {
-              value: "outOfStock",
-              label: "Out of Stock",
-              count: availabilityCounts.outOfStock,
-            },
-          ]}
-          selected={["inStock", "outOfStock"].filter(
-            (value) => searchParams.get(value) === "true",
-          )}
-          onChange={(values) => {
-            const selectedValues = new Set(values);
-            updateParams([
-              ["inStock", selectedValues.has("inStock") ? "true" : undefined],
-              [
-                "outOfStock",
-                selectedValues.has("outOfStock") ? "true" : undefined,
-              ],
-            ]);
-          }}
-        />
-      ),
-    },
+    availabilityCounts.inStock > 0 || availabilityCounts.outOfStock > 0
+      ? {
+          key: "inStock",
+          title: "Availability",
+          content: (
+            <CheckboxListFilter
+              name="availability"
+              options={[
+                {
+                  value: "inStock",
+                  label: "In Stock",
+                  count: availabilityCounts.inStock,
+                },
+                {
+                  value: "outOfStock",
+                  label: "Out of Stock",
+                  count: availabilityCounts.outOfStock,
+                },
+              ].filter((option) => Number(option.count || 0) > 0)}
+              selected={["inStock", "outOfStock"].filter(
+                (value) => searchParams.get(value) === "true",
+              )}
+              onChange={(values) => {
+                const selectedValues = new Set(values);
+                updateParams([
+                  [
+                    "inStock",
+                    selectedValues.has("inStock") ? "true" : undefined,
+                  ],
+                  [
+                    "outOfStock",
+                    selectedValues.has("outOfStock") ? "true" : undefined,
+                  ],
+                ]);
+              }}
+            />
+          ),
+        }
+      : false,
   ].filter(Boolean);
 
   const breadcrumbItems = [
@@ -479,7 +605,7 @@ export default function BrandPage() {
           filterSections,
           filters: activeFilters,
           onRemoveFilter: removeFilter,
-          onClearFilters: () => setSearchParams(new URLSearchParams()),
+          onClearFilters: clearFiltersAction,
           sidebarOpen,
           onCloseSidebar: () => setSidebarOpen(false),
           loading:

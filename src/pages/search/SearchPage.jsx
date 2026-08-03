@@ -419,29 +419,6 @@ export default function SearchPage() {
     setSearchParams(new URLSearchParams());
   };
 
-  const hasOtherFilters = Array.from(searchParams.keys()).some(
-    (key) => {
-      const value = searchParams.get(key);
-      if (!value || value === "undefined" || value === "null") return false;
-      return [
-        "q",
-        "minPrice",
-        "maxPrice",
-        "minRating",
-        "inStock",
-        "outOfStock",
-        "brand",
-        "tags",
-        "collectionIds",
-        "featured",
-        "bestSeller",
-        "newArrival",
-      ].includes(key) || key.startsWith("attr_");
-    }
-  );
-
-  const clearFiltersAction = hasOtherFilters ? handleClearFilters : undefined;
-
   const activeFilters = [
     q && {
       key: "q",
@@ -469,7 +446,49 @@ export default function SearchPage() {
       key: "outOfStock",
       label: "Out of Stock",
     },
-  ].filter(Boolean);
+    searchParams.get("brand") && {
+      key: "brand",
+      groupKey: "brand",
+      label: `Brand: ${searchParams.get("brand").split(",").join(", ")}`,
+    },
+    searchParams.get("collectionIds") && {
+      key: "collectionIds",
+      groupKey: "collectionIds",
+      label: `Collection: ${searchParams.get("collectionIds").split(",").join(", ")}`,
+    },
+    searchParams.get("tags") && {
+      key: "tags",
+      groupKey: "tags",
+      label: `Tag: ${searchParams.get("tags").split(",").join(", ")}`,
+    },
+    searchParams.get("featured") === "true" && {
+      key: "featured",
+      label: "Featured",
+    },
+    searchParams.get("bestSeller") === "true" && {
+      key: "bestSeller",
+      label: "Best Seller",
+    },
+    searchParams.get("newArrival") === "true" && {
+      key: "newArrival",
+      label: "New Arrival",
+    },
+    ...Array.from(searchParams.entries())
+      .filter(([key, value]) => key.startsWith("attr_") && value)
+      .map(([key, value]) => {
+        const attributeKey = key.replace(/^attr_/, "");
+        const label = attributeFacets?.find((a) => a.key === attributeKey)?.label || attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1);
+        return {
+          key,
+          groupKey: key,
+          label: `${label}: ${value.split(",").join(", ")}`,
+        };
+      }),
+  ]
+    .flat()
+    .filter(Boolean);
+
+  const clearFiltersAction = activeFilters.length > 1 ? handleClearFilters : undefined;
 
   const removeFilter = (key, filter) => {
     setSearchParams((prev) => {
@@ -482,12 +501,16 @@ export default function SearchPage() {
         next.delete("minPrice");
         next.delete("maxPrice");
       } else if (filter?.groupKey) {
-        const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
-          (value) => value !== filter.value,
-        );
-        const serialized = serializeMultiValue(nextValues);
-        if (serialized) next.set(filter.groupKey, serialized);
-        else next.delete(filter.groupKey);
+        if (filter.value === undefined) {
+          next.delete(filter.groupKey);
+        } else {
+          const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+            (value) => value !== filter.value,
+          );
+          const serialized = serializeMultiValue(nextValues);
+          if (serialized) next.set(filter.groupKey, serialized);
+          else next.delete(filter.groupKey);
+        }
       } else if (key === "categoryId" || key === "category") {
         next.delete("category");
         next.delete("categoryId");
@@ -819,7 +842,6 @@ export default function SearchPage() {
     availabilityOptions.length > 0 && {
       key: "availability",
       title: "Availability",
-      defaultOpen: false,
       content: (
         <CheckboxListFilter
           name="availability"

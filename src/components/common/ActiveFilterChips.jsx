@@ -21,7 +21,7 @@ export default function ActiveFilterChips({
           {filter.label} <X size={10} />
         </button>
       ))}
-      {onClear && (
+      {/* {onClear && (
         <button
           type="button"
           onClick={onClear}
@@ -29,7 +29,7 @@ export default function ActiveFilterChips({
         >
           {clearLabel}
         </button>
-      )}
+      )} */}
     </div>
   );
 }

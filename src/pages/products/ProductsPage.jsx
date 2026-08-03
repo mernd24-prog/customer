@@ -466,12 +466,16 @@ export default function ProductsPage() {
         next.delete("minPrice");
         next.delete("maxPrice");
       } else if (filter?.groupKey) {
-        const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
-          (value) => value !== filter.value,
-        );
-        const serialized = serializeMultiValue(nextValues);
-        if (serialized) next.set(filter.groupKey, serialized);
-        else next.delete(filter.groupKey);
+        if (filter.value === undefined) {
+          next.delete(filter.groupKey);
+        } else {
+          const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
+            (value) => value !== filter.value,
+          );
+          const serialized = serializeMultiValue(nextValues);
+          if (serialized) next.set(filter.groupKey, serialized);
+          else next.delete(filter.groupKey);
+        }
       } else next.delete(key);
       next.delete("page");
       return next;
@@ -500,41 +504,25 @@ export default function ProductsPage() {
     });
   }, [setSearchParams]);
 
-  const hasOtherFilters = Array.from(searchParams.keys()).some(
-    (key) =>
-      [
-        "q",
-        "category",
-        "collectionIds",
-        "page",
-        "sort",
-        "limit",
-      ].indexOf(key) === -1
-  );
-  
-  const clearFiltersAction = hasOtherFilters ? handleClearFilters : undefined;
-
   const activeFilters = [
     searchParams.get("category") && {
       key: "category",
       label: `Category: ${searchParams.get("category")}`,
     },
-    ...selectedBrands.map((brand) => ({
-      key: `brand:${brand}`,
+    searchParams.get("brand") && {
+      key: "brand",
       groupKey: "brand",
-      value: brand,
-      label: `Brand: ${brand}`,
-    })),
+      label: `Brand: ${searchParams.get("brand").split(",").join(", ")}`,
+    },
     searchParams.get("productFamilyCode") && {
       key: "productFamilyCode",
       label: `Family: ${searchParams.get("productFamilyCode")}`,
     },
-    ...selectedRatings.map((rating) => ({
-      key: `rating:${rating}`,
+    searchParams.get("rating") && {
+      key: "rating",
       groupKey: "rating",
-      value: rating,
-      label: `Rating: ${rating}★ & up`,
-    })),
+      label: `Rating: ${searchParams.get("rating").split(",").join(", ")}★ & up`,
+    },
     searchParams.get("inStock") === "true" && {
       key: "inStock",
       label: "In Stock Only",
@@ -553,15 +541,17 @@ key: "freeDelivery",
 label: "Free Delivery",
 },
 */
-    ["color", "size", "material", "fit", "storage", "skinType", "shade"]
-      .map(
-        (key) =>
-          searchParams.get(key) && {
-            key,
-            label: `${key}: ${searchParams.get(key)}`,
-          },
-      )
-      .filter(Boolean),
+    ...Array.from(searchParams.entries())
+      .filter(([key, value]) => key.startsWith("attr_") && value)
+      .map(([key, value]) => {
+        const attributeKey = key.replace(/^attr_/, "");
+        const label = attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1);
+        return {
+          key,
+          groupKey: key,
+          label: `${label}: ${value.split(",").join(", ")}`,
+        };
+      }),
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
       label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
@@ -573,6 +563,8 @@ label: "Free Delivery",
   ]
     .flat()
     .filter(Boolean);
+
+  const clearFiltersAction = activeFilters.length > 1 ? handleClearFilters : undefined;
 
   const isSearchMode = Boolean(searchParams.get("q"));
   const pageTitle = isSearchMode
