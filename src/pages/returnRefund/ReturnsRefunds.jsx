@@ -44,41 +44,37 @@ const RETURNS_PAGE_SKELETON = [
 
 /* ─── Status filter options ───────────────────────────────────────────── */
 const STATUS_FILTERS = [
-  { value: "all", label: "All Returns" },
-  { value: "requested", label: "Under Review" },
-  { value: "approved", label: "Approved" },
-  { value: "rejected", label: "Rejected" },
-  { value: "received", label: "Received" },
-  { value: "issue", label: "Action Required" },
-  { value: "refunded", label: "Refunded" },
+  { value: "all",                    label: "All Returns" },
+  { value: "requested",              label: "Requested" },
+  { value: "approved",               label: "Approved" },
+  { value: "rejected",               label: "Rejected" },
+  { value: "reverse_pickup_scheduled", label: "Reverse Pickup Scheduled" },
+  { value: "pickup_failed",          label: "Pickup Failed" },
+  { value: "manual_ship_back",       label: "Manual Ship Back" },
+  { value: "shipped_back",           label: "Shipped Back" },
+  { value: "in_reverse_transit",     label: "In Reverse Transit" },
+  { value: "received",               label: "Received" },
+  { value: "qc_passed",              label: "QC Passed" },
+  { value: "qc_failed",              label: "QC Failed" },
+  { value: "qc_completed",           label: "QC Completed" },
+  { value: "qc_failure_upheld",      label: "QC Failure Upheld" },
+  { value: "refund_pending",         label: "Refund Pending" },
+  { value: "refund_failed",          label: "Refund Failed" },
+  { value: "partially_refunded",     label: "Partially Refunded" },
+  { value: "refunded",               label: "Refunded" },
+  { value: "replacement_requested",  label: "Replacement Requested" },
+  { value: "replacement_pending",    label: "Replacement Pending" },
+  { value: "replacement_created",    label: "Replacement Created" },
+  { value: "replacement_shipped",    label: "Replacement Shipped" },
+  { value: "replacement_delivered",  label: "Replacement Delivered" },
+  { value: "replaced",               label: "Replaced" },
+  { value: "closed",                 label: "Closed" },
 ];
 
-/* maps raw API status → filter bucket */
-const statusToBucket = (status) => {
-  if (!status) return "all";
-  if (status === "requested") return "requested";
-  if (
-    ["approved", "reverse_pickup_scheduled", "manual_ship_back", "shipped_back", "in_reverse_transit"].includes(
-      status,
-    )
-  )
-    return "approved";
-  if (status === "rejected") return "rejected";
-  if (["received", "qc_passed", "qc_completed", "replacement_requested", "replacement_pending", "replacement_created", "replacement_shipped", "replacement_delivered"].includes(status))
-    return "received";
-  if (["pickup_failed", "qc_failed", "qc_failure_upheld", "refund_failed"].includes(status))
-    return "issue";
-  if (
-    [
-      "refunded",
-      "partially_refunded",
-      "refund_pending",
-      "replaced",
-      "closed",
-    ].includes(status)
-  )
-    return "refunded";
-  return "all";
+/* exact-match filter — value is the raw API status string */
+const matchesFilter = (status, filter) => {
+  if (filter === "all") return true;
+  return String(status || "") === filter;
 };
 
 /* ─── Tracking-step builder (unchanged) ───────────────────────────────── */
@@ -110,6 +106,9 @@ const buildTrackingSteps = (ret) => {
 
   const getTimelineDetail = (statuses) => {
     const entry = timeline.find((t) => statuses.includes(t.status));
+    if (statuses.includes("requested")) {
+      return entry?.note || entry?.reason || ret.description || "";
+    }
     if (!entry) return "";
     return entry.note || entry.reason || "";
   };
@@ -117,31 +116,22 @@ const buildTrackingSteps = (ret) => {
   const stepsDef = [
     {
       title: "Return Requested",
-      description: "Your return request has been submitted successfully.",
       statuses: ["requested"],
     },
     {
       title: "Return Approved",
-      description: "Your return request has been approved.",
       statuses: ["approved"],
     },
     {
       title: "Pickup Scheduled",
-      description: "Your return pickup has been scheduled.",
       statuses: ["reverse_pickup_scheduled", "manual_ship_back"],
     },
     {
       title: currentStatus === "pickup_failed" ? "Pickup Failed" : "Product Shipped Back",
-      description: currentStatus === "pickup_failed"
-        ? "The pickup could not be completed. A new pickup will be arranged."
-        : "Your item is on its way back to the seller.",
       statuses: ["pickup_failed", "shipped_back", "in_reverse_transit"],
     },
     {
       title: currentStatus === "qc_failed" ? "Quality Check Failed" : "Quality Check",
-      description: currentStatus === "qc_failed"
-        ? "The returned item did not pass quality inspection."
-        : "We are checking the returned item at our facility.",
       statuses: ["received", "qc_passed", "qc_completed", "qc_failed"],
     },
   ];
@@ -149,7 +139,6 @@ const buildTrackingSteps = (ret) => {
   if (currentStatus === "qc_failure_upheld" || ret.qcReview?.adminDecision === "uphold") {
     stepsDef.push({
       title: "QC Failure Upheld",
-      description: "Marketplace review upheld the QC failure. No refund is due, and the product will be returned to you when required.",
       statuses: ["qc_failure_upheld", "qc_uphold"],
     });
   }
@@ -158,31 +147,22 @@ const buildTrackingSteps = (ret) => {
     const replacementSteps = [
       {
         title: "Replacement Requested",
-        description: ret.replacement?.metadata?.doorstepExchange
-          ? "Your doorstep exchange has been approved."
-          : "Your replacement is awaiting approval.",
         statuses: ["replacement_requested", "replacement_pending"],
       },
       {
         title: "Replacement Order Created",
-        description: ret.replacement?.metadata?.doorstepExchange
-          ? "Your ₹0 replacement order is reserved for the doorstep exchange."
-          : "A linked replacement order has been created at no additional charge.",
         statuses: ["replacement_created"],
       },
       {
         title: "Replacement Shipped",
-        description: "Your replacement product is on its way.",
         statuses: ["replacement_shipped"],
       },
       {
         title: "Replacement Delivered",
-        description: "Your replacement product has been delivered.",
         statuses: ["replacement_delivered"],
       },
       {
         title: "Replacement Completed",
-        description: "The replacement item has been delivered.",
         statuses: ["replaced"],
       },
     ];
@@ -195,15 +175,10 @@ const buildTrackingSteps = (ret) => {
     stepsDef.push(
       {
         title: "Refund Initiated",
-        description:
-          currentStatus === "refund_failed"
-            ? "Refund attempt failed. We will retry."
-            : "Refund will be initiated once the item is approved.",
         statuses: ["refund_pending", "refund_failed"],
       },
       {
         title: "Refund Completed",
-        description: "The refund amount will be credited to your account.",
         statuses: ["refunded", "partially_refunded"],
       },
     );
@@ -212,7 +187,6 @@ const buildTrackingSteps = (ret) => {
   if (currentStatus === "rejected") {
     stepsDef.push({
       title: "Return Rejected",
-      description: "Your return request has been rejected.",
       statuses: ["rejected"],
     });
   } else if (
@@ -221,39 +195,34 @@ const buildTrackingSteps = (ret) => {
   ) {
     stepsDef.push({
       title: "Return Closed",
-      description: "The return request has been closed.",
       statuses: ["closed"],
     });
   }
 
-  let lastCompletedIndex = -1;
-  const mappedSteps = stepsDef.map((def, idx) => {
-    const time = getTimelineTime(def.statuses);
-    const hasBeenRecorded = hasStatus(def.statuses);
-    if (hasBeenRecorded) {
-      lastCompletedIndex = idx;
-    }
-    return {
-      title: def.title,
-      description: getTimelineDetail(def.statuses) || def.description,
-      time: time || "—",
-      completed: false,
-      active: false,
-      hasBeenRecorded,
-    };
-  });
+  const recordedSteps = stepsDef
+    .map((def) => {
+      const time = getTimelineTime(def.statuses);
+      const hasBeenRecorded = hasStatus(def.statuses);
+      return {
+        title: def.title,
+        description: getTimelineDetail(def.statuses),
+        time: time || "—",
+        completed: false,
+        active: false,
+        hasBeenRecorded,
+      };
+    })
+    .filter((step) => step.hasBeenRecorded);
 
-  mappedSteps.forEach((step, idx) => {
-    if (step.hasBeenRecorded) {
-      if (idx === lastCompletedIndex) {
-        step.active = true;
-      } else {
-        step.completed = true;
-      }
+  recordedSteps.forEach((step, idx) => {
+    if (idx === recordedSteps.length - 1) {
+      step.active = true;
+    } else {
+      step.completed = true;
     }
   });
 
-  return mappedSteps;
+  return recordedSteps;
 };
 
 /* ─── Expected-date helper (unchanged) ────────────────────────────────── */
@@ -312,7 +281,7 @@ function StatusDropdown({ value, onChange }) {
       </button>
 
       {open && (
-        <ul className="absolute left-0 right-0 z-50 mt-1.5 overflow-hidden rounded-[10px] border border-[#CE9F2D66] bg-white py-1 shadow-lg">
+        <ul className="absolute left-0 right-0 z-10 mt-1.5 max-h-64 overflow-y-auto rounded-[10px] border border-[#CE9F2D66] bg-white py-1 shadow-lg [scrollbar-width:thin] [scrollbar-color:#CE9F2D_transparent]">
           {STATUS_FILTERS.map((opt) => {
             const isActive = value === opt.value;
             return (
@@ -345,6 +314,7 @@ function StatusDropdown({ value, onChange }) {
   );
 }
 
+
 /* ─── Main page ───────────────────────────────────────────────────────── */
 function ReturnsRefundsPage() {
   const dispatch = useDispatch();
@@ -373,11 +343,21 @@ function ReturnsRefundsPage() {
     };
   }, [dispatch]);
 
+  const [visibleCount, setVisibleCount] = useState(3);
+
+  const handleStatusFilterChange = (newFilter) => {
+    setStatusFilter(newFilter);
+    setVisibleCount(3);
+  };
+
   /* filtered list */
   const filteredReturns =
     statusFilter === "all"
       ? returns
-      : returns.filter((ret) => statusToBucket(ret.status) === statusFilter);
+      : returns.filter((ret) => matchesFilter(ret.status, statusFilter));
+
+  const visibleReturns = filteredReturns.slice(0, visibleCount);
+  const hasMoreReturns = visibleCount < filteredReturns.length;
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -570,7 +550,7 @@ function ReturnsRefundsPage() {
                 </span>
               )}
             </p>
-            <StatusDropdown value={statusFilter} onChange={setStatusFilter} />
+            <StatusDropdown value={statusFilter} onChange={handleStatusFilterChange} />
           </div>
 
           {/* ── Return cards ────────────────────────────────────────── */}
@@ -579,7 +559,21 @@ function ReturnsRefundsPage() {
               No Returns Found for This Filter.
             </div>
           ) : (
-            renderReturnsList(filteredReturns)
+            <>
+              {renderReturnsList(visibleReturns)}
+              {hasMoreReturns && (
+                <div className="mt-8 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setVisibleCount((prev) => prev + 3)}
+                    className="flex items-center gap-2 rounded-xl border border-[#CE9F2D] bg-white px-6 py-3 font-sans text-[14px] font-semibold text-[#3E4093] shadow-sm transition-all hover:bg-[#FFEFC8]/40 focus:outline-none"
+                  >
+                    Load More
+                    <ChevronDown size={16} className="text-[#CE9F2D]" />
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </ApiState>
       </div>

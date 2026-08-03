@@ -13,9 +13,7 @@ export default function CollectionToolbar({
   onOpenFilters,
   className = "",
 }) {
-  const shellClassName = countText
-    ? `mb-4 flex flex-col-reverse sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 ${className}`
-    : `flex flex-col-reverse sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 ${className}`;
+  const shellClassName = `mb-4 flex flex-col-reverse sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 ${className}`;
 
   const pageSizeOptions = pageSizes.map((size) => ({
     value: size,
@@ -30,7 +28,7 @@ export default function CollectionToolbar({
         </p>
       )}
 
-      <div className="flex w-full sm:w-auto items-center gap-2 sm:gap-3">
+      <div className="flex w-full sm:w-auto items-center gap-2 sm:gap-3 sm:ml-auto">
         {/* Sort Trigger */}
         {!!sortOptions.length && (
           <CustomDropdown

@@ -18,11 +18,7 @@ const PolicySection = ({ title, points, description, footer }) => {
 
   return (
     <section className="py-1 first:pt-0">
-      {title && (
-        <h2 className="mb-3 text-h3 font-bold text-ink">
-          {title}
-        </h2>
-      )}
+      {title && <h2 className="mb-3 text-h3 font-bold text-ink">{title}</h2>}
 
       {description && (
         <p className="mb-8 text-[14px] md:text-base leading-relaxed text-muted">
@@ -43,9 +39,9 @@ const PolicySection = ({ title, points, description, footer }) => {
               {getTextLines(point.description).length > 1 ? (
                 <ul className="space-y-2">
                   {getTextLines(point.description).map((line, lineIdx) => (
-                    <li key={lineIdx} className="flex items-start gap-2 px-4">
+                    <li key={lineIdx} className="flex items-start gap-2 px-2">
                       <img
-                        src="/image/png/arrow.png"
+                        src="/image/png/arrow.svg"
                         alt=""
                         className="my-auto h-3 w-3 flex-shrink-0 object-contain md:h-3.5 md:w-3.5"
                       />
