@@ -6,6 +6,7 @@ import Seo from "../../components/common/Seo";
 import {
   BrandProductPage,
   CheckboxListFilter,
+  OptionFilter,
   PriceRangeFilter,
   RatingFilter,
 } from "../../components/ecommerce";

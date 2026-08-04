@@ -6,6 +6,7 @@ import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import { fetchWallet } from "../../features/wallet/walletSlice";
 import { formatMoney } from "../../utils/ecommerce";
+import { WALLET_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
 
 export function WalletPage() {
   const dispatch = useDispatch();
@@ -27,6 +28,8 @@ export function WalletPage() {
           empty={!wallet && !walletState.loading}
           emptyTitle="Wallet not available"
           emptyText="Your wallet information will appear here."
+          skeletonLayout={WALLET_PAGE_SKELETON}
+          skeletonContainerClass="bg-transparent"
         >
           {wallet && (
             <div className="rounded-[var(--customer-radius)] bg-gradient-to-br from-ink to-muted p-6 text-white">

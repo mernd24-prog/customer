@@ -8,39 +8,8 @@ import { notify } from "../../utils/notify";
 import { ChevronDown } from "lucide-react";
 import ReturnItemCard from "./component/ReturnItemCard";
 import ReturnTrackingCard from "./component/ReturnTrackingCard";
+import { RETURNS_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
 
-const RETURNS_PAGE_SKELETON = [
-  {
-    type: "col",
-    className: "gap-6",
-    count: 3,
-    children: [
-      { 
-        type: "row", 
-        className: "w-full rounded-[15px] border border-[#EFE5D2] bg-white p-4 flex-col sm:flex-row sm:items-start gap-4",
-        children: [
-          { type: "box", width: "80px", height: "80px", className: "shrink-0 rounded-[8px]" },
-          { 
-            type: "col", 
-            className: "w-full flex-1 gap-2", 
-            children: [
-              { type: "box", width: "70%", height: "16px", className: "rounded-md" },
-              { type: "box", width: "40%", height: "14px", className: "rounded-md" },
-              { type: "row", className: "gap-4", children: [
-                 { type: "box", width: "80px", height: "14px", className: "rounded-md" },
-                 { type: "box", width: "80px", height: "14px", className: "rounded-md" },
-              ]},
-              { type: "row", className: "mt-2 pt-2 gap-3", children: [
-                 { type: "box", width: "120px", height: "32px", className: "rounded-full" },
-                 { type: "box", width: "120px", height: "32px", className: "rounded-full" },
-              ]}
-            ]
-          }
-        ]
-      }
-    ]
-  }
-];
 
 /* ─── Status filter options ───────────────────────────────────────────── */
 const STATUS_FILTERS = [

@@ -147,14 +147,15 @@ export default function WatchlistPage() {
           />
 
           {isLoading ? (
-            <div className="mt-8 lg:mt-10 rounded-[16px] border border-gold/50 bg-[#FFFDF8] sm:rounded-[20px] p-4 lg:p-6">
+            <div className="mt-8 lg:mt-10 rounded-[16px] border border-gold/50 bg-[#FFFDF8] sm:rounded-[20px]">
               <SkeletonLoader 
                 count={products.length || 3} 
-                containerClass="grid gap-4" 
+                containerClass="flex flex-col" 
+                wrapperClass="border-b border-[#E7D9B8] last:border-b-0"
                 layout={[
                   {
                     type: "row",
-                    className: "items-start gap-4 sm:gap-6 py-4",
+                    className: "items-start gap-4 sm:gap-6 p-4 lg:p-6",
                     children: [
                       { type: "box", width: "120px", height: "120px", rounded: "rounded-[12px]", className: "shrink-0 lg:w-[180px] lg:h-[180px]" },
                       {

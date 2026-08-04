@@ -35,6 +35,37 @@ export default function ShipmentTrackingPanel({
     );
   }
 
+  const sortedShipments = [...shipments].sort((a, b) => {
+    const isReverseA = Boolean(
+      a.return_id ||
+      a.is_return ||
+      a.type === "return" ||
+      a.type === "reverse" ||
+      (a.trackingEvents || []).some(
+        (e) =>
+          e.note?.toLowerCase()?.includes("reverse") ||
+          e.note?.toLowerCase()?.includes("return") ||
+          e.status?.toLowerCase()?.includes("reverse") ||
+          e.status?.toLowerCase()?.includes("return")
+      )
+    );
+    const isReverseB = Boolean(
+      b.return_id ||
+      b.is_return ||
+      b.type === "return" ||
+      b.type === "reverse" ||
+      (b.trackingEvents || []).some(
+        (e) =>
+          e.note?.toLowerCase()?.includes("reverse") ||
+          e.note?.toLowerCase()?.includes("return") ||
+          e.status?.toLowerCase()?.includes("reverse") ||
+          e.status?.toLowerCase()?.includes("return")
+      )
+    );
+    if (isReverseA === isReverseB) return 0;
+    return isReverseA ? 1 : -1;
+  });
+
   return (
     <section className="space-y-4">
       <div>
@@ -43,7 +74,21 @@ export default function ShipmentTrackingPanel({
           Each Seller Package May Move Separately.
         </p> */}
       </div>
-      {shipments.map((shipment, index) => {
+      {sortedShipments.map((shipment, index) => {
+        const isReverse = Boolean(
+          shipment.return_id ||
+          shipment.is_return ||
+          shipment.type === "return" ||
+          shipment.type === "reverse" ||
+          (shipment.trackingEvents || []).some(
+            (e) =>
+              e.note?.toLowerCase()?.includes("reverse") ||
+              e.note?.toLowerCase()?.includes("return") ||
+              e.status?.toLowerCase()?.includes("reverse") ||
+              e.status?.toLowerCase()?.includes("return")
+          )
+        );
+
         const displayStatus =
           orderDeliveryStatus === "delivered"
             ? "delivered"
@@ -75,7 +120,8 @@ export default function ShipmentTrackingPanel({
           >
             {/* Shipment Information */}
             <OrderDetailSectionCard
-              title="Shipment Information"
+              title={isReverse ? "Return Pickup Information" : "Shipment Information"}
+
               headerClassName="!min-h-[60px] !py-4"
               titleClassName="text-lg font-bold"
               bodyClassName="p-5"
@@ -150,7 +196,7 @@ export default function ShipmentTrackingPanel({
 
             {/* Tracking Timeline */}
             <OrderDetailSectionCard
-              title="Tracking Timeline"
+              title={isReverse ? "Return Timeline" : "Tracking Timeline"}
               headerClassName="!min-h-[60px] !py-4"
               titleClassName="text-lg font-bold"
               bodyClassName="p-5"

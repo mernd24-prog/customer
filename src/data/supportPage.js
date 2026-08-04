@@ -85,7 +85,7 @@ export const SUPPORT_FALLBACK_TOPICS = [
   {
     title: "Return & Refund",
     image: "/image/png/Return-refund.png",
-    path: "/returns",
+    path: "/returns-refunds",
   },
   {
     title: "Payment Issues",
