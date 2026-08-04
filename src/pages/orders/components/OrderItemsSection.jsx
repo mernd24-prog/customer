@@ -1010,144 +1010,146 @@ function OrderItemsSection({
                       <OrderItemCard item={item} {...itemProps} />
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2 text-xs font-semibold">
-                    <span
-                      className={`rounded-full px-3 py-1 capitalize ${fulfillment.delivered ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-700"}`}
-                    >
-                      {label(fulfillment.status)}
-                    </span>
-                    <span
-                      className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}
-                    >
-                      {policy.returnable
-                        ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}`
-                        : "Non-returnable"}
-                    </span>
-                    {policy.returnable && policy.eligibleUntil && (
-                      <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-700">
-                        Return until {formatDate(policy.eligibleUntil)}
-                      </span>
-                    )}
-                    {returnRequest && (
-                      <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex flex-wrap gap-2 text-xs font-semibold">
+                      {/* <span
+                        className={`rounded-full px-3 py-1 capitalize ${fulfillment.delivered ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-700"}`}
+                      >
                         {label(fulfillment.status)}
+                      </span> */}
+                      <span
+                        className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}
+                      >
+                        {policy.returnable
+                          ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}`
+                          : "Non-returnable"}
                       </span>
-                    )}
-                    {returnedQuantity > 0 && (
-                      <span className="rounded-full bg-purple-50 px-3 py-1 text-purple-700">
-                        Returned/requested {returnedQuantity} of{" "}
-                        {getItemQuantity(item)}
-                      </span>
-                    )}
-                    {policy.returnable && returnableQuantity > 0 && (
-                      <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">
-                        Returnable now {returnableQuantity}
-                      </span>
-                    )}
-                  </div>
-                  {/* {expanded && (
-                    <div className="grid gap-3 rounded-xl border border-[#E7D9B8] bg-white p-4">
-                      <div className="grid gap-2 rounded-lg bg-[#F8FAFC] px-3 py-3 text-xs text-[#5E6472] sm:grid-cols-2 lg:grid-cols-4">
-                        <span>
-                          <strong className="block text-[#1B1D60]">
-                            Item status
-                          </strong>
-                          <span className="capitalize">
-                            {label(fulfillment.status)}
-                          </span>
+                      {policy.returnable && policy.eligibleUntil && (
+                        <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-700">
+                          Return until {formatDate(policy.eligibleUntil)}
                         </span>
-                        <span>
-                          <strong className="block text-[#1B1D60]">
-                            Courier
-                          </strong>
-                          {tracking.courier
-                            ? label(tracking.courier)
-                            : "Not added yet"}
-                        </span>
-                        <span>
-                          <strong className="block text-[#1B1D60]">
-                            Tracking / AWB
-                          </strong>
-                          {tracking.trackingNumber || "Not added yet"}
-                        </span>
-                        <span>
-                          <strong className="block text-[#1B1D60]">
-                            Delivered on
-                          </strong>
-                          {fulfillment.deliveredAt
-                            ? formatDate(fulfillment.deliveredAt)
-                            : "Pending"}
-                        </span>
-                        {tracking.trackingUrl && (
-                          <a
-                            href={tracking.trackingUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="font-bold text-[#3E4093] underline-offset-2 hover:underline"
-                          >
-                            Open courier tracking
-                          </a>
-                        )}
-                      </div>
-
+                      )}
                       {returnRequest && (
-                        <div className="grid gap-2 rounded-lg bg-[#FFF8E7] px-3 py-3 text-xs text-[#5E6472] sm:grid-cols-3">
-                          <span>
-                            <strong className="block text-[#1B1D60]">
-                              Return/refund
-                            </strong>
-                            {`${label(returnRequest.status)} · ${returnableQuantity > 0 ? `${returnableQuantity} left` : "No quantity left"}`}
-                          </span>
-                          <span>
-                            <strong className="block text-[#1B1D60]">
-                              Refund status
-                            </strong>
-                            {returnRequest?.refund?.status
-                              ? label(returnRequest.refund.status)
-                              : "Not started"}
-                          </span>
-                          <span>
-                            <strong className="block text-[#1B1D60]">
-                              Refund amount
-                            </strong>
-                            {returnRequest?.refundAmount ||
-                            returnRequest?.refundBreakup?.totalRefundAmount
-                              ? itemProps.formatMoney(
-                                  returnRequest.refundAmount ||
-                                    returnRequest.refundBreakup
-                                      ?.totalRefundAmount,
-                                  itemProps.currency,
-                                )
-                              : "—"}
-                          </span>
-                        </div>
+                        <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">
+                          {label(fulfillment.status)}
+                        </span>
+                      )}
+                      {returnedQuantity > 0 && (
+                        <span className="rounded-full bg-purple-50 px-3 py-1 text-purple-700">
+                          Returned/requested {returnedQuantity} of{" "}
+                          {getItemQuantity(item)}
+                        </span>
+                      )}
+                      {policy.returnable && returnableQuantity > 0 && (
+                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">
+                          Returnable Item: {returnableQuantity} 
+                        </span>
                       )}
                     </div>
-                  )} */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    {fulfillment.delivered &&
-                      Boolean(getReviewProductId(item)) && (
-                        <OrderItemReviewAction
-                          item={item}
-                          orderId={orderId}
-                          canReview
-                          existingReview={
-                            reviewByItem[reviewKeyForItem(orderId, item)]
-                          }
-                          reviewChecked={Boolean(
-                            checkedReviewKeys[reviewKeyForItem(orderId, item)],
+                    {/* {expanded && (
+                      <div className="grid gap-3 rounded-xl border border-[#E7D9B8] bg-white p-4">
+                        <div className="grid gap-2 rounded-lg bg-[#F8FAFC] px-3 py-3 text-xs text-[#5E6472] sm:grid-cols-2 lg:grid-cols-4">
+                          <span>
+                            <strong className="block text-[#1B1D60]">
+                              Item status
+                            </strong>
+                            <span className="capitalize">
+                              {label(fulfillment.status)}
+                            </span>
+                          </span>
+                          <span>
+                            <strong className="block text-[#1B1D60]">
+                              Courier
+                            </strong>
+                            {tracking.courier
+                              ? label(tracking.courier)
+                              : "Not added yet"}
+                          </span>
+                          <span>
+                            <strong className="block text-[#1B1D60]">
+                              Tracking / AWB
+                            </strong>
+                            {tracking.trackingNumber || "Not added yet"}
+                          </span>
+                          <span>
+                            <strong className="block text-[#1B1D60]">
+                              Delivered on
+                            </strong>
+                            {fulfillment.deliveredAt
+                              ? formatDate(fulfillment.deliveredAt)
+                              : "Pending"}
+                          </span>
+                          {tracking.trackingUrl && (
+                            <a
+                              href={tracking.trackingUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="font-bold text-[#3E4093] underline-offset-2 hover:underline"
+                            >
+                              Open courier tracking
+                            </a>
                           )}
-                          onReviewClick={setReviewTarget}
-                        />
-                      )}
-                    {canReturn && (
-                      <Link
-                        to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(itemId)}`}
-                        className="inline-flex min-h-9 items-center gap-2 rounded-[8px] border border-[#CE9F2D] bg-white px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#FFF8E7]"
-                      >
-                        <RotateCcw size={15} /> Return or replace
-                      </Link>
-                    )}
+                        </div>
+
+                        {returnRequest && (
+                          <div className="grid gap-2 rounded-lg bg-[#FFF8E7] px-3 py-3 text-xs text-[#5E6472] sm:grid-cols-3">
+                            <span>
+                              <strong className="block text-[#1B1D60]">
+                                Return/refund
+                              </strong>
+                              {`${label(returnRequest.status)} · ${returnableQuantity > 0 ? `${returnableQuantity} left` : "No quantity left"}`}
+                            </span>
+                            <span>
+                              <strong className="block text-[#1B1D60]">
+                                Refund status
+                              </strong>
+                              {returnRequest?.refund?.status
+                                ? label(returnRequest.refund.status)
+                                : "Not started"}
+                            </span>
+                            <span>
+                              <strong className="block text-[#1B1D60]">
+                                Refund amount
+                              </strong>
+                              {returnRequest?.refundAmount ||
+                              returnRequest?.refundBreakup?.totalRefundAmount
+                                ? itemProps.formatMoney(
+                                    returnRequest.refundAmount ||
+                                      returnRequest.refundBreakup
+                                        ?.totalRefundAmount,
+                                    itemProps.currency,
+                                  )
+                                : "—"}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )} */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {fulfillment.delivered &&
+                        Boolean(getReviewProductId(item)) && (
+                          <OrderItemReviewAction
+                            item={item}
+                            orderId={orderId}
+                            canReview
+                            existingReview={
+                              reviewByItem[reviewKeyForItem(orderId, item)]
+                            }
+                            reviewChecked={Boolean(
+                              checkedReviewKeys[reviewKeyForItem(orderId, item)],
+                            )}
+                            onReviewClick={setReviewTarget}
+                          />
+                        )}
+                      {/* {canReturn && (
+                        <Link
+                          to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(itemId)}`}
+                          className="inline-flex min-h-9 items-center gap-2 rounded-[8px] border border-[#CE9F2D] bg-white px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#FFF8E7]"
+                        >
+                          <RotateCcw size={15} /> Return or replace
+                        </Link>
+                      )} */}
+                    </div>
                   </div>
                 </div>
               );

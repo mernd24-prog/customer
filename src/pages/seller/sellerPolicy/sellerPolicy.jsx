@@ -98,43 +98,38 @@ export default function SellerPolicy() {
     >
       {/* ================= HERO ================= */}
 
-      <section className="relative isolate w-full
-       bg-[#FAF8F3]">
+      <section className="relative isolate overflow-hidden w-full bg-[#FAF8F3]">
         {/* Background Image */}
         <img
           src="/image/png/sellerPrivacy.png"
           alt="Seller Policy"
-          className="absolute inset-0 -z-20 h-full w-full "
+          className="absolute inset-0 -z-20 h-full w-full object-cover object-top"
         />
 
         {/* Content Overlay */}
-        <div className="mx-auto flex min-h-[570px] w-full max-w-7xl items-center px-6 py-16 lg:min-h-[780px] lg:py-20">
-            <div className="max-w-xl">
-              <span className="inline-flex items-center rounded-full border border-[#D4A52A]/30 bg-[#D4A52A]/15 px-4 py-2 text-sm font-medium text-[#18156D] backdrop-blur-sm">
+        <div className="customer-container flex min-h-[570px] items-center py-16 lg:min-h-[780px] lg:py-20">
+            <div className="max-w-3xl">
+              <div className="mb-6 inline-flex items-center rounded-full border border-[#D4A52A]/30 bg-[#D4A52A]/15 px-4 py-2 text-sm font-medium text-[#18156D] backdrop-blur-sm">
                 Seller Guidelines
-              </span>
+              </div>
 
-              <h1 className="mt-6 text-[24px] font-bold leading-[32px] tracking-[-0.01em] text-[#18156D] md:text-[28px] md:leading-[36px] lg:text-[32px] lg:leading-[40px]">
+              <h1 className="banner-heading font-bold text-[#18156D]">
                 Seller Policy
               </h1>
 
-              <p className="mt-6 text-[14px] leading-[22px] text-gray-700 md:text-[18px] md:leading-[28px]">
+              <p className="mt-6 max-w-xl text-base text-gray-700 sm:text-lg">
                 Our Seller Policy defines the standards, responsibilities, and
                 marketplace guidelines that help create a trusted experience for
                 both sellers and customers.
               </p>
 
-              <div className="mt-10 flex flex-wrap gap-4">
-                <a href="/become-a-seller">
-                  <button className="rounded-xl bg-[#D4A52A] px-6 py-3 font-semibold text-[#18156D]">
-                    Become a Seller
-                  </button>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a href="/become-a-seller" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#D4A52A] px-7 font-bold text-[#18156D] transition hover:-translate-y-0.5 hover:bg-[#e5b738]">
+                  Become a Seller
                 </a>
 
-                <a href="/contact-us">
-                  <button className="rounded-xl border border-[#18156D]/20 bg-white/70 px-6 py-3 font-medium text-[#18156D] backdrop-blur">
-                    Contact Support
-                  </button>
+                <a href="/contact-us" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-7 font-bold text-[#18156D] transition hover:-translate-y-0.5 backdrop-blur">
+                  Contact Support
                 </a>
               </div>
             </div>

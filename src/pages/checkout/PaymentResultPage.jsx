@@ -203,6 +203,61 @@ export function PaymentResultPage({ failed = false }) {
                 </section>
               </div>
             </OrderDetailLayout>
+
+            {hasOrderShippingAddress(shippingAddress) && (
+              <OrderDetailSectionCard
+                title="Delivery Address"
+                className="w-full rounded-[20px]"
+                headerClassName="min-h-[64px] px-4 py-4 min-[375px]:px-5 sm:min-h-[72px] sm:px-6 xl:px-[20px] xl:py-[25px]"
+                titleClassName=""
+                borderClassName="border-[#CE9F2D66]"
+                bodyClassName="grid gap-4 px-4 py-4 sm:px-6"
+              >
+                <div className="grid gap-3 text-[#2E2E2E]">
+                  <div className="flex flex-wrap items-center gap-3">
+                    {displayName && (
+                      <p className="break-words text-h6 font-bold text-[#2E2E2E]">
+                        {displayName}
+                      </p>
+                    )}
+                    <div className="inline-flex h-[28px] items-center justify-center rounded-full bg-[#CE9F2D] px-3 py-1 text-xs font-semibold text-white capitalize">
+                      {shippingAddress?.addressType || shippingAddress?.type || "Home"}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+                    <div className="flex items-center gap-2 small font-medium">
+                      <Phone className="h-[18px] w-[18px] shrink-0 text-[#CE9F2D]" />
+                      <span className="break-words">
+                        {deliveryPhone || "Phone unavailable"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 small font-medium">
+                    <MapPin className="mt-1 h-[18px] w-[18px] shrink-0 text-[#CE9F2D]" />
+                    <span className="break-words leading-relaxed">
+                      {[
+                        shippingAddress.line1 ||
+                          shippingAddress.addressLine1 ||
+                          shippingAddress.address_line1,
+                        shippingAddress.line2 ||
+                          shippingAddress.addressLine2 ||
+                          shippingAddress.address_line2,
+                        shippingAddress.city,
+                        shippingAddress.state,
+                        getOrderAddressValue(
+                          shippingAddress,
+                          "postalCode",
+                          "postal_code",
+                        ),
+                        shippingAddress.country,
+                      ]
+                        .filter(Boolean)
+                        .join(", ")}
+                    </span>
+                  </div>
+                </div>
+              </OrderDetailSectionCard>
+            )}
           </div>
         </ApiState>
       </div>

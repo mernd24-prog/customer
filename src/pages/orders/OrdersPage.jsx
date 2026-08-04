@@ -67,7 +67,8 @@ import {
   ORDER_FILTERS,
 } from "../../data/orderPage";
 import OrderDetailInfoGrid from "../../components/orderDetailInfoGrid/orderDetailInfoGrid";
-import { RETURNS_PAGE_SKELETON } from "../returnRefund/ReturnsRefunds";
+import { ORDER_LIST_SKELETON } from "../../components/common/skeleton/layouts";
+
 
 const getOrderId = (order) =>
   order?.id || order?._id || order?.orderId || order?.order_id;
@@ -632,6 +633,8 @@ function OrderDetail({ orderId, track }) {
     order?.relations?.invoice?.url ||
     null;
 
+  const shippingAddress =
+    order?.shipping_address || order?.shippingAddress || {};
   const taxBreakup = order?.tax_breakup || order?.taxBreakup;
   const subtotal = getAmount(order, "subtotal");
   const discount = getAmount(order, "discount");
@@ -650,7 +653,8 @@ function OrderDetail({ orderId, track }) {
   const pricingSummary =
     order?.metadata?.pricingSummary || order?.metadata?.pricing_summary || {};
   const customerAmount = getCustomerOrderAmount(order);
-
+  const taxIncluded = getTaxIncludedAmount(order, taxBreakup);
+  const taxPayable = getTaxPayableAmount(order, taxBreakup);
   const status = getOrderStatus(order);
   const progressStatus = getProgressStatus(order);
   const rawPaymentMethod = getPaymentMethod(order);
@@ -1122,8 +1126,6 @@ function OrderDetail({ orderId, track }) {
           loading={state.loading && !order}
           error={state.error}
           empty={!order}
-          skeletonLayout={RETURNS_PAGE_SKELETON}
-          skeletonContainerClass="bg-transparent mt-4 flex flex-col gap-6"
         >
           <div className="grid gap-5 sm:gap-6 lg:gap-9">
             <section className="grid gap-4 sm:gap-8">
@@ -1230,153 +1232,6 @@ function OrderDetail({ orderId, track }) {
                 </p>
               )}
 
-              {hasKnownStatus(order) && (
-                <OrderDetailSectionCard
-                  title={
-                    selectedOrderItem
-                      ? "Selected Item Progress"
-                      : "Order Progress"
-                  }
-                  headerClassName="!min-h-[56px] !py-4"
-                  bodyClassName="overflow-hidden px-4"
-                  titleClassName="text-lg font-bold leading-none"
-                >
-                  {selectedOrderItem && (
-                    <div className="mb-3 rounded-lg bg-[#FFF8E7] px-3 py-2 text-sm text-[#1B1D60]">
-                      <strong>{getProductTitle(selectedOrderItem)}</strong>
-                      <span className="ml-2 text-xs font-semibold text-[#6F7480]">
-                        Showing progress/actions for this item only.
-                      </span>
-                      {selectedItemReturnedQuantity > 0 && (
-                        <div className="mt-1 text-xs font-semibold text-[#7A5A00]">
-                          Returned/requested {selectedItemReturnedQuantity} of{" "}
-                          {Number(selectedOrderItem.quantity || 0)} · Returnable
-                          now {selectedItemReturnableQuantity}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <OrderProgress
-                    status={selectedItemStatus || progressStatus}
-                    cancellations={cancellations}
-                    returns={
-                      selectedItemReturn
-                        ? [selectedItemReturn]
-                        : selectedOrderItem
-                          ? []
-                          : returns
-                    }
-                  />
-                </OrderDetailSectionCard>
-              )}
-
-              {(track || visibleShipments.length > 0) && (
-                <ShipmentTrackingPanel
-                  shipments={visibleShipments}
-                  orderDeliveryStatus={getDeliveryStatus(order)}
-                  notifications={
-                    Array.isArray(notificationState.list)
-                      ? notificationState.list
-                      : []
-                  }
-                />
-              )}
-
-              {!track && (
-                <section className="rounded-[8px] md:border md:border-border bg-white px-4 py-4 sm:px-6">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <h2 className="text-sm font-semibold text-ink">
-                        {selectedOrderItem
-                          ? "Selected item documents"
-                          : "Order documents"}
-                      </h2>
-                      <p className="mt-1 text-xs text-muted">
-                        {selectedOrderItem
-                          ? "Only documents related to this item are shown here."
-                          : "Invoices appear after seller delivery. Reverse invoices appear after cancellation or return refund."}
-                      </p>
-                    </div>
-                    <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-muted">
-                      {downloadableDocuments.length} document
-                      {downloadableDocuments.length === 1 ? "" : "s"}
-                    </span>
-                  </div>
-
-                  <div className="mt-3 grid gap-3 md:grid-cols-2">
-                    {downloadableDocuments.map((document) => (
-                      <div
-                        key={`${document.title}-${document.id}`}
-                        className="flex flex-wrap items-center justify-between gap-3 rounded-[6px] border border-border bg-surface px-3 py-3 text-sm"
-                      >
-                        <div className="min-w-0">
-                          <strong>{document.title}</strong>
-                          <div className="mt-1 truncate text-xs text-muted">
-                            {document.subtitle}
-                          </div>
-                        </div>
-                        {document.pending ? (
-                          <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-muted">
-                            Pending
-                          </span>
-                        ) : (
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            loading={downloadingId === document.downloadPath}
-                            onClick={() =>
-                              handleDownload(
-                                document.downloadPath,
-                                document.filename,
-                              )
-                            }
-                          >
-                            <Download size={12} /> Download
-                          </Button>
-                        )}
-                      </div>
-                    ))}
-
-                    {visiblePendingSellerDocuments.map((document, index) => (
-                      <div
-                        key={`${document.sellerName}-${index}`}
-                        className="rounded-[6px] border border-dashed border-border bg-surface px-3 py-3 text-sm"
-                        title={(document.productTitles || []).join(", ")}
-                      >
-                        <strong>{document.sellerName} seller invoice</strong>
-                        <div className="mt-1 text-xs text-muted">
-                          Available after delivery
-                        </div>
-                      </div>
-                    ))}
-
-                    {!downloadableDocuments.length &&
-                      !visiblePendingSellerDocuments.length && (
-                        <div className="rounded-[6px] border border-dashed border-border bg-surface px-3 py-3 text-sm text-muted">
-                          No documents are available yet.
-                        </div>
-                      )}
-
-                    {invoiceDownloadAvailable &&
-                      !customerInvoices.length &&
-                      getInvoiceUrl(order) && (
-                        <Button
-                          variant="secondary"
-                          onClick={() =>
-                            window.open(
-                              getInvoiceUrl(order),
-                              "_blank",
-                              "noopener,noreferrer",
-                            )
-                          }
-                          className="flex min-h-[46px] items-center justify-center gap-2 rounded-[8px] border border-[#3E409380] bg-white px-4 text-[#3E4093]"
-                        >
-                          <Download size={16} /> Download invoice
-                        </Button>
-                      )}
-                  </div>
-                </section>
-              )}
             </section>
 
             {!track && (
@@ -1433,6 +1288,66 @@ function OrderDetail({ orderId, track }) {
               />
             )}
 
+            <section className="grid gap-4 sm:gap-8">
+              {hasKnownStatus(order) && (
+                <OrderDetailSectionCard
+                  title={
+                    selectedOrderItem
+                      ? "Selected Item Progress"
+                      : "Order Progress"
+                  }
+                  headerClassName="!min-h-[56px] !py-4"
+                  bodyClassName="overflow-hidden px-4"
+                  titleClassName="text-lg font-bold leading-none"
+                >
+                  {selectedOrderItem && (
+                    <div className="mb-3 rounded-lg bg-[#FFF8E7] px-3 py-2 text-sm text-[#1B1D60]">
+                      <strong>{getProductTitle(selectedOrderItem)}</strong>
+                      <span className="ml-2 text-xs font-semibold text-[#6F7480]">
+                        Showing progress/actions for this item only.
+                      </span>
+                      {selectedItemReturnedQuantity > 0 && (
+                        <div className="mt-1 text-xs font-semibold text-[#7A5A00]">
+                          Returned/requested {selectedItemReturnedQuantity} of{" "}
+                          {Number(selectedOrderItem.quantity || 0)} · Returnable
+                          now {selectedItemReturnableQuantity}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <OrderProgress
+                    status={selectedItemStatus || progressStatus}
+                    cancellations={cancellations}
+                    returns={
+                      selectedItemReturn
+                        ? [selectedItemReturn]
+                        : selectedOrderItem
+                          ? []
+                          : returns
+                    }
+                  />
+                </OrderDetailSectionCard>
+              )}
+
+              {(track || visibleShipments.length > 0) && (
+                <ShipmentTrackingPanel
+                  shipments={visibleShipments}
+                  orderDeliveryStatus={getDeliveryStatus(order)}
+                  notifications={
+                    Array.isArray(notificationState.list)
+                      ? notificationState.list
+                      : []
+                  }
+                />
+              )}
+
+
+
+
+
+
+            </section>
+
             {cancellations.length > 0 && (
               <section className="rounded-[8px] md:border md:border-border bg-white px-4 py-4 sm:px-6">
                 <h2 className="text-sm font-semibold text-ink">
@@ -1459,12 +1374,12 @@ function OrderDetail({ orderId, track }) {
                             Refund:{" "}
                             {formatMoney(cancellation.refund_amount, currency)}
                           </span>
-                          <span className="d">
+                          {/* <span>
                             Refund status:{" "}
                             {String(
                               cancellation.refund_status || "pending",
                             ).replace(/_/g, " ")}
-                          </span>
+                          </span> */}
                           {(cancellation.credit_note_id ||
                             cancellation.creditNoteId) && (
                             <span>
@@ -1486,6 +1401,14 @@ function OrderDetail({ orderId, track }) {
               </section>
             )}
 
+
+
+
+
+
+
+
+
             {visibleReturns.length > 0 && (
               <section className="rounded-[8px] md:border md:border-border bg-white px-4 py-4 sm:px-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -1505,7 +1428,7 @@ function OrderDetail({ orderId, track }) {
                     className="text-xs font-semibold text-[#3E4093] underline-offset-2 hover:underline"
                   >
                     View all returns
-                  </Link>
+                  </Link> 
                 </div>
 
                 <div className="mt-3 grid gap-3">
@@ -1558,13 +1481,13 @@ function OrderDetail({ orderId, track }) {
                               currency,
                             )}
                           </span>
-                          <span className="capitalize">
+                          {/* <span className="capitalize">
                             Refund status:{" "}
                             {humanize(
                               getReturnRefundStatus(returnRequest),
                               "pending",
                             )}
-                          </span>
+                          </span> */}
                           {returnRequest.refund?.method ||
                           returnRequest.refundMethod ? (
                             <span className="capitalize">
@@ -1628,7 +1551,106 @@ function OrderDetail({ orderId, track }) {
               </section>
             )}
 
+            {!track && (
+              <section className="rounded-[8px] md:border md:border-border bg-white px-4 py-4 sm:px-6">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h2 className="text-sm font-semibold text-ink">
+                      {selectedOrderItem
+                        ? "Selected item documents"
+                        : "Order documents"}
+                    </h2>
+                    <p className="mt-1 text-xs text-muted">
+                      {selectedOrderItem
+                        ? "Only documents related to this item are shown here."
+                        : "Invoices appear after seller delivery. Reverse invoices appear after cancellation or return refund."}
+                    </p>
+                  </div>
+                  <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-muted">
+                    {downloadableDocuments.length} document
+                    {downloadableDocuments.length === 1 ? "" : "s"}
+                  </span>
+                </div>
+
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  {downloadableDocuments.map((document) => (
+                    <div
+                      key={`${document.title}-${document.id}`}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-[6px] border border-border bg-surface px-3 py-3 text-sm"
+                    >
+                      <div className="min-w-0">
+                        <strong>{document.title}</strong>
+                        <div className="mt-1 truncate text-xs text-muted">
+                          {document.subtitle}
+                        </div>
+                      </div>
+                      {document.pending ? (
+                        <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-muted">
+                          Pending
+                        </span>
+                      ) : (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          loading={downloadingId === document.downloadPath}
+                          onClick={() =>
+                            handleDownload(
+                              document.downloadPath,
+                              document.filename,
+                            )
+                          }
+                        >
+                          <Download size={12} /> Download
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+
+                  {visiblePendingSellerDocuments.map((document, index) => (
+                    <div
+                      key={`${document.sellerName}-${index}`}
+                      className="rounded-[6px] border border-dashed border-border bg-surface px-3 py-3 text-sm"
+                      title={(document.productTitles || []).join(", ")}
+                    >
+                      <strong>{document.sellerName} seller invoice</strong>
+                      <div className="mt-1 text-xs text-muted">
+                        Available after delivery
+                      </div>
+                    </div>
+                  ))}
+
+                  {!downloadableDocuments.length &&
+                    !visiblePendingSellerDocuments.length && (
+                      <div className="rounded-[6px] border border-dashed border-border bg-surface px-3 py-3 text-sm text-muted">
+                        No documents are available yet.
+                      </div>
+                    )}
+
+                  {invoiceDownloadAvailable &&
+                    !customerInvoices.length &&
+                    getInvoiceUrl(order) && (
+                      <Button
+                        variant="secondary"
+                        onClick={() =>
+                          window.open(
+                            getInvoiceUrl(order),
+                            "_blank",
+                            "noopener,noreferrer",
+                          )
+                        }
+                        className="flex min-h-[46px] items-center justify-center gap-2 rounded-[8px] border border-[#3E409380] bg-white px-4 text-[#3E4093]"
+                      >
+                        <Download size={16} /> Download invoice
+                      </Button>
+                    )}
+                </div>
+              </section>
+            )}
+
             {hasKnownStatus(order) && (
+              (status === "pending_payment" || status === "payment_failed") || 
+              canCancelOrder(order)
+            ) && (
               <section className="rounded-[15px] lg:border lg:border-[#CE9F2D66] bg-white py-4 sm:px-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                   {(status === "pending_payment" ||
@@ -2363,24 +2385,24 @@ function OrderItemSummaryCard({ order, item }) {
                 Color: {getOrderItemColor(item)}
               </span>
             )}
-            <span
+            {/* <span
               className={`rounded-full px-3 py-1.5 capitalize ${COMPACT_STATUS_BADGE[itemStatus] || "bg-[#EEF2FF] text-[#1B1D60]"}`}
             >
               {humanize(itemStatus, "Processing")}
-            </span>
+            </span> */}
           </span>
           <span className="mt-4 block text-2xl font-extrabold text-[#1B1D60]">
             {formatMoney(itemTotal, currency)}
           </span>
-          <span className="mt-0.5 block text-xs font-medium text-[#6F7480]">
+          {/* <span className="mt-0.5 block text-xs font-medium text-[#6F7480]">
             Inclusive of all taxes
-          </span>
-          {(courierName || trackingNumber) && (
+          </span> */}
+          {/* {(courierName || trackingNumber) && (
             <span className="mt-3 block text-xs font-semibold text-[#3E4093]">
               {courierName ? humanize(courierName, "Courier") : "Tracking"}
               {trackingNumber ? ` · ${trackingNumber}` : ""}
             </span>
-          )}
+          )} */}
           <span className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg bg-gold px-4 text-sm font-bold text-white">
             <Truck size={15} />
             Track / item details
@@ -2548,6 +2570,8 @@ function OrderList() {
                   loading={state.loading && !allOrders.length}
                   error={state.error}
                   empty={!orderItemsList.length && !state.loading}
+                  skeletonLayout={ORDER_LIST_SKELETON}
+                  skeletonContainerClass=""
                   emptyTitle={
                     activeFilter ? "No orders found" : "No orders yet"
                   }
