@@ -96,15 +96,24 @@ export const INFO_TILE_TONES = {
 
 export const ORDER_FILTERS = [
   { label: "All", value: "" },
-  { label: "Confirmed", value: "confirmed" },
-  { label: "Processing", value: "processing" },
-  { label: "Ready To Ship", value: "ready_to_ship" },
-  { label: "Shipped", value: "shipped" },
-  { label: "Out For Delivery", value: "out_for_delivery" },
+
   { label: "Delivered", value: "delivered" },
+  { label: "Out For Delivery", value: "out_for_delivery" },
+  { label: "Failed Delivered", value: "failed_delivered" },
   { label: "Cancelled", value: "cancelled" },
-  { label: "Return", value: "return_requested" },
-  { label: "Payment failed", value: "payment_failed" },
+  { label: "On Hold", value: "on_hold" },
+  { label: "Refunded", value: "refunded" },
+  { label: " Returned", value: "returned" },
+  { label: "Ready To Ship", value: "ready_to_ship" },
+  { label: "Partially Returned", value: "partially_returned" },
+  { label: "Return Requested", value: "return_requested" },
+  { label: "Fulfilled", value: "fulfilled" },
+  { label: "Shipped", value: "shipped" },
+  { label: "Packed", value: "packed" },
+  { label: "Processing", value: "processing" },
+  { label: "Confirmed", value: "confirmed" },
+  { label: "Payment Failed", value: "payment_failed" },
+  { label: "Payment Pending", value: "payment_pending" },
 ];
 
 export const COMPACT_STATUS_BADGE = {

@@ -227,8 +227,10 @@ export default function ProductsPage() {
   useEffect(() => {
     if (currentContextKey !== facetsContextKey) return;
 
-    let backendMin = productFacets?.priceStats?.min ?? productFacets?.price?.min;
-    let backendMax = productFacets?.priceStats?.max ?? productFacets?.price?.max;
+    let backendMin =
+      productFacets?.priceStats?.min ?? productFacets?.price?.min;
+    let backendMax =
+      productFacets?.priceStats?.max ?? productFacets?.price?.max;
 
     let currentMin = backendMin;
     let currentMax = backendMax;
@@ -499,7 +501,8 @@ export default function ProductsPage() {
       const next = new URLSearchParams();
       if (prev.has("category")) next.set("category", prev.get("category"));
       if (prev.has("q")) next.set("q", prev.get("q"));
-      if (prev.has("collectionIds")) next.set("collectionIds", prev.get("collectionIds"));
+      if (prev.has("collectionIds"))
+        next.set("collectionIds", prev.get("collectionIds"));
       return next;
     });
   }, [setSearchParams]);
@@ -545,7 +548,8 @@ label: "Free Delivery",
       .filter(([key, value]) => key.startsWith("attr_") && value)
       .map(([key, value]) => {
         const attributeKey = key.replace(/^attr_/, "");
-        const label = attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1);
+        const label =
+          attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1);
         return {
           key,
           groupKey: key,
@@ -564,7 +568,8 @@ label: "Free Delivery",
     .flat()
     .filter(Boolean);
 
-  const clearFiltersAction = activeFilters.length > 1 ? handleClearFilters : undefined;
+  const clearFiltersAction =
+    activeFilters.length > 1 ? handleClearFilters : undefined;
 
   const isSearchMode = Boolean(searchParams.get("q"));
   const pageTitle = isSearchMode
@@ -780,24 +785,6 @@ label: "Free Delivery",
             sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
             onSortChange={(value) => updateParam("sort", value)}
             onOpenFilters={() => setSidebarOpen(true)}
-            // viewControls={
-            // <div className="hidden items-center gap-0.5 rounded-[6px] border border-border-strong bg-white p-1 sm:flex">
-            // <button
-            // type="button"
-            // onClick={() => setViewMode("grid")}
-            // className={`rounded p-1.5 transition-all duration-300 ease-in-out ${viewMode === "grid" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
-            // >
-            // <Grid2X2 size={15} />
-            // </button>
-            // <button
-            // type="button"
-            // onClick={() => setViewMode("list")}
-            // className={`rounded p-1.5 transition-all duration-300 ease-in-out ${viewMode === "list" ? "bg-gold text-white" : "text-gray hover:text-ink"}`}
-            // >
-            // <List size={15} />
-            // </button>
-            // </div>
-            // }
           />
         </div>
         <ProductResultsLayout

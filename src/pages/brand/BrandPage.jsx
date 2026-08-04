@@ -6,6 +6,7 @@ import Seo from "../../components/common/Seo";
 import {
   BrandProductPage,
   CheckboxListFilter,
+  OptionFilter,
   PriceRangeFilter,
   RatingFilter,
 } from "../../components/ecommerce";
@@ -111,8 +112,10 @@ export default function BrandPage() {
   useEffect(() => {
     if (currentContextKey !== facetsContextKey) return;
 
-    let backendMin = productFacets?.priceStats?.min ?? productFacets?.price?.min;
-    let backendMax = productFacets?.priceStats?.max ?? productFacets?.price?.max;
+    let backendMin =
+      productFacets?.priceStats?.min ?? productFacets?.price?.min;
+    let backendMax =
+      productFacets?.priceStats?.max ?? productFacets?.price?.max;
 
     let currentMin = backendMin;
     let currentMax = backendMax;
@@ -158,7 +161,7 @@ export default function BrandPage() {
     dispatch(fetchBrands({ limit: 500 }))
       .then((action) => {
         const data = action?.payload?.data;
-        const list = Array.isArray(data) 
+        const list = Array.isArray(data)
           ? data
           : Array.isArray(data?.items)
             ? data.items
@@ -404,7 +407,9 @@ export default function BrandPage() {
       .filter(([key, value]) => key.startsWith("attr_") && value)
       .map(([key, value]) => {
         const attributeKey = key.replace(/^attr_/, "");
-        const label = attributeFacets?.find((a) => a.key === attributeKey)?.label || attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1);
+        const label =
+          attributeFacets?.find((a) => a.key === attributeKey)?.label ||
+          attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1);
         return {
           key,
           groupKey: key,
@@ -413,26 +418,29 @@ export default function BrandPage() {
       }),
   ].filter(Boolean);
 
-  const clearFiltersAction = activeFilters.length > 1 ? handleClearFilters : undefined;
+  const clearFiltersAction =
+    activeFilters.length > 1 ? handleClearFilters : undefined;
 
   const filterSections = [
-    ((pageInfo.total || items.length) > 1 || searchParams.get("minPrice") || searchParams.get("maxPrice")) &&
+    ((pageInfo.total || items.length) > 1 ||
+      searchParams.get("minPrice") ||
+      searchParams.get("maxPrice")) &&
       absolutePriceLimits.min != null &&
       absolutePriceLimits.max != null &&
       absolutePriceLimits.max > 0 &&
       absolutePriceLimits.min < absolutePriceLimits.max && {
-      key: "price",
-      title: "Price Range",
-      content: (
-        <PriceRangeFilter
-          min={searchParams.get("minPrice")}
-          max={searchParams.get("maxPrice")}
-          minLimit={absolutePriceLimits.min}
-          maxLimit={absolutePriceLimits.max}
-          onChange={handlePriceChange}
-        />
-      ),
-    },
+        key: "price",
+        title: "Price Range",
+        content: (
+          <PriceRangeFilter
+            min={searchParams.get("minPrice")}
+            max={searchParams.get("maxPrice")}
+            minLimit={absolutePriceLimits.min}
+            maxLimit={absolutePriceLimits.max}
+            onChange={handlePriceChange}
+          />
+        ),
+      },
     hasRatingFilter && {
       key: "rating",
       title: "Rating",
@@ -611,7 +619,8 @@ export default function BrandPage() {
           loading:
             (productState.loading && !items.length) ||
             (!firstLoadDone && !items.length && !!brand),
-          refreshing: productState.loading && items.length > 0 && !isLoadingMore,
+          refreshing:
+            productState.loading && items.length > 0 && !isLoadingMore,
           error: productState.error,
           empty: !items.length && !productState.loading && firstLoadDone,
           emptyTitle: `No Products from ${brandName}`,

@@ -3,72 +3,119 @@ import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import ApiState from "../../components/common/ApiState";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { disputeReturnQc, fetchMyReturns } from "../../features/returns/returnsSlice";
+import {
+  disputeReturnQc,
+  fetchMyReturns,
+} from "../../features/returns/returnsSlice";
 import { notify } from "../../utils/notify";
 import { ChevronDown } from "lucide-react";
 import ReturnItemCard from "./component/ReturnItemCard";
 import ReturnTrackingCard from "./component/ReturnTrackingCard";
 
-const RETURNS_PAGE_SKELETON = [
+export const RETURNS_PAGE_SKELETON = [
   {
     type: "col",
     className: "gap-6",
-    count: 3,
     children: [
-      { 
-        type: "row", 
-        className: "w-full rounded-[15px] border border-[#EFE5D2] bg-white p-4 flex-col sm:flex-row sm:items-start gap-4",
+      {
+        type: "row",
+        count: 3,
+        className:
+          "w-full rounded-[15px] border border-[#EFE5D2] bg-white p-4 flex-col sm:flex-row sm:items-start gap-8",
         children: [
-          { type: "box", width: "80px", height: "80px", className: "shrink-0 rounded-[8px]" },
-          { 
-            type: "col", 
-            className: "w-full flex-1 gap-2", 
+          {
+            type: "box",
+            width: "80px",
+            height: "80px",
+            className: "shrink-0 rounded-[8px]",
+          },
+          {
+            type: "col",
+            className: "w-full flex-1 gap-2",
             children: [
-              { type: "box", width: "70%", height: "16px", className: "rounded-md" },
-              { type: "box", width: "40%", height: "14px", className: "rounded-md" },
-              { type: "row", className: "gap-4", children: [
-                 { type: "box", width: "80px", height: "14px", className: "rounded-md" },
-                 { type: "box", width: "80px", height: "14px", className: "rounded-md" },
-              ]},
-              { type: "row", className: "mt-2 pt-2 gap-3", children: [
-                 { type: "box", width: "120px", height: "32px", className: "rounded-full" },
-                 { type: "box", width: "120px", height: "32px", className: "rounded-full" },
-              ]}
-            ]
-          }
-        ]
-      }
-    ]
-  }
+              {
+                type: "box",
+                width: "70%",
+                height: "16px",
+                className: "rounded-md",
+              },
+              {
+                type: "box",
+                width: "40%",
+                height: "14px",
+                className: "rounded-md",
+              },
+              {
+                type: "row",
+                className: "gap-4",
+                children: [
+                  {
+                    type: "box",
+                    width: "80px",
+                    height: "14px",
+                    className: "rounded-md",
+                  },
+                  {
+                    type: "box",
+                    width: "80px",
+                    height: "14px",
+                    className: "rounded-md",
+                  },
+                ],
+              },
+              {
+                type: "row",
+                className: "mt-2 pt-2 gap-4",
+                children: [
+                  {
+                    type: "box",
+                    width: "120px",
+                    height: "32px",
+                    className: "rounded-full",
+                  },
+                  {
+                    type: "box",
+                    width: "120px",
+                    height: "32px",
+                    className: "rounded-full",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 /* ─── Status filter options ───────────────────────────────────────────── */
 const STATUS_FILTERS = [
-  { value: "all",                    label: "All Returns" },
-  { value: "requested",              label: "Requested" },
-  { value: "approved",               label: "Approved" },
-  { value: "rejected",               label: "Rejected" },
+  { value: "all", label: "All Returns" },
+  { value: "requested", label: "Requested" },
+  { value: "approved", label: "Approved" },
+  { value: "rejected", label: "Rejected" },
   { value: "reverse_pickup_scheduled", label: "Reverse Pickup Scheduled" },
-  { value: "pickup_failed",          label: "Pickup Failed" },
-  { value: "manual_ship_back",       label: "Manual Ship Back" },
-  { value: "shipped_back",           label: "Shipped Back" },
-  { value: "in_reverse_transit",     label: "In Reverse Transit" },
-  { value: "received",               label: "Received" },
-  { value: "qc_passed",              label: "QC Passed" },
-  { value: "qc_failed",              label: "QC Failed" },
-  { value: "qc_completed",           label: "QC Completed" },
-  { value: "qc_failure_upheld",      label: "QC Failure Upheld" },
-  { value: "refund_pending",         label: "Refund Pending" },
-  { value: "refund_failed",          label: "Refund Failed" },
-  { value: "partially_refunded",     label: "Partially Refunded" },
-  { value: "refunded",               label: "Refunded" },
-  { value: "replacement_requested",  label: "Replacement Requested" },
-  { value: "replacement_pending",    label: "Replacement Pending" },
-  { value: "replacement_created",    label: "Replacement Created" },
-  { value: "replacement_shipped",    label: "Replacement Shipped" },
-  { value: "replacement_delivered",  label: "Replacement Delivered" },
-  { value: "replaced",               label: "Replaced" },
-  { value: "closed",                 label: "Closed" },
+  { value: "pickup_failed", label: "Pickup Failed" },
+  { value: "manual_ship_back", label: "Manual Ship Back" },
+  { value: "shipped_back", label: "Shipped Back" },
+  { value: "in_reverse_transit", label: "In Reverse Transit" },
+  { value: "received", label: "Received" },
+  { value: "qc_passed", label: "QC Passed" },
+  { value: "qc_failed", label: "QC Failed" },
+  { value: "qc_completed", label: "QC Completed" },
+  { value: "qc_failure_upheld", label: "QC Failure Upheld" },
+  { value: "refund_pending", label: "Refund Pending" },
+  { value: "refund_failed", label: "Refund Failed" },
+  { value: "partially_refunded", label: "Partially Refunded" },
+  { value: "refunded", label: "Refunded" },
+  { value: "replacement_requested", label: "Replacement Requested" },
+  { value: "replacement_pending", label: "Replacement Pending" },
+  { value: "replacement_created", label: "Replacement Created" },
+  { value: "replacement_shipped", label: "Replacement Shipped" },
+  { value: "replacement_delivered", label: "Replacement Delivered" },
+  { value: "replaced", label: "Replaced" },
+  { value: "closed", label: "Closed" },
 ];
 
 /* exact-match filter — value is the raw API status string */
@@ -127,16 +174,25 @@ const buildTrackingSteps = (ret) => {
       statuses: ["reverse_pickup_scheduled", "manual_ship_back"],
     },
     {
-      title: currentStatus === "pickup_failed" ? "Pickup Failed" : "Product Shipped Back",
+      title:
+        currentStatus === "pickup_failed"
+          ? "Pickup Failed"
+          : "Product Shipped Back",
       statuses: ["pickup_failed", "shipped_back", "in_reverse_transit"],
     },
     {
-      title: currentStatus === "qc_failed" ? "Quality Check Failed" : "Quality Check",
+      title:
+        currentStatus === "qc_failed"
+          ? "Quality Check Failed"
+          : "Quality Check",
       statuses: ["received", "qc_passed", "qc_completed", "qc_failed"],
     },
   ];
 
-  if (currentStatus === "qc_failure_upheld" || ret.qcReview?.adminDecision === "uphold") {
+  if (
+    currentStatus === "qc_failure_upheld" ||
+    ret.qcReview?.adminDecision === "uphold"
+  ) {
     stepsDef.push({
       title: "QC Failure Upheld",
       statuses: ["qc_failure_upheld", "qc_uphold"],
@@ -314,7 +370,6 @@ function StatusDropdown({ value, onChange }) {
   );
 }
 
-
 /* ─── Main page ───────────────────────────────────────────────────────── */
 function ReturnsRefundsPage() {
   const dispatch = useDispatch();
@@ -323,14 +378,20 @@ function ReturnsRefundsPage() {
 
   const [statusFilter, setStatusFilter] = useState("all");
   const [expandedReturnId, setExpandedReturnId] = useState(null);
-  const [qcDispute, setQcDispute] = useState({ returnId: null, reason: "", evidence: "", submitting: false });
+  const [qcDispute, setQcDispute] = useState({
+    returnId: null,
+    reason: "",
+    evidence: "",
+    submitting: false,
+  });
 
   useEffect(() => {
-    const refreshReturns = () => dispatch(fetchMyReturns())
-      .unwrap()
-      .catch((error) => {
-        console.log("Returns API error:", error);
-      });
+    const refreshReturns = () =>
+      dispatch(fetchMyReturns())
+        .unwrap()
+        .catch((error) => {
+          console.log("Returns API error:", error);
+        });
 
     refreshReturns();
     const intervalId = window.setInterval(refreshReturns, 30000);
@@ -375,13 +436,23 @@ function ReturnsRefundsPage() {
     }
     try {
       setQcDispute((current) => ({ ...current, submitting: true }));
-      await dispatch(disputeReturnQc({
-        returnId: qcDispute.returnId,
-        reason: qcDispute.reason.trim(),
-        evidence: qcDispute.evidence.split(/[\n,]/).map((value) => value.trim()).filter(Boolean),
-      })).unwrap();
+      await dispatch(
+        disputeReturnQc({
+          returnId: qcDispute.returnId,
+          reason: qcDispute.reason.trim(),
+          evidence: qcDispute.evidence
+            .split(/[\n,]/)
+            .map((value) => value.trim())
+            .filter(Boolean),
+        }),
+      ).unwrap();
       notify.success("Your QC dispute was submitted for marketplace review.");
-      setQcDispute({ returnId: null, reason: "", evidence: "", submitting: false });
+      setQcDispute({
+        returnId: null,
+        reason: "",
+        evidence: "",
+        submitting: false,
+      });
       await dispatch(fetchMyReturns());
     } catch (error) {
       notify.error(error?.message || "Unable to submit the QC dispute.");
@@ -409,8 +480,11 @@ function ReturnsRefundsPage() {
             0;
 
           const expectedDate = getExpectedDate(ret);
-          const qcDisputeDeadline = ret.qcReview?.disputeDeadline ? new Date(ret.qcReview.disputeDeadline) : null;
-          const qcDisputeOpen = !qcDisputeDeadline || qcDisputeDeadline >= new Date();
+          const qcDisputeDeadline = ret.qcReview?.disputeDeadline
+            ? new Date(ret.qcReview.disputeDeadline)
+            : null;
+          const qcDisputeOpen =
+            !qcDisputeDeadline || qcDisputeDeadline >= new Date();
 
           return (
             <div
@@ -458,44 +532,145 @@ function ReturnsRefundsPage() {
 
               {ret.status === "qc_failed" && (
                 <div className="border-t border-amber-200 bg-amber-50 p-4 sm:p-6">
-                  <h3 className="font-semibold text-amber-900">Quality Check Failed ——— Marketplace Review</h3>
-                  <p className="mt-1 text-sm text-amber-800">The Seller Reported That the Returned Product Did Not Pass Inspection. Your Refund Remains on Hold Until the Evidence Is Reviewed.</p>
-                  {(ret.qcReview?.sellerEvidence || []).map((evidence, index) => (
-                    <div key={evidence.orderItemId || index} className="mt-3 rounded-lg bg-white p-3 text-sm text-[#454545]">
-                      <div className="font-medium">Seller Finding: {String(evidence.result || "").replace(/_/g, " ")}</div>
-                      <div>{evidence.notes || "No inspection note provided."}</div>
-                      {(evidence.photos || []).map((url) => <a key={url} href={url} target="_blank" rel="noreferrer" className="mr-3 text-blue-700 underline">View Evidence</a>)}
-                    </div>
-                  ))}
+                  <h3 className="font-semibold text-amber-900">
+                    Quality Check Failed ——— Marketplace Review
+                  </h3>
+                  <p className="mt-1 text-sm text-amber-800">
+                    The Seller Reported That the Returned Product Did Not Pass
+                    Inspection. Your Refund Remains on Hold Until the Evidence
+                    Is Reviewed.
+                  </p>
+                  {(ret.qcReview?.sellerEvidence || []).map(
+                    (evidence, index) => (
+                      <div
+                        key={evidence.orderItemId || index}
+                        className="mt-3 rounded-lg bg-white p-3 text-sm text-[#454545]"
+                      >
+                        <div className="font-medium">
+                          Seller Finding:{" "}
+                          {String(evidence.result || "").replace(/_/g, " ")}
+                        </div>
+                        <div>
+                          {evidence.notes || "No inspection note provided."}
+                        </div>
+                        {(evidence.photos || []).map((url) => (
+                          <a
+                            key={url}
+                            href={url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mr-3 text-blue-700 underline"
+                          >
+                            View Evidence
+                          </a>
+                        ))}
+                      </div>
+                    ),
+                  )}
                   {ret.qcReview?.customerDispute ? (
-                    <p className="mt-3 rounded-lg bg-blue-50 p-3 text-sm text-blue-800">Your Dispute Is Under Admin Review: {ret.qcReview.customerDispute.reason}</p>
+                    <p className="mt-3 rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
+                      Your Dispute Is Under Admin Review:{" "}
+                      {ret.qcReview.customerDispute.reason}
+                    </p>
                   ) : !qcDisputeOpen ? (
-                    <p className="mt-3 rounded-lg bg-stone-100 p-3 text-sm text-stone-700">The Qc Dispute Window Closed on {qcDisputeDeadline.toLocaleString("en-IN")}.</p>
+                    <p className="mt-3 rounded-lg bg-stone-100 p-3 text-sm text-stone-700">
+                      The Qc Dispute Window Closed on{" "}
+                      {qcDisputeDeadline.toLocaleString("en-IN")}.
+                    </p>
                   ) : qcDispute.returnId === returnId ? (
                     <div className="mt-4 space-y-3">
-                      <textarea className="w-full rounded-lg border border-amber-300 bg-white p-3 text-sm" rows={4} placeholder="Explain Why You Disagree with the Qc Result" value={qcDispute.reason} onChange={(event) => setQcDispute((current) => ({ ...current, reason: event.target.value }))} />
-                      <textarea className="w-full rounded-lg border border-amber-300 bg-white p-3 text-sm" rows={2} placeholder="Optional Evidence Image Urls, One Per Line" value={qcDispute.evidence} onChange={(event) => setQcDispute((current) => ({ ...current, evidence: event.target.value }))} />
+                      <textarea
+                        className="w-full rounded-lg border border-amber-300 bg-white p-3 text-sm"
+                        rows={4}
+                        placeholder="Explain Why You Disagree with the Qc Result"
+                        value={qcDispute.reason}
+                        onChange={(event) =>
+                          setQcDispute((current) => ({
+                            ...current,
+                            reason: event.target.value,
+                          }))
+                        }
+                      />
+                      <textarea
+                        className="w-full rounded-lg border border-amber-300 bg-white p-3 text-sm"
+                        rows={2}
+                        placeholder="Optional Evidence Image Urls, One Per Line"
+                        value={qcDispute.evidence}
+                        onChange={(event) =>
+                          setQcDispute((current) => ({
+                            ...current,
+                            evidence: event.target.value,
+                          }))
+                        }
+                      />
                       <div className="flex gap-2">
-                        <button type="button" disabled={qcDispute.submitting} onClick={submitQcDispute} className="rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Submit Dispute</button>
-                        <button type="button" onClick={() => setQcDispute({ returnId: null, reason: "", evidence: "", submitting: false })} className="rounded-lg border px-4 py-2 text-sm">Cancel</button>
+                        <button
+                          type="button"
+                          disabled={qcDispute.submitting}
+                          onClick={submitQcDispute}
+                          className="rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                        >
+                          Submit Dispute
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setQcDispute({
+                              returnId: null,
+                              reason: "",
+                              evidence: "",
+                              submitting: false,
+                            })
+                          }
+                          className="rounded-lg border px-4 py-2 text-sm"
+                        >
+                          Cancel
+                        </button>
                       </div>
                     </div>
                   ) : (
-                    <button type="button" onClick={() => setQcDispute({ returnId, reason: "", evidence: "", submitting: false })} className="mt-3 rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white">Dispute Qc Result</button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setQcDispute({
+                          returnId,
+                          reason: "",
+                          evidence: "",
+                          submitting: false,
+                        })
+                      }
+                      className="mt-3 rounded-lg bg-[#3E4093] px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      Dispute Qc Result
+                    </button>
                   )}
                 </div>
               )}
 
               {ret.qcReview?.status === "resolved" && (
                 <div className="border-t border-blue-200 bg-blue-50 p-4 text-sm text-blue-900 sm:p-6">
-                  <strong>Marketplace Decision:</strong> {String(ret.qcReview.adminDecision || "").replace(/_/g, " ")} — {ret.qcReview.decisionReason}
+                  <strong>Marketplace Decision:</strong>{" "}
+                  {String(ret.qcReview.adminDecision || "").replace(/_/g, " ")}{" "}
+                  — {ret.qcReview.decisionReason}
                 </div>
               )}
 
               {ret.returnToCustomer?.trackingNumber && (
                 <div className="border-t border-purple-200 bg-purple-50 p-4 text-sm text-purple-900 sm:p-6">
-                  <strong>Product Returning to You:</strong> {ret.returnToCustomer.courierName} · {ret.returnToCustomer.trackingNumber} · {String(ret.returnToCustomer.status || "").replace(/_/g, " ")}
-                  {ret.returnToCustomer.trackingUrl && <a className="ml-3 underline" href={ret.returnToCustomer.trackingUrl} target="_blank" rel="noreferrer">Track Shipment</a>}
+                  <strong>Product Returning to You:</strong>{" "}
+                  {ret.returnToCustomer.courierName} ·{" "}
+                  {ret.returnToCustomer.trackingNumber} ·{" "}
+                  {String(ret.returnToCustomer.status || "").replace(/_/g, " ")}
+                  {ret.returnToCustomer.trackingUrl && (
+                    <a
+                      className="ml-3 underline"
+                      href={ret.returnToCustomer.trackingUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Track Shipment
+                    </a>
+                  )}
                 </div>
               )}
 
@@ -534,7 +709,7 @@ function ReturnsRefundsPage() {
           error={state.error}
           empty={!returns.length}
           skeletonLayout={RETURNS_PAGE_SKELETON}
-          skeletonContainerClass="bg-transparent mt-4"
+          skeletonContainerClass="bg-transparent mt-4 flex flex-col gap-6"
           emptyTitle="No returns yet"
           emptyText="Your return requests will appear here."
         >
@@ -550,7 +725,10 @@ function ReturnsRefundsPage() {
                 </span>
               )}
             </p>
-            <StatusDropdown value={statusFilter} onChange={handleStatusFilterChange} />
+            <StatusDropdown
+              value={statusFilter}
+              onChange={handleStatusFilterChange}
+            />
           </div>
 
           {/* ── Return cards ────────────────────────────────────────── */}
