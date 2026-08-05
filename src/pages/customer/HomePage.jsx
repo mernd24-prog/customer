@@ -20,6 +20,7 @@ import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import { mothersDayData } from "../../data/special";
 import ShoppingMadeEasyBanner from "../../components/home/ShoppingBanner";
 import FeaturedProductsSection from "../../components/home/FeaturedProductsSection";
+
 import {
   getProductImage as getVariantProductImage,
   getProductMrp,

@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
-import { SkeletonLoader, SKELETON_PRESETS } from "../../components/common/skeleton";
+import {
+  SkeletonLoader,
+  SKELETON_PRESETS,
+} from "../../components/common/skeleton";
 import { EmptyState } from "../../components/common";
 import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
 import CartItemCard from "../../components/cart/CartItemCard";
@@ -64,7 +67,6 @@ import {
   CHECKOUT_CART_ITEM_IDS_STORAGE_KEY,
   SELECTED_CHECKOUT_STORAGE_KEY,
 } from "../../constants";
-
 
 function adaptItemForCard(item, fullProduct = null) {
   const product = fullProduct || item.productId || {};
@@ -595,8 +597,8 @@ export default function CartPage() {
 
             <StickySidebarLayout
               sidebarPosition="right"
-              containerClass="flex flex-col xl:flex-row gap-6 sm:gap-8 lg:gap-9"
-              sidebarClass="w-full xl:w-[420px] 2xl:w-[563px] transition-[top] duration-300 ease-in-out"
+              containerClass="flex flex-col lg:flex-row gap-5 sm:gap-6 lg:gap-8 xl:gap-9"
+              sidebarClass="w-full lg:w-[350px] 2xl:w-[369px] shrink-0 transition-[top] duration-300 ease-in-out"
               mainContent={
                 <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8">
                   {hasCartItems && (
@@ -640,6 +642,46 @@ export default function CartPage() {
                           />
                         </div>
                       ))}
+                    </div>
+                  )}
+
+                  {/* On screens below lg, display Order Summary ABOVE Wishlist */}
+                  {hasCartItems && (
+                    <div className="block lg:hidden my-2 sm:my-4">
+                      <OrderPaymentSummary
+                        variant="cart"
+                        mrpSubtotal={mrpSubtotal}
+                        subtotal={sellingSubtotal}
+                        productDiscount={productSavings}
+                        couponDiscount={extraCoupon}
+                        walletDiscount={extraWallet}
+                        shipping={shippingTotal}
+                        customerAmount={totalPayable}
+                        totalSavings={totalSavings}
+                        itemCount={selectedItems.length}
+                        currency="INR"
+                        title="Order Summary"
+                        formatMoney={formatMoney}
+                        asNumber={toNum}
+                        buttonText={
+                          selectedItems.length
+                            ? "Proceed to Checkout"
+                            : "Select products to checkout"
+                        }
+                        onCheckout={() => {
+                          if (!selectedItems.length) return;
+
+                          window.sessionStorage.removeItem(
+                            BUY_NOW_STORAGE_KEY,
+                          );
+                          window.sessionStorage.setItem(
+                            SELECTED_CHECKOUT_STORAGE_KEY,
+                            JSON.stringify(selectedItemIds),
+                          );
+
+                          navigate("/checkout");
+                        }}
+                      />
                     </div>
                   )}
 
@@ -879,7 +921,7 @@ export default function CartPage() {
               }
               sidebarContent={
                 hasCartItems && (
-                  <div className="w-full min-w-0">
+                  <div className="hidden lg:block w-full min-w-0">
                     <OrderPaymentSummary
                       variant="cart"
                       mrpSubtotal={mrpSubtotal}
