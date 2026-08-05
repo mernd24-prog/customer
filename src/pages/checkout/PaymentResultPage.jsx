@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
@@ -17,6 +16,46 @@ import {
   formatOrderDate,
   
 } from "../../utils/orderHelpers";
+
+function getOrderAddressValue(address, ...keys) {
+  if (!address || typeof address !== "object") return "";
+
+  for (const key of keys) {
+    const value = address[key];
+    if (value !== undefined && value !== null && value !== "") {
+      return value;
+    }
+  }
+
+  return "";
+}
+
+function OrderDetailSectionCard({
+  title,
+  children,
+  className = "",
+  headerClassName = "",
+  titleClassName = "",
+  borderClassName = "",
+  bodyClassName = "",
+}) {
+  return (
+    <section
+      className={`overflow-hidden border bg-white ${borderClassName} ${className}`.trim()}
+    >
+      <div
+        className={`flex items-center border-b border-[#CE9F2D66] ${headerClassName}`.trim()}
+      >
+        <h2
+          className={`text-h5 font-bold text-[#1B1D60] ${titleClassName}`.trim()}
+        >
+          {title}
+        </h2>
+      </div>
+      <div className={bodyClassName}>{children}</div>
+    </section>
+  );
+}
 
 export function PaymentResultPage({ failed = false }) {
   const dispatch = useDispatch();

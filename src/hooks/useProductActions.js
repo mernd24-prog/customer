@@ -1,20 +1,17 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { updateCart } from "../features/cart/cartSlice";
+import { setGuestCart, updateCart } from "../features/cart/cartSlice";
 import { openAddedToCartModal } from "../features/cart/cartUiSlice";
-import {
-  addProductToCartPayload,
-  getProductId,
-  wishlistPayload,
-} from "../utils/ecommerce";
+import { addProductToCartPayload, getProductId, writeGuestCart, wishlistPayload } from "../utils/ecommerce";
 import { useToastThunk } from "./useToastThunk";
 import { useAuthModal } from "../context/AuthModalContext";
+import { store } from "../app/store";
 
 export function useProductActions() {
   const dispatch = useDispatch();
   const run = useToastThunk();
-  const { openAuthModal } = useAuthModal();
+  const { openGuestOtpModal } = useAuthModal();
 
   const user = useSelector((state) => state.auth.current);
   const cart = useSelector((state) => state.cart.current);
@@ -33,8 +30,11 @@ export function useProductActions() {
   const addToCart = useCallback(
     async (product, quantity = 1) => {
       if (!user) {
-        openAuthModal();
-        return;
+        const nextCart = addProductToCartPayload(cart, product, quantity);
+        const writtenCart = writeGuestCart(nextCart);
+        dispatch(setGuestCart(writtenCart));
+        dispatch(openAddedToCartModal({ product }));
+        return writtenCart;
       }
       const result = await run(
         dispatch,
@@ -48,16 +48,34 @@ export function useProductActions() {
       dispatch(openAddedToCartModal({ product }));
       return result;
     },
-    [cart, dispatch, run, user, openAuthModal],
+    [cart, dispatch, run, user],
   );
 
   const toggleWishlist = useCallback(
     (product) => {
-      if (!user) {
-        openAuthModal();
-        return;
-      }
       const added = isWishlisted(product);
+      if (!user) {
+        openGuestOtpModal(() => {
+          // Use current store state at callback time (post-login)
+          const currentCart = store.getState().cart.current;
+          run(
+            dispatch,
+            updateCart(wishlistPayload(currentCart, product, added)),
+            added
+              ? {
+                  title: "Removed from wishlist",
+                  message: "The item has been removed from your wishlist.",
+                  tone: "remove",
+                }
+              : {
+                  title: "Added to wishlist",
+                  message: "The item has been saved to your wishlist.",
+                  tone: "wishlist",
+                },
+          );
+        });
+        return null;
+      }
       return run(
         dispatch,
         updateCart(wishlistPayload(cart, product, added)),
@@ -74,14 +92,21 @@ export function useProductActions() {
             },
       );
     },
-    [cart, dispatch, isWishlisted, run, user, openAuthModal],
+    [cart, dispatch, isWishlisted, openGuestOtpModal, run, user],
   );
 
   const removeFromWishlist = useCallback(
     (product) => {
       if (!user) {
-        openAuthModal();
-        return;
+        openGuestOtpModal(() => {
+          const currentCart = store.getState().cart.current;
+          run(dispatch, updateCart(wishlistPayload(currentCart, product, true)), {
+            title: "Removed from wishlist",
+            message: "The item has been removed from your wishlist.",
+            tone: "remove",
+          });
+        });
+        return null;
       }
       return run(dispatch, updateCart(wishlistPayload(cart, product, true)), {
         title: "Removed from wishlist",
@@ -89,7 +114,7 @@ export function useProductActions() {
         tone: "remove",
       });
     },
-    [cart, dispatch, run, user, openAuthModal],
+    [cart, dispatch, openGuestOtpModal, run, user],
   );
 
   return {

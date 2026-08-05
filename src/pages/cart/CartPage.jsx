@@ -13,7 +13,7 @@ import CartItemCard from "../../components/cart/CartItemCard";
 // import CartSummary from "../../components/cart/CartSummary";
 import BrandButton from "../../components/ui/BrandButton";
 import { Breadcrumbs, ProductCard } from "../../components/ecommerce";
-import { fetchCart, updateCart } from "../../features/cart/cartSlice";
+import { fetchCart, setGuestCart, updateCart } from "../../features/cart/cartSlice";
 import { fetchProductById } from "../../features/product/productSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { useProductActions } from "../../hooks/useProductActions";
@@ -41,6 +41,7 @@ import {
 } from "../../utils/ecommerce/money";
 
 import { ConfirmModal } from "../../components/common";
+import GuestOtpAuthModal from "../../components/common/overlay/GuestOtpAuthModal";
 
 import OrderPaymentSummary from "../orders/components/OrderPaymentSummary";
 
@@ -58,6 +59,7 @@ import {
   readSavedForLaterItems,
   readSelectedCheckoutItemIds,
   writeCheckoutCartItemIds,
+  writeGuestCart,
   writeSavedForLaterItems,
   writeSelectedCheckoutItemIds,
 } from "../../utils/ecommerce/cart";
@@ -198,6 +200,7 @@ export default function CartPage() {
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const recentViewedItems = getRecentlyViewed();
 
+  const currentUser = useSelector((state) => state.auth.current);
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
   const rawItems = useMemo(
@@ -214,14 +217,17 @@ export default function CartPage() {
   );
   const [selectedItemIds, setSelectedItemIds] = useState([]);
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const [showGuestOtpModal, setShowGuestOtpModal] = useState(false);
 
   const [localQuantities, setLocalQuantities] = useState({});
   const latestRef = useRef({ rawItems: [], wishlist: [], localQuantities: {} });
   const updateTimerRef = useRef(null);
 
   useEffect(() => {
-    dispatch(fetchCart());
-  }, [dispatch]);
+    if (currentUser) {
+      dispatch(fetchCart());
+    }
+  }, [dispatch, currentUser]);
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -389,6 +395,17 @@ export default function CartPage() {
         const key = cartLineKey(ci);
         return pending[key] != null ? { ...ci, quantity: pending[key] } : ci;
       });
+
+      if (!currentUser) {
+        const nextCart = normalizeCartPayloadForWrite({
+          items: updated,
+          wishlist: latestWishlist,
+        });
+        const writtenCart = writeGuestCart(nextCart);
+        dispatch(setGuestCart(writtenCart));
+        return;
+      }
+
       run(
         dispatch,
         updateCart(
@@ -400,7 +417,7 @@ export default function CartPage() {
         "Cart updated",
       );
     }, 600);
-  }, [dispatch, run]);
+  }, [currentUser, dispatch, run]);
 
   const handleIncrease = (id) => {
     setLocalQuantities((prev) => {
@@ -427,6 +444,16 @@ export default function CartPage() {
 
   const handleRemove = (id) => {
     const updated = rawItems.filter((ci) => cartLineKey(ci) !== id);
+
+    if (!currentUser) {
+      const nextCart = normalizeCartPayloadForWrite({
+        items: updated,
+        wishlist: cart.wishlist || [],
+      });
+      const writtenCart = writeGuestCart(nextCart);
+      dispatch(setGuestCart(writtenCart));
+      return;
+    }
 
     run(
       dispatch,
@@ -553,6 +580,14 @@ export default function CartPage() {
 
   return (
     <>
+      <GuestOtpAuthModal
+        open={showGuestOtpModal}
+        onClose={() => setShowGuestOtpModal(false)}
+        onSuccess={() => {
+          setShowGuestOtpModal(false);
+          navigate("/checkout");
+        }}
+      />
       <ConfirmModal
         open={showLimitModal}
         title="Maximum Quantity Reached"
@@ -950,6 +985,11 @@ export default function CartPage() {
                           SELECTED_CHECKOUT_STORAGE_KEY,
                           JSON.stringify(selectedItemIds),
                         );
+
+                        if (!currentUser) {
+                          setShowGuestOtpModal(true);
+                          return;
+                        }
 
                         navigate("/checkout");
                       }}

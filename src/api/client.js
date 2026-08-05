@@ -98,6 +98,7 @@ const isPublicAuthEndpoint = (url = "") =>
     endpoints.auth.sendOtp,
     endpoints.auth.verifyOtp,
     endpoints.auth.resendOtp,
+    endpoints.auth.otpAuth,
     endpoints.auth.forgotPassword,
     endpoints.auth.resetPassword,
   ].some((endpoint) => String(url || "").includes(endpoint));

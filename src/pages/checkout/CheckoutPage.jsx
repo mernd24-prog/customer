@@ -59,6 +59,7 @@ import AddressSelection from "./components/AddressSelection";
 import DiscountsSection from "./components/DiscountsSection";
 import CheckoutSummary from "./components/CheckoutSummary";
 import BaseModal from "../../components/common/overlay/BaseModal";
+import GuestOtpAuthModal from "../../components/common/overlay/GuestOtpAuthModal";
 import Button from "../../components/ui/Button";
 import AddressFormFields from "../../components/address/AddressFormFields";
 import { CHECKOUT_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
@@ -726,6 +727,15 @@ export default function CheckoutPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const run = useToastThunk();
+
+  const currentUser = useSelector((s) => s.auth?.current);
+  const [showGuestOtpModal, setShowGuestOtpModal] = useState(!currentUser);
+
+  useEffect(() => {
+    if (!currentUser) {
+      setShowGuestOtpModal(true);
+    }
+  }, [currentUser]);
 
   const cartState = useSelector((s) => s.cart);
   const walletState = useSelector((s) => s.wallet);
@@ -1600,6 +1610,16 @@ export default function CheckoutPage() {
 
   return (
     <>
+      <GuestOtpAuthModal
+        open={showGuestOtpModal}
+        onClose={() => {
+          setShowGuestOtpModal(false);
+          if (!currentUser) {
+            navigate("/cart");
+          }
+        }}
+        onSuccess={() => setShowGuestOtpModal(false)}
+      />
       <Seo title="Checkout | Sam Global" />
 
       <div className=" py-6 sm:py-8">

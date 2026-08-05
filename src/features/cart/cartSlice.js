@@ -3,11 +3,19 @@ import { cartThunks } from "../domainThunks";
 
 export const { fetchCart, updateCart } = cartThunks;
 
-export default createApiSlice({
+const cartSlice = createApiSlice({
   name: "cart",
   thunks: cartThunks,
+  reducers: {
+    setGuestCart: (state, action) => {
+      state.current = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     // Clear cart when any user logs out so the next user starts fresh
     builder.addCase("auth/logout", () => defaultInitialState);
   },
-}).reducer;
+});
+
+export const { setGuestCart, resetState, clearError } = cartSlice.actions;
+export default cartSlice.reducer;
