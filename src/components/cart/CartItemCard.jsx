@@ -51,69 +51,98 @@ export default function CartItemCard({
         ? Math.min(stockQuantity, Number(maxQty))
         : stockQuantity
       : maxQty;
+  const hasVariantTags = Boolean(
+    item?.condition ||
+    item?.color ||
+    item?.size ||
+    Object.keys(item?.attributes || {}).some(
+      (key) => !["color", "size"].includes(key),
+    ),
+  );
 
   return (
     <article
-      className={`relative w-full p-3 min-[375px]:p-4 sm:p-5 lg:p-6 xl:min-h-[433px] xl:p-[25px] ${
+      className={`relative w-full p-3 sm:p-4 lg:p-5 ${
         fullWidth ? "xl:max-w-none" : "xl:max-w-[1161px]"
       }`}
     >
       <div
-        className={`grid gap-5 sm:gap-6  lg:grid-cols-[minmax(220px,320px)_1fr] xl:grid-cols-[minmax(220px,399px)_1fr] xl:gap-9 pb-7 ${
+        className={`grid grid-cols-1 sm:grid-cols-[170px_1fr] lg:grid-cols-[190px_1fr] gap-4 sm:gap-5 pb-5 ${
           !isLastItem ? " border-b border-[#CE9F2D4D]" : ""
         }`}
       >
-        {item?.image && (
-          <div className=" relative  mx-auto flex aspect-[399/383] w-full max-w-[399px] items-center justify-center overflow-hidden rounded-[12px]  border border-[#F0E6D2] bg-white lg:h-auto lg:max-w-[320px] xl:h-[383px] xl:w-[399px] xl:max-w-[399px]">
-            {showCheckbox && (
-              <label className=" absolute left-3 top-3 z-10 flex items-center justify-center sm:left-4 sm:top-4 xl:left-5 xl:top-5">
-                <input
-                  type="checkbox"
-                  checked={selected}
-                  onChange={(event) =>
-                    onSelect?.(item?.id, event.target.checked)
-                  }
-                  className="h-[18px] w-[18px] rounded-[4px] border-[#A9B4D8] accent-[#3F4095]"
-                />
-                <span className="sr-only">
-                  Select {item?.title} For Checkout
-                </span>
-              </label>
-            )}
+        <div className="flex flex-col items-start sm:items-center gap-2 w-full">
+          {item?.image && (
+            <div className="relative flex aspect-square w-full max-w-full sm:max-w-[165px] h-auto max-h-[260px] sm:max-h-[190px] items-center justify-center overflow-hidden rounded-[10px] border border-[#F0E6D2] bg-white">
+              {showCheckbox && (
+                <label className="absolute left-2.5 top-2.5 z-10 flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={selected}
+                    onChange={(event) =>
+                      onSelect?.(item?.id, event.target.checked)
+                    }
+                    className="h-4 w-4 rounded-[4px] border-[#A9B4D8] accent-[#3F4095]"
+                  />
+                  <span className="sr-only">
+                    Select {item?.title} For Checkout
+                  </span>
+                </label>
+              )}
 
-            {productPath ? (
-              <Link
-                to={productPath}
-                aria-label={`View details for ${item?.title}`}
-                className="block h-full w-full"
-              >
+              {productPath ? (
+                <Link
+                  to={productPath}
+                  aria-label={`View details for ${item?.title}`}
+                  className="block h-full w-full"
+                >
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="h-full w-full object-contain p-2 transition duration-300 hover:scale-105 sm:p-3"
+                    onError={(event) =>
+                      applyImageFallback(event, item.title, "cart")
+                    }
+                  />
+                </Link>
+              ) : (
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="h-full w-full object-contain p-3 transition duration-300 hover:scale-105 min-[375px]:p-4 sm:p-6"
+                  className="h-full w-full object-contain p-2 sm:p-3"
                   onError={(event) =>
                     applyImageFallback(event, item.title, "cart")
                   }
                 />
-              </Link>
-            ) : (
-              <img
-                src={item.image}
-                alt={item.title}
-                className="h-full w-full object-contain p-3 min-[375px]:p-4 sm:p-6"
-                onError={(event) =>
-                  applyImageFallback(event, item.title, "cart")
-                }
-              />
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
 
-        <div className="min-w-0 py-1 lg:py-2">
+          <div className="hidden sm:flex mt-1 w-full flex-col items-center">
+            <QuantitySelector
+              quantity={item.quantity}
+              onIncrease={() => onIncrease(item.id)}
+              onDecrease={() => onDecrease(item.id)}
+              max={quantityMax}
+              increaseDisabled={item.increaseDisabled}
+              increaseDisabledLabel={item.stockMessage || undefined}
+            />
+            {item.stockMessage ? (
+              <p className="mt-1 text-center text-xs font-semibold text-red-600">
+                {item.stockMessage}
+              </p>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="min-w-0 py-0.5">
+          <div className="my-1.5">
+            <StarRating rating={ratingValue} count={reviewCount} />
+          </div>
           {productPath ? (
             <Link
               to={productPath}
-              className="block font-bold text-h6 text-[#2d2d2d] transition hover:text-[#1B1D60]"
+              className="block font-bold text-sm sm:text-base text-[#2d2d2d] transition hover:text-[#1B1D60]"
             >
               <ShowMoreText
                 text={item?.title}
@@ -122,51 +151,49 @@ export default function CartItemCard({
                 moreLabel="more"
                 lessLabel="less"
                 textClassName="inline"
-                buttonClassName="ml-1 text-sm font-semibold text-[#1B1D60] hover:underline"
+                buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
               />
             </Link>
           ) : (
-            <h3 className="line-clamp-2 block font-bold text-h6 text-[#2d2d2d]">
+            <h3 className="line-clamp-2 block font-bold text-sm sm:text-base text-[#2d2d2d]">
               {item?.title}
             </h3>
           )}
 
-          <div className="my-4">
-            <StarRating rating={ratingValue} count={reviewCount} />
-          </div>
-
-          <div className=" flex flex-wrap  gap-1.5  sm:gap-2">
-            {item?.condition && (
-              <span className="rounded-full bg-[#F2F1F8] px-3 py-1 text-xs font-semibold text-[#1B1D60]">
-                {item.condition}
-              </span>
-            )}
-
-            {item?.color && (
-              <span className="rounded-full bg-[#F2F1F8] px-3 py-1 text-xs font-semibold text-[#1B1D60]">
-                Color: {item.color}
-              </span>
-            )}
-
-            {item?.size && (
-              <span className="rounded-full bg-[#F2F1F8] px-3 py-1 text-xs font-semibold text-[#1B1D60]">
-                Size: {item.size}
-              </span>
-            )}
-
-            {Object.entries(item?.attributes || {})
-              .filter(([key]) => !["color", "size"].includes(key))
-              .map(([key, value]) => (
-                <span
-                  key={key}
-                  className="rounded-full bg-[#F2F1F8] px-3 py-1 text-xs font-semibold capitalize text-[#1B1D60]"
-                >
-                  {key.replace(/_/g, " ")}: {String(value)}
+          {hasVariantTags && (
+            <div className="my-2 flex flex-wrap gap-1.5">
+              {item?.condition && (
+                <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-[11px] font-semibold text-[#1B1D60]">
+                  {item.condition}
                 </span>
-              ))}
-          </div>
+              )}
 
-          <div className="">
+              {item?.color && (
+                <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-[11px] font-semibold text-[#1B1D60]">
+                  Color: {item.color}
+                </span>
+              )}
+
+              {item?.size && (
+                <span className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-[11px] font-semibold text-[#1B1D60]">
+                  Size: {item.size}
+                </span>
+              )}
+
+              {Object.entries(item?.attributes || {})
+                .filter(([key]) => !["color", "size"].includes(key))
+                .map(([key, value]) => (
+                  <span
+                    key={key}
+                    className="rounded-full bg-[#F2F1F8] px-2.5 py-0.5 text-[11px] font-semibold capitalize text-[#1B1D60]"
+                  >
+                    {key.replace(/_/g, " ")}: {String(value)}
+                  </span>
+                ))}
+            </div>
+          )}
+
+          <div>
             <ProductStockStatus
               inStock={!isOutOfStock}
               selectedVariant={selectedVariant}
@@ -179,35 +206,35 @@ export default function CartItemCard({
               mrp={oldPrice}
               currency={item?.currency ?? item?._raw?.currency}
               discount={discountPct}
-              priceClassName="text-[20px] lg:text-[24px] font-extrabold text-[#001F3F]"
-              mrpClassName="text-[20px] lg:text-[24px] font-semibold text-[#949494]"
-              discountClassName=" text-xs lg:text-base font-semibold"
+              priceClassName="text-base sm:text-lg font-extrabold text-[#001F3F]"
+              mrpClassName="text-xs sm:text-sm font-semibold text-[#949494]"
+              discountClassName="text-xs font-semibold"
             />
 
             {atMaxQty && !isOutOfStock && (
-              <p className="mt-1 text-[13px] font-medium text-[var(--customer-muted)]">
+              <p className="mt-0.5 text-xs font-medium text-[var(--customer-muted)]">
                 Max {maxQty} Per Order
               </p>
             )}
+
+            <div className="mt-2.5 sm:hidden">
+              <QuantitySelector
+                quantity={item.quantity}
+                onIncrease={() => onIncrease(item.id)}
+                onDecrease={() => onDecrease(item.id)}
+                max={quantityMax}
+                increaseDisabled={item.increaseDisabled}
+                increaseDisabledLabel={item.stockMessage || undefined}
+              />
+              {item.stockMessage ? (
+                <p className="mt-1 text-xs font-semibold text-red-600">
+                  {item.stockMessage}
+                </p>
+              ) : null}
+            </div>
           </div>
 
-          <div className="mt-5 sm:mt-7">
-            <QuantitySelector
-              quantity={item.quantity}
-              onIncrease={() => onIncrease(item.id)}
-              onDecrease={() => onDecrease(item.id)}
-              max={quantityMax}
-              increaseDisabled={item.increaseDisabled}
-              increaseDisabledLabel={item.stockMessage || undefined}
-            />
-            {item.stockMessage ? (
-              <p className="mt-1 text-xs font-semibold text-red-600">
-                {item.stockMessage}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 sm:mt-7 sm:gap-x-8">
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-6">
             {saveForLaterLabel === "Move to Wishlist" ? (
               <button
                 type="button"
@@ -215,9 +242,13 @@ export default function CartItemCard({
                   setIsSaving(true);
                   onSaveForLater?.(item?.id);
                 }}
-                className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#1B1D60] min-[375px]:text-base sm:gap-3 sm:text-lg"
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#2d2d2d] transition hover:text-[#1B1D60]"
               >
-                <Heart size={22} className="text-[#1B1D60] sm:size-[25px]" fill={isSaving ? "currentColor" : "none"} />
+                <Heart
+                  size={16}
+                  className="text-[#1B1D60]"
+                  fill={isSaving ? "currentColor" : "none"}
+                />
                 {saveForLaterLabel}
               </button>
             ) : (
@@ -226,9 +257,9 @@ export default function CartItemCard({
                 onClick={() => onSaveForLater?.(item?.id)}
                 disabled={isOutOfStock}
                 title={isOutOfStock ? "Out of stock" : undefined}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#CE9F2D] px-14 py-2 font-medium text-white transition hover:bg-[#b8891f] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#CE9F2D] disabled:active:scale-100 lg:px-20 lg:py-3"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[#CE9F2D] px-6 py-1.5 text-xs font-semibold text-white transition hover:bg-[#b8891f] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#CE9F2D] disabled:active:scale-100"
               >
-                <FaShoppingCart />
+                <FaShoppingCart size={13} />
                 {saveForLaterLabel}
               </button>
             )}
@@ -236,9 +267,9 @@ export default function CartItemCard({
             <button
               type="button"
               onClick={() => onRemove?.(item?.id)}
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#2d2d2d] transition hover:text-[#FF3B35] min-[375px]:text-base sm:gap-3 sm:text-lg"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#2d2d2d] transition hover:text-[#FF3B35]"
             >
-              <Trash2 size={19} className="text-[#FF3B35] sm:size-[22px]" />
+              <Trash2 size={16} className="text-[#FF3B35]" />
               {removeLabel}
             </button>
 
@@ -246,7 +277,7 @@ export default function CartItemCard({
               <button
                 type="button"
                 onClick={() => onBuyNow(item?.id)}
-                className="inline-flex items-center text-sm font-medium text-[#1B1D60] transition hover:text-[#CE9F2D] min-[375px]:text-base sm:text-lg"
+                className="inline-flex items-center text-xs sm:text-sm font-semibold text-[#1B1D60] transition hover:text-[#CE9F2D]"
               >
                 Buy Now
               </button>

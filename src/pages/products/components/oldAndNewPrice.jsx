@@ -22,7 +22,7 @@ export default function ProductPriceBlock({
             {dealBadge}
           </span>
         ) : null}
-        <div className="my-4 flex flex-wrap items-center gap-3">
+        <div className="my-2 flex flex-wrap items-center gap-3">
           <span className={cn("    font-bold  text-navy", priceClassName)}>
             {formatMoney(price, currency)}
           </span>
@@ -41,7 +41,7 @@ export default function ProductPriceBlock({
           {discount > 0 && (
             <span
               className={cn(
-                "rounded-full bg-[#FF3D31] px-3 py-1 text-sm font-bold uppercase text-white lg:text-base",
+                "rounded-full bg-[#FF3D31] px-3 py-1 text-xs font-bold uppercase text-white",
                 discountClassName,
               )}
             >
@@ -50,7 +50,7 @@ export default function ProductPriceBlock({
           )}
         </div>
 
-        <p className="text-sm font-medium text-[#2E2E2E] lg:text-base">
+        <p className="text-xs font-medium text-[#2E2E2E] lg:text-sm">
           Inclusive of All Taxes
         </p>
       </div>

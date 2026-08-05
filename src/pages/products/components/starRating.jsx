@@ -22,7 +22,7 @@ export default function StarRating({ rating, count }) {
   const formattedCount = formatRatingCount(count);
 
   return (
-    <div className="my-2 flex items-center gap-2">
+    <div className=" flex items-center gap-2">
       <div className="flex items-center gap-1">
         {rating != null && (
           <span className="text-sm font-medium text-ink lg:text-lg">
