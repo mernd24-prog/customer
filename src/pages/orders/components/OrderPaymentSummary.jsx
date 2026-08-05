@@ -237,7 +237,7 @@ function OrderPaymentSummary({
       {variant === "cart" && asNumber?.(productDiscount) > 0 && (
         <div className="border-t  border-[#04258626] pt-2">
           <SummaryRow
-            label="Product Discount"
+            label="Product discount"
             value={`-${formatMoney(productDiscount, currency)}`}
             savings
           />

@@ -28,15 +28,9 @@ export const STATUS_BADGE = {
   order_closed: "bg-gray-100 text-gray-600",
 };
 export const ORDER_STEPS = [
-  "pending_payment",
-  "confirmed",
-  "processing",
-  "packed",
-  "ready_to_ship",
-  "shipped",
-  "out_for_delivery",
+  "initiated",
+  "in_transit",
   "delivered",
-  "fulfilled",
 ];
 
 export const ORDER_BREADCRUMBS = [
@@ -99,11 +93,11 @@ export const ORDER_FILTERS = [
 
   { label: "Delivered", value: "delivered" },
   { label: "Out For Delivery", value: "out_for_delivery" },
-  { label: "Failed Delivered", value: "failed_delivered" },
+  { label: "Failed Delivered", value: "failed_delivery" },
   { label: "Cancelled", value: "cancelled" },
   { label: "On Hold", value: "on_hold" },
   { label: "Refunded", value: "refunded" },
-  { label: " Returned", value: "returned" },
+  { label: "Returned", value: "returned" },
   { label: "Ready To Ship", value: "ready_to_ship" },
   { label: "Partially Returned", value: "partially_returned" },
   { label: "Return Requested", value: "return_requested" },
@@ -113,7 +107,7 @@ export const ORDER_FILTERS = [
   { label: "Processing", value: "processing" },
   { label: "Confirmed", value: "confirmed" },
   { label: "Payment Failed", value: "payment_failed" },
-  { label: "Payment Pending", value: "payment_pending" },
+  { label: "Payment Pending", value: "pending_payment" },
 ];
 
 export const COMPACT_STATUS_BADGE = {

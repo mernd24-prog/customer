@@ -24,10 +24,7 @@ export default function ShowcaseSection({
 }) {
   const skeletonPreset =
     skeletonVariant === "new-arrivals" ? "NEW_ARRIVAL_CARD" : "TOP_DEAL_CARD";
-  const skeletonWrapperClass =
-    skeletonVariant === "new-arrivals"
-      ? "relative h-full min-w-0 rounded-[12px] bg-white px-4  pb-6 pt-5 shadow-sm sm:px-5"
-      : "min-w-0 px-4 pb-6 pt-5";
+  const skeletonWrapperClass = "min-w-0 h-full";
 
   return (
     <SectionContainer

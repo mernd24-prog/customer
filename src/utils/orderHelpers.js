@@ -385,7 +385,20 @@ export const getDeliveryEtaDays = (order = {}) => {
   const sellers = Array.isArray(metadata.deliveryCharge?.sellers)
     ? metadata.deliveryCharge.sellers
     : [];
-  const etas = sellers.map((s) => s.estimatedDeliveryDays).filter(Boolean);
+  
+  let etas = sellers.map((s) => s.estimatedDeliveryDays).filter(Boolean);
+
+  if (!etas.length) {
+    const items = getOrderItems(order) || [];
+    etas = items
+      .map((item) => item?.product_snapshot?.shipping)
+      .filter((s) => s && (s.estimatedDaysMin || s.estimatedDaysMax))
+      .map((s) => ({
+        minDays: s.estimatedDaysMin,
+        maxDays: s.estimatedDaysMax,
+      }));
+  }
+
   if (!etas.length) return null;
   const minDays = Math.min(...etas.map((e) => Number(e.minDays ?? e.maxDays ?? 0)));
   const maxDays = Math.max(...etas.map((e) => Number(e.maxDays ?? e.minDays ?? 0)));
@@ -417,7 +430,7 @@ export const getDeliveryDateRange = (order = {}) => {
   if (!eta) return null;
   const base = order.created_at || order.createdAt || new Date();
   return {
-    minDate: eta.minDays ? addDays(base, eta.minDays) : null,
+    minDate: base,
     maxDate: addDays(base, eta.maxDays),
   };
 };

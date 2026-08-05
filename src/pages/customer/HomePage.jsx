@@ -115,6 +115,10 @@ export function HomePage() {
   const products = Array.isArray(productList) ? productList : [];
 
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
+  
+  const isProductLoading = useSelector((s) => s.product.loading);
+  const isTrendingLoading = useSelector((s) => s.recommendation.loading);
+  const loading = isProductLoading || isTrendingLoading;
 
   useEffect(() => {
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
@@ -173,6 +177,7 @@ export function HomePage() {
         actionLabel="View All Products"
         actionHref="/products"
         products={featuredProducts}
+        loading={loading}
       />
 
       <section className="my-10">
@@ -189,6 +194,7 @@ export function HomePage() {
           className="mt-8"
           actionLabel="View Shop"
           actionHref="/products"
+          loading={loading}
         />
       </section>
 

@@ -7,6 +7,11 @@ import {
 import { formatMoney } from "../../../utils/ecommerce";
 import ShowMoreText from "../../../utils/showMore";
 
+const capitalizeFirst = (str) => {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 export default function ReturnItemCard({
   title,
   image,
@@ -27,87 +32,85 @@ export default function ReturnItemCard({
 }) {
   return (
     <article
-      className={`w-full overflow-hidden rounded-[15px] border border-[#CE9F2D66] bg-white px-3 py-4 min-[375px]:px-4 sm:px-6 sm:py-5 lg:px-12 lg:py-6 ${className}`}
+      className={`w-full overflow-hidden rounded-[15px] border border-[#CE9F2D66] bg-white px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6 ${className}`}
     >
-      <div className="flex flex-col justify-between md:flex-row">
-        <div className="grid min-w-0 gap-4 sm:grid-cols-[125px_minmax(0,1fr)] sm:items-center sm:gap-6 lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-10 ">
-          <ImageWithFallback
-            src={image}
-            alt={title}
-            className="mx-auto  h-[110px] w-[110px] shrink-0 bg-white min-[375px]:h-[120px] min-[375px]:w-[120px] sm:mx-0 sm:h-[125px] sm:w-[125px] md:h-[135px] md:w-[135px] lg:h-auto lg:w-auto"
-          />
+      <div className="flex flex-col min-[480px]:flex-row items-start gap-4 sm:gap-6">
+        <ImageWithFallback
+          src={image}
+          alt={title}
+          className="shrink-0 rounded-[8px] bg-white object-cover w-full h-[180px] min-[480px]:w-[120px] min-[480px]:h-[120px] sm:h-[150px] sm:w-[150px] lg:h-[120px] lg:w-[120px]"
+        />
 
-          <div className="min-w-0 space-y-1.5 text-small font-medium  text-[#454545]  sm:space-y-2  ">
-            <h2 className="text-h4 py-2 font-semibold text-[#1B1D60] max-w-2xl lg:font-bold">
+        <div className="min-w-0 flex-1 flex flex-col w-full">
+          <div className="flex flex-row items-start justify-between gap-3 sm:gap-4 mb-2 min-[480px]:mb-0">
+            <h2 className="max-w-4xl block text-[13px] min-[400px]:text-[14px] font-bold text-[#1B1D60] min-[480px]:text-base md:text-lg lg:text-[20px] leading-snug">
               <ShowMoreText
                 text={title}
-                mode="lines"
-                limit={2}
+                mode="characters"
+                limit={65}
                 moreLabel="more"
                 lessLabel="less"
                 textClassName="inline"
-                buttonClassName="ml-1 text-sm font-semibold text-[#1B1D60] hover:underline"
+                buttonClassName="ml-1 text-xs sm:text-sm font-semibold text-[#1B1D60] hover:underline"
               />
             </h2>
-
-            <p>Order ID : {orderId}</p>
-            <p className="py-2">Qty : {quantity}</p>
-            <p>Sold by {seller}</p>
-
-            <p className="py-2 text-h5 font-bold text-[#1B1D60]  lg:font-extrabold ">
-              {formatMoney(price, currency)}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex  flex-col space-y-4">
-          <Badge
-            variant="gold"
-            className="w-fit min-w-[120px] justify-center rounded-[10px] px-3 py-1.5 text-xs font-medium normal-case text-[#CE9F2D] sm:min-w-[140px] sm:py-2 md:w-full lg:h-[45px] lg:w-[220px] lg:min-w-[220px] lg:rounded-[15px] lg:border lg:border-[#CE9F2D] lg:px-[10px] lg:text-[16px] lg:font-medium"
-          >
-            {status}
-          </Badge>
-
-          <div>
-            <div>Requested On</div>
-            <div className="mt-1 text-small font-bold text-[#1B1D60]">
-              {requestedOn}
-            </div>
+            <Badge
+              variant="gold"
+              className="w-fit shrink-0 justify-center rounded-[8px] border border-[#CE9F2D] !bg-[#FFEFC8] px-2.5 py-1 text-[10px] font-semibold normal-case text-[#CE9F2D] sm:px-4 sm:py-1.5 sm:text-[13px]"
+            >
+              {capitalizeFirst(status)}
+            </Badge>
           </div>
 
-          <div>
-            <div>Return ID</div>
-            <div className="mt-1 break-words text-small font-bold text-[#1B1D60]  lg:font-extrabold ">
-              {returnId}
+          <div className="space-y-1.5 sm:space-y-2 text-[11px] min-[400px]:text-[12px] font-medium text-[#454545] sm:text-[14px]">
+            <p>Qty : {quantity}</p>
+            
+            <div className="flex flex-col min-[480px]:flex-row min-[480px]:flex-wrap min-[480px]:items-center gap-x-6 gap-y-1 sm:gap-y-2">
+              <div className="flex items-center gap-1">
+                <span className="font-medium text-muted">Requested On :</span>
+                <span className="font-semibold text-[#1B1D60]">{requestedOn}</span>
+              </div>
+
+              <div className="flex items-start gap-1">
+                <span className="font-medium whitespace-nowrap text-muted">Return ID :</span>
+                <span className="break-all font-semibold text-[#1B1D60]">{returnId}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <Divider className="my-4 border-[#8D8D8D] sm:my-5 lg:pt-2" />
+      <Divider className="my-3 border-[#D9DDE8] sm:my-4" />
 
-      <div className="grid gap-5 md:grid-cols-[1.1fr_1fr_1fr_220px]  mt-6 md:items-end lg:grid-cols-[1.1fr_1fr_1fr_220px] lg:gap-8 ">
-        <ReturnInfo label="Reason for Return">
-          <ShowMoreText
-            label="Reason for Return"
-            text={reason}
-            mode="lines"
-            limit={2}
-            buttonClassName="ml-1 text-sm font-semibold text-[#1B1D60] hover:underline"
-          />
-        </ReturnInfo>
+      <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-5 md:gap-6">
+        <div className="flex flex-1 flex-wrap items-start gap-4 sm:gap-6 lg:gap-10 w-full">
+          <ReturnInfo 
+            label="Reason for Return" 
+            className="flex-1 min-w-[130px] sm:min-w-[200px] md:flex-none md:w-[260px] lg:w-[320px] shrink-0"
+          >
+            <ShowMoreText
+              label="Reason for Return"
+              text={capitalizeFirst(reason)}
+              mode="lines"
+              limit={2}
+              buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+            />
+          </ReturnInfo>
 
-        <ReturnInfo label="Refund Amount">
-          {formatMoney(refundAmount || 0, currency)}
-        </ReturnInfo>
+          <ReturnInfo label="Refund Amount" className="flex-1 min-w-[100px] shrink-0">
+            {formatMoney(refundAmount || 0, currency)}
+          </ReturnInfo>
 
-        <ReturnInfo label="Expected Date">{expectedDate || "—"}</ReturnInfo>
+          <ReturnInfo label="Expected Date" className="flex-1 min-w-[100px] shrink-0">
+            {expectedDate || "—"}
+          </ReturnInfo>
+        </div>
 
         <Button
           variant="secondary"
           size="sm"
           onClick={onTrackRequest}
-          className="h-9 w-full border-[#A9ACD1] px-4 text-sm font-semibold md:h-10 lg:h-[45px] lg:w-[220px] lg:min-w-[220px] lg:rounded-[10px] lg:border lg:px-[25px] lg:py-[10px] lg:text-[16px] lg:font-medium"
+          className="h-9 sm:h-10 w-full shrink-0 rounded-[8px] border border-[#CE9F2D] !bg-transparent px-4 text-[12px] sm:text-[13px] font-semibold text-[#1B1D60] hover:bg-[#FFEFC8]/40 md:w-[140px]"
         >
           {trackLabel}
         </Button>
@@ -116,14 +119,13 @@ export default function ReturnItemCard({
   );
 }
 
-function ReturnInfo({ label, children }) {
+function ReturnInfo({ label, children, className = "" }) {
   return (
-    <div className="min-w-0">
-      <p className="text-h6 font-medium  text-[#454545] ">{label}</p>
-
-      <p className="mt-2 break-words text-small font-bold text-[#1B1D60] lg:font-extrabold">
+    <div className={`min-w-0 ${className}`}>
+      <p className="text-[11px] font-medium text-muted sm:text-[14px]">{label}</p>
+      <div className="mt-1 break-words text-[12px] font-semibold text-[#1B1D60] sm:text-[14px]">
         {children}
-      </p>
+      </div>
     </div>
   );
 }

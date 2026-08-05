@@ -44,24 +44,30 @@ export const RETURNS_PAGE_SKELETON = [
           // Bottom section (Stats + Button)
           {
             type: "row",
-            className: "w-full border-t border-[#D9DDE8] mt-6 pt-6 px-6 justify-between items-center",
+            className: "w-full border-t border-[#D9DDE8] mt-6 pt-6 px-6 justify-between items-end",
             children: [
               {
-                type: "col", className: "gap-2", children: [
-                  { type: "box", width: "100px", height: "12px" },
-                  { type: "box", width: "140px", height: "16px" }
-                ]
-              },
-              {
-                type: "col", className: "gap-2 hidden sm:flex", children: [
-                  { type: "box", width: "100px", height: "12px" },
-                  { type: "box", width: "80px", height: "16px" }
-                ]
-              },
-              {
-                type: "col", className: "gap-2 hidden md:flex", children: [
-                  { type: "box", width: "100px", height: "12px" },
-                  { type: "box", width: "120px", height: "16px" }
+                type: "row",
+                className: "gap-6 sm:gap-10 md:gap-14 items-start",
+                children: [
+                  {
+                    type: "col", className: "gap-2", children: [
+                      { type: "box", width: "100px", height: "12px" },
+                      { type: "box", width: "140px", height: "16px" }
+                    ]
+                  },
+                  {
+                    type: "col", className: "gap-2 hidden sm:flex", children: [
+                      { type: "box", width: "100px", height: "12px" },
+                      { type: "box", width: "80px", height: "16px" }
+                    ]
+                  },
+                  {
+                    type: "col", className: "gap-2 hidden md:flex", children: [
+                      { type: "box", width: "100px", height: "12px" },
+                      { type: "box", width: "120px", height: "16px" }
+                    ]
+                  },
                 ]
               },
               { type: "box", width: "140px", height: "40px", className: "rounded-[8px] !bg-transparent border border-[#CE9F2D] shrink-0" },

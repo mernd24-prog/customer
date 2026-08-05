@@ -6,15 +6,43 @@
 export const SKELETON_PRESETS = {
   // 1. Product Card (Vertical)
   PRODUCT_CARD: [
-    { type: "box", height: "200px", rounded: "rounded-lg", className: "mb-4" }, // Image
-    { type: "box", width: "80%", height: "16px", className: "mb-2" }, // Title
-    { type: "box", width: "40%", height: "14px", className: "mb-4" }, // Category
     {
-      type: "row",
-      className: "justify-between",
+      type: "col",
+      className: "relative flex flex-col h-[525px] overflow-hidden rounded-[20px] border border-[#CE9F2D80]/50 bg-white",
       children: [
-        { type: "box", width: "60px", height: "20px" }, // Price
-        { type: "box", width: "32px", height: "32px", variant: "circle" }, // Cart Icon
+        {
+          type: "row",
+          className: "absolute left-4 top-4 z-20 gap-2 w-[calc(100%-2rem)]",
+          children: [
+            { type: "box", width: "72px", height: "24px", rounded: "rounded-[50px]", className: "sm:h-[28px] sm:w-[84px]" },
+            { type: "box", width: "100px", height: "24px", rounded: "rounded-[50px]", className: "sm:h-[28px]" },
+          ],
+        },
+        { type: "box", height: "260px", width: "100%", className: "rounded-t-[20px] shrink-0" },
+        {
+          type: "col",
+          className: "px-4 pb-4 pt-4 lg:pt-6 flex-1 min-w-0",
+          children: [
+            { type: "box", width: "90px", height: "16px", className: "mb-2" },
+            { type: "box", width: "100%", height: "20px" },
+            {
+              type: "row",
+              className: "gap-3 my-2 lg:my-4 items-center",
+              children: [
+                { type: "box", width: "70px", height: "24px" },
+                { type: "box", width: "50px", height: "20px" },
+              ],
+            },
+          ],
+        },
+        {
+          type: "row",
+          className: "px-4 pb-4 gap-8 mt-auto shrink-0",
+          children: [
+            { type: "box", height: "44px", rounded: "rounded-[30px]", className: "flex-1" },
+            { type: "box", width: "44px", height: "44px", variant: "circle" },
+          ],
+        },
       ],
     },
   ],
@@ -97,34 +125,74 @@ export const SKELETON_PRESETS = {
   ],
 
   NEW_ARRIVAL_CARD: [
-    { type: "box", width: "75%", height: "34px", className: "mx-auto" },
-    { type: "box", width: "100px", height: "18px", className: "mt-3" },
     {
-      type: "grid",
-      className: "mt-2 grid-cols-2 gap-3",
+      type: "col",
+      className: "flex flex-col h-[510px] overflow-hidden rounded-[20px] border border-[#1B1D6066] bg-white shadow-sm",
       children: [
         {
           type: "col",
-          className: "min-w-0 gap-0",
-          count: 2,
+          className: "bg-[#1B1D60] p-5 h-[100px] shrink-0",
           children: [
-            {
-              type: "box",
-              height: "auto",
-              rounded: "rounded-[10px]",
-              className: "aspect-[238/273] w-full",
-            },
-            {
-              type: "box",
-              width: "100%",
-              height: "34px",
-              rounded: "rounded-full",
-              className: "mx-auto mt-4 max-w-[160px]",
-            },
-          ],
+             { type: "row", className: "justify-end w-full mb-3", children: [{ type: "box", width: "80px", height: "24px", className: "!bg-white/20" }] },
+             { type: "box", width: "80%", height: "24px", className: "!bg-white/20 mt-1" }
+          ]
         },
-      ],
-    },
+        {
+          type: "col",
+          className: "flex-col divide-y divide-[#1B1D6066] bg-white flex-1",
+          children: [
+             {
+                type: "row",
+                className: "p-6 items-center gap-4 pl-4 h-[135px]",
+                children: [
+                   { type: "box", width: "90px", height: "90px", rounded: "rounded-[10px]" },
+                   {
+                      type: "col",
+                      className: "flex-1",
+                      children: [
+                         { type: "box", width: "95%", height: "18px", className: "mb-4" },
+                         { type: "row", className: "gap-2 mb-3 items-end", children: [ { type: "box", width: "70px", height: "22px"}, { type: "box", width: "60px", height: "18px"} ] },
+                         { type: "box", width: "110px", height: "14px", className: "mt-1" }
+                      ]
+                   }
+                ]
+             },
+             {
+                type: "row",
+                className: "p-6 items-center gap-4 pl-4 h-[135px]",
+                children: [
+                   { type: "box", width: "90px", height: "90px", rounded: "rounded-[10px]" },
+                   {
+                      type: "col",
+                      className: "flex-1",
+                      children: [
+                         { type: "box", width: "90%", height: "18px", className: "mb-4" },
+                         { type: "row", className: "gap-2 mb-3 items-end", children: [ { type: "box", width: "65px", height: "22px"}, { type: "box", width: "55px", height: "18px"} ] },
+                         { type: "box", width: "100px", height: "14px", className: "mt-1" }
+                      ]
+                   }
+                ]
+             },
+             {
+                type: "row",
+                className: "p-6 items-center gap-4 pl-4 h-[135px]",
+                children: [
+                   { type: "box", width: "90px", height: "90px", rounded: "rounded-[10px]" },
+                   {
+                      type: "col",
+                      className: "flex-1",
+                      children: [
+                         { type: "box", width: "85%", height: "18px", className: "mb-4" },
+                         { type: "row", className: "gap-2 mb-3 items-end", children: [ { type: "box", width: "75px", height: "22px"}, { type: "box", width: "65px", height: "18px"} ] },
+                         { type: "box", width: "95px", height: "14px", className: "mt-1" }
+                      ]
+                   }
+                ]
+             }
+          ]
+        }
+      ]
+    }
   ],
 
   API_GRID_CARD: [
