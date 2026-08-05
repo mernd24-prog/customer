@@ -32,14 +32,17 @@ const normalizeProgressStatus = (status) => {
 };
 
 const CUSTOMER_PROGRESS_STEPS = [
+  "initiated",
   "pending_payment",
   "confirmed",
   "processing",
   "packed",
   "ready_to_ship",
   "shipped",
+  "in_transit",
   "out_for_delivery",
   "delivered",
+  "fulfilled",
   "return_requested",
   "return_approved",
   "pickup_scheduled",
@@ -58,10 +61,8 @@ const PROGRESS_MESSAGES = {
   packed: "This item is packed.",
   ready_to_ship: "This item is ready for courier pickup.",
   shipped: "This item has been shipped.",
-  out_for_delivery:
-    "This item is out for delivery.",
-  delivered:
-    "This item has been delivered.",
+  out_for_delivery: "This item is out for delivery.",
+  delivered: "This item has been delivered.",
   fulfilled: "This item is complete.",
   return_requested: "Return request received for this item.",
   return_approved: "Return approved. Follow the return instructions.",
@@ -84,6 +85,7 @@ const CUSTOMER_LABELS = {
   packed: "Packed",
   ready_to_ship: "Ready to ship",
   shipped: "Shipped",
+  in_transit: "In Transit",
   out_for_delivery: "Out for delivery",
   delivered: "Delivered",
   fulfilled: "Complete",
@@ -116,7 +118,11 @@ const customerLabel = (status = "") =>
     .replace(/_/g, " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
-const buildReadableProgressSteps = (baseSteps = [], timeline = [], activeStatus) => {
+const buildReadableProgressSteps = (
+  baseSteps = [],
+  timeline = [],
+  activeStatus,
+) => {
   const normalizedBase = baseSteps.map(normalizeProgressStatus).filter(Boolean);
   const normalizedTimeline = (timeline || [])
     .map((entry) => normalizeProgressStatus(entry.to_status || entry.status))
@@ -230,8 +236,7 @@ function MobileStepBar({ steps, activeStatus }) {
         {steps.map((step, index) => {
           const done = activeIndex >= index;
           const current = activeIndex === index;
-          const label =
-            customerLabel(step);
+          const label = customerLabel(step);
 
           return (
             <div key={step} className="relative flex min-h-12 gap-3">
@@ -300,13 +305,12 @@ const getReturnStatus = (returns = [], status) => {
     latestReturn?.status ||
     latestReturn?.return_status ||
     latestReturn?.returnStatus;
-  if (returnStatus === "approved") return "return_approved";
-  if (returnStatus === "requested") return "return_requested";
-  if (returnStatus === "pickup_scheduled") return "pickup_scheduled";
-  if (returnStatus === "pickup_completed") return "pickup_completed";
-  if (returnStatus === "received" || returnStatus === "returned")
-    return "returned";
-  return RETURN_STEPS.includes(returnStatus) ? returnStatus : null;
+
+  const normalizedReturnStatus = normalizeProgressStatus(returnStatus);
+  if (RETURN_STEPS.includes(normalizedReturnStatus)) {
+    return normalizedReturnStatus;
+  }
+  return null;
 };
 
 const getRefundStatus = ({ returns = [], cancellations = [], status }) => {
@@ -343,24 +347,6 @@ function OrderProgress({
 
   const activeStatus = cancelStatus || refundStatus || returnStatus || status;
 
-  let progressSteps = cancelStatus
-    ? ["pending_payment", "confirmed", "cancelled"]
-    : refundStatus
-      ? [...ORDER_STEPS, ...RETURN_STEPS, ...REFUND_STEPS]
-      : returnStatus
-        ? [...ORDER_STEPS, ...RETURN_STEPS]
-        : isFailed
-          ? ["pending_payment", "payment_failed"]
-          : isDeliveryFailed
-            ? [
-                ...ORDER_STEPS.slice(
-                  0,
-                  ORDER_STEPS.indexOf("out_for_delivery") + 1,
-                ),
-                "failed_delivery",
-              ]
-            : ORDER_STEPS;
-
   const mergedTimeline = [...(timeline || [])];
   if (returns && Array.isArray(returns)) {
     returns.forEach((ret) => {
@@ -374,6 +360,24 @@ function OrderProgress({
       new Date(a.created_at || a.at).getTime() -
       new Date(b.created_at || b.at).getTime(),
   );
+
+  let progressSteps = cancelStatus
+    ? ["initiated", "cancelled"]
+    : refundStatus
+      ? [...ORDER_STEPS, ...RETURN_STEPS, ...REFUND_STEPS]
+      : returnStatus
+        ? [...ORDER_STEPS, ...RETURN_STEPS]
+        : isFailed
+          ? ["initiated", "payment_failed"]
+          : isDeliveryFailed
+            ? [
+                ...ORDER_STEPS.slice(
+                  0,
+                  ORDER_STEPS.indexOf("out_for_delivery") + 1,
+                ),
+                "failed_delivery",
+              ]
+            : ORDER_STEPS;
 
   if (!cancelStatus && !isFailed && !isDeliveryFailed) {
     progressSteps = buildReadableProgressSteps(

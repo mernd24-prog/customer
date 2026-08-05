@@ -2,6 +2,7 @@ import { ProductCard } from "../ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import SectionContainer from "../ui/SectionContainer";
 import { getProductId } from "../../utils/ecommerce";
+import { SkeletonLoader } from "../../components/common/skeleton";
 
 const featuredProducts = [
   {
@@ -56,6 +57,7 @@ export default function FeaturedProductsSection({
   actionLabel = "View Featured Products",
   actionHref = "/products",
   products = featuredProducts,
+  loading = false,
 }) {
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const displayProducts = Array.isArray(products) ? products.slice(0, 5) : [];
@@ -66,18 +68,27 @@ export default function FeaturedProductsSection({
       actionLabel={actionLabel}
       actionHref={actionHref}
     >
-      <div className="grid grid-cols-1 mt-6 md:mt-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-        {displayProducts.map((product, index) => (
-          <ProductCard
-            key={getProductId(product) || `featured-product-${index}`}
-            product={product}
-            badge="Featured"
-            onAddToCart={addToCart}
-            onWishlist={toggleWishlist}
-            isWishlisted={isWishlisted(product)}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <SkeletonLoader
+          preset="PRODUCT_CARD"
+          count={5}
+          containerClass="grid grid-cols-1 mt-6 md:mt-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+          wrapperClass="min-w-0"
+        />
+      ) : (
+        <div className="grid grid-cols-1 mt-6 md:mt-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+          {displayProducts.map((product, index) => (
+            <ProductCard
+              key={getProductId(product) || `featured-product-${index}`}
+              product={product}
+              badge="Featured"
+              onAddToCart={addToCart}
+              onWishlist={toggleWishlist}
+              isWishlisted={isWishlisted(product)}
+            />
+          ))}
+        </div>
+      )}
     </SectionContainer>
   );
 }

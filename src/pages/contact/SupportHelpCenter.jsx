@@ -10,6 +10,7 @@ import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import NeedHelpPanel from "../../components/ecommerce/NeedHelpPanel";
 import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
 import SupportTicketSidebar from "./components/SupportTicketSidebar";
+import { SUPPORT_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 import { apiRequest } from "../../api/client";
 import { endpoints } from "../../api/endpoints";
@@ -354,22 +355,23 @@ export default function SupportHelpCenter() {
           description={pageDescription}
         />
 
-        <section className="w-container py-8 sm:py-10">
-          <div className="py-4">
-            <Breadcrumbs items={SUPPORT_BREADCRUMBS} />
+        <main className="main-container p-0 sm:px-6 sm:py-6 lg:px-0 lg:py-8">
+          <Breadcrumbs items={SUPPORT_BREADCRUMBS} />
+          <div className="mb-7 mt-4 sm:mt-5">
+            <h1 className="text-[26px] font-bold leading-tight text-[#3E4093] sm:text-[30px] lg:text-[32px]">
+              {pageTitle || "Help & Support"}
+            </h1>
           </div>
-
-          <h1 className="mb-8 text-[20px] leading-[28px] tracking-[-0.01em] font-bold text-ink sm:text-[24px] sm:leading-[32px] sm:tracking-[-0.01em]">
-            {pageTitle || "Customer Support"}
-          </h1>
 
           <ApiState
             loading={isPageLoading}
             empty={!isPageLoading && !page}
             emptyTitle="Customer Support"
             emptyText="Help topics and support options will appear here."
+            skeletonLayout={SUPPORT_PAGE_SKELETON}
+            skeletonContainerClass="w-full"
           />
-        </section>
+        </main>
       </>
     );
   }

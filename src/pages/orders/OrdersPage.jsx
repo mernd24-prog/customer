@@ -68,7 +68,7 @@ import {
 } from "../../data/orderPage";
 import OrderDetailInfoGrid from "../../components/orderDetailInfoGrid/orderDetailInfoGrid";
 import { ORDER_LIST_SKELETON } from "../../components/common/skeleton/layouts";
-
+import ShowMoreText from "../../utils/showMore";
 
 const getOrderId = (order) =>
   order?.id || order?._id || order?.orderId || order?.order_id;
@@ -515,8 +515,34 @@ const asNumber = (value) => {
   const number = Number(value);
   return Number.isFinite(number) ? number : 0;
 };
-const humanize = (value, fallback = "N/A") =>
-  value ? String(value).replace(/_/g, " ") : fallback;
+const STATUS_LABELS = {
+  initiated: "Order Confirmed",
+  pending_payment: "Pending Payment",
+  payment_failed: "Payment Failed",
+  confirmed: "Confirmed",
+  in_transit: "In Transit",
+  shipped: "Shipped",
+  delivered: "Delivered",
+  qc_passed: "Return QC Passed",
+  return_qc_passed: "Return QC Passed",
+  return_requested: "Return Requested",
+  return_approved: "Return Approved",
+  return_rejected: "Return Rejected",
+  partially_returned: "Partially Returned",
+  returned: "Returned",
+  refunded: "Refunded",
+  cancelled: "Cancelled",
+  return_completed: "Return Completed",
+};
+
+const humanize = (value, fallback = "N/A") => {
+  if (!value) return fallback;
+  const normalized = String(value).toLowerCase();
+  if (STATUS_LABELS[normalized]) return STATUS_LABELS[normalized];
+  return String(value)
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (l) => l.toUpperCase());
+};
 
 // ─── Order Detail ──────────────────────────────────────────────────────────────
 
@@ -1231,7 +1257,6 @@ function OrderDetail({ orderId, track }) {
                   packages are still being prepared or shipped.
                 </p>
               )}
-
             </section>
 
             {!track && (
@@ -1340,12 +1365,6 @@ function OrderDetail({ orderId, track }) {
                   }
                 />
               )}
-
-
-
-
-
-
             </section>
 
             {cancellations.length > 0 && (
@@ -1401,14 +1420,6 @@ function OrderDetail({ orderId, track }) {
               </section>
             )}
 
-
-
-
-
-
-
-
-
             {visibleReturns.length > 0 && (
               <section className="rounded-[8px] md:border md:border-border bg-white px-4 py-4 sm:px-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -1428,7 +1439,7 @@ function OrderDetail({ orderId, track }) {
                     className="text-xs font-semibold text-[#3E4093] underline-offset-2 hover:underline"
                   >
                     View all returns
-                  </Link> 
+                  </Link>
                 </div>
 
                 <div className="mt-3 grid gap-3">
@@ -1647,35 +1658,35 @@ function OrderDetail({ orderId, track }) {
               </section>
             )}
 
-            {hasKnownStatus(order) && (
-              (status === "pending_payment" || status === "payment_failed") || 
-              canCancelOrder(order)
-            ) && (
-              <section className="rounded-[15px] lg:border lg:border-[#CE9F2D66] bg-white py-4 sm:px-5">
-                <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                  {(status === "pending_payment" ||
-                    status === "payment_failed") && (
-                    <Button
-                      className="min-h-[38px] w-full sm:w-auto text-white"
-                      loading={retrying}
-                      onClick={handleRetryPayment}
-                    >
-                      <RefreshCw size={15} /> Retry payment
-                    </Button>
-                  )}
-                  {canCancelOrder(order) && (
-                    <Button
-                      variant="secondary"
-                      className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
-                      onClick={openCancellation}
-                    >
-                      <XCircle size={15} />{" "}
-                      {selectedOrderItem
-                        ? "Cancel selected item"
-                        : "Cancel order"}
-                    </Button>
-                  )}
-                  {/* {!track && (
+            {hasKnownStatus(order) &&
+              (status === "pending_payment" ||
+                status === "payment_failed" ||
+                canCancelOrder(order)) && (
+                <section className="rounded-[15px] lg:border lg:border-[#CE9F2D66] bg-white py-4 sm:px-5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                    {(status === "pending_payment" ||
+                      status === "payment_failed") && (
+                      <Button
+                        className="min-h-[38px] w-full sm:w-auto text-white"
+                        loading={retrying}
+                        onClick={handleRetryPayment}
+                      >
+                        <RefreshCw size={15} /> Retry payment
+                      </Button>
+                    )}
+                    {canCancelOrder(order) && (
+                      <Button
+                        variant="secondary"
+                        className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
+                        onClick={openCancellation}
+                      >
+                        <XCircle size={15} />{" "}
+                        {selectedOrderItem
+                          ? "Cancel selected item"
+                          : "Cancel order"}
+                      </Button>
+                    )}
+                    {/* {!track && (
                     <Link
                       to={`/orders/${orderId}/track${selectedOrderItem ? `?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}` : ""}`}
                       className="block sm:inline-flex"
@@ -1701,9 +1712,9 @@ function OrderDetail({ orderId, track }) {
                       </Button>
                     </Link>
                   )} */}
-                </div>
-              </section>
-            )}
+                  </div>
+                </section>
+              )}
           </div>
         </ApiState>
       </div>
@@ -1908,21 +1919,40 @@ const resolveOrderItemDisplayStatus = (
   item = {},
   fallbackStatus = "",
   shipments = [],
+  fulfillmentGroups = [],
 ) => {
   const shipment = findShipmentForOrderItem(shipments, item);
   const payoutStatus = String(
     item.payout_status || item.payoutStatus || "",
   ).toLowerCase();
   const fallback = String(fallbackStatus || "").toLowerCase();
+
+  let fulfillmentReturnStatus = "";
+  if (fulfillmentGroups && fulfillmentGroups.length > 0) {
+    const itemSellerKey = getSellerGroupKey(
+      item.seller_id || item.sellerId || "platform",
+      item.organization_id || item.organizationId || "default",
+    );
+    const fulfillment = fulfillmentGroups.find(
+      (group) =>
+        getSellerGroupKey(
+          group.sellerId || group.seller_id || "platform",
+          group.organizationId || group.organization_id || "default",
+        ) === itemSellerKey,
+    );
+    if (fulfillment?.returnLifecycle?.status) {
+      fulfillmentReturnStatus = fulfillment.returnLifecycle.status;
+    }
+  }
+
   return (
     item.cancellation_status ||
     item.cancellationStatus ||
     item.return_status ||
     item.returnStatus ||
+    fulfillmentReturnStatus ||
     (payoutStatus === "refunded" ? "refunded" : "") ||
-    (payoutStatus === "held" && fallback.includes("return")
-      ? "return_requested"
-      : "") ||
+    (payoutStatus === "held" && fallback.includes("return") ? fallback : "") ||
     item.delivery_status ||
     item.deliveryStatus ||
     item.status ||
@@ -1991,6 +2021,7 @@ function OrderSummaryCard({ order }) {
           item,
           sellerPackage.status || status,
           shipments,
+          fulfillmentGroups,
         ),
       );
       const uniqueStatuses = [...new Set(itemStatuses.filter(Boolean))];
@@ -2008,7 +2039,7 @@ function OrderSummaryCard({ order }) {
     });
   })();
   const orderItemStatuses = orderItems.map((item) =>
-    resolveOrderItemDisplayStatus(item, status, shipments),
+    resolveOrderItemDisplayStatus(item, status, shipments, fulfillmentGroups),
   );
   const previewItems = orderItems.slice(0, 4);
   const currency = getOrderCurrency(order);
@@ -2358,9 +2389,9 @@ function OrderItemSummaryCard({ order, item }) {
 
       <Link
         to={itemDetailPath}
-        className="grid gap-4 px-4 py-5 transition hover:bg-[#FFFCF6] sm:grid-cols-[150px_minmax(0,1fr)] md:px-5"
+        className="grid gap-4 px-4 py-5 transition hover:bg-[#FFFCF6] sm:grid-cols-[175px_minmax(0,1fr)] lg:grid-cols-[190px_minmax(0,1fr)] md:px-5"
       >
-        <span className="flex aspect-square w-full max-w-[150px] items-center justify-center overflow-hidden rounded-xl border border-[#EFE5D2] bg-white p-2">
+        <span className="flex aspect-square w-full max-w-[175px] lg:max-w-[190px] items-center justify-center overflow-hidden rounded-xl border border-[#EFE5D2] bg-white p-2">
           {itemImage ? (
             <img
               src={itemImage}
@@ -2374,7 +2405,15 @@ function OrderItemSummaryCard({ order, item }) {
 
         <span className="min-w-0">
           <span className="block text-base font-extrabold text-[#1B1D60] md:text-lg">
-            {getProductTitle(item)}
+            <ShowMoreText
+              text={getProductTitle(item)}
+              mode="characters"
+              limit={65}
+              moreLabel="more"
+              lessLabel="less"
+              textClassName="inline"
+              buttonClassName="ml-1 text-sm font-semibold text-[#1B1D60] hover:underline"
+            />
           </span>
           <span className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-[#5E6472]">
             <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">
@@ -2405,7 +2444,7 @@ function OrderItemSummaryCard({ order, item }) {
           )} */}
           <span className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg bg-gold px-4 text-sm font-bold text-white">
             <Truck size={15} />
-            Track / item details
+            Track item details
           </span>
         </span>
       </Link>
@@ -2430,6 +2469,45 @@ function OrderList() {
   const allOrders = state.list.length
     ? state.list
     : getOrderCollection(state.current);
+
+  const availableFilters = useMemo(() => {
+    const activeStatuses = new Set();
+
+    allOrders.forEach((order) => {
+      const orderStatus = String(getOrderStatus(order) || "").toLowerCase();
+      activeStatuses.add(orderStatus);
+
+      const shipments = Array.isArray(order?.relations?.shipments)
+        ? order.relations.shipments
+        : [];
+
+      getOrderItems(order).forEach((item) => {
+        const itemStatus = resolveOrderItemDisplayStatus(
+          item,
+          getOrderStatus(order),
+          shipments,
+        );
+        const normalizedItemStatus = String(itemStatus || "").toLowerCase();
+        activeStatuses.add(normalizedItemStatus);
+      });
+    });
+
+    return ORDER_FILTERS.filter((filterOption) => {
+      if (!filterOption.value) return true;
+
+      if (filterOption.value === "return_requested") {
+        return (
+          activeStatuses.has("return_requested") ||
+          activeStatuses.has("return_approved") ||
+          activeStatuses.has("partially_returned") ||
+          activeStatuses.has("returned") ||
+          activeStatuses.has("refunded")
+        );
+      }
+
+      return activeStatuses.has(filterOption.value);
+    });
+  }, [allOrders]);
 
   const orderItemsList = useMemo(() => {
     let term = query.trim().toLowerCase();
@@ -2461,10 +2539,14 @@ function OrderList() {
           );
           return { order, item, itemStatus };
         })
-        .filter(({ item, itemStatus }) => {
+        .filter(({ order, item, itemStatus }) => {
           if (activeFilter) {
+            const normalizedItemStatus = String(itemStatus || "").toLowerCase();
+            const normalizedOrderStatus = String(
+              getOrderStatus(order) || "",
+            ).toLowerCase();
+
             if (activeFilter === "return_requested") {
-              const normalizedStatus = String(itemStatus || "");
               if (
                 ![
                   "return_requested",
@@ -2472,13 +2554,13 @@ function OrderList() {
                   "partially_returned",
                   "returned",
                   "refunded",
-                ].includes(normalizedStatus)
+                ].includes(normalizedItemStatus)
               ) {
                 return false;
               }
             } else if (
-              itemStatus !== activeFilter &&
-              getOrderStatus(order) !== activeFilter
+              normalizedItemStatus !== activeFilter &&
+              normalizedOrderStatus !== activeFilter
             ) {
               return false;
             }
@@ -2537,39 +2619,45 @@ function OrderList() {
             sidebarClass="w-full xl:w-[400px] 2xl:w-[413px] transition-[top] duration-300 ease-in-out"
             mainContent={
               <div className="min-w-0 rounded-xl bg-white sm:p-4">
-                <div className="my-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <label className="relative block w-full sm:max-w-[450px]">
-                    <Search
-                      size={15}
-                      className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
-                    />
-                    <input
-                      value={query}
-                      onChange={(event) => setQuery(event.target.value)}
-                      placeholder="Search by  product name or Order ID..."
-                      className="h-12 w-full  rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
-                    />
-                  </label>
+                {!(state.loading && !orderItemsList.length) && (
+                  <div className="my-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <label className="relative block w-full sm:max-w-[450px]">
+                      <Search
+                        size={15}
+                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+                      />
+                      <input
+                        value={query}
+                        onChange={(event) => setQuery(event.target.value)}
+                        placeholder="Search by  product name or Order ID..."
+                        className="h-12 w-full  rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
+                      />
+                    </label>
 
-                  <CustomDropdown
-                    className="w-full  lg:w-[220px]"
-                    buttonClassName="h-12 rounded-[10px] border-[#1B1D604D] font-semibold text-ink"
-                    options={ORDER_FILTERS.map((f) => ({
-                      value: f.value,
-                      label: f.label === "All" ? "All Status" : f.label,
-                    }))}
-                    value={activeFilter}
-                    onChange={(val) => {
-                      setActiveFilter(val);
-                    }}
-                    placeholder="All Status"
-                  />
-                </div>
+                    <CustomDropdown
+                      className="w-full  lg:w-[220px]"
+                      buttonClassName="h-12 rounded-[10px] border-[#1B1D604D] font-semibold text-ink"
+                      options={availableFilters.map((f) => ({
+                        value: f.value,
+                        label: f.label === "All" ? "All Status" : f.label,
+                      }))}
+                      value={activeFilter}
+                      onChange={(val) => {
+                        setActiveFilter(val);
+                      }}
+                      placeholder="All Status"
+                    />
+                  </div>
+                )}
 
                 <ApiState
-                  loading={state.loading && !allOrders.length}
+                  loading={state.loading && !orderItemsList.length}
                   error={state.error}
-                  empty={!orderItemsList.length && !state.loading}
+                  empty={
+                    !orderItemsList.length &&
+                    !state.loading &&
+                    !!state.lastFetchedAt
+                  }
                   skeletonLayout={ORDER_LIST_SKELETON}
                   skeletonContainerClass=""
                   emptyTitle={

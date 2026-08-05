@@ -1,7 +1,15 @@
 export const ORDER_LIST_SKELETON = [
   {
+    type: "row",
+    className: "my-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between w-full",
+    children: [
+      { type: "box", className: "w-full sm:max-w-[450px] h-12", rounded: "rounded-[10px]" },
+      { type: "box", className: "w-full lg:w-[220px] h-12", rounded: "rounded-[10px]" }
+    ]
+  },
+  {
     type: "col",
-    className: "w-full",
+    className: "w-full gap-4",
     children: [
       {
         type: "col",

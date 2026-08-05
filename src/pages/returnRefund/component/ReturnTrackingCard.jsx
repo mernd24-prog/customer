@@ -8,7 +8,7 @@ export default function ReturnTrackingCard({
   const stepsToRender = customSteps || [];
   return (
     <section className="rounded-xl rounded-t-none border border-[#E7D9B8] bg-white px-3 py-4 min-[375px]:px-4 sm:px-6 lg:px-6 lg:py-9  ">
-      <h2 className="text-[16px]  font-semibold leading-tight text-[#1B1D60] sm:text-[18px] md:text-[20px] lg:text-[22px] pb-2">
+      <h2 className="text-[16px]  font-bold leading-tight text-[#1B1D60] sm:text-[18px] md:text-[20px]  pb-2">
         <ShowMoreText
           text={title}
           mode="words"
@@ -18,9 +18,7 @@ export default function ReturnTrackingCard({
           textClassName="inline"
           buttonClassName="ml-1.5 text-xs sm:text-sm font-semibold text-[#3E4093] hover:underline cursor-pointer"
         />{" "}
-        <span className="text-[13px] font-semibold text-[#555] sm:text-[15px] md:text-[20px] lg:text-[20px]">
-          ({returnId})
-        </span>
+       
       </h2>
 
       <div className="my-4 h-px bg-[#2E2E2E]/40" />
@@ -32,10 +30,10 @@ export default function ReturnTrackingCard({
           return (
             <div
               key={step.title}
-              className="relative grid grid-cols-[30px_minmax(0,1fr)] gap-3 pb-6 min-[375px]:grid-cols-[34px_minmax(0,1fr)] sm:grid-cols-[40px_minmax(0,1fr)_180px] sm:gap-4 lg:grid-cols-[50px_minmax(0,1fr)_260px] lg:gap-5 lg:pb-10 lg:pt-9"
+              className="relative grid grid-cols-[30px_minmax(0,1fr)] gap-3 pb-4 min-[375px]:grid-cols-[34px_minmax(0,1fr)] sm:grid-cols-[40px_minmax(0,1fr)_180px] sm:gap-4 lg:grid-cols-[50px_minmax(0,1fr)_260px] lg:gap-5 lg:pb-7"
             >
               {!isLast && (
-                <span className="absolute left-[14px] top-7 h-full w-px bg-[#D7C07A] min-[375px]:left-[16px] sm:left-[19px] sm:top-8 lg:left-[24px] lg:top-[50px]" />
+                <span className="absolute left-[14px] top-7 h-full w-px bg-[#D7C07A] min-[375px]:left-[16px] sm:left-[19px] sm:top-8 lg:left-[24px] lg:top-[40px]" />
               )}
 
               <span
@@ -68,16 +66,16 @@ export default function ReturnTrackingCard({
               </span>
 
               <div className="min-w-0">
-                <h3 className="text-h4 font-bold leading-tight text-[#1B1D60] ">
+                <h3 className="text-[14px] font-bold leading-tight text-[#1B1D60] sm:text-[16px]">
                   {step.title}
                 </h3>
 
-                <p className="mt-1 small leading-snug text-[#2E2E2E]">
+                <p className="mt-1 text-[12px] font-medium leading-snug text-[#454545] sm:text-[13px]">
                   {step.description}
                 </p>
               </div>
 
-              <p className="col-start-2 text-[12px]  text-[#2E2E2E] sm:col-start-auto sm:text-right sm:text-sm md:text-base font-medium lg:text-[20px]">
+              <p className="col-start-2 text-[12px] font-medium text-[#454545] sm:col-start-auto sm:text-right sm:text-[13px]">
                 {step.time}
               </p>
             </div>

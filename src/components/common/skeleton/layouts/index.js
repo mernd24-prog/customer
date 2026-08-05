@@ -4,3 +4,4 @@ export { CART_PAGE_SKELETON } from "./cartPageSkeleton";
 export { ORDER_LIST_SKELETON } from "./orderListSkeleton";
 export { RETURNS_PAGE_SKELETON } from "./returnsPageSkeleton";
 export { WALLET_PAGE_SKELETON } from "./walletPageSkeleton";
+export { SUPPORT_PAGE_SKELETON } from "./supportPageSkeleton";

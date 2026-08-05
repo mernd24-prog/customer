@@ -293,11 +293,11 @@ export function Footer({ data = footerData }) {
     <footer className="w-full   bg-[#1C1C1C] h-auto text-white">
       {benefits.length > 0 && (
         <div className="xl:px-12 bg-[#F5F8FB] border-t-2 border-[#1B1D6033]">
-          <div className="flex flex-col lg:flex-row justify-between py-1">
+          <div className="flex flex-col lg:flex-row justify-between py-1 px-12">
             {benefits.map((item, index) => (
               <div
                 key={item?.title || `benefit-${index}`}
-                className="flex items-center gap-4 rounded-[var(--customer-radius)] px-4 py-3"
+                className="flex items-center gap-4 rounded-[var(--customer-radius)] px-4 py-3 mr-10"
               >
                 <img
                   className="h-10 w-10  shrink-0 object-contain sm:h-12 sm:w-12 2xl:h-[60px] 2xl:w-[60px]"

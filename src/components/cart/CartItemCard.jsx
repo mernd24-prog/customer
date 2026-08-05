@@ -113,7 +113,7 @@ export default function CartItemCard({
           {productPath ? (
             <Link
               to={productPath}
-              className="block font-bold text-h6 text-[#2d2d2d] transition hover:text-[#1B1D60]"
+              className="block text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px] leading-snug transition hover:opacity-80"
             >
               <ShowMoreText
                 text={item?.title}
@@ -126,7 +126,7 @@ export default function CartItemCard({
               />
             </Link>
           ) : (
-            <h3 className="line-clamp-2 block font-bold text-h6 text-[#2d2d2d]">
+            <h3 className="line-clamp-2 block text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px] leading-snug">
               {item?.title}
             </h3>
           )}

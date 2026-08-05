@@ -1717,7 +1717,7 @@ export default function ProductDetailPage() {
                 <div className="flex min-w-0 flex-col gap-3">
                   <div className="flex min-w-0 items-start justify-between gap-3 ">
                     <div className="min-w-0 w-full">
-                      <h1 className="break-words text-h3 font-semibold text-ink leading-snug">
+                      <h1 className="break-words block text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px] leading-snug">
                         <ShowMoreText
                           text={getProductTitle(product)}
                           mode="lines"

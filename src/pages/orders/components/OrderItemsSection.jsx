@@ -13,6 +13,7 @@ import {
   submitProductReview,
 } from "../../../features/review/reviewSlice";
 import { notify } from "../../../utils/notify";
+import ShowMoreText from "../../../utils/showMore";
 
 const DELIVERED_STATUSES = new Set(["delivered", "fulfilled", "completed"]);
 
@@ -172,7 +173,7 @@ function ExistingReviewCard({ review }) {
                   <img
                     src={url}
                     alt={`Review image ${index + 1}`}
-                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    className="h-full w-full object-contain transition duration-300 group-hover:scale-105"
                   />
                 </button>
               ))}
@@ -181,7 +182,7 @@ function ExistingReviewCard({ review }) {
         )}
       </div>
 
-      {lightboxIndex !== null && (
+      {lightboxIndex !== null && (  
         <ReviewMediaLightbox
           images={media}
           index={lightboxIndex}
@@ -351,9 +352,32 @@ const getOrderItemProductPath = (item) => {
   const productId = getOrderItemProductId(item);
   return productId ? `/products/${productId}` : "";
 };
+const STATUS_LABELS = {
+  initiated: "Order Confirmed",
+  pending_payment: "Pending Payment",
+  payment_failed: "Payment Failed",
+  confirmed: "Confirmed",
+  in_transit: "In Transit",
+  shipped: "Shipped",
+  delivered: "Delivered",
+  qc_passed: "Return QC Passed",
+  return_qc_passed: "Return QC Passed",
+  return_requested: "Return Requested",
+  return_approved: "Return Approved",
+  return_rejected: "Return Rejected",
+  partially_returned: "Partially Returned",
+  returned: "Returned",
+  refunded: "Refunded",
+  cancelled: "Cancelled",
+  return_completed: "Return Completed",
+};
+
 const label = (value = "") => {
-  const text = String(value || "Not available").replace(/_/g, " ");
-  return text.charAt(0).toUpperCase() + text.slice(1);
+  const text = String(value || "Not available");
+  const normalized = text.toLowerCase();
+  if (STATUS_LABELS[normalized]) return STATUS_LABELS[normalized];
+  const formatted = text.replace(/_/g, " ");
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 };
 
 const formatDate = (value) => {
@@ -573,7 +597,7 @@ const resolveItemStatus = ({
   if (returnRequest?.status) return `return_${returnRequest.status}`;
   if (payoutStatus === "refunded") return "refunded";
   if (payoutStatus === "held" && orderStatusText.includes("return"))
-    return "return_requested";
+    return fulfillment?.returnLifecycle?.status || orderStatus;
   return (
     item.delivery_status ||
     item.deliveryStatus ||
@@ -645,10 +669,18 @@ function OrderItemCard({
           )}
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          <p className="line-clamp-2 break-words text-h4 font-bold text-[#2E2E2E]">
-            {getProductTitle(item)}
-          </p>
+        <div className="flex min-w-0 flex-1 flex-col pt-2 sm:pt-3">
+          <span className="block text-base font-extrabold text-[#2E2E2E] md:text-lg">
+            <ShowMoreText
+              text={getProductTitle(item)}
+              mode="characters"
+              limit={65}
+              moreLabel="more"
+              lessLabel="less"
+              textClassName="inline"
+              buttonClassName="ml-1 text-sm font-semibold text-[#1B1D60] hover:underline"
+            />
+          </span>
 
           <div className="my-3 flex flex-wrap gap-x-6 gap-y-2 text-ink sm:my-4">
             {shouldShowColor && (
@@ -1127,6 +1159,7 @@ function OrderItemsSection({
                     )} */}
                     <div className="flex flex-wrap items-center gap-2">
                       {fulfillment.delivered &&
+                        returnedQuantity === 0 &&
                         Boolean(getReviewProductId(item)) && (
                           <OrderItemReviewAction
                             item={item}

@@ -10,12 +10,6 @@ export const footerData = {
       alt: "Payment",
     },
     {
-      title: "Free Shipping",
-      description: "On order above ₹999",
-      icon: footer.shipping,
-      alt: "Shipping",
-    },
-    {
       title: "Easy Returns",
       description: "Hassle-free 10 days return",
       icon: footer.return,

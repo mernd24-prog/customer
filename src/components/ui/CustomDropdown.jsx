@@ -19,6 +19,7 @@ export default function CustomDropdown({
 
   // Used when custom option UI is required
   renderOption,
+  isLoading = false,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -106,7 +107,15 @@ export default function CustomDropdown({
           )}
         >
           <div className="max-h-60 overflow-y-auto py-1 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
-            {options.length > 0 ? (
+            {isLoading ? (
+              <>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="px-4 py-3">
+                    <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200"></div>
+                  </div>
+                ))}
+              </>
+            ) : options.length > 0 ? (
               options.map((option, index) => {
                 const optionValue = option?.value ?? option;
 
