@@ -57,6 +57,11 @@ export const authThunks = {
     url: endpoints.auth.resendOtp,
     data: body,
   }),
+  otpAuth: makeThunk("auth/otpAuth", {
+    method: "post",
+    url: endpoints.auth.otpAuth,
+    data: body,
+  }),
   forgotPassword: makeThunk("auth/forgotPassword", {
     method: "post",
     url: endpoints.auth.forgotPassword,

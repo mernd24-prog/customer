@@ -1,5 +1,6 @@
 import {
   CHECKOUT_CART_ITEM_IDS_STORAGE_KEY,
+  GUEST_CART_STORAGE_KEY,
   SAVED_FOR_LATER_STORAGE_KEY,
   SELECTED_CHECKOUT_STORAGE_KEY,
 } from "../../constants";
@@ -126,10 +127,10 @@ export function addProductToCartPayload(cart, product, quantity = 1) {
 
   const items = existing.some((item) => cartItemKey(item) === key)
     ? existing.map((item) =>
-        cartItemKey(item) === key
-          ? { ...item, quantity: item.quantity + quantity }
-          : item,
-      )
+      cartItemKey(item) === key
+        ? { ...item, quantity: item.quantity + quantity }
+        : item,
+    )
     : [nextItem, ...existing]; // Add new item at the top
 
   return {
@@ -162,17 +163,17 @@ export function normalizeCartItemId(value) {
   if (typeof value === "object") {
     const productId = normalizeId(
       value.productId ||
-        value.product ||
-        value._raw?.productId ||
-        value.id ||
-        value,
+      value.product ||
+      value._raw?.productId ||
+      value.id ||
+      value,
     );
     const variantId = normalizeId(
       value.variantId ||
-        value.variantSku ||
-        value._raw?.variantId ||
-        value._raw?.variantSku ||
-        "",
+      value.variantSku ||
+      value._raw?.variantId ||
+      value._raw?.variantSku ||
+      "",
     );
     return [productId, variantId].filter(Boolean).join(":");
   }
@@ -200,7 +201,7 @@ export function getCartItemStock(item = {}, product = {}) {
   const matchingVariant = variants.find(
     (variant) =>
       String(variant?._id || variant?.id || "") ===
-        String(item.variantId || "") ||
+      String(item.variantId || "") ||
       String(variant?.sku || "") === String(item.variantSku || ""),
   );
 
@@ -222,7 +223,7 @@ export function cartLineKey(item) {
   const defaultVariant =
     !item.variantId && !item.variantSku && Array.isArray(product?.variants)
       ? product.variants.find((variant) => variant.isDefault) ||
-        product.variants[0]
+      product.variants[0]
       : null;
   return normalizeCartItemId({
     productId,
@@ -336,4 +337,81 @@ export function writeCheckoutCartItemIds(itemIds) {
     CHECKOUT_CART_ITEM_IDS_STORAGE_KEY,
     JSON.stringify(itemIds),
   );
+}
+
+export function readGuestCart() {
+  try {
+    const stored = window.localStorage.getItem(GUEST_CART_STORAGE_KEY);
+    if (!stored) return { items: [], wishlist: [] };
+    const parsed = JSON.parse(stored);
+    return {
+      items: Array.isArray(parsed?.items) ? parsed.items : [],
+      wishlist: Array.isArray(parsed?.wishlist) ? parsed.wishlist : [],
+    };
+  } catch {
+    return { items: [], wishlist: [] };
+  }
+}
+
+export function writeGuestCart(cart = {}) {
+  try {
+    const payload = normalizeCartPayloadForWrite(cart);
+    window.localStorage.setItem(
+      GUEST_CART_STORAGE_KEY,
+      JSON.stringify(payload),
+    );
+    return payload;
+  } catch {
+    return cart;
+  }
+}
+
+export function clearGuestCart() {
+  try {
+    window.localStorage.removeItem(GUEST_CART_STORAGE_KEY);
+  } catch { }
+}
+
+export async function syncGuestCartWithServer(dispatch, { fetchCartAction, updateCartAction }) {
+  const guestCart = readGuestCart();
+  if (!guestCart || !Array.isArray(guestCart.items) || guestCart.items.length === 0) {
+    clearGuestCart();
+    if (fetchCartAction) {
+      await dispatch(fetchCartAction()).unwrap().catch(() => null);
+    }
+    return;
+  }
+
+  try {
+    let existingServerCart = {};
+    if (fetchCartAction) {
+      const serverRes = await dispatch(fetchCartAction()).unwrap().catch(() => null);
+      existingServerCart = serverRes?.data || serverRes || {};
+    }
+
+    const mergedItems = mergeCartItems([
+      ...(existingServerCart.items || []),
+      ...(guestCart.items || []),
+    ]);
+
+    const mergedPayload = {
+      items: mergedItems,
+      wishlist: Array.from(
+        new Set([
+          ...(existingServerCart.wishlist || []).map(normalizeId),
+          ...(guestCart.wishlist || []).map(normalizeId),
+        ].filter(Boolean)),
+      ),
+    };
+
+    if (updateCartAction) {
+      await dispatch(updateCartAction(mergedPayload)).unwrap();
+    }
+    clearGuestCart();
+  } catch (err) {
+    clearGuestCart();
+    if (fetchCartAction) {
+      await dispatch(fetchCartAction()).catch(() => { });
+    }
+  }
 }

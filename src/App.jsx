@@ -11,7 +11,8 @@ import {
   SellerOnlyRoute,
 } from "./routing/RouteGuards";
 import { checkAuthStatus, logout } from "./features/auth/authSlice";
-import { fetchCart } from "./features/cart/cartSlice";
+import { fetchCart, setGuestCart } from "./features/cart/cartSlice";
+import { readGuestCart } from "./utils/ecommerce/cart";
 import { fetchCmsPages } from "./features/cms/cmsSlice";
 import { AUTH_ROUTES } from "./features/auth/authRoutes";
 import { tokenStorage } from "./api/tokenStorage";
@@ -52,7 +53,6 @@ const RegisterOtpPage = lazy(() => import("./pages/auth/RegisterOtpPage"));
 const VerifyRegistrationPage = lazy(
   () => import("./pages/auth/VerifyRegistrationPage"),
 );
-const VerifyOtpPage = lazy(() => import("./pages/auth/VerifyOtpPage"));
 const ForgotPasswordPage = lazy(
   () => import("./pages/auth/ForgotPasswordPage"),
 );
@@ -250,8 +250,12 @@ export default function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!currentUser) return;
-    dispatch(fetchCart()).catch(() => {});
+    if (currentUser) {
+      dispatch(fetchCart()).catch(() => {});
+    } else {
+      const guestCart = readGuestCart();
+      dispatch(setGuestCart(guestCart));
+    }
   }, [currentUser, dispatch]);
 
   if (!sessionReady) {
@@ -286,10 +290,7 @@ export default function App() {
                   path={AUTH_ROUTES.verifyRegistration}
                   element={<VerifyRegistrationPage />}
                 />
-                <Route
-                  path={AUTH_ROUTES.verifyOtp}
-                  element={<VerifyOtpPage />}
-                />
+
                 <Route
                   path={AUTH_ROUTES.forgotPassword}
                   element={<ForgotPasswordPage />}
@@ -412,6 +413,9 @@ export default function App() {
                   path="/settings"
                   element={<Navigate to="/notification-preferences" replace />}
                 />
+                {/* Cart & Checkout */}
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
               </Route>
               {/* ── Protected buyer routes (must be logged in) ────────────── */}
               <Route element={<ProtectedRoute />}>
@@ -438,9 +442,7 @@ export default function App() {
                     element={<AccountPage tab="kyc" />}
                   />
 
-                  {/* Cart & Checkout */}
-                  <Route path="/cart" element={<CartPage />} />
-                  <Route path="/checkout" element={<CheckoutPage />} />
+                  {/* Payment results */}
                   <Route
                     path="/payment/success"
                     element={<PaymentResultPage />}

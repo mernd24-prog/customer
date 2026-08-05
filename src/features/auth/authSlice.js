@@ -9,6 +9,7 @@ const sessionThunks = [
   authThunks.registerUser,
   authThunks.verifyRegistration,
   authThunks.verifyOtp,
+  authThunks.otpAuth,
   authThunks.refreshSession,
 ];
 const currentPayloadThunks = [authThunks.checkAuthStatus];
@@ -87,6 +88,7 @@ export const {
   refreshSession,
   sendOtp,
   verifyOtp,
+  otpAuth,
   resendOtp,
   forgotPassword,
   resetPassword,

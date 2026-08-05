@@ -1,6 +1,5 @@
 export default function AuthCard({
   children,
-  eyebrow,
   subtitle,
   title,
   image,
@@ -9,16 +8,15 @@ export default function AuthCard({
   maxHeight,
 }) {
   return (
-    <section className="mt-10 md:mt-8 mx-1">
+    <section className="mt-10 md:mt-8  ">
       <div
         className={`mx-auto w-full ${maxWidth}  shadow-xl  bg-[#F7F8FC]  rounded-xl border border-[#EAEFF3] p-4 lg:p-6 md:shadow-sm`}
       >
         <div className="flex flex-col md:flex-row items-stretch gap-6">
           {/* Left image - visible on md+ */}
           <div
-            className={`w-full hidden lg:block lg:w-1/2 ${
-              maxHeight || "h-full"
-            }`}
+            className={`w-full hidden lg:block lg:w-1/2 ${maxHeight || "h-full"
+              }`}
           >
             <img
               src={image}
@@ -76,14 +74,7 @@ export default function AuthCard({
                   )}
                 </div>
 
-                {eyebrow && (
-                  <button className="my-2 py-2 px-6 text-blue rounded-full bg-[#E5D09E] border border-[#CE9F2D] font-medium text-sm">
-                    <div className="flex gap-2 items-center">
-                      <div className="bg-blue w-2 h-2 rounded-full " />
-                      {eyebrow}
-                    </div>
-                  </button>
-                )}
+               
 
                 {title && (
                   <h1 className="text-h4 font-semibold text-[#2E2E2E] pt-2 lg:py-3">

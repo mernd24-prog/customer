@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Truck } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
@@ -14,7 +14,48 @@ import {
   findFetchedOrder,
   getDeliveryDateRange,
   formatOrderDate,
+  hasOrderShippingAddress,
 } from "../../utils/orderHelpers";
+
+function getOrderAddressValue(address, ...keys) {
+  if (!address || typeof address !== "object") return "";
+
+  for (const key of keys) {
+    const value = address[key];
+    if (value !== undefined && value !== null && value !== "") {
+      return value;
+    }
+  }
+
+  return "";
+}
+
+function OrderDetailSectionCard({
+  title,
+  children,
+  className = "",
+  headerClassName = "",
+  titleClassName = "",
+  borderClassName = "",
+  bodyClassName = "",
+}) {
+  return (
+    <section
+      className={`overflow-hidden border bg-white ${borderClassName} ${className}`.trim()}
+    >
+      <div
+        className={`flex items-center border-b border-[#CE9F2D66] ${headerClassName}`.trim()}
+      >
+        <h2
+          className={`text-h5 font-bold text-[#1B1D60] ${titleClassName}`.trim()}
+        >
+          {title}
+        </h2>
+      </div>
+      <div className={bodyClassName}>{children}</div>
+    </section>
+  );
+}
 
 export function PaymentResultPage({ failed = false }) {
   const dispatch = useDispatch();
@@ -27,6 +68,43 @@ export function PaymentResultPage({ failed = false }) {
 
   const order = findFetchedOrder(orderState, orderId);
   const currentUser = userState.current || userState.data || {};
+
+  const shippingAddress =
+    order?.shippingAddress ||
+    order?.shipping_address ||
+    order?.deliveryAddress ||
+    order?.delivery_address ||
+    order?.address ||
+    order?.buyerAddress ||
+    order?.customerAddress ||
+    order?.checkout?.shippingAddress ||
+    order?.shipping?.address ||
+    {};
+
+  const displayName =
+    shippingAddress?.fullName ||
+    shippingAddress?.full_name ||
+    shippingAddress?.name ||
+    shippingAddress?.recipientName ||
+    shippingAddress?.recipient_name ||
+    [shippingAddress?.firstName, shippingAddress?.lastName]
+      .filter(Boolean)
+      .join(" ") ||
+    [shippingAddress?.first_name, shippingAddress?.last_name]
+      .filter(Boolean)
+      .join(" ") ||
+    currentUser?.name ||
+    currentUser?.fullName ||
+    "";
+
+  const deliveryPhone =
+    shippingAddress?.phone ||
+    shippingAddress?.mobile ||
+    shippingAddress?.phoneNumber ||
+    shippingAddress?.phone_number ||
+    currentUser?.mobile ||
+    currentUser?.phone ||
+    "";
 
   const deliveryDateRange = getDeliveryDateRange(order || {});
   const deliveryLabel = deliveryDateRange
@@ -221,7 +299,10 @@ export function PaymentResultPage({ failed = false }) {
                       </p>
                     )}
                     <div className="inline-flex h-[28px] items-center justify-center rounded-full bg-[#CE9F2D] px-3 py-1 text-xs font-semibold text-white capitalize">
-                      {shippingAddress?.addressType || shippingAddress?.type || "Home"}
+                      {shippingAddress?.addressType ||
+                        shippingAddress?.address_type ||
+                        shippingAddress?.type ||
+                        "Home"}
                     </div>
                   </div>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
@@ -237,17 +318,21 @@ export function PaymentResultPage({ failed = false }) {
                     <span className="break-words leading-relaxed">
                       {[
                         shippingAddress.line1 ||
-                          shippingAddress.addressLine1 ||
-                          shippingAddress.address_line1,
+                        shippingAddress.addressLine1 ||
+                        shippingAddress.address_line1,
                         shippingAddress.line2 ||
-                          shippingAddress.addressLine2 ||
-                          shippingAddress.address_line2,
+                        shippingAddress.addressLine2 ||
+                        shippingAddress.address_line2,
                         shippingAddress.city,
                         shippingAddress.state,
                         getOrderAddressValue(
                           shippingAddress,
                           "postalCode",
                           "postal_code",
+                          "pincode",
+                          "pinCode",
+                          "zipCode",
+                          "zip_code",
                         ),
                         shippingAddress.country,
                       ]

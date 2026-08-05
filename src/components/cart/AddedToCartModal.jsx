@@ -84,6 +84,7 @@ function CartLine({ item, onClose }) {
 export default function AddedToCartModal({
   open,
   onClose,
+  onCheckout,
   addedProduct,
   cartItems = [],
 }) {
@@ -162,13 +163,16 @@ export default function AddedToCartModal({
             >
               View Cart
             </Link>
-            <Link
-              to="/checkout"
-              onClick={onClose}
+            <button
+              type="button"
+              onClick={() => {
+                onClose?.();
+                onCheckout?.(cartItems);
+              }}
               className="button secondary w-full text-center transition-transform hover:-translate-y-0.5"
             >
               Checkout
-            </Link>
+            </button>
           </div>
         </div>
 

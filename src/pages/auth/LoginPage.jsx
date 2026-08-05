@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LogIn } from "lucide-react";
+import { LogIn, Smartphone } from "lucide-react";
 
 import AuthCard from "../../components/ui/AuthCard";
 import Button from "../../components/ui/Button";
@@ -18,6 +18,7 @@ import {
   clearError,
 } from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
+import { useAuthModal } from "../../context/AuthModalContext";
 import { notify } from "../../utils/notify";
 import { loginSchema } from "../../validations/validationSchemas";
 
@@ -61,8 +62,9 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const run = useToastThunk();
+  const { openGuestOtpModal } = useAuthModal();
 
-  const { loading, error } = useSelector((s) => s.auth);
+  const { loading, error } = useSelector((state) => state.auth);
   const [googleLoading, setGoogleLoading] = useState(false);
   const from = location.state?.from || AUTH_ROUTES.home;
 
@@ -85,27 +87,41 @@ export default function LoginPage() {
   });
 
   const submit = async (values) => {
-    await run(
-      dispatch,
-      loginUser({
-        email: values.email,
-        password: values.password,
-      }),
-    );
-    await run(dispatch, checkAuthStatus(), "Welcome back!");
-    navigate(from, { replace: true });
+    try {
+      await run(
+        dispatch,
+        loginUser({
+          email: values.email,
+          password: values.password,
+        }),
+      );
+
+      await run(dispatch, checkAuthStatus(), "Welcome back!");
+      navigate(from, { replace: true });
+    } catch {
+      // Errors are handled by Redux and useToastThunk.
+    }
+  };
+
+  const handleMobileOtpLogin = () => {
+    openGuestOtpModal(async () => {
+      await dispatch(checkAuthStatus());
+      navigate(from, { replace: true });
+    });
   };
 
   const handleGoogleLogin = async () => {
     if (!GOOGLE_CLIENT_ID) {
       notify.error({
         title: "Google sign-in is not configured",
-        message: "Set VITE_GOOGLE_CLIENT_ID in customer/.env and restart the customer app.",
+        message:
+          "Set VITE_GOOGLE_CLIENT_ID in customer/.env and restart the customer app.",
       });
       return;
     }
 
     setGoogleLoading(true);
+
     try {
       await loadGoogleIdentityScript();
 
@@ -127,6 +143,7 @@ export default function LoginPage() {
                 role: "buyer",
               }),
             );
+
             await run(dispatch, checkAuthStatus(), "Welcome!");
             navigate(from, { replace: true });
           } finally {
@@ -161,7 +178,7 @@ export default function LoginPage() {
 
       <AuthCard
         title="Login to Sam Global"
-        subtitle="Enter your details to access your account."
+        subtitle="Sign in with your email or continue securely using mobile OTP."
         icon="/image/png/person.png"
         maxWidth="max-w-[56rem]"
         maxHeight="h-[650px]"
@@ -172,7 +189,6 @@ export default function LoginPage() {
           onSubmit={handleSubmit(submit)}
           noValidate
         >
-          {/* EMAIL FIELD */}
           <FormField
             id="email"
             label="Email Address"
@@ -181,10 +197,9 @@ export default function LoginPage() {
             error={errors.email}
             autoComplete="email"
             placeholder="you@example.com"
-            disabled={loading}
+            disabled={loading || googleLoading}
           />
 
-          {/* PASSWORD FIELD (Now leveraging your clean FormField component) */}
           <div className="grid gap-1">
             <FormField
               id="password"
@@ -194,11 +209,10 @@ export default function LoginPage() {
               error={errors.password}
               autoComplete="current-password"
               placeholder="••••••••"
-              disabled={loading}
+              disabled={loading || googleLoading}
             />
 
-            {/* FORGOT PASSWORD LINK */}
-            <div className="flex justify-end mt-1">
+            <div className="mt-1 flex justify-end">
               <Link
                 to={AUTH_ROUTES.forgotPassword}
                 className="text-xs font-medium text-muted underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold hover:underline"
@@ -208,7 +222,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* API ERROR SUMMARY */}
           {error && (
             <div
               className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
@@ -218,32 +231,39 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* SUBMIT BUTTON */}
           <Button
             type="submit"
             loading={loading}
-            disabled={!isValid || loading}
-            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-[13px] leading-[20px] tracking-[0.5px] font-semibold tracking-normal text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={!isValid || loading || googleLoading}
+            className="h-12 w-full rounded-[8px] bg-gradient-to-r from-gold to-gold-dark text-[13px] font-semibold tracking-[0.5px] text-white shadow-sm transition-all duration-500 ease-in-out hover:brightness-105 hover:shadow-md active:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <LogIn size={18} />
-            Sign in
+            Sign In
           </Button>
 
-          {/* ACCESSIBLE DIVIDER */}
           <div className="relative flex items-center gap-3 py-0.5">
             <hr className="flex-1 border-border" />
-            <span className="text-xs text-gray">Or</span>
+            <span className="text-xs text-gray">Or continue with</span>
             <hr className="flex-1 border-border" />
           </div>
 
-          {/* OAUTH GOOGLE SIGN IN */}
+          <Button
+            type="button"
+            onClick={handleMobileOtpLogin}
+            disabled={loading || googleLoading}
+            className="h-12 w-full rounded-[8px] border border-gold bg-white text-[13px] font-semibold tracking-[0.5px] text-gold shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:bg-gold/5 hover:text-gold-dark hover:shadow-md active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <Smartphone size={18} />
+            Continue with Mobile OTP
+          </Button>
+
           <Button
             type="button"
             variant="google"
             onClick={handleGoogleLogin}
             loading={googleLoading}
             disabled={loading || googleLoading}
-            className="h-12 w-full rounded-[8px] border-border bg-white text-[13px] leading-[20px] tracking-[0.5px] font-semibold tracking-normal text-ink shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:bg-white hover:text-ink hover:shadow-md active:translate-y-0 active:scale-[0.98] active:bg-navy-soft"
+            className="h-12 w-full rounded-[8px] border-border bg-white text-[13px] font-semibold tracking-[0.5px] text-ink shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:bg-white hover:text-ink hover:shadow-md active:translate-y-0 active:scale-[0.98] active:bg-navy-soft"
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -253,7 +273,6 @@ export default function LoginPage() {
             <span>Continue with Google</span>
           </Button>
 
-          {/* ROUTING LINKS */}
           <p className="text-center text-[0.8rem] text-muted">
             Don&apos;t have an account?{" "}
             <Link
@@ -261,16 +280,6 @@ export default function LoginPage() {
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
             >
               Create Account
-            </Link>
-          </p>
-
-          <p className="text-center text-[0.8rem] text-muted">
-            Seller Account Login?{" "}
-            <Link
-              to={AUTH_ROUTES.verifyOtp}
-              className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
-            >
-              Verify with OTP
             </Link>
           </p>
         </form>
