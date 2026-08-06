@@ -2456,43 +2456,8 @@ function OrderList() {
     : getOrderCollection(state.current);
 
   const availableFilters = useMemo(() => {
-    const activeStatuses = new Set();
-
-    allOrders.forEach((order) => {
-      const orderStatus = String(getOrderStatus(order) || "").toLowerCase();
-      activeStatuses.add(orderStatus);
-
-      const shipments = Array.isArray(order?.relations?.shipments)
-        ? order.relations.shipments
-        : [];
-
-      getOrderItems(order).forEach((item) => {
-        const itemStatus = resolveOrderItemDisplayStatus(
-          item,
-          getOrderStatus(order),
-          shipments,
-        );
-        const normalizedItemStatus = String(itemStatus || "").toLowerCase();
-        activeStatuses.add(normalizedItemStatus);
-      });
-    });
-
-    return ORDER_FILTERS.filter((filterOption) => {
-      if (!filterOption.value) return true;
-
-      if (filterOption.value === "return_requested") {
-        return (
-          activeStatuses.has("return_requested") ||
-          activeStatuses.has("return_approved") ||
-          activeStatuses.has("partially_returned") ||
-          activeStatuses.has("returned") ||
-          activeStatuses.has("refunded")
-        );
-      }
-
-      return activeStatuses.has(filterOption.value);
-    });
-  }, [allOrders]);
+    return ORDER_FILTERS;
+  }, []);
 
   const orderItemsList = useMemo(() => {
     let term = query.trim().toLowerCase();

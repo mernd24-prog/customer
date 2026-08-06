@@ -313,7 +313,7 @@ export default function AddressSelection({
         <button
           type="button"
           onClick={onAddNewAddress}
-          className="inline-flex w-full sm:w-[150px] h-10 sm:h-6 items-center justify-center text-[#3E4093] text-center text-sm sm:text-base font-semibold leading-6 transition hover:opacity-90"
+          className="inline-flex w-max sm:w-[150px] h-10 sm:h-auto items-center justify-center text-[#3E4093] text-center text-sm sm:text-base font-semibold leading-6 transition hover:opacity-90"
         >
           + Add New Address
         </button>

@@ -1680,7 +1680,7 @@ export default function CheckoutPage() {
       />
       <Seo title="Checkout | Sam Global" />
 
-      <div className=" py-6 sm:py-8">
+      <div className="mx-auto max-w-[850px] lg:max-w-none py-6 sm:py-8">
         <div className="mb-6">
           <Breadcrumbs
             items={[
