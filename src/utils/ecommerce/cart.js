@@ -50,6 +50,15 @@ function normalizeCartItemForWrite(item) {
       ? getDefaultVariant(productObj)
       : null;
   const productId = cartItemProductId(item);
+  const image =
+    item?.image ||
+    item?.imageUrl ||
+    getProductImage(productObj) ||
+    (typeof item?.productId === "object" ? getProductImage(item.productId) : "");
+  const title =
+    item?.title ||
+    getProductTitle(productObj) ||
+    (typeof item?.productId === "object" ? getProductTitle(item.productId) : "");
   return {
     ...item,
     productId,
@@ -64,6 +73,8 @@ function normalizeCartItemForWrite(item) {
       getVariantPrice(defaultVariant) ??
       getProductPrice(productObj) ??
       0,
+    image,
+    title,
   };
 }
 
@@ -86,6 +97,8 @@ function mergeCartItems(items = []) {
         ...item,
         quantity: Number(existing.quantity || 0) + Number(item.quantity || 0),
         price: item.price ?? existing.price,
+        image: item.image || existing.image,
+        title: item.title || existing.title,
       });
     });
 
@@ -107,6 +120,13 @@ export function normalizeCartPayloadForWrite(cart = {}) {
 
 export function buildCartItem(product, quantity = 1) {
   const variant = product?.selectedVariant || getDefaultVariant(product);
+  const image =
+    getProductImage(
+      product?.selectedVariant
+        ? { ...product, selectedVariant: variant }
+        : product,
+    ) || getProductImage(product);
+  const title = getProductTitle(product);
   return {
     productId: normalizeId(product),
     variantId: variant?._id || variant?.id || "",
@@ -117,6 +137,8 @@ export function buildCartItem(product, quantity = 1) {
     price: getProductPrice(product) ?? getVariantPrice(variant),
     mrp: getProductMrp(product),
     deal: product?.deal || null,
+    image,
+    title,
   };
 }
 
