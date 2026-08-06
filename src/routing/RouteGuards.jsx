@@ -18,10 +18,7 @@ export function BuyerOnlyRoute() {
   return isSellerRole(role) ? <Navigate to="/seller/status" replace /> : <Outlet />;
 }
 
-export function SellerOnlyRoute() {
-  const role = getRole(useSelector((state) => state.auth.current));
-  return isSellerRole(role) ? <Outlet /> : <Navigate to="/" replace />;
-}
+ 
 
 export function AdminOnlyRoute() {
   const role = getRole(useSelector((state) => state.auth.current));

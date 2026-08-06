@@ -68,12 +68,7 @@ export const footerData = {
     // },
   ],
   actionLinks: [
-    {
-      label: "Become a Seller",
-      href: "/seller/status",
-      icon: footer.seller,
-      alt: "Seller",
-    },
+    
     {
       label: "Advertise",
       href: "/advertise",

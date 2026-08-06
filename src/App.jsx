@@ -4,11 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { AuthModalProvider } from "./context/AuthModalContext";
 import AppLayout from "./layouts/AppLayout";
 import {
-  AdminOnlyRoute,
   BuyerOnlyRoute,
   GuestRoute,
   ProtectedRoute,
-  SellerOnlyRoute,
 } from "./routing/RouteGuards";
 import { checkAuthStatus, logout } from "./features/auth/authSlice";
 import { fetchCart, setGuestCart } from "./features/cart/cartSlice";
@@ -160,31 +158,9 @@ const PreferencesPage = lazyNamed(
   () => import("./pages/preferences/PreferencesPage"),
   "PreferencesPage",
 );
-
-const SellerStatusPage = lazyNamed(
-  () => import("./pages/SellerPages"),
-  "SellerStatusPage",
-);
-const SellerTrackingPage = lazyNamed(
-  () => import("./pages/SellerPages"),
-  "SellerTrackingPage",
-);
-const SellerTrackingDetailPage = lazyNamed(
-  () => import("./pages/SellerPages"),
-  "SellerTrackingDetailPage",
-);
-const AdminProductManagementPage = lazy(
-  () => import("./pages/admin/AdminProductManagementPage"),
-);
-const AdminCatalogManagementPage = lazy(
-  () => import("./pages/admin/AdminCatalogManagementPage"),
-);
-const AdminBrandManagementPage = lazy(
-  () => import("./pages/admin/AdminBrandManagementPage"),
-);
-const AdminRbacManagementPage = lazy(
-  () => import("./pages/admin/AdminRbacManagementPage"),
-);
+ 
+ 
+ 
 
 function RouteFallback() {
   return (
@@ -511,36 +487,9 @@ export default function App() {
                 </Route>
 
                 {/* ── Seller-only routes ─────────────────────────────────── */}
-                <Route element={<SellerOnlyRoute />}>
-                  <Route path="/seller/status" element={<SellerStatusPage />} />
-                  <Route
-                    path="/seller/tracking"
-                    element={<SellerTrackingPage />}
-                  />
-                  <Route
-                    path="/seller/tracking/:orderId"
-                    element={<SellerTrackingDetailPage />}
-                  />
-                </Route>
+                
 
-                <Route element={<AdminOnlyRoute />}>
-                  <Route
-                    path="/admin/products"
-                    element={<AdminProductManagementPage />}
-                  />
-                  <Route
-                    path="/admin/catalog"
-                    element={<AdminCatalogManagementPage />}
-                  />
-                  <Route
-                    path="/admin/brands"
-                    element={<AdminBrandManagementPage />}
-                  />
-                  <Route
-                    path="/admin/rbac"
-                    element={<AdminRbacManagementPage />}
-                  />
-                </Route>
+             
               </Route>
               {/* ── 404 catch-all ─────────────────────────────────────────── */}
               <Route path="*" element={<NotFoundPage />} />

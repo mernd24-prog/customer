@@ -132,15 +132,7 @@ export const SITE_ROUTES = [
     robots: "noindex,nofollow",
     includeInSitemap: false,
   },
-  {
-    path: "/seller/status",
-    title: "Seller Status",
-    description: "Check seller onboarding and web status.",
-    changefreq: "monthly",
-    priority: 0.2,
-    robots: "noindex,nofollow",
-    includeInSitemap: false,
-  },
+ 
 ];
 
 export const DYNAMIC_ROUTE_PATTERNS = [
