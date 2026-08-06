@@ -505,7 +505,7 @@ function ReturnsRefundsPage() {
                   ) : qcDispute.returnId === returnId ? (
                     <div className="mt-4 space-y-3">
                       <textarea
-                        className="w-full rounded-lg  border-amber-300 bg-white p-3 text-sm"
+                        className="w-full rounded-lg border border-amber-300 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 bg-white p-3 text-sm"
                         rows={4}
                         placeholder="Explain Why You Disagree with the Qc Result"
                         value={qcDispute.reason}
@@ -517,7 +517,7 @@ function ReturnsRefundsPage() {
                         }
                       />
                       <textarea
-                        className="w-full rounded-lg  border-amber-300 bg-white p-3 text-sm"
+                        className="w-full rounded-lg border border-amber-300 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 bg-white p-3 text-sm"
                         rows={2}
                         placeholder="Optional Evidence Image Urls, One Per Line"
                         value={qcDispute.evidence}
