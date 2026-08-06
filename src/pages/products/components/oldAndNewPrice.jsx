@@ -18,7 +18,7 @@ export default function ProductPriceBlock({
     <>
       <div>
         {dealBadge ? (
-          <span className="inline-flex rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-bold uppercase text-white">
+          <span className="inline-flex rounded-full bg-[#1B1D60] px-3 py-1 text-xs  font-bold uppercase text-white">
             {dealBadge}
           </span>
         ) : null}
@@ -41,7 +41,7 @@ export default function ProductPriceBlock({
           {discount > 0 && (
             <span
               className={cn(
-                "rounded-full bg-[#FF3D31] px-3 py-1 text-xs font-bold uppercase text-white",
+                "rounded-full bg-[#FF3D31] px-3 py-1 text-[8px] font-bold uppercase text-white",
                 discountClassName,
               )}
             >

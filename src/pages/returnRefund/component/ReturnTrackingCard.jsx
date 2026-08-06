@@ -33,7 +33,7 @@ export default function ReturnTrackingCard({
               className="relative grid grid-cols-[30px_minmax(0,1fr)] gap-3 pb-4 min-[375px]:grid-cols-[34px_minmax(0,1fr)] sm:grid-cols-[40px_minmax(0,1fr)_180px] sm:gap-4 lg:grid-cols-[50px_minmax(0,1fr)_260px] lg:gap-5 lg:pb-7"
             >
               {!isLast && (
-                <span className="absolute left-[14px] top-7 h-full w-px bg-[#D7C07A] min-[375px]:left-[16px] sm:left-[19px] sm:top-8 lg:left-[24px] lg:top-[40px]" />
+                <span className=" absolute left-[14px] top-7 h-full w-px bg-[#D7C07A] min-[375px]:left-[16px] sm:left-[15px] sm:top-8 lg:top-[30px]" />
               )}
 
               <span
@@ -43,7 +43,7 @@ export default function ReturnTrackingCard({
                     : step.active
                       ? "border-[#1B1D60] bg-[#E9EAFB] text-[#1B1D60]"
                       : "border-[#BDBDBD] bg-[#E5E5E5] text-[#555]"
-                } h-7 w-7 text-[12px] sm:h-8 sm:w-8 sm:text-[13px] lg:h-[40px] lg:w-[40px] lg:text-[16px]`}
+                } h-7 w-7 text-[12px] sm:h-8 sm:w-8 sm:text-[13px] lg:h-[30px] lg:w-[30px] lg:text-[16px]`}
               >
                 {step.completed ? (
                   <svg
