@@ -60,7 +60,6 @@ import SizeChartSidebar from "./components/SizeChartSidebar";
 import ShowMoreText, { getShowMoreText } from "../../utils/showMore";
 import { PRODUCT_DETAIL_SKELETON } from "../../components/common/skeleton/layouts";
 
-
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
 const isImageSource = (src) => {
@@ -489,16 +488,9 @@ function DeliveryChecker({ productId, onResultChange }) {
 
   return (
     <div className="flex w-full max-w-[360px] flex-col gap-2">
-      {/* Pincode check label */}
-      <div className="flex min-h-5 flex-wrap items-center gap-2">
-        <span className="text-extaSmall font-semibold leading-5 text-ink">
-          Check Delivery
-        </span>
-      </div>
-
       <form
         onSubmit={check}
-        className="flex h-12 w-full overflow-hidden rounded-full border border-[#1B1D604D] bg-white"
+        className="flex h-11 w-full overflow-hidden rounded-full border border-[#1B1D604D] bg-white shadow-sm"
       >
         <input
           type="text"
@@ -508,12 +500,12 @@ function DeliveryChecker({ productId, onResultChange }) {
             setPincode(e.target.value.replace(/\D/g, "").slice(0, 6));
           }}
           placeholder="Enter 6-digit Pincode"
-          className="flex-1 min-w-0 bg-transparent border border-none focus:outline-none px-8 text-sm text-[#4E4E4E] "
+          className="flex-1 min-w-0 bg-transparent border border-none focus:outline-none px-6 text-sm text-[#4E4E4E]"
         />
         <button
           type="submit"
           disabled={loading}
-          className="flex w-14 shrink-0 items-center justify-center bg-navy text-white disabled:opacity-60"
+          className="flex h-full w-14 shrink-0 items-center justify-center bg-navy text-white disabled:opacity-60 transition hover:bg-[#25287d]"
         >
           {loading ? (
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -1747,6 +1739,7 @@ export default function ProductDetailPage() {
                     mrp={mrp}
                     priceClassName="text-h3"
                     mrpClassName="text-h3"
+                    discountClassName="text-xs"
                     currency={currency}
                     discount={discount}
                     safeDynamicPrice={safeDynamicPrice}
@@ -1754,8 +1747,8 @@ export default function ProductDetailPage() {
                     dealBadge={activeDealBadge}
                   />
 
-                  <div className="my-4 flex flex-col items-start gap-6 md:flex-row">
-                    <div className="w-full  md:w-fit">
+                  <div className="my-4 flex flex-col items-start md:flex-row md:items-center gap-6">
+                    <div className="w-full md:w-fit">
                       <QuantitySelector
                         quantity={quantity}
                         onIncrease={() =>

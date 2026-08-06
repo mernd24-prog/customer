@@ -68,7 +68,6 @@ export const footerData = {
     // },
   ],
   actionLinks: [
-    
     {
       label: "Advertise",
       href: "/advertise",
@@ -119,7 +118,7 @@ export const footerData = {
     {
       label: "Instagram",
       href: "#",
-      icon: footer.youtube,
+      icon: footer.instagram,
       alt: "Instagram",
     },
     {

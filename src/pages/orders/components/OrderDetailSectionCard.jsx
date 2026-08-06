@@ -19,7 +19,7 @@ function OrderDetailSectionCard({
         >
           {title ? (
             <TitleTag
-              className={`font-sans  text-h4 font-bold  text-[#2E2E2E] ${titleClassName}`}
+              className={`font-sans  text-h6 font-bold  text-[#2E2E2E] ${titleClassName}`}
             >
               {title}
             </TitleTag>

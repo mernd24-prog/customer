@@ -1,12 +1,18 @@
 import { Link } from "react-router-dom";
 import Label from "../common/label/Label";
-import { collageImageHeightClass, compactLabel, collageLabelWidthClass } from "../../utils/collage";
+import {
+  collageImageHeightClass,
+  compactLabel,
+  collageLabelWidthClass,
+} from "../../utils/collage";
 
 function CollageImage({ src, title, label, count, index }) {
   const imageLabel = label || title;
   const displayLabel = compactLabel(imageLabel);
   return (
-    <div className={`relative w-full overflow-hidden bg-[var(--customer-cream)] ${collageImageHeightClass(count, index)}`}>
+    <div
+      className={`relative w-full overflow-hidden bg-[var(--customer-cream)] ${collageImageHeightClass(count, index)}`}
+    >
       <img
         src={src}
         alt={label}
@@ -28,46 +34,65 @@ function CollageImage({ src, title, label, count, index }) {
 }
 
 export default function CollageCard({ section }) {
-  const images = (section.images || []).filter((item) => item?.image).slice(0, 4);
-  
-  const cardLink = section.category ? `/categories/${section.category}` : "/products";
-  
-  const normalizeCat = (c) => String(c || "").toLowerCase().replace(/[^a-z0-9-]/g, "");
+  const images = (section.images || [])
+    .filter((item) => item?.image)
+    .slice(0, 4);
+
+  const cardLink = section.category
+    ? `/categories/${section.category}`
+    : "/products";
+
+  const normalizeCat = (c) =>
+    String(c || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "");
   const sectionCat = normalizeCat(section.category);
   const sectionTokens = sectionCat.split("-").filter(Boolean);
 
-  const fallbackProducts = images.map((img) => ({
-    _id: img.productId || img._id || img.id,
-    id: img.productId || img._id || img.id,
-    name: img.label || img.title,
-    title: img.label || img.title,
-    price: img.price,
-    mrp: img.mrp || img.oldPrice,
-    discountPercent: img.discountPercent,
-    rating: img.rating,
-    reviewCount: img.reviewCount,
-    image: img.image,
-    category: img.category || section.category,
-    source: img.source,
-    inStock: true
-  })).filter(p => {
-    if (!section.category) return true;
-    const cat = p.category;
-    if (!cat) return false;
-    const catId = typeof cat === "object" ? (cat.slug || cat.key || cat.id || cat._id || cat.name) : cat;
-    const pCat = normalizeCat(catId);
-    
-    if (pCat === sectionCat || pCat.includes(sectionCat) || sectionCat.includes(pCat)) return true;
+  const fallbackProducts = images
+    .map((img) => ({
+      _id: img.productId || img._id || img.id,
+      id: img.productId || img._id || img.id,
+      name: img.label || img.title,
+      title: img.label || img.title,
+      price: img.price,
+      mrp: img.mrp || img.oldPrice,
+      discountPercent: img.discountPercent,
+      rating: img.rating,
+      reviewCount: img.reviewCount,
+      image: img.image,
+      category: img.category || section.category,
+      source: img.source,
+      inStock: true,
+    }))
+    .filter((p) => {
+      if (!section.category) return true;
+      const cat = p.category;
+      if (!cat) return false;
+      const catId =
+        typeof cat === "object"
+          ? cat.slug || cat.key || cat.id || cat._id || cat.name
+          : cat;
+      const pCat = normalizeCat(catId);
 
-    // Partial word match (e.g. "mens-fashion" and "mens-watches" share "mens", "womens-fashion" and "...women" share "women")
-    const pTokens = pCat.split("-").filter(Boolean);
-    return sectionTokens.some(token => 
-      pTokens.some(pToken => token.includes(pToken) || pToken.includes(token))
-    );
-  });
+      if (
+        pCat === sectionCat ||
+        pCat.includes(sectionCat) ||
+        sectionCat.includes(pCat)
+      )
+        return true;
+
+      // Partial word match (e.g. "mens-fashion" and "mens-watches" share "mens", "womens-fashion" and "...women" share "women")
+      const pTokens = pCat.split("-").filter(Boolean);
+      return sectionTokens.some((token) =>
+        pTokens.some(
+          (pToken) => token.includes(pToken) || pToken.includes(token),
+        ),
+      );
+    });
 
   return (
-    <Link to={cardLink} state={{ fallbackProducts }} className="block transition-transform hover:-translate-y-1">
+    <Link to={cardLink} state={{ fallbackProducts }} className="block ">
       <article className="overflow-hidden rounded-[24px] border border-[#E8B84B] bg-[#F8EFD8] transition-shadow hover:shadow-md">
         <div className="flex min-h-[76px] items-center justify-between gap-3 px-4 py-4 sm:px-5 sm:py-5 lg:px-6">
           <h2 className="min-w-0 flex-1 overflow-hidden line-clamp-1 text-extaSmall font-bold text-[#2E2E2E]">

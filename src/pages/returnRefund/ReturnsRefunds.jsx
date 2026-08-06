@@ -50,11 +50,76 @@ const matchesFilter = (status, filter) => {
 };
 
 /* ─── Tracking-step builder (unchanged) ───────────────────────────────── */
+/* ─── Tracking-step builder ───────────────────────────────── */
 const buildTrackingSteps = (ret) => {
   if (!ret) return [];
-  const timeline = ret.timeline || [];
+  const timeline = Array.isArray(ret.timeline) ? ret.timeline : [];
   const currentStatus = ret.status;
   const resolution = ret.resolution || "refund";
+
+  if (timeline.length > 0) {
+    const recordedSteps = timeline.map((t, idx) => {
+      const status = t.status;
+      const meta = t.metadata || {};
+      let title = "Timeline Step";
+
+      if (status === "requested") title = "Return Requested";
+      else if (status === "approved") title = "Return Approved";
+      else if (status === "reverse_pickup_scheduled") title = "Reverse Pickup Scheduled";
+      else if (status === "manual_ship_back") title = "Manual Ship Back Scheduled";
+      else if (status === "pickup_failed") title = "Pickup Failed";
+      else if (status === "shipped_back") title = "Shipped Back";
+      else if (status === "in_reverse_transit") {
+        if (meta.shipmentStatus === "picked_up") title = "Item Picked Up";
+        else if (meta.shipmentStatus === "in_transit") title = "In Reverse Transit";
+        else title = "In Reverse Transit";
+      } else if (status === "received") title = "Item Received at Warehouse";
+      else if (status === "qc_passed") title = "Quality Check Passed";
+      else if (status === "qc_failed") title = "Quality Check Failed";
+      else if (status === "qc_completed") title = "Quality Check Completed";
+      else if (status === "qc_failure_upheld" || status === "qc_uphold") title = "QC Failure Upheld";
+      else if (status === "refund_pending") title = "Refund Initiated";
+      else if (status === "refund_failed") title = "Refund Failed";
+      else if (status === "refunded") title = "Refund Completed";
+      else if (status === "partially_refunded") title = "Partially Refunded";
+      else if (status === "replacement_requested") title = "Replacement Requested";
+      else if (status === "replacement_created") title = "Replacement Order Created";
+      else if (status === "replacement_shipped") title = "Replacement Shipped";
+      else if (status === "replacement_delivered") title = "Replacement Delivered";
+      else if (status === "replaced") title = "Replacement Completed";
+      else if (status === "rejected") title = "Return Rejected";
+      else if (status === "closed") title = "Return Closed";
+      else title = String(status).replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+      let description = t.note || t.reason || "";
+      if (status === "requested" && !description) {
+        description = ret.description || "";
+      }
+
+      const time = t.at
+        ? new Date(t.at).toLocaleString("en-IN", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          })
+        : "—";
+
+      const isLast = idx === timeline.length - 1;
+
+      return {
+        title,
+        description,
+        time,
+        completed: !isLast,
+        active: isLast,
+      };
+    });
+
+    return recordedSteps;
+  }
 
   const getTimelineTime = (statuses) => {
     const entry = timeline.find((t) => statuses.includes(t.status));
@@ -168,7 +233,7 @@ const buildTrackingSteps = (ret) => {
   if (currentStatus === "rejected") {
     stepsDef.push({
       title: "Return Rejected",
-      statuses: ["rejected"],
+    statuses: ["rejected"],
     });
   } else if (
     currentStatus === "closed" &&

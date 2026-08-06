@@ -241,15 +241,8 @@ export default function ContactUs() {
                     name="message"
                     value={form.message}
                     onChange={handleChange}
-                    placeholder="Write your message..."
                     className="w-full border rounded-xl p-4"
                   />
-
-                  {errors.message && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.message}
-                    </p>
-                  )}
                 </div>
               </div>
               <div className="w-full flex justify-center mt-8">

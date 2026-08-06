@@ -27,20 +27,20 @@ export default function CheckoutSummary({
   deliveryPincode = "",
 }) {
   const quoteErrorMessage =
-    typeof quoteError === "string"
-      ? quoteError
-      : quoteError?.message || "";
+    typeof quoteError === "string" ? quoteError : quoteError?.message || "";
   const isDeliveryBlocked = Boolean(
     quoteErrorMessage &&
-      /(not deliverable|delivery is not available|delivery area|pincode|serviceable)/i.test(
-        quoteErrorMessage,
-      ),
+    /(not deliverable|delivery is not available|delivery area|pincode|serviceable)/i.test(
+      quoteErrorMessage,
+    ),
   );
   const blockedItemName =
     quoteErrorMessage.match(/^(.+?)\s+is not deliverable/i)?.[1] || "";
   const isBlockedItem = (item = {}) => {
     if (!isDeliveryBlocked || !blockedItemName) return false;
-    const title = String(item._safeTitle || item.title || item.productTitle || "");
+    const title = String(
+      item._safeTitle || item.title || item.productTitle || "",
+    );
     return title && title.toLowerCase().includes(blockedItemName.toLowerCase());
   };
   const sellerDeliveryBreakup = (() => {
@@ -187,19 +187,24 @@ export default function CheckoutSummary({
       {quoteError && (
         <div className="rounded-[10px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           <div className="font-bold">
-            {isDeliveryBlocked ? "Some item(s) cannot be delivered" : "Checkout cannot continue"}
+            {isDeliveryBlocked
+              ? "Some item(s) cannot be delivered"
+              : "Checkout cannot continue"}
           </div>
           <div className="mt-1 font-medium">
-            {quoteErrorMessage || "Delivery is not available for the selected address."}
+            {quoteErrorMessage ||
+              "Delivery is not available for the selected address."}
           </div>
           {deliveryPincode ? (
             <div className="mt-1 text-xs text-red-600">
-              Selected pincode: <span className="font-semibold">{deliveryPincode}</span>
+              Selected pincode:{" "}
+              <span className="font-semibold">{deliveryPincode}</span>
             </div>
           ) : null}
           {isDeliveryBlocked && (
             <div className="mt-2 rounded-md bg-white/70 px-3 py-2 text-xs text-red-700">
-              Please change the delivery address or remove the undeliverable item before placing the order.
+              Please change the delivery address or remove the undeliverable
+              item before placing the order.
             </div>
           )}
         </div>
@@ -208,7 +213,10 @@ export default function CheckoutSummary({
         <div className="rounded-[10px] border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
           <div className="font-bold">Blocked item</div>
           <div className="mt-1">
-            {items.filter(isBlockedItem).map((item) => item._safeTitle || item.title).join(", ") || blockedItemName}
+            {items
+              .filter(isBlockedItem)
+              .map((item) => item._safeTitle || item.title)
+              .join(", ") || blockedItemName}
           </div>
         </div>
       ) : null}
