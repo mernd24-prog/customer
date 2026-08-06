@@ -9,8 +9,8 @@ function OrderDetailLayout({ children }) {
   return (
     <StickySidebarLayout
       sidebarPosition="right"
-      containerClass="flex flex-col xl:flex-row gap-4 md:gap-6 xl:gap-8"
-      sidebarClass="w-full xl:w-[380px] 2xl:w-[420px]"
+      containerClass="flex flex-col lg:flex-row gap-4 md:gap-6 xl:gap-8"
+      sidebarClass="w-full lg:w-[340px] xl:w-[380px] 2xl:w-[420px]"
       mainContent={mainContent}
       sidebarContent={sidebarContent}
     />
