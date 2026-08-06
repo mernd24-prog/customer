@@ -7,14 +7,12 @@ import ApiState from "../../components/common/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import BrandButton from "../../components/ui/BrandButton";
 import OrderDetailLayout from "../orders/components/OrderDetailLayout";
-import OrderDetailSectionCard from "../orders/components/OrderDetailSectionCard";
 import { fetchOrderById } from "../../features/order/orderSlice";
 import { fetchMe } from "../../features/user/userSlice";
 import {
   findFetchedOrder,
   getDeliveryDateRange,
   formatOrderDate,
-  
 } from "../../utils/orderHelpers";
 
 function getOrderAddressValue(address, ...keys) {
@@ -68,7 +66,7 @@ export function PaymentResultPage({ failed = false }) {
 
   const order = findFetchedOrder(orderState, orderId);
   const currentUser = userState.current || userState.data || {};
-  
+
   const deliveryDateRange = getDeliveryDateRange(order || {});
   const deliveryLabel = deliveryDateRange
     ? deliveryDateRange.minDate
@@ -244,8 +242,6 @@ export function PaymentResultPage({ failed = false }) {
                 </section>
               </div>
             </OrderDetailLayout>
-
-        
           </div>
         </ApiState>
       </div>

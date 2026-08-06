@@ -1,20 +1,27 @@
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { ArrowRight, ShoppingBag, X } from "lucide-react";
 import ModalOverlay from "./ModalOverlay";
 import {
+  applyImageFallback,
   formatMoney,
+  getImageFallbackSrc,
   getProductId,
   getProductImage,
   getProductTitle,
 } from "../../utils/ecommerce";
 
 function CartLine({ item, onClose }) {
+  const productEntities = useSelector((state) => state.product?.entities) || {};
+
   const product =
     item?.productId && typeof item.productId === "object"
       ? item.productId
-      : item?.product || {};
-  const id = getProductId(product) || item?.productId || item?._id;
-  const baseTitle = getProductTitle(product, "Product");
+      : item?.product ||
+        (typeof item?.productId === "string" ? productEntities[item.productId] : null) ||
+        {};
+  const id = getProductId(product) || (typeof item?.productId === "string" ? item.productId : getProductId(item)) || item?._id;
+  const baseTitle = getProductTitle(product, item?.title || "Product");
   const title =
     item?.variantTitle &&
     item.variantTitle !== "Default Title" &&
@@ -22,7 +29,12 @@ function CartLine({ item, onClose }) {
       ? `${baseTitle} - ${item.variantTitle}`
       : baseTitle;
 
-  let image = getProductImage(product);
+  let image =
+    getProductImage(product) ||
+    item?.image ||
+    item?.imageUrl ||
+    item?.thumbnail ||
+    getProductImage(item);
   const variantId = item?.variantId || item?.variantSku;
   if (variantId && product?.variants?.length) {
     const variant = product.variants.find(
@@ -37,6 +49,8 @@ function CartLine({ item, onClose }) {
     }
   }
 
+  const displayImage = image || getImageFallbackSrc(title, "cart");
+
   const getDisplayPrice = (item, product) => {
     const salePrice = item?.salePrice || product?.salePrice || 0;
 
@@ -48,8 +62,6 @@ function CartLine({ item, onClose }) {
   const quantity = item?.quantity || 1;
   const price = getDisplayPrice(item, product);
 
-  console.log(price);
-
   return (
     <Link
       to={`/products/${id}`}
@@ -58,13 +70,12 @@ function CartLine({ item, onClose }) {
       aria-label={`View ${title}`}
     >
       <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-[var(--customer-cream)] ring-1 ring-black/5">
-        {image ? (
-          <img
-            src={image}
-            alt={title}
-            className="h-full w-full object-contain"
-          />
-        ) : null}
+        <img
+          src={displayImage}
+          alt={title}
+          className="h-full w-full object-contain"
+          onError={(e) => applyImageFallback(e, title, "cart")}
+        />
       </div>
       <div className="min-w-0 flex-1">
         <p className="line-clamp-1 text-sm font-semibold text-[var(--customer-ink)]">
@@ -91,7 +102,11 @@ export default function AddedToCartModal({
   if (!open) return null;
 
   const addedTitle = getProductTitle(addedProduct, "Item");
-  const addedImage = getProductImage(addedProduct);
+  const addedImage =
+    getProductImage(addedProduct) ||
+    addedProduct?.image ||
+    addedProduct?.imageUrl ||
+    getImageFallbackSrc(addedTitle, "cart");
   const addedProductId = getProductId(addedProduct);
   const subtotal = cartItems.reduce((sum, item) => {
     const product = typeof item.productId === "object" ? item.productId : {};
@@ -136,13 +151,12 @@ export default function AddedToCartModal({
             aria-label={`View ${addedTitle}`}
           >
             <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--customer-cream)] ring-1  ring-black/5 sm:h-24 sm:w-24">
-              {addedImage ? (
-                <img
-                  src={addedImage}
-                  alt={addedTitle}
-                  className="h-full  w-full object-contain"
-                />
-              ) : null}
+              <img
+                src={addedImage}
+                alt={addedTitle}
+                className="h-full  w-full object-contain"
+                onError={(e) => applyImageFallback(e, addedTitle, "cart")}
+              />
             </div>
             <div className="min-w-0">
               <p className="line-clamp-2  text-sm font-bold leading-5 text-[var(--customer-ink)] sm:text-base">
