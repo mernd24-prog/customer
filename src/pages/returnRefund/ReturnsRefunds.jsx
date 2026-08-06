@@ -81,6 +81,19 @@ const buildTrackingSteps = (ret) => {
     if (statuses.includes("requested")) {
       return entry?.note || entry?.reason || ret.description || "";
     }
+    
+    if (statuses.includes("reverse_pickup_scheduled") && ret.reverseShipment?.pickupScheduledAt) {
+      const scheduledDate = new Date(ret.reverseShipment.pickupScheduledAt).toLocaleString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+      return `Expected Pickup: ${scheduledDate}`;
+    }
+
     if (!entry) return "";
     return entry.note || entry.reason || "";
   };

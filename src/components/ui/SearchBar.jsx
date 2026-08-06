@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Search, ChevronDown } from "lucide-react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { sanitizeSearchQuery } from "../../validations";
 import { getImageUrlFromValue } from "../../utils/ecommerce/product";
@@ -162,6 +162,7 @@ const SearchBar = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
 
   const categoriesRaw = useSelector((state) => state.catalog.globalCategories) || [];
   const suggestionsRaw = useSelector((state) => state.search.suggestions) || [];
@@ -227,7 +228,8 @@ const SearchBar = ({
   const catParam =
     searchParams.get("categoryId") ||
     searchParams.get("category") ||
-    searchParams.get("categorySlug");
+    searchParams.get("categorySlug") ||
+    (location.pathname.startsWith('/categories/') ? decodeURIComponent(location.pathname.split('/')[2] || "") : null);
   const selectedCategory = useMemo(() => {
     if (!enableCategoryDropdown) return null;
     if (catParam && categories.length) {
@@ -266,6 +268,12 @@ const SearchBar = ({
   useEffect(() => {
     setActiveSuggestionIndex(-1);
   }, [sanitizedQuery, suggestions.length]);
+
+  useEffect(() => {
+    if (!catParam) {
+      setManualSelectedCategory(null);
+    }
+  }, [catParam]);
 
   // Handle outside clicks to close dropdown
   useEffect(() => {
@@ -352,8 +360,6 @@ const SearchBar = ({
         if (catName) url += `&categoryName=${encodeURIComponent(catName)}`;
       }
       navigate(url);
-    } else {
-      navigate("/products");
     }
   };
 

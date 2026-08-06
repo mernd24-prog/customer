@@ -1203,6 +1203,8 @@ export default function CheckoutPage() {
     total,
   ]);
 
+  const prevQuotePayloadRef = useRef(quotePayload);
+
   useEffect(() => {
     if (!quotePayload) {
       setQuoteData(null);
@@ -1218,6 +1220,27 @@ export default function CheckoutPage() {
       return undefined;
     }
 
+    const prev = prevQuotePayloadRef.current;
+    let successTitle = "Order Updated";
+    let successMessage = "Delivery charges updated successfully.";
+
+    if (prev) {
+      if (JSON.stringify(prev.shippingAddress) !== JSON.stringify(quotePayload.shippingAddress)) {
+        successTitle = "Address Updated";
+        successMessage = "Delivery address updated successfully.";
+      } else if (prev.paymentProvider !== quotePayload.paymentProvider) {
+        successTitle = "Payment Updated";
+        successMessage = "Payment method updated successfully.";
+      } else if (prev.couponCode !== quotePayload.couponCode) {
+        successTitle = "Coupon Updated";
+        successMessage = "Coupon code updated successfully.";
+      } else if (prev.walletAmount !== quotePayload.walletAmount) {
+        successTitle = "Wallet Updated";
+        successMessage = "Wallet balance applied successfully.";
+      }
+    }
+    prevQuotePayloadRef.current = quotePayload;
+
     let active = true;
     const timer = window.setTimeout(() => {
       setQuoteLoading(true);
@@ -1229,20 +1252,19 @@ export default function CheckoutPage() {
           if (active) {
             setQuoteData(result.data || null);
             notify.success({
-              title: "Order Updated",
-              message: "Delivery charges updated successfully.",
+              title: successTitle,
+              message: successMessage,
             });
           }
         })
         .catch((error) => {
           if (!active) return;
           setQuoteData(null);
-          const errMsg = error || "Unable to calculate order quote";
+          const errMsg = typeof error === 'string' ? error : (error?.message || error?.error?.message || "Unable to calculate order quote");
           setQuoteError(errMsg);
           notify.error({
             title: "Update Failed",
-            message:
-              "Delivery is not available for this address or an error occurred.",
+            message: errMsg,
           });
         })
         .finally(() => {

@@ -663,29 +663,29 @@ export default function CategoryPage() {
     ]);
     let changed = false;
 
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      Array.from(next.keys()).forEach((key) => {
-        if (key === "page") {
-          next.delete(key);
-          changed = true;
-          return;
-        }
-
-        if (globalFilterKeys.has(key)) return;
-
-        if (key.startsWith("attr_")) {
-          const attributeKey = key.replace(/^attr_/, "");
-          if (supportedAttributeKeys.has(attributeKey)) return;
-        }
-
-        next.delete(key);
+    const currentParams = new URLSearchParams(searchParams);
+    Array.from(currentParams.keys()).forEach((key) => {
+      if (key === "page") {
+        currentParams.delete(key);
         changed = true;
-      });
+        return;
+      }
 
-      return changed ? next : prev;
+      if (globalFilterKeys.has(key)) return;
+
+      if (key.startsWith("attr_")) {
+        const attributeKey = key.replace(/^attr_/, "");
+        if (supportedAttributeKeys.has(attributeKey)) return;
+      }
+
+      currentParams.delete(key);
+      changed = true;
     });
-  }, [categoryData, supportedAttributeKeys, setSearchParams]);
+
+    if (changed) {
+      setSearchParams(currentParams, { replace: true });
+    }
+  }, [categoryData, supportedAttributeKeys, searchParams, setSearchParams]);
 
   // ── Load category meta + subcategories ──────────────────────────────────
   useEffect(() => {

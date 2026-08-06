@@ -288,8 +288,6 @@ export const Navbar = ({ icons: propIcons }) => {
     }
     if (trimmedQuery || category) {
       navigate(url);
-    } else {
-      navigate("/products");
     }
   };
 

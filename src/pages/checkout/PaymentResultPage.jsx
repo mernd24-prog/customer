@@ -6,8 +6,6 @@ import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import BrandButton from "../../components/ui/BrandButton";
-import OrderDetailLayout from "../orders/components/OrderDetailLayout";
-import OrderDetailSectionCard from "../orders/components/OrderDetailSectionCard";
 import { fetchOrderById } from "../../features/order/orderSlice";
 import { fetchMe } from "../../features/user/userSlice";
 import {
@@ -30,32 +28,32 @@ function getOrderAddressValue(address, ...keys) {
   return "";
 }
 
-function OrderDetailSectionCard({
-  title,
-  children,
-  className = "",
-  headerClassName = "",
-  titleClassName = "",
-  borderClassName = "",
-  bodyClassName = "",
-}) {
-  return (
-    <section
-      className={`overflow-hidden border bg-white ${borderClassName} ${className}`.trim()}
-    >
-      <div
-        className={`flex items-center border-b border-[#CE9F2D66] ${headerClassName}`.trim()}
-      >
-        <h2
-          className={`text-h5 font-bold text-[#1B1D60] ${titleClassName}`.trim()}
-        >
-          {title}
-        </h2>
-      </div>
-      <div className={bodyClassName}>{children}</div>
-    </section>
-  );
-}
+// function OrderDetailSectionCard({
+//   title,
+//   children,
+//   className = "",
+//   headerClassName = "",
+//   titleClassName = "",
+//   borderClassName = "",
+//   bodyClassName = "",
+// }) {
+//   return (
+//     <section
+//       className={`overflow-hidden border bg-white ${borderClassName} ${className}`.trim()}
+//     >
+//       <div
+//         className={`flex items-center border-b border-[#CE9F2D66] ${headerClassName}`.trim()}
+//       >
+//         <h2
+//           className={`text-h5 font-bold text-[#1B1D60] ${titleClassName}`.trim()}
+//         >
+//           {title}
+//         </h2>
+//       </div>
+//       <div className={bodyClassName}>{children}</div>
+//     </section>
+//   );
+// }
 
 export function PaymentResultPage({ failed = false }) {
   const dispatch = useDispatch();
@@ -96,7 +94,7 @@ export function PaymentResultPage({ failed = false }) {
   ];
 
   const failureCard = (
-    <div className="mx-auto w-full max-w-[760px] px-4 py-10 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <Breadcrumbs
         items={breadcrumbItems}
         className="mb-6 text-[#2E2E2E]"
@@ -105,9 +103,9 @@ export function PaymentResultPage({ failed = false }) {
         separatorClassName="text-[#2E2E2E]"
       />
       <section className="overflow-hidden rounded-[20px] border border-red-200 bg-white shadow-[0_24px_60px_rgba(27,29,96,0.06)]">
-        <div className="bg-[linear-gradient(135deg,#FFF6F6_0%,#FFFFFF_100%)] px-6 py-8 sm:px-10">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-100 text-red-500">
+        <div className="bg-[linear-gradient(135deg,#FFF6F6_0%,#FFFFFF_100%)] px-6 py-8 text-center sm:px-10">
+          <div className="flex flex-col items-center justify-center gap-5">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-500">
               <svg
                 className="h-10 w-10"
                 fill="none"
@@ -122,7 +120,7 @@ export function PaymentResultPage({ failed = false }) {
                 />
               </svg>
             </div>
-            <div className="min-w-0 flex-1">
+            <div className="flex flex-col items-center">
               <h1 className="text-[32px] font-bold leading-tight text-[#3E4093]">
                 Payment Failed
               </h1>
@@ -133,7 +131,7 @@ export function PaymentResultPage({ failed = false }) {
             </div>
           </div>
         </div>
-        <div className="border-t border-red-100 px-6 py-5 sm:px-10">
+        <div className="flex justify-center border-t border-red-100 px-6 py-5 sm:px-10">
           <BrandButton
             variant="secondary"
             rounded
@@ -198,11 +196,11 @@ export function PaymentResultPage({ failed = false }) {
               />
             </section>
 
-            <OrderDetailLayout>
-              <div className="grid gap-3 min-[375px]:gap-4 min-[425px]:gap-5 md:gap-6 xl:gap-12">
+            <div className="mx-auto flex w-full justify-center">
+              <div className="w-full max-w-5xl">
                 <section className="flex w-full flex-col overflow-hidden rounded-[16px] border border-[#CE9F2D]/40 bg-[#fffcf6] sm:rounded-[18px] xl:rounded-[20px]">
-                  <div className="flex flex-col gap-4 px-4 py-5 min-[375px]:gap-5 min-[375px]:px-5 min-[425px]:gap-6 sm:px-7 sm:py-6 md:px-8 xl:mt-5 xl:px-[57px]">
-                    <div className="flex flex-col items-center gap-5 text-center min-[375px]:gap-6 sm:gap-7 md:flex-row md:items-center md:text-left xl:gap-10">
+                  <div className="flex flex-col gap-4 px-4 py-8 text-center min-[375px]:gap-5 min-[375px]:px-5 min-[425px]:gap-6 sm:px-7 sm:py-10 md:px-8 xl:px-[57px]">
+                    <div className="flex flex-col items-center justify-center gap-5 min-[375px]:gap-6 sm:gap-7 xl:gap-8">
                       <div className="shrink-0">
                         <img
                           src="/image/png/Group.png"
@@ -210,17 +208,19 @@ export function PaymentResultPage({ failed = false }) {
                           className="size-24 object-contain"
                         />
                       </div>
-                      <div className="min-w-0 flex-1">
+
+                      <div className="flex flex-col items-center">
                         <h1 className="break-words text-h2 font-bold text-[#3E4093]">
-                          Order Placed Successfully !
+                          Order Placed Successfully!
                         </h1>
-                        <p className="my-4 max-w-3xl text-small font-medium text-[#2E2E2E]">
+
+                        <p className="my-4 max-w-2xl text-small font-medium text-[#2E2E2E]">
                           Thank You for Shopping with Sam Global.
                           <br className="hidden sm:block" />
-                          Your order has been received and is being prepared for
-                          shipment.
+                          Your order has been received and is being prepared for shipment.
                         </p>
-                        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+
+                        <div className="mt-4 flex flex-col justify-center gap-3 sm:flex-row sm:items-center">
                           <BrandButton
                             variant="secondary"
                             rounded
@@ -235,17 +235,18 @@ export function PaymentResultPage({ failed = false }) {
                     </div>
                   </div>
 
-                  <div className="mt-auto flex flex-col gap-2 border-t border-[#CE9F2D]/30 bg-[#FFF4D7] px-4 py-3 text-small font-semibold text-[#1B1D60] min-[375px]:px-5 min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-4 md:px-8">
-                    <span className="break-words">Order ID : # {orderId}</span>
+                  <div className="mt-auto flex flex-col gap-2 border-t border-[#CE9F2D]/30 bg-[#FFF4D7] px-4 py-4 text-small font-semibold text-[#1B1D60] min-[375px]:px-5 min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-5 md:px-8">
+                    <span className="break-words">
+                      Order ID : #{orderId}
+                    </span>
+
                     <span className="break-words">
                       Estimated Delivery : {deliveryLabel}
                     </span>
                   </div>
                 </section>
               </div>
-            </OrderDetailLayout>
-
-        
+            </div>
           </div>
         </ApiState>
       </div>
