@@ -8,39 +8,39 @@ export const SKELETON_PRESETS = {
   PRODUCT_CARD: [
     {
       type: "col",
-      className: "relative flex flex-col h-[525px] overflow-hidden rounded-[20px] border border-[#CE9F2D80]/50 bg-white",
+      className: "relative flex flex-col h-[440px] overflow-hidden rounded-[20px] border border-[#EFE5D2] bg-white !gap-0",
       children: [
         {
           type: "row",
           className: "absolute left-4 top-4 z-20 gap-2 w-[calc(100%-2rem)]",
           children: [
-            { type: "box", width: "72px", height: "24px", rounded: "rounded-[50px]", className: "sm:h-[28px] sm:w-[84px]" },
-            { type: "box", width: "100px", height: "24px", rounded: "rounded-[50px]", className: "sm:h-[28px]" },
+            { type: "box", width: "64px", height: "20px", rounded: "rounded-[50px]", className: "sm:h-[22px] sm:w-[72px]" },
+            { type: "box", width: "84px", height: "20px", rounded: "rounded-[50px]", className: "sm:h-[22px]" },
           ],
         },
-        { type: "box", height: "260px", width: "100%", className: "rounded-t-[20px] shrink-0" },
+        { type: "box", height: "230px", width: "100%", className: "rounded-t-[20px] shrink-0" },
         {
           type: "col",
-          className: "px-4 pb-4 pt-4 lg:pt-6 flex-1 min-w-0",
+          className: "px-4 pb-3 pt-4 flex-1 min-w-0 !gap-2",
           children: [
-            { type: "box", width: "90px", height: "16px", className: "mb-2" },
-            { type: "box", width: "100%", height: "20px" },
+            { type: "box", width: "80px", height: "12px", className: "mb-1" },
+            { type: "box", width: "90%", height: "16px" },
             {
               type: "row",
-              className: "gap-3 my-2 lg:my-4 items-center",
+              className: "gap-3 my-2 items-center",
               children: [
-                { type: "box", width: "70px", height: "24px" },
-                { type: "box", width: "50px", height: "20px" },
+                { type: "box", width: "60px", height: "20px" },
+                { type: "box", width: "40px", height: "16px" },
               ],
             },
           ],
         },
         {
           type: "row",
-          className: "px-4 pb-4 gap-8 mt-auto shrink-0",
+          className: "px-4 pb-6 gap-8 mt-auto shrink-0",
           children: [
-            { type: "box", height: "44px", rounded: "rounded-[30px]", className: "flex-1" },
-            { type: "box", width: "44px", height: "44px", variant: "circle" },
+            { type: "box", height: "40px", rounded: "rounded-[30px]", className: "flex-1" },
+            { type: "box", width: "40px", height: "40px", variant: "circle" },
           ],
         },
       ],
@@ -127,68 +127,68 @@ export const SKELETON_PRESETS = {
   NEW_ARRIVAL_CARD: [
     {
       type: "col",
-      className: "flex flex-col h-[510px] overflow-hidden rounded-[20px] border border-[#1B1D6066] bg-white shadow-sm",
+      className: "flex flex-col h-[440px] overflow-hidden rounded-[20px] border border-[#EFE5D2] bg-white shadow-sm !gap-0",
       children: [
         {
           type: "col",
-          className: "bg-[#1B1D60] p-5 h-[100px] shrink-0",
+          className: "bg-[#FAFAFA] p-4 h-[75px] shrink-0 border-b border-[#EFE5D2] justify-center !gap-1",
           children: [
-             { type: "row", className: "justify-end w-full mb-3", children: [{ type: "box", width: "80px", height: "24px", className: "!bg-white/20" }] },
-             { type: "box", width: "80%", height: "24px", className: "!bg-white/20 mt-1" }
+            { type: "row", className: "justify-end w-full mb-1", children: [{ type: "box", width: "60px", height: "14px" }] },
+            { type: "box", width: "70%", height: "16px" }
           ]
         },
         {
           type: "col",
-          className: "flex-col divide-y divide-[#1B1D6066] bg-white flex-1",
+          className: "flex-col divide-y divide-[#EFE5D2] bg-white flex-1 !gap-0",
           children: [
-             {
-                type: "row",
-                className: "p-6 items-center gap-4 pl-4 h-[135px]",
-                children: [
-                   { type: "box", width: "90px", height: "90px", rounded: "rounded-[10px]" },
-                   {
-                      type: "col",
-                      className: "flex-1",
-                      children: [
-                         { type: "box", width: "95%", height: "18px", className: "mb-4" },
-                         { type: "row", className: "gap-2 mb-3 items-end", children: [ { type: "box", width: "70px", height: "22px"}, { type: "box", width: "60px", height: "18px"} ] },
-                         { type: "box", width: "110px", height: "14px", className: "mt-1" }
-                      ]
-                   }
-                ]
-             },
-             {
-                type: "row",
-                className: "p-6 items-center gap-4 pl-4 h-[135px]",
-                children: [
-                   { type: "box", width: "90px", height: "90px", rounded: "rounded-[10px]" },
-                   {
-                      type: "col",
-                      className: "flex-1",
-                      children: [
-                         { type: "box", width: "90%", height: "18px", className: "mb-4" },
-                         { type: "row", className: "gap-2 mb-3 items-end", children: [ { type: "box", width: "65px", height: "22px"}, { type: "box", width: "55px", height: "18px"} ] },
-                         { type: "box", width: "100px", height: "14px", className: "mt-1" }
-                      ]
-                   }
-                ]
-             },
-             {
-                type: "row",
-                className: "p-6 items-center gap-4 pl-4 h-[135px]",
-                children: [
-                   { type: "box", width: "90px", height: "90px", rounded: "rounded-[10px]" },
-                   {
-                      type: "col",
-                      className: "flex-1",
-                      children: [
-                         { type: "box", width: "85%", height: "18px", className: "mb-4" },
-                         { type: "row", className: "gap-2 mb-3 items-end", children: [ { type: "box", width: "75px", height: "22px"}, { type: "box", width: "65px", height: "18px"} ] },
-                         { type: "box", width: "95px", height: "14px", className: "mt-1" }
-                      ]
-                   }
-                ]
-             }
+            {
+              type: "row",
+              className: "p-4 items-center gap-3 h-[121px]",
+              children: [
+                { type: "box", width: "60px", height: "60px", rounded: "rounded-[8px]" },
+                {
+                  type: "col",
+                  className: "flex-1 !gap-1",
+                  children: [
+                    { type: "box", width: "95%", height: "14px", className: "mb-1" },
+                    { type: "row", className: "gap-2 mb-1 items-end", children: [{ type: "box", width: "50px", height: "16px" }, { type: "box", width: "40px", height: "12px" }] },
+                    { type: "box", width: "80px", height: "10px" }
+                  ]
+                }
+              ]
+            },
+            {
+              type: "row",
+              className: "p-4 items-center gap-3 h-[121px]",
+              children: [
+                { type: "box", width: "60px", height: "60px", rounded: "rounded-[8px]" },
+                {
+                  type: "col",
+                  className: "flex-1 !gap-1",
+                  children: [
+                    { type: "box", width: "90%", height: "14px", className: "mb-1" },
+                    { type: "row", className: "gap-2 mb-1 items-end", children: [{ type: "box", width: "45px", height: "16px" }, { type: "box", width: "35px", height: "12px" }] },
+                    { type: "box", width: "70px", height: "10px" }
+                  ]
+                }
+              ]
+            },
+            {
+              type: "row",
+              className: "p-4 items-center gap-3 h-[121px]",
+              children: [
+                { type: "box", width: "60px", height: "60px", rounded: "rounded-[8px]" },
+                {
+                  type: "col",
+                  className: "flex-1 !gap-1",
+                  children: [
+                    { type: "box", width: "85%", height: "14px", className: "mb-1" },
+                    { type: "row", className: "gap-2 mb-1 items-end", children: [{ type: "box", width: "55px", height: "16px" }, { type: "box", width: "45px", height: "12px" }] },
+                    { type: "box", width: "75px", height: "10px" }
+                  ]
+                }
+              ]
+            }
           ]
         }
       ]
@@ -377,10 +377,12 @@ export const SKELETON_PRESETS = {
     { type: "box", width: "100%", height: "24px", className: "rounded-md" },
     { type: "box", width: "100%", height: "24px", className: "rounded-md" },
     { type: "box", width: "100%", height: "1px", className: "bg-[#EFE5D2] my-2" },
-    { type: "row", className: "justify-between", children: [
+    {
+      type: "row", className: "justify-between", children: [
         { type: "box", width: "40%", height: "28px", className: "rounded-md" },
         { type: "box", width: "30%", height: "28px", className: "rounded-md" },
-    ]},
+      ]
+    },
     { type: "box", width: "100%", height: "48px", className: "rounded-[12px] mt-4" },
   ],
 

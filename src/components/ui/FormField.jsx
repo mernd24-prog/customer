@@ -58,7 +58,7 @@ export default function FormField({
           id={id}
           type={inputType}
           inputMode={isWallet ? "decimal" : undefined}
-          className={`customer-input ${isPassword ? "pr-11" : ""} ${className}`}
+          className={`customer-input ${isPassword ? "!pr-12" : ""} ${className}`}
           aria-invalid={Boolean(error)}
           {...registration}
           {...props}

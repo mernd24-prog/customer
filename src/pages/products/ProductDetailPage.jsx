@@ -877,11 +877,9 @@ function InfoTabs({ tabs, activeTab, onChange }) {
   );
 }
 
-function InfoCard({ title, children, roundedClass = "rounded-[8px]" }) {
+function InfoCard({ title, children }) {
   return (
-    <div
-      className={`mt-5 overflow-hidden ${roundedClass} border border-[#E7D9B8] bg-white`}
-    >
+    <div className="mt-5 overflow-hidden rounded-xl border border-[#E7D9B8] bg-white">
       <div className="bg-[#CE9F2D33] px-4 py-6">
         <h2 className="text-sm md:text-lg font-bold text-[#2E2E2E]">{title}</h2>
       </div>
@@ -958,7 +956,7 @@ function ProductInfoSection({
       />
 
       {activeInfoTab === "details" && (
-        <InfoCard title="Product Details" roundedClass="rounded-xl">
+        <InfoCard title="Product Details">
           {detailRows.length > 0 || warranty ? (
             <DetailRows
               rows={detailRows.map(([key, value]) => [
@@ -1012,7 +1010,7 @@ function ProductInfoSection({
       )}
 
       {activeInfoTab === "warranty" && (
-        <InfoCard title="Warranty Information" roundedClass="rounded-xl">
+        <InfoCard title="Warranty Information">
           <div className="space-y-6 px-4 py-5 text-sm lg:text-base text-[#4E4E4E] leading-relaxed">
             {(effectiveWarranty.summary ||
               effectiveWarranty.warrantySummary ||
@@ -1116,7 +1114,7 @@ function ProductInfoSection({
 
       {activeInfoTab === "common-images" &&
         product.commonImages?.length > 0 && (
-          <InfoCard title="Catalogue Images" roundedClass="rounded-xl">
+          <InfoCard title="Catalogue Images">
             <div className="flex flex-wrap gap-4 p-4">
               {product.commonImages.slice(0, 4).map((image, index) => {
                 const isLast = index === 3;

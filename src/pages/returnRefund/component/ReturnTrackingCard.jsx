@@ -7,8 +7,8 @@ export default function ReturnTrackingCard({
 }) {
   const stepsToRender = customSteps || [];
   return (
-    <section className="rounded-xl rounded-t-none border border-[#E7D9B8] bg-white px-3 py-4 min-[375px]:px-4 sm:px-6 lg:px-6 lg:py-9  ">
-      <h2 className="text-[16px]  font-bold leading-tight text-[#1B1D60] sm:text-[18px] md:text-[20px]  pb-2">
+    <section className="rounded-xl rounded-t-none border border-[#E7D9B8] bg-white px-2 py-3 min-[375px]:px-4 sm:px-6 lg:px-6 lg:py-9  ">
+      {/* <h2 className="text-[16px]  font-bold leading-tight text-[#1B1D60] sm:text-[18px] md:text-[20px]  pb-2">
         <ShowMoreText
           text={title}
           mode="words"
@@ -19,9 +19,9 @@ export default function ReturnTrackingCard({
           buttonClassName="ml-1.5 text-xs sm:text-sm font-semibold text-[#3E4093] hover:underline cursor-pointer"
         />{" "}
        
-      </h2>
+      </h2> */}
 
-      <div className="my-4 h-px bg-[#2E2E2E]/40" />
+      {/* <div className="my-4 h-px bg-[#2E2E2E]/40" /> */}
 
       <div>
         {stepsToRender.map((step, index) => {

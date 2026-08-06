@@ -10,15 +10,25 @@ export default function ProductStockStatus({
     );
   }
 
+  const stockCount =
+    availableStock ??
+    selectedVariant?.availableStock ??
+    product?.availableStock ??
+    0;
+
+  const displayStock =
+    stockCount >= 1000
+      ? new Intl.NumberFormat("en-US", {
+          notation: "compact",
+          compactDisplay: "short",
+        }).format(stockCount) + "+"
+      : stockCount;
+
   return (
     <div className="flex items-center gap-2 my-1">
       <div className="relative z-0 w-3 h-3 rounded-full bg-success " />
       <p className="text-xs lg:text-sm font-bold text-success">
-        {availableStock ??
-          selectedVariant?.availableStock ??
-          product?.availableStock ??
-          0}{" "}
-        In Stock
+        {displayStock} In Stock
       </p>
     </div>
   );
