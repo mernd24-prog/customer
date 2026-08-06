@@ -62,6 +62,24 @@ import { PRODUCT_DETAIL_SKELETON } from "../../components/common/skeleton/layout
 
 const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 
+const formatSellerAddress = (addr) => {
+  if (!addr) return "";
+  if (typeof addr === "string") return addr;
+  if (typeof addr === "object") {
+    const parts = [
+      addr.line1,
+      addr.line2,
+      addr.street,
+      addr.city,
+      addr.state,
+      addr.postalCode || addr.postal_code || addr.zip,
+      addr.country,
+    ].filter(Boolean);
+    return parts.join(", ");
+  }
+  return "";
+};
+
 const isImageSource = (src) => {
   if (!src || typeof src !== "string") return false;
   const value = src.trim();
@@ -869,9 +887,11 @@ function InfoTabs({ tabs, activeTab, onChange }) {
   );
 }
 
-function InfoCard({ title, children }) {
+function InfoCard({ title, children, roundedClass = "rounded-[8px]" }) {
   return (
-    <div className="mt-5 overflow-hidden rounded-xl border border-[#E7D9B8] bg-white">
+    <div
+      className={`mt-5 overflow-hidden ${roundedClass} border border-[#E7D9B8] bg-white`}
+    >
       <div className="bg-[#CE9F2D33] px-4 py-6">
         <h2 className="text-sm md:text-lg font-bold text-[#2E2E2E]">{title}</h2>
       </div>
@@ -948,7 +968,7 @@ function ProductInfoSection({
       />
 
       {activeInfoTab === "details" && (
-        <InfoCard title="Product Details">
+        <InfoCard title="Product Details" roundedClass="rounded-xl">
           {detailRows.length > 0 || warranty ? (
             <DetailRows
               rows={detailRows.map(([key, value]) => [
@@ -1002,7 +1022,7 @@ function ProductInfoSection({
       )}
 
       {activeInfoTab === "warranty" && (
-        <InfoCard title="Warranty Information">
+        <InfoCard title="Warranty Information" roundedClass="rounded-xl">
           <div className="space-y-6 px-4 py-5 text-sm lg:text-base text-[#4E4E4E] leading-relaxed">
             {(effectiveWarranty.summary ||
               effectiveWarranty.warrantySummary ||
@@ -1106,7 +1126,7 @@ function ProductInfoSection({
 
       {activeInfoTab === "common-images" &&
         product.commonImages?.length > 0 && (
-          <InfoCard title="Catalogue Images">
+          <InfoCard title="Catalogue Images" roundedClass="rounded-xl">
             <div className="flex flex-wrap gap-4 p-4">
               {product.commonImages.slice(0, 4).map((image, index) => {
                 const isLast = index === 3;
@@ -1140,31 +1160,24 @@ function ProductInfoSection({
           </InfoCard>
         )}
 
-      {/* {activeInfoTab === "seller" && (
-        <InfoCard title="Seller Info">
+      {activeInfoTab === "seller" && (
+        <InfoCard title="Seller Information">
           {product.seller ? (
             <div className="flex items-center gap-3 px-4 py-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-soft font-bold text-gold-dark">
-                {(product.seller.name || "S")[0].toUpperCase()}
-              </div>
-
               <div>
                 <p className="text-sm font-semibold text-ink">
+                  Store Name:{" "}
                   {product.seller.name || product.seller.storeName || "Seller"}
                 </p>
-
-                {product.seller.rating && (
-                  <StarRating rating={product.seller.rating} />
-                )}
               </div>
             </div>
           ) : (
-            <div className="px-4 py-4 text-sm lg:text-lg   text-black/90 whitespace-pre-line">
+            <div className="px-4 py-4 text-sm lg:text-lg text-black/90 whitespace-pre-line">
               Seller Information Is Not Available.
             </div>
           )}
         </InfoCard>
-      )} */}
+      )}
 
       {isModalOpen &&
         createPortal(
@@ -1618,7 +1631,7 @@ export default function ProductDetailPage() {
     { key: "details", label: "Product Details" },
     { key: "description", label: "Description" },
     { key: "warranty", label: "Warranty" },
-    // { key: "seller", label: "Seller Information" },
+    { key: "seller", label: "Seller Information" },
   ];
 
   return (
