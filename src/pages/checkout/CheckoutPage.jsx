@@ -9,6 +9,7 @@ import ApiState from "../../components/common/ApiState";
 import { SKELETON_PRESETS } from "../../components/common/skeleton/skeletonPresets";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import { useToastThunk } from "../../hooks/useToastThunk";
+import { getCashfreeCheckout, openCashfreeCheckout } from "../../utils/cashfree";
 import { notify } from "../../utils/notify";
 import { fetchCart } from "../../features/cart/cartSlice";
 import { fetchProductById } from "../../features/product/productSlice";
@@ -66,52 +67,10 @@ import { CHECKOUT_PAGE_SKELETON } from "../../components/common/skeleton/layouts
 
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
-const RAZORPAY_CHECKOUT_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
-let razorpayScriptPromise;
-
-const loadRazorpayCheckout = () => {
-  if (window.Razorpay) {
-    return Promise.resolve(window.Razorpay);
-  }
-
-  if (razorpayScriptPromise) {
-    return razorpayScriptPromise;
-  }
-
-  razorpayScriptPromise = new Promise((resolve, reject) => {
-    const existingScript = document.querySelector(
-      `script[src="${RAZORPAY_CHECKOUT_SCRIPT}"]`,
-    );
-
-    const handleLoad = () => {
-      if (window.Razorpay) {
-        resolve(window.Razorpay);
-      } else {
-        reject(new Error("Razorpay checkout could not be loaded."));
-      }
-    };
-
-    if (existingScript) {
-      existingScript.addEventListener("load", handleLoad, { once: true });
-      existingScript.addEventListener(
-        "error",
-        () => reject(new Error("Razorpay checkout could not be loaded.")),
-        { once: true },
-      );
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = RAZORPAY_CHECKOUT_SCRIPT;
-    script.async = true;
-    script.onload = handleLoad;
-    script.onerror = () =>
-      reject(new Error("Razorpay checkout could not be loaded."));
-    document.body.appendChild(script);
-  });
-
-  return razorpayScriptPromise;
-};
+// Razorpay integration temporarily disabled — prefer Cashfree for now.
+//const RAZORPAY_CHECKOUT_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
+//let razorpayScriptPromise;
+//const loadRazorpayCheckout = () => { /* commented out */ };
 
 async function fetchFullList(dispatch, thunkAction, params = {}) {
   const res = await dispatch(thunkAction({ params })).unwrap();
@@ -410,10 +369,7 @@ const getPaymentAmount = (payment = {}) =>
     payment?.amount ?? payment?.payableAmount ?? payment?.payable_amount,
   );
 const getCheckoutAmount = (payment = {}) => {
-  const amountInPaise = asOptionalNumber(payment?.checkout?.amount);
-  return amountInPaise === null
-    ? null
-    : Number((amountInPaise / 100).toFixed(2));
+  return asOptionalNumber(payment?.checkout?.amount);
 };
 const amountsMatch = (left, right) =>
   Math.round(Number(left || 0) * 100) === Math.round(Number(right || 0) * 100);
@@ -641,85 +597,10 @@ const getClientDeliverabilityBlockers = (items = [], address = {}) => {
     .filter(Boolean);
 };
 
-const openRazorpayCheckout = async ({
-  dispatch,
-  run,
-  order,
-  orderId,
-  payment,
-  user,
-}) => {
-  const checkout = payment?.checkout || {};
-  if (!checkout.keyId || !checkout.orderId || !checkout.amount) {
-    throw new Error("Razorpay checkout details are missing. Please try again.");
-  }
-
-  const Razorpay = await loadRazorpayCheckout();
-
-  return new Promise((resolve, reject) => {
-    let settled = false;
-    const settle = (callback, value) => {
-      if (settled) return;
-      settled = true;
-      callback(value);
-    };
-
-    const razorpay = new Razorpay({
-      key: checkout.keyId,
-      amount: checkout.amount,
-      currency: checkout.currency || payment.currency || "INR",
-      name: "Sam Global",
-      description: `Order ${order?.orderNumber || order?.order_number || orderId}`,
-      order_id: checkout.orderId,
-      prefill: {
-        name: user?.name || user?.fullName || "",
-        email: user?.email || "",
-        contact: user?.phone || user?.mobile || "",
-      },
-      notes: { orderId },
-      theme: { color: "#B48A3C" },
-      handler: async (response) => {
-        try {
-          const verifiedPayment = await run(
-            dispatch,
-            verifyPayment({
-              provider: "razorpay",
-              orderId,
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
-            }),
-            "Payment verified",
-          );
-          settle(resolve, verifiedPayment);
-        } catch (error) {
-          settle(reject, error);
-        }
-      },
-      modal: {
-        ondismiss: () =>
-          settle(
-            reject,
-            new Error(
-              "Payment was not completed. Your order is still pending payment.",
-            ),
-          ),
-      },
-    });
-
-    razorpay.on("payment.failed", (response) => {
-      settle(
-        reject,
-        new Error(
-          response?.error?.description ||
-            response?.error?.reason ||
-            "Payment failed. Please try again.",
-        ),
-      );
-    });
-
-    razorpay.open();
-  });
+// Razorpay frontend checkout is temporarily disabled.
+// If called inadvertently, throw a clear error.
+const openRazorpayCheckout = async () => {
+  throw new Error("Razorpay checkout is disabled. Use Cashfree for payments.");
 };
 
 export default function CheckoutPage() {
@@ -782,12 +663,16 @@ export default function CheckoutPage() {
   const subtotal = items.reduce((sum, item) => sum + item._lineTotal, 0);
   const shipping = items.reduce((sum, item) => sum + item._shippingTotal, 0);
   const total = subtotal + shipping;
-  const [paymentProvider, setPaymentProvider] = useState("razorpay");
+  const [paymentProvider, setPaymentProvider] = useState("cashfree");
   const paymentOptions = useMemo(() => {
     const providers = Array.isArray(paymentState.current?.providers)
       ? paymentState.current.providers
       : [];
-    return providers.filter((option) => option.enabled !== false);
+    // Only show Cashfree and COD to customers as requested
+    const allowed = new Set(["cashfree", "cod"]);
+    return providers
+      .filter((option) => option && option.enabled !== false)
+      .filter((option) => allowed.has(String(option.provider || "").toLowerCase()));
   }, [paymentState]);
   const quotePayableAmount = getQuotePayableAmount(quoteData);
 
@@ -837,9 +722,14 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (!paymentOptions.length) return;
-    const selected = paymentOptions.find(
-      (option) => option.provider === paymentProvider,
-    );
+    // Prefer Cashfree when available/configured, otherwise keep existing logic
+    const cashfreeOption = paymentOptions.find((opt) => String(opt.provider).toLowerCase() === "cashfree" && opt.enabled !== false);
+    if (cashfreeOption) {
+      setPaymentProvider(cashfreeOption.provider);
+      return;
+    }
+
+    const selected = paymentOptions.find((option) => option.provider === paymentProvider);
     if (selected?.enabled) return;
     const firstEnabled = paymentOptions.find((option) => option.enabled);
     if (firstEnabled?.provider) {
@@ -1586,6 +1476,47 @@ export default function CheckoutPage() {
             });
             return;
           }
+        }
+      }
+
+      if (paymentProvider === "cashfree") {
+        const checkout = getCashfreeCheckout(initiatedPayment);
+        if (!checkout || (!checkout.paymentSessionId && !checkout.orderToken)) {
+          const message =
+            "Cashfree checkout could not be started. Please try again or contact support.";
+          setError("root", { type: "manual", message });
+          notify.error({
+            title: "Cashfree checkout failed",
+            message,
+          });
+          return;
+        }
+
+        const returnUrl = `${window.location.origin}/payment/success?orderId=${encodeURIComponent(orderId)}`;
+        const notifyUrl = `${window.location.origin}/api/v1/payments/webhooks/cashfree`;
+        try {
+          openCashfreeCheckout({
+            checkout,
+            orderId,
+            returnUrl,
+            notifyUrl,
+            customerEmail: userState.current?.email,
+            customerPhone: userState.current?.phone || userState.current?.mobile,
+            customerName:
+              userState.current?.name || userState.current?.fullName || "",
+          });
+          shouldReleaseSubmitLock = false;
+          return;
+        } catch (error) {
+          const message =
+            error?.message ||
+            "Cashfree checkout could not be opened. Please try again.";
+          setError("root", { type: "manual", message });
+          notify.error({
+            title: "Cashfree checkout failed",
+            message,
+          });
+          return;
         }
       }
 

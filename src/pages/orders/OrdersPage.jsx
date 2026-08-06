@@ -6,6 +6,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { getCashfreeCheckout, openCashfreeCheckout } from "../../utils/cashfree";
 import { MdContentCopy } from "react-icons/md";
 import { FaShoppingCart } from "react-icons/fa";
 import { BsCreditCardFill } from "react-icons/bs";
@@ -58,7 +59,6 @@ import {
   downloadAuthDocument,
   getDocumentId,
 } from "../../utils/downloadAuthDocument";
-import { openRazorpayCheckout } from "../../utils/razorpay";
 import { endpoints } from "../../api/endpoints";
 import {
   COMPACT_STATUS_BADGE,
@@ -1023,28 +1023,40 @@ function OrderDetail({ orderId, track }) {
     setRetrying(true);
     try {
       await run(dispatch, retryOrderPayment({ orderId }), null);
-      const paymentResult = await run(
+      const initiatedPaymentResult = await run(
         dispatch,
         initiatePayment({
           orderId,
-          provider: "razorpay",
+          provider: "cashfree",
           currency: "INR",
           notes: { source: "web_retry" },
         }),
         null,
       );
-      const payment = paymentResult?.data || paymentResult;
-      await openRazorpayCheckout({
-        dispatch,
-        run,
-        order,
-        orderId,
-        payment,
-        user: userState.current,
-        verifyPayment,
-      });
-      navigate(`/payment/success?orderId=${orderId}`);
-    } catch {
+      const payment =
+        initiatedPaymentResult?.data?.payment ||
+        initiatedPaymentResult?.payment ||
+        initiatedPaymentResult?.data ||
+        initiatedPaymentResult;
+      const checkout = getCashfreeCheckout(payment);
+      if (checkout && (checkout.paymentSessionId || checkout.orderToken)) {
+        const returnUrl = `${window.location.origin}/payment/success?orderId=${encodeURIComponent(orderId)}`;
+        const notifyUrl = `${window.location.origin}/api/v1/payments/webhooks/cashfree`;
+        openCashfreeCheckout({
+          checkout,
+          orderId,
+          returnUrl,
+          notifyUrl,
+          customerEmail: userState.current?.email,
+          customerPhone: userState.current?.phone || userState.current?.mobile,
+          customerName: userState.current?.name || userState.current?.fullName || "",
+        });
+        return;
+      }
+      // Cashfree frontend flow is expected to be handled by the checkout UI.
+      // After initiating payment we refresh the order to show current state.
+    } catch (error) {
+      // Retry payment initiation failed; error will be logged by run() hook
     } finally {
       setRetrying(false);
       dispatch(fetchOrderById({ orderId }));

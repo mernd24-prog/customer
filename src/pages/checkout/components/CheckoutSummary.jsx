@@ -6,6 +6,7 @@ import OrderPaymentSummary, {
 
 const PAYMENT_ICONS = {
   razorpay: CreditCard,
+  cashfree: CreditCard,
   cod: Banknote,
   manual_upi: Smartphone,
   manual_bank_transfer: Building2,

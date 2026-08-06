@@ -1,19 +1,24 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Truck } from "lucide-react";
+import { Phone, MapPin } from "lucide-react";
 
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import BrandButton from "../../components/ui/BrandButton";
 import OrderDetailLayout from "../orders/components/OrderDetailLayout";
+import OrderDetailSectionCard from "../orders/components/OrderDetailSectionCard";
 import { fetchOrderById } from "../../features/order/orderSlice";
 import { fetchMe } from "../../features/user/userSlice";
 import {
   findFetchedOrder,
   getDeliveryDateRange,
   formatOrderDate,
+  getOrderAddressName,
+  getOrderAddressValue,
+  getOrderPhone,
+  hasOrderShippingAddress,
 } from "../../utils/orderHelpers";
 
 export function PaymentResultPage({ failed = false }) {
@@ -27,6 +32,18 @@ export function PaymentResultPage({ failed = false }) {
 
   const order = findFetchedOrder(orderState, orderId);
   const currentUser = userState.current || userState.data || {};
+  const orderStatus = String(order?.status || order?.order_status || "").toLowerCase();
+  const paymentStatus = String(order?.payment_status || order?.paymentStatus || "").toLowerCase();
+  const isPaymentPending =
+    orderStatus === "pending_payment" ||
+    ["initiated", "authorized"].includes(paymentStatus);
+  const isPaymentFailed =
+    orderStatus === "payment_failed" || paymentStatus === "failed";
+
+  const shippingAddress =
+    order?.shipping_address || order?.shippingAddress || order?.address || {};
+  const displayName = getOrderAddressName(shippingAddress);
+  const deliveryPhone = getOrderPhone(shippingAddress);
 
   const deliveryDateRange = getDeliveryDateRange(order || {});
   const deliveryLabel = deliveryDateRange
@@ -53,6 +70,57 @@ export function PaymentResultPage({ failed = false }) {
     { label: "Checkout" },
     { label: failed ? "Payment Failed" : "Order Placed" },
   ];
+
+  const pendingCard = (
+    <div className="mx-auto w-full max-w-[760px] px-4 py-10 sm:px-6 lg:px-8">
+      <Breadcrumbs
+        items={breadcrumbItems}
+        className="mb-6 text-[#2E2E2E]"
+        linkClassName="text-[#2E2E2E]"
+        currentClassName="text-[#CE9F2D]"
+        separatorClassName="text-[#2E2E2E]"
+      />
+      <section className="overflow-hidden rounded-[20px] border border-amber-200 bg-white shadow-[0_24px_60px_rgba(27,29,96,0.06)]">
+        <div className="bg-[linear-gradient(135deg,#FFFAEB_0%,#FFFFFF_100%)] px-6 py-8 sm:px-10">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+              <svg
+                className="h-10 w-10"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3"
+                />
+              </svg>
+            </div>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-[32px] font-bold leading-tight text-[#3E4093]">
+                Payment Pending
+              </h1>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-[#2E2E2E]">
+                Your order has been created, but the payment has not been confirmed yet.
+                Please complete the payment in the Cashfree checkout window or retry from the orders page.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="border-t border-amber-100 px-6 py-5 sm:px-10">
+          <BrandButton
+            variant="secondary"
+            rounded
+            onClick={() => navigate("/orders")}
+            label="View Orders"
+            className="h-12 w-full min-w-[180px] text-sm sm:w-auto"
+          />
+        </div>
+      </section>
+    </div>
+  );
 
   const failureCard = (
     <div className="mx-auto w-full max-w-[760px] px-4 py-10 sm:px-6 lg:px-8">
@@ -127,6 +195,24 @@ export function PaymentResultPage({ failed = false }) {
             </div>
           </div>
         )}
+      </>
+    );
+  }
+
+  if (order && isPaymentFailed) {
+    return (
+      <>
+        <Seo title="Payment Failed | Sam Global" />
+        {failureCard}
+      </>
+    );
+  }
+
+  if (order && isPaymentPending) {
+    return (
+      <>
+        <Seo title="Payment Pending | Sam Global" />
+        {pendingCard}
       </>
     );
   }
