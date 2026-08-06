@@ -64,7 +64,6 @@ import Button from "../../components/ui/Button";
 import AddressFormFields from "../../components/address/AddressFormFields";
 import { CHECKOUT_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
 
-
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
 const RAZORPAY_CHECKOUT_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
@@ -587,39 +586,72 @@ const buildOrderItems = (items = []) =>
 
 const normalizePincode = (value) => String(value || "").trim();
 const normalizeServiceabilityMode = (value) => {
-  const mode = String(value || "inherit").trim().toLowerCase();
-  if (["all_pincodes", "all_india", "all_locations"].includes(mode)) return "all_pincodes";
-  if (["allowlist", "selected_pincodes", "serviceable_pincodes", "allow_pincodes"].includes(mode)) return "allowlist";
-  if (["regions", "selected_states", "selected_cities"].includes(mode)) return "regions";
+  const mode = String(value || "inherit")
+    .trim()
+    .toLowerCase();
+  if (["all_pincodes", "all_india", "all_locations"].includes(mode))
+    return "all_pincodes";
+  if (
+    [
+      "allowlist",
+      "selected_pincodes",
+      "serviceable_pincodes",
+      "allow_pincodes",
+    ].includes(mode)
+  )
+    return "allowlist";
+  if (["regions", "selected_states", "selected_cities"].includes(mode))
+    return "regions";
   if (mode === "disabled") return "disabled";
   return "inherit";
 };
 const normalizeList = (value) =>
   (Array.isArray(value) ? value : String(value || "").split(/[\n,]+/))
-    .map((item) => String(item || "").trim().toLowerCase())
+    .map((item) =>
+      String(item || "")
+        .trim()
+        .toLowerCase(),
+    )
     .filter(Boolean);
 const listIncludes = (list, value) =>
-  normalizeList(list).includes(String(value || "").trim().toLowerCase());
+  normalizeList(list).includes(
+    String(value || "")
+      .trim()
+      .toLowerCase(),
+  );
 const getClientDeliverabilityBlockers = (items = [], address = {}) => {
   const pincode = normalizePincode(
-    address?.postalCode || address?.postal_code || address?.pincode || address?.zip,
+    address?.postalCode ||
+      address?.postal_code ||
+      address?.pincode ||
+      address?.zip,
   );
   if (!pincode) return [];
   return items
     .map((item) => {
       const product = getCartItemProduct(item);
-      const shipping = product?.shipping && typeof product.shipping === "object"
-        ? product.shipping
-        : {};
+      const shipping =
+        product?.shipping && typeof product.shipping === "object"
+          ? product.shipping
+          : {};
       const mode = normalizeServiceabilityMode(shipping.serviceabilityMode);
-      const allowed = shipping.allowPincodes || shipping.serviceablePincodes || [];
+      const allowed =
+        shipping.allowPincodes || shipping.serviceablePincodes || [];
       const title = getCartItemTitle(item);
 
       if (mode === "disabled") {
-        return { title, pincode, reason: "Delivery is disabled for this product." };
+        return {
+          title,
+          pincode,
+          reason: "Delivery is disabled for this product.",
+        };
       }
       if (mode === "allowlist" && !listIncludes(allowed, pincode)) {
-        return { title, pincode, reason: `Not in this product's allowed pincode list.` };
+        return {
+          title,
+          pincode,
+          reason: `Not in this product's allowed pincode list.`,
+        };
       }
       if (mode === "regions") {
         const regionAllowed =
@@ -634,7 +666,11 @@ const getClientDeliverabilityBlockers = (items = [], address = {}) => {
           !normalizeList(shipping.cities).length ||
           listIncludes(shipping.cities, address?.city);
         if (!regionAllowed || !stateAllowed || !cityAllowed) {
-          return { title, pincode, reason: "Not in this product's delivery region." };
+          return {
+            title,
+            pincode,
+            reason: "Not in this product's delivery region.",
+          };
         }
       }
       return null;

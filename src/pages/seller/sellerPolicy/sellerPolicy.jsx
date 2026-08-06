@@ -18,20 +18,19 @@ export default function SellerPolicy() {
       icon: ShieldCheck,
       title: "Good Standing",
       desc: "Maintain accurate listings, timely shipping, and quality customer service to keep your seller account active and trusted.",
-      color: "bg-green-50 text-green-600",
+      color: "bg-[#18156D]/10 text-[#18156D]",
     },
     {
       icon: BarChart3,
       title: "Performance Review",
       desc: "Your account is regularly reviewed based on order fulfillment, cancellations, returns, and customer satisfaction.",
       color: "bg-[#18156D]/10 text-[#18156D]",
-      featured: true,
     },
     {
       icon: TriangleAlert,
       title: "Policy Violations",
       desc: "Repeated policy violations may lead to listing restrictions, temporary suspension, or permanent account removal.",
-      color: "bg-red-50 text-red-500",
+      color: "bg-[#18156D]/10 text-[#18156D]",
     },
   ];
 
@@ -92,8 +91,8 @@ export default function SellerPolicy() {
   ];
 
   return (
-    <div 
-      className="w-[100vw] overflow-x-hidden" 
+    <div
+      className="w-[100vw] overflow-x-hidden"
       style={{ marginLeft: "calc(-50vw + 50%)" }}
     >
       {/* ================= HERO ================= */}
@@ -108,32 +107,38 @@ export default function SellerPolicy() {
 
         {/* Content Overlay */}
         <div className="customer-container flex min-h-[570px] items-center py-16 lg:min-h-[780px] lg:py-20">
-            <div className="max-w-3xl">
-              <div className="mb-6 inline-flex items-center rounded-full border border-[#D4A52A]/30 bg-[#D4A52A]/15 px-4 py-2 text-sm font-medium text-[#18156D] backdrop-blur-sm">
-                Seller Guidelines
-              </div>
+          <div className="max-w-3xl">
+            <div className="mb-6 inline-flex items-center rounded-full border border-[#D4A52A]/30 bg-[#D4A52A]/15 px-4 py-2 text-sm font-medium text-[#18156D] backdrop-blur-sm">
+              Seller Guidelines
+            </div>
 
-              <h1 className="banner-heading font-bold text-[#18156D]">
-                Seller Policy
-              </h1>
+            <h1 className="banner-heading font-bold text-[#18156D]">
+              Seller Policy
+            </h1>
 
-              <p className="mt-6 max-w-xl text-base text-gray-700 sm:text-lg">
-                Our Seller Policy defines the standards, responsibilities, and
-                marketplace guidelines that help create a trusted experience for
-                both sellers and customers.
-              </p>
+            <p className="mt-6 max-w-xl text-base text-gray-700 sm:text-lg">
+              Our Seller Policy defines the standards, responsibilities, and
+              marketplace guidelines that help create a trusted experience for
+              both sellers and customers.
+            </p>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <a href="/become-a-seller" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#D4A52A] px-7 font-bold text-[#18156D] transition hover:-translate-y-0.5 hover:bg-[#e5b738]">
-                  Become a Seller
-                </a>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a
+                href="/become-a-seller"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#D4A52A] px-7 font-bold text-[#18156D] transition hover:-translate-y-0.5 hover:bg-[#e5b738]"
+              >
+                Become a Seller
+              </a>
 
-                <a href="/contact-us" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-7 font-bold text-[#18156D] transition hover:-translate-y-0.5 backdrop-blur">
-                  Contact Support
-                </a>
-              </div>
+              <a
+                href="/contact-us"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#18156D]/20 bg-white/70 px-7 font-bold text-[#18156D] transition hover:-translate-y-0.5 backdrop-blur"
+              >
+                Contact Support
+              </a>
             </div>
           </div>
+        </div>
       </section>
 
       {/* ================= POLICY HIGHLIGHTS ================= */}
@@ -262,41 +267,21 @@ export default function SellerPolicy() {
               return (
                 <div
                   key={index}
-                  className={`rounded-[28px] border p-8 transition-all duration-300 ${
-                    item.featured
-                      ? "bg-[#18156D] text-white border-[#18156D]"
-                      : "bg-white border-[#ECE7DD]"
-                  }`}
+                  className="group rounded-[28px] border border-[#ECE7DD]  p-8 transition-all duration-500 ease-in-out hover:-translate-y-1.5 hover:border-[#18156D] hover:bg-[#18156D]  cursor-pointer"
                 >
-                  <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-xl ${
-                      item.featured ? "bg-white/10" : item.color
-                    }`}
-                  >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#18156D]/10 text-[#18156D] transition-all duration-500 ease-in-out group-hover:bg-white/10 group-hover:text-white">
                     <Icon size={22} />
                   </div>
 
-                  <h3
-                    className={`mt-6 text-[18px] md:text-[20px] lg:text-[24px] font-bold leading-tight ${
-                      item.featured ? "text-white" : "text-[#18156D]"
-                    }`}
-                  >
+                  <h3 className="mt-6 text-[18px] font-bold leading-tight text-[#18156D] transition-colors duration-500 ease-in-out group-hover:text-white md:text-[20px] lg:text-[24px]">
                     {item.title}
                   </h3>
 
-                  <p
-                    className={`mt-4 text-[14px] leading-[22px] md:text-[16px] md:leading-[26px] ${
-                      item.featured ? "text-white/75" : "text-gray-600"
-                    }`}
-                  >
+                  <p className="mt-4 text-[14px] leading-[22px] text-gray-600 transition-colors duration-500 ease-in-out group-hover:text-white/80 md:text-[16px] md:leading-[26px]">
                     {item.desc}
                   </p>
 
-                  <div
-                    className={`mt-8 h-1 w-16 rounded-full ${
-                      item.featured ? "bg-[#D4A52A]" : "bg-[#D4A52A]/30"
-                    }`}
-                  />
+                  <div className="mt-8 h-1 w-16 rounded-full bg-[#D4A52A]/30 transition-all duration-500 ease-in-out group-hover:w-20 group-hover:bg-[#D4A52A]" />
                 </div>
               );
             })}

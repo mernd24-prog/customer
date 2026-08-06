@@ -334,7 +334,7 @@ export function Footer({ data = footerData }) {
             <h2 className="max-w-sm lg:!w-full text-sm font-medium text-white/85">
               {appDownload.title}
             </h2>
-            <div className="my-4 flex flex-wrap gap-6 lg:my-6 ">
+            <div className="my-4  flex flex-wrap gap-6 lg:my-6 ">
               {appDownloadLinks.map((app, index) => {
                 const toPath = hrefOr(app?.href);
                 return (

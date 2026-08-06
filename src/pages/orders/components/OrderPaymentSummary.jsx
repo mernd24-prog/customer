@@ -164,9 +164,7 @@ function OrderPaymentSummary({
   selectedLabel,
 }) {
   const visiblePaymentMethods =
-    variant === "checkout"
-      ? paymentMethods
-      : paymentMethods;
+    variant === "checkout" ? paymentMethods : paymentMethods;
 
   return (
     <OrderDetailSectionCard
@@ -332,7 +330,11 @@ function OrderPaymentSummary({
       {asNumber?.(customerPlatformFee) > 0 && (
         <div className="border-t border-[#04258626] pt-2">
           <SummaryRow
-            label={asNumber?.(customerPlatformFeeTax) > 0 ? "Platform fee base" : "Platform Fee"}
+            label={
+              asNumber?.(customerPlatformFeeTax) > 0
+                ? "Platform fee base"
+                : "Platform Fee"
+            }
             value={formatMoney(customerPlatformFee, currency)}
           />
           {variant === "order" && (
@@ -343,7 +345,8 @@ function OrderPaymentSummary({
         </div>
       )}
 
-      {(asNumber?.(customerPlatformFeeTax) > 0 || (variant === "order" && asNumber?.(customerPlatformFee) > 0)) && (
+      {(asNumber?.(customerPlatformFeeTax) > 0 ||
+        (variant === "order" && asNumber?.(customerPlatformFee) > 0)) && (
         <div className="border-t border-[#04258626] pt-2">
           <SummaryRow
             label="Platform Fee GST"
@@ -427,7 +430,7 @@ function OrderPaymentSummary({
       {/* Cart Savings Box */}
       {variant === "cart" && asNumber?.(totalSavings) > 0 && (
         <div className="mt-4 rounded-xl bg-[#228B221A] p-4 text-[#228B22]">
-          <p className="text-base font-medium">
+          <p className="text-sm font-medium">
             You Saved{" "}
             <span className="font-bold">
               {formatMoney(totalSavings, currency)}

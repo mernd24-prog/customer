@@ -1325,21 +1325,6 @@ function OrderDetail({ orderId, track }) {
                   bodyClassName="overflow-hidden px-4"
                   titleClassName="text-lg font-bold leading-none"
                 >
-                  {selectedOrderItem && (
-                    <div className="mb-3 rounded-lg bg-[#FFF8E7] px-3 py-2 text-sm text-[#1B1D60]">
-                      <strong>{getProductTitle(selectedOrderItem)}</strong>
-                      <span className="ml-2 text-xs font-semibold text-[#6F7480]">
-                        Showing progress/actions for this item only.
-                      </span>
-                      {selectedItemReturnedQuantity > 0 && (
-                        <div className="mt-1 text-xs font-semibold text-[#7A5A00]">
-                          Returned/requested {selectedItemReturnedQuantity} of{" "}
-                          {Number(selectedOrderItem.quantity || 0)} · Returnable
-                          now {selectedItemReturnableQuantity}
-                        </div>
-                      )}
-                    </div>
-                  )}
                   <OrderProgress
                     status={selectedItemStatus || progressStatus}
                     cancellations={cancellations}
@@ -2430,7 +2415,7 @@ function OrderItemSummaryCard({ order, item }) {
               {humanize(itemStatus, "Processing")}
             </span> */}
           </span>
-          <span className="mt-4 block text-2xl font-extrabold text-[#1B1D60]">
+          <span className="mt-4 block text-xl font-extrabold text-[#1B1D60]">
             {formatMoney(itemTotal, currency)}
           </span>
           {/* <span className="mt-0.5 block text-xs font-medium text-[#6F7480]">

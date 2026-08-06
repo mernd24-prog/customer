@@ -1,5 +1,5 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthModalProvider } from "./context/AuthModalContext";
 import AppLayout from "./layouts/AppLayout";
@@ -158,9 +158,33 @@ const PreferencesPage = lazyNamed(
   () => import("./pages/preferences/PreferencesPage"),
   "PreferencesPage",
 );
- 
- 
- 
+
+function PageNavigationLoader() {
+  const location = useLocation();
+  const [loading, setLoading] = useState(false);
+  const isFirstMount = useRef(true);
+
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 450);
+
+    return () => clearTimeout(timer);
+  }, [location.pathname, location.search]);
+
+  if (!loading) return null;
+
+  return (
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-white">
+      <Loader size="xl" />
+    </div>
+  );
+}
 
 function RouteFallback() {
   return (
@@ -246,6 +270,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <PageNavigationLoader />
       <AuthModalProvider>
         <ScrollToTop />
         <Suspense fallback={<RouteFallback />}>

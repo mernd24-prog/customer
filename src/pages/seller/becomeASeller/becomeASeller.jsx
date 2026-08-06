@@ -246,13 +246,15 @@ export default function BecomeASeller() {
             </div>
             <div className="flex gap-3">
               <button
-                className="seller-story-prev grid h-12 w-12 place-items-center rounded-full border border-[#d9d1c3] bg-white text-[#201b78] shadow-sm transition hover:border-[#201b78] hover:bg-[#201b78] hover:text-white"
+                type="button"
+                className="seller-story-prev grid h-12 w-12 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:shadow-none"
                 aria-label="Previous Seller Story"
               >
                 <ArrowLeft size={19} />
               </button>
               <button
-                className="seller-story-next grid h-12 w-12 place-items-center rounded-full bg-[#201b78] text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#3e4093]"
+                type="button"
+                className="seller-story-next grid h-12 w-12 place-items-center rounded-full border border-[#201b78] bg-white text-[#201b78] shadow-sm transition-all duration-300 hover:bg-[#201b78] hover:text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none [&.swiper-button-disabled]:opacity-40 [&.swiper-button-disabled]:cursor-not-allowed [&.swiper-button-disabled]:pointer-events-none [&.swiper-button-disabled]:bg-white [&.swiper-button-disabled]:border-[#d9d1c3] [&.swiper-button-disabled]:text-[#999] [&.swiper-button-disabled]:shadow-none"
                 aria-label="Next Seller Story"
               >
                 <ArrowRight size={19} />
@@ -277,7 +279,7 @@ export default function BecomeASeller() {
             >
               {experiences.map((story) => (
                 <SwiperSlide key={story.name} className="!h-auto pb-12">
-                  <article className="group h-full rounded-[22px] bg-white p-3 pb-6  transition duration-300 hover:-translate-y-1  sm:p-4 sm:pb-7">
+                  <article className="group h-full rounded-[22px] bg-white p-3 pb-6   sm:p-4 sm:pb-7">
                     <div className="relative">
                       <div className="overflow-hidden  rounded-xl  bg-[#e8e5df]">
                         <img
@@ -322,10 +324,10 @@ export default function BecomeASeller() {
             {benefits.map(({ icon: Icon, title, text }, index) => (
               <article
                 key={title}
-                className="group rounded-2xl border border-[#e4ddcf] bg-white p-7 transition duration-300 hover:-translate-y-1 hover:border-[#d6a323]/60 "
+                className="group rounded-2xl border border-[#e4ddcf] bg-white p-7   hover:border-[#d6a323]/60 "
               >
                 <div
-                  className={`grid h-12 w-12 place-items-center rounded-xl ${index === 0 ? "bg-[#201b78] text-white" : "bg-[#f4f2ff] text-[#3E4093]"} transition group-hover:bg-[#d6a323] group-hover:text-[#201b78]`}
+                  className={`grid h-12 w-12 place-items-center rounded-xl bg-[#f4f2ff] text-[#3E4093] transition group-hover:bg-[#d6a323] group-hover:text-[#201b78]`}
                 >
                   <Icon size={23} />
                 </div>

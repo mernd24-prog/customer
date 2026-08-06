@@ -7,22 +7,7 @@ export default function ReturnTrackingCard({
 }) {
   const stepsToRender = customSteps || [];
   return (
-    <section className="rounded-xl rounded-t-none border border-[#E7D9B8] bg-white px-2 py-3 min-[375px]:px-4 sm:px-6 lg:px-6 lg:py-9  ">
-      {/* <h2 className="text-[16px]  font-bold leading-tight text-[#1B1D60] sm:text-[18px] md:text-[20px]  pb-2">
-        <ShowMoreText
-          text={title}
-          mode="words"
-          limit={14}
-          moreLabel="more"
-          lessLabel="less"
-          textClassName="inline"
-          buttonClassName="ml-1.5 text-xs sm:text-sm font-semibold text-[#3E4093] hover:underline cursor-pointer"
-        />{" "}
-       
-      </h2> */}
-
-      {/* <div className="my-4 h-px bg-[#2E2E2E]/40" /> */}
-
+    <section className="rounded-xl rounded-t-none border border-[#E7D9B8] bg-white px-3 py-4 min-[375px]:px-4 sm:px-6 lg:px-6 lg:py-9  ">
       <div>
         {stepsToRender.map((step, index) => {
           const isLast = index === stepsToRender.length - 1;
@@ -70,9 +55,19 @@ export default function ReturnTrackingCard({
                   {step.title}
                 </h3>
 
-                <p className="mt-1 text-[12px] font-medium leading-snug text-[#454545] sm:text-[13px]">
-                  {step.description}
-                </p>
+                {step.description && (
+                  <div className="mt-1 text-[12px] font-medium leading-snug text-[#454545] sm:text-[13px]">
+                    <ShowMoreText
+                      text={step.description}
+                      mode="lines"
+                      limit={1}
+                      moreLabel="more"
+                      lessLabel="less"
+                      textClassName="inline break-words"
+                      buttonClassName="ml-1.5 text-xs sm:text-sm font-semibold text-[#3E4093] hover:underline cursor-pointer"
+                    />
+                  </div>
+                )}
               </div>
 
               <p className="col-start-2 text-[12px] font-medium text-[#454545] sm:col-start-auto sm:text-right sm:text-[13px]">

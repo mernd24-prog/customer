@@ -60,6 +60,7 @@ function AccountProfileCard({
   avatarError,
   fileInputRef,
   onAvatarChange,
+  showEditButton = true,
 }) {
   return (
     <div className="rounded-[20px] border border-gold bg-[#FFFDF8] p-6 2xl:p-8">
@@ -109,13 +110,15 @@ function AccountProfileCard({
           </div>
         </span>
 
-        <Link
-          to="/account/profile"
-          className="col-span-2 inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-[#343B91] bg-[#F3F1F0] px-3 py-2  text-sm font-semibold text-[#1B1D60] hover:!bg-[#F3F1F0] hover:!text-[#1B1D60] sm:col-auto sm:mb-auto sm:ml-auto sm:px-4 "
-        >
-          <Pencil className="size-3 my-auto" />
-          Edit Profile
-        </Link>
+        {showEditButton && (
+          <Link
+            to="/account/profile"
+            className="col-span-2 inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-[#343B91] bg-[#F3F1F0] px-3 py-2 text-sm font-semibold text-[#1B1D60] hover:!bg-[#F3F1F0] hover:!text-[#1B1D60] sm:col-auto sm:mb-auto sm:ml-auto sm:px-4"
+          >
+            <Pencil className="size-3 my-auto" />
+            Edit Profile
+          </Link>
+        )}
       </div>
 
       {avatarError && (
@@ -239,6 +242,7 @@ function AccountSidebar({
   activeMenuItem,
   isMobileMenuOpen,
   setIsMobileMenuOpen,
+  tab,
 }) {
   return (
     <aside className="relative z-30 min-w-0 space-y-5 lg:sticky lg:top-24 lg:self-start">
@@ -249,6 +253,7 @@ function AccountSidebar({
         avatarError={avatarError}
         fileInputRef={fileInputRef}
         onAvatarChange={onAvatarChange}
+        showEditButton={tab !== "profile"}
       />
 
       <div>
@@ -360,6 +365,7 @@ export default function AccountPage({ tab = "profile" }) {
           activeMenuItem={activeMenuItem}
           isMobileMenuOpen={isMobileMenuOpen}
           setIsMobileMenuOpen={setIsMobileMenuOpen}
+          tab={tab}
         />
 
         <div className="relative z-0 min-w-0">

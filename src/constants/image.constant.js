@@ -10,6 +10,7 @@ export const footer = {
   playStore: "/image/svg/playStore.svg",
   seller: "/image/svg/seller.svg",
   youtube: "/image/svg/youtube.svg",
+  instagram: "/image/svg/instagram.svg",
   facebook: "/image/svg/facebook.svg",
   appStore: "/image/svg/appStore.svg",
   caseBack: "/image/png/support.png",
