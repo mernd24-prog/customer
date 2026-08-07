@@ -3,13 +3,10 @@ import { Store } from "lucide-react";
 import Breadcrumbs from "./Breadcrumbs";
 import CollectionToolbar from "./CollectionToolbar";
 import ProductResultsLayout from "./ProductResultsLayout";
-import { applyImageFallback } from "../../utils/ecommerce";
-import bannerImage from "/image/png/CategoryBanner.png";
 
 export default function BrandProductPage({
   brandName,
   brandDescription,
-  brandImage,
   breadcrumbs = [],
   total = 0,
   shown = 0,

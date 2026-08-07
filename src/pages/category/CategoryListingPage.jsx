@@ -7,7 +7,6 @@ import Seo from "../../components/common/Seo";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
 import {
-  applyImageFallback,
   getImageUrlFromValue,
 } from "../../utils/ecommerce";
 import Loader from "../../components/common/Loader";

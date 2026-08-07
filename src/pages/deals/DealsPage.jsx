@@ -11,16 +11,12 @@ import {
   PriceRangeFilter,
   RatingFilter,
 } from "../../components/ecommerce";
-// import SearchInput from "../../components/common/inputs/SearchInput";
-
 import { useProductActions } from "../../hooks/useProductActions";
 import { getPublicDealProducts } from "../../api/deals";
 import {
   applyImageFallback,
-  buildFacetCountMap,
   buildRatingCountMap,
-  getProductBrandName,
-  isProductInStock,
+  isProductInStock
 } from "../../utils/ecommerce";
 import bannerImage from "/image/png/ShoppingBanner.png";
 
@@ -143,43 +139,9 @@ export default function DealsPage() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dealFacets, setDealFacets] = useState({});
-  // const currentSearchQuery = searchParams.get("q") || "";
-  // const [searchQuery, setSearchQuery] = useState(currentSearchQuery);
-
+ 
   const sentinelRef = useRef(null);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
-
-  // const dealEndInfo = useMemo(() => {
-  //   const endDates = products
-  //     .map(getDealEndDateValue)
-  //     .map((value) => ({ value, time: new Date(value).getTime() }))
-  //     .filter(({ time }) => !Number.isNaN(time))
-  //     .sort((a, b) => a.time - b.time);
-
-  //   const metaEndValue = getDealMetaEndDateValue(dealMeta);
-  //   const metaEndTime = new Date(metaEndValue).getTime();
-  //   const selectedEndDate = !Number.isNaN(metaEndTime)
-  //     ? { value: metaEndValue, time: metaEndTime }
-  //     : endDates[0];
-  //   const formattedEndDate = formatDealEndDate(selectedEndDate?.value);
-  //   const isEnded =
-  //     isEndedStatus(
-  //       dealMeta?.status ||
-  //         dealMeta?.dealStatus ||
-  //         dealMeta?.deal_status ||
-  //         dealMeta?.state,
-  //     ) ||
-  //     Boolean(dealMeta?.isEnded || dealMeta?.isExpired || dealMeta?.expired) ||
-  //     (Boolean(selectedEndDate?.time) && selectedEndDate.time <= Date.now());
-
-  //   return {
-  //     isEnded,
-  //     formattedEndDate,
-  //     label: formattedEndDate
-  //       ? `Deals end at: ${formattedEndDate}`
-  //       : "Prices restore after deal expiry",
-  //   };
-  // }, [dealMeta, products]);
 
   const selectedBrands = useMemo(
     () => parseMultiValue(searchParams.get("brand")),
@@ -218,12 +180,6 @@ export default function DealsPage() {
             { inStock: 0, outOfStock: 0 },
           ),
     [dealFacets, products],
-  );
-
-  const brandCounts = useMemo(
-    () =>
-      buildFacetCountMap(products, (product) => getProductBrandName(product)),
-    [products],
   );
 
   const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
@@ -332,30 +288,7 @@ export default function DealsPage() {
 
   useEffect(() => {
     loadDeals({ page: Number(searchParams.get("page") || 1), append: false });
-  }, [loadDeals, searchParams]);
-
-  /*
-  useEffect(() => {
-    setSearchQuery(currentSearchQuery);
-  }, [currentSearchQuery]);
-
-  useEffect(() => {
-    if (searchQuery === currentSearchQuery) return undefined;
-
-    const debounceTimer = setTimeout(() => {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        const nextQuery = searchQuery.trim();
-        if (nextQuery) next.set("q", nextQuery);
-        else next.delete("q");
-        next.delete("page");
-        return next;
-      });
-    }, 500);
-
-    return () => clearTimeout(debounceTimer);
-  }, [currentSearchQuery, searchQuery, setSearchParams]);
-  */
+  }, [loadDeals, searchParams])
 
   useEffect(() => {
     if (
@@ -472,16 +405,6 @@ export default function DealsPage() {
           key: "outOfStock",
           label: "Out of Stock",
         },
-        /*
-        searchParams.get("expressDelivery") === "true" && {
-          key: "expressDelivery",
-          label: "Express Delivery",
-        },
-        searchParams.get("freeDelivery") === "true" && {
-          key: "freeDelivery",
-          label: "Free Delivery",
-        },
-        */
         (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
           key: "price",
           label: `Price: ₹${Number(searchParams.get("minPrice") || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || 150000).toLocaleString("en-IN")}`,
@@ -553,37 +476,7 @@ export default function DealsPage() {
         />
       ),
     },
-    /*
-    availabilityCounts.inStock > 0 || availabilityCounts.outOfStock > 0 ? {
-      key: "delivery",
-      title: "Delivery",
-      content: (
-        <CheckboxListFilter
-          name="delivery"
-          options={[
-            { value: "expressDelivery", label: "Express Delivery" },
-            { value: "freeDelivery", label: "Free Delivery" },
-          ].filter((option) => Number(option.count || 0) > 0)}
-          selected={["expressDelivery", "freeDelivery"].filter(
-            (value) => searchParams.get(value) === "true",
-          )}
-          onChange={(values) => {
-            const selectedValues = new Set(values);
-            updateParams([
-              [
-                "expressDelivery",
-                selectedValues.has("expressDelivery") ? "true" : undefined,
-              ],
-              [
-                "freeDelivery",
-                selectedValues.has("freeDelivery") ? "true" : undefined,
-              ],
-            ]);
-          }}
-        />
-      ),
-    } : false,
-    */
+   
     {
       key: "inStock",
       title: "Availability",
@@ -687,9 +580,6 @@ export default function DealsPage() {
                 Products promoted by admin with special deal price, original
                 price, deal badge, and limited-time availability.
               </p>
-              {/* <div className="mt-3 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1B1D60]">
-                <Clock3 size={16} /> {dealEndInfo.label}
-              </div> */}
             </div>
           </div>
 
@@ -710,18 +600,7 @@ export default function DealsPage() {
 
       <div className="my-3 md:my-6">
         <div className=" flex flex-col gap-3 md:flex-row md:items-end md:justify-end">
-          {/*
-          <div className="w-full md:max-w-md">
-            <SearchInput
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search deal products..."
-              onClear={() => setSearchQuery("")}
-              inputClassName="!outline-none !border-none !ring-0 !shadow-none"
-              style={{ textDecoration: "none" }}
-            />
-          </div>
-          */}
+    
           <CollectionToolbar
             countText={`${pageInfo.total} deals`}
             sortValue={searchParams.get("sort") || "ending_soon"}
@@ -730,26 +609,6 @@ export default function DealsPage() {
             onOpenFilters={() => setSidebarOpen(true)}
           />
         </div>
-
-        {/* {dealEndInfo.isEnded && (
-          <div className="mb-6 rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] px-5 py-4 shadow-sm sm:px-6">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-[18px] font-semibold text-[#1B1D60]">
-                  This deal has ended
-                </p>
-                <p className="mt-1 text-[14px] font-medium text-[#6F7480]">
-                  Prices have restored after deal expiry.
-                </p>
-              </div>
-              {dealEndInfo.formattedEndDate && (
-                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#F0F1FF] px-3 py-2 text-[13px] font-semibold text-[#1B1D60]">
-                  <Clock3 size={15} /> Ended at: {dealEndInfo.formattedEndDate}
-                </span>
-              )}
-            </div>
-          </div>
-        )} */}
 
         <ProductResultsLayout
           totalResults={pageInfo.total}

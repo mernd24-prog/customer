@@ -1,11 +1,9 @@
-import { X, ChevronDown, ChevronUp } from "lucide-react";
+import { X } from "lucide-react";
 import { useState, useRef, useLayoutEffect } from "react";
 
 export default function ActiveFilterChips({
   filters = [],
   onRemove,
-  onClear,
-  clearLabel = "Clear All",
   className = "mb-4",
 }) {
   const [expanded, setExpanded] = useState(false);

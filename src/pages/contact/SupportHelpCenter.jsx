@@ -14,7 +14,6 @@ import { SUPPORT_PAGE_SKELETON } from "../../components/common/skeleton/layouts"
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 import { apiRequest } from "../../api/client";
 import { endpoints } from "../../api/endpoints";
-import { tokenStorage } from "../../api/tokenStorage";
 import { notify } from "../../utils/notify";
 import { useAuthModal } from "../../context/AuthModalContext";
 import { useSelector } from "react-redux";
@@ -375,10 +374,7 @@ export default function SupportHelpCenter() {
       </>
     );
   }
-  const selectedSupportCategoryLabel =
-    CUSTOMER_SUPPORT_CATEGORIES.find(
-      (item) => item.value === selectedSupportCategory,
-    )?.label || "All";
+
   return (
     <>
       <Seo

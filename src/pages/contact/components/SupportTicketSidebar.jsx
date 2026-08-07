@@ -1,24 +1,6 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
 
-function SupportStatusBadge({ status }) {
-  const normalized = String(status || "pending").toLowerCase();
-
-  const className =
-    normalized === "resolved" || normalized === "closed"
-      ? "bg-[#E8F8F5] text-[#117A65]"
-      : normalized === "in_progress"
-        ? "bg-[#EEF2FF] text-[#3E4093]"
-        : "bg-[#FEF9E7] text-[#B7950B]";
-
-  return (
-    <span
-      className={`inline-flex rounded-full px-3 py-1 text-[12px] font-semibold capitalize ${className}`}
-    >
-      {normalized.replace(/_/g, " ")}
-    </span>
-  );
-}
 
 export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
   useEffect(() => {

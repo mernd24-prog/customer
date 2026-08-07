@@ -35,7 +35,6 @@ import { logout } from "../features/auth/authSlice";
 import { fetchMe } from "../features/user/userSlice";
 import { getRole, isAdminRole } from "../utils/roles";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
-import { getCmsPayload, useCmsRecord } from "../hooks/useCmsRecord";
 import { fetchProducts } from "../features/product/productSlice";
 
 const buildCategorySlug = (name = "category") =>
@@ -84,7 +83,6 @@ const baseAccountMenuItems = [
 
 ];
 
-const DEFAULT_FASHION_MENU = { leftSections: [], promo: null };
 const CATEGORY_MENU_OPEN_DELAY_MS = 350;
 const CATEGORY_MENU_CLOSE_DELAY_MS = 160;
 const HEADER_HEIGHT_VAR = "--customer-header-height";
@@ -470,8 +468,6 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   }, [dispatch, discoveryNavigationLoaded, discoveryNavigationLoading]);
 
   const catalogCategories = useMemo(() => categoriesList, [categoriesList]);
-  const { page: megaMenuPage } = useCmsRecord("header-mega-menu");
-  const megaMenuData = getCmsPayload(megaMenuPage, DEFAULT_FASHION_MENU);
   const [activeMenu, setActiveMenu] = useState(null);
   const [isPinned, setIsPinned] = useState(false);
   const categoryBarRef = useRef(null);
@@ -499,11 +495,6 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     closeTimeoutRef.current = setTimeout(() => {
       setActiveMenu(null);
     }, CATEGORY_MENU_CLOSE_DELAY_MS);
-  };
-
-  const keepCategoryMenuOpen = () => {
-    if (window.innerWidth < 1024) return;
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
   };
 
   useEffect(() => {

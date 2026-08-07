@@ -3,7 +3,6 @@ import { useEffect } from "react";
 
 export default function Drawer({
   open,
-  title = "Filters",
   onClose,
   side = "right",
   width = "w-full",

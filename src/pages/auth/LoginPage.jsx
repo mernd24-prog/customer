@@ -64,7 +64,7 @@ export default function LoginPage() {
   const run = useToastThunk();
   const { openGuestOtpModal } = useAuthModal();
 
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading } = useSelector((state) => state.auth);
   const [googleLoading, setGoogleLoading] = useState(false);
   const from = location.state?.from || AUTH_ROUTES.home;
 

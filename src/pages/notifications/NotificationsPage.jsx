@@ -12,34 +12,6 @@ import { fetchNotifications } from "../../features/notification/notificationSlic
 import notificationData from "../../data/notificationData";
 import { SKELETON_PRESETS } from "../../components/common/skeleton/skeletonPresets";
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-const categoryOf = (notification) => {
-  const eventName = String(
-    notification.payload?.eventName || notification.subject || "",
-  ).toLowerCase();
-
-  if (
-    ["return", "refund", "cancellation", "credit_note"].some((term) =>
-      eventName.includes(term),
-    )
-  ) {
-    return "returns";
-  }
-
-  if (
-    ["order", "shipment", "delivery", "payment", "invoice"].some((term) =>
-      eventName.includes(term),
-    )
-  ) {
-    return "orders";
-  }
-
-  return "account";
-};
-
 const formatNotificationDate = (value) => {
   if (!value) return "";
 
@@ -106,10 +78,6 @@ const NOTIFICATION_HELP_ITEMS = [
   },
 ];
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export function NotificationsPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -168,7 +136,6 @@ export function NotificationsPage() {
           className="mb-4 text-[#2E2E2E]"
           linkClassName="text-[#2E2E2E]"
           currentClassName="text-[#CE9F2D]"
-          separatorClassName="text-[#2E2E2E]"
         />
 
         {/* Heading */}

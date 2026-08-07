@@ -265,14 +265,6 @@ export default function ProductsPage() {
       });
     }
   }, [productFacets?.price, products, currentContextKey, facetsContextKey]);
-
-  const priceLimits = useMemo(() => {
-    return {
-      min: absolutePriceLimits.min ?? 0,
-      max: absolutePriceLimits.max ?? 150000,
-    };
-  }, [absolutePriceLimits]);
-
   const categoryOptions = facetCategoryOptions.filter(
     (option) => Number(option.count || 0) > 0,
   );

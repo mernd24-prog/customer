@@ -83,7 +83,6 @@ export function ShowMoreText({
   buttonClassName = "",
   ellipsis = "...",
   defaultExpanded = false,
-  collapsedPaddingRight,
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const lineTextRef = useRef(null);

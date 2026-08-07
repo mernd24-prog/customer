@@ -5,7 +5,6 @@ import CartItemCard from "../../components/cart/CartItemCard";
 import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
-import { FaAngleRight } from "react-icons/fa6";
 import {
   getProductId,
   getProductImage,
@@ -80,7 +79,7 @@ function adaptProductToItem(product, quantity = 1) {
 
 export default function WatchlistPage() {
   const navigate = useNavigate();
-  const { addToCart, removeFromWishlist, toggleWishlist, isWishlisted } =
+  const { addToCart, removeFromWishlist} =
     useProductActions();
   const { products, hideFallbackProduct, isUsingFallback, isLoading } =
     useWatchlistProducts();
@@ -130,8 +129,6 @@ export default function WatchlistPage() {
     addToCart({ ...product, quantity: qty });
   };
 
-  const recentViewedItems = getRecentlyViewed();
-
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "Watchlist", href: "/watchlist" },
@@ -143,13 +140,7 @@ export default function WatchlistPage() {
 
       <section className="min-h-screen  py-3 sm:py-6 lg:py-8 mt-8 lg:mt-0">
         <div>
-          <Breadcrumbs
-            items={breadcrumbItems}
-            className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
-            linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
-            currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
-            separatorClassName="text-[#2E2E2E]"
-          />
+          <Breadcrumbs items={breadcrumbItems} />
 
           {isLoading ? (
             <div className="mt-8 lg:mt-10 rounded-[16px] border border-gold/50 bg-[#FFFDF8] sm:rounded-[20px]">

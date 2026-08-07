@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BadgeCheck, Camera, Package, RotateCcw } from "lucide-react";
+import { BadgeCheck, Camera, Package } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { Link, useSearchParams } from "react-router-dom";
@@ -7,7 +7,6 @@ import { Link, useSearchParams } from "react-router-dom";
 import ReviewImageUploader from "../../../components/ecommerce/ReviewImageUploader";
 import ReviewMediaLightbox from "../../../components/ecommerce/ReviewMediaLightbox";
 import BaseModal from "../../../components/common/overlay/BaseModal";
-import OrderDetailSectionCard from "./OrderDetailSectionCard";
 import {
   fetchMyProductReview,
   submitProductReview,
@@ -1011,20 +1010,11 @@ function OrderItemsSection({
               resolveReturnForItem(returns, item);
             const tracking = fulfillment.tracking || {};
             const expanded = expandedItemId === itemId;
-            const returnExpired =
-              Boolean(policy.eligibleUntil) &&
-              new Date(policy.eligibleUntil).getTime() < Date.now();
             const returnedQuantity = getReturnedQuantityForItem(returns, item);
             const returnableQuantity = getReturnableQuantityForItem(
               returns,
               item,
             );
-            const canReturn =
-              fulfillment.delivered &&
-              policy.returnable &&
-              !returnExpired &&
-              returnableQuantity > 0 &&
-              !isClosedItemStatus(item.status || item.item_status);
             return (
               <div
                 id={`order-item-${itemId}`}

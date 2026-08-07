@@ -1,4 +1,4 @@
-import { SlidersHorizontal, ListFilter } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import CustomDropdown from "../ui/CustomDropdown";
 
 export default function CollectionToolbar({

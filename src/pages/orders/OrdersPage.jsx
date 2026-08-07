@@ -15,7 +15,6 @@ import {
   Download,
   IndianRupee,
   Package,
-  ReceiptText,
   RefreshCw,
   RotateCcw,
   Search,
@@ -76,8 +75,6 @@ const getOrderNumber = (order) =>
   order?.order_number || order?.orderNumber || getOrderId(order);
 const getOrderStatus = (order) =>
   order?.status || order?.orderStatus || "unknown";
-const getPaymentStatus = (order) =>
-  order?.payment_status || order?.paymentStatus || "unknown";
 const getDeliveryStatus = (order) =>
   order?.delivery_status || order?.deliveryStatus || null;
 const getProgressStatus = (order) => {
@@ -231,17 +228,6 @@ const getOrderCurrency = (order) => {
 const getAddressValue = (address, camelKey, snakeKey = camelKey) =>
   address?.[camelKey] || address?.[snakeKey];
 
-const hasShippingAddress = (address) =>
-  Boolean(
-    getAddressValue(address, "fullName", "full_name") ||
-    address?.phone ||
-    address?.line1 ||
-    address?.line2 ||
-    address?.city ||
-    address?.state ||
-    getAddressValue(address, "postalCode", "postal_code") ||
-    address?.country,
-  );
 const getProductTitle = (item) =>
   getItemProduct(item)?.title ||
   getItemProduct(item)?.name ||
@@ -660,12 +646,9 @@ function OrderDetail({ orderId, track }) {
     order?.relations?.invoice?.url ||
     null;
 
-  const shippingAddress =
-    order?.shipping_address || order?.shippingAddress || {};
   const taxBreakup = order?.tax_breakup || order?.taxBreakup;
   const subtotal = getAmount(order, "subtotal");
   const discount = getAmount(order, "discount");
-  const tax = getAmount(order, "tax");
   const walletDiscount = getAmount(order, "walletDiscount");
   const shipping = getAmount(order, "shipping");
   const customerPlatformFee = getCustomerPlatformFeeAmount(order);
@@ -680,12 +663,9 @@ function OrderDetail({ orderId, track }) {
   const pricingSummary =
     order?.metadata?.pricingSummary || order?.metadata?.pricing_summary || {};
   const customerAmount = getCustomerOrderAmount(order);
-  const taxIncluded = getTaxIncludedAmount(order, taxBreakup);
-  const taxPayable = getTaxPayableAmount(order, taxBreakup);
   const status = getOrderStatus(order);
   const progressStatus = getProgressStatus(order);
   const rawPaymentMethod = getPaymentMethod(order);
-  const isCodOrder = String(rawPaymentMethod || "").toLowerCase() === "cod";
   const returnableItems = items.filter((item) => {
     const snapshot =
       item.return_policy_snapshot ||
@@ -993,11 +973,6 @@ function OrderDetail({ orderId, track }) {
     returnRequest.refundBreakup?.totalRefundAmount ||
     returnRequest.refund_breakup?.total_refund_amount ||
     0;
-  const getReturnRefundStatus = (returnRequest = {}) =>
-    returnRequest.refund?.status ||
-    returnRequest.refundStatus ||
-    returnRequest.refund_status ||
-    "pending";
   const getReturnItemTitle = (item = {}) =>
     item.productTitle ||
     item.productName ||
@@ -1160,10 +1135,6 @@ function OrderDetail({ orderId, track }) {
                 <div>
                   <Breadcrumbs
                     items={breadcrumbItems}
-                    className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
-                    linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
-                    currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
-                    separatorClassName="text-[#2E2E2E]"
                   />
                 </div>
 
@@ -2313,13 +2284,6 @@ function OrderItemSummaryCard({ order, item }) {
     fulfillmentGroups,
   );
   const shipment = findShipmentForOrderItem(shipments, item);
-  const trackingNumber =
-    shipment?.tracking_number ||
-    shipment?.trackingNumber ||
-    shipment?.awb_number ||
-    shipment?.awbNumber;
-  const courierName =
-    shipment?.courier_name || shipment?.courierName || shipment?.provider;
   const itemImage = getOrderCardImage(item);
   const itemTotal =
     item.line_total ??
@@ -2562,9 +2526,6 @@ function OrderList() {
           <Breadcrumbs
             items={ORDER_BREADCRUMBS}
             className="mb-2 flex flex-wrap  items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
-            linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
-            currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
-            separatorClassName="text-[#2E2E2E]"
             heading="My Order"
           />
           <StickySidebarLayout

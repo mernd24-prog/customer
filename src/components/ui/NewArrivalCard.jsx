@@ -1,15 +1,11 @@
 import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
 import { IoArrowForwardOutline } from "react-icons/io5";
-import Label from "../common/label/Label";
 import { TextWhiteButton } from "../dynamicComponent/button/static";
 import { formatPageTitle } from "../../lib/utils";
 
 export default function NewArrivalCard({
-  badgeText = "New",
-
   title = "",
-
   seeAllLink = "/products",
   products = [],
 }) {

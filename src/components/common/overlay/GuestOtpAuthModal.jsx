@@ -12,14 +12,6 @@ import { fetchCart, updateCart } from "../../../features/cart/cartSlice";
 import { syncGuestCartWithServer } from "../../../utils/ecommerce/cart";
 import { notify } from "../../../utils/notify";
 
-const DEFAULT_PERSON_ICON = `data:image/svg+xml,${encodeURIComponent(`
-  <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" fill="none">
-    <circle cx="40" cy="40" r="39" fill="#FFF7E5" stroke="#CE9F2D" stroke-width="2"/>
-    <circle cx="40" cy="31" r="11" stroke="#3E4093" stroke-width="3"/>
-    <path d="M20 63C22.5 50.5 30 45 40 45C50 45 57.5 50.5 60 63" stroke="#3E4093" stroke-width="3" stroke-linecap="round"/>
-  </svg>
-`)}`;
-
 function CloseIcon() {
   return (
     <svg
@@ -43,7 +35,6 @@ export default function GuestOtpAuthModal({
   open,
   onClose,
   onSuccess,
-  onGuestLogin,
   image = "/image/png/authImage.png",
   icon = "/image/png/person.png",
 }) {

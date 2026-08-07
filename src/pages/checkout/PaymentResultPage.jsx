@@ -14,18 +14,6 @@ import {
   formatOrderDate,
 } from "../../utils/orderHelpers";
 
-function getOrderAddressValue(address, ...keys) {
-  if (!address || typeof address !== "object") return "";
-
-  for (const key of keys) {
-    const value = address[key];
-    if (value !== undefined && value !== null && value !== "") {
-      return value;
-    }
-  }
-
-  return "";
-}
 
 // function OrderDetailSectionCard({
 //   title,
@@ -96,10 +84,7 @@ export function PaymentResultPage({ failed = false }) {
     <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <Breadcrumbs
         items={breadcrumbItems}
-        className="mb-6 text-[#2E2E2E]"
-        linkClassName="text-[#2E2E2E]"
-        currentClassName="text-[#CE9F2D]"
-        separatorClassName="text-[#2E2E2E]"
+        className="mb-6"
       />
       <section className="overflow-hidden rounded-[20px] border border-red-200 bg-white shadow-[0_24px_60px_rgba(27,29,96,0.06)]">
         <div className="bg-[linear-gradient(135deg,#FFF6F6_0%,#FFFFFF_100%)] px-6 py-8 text-center sm:px-10">
@@ -188,10 +173,7 @@ export function PaymentResultPage({ failed = false }) {
             <section className="grid !sm:mt-10">
               <Breadcrumbs
                 items={breadcrumbItems}
-                className="flex flex-wrap items-center gap-[10px] sm:mt-6 sm:gap-[12px] lg:gap-[15px] xl:mt-2"
-                linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
-                currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
-                separatorClassName="text-[#2E2E2E]"
+                className="sm:mt-6 xl:mt-2"
               />
             </section>
 
