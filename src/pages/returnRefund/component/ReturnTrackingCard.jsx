@@ -1,8 +1,6 @@
 import ShowMoreText from "../../../utils/showMore";
 
 export default function ReturnTrackingCard({
-  title = "Return Tracking – Smart Watch",
-  returnId = "RTN8745621",
   steps: customSteps,
 }) {
   const stepsToRender = customSteps || [];

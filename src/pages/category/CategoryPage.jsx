@@ -248,41 +248,6 @@ function CategorySidebarNav({
   );
 }
 
-function CategoryPageSkeleton() {
-  return (
-    <div className="animate-pulse py-5 sm:py-7">
-      <div className="mt-4 rounded-[var(--customer-radius-lg)] border border-[var(--customer-border)] bg-[var(--customer-cream)] px-5 py-6">
-        <div className="mb-3 h-3 w-48 rounded bg-[var(--customer-border)]" />
-        <div className="h-8 w-64 max-w-full rounded bg-[var(--customer-border)]" />
-        <div className="mt-3 h-4 w-full max-w-xl rounded bg-[var(--customer-border)]" />
-      </div>
-      <div className="mt-5 flex items-center justify-between">
-        <div className="h-8 w-40 rounded bg-[var(--customer-border)]" />
-        <div className="h-8 w-28 rounded bg-[var(--customer-border)]" />
-      </div>
-      <div className="mt-6 grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[392px_minmax(0,1fr)]">
-        <div className="hidden space-y-3 lg:block">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-10 rounded bg-[var(--customer-border)]"
-            />
-          ))}
-        </div>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="space-y-3">
-              <div className="aspect-[3/4] rounded-[14px] bg-[var(--customer-border)]" />
-              <div className="h-4 rounded bg-[var(--customer-border)]" />
-              <div className="h-4 w-2/3 rounded bg-[var(--customer-border)]" />
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function getMatchingCategoryKeys(targetCats, categoryTree) {
   const keys = new Set();
 
@@ -344,7 +309,7 @@ export default function CategoryPage() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [categoryError, setCategoryError] = useState(null);
-  const [categoryLoading, setCategoryLoading] = useState(true);
+
 
   const sentinelRef = useRef(null);
   const requestSequenceRef = useRef(0);
@@ -695,7 +660,7 @@ export default function CategoryPage() {
     setSidebarCategory(null);
     setSubCategories([]);
     setCategoryError(null);
-    setCategoryLoading(true);
+
 
     dispatch(fetchCategoryByKey({ categoryKey }))
       .unwrap()
@@ -748,7 +713,7 @@ export default function CategoryPage() {
         setCategoryError(error);
       })
       .finally(() => {
-        setCategoryLoading(false);
+
       });
   }, [dispatch, categoryKey]);
 

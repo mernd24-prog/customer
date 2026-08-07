@@ -5,8 +5,7 @@ export default function QuantitySelector({
   max,
   disabled,
   increaseDisabled,
-  increaseDisabledLabel,
-  labelAccessory,
+  increaseDisabledLabel
 }) {
   const atMax = max != null && quantity >= max;
   const disableIncrease = disabled || increaseDisabled || atMax;

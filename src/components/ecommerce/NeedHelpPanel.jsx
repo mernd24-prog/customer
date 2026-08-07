@@ -6,7 +6,6 @@ export default function NeedHelpPanel({
   title = "Need Help ?",
   items = [],
   className = "",
-  href,
   sticky = false,
   headerStyle = "plain",
   expandedIndex: controlledExpandedIndex,

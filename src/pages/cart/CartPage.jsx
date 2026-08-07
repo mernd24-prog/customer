@@ -3,22 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
-import {
-  SkeletonLoader,
-  SKELETON_PRESETS,
-} from "../../components/common/skeleton";
+import {SkeletonLoader} from "../../components/common/skeleton";
 import { EmptyState } from "../../components/common";
 import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
 import CartItemCard from "../../components/cart/CartItemCard";
-// import CartSummary from "../../components/cart/CartSummary";
 import BrandButton from "../../components/ui/BrandButton";
-import { Breadcrumbs, ProductCard } from "../../components/ecommerce";
+import { Breadcrumbs } from "../../components/ecommerce";
 import { fetchCart, setGuestCart, updateCart } from "../../features/cart/cartSlice";
 import { fetchProductById } from "../../features/product/productSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
-import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import {
   getProductId,
   getProductImage,
@@ -197,8 +191,6 @@ export default function CartPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const run = useToastThunk();
-  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
-  const recentViewedItems = getRecentlyViewed();
 
   const currentUser = useSelector((state) => state.auth.current);
   const cartState = useSelector((s) => s.cart);
@@ -606,10 +598,6 @@ export default function CartPage() {
         <div className="mx-auto w-full max-w-[1900px]">
           <Breadcrumbs
             items={breadcrumbItems}
-            className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
-            linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
-            currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
-            separatorClassName="text-[#2E2E2E]"
             heading="Shopping Cart"
           />
 

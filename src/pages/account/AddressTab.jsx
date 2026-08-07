@@ -464,11 +464,6 @@ export default function AddressTab({ user }) {
     setDeleteAddressId(null);
     dispatch(fetchMe());
   };
-
-  const formActionsClass = "flex flex-col gap-3 sm:flex-row";
-  const responsiveButtonClass = "w-full sm:w-auto";
-  const sectionHeaderClass =
-    "flex items-center gap-2 text-sm font-semibold text-ink";
   return (
     <>
       <div className="grid gap-5  ">

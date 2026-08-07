@@ -11,7 +11,7 @@ function getTextLines(value = "") {
     .filter(Boolean);
 }
 
-const PolicySection = ({ title, points, description, footer }) => {
+const PolicySection = ({ title, points, description }) => {
   const visiblePoints = Array.isArray(points)
     ? points.filter((point) => point?.title || point?.description)
     : [];

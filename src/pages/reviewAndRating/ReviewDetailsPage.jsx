@@ -227,8 +227,7 @@ function ReviewCard({
   review,
   currentUser,
   currentUserId,
-  onHelpful,
-  hasReviewed,
+  onHelpful
 }) {
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const isOwn =

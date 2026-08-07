@@ -1,4 +1,4 @@
-import { MessageSquare, Phone, Mail, Ticket } from "lucide-react";
+import { Phone, Mail, Ticket } from "lucide-react";
 
 export const SUPPORT_CONTACT_ITEMS = [
   {

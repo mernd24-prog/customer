@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import Seo from "../../components/common/Seo";
 import MothersDaySwiper from "../../components/home/MothersDayCarousel";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
@@ -104,7 +103,6 @@ const buildNewArrivalItems = (products) => {
 
 export function HomePage() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const categoryList = useSelector((s) => s.catalog.globalCategories);
   const categories = Array.isArray(categoryList) ? categoryList : [];
 

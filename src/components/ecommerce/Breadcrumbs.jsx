@@ -7,19 +7,20 @@ export default function Breadcrumbs({
   items = [],
   className = "",
   linkClassName = "",
-  currentClassName = "text-[#CE9F2D]",
-  separatorClassName = "text-white",
+  currentClassName = "",
+  separatorClassName = "",
   heading,
 
   // Breadcrumb truncation options
   truncateMode = "characters",
   truncateLimit = 30,
+  rightContent,
 }) {
   return (
     <>
       <nav
         className={cn(
-          "flex flex-wrap items-center gap-2 pb-3 text-[12px] font-normal leading-[20px] sm:gap-3 sm:text-[13px] lg:gap-[15px] lg:text-[14px] lg:leading-[23px]",
+          "mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]",
           className,
         )}
         aria-label="Breadcrumb"
@@ -46,7 +47,7 @@ export default function Breadcrumbs({
                   to={item.href}
                   title={item.label}
                   className={cn(
-                    "font-medium text-[14px] sm:text-[16px] lg:text-[18px]",
+                    "font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]",
                     linkClassName,
                   )}
                 >
@@ -56,7 +57,7 @@ export default function Breadcrumbs({
                 <span
                   title={item.label}
                   className={cn(
-                    "font-medium text-[14px] sm:text-[16px] lg:text-[18px]",
+                    "font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]",
                     currentClassName,
                   )}
                 >
@@ -66,7 +67,7 @@ export default function Breadcrumbs({
 
               {!isLast && (
                 <IoIosArrowForward
-                  className={separatorClassName}
+                  className={cn("text-[#2E2E2E]", separatorClassName)}
                   aria-hidden="true"
                 />
               )}
@@ -76,9 +77,12 @@ export default function Breadcrumbs({
       </nav>
 
       {heading && (
-        <h1 className="pb-6  pt-2 text-h2 font-black text-[#3F4095]">
-          {heading}
-        </h1>
+        <div className="flex w-full flex-col items-start gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <h1 className="pb-3 pt-1 text-h2 font-black text-[#3F4095] lg:pb-6 lg:pt-2">
+            {heading}
+          </h1>
+          {rightContent}
+        </div>
       )}
     </>
   );

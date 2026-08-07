@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDown, ChevronUp, MapPin, Pencil, Phone } from "lucide-react";
+import { ChevronDown, ChevronUp, MapPin, Pencil, Phone, Info } from "lucide-react";
 import Button from "../../../components/ui/Button";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
@@ -96,6 +96,7 @@ export default function AddressSelection({
   errors,
   countries = [],
   onAddNewAddress,
+  quoteError,
 }) {
   const dispatch = useDispatch();
   const run = useToastThunk();
@@ -339,7 +340,7 @@ export default function AddressSelection({
             >
               <div className="flex w-full items-start gap-3 sm:gap-[15px] border-b border-[#CE9F2D4D]">
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span
                       className={`inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-bold capitalize sm:text-[12px] ${
                         label?.toLowerCase() === "work"
@@ -349,6 +350,12 @@ export default function AddressSelection({
                     >
                       {label}
                     </span>
+                    {selectedAddressId === addrId && !useNewAddress && quoteError && (
+                      <span className="inline-flex items-center gap-1 text-[11px] sm:text-[12px] font-semibold text-[#D12E2E]">
+                        <Info size={14} className="shrink-0" />
+                        We currently do not deliver to pincode {postalCode}.
+                      </span>
+                    )}
                   </div>
                   <label className="my-4 flex w-full cursor-pointer items-start gap-2 sm:gap-3">
                     <input
@@ -411,6 +418,8 @@ export default function AddressSelection({
                 </button>
               </div>
 
+
+
               {isEditing && (
                 <BaseModal onClose={cancelEdit} maxWidth="max-w-3xl">
                   <div className="flex flex-col max-h-[85vh] rounded-[10px] bg-white p-4 sm:p-6">
@@ -418,7 +427,7 @@ export default function AddressSelection({
                       <Pencil size={24} className="text-gold" />
                       Edit Address
                     </div>
-
+                
                     <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
                       <div className="grid gap-4 pb-2">
                         <AddressFormFields

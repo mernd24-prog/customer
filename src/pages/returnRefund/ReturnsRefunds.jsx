@@ -300,14 +300,6 @@ function ReturnsRefundsPage() {
           const trackingSteps = buildTrackingSteps(ret);
           const firstItemTitle = ret.items?.[0]?.productTitle || "Product";
           const trackingReturnId = ret.returnNumber || returnId;
-
-          const refundAmount =
-            ret.refundAmount ||
-            ret.refund?.requestedAmount ||
-            ret.refund?.amount ||
-            ret.refund_amount ||
-            0;
-
           const expectedDate = getExpectedDate(ret);
           const qcDisputeDeadline = ret.qcReview?.disputeDeadline
             ? new Date(ret.qcReview.disputeDeadline)
@@ -523,8 +515,6 @@ function ReturnsRefundsPage() {
       <div className="py-6 sm:py-8">
         <Breadcrumbs
           items={breadcrumbItems}
-          linkClassName="font-medium text-[12px] sm:text-[14px] lg:text-[16px] leading-[100%] text-[#2E2E2E]"
-          separatorClassName="text-[#2E2E2E]"
         />
         <h1 className="lg:mb-4 lg:mt-5 text-[24px] sm:text-[28px] lg:text-[32px] font-bold text-[#3E4093] ">
           Returns & Refunds

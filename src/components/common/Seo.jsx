@@ -1,13 +1,11 @@
 import { Helmet } from "react-helmet-async";
 import { SITE_CONFIG } from "../../config/site";
-import { buildSeo } from "../../utils/seo";
 
 export default function Seo({
   title,
   metaDescription,
   image,
   keywords,
-  path,
   canonical,
   type,
   robots,

@@ -139,12 +139,6 @@ export function FilterSection({
   );
 }
 
-const MIN_LIMIT = 0;
-const MAX_LIMIT = 150000;
-const DEFAULT_MIN_PRICE = MIN_LIMIT;
-const DEFAULT_MAX_PRICE = 150000;
-const PRICE_STEP = 1000;
-
 export function PriceRangeFilter({
   min,
   max,

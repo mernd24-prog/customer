@@ -87,20 +87,6 @@ export default function CheckoutSummary({
   const quotedPayable = Number(
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
   );
-  const deliverySellers =
-    quote?.deliveryChargeBreakup?.sellers ||
-    quote?.deliveryChargeBreakup?.breakup?.sellers ||
-    [];
-  const deliveryEta = deliverySellers
-    .map((seller) => seller.estimatedDeliveryDays)
-    .filter(Boolean)[0];
-  const deliveryMethod = deliverySellers
-    .map((seller) =>
-      [seller.shippingPartner, seller.shippingMethod]
-        .filter(Boolean)
-        .join(" · "),
-    )
-    .filter(Boolean)[0];
 
   const SummaryRow = ({
     label,

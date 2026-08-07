@@ -387,34 +387,6 @@ function OrderProgress({
     );
   }
 
-  const activeIndex = progressSteps.indexOf(
-    normalizeProgressStatus(activeStatus),
-  );
-  const visibleSteps =
-    isCancelled || isFailed || isDeliveryFailed
-      ? [
-          {
-            label: customerLabel("confirmed"),
-            note: "Your order update has been recorded.",
-          },
-          {
-            label: customerLabel(status),
-            note: isCancelled
-              ? "Your cancellation request is being processed."
-              : isDeliveryFailed
-                ? "Delivery could not be completed. We will update you with the next step."
-                : "Payment could not be completed for this order.",
-          },
-        ]
-      : progressSteps.map((step, index) => ({
-          label: customerLabel(step),
-          current: activeIndex === index,
-        }));
-
-  const currentStep =
-    visibleSteps.find((step) => step.current) ||
-    visibleSteps[visibleSteps.length - 1];
-
   return (
     <div className="">
       <div className="hidden  xl:block">

@@ -1,4 +1,3 @@
-import { FaAngleRight } from "react-icons/fa6";
 import { SolidLargeButton } from "../dynamicComponent/button/static";
 import defaultBannerImage from "/image/png/ShoppingBanner.png";
 

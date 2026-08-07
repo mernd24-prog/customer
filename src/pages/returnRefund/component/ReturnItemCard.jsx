@@ -15,10 +15,7 @@ const capitalizeFirst = (str) => {
 export default function ReturnItemCard({
   title,
   image,
-  orderId,
   quantity = 1,
-  seller,
-  price,
   currency = "INR",
   status,
   requestedOn,

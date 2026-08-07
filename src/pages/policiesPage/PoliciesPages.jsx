@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
 import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 
 import PolicyHeader from "../../components/policy/PolicyHeader";
@@ -25,7 +24,7 @@ const PolicyPage = ({ slugOverride = "", fallbackData = null }) => {
   const { slug } = useParams();
   const cmsSlug = slugOverride || slug || "";
 
-  const { page: cmsPolicy, loading } = useCmsRecord(cmsSlug);
+  const { page: cmsPolicy } = useCmsRecord(cmsSlug);
   const policy = getPolicyPayload(cmsPolicy) || fallbackData;
 
   const title = policy?.title || "";

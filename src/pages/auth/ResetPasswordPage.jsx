@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { KeyRound, Lock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -24,7 +23,7 @@ export default function ResetPasswordPage() {
   const location = useLocation();
   const run = useToastThunk();
   const { loading, error } = useSelector((s) => s.auth);
-  const [successMessage, setSuccessMessage] = useState("");
+
 
   useEffect(() => {
     dispatch(clearError());
@@ -47,7 +46,7 @@ export default function ResetPasswordPage() {
   });
 
   const submit = async (values) => {
-    setSuccessMessage("");
+
     try {
       const response = await run(
         dispatch,
@@ -58,11 +57,7 @@ export default function ResetPasswordPage() {
         }),
         "Password reset successfully",
       );
-      setSuccessMessage(
-        response?.message ||
-          response?.data?.message ||
-          "Your password has been reset successfully.",
-      );
+
       window.setTimeout(() => {
         navigate(AUTH_ROUTES.login, { state: { email: values.email } });
       }, 1500);

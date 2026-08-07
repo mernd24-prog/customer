@@ -17,22 +17,7 @@ const getCategoryKey = (item = {}) =>
   item?.categoryKey ||
   item?.key ||
   item?.slug ||
-  buildCategorySlug(item?.title || item?.name);
-
-const normalizeForMatch = (value = "") =>
-  String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "");
-
-const getMatchTokens = (value = "") =>
-  String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/&/g, "and")
-    .split(/[^a-z0-9]+/)
-    .filter(Boolean);
+  buildCategorySlug(item?.title || item?.name)
 
 function getCategoryListFromResponse(data) {
   if (Array.isArray(data)) return data;
@@ -78,59 +63,6 @@ function getRootCategories(categories = []) {
   );
 }
 
-function findCategoryForFooterLink(link, categories) {
-  const labelKey = normalizeForMatch(link?.label);
-  const labelTokens = getMatchTokens(link?.label);
-  if (!labelKey) return null;
-
-  return categories.find((category) => {
-    const rawValues = [
-      category?.title,
-      category?.name,
-      category?.label,
-      category?.categoryKey,
-      category?.key,
-      category?.slug,
-    ];
-    const values = rawValues.map(normalizeForMatch);
-    const tokens = rawValues.flatMap(getMatchTokens);
-
-    return (
-      values.some((value) => value === labelKey) ||
-      labelTokens.some((labelToken) =>
-        tokens.some(
-          (token) =>
-            token === labelToken ||
-            token === `${labelToken}s` ||
-            `${token}s` === labelToken ||
-            token.startsWith(labelToken),
-        ),
-      )
-    );
-  });
-}
-
-function resolveFooterLinkGroups(groups, categories) {
-  if (!categories.length) return groups;
-
-  return groups.map((group) => {
-    if (String(group?.title || "").toLowerCase() !== "buy") return group;
-
-    return {
-      ...group,
-      links: asArray(group?.links).map((link) => {
-        if (link?.href) return link;
-
-        const category = findCategoryForFooterLink(link, categories);
-        const categoryKey = category ? getCategoryKey(category) : "";
-
-        return categoryKey
-          ? { ...link, href: CUSTOMER_ROUTES.category(categoryKey) }
-          : link;
-      }),
-    };
-  });
-}
 
 // ─── FooterLinkGroups ─────────────────────────────────────────────────────────
 

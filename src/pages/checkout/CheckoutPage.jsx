@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Seo from "../../components/common/Seo";
 import ApiState from "../../components/common/ApiState";
-import { SKELETON_PRESETS } from "../../components/common/skeleton/skeletonPresets";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { notify } from "../../utils/notify";
@@ -60,8 +59,6 @@ import DiscountsSection from "./components/DiscountsSection";
 import CheckoutSummary from "./components/CheckoutSummary";
 import BaseModal from "../../components/common/overlay/BaseModal";
 import GuestOtpAuthModal from "../../components/common/overlay/GuestOtpAuthModal";
-import Button from "../../components/ui/Button";
-import AddressFormFields from "../../components/address/AddressFormFields";
 import { CHECKOUT_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
 
 const getAddressId = (addr) => addr?._id || addr?.id || "";
@@ -784,6 +781,9 @@ export default function CheckoutPage() {
   const [quoteData, setQuoteData] = useState(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState("");
+  const [isQuoteErrorDismissed, setIsQuoteErrorDismissed] = useState(false);
+
+
 
   const buyNowItems = useMemo(getBuyNowItems, []);
   const selectedCheckoutItemIds = useMemo(getSelectedCheckoutItemIds, []);
@@ -919,6 +919,10 @@ export default function CheckoutPage() {
   const useNewAddress = watch("useNewAddress");
   const selectedAddressId = watch("selectedAddressId");
   const selectedCountry = watch("country");
+
+  useEffect(() => {
+    setIsQuoteErrorDismissed(false);
+  }, [quoteError, selectedAddressId]);
   const selectedState = watch("state");
   const selectedCity = watch("city");
   const watchedPostalCode = watch("postalCode");
@@ -1681,18 +1685,34 @@ export default function CheckoutPage() {
       <Seo title="Checkout | Sam Global" />
 
       <div className="mx-auto max-w-[850px] lg:max-w-none py-6 sm:py-8">
-        <div className="mb-6">
+        <div className="mb-6 lg:mb-2">
           <Breadcrumbs
             items={[
               { label: "Home", href: "/" },
               { label: "Cart", href: "/cart" },
               { label: "Checkout" },
             ]}
-            className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
-            linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
             heading="Checkout"
-            currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
-            separatorClassName="text-[#2E2E2E]"
+            rightContent={
+              quoteError && !isQuoteErrorDismissed && (
+                <div className="flex w-full sm:max-w-[500px] md:max-w-[600px] rounded-lg border border-red-200 border-l-4 border-l-red-500 bg-[#FFF8F8] px-3 py-2.5 text-sm leading-tight text-red-700 text-left lg:max-w-[700px] lg:ml-auto relative shadow-[0_2px_10px_rgba(255,0,0,0.05)]">
+                  <div className="flex items-start gap-2.5 pr-6">
+                    <div className="mt-0.5 shrink-0 rounded-full border border-red-200 bg-white p-0.5 text-red-500">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="font-bold text-[14px] text-[#D12E2E]">Delivery Unavailable</span>
+                      <div className="font-medium text-[#4A4A4A] text-[12px] leading-snug">
+                        We're unable to deliver to the selected address. Please try another address or update your pincode.
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" onClick={() => setIsQuoteErrorDismissed(true)} className="absolute right-2 top-2 p-1 text-red-400 hover:text-red-600 transition-colors">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                  </button>
+                </div>
+              )
+            }
           />
         </div>
         <ApiState
@@ -1736,6 +1756,7 @@ export default function CheckoutPage() {
                     errors={errors}
                     countries={countries}
                     onAddNewAddress={handleAddNewAddress}
+                    quoteError={quoteError}
                   />
                 )}
 
@@ -1809,15 +1830,9 @@ export default function CheckoutPage() {
                   quoteError={quoteError}
                   loading={checkoutActionLoading}
                   paymentOptions={paymentOptions}
-                  paymentOptionsLoading={
-                    paymentState.loading && !paymentOptions.length
-                  }
                   selectedPaymentProvider={paymentProvider}
                   onPaymentProviderChange={setPaymentProvider}
                   getPaymentProviderLabel={getPaymentProviderLabel}
-                  deliveryPincode={
-                    quoteShippingAddress?.postalCode || watchedPostalCode || ""
-                  }
                 />
               </OrderDetailAside>
             </OrderDetailLayout>

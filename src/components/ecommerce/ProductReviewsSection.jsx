@@ -74,7 +74,6 @@ function ProductReviewCard({
   currentUser,
   currentUserId,
   onHelpful,
-  hasReviewed,
 }) {
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const dateStr = review.createdAt

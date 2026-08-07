@@ -321,7 +321,7 @@ export default function BecomeASeller() {
             text="A marketplace should do more than host your products. It should help your business move forward."
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {benefits.map(({ icon: Icon, title, text }, index) => (
+            {benefits.map(({ icon: Icon, title, text }) => (
               <article
                 key={title}
                 className="group rounded-2xl border border-[#e4ddcf] bg-white p-7   hover:border-[#d6a323]/60 "

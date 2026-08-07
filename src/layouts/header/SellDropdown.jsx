@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
 import { HeaderGoldButton } from "../../components/dynamicComponent/button/static";
-import BrandButton from "../../components/ui/BrandButton";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 
 export default function SellDropdown({ data }) {

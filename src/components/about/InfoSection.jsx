@@ -1,8 +1,7 @@
-import NeedHelpSection from "../faq/NeedHelpSection";
 
 const InfoSection = ({ data }) => {
   const finalData = data || {};
-  const { title, description, image, helpSection } = finalData;
+  const { title, description, image } = finalData;
   const imageUrl = typeof image === "string" ? image : image?.url;
   const imageAlt = typeof image === "object" ? image?.alt : title;
 

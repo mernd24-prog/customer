@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { User } from "lucide-react";
 import AuthCard from "../../components/ui/AuthCard";
 import Seo from "../../components/common/Seo";
 import { useToastThunk } from "../../hooks/useToastThunk";
