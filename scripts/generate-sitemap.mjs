@@ -6,7 +6,10 @@ import { SITE_ROUTES } from "../src/config/siteRoutes.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, "..");
-const siteUrl = (process.env.VITE_SITE_URL || "https://samglobal.com").replace(/\/$/, "");
+const siteUrl = (process.env.VITE_SITE_URL || "https://samglobal.com").replace(
+  /\/$/,
+  "",
+);
 
 const routes = SITE_ROUTES.filter((route) => route.includeInSitemap !== false);
 
@@ -47,4 +50,4 @@ await mkdir(resolve(rootDir, "public"), { recursive: true });
 await writeFile(resolve(rootDir, "public/sitemap.xml"), sitemap);
 await writeFile(resolve(rootDir, "public/robots.txt"), robots);
 
-console.log(`Generated sitemap.xml and robots.txt for ${siteUrl}`);
+// console.log(`Generated sitemap.xml and robots.txt for ${siteUrl}`);

@@ -50,11 +50,9 @@ export default function CmsPage({ slugOverride = "" }) {
     if (!slug) return null;
 
     const pageList = Array.isArray(list) ? list : [];
-    const candidates = [
-      entities[slug],
-      currentPage,
-      ...pageList,
-    ].filter(Boolean);
+    const candidates = [entities[slug], currentPage, ...pageList].filter(
+      Boolean,
+    );
 
     const matchedPage =
       candidates.find((item) => cmsRecordKey(item) === slug) ||
@@ -67,14 +65,7 @@ export default function CmsPage({ slugOverride = "" }) {
   useEffect(() => {
     if (!slug) return;
 
-    dispatch(fetchCmsPageBySlug({ slug }))
-      .unwrap()
-      .then((response) => {
-        console.log("[CMS page response]", { slug, response });
-      })
-      .catch((error) => {
-        console.error("[CMS page error]", { slug, error });
-      });
+    dispatch(fetchCmsPageBySlug({ slug })).unwrap();
   }, [dispatch, slug]);
 
   const title = page?.metadata?.seoTitle || page?.title || slug;
@@ -96,9 +87,7 @@ export default function CmsPage({ slugOverride = "" }) {
   const author = page?.author;
   const readTime = page?.readTime || page?.metadata?.readTime;
   const pageUnavailable =
-    !page &&
-    !cmsLoading &&
-    (!cmsError || isNotFoundApiError(cmsError));
+    !page && !cmsLoading && (!cmsError || isNotFoundApiError(cmsError));
 
   return (
     <>

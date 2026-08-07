@@ -28,7 +28,7 @@ export const DealsAndProductsShowcase = () => {
       setDeals(response.data || []);
       setError(null);
     } catch (err) {
-      console.error("Error fetching deals:", err);
+      // console.error("Error fetching deals:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -46,7 +46,7 @@ export const DealsAndProductsShowcase = () => {
       setProducts(response.data || []);
       setError(null);
     } catch (err) {
-      console.error("Error fetching products:", err);
+      // console.error("Error fetching products:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -68,7 +68,7 @@ export const DealsAndProductsShowcase = () => {
       setProducts(response.data || []);
       setError(null);
     } catch (err) {
-      console.error("Error searching products:", err);
+      // console.error("Error searching products:", err);
       setError(err.message);
     } finally {
       setLoading(false);

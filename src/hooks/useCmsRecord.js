@@ -33,9 +33,6 @@ export function useCmsRecord(cmsKey) {
   useEffect(() => {
     if (!cmsKey || page || requestedCmsKeys.has(cmsKey)) return;
     requestedCmsKeys.add(cmsKey);
-    dispatch(fetchCmsPageBySlug({ slug: cmsKey })).catch((error) => {
-      console.error(`Failed to fetch CMS page "${cmsKey}":`, error);
-    });
   }, [cmsKey, dispatch, page]);
 
   return { page, loading };

@@ -273,35 +273,6 @@ export default function BrandPage() {
     });
   }, [brand, loadProducts, searchParams]);
 
-  useEffect(() => {
-    if (
-      !sentinelRef.current ||
-      !firstLoadDone ||
-      productState.loading ||
-      isLoadingMore
-    )
-      return undefined;
-    if (currentPage >= totalPages) return undefined;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return;
-        loadProducts({ page: currentPage + 1, append: true }).catch(() => {});
-      },
-      { threshold: 0.2, rootMargin: "0px 0px 300px 0px" },
-    );
-
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [
-    currentPage,
-    totalPages,
-    firstLoadDone,
-    loadProducts,
-    productState.loading,
-    isLoadingMore,
-  ]);
-
   const updateParam = (key, value) => {
     updateSearchParams((next) => {
       if (value == null || value === "") {
@@ -388,16 +359,6 @@ export default function BrandPage() {
       key: "outOfStock",
       label: "Out of Stock",
     },
-    /*
-    searchParams.get("expressDelivery") === "true" && {
-      key: "expressDelivery",
-      label: "Express Delivery",
-    },
-    searchParams.get("freeDelivery") === "true" && {
-      key: "freeDelivery",
-      label: "Free Delivery",
-    },
-    */
 
     (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
       key: "price",
@@ -633,7 +594,6 @@ export default function BrandPage() {
           totalPages,
           onPageChange: setPage,
           loadingMore: isLoadingMore,
-          sentinelRef,
         }}
       />
     </>

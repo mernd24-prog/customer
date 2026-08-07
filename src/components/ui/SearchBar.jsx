@@ -164,7 +164,8 @@ const SearchBar = ({
   const [searchParams] = useSearchParams();
   const location = useLocation();
 
-  const categoriesRaw = useSelector((state) => state.catalog.globalCategories) || [];
+  const categoriesRaw =
+    useSelector((state) => state.catalog.globalCategories) || [];
   const suggestionsRaw = useSelector((state) => state.search.suggestions) || [];
   const autocompleteLoading = useSelector(
     (state) => state.search.autocompleteLoading,
@@ -229,13 +230,16 @@ const SearchBar = ({
     searchParams.get("categoryId") ||
     searchParams.get("category") ||
     searchParams.get("categorySlug") ||
-    (location.pathname.startsWith('/categories/') ? decodeURIComponent(location.pathname.split('/')[2] || "") : null);
+    (location.pathname.startsWith("/categories/")
+      ? decodeURIComponent(location.pathname.split("/")[2] || "")
+      : null);
   const selectedCategory = useMemo(() => {
     if (!enableCategoryDropdown) return null;
     if (catParam && categories.length) {
       return (
-        categories.find((category) => categoryMatchesParam(category, catParam)) ||
-        null
+        categories.find((category) =>
+          categoryMatchesParam(category, catParam),
+        ) || null
       );
     }
     return manualSelectedCategory;

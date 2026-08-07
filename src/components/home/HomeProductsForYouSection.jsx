@@ -1,9 +1,11 @@
-import { useSelector } from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import SkeletonLoader from "../common/skeleton/SkeletonLoader";
 import { ProductCard } from "../ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { getProductId } from "../../utils/ecommerce";
 import SectionContainer from "../ui/SectionContainer";
+import { fetchProducts } from "../../features/product/productSlice";
 
 export default function HomeProductsForYouSection({
   title = "Featured Products",
@@ -12,28 +14,62 @@ export default function HomeProductsForYouSection({
   actionHref = "/products",
   limit = 10,
 }) {
+  const dispatch = useDispatch();
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const recommendationList = useSelector((s) => s.recommendation.list);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
-  const productList = useSelector((s) => s.product.list);
+
+  const [localProducts, setLocalProducts] = useState([]);
+  const hasFetchedRef = useRef(false);
+  const [localLoading, setLocalLoading] = useState(true);
+
   const loading = useSelector(
     (s) =>
       s.recommendation.loadingRecommendations ||
-      s.recommendation.loadingTrending ||
-      s.product.loading,
-  );
+      s.recommendation.loadingTrending,
+  ) || localLoading;
 
   const recommendations = Array.isArray(recommendationList)
     ? recommendationList
     : [];
   const trending = Array.isArray(trendingList) ? trendingList : [];
-  const productsFallback = Array.isArray(productList) ? productList : [];
+
+  useEffect(() => {
+    if (recommendations.length || trending.length) {
+      setLocalLoading(false);
+      return;
+    }
+    if (hasFetchedRef.current && localProducts.length > 0) {
+      setLocalLoading(false);
+      return;
+    }
+    hasFetchedRef.current = true;
+    setLocalLoading(true);
+    dispatch(fetchProducts({ limit, page: 1, sort: "newest" }))
+      .unwrap()
+      .then((result) => {
+        const data = result?.data || {};
+        const list =
+          data.hits ||
+          data.products ||
+          data.results ||
+          data.items ||
+          data.list ||
+          (Array.isArray(data) ? data : []);
+        if (list.length > 0) {
+          setLocalProducts(list);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLocalLoading(false));
+  }, [dispatch, limit, recommendations.length, trending.length]);
+
   const products = (
     recommendations.length
       ? recommendations
       : trending.length
         ? trending
-        : productsFallback
+        : localProducts
   ).slice(0, limit);
 
   return (

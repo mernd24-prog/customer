@@ -945,6 +945,7 @@ function OrderItemsSection({
             item.seller?.businessName ||
             "Marketplace seller",
           status:
+            fulfillment.returnLifecycle?.status ||
             fulfillment.deliveryStatus ||
             fulfillment.shipmentStatus ||
             groupShipments[0]?.status ||

@@ -11,7 +11,7 @@ export default class AppErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error("Unhandled UI error:", error, errorInfo);
+    // console.error("Unhandled UI error:", error, errorInfo);
   }
 
   handleReload = () => {

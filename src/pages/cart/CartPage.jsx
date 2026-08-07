@@ -18,6 +18,8 @@ import { fetchProductById } from "../../features/product/productSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
+import { useAuthModal } from "../../context/AuthModalContext";
+import { store } from "../../app/store";
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import {
   getProductId,
@@ -197,6 +199,7 @@ export default function CartPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const run = useToastThunk();
+  const { openGuestOtpModal } = useAuthModal();
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const recentViewedItems = getRecentlyViewed();
 
@@ -301,7 +304,7 @@ export default function CartPage() {
 
   const mrpSubtotal = calcMRPSubtotal(selectedItems);
   const sellingSubtotal = calcSellingSubtotal(selectedItems);
-  const shippingTotal = calcShippingTotal(selectedItems);
+  const shippingTotal = 0;
   const productSavings = calcTotalSavings(selectedItems);
   const extraCoupon = 0;
   const extraWallet = 0;
@@ -498,6 +501,32 @@ export default function CartPage() {
     );
 
     if (!itemToSave) return;
+
+    if (!currentUser) {
+      openGuestOtpModal(() => {
+        const currentStoreState = store.getState();
+        const currentCart = currentStoreState.cart.current || {};
+        const currentRawItems = mergeDisplayCartItems(currentCart.items) || [];
+        const remainingItems = currentRawItems.filter(
+          (ci) => normalizeCartItemId(ci) !== normalizedId,
+        );
+        const productToWishlist =
+          itemToSave.productId && typeof itemToSave.productId === "object"
+            ? itemToSave.productId
+            : itemToSave.product || itemToSave._raw || itemView?._raw || itemToSave;
+        const nextCart = normalizeCartPayloadForWrite({
+          items: remainingItems,
+          wishlist: currentCart.wishlist || [],
+        });
+
+        run(
+          dispatch,
+          updateCart(wishlistPayload(nextCart, productToWishlist, false)),
+          "Moved to wishlist",
+        );
+      });
+      return;
+    }
 
     const remainingItems = rawItems.filter(
       (ci) => normalizeCartItemId(ci) !== normalizedId,

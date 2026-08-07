@@ -233,8 +233,8 @@ export default function AddressSelection({
               });
             }
           }
-        })
-        .catch((err) => console.error("Error fetching zip code:", err));
+        });
+      //.catch((err) => console.error("Error fetching zip code:", err));
     }, 500);
 
     return () => clearTimeout(timer);

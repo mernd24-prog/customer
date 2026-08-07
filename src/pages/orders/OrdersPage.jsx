@@ -638,6 +638,7 @@ function OrderDetail({ orderId, track }) {
         selectedOrderItem,
         getProgressStatus(order),
         shipments,
+        order?.relations?.sellerFulfillmentGroups || [],
       )
     : null;
   const selectedItemAmount = selectedOrderItem
@@ -2040,14 +2041,12 @@ function OrderSummaryCard({ order }) {
   const handleCopyOrderId = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    navigator.clipboard
-      .writeText(apiOrderId)
-      .then(() => {
-        notify.success(`Order ID #${apiOrderId} copied to clipboard!`);
-      })
-      .catch((err) => {
-        console.error("Failed to copy order ID:", err);
-      });
+    navigator.clipboard.writeText(apiOrderId).then(() => {
+      notify.success(`Order ID #${apiOrderId} copied to clipboard!`);
+    });
+    // .catch((err) => {
+    //   console.error("Failed to copy order ID:", err);
+    // });
   };
 
   const handleOpenOrder = () => {
@@ -2306,10 +2305,12 @@ function OrderItemSummaryCard({ order, item }) {
     ? order.relations.shipments
     : [];
   const itemId = getOrderItemId(item);
+  const fulfillmentGroups = order?.relations?.sellerFulfillmentGroups || [];
   const itemStatus = resolveOrderItemDisplayStatus(
     item,
     getOrderStatus(order),
     shipments,
+    fulfillmentGroups,
   );
   const shipment = findShipmentForOrderItem(shipments, item);
   const trackingNumber =
@@ -2333,8 +2334,8 @@ function OrderItemSummaryCard({ order, item }) {
       .writeText(apiOrderId)
       .then(() =>
         notify.success(`Order ID #${apiOrderId} copied to clipboard!`),
-      )
-      .catch((err) => console.error("Failed to copy Order ID:", err));
+      );
+    // .catch((err) => console.error("Failed to copy Order ID:", err));
   };
 
   return (
@@ -2480,12 +2481,15 @@ function OrderList() {
         ? order.relations.shipments
         : [];
 
+      const fulfillmentGroups = order?.relations?.sellerFulfillmentGroups || [];
+
       return getOrderItems(order)
         .map((item) => {
           const itemStatus = resolveOrderItemDisplayStatus(
             item,
             getOrderStatus(order),
             shipments,
+            fulfillmentGroups,
           );
           return { order, item, itemStatus };
         })

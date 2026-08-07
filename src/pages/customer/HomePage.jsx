@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Seo from "../../components/common/Seo";
@@ -108,26 +108,47 @@ export function HomePage() {
   const categoryList = useSelector((s) => s.catalog.globalCategories);
   const categories = Array.isArray(categoryList) ? categoryList : [];
 
-  const productList = useSelector((s) => s.product.list);
+  const [homeProducts, setHomeProducts] = useState([]);
+  const [homeLoading, setHomeLoading] = useState(true);
+  const hasFetchedRef = useRef(false);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
   const cmsList = useSelector((s) => s.cms.list);
   const cmsPages = Array.isArray(cmsList) ? cmsList : [];
-  const products = Array.isArray(productList) ? productList : [];
+  const products = homeProducts;
 
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
   
-  const isProductLoading = useSelector((s) => s.product.loading);
   const isTrendingLoading = useSelector((s) => s.recommendation.loading);
-  const loading = isProductLoading || isTrendingLoading;
+  const loading = homeLoading || isTrendingLoading;
 
   useEffect(() => {
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
     if (tokenStorage.getAccessToken()) {
       dispatch(fetchRecommendations({ limit: 10 })).catch(() => {});
     }
-    dispatch(fetchProducts({ limit: 18, page: 1, sort: "newest" })).catch(
-      () => {},
-    );
+    if (!hasFetchedRef.current || homeProducts.length === 0) {
+      hasFetchedRef.current = true;
+      setHomeLoading(true);
+      dispatch(fetchProducts({ limit: 18, page: 1, sort: "newest" }))
+        .unwrap()
+        .then((result) => {
+          const data = result?.data || {};
+          const list =
+            data.hits ||
+            data.products ||
+            data.results ||
+            data.items ||
+            data.list ||
+            (Array.isArray(data) ? data : []);
+          if (list.length > 0) {
+            setHomeProducts(list);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setHomeLoading(false));
+    } else {
+      setHomeLoading(false);
+    }
     dispatch(fetchCmsPages({ limit: 100 })).catch(() => {});
   }, [dispatch]);
 

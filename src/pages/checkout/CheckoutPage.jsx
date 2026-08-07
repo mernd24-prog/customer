@@ -857,11 +857,10 @@ export default function CheckoutPage() {
     dispatch(fetchCart());
     dispatch(fetchWallet());
     dispatch(fetchMe());
-    fetchFullList(dispatch, fetchCountries)
-      .then((list) => {
-        setCountries(list);
-      })
-      .catch((err) => console.error("Error fetching countries:", err));
+    fetchFullList(dispatch, fetchCountries).then((list) => {
+      setCountries(list);
+    });
+    // .catch((err) => console.error("Error fetching countries:", err));
   }, [dispatch]);
 
   useEffect(() => {
@@ -986,11 +985,10 @@ export default function CheckoutPage() {
       const stateObj = states.find((s) => (s.name || s) === selectedState);
       const stateId = stateObj?._id || stateObj?.id;
       if (stateId) {
-        fetchFullList(dispatch, fetchCities, { stateId })
-          .then((list) => {
-            setCities(list);
-          })
-          .catch((err) => console.error("Error fetching cities:", err));
+        fetchFullList(dispatch, fetchCities, { stateId }).then((list) => {
+          setCities(list);
+        });
+        // .catch((err) => console.error("Error fetching cities:", err));
       } else {
         setCities([]);
       }
@@ -1005,11 +1003,10 @@ export default function CheckoutPage() {
       const cityObj = cities.find((c) => (c.name || c) === selectedCity);
       const cityId = cityObj?._id || cityObj?.id;
       if (cityId) {
-        fetchFullList(dispatch, fetchZipCodes, { cityId })
-          .then((list) => {
-            setPostalCodes(list);
-          })
-          .catch((err) => console.error("Error fetching zip codes:", err));
+        fetchFullList(dispatch, fetchZipCodes, { cityId }).then((list) => {
+          setPostalCodes(list);
+        });
+        // .catch((err) => console.error("Error fetching zip codes:", err));
       } else {
         setPostalCodes([]);
       }
@@ -1037,7 +1034,7 @@ export default function CheckoutPage() {
               }
             }
           })
-          .catch((err) => console.error("Error fetching zip code:", err));
+          // .catch((err) => console.error("Error fetching zip code:", err));
       }, 500);
       return () => clearTimeout(timer);
     }
@@ -1261,18 +1258,31 @@ export default function CheckoutPage() {
     let successMessage = "Delivery charges updated successfully.";
 
     if (prev) {
-      if (JSON.stringify(prev.shippingAddress) !== JSON.stringify(quotePayload.shippingAddress)) {
+      if (
+        JSON.stringify(prev.shippingAddress) !==
+        JSON.stringify(quotePayload.shippingAddress)
+      ) {
         successTitle = "Address Updated";
         successMessage = "Delivery address updated successfully.";
       } else if (prev.paymentProvider !== quotePayload.paymentProvider) {
         successTitle = "Payment Updated";
         successMessage = "Payment method updated successfully.";
       } else if (prev.couponCode !== quotePayload.couponCode) {
-        successTitle = "Coupon Updated";
-        successMessage = "Coupon code updated successfully.";
+        if (!quotePayload.couponCode) {
+          successTitle = "Coupon Removed";
+          successMessage = "Coupon code removed successfully.";
+        } else {
+          successTitle = "Coupon Updated";
+          successMessage = "Coupon code updated successfully.";
+        }
       } else if (prev.walletAmount !== quotePayload.walletAmount) {
-        successTitle = "Wallet Updated";
-        successMessage = "Wallet balance applied successfully.";
+        if (!quotePayload.walletAmount || quotePayload.walletAmount <= 0) {
+          successTitle = "Wallet Removed";
+          successMessage = "Wallet balance removed successfully.";
+        } else {
+          successTitle = "Wallet Updated";
+          successMessage = "Wallet balance applied successfully.";
+        }
       }
     }
     prevQuotePayloadRef.current = quotePayload;
@@ -1296,7 +1306,12 @@ export default function CheckoutPage() {
         .catch((error) => {
           if (!active) return;
           setQuoteData(null);
-          const errMsg = typeof error === 'string' ? error : (error?.message || error?.error?.message || "Unable to calculate order quote");
+          const errMsg =
+            typeof error === "string"
+              ? error
+              : error?.message ||
+                error?.error?.message ||
+                "Unable to calculate order quote";
           setQuoteError(errMsg);
           notify.error({
             title: "Update Failed",

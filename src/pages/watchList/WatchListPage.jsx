@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {  EmptyState, Seo } from "../../components/common";
+import { EmptyState, Seo } from "../../components/common";
 import CartItemCard from "../../components/cart/CartItemCard";
 import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
@@ -18,7 +18,10 @@ import {
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import { OutlineSmallButton } from "../../components/dynamicComponent/button/static";
 import { ProductCard } from "../../components/ecommerce";
-import { SkeletonLoader, SKELETON_PRESETS } from "../../components/common/skeleton";
+import {
+  SkeletonLoader,
+  SKELETON_PRESETS,
+} from "../../components/common/skeleton";
 
 function adaptProductToItem(product, quantity = 1) {
   const id = getProductId(product);
@@ -59,7 +62,11 @@ function adaptProductToItem(product, quantity = 1) {
     quantity,
     shipping: 0,
     seller: product?.seller?.name || product?.seller || product?.brand || "",
-    color: product?.selectedVariant?.attributes?.color || product?.color || product?.selectedColor || null,
+    color:
+      product?.selectedVariant?.attributes?.color ||
+      product?.color ||
+      product?.selectedColor ||
+      null,
     size: product?.size || product?.selectedSize || null,
     stock: hasStockQuantity ? stockQuantity : null,
     rating,
@@ -92,9 +99,7 @@ export default function WatchlistPage() {
   const handleIncrease = (id) => {
     setLocalQuantities((prev) => {
       const product = products.find((p) => getProductId(p) === id);
-      const item = product
-        ? adaptProductToItem(product, prev[id] ?? 1)
-        : null;
+      const item = product ? adaptProductToItem(product, prev[id] ?? 1) : null;
 
       if (item?.increaseDisabled) return prev;
 
@@ -129,7 +134,7 @@ export default function WatchlistPage() {
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
-    { label: "Wishlist", href: "/watchlist" },
+    { label: "Watchlist", href: "/watchlist" },
   ];
 
   return (
@@ -148,27 +153,43 @@ export default function WatchlistPage() {
 
           {isLoading ? (
             <div className="mt-8 lg:mt-10 rounded-[16px] border border-gold/50 bg-[#FFFDF8] sm:rounded-[20px]">
-              <SkeletonLoader 
-                count={products.length || 3} 
-                containerClass="flex flex-col" 
+              <SkeletonLoader
+                count={products.length || 3}
+                containerClass="flex flex-col"
                 wrapperClass="border-b border-[#E7D9B8] last:border-b-0"
                 layout={[
                   {
                     type: "row",
                     className: "items-start gap-4 sm:gap-6 p-4 lg:p-6",
                     children: [
-                      { type: "box", width: "120px", height: "120px", rounded: "rounded-[12px]", className: "shrink-0 lg:w-[180px] lg:h-[180px]" },
+                      {
+                        type: "box",
+                        width: "120px",
+                        height: "120px",
+                        rounded: "rounded-[12px]",
+                        className: "shrink-0 lg:w-[180px] lg:h-[180px]",
+                      },
                       {
                         type: "col",
                         className: "flex-1 pt-2",
                         children: [
                           { type: "box", width: "80%", height: "24px" },
-                          { type: "box", width: "40%", height: "16px", className: "mt-4" },
-                          { type: "box", width: "120px", height: "30px", className: "mt-4" },
-                        ]
-                      }
-                    ]
-                  }
+                          {
+                            type: "box",
+                            width: "40%",
+                            height: "16px",
+                            className: "mt-4",
+                          },
+                          {
+                            type: "box",
+                            width: "120px",
+                            height: "30px",
+                            className: "mt-4",
+                          },
+                        ],
+                      },
+                    ],
+                  },
                 ]}
               />
             </div>

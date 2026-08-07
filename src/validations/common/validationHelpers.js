@@ -6,7 +6,7 @@ export const ERROR_MESSAGES = Object.freeze({
   required: (field) => `${field} is required`,
   min: (field, length) => `${field} must be at least ${length} characters`,
   max: (field, length) => `${field} must be ${length} characters or less`,
-  email: "Enter a valid email address",
+  email: "Enter a valid email",
   phone: "Enter a valid 10-digit Indian mobile number",
   safeText: "Only letters, numbers, spaces, and basic punctuation are allowed",
   name: (field) =>
@@ -31,7 +31,6 @@ const normalizeCountry = (country = "") =>
     .trim()
     .toLowerCase()
     .replace(/[^a-z]/g, "");
-
 
 export const getPostalCodeRule = (country) => {
   const normalizedCountry = normalizeCountry(country);
@@ -241,27 +240,41 @@ export const emailField = trimString
   .max(254, ERROR_MESSAGES.max("Email", 254))
   .regex(REGEX.email, ERROR_MESSAGES.email)
   .refine((value) => {
-    const [localPart = "", domain = ""] = value.split("@");
+    // 1. Must contain '@' separating local part and domain
+    if (!value.includes("@")) return false;
+    const parts = value.split("@");
+    if (parts.length !== 2) return false;
+    const [localPart, domain] = parts;
+    if (!localPart || !domain) return false;
 
-    return localPart.length <= 64 && domain.length <= 253;
-  }, ERROR_MESSAGES.email)
-  .refine((value) => {
-    const [localPart = ""] = value.split("@");
+    // 2. Must contain '.' separating domain name and TLD
+    if (!domain.includes(".")) return false;
+    const domainParts = domain.split(".");
+    if (domainParts.length < 2) return false;
 
-    return !localPart.startsWith(".") && !localPart.endsWith(".");
-  }, ERROR_MESSAGES.email)
-  .refine((value) => {
-    const [, domain = ""] = value.split("@");
+    const domainName = domainParts[domainParts.length - 2].toLowerCase();
+    const tld = domainParts[domainParts.length - 1].toLowerCase();
 
-    return domain
-      .split(".")
-      .every(
-        (label) =>
-          label.length > 0 &&
-          label.length <= 63 &&
-          !label.startsWith("-") &&
-          !label.endsWith("-"),
-      );
+    if (!domainName || !tld) return false;
+
+    // 3. Gmail check: if domain starts with 'g' or looks like gmail (e.g. gsail, gmart, gmait, gamil, gmial), it MUST be exactly "gmail"
+    if (/^g[a-z0-9]/i.test(domainName)) {
+      const validGDomains = ["gmail", "google", "github", "godaddy", "gmx"];
+      if (!validGDomains.includes(domainName)) return false;
+    }
+    if (/^(gm|gma|gmi|ga|fma|hma|gs)/i.test(domainName) && domainName !== "gmail") {
+      return false;
+    }
+
+    // 4. .com check: if TLD starts with 'co' (e.g. cot, comm, commm, coom, con) or 'cm', it MUST be exactly "com" or "co"
+    if (/^co/i.test(tld) && tld !== "com" && tld !== "co" && tld !== "code" && tld !== "codes") {
+      return false;
+    }
+    if (/^cm/i.test(tld)) {
+      return false;
+    }
+
+    return true;
   }, ERROR_MESSAGES.email);
 
 export const normalizePhoneNumber = (value = "") =>
@@ -277,7 +290,7 @@ export const phoneField = z.preprocess(
 export const passwordField = z
   .string()
   .min(8, ERROR_MESSAGES.passwordMin)
-  .max(72, ERROR_MESSAGES.max("Password", 72));
+  .max(16, ERROR_MESSAGES.max("Password", 16));
 
 export const loginPasswordField = z
   .string({
@@ -285,7 +298,7 @@ export const loginPasswordField = z
     invalid_type_error: ERROR_MESSAGES.required("Password"),
   })
   .min(1, ERROR_MESSAGES.required("Password"))
-  .max(72, ERROR_MESSAGES.max("Password", 72));
+  .max(16, ERROR_MESSAGES.max("Password", 16));
 
 export const confirmPasswordField = z
   .string({
@@ -293,7 +306,7 @@ export const confirmPasswordField = z
     invalid_type_error: ERROR_MESSAGES.required("Confirm password"),
   })
   .min(1, ERROR_MESSAGES.required("Confirm password"))
-  .max(72, ERROR_MESSAGES.max("Confirm password", 72));
+  .max(16, ERROR_MESSAGES.max("Confirm password", 16));
 
 export const strongPasswordField = passwordField
   .regex(REGEX.passwordUppercase, ERROR_MESSAGES.passwordUppercase)

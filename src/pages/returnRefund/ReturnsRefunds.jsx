@@ -13,7 +13,6 @@ import ReturnItemCard from "./component/ReturnItemCard";
 import ReturnTrackingCard from "./component/ReturnTrackingCard";
 import { RETURNS_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
 
-
 /* ─── Status filter options ───────────────────────────────────────────── */
 const STATUS_FILTERS = [
   { value: "all", label: "All Returns" },
@@ -66,15 +65,22 @@ const buildTrackingSteps = (ret) => {
 
   const recordedSteps = uniqueTimeline.map((t, idx) => {
     const status = t.status || "";
-    let title = String(status).replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    let title = String(status)
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
 
     let description = t.note || t.reason || "";
     if (status === "requested" && !description) {
       description = ret.description || "";
     }
-    
-    if (status === "reverse_pickup_scheduled" && ret.reverseShipment?.pickupScheduledAt) {
-      const scheduledDate = new Date(ret.reverseShipment.pickupScheduledAt).toLocaleString("en-IN", {
+
+    if (
+      status === "reverse_pickup_scheduled" &&
+      ret.reverseShipment?.pickupScheduledAt
+    ) {
+      const scheduledDate = new Date(
+        ret.reverseShipment.pickupScheduledAt,
+      ).toLocaleString("en-IN", {
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -82,7 +88,9 @@ const buildTrackingSteps = (ret) => {
         minute: "2-digit",
         hour12: true,
       });
-      description = description ? `${description} | Expected Pickup: ${scheduledDate}` : `Expected Pickup: ${scheduledDate}`;
+      description = description
+        ? `${description} | Expected Pickup: ${scheduledDate}`
+        : `Expected Pickup: ${scheduledDate}`;
     }
 
     const time = t.at
@@ -219,7 +227,7 @@ function ReturnsRefundsPage() {
       dispatch(fetchMyReturns())
         .unwrap()
         .catch((error) => {
-          console.log("Returns API error:", error);
+          // console.log("Returns API error:", error);
         });
 
     refreshReturns();

@@ -48,11 +48,10 @@ export default function BuyerRegisterForm({ error, loading, onSubmit }) {
   });
 
   useEffect(() => {
-    fetchFullList(dispatch, fetchCountries)
-      .then((list) => {
-        setCountries(list);
-      })
-      .catch((err) => console.error("Error fetching countries:", err));
+    fetchFullList(dispatch, fetchCountries).then((list) => {
+      setCountries(list);
+    });
+    // .catch((err) => console.error("Error fetching countries:", err));
   }, [dispatch]);
 
   const submit = (values) => onSubmit(buildBuyerRegistrationPayload(values));

@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
         navigate(AUTH_ROUTES.login, { state: { email: values.email } });
       }, 1500);
     } catch (requestError) {
-      console.log("[Reset password API error response]", requestError);
+      // console.log("[Reset password API error response]", requestError);
     }
   };
 

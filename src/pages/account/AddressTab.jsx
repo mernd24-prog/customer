@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDown, ChevronUp, MapPin, Pencil, Phone, Plus, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  MapPin,
+  Pencil,
+  Phone,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import Button from "../../components/ui/Button";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
@@ -162,23 +170,22 @@ export default function AddressTab({ user }) {
 
   // Fetch initial countries and states
   useEffect(() => {
-    fetchFullList(dispatch, fetchCountries)
-      .then((list) => {
-        setCountries(list);
-        // Auto-select India if the add form still has no country or has the placeholder
-        const currentCountry = addForm.getValues("country");
-        if (!currentCountry || currentCountry === "") {
-          const india = list.find(
-            (c) => String(c.name || c).toLowerCase() === "india",
-          );
-          if (india) {
-            addForm.setValue("country", india.name || india, {
-              shouldValidate: false,
-            });
-          }
+    fetchFullList(dispatch, fetchCountries).then((list) => {
+      setCountries(list);
+      // Auto-select India if the add form still has no country or has the placeholder
+      const currentCountry = addForm.getValues("country");
+      if (!currentCountry || currentCountry === "") {
+        const india = list.find(
+          (c) => String(c.name || c).toLowerCase() === "india",
+        );
+        if (india) {
+          addForm.setValue("country", india.name || india, {
+            shouldValidate: false,
+          });
         }
-      })
-      .catch((err) => console.error("Error fetching countries:", err));
+      }
+    });
+    //.catch((err) => console.error("Error fetching countries:", err));
   }, [dispatch]);
 
   useEffect(() => {
@@ -280,8 +287,8 @@ export default function AddressTab({ user }) {
                 });
               }
             }
-          })
-          .catch((err) => console.error("Error fetching zip code:", err));
+          });
+        //.catch((err) => console.error("Error fetching zip code:", err));
       }, 500);
       return () => clearTimeout(timer);
     }
@@ -368,8 +375,8 @@ export default function AddressTab({ user }) {
                 });
               }
             }
-          })
-          .catch((err) => console.error("Error fetching zip code:", err));
+          });
+        //.catch((err) => console.error("Error fetching zip code:", err));
       }, 500);
       return () => clearTimeout(timer);
     }
@@ -544,81 +551,83 @@ export default function AddressTab({ user }) {
         {addresses.length > 0 ? (
           <div className="flex flex-col gap-6">
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-              {(showAllAddresses ? addresses : addresses.slice(0, 4)).map((addr) => {
-                const addrId = addr._id || addr.id;
-                const isEditing = editingId === addrId;
+              {(showAllAddresses ? addresses : addresses.slice(0, 4)).map(
+                (addr) => {
+                  const addrId = addr._id || addr.id;
+                  const isEditing = editingId === addrId;
 
-                return (
-                  <div
-                    key={addrId}
-                    className="w-full overflow-hidden rounded-[12px] border border-gold bg-white"
-                  >
-                    <AddressViewCard
-                      addr={addr}
-                      addrId={addrId}
-                      startEdit={startEdit}
-                      handleDelete={handleDelete}
-                    />
-                    
-                    {isEditing && (
-                      <BaseModal onClose={cancelEdit} maxWidth="max-w-3xl">
-                        <form
-                          className="flex flex-col max-h-[85vh] rounded-[10px] bg-white p-4 sm:p-6"
-                          onSubmit={editForm.handleSubmit(
-                            handleUpdate,
-                            handleInvalidEdit,
-                          )}
-                          noValidate
-                        >
-                          <div className="mb-4 flex items-center gap-2 text-lg font-bold text-ink">
-                            <Pencil size={24} className="text-gold" />
-                            Edit Address
-                          </div>
+                  return (
+                    <div
+                      key={addrId}
+                      className="w-full overflow-hidden rounded-[12px] border border-gold bg-white"
+                    >
+                      <AddressViewCard
+                        addr={addr}
+                        addrId={addrId}
+                        startEdit={startEdit}
+                        handleDelete={handleDelete}
+                      />
 
-                          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                            <div className="grid gap-4 pb-2">
-                              <AddressFormFields
-                                form={editForm}
-                                idPrefix={`edit-${addrId}`}
-                                countries={countries}
-                                states={editStates}
-                                cities={editCities}
-                                postalCodes={editPostalCodes}
-                                dialCodes={editDialCodes}
-                                selectedCountry={editCountry}
-                                selectedState={editState}
-                                selectedCity={editCity}
-                                selectedPostalCode={editPostalCode}
-                                addressLabels={addressLabels}
-                              />
+                      {isEditing && (
+                        <BaseModal onClose={cancelEdit} maxWidth="max-w-3xl">
+                          <form
+                            className="flex flex-col max-h-[85vh] rounded-[10px] bg-white p-4 sm:p-6"
+                            onSubmit={editForm.handleSubmit(
+                              handleUpdate,
+                              handleInvalidEdit,
+                            )}
+                            noValidate
+                          >
+                            <div className="mb-4 flex items-center gap-2 text-lg font-bold text-ink">
+                              <Pencil size={24} className="text-gold" />
+                              Edit Address
                             </div>
-                          </div>
 
-                          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
-                            <Button
-                              type="button"
-                              variant="secondary"
-                              onClick={cancelEdit}
-                              className="w-full sm:w-auto"
-                            >
-                              Cancel
-                            </Button>
-                            <Button
-                              type="submit"
-                              loading={loading}
-                              className="w-full sm:w-auto"
-                            >
-                              Save Changes
-                            </Button>
-                          </div>
-                        </form>
-                      </BaseModal>
-                    )}
-                  </div>
-                );
-              })}
+                            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                              <div className="grid gap-4 pb-2">
+                                <AddressFormFields
+                                  form={editForm}
+                                  idPrefix={`edit-${addrId}`}
+                                  countries={countries}
+                                  states={editStates}
+                                  cities={editCities}
+                                  postalCodes={editPostalCodes}
+                                  dialCodes={editDialCodes}
+                                  selectedCountry={editCountry}
+                                  selectedState={editState}
+                                  selectedCity={editCity}
+                                  selectedPostalCode={editPostalCode}
+                                  addressLabels={addressLabels}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+                              <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={cancelEdit}
+                                className="w-full sm:w-auto"
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                type="submit"
+                                loading={loading}
+                                className="w-full sm:w-auto"
+                              >
+                                Save Changes
+                              </Button>
+                            </div>
+                          </form>
+                        </BaseModal>
+                      )}
+                    </div>
+                  );
+                },
+              )}
             </div>
-            
+
             {addresses.length > 4 && (
               <div className="flex justify-center w-full">
                 <button
@@ -632,7 +641,8 @@ export default function AddressTab({ user }) {
                     </>
                   ) : (
                     <>
-                      Show {addresses.length - 4} More Addresses <ChevronDown size={16} />
+                      Show {addresses.length - 4} More Addresses{" "}
+                      <ChevronDown size={16} />
                     </>
                   )}
                 </button>
