@@ -16,6 +16,7 @@ import {
 } from "../../utils/ecommerce";
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import { OutlineSmallButton } from "../../components/dynamicComponent/button/static";
+import { FaAngleRight } from "react-icons/fa6";
 import { ProductCard } from "../../components/ecommerce";
 import {
   SkeletonLoader,
@@ -185,8 +186,9 @@ export default function WatchlistPage() {
               />
             </div>
           ) : products.length > 0 ? (
-            <div className="mt-8 lg:mt-10 rounded-[16px] border border-gold/50 bg-[#FFFDF8] sm:rounded-[20px]">
-              {products.map((product, index) => {
+            <>
+              <div className="mt-8 lg:mt-10 rounded-[16px] border border-gold/50 bg-[#FFFDF8] sm:rounded-[20px]">
+                {products.map((product, index) => {
                 const id = getProductId(product);
                 const item = adaptProductToItem(
                   product,
@@ -213,6 +215,16 @@ export default function WatchlistPage() {
                 );
               })}
             </div>
+            <div className="flex items-center gap-3 mt-6 lg:mt-8">
+              <OutlineSmallButton
+                to="/products"
+                rightIcon={<FaAngleRight className="text-[10px]" />}
+                className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
+              >
+                Continue Shopping
+              </OutlineSmallButton>
+            </div>
+          </>
           ) : (
             <EmptyState
               title="Your Watchlist Is Empty"

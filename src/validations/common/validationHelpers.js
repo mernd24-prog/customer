@@ -257,20 +257,31 @@ export const emailField = trimString
 
     if (!domainName || !tld) return false;
 
-    // 3. Gmail check: if domain starts with 'g' or looks like gmail (e.g. gsail, gmart, gmait, gamil, gmial), it MUST be exactly "gmail"
-    if (/^g[a-z0-9]/i.test(domainName)) {
-      const validGDomains = ["gmail", "google", "github", "godaddy", "gmx"];
-      if (!validGDomains.includes(domainName)) return false;
-    }
-    if (/^(gm|gma|gmi|ga|fma|hma|gs)/i.test(domainName) && domainName !== "gmail") {
-      return false;
-    }
+    // Strict validation: Only allow known, valid email providers to prevent fake/disposable emails
+    const fullDomain = `${domainName}.${tld}`;
+    const allowedDomains = [
+      "gmail.com",
+      "googlemail.com",
+      "yahoo.com",
+      "yahoo.in",
+      "ymail.com",
+      "hotmail.com",
+      "outlook.com",
+      "live.com",
+      "msn.com",
+      "icloud.com",
+      "me.com",
+      "mac.com",
+      "aol.com",
+      "rediffmail.com",
+      "protonmail.com",
+      "proton.me",
+      "zoho.com",
+      "zoho.in",
+      "mail.com",
+    ];
 
-    // 4. .com check: if TLD starts with 'co' (e.g. cot, comm, commm, coom, con) or 'cm', it MUST be exactly "com" or "co"
-    if (/^co/i.test(tld) && tld !== "com" && tld !== "co" && tld !== "code" && tld !== "codes") {
-      return false;
-    }
-    if (/^cm/i.test(tld)) {
+    if (!allowedDomains.includes(fullDomain)) {
       return false;
     }
 

@@ -1212,7 +1212,8 @@ export default function CheckoutPage() {
       deliverabilityBlockers.length > 1
         ? ` and ${deliverabilityBlockers.length - 1} more item(s)`
         : "";
-    return `${first.title}${extra} cannot be delivered to ${first.pincode}. ${first.reason}`;
+    const truncatedTitle = first.title.length > 35 ? first.title.substring(0, 35).trim() + "..." : first.title;
+    return `"${truncatedTitle}"${extra} cannot be delivered to ${first.pincode}. ${first.reason}`;
   }, [deliverabilityBlockers]);
 
   useEffect(() => {
@@ -1718,7 +1719,9 @@ export default function CheckoutPage() {
                     <div className="flex flex-col gap-0.5">
                       <span className="font-bold text-[14px] text-[#D12E2E]">Delivery Unavailable</span>
                       <div className="font-medium text-[#4A4A4A] text-[12px] leading-snug">
-                        We're unable to deliver to the selected address. Please try another address or update your pincode.
+                        {typeof quoteError === "string" && quoteError.trim() !== ""
+                          ? quoteError
+                          : "We're unable to deliver to the selected address. Please try another address or update your pincode."}
                       </div>
                     </div>
                   </div>

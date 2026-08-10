@@ -8,36 +8,39 @@ export default function OrderActions({
   retrying,
   handleRetryPayment,
   openCancellation,
-  selectedOrderItem
+  selectedOrderItem,
 }) {
+  const hasRetryPayment = status === "pending_payment" || status === "payment_failed";
+  const hasCancelAction = canCancelOrder(order);
+
+  if (!hasRetryPayment && !hasCancelAction) {
+    return null;
+  }
+
   return (
     <>
-      
-                <section className="rounded-[15px] lg:border lg:border-[#CE9F2D66] bg-white py-4 sm:px-5">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                    {(status === "pending_payment" ||
-                      status === "payment_failed") && (
-                      <Button
-                        className="min-h-[38px] w-full sm:w-auto text-white"
-                        loading={retrying}
-                        onClick={handleRetryPayment}
-                      >
-                        <RefreshCw size={15} /> Retry payment
-                      </Button>
-                    )}
-                    {canCancelOrder(order) && (
-                      <Button
-                        variant="secondary"
-                        className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
-                        onClick={openCancellation}
-                      >
-                        <XCircle size={15} />{" "}
-                        {selectedOrderItem
-                          ? "Cancel selected item"
-                          : "Cancel order"}
-                      </Button>
-                    )}
-                    {/* {!track && (
+      <section className="rounded-[15px] lg:border lg:border-[#CE9F2D66] bg-white py-4 sm:px-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          {(status === "pending_payment" || status === "payment_failed") && (
+            <Button
+              className="min-h-[38px] w-full sm:w-auto text-white"
+              loading={retrying}
+              onClick={handleRetryPayment}
+            >
+              <RefreshCw size={15} /> Retry payment
+            </Button>
+          )}
+          {canCancelOrder(order) && (
+            <Button
+              variant="secondary"
+              className="min-h-[38px] w-full border-[#CE9F2D66] text-[#1B1D60] sm:w-auto"
+              onClick={openCancellation}
+            >
+              <XCircle size={15} />{" "}
+              {selectedOrderItem ? "Cancel selected item" : "Cancel order"}
+            </Button>
+          )}
+          {/* {!track && (
                     <Link
                       to={`/orders/${orderId}/track${selectedOrderItem ? `?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}` : ""}`}
                       className="block sm:inline-flex"
@@ -63,9 +66,8 @@ export default function OrderActions({
                       </Button>
                     </Link>
                   )} */}
-                  </div>
-                </section>
-              
+        </div>
+      </section>
     </>
   );
 }

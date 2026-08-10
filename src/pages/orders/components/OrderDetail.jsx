@@ -109,7 +109,7 @@ export default function OrderDetail({ orderId, track }) {
 return (
     <>
       <Seo title={`Order ${getOrderNumber(order) || "Details"} | Sam Global`} />
-      <div className="mx-auto w-full max-w-[1740px]">
+      <div className="mx-auto w-full max-w-[1740px] px-4 sm:px-6 lg:px-8">
         <ApiState
           loading={state.loading && !order}
           error={state.error}

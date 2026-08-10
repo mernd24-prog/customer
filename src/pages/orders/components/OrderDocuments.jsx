@@ -12,6 +12,13 @@ export default function OrderDocuments({
   order,
   selectedOrderItem
 }) {
+  const hasDocuments = downloadableDocuments?.length > 0 || visiblePendingSellerDocuments?.length > 0;
+  const hasInvoice = invoiceDownloadAvailable && !customerInvoices?.length && getInvoiceUrl(order);
+
+  if (!hasDocuments && !hasInvoice) {
+    return null;
+  }
+
   return (
     <>
       
@@ -108,7 +115,6 @@ export default function OrderDocuments({
                     )}
                 </div>
               </section>
-            
     </>
   );
 }
