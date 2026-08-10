@@ -1,4 +1,3 @@
-
 export { HomePage } from "./customer/HomePage";
 
 // Auth
@@ -26,15 +25,9 @@ export { WalletPage } from "./wallet/WalletPage";
 export { PaymentsPage } from "./payments/PaymentsPage";
 export { SubscriptionPage } from "./subscription/SubscriptionPage";
 
-
-
 // Warranty
 export { WarrantyPage } from "./warranty/WarrantyPage";
 
 // Notifications
 export { NotificationsPage } from "./notifications/NotificationsPage";
 export { PreferencesPage } from "./preferences/PreferencesPage";
-
-// Misc
-export { SimpleApiPage } from "./SimpleApiPage";
-export { BackendGapNotes } from "./BackendGapNotes";
