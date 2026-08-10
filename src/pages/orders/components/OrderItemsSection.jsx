@@ -299,8 +299,8 @@ function OrderItemsSection({
                     <OrderItemCard item={item} {...itemProps} />
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div className="flex flex-wrap gap-2 text-xs font-semibold">
+                <div className="flex flex-wrap items-start justify-between gap-4 w-full">
+                  <div className="flex flex-wrap gap-2 text-xs font-semibold mt-2">
                     {/* <span
                         className={`rounded-full px-3 py-1 capitalize ${fulfillment.delivered ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-700"}`}
                       >
@@ -414,32 +414,30 @@ function OrderItemsSection({
                         )}
                       </div>
                     )} */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    {fulfillment.delivered &&
-                      returnedQuantity === 0 &&
-                      Boolean(getReviewProductId(item)) && (
-                        <OrderItemReviewAction
-                          item={item}
-                          orderId={orderId}
-                          canReview
-                          existingReview={
-                            reviewByItem[reviewKeyForItem(orderId, item)]
-                          }
-                          reviewChecked={Boolean(
-                            checkedReviewKeys[reviewKeyForItem(orderId, item)],
-                          )}
-                          onReviewClick={setReviewTarget}
-                        />
-                      )}
-                    {/* {canReturn && (
-                        <Link
-                          to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(itemId)}`}
-                          className="inline-flex min-h-9 items-center gap-2 rounded-[8px] border border-[#CE9F2D] bg-white px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#FFF8E7]"
-                        >
-                          <RotateCcw size={15} /> Return or replace
-                        </Link>
-                      )} */}
-                  </div>
+                  {fulfillment.delivered &&
+                    returnedQuantity === 0 &&
+                    Boolean(getReviewProductId(item)) && (
+                      <OrderItemReviewAction
+                        item={item}
+                        orderId={orderId}
+                        canReview
+                        existingReview={
+                          reviewByItem[reviewKeyForItem(orderId, item)]
+                        }
+                        reviewChecked={Boolean(
+                          checkedReviewKeys[reviewKeyForItem(orderId, item)],
+                        )}
+                        onReviewClick={setReviewTarget}
+                      />
+                    )}
+                  {/* {canReturn && (
+                      <Link
+                        to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(itemId)}`}
+                        className="inline-flex min-h-9 items-center gap-2 rounded-[8px] border border-[#CE9F2D] bg-white px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#FFF8E7]"
+                      >
+                        <RotateCcw size={15} /> Return or replace
+                      </Link>
+                    )} */}
                 </div>
               </div>
             );

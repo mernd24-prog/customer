@@ -442,12 +442,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   const globalCategories = useSelector(
     (state) => state.catalog.globalCategories,
   );
-  const discoveryNavigationLoaded = useSelector((state) =>
-    Boolean(state.catalog.discoveryNavigationLoaded),
-  );
-  const discoveryNavigationLoading = useSelector((state) =>
-    Boolean(state.catalog.discoveryNavigationLoading),
-  );
+
   const [categoriesList, setCategoriesList] = useState([]);
 
   useEffect(() => {
@@ -457,15 +452,6 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     );
     setCategoriesList(actualCategories);
   }, [globalCategories]);
-
-  useEffect(() => {
-    if (discoveryNavigationLoaded || discoveryNavigationLoading)
-      return undefined;
-    const fallbackTimer = window.setTimeout(() => {
-      dispatch(fetchProducts({ page: 1, limit: 1 })).catch(() => {});
-    }, 250);
-    return () => window.clearTimeout(fallbackTimer);
-  }, [dispatch, discoveryNavigationLoaded, discoveryNavigationLoading]);
 
   const catalogCategories = useMemo(() => categoriesList, [categoriesList]);
   const [activeMenu, setActiveMenu] = useState(null);
@@ -844,6 +830,23 @@ export const CategoryBar = ({ headerData, compact = false }) => {
 
 export const Header = () => {
   const headerRef = useRef(null);
+  const dispatch = useDispatch();
+
+  const discoveryNavigationLoaded = useSelector((state) =>
+    Boolean(state.catalog.discoveryNavigationLoaded),
+  );
+  const discoveryNavigationLoading = useSelector((state) =>
+    Boolean(state.catalog.discoveryNavigationLoading),
+  );
+
+  useEffect(() => {
+    if (discoveryNavigationLoaded || discoveryNavigationLoading)
+      return undefined;
+    const fallbackTimer = window.setTimeout(() => {
+      dispatch(fetchProducts({ page: 1, limit: 1 })).catch(() => {});
+    }, 250);
+    return () => window.clearTimeout(fallbackTimer);
+  }, [dispatch, discoveryNavigationLoaded, discoveryNavigationLoading]);
 
   useEffect(() => {
     const updateHeaderHeight = () => {
@@ -852,7 +855,7 @@ export const Header = () => {
         HEADER_HEIGHT_VAR,
         `${height}px`,
       );
-    };
+    };  
 
     updateHeaderHeight();
 

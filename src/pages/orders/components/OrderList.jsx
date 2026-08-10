@@ -385,7 +385,7 @@ export default function OrderList() {
       <Seo title="My Orders | Sam Global" />
 
       <section className="min-h-screen bg-white  py-5 sm:py-8 lg:py-10">
-        <div>
+        <div className="mx-auto w-full max-w-[1740px] px-4 sm:px-6 lg:px-8">
           <Breadcrumbs
             items={ORDER_BREADCRUMBS}
             className="mb-2 flex flex-wrap  items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"

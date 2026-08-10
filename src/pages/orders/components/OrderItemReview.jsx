@@ -81,7 +81,7 @@ function ExistingReviewCard({ review }) {
 
   return (
     <section
-      className="mt-5 overflow-hidden rounded-2xl border border-[#E2E3EA] bg-white "
+      className="mt-5 overflow-hidden rounded-2xl border border-[#E2E3EA] bg-white w-full sm:w-fit max-w-full"
       aria-label="Your product review"
     >
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#ECECF1] bg-[#F5ECD5] px-4 py-3.5 sm:px-5">
@@ -314,25 +314,31 @@ function OrderItemReviewAction({
 }) {
   if (!canReview) return null;
 
-  return (
-    <div className="w-full">
-      {!reviewChecked ? (
-        <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA] px-4 text-sm font-bold text-[#6B6B80]">
-          Checking review...
-        </span>
-      ) : existingReview ? (
+  if (!reviewChecked) {
+    return (
+      <span className="inline-flex min-h-9 items-center rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA] px-4 text-sm font-bold text-[#6B6B80]">
+        Checking review...
+      </span>
+    );
+  }
+
+  if (existingReview) {
+    return (
+      <div className="w-full">
         <ExistingReviewCard review={existingReview} />
-      ) : (
-        <button
-          type="button"
-          className="inline-flex min-h-9 items-center rounded-[8px] border border-[#CE9F2D] bg-[#CE9F2D12] px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#CE9F2D22]"
-          onClick={() => onReviewClick(item)}
-          disabled={!orderId}
-        >
-          Write Review
-        </button>
-      )}
-    </div>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className="inline-flex min-h-9 items-center rounded-[8px] border border-[#CE9F2D] bg-[#CE9F2D12] px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#CE9F2D22]"
+      onClick={() => onReviewClick(item)}
+      disabled={!orderId}
+    >
+      Write Review
+    </button>
   );
 }
 
