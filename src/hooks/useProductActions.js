@@ -55,10 +55,9 @@ export function useProductActions() {
     (product) => {
       const added = isWishlisted(product);
       if (!user) {
-        openGuestOtpModal(() => {
-          // Use current store state at callback time (post-login)
+        openGuestOtpModal(async () => {
           const currentCart = store.getState().cart.current;
-          run(
+          return run(
             dispatch,
             updateCart(wishlistPayload(currentCart, product, added)),
             added

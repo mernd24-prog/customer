@@ -396,7 +396,13 @@ export function clearGuestCart() {
 
 export async function syncGuestCartWithServer(dispatch, { fetchCartAction, updateCartAction }) {
   const guestCart = readGuestCart();
-  if (!guestCart || !Array.isArray(guestCart.items) || guestCart.items.length === 0) {
+  const hasGuestItems = Array.isArray(guestCart?.items) && guestCart.items.length > 0;
+  const hasGuestWishlist =
+    Array.isArray(guestCart?.wishlist) && guestCart.wishlist.length > 0;
+
+  // A wishlist-only cart still contains user data that must be merged. The old
+  // items-only check treated it as empty and deleted it during sign-in.
+  if (!hasGuestItems && !hasGuestWishlist) {
     clearGuestCart();
     if (fetchCartAction) {
       await dispatch(fetchCartAction()).unwrap().catch(() => null);
@@ -431,7 +437,8 @@ export async function syncGuestCartWithServer(dispatch, { fetchCartAction, updat
     }
     clearGuestCart();
   } catch (err) {
-    clearGuestCart();
+    // Keep the local copy when synchronization fails so a temporary API/network
+    // error cannot permanently discard the user's cart or wishlist.
     if (fetchCartAction) {
       await dispatch(fetchCartAction()).catch(() => { });
     }

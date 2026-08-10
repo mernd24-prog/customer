@@ -176,11 +176,12 @@ export default function GuestOtpAuthModal({
         updateCartAction: updateCart,
       });
 
-      onClose?.();
-
       if (onSuccess) {
-        onSuccess();
+        // The success handler closes the modal after capturing the pending
+        // wishlist action. Calling onClose first clears that action.
+        await onSuccess();
       } else {
+        onClose?.();
         navigate("/checkout");
       }
     } catch (error) {

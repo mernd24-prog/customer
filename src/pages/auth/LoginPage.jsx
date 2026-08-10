@@ -21,6 +21,8 @@ import { useToastThunk } from "../../hooks/useToastThunk";
 import { useAuthModal } from "../../context/AuthModalContext";
 import { notify } from "../../utils/notify";
 import { loginSchema } from "../../validations/validationSchemas";
+import { fetchCart, updateCart } from "../../features/cart/cartSlice";
+import { syncGuestCartWithServer } from "../../utils/ecommerce/cart";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
 const GOOGLE_SCRIPT_SRC = "https://accounts.google.com/gsi/client";
@@ -97,6 +99,10 @@ export default function LoginPage() {
       );
 
       await run(dispatch, checkAuthStatus(), "Welcome back!");
+      await syncGuestCartWithServer(dispatch, {
+        fetchCartAction: fetchCart,
+        updateCartAction: updateCart,
+      });
       navigate(from, { replace: true });
     } catch {
       // Errors are handled by Redux and useToastThunk.
@@ -145,6 +151,10 @@ export default function LoginPage() {
             );
 
             await run(dispatch, checkAuthStatus(), "Welcome!");
+            await syncGuestCartWithServer(dispatch, {
+              fetchCartAction: fetchCart,
+              updateCartAction: updateCart,
+            });
             navigate(from, { replace: true });
           } finally {
             setGoogleLoading(false);
