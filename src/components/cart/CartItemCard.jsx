@@ -238,9 +238,15 @@ export default function CartItemCard({
             {saveForLaterLabel === "Move to Wishlist" ? (
               <button
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   setIsSaving(true);
-                  onSaveForLater?.(item?.id);
+                  try {
+                    await onSaveForLater?.(item?.id);
+                  } finally {
+                    // Opening or cancelling authentication must not leave the
+                    // guest-facing heart in its selected state.
+                    setIsSaving(false);
+                  }
                 }}
                 className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#2d2d2d] transition hover:text-[#1B1D60]"
               >
