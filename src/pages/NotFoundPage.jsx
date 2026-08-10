@@ -10,14 +10,15 @@ export default function NotFoundPage() {
         description="The page you're looking for doesn't exist."
         robots="noindex,follow"
       />
-
       <section className="flex min-h-[60vh] items-center justify-center px-4 py-12 text-center">
         <div className="mx-auto max-w-2xl rounded-[18px] border border-[var(--customer-border)] bg-white px-6 py-10 shadow-sm sm:px-10">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--customer-gold-soft)] text-[var(--customer-gold-dark)]">
             <SearchX size={26} strokeWidth={1.8} />
           </div>
 
-          <p className="mt-5 text-[40px] leading-[48px] tracking-[-0.02em] font-black text-[var(--customer-navy)]">404</p>
+          <p className="mt-5 text-[40px] leading-[48px] tracking-[-0.02em] font-black text-[var(--customer-navy)]">
+            404
+          </p>
           <h1 className="mt-2 text-[28px] leading-[36px] tracking-[-0.01em] font-bold text-[var(--customer-navy)] sm:text-[32px] sm:leading-[40px] sm:tracking-[-0.01em]">
             Page not found
           </h1>
