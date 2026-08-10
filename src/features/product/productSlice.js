@@ -13,3 +13,4 @@ export default createApiSlice({
   thunks: productThunks,
   setCurrentFromList: false,
 }).reducer;
+  
