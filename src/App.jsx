@@ -1,4 +1,10 @@
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthModalProvider } from "./context/AuthModalContext";
@@ -62,18 +68,6 @@ const SupportHelpCenter = lazy(
 );
 const CmsPage = lazy(() => import("./pages/cms/CmsPage"));
 const BrandOutletPage = lazy(() => import("./pages/brand/BrandOutletPage"));
-const WhyChooseUsPage = lazyNamed(
-  () => import("./pages/StaticPages"),
-  "WhyChooseUsPage",
-);
-const OurCommitmentPage = lazyNamed(
-  () => import("./pages/StaticPages"),
-  "OurCommitmentPage",
-);
-const FeaturesPage = lazyNamed(
-  () => import("./pages/StaticPages"),
-  "FeaturesPage",
-);
 
 const HomePage = lazyNamed(
   () => import("./pages/customer/HomePage"),
@@ -113,10 +107,6 @@ const AboutPage = lazy(() => import("./pages/about/AboutPage"));
 const BrandPage = lazy(() => import("./pages/brand/BrandPage"));
 const CategoryPage = lazy(() => import("./pages/category/CategoryPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
-const BackendGapNotes = lazyNamed(
-  () => import("./pages/BackendGapNotes"),
-  "BackendGapNotes",
-);
 
 const AccountPage = lazy(() => import("./pages/account/AccountPage"));
 const CartPage = lazy(() => import("./pages/cart/CartPage"));
@@ -142,10 +132,6 @@ const SubscriptionPage = lazyNamed(
   "SubscriptionPage",
 );
 
-const SimpleApiPage = lazyNamed(
-  () => import("./pages/SimpleApiPage"),
-  "SimpleApiPage",
-);
 const WarrantyPage = lazyNamed(
   () => import("./pages/warranty/WarrantyPage"),
   "WarrantyPage",
@@ -338,9 +324,7 @@ export default function App() {
                 path="/announcements"
                 element={<CmsPage slugOverride="announcements" />}
               /> */}
-              <Route path="/why-choose-us" element={<WhyChooseUsPage />} />
-              <Route path="/our-commitment" element={<OurCommitmentPage />} />
-              <Route path="/features" element={<FeaturesPage />} />
+
               <Route
                 path="/shipping-policy"
                 element={<PolicyPage slugOverride="shipping-delivery-policy" />}
@@ -405,7 +389,7 @@ export default function App() {
                 />
                 <Route path="/brands/:brandSlug" element={<BrandPage />} />
                 <Route path="/cms/:slug" element={<CmsPage />} />
-                <Route path="/backend-gaps" element={<BackendGapNotes />} />
+
                 <Route
                   path="/profile"
                   element={<Navigate to="/account/profile" replace />}
@@ -497,24 +481,9 @@ export default function App() {
                     path="/notification-preferences"
                     element={<PreferencesPage />}
                   />
-
-                  {/* Recommendations */}
-                  <Route
-                    path="/recommendations"
-                    element={
-                      <SimpleApiPage
-                        title="Recommendations"
-                        selector={(s) => s.recommendation}
-                        thunk={fetchRecommendations}
-                      />
-                    }
-                  />
                 </Route>
 
                 {/* ── Seller-only routes ─────────────────────────────────── */}
-                
-
-             
               </Route>
               {/* ── 404 catch-all ─────────────────────────────────────────── */}
               <Route path="*" element={<NotFoundPage />} />

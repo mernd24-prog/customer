@@ -12,7 +12,6 @@ import "./styles.css";
 if (import.meta.env.PROD) {
   registerSW({ immediate: true });
 } else if ("serviceWorker" in navigator) {
-  // Prevent stale SW from hijacking dev assets and returning HTML for JS chunk requests.
   navigator.serviceWorker.getRegistrations().then((registrations) => {
     registrations.forEach((registration) => registration.unregister());
   });
@@ -22,9 +21,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
       <HelmetProvider>
-        {/* <AppErrorBoundary> */}
-          <App />
-        {/* </AppErrorBoundary> */}
+        <App />
         <ToastContainer
           position="bottom-center"
           autoClose={2000}
@@ -43,5 +40,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         />
       </HelmetProvider>
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
