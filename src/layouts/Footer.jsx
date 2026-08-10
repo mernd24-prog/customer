@@ -124,15 +124,17 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
+const emptyArray = [];
+
 export function Footer({ data = footerData }) {
   const dispatch = useDispatch();
   const location = useLocation();
 
   // ── Redux state ─────────────────────────────────────────────────────────────
   const catalogCategoryList = useSelector(
-    (state) => state.catalog.globalCategories || state.catalog.list || [],
+    (state) => state.catalog.globalCategories || state.catalog.list || emptyArray,
   );
-  const globalBrands = useSelector((state) => state.catalog.globalBrands || []);
+  const globalBrands = useSelector((state) => state.catalog.globalBrands || emptyArray);
 
   // ── Fetch if not yet loaded ──────────────────────────────────────────────────
   useEffect(() => {
