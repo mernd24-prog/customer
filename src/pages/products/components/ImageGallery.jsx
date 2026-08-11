@@ -88,57 +88,63 @@ function ProductGallery({
         isModal ? "h-full w-full" : "h-auto w-full xl:h-[480px] 2xl:h-[560px]"
       }`}
     >
-      <div className="flex min-w-0 flex-col gap-6 overflow-hidden xl:h-full xl:flex-row">
-        <div className="order-2 h-[90px]   w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[85px]">
-          <Swiper
-            onSwiper={setThumbsSwiper}
-            spaceBetween={20}
-            slidesPerView="auto"
-            freeMode
-            watchSlidesProgress
-            direction={isLarge ? "vertical" : "horizontal"}
-            modules={[FreeMode, Thumbs]}
-            className="h-full w-full"
-          >
-            {images.map((img, i) => (
-              <SwiperSlide
-                key={i}
-                className="!h-[90px] !w-[90px] xl:!h-[90px]  xl:!w-[85px]"
-              >
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveIndex(i);
-                    mainSwiper?.slideTo(i);
-                  }}
-                  onMouseEnter={() => {
-                    if (!isLarge) return;
-                    setActiveIndex(i);
-                    mainSwiper?.slideTo(i);
-                  }}
-                  className={`h-full w-full overflow-hidden rounded-[15px]  border   transition-colors duration-200 ${
-                    activeIndex === i
-                      ? "border-gold shadow-sm bg-gradient-to-t from-[#1B1D60]/65 to-transparent"
-                      : "border-border"
-                  }`}
+      <div
+        className={`flex min-w-0 flex-col overflow-hidden xl:h-full ${
+          images.length > 1 ? "gap-6 xl:flex-row" : ""
+        }`}
+      >
+        {images.length > 1 && (
+          <div className="order-2 h-[90px]   w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[85px]">
+            <Swiper
+              onSwiper={setThumbsSwiper}
+              spaceBetween={20}
+              slidesPerView="auto"
+              freeMode
+              watchSlidesProgress
+              direction={isLarge ? "vertical" : "horizontal"}
+              modules={[FreeMode, Thumbs]}
+              className="h-full w-full"
+            >
+              {images.map((img, i) => (
+                <SwiperSlide
+                  key={i}
+                  className="!h-[90px] !w-[90px] xl:!h-[90px]  xl:!w-[85px]"
                 >
-                  <img
-                    src={img}
-                    alt=""
-                    className="h-full p-2  w-full object-contain"
-                    onError={(event) =>
-                      applyImageFallback(event, fallbackLabel, "product")
-                    }
-                  />
-                </button>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveIndex(i);
+                      mainSwiper?.slideTo(i);
+                    }}
+                    onMouseEnter={() => {
+                      if (!isLarge) return;
+                      setActiveIndex(i);
+                      mainSwiper?.slideTo(i);
+                    }}
+                    className={`h-full w-full overflow-hidden rounded-[15px]  border   transition-colors duration-200 ${
+                      activeIndex === i
+                        ? "border-gold shadow-sm bg-gradient-to-t from-[#1B1D60]/65 to-transparent"
+                        : "border-border"
+                    }`}
+                  >
+                    <img
+                      src={img}
+                      alt=""
+                      className="h-full p-2  w-full object-contain"
+                      onError={(event) =>
+                        applyImageFallback(event, fallbackLabel, "product")
+                      }
+                    />
+                  </button>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        )}
 
         <div
           className={`relative order-1 min-w-0  overflow-hidden border border-gold rounded-[20px]  bg-transparent xl:order-2 ${
-            isModal ? "h-full" : "h-[324px] md:h-[440px] xl:h-full w-full"
+            isModal ? "h-full w-full" : "h-[324px] md:h-[440px] xl:h-full w-full"
           }`}
         >
           <Swiper

@@ -34,14 +34,13 @@ import {
   getOrderItemId,
   getItemLineTotal,
   asNumber,
-  canCancelOrder
+  canCancelOrder,
 } from "../utils/orderUtils";
 
 import { formatMoney } from "../../../utils/ecommerce";
 
-
 export default function OrderDetail({ orderId, track }) {
-    const {
+  const {
     state,
     notificationState,
     order,
@@ -105,9 +104,9 @@ export default function OrderDetail({ orderId, track }) {
     getReturnNumber,
     isCodOrder,
     visibleReturns,
-    visiblePendingSellerDocuments
+    visiblePendingSellerDocuments,
   } = useOrderDetail({ orderId, track });
-return (
+  return (
     <>
       <Seo title={`Order ${getOrderNumber(order) || "Details"} | Sam Global`} />
       <div className="mx-auto w-full max-w-[1740px] px-4 sm:px-6 lg:px-8">
@@ -120,9 +119,7 @@ return (
             <section className="grid gap-4 sm:gap-8">
               <div className="flex flex-col gap-4  items-center mt-8 md:flex-row  justify-between">
                 <div>
-                  <Breadcrumbs
-                    items={breadcrumbItems}
-                  />
+                  <Breadcrumbs items={breadcrumbItems} />
                 </div>
 
                 <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap items-center md:w-auto md:justify-end">
@@ -316,13 +313,43 @@ return (
               )}
             </section>
 
-            <OrderCancellations cancellations={visibleCancellations} currency={currency} />
+            <OrderCancellations
+              cancellations={cancellations}
+              currency={currency}
+            />
 
-            <OrderReturns visibleReturns={visibleReturns} currency={currency} getReturnRefundAmount={getReturnRefundAmount} getReturnItemTitle={getReturnItemTitle} getReturnItemQuantity={getReturnItemQuantity} getReturnNumber={getReturnNumber} isCodOrder={isCodOrder} selectedOrderItem={selectedOrderItem} />
+            <OrderReturns
+              visibleReturns={visibleReturns}
+              currency={currency}
+              getReturnRefundAmount={getReturnRefundAmount}
+              getReturnItemTitle={getReturnItemTitle}
+              getReturnItemQuantity={getReturnItemQuantity}
+              getReturnNumber={getReturnNumber}
+              isCodOrder={isCodOrder}
+              selectedOrderItem={selectedOrderItem}
+            />
 
-            <OrderDocuments downloadableDocuments={downloadableDocuments} visiblePendingSellerDocuments={visiblePendingSellerDocuments} invoiceDownloadAvailable={invoiceDownloadAvailable} customerInvoices={customerInvoices} getInvoiceUrl={getInvoiceUrl} downloadingId={downloadingId} handleDownload={handleDownload} order={order} selectedOrderItem={selectedOrderItem} />
+            <OrderDocuments
+              downloadableDocuments={downloadableDocuments}
+              visiblePendingSellerDocuments={visiblePendingSellerDocuments}
+              invoiceDownloadAvailable={invoiceDownloadAvailable}
+              customerInvoices={customerInvoices}
+              getInvoiceUrl={getInvoiceUrl}
+              downloadingId={downloadingId}
+              handleDownload={handleDownload}
+              order={order}
+              selectedOrderItem={selectedOrderItem}
+            />
 
-            <OrderActions order={order} status={status} canCancelOrder={canCancelOrder} retrying={retrying} handleRetryPayment={handleRetryPayment} openCancellation={openCancellation} selectedOrderItem={selectedOrderItem} />
+            <OrderActions
+              order={order}
+              status={status}
+              canCancelOrder={canCancelOrder}
+              retrying={retrying}
+              handleRetryPayment={handleRetryPayment}
+              openCancellation={openCancellation}
+              selectedOrderItem={selectedOrderItem}
+            />
           </div>
         </ApiState>
       </div>

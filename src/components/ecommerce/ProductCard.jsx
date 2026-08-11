@@ -336,7 +336,7 @@ export default function ProductCard({
             {dealBadge}
           </Label>
         )}
-        {codAvailable && (
+        {/* {codAvailable && (
           <Label
             variant="success"
             className="
@@ -357,7 +357,7 @@ export default function ProductCard({
           >
             <Banknote size={12} /> COD Available
           </Label>
-        )}
+        )} */}
         {/* {resolvedBadgeLabel && (
           <span
             className="flex h-[24px] items-center justify-center rounded-[50px] px-[12px] py-[5px] text-[11px] font-bold uppercase tracking-wide sm:h-[28px] sm:px-[15px] sm:text-[12px]"

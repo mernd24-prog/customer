@@ -49,7 +49,7 @@ import {
 } from "../utils/orderUtils";
 
 export function useOrderDetail({ orderId, track }) {
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const run = useToastThunk();
@@ -92,31 +92,31 @@ const dispatch = useDispatch();
         : [];
   const fetchedReturns = Array.isArray(returnsState.list)
     ? returnsState.list.filter(
-        (returnRequest) =>
-          String(returnRequest.orderId || returnRequest.order_id || "") ===
-          String(orderId),
-      )
+      (returnRequest) =>
+        String(returnRequest.orderId || returnRequest.order_id || "") ===
+        String(orderId),
+    )
     : [];
   const returns = [...fetchedReturns, ...embeddedReturns].filter(
     (returnRequest, index, list) => {
       const id = String(
         returnRequest.id ||
-          returnRequest._id ||
-          returnRequest.returnId ||
-          returnRequest.returnNumber ||
-          returnRequest.return_number ||
-          index,
+        returnRequest._id ||
+        returnRequest.returnId ||
+        returnRequest.returnNumber ||
+        returnRequest.return_number ||
+        index,
       );
       return (
         list.findIndex(
           (candidate, candidateIndex) =>
             String(
               candidate.id ||
-                candidate._id ||
-                candidate.returnId ||
-                candidate.returnNumber ||
-                candidate.return_number ||
-                candidateIndex,
+              candidate._id ||
+              candidate.returnId ||
+              candidate.returnNumber ||
+              candidate.return_number ||
+              candidateIndex,
             ) === id,
         ) === index
       );
@@ -131,10 +131,10 @@ const dispatch = useDispatch();
     : null;
   const selectedItemReturn = selectedOrderItem
     ? returns.find((returnRequest) =>
-        (returnRequest.items || []).some((returnItem) =>
-          returnItemMatchesOrderItem(returnItem, selectedOrderItem),
-        ),
-      )
+      (returnRequest.items || []).some((returnItem) =>
+        returnItemMatchesOrderItem(returnItem, selectedOrderItem),
+      ),
+    )
     : null;
   const cancellationMatchesSelectedItem = (cancellation = {}) =>
     selectedOrderItem &&
@@ -148,16 +148,16 @@ const dispatch = useDispatch();
     : cancellations;
   const selectedItemStatus = selectedOrderItem
     ? resolveOrderItemDisplayStatus(
-        selectedOrderItem,
-        getProgressStatus(order),
-        shipments,
-      )
+      selectedOrderItem,
+      getProgressStatus(order),
+      shipments,
+    )
     : null;
   const selectedItemAmount = selectedOrderItem
     ? (selectedOrderItem.line_total ??
       selectedOrderItem.lineTotal ??
       Number(selectedOrderItem.unit_price || selectedOrderItem.unitPrice || 0) *
-        Number(selectedOrderItem.quantity || 0))
+      Number(selectedOrderItem.quantity || 0))
     : null;
   const selectedItemShipment = selectedOrderItem
     ? findShipmentForOrderItem(shipments, selectedOrderItem)
@@ -214,8 +214,8 @@ const dispatch = useDispatch();
     .filter(Boolean);
   const returnEligibleUntil = itemReturnDeadlines.length
     ? itemReturnDeadlines.reduce((latest, value) =>
-        new Date(value).getTime() > new Date(latest).getTime() ? value : latest,
-      )
+      new Date(value).getTime() > new Date(latest).getTime() ? value : latest,
+    )
     : null;
   const returnWindowOpen = returnableItems.some((item) => {
     const deadline =
@@ -231,65 +231,65 @@ const dispatch = useDispatch();
     returnableItems.length > 0;
   const selectedItemReturnPolicy = selectedOrderItem
     ? selectedOrderItem.return_policy_snapshot ||
-      selectedOrderItem.returnPolicySnapshot ||
-      selectedOrderItem.product_snapshot?.returnPolicy ||
-      {}
+    selectedOrderItem.returnPolicySnapshot ||
+    selectedOrderItem.product_snapshot?.returnPolicy ||
+    {}
     : {};
   const selectedItemReturnDeadline = selectedOrderItem
     ? selectedOrderItem.return_eligible_until ||
-      selectedOrderItem.returnEligibleUntil ||
-      selectedItemReturnPolicy.eligibleUntil ||
-      null
+    selectedOrderItem.returnEligibleUntil ||
+    selectedItemReturnPolicy.eligibleUntil ||
+    null
     : null;
   const selectedItemReturnWindowOpen = selectedOrderItem
     ? !selectedItemReturnDeadline ||
-      new Date(selectedItemReturnDeadline).getTime() >= Date.now()
+    new Date(selectedItemReturnDeadline).getTime() >= Date.now()
     : false;
   const selectedItemReturnedQuantity = selectedOrderItem
     ? returns.reduce((sum, returnRequest) => {
-        const returnStatus = String(returnRequest.status || "").toLowerCase();
-        const refundStatus = String(
-          returnRequest.refund?.status ||
-            returnRequest.refundStatus ||
-            returnRequest.refund_status ||
-            "",
-        ).toLowerCase();
-        if (["rejected", "qc_failure_upheld"].includes(returnStatus))
-          return sum;
-        if (
-          returnStatus === "closed" &&
-          !["completed", "not_required"].includes(refundStatus)
-        )
-          return sum;
-        return (
-          sum +
-          (returnRequest.items || [])
-            .filter((returnItem) =>
-              returnItemMatchesOrderItem(returnItem, selectedOrderItem),
-            )
-            .reduce(
-              (itemSum, returnItem) =>
-                itemSum +
-                Number(
-                  returnItem.receivedQuantity ??
-                    returnItem.received_quantity ??
-                    returnItem.approvedQuantity ??
-                    returnItem.approved_quantity ??
-                    returnItem.requestedQuantity ??
-                    returnItem.requested_quantity ??
-                    returnItem.quantity ??
-                    0,
-                ),
-              0,
-            )
-        );
-      }, 0)
+      const returnStatus = String(returnRequest.status || "").toLowerCase();
+      const refundStatus = String(
+        returnRequest.refund?.status ||
+        returnRequest.refundStatus ||
+        returnRequest.refund_status ||
+        "",
+      ).toLowerCase();
+      if (["rejected", "qc_failure_upheld"].includes(returnStatus))
+        return sum;
+      if (
+        returnStatus === "closed" &&
+        !["completed", "not_required"].includes(refundStatus)
+      )
+        return sum;
+      return (
+        sum +
+        (returnRequest.items || [])
+          .filter((returnItem) =>
+            returnItemMatchesOrderItem(returnItem, selectedOrderItem),
+          )
+          .reduce(
+            (itemSum, returnItem) =>
+              itemSum +
+              Number(
+                returnItem.receivedQuantity ??
+                returnItem.received_quantity ??
+                returnItem.approvedQuantity ??
+                returnItem.approved_quantity ??
+                returnItem.requestedQuantity ??
+                returnItem.requested_quantity ??
+                returnItem.quantity ??
+                0,
+              ),
+            0,
+          )
+      );
+    }, 0)
     : 0;
   const selectedItemReturnableQuantity = selectedOrderItem
     ? Math.max(
-        0,
-        Number(selectedOrderItem.quantity || 0) - selectedItemReturnedQuantity,
-      )
+      0,
+      Number(selectedOrderItem.quantity || 0) - selectedItemReturnedQuantity,
+    )
     : 0;
   const selectedItemCanReturn = Boolean(
     selectedOrderItem &&
@@ -302,9 +302,9 @@ const dispatch = useDispatch();
     ["delivered", "fulfilled", "completed"].includes(
       String(
         selectedOrderItem.delivery_status ||
-          selectedOrderItem.deliveryStatus ||
-          selectedItemStatus ||
-          "",
+        selectedOrderItem.deliveryStatus ||
+        selectedItemStatus ||
+        "",
       ).toLowerCase(),
     ),
   );
@@ -453,33 +453,33 @@ const dispatch = useDispatch();
     }),
     !selectedOrderItem && orderReceipt && getDocumentId(orderReceipt)
       ? {
-          id: getDocumentId(orderReceipt),
-          title: "Order receipt",
-          subtitle: "Marketplace payment summary",
-          downloadPath: endpoints.tax.invoiceDownload(
-            getDocumentId(orderReceipt),
-          ),
-          filename: `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || `receipt-${orderId}`}.pdf`,
-        }
+        id: getDocumentId(orderReceipt),
+        title: "Order receipt",
+        subtitle: "Marketplace payment summary",
+        downloadPath: endpoints.tax.invoiceDownload(
+          getDocumentId(orderReceipt),
+        ),
+        filename: `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || `receipt-${orderId}`}.pdf`,
+      }
       : null,
     customerFeeInvoice && getDocumentId(customerFeeInvoice)
       ? {
-          id: getDocumentId(customerFeeInvoice),
-          title: "Platform fee invoice",
-          subtitle: "Marketplace tax invoice for platform fee",
-          downloadPath: endpoints.tax.invoiceDownload(
-            getDocumentId(customerFeeInvoice),
-          ),
-          filename: `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
-        }
+        id: getDocumentId(customerFeeInvoice),
+        title: "Platform fee invoice",
+        subtitle: "Marketplace tax invoice for platform fee",
+        downloadPath: endpoints.tax.invoiceDownload(
+          getDocumentId(customerFeeInvoice),
+        ),
+        filename: `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
+      }
       : null,
     !customerFeeInvoice && customerPlatformFee > 0
       ? {
-          id: `pending-platform-fee-${orderId}`,
-          title: "Platform fee invoice",
-          subtitle: "Will be available after payment document is generated.",
-          pending: true,
-        }
+        id: `pending-platform-fee-${orderId}`,
+        title: "Platform fee invoice",
+        subtitle: "Will be available after payment document is generated.",
+        pending: true,
+      }
       : null,
     ...(selectedOrderItem ? [] : cancellationReverseInvoices),
     ...returnReverseInvoices,
@@ -543,7 +543,7 @@ const dispatch = useDispatch();
     dispatch(fetchMarketplaceInvoices({ orderId }))
       .unwrap()
       .then((result) => setInvoices(result?.data || result))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setInvoicesLoading(false));
   }, [dispatch, orderId]);
 
@@ -626,8 +626,8 @@ const dispatch = useDispatch();
         Number(selectedOrderItem.quantity || 0) -
         Number(
           selectedOrderItem.cancelled_quantity ||
-            selectedOrderItem.cancelledQuantity ||
-            0,
+          selectedOrderItem.cancelledQuantity ||
+          0,
         );
       setCancelItems(quantity > 0 ? { [itemId]: quantity } : {});
       setCancelModalOpen(true);
@@ -646,7 +646,7 @@ const dispatch = useDispatch();
     setCancelModalOpen(true);
   };
 
-  
+
   return {
     state,
     notificationState,
