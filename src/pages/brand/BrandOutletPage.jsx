@@ -177,7 +177,7 @@ export default function BrandOutletPage() {
               {!loading && !error && totalBrands > 0 && (
                 <CollectionToolbar
                   countText={countText}
-                  pageSizeValue={String(limit)}
+                  pageSizeValue={limit}
                   pageSizes={PAGE_SIZE_OPTIONS}
                   onPageSizeChange={(val) => updateParam("limit", val)}
                 />

@@ -39,7 +39,7 @@ export default function Pagination({
         type="button"
         disabled={currentPage <= 1}
         onClick={() => onPageChange?.(currentPage - 1)}
-        className="icon-button secondary"
+        className={cn("icon-button secondary", "disabled:opacity-50 disabled:cursor-not-allowed")}
       >
         <ChevronLeft size={16} />
       </button>
@@ -68,7 +68,7 @@ export default function Pagination({
         type="button"
         disabled={currentPage >= totalPages}
         onClick={() => onPageChange?.(currentPage + 1)}
-        className="icon-button secondary"
+        className={cn("icon-button secondary", "disabled:opacity-50 disabled:cursor-not-allowed")}
       >
         <ChevronRight size={16} />
       </button>
