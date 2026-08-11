@@ -342,8 +342,10 @@ function OrderProgress({
   const isDeliveryFailed = status === "failed_delivery";
   const returnStatus = getReturnStatus(returns, status);
   const refundStatus = getRefundStatus({ returns, cancellations, status });
-  const cancelStatus =
-    isCancelled || cancellations.length > 0 ? "cancelled" : null;
+  const hasFullCancellation = cancellations.some(
+    (cancellation) => String(cancellation.scope || "").toLowerCase() === "full",
+  );
+  const cancelStatus = isCancelled || hasFullCancellation ? "cancelled" : null;
 
   const activeStatus = cancelStatus || refundStatus || returnStatus || status;
 

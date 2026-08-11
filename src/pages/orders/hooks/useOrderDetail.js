@@ -136,6 +136,16 @@ const dispatch = useDispatch();
         ),
       )
     : null;
+  const cancellationMatchesSelectedItem = (cancellation = {}) =>
+    selectedOrderItem &&
+    (Array.isArray(cancellation.items) ? cancellation.items : []).some(
+      (item) =>
+        String(item.orderItemId || item.order_item_id || item.id || "") ===
+        getOrderItemId(selectedOrderItem),
+    );
+  const visibleCancellations = selectedOrderItem
+    ? cancellations.filter(cancellationMatchesSelectedItem)
+    : cancellations;
   const selectedItemStatus = selectedOrderItem
     ? resolveOrderItemDisplayStatus(
         selectedOrderItem,
@@ -643,6 +653,7 @@ const dispatch = useDispatch();
     order,
     items,
     cancellations,
+    visibleCancellations,
     returns,
     shipments,
     currency,

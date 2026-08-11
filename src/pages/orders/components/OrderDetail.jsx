@@ -47,6 +47,7 @@ export default function OrderDetail({ orderId, track }) {
     order,
     items,
     cancellations,
+    visibleCancellations,
     returns,
     shipments,
     currency,
@@ -285,13 +286,18 @@ return (
                 >
                   <OrderProgress
                     status={selectedItemStatus || progressStatus}
-                    cancellations={cancellations}
+                    cancellations={visibleCancellations}
                     returns={
                       selectedItemReturn
                         ? [selectedItemReturn]
                         : selectedOrderItem
                           ? []
                           : returns
+                    }
+                    timeline={
+                      selectedOrderItem
+                        ? selectedOrderItem.timeline || []
+                        : order?.timeline || []
                     }
                   />
                 </OrderDetailSectionCard>
@@ -310,7 +316,7 @@ return (
               )}
             </section>
 
-            <OrderCancellations cancellations={cancellations} currency={currency} />
+            <OrderCancellations cancellations={visibleCancellations} currency={currency} />
 
             <OrderReturns visibleReturns={visibleReturns} currency={currency} getReturnRefundAmount={getReturnRefundAmount} getReturnItemTitle={getReturnItemTitle} getReturnItemQuantity={getReturnItemQuantity} getReturnNumber={getReturnNumber} isCodOrder={isCodOrder} selectedOrderItem={selectedOrderItem} />
 
@@ -322,10 +328,14 @@ return (
       </div>
       <ConfirmModal
         open={cancelModalOpen}
-        title="Cancel this order?"
-        description="Your order will be cancelled and any reserved items will be released. If payment was already captured, the refund will be handled according to the payment method."
-        confirmLabel={state.loading ? "Cancelling..." : "Cancel order"}
-        cancelLabel="Keep order"
+        title={selectedOrderItem ? "Cancel this item?" : "Cancel this order?"}
+        description={
+          selectedOrderItem
+            ? "Only the selected item will be cancelled. Other active items and their shipment will continue normally."
+            : "All remaining items will be cancelled and reserved inventory will be released. Any captured payment will be refunded according to the payment method."
+        }
+        confirmLabel={state.loading ? "Cancelling..." : selectedOrderItem ? "Cancel item" : "Cancel order"}
+        cancelLabel={selectedOrderItem ? "Keep item" : "Keep order"}
         onCancel={() => setCancelModalOpen(false)}
         onConfirm={handleCancelOrder}
       >
