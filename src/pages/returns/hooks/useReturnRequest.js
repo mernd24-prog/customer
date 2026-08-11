@@ -18,6 +18,7 @@ import {
   getItemUnitPrice,
   getReturnableQuantityForItem,
   getReturnedQuantityForItem,
+  getCancelledQuantityForItem,
   calculateEstimatedRefundBreakup,
   getItemReturnPolicy,
   isItemDelivered,
@@ -192,6 +193,7 @@ export default function useReturnRequest(orderId) {
     const alreadyQueuedQuantity = item
       ? getReturnedQuantityForItem(existingReturns, item)
       : 0;
+    const cancelledQuantity = item ? getCancelledQuantityForItem(item) : 0;
     const orderedQuantity = item ? getItemQuantity(item) : 0;
     if (!item || !getItemId(item)) {
       notify.error("Please select the exact item/variant to return.");
@@ -205,7 +207,9 @@ export default function useReturnRequest(orderId) {
     }
     if (requestedQuantity < 1 || requestedQuantity > returnableQuantity) {
       notify.error(
-        alreadyQueuedQuantity > 0
+        cancelledQuantity >= orderedQuantity
+          ? "This item has been cancelled and cannot be returned."
+          : alreadyQueuedQuantity > 0
           ? `${alreadyQueuedQuantity} of ${orderedQuantity} unit${orderedQuantity === 1 ? "" : "s"} already in return/refund queue. You can return only ${returnableQuantity} more unit${returnableQuantity === 1 ? "" : "s"} now.`
           : `You can return up to ${returnableQuantity} unit${returnableQuantity === 1 ? "" : "s"} for this item.`,
       );

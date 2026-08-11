@@ -362,8 +362,11 @@ export default function OrderDetail({ orderId, track }) {
             : "All remaining items will be cancelled and reserved inventory will be released. Any captured payment will be refunded according to the payment method."
         }
         confirmLabel={state.loading ? "Cancelling..." : selectedOrderItem ? "Cancel item" : "Cancel order"}
+        confirmDisabled={state.loading}
         cancelLabel={selectedOrderItem ? "Keep item" : "Keep order"}
-        onCancel={() => setCancelModalOpen(false)}
+        onCancel={() => {
+          if (!state.loading) setCancelModalOpen(false);
+        }}
         onConfirm={handleCancelOrder}
       >
         <div className="grid gap-3">

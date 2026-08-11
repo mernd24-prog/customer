@@ -16,6 +16,7 @@ import {
   getItemReturnPolicy,
   getReturnForItem,
   getReturnedQuantityForItem,
+  getCancelledQuantityForItem,
   getReturnableQuantityForItem,
   isItemDelivered,
   getItemQuantity
@@ -110,6 +111,7 @@ function ReturnRequestPage({ orderId }) {
                       existingReturns,
                       item,
                     );
+                    const cancelledQuantity = getCancelledQuantityForItem(item);
                     const returnableQuantity = getReturnableQuantityForItem(
                       existingReturns,
                       item,
@@ -170,6 +172,9 @@ function ReturnRequestPage({ orderId }) {
                           )}
                           <p className="mt-1 text-xs text-[#5E6472]">
                             Ordered: {getItemQuantity(item)}
+                            {cancelledQuantity > 0
+                              ? ` · Cancelled: ${cancelledQuantity}`
+                              : ""}
                             {returnedQuantity > 0
                               ? ` · Already in return/refund queue: ${returnedQuantity}`
                               : ""}
@@ -182,6 +187,8 @@ function ReturnRequestPage({ orderId }) {
                           >
                             {!returnsChecked
                               ? "Checking existing return requests…"
+                              : cancelledQuantity >= getItemQuantity(item)
+                                ? "Cancelled items cannot be returned"
                               : returnableQuantity <= 0 && existingReturn
                                 ? `All units already ${String(existingReturn.status || "requested").replace(/_/g, " ")}`
                                 : !delivered

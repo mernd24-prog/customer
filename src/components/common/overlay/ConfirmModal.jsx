@@ -6,6 +6,7 @@ export default function ConfirmModal({
   title = "Are you sure?",
   description,
   confirmLabel = "Confirm",
+  confirmDisabled = false,
   cancelLabel = "Cancel",
   onConfirm,
   onCancel,
@@ -30,7 +31,7 @@ export default function ConfirmModal({
               </Button>
             )
           }
-          <Button variant={variant} size="sm" onClick={onConfirm}>
+          <Button variant={variant} size="sm" onClick={onConfirm} disabled={confirmDisabled}>
             {confirmLabel}
           </Button>
         </div>

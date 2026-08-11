@@ -418,11 +418,27 @@ export const getReturnedQuantityForItem = (returns = [], item = {}) => {
     );
   }, 0);
 };
-export const getReturnableQuantityForItem = (returns = [], item = {}) =>
+export const getCancelledQuantityForItem = (item = {}) =>
   Math.max(
     0,
-    getItemQuantity(item) - getReturnedQuantityForItem(returns, item),
+    asNumber(
+      item.cancelled_quantity ??
+        item.cancelledQuantity ??
+        item.cancellation_snapshot?.cancelledQuantity ??
+        item.cancellationSnapshot?.cancelledQuantity ??
+        0,
+    ),
   );
+export const getReturnableQuantityForItem = (returns = [], item = {}) => {
+  const projectedQuantity = item.returnable_quantity ?? item.returnableQuantity;
+  const cancellationAdjustedQuantity = projectedQuantity !== undefined && projectedQuantity !== null
+    ? asNumber(projectedQuantity)
+    : getItemQuantity(item) - getCancelledQuantityForItem(item);
+  return Math.max(
+    0,
+    cancellationAdjustedQuantity - getReturnedQuantityForItem(returns, item),
+  );
+};
 export const isDeliveredStatus = (status) =>
   ["delivered", "fulfilled", "completed"].includes(
     String(status || "").toLowerCase(),

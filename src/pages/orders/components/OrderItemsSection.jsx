@@ -231,8 +231,17 @@ function OrderItemsSection({
       }
       grouped.get(key).items.push(item);
     });
-    return Array.from(grouped.values());
-  }, [items, returns, sellerFulfillmentGroups, shipments]);
+    return Array.from(grouped.values()).map((group) => {
+      const itemStatuses = group.items.map((item) =>
+        itemFulfillment.get(getItemId(item))?.status,
+      ).filter(Boolean);
+      const uniqueStatuses = [...new Set(itemStatuses)];
+      return {
+        ...group,
+        status: uniqueStatuses.length === 1 ? uniqueStatuses[0] : group.status,
+      };
+    });
+  }, [itemFulfillment, items, returns, sellerFulfillmentGroups, shipments]);
 
   const handleSubmitted = (review) => {
     if (!reviewTarget) return;

@@ -448,6 +448,9 @@ export const STATUS_LABELS = {
   partially_returned: "Partially Returned",
   returned: "Returned",
   refunded: "Refunded",
+  refund_pending: "Refund Pending",
+  refund_failed: "Refund Failed",
+  partially_refunded: "Partially Refunded",
   cancelled: "Cancelled",
   return_completed: "Return Completed",
 };
@@ -625,4 +628,3 @@ export const resolveOrderItemDisplayStatus = (
     "processing"
   );
 };
-

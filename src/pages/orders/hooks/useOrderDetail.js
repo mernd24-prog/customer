@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useToastThunk } from "../../../hooks/useToastThunk";
@@ -57,6 +57,7 @@ export function useOrderDetail({ orderId, track }) {
   const [cancelReason, setCancelReason] = useState("");
   const [cancelReasonCode, setCancelReasonCode] = useState("changed_mind");
   const [cancelItems, setCancelItems] = useState({});
+  const cancelRequestKey = useRef(null);
   const [invoices, setInvoices] = useState(null);
   const [, setInvoicesLoading] = useState(false);
   const [downloadingId, setDownloadingId] = useState(null);
@@ -593,6 +594,7 @@ export function useOrderDetail({ orderId, track }) {
   };
 
   const handleCancelOrder = async () => {
+    if (state.loading) return;
     const selectedItems = Object.entries(cancelItems)
       .filter(([, quantity]) => Number(quantity) > 0)
       .map(([orderItemId, quantity]) => ({
@@ -601,7 +603,7 @@ export function useOrderDetail({ orderId, track }) {
       }));
     if (cancelReason.trim().length < 3) return;
     if (!selectedItems.length) return;
-    await run(
+    const result = await run(
       dispatch,
       cancelOrder({
         orderId,
@@ -609,17 +611,22 @@ export function useOrderDetail({ orderId, track }) {
         reasonCode: cancelReasonCode,
         refundMethod: "auto",
         items: selectedItems,
-        idempotencyKey: `customer:${orderId}:${Date.now()}`,
+        idempotencyKey: cancelRequestKey.current,
       }),
       "Cancellation processed",
     );
+    if (!result) return;
     setCancelModalOpen(false);
     setCancelReason("");
     setCancelItems({});
+    cancelRequestKey.current = null;
     dispatch(fetchOrderById({ orderId }));
   };
 
   const openCancellation = () => {
+    cancelRequestKey.current = `customer:${orderId}:${
+      globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`
+    }`;
     if (selectedOrderItem) {
       const itemId = String(getOrderItemId(selectedOrderItem));
       const quantity =

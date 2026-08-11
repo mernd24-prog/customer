@@ -59,6 +59,9 @@ export const STATUS_LABELS = {
   partially_returned: "Partially Returned",
   returned: "Returned",
   refunded: "Refunded",
+  refund_pending: "Refund Pending",
+  refund_failed: "Refund Failed",
+  partially_refunded: "Partially Refunded",
   cancelled: "Cancelled",
   return_completed: "Return Completed",
 };
@@ -285,6 +288,17 @@ export const resolveItemStatus = ({
   ) {
     return "refunded";
   }
+  const refundStatus = String(
+    returnRequest?.refund?.status ||
+      item.return_lifecycle?.refundStatus ||
+      item.returnLifecycle?.refundStatus ||
+      "",
+  ).toLowerCase();
+  if (["pending", "provider_pending", "manual_review"].includes(refundStatus)) {
+    return "refund_pending";
+  }
+  if (refundStatus === "failed") return "refund_failed";
+  if (returnRequest?.status === "partially_refunded") return "partially_refunded";
   if (returnRequest?.status) return `return_${returnRequest.status}`;
   if (payoutStatus === "refunded") return "refunded";
   if (payoutStatus === "held" && orderStatusText.includes("return"))
@@ -316,4 +330,3 @@ export const resolveItemTracking = (shipment = {}) => ({
     "",
   trackingUrl: shipment.tracking_url || shipment.trackingUrl || "",
 });
-
