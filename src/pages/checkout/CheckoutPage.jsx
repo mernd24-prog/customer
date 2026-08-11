@@ -51,7 +51,12 @@ export default function CheckoutPage() {
     handleSaveShippingAddressOnly,
     submit,
     quoteData,
-    quoteLoading
+    quoteLoading,
+    checkoutDialCodes,
+    selectedCountry,
+    selectedState,
+    selectedCity,
+    watchedPostalCode
   } = useCheckout();
 
   return (

@@ -17,7 +17,8 @@ import {
   getReturnForItem,
   getReturnedQuantityForItem,
   getReturnableQuantityForItem,
-  isItemDelivered
+  isItemDelivered,
+  getItemQuantity
 } from "./utils/returnUtils";
 
 function ReturnRequestPage({ orderId }) {
@@ -37,6 +38,7 @@ function ReturnRequestPage({ orderId }) {
     watchedQty,
     estimatedRefund,
     selectedReturnableQuantity,
+    selectedReturnedQuantity,
     selectedOrderedQuantity,
     quantityExceedsRemaining,
     handleItemSelect,

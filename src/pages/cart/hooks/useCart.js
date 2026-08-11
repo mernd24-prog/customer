@@ -501,7 +501,8 @@ export default function useCart() {
     setSelectedItemIds,
     addToCart,
     isWishlisted,
-    toggleWishlist
+    toggleWishlist,
+    currentUser
   };
 
 }

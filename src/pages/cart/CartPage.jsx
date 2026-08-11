@@ -63,7 +63,8 @@ export default function CartPage() {
     setSelectedItemIds,
     addToCart,
     isWishlisted,
-    toggleWishlist
+    toggleWishlist,
+    currentUser
   } = useCart();
 
   const savedCardClass =
@@ -214,6 +215,11 @@ export default function CartPage() {
                             SELECTED_CHECKOUT_STORAGE_KEY,
                             JSON.stringify(selectedItemIds),
                           );
+
+                          if (!currentUser) {
+                            setShowGuestOtpModal(true);
+                            return;
+                          }
 
                           navigate("/checkout");
                         }}
