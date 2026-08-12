@@ -9,8 +9,13 @@ import {
   setCache,
 } from "../utils/cache";
 
+const getDefaultApiBaseUrl = () => {
+  if (typeof window === "undefined") return "http://localhost:4000";
+  return `${window.location.protocol}//${window.location.hostname}:4000`;
+};
+
 const API_BASE_URL = (
-  import.meta.env.VITE_API_BASE_URL || "http://192.168.16.47:4000"
+  import.meta.env.VITE_API_BASE_URL || getDefaultApiBaseUrl()
 ).replace(/\/+$/, "");
 
 const API_TIMEOUT_MS = Number(import.meta.env.VITE_API_TIMEOUT_MS || 30000);
@@ -31,6 +36,7 @@ const api = axios.create({
 });
 
 let refreshPromise = null;
+const pendingCachedGetRequests = new Map();
 
 const FORCE_LOGOUT_CODES = new Set([
   "USER_NOT_FOUND",
@@ -219,9 +225,12 @@ export async function apiRequest({
   if (shouldCache) {
     const cached = getCache(resolvedCacheKey);
     if (cached) return cached;
+
+    const pending = pendingCachedGetRequests.get(resolvedCacheKey);
+    if (pending) return pending;
   }
 
-  try {
+  const requestPromise = (async () => {
     const response = await requestWithReadRetry({ method, url, data, params });
     const result = normalizeApiResponse(response);
 
@@ -232,8 +241,20 @@ export async function apiRequest({
     }
 
     return result;
+  })();
+
+  if (shouldCache) {
+    pendingCachedGetRequests.set(resolvedCacheKey, requestPromise);
+  }
+
+  try {
+    return await requestPromise;
   } catch (error) {
     throw new Error(normalizeApiError(error));
+  } finally {
+    if (shouldCache && pendingCachedGetRequests.get(resolvedCacheKey) === requestPromise) {
+      pendingCachedGetRequests.delete(resolvedCacheKey);
+    }
   }
 }
 

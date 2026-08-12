@@ -146,6 +146,78 @@ const normalizeSuggestion = (suggestion, source = "api") => ({
   source,
 });
 
+const normalizeSearchText = (value = "") =>
+  String(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+const boundedEditDistance = (a = "", b = "") => {
+  if (!a || !b) return Math.max(a.length, b.length);
+  if (Math.abs(a.length - b.length) > 2) return 3;
+
+  const previous = Array.from({ length: b.length + 1 }, (_, index) => index);
+  for (let i = 1; i <= a.length; i += 1) {
+    let last = previous[0];
+    previous[0] = i;
+    for (let j = 1; j <= b.length; j += 1) {
+      const current = previous[j];
+      previous[j] =
+        a[i - 1] === b[j - 1]
+          ? last
+          : Math.min(last, previous[j - 1], previous[j]) + 1;
+      last = current;
+    }
+  }
+  return previous[b.length];
+};
+
+const tokenMatchScore = (query, text = "", scores = {}) => {
+  const normalized = normalizeSearchText(text);
+  if (!query || !normalized) return 0;
+
+  return normalized.split(/\s+/).filter(Boolean).reduce((bestScore, token) => {
+    if (token === query) return Math.max(bestScore, scores.exact || 100);
+    if (token.startsWith(query) || token.replace(/s$/, "").startsWith(query)) {
+      return Math.max(bestScore, scores.prefix || 90);
+    }
+    if (query.length >= 4 && token.includes(query)) {
+      return Math.max(bestScore, scores.contains || 50);
+    }
+    if (query.length >= 3 && query[0] === token[0]) {
+      const prefix = token.slice(0, query.length);
+      const allowedDistance = query.length >= 5 ? 2 : 1;
+      if (boundedEditDistance(query, prefix) <= allowedDistance) {
+        return Math.max(bestScore, scores.fuzzy || 60);
+      }
+    }
+    return bestScore;
+  }, 0);
+};
+
+const getSuggestionMatchScore = (query, suggestion) => {
+  const term = normalizeSearchText(query);
+  const label = normalizeSearchText(suggestion.label);
+  const subtitle = normalizeSearchText(suggestion.subtitle);
+  if (!term || !label) return 0;
+
+  const categoryScore = tokenMatchScore(term, subtitle, {
+    exact: 130,
+    prefix: 120,
+    contains: 105,
+    fuzzy: 90,
+  });
+  const titleScore = tokenMatchScore(term, label, {
+    exact: 100,
+    prefix: 92,
+    contains: 45,
+    fuzzy: 70,
+  });
+
+  if (label.startsWith(term)) return Math.max(110, categoryScore, titleScore);
+  return Math.max(categoryScore, titleScore);
+};
+
 const SearchBar = ({
   placeholder = "Search for products, brands and categories...",
   className = "",
@@ -209,15 +281,18 @@ const SearchBar = ({
     const seen = new Set();
 
     return [...apiSuggestions]
+      .map((suggestion) => ({
+        ...suggestion,
+        matchScore: getSuggestionMatchScore(query, suggestion),
+      }))
       .filter((suggestion) => {
         const label = suggestion.label || "";
-        const haystack = `${label} ${suggestion.subtitle}`.toLowerCase();
-        const isMatch = haystack.includes(query);
         const key = label.toLowerCase();
-        if (!label || !isMatch || seen.has(key)) return false;
+        if (!label || suggestion.matchScore <= 0 || seen.has(key)) return false;
         seen.add(key);
         return true;
       })
+      .sort((a, b) => b.matchScore - a.matchScore)
       .slice(0, autocompleteLimit);
   }, [
     autocompleteLimit,

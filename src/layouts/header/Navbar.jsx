@@ -171,7 +171,7 @@ export const Navbar = ({ icons: propIcons }) => {
           enableAutocomplete
           autocompleteLimit={8}
           autocompleteMinLength={1}
-          autocompleteDebounceMs={1000}
+          autocompleteDebounceMs={300}
           placeholder="Search for Products, Brands and Categories..."
           showButtonLabel={false}
           className="order-3 w-full min-w-0 lg:order-2 my-2 lg:my-0 lg:w-auto lg:max-w-[720px] lg:flex-1"

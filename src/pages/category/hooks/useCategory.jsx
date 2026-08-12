@@ -41,6 +41,9 @@ export default function useCategory() {
 
   const sentinelRef = useRef(null);
   const requestSequenceRef = useRef(0);
+  const didInitialProductsLoadRef = useRef(false);
+  const productLoadTimerRef = useRef(null);
+  const inFlightProductLoadKeyRef = useRef("");
   const productState = useSelector((s) => s.product);
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const catalogCategoryList =
@@ -276,6 +279,9 @@ export default function useCategory() {
   const loadProducts = useCallback(
     async ({ page = 1, append = false } = {}) => {
       const params = getParams(page);
+      const loadKey = JSON.stringify({ params, append });
+      if (!append && inFlightProductLoadKeyRef.current === loadKey) return [];
+      if (!append) inFlightProductLoadKeyRef.current = loadKey;
       const requestSequence = append ? requestSequenceRef.current : ++requestSequenceRef.current;
       if (append) setIsLoadingMore(true);
       try {
@@ -301,18 +307,37 @@ export default function useCategory() {
 
         setItems((prev) => (append ? [...prev, ...list] : list));
         setFirstLoadDone(true);
+        if (!append) didInitialProductsLoadRef.current = true;
       } finally {
         if (append) setIsLoadingMore(false);
+        if (!append && inFlightProductLoadKeyRef.current === loadKey) {
+          inFlightProductLoadKeyRef.current = "";
+        }
       }
     },
     [dispatch, getParams, searchParams, categoryKey],
   );
 
-  useEffect(() => {
-    loadProducts({ page: 1, append: false }).catch(() => {
-      setFirstLoadDone(true);
-      setIsLoadingMore(false);
+  const scrollToResultsTop = useCallback(() => {
+    if (typeof window === "undefined") return;
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
+  }, []);
+
+  useEffect(() => {
+    if (productLoadTimerRef.current) clearTimeout(productLoadTimerRef.current);
+    const delay = didInitialProductsLoadRef.current ? 300 : 0;
+    productLoadTimerRef.current = setTimeout(() => {
+      loadProducts({ page: 1, append: false }).catch(() => {
+        setFirstLoadDone(true);
+        setIsLoadingMore(false);
+      });
+    }, delay);
+
+    return () => {
+      if (productLoadTimerRef.current) clearTimeout(productLoadTimerRef.current);
+    };
   }, [loadProducts]);
 
   useEffect(() => {
@@ -351,6 +376,8 @@ export default function useCategory() {
     setSidebarCategory(null);
     setSubCategories([]);
     setCategoryError(null);
+    didInitialProductsLoadRef.current = false;
+    inFlightProductLoadKeyRef.current = "";
 
     dispatch(fetchCategoryByKey({ categoryKey }))
       .unwrap()
@@ -420,8 +447,9 @@ export default function useCategory() {
         next.delete("page");
         return next;
       });
+      scrollToResultsTop();
     },
-    [setSearchParams],
+    [scrollToResultsTop, setSearchParams],
   );
 
   const updateParams = useCallback(
@@ -435,8 +463,9 @@ export default function useCategory() {
         next.delete("page");
         return next;
       });
+      scrollToResultsTop();
     },
-    [setSearchParams],
+    [scrollToResultsTop, setSearchParams],
   );
 
   const handlePriceChange = useCallback(
@@ -450,8 +479,9 @@ export default function useCategory() {
         next.delete("page");
         return next;
       });
+      scrollToResultsTop();
     },
-    [setSearchParams],
+    [scrollToResultsTop, setSearchParams],
   );
 
   const removeFilter = useCallback(
@@ -479,13 +509,15 @@ export default function useCategory() {
         next.delete("page");
         return next;
       });
+      scrollToResultsTop();
     },
-    [navigate, setSearchParams],
+    [navigate, scrollToResultsTop, setSearchParams],
   );
 
   const handleClearFilters = useCallback(() => {
     setSearchParams(new URLSearchParams());
-  }, [setSearchParams]);
+    scrollToResultsTop();
+  }, [scrollToResultsTop, setSearchParams]);
 
   const categoryTitle = categoryData?.title || categoryData?.name || (categoryKey || "").replace(/-/g, " ");
   const sidebarCategoryTitle = sidebarCategory?.title || sidebarCategory?.name || categoryTitle;

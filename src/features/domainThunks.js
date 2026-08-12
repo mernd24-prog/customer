@@ -178,7 +178,7 @@ export const searchThunks = {
     url: endpoints.search.autocomplete,
     params: q,
     cache: true,
-    cacheTtl: 120000,
+    cacheTtl: 300000,
   }),
 };
 
