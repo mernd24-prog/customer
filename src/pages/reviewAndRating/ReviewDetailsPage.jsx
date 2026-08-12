@@ -11,41 +11,18 @@ import {
   markReviewHelpful,
 } from "../../features/review/reviewSlice";
 import {
-  getImageFallbackSrc,
-  getProductImage,
-  getProductMrp,
-  getProductPrice,
-  getProductTitle,
   getImageUrlFromValue,
 } from "../../utils/ecommerce";
+import {
+  sortReviews,
+  getUserDisplayName,
+  getProductDisplay,
+} from "./utils/reviewUtils";
 
 const LIMIT = 10;
 const STAR_VALUES = [5, 4, 3, 2, 1];
 
-function getReviewTime(review) {
-  const value = review?.createdAt || review?.updatedAt || review?.date;
-  const time = value ? new Date(value).getTime() : 0;
-  return Number.isFinite(time) ? time : 0;
-}
 
-function sortReviews(reviews, sort) {
-  return [...reviews].sort((a, b) => {
-    if (sort === "highest") {
-      return Number(b?.rating || 0) - Number(a?.rating || 0);
-    }
-    if (sort === "lowest") {
-      return Number(a?.rating || 0) - Number(b?.rating || 0);
-    }
-    if (sort === "helpful") {
-      return (
-        Number(b?.helpfulVotes ?? b?.helpful ?? 0) -
-        Number(a?.helpfulVotes ?? a?.helpful ?? 0)
-      );
-    }
-
-    return getReviewTime(b) - getReviewTime(a);
-  });
-}
 
 function StarRow({ rating, size = 14 }) {
   const filled = Math.round(Number(rating || 0));
@@ -210,18 +187,7 @@ function ReviewsHeader({ total, sort, onSort }) {
   );
 }
 
-function getUserDisplayName(user = {}) {
-  const first = user.profile?.firstName || user.firstName || "";
-  const last = user.profile?.lastName || user.lastName || "";
-  return (
-    [first, last].filter(Boolean).join(" ").trim() ||
-    user.fullName ||
-    user.displayName ||
-    user.name ||
-    user.email ||
-    ""
-  );
-}
+
 
 function ReviewCard({
   review,
@@ -461,32 +427,7 @@ function ReviewPagination({ page, totalPages, onPrev, onNext }) {
   );
 }
 
-function getProductDisplay(product) {
-  const title = getProductTitle(product, "Product");
 
-  const category =
-    product?.category?.name ||
-    (typeof product?.category === "string" ? product.category : "") ||
-    product?.subcategory?.name ||
-    "";
-
-  const price = getProductPrice(product) ?? product?.salePrice ?? "";
-  const mrp = getProductMrp(product) ?? product?.originalPrice ?? "";
-
-  const discount =
-    mrp && price && Number(mrp) > Number(price)
-      ? `${Math.round(((Number(mrp) - Number(price)) / Number(mrp)) * 100)}% Off`
-      : product?.discount || "";
-
-  return {
-    title,
-    category,
-    price,
-    mrp,
-    discount,
-    image: getProductImage(product) || getImageFallbackSrc(title, category),
-  };
-}
 
 export default function ReviewDetailsPage() {
   const { productId } = useParams();

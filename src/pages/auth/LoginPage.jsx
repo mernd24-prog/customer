@@ -23,41 +23,10 @@ import { notify } from "../../utils/notify";
 import { loginSchema } from "../../validations/validationSchemas";
 import { fetchCart, updateCart } from "../../features/cart/cartSlice";
 import { syncGuestCartWithServer } from "../../utils/ecommerce/cart";
+import { loadGoogleIdentityScript } from "./utils/authUtils";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
-const GOOGLE_SCRIPT_SRC = "https://accounts.google.com/gsi/client";
 
-let googleScriptPromise;
-
-function loadGoogleIdentityScript() {
-  if (window.google?.accounts?.id) {
-    return Promise.resolve();
-  }
-
-  if (!googleScriptPromise) {
-    googleScriptPromise = new Promise((resolve, reject) => {
-      const existingScript = document.querySelector(
-        `script[src="${GOOGLE_SCRIPT_SRC}"]`,
-      );
-
-      if (existingScript) {
-        existingScript.addEventListener("load", resolve, { once: true });
-        existingScript.addEventListener("error", reject, { once: true });
-        return;
-      }
-
-      const script = document.createElement("script");
-      script.src = GOOGLE_SCRIPT_SRC;
-      script.async = true;
-      script.defer = true;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.appendChild(script);
-    });
-  }
-
-  return googleScriptPromise;
-}
 
 export default function LoginPage() {
   const dispatch = useDispatch();

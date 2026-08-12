@@ -7,6 +7,7 @@ import {
   CollectionToolbar,
   OptionFilter,
   ProductResultsLayout,
+  ProductListingLayout,
   CheckboxListFilter,
   PriceRangeFilter,
   RatingFilter,
@@ -16,8 +17,18 @@ import { getPublicDealProducts } from "../../api/deals";
 import {
   applyImageFallback,
   buildRatingCountMap,
-  isProductInStock
+  isProductInStock,
+  getAvailabilityCounts,
 } from "../../utils/ecommerce";
+import {
+  parseMultiValue,
+  serializeMultiValue,
+  unwrapProducts,
+  getPagination,
+  getResponseFacets,
+  getFacetList,
+  normalizeFacetOption
+} from "../../utils/filterUtils";
 import bannerImage from "/image/png/ShoppingBanner.png";
 
 const SORT_OPTIONS = [
@@ -28,101 +39,7 @@ const SORT_OPTIONS = [
   { value: "newest", label: "Newest Deals" },
 ];
 
-function parseMultiValue(value) {
-  return String(value || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
 
-function serializeMultiValue(values) {
-  const uniqueValues = [
-    ...new Set(
-      (values || [])
-        .map(String)
-        .map((item) => item.trim())
-        .filter(Boolean),
-    ),
-  ];
-  return uniqueValues.length ? uniqueValues.join(",") : undefined;
-}
-
-const unwrapProducts = (response = {}) => {
-  const data = response?.data ?? response;
-  if (Array.isArray(data)) return data;
-  return data?.items || data?.products || data?.list || [];
-};
-
-const getPagination = (response = {}, fallback = {}) =>
-  response?.meta?.pagination ||
-  response?.pagination ||
-  response?.meta ||
-  fallback;
-
-const getResponseFacets = (response = {}) => {
-  const data = response?.data ?? response;
-  return (
-    data?.filters ||
-    data?.facets ||
-    data?.aggregations ||
-    response?.filters ||
-    response?.facets ||
-    response?.meta?.filters ||
-    response?.meta?.facets ||
-    {}
-  );
-};
-
-const getFacetList = (facets = {}, keys = []) => {
-  for (const key of keys) {
-    const value = facets?.[key];
-    if (Array.isArray(value)) return value;
-    if (Array.isArray(value?.items)) return value.items;
-    if (Array.isArray(value?.options)) return value.options;
-    if (value && typeof value === "object") {
-      return Object.entries(value).map(([entryKey, entryValue]) => ({
-        value: entryKey,
-        label: entryKey,
-        count:
-          typeof entryValue === "number"
-            ? entryValue
-            : entryValue?.count || entryValue?.doc_count,
-      }));
-    }
-  }
-  return [];
-};
-
-const normalizeFacetOption = (option = {}) => {
-  const value =
-    option.value ??
-    option.id ??
-    option._id ??
-    option.key ??
-    option.slug ??
-    option.categoryKey ??
-    option.category_id ??
-    option.brand_id ??
-    option.name ??
-    option.title;
-  const label =
-    option.label ??
-    option.name ??
-    option.title ??
-    option.brandName ??
-    option.categoryName ??
-    option.category_name ??
-    option.brand_name ??
-    value;
-
-  return value
-    ? {
-        value: String(value),
-        label: String(label),
-        count: option.count ?? option.doc_count ?? option.total,
-      }
-    : null;
-};
 
 export default function DealsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -154,31 +71,7 @@ export default function DealsPage() {
   );
 
   const availabilityCounts = useMemo(
-    () =>
-      dealFacets?.availability && typeof dealFacets.availability === "object"
-        ? {
-            inStock: Number(
-              dealFacets.availability.inStock ||
-                dealFacets.availability.in_stock ||
-                0,
-            ),
-            outOfStock: Number(
-              dealFacets.availability.outOfStock ||
-                dealFacets.availability.out_of_stock ||
-                0,
-            ),
-          }
-        : products.reduce(
-            (counts, product) => {
-              if (isProductInStock(product)) {
-                counts.inStock += 1;
-              } else {
-                counts.outOfStock += 1;
-              }
-              return counts;
-            },
-            { inStock: 0, outOfStock: 0 },
-          ),
+    () => getAvailabilityCounts(products, dealFacets),
     [dealFacets, products],
   );
 
@@ -516,126 +409,111 @@ export default function DealsPage() {
   const breadcrumbItems = [{ label: "Home", href: "/" }, { label: "Deals" }];
 
   return (
-    <>
-      <Seo
-        title="Deals | Sam Global"
-        description="Shop active deal products with special prices, deal badges, and limited-time offers."
-      />
-
-      <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
-        <div className="grid gap-0 h-[320px] sm:h-[380px] md:h-[371px] xl:h-[500px] lg:grid-cols-[52%_48%]">
-          {/* Mobile & Tablet Banner */}
-          <div className="relative lg:hidden h-full">
-            <img
-              src={bannerImage}
-              alt="Deals"
-              className="absolute inset-0 h-full w-full object-cover"
-              onError={(event) =>
-                applyImageFallback(event, "Deals", "category")
-              }
-            />
-            <div className="absolute inset-0 bg-black/30" />
-            <div className="absolute inset-0 flex items-center">
-              <div className="customer-container">
-                <div className="max-w-xl">
-                  <Breadcrumbs
-                    linkClassName="!text-white"
-                    currentClassName="!text-[#CE9F2D]"
-                    separatorClassName="!text-gold"
-                    items={breadcrumbItems}
-                    className="mb-5"
-                  />
-                  <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#9A6A00]">
-                    <BadgePercent size={15} /> Live Deals
+    <ProductListingLayout
+      pageTitle="Deals"
+      seoDescription="Shop active deal products with special prices, deal badges, and limited-time offers."
+      topContent={
+        <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
+          <div className="grid gap-0 h-[320px] sm:h-[380px] md:h-[371px] xl:h-[500px] lg:grid-cols-[52%_48%]">
+            {/* Mobile & Tablet Banner */}
+            <div className="relative lg:hidden h-full">
+              <img
+                src={bannerImage}
+                alt="Deals"
+                className="absolute inset-0 h-full w-full object-cover"
+                onError={(event) =>
+                  applyImageFallback(event, "Deals", "category")
+                }
+              />
+              <div className="absolute inset-0 bg-black/30" />
+              <div className="absolute inset-0 flex items-center">
+                <div className="customer-container">
+                  <div className="max-w-xl">
+                    <Breadcrumbs
+                      linkClassName="!text-white"
+                      currentClassName="!text-[#CE9F2D]"
+                      separatorClassName="!text-gold"
+                      items={breadcrumbItems}
+                      className="mb-5"
+                    />
+                    <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#9A6A00]">
+                      <BadgePercent size={15} /> Live Deals
+                    </div>
+                    <h1 className="text-h1 font-bold leading-tight text-white capitalize">
+                      Deal Products
+                    </h1>
+                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
+                      Products promoted by admin with special deal price, original
+                      price, deal badge, and limited-time availability.
+                    </p>
                   </div>
-                  <h1 className="text-h1 font-bold leading-tight text-white capitalize">
-                    Deal Products
-                  </h1>
-                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
-                    Products promoted by admin with special deal price, original
-                    price, deal badge, and limited-time availability.
-                  </p>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Desktop Content */}
-          <div className="hidden items-center pl-6 pr-10 lg:flex xl:pl-[max(3rem,calc((100vw-1559px)/2))]">
-            <div className="max-w-xl">
-              <Breadcrumbs
-                items={breadcrumbItems}
-                linkClassName="!text-white"
-                currentClassName="!text-[#CE9F2D]"
-                separatorClassName="!text-white"
-                className="mb-5"
-              />
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#9A6A00]">
-                <BadgePercent size={15} /> Live Deals
+            {/* Desktop Content */}
+            <div className="hidden items-center pl-6 pr-10 lg:flex xl:pl-[max(3rem,calc((100vw-1559px)/2))]">
+              <div className="max-w-xl">
+                <Breadcrumbs
+                  items={breadcrumbItems}
+                  linkClassName="!text-white"
+                  currentClassName="!text-[#CE9F2D]"
+                  separatorClassName="!text-white"
+                  className="mb-5"
+                />
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#9A6A00]">
+                  <BadgePercent size={15} /> Live Deals
+                </div>
+                <h1 className="text-h1 font-bold leading-tight text-white capitalize">
+                  Deal Products
+                </h1>
+                <p className="mt-3 max-w-xl font-normal leading-relaxed text-p text-white/80">
+                  Products promoted by admin with special deal price, original
+                  price, deal badge, and limited-time availability.
+                </p>
               </div>
-              <h1 className="text-h1 font-bold leading-tight text-white capitalize">
-                Deal Products
-              </h1>
-              <p className="mt-3 max-w-xl font-normal leading-relaxed text-p text-white/80">
-                Products promoted by admin with special deal price, original
-                price, deal badge, and limited-time availability.
-              </p>
+            </div>
+
+            {/* Desktop Image */}
+            <div className="relative hidden lg:block overflow-hidden -ml-px">
+              <img
+                src={bannerImage}
+                alt="Deals"
+                className="h-full w-full object-cover object-right"
+                onError={(event) =>
+                  applyImageFallback(event, "Deals", "category")
+                }
+              />
+              <div className="absolute inset-y-0 -left-px right-0 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/20 to-transparent" />
             </div>
           </div>
-
-          {/* Desktop Image */}
-          <div className="relative hidden lg:block overflow-hidden -ml-px">
-            <img
-              src={bannerImage}
-              alt="Deals"
-              className="h-full w-full object-cover object-right"
-              onError={(event) =>
-                applyImageFallback(event, "Deals", "category")
-              }
-            />
-            <div className="absolute inset-y-0 -left-px right-0 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/20 to-transparent" />
-          </div>
         </div>
-      </div>
-
-      <div className="my-3 md:my-6">
-        <div className=" flex flex-col gap-3 md:flex-row md:items-end md:justify-end">
-    
-          <CollectionToolbar
-            countText={`${pageInfo.total} deals`}
-            sortValue={searchParams.get("sort") || "ending_soon"}
-            sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
-            onSortChange={(value) => updateParam("sort", value)}
-            onOpenFilters={() => setSidebarOpen(true)}
-          />
-        </div>
-
-        <ProductResultsLayout
-          totalResults={pageInfo.total}
-          pageSize={pageSize}
-          filterSections={filterSections}
-          filters={activeFilters}
-          onRemoveFilter={removeFilter}
-          onClearFilters={clearFiltersAction}
-          sidebarOpen={sidebarOpen}
-          onCloseSidebar={() => setSidebarOpen(false)}
-          loading={loading && !products.length}
-          error={error}
-          empty={!products.length && !loading && firstLoadDone}
-          emptyTitle="No active deals found"
-          emptyText="Please check back later for new deal products."
-          products={products}
-          viewMode="grid"
-          onAddToCart={addToCart}
-          onWishlist={toggleWishlist}
-          isWishlisted={isWishlisted}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          showPagination={false}
-          loadingMore={loadingMore}
-          sentinelRef={sentinelRef}
-        />
-      </div>
-    </>
+      }
+      totalResults={pageInfo.total}
+      pageSize={pageSize}
+      sortValue={searchParams.get("sort") || "ending_soon"}
+      sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
+      onSortChange={(value) => updateParam("sort", value)}
+      sidebarOpen={sidebarOpen}
+      setSidebarOpen={setSidebarOpen}
+      filterSections={filterSections}
+      activeFilters={activeFilters}
+      onRemoveFilter={removeFilter}
+      onClearFilters={clearFiltersAction}
+      loading={loading && !products.length}
+      error={error}
+      empty={!products.length && !loading && firstLoadDone}
+      emptyTitle="No active deals found"
+      emptyText="Please check back later for new deal products."
+      products={products}
+      viewMode="grid"
+      onAddToCart={addToCart}
+      onWishlist={toggleWishlist}
+      isWishlisted={isWishlisted}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      loadingMore={loadingMore}
+      sentinelRef={sentinelRef}
+    />
   );
 }

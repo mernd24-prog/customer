@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/common/Seo";
-
+import ProductListingLayout from "../../components/ecommerce/ProductListingLayout";
 import {
   CheckboxListFilter,
   CollectionToolbar,
@@ -17,7 +17,11 @@ import {
   buildRatingCountMap,
   isProductInStock,
   getProductPrice,
+  getAvailabilityCounts,
+  calculateAbsolutePriceLimits,
 } from "../../utils/ecommerce";
+import { parseMultiValue, serializeMultiValue, getFacetList, normalizeFacetOption } from "../../utils/filterUtils";
+import { capitalizeFirst } from "../../utils/stringUtils";
 
 const SORT_OPTIONS = [
   { value: "", label: "Sort By" },
@@ -27,75 +31,7 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Top Rated" },
 ];
 
-function parseMultiValue(value) {
-  return String(value || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
 
-function serializeMultiValue(values) {
-  const uniqueValues = [
-    ...new Set(
-      (values || [])
-        .map(String)
-        .map((item) => item.trim())
-        .filter(Boolean),
-    ),
-  ];
-  return uniqueValues.length ? uniqueValues.join(",") : undefined;
-}
-
-const getFacetList = (facets = {}, keys = []) => {
-  for (const key of keys) {
-    const value = facets?.[key];
-    if (Array.isArray(value)) return value;
-    if (Array.isArray(value?.items)) return value.items;
-    if (Array.isArray(value?.options)) return value.options;
-    if (value && typeof value === "object") {
-      return Object.entries(value).map(([entryKey, entryValue]) => ({
-        value: entryKey,
-        label: entryKey,
-        count:
-          typeof entryValue === "number"
-            ? entryValue
-            : entryValue?.count || entryValue?.doc_count,
-      }));
-    }
-  }
-  return [];
-};
-
-const normalizeFacetOption = (option = {}) => {
-  const value =
-    option.value ??
-    option.id ??
-    option._id ??
-    option.key ??
-    option.slug ??
-    option.categoryKey ??
-    option.category_id ??
-    option.brand_id ??
-    option.name ??
-    option.title;
-  const label =
-    option.label ??
-    option.name ??
-    option.title ??
-    option.brandName ??
-    option.categoryName ??
-    option.category_name ??
-    option.brand_name ??
-    value;
-
-  return value
-    ? {
-        value: String(value),
-        label: String(label),
-        count: option.count ?? option.doc_count ?? option.total,
-      }
-    : null;
-};
 
 export default function ProductsPage() {
   const dispatch = useDispatch();
@@ -131,32 +67,7 @@ export default function ProductsPage() {
   const currentPage = pageInfo.page || 1;
   const pageSize = Number(searchParams.get("limit") || 12);
   const availabilityCounts = useMemo(
-    () =>
-      productFacets?.availability &&
-      typeof productFacets.availability === "object"
-        ? {
-            inStock: Number(
-              productFacets.availability.inStock ||
-                productFacets.availability.in_stock ||
-                0,
-            ),
-            outOfStock: Number(
-              productFacets.availability.outOfStock ||
-                productFacets.availability.out_of_stock ||
-                0,
-            ),
-          }
-        : products.reduce(
-            (counts, product) => {
-              if (isProductInStock(product)) {
-                counts.inStock += 1;
-              } else {
-                counts.outOfStock += 1;
-              }
-              return counts;
-            },
-            { inStock: 0, outOfStock: 0 },
-          ),
+    () => getAvailabilityCounts(products, productFacets),
     [productFacets, products],
   );
   const ratingCounts = useMemo(() => buildRatingCountMap(products), [products]);
@@ -227,26 +138,7 @@ export default function ProductsPage() {
   useEffect(() => {
     if (currentContextKey !== facetsContextKey) return;
 
-    let backendMin =
-      productFacets?.priceStats?.min ?? productFacets?.price?.min;
-    let backendMax =
-      productFacets?.priceStats?.max ?? productFacets?.price?.max;
-
-    let currentMin = backendMin;
-    let currentMax = backendMax;
-
-    if (currentMin == null || currentMax == null || currentMin >= currentMax) {
-      if (products.length > 0) {
-        const prices = products
-          .map((p) => Number(getProductPrice(p) || 0))
-          .filter((price) => price > 0);
-
-        if (prices.length > 0) {
-          currentMin = Math.min(...prices);
-          currentMax = Math.max(...prices);
-        }
-      }
-    }
+    const { min: currentMin, max: currentMax } = calculateAbsolutePriceLimits(productFacets, products);
 
     if (currentMin != null && currentMax != null) {
       setAbsolutePriceLimits((prev) => {
@@ -540,8 +432,7 @@ label: "Free Delivery",
       .filter(([key, value]) => key.startsWith("attr_") && value)
       .map(([key, value]) => {
         const attributeKey = key.replace(/^attr_/, "");
-        const label =
-          attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1);
+        const label = attributeFacets?.find((a) => a.key === attributeKey)?.label || capitalizeFirst(attributeKey);
         return {
           key,
           groupKey: key,
@@ -764,57 +655,44 @@ label: "Free Delivery",
   ].filter(Boolean);
 
   return (
-    <>
-      <Seo
-        title={`${pageTitle} | Sam Global`}
-        description="Browse products with filters, sort, and pagination."
-      />
-
-      <div className="my-3 md:my-6 ">
-        <div className="flex flex-wrap items-end justify-end gap-3">
-          <CollectionToolbar
-            sortValue={searchParams.get("sort") || ""}
-            sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
-            onSortChange={(value) => updateParam("sort", value)}
-            onOpenFilters={() => setSidebarOpen(true)}
-          />
-        </div>
-        <ProductResultsLayout
-          totalResults={pageInfo.total}
-          pageSize={pageSize}
-          filterSections={filterSections}
-          filters={activeFilters}
-          onRemoveFilter={removeFilter}
-          onClearFilters={clearFiltersAction}
-          sidebarOpen={sidebarOpen}
-          onCloseSidebar={() => setSidebarOpen(false)}
-          loading={
-            (productState.loading && !products.length) ||
-            (!firstLoadDone && !products.length)
-          }
-          refreshing={
-            productState.loading && products.length > 0 && !isLoadingMore
-          }
-          error={products.length === 0 ? productState.error : null}
-          empty={!products.length && !productState.loading && firstLoadDone}
-          emptyTitle={isSearchMode ? "No results found" : "No Products Found"}
-          emptyText={
-            isSearchMode
-              ? "Try different keywords or remove filters."
-              : "Try adjusting your filters or browse other categories."
-          }
-          products={products}
-          viewMode={viewMode}
-          onAddToCart={addToCart}
-          onWishlist={toggleWishlist}
-          isWishlisted={isWishlisted}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          showPagination={false}
-          loadingMore={isLoadingMore}
-          sentinelRef={sentinelRef}
-        />
-      </div>
-    </>
+    <ProductListingLayout
+      pageTitle={pageTitle}
+      seoDescription="Browse products with filters, sort, and pagination."
+      totalResults={pageInfo.total}
+      pageSize={pageSize}
+      sortValue={searchParams.get("sort") || ""}
+      sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
+      onSortChange={(value) => updateParam("sort", value)}
+      sidebarOpen={sidebarOpen}
+      setSidebarOpen={setSidebarOpen}
+      filterSections={filterSections}
+      activeFilters={activeFilters}
+      onRemoveFilter={removeFilter}
+      onClearFilters={clearFiltersAction}
+      loading={
+        (productState.loading && !products.length) ||
+        (!firstLoadDone && !products.length)
+      }
+      refreshing={
+        productState.loading && products.length > 0 && !isLoadingMore
+      }
+      error={products.length === 0 ? productState.error : null}
+      empty={!products.length && !productState.loading && firstLoadDone}
+      emptyTitle={isSearchMode ? "No results found" : "No Products Found"}
+      emptyText={
+        isSearchMode
+          ? "Try different keywords or remove filters."
+          : "Try adjusting your filters or browse other categories."
+      }
+      products={products}
+      viewMode={viewMode}
+      onAddToCart={addToCart}
+      onWishlist={toggleWishlist}
+      isWishlisted={isWishlisted}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      loadingMore={isLoadingMore}
+      sentinelRef={sentinelRef}
+    />
   );
 }

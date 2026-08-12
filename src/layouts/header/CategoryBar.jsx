@@ -167,18 +167,22 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   );
 
   const categories = useMemo(() => {
+    let result = [];
     const headerCategories = getCategoryListFromResponse(headerData);
-    if (headerCategories.length) return buildCategoryTree(headerCategories);
-    if (!catalogTree.length) return [];
+    if (headerCategories.length) {
+      result = buildCategoryTree(headerCategories);
+    } else if (catalogTree.length) {
+      result = catalogTree.map((cat) => ({
+        ...cat,
+        name: textOr(cat?.name, textOr(cat?.title, "Category")),
+        img: cat?.imageUrl || cat?.image || cat?.img,
+        slug: keyOr(cat?.slug, getCategoryKey(cat)),
+        categoryKey: getCategoryKey(cat),
+        children: asArray(cat?.children),
+      }));
+    }
 
-    return catalogTree.map((cat) => ({
-      ...cat,
-      name: textOr(cat?.name, textOr(cat?.title, "Category")),
-      img: cat?.imageUrl || cat?.image || cat?.img,
-      slug: keyOr(cat?.slug, getCategoryKey(cat)),
-      categoryKey: getCategoryKey(cat),
-      children: asArray(cat?.children),
-    }));
+    return result;
   }, [catalogTree, headerData]);
 
   const visibleCategories = useMemo(
@@ -203,13 +207,11 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     );
   }
 
-  // ── Full mode: visual icon bar (homepage) ───────────────────────────────
   return (
     <header
       ref={categoryBarRef}
       className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen h-[130px] sm:h-[150px] lg:h-[167px] flex items-center"
     >
-      {/* Split background images */}
       <div
         className="absolute inset-y-0 left-0 w-1/2 bg-cover bg-center bg-no-repeat z-0"
         style={{ backgroundImage: "url('/image/jpg/cat1.png')" }}
@@ -218,12 +220,8 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         className="absolute inset-y-0 right-0 w-1/2 bg-cover bg-center bg-no-repeat z-0"
         style={{ backgroundImage: "url('/image/jpg/cat.jpg')" }}
       />
-
-      {/* Golden overlay */}
       <div className="absolute inset-0 bg-[#CE9F2D33] z-10" />
-
-      {/* Category icon grid */}
-      <div className="w-full relative z-20">
+      <div className="w-full relative z-20">  
         <div
           className="hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:gap-5 lg:justify-center"
           style={{ justifyContent: "safe center" }}
@@ -282,8 +280,6 @@ export const CategoryBar = ({ headerData, compact = false }) => {
             icon={moreImage}
           />
         </div>
-
-        {/* Mega menu panel */}
         {activeMenu && (
           <div
             id="category-mega-menu"
@@ -295,8 +291,6 @@ export const CategoryBar = ({ headerData, compact = false }) => {
           </div>
         )}
       </div>
-
-      {/* Sticky overlay nav (pins to top when scrolled past) */}
       <nav
         aria-label="Sticky Category Navigation"
         style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}

@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Store } from "lucide-react";
 import Seo from "../../components/common/Seo";
 import {
-  BrandProductPage,
+  Breadcrumbs,
+  ProductListingLayout,
   CheckboxListFilter,
   OptionFilter,
   PriceRangeFilter,
@@ -18,6 +19,8 @@ import {
   getImageUrlFromValue,
   getProductPrice,
   isProductInStock,
+  getAvailabilityCounts,
+  calculateAbsolutePriceLimits,
 } from "../../utils/ecommerce";
 import {
   brandToSlug,
@@ -25,6 +28,8 @@ import {
   serializeMultiValue,
   slugToBrandName,
 } from "../../utils/ecommerce/brand";
+import { getBrandName, getBrandLogo } from "./utils/brandUtils";
+import { capitalizeFirst } from "../../utils/stringUtils";
 import LoadingSkeleton from "../../components/ecommerce/BrandLoadingSkeleton";
 import { useSearchParamHelper } from "../../hooks/useSearchParamsHelper";
 import { PAGE_SIZES, SORT_OPTIONS } from "../../data/constant";
@@ -62,19 +67,8 @@ export default function BrandPage() {
   const totalPages = pageInfo.totalPages || 1;
   const currentPage = pageInfo.page || 1;
   const availabilityCounts = useMemo(
-    () =>
-      items.reduce(
-        (counts, product) => {
-          if (isProductInStock(product)) {
-            counts.inStock += 1;
-          } else {
-            counts.outOfStock += 1;
-          }
-          return counts;
-        },
-        { inStock: 0, outOfStock: 0 },
-      ),
-    [items],
+    () => getAvailabilityCounts(items),
+    [items]
   );
   const ratingCounts = useMemo(() => buildRatingCountMap(items), [items]);
   const hasRatingFilter = useMemo(
@@ -112,26 +106,7 @@ export default function BrandPage() {
   useEffect(() => {
     if (currentContextKey !== facetsContextKey) return;
 
-    let backendMin =
-      productFacets?.priceStats?.min ?? productFacets?.price?.min;
-    let backendMax =
-      productFacets?.priceStats?.max ?? productFacets?.price?.max;
-
-    let currentMin = backendMin;
-    let currentMax = backendMax;
-
-    if (currentMin == null || currentMax == null || currentMin >= currentMax) {
-      if (items.length > 0) {
-        const prices = items
-          .map((p) => Number(getProductPrice(p) || 0))
-          .filter((price) => price > 0);
-
-        if (prices.length > 0) {
-          currentMin = Math.min(...prices);
-          currentMax = Math.max(...prices);
-        }
-      }
-    }
+    const { min: currentMin, max: currentMax } = calculateAbsolutePriceLimits(productFacets, items);
 
     if (currentMin != null && currentMax != null) {
       setAbsolutePriceLimits((prev) => {
@@ -201,11 +176,7 @@ export default function BrandPage() {
       });
   }, [decodedBrandSlug, dispatch]);
 
-  const brandName =
-    brand?.name ||
-    brand?.brandName ||
-    brand?.title ||
-    slugToBrandName(brandSlug);
+  const brandName = getBrandName(brand) || slugToBrandName(brandSlug);
 
   const getParams = useCallback(
     (pageOverride) => ({
@@ -217,11 +188,6 @@ export default function BrandPage() {
       inStock: searchParams.get("inStock") === "true" ? "true" : undefined,
       outOfStock:
         searchParams.get("outOfStock") === "true" ? "true" : undefined,
-      // expressDelivery:
-      //   searchParams.get("expressDelivery") === "true" ? "true" : undefined,
-      // freeDelivery:
-      //   searchParams.get("freeDelivery") === "true" ? "true" : undefined,
-
       page: pageOverride || 1,
       limit: Number(searchParams.get("limit") || 20),
     }),
@@ -368,9 +334,7 @@ export default function BrandPage() {
       .filter(([key, value]) => key.startsWith("attr_") && value)
       .map(([key, value]) => {
         const attributeKey = key.replace(/^attr_/, "");
-        const label =
-          attributeFacets?.find((a) => a.key === attributeKey)?.label ||
-          attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1);
+        const label = attributeFacets?.find((a) => a.key === attributeKey)?.label || capitalizeFirst(attributeKey);
         return {
           key,
           groupKey: key,
@@ -432,37 +396,7 @@ export default function BrandPage() {
         />
       ),
     })),
-    /*
-    {
-      key: "delivery",
-      title: "Delivery",
-      content: (
-        <CheckboxListFilter
-          name="delivery"
-          options={[
-            { value: "expressDelivery", label: "Express Delivery" },
-            { value: "freeDelivery", label: "Free Delivery" },
-          ]}
-          selected={["expressDelivery", "freeDelivery"].filter(
-            (value) => searchParams.get(value) === "true",
-          )}
-          onChange={(values) => {
-            const selectedValues = new Set(values);
-            updateParams([
-              [ 
-                "expressDelivery",
-                selectedValues.has("expressDelivery") ? "true" : undefined,
-              ],
-              [
-                "freeDelivery",
-                selectedValues.has("freeDelivery") ? "true" : undefined,
-              ],
-            ]);
-          }}
-        />
-      ),
-    },
-    */
+  
 
     availabilityCounts.inStock > 0 || availabilityCounts.outOfStock > 0
       ? {
@@ -537,65 +471,102 @@ export default function BrandPage() {
     );
   }
 
-  const brandImage =
-    getImageUrlFromValue(brand?.thumbnails) ||
-    getImageUrlFromValue(brand?.thumbnail) ||
-    getImageUrlFromValue(brand?.imageUrl) ||
-    getImageUrlFromValue(brand?.image) ||
-    getImageUrlFromValue(brand?.logoUrl) ||
-    getImageUrlFromValue(brand?.logo);
+  const brandImage = getBrandLogo(brand);
   const brandDescription = brand?.description || brand?.about;
   const showPageSizeSelector = Number(pageInfo.total || 0) >= 12;
 
   return (
-    <>
-      <Seo
-        title={`${brandName} Products | Sam Global`}
-        description={
-          brandDescription || `Shop ${brandName} products at Sam Global`
-        }
-      />
+    <ProductListingLayout
+      pageTitle={`${brandName} Products`}
+      seoDescription={
+        brandDescription || `Shop ${brandName} products at Sam Global`
+      }
+      topContent={
+        <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
+          <div className="grid  gap-0 h-[320px] sm:h-[380px] md:h-[371px] xl:h-[500px] lg:grid-cols-[52%_48%]">
+            <div className="relative lg:hidden h-full">
+              <div className="absolute inset-0 bg-black/30" />
+              <div className="absolute inset-0 flex items-center">
+                <div className="customer-container">
+                  <div className="max-w-xl">
+                    <Breadcrumbs
+                      linkClassName="!text-white"
+                      currentClassName="!text-[#CE9F2D]"
+                      separatorClassName="!text-gold"
+                      items={breadcrumbItems}
+                      className="mb-5"
+                    />
+                    <h1 className="text-h1 font-bold leading-tight text-white capitalize">
+                      {brandName}
+                    </h1>
+                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
+                      {brandDescription ||
+                        `Shop ${brandName} products at Sam Global`}
+                    </p>
+                    <p className="mt-3 text-sm text-white">
+                      {Number(pageInfo.total || 0).toLocaleString()} Products
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-      <BrandProductPage
-        brandName={brandName}
-        brandDescription={brandDescription}
-        brandImage={brandImage}
-        breadcrumbs={breadcrumbItems}
-        total={pageInfo.total}
-        shown={items.length}
-        sortValue={searchParams.get("sort") || ""}
-        sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
-        onSortChange={(value) => updateParam("sort", value)}
-        pageSizeValue={searchParams.get("limit") || "20"}
-        pageSizes={showPageSizeSelector ? PAGE_SIZES : []}
-        onPageSizeChange={(value) => updateParam("limit", value)}
-        onOpenFilters={() => setSidebarOpen(true)}
-        resultsProps={{
-          filterSections,
-          filters: activeFilters,
-          onRemoveFilter: removeFilter,
-          onClearFilters: clearFiltersAction,
-          sidebarOpen,
-          onCloseSidebar: () => setSidebarOpen(false),
-          loading:
-            (productState.loading && !items.length) ||
-            (!firstLoadDone && !items.length && !!brand),
-          refreshing:
-            productState.loading && items.length > 0 && !isLoadingMore,
-          error: productState.error,
-          empty: !items.length && !productState.loading && firstLoadDone,
-          emptyTitle: `No Products from ${brandName}`,
-          emptyText: "Try adjusting your filters or check back later.",
-          products: items,
-          onAddToCart: addToCart,
-          onWishlist: toggleWishlist,
-          isWishlisted,
-          currentPage,
-          totalPages,
-          onPageChange: setPage,
-          loadingMore: isLoadingMore,
-        }}
-      />
-    </>
+            <div className="hidden items-center pl-6 pr-10 lg:flex xl:pl-[max(3rem,calc((100vw-1559px)/2))]">
+              <div className="max-w-xl">
+                <Breadcrumbs
+                  items={breadcrumbItems}
+                  linkClassName="!text-white"
+                  currentClassName="!text-[#CE9F2D]"
+                  separatorClassName="!text-white"
+                  className="mb-5"
+                />
+                <h1 className="text-h1 font-bold leading-tight text-white capitalize">
+                  {brandName}
+                </h1>
+                <p className="mt-3 max-w-xl font-normal leading-relaxed text-p text-white/80">
+                  {brandDescription || `Shop ${brandName} products at Sam Global`}
+                </p>
+                <p className="mt-3 text-sm text-white">
+                  {Number(pageInfo.total || 0).toLocaleString()} Products
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      totalResults={pageInfo.total}
+      pageSize={searchParams.get("limit") || 20}
+      sortValue={searchParams.get("sort") || ""}
+      sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
+      onSortChange={(value) => updateParam("sort", value)}
+      countText={`Showing ${Number(items.length || 0).toLocaleString()} of ${Number(pageInfo.total || 0).toLocaleString()} products`}
+      pageSizeValue={searchParams.get("limit") || "20"}
+      pageSizes={showPageSizeSelector ? PAGE_SIZES : []}
+      onPageSizeChange={(value) => updateParam("limit", value)}
+      sidebarOpen={sidebarOpen}
+      setSidebarOpen={setSidebarOpen}
+      filterSections={filterSections}
+      activeFilters={activeFilters}
+      onRemoveFilter={removeFilter}
+      onClearFilters={clearFiltersAction}
+      loading={
+        (productState.loading && !items.length) ||
+        (!firstLoadDone && !items.length && !!brand)
+      }
+      refreshing={productState.loading && items.length > 0 && !isLoadingMore}
+      error={productState.error}
+      empty={!items.length && !productState.loading && firstLoadDone}
+      emptyTitle={`No Products from ${brandName}`}
+      emptyText="Try adjusting your filters or check back later."
+      products={items}
+      viewMode="grid"
+      onAddToCart={addToCart}
+      onWishlist={toggleWishlist}
+      isWishlisted={isWishlisted}
+      currentPage={currentPage}
+      totalPages={pageInfo.totalPages || 1}
+      loadingMore={isLoadingMore}
+      sentinelRef={sentinelRef}
+    />
   );
 }

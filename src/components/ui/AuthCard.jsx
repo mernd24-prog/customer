@@ -1,3 +1,5 @@
+import { LockIcon } from "../icons";
+
 export default function AuthCard({
   children,
   subtitle,
@@ -37,45 +39,9 @@ export default function AuthCard({
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <svg
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      aria-hidden="true"
-                    >
-                      <rect
-                        x="3"
-                        y="11"
-                        width="18"
-                        height="11"
-                        rx="2.5"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                      />
-                      <path
-                        d="M7 11V7a5 5 0 0110 0v4"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <circle cx="12" cy="16.5" r="1.4" fill="currentColor" />
-                      <line
-                        x1="12"
-                        y1="17.9"
-                        x2="12"
-                        y2="19.5"
-                        stroke="currentColor"
-                        strokeWidth="1.6"
-                        strokeLinecap="round"
-                      />
-                    </svg>
+                    <LockIcon size={22} />
                   )}
                 </div>
-
-               
-
                 {title && (
                   <h1 className="text-h4 font-semibold text-[#2E2E2E] pt-2 lg:py-3">
                     {title}

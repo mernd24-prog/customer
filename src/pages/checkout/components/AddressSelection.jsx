@@ -7,6 +7,7 @@ import Button from "../../../components/ui/Button";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
 } from "../../../components/address/AddressFormFields";
+import AddressEditModal from "../../../components/address/AddressEditModal";
 import { updateAddress, fetchMe } from "../../../features/user/userSlice";
 import {
   fetchCities,
@@ -20,37 +21,12 @@ import { normalizeDialCode } from "../../../lib/utils";
 import { addressSchema } from "../../../validations/validationSchemas";
 import { validatePostalCodeForCountry } from "../../../validations";
 import { scrollToFirstFormError } from "../../../utils/formErrors";
+import { fetchFullList } from "../utils/checkoutUtils";
 
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
 const addressLabels = ADDRESS_LABEL_OPTIONS;
 
-async function fetchFullList(dispatch, thunkAction, params = {}) {
-  const res = await dispatch(thunkAction({ params })).unwrap();
-  const total = res.meta?.total || 20;
-  const limit = res.meta?.limit || 20;
-  if (total > limit) {
-    const allRes = await dispatch(
-      thunkAction({ params: { ...params, limit: total } }),
-    ).unwrap();
-    return extractList(allRes);
-  }
-  return extractList(res);
-}
-
-const extractList = (response = {}) => {
-  const data = response?.data ?? response;
-  if (Array.isArray(data)) return data;
-  return (
-    data?.items ||
-    data?.states ||
-    data?.cities ||
-    data?.pincodes ||
-    data?.results ||
-    data?.list ||
-    []
-  );
-};
 
 const normalizeLabelValue = (value) => {
   const normalized = String(value || "").toLowerCase();
@@ -420,57 +396,24 @@ export default function AddressSelection({
 
 
 
-              {isEditing && (
-                <BaseModal onClose={cancelEdit} maxWidth="max-w-3xl">
-                  <div className="flex flex-col max-h-[85vh] rounded-[10px] bg-white p-4 sm:p-6">
-                    <div className="mb-4 flex items-center gap-2 text-lg font-bold text-ink">
-                      <Pencil size={24} className="text-gold" />
-                      Edit Address
-                    </div>
-                
-                    <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                      <div className="grid gap-4 pb-2">
-                        <AddressFormFields
-                          form={editForm}
-                          idPrefix={`checkout-edit-${addrId}`}
-                          countries={countries}
-                          states={states}
-                          cities={cities}
-                          postalCodes={postalCodes}
-                          dialCodes={editDialCodes}
-                          selectedCountry={editCountry}
-                          selectedState={editState}
-                          selectedCity={editCity}
-                          selectedPostalCode={editPostalCode}
-                          addressLabels={addressLabels}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={cancelEdit}
-                        className="w-full sm:w-auto"
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={editForm.handleSubmit(
-                          handleUpdate,
-                          handleInvalidEdit,
-                        )}
-                        loading={loading}
-                        className="w-full sm:w-auto"
-                      >
-                        Save Changes
-                      </Button>
-                    </div>
-                  </div>
-                </BaseModal>
-              )}
+              <AddressEditModal
+                isOpen={isEditing}
+                onClose={cancelEdit}
+                onSave={editForm.handleSubmit(handleUpdate, handleInvalidEdit)}
+                form={editForm}
+                idPrefix={`checkout-edit-${addrId}`}
+                loading={loading}
+                countries={countries}
+                states={states}
+                cities={cities}
+                postalCodes={postalCodes}
+                dialCodes={editDialCodes}
+                selectedCountry={editCountry}
+                selectedState={editState}
+                selectedCity={editCity}
+                selectedPostalCode={editPostalCode}
+                addressLabels={addressLabels}
+              />
             </div>
           );
         })}

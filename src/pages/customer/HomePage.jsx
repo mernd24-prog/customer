@@ -20,38 +20,7 @@ import { mothersDayData } from "../../data/special";
 import ShoppingMadeEasyBanner from "../../components/home/ShoppingBanner";
 import FeaturedProductsSection from "../../components/home/FeaturedProductsSection";
 
-import {
-  getProductImage as getVariantProductImage,
-  getProductMrp,
-  getProductPrice,
-} from "../../utils/ecommerce";
-
-const formatPrice = (product) => {
-  const price = Number(getProductPrice(product) || 0);
-  return `₹${price.toLocaleString("en-IN")}`;
-};
-
-const getProductLink = (product) => {
-  const slug = product?.slug || product?.id || product?._id;
-  return slug ? `/products/${slug}` : "/products";
-};
-
-const getProductImage = (product) =>
-  getVariantProductImage(product) || product?.image || product?.thumbnail || "";
-
-const toNewArrivalProduct = (product) => ({
-  id: String(product?._id || product?.id || ""),
-  title: product?.title || "",
-  image: getProductImage(product),
-  price: formatPrice(product),
-  oldPrice:
-    getProductMrp(product) || getProductPrice(product)
-      ? `₹${Number(getProductMrp(product) || getProductPrice(product) || 0).toLocaleString("en-IN")}`
-      : undefined,
-  rating: Number(product?.rating || 0).toFixed(1),
-  reviewsCount: product?.reviewCount || 0,
-  link: getProductLink(product),
-});
+import { toStandardProductCard as toNewArrivalProduct } from "../../utils/productUtils";
 
 const buildNewArrivalItems = (products) => {
   if (!products.length) return [];

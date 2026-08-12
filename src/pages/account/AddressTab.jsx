@@ -15,6 +15,8 @@ import Button from "../../components/ui/Button";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
 } from "../../components/address/AddressFormFields";
+import AddressEditModal from "../../components/address/AddressEditModal";
+import SharedAddressCard from "../../components/address/SharedAddressCard";
 import ConfirmModal from "../../components/common/overlay/ConfirmModal";
 import BaseModal from "../../components/common/overlay/BaseModal";
 import { useToastThunk } from "../../hooks/useToastThunk";
@@ -34,82 +36,8 @@ import {
   fetchCities,
   fetchZipCodes,
 } from "../../features/global/globalSlice";
+import { fetchFullList } from "../checkout/utils/checkoutUtils";
 
-async function fetchFullList(dispatch, thunkAction, params = {}) {
-  const res = await dispatch(thunkAction({ params })).unwrap();
-  const total = res.meta?.total || 20;
-  const limit = res.meta?.limit || 20;
-  if (total > limit) {
-    const allRes = await dispatch(
-      thunkAction({ params: { ...params, limit: total } }),
-    ).unwrap();
-    return allRes.data || allRes.list || allRes || [];
-  }
-  return res.data || res.list || res || [];
-}
-
-function AddressViewCard({ addr, addrId, startEdit, handleDelete }) {
-  return (
-    <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between gap-3 bg-[#CE9F2D33] px-4 py-5">
-        <p className="text-sm font-bold capitalize text-[#2E2E2E] lg:text-[18px] ">
-          {addr.label || "Address"}
-        </p>
-
-        {addr.isDefault && (
-          <span className="rounded-full bg-[#D4A428] px-2.5 py-1 text-[14px] font-semibold text-white">
-            Default Address
-          </span>
-        )}
-      </div>
-
-      <div className="flex flex-1 flex-col justify-between p-4">
-        <div>
-          <p className="text-h6 font-bold text-[#2E2E2E] ">
-            {addr.fullName || "—"}
-          </p>
-
-          {addr.phone && (
-            <p className="mt-5 flex items-center gap-2 text-sm font-medium text-[#2E2E2E] lg:text-[16px]">
-              <Phone className="size-6 shrink-0 text-[#D4A428]" />
-              <span>{addr.phone}</span>
-            </p>
-          )}
-
-          <p className="mt-3 flex items-start gap-2 text-sm font-medium text-[#2E2E2E] lg:text-[16px]">
-            <MapPin className="mt-0.5 size-6 shrink-0 text-[#D4A428]" />
-            <span>
-              {addr.line1}
-              {addr.line2 ? `, ${addr.line2}` : ""}, {addr.city}, {addr.state}{" "}
-              {addr.postalCode || addr.postal_code || ""},{" "}
-              {addr.country || "India"}
-            </span>
-          </p>
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-2 items-center lg:gap-5">
-          <button
-            type="button"
-            onClick={() => startEdit(addr)}
-            className="inline-flex  min-h-9 items-center justify-center gap-2 rounded-[6px] bg-[#D4A428] px-2 md:px-8 text-sm font-semibold text-white"
-          >
-            <Pencil className="size-4" />
-            Edit Address
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleDelete(addrId)}
-            className="inline-flex min-h-9 items-center gap-2 text-sm font-medium text-[#2E2E2E]"
-          >
-            <Trash2 className="size-4 text-red-500" />
-            Remove Address
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function AddressTab({ user }) {
   const dispatch = useDispatch();
@@ -168,11 +96,9 @@ export default function AddressTab({ user }) {
   const editCity = editForm.watch("city");
   const editPostalCode = editForm.watch("postalCode");
 
-  // Fetch initial countries and states
   useEffect(() => {
     fetchFullList(dispatch, fetchCountries).then((list) => {
       setCountries(list);
-      // Auto-select India if the add form still has no country or has the placeholder
       const currentCountry = addForm.getValues("country");
       if (!currentCountry || currentCountry === "") {
         const india = list.find(
@@ -556,67 +482,31 @@ export default function AddressTab({ user }) {
                       key={addrId}
                       className="w-full overflow-hidden rounded-[12px] border border-gold bg-white"
                     >
-                      <AddressViewCard
+                      <SharedAddressCard
                         addr={addr}
                         addrId={addrId}
                         startEdit={startEdit}
                         handleDelete={handleDelete}
                       />
 
-                      {isEditing && (
-                        <BaseModal onClose={cancelEdit} maxWidth="max-w-3xl">
-                          <form
-                            className="flex flex-col max-h-[85vh] rounded-[10px] bg-white p-4 sm:p-6"
-                            onSubmit={editForm.handleSubmit(
-                              handleUpdate,
-                              handleInvalidEdit,
-                            )}
-                            noValidate
-                          >
-                            <div className="mb-4 flex items-center gap-2 text-lg font-bold text-ink">
-                              <Pencil size={24} className="text-gold" />
-                              Edit Address
-                            </div>
-
-                            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                              <div className="grid gap-4 pb-2">
-                                <AddressFormFields
-                                  form={editForm}
-                                  idPrefix={`edit-${addrId}`}
-                                  countries={countries}
-                                  states={editStates}
-                                  cities={editCities}
-                                  postalCodes={editPostalCodes}
-                                  dialCodes={editDialCodes}
-                                  selectedCountry={editCountry}
-                                  selectedState={editState}
-                                  selectedCity={editCity}
-                                  selectedPostalCode={editPostalCode}
-                                  addressLabels={addressLabels}
-                                />
-                              </div>
-                            </div>
-
-                            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
-                              <Button
-                                type="button"
-                                variant="secondary"
-                                onClick={cancelEdit}
-                                className="w-full sm:w-auto"
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                type="submit"
-                                loading={loading}
-                                className="w-full sm:w-auto"
-                              >
-                                Save Changes
-                              </Button>
-                            </div>
-                          </form>
-                        </BaseModal>
-                      )}
+                      <AddressEditModal
+                        isOpen={isEditing}
+                        onClose={cancelEdit}
+                        onSave={editForm.handleSubmit(handleUpdate, handleInvalidEdit)}
+                        form={editForm}
+                        idPrefix={`edit-${addrId}`}
+                        loading={loading}
+                        countries={countries}
+                        states={editStates}
+                        cities={editCities}
+                        postalCodes={editPostalCodes}
+                        dialCodes={editDialCodes}
+                        selectedCountry={editCountry}
+                        selectedState={editState}
+                        selectedCity={editCity}
+                        selectedPostalCode={editPostalCode}
+                        addressLabels={addressLabels}
+                      />
                     </div>
                   );
                 },

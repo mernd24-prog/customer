@@ -1120,5 +1120,4 @@ export default function useCheckout() {
     handleSaveShippingAddressOnly,
     submit
   };
-
 }

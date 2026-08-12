@@ -1,11 +1,4 @@
-/**
- * StickyNavStrip.jsx
- * Reusable horizontal text-link navigation strip used in both:
- *   - The compact CategoryBar (non-homepage pages)
- *   - The sticky overlay that pins to the top when scrolling past the full CategoryBar
- *
- * Eliminates ~100 lines of duplication from CategoryBar.
- */
+
 import { Link } from "react-router-dom";
 import { keyOr, textOr } from "../../utils/content";
 import { buildCategorySlug } from "./categoryHelpers";

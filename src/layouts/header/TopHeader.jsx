@@ -6,13 +6,12 @@ import { LogOut } from "lucide-react";
 import { HeaderGoldButton } from "../../components/dynamicComponent/button/static";
 import HeaderDropdown from "./HeaderDropdown";
 import MenuDropdown from "./MenuDropdown";
-import SellDropdown from "./SellDropdown";
 
 import { logout } from "../../features/auth/authSlice";
 import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 
-import { DEFAULT_TOP_NAV_LINKS, DEFAULT_SELL_DROPDOWN } from "./constants";
+import { DEFAULT_TOP_NAV_LINKS } from "./constants";
 import { withIcons } from "./categoryHelpers";
 
 export const TopHeader = () => {
@@ -21,26 +20,9 @@ export const TopHeader = () => {
   const currentUser = useSelector((s) => s.auth.current);
 
   const { page: helpContactPage } = useCmsRecord("help-contact");
-  const { page: headerSellPage } = useCmsRecord("header-sell-dropdown");
-
-  const sellDropdownCms = getCmsPayload(headerSellPage, DEFAULT_SELL_DROPDOWN);
 
   const dropdowns = useMemo(
     () => [
-      /*
-      {
-        type: "sell",
-        label: "Sell",
-        path: "/seller/status",
-        data: {
-          ...DEFAULT_SELL_DROPDOWN,
-          ...sellDropdownCms,
-          features: withIcons(
-            sellDropdownCms?.features || DEFAULT_SELL_DROPDOWN.features,
-          ),
-        },
-      },
-      */
       {
         type: "more",
         label: "More",
@@ -59,13 +41,11 @@ export const TopHeader = () => {
         ]),
       },
     ],
-    [helpContactPage?.title, sellDropdownCms],
+    [helpContactPage?.title],
   );
 
   const renderDropdown = (dropdown) => {
     switch (dropdown.type) {
-      case "sell":
-        return <SellDropdown data={dropdown.data} />;
       case "menu":
       case "more":
         return <MenuDropdown title={dropdown.title} items={dropdown.items} />;

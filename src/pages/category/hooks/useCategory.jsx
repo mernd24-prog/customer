@@ -6,7 +6,12 @@ import { CheckboxListFilter, OptionFilter, PriceRangeFilter } from "../../../com
 import { useProductActions } from "../../../hooks/useProductActions";
 import { fetchProducts } from "../../../features/product/productSlice";
 import { fetchCategoryByKey, fetchCategories } from "../../../features/catalog/catalogSlice";
-import { isProductInStock, getProductPrice } from "../../../utils/ecommerce";
+import {
+  isProductInStock,
+  getProductPrice,
+  getAvailabilityCounts,
+  calculateAbsolutePriceLimits,
+} from "../../../utils/ecommerce";
 import { buildCategoryTree } from "../../../layouts/header/categoryHelpers";
 import {
   parseMultiValue,
@@ -16,6 +21,7 @@ import {
   getCategoryKey,
   getMatchingCategoryKeys,
 } from "../utils/categoryUtils";
+import { capitalizeFirst } from "../../../utils/stringUtils";
 
 export default function useCategory() {
   const { categoryKey } = useParams();
@@ -99,19 +105,8 @@ export default function useCategory() {
   }, [items, categoryKey, categoryTree]);
 
   const availabilityCounts = useMemo(
-    () =>
-      products.reduce(
-        (counts, product) => {
-          if (isProductInStock(product)) {
-            counts.inStock += 1;
-          } else {
-            counts.outOfStock += 1;
-          }
-          return counts;
-        },
-        { inStock: 0, outOfStock: 0 },
-      ),
-    [products],
+    () => getAvailabilityCounts(products, productFacets),
+    [products, productFacets]
   );
 
   const attributesContextKey = useMemo(() => {
@@ -207,22 +202,7 @@ export default function useCategory() {
   useEffect(() => {
     if (currentContextKey !== facetsContextKey) return;
 
-    let backendMin = productFacets?.priceStats?.min ?? productFacets?.price?.min;
-    let backendMax = productFacets?.priceStats?.max ?? productFacets?.price?.max;
-
-    let currentMin = backendMin;
-    let currentMax = backendMax;
-
-    if (currentMin == null || currentMax == null || currentMin >= currentMax) {
-      if (products.length > 0) {
-        const prices = products.map((p) => Number(getProductPrice(p) || 0)).filter((price) => price > 0);
-
-        if (prices.length > 0) {
-          currentMin = Math.min(...prices);
-          currentMax = Math.max(...prices);
-        }
-      }
-    }
+    const { min: currentMin, max: currentMax } = calculateAbsolutePriceLimits(productFacets, products);
 
     if (currentMin != null && currentMax != null) {
       setAbsolutePriceLimits((prev) => {
@@ -668,7 +648,7 @@ export default function useCategory() {
         })
         .map(([key, value]) => {
           const attributeKey = key.replace(/^attr_/, "");
-          const label = attributeLabelByKey.get(attributeKey) || attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1);
+          const label = attributeLabelByKey.get(attributeKey) || capitalizeFirst(attributeKey);
           return {
             key,
             groupKey: key,

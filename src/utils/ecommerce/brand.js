@@ -1,14 +1,4 @@
-export function parseMultiValue(value) {
-  return String(value || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-export function serializeMultiValue(values) {
-  const uniqueValues = [...new Set((values || []).map(String).map((item) => item.trim()).filter(Boolean))];
-  return uniqueValues.length ? uniqueValues.join(",") : undefined;
-}
+export { parseMultiValue, serializeMultiValue } from "../filterUtils";
 
 export function slugToBrandName(slug = "") {
   return decodeURIComponent(slug)

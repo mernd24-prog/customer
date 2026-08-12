@@ -3,69 +3,10 @@ import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../../lib/utils";
 import { AUTH_ROUTES } from "../../../features/auth/authRoutes";
+import { X } from "lucide-react";
 
-function LockIcon() {
-  return (
-    <svg
-      width="28"
-      height="28"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
-      <rect
-        x="3"
-        y="11"
-        width="18"
-        height="11"
-        rx="2.5"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
-      <path
-        d="M7 11V7a5 5 0 0110 0v4"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="12" cy="16.5" r="1.4" fill="currentColor" />
-      <line
-        x1="12"
-        y1="17.9"
-        x2="12"
-        y2="19.5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
+import { LockIcon } from "../../../components/icons";
 
-function CloseIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M11 3L3 11M3 3l8 8"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-/**
- * Global auth required modal.
- * Rendered via AuthModalProvider — do not use directly.
- */
 export default function AuthModal({ open, onClose }) {
   const navigate = useNavigate();
   const loginBtnRef = useRef(null);
@@ -160,7 +101,7 @@ export default function AuthModal({ open, onClose }) {
           )}
           aria-label="Close Login Prompt"
         >
-          <CloseIcon />
+          <X size={14} strokeWidth={1.8} />
         </button>
 
         {/* Body */}
@@ -176,7 +117,7 @@ export default function AuthModal({ open, onClose }) {
                   "0 0 0 8px rgba(214, 163, 35, 0.14), 0 0 0 14px rgba(214, 163, 35, 0.08)",
               }}
             >
-              <LockIcon />
+              <LockIcon size={28} />
             </div>
           </div>
 

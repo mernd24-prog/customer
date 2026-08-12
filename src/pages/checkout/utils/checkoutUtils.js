@@ -16,56 +16,9 @@ import {
   validatePostalCodeForCountry,
 } from "../../../validations";
 import { verifyPayment } from "../../../features/payment/paymentSlice";
+import { openRazorpayCheckout as baseOpenRazorpayCheckout } from "../../../utils/razorpay";
 
 export const getAddressId = (addr) => addr?._id || addr?.id || "";
-
-export const RAZORPAY_CHECKOUT_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
-export let razorpayScriptPromise;
-
-export const loadRazorpayCheckout = () => {
-  if (window.Razorpay) {
-    return Promise.resolve(window.Razorpay);
-  }
-
-  if (razorpayScriptPromise) {
-    return razorpayScriptPromise;
-  }
-
-  razorpayScriptPromise = new Promise((resolve, reject) => {
-    const existingScript = document.querySelector(
-      `script[src="${RAZORPAY_CHECKOUT_SCRIPT}"]`,
-    );
-
-    const handleLoad = () => {
-      if (window.Razorpay) {
-        resolve(window.Razorpay);
-      } else {
-        reject(new Error("Razorpay checkout could not be loaded."));
-      }
-    };
-
-    if (existingScript) {
-      existingScript.addEventListener("load", handleLoad, { once: true });
-      existingScript.addEventListener(
-        "error",
-        () => reject(new Error("Razorpay checkout could not be loaded.")),
-        { once: true },
-      );
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = RAZORPAY_CHECKOUT_SCRIPT;
-    script.async = true;
-    script.onload = handleLoad;
-    script.onerror = () =>
-      reject(new Error("Razorpay checkout could not be loaded."));
-    document.body.appendChild(script);
-  });
-
-  return razorpayScriptPromise;
-};
-
 export async function fetchFullList(dispatch, thunkAction, params = {}) {
   const res = await dispatch(thunkAction({ params })).unwrap();
   const total = res.meta?.total || 20;
@@ -282,9 +235,7 @@ export const getCartItemAttributes = (item = {}) =>
     item.attributes && typeof item.attributes === "object"
       ? item.attributes
       : {},
-  ).filter(
-    ([, value]) => value !== null && value !== undefined && value !== "",
-  );
+  ).filter(([, value]) => hasAmountValue(value));
 export const adaptCheckoutItem = (item = {}, index = 0, fullProduct = null) => {
   const product = fullProduct || getCartItemProduct(item);
   const productId = getProductId(product || item.productId || item.id);
@@ -315,13 +266,11 @@ export const adaptCheckoutItem = (item = {}, index = 0, fullProduct = null) => {
 };
 export const getOrderPayableAmount = (order = {}) => {
   const orderCandidates = [order, order?.order, order?.data].filter(Boolean);
-  for (const candidate of orderCandidates) {
-    const payable = asOptionalNumber(getOrderAmount(candidate, "payable"));
-    if (payable !== null) return payable;
-  }
-  for (const candidate of orderCandidates) {
-    const total = asOptionalNumber(getOrderAmount(candidate, "total"));
-    if (total !== null) return total;
+  for (const key of ["payable", "total"]) {
+    for (const candidate of orderCandidates) {
+      const amount = asOptionalNumber(getOrderAmount(candidate, key));
+      if (amount !== null) return amount;
+    }
   }
   return null;
 };
@@ -370,6 +319,16 @@ export const getCheckoutAmount = (payment = {}) => {
 };
 export const amountsMatch = (left, right) =>
   Math.round(Number(left || 0) * 100) === Math.round(Number(right || 0) * 100);
+
+const getSessionData = (key, fallback) => {
+  try {
+    const val = window.sessionStorage.getItem(key);
+    return val !== null ? JSON.parse(val) : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
 export const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
 export const SELECTED_CHECKOUT_STORAGE_KEY = "sam_global_selected_checkout_item_ids";
 export const CHECKOUT_CART_ITEM_IDS_STORAGE_KEY = "sam_global_checkout_cart_item_ids";
@@ -394,36 +353,16 @@ export const normalizeCartItemIds = (values = []) =>
     new Set(values.map((value) => normalizeCartItemId(value)).filter(Boolean)),
   );
 export const getBuyNowItems = () => {
-  try {
-    const parsed = JSON.parse(
-      window.sessionStorage.getItem(BUY_NOW_STORAGE_KEY) || "[]",
-    );
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+  const parsed = getSessionData(BUY_NOW_STORAGE_KEY, []);
+  return Array.isArray(parsed) ? parsed : [];
 };
 export const getSelectedCheckoutItemIds = () => {
-  try {
-    const storedValue = window.sessionStorage.getItem(
-      SELECTED_CHECKOUT_STORAGE_KEY,
-    );
-    if (storedValue === null) return null;
-    const parsed = JSON.parse(storedValue);
-    return Array.isArray(parsed) ? normalizeCartItemIds(parsed) : null;
-  } catch {
-    return null;
-  }
+  const parsed = getSessionData(SELECTED_CHECKOUT_STORAGE_KEY, null);
+  return Array.isArray(parsed) ? normalizeCartItemIds(parsed) : null;
 };
 export const getCompletedCheckout = () => {
-  try {
-    const parsed = JSON.parse(
-      window.sessionStorage.getItem(COMPLETED_CHECKOUT_STORAGE_KEY) || "null",
-    );
-    return parsed && typeof parsed === "object" ? parsed : null;
-  } catch {
-    return null;
-  }
+  const parsed = getSessionData(COMPLETED_CHECKOUT_STORAGE_KEY, null);
+  return parsed && typeof parsed === "object" ? parsed : null;
 };
 export const setCompletedCheckout = (orderId) => {
   if (!orderId) return;
@@ -464,15 +403,9 @@ export const getCheckoutFingerprint = ({
   });
 };
 export const getCheckoutIdempotencyBaseKey = (fingerprint) => {
-  try {
-    const stored = JSON.parse(
-      window.sessionStorage.getItem(CHECKOUT_IDEMPOTENCY_STORAGE_KEY) || "null",
-    );
-    if (stored?.fingerprint === fingerprint && stored?.key) {
-      return stored.key;
-    }
-  } catch {
-    // Ignore malformed session data and replace it below.
+  const stored = getSessionData(CHECKOUT_IDEMPOTENCY_STORAGE_KEY, null);
+  if (stored?.fingerprint === fingerprint && stored?.key) {
+    return stored.key;
   }
 
   const key = createCheckoutIdempotencyKey();
@@ -607,17 +540,23 @@ export const getClientDeliverabilityBlockers = (items = [], address = {}) => {
         };
       }
       if (mode === "regions") {
+        const regions = normalizeList(shipping.regions);
+        const states = normalizeList(shipping.states);
+        const cities = normalizeList(shipping.cities);
+
+        const checkInc = (list, val) =>
+          list.includes(String(val || "").trim().toLowerCase());
+
         const regionAllowed =
-          !normalizeList(shipping.regions).length ||
-          listIncludes(shipping.regions, pincode) ||
-          listIncludes(shipping.regions, address?.state) ||
-          listIncludes(shipping.regions, address?.city);
+          !regions.length ||
+          checkInc(regions, pincode) ||
+          checkInc(regions, address?.state) ||
+          checkInc(regions, address?.city);
         const stateAllowed =
-          !normalizeList(shipping.states).length ||
-          listIncludes(shipping.states, address?.state);
+          !states.length || checkInc(states, address?.state);
         const cityAllowed =
-          !normalizeList(shipping.cities).length ||
-          listIncludes(shipping.cities, address?.city);
+          !cities.length || checkInc(cities, address?.city);
+
         if (!regionAllowed || !stateAllowed || !cityAllowed) {
           return {
             title,
@@ -631,83 +570,5 @@ export const getClientDeliverabilityBlockers = (items = [], address = {}) => {
     .filter(Boolean);
 };
 
-export const openRazorpayCheckout = async ({
-  dispatch,
-  run,
-  order,
-  orderId,
-  payment,
-  user,
-}) => {
-  const checkout = payment?.checkout || {};
-  if (!checkout.keyId || !checkout.orderId || !checkout.amount) {
-    throw new Error("Razorpay checkout details are missing. Please try again.");
-  }
-
-  const Razorpay = await loadRazorpayCheckout();
-
-  return new Promise((resolve, reject) => {
-    let settled = false;
-    const settle = (callback, value) => {
-      if (settled) return;
-      settled = true;
-      callback(value);
-    };
-
-    const razorpay = new Razorpay({
-      key: checkout.keyId,
-      amount: checkout.amount,
-      currency: checkout.currency || payment.currency || "INR",
-      name: "Sam Global",
-      description: `Order ${order?.orderNumber || order?.order_number || orderId}`,
-      order_id: checkout.orderId,
-      prefill: {
-        name: user?.name || user?.fullName || "",
-        email: user?.email || "",
-        contact: user?.phone || user?.mobile || "",
-      },
-      notes: { orderId },
-      theme: { color: "#B48A3C" },
-      handler: async (response) => {
-        try {
-          const verifiedPayment = await run(
-            dispatch,
-            verifyPayment({
-              provider: "razorpay",
-              orderId,
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
-            }),
-            "Payment verified",
-          );
-          settle(resolve, verifiedPayment);
-        } catch (error) {
-          settle(reject, error);
-        }
-      },
-      modal: {
-        ondismiss: () =>
-          settle(
-            reject,
-            new Error(
-              "Payment was not completed. Your order is still pending payment.",
-            ),
-          ),
-      },
-    });
-
-    razorpay.on("payment.failed", (response) => {
-      settle(
-        reject,
-        new Error(
-          response?.error?.description ||
-            response?.error?.reason ||
-            "Payment failed. Please try again.",
-        ),
-      );
-    });
-
-    razorpay.open();
-  });
-};
+export const openRazorpayCheckout = (params) =>
+  baseOpenRazorpayCheckout({ ...params, verifyPayment });
