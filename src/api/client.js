@@ -108,6 +108,8 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const isRetriableReadError = (error) =>
   error?.code === "ECONNABORTED" ||
   error?.code === "ERR_NETWORK" ||
+  (error?.response?.status === 503 &&
+    ["DATABASE_UNAVAILABLE", "DATABASE_TIMEOUT"].includes(getAuthCode(error))) ||
   (!error?.response && Boolean(error?.request));
 
 const requestWithReadRetry = async (config) => {
@@ -123,7 +125,8 @@ const requestWithReadRetry = async (config) => {
       throw error;
     }
 
-    await wait(API_RETRY_DELAY_MS);
+    const retryAfterSeconds = Number(error?.response?.headers?.["retry-after"] || 0);
+    await wait(Math.max(API_RETRY_DELAY_MS, retryAfterSeconds * 1000));
     return api.request({ ...config, _retryRead: true });
   }
 };
