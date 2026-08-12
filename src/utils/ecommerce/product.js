@@ -1,5 +1,10 @@
+const getDefaultApiAssetBaseUrl = () => {
+  if (typeof window === "undefined") return "http://localhost:4000";
+  return `${window.location.protocol}//${window.location.hostname}:4000`;
+};
+
 const API_ASSET_BASE_URL = (
-  import.meta.env.VITE_API_BASE_URL || "http://45.195.90.183:4000"
+  import.meta.env.VITE_API_BASE_URL || getDefaultApiAssetBaseUrl()
 ).replace(/\/+$/, "");
 
 function normalizeImageUrl(url = "") {
