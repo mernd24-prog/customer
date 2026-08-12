@@ -1,8 +1,4 @@
-/**
- * Navbar.jsx
- * Main horizontal navigation bar: logo, search, utility icons,
- * cart badge, watchlist badge, and account avatar / login button.
- */
+
 import { Fragment, useEffect, useMemo, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -149,7 +145,7 @@ export const Navbar = ({ icons: propIcons }) => {
     <header className="customer-container w-full">
       <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4 lg:h-[90px] lg:flex-nowrap lg:gap-5">
         {/* Logo */}
-        <div className="order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
+        <div className="order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6 group relative">
           <Link to="/" aria-label="Sam Global Home">
             <img
               src="/image/png/logo.png"

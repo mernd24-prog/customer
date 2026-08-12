@@ -6,11 +6,7 @@ import {
 } from "../../../components/common";
 import { formatMoney } from "../../../utils/ecommerce";
 import ShowMoreText from "../../../utils/showMore";
-
-const capitalizeFirst = (str) => {
-  if (!str) return "";
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
+import { capitalizeFirst } from "../../../utils/stringUtils";
 
 export default function ReturnItemCard({
   title,

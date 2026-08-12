@@ -13,6 +13,7 @@ import CheckoutSummary from "./components/CheckoutSummary";
 import BaseModal from "../../components/common/overlay/BaseModal";
 import GuestOtpAuthModal from "../../components/common/overlay/GuestOtpAuthModal";
 import { CHECKOUT_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
+import { WarningIcon, CloseIcon } from "../../components/icons";
 
 export default function CheckoutPage() {
   const {
@@ -87,7 +88,7 @@ export default function CheckoutPage() {
                 <div className="flex w-full sm:max-w-[500px] md:max-w-[600px] rounded-lg border border-red-200 border-l-4 border-l-red-500 bg-[#FFF8F8] px-3 py-2.5 text-sm leading-tight text-red-700 text-left lg:max-w-[700px] lg:ml-auto relative shadow-[0_2px_10px_rgba(255,0,0,0.05)]">
                   <div className="flex items-start gap-2.5 pr-6">
                     <div className="mt-0.5 shrink-0 rounded-full border border-red-200 bg-white p-0.5 text-red-500">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+                      <WarningIcon size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
                       <span className="font-bold text-[14px] text-[#D12E2E]">Delivery Unavailable</span>
@@ -99,7 +100,7 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                   <button type="button" onClick={() => setIsQuoteErrorDismissed(true)} className="absolute right-2 top-2 p-1 text-red-400 hover:text-red-600 transition-colors">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                    <CloseIcon size={16} />
                   </button>
                 </div>
               )

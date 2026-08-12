@@ -15,8 +15,9 @@ import {
   PriceRangeFilter,
   ProductGrid,
   ProductFilterSidebar,
+  ProductListingLayout,
 } from "../../components/ecommerce";
-import { buildRatingCountMap, isProductInStock } from "../../utils/ecommerce";
+import { buildRatingCountMap, isProductInStock, getAvailabilityCounts } from "../../utils/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import {
   clearSearch,
@@ -24,6 +25,8 @@ import {
   searchCatalog,
 } from "../../features/search/searchSlice";
 import { sanitizeSearchQuery } from "../../validations";
+import { parseMultiValue, serializeMultiValue, flattenCategoryList } from "../../utils/filterUtils";
+import { capitalizeFirst } from "../../utils/stringUtils";
 
 const SORT_OPTIONS = [
   { value: "", label: "Sort By" },
@@ -33,41 +36,7 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Top Rated" },
 ];
 
-function parseMultiValue(value) {
-  return String(value || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
 
-function serializeMultiValue(values) {
-  const uniqueValues = [
-    ...new Set(
-      (values || [])
-        .map(String)
-        .map((item) => item.trim())
-        .filter(Boolean),
-    ),
-  ];
-  return uniqueValues.length ? uniqueValues.join(",") : undefined;
-}
-
-function flattenCategoryList(data) {
-  const source = Array.isArray(data)
-    ? data
-    : Array.isArray(data?.items)
-      ? data.items
-      : Array.isArray(data?.list)
-        ? data.list
-        : Array.isArray(data?.categories)
-          ? data.categories
-          : [];
-
-  return source.flatMap((category) => [
-    category,
-    ...flattenCategoryList(category?.children || category?.subCategories || []),
-  ]);
-}
 
 export default function SearchPage() {
   const dispatch = useDispatch();
@@ -85,25 +54,10 @@ export default function SearchPage() {
     () => (Array.isArray(searchState.hits) ? searchState.hits : []),
     [searchState.hits],
   );
-  const availabilityCounts = useMemo(() => {
-    if (facets.availability) {
-      return {
-        inStock: Number(facets.availability.inStock || 0),
-        outOfStock: Number(facets.availability.outOfStock || 0),
-      };
-    }
-    return hits.reduce(
-      (counts, product) => {
-        if (isProductInStock(product)) {
-          counts.inStock += 1;
-        } else {
-          counts.outOfStock += 1;
-        }
-        return counts;
-      },
-      { inStock: 0, outOfStock: 0 },
-    );
-  }, [facets.availability, hits]);
+  const availabilityCounts = useMemo(
+    () => getAvailabilityCounts(hits, facets),
+    [facets, hits]
+  );
   const ratingCounts = useMemo(() => buildRatingCountMap(hits), [hits]);
   const ratingOptions = useMemo(() => {
     if (Array.isArray(facets.ratings)) {
@@ -477,7 +431,7 @@ export default function SearchPage() {
       .filter(([key, value]) => key.startsWith("attr_") && value)
       .map(([key, value]) => {
         const attributeKey = key.replace(/^attr_/, "");
-        const label = attributeFacets?.find((a) => a.key === attributeKey)?.label || attributeKey.charAt(0).toUpperCase() + attributeKey.slice(1);
+        const label = attributeFacets?.find((a) => a.key === attributeKey)?.label || capitalizeFirst(attributeKey);
         return {
           key,
           groupKey: key,
@@ -864,110 +818,74 @@ export default function SearchPage() {
     },
   ].filter(Boolean);
 
-  return (
-    <>
-      <Seo
-        title={q ? `Search: "${q}" | Sam Global` : "Search | Sam Global"}
-        description="Search Products at Sam Global"
-      />
-
-      <div className="w-container py-6 sm:py-8">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            {(q || categoryValue) && (
-              <PageHeader
-                title={
-                  q
-                    ? `Results for "${q}"`
-                    : `Products in Category: "${categoryLabel}"`
-                }
-                className="mb-0"
-              />
-            )}
-
-            {meta.total != null && (
-              <p className=" text-sm text-muted">
-                {meta.total.toLocaleString()} Results
-              </p>
-            )}
-          </div>
-
-          <CollectionToolbar
-            sortValue={sort}
-            sortOptions={meta.total <= 1 ? [] : SORT_OPTIONS}
-            onSortChange={(value) => updateParam("sort", value)}
-            onOpenFilters={() => setSidebarOpen(true)}
-          />
-        </div>
-
-        <ActiveFilterChips
-          filters={activeFilters}
-          onRemove={removeFilter}
-          onClear={clearFiltersAction}
+  const topContent = (
+    <div>
+      {(q || categoryValue) && (
+        <PageHeader
+          title={
+            q
+              ? `Results for "${q}"`
+              : `Products in Category: "${categoryLabel}"`
+          }
+          className="mb-0"
         />
+      )}
 
-        <div className="flex gap-6">
-          <div className="hidden lg:block">
-            <ProductFilterSidebar
-              sections={filterSections}
-              onClearAll={clearFiltersAction}
-              loading={searchState.loading && filterSections.length === 0}
-            />
-          </div>
+      {meta.total != null && (
+        <p className=" text-sm text-muted">
+          {meta.total.toLocaleString()} Results
+        </p>
+      )}
+    </div>
+  );
 
-          <FilterDrawer
-            open={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-          >
-            <ProductFilterSidebar
-              sections={filterSections}
-              onClearAll={clearFiltersAction}
-              loading={searchState.loading && filterSections.length === 0}
-            />
-          </FilterDrawer>
+  return (
+    <ProductListingLayout
+      pageTitle={q ? `Search: "${q}"` : "Search"}
+      seoDescription="Search Products at Sam Global"
+      topContent={topContent}
+      totalResults={meta.total}
+      pageSize={limit}
+      sortValue={sort}
+      sortOptions={meta.total <= 1 ? [] : SORT_OPTIONS}
+      onSortChange={(value) => updateParam("sort", value)}
+      sidebarOpen={sidebarOpen}
+      setSidebarOpen={setSidebarOpen}
+      filterSections={filterSections}
+      activeFilters={activeFilters}
+      onRemoveFilter={removeFilter}
+      onClearFilters={clearFiltersAction}
+      loading={searchState.loading && !hits.length}
+      error={searchState.error}
+      empty={!hits.length && !searchState.loading}
+      emptyTitle="No results found"
+      emptyText={
+        q
+          ? `We couldn't find anything for "${q}". Try different keywords or remove some filters.`
+          : "We couldn't find any products in this category. Try selecting another category or removing some filters."
+      }
+      products={hits}
+      viewMode="grid"
+      onAddToCart={addToCart}
+      onWishlist={toggleWishlist}
+      isWishlisted={isWishlisted}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      loadingMore={false}
+    >
+      {!(q || categoryValue) ? (
+        <div className="state-box flex flex-col items-center py-20 text-center">
+          <Search size={48} className="mb-4 text-gray" />
 
-          <div className="min-w-0 flex-1">
-            {!(q || categoryValue) ? (
-              <div className="state-box flex flex-col items-center py-20 text-center">
-                <Search size={48} className="mb-4 text-gray" />
+          <p className=" text-[18px] font-semibold text-ink">
+            What Are You Looking for?
+          </p>
 
-                <p className=" text-[18px] font-semibold text-ink">
-                  What Are You Looking for?
-                </p>
-
-                <p className="mt-2  text-sm text-muted">
-                  Enter a Search Term Above to Find Products.
-                </p>
-              </div>
-            ) : (
-              <ApiState
-                loading={searchState.loading && !hits.length}
-                error={searchState.error}
-                empty={!hits.length && !searchState.loading}
-                emptyTitle="No results found"
-                emptyText={
-                  q
-                    ? `We couldn't find anything for "${q}". Try different keywords or remove some filters.`
-                    : "We couldn't find any products in this category. Try selecting another category or removing some filters."
-                }
-              >
-                <ProductGrid
-                  products={hits}
-                  onAddToCart={addToCart}
-                  onWishlist={toggleWishlist}
-                  isWishlisted={isWishlisted}
-                />
-
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setPage}
-                />
-              </ApiState>
-            )}
-          </div>
+          <p className="mt-2  text-sm text-muted">
+            Enter a Search Term Above to Find Products.
+          </p>
         </div>
-      </div>
-    </>
+      ) : null}
+    </ProductListingLayout>
   );
 }

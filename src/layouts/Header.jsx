@@ -550,43 +550,47 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   );
 
   const categories = useMemo(() => {
+    let result = [];
     const headerCategories = getCategoryListFromResponse(headerData);
-    if (headerCategories.length) return buildCategoryTree(headerCategories);
-    if (!catalogTree.length) return [];
-
-    const fullTree = buildCategoryTree(globalCategories) || [];
-    const findInTree = (nodes, key) => {
-      if (!Array.isArray(nodes)) return null;
-      for (const n of nodes) {
-        if (n.categoryKey === key) return n;
-        if (n.children && n.children.length > 0) {
-          const found = findInTree(n.children, key);
-          if (found) return found;
+    if (headerCategories.length) {
+      result = buildCategoryTree(headerCategories);
+    } else if (catalogTree.length) {
+      const fullTree = buildCategoryTree(globalCategories) || [];
+      const findInTree = (nodes, key) => {
+        if (!Array.isArray(nodes)) return null;
+        for (const n of nodes) {
+          if (n.categoryKey === key) return n;
+          if (n.children && n.children.length > 0) {
+            const found = findInTree(n.children, key);
+            if (found) return found;
+          }
         }
-      }
-      return null;
-    };
-
-    return catalogTree.map((cat) => {
-      const globalNode = findInTree(fullTree, cat.categoryKey);
-      const catChildren =
-        Array.isArray(globalNode?.children) && globalNode.children.length > 0
-          ? globalNode.children
-          : asArray(cat?.children);
-
-      return {
-        ...cat,
-        name: textOr(cat?.name, textOr(cat?.title, "Category")),
-        img: cat?.imageUrl || cat?.image || cat?.img,
-        slug: keyOr(cat?.slug, getCategoryKey(cat)),
-        categoryKey: getCategoryKey(cat),
-        children: catChildren,
+        return null;
       };
-    });
+
+      result = catalogTree.map((cat) => {
+        const globalNode = findInTree(fullTree, cat.categoryKey);
+        const catChildren =
+          Array.isArray(globalNode?.children) && globalNode.children.length > 0
+            ? globalNode.children
+            : asArray(cat?.children);
+
+        return {
+          ...cat,
+          name: textOr(cat?.name, textOr(cat?.title, "Category")),
+          img: cat?.imageUrl || cat?.image || cat?.img,
+          slug: keyOr(cat?.slug, getCategoryKey(cat)),
+          categoryKey: getCategoryKey(cat),
+          children: catChildren,
+        };
+      });
+    }
+
+    return result;
   }, [catalogTree, headerData, globalCategories]);
 
   const visibleCategories = useMemo(
-    () => asArray(categories).slice(0, 10),
+    () => asArray(categories).slice(0, 8),
     [categories],
   );
 

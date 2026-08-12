@@ -1,9 +1,55 @@
 import { getImageUrlFromValue } from "../../../utils/ecommerce";
+import {
+  getOrderId,
+  getOrderNumber,
+  getOrderItems,
+  getItemProduct,
+  getItemImage,
+  getOrderCurrency,
+  getAddressValue,
+  getItemUnitPrice,
+  getItemLineTotal,
+  idsMatch,
+  unwrapOrder,
+  getCustomerOrderAmount,
+  asNumber,
+  formatOrderDate,
+  formatOrderId,
+  getOrderProductTitle as getProductTitle,
+  getItemReturnPolicy,
+  getReturnForItem,
+  getReturnItemQuantity,
+  isReturnQuantityBlocking,
+  getReturnedQuantityForItem,
+  getReturnableQuantityForItem,
+  getCancelledQuantityForItem,
+} from "../../../utils/orderHelpers";
 
-export const getOrderId = (order) =>
-  order?.id || order?._id || order?.orderId || order?.order_id;
-export const getOrderNumber = (order) =>
-  order?.order_number || order?.orderNumber || getOrderId(order);
+export {
+  getOrderId,
+  getOrderNumber,
+  getOrderItems,
+  getItemProduct,
+  getItemImage,
+  getOrderCurrency,
+  getAddressValue,
+  getItemUnitPrice,
+  getItemLineTotal,
+  idsMatch,
+  unwrapOrder,
+  getCustomerOrderAmount,
+  asNumber,
+  formatOrderDate,
+  formatOrderId,
+  getProductTitle,
+  getItemReturnPolicy,
+  getReturnForItem,
+  getReturnItemQuantity,
+  isReturnQuantityBlocking,
+  getReturnedQuantityForItem,
+  getReturnableQuantityForItem,
+  getCancelledQuantityForItem,
+};
 export const getOrderStatus = (order) =>
   order?.status || order?.orderStatus || "unknown";
 export const getDeliveryStatus = (order) =>
@@ -49,16 +95,7 @@ export const canCancelOrder = (order) => {
     preHandoverDeliveryStatuses.includes(deliveryStatus)
   );
 };
-export const getOrderItems = (order) => {
-  const items =
-    order?.items ||
-    order?.orderItems ||
-    order?.order_items ||
-    order?.lineItems ||
-    order?.line_items ||
-    order?.products;
-  return Array.isArray(items) ? items : [];
-};
+
 export const isDeliveredOrderItem = (item = {}) =>
   Boolean(item.delivered_at || item.deliveredAt) ||
   ["delivered", "fulfilled", "completed"].includes(
@@ -94,10 +131,7 @@ export const hasDeliveredSellerPackage = (order = {}) => {
       sellerItems.length > 0 && sellerItems.every(isDeliveredOrderItem),
   );
 };
-export const getItemProduct = (item) =>
-  item?.productId && typeof item.productId === "object"
-    ? item.productId
-    : item?.product;
+
 
 export const getItemProductId = (item) => {
   const product = getItemProduct(item);
@@ -118,55 +152,9 @@ export const getItemProductPath = (item) => {
   return productId ? `/products/${productId}` : "";
 };
 
-export const getItemImage = (item) => {
-  const product = getItemProduct(item);
-  const candidateImages = [
-    item?.image,
-    item?.imageUrl,
-    item?.images,
-    item?.thumbnail,
-    item?.thumbnailUrl,
-    item?.product_image,
-    item?.productImage,
-    item?.product_image_url,
-    item?.productImageUrl,
-    item?.product_thumbnail,
-    item?.productThumbnail,
-    item?.variant?.image,
-    item?.variant?.images,
-    item?.variant?.imageUrl,
-    item?.variant?.thumbnail,
-    item?.variant?.thumbnailUrl,
-    product?.image,
-    product?.images,
-    product?.imageUrl,
-    product?.thumbnail,
-    product?.thumbnailUrl,
-  ];
 
-  for (const candidate of candidateImages) {
-    const url = getImageUrlFromValue(candidate);
-    if (url) return url;
-  }
-  return "";
-};
 
-export const getOrderCurrency = (order) => {
-  const firstItem = getOrderItems(order)[0];
-  const firstProduct = getItemProduct(firstItem);
-  return order?.currency || firstProduct?.currency || "INR";
-};
-export const getAddressValue = (address, camelKey, snakeKey = camelKey) =>
-  address?.[camelKey] || address?.[snakeKey];
 
-export const getProductTitle = (item) =>
-  getItemProduct(item)?.title ||
-  getItemProduct(item)?.name ||
-  item?.product_title ||
-  item?.productTitle ||
-  item?.title ||
-  item?.name ||
-  "Product";
 export const getItemAttributes = (item) => {
   const attributes =
     item?.attributes && typeof item.attributes === "object"
@@ -176,25 +164,7 @@ export const getItemAttributes = (item) => {
     ([, value]) => value !== null && value !== undefined && value !== "",
   );
 };
-export const getItemUnitPrice = (item) =>
-  item?.unit_price ??
-  item?.unitPrice ??
-  item?.sale_price ??
-  item?.salePrice ??
-  item?.price ??
-  item?.variant?.price ??
-  getItemProduct(item)?.salePrice ??
-  getItemProduct(item)?.sale_price ??
-  getItemProduct(item)?.price ??
-  0;
-export const getItemLineTotal = (item) =>
-  item?.line_total ??
-  item?.lineTotal ??
-  item?.total_price ??
-  item?.totalPrice ??
-  asNumber(getItemUnitPrice(item)) * asNumber(item?.quantity || 1);
 
-export const idsMatch = (left, right) => String(left || "") === String(right || "");
 export const getOrderCollection = (value) => {
   if (Array.isArray(value)) return value;
   if (Array.isArray(value?.orders)) return value.orders;
@@ -202,27 +172,7 @@ export const getOrderCollection = (value) => {
   if (Array.isArray(value?.data)) return value.data;
   return [];
 };
-export const unwrapOrder = (value) => {
-  const wrapper = value?.data?.order ? value.data : value;
-  const order = wrapper?.order || wrapper;
 
-  if (wrapper?.order && typeof wrapper.order === "object") {
-    return {
-      ...wrapper.order,
-      items: getOrderItems(wrapper.order).length
-        ? getOrderItems(wrapper.order)
-        : getOrderItems(wrapper),
-      amounts: wrapper.order.amounts || wrapper.amounts,
-      shipping_address:
-        wrapper.order.shipping_address || wrapper.shipping_address,
-      shippingAddress: wrapper.order.shippingAddress || wrapper.shippingAddress,
-      tax_breakup: wrapper.order.tax_breakup || wrapper.tax_breakup,
-      taxBreakup: wrapper.order.taxBreakup || wrapper.taxBreakup,
-    };
-  }
-
-  return order;
-};
 export const getMatchingOrder = ({ current, entities, orders, orderId }) => {
   const currentOrder = unwrapOrder(current);
   if (idsMatch(getOrderId(currentOrder), orderId)) return currentOrder;
@@ -287,55 +237,7 @@ export const getAmount = (order, key) => {
 
   return undefined;
 };
-export const getCustomerOrderAmount = (order) => {
-  const subtotal = getAmount(order, "subtotal") ?? getItemsTotal(order);
-  const discount = getAmount(order, "discount") ?? 0;
-  const walletDiscount = getAmount(order, "walletDiscount") ?? 0;
-  const shipping = getAmount(order, "shipping") ?? 0;
-  const platformFee = getAmount(order, "platformFee") ?? 0;
-  const taxPayable =
-    order?.summary?.taxPayableAmount ??
-    order?.summary?.tax_payable_amount ??
-    order?.taxBreakup?.taxPayableAmount ??
-    order?.tax_breakup?.tax_payable_amount ??
-    0;
-  const codCharge =
-    order?.summary?.codChargeAmount ??
-    order?.summary?.cod_charge_amount ??
-    order?.amounts?.codChargeAmount ??
-    order?.amounts?.cod_charge_amount ??
-    0;
-  const calculatedAmount = Number(
-    Math.max(
-      0,
-      asNumber(subtotal) -
-        asNumber(discount) +
-        asNumber(shipping) +
-        asNumber(platformFee) +
-        asNumber(taxPayable) +
-        asNumber(codCharge) -
-        asNumber(walletDiscount),
-    ).toFixed(2),
-  );
 
-  if (order?.summary?.customerPayableAmount !== undefined) {
-    const payableAmount = asNumber(order.summary.customerPayableAmount);
-    return payableAmount > 0 || calculatedAmount <= 0
-      ? payableAmount
-      : calculatedAmount;
-  }
-  if (order?.summary?.customerTotalAmount !== undefined) {
-    const payableAmount = Math.max(
-      0,
-      asNumber(order.summary.customerTotalAmount) -
-        asNumber(order.summary.walletDiscountAmount),
-    );
-    return payableAmount > 0 || calculatedAmount <= 0
-      ? payableAmount
-      : calculatedAmount;
-  }
-  return calculatedAmount;
-};
 export const getTaxIncludedAmount = (order, taxBreakup = {}) =>
   asNumber(
     order?.summary?.taxIncludedAmount ??
@@ -401,17 +303,7 @@ export const splitInclusivePlatformFee = (fee, taxAmount, taxRate = 18) => {
     platformFeeTax: Number((gross - platformFeeBase).toFixed(2)),
   };
 };
-export const formatOrderDate = (value) =>
-  value
-    ? new Date(value).toLocaleString("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : "";
-export const formatOrderId = (id = "") => String(id).slice(0, 8).toUpperCase();
+
 export const getApiOrderId = (order) => String(getOrderNumber(order) || "").trim();
 export const normalizeOrderSearchText = (value = "") =>
   String(value)
@@ -427,10 +319,6 @@ export const getPaymentMethod = (order) => {
     order?.paymentProvider ||
     "N/A"
   );
-};
-export const asNumber = (value) => {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : 0;
 };
 export const STATUS_LABELS = {
   initiated: "Order Confirmed",
@@ -626,5 +514,14 @@ export const resolveOrderItemDisplayStatus = (
     shipment?.status ||
     fallbackStatus ||
     "processing"
+  );
+};
+
+export const getOrderCardImage = (item) => {
+  return (
+    getImageUrlFromValue(getItemImage(item)) ||
+    getImageUrlFromValue(getItemProduct(item)?.image) ||
+    getImageUrlFromValue(getItemProduct(item)?.imageUrl) ||
+    getImageUrlFromValue(getItemProduct(item)?.thumbnail)
   );
 };

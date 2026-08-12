@@ -1,4 +1,5 @@
 import ShowMoreText from "../../../utils/showMore";
+import { CheckIcon } from "../../../components/icons";
 
 export default function ReturnTrackingCard({
   steps: customSteps,
@@ -29,20 +30,7 @@ export default function ReturnTrackingCard({
                 } h-7 w-7 text-[12px] sm:h-8 sm:w-8 sm:text-[13px] lg:h-[30px] lg:w-[30px] lg:text-[16px]`}
               >
                 {step.completed ? (
-                  <svg
-                    viewBox="0 0 11 8"
-                    className="h-[8px] w-[11px]"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M1 4L4 7L10 1"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <CheckIcon className="h-[8px] w-[11px]" />
                 ) : (
                   index + 1
                 )}

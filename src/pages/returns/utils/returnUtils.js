@@ -1,4 +1,20 @@
 import { getImageUrlFromValue } from "../../../utils/ecommerce";
+export {
+  getOrderItemVariantSku as getItemVariantSku,
+  getOrderItemVariantId as getItemVariantId,
+  getOrderItemId as getItemId,
+  getReturnItemProductId,
+  getReturnItemVariantId,
+  getReturnItemVariantSku,
+  returnItemMatchesOrderItem,
+  getItemReturnPolicy,
+  getReturnForItem,
+  getReturnItemQuantity,
+  isReturnQuantityBlocking,
+  getReturnedQuantityForItem,
+  getCancelledQuantityForItem,
+  getReturnableQuantityForItem,
+} from "../../orders/utils/orderUtils";
 
 export const RETURN_REASONS = [
   { value: "defective", label: "Defective / damaged" },
@@ -289,155 +305,6 @@ export const getItemImage = (item) => {
     if (url) return url;
   }
   return "";
-};
-export const getItemVariantSku = (item) => item?.variant_sku || item?.variantSku || "";
-export const getItemVariantId = (item) =>
-  item?.variant_id ||
-  item?.variantId ||
-  item?.variant?._id ||
-  item?.variant?.id ||
-  "";
-export const getItemId = (item) =>
-  item?.id || item?._id || item?.orderItemId || item?.order_item_id || "";
-export const getReturnItemProductId = (returnItem = {}) =>
-  returnItem.productId ||
-  returnItem.product_id ||
-  returnItem.product?._id ||
-  returnItem.product?.id ||
-  "";
-export const getReturnItemVariantId = (returnItem = {}) =>
-  returnItem.variantId ||
-  returnItem.variant_id ||
-  returnItem.variant?._id ||
-  returnItem.variant?.id ||
-  "";
-export const getReturnItemVariantSku = (returnItem = {}) =>
-  returnItem.variantSku ||
-  returnItem.variant_sku ||
-  returnItem.sku ||
-  returnItem.productSku ||
-  returnItem.product_sku ||
-  "";
-export const returnItemMatchesOrderItem = (returnItem = {}, item = {}) => {
-  const itemId = String(getItemId(item) || "");
-  const returnOrderItemId = String(
-    returnItem.orderItemId ||
-      returnItem.order_item_id ||
-      returnItem.itemId ||
-      returnItem.item_id ||
-      returnItem.orderLineItemId ||
-      returnItem.order_line_item_id ||
-      "",
-  );
-  if (itemId && returnOrderItemId) return returnOrderItemId === itemId;
-
-  const productId = String(getItemProductId(item) || "");
-  const returnProductId = String(getReturnItemProductId(returnItem) || "");
-  if (!productId || !returnProductId || productId !== returnProductId)
-    return false;
-
-  const variantId = String(getItemVariantId(item) || "");
-  const returnVariantId = String(getReturnItemVariantId(returnItem) || "");
-  if (variantId || returnVariantId) return variantId === returnVariantId;
-
-  const variantSku = String(getItemVariantSku(item) || "");
-  const returnVariantSku = String(getReturnItemVariantSku(returnItem) || "");
-  if (variantSku || returnVariantSku) return variantSku === returnVariantSku;
-
-  return true;
-};
-export const getItemReturnPolicy = (item = {}) => {
-  const snapshot = item.product_snapshot || item.productSnapshot || {};
-  const storedPolicy =
-    item.return_policy_snapshot || item.returnPolicySnapshot || {};
-  const policy =
-    snapshot.returnPolicy ||
-    snapshot.return_policy ||
-    snapshot.commercialPolicy?.returnPolicy ||
-    storedPolicy;
-  return {
-    returnable: policy.returnable ?? policy.eligible ?? true,
-    days: Number(
-      policy.returnWindowDays || policy.windowDays || policy.days || 0,
-    ),
-    requiresImages: Boolean(policy.requiresImages || policy.requires_images),
-    inspectionRequired: policy.inspectionRequired ?? policy.requiresQc ?? true,
-    eligibleUntil:
-      item.return_eligible_until ||
-      item.returnEligibleUntil ||
-      policy.eligibleUntil ||
-      null,
-  };
-};
-export const getReturnForItem = (returns = [], item = {}) => {
-  return returns.find((returnRequest) =>
-    (returnRequest.items || []).some((returnItem) =>
-      returnItemMatchesOrderItem(returnItem, item),
-    ),
-  );
-};
-export const getReturnItemQuantity = (returnItem = {}) =>
-  asNumber(
-    returnItem.receivedQuantity ??
-      returnItem.received_quantity ??
-      returnItem.approvedQuantity ??
-      returnItem.approved_quantity ??
-      returnItem.requestedQuantity ??
-      returnItem.requested_quantity ??
-      returnItem.quantity ??
-      0,
-  );
-export const isReturnQuantityBlocking = (returnRequest = {}) => {
-  const status = String(returnRequest.status || "").toLowerCase();
-  const refundStatus = String(
-    returnRequest.refund?.status ||
-      returnRequest.refundStatus ||
-      returnRequest.refund_status ||
-      "",
-  ).toLowerCase();
-  if (["rejected", "qc_failure_upheld"].includes(status)) return false;
-  if (
-    status === "closed" &&
-    !["completed", "not_required"].includes(refundStatus)
-  )
-    return false;
-  return true;
-};
-export const getReturnedQuantityForItem = (returns = [], item = {}) => {
-  return returns.reduce((sum, returnRequest) => {
-    if (!isReturnQuantityBlocking(returnRequest)) return sum;
-    const matchingItems = (returnRequest.items || []).filter((returnItem) =>
-      returnItemMatchesOrderItem(returnItem, item),
-    );
-    return (
-      sum +
-      matchingItems.reduce(
-        (itemSum, returnItem) => itemSum + getReturnItemQuantity(returnItem),
-        0,
-      )
-    );
-  }, 0);
-};
-export const getCancelledQuantityForItem = (item = {}) =>
-  Math.max(
-    0,
-    asNumber(
-      item.cancelled_quantity ??
-        item.cancelledQuantity ??
-        item.cancellation_snapshot?.cancelledQuantity ??
-        item.cancellationSnapshot?.cancelledQuantity ??
-        0,
-    ),
-  );
-export const getReturnableQuantityForItem = (returns = [], item = {}) => {
-  const projectedQuantity = item.returnable_quantity ?? item.returnableQuantity;
-  const cancellationAdjustedQuantity = projectedQuantity !== undefined && projectedQuantity !== null
-    ? asNumber(projectedQuantity)
-    : getItemQuantity(item) - getCancelledQuantityForItem(item);
-  return Math.max(
-    0,
-    cancellationAdjustedQuantity - getReturnedQuantityForItem(returns, item),
-  );
 };
 export const isDeliveredStatus = (status) =>
   ["delivered", "fulfilled", "completed"].includes(

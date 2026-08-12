@@ -126,6 +126,114 @@ export const getOrderItemColor = (item) => {
   return found?.[1] || item?.color || item?.selectedColor || "N/A";
 };
 
+export const getItemReturnPolicy = (item = {}) => {
+  const snapshot = item.product_snapshot || item.productSnapshot || {};
+  const policy =
+    item.return_policy_snapshot ||
+    item.returnPolicySnapshot ||
+    snapshot.returnPolicy ||
+    snapshot.return_policy ||
+    snapshot.commercialPolicy?.returnPolicy ||
+    {};
+  return {
+    returnable: item.returnable ?? policy.returnable ?? policy.eligible ?? true,
+    days: Number(
+      item.return_window_days ??
+        policy.returnWindowDays ??
+        policy.windowDays ??
+        policy.days ??
+        0,
+    ),
+    eligibleUntil:
+      item.return_eligible_until ||
+      item.returnEligibleUntil ||
+      policy.eligibleUntil ||
+      null,
+  };
+};
+
+export const getReturnForItem = (returns = [], item = {}) => {
+  return returns.find((returnRequest) =>
+    (returnRequest.items || []).some((returnItem) =>
+      idsMatch(
+        returnItem.orderItemId || returnItem.order_item_id,
+        item.id || item._id
+      ),
+    ),
+  );
+};
+
+export const getReturnItemQuantity = (returnItem = {}) =>
+  asNumber(
+    returnItem.receivedQuantity ??
+      returnItem.received_quantity ??
+      returnItem.approvedQuantity ??
+      returnItem.approved_quantity ??
+      returnItem.requestedQuantity ??
+      returnItem.requested_quantity ??
+      returnItem.quantity ??
+      0,
+  );
+
+export const isReturnQuantityBlocking = (returnRequest = {}) => {
+  const status = String(returnRequest.status || "").toLowerCase();
+  const refundStatus = String(
+    returnRequest.refund?.status ||
+      returnRequest.refundStatus ||
+      returnRequest.refund_status ||
+      "",
+  ).toLowerCase();
+  if (["rejected", "qc_failure_upheld"].includes(status)) return false;
+  if (
+    status === "closed" &&
+    !["completed", "not_required"].includes(refundStatus)
+  )
+    return false;
+  return true;
+};
+
+export const getReturnedQuantityForItem = (returns = [], item = {}) => {
+  return returns.reduce((sum, returnRequest) => {
+    if (!isReturnQuantityBlocking(returnRequest)) return sum;
+    const matchingItems = (returnRequest.items || []).filter((returnItem) =>
+      idsMatch(
+        returnItem.orderItemId || returnItem.order_item_id,
+        item.id || item._id
+      ),
+    );
+    return (
+      sum +
+      matchingItems.reduce(
+        (itemSum, returnItem) => itemSum + getReturnItemQuantity(returnItem),
+        0,
+      )
+    );
+  }, 0);
+};
+
+export const getCancelledQuantityForItem = (item = {}) =>
+  Math.max(
+    0,
+    asNumber(
+      item.cancelled_quantity ??
+        item.cancelledQuantity ??
+        item.cancellation_snapshot?.cancelledQuantity ??
+        item.cancellationSnapshot?.cancelledQuantity ??
+        0,
+    ),
+  );
+
+export const getReturnableQuantityForItem = (returns = [], item = {}) => {
+  const projectedQuantity = item.returnable_quantity ?? item.returnableQuantity;
+  const cancellationAdjustedQuantity = projectedQuantity !== undefined && projectedQuantity !== null
+    ? asNumber(projectedQuantity)
+    : asNumber(item?.quantity || 1) - getCancelledQuantityForItem(item);
+  return Math.max(
+    0,
+    cancellationAdjustedQuantity - getReturnedQuantityForItem(returns, item),
+  );
+};
+
 export const getOrderItemLineTotal = (item) => {
   const unitPrice =
     item?.unit_price ??

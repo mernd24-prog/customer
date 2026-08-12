@@ -6,12 +6,7 @@ import { useCmsRecord } from "../../hooks/useCmsRecord";
 
 import PolicyHeader from "../../components/policy/PolicyHeader";
 import PolicySection from "../../components/policy/PolicySection";
-
-function cleanPolicyText(value = "") {
-  return String(value || "")
-    .replace(/^\s*:\s*/, "")
-    .trim();
-}
+import { cleanPolicyText } from "./utils/policyUtils";
 
 const getPolicyPayload = (page) =>
   page?.metadata?.data ||

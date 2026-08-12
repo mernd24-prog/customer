@@ -1,23 +1,50 @@
 import { getImageUrlFromValue } from "../../../utils/ecommerce";
 
-export function parseMultiValue(value) {
-  return String(value || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
+export function getCategoryListFromResponse(data) {
+  if (Array.isArray(data)) return data;
+  if (!data || typeof data !== "object") return [];
+  if (Array.isArray(data?.items)) return data.items;
+  if (Array.isArray(data?.list)) return data.list;
+  if (Array.isArray(data?.categories)) return data.categories;
+  if (data?.category && typeof data.category === "object")
+    return [data.category];
+  if (data?.data) return getCategoryListFromResponse(data.data);
+  if (data?.categoryKey || data?.title) return [data];
+  return [];
 }
 
-export function serializeMultiValue(values) {
-  const uniqueValues = [
-    ...new Set(
-      (values || [])
-        .map(String)
-        .map((item) => item.trim())
-        .filter(Boolean),
-    ),
-  ];
-  return uniqueValues.length ? uniqueValues.join(",") : undefined;
+export function paginationFromPayload(payload, fallbackCount = 0, currentPage = 1, pageSize = 20) {
+  const data = payload?.data ?? payload;
+  const meta =
+    payload?.meta?.pagination || payload?.meta || data?.pagination || {};
+  const total = Number(
+    meta.total ||
+      meta.totalItems ||
+      meta.count ||
+      data?.total ||
+      data?.count ||
+      fallbackCount,
+  );
+  const totalPages = Number(
+    meta.totalPages ||
+      meta.pages ||
+      data?.totalPages ||
+      data?.pages ||
+      Math.max(1, Math.ceil(total / pageSize)),
+  );
+  const page = Number(
+    meta.page || meta.currentPage || data?.page || currentPage,
+  );
+
+  return {
+    page,
+    totalPages,
+    total,
+    hasMore: page < totalPages,
+  };
 }
+
+export { parseMultiValue, serializeMultiValue } from "../../../utils/filterUtils";
 
 export function normalizeFacetValue(value = "") {
   return String(value).trim().toLowerCase();
@@ -124,3 +151,52 @@ export function getMatchingCategoryKeys(targetCats, categoryTree) {
   findAndAdd(categoryTree);
   return keys;
 }
+
+export function normalizeCategory(category = {}) {
+  const routeKey = getCategoryKey(category);
+  const displayName = getCategoryLabel(category);
+  const imageUrl = getImageUrlFromValue(category.imageUrl);
+  const bannerUrl = getImageUrlFromValue(category.bannerUrl);
+  const iconUrl = getImageUrlFromValue(category.iconUrl);
+
+  return {
+    id: category._id || category.id || routeKey,
+    categoryKey: category.categoryKey || routeKey,
+    displayName,
+    imageUrl,
+    bannerUrl,
+    iconUrl,
+    displayImage:
+      imageUrl || bannerUrl || iconUrl || getCategoryImage(category),
+    routeKey,
+    parentKey: category.parentKey,
+    level: category.level,
+    active: category.active,
+    sortOrder: category.sortOrder,
+    productCount: getCategoryCount(category),
+  };
+}
+
+export function getRootCategories(list = []) {
+  const categories = getCategoryListFromResponse(list);
+  const byKey = new Map();
+  const sortByOrder = (a, b) =>
+    Number(a?.sortOrder ?? 0) - Number(b?.sortOrder ?? 0);
+
+  categories.forEach((category) => {
+    const normalized = normalizeCategory(category);
+    if (!normalized.routeKey || !normalized.displayName) return;
+    byKey.set(normalized.routeKey, normalized);
+  });
+
+  return Array.from(byKey.values())
+    .filter(
+      (category) =>
+        category.parentKey === null ||
+        category.parentKey === undefined ||
+        !byKey.has(category.parentKey) ||
+        Number(category.level || 0) === 0,
+    )
+    .sort(sortByOrder);
+}
+

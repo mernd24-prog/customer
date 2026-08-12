@@ -13,34 +13,7 @@ import {
   getDeliveryDateRange,
   formatOrderDate,
 } from "../../utils/orderHelpers";
-
-
-// function OrderDetailSectionCard({
-//   title,
-//   children,
-//   className = "",
-//   headerClassName = "",
-//   titleClassName = "",
-//   borderClassName = "",
-//   bodyClassName = "",
-// }) {
-//   return (
-//     <section
-//       className={`overflow-hidden border bg-white ${borderClassName} ${className}`.trim()}
-//     >
-//       <div
-//         className={`flex items-center border-b border-[#CE9F2D66] ${headerClassName}`.trim()}
-//       >
-//         <h2
-//           className={`text-h5 font-bold text-[#1B1D60] ${titleClassName}`.trim()}
-//         >
-//           {title}
-//         </h2>
-//       </div>
-//       <div className={bodyClassName}>{children}</div>
-//     </section>
-//   );
-// }
+import { FailedIcon } from "../../components/icons";
 
 export function PaymentResultPage({ failed = false }) {
   const dispatch = useDispatch();
@@ -90,19 +63,7 @@ export function PaymentResultPage({ failed = false }) {
         <div className="bg-[linear-gradient(135deg,#FFF6F6_0%,#FFFFFF_100%)] px-6 py-8 text-center sm:px-10">
           <div className="flex flex-col items-center justify-center gap-5">
             <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-500">
-              <svg
-                className="h-10 w-10"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <FailedIcon className="h-10 w-10" />
             </div>
             <div className="flex flex-col items-center">
               <h1 className="text-[32px] font-bold leading-tight text-[#3E4093]">

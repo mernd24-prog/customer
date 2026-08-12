@@ -95,7 +95,8 @@ getOrderId,
   getSellerGroupKey,
   getOrderItemSellerGroupKey,
   findShipmentForOrderItem,
-  resolveOrderItemDisplayStatus
+  resolveOrderItemDisplayStatus,
+  getOrderCardImage
 } from "../utils/orderUtils";
 
 function OrderListStatusBadge({ status }) {
@@ -122,15 +123,6 @@ function OrderListItemStatusSummary({ statuses = [] }) {
     <span className="mt-2 inline-flex min-w-[110px] justify-center rounded-full bg-[#1B1D60] px-3 py-2 text-xs font-bold capitalize text-white md:mt-0">
       Mixed item status
     </span>
-  );
-}
-
-function getOrderCardImage(item) {
-  return (
-    getImageUrlFromValue(getItemImage(item)) ||
-    getImageUrlFromValue(getItemProduct(item)?.image) ||
-    getImageUrlFromValue(getItemProduct(item)?.imageUrl) ||
-    getImageUrlFromValue(getItemProduct(item)?.thumbnail)
   );
 }
 

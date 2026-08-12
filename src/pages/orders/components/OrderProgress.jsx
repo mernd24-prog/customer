@@ -2,9 +2,9 @@ import {
   ORDER_STEPS,
   REFUND_STEPS,
   RETURN_STEPS,
-  TRACKING_LABELS,
 } from "../../../data/orderPage";
 import vectorImage from "/image/png/SuccessVector .png";
+import { InfoCircleIcon } from "../../../components/icons";
 
 const normalizeProgressStatus = (status) => {
   if (status === "partially_delivered") {
@@ -404,19 +404,7 @@ function OrderProgress({
         !isDeliveryFailed &&
         PROGRESS_MESSAGES[normalizeProgressStatus(activeStatus)] && (
           <div className="mx-3 mb-3 flex items-center gap-3 rounded-lg bg-[#F8F9FA] px-4 py-3">
-            <svg
-              className="h-5 w-5 shrink-0 text-[#83858C]"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+            <InfoCircleIcon className="h-5 w-5 shrink-0 text-[#83858C]" />
             <p className="text-sm font-medium text-[#333333]">
               {PROGRESS_MESSAGES[normalizeProgressStatus(activeStatus)]}
             </p>

@@ -11,25 +11,9 @@ import { otpAuth } from "../../../features/auth/authSlice";
 import { fetchCart, updateCart } from "../../../features/cart/cartSlice";
 import { syncGuestCartWithServer } from "../../../utils/ecommerce/cart";
 import { notify } from "../../../utils/notify";
+import { X } from "lucide-react";
 
-function CloseIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M11 3L3 11M3 3l8 8"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
+
 
 export default function GuestOtpAuthModal({
   open,
@@ -250,7 +234,7 @@ export default function GuestOtpAuthModal({
           )}
           aria-label="Close"
         >
-          <CloseIcon />
+          <X size={14} strokeWidth={1.8} />
         </button>
 
         <div className="bg-[#F7F8FC]">
