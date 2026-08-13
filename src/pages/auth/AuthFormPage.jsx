@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import {
   loginUser,

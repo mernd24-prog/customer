@@ -1,5 +1,5 @@
 import { Download } from "lucide-react";
-import Button from "../../../components/ui/Button";
+import Button from "../../../components/ui/buttons/Button";
 
 export default function OrderDocuments({
   downloadableDocuments,

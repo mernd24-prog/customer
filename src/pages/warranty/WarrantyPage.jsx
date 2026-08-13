@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { ShieldCheck } from "lucide-react";
 
-import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
-import BrandButton from "../../components/ui/BrandButton";
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
+import BrandButton from "../../components/ui/buttons/Button";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import {
   fetchWarrantyById,

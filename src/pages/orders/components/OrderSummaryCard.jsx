@@ -7,7 +7,7 @@ import { formatMoney } from "../../../utils/ecommerce";
 import { notify } from "../../../utils/notify";
 import { OrderListItemStatusSummary } from "./OrderListStatusBadge";
 import { COMPACT_STATUS_BADGE } from "../../../data/orderPage";
-import { getOrderId, getOrderStatus, hasDeliveredSellerPackage, getOrderItems, getSellerGroupKey, findShipmentForOrderItem, resolveOrderItemDisplayStatus, isDeliveredOrderItem, getOrderCurrency, getCustomerOrderAmount, getPaymentMethod, formatOrderDate, getOrderCardImage, getProductTitle, humanize, getOrderItemId } from "../utils/orderUtils";
+import { getOrderId, getOrderStatus, hasDeliveredSellerPackage, getOrderItems, getSellerGroupKey, findShipmentForOrderItem, resolveOrderItemDisplayStatus, isDeliveredOrderItem, getOrderCurrency, getCustomerOrderAmount, getPaymentMethod, formatOrderDate, getOrderCardImage, getProductTitle, humanize, getOrderItemId } from "../../../utils/pages/orderUtils";
 
 export function OrderSummaryCard({ order }) {
   const id = getOrderId(order);
@@ -73,9 +73,6 @@ export function OrderSummaryCard({ order }) {
         console.error("Failed to copy order ID:", err);
       });
   };
-
-
-
 
   return (
     <article className="overflow-hidden rounded-xl  border border-[#E7D9B8]  bg-[#FFFCF6]">

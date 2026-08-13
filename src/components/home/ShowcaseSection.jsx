@@ -1,4 +1,4 @@
-import { SkeletonLoader } from "../../components/common/skeleton";
+import { SkeletonLoader } from "../../components/ui/skeleton";
 import SectionContainer from "../../components/ui/SectionContainer";
 import TopDealCard from "../../components/ui/TopDealCard";
 import { asArray, keyOr } from "../../utils/content";

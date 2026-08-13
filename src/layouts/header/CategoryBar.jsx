@@ -5,7 +5,7 @@ import { ShoppingBag } from "lucide-react";
 
 import moreImage from "/image/png/MoreImage.png";
 import ImageSkeleton from "../../components/ui/Image";
-import { CategoryMoreButton } from "../../components/dynamicComponent/button/static";
+import { CategoryMoreButton } from "../../components/ui/button/static";
 import { CategoryMegaMenu } from "../../components/ecommerce";
 import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
@@ -16,7 +16,7 @@ import {
   CATEGORY_MENU_CLOSE_DELAY_MS,
   HEADER_HEIGHT_VAR,
   DEFAULT_FASHION_MENU,
-} from "./constants";
+} from "../../constants/header.constant";
 import {
   buildCategorySlug,
   buildCategoryTree,

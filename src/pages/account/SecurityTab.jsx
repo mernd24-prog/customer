@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyRound } from "lucide-react";
 import FormField from "../../components/ui/FormField";
-import Button from "../../components/ui/Button";
+import Button from "../../components/ui/buttons/Button";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { changePassword } from "../../features/auth/authSlice";
 import { securitySchema } from "../../validations/validationSchemas";

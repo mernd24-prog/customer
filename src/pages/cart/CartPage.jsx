@@ -1,17 +1,17 @@
-import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
-import { SkeletonLoader } from "../../components/common/skeleton";
-import { EmptyState } from "../../components/common";
-import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
-import CartItemCard from "../../components/cart/CartItemCard";
-import BrandButton from "../../components/ui/BrandButton";
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
+import { SkeletonLoader } from "../../components/ui/skeleton";
+import { EmptyState } from "../../components/ui";
+import StickySidebarLayout from "../../components/ui/layout/StickySidebarLayout";
+import CartItemCard from "./components/CartItemCard";
+import BrandButton from "../../components/ui/buttons/Button";
 import { Breadcrumbs, ProductCard } from "../../components/ecommerce";
-import { ConfirmModal } from "../../components/common";
-import GuestOtpAuthModal from "../../components/common/overlay/GuestOtpAuthModal";
+import { ConfirmModal } from "../../components/ui";
+import GuestOtpAuthModal from "../../components/ui/overlay/GuestOtpAuthModal";
 import OrderPaymentSummary from "../orders/components/OrderPaymentSummary";
-import { OutlineSmallButton } from "../../components/dynamicComponent/button/static";
+import { OutlineSmallButton } from "../../components/ui/button/static";
 import { FaAngleRight } from "react-icons/fa6";
-import { CART_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
+import { CART_PAGE_SKELETON } from "../../components/ui/skeleton/layouts";
 import { formatMoney, toNum } from "../../utils/ecommerce/money";
 import { normalizeCartItemId, cartLineKey, buildSavedProductView } from "../../utils/ecommerce/cart";
 import { getProductId } from "../../utils/ecommerce";
@@ -19,7 +19,7 @@ import {
   BUY_NOW_STORAGE_KEY,
   SELECTED_CHECKOUT_STORAGE_KEY,
 } from "../../constants";
-import { adaptItemForCard } from "./utils/cartUtils";
+import { adaptItemForCard } from "../../utils/pages/cartUtils";
 import useCart from "./hooks/useCart";
 
 export default function CartPage() {

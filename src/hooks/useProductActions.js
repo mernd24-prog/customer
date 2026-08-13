@@ -5,7 +5,7 @@ import { setGuestCart, updateCart } from "../features/cart/cartSlice";
 import { openAddedToCartModal } from "../features/cart/cartUiSlice";
 import { addProductToCartPayload, getProductId, writeGuestCart, wishlistPayload } from "../utils/ecommerce";
 import { useToastThunk } from "./useToastThunk";
-import { useAuthModal } from "../context/AuthModalContext";
+import { useAuthModal } from "../features/auth/AuthModalContext";
 import { store } from "../app/store";
 
 export function useProductActions() {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useAuthModal } from "../../context/AuthModalContext";
+import { useAuthModal } from "../../features/auth/AuthModalContext";
 import { ChevronRight, ThumbsUp } from "lucide-react";
 import CustomDropdown from "../ui/CustomDropdown";
 import { IoIosStar } from "react-icons/io";

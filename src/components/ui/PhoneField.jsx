@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { normalizeDialCode } from "../../lib/utils";
+import { normalizeDialCode } from "../../utils/common";
 
 const getCountryCode = (country = {}) =>
   (

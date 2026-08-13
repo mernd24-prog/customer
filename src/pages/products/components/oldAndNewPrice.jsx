@@ -1,4 +1,4 @@
-import { cn } from "../../../lib/utils";
+import { cn } from "../../../utils/common";
 import { formatMoney } from "../../../utils/ecommerce";
 
 export default function ProductPriceBlock({

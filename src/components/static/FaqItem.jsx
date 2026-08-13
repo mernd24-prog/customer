@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import { cn } from "../../lib/utils";
+import { cn } from "../../utils/common";
 
 export default function FaqItem({ item, index }) {
   const [open, setOpen] = useState(false);

@@ -1,7 +1,7 @@
 import useCheckout from "./hooks/useCheckout";
-import { getPaymentProviderLabel } from "./utils/checkoutUtils";
-import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
+import { getPaymentProviderLabel } from "../../utils/pages/checkoutUtils";
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import OrderDetailLayout, {
   OrderDetailAside,
@@ -10,10 +10,10 @@ import ShippingAddressForm from "./components/ShippingAddressForm";
 import AddressSelection from "./components/AddressSelection";
 import DiscountsSection from "./components/DiscountsSection";
 import CheckoutSummary from "./components/CheckoutSummary";
-import BaseModal from "../../components/common/overlay/BaseModal";
-import GuestOtpAuthModal from "../../components/common/overlay/GuestOtpAuthModal";
-import { CHECKOUT_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
-import { WarningIcon, CloseIcon } from "../../components/icons";
+import BaseModal from "../../components/ui/overlay/BaseModal";
+import GuestOtpAuthModal from "../../components/ui/overlay/GuestOtpAuthModal";
+import { CHECKOUT_PAGE_SKELETON } from "../../components/ui/skeleton/layouts";
+import { WarningIcon, CloseIcon } from "../../components/ui/icons";
 
 export default function CheckoutPage() {
   const {

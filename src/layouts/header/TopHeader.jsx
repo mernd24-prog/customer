@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { LogOut } from "lucide-react";
 
-import { HeaderGoldButton } from "../../components/dynamicComponent/button/static";
+import { HeaderGoldButton } from "../../components/ui/button/static";
 import HeaderDropdown from "./HeaderDropdown";
 import MenuDropdown from "./MenuDropdown";
 
@@ -11,7 +11,7 @@ import { logout } from "../../features/auth/authSlice";
 import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 
-import { DEFAULT_TOP_NAV_LINKS } from "./constants";
+import { DEFAULT_TOP_NAV_LINKS } from "../../constants/header.constant";
 import { withIcons } from "./categoryHelpers";
 
 export const TopHeader = () => {

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Grid2X2, Home, SearchX } from "lucide-react";
-import Seo from "../components/common/Seo";
+import Seo from "../components/ui/Seo";
 
 export default function NotFoundPage() {
   return (

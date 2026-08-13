@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import Button from "../../components/ui/Button";
+import Button from "../../components/ui/buttons/Button";
 import FormField from "../../components/ui/FormField";
 import PhoneField from "../../components/ui/PhoneField";
 import { fetchCountries } from "../global/globalSlice";
 import { AUTH_ROUTES } from "./authRoutes";
 import { buildBuyerRegistrationPayload } from "./buildBuyerRegistrationPayload";
-import { buyerRegisterSchema } from "./validation";
+import { buyerRegisterSchema } from "../../validations/schemas/authSchemas";
 
 async function fetchFullList(dispatch, thunkAction, params = {}) {
   const res = await dispatch(thunkAction({ params })).unwrap();

@@ -1,6 +1,6 @@
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import { footerData } from "../../data/footer";
-import { BENEFITS } from "../../data/constant";
+import { BENEFITS } from "../../constants/data.constant";
 
 export default function DownloadApp() {
   return (

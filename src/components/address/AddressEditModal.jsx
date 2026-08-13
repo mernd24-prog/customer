@@ -1,5 +1,5 @@
 import { Pencil } from "lucide-react";
-import BaseModal from "../common/overlay/BaseModal";
+import BaseModal from "../ui/overlay/BaseModal";
 import Button from "../ui/Button";
 import AddressFormFields from "./AddressFormFields";
 

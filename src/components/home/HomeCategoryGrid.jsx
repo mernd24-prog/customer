@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SkeletonLoader } from "../../components/common/skeleton";
+import { SkeletonLoader } from "../../components/ui/skeleton";
 import CategoryCard from "./CategoryCard";
 import SectionContainer from "../ui/SectionContainer";
 import CUSTOMER_ROUTES from "../../constants/routes";

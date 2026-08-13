@@ -1,9 +1,9 @@
 import { useDispatch } from "react-redux";
 import { Star } from "lucide-react";
 
-import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
-import BrandButton from "../../components/ui/BrandButton";
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
+import BrandButton from "../../components/ui/buttons/Button";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import {
   fetchSubscriptionPlans,

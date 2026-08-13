@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import CUSTOMER_ROUTES from "../../../constants/routes";
-import { getCategoryKey, getCategoryLabel } from "../utils/categoryUtils";
+import { getCategoryKey, getCategoryLabel } from "../../../utils/pages/categoryUtils";
 
 export function CategorySidebarNav({
   categoryTitle,

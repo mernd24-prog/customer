@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import QuantitySelector from "../../components/cart/QuantitySelector";
+import QuantitySelector from "../../pages/cart/components/QuantitySelector";
 import { IoIosSearch } from "react-icons/io";
 import { Banknote, Heart, Share2, Truck, ZoomIn, X } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -12,8 +12,8 @@ import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import "swiper/css/free-mode";
 import "swiper/css/zoom";
-import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
 import { ProductCard } from "../../components/ecommerce";
 import { fetchProductById } from "../../features/product/productSlice";
 import { fetchProductWarranty } from "../../features/warranty/warrantySlice";
@@ -49,7 +49,7 @@ import {
   isProductCodAvailable,
   getAvailableStock,
 } from "../../utils/ecommerce";
-import { formatPageTitle } from "../../lib/utils";
+import { formatPageTitle } from "../../utils/common";
 import ProductReviewsSection from "../../components/ecommerce/ProductReviewsSection";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import StarRating from "./components/starRating";
@@ -58,7 +58,7 @@ import ProductPriceBlock from "./components/oldAndNewPrice";
 import ProductStockStatus from "./components/stockStatus";
 import SizeChartSidebar from "./components/SizeChartSidebar";
 import ShowMoreText, { getShowMoreText } from "../../utils/showMore";
-import { PRODUCT_DETAIL_SKELETON } from "../../components/common/skeleton/layouts";
+import { PRODUCT_DETAIL_SKELETON } from "../../components/ui/skeleton/layouts";
 
 import ImageGallery from "./components/ImageGallery";
 import DeliveryChecker from "./components/DeliveryChecker";
@@ -66,7 +66,7 @@ import VariantSelector from "./components/VariantSelector";
 import ProductActionButtons from "./components/ProductActionButtons";
 import ProductInfoSection from "./sections/ProductInfoSection";
 import ProductRecommendationSection from "./sections/ProductRecommendationSection";
-import { getActiveDealPrice, getActiveDealOriginalPrice } from "./utils/productUtils";
+import { getActiveDealPrice, getActiveDealOriginalPrice } from "../../utils/pages/productUtils";
 export default function ProductDetailPage() {
   const { productId } = useParams();
   const dispatch = useDispatch();

@@ -1,4 +1,4 @@
-import Seo from "../common/Seo";
+import Seo from "../ui/Seo";
 import { CollectionToolbar, ProductResultsLayout } from "./index";
 
 export default function ProductListingLayout({

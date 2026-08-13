@@ -1,6 +1,6 @@
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
-import ApiState from "../../components/common/ApiState";
+import ApiState from "../../components/ui/ApiState";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,7 +11,7 @@ import { notify } from "../../utils/notify";
 import { ChevronDown } from "lucide-react";
 import ReturnItemCard from "./component/ReturnItemCard";
 import ReturnTrackingCard from "./component/ReturnTrackingCard";
-import { RETURNS_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
+import { RETURNS_PAGE_SKELETON } from "../../components/ui/skeleton/layouts";
 
 /* ─── Status filter options ───────────────────────────────────────────── */
 const STATUS_FILTERS = [

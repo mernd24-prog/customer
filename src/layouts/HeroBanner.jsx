@@ -7,11 +7,11 @@ import { bannerData } from "../constants/image.constant";
 import "swiper/css";
 import "swiper/css/navigation";
 
-import Label from "../components/common/label/Label";
+import Label from "../components/ui/label/Label";
 import {
   OutlineLightButton,
   SolidLargeButton,
-} from "../components/dynamicComponent/button/static";
+} from "../components/ui/button/static";
 
 const heroContent = [
   {

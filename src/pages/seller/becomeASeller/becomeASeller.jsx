@@ -16,7 +16,7 @@ import {
   UserRoundPlus,
   WalletCards,
 } from "lucide-react";
-import Seo from "../../../components/common/Seo";
+import Seo from "../../../components/ui/Seo";
 import "swiper/css";
 import "swiper/css/pagination";
 

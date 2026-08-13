@@ -3,7 +3,7 @@ import { IoChevronForward } from "react-icons/io5";
 import {
   GhostPillButton,
   SolidLargeButton,
-} from "../dynamicComponent/button/static";
+} from "../ui/button/static";
 import { FaAngleRight } from "react-icons/fa6";
 import { hrefOr } from "../../utils/content";
 

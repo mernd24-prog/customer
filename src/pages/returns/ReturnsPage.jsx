@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Package, RotateCcw } from "lucide-react";
-import Seo from "../../components/common/Seo";
-import Button from "../../components/ui/Button";
+import Seo from "../../components/ui/Seo";
+import Button from "../../components/ui/buttons/Button";
 import CustomDropdown from "../../components/ui/CustomDropdown";
 import ShowMoreText from "../../utils/showMore";
 import useReturnRequest from "./hooks/useReturnRequest";
@@ -20,7 +20,7 @@ import {
   getReturnableQuantityForItem,
   isItemDelivered,
   getItemQuantity
-} from "./utils/returnUtils";
+} from "../../utils/pages/returnUtils";
 
 function ReturnRequestPage({ orderId }) {
   const {

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { formatMoney } from "../../../utils/ecommerce";
-import { humanize, returnItemMatchesOrderItem } from "../utils/orderUtils";
+import { humanize, returnItemMatchesOrderItem } from "../../../utils/pages/orderUtils";
 
 export default function OrderReturns({ 
   visibleReturns, 

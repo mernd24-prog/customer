@@ -16,12 +16,12 @@ import {
   XCircle,
 } from "lucide-react";
 
-import ApiState from "../../../components/common/ApiState";
-import Seo from "../../../components/common/Seo";
-import Button from "../../../components/ui/Button";
-import ConfirmModal from "../../../components/common/overlay/ConfirmModal";
+import ApiState from "../../../components/ui/ApiState";
+import Seo from "../../../components/ui/Seo";
+import Button from "../../../components/ui/buttons/Button";
+import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
-import StickySidebarLayout from "../../../components/common/layouts/StickySidebarLayout";
+import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 import { useToastThunk } from "../../../hooks/useToastThunk";
 import { notify } from "../../../utils/notify";
 
@@ -39,7 +39,7 @@ import {
   ORDER_BREADCRUMBS,
   ORDER_FILTERS,
 } from "../../../data/orderPage";
-import { ORDER_LIST_SKELETON } from "../../../components/common/skeleton/layouts";
+import { ORDER_LIST_SKELETON } from "../../../components/ui/skeleton/layouts";
 
 import {
 getOrderId,
@@ -97,7 +97,7 @@ getOrderId,
   findShipmentForOrderItem,
   resolveOrderItemDisplayStatus,
   getOrderCardImage
-} from "../utils/orderUtils";
+} from "../../../utils/pages/orderUtils";
 
 function OrderListStatusBadge({ status }) {
   const cls = COMPACT_STATUS_BADGE[status] || "bg-[#D7A522] text-white";

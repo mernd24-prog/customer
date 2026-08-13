@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Store } from "lucide-react";
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import {
   Breadcrumbs,
   ProductListingLayout,
@@ -28,11 +28,11 @@ import {
   serializeMultiValue,
   slugToBrandName,
 } from "../../utils/ecommerce/brand";
-import { getBrandName, getBrandLogo } from "./utils/brandUtils";
+import { getBrandName, getBrandLogo } from "../../utils/pages/brandUtils";
 import { capitalizeFirst } from "../../utils/stringUtils";
 import LoadingSkeleton from "../../components/ecommerce/BrandLoadingSkeleton";
 import { useSearchParamHelper } from "../../hooks/useSearchParamsHelper";
-import { PAGE_SIZES, SORT_OPTIONS } from "../../data/constant";
+import { PAGE_SIZES, SORT_OPTIONS } from "../../constants/data.constant";
 
 export default function BrandPage() {
   const { brandSlug } = useParams();

@@ -1,4 +1,4 @@
-import Seo from "../components/common/Seo";
+import Seo from "../components/ui/Seo";
 
 export function BackendGapNotes() {
   return (

@@ -56,6 +56,7 @@ export function useOrderDetail({ orderId, track }) {
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [cancelReasonCode, setCancelReasonCode] = useState("changed_mind");
+  const [cancelReasonError, setCancelReasonError] = useState(false);
   const [cancelItems, setCancelItems] = useState({});
   const cancelRequestKey = useRef(null);
   const [invoices, setInvoices] = useState(null);
@@ -601,7 +602,11 @@ export function useOrderDetail({ orderId, track }) {
         orderItemId,
         quantity: Number(quantity),
       }));
-    if (cancelReason.trim().length < 3) return;
+    if (cancelReason.trim().length < 10) {
+      setCancelReasonError(true);
+      return;
+    }
+    setCancelReasonError(false);
     if (!selectedItems.length) return;
     const result = await run(
       dispatch,
@@ -618,12 +623,14 @@ export function useOrderDetail({ orderId, track }) {
     if (!result) return;
     setCancelModalOpen(false);
     setCancelReason("");
+    setCancelReasonError(false);
     setCancelItems({});
     cancelRequestKey.current = null;
     dispatch(fetchOrderById({ orderId }));
   };
 
   const openCancellation = () => {
+    setCancelReasonError(false);
     cancelRequestKey.current = `customer:${orderId}:${
       globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`
     }`;
@@ -698,12 +705,14 @@ export function useOrderDetail({ orderId, track }) {
     breadcrumbItems,
     cancelModalOpen,
     cancelReason,
+    cancelReasonError,
     cancelReasonCode,
     cancelItems,
     downloadingId,
     retrying,
     setCancelModalOpen,
     setCancelReason,
+    setCancelReasonError,
     setCancelReasonCode,
     setCancelItems,
     setDownloadingId,

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormField from "../../components/ui/FormField";
-import Button from "../../components/ui/Button";
+import Button from "../../components/ui/buttons/Button";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import {
   fetchMe,

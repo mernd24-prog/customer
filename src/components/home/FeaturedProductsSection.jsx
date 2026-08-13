@@ -2,7 +2,7 @@ import { ProductCard } from "../ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import SectionContainer from "../ui/SectionContainer";
 import { getProductId } from "../../utils/ecommerce";
-import { SkeletonLoader } from "../../components/common/skeleton";
+import { SkeletonLoader } from "../../components/ui/skeleton";
 
 const featuredProducts = [
   {

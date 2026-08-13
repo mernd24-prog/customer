@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Banknote, Clock3, Heart, ShoppingCart } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
-import Label from "../common/label/Label";
+import Label from "../ui/label/Label";
 import {
   IconCircleButton,
   PillButton,
-} from "../dynamicComponent/button/static";
+} from "../ui/button/static";
 import Price from "./Price";
 import Rating from "./Rating";
 import WishlistButton from "./WishlistButton";
@@ -20,7 +20,7 @@ import {
   getProductAvailableStock,
   isProductCodAvailable,
 } from "../../utils/ecommerce";
-import { cn } from "../../lib/utils";
+import { cn } from "../../utils/common";
 import StarRating from "../../pages/products/components/starRating";
 
 const getDealEndDateValue = (product = {}) =>

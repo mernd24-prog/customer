@@ -1,5 +1,5 @@
 import { FaAngleRight } from "react-icons/fa6";
-import { OutlineSmallButton } from "../dynamicComponent/button/static";
+import { OutlineSmallButton } from "../ui/button/static";
 
 export default function SectionContainer({
   title,

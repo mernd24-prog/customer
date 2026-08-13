@@ -1,5 +1,5 @@
 import { COMPACT_STATUS_BADGE } from "../../../data/orderPage";
-import { humanize } from "../utils/orderUtils";
+import { humanize } from "../../../utils/pages/orderUtils";
 
 export function OrderListStatusBadge({ status }) {
   const cls = COMPACT_STATUS_BADGE[status] || "bg-[#D7A522] text-white";

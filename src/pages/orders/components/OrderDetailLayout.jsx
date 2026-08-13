@@ -1,5 +1,5 @@
 import React from 'react';
-import StickySidebarLayout from "../../../components/common/layouts/StickySidebarLayout";
+import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 
 function OrderDetailLayout({ children }) {
   const childrenArray = React.Children.toArray(children);

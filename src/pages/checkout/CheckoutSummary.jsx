@@ -1,5 +1,5 @@
 import { Banknote, Building2, CreditCard, Smartphone } from "lucide-react";
-import Button from "../../components/ui/Button";
+import Button from "../../components/ui/buttons/Button";
 import { formatMoney } from "../../utils/ecommerce";
 
 const PAYMENT_ICONS = {

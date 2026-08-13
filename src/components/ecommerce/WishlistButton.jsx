@@ -1,5 +1,5 @@
 import { Heart } from "lucide-react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../utils/common";
 
 export default function WishlistButton({
   active = false,

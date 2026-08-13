@@ -1,4 +1,4 @@
-import { SolidLargeButton } from "../dynamicComponent/button/static";
+import { SolidLargeButton } from "../ui/button/static";
 import defaultBannerImage from "/image/png/ShoppingBanner.png";
 
 export default function ShoppingMadeEasyBanner({

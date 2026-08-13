@@ -3,7 +3,7 @@ import {
   Button,
   Divider,
   ImageWithFallback,
-} from "../../../components/common";
+} from "../../../components/ui";
 import { formatMoney } from "../../../utils/ecommerce";
 import ShowMoreText from "../../../utils/showMore";
 import { capitalizeFirst } from "../../../utils/stringUtils";

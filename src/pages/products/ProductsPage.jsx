@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import ProductListingLayout from "../../components/ecommerce/ProductListingLayout";
 import {
   CheckboxListFilter,

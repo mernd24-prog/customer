@@ -5,8 +5,8 @@ import { ChevronDown, Pencil } from "lucide-react";
 import { CgMail } from "react-icons/cg";
 import { MdOutlineLocalPhone } from "react-icons/md";
 
-import ApiState from "../../components/common/ApiState";
-import Seo from "../../components/common/Seo";
+import ApiState from "../../components/ui/ApiState";
+import Seo from "../../components/ui/Seo";
 import { fetchMe } from "../../features/user/userSlice";
 
 import ProfileTab from "./ProfileTab";

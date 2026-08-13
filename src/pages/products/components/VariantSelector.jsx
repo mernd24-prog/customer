@@ -1,5 +1,5 @@
 import { applyImageFallback, getAvailableStock } from "../../../utils/ecommerce";
-import { getColorSwatchImage } from "../utils/productUtils";
+import { getColorSwatchImage } from "../../../utils/pages/productUtils";
 
 export default function VariantSelector({
   variantOptions,

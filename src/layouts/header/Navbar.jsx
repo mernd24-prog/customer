@@ -8,7 +8,7 @@ import SearchBar from "../../components/ui/SearchBar";
 import {
   HeaderGoldButton,
   HeaderIconButton,
-} from "../../components/dynamicComponent/button/static";
+} from "../../components/ui/button/static";
 import HeaderDropdown from "./HeaderDropdown";
 import MenuDropdown from "./MenuDropdown";
 
@@ -17,12 +17,12 @@ import { logout } from "../../features/auth/authSlice";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import { getRole, isAdminRole } from "../../utils/roles";
 import { asArray, keyOr, textOr } from "../../utils/content";
-import { navbarIcons as navData } from "../../constants/image.constant";
+import { navbarIcons as navData } from "../.../../constants/header.constant/image.constant";
 
 import {
   baseAccountMenuItems,
   navbarIconLabels,
-} from "./constants";
+} from "../../constants/header.constant";
 import {
   buildCategorySlug,
   getNavbarIconPath,

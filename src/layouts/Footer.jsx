@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { asArray, hrefOr } from "../utils/content";
 import { footerData } from "../data/footer";
-import { SocialIcons } from "../components/common";
+import { SocialIcons } from "../components/ui";
 import { Link, useLocation } from "react-router-dom";
 import { CUSTOMER_ROUTES } from "../constants/routes";
 import { fetchCategories, fetchBrands } from "../features/catalog/catalogSlice";

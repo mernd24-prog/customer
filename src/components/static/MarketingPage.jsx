@@ -1,6 +1,6 @@
 import { BadgePercent, Gift, Megaphone, Sparkles, Store } from "lucide-react";
 
-import Seo from "../common/Seo";
+import Seo from "../ui/Seo";
 import InfoCard from "../ui/InfoCard";
 import { getCmsImageSet, getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 import CardGridSection from "./CardGridSection";

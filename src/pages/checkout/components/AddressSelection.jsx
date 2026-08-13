@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, ChevronUp, MapPin, Pencil, Phone, Info } from "lucide-react";
-import Button from "../../../components/ui/Button";
+import Button from "../../../components/ui/buttons/Button";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
 } from "../../../components/address/AddressFormFields";
@@ -15,13 +15,13 @@ import {
   fetchZipCodes,
 } from "../../../features/global/globalSlice";
 import OrderDetailSectionCard from "../../orders/components/OrderDetailSectionCard";
-import BaseModal from "../../../components/common/overlay/BaseModal";
+import BaseModal from "../../../components/ui/overlay/BaseModal";
 import { useToastThunk } from "../../../hooks/useToastThunk";
-import { normalizeDialCode } from "../../../lib/utils";
+import { normalizeDialCode } from "../../../utils/common";
 import { addressSchema } from "../../../validations/validationSchemas";
 import { validatePostalCodeForCountry } from "../../../validations";
 import { scrollToFirstFormError } from "../../../utils/formErrors";
-import { fetchFullList } from "../utils/checkoutUtils";
+import { fetchFullList } from "../../../utils/pages/checkoutUtils";
 
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
