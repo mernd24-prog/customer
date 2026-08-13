@@ -7,7 +7,7 @@ import {
   getCategoryLabel,
   getCategoryImage,
   getCategoryCount,
-} from "../utils/categoryUtils";
+} from "../../../utils/pages/categoryUtils";
 
 export function SubCategoryStrip({ categories = [], loading }) {
   const visibleCategories = categories

@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Bell, ChevronDown, Headphones } from "lucide-react";
 
-import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import NeedHelpPanel from "../../components/ecommerce/NeedHelpPanel";
-import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
+import StickySidebarLayout from "../../components/ui/layout/StickySidebarLayout";
 import { fetchNotifications } from "../../features/notification/notificationSlice";
 import notificationData from "../../data/notificationData";
-import { SKELETON_PRESETS } from "../../components/common/skeleton/skeletonPresets";
+import { SKELETON_PRESETS } from "../../components/ui/skeleton/skeletonPresets";
 
 const formatNotificationDate = (value) => {
   if (!value) return "";

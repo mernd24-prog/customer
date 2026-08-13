@@ -11,16 +11,16 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import Button from "../../components/ui/Button";
+import Button from "../../components/ui/buttons/Button";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
 } from "../../components/address/AddressFormFields";
 import AddressEditModal from "../../components/address/AddressEditModal";
 import SharedAddressCard from "../../components/address/SharedAddressCard";
-import ConfirmModal from "../../components/common/overlay/ConfirmModal";
-import BaseModal from "../../components/common/overlay/BaseModal";
+import ConfirmModal from "../../components/ui/overlay/ConfirmModal";
+import BaseModal from "../../components/ui/overlay/BaseModal";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { normalizeDialCode } from "../../lib/utils";
+import { normalizeDialCode } from "../../utils/common";
 import { addressSchema } from "../../validations/validationSchemas";
 import { validatePostalCodeForCountry } from "../../validations";
 import { scrollToFirstFormError } from "../../utils/formErrors";
@@ -36,7 +36,7 @@ import {
   fetchCities,
   fetchZipCodes,
 } from "../../features/global/globalSlice";
-import { fetchFullList } from "../checkout/utils/checkoutUtils";
+import { fetchFullList } from "../../utils/pages/checkoutUtils";
 
 
 export default function AddressTab({ user }) {

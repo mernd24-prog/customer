@@ -1,5 +1,5 @@
 import { ShoppingCart } from "lucide-react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../utils/common";
 
 export default function AddToCartButton({
   label = "Add to cart",

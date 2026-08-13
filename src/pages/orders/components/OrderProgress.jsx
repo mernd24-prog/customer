@@ -4,7 +4,7 @@ import {
   RETURN_STEPS,
 } from "../../../data/orderPage";
 import vectorImage from "/image/png/SuccessVector .png";
-import { InfoCircleIcon } from "../../../components/icons";
+import { InfoCircleIcon } from "../../../components/ui/icons";
 
 const normalizeProgressStatus = (status) => {
   if (status === "partially_delivered") {

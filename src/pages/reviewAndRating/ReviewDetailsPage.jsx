@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ChevronLeft, Star, ThumbsUp } from "lucide-react";
 import CustomDropdown from "../../components/ui/CustomDropdown";
 import ReviewMediaLightbox from "../../components/ecommerce/ReviewMediaLightbox";
-import { useAuthModal } from "../../context/AuthModalContext";
+import { useAuthModal } from "../../features/auth/AuthModalContext";
 import {
   fetchProductReviews,
   fetchMyProductReview,
@@ -17,7 +17,7 @@ import {
   sortReviews,
   getUserDisplayName,
   getProductDisplay,
-} from "./utils/reviewUtils";
+} from "../../utils/pages/reviewUtils";
 
 const LIMIT = 10;
 const STAR_VALUES = [5, 4, 3, 2, 1];
@@ -186,8 +186,6 @@ function ReviewsHeader({ total, sort, onSort }) {
     </div>
   );
 }
-
-
 
 function ReviewCard({
   review,

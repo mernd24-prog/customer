@@ -20,7 +20,7 @@ import {
   getCategoryLabel,
   getCategoryKey,
   getMatchingCategoryKeys,
-} from "../utils/categoryUtils";
+} from "../../../utils/pages/categoryUtils";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 
 export default function useCategory() {

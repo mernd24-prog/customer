@@ -2,18 +2,18 @@ import { Link } from "react-router-dom";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { IndianRupee, RotateCcw, ReceiptText } from "lucide-react";
 
-import ApiState from "../../../components/common/ApiState";
-import Seo from "../../../components/common/Seo";
-import Button from "../../../components/ui/Button";
-import ConfirmModal from "../../../components/common/overlay/ConfirmModal";
+import ApiState from "../../../components/ui/ApiState";
+import Seo from "../../../components/ui/Seo";
+import Button from "../../../components/ui/buttons/Button";
+import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
-import StickySidebarLayout from "../../../components/common/layouts/StickySidebarLayout";
+import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 import OrderDetailSectionCard from "./OrderDetailSectionCard";
 import OrderItemsSection from "./OrderItemsSection";
 import OrderPaymentSummary from "./OrderPaymentSummary";
 import OrderProgress from "./OrderProgress";
 import ShipmentTrackingPanel from "./ShipmentTrackingPanel";
-import OrderDetailInfoGrid from "../../../components/orderDetailInfoGrid/orderDetailInfoGrid";
+import OrderDetailInfoGrid from "./OrderDetailInfoGrid";
 
 import { useOrderDetail } from "../hooks/useOrderDetail";
 import OrderCancellations from "./OrderCancellations";
@@ -35,7 +35,7 @@ import {
   getItemLineTotal,
   asNumber,
   canCancelOrder,
-} from "../utils/orderUtils";
+} from "../../../utils/pages/orderUtils";
 
 import { formatMoney } from "../../../utils/ecommerce";
 
@@ -84,12 +84,14 @@ export default function OrderDetail({ orderId, track }) {
     breadcrumbItems,
     cancelModalOpen,
     cancelReason,
+    cancelReasonError,
     cancelReasonCode,
     cancelItems,
     downloadingId,
     retrying,
     setCancelModalOpen,
     setCancelReason,
+    setCancelReasonError,
     setCancelReasonCode,
     setCancelItems,
     setDownloadingId,
@@ -375,7 +377,10 @@ export default function OrderDetail({ orderId, track }) {
             <select
               className="mt-1 w-full focus:outline-none  rounded-[6px] border border-border bg-white px-3 py-2 "
               value={cancelReasonCode}
-              onChange={(event) => setCancelReasonCode(event.target.value)}
+              onChange={(event) => {
+                setCancelReasonCode(event.target.value);
+                if (cancelReasonError) setCancelReasonError(false);
+              }}
             >
               <option value="changed_mind">Changed my mind</option>
               <option value="ordered_by_mistake">Ordered by mistake</option>
@@ -386,16 +391,21 @@ export default function OrderDetail({ orderId, track }) {
             </select>
           </label>
           <textarea
-            className="min-h-20 focus:outline-none  w-full rounded-[6px]  px-3 py-2 text-sm"
+            className={`min-h-20 focus:outline-none w-full rounded-[6px] px-3 py-2 text-sm border ${
+              cancelReasonError ? "border-red-600" : "border-border"
+            }`}
             value={cancelReason}
-            onChange={(event) => setCancelReason(event.target.value)}
+            onChange={(event) => {
+              setCancelReason(event.target.value);
+              if (cancelReasonError) setCancelReasonError(false);
+            }}
             maxLength={500}
-            placeholder="Tell us why you are cancelling"
+            placeholder="Tell us why you are cancelling *"
           />
 
-          {cancelReason.trim().length > 0 && cancelReason.trim().length < 3 && (
+          {(cancelReasonError || (cancelReason.trim().length > 0 && cancelReason.trim().length < 10)) && (
             <p className="text-xs text-red-600">
-              Please enter at least 3 characters.
+              Please enter at least 10 characters.
             </p>
           )}
         </div>

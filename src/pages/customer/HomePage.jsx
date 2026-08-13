@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import MothersDaySwiper from "../../components/home/MothersDayCarousel";
 import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
 import {

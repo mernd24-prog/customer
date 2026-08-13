@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
-import AboutBanner from "../../components/about/AboutBanner";
-import InfoSection from "../../components/about/InfoSection";
-import OurStory from "../../components/about/OurStory";
-import ValuesSection from "../../components/about/ValuesSection";
-import BrandCarousel from "../../components/about/BrandSection";
-import WhyChooseSection from "../../components/about/WhyChooseSection";
+import AboutBanner from "./components/AboutBanner";
+import InfoSection from "./components/InfoSection";
+import OurStory from "./components/OurStory";
+import ValuesSection from "./components/ValuesSection";
+import BrandCarousel from "./components/BrandSection";
+import WhyChooseSection from "./components/WhyChooseSection";
 
 export default function AboutPage() {
   const { page: bannerPage } = useCmsRecord("about-banner");

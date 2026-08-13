@@ -4,7 +4,7 @@
  * tree normalisation, response unwrapping, and icon injection.
  */
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
-import { dropdownIconMap } from "./constants";
+import { dropdownIconMap } from "../../constants/header.constant";
 
 // ---------------------------------------------------------------------------
 // Slug / key helpers

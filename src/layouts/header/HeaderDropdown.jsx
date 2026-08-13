@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../utils/common";
 
 export default function HeaderDropdown({
   label,

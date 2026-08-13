@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Label from "../common/label/Label";
+import Label from "../ui/label/Label";
 import {
   collageImageHeightClass,
   compactLabel,

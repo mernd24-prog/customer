@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { BadgePercent } from "lucide-react";
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import {
   Breadcrumbs,
   CollectionToolbar,

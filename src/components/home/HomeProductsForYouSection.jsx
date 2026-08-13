@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import SkeletonLoader from "../common/skeleton/SkeletonLoader";
+import SkeletonLoader from "../ui/skeleton/SkeletonLoader";
 import { ProductCard } from "../ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { getProductId } from "../../utils/ecommerce";

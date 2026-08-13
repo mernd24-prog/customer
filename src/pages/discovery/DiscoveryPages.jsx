@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Seo from "../../components/common/Seo";
-import { EmptyState } from "../../components/common";
+import Seo from "../../components/ui/Seo";
+import { EmptyState } from "../../components/ui";
 import { ProductGrid } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";

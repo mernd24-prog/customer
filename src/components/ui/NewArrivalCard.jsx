@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
 import { IoArrowForwardOutline } from "react-icons/io5";
-import { TextWhiteButton } from "../dynamicComponent/button/static";
-import { formatPageTitle } from "../../lib/utils";
+import { TextWhiteButton } from "../ui/button/static";
+import { formatPageTitle } from "../../utils/common";
 
 export default function NewArrivalCard({
   title = "",

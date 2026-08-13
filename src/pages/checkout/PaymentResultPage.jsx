@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
-import BrandButton from "../../components/ui/BrandButton";
+import BrandButton from "../../components/ui/buttons/Button";
 import { fetchOrderById } from "../../features/order/orderSlice";
 import { fetchMe } from "../../features/user/userSlice";
 import {
@@ -13,7 +13,7 @@ import {
   getDeliveryDateRange,
   formatOrderDate,
 } from "../../utils/orderHelpers";
-import { FailedIcon } from "../../components/icons";
+import { FailedIcon } from "../../components/ui/icons";
 
 export function PaymentResultPage({ failed = false }) {
   const dispatch = useDispatch();

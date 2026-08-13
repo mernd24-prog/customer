@@ -1,7 +1,7 @@
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import { CollectionToolbar, ProductResultsLayout } from "../../components/ecommerce";
 import { isNotFoundApiError } from "../../utils/apiErrors";
-import { SORT_OPTIONS } from "../../data/constant";
+import { SORT_OPTIONS } from "../../constants/data.constant";
 import useCategory from "./hooks/useCategory";
 import { SubCategoryStrip } from "./components/SubCategoryStrip";
 import { CategorySidebarNav } from "./components/CategorySidebarNav";

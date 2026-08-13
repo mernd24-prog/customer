@@ -1,6 +1,6 @@
 import { MapPin } from "lucide-react";
 import AddressFormFields from "../../../components/address/AddressFormFields";
-import Button from "../../../components/ui/Button";
+import Button from "../../../components/ui/buttons/Button";
 
 export default function ShippingAddressForm({
   register,

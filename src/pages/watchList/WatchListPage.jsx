@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EmptyState, Seo } from "../../components/common";
-import CartItemCard from "../../components/cart/CartItemCard";
+import { EmptyState, Seo } from "../../components/ui";
+import CartItemCard from "../../pages/cart/components/CartItemCard";
 import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
@@ -15,14 +15,14 @@ import {
   getProductPrice,
 } from "../../utils/ecommerce";
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
-import { adaptProductToItem } from "./utils/watchListUtils";
-import { OutlineSmallButton } from "../../components/dynamicComponent/button/static";
+import { adaptProductToItem } from "../../utils/pages/watchListUtils";
+import { OutlineSmallButton } from "../../components/ui/button/static";
 import { FaAngleRight } from "react-icons/fa6";
 import { ProductCard } from "../../components/ecommerce";
 import {
   SkeletonLoader,
   SKELETON_PRESETS,
-} from "../../components/common/skeleton";
+} from "../../components/ui/skeleton";
 
 export default function WatchlistPage() {
   const navigate = useNavigate();

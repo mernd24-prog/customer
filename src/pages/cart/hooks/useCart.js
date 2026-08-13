@@ -10,7 +10,7 @@ import { fetchProductById } from "../../../features/product/productSlice";
 import { useToastThunk } from "../../../hooks/useToastThunk";
 import { useProductActions } from "../../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../../hooks/useWatchlistProducts";
-import { useAuthModal } from "../../../context/AuthModalContext";
+import { useAuthModal } from "../../../features/auth/AuthModalContext";
 import { store } from "../../../app/store";
 import { getRecentlyViewed } from "../../../utils/recentlyViewed";
 import {

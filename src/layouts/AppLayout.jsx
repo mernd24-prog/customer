@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Header, CategoryBar } from "./Header";
 import { Footer } from "./Footer";
-import AddedToCartModal from "../components/cart/AddedToCartModal";
-import GuestOtpAuthModal from "../components/common/overlay/GuestOtpAuthModal";
-import ScrollTopButton from "../components/common/ScrollTopButton";
+import AddedToCartModal from "../pages/cart/components/AddedToCartModal";
+import GuestOtpAuthModal from "../components/ui/overlay/GuestOtpAuthModal";
+import ScrollTopButton from "../components/ui/ScrollTopButton";
 
 import { closeAddedToCartModal } from "../features/cart/cartUiSlice";
 import { footerData } from "../data/footer";

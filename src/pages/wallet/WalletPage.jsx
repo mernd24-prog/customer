@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Wallet, Lock, Sparkles } from "lucide-react";
 
-import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
 import { fetchWallet } from "../../features/wallet/walletSlice";
 import { formatMoney } from "../../utils/ecommerce";
-import { WALLET_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
+import { WALLET_PAGE_SKELETON } from "../../components/ui/skeleton/layouts";
 
 export function WalletPage() {
   const dispatch = useDispatch();

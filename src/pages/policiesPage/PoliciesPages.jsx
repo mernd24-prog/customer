@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 
 import PolicyHeader from "../../components/policy/PolicyHeader";
 import PolicySection from "../../components/policy/PolicySection";
-import { cleanPolicyText } from "./utils/policyUtils";
+import { cleanPolicyText } from "../../utils/pages/policyUtils";
 
 const getPolicyPayload = (page) =>
   page?.metadata?.data ||

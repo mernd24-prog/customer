@@ -2,11 +2,11 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Search } from "lucide-react";
-import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
-import ActiveFilterChips from "../../components/common/ActiveFilterChips";
-import FilterDrawer from "../../components/common/overlay/Drawer";
-import PageHeader from "../../components/common/PageHeader";
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
+import ActiveFilterChips from "../../components/ui/ActiveFilterChips";
+import FilterDrawer from "../../components/ui/overlay/Drawer";
+import PageHeader from "../../components/ui/PageHeader";
 import {
   CheckboxListFilter,
   CollectionToolbar,

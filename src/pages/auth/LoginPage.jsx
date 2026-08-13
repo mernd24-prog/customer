@@ -6,9 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LogIn, Smartphone } from "lucide-react";
 
 import AuthCard from "../../components/ui/AuthCard";
-import Button from "../../components/ui/Button";
+import Button from "../../components/ui/buttons/Button";
 import FormField from "../../components/ui/FormField";
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
 import {
@@ -18,12 +18,12 @@ import {
   clearError,
 } from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { useAuthModal } from "../../context/AuthModalContext";
+import { useAuthModal } from "../../features/auth/AuthModalContext";
 import { notify } from "../../utils/notify";
 import { loginSchema } from "../../validations/validationSchemas";
 import { fetchCart, updateCart } from "../../features/cart/cartSlice";
 import { syncGuestCartWithServer } from "../../utils/ecommerce/cart";
-import { loadGoogleIdentityScript } from "./utils/authUtils";
+import { loadGoogleIdentityScript } from "../../utils/pages/authUtils";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
 
@@ -157,7 +157,7 @@ export default function LoginPage() {
 
       <AuthCard
         title="Login to Sam Global"
-        subtitle="Sign in with your email or continue securely using mobile OTP."
+        subtitle="Sign in with your email or continue securely using mobile OTP."  
         icon="/image/png/person.png"
         maxWidth="max-w-[56rem]"
         maxHeight="h-[650px]"
@@ -180,7 +180,7 @@ export default function LoginPage() {
           />
 
           <div className="grid gap-1">
-            <FormField
+            <FormField                                                                 
               id="password"
               label="Password"
               type="password"

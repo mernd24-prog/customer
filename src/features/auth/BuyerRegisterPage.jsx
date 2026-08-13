@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthCard from "../../components/ui/AuthCard";
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { registerUser, clearError } from "./authSlice";
 import { AUTH_ROUTES } from "./authRoutes";

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SKELETON_PRESETS, SkeletonLoader } from "../common/skeleton";
+import { SKELETON_PRESETS, SkeletonLoader } from "../ui/skeleton";
 import CollageCard from "../ui/CollageCard";
 import { apiRequest } from "../../api/client";
 import { endpoints } from "../../api/endpoints";

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
-import { formatPageTitle } from "../../../lib/utils";
+import { formatPageTitle } from "../../../utils/common";
 import { getProductTitle, getImageUrlFromValue } from "../../../utils/ecommerce";
 import { ProductGallery } from "../components/ImageGallery";
 

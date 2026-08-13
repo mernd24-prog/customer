@@ -2,9 +2,9 @@ import { useEffect, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Calendar, Clock, Tag } from "lucide-react";
-import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
-import BrandButton from "../../components/ui/BrandButton";
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
+import BrandButton from "../../components/ui/buttons/Button";
 import { fetchCmsPageBySlug } from "../../features/cms/cmsSlice";
 import { isNotFoundApiError } from "../../utils/apiErrors";
 

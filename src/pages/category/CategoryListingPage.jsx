@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid2X2 } from "lucide-react";
 
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
 import {
   getImageUrlFromValue,
 } from "../../utils/ecommerce";
-import Loader from "../../components/common/Loader";
+import Loader from "../../components/ui/Loader";
 
 const PAGE_SIZE = 20;
 const categoryGridClass =
@@ -20,7 +20,7 @@ import {
   paginationFromPayload,
   getCategoryCount,
   getRootCategories
-} from "./utils/categoryUtils";
+} from "../../utils/pages/categoryUtils";
 
 function CategoryTile({ category }) {
   const count = getCategoryCount(category);

@@ -1,5 +1,5 @@
 import ShowMoreText from "../../../utils/showMore";
-import { CheckIcon } from "../../../components/icons";
+import { CheckIcon } from "../../../components/ui/icons";
 
 export default function ReturnTrackingCard({
   steps: customSteps,

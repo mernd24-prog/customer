@@ -1,5 +1,5 @@
 import { buildCartItem } from "../../../utils/ecommerce";
-import { BUY_NOW_STORAGE_KEY } from "../utils/productUtils";
+import { BUY_NOW_STORAGE_KEY } from "../../../utils/pages/productUtils";
 
 export default function ProductActionButtons({
   inStock,

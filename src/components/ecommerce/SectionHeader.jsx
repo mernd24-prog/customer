@@ -1,1 +1,1 @@
-export { default } from "../common/layout/SectionHeader";
+export { default } from "../ui/layout/SectionHeader";

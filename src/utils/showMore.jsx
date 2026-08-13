@@ -59,7 +59,6 @@ export function getShowMoreText(value, options = {}) {
 
   if (isTruncated) {
     const slicedText = characters.slice(0, limit).join("").trimEnd();
-
     preview = slicedText.includes(" ")
       ? slicedText.substring(0, slicedText.lastIndexOf(" "))
       : slicedText;
@@ -71,7 +70,7 @@ export function getShowMoreText(value, options = {}) {
     isTruncated,
   };
 }
-
+  
 export function ShowMoreText({
   text,
   mode = "characters",

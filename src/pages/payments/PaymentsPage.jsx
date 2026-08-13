@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CreditCard, CheckCircle2, XCircle, Clock } from "lucide-react";
 
-import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
 import { fetchPayments } from "../../features/payment/paymentSlice";
 import { formatMoney } from "../../utils/ecommerce";
 

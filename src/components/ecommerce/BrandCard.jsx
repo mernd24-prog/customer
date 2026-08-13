@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../utils/common";
 
 export const getValidImage = (...images) => {
   for (const image of images) {

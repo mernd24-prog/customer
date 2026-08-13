@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import {
   BrandCard,
   CollectionToolbar,
@@ -17,7 +17,7 @@ import {
   getBrandRouteKey,
   getBrandLogo,
   getBrandProductCount
-} from "./utils/brandUtils";
+} from "../../utils/pages/brandUtils";
 
 const PAGE_SIZE_OPTIONS = [12, 20, 36, 48];
 

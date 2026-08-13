@@ -24,7 +24,7 @@ import {
   CategoryMoreButton,
   HeaderGoldButton,
   HeaderIconButton,
-} from "../components/dynamicComponent/button/static";
+} from "../components/ui/button/static";
 import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
 import { TopHeader } from "./header/TopHeader";
@@ -40,26 +40,14 @@ import { fetchProducts } from "../features/product/productSlice";
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");
 
-const dropdownIconMap = {
-  bell: Bell,
-  camera: Camera,
-  lock: Lock,
-  logOut: LogOut,
-  settings: Settings,
-  shoppingBag: ShoppingBag,
-  store: Store,
-  truck: Truck,
-  user: User,
-  lifeBuoy: LifeBuoy,
-  refreshCcw: RefreshCcw,
-};
-
-const navbarIconLabels = {
-  IN: "Deliver to address",
-  Word: "Language and region",
-  Account: "Account",
-  Cart: "Cart",
-};
+import {
+  dropdownIconMap,
+  navbarIconLabels,
+  baseAccountMenuItems,
+  CATEGORY_MENU_OPEN_DELAY_MS,
+  CATEGORY_MENU_CLOSE_DELAY_MS,
+  HEADER_HEIGHT_VAR,
+} from "../constants/header.constant";
 
 const getNavbarIconPath = (item = {}) => {
   if (item.name === "IN") return "/account/addresses";
@@ -71,21 +59,6 @@ const getNavbarIconLabel = (item = {}) =>
   navbarIconLabels[item.name] ||
   textOr(item.name, "Navigation");
 
-const baseAccountMenuItems = [
-  { label: "My Profile", path: "/account/profile", icon: "user" },
-  { label: "My Orders", path: "/orders", icon: "shoppingBag" },
-  { label: "Returns & Refunds", path: "/returns-refunds", icon: "refreshCcw" },
-  { label: "Wallet", path: "/wallet", icon: "lock" },
-  { label: "Notifications", path: "/notifications", icon: "bell" },
-  { label: "Settings", path: "/notification-preferences", icon: "settings" },
-  { label: "Sign Out", path: "/sign-out", icon: "logOut" },
-
-
-];
-
-const CATEGORY_MENU_OPEN_DELAY_MS = 350;
-const CATEGORY_MENU_CLOSE_DELAY_MS = 160;
-const HEADER_HEIGHT_VAR = "--customer-header-height";
 
 function getHeaderHeight() {
   if (typeof window === "undefined") return 0;

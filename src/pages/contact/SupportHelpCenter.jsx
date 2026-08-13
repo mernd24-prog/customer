@@ -1,21 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle2, ChevronDown } from "lucide-react";
-import BaseModal from "../../components/common/overlay/BaseModal";
+import BaseModal from "../../components/ui/overlay/BaseModal";
 import CustomDropdown from "../../components/ui/CustomDropdown";
 
-import Seo from "../../components/common/Seo";
-import ApiState from "../../components/common/ApiState";
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import NeedHelpPanel from "../../components/ecommerce/NeedHelpPanel";
-import StickySidebarLayout from "../../components/common/layouts/StickySidebarLayout";
+import StickySidebarLayout from "../../components/ui/layout/StickySidebarLayout";
 import SupportTicketSidebar from "./components/SupportTicketSidebar";
-import { SUPPORT_PAGE_SKELETON } from "../../components/common/skeleton/layouts";
+import { SUPPORT_PAGE_SKELETON } from "../../components/ui/skeleton/layouts";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 import { apiRequest } from "../../api/client";
 import { endpoints } from "../../api/endpoints";
 import { notify } from "../../utils/notify";
-import { useAuthModal } from "../../context/AuthModalContext";
+import { useAuthModal } from "../../features/auth/AuthModalContext";
 import { useSelector } from "react-redux";
 import {
   SUPPORT_CONTACT_ITEMS,
@@ -44,7 +44,7 @@ import {
   normalizeHelpTopics,
   normalizeCommonQuestions,
   normalizeSupportQueries,
-} from "./utils/supportUtils";
+} from "../../utils/pages/supportUtils";
 
 function SupportStatusBadge({ status }) {
   const normalized = String(status || "pending").toLowerCase();

@@ -4,10 +4,10 @@ import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import AuthCard from "../../components/ui/AuthCard";
-import Button from "../../components/ui/Button";
+import Button from "../../components/ui/buttons/Button";
 import FormField from "../../components/ui/FormField";
 import OtpInput from "../../components/ui/OtpInput";
-import Seo from "../../components/common/Seo";
+import Seo from "../../components/ui/Seo";
 import { AUTH_ROUTES } from "../../features/auth/authRoutes";
 import {
   resetPassword,

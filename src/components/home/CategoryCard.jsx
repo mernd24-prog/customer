@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa6";
-import { TextGoldButton } from "../dynamicComponent/button/static";
+import { TextGoldButton } from "../ui/button/static";
 import { applyImageFallback, getImageFallbackSrc } from "../../utils/ecommerce";
-import { cn } from "../../lib/utils";
+import { cn } from "../../utils/common";
 
 export default function CategoryCard({
   image,

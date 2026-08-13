@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { cn } from "../../lib/utils";
+import { cn } from "../../utils/common";
 import { IoIosArrowForward } from "react-icons/io";
 import { getShowMoreText } from "../../utils/showMore";
 

@@ -1,4 +1,4 @@
-import { LockIcon } from "../icons";
+import { LockIcon } from "./icons";
 
 export default function AuthCard({
   children,
@@ -10,15 +10,16 @@ export default function AuthCard({
   maxHeight,
 }) {
   return (
-    <section className="mt-10 md:mt-8  ">
+    <section className="mt-10 md:mt-8">
       <div
         className={`mx-auto w-full ${maxWidth}  shadow-xl  bg-[#F7F8FC]  rounded-xl border border-[#EAEFF3] p-4 lg:p-6 md:shadow-sm`}
       >
         <div className="flex flex-col md:flex-row items-stretch gap-6">
           {/* Left image - visible on md+ */}
           <div
-            className={`w-full hidden lg:block lg:w-1/2 ${maxHeight || "h-full"
-              }`}
+            className={`dw-full hidden lg:block lg:w-1/2 ${
+              maxHeight || "h-full"
+            }`}
           >
             <img
               src={image}
@@ -54,7 +55,6 @@ export default function AuthCard({
                   </p>
                 )}
               </div>
-
               <div className="w-full pt-4">{children}</div>
             </div>
           </div>
