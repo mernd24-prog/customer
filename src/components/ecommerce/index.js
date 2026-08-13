@@ -19,7 +19,6 @@ export { default as WishlistButton } from "./WishlistButton";
 export { WatchlistItemCard } from "./WatchlistItemCard";
 export {
   CheckboxListFilter,
-  
   FilterSection,
   OptionFilter,
   PriceRangeFilter,

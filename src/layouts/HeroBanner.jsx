@@ -62,7 +62,7 @@ const HeroBanner = ({ content = heroContent }) => {
               <div className="  pointer-events-none absolute inset-y-0 left-0 right-1/3 z-10 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/90 to-transparent" />
 
               <div className="  customer-container relative z-20 flex h-full flex-col items-center justify-between gap-6 pb-8 pt-12 sm:pb-8 sm:pt-16 md:pb-10 md:pt-20 lg:flex-row lg:py-0">
-                <div className="flex flex-1 flex-col items-center space-y-4 pt-4 text-center text-white md:space-y-6 lg:items-start  lg:pl-4 lg:pt-0 lg:text-left">
+                <div className="flex flex-1 flex-col items-center space-y-4 pt-4 text-center text-white md:space-y-6 lg:items-start lg:pt-0 lg:text-left">
                   <div className="  flex flex-col items-center gap-2 md:gap-4 lg:items-start lg:gap-6">
                     <Label
                       variant="seasonSale"

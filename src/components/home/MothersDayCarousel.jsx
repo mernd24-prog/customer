@@ -21,10 +21,10 @@ export default function MothersDayCarousel({
 
   return (
     <section className="my-8 full-banner relative bg-[#1B1E5C] w-full py-12 lg:py-4 ">
-      <div className="max-w-[1760px]   mx-auto px-4 xl:px-8 grid grid-cols-1 xl:grid-cols-4 gap-8 items-center">
+      <div className="customer-container grid grid-cols-1 xl:grid-cols-4 gap-6 items-center">
         {/* Left Text Block */}
 
-        <div className=" flex flex-col items-center text-center xl:items-start xl:text-left text-white p-2 2xl:p-5">
+        <div className="flex flex-col items-center text-center xl:items-start xl:text-left text-white py-2">
           <img
             src="/image/png/backgroundImg.png"
             alt="Decorative Ring"
@@ -65,7 +65,7 @@ export default function MothersDayCarousel({
               <Link
                 key={index}
                 to={cardLink}
-                className="relative overflow-hidden  rounded-md md:rounded-2xl group shadow-xl h-[350px] xl:h-[440px] w-full block"
+                className="relative overflow-hidden  rounded-md md:rounded-2xl group shadow-xl h-[300px] xl:h-[380px] w-full block"
               >
                 {/* Background Image */}
                 <img

@@ -46,6 +46,8 @@ export default function NewArrivalCard({
           <Link
             key={prod.id || index}
             to={`/products/${prod.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex gap-4  p-6 items-center hover:bg-slate-50 transition-colors duration-200 pl-4"
           >
             {/* Product Thumbnail */}

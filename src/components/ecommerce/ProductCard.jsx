@@ -184,6 +184,8 @@ export default function ProductCard({
         <div className="grid gap-4   sm:grid-cols-[180px_1fr_auto]   sm:items-center">
           <Link
             to={to}
+            target="_blank"
+            rel="noopener noreferrer"
             className="block overflow-hidden  rounded-[var(--customer-radius)] bg-[var(--customer-cream)]"
           >
             {image ? (
@@ -204,7 +206,7 @@ export default function ProductCard({
             )}
           </Link>
 
-          <Link to={to} className="min-w-0">
+          <Link to={to} target="_blank" rel="noopener noreferrer" className="min-w-0">
             {brand && (
               <button
                 type="button"
@@ -372,7 +374,7 @@ export default function ProductCard({
         )} */}
       </div>
 
-      <Link to={to} className="flex flex-1 flex-col">
+      <Link to={to} target="_blank" rel="noopener noreferrer" className="flex flex-1 flex-col">
         <div className="flex justify-center overflow-hidden  h-[260px] items-center   w-auto rounded-t-[20px]  transition-all duration-300 ease-in-out group-hover:scale-[1.01]">
           {image ? (
             <img

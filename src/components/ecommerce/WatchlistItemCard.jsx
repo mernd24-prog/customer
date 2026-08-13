@@ -26,6 +26,8 @@ export function WatchlistItemCard({
       <article className="group relative flex gap-3 border-b border-border p-3 transition-all duration-300 ease-in-out hover:bg-cream">
         <Link
           to={`/products/${id}`}
+          target="_blank"
+          rel="noopener noreferrer"
           className="h-16 w-16 shrink-0 overflow-hidden rounded-[8px] border border-border"
           aria-label={`View ${title}`}
         >
@@ -43,6 +45,8 @@ export function WatchlistItemCard({
             <h4 className="truncate text-[13px] font-semibold text-ink transition-all duration-300 ease-in-out group-hover:text-gold">
               <Link
                 to={`/products/${id}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="block min-w-0 truncate"
                 title={title}
               >
@@ -54,6 +58,8 @@ export function WatchlistItemCard({
 
           <Link
             to={`/products/${id}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="mt-1  text-[11px] font-medium text-gold hover:underline"
           >
             View Item
@@ -91,6 +97,8 @@ export function WatchlistItemCard({
           <div className="flex  flex-1 flex-col">
             <Link
               to={`/products/${id}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className=" text-[22px] font-bold leading-8 text-ink  sm:text-[24px] sm:leading-[34px]"
             >
               {title}

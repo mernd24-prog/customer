@@ -71,7 +71,7 @@ function FooterLinkGroups({ groups = [], socialLinks = [] }) {
   if (!groups.length) return null;
 
   return (
-    <div className="max-w-[1760px] mx-auto px-4  md:px-8">
+    <div className="customer-container">
       <div className="grid grid-cols-2 gap-6  md:gap-10 xl:gap-24 border-t border-white/25 pt-8 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
         {groups.map((group, groupIndex) => (
           <div key={group?.title || `group-${groupIndex}`}>
@@ -228,8 +228,8 @@ export function Footer({ data = footerData }) {
   return (
     <footer className="w-full   bg-[#1C1C1C] h-auto text-white">
       {benefits.length > 0 && (
-        <div className="xl:px-12 bg-[#F5F8FB] border-t-2 border-[#1B1D6033]">
-          <div className="flex  flex-col lg:flex-row justify-between customer-container">
+        <div className="bg-[#F5F8FB] border-t-2 border-[#1B1D6033]">
+          <div className="flex flex-col lg:flex-row justify-between customer-container">
             {benefits.map((item, index) => (
               <div
                 key={item?.title || `benefit-${index}`}
@@ -253,7 +253,7 @@ export function Footer({ data = footerData }) {
           </div>
         </div>
       )}
-      <div className="pt-4 sm:pt-0 flex  flex-col max-w-[1760px] mx-auto px-4 md:px-8 gap-2 md:gap-16 lg:gap-4 md:flex-row justify-between">
+      <div className="customer-container pt-4 sm:pt-0 flex flex-col gap-2 md:gap-16 lg:gap-4 md:flex-row justify-between">
         <div className="flex my-2 items-center gap-3 ">
           <Link to="/">
             <img
@@ -299,8 +299,8 @@ export function Footer({ data = footerData }) {
 
       <FooterLinkGroups groups={resolvedLinkGroups} socialLinks={socialLinks} />
 
-      <section className="bg-black py-2   ">
-        <div className="flex flex-col gap-2 lg:gap-10 text-white text-xs md:text-base lg:flex-row justify-center">
+      <section className="bg-black py-2">
+        <div className="customer-container flex flex-col gap-2 lg:gap-10 text-white text-xs md:text-base lg:flex-row justify-center">
           <p className="text-center ">{copyright}</p>
           <div className="flex items-center justify-center gap-2 md:gap-8">
             {extraPages.map((item, index) => {

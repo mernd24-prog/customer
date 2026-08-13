@@ -51,21 +51,11 @@ export const footerData = {
       links: [
         { label: "Customer Support", href: "/support" },
         { label: "Mobile App", href: "/mobile-app" },
-        // { label: "FAQs", href: "/faq" },
         { label: "Shipping & Delivery Policy", href: "/shipping-policy" },
         { label: "Return & Refund Policy", href: "/refund-policy" },
-
-        // Added policy routes
+        { label: "Terms of Use", href: "/terms-of-use" },
       ],
     },
-    // {
-    //   title: "Community",
-    //   links: [
-    //     { label: "Blog", href: "/blog" },
-    //     { label: "Updates", href: "/updates" },
-    //     { label: "Announcements", href: "/announcements" },
-    //   ],
-    // },
   ],
   actionLinks: [
     {
@@ -100,20 +90,6 @@ export const footerData = {
   },
 
   copyright: "© 2026 Samglobal Marketplace Pvt. Ltd. All rights reserved.",
-  extrapages: [
-    {
-      labels: "Terms of Use",
-      links: "/terms-of-use",
-    },
-    // {
-    //   labels: "Cookie Settings",
-    //   links: "/cookie-settings",
-    // },
-    // {
-    //   labels: "Sitemap",
-    //   links: "#",
-    // },
-  ],
   socialLinks: [
     {
       label: "Instagram",

@@ -20,7 +20,12 @@ import {
   getAvailabilityCounts,
   calculateAbsolutePriceLimits,
 } from "../../utils/ecommerce";
-import { parseMultiValue, serializeMultiValue, getFacetList, normalizeFacetOption } from "../../utils/filterUtils";
+import {
+  parseMultiValue,
+  serializeMultiValue,
+  getFacetList,
+  normalizeFacetOption,
+} from "../../utils/filterUtils";
 import { capitalizeFirst } from "../../utils/stringUtils";
 
 const SORT_OPTIONS = [
@@ -30,8 +35,6 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High to Low" },
   { value: "rating", label: "Top Rated" },
 ];
-
-
 
 export default function ProductsPage() {
   const dispatch = useDispatch();
@@ -138,7 +141,10 @@ export default function ProductsPage() {
   useEffect(() => {
     if (currentContextKey !== facetsContextKey) return;
 
-    const { min: currentMin, max: currentMax } = calculateAbsolutePriceLimits(productFacets, products);
+    const { min: currentMin, max: currentMax } = calculateAbsolutePriceLimits(
+      productFacets,
+      products,
+    );
 
     if (currentMin != null && currentMax != null) {
       setAbsolutePriceLimits((prev) => {
@@ -323,62 +329,84 @@ export default function ProductsPage() {
     isLoadingMore,
   ]);
 
-  const updateParam = (key, value) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (value == null || value === "") next.delete(key);
-      else next.set(key, value);
-      next.delete("page");
-      return next;
-    });
-  };
+  const scrollToTop = useCallback(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, []);
 
-  const updateParams = (entries) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      entries.forEach(([key, value]) => {
+  const updateParam = useCallback(
+    (key, value) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
         if (value == null || value === "") next.delete(key);
         else next.set(key, value);
+        next.delete("page");
+        return next;
       });
-      next.delete("page");
-      return next;
-    });
-  };
+      scrollToTop();
+    },
+    [scrollToTop, setSearchParams],
+  );
 
-  const removeFilter = (key, filter) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (key === "price") {
-        next.delete("minPrice");
-        next.delete("maxPrice");
-      } else if (filter?.groupKey) {
-        if (filter.value === undefined) {
-          next.delete(filter.groupKey);
-        } else {
-          const nextValues = parseMultiValue(next.get(filter.groupKey)).filter(
-            (value) => value !== filter.value,
-          );
-          const serialized = serializeMultiValue(nextValues);
-          if (serialized) next.set(filter.groupKey, serialized);
-          else next.delete(filter.groupKey);
-        }
-      } else next.delete(key);
-      next.delete("page");
-      return next;
-    });
-  };
+  const updateParams = useCallback(
+    (entries) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        entries.forEach(([key, value]) => {
+          if (value == null || value === "") next.delete(key);
+          else next.set(key, value);
+        });
+        next.delete("page");
+        return next;
+      });
+      scrollToTop();
+    },
+    [scrollToTop, setSearchParams],
+  );
 
-  const handlePriceChange = ({ minPrice, maxPrice }) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (minPrice) next.set("minPrice", minPrice);
-      else next.delete("minPrice");
-      if (maxPrice) next.set("maxPrice", maxPrice);
-      else next.delete("maxPrice");
-      next.delete("page");
-      return next;
-    });
-  };
+  const removeFilter = useCallback(
+    (key, filter) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        if (key === "price") {
+          next.delete("minPrice");
+          next.delete("maxPrice");
+        } else if (filter?.groupKey) {
+          if (filter.value === undefined) {
+            next.delete(filter.groupKey);
+          } else {
+            const nextValues = parseMultiValue(
+              next.get(filter.groupKey),
+            ).filter((value) => value !== filter.value);
+            const serialized = serializeMultiValue(nextValues);
+            if (serialized) next.set(filter.groupKey, serialized);
+            else next.delete(filter.groupKey);
+          }
+        } else next.delete(key);
+        next.delete("page");
+        return next;
+      });
+      scrollToTop();
+    },
+    [scrollToTop, setSearchParams],
+  );
+
+  const handlePriceChange = useCallback(
+    ({ minPrice, maxPrice }) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        if (minPrice) next.set("minPrice", minPrice);
+        else next.delete("minPrice");
+        if (maxPrice) next.set("maxPrice", maxPrice);
+        else next.delete("maxPrice");
+        next.delete("page");
+        return next;
+      });
+      scrollToTop();
+    },
+    [scrollToTop, setSearchParams],
+  );
 
   const handleClearFilters = useCallback(() => {
     setSearchParams((prev) => {
@@ -389,7 +417,8 @@ export default function ProductsPage() {
         next.set("collectionIds", prev.get("collectionIds"));
       return next;
     });
-  }, [setSearchParams]);
+    scrollToTop();
+  }, [scrollToTop, setSearchParams]);
 
   const activeFilters = [
     searchParams.get("category") && {
@@ -432,7 +461,9 @@ label: "Free Delivery",
       .filter(([key, value]) => key.startsWith("attr_") && value)
       .map(([key, value]) => {
         const attributeKey = key.replace(/^attr_/, "");
-        const label = attributeFacets?.find((a) => a.key === attributeKey)?.label || capitalizeFirst(attributeKey);
+        const label =
+          attributeFacets?.find((a) => a.key === attributeKey)?.label ||
+          capitalizeFirst(attributeKey);
         return {
           key,
           groupKey: key,
@@ -673,9 +704,7 @@ label: "Free Delivery",
         (productState.loading && !products.length) ||
         (!firstLoadDone && !products.length)
       }
-      refreshing={
-        productState.loading && products.length > 0 && !isLoadingMore
-      }
+      refreshing={productState.loading && products.length > 0 && !isLoadingMore}
       error={products.length === 0 ? productState.error : null}
       empty={!products.length && !productState.loading && firstLoadDone}
       emptyTitle={isSearchMode ? "No results found" : "No Products Found"}

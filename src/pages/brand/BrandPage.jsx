@@ -239,6 +239,12 @@ export default function BrandPage() {
     });
   }, [brand, loadProducts, searchParams]);
 
+  const scrollToTop = useCallback(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, []);
+
   const updateParam = (key, value) => {
     updateSearchParams((next) => {
       if (value == null || value === "") {
@@ -247,6 +253,7 @@ export default function BrandPage() {
         next.set(key, value);
       }
     });
+    scrollToTop();
   };
 
   const updateParams = (entries) => {
@@ -259,6 +266,7 @@ export default function BrandPage() {
         }
       });
     });
+    scrollToTop();
   };
 
   const handlePriceChange = ({ minPrice, maxPrice }) => {
@@ -269,6 +277,7 @@ export default function BrandPage() {
       if (maxPrice) next.set("maxPrice", maxPrice);
       else next.delete("maxPrice");
     });
+    scrollToTop();
   };
 
   const removeFilter = (key, filter) => {
@@ -294,18 +303,20 @@ export default function BrandPage() {
         next.delete(key);
       }
     });
+    scrollToTop();
   };
 
   const setPage = (p) => {
     updateSearchParams((next) => {
       next.set("page", p);
     }, false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToTop();
   };
 
   const handleClearFilters = useCallback(() => {
     setSearchParams(new URLSearchParams());
-  }, [setSearchParams]);
+    scrollToTop();
+  }, [scrollToTop, setSearchParams]);
 
   const activeFilters = [
     searchParams.get("sort") && {

@@ -300,9 +300,7 @@ export default function useCategory() {
 
   const scrollToResultsTop = useCallback(() => {
     if (typeof window === "undefined") return;
-    window.requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   useEffect(() => {
