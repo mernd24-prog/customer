@@ -17,7 +17,7 @@ const getCategoryKey = (item = {}) =>
   item?.categoryKey ||
   item?.key ||
   item?.slug ||
-  buildCategorySlug(item?.title || item?.name)
+  buildCategorySlug(item?.title || item?.name);
 
 function getCategoryListFromResponse(data) {
   if (Array.isArray(data)) return data;
@@ -62,7 +62,6 @@ function getRootCategories(categories = []) {
       Number(category?.level ?? 0) === 0,
   );
 }
-
 
 // ─── FooterLinkGroups ─────────────────────────────────────────────────────────
 
@@ -132,9 +131,12 @@ export function Footer({ data = footerData }) {
 
   // ── Redux state ─────────────────────────────────────────────────────────────
   const catalogCategoryList = useSelector(
-    (state) => state.catalog.globalCategories || state.catalog.list || emptyArray,
+    (state) =>
+      state.catalog.globalCategories || state.catalog.list || emptyArray,
   );
-  const globalBrands = useSelector((state) => state.catalog.globalBrands || emptyArray);
+  const globalBrands = useSelector(
+    (state) => state.catalog.globalBrands || emptyArray,
+  );
 
   // ── Fetch if not yet loaded ──────────────────────────────────────────────────
   useEffect(() => {
@@ -227,11 +229,11 @@ export function Footer({ data = footerData }) {
     <footer className="w-full   bg-[#1C1C1C] h-auto text-white">
       {benefits.length > 0 && (
         <div className="xl:px-12 bg-[#F5F8FB] border-t-2 border-[#1B1D6033]">
-          <div className="flex flex-col lg:flex-row justify-between py-1 px-12">
+          <div className="flex  flex-col lg:flex-row justify-between customer-container">
             {benefits.map((item, index) => (
               <div
                 key={item?.title || `benefit-${index}`}
-                className="flex items-center gap-4 rounded-[var(--customer-radius)] px-4 py-3 mr-10"
+                className="flex items-center gap-4 rounded-[var(--customer-radius)] py-3 mr-10"
               >
                 <img
                   className="h-10 w-10  shrink-0 object-contain sm:h-12 sm:w-12 2xl:h-[60px] 2xl:w-[60px]"

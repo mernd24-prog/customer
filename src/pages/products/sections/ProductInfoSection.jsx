@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { formatPageTitle } from "../../../lib/utils";
-import { getProductTitle, getImageUrlFromValue } from "../../../utils/ecommerce";
+import {
+  getProductTitle,
+  getImageUrlFromValue,
+} from "../../../utils/ecommerce";
 import { ProductGallery } from "../components/ImageGallery";
 
 function InfoTabs({ tabs, activeTab, onChange }) {
@@ -117,8 +120,7 @@ export default function ProductInfoSection({
               rowClassName="grid grid-cols-1 gap-1 px-4 py-4 text-[16px] sm:grid-cols-[220px_minmax(0,1fr)]"
               labelClassName="font-medium text-[#2E2E2E]"
               valueClassName="text-left font-bold text-navy sm:text-right"
-            >
-            </DetailRows>
+            ></DetailRows>
           ) : (
             <p className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line">
               No Product Details Available.
@@ -131,7 +133,7 @@ export default function ProductInfoSection({
         <InfoCard title="Description">
           {product?.description ? (
             <div
-              className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line leading-relaxed"
+              className="px-4 py-4  text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line leading-relaxed"
               dangerouslySetInnerHTML={{ __html: product.description }}
             />
           ) : (
