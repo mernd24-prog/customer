@@ -1,7 +1,16 @@
 import { useEffect, useState, useMemo } from "react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { MdOutlineShoppingCart, MdContentCopy, MdDateRange } from "react-icons/md";
+import {
+  MdOutlineShoppingCart,
+  MdContentCopy,
+  MdDateRange,
+} from "react-icons/md";
 import { FaShoppingCart } from "react-icons/fa";
 import { BsCreditCardFill } from "react-icons/bs";
 import ShowMoreText from "../../../utils/showMore";
@@ -14,6 +23,7 @@ import {
   Search,
   Truck,
   XCircle,
+  X,
 } from "lucide-react";
 
 import ApiState from "../../../components/ui/ApiState";
@@ -28,9 +38,7 @@ import { notify } from "../../../utils/notify";
 import NeedHelpPanel from "../../../components/ecommerce/NeedHelpPanel";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 
-import {
-  fetchMyOrders,
-} from "../../../features/order/orderSlice";
+import { fetchMyOrders } from "../../../features/order/orderSlice";
 
 import { formatMoney, getImageUrlFromValue } from "../../../utils/ecommerce";
 import {
@@ -42,7 +50,7 @@ import {
 import { ORDER_LIST_SKELETON } from "../../../components/ui/skeleton/layouts";
 
 import {
-getOrderId,
+  getOrderId,
   getOrderNumber,
   getOrderStatus,
   getDeliveryStatus,
@@ -96,7 +104,7 @@ getOrderId,
   getOrderItemSellerGroupKey,
   findShipmentForOrderItem,
   resolveOrderItemDisplayStatus,
-  getOrderCardImage
+  getOrderCardImage,
 } from "../../../utils/pages/orderUtils";
 
 function OrderListStatusBadge({ status }) {
@@ -250,8 +258,8 @@ function OrderItemSummaryCard({ order, item }) {
               {trackingNumber ? ` · ${trackingNumber}` : ""}
             </span>
           )} */}
-          <span className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg bg-gold px-4 text-sm font-bold text-white">
-            <Truck size={15} />
+          <span className="mt-3 inline-flex h-8 items-center gap-1.5 rounded-md bg-gold px-3 text-xs font-bold text-white transition-opacity hover:opacity-90">
+            <Truck size={13} />
             Track item details
           </span>
         </span>
@@ -399,9 +407,19 @@ export default function OrderList() {
                       <input
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
-                        placeholder="Search by  product name or Order ID..."
-                        className="h-12 w-full  rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-3  text-base font-medium text-ink outline-none focus:outline-none"
+                        placeholder="Search by product name or Order ID..."
+                        className="h-12 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-9 text-base font-medium text-ink outline-none focus:outline-none"
                       />
+                      {Boolean(query) && (
+                        <button
+                          type="button"
+                          onClick={() => setQuery("")}
+                          aria-label="Clear search"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-[#1B1D6080] hover:text-[#1B1D60] transition"
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
                     </label>
 
                     <CustomDropdown
@@ -469,4 +487,3 @@ export default function OrderList() {
     </>
   );
 }
-

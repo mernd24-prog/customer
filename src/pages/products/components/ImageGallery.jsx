@@ -121,10 +121,10 @@ function ProductGallery({
                       setActiveIndex(i);
                       mainSwiper?.slideTo(i);
                     }}
-                    className={`h-full w-full overflow-hidden rounded-[15px]  border   transition-colors duration-200 ${
+                    className={`h-full w-full overflow-hidden rounded-[15px] border transition-colors duration-200 ${
                       activeIndex === i
-                        ? "border-gold shadow-sm bg-gradient-to-t from-[#1B1D60]/65 to-transparent"
-                        : "border-border"
+                        ? "border-gold shadow-sm bg-white"
+                        : "border-border bg-white"
                     }`}
                   >
                     <img

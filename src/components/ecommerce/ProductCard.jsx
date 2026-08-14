@@ -1,11 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useMemo } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Banknote, Clock3, Heart, ShoppingCart } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
 import Label from "../ui/label/Label";
-import {
-  IconCircleButton,
-  PillButton,
-} from "../ui/button/static";
+import { IconCircleButton, PillButton } from "../ui/button/static";
 import Price from "./Price";
 import Rating from "./Rating";
 import WishlistButton from "./WishlistButton";
@@ -66,6 +64,7 @@ export default function ProductCard({
   inStock,
   discountPercent: discountPercentProp,
   href,
+  target,
   variant = "grid",
   onAddToCart,
   onWishlist,
@@ -74,6 +73,32 @@ export default function ProductCard({
   className = "",
 }) {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const resolvedTarget = useMemo(() => {
+    if (target !== undefined) return target;
+
+    const pathname = location.pathname || "";
+
+    // Product Detail Page: navigate in same tab
+    if (/^\/products\/[^/]+/.test(pathname)) {
+      return "_self";
+    }
+
+    // Catalog / Listing pages with sidebar filters: open in new tab
+    if (
+      pathname === "/products" ||
+      pathname.startsWith("/categories") ||
+      pathname.startsWith("/brands") ||
+      pathname.startsWith("/search") ||
+      pathname.startsWith("/brand-outlet")
+    ) {
+      return "_blank";
+    }
+
+    return "_self";
+  }, [target, location.pathname]);
+
   const cardProduct = product || {};
   const id = getProductId(cardProduct);
   const title = titleProp || getProductTitle(cardProduct);
@@ -184,8 +209,10 @@ export default function ProductCard({
         <div className="grid gap-4   sm:grid-cols-[180px_1fr_auto]   sm:items-center">
           <Link
             to={to}
-            target="_blank"
-            rel="noopener noreferrer"
+            target={resolvedTarget === "_self" ? undefined : resolvedTarget}
+            rel={
+              resolvedTarget === "_blank" ? "noopener noreferrer" : undefined
+            }
             className="block overflow-hidden  rounded-[var(--customer-radius)] bg-[var(--customer-cream)]"
           >
             {image ? (
@@ -206,7 +233,14 @@ export default function ProductCard({
             )}
           </Link>
 
-          <Link to={to} target="_blank" rel="noopener noreferrer" className="min-w-0">
+          <Link
+            to={to}
+            target={resolvedTarget === "_self" ? undefined : resolvedTarget}
+            rel={
+              resolvedTarget === "_blank" ? "noopener noreferrer" : undefined
+            }
+            className="min-w-0"
+          >
             {brand && (
               <button
                 type="button"
@@ -338,43 +372,14 @@ export default function ProductCard({
             {dealBadge}
           </Label>
         )}
-        {/* {codAvailable && (
-          <Label
-            variant="success"
-            className="
-              flex h-[24px] items-center justify-center gap-1
-              rounded-[50px]
-              border border-emerald-200
-              bg-emerald-50
-              px-[12px] py-[5px]
-              font-dmSans
-              text-[12px] font-semibold
-              leading-none
-              tracking-[0%]
-              text-emerald-700
-              sm:h-[28px]
-              sm:px-[15px]
-              sm:text-[14px]
-              "
-          >
-            <Banknote size={12} /> COD Available
-          </Label>
-        )} */}
-        {/* {resolvedBadgeLabel && (
-          <span
-            className="flex h-[24px] items-center justify-center rounded-[50px] px-[12px] py-[5px] text-[11px] font-bold uppercase tracking-wide sm:h-[28px] sm:px-[15px] sm:text-[12px]"
-            style={{
-              color: resolvedBadgeStyle?.color || "#E53E3E",
-              backgroundColor: resolvedBadgeStyle?.bgColor || "#FFF5F5",
-              border: `1px solid ${resolvedBadgeStyle?.color || "#E53E3E"}40`,
-            }}
-          >
-            {resolvedBadgeLabel}
-          </span>
-        )} */}
       </div>
 
-      <Link to={to} target="_blank" rel="noopener noreferrer" className="flex flex-1 flex-col">
+      <Link
+        to={to}
+        target={resolvedTarget === "_self" ? undefined : resolvedTarget}
+        rel={resolvedTarget === "_blank" ? "noopener noreferrer" : undefined}
+        className="flex flex-1 flex-col"
+      >
         <div className="flex justify-center overflow-hidden  h-[260px] items-center   w-auto rounded-t-[20px]  transition-all duration-300 ease-in-out group-hover:scale-[1.01]">
           {image ? (
             <img

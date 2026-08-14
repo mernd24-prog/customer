@@ -10,9 +10,7 @@ import {
   fetchMyProductReview,
   markReviewHelpful,
 } from "../../features/review/reviewSlice";
-import {
-  getImageUrlFromValue,
-} from "../../utils/ecommerce";
+import { getImageUrlFromValue } from "../../utils/ecommerce";
 import {
   sortReviews,
   getUserDisplayName,
@@ -21,8 +19,6 @@ import {
 
 const LIMIT = 10;
 const STAR_VALUES = [5, 4, 3, 2, 1];
-
-
 
 function StarRow({ rating, size = 14 }) {
   const filled = Math.round(Number(rating || 0));
@@ -73,11 +69,11 @@ function ProductReviewSidebar({ product, productId }) {
       <img
         src={product.image}
         alt={product.title}
-        className="aspect-[10/10] max-w-[800px] w-full rounded-[4px] bg-[var(--customer-cream)] object-cover"
+        className="aspect-[8/8] max-w-[800px] w-full rounded-[4px] bg-[var(--customer-cream)] object-contain"
       />
 
       <div className="mt-4">
-        <h1 className="text-base  font-bold  uppercase text-[var(--customer-ink)]">
+        <h1 className="text-sm  font-bold  uppercase text-[var(--customer-ink)]">
           {product.title}
         </h1>
 
@@ -187,12 +183,7 @@ function ReviewsHeader({ total, sort, onSort }) {
   );
 }
 
-function ReviewCard({
-  review,
-  currentUser,
-  currentUserId,
-  onHelpful
-}) {
+function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const isOwn =
     currentUserId &&
@@ -424,8 +415,6 @@ function ReviewPagination({ page, totalPages, onPrev, onNext }) {
     </div>
   );
 }
-
-
 
 export default function ReviewDetailsPage() {
   const { productId } = useParams();

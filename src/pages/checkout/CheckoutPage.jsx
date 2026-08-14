@@ -12,6 +12,7 @@ import DiscountsSection from "./components/DiscountsSection";
 import CheckoutSummary from "./components/CheckoutSummary";
 import BaseModal from "../../components/ui/overlay/BaseModal";
 import GuestOtpAuthModal from "../../components/ui/overlay/GuestOtpAuthModal";
+import Loader from "../../components/ui/Loader";
 import { CHECKOUT_PAGE_SKELETON } from "../../components/ui/skeleton/layouts";
 import { WarningIcon, CloseIcon } from "../../components/ui/icons";
 
@@ -25,6 +26,7 @@ export default function CheckoutPage() {
     quoteError,
     isQuoteErrorDismissed,
     setIsQuoteErrorDismissed,
+    isPostPaymentProcessing,
     items,
     subtotal,
     shipping,
@@ -57,11 +59,16 @@ export default function CheckoutPage() {
     selectedCountry,
     selectedState,
     selectedCity,
-    watchedPostalCode
+    watchedPostalCode,
   } = useCheckout();
 
   return (
     <>
+      {isPostPaymentProcessing && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--customer-cream)]">
+          <Loader size="xl" />
+        </div>
+      )}
       <GuestOtpAuthModal
         open={showGuestOtpModal}
         onClose={() => {
@@ -84,22 +91,30 @@ export default function CheckoutPage() {
             ]}
             heading="Checkout"
             rightContent={
-              quoteError && !isQuoteErrorDismissed && (
+              quoteError &&
+              !isQuoteErrorDismissed && (
                 <div className="flex w-full sm:max-w-[500px] md:max-w-[600px] rounded-lg border border-red-200 border-l-4 border-l-red-500 bg-[#FFF8F8] px-3 py-2.5 text-sm leading-tight text-red-700 text-left lg:max-w-[700px] lg:ml-auto relative shadow-[0_2px_10px_rgba(255,0,0,0.05)]">
                   <div className="flex items-start gap-2.5 pr-6">
                     <div className="mt-0.5 shrink-0 rounded-full border border-red-200 bg-white p-0.5 text-red-500">
                       <WarningIcon size={16} />
                     </div>
                     <div className="flex flex-col gap-0.5">
-                      <span className="font-bold text-[14px] text-[#D12E2E]">Delivery Unavailable</span>
+                      <span className="font-bold text-[14px] text-[#D12E2E]">
+                        Delivery Unavailable
+                      </span>
                       <div className="font-medium text-[#4A4A4A] text-[12px] leading-snug">
-                        {typeof quoteError === "string" && quoteError.trim() !== ""
+                        {typeof quoteError === "string" &&
+                        quoteError.trim() !== ""
                           ? quoteError
                           : "We're unable to deliver to the selected address. Please try another address or update your pincode."}
                       </div>
                     </div>
                   </div>
-                  <button type="button" onClick={() => setIsQuoteErrorDismissed(true)} className="absolute right-2 top-2 p-1 text-red-400 hover:text-red-600 transition-colors">
+                  <button
+                    type="button"
+                    onClick={() => setIsQuoteErrorDismissed(true)}
+                    className="absolute right-2 top-2 p-1 text-red-400 hover:text-red-600 transition-colors"
+                  >
                     <CloseIcon size={16} />
                   </button>
                 </div>

@@ -27,7 +27,7 @@ export const loadRazorpayCheckout = () => {
   return razorpayScriptPromise;
 };
 
-export const openRazorpayCheckout = async ({ dispatch, run, order, orderId, payment, user, verifyPayment }) => {
+export const openRazorpayCheckout = async ({ dispatch, run, order, orderId, payment, user, verifyPayment, onPaymentSuccess }) => {
   const checkout = payment?.checkout || {};
   if (!checkout.keyId || !checkout.orderId || !checkout.amount) {
     throw new Error("Razorpay checkout details are missing. Please try again.");
@@ -58,6 +58,9 @@ export const openRazorpayCheckout = async ({ dispatch, run, order, orderId, paym
       notes: { orderId },
       theme: { color: "#B48A3C" },
       handler: async (response) => {
+        if (typeof onPaymentSuccess === "function") {
+          onPaymentSuccess();
+        }
         try {
           const verified = await run(
             dispatch,

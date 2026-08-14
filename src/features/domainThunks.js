@@ -664,7 +664,8 @@ export const sellerCommissionThunks = {
   }),
   processPayoutById: makeThunk("sellerCommission/processPayoutById", {
     method: "post",
-    url: ({ payoutId }) => endpoints.sellerCommissions.processPayoutById(payoutId),
+    url: ({ payoutId }) =>
+      endpoints.sellerCommissions.processPayoutById(payoutId),
     data: body,
   }),
   failPayoutById: makeThunk("sellerCommission/failPayoutById", {
@@ -1419,10 +1420,12 @@ export const reviewThunks = {
   }),
   markReviewHelpful: makeThunk("review/markReviewHelpful", {
     method: "patch",
-    url: ({ productId, reviewId }) => endpoints.products.reviewHelpful(productId, reviewId),
+    url: ({ productId, reviewId }) =>
+      endpoints.products.reviewHelpful(productId, reviewId),
   }),
   deleteMyReview: makeThunk("review/deleteMyReview", {
     method: "delete",
-    url: ({ productId, reviewId }) => endpoints.products.reviewItem(productId, reviewId),
+    url: ({ productId, reviewId }) =>
+      endpoints.products.reviewItem(productId, reviewId),
   }),
 };
