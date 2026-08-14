@@ -259,6 +259,8 @@ export function Footer({ data = footerData }) {
             <img
               src="/image/png/logoWithName.png"
               alt="Sam Global"
+              width="160"
+              height="60"
               className="h-9 sm:h-12 lg:h-16 xl:h-[60px]  rounded object-contain"
             />
           </Link>
@@ -288,6 +290,8 @@ export function Footer({ data = footerData }) {
                       className="h-10 lg:h-[50px] w-auto"
                       src={app?.image}
                       alt={app?.alt || app?.label || "App"}
+                      width="150"
+                      height="50"
                     />
                   </Link>
                 );

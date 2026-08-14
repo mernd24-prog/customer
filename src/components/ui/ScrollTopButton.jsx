@@ -5,7 +5,16 @@ export default function ScrollTopButton() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 300);
+    let ticking = false;
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setVisible(window.scrollY > 300);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
 
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });

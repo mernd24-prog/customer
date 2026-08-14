@@ -584,14 +584,11 @@ export default function useCheckout() {
     [items, quoteShippingAddress],
   );
   const deliverabilityError = useMemo(() => {
-    if (!deliverabilityBlockers.length) return "";
-    const first = deliverabilityBlockers[0];
-    const extra =
-      deliverabilityBlockers.length > 1
-        ? ` and ${deliverabilityBlockers.length - 1} more item(s)`
-        : "";
-    const truncatedTitle = first.title.length > 35 ? first.title.substring(0, 35).trim() + "..." : first.title;
-    return `"${truncatedTitle}"${extra} cannot be delivered to ${first.pincode}. ${first.reason}`;
+    if (!deliverabilityBlockers.length) return null;
+    return deliverabilityBlockers.map(blocker => {
+      const truncatedTitle = blocker.title.length > 35 ? blocker.title.substring(0, 35).trim() + "..." : blocker.title;
+      return `"${truncatedTitle}" cannot be delivered to ${blocker.pincode}. ${blocker.reason}`;
+    });
   }, [deliverabilityBlockers]);
 
   useEffect(() => {
