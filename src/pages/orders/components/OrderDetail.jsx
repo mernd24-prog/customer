@@ -357,14 +357,14 @@ export default function OrderDetail({ orderId, track }) {
       </div>
       <ConfirmModal
         open={cancelModalOpen}
-        title={selectedOrderItem ? "Cancel this item?" : "Cancel this order?"}
+        title={selectedOrderItem ? "Request item cancellation?" : "Request cancellation?"}
         description={
           selectedOrderItem
-            ? "Only the selected item will be cancelled. Other active items and their shipment will continue normally."
-            : "All remaining items will be cancelled and reserved inventory will be released. Any captured payment will be refunded according to the payment method."
+            ? "Submit the selected quantity for seller/admin approval. No refund or cancellation is processed before approval."
+            : "Submit the selected item quantities for seller/admin approval. Refund processing starts only after approval."
         }
-        confirmLabel={state.loading ? "Cancelling..." : selectedOrderItem ? "Cancel item" : "Cancel order"}
-        confirmDisabled={state.loading}
+        confirmLabel={state.loading ? "Submitting..." : "Submit cancellation request"}
+        confirmDisabled={state.loading || !Object.values(cancelItems).some((quantity) => Number(quantity) > 0)}
         cancelLabel={selectedOrderItem ? "Keep item" : "Keep order"}
         onCancel={() => {
           if (!state.loading) setCancelModalOpen(false);
@@ -372,6 +372,61 @@ export default function OrderDetail({ orderId, track }) {
         onConfirm={handleCancelOrder}
       >
         <div className="grid gap-3">
+          <div className="grid gap-2 rounded-[6px] border border-border bg-slate-50 p-3">
+            <p className="text-sm font-medium text-ink">Select item quantities</p>
+            {(selectedOrderItem ? [selectedOrderItem] : items).map((item) => {
+              const itemId = String(getOrderItemId(item));
+              const pendingQuantity = cancellations
+                .filter((request) => !["completed", "failed", "rejected"].includes(String(request.status || "").toLowerCase()))
+                .flatMap((request) => request.items || [])
+                .filter((entry) => String(entry.orderItemId || entry.order_item_id || "") === itemId)
+                .reduce((sum, entry) => sum + Number(entry.quantity || 0), 0);
+              const remaining = Math.max(
+                Number(item.quantity || 0) - Number(item.cancelled_quantity || item.cancelledQuantity || 0) - pendingQuantity,
+                0,
+              );
+              const selected = Object.prototype.hasOwnProperty.call(cancelItems, itemId);
+              return (
+                <div key={itemId} className="flex items-center gap-3 rounded-[6px] border border-border bg-white p-2 text-sm">
+                  {!selectedOrderItem && (
+                    <input
+                      type="checkbox"
+                      checked={selected}
+                      disabled={remaining <= 0 || state.loading}
+                      aria-label={`Select ${getProductTitle(item)} for cancellation`}
+                      onChange={(event) => setCancelItems((current) => {
+                        const next = { ...current };
+                        if (event.target.checked) next[itemId] = remaining;
+                        else delete next[itemId];
+                        return next;
+                      })}
+                    />
+                  )}
+                  <span className="min-w-0 flex-1 truncate">{getProductTitle(item)}</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max={remaining}
+                    disabled={!selected || remaining <= 0 || state.loading}
+                    className="w-20 rounded-[6px] border border-border px-2 py-1"
+                    value={selected ? cancelItems[itemId] : ""}
+                    aria-label={`Cancellation quantity for ${getProductTitle(item)}`}
+                    onChange={(event) => setCancelItems((current) => ({
+                      ...current,
+                      [itemId]: Math.min(Math.max(Number(event.target.value || 1), 1), remaining),
+                    }))}
+                  />
+                  <span className="whitespace-nowrap text-xs text-muted">of {remaining}</span>
+                  {pendingQuantity > 0 && (
+                    <span className="whitespace-nowrap text-xs text-amber-700">{pendingQuantity} pending</span>
+                  )}
+                </div>
+              );
+            })}
+            {!Object.values(cancelItems).some((quantity) => Number(quantity) > 0) && (
+              <p className="text-xs text-red-600">Select at least one item and quantity.</p>
+            )}
+          </div>
           <label className="text-sm font-medium text-ink">
             Reason
             <select

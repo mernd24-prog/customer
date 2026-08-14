@@ -384,18 +384,30 @@ function OrderPaymentSummary({
             {visiblePaymentMethods.map((option) => (
               <label
                 key={option.provider}
-                className="flex cursor-pointer  items-center gap-3 rounded-[10px] px-3 py-3 text-sm transition hover:border-[#CE9F2D]"
+                className={`flex items-start gap-3 rounded-[10px] px-3 py-3 text-sm transition ${
+                  option.enabled === false
+                    ? "cursor-not-allowed bg-slate-50 opacity-70"
+                    : "cursor-pointer hover:border-[#CE9F2D]"
+                }`}
               >
                 <input
                   type="radio"
                   value={option.provider}
                   checked={selectedPaymentProvider === option.provider}
+                  disabled={option.enabled === false}
                   onChange={(e) => onPaymentProviderChange?.(e.target.value)}
-                  className="h-[18px] w-[18px] accent-[#3E4093]"
+                  className="mt-1 h-[18px] w-[18px] accent-[#3E4093]"
                 />
 
-                <span className="text-sm md:text-[18px]   font-medium leading-[28px] text-[#2E2E2E]">
-                  {option.label}
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-medium leading-[28px] text-[#2E2E2E] md:text-[18px]">
+                    {option.label}
+                  </span>
+                  {option.enabled === false && option.disabledReason ? (
+                    <span className="block text-xs leading-5 text-red-600">
+                      {option.disabledReason}
+                    </span>
+                  ) : null}
                 </span>
               </label>
             ))}

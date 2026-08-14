@@ -258,6 +258,7 @@ export const adaptCheckoutItem = (item = {}, index = 0, fullProduct = null) => {
       .join(":"),
     _safeTitle: title,
     _variantTitle: getCartItemVariantTitle(item),
+    _resolvedProduct: product,
     _image: image,
     _attributes: getCartItemAttributes(item),
     _lineTotal: price * quantity,

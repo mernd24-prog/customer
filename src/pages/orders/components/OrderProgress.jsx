@@ -2,6 +2,7 @@ import {
   ORDER_STEPS,
   REFUND_STEPS,
   RETURN_STEPS,
+  TRACKING_LABELS,
 } from "../../../data/orderPage";
 import vectorImage from "/image/png/SuccessVector .png";
 import { InfoCircleIcon } from "../../../components/ui/icons";
@@ -43,6 +44,9 @@ const CUSTOMER_PROGRESS_STEPS = [
   "out_for_delivery",
   "delivered",
   "fulfilled",
+  "cancellation_requested",
+  "cancellation_approved",
+  "cancellation_rejected",
   "return_requested",
   "return_approved",
   "pickup_scheduled",
@@ -52,6 +56,8 @@ const CUSTOMER_PROGRESS_STEPS = [
   "refund_initiated",
   "partially_refunded",
   "refund_completed",
+  "partially_cancelled",
+  "cancelled",
 ];
 
 const PROGRESS_MESSAGES = {
@@ -64,6 +70,9 @@ const PROGRESS_MESSAGES = {
   out_for_delivery: "This item is out for delivery.",
   delivered: "This item has been delivered.",
   fulfilled: "This item is complete.",
+  cancellation_requested: "Cancellation requested. Waiting for seller or admin approval.",
+  cancellation_approved: "Cancellation approved. Refund processing will begin where required.",
+  cancellation_rejected: "The cancellation request was rejected. The item remains active.",
   return_requested: "Return request received for this item.",
   return_approved: "Return approved. Follow the return instructions.",
   pickup_scheduled: "Return pickup has been scheduled.",
@@ -74,6 +83,8 @@ const PROGRESS_MESSAGES = {
   partially_refunded: "Partial refund has been processed.",
   refund_completed: "Refund completed.",
   refunded: "Refund completed.",
+  partially_cancelled: "The approved item quantity has been cancelled successfully.",
+  cancelled: "Cancellation completed successfully.",
 };
 
 const CUSTOMER_LABELS = {
@@ -90,6 +101,9 @@ const CUSTOMER_LABELS = {
   delivered: "Delivered",
   fulfilled: "Complete",
   cancelled: "Cancelled",
+  cancellation_requested: "Cancellation requested",
+  cancellation_approved: "Cancellation approved",
+  cancellation_rejected: "Cancellation rejected",
   failed_delivery: "Delivery issue",
   return_requested: "Return requested",
   return_approved: "Return approved",
@@ -109,6 +123,7 @@ const CUSTOMER_LABELS = {
   replacement_delivered: "Replacement delivered",
   replaced: "Replaced",
   closed: "Closed",
+  partially_cancelled: "Partially cancelled",
 };
 
 const customerLabel = (status = "") =>
@@ -290,6 +305,7 @@ function MobileStepBar({ steps, activeStatus }) {
 
 const normalizeRefundStatus = (status) => {
   if (status === "pending") return "refund_pending";
+  if (status === "manual_review" || status === "provider_pending") return "refund_pending";
   if (status === "initiated" || status === "processing")
     return "refund_initiated";
   if (status === "completed") return "refund_completed";
@@ -317,7 +333,10 @@ const getRefundStatus = ({ returns = [], cancellations = [], status }) => {
   if (REFUND_STEPS.includes(status)) return status;
   if (status === "refunded") return "refund_completed";
 
-  const records = [...returns, ...cancellations].filter(Boolean);
+  const approvedCancellations = cancellations.filter((record) =>
+    !["requested", "approved"].includes(String(record?.status || "").toLowerCase()),
+  );
+  const records = [...returns, ...approvedCancellations].filter(Boolean);
   for (const record of records) {
     const refundStatus =
       record?.refund?.status ||
@@ -343,11 +362,32 @@ function OrderProgress({
   const returnStatus = getReturnStatus(returns, status);
   const refundStatus = getRefundStatus({ returns, cancellations, status });
   const hasFullCancellation = cancellations.some(
-    (cancellation) => String(cancellation.scope || "").toLowerCase() === "full",
+    (cancellation) =>
+      String(cancellation.scope || "").toLowerCase() === "full" &&
+      String(cancellation.status || "").toLowerCase() === "completed",
   );
   const cancelStatus = isCancelled || hasFullCancellation ? "cancelled" : null;
 
-  const activeStatus = cancelStatus || refundStatus || returnStatus || status;
+  const latestCancellation = cancellations.find(Boolean);
+  const cancellationLifecycleStatus = String(latestCancellation?.status || "").toLowerCase();
+  const cancellationRefundStatus = normalizeRefundStatus(
+    latestCancellation?.refund_status || latestCancellation?.refundStatus,
+  );
+  const cancellationInProgress = latestCancellation && cancellationLifecycleStatus !== "completed";
+  const cancellationFinalStatus = cancellationLifecycleStatus === "completed"
+    ? (status === "partially_cancelled" ? "partially_cancelled" : "cancelled")
+    : null;
+
+  const cancellationActiveStatus = cancellationLifecycleStatus === "requested"
+    ? "cancellation_requested"
+    : cancellationLifecycleStatus === "rejected"
+      ? "cancellation_rejected"
+    : cancellationLifecycleStatus === "approved" || cancellationLifecycleStatus === "processing"
+      ? "cancellation_approved"
+      : cancellationInProgress && cancellationRefundStatus
+        ? cancellationRefundStatus
+        : cancellationFinalStatus;
+  const activeStatus = cancellationActiveStatus || cancelStatus || refundStatus || returnStatus || status;
 
   const mergedTimeline = [...(timeline || [])];
   if (returns && Array.isArray(returns)) {
@@ -363,7 +403,23 @@ function OrderProgress({
       new Date(b.created_at || b.at).getTime(),
   );
 
-  let progressSteps = cancelStatus
+  const cancellationNeedsRefund = latestCancellation &&
+    String(latestCancellation.refund_status || latestCancellation.refundStatus || "") !== "not_required";
+  const cancellationSteps = latestCancellation
+    ? [
+        "initiated",
+        "cancellation_requested",
+        ...(cancellationLifecycleStatus === "rejected" ? ["cancellation_rejected"] : []),
+        ...(!["requested", "rejected"].includes(cancellationLifecycleStatus) ? ["cancellation_approved"] : []),
+        ...(cancellationNeedsRefund && !["requested", "approved", "processing"].includes(cancellationLifecycleStatus)
+          ? ["refund_pending"]
+          : []),
+        ...(cancellationLifecycleStatus === "completed" && cancellationNeedsRefund ? ["refund_completed"] : []),
+        ...(cancellationLifecycleStatus === "completed" ? [cancellationFinalStatus || "cancelled"] : []),
+      ]
+    : null;
+
+  let progressSteps = cancellationSteps || (cancelStatus
     ? ["initiated", "cancelled"]
     : refundStatus
       ? [...ORDER_STEPS, ...RETURN_STEPS, ...REFUND_STEPS]
@@ -379,9 +435,9 @@ function OrderProgress({
                 ),
                 "failed_delivery",
               ]
-            : ORDER_STEPS;
+            : ORDER_STEPS);
 
-  if (!cancelStatus && !isFailed && !isDeliveryFailed) {
+  if (!latestCancellation && !cancelStatus && !isFailed && !isDeliveryFailed) {
     progressSteps = buildReadableProgressSteps(
       progressSteps,
       mergedTimeline,

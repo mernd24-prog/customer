@@ -9,6 +9,27 @@ const PAYMENT_ICONS = {
   manual_bank_transfer: Building2,
 };
 
+const withQuotedPrices = (items = [], quote = {}) => {
+  const quotedItems = Array.isArray(quote?.items) ? quote.items : [];
+  if (!quotedItems.length) return items;
+  return items.map((item, index) => {
+    const productId = String(item._safeId || item.productId?._id || item.productId || "");
+    const variantId = String(item.variantId || "");
+    const variantSku = String(item.variantSku || "");
+    const quoted = quotedItems.find((candidate) =>
+      String(candidate.productId || "") === productId &&
+      ((!variantId && !variantSku) || String(candidate.variantId || "") === variantId || String(candidate.variantSku || "") === variantSku),
+    ) || (!productId ? quotedItems[index] : null);
+    if (!quoted) return item;
+    return {
+      ...item,
+      quantity: Number(quoted.quantity ?? item.quantity),
+      _safeTitle: quoted.title || item._safeTitle,
+      _lineTotal: Number(quoted.lineTotal ?? quoted.line_total ?? item._lineTotal),
+    };
+  });
+};
+
 export default function CheckoutSummary({
   items,
   subtotal,
@@ -87,6 +108,7 @@ export default function CheckoutSummary({
   const quotedPayable = Number(
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
   );
+  const displayItems = withQuotedPrices(items, quote);
 
   const SummaryRow = ({
     label,
@@ -112,7 +134,7 @@ export default function CheckoutSummary({
             {String(items.length).padStart(2, "0")} Item(s)
           </p>
           <div className="grid divide-y divide-border">
-            {items.map((item) => (
+            {displayItems.map((item) => (
               <div
                 key={item._lineKey}
                 className="flex min-w-0 items-center justify-between gap-3 py-3 text-xs first:pt-0 last:pb-0"

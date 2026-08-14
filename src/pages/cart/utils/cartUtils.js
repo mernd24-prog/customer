@@ -4,6 +4,7 @@ import {
   getImageFallbackSrc,
   getProductTitle,
   getProductMrp,
+  getProductDealPrice,
   getProductPrice,
   getVariantPrice,
 } from "../../../utils/ecommerce";
@@ -32,6 +33,12 @@ export function adaptItemForCard(item, fullProduct = null) {
 
   let livePrice = getProductPrice(product);
   let liveMrp = getProductMrp(product);
+  const activeDealPrice = getProductDealPrice(item) ?? getProductDealPrice(product);
+  const activeDealOriginalPrice =
+    item?.deal?.originalPrice ??
+    item?.deal?.original_price ??
+    product?.deal?.originalPrice ??
+    product?.deal?.original_price;
 
   const variantId = item.variantId || item.variantSku;
   if (variantId && product?.variants?.length) {
@@ -39,8 +46,10 @@ export function adaptItemForCard(item, fullProduct = null) {
       (v) => v._id === variantId || v.id === variantId || v.sku === variantId,
     );
     if (variant) {
-      livePrice = getVariantPrice(variant) ?? livePrice;
-      liveMrp = variant.mrp ?? variant.oldPrice ?? liveMrp;
+      if (activeDealPrice === undefined) {
+        livePrice = getVariantPrice(variant) ?? livePrice;
+        liveMrp = variant.mrp ?? variant.oldPrice ?? liveMrp;
+      }
       if (variant.images?.length > 0 || variant.image || variant.imageUrl) {
         image =
           getProductImage({ ...product, selectedVariant: variant }) || image;
@@ -49,6 +58,7 @@ export function adaptItemForCard(item, fullProduct = null) {
   }
 
   let price =
+    activeDealPrice ??
     livePrice ??
     item.price ??
     item.unitPrice ??
@@ -59,6 +69,7 @@ export function adaptItemForCard(item, fullProduct = null) {
     fallbackProduct.sellingPrice ??
     0;
   const oldPrice =
+    activeDealOriginalPrice ??
     liveMrp ??
     item.oldPrice ??
     item.mrp ??

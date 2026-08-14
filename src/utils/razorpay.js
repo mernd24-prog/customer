@@ -1,6 +1,22 @@
 const RAZORPAY_CHECKOUT_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
 let razorpayScriptPromise;
 
+export const RAZORPAY_ERROR_CODES = Object.freeze({
+  DISMISSED: "PAYMENT_DISMISSED",
+  FAILED: "PAYMENT_GATEWAY_FAILED",
+  CONFIRMATION_PENDING: "PAYMENT_CONFIRMATION_PENDING",
+});
+
+const paymentError = (code, message, cause) => {
+  const error = new Error(message, cause ? { cause } : undefined);
+  error.code = code;
+  return error;
+};
+
+const paymentPayload = (result = {}) =>
+  result?.data?.payment || result?.data?.data?.payment || result?.data?.data ||
+  result?.payment || result?.data || result;
+
 export const loadRazorpayCheckout = () => {
   if (window.Razorpay) return Promise.resolve(window.Razorpay);
   if (razorpayScriptPromise) return razorpayScriptPromise;
@@ -70,21 +86,55 @@ export const openRazorpayCheckout = async ({ dispatch, run, order, orderId, paym
             }),
             "Payment verified",
           );
+          const verifiedPayment = paymentPayload(verified);
+          const status = String(
+            verifiedPayment?.status || verifiedPayment?.payment_status || "",
+          ).toLowerCase();
+          if (status !== "captured") {
+            settle(
+              reject,
+              paymentError(
+                status === "failed"
+                  ? RAZORPAY_ERROR_CODES.FAILED
+                  : RAZORPAY_ERROR_CODES.CONFIRMATION_PENDING,
+                status === "failed"
+                  ? "Razorpay could not complete the payment. You can retry from the order page."
+                  : "Payment was submitted, but confirmation is still pending. Check the order page before paying again.",
+              ),
+            );
+            return;
+          }
           settle(resolve, verified);
         } catch (error) {
-          settle(reject, error);
+          settle(
+            reject,
+            error?.code
+              ? error
+              : paymentError(
+                  RAZORPAY_ERROR_CODES.CONFIRMATION_PENDING,
+                  "Payment was submitted, but confirmation could not be verified. Check the order page before paying again.",
+                  error,
+                ),
+          );
         }
       },
       modal: {
         ondismiss: () =>
-          settle(reject, new Error("Payment was not completed. Your order is still pending payment.")),
+          settle(reject, paymentError(
+            RAZORPAY_ERROR_CODES.DISMISSED,
+            "Razorpay was closed before payment completed. Your order is saved and still awaiting payment.",
+          )),
       },
     });
 
     razorpay.on("payment.failed", (response) => {
       settle(
         reject,
-        new Error(response?.error?.description || response?.error?.reason || "Payment failed. Please try again."),
+        paymentError(
+          RAZORPAY_ERROR_CODES.FAILED,
+          response?.error?.description || response?.error?.reason ||
+            "Payment failed. Your order is saved and you can retry from the order page.",
+        ),
       );
     });
 

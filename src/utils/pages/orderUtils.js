@@ -80,13 +80,17 @@ export const canCancelOrder = (order) => {
     "pending_payment",
     "payment_failed",
     "confirmed",
+    "processing",
     "packed",
+    "ready_to_ship",
+    "on_hold",
   ];
   const preHandoverDeliveryStatuses = [
     undefined,
     null,
     "",
     "initiated",
+    "manifested",
     "cancelled",
     "failed",
   ];

@@ -85,6 +85,11 @@ export function useOrderDetail({ orderId, track }) {
   const cancellations = Array.isArray(order?.relations?.cancellations)
     ? order.relations.cancellations
     : [];
+  const pendingCancellationQuantity = (itemId) => cancellations
+    .filter((request) => !["completed", "failed", "rejected"].includes(String(request.status || "").toLowerCase()))
+    .flatMap((request) => request.items || [])
+    .filter((item) => String(item.orderItemId || item.order_item_id || "") === String(itemId))
+    .reduce((sum, item) => sum + Number(item.quantity || 0), 0);
   const embeddedReturns = Array.isArray(order?.relations?.returns)
     ? order.relations.returns
     : Array.isArray(order?.returns)
@@ -573,8 +578,25 @@ export function useOrderDetail({ orderId, track }) {
         user: userState.current,
         verifyPayment,
       });
-      navigate(`/payment/success?orderId=${orderId}`);
-    } catch {
+      const refreshed = await dispatch(fetchOrderById({ orderId })).unwrap();
+      const refreshedOrder = refreshed?.data?.order || refreshed?.data?.data?.order ||
+        refreshed?.data?.data || refreshed?.order || refreshed?.data || refreshed;
+      const paymentStatus = String(
+        refreshedOrder?.paymentStatus || refreshedOrder?.payment_status || "",
+      ).toLowerCase();
+      const orderStatus = getOrderStatus(refreshedOrder);
+      navigate(
+        paymentStatus === "captured" && !["pending_payment", "payment_failed"].includes(orderStatus)
+          ? `/payment/success?orderId=${orderId}`
+          : `/payment/failed?orderId=${orderId}&reason=pending_confirmation`,
+      );
+    } catch (error) {
+      const reason = error?.code === "PAYMENT_GATEWAY_FAILED"
+        ? "failed"
+        : error?.code === "PAYMENT_DISMISSED"
+          ? "dismissed"
+          : "pending_confirmation";
+      navigate(`/payment/failed?orderId=${orderId}&reason=${reason}`);
     } finally {
       setRetrying(false);
       dispatch(fetchOrderById({ orderId }));
@@ -618,7 +640,7 @@ export function useOrderDetail({ orderId, track }) {
         items: selectedItems,
         idempotencyKey: cancelRequestKey.current,
       }),
-      "Cancellation processed",
+      "Cancellation request submitted for seller/admin approval",
     );
     if (!result) return;
     setCancelModalOpen(false);
@@ -642,7 +664,7 @@ export function useOrderDetail({ orderId, track }) {
           selectedOrderItem.cancelled_quantity ||
           selectedOrderItem.cancelledQuantity ||
           0,
-        );
+        ) - pendingCancellationQuantity(itemId);
       setCancelItems(quantity > 0 ? { [itemId]: quantity } : {});
       setCancelModalOpen(true);
       return;
@@ -652,7 +674,7 @@ export function useOrderDetail({ orderId, track }) {
         items
           .map((item) => [
             String(item.id || item._id),
-            Number(item.quantity || 0) - Number(item.cancelled_quantity || 0),
+            Number(item.quantity || 0) - Number(item.cancelled_quantity || 0) - pendingCancellationQuantity(item.id || item._id),
           ])
           .filter(([itemId, quantity]) => itemId && quantity > 0),
       ),

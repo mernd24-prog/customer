@@ -174,12 +174,44 @@ export default function useCheckout() {
   const shipping = items.reduce((sum, item) => sum + item._shippingTotal, 0);
   const total = subtotal + shipping;
   const [paymentProvider, setPaymentProvider] = useState("razorpay");
+  const codBlockedProductNames = useMemo(() => items
+    .filter((item) => {
+      const product = item._resolvedProduct || getCartItemProduct(item);
+      const shippingInfo = product.shipping && typeof product.shipping === "object"
+        ? product.shipping
+        : item.shipping && typeof item.shipping === "object"
+          ? item.shipping
+          : {};
+      return shippingInfo.codAvailable === false || shippingInfo.cod_available === false;
+    })
+    .map((item) => item._safeTitle || item.title || "Selected product"), [items]);
   const paymentOptions = useMemo(() => {
     const providers = Array.isArray(paymentState.current?.providers)
       ? paymentState.current.providers
       : [];
-    return providers.filter((option) => option.enabled !== false);
-  }, [paymentState]);
+    return providers.map((option) => {
+      if (option.provider !== "cod") return option;
+      const blockedSellerIds = new Set((option.config?.sellerRules || [])
+        .filter((rule) => rule.allowed === false)
+        .map((rule) => String(rule.sellerId || ""))
+        .filter(Boolean));
+      const sellerBlockedProductNames = blockedSellerIds.size
+        ? items.filter((item) => {
+            const product = item._resolvedProduct || getCartItemProduct(item);
+            return blockedSellerIds.has(String(
+              item.sellerId || item.seller_id || product.sellerId || product.seller_id || "",
+            ));
+          }).map((item) => item._safeTitle || item.title || "Selected product")
+        : [];
+      const blockedNames = [...new Set([...codBlockedProductNames, ...sellerBlockedProductNames])];
+      if (!blockedNames.length) return option;
+      return {
+        ...option,
+        enabled: false,
+        disabledReason: `COD unavailable for: ${blockedNames.join(", ")}. Deselect or remove ${blockedNames.length === 1 ? "this product" : "these products"} to use COD, or choose online payment.`,
+      };
+    });
+  }, [paymentState, codBlockedProductNames, items]);
   const quotePayableAmount = getQuotePayableAmount(quoteData);
 
   const addresses = useMemo(
@@ -843,6 +875,7 @@ export default function useCheckout() {
     orderSubmitRef.current = true;
     setSubmittingOrder(true);
     let shouldReleaseSubmitLock = true;
+    let activeOrderId = null;
 
     const completeCheckout = (orderId) => {
       setCompletedCheckout(orderId);
@@ -936,13 +969,14 @@ export default function useCheckout() {
           shippingAddress,
           items: orderItems,
         }),
-        "Order created",
+        null,
       );
 
       const createdOrder = getCreatedOrder(order);
       const orderId =
         createdOrder?.id || createdOrder?.orderId || createdOrder?.order_id;
       if (!orderId) return;
+      activeOrderId = orderId;
 
       let paymentOrder = createdOrder;
       let payableAmount = getOrderPayableAmount(paymentOrder);
@@ -955,15 +989,21 @@ export default function useCheckout() {
       }
 
       if (payableAmount === null) {
-        setError("root", {
-          type: "manual",
-          message:
-            "Payment amount is missing from order details. Please try again.",
+        navigate(`/orders/${encodeURIComponent(orderId)}`, { replace: true });
+        notify.error({
+          title: "Payment could not be started",
+          message: "The order is saved, but its payment amount could not be confirmed. Review the order before retrying payment.",
         });
         return;
       }
 
       if (payableAmount <= 0) {
+        const noPaymentResult = await dispatch(fetchOrderById({ orderId })).unwrap();
+        const noPaymentOrder = getCreatedOrder(noPaymentResult);
+        if (["pending_payment", "payment_failed"].includes(String(noPaymentOrder?.status || noPaymentOrder?.orderStatus || "").toLowerCase())) {
+          navigate(`/payment/failed?orderId=${encodeURIComponent(orderId)}&reason=pending_confirmation`, { replace: true });
+          return;
+        }
         completeCheckout(orderId);
         return;
       }
@@ -977,7 +1017,7 @@ export default function useCheckout() {
           currency: paymentOrder?.currency || createdOrder?.currency || "INR",
           notes: { source: "web_checkout", paymentProvider },
         }),
-        paymentProvider === "cod" ? "COD order confirmed" : null,
+        null,
       );
       const initiatedPayment = getPaymentPayload(initiatedPaymentResult);
       const paymentAmount = getPaymentAmount(initiatedPayment);
@@ -992,8 +1032,9 @@ export default function useCheckout() {
         setError("root", { type: "manual", message });
         notify.error({
           title: "Payment amount mismatch",
-          message,
+          message: `${message} The order is saved; review it before retrying payment.`,
         });
+        navigate(`/orders/${encodeURIComponent(orderId)}`, { replace: true });
         return;
       }
 
@@ -1013,16 +1054,46 @@ export default function useCheckout() {
               error?.message ||
               "Payment was not completed. Your order is still pending payment.";
             setError("root", { type: "manual", message });
-            notify.error({
-              title: "Payment failed",
+            const reason = error?.code === "PAYMENT_GATEWAY_FAILED"
+              ? "failed"
+              : error?.code === "PAYMENT_DISMISSED"
+                ? "dismissed"
+                : "pending_confirmation";
+            notify[reason === "failed" ? "error" : "info"]?.({
+              title: reason === "failed" ? "Payment failed" : "Order awaiting payment",
               message,
             });
+            navigate(`/payment/failed?orderId=${encodeURIComponent(orderId)}&reason=${reason}`, { replace: true });
             return;
           }
         }
       }
 
+      const confirmedResult = await dispatch(fetchOrderById({ orderId })).unwrap();
+      const confirmedOrder = getCreatedOrder(confirmedResult);
+      const confirmedStatus = String(
+        confirmedOrder?.status || confirmedOrder?.orderStatus || "",
+      ).toLowerCase();
+      const confirmedPaymentStatus = String(
+        confirmedOrder?.paymentStatus || confirmedOrder?.payment_status || "",
+      ).toLowerCase();
+      const paymentConfirmed = paymentProvider === "cod"
+        ? confirmedPaymentStatus === "authorized"
+        : confirmedPaymentStatus === "captured";
+      if (!paymentConfirmed || ["pending_payment", "payment_failed"].includes(confirmedStatus)) {
+        navigate(`/payment/failed?orderId=${encodeURIComponent(orderId)}&reason=pending_confirmation`, { replace: true });
+        return;
+      }
+
       completeCheckout(orderId);
+    } catch (error) {
+      if (activeOrderId) {
+        notify.warning({
+          title: "Order saved — payment not confirmed",
+          message: "We could not finish payment confirmation. Check this order before retrying so you are not charged twice.",
+        });
+        navigate(`/payment/failed?orderId=${encodeURIComponent(activeOrderId)}&reason=pending_confirmation`, { replace: true });
+      }
     } finally {
       if (shouldReleaseSubmitLock) {
         orderSubmitRef.current = false;

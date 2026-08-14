@@ -15,7 +15,7 @@ import {
 } from "../../utils/orderHelpers";
 import { FailedIcon } from "../../components/ui/icons";
 
-export function PaymentResultPage({ failed = false }) {
+export function PaymentResultPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const orderState = useSelector((state) => state.order);
@@ -23,9 +23,22 @@ export function PaymentResultPage({ failed = false }) {
   const [searchParams] = useSearchParams();
 
   const orderId = searchParams.get("orderId");
+  const reason = searchParams.get("reason") || "";
 
   const order = findFetchedOrder(orderState, orderId);
   const currentUser = userState.current || userState.data || {};
+  const orderStatus = String(order?.status || order?.orderStatus || "").toLowerCase();
+  const paymentStatus = String(
+    order?.paymentStatus || order?.payment_status || "",
+  ).toLowerCase();
+  const isCod = String(
+    order?.paymentProvider || order?.payment_provider || order?.paymentMethod || "",
+  ).toLowerCase() === "cod";
+  const isConfirmed = Boolean(order) &&
+    (isCod ? paymentStatus === "authorized" : paymentStatus === "captured") &&
+    !["pending_payment", "payment_failed"].includes(orderStatus);
+  const isActuallyFailed = paymentStatus === "failed" || orderStatus === "payment_failed";
+  const isPending = Boolean(orderId) && !isConfirmed && !isActuallyFailed;
 
   const deliveryDateRange = getDeliveryDateRange(order || {});
   const deliveryLabel = deliveryDateRange
@@ -41,6 +54,18 @@ export function PaymentResultPage({ failed = false }) {
   }, [dispatch, orderId]);
 
   useEffect(() => {
+    if (!orderId || !isPending) return undefined;
+    const interval = window.setInterval(() => {
+      dispatch(fetchOrderById({ orderId }));
+    }, 3000);
+    const timeout = window.setTimeout(() => window.clearInterval(interval), 30000);
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(timeout);
+    };
+  }, [dispatch, isPending, orderId]);
+
+  useEffect(() => {
     if (!currentUser?.id && !currentUser?._id && !userState.loading) {
       dispatch(fetchMe());
     }
@@ -50,38 +75,43 @@ export function PaymentResultPage({ failed = false }) {
     { label: "Home", href: "/" },
     { label: "Cart", href: "/cart" },
     { label: "Checkout" },
-    { label: failed ? "Payment Failed" : "Order Placed" },
+    { label: isConfirmed ? "Order Placed" : isActuallyFailed ? "Payment Failed" : "Payment Pending" },
   ];
 
-  const failureCard = (
+  const resultCard = (
     <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <Breadcrumbs
         items={breadcrumbItems}
         className="mb-6"
       />
-      <section className="overflow-hidden rounded-[20px] border border-red-200 bg-white shadow-[0_24px_60px_rgba(27,29,96,0.06)]">
+      <section className={`overflow-hidden rounded-[20px] border bg-white shadow-[0_24px_60px_rgba(27,29,96,0.06)] ${isActuallyFailed ? "border-red-200" : "border-amber-200"}`}>
         <div className="bg-[linear-gradient(135deg,#FFF6F6_0%,#FFFFFF_100%)] px-6 py-8 text-center sm:px-10">
           <div className="flex flex-col items-center justify-center gap-5">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-500">
-              <FailedIcon className="h-10 w-10" />
+            <div className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-full ${isActuallyFailed ? "bg-red-100 text-red-500" : "bg-amber-100 text-amber-600"}`}>
+              {isActuallyFailed
+                ? <FailedIcon className="h-10 w-10" />
+                : <span className="text-4xl" aria-hidden="true">⌛</span>}
             </div>
             <div className="flex flex-col items-center">
               <h1 className="text-[32px] font-bold leading-tight text-[#3E4093]">
-                Payment Failed
+                {isActuallyFailed ? "Payment Failed" : reason === "dismissed" ? "Payment Not Completed" : "Payment Confirmation Pending"}
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-[#2E2E2E]">
-                Your payment could not be processed. Try the payment again from
-                your orders page or contact support if the issue persists.
+                {isActuallyFailed
+                  ? "Razorpay could not complete this payment. Your order is saved; retry safely from its order page."
+                  : reason === "dismissed"
+                    ? "You closed Razorpay before payment completed. Your order is saved and will not be shipped until payment is confirmed."
+                    : "We have not received final payment confirmation yet. This page checks automatically; please do not pay twice."}
               </p>
             </div>
           </div>
         </div>
-        <div className="flex justify-center border-t border-red-100 px-6 py-5 sm:px-10">
+        <div className="flex flex-col justify-center gap-3 border-t border-red-100 px-6 py-5 sm:flex-row sm:px-10">
           <BrandButton
             variant="secondary"
             rounded
-            onClick={() => navigate("/orders")}
-            label="View Orders"
+            onClick={() => navigate(orderId ? `/orders/${encodeURIComponent(orderId)}` : "/orders")}
+            label={isActuallyFailed || reason === "dismissed" ? "View order and retry" : "View order status"}
             className="h-12 w-full min-w-[180px] text-sm sm:w-auto"
           />
         </div>
@@ -89,39 +119,34 @@ export function PaymentResultPage({ failed = false }) {
     </div>
   );
 
-  if (failed || !orderId) {
+  if (!orderId) {
     return (
       <>
         <Seo
           title={
-            failed
-              ? "Payment Failed | Sam Global"
-              : "Payment Successful | Sam Global"
+            "Payment Status | Sam Global"
           }
         />
-        {failed ? (
-          failureCard
-        ) : (
-          <div className="mx-auto flex min-h-[60vh] w-full max-w-md items-center px-4 py-12">
-            <div className="w-full rounded-[var(--customer-radius)] border border-border bg-white p-8 text-center">
-              <h1 className="text-2xl font-bold text-ink">Order Placed!</h1>
-              <p className="mt-2 text-sm text-muted">
-                Your Order Has Been Placed Successfully.
-              </p>
-            </div>
+        <div className="mx-auto flex min-h-[60vh] w-full max-w-md items-center px-4 py-12">
+          <div className="w-full rounded-[var(--customer-radius)] border border-border bg-white p-8 text-center">
+            <h1 className="text-2xl font-bold text-ink">Order reference missing</h1>
+            <p className="mt-2 text-sm text-muted">Open My Orders to check whether an order was created.</p>
+            <BrandButton variant="secondary" rounded onClick={() => navigate("/orders")} label="View Orders" className="mt-5" />
           </div>
-        )}
+        </div>
       </>
     );
+  }
+
+  if ((!order && !orderState.loading && orderState.error) || (order && !isConfirmed)) {
+    return <><Seo title="Payment Status | Sam Global" />{resultCard}</>;
   }
 
   return (
     <>
       <Seo
         title={
-          failed
-            ? "Payment Failed | Sam Global"
-            : "Payment Successful | Sam Global"
+          isConfirmed ? "Payment Successful | Sam Global" : "Payment Status | Sam Global"
         }
       />
       <div className="!main-container py-4 min-[375px]:py-10 sm:py-2 lg:py-[3rem]">

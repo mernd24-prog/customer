@@ -2,6 +2,39 @@ import { Banknote, Building2, CreditCard, Smartphone } from "lucide-react";
 
 import OrderPaymentSummary from "../../orders/components/OrderPaymentSummary";
 
+const withQuotedPrices = (items = [], quote = {}) => {
+  const quotedItems = Array.isArray(quote?.items)
+    ? quote.items
+    : Array.isArray(quote?.quote?.items)
+      ? quote.quote.items
+      : [];
+  if (!quotedItems.length) return items;
+  return items.map((item, index) => {
+    const productId = String(item._safeId || item.productId?._id || item.productId || item.product_id || "");
+    const variantId = String(item.variantId || item.variant_id || "");
+    const variantSku = String(item.variantSku || item.variant_sku || "");
+    const quoted = quotedItems.find((candidate) => {
+      if (String(candidate.productId || candidate.product_id || "") !== productId) return false;
+      const candidateVariantId = String(candidate.variantId || candidate.variant_id || "");
+      const candidateVariantSku = String(candidate.variantSku || candidate.variant_sku || "");
+      return (!variantId && !variantSku) || candidateVariantId === variantId || candidateVariantSku === variantSku;
+    }) || (!productId ? quotedItems[index] : null);
+    if (!quoted) return item;
+    const quantity = Number(quoted.quantity ?? item.quantity ?? 1);
+    const unitPrice = Number(quoted.unitPrice ?? quoted.unit_price ?? item.price ?? 0);
+    const lineTotal = Number(quoted.lineTotal ?? quoted.line_total ?? unitPrice * quantity);
+    return {
+      ...item,
+      quantity,
+      price: unitPrice,
+      _safeTitle: quoted.title || item._safeTitle,
+      _lineTotal: lineTotal,
+      _quotedUnitPrice: unitPrice,
+      _originalUnitPrice: Number(quoted.originalUnitPrice ?? quoted.original_unit_price ?? unitPrice),
+    };
+  });
+};
+
 export default function CheckoutSummary({
   items,
   subtotal,
@@ -90,6 +123,7 @@ export default function CheckoutSummary({
   const quotedPayable = Number(
     quoteSummary.customerPayableAmount ?? quoteAmounts.payableAmount ?? total,
   );
+  const displayItems = withQuotedPrices(items, quote);
 
 
   return (
@@ -97,7 +131,7 @@ export default function CheckoutSummary({
       <OrderPaymentSummary
         title="Order Summary"
         variant="checkout"
-        items={items}
+        items={displayItems}
         subtotal={quoteSubtotal}
         discount={quoteDiscount}
         walletDiscount={quoteWallet}
