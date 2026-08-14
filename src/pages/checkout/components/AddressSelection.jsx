@@ -327,10 +327,23 @@ export default function AddressSelection({
                       {label}
                     </span>
                     {selectedAddressId === addrId && !useNewAddress && quoteError && (
-                      <span className="inline-flex items-center gap-1 text-[11px] sm:text-[12px] font-semibold text-[#D12E2E]">
-                        <Info size={14} className="shrink-0" />
-                        We currently do not deliver to pincode {postalCode}.
-                      </span>
+                      <div className="flex flex-col gap-1 mt-1 sm:mt-0">
+                        {Array.isArray(quoteError) ? (
+                          quoteError.map((err, i) => (
+                            <span key={i} className="inline-flex items-start gap-1 text-[11px] sm:text-[12px] font-semibold text-[#D12E2E]">
+                              <Info size={14} className="mt-[2px] shrink-0" />
+                              {err}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="inline-flex items-start gap-1 text-[11px] sm:text-[12px] font-semibold text-[#D12E2E]">
+                            <Info size={14} className="mt-[2px] shrink-0" />
+                            {typeof quoteError === "string" && quoteError.trim() !== ""
+                              ? quoteError
+                              : `We currently do not deliver to pincode ${postalCode}.`}
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                   <label className="my-4 flex w-full cursor-pointer items-start gap-2 sm:gap-3">
@@ -341,7 +354,7 @@ export default function AddressSelection({
                       checked={selectedAddressId === addrId && !useNewAddress}
                       onChange={() => {
                         setValue("selectedAddressId", addrId, {
-                          shouldValidate: true,
+                          shouldValidate: true, 
                         });
                         setValue("useNewAddress", false, {
                           shouldValidate: true,

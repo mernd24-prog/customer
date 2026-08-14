@@ -26,13 +26,12 @@ export default function CollageSection({ cmsPages = [] }) {
   useEffect(() => {
     let active = true;
 
-    const minDelay = new Promise((resolve) => setTimeout(resolve, 1000));
     const request = loadCollageSections().catch(() => {
       if (active) setApiFailed(true);
       return { data: [] };
     });
 
-    Promise.all([request, minDelay]).then(([response]) => {
+    request.then((response) => {
       if (!active) return;
       const sections = Array.isArray(response?.data) ? response.data : [];
       if (!sections.length) setApiFailed(true);

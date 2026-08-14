@@ -90,36 +90,7 @@ export default function CheckoutPage() {
               { label: "Checkout" },
             ]}
             heading="Checkout"
-            rightContent={
-              quoteError &&
-              !isQuoteErrorDismissed && (
-                <div className="flex w-full sm:max-w-[500px] md:max-w-[600px] rounded-lg border border-red-200 border-l-4 border-l-red-500 bg-[#FFF8F8] px-3 py-2.5 text-sm leading-tight text-red-700 text-left lg:max-w-[700px] lg:ml-auto relative shadow-[0_2px_10px_rgba(255,0,0,0.05)]">
-                  <div className="flex items-start gap-2.5 pr-6">
-                    <div className="mt-0.5 shrink-0 rounded-full border border-red-200 bg-white p-0.5 text-red-500">
-                      <WarningIcon size={16} />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="font-bold text-[14px] text-[#D12E2E]">
-                        Delivery Unavailable
-                      </span>
-                      <div className="font-medium text-[#4A4A4A] text-[12px] leading-snug">
-                        {typeof quoteError === "string" &&
-                        quoteError.trim() !== ""
-                          ? quoteError
-                          : "We're unable to deliver to the selected address. Please try another address or update your pincode."}
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsQuoteErrorDismissed(true)}
-                    className="absolute right-2 top-2 p-1 text-red-400 hover:text-red-600 transition-colors"
-                  >
-                    <CloseIcon size={16} />
-                  </button>
-                </div>
-              )
-            }
+            rightContent={null}
           />
         </div>
         <ApiState

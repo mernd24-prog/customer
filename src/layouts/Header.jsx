@@ -270,6 +270,8 @@ export const Navbar = ({ icons: propIcons }) => {
             <img
               src="/image/png/logo.png"
               alt="Sam Global"
+              width="160"
+              height="40"
               className="h-auto w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
             />
           </Link>
@@ -492,18 +494,25 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   }, []);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
       if (!categoryBarRef.current) return;
 
-      const headerOffset = getHeaderHeight();
-      const { bottom } = categoryBarRef.current.getBoundingClientRect();
-      const nextPinned = isPinnedRef.current
-        ? bottom <= headerOffset + 16
-        : bottom <= headerOffset - 8;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const headerOffset = getHeaderHeight();
+          const { bottom } = categoryBarRef.current.getBoundingClientRect();
+          const nextPinned = isPinnedRef.current
+            ? bottom <= headerOffset + 16
+            : bottom <= headerOffset - 8;
 
-      if (nextPinned !== isPinnedRef.current) {
-        isPinnedRef.current = nextPinned;
-        setIsPinned(nextPinned);
+          if (nextPinned !== isPinnedRef.current) {
+            isPinnedRef.current = nextPinned;
+            setIsPinned(nextPinned);
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
