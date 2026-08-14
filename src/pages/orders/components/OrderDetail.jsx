@@ -8,6 +8,7 @@ import Button from "../../../components/ui/buttons/Button";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
+import CustomDropdown from "../../../components/ui/CustomDropdown";
 import OrderDetailSectionCard from "./OrderDetailSectionCard";
 import OrderItemsSection from "./OrderItemsSection";
 import OrderPaymentSummary from "./OrderPaymentSummary";
@@ -357,109 +358,172 @@ export default function OrderDetail({ orderId, track }) {
       </div>
       <ConfirmModal
         open={cancelModalOpen}
-        title={selectedOrderItem ? "Request item cancellation?" : "Request cancellation?"}
+        title={
+          selectedOrderItem
+            ? "Request item cancellation?"
+            : "Request cancellation?"
+        }
         description={
           selectedOrderItem
             ? "Submit the selected quantity for seller/admin approval. No refund or cancellation is processed before approval."
             : "Submit the selected item quantities for seller/admin approval. Refund processing starts only after approval."
         }
-        confirmLabel={state.loading ? "Submitting..." : "Submit cancellation request"}
-        confirmDisabled={state.loading || !Object.values(cancelItems).some((quantity) => Number(quantity) > 0)}
+        confirmLabel={
+          state.loading ? "Submitting..." : "Submit cancellation request"
+        }
+        confirmDisabled={
+          state.loading ||
+          !Object.values(cancelItems).some((quantity) => Number(quantity) > 0)
+        }
         cancelLabel={selectedOrderItem ? "Keep item" : "Keep order"}
         onCancel={() => {
           if (!state.loading) setCancelModalOpen(false);
         }}
         onConfirm={handleCancelOrder}
       >
-        <div className="grid gap-3">
-          <div className="grid gap-2 rounded-[6px] border border-border bg-slate-50 p-3">
-            <p className="text-sm font-medium text-ink">Select item quantities</p>
+        <div className="grid gap-4">
+          <div className="grid gap-3 rounded-xl border border-[#E7D9B8] bg-[#FFFDF9] p-3.5 sm:p-4">
+            <p className="text-sm font-bold text-[#1B1D60]">
+              Select item quantities
+            </p>
             {(selectedOrderItem ? [selectedOrderItem] : items).map((item) => {
               const itemId = String(getOrderItemId(item));
               const pendingQuantity = cancellations
-                .filter((request) => !["completed", "failed", "rejected"].includes(String(request.status || "").toLowerCase()))
+                .filter(
+                  (request) =>
+                    !["completed", "failed", "rejected"].includes(
+                      String(request.status || "").toLowerCase(),
+                    ),
+                )
                 .flatMap((request) => request.items || [])
-                .filter((entry) => String(entry.orderItemId || entry.order_item_id || "") === itemId)
+                .filter(
+                  (entry) =>
+                    String(entry.orderItemId || entry.order_item_id || "") ===
+                    itemId,
+                )
                 .reduce((sum, entry) => sum + Number(entry.quantity || 0), 0);
               const remaining = Math.max(
-                Number(item.quantity || 0) - Number(item.cancelled_quantity || item.cancelledQuantity || 0) - pendingQuantity,
+                Number(item.quantity || 0) -
+                  Number(
+                    item.cancelled_quantity || item.cancelledQuantity || 0,
+                  ) -
+                  pendingQuantity,
                 0,
               );
-              const selected = Object.prototype.hasOwnProperty.call(cancelItems, itemId);
+              const selected = Object.prototype.hasOwnProperty.call(
+                cancelItems,
+                itemId,
+              );
               return (
-                <div key={itemId} className="flex items-center gap-3 rounded-[6px] border border-border bg-white p-2 text-sm">
-                  {!selectedOrderItem && (
+                <div
+                  key={itemId}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#E2E3EA] bg-white p-3 text-sm transition hover:border-[#CE9F2D66]"
+                >
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    {!selectedOrderItem && (
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        disabled={remaining <= 0 || state.loading}
+                        aria-label={`Select ${getProductTitle(item)} for cancellation`}
+                        className="h-4 w-4 rounded border-gray-300 text-[#CE9F2D]"
+                        onChange={(event) =>
+                          setCancelItems((current) => {
+                            const next = { ...current };
+                            if (event.target.checked) next[itemId] = remaining;
+                            else delete next[itemId];
+                            return next;
+                          })
+                        }
+                      />
+                    )}
+                    <span className="min-w-0 flex-1 line-clamp-2 font-semibold text-[#1B1D60]">
+                      {getProductTitle(item)}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
                     <input
-                      type="checkbox"
-                      checked={selected}
-                      disabled={remaining <= 0 || state.loading}
-                      aria-label={`Select ${getProductTitle(item)} for cancellation`}
-                      onChange={(event) => setCancelItems((current) => {
-                        const next = { ...current };
-                        if (event.target.checked) next[itemId] = remaining;
-                        else delete next[itemId];
-                        return next;
-                      })}
+                      type="number"
+                      min="1"
+                      max={remaining}
+                      disabled={!selected || remaining <= 0 || state.loading}
+                      className="w-16 rounded-md border border-[#DCDDE5] bg-[#F7F7FA] py-1 text-center font-bold text-[#1B1D60] outline-none  focus:bg-white"
+                      value={selected ? cancelItems[itemId] : ""}
+                      aria-label={`Cancellation quantity for ${getProductTitle(item)}`}
+                      onChange={(event) =>
+                        setCancelItems((current) => ({
+                          ...current,
+                          [itemId]: Math.min(
+                            Math.max(Number(event.target.value || 1), 1),
+                            remaining,
+                          ),
+                        }))
+                      }
                     />
-                  )}
-                  <span className="min-w-0 flex-1 truncate">{getProductTitle(item)}</span>
-                  <input
-                    type="number"
-                    min="1"
-                    max={remaining}
-                    disabled={!selected || remaining <= 0 || state.loading}
-                    className="w-20 rounded-[6px] border border-border px-2 py-1"
-                    value={selected ? cancelItems[itemId] : ""}
-                    aria-label={`Cancellation quantity for ${getProductTitle(item)}`}
-                    onChange={(event) => setCancelItems((current) => ({
-                      ...current,
-                      [itemId]: Math.min(Math.max(Number(event.target.value || 1), 1), remaining),
-                    }))}
-                  />
-                  <span className="whitespace-nowrap text-xs text-muted">of {remaining}</span>
-                  {pendingQuantity > 0 && (
-                    <span className="whitespace-nowrap text-xs text-amber-700">{pendingQuantity} pending</span>
-                  )}
+                    <span className="rounded-md bg-[#F4F4F7] px-2 py-1 text-xs font-semibold text-[#5F6078]">
+                      of {remaining}
+                    </span>
+                    {pendingQuantity > 0 && (
+                      <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+                        {pendingQuantity} pending
+                      </span>
+                    )}
+                  </div>
                 </div>
               );
             })}
-            {!Object.values(cancelItems).some((quantity) => Number(quantity) > 0) && (
-              <p className="text-xs text-red-600">Select at least one item and quantity.</p>
+            {!Object.values(cancelItems).some(
+              (quantity) => Number(quantity) > 0,
+            ) && (
+              <p className="text-xs font-semibold text-red-600">
+                Select at least one item and quantity.
+              </p>
             )}
           </div>
-          <label className="text-sm font-medium text-ink">
-            Reason
-            <select
-              className="mt-1 w-full focus:outline-none  rounded-[6px] border border-border bg-white px-3 py-2 "
+          <div className="grid gap-1.5">
+            <span className="text-sm font-bold text-[#1B1D60]">
+              Reason for cancellation
+            </span>
+            <CustomDropdown
+              options={[
+                { value: "changed_mind", label: "Changed my mind" },
+                { value: "ordered_by_mistake", label: "Ordered by mistake" },
+                { value: "address_issue", label: "Address issue" },
+                { value: "payment_issue", label: "Payment issue" },
+                { value: "delivery_delay", label: "Delivery delay" },
+                { value: "other", label: "Other" },
+              ]}
               value={cancelReasonCode}
-              onChange={(event) => {
-                setCancelReasonCode(event.target.value);
+              onChange={(val) => {
+                setCancelReasonCode(val);
                 if (cancelReasonError) setCancelReasonError(false);
               }}
-            >
-              <option value="changed_mind">Changed my mind</option>
-              <option value="ordered_by_mistake">Ordered by mistake</option>
-              <option value="address_issue">Address issue</option>
-              <option value="payment_issue">Payment issue</option>
-              <option value="delivery_delay">Delivery delay</option>
-              <option value="other">Other</option>
-            </select>
-          </label>
-          <textarea
-            className={`min-h-20 focus:outline-none w-full rounded-[6px] px-3 py-2 text-sm border ${
-              cancelReasonError ? "border-red-600" : "border-border"
-            }`}
-            value={cancelReason}
-            onChange={(event) => {
-              setCancelReason(event.target.value);
-              if (cancelReasonError) setCancelReasonError(false);
-            }}
-            maxLength={500}
-            placeholder="Tell us why you are cancelling *"
-          />
+              placeholder="Select reason"
+              buttonClassName="h-11 rounded-lg border-[#DCDDE5] text-sm font-medium text-[#1B1D60]"
+            />
+          </div>
+          <div className="grid gap-1.5">
+            <span className="text-sm font-bold text-[#1B1D60]">
+              Additional details
+            </span>
+            <textarea
+              className={`min-h-[96px] w-full resize-none rounded-lg border p-3 text-sm font-medium text-[#1B1D60] outline-none transition placeholder:text-[#8C8E9E]  ${
+                cancelReasonError ? "border-red-600" : "border-[#DCDDE5]"
+              }`}
+              value={cancelReason}
+              onChange={(event) => {
+                setCancelReason(event.target.value);
+                if (cancelReasonError) setCancelReasonError(false);
+              }}
+              maxLength={500}
+              placeholder="Tell us why you are cancelling *"
+            />
+          </div>
 
-          {(cancelReasonError || (cancelReason.trim().length > 0 && cancelReason.trim().length < 10)) && (
-            <p className="text-xs text-red-600">
+          {(cancelReasonError ||
+            (cancelReason.trim().length > 0 &&
+              cancelReason.trim().length < 10)) && (
+            <p className="text-xs font-semibold text-red-600">
               Please enter at least 10 characters.
             </p>
           )}

@@ -1,10 +1,10 @@
 import { SolidLargeButton } from "../ui/button/static";
-import defaultBannerImage from "/image/png/ShoppingBanner.png";
+import defaultBannerImage from "/image/png/bannerFestival.png";
 
 export default function ShoppingMadeEasyBanner({
-  title = "Shopping Made Easy",
-  description = "Enjoy seamless shopping with reliable delivery, secure payments, and hassle-free returns.",
-  ctaLabel = "Shop Now",
+  title = "Raksha Bandhan Special",
+  description = "Celebrate the eternal bond of love with curated Rakhi gifts, sweet hampers, and festive treats.",
+  ctaLabel = "Explore Rakhi Collection",
   ctaTo = "/products",
   backgroundImage = defaultBannerImage,
   className = "",
@@ -19,19 +19,19 @@ export default function ShoppingMadeEasyBanner({
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="flex h-full w-full items-start px-4 py-6 min-[375px]:px-5 min-[425px]:px-6 md:px-10 lg:px-16 xl:px-[64px] 2xl:px-[180px]">
-        <div className="w-full max-w-[240px] min-[375px]:max-w-[280px]  lg:mt-12 min-[425px]:max-w-[320px] md:max-w-[430px] lg:max-w-[520px] xl:max-w-[620px]">
-          <h2 className="text-h1  font-bold  text-[#3E4093] ">
+      <div className="flex h-full w-full items-center justify-end px-6 md:px-12 lg:px-20 xl:px-[96px] 2xl:px-[180px]">
+        <div className="w-full max-w-[320px] min-[375px]:max-w-[360px] md:max-w-[480px] lg:max-w-[580px] flex flex-col items-end text-right">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#1B1D60] leading-tight drop-shadow-sm">
             {title}
           </h2>
 
-          <p className="mt-3 text-small w-full   text-[#2E2E2E]     md:mt-4   lg:my-6 lg:max-w-[470px]  xl:max-w-[560px]">
+          <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg font-semibold text-[#2E2E2E] max-w-[480px] drop-shadow-xs">
             {description}
           </p>
 
           <SolidLargeButton
             to={ctaTo}
-            className="mt-5 h-[40px] min-w-[120px] rounded-[10px] px-4 py-2   font-smibold  text-black min-[425px]:h-[44px] min-[425px]:min-w-[132px]  md:mt-6 md:h-[48px]  md:px-6 lg:h-[50px] md:min-w-[140px] lg:px-8 text-h3 "
+            className="mt-5 sm:mt-6 h-[44px] sm:h-[48px] lg:h-[52px] rounded-xl px-6 lg:px-8 font-bold text-white bg-[#CE9F2D] hover:bg-[#b88c22] shadow-lg transition-all"
           >
             {ctaLabel}
           </SolidLargeButton>

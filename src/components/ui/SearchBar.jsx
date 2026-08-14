@@ -176,23 +176,29 @@ const tokenMatchScore = (query, text = "", scores = {}) => {
   const normalized = normalizeSearchText(text);
   if (!query || !normalized) return 0;
 
-  return normalized.split(/\s+/).filter(Boolean).reduce((bestScore, token) => {
-    if (token === query) return Math.max(bestScore, scores.exact || 100);
-    if (token.startsWith(query) || token.replace(/s$/, "").startsWith(query)) {
-      return Math.max(bestScore, scores.prefix || 90);
-    }
-    if (query.length >= 4 && token.includes(query)) {
-      return Math.max(bestScore, scores.contains || 50);
-    }
-    if (query.length >= 3 && query[0] === token[0]) {
-      const prefix = token.slice(0, query.length);
-      const allowedDistance = query.length >= 5 ? 2 : 1;
-      if (boundedEditDistance(query, prefix) <= allowedDistance) {
-        return Math.max(bestScore, scores.fuzzy || 60);
+  return normalized
+    .split(/\s+/)
+    .filter(Boolean)
+    .reduce((bestScore, token) => {
+      if (token === query) return Math.max(bestScore, scores.exact || 100);
+      if (
+        token.startsWith(query) ||
+        token.replace(/s$/, "").startsWith(query)
+      ) {
+        return Math.max(bestScore, scores.prefix || 90);
       }
-    }
-    return bestScore;
-  }, 0);
+      if (query.length >= 4 && token.includes(query)) {
+        return Math.max(bestScore, scores.contains || 50);
+      }
+      if (query.length >= 3 && query[0] === token[0]) {
+        const prefix = token.slice(0, query.length);
+        const allowedDistance = query.length >= 5 ? 2 : 1;
+        if (boundedEditDistance(query, prefix) <= allowedDistance) {
+          return Math.max(bestScore, scores.fuzzy || 60);
+        }
+      }
+      return bestScore;
+    }, 0);
 };
 
 const getSuggestionMatchScore = (query, suggestion) => {
@@ -398,11 +404,13 @@ const SearchBar = ({
   const handleChange = (event) => {
     const nextValue = event.target.value;
     const sanitizedValue = sanitizeSearchQuery(nextValue);
-    setIsSuggestionOpen(
-      Boolean(
-        enableAutocomplete && sanitizedValue.length >= autocompleteMinLength,
-      ),
+    const shouldOpenSuggestions = Boolean(
+      enableAutocomplete && sanitizedValue.length >= autocompleteMinLength,
     );
+    setIsSuggestionOpen(shouldOpenSuggestions);
+    if (shouldOpenSuggestions) {
+      setIsDropdownOpen(false);
+    }
     setActiveSuggestionIndex(-1);
 
     if (onChange) {
@@ -518,6 +526,7 @@ const SearchBar = ({
   const shouldShowAutocompletePanel =
     enableAutocomplete &&
     isSuggestionOpen &&
+    !isDropdownOpen &&
     sanitizedQuery.length >= autocompleteMinLength;
 
   const shouldShowSuggestions =
@@ -540,7 +549,15 @@ const SearchBar = ({
               >
                 <button
                   type="button"
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  onClick={() => {
+                    setIsDropdownOpen((prev) => {
+                      const next = !prev;
+                      if (next) {
+                        setIsSuggestionOpen(false);
+                      }
+                      return next;
+                    });
+                  }}
                   className="flex h-full w-[92px] min-w-0 items-center gap-1 rounded-l-full pl-2 pr-1.5 text-[11px] font-medium text-[var(--customer-ink)] !outline-none transition-all duration-300  ease-in-out hover:bg-black/[0.02] hover:text-[#03014D] focus:!outline-none focus-visible:!outline-none min-[375px]:w-[100px] min-[375px]:pl-2.5 min-[375px]:pr-2 min-[375px]:text-[12px] min-[425px]:w-[108px] sm:w-auto sm:max-w-none sm:gap-2 sm:pl-6 sm:pr-4 sm:text-sm"
                 >
                   <span className="truncate">
@@ -564,7 +581,7 @@ const SearchBar = ({
                       : "invisible -translate-y-2 opacity-0 pointer-events-none"
                   }`}
                 >
-                  <div className="max-h-[280px] overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin] sm:max-h-[320px]">
+                  <div className="max-h-[280px] overflow-y-auto overscroll-contain p-1.5 [scrollbar-color:#CE9F2D33_transparent]  [scrollbar-width:thin] sm:max-h-[320px]">
                     {categories.map((category) => {
                       const label = getCategoryLabel(category);
                       const key = getCategoryId(category);
@@ -610,6 +627,7 @@ const SearchBar = ({
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             onFocus={() => {
+              setIsDropdownOpen(false);
               if (
                 enableAutocomplete &&
                 sanitizedQuery.length >= autocompleteMinLength

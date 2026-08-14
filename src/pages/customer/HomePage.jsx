@@ -155,9 +155,9 @@ export function HomePage() {
       <CollageSection cmsPages={cmsPages} />
 
       <ShoppingMadeEasyBanner
-        title="Shopping Made Easy"
-        description="Enjoy seamless shopping with reliable delivery, secure payments, and hassle-free returns."
-        ctaLabel="Shop Now"
+        title="Raksha Bandhan Special"
+        description="Celebrate the eternal bond of love with curated Rakhi gifts, sweet hampers, and festive treats."
+        ctaLabel="Explore Rakhi Collection"
       />
 
       <FeaturedProductsSection

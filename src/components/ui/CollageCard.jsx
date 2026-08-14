@@ -20,14 +20,15 @@ function CollageImage({ src, title, label, count, index }) {
         loading="lazy"
       />
       {imageLabel && (
-        <span
-          className={`absolute bottom-[14px] left-1/2 flex min-h-[29px] -translate-x-1/2 items-center justify-center rounded-[25px] border border-[#FFFFFF80] bg-[#FFFFFF66] px-3 py-[5px] text-white shadow-[0px_4px_16px_rgba(0,0,0,0.12)] backdrop-blur-[20px] ${collageLabelWidthClass(count, index)}`}
+        <Label
+          variant="imageLabel"
+          className={`absolute bottom-[14px] left-1/2 flex min-h-[29px] -translate-x-1/2 items-center justify-center rounded-[25px] border border-[#CE9F2D] bg-[#CE9F2D] px-3 py-[5px] text-white font-bold shadow-md ${collageLabelWidthClass(count, index)}`}
           title={imageLabel}
         >
-          <span className="block min-w-0 truncate font-dm-sans text-[12px] font-medium leading-[16px]">
+          <span className="block min-w-0 truncate font-dm-sans text-[12px] font-bold leading-[16px] text-white">
             {displayLabel}
           </span>
-        </span>
+        </Label>
       )}
     </div>
   );

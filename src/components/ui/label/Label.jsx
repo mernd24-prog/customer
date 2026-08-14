@@ -19,7 +19,7 @@ const variants = {
   outofStock: "bg-red-500 text-white font-semibold",
 
   imageLabel:
-    "min-h-[31px] min-w-[77px] justify-center rounded-[25px] border border-[#FFFFFF80] bg-[#FFFFFF4D] px-[15px] py-[5px] text-white shadow-[0px_4px_16px_rgba(0,0,0,0.12)] backdrop-blur-[20px]",
+    "min-h-[31px] min-w-[77px] justify-center rounded-[25px] border border-[#CE9F2D] bg-[#CE9F2D] px-[15px] py-[5px] text-white font-bold shadow-md",
 };
 
 export default function Label({

@@ -60,7 +60,8 @@ export const getItemTitle = (item) =>
     ? item.productId?.title || item.productId?.name
     : null) ||
   "Product";
-export const getItemQuantity = (item) => Math.max(1, asNumber(item?.quantity || 1));
+export const getItemQuantity = (item) =>
+  Math.max(1, asNumber(item?.quantity || 1));
 export const getItemLineTotal = (item) =>
   item?.line_total ??
   item?.lineTotal ??
