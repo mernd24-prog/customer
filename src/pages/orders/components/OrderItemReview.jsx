@@ -110,30 +110,32 @@ function ExistingReviewCard({ review }) {
         </span>
       </div>
 
-      <div className="p-4 sm:p-5">
-        <div className="flex flex-wrap items-center gap-3">
-          <ReviewRating rating={rating} />
-          <span className="text-sm font-bold text-[#1B1D60]">
-            {rating}.0 out of 5
-          </span>
+      <div className="p-4 sm:p-5 flex flex-col md:flex-row md:items-start gap-6 md:gap-10 justify-between">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-3">
+            <ReviewRating rating={rating} />
+            <span className="text-sm font-bold text-[#1B1D60]">
+              {rating}.0 out of 5
+            </span>
+          </div>
+
+          {review?.title && (
+            <h4 className="mt-4 text-base font-bold text-[#22232B] sm:text-lg">
+              {review.title}
+            </h4>
+          )}
+
+          {reviewText && (
+            <p className="mt-2 max-w-full break-words text-sm leading-6 text-[#4E505C] sm:text-[14px]">
+              {reviewText}
+            </p>
+          )}
         </div>
 
-        {review?.title && (
-          <h4 className="mt-4 text-base font-bold text-[#22232B] sm:text-lg">
-            {review.title}
-          </h4>
-        )}
-
-        {reviewText && (
-          <p className="mt-2 max-full text-sm leading-6 text-[#4E505C] sm:text-[14px]">
-            {reviewText}
-          </p>
-        )}
-
         {media.length > 0 && (
-          <div className="mt-5">
+          <div className="shrink-0 md:mt-0">
             <p className="mb-2.5 flex items-center gap-2 text-xs font-bold uppercase tracking-[.08em] text-[#6B6B80]">
-              <Camera size={15} /> Photos from your review
+              <Camera size={15} /> Photos from your review ({media.length})
             </p>
             <div className="flex flex-wrap gap-2.5">
               {media.slice(0, 5).map((url, index) => (

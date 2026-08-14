@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "../../utils/common";
@@ -19,27 +19,9 @@ export default function HeaderDropdown({
   const isExternal =
     path && (path.startsWith("http://") || path.startsWith("https://"));
 
-  const timerRef = useRef(null);
-
-  const handleMouseEnter = () => {
-    timerRef.current = setTimeout(() => {
-      setIsOpen(true);
-    }, 120);
-  };
-
-  const handleMouseLeave = () => {
-    clearTimeout(timerRef.current);
-    setIsOpen(false);
-  };
-
   return (
     <div
       className="relative  inline-flex items-center"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      // onMouseEnter={() => setIsOpen(true)}
-      // onMouseLeave={() => setIsOpen(false)}
-      onFocus={() => setIsOpen(true)}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) {
           setIsOpen(false);
