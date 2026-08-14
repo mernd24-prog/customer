@@ -81,7 +81,7 @@ function ExistingReviewCard({ review }) {
 
   return (
     <section
-      className="mt-5 overflow-hidden rounded-2xl border border-[#E2E3EA] bg-white w-full sm:w-fit max-w-full"
+      className="mt-5 overflow-hidden rounded-2xl border border-[#E2E3EA] bg-white w-full"
       aria-label="Your product review"
     >
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#ECECF1] bg-[#F5ECD5] px-4 py-3.5 sm:px-5">

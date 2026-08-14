@@ -1,5 +1,5 @@
 import { getImageUrlFromValue } from "../../utils/ecommerce";
-export {
+import {
   getOrderItemVariantSku as getItemVariantSku,
   getOrderItemVariantId as getItemVariantId,
   getOrderItemId as getItemId,
@@ -15,6 +15,23 @@ export {
   getCancelledQuantityForItem,
   getReturnableQuantityForItem,
 } from "./orderUtils";
+
+export {
+  getItemVariantSku,
+  getItemVariantId,
+  getItemId,
+  getReturnItemProductId,
+  getReturnItemVariantId,
+  getReturnItemVariantSku,
+  returnItemMatchesOrderItem,
+  getItemReturnPolicy,
+  getReturnForItem,
+  getReturnItemQuantity,
+  isReturnQuantityBlocking,
+  getReturnedQuantityForItem,
+  getCancelledQuantityForItem,
+  getReturnableQuantityForItem,
+};
 
 export const RETURN_REASONS = [
   { value: "defective", label: "Defective / damaged" },

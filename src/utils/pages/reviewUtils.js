@@ -45,21 +45,24 @@ export function getUserDisplayName(user = {}) {
 }
 
 export function getProductDisplay(product) {
-  const title = getProductTitle(product, "Product");
+  const p = product?.data || product || {};
+  const title = getProductTitle(p, "Product");
 
   const category =
-    product?.category?.name ||
-    (typeof product?.category === "string" ? product.category : "") ||
-    product?.subcategory?.name ||
+    p?.category?.name ||
+    (typeof p?.category === "string" ? p.category : "") ||
+    p?.subcategory?.name ||
     "";
 
-  const price = getProductPrice(product) ?? product?.salePrice ?? "";
-  const mrp = getProductMrp(product) ?? product?.originalPrice ?? "";
+  const price = getProductPrice(p) ?? p?.salePrice ?? "";
+  const mrp = getProductMrp(p) ?? p?.originalPrice ?? "";
 
   const discount =
     mrp && price && Number(mrp) > Number(price)
       ? `${Math.round(((Number(mrp) - Number(price)) / Number(mrp)) * 100)}% Off`
-      : product?.discount || "";
+      : p?.discount || "";
+
+  const image = getProductImage(p) || getImageFallbackSrc(title, category);
 
   return {
     title,
@@ -67,6 +70,7 @@ export function getProductDisplay(product) {
     price,
     mrp,
     discount,
-    image: getProductImage(product) || getImageFallbackSrc(title, category),
+    image,
+    rawProduct: p,
   };
 }

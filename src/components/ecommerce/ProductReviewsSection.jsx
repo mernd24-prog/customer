@@ -69,12 +69,7 @@ function getUserDisplayName(user = {}) {
   );
 }
 
-function ProductReviewCard({
-  review,
-  currentUser,
-  currentUserId,
-  onHelpful,
-}) {
+function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const dateStr = review.createdAt
     ? new Date(review.createdAt).toLocaleDateString("en-GB", {
@@ -119,55 +114,67 @@ function ProductReviewCard({
   const buyerImage = review.buyerImage || review.buyerAvatarUrl || "";
 
   return (
-    <article className=" my-8">
-      <div className="mb-2  flex min-w-0 items-center gap-2.5">
-        <span className="w-8 h-8 lg:w-10 lg:h-10">
-          <img
-            src={buyerImage || "/image/png/person.png"}
-            alt={name}
-            className="h-full w-full rounded-full object-cover"
-          />
+    <article className="py-4 border-b border-[#CE9F2D33] last:border-b-0">
+      <div className="mb-2 flex min-w-0 items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span className="size-8 shrink-0 overflow-hidden rounded-full border border-gold/20 bg-cream">
+            <img
+              src={buyerImage || "/image/png/person.png"}
+              alt={name}
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = "/image/png/person.png";
+              }}
+            />
+          </span>
+          <span className="text-sm font-bold text-[#2E2E2E] truncate">
+            {name}
+          </span>
+          {isOwn && (
+            <span className="rounded-full bg-[#CE9F2D1A] px-2 py-0.5 text-[10px] font-bold text-[#CE9F2D]">
+              Your Review
+            </span>
+          )}
+        </div>
+        <span className="text-xs font-medium text-[#949494]">
+          {dateStr || review.date}
         </span>
-        <span className="text-h6 font-bold  text-[#2E2E2E]">{name}</span>
       </div>
 
-      <div className="my-4 flex flex-wrap items-center gap-2">
+      <div className="my-2 flex flex-wrap items-center gap-2">
         <RatingPill rating={rating} />
-        <span className="text-base flex gap-2 font-medium text-[#949494]">
-          <div className="w-1 h-1 my-auto rounded-full bg-[#949494]" />
-          Posted on {dateStr || review.date}
-        </span>
+        {review.title && (
+          <span className="text-sm font-bold text-[var(--customer-ink)]">
+            {review.title}
+          </span>
+        )}
       </div>
 
-      {review.title && (
-        <p className="mb-1 text-sm font-bold text-[var(--customer-ink)]">
-          {review.title}
-        </p>
-      )}
       {text && (
-        <p className="small my-4 text-[#2E2E2E]">
+        <div className="text-xs leading-relaxed text-[#2E2E2E] my-2">
           <ShowMoreText
             text={text}
             mode="lines"
             limit={3}
             buttonClassName="inline whitespace-nowrap text-xs font-semibold text-black/50 hover:underline"
           />
-        </p>
+        </div>
       )}
 
       {media.length > 0 && (
-        <div className="mb-4 mt-3 flex flex-wrap gap-2">
+        <div className="mb-3 mt-2 flex flex-wrap gap-2">
           {media.slice(0, 5).map((url, index) => (
             <button
               type="button"
               key={`${url}-${index}`}
               onClick={() => setLightboxIndex(index)}
-              className="block size-20  overflow-hidden rounded-[8px] border border-[#CE9F2D33] bg-[#FFFDF8] sm:size-24"
+              className="block size-16 shrink-0 overflow-hidden rounded-[8px] border border-[#CE9F2D33] bg-[#FFFDF8] sm:size-18 hover:opacity-90 transition-opacity"
             >
               <img
                 src={url}
                 alt={`Review media ${index + 1}`}
                 className="h-full w-full object-cover"
+                onError={(e) => applyImageFallback(e, "Review Photo")}
               />
             </button>
           ))}
@@ -175,8 +182,8 @@ function ProductReviewCard({
       )}
 
       {review.adminReply?.text && (
-        <div className="mt-4 rounded-[6px] border-l-2 border-[var(--customer-gold)] bg-[var(--customer-cream)] p-3">
-          <p className="mb-1 text-xs font-bold text-[var(--customer-gold-dark)]">
+        <div className="my-3 rounded-[6px] border-l-2 border-[var(--customer-gold)] bg-[var(--customer-cream)] p-2.5">
+          <p className="mb-0.5 text-xs font-bold text-[var(--customer-gold-dark)]">
             Seller Response
           </p>
           <p className="text-xs font-medium text-[var(--customer-muted)]">
@@ -185,22 +192,24 @@ function ProductReviewCard({
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={() => onHelpful?.(reviewId)}
-        disabled={!reviewId || isOwn}
-        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
-          alreadyVoted
-            ? "bg-[#CE9F2D1A] text-[#1B1D60]"
-            : "text-[#949494] hover:bg-[#F7F7FA] hover:text-[#1B1D60]"
-        }`}
-      >
-        <ThumbsUp
-          size={13}
-          className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
-        />
-        Helpful ({helpfulVotes})
-      </button>
+      <div className="mt-2 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => onHelpful?.(reviewId)}
+          disabled={!reviewId || isOwn}
+          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+            alreadyVoted
+              ? "bg-[#CE9F2D1A] text-[#1B1D60]"
+              : "text-[#949494] hover:bg-[#F7F7FA] hover:text-[#1B1D60]"
+          }`}
+        >
+          <ThumbsUp
+            size={12}
+            className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
+          />
+          Helpful ({helpfulVotes})
+        </button>
+      </div>
 
       {lightboxIndex !== null && (
         <ReviewMediaLightbox
@@ -561,27 +570,27 @@ export default function ProductReviewsSection({ productId, product }) {
     <section id="reviews" className="w-full overflow-visible">
       <div className="flex mt-4 lg:mt-8 flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-12">
         <aside className="lg:sticky lg:top-[calc(var(--customer-header-height,95px)+100px)] lg:self-start">
-          <div className="w-full overflow-hidden lg:w-[420px] xl:w-[580px] rounded-xl border border-[#CE9F2D66] bg-white">
-            <div className=" px-4 py-6  bg-[#CE9F2D33]   sm:px-5">
-              <h2 className="text-h6 font-bold text-[#2E2E2E]">
+          <div className="w-full overflow-hidden lg:w-[320px] xl:w-[400px] rounded-xl border border-[#CE9F2D66] bg-white shadow-sm">
+            <div className="px-5 py-2 bg-[#CE9F2D26] sm:px-6">
+              <h2 className="text-base sm:text-lg font-bold text-[#2E2E2E]">
                 Product Ratings & Reviews
               </h2>
             </div>
 
-            <div className="p-3 lg:p-5">
-              <div className="flex  items-center gap-2  font-bold  text-[#008425]">
+            <div className="p-5">
+              <div className="flex items-center gap-2 font-bold text-[#008425]">
                 <span>
                   <IoIosStar className="text-xl lg:text-2xl" />
                 </span>
-                <span className="text-[28px]  lg:text-[40px]">
+                <span className="text-xl lg:text-[28px] font-extrabold">
                   {Number(displayAvgRating).toFixed(1)}
                 </span>
               </div>
-              <p className="text-sm lg:text-base mt-4  font-medium text-[#2E2E2E]">
+              <p className="mt-3 text-sm font-medium text-[#2E2E2E]">
                 {displayReviewCount} Ratings, {displayTotal} Reviews
               </p>
 
-              <div className="py-2 lg:py-3">
+              <div className="mt-4 py-2 space-y-3">
                 {displayRatingBreakdown.map((item, index) => {
                   const rating = item.rating || 5 - index;
                   return (
@@ -592,22 +601,22 @@ export default function ProductReviewsSection({ productId, product }) {
                         setRatingFilter(ratingFilter === rating ? 0 : rating);
                         setPage(1);
                       }}
-                      className={`grid  w-full  items-center gap-1 text-left   ${
+                      className={`grid w-full items-center gap-1.5 text-left ${
                         ratingFilter && ratingFilter !== rating
                           ? "opacity-40"
                           : "opacity-100"
                       }`}
                     >
-                      <div className="my-3 flex justify-between">
-                        <span className="  small   font-medium text-[#2E2E2E] ">
+                      <div className="my-1.5 flex justify-between">
+                        <span className="text-sm font-medium text-[#2E2E2E]">
                           {item.label}
                         </span>
-                        <span className="text-right  small font-medium text-[#2E2E2E]">
+                        <span className="text-right text-sm font-medium text-[#2E2E2E]">
                           {item.count}
                         </span>
                       </div>
 
-                      <span className="h-0.5  overflow-hidden bg-[var(--customer-border)]">
+                      <span className="h-1.5 rounded-full overflow-hidden bg-[var(--customer-border)]">
                         <span
                           className={`block h-full ${item.color}`}
                           style={{ width: item.width }}

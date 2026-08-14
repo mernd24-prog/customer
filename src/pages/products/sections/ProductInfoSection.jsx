@@ -15,7 +15,7 @@ function InfoTabs({ tabs, activeTab, onChange }) {
           onClick={() => onChange(tab.key)}
           className={`min-w-max px-5  lg:py-4 py-2 text-lg font-medium ${
             activeTab === tab.key
-              ? "border-b-2 border-navy font-semibold bg-gradient-to-t from-[#1B1D6033] to-transparent text-navy"
+              ? "border-b-2 border-navy font-semibold text-navy"
               : "text-[#2E2E2E]"
           }`}
         >

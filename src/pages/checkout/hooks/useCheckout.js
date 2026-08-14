@@ -127,6 +127,7 @@ export default function useCheckout() {
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState("");
   const [isQuoteErrorDismissed, setIsQuoteErrorDismissed] = useState(false);
+  const [isPostPaymentProcessing, setIsPostPaymentProcessing] = useState(false);
 
 
 
@@ -1048,8 +1049,10 @@ export default function useCheckout() {
               orderId,
               payment: initiatedPayment,
               user: userState.current,
+              onPaymentSuccess: () => setIsPostPaymentProcessing(true),
             });
           } catch (error) {
+            setIsPostPaymentProcessing(false);
             const message =
               error?.message ||
               "Payment was not completed. Your order is still pending payment.";
@@ -1124,6 +1127,7 @@ export default function useCheckout() {
     setQuoteError,
     isQuoteErrorDismissed,
     setIsQuoteErrorDismissed,
+    isPostPaymentProcessing,
     buyNowItems,
     selectedCheckoutItemIds,
     isBuyNowCheckout,

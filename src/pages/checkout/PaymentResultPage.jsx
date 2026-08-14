@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -6,6 +6,7 @@ import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import BrandButton from "../../components/ui/buttons/Button";
+import Loader from "../../components/ui/Loader";
 import { fetchOrderById } from "../../features/order/orderSlice";
 import { fetchMe } from "../../features/user/userSlice";
 import {
@@ -21,6 +22,7 @@ export function PaymentResultPage() {
   const orderState = useSelector((state) => state.order);
   const userState = useSelector((state) => state.user);
   const [searchParams] = useSearchParams();
+  const [pageReady, setPageReady] = useState(false);
 
   const orderId = searchParams.get("orderId");
   const reason = searchParams.get("reason") || "";
@@ -49,7 +51,12 @@ export function PaymentResultPage() {
 
   useEffect(() => {
     if (orderId) {
-      dispatch(fetchOrderById({ orderId }));
+      setPageReady(false);
+      dispatch(fetchOrderById({ orderId })).finally(() => {
+        setPageReady(true);
+      });
+    } else {
+      setPageReady(true);
     }
   }, [dispatch, orderId]);
 
@@ -164,30 +171,31 @@ export function PaymentResultPage() {
             </section>
 
             <div className="mx-auto flex w-full justify-center">
-              <div className="w-full max-w-5xl">
-                <section className="flex w-full flex-col overflow-hidden rounded-[16px] border border-[#CE9F2D]/40 bg-[#fffcf6] sm:rounded-[18px] xl:rounded-[20px]">
-                  <div className="flex flex-col gap-4 px-4 py-8 text-center min-[375px]:gap-5 min-[375px]:px-5 min-[425px]:gap-6 sm:px-7 sm:py-10 md:px-8 xl:px-[57px]">
-                    <div className="flex flex-col items-center justify-center gap-5 min-[375px]:gap-6 sm:gap-7 xl:gap-8">
+              <div className="w-full max-w-3xl">
+                <section className="flex w-full flex-col overflow-hidden rounded-[16px] border border-[#CE9F2D]/40 bg-[#fffcf6] shadow-sm sm:rounded-[18px]">
+                  <div className="flex flex-col gap-4 px-5 py-6 text-center sm:px-8 sm:py-8">
+                    <div className="flex flex-col items-center justify-center gap-3 sm:gap-4">
                       <div className="shrink-0">
                         <img
                           src="/image/png/Group.png"
                           alt="Order Placed Successfully"
-                          className="size-24 object-contain"
+                          className="size-16 sm:size-20 object-contain"
                         />
                       </div>
 
                       <div className="flex flex-col items-center">
-                        <h1 className="break-words text-h2 font-bold text-[#3E4093]">
+                        <h1 className="break-words text-xl sm:text-2xl font-bold text-[#3E4093]">
                           Order Placed Successfully!
                         </h1>
 
-                        <p className="my-4 max-w-2xl text-small font-medium text-[#2E2E2E]">
+                        <p className="my-2 max-w-xl text-xs sm:text-sm font-medium text-[#2E2E2E] leading-relaxed">
                           Thank You for Shopping with Sam Global.
                           <br className="hidden sm:block" />
-                          Your order has been received and is being prepared for shipment.
+                          Your order has been received and is being prepared for
+                          shipment.
                         </p>
 
-                        <div className="mt-4 flex flex-col justify-center gap-3 sm:flex-row sm:items-center">
+                        <div className="mt-3 flex flex-col justify-center gap-3 sm:flex-row sm:items-center">
                           <BrandButton
                             variant="secondary"
                             rounded
@@ -195,17 +203,15 @@ export function PaymentResultPage() {
                               navigate(`/orders/${encodeURIComponent(orderId)}`)
                             }
                             label="View order details"
-                            className="h-12 w-full min-w-[180px] text-sm sm:w-auto"
+                            className="h-10 w-full min-w-[160px] text-xs sm:text-sm sm:w-auto px-6"
                           />
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-auto flex flex-col gap-2 border-t border-[#CE9F2D]/30 bg-[#FFF4D7] px-4 py-4 text-small font-semibold text-[#1B1D60] min-[375px]:px-5 min-[425px]:gap-3 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-5 md:px-8">
-                    <span className="break-words">
-                      Order ID : #{orderId}
-                    </span>
+                  <div className="mt-auto flex flex-col gap-2 border-t border-[#CE9F2D]/30 bg-[#FFF4D7] px-5 py-3 text-xs sm:text-sm font-semibold text-[#1B1D60] sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-3.5">
+                    <span className="break-words">Order ID : #{orderId}</span>
 
                     <span className="break-words">
                       Estimated Delivery : {deliveryLabel}
