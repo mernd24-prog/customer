@@ -322,9 +322,9 @@ export default function ProductCard({
             className="
               flex  items-center justify-center
               rounded-[50px]
-              bg-[#CE9F2D]
+              bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)]
               text-[12px] font-semibold
-              text-[#1F2430]
+              text-white
               sm:text-[14px]
             "
           >

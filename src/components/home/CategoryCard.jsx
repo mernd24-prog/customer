@@ -30,7 +30,7 @@ export default function CategoryCard({
               absolute left-3 top-3 z-10
               flex h-[24px] min-w-[75px] items-center justify-center
               rounded-[50px]
-              bg-[#CE9F2D]
+              bg-[#8A6500]
               px-[12px] py-[5px]
               font-dmSans
               text-[12px] font-semibold

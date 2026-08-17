@@ -47,6 +47,9 @@ const InfoSection = ({ data }) => {
                 <img
                   src={imageUrl}
                   alt={imageAlt || title || ""}
+                  loading="lazy"
+                  width="800"
+                  height="600"
                   className="block h-auto w-full object-cover"
                 />
               </div>

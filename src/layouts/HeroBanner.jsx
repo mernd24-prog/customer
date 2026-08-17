@@ -44,6 +44,8 @@ const HeroBanner = memo(({ content = heroContent }) => {
         autoplay={AUTOPLAY_CONFIG}
         pagination={PAGINATION_CONFIG}
         modules={SWIPER_MODULES}
+        observer={true}
+        observeParents={true}
         className="seller-experience-swiper  h-full w-full"
       >
         {bannerData.map((slide, index) => {

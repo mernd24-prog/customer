@@ -522,10 +522,15 @@ export const resolveOrderItemDisplayStatus = (
 };
 
 export const getOrderCardImage = (item) => {
-  return (
+  let img = (
     getImageUrlFromValue(getItemImage(item)) ||
     getImageUrlFromValue(getItemProduct(item)?.image) ||
     getImageUrlFromValue(getItemProduct(item)?.imageUrl) ||
     getImageUrlFromValue(getItemProduct(item)?.thumbnail)
   );
+  if (img && img.includes("res.cloudinary.com") && img.includes("/upload/")) {
+    // Add f_auto, q_auto and resize to 200x200 max to fix Lighthouse image delivery issue
+    img = img.replace(/\/upload\/(v\d+\/)/, "/upload/w_200,h_200,c_fit,f_auto,q_auto/$1");
+  }
+  return img;
 };

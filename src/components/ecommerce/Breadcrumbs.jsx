@@ -57,7 +57,7 @@ export default function Breadcrumbs({
                 <span
                   title={item.label}
                   className={cn(
-                    "font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]",
+                    "font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#8A6500]",
                     currentClassName,
                   )}
                 >

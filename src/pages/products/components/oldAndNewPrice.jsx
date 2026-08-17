@@ -30,7 +30,7 @@ export default function ProductPriceBlock({
           {mrp && mrp > price && (
             <span
               className={cn(
-                "  font-semibold !text-gray line-through ",
+                "font-semibold text-[#595959] line-through",
                 mrpClassName,
               )}
             >
@@ -41,7 +41,7 @@ export default function ProductPriceBlock({
           {discount > 0 && (
             <span
               className={cn(
-                "rounded-full bg-[#FF3D31] px-3 py-1 text-[8px] font-bold uppercase text-white",
+                "rounded-full bg-[#D93025] px-3 py-1 text-[8px] font-bold uppercase text-white",
                 discountClassName,
               )}
             >
