@@ -33,6 +33,7 @@ export function useCmsRecord(cmsKey) {
   useEffect(() => {
     if (!cmsKey || page || requestedCmsKeys.has(cmsKey)) return;
     requestedCmsKeys.add(cmsKey);
+    dispatch(fetchCmsPageBySlug({ slug: cmsKey })).catch(() => {});
   }, [cmsKey, dispatch, page]);
 
   return { page, loading };

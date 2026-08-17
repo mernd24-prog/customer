@@ -254,14 +254,14 @@ export function Footer({ data = footerData }) {
         </div>
       )}
       <div className="customer-container pt-4 sm:pt-0 flex flex-col gap-2 md:gap-16 lg:gap-4 md:flex-row justify-between">
-        <div className="flex my-2 items-center gap-3 ">
+        <div className="flex my-2  md:items-center gap-3 ">
           <Link to="/">
             <img
               src="/image/png/logoWithName.png"
               alt="Sam Global"
               width="160"
               height="60"
-              className="h-9 sm:h-12 lg:h-16 xl:h-[60px]  rounded object-contain"
+              className="h-9 sm:h-12 lg:h-16 xl:h-[60px] w-[290px]  rounded object-contain"
             />
           </Link>
         </div>

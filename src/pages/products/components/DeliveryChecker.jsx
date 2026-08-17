@@ -87,6 +87,7 @@ export default function DeliveryChecker({ productId, onResultChange }) {
         <button
           type="submit"
           disabled={loading}
+          aria-label="Check delivery pincode"
           className="flex h-full w-14 shrink-0 items-center justify-center bg-navy text-white disabled:opacity-60 transition hover:bg-[#25287d]"
         >
           {loading ? (
@@ -104,6 +105,7 @@ export default function DeliveryChecker({ productId, onResultChange }) {
           {/* Close button */}
           <button
             type="button"
+            aria-label="Close delivery result"
             onClick={() => {
               setResult(null);
               onResultChange?.(null);

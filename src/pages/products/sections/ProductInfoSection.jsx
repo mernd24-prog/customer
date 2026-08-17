@@ -2,8 +2,24 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { formatPageTitle } from "../../../utils/common";
-import { getProductTitle, getImageUrlFromValue } from "../../../utils/ecommerce";
+import {
+  getProductTitle,
+  getImageUrlFromValue,
+} from "../../../utils/ecommerce";
 import { ProductGallery } from "../components/ImageGallery";
+
+const decodeHtml = (html) => {
+  if (!html || typeof html !== "string") return html || "";
+  if (html.includes("&lt;") && html.includes("&gt;")) {
+    return html
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+  }
+  return html;
+};
 
 function InfoTabs({ tabs, activeTab, onChange }) {
   return (
@@ -130,8 +146,8 @@ export default function ProductInfoSection({
         <InfoCard title="Description">
           {product?.description ? (
             <div
-              className="px-4 py-4  text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: product.description }}
+              className="rich-text-content px-4 py-4 text-[#4E4E4E]"
+              dangerouslySetInnerHTML={{ __html: decodeHtml(product.description) }}
             />
           ) : (
             <p className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line">
@@ -192,11 +208,12 @@ export default function ProductInfoSection({
                   Covered in Warranty
                 </h3>
                 <div
-                  className="mt-2 prose prose-sm max-w-none text-[#4E4E4E] lg:prose-base"
+                  className="mt-2 rich-text-content text-[#4E4E4E]"
                   dangerouslySetInnerHTML={{
-                    __html:
+                    __html: decodeHtml(
                       effectiveWarranty.coveredInWarranty ||
-                      effectiveWarranty.terms,
+                        effectiveWarranty.terms
+                    ),
                   }}
                 />
               </div>
@@ -208,9 +225,9 @@ export default function ProductInfoSection({
                   Not Covered in Warranty
                 </h3>
                 <div
-                  className="mt-2 prose prose-sm max-w-none text-[#4E4E4E] lg:prose-base"
+                  className="mt-2 rich-text-content text-[#4E4E4E]"
                   dangerouslySetInnerHTML={{
-                    __html: effectiveWarranty.notCoveredInWarranty,
+                    __html: decodeHtml(effectiveWarranty.notCoveredInWarranty),
                   }}
                 />
               </div>

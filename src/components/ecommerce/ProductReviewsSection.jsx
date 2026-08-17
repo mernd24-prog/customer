@@ -21,7 +21,7 @@ import ShowMoreText from "../../utils/showMore";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function StarInput({ value, onChange, size = 28 }) {
+function StarInput({ value, onChange, size = 24 }) {
   const [hovered, setHovered] = useState(0);
   return (
     <div className="flex gap-1">
@@ -38,7 +38,7 @@ function StarInput({ value, onChange, size = 28 }) {
             size={size}
             className={
               n <= (hovered || value)
-                ? "fill-gold text-gold"
+                ? "fill-[#CE9F2D] text-[#CE9F2D]"
                 : "fill-border text-border"
             }
           />
@@ -50,8 +50,8 @@ function StarInput({ value, onChange, size = 28 }) {
 
 function RatingPill({ rating }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-[#CE9F2D] px-2 py-1 text-xs font-bold text-white ">
-      <IoIosStar className="text-xs" />({rating})
+    <span className="inline-flex items-center gap-1 rounded-md bg-[#CE9F2D] px-1.5 py-0.5 text-[11px] sm:text-xs font-bold text-white shadow-xs">
+      <IoIosStar className="text-xs" /> {rating}
     </span>
   );
 }
@@ -114,10 +114,10 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
   const buyerImage = review.buyerImage || review.buyerAvatarUrl || "";
 
   return (
-    <article className="py-4 border-b border-[#CE9F2D33] last:border-b-0">
-      <div className="mb-2 flex min-w-0 items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <span className="size-8 shrink-0 overflow-hidden rounded-full border border-gold/20 bg-cream">
+    <article className="py-3.5 border-b border-[#E7D9B8]/50 last:border-b-0">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <span className="size-8 shrink-0 overflow-hidden rounded-full border border-[#CE9F2D]/30 bg-[#FAF6EE]">
             <img
               src={buyerImage || "/image/png/person.png"}
               alt={name}
@@ -127,54 +127,57 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
               }}
             />
           </span>
-          <span className="text-sm font-bold text-[#2E2E2E] truncate">
-            {name}
-          </span>
-          {isOwn && (
-            <span className="rounded-full bg-[#CE9F2D1A] px-2 py-0.5 text-[10px] font-bold text-[#CE9F2D]">
-              Your Review
-            </span>
-          )}
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs sm:text-sm font-bold text-[#1B1D60]">
+                {name}
+              </span>
+              {isOwn && (
+                <span className="rounded-md bg-[#CE9F2D]/15 px-2 py-0.5 text-[10px] font-bold text-[#A96F14]">
+                  Your Review
+                </span>
+              )}
+            </div>
+          </div>
         </div>
-        <span className="text-xs font-medium text-[#949494]">
+        <span className="text-[11px] sm:text-xs font-medium text-[#949494] shrink-0">
           {dateStr || review.date}
         </span>
       </div>
 
-      <div className="my-2 flex flex-wrap items-center gap-2">
+      <div className="mt-2 flex flex-wrap items-center gap-2">
         <RatingPill rating={rating} />
         {review.title && (
-          <span className="text-sm font-bold text-[var(--customer-ink)]">
+          <span className="text-xs sm:text-sm font-bold text-[#1F2430]">
             {review.title}
           </span>
         )}
       </div>
 
       {text && (
-        <div className="text-xs leading-relaxed text-[#2E2E2E] my-2">
+        <div className="mt-1.5 text-xs sm:text-sm leading-relaxed text-[#4E4E4E]">
           <ShowMoreText
             text={text}
             mode="lines"
             limit={3}
-            buttonClassName="inline whitespace-nowrap text-xs font-semibold text-black/50 hover:underline"
+            buttonClassName="inline whitespace-nowrap text-xs font-semibold text-[#CE9F2D] hover:underline ml-1"
           />
         </div>
       )}
 
       {media.length > 0 && (
-        <div className="mb-3 mt-2 flex flex-wrap gap-2">
+        <div className="mt-2.5 flex flex-wrap gap-2">
           {media.slice(0, 5).map((url, index) => (
             <button
               type="button"
               key={`${url}-${index}`}
               onClick={() => setLightboxIndex(index)}
-              className="block size-16 shrink-0 overflow-hidden rounded-[8px] border border-[#CE9F2D33] bg-[#FFFDF8] sm:size-18 hover:opacity-90 transition-opacity"
+              className="block size-14 shrink-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white hover:opacity-90 transition-opacity"
             >
               <img
                 src={url}
                 alt={`Review media ${index + 1}`}
                 className="h-full w-full object-cover"
-                onError={(e) => applyImageFallback(e, "Review Photo")}
               />
             </button>
           ))}
@@ -182,29 +185,25 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
       )}
 
       {review.adminReply?.text && (
-        <div className="my-3 rounded-[6px] border-l-2 border-[var(--customer-gold)] bg-[var(--customer-cream)] p-2.5">
-          <p className="mb-0.5 text-xs font-bold text-[var(--customer-gold-dark)]">
-            Seller Response
-          </p>
-          <p className="text-xs font-medium text-[var(--customer-muted)]">
-            {review.adminReply.text}
-          </p>
+        <div className="mt-2.5 rounded-lg border-l-3 border-[#CE9F2D] bg-[#FAF6EE] p-2.5 text-xs">
+          <p className="font-bold text-[#A96F14] mb-0.5">Seller Response</p>
+          <p className="font-medium text-[#6F7480]">{review.adminReply.text}</p>
         </div>
       )}
 
-      <div className="mt-2 flex items-center justify-between">
+      <div className="mt-2.5 flex items-center justify-between">
         <button
           type="button"
           onClick={() => onHelpful?.(reviewId)}
           disabled={!reviewId || isOwn}
-          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold border transition disabled:cursor-not-allowed disabled:opacity-50 ${
             alreadyVoted
-              ? "bg-[#CE9F2D1A] text-[#1B1D60]"
-              : "text-[#949494] hover:bg-[#F7F7FA] hover:text-[#1B1D60]"
+              ? "bg-[#CE9F2D]/15 border-[#CE9F2D]/40 text-[#1B1D60]"
+              : "border-[#E7D9B8] bg-[#FAF6EE] text-[#6F7480] hover:border-[#CE9F2D] hover:text-[#1B1D60]"
           }`}
         >
           <ThumbsUp
-            size={12}
+            size={11}
             className={alreadyVoted ? "fill-[#CE9F2D] text-[#CE9F2D]" : ""}
           />
           Helpful ({helpfulVotes})
@@ -267,13 +266,15 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="border border-[#e4ddcf] rounded-xl bg-[#ffffff] p-10 flex flex-col gap-4"
+      className="border border-[#E7D9B8] rounded-xl bg-white p-5 sm:p-6 flex flex-col gap-4 shadow-xs"
     >
-      <h3 className="text-base font-bold text-ink">Write a Review</h3>
+      <h3 className="text-sm sm:text-base font-bold text-[#1B1D60]">
+        Write a Review
+      </h3>
 
       {deliveredOrders.length > 1 && (
         <div>
-          <label className="text-xs font-semibold text-gray uppercase tracking-wide mb-1 block">
+          <label className="text-xs font-semibold text-[#6F7480] uppercase tracking-wide mb-1 block">
             Select Order
           </label>
           <select
@@ -281,7 +282,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
             onChange={(e) =>
               setForm((f) => ({ ...f, orderId: e.target.value }))
             }
-            className="w-full border border-border-strong rounded-[6px] px-3 py-2 text-sm"
+            className="w-full border border-[#E7D9B8] rounded-lg px-3 py-2 text-xs sm:text-sm focus:border-[#CE9F2D] outline-none"
           >
             {deliveredOrders.map((o) => {
               const id = o.id || o.orderId;
@@ -296,17 +297,18 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
       )}
 
       <div>
-        <label className="text-xs font-semibold text-gray uppercase tracking-wide mb-2 block">
+        <label className="text-xs font-semibold text-[#6F7480] uppercase tracking-wide mb-1.5 block">
           Your Rating <span className="text-red-500">*</span>
         </label>
         <StarInput
           value={form.rating}
           onChange={(r) => setForm((f) => ({ ...f, rating: r }))}
+          size={24}
         />
       </div>
 
       <div>
-        <label className="text-xs  font-semibold text-gray uppercase tracking-wide mb-1 block">
+        <label className="text-xs font-semibold text-[#6F7480] uppercase tracking-wide mb-1 block">
           Title
         </label>
         <input
@@ -315,27 +317,27 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
           onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
           maxLength={200}
           required
-          placeholder="Summarise Your Review"
-          className="w-full border border-border-strong rounded-[6px] px-3 py-2 text-sm"
+          placeholder="Summarize your review in a few words"
+          className="w-full border border-[#E7D9B8] rounded-lg px-3 py-2 text-xs sm:text-sm focus:border-[#CE9F2D] outline-none"
         />
       </div>
 
       <div>
-        <label className="text-xs font-semibold text-gray uppercase tracking-wide mb-1 block">
+        <label className="text-xs font-semibold text-[#6F7480] uppercase tracking-wide mb-1 block">
           Review
         </label>
         <textarea
-          rows={4}
+          rows={3}
           value={form.reviewText}
           onChange={(e) =>
             setForm((f) => ({ ...f, reviewText: e.target.value }))
           }
           maxLength={2000}
           required
-          placeholder="Share Your Experience with This Product…"
-          className="w-full border border-border-strong rounded-[6px] px-3 py-2 text-sm resize-none"
+          placeholder="Share your experience with this product…"
+          className="w-full border border-[#E7D9B8] rounded-lg px-3 py-2 text-xs sm:text-sm resize-none focus:border-[#CE9F2D] outline-none"
         />
-        <p className="text-xs text-gray text-right">
+        <p className="text-[11px] text-[#949494] text-right mt-1">
           {form.reviewText.length}/2000
         </p>
       </div>
@@ -347,7 +349,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
       />
 
       {submitError && (
-        <p className="text-xs text-red-600 rounded-lg bg-red-50 px-3 py-2">
+        <p className="text-xs text-red-600 rounded-lg bg-red-50 px-3 py-2 border border-red-200">
           {submitError}
         </p>
       )}
@@ -362,7 +364,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
           !form.title.trim() ||
           !form.reviewText.trim()
         }
-        className="w-full h-11 rounded-full bg-gold text-white font-semibold text-sm hover:bg-gold-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full h-10 rounded-lg bg-[#CE9F2D] text-white font-bold text-xs sm:text-sm hover:bg-[#A96F14] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-xs"
       >
         {submitting
           ? "Submitting…"
@@ -388,11 +390,11 @@ const EMPTY_REVIEWS = [];
 function getRatingBreakdown(stats) {
   const labels = ["Excellent", "Very Good", "Good", "Average", "Poor"];
   const colors = [
-    "bg-[var(--customer-success)]",
-    "bg-[var(--customer-success)]",
-    "bg-[var(--customer-warning)]",
-    "bg-[#f0793d]",
-    "bg-[var(--customer-danger)]",
+    "bg-[#CE9F2D]",
+    "bg-[#CE9F2D]",
+    "bg-[#EAB308]",
+    "bg-[#F97316]",
+    "bg-[#EF4444]",
   ];
 
   return [5, 4, 3, 2, 1].map((rating, index) => {
@@ -567,30 +569,37 @@ export default function ProductReviewsSection({ productId, product }) {
   if (!hasPublishedReviews) return null;
 
   return (
-    <section id="reviews" className="w-full overflow-visible">
-      <div className="flex mt-4 lg:mt-8 flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-12">
-        <aside className="lg:sticky lg:top-[calc(var(--customer-header-height,95px)+100px)] lg:self-start">
-          <div className="w-full overflow-hidden lg:w-[320px] xl:w-[400px] rounded-xl border border-[#CE9F2D66] bg-white shadow-sm">
-            <div className="px-5 py-2 bg-[#CE9F2D26] sm:px-6">
-              <h2 className="text-base sm:text-lg font-bold text-[#2E2E2E]">
-                Product Ratings & Reviews
+    <section id="reviews" className="w-full mt-8 lg:mt-12">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+        {/* Left Sidebar */}
+        <aside className="w-full lg:w-[280px] xl:w-[300px] shrink-0">
+          <div className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-white shadow-xs">
+            <div className="px-4 py-3 bg-[#FAF6EE] border-b border-[#E7D9B8]">
+              <h2 className="text-sm font-bold text-[#1B1D60]">
+                Product Ratings &amp; Reviews
               </h2>
             </div>
 
-            <div className="p-5">
-              <div className="flex items-center gap-2 font-bold text-[#008425]">
-                <span>
-                  <IoIosStar className="text-xl lg:text-2xl" />
-                </span>
-                <span className="text-xl lg:text-[28px] font-extrabold">
-                  {Number(displayAvgRating).toFixed(1)}
+            <div className="p-4 sm:p-5">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  <IoIosStar className="text-2xl text-[#CE9F2D]" />
+                  <span className="text-3xl font-extrabold text-[#1B1D60]">
+                    {Number(displayAvgRating).toFixed(1)}
+                  </span>
+                </div>
+                <span className="text-xs font-semibold text-[#6F7480] self-end mb-1">
+                  / 5.0
                 </span>
               </div>
-              <p className="mt-3 text-sm font-medium text-[#2E2E2E]">
-                {displayReviewCount} Ratings, {displayTotal} Reviews
+              <p className="mt-1 text-xs font-semibold text-[#6F7480]">
+                {displayReviewCount}{" "}
+                {displayReviewCount === 1 ? "Rating" : "Ratings"} &amp;{" "}
+                {displayTotal} {displayTotal === 1 ? "Review" : "Reviews"}
               </p>
 
-              <div className="mt-4 py-2 space-y-3">
+              {/* Rating Bars */}
+              <div className="mt-4 space-y-2">
                 {displayRatingBreakdown.map((item, index) => {
                   const rating = item.rating || 5 - index;
                   return (
@@ -601,26 +610,25 @@ export default function ProductReviewsSection({ productId, product }) {
                         setRatingFilter(ratingFilter === rating ? 0 : rating);
                         setPage(1);
                       }}
-                      className={`grid w-full items-center gap-1.5 text-left ${
+                      className={`flex w-full items-center gap-2 text-left text-xs transition-opacity ${
                         ratingFilter && ratingFilter !== rating
-                          ? "opacity-40"
-                          : "opacity-100"
+                          ? "opacity-35"
+                          : "opacity-100 hover:opacity-80"
                       }`}
                     >
-                      <div className="my-1.5 flex justify-between">
-                        <span className="text-sm font-medium text-[#2E2E2E]">
-                          {item.label}
-                        </span>
-                        <span className="text-right text-sm font-medium text-[#2E2E2E]">
-                          {item.count}
-                        </span>
-                      </div>
+                      <span className="w-16 shrink-0 font-medium text-[#2E2E2E]">
+                        {item.label}
+                      </span>
 
-                      <span className="h-1.5 rounded-full overflow-hidden bg-[var(--customer-border)]">
-                        <span
-                          className={`block h-full ${item.color}`}
+                      <div className="h-2 rounded-full overflow-hidden bg-[#FAF6EE] flex-1 border border-[#E7D9B8]/40">
+                        <div
+                          className={`h-full transition-all duration-300 ${item.color}`}
                           style={{ width: item.width }}
                         />
+                      </div>
+
+                      <span className="w-5 shrink-0 text-right font-medium text-[#6F7480]">
+                        {item.count}
                       </span>
                     </button>
                   );
@@ -631,37 +639,50 @@ export default function ProductReviewsSection({ productId, product }) {
                 <button
                   type="button"
                   onClick={() => setRatingFilter(0)}
-                  className="mt-4 text-xs font-bold text-[var(--customer-gold-dark)] hover:text-[var(--customer-gold)]"
+                  className="mt-3 text-xs font-bold text-[#A96F14] hover:text-[#CE9F2D] underline block"
                 >
-                  Clear Filter
+                  Clear Filter ({ratingFilter}★)
                 </button>
               )}
             </div>
           </div>
         </aside>
 
-        <div className="flex min-w-0 flex-1 flex-col ">
-          {showForm && canWriteReview && (
-            <div className="mb-6">
-              <WriteReviewForm
-                productId={productId}
-                deliveredOrders={deliveredOrders}
-                onSuccess={handleFormSuccess}
-              />
+        {/* Right Section */}
+        <div className="flex min-w-0 flex-1 flex-col">
+          {/* Top Bar: Heading + Actions */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-2 border-b border-[#E7D9B8]">
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-bold text-[#1B1D60]">
+                Customer Reviews
+              </h3>
+              {displayTotal > 0 && (
+                <span className="rounded-full bg-[#FAF6EE] px-2.5 py-0.5 text-xs font-bold text-[#A96F14] border border-[#E7D9B8]">
+                  {displayTotal}
+                </span>
+              )}
+              {ratingFilter > 0 && (
+                <span className="rounded-md bg-[#CE9F2D]/15 px-2 py-0.5 text-xs font-bold text-[#A96F14]">
+                  {ratingFilter}★ Only
+                </span>
+              )}
             </div>
-          )}
 
-          {displayTotal > 0 && (
-            <div className="flex flex-col gap-3   mt-2 lg:mt-6 sm:flex-row items-end justify-end ">
-              <div className="flex flex-wrap items-center gap-2">
-                {ratingFilter > 0 && (
-                  <span className="rounded-full bg-gold-soft px-2 py-1 text-xs text-gold-dark">
-                    {ratingFilter}★ Only
-                  </span>
-                )}
+            <div className="flex items-center gap-2 sm:gap-3">
+              {canWriteReview && (
+                <button
+                  type="button"
+                  onClick={() => setShowForm((prev) => !prev)}
+                  className="rounded-lg bg-[#1B1D60] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#15115d] transition-colors shadow-xs"
+                >
+                  {showForm ? "Cancel Review" : "Write a Review"}
+                </button>
+              )}
+
+              {displayTotal > 0 && (
                 <CustomDropdown
-                  className="w-[190px]"
-                  buttonClassName="h-10 rounded-[10px] border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] focus:ring-2 focus:ring-[#CE9F2D33]"
+                  className="w-[150px]"
+                  buttonClassName="h-8 text-xs rounded-lg border-[#E7D9B8] font-semibold text-[#1B1D60] bg-white hover:bg-[#FAF6EE]"
                   options={SORT_OPTIONS}
                   value={sort}
                   onChange={(val) => {
@@ -670,43 +691,59 @@ export default function ProductReviewsSection({ productId, product }) {
                   }}
                   placeholder="Most Recent"
                 />
-              </div>
+              )}
+            </div>
+          </div>
+
+          {/* Form */}
+          {showForm && canWriteReview && (
+            <div className="my-4">
+              <WriteReviewForm
+                productId={productId}
+                deliveredOrders={deliveredOrders}
+                onSuccess={handleFormSuccess}
+              />
             </div>
           )}
 
+          {/* Loading Skeleton */}
           {bucket.loading && items.length === 0 && (
-            <div className="flex flex-col gap-3 pt-4">
-              {Array.from({ length: 3 }, (_, i) => (
+            <div className="flex flex-col gap-3 py-2">
+              {Array.from({ length: 2 }, (_, i) => (
                 <div
                   key={i}
-                  className="h-28 animate-pulse rounded-[8px] bg-surface-soft"
+                  className="h-20 animate-pulse rounded-lg bg-[#FAF6EE]"
                 />
               ))}
             </div>
           )}
 
-          <div>
-            {previewReviews.map((review, index) => (
-              <ProductReviewCard
-                key={
-                  review._id ||
-                  review.id ||
-                  `${review.name}-${review.date}-${index}`
-                }
-                review={review}
-                currentUser={currentUser}
-                currentUserId={userId}
-                onHelpful={handleHelpful}
-                hasReviewed={hasOwnPublishedReview}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
+          {/* Reviews List */}
+          {displayReviews.length > 0 && (
+            <div className="divide-y divide-[#E7D9B8]/40">
+              {previewReviews.map((review, index) => (
+                <ProductReviewCard
+                  key={
+                    review._id ||
+                    review.id ||
+                    `${review.name}-${review.date}-${index}`
+                  }
+                  review={review}
+                  currentUser={currentUser}
+                  currentUserId={userId}
+                  onHelpful={handleHelpful}
+                  hasReviewed={hasOwnPublishedReview}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+          )}
 
+          {/* Empty State */}
           {!bucket.loading && displayReviews.length === 0 && (
-            <div className="flex flex-1  items-center justify-center rounded-[10px] border border-[#CE9F2D66] bg-[#FFFDF8] px-4 py-8 text-center sm:min-h-[340px] lg:min-h-0">
-              <div className="mx-auto flex w-full max-w-[420px] flex-col items-center">
-                <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-[#CE9F2D1F] sm:h-36 sm:w-36 lg:h-44 lg:w-44">
+            <div className="flex flex-1 items-center justify-center rounded-xl border border-[#E7D9B8] bg-[#FAF6EE]/50 px-4 py-8 text-center">
+              <div className="mx-auto flex w-full max-w-[320px] flex-col items-center">
+                <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-[#CE9F2D]/15">
                   <img
                     src="/image/png/noReview.png"
                     alt="No Reviews Yet"
@@ -714,24 +751,28 @@ export default function ProductReviewsSection({ productId, product }) {
                     loading="lazy"
                   />
                 </div>
-                <p className="mt-5 text-lg font-bold text-[#1B1D60] sm:text-xl">
+                <p className="mt-3 text-base font-bold text-[#1B1D60]">
                   No Reviews Yet
                 </p>
-                <p className="mt-2 max-w-[320px] text-sm font-medium leading-6 text-[#5F6078] sm:text-base">
-                  Published Customer Reviews Will Appear Here.
+                <p className="mt-1 text-xs text-[#6F7480]">
+                  Customer reviews will appear here once verified buyers share
+                  their feedback.
                 </p>
               </div>
             </div>
           )}
 
+          {/* View All Reviews Link */}
           {displayTotal > 0 && (
-            <Link
-              to={`/products/${productId}/reviews`}
-              state={{ product }}
-              className=" flex w-full items-center gap-2 text-left text-sm lg:text-lg font-semibold  text-[#CE9F2D] transition-colors "
-            >
-              View All Reviews <ChevronRight size={16} />
-            </Link>
+            <div className="mt-3 pt-3 border-t border-[#E7D9B8]/40 flex justify-end">
+              <Link
+                to={`/products/${productId}/reviews`}
+                state={{ product }}
+                className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#CE9F2D] hover:text-[#A96F14] transition-colors"
+              >
+                View All Reviews ({displayTotal}) <ChevronRight size={14} />
+              </Link>
+            </div>
           )}
         </div>
       </div>

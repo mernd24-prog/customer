@@ -46,6 +46,21 @@
   .small {
     @apply text-sm sm:text-base;
   }
+
+  /* Rich Text Content formatting for Admin HTML descriptions */
+  .rich-text-content h1 {
+    @apply text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1F2430] mt-4 mb-3 leading-tight block;
+  }
+  .rich-text-content h2 {
+    @apply text-xl sm:text-2xl font-bold text-[#1F2430] mt-4 mb-2 leading-tight block;
+  }
+  .rich-text-content h3 {
+    @apply text-lg sm:text-xl font-bold text-[#1F2430] mt-3 mb-2 block;
+  }
+
+  .rich-text-content p {
+    @apply text-sm sm:text-base leading-relaxed text-[#4E4E4E] mb-3;
+  }
 }
 
 /* ============================= */
@@ -137,7 +152,9 @@
   border-radius: 999px;
   background: #b9b5d8;
   transform: scaleX(0.3076);
-  transition: transform 200ms ease, background-color 200ms ease;
+  transition:
+    transform 200ms ease,
+    background-color 200ms ease;
 }
 
 .seller-experience-swiper .swiper-pagination-bullet-active::after {
