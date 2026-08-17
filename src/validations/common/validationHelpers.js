@@ -240,63 +240,49 @@ export const emailField = trimString
   .max(254, ERROR_MESSAGES.max("Email", 254))
   .regex(REGEX.email, ERROR_MESSAGES.email)
   .refine((value) => {
+    // 1. Must contain '@' separating local part and domain
+    if (!value.includes("@")) return false;
     const parts = value.split("@");
-
-    // Must contain exactly one @
     if (parts.length !== 2) return false;
-
     const [localPart, domain] = parts;
-
     if (!localPart || !domain) return false;
 
+    // 2. Must contain '.' separating domain name and TLD
+    if (!domain.includes(".")) return false;
     const domainParts = domain.split(".");
-
-    // Must contain domain + TLD
     if (domainParts.length < 2) return false;
 
-    // Prevent:
-    // user@.com
-    // user@company.
-    // user@company..com
-    if (domainParts.some((part) => !part)) {
-      return false;
-    }
-
+    const domainName = domainParts[domainParts.length - 2].toLowerCase();
     const tld = domainParts[domainParts.length - 1].toLowerCase();
 
-    // Allow valid/common TLDs
-    const allowedTlds = [
-      "com",
-      "in",
-      "org",
-      "net",
-      "co",
-      "io",
-      "ai",
-      "info",
-      "biz",
-      "edu",
-      "gov",
-      "me",
-      "app",
-      "dev",
-      "tech",
-      "store",
-      "online",
-      "site",
-      "xyz",
-      "us",
-      "uk",
-      "ca",
-      "au",
-      "de",
-      "fr",
-      "jp",
-      "sg",
-      "ae",
+    if (!domainName || !tld) return false;
+
+    // Strict validation: Only allow known, valid email providers to prevent fake/disposable emails
+    const fullDomain = `${domainName}.${tld}`;
+    const allowedDomains = [
+      "gmail.com",
+      "googlemail.com",
+      "yahoo.com",
+      "yahoo.in",
+      "ymail.com",
+      "hotmail.com",
+      "outlook.com",
+      "live.com",
+      "msn.com",
+      "icloud.com",
+      "me.com",
+      "mac.com",
+      "aol.com",
+      "rediffmail.com",
+      "protonmail.com",
+      "proton.me",
+      "zoho.com",
+      "zoho.in",
+      "mail.com",
+      "conative.in",
     ];
 
-    if (!allowedTlds.includes(tld)) {
+    if (!allowedDomains.includes(fullDomain)) {
       return false;
     }
 

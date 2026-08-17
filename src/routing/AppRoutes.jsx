@@ -4,13 +4,19 @@ import AppLayout from "../layouts/AppLayout";
 import { BuyerOnlyRoute, GuestRoute, ProtectedRoute } from "./RouteGuards";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
 import Loader from "../components/ui/Loader";
-const CategoryListingPage = lazy(() => import("../pages/category/CategoryListingPage"));
+const CategoryListingPage = lazy(
+  () => import("../pages/category/CategoryListingPage"),
+);
 const DownloadApp = lazy(() => import("../pages/downloadApp/DownloadApp"));
 const PolicyPage = lazy(() => import("../pages/policiesPage/PoliciesPages"));
 const ReturnsPage = lazy(() => import("../pages/returns/ReturnsPage.jsx"));
 const ContactUs = lazy(() => import("../pages/contact/ContactUs.jsx"));
-const SellerPolicy = lazy(() => import("../pages/seller/sellerPolicy/sellerPolicy.jsx"));
-const BecomeASeller = lazy(() => import("../pages/seller/becomeASeller/becomeASeller.jsx"));
+const SellerPolicy = lazy(
+  () => import("../pages/seller/sellerPolicy/sellerPolicy.jsx"),
+);
+const BecomeASeller = lazy(
+  () => import("../pages/seller/becomeASeller/becomeASeller.jsx"),
+);
 
 const lazyNamed = (loader, exportName) =>
   lazy(() => loader().then((module) => ({ default: module[exportName] })));
@@ -148,239 +154,193 @@ function RouteFallback() {
   );
 }
 
-
 export default function AppRoutes() {
   return (
     <Suspense fallback={<RouteFallback />}>
       <Routes>
-            <Route element={<AppLayout />}>
-              {/* ── Auth routes (guest only) ───────────────────────────────── */}
-              <Route element={<GuestRoute />}>
-                <Route path={AUTH_ROUTES.login} element={<LoginPage />} />
-                <Route
-                  path={AUTH_ROUTES.register}
-                  element={<BuyerRegisterPage />}
-                />
-                <Route
-                  path={AUTH_ROUTES.registerOtp}
-                  element={<RegisterOtpPage />}
-                />
-                <Route
-                  path={AUTH_ROUTES.verifyRegistration}
-                  element={<VerifyRegistrationPage />}
-                />
+        <Route element={<AppLayout />}>
+          {/* ── Auth routes (guest only) ───────────────────────────────── */}
+          <Route element={<GuestRoute />}>
+            <Route path={AUTH_ROUTES.login} element={<LoginPage />} />
+            <Route
+              path={AUTH_ROUTES.register}
+              element={<BuyerRegisterPage />}
+            />
+            <Route
+              path={AUTH_ROUTES.registerOtp}
+              element={<RegisterOtpPage />}
+            />
+            <Route
+              path={AUTH_ROUTES.verifyRegistration}
+              element={<VerifyRegistrationPage />}
+            />
 
-                <Route
-                  path={AUTH_ROUTES.forgotPassword}
-                  element={<ForgotPasswordPage />}
-                />
-                <Route
-                  path={AUTH_ROUTES.resetPassword}
-                  element={<ResetPasswordPage />}
-                />
-              </Route>
-              <Route path="/contact-us" element={<ContactUs />} />
+            <Route
+              path={AUTH_ROUTES.forgotPassword}
+              element={<ForgotPasswordPage />}
+            />
+            <Route
+              path={AUTH_ROUTES.resetPassword}
+              element={<ResetPasswordPage />}
+            />
+          </Route>
+          <Route path="/contact-us" element={<ContactUs />} />
 
-              <Route path="/faq" element={<FAQPage />} />
+          <Route path="/faq" element={<FAQPage />} />
 
-              {/* Not working */}
-              <Route path="/contact-us" element={<ContactUs />} />
-              <Route path="/support" element={<SupportHelpCenter />} />
+          {/* Not working */}
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/support" element={<SupportHelpCenter />} />
 
-              {/* <Route path="/deals" element={<DealsPage />} /> */}
-              <Route path="/brand-outlet" element={<BrandOutletPage />} />
+          {/* <Route path="/deals" element={<DealsPage />} /> */}
+          <Route path="/brand-outlet" element={<BrandOutletPage />} />
+          <Route
+            path="/who-we-are"
+            element={<CmsPage slugOverride="who-we-are" />}
+          />
+
+          <Route path="/mobile-app" element={<DownloadApp />} />
+
+          <Route
+            path="/shipping-policy"
+            element={<PolicyPage slugOverride="shipping-delivery-policy" />}
+          />
+
+          <Route
+            path="/refund-policy"
+            element={<PolicyPage slugOverride="return-refund-policy" />}
+          />
+          <Route
+            path="/terms-of-use"
+            element={<PolicyPage slugOverride="terms-of-use" />}
+          />
+
+          <Route path="/become-a-seller" element={<BecomeASeller />} />
+
+          <Route path="/seller-policies" element={<SellerPolicy />} />
+
+          {/* ── Public buyer routes ────────────────────────────────────── */}
+          <Route element={<BuyerOnlyRoute />}>
+            <Route index element={<HomePage />} />
+            <Route path="/watchlist" element={<WatchlistPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/new-arrivals" element={<NewArrivalsPage />} />
+            <Route
+              path="/recently-uploaded"
+              element={<RecentlyUploadedPage />}
+            />
+            <Route path="/related-products" element={<RelatedProductsPage />} />
+            <Route path="/trending-now" element={<TrendingNowPage />} />
+            <Route path="/recently-viewed" element={<RecentlyViewedPage />} />
+            <Route
+              path="/products/:productId"
+              element={<ProductDetailPage />}
+            />
+            <Route
+              path="/products/:productId/reviews"
+              element={<ReviewDetailsPage />}
+            />
+            <Route path="/about-us" element={<AboutPage />} />
+
+            <Route path="/categories/brand" element={<BrandOutletPage />} />
+            <Route path="/categories" element={<CategoryListingPage />} />
+            <Route
+              path="/categories/brand/:brandSlug"
+              element={<BrandPage />}
+            />
+            <Route
+              path="/categories/brands/:brandSlug"
+              element={<BrandPage />}
+            />
+            <Route path="/categories/:categoryKey" element={<CategoryPage />} />
+            <Route path="/brands/:brandSlug" element={<BrandPage />} />
+            <Route path="/cms/:slug" element={<CmsPage />} />
+
+            <Route
+              path="/profile"
+              element={<Navigate to="/account/profile" replace />}
+            />
+            <Route
+              path="/settings"
+              element={<Navigate to="/notification-preferences" replace />}
+            />
+            {/* Cart & Checkout */}
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+          </Route>
+          {/* ── Protected buyer routes (must be logged in) ────────────── */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<BuyerOnlyRoute />}>
+              {/* Account */}
               <Route
-                path="/who-we-are"
-                element={<CmsPage slugOverride="who-we-are" />}
+                path="/account"
+                element={<Navigate to="/account/profile" replace />}
+              />
+              <Route
+                path="/account/profile"
+                element={<AccountPage tab="profile" />}
+              />
+              <Route
+                path="/account/addresses"
+                element={<AccountPage tab="addresses" />}
+              />
+              <Route
+                path="/account/security"
+                element={<AccountPage tab="security" />}
+              />
+              <Route path="/account/kyc" element={<AccountPage tab="kyc" />} />
+
+              {/* Payment results */}
+              <Route path="/payment/success" element={<PaymentResultPage />} />
+              <Route
+                path="/payment/failed"
+                element={<PaymentResultPage failed />}
               />
 
-              <Route path="/mobile-app" element={<DownloadApp />} />
-              {/* <Route
-                path="/seller-policies"
-                element={<CmsPage slugOverride="seller-policies" />}
-              />
+              {/* Orders */}
+              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/orders/:orderId" element={<OrdersPage detail />} />
               <Route
-                path="/growth-support"
-                element={<CmsPage slugOverride="growth-support" />}
-              /> */}
-              {/* <Route
-                path="/advertise"
-                element={<CmsPage slugOverride="advertise" />}
-              />
-              <Route path="/blog" element={<CmsPage slugOverride="blog" />} />
-              <Route
-                path="/updates"
-                element={<CmsPage slugOverride="updates" />}
-              />
-              <Route
-                path="/announcements"
-                element={<CmsPage slugOverride="announcements" />}
-              /> */}
-
-              <Route
-                path="/shipping-policy"
-                element={<PolicyPage slugOverride="shipping-delivery-policy" />}
+                path="/orders/:orderId/track"
+                element={<OrdersPage detail track />}
               />
 
+              {/* Returns */}
+              <Route path="/returns" element={<ReturnsPage />} />
               <Route
-                path="/refund-policy"
-                element={<PolicyPage slugOverride="return-refund-policy" />}
+                path="/returns/request/:orderId"
+                element={<ReturnsPage request />}
               />
+              {/* Returns & Refunds */}
+              <Route path="/returns-refunds" element={<ReturnsRefundsPage />} />
+
+              {/* Financial */}
+              <Route path="/wallet" element={<WalletPage />} />
+              <Route path="/payments" element={<PaymentsPage />} />
+              <Route path="/subscriptions" element={<SubscriptionPage />} />
+
+              {/* Warranty */}
+              <Route path="/warranty" element={<WarrantyPage />} />
               <Route
-                path="/terms-of-use"
-                element={<PolicyPage slugOverride="terms-of-use" />}
+                path="/warranty/:warrantyId"
+                element={<WarrantyPage detail />}
               />
 
-              <Route path="/become-a-seller" element={<BecomeASeller />} />
-
-              <Route path="/seller-policies" element={<SellerPolicy />} />
-
-              {/* ── Public buyer routes ────────────────────────────────────── */}
-              <Route element={<BuyerOnlyRoute />}>
-                <Route index element={<HomePage />} />
-                <Route path="/watchlist" element={<WatchlistPage />} />
-                <Route path="/search" element={<SearchPage />} />
-                <Route path="/products" element={<ProductsPage />} />
-                <Route path="/new-arrivals" element={<NewArrivalsPage />} />
-                <Route
-                  path="/recently-uploaded"
-                  element={<RecentlyUploadedPage />}
-                />
-                <Route
-                  path="/related-products"
-                  element={<RelatedProductsPage />}
-                />
-                <Route path="/trending-now" element={<TrendingNowPage />} />
-                <Route
-                  path="/recently-viewed"
-                  element={<RecentlyViewedPage />}
-                />
-                <Route
-                  path="/products/:productId"
-                  element={<ProductDetailPage />}
-                />
-                <Route
-                  path="/products/:productId/reviews"
-                  element={<ReviewDetailsPage />}
-                />
-                <Route path="/about-us" element={<AboutPage />} />
-
-                <Route path="/categories/brand" element={<BrandOutletPage />} />
-                <Route path="/categories" element={<CategoryListingPage />} />
-                <Route
-                  path="/categories/brand/:brandSlug"
-                  element={<BrandPage />}
-                />
-                <Route
-                  path="/categories/brands/:brandSlug"
-                  element={<BrandPage />}
-                />
-                <Route
-                  path="/categories/:categoryKey"
-                  element={<CategoryPage />}
-                />
-                <Route path="/brands/:brandSlug" element={<BrandPage />} />
-                <Route path="/cms/:slug" element={<CmsPage />} />
-
-                <Route
-                  path="/profile"
-                  element={<Navigate to="/account/profile" replace />}
-                />
-                <Route
-                  path="/settings"
-                  element={<Navigate to="/notification-preferences" replace />}
-                />
-                {/* Cart & Checkout */}
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/checkout" element={<CheckoutPage />} />
-              </Route>
-              {/* ── Protected buyer routes (must be logged in) ────────────── */}
-              <Route element={<ProtectedRoute />}>
-                <Route element={<BuyerOnlyRoute />}>
-                  {/* Account */}
-                  <Route
-                    path="/account"
-                    element={<Navigate to="/account/profile" replace />}
-                  />
-                  <Route
-                    path="/account/profile"
-                    element={<AccountPage tab="profile" />}
-                  />
-                  <Route
-                    path="/account/addresses"
-                    element={<AccountPage tab="addresses" />}
-                  />
-                  <Route
-                    path="/account/security"
-                    element={<AccountPage tab="security" />}
-                  />
-                  <Route
-                    path="/account/kyc"
-                    element={<AccountPage tab="kyc" />}
-                  />
-
-                  {/* Payment results */}
-                  <Route
-                    path="/payment/success"
-                    element={<PaymentResultPage />}
-                  />
-                  <Route
-                    path="/payment/failed"
-                    element={<PaymentResultPage failed />}
-                  />
-
-                  {/* Orders */}
-                  <Route path="/orders" element={<OrdersPage />} />
-                  <Route
-                    path="/orders/:orderId"
-                    element={<OrdersPage detail />}
-                  />
-                  <Route
-                    path="/orders/:orderId/track"
-                    element={<OrdersPage detail track />}
-                  />
-
-                  {/* Returns */}
-                  <Route path="/returns" element={<ReturnsPage />} />
-                  <Route
-                    path="/returns/request/:orderId"
-                    element={<ReturnsPage request />}
-                  />
-                  {/* Returns & Refunds */}
-                  <Route
-                    path="/returns-refunds"
-                    element={<ReturnsRefundsPage />}
-                  />
-
-                  {/* Financial */}
-                  <Route path="/wallet" element={<WalletPage />} />
-                  <Route path="/payments" element={<PaymentsPage />} />
-                  <Route path="/subscriptions" element={<SubscriptionPage />} />
-
-                  {/* Warranty */}
-                  <Route path="/warranty" element={<WarrantyPage />} />
-                  <Route
-                    path="/warranty/:warrantyId"
-                    element={<WarrantyPage detail />}
-                  />
-
-                  {/* Notifications */}
-                  <Route
-                    path="/notifications"
-                    element={<NotificationsPage />}
-                  />
-                  <Route
-                    path="/notification-preferences"
-                    element={<PreferencesPage />}
-                  />
-                </Route>
-
-                {/* ── Seller-only routes ─────────────────────────────────── */}
-              </Route>
-              {/* ── 404 catch-all ─────────────────────────────────────────── */}
-              <Route path="*" element={<NotFoundPage />} />
+              {/* Notifications */}
+              <Route path="/notifications" element={<NotificationsPage />} />
+              <Route
+                path="/notification-preferences"
+                element={<PreferencesPage />}
+              />
             </Route>
-          </Routes>
+
+            {/* ── Seller-only routes ─────────────────────────────────── */}
+          </Route>
+          {/* ── 404 catch-all ─────────────────────────────────────────── */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Routes>
     </Suspense>
   );
 }

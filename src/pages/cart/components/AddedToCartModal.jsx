@@ -18,9 +18,16 @@ function CartLine({ item, onClose }) {
     item?.productId && typeof item.productId === "object"
       ? item.productId
       : item?.product ||
-        (typeof item?.productId === "string" ? productEntities[item.productId] : null) ||
+        (typeof item?.productId === "string"
+          ? productEntities[item.productId]
+          : null) ||
         {};
-  const id = getProductId(product) || (typeof item?.productId === "string" ? item.productId : getProductId(item)) || item?._id;
+  const id =
+    getProductId(product) ||
+    (typeof item?.productId === "string"
+      ? item.productId
+      : getProductId(item)) ||
+    item?._id;
   const baseTitle = getProductTitle(product, item?.title || "Product");
   const title =
     item?.variantTitle &&
@@ -132,7 +139,7 @@ export default function AddedToCartModal({
           <X size={18} aria-hidden="true" />
         </button>
 
-        <div className="relative overflow-hidden border-b border-[var(--customer-border)] bg-gradient-to-br from-white via-white to-[var(--customer-cream)] p-4 pt-5 sm:p-7 md:border-b-0 md:border-r">
+        <div className="relative overflow-hidden border-b border-[var(--customer-border)] bg-gradient-to-br from-white via-white to-[var(--customer-cream)] p-4  sm:p-7 md:border-b-0 md:border-r">
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-[var(--customer-gold-soft)]/60 blur-3xl" />
           <div className="relative flex items-center gap-3 pr-10">
             <div>
@@ -173,7 +180,7 @@ export default function AddedToCartModal({
             <Link
               to="/cart"
               onClick={onClose}
-              className="button w-full text-center shadow-sm transition-transform hover:-translate-y-0.5"
+              className="button border border-gold w-full py-2 rounded-lg text-center shadow-sm transition-transform hover:-translate-y-0.5"
             >
               View Cart
             </Link>
@@ -183,7 +190,7 @@ export default function AddedToCartModal({
                 onClose?.();
                 onCheckout?.(cartItems);
               }}
-              className="button secondary w-full text-center transition-transform hover:-translate-y-0.5"
+              className="button secondary border py-2 rounded-lg border-gold w-full text-center transition-transform hover:-translate-y-0.5"
             >
               Checkout
             </button>
