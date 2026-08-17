@@ -56,13 +56,13 @@ export default function MothersDayCarousel({
                   {card.imageSmall && card.image && (
                     <>
                       <source
-                        srcSet={`${card.imageSmall.replace('.webp', '.avif')} 371w, ${card.image.replace('.webp', '.avif')} 742w`}
-                        sizes="(max-width: 1024px) 371px, 500px"
+                        srcSet={`${card.imageSmall.replace('.webp', '.avif')} 371w`}
+                        sizes="100vw"
                         type="image/avif"
                       />
                       <source
-                        srcSet={`${card.imageSmall} 371w, ${card.image} 742w`}
-                        sizes="(max-width: 1024px) 371px, 500px"
+                        srcSet={`${card.imageSmall} 371w`}
+                        sizes="100vw"
                         type="image/webp"
                       />
                     </>
@@ -87,8 +87,8 @@ export default function MothersDayCarousel({
                     {card.title}
                   </h3>
 
-                  <span className="inline-flex items-center gap-1.5 w-fit rounded-full bg-[#CE9F2D] group-hover:bg-[#b88c22] px-4 py-1.5 text-xs xl:text-sm font-bold text-[#1F2430] shadow-md transition-all duration-300">
-                    Explore <IoChevronForward className="text-xs text-[#1F2430]" />
+                  <span className="inline-flex items-center gap-1.5 w-fit rounded-full bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] group-hover:bg-[linear-gradient(#bd9025,#bd9025)] px-4 py-1.5 text-xs xl:text-sm font-bold text-white shadow-md transition-all duration-300">
+                    Explore <IoChevronForward className="text-xs text-white" />
                   </span>
                 </div>
               </Link>

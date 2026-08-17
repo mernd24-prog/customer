@@ -258,7 +258,7 @@ function OrderItemSummaryCard({ order, item }) {
               {trackingNumber ? ` · ${trackingNumber}` : ""}
             </span>
           )} */}
-          <span className="mt-3 inline-flex h-8 items-center gap-1.5 rounded-md bg-gold px-3 text-xs font-bold text-white transition-opacity hover:opacity-90">
+          <span className="mt-3 inline-flex h-8 items-center gap-1.5 rounded-md bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-3 text-xs font-bold text-white transition-opacity hover:opacity-90">
             <Truck size={13} />
             Track item details
           </span>

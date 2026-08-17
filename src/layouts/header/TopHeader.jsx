@@ -19,8 +19,6 @@ export const TopHeader = () => {
   const navigate = useNavigate();
   const currentUser = useSelector((s) => s.auth.current);
 
-  const { page: helpContactPage } = useCmsRecord("help-contact");
-
   const dropdowns = useMemo(
     () => [
       {
@@ -34,14 +32,14 @@ export const TopHeader = () => {
             icon: "store",
           },
           {
-            label: helpContactPage?.title || "Help and Support",
+            label: "Help and Support",
             path: "/support",
             icon: "lifeBuoy",
           },
         ]),
       },
     ],
-    [helpContactPage?.title],
+    [],
   );
 
   const renderDropdown = (dropdown) => {

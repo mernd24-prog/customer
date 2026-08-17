@@ -279,7 +279,7 @@ export const Navbar = ({ icons: propIcons }) => {
                 alt="Sam Global"
                 width="130"
                 height="72"
-                fetchPriority="high"
+                fetchpriority="high"
                 className="h-auto w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
               />
             </picture>

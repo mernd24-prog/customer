@@ -1,60 +1,31 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { Heart, Play, Share2, ZoomIn, X } from "lucide-react";
+import { Heart, Share2, ZoomIn, X } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode } from "swiper/modules";
+import { Thumbs, FreeMode } from "swiper/modules";
 import "swiper/css";
+import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import "swiper/css/free-mode";
+import "swiper/css/zoom";
 
 import { applyImageFallback } from "../../../utils/ecommerce";
 import IconActionButton from "./IconActionButton";
 import ShareProductPopover from "./socialMediaShare";
 
-const GALLERY_SWIPER_MODULES = [Thumbs, FreeMode];
-
 function ProductGallery({
   images,
-  video,
   isModal = false,
-  initialIndex = 0,
-  onCollapsedThumbnailClick,
   fallbackLabel = "Product",
 }) {
+  const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [mainSwiper, setMainSwiper] = useState(null);
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-  const videoRefs = useRef([]);
   const [isLarge, setIsLarge] = useState(
     typeof window !== "undefined" ? window.innerWidth >= 1280 : false,
   );
-  const mediaItems = [
-    ...images.map((src) => ({ type: "image", src })),
-    ...(video ? [{ type: "video", src: video, poster: images[0] }] : []),
-  ];
-  const visibleThumbnailCount = 5;
-  const hasHiddenThumbnails = mediaItems.length > visibleThumbnailCount;
-  const hiddenThumbnailCount = Math.max(
-    0,
-    mediaItems.length - visibleThumbnailCount,
-  );
-  const shouldCollapseThumbnails = !isModal && hasHiddenThumbnails;
-  const thumbnailItems = shouldCollapseThumbnails
-    ? mediaItems.slice(0, visibleThumbnailCount)
-    : mediaItems;
-
-  const handleVideoToggle = (index) => {
-    const videoElement = videoRefs.current[index];
-    if (!videoElement) return;
-
-    if (videoElement.paused) {
-      videoElement.play().catch(() => {});
-    } else {
-      videoElement.pause();
-    }
-  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -72,18 +43,6 @@ function ProductGallery({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    if (!mainSwiper) return;
-
-    const nextIndex = Math.max(
-      0,
-      Math.min(Number(initialIndex) || 0, mediaItems.length - 1),
-    );
-
-    setActiveIndex(nextIndex);
-    mainSwiper.slideTo(nextIndex, 0);
-  }, [initialIndex, mainSwiper, mediaItems.length]);
-
   const handleMouseMove = (e) => {
     if (!isLarge && !isModal) return;
     if (!isZoomed) return;
@@ -98,18 +57,6 @@ function ProductGallery({
       y: Math.max(0, Math.min(100, y)),
     });
   };
-
-  const thumbsConfig = useMemo(
-    () => ({
-      swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
-    }),
-    [thumbsSwiper],
-  );
-
-  const handleSlideChange = useCallback((swiper) => {
-    setActiveIndex(swiper.activeIndex);
-    setIsZoomed(false);
-  }, []);
 
   const handleMouseLeave = () => {
     setZoomPos({ x: 50, y: 50 });
@@ -143,95 +90,55 @@ function ProductGallery({
     >
       <div
         className={`flex min-w-0 flex-col overflow-hidden xl:h-full ${
-          mediaItems.length > 1 ? "gap-6 xl:flex-row" : ""
+          images.length > 1 ? "gap-6 xl:flex-row" : ""
         }`}
       >
-        {mediaItems.length > 1 && (
-          <div className="order-2 h-[84px] w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[92px]">
-            <div
-              className={`flex h-full w-full gap-3 xl:flex-col ${
-                isModal ? "overflow-y-auto xl:gap-5" : "overflow-hidden xl:gap-4"
-              }`}
+        {images.length > 1 && (
+          <div className="order-2 h-[90px]   w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[85px]">
+            <Swiper
+              onSwiper={setThumbsSwiper}
+              spaceBetween={20}
+              slidesPerView="auto"
+              freeMode
+              watchSlidesProgress
+              direction={isLarge ? "vertical" : "horizontal"}
+              modules={[FreeMode, Thumbs]}
+              className="h-full w-full"
             >
-              {thumbnailItems.map((item, i) => {
-                const isLastVisible =
-                  shouldCollapseThumbnails && i === thumbnailItems.length - 1;
-                const targetIndex = isLastVisible ? mediaItems.length - 1 : i;
-                const isActive =
-                  activeIndex === i ||
-                  (isLastVisible && activeIndex >= i);
-
-                return (
+              {images.map((img, i) => (
+                <SwiperSlide
+                  key={i}
+                  className="!h-[90px] !w-[90px] xl:!h-[90px]  xl:!w-[85px]"
+                >
                   <button
-                    key={`${item.type}-${item.src}-${i}`}
                     type="button"
-                    aria-label={`View product thumbnail ${i + 1}`}
                     onClick={() => {
-                      if (isLastVisible && onCollapsedThumbnailClick) {
-                        onCollapsedThumbnailClick(targetIndex);
-                        return;
-                      }
-
-                      setActiveIndex(targetIndex);
-                      mainSwiper?.slideTo(targetIndex);
+                      setActiveIndex(i);
+                      mainSwiper?.slideTo(i);
                     }}
                     onMouseEnter={() => {
                       if (!isLarge) return;
-                      if (isLastVisible && onCollapsedThumbnailClick) return;
-
-                      setActiveIndex(targetIndex);
-                      mainSwiper?.slideTo(targetIndex);
+                      setActiveIndex(i);
+                      mainSwiper?.slideTo(i);
                     }}
-                    className={`relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-[15px] border transition-colors duration-200 xl:w-[92px] ${
-                      isModal
-                        ? "xl:h-[80px]"
-                        : "xl:h-[calc((100%_-_64px)/5)]"
-                    } ${
-                      isActive
+                    className={`h-full w-full overflow-hidden rounded-[15px] border transition-colors duration-200 ${
+                      activeIndex === i
                         ? "border-gold shadow-sm bg-white"
                         : "border-border bg-white"
                     }`}
                   >
-                    {item.type === "video" ? (
-                      <span className="relative flex h-full w-full items-center justify-center bg-black">
-                        {item.poster && (
-                          <img
-                            src={item.poster}
-                            alt=""
-                            className="absolute inset-0 h-full w-full object-contain p-2 opacity-70"
-                            onError={(event) =>
-                              applyImageFallback(
-                                event,
-                                fallbackLabel,
-                                "product",
-                              )
-                            }
-                          />
-                        )}
-                        <span className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full bg-[#CE9F2D] text-white shadow-sm ring-2 ring-white">
-                          <Play size={18} fill="currentColor" />
-                        </span>
-                      </span>
-                    ) : (
-                      <img
-                        src={item.src}
-                        alt=""
-                        className="h-full p-2  w-full object-contain"
-                        onError={(event) =>
-                          applyImageFallback(event, fallbackLabel, "product")
-                        }
-                      />
-                    )}
-
-                    {isLastVisible && (
-                      <span className="absolute inset-0 flex items-center justify-center bg-black/55 text-lg font-bold text-white">
-                        +{hiddenThumbnailCount}
-                      </span>
-                    )}
+                    <img
+                      src={img}
+                      alt=""
+                      className="h-full p-2  w-full object-contain"
+                      onError={(event) =>
+                        applyImageFallback(event, fallbackLabel, "product")
+                      }
+                    />
                   </button>
-                );
-              })}
-            </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         )}
 
@@ -243,79 +150,47 @@ function ProductGallery({
           <Swiper
             onSwiper={setMainSwiper}
             onSlideChange={(swiper) => {
-              videoRefs.current.forEach((videoElement) => {
-                videoElement?.pause();
-              });
               setActiveIndex(swiper.activeIndex);
               setIsZoomed(false);
-              setIsVideoPlaying(false);
             }}
             spaceBetween={10}
-            modules={[FreeMode]}
+            thumbs={{
+              swiper:
+                thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
+            }}
+            modules={[Thumbs, FreeMode]}
             className="h-full w-full bg-transparent"
           >
-            {mediaItems.map((item, i) => (
+            {images.map((img, i) => (
               <SwiperSlide key={i} className="!h-full bg-transparent">
-                {item.type === "video" ? (
-                  <button
-                    type="button"
-                    className="relative flex h-full w-full items-center justify-center overflow-hidden bg-black"
-                    onClick={() => handleVideoToggle(i)}
-                    aria-label={isVideoPlaying ? "Pause video" : "Play video"}
-                  >
-                    <video
-                      ref={(node) => {
-                        videoRefs.current[i] = node;
-                      }}
-                      src={item.src}
-                      poster={item.poster}
-                      className="h-full w-full object-contain"
-                      preload="metadata"
-                      playsInline
-                      onPlay={() => setIsVideoPlaying(true)}
-                      onPause={() => setIsVideoPlaying(false)}
-                      onEnded={() => setIsVideoPlaying(false)}
-                    />
-                    <div
-                      className={`pointer-events-none absolute inset-0 items-center justify-center text-white ${
-                        isVideoPlaying ? "hidden" : "flex"
-                      }`}
-                    >
-                      <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#CE9F2D] text-white shadow-lg ring-4 ring-white">
-                        <Play size={34} fill="currentColor" />
-                      </span>
-                    </div>
-                  </button>
-                ) : (
-                  <div
-                    className={`relative   h-full w-full overflow-hidden bg-transparent ${
-                      isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
+                <div
+                  className={`relative   h-full w-full overflow-hidden bg-transparent ${
+                    isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
+                  }`}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                  onClick={handleImageClick}
+                >
+                  <img
+                    src={img}
+                    alt=""
+                    draggable={false}
+                    className={`h-full w-full select-none  object-contain transition-transform duration-300 ease-out ${
+                      isZoomed
+                        ? isModal
+                          ? "scale-[2.0]"
+                          : "scale-[2.4]"
+                        : "scale-95"
                     }`}
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
-                    onClick={handleImageClick}
-                  >
-                    <img
-                      src={item.src}
-                      alt=""
-                      draggable={false}
-                      className={`h-full w-full select-none  object-contain transition-transform duration-300 ease-out ${
-                        isZoomed
-                          ? isModal
-                            ? "scale-[2.0]"
-                            : "scale-[2.4]"
-                          : "scale-95"
-                      }`}
-                      style={{
-                        transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
-                        willChange: "transform",
-                      }}
-                      onError={(event) =>
-                        applyImageFallback(event, fallbackLabel, "product")
-                      }
-                    />
-                  </div>
-                )}
+                    style={{
+                      transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                      willChange: "transform",
+                    }}
+                    onError={(event) =>
+                      applyImageFallback(event, fallbackLabel, "product")
+                    }
+                  />
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>
@@ -327,7 +202,6 @@ function ProductGallery({
 
 export default function ImageGallery({
   images,
-  video,
   fallbackLabel,
   isWishlisted,
   onWishlist,
@@ -339,14 +213,7 @@ export default function ImageGallery({
   onShareClose,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalInitialIndex, setModalInitialIndex] = useState(0);
   const shareRef = useRef(null);
-
-  const openModal = (initialIndex = 0) => {
-    setModalInitialIndex(initialIndex);
-    if (onModalOpen) onModalOpen();
-    setIsModalOpen(true);
-  };
 
   useEffect(() => {
     if (isModalOpen) {
@@ -377,17 +244,15 @@ export default function ImageGallery({
 
   return (
     <div className="relative w-full  min-w-0 overflow-hidden">
-      <ProductGallery
-        images={images}
-        video={video}
-        fallbackLabel={fallbackLabel}
-        onCollapsedThumbnailClick={openModal}
-      />
+      <ProductGallery images={images} fallbackLabel={fallbackLabel} />
 
       <div className="absolute right-3  top-3 z-20 flex flex-col gap-2 sm:right-4 sm:top-4">
         <IconActionButton
           title="Zoom Image"
-          onClick={() => openModal(0)}
+          onClick={() => {
+            if (onModalOpen) onModalOpen();
+            setIsModalOpen(true);
+          }}
           className="hidden text-ink md:flex"
         >
           <ZoomIn size={18} />
@@ -419,7 +284,6 @@ export default function ImageGallery({
           <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4 animate-fadeIn sm:p-6">
             <button
               type="button"
-              aria-label="Close image gallery modal"
               onClick={() => {
                 setIsModalOpen(false);
                 if (onModalClose) onModalClose();
@@ -432,9 +296,7 @@ export default function ImageGallery({
             <div className="flex h-[90vh]  w-full max-w-[1200px] items-center justify-center bg-white">
               <ProductGallery
                 images={images}
-                video={video}
                 isModal={true}
-                initialIndex={modalInitialIndex}
                 fallbackLabel={fallbackLabel}
               />
             </div>

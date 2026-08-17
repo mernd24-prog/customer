@@ -140,7 +140,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
             </div>
           </div>
         </div>
-        <span className="text-[11px] sm:text-xs font-medium text-[#949494] shrink-0">
+        <span className="text-[11px] sm:text-xs font-medium text-[#737373] shrink-0">
           {dateStr || review.date}
         </span>
       </div>
@@ -337,7 +337,7 @@ function WriteReviewForm({ productId, deliveredOrders, onSuccess }) {
           placeholder="Share your experience with this product…"
           className="w-full border border-[#E7D9B8] rounded-lg px-3 py-2 text-xs sm:text-sm resize-none focus:border-[#CE9F2D] outline-none"
         />
-        <p className="text-[11px] text-[#949494] text-right mt-1">
+        <p className="text-[11px] text-[#737373] text-right mt-1">
           {form.reviewText.length}/2000
         </p>
       </div>

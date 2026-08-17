@@ -229,9 +229,9 @@ export default function CartPage() {
 
                   {hasSavedItems && (
                     <div className="">
-                      <h3 className="mb-4  text-[16px] font-semibold text-ink">
+                      <h2 className="mb-4  text-[16px] font-semibold text-ink">
                         Wishlist ({savedForLaterItems.length + wishlist.length})
-                      </h3>
+                      </h2>
 
                       <div className="grid gap-3">
                         {savedForLaterItems.map((savedItem) => {
@@ -260,7 +260,7 @@ export default function CartPage() {
 
                                     <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
                                       {savedItemView.variantSku ? (
-                                        <span className="rounded-full bg-cream px-2.5 py-1 font-semibold text-gray">
+                                        <span className="rounded-full bg-cream px-2.5 py-1 font-semibold text-[#595959]">
                                           {savedItemView.variantSku}
                                         </span>
                                       ) : null}
@@ -400,7 +400,7 @@ export default function CartPage() {
 
                                         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
                                           {savedProduct.brand ? (
-                                            <span className="rounded-full bg-cream px-2.5 py-1 font-semibold text-gray">
+                                            <span className="rounded-full bg-cream px-2.5 py-1 font-semibold text-[#595959]">
                                               {savedProduct.brand}
                                             </span>
                                           ) : null}

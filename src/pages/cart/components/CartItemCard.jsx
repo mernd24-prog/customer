@@ -75,7 +75,7 @@ export default function CartItemCard({
           {item?.image && (
             <div className="relative flex aspect-square w-full max-w-full sm:max-w-[165px] h-auto max-h-[260px] sm:max-h-[190px] items-center justify-center overflow-hidden rounded-[10px] border border-[#F0E6D2] bg-white">
               {showCheckbox && (
-                <label className="absolute left-2.5 top-2.5 z-10 flex items-center justify-center">
+                <label className="absolute left-2.5 top-2.5 z-20 flex min-h-[32px] min-w-[32px] cursor-pointer items-center justify-center p-2">
                   <input
                     type="checkbox"
                     checked={selected}
@@ -263,7 +263,7 @@ export default function CartItemCard({
                 onClick={() => onSaveForLater?.(item?.id)}
                 disabled={isOutOfStock}
                 title={isOutOfStock ? "Out of stock" : undefined}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[#CE9F2D] px-6 py-1.5 text-xs font-semibold text-white transition hover:bg-[#b8891f] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#CE9F2D] disabled:active:scale-100"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-6 py-1.5 text-xs font-semibold text-white transition hover:opacity-90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:opacity-60 disabled:active:scale-100"
               >
                 <FaShoppingCart size={13} />
                 {saveForLaterLabel}

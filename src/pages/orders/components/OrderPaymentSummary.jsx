@@ -457,7 +457,7 @@ function OrderPaymentSummary({
         <button
           type="button"
           onClick={onCheckout}
-          className="mt-6 h-[54px] w-full rounded-[10px] bg-[#CE9F2D] px-4 text-sm font-bold text-white transition hover:bg-[#C9961F] sm:text-base"
+          className="mt-6 h-[54px] w-full rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-sm font-bold text-white transition hover:opacity-90 sm:text-base"
         >
           {buttonText}
         </button>
@@ -467,7 +467,7 @@ function OrderPaymentSummary({
           <button
             type="submit"
             disabled={loading || disabled}
-            className="mt-6 flex h-[54px] w-full items-center justify-center gap-2 rounded-[10px] bg-[#CE9F2D] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:bg-[#C9961F] disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-6 flex h-[54px] w-full items-center justify-center gap-2 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
           >
             {loading ? (
               <>

@@ -51,11 +51,16 @@ export default function ShoppingMadeEasyBanner({
     item?.thumbnailUrl ||
     defaultBannerImage;
 
+  let optimizedBannerImage = bannerImage;
+  if (optimizedBannerImage?.includes("res.cloudinary.com") && optimizedBannerImage?.includes("/upload/")) {
+    optimizedBannerImage = optimizedBannerImage.replace(/\/upload\/(v\d+\/)/, "/upload/f_auto,q_auto/$1");
+  }
+
   return (
     <section
       className={`mt-8 md:mt-16 relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[420px] min-[375px]:h-[440px] min-[425px]:h-[460px] md:h-[520px] lg:h-[450px] xl:h-[600px] w-screen items-center overflow-hidden ${className}`}
       style={{
-        backgroundImage: `url("${bannerImage}")`,
+        backgroundImage: `url("${optimizedBannerImage}")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -75,7 +80,7 @@ export default function ShoppingMadeEasyBanner({
             to={bannerCtaTo}
             target={bannerCtaTarget}
             rel={bannerCtaTarget === "_blank" ? "noopener noreferrer" : undefined}
-            className="mt-5 sm:mt-6 h-[44px] sm:h-[48px] lg:h-[52px] rounded-xl px-6 lg:px-8 font-bold text-white bg-[#CE9F2D] hover:bg-[#b88c22] shadow-lg transition-all"
+            className="mt-5 sm:mt-6 h-[44px] sm:h-[48px] lg:h-[52px] rounded-xl px-6 lg:px-8 font-bold text-white bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] hover:bg-[linear-gradient(#bd9025,#bd9025)] shadow-lg transition-all"
           >
             {bannerCtaLabel}
           </SolidLargeButton>
