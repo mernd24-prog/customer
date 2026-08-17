@@ -137,17 +137,28 @@ export const CategoryBar = ({ headerData, compact = false }) => {
 
   // Sticky pin logic (only relevant in full mode)
   useEffect(() => {
-    const handleScroll = () => {
-      if (!categoryBarRef.current) return;
-      const headerOffset = getHeaderHeight(HEADER_HEIGHT_VAR);
-      const { bottom } = categoryBarRef.current.getBoundingClientRect();
-      const nextPinned = isPinnedRef.current
-        ? bottom <= headerOffset + 16
-        : bottom <= headerOffset - 8;
+    let ticking = false;
 
-      if (nextPinned !== isPinnedRef.current) {
-        isPinnedRef.current = nextPinned;
-        setIsPinned(nextPinned);
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!categoryBarRef.current) {
+            ticking = false;
+            return;
+          }
+          const headerOffset = getHeaderHeight(HEADER_HEIGHT_VAR);
+          const { bottom } = categoryBarRef.current.getBoundingClientRect();
+          const nextPinned = isPinnedRef.current
+            ? bottom <= headerOffset + 16
+            : bottom <= headerOffset - 8;
+
+          if (nextPinned !== isPinnedRef.current) {
+            isPinnedRef.current = nextPinned;
+            setIsPinned(nextPinned);
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -248,8 +259,6 @@ export const CategoryBar = ({ headerData, compact = false }) => {
               >
                 <Link
                   to={categoryHref}
-                  aria-expanded={isActive}
-                  aria-controls="category-mega-menu"
                   className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px] flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                 >
                   <div className="mx-auto flex h-[50px] w-[50px] sm:h-[65px] sm:w-[65px] lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform">

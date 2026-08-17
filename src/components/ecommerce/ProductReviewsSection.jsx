@@ -136,7 +136,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
             </span>
           )}
         </div>
-        <span className="text-xs font-medium text-[#949494]">
+        <span className="text-xs font-medium text-[#737373]">
           {dateStr || review.date}
         </span>
       </div>
@@ -200,7 +200,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
             alreadyVoted
               ? "bg-[#CE9F2D1A] text-[#1B1D60]"
-              : "text-[#949494] hover:bg-[#F7F7FA] hover:text-[#1B1D60]"
+              : "text-[#737373] hover:bg-[#F7F7FA] hover:text-[#1B1D60]"
           }`}
         >
           <ThumbsUp

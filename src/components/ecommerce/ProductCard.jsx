@@ -324,7 +324,7 @@ export default function ProductCard({
               rounded-[50px]
               bg-[#CE9F2D]
               text-[12px] font-semibold
-              text-white
+              text-[#1F2430]
               sm:text-[14px]
             "
           >
@@ -343,7 +343,7 @@ export default function ProductCard({
               text-[12px] font-semibold
               leading-none
               tracking-[0%]
-              text-[#228B22]
+              text-[#117A65]
               sm:h-[28px] sm:min-w-[84px]
               sm:px-[15px]
               sm:text-[14px]
@@ -413,7 +413,7 @@ export default function ProductCard({
             currency={currency || cardProduct?.currency}
             className="mb-0 gap-3 my-2 lg:my-4"
             priceClassName="text-base font-extrabold text-[#1B1D60] md:text-lg 2xl:text-[20px]"
-            oldPriceClassName="text-base font-semibold text-[#949494] line-through md:text-lg 2xl:text-[20px]"
+            oldPriceClassName="text-base font-semibold text-[#737373] line-through md:text-lg 2xl:text-[20px]"
           />
 
           {isDealProduct && dealEndDate && (

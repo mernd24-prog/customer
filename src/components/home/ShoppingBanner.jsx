@@ -1,5 +1,5 @@
 import { SolidLargeButton } from "../ui/button/static";
-import defaultBannerImage from "/image/png/bannerFestival.png";
+import defaultBannerImage from "/image/png/bannerFestival.webp";
 
 export default function ShoppingMadeEasyBanner({
   title = "Raksha Bandhan Special",
@@ -31,7 +31,7 @@ export default function ShoppingMadeEasyBanner({
 
           <SolidLargeButton
             to={ctaTo}
-            className="mt-5 sm:mt-6 h-[44px] sm:h-[48px] lg:h-[52px] rounded-xl px-6 lg:px-8 font-bold text-white bg-[#CE9F2D] hover:bg-[#b88c22] shadow-lg transition-all"
+            className="mt-5 sm:mt-6 h-[44px] sm:h-[48px] lg:h-[52px] rounded-xl px-6 lg:px-8 font-bold text-[#1B1D60] bg-[#CE9F2D] hover:bg-[#b88c22] shadow-lg transition-all"
           >
             {ctaLabel}
           </SolidLargeButton>

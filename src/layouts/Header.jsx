@@ -63,9 +63,14 @@ const getNavbarIconLabel = (item = {}) =>
 function getHeaderHeight() {
   if (typeof window === "undefined") return 0;
 
-  const value = window
-    .getComputedStyle(document.documentElement)
-    .getPropertyValue(HEADER_HEIGHT_VAR);
+  // Prefer reading inline style to avoid forced layout from getComputedStyle
+  let value = document.documentElement.style.getPropertyValue(HEADER_HEIGHT_VAR);
+  
+  if (!value) {
+    value = window
+      .getComputedStyle(document.documentElement)
+      .getPropertyValue(HEADER_HEIGHT_VAR);
+  }
 
   return Number.parseFloat(value) || 0;
 }
@@ -267,13 +272,18 @@ export const Navbar = ({ icons: propIcons }) => {
       <div className="flex h-auto flex-wrap items-center justify-between gap-x-2 gap-y-3 py-3 min-[375px]:gap-x-3 sm:gap-4  lg:h-[90px] lg:flex-nowrap lg:gap-5">
         <div className="order-1  flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
           <Link to="/" aria-label="Sam Global Home">
-            <img
-              src="/image/png/logo.png"
-              alt="Sam Global"
-              width="160"
-              height="40"
-              className="h-auto w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
-            />
+            <picture>
+              <source srcSet="/image/png/logo-small.avif 1x, /image/png/logo.avif 2x" type="image/avif" />
+              <source srcSet="/image/png/logo-small.webp 1x, /image/png/logo.webp 2x" type="image/webp" />
+              <img
+                src="/image/png/logo-small.webp"
+                alt="Sam Global"
+                width="130"
+                height="72"
+                fetchPriority="high"
+                className="h-auto w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
+              />
+            </picture>
           </Link>
 
           <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
@@ -693,8 +703,6 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                 >
                   <Link
                     to={categoryHref}
-                    aria-expanded={isActive}
-                    aria-controls="category-mega-menu"
                     className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px]  flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
                   >
                     <div className="mx-auto flex h-[50px]  w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out  group-hover:-translate-y-0.5  will-change-transform ">
@@ -837,10 +845,13 @@ export const Header = () => {
   useEffect(() => {
     const updateHeaderHeight = () => {
       const height = headerRef.current?.offsetHeight || 0;
-      document.documentElement.style.setProperty(
-        HEADER_HEIGHT_VAR,
-        `${height}px`,
-      );
+      const currentHeight = Number.parseFloat(document.documentElement.style.getPropertyValue(HEADER_HEIGHT_VAR));
+      if (height !== currentHeight) {
+        document.documentElement.style.setProperty(
+          HEADER_HEIGHT_VAR,
+          `${height}px`,
+        );
+      }
     };  
 
     updateHeaderHeight();

@@ -549,6 +549,9 @@ const SearchBar = ({
               >
                 <button
                   type="button"
+                  aria-label="Select Category"
+                  aria-expanded={isDropdownOpen}
+                  aria-haspopup="listbox"
                   onClick={() => {
                     setIsDropdownOpen((prev) => {
                       const next = !prev;
@@ -636,6 +639,7 @@ const SearchBar = ({
               }
             }}
             placeholder={placeholder}
+            role="combobox"
             aria-label="Search Products"
             aria-autocomplete={enableAutocomplete ? "list" : undefined}
             aria-expanded={
@@ -651,10 +655,10 @@ const SearchBar = ({
           <button
             type="button"
             onClick={() => handleSearch()}
-            className="flex h-full w-[42px] shrink-0 items-center justify-center rounded-r-full bg-[#CE9F2D] text-white transition-all duration-200 hover:bg-[#CE9F2D]/95 active:scale-[0.98] min-[375px]:w-[44px] min-[425px]:w-[48px] sm:w-[64px] !outline-none focus:!outline-none focus-visible:!outline-none"
+            className="flex h-full w-[42px] shrink-0 items-center justify-center rounded-r-full bg-[#CE9F2D] text-[#03014D] transition-all duration-200 hover:bg-[#CE9F2D]/95 active:scale-[0.98] min-[375px]:w-[44px] min-[425px]:w-[48px] sm:w-[64px] !outline-none focus:!outline-none focus-visible:!outline-none"
             aria-label="Search"
           >
-            <Search size={18} className="text-white sm:size-5" />
+            <Search size={18} className="text-[#03014D] sm:size-5" />
           </button>
         </div>
       </div>

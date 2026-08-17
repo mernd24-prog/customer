@@ -10,7 +10,7 @@ export {
   isReturnQuantityBlocking,
   getReturnedQuantityForItem,
   getReturnableQuantityForItem,
-} from "../utils/orderUtils";
+} from "../../../utils/pages/orderUtils";
 
 export const DELIVERED_STATUSES = new Set(["delivered", "fulfilled", "completed"]);
 

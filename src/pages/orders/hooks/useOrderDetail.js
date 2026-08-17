@@ -46,7 +46,7 @@ import {
   findShipmentForOrderItem,
   resolveOrderItemDisplayStatus,
   returnItemMatchesOrderItem
-} from "../utils/orderUtils";
+} from "../../../utils/pages/orderUtils";
 
 export function useOrderDetail({ orderId, track }) {
   const dispatch = useDispatch();

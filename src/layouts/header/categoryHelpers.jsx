@@ -4,7 +4,7 @@
  * tree normalisation, response unwrapping, and icon injection.
  */
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
-import { dropdownIconMap } from "../../constants/header.constant";
+import { dropdownIconMap, HEADER_HEIGHT_VAR } from "../../constants/header.constant";
 
 // ---------------------------------------------------------------------------
 // Slug / key helpers
@@ -110,11 +110,17 @@ export function getCategoryListFromResponse(data) {
 // CSS variable helper
 // ---------------------------------------------------------------------------
 
-export function getHeaderHeight(HEADER_HEIGHT_VAR) {
+export function getHeaderHeight() {
   if (typeof window === "undefined") return 0;
-  const value = window
-    .getComputedStyle(document.documentElement)
-    .getPropertyValue(HEADER_HEIGHT_VAR);
+
+  let value = document.documentElement.style.getPropertyValue(HEADER_HEIGHT_VAR);
+  
+  if (!value) {
+    value = window
+      .getComputedStyle(document.documentElement)
+      .getPropertyValue(HEADER_HEIGHT_VAR);
+  }
+
   return Number.parseFloat(value) || 0;
 }
 

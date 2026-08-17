@@ -147,11 +147,18 @@ export const Navbar = ({ icons: propIcons }) => {
         {/* Logo */}
         <div className="order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6 group relative">
           <Link to="/" aria-label="Sam Global Home">
-            <img
-              src="/image/png/logo.png"
-              alt="Sam Global"
-              className="h-auto w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
-            />
+            <picture>
+              <source srcSet="/image/png/logo-small.avif 1x, /image/png/logo.avif 2x" type="image/avif" />
+              <source srcSet="/image/png/logo-small.webp 1x, /image/png/logo.webp 2x" type="image/webp" />
+              <img
+                src="/image/png/logo-small.webp"
+                alt="Sam Global"
+                width="130"
+                height="72"
+                fetchPriority="high"
+                className="h-auto w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
+              />
+            </picture>
           </Link>
           <span className="pointer-events-none absolute top-full z-50 mt-2 whitespace-nowrap rounded bg-[var(--customer-black)] px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-lg transition-all duration-300 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100">
             Menu

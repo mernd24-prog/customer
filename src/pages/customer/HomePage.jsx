@@ -1,24 +1,24 @@
-import { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState, useRef, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/ui/Seo";
-import MothersDaySwiper from "../../components/home/MothersDayCarousel";
-import HomeProductsForYouSection from "../../components/home/HomeProductsForYouSection";
 import {
   fetchTrendingProducts,
   fetchRecommendations,
 } from "../../features/recommendation/recommendationSlice";
-import { fetchCmsPages } from "../../features/cms/cmsSlice";
 import { fetchProducts } from "../../features/product/productSlice";
 import { tokenStorage } from "../../api/tokenStorage";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import Banner from "../../layouts/HeroBanner";
 import { CategoryBar } from "../../layouts/Header";
-import CollageSection from "../../components/home/CollageSection";
-import ShowcaseSection from "../../components/home/ShowcaseSection";
 import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import { mothersDayData } from "../../data/special";
-import ShoppingMadeEasyBanner from "../../components/home/ShoppingBanner";
-import FeaturedProductsSection from "../../components/home/FeaturedProductsSection";
+
+const ShoppingMadeEasyBanner = React.lazy(() => import("../../components/home/ShoppingBanner"));
+const FeaturedProductsSection = React.lazy(() => import("../../components/home/FeaturedProductsSection"));
+const MothersDaySwiper = React.lazy(() => import("../../components/home/MothersDayCarousel"));
+const HomeProductsForYouSection = React.lazy(() => import("../../components/home/HomeProductsForYouSection"));
+const CollageSection = React.lazy(() => import("../../components/home/CollageSection"));
+const ShowcaseSection = React.lazy(() => import("../../components/home/ShowcaseSection"));
 
 import { toStandardProductCard as toNewArrivalProduct } from "../../utils/productUtils";
 
@@ -89,34 +89,33 @@ export function HomePage() {
   const loading = homeLoading || isTrendingLoading;
 
   useEffect(() => {
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
+
+    setHomeLoading(true);
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
     if (tokenStorage.getAccessToken()) {
       dispatch(fetchRecommendations({ limit: 10 })).catch(() => {});
     }
-    if (!hasFetchedRef.current || homeProducts.length === 0) {
-      hasFetchedRef.current = true;
-      setHomeLoading(true);
-      dispatch(fetchProducts({ limit: 18, page: 1, sort: "newest" }))
-        .unwrap()
-        .then((result) => {
-          const data = result?.data || {};
-          const list =
-            data.hits ||
-            data.products ||
-            data.results ||
-            data.items ||
-            data.list ||
-            (Array.isArray(data) ? data : []);
-          if (list.length > 0) {
-            setHomeProducts(list);
-          }
-        })
-        .catch(() => {})
-        .finally(() => setHomeLoading(false));
-    } else {
-      setHomeLoading(false);
-    }
-    dispatch(fetchCmsPages({ limit: 100 })).catch(() => {});
+    
+    dispatch(fetchProducts({ limit: 18, page: 1, sort: "newest" }))
+      .unwrap()
+      .then((result) => {
+        const data = result?.data || {};
+        const list =
+          data.hits ||
+          data.products ||
+          data.results ||
+          data.items ||
+          data.list ||
+          (Array.isArray(data) ? data : []);
+        if (list.length > 0) {
+          setHomeProducts(list);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setHomeLoading(false));
+
   }, [dispatch]);
 
   // Featured: top-rated from newest products; fall back to trending
@@ -152,50 +151,55 @@ export function HomePage() {
         className="text-[#3E4093] font-regular text-[18px] "
       />
 
-      <CollageSection cmsPages={cmsPages} />
+      <Suspense fallback={<div className="h-[400px] w-full" />}>
+        <CollageSection cmsPages={cmsPages} />
 
-      <ShoppingMadeEasyBanner
-        title="Raksha Bandhan Special"
-        description="Celebrate the eternal bond of love with curated Rakhi gifts, sweet hampers, and festive treats."
-        ctaLabel="Explore Rakhi Collection"
-      />
+        <ShoppingMadeEasyBanner
+          title="Raksha Bandhan Special"
+          description="Celebrate the eternal bond of love with curated Rakhi gifts, sweet hampers, and festive treats."
+          ctaLabel="Explore Rakhi Collection"
+        />
 
-      <FeaturedProductsSection
-        title="Featured Products"
-        actionLabel="View All Products"
-        actionHref="/products"
-        products={featuredProducts}
-        loading={loading}
-      />
-
-      <section className="my-10">
-        <ShowcaseSection
-          title="New Arrivals"
-          subtitle="Newly added products with trend-driven rankings"
-          headerbgColor="bg-white"
-          bodybgColor="bg-white"
-          gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-9 xl:grid-cols-3"
-          items={newArrivalItems.length ? newArrivalItems : undefined}
-          CardComponent={NewArrivalCard}
-          skeletonVariant="new-arrivals"
-          skeletonCount={3}
-          className="mt-8"
-          actionLabel="View Shop"
+        <FeaturedProductsSection
+          title="Featured Products"
+          actionLabel="View All Products"
           actionHref="/products"
+          products={featuredProducts}
           loading={loading}
         />
-      </section>
 
-      <MothersDaySwiper data={mothersDayData} />
+        <section className="my-10">
+          <ShowcaseSection
+            title="New Arrivals"
+            subtitle="Newly added products with trend-driven rankings"
+            headerbgColor="bg-white"
+            bodybgColor="bg-white"
+            gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-9 xl:grid-cols-3"
+            items={newArrivalItems.length ? newArrivalItems : undefined}
+            CardComponent={NewArrivalCard}
+            skeletonVariant="new-arrivals"
+            skeletonCount={3}
+            className="mt-8"
+            actionLabel="View Shop"
+            actionHref="/products"
+            loading={loading}
+          />
+        </section>
+      </Suspense>
 
-      <div className="mt-16">
-        <HomeProductsForYouSection
-          title="Explore Our Collection"
-          description="Handpicked products loved by thousands of shoppers"
-          actionLabel="Browse All Products"
-          limit={10}
-        />
-      </div>
+      <Suspense fallback={<div className="h-[200px] w-full" />}>
+        <MothersDaySwiper data={mothersDayData} />
+
+        <div className="mt-16">
+          <HomeProductsForYouSection
+            title="Explore Our Collection"
+            description="Handpicked products loved by thousands of shoppers"
+            actionLabel="Browse All Products"
+            limit={10}
+            fallbackProducts={homeProducts}
+          />
+        </div>
+      </Suspense>
     </>
   );
 }

@@ -76,7 +76,7 @@ export const bannerData = [
     lineImg: "/image/png/line.png",
     description:
       "Discover fashion, electronics, beauty, home essentials,  gifts, and more from trusted sellers. Enjoy exciting deals, secure payments, fast delivery, and a smooth shopping. Experience in one marketplace.",
-    image: "/image/png/HeroImg.png",
+    image: "/image/png/HeroImg.webp",
     modelBg: "/image/png/%20modelbg.png",
   },
   {
@@ -88,7 +88,7 @@ export const bannerData = [
     lineImg: "/image/png/line.png",
     description:
       "Discover premium accessories, smart gadgets, travel gear, and everyday essentials designed to complement your modern lifestyle.",
-    image: "/image/jpg/Banner2.jpg",
+    image: "/image/jpg/Banner2.webp",
     modelBg: "/image/png/%20modelbg.png",
   },
   {
@@ -100,7 +100,7 @@ export const bannerData = [
     lineImg: "/image/png/line.png",
     description:
       "From premium laptops and wireless headphones to everyday gadgets and accessories, find everything you need at unbeatable prices with quick and reliable delivery.",
-    image: "/image/jpg/Banner3.jpg",
+    image: "/image/jpg/Banner3.webp",
     modelBg: "/image/png/%20modelbg.png",
   },
 ];

@@ -2,15 +2,21 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { HelmetProvider } from "react-helmet-async";
-import { Slide, ToastContainer } from "react-toastify";
-import { registerSW } from "virtual:pwa-register";
-import "react-toastify/dist/ReactToastify.css";
 import { store } from "./app/store";
 import App from "./App";
+import LazyToast from "./components/ui/LazyToast";
 import "./styles.css";
-
+// Defer SW registration to after the page is fully loaded
 if (import.meta.env.PROD) {
-  registerSW({ immediate: true });
+  window.addEventListener("load", () => {
+    // Use requestIdleCallback if available for even less main-thread impact
+    const register = () => import("virtual:pwa-register").then(({ registerSW }) => registerSW({ immediate: true }));
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(register);
+    } else {
+      register();
+    }
+  }, { once: true });
 } else if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations().then((registrations) => {
     registrations.forEach((registration) => registration.unregister());
@@ -22,22 +28,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <HelmetProvider>
         <App />
-        <ToastContainer
-          position="bottom-center"
-          autoClose={2000}
-          newestOnTop
-          closeOnClick
-          pauseOnHover
-          draggable
-          hideProgressBar={false}
-          pauseOnFocusLoss={false}
-          limit={1}
-          theme="light"
-          transition={Slide}
-          toastClassName="customer-toast"
-          bodyClassName="customer-toast-body"
-          progressClassName="customer-toast-progress"
-        />
+        <LazyToast />
       </HelmetProvider>
     </Provider>
   </React.StrictMode>,
