@@ -3,6 +3,11 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  // Remove repeated third-party license comments from emitted bundles.
+  // Vite's esbuild minifier remains responsible for production JavaScript.
+  esbuild: {
+    legalComments: "none",
+  },
   plugins: [
     react(),
     VitePWA({
@@ -54,6 +59,7 @@ export default defineConfig({
     })
   ],
   build: {
+    minify: "esbuild",
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -76,10 +82,10 @@ export default defineConfig({
             return "vendor-icons";
           }
           if (id.includes("axios")) return "vendor-http";
+          if (id.includes("swiper")) return "vendor-swiper";
           if (
             id.includes("react-helmet-async") ||
             id.includes("react-hook-form") ||
-            id.includes("react-toastify") ||
             id.includes("@hookform")
           ) {
             return "vendor-ui";
@@ -89,6 +95,29 @@ export default defineConfig({
           return undefined;
         }
       }
+    }
+  },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://45.195.90.183:4000",
+        changeOrigin: true
+      },
+    },
+  },
+  preview: {
+    proxy: {
+      "/api": {
+        target: "http://45.195.90.183:4000",
+        changeOrigin: true
+      },
+    },
+    headers: {
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Content-Security-Policy": "default-src 'self' http://45.195.90.183:4000 https: data: blob: 'unsafe-inline' 'unsafe-eval'",
     }
   }
 });

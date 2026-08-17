@@ -1,27 +1,15 @@
 import AppRoutes from "./routing/AppRoutes";
 import {
   BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
 } from "react-router-dom";
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthModalProvider } from "./features/auth/AuthModalContext";
-import AppLayout from "./layouts/AppLayout";
-import {
-  BuyerOnlyRoute,
-  GuestRoute,
-  ProtectedRoute,
-} from "./routing/RouteGuards";
 import { checkAuthStatus, logout } from "./features/auth/authSlice";
 import { fetchCart, setGuestCart } from "./features/cart/cartSlice";
 import { readGuestCart } from "./utils/ecommerce/cart";
 import { fetchCmsPages } from "./features/cms/cmsSlice";
-import { AUTH_ROUTES } from "./features/auth/authRoutes";
 import { tokenStorage } from "./api/tokenStorage";
-import { fetchRecommendations } from "./features/recommendation/recommendationSlice";
 
 import ScrollToTop from "./components/ui/ScrollToTop";
 import Loader from "./components/ui/Loader";

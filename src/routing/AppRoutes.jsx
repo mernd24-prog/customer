@@ -4,13 +4,13 @@ import AppLayout from "../layouts/AppLayout";
 import { BuyerOnlyRoute, GuestRoute, ProtectedRoute } from "./RouteGuards";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
 import Loader from "../components/ui/Loader";
-import CategoryListingPage from "../pages/category/CategoryListingPage";
-import DownloadApp from "../pages/downloadApp/DownloadApp";
-import PolicyPage from "../pages/policiesPage/PoliciesPages";
-import ReturnsPage from "../pages/returns/ReturnsPage.jsx";
-import ContactUs from "../pages/contact/ContactUs.jsx";
-import SellerPolicy from "../pages/seller/sellerPolicy/sellerPolicy.jsx";
-import BecomeASeller from "../pages/seller/becomeASeller/becomeASeller.jsx";
+const CategoryListingPage = lazy(() => import("../pages/category/CategoryListingPage"));
+const DownloadApp = lazy(() => import("../pages/downloadApp/DownloadApp"));
+const PolicyPage = lazy(() => import("../pages/policiesPage/PoliciesPages"));
+const ReturnsPage = lazy(() => import("../pages/returns/ReturnsPage.jsx"));
+const ContactUs = lazy(() => import("../pages/contact/ContactUs.jsx"));
+const SellerPolicy = lazy(() => import("../pages/seller/sellerPolicy/sellerPolicy.jsx"));
+const BecomeASeller = lazy(() => import("../pages/seller/becomeASeller/becomeASeller.jsx"));
 
 const lazyNamed = (loader, exportName) =>
   lazy(() => loader().then((module) => ({ default: module[exportName] })));

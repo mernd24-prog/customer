@@ -52,23 +52,43 @@ export default function MothersDayCarousel({
                 className="relative overflow-hidden  rounded-md md:rounded-2xl group shadow-xl h-[300px] xl:h-[380px] w-full block"
               >
                 {/* Background Image */}
-                <img
-                  src={card.image}
-                  alt={card.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                />
+                <picture>
+                  {card.imageSmall && card.image && (
+                    <>
+                      <source
+                        srcSet={`${card.imageSmall.replace('.webp', '.avif')} 371w, ${card.image.replace('.webp', '.avif')} 742w`}
+                        sizes="(max-width: 1024px) 371px, 500px"
+                        type="image/avif"
+                      />
+                      <source
+                        srcSet={`${card.imageSmall} 371w, ${card.image} 742w`}
+                        sizes="(max-width: 1024px) 371px, 500px"
+                        type="image/webp"
+                      />
+                    </>
+                  )}
+                  <img
+                    src={card.imageSmall || card.image}
+                    alt={card.title}
+                    loading="lazy"
+                    decoding="async"
+                    width="371"
+                    height="380"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                </picture>
 
                 {/* Soft Bottom Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-black/15 to-transparent pointer-events-none transition-opacity duration-300 " />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/10 pointer-events-none transition-opacity duration-300 " />
 
                 {/* Content at Bottom Left */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 xl:p-5 flex flex-col justify-end text-white z-10">
-                  <h3 className="text-lg xl:text-xl font-bold mb-3 text-white drop-shadow-sm">
+                  <h3 className="text-lg xl:text-xl font-bold mb-3 text-white drop-shadow-md">
                     {card.title}
                   </h3>
 
-                  <span className="inline-flex items-center gap-1.5 w-fit rounded-full bg-[#CE9F2D] group-hover:bg-[#b88c22] px-4 py-1.5 text-xs xl:text-sm font-bold text-white shadow-md transition-all duration-300">
-                    Explore <IoChevronForward className="text-xs text-white" />
+                  <span className="inline-flex items-center gap-1.5 w-fit rounded-full bg-[#CE9F2D] group-hover:bg-[#b88c22] px-4 py-1.5 text-xs xl:text-sm font-bold text-[#1F2430] shadow-md transition-all duration-300">
+                    Explore <IoChevronForward className="text-xs text-[#1F2430]" />
                   </span>
                 </div>
               </Link>

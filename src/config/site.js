@@ -6,7 +6,7 @@ export const SITE_CONFIG = {
     "Shop smarter with Sam Global. Discover products, deals, order tracking, returns, wallet, warranties, and subscriptions in one ecommerce experience.",
   url: import.meta.env.VITE_SITE_URL || "https://samglobal.com",
   locale: "en_IN",
-  image: "/image/png/logo.png",
+  image: "/image/png/logo.webp",
   favicon: "/image/png/favicon.png",
   twitterHandle: "",
 };

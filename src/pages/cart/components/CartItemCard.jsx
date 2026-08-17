@@ -207,7 +207,7 @@ export default function CartItemCard({
               currency={item?.currency ?? item?._raw?.currency}
               discount={discountPct}
               priceClassName="text-base sm:text-lg font-extrabold text-[#001F3F]"
-              mrpClassName="text-xs sm:text-sm font-semibold text-[#949494]"
+              mrpClassName="text-xs sm:text-sm font-semibold text-[#737373]"
               discountClassName="text-xs font-semibold"
             />
 

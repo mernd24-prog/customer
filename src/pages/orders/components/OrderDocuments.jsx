@@ -50,7 +50,7 @@ export default function OrderDocuments({
           >
             <div className="min-w-0">
               <strong className="block font-bold text-[#2E2E2E]">{document.title}</strong>
-              <div className="mt-0.5 truncate text-xs font-medium text-[#949494]">
+              <div className="mt-0.5 truncate text-xs font-medium text-[#737373]">
                 {document.subtitle}
               </div>
             </div>
@@ -84,7 +84,7 @@ export default function OrderDocuments({
             title={(document.productTitles || []).join(", ")}
           >
             <strong className="block font-bold text-[#2E2E2E]">{document.sellerName} seller invoice</strong>
-            <div className="mt-1 text-xs font-medium text-[#949494]">
+            <div className="mt-1 text-xs font-medium text-[#737373]">
               Available after delivery
             </div>
           </div>
@@ -92,7 +92,7 @@ export default function OrderDocuments({
 
         {!downloadableDocuments.length &&
           !visiblePendingSellerDocuments.length && (
-            <div className="rounded-[12px] border border-dashed border-[#CE9F2D66] bg-[#FFFDF8] p-3.5 text-xs font-medium text-[#949494]">
+            <div className="rounded-[12px] border border-dashed border-[#CE9F2D66] bg-[#FFFDF8] p-3.5 text-xs font-medium text-[#737373]">
               No documents are available yet.
             </div>
           )}

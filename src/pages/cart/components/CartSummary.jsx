@@ -179,7 +179,7 @@ export default function CartSummary({
         </div>
 
         {hasDiscount && (
-          <div className="mt-8 flex items-center gap-3 rounded-xl bg-[#228B221A] px-4 py-4 font-sans text-base font-bold text-[#228B22] sm:mt-12 sm:gap-4 sm:px-5 sm:py-5 sm:text-[20px] lg:mt-16">
+          <div className="mt-8 flex items-center gap-3 rounded-xl bg-[#228B221A] px-4 py-4 font-sans text-base font-bold text-[#117A65] sm:mt-12 sm:gap-4 sm:px-5 sm:py-5 sm:text-[20px] lg:mt-16">
             <BadgeCheck size={28} className="shrink-0 sm:size-8" />
             <p className="text-base font-medium min-[375px]:text-lg sm:text-xl">
               You Saved <span className="font-bold">{fmt(totalSavings)}</span>{" "}

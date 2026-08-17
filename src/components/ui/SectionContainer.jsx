@@ -46,6 +46,7 @@ export default function SectionContainer({
                 to={actionHref}
                 rightIcon={<FaAngleRight className="text-[10px]" />}
                 className="self-start   my-2  sm:self-center md:block hidden"
+                aria-label={`${actionLabel} ${title || ''}`}
               >
                 {actionLabel}
               </OutlineSmallButton>
@@ -64,6 +65,7 @@ export default function SectionContainer({
             to={actionHref}
             rightIcon={<FaAngleRight className="text-[10px]" />}
             className="self-start text-center md:hidden block    sm:self-center"
+            aria-label={`${actionLabel} ${title || ''}`}
           >
             {actionLabel}
           </OutlineSmallButton>

@@ -4,9 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Header, CategoryBar } from "./Header";
 import { Footer } from "./Footer";
-import AddedToCartModal from "../pages/cart/components/AddedToCartModal";
-import GuestOtpAuthModal from "../components/ui/overlay/GuestOtpAuthModal";
-import ScrollTopButton from "../components/ui/ScrollTopButton";
+import React, { Suspense } from "react";
+
+const AddedToCartModal = React.lazy(() => import("../pages/cart/components/AddedToCartModal"));
+const GuestOtpAuthModal = React.lazy(() => import("../components/ui/overlay/GuestOtpAuthModal"));
+const ScrollTopButton = React.lazy(() => import("../components/ui/ScrollTopButton"));
 
 import { closeAddedToCartModal } from "../features/cart/cartUiSlice";
 import { footerData } from "../data/footer";
@@ -134,21 +136,27 @@ export default function AppLayout() {
 
       <Footer data={footerData} />
 
-      <ScrollTopButton />
+      <Suspense fallback={null}>
+        <ScrollTopButton />
 
-      <AddedToCartModal
-        open={addedModalOpen}
-        onClose={handleCloseAddedToCartModal}
-        onCheckout={handleAddedModalCheckout}
-        addedProduct={addedProduct}
-        cartItems={cartItems}
-      />
+        {addedModalOpen && (
+          <AddedToCartModal
+            open={addedModalOpen}
+            onClose={handleCloseAddedToCartModal}
+            onCheckout={handleAddedModalCheckout}
+            addedProduct={addedProduct}
+            cartItems={cartItems}
+          />
+        )}
 
-      <GuestOtpAuthModal
-        open={showGuestOtpModal}
-        onClose={() => setShowGuestOtpModal(false)}
-        onSuccess={handleGuestLoginSuccess}
-      />
+        {showGuestOtpModal && (
+          <GuestOtpAuthModal
+            open={showGuestOtpModal}
+            onClose={() => setShowGuestOtpModal(false)}
+            onSuccess={handleGuestLoginSuccess}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

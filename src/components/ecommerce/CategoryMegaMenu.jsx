@@ -262,12 +262,12 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
               <Link
                 key={item.categoryKey}
                 to={itemHref}
-                className={`group flex items-center gap-2 rounded-xl px-3 py-1.5 text-left text-sm font-medium transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold hover:translate-x-0.5 ${
-                  isCurrentLink ? "bg-cream text-gold" : "text-ink/70"
+                className={`group flex items-center gap-2 rounded-xl px-3 py-1.5 text-left text-sm font-medium transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold-dark hover:translate-x-0.5 ${
+                  isCurrentLink ? "bg-cream text-gold-dark" : "text-ink/70"
                 }`}
               >
                 <span
-                  className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ease-in-out ${isCurrentLink ? "bg-gold" : "bg-gold/30 group-hover:bg-gold"}`}
+                  className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ease-in-out ${isCurrentLink ? "bg-gold-dark" : "bg-gold-dark/30 group-hover:bg-gold-dark"}`}
                 />
                 <span className="flex-1 truncate">{item.title}</span>
               </Link>
@@ -275,7 +275,7 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
           })
         ) : quickLinks.length > 0 ? (
           <>
-            <div className="mb-2 flex items-center gap-1.5 px-4 text-xs font-bold uppercase tracking-normal text-gold">
+            <div className="mb-2 flex items-center gap-1.5 px-4 text-xs font-bold uppercase tracking-normal text-gold-dark">
               <Flame size={12} />
               <span>{labels.trending}</span>
             </div>
@@ -283,9 +283,9 @@ const InnerCategoryColumn = memo(function InnerCategoryColumn({
               <Link
                 key={item.name}
                 to={getQuickLinkHref(item)}
-                className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm font-medium text-ink/70 transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold hover:translate-x-0.5"
+                className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-sm font-medium text-ink/70 transition-all duration-300 ease-in-out hover:bg-cream/50 hover:text-gold-dark hover:translate-x-0.5"
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-gold/30 group-hover:bg-gold transition-all duration-300 ease-in-out" />
+                <span className="h-1.5 w-1.5 rounded-full bg-gold-dark/30 group-hover:bg-gold-dark transition-all duration-300 ease-in-out" />
                 <span className="flex-1 truncate">{item.name}</span>
               </Link>
             ))}

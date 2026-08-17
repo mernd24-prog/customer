@@ -1,17 +1,17 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { Heart, Play, Share2, ZoomIn, X } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import "swiper/css/free-mode";
-import "swiper/css/zoom";
 
 import { applyImageFallback } from "../../../utils/ecommerce";
 import IconActionButton from "./IconActionButton";
 import ShareProductPopover from "./socialMediaShare";
+
+const GALLERY_SWIPER_MODULES = [Thumbs, FreeMode];
 
 function ProductGallery({
   images,
@@ -98,6 +98,18 @@ function ProductGallery({
       y: Math.max(0, Math.min(100, y)),
     });
   };
+
+  const thumbsConfig = useMemo(
+    () => ({
+      swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
+    }),
+    [thumbsSwiper],
+  );
+
+  const handleSlideChange = useCallback((swiper) => {
+    setActiveIndex(swiper.activeIndex);
+    setIsZoomed(false);
+  }, []);
 
   const handleMouseLeave = () => {
     setZoomPos({ x: 50, y: 50 });

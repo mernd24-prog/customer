@@ -73,7 +73,7 @@ export default function NewArrivalCard({
                   {prod.price}
                 </span>
                 {prod.oldPrice && (
-                  <span className="ml-2 font-dmSans text-[18px] font-semibold leading-none text-[#949494] line-through sm:text-[21px]">
+                  <span className="ml-2 font-dmSans text-[18px] font-semibold leading-none text-[#737373] line-through sm:text-[21px]">
                     {prod.oldPrice}
                   </span>
                 )}

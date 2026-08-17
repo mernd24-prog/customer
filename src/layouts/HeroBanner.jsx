@@ -1,17 +1,22 @@
+import { useMemo, memo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Autoplay, Pagination } from "swiper/modules";
 import { Tag } from "lucide-react";
 import { bannerData } from "../constants/image.constant";
 
 // Swiper styles
 import "swiper/css";
-import "swiper/css/navigation";
 
 import Label from "../components/ui/label/Label";
 import {
   OutlineLightButton,
   SolidLargeButton,
 } from "../components/ui/button/static";
+
+// Stable module array — avoids re-initialization on every render
+const SWIPER_MODULES = [Autoplay, Pagination];
+const AUTOPLAY_CONFIG = { delay: 2000, disableOnInteraction: false };
+const PAGINATION_CONFIG = { clickable: true };
 
 const heroContent = [
   {
@@ -28,21 +33,17 @@ const heroContent = [
   },
 ];
 
-const HeroBanner = ({ content = heroContent }) => {
+const HeroBanner = memo(({ content = heroContent }) => {
   return (
     <section className="  relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[480px] w-screen items-center overflow-hidden  bg-[#1B1D60] sm:h-[520px] md:h-[620px] lg:h-[650px]">
       <Swiper
         key="hero-swiper"
         spaceBetween={0}
         centeredSlides={false}
-        loop={true}
-        autoplay={{
-          delay: 2000,
-          disableOnInteraction: false,
-        }}
-        pagination={{ clickable: true }}
-        navigation={false}
-        modules={[Autoplay, Navigation, Pagination]}
+        loop
+        autoplay={AUTOPLAY_CONFIG}
+        pagination={PAGINATION_CONFIG}
+        modules={SWIPER_MODULES}
         className="seller-experience-swiper  h-full w-full"
       >
         {bannerData.map((slide, index) => {
@@ -56,9 +57,11 @@ const HeroBanner = ({ content = heroContent }) => {
               <img
                 src={slide.image}
                 alt="Banner Background"
+                width="1664"
+                height="650"
                 className="absolute right-0 top-0 z-0 h-full w-auto object-cover object-right"
                 fetchpriority={index === 0 ? "high" : "auto"}
-                loading={index === 0 ? "eager" : "lazy"}
+                loading="eager"
               />
 
               <div className="  pointer-events-none absolute inset-y-0 left-0 right-1/3 z-10 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/90 to-transparent" />
@@ -143,6 +146,7 @@ const HeroBanner = ({ content = heroContent }) => {
       <div className="pointer-events-none absolute -bottom-48 -left-48 h-[400px] w-[400px] rounded-full bg-[var(--customer-gold)]/10 blur-[80px]" />
     </section>
   );
-};
+});
 
+HeroBanner.displayName = "HeroBanner";
 export default HeroBanner;

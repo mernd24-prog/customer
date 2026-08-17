@@ -1,7 +1,7 @@
 export { default as AddToCartButton } from "./AddToCartButton";
 export { default as BrandCard } from "./BrandCard";
 export { default as Breadcrumbs } from "./Breadcrumbs";
-export { default as CategoryCard } from "./CategoryCard";
+
 export { default as CategoryMegaMenu } from "./CategoryMegaMenu";
 export { default as CollectionToolbar } from "./CollectionToolbar";
 export { default as Pagination } from "./Pagination";

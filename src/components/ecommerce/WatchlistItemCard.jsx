@@ -61,6 +61,7 @@ export function WatchlistItemCard({
             target="_blank"
             rel="noopener noreferrer"
             className="mt-1  text-[11px] font-medium text-gold hover:underline"
+            aria-label={`View details for ${title}`}
           >
             View Item
           </Link>

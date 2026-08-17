@@ -19,12 +19,12 @@ const buttonStyles = {
   headerIcon:
     "group relative h-10 w-10 rounded-full bg-transparent p-0 shadow-none",
 
-  pill: "inline-flex min-w-[110px]  sm:min-w-[130px] h-[40px] sm:h-[38px] items-center justify-center  gap-1 sm:gap-[15px] md:gap-2 rounded-full bg-[#CE9F2D] px-4 sm:px-[34px]    font-semibold leading-none text-white whitespace-nowrap transition-all duration-300 hover:bg-[#bd9025]",
+  pill: "inline-flex min-w-[110px]  sm:min-w-[130px] h-[40px] sm:h-[38px] items-center justify-center  gap-1 sm:gap-[15px] md:gap-2 rounded-full bg-[#CE9F2D] px-4 sm:px-[34px]    font-semibold leading-none text-[#1F2430] whitespace-nowrap transition-all duration-300 hover:bg-[#bd9025]",
 
   ghostPill:
-    "rounded-full border border-[#CE9F2D4D] bg-[#CE9F2D4D] px-4 py-2 text-[12px] leading-[18px] tracking-[0.5px] font-semibold text-[#D6A323] hover:bg-black/60 xl:text-[14px] xl:leading-[20px] xl:tracking-[0.5px]",
+    "rounded-full border border-[#CE9F2D4D] bg-[#CE9F2D4D] px-4 py-2 text-[12px] leading-[18px] tracking-[0.5px] font-semibold text-[#8C6710] hover:bg-black/60 hover:text-white xl:text-[14px] xl:leading-[20px] xl:tracking-[0.5px]",
   textGold:
-    "h-auto  justify-start rounded-none bg-transparent p-0  md:text-base text-sm font-semibold text-[#CE9F2D] hover:text-[#bd9025]",
+    "h-auto  justify-start rounded-none bg-transparent p-0  md:text-base text-sm font-semibold text-[#8C6710] hover:text-[#72540d]",
   textWhite:
     "h-auto justify-start rounded-none bg-transparent p-0 text-[12px] leading-[18px] tracking-[0.5px] font-medium text-white hover:text-white/80",
   iconCircle:

@@ -1,6 +1,6 @@
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 import { SolidLargeButton } from "../ui/button/static";
-import defaultBannerImage from "/image/png/bannerFestival.png";
+import defaultBannerImage from "/image/png/bannerFestival.webp";
 
 export default function ShoppingMadeEasyBanner({
   data,

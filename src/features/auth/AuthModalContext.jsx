@@ -1,13 +1,17 @@
 import {
   createContext,
+  lazy,
   useCallback,
   useContext,
   useRef,
   useState,
+  Suspense,
 } from "react";
 
-import AuthModal from "../../components/ui/overlay/AuthModal";
-import GuestOtpAuthModal from "../../components/ui/overlay/GuestOtpAuthModal";
+const AuthModal = lazy(() => import("../../components/ui/overlay/AuthModal"));
+const GuestOtpAuthModal = lazy(
+  () => import("../../components/ui/overlay/GuestOtpAuthModal"),
+);
 
 const AuthModalContext = createContext(null);
 
@@ -62,25 +66,31 @@ export function AuthModalProvider({ children }) {
     >
       {children}
 
-      <AuthModal
-        open={isOpen}
-        onClose={closeAuthModal}
-        onSuccess={handleAuthSuccess}
-        onGuestLogin={() => {
-          setIsOpen(false);
-          setIsOtpOpen(true);
-        }}
-      />
+      <Suspense fallback={null}>
+        {isOpen && (
+          <AuthModal
+            open={isOpen}
+            onClose={closeAuthModal}
+            onSuccess={handleAuthSuccess}
+            onGuestLogin={() => {
+              setIsOpen(false);
+              setIsOtpOpen(true);
+            }}
+          />
+        )}
 
-      <GuestOtpAuthModal
-        open={isOtpOpen}
-        onClose={closeAuthModal}
-        onSuccess={handleAuthSuccess}
-        onNormalLogin={() => {
-          setIsOtpOpen(false);
-          setIsOpen(true);
-        }}
-      />
+        {isOtpOpen && (
+          <GuestOtpAuthModal
+            open={isOtpOpen}
+            onClose={closeAuthModal}
+            onSuccess={handleAuthSuccess}
+            onNormalLogin={() => {
+              setIsOtpOpen(false);
+              setIsOpen(true);
+            }}
+          />
+        )}
+      </Suspense>
     </AuthModalContext.Provider>
   );
 }

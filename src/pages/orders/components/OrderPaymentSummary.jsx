@@ -441,7 +441,7 @@ function OrderPaymentSummary({
 
       {/* Cart Savings Box */}
       {variant === "cart" && asNumber?.(totalSavings) > 0 && (
-        <div className="mt-4 rounded-xl bg-[#228B221A] p-4 text-[#228B22]">
+        <div className="mt-4 rounded-xl bg-[#228B221A] p-4 text-[#117A65]">
           <p className="text-sm font-medium">
             You Saved{" "}
             <span className="font-bold">

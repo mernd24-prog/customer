@@ -22,10 +22,10 @@ function CollageImage({ src, title, label, count, index }) {
       {imageLabel && (
         <Label
           variant="imageLabel"
-          className={`absolute bottom-[14px] left-1/2 flex min-h-[29px] -translate-x-1/2 items-center justify-center rounded-[25px] border border-[#CE9F2D] bg-[#CE9F2D] px-3 py-[5px] text-white font-bold shadow-md ${collageLabelWidthClass(count, index)}`}
+          className={`absolute bottom-[14px] left-1/2 flex min-h-[29px] -translate-x-1/2 items-center justify-center rounded-[25px] border border-[#CE9F2D] bg-[#CE9F2D] px-3 py-[5px] text-[#1F2430] font-bold shadow-md ${collageLabelWidthClass(count, index)}`}
           title={imageLabel}
         >
-          <span className="block min-w-0 truncate font-dm-sans text-[12px] font-bold leading-[16px] text-white">
+          <span className="block min-w-0 truncate font-dm-sans text-[12px] font-bold leading-[16px] text-[#1F2430]">
             {displayLabel}
           </span>
         </Label>

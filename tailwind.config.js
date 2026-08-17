@@ -1,11 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       fontFamily: {
-        sans: ["DM Sans", "sans-serif"],
-        "dm-sans": ["DM Sans", "sans-serif"],
+        sans: ["DM Sans", "DM Sans Fallback", "sans-serif"],
+        "dm-sans": ["DM Sans", "DM Sans Fallback", "sans-serif"],
       },
       fontWeight: {
         thin: 100,
@@ -32,9 +32,9 @@ export default {
         band: "#FFF4D6",
         accent: "#D6A323",
         ink: "#1F2430",
-        gray: "#A6A6A6",
+        gray: "#737373",
         brown: "#9E886A",
-        muted: "#6F7480",
+        muted: "#595959",
         border: "#E4DDCF",
         divider: "#D0C4B1",
         grayBorder: "#E4DDCF",
@@ -44,7 +44,7 @@ export default {
         "navy-dark": "#15115D",
         "navy-soft": "#F0F1FF",
         gold: "#D6A323",
-        "gold-dark": "#A96F14",
+        "gold-dark": "#8C6710",
         "gold-soft": "#FFF4D6",
         cream: "#FAF6EE",
         "cream-strong": "#F2EADC",

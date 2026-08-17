@@ -23,7 +23,7 @@ export default function AuthCard({
           >
             <img
               src={image}
-              alt="Register Decorative Image"
+              alt=""
               className="w-full h-full object-cover rounded-md"
             />
           </div>
@@ -36,7 +36,7 @@ export default function AuthCard({
                   {icon ? (
                     <img
                       src={icon}
-                      alt="Icon"
+                      alt=""
                       className="h-full w-full object-cover"
                     />
                   ) : (

@@ -14,7 +14,7 @@ import {
 const loadCollageSections = () => {
   return apiRequest({
     url: endpoints.home.collectionCollages,
-    params: { limit: 4, itemsPerSection: 4, v: 8, ts: Date.now() },
+    params: { limit: 4, itemsPerSection: 4, v: 8 },
   });
 };
 

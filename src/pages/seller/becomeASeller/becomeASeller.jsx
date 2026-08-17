@@ -20,6 +20,18 @@ import Seo from "../../../components/ui/Seo";
 import "swiper/css";
 import "swiper/css/pagination";
 
+const STORY_SWIPER_MODULES = [Navigation, Pagination];
+const STORY_SWIPER_NAVIGATION = {
+  prevEl: ".seller-story-prev",
+  nextEl: ".seller-story-next",
+};
+const STORY_SWIPER_PAGINATION = { clickable: true };
+const STORY_SWIPER_BREAKPOINTS = {
+  640: { slidesPerView: 2 },
+  900: { slidesPerView: 3 },
+  1100: { slidesPerView: 4 },
+};
+
 export const SELLER_LOGIN_URL = "http://45.195.90.183:3000/login";
 
 const experiences = [
@@ -263,19 +275,12 @@ export default function BecomeASeller() {
           </div>
           <div className="seller-experience-swiper  mt-10 ">
             <Swiper
-              modules={[Navigation, Pagination]}
-              navigation={{
-                prevEl: ".seller-story-prev",
-                nextEl: ".seller-story-next",
-              }}
-              pagination={{ clickable: true }}
+              modules={STORY_SWIPER_MODULES}
+              navigation={STORY_SWIPER_NAVIGATION}
+              pagination={STORY_SWIPER_PAGINATION}
               spaceBetween={24}
               slidesPerView={1}
-              breakpoints={{
-                640: { slidesPerView: 2 },
-                900: { slidesPerView: 3 },
-                1100: { slidesPerView: 4 },
-              }}
+              breakpoints={STORY_SWIPER_BREAKPOINTS}
             >
               {experiences.map((story) => (
                 <SwiperSlide key={story.name} className="!h-auto pb-12">
