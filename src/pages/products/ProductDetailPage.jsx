@@ -383,6 +383,9 @@ export default function ProductDetailPage() {
     ),
   );
   if (!images.length && fallbackProductImage) images.push(fallbackProductImage);
+  const productVideo = Array.isArray(product?.videos)
+    ? product.videos.find(Boolean)
+    : product?.video || "";
 
   const attributes = product?.attributes || product?.specifications || {};
 
@@ -522,6 +525,7 @@ export default function ProductDetailPage() {
                 <div className="min-w-0">
                   <ImageGallery
                     images={images}
+                    video={productVideo}
                     fallbackLabel={getProductTitle(product)}
                     isWishlisted={isWishlisted(product)}
                     onWishlist={() => toggleWishlist(product)}
