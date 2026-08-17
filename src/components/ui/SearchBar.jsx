@@ -636,6 +636,8 @@ const SearchBar = ({
               }
             }}
             placeholder={placeholder}
+            role={enableAutocomplete ? "combobox" : undefined}
+            aria-haspopup={enableAutocomplete ? "listbox" : undefined}
             aria-label="Search Products"
             aria-autocomplete={enableAutocomplete ? "list" : undefined}
             aria-expanded={

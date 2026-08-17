@@ -112,6 +112,7 @@ function ProductGallery({
                 >
                   <button
                     type="button"
+                    aria-label={`View product thumbnail ${i + 1}`}
                     onClick={() => {
                       setActiveIndex(i);
                       mainSwiper?.slideTo(i);
@@ -284,6 +285,7 @@ export default function ImageGallery({
           <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white p-4 animate-fadeIn sm:p-6">
             <button
               type="button"
+              aria-label="Close image gallery modal"
               onClick={() => {
                 setIsModalOpen(false);
                 if (onModalClose) onModalClose();

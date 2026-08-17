@@ -155,9 +155,9 @@ export function HomePage() {
       <CollageSection cmsPages={cmsPages} />
 
       <ShoppingMadeEasyBanner
-        title="Raksha Bandhan Special"
-        description="Celebrate the eternal bond of love with curated Rakhi gifts, sweet hampers, and festive treats."
-        ctaLabel="Explore Rakhi Collection"
+        cmsPage={cmsPages.find(
+          (p) => p.slug === "promotion_banner" || p.slug === "promotion-banner"
+        )}
       />
 
       <FeaturedProductsSection

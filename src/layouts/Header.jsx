@@ -59,7 +59,6 @@ const getNavbarIconLabel = (item = {}) =>
   navbarIconLabels[item.name] ||
   textOr(item.name, "Navigation");
 
-
 function getHeaderHeight() {
   if (typeof window === "undefined") return 0;
 
@@ -272,7 +271,8 @@ export const Navbar = ({ icons: propIcons }) => {
               alt="Sam Global"
               width="160"
               height="40"
-              className="h-auto w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
+              fetchPriority="high"
+              className="h-auto  w-[74px] object-contain min-[375px]:w-[86px] min-[425px]:w-[98px] sm:w-[160px] md:w-[135px] lg:w-[120px] xl:w-[130px]"
             />
           </Link>
 
@@ -841,7 +841,7 @@ export const Header = () => {
         HEADER_HEIGHT_VAR,
         `${height}px`,
       );
-    };  
+    };
 
     updateHeaderHeight();
 

@@ -80,7 +80,7 @@ export default function ContactUs() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left */}
 
-          <div className="bg-white rounded-3xl shadow-lg p-8">
+          <div className="bg-white rounded-3xl border border-gold p-8">
             <h2 className="text-2xl font-bold mb-8 text-[#1d2377]">
               Contact Information
             </h2>
@@ -127,7 +127,7 @@ export default function ContactUs() {
 
           {/* Right */}
 
-          <div className="lg:col-span-2 bg-white rounded-3xl shadow-lg p-8">
+          <div className="lg:col-span-2 bg-white rounded-3xl border border-gold p-8">
             <h2 className="text-2xl font-bold text-[#1d2377] mb-8">
               Send us a Message
             </h2>
@@ -160,7 +160,7 @@ export default function ContactUs() {
                     <button
                       type="button"
                       onClick={() => setSubmitted(false)}
-                      className="w-full bg-[#d4a12f] hover:bg-yellow-500 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg shadow-yellow-500/20"
+                      className="w-full bg-[#d4a12f] hover:bg-yellow-500 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 border border-gold shadow-yellow-500/20"
                     >
                       Done
                     </button>
@@ -177,7 +177,7 @@ export default function ContactUs() {
                     value={form.name}
                     onChange={handleChange}
                     placeholder="Full Name"
-                    className="w-full border rounded-xl p-4 focus:border-[#d4a12f] outline-none"
+                    className="w-full border rounded-xl p-4 focus:outline-none"
                   />
 
                   {errors.name && (
@@ -191,7 +191,7 @@ export default function ContactUs() {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="Email"
-                    className="w-full border rounded-xl p-4"
+                    className="w-full border rounded-xl p-4 focus:outline-none"
                   />
 
                   {errors.email && (
@@ -205,7 +205,7 @@ export default function ContactUs() {
                     value={form.phone}
                     onChange={handleChange}
                     placeholder="Phone Number"
-                    className="w-full border rounded-xl p-4"
+                    className="w-full border rounded-xl p-4 focus:outline-none"
                   />
 
                   {errors.phone && (
@@ -218,7 +218,7 @@ export default function ContactUs() {
                     name="subject"
                     value={form.subject}
                     onChange={handleChange}
-                    className="w-full border rounded-xl p-4"
+                    className="w-full border rounded-xl p-4 focus:outline-none"
                   >
                     <option value="">Select Subject</option>
                     <option>Order Issue</option>
@@ -241,7 +241,7 @@ export default function ContactUs() {
                     name="message"
                     value={form.message}
                     onChange={handleChange}
-                    className="w-full border rounded-xl p-4"
+                    className="w-full border rounded-xl p-4 focus:outline-none"
                   />
                 </div>
               </div>
