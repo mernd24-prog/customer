@@ -38,6 +38,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "postcss": "^8.5.13",
     "sharp": "^0.35.3",
-    "vite": "^5.4.11"
+    "vite": "^5.4.11",
+    "vite-plugin-purgecss": "^0.2.13"
   }
 }

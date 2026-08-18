@@ -16,6 +16,20 @@ function normalizeImageUrl(url = "") {
   return `${API_ASSET_BASE_URL}/${value.replace(/^\/+/, "")}`;
 }
 
+export function getOptimizedCloudinaryUrl(url, width = "auto") {
+  if (!url || typeof url !== "string") return url;
+  if (url.includes("res.cloudinary.com") && url.includes("/upload/")) {
+    if (url.includes("f_auto") || url.includes("q_auto")) return url;
+    return url.replace("/upload/", `/upload/f_auto,q_auto,w_${width}/`);
+  }
+  return url;
+}
+
+export function generateCloudinarySrcSet(url, widths = [300, 400, 800]) {
+  if (!url || typeof url !== "string" || !url.includes("res.cloudinary.com")) return undefined;
+  return widths.map(w => `${getOptimizedCloudinaryUrl(url, w)} ${w}w`).join(", ");
+}
+
 export function getProductId(product) {
   if (!product) return "";
 

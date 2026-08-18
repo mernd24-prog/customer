@@ -6,9 +6,7 @@ import { Grid2X2 } from "lucide-react";
 import Seo from "../../components/ui/Seo";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
-import {
-  getImageUrlFromValue,
-} from "../../utils/ecommerce";
+import { getImageUrlFromValue } from "../../utils/ecommerce";
 import Loader from "../../components/ui/Loader";
 
 const PAGE_SIZE = 20;
@@ -19,7 +17,7 @@ import {
   getCategoryListFromResponse,
   paginationFromPayload,
   getCategoryCount,
-  getRootCategories
+  getRootCategories,
 } from "../../utils/pages/categoryUtils";
 
 function CategoryTile({ category }) {
@@ -221,16 +219,21 @@ export default function CategoryListingPage() {
   ]);
 
   useEffect(() => {
-    if (!catalogState.globalCategories || catalogState.globalCategories.length === 0) {
-      import("../../features/product/productSlice").then(({ fetchProducts }) => {
-        dispatch(fetchProducts({ limit: 1 })).catch(() => {});
-      });
+    if (
+      !catalogState.globalCategories ||
+      catalogState.globalCategories.length === 0
+    ) {
+      import("../../features/product/productSlice").then(
+        ({ fetchProducts }) => {
+          dispatch(fetchProducts({ limit: 1 })).catch(() => {});
+        },
+      );
     }
   }, [dispatch, catalogState.globalCategories]);
 
   const categories = useMemo(() => {
     const available = getRootCategories(catalogState.globalCategories);
-    
+
     // If the homepage already loaded globalCategories, use them to enrich the data
     if (available && available.length > 0) {
       const masterByKey = new Map(
@@ -247,7 +250,10 @@ export default function CategoryListingPage() {
     // (If you want it to only show items with products, wait for globalCategories to populate)
     return categoryList.filter((category) => {
       // If we somehow have productCount, use it
-      if (category.productCount !== undefined && category.productCount !== null) {
+      if (
+        category.productCount !== undefined &&
+        category.productCount !== null
+      ) {
         return Number(category.productCount) > 0;
       }
       return true; // Fallback to returning all if count is unknown

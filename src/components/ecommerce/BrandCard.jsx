@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "../../utils/common";
+import { getOptimizedCloudinaryUrl } from "../../utils/ecommerce";
 
 export const getValidImage = (...images) => {
   for (const image of images) {
@@ -45,14 +46,14 @@ export default function BrandCard({
     >
       <div className="relative flex h-24 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-cream p-4 w-full">
         <img
-          src={displayImage || "/image/png/favicon.png"}
-          alt={name}
+          src={getOptimizedCloudinaryUrl(displayImage || "/image/webp/favicon.webp", 200)}
+          alt=""
           className="max-h-full max-w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.04]"
           loading="lazy"
           decoding="async"
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = "/image/png/favicon.png";
+            e.currentTarget.src = "/image/webp/favicon.webp";
           }}
         />
 

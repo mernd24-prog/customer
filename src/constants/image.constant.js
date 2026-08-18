@@ -116,10 +116,10 @@ export const bannerConfig = {
 
 export const productImages = {
   stylishGirls: "/image/jpg/stylish-girls.jpg",
-  kidsFashion: "/image/jpg/kids-fashion.jpg",
+  kidsFashion: "/image/webp/kids-fashion.webp",
   menFashion: "/image/png/men-fashion.png",
   smartHome: "/image/jpg/smart-home.jpg",
-  homeDecor: "/image/jpg/home-decor.jpg",
+  homeDecor: "/image/webp/home-decor.webp",
   blazer: "/image/png/blazer.png",
   perfume: "/image/png/Perfume.png",
   diamondJewellery: "/image/png/women-wearing-diamond-jewellery 1.png",

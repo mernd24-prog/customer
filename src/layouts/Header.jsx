@@ -672,11 +672,11 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       {/* Split Background Images */}
       <div
         className="absolute inset-y-0 left-0 w-1/2 bg-cover bg-center bg-no-repeat z-0"
-        style={{ backgroundImage: "url('/image/jpg/cat1.png')" }}
+        style={{ backgroundImage: "url('/image/webp/cat1.webp')" }}
       />
       <div
         className="absolute inset-y-0 right-0 w-1/2 bg-cover bg-center bg-no-repeat z-0"
-        style={{ backgroundImage: "url('/image/jpg/cat.jpg')" }}
+        style={{ backgroundImage: "url('/image/webp/cat.webp')" }}
       />
 
       {/* Golden Overlay */}

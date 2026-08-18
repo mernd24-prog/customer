@@ -17,6 +17,8 @@ import {
   getImageFallbackSrc,
   getProductAvailableStock,
   isProductCodAvailable,
+  getOptimizedCloudinaryUrl,
+  generateCloudinarySrcSet,
 } from "../../utils/ecommerce";
 import { cn } from "../../utils/common";
 import StarRating from "../../pages/products/components/starRating";
@@ -218,8 +220,10 @@ export default function ProductCard({
             {image ? (
               <div className="group  flex aspect-square w-full items-center justify-center overflow-hidden p-4">
                 <img
-                  src={image}
-                  alt={title}
+                  src={getOptimizedCloudinaryUrl(image, 300)}
+                  srcSet={generateCloudinarySrcSet(image, [200, 300, 400])}
+                  sizes="(max-width: 640px) 180px, 300px"
+                  alt=""
                   className="h-full w-full object-contain  transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
@@ -383,8 +387,10 @@ export default function ProductCard({
         <div className="flex justify-center overflow-hidden  h-[260px] items-center   w-auto rounded-t-[20px]  transition-all duration-300 ease-in-out group-hover:scale-[1.01]">
           {image ? (
             <img
-              src={image}
-              alt={title}
+              src={getOptimizedCloudinaryUrl(image, 400)}
+              srcSet={generateCloudinarySrcSet(image, [300, 400, 800])}
+              sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 800px"
+              alt=""
               className="h-full w-full object-contain p-2 transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
               loading="lazy"
               decoding="async"

@@ -78,11 +78,11 @@ export function OrderItemCard({
             </span>
           </div>
 
-          {eta && (
+          {eta !== undefined && eta !== null && eta !== "" ? (
             <p className="mb-3 text-[14px] font-semibold leading-5 text-[#5F6078]">
               Estimated Delivery: {eta} {Number(eta) === 1 ? "day" : "days"}
             </p>
-          )}
+          ) : null}
 
           <div className="mt-1">
             <p className="text-base font-extrabold leading-8 text-[#1B1D60] sm:text-xl">

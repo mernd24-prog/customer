@@ -1,6 +1,6 @@
 import { useState } from "react";
 import QuantitySelector from "./QuantitySelector";
-import { applyImageFallback } from "../../../utils/ecommerce";
+import { applyImageFallback, getOptimizedCloudinaryUrl, generateCloudinarySrcSet } from "../../../utils/ecommerce";
 import { calculateDiscountPercent } from "../../../utils/ecommerce/money";
 import { Link } from "react-router-dom";
 import { Heart, Trash2 } from "lucide-react";
@@ -97,8 +97,10 @@ export default function CartItemCard({
                   className="block h-full w-full"
                 >
                   <img
-                    src={item.image}
-                    alt={item.title}
+                    src={getOptimizedCloudinaryUrl(item.image, 300)}
+                    srcSet={generateCloudinarySrcSet(item.image, [200, 300, 400])}
+                    sizes="(max-width: 640px) 165px, 200px"
+                    alt=""
                     className="h-full w-full object-contain p-2 transition duration-300 hover:scale-105 sm:p-3"
                     onError={(event) =>
                       applyImageFallback(event, item.title, "cart")
@@ -107,8 +109,10 @@ export default function CartItemCard({
                 </Link>
               ) : (
                 <img
-                  src={item.image}
-                  alt={item.title}
+                  src={getOptimizedCloudinaryUrl(item.image, 300)}
+                  srcSet={generateCloudinarySrcSet(item.image, [200, 300, 400])}
+                  sizes="(max-width: 640px) 165px, 200px"
+                  alt=""
                   className="h-full w-full object-contain p-2 sm:p-3"
                   onError={(event) =>
                     applyImageFallback(event, item.title, "cart")

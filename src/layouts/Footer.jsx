@@ -256,14 +256,17 @@ export function Footer({ data = footerData }) {
       <div className="customer-container pt-4 sm:pt-0 flex flex-col gap-2 md:gap-16 lg:gap-4 md:flex-row justify-between">
         <div className="flex my-2  md:items-center gap-3 ">
           <Link to="/">
-            <img
-              src="/image/png/logoWithName.png"
-              alt="Sam Global"
-              width="466"
-              height="80"
-              loading="lazy"
-              className="h-9 sm:h-12 lg:h-16 xl:h-[60px] w-[290px] rounded object-contain"
-            />
+            <picture>
+              <source srcSet="/image/webp/logoWithName-small.webp 1x, /image/webp/logoWithName.webp 2x" type="image/webp" />
+              <img
+                src="/image/webp/logoWithName.webp"
+                alt="Sam Global"
+                width="290"
+                height="50"
+                loading="lazy"
+                className="h-9 sm:h-12 lg:h-16 xl:h-[60px] w-[290px] rounded object-contain"
+              />
+            </picture>
           </Link>
         </div>
 
