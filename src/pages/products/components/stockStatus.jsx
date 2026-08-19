@@ -5,9 +5,7 @@ export default function ProductStockStatus({
   availableStock,
 }) {
   if (!inStock) {
-    return (
-      <p className="text-[12px] font-semibold text-red-500 ">Out of Stock</p>
-    );
+    return null;
   }
 
   const stockCount =

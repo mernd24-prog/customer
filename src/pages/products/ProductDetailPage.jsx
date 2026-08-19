@@ -669,7 +669,11 @@ export default function ProductDetailPage() {
                     navigate={navigate}
                   />
 
-                  <div className="mt-4">
+                  <div
+                    className={`mt-4 flex ${
+                      inStock ? "justify-center" : "justify-start"
+                    }`}
+                  >
                     <DeliveryChecker
                       productId={productId}
                       onResultChange={setDeliveryResult}
