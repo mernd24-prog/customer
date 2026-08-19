@@ -1,9 +1,11 @@
-import { useSelector } from "react-redux";
+import React, { useEffect, useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import SkeletonLoader from "../ui/skeleton/SkeletonLoader";
 import { ProductCard } from "../ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { getProductId, getProductListFromResponse } from "../../utils/ecommerce";
 import SectionContainer from "../ui/SectionContainer";
+import { fetchProducts } from "../../features/product/productSlice";
 
 export default function HomeProductsForYouSection({
   title = "Featured Products",
@@ -13,22 +15,30 @@ export default function HomeProductsForYouSection({
   limit = 10,
   fallbackProducts = [],
 }) {
+  const dispatch = useDispatch();
+  const [localProducts, setLocalProducts] = useState([]);
+  const [localLoading, setLocalLoading] = useState(false);
+  const hasFetchedRef = useRef(false);
+
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const recommendationList = useSelector((s) => s.recommendation.list);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
   const productList = useSelector((s) => s.product.list);
 
-  const loading = useSelector(
+  const loadingRecommendations = useSelector(
     (s) =>
       s.recommendation.loadingRecommendations ||
       s.recommendation.loadingTrending,
   );
+
+  const loading = localLoading || loadingRecommendations;
 
   const recommendations = Array.isArray(recommendationList)
     ? recommendationList
     : [];
   const trending = Array.isArray(trendingList) ? trendingList : [];
   const reduxProducts = Array.isArray(productList) ? productList : [];
+  const fallback = Array.isArray(fallbackProducts) ? fallbackProducts : [];
 
   useEffect(() => {
     if (hasFetchedRef.current) {
@@ -53,7 +63,9 @@ export default function HomeProductsForYouSection({
         ? reduxProducts
         : trending.length
           ? trending
-          : recommendations
+          : recommendations.length
+            ? recommendations
+            : fallback
   ).slice(0, limit);
 
   return (

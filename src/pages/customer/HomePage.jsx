@@ -6,6 +6,7 @@ import {
   fetchRecommendations,
 } from "../../features/recommendation/recommendationSlice";
 import { fetchProducts } from "../../features/product/productSlice";
+import { fetchCmsPages } from "../../features/cms/cmsSlice";
 import { tokenStorage } from "../../api/tokenStorage";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import Banner from "../../layouts/HeroBanner";
