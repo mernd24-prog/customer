@@ -66,9 +66,15 @@ export const getProgressStatus = (order) => {
   if (deliveryStatus === "partially_delivered") return "out_for_delivery";
   if (
     deliveryStatus === "out_for_delivery" &&
-    ["confirmed", "packed", "shipped"].includes(status)
+    ["confirmed", "packed", "shipped", "in_transit"].includes(status)
   ) {
     return "out_for_delivery";
+  }
+  if (
+    deliveryStatus === "in_transit" &&
+    ["confirmed", "packed", "shipped"].includes(status)
+  ) {
+    return "in_transit";
   }
   return status;
 };

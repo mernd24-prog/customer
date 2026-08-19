@@ -54,12 +54,19 @@ export default function HomeCategoryGrid({
   const displayCategories = categories.length ? categories.slice(0, 5) : []; // defaultHomeCategories;
   if (loading) {
     return (
-      <SkeletonLoader
-        preset="CATEGORY_CARD"
-        count={5}
-        containerClass="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5"
-        wrapperClass="customer-card p-2"
-      />
+      <SectionContainer
+        title={title}
+        subtitle={subtitle}
+        actionLabel={actionLabel}
+        actionHref={actionHref}
+      >
+        <SkeletonLoader
+          preset="CATEGORY_CARD"
+          count={5}
+          containerClass="grid grid-cols-1 mt-8 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+          wrapperClass="customer-card p-2"
+        />
+      </SectionContainer>
     );
   }
 

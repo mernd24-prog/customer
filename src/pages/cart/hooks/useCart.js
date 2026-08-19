@@ -121,7 +121,7 @@ export default function useCart() {
     missingIds.forEach((id) => fetchedIdsRef.current.add(id));
 
     missingIds.forEach((productId) => {
-      dispatch(fetchProductById({ productId })).catch(() => {});
+      dispatch(fetchProductById({ productId })).catch(() => { });
     });
   }, [dispatch, rawItems, productEntities]);
 
@@ -135,9 +135,9 @@ export default function useCart() {
 
         return localQuantities[key] != null
           ? adaptItemForCard(
-              { ...item, quantity: localQuantities[key] },
-              fullProduct,
-            )
+            { ...item, quantity: localQuantities[key] },
+            fullProduct,
+          )
           : adaptItemForCard(item, fullProduct);
       }),
     [rawItems, localQuantities, productEntities],
@@ -196,9 +196,9 @@ export default function useCart() {
         storedSelectedItemIds === null
           ? currentItemIds
           : normalizeCartItemIds([
-              ...savedSelectedItemIds.filter((id) => currentItemIdsSet.has(id)),
-              ...newlyAddedItemIds,
-            ]);
+            ...savedSelectedItemIds.filter((id) => currentItemIdsSet.has(id)),
+            ...newlyAddedItemIds,
+          ]);
 
       setSelectedItemIds(nextSelectedItemIds);
       writeSelectedCheckoutItemIds(nextSelectedItemIds);
@@ -365,9 +365,9 @@ export default function useCart() {
           itemToSave.productId && typeof itemToSave.productId === "object"
             ? itemToSave.productId
             : itemToSave.product ||
-              itemToSave._raw ||
-              itemView?._raw ||
-              itemToSave;
+            itemToSave._raw ||
+            itemView?._raw ||
+            itemToSave;
         const nextCart = normalizeCartPayloadForWrite({
           items: remainingItems,
           wishlist: currentCart.wishlist || [],

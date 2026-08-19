@@ -13,7 +13,11 @@ import { OutlineSmallButton } from "../../components/ui/button/static";
 import { FaAngleRight } from "react-icons/fa6";
 import { CART_PAGE_SKELETON } from "../../components/ui/skeleton/layouts";
 import { formatMoney, toNum } from "../../utils/ecommerce/money";
-import { normalizeCartItemId, cartLineKey, buildSavedProductView } from "../../utils/ecommerce/cart";
+import {
+  normalizeCartItemId,
+  cartLineKey,
+  buildSavedProductView,
+} from "../../utils/ecommerce/cart";
 import { getProductId } from "../../utils/ecommerce";
 import {
   BUY_NOW_STORAGE_KEY,
@@ -64,7 +68,7 @@ export default function CartPage() {
     addToCart,
     isWishlisted,
     toggleWishlist,
-    currentUser
+    currentUser,
   } = useCart();
 
   const savedCardClass =
@@ -547,4 +551,3 @@ export default function CartPage() {
     </>
   );
 }
-

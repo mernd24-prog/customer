@@ -66,7 +66,10 @@ import VariantSelector from "./components/VariantSelector";
 import ProductActionButtons from "./components/ProductActionButtons";
 import ProductInfoSection from "./sections/ProductInfoSection";
 import ProductRecommendationSection from "./sections/ProductRecommendationSection";
-import { getActiveDealPrice, getActiveDealOriginalPrice } from "../../utils/pages/productUtils";
+import {
+  getActiveDealPrice,
+  getActiveDealOriginalPrice,
+} from "../../utils/pages/productUtils";
 export default function ProductDetailPage() {
   const { productId } = useParams();
   const dispatch = useDispatch();
@@ -548,7 +551,7 @@ export default function ProductDetailPage() {
                         <ShowMoreText
                           text={getProductTitle(product)}
                           mode="lines"
-                          limit={2}
+                          limit={1}
                           buttonClassName="ml-1 text-sm font-semibold text-black/50 hover:underline"
                         />
                       </h1>
@@ -582,7 +585,7 @@ export default function ProductDetailPage() {
                     dealBadge={activeDealBadge}
                   />
 
-                  <div className="my-4 flex flex-col items-start md:flex-row md:items-center gap-6">
+                  <div className="my-4">
                     <div className="w-full md:w-fit">
                       <QuantitySelector
                         quantity={quantity}
@@ -611,11 +614,6 @@ export default function ProductDetailPage() {
                         </p>
                       ) : null}
                     </div>
-
-                    <DeliveryChecker
-                      productId={productId}
-                      onResultChange={setDeliveryResult}
-                    />
                   </div>
 
                   {!deliveryResult && (
@@ -672,6 +670,13 @@ export default function ProductDetailPage() {
                     addToCart={addToCart}
                     navigate={navigate}
                   />
+
+                  <div className="mt-4">
+                    <DeliveryChecker
+                      productId={productId}
+                      onResultChange={setDeliveryResult}
+                    />
+                  </div>
                 </div>
               </div>
 

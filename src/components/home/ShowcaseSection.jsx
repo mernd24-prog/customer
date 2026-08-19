@@ -41,11 +41,11 @@ export default function ShowcaseSection({
         <SkeletonLoader
           preset={skeletonPreset}
           count={skeletonCount}
-          containerClass={gridClassName}
+          containerClass={`mt-4 ${gridClassName}`}
           wrapperClass={skeletonWrapperClass}
         />
       ) : (
-        <div className={`  mt-4 ${gridClassName}`}>
+        <div className={`mt-4 ${gridClassName}`}>
           {asArray(items).map((item, index) => (
             <CardComponent
               key={keyOr(item?.id, `item-${index}`)}

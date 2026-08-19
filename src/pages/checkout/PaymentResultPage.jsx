@@ -117,7 +117,15 @@ export function PaymentResultPage() {
           <BrandButton
             variant="secondary"
             rounded
-            onClick={() => navigate(orderId ? `/orders/${encodeURIComponent(orderId)}` : "/orders")}
+            onClick={() => {
+              if (orderId) {
+                dispatch(fetchOrderById({ orderId })).unwrap().finally(() => {
+                  navigate(`/orders/${encodeURIComponent(orderId)}`);
+                });
+              } else {
+                navigate("/orders");
+              }
+            }}
             label={isActuallyFailed || reason === "dismissed" ? "View order and retry" : "View order status"}
             className="h-12 w-full min-w-[180px] text-sm sm:w-auto"
           />
@@ -199,9 +207,11 @@ export function PaymentResultPage() {
                           <BrandButton
                             variant="secondary"
                             rounded
-                            onClick={() =>
-                              navigate(`/orders/${encodeURIComponent(orderId)}`)
-                            }
+                            onClick={() => {
+                              dispatch(fetchOrderById({ orderId })).unwrap().finally(() => {
+                                navigate(`/orders/${encodeURIComponent(orderId)}`);
+                              });
+                            }}
                             label="View order details"
                             className="h-10 w-full min-w-[160px] text-xs sm:text-sm sm:w-auto px-6"
                           />

@@ -9,13 +9,14 @@ import "./styles.css";
 // Defer SW registration to after the page is fully loaded
 if (import.meta.env.PROD) {
   window.addEventListener("load", () => {
-    // Use requestIdleCallback if available for even less main-thread impact
     const register = () => import("virtual:pwa-register").then(({ registerSW }) => registerSW({ immediate: true }));
-    if ("requestIdleCallback" in window) {
-      requestIdleCallback(register);
-    } else {
-      register();
-    }
+    setTimeout(() => {
+      if ("requestIdleCallback" in window) {
+        requestIdleCallback(register);
+      } else {
+        register();
+      }
+    }, 3000);
   }, { once: true });
 } else if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations().then((registrations) => {

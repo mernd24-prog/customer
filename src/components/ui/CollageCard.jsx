@@ -16,6 +16,8 @@ function CollageImage({ src, title, label, count, index }) {
       <img
         src={src}
         alt={label}
+        width="300"
+        height="300"
         className="h-full w-full object-cover object-top transition-all duration-300 ease-in-out hover:scale-105"
         loading="lazy"
       />

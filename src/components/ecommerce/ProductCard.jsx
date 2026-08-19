@@ -224,6 +224,8 @@ export default function ProductCard({
                   srcSet={generateCloudinarySrcSet(image, [200, 300, 400])}
                   sizes="(max-width: 640px) 180px, 300px"
                   alt=""
+                  width="300"
+                  height="300"
                   className="h-full w-full object-contain  transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
@@ -391,6 +393,8 @@ export default function ProductCard({
               srcSet={generateCloudinarySrcSet(image, [300, 400, 800])}
               sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 800px"
               alt=""
+              width="400"
+              height="400"
               className="h-full w-full object-contain p-2 transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
               loading="lazy"
               decoding="async"

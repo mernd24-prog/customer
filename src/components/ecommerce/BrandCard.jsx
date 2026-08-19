@@ -48,6 +48,8 @@ export default function BrandCard({
         <img
           src={getOptimizedCloudinaryUrl(displayImage || "/image/webp/favicon.webp", 200)}
           alt=""
+          width="200"
+          height="100"
           className="max-h-full max-w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.04]"
           loading="lazy"
           decoding="async"

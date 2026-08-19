@@ -56,7 +56,7 @@ export default function CollageSection({ cmsPages = [] }) {
         <SkeletonLoader
           layout={SKELETON_PRESETS.HERO_CARDS}
           count={4}
-          containerClass="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4"
+          containerClass="grid grid-cols-1 gap-4 lg:gap-8 md:grid-cols-2 xl:grid-cols-4 h-full"
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:gap-8 md:grid-cols-2 xl:grid-cols-4 h-full">
