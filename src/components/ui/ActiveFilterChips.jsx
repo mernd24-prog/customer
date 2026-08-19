@@ -33,8 +33,8 @@ export default function ActiveFilterChips({
 
   return (
     <div className={`${className} flex flex-col gap-2`}>
-      <div 
-        className={`w-full overflow-hidden transition-all duration-300 ${expanded ? 'max-h-[1000px]' : 'max-h-[42px]'}`}
+      <div
+        className={`w-full overflow-hidden transition-all mt-6 duration-300 ${expanded ? "max-h-[1000px]" : "max-h-[42px]"}`}
       >
         <div ref={contentRef} className="flex flex-wrap gap-2">
           {filters.map((filter) => (
@@ -49,7 +49,7 @@ export default function ActiveFilterChips({
           ))}
         </div>
       </div>
-      
+
       {isOverflowing && (
         <button
           type="button"

@@ -28,7 +28,7 @@ export default function CollectionToolbar({
         </p>
       )}
 
-      <div className="flex w-full sm:w-auto items-center gap-2 sm:gap-3 sm:ml-auto">
+      <div className="flex w-full sm:w-auto items-center gap-2 sm:gap-3 sm:ml-auto mt-4">
         {/* Sort Trigger */}
         {!!sortOptions.length && (
           <CustomDropdown

@@ -668,7 +668,7 @@ const SearchBar = ({
           id="search-suggestions"
           ref={searchDropdownRef}
           role="listbox"
-          className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 max-h-[390px] overflow-y-auto rounded-xl border border-[#1B1D6020] bg-white py-2 shadow-[0_12px_32px_rgba(0,0,0,0.1)] [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]"
+          className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 max-h-[390px] overflow-y-auto rounded-xl border border-[#1B1D6020] bg-white  shadow-[0_12px_32px_rgba(0,0,0,0.1)] [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]"
         >
           {suggestions.map((suggestion, index) => {
             const label = getSuggestionLabel(suggestion);

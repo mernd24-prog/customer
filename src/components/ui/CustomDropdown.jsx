@@ -106,7 +106,7 @@ export default function CustomDropdown({
             optionsClassName,
           )}
         >
-          <div className="max-h-60 overflow-y-auto py-1 [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
+          <div className="max-h-60 overflow-y-auto[scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
             {isLoading ? (
               <>
                 {[1, 2, 3].map((i) => (
