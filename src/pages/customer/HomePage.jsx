@@ -21,6 +21,7 @@ import ShoppingMadeEasyBanner from "../../components/home/ShoppingBanner";
 import FeaturedProductsSection from "../../components/home/FeaturedProductsSection";
 
 import { toStandardProductCard as toNewArrivalProduct } from "../../utils/productUtils";
+import { getProductListFromResponse } from "../../utils/ecommerce";
 
 const buildNewArrivalItems = (products) => {
   if (!products.length) return [];
@@ -100,16 +101,8 @@ export function HomePage() {
         .unwrap()
         .then((result) => {
           const data = result?.data || {};
-          const list =
-            data.hits ||
-            data.products ||
-            data.results ||
-            data.items ||
-            data.list ||
-            (Array.isArray(data) ? data : []);
-          if (list.length > 0) {
-            setHomeProducts(list);
-          }
+          const list = getProductListFromResponse(data);
+          setHomeProducts(list);
         })
         .catch(() => {})
         .finally(() => setHomeLoading(false));

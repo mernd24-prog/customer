@@ -19,6 +19,7 @@ import {
   getProductPrice,
   getAvailabilityCounts,
   calculateAbsolutePriceLimits,
+  getProductListFromResponse,
 } from "../../utils/ecommerce";
 import {
   parseMultiValue,
@@ -260,13 +261,7 @@ export default function ProductsPage() {
       if (requestSequence !== requestSequenceRef.current) return [];
 
       const data = result?.data || {};
-      let list =
-        data.hits ||
-        data.products ||
-        data.results ||
-        data.items ||
-        data.list ||
-        (Array.isArray(data) ? data : []);
+      const list = getProductListFromResponse(data);
 
       const p = new URLSearchParams(searchParams);
       p.delete("minPrice");

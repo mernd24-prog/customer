@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import SkeletonLoader from "../ui/skeleton/SkeletonLoader";
 import { ProductCard } from "../ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
-import { getProductId } from "../../utils/ecommerce";
+import { getProductId, getProductListFromResponse } from "../../utils/ecommerce";
 import SectionContainer from "../ui/SectionContainer";
 import { fetchProducts } from "../../features/product/productSlice";
 
@@ -18,6 +18,7 @@ export default function HomeProductsForYouSection({
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const recommendationList = useSelector((s) => s.recommendation.list);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
+  const productList = useSelector((s) => s.product.list);
 
   const [localProducts, setLocalProducts] = useState([]);
   const hasFetchedRef = useRef(false);
@@ -33,13 +34,10 @@ export default function HomeProductsForYouSection({
     ? recommendationList
     : [];
   const trending = Array.isArray(trendingList) ? trendingList : [];
+  const reduxProducts = Array.isArray(productList) ? productList : [];
 
   useEffect(() => {
-    if (recommendations.length || trending.length) {
-      setLocalLoading(false);
-      return;
-    }
-    if (hasFetchedRef.current && localProducts.length > 0) {
+    if (hasFetchedRef.current) {
       setLocalLoading(false);
       return;
     }
@@ -48,28 +46,20 @@ export default function HomeProductsForYouSection({
     dispatch(fetchProducts({ limit, page: 1, sort: "newest" }))
       .unwrap()
       .then((result) => {
-        const data = result?.data || {};
-        const list =
-          data.hits ||
-          data.products ||
-          data.results ||
-          data.items ||
-          data.list ||
-          (Array.isArray(data) ? data : []);
-        if (list.length > 0) {
-          setLocalProducts(list);
-        }
+        setLocalProducts(getProductListFromResponse(result));
       })
       .catch(() => {})
       .finally(() => setLocalLoading(false));
-  }, [dispatch, limit, recommendations.length, trending.length]);
+  }, [dispatch, limit]);
 
   const products = (
-    recommendations.length
-      ? recommendations
-      : trending.length
-        ? trending
-        : localProducts
+    localProducts.length
+      ? localProducts
+      : reduxProducts.length
+        ? reduxProducts
+        : trending.length
+          ? trending
+          : recommendations
   ).slice(0, limit);
 
   return (
