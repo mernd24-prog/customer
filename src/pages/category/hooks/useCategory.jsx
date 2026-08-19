@@ -11,6 +11,7 @@ import {
   getProductPrice,
   getAvailabilityCounts,
   calculateAbsolutePriceLimits,
+  sortProducts,
 } from "../../../utils/ecommerce";
 import { buildCategoryTree } from "../../../layouts/header/categoryHelpers";
 import {
@@ -89,8 +90,9 @@ export default function useCategory() {
     if (!categoryKey) return items;
     const targetCats = [String(categoryKey).toLowerCase().replace(/[^a-z0-9]/g, "")];
     const validKeys = getMatchingCategoryKeys(targetCats, categoryTree);
+    const sortKey = searchParams.get("sort") || "";
 
-    return items.filter((p) => {
+    const filtered = items.filter((p) => {
       const cat = p.categoryId || p.category;
       if (!cat) return false;
       const catStr = String(typeof cat === "object" ? cat.slug || cat.key || cat.id || cat.name : cat)
@@ -105,7 +107,9 @@ export default function useCategory() {
         (targetCat) => catStr === targetCat || catStr.includes(targetCat) || targetCat.includes(catStr),
       );
     });
-  }, [items, categoryKey, categoryTree]);
+
+    return sortProducts(filtered, sortKey);
+  }, [items, categoryKey, categoryTree, searchParams]);
 
   const availabilityCounts = useMemo(
     () => getAvailabilityCounts(products, productFacets),

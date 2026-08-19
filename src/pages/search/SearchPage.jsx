@@ -17,7 +17,7 @@ import {
   ProductFilterSidebar,
   ProductListingLayout,
 } from "../../components/ecommerce";
-import { buildRatingCountMap, isProductInStock, getAvailabilityCounts } from "../../utils/ecommerce";
+import { buildRatingCountMap, isProductInStock, getAvailabilityCounts, sortProducts } from "../../utils/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import {
   clearSearch,
@@ -49,11 +49,12 @@ export default function SearchPage() {
   const categoriesRaw = useSelector((s) => s.catalog.list) || [];
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const facets = searchState.facets || {};
+  const sort = searchParams.get("sort") || "";
 
-  const hits = useMemo(
-    () => (Array.isArray(searchState.hits) ? searchState.hits : []),
-    [searchState.hits],
-  );
+  const hits = useMemo(() => {
+    const rawHits = Array.isArray(searchState.hits) ? searchState.hits : [];
+    return sortProducts(rawHits, sort);
+  }, [searchState.hits, sort]);
   const availabilityCounts = useMemo(
     () => getAvailabilityCounts(hits, facets),
     [facets, hits]
@@ -114,7 +115,6 @@ export default function SearchPage() {
   // const expressDelivery = searchParams.get("expressDelivery") === "true";
   // const freeDelivery = searchParams.get("freeDelivery") === "true";
 
-  const sort = searchParams.get("sort") || "";
   const limit = Number(searchParams.get("limit") || 20);
   const categoryValue =
     searchParams.get("categoryId") ||

@@ -1,6 +1,10 @@
 import { useState } from "react";
 import QuantitySelector from "./QuantitySelector";
-import { applyImageFallback, getOptimizedCloudinaryUrl, generateCloudinarySrcSet } from "../../../utils/ecommerce";
+import {
+  applyImageFallback,
+  getOptimizedCloudinaryUrl,
+  generateCloudinarySrcSet,
+} from "../../../utils/ecommerce";
 import { calculateDiscountPercent } from "../../../utils/ecommerce/money";
 import { Link } from "react-router-dom";
 import { Heart, Trash2 } from "lucide-react";
@@ -24,6 +28,7 @@ export default function CartItemCard({
   removeLabel = "Remove",
   showCheckbox,
   fullWidth = false,
+  showQuantitySelector = true,
 }) {
   const [isSaving, setIsSaving] = useState(false);
   const productPath = item?.productId ? `/products/${item.productId}` : "";
@@ -98,7 +103,10 @@ export default function CartItemCard({
                 >
                   <img
                     src={getOptimizedCloudinaryUrl(item.image, 300)}
-                    srcSet={generateCloudinarySrcSet(item.image, [200, 300, 400])}
+                    srcSet={generateCloudinarySrcSet(
+                      item.image,
+                      [200, 300, 400],
+                    )}
                     sizes="(max-width: 640px) 165px, 200px"
                     alt=""
                     className="h-full w-full object-contain p-2 transition duration-300 hover:scale-105 sm:p-3"
@@ -122,21 +130,23 @@ export default function CartItemCard({
             </div>
           )}
 
-          <div className="hidden sm:flex mt-1 w-full flex-col items-center">
-            <QuantitySelector
-              quantity={item.quantity}
-              onIncrease={() => onIncrease(item.id)}
-              onDecrease={() => onDecrease(item.id)}
-              max={quantityMax}
-              increaseDisabled={item.increaseDisabled}
-              increaseDisabledLabel={item.stockMessage || undefined}
-            />
-            {item.stockMessage ? (
-              <p className="mt-1 text-center text-xs font-semibold text-red-600">
-                {item.stockMessage}
-              </p>
-            ) : null}
-          </div>
+          {showQuantitySelector && (
+            <div className="hidden sm:flex mt-1 w-full flex-col items-center">
+              <QuantitySelector
+                quantity={item.quantity}
+                onIncrease={() => onIncrease(item.id)}
+                onDecrease={() => onDecrease(item.id)}
+                max={quantityMax}
+                increaseDisabled={item.increaseDisabled}
+                increaseDisabledLabel={item.stockMessage || undefined}
+              />
+              {item.stockMessage ? (
+                <p className="mt-1 text-center text-xs font-semibold text-red-600">
+                  {item.stockMessage}
+                </p>
+              ) : null}
+            </div>
+          )}
         </div>
 
         <div className="min-w-0 py-0.5">
@@ -221,21 +231,23 @@ export default function CartItemCard({
               </p>
             )}
 
-            <div className="mt-2.5 sm:hidden">
-              <QuantitySelector
-                quantity={item.quantity}
-                onIncrease={() => onIncrease(item.id)}
-                onDecrease={() => onDecrease(item.id)}
-                max={quantityMax}
-                increaseDisabled={item.increaseDisabled}
-                increaseDisabledLabel={item.stockMessage || undefined}
-              />
-              {item.stockMessage ? (
-                <p className="mt-1 text-xs font-semibold text-red-600">
-                  {item.stockMessage}
-                </p>
-              ) : null}
-            </div>
+            {showQuantitySelector && (
+              <div className="mt-2.5 sm:hidden">
+                <QuantitySelector
+                  quantity={item.quantity}
+                  onIncrease={() => onIncrease(item.id)}
+                  onDecrease={() => onDecrease(item.id)}
+                  max={quantityMax}
+                  increaseDisabled={item.increaseDisabled}
+                  increaseDisabledLabel={item.stockMessage || undefined}
+                />
+                {item.stockMessage ? (
+                  <p className="mt-1 text-xs font-semibold text-red-600">
+                    {item.stockMessage}
+                  </p>
+                ) : null}
+              </div>
+            )}
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-6">

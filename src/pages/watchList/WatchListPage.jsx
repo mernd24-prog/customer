@@ -156,6 +156,7 @@ export default function WatchlistPage() {
                       saveForLaterLabel="Add to Cart"
                       removeLabel="Remove From Watchlist"
                       showCheckbox={false}
+                      showQuantitySelector={false}
                     />
                   </div>
                 );

@@ -20,6 +20,7 @@ import {
   getAvailabilityCounts,
   calculateAbsolutePriceLimits,
   getProductListFromResponse,
+  sortProducts,
 } from "../../utils/ecommerce";
 import {
   parseMultiValue,
@@ -261,7 +262,9 @@ export default function ProductsPage() {
       if (requestSequence !== requestSequenceRef.current) return [];
 
       const data = result?.data || {};
-      const list = getProductListFromResponse(data);
+      const rawList = getProductListFromResponse(data);
+      const sortKey = params.sort || searchParams.get("sort") || "";
+      const list = sortProducts(rawList, sortKey);
 
       const p = new URLSearchParams(searchParams);
       p.delete("minPrice");
@@ -278,12 +281,12 @@ export default function ProductsPage() {
       });
       setProductFacets(result?.meta?.facets || result?.meta?.filters || {});
       setFacetsContextKey(ctxKey);
-      setItems((prev) => (append ? [...prev, ...list] : list));
+      setItems((prev) => (append ? sortProducts([...prev, ...list], sortKey) : list));
       setFirstLoadDone(true);
       setIsLoadingMore(false);
       return list;
     },
-    [dispatch, getParams],
+    [dispatch, getParams, searchParams],
   );
 
   useEffect(() => {

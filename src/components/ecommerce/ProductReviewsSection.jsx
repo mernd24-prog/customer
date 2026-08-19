@@ -669,7 +669,7 @@ export default function ProductReviewsSection({ productId, product }) {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              {canWriteReview && (
+              {/* {canWriteReview && (
                 <button
                   type="button"
                   onClick={() => setShowForm((prev) => !prev)}
@@ -677,7 +677,7 @@ export default function ProductReviewsSection({ productId, product }) {
                 >
                   {showForm ? "Cancel Review" : "Write a Review"}
                 </button>
-              )}
+              )} */}
 
               {displayTotal > 0 && (
                 <CustomDropdown

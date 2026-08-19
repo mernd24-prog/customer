@@ -73,7 +73,7 @@ export function FilterSection({
   };
 
   return (
-    <div className="border-b  border-[#EEDFB9] py-6 last:border-b-0 sm:py-7 ">
+    <div className="border-b  border-[#EEDFB9] py-4 last:border-b-0 sm:py-4 ">
       {searchOpen ? (
         <div className="flex h-9 w-full items-center gap-2 rounded-full bg-[#F4F4F6] px-3">
           <Search size={16} className="shrink-0 text-[#6F7480]" />
@@ -127,7 +127,7 @@ export function FilterSection({
       )}
 
       <div
-        className={`grid transition-all duration-300 ease-in-out ${
+        className={`grid transition-all  duration-300 ease-in-out ${
           open
             ? "mt-5 grid-rows-[1fr] opacity-100 sm:mt-6"
             : "grid-rows-[0fr] opacity-0"
@@ -732,7 +732,7 @@ export default function ProductFilterSidebar({
 }) {
   return (
     <aside
-      className={`w-full [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]  overflow-x-hidden lg:sticky lg:top-24 lg:w-[320px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
+      className={`w-full [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]  overflow-x-hidden lg:sticky lg:top-24 lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
     >
       <div className="w-full overflow-hidden rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] shadow-none">
         <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-5 min-[375px]:px-5 sm:px-6 sm:py-6">
@@ -754,7 +754,7 @@ export default function ProductFilterSidebar({
         {loading ? (
           <FilterSkeleton />
         ) : (
-          <div className="px-4  min-[375px]:px-5 sm:px-6">
+          <div className="px-4  min-[375px]:px-5 ">
             {sections.map((section) => (
               <FilterSection
                 key={section.key || section.title}

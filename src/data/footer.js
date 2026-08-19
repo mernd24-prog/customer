@@ -54,6 +54,7 @@ export const footerData = {
         { label: "Shipping & Delivery Policy", href: "/shipping-policy" },
         { label: "Return & Refund Policy", href: "/refund-policy" },
         { label: "Terms of Use", href: "/terms-of-use" },
+        { label: "FAQ", href: "/faq" },
       ],
     },
   ],

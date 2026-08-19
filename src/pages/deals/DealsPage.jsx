@@ -19,6 +19,7 @@ import {
   buildRatingCountMap,
   isProductInStock,
   getAvailabilityCounts,
+  sortProducts,
 } from "../../utils/ecommerce";
 import {
   parseMultiValue,
@@ -149,7 +150,9 @@ export default function DealsPage() {
       try {
         const params = getParams(page);
         const response = await getPublicDealProducts(params);
-        const list = unwrapProducts(response);
+        const rawList = unwrapProducts(response);
+        const sortKey = params.sort || searchParams.get("sort") || "";
+        const list = sortProducts(rawList, sortKey);
         const pagination = getPagination(response, {
           page,
           limit: pageSize,
@@ -157,7 +160,7 @@ export default function DealsPage() {
           totalPages: 1,
         });
 
-        setProducts((current) => (append ? [...current, ...list] : list));
+        setProducts((current) => (append ? sortProducts([...current, ...list], sortKey) : list));
         setDealFacets(getResponseFacets(response));
         setPageInfo({
           page: Number(pagination.page || page),

@@ -53,7 +53,10 @@ export default function CartSummary({
   // Treat the incoming cart lines as the single source of truth for selection.
   // CartPage already passes only selected lines, so all pricing must derive from this array.
   const selectedItems = Array.isArray(items) ? items : [];
-  const selectedItemCount = selectedItems.length;
+  const selectedItemCount = selectedItems.reduce(
+    (total, item) => total + Math.max(1, Number(item?.quantity || item?.qty || 1)),
+    0,
+  );
   const hasSelectedItems = selectedItemCount > 0;
 
   // Clamp every computed amount so deselection never leaves stale or negative totals behind.

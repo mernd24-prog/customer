@@ -198,6 +198,38 @@ export function getProductMrp(product) {
   );
 }
 
+export function sortProducts(products = [], sortKey = "") {
+  if (!Array.isArray(products) || !products.length || !sortKey) return products;
+  const list = [...products];
+
+  switch (sortKey) {
+    case "price_asc":
+      return list.sort(
+        (a, b) =>
+          (Number(getProductPrice(a)) || 0) -
+          (Number(getProductPrice(b)) || 0),
+      );
+    case "price_desc":
+      return list.sort(
+        (a, b) =>
+          (Number(getProductPrice(b)) || 0) -
+          (Number(getProductPrice(a)) || 0),
+      );
+    case "rating":
+      return list.sort(
+        (a, b) => Number(b?.rating || 0) - Number(a?.rating || 0),
+      );
+    case "newest":
+      return list.sort(
+        (a, b) =>
+          new Date(b?.createdAt || b?.created_at || 0) -
+          new Date(a?.createdAt || a?.created_at || 0),
+      );
+    default:
+      return list;
+  }
+}
+
 function normalizeStockNumber(value) {
   if (value === null || value === undefined || value === "") return null;
   const number = Number(value);
