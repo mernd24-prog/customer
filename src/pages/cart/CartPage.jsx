@@ -182,6 +182,7 @@ export default function CartPage() {
                             onSaveForLater={handleSaveForLater}
                             onBuyNow={handleBuyNow}
                             showCheckbox={true}
+                            isWishlisted={isWishlisted(item.productId)}
                           />
                         </div>
                       ))}

@@ -29,6 +29,7 @@ export default function CartItemCard({
   showCheckbox,
   fullWidth = false,
   showQuantitySelector = true,
+  isWishlisted = false,
 }) {
   const [isSaving, setIsSaving] = useState(false);
   const productPath = item?.productId ? `/products/${item.productId}` : "";
@@ -255,6 +256,7 @@ export default function CartItemCard({
               <button
                 type="button"
                 onClick={async () => {
+                  if (isWishlisted) return;
                   setIsSaving(true);
                   try {
                     await onSaveForLater?.(item?.id);
@@ -264,14 +266,19 @@ export default function CartItemCard({
                     setIsSaving(false);
                   }
                 }}
-                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#2d2d2d] transition hover:text-[#1B1D60]"
+                disabled={isWishlisted}
+                className={`inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium transition ${
+                  isWishlisted
+                    ? "text-[#1B1D60] cursor-default"
+                    : "text-[#2d2d2d] hover:text-[#1B1D60]"
+                }`}
               >
                 <Heart
                   size={16}
                   className="text-[#1B1D60]"
-                  fill={isSaving ? "currentColor" : "none"}
+                  fill={isWishlisted || isSaving ? "currentColor" : "none"}
                 />
-                {saveForLaterLabel}
+                {isWishlisted ? "Wishlisted" : saveForLaterLabel}
               </button>
             ) : (
               <button
