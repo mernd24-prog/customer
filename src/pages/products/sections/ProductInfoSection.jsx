@@ -264,7 +264,7 @@ export default function ProductInfoSection({
       {activeInfoTab === "common-images" &&
         product.commonImages?.length > 0 && (
           <InfoCard title="Catalogue Images" roundedClass="rounded-xl">
-            <div className="flex flex-wrap gap-4 p-4">
+            <div className="grid grid-cols-2 gap-4 p-4 sm:flex sm:flex-wrap">
               {product.commonImages.slice(0, 4).map((image, index) => {
                 const isLast = index === 3;
                 const hasMore = product.commonImages.length > 4;
@@ -273,7 +273,7 @@ export default function ProductInfoSection({
                 return (
                   <div
                     key={`${image}-${index}`}
-                    className="relative flex h-[140px] w-[140px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#E7D9B8] bg-white cursor-pointer transition-colors hover:border-gold sm:h-[180px] sm:w-[180px] md:h-[200px] md:w-[200px]"
+                    className="relative flex aspect-square w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#E7D9B8] bg-white cursor-pointer transition-colors hover:border-gold sm:h-[180px] sm:w-[180px] md:h-[200px] md:w-[200px]"
                     onClick={() => setIsModalOpen(true)}
                   >
                     <img

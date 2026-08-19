@@ -48,6 +48,8 @@ export default function CategoryCard({
         <img
           src={image || getImageFallbackSrc(title, "category")}
           alt={title}
+          width="284"
+          height="160"
           className="aspect-[284/160] h-[260px] w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-100"
           loading="lazy"
           decoding="async"

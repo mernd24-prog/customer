@@ -2,7 +2,14 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDown, ChevronUp, MapPin, Pencil, Phone, Info } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  MapPin,
+  Pencil,
+  Phone,
+  Info,
+} from "lucide-react";
 import Button from "../../../components/ui/buttons/Button";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
@@ -26,13 +33,10 @@ import { fetchFullList } from "../../../utils/pages/checkoutUtils";
 const getAddressId = (addr) => addr?._id || addr?.id || "";
 
 const addressLabels = ADDRESS_LABEL_OPTIONS;
-
-
 const normalizeLabelValue = (value) => {
   const normalized = String(value || "").toLowerCase();
   return ["home", "work", "other"].includes(normalized) ? normalized : "home";
 };
-
 const getLocationValue = (item) => {
   if (item == null) return "";
   if (typeof item !== "object") return String(item);
@@ -327,20 +331,22 @@ export default function AddressSelection({
                       {label}
                     </span>
                     {selectedAddressId === addrId && !useNewAddress && quoteError && (
-                      <div className="flex flex-col gap-1 mt-1 sm:mt-0">
+                      <div className="flex flex-col justify-center gap-1">
                         {Array.isArray(quoteError) ? (
                           quoteError.map((err, i) => (
-                            <span key={i} className="inline-flex items-start gap-1 text-[11px] sm:text-[12px] font-semibold text-[#D12E2E]">
-                              <Info size={14} className="mt-[2px] shrink-0" />
-                              {err}
+                            <span key={i} className="inline-flex items-center gap-1 text-[11px] sm:text-[12px] font-semibold text-[#D12E2E]">
+                              <Info size={14} className="shrink-0" />
+                              <span>{err}</span>
                             </span>
                           ))
                         ) : (
-                          <span className="inline-flex items-start gap-1 text-[11px] sm:text-[12px] font-semibold text-[#D12E2E]">
-                            <Info size={14} className="mt-[2px] shrink-0" />
-                            {typeof quoteError === "string" && quoteError.trim() !== ""
-                              ? quoteError
-                              : `We currently do not deliver to pincode ${postalCode}.`}
+                          <span className="inline-flex items-center gap-1 text-[11px] sm:text-[12px] font-semibold text-[#D12E2E]">
+                            <Info size={14} className="shrink-0" />
+                            <span>
+                              {typeof quoteError === "string" && quoteError.trim() !== ""
+                                ? quoteError
+                                : `We currently do not deliver to pincode ${postalCode}.`}
+                            </span>
                           </span>
                         )}
                       </div>
@@ -354,7 +360,7 @@ export default function AddressSelection({
                       checked={selectedAddressId === addrId && !useNewAddress}
                       onChange={() => {
                         setValue("selectedAddressId", addrId, {
-                          shouldValidate: true, 
+                          shouldValidate: true,
                         });
                         setValue("useNewAddress", false, {
                           shouldValidate: true,
@@ -406,8 +412,6 @@ export default function AddressSelection({
                   <Pencil size={14} />
                 </button>
               </div>
-
-
 
               <AddressEditModal
                 isOpen={isEditing}

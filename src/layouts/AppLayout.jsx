@@ -3,16 +3,17 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Header, CategoryBar } from "./Header";
-import { Footer } from "./Footer";
 import React, { Suspense } from "react";
-
 const AddedToCartModal = React.lazy(() => import("../pages/cart/components/AddedToCartModal"));
 const GuestOtpAuthModal = React.lazy(() => import("../components/ui/overlay/GuestOtpAuthModal"));
 const ScrollTopButton = React.lazy(() => import("../components/ui/ScrollTopButton"));
-
 import { closeAddedToCartModal } from "../features/cart/cartUiSlice";
 import { footerData } from "../data/footer";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
+
+const LazyFooter = React.lazy(() =>
+  import("./Footer").then((module) => ({ default: module.Footer }))
+);
 
 import {
   normalizeCartItemId,
@@ -134,7 +135,9 @@ export default function AppLayout() {
         <Outlet />
       </main>
 
-      <Footer data={footerData} />
+      <Suspense fallback={<div className="h-[400px] w-full" />}>
+        <LazyFooter data={footerData} />
+      </Suspense>
 
       <Suspense fallback={null}>
         <ScrollTopButton />

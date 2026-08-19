@@ -4,10 +4,7 @@ import { Heart, Play, Share2, ZoomIn, X } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/thumbs";
 import "swiper/css/free-mode";
-import "swiper/css/zoom";
 
 import { applyImageFallback } from "../../../utils/ecommerce";
 import IconActionButton from "./IconActionButton";

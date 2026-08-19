@@ -54,6 +54,8 @@ export default function NewArrivalCard({
             <img
               src={prod.image}
               alt={prod.title}
+              width="90"
+              height="90"
               className="h-[90px] w-[90px] rounded-[10px] border border-[var(--customer-border)] object-cover transition-all duration-300 hover:scale-105 md:h-[90px] md:w-[90px]"
             />
 

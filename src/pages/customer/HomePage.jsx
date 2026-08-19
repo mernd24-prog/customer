@@ -12,6 +12,7 @@ import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";
 import Banner from "../../layouts/HeroBanner";
 import { CategoryBar } from "../../layouts/Header";
 import NewArrivalCard from "../../components/ui/NewArrivalCard";
+import LazySection from "../../components/ui/LazySection";
 import { mothersDayData } from "../../data/special";
 
 const ShoppingMadeEasyBanner = React.lazy(() => import("../../components/home/ShoppingBanner"));
@@ -144,21 +145,25 @@ export function HomePage() {
         categories={categories
           ?.filter((c) => c?.isDashboardVisible !== false)
           .slice(0, 10)}
-        loading={false}
+        loading={homeLoading}
         title="Time For a Spring Refresh"
         subtitle="Curated collections for every style & home"
         className="text-[#3E4093] font-regular text-[18px] "
       />
 
-      <Suspense fallback={<div className="h-[400px] w-full" />}>
+      <LazySection minHeight="400px">
         <CollageSection cmsPages={cmsPages} />
+      </LazySection>
 
-      <ShoppingMadeEasyBanner
-        cmsPage={cmsPages.find(
-          (p) => p.slug === "promotion_banner" || p.slug === "promotion-banner"
-        )}
-      />
+      <LazySection minHeight="150px">
+        <ShoppingMadeEasyBanner
+          cmsPage={cmsPages.find(
+            (p) => p.slug === "promotion_banner" || p.slug === "promotion-banner"
+          )}
+        />
+      </LazySection>
 
+      <LazySection minHeight="450px">
         <FeaturedProductsSection
           title="Featured Products"
           actionLabel="View All Products"
@@ -166,39 +171,43 @@ export function HomePage() {
           products={featuredProducts}
           loading={loading}
         />
+      </LazySection>
 
-        <section className="my-10">
-          <ShowcaseSection
-            title="New Arrivals"
-            subtitle="Newly added products with trend-driven rankings"
-            headerbgColor="bg-white"
-            bodybgColor="bg-white"
-            gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-9 xl:grid-cols-3"
-            items={newArrivalItems.length ? newArrivalItems : undefined}
-            CardComponent={NewArrivalCard}
-            skeletonVariant="new-arrivals"
-            skeletonCount={3}
-            className="mt-8"
-            actionLabel="View Shop"
-            actionHref="/products"
-            loading={loading}
-          />
-        </section>
-      </Suspense>
+        <LazySection minHeight="500px">
+          <section className="my-10">
+            <ShowcaseSection
+              title="New Arrivals"
+              subtitle="Newly added products with trend-driven rankings"
+              headerbgColor="bg-white"
+              bodybgColor="bg-white"
+              gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-9 xl:grid-cols-3"
+              items={newArrivalItems.length ? newArrivalItems : undefined}
+              CardComponent={NewArrivalCard}
+              skeletonVariant="new-arrivals"
+              skeletonCount={3}
+              className="mt-8"
+              actionLabel="View Shop"
+              actionHref="/products"
+              loading={loading}
+            />
+          </section>
+        </LazySection>
 
-      <Suspense fallback={<div className="h-[200px] w-full" />}>
-        <MothersDaySwiper data={mothersDayData} />
+        <LazySection minHeight="380px">
+          <MothersDaySwiper data={mothersDayData} />
+        </LazySection>
 
-        <div className="mt-16">
-          <HomeProductsForYouSection
-            title="Explore Our Collection"
-            description="Handpicked products loved by thousands of shoppers"
-            actionLabel="Browse All Products"
-            limit={10}
-            fallbackProducts={homeProducts}
-          />
-        </div>
-      </Suspense>
+        <LazySection minHeight="400px">
+          <div className="mt-16">
+            <HomeProductsForYouSection
+              title="Explore Our Collection"
+              description="Handpicked products loved by thousands of shoppers"
+              actionLabel="Browse All Products"
+              limit={10}
+              fallbackProducts={homeProducts}
+            />
+          </div>
+        </LazySection>
     </>
   );
 }

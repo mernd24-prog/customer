@@ -16,6 +16,8 @@ export default function TopDealCard({
           <img
             src={image}
             alt={title}
+            width="292"
+            height="310"
             className="aspect-[292/310] w-full object-cover transition-all duration-300 ease-in-out hover:scale-105"
           />
         </div>

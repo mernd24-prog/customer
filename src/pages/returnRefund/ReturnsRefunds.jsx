@@ -110,7 +110,7 @@ const buildTrackingSteps = (ret) => {
       title,
       description,
       time,
-      completed: !isLast,
+      completed: true,
       active: isLast,
     };
   });

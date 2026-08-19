@@ -70,7 +70,7 @@ export function getShowMoreText(value, options = {}) {
     isTruncated,
   };
 }
-  
+
 export function ShowMoreText({
   text,
   mode = "characters",
@@ -114,7 +114,11 @@ export function ShowMoreText({
 
       const originalText = showMore.text;
 
+      const currentText = element.textContent;
+      element.textContent = originalText;
       const rect = element.getBoundingClientRect();
+      element.textContent = currentText;
+
       const availableWidth = rect.width;
 
       if (availableWidth === 0) return;
