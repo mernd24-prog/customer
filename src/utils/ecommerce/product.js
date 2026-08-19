@@ -46,6 +46,22 @@ export function getProductId(product) {
   return "";
 }
 
+export function getProductListFromResponse(result) {
+  const data = result?.data ?? result;
+  if (Array.isArray(data)) return data;
+  if (!data || typeof data !== "object") return [];
+
+  return (
+    [
+      data.products,
+      data.items,
+      data.results,
+      data.hits,
+      data.list,
+    ].find(Array.isArray) || []
+  );
+}
+
 export function getProductTitle(product, fallback = "Untitled product") {
   const baseTitle = product?.title || product?.name || product?.productName || fallback;
   const variantTitle = product?.selectedVariant?.title;

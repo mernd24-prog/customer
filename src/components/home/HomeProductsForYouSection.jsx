@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import SkeletonLoader from "../ui/skeleton/SkeletonLoader";
 import { ProductCard } from "../ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
-import { getProductId } from "../../utils/ecommerce";
+import { getProductId, getProductListFromResponse } from "../../utils/ecommerce";
 import SectionContainer from "../ui/SectionContainer";
 
 export default function HomeProductsForYouSection({
@@ -16,6 +16,7 @@ export default function HomeProductsForYouSection({
   const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
   const recommendationList = useSelector((s) => s.recommendation.list);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
+  const productList = useSelector((s) => s.product.list);
 
   const loading = useSelector(
     (s) =>
@@ -27,13 +28,32 @@ export default function HomeProductsForYouSection({
     ? recommendationList
     : [];
   const trending = Array.isArray(trendingList) ? trendingList : [];
+  const reduxProducts = Array.isArray(productList) ? productList : [];
+
+  useEffect(() => {
+    if (hasFetchedRef.current) {
+      setLocalLoading(false);
+      return;
+    }
+    hasFetchedRef.current = true;
+    setLocalLoading(true);
+    dispatch(fetchProducts({ limit, page: 1, sort: "newest" }))
+      .unwrap()
+      .then((result) => {
+        setLocalProducts(getProductListFromResponse(result));
+      })
+      .catch(() => {})
+      .finally(() => setLocalLoading(false));
+  }, [dispatch, limit]);
 
   const products = (
-    recommendations.length
-      ? recommendations
-      : trending.length
-        ? trending
-        : fallbackProducts
+    localProducts.length
+      ? localProducts
+      : reduxProducts.length
+        ? reduxProducts
+        : trending.length
+          ? trending
+          : recommendations
   ).slice(0, limit);
 
   return (

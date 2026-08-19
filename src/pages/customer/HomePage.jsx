@@ -21,6 +21,7 @@ const CollageSection = React.lazy(() => import("../../components/home/CollageSec
 const ShowcaseSection = React.lazy(() => import("../../components/home/ShowcaseSection"));
 
 import { toStandardProductCard as toNewArrivalProduct } from "../../utils/productUtils";
+import { getProductListFromResponse } from "../../utils/ecommerce";
 
 const buildNewArrivalItems = (products) => {
   if (!products.length) return [];
@@ -97,25 +98,22 @@ export function HomePage() {
     if (tokenStorage.getAccessToken()) {
       dispatch(fetchRecommendations({ limit: 10 })).catch(() => {});
     }
-    
-    dispatch(fetchProducts({ limit: 18, page: 1, sort: "newest" }))
-      .unwrap()
-      .then((result) => {
-        const data = result?.data || {};
-        const list =
-          data.hits ||
-          data.products ||
-          data.results ||
-          data.items ||
-          data.list ||
-          (Array.isArray(data) ? data : []);
-        if (list.length > 0) {
+    if (!hasFetchedRef.current || homeProducts.length === 0) {
+      hasFetchedRef.current = true;
+      setHomeLoading(true);
+      dispatch(fetchProducts({ limit: 18, page: 1, sort: "newest" }))
+        .unwrap()
+        .then((result) => {
+          const data = result?.data || {};
+          const list = getProductListFromResponse(data);
           setHomeProducts(list);
-        }
-      })
-      .catch(() => {})
-      .finally(() => setHomeLoading(false));
-
+        })
+        .catch(() => {})
+        .finally(() => setHomeLoading(false));
+    } else {
+      setHomeLoading(false);
+    }
+    dispatch(fetchCmsPages({ limit: 100 })).catch(() => {});
   }, [dispatch]);
 
   // Featured: top-rated from newest products; fall back to trending
