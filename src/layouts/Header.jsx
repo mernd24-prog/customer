@@ -348,9 +348,9 @@ export const Navbar = ({ icons: propIcons }) => {
             >
               <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
-              {cartItemsLength > 0 && (
+              {cartItemCount > 0 && (
                 <span className="absolute  -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1  text-[12px] font-bold  text-white shadow-sm">
-                  {cartItemsLength > 99 ? "99+" : cartItemsLength}
+                  {cartItemCount > 99 ? "99+" : cartItemCount}
                 </span>
               )}
             </HeaderIconButton>

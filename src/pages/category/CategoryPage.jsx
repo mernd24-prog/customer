@@ -1,5 +1,8 @@
 import Seo from "../../components/ui/Seo";
-import { CollectionToolbar, ProductResultsLayout } from "../../components/ecommerce";
+import {
+  CollectionToolbar,
+  ProductResultsLayout,
+} from "../../components/ecommerce";
 import { isNotFoundApiError } from "../../utils/apiErrors";
 import { SORT_OPTIONS } from "../../constants/data.constant";
 import useCategory from "./hooks/useCategory";
@@ -57,15 +60,21 @@ export default function CategoryPage() {
       )}
 
       {/* ── Product listing with sidebar filters ────────────────────────── */}
-      <div className="py-5 sm:py-7">
+      <div className="">
         {showSubCategoryStrip && (
-          <SubCategoryStrip categories={visibleSubCategories} loading={isInitialLoading} />
+          <SubCategoryStrip
+            categories={visibleSubCategories}
+            loading={isInitialLoading}
+          />
         )}
 
         <CollectionToolbar
-          countText={firstLoadDone ? `${(pageInfo.total || products.length).toLocaleString()} products` : ""}
           sortValue={searchParams.get("sort") || ""}
-          sortOptions={firstLoadDone && (pageInfo.total || products.length) <= 1 ? [] : SORT_OPTIONS}
+          sortOptions={
+            firstLoadDone && (pageInfo.total || products.length) <= 1
+              ? []
+              : SORT_OPTIONS
+          }
           onSortChange={(value) => updateParam("sort", value)}
           onOpenFilters={() => setSidebarOpen(true)}
         />

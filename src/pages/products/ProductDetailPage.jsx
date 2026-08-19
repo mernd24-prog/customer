@@ -14,10 +14,8 @@ import "swiper/css/free-mode";
 import "swiper/css/zoom";
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
-import { ProductCard } from "../../components/ecommerce";
 import { fetchProductById } from "../../features/product/productSlice";
 import { fetchProductWarranty } from "../../features/warranty/warrantySlice";
-import { checkServiceability } from "../../features/delivery/deliverySlice";
 import { fetchDynamicPrice } from "../../features/dynamicPricing/dynamicPricingSlice";
 import {
   fetchRecommendations,
@@ -66,7 +64,10 @@ import VariantSelector from "./components/VariantSelector";
 import ProductActionButtons from "./components/ProductActionButtons";
 import ProductInfoSection from "./sections/ProductInfoSection";
 import ProductRecommendationSection from "./sections/ProductRecommendationSection";
-import { getActiveDealPrice, getActiveDealOriginalPrice } from "../../utils/pages/productUtils";
+import {
+  getActiveDealPrice,
+  getActiveDealOriginalPrice,
+} from "../../utils/pages/productUtils";
 export default function ProductDetailPage() {
   const { productId } = useParams();
   const dispatch = useDispatch();

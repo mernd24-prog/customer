@@ -13,7 +13,7 @@ export default function CollectionToolbar({
   onOpenFilters,
   className = "",
 }) {
-  const shellClassName = `mb-4 flex flex-col-reverse sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 ${className}`;
+  const shellClassName = ` flex flex-col-reverse sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 ${className}`;
 
   const pageSizeOptions = pageSizes.map((size) => ({
     value: size,
@@ -32,9 +32,9 @@ export default function CollectionToolbar({
         {/* Sort Trigger */}
         {!!sortOptions.length && (
           <CustomDropdown
-            className="flex-1 sm:flex-none w-full  sm:w-[180px]"
-            buttonClassName="min-h-10 w-full sm:w-[180px] rounded-[var(--customer-radius-sm)] border-[#1B1D604D] font-medium text-[#03014D] shadow-sm"
-            optionsClassName="w-[200px] sm:w-[190px] rounded-lg  xl:rounded-2xl"
+            className="flex-1 sm:flex-none w-full sm:w-[180px]"
+            buttonClassName="h-10 sm:h-11 w-full sm:w-[180px] rounded-lg border border-[#1B1D604D] text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs"
+            optionsClassName="w-[200px] sm:w-[190px] rounded-lg xl:rounded-2xl"
             options={sortOptions}
             value={sortValue}
             onChange={onSortChange}
@@ -45,8 +45,8 @@ export default function CollectionToolbar({
         {/* Page Size Trigger */}
         {!!pageSizes.length && (
           <CustomDropdown
-            className="flex-1  sm:flex-none w-full sm:w-[180px]"
-            buttonClassName="min-h-10 w-full sm:w-[180px] rounded-[var(--customer-radius-sm)] border-[#1B1D604D] font-medium text-[#03014D] shadow-sm"
+            className="flex-1 sm:flex-none w-full sm:w-[180px]"
+            buttonClassName="h-10 sm:h-11 w-full sm:w-[180px] rounded-lg border border-[#1B1D604D] text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs"
             optionsClassName="w-[200px] sm:w-[240px] rounded-2xl"
             options={pageSizeOptions}
             value={pageSizeValue}
@@ -63,10 +63,10 @@ export default function CollectionToolbar({
           <button
             type="button"
             onClick={onOpenFilters}
-            className="flex flex-1 sm:flex-none h-10 sm:h-11 justify-center items-center gap-1.5 sm:gap-2 rounded-xl border border-[#1B1D604D] bg-white px-3 sm:px-4 text-[13px] sm:text-[14px] font-medium text-[#03014D] shadow-sm transition hover:border-[#CE9F2D] hover:bg-[#F8F3E7] lg:hidden focus:outline-none"
+            className="flex flex-1 sm:flex-none h-10 sm:h-11 justify-start items-center gap-1.5 sm:gap-2 rounded-lg border border-[#1B1D604D] bg-white px-3 sm:px-4 text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs transition hover:border-[#CE9F2D] hover:bg-[#F8F3E7] lg:hidden focus:outline-none"
           >
-            <SlidersHorizontal size={16} className="hidden sm:block" />
-            Filters
+            <SlidersHorizontal size={16} className="shrink-0 text-[#1B1D60]" />
+            <span>Filters</span>
           </button>
         )}
       </div>
