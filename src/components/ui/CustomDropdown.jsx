@@ -99,7 +99,7 @@ export default function CustomDropdown({
           className={cn(
             "absolute left-0 top-[calc(100%+6px)]",
             "z-30 w-full overflow-hidden",
-            "rounded-xl",
+            "rounded-lg",
             "border border-[#E7D9B8]",
             "bg-white",
 

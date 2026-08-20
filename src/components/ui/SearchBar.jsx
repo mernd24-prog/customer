@@ -536,7 +536,7 @@ const SearchBar = ({
   return (
     <div
       ref={searchBarRef}
-      className={`group relative w-full max-w-[720px] ${className}`}
+      className={`group relative w-full lg:max-w-[720px] ${className}`}
     >
       <div className="rounded-full border border-[#1B1D604D] bg-white shadow-sm outline-0 transition-all duration-200">
         <div className="flex h-[42px] w-full min-w-0 items-center overflow-visible rounded-full border-none bg-white pl-0 pr-0 outline-none sm:h-[46px]">

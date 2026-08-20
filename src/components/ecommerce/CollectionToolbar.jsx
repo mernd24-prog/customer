@@ -34,7 +34,7 @@ export default function CollectionToolbar({
           <CustomDropdown
             className="flex-1 sm:flex-none w-full sm:w-[180px]"
             buttonClassName="h-10 sm:h-11 w-full sm:w-[180px] rounded-lg border border-[#1B1D604D] text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs"
-            optionsClassName="w-[200px] sm:w-[190px] rounded-lg xl:rounded-2xl"
+            optionsClassName="w-[200px] sm:w-[190px]"
             options={sortOptions}
             value={sortValue}
             onChange={onSortChange}
@@ -47,7 +47,7 @@ export default function CollectionToolbar({
           <CustomDropdown
             className="flex-1 sm:flex-none w-full sm:w-[180px]"
             buttonClassName="h-10 sm:h-11 w-full sm:w-[180px] rounded-lg border border-[#1B1D604D] text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs"
-            optionsClassName="w-[200px] sm:w-[240px] rounded-2xl"
+            optionsClassName="w-[200px] sm:w-[240px]"
             options={pageSizeOptions}
             value={pageSizeValue}
             onChange={onPageSizeChange}

@@ -65,7 +65,7 @@ const buildTrackingSteps = (ret) => {
 
   const recordedSteps = uniqueTimeline.map((t, idx) => {
     const status = t.status || "";
-    let title = String(status)
+    let title = STATUS_FILTERS.find(f => f.value === status)?.label || String(status)
       .replace(/_/g, " ")
       .replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -327,7 +327,7 @@ function ReturnsRefundsPage() {
                 const quantity = item.quantity || item.requestedQuantity || 1;
                 const seller = item.sellerName || "Sam Global Seller";
                 const price = item.lineTotal || item.unitPrice || 0;
-                const status = ret.status?.replace(/_/g, " ");
+                const status = STATUS_FILTERS.find(f => f.value === ret.status)?.label || ret.status?.replace(/_/g, " ");
                 const requestedOn = new Date(
                   ret.requestedAt || ret.createdAt || Date.now(),
                 ).toLocaleDateString("en-IN", {
