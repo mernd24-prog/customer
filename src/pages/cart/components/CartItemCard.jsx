@@ -32,7 +32,10 @@ export default function CartItemCard({
   isWishlisted = false,
 }) {
   const [isSaving, setIsSaving] = useState(false);
-  const productPath = item?.productId ? `/products/${item.productId}` : "";
+  const rawProductId = item?.productId
+    ? String(item.productId).split(":")[0]
+    : "";
+  const productPath = rawProductId ? `/products/${rawProductId}` : "";
   const price = Number(item?.price || 0);
   const oldPrice = Number(item?.oldPrice || 0);
   const stock =

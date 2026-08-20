@@ -74,7 +74,8 @@ import {
   getActiveDealOriginalPrice,
 } from "../../utils/pages/productUtils";
 export default function ProductDetailPage() {
-  const { productId } = useParams();
+  const { productId: rawParamId } = useParams();
+  const productId = rawParamId ? String(rawParamId).split(":")[0] : "";
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

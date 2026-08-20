@@ -48,7 +48,7 @@ export default function CustomerToast({
   tone,
 }) {
   const baseConfig = TYPE_CONFIG[type] || TYPE_CONFIG.info;
-  const ToneIcon = TONE_ICON_MAP[tone];
+  const ToneIcon = type === "success" ? null : TONE_ICON_MAP[tone];
   const Icon = ToneIcon || baseConfig.Icon;
 
   return (

@@ -58,8 +58,9 @@
 }
 
 .Toastify__toast--success .customer-toast-progress,
+.Toastify__toast--success .Toastify__progress-bar,
 .Toastify__progress-bar--success {
-  background: linear-gradient(90deg, #0f2752 0%, #1d4ed8 100%) !important;
+  background: linear-gradient(90deg, #15803d 0%, #16a34a 100%) !important;
 }
 
 .Toastify__toast--error .customer-toast-progress,
@@ -119,22 +120,12 @@
   box-sizing: border-box !important;
 }
 
-/* Bottom-Right Gold Corner Flourish via Pseudo-Element */
+/* Remove Bottom-Right Corner Lines */
 .customer-toast-card::after {
-  content: "" !important;
-  position: absolute !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 65px !important;
-  height: 65px !important;
-  pointer-events: none !important;
-  background-image: url("data:image/svg+xml,%3Csvg width='65' height='65' viewBox='0 0 65 65' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M65 20C50 20 40 30 40 65' stroke='%23d4af37' stroke-width='1.5' stroke-opacity='0.4'/%3E%3Cpath d='M65 35C55 35 48 42 48 65' stroke='%23d4af37' stroke-width='1.2' stroke-opacity='0.3'/%3E%3Cpath d='M65 10C42 10 32 25 32 65' stroke='%23d4af37' stroke-width='1.8' stroke-opacity='0.45'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: bottom right !important;
-  z-index: 1 !important;
+  display: none !important;
 }
 
-/* Icon Container - Navy Badge with Gold Ring */
+/* Icon Container - Navy Badge */
 .customer-toast-card__icon-wrap {
   flex-shrink: 0 !important;
   margin-left: 0 !important;
@@ -153,14 +144,20 @@
   box-sizing: border-box !important;
 }
 
+.customer-toast-card--success .customer-toast-card__icon {
+  background: #16a34a !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
 .customer-toast-card--error .customer-toast-card__icon {
-  background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%) !important;
+  background: #e5383b !important;
   color: #ffffff !important;
   box-shadow: none !important;
 }
 
 .customer-toast-card--warning .customer-toast-card__icon {
-  background: linear-gradient(135deg, #78350f 0%, #451a03 100%) !important;
+  background: #f59e0b !important;
   color: #ffffff !important;
   box-shadow: none !important;
 }

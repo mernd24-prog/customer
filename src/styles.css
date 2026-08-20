@@ -3,26 +3,32 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'DM Sans';
+  font-family: "DM Sans";
   font-style: normal;
   font-weight: 100 1000;
   font-display: swap;
-  src: url(/fonts/dm-sans-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url(/fonts/dm-sans-latin.woff2) format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: 'DM Sans';
+  font-family: "DM Sans";
   font-style: italic;
   font-weight: 100 1000;
   font-display: swap;
-  src: url(/fonts/dm-sans-latin-italic.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url(/fonts/dm-sans-latin-italic.woff2) format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: 'DM Sans Fallback';
-  src: local('Arial');
+  font-family: "DM Sans Fallback";
+  src: local("Arial");
   ascent-override: 105%;
   descent-override: 28%;
   line-gap-override: 0%;
@@ -146,8 +152,6 @@
   }
 }
 
-
-
 .swiper-slide img {
   backface-visibility: hidden;
   transform-style: preserve-3d;
@@ -186,10 +190,6 @@
   transform: scaleX(1);
   background: #3e4093;
 }
-
-
-
-
 
 :root {
   color-scheme: light;
@@ -239,8 +239,6 @@
 
   color: #000000;
 }
-
-
 
 * {
   box-sizing: border-box;
@@ -312,8 +310,6 @@ textarea {
   outline-offset: 2px;
 }
 
-
-
 .customer-shell {
   min-height: 100vh;
   background: var(--customer-surface);
@@ -381,8 +377,6 @@ textarea {
     background-color 180ms ease;
 }
 
-
-
 .customer-input::placeholder {
   color: var(--customer-subtle);
 }
@@ -397,8 +391,6 @@ main {
   margin: 0 auto;
   padding: 0 0 56px;
 }
-
-
 
 .brand {
   font-weight: 800;
@@ -432,8 +424,6 @@ nav a:hover {
   color: var(--customer-navy);
 }
 
-
-
 .section-head {
   display: flex;
   justify-content: space-between;
@@ -442,15 +432,11 @@ nav a:hover {
   flex-wrap: wrap;
 }
 
-
-
 .state-box {
   background: var(--customer-surface);
   border: 1px solid var(--customer-border);
   border-radius: 8px;
 }
-
-
 
 /* Product images swiper */
 .product-images-swiper {
@@ -590,8 +576,6 @@ nav a:hover {
   color: var(--customer-warning);
   font-weight: 700;
 }
-
-
 
 .fade-in-up {
   opacity: 0;

@@ -56,7 +56,7 @@ export default function MothersDayCarousel({
                   {card.imageSmall && card.image && (
                     <>
                       <source
-                        srcSet={`${card.imageSmall.replace('.webp', '.avif')} 371w`}
+                        srcSet={`${card.imageSmall.replace(".webp", ".avif")} 371w`}
                         sizes="100vw"
                         type="image/avif"
                       />

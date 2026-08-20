@@ -444,7 +444,9 @@ export default function ProductCard({
           <PillButton
             disabled={!isInStock}
             onClick={handleAddToCart}
-            rightIcon={<ShoppingCart size={18} strokeWidth={2.4} className="shrink-0" />}
+            rightIcon={
+              <ShoppingCart size={18} strokeWidth={2.4} className="shrink-0" />
+            }
             className={cn(
               "w-full flex-1 gap-1.5 sm:gap-2 text-[13px] sm:text-[14px] md:text-[15px] font-semibold focus-visible:outline-[#1B1D60] whitespace-nowrap px-3 sm:px-4",
               !isInStock && "cursor-not-allowed opacity-60",
