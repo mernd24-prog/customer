@@ -233,6 +233,7 @@ export default function OrderDetail({ orderId, track }) {
                       order?.relations?.sellerFulfillmentGroups || []
                     }
                     returns={visibleReturns}
+                    cancellations={visibleCancellations}
                     currency={currency}
                     getItemImage={getItemImage}
                     getProductTitle={getProductTitle}
@@ -507,7 +508,7 @@ export default function OrderDetail({ orderId, track }) {
               Additional details
             </span>
             <textarea
-              className={`min-h-[96px] w-full resize-none rounded-lg border p-3 text-sm font-medium text-[#1B1D60] outline-none transition placeholder:text-[#8C8E9E]  ${
+              className={`min-h-[96px] w-full resize-none rounded-lg border p-3 text-sm font-medium text-[#1B1D60] focus:outline-none transition placeholder:text-[#8C8E9E]  ${
                 cancelReasonError ? "border-red-600" : "border-[#DCDDE5]"
               }`}
               value={cancelReason}

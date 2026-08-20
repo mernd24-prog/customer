@@ -125,6 +125,9 @@ export const COMPACT_STATUS_BADGE = {
   failed_delivery: "bg-[#D93636] text-white",
   on_hold: "bg-[#D7A522] text-white",
   cancelled: "bg-[#D93636] text-white",
+  cancellation_requested: "bg-[#D7A522] text-white",
+  cancellation_approved: "bg-[#2F64E5] text-white",
+  cancellation_rejected: "bg-[#D93636] text-white",
 };
 
 export const items = [{ icon: Headphones, title: "Contact Support" }];

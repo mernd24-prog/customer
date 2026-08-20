@@ -158,6 +158,8 @@ export function useOrderDetail({ orderId, track }) {
       selectedOrderItem,
       getProgressStatus(order),
       shipments,
+      order?.relations?.sellerFulfillmentGroups || [],
+      cancellations,
     )
     : null;
   const selectedItemAmount = selectedOrderItem

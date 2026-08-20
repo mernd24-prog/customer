@@ -351,6 +351,9 @@ export const STATUS_LABELS = {
   partially_refunded: "Partially Refunded",
   cancelled: "Cancelled",
   return_completed: "Return Completed",
+  cancellation_requested: "Cancellation Requested",
+  cancellation_approved: "Cancellation Approved",
+  cancellation_rejected: "Cancellation Rejected",
 };
 
 export const humanize = (value, fallback = "N/A") => {
@@ -361,8 +364,6 @@ export const humanize = (value, fallback = "N/A") => {
     .replace(/_/g, " ")
     .replace(/\b\w/g, (l) => l.toUpperCase());
 };
-
-
 export function getOrderItemColor(item) {
   const found = getItemAttributes(item).find(([key]) =>
     String(key).toLowerCase().includes("color"),
@@ -478,12 +479,23 @@ export const findShipmentForOrderItem = (shipments = [], item = {}) => {
   });
 };
 
+export const getCancellationForItem = (cancellations = [], item = {}) => {
+  if (!Array.isArray(cancellations) || !item) return null;
+  return cancellations.find((req) =>
+    (req.items || []).some((cancelItem) =>
+      returnItemMatchesOrderItem(cancelItem, item),
+    ),
+  );
+};
+
 export const resolveOrderItemDisplayStatus = (
   item = {},
   fallbackStatus = "",
   shipments = [],
   fulfillmentGroups = [],
+  cancellations = [],
 ) => {
+  const cancellation = getCancellationForItem(cancellations, item);
   const shipment = findShipmentForOrderItem(shipments, item);
   const payoutStatus = String(
     item.payout_status || item.payoutStatus || "",
@@ -509,6 +521,9 @@ export const resolveOrderItemDisplayStatus = (
   }
 
   return (
+    cancellation?.status === "requested" ? "cancellation_requested" :
+    cancellation?.status === "approved" ? "cancellation_approved" :
+    cancellation?.status === "rejected" ? "cancellation_rejected" :
     item.cancellation_status ||
     item.cancellationStatus ||
     item.return_status ||

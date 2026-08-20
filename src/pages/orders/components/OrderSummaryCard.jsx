@@ -42,7 +42,7 @@ export function OrderSummaryCard({ order }) {
     });
     return [...grouped.values()].map((sellerPackage) => {
       const itemStatuses = sellerPackage.items.map((item) =>
-        resolveOrderItemDisplayStatus(item, sellerPackage.status || status, shipments),
+        resolveOrderItemDisplayStatus(item, sellerPackage.status || status, shipments, fulfillmentGroups, order?.relations?.cancellations || order?.cancellations || []),
       );
       const uniqueStatuses = [...new Set(itemStatuses.filter(Boolean))];
       return {
@@ -54,7 +54,7 @@ export function OrderSummaryCard({ order }) {
       };
     });
   })();
-  const orderItemStatuses = orderItems.map((item) => resolveOrderItemDisplayStatus(item, status, shipments));
+  const orderItemStatuses = orderItems.map((item) => resolveOrderItemDisplayStatus(item, status, shipments, fulfillmentGroups, order?.relations?.cancellations || order?.cancellations || []));
   const previewItems = orderItems.slice(0, 4);
   const currency = getOrderCurrency(order);
   const amount = getCustomerOrderAmount(order);
@@ -185,7 +185,7 @@ export function OrderSummaryCard({ order }) {
               </div>
               <div className="divide-y divide-[#F1E8D5]">
                 {sellerPackage.items.map((packageItem, index) => {
-                  const itemStatus = resolveOrderItemDisplayStatus(packageItem, sellerPackage.status, shipments);
+                  const itemStatus = resolveOrderItemDisplayStatus(packageItem, sellerPackage.status, shipments, fulfillmentGroups, order?.relations?.cancellations || order?.cancellations || []);
                   const shipment = findShipmentForOrderItem(shipments, packageItem);
                   const trackingNumber = shipment?.tracking_number || shipment?.trackingNumber || shipment?.awb_number || shipment?.awbNumber;
                   const courierName = shipment?.courier_name || shipment?.courierName || shipment?.provider;

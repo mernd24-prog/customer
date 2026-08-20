@@ -21,7 +21,8 @@ import {
   getItemReturnPolicy,
   getReturnedQuantityForItem,
   getReturnableQuantityForItem,
-  getItemQuantity
+  getItemQuantity,
+  getCancellationForItem
 } from "../hooks/useOrderItems";
 function OrderItemsSection({
   items = [],
@@ -30,6 +31,7 @@ function OrderItemsSection({
   shipments = [],
   sellerFulfillmentGroups = [],
   returns = [],
+  cancellations = [],
   ...itemProps
 }) {
   const dispatch = useDispatch();
@@ -72,11 +74,13 @@ function OrderItemsSection({
         );
       });
       const returnRequest = resolveReturnForItem(returns, item);
+      const cancellationRequest = getCancellationForItem(cancellations, item);
       const status = resolveItemStatus({
         item,
         shipment,
         fulfillment,
         returnRequest,
+        cancellationRequest,
         orderStatus,
       });
       result.set(itemId, {
@@ -100,7 +104,7 @@ function OrderItemsSection({
       });
     });
     return result;
-  }, [items, orderStatus, returns, sellerFulfillmentGroups, shipments]);
+  }, [items, orderStatus, returns, cancellations, sellerFulfillmentGroups, shipments]);
 
   const reviewableItems = useMemo(
     () =>
