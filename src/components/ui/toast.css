@@ -1,210 +1,256 @@
+/* Container */
 .Toastify__toast-container {
-  width: min(360px, calc(100vw - 28px));
-  padding: 0;
-  z-index: 9999;
+  width: min(440px, calc(100vw - 28px)) !important;
+  padding: 0 !important;
+  z-index: 99999 !important;
 }
 
 .Toastify__toast-container--bottom-center {
-  bottom: 18px;
+  bottom: 24px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
 }
 
-.customer-toast {
-  min-height: 72px;
-  margin-bottom: 10px;
-  padding: 0;
-  border: 1px solid rgba(17, 24, 39, 0.08);
-  border-radius: 14px;
-  background: linear-gradient(135deg, #ffffff 0%, #fffaf1 100%);
-  box-shadow: 0 14px 28px rgba(11, 17, 46, 0.14);
-  color: var(--customer-ink);
-  display: flex;
-  overflow: hidden;
+/* Base Toast Card */
+.Toastify__toast.customer-toast {
+  min-height: auto !important;
+  margin-bottom: 10px !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #fffdf7 0%, #fffaf0 100%) !important;
+  border: 1px solid #e6cb85 !important;
+  box-shadow:
+    0 10px 28px rgba(17, 24, 39, 0.08),
+    0 2px 8px rgba(212, 175, 55, 0.12) !important;
+  color: #0f172a !important;
+  display: flex !important;
+  overflow: hidden !important;
+  font-family: inherit !important;
+  position: relative !important;
+  width: 100% !important;
 }
 
 .customer-toast-body {
-  padding: 0;
-  width: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
 }
 
-.customer-toast-progress {
-  inset-inline: 14px;
-  bottom: 6px;
-  width: calc(100% - 28px);
-  height: 3px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #f2b43b, #d98b00);
-}
-
+/* Hide default Toastify icon only */
 .Toastify__toast-icon {
-  display: none;
+  display: none !important;
 }
 
+/* Progress Bar - Blue Auto-filling Line */
+.Toastify__progress-bar,
+.Toastify__progress-bar.customer-toast-progress,
+.customer-toast-progress {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: absolute !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  height: 3.5px !important;
+  border-radius: 0 0 12px 12px !important;
+  background: linear-gradient(90deg, #0f2752 0%, #1d4ed8 100%) !important;
+  z-index: 5 !important;
+}
+
+.Toastify__toast--success .customer-toast-progress,
+.Toastify__progress-bar--success {
+  background: linear-gradient(90deg, #0f2752 0%, #1d4ed8 100%) !important;
+}
+
+.Toastify__toast--error .customer-toast-progress,
+.Toastify__progress-bar--error {
+  background: #ef4444 !important;
+}
+
+.Toastify__toast--warning .customer-toast-progress,
+.Toastify__progress-bar--warning {
+  background: #f59e0b !important;
+}
+
+.Toastify__toast--info .customer-toast-progress,
+.Toastify__progress-bar--info {
+  background: linear-gradient(90deg, #0f2752 0%, #1d4ed8 100%) !important;
+}
+
+/* Close Button */
 .Toastify__close-button {
-  position: absolute;
-  right: 12px;
-  top: 12px;
-  color: #67708f;
-  opacity: 1;
-  font-size: 0.8rem;
-  transition:
-    opacity 0.2s ease,
-    color 0.2s ease;
+  position: absolute !important;
+  right: 12px !important;
+  top: 12px !important;
+  color: #172554 !important;
+  opacity: 0.75 !important;
+  padding: 4px !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  z-index: 10 !important;
 }
 
 .Toastify__close-button:hover {
-  color: var(--customer-ink);
-  opacity: 1;
+  background: rgba(212, 175, 55, 0.15) !important;
+  color: #0f172a !important;
+  opacity: 1 !important;
 }
 
-.Toastify__toast--success .customer-toast-progress {
-  background: linear-gradient(90deg, #16a34a, #22c55e);
+.Toastify__close-button > svg {
+  width: 13px !important;
+  height: 13px !important;
+  stroke-width: 2.2 !important;
 }
 
-.Toastify__toast--error .customer-toast-progress {
-  background: linear-gradient(90deg, #ef4444, #f97316);
-}
-
-.Toastify__toast--warning .customer-toast-progress {
-  background: linear-gradient(90deg, #f59e0b, #f97316);
-}
-
-.Toastify__toast--info .customer-toast-progress {
-  background: linear-gradient(90deg, #2563eb, #38bdf8);
-}
-
+/* Card Content Layout */
 .customer-toast-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  min-height: 72px;
-  padding: 12px 42px 14px 14px;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 12px 38px 12px 14px !important;
+  width: 100% !important;
+  position: relative !important;
+  box-sizing: border-box !important;
 }
 
+/* Bottom-Right Gold Corner Flourish via Pseudo-Element */
+.customer-toast-card::after {
+  content: "" !important;
+  position: absolute !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 65px !important;
+  height: 65px !important;
+  pointer-events: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg width='65' height='65' viewBox='0 0 65 65' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M65 20C50 20 40 30 40 65' stroke='%23d4af37' stroke-width='1.5' stroke-opacity='0.4'/%3E%3Cpath d='M65 35C55 35 48 42 48 65' stroke='%23d4af37' stroke-width='1.2' stroke-opacity='0.3'/%3E%3Cpath d='M65 10C42 10 32 25 32 65' stroke='%23d4af37' stroke-width='1.8' stroke-opacity='0.45'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: bottom right !important;
+  z-index: 1 !important;
+}
+
+/* Icon Container - Navy Badge with Gold Ring */
 .customer-toast-card__icon-wrap {
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
+  margin-left: 0 !important;
 }
 
 .customer-toast-card__icon {
-  display: inline-flex;
-  height: 32px;
-  width: 32px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  color: #ffffff;
-  box-shadow: inset 0 -2px 6px rgba(255, 255, 255, 0.18);
-}
-
-.customer-toast-card__content {
-  min-width: 0;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.customer-toast-card__title {
-  margin: 0;
-  color: #111827;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.customer-toast-card__message {
-  margin: 4px 0 0;
-  color: #4b5563;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.35;
-}
-
-.customer-toast-card__action {
-  margin-top: 8px;
-  align-self: flex-start;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.customer-toast-card--success .customer-toast-card__icon {
-  background: linear-gradient(135deg, #16a34a, #15803d);
+  display: inline-flex !important;
+  height: 34px !important;
+  width: 34px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #172554 0%, #0f172a 100%) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
 }
 
 .customer-toast-card--error .customer-toast-card__icon {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
 }
 
 .customer-toast-card--warning .customer-toast-card__icon {
-  background: linear-gradient(135deg, #f59e0b, #ea580c);
+  background: linear-gradient(135deg, #78350f 0%, #451a03 100%) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
 }
 
 .customer-toast-card--info .customer-toast-card__icon {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #172554 0%, #0f172a 100%) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
 }
 
-.customer-toast-card--success .customer-toast-card__action {
-  color: #15803d;
+/* Typography */
+.customer-toast-card__content {
+  min-width: 0 !important;
+  display: flex !important;
+  flex: 1 !important;
+  flex-direction: column !important;
+  z-index: 2 !important;
 }
 
-.customer-toast-card--error .customer-toast-card__action {
-  color: #dc2626;
+.customer-toast-card__title {
+  margin: 0 !important;
+  color: #172554 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.01em !important;
 }
 
-.customer-toast-card--warning .customer-toast-card__action {
-  color: #ea580c;
+.customer-toast-card__message {
+  margin: 2px 0 0 !important;
+  color: #334155 !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
 }
 
-.customer-toast-card--info .customer-toast-card__action {
-  color: #1d4ed8;
+.customer-toast-card__action {
+  margin-top: 6px !important;
+  align-self: flex-start !important;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #172554 !important;
+  cursor: pointer !important;
+  text-decoration: underline !important;
+  transition: color 0.15s ease !important;
 }
 
+/* Mobile Responsive Adjustments */
 @media (max-width: 480px) {
   .Toastify__toast-container {
-    width: calc(100vw - 20px);
+    width: min(330px, calc(100vw - 24px)) !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
   }
 
   .Toastify__toast-container--bottom-center {
-    bottom: 12px;
+    bottom: 16px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
   }
 
-  .customer-toast {
-    min-height: 68px;
-    margin-bottom: 8px;
-    border-radius: 12px;
+  .Toastify__toast.customer-toast {
+    width: 100% !important;
+    border-radius: 10px !important;
   }
 
   .customer-toast-card {
-    min-height: 68px;
-    gap: 9px;
-    padding: 11px 38px 13px 12px;
+    gap: 10px !important;
+    padding: 10px 32px 10px 14px !important;
   }
 
   .customer-toast-card__icon {
-    height: 30px;
-    width: 30px;
+    height: 28px !important;
+    width: 28px !important;
+  }
+
+  .customer-toast-card__icon svg {
+    width: 14px !important;
+    height: 14px !important;
   }
 
   .customer-toast-card__title {
-    font-size: 13px;
+    font-size: 13px !important;
   }
 
   .customer-toast-card__message {
-    font-size: 11px;
-  }
-
-  .Toastify__close-button {
-    right: 10px;
-    top: 10px;
-  }
-
-  .customer-toast-progress {
-    inset-inline: 12px;
-    width: calc(100% - 24px);
+    font-size: 11px !important;
   }
 }

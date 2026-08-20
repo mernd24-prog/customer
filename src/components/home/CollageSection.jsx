@@ -4,11 +4,11 @@ import CollageCard from "../ui/CollageCard";
 import { apiRequest } from "../../api/client";
 import { endpoints } from "../../api/endpoints";
 import { FALLBACK_COLLAGE_SECTIONS } from "../../constants/home.constant";
-import { 
-  toCollageSections, 
-  resolveVisibleSections, 
-  completeSection, 
-  hasImages 
+import {
+  toCollageSections,
+  resolveVisibleSections,
+  completeSection,
+  hasImages,
 } from "../../utils/collage";
 
 const loadCollageSections = () => {
@@ -43,9 +43,9 @@ export default function CollageSection({ cmsPages = [] }) {
       active = false;
     };
   }, []);
-  
+
   const sections = toCollageSections(cmsPages);
-  
+
   const visibleSections = apiFailed
     ? resolveVisibleSections(apiSections, sections, FALLBACK_COLLAGE_SECTIONS)
     : apiSections.filter(hasImages).map(completeSection).slice(0, 4);
@@ -59,7 +59,7 @@ export default function CollageSection({ cmsPages = [] }) {
           containerClass="grid grid-cols-1 gap-4 lg:gap-8 md:grid-cols-2 xl:grid-cols-4 h-full"
         />
       ) : (
-        <div className="grid grid-cols-1 gap-4 lg:gap-8 md:grid-cols-2 xl:grid-cols-4 h-full">
+        <div className="grid grid-cols-1 gap-4 lg:gap-8 md:grid-cols-2  2xl:grid-cols-4 h-full">
           {visibleSections.map((section, idx) => (
             <CollageCard key={idx} section={section} />
           ))}

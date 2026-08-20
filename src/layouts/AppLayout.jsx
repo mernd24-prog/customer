@@ -4,15 +4,21 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Header, CategoryBar } from "./Header";
 import React, { Suspense } from "react";
-const AddedToCartModal = React.lazy(() => import("../pages/cart/components/AddedToCartModal"));
-const GuestOtpAuthModal = React.lazy(() => import("../components/ui/overlay/GuestOtpAuthModal"));
-const ScrollTopButton = React.lazy(() => import("../components/ui/ScrollTopButton"));
+const AddedToCartModal = React.lazy(
+  () => import("../pages/cart/components/AddedToCartModal"),
+);
+const GuestOtpAuthModal = React.lazy(
+  () => import("../components/ui/overlay/GuestOtpAuthModal"),
+);
+const ScrollTopButton = React.lazy(
+  () => import("../components/ui/ScrollTopButton"),
+);
 import { closeAddedToCartModal } from "../features/cart/cartUiSlice";
 import { footerData } from "../data/footer";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
 
 const LazyFooter = React.lazy(() =>
-  import("./Footer").then((module) => ({ default: module.Footer }))
+  import("./Footer").then((module) => ({ default: module.Footer })),
 );
 
 import {
@@ -47,13 +53,9 @@ export default function AppLayout() {
 
   const [showGuestOtpModal, setShowGuestOtpModal] = useState(false);
 
-  const addedModalOpen = useSelector(
-    (state) => state.cartUi.addedModalOpen,
-  );
+  const addedModalOpen = useSelector((state) => state.cartUi.addedModalOpen);
 
-  const addedProduct = useSelector(
-    (state) => state.cartUi.addedProduct,
-  );
+  const addedProduct = useSelector((state) => state.cartUi.addedProduct);
 
   const cart = useSelector((state) => state.cart.current || {});
 
@@ -61,15 +63,12 @@ export default function AppLayout() {
     (state) => state.cart.current?.items ?? EMPTY_ITEMS,
   );
 
-  const currentUser = useSelector(
-    (state) => state.auth.current,
-  );
+  const currentUser = useSelector((state) => state.auth.current);
 
   const showCategoryBar = !HIDE_CATEGORY_BAR_ROUTES.some(
     (route) =>
       location.pathname === route ||
-      (route !== "/" &&
-        location.pathname.startsWith(`${route}/`)),
+      (route !== "/" && location.pathname.startsWith(`${route}/`)),
   );
 
   const handleCloseAddedToCartModal = () => {

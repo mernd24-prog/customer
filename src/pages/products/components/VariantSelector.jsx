@@ -1,4 +1,7 @@
-import { applyImageFallback, getAvailableStock } from "../../../utils/ecommerce";
+import {
+  applyImageFallback,
+  getAvailableStock,
+} from "../../../utils/ecommerce";
 import { getColorSwatchImage } from "../../../utils/pages/productUtils";
 
 export default function VariantSelector({
@@ -98,7 +101,7 @@ export default function VariantSelector({
                     }
                     className={`relative h-[80px] w-[80px] overflow-hidden rounded-xl border bg-white transition-all duration-300 ease-in-out sm:h-[95px] sm:w-[95px] ${
                       isSelected
-                        ? "border-2 border-gold shadow-sm"
+                        ? "border border-gold shadow-sm"
                         : "border border-gold/20 hover:border-gold/50"
                     } ${isUnavailable ? "opacity-55 grayscale" : ""} ${
                       !isComboAvailable ? "opacity-40   cursor-not-allowed" : ""
@@ -164,7 +167,7 @@ export default function VariantSelector({
                   }
                   className={`relative min-h-10 min-w-12 rounded-[8px] px-3 py-1 text-xs font-bold transition-all duration-300 ease-in-out disabled:cursor-not-allowed ${
                     isSelected
-                      ? "border-2 border-gold bg-gold/10 text-gold-dark shadow-sm"
+                      ? "border border-gold bg-gold/10 text-gold-dark shadow-sm"
                       : "border border-gold/20 hover:border-gold/50"
                   } ${
                     isUnavailable ? "border-red-200 bg-red-50 text-red-500" : ""
