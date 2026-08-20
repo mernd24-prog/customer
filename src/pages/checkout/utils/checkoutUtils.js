@@ -533,7 +533,11 @@ export const getClientDeliverabilityBlockers = (items = [], address = {}) => {
           reason: "Delivery is disabled for this product.",
         };
       }
-      if (mode === "allowlist" && !listIncludes(allowed, pincode)) {
+      if (
+        mode === "allowlist" &&
+        normalizeList(allowed).length > 0 &&
+        !listIncludes(allowed, pincode)
+      ) {
         return {
           title,
           pincode,

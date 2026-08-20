@@ -33,6 +33,7 @@ export default function ProductResultsLayout({
   loadingMore,
   sentinelRef,
   sidebarTopContent,
+  toolbar,
   children,
 }) {
   const productCount = products.length;
@@ -89,9 +90,12 @@ export default function ProductResultsLayout({
                 emptyTitle={emptyTitle}
                 emptyText={emptyText}
               >
-                <h4 className="text-m md:text-[20px] my-4">
-                  Showing {rangeStart}-{rangeEnd} Of {totalCount} Results
-                </h4>
+                <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <h4 className="text-m md:text-[20px] m-0">
+                    Showing {rangeStart}-{rangeEnd} Of {totalCount} Results
+                  </h4>
+                  {toolbar}
+                </div>
                 <ProductGrid
                   products={products}
                   variant={viewMode}

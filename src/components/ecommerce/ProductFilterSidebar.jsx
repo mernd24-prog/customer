@@ -73,7 +73,7 @@ export function FilterSection({
   };
 
   return (
-    <div className="border-b  border-[#EEDFB9] py-4 last:border-b-0 sm:py-4 ">
+    <div className="border-b  border-[#EEDFB9] py-3 last:border-b-0 sm:py-3 ">
       {searchOpen ? (
         <div className="flex h-9 w-full items-center gap-2 rounded-full bg-[#F4F4F6] px-3">
           <Search size={16} className="shrink-0 text-[#6F7480]" />
@@ -129,7 +129,7 @@ export function FilterSection({
       <div
         className={`grid transition-all  duration-300 ease-in-out ${
           open
-            ? "mt-5 grid-rows-[1fr] opacity-100 sm:mt-6"
+            ? "mt-3 grid-rows-[1fr] opacity-100 sm:mt-4"
             : "grid-rows-[0fr] opacity-0"
         }`}
       >
@@ -306,9 +306,9 @@ export function PriceRangeFilter({
   };
 
   return (
-    <form className="space-y-3 pt-1" onSubmit={handleSubmit}>
+    <form className="space-y-3 pt-0" onSubmit={handleSubmit}>
       <div>
-        <p className="mb-5 text-sm font-bold uppercase tracking-wide text-[#2E2E2E]">
+        <p className="mb-3 text-sm font-bold uppercase tracking-wide text-[#2E2E2E]">
           PRICE
         </p>
 
@@ -375,7 +375,7 @@ export function PriceRangeFilter({
         </div>
 
         {/* Price */}
-        <div className="mt-5 text-center">
+        <div className="mt-3 text-center">
           <span className="text-lg font-bold text-[#111111]">
             ₹{localMin.toLocaleString("en-IN")} – ₹
             {localMax >= maxLimit
@@ -550,7 +550,7 @@ export function OptionFilter({
         <button
           type="button"
           onClick={() => setExpanded((value) => !value)}
-          className="pt-3 text-left text-[16px] font-semibold leading-none text-[#5960B8] transition-colors duration-200 hover:text-[#2D347D]"
+          className="pt-2 text-left text-[16px] font-semibold leading-none text-[#5960B8] transition-colors duration-200 hover:text-[#2D347D]"
         >
           {expanded ? "View Less" : "View More"}
         </button>
@@ -703,9 +703,9 @@ export function FilterSkeleton() {
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="border-b border-[#EEDFB9] py-6 last:border-b-0 sm:py-7"
+          className="border-b border-[#EEDFB9] py-4 last:border-b-0 sm:py-5"
         >
-          <div className="mb-6 flex w-full items-center justify-between gap-3">
+          <div className="mb-4 flex w-full items-center justify-between gap-3">
             <div className="h-6 w-32 animate-pulse rounded bg-black/5"></div>
             <div className="h-4 w-4 animate-pulse rounded bg-black/5"></div>
           </div>
@@ -735,14 +735,14 @@ export default function ProductFilterSidebar({
       className={`w-full [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]  overflow-x-hidden lg:sticky lg:top-24 lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
     >
       <div className="w-full overflow-hidden rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] shadow-none">
-        <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-5 min-[375px]:px-5 sm:px-6 sm:py-6">
+        <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-3 min-[375px]:px-5 sm:px-6 sm:py-4">
           <h3 className="text-h4 font-semibold  text-[#373737] ">Filters</h3>
 
           {onClearAll && (
             <button
               type="button"
               onClick={onClearAll}
-              className="inline-flex h-[52px] shrink-0 items-center justify-center rounded-[14px]   text-[14px] font-semibold text-[#5960B8]  sm:text-[16px]"
+              className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[14px]   text-[14px] font-semibold text-[#5960B8]  sm:text-[16px]"
             >
               Clear All
             </button>

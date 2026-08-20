@@ -28,13 +28,12 @@ export default function CollectionToolbar({
         </p>
       )}
 
-      <div className="flex w-full sm:w-auto items-center gap-2 sm:gap-3 sm:ml-auto mt-4">
+      <div className="flex w-full sm:w-auto items-center gap-2 sm:gap-3 sm:ml-auto">
         {/* Sort Trigger */}
         {!!sortOptions.length && (
           <CustomDropdown
             className="flex-1 sm:flex-none w-full sm:w-[180px]"
-            buttonClassName="h-10 sm:h-11 w-full sm:w-[180px] rounded-lg border border-[#1B1D604D] text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs"
-            optionsClassName="w-[200px] sm:w-[190px]"
+            buttonClassName="h-10 sm:h-11 w-full sm:w-[180px] rounded-lg text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs"
             options={sortOptions}
             value={sortValue}
             onChange={onSortChange}
@@ -46,8 +45,7 @@ export default function CollectionToolbar({
         {!!pageSizes.length && (
           <CustomDropdown
             className="flex-1 sm:flex-none w-full sm:w-[180px]"
-            buttonClassName="h-10 sm:h-11 w-full sm:w-[180px] rounded-lg border border-[#1B1D604D] text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs"
-            optionsClassName="w-[200px] sm:w-[240px]"
+            buttonClassName="h-10 sm:h-11 w-full sm:w-[180px] rounded-lg text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs"
             options={pageSizeOptions}
             value={pageSizeValue}
             onChange={onPageSizeChange}

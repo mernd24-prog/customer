@@ -135,8 +135,10 @@ export default function CustomDropdown({
                       "px-4 py-2.5",
                       "text-left text-[13px]",
                       "font-semibold",
-                      "transition-colors",
-                      "hover:bg-[#F8F1E2]",
+                      "transition-all",
+                      "border-y border-transparent",
+                      "hover:border-[#E5DAB5] hover:bg-[#F8F1E2]",
+                      "first:hover:border-t-transparent last:hover:border-b-transparent",
                       isSelected
                         ? "bg-[#F8F1E2] text-[#1B1D60]"
                         : "text-[#2E2E2E]",

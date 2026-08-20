@@ -220,7 +220,7 @@ export default function ShipmentTrackingPanel({
                     )}
                     <span className="absolute -left-[6px] top-1 h-3 w-3 rounded-full bg-[#CE9F2D]" />
 
-                    <p className="text-sm font-semibold capitalize text-[#2E2E2E]">
+                    <p className="text-sm font-semibold capitalize text-[#2E2E2E] ">
                       {label(event.status)}
                     </p>
 
@@ -235,7 +235,7 @@ export default function ShipmentTrackingPanel({
 
                     {event.note && (
                       <p className="mt-1 text-xs text-[#6F7480]">
-                        {event.note}
+                        {event.note.replace(/_/g, " ")}
                       </p>
                     )}
                   </div>

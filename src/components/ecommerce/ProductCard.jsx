@@ -411,7 +411,7 @@ export default function ProductCard({
           <StarRating rating={rating} count={ratingCount} />
 
           <h3
-            className=" w-full text-base  md:text-small line-clamp-1 font-semibold text-[#2E2E2E] "
+            className="mt-1.5 w-full text-base md:text-small line-clamp-1 font-semibold text-[#2E2E2E]"
             title={title}
           >
             {title}
@@ -440,13 +440,13 @@ export default function ProductCard({
       </Link>
 
       {showActions && (
-        <div className="mt-auto  flex items-center gap-8  px-4 pb-4">
+        <div className="mt-auto flex items-center justify-between gap-2 sm:gap-3 lg:gap-4 xl:gap-6 px-4 pb-4">
           <PillButton
             disabled={!isInStock}
             onClick={handleAddToCart}
-            rightIcon={<ShoppingCart size={19} strokeWidth={2.4} />}
+            rightIcon={<ShoppingCart size={18} strokeWidth={2.4} className="shrink-0" />}
             className={cn(
-              "w-full   gap-[15px] text-[15px]  font-semibold focus-visible:outline-[#1B1D60]",
+              "w-full flex-1 gap-1.5 sm:gap-2 text-[13px] sm:text-[14px] md:text-[15px] font-semibold focus-visible:outline-[#1B1D60] whitespace-nowrap px-3 sm:px-4",
               !isInStock && "cursor-not-allowed opacity-60",
             )}
           >

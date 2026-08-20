@@ -18,7 +18,9 @@ export default function Rating({
       className={cn("flex items-center gap-2", className)}
       aria-label={`${rating.toFixed(1)} out of ${max} stars`}
     >
-      <div className="flex items-center gap-1 rounded-[4px] bg-[#CE9F2D] px-1.5 py-0.5 text-white">
+      <div className={`flex items-center gap-1 rounded-[4px] px-1.5 py-0.5 text-white ${
+        rating > 3 ? "bg-[#388e3c]" : rating === 0 ? "bg-[#9e9e9e]" : "bg-[#CE9F2D]"
+      }`}>
         <Star size={size > 14 ? size : 12} className="fill-white text-white" />
         <span className="text-xs font-bold sm:text-[13px]">
           {rating.toFixed(1)}
