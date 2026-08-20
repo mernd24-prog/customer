@@ -156,7 +156,7 @@ export function useProductActions() {
         const withCartItem = addProductToCartPayload(currentCart, product, quantity);
         const result = await run(
           dispatch,
-          updateCart(wishlistPayload(withCartItem, product, true)),
+          updateCart(wishlistPayload(withCartItem, product, true, true)),
           {
             title: "Moved to cart",
             message: "The item was moved from your wishlist to the cart.",

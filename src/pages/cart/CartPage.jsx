@@ -86,6 +86,18 @@ export default function CartPage() {
     "hidden text-xs font-semibold uppercase text-muted sm:block";
   const moveToCartButtonClass =
     "h-9 w-full border-gold/40 px-4 text-xs font-bold text-ink sm:w-auto";
+  const stockBlockedItems = selectedItems.filter((item) => {
+    if (item?.stock === null || item?.stock === undefined) return false;
+    const stock = Number(item.stock);
+    const quantity = Math.max(1, Number(item?.quantity || 1));
+    return Number.isFinite(stock) && (stock <= 0 || quantity > stock);
+  });
+  const checkoutBlockedByStock = stockBlockedItems.length > 0;
+  const checkoutButtonText = !selectedItems.length
+    ? "Select products to checkout"
+    : checkoutBlockedByStock
+      ? "Remove out-of-stock items"
+      : "Proceed to Checkout";
 
   return (
     <>
@@ -189,6 +201,15 @@ export default function CartPage() {
                     </div>
                   )}
 
+                  {checkoutBlockedByStock && (
+                    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                      <p className="font-semibold">Out-of-stock items cannot proceed to checkout.</p>
+                      <p className="mt-1 text-xs">
+                        Deselect, remove, or move to wishlist: {stockBlockedItems.map((item) => item.title).join(", ")}
+                      </p>
+                    </div>
+                  )}
+
                   {/* On screens below lg, display Order Summary ABOVE Wishlist */}
                   {hasCartItems && (
                     <div className="block lg:hidden my-2 sm:my-4">
@@ -207,13 +228,10 @@ export default function CartPage() {
                         title="Order Summary"
                         formatMoney={formatMoney}
                         asNumber={toNum}
-                        buttonText={
-                          selectedItems.length
-                            ? "Proceed to Checkout"
-                            : "Select products to checkout"
-                        }
+                        buttonText={checkoutButtonText}
+                        disabled={!selectedItems.length || checkoutBlockedByStock}
                         onCheckout={() => {
-                          if (!selectedItems.length) return;
+                          if (!selectedItems.length || checkoutBlockedByStock) return;
 
                           window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
                           window.sessionStorage.setItem(
@@ -265,13 +283,10 @@ export default function CartPage() {
                       title="Order Summary"
                       formatMoney={formatMoney}
                       asNumber={toNum}
-                      buttonText={
-                        selectedItems.length
-                          ? "Proceed to Checkout"
-                          : "Select products to checkout"
-                      }
+                      buttonText={checkoutButtonText}
+                      disabled={!selectedItems.length || checkoutBlockedByStock}
                       onCheckout={() => {
-                        if (!selectedItems.length) return;
+                        if (!selectedItems.length || checkoutBlockedByStock) return;
 
                         window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
                         window.sessionStorage.setItem(

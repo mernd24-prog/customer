@@ -383,7 +383,7 @@ export default function useCart() {
 
         run(
           dispatch,
-          updateCart(wishlistPayload(nextCart, productToWishlist, false)),
+          updateCart(wishlistPayload(nextCart, productToWishlist, false, true)),
           "Moved to wishlist",
         );
       });
@@ -410,7 +410,7 @@ export default function useCart() {
 
     run(
       dispatch,
-      updateCart(wishlistPayload(nextCart, productToWishlist, false)),
+      updateCart(wishlistPayload(nextCart, productToWishlist, false, true)),
       "Moved to wishlist",
     );
   };
@@ -425,6 +425,7 @@ export default function useCart() {
     const newWishlistPayload = wishlistPayload(
       payload,
       savedProduct.productForCart,
+      true,
       true,
     );
 

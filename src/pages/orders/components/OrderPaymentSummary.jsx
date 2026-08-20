@@ -457,7 +457,8 @@ function OrderPaymentSummary({
         <button
           type="button"
           onClick={onCheckout}
-          className="mt-6 h-[54px] w-full rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-sm font-bold text-white transition hover:opacity-90 sm:text-base"
+          disabled={disabled}
+          className="mt-6 h-[54px] w-full rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-sm font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
         >
           {buttonText}
         </button>

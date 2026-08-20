@@ -65,10 +65,6 @@ function normalizeCartItemForWrite(item) {
     item?.productId && typeof item.productId === "object"
       ? item.productId
       : item?.product;
-  const defaultVariant =
-    !item?.variantId && !item?.variantSku
-      ? getDefaultVariant(productObj)
-      : null;
   const productId = cartItemProductId(item);
   const image =
     item?.image ||
@@ -86,15 +82,15 @@ function normalizeCartItemForWrite(item) {
   return {
     ...item,
     productId,
-    variantId:
-      item?.variantId || defaultVariant?._id || defaultVariant?.id || "",
-    variantSku: item?.variantSku || defaultVariant?.sku || "",
-    variantTitle: item?.variantTitle || defaultVariant?.title || "",
-    attributes: item?.attributes || defaultVariant?.attributes || {},
+    // Existing legacy product-level lines must remain product-level. Inferring
+    // today's default variant here changes their identity on every cart write.
+    variantId: item?.variantId || "",
+    variantSku: item?.variantSku || "",
+    variantTitle: item?.variantTitle || "",
+    attributes: item?.attributes || {},
     quantity: Number(item?.quantity) > 0 ? Number(item.quantity) : 1,
     price:
       getProductPrice(item) ??
-      getVariantPrice(defaultVariant) ??
       getProductPrice(productObj) ??
       0,
     image,
@@ -187,7 +183,7 @@ export function addProductToCartPayload(cart, product, quantity = 1) {
     items,
   };
 }
-export function wishlistPayload(cart, product, remove = false) {
+export function wishlistPayload(cart, product, remove = false, includeItems = false) {
   const entry = normalizeWishlistItem(product);
   const key = wishlistItemKey(entry);
   const current = (cart?.wishlist || [])
@@ -195,7 +191,9 @@ export function wishlistPayload(cart, product, remove = false) {
     .filter((item) => item.productId);
 
   return {
-    items: (cart?.items || []).map(normalizeCartItemForWrite),
+    ...(includeItems
+      ? { items: (cart?.items || []).map(normalizeCartItemForWrite) }
+      : {}),
     wishlist: remove
       ? current.filter((item) => wishlistItemKey(item) !== key)
       : [entry, ...current.filter((item) => wishlistItemKey(item) !== key)],
