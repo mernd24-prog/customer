@@ -26,6 +26,7 @@ import { syncGuestCartWithServer } from "../../utils/ecommerce/cart";
 import { loadGoogleIdentityScript } from "../../utils/pages/authUtils";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+const GOOGLE_AUTH_SCOPES = "openid email profile";
 
 
 export default function LoginPage() {
@@ -100,11 +101,37 @@ export default function LoginPage() {
     try {
       await loadGoogleIdentityScript();
 
-      window.google.accounts.id.initialize({
+      const codeClient = window.google.accounts.oauth2.initCodeClient({
         client_id: GOOGLE_CLIENT_ID,
+        scope: GOOGLE_AUTH_SCOPES,
+        ux_mode: "popup",
+        include_granted_scopes: false,
+        prompt: "select_account",
         callback: async (response) => {
-          if (!response?.credential) {
-            notify.error("Google did not return a sign-in token.");
+          if (response?.error) {
+            notify.error({
+              title: "Google sign-in was not completed",
+              message: response.error_description || response.error,
+            });
+            setGoogleLoading(false);
+            return;
+          }
+
+          if (!response?.code) {
+            notify.error("Google did not return an authorization code.");
+            setGoogleLoading(false);
+            return;
+          }
+
+          const grantedScopes = new Set(String(response.scope || "").split(/\s+/).filter(Boolean));
+          const missingScopes = GOOGLE_AUTH_SCOPES
+            .split(" ")
+            .filter((scope) => !grantedScopes.has(scope));
+          if (missingScopes.length) {
+            notify.error({
+              title: "Google sign-in needs basic profile access",
+              message: "Please allow email and profile access to continue.",
+            });
             setGoogleLoading(false);
             return;
           }
@@ -114,7 +141,9 @@ export default function LoginPage() {
               dispatch,
               socialLogin({
                 provider: "google",
-                idToken: response.credential,
+                authCode: response.code,
+                clientId: GOOGLE_CLIENT_ID,
+                redirectUri: window.location.origin,
                 role: "buyer",
               }),
             );
@@ -129,16 +158,25 @@ export default function LoginPage() {
             setGoogleLoading(false);
           }
         },
+        error_callback: (error) => {
+          if (error?.type === "popup_closed") {
+            notify.info("Google sign-in was cancelled.");
+          } else if (error?.type === "popup_failed_to_open") {
+            notify.error({
+              title: "Google popup was blocked",
+              message: "Please allow popups for Sam Global and try again.",
+            });
+          } else {
+            notify.error({
+              title: "Google sign-in failed",
+              message: error?.message || error?.type || "Please try again.",
+            });
+          }
+          setGoogleLoading(false);
+        },
       });
 
-      window.google.accounts.id.prompt((notification) => {
-        if (
-          notification.isNotDisplayed?.() ||
-          notification.isSkippedMoment?.()
-        ) {
-          setGoogleLoading(false);
-        }
-      });
+      codeClient.requestCode();
     } catch {
       setGoogleLoading(false);
       notify.error({
