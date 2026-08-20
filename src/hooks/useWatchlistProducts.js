@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 import { apiRequest } from "../api/client";
 import { endpoints } from "../api/endpoints";
-import { getProductId } from "../utils/ecommerce";
+import { getProductId, normalizeWishlistItem, wishlistItemKey } from "../utils/ecommerce";
 
 export function useWatchlistProducts({ fallback = [] } = {}) {
   const [hiddenFallbackIds, setHiddenFallbackIds] = useState([]);
@@ -11,6 +11,10 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
   const wishlist = useSelector((state) => state.cart.current?.wishlist);
   const wishlistIds = useMemo(
     () => Array.from(new Set((Array.isArray(wishlist) ? wishlist : []).map((item) => getProductId(item)).filter(Boolean))),
+    [wishlist],
+  );
+  const wishlistEntries = useMemo(
+    () => (Array.isArray(wishlist) ? wishlist : []).map(normalizeWishlistItem).filter((item) => item.productId),
     [wishlist],
   );
   const productEntities = useSelector((state) => state.product.entities) || {};
@@ -59,8 +63,17 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
   }, [missingIds]);
 
   const { products, isUsingFallback } = useMemo(() => {
-    const matchedProducts = wishlistIds
-      .map((id) => productEntities[id] || fetchedProducts[id])
+    const decorate = (product, entry) => {
+      if (!product) return null;
+      const variants = Array.isArray(product.variants) ? product.variants : [];
+      const selectedVariant = variants.find((variant) =>
+        (entry.variantId && String(variant._id || variant.id || "") === String(entry.variantId)) ||
+        (entry.variantSku && String(variant.sku || "") === String(entry.variantSku))
+      ) || null;
+      return { ...product, selectedVariant, wishlistEntry: entry, wishlistKey: wishlistItemKey(entry) };
+    };
+    const matchedProducts = wishlistEntries
+      .map((entry) => decorate(productEntities[entry.productId] || fetchedProducts[entry.productId], entry))
       .filter(Boolean);
 
     if (matchedProducts.length === wishlistIds.length && matchedProducts.length > 0) {
@@ -69,9 +82,9 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
 
     // Fallback to list if available
     const wishlistSet = new Set(wishlistIds);
-    const fromList = allProducts.filter((product) =>
-      wishlistSet.has(getProductId(product)),
-    );
+    const fromList = wishlistEntries
+      .map((entry) => decorate(allProducts.find((product) => getProductId(product) === entry.productId), entry))
+      .filter(Boolean);
 
     if (fromList.length > 0) {
       return { products: fromList, isUsingFallback: false };
@@ -91,6 +104,7 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
     };
   }, [
     wishlistIds,
+    wishlistEntries,
     productEntities,
     fetchedProducts,
     allProducts,

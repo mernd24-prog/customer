@@ -13,6 +13,7 @@ import {
   getProductAvailableStock,
   getProductMrp,
   getProductPrice,
+  wishlistItemKey,
 } from "../../utils/ecommerce";
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import { adaptProductToItem } from "../../utils/pages/watchListUtils";
@@ -26,7 +27,7 @@ import {
 
 export default function WatchlistPage() {
   const navigate = useNavigate();
-  const { addToCart, removeFromWishlist} =
+  const { addToCart, moveWishlistToCart, removeFromWishlist } =
     useProductActions();
   const { products, hideFallbackProduct, isUsingFallback, isLoading } =
     useWatchlistProducts();
@@ -44,7 +45,7 @@ export default function WatchlistPage() {
 
   const handleIncrease = (id) => {
     setLocalQuantities((prev) => {
-      const product = products.find((p) => getProductId(p) === id);
+      const product = products.find((p) => wishlistItemKey(p.wishlistEntry || p) === id);
       const item = product ? adaptProductToItem(product, prev[id] ?? 1) : null;
 
       if (item?.increaseDisabled) return prev;
@@ -64,16 +65,16 @@ export default function WatchlistPage() {
   };
 
   const handleRemove = (id) => {
-    const product = products.find((p) => getProductId(p) === id);
+    const product = products.find((p) => wishlistItemKey(p.wishlistEntry || p) === id);
     if (product) removeProduct(product);
   };
 
-  // "Move to Wishlist" in CartItemCard → here repurposed as "Add to Cart"
+  // CartItemCard's secondary action is repurposed as an atomic wishlist-to-cart move.
   const handleSaveForLater = (id) => {
-    const product = products.find((p) => getProductId(p) === id);
+    const product = products.find((p) => wishlistItemKey(p.wishlistEntry || p) === id);
     if (!product) return;
     const qty = localQuantities[id] ?? 1;
-    addToCart({ ...product, quantity: qty });
+    return moveWishlistToCart(product, qty);
   };
 
   const breadcrumbItems = [
@@ -135,7 +136,7 @@ export default function WatchlistPage() {
             <>
               <div className="mt-8 lg:mt-10 rounded-[16px] border border-gold/50 bg-[#FFFDF8] sm:rounded-[20px]">
                 {products.map((product, index) => {
-                const id = getProductId(product);
+                const id = wishlistItemKey(product.wishlistEntry || product);
                 const item = adaptProductToItem(
                   product,
                   localQuantities[id] ?? 1,
@@ -153,7 +154,7 @@ export default function WatchlistPage() {
                       onDecrease={handleDecrease}
                       onRemove={handleRemove}
                       onSaveForLater={handleSaveForLater}
-                      saveForLaterLabel="Add to Cart"
+                      saveForLaterLabel="Move to Cart"
                       removeLabel="Remove From Watchlist"
                       showCheckbox={false}
                       showQuantitySelector={false}

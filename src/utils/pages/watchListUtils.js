@@ -9,7 +9,7 @@ import {
 } from "../../utils/ecommerce";
 
 export function adaptProductToItem(product, quantity = 1) {
-  const id = getProductId(product);
+  const id = product?.wishlistKey || getProductId(product);
   const title = getProductTitle(product, "Product");
   const image =
     getProductImage(product) || getImageFallbackSrc(title, "watchlist");
@@ -56,7 +56,7 @@ export function adaptProductToItem(product, quantity = 1) {
     stock: hasStockQuantity ? stockQuantity : null,
     rating,
     reviewCount,
-    attributes: {},
+    attributes: product?.selectedVariant?.attributes || {},
     increaseDisabled: outOfStock || stockLimitReached,
     stockMessage,
     _raw: product,

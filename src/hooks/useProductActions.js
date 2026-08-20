@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { setGuestCart, updateCart } from "../features/cart/cartSlice";
 import { openAddedToCartModal } from "../features/cart/cartUiSlice";
-import { addProductToCartPayload, getProductId, writeGuestCart, wishlistPayload } from "../utils/ecommerce";
+import { addProductToCartPayload, wishlistItemKey, writeGuestCart, wishlistPayload } from "../utils/ecommerce";
 import { useToastThunk } from "./useToastThunk";
 import { useAuthModal } from "../features/auth/AuthModalContext";
 import { store } from "../app/store";
@@ -18,12 +18,12 @@ export function useProductActions() {
   const wishlist = useSelector((state) => state.cart.current?.wishlist);
   const wishlistIds = useMemo(
     () =>
-      Array.isArray(wishlist) ? wishlist.map((item) => getProductId(item)) : [],
+      Array.isArray(wishlist) ? wishlist.map(wishlistItemKey) : [],
     [wishlist],
   );
 
   const isWishlisted = useCallback(
-    (product) => wishlistIds.includes(getProductId(product)),
+    (product) => wishlistIds.includes(wishlistItemKey(product)),
     [wishlistIds],
   );
 
@@ -116,10 +116,37 @@ export function useProductActions() {
     [cart, dispatch, openGuestOtpModal, run, user],
   );
 
+  const moveWishlistToCart = useCallback(
+    (product, quantity = 1) => {
+      const move = async (currentCart) => {
+        const withCartItem = addProductToCartPayload(currentCart, product, quantity);
+        const result = await run(
+          dispatch,
+          updateCart(wishlistPayload(withCartItem, product, true)),
+          {
+            title: "Moved to cart",
+            message: "The item was moved from your wishlist to the cart.",
+            tone: "cart",
+          },
+        );
+        dispatch(openAddedToCartModal({ product }));
+        return result;
+      };
+
+      if (!user) {
+        openGuestOtpModal(() => move(store.getState().cart.current || {}));
+        return null;
+      }
+      return move(cart);
+    },
+    [cart, dispatch, openGuestOtpModal, run, user],
+  );
+
   return {
     addToCart,
     cart,
     isWishlisted,
+    moveWishlistToCart,
     removeFromWishlist,
     toggleWishlist,
     wishlistIds,

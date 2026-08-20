@@ -365,13 +365,16 @@ export default function useCart() {
         const remainingItems = currentRawItems.filter(
           (ci) => normalizeCartItemId(ci) !== normalizedId,
         );
-        const productToWishlist =
-          itemToSave.productId && typeof itemToSave.productId === "object"
+        const productToWishlist = {
+          ...(itemToSave.productId && typeof itemToSave.productId === "object"
             ? itemToSave.productId
-            : itemToSave.product ||
-            itemToSave._raw ||
-            itemView?._raw ||
-            itemToSave;
+            : itemToSave.product || itemToSave._raw || itemView?._raw || {}),
+          productId: itemToSave.productId,
+          variantId: itemToSave.variantId,
+          variantSku: itemToSave.variantSku,
+          variantTitle: itemToSave.variantTitle,
+          attributes: itemToSave.attributes,
+        };
         const nextCart = normalizeCartPayloadForWrite({
           items: remainingItems,
           wishlist: currentCart.wishlist || [],
@@ -389,10 +392,16 @@ export default function useCart() {
     const remainingItems = rawItems.filter(
       (ci) => normalizeCartItemId(ci) !== normalizedId,
     );
-    const productToWishlist =
-      itemToSave.productId && typeof itemToSave.productId === "object"
+    const productToWishlist = {
+      ...(itemToSave.productId && typeof itemToSave.productId === "object"
         ? itemToSave.productId
-        : itemToSave.product || itemToSave._raw || itemView?._raw || itemToSave;
+        : itemToSave.product || itemToSave._raw || itemView?._raw || {}),
+      productId: itemToSave.productId,
+      variantId: itemToSave.variantId,
+      variantSku: itemToSave.variantSku,
+      variantTitle: itemToSave.variantTitle,
+      attributes: itemToSave.attributes,
+    };
     const nextCart = normalizeCartPayloadForWrite({
       items: remainingItems,
       wishlist: cart.wishlist || [],

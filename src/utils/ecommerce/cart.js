@@ -20,6 +20,24 @@ export function normalizeId(value) {
   return getProductId(value);
 }
 
+export function normalizeWishlistItem(value) {
+  const item = typeof value === "object" && value !== null ? value : { productId: value };
+  const productId = normalizeId(item.productId || item.product || item);
+  const variant = item.selectedVariant || item.variant || getDefaultVariant(item) || null;
+  return {
+    productId,
+    variantId: item.variantId || variant?._id || variant?.id || "",
+    variantSku: item.variantSku || variant?.sku || "",
+    variantTitle: item.variantTitle || variant?.title || "",
+    attributes: item.attributes || variant?.attributes || {},
+  };
+}
+
+export function wishlistItemKey(value) {
+  const item = normalizeWishlistItem(value);
+  return [item.productId, item.variantId || item.variantSku || ""].join(":");
+}
+
 function cartItemProductId(item) {
   return normalizeId(item?.productId || item?.product || item);
 }
@@ -111,9 +129,8 @@ function mergeCartItems(items = []) {
 export function normalizeCartPayloadForWrite(cart = {}) {
   const items = mergeCartItems(cart?.items || []);
   const wishlist = Array.from(
-    new Set(
-      (cart?.wishlist || []).map((item) => normalizeId(item)).filter(Boolean),
-    ),
+    new Map((cart?.wishlist || []).map(normalizeWishlistItem).filter((item) => item.productId)
+      .map((item) => [wishlistItemKey(item), item])).values(),
   );
   return { items, wishlist };
 }
@@ -161,14 +178,15 @@ export function addProductToCartPayload(cart, product, quantity = 1) {
   };
 }
 export function wishlistPayload(cart, product, remove = false) {
-  const id = normalizeId(product);
-  const current = (cart?.wishlist || []).map((item) => normalizeId(item));
+  const entry = normalizeWishlistItem(product);
+  const key = wishlistItemKey(entry);
+  const current = (cart?.wishlist || []).map(normalizeWishlistItem).filter((item) => item.productId);
 
   return {
     items: (cart?.items || []).map(normalizeCartItemForWrite),
     wishlist: remove
-      ? current.filter((item) => item !== id)
-      : [id, ...current.filter((item) => item !== id)],
+      ? current.filter((item) => wishlistItemKey(item) !== key)
+      : [entry, ...current.filter((item) => wishlistItemKey(item) !== key)],
   };
 }
 
@@ -424,12 +442,10 @@ export async function syncGuestCartWithServer(dispatch, { fetchCartAction, updat
 
     const mergedPayload = {
       items: mergedItems,
-      wishlist: Array.from(
-        new Set([
-          ...(existingServerCart.wishlist || []).map(normalizeId),
-          ...(guestCart.wishlist || []).map(normalizeId),
-        ].filter(Boolean)),
-      ),
+      wishlist: Array.from(new Map([
+        ...(existingServerCart.wishlist || []).map(normalizeWishlistItem),
+        ...(guestCart.wishlist || []).map(normalizeWishlistItem),
+      ].filter((item) => item.productId).map((item) => [wishlistItemKey(item), item])).values()),
     };
 
     if (updateCartAction) {
