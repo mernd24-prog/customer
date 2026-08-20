@@ -3,6 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { HeaderGoldButton } from "../../components/ui/button/static";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 
+const CUSTOMER_SELLER_ENTRY_ROUTE = "/become-a-seller";
+
+const normalizeCustomerSellerPath = (path = "") =>
+  String(path || "").replace(/\/+$/, "") === "/seller/status"
+    ? CUSTOMER_SELLER_ENTRY_ROUTE
+    : path;
+
 export default function SellDropdown({ data }) {
   const navigate = useNavigate();
   const features = asArray(data?.features);
@@ -36,7 +43,9 @@ export default function SellDropdown({ data }) {
 
         <div className="mt-8 flex flex-col gap-3">
           {buttons.map((button, index) => {
-            const btnPath = hrefOr(button?.path, "/seller/status");
+            const btnPath = normalizeCustomerSellerPath(
+              hrefOr(button?.path, CUSTOMER_SELLER_ENTRY_ROUTE),
+            );
             const isExternal =
               btnPath &&
               (btnPath.startsWith("http://") || btnPath.startsWith("https://"));

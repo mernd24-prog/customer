@@ -27,7 +27,30 @@ import { loadGoogleIdentityScript } from "../../utils/pages/authUtils";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
 const GOOGLE_AUTH_SCOPES = "openid email profile";
+const CUSTOMER_LOGIN_REDIRECT = AUTH_ROUTES.home;
 
+const BLOCKED_LOGIN_REDIRECT_PREFIXES = [
+  "/admin",
+  "/app",
+  "/seller",
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-registration",
+];
+
+const getCustomerLoginRedirect = (path) => {
+  if (!path || typeof path !== "string") return CUSTOMER_LOGIN_REDIRECT;
+  if (!path.startsWith("/") || path.startsWith("//")) return CUSTOMER_LOGIN_REDIRECT;
+
+  const normalizedPath = path.split("#")[0].split("?")[0].replace(/\/+$/, "") || "/";
+  const isBlockedPath = BLOCKED_LOGIN_REDIRECT_PREFIXES.some(
+    (prefix) => normalizedPath === prefix || normalizedPath.startsWith(`${prefix}/`),
+  );
+
+  return isBlockedPath ? CUSTOMER_LOGIN_REDIRECT : path;
+};
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -38,7 +61,7 @@ export default function LoginPage() {
 
   const { loading } = useSelector((state) => state.auth);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const from = location.state?.from || AUTH_ROUTES.home;
+  const loginRedirect = getCustomerLoginRedirect(location.state?.from);
 
   useEffect(() => {
     dispatch(clearError());
@@ -73,7 +96,7 @@ export default function LoginPage() {
         fetchCartAction: fetchCart,
         updateCartAction: updateCart,
       });
-      navigate(from, { replace: true });
+      navigate(loginRedirect, { replace: true });
     } catch {
       // Errors are handled by Redux and useToastThunk.
     }
@@ -82,7 +105,7 @@ export default function LoginPage() {
   const handleMobileOtpLogin = () => {
     openGuestOtpModal(async () => {
       await dispatch(checkAuthStatus());
-      navigate(from, { replace: true });
+      navigate(loginRedirect, { replace: true });
     });
   };
 
@@ -153,7 +176,7 @@ export default function LoginPage() {
               fetchCartAction: fetchCart,
               updateCartAction: updateCart,
             });
-            navigate(from, { replace: true });
+            navigate(loginRedirect, { replace: true });
           } finally {
             setGoogleLoading(false);
           }

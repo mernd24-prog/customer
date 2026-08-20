@@ -15,7 +15,6 @@ import MenuDropdown from "./MenuDropdown";
 import { fetchMe } from "../../features/user/userSlice";
 import { logout } from "../../features/auth/authSlice";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
-import { getRole, isAdminRole } from "../../utils/roles";
 import { asArray, keyOr, textOr } from "../../utils/content";
 import { navbarIcons as navData } from "../.../../constants/header.constant/image.constant";
 
@@ -38,7 +37,6 @@ export const Navbar = ({ icons: propIcons }) => {
 
   const currentUser = useSelector((s) => s.auth.current);
   const profileUser = useSelector((s) => s.user.current) || currentUser;
-  const currentRole = getRole(currentUser);
 
   const cartItems = useSelector((s) => s.cart.current?.items) || [];
   const { products: wishlistedProducts } = useWatchlistProducts();
@@ -75,14 +73,6 @@ export const Navbar = ({ icons: propIcons }) => {
       }
       return item;
     }),
-    ...(isAdminRole(currentRole)
-      ? [
-          { label: "Admin Products", path: "/admin/products", icon: "settings" },
-          { label: "Admin Catalog", path: "/admin/catalog", icon: "settings" },
-          { label: "Admin Brands", path: "/admin/brands", icon: "settings" },
-          { label: "Admin RBAC", path: "/admin/rbac", icon: "settings" },
-        ]
-      : []),
   ]);
 
   const cartItemCount = cartItems.reduce(
