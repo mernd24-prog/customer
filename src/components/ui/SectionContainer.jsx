@@ -28,11 +28,7 @@ export default function SectionContainer({
           >
             <div className="min-w-0 ">
               {title && (
-                <h2
-                  className="font-bold text-h2 text-[#3E4093]"
-                >
-                  {title}
-                </h2>
+                <h2 className="font-bold text-h2 text-[#3E4093]">{title}</h2>
               )}
               {subtitle && (
                 <p className=" md:py-4 text-small  align-middle text-[#2E2E2E]">
@@ -46,7 +42,7 @@ export default function SectionContainer({
                 to={actionHref}
                 rightIcon={<FaAngleRight className="text-[10px]" />}
                 className="self-start   my-2  sm:self-center md:block hidden"
-                aria-label={`${actionLabel} ${title || ''}`}
+                aria-label={`${actionLabel} ${title || ""}`}
               >
                 {actionLabel}
               </OutlineSmallButton>
@@ -65,7 +61,7 @@ export default function SectionContainer({
             to={actionHref}
             rightIcon={<FaAngleRight className="text-[10px]" />}
             className="self-start text-center md:hidden block    sm:self-center"
-            aria-label={`${actionLabel} ${title || ''}`}
+            aria-label={`${actionLabel} ${title || ""}`}
           >
             {actionLabel}
           </OutlineSmallButton>
