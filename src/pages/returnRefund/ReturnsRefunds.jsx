@@ -337,6 +337,9 @@ function ReturnsRefundsPage() {
                 });
                 const reason = ret.description;
 
+                const productId = item.productId || item.product_id || item.product?._id || item.product?.id || "";
+                const productPath = productId ? `/products/${productId}` : "";
+
                 return (
                   <ReturnItemCard
                     key={`${returnId}-${item.orderItemId || idx}`}
@@ -354,6 +357,7 @@ function ReturnsRefundsPage() {
                     expectedDate={expectedDate}
                     onTrackRequest={() => toggleTracking(returnId)}
                     trackLabel={isExpanded ? "Hide Tracking" : "Track Order"}
+                    productPath={productPath}
                     className="!rounded-none !border-0"
                   />
                 );

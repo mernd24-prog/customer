@@ -46,15 +46,6 @@ export default function ProductListingLayout({
       {topContent}
 
       <div className="my-3 md:my-6">
-        <div className="flex flex-wrap items-end justify-end gap-3">
-          <CollectionToolbar
-            sortValue={sortValue}
-            sortOptions={sortOptions}
-            onSortChange={onSortChange}
-            onOpenFilters={() => setSidebarOpen(true)}
-          />
-        </div>
-
         <ProductResultsLayout
           totalResults={totalResults}
           pageSize={pageSize}
@@ -80,6 +71,14 @@ export default function ProductListingLayout({
           showPagination={false}
           loadingMore={loadingMore}
           sentinelRef={sentinelRef}
+          toolbar={
+            <CollectionToolbar
+              sortValue={sortValue}
+              sortOptions={sortOptions}
+              onSortChange={onSortChange}
+              onOpenFilters={() => setSidebarOpen(true)}
+            />
+          }
         />
       </div>
     </>

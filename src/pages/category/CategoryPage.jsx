@@ -68,16 +68,7 @@ export default function CategoryPage() {
           />
         )}
 
-        <CollectionToolbar
-          sortValue={searchParams.get("sort") || ""}
-          sortOptions={
-            firstLoadDone && (pageInfo.total || products.length) <= 1
-              ? []
-              : SORT_OPTIONS
-          }
-          onSortChange={(value) => updateParam("sort", value)}
-          onOpenFilters={() => setSidebarOpen(true)}
-        />
+
 
         <ProductResultsLayout
           filterSections={filterSections}
@@ -116,6 +107,18 @@ export default function CategoryPage() {
           showPagination={false}
           loadingMore={isLoadingMore}
           sentinelRef={sentinelRef}
+          toolbar={
+            <CollectionToolbar
+              sortValue={searchParams.get("sort") || ""}
+              sortOptions={
+                firstLoadDone && (pageInfo.total || products.length) <= 1
+                  ? []
+                  : SORT_OPTIONS
+              }
+              onSortChange={(value) => updateParam("sort", value)}
+              onOpenFilters={() => setSidebarOpen(true)}
+            />
+          }
         />
       </div>
     </>

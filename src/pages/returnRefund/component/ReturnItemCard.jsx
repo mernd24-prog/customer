@@ -7,6 +7,7 @@ import {
 import { formatMoney } from "../../../utils/ecommerce";
 import ShowMoreText from "../../../utils/showMore";
 import { capitalizeFirst } from "../../../utils/stringUtils";
+import { Link } from "react-router-dom";
 
 export default function ReturnItemCard({
   title,
@@ -21,6 +22,7 @@ export default function ReturnItemCard({
   expectedDate,
   onTrackRequest,
   trackLabel = "Track Order",
+  productPath = "",
   className = "",
 }) {
   return (
@@ -28,25 +30,50 @@ export default function ReturnItemCard({
       className={`w-full overflow-hidden rounded-[15px] border border-[#CE9F2D66] bg-white px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6 ${className}`}
     >
       <div className="flex flex-col min-[480px]:flex-row items-start gap-4 sm:gap-6">
-        <ImageWithFallback
-          src={image}
-          alt={title}
-          className="shrink-0 rounded-[8px] bg-white w-full h-[180px] min-[480px]:w-[120px] min-[480px]:h-[120px] sm:h-[150px] sm:w-[150px] lg:h-[120px] lg:w-[120px]"
-          imgClassName="object-top"
-        />
+        {productPath ? (
+          <Link to={productPath} className="shrink-0 w-full min-[480px]:w-auto block">
+            <ImageWithFallback
+              src={image}
+              alt={title}
+              className="rounded-[8px] bg-white w-full h-[180px] min-[480px]:w-[120px] min-[480px]:h-[120px] sm:h-[150px] sm:w-[150px] lg:h-[120px] lg:w-[120px]"
+              imgClassName="object-top"
+            />
+          </Link>
+        ) : (
+          <ImageWithFallback
+            src={image}
+            alt={title}
+            className="shrink-0 rounded-[8px] bg-white w-full h-[180px] min-[480px]:w-[120px] min-[480px]:h-[120px] sm:h-[150px] sm:w-[150px] lg:h-[120px] lg:w-[120px]"
+            imgClassName="object-top"
+          />
+        )}
 
         <div className="min-w-0 flex-1 flex flex-col w-full">
           <div className="flex flex-row items-start justify-between gap-3 sm:gap-4 mb-2 min-[480px]:mb-0">
             <h2 className="max-w-4xl block text-[13px] min-[400px]:text-[14px] font-bold text-[#1B1D60] min-[480px]:text-base md:text-lg lg:text-[20px] leading-snug">
-              <ShowMoreText
-                text={title}
-                mode="characters"
-                limit={65}
-                moreLabel="more"
-                lessLabel="less"
-                textClassName="inline"
-                buttonClassName="ml-1 text-xs sm:text-sm font-semibold text-[#1B1D60] hover:underline"
-              />
+              {productPath ? (
+                <Link to={productPath}>
+                  <ShowMoreText
+                    text={title}
+                    mode="characters"
+                    limit={65}
+                    moreLabel="more"
+                    lessLabel="less"
+                    textClassName="inline"
+                    buttonClassName="ml-1 text-xs sm:text-sm font-semibold text-[#1B1D60] hover:underline"
+                  />
+                </Link>
+              ) : (
+                <ShowMoreText
+                  text={title}
+                  mode="characters"
+                  limit={65}
+                  moreLabel="more"
+                  lessLabel="less"
+                  textClassName="inline"
+                  buttonClassName="ml-1 text-xs sm:text-sm font-semibold text-[#1B1D60] hover:underline"
+                />
+              )}
             </h2>
             <Badge
               variant="gold"
