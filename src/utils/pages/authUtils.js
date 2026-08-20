@@ -2,7 +2,7 @@ const GOOGLE_SCRIPT_SRC = "https://accounts.google.com/gsi/client";
 let googleScriptPromise;
 
 export function loadGoogleIdentityScript() {
-  if (window.google?.accounts?.id) {
+  if (window.google?.accounts?.id && window.google?.accounts?.oauth2) {
     return Promise.resolve();
   }
 
