@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -7,6 +7,7 @@ import { z } from "zod";
 import { useToastThunk } from "../../../hooks/useToastThunk";
 import { notify } from "../../../utils/notify";
 import { fetchCart } from "../../../features/cart/cartSlice";
+import { checkServiceability } from "../../../features/delivery/deliverySlice";
 import { fetchProductById } from "../../../features/product/productSlice";
 import { fetchWallet } from "../../../features/wallet/walletSlice";
 import { fetchMe, addAddress } from "../../../features/user/userSlice";
@@ -126,13 +127,17 @@ export default function useCheckout() {
   const [quoteData, setQuoteData] = useState(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState("");
+  const [deliveryCheckLoading, setDeliveryCheckLoading] = useState(false);
+  const [serverDeliverabilityBlockers, setServerDeliverabilityBlockers] = useState([]);
   const [isQuoteErrorDismissed, setIsQuoteErrorDismissed] = useState(false);
   const [isPostPaymentProcessing, setIsPostPaymentProcessing] = useState(false);
 
 
 
   const buyNowItems = useMemo(getBuyNowItems, []);
-  const selectedCheckoutItemIds = useMemo(getSelectedCheckoutItemIds, []);
+  const [selectedCheckoutItemIds, setSelectedCheckoutItemIds] = useState(
+    () => getSelectedCheckoutItemIds(),
+  );
   const isBuyNowCheckout = buyNowItems.length > 0;
   const cart = cartState.current || {};
   const checkoutSourceItems = useMemo(
@@ -579,17 +584,70 @@ export default function useCheckout() {
     watchedCouponCode,
     watchedWalletAmount,
   ]);
-  const deliverabilityBlockers = useMemo(
+  const clientDeliverabilityBlockers = useMemo(
     () => getClientDeliverabilityBlockers(items, quoteShippingAddress),
     [items, quoteShippingAddress],
   );
+  useEffect(() => {
+    const pincode = normalizePincode(quoteShippingAddress?.postalCode);
+    if (!/^\d{6}$/.test(pincode) || !items.length) {
+      setServerDeliverabilityBlockers([]);
+      setDeliveryCheckLoading(false);
+      return undefined;
+    }
+    let active = true;
+    setDeliveryCheckLoading(true);
+    Promise.all(items.map(async (item) => {
+      const productId = item._safeId || getProductId(getCartItemProduct(item));
+      if (!productId) return null;
+      try {
+        const payload = await dispatch(checkServiceability({ pincode, productId })).unwrap();
+        const result = payload?.data || payload;
+        if (result?.serviceable !== false) return null;
+        return {
+          lineKey: getCartLineKey(item),
+          productId,
+          title: item._safeTitle || getCartItemTitle(item),
+          pincode,
+          reason: result?.exclusions?.[0]?.reason || "This product is not serviceable at the selected address.",
+        };
+      } catch {
+        return null;
+      }
+    })).then((results) => {
+      if (active) setServerDeliverabilityBlockers(results.filter(Boolean));
+    }).finally(() => {
+      if (active) setDeliveryCheckLoading(false);
+    });
+    return () => { active = false; };
+  }, [dispatch, items, quoteShippingAddress?.postalCode]);
+
+  const deliverabilityBlockers = useMemo(() => {
+    const byLine = new Map();
+    [...clientDeliverabilityBlockers, ...serverDeliverabilityBlockers].forEach((blocker) => {
+      byLine.set(blocker.lineKey || blocker.productId || blocker.title, blocker);
+    });
+    return [...byLine.values()];
+  }, [clientDeliverabilityBlockers, serverDeliverabilityBlockers]);
   const deliverabilityError = useMemo(() => {
     if (!deliverabilityBlockers.length) return null;
     return deliverabilityBlockers.map(blocker => {
       const truncatedTitle = blocker.title.length > 35 ? blocker.title.substring(0, 35).trim() + "..." : blocker.title;
       return `"${truncatedTitle}" cannot be delivered to ${blocker.pincode}. ${blocker.reason}`;
-    });
+    }).join(" ");
   }, [deliverabilityBlockers]);
+
+  const excludeBlockedItem = useCallback((blocker) => {
+    if (isBuyNowCheckout) return;
+    setSelectedCheckoutItemIds((current) => {
+      const next = (current || []).filter(
+        (itemId) => String(itemId) !== String(blocker.lineKey),
+      );
+      window.sessionStorage.setItem(SELECTED_CHECKOUT_STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
+    setQuoteError("");
+  }, [isBuyNowCheckout]);
 
   useEffect(() => {
     const sellerIds = paymentSellerContext.sellerIds.join(",");
@@ -623,6 +681,11 @@ export default function useCheckout() {
       setQuoteData(null);
       setQuoteError("");
       setQuoteLoading(false);
+      return undefined;
+    }
+
+    if (deliveryCheckLoading) {
+      setQuoteLoading(true);
       return undefined;
     }
 
@@ -707,7 +770,7 @@ export default function useCheckout() {
       active = false;
       window.clearTimeout(timer);
     };
-  }, [dispatch, quotePayload, deliverabilityError]);
+  }, [dispatch, quotePayload, deliverabilityError, deliveryCheckLoading]);
 
   const checkoutActionLoading = orderState.loading || submittingOrder;
 
@@ -1186,6 +1249,8 @@ export default function useCheckout() {
     quotePayload,
     deliverabilityBlockers,
     deliverabilityError,
+    deliveryCheckLoading,
+    excludeBlockedItem,
     prevQuotePayloadRef,
     checkoutActionLoading,
     saveCheckoutAddress,

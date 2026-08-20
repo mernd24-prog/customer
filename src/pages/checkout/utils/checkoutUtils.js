@@ -528,6 +528,8 @@ export const getClientDeliverabilityBlockers = (items = [], address = {}) => {
 
       if (mode === "disabled") {
         return {
+          lineKey: getCartLineKey(item),
+          productId: item._safeId || getProductId(product),
           title,
           pincode,
           reason: "Delivery is disabled for this product.",
@@ -535,6 +537,8 @@ export const getClientDeliverabilityBlockers = (items = [], address = {}) => {
       }
       if (mode === "allowlist" && !listIncludes(allowed, pincode)) {
         return {
+          lineKey: getCartLineKey(item),
+          productId: item._safeId || getProductId(product),
           title,
           pincode,
           reason: `Not in this product's allowed pincode list.`,
@@ -560,6 +564,8 @@ export const getClientDeliverabilityBlockers = (items = [], address = {}) => {
 
         if (!regionAllowed || !stateAllowed || !cityAllowed) {
           return {
+            lineKey: getCartLineKey(item),
+            productId: item._safeId || getProductId(product),
             title,
             pincode,
             reason: "Not in this product's delivery region.",
