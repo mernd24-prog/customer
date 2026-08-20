@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { checkServiceability } from "../../../features/delivery/deliverySlice";
 import {
@@ -22,6 +22,18 @@ export default function DeliveryChecker({ productId, onResultChange }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!error && result?.serviceable !== false) return undefined;
+    const timeoutId = window.setTimeout(() => {
+      setError("");
+      if (result?.serviceable === false) {
+        setResult(null);
+        onResultChange?.(null);
+      }
+    }, 5000);
+    return () => window.clearTimeout(timeoutId);
+  }, [error, onResultChange, result?.serviceable]);
 
   const check = async (e) => {
     e?.preventDefault();
@@ -70,6 +82,11 @@ export default function DeliveryChecker({ productId, onResultChange }) {
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setPincode("");
+    setLastCheckedPincode("");
+    setResult(null);
+    setError("");
+    onResultChange?.(null);
   };
 
   return (
@@ -209,8 +226,10 @@ export default function DeliveryChecker({ productId, onResultChange }) {
                     <button
                       type="submit"
                       disabled={loading || pincode.length !== 6}
+                      aria-busy={loading}
+                      aria-label={loading ? "Checking delivery availability" : "Check delivery availability"}
                       className={cn(
-                        "h-11 px-5 rounded-[8px]",
+                        "inline-flex h-11 min-w-[82px] items-center justify-center gap-2 px-5 rounded-[8px]",
                         "text-sm font-semibold text-white",
                         "bg-gradient-to-r from-gold to-gold-dark",
                         "shadow-sm hover:shadow-md",
@@ -220,7 +239,13 @@ export default function DeliveryChecker({ productId, onResultChange }) {
                       )}
                     >
                       {loading ? (
-                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        <>
+                          <span
+                            className="block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-white/40 border-t-white"
+                            aria-hidden="true"
+                          />
+                          <span className="sr-only">Checking delivery availability</span>
+                        </>
                       ) : (
                         "Check"
                       )}
