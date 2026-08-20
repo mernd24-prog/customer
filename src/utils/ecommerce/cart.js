@@ -21,9 +21,11 @@ export function normalizeId(value) {
 }
 
 export function normalizeWishlistItem(value) {
-  const item = typeof value === "object" && value !== null ? value : { productId: value };
+  const item =
+    typeof value === "object" && value !== null ? value : { productId: value };
   const productId = normalizeId(item.productId || item.product || item);
-  const variant = item.selectedVariant || item.variant || getDefaultVariant(item) || null;
+  const variant =
+    item.selectedVariant || item.variant || getDefaultVariant(item) || null;
   return {
     productId,
     variantId: item.variantId || variant?._id || variant?.id || "",
@@ -72,11 +74,15 @@ function normalizeCartItemForWrite(item) {
     item?.image ||
     item?.imageUrl ||
     getProductImage(productObj) ||
-    (typeof item?.productId === "object" ? getProductImage(item.productId) : "");
+    (typeof item?.productId === "object"
+      ? getProductImage(item.productId)
+      : "");
   const title =
     item?.title ||
     getProductTitle(productObj) ||
-    (typeof item?.productId === "object" ? getProductTitle(item.productId) : "");
+    (typeof item?.productId === "object"
+      ? getProductTitle(item.productId)
+      : "");
   return {
     ...item,
     productId,
@@ -129,8 +135,12 @@ function mergeCartItems(items = []) {
 export function normalizeCartPayloadForWrite(cart = {}) {
   const items = mergeCartItems(cart?.items || []);
   const wishlist = Array.from(
-    new Map((cart?.wishlist || []).map(normalizeWishlistItem).filter((item) => item.productId)
-      .map((item) => [wishlistItemKey(item), item])).values(),
+    new Map(
+      (cart?.wishlist || [])
+        .map(normalizeWishlistItem)
+        .filter((item) => item.productId)
+        .map((item) => [wishlistItemKey(item), item]),
+    ).values(),
   );
   return { items, wishlist };
 }
@@ -166,10 +176,10 @@ export function addProductToCartPayload(cart, product, quantity = 1) {
 
   const items = existing.some((item) => cartItemKey(item) === key)
     ? existing.map((item) =>
-      cartItemKey(item) === key
-        ? { ...item, quantity: item.quantity + quantity }
-        : item,
-    )
+        cartItemKey(item) === key
+          ? { ...item, quantity: item.quantity + quantity }
+          : item,
+      )
     : [nextItem, ...existing]; // Add new item at the top
 
   return {
@@ -180,7 +190,9 @@ export function addProductToCartPayload(cart, product, quantity = 1) {
 export function wishlistPayload(cart, product, remove = false) {
   const entry = normalizeWishlistItem(product);
   const key = wishlistItemKey(entry);
-  const current = (cart?.wishlist || []).map(normalizeWishlistItem).filter((item) => item.productId);
+  const current = (cart?.wishlist || [])
+    .map(normalizeWishlistItem)
+    .filter((item) => item.productId);
 
   return {
     items: (cart?.items || []).map(normalizeCartItemForWrite),
@@ -203,17 +215,17 @@ export function normalizeCartItemId(value) {
   if (typeof value === "object") {
     const productId = normalizeId(
       value.productId ||
-      value.product ||
-      value._raw?.productId ||
-      value.id ||
-      value,
+        value.product ||
+        value._raw?.productId ||
+        value.id ||
+        value,
     );
     const variantId = normalizeId(
       value.variantId ||
-      value.variantSku ||
-      value._raw?.variantId ||
-      value._raw?.variantSku ||
-      "",
+        value.variantSku ||
+        value._raw?.variantId ||
+        value._raw?.variantSku ||
+        "",
     );
     return [productId, variantId].filter(Boolean).join(":");
   }
@@ -241,7 +253,7 @@ export function getCartItemStock(item = {}, product = {}) {
   const matchingVariant = variants.find(
     (variant) =>
       String(variant?._id || variant?.id || "") ===
-      String(item.variantId || "") ||
+        String(item.variantId || "") ||
       String(variant?.sku || "") === String(item.variantSku || ""),
   );
 
@@ -263,7 +275,7 @@ export function cartLineKey(item) {
   const defaultVariant =
     !item.variantId && !item.variantSku && Array.isArray(product?.variants)
       ? product.variants.find((variant) => variant.isDefault) ||
-      product.variants[0]
+        product.variants[0]
       : null;
   return normalizeCartItemId({
     productId,
@@ -321,7 +333,6 @@ export function buildSavedProductView(wishlistProduct, resolvedProduct) {
     productForCart: product || wishlistProduct,
   };
 }
-
 
 export function readSavedForLaterItems() {
   try {
@@ -409,12 +420,16 @@ export function writeGuestCart(cart = {}) {
 export function clearGuestCart() {
   try {
     window.localStorage.removeItem(GUEST_CART_STORAGE_KEY);
-  } catch { }
+  } catch {}
 }
 
-export async function syncGuestCartWithServer(dispatch, { fetchCartAction, updateCartAction }) {
+export async function syncGuestCartWithServer(
+  dispatch,
+  { fetchCartAction, updateCartAction },
+) {
   const guestCart = readGuestCart();
-  const hasGuestItems = Array.isArray(guestCart?.items) && guestCart.items.length > 0;
+  const hasGuestItems =
+    Array.isArray(guestCart?.items) && guestCart.items.length > 0;
   const hasGuestWishlist =
     Array.isArray(guestCart?.wishlist) && guestCart.wishlist.length > 0;
 
@@ -423,7 +438,9 @@ export async function syncGuestCartWithServer(dispatch, { fetchCartAction, updat
   if (!hasGuestItems && !hasGuestWishlist) {
     clearGuestCart();
     if (fetchCartAction) {
-      await dispatch(fetchCartAction()).unwrap().catch(() => null);
+      await dispatch(fetchCartAction())
+        .unwrap()
+        .catch(() => null);
     }
     return;
   }
@@ -431,7 +448,9 @@ export async function syncGuestCartWithServer(dispatch, { fetchCartAction, updat
   try {
     let existingServerCart = {};
     if (fetchCartAction) {
-      const serverRes = await dispatch(fetchCartAction()).unwrap().catch(() => null);
+      const serverRes = await dispatch(fetchCartAction())
+        .unwrap()
+        .catch(() => null);
       existingServerCart = serverRes?.data || serverRes || {};
     }
 
@@ -442,10 +461,16 @@ export async function syncGuestCartWithServer(dispatch, { fetchCartAction, updat
 
     const mergedPayload = {
       items: mergedItems,
-      wishlist: Array.from(new Map([
-        ...(existingServerCart.wishlist || []).map(normalizeWishlistItem),
-        ...(guestCart.wishlist || []).map(normalizeWishlistItem),
-      ].filter((item) => item.productId).map((item) => [wishlistItemKey(item), item])).values()),
+      wishlist: Array.from(
+        new Map(
+          [
+            ...(existingServerCart.wishlist || []).map(normalizeWishlistItem),
+            ...(guestCart.wishlist || []).map(normalizeWishlistItem),
+          ]
+            .filter((item) => item.productId)
+            .map((item) => [wishlistItemKey(item), item]),
+        ).values(),
+      ),
     };
 
     if (updateCartAction) {
@@ -456,7 +481,7 @@ export async function syncGuestCartWithServer(dispatch, { fetchCartAction, updat
     // Keep the local copy when synchronization fails so a temporary API/network
     // error cannot permanently discard the user's cart or wishlist.
     if (fetchCartAction) {
-      await dispatch(fetchCartAction()).catch(() => { });
+      await dispatch(fetchCartAction()).catch(() => {});
     }
   }
 }

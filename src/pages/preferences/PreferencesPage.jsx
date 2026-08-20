@@ -54,8 +54,8 @@ export function PreferencesPage() {
   return (
     <>
       <Seo title="Notification Preferences | Sam Global" />
-      <div className="w-container py-8">
-        <h1 className="mb-6  text-2xl font-bold text-ink">
+      <div className="">
+        <h1 className=" my-6 text-2xl font-bold text-ink">
           Notification Preferences
         </h1>
         <ApiState loading={state.loading} error={state.error} empty={false}>

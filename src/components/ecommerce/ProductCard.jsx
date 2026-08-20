@@ -407,11 +407,11 @@ export default function ProductCard({
           )}
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-col px-4 pb-4 pt-4 lg:pt-6">
+        <div className="flex min-w-0 flex-col px-4 pt-3 pb-2">
           <StarRating rating={rating} count={ratingCount} />
 
           <h3
-            className=" w-full text-base  md:text-small line-clamp-1 font-semibold text-[#2E2E2E] "
+            className="my-[10px]  w-full text-sm font-semibold text-[#2E2E2E] line-clamp-1"
             title={title}
           >
             {title}
@@ -421,7 +421,7 @@ export default function ProductCard({
             price={price}
             oldPrice={oldPrice}
             currency={currency || cardProduct?.currency}
-            className="mb-0 gap-3 my-2 lg:my-4"
+            className="my-1 flex items-center gap-2.5"
             priceClassName="text-base font-extrabold text-[#1B1D60] md:text-lg 2xl:text-[20px]"
             oldPriceClassName="text-base font-semibold text-[#737373] line-through md:text-lg 2xl:text-[20px]"
           />
@@ -440,7 +440,7 @@ export default function ProductCard({
       </Link>
 
       {showActions && (
-        <div className="mt-auto  flex items-center gap-8  px-4 pb-4">
+        <div className="mt-auto flex items-center gap-3 px-4 pb-3 pt-1">
           <PillButton
             disabled={!isInStock}
             onClick={handleAddToCart}

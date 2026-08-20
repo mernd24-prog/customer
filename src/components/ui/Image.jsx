@@ -5,7 +5,7 @@ const ImageSkeleton = ({ src, alt, className = "", imageClassName = "" }) => {
 
   return (
     <div
-      className={`relative flex h-10 w-10 items-center justify-center ${className}`}
+      className={`relative flex h-7 md:h-10 w-7 md:w-10 items-center justify-center ${className}`}
     >
       {/* Skeleton */}
       {loading && (

@@ -15,12 +15,24 @@ import NewArrivalCard from "../../components/ui/NewArrivalCard";
 import LazySection from "../../components/ui/LazySection";
 import { mothersDayData } from "../../data/special";
 
-const ShoppingMadeEasyBanner = React.lazy(() => import("../../components/home/ShoppingBanner"));
-const FeaturedProductsSection = React.lazy(() => import("../../components/home/FeaturedProductsSection"));
-const MothersDaySwiper = React.lazy(() => import("../../components/home/MothersDayCarousel"));
-const HomeProductsForYouSection = React.lazy(() => import("../../components/home/HomeProductsForYouSection"));
-const CollageSection = React.lazy(() => import("../../components/home/CollageSection"));
-const ShowcaseSection = React.lazy(() => import("../../components/home/ShowcaseSection"));
+const ShoppingMadeEasyBanner = React.lazy(
+  () => import("../../components/home/ShoppingBanner"),
+);
+const FeaturedProductsSection = React.lazy(
+  () => import("../../components/home/FeaturedProductsSection"),
+);
+const MothersDaySwiper = React.lazy(
+  () => import("../../components/home/MothersDayCarousel"),
+);
+const HomeProductsForYouSection = React.lazy(
+  () => import("../../components/home/HomeProductsForYouSection"),
+);
+const CollageSection = React.lazy(
+  () => import("../../components/home/CollageSection"),
+);
+const ShowcaseSection = React.lazy(
+  () => import("../../components/home/ShowcaseSection"),
+);
 
 import { toStandardProductCard as toNewArrivalProduct } from "../../utils/productUtils";
 import { getProductListFromResponse } from "../../utils/ecommerce";
@@ -87,7 +99,7 @@ export function HomePage() {
   const products = homeProducts;
 
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
-  
+
   const isTrendingLoading = useSelector((s) => s.recommendation.loading);
   const loading = homeLoading || isTrendingLoading;
 
@@ -158,7 +170,8 @@ export function HomePage() {
       <LazySection minHeight="150px">
         <ShoppingMadeEasyBanner
           cmsPage={cmsPages.find(
-            (p) => p.slug === "promotion_banner" || p.slug === "promotion-banner"
+            (p) =>
+              p.slug === "promotion_banner" || p.slug === "promotion-banner",
           )}
         />
       </LazySection>
@@ -173,41 +186,41 @@ export function HomePage() {
         />
       </LazySection>
 
-        <LazySection minHeight="500px">
-          <section className="my-10">
-            <ShowcaseSection
-              title="New Arrivals"
-              subtitle="Newly added products with trend-driven rankings"
-              headerbgColor="bg-white"
-              bodybgColor="bg-white"
-              gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-9 xl:grid-cols-3"
-              items={newArrivalItems.length ? newArrivalItems : undefined}
-              CardComponent={NewArrivalCard}
-              skeletonVariant="new-arrivals"
-              skeletonCount={3}
-              className="mt-8"
-              actionLabel="View Shop"
-              actionHref="/products"
-              loading={loading}
-            />
-          </section>
-        </LazySection>
+      <LazySection minHeight="500px">
+        <section className="my-10">
+          <ShowcaseSection
+            title="New Arrivals"
+            subtitle="Newly added products with trend-driven rankings"
+            headerbgColor="bg-white"
+            bodybgColor="bg-white"
+            gridClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-9 xl:grid-cols-3"
+            items={newArrivalItems.length ? newArrivalItems : undefined}
+            CardComponent={NewArrivalCard}
+            skeletonVariant="new-arrivals"
+            skeletonCount={3}
+            className="mt-8"
+            actionLabel="View Shop"
+            actionHref="/products"
+            loading={loading}
+          />
+        </section>
+      </LazySection>
 
-        <LazySection minHeight="380px">
-          <MothersDaySwiper data={mothersDayData} />
-        </LazySection>
+      <LazySection minHeight="380px">
+        <MothersDaySwiper data={mothersDayData} />
+      </LazySection>
 
-        <LazySection minHeight="400px">
-          <div className="mt-16">
-            <HomeProductsForYouSection
-              title="Explore Our Collection"
-              description="Handpicked products loved by thousands of shoppers"
-              actionLabel="Browse All Products"
-              limit={10}
-              fallbackProducts={homeProducts}
-            />
-          </div>
-        </LazySection>
+      <LazySection minHeight="400px">
+        <div className="mt-16">
+          <HomeProductsForYouSection
+            title="Explore Our Collection"
+            description="Handpicked products loved by thousands of shoppers"
+            actionLabel="Browse All Products"
+            limit={10}
+            fallbackProducts={homeProducts}
+          />
+        </div>
+      </LazySection>
     </>
   );
 }

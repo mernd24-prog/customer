@@ -20,10 +20,7 @@ import { adaptProductToItem } from "../../utils/pages/watchListUtils";
 import { OutlineSmallButton } from "../../components/ui/button/static";
 import { FaAngleRight } from "react-icons/fa6";
 import { ProductCard } from "../../components/ecommerce";
-import {
-  SkeletonLoader,
-  SKELETON_PRESETS,
-} from "../../components/ui/skeleton";
+import { SkeletonLoader, SKELETON_PRESETS } from "../../components/ui/skeleton";
 
 export default function WatchlistPage() {
   const navigate = useNavigate();
@@ -45,7 +42,9 @@ export default function WatchlistPage() {
 
   const handleIncrease = (id) => {
     setLocalQuantities((prev) => {
-      const product = products.find((p) => wishlistItemKey(p.wishlistEntry || p) === id);
+      const product = products.find(
+        (p) => wishlistItemKey(p.wishlistEntry || p) === id,
+      );
       const item = product ? adaptProductToItem(product, prev[id] ?? 1) : null;
 
       if (item?.increaseDisabled) return prev;
@@ -65,13 +64,17 @@ export default function WatchlistPage() {
   };
 
   const handleRemove = (id) => {
-    const product = products.find((p) => wishlistItemKey(p.wishlistEntry || p) === id);
+    const product = products.find(
+      (p) => wishlistItemKey(p.wishlistEntry || p) === id,
+    );
     if (product) removeProduct(product);
   };
 
   // CartItemCard's secondary action is repurposed as an atomic wishlist-to-cart move.
   const handleSaveForLater = (id) => {
-    const product = products.find((p) => wishlistItemKey(p.wishlistEntry || p) === id);
+    const product = products.find(
+      (p) => wishlistItemKey(p.wishlistEntry || p) === id,
+    );
     if (!product) return;
     const qty = localQuantities[id] ?? 1;
     return moveWishlistToCart(product, qty);
@@ -136,43 +139,43 @@ export default function WatchlistPage() {
             <>
               <div className="mt-8 lg:mt-10 rounded-[16px] border border-gold/50 bg-[#FFFDF8] sm:rounded-[20px]">
                 {products.map((product, index) => {
-                const id = wishlistItemKey(product.wishlistEntry || product);
-                const item = adaptProductToItem(
-                  product,
-                  localQuantities[id] ?? 1,
-                );
+                  const id = wishlistItemKey(product.wishlistEntry || product);
+                  const item = adaptProductToItem(
+                    product,
+                    localQuantities[id] ?? 1,
+                  );
 
-                return (
-                  <div key={id}>
-                    <CartItemCard
-                      item={item}
-                      selected={false}
-                      isLastItem={index === products.length - 1}
-                      fullWidth
-                      onSelect={() => {}}
-                      onIncrease={handleIncrease}
-                      onDecrease={handleDecrease}
-                      onRemove={handleRemove}
-                      onSaveForLater={handleSaveForLater}
-                      saveForLaterLabel="Move to Cart"
-                      removeLabel="Remove From Watchlist"
-                      showCheckbox={false}
-                      showQuantitySelector={false}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex items-center gap-3 mt-6 lg:mt-8">
-              <OutlineSmallButton
-                to="/products"
-                rightIcon={<FaAngleRight className="text-[10px]" />}
-                className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
-              >
-                Continue Shopping
-              </OutlineSmallButton>
-            </div>
-          </>
+                  return (
+                    <div key={id}>
+                      <CartItemCard
+                        item={item}
+                        selected={false}
+                        isLastItem={index === products.length - 1}
+                        fullWidth
+                        onSelect={() => {}}
+                        onIncrease={handleIncrease}
+                        onDecrease={handleDecrease}
+                        onRemove={handleRemove}
+                        onSaveForLater={handleSaveForLater}
+                        saveForLaterLabel="Move to Cart"
+                        removeLabel="Remove From Watchlist"
+                        showCheckbox={false}
+                        showQuantitySelector={true}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex items-center gap-3 mt-6 lg:mt-8">
+                <OutlineSmallButton
+                  to="/products"
+                  rightIcon={<FaAngleRight className="text-[10px]" />}
+                  className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
+                >
+                  Continue Shopping
+                </OutlineSmallButton>
+              </div>
+            </>
           ) : (
             <EmptyState
               title="Your Watchlist Is Empty"
