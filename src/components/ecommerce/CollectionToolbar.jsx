@@ -61,9 +61,9 @@ export default function CollectionToolbar({
           <button
             type="button"
             onClick={onOpenFilters}
-            className="flex flex-1 sm:flex-none h-10 sm:h-11 justify-start items-center gap-1.5 sm:gap-2 rounded-lg border border-[#1B1D604D] bg-white px-3 sm:px-4 text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs transition hover:border-[#CE9F2D] hover:bg-[#F8F3E7] lg:hidden focus:outline-none"
+            className="flex flex-1 sm:flex-none h-10 sm:h-11 justify-start items-center gap-1.5 sm:gap-2 rounded-lg border border-[#E7D9B8] bg-white px-3 sm:px-4 text-xs sm:text-sm font-semibold text-[#03014D] shadow-xs transition hover:border-[#CE9F2D] hover:bg-[#F8F3E7] lg:hidden focus:outline-none"
           >
-            <SlidersHorizontal size={16} className="shrink-0 text-[#1B1D60]" />
+            <SlidersHorizontal size={16} className="shrink-0 text-[#CE9F2D]" />
             <span>Filters</span>
           </button>
         )}

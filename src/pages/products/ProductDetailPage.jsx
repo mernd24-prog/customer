@@ -618,6 +618,13 @@ export default function ProductDetailPage() {
                           {quantityStockMessage}
                         </p>
                       ) : null}
+
+                      {/* Delivery Checker link directly below Quantity Selector */}
+                      <DeliveryChecker
+                        productId={productId}
+                        product={product}
+                        onResultChange={setDeliveryResult}
+                      />
                     </div>
                   </div>
 
@@ -688,17 +695,6 @@ export default function ProductDetailPage() {
                       }
                     }}
                   />
-
-                  <div
-                    className={`mt-4 flex ${
-                      inStock ? "justify-center" : "justify-start"
-                    }`}
-                  >
-                    <DeliveryChecker
-                      productId={productId}
-                      onResultChange={setDeliveryResult}
-                    />
-                  </div>
                 </div>
               </div>
 
