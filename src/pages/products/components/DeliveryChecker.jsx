@@ -1,8 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { checkServiceability } from "../../../features/delivery/deliverySlice";
-import { IoIosSearch } from "react-icons/io";
-import { Truck, Banknote, X } from "lucide-react";
+import {
+  Truck,
+  Banknote,
+  CheckCircle2,
+  XCircle,
+  Package,
+  ShieldCheck,
+  X,
+  MapPin,
+} from "lucide-react";
+import { createPortal } from "react-dom";
+import { cn } from "../../../utils/common";
 
 export default function DeliveryChecker({ productId, onResultChange }) {
   const dispatch = useDispatch();
@@ -11,19 +21,10 @@ export default function DeliveryChecker({ productId, onResultChange }) {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (result) {
-      const timer = setTimeout(() => {
-        setResult(null);
-        onResultChange?.(null);
-      }, 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [result, onResultChange]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const check = async (e) => {
-    e.preventDefault();
+    e?.preventDefault();
     const pin = pincode.trim();
     if (!/^\d{6}$/.test(pin)) {
       setError("Enter a valid 6-digit pincode");
@@ -40,7 +41,6 @@ export default function DeliveryChecker({ productId, onResultChange }) {
       onResultChange?.(nextResult);
       if (nextResult) {
         setLastCheckedPincode(pin);
-        setPincode("");
       }
     } catch (err) {
       setResult(null);
@@ -68,127 +68,282 @@ export default function DeliveryChecker({ productId, onResultChange }) {
   );
   const resultCodAvailable = result?.codAvailable;
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="flex w-full max-w-[360px] flex-col gap-2">
-      <form
-        onSubmit={check}
-        className="flex h-11 w-full overflow-hidden rounded-full border border-[#1B1D604D] bg-white shadow-sm"
-      >
-        <input
-          type="text"
-          value={pincode}
-          onChange={(e) => {
-            setError("");
-            setPincode(e.target.value.replace(/\D/g, "").slice(0, 6));
-          }}
-          placeholder="Enter 6-digit Pincode"
-          className="flex-1 min-w-0 bg-transparent border border-none focus:outline-none px-6 text-sm text-[#4E4E4E]"
-        />
+    <div className="w-full">
+      {/* Trigger Link directly below Quantity Selector */}
+      <div className="mt-2.5 flex flex-col gap-1">
         <button
-          type="submit"
-          disabled={loading}
-          aria-label="Check delivery pincode"
-          className="flex h-full w-14 shrink-0 items-center justify-center bg-navy text-white disabled:opacity-60 transition hover:bg-[#25287d]"
+          type="button"
+          onClick={() => setIsModalOpen(true)}
+          className="group inline-flex w-fit items-center gap-2 text-xs sm:text-sm font-semibold text-ink transition-colors hover:text-gold focus:outline-none"
         >
-          {loading ? (
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-          ) : (
-            <IoIosSearch className="text-xl" />
-          )}
-        </button>
-      </form>
-
-      {error && <p className="text-xs text-red-600">{error}</p>}
-
-      {result && (
-        <div className="relative mt-3 p-4 rounded-xl border border-gray-100 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-all duration-300 overflow-hidden">
-          {/* Close button */}
-          <button
-            type="button"
-            aria-label="Close delivery result"
-            onClick={() => {
-              setResult(null);
-              onResultChange?.(null);
+          <div
+            className="flex h-7 w-7 items-center justify-center rounded-full text-gold transition-all group-hover:scale-105"
+            style={{
+              background:
+                "linear-gradient(135deg, var(--customer-gold-soft) 0%, var(--customer-cream) 100%)",
             }}
-            className="absolute top-3 right-3 text-[#2E2E2E]/40 hover:text-[#2E2E2E]/80 transition-colors"
           >
-            <X size={16} />
-          </button>
+            <MapPin size={15} />
+          </div>
+          <span className="underline decoration-gold/50 underline-offset-4 group-hover:decoration-gold">
+            {lastCheckedPincode
+              ? `Delivering to ${lastCheckedPincode} (Change)`
+              : "Check Delivery & Pincode Availability"}
+          </span>
+          <span className="text-xs font-bold text-gold transition-transform group-hover:translate-x-1">
+            →
+          </span>
+        </button>
 
-          {result.serviceable ? (
-            <div className="space-y-3">
-              {/* Header */}
-              <div className="flex items-center gap-2 text-emerald-700 font-bold text-sm">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-800 text-xs">
-                  ✓
-                </span>
-                <span>Deliverable to {lastCheckedPincode}</span>
+        {/* Quick inline status if already checked */}
+        {result && result.serviceable && (
+          <div className="flex items-center gap-2 pt-0.5 text-xs font-medium text-emerald-700">
+            <CheckCircle2 size={14} className="shrink-0 text-emerald-600" />
+            <span>
+              Deliverable to <strong>{lastCheckedPincode}</strong>
+              {etaText ? ` • Ships in ${etaText} days` : ""}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Modal Popup portal styled like AuthModal */}
+      {isModalOpen &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center sm:p-4 animate-overlay-in"
+            style={{
+              backgroundColor: "rgba(0,0,0,0.55)",
+              backdropFilter: "blur(6px)",
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) closeModal();
+            }}
+            role="dialog"
+            aria-modal="true"
+          >
+            <div
+              className={cn(
+                "relative w-full bg-white overflow-hidden",
+                "rounded-t-[20px] sm:rounded-[var(--customer-radius-lg)]",
+                "sm:max-w-[420px]",
+                "shadow-2xl",
+                "sm:animate-modal-in animate-sheet-in",
+              )}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Top Gold Accent Bar */}
+              <div className="h-[3px] w-full bg-gradient-to-r from-gold via-gold to-gold-dark" />
+
+              {/* Mobile drag handle */}
+              <div className="flex justify-center pt-3 sm:hidden">
+                <div className="h-1 w-10 rounded-full bg-border" />
               </div>
 
-              {/* Grid of info */}
-              <div className="grid grid-cols-1 gap-2 pt-2 border-t border-gray-100 text-xs text-[#4E4E4E]">
-                {etaText && (
-                  <div className="flex items-center gap-2.5">
-                    <Truck size={14} className="text-[#1B1D60]/75 shrink-0" />
-                    <span>
-                      Estimated Delivery: <strong>{etaText} Days</strong>
-                    </span>
-                  </div>
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={closeModal}
+                className={cn(
+                  "absolute right-4 top-4 flex h-8 w-8 items-center justify-center",
+                  "rounded-full text-muted transition-all duration-300 ease-in-out",
+                  "hover:bg-cream hover:text-ink",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1",
                 )}
-                <div className="flex items-center gap-2.5">
-                  <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-[10px] font-bold text-emerald-700 shrink-0">
-                    ₹
-                  </span>
-                  <span>
-                    Shipping Charge:{" "}
-                    <strong>
-                      {deliveryCharge > 0
-                        ? `${new Intl.NumberFormat("en-IN", {
-                            style: "currency",
-                            currency: "INR",
-                            maximumFractionDigits: 0,
-                          }).format(deliveryCharge)}`
-                        : "Free Delivery"}
-                    </strong>
-                  </span>
+                aria-label="Close Delivery Modal"
+              >
+                <X size={16} strokeWidth={1.8} />
+              </button>
+
+              {/* Body */}
+              <div className="px-6 pb-7 pt-5 sm:pt-6 sm:px-7">
+                {/* Icon Badge */}
+                <div className="mb-4 flex justify-center">
+                  <div
+                    className="flex h-[60px] w-[60px] items-center justify-center rounded-full text-gold"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, var(--customer-gold-soft) 0%, var(--customer-cream) 100%)",
+                      boxShadow:
+                        "0 0 0 8px rgba(214, 163, 35, 0.14), 0 0 0 14px rgba(214, 163, 35, 0.08)",
+                    }}
+                  >
+                    <Truck size={28} />
+                  </div>
                 </div>
-                {resultCodAvailable !== undefined && (
-                  <div className="flex items-center gap-2.5">
-                    <Banknote
-                      size={14}
-                      className={`${resultCodAvailable ? "text-emerald-600" : "text-red-500"} shrink-0`}
+
+                {/* Title */}
+                <h2 className="text-center text-[1.25rem] font-semibold leading-snug text-ink">
+                  Check Delivery Availability
+                </h2>
+
+                {/* Description */}
+                <p className="mt-2 text-center text-[0.825rem] leading-relaxed text-muted">
+                  Enter your 6-digit delivery pincode to check estimated arrival times, shipping costs, and COD availability for your location.
+                </p>
+
+                {/* Divider */}
+                <div className="my-5 h-px w-full bg-border" />
+
+                {/* Form */}
+                <form onSubmit={check} className="space-y-3">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={pincode}
+                      onChange={(e) => {
+                        setError("");
+                        setPincode(
+                          e.target.value.replace(/\D/g, "").slice(0, 6),
+                        );
+                      }}
+                      placeholder="Enter 6-digit Pincode"
+                      className="h-11 flex-1 min-w-0 rounded-[8px] border border-border bg-white px-4 text-sm font-medium text-ink placeholder:text-muted/60 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                      autoFocus
                     />
-                    <span>
-                      Cash on Delivery:{" "}
-                      <strong
-                        className={
-                          resultCodAvailable
-                            ? "text-emerald-700"
-                            : "text-red-600"
-                        }
-                      >
-                        {resultCodAvailable ? "Available" : "Not Available"}
-                      </strong>
-                    </span>
+                    <button
+                      type="submit"
+                      disabled={loading || pincode.length !== 6}
+                      className={cn(
+                        "h-11 px-5 rounded-[8px]",
+                        "text-sm font-semibold text-white",
+                        "bg-gradient-to-r from-gold to-gold-dark",
+                        "shadow-sm hover:shadow-md",
+                        "transition-all duration-300 ease-in-out hover:brightness-105 active:brightness-95",
+                        "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100",
+                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold",
+                      )}
+                    >
+                      {loading ? (
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      ) : (
+                        "Check"
+                      )}
+                    </button>
+                  </div>
+
+                  {error && (
+                    <p className="text-xs font-semibold text-red-600 pl-1">
+                      {error}
+                    </p>
+                  )}
+                </form>
+
+                {/* Result Block */}
+                {result && (
+                  <div className="mt-5 overflow-hidden rounded-[10px] border border-border bg-cream/40 p-4 text-xs">
+                    {result.serviceable ? (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2 font-semibold text-emerald-700 text-sm">
+                          <CheckCircle2
+                            size={18}
+                            className="shrink-0 text-emerald-600"
+                          />
+                          <span>Deliverable to {lastCheckedPincode}</span>
+                        </div>
+
+                        <div className="grid gap-2.5 pt-2 border-t border-border/60 text-ink">
+                          {etaText && (
+                            <div className="flex items-center gap-2.5">
+                              <Truck
+                                size={15}
+                                className="shrink-0 text-gold-dark"
+                              />
+                              <span>
+                                Estimated Arrival:{" "}
+                                <strong>{etaText} Days</strong>
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center gap-2.5">
+                            <Package
+                              size={15}
+                              className="shrink-0 text-gold-dark"
+                            />
+                            <span>
+                              Shipping Charge:{" "}
+                              <strong>
+                                {deliveryCharge > 0
+                                  ? new Intl.NumberFormat("en-IN", {
+                                      style: "currency",
+                                      currency: "INR",
+                                      maximumFractionDigits: 0,
+                                    }).format(deliveryCharge)
+                                  : "Free Shipping"}
+                              </strong>
+                            </span>
+                          </div>
+                          {resultCodAvailable !== undefined && (
+                            <div className="flex items-center gap-2.5">
+                              <Banknote
+                                size={15}
+                                className={`shrink-0 ${
+                                  resultCodAvailable
+                                    ? "text-emerald-600"
+                                    : "text-red-500"
+                                }`}
+                              />
+                              <span>
+                                Cash on Delivery:{" "}
+                                <strong
+                                  className={
+                                    resultCodAvailable
+                                      ? "text-emerald-700"
+                                      : "text-red-600"
+                                  }
+                                >
+                                  {resultCodAvailable
+                                    ? "Available"
+                                    : "Not Available"}
+                                </strong>
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-2.5 text-red-600 font-semibold">
+                        <XCircle
+                          size={18}
+                          className="shrink-0 text-red-600 mt-0.5"
+                        />
+                        <div>
+                          <span>
+                            Delivery unavailable to {lastCheckedPincode}.
+                          </span>
+                          <p className="text-muted text-[11px] font-normal mt-0.5">
+                            Please enter a different pincode.
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
+
+                {/* Footer Info */}
+                <div className="mt-5 flex items-center justify-between border-t border-border pt-3 text-[11px] text-muted">
+                  <span className="flex items-center gap-1">
+                    <ShieldCheck size={13} className="text-emerald-600" />
+                    Verified Courier Network
+                  </span>
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="font-semibold text-gold hover:text-gold-dark hover:underline"
+                  >
+                    Done
+                  </button>
+                </div>
               </div>
             </div>
-          ) : (
-            <div className="flex items-start gap-2.5">
-               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-100 text-red-800 text-xs shrink-0 font-bold mt-0.5">
-                ✗
-              </span>
-              <div className="text-sm font-medium text-red-600">
-                <span>Delivery Not Available to {lastCheckedPincode}.</span>
-                <p className="text-xs text-[#7E7E7E] mt-0.5">
-                  Please Check Another Pincode.
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
