@@ -49,8 +49,16 @@ function StarInput({ value, onChange, size = 24 }) {
 }
 
 function RatingPill({ rating }) {
+  const numRating = Number(rating);
+  const bgColor =
+    numRating > 3
+      ? "bg-[#388e3c]"
+      : numRating === 0
+        ? "bg-[#9e9e9e]"
+        : "bg-[#CE9F2D]";
+
   return (
-    <span className="inline-flex items-center gap-1 rounded-md bg-[#CE9F2D] px-1.5 py-0.5 text-[11px] sm:text-xs font-bold text-white shadow-xs">
+    <span className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] sm:text-xs font-bold text-white shadow-xs ${bgColor}`}>
       <IoIosStar className="text-xs" /> {rating}
     </span>
   );

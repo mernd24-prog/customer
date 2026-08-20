@@ -604,6 +604,30 @@ export default function useCheckout() {
         const payload = await dispatch(checkServiceability({ pincode, productId })).unwrap();
         const result = payload?.data || payload;
         if (result?.serviceable !== false) return null;
+
+        // Bypass server false negatives using client logic
+        const product = item._resolvedProduct || getCartItemProduct(item);
+        const shipping = product?.shipping && typeof product.shipping === "object" ? product.shipping : {};
+        const mode = normalizeServiceabilityMode(shipping?.serviceabilityMode);
+        
+        if (mode === "allowlist") {
+          const allowed = shipping.allowPincodes || shipping.serviceablePincodes || [];
+          if (normalizeList(allowed).length === 0) return null;
+          const pincodes = normalizeList(allowed);
+          if (pincodes.includes(pincode)) return null;
+        }
+
+        if (mode === "regions") {
+          const regions = normalizeList(shipping.regions);
+          const states = normalizeList(shipping.states);
+          const cities = normalizeList(shipping.cities);
+          const checkInc = (list, val) => list.includes(String(val || "").trim().toLowerCase());
+          const regionAllowed = !regions.length || checkInc(regions, pincode) || checkInc(regions, quoteShippingAddress?.state) || checkInc(regions, quoteShippingAddress?.city);
+          const stateAllowed = !states.length || checkInc(states, quoteShippingAddress?.state);
+          const cityAllowed = !cities.length || checkInc(cities, quoteShippingAddress?.city);
+          if (regionAllowed && stateAllowed && cityAllowed) return null;
+        }
+
         return {
           lineKey: getCartLineKey(item),
           productId,

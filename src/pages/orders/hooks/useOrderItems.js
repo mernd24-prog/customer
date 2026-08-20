@@ -4,6 +4,7 @@ export {
   getOrderItemVariantSku as getItemVariantSku,
   getOrderItemId as getItemId,
   returnItemMatchesOrderItem,
+  getCancellationForItem,
   getItemReturnPolicy,
   getReturnForItem as resolveReturnForItem,
   getReturnItemQuantity,
@@ -62,6 +63,10 @@ export const STATUS_LABELS = {
   refund_failed: "Refund Failed",
   partially_refunded: "Partially Refunded",
   cancelled: "Cancelled",
+  cancellation_requested: "Cancellation Requested",
+  cancellation_approved: "Cancellation Approved",
+  cancellation_rejected: "Cancellation Rejected",
+  cancellation_failed: "Cancellation Failed",
   return_completed: "Return Completed",
 };
 
@@ -114,8 +119,17 @@ export const resolveItemStatus = ({
   shipment = null,
   fulfillment = {},
   returnRequest = null,
+  cancellationRequest = null,
   orderStatus = "",
 }) => {
+  if (cancellationRequest?.status) {
+    if (cancellationRequest.status === "requested") return "cancellation_requested";
+    if (cancellationRequest.status === "approved") return "cancellation_approved";
+    if (cancellationRequest.status === "rejected") return "cancellation_rejected";
+    if (cancellationRequest.status === "failed") return "cancellation_failed";
+    return `cancellation_${cancellationRequest.status}`;
+  }
+
   const cancellationStatus =
     item.cancellation_status || item.cancellationStatus;
   const payoutStatus = String(

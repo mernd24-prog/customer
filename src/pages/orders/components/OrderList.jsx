@@ -148,6 +148,8 @@ function OrderItemSummaryCard({ order, item }) {
     item,
     getOrderStatus(order),
     shipments,
+    [],
+    order?.relations?.cancellations || order?.cancellations || [],
   );
   const shipment = findShipmentForOrderItem(shipments, item);
   const itemImage = getOrderCardImage(item);
@@ -317,6 +319,8 @@ export default function OrderList() {
             item,
             getOrderStatus(order),
             shipments,
+            [],
+            order?.relations?.cancellations || order?.cancellations || [],
           );
           return { order, item, itemStatus };
         })
