@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import SkeletonLoader from "../ui/skeleton/SkeletonLoader";
 import { ProductCard } from "../ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
-import { getProductId, getProductListFromResponse } from "../../utils/ecommerce";
+import {
+  getProductId,
+  getProductListFromResponse,
+} from "../../utils/ecommerce";
 import SectionContainer from "../ui/SectionContainer";
 import { fetchProducts } from "../../features/product/productSlice";
 
@@ -83,7 +86,7 @@ export default function HomeProductsForYouSection({
           wrapperClass="customer-card min-w-0 p-3"
         />
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid grid-cols-1  gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {products.map((product) => (
             <ProductCard
               key={getProductId(product)}
