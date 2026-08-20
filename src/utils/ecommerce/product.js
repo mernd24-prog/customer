@@ -264,6 +264,10 @@ export function getAvailableStock(source) {
 export function getProductAvailableStock(product) {
   if (!product || typeof product !== "object") return null;
 
+  if (product.selectedVariant) {
+    return getAvailableStock(product.selectedVariant);
+  }
+
   const defaultVariant = getDefaultVariant(product);
   if (defaultVariant) {
     return getAvailableStock(defaultVariant);
@@ -363,6 +367,9 @@ export function buildRatingCountMap(products) {
 export function isProductInStock(product) {
   const availableStock = getProductAvailableStock(product);
 
+  if (product?.selectedVariant && availableStock !== null) {
+    return availableStock > 0;
+  }
   if (typeof product?.inStock === "boolean") return product.inStock;
   if (typeof product?.isInStock === "boolean") return product.isInStock;
   if (availableStock !== null) return availableStock > 0;
