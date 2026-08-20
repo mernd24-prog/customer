@@ -43,7 +43,8 @@ function ReturnRequestPage({ orderId }) {
     selectedOrderedQuantity,
     quantityExceedsRemaining,
     handleItemSelect,
-    submit
+    submit,
+    setValue
   } = useReturnRequest(orderId);
 
   return (

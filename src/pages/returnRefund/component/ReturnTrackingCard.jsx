@@ -1,9 +1,7 @@
 import ShowMoreText from "../../../utils/showMore";
 import { CheckIcon } from "../../../components/ui/icons";
 
-export default function ReturnTrackingCard({
-  steps: customSteps,
-}) {
+export default function ReturnTrackingCard({ steps: customSteps }) {
   const stepsToRender = customSteps || [];
   return (
     <section className="rounded-xl rounded-t-none border border-[#E7D9B8] bg-white px-3 py-4 min-[375px]:px-4 sm:px-6 lg:px-6 lg:py-9  ">
@@ -44,12 +42,10 @@ export default function ReturnTrackingCard({
                 {step.description && (
                   <div className="mt-1 text-[12px] font-medium leading-snug text-[#454545] sm:text-[13px]">
                     <ShowMoreText
+                      label="Reason for Return"
                       text={step.description}
-                      mode="lines"
-                      limit={1}
-                      moreLabel="more"
-                      lessLabel="less"
-                      textClassName="inline break-words"
+                      mode="characters"
+                      limit={170}
                       buttonClassName="ml-1.5 text-xs sm:text-sm font-semibold text-[#3E4093] hover:underline cursor-pointer"
                     />
                   </div>

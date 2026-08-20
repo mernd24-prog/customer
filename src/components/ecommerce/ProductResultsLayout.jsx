@@ -55,14 +55,16 @@ export default function ProductResultsLayout({
       <ActiveFilterChips filters={filters} onRemove={onRemoveFilter} />
 
       <div className="flex  items-start gap-8 w-full ">
-        <div className="hidden lg:block ">
-          <ProductFilterSidebar
-            sections={filterSections}
-            onClearAll={onClearFilters}
-            topContent={sidebarTopContent}
-            loading={loading && filterSections.length === 0}
-          />
-        </div>
+        {(!empty || filterSections?.length > 0 || loading) && (
+          <div className="hidden lg:block ">
+            <ProductFilterSidebar
+              sections={filterSections}
+              onClearAll={onClearFilters}
+              topContent={sidebarTopContent}
+              loading={loading && filterSections?.length === 0}
+            />
+          </div>
+        )}
 
         <FilterDrawer open={sidebarOpen} onClose={onCloseSidebar}>
           <ProductFilterSidebar

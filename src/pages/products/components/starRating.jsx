@@ -22,29 +22,18 @@ export default function StarRating({ rating, count }) {
   const formattedCount = formatRatingCount(count);
 
   return (
-    <div className=" flex items-center gap-2">
-      <div className="flex items-center gap-1">
-        {rating != null && (
-          <span className="text-sm font-medium text-ink lg:text-lg">
+    <div className="flex items-center gap-2">
+      {rating != null && (
+        <div className="flex items-center gap-1 rounded-[4px] bg-[#CE9F2D] px-1.5 py-0.5 text-white">
+          <Star size={12} className="fill-white text-white" />
+          <span className="text-xs font-bold sm:text-[13px]">
             {ratingValue.toFixed(1)}
           </span>
-        )}
-
-        {Array.from({ length: 5 }, (_, i) => (
-          <Star
-            key={i}
-            size={18}
-            className={
-              i < stars
-                ? "fill-[#F58220] text-[#F58220]"
-                : "fill-border text-border"
-            }
-          />
-        ))}
-      </div>
+        </div>
+      )}
 
       {formattedCount && (
-        <span className="text-sm font-medium text-[#2E2E2E] lg:text-lg">
+        <span className="text-sm font-medium text-[#2E2E2E] lg:text-base">
           ({formattedCount})
         </span>
       )}

@@ -31,7 +31,8 @@ export default function ReturnItemCard({
         <ImageWithFallback
           src={image}
           alt={title}
-          className="shrink-0 rounded-[8px] bg-white object-cover w-full h-[180px] min-[480px]:w-[120px] min-[480px]:h-[120px] sm:h-[150px] sm:w-[150px] lg:h-[120px] lg:w-[120px]"
+          className="shrink-0 rounded-[8px] bg-white w-full h-[180px] min-[480px]:w-[120px] min-[480px]:h-[120px] sm:h-[150px] sm:w-[150px] lg:h-[120px] lg:w-[120px]"
+          imgClassName="object-top"
         />
 
         <div className="min-w-0 flex-1 flex flex-col w-full">
@@ -49,7 +50,7 @@ export default function ReturnItemCard({
             </h2>
             <Badge
               variant="gold"
-              className="w-fit shrink-0 justify-center rounded-[8px] border border-[#CE9F2D] !bg-[#FFEFC8] px-2.5 py-1 text-[10px] font-semibold normal-case text-[#CE9F2D] sm:px-4 sm:py-1.5 sm:text-[13px]"
+              className=" w-fit shrink-0 justify-center rounded-[8px] border border-[#CE9F2D] !bg-[#FFEFC8] px-2.5 py-1 text-[10px] font-semibold normal-case text-[#CE9F2D] sm:px-4 sm:py-1.5 sm:text-[13px]"
             >
               {capitalizeFirst(status)}
             </Badge>

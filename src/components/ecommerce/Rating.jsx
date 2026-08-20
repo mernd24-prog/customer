@@ -15,24 +15,20 @@ export default function Rating({
 
   return (
     <div
-      className={cn("flex items-center gap-1  text-xs text-[var(--customer-muted)]", className)}
-      aria-label={`${rating} out of ${max} stars`}
+      className={cn("flex items-center gap-2", className)}
+      aria-label={`${rating.toFixed(1)} out of ${max} stars`}
     >
-      <span className="flex items-center gap-0.5 text-[var(--customer-gold)]">
-        {Array.from({ length: max }, (_, index) => (
-          <Star
-            key={index}
-            size={size}
-            className={
-              index < roundedRating
-                ? "fill-[var(--customer-gold)] text-[var(--customer-gold)]"
-                : "fill-[var(--customer-border)] text-[var(--customer-border)]"
-            }
-          />
-        ))}
-      </span>
-      {showValue && <span>{rating.toFixed(1)}</span>}
-      {count != null && <span>({count})</span>}
+      <div className="flex items-center gap-1 rounded-[4px] bg-[#CE9F2D] px-1.5 py-0.5 text-white">
+        <Star size={size > 14 ? size : 12} className="fill-white text-white" />
+        <span className="text-xs font-bold sm:text-[13px]">
+          {rating.toFixed(1)}
+        </span>
+      </div>
+      {count != null && (
+        <span className="text-[13px] font-medium text-[#2E2E2E]">
+          ({count})
+        </span>
+      )}
     </div>
   );
 }

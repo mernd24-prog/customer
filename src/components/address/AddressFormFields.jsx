@@ -108,20 +108,16 @@ export default function AddressFormFields({
         autoComplete="address-line2"
       />
       <div className="grid gap-4 sm:grid-cols-2">
+        <input type="hidden" {...register("country")} value="India" />
         <SelectField
           id={`${idPrefix}-country`}
           label="Country"
-          placeholder="Select Country"
+          placeholder="India"
           options={countries}
-          value={selectedCountry}
-          registration={register("country", {
-            onChange: () => {
-              setValue("state", "");
-              setValue("city", "");
-              setValue("postalCode", "");
-            },
-          })}
+          value="India"
+          defaultValue="India"
           error={errors.country}
+          disabled={true}
         />
         <SelectField
           id={`${idPrefix}-state`}

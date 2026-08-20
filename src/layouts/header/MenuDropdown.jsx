@@ -54,7 +54,7 @@ export default function MenuDropdown({ title, items }) {
   return (
     <div className="w-[250px] overflow-hidden rounded-[var(--customer-radius)] border border-[var(--customer-border)] bg-white shadow-[var(--customer-shadow-strong)]">
       <DropdownHeader title={title} />
-      <div className="flex flex-col py-2">
+      <div className="flex flex-col ">
         {items.map((item, index) => (
           <MenuItem key={item.label} item={{ ...item, isLast: index === items.length - 1 }} />
         ))}
