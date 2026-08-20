@@ -411,11 +411,7 @@ export default function ProductCard({
           <StarRating rating={rating} count={ratingCount} />
 
           <h3
-<<<<<<< HEAD
             className="my-[10px]  w-full text-sm font-semibold text-[#2E2E2E] line-clamp-1"
-=======
-            className="mt-1.5 w-full text-base md:text-small line-clamp-1 font-semibold text-[#2E2E2E]"
->>>>>>> origin/dev-hiteshvari
             title={title}
           >
             {title}
@@ -444,11 +440,7 @@ export default function ProductCard({
       </Link>
 
       {showActions && (
-<<<<<<< HEAD
         <div className="mt-auto flex items-center gap-3 px-4 pb-3 pt-1">
-=======
-        <div className="mt-auto flex items-center justify-between gap-2 sm:gap-3 lg:gap-4 xl:gap-6 px-4 pb-4">
->>>>>>> origin/dev-hiteshvari
           <PillButton
             disabled={!isInStock}
             onClick={handleAddToCart}
