@@ -1,5 +1,4 @@
 import { buildCartItem } from "../../../utils/ecommerce";
-import { BUY_NOW_STORAGE_KEY } from "../../../utils/pages/productUtils";
 
 export default function ProductActionButtons({
   inStock,
@@ -7,7 +6,7 @@ export default function ProductActionButtons({
   selectedVariant,
   quantity,
   addToCart,
-  navigate,
+  onBuyNow,
 }) {
   return (
     <div className="mt-2 grid gap-4 sm:grid-cols-2">
@@ -32,13 +31,7 @@ export default function ProductActionButtons({
                 { ...product, selectedVariant },
                 quantity,
               );
-
-              window.sessionStorage.setItem(
-                BUY_NOW_STORAGE_KEY,
-                JSON.stringify([buyNowItem]),
-              );  
-
-              navigate("/checkout");
+              onBuyNow?.(buyNowItem);
             }}
             className="py-3 w-full rounded-[10px] border border-navy text-base font-semibold text-navy transition-all duration-300 ease-in-out hover:bg-cream disabled:cursor-not-allowed disabled:opacity-50"
           >
