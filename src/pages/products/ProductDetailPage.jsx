@@ -50,6 +50,11 @@ import {
 import { formatPageTitle } from "../../utils/common";
 import ProductReviewsSection from "../../components/ecommerce/ProductReviewsSection";
 import CUSTOMER_ROUTES from "../../constants/routes";
+import {
+  BUY_NOW_STORAGE_KEY,
+  SELECTED_CHECKOUT_STORAGE_KEY,
+} from "../../constants";
+import GuestOtpAuthModal from "../../components/ui/overlay/GuestOtpAuthModal";
 import StarRating from "./components/starRating";
 import ShareProductPopover from "./components/socialMediaShare";
 import ProductPriceBlock from "./components/oldAndNewPrice";
@@ -118,6 +123,7 @@ export default function ProductDetailPage() {
   const [activeInfoTab, setActiveInfoTab] = useState("details");
   const [recentlyViewedList, setRecentlyViewedList] = useState([]);
   const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
+  const [showGuestOtpModal, setShowGuestOtpModal] = useState(false);
 
   useEffect(() => {
     setActiveInfoTab(
@@ -130,6 +136,9 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     dispatch(fetchProductById({ productId }));
+    dispatch(fetchProductWarranty({ productId })).catch(() => {});
+    dispatch(fetchRelatedProducts({ productId })).catch(() => {});
+    dispatch(fetchCrossSellProducts({ productId })).catch(() => {});
     sideEffectsRanFor.current = null;
     setDeliveryResult(null);
   }, [dispatch, productId]);
@@ -140,9 +149,6 @@ export default function ProductDetailPage() {
     if (sideEffectsRanFor.current === productId) return;
     sideEffectsRanFor.current = productId;
 
-    dispatch(fetchProductWarranty({ productId })).catch(() => {});
-    dispatch(fetchRelatedProducts({ productId })).catch(() => {});
-    dispatch(fetchCrossSellProducts({ productId })).catch(() => {});
     dispatch(
       fetchRecommendations({
         category: product.category,
@@ -666,7 +672,20 @@ export default function ProductDetailPage() {
                     selectedVariant={selectedVariant}
                     quantity={quantity}
                     addToCart={addToCart}
-                    navigate={navigate}
+                    onBuyNow={(buyNowItem) => {
+                      window.sessionStorage.setItem(
+                        BUY_NOW_STORAGE_KEY,
+                        JSON.stringify([buyNowItem]),
+                      );
+                      window.sessionStorage.removeItem(
+                        SELECTED_CHECKOUT_STORAGE_KEY,
+                      );
+                      if (!isLoggedIn) {
+                        setShowGuestOtpModal(true);
+                      } else {
+                        navigate("/checkout");
+                      }
+                    }}
                   />
 
                   <div
@@ -708,7 +727,7 @@ export default function ProductDetailPage() {
               )}
 
               {/* <ProductRecommendationSection
-                title="You May Also Like"
+                title="Related Products"
                 linkText="View all →"
                 products={relatedProducts}
                 addToCart={addToCart}
@@ -716,6 +735,7 @@ export default function ProductDetailPage() {
                 isWishlisted={isWishlisted}
                 className="mt-12"
               /> */}
+
               <ProductRecommendationSection
                 title="Complete the Look"
                 linkText="Explore more →"
@@ -742,6 +762,14 @@ export default function ProductDetailPage() {
         </ApiState>
       </div>
 
+      <GuestOtpAuthModal
+        open={showGuestOtpModal}
+        onClose={() => setShowGuestOtpModal(false)}
+        onSuccess={() => {
+          setShowGuestOtpModal(false);
+          navigate("/checkout");
+        }}
+      />
       {product && (
         <SizeChartSidebar
           isOpen={isSizeChartOpen}

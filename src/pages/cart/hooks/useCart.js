@@ -447,6 +447,11 @@ export default function useCart() {
       BUY_NOW_STORAGE_KEY,
       JSON.stringify([itemToBuy]),
     );
+    window.sessionStorage.removeItem(SELECTED_CHECKOUT_STORAGE_KEY);
+    if (!currentUser) {
+      setShowGuestOtpModal(true);
+      return;
+    }
     navigate("/checkout");
   };
 

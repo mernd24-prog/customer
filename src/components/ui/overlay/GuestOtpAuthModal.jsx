@@ -13,8 +13,6 @@ import { syncGuestCartWithServer } from "../../../utils/ecommerce/cart";
 import { notify } from "../../../utils/notify";
 import { X } from "lucide-react";
 
-
-
 export default function GuestOtpAuthModal({
   open,
   onClose,
@@ -102,7 +100,13 @@ export default function GuestOtpAuthModal({
     const cleanedMobile = mobile.replace(/\D/g, "").slice(0, 10);
 
     if (!validateMobile(cleanedMobile)) {
-      setErrorMessage("Please enter a valid 10-digit mobile number.");
+      if (cleanedMobile.length !== 10) {
+        setErrorMessage("Please enter a valid 10-digit mobile number.");
+      } else if (!/^[6-9]/.test(cleanedMobile)) {
+        setErrorMessage("Mobile number must start with 6, 7, 8, or 9.");
+      } else {
+        setErrorMessage("Please enter a valid 10-digit mobile number.");
+      }
       return;
     }
 
@@ -250,7 +254,7 @@ export default function GuestOtpAuthModal({
               {cardTitle}
             </div>
 
-            {errorMessage && (
+            {errorMessage && step === 2 && (
               <div
                 role="alert"
                 className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-medium text-red-600"
@@ -270,7 +274,14 @@ export default function GuestOtpAuthModal({
                     <span className="text-red-500">*</span>
                   </label>
 
-                  <div className="flex h-11 w-full overflow-hidden rounded-md border border-[#D6D9DE] bg-white transition-all duration-200 focus-within:border-[#CE9F2D] focus-within:ring-2 focus-within:ring-[#CE9F2D]/20">
+                  <div
+                    className={cn(
+                      "flex h-11 w-full overflow-hidden rounded-md border bg-white transition-all duration-200",
+                      errorMessage
+                        ? "border-red-500 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-500/20"
+                        : "border-[#D6D9DE] focus-within:border-[#CE9F2D] focus-within:ring-2 focus-within:ring-[#CE9F2D]/20",
+                    )}
+                  >
                     <div className="flex shrink-0 items-center border-r border-[#D6D9DE] bg-[#FAFAFA] px-3.5 text-sm font-medium text-[#5F6470]">
                       +91
                     </div>
@@ -288,20 +299,31 @@ export default function GuestOtpAuthModal({
                           .replace(/\D/g, "")
                           .slice(0, 10);
                         setMobile(value);
-                        setErrorMessage("");
+                        if (value.length === 10 && !/^[6-9]/.test(value)) {
+                          setErrorMessage(
+                            "Mobile number must start with 6, 7, 8, or 9.",
+                          );
+                        } else {
+                          setErrorMessage("");
+                        }
                       }}
                       placeholder="Mobile Number"
                       className="h-full min-w-0 flex-1 border-0 bg-transparent px-3.5 text-sm font-medium text-[#2E2E2E] placeholder:font-normal placeholder:text-muted focus:border-0 focus:outline-none focus:ring-0"
                       required
                     />
                   </div>
+                  {errorMessage && (
+                    <p className="mt-1.5 text-xs font-semibold text-red-600">
+                      {errorMessage}
+                    </p>
+                  )}
                 </div>
 
                 <Button
                   type="submit"
                   variant="primary"
                   fullWidth
-                  disabled={isSubmitting || !validateMobile(mobile)}
+                  disabled={isSubmitting || mobile.length < 10}
                   className="h-11 text-sm font-semibold uppercase"
                 >
                   {isSubmitting ? "Please wait..." : "Continue"}

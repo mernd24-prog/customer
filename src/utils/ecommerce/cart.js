@@ -228,11 +228,11 @@ export function getCartItemStock(item = {}, product = {}) {
   );
 
   return getNumericValue(
-    getAvailableStock(item.variant),
     getAvailableStock(matchingVariant),
     getProductAvailableStock(product),
-    getAvailableStock(item),
+    getAvailableStock(item.variant),
     item.availableStock,
+    item.stock,
   );
 }
 
