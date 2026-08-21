@@ -143,6 +143,14 @@ export function normalizeSupportQueries(result) {
     category: item.category || "OTHER",
     categoryLabel: formatSupportCategory(item.category || "OTHER"),
     status: item.status || "pending",
+    adminNotes: item.adminNotes || "",
+    statusHistory: Array.isArray(item.statusHistory)
+      ? item.statusHistory.map((historyItem) => ({
+          ...historyItem,
+          changedAt: formatSupportDate(historyItem.changedAt),
+        }))
+      : [],
+    resolvedAt: item.resolvedAt ? formatSupportDate(item.resolvedAt) : "",
     createdAt: formatSupportDate(item.createdAt),
     updatedAt: formatSupportDate(item.updatedAt || item.createdAt),
   }));
