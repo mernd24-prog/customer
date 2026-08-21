@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useToastThunk } from "../../../hooks/useToastThunk";
@@ -653,6 +653,27 @@ export function useOrderDetail({ orderId, track }) {
     dispatch(fetchOrderById({ orderId }));
   };
 
+  const hasCancellableQuantity = useMemo(() => {
+    if (selectedOrderItem) {
+      const itemId = String(getOrderItemId(selectedOrderItem));
+      const quantity =
+        Number(selectedOrderItem.quantity || 0) -
+        Number(
+          selectedOrderItem.cancelled_quantity ||
+          selectedOrderItem.cancelledQuantity ||
+          0,
+        ) - pendingCancellationQuantity(itemId);
+      return quantity > 0;
+    }
+    return items.some((item) => {
+      const quantity =
+        Number(item.quantity || 0) -
+        Number(item.cancelled_quantity || 0) -
+        pendingCancellationQuantity(item.id || item._id);
+      return quantity > 0;
+    });
+  }, [selectedOrderItem, items, pendingCancellationQuantity]);
+
   const openCancellation = () => {
     setCancelReasonError(false);
     cancelRequestKey.current = `customer:${orderId}:${
@@ -744,6 +765,7 @@ export function useOrderDetail({ orderId, track }) {
     handleDownload,
     handleCancelOrder,
     openCancellation,
+    hasCancellableQuantity,
     getInvoiceUrl,
     getReturnRefundAmount,
     getReturnItemTitle,

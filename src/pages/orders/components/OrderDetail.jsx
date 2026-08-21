@@ -100,6 +100,7 @@ export default function OrderDetail({ orderId, track }) {
     handleDownload,
     handleCancelOrder,
     openCancellation,
+    hasCancellableQuantity,
     getInvoiceUrl,
     getReturnRefundAmount,
     getReturnItemTitle,
@@ -353,6 +354,7 @@ export default function OrderDetail({ orderId, track }) {
               handleRetryPayment={handleRetryPayment}
               openCancellation={openCancellation}
               selectedOrderItem={selectedOrderItem}
+              hasCancellableQuantity={hasCancellableQuantity}
             />
           </div>
         </ApiState>

@@ -198,7 +198,7 @@ export default function AddedToCartModal({
         </div>
 
         <div className="flex flex-col bg-[#fcfcfb] p-4 sm:p-5 md:max-h-[80vh]">
-          <div className="mb-4 flex min-h-9 items-center justify-between gap-3 pr-12 sm:pr-14">
+          <div className="mb-4 flex min-h-9 items-center justify-between gap-3 md:pr-14">
             <div>
               <h3 className="mt-0.5 text-base font-bold text-[var(--customer-ink)]">
                 Cart Items
@@ -208,7 +208,7 @@ export default function AddedToCartModal({
               {formatMoney(subtotal, "INR")}
             </span>
           </div>
-          <div className="space-y-2.5  h-[16rem] overflow-y-auto pr-1 [scrollbar-color:var(--customer-border)_transparent] [scrollbar-width:thin]">
+          <div className="space-y-2.5 max-h-[20rem] overflow-y-auto pr-1 hide-scrollbar">
             {cartItems.map((item, index) => (
               <CartLine
                 key={`${getProductId(item?.productId || item?.product || item)}-${index}`}

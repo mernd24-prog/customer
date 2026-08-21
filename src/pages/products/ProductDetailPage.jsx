@@ -4,9 +4,12 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import QuantitySelector from "../../pages/cart/components/QuantitySelector";
 import { IoIosSearch } from "react-icons/io";
+import Rating from "../../components/ecommerce/Rating";
 import { Banknote, Heart, Share2, Truck, ZoomIn, X } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, FreeMode } from "swiper/modules";
+import { Star } from "lucide-react";
+
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
@@ -536,7 +539,9 @@ export default function ProductDetailPage() {
                     video={productVideo}
                     fallbackLabel={getProductTitle(product)}
                     isWishlisted={isWishlisted({ ...product, selectedVariant })}
-                    onWishlist={() => toggleWishlist({ ...product, selectedVariant })}
+                    onWishlist={() =>
+                      toggleWishlist({ ...product, selectedVariant })
+                    }
                     onModalOpen={() => {
                       setShareOpen(false);
                       setZoomOpen(true);
@@ -563,13 +568,31 @@ export default function ProductDetailPage() {
                     </div>
                   </div>
 
-                  {(product.rating != null || product.reviewCount != null) && (
-                    <StarRating
-                      rating={product.rating}
-                      count={product.reviewCount || product.ratingCount}
-                    />
-                  )}
-
+                 {/* Star Rating Row */}
+                 <div className="flex items-center mt-1">
+                   <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
+                     {Number(product.rating || 0).toFixed(1)}
+                   </span>
+                   <div className="flex gap-0.5">
+                     {Array.from({ length: 5 }).map((_, i) => {
+                       const stars = Math.round(Math.max(0, Math.min(Number(product.rating || 0), 5)));
+                       return (
+                         <Star
+                           key={i}
+                           size={16}
+                           className={
+                             i < stars
+                               ? "fill-[#F58220] text-[#F58220]"
+                               : "fill-border text-border"
+                           }
+                         />
+                       );
+                     })}
+                   </div>
+                   <span className="ml-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
+                     ({product.reviewCount || product.ratingCount || "0"})
+                   </span>
+                 </div>
                   <ProductStockStatus
                     inStock={inStock}
                     selectedVariant={selectedVariant}

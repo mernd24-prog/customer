@@ -127,15 +127,15 @@ function ProductGallery({
       }`}
     >
       <div
-        className={`flex min-w-0 flex-col overflow-hidden xl:h-full ${
-          mediaItems.length > 1 ? "gap-6 xl:flex-row" : ""
-        }`}
+        className={`flex min-w-0 flex-col overflow-hidden w-full ${
+          isModal ? "h-full" : "xl:h-full"
+        } ${mediaItems.length > 1 ? "gap-6 xl:flex-row" : ""}`}
       >
         {mediaItems.length > 1 && (
           <div className="order-2 h-[84px] w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[92px]">
             <div
-              className={`flex h-full w-full gap-3 xl:flex-col ${
-                isModal ? "overflow-y-auto xl:gap-5" : "overflow-hidden xl:gap-4"
+              className={`flex h-full w-full gap-3 overflow-x-auto overflow-y-hidden hide-scrollbar xl:flex-col xl:overflow-x-hidden xl:overflow-y-auto ${
+                isModal ? "xl:gap-5" : "xl:gap-4"
               }`}
             >
               {thumbnailItems.map((item, i) => {
@@ -220,8 +220,8 @@ function ProductGallery({
         )}
 
         <div
-          className={`relative order-1 min-w-0  overflow-hidden border border-gold rounded-[20px]  bg-transparent xl:order-2 ${
-            isModal ? "h-full w-full" : "h-[324px] md:h-[440px] xl:h-full w-full"
+          className={`relative order-1 min-w-0 overflow-hidden border border-gold rounded-[20px] bg-transparent xl:order-2 ${
+            isModal ? "flex-1 w-full" : "h-[324px] md:h-[440px] xl:h-full xl:flex-1 w-full"
           }`}
         >
           <Swiper

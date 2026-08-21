@@ -19,9 +19,9 @@ export default function PageHeader({
             {eyebrow}
           </p>
         )}
-        <h1 className="mt-1  text-2xl font-bold text-[var(--customer-navy)]">
+        {/* <h1 className="mt-1  text-2xl font-bold text-[var(--customer-navy)]">
           {displayTitle}
-        </h1>
+        </h1> */}
         {description && (
           <p className="mt-2 max-w-2xl  text-[14px] leading-6 text-[var(--customer-muted)]">
             {description}

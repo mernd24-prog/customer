@@ -4,9 +4,9 @@ import AppLayout from "../layouts/AppLayout";
 import { BuyerOnlyRoute, GuestRoute, ProtectedRoute } from "./RouteGuards";
 import { AUTH_ROUTES } from "../features/auth/authRoutes";
 import Loader from "../components/ui/Loader";
-const CategoryListingPage = lazy(
-  () => import("../pages/category/CategoryListingPage"),
-);
+
+
+const CategoryListingPage = lazy(() => import("../pages/category/CategoryListingPage"),);
 const DownloadApp = lazy(() => import("../pages/downloadApp/DownloadApp"));
 const PolicyPage = lazy(() => import("../pages/policiesPage/PoliciesPages"));
 const ReturnsPage = lazy(() => import("../pages/returns/ReturnsPage.jsx"));

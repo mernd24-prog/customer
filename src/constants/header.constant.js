@@ -44,7 +44,7 @@ export const baseAccountMenuItems = [
   { label: "Returns & Refunds", path: "/returns-refunds", icon: "refreshCcw" },
   { label: "Wallet", path: "/wallet", icon: "lock" },
   { label: "Notifications", path: "/notifications", icon: "bell" },
-  { label: "Settings", path: "/notification-preferences", icon: "settings" },
+  // { label: "Settings", path: "/notification-preferences", icon: "settings" },
   { label: "Sign Out", path: "/sign-out", icon: "logOut" },
 ];
 
