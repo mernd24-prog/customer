@@ -8,6 +8,7 @@ import {
   CheckCircle,
   X,
 } from "lucide-react";
+import CustomDropdown from "../../components/ui/CustomDropdown";
 
 export default function ContactUs() {
   const [form, setForm] = useState({
@@ -214,25 +215,20 @@ export default function ContactUs() {
                 </div>
 
                 <div>
-                  <select
-                    name="subject"
+                  <CustomDropdown
+                    options={[
+                      "Order Issue",
+                      "Payment",
+                      "Return",
+                      "Seller Support",
+                      "Technical",
+                    ]}
                     value={form.subject}
-                    onChange={handleChange}
-                    className="w-full border rounded-xl p-4 focus:outline-none"
-                  >
-                    <option value="">Select Subject</option>
-                    <option>Order Issue</option>
-                    <option>Payment</option>
-                    <option>Return</option>
-                    <option>Seller Support</option>
-                    <option>Technical</option>
-                  </select>
-
-                  {errors.subject && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.subject}
-                    </p>
-                  )}
+                    onChange={(val) => setForm({ ...form, subject: val })}
+                    placeholder="Select Subject"
+                    buttonClassName="!h-[58px] !rounded-xl !text-base !border-[#E7D9B8] hover:!border-[#CE9F2D]"
+                    error={errors.subject}
+                  />
                 </div>
 
                 <div className="md:col-span-2">

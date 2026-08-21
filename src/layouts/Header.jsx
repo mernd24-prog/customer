@@ -340,10 +340,10 @@ export const Navbar = ({ icons: propIcons }) => {
                 </span>
               )}
             </HeaderIconButton>
-            <HeaderIconButton
-              to="/watchlist"
+             <HeaderIconButton
+              to="/wishlist"
               className={`relative h-8 w-8 overflow-visible bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-all ${
-                location.pathname === "/watchlist"
+                location.pathname === "/wishlist"
                   ? "border border-[#1B1D6099]"
                   : "border border-transparent"
               }`}

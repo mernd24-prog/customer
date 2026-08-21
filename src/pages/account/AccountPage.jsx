@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronDown, Pencil } from "lucide-react";
+import { ChevronDown, Pencil, Heart } from "lucide-react";
 import { CgMail } from "react-icons/cg";
 import { MdOutlineLocalPhone } from "react-icons/md";
 
@@ -27,8 +27,9 @@ const MENU_ITEMS = [
     id: "wishlist",
     label: "Wishlist",
     description: "View and manage your saved items.",
-    icon: "/image/png/wishList.png",
-    path: "/watchlist",
+    icon: Heart,
+    iconColor: "text-[#e23b3b] fill-[#e23b3b]",
+    path: "/wishlist",
   },
   {
     id: "addresses",
@@ -148,15 +149,28 @@ function AccountMenuItem({ item, variant = "desktop", onClick }) {
             : "flex lg:size-12 size-9 shrink-0 items-center justify-center rounded-full bg-[#FFC82E] text-[#1B1D60] xl:size-[50px] "
         }
       >
-        <img
-          src={item.icon}
-          alt={isMobile ? "" : item.label}
-          className={
-            isMobile
-              ? "size-4 object-contain"
-              : "size-4 object-contain sm:size-5"
-          }
-        />
+        {typeof item.icon === "string" ? (
+          <img
+            src={item.icon}
+            alt={isMobile ? "" : item.label}
+            className={
+              isMobile
+                ? "size-4 object-contain"
+                : "size-4 object-contain sm:size-5"
+            }
+          />
+        ) : (
+          (() => {
+            const Icon = item.icon;
+            return (
+              <Icon
+                className={`${
+                  isMobile ? "size-4" : "size-4 sm:size-5"
+                } ${item.iconColor || "text-[#1B1D60] fill-current"}`}
+              />
+            );
+          })()
+        )}
       </span>
 
       <span className="min-w-0">

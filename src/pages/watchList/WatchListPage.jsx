@@ -5,27 +5,15 @@ import CartItemCard from "../../pages/cart/components/CartItemCard";
 import { useProductActions } from "../../hooks/useProductActions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
-import {
-  getProductId,
-  getProductImage,
-  getProductTitle,
-  getImageFallbackSrc,
-  getProductAvailableStock,
-  getProductMrp,
-  getProductPrice,
-  wishlistItemKey,
-} from "../../utils/ecommerce";
-import { getRecentlyViewed } from "../../utils/recentlyViewed";
+import { wishlistItemKey } from "../../utils/ecommerce";
 import { adaptProductToItem } from "../../utils/pages/watchListUtils";
 import { OutlineSmallButton } from "../../components/ui/button/static";
 import { FaAngleRight } from "react-icons/fa6";
-import { ProductCard } from "../../components/ecommerce";
-import { SkeletonLoader, SKELETON_PRESETS } from "../../components/ui/skeleton";
+import { SkeletonLoader } from "../../components/ui/skeleton";
 
 export default function WatchlistPage() {
   const navigate = useNavigate();
-  const { addToCart, moveWishlistToCart, removeFromWishlist } =
-    useProductActions();
+  const { moveWishlistToCart, removeFromWishlist } = useProductActions();
   const { products, hideFallbackProduct, isUsingFallback, isLoading } =
     useWatchlistProducts();
 
@@ -82,12 +70,12 @@ export default function WatchlistPage() {
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
-    { label: "Watchlist", href: "/watchlist" },
+    { label: "Wishlist", href: "/wishlist" },
   ];
 
   return (
     <>
-      <Seo title="My Watchlist | Sam Global" />
+      <Seo title="My Wishlist | Sam Global" />
 
       <section className="min-h-screen  py-3 sm:py-6 lg:py-8 mt-8 lg:mt-0">
         <div>
@@ -158,7 +146,7 @@ export default function WatchlistPage() {
                         onRemove={handleRemove}
                         onSaveForLater={handleSaveForLater}
                         saveForLaterLabel="Move to Cart"
-                        removeLabel="Remove From Watchlist"
+                        removeLabel="Remove From Wishlist"
                         showCheckbox={false}
                         showQuantitySelector={true}
                       />
@@ -178,7 +166,7 @@ export default function WatchlistPage() {
             </>
           ) : (
             <EmptyState
-              title="Your Watchlist Is Empty"
+              title="Your Wishlist Is Empty"
               description="Save items you love to buy later."
               actionLabel="Continue Shopping"
               onAction={() => navigate("/products")}

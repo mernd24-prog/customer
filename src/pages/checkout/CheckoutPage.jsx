@@ -14,7 +14,6 @@ import BaseModal from "../../components/ui/overlay/BaseModal";
 import GuestOtpAuthModal from "../../components/ui/overlay/GuestOtpAuthModal";
 import Loader from "../../components/ui/Loader";
 import { CHECKOUT_PAGE_SKELETON } from "../../components/ui/skeleton/layouts";
-import { WarningIcon, CloseIcon } from "../../components/ui/icons";
 
 export default function CheckoutPage() {
   const {
@@ -117,17 +116,33 @@ export default function CheckoutPage() {
             ) : null}
             {deliverabilityBlockers.length > 0 && (
               <div className="mb-4 rounded-xl border border-amber-300 bg-amber-50 p-4">
-                <p className="font-semibold text-amber-900">Some items cannot be delivered to this address</p>
-                <p className="mt-1 text-xs text-amber-700">Exclude them here and continue checkout without going back to your cart.</p>
+                <p className="font-semibold text-amber-900">
+                  Some items cannot be delivered to this address
+                </p>
+                <p className="mt-1 text-xs text-amber-700">
+                  Exclude them here and continue checkout without going back to
+                  your cart.
+                </p>
                 <div className="mt-3 space-y-2">
                   {deliverabilityBlockers.map((blocker) => (
-                    <div key={blocker.lineKey || blocker.productId} className="flex items-center justify-between gap-3 rounded-lg border border-amber-200 bg-white px-3 py-2">
+                    <div
+                      key={blocker.lineKey || blocker.productId}
+                      className="flex items-center justify-between gap-3 rounded-lg border border-amber-200 bg-white px-3 py-2"
+                    >
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-gray-800">{blocker.title}</p>
-                        <p className="text-xs text-gray-600">{blocker.reason}</p>
+                        <p className="truncate text-sm font-semibold text-gray-800">
+                          {blocker.title}
+                        </p>
+                        <p className="text-xs text-gray-600">
+                          {blocker.reason}
+                        </p>
                       </div>
                       {!isBuyNowCheckout && (
-                        <button type="button" onClick={() => excludeBlockedItem(blocker)} className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50">
+                        <button
+                          type="button"
+                          onClick={() => excludeBlockedItem(blocker)}
+                          className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
+                        >
                           Exclude item
                         </button>
                       )}
@@ -136,9 +151,11 @@ export default function CheckoutPage() {
                 </div>
               </div>
             )}
-            {deliveryCheckLoading && (
-              <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50 px-4 py-2 text-sm text-blue-700">Checking every item for this delivery address…</div>
-            )}
+            {/* {deliveryCheckLoading && (
+              <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50 px-4 py-2 text-sm text-blue-700">
+                Checking every item for this delivery address…
+              </div>
+            )} */}
             <input
               type="hidden"
               value={String(useNewAddress)}
