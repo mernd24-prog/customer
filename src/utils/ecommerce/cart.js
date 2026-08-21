@@ -20,15 +20,37 @@ export function normalizeId(value) {
   return getProductId(value);
 }
 
+const MONGO_OBJECT_ID_PATTERN = /^[a-f\d]{24}$/i;
+
+function normalizeObjectId(value) {
+  const text = String(value || "").trim();
+  return MONGO_OBJECT_ID_PATTERN.test(text) ? text : "";
+}
+
+function getWritableProductId(value) {
+  if (!value) return "";
+  if (typeof value !== "object") return normalizeObjectId(value);
+
+  const directId = normalizeObjectId(value._id || value.id || value.productId);
+  if (directId) return directId;
+
+  const nestedProduct = value.product || value.productId;
+  if (nestedProduct && nestedProduct !== value) {
+    return getWritableProductId(nestedProduct);
+  }
+
+  return "";
+}
+
 export function normalizeWishlistItem(value) {
   const item =
     typeof value === "object" && value !== null ? value : { productId: value };
-  const productId = normalizeId(item.productId || item.product || item);
+  const productId = getWritableProductId(item.productId || item.product || item);
   const variant =
     item.selectedVariant || item.variant || getDefaultVariant(item) || null;
   return {
     productId,
-    variantId: item.variantId || variant?._id || variant?.id || "",
+    variantId: normalizeObjectId(item.variantId || variant?._id || variant?.id),
     variantSku: item.variantSku || variant?.sku || "",
     variantTitle: item.variantTitle || variant?.title || "",
     attributes: item.attributes || variant?.attributes || {},
@@ -41,7 +63,7 @@ export function wishlistItemKey(value) {
 }
 
 function cartItemProductId(item) {
-  return normalizeId(item?.productId || item?.product || item);
+  return getWritableProductId(item?.productId || item?.product || item);
 }
 
 function cartItemKey(item) {
@@ -84,7 +106,7 @@ function normalizeCartItemForWrite(item) {
     productId,
     // Existing legacy product-level lines must remain product-level. Inferring
     // today's default variant here changes their identity on every cart write.
-    variantId: item?.variantId || "",
+    variantId: normalizeObjectId(item?.variantId),
     variantSku: item?.variantSku || "",
     variantTitle: item?.variantTitle || "",
     attributes: item?.attributes || {},
@@ -151,8 +173,8 @@ export function buildCartItem(product, quantity = 1) {
     ) || getProductImage(product);
   const title = getProductTitle(product);
   return {
-    productId: normalizeId(product),
-    variantId: variant?._id || variant?.id || "",
+    productId: getWritableProductId(product),
+    variantId: normalizeObjectId(variant?._id || variant?.id),
     variantSku: variant?.sku || "",
     variantTitle: variant?.title || "",
     attributes: variant?.attributes || {},
@@ -178,10 +200,10 @@ export function addProductToCartPayload(cart, product, quantity = 1) {
       )
     : [nextItem, ...existing]; // Add new item at the top
 
-  return {
+  return normalizeCartPayloadForWrite({
     wishlist: cart?.wishlist || [],
     items,
-  };
+  });
 }
 export function wishlistPayload(cart, product, remove = false, includeItems = false) {
   const entry = normalizeWishlistItem(product);
@@ -192,11 +214,12 @@ export function wishlistPayload(cart, product, remove = false, includeItems = fa
 
   return {
     ...(includeItems
-      ? { items: (cart?.items || []).map(normalizeCartItemForWrite) }
+      ? { items: mergeCartItems(cart?.items || []) }
       : {}),
-    wishlist: remove
-      ? current.filter((item) => wishlistItemKey(item) !== key)
-      : [entry, ...current.filter((item) => wishlistItemKey(item) !== key)],
+    wishlist:
+      remove || !entry.productId
+        ? current.filter((item) => wishlistItemKey(item) !== key)
+        : [entry, ...current.filter((item) => wishlistItemKey(item) !== key)],
   };
 }
 

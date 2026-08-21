@@ -1,6 +1,22 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
 
+const statusLabel = (status = "") =>
+  String(status || "pending")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+const statusClass = (status = "") => {
+  const normalized = String(status || "").toLowerCase();
+  if (normalized === "resolved" || normalized === "closed") {
+    return "border-green-200 bg-green-50 text-green-700";
+  }
+  if (normalized === "in_progress") {
+    return "border-blue-200 bg-blue-50 text-blue-700";
+  }
+  return "border-[#E7D9B8] bg-[#FFF9EA] text-[#8A640D]";
+};
+
 export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
   useEffect(() => {
     if (isOpen) {
@@ -40,7 +56,7 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-hidden mt-4 flex flex-col space-y-5">
+        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5 custom-scrollbar">
           <div className="shrink-0">
             <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
               Ticket ID
@@ -48,6 +64,20 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
             <p className="text-sm font-medium text-[#2E2E2E] break-all">
               {ticket.id || ticket.queryId}
             </p>
+          </div>
+
+          <div className="border-t border-[#EFE5D2] pt-4">
+            <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
+              Status
+            </p>
+            <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${statusClass(ticket.status)}`}>
+              {statusLabel(ticket.status)}
+            </span>
+            {ticket.resolvedAt ? (
+              <p className="mt-2 text-xs text-[#666666]">
+                Resolved on {ticket.resolvedAt}
+              </p>
+            ) : null}
           </div>
 
           <div className="border-t border-[#EFE5D2] pt-4">
@@ -76,14 +106,53 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
             </div>
           </div>
 
-          <div className="border-t border-[#EFE5D2] pt-4 flex flex-col min-h-0 shrink">
-            <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1 shrink-0">
+          <div className="border-t border-[#EFE5D2] pt-4">
+            <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
               Message
             </p>
-            <div className="text-sm text-[#4E4E4E] leading-relaxed whitespace-pre-wrap bg-[#F7EED8] p-3 rounded-lg border border-[#E7D9B8]/50 break-words min-h-0 shrink overflow-y-auto custom-scrollbar">
+            <div className="text-sm text-[#4E4E4E] leading-relaxed whitespace-pre-wrap bg-[#F7EED8] p-3 rounded-lg border border-[#E7D9B8]/50 break-words">
               {ticket.message || "No message provided."}
             </div>
           </div>
+
+          {ticket.adminNotes ? (
+            <div className="border-t border-[#EFE5D2] pt-4 shrink-0">
+              <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
+                Support Note
+              </p>
+              <div className="text-sm text-[#4E4E4E] leading-relaxed whitespace-pre-wrap bg-green-50 p-3 rounded-lg border border-green-100 break-words">
+                {ticket.adminNotes}
+              </div>
+            </div>
+          ) : null}
+
+          {Array.isArray(ticket.statusHistory) && ticket.statusHistory.length ? (
+            <div className="border-t border-[#EFE5D2] pt-4 shrink-0">
+              <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-2">
+                Status History
+              </p>
+              <div className="space-y-2">
+                {ticket.statusHistory.map((item, index) => (
+                  <div
+                    key={`${item.status}-${item.changedAt || index}`}
+                    className="rounded-lg border border-[#EFE5D2] bg-white p-3"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${statusClass(item.status)}`}>
+                        {statusLabel(item.status)}
+                      </span>
+                      <span className="text-xs text-[#666666]">
+                        {item.changedAt || "-"}
+                      </span>
+                    </div>
+                    <p className="mt-2 whitespace-pre-wrap text-sm text-[#4E4E4E]">
+                      {item.note || "No note added."}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </>
