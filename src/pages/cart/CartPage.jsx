@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
 import { SkeletonLoader } from "../../components/ui/skeleton";
@@ -27,6 +28,7 @@ import { adaptItemForCard } from "../../utils/pages/cartUtils";
 import useCart from "./hooks/useCart";
 
 export default function CartPage() {
+  const [itemToRemove, setItemToRemove] = useState(null);
   const {
     navigate,
     showGuestOtpModal,
@@ -118,6 +120,20 @@ export default function CartPage() {
         onConfirm={() => setShowLimitModal(false)}
         onCancel={() => setShowLimitModal(false)}
       />
+      <ConfirmModal
+        open={!!itemToRemove}
+        title="Remove Item"
+        description="Are you sure you want to remove this item from your cart?"
+        confirmLabel="Remove"
+        cancelLabel="Cancel"
+        onConfirm={() => {
+          if (itemToRemove) {
+            handleRemove(itemToRemove);
+            setItemToRemove(null);
+          }
+        }}
+        onCancel={() => setItemToRemove(null)}
+      />
       <Seo
         title="Cart | Sam Global"
         description="Review items in your shopping cart."
@@ -190,7 +206,7 @@ export default function CartPage() {
                             onSelect={handleSelectItem}
                             onIncrease={handleIncrease}
                             onDecrease={handleDecrease}
-                            onRemove={handleRemove}
+                            onRemove={setItemToRemove}
                             onSaveForLater={handleSaveForLater}
                             onBuyNow={handleBuyNow}
                             showCheckbox={true}

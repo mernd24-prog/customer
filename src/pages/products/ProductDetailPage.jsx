@@ -536,7 +536,9 @@ export default function ProductDetailPage() {
                     video={productVideo}
                     fallbackLabel={getProductTitle(product)}
                     isWishlisted={isWishlisted({ ...product, selectedVariant })}
-                    onWishlist={() => toggleWishlist({ ...product, selectedVariant })}
+                    onWishlist={() =>
+                      toggleWishlist({ ...product, selectedVariant })
+                    }
                     onModalOpen={() => {
                       setShareOpen(false);
                       setZoomOpen(true);

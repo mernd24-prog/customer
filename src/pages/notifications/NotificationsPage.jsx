@@ -411,7 +411,9 @@ export function NotificationsPage() {
                   <div className="flex justify-center py-5">
                     <button
                       type="button"
-                      onClick={page >= totalPages ? handleShowLess : handleLoadMore}
+                      onClick={
+                        page >= totalPages ? handleShowLess : handleLoadMore
+                      }
                       disabled={notifState.loading}
                       className="
                         flex

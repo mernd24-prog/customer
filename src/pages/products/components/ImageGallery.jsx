@@ -135,7 +135,9 @@ function ProductGallery({
           <div className="order-2 h-[84px] w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[92px]">
             <div
               className={`flex h-full w-full gap-3 xl:flex-col ${
-                isModal ? "overflow-y-auto xl:gap-5" : "overflow-hidden xl:gap-4"
+                isModal
+                  ? "overflow-y-auto xl:gap-5"
+                  : "overflow-hidden xl:gap-4"
               }`}
             >
               {thumbnailItems.map((item, i) => {
@@ -143,8 +145,7 @@ function ProductGallery({
                   shouldCollapseThumbnails && i === thumbnailItems.length - 1;
                 const targetIndex = isLastVisible ? mediaItems.length - 1 : i;
                 const isActive =
-                  activeIndex === i ||
-                  (isLastVisible && activeIndex >= i);
+                  activeIndex === i || (isLastVisible && activeIndex >= i);
 
                 return (
                   <button
@@ -167,9 +168,7 @@ function ProductGallery({
                       mainSwiper?.slideTo(targetIndex);
                     }}
                     className={`relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-[15px] border transition-colors duration-200 xl:w-[92px] ${
-                      isModal
-                        ? "xl:h-[80px]"
-                        : "xl:h-[calc((100%_-_64px)/5)]"
+                      isModal ? "xl:h-[80px]" : "xl:h-[calc((100%_-_64px)/5)]"
                     } ${
                       isActive
                         ? "border-gold shadow-sm bg-white"
@@ -221,7 +220,9 @@ function ProductGallery({
 
         <div
           className={`relative order-1 min-w-0  overflow-hidden border border-gold rounded-[20px]  bg-transparent xl:order-2 ${
-            isModal ? "h-full w-full" : "h-[324px] md:h-[440px] xl:h-full w-full"
+            isModal
+              ? "h-full w-full"
+              : "h-[324px] md:h-[440px] xl:h-full w-full"
           }`}
         >
           <Swiper

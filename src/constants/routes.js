@@ -15,7 +15,7 @@ export const CUSTOMER_ROUTES = {
   product: (productId = ":productId") => `/products/${routeParam(productId)}`,
   category: (categoryKey = ":categoryKey") => `/categories/${routeParam(categoryKey)}`,
   brand: (brandSlug = ":brandSlug") => `/brands/${routeParam(brandSlug)}`,
-  wishlist: "/watchlist",
+  wishlist: "/wishlist",
   cart: "/cart",
   checkout: "/checkout",
   search: "/search",

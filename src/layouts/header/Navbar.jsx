@@ -219,7 +219,7 @@ export const Navbar = ({ icons: propIcons }) => {
 
             {/* Watchlist */}
             <HeaderIconButton
-              to="/watchlist"
+              to="/wishlist"
               className="relative h-8 w-8 overflow-visible border border-[#1B1D6099] bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
               aria-label={`Watchlist with ${wishlistedProducts.length} ${wishlistedProducts.length === 1 ? "item" : "items"}`}
             >

@@ -117,33 +117,6 @@ const PreferencesPage = lazyNamed(
   "PreferencesPage",
 );
 
-function PageNavigationLoader() {
-  const location = useLocation();
-  const [loading, setLoading] = useState(false);
-  const isFirstMount = useRef(true);
-
-  useEffect(() => {
-    if (isFirstMount.current) {
-      isFirstMount.current = false;
-      return;
-    }
-    setLoading(true);
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 450);
-
-    return () => clearTimeout(timer);
-  }, [location.pathname, location.search]);
-
-  if (!loading) return null;
-
-  return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-white">
-      <Loader size="xl" />
-    </div>
-  );
-}
-
 function RouteFallback() {
   return (
     <main className="flex min-h-[100vh] items-center justify-center bg-[var(--customer-cream)]">
@@ -222,7 +195,7 @@ export default function AppRoutes() {
           {/* ── Public buyer routes ────────────────────────────────────── */}
           <Route element={<BuyerOnlyRoute />}>
             <Route index element={<HomePage />} />
-            <Route path="/watchlist" element={<WatchlistPage />} />
+            <Route path="/wishlist" element={<WatchlistPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/new-arrivals" element={<NewArrivalsPage />} />

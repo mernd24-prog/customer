@@ -1,7 +1,6 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
 
-
 export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
   useEffect(() => {
     if (isOpen) {
@@ -25,7 +24,7 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
       />
 
       {/* Sidebar */}
-      <div className="fixed top-0 right-0 h-full w-full sm:w-[400px] md:w-[450px] max-w-full bg-white z-[9999] shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out">
+      <div className="fixed top-0 right-0 h-full w-full sm:w-[400px] md:w-[450px] max-w-full bg-white z-[9999] shadow-2xl flex flex-col p-6 transform transition-transform duration-300 ease-in-out">
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-5 bg-white border-b border-[#E7D9B8]">
           <h2 className="text-lg sm:text-xl font-bold text-[#1B1D60] text-center w-full px-8">
@@ -41,7 +40,7 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-hidden p-5 sm:p-6 flex flex-col space-y-5">
+        <div className="flex-1 overflow-hidden mt-4 flex flex-col space-y-5">
           <div className="shrink-0">
             <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
               Ticket ID
