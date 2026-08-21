@@ -92,7 +92,7 @@ export default function DeliveryChecker({ productId, onResultChange }) {
   return (
     <div className="w-full">
       {/* Trigger Link directly below Quantity Selector */}
-      <div className="mt-2.5 flex flex-col gap-1">
+      <div className=" flex flex-col gap-1 ">
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
@@ -107,7 +107,7 @@ export default function DeliveryChecker({ productId, onResultChange }) {
           >
             <MapPin size={15} />
           </div>
-          <span className="underline decoration-gold/50 underline-offset-4 group-hover:decoration-gold">
+          <span className="underline my-4 decoration-gold/50 underline-offset-4 group-hover:decoration-gold">
             {lastCheckedPincode
               ? `Delivering to ${lastCheckedPincode} (Change)`
               : "Check Delivery & Pincode Availability"}
@@ -201,7 +201,8 @@ export default function DeliveryChecker({ productId, onResultChange }) {
 
                 {/* Description */}
                 <p className="mt-2 text-center text-[0.825rem] leading-relaxed text-muted">
-                  Enter your 6-digit delivery pincode to check estimated arrival times, shipping costs, and COD availability for your location.
+                  Enter your 6-digit delivery pincode to check estimated arrival
+                  times, shipping costs, and COD availability for your location.
                 </p>
 
                 {/* Divider */}

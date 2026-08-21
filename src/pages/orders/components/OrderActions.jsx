@@ -9,9 +9,10 @@ export default function OrderActions({
   handleRetryPayment,
   openCancellation,
   selectedOrderItem,
+  hasCancellableQuantity,
 }) {
   const hasRetryPayment = status === "pending_payment" || status === "payment_failed";
-  const hasCancelAction = canCancelOrder(order);
+  const hasCancelAction = canCancelOrder(order) && hasCancellableQuantity;
 
   if (!hasRetryPayment && !hasCancelAction) {
     return null;
@@ -28,7 +29,7 @@ export default function OrderActions({
           <RefreshCw size={15} /> Retry payment
         </Button>
       )}
-      {canCancelOrder(order) && (
+      {hasCancelAction && (
         <Button
           variant="secondary"
           className="min-h-[36px] w-full border-[#CE9F2D] font-bold text-[#1B1D60] hover:bg-[#FFF9EA] sm:w-auto px-4 rounded-[10px]"

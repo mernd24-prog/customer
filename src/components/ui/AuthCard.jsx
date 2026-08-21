@@ -17,7 +17,7 @@ export default function AuthCard({
         <div className="flex flex-col md:flex-row items-stretch gap-6">
           {/* Left image - visible on md+ */}
           <div
-            className={`dw-full hidden lg:block lg:w-1/2 ${
+            className={`w-full hidden lg:block lg:w-1/2 ${
               maxHeight || "h-full"
             }`}
           >

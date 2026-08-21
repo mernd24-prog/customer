@@ -221,7 +221,6 @@ export default function LoginPage() {
         subtitle="Sign in with your email or continue securely using mobile OTP."  
         icon="/image/png/person.png"
         maxWidth="max-w-[56rem]"
-        maxHeight="h-[650px]"
         image="/image/png/authImage.png"
       >
         <form
@@ -261,15 +260,6 @@ export default function LoginPage() {
               </Link>
             </div>
           </div>
-
-          {/* {error && (
-            <div
-              className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-              role="alert"
-            >
-              {error}
-            </div>
-          )} */}
 
           <Button
             type="submit"

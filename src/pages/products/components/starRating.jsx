@@ -24,9 +24,13 @@ export default function StarRating({ rating, count }) {
   return (
     <div className="flex items-center gap-2">
       {rating != null && (
-        <div 
+        <div
           className={`flex items-center gap-1 rounded-[4px] px-1.5 py-0.5 text-white ${
-            ratingValue > 3 ? "bg-[#388e3c]" : ratingValue === 0 ? "bg-[#9e9e9e]" : "bg-[#CE9F2D]"
+            ratingValue > 3
+              ? "bg-[#388e3c]"
+              : ratingValue === 0
+                ? "bg-[#9e9e9e]"
+                : "bg-[#CE9F2D]"
           }`}
         >
           <Star size={12} className="fill-white text-white" />

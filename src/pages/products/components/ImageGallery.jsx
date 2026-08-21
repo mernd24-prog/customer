@@ -127,9 +127,9 @@ function ProductGallery({
       }`}
     >
       <div
-        className={`flex min-w-0 flex-col overflow-hidden xl:h-full ${
-          mediaItems.length > 1 ? "gap-6 xl:flex-row" : ""
-        }`}
+        className={`flex min-w-0 flex-col overflow-hidden w-full ${
+          isModal ? "h-full" : "xl:h-full"
+        } ${mediaItems.length > 1 ? "gap-6 xl:flex-row" : ""}`}
       >
         {mediaItems.length > 1 && (
           <div className="order-2 h-[84px] w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[92px]">
