@@ -609,6 +609,19 @@ export default function useCheckout() {
         const product = item._resolvedProduct || getCartItemProduct(item);
         const shipping = product?.shipping && typeof product.shipping === "object" ? product.shipping : {};
         const mode = normalizeServiceabilityMode(shipping?.serviceabilityMode);
+        const hasProfile = Boolean(shipping?.shippingProfileId);
+
+        // Seller-managed products without a profile and without manual
+        // restrictions are deliverable across All India.
+        if (!hasProfile && mode === "all_pincodes") return null;
+        if (
+          !hasProfile &&
+          mode === "inherit" &&
+          normalizeList(shipping.allowPincodes || shipping.serviceablePincodes || []).length === 0 &&
+          normalizeList(shipping.regions).length === 0 &&
+          normalizeList(shipping.states).length === 0 &&
+          normalizeList(shipping.cities).length === 0
+        ) return null;
         
         if (mode === "allowlist") {
           const allowed = shipping.allowPincodes || shipping.serviceablePincodes || [];
