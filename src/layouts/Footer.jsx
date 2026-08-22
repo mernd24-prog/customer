@@ -233,18 +233,20 @@ export function Footer({ data = footerData }) {
             {benefits.map((item, index) => (
               <div
                 key={item?.title || `benefit-${index}`}
-                className="flex items-center gap-4 rounded-[var(--customer-radius)] py-3 mr-10"
+                className="flex items-center gap-3.5 py-3.5 my-1"
               >
-                <img
-                  className="h-10 w-10  shrink-0 object-contain sm:h-12 sm:w-12 2xl:h-[60px] 2xl:w-[60px]"
-                  src={item?.icon}
-                  alt={item?.alt || item?.title || "Benefit"}
-                />
+                <div className="flex h-11 w-11 sm:h-14 sm:w-14  items-center justify-center rounded-full border border-[#D2E2F4] bg-white p-2.5 shadow-sm">
+                  <img
+                    className="h-6 w-6  shrink-0 object-contain"
+                    src={item?.icon}
+                    alt={item?.alt || item?.title || "Benefit"}
+                  />
+                </div>
                 <div>
-                  <h2 className="mb-0 text-base xl:text-xl font-bold text-[#1B1D60]">
+                  <h2 className="mb-0 text-base xl:text-lg font-bold text-[#1B1D60]">
                     {item?.title}
                   </h2>
-                  <p className="text-sm xl:text-lg font-light text-[#2E2E2E]">
+                  <p className="text-xs sm:text-sm xl:text-base font-light text-[#2E2E2E]">
                     {item?.description}
                   </p>
                 </div>
@@ -257,7 +259,10 @@ export function Footer({ data = footerData }) {
         <div className="flex my-2  md:items-center gap-3 ">
           <Link to="/">
             <picture>
-              <source srcSet="/image/webp/logoWithName-small.webp 1x, /image/webp/logoWithName.webp 2x" type="image/webp" />
+              <source
+                srcSet="/image/webp/logoWithName-small.webp 1x, /image/webp/logoWithName.webp 2x"
+                type="image/webp"
+              />
               <img
                 src="/image/webp/logoWithName.webp"
                 alt="Sam Global"

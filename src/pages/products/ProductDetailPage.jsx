@@ -383,17 +383,31 @@ export default function ProductDetailPage() {
   const variantImages = Array.isArray(selectedVariant?.images)
     ? selectedVariant.images
     : [];
+  const commonImages = Array.isArray(product?.commonImages)
+    ? product.commonImages
+    : Array.isArray(product?.catalogImages)
+      ? product.catalogImages
+      : [];
   const productImages = Array.isArray(product?.images)
     ? product.images
     : product?.imageUrl
       ? [product.imageUrl]
       : [];
+
+  const rawMergedImages = (
+    variantImages.length > 0
+      ? [...variantImages, ...commonImages]
+      : [...productImages, ...commonImages]
+  ).filter(Boolean);
+
   const images = Array.from(
     new Set(
-      (variantImages.length ? variantImages : productImages).filter(Boolean),
+      rawMergedImages.map((img) => getImageUrlFromValue(img)).filter(Boolean),
     ),
   );
-  if (!images.length && fallbackProductImage) images.push(fallbackProductImage);
+  if (!images.length && fallbackProductImage) {
+    images.push(getImageUrlFromValue(fallbackProductImage));
+  }
   const productVideo = Array.isArray(product?.videos)
     ? product.videos.find(Boolean)
     : product?.video || "";
@@ -568,31 +582,38 @@ export default function ProductDetailPage() {
                     </div>
                   </div>
 
-                 {/* Star Rating Row */}
-                 <div className="flex items-center mt-1">
-                   <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
-                     {Number(product.rating || 0).toFixed(1)}
-                   </span>
-                   <div className="flex gap-0.5">
-                     {Array.from({ length: 5 }).map((_, i) => {
-                       const stars = Math.round(Math.max(0, Math.min(Number(product.rating || 0), 5)));
-                       return (
-                         <Star
-                           key={i}
-                           size={16}
-                           className={
-                             i < stars
-                               ? "fill-[#F58220] text-[#F58220]"
-                               : "fill-border text-border"
-                           }
-                         />
-                       );
-                     })}
-                   </div>
-                   <span className="ml-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
-                     ({product.reviewCount || product.ratingCount || "0"})
-                   </span>
-                 </div>
+                  {Number(product.rating || 0) > 0 && (
+                    <div className="flex items-center mt-1">
+                      <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
+                        {Number(product.rating || 0).toFixed(1)}
+                      </span>
+                      <div className="flex gap-0.5">
+                        {Array.from({ length: 5 }).map((_, i) => {
+                          const stars = Math.round(
+                            Math.max(
+                              0,
+                              Math.min(Number(product.rating || 0), 5),
+                            ),
+                          );
+                          return (
+                            <Star
+                              key={i}
+                              size={16}
+                              className={
+                                i < stars
+                                  ? "fill-[#F58220] text-[#F58220]"
+                                  : "fill-border text-border"
+                              }
+                            />
+                          );
+                        })}
+                      </div>
+                      <span className="ml-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
+                        ({product.reviewCount || product.ratingCount || "0"})
+                      </span>
+                    </div>
+                  )}
+
                   <ProductStockStatus
                     inStock={inStock}
                     selectedVariant={selectedVariant}

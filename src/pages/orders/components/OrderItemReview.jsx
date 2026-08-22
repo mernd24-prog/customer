@@ -10,7 +10,11 @@ import {
   submitProductReview,
 } from "../../../features/review/reviewSlice";
 import { notify } from "../../../utils/notify";
-import { getReviewProductId, getReviewOrderItemId, reviewKeyForItem } from "../hooks/useOrderItems";
+import {
+  getReviewProductId,
+  getReviewOrderItemId,
+  reviewKeyForItem,
+} from "../hooks/useOrderItems";
 
 function StarInput({ value, onChange }) {
   const [hovered, setHovered] = useState(0);
@@ -344,5 +348,10 @@ function OrderItemReviewAction({
   );
 }
 
-
-export { OrderItemReviewAction, ReviewModal, ExistingReviewCard, StarInput, ReviewRating };
+export {
+  OrderItemReviewAction,
+  ReviewModal,
+  ExistingReviewCard,
+  StarInput,
+  ReviewRating,
+};

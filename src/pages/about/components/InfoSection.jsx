@@ -5,42 +5,39 @@ const InfoSection = ({ data }) => {
   const imageAlt = typeof image === "object" ? image?.alt : title;
 
   return (
-    <section className="relative my-8 lg:my-16">
-      {/* Main Blue Section */}
-      <section className="relative left-1/2 right-1/2 w-[100vw] -ml-[50vw] -mr-[50vw] overflow-hidden rounded-[var(--customer-radius)] bg-gradient-to-r from-navy to-navy-dark pt-[100px] pb-10 lg:pb-0">
-        <div className="mx-auto flex max-w-[1648px] flex-col items-center gap-6 lg:flex-row lg:items-stretch lg:px-4 xl:px-6">
-          {/* Left Content */}
-          <div className="flex w-full flex-col items-start px-4 text-left sm:px-6 lg:w-[60%] lg:px-0 lg:py-12">
-            <div className="flex w-full flex-col gap-6">
-              <h2 className=" text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
-                {title}
-              </h2>
+    <section className="relative left-1/2 right-1/2 w-[100vw] -ml-[50vw] -mr-[50vw] my-8 lg:my-16 overflow-hidden bg-gradient-to-r from-navy to-navy-dark">
+      <div className="customer-container flex flex-col items-center gap-6 lg:flex-row lg:items-stretch">
+        {/* Left Content */}
+        <div className="flex w-full flex-col justify-center text-left lg:w-[55%] py-8 lg:py-12">
+          <div className="flex w-full flex-col gap-6">
+            <h2 className="text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
+              {title}
+            </h2>
 
-              <div className="flex flex-col gap-5">
-                <p
-                  className=" text-base font-light leading-8 text-white/90 sm:text-lg"
-                  dangerouslySetInnerHTML={{ __html: description }}
-                />
-              </div>
+            <div className="flex flex-col gap-5">
+              <p
+                className="text-base font-light leading-8 text-white/90 sm:text-lg"
+                dangerouslySetInnerHTML={{ __html: description }}
+              />
             </div>
           </div>
-
-          {imageUrl && (
-            <div className="mt-8 flex w-full items-end justify-center lg:mt-0 lg:w-[40%] lg:justify-end">
-              <div className="relative w-full max-w-[340px] overflow-hidden rounded-t-[1.8rem] sm:max-w-[450px] lg:max-w-[700px]">
-                <img
-                  src={imageUrl}
-                  alt={imageAlt || title || ""}
-                  loading="lazy"
-                  width="800"
-                  height="600"
-                  className="block h-auto w-full object-cover"
-                />
-              </div>
-            </div>
-          )}
         </div>
-      </section>
+
+        {imageUrl && (
+          <div className="flex w-full items-end justify-center lg:w-[45%] lg:justify-end">
+            <div className="relative w-full max-w-[340px] overflow-hidden rounded-t-[1.8rem] sm:max-w-[450px] lg:max-w-[550px]">
+              <img
+                src={imageUrl}
+                alt={imageAlt || title || ""}
+                loading="lazy"
+                width="800"
+                height="600"
+                className="block h-auto w-full object-cover"
+              />
+            </div>
+          </div>
+        )}
+      </div>
     </section>
   );
 };

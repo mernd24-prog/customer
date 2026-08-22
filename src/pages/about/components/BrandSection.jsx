@@ -23,7 +23,7 @@ export default function BrandCarousel({ data = {} }) {
           wrapperClass="flex-shrink-0"
         />
       ) : (
-        <div className="brand-auto-carousel my-10 lg:my-16 flex w-max items-center gap-10 md:gap-20">
+        <div className="brand-auto-carousel my-8 flex w-max items-center gap-10 md:gap-20">
           {repeatedPoints.map((item, index) => (
             <InfiniteLoopSwiper
               key={`${item?.title || item?.name || "brand"}-${index}`}

@@ -26,8 +26,11 @@ export function getOptimizedCloudinaryUrl(url, width = "auto") {
 }
 
 export function generateCloudinarySrcSet(url, widths = [300, 400, 800]) {
-  if (!url || typeof url !== "string" || !url.includes("res.cloudinary.com")) return undefined;
-  return widths.map(w => `${getOptimizedCloudinaryUrl(url, w)} ${w}w`).join(", ");
+  if (!url || typeof url !== "string" || !url.includes("res.cloudinary.com"))
+    return undefined;
+  return widths
+    .map((w) => `${getOptimizedCloudinaryUrl(url, w)} ${w}w`)
+    .join(", ");
 }
 
 export function getProductId(product) {
@@ -52,21 +55,22 @@ export function getProductListFromResponse(result) {
   if (!data || typeof data !== "object") return [];
 
   return (
-    [
-      data.products,
-      data.items,
-      data.results,
-      data.hits,
-      data.list,
-    ].find(Array.isArray) || []
+    [data.products, data.items, data.results, data.hits, data.list].find(
+      Array.isArray,
+    ) || []
   );
 }
 
 export function getProductTitle(product, fallback = "Untitled product") {
-  const baseTitle = product?.title || product?.name || product?.productName || fallback;
+  const baseTitle =
+    product?.title || product?.name || product?.productName || fallback;
   const variantTitle = product?.selectedVariant?.title;
 
-  if (variantTitle && variantTitle !== baseTitle && variantTitle !== "Default Title") {
+  if (
+    variantTitle &&
+    variantTitle !== baseTitle &&
+    variantTitle !== "Default Title"
+  ) {
     return `${baseTitle} - ${variantTitle}`;
   }
   return baseTitle;
@@ -206,14 +210,12 @@ export function sortProducts(products = [], sortKey = "") {
     case "price_asc":
       return list.sort(
         (a, b) =>
-          (Number(getProductPrice(a)) || 0) -
-          (Number(getProductPrice(b)) || 0),
+          (Number(getProductPrice(a)) || 0) - (Number(getProductPrice(b)) || 0),
       );
     case "price_desc":
       return list.sort(
         (a, b) =>
-          (Number(getProductPrice(b)) || 0) -
-          (Number(getProductPrice(a)) || 0),
+          (Number(getProductPrice(b)) || 0) - (Number(getProductPrice(a)) || 0),
       );
     case "rating":
       return list.sort(

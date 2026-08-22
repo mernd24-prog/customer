@@ -134,16 +134,16 @@ function ProductGallery({
         {mediaItems.length > 1 && (
           <div className="order-2 h-[84px] w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[92px]">
             <div
-              className={`flex h-full w-full gap-3 xl:flex-col ${
+              className={`flex h-full w-full gap-3 hide-scrollbar no-scrollbar overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden xl:flex-col ${
                 isModal
                   ? "overflow-y-auto xl:gap-5"
-                  : "overflow-hidden xl:gap-4"
+                  : "overflow-y-auto xl:overflow-hidden xl:gap-4"
               }`}
             >
               {thumbnailItems.map((item, i) => {
                 const isLastVisible =
                   shouldCollapseThumbnails && i === thumbnailItems.length - 1;
-                const targetIndex = isLastVisible ? mediaItems.length - 1 : i;
+                const targetIndex = i;
                 const isActive =
                   activeIndex === i || (isLastVisible && activeIndex >= i);
 
@@ -207,7 +207,7 @@ function ProductGallery({
                     )}
 
                     {isLastVisible && (
-                      <span className="absolute inset-0 flex items-center justify-center bg-black/55 text-lg font-bold text-white">
+                      <span className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 text-lg font-bold text-white">
                         +{hiddenThumbnailCount}
                       </span>
                     )}
@@ -372,7 +372,7 @@ export default function ImageGallery({
       <div className="absolute right-3  top-3 z-20 flex flex-col gap-2 sm:right-4 sm:top-4">
         <IconActionButton
           title="Zoom Image"
-          onClick={() => openModal(0)}
+          onClick={() => openModal(activeIndex)}
           className="hidden text-ink md:flex"
         >
           <ZoomIn size={18} />

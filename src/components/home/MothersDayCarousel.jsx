@@ -79,7 +79,7 @@ export default function MothersDayCarousel({
                 </picture>
 
                 {/* Soft Bottom Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/10 pointer-events-none transition-opacity duration-300 " />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/15 to-transparent pointer-events-none transition-opacity duration-300" />
 
                 {/* Content at Bottom Left */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 xl:p-5 flex flex-col justify-end text-white z-10">

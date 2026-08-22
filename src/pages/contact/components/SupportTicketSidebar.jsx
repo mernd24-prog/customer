@@ -56,7 +56,7 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto mt-6 space-y-5 custom-scrollbar">
           <div className="shrink-0">
             <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
               Ticket ID
@@ -70,7 +70,9 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
             <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
               Status
             </p>
-            <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${statusClass(ticket.status)}`}>
+            <span
+              className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${statusClass(ticket.status)}`}
+            >
               {statusLabel(ticket.status)}
             </span>
             {ticket.resolvedAt ? (
@@ -110,7 +112,7 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
             <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
               Message
             </p>
-            <div className="text-sm text-[#4E4E4E] leading-relaxed whitespace-pre-wrap bg-[#F7EED8] p-3 rounded-lg border border-[#E7D9B8]/50 break-words">
+            <div className="text-sm text-[#4E4E4E] leading-relaxed whitespace-pre-wrap bg-[#F7EED8] mt-2 p-3 rounded-lg border border-[#E7D9B8]/50 break-words">
               {ticket.message || "No message provided."}
             </div>
           </div>
@@ -126,7 +128,8 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
             </div>
           ) : null}
 
-          {Array.isArray(ticket.statusHistory) && ticket.statusHistory.length ? (
+          {Array.isArray(ticket.statusHistory) &&
+          ticket.statusHistory.length ? (
             <div className="border-t border-[#EFE5D2] pt-4 shrink-0">
               <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-2">
                 Status History
@@ -138,7 +141,9 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
                     className="rounded-lg border border-[#EFE5D2] bg-white p-3"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${statusClass(item.status)}`}>
+                      <span
+                        className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${statusClass(item.status)}`}
+                      >
                         {statusLabel(item.status)}
                       </span>
                       <span className="text-xs text-[#666666]">

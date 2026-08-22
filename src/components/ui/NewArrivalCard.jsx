@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { Star } from "lucide-react";
 import { IoArrowForwardOutline } from "react-icons/io5";
 import { TextWhiteButton } from "../ui/button/static";
 import { formatPageTitle } from "../../utils/common";
+import StarRating from "../../pages/products/components/starRating";
 
 export default function NewArrivalCard({
   title = "",
@@ -81,30 +81,9 @@ export default function NewArrivalCard({
                 )}
               </div>
 
-              {/* Star Rating Row */}
+              {/* Star Rating Badge */}
               <div className="flex items-center mt-1">
-                <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
-                  {prod.rating || "0.0"}
-                </span>
-                <div className="flex gap-0.5">
-                  {Array.from({ length: 5 }).map((_, i) => {
-                    const stars = Math.round(Math.max(0, Math.min(Number(prod.rating || 0), 5)));
-                    return (
-                      <Star
-                        key={i}
-                        size={16}
-                        className={
-                          i < stars
-                            ? "fill-[#F58220] text-[#F58220]"
-                            : "fill-border text-border"
-                        }
-                      />
-                    );
-                  })}
-                </div>
-                <span className="ml-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
-                  ({prod.reviewsCount || "0"})
-                </span>
+                <StarRating rating={prod.rating} count={prod.reviewsCount} />
               </div>
             </div>
           </Link>

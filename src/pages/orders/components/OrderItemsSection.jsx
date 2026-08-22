@@ -274,16 +274,13 @@ function OrderItemsSection({
                 {group.sellerName}
               </p>
             </div>
-            <div className="text-right text-sm">
-              <span className="rounded-full bg-[#1B1D60] px-3 py-1 text-xs font-semibold capitalize text-white">
-                {label(group.status)}
-              </span>
-              {group.expectedDeliveryAt && (
-                <p className="mt-1 text-xs text-[#6F7480]">
+            {group.expectedDeliveryAt && (
+              <div className="text-right text-sm">
+                <p className="text-xs text-[#6F7480]">
                   Expected {formatDate(group.expectedDeliveryAt)}
                 </p>
-              )}
-            </div>
+              </div>
+            )}
           </div>
           {group.items.map((item, index) => {
             const policy = getItemReturnPolicy(item);

@@ -147,7 +147,9 @@ export default function ProductInfoSection({
           {product?.description ? (
             <div
               className="rich-text-content px-4 py-4 text-[#4E4E4E]"
-              dangerouslySetInnerHTML={{ __html: decodeHtml(product.description) }}
+              dangerouslySetInnerHTML={{
+                __html: decodeHtml(product.description),
+              }}
             />
           ) : (
             <p className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line">
@@ -212,7 +214,7 @@ export default function ProductInfoSection({
                   dangerouslySetInnerHTML={{
                     __html: decodeHtml(
                       effectiveWarranty.coveredInWarranty ||
-                        effectiveWarranty.terms
+                        effectiveWarranty.terms,
                     ),
                   }}
                 />

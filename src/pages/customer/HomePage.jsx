@@ -187,7 +187,7 @@ export function HomePage() {
       </LazySection>
 
       <LazySection minHeight="500px">
-        <section className="my-10">
+        <section className="">
           <ShowcaseSection
             title="New Arrivals"
             subtitle="Newly added products with trend-driven rankings"

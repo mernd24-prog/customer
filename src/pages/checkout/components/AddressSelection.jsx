@@ -8,7 +8,6 @@ import {
   MapPin,
   Pencil,
   Phone,
-  Info,
 } from "lucide-react";
 import Button from "../../../components/ui/buttons/Button";
 import AddressFormFields, {
@@ -330,27 +329,6 @@ export default function AddressSelection({
                     >
                       {label}
                     </span>
-                    {selectedAddressId === addrId && !useNewAddress && quoteError && (
-                      <div className="flex flex-col justify-center gap-1">
-                        {Array.isArray(quoteError) ? (
-                          quoteError.map((err, i) => (
-                            <span key={i} className="inline-flex items-center gap-1 text-[11px] sm:text-[12px] font-semibold text-[#D12E2E]">
-                              <Info size={14} className="shrink-0" />
-                              <span>{err}</span>
-                            </span>
-                          ))
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-[11px] sm:text-[12px] font-semibold text-[#D12E2E]">
-                            <Info size={14} className="shrink-0" />
-                            <span>
-                              {typeof quoteError === "string" && quoteError.trim() !== ""
-                                ? quoteError
-                                : `We currently do not deliver to pincode ${postalCode}.`}
-                            </span>
-                          </span>
-                        )}
-                      </div>
-                    )}
                   </div>
                   <label className="my-4 flex w-full cursor-pointer items-start gap-2 sm:gap-3">
                     <input
