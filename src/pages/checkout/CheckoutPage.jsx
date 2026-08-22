@@ -117,11 +117,7 @@ export default function CheckoutPage() {
             {deliverabilityBlockers.length > 0 && (
               <div className="mb-4 rounded-xl border border-amber-300 bg-amber-50 p-4">
                 <p className="font-semibold text-amber-900">
-                  Some items cannot be delivered to this address
-                </p>
-                <p className="mt-1 text-xs text-amber-700">
-                  Exclude them here and continue checkout without going back to
-                  your cart.
+                  This product is no longer available. Please remove it from your cart and try again later.
                 </p>
                 <div className="mt-3 space-y-2">
                   {deliverabilityBlockers.map((blocker) => (

@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  Link,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import QuantitySelector from "../../pages/cart/components/QuantitySelector";
 import { IoIosSearch } from "react-icons/io";
@@ -81,6 +86,7 @@ export default function ProductDetailPage() {
   const productId = rawParamId ? String(rawParamId).split(":")[0] : "";
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const productState = useSelector((s) => s.product);
   const currentProduct = productState.current;
@@ -284,19 +290,72 @@ export default function ProductDetailPage() {
       return;
     }
 
+    const pathVariantKey =
+      rawParamId && rawParamId.includes(":") ? rawParamId.split(":")[1] : null;
+
+    const paramVariantKey =
+      searchParams.get("variant") ||
+      searchParams.get("variantId") ||
+      searchParams.get("sku") ||
+      pathVariantKey;
+
+    const storedVariantKey = productId
+      ? window.sessionStorage.getItem(`selected_variant_${productId}`)
+      : null;
+
+    const targetKey = paramVariantKey || storedVariantKey;
+
+    let targetVariant = null;
+    if (targetKey) {
+      targetVariant = variants.find(
+        (v) =>
+          String(v._id || "") === String(targetKey) ||
+          String(v.id || "") === String(targetKey) ||
+          String(v.sku || "") === String(targetKey) ||
+          String(v.code || "") === String(targetKey),
+      );
+    }
+
     const defaultVariant =
       variants.find((variant) => variant.isDefault) || variants[0];
 
-    setSelectedVariant((current) =>
-      current &&
-      variants.some(
-        (variant) =>
-          (variant._id || variant.sku) === (current._id || current.sku),
-      )
-        ? current
-        : defaultVariant,
-    );
-  }, [variants]);
+    setSelectedVariant((current) => {
+      if (targetVariant) {
+        return targetVariant;
+      }
+      if (
+        current &&
+        variants.some(
+          (variant) =>
+            (variant._id || variant.sku) === (current._id || current.sku),
+        )
+      ) {
+        return current;
+      }
+      return defaultVariant;
+    });
+  }, [variants, searchParams, productId, rawParamId]);
+
+  useEffect(() => {
+    if (!selectedVariant || !productId) return;
+    const variantKey =
+      selectedVariant._id || selectedVariant.id || selectedVariant.sku;
+    if (!variantKey) return;
+
+    window.sessionStorage.setItem(`selected_variant_${productId}`, variantKey);
+
+    const currentParam = searchParams.get("variant");
+    if (currentParam !== String(variantKey)) {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.set("variant", variantKey);
+          return next;
+        },
+        { replace: true },
+      );
+    }
+  }, [selectedVariant, productId, searchParams, setSearchParams]);
 
   const selectedAttributes = selectedVariant?.attributes || {};
 
@@ -492,49 +551,6 @@ export default function ProductDetailPage() {
       />
 
       <div className=" ">
-        <nav className="mt-8 flex flex-wrap items-center gap-1 text-sm text-[#2E2E2E] lg:mt-12 lg:text-lg">
-          <Link
-            to="/"
-            className="font-medium text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-ink"
-          >
-            Home
-          </Link>
-
-          <span>{">"}</span>
-
-          {product?.parentCategory && (
-            <>
-              <Link
-                to={CUSTOMER_ROUTES.category(product.parentCategory)}
-                className="capitalize transition-all duration-300 ease-in-out hover:text-ink"
-              >
-                {(product.parentCategory || "").replace(/-/g, " ")}
-              </Link>
-
-              <span>{">"}</span>
-            </>
-          )}
-
-          {product?.category && product.category !== product.parentCategory && (
-            <>
-              <Link
-                to={CUSTOMER_ROUTES.category(product.category)}
-                className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-ink"
-              >
-                {(product.category || "").replace(/-/g, " ")}
-              </Link>
-
-              <span>{">"}</span>
-            </>
-          )}
-
-          <span title={productTitle} className="font-medium text-gold">
-            {isProductTitleTruncated
-              ? `${productTitlePreview}...`
-              : productTitle}
-          </span>
-        </nav>
-
         <ApiState
           loading={productState.loading && !product}
           error={productState.error}
@@ -546,6 +562,49 @@ export default function ProductDetailPage() {
         >
           {product && (
             <>
+              <nav className="mt-8 flex flex-wrap items-center gap-1 text-sm text-[#2E2E2E] lg:mt-12 lg:text-lg">
+                <Link
+                  to="/"
+                  className="font-medium text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-ink"
+                >
+                  Home
+                </Link>
+
+                <span>{">"}</span>
+
+                {product?.parentCategory && (
+                  <>
+                    <Link
+                      to={CUSTOMER_ROUTES.category(product.parentCategory)}
+                      className="capitalize transition-all duration-300 ease-in-out hover:text-ink"
+                    >
+                      {(product.parentCategory || "").replace(/-/g, " ")}
+                    </Link>
+
+                    <span>{">"}</span>
+                  </>
+                )}
+
+                {product?.category &&
+                  product.category !== product.parentCategory && (
+                    <>
+                      <Link
+                        to={CUSTOMER_ROUTES.category(product.category)}
+                        className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-ink"
+                      >
+                        {(product.category || "").replace(/-/g, " ")}
+                      </Link>
+
+                      <span>{">"}</span>
+                    </>
+                  )}
+
+                <span title={productTitle} className="font-medium text-gold">
+                  {isProductTitleTruncated
+                    ? `${productTitlePreview}...`
+                    : productTitle}
+                </span>
+              </nav>
               <div className="grid min-w-0 mt-8 lg:mt-14 items-start gap-6 lg:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] md:gap-10">
                 <div className="min-w-0">
                   <ImageGallery

@@ -330,10 +330,13 @@ const getSessionData = (key, fallback) => {
 };
 
 export const BUY_NOW_STORAGE_KEY = "sam_global_buy_now_items";
-export const SELECTED_CHECKOUT_STORAGE_KEY = "sam_global_selected_checkout_item_ids";
-export const CHECKOUT_CART_ITEM_IDS_STORAGE_KEY = "sam_global_checkout_cart_item_ids";
+export const SELECTED_CHECKOUT_STORAGE_KEY =
+  "sam_global_selected_checkout_item_ids";
+export const CHECKOUT_CART_ITEM_IDS_STORAGE_KEY =
+  "sam_global_checkout_cart_item_ids";
 export const COMPLETED_CHECKOUT_STORAGE_KEY = "sam_global_completed_checkout";
-export const CHECKOUT_IDEMPOTENCY_STORAGE_KEY = "sam_global_checkout_idempotency";
+export const CHECKOUT_IDEMPOTENCY_STORAGE_KEY =
+  "sam_global_checkout_idempotency";
 export const normalizeCartItemId = (value) => {
   if (!value) return "";
 
@@ -545,17 +548,19 @@ export const getClientDeliverabilityBlockers = (items = [], address = {}) => {
         const cities = normalizeList(shipping.cities);
 
         const checkInc = (list, val) =>
-          list.includes(String(val || "").trim().toLowerCase());
+          list.includes(
+            String(val || "")
+              .trim()
+              .toLowerCase(),
+          );
 
         const regionAllowed =
           !regions.length ||
           checkInc(regions, pincode) ||
           checkInc(regions, address?.state) ||
           checkInc(regions, address?.city);
-        const stateAllowed =
-          !states.length || checkInc(states, address?.state);
-        const cityAllowed =
-          !cities.length || checkInc(cities, address?.city);
+        const stateAllowed = !states.length || checkInc(states, address?.state);
+        const cityAllowed = !cities.length || checkInc(cities, address?.city);
 
         if (!regionAllowed || !stateAllowed || !cityAllowed) {
           return {

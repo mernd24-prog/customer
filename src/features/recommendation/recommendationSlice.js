@@ -50,7 +50,10 @@ const recommendationSlice = createSlice({
             : [];
       })
       .addCase(fetchRecommendations.rejected, (state, action) => {
-        const message = action.payload || action.error?.message || "Failed to load recommendations";
+        const message =
+          action.payload ||
+          action.error?.message ||
+          "Failed to load recommendations";
         state.loadingRecommendations = false;
         state.loading = state.loadingTrending;
         state.error = message;
@@ -74,7 +77,10 @@ const recommendationSlice = createSlice({
             : [];
       })
       .addCase(fetchTrendingProducts.rejected, (state, action) => {
-        const message = action.payload || action.error?.message || "Failed to load trending products";
+        const message =
+          action.payload ||
+          action.error?.message ||
+          "Failed to load trending products";
         state.loadingTrending = false;
         state.loading = state.loadingRecommendations;
         state.error = message;

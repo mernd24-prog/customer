@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Banknote, Clock3, Heart, ShoppingCart } from "lucide-react";
 import AddToCartButton from "./AddToCartButton";
@@ -177,6 +177,68 @@ export default function ProductCard({
             ? availableStock > 0
             : true;
 
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const allImages = useMemo(() => {
+    const list = [];
+    const addImg = (img) => {
+      if (!img) return;
+      const url =
+        typeof img === "string"
+          ? img
+          : img?.url || img?.src || img?.image || img?.link || "";
+      if (url && typeof url === "string" && !list.includes(url)) {
+        list.push(url);
+      }
+    };
+
+    addImg(imageProp || getProductImage(cardProduct));
+
+    if (Array.isArray(cardProduct?.images)) {
+      cardProduct.images.forEach(addImg);
+    }
+    if (Array.isArray(cardProduct?.gallery)) {
+      cardProduct.gallery.forEach(addImg);
+    }
+    if (Array.isArray(cardProduct?.commonImages)) {
+      cardProduct.commonImages.forEach(addImg);
+    }
+    if (Array.isArray(cardProduct?.media)) {
+      cardProduct.media.forEach(addImg);
+    }
+    if (Array.isArray(cardProduct?.variants)) {
+      cardProduct.variants.forEach((v) => {
+        addImg(v?.image);
+        if (Array.isArray(v?.images)) v.images.forEach(addImg);
+      });
+    }
+
+    return list.length > 0 ? list : image ? [image] : [];
+  }, [cardProduct, imageProp, image]);
+
+  useEffect(() => {
+    if (!isHovered || allImages.length <= 1) {
+      setActiveImageIndex(0);
+      return;
+    }
+
+    allImages.forEach((imgUrl) => {
+      if (imgUrl) {
+        const img = new Image();
+        img.src = getOptimizedCloudinaryUrl(imgUrl, 400);
+      }
+    });
+
+    const interval = setInterval(() => {
+      setActiveImageIndex((prev) => (prev + 1) % allImages.length);
+    }, 1200);
+
+    return () => clearInterval(interval);
+  }, [isHovered, allImages]);
+
+  const activeImage = allImages[activeImageIndex] || image;
+
   const handleWishlist = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -203,34 +265,51 @@ export default function ProductCard({
   if (isListVariant) {
     return (
       <article
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         className={cn(
-          "customer-card p-3 transition-all   duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]",
+          "customer-card p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]",
           className,
         )}
       >
-        <div className="grid gap-4   sm:grid-cols-[180px_1fr_auto]   sm:items-center">
+        <div className="grid gap-4 sm:grid-cols-[180px_1fr_auto] sm:items-center">
           <Link
             to={to}
             target={resolvedTarget === "_self" ? undefined : resolvedTarget}
             rel={
               resolvedTarget === "_blank" ? "noopener noreferrer" : undefined
             }
-            className="block overflow-hidden  rounded-[var(--customer-radius)] bg-[var(--customer-cream)]"
+            className="relative block overflow-hidden rounded-[var(--customer-radius)] bg-[var(--customer-cream)]"
           >
-            {image ? (
-              <div className="group  flex aspect-square w-full items-center justify-center overflow-hidden p-4">
+            {activeImage ? (
+              <div className="group flex aspect-square w-full items-center justify-center overflow-hidden p-4">
                 <img
-                  src={getOptimizedCloudinaryUrl(image, 300)}
-                  srcSet={generateCloudinarySrcSet(image, [200, 300, 400])}
+                  src={getOptimizedCloudinaryUrl(activeImage, 300)}
+                  srcSet={generateCloudinarySrcSet(activeImage, [200, 300, 400])}
                   sizes="(max-width: 640px) 180px, 300px"
                   alt=""
                   width="300"
                   height="300"
-                  className="h-full w-full object-contain  transition-transform duration-300 group-hover:scale-105"
+                  className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
                   onError={handleImageError}
                 />
+                {isHovered && allImages.length > 1 && (
+                  <div className="absolute bottom-2 inset-x-0 z-20 flex justify-center items-center gap-1 px-2 pointer-events-none">
+                    {allImages.slice(0, 5).map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={cn(
+                          "h-1 rounded-full transition-all duration-300 shadow-sm",
+                          activeImageIndex % Math.min(allImages.length, 5) === idx
+                            ? "w-4 bg-[#1B1D60]"
+                            : "w-1.5 bg-black/30"
+                        )}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex aspect-square items-center justify-center text-[var(--customer-border-strong)]">
@@ -316,17 +395,19 @@ export default function ProductCard({
 
   return (
     <article
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className={cn(
-        `  group relative flex min-w-0 flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out `,
+        `group relative flex min-w-0 flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out`,
         className,
       )}
     >
-      <div className="absolute  left-4 top-4 z-20 flex max-w-[calc(100%-2rem)] flex-wrap items-center gap-2">
+      <div className="absolute left-4 top-4 z-20 flex max-w-[calc(100%-2rem)] flex-wrap items-center gap-2">
         {isFeatured && (
           <Label
             variant="featured"
             className="
-              flex  items-center justify-center
+              flex items-center justify-center
               rounded-[50px]
               bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)]
               text-[12px] font-semibold
@@ -386,20 +467,37 @@ export default function ProductCard({
         rel={resolvedTarget === "_blank" ? "noopener noreferrer" : undefined}
         className="flex flex-1 flex-col"
       >
-        <div className="flex justify-center overflow-hidden  h-[260px] items-center   w-auto rounded-t-[20px]  transition-all duration-300 ease-in-out group-hover:scale-[1.01]">
-          {image ? (
-            <img
-              src={getOptimizedCloudinaryUrl(image, 400)}
-              srcSet={generateCloudinarySrcSet(image, [300, 400, 800])}
-              sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 800px"
-              alt=""
-              width="400"
-              height="400"
-              className="h-full w-full object-contain p-2 transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
-              loading="lazy"
-              decoding="async"
-              onError={handleImageError}
-            />
+        <div className="relative flex justify-center overflow-hidden h-[260px] items-center w-auto rounded-t-[20px] transition-all duration-300 ease-in-out group-hover:scale-[1.01]">
+          {activeImage ? (
+            <>
+              <img
+                src={getOptimizedCloudinaryUrl(activeImage, 400)}
+                srcSet={generateCloudinarySrcSet(activeImage, [300, 400, 800])}
+                sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 800px"
+                alt=""
+                width="400"
+                height="400"
+                className="h-full w-full object-contain p-2 transition-all duration-300 ease-in-out group-hover:scale-[1.02]"
+                loading="lazy"
+                decoding="async"
+                onError={handleImageError}
+              />
+              {isHovered && allImages.length > 1 && (
+                <div className="absolute bottom-3 inset-x-0 z-20 flex justify-center items-center gap-1.5 px-2 pointer-events-none">
+                  {allImages.slice(0, 6).map((_, idx) => (
+                    <div
+                      key={idx}
+                      className={cn(
+                        "h-1 rounded-full transition-all duration-300 shadow-sm",
+                        activeImageIndex % Math.min(allImages.length, 6) === idx
+                          ? "w-4 bg-[#1B1D60]"
+                          : "w-1.5 bg-black/30"
+                      )}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           ) : (
             <div className="flex h-full w-full items-center justify-center text-[var(--customer-border-strong)]">
               <ShoppingCart size={48} strokeWidth={1.4} />

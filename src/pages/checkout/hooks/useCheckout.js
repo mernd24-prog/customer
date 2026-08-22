@@ -128,15 +128,14 @@ export default function useCheckout() {
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState("");
   const [deliveryCheckLoading, setDeliveryCheckLoading] = useState(false);
-  const [serverDeliverabilityBlockers, setServerDeliverabilityBlockers] = useState([]);
+  const [serverDeliverabilityBlockers, setServerDeliverabilityBlockers] =
+    useState([]);
   const [isQuoteErrorDismissed, setIsQuoteErrorDismissed] = useState(false);
   const [isPostPaymentProcessing, setIsPostPaymentProcessing] = useState(false);
 
-
-
   const buyNowItems = useMemo(getBuyNowItems, []);
-  const [selectedCheckoutItemIds, setSelectedCheckoutItemIds] = useState(
-    () => getSelectedCheckoutItemIds(),
+  const [selectedCheckoutItemIds, setSelectedCheckoutItemIds] = useState(() =>
+    getSelectedCheckoutItemIds(),
   );
   const isBuyNowCheckout = buyNowItems.length > 0;
   const cart = cartState.current || {};
@@ -180,36 +179,56 @@ export default function useCheckout() {
   const shipping = items.reduce((sum, item) => sum + item._shippingTotal, 0);
   const total = subtotal + shipping;
   const [paymentProvider, setPaymentProvider] = useState("razorpay");
-  const codBlockedProductNames = useMemo(() => items
-    .filter((item) => {
-      const product = item._resolvedProduct || getCartItemProduct(item);
-      const shippingInfo = product.shipping && typeof product.shipping === "object"
-        ? product.shipping
-        : item.shipping && typeof item.shipping === "object"
-          ? item.shipping
-          : {};
-      return shippingInfo.codAvailable === false || shippingInfo.cod_available === false;
-    })
-    .map((item) => item._safeTitle || item.title || "Selected product"), [items]);
+  const codBlockedProductNames = useMemo(
+    () =>
+      items
+        .filter((item) => {
+          const product = item._resolvedProduct || getCartItemProduct(item);
+          const shippingInfo =
+            product.shipping && typeof product.shipping === "object"
+              ? product.shipping
+              : item.shipping && typeof item.shipping === "object"
+                ? item.shipping
+                : {};
+          return (
+            shippingInfo.codAvailable === false ||
+            shippingInfo.cod_available === false
+          );
+        })
+        .map((item) => item._safeTitle || item.title || "Selected product"),
+    [items],
+  );
   const paymentOptions = useMemo(() => {
     const providers = Array.isArray(paymentState.current?.providers)
       ? paymentState.current.providers
       : [];
     return providers.map((option) => {
       if (option.provider !== "cod") return option;
-      const blockedSellerIds = new Set((option.config?.sellerRules || [])
-        .filter((rule) => rule.allowed === false)
-        .map((rule) => String(rule.sellerId || ""))
-        .filter(Boolean));
+      const blockedSellerIds = new Set(
+        (option.config?.sellerRules || [])
+          .filter((rule) => rule.allowed === false)
+          .map((rule) => String(rule.sellerId || ""))
+          .filter(Boolean),
+      );
       const sellerBlockedProductNames = blockedSellerIds.size
-        ? items.filter((item) => {
-            const product = item._resolvedProduct || getCartItemProduct(item);
-            return blockedSellerIds.has(String(
-              item.sellerId || item.seller_id || product.sellerId || product.seller_id || "",
-            ));
-          }).map((item) => item._safeTitle || item.title || "Selected product")
+        ? items
+            .filter((item) => {
+              const product = item._resolvedProduct || getCartItemProduct(item);
+              return blockedSellerIds.has(
+                String(
+                  item.sellerId ||
+                    item.seller_id ||
+                    product.sellerId ||
+                    product.seller_id ||
+                    "",
+                ),
+              );
+            })
+            .map((item) => item._safeTitle || item.title || "Selected product")
         : [];
-      const blockedNames = [...new Set([...codBlockedProductNames, ...sellerBlockedProductNames])];
+      const blockedNames = [
+        ...new Set([...codBlockedProductNames, ...sellerBlockedProductNames]),
+      ];
       if (!blockedNames.length) return option;
       return {
         ...option,
@@ -420,8 +439,8 @@ export default function useCheckout() {
                 setValue("country", data.country, { shouldValidate: true });
               }
             }
-          })
-          // .catch((err) => console.error("Error fetching zip code:", err));
+          });
+        // .catch((err) => console.error("Error fetching zip code:", err));
       }, 500);
       return () => clearTimeout(timer);
     }
@@ -597,94 +616,133 @@ export default function useCheckout() {
     }
     let active = true;
     setDeliveryCheckLoading(true);
-    Promise.all(items.map(async (item) => {
-      const productId = item._safeId || getProductId(getCartItemProduct(item));
-      if (!productId) return null;
-      try {
-        const payload = await dispatch(checkServiceability({ pincode, productId })).unwrap();
-        const result = payload?.data || payload;
-        if (result?.serviceable !== false) return null;
+    Promise.all(
+      items.map(async (item) => {
+        const productId =
+          item._safeId || getProductId(getCartItemProduct(item));
+        if (!productId) return null;
+        try {
+          const payload = await dispatch(
+            checkServiceability({ pincode, productId }),
+          ).unwrap();
+          const result = payload?.data || payload;
+          if (result?.serviceable !== false) return null;
 
-        // Bypass server false negatives using client logic
-        const product = item._resolvedProduct || getCartItemProduct(item);
-        const shipping = product?.shipping && typeof product.shipping === "object" ? product.shipping : {};
-        const mode = normalizeServiceabilityMode(shipping?.serviceabilityMode);
-        const hasProfile = Boolean(shipping?.shippingProfileId);
+          // Bypass server false negatives using client logic
+          const product = item._resolvedProduct || getCartItemProduct(item);
+          const shipping =
+            product?.shipping && typeof product.shipping === "object"
+              ? product.shipping
+              : {};
+          const mode = normalizeServiceabilityMode(
+            shipping?.serviceabilityMode,
+          );
+          const hasProfile = Boolean(shipping?.shippingProfileId);
 
-        // Seller-managed products without a profile and without manual
-        // restrictions are deliverable across All India.
-        if (!hasProfile && mode === "all_pincodes") return null;
-        if (
-          !hasProfile &&
-          mode === "inherit" &&
-          normalizeList(shipping.allowPincodes || shipping.serviceablePincodes || []).length === 0 &&
-          normalizeList(shipping.regions).length === 0 &&
-          normalizeList(shipping.states).length === 0 &&
-          normalizeList(shipping.cities).length === 0
-        ) return null;
-        
-        if (mode === "allowlist") {
-          const allowed = shipping.allowPincodes || shipping.serviceablePincodes || [];
-          if (normalizeList(allowed).length === 0) return null;
-          const pincodes = normalizeList(allowed);
-          if (pincodes.includes(pincode)) return null;
+          // Seller-managed products without a profile and without manual
+          // restrictions are deliverable across All India.
+          if (!hasProfile && mode === "all_pincodes") return null;
+          if (
+            !hasProfile &&
+            mode === "inherit" &&
+            normalizeList(
+              shipping.allowPincodes || shipping.serviceablePincodes || [],
+            ).length === 0 &&
+            normalizeList(shipping.regions).length === 0 &&
+            normalizeList(shipping.states).length === 0 &&
+            normalizeList(shipping.cities).length === 0
+          )
+            return null;
+
+          if (mode === "allowlist") {
+            const allowed =
+              shipping.allowPincodes || shipping.serviceablePincodes || [];
+            if (normalizeList(allowed).length === 0) return null;
+            const pincodes = normalizeList(allowed);
+            if (pincodes.includes(pincode)) return null;
+          }
+
+          if (mode === "regions") {
+            const regions = normalizeList(shipping.regions);
+            const states = normalizeList(shipping.states);
+            const cities = normalizeList(shipping.cities);
+            const checkInc = (list, val) =>
+              list.includes(
+                String(val || "")
+                  .trim()
+                  .toLowerCase(),
+              );
+            const regionAllowed =
+              !regions.length ||
+              checkInc(regions, pincode) ||
+              checkInc(regions, quoteShippingAddress?.state) ||
+              checkInc(regions, quoteShippingAddress?.city);
+            const stateAllowed =
+              !states.length || checkInc(states, quoteShippingAddress?.state);
+            const cityAllowed =
+              !cities.length || checkInc(cities, quoteShippingAddress?.city);
+            if (regionAllowed && stateAllowed && cityAllowed) return null;
+          }
+
+          return {
+            lineKey: getCartLineKey(item),
+            productId,
+            title: item._safeTitle || getCartItemTitle(item),
+            pincode,
+            reason:
+              result?.exclusions?.[0]?.reason ||
+              "This product is not serviceable at the selected address.",
+          };
+        } catch {
+          return null;
         }
-
-        if (mode === "regions") {
-          const regions = normalizeList(shipping.regions);
-          const states = normalizeList(shipping.states);
-          const cities = normalizeList(shipping.cities);
-          const checkInc = (list, val) => list.includes(String(val || "").trim().toLowerCase());
-          const regionAllowed = !regions.length || checkInc(regions, pincode) || checkInc(regions, quoteShippingAddress?.state) || checkInc(regions, quoteShippingAddress?.city);
-          const stateAllowed = !states.length || checkInc(states, quoteShippingAddress?.state);
-          const cityAllowed = !cities.length || checkInc(cities, quoteShippingAddress?.city);
-          if (regionAllowed && stateAllowed && cityAllowed) return null;
-        }
-
-        return {
-          lineKey: getCartLineKey(item),
-          productId,
-          title: item._safeTitle || getCartItemTitle(item),
-          pincode,
-          reason: result?.exclusions?.[0]?.reason || "This product is not serviceable at the selected address.",
-        };
-      } catch {
-        return null;
-      }
-    })).then((results) => {
-      if (active) setServerDeliverabilityBlockers(results.filter(Boolean));
-    }).finally(() => {
-      if (active) setDeliveryCheckLoading(false);
-    });
-    return () => { active = false; };
+      }),
+    )
+      .then((results) => {
+        if (active) setServerDeliverabilityBlockers(results.filter(Boolean));
+      })
+      .finally(() => {
+        if (active) setDeliveryCheckLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, [dispatch, items, quoteShippingAddress?.postalCode]);
 
   const deliverabilityBlockers = useMemo(() => {
     const byLine = new Map();
-    [...clientDeliverabilityBlockers, ...serverDeliverabilityBlockers].forEach((blocker) => {
-      byLine.set(blocker.lineKey || blocker.productId || blocker.title, blocker);
-    });
+    [...clientDeliverabilityBlockers, ...serverDeliverabilityBlockers].forEach(
+      (blocker) => {
+        byLine.set(
+          blocker.lineKey || blocker.productId || blocker.title,
+          blocker,
+        );
+      },
+    );
     return [...byLine.values()];
   }, [clientDeliverabilityBlockers, serverDeliverabilityBlockers]);
   const deliverabilityError = useMemo(() => {
     if (!deliverabilityBlockers.length) return null;
-    return deliverabilityBlockers.map(blocker => {
-      const truncatedTitle = blocker.title.length > 35 ? blocker.title.substring(0, 35).trim() + "..." : blocker.title;
-      return `"${truncatedTitle}" cannot be delivered to ${blocker.pincode}. ${blocker.reason}`;
-    }).join(" ");
+    return "This product is no longer available. Please remove it from your cart and try again later.";
   }, [deliverabilityBlockers]);
 
-  const excludeBlockedItem = useCallback((blocker) => {
-    if (isBuyNowCheckout) return;
-    setSelectedCheckoutItemIds((current) => {
-      const next = (current || []).filter(
-        (itemId) => String(itemId) !== String(blocker.lineKey),
-      );
-      window.sessionStorage.setItem(SELECTED_CHECKOUT_STORAGE_KEY, JSON.stringify(next));
-      return next;
-    });
-    setQuoteError("");
-  }, [isBuyNowCheckout]);
+  const excludeBlockedItem = useCallback(
+    (blocker) => {
+      if (isBuyNowCheckout) return;
+      setSelectedCheckoutItemIds((current) => {
+        const next = (current || []).filter(
+          (itemId) => String(itemId) !== String(blocker.lineKey),
+        );
+        window.sessionStorage.setItem(
+          SELECTED_CHECKOUT_STORAGE_KEY,
+          JSON.stringify(next),
+        );
+        return next;
+      });
+      setQuoteError("");
+    },
+    [isBuyNowCheckout],
+  );
 
   useEffect(() => {
     const sellerIds = paymentSellerContext.sellerIds.join(",");
@@ -786,12 +844,24 @@ export default function useCheckout() {
         .catch((error) => {
           if (!active) return;
           setQuoteData(null);
-          const errMsg =
+          const rawMsg =
             typeof error === "string"
               ? error
               : error?.message ||
                 error?.error?.message ||
-                "Unable to calculate order quote";
+                "";
+          const isUnavailable =
+            !rawMsg ||
+            /not available/i.test(rawMsg) ||
+            /out of stock/i.test(rawMsg) ||
+            /unserviceable/i.test(rawMsg) ||
+            /disabled/i.test(rawMsg) ||
+            /inactive/i.test(rawMsg);
+
+          const errMsg = isUnavailable
+            ? "This product is no longer available. Please remove it from your cart and try again later."
+            : rawMsg;
+
           setQuoteError(errMsg);
           notify.error({
             title: "Update Failed",
@@ -1090,16 +1160,28 @@ export default function useCheckout() {
         navigate(`/orders/${encodeURIComponent(orderId)}`, { replace: true });
         notify.error({
           title: "Payment could not be started",
-          message: "The order is saved, but its payment amount could not be confirmed. Review the order before retrying payment.",
+          message:
+            "The order is saved, but its payment amount could not be confirmed. Review the order before retrying payment.",
         });
         return;
       }
 
       if (payableAmount <= 0) {
-        const noPaymentResult = await dispatch(fetchOrderById({ orderId })).unwrap();
+        const noPaymentResult = await dispatch(
+          fetchOrderById({ orderId }),
+        ).unwrap();
         const noPaymentOrder = getCreatedOrder(noPaymentResult);
-        if (["pending_payment", "payment_failed"].includes(String(noPaymentOrder?.status || noPaymentOrder?.orderStatus || "").toLowerCase())) {
-          navigate(`/payment/failed?orderId=${encodeURIComponent(orderId)}&reason=pending_confirmation`, { replace: true });
+        if (
+          ["pending_payment", "payment_failed"].includes(
+            String(
+              noPaymentOrder?.status || noPaymentOrder?.orderStatus || "",
+            ).toLowerCase(),
+          )
+        ) {
+          navigate(
+            `/payment/failed?orderId=${encodeURIComponent(orderId)}&reason=pending_confirmation`,
+            { replace: true },
+          );
           return;
         }
         completeCheckout(orderId);
@@ -1154,22 +1236,31 @@ export default function useCheckout() {
               error?.message ||
               "Payment was not completed. Your order is still pending payment.";
             setError("root", { type: "manual", message });
-            const reason = error?.code === "PAYMENT_GATEWAY_FAILED"
-              ? "failed"
-              : error?.code === "PAYMENT_DISMISSED"
-                ? "dismissed"
-                : "pending_confirmation";
+            const reason =
+              error?.code === "PAYMENT_GATEWAY_FAILED"
+                ? "failed"
+                : error?.code === "PAYMENT_DISMISSED"
+                  ? "dismissed"
+                  : "pending_confirmation";
             notify[reason === "failed" ? "error" : "info"]?.({
-              title: reason === "failed" ? "Payment failed" : "Order awaiting payment",
+              title:
+                reason === "failed"
+                  ? "Payment failed"
+                  : "Order awaiting payment",
               message,
             });
-            navigate(`/payment/failed?orderId=${encodeURIComponent(orderId)}&reason=${reason}`, { replace: true });
+            navigate(
+              `/payment/failed?orderId=${encodeURIComponent(orderId)}&reason=${reason}`,
+              { replace: true },
+            );
             return;
           }
         }
       }
 
-      const confirmedResult = await dispatch(fetchOrderById({ orderId })).unwrap();
+      const confirmedResult = await dispatch(
+        fetchOrderById({ orderId }),
+      ).unwrap();
       const confirmedOrder = getCreatedOrder(confirmedResult);
       const confirmedStatus = String(
         confirmedOrder?.status || confirmedOrder?.orderStatus || "",
@@ -1177,11 +1268,18 @@ export default function useCheckout() {
       const confirmedPaymentStatus = String(
         confirmedOrder?.paymentStatus || confirmedOrder?.payment_status || "",
       ).toLowerCase();
-      const paymentConfirmed = paymentProvider === "cod"
-        ? confirmedPaymentStatus === "authorized"
-        : confirmedPaymentStatus === "captured";
-      if (!paymentConfirmed || ["pending_payment", "payment_failed"].includes(confirmedStatus)) {
-        navigate(`/payment/failed?orderId=${encodeURIComponent(orderId)}&reason=pending_confirmation`, { replace: true });
+      const paymentConfirmed =
+        paymentProvider === "cod"
+          ? confirmedPaymentStatus === "authorized"
+          : confirmedPaymentStatus === "captured";
+      if (
+        !paymentConfirmed ||
+        ["pending_payment", "payment_failed"].includes(confirmedStatus)
+      ) {
+        navigate(
+          `/payment/failed?orderId=${encodeURIComponent(orderId)}&reason=pending_confirmation`,
+          { replace: true },
+        );
         return;
       }
 
@@ -1190,9 +1288,13 @@ export default function useCheckout() {
       if (activeOrderId) {
         notify.warning({
           title: "Order saved — payment not confirmed",
-          message: "We could not finish payment confirmation. Check this order before retrying so you are not charged twice.",
+          message:
+            "We could not finish payment confirmation. Check this order before retrying so you are not charged twice.",
         });
-        navigate(`/payment/failed?orderId=${encodeURIComponent(activeOrderId)}&reason=pending_confirmation`, { replace: true });
+        navigate(
+          `/payment/failed?orderId=${encodeURIComponent(activeOrderId)}&reason=pending_confirmation`,
+          { replace: true },
+        );
       }
     } finally {
       if (shouldReleaseSubmitLock) {
@@ -1292,6 +1394,6 @@ export default function useCheckout() {
     checkoutActionLoading,
     saveCheckoutAddress,
     handleSaveShippingAddressOnly,
-    submit
+    submit,
   };
 }
