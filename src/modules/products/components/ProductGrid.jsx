@@ -1,6 +1,6 @@
-import ResponsiveGrid from "../ui/display/ResponsiveGrid";
+import ResponsiveGrid from "../../../components/ui/display/ResponsiveGrid";
 import ProductCard from "./ProductCard";
-import { getProductId } from "../../utils/ecommerce";
+import { getProductId } from "../../../utils/ecommerce";
 
 export default function ProductGrid({
   products = [],

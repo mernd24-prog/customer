@@ -1,5 +1,5 @@
 import { SlidersHorizontal } from "lucide-react";
-import CustomDropdown from "../ui/CustomDropdown";
+import CustomDropdown from "../../../components/ui/CustomDropdown";
 
 export default function CollectionToolbar({
   countText,

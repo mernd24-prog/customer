@@ -1,4 +1,4 @@
-import Price from "../ecommerce/Price";
+import Price from "../../modules/products/components/Price";
 
 export default function PricePill({
     price,

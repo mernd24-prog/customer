@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Banknote, Clock3, Heart, ShoppingCart } from "lucide-react";
-import AddToCartButton from "./AddToCartButton";
-import Label from "../ui/label/Label";
-import { IconCircleButton, PillButton } from "../ui/button/static";
+import AddToCartButton from "../../../components/ecommerce/AddToCartButton";
+import Label from "../../../components/ui/label/Label";
+import { IconCircleButton, PillButton } from "../../../components/ui/button/static";
 import Price from "./Price";
 import Rating from "./Rating";
-import WishlistButton from "./WishlistButton";
+import WishlistButton from "../../../components/ecommerce/WishlistButton";
 import {
   getProductId,
   getProductImage,
@@ -19,9 +19,9 @@ import {
   isProductCodAvailable,
   getOptimizedCloudinaryUrl,
   generateCloudinarySrcSet,
-} from "../../utils/ecommerce";
-import { cn } from "../../utils/common";
-import StarRating from "../../pages/products/components/starRating";
+} from "../../../utils/ecommerce";
+import { cn } from "../../../utils/common";
+import StarRating from "./starRating";
 
 const getDealEndDateValue = (product = {}) =>
   product?.deal?.endAt ||

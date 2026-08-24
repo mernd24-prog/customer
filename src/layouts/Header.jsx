@@ -34,7 +34,7 @@ import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
 import { logout } from "../features/auth/authSlice";
 import { fetchMe } from "../features/user/userSlice";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
-import { fetchProducts } from "../features/product/productSlice";
+import { fetchProducts } from "../modules/products/slices/productSlice";
 
 const buildCategorySlug = (name = "category") =>
   String(name).trim().toLowerCase().replace(/\s+/g, "-");

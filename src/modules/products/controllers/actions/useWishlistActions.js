@@ -1,87 +1,30 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { updateCart } from "../../../../features/cart/cartSlice";
+import { openAddedToCartModal } from "../../../../features/cart/cartUiSlice";
+import { addProductToCartPayload, wishlistItemKey, wishlistPayload } from "../../../../utils/ecommerce";
+import { useToastThunk } from "../../../../hooks/useToastThunk";
+import { useAuthModal } from "../../../../features/auth/AuthModalContext";
+import { store } from "../../../../app/store";
+import { useCheckServiceability } from "./useCheckServiceability";
 
-import { setGuestCart, updateCart } from "../features/cart/cartSlice";
-import { checkServiceability } from "../features/delivery/deliverySlice";
-import { openAddedToCartModal } from "../features/cart/cartUiSlice";
-import { addProductToCartPayload, wishlistItemKey, writeGuestCart, wishlistPayload } from "../utils/ecommerce";
-import { useToastThunk } from "./useToastThunk";
-import { useAuthModal } from "../features/auth/AuthModalContext";
-import { store } from "../app/store";
-import { notify } from "../utils/notify";
-
-export function useProductActions() {
+export function useWishlistActions() {
   const dispatch = useDispatch();
   const run = useToastThunk();
   const { openGuestOtpModal } = useAuthModal();
-
   const user = useSelector((state) => state.auth.current);
-  const customer = useSelector((state) => state.user.current);
   const cart = useSelector((state) => state.cart.current);
   const wishlist = useSelector((state) => state.cart.current?.wishlist);
+  const checkSavedAddressServiceability = useCheckServiceability();
+
   const wishlistIds = useMemo(
-    () =>
-      Array.isArray(wishlist) ? wishlist.map(wishlistItemKey) : [],
+    () => (Array.isArray(wishlist) ? wishlist.map(wishlistItemKey) : []),
     [wishlist],
   );
 
   const isWishlisted = useCallback(
     (product) => wishlistIds.includes(wishlistItemKey(product)),
     [wishlistIds],
-  );
-
-  const checkSavedAddressServiceability = useCallback(async (product) => {
-    const addresses = customer?.addresses || user?.addresses || [];
-    const address = addresses.find((item) => item?.isDefault || item?.is_default) || addresses[0];
-    const pincode = String(
-      address?.postalCode || address?.postal_code || address?.pincode || address?.zip || "",
-    ).trim();
-    const productId = product?._id || product?.id || product?.productId?._id || product?.productId;
-    if (!/^\d{6}$/.test(pincode) || !productId) return true;
-
-    try {
-      const payload = await dispatch(
-        checkServiceability({ pincode, productId }),
-      ).unwrap();
-      const result = payload?.data || payload;
-      if (result?.serviceable !== false) return true;
-      notify.error({
-        title: "Not deliverable to your address",
-        message: `This product cannot be delivered to pincode ${pincode}. Choose another address or product.`,
-      });
-      return false;
-    } catch (error) {
-      notify.error({
-        title: "Delivery check unavailable",
-        message: typeof error === "string" ? error : "Please try adding this product again.",
-      });
-      return false;
-    }
-  }, [customer?.addresses, dispatch, user?.addresses]);
-
-  const addToCart = useCallback(
-    async (product, quantity = 1) => {
-      if (!(await checkSavedAddressServiceability(product))) return null;
-      if (!user) {
-        const nextCart = addProductToCartPayload(cart, product, quantity);
-        const writtenCart = writeGuestCart(nextCart);
-        dispatch(setGuestCart(writtenCart));
-        dispatch(openAddedToCartModal({ product }));
-        return writtenCart;
-      }
-      const result = await run(
-        dispatch,
-        updateCart(addProductToCartPayload(cart, product, quantity)),
-        {
-          title: "Added to cart",
-          message: "Your item has been added to the cart successfully.",
-          tone: "cart",
-        },
-      );
-      dispatch(openAddedToCartModal({ product }));
-      return result;
-    },
-    [cart, checkSavedAddressServiceability, dispatch, run, user],
   );
 
   const toggleWishlist = useCallback(
@@ -177,12 +120,10 @@ export function useProductActions() {
   );
 
   return {
-    addToCart,
-    cart,
-    isWishlisted,
-    moveWishlistToCart,
-    removeFromWishlist,
-    toggleWishlist,
     wishlistIds,
+    isWishlisted,
+    toggleWishlist,
+    removeFromWishlist,
+    moveWishlistToCart,
   };
 }

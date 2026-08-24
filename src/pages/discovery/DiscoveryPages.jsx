@@ -5,8 +5,8 @@ import Seo from "../../components/ui/Seo";
 import { EmptyState } from "../../components/ui";
 import ApiState from "../../components/ui/ApiState";
 import { ProductGrid } from "../../components/ecommerce";
-import { useProductActions } from "../../hooks/useProductActions";
-import { fetchProducts } from "../../features/product/productSlice";
+import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
+import { fetchProducts } from "../../modules/products/slices/productSlice";
 import {
   fetchRecommendations,
   fetchTrendingProducts,
@@ -23,7 +23,8 @@ const ProductGridPage = memo(function ProductGridPage({
   sourceLink,
   sourceText,
 }) {
-  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+  const addToCart = useCartActions();
+  const { isWishlisted, toggleWishlist } = useWishlistActions();
 
   return (
     <>

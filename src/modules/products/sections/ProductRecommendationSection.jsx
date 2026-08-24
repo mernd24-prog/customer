@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { ProductCard } from "../../../components/ecommerce";
+import ProductCard from "../../../modules/products/components/ProductCard";
+
 import { getProductId } from "../../../utils/ecommerce";
 
 export default function ProductRecommendationSection({

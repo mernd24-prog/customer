@@ -8,7 +8,7 @@ import { useToastThunk } from "../../../hooks/useToastThunk";
 import { notify } from "../../../utils/notify";
 import { fetchCart } from "../../../features/cart/cartSlice";
 import { checkServiceability } from "../../../features/delivery/deliverySlice";
-import { fetchProductById } from "../../../features/product/productSlice";
+import { fetchProductById } from "../../../modules/products/slices/productSlice";
 import { fetchWallet } from "../../../features/wallet/walletSlice";
 import { fetchMe, addAddress } from "../../../features/user/userSlice";
 import {

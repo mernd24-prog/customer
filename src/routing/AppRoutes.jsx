@@ -36,7 +36,7 @@ const ResetPasswordPage = lazy(() => import("../pages/auth/ResetPasswordPage"));
 
 const FAQPage = lazy(() => import("../pages/faq/FAQPage"));
 const SupportHelpCenter = lazy(
-  () => import("../pages/contact/SupportHelpCenter"),
+  () => import("../modules/support/pages/SupportHelpCenter"),
 );
 const CmsPage = lazy(() => import("../pages/cms/CmsPage"));
 const BrandOutletPage = lazy(() => import("../pages/brand/BrandOutletPage"));
@@ -47,10 +47,10 @@ const HomePage = lazyNamed(
 );
 const WatchlistPage = lazy(() => import("../pages/watchList/WatchListPage"));
 const SearchPage = lazy(() => import("../pages/search/SearchPage"));
-const ProductsPage = lazy(() => import("../pages/products/ProductsPage"));
+const ProductsPage = lazy(() => import("../modules/products/pages/ProductsPage"));
 // const DealsPage = lazy(() => import("../pages/deals/DealsPage"));
 const ProductDetailPage = lazy(
-  () => import("../pages/products/ProductDetailPage"),
+  () => import("../modules/products/pages/ProductDetailPage"),
 );
 const ReviewDetailsPage = lazy(
   () => import("../pages/reviewAndRating/ReviewDetailsPage"),

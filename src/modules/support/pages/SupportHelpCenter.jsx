@@ -1,30 +1,33 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle2, ChevronDown } from "lucide-react";
-import BaseModal from "../../components/ui/overlay/BaseModal";
-import CustomDropdown from "../../components/ui/CustomDropdown";
+import BaseModal from "../../../components/ui/overlay/BaseModal";
+import CustomDropdown from "../../../components/ui/CustomDropdown";
 
-import Seo from "../../components/ui/Seo";
-import ApiState from "../../components/ui/ApiState";
-import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
-import NeedHelpPanel from "../../components/ecommerce/NeedHelpPanel";
-import StickySidebarLayout from "../../components/ui/layout/StickySidebarLayout";
-import SupportTicketSidebar from "./components/SupportTicketSidebar";
-import { SUPPORT_PAGE_SKELETON } from "../../components/ui/skeleton/layouts";
-import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
-import { SkeletonLoader } from "../../components/ui/skeleton";
-import { useCmsRecord } from "../../hooks/useCmsRecord";
-import { apiRequest } from "../../api/client";
-import { endpoints } from "../../api/endpoints";
-import { notify } from "../../utils/notify";
-import { useAuthModal } from "../../features/auth/AuthModalContext";
+import Seo from "../../../components/ui/Seo";
+import ApiState from "../../../components/ui/ApiState";
+import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
+import NeedHelpPanel from "../../../components/ecommerce/NeedHelpPanel";
+import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
+import SupportTicketSidebar from "../components/SupportTicketSidebar";
+import { useSupportController } from "../controllers/useSupportController";
+import { RaiseTicketModal } from "../components/RaiseTicketModal";
+import { TicketSuccessModal } from "../components/TicketSuccessModal";
+import { SUPPORT_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
+import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
+import { SkeletonLoader } from "../../../components/ui/skeleton";
+import { useCmsRecord } from "../../../hooks/useCmsRecord";
+import { apiRequest } from "../../../api/client";
+import { endpoints } from "../../../api/endpoints";
+import { notify } from "../../../utils/notify";
+import { useAuthModal } from "../../../features/auth/AuthModalContext";
 import { useSelector } from "react-redux";
 import {
   SUPPORT_CONTACT_ITEMS,
   SUPPORT_BREADCRUMBS,
   SUPPORT_FALLBACK_FAQS,
   SUPPORT_FALLBACK_TOPICS,
-} from "../../data/supportPage";
+} from "../../../data/supportPage";
 
 const CUSTOMER_SUPPORT_CATEGORIES = [
   { value: "ORDER_ISSUE", label: "Order Issue" },
@@ -46,7 +49,7 @@ import {
   normalizeHelpTopics,
   normalizeCommonQuestions,
   normalizeSupportQueries,
-} from "../../utils/pages/supportUtils";
+} from "../utils/supportUtils";
 
 function SupportStatusBadge({ status }) {
   const normalized = String(status || "pending").toLowerCase();
@@ -76,19 +79,16 @@ export default function SupportHelpCenter() {
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
 
   const [selectedSupportCategory, setSelectedSupportCategory] = useState("");
-
-  const [supportForm, setSupportForm] = useState(CUSTOMER_SUPPORT_INITIAL_FORM);
-
-  const [supportQueries, setSupportQueries] = useState([]);
-  const [supportLoading, setSupportLoading] = useState(false);
-  const [supportSubmitting, setSupportSubmitting] = useState(false);
-  const [supportError, setSupportError] = useState("");
   const [helpPanelExpandedIndex, setHelpPanelExpandedIndex] = useState(null);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [submittedTicketId, setSubmittedTicketId] = useState("");
-
   const [selectedTicket, setSelectedTicket] = useState(null);
-  const [showRaiseTicketModal, setShowRaiseTicketModal] = useState(false);
+
+  const {
+    supportQueries,
+    supportLoading,
+    supportError,
+    loadSupportQueries,
+    handleOpenRaiseTicketModal,
+  } = useSupportController();
 
   const pageTitle = page?.title || "";
   const pageDescription = page?.description || page?.excerpt || "";
@@ -107,103 +107,13 @@ export default function SupportHelpCenter() {
 
   const isSignedIn = Boolean(user);
 
-  const loadSupportQueries = useCallback(async () => {
-    if (!isSignedIn) {
-      setSupportQueries([]);
-      setSupportError("");
-      return;
-    }
-
-    setSupportLoading(true);
-    setSupportError("");
-
-    try {
-      const result = await apiRequest({
-        method: "get",
-        url: endpoints.support.queries,
-        params: {
-          limit: 5,
-          ...(selectedSupportCategory
-            ? { category: selectedSupportCategory }
-            : {}),
-        },
-      });
-
-      setSupportQueries(normalizeSupportQueries(result.data));
-    } catch (error) {
-      setSupportError(error?.message || "Unable to load support tickets.");
-    } finally {
-      setSupportLoading(false);
-    }
-  }, [isSignedIn, selectedSupportCategory]);
-
   useEffect(() => {
-    loadSupportQueries();
-  }, [loadSupportQueries]);
-
-  const handleSupportFieldChange = (event) => {
-    const { name, value } = event.target;
-
-    setSupportForm((current) => ({
-      ...current,
-      [name]: value,
-    }));
-  };
-
-  const handleSupportSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!isSignedIn) {
-  notify.error("Please login to raise a support ticket.");
-  return;
-}
-
-    const subject = supportForm.subject.trim();
-    const message = supportForm.message.trim();
-
-    if (subject.length < 5) {
-      notify.warning("Please enter a subject with at least 5 characters.");
-      return;
+    if (isSignedIn) {
+      loadSupportQueries(selectedSupportCategory);
     }
+  }, [loadSupportQueries, isSignedIn, selectedSupportCategory]);
 
-    if (message.length < 10) {
-      notify.warning("Please describe your issue in at least 10 characters.");
-      return;
-    }
-
-    setSupportSubmitting(true);
-
-    try {
-      const response = await apiRequest({
-        method: "post",
-        url: endpoints.support.queries,
-        data: {
-          category: supportForm.category,
-          subject,
-          message,
-          metadata: {
-            source: "customer_support_center",
-            channel: "chat",
-          },
-        },
-      });
-
-      const ticketId = response?.data?.queryId || response?.data?.id || "";
-      setSubmittedTicketId(ticketId);
-
-      setSupportForm(CUSTOMER_SUPPORT_INITIAL_FORM);
-      setSelectedSupportCategory("");
-      setHelpPanelExpandedIndex(null);
-      setShowRaiseTicketModal(false);
-      setShowSuccessModal(true);
-
-      await loadSupportQueries();
-    } catch (error) {
-      notify.error(error?.message || "Failed to send support message.");
-    } finally {
-      setSupportSubmitting(false);
-    }
-  };
+  // Form state and submission are now isolated in RaiseTicketModal
 
   if (isPageLoading) {
     return (
@@ -248,10 +158,7 @@ export default function SupportHelpCenter() {
             Help & Support
           </h1>
         </div>
-        {/* =====================================================
-            MOBILE QUICK ACTIONS
-            Separate from desktop grid
-        ====================================================== */}
+    
         {quickActions.length > 0 && (
           <section className="relative mb-5 md:hidden">
             <button
@@ -313,7 +220,6 @@ export default function SupportHelpCenter() {
           sidebarClass="w-full md:w-[280px] lg:w-[320px] xl:w-[340px]"
           mainContent={
             <div className="min-w-0 space-y-5">
-              {/* DESKTOP QUICK ACTIONS */}
               {quickActions.length > 0 && (
                 <section className="hidden overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white md:block">
                   <div className="bg-[#F7EED8] px-5  py-3">
@@ -413,7 +319,7 @@ export default function SupportHelpCenter() {
                         if (!user) {
                           openAuthModal();
                         } else {
-                          setShowRaiseTicketModal(true);
+                          handleOpenRaiseTicketModal();
                         }
                       },
                     };
@@ -503,110 +409,8 @@ export default function SupportHelpCenter() {
         />{" "}
       </main>
 
-      {showRaiseTicketModal && (
-        <BaseModal
-          onClose={() => setShowRaiseTicketModal(false)}
-          maxWidth="max-w-md"
-        >
-          <div className="p-6 sm:p-8">
-            <h3 className="text-xl font-bold text-[#1B1D60] mb-5">
-              Raise a Ticket
-            </h3>
-            <form onSubmit={handleSupportSubmit} className="space-y-4">
-              <CustomDropdown
-                label="Category"
-                options={CUSTOMER_SUPPORT_CATEGORIES}
-                value={supportForm.category}
-                onChange={(val) =>
-                  setSupportForm((prev) => ({
-                    ...prev,
-                    category: val,
-                  }))
-                }
-                placeholder="Select Category"
-              />
-
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
-                  Subject
-                </span>
-
-                <input
-                  name="subject"
-                  value={supportForm.subject}
-                  onChange={handleSupportFieldChange}
-                  placeholder="Example: Refund Not Received"
-                  className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] focus:outline-none placeholder:text-[#9A9A9A] focus:border-[#CE9F2D]"
-                />
-              </label>
-
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
-                  Message
-                </span>
-
-                <textarea
-                  name="message"
-                  value={supportForm.message}
-                  onChange={handleSupportFieldChange}
-                  rows={4}
-                  placeholder="Write Your Issue Here..."
-                  className="w-full resize-none rounded-lg border border-[#E7D9B8] bg-white px-3 py-3 text-sm leading-5 text-[#2E2E2E] placeholder:text-[#9A9A9A] focus:border-[#CE9F2D] focus:outline-none focus:ring-0 focus:shadow-none"
-                />
-              </label>
-
-              <button
-                type="submit"
-                disabled={supportSubmitting}
-                className="h-11 w-full rounded-lg bg-[#CE9F2D] text-sm font-bold text-white transition hover:bg-[#C9961F] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {supportSubmitting ? "Sending..." : "Send Message"}
-              </button>
-
-              {!isSignedIn && (
-                <p className="text-center text-xs font-medium text-[#666666]">
-                  Login Is Required to Send a Support Message.
-                </p>
-              )}
-            </form>
-          </div>
-        </BaseModal>
-      )}
-
-      {showSuccessModal && (
-        <BaseModal
-          onClose={() => setShowSuccessModal(false)}
-          maxWidth="max-w-md"
-        >
-          <div className="flex flex-col items-center px-6 py-10 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#E8F8F5] text-[#117A65] mb-5">
-              <CheckCircle2 size={40} strokeWidth={2.5} />
-            </div>
-
-            <h3 className="text-xl font-bold text-[#1B1D60] mb-2">
-              Ticket Raised Successfully!
-            </h3>
-
-            <p className="text-sm text-[#4E4E4E] leading-relaxed mb-6">
-              Thank you for contacting us. Your ticket has been logged and our
-              support team will get back to you shortly.
-              {submittedTicketId && (
-                <span className="block mt-2 font-semibold text-[#3E4093]">
-                  Ticket ID: #{submittedTicketId}
-                </span>
-              )}
-            </p>
-
-            <button
-              type="button"
-              onClick={() => setShowSuccessModal(false)}
-              className="w-full h-11 rounded-lg bg-[#CE9F2D] text-sm font-bold text-white transition hover:bg-[#C9961F] active:scale-[0.98]"
-            >
-              Done
-            </button>
-          </div>
-        </BaseModal>
-      )}
+      <RaiseTicketModal />
+      <TicketSuccessModal />
 
       <SupportTicketSidebar
         isOpen={!!selectedTicket}

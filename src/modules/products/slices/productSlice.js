@@ -1,5 +1,5 @@
-import { createApiSlice } from "../createApiSlice";
-import { productThunks } from "../domainThunks";
+import { createApiSlice } from "../../../features/createApiSlice";
+import { productThunks } from "../../../features/domainThunks";
 export const {
   fetchProducts,
   fetchSellerProducts,

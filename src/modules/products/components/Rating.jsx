@@ -1,6 +1,6 @@
 import { Star } from "lucide-react";
-import { clampRating } from "../../utils/ecommerce";
-import { cn } from "../../utils/common";
+import { clampRating } from "../../../utils/ecommerce";
+import { cn } from "../../../utils/common";
 
 export default function Rating({
   value = 0,

@@ -6,9 +6,9 @@ import {
   setGuestCart,
   updateCart,
 } from "../../../features/cart/cartSlice";
-import { fetchProductById } from "../../../features/product/productSlice";
+import { fetchProductById } from "../../../modules/products/slices/productSlice";
 import { useToastThunk } from "../../../hooks/useToastThunk";
-import { useProductActions } from "../../../hooks/useProductActions";
+import { useCartActions, useWishlistActions } from "../../../modules/products/controllers/actions";
 import { useWatchlistProducts } from "../../../hooks/useWatchlistProducts";
 import { useAuthModal } from "../../../features/auth/AuthModalContext";
 import { store } from "../../../app/store";
@@ -51,7 +51,8 @@ export default function useCart() {
   const navigate = useNavigate();
   const run = useToastThunk();
   const { openGuestOtpModal } = useAuthModal();
-  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+  const addToCart = useCartActions();
+  const { isWishlisted, toggleWishlist } = useWishlistActions();
   const recentViewedItems = getRecentlyViewed();
 
   const currentUser = useSelector((state) => state.auth.current);

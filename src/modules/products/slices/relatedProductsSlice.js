@@ -1,10 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { makeThunk } from "../createApiSlice";
-import { endpoints } from "../../api/endpoints";
+import { makeThunk } from "../../../features/createApiSlice";
+import { endpoints } from "../../../api/endpoints";
 
 const q = (arg) => arg?.params || arg;
 
-// Standalone thunks — NOT part of productThunks so productSlice never touches them
 export const fetchRelatedProducts = makeThunk("relatedProducts/fetchRelated", {
   url: ({ productId }) => endpoints.products.related(productId),
   params: q,

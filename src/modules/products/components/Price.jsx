@@ -1,5 +1,5 @@
-import { formatMoney } from "../../utils/ecommerce";
-import { cn } from "../../utils/common";
+import { formatMoney } from "../../../utils/ecommerce";
+import { cn } from "../../../utils/common";
 
 function normalizeMoneyValue(value) {
   if (typeof value === "number") return value;

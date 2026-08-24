@@ -18,7 +18,7 @@ import {
   ProductListingLayout,
 } from "../../components/ecommerce";
 import { buildRatingCountMap, isProductInStock, getAvailabilityCounts, sortProducts } from "../../utils/ecommerce";
-import { useProductActions } from "../../hooks/useProductActions";
+import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
 import {
   clearSearch,
   clearSuggestions,
@@ -47,7 +47,8 @@ export default function SearchPage() {
 
   const searchState = useSelector((s) => s.search);
   const categoriesRaw = useSelector((s) => s.catalog.list) || [];
-  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+  const addToCart = useCartActions();
+  const { isWishlisted, toggleWishlist } = useWishlistActions();
   const facets = searchState.facets || {};
   const sort = searchParams.get("sort") || "";
 

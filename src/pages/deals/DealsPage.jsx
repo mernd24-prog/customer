@@ -12,7 +12,7 @@ import {
   PriceRangeFilter,
   RatingFilter,
 } from "../../components/ecommerce";
-import { useProductActions } from "../../hooks/useProductActions";
+import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
 import { getPublicDealProducts } from "../../api/deals";
 import {
   applyImageFallback,
@@ -59,7 +59,8 @@ export default function DealsPage() {
   const [dealFacets, setDealFacets] = useState({});
  
   const sentinelRef = useRef(null);
-  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+  const addToCart = useCartActions();
+  const { isWishlisted, toggleWishlist } = useWishlistActions();
 
   const selectedBrands = useMemo(
     () => parseMultiValue(searchParams.get("brand")),

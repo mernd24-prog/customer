@@ -1,10 +1,10 @@
-import ApiState from "../ui/ApiState";
-import ActiveFilterChips from "../ui/ActiveFilterChips";
-import FilterDrawer from "../ui/overlay/Drawer";
+import ApiState from "../../../components/ui/ApiState";
+import ActiveFilterChips from "../../../components/ui/ActiveFilterChips";
+import FilterDrawer from "../../../components/ui/overlay/Drawer";
 import ProductFilterSidebar from "./ProductFilterSidebar";
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
-import Loader from "../ui/Loader";
+import Loader from "../../../components/ui/Loader";
 
 export default function ProductResultsLayout({
   totalResults = 0,

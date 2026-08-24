@@ -11,8 +11,8 @@ import {
   PriceRangeFilter,
   RatingFilter,
 } from "../../components/ecommerce";
-import { useProductActions } from "../../hooks/useProductActions";
-import { fetchProducts } from "../../features/product/productSlice";
+import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
+import { fetchProducts } from "../../modules/products/slices/productSlice";
 import { fetchBrands } from "../../features/catalog/catalogSlice";
 import {
   buildRatingCountMap,
@@ -58,7 +58,8 @@ export default function BrandPage() {
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const sentinelRef = useRef(null);
   const productState = useSelector((s) => s.product);
-  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+  const addToCart = useCartActions();
+  const { isWishlisted, toggleWishlist } = useWishlistActions();
   const selectedRatings = useMemo(
     () => parseMultiValue(searchParams.get("rating")),
     [searchParams],
