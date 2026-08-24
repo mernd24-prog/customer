@@ -4,7 +4,7 @@ import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import {
   CollectionToolbar,
   ProductResultsLayout,
-} from "../../components/ecommerce";
+} from "../../modules/products/components";
 import { isNotFoundApiError } from "../../utils/apiErrors";
 import { SORT_OPTIONS } from "../../constants/data.constant";
 import useCategory from "./hooks/useCategory";

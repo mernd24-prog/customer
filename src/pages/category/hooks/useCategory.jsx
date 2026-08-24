@@ -2,7 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import CUSTOMER_ROUTES from "../../../constants/routes";
-import { CheckboxListFilter, OptionFilter, PriceRangeFilter } from "../../../components/ecommerce";
+import {
+  CheckboxListFilter,
+  OptionFilter,
+  PriceRangeFilter,
+} from "../../../modules/products/components";
 import { useCartActions, useWishlistActions } from "../../../modules/products/controllers/actions";
 import { fetchProducts } from "../../../modules/products/slices/productSlice";
 import { fetchCategoryByKey, fetchCategories } from "../../../features/catalog/catalogSlice";

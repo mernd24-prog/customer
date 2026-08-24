@@ -23,7 +23,7 @@ const heroContent = [
 
 const StaticFirstSlide = ({ item, slide }) => (
   <div className="relative overflow-hidden bg-[#1B1D60] h-full w-full">
-    <img loading="lazy"
+    <img
       src={slide.image}
       alt="Banner Background"
       width="1664"
