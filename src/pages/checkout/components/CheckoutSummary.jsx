@@ -23,11 +23,28 @@ const withQuotedPrices = (items = [], quote = {}) => {
     const quantity = Number(quoted.quantity ?? item.quantity ?? 1);
     const unitPrice = Number(quoted.unitPrice ?? quoted.unit_price ?? item.price ?? 0);
     const lineTotal = Number(quoted.lineTotal ?? quoted.line_total ?? unitPrice * quantity);
+    const baseTitle = quoted.title || item.title || item._safeTitle || "";
+    const variantTitle =
+      quoted.variantTitle ||
+      quoted.variant_title ||
+      item._variantTitle ||
+      item.variantTitle ||
+      item.variant_title ||
+      "";
+    const safeTitle =
+      variantTitle &&
+      variantTitle !== "Default Title" &&
+      variantTitle !== baseTitle &&
+      !baseTitle.includes(variantTitle)
+        ? `${baseTitle} - ${variantTitle}`
+        : item._safeTitle || baseTitle;
+
     return {
       ...item,
       quantity,
       price: unitPrice,
-      _safeTitle: quoted.title || item._safeTitle,
+      _safeTitle: safeTitle,
+      _variantTitle: variantTitle,
       _lineTotal: lineTotal,
       _quotedUnitPrice: unitPrice,
       _originalUnitPrice: Number(quoted.originalUnitPrice ?? quoted.original_unit_price ?? unitPrice),

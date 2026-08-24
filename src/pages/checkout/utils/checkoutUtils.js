@@ -240,7 +240,15 @@ export const adaptCheckoutItem = (item = {}, index = 0, fullProduct = null) => {
   const product = fullProduct || getCartItemProduct(item);
   const productId = getProductId(product || item.productId || item.id);
   const variantKey = item.variantId || item.variantSku || "";
-  const title = getCartItemTitle(item);
+  const baseTitle = getCartItemTitle(item);
+  const variantTitle = getCartItemVariantTitle(item);
+  const title =
+    variantTitle &&
+    variantTitle !== "Default Title" &&
+    variantTitle !== baseTitle &&
+    !baseTitle.includes(variantTitle)
+      ? `${baseTitle} - ${variantTitle}`
+      : baseTitle;
   const image =
     getProductImage(product) ||
     item.image ||
@@ -257,7 +265,7 @@ export const adaptCheckoutItem = (item = {}, index = 0, fullProduct = null) => {
       .filter(Boolean)
       .join(":"),
     _safeTitle: title,
-    _variantTitle: getCartItemVariantTitle(item),
+    _variantTitle: variantTitle,
     _resolvedProduct: product,
     _image: image,
     _attributes: getCartItemAttributes(item),

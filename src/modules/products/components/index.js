@@ -8,6 +8,7 @@ export { default as Price } from "./Price";
 export { default as CollectionToolbar } from "./CollectionToolbar";
 export { default as Pagination } from "./Pagination";
 export { default as ProductReviewsSection } from "./ProductReviewsSection";
+export { default as ProductServiceBadges } from "./ProductServiceBadges";
 
 export {
   default as ProductFilterSidebar,

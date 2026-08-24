@@ -30,9 +30,7 @@ import {
   fetchRecommendations,
   trackRecommendationInteraction,
 } from "../../features/recommendation/recommendationSlice";
-import {
-  fetchCrossSellProducts,
-} from "../../features/product/relatedProductsSlice";
+import { fetchCrossSellProducts } from "../../features/product/relatedProductsSlice";
 import { trackAnalyticsEvent } from "../../features/analytics/analyticsSlice";
 import { useProductActions } from "../../hooks/useProductActions";
 import {
@@ -75,6 +73,7 @@ import ImageGallery from "./components/ImageGallery";
 import DeliveryChecker from "./components/DeliveryChecker";
 import VariantSelector from "./components/VariantSelector";
 import ProductActionButtons from "./components/ProductActionButtons";
+import ProductServiceBadges from "../../modules/products/components/ProductServiceBadges";
 import ProductInfoSection from "./sections/ProductInfoSection";
 import ProductRecommendationSection from "./sections/ProductRecommendationSection";
 import {
@@ -718,38 +717,13 @@ export default function ProductDetailPage() {
                   </div>
 
                   {!deliveryResult && (
-                    <div className="flex flex-wrap items-center gap-2">
-                      {shippingEtaText && (
-                        <span className="inline-flex items-center rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
-                          Ships in {shippingEtaText} Days
-                        </span>
-                      )}
-                      {staticIsFree ? (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
-                          <Truck size={11} /> Free Shipping
-                        </span>
-                      ) : staticCharge > 0 ? (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-border bg-cream px-2.5 py-1 text-[11px] font-medium text-muted">
-                          <Truck size={11} />
-                          {new Intl.NumberFormat("en-IN", {
-                            style: "currency",
-                            currency: "INR",
-                            maximumFractionDigits: 0,
-                          }).format(staticCharge)}{" "}
-                          Delivery
-                        </span>
-                      ) : null}
-                      {productCodAvailable && (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
-                          <Banknote size={11} /> COD Available
-                        </span>
-                      )}
-                      {productCodDisabled && (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600">
-                          Cod Not Available
-                        </span>
-                      )}
-                    </div>
+                    <ProductServiceBadges
+                      shippingEtaText={shippingEtaText}
+                      staticIsFree={staticIsFree}
+                      staticCharge={staticCharge}
+                      productCodAvailable={productCodAvailable}
+                      productCodDisabled={productCodDisabled}
+                    />
                   )}
 
                   {variants.length > 0 && variantOptions.length > 0 && (

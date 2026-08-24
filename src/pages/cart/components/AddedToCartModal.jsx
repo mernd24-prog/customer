@@ -11,6 +11,33 @@ import {
   getProductTitle,
 } from "../../../utils/ecommerce";
 
+function getCartLineDisplayPrice(item, product) {
+  if (typeof item?.salePrice === "number" && item.salePrice > 0) {
+    return item.salePrice;
+  }
+  if (typeof item?.price === "number" && item.price > 0) {
+    return item.price;
+  }
+
+  const variantId = item?.variantId || item?.variantSku;
+  if (variantId && product?.variants?.length) {
+    const variant = product.variants.find(
+      (v) => v._id === variantId || v.id === variantId || v.sku === variantId,
+    );
+    if (variant) {
+      const vSalePrice = variant.salePrice ?? variant.sale_price;
+      if (typeof vSalePrice === "number" && vSalePrice > 0) return vSalePrice;
+      const vPrice = variant.price ?? variant.sellingPrice;
+      if (typeof vPrice === "number" && vPrice > 0) return vPrice;
+    }
+  }
+
+  if (typeof product?.salePrice === "number" && product.salePrice > 0) {
+    return product.salePrice;
+  }
+  return product?.price || 0;
+}
+
 function CartLine({ item, onClose }) {
   const productEntities = useSelector((state) => state.product?.entities) || {};
 
@@ -58,16 +85,8 @@ function CartLine({ item, onClose }) {
 
   const displayImage = image || getImageFallbackSrc(title, "cart");
 
-  const getDisplayPrice = (item, product) => {
-    const salePrice = item?.salePrice || product?.salePrice || 0;
-
-    const price = item?.price > 0 ? item.price : product?.price || 0;
-
-    return salePrice > 0 ? salePrice : price;
-  };
-
   const quantity = item?.quantity || 1;
-  const price = getDisplayPrice(item, product);
+  const unitPrice = getCartLineDisplayPrice(item, product);
 
   return (
     <Link
@@ -77,7 +96,10 @@ function CartLine({ item, onClose }) {
       aria-label={`View ${title}`}
     >
       <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-[var(--customer-cream)] ring-1 ring-black/5">
-        <img loading="lazy" width="400" height="400"
+        <img
+          loading="lazy"
+          width="400"
+          height="400"
           src={displayImage}
           alt={title}
           className="h-full w-full object-contain"
@@ -89,7 +111,7 @@ function CartLine({ item, onClose }) {
           {title}
         </p>
         <p className="mt-1  text-xs text-[var(--customer-muted)]">
-          Qty {quantity} • {formatMoney(price, product?.currency || "INR")}
+          Qty {quantity} • {formatMoney(unitPrice, product?.currency || "INR")}
         </p>
       </div>
       <span className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-bold text-[var(--customer-gold-dark)] transition-all group-hover:gap-2 group-hover:bg-[var(--customer-gold-soft)]">
@@ -115,16 +137,11 @@ export default function AddedToCartModal({
     addedProduct?.imageUrl ||
     getImageFallbackSrc(addedTitle, "cart");
   const addedProductId = getProductId(addedProduct);
+
   const subtotal = cartItems.reduce((sum, item) => {
-    const product = typeof item.productId === "object" ? item.productId : {};
-
-    const salePrice = item.salePrice > 0 ? item.salePrice : product.salePrice;
-
-    const price = item.price > 0 ? item.price : product.price;
-
-    const finalPrice = salePrice > 0 ? salePrice : price;
-
-    return sum + finalPrice * (item.quantity || 1);
+    const product = typeof item?.productId === "object" ? item.productId : {};
+    const finalPrice = getCartLineDisplayPrice(item, product);
+    return sum + finalPrice * (item?.quantity || 1);
   }, 0);
 
   return (
@@ -158,7 +175,10 @@ export default function AddedToCartModal({
             aria-label={`View ${addedTitle}`}
           >
             <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--customer-cream)] ring-1  ring-black/5 sm:h-24 sm:w-24">
-              <img loading="lazy" width="400" height="400"
+              <img
+                loading="lazy"
+                width="400"
+                height="400"
                 src={addedImage}
                 alt={addedTitle}
                 className="h-full  w-full object-contain"

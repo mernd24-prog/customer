@@ -118,15 +118,23 @@ export default function DeliveryChecker({ productId, onResultChange }) {
         </button>
 
         {/* Quick inline status if already checked */}
-        {result && result.serviceable && (
-          <div className="flex items-center gap-2 pt-0.5 text-xs font-medium text-emerald-700">
-            <CheckCircle2 size={14} className="shrink-0 text-emerald-600" />
-            <span>
-              Deliverable to <strong>{lastCheckedPincode}</strong>
-              {etaText ? ` • Ships in ${etaText} days` : ""}
-            </span>
-          </div>
-        )}
+        {result &&
+          (result.serviceable ? (
+            <div className="flex items-center gap-2 pt-0.5 text-xs font-medium text-emerald-700">
+              <CheckCircle2 size={14} className="shrink-0 text-emerald-600" />
+              <span>
+                Deliverable to <strong>{lastCheckedPincode}</strong>
+                {etaText ? ` • Ships in ${etaText} days` : ""}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 pt-0.5 text-xs font-medium text-red-600">
+              <XCircle size={14} className="shrink-0 text-red-500" />
+              <span>
+                Sorry, we do not ship to this pincode. Try another one.
+              </span>
+            </div>
+          ))}
       </div>
 
       {/* Modal Popup portal styled like AuthModal */}
@@ -228,7 +236,11 @@ export default function DeliveryChecker({ productId, onResultChange }) {
                       type="submit"
                       disabled={loading || pincode.length !== 6}
                       aria-busy={loading}
-                      aria-label={loading ? "Checking delivery availability" : "Check delivery availability"}
+                      aria-label={
+                        loading
+                          ? "Checking delivery availability"
+                          : "Check delivery availability"
+                      }
                       className={cn(
                         "inline-flex h-11 min-w-[82px] items-center justify-center gap-2 px-5 rounded-[8px]",
                         "text-sm font-semibold text-white",
@@ -245,7 +257,9 @@ export default function DeliveryChecker({ productId, onResultChange }) {
                             className="block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-white/40 border-t-white"
                             aria-hidden="true"
                           />
-                          <span className="sr-only">Checking delivery availability</span>
+                          <span className="sr-only">
+                            Checking delivery availability
+                          </span>
                         </>
                       ) : (
                         "Check"
@@ -262,109 +276,41 @@ export default function DeliveryChecker({ productId, onResultChange }) {
 
                 {/* Result Block */}
                 {result && (
-                  <div className="mt-5 overflow-hidden rounded-[10px] border border-border bg-cream/40 p-4 text-xs">
+                  <div className="mt-5 overflow-hidden rounded-[10px]  text-xs">
                     {result.serviceable ? (
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2 font-semibold text-emerald-700 text-sm">
-                          <CheckCircle2
-                            size={18}
-                            className="shrink-0 text-emerald-600"
-                          />
-                          <span>Deliverable to {lastCheckedPincode}</span>
-                        </div>
-
-                        <div className="grid gap-2.5 pt-2 border-t border-border/60 text-ink">
-                          {etaText && (
-                            <div className="flex items-center gap-2.5">
-                              <Truck
-                                size={15}
-                                className="shrink-0 text-gold-dark"
-                              />
-                              <span>
-                                Estimated Arrival:{" "}
-                                <strong>{etaText} Days</strong>
-                              </span>
-                            </div>
-                          )}
-                          <div className="flex items-center gap-2.5">
-                            <Package
-                              size={15}
-                              className="shrink-0 text-gold-dark"
-                            />
-                            <span>
-                              Shipping Charge:{" "}
-                              <strong>
-                                {deliveryCharge > 0
-                                  ? new Intl.NumberFormat("en-IN", {
-                                      style: "currency",
-                                      currency: "INR",
-                                      maximumFractionDigits: 0,
-                                    }).format(deliveryCharge)
-                                  : "Free Shipping"}
-                              </strong>
-                            </span>
-                          </div>
-                          {resultCodAvailable !== undefined && (
-                            <div className="flex items-center gap-2.5">
-                              <Banknote
-                                size={15}
-                                className={`shrink-0 ${
-                                  resultCodAvailable
-                                    ? "text-emerald-600"
-                                    : "text-red-500"
-                                }`}
-                              />
-                              <span>
-                                Cash on Delivery:{" "}
-                                <strong
-                                  className={
-                                    resultCodAvailable
-                                      ? "text-emerald-700"
-                                      : "text-red-600"
-                                  }
-                                >
-                                  {resultCodAvailable
-                                    ? "Available"
-                                    : "Not Available"}
-                                </strong>
-                              </span>
-                            </div>
-                          )}
-                        </div>
+                      <div className="flex items-center gap-2.5 font-semibold text-emerald-700 text-xs">
+                        <CheckCircle2
+                          size={16}
+                          className="shrink-0 text-emerald-600"
+                        />
+                        <span className="leading-snug text-xs">
+                          Deliverable to <strong>{lastCheckedPincode}</strong>
+                          {etaText ? ` • Ships in ${etaText} days` : ""}
+                          {deliveryCharge > 0
+                            ? ` • ${new Intl.NumberFormat("en-IN", {
+                                style: "currency",
+                                currency: "INR",
+                                maximumFractionDigits: 0,
+                              }).format(deliveryCharge)} Delivery`
+                            : " • Free Shipping"}
+                          {resultCodAvailable !== undefined
+                            ? resultCodAvailable
+                              ? " • COD Available"
+                              : " • COD Not Available"
+                            : ""}
+                        </span>
                       </div>
                     ) : (
-                      <div className="flex items-start gap-2.5 text-red-600 font-semibold">
-                        <XCircle
-                          size={18}
-                          className="shrink-0 text-red-600 mt-0.5"
-                        />
-                        <div>
-                          <span>
-                            Delivery unavailable to {lastCheckedPincode}.
-                          </span>
-                          <p className="text-muted text-[11px] font-normal mt-0.5">
-                            Please enter a different pincode.
-                          </p>
-                        </div>
+                      <div className="flex items-center gap-2.5 text-red-600 font-semibold">
+                        <XCircle size={18} className="shrink-0 text-red-600" />
+                        <span className="text-xs font-semibold text-red-600">
+                          Sorry, we do not ship to this pincode. Try another
+                          one.
+                        </span>
                       </div>
                     )}
                   </div>
                 )}
-
-                {/* Footer Info */}
-                <div className="mt-5 flex items-center justify-between border-t border-border pt-3 text-[11px] text-muted">
-                  <span className="flex items-center gap-1">
-                    <ShieldCheck size={13} className="text-emerald-600" />
-                    Verified Courier Network
-                  </span>
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className="font-semibold text-gold hover:text-gold-dark hover:underline"
-                  >
-                    Done
-                  </button>
-                </div>
               </div>
             </div>
           </div>,

@@ -1,10 +1,11 @@
-import React, { useMemo, memo, useState, useEffect, Suspense } from "react";
+import React, { memo } from "react";
 import { Tag } from "lucide-react";
-import { bannerData } from "../constants/image.constant";
 import Label from "../components/ui/label/Label";
-import { OutlineLightButton, SolidLargeButton } from "../components/ui/button/static";
-
-const LazyHeroSwiper = React.lazy(() => import("./HeroSwiper"));
+import {
+  OutlineLightButton,
+  SolidLargeButton,
+} from "../components/ui/button/static";
+import HeroSwiper from "./HeroSwiper";
 
 const heroContent = [
   {
@@ -32,29 +33,41 @@ const StaticFirstSlide = ({ item, slide }) => (
       fetchpriority="high"
       loading="eager"
     />
-    <div className="pointer-events-none absolute inset-y-0 left-0 right-1/3 z-10 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/90 to-transparent" />
+    <div className="pointer-events-none absolute inset-y-0 left-0 right-1/4 z-10 bg-gradient-to-r from-[#1B1D60] via-[#1B1D60]/95 to-transparent" />
     <div className="customer-container relative z-20 flex h-full flex-col items-center justify-between gap-6 pb-8 pt-12 sm:pb-8 sm:pt-16 md:pb-10 md:pt-20 lg:flex-row lg:py-0">
       <div className="flex flex-1 flex-col items-center space-y-4 pt-4 text-center text-white md:space-y-6 lg:items-start lg:pt-0 lg:text-left">
         <div className="flex flex-col items-center gap-2 md:gap-4 lg:items-start lg:gap-6">
           <Label
             variant="seasonSale"
             className="max-w-[290px] px-2 py-1 text-[10px] leading-4 text-center min-[375px]:max-w-[330px] min-[375px]:text-[11px] sm:max-w-fit sm:text-[12px] lg:text-[14px]"
-            leftIcon={<Tag size={12} className="text-[#CE9F2D] lg:h-[14px] lg:w-[14px]" />}
+            leftIcon={
+              <Tag
+                size={12}
+                className="text-[#CE9F2D] lg:h-[14px] lg:w-[14px]"
+              />
+            }
           >
             {item.badge}
           </Label>
           <h2 className="banner-heading mt-4 md:mt-0 max-w-[681px] lg:max-w-[800px] font-bold">
-            {item.title} <br /> <span className="text-[#CE9F2D]">{item.highlight}</span>
+            {item.title} <br />{" "}
+            <span className="text-[#CE9F2D]">{item.highlight}</span>
           </h2>
         </div>
         <p className="max-w-xl lg:max-w-2xl font-medium text-center text-sm md:text-base xl:text-lg text-white/80 lg:text-left">
           {item.description}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3 pt-1 md:pt-3 lg:justify-start">
-          <SolidLargeButton to={item.primaryLink} className="h-[40px] min-w-[116px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold shadow-none hover:scale-105 sm:h-[44px] sm:min-w-[128px] sm:px-5 sm:text-base lg:h-[48px] lg:w-[141px] lg:min-w-0 lg:rounded-[10px] lg:px-[22px]">
+          <SolidLargeButton
+            to={item.primaryLink}
+            className="h-[40px] min-w-[116px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold shadow-none hover:scale-105 sm:h-[44px] sm:min-w-[128px] sm:px-5 sm:text-base lg:h-[48px] lg:w-[141px] lg:min-w-0 lg:rounded-[10px] lg:px-[22px]"
+          >
             {item.primaryButton}
           </SolidLargeButton>
-          <OutlineLightButton to={item.secondaryLink} className="h-[42px] min-w-[156px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold hover:scale-105 sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-[10px]">
+          <OutlineLightButton
+            to={item.secondaryLink}
+            className="h-[42px] min-w-[156px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold hover:scale-105 sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-[10px]"
+          >
             {item.secondaryButton}
           </OutlineLightButton>
         </div>
@@ -65,26 +78,11 @@ const StaticFirstSlide = ({ item, slide }) => (
 );
 
 const HeroBanner = memo(({ content = heroContent }) => {
-  const [loadSwiper, setLoadSwiper] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoadSwiper(true);
-    }, 3500); // delay loading heavy swiper until after initial metrics are measured
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] flex h-[480px] w-screen items-center overflow-hidden bg-[#1B1D60] sm:h-[520px] md:h-[620px] lg:h-[650px]">
-      {loadSwiper ? (
-        <Suspense fallback={<StaticFirstSlide item={content[0]} slide={bannerData[0]} />}>
-          <LazyHeroSwiper content={content} />
-        </Suspense>
-      ) : (
-        <StaticFirstSlide item={content[0]} slide={bannerData[0]} />
-      )}
-      <div className="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-black/25 to-transparent" />
-      <div className="pointer-events-none absolute -bottom-48 -left-48 h-[400px] w-[400px] rounded-full bg-[var(--customer-gold)]/10 blur-[80px]" />
+      <HeroSwiper content={content} />
+      <div className="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-black/20 to-transparent z-20" />
+      <div className="pointer-events-none absolute -bottom-48 -left-48 h-[400px] w-[400px] rounded-full bg-[var(--customer-gold)]/10 blur-[80px] z-20" />
     </section>
   );
 });
