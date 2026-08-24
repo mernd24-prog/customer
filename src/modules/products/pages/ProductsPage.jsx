@@ -19,30 +19,51 @@ const SORT_OPTIONS = [
 ];
 
 export default function ProductsPage() {
-  const { searchParams, setSearchParams, viewMode, sidebarOpen, setSidebarOpen, products, availabilityCounts, attributeFacets, collectionOptions, absolutePriceLimits, categoryOptions, brandOptions, effectiveRatingCounts, handleFilterChange, handlePriceFilterChange, clearAllFilters, handleSortChange, productState, isLoadingMore, totalPages, currentPage, pageSize, sentinelRef, addToCart, isWishlisted, toggleWishlist, sidebarContent, pageTitle } = useProductsPageController();
+  const {
+    searchParams,
+    viewMode,
+    sidebarOpen,
+    setSidebarOpen,
+    products,
+    handleSortChange,
+    handleFilterChange,
+    handlePriceFilterChange,
+    clearAllFilters,
+    productState,
+    isLoadingMore,
+    totalPages,
+    currentPage,
+    pageSize,
+    sentinelRef,
+    addToCart,
+    isWishlisted,
+    toggleWishlist,
+    filterSections,
+    activeFilters,
+    clearFiltersAction,
+    pageTitle,
+  } = useProductsPageController();
+
+  const isSearchMode = Boolean(searchParams.get("q"));
 
   return (
     <ProductListingLayout
       pageTitle={pageTitle}
       seoDescription="Browse products with filters, sort, and pagination."
-      totalResults={pageInfo.total}
+      totalResults={products.length}
       pageSize={pageSize}
       sortValue={searchParams.get("sort") || ""}
-      sortOptions={pageInfo.total <= 1 ? [] : SORT_OPTIONS}
-      onSortChange={(value) => updateParam("sort", value)}
+      sortOptions={SORT_OPTIONS}
+      onSortChange={handleSortChange}
       sidebarOpen={sidebarOpen}
       setSidebarOpen={setSidebarOpen}
       filterSections={filterSections}
       activeFilters={activeFilters}
-      onRemoveFilter={removeFilter}
-      onClearFilters={clearFiltersAction}
-      loading={
-        (productState.loading && !products.length) ||
-        (!firstLoadDone && !products.length)
-      }
+      onClearFilters={clearFiltersAction ?? clearAllFilters}
+      loading={productState.loading && !products.length}
       refreshing={productState.loading && products.length > 0 && !isLoadingMore}
       error={products.length === 0 ? productState.error : null}
-      empty={!products.length && !productState.loading && firstLoadDone}
+      empty={!products.length && !productState.loading}
       emptyTitle={isSearchMode ? "No results found" : "No Products Found"}
       emptyText={
         isSearchMode
