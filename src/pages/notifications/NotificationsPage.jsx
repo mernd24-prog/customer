@@ -225,7 +225,7 @@ export function NotificationsPage() {
                             lg:w-[64px]
                           "
                       >
-                        <img
+                        <img loading="lazy" width="400" height="400"
                           src={notificationItem.icon}
                           alt={notif.title || notif.subject || "Notification"}
                           className="

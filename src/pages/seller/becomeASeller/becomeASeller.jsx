@@ -194,7 +194,7 @@ export default function BecomeASeller() {
       />
 
       <section className="relative isolate overflow-hidden bg-[#17145f] text-white">
-        <img
+        <img loading="lazy" width="400" height="400"
           src="/image/png/sellerBanner.png"
           alt="Sam Global Seller Growing His Online Business"
           className="absolute inset-0 -z-20 h-full w-full object-cover  object-top "
@@ -287,7 +287,7 @@ export default function BecomeASeller() {
                   <article className="group h-full rounded-[22px] bg-white p-3 pb-6   sm:p-4 sm:pb-7">
                     <div className="relative">
                       <div className="overflow-hidden  rounded-xl  bg-[#e8e5df]">
-                        <img
+                        <img width="400" height="400"
                           src={story.photo}
                           alt={`${story.name} at their business`}
                           className="h-44 w-full object-cover object-top"

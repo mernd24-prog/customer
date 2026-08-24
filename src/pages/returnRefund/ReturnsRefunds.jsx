@@ -1,7 +1,7 @@
 import Seo from "../../components/ui/Seo";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import ApiState from "../../components/ui/ApiState";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   disputeReturnQc,
@@ -12,6 +12,7 @@ import { ChevronDown } from "lucide-react";
 import ReturnItemCard from "./component/ReturnItemCard";
 import ReturnTrackingCard from "./component/ReturnTrackingCard";
 import { RETURNS_PAGE_SKELETON } from "../../components/ui/skeleton/layouts";
+import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 
 /* ─── Status filter options ───────────────────────────────────────────── */
 const STATUS_FILTERS = [
@@ -243,10 +244,10 @@ function ReturnsRefundsPage() {
 
   const [visibleCount, setVisibleCount] = useState(3);
 
-  const handleStatusFilterChange = (newFilter) => {
+  const handleStatusFilterChange = useCallback((newFilter) => {
     setStatusFilter(newFilter);
     setVisibleCount(3);
-  };
+  }, []);
 
   /* filtered list */
   const filteredReturns =
@@ -262,11 +263,11 @@ function ReturnsRefundsPage() {
     { label: "Returns & Refunds" },
   ];
 
-  const toggleTracking = (retId) => {
+  const toggleTracking = useCallback((retId) => {
     setExpandedReturnId((prev) => (prev === retId ? null : retId));
-  };
+  }, []);
 
-  const submitQcDispute = async () => {
+  const submitQcDispute = useCallback(async () => {
     if (!qcDispute.returnId || qcDispute.reason.trim().length < 10) {
       notify.error("Please explain the QC dispute in at least 10 characters.");
       return;
@@ -295,9 +296,9 @@ function ReturnsRefundsPage() {
       notify.error(error?.message || "Unable to submit the QC dispute.");
       setQcDispute((current) => ({ ...current, submitting: false }));
     }
-  };
+  }, [qcDispute, dispatch]);
 
-  const renderReturnsList = (list) => {
+  const renderReturnsList = useCallback((list) => {
     return (
       <div className="flex flex-col  gap-y-14">
         {list.map((ret) => {
@@ -519,10 +520,10 @@ function ReturnsRefundsPage() {
         })}
       </div>
     );
-  };
+  }, [expandedReturnId, qcDispute, toggleTracking, submitQcDispute]);
 
   return (
-    <>
+    <AppErrorBoundary>
       <Seo title="Returns & Refunds | Sam Global" />
       <div className="py-6 sm:py-8">
         <Breadcrumbs
@@ -586,7 +587,7 @@ function ReturnsRefundsPage() {
           )}
         </ApiState>
       </div>
-    </>
+    </AppErrorBoundary>
   );
 }
 

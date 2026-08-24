@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
+import Seo from "../../components/ui/Seo";
 import AboutBanner from "./components/AboutBanner";
 import InfoSection from "./components/InfoSection";
 import OurStory from "./components/OurStory";
@@ -48,6 +49,10 @@ export default function AboutPage() {
 
   return (
     <>
+      <Seo 
+        title="About Us - Sam Global" 
+        metaDescription="Learn more about Sam Global, our story, our values, and our mission." 
+      />
       <AboutBanner
         image={bannerSection?.image?.url ?? "/image/png/aboutBanner.png"}
       />

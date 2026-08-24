@@ -105,7 +105,7 @@ export default function CartItemCard({
                   aria-label={`View details for ${item?.title}`}
                   className="block h-full w-full"
                 >
-                  <img
+                  <img loading="lazy" width="400" height="400"
                     src={getOptimizedCloudinaryUrl(item.image, 300)}
                     srcSet={generateCloudinarySrcSet(
                       item.image,
@@ -120,7 +120,7 @@ export default function CartItemCard({
                   />
                 </Link>
               ) : (
-                <img
+                <img loading="lazy" width="400" height="400"
                   src={getOptimizedCloudinaryUrl(item.image, 300)}
                   srcSet={generateCloudinarySrcSet(item.image, [200, 300, 400])}
                   sizes="(max-width: 640px) 165px, 200px"

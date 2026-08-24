@@ -260,7 +260,7 @@ export const Navbar = ({ icons: propIcons }) => {
             <picture>
               <source srcSet="/image/png/logo-small.avif 1x, /image/png/logo.avif 2x" type="image/avif" />
               <source srcSet="/image/png/logo-small.webp 1x, /image/png/logo.webp 2x" type="image/webp" />
-              <img
+              <img loading="lazy"
                 src="/image/png/logo-small.webp"
                 alt="Sam Global"
                 width="130"
@@ -299,7 +299,7 @@ export const Navbar = ({ icons: propIcons }) => {
                   to={getNavbarIconPath(item)}
                   aria-label={getNavbarIconLabel(item)}
                 >
-                  <img
+                  <img loading="lazy" width="400" height="400"
                     src={item?.img}
                     alt={getNavbarIconLabel(item)}
                     className={`object-contain ${
@@ -368,7 +368,7 @@ export const Navbar = ({ icons: propIcons }) => {
               showChevron
               icon={
                 <div className="flex items-center gap-2.5">
-                  <img
+                  <img loading="lazy" width="400" height="400"
                     src={profileAvatar}
                     alt=""
                     className="h-8 w-8 rounded-full object-cover min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"

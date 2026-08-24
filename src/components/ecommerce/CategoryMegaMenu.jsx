@@ -328,7 +328,7 @@ const PromotionBanner = memo(function PromotionBanner({
     <div className="flex h-full flex-col justify-between border-l border-border bg-gradient-to-br from-cream/60 to-white p-3 xl:p-3">
       <div className="group relative h-full min-h-[150px] w-full overflow-hidden rounded-[var(--customer-radius)] shadow-md transition-all duration-300 ease-in-out hover:shadow-xl">
         <div className="absolute inset-0">
-          <img
+          <img loading="lazy" width="400" height="400"
             src={image}
             alt={title}
             className="h-full w-full object-cover object-right transition-all duration-300 ease-in-out group-hover:scale-105"

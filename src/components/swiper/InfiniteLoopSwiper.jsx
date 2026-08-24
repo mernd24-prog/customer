@@ -1,7 +1,7 @@
 export default function InfiniteLoopSwiper({ item, index }) {
   return (
     <div key={`${item?.title}-${index}`} className="flex-shrink-0">
-      <img
+      <img width="400" height="400"
         src={item?.image?.url}
         alt={item?.title}
         loading="lazy"

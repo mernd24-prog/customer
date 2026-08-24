@@ -11,6 +11,7 @@ import {
   BarChart3,
   TriangleAlert,
 } from "lucide-react";
+import Seo from "../../../components/ui/Seo";
 
 export default function SellerPolicy() {
   const compliance = [
@@ -95,11 +96,15 @@ export default function SellerPolicy() {
       className="w-[100vw] overflow-x-hidden"
       style={{ marginLeft: "calc(-50vw + 50%)" }}
     >
+      <Seo 
+        title="Seller Policy - Sam Global" 
+        metaDescription="Read our Seller Policy to understand the guidelines, responsibilities, and standards for selling on our platform." 
+      />
       {/* ================= HERO ================= */}
 
       <section className="relative isolate overflow-hidden w-full bg-[#FAF8F3]">
         {/* Background Image */}
-        <img
+        <img loading="lazy" width="400" height="400"
           src="/image/png/sellerPrivacy.png"
           alt="Seller Policy"
           className="absolute inset-0 -z-20 h-full w-full object-cover object-top"

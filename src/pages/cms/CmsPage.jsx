@@ -5,6 +5,7 @@ import { Calendar, Clock, Tag } from "lucide-react";
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
 import BrandButton from "../../components/ui/buttons/Button";
+import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { fetchCmsPageBySlug } from "../../features/cms/cmsSlice";
 import { isNotFoundApiError } from "../../utils/apiErrors";
 
@@ -90,7 +91,7 @@ export default function CmsPage({ slugOverride = "" }) {
     !page && !cmsLoading && (!cmsError || isNotFoundApiError(cmsError));
 
   return (
-    <>
+    <AppErrorBoundary>
       <Seo title={`${title} | Sam Global`} description={description} />
 
       {/* Page header band */}
@@ -125,7 +126,7 @@ export default function CmsPage({ slugOverride = "" }) {
               {/* Cover image */}
               {coverImage && (
                 <div className="mb-8 overflow-hidden  rounded-[var(--customer-radius)]">
-                  <img
+                  <img loading="lazy" width="400" height="400"
                     src={coverImage}
                     alt={title}
                     className="max-h-[420px] w-full object-cover"
@@ -208,7 +209,7 @@ export default function CmsPage({ slugOverride = "" }) {
                         className="flex gap-3"
                       >
                         {point?.image ? (
-                          <img
+                          <img loading="lazy" width="400" height="400"
                             src={point.image}
                             alt={point?.title || "point"}
                             className="h-12 w-12 rounded object-cover"
@@ -234,7 +235,7 @@ export default function CmsPage({ slugOverride = "" }) {
               {galleryImages.length > 0 && (
                 <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
                   {galleryImages.map((imageUrl) => (
-                    <img
+                    <img loading="lazy" width="400" height="400"
                       key={imageUrl}
                       src={imageUrl}
                       alt={page.title}
@@ -280,6 +281,6 @@ export default function CmsPage({ slugOverride = "" }) {
           )}
         </ApiState>
       </div>
-    </>
+    </AppErrorBoundary>
   );
 }

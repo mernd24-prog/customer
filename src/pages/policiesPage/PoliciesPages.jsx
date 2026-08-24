@@ -2,6 +2,8 @@ import React, { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
 import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
+import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 
 import PolicyHeader from "../../components/policy/PolicyHeader";
@@ -19,7 +21,7 @@ const PolicyPage = ({ slugOverride = "", fallbackData = null }) => {
   const { slug } = useParams();
   const cmsSlug = slugOverride || slug || "";
 
-  const { page: cmsPolicy } = useCmsRecord(cmsSlug);
+  const { page: cmsPolicy, loading, error } = useCmsRecord(cmsSlug);
   const policy = getPolicyPayload(cmsPolicy) || fallbackData;
 
   const title = policy?.title || "";
@@ -66,11 +68,19 @@ const PolicyPage = ({ slugOverride = "", fallbackData = null }) => {
   }, [sections, title]);
 
   return (
-    <main className="w-full bg-white  pb-20">
-      <Seo title={title} description={description} />
+    <AppErrorBoundary>
+      <main className="w-full bg-white  pb-20">
+        <Seo title={title} description={description} />
 
-      {data && (
-        <>
+        <ApiState
+          loading={loading && !policy}
+          error={error}
+          empty={!loading && !policy}
+          emptyTitle="Policy Not Found"
+          emptyText="The requested policy document could not be found."
+        >
+          {data && (
+            <>
           <PolicyHeader title={data.title} />
 
           <div className="mx-auto mt-10 w-full   md:mt-12 md:px-12">
@@ -92,9 +102,11 @@ const PolicyPage = ({ slugOverride = "", fallbackData = null }) => {
               </div>
             )}
           </div>
-        </>
-      )}
-    </main>
+            </>
+          )}
+        </ApiState>
+      </main>
+    </AppErrorBoundary>
   );
 };
 

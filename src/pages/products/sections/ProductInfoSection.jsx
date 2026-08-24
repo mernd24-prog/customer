@@ -278,7 +278,7 @@ export default function ProductInfoSection({
                     className="relative flex aspect-square w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#E7D9B8] bg-white cursor-pointer transition-colors hover:border-gold sm:h-[180px] sm:w-[180px] md:h-[200px] md:w-[200px]"
                     onClick={() => setIsModalOpen(true)}
                   >
-                    <img
+                    <img width="400" height="400"
                       src={getImageUrlFromValue(image)}
                       alt={`${getProductTitle(product)} detail ${index + 1}`}
                       className="h-full w-full object-contain p-2"

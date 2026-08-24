@@ -27,7 +27,7 @@ export default function ImageWithFallback({
       {showSkeleton && loading && (
         <div className={cn("absolute inset-0 animate-pulse bg-gray-100", skeletonClass)} />
       )}
-      <img
+      <img loading="lazy" width="400" height="400"
         src={src}
         alt={alt}
         onLoad={() => setLoading(false)}

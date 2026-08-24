@@ -115,7 +115,7 @@ export default function VariantSelector({
                     }`}
                   >
                     {swatchImage ? (
-                      <img
+                      <img loading="lazy" width="400" height="400"
                         src={swatchImage}
                         alt={`${value} colour`}
                         className="h-full w-full object-contain p-3"

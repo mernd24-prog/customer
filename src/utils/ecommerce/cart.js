@@ -23,6 +23,9 @@ export function normalizeId(value) {
 const MONGO_OBJECT_ID_PATTERN = /^[a-f\d]{24}$/i;
 
 function normalizeObjectId(value) {
+  if (value && typeof value === "object") {
+    value = value._id || value.id || value;
+  }
   const text = String(value || "").trim();
   return MONGO_OBJECT_ID_PATTERN.test(text) ? text : "";
 }
@@ -38,7 +41,6 @@ function getWritableProductId(value) {
   if (nestedProduct && nestedProduct !== value) {
     return getWritableProductId(nestedProduct);
   }
-
   return "";
 }
 
@@ -205,7 +207,7 @@ export function addProductToCartPayload(cart, product, quantity = 1) {
     items,
   });
 }
-export function wishlistPayload(cart, product, remove = false, includeItems = false) {
+export function wishlistPayload(cart, product, remove = false, includeItems = true) {
   const entry = normalizeWishlistItem(product);
   const key = wishlistItemKey(entry);
   const current = (cart?.wishlist || [])

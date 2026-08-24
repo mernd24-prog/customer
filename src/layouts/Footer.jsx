@@ -236,7 +236,7 @@ export function Footer({ data = footerData }) {
                 className="flex items-center gap-3.5 py-3.5 my-1"
               >
                 <div className="flex h-11 w-11 sm:h-14 sm:w-14  items-center justify-center rounded-full border border-[#D2E2F4] bg-white p-2.5 shadow-sm">
-                  <img
+                  <img loading="lazy" width="400" height="400"
                     className="h-6 w-6  shrink-0 object-contain"
                     src={item?.icon}
                     alt={item?.alt || item?.title || "Benefit"}
@@ -263,7 +263,7 @@ export function Footer({ data = footerData }) {
                 srcSet="/image/webp/logoWithName-small.webp 1x, /image/webp/logoWithName.webp 2x"
                 type="image/webp"
               />
-              <img
+              <img loading="lazy"
                 src="/image/webp/logoWithName.webp"
                 alt="Sam Global"
                 width="290"
@@ -295,7 +295,7 @@ export function Footer({ data = footerData }) {
                     }}
                     aria-label={app?.label || "App link"}
                   >
-                    <img
+                    <img loading="lazy"
                       className="h-10 lg:h-[50px] w-auto"
                       src={app?.image}
                       alt={app?.alt || app?.label || "App"}

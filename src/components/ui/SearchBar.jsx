@@ -690,7 +690,7 @@ const SearchBar = ({
                 }`}
               >
                 {image ? (
-                  <img
+                  <img width="400" height="400"
                     src={image}
                     alt=""
                     className="h-10 w-10 shrink-0 rounded-md object-cover"
@@ -722,7 +722,7 @@ const SearchBar = ({
             suggestions.length === 0 &&
             sanitizedQuery.length >= autocompleteMinLength ? (
             <div className="flex flex-col items-center justify-center p-6 text-center">
-              <img
+              <img loading="lazy" width="400" height="400"
                 src="/image/png/NoProductFound.png"
                 alt="No Products Found"
                 className="mb-3 h-20 w-20 object-contain"

@@ -21,7 +21,7 @@ export default function AuthCard({
               maxHeight || "h-full"
             }`}
           >
-            <img
+            <img loading="lazy" width="400" height="400"
               src={image}
               alt=""
               className="w-full h-full object-cover rounded-md"
@@ -34,7 +34,7 @@ export default function AuthCard({
               <div className="mb-3 text-center ">
                 <div className="mx-auto   mb-2 flex w-[60px] h-[60px] lg:h-[70px] lg:w-[70px] items-center justify-center rounded-full text-gold">
                   {icon ? (
-                    <img
+                    <img loading="lazy" width="400" height="400"
                       src={icon}
                       alt=""
                       className="h-full w-full object-cover"

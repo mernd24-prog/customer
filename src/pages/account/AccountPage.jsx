@@ -83,7 +83,7 @@ function AccountProfileCard({
           className="group relative shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1B1D60]/40"
           aria-label="Change Profile Image"
         >
-          <img
+          <img loading="lazy" width="400" height="400"
             src={avatar}
             alt="Profile Avatar"
             className="size-12 rounded-full border-2 border-[#1B1D60] object-cover md:size-[60px] lg:size-[80px] "
@@ -150,7 +150,7 @@ function AccountMenuItem({ item, variant = "desktop", onClick }) {
         }
       >
         {typeof item.icon === "string" ? (
-          <img
+          <img loading="lazy" width="400" height="400"
             src={item.icon}
             alt={isMobile ? "" : item.label}
             className={

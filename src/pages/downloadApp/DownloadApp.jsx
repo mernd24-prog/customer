@@ -16,7 +16,7 @@ export default function DownloadApp() {
           <div className="relative grid min-h-[520px] grid-cols-1 items-center gap-2 sm:gap-12 px-5 py-10 sm:px-8 md:min-h-[600px] lg:grid-cols-[1fr_0.82fr] lg:px-20 lg:py-6 xl:min-h-[700px]">
             <div className="relative z-10 flex flex-col items-center text-center lg:items-start lg:text-left">
               <div className=" flex  gap-3">
-                <img
+                <img loading="lazy" width="400" height="400"
                   src="/image/png/logoWithWhiteText.png"
                   alt="Sam Global"
                   className="h-28 w-auto object-contain sm:h-32"
@@ -53,7 +53,7 @@ export default function DownloadApp() {
                     aria-label={link.label}
                     className="flex h-[58px] w-[205px] items-center justify-center rounded-[8px] border border-white/20 bg-black px-4 shadow-lg"
                   >
-                    <img
+                    <img loading="lazy" width="400" height="400"
                       src={link.image}
                       alt={link.alt}
                       className="max-h-11 w-full object-contain"
@@ -64,7 +64,7 @@ export default function DownloadApp() {
             </div>
 
             <div className="relative z-10  flex items-end justify-center self-end lg:h-full lg:justify-end">
-              <img
+              <img loading="lazy" width="400" height="400"
                 src="/image/png/downloadApp.png"
                 alt="Sam Global Mobile App Preview"
                 className="w-full max-w-[330px] object-contain  sm:max-w-[430px] lg:max-w-[520px] xl:max-w-[570px]"

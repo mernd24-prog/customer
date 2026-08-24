@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { X } from "lucide-react";
 
-import BrandButton from "../ui/BrandButton";
+import Button from "../ui/buttons/Button";
 import {
   formatMoney,
   getProductId,
@@ -126,14 +126,14 @@ export function WatchlistItemCard({
         </div>
 
         <div className="flex w-full flex-col gap-3 lg:w-[240px]">
-          <BrandButton
+          <Button
             variant="primary"
             rounded
             label="Add to Cart"
             className="h-[48px] text-[15px] font-bold bg-blue hover:bg-blue/90 border border-none text-white"
             onClick={() => onAddToCart?.(product)}
           />
-          <BrandButton
+          <Button
             variant="secondary"
             rounded
             label="Remove From Watchlist"

@@ -92,7 +92,7 @@ export function useProductActions() {
           const currentCart = store.getState().cart.current;
           return run(
             dispatch,
-            updateCart(wishlistPayload(currentCart, product, added)),
+            updateCart(wishlistPayload(currentCart, product, added, true)),
             added
               ? {
                   title: "Removed from wishlist",
@@ -110,7 +110,7 @@ export function useProductActions() {
       }
       return run(
         dispatch,
-        updateCart(wishlistPayload(cart, product, added)),
+        updateCart(wishlistPayload(cart, product, added, true)),
         added
           ? {
               title: "Removed from wishlist",

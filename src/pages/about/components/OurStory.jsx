@@ -21,7 +21,7 @@ export default function OurStory({ data }) {
       ) : (
         <section className="flex  flex-col lg:flex-row  lg:gap-12 gap-2 py-8 lg:py-20">
           <div className=" w-full xl:w-[45%]  flex justify-center">
-            <img
+            <img loading="lazy" width="400" height="400"
               src={data?.image?.url}
               alt={data?.image?.alt}
               className="w-full h-full object-cover rounded-lg max-w-[750px]  "

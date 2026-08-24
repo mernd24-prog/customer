@@ -26,7 +26,7 @@ export default function Avatar({
 
   if (src) {
     return (
-      <img
+      <img loading="lazy" width="400" height="400"
         src={src}
         alt={alt || name}
         className={cn(

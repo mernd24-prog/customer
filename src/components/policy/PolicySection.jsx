@@ -40,7 +40,7 @@ const PolicySection = ({ title, points, description }) => {
                 <ul className="space-y-2">
                   {getTextLines(point.description).map((line, lineIdx) => (
                     <li key={lineIdx} className="flex items-start gap-2 px-2">
-                      <img
+                      <img loading="lazy" width="400" height="400"
                         src="/image/png/arrow.svg"
                         alt=""
                         className="my-auto h-3 w-3 flex-shrink-0 object-contain md:h-3.5 md:w-3.5"

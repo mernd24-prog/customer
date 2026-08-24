@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -81,7 +81,7 @@ export default function LoginPage() {
     },
   });
 
-  const submit = async (values) => {
+  const submit = useCallback(async (values) => {
     try {
       await run(
         dispatch,
@@ -100,16 +100,16 @@ export default function LoginPage() {
     } catch {
       // Errors are handled by Redux and useToastThunk.
     }
-  };
+  }, [dispatch, run, navigate, loginRedirect]);
 
-  const handleMobileOtpLogin = () => {
+  const handleMobileOtpLogin = useCallback(() => {
     openGuestOtpModal(async () => {
       await dispatch(checkAuthStatus());
       navigate(loginRedirect, { replace: true });
     });
-  };
+  }, [openGuestOtpModal, dispatch, navigate, loginRedirect]);
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = useCallback(async () => {
     if (!GOOGLE_CLIENT_ID) {
       notify.error({
         title: "Google sign-in is not configured",
@@ -207,7 +207,7 @@ export default function LoginPage() {
         message: "Unable to load Google sign-in. Please try again.",
       });
     }
-  };
+  }, [dispatch, run, navigate, loginRedirect]);
 
   return (
     <>
@@ -295,7 +295,7 @@ export default function LoginPage() {
             disabled={loading || googleLoading}
             className="h-12 w-full rounded-[8px] border-border bg-white text-[13px] font-semibold tracking-[0.5px] text-ink shadow-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:bg-white hover:text-ink hover:shadow-md active:translate-y-0 active:scale-[0.98] active:bg-navy-soft"
           >
-            <img
+            <img loading="lazy" width="400" height="400"
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
               alt="Google"
               className="h-5 w-5"

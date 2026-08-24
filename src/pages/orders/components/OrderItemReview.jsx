@@ -150,7 +150,7 @@ function ExistingReviewCard({ review }) {
                   className="group relative block size-16 overflow-hidden rounded-lg border border-[#DCDDE5] bg-[#F7F7FA] shadow-sm transition hover:border-[#CE9F2D] hover:shadow-md sm:size-20"
                   aria-label={`Preview review image ${index + 1}`}
                 >
-                  <img
+                  <img loading="lazy" width="400" height="400"
                     src={url}
                     alt={`Review image ${index + 1}`}
                     className="h-full w-full object-contain transition duration-300 group-hover:scale-105"

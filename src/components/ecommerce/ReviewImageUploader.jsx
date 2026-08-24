@@ -162,7 +162,7 @@ export default function ReviewImageUploader({
             key={image.id || image.url || image.previewUrl}
             className="relative aspect-square overflow-hidden rounded-[8px] border border-[#D7D7E0] bg-[#F7F7FA]"
           >
-            <img
+            <img loading="lazy" width="400" height="400"
               src={image.previewUrl || image.url}
               alt={image.name || `Review image ${index + 1}`}
               className="h-full w-full object-cover"

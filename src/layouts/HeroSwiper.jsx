@@ -30,7 +30,7 @@ const HeroSwiper = memo(({ content }) => {
 
         return (
           <SwiperSlide key={slide.id} className="relative overflow-hidden bg-[#1B1D60]">
-            <img
+            <img loading="lazy"
               src={slide.image}
               alt="Banner Background"
               width="1664"

@@ -77,7 +77,7 @@ function CartLine({ item, onClose }) {
       aria-label={`View ${title}`}
     >
       <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-[var(--customer-cream)] ring-1 ring-black/5">
-        <img
+        <img loading="lazy" width="400" height="400"
           src={displayImage}
           alt={title}
           className="h-full w-full object-contain"
@@ -158,7 +158,7 @@ export default function AddedToCartModal({
             aria-label={`View ${addedTitle}`}
           >
             <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--customer-cream)] ring-1  ring-black/5 sm:h-24 sm:w-24">
-              <img
+              <img loading="lazy" width="400" height="400"
                 src={addedImage}
                 alt={addedTitle}
                 className="h-full  w-full object-contain"
