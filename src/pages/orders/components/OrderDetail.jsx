@@ -113,7 +113,7 @@ export default function OrderDetail({ orderId, track }) {
   return (
     <>
       <Seo title={`Order ${getOrderNumber(order) || "Details"} | Sam Global`} />
-      <div className="mx-auto w-full max-w-[1740px] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1740px]  px-4 sm:px-6 lg:px-8">
         <ApiState
           loading={state.loading && !order}
           error={state.error}
@@ -128,11 +128,10 @@ export default function OrderDetail({ orderId, track }) {
 
                 <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap items-center md:w-auto md:justify-end">
                   {!track &&
-                    (selectedOrderItem
-                      ? selectedItemCanReturn
-                      : canRequestReturn) && (
+                    Boolean(selectedOrderItem) &&
+                    selectedItemCanReturn && (
                       <Link
-                        to={`/returns/request/${orderId}${selectedOrderItem ? `?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}` : ""}`}
+                        to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}`}
                         className="block w-full sm:w-auto"
                       >
                         <Button className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] bg-[#CE9F2D] px-[24px] py-[15px] text-white hover:bg-[#B88200]">
@@ -210,13 +209,6 @@ export default function OrderDetail({ orderId, track }) {
                     {formatOrderDate(returnEligibleUntil)}.
                   </p>
                 )}
-
-              {getDeliveryStatus(order) === "partially_delivered" && (
-                <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-                  Part of your order has been delivered. Remaining seller
-                  packages are still being prepared or shipped.
-                </p>
-              )}
             </section>
 
             {!track && (
@@ -227,6 +219,7 @@ export default function OrderDetail({ orderId, track }) {
                 mainContent={
                   <OrderItemsSection
                     items={visibleOrderItems}
+                    selectedOrderItem={selectedOrderItem}
                     orderId={orderId}
                     orderStatus={status}
                     shipments={shipments}
@@ -275,13 +268,9 @@ export default function OrderDetail({ orderId, track }) {
             )}
 
             <section className="grid gap-4 sm:gap-8">
-              {hasKnownStatus(order) && (
+              {Boolean(selectedOrderItem) && hasKnownStatus(order) && (
                 <OrderDetailSectionCard
-                  title={
-                    selectedOrderItem
-                      ? "Selected Item Progress"
-                      : "Order Progress"
-                  }
+                  title="Selected Item Progress"
                   headerClassName="!min-h-[56px] !py-4"
                   bodyClassName="overflow-hidden px-4"
                   titleClassName="text-lg font-bold leading-none"
@@ -292,20 +281,14 @@ export default function OrderDetail({ orderId, track }) {
                     returns={
                       selectedItemReturn
                         ? [selectedItemReturn]
-                        : selectedOrderItem
-                          ? []
-                          : returns
+                        : []
                     }
-                    timeline={
-                      selectedOrderItem
-                        ? selectedOrderItem.timeline || []
-                        : order?.timeline || []
-                    }
+                    timeline={selectedOrderItem.timeline || []}
                   />
                 </OrderDetailSectionCard>
               )}
 
-              {(track || visibleShipments.length > 0) && (
+              {Boolean(selectedOrderItem) && (track || visibleShipments.length > 0) && (
                 <ShipmentTrackingPanel
                   shipments={visibleShipments}
                   orderDeliveryStatus={getDeliveryStatus(order)}
@@ -334,17 +317,19 @@ export default function OrderDetail({ orderId, track }) {
               selectedOrderItem={selectedOrderItem}
             />
 
-            <OrderDocuments
-              downloadableDocuments={downloadableDocuments}
-              visiblePendingSellerDocuments={visiblePendingSellerDocuments}
-              invoiceDownloadAvailable={invoiceDownloadAvailable}
-              customerInvoices={customerInvoices}
-              getInvoiceUrl={getInvoiceUrl}
-              downloadingId={downloadingId}
-              handleDownload={handleDownload}
-              order={order}
-              selectedOrderItem={selectedOrderItem}
-            />
+            {Boolean(selectedOrderItem) && (
+              <OrderDocuments
+                downloadableDocuments={downloadableDocuments}
+                visiblePendingSellerDocuments={visiblePendingSellerDocuments}
+                invoiceDownloadAvailable={invoiceDownloadAvailable}
+                customerInvoices={customerInvoices}
+                getInvoiceUrl={getInvoiceUrl}
+                downloadingId={downloadingId}
+                handleDownload={handleDownload}
+                order={order}
+                selectedOrderItem={selectedOrderItem}
+              />
+            )}
 
             <OrderActions
               order={order}
