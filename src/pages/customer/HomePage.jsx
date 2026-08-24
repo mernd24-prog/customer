@@ -6,7 +6,7 @@ import {
   fetchTrendingProducts,
   fetchRecommendations,
 } from "../../features/recommendation/recommendationSlice";
-import { fetchProducts } from "../../features/product/productSlice";
+import { fetchProducts } from "../../modules/products/slices/productSlice";
 import { fetchCmsPages } from "../../features/cms/cmsSlice";
 import { tokenStorage } from "../../api/tokenStorage";
 import HomeCategoryGrid from "../../components/home/HomeCategoryGrid";

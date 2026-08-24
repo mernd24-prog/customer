@@ -223,7 +223,7 @@ export default function CategoryListingPage() {
       !catalogState.globalCategories ||
       catalogState.globalCategories.length === 0
     ) {
-      import("../../features/product/productSlice").then(
+      import("../../modules/products/slices/productSlice").then(
         ({ fetchProducts }) => {
           dispatch(fetchProducts({ limit: 1 })).catch(() => {});
         },

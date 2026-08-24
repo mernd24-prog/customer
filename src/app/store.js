@@ -3,7 +3,7 @@ import auth from "../features/auth/authSlice";
 import search from "../features/search/searchSlice";
 import user from "../features/user/userSlice";
 import catalog from "../features/catalog/catalogSlice";
-import product from "../features/product/productSlice";
+import product from "../modules/products/slices/productSlice";
 import cart from "../features/cart/cartSlice";
 import cartUi from "../features/cart/cartUiSlice";
 import checkout from "../features/checkout/checkoutSlice";
@@ -30,8 +30,9 @@ import rbac from "../features/rbac/rbacSlice";
 import tax from "../features/tax/taxSlice";
 import fraud from "../features/fraud/fraudSlice";
 import review from "../features/review/reviewSlice";
-import relatedProducts from "../features/product/relatedProductsSlice";
+import relatedProducts from "../modules/products/slices/relatedProductsSlice";
 import badges from "../features/badges/badgeSlice";
+import support from "../modules/support/slices/supportSlice";
 
 export const store = configureStore({
   reducer: {
@@ -68,5 +69,6 @@ export const store = configureStore({
     review,
     relatedProducts,
     badges,
+    support,
   }
 });

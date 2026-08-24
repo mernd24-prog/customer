@@ -3,8 +3,8 @@ import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import CUSTOMER_ROUTES from "../../../constants/routes";
 import { CheckboxListFilter, OptionFilter, PriceRangeFilter } from "../../../components/ecommerce";
-import { useProductActions } from "../../../hooks/useProductActions";
-import { fetchProducts } from "../../../features/product/productSlice";
+import { useCartActions, useWishlistActions } from "../../../modules/products/controllers/actions";
+import { fetchProducts } from "../../../modules/products/slices/productSlice";
 import { fetchCategoryByKey, fetchCategories } from "../../../features/catalog/catalogSlice";
 import {
   isProductInStock,
@@ -52,7 +52,8 @@ export default function useCategory() {
   const productLoadTimerRef = useRef(null);
   const inFlightProductLoadKeyRef = useRef("");
   const productState = useSelector((s) => s.product);
-  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+  const addToCart = useCartActions();
+  const { isWishlisted, toggleWishlist } = useWishlistActions();
   const catalogCategoryList =
     useSelector((state) => state.catalog?.globalCategories || state.catalog?.list) || [];
   const categoryTree = useMemo(() => buildCategoryTree(catalogCategoryList), [catalogCategoryList]);

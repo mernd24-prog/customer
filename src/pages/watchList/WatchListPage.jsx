@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { EmptyState, Seo } from "../../components/ui";
 import CartItemCard from "../../pages/cart/components/CartItemCard";
-import { useProductActions } from "../../hooks/useProductActions";
+import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
 import { wishlistItemKey } from "../../utils/ecommerce";
@@ -13,7 +13,7 @@ import { SkeletonLoader } from "../../components/ui/skeleton";
 
 export default function WatchlistPage() {
   const navigate = useNavigate();
-  const { moveWishlistToCart, removeFromWishlist } = useProductActions();
+  const { moveWishlistToCart, removeFromWishlist } = useWishlistActions();
   const { products, hideFallbackProduct, isUsingFallback, isLoading } =
     useWatchlistProducts();
 

@@ -1,5 +1,6 @@
-import { ProductCard } from "../ecommerce";
-import { useProductActions } from "../../hooks/useProductActions";
+import ProductCard from "../../modules/products/components/ProductCard";
+
+import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
 import SectionContainer from "../ui/SectionContainer";
 import { getProductId } from "../../utils/ecommerce";
 import { SkeletonLoader } from "../../components/ui/skeleton";
@@ -59,7 +60,8 @@ export default function FeaturedProductsSection({
   products = featuredProducts,
   loading = false,
 }) {
-  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+  const addToCart = useCartActions();
+  const { isWishlisted, toggleWishlist } = useWishlistActions();
   const displayProducts = Array.isArray(products) ? products.slice(0, 5) : [];
 
   return (

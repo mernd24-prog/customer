@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SkeletonLoader from "../ui/skeleton/SkeletonLoader";
-import { ProductCard } from "../ecommerce";
-import { useProductActions } from "../../hooks/useProductActions";
+import ProductCard from "../../modules/products/components/ProductCard";
+
+import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
 import {
   getProductId,
   getProductListFromResponse,
 } from "../../utils/ecommerce";
 import SectionContainer from "../ui/SectionContainer";
-import { fetchProducts } from "../../features/product/productSlice";
+import { fetchProducts } from "../../modules/products/slices/productSlice";
 
 export default function HomeProductsForYouSection({
   title = "Featured Products",
@@ -23,7 +24,8 @@ export default function HomeProductsForYouSection({
   const [localLoading, setLocalLoading] = useState(false);
   const hasFetchedRef = useRef(false);
 
-  const { addToCart, isWishlisted, toggleWishlist } = useProductActions();
+  const addToCart = useCartActions();
+  const { isWishlisted, toggleWishlist } = useWishlistActions();
   const recommendationList = useSelector((s) => s.recommendation.list);
   const trendingList = useSelector((s) => s.recommendation.trendingList);
   const productList = useSelector((s) => s.product.list);
