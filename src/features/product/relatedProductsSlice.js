@@ -8,16 +8,22 @@ const q = (arg) => arg?.params || arg;
 export const fetchRelatedProducts = makeThunk("relatedProducts/fetchRelated", {
   url: ({ productId }) => endpoints.products.related(productId),
   params: q,
+  cache: true,
+  cacheTtl: 120000,
 });
 
 export const fetchCrossSellProducts = makeThunk("relatedProducts/fetchCrossSell", {
   url: ({ productId }) => endpoints.products.crossSell(productId),
   params: q,
+  cache: true,
+  cacheTtl: 120000,
 });
 
 export const fetchUpSellProducts = makeThunk("relatedProducts/fetchUpSell", {
   url: ({ productId }) => endpoints.products.upSell(productId),
   params: q,
+  cache: true,
+  cacheTtl: 120000,
 });
 
 const extractItems = (payload) => {

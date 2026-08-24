@@ -193,6 +193,8 @@ export const productThunks = {
   }),
   fetchProductById: makeThunk("product/fetchProductById", {
     url: ({ productId }) => endpoints.products.detail(productId),
+    cache: true,
+    cacheTtl: 60000,
   }),
   createProduct: makeThunk("product/createProduct", {
     method: "post",
@@ -382,6 +384,8 @@ export const simpleThunks = {
     fetchDynamicPrice: makeThunk("dynamicPricing/fetchDynamicPrice", {
       url: endpoints.dynamicPricing.price,
       params: q,
+      cache: true,
+      cacheTtl: 15000,
     }),
     adjustDynamicPrice: makeThunk("dynamicPricing/adjustDynamicPrice", {
       method: "post",
@@ -531,6 +535,8 @@ export const loyaltyThunks = {
 export const warrantyThunks = {
   fetchProductWarranty: makeThunk("warranty/fetchProductWarranty", {
     url: ({ productId }) => endpoints.warranty.product(productId),
+    cache: true,
+    cacheTtl: 300000,
   }),
   registerWarranty: makeThunk("warranty/registerWarranty", {
     method: "post",
@@ -557,6 +563,8 @@ export const recommendationThunks = {
   fetchRecommendations: makeThunk("recommendation/fetchRecommendations", {
     url: endpoints.recommendations.list,
     params: q,
+    cache: true,
+    cacheTtl: 120000,
   }),
   trackRecommendationInteraction: makeThunk(
     "recommendation/trackRecommendationInteraction",

@@ -30,7 +30,6 @@ import {
   trackRecommendationInteraction,
 } from "../../features/recommendation/recommendationSlice";
 import {
-  fetchRelatedProducts,
   fetchCrossSellProducts,
 } from "../../features/product/relatedProductsSlice";
 import { trackAnalyticsEvent } from "../../features/analytics/analyticsSlice";
@@ -119,8 +118,6 @@ export default function ProductDetailPage() {
 
   //const allProducts = Array.isArray(productState.list) ? productState.list : [];
 
-  const relatedProducts = relatedState.relatedByProduct[productId]?.items || [];
-
   const crossSellProducts =
     crossSellState.crossSellByProduct[productId]?.items || [];
 
@@ -147,7 +144,6 @@ export default function ProductDetailPage() {
   useEffect(() => {
     dispatch(fetchProductById({ productId }));
     dispatch(fetchProductWarranty({ productId })).catch(() => {});
-    dispatch(fetchRelatedProducts({ productId })).catch(() => {});
     dispatch(fetchCrossSellProducts({ productId })).catch(() => {});
     sideEffectsRanFor.current = null;
     setDeliveryResult(null);
@@ -198,41 +194,30 @@ export default function ProductDetailPage() {
     );
   }, [isLoggedIn, product, productId]);
 
-  useEffect(() => {
-    if (!loadedProductId || String(loadedProductId) !== String(productId)) {
-      return;
-    }
-
-    const requestKey = `${productId}:${quantity}`;
-
-    if (dynamicPriceRequestKey.current === requestKey) return;
-
-    dynamicPriceRequestKey.current = requestKey;
-
-    dispatch(fetchDynamicPrice({ productId, quantity })).catch(() => {});
-  }, [dispatch, loadedProductId, productId, quantity]);
-
   const selectedVariantKey = selectedVariant?._id || selectedVariant?.sku || "";
 
   useEffect(() => {
     if (!loadedProductId || String(loadedProductId) !== String(productId)) {
-      return;
+      return undefined;
     }
 
     const requestKey = `${productId}:${selectedVariantKey}:${quantity}`;
 
-    if (dynamicPriceRequestKey.current === requestKey) return;
+    if (dynamicPriceRequestKey.current === requestKey) return undefined;
 
-    dynamicPriceRequestKey.current = requestKey;
+    const timeoutId = window.setTimeout(() => {
+      dynamicPriceRequestKey.current = requestKey;
+      dispatch(
+        fetchDynamicPrice({
+          productId,
+          variantId: selectedVariant?._id,
+          sku: selectedVariant?.sku,
+          quantity,
+        }),
+      ).catch(() => {});
+    }, 250);
 
-    dispatch(
-      fetchDynamicPrice({
-        productId,
-        variantId: selectedVariant?._id,
-        sku: selectedVariant?.sku,
-        quantity,
-      }),
-    ).catch(() => {});
+    return () => window.clearTimeout(timeoutId);
   }, [
     dispatch,
     loadedProductId,
