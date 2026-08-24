@@ -35,7 +35,7 @@ function OrderItemsSection({
   ...itemProps
 }) {
   const dispatch = useDispatch();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [reviewTarget, setReviewTarget] = useState(null);
   const [expandedItemId, setExpandedItemId] = useState("");
   const [reviewByItem, setReviewByItem] = useState({});
@@ -345,6 +345,18 @@ function OrderItemsSection({
                       </span>
                     )}
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = new URLSearchParams(searchParams);
+                      next.set("orderItemId", itemId);
+                      setSearchParams(next);
+                      setExpandedItemId(itemId);
+                    }}
+                    className={`mt-2 inline-flex min-h-9 items-center rounded-lg border px-4 text-sm font-bold transition ${expanded ? "border-[#CE9F2D] bg-[#FFF8E7] text-[#8A6500]" : "border-[#E7D9B8] bg-white text-[#1B1D60] hover:border-[#CE9F2D] hover:bg-[#FFF8E7]"}`}
+                  >
+                    {expanded ? "Viewing item progress" : "View item progress"}
+                  </button>
                   {/* {expanded && (
                       <div className="grid gap-3 rounded-xl border border-[#E7D9B8] bg-white p-4">
                         <div className="grid gap-2 rounded-lg bg-[#F8FAFC] px-3 py-3 text-xs text-[#5E6472] sm:grid-cols-2 lg:grid-cols-4">

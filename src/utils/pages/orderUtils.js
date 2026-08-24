@@ -488,6 +488,48 @@ export const getCancellationForItem = (cancellations = [], item = {}) => {
   );
 };
 
+const FORWARD_ITEM_STATUS_RANK = {
+  initiated: 0,
+  pending_payment: 1,
+  paid: 2,
+  confirmed: 3,
+  processing: 4,
+  packed: 5,
+  ready_to_ship: 6,
+  manifested: 6,
+  shipped: 7,
+  in_transit: 8,
+  out_for_delivery: 9,
+  delivered: 10,
+  fulfilled: 11,
+};
+
+const mostAdvancedForwardItemStatus = (item = {}, shipment = null) => {
+  const timelineStatuses = (Array.isArray(item.timeline) ? item.timeline : [])
+    .map((entry) => entry?.to_status || entry?.status)
+    .filter(Boolean);
+  const candidates = [
+    item.delivery_status,
+    item.deliveryStatus,
+    item.effective_status,
+    item.effectiveStatus,
+    item.status,
+    item.item_status,
+    item.itemStatus,
+    shipment?.status,
+    ...timelineStatuses,
+  ]
+    .map((status) => String(status || "").toLowerCase())
+    .filter((status) => Object.prototype.hasOwnProperty.call(FORWARD_ITEM_STATUS_RANK, status));
+  return candidates.reduce(
+    (latest, status) =>
+      FORWARD_ITEM_STATUS_RANK[status] > FORWARD_ITEM_STATUS_RANK[latest]
+        ? status
+        : latest,
+    candidates[0] || "",
+  );
+};
+
 export const resolveOrderItemDisplayStatus = (
   item = {},
   fallbackStatus = "",
@@ -501,6 +543,7 @@ export const resolveOrderItemDisplayStatus = (
     item.payout_status || item.payoutStatus || "",
   ).toLowerCase();
   const fallback = String(fallbackStatus || "").toLowerCase();
+  const forwardItemStatus = mostAdvancedForwardItemStatus(item, shipment);
 
   let fulfillmentReturnStatus = "";
   if (fulfillmentGroups && fulfillmentGroups.length > 0) {
@@ -531,12 +574,7 @@ export const resolveOrderItemDisplayStatus = (
     fulfillmentReturnStatus ||
     (payoutStatus === "refunded" ? "refunded" : "") ||
     (payoutStatus === "held" && fallback.includes("return") ? fallback : "") ||
-    item.delivery_status ||
-    item.deliveryStatus ||
-    item.status ||
-    item.item_status ||
-    item.itemStatus ||
-    shipment?.status ||
+    forwardItemStatus ||
     fallbackStatus ||
     "processing"
   );
