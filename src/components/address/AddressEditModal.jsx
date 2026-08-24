@@ -1,6 +1,6 @@
 import { Pencil } from "lucide-react";
 import BaseModal from "../ui/overlay/BaseModal";
-import Button from "../ui/Button";
+import Button from "../ui/buttons/Button";
 import AddressFormFields from "./AddressFormFields";
 
 export default function AddressEditModal({

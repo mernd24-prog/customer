@@ -142,7 +142,7 @@ function ReturnRequestPage({ orderId }) {
                         }`}
                       >
                         {img ? (
-                          <img
+                          <img loading="lazy" width="400" height="400"
                             src={img}
                             alt={title}
                             className="h-20 w-20 sm:h-24 sm:w-24 flex-shrink-0 rounded-xl border border-[#EFE5D2] object-contain p-1.5 bg-white shadow-xs"

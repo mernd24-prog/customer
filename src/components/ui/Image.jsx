@@ -13,7 +13,7 @@ const ImageSkeleton = ({ src, alt, className = "", imageClassName = "" }) => {
       )}
 
       {/* Image */}
-      <img
+      <img loading="lazy" width="400" height="400"
         src={src}
         alt={alt}
         className={`h-12 w-12  rounded object-contain  transition-all duration-300 ease-in-out ${imageClassName} ${

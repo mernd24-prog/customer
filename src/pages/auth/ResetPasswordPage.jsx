@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +16,7 @@ import {
 } from "../../features/auth/authSlice";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import { resetSchema } from "../../validations/validationSchemas";
+import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 
 export default function ResetPasswordPage() {
   const dispatch = useDispatch();
@@ -45,7 +46,7 @@ export default function ResetPasswordPage() {
     },
   });
 
-  const submit = async (values) => {
+  const submit = useCallback(async (values) => {
 
     try {
       const response = await run(
@@ -64,10 +65,20 @@ export default function ResetPasswordPage() {
     } catch (requestError) {
       // console.log("[Reset password API error response]", requestError);
     }
-  };
+  }, [dispatch, run, navigate]);
+
+  const handleResendOtp = useCallback(() => {
+    const email = watch("email");
+    if (!email) return;
+    run(
+      dispatch,
+      resendOtp({ email, purpose: "forgot_password" }),
+      "OTP resent",
+    );
+  }, [watch, dispatch, run]);
 
   return (
-    <>
+    <AppErrorBoundary>
       <Seo title="Reset Password | Sam Global" />
       <AuthCard
         title="Reset Password"
@@ -131,15 +142,7 @@ export default function ResetPasswordPage() {
             <button
               type="button"
               className="font-semibold text-gold underline-offset-4 transition-all duration-500 ease-in-out hover:text-gold-dark hover:underline"
-              onClick={() => {
-                const email = watch("email");
-                if (!email) return;
-                run(
-                  dispatch,
-                  resendOtp({ email, purpose: "forgot_password" }),
-                  "OTP resent",
-                );
-              }}
+              onClick={handleResendOtp}
             >
               Resend OTP
             </button>
@@ -155,6 +158,6 @@ export default function ResetPasswordPage() {
           </p>
         </form>
       </AuthCard>
-    </>
+    </AppErrorBoundary>
   );
 }

@@ -184,7 +184,7 @@ export function PaymentResultPage() {
                   <div className="flex flex-col gap-4 px-5 py-6 text-center sm:px-8 sm:py-8">
                     <div className="flex flex-col items-center justify-center gap-3 sm:gap-4">
                       <div className="shrink-0">
-                        <img
+                        <img loading="lazy" width="400" height="400"
                           src="/image/png/Group.png"
                           alt="Order Placed Successfully"
                           className="size-16 sm:size-20 object-contain"

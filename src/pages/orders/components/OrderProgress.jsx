@@ -217,7 +217,7 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
                     done ? "bg-[#CE9F2D]" : "bg-[#8A8C92]"
                   } ${compact ? "h-7 w-7" : "h-8 w-8"}`}
                 >
-                  <img
+                  <img loading="lazy" width="400" height="400"
                     src={vectorImage}
                     alt="done"
                     className={compact ? "h-3.5 w-3.5" : "h-4 w-4"}
@@ -272,7 +272,7 @@ function MobileStepBar({ steps, activeStatus }) {
                 }`}
               >
                 {done ? (
-                  <img
+                  <img loading="lazy" width="400" height="400"
                     src={vectorImage}
                     alt="Completed"
                     className="h-3.5 w-3.5"

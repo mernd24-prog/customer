@@ -28,14 +28,14 @@ export function OrderItemCard({
           {getItemImage(item) ? (
             productPath ? (
               <Link to={productPath}>
-                <img
+                <img loading="lazy" width="400" height="400"
                   src={getItemImage(item)}
                   alt={getProductTitle(item)}
                   className="h-full w-full object-contain"
                 />
               </Link>
             ) : (
-              <img
+              <img loading="lazy" width="400" height="400"
                 src={getItemImage(item)}
                 alt={getProductTitle(item)}
                 className="h-full w-full object-contain"

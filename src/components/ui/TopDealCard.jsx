@@ -13,7 +13,7 @@ export default function TopDealCard({
       <article className="customer-card flex h-full flex-col p-3 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[var(--customer-shadow)]">
         {/* Product Image */}
         <div className="overflow-hidden rounded-[var(--customer-radius)]">
-          <img
+          <img loading="lazy"
             src={image}
             alt={title}
             width="292"

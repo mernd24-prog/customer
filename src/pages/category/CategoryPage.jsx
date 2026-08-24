@@ -1,4 +1,6 @@
+import { useCallback, useMemo } from "react";
 import Seo from "../../components/ui/Seo";
+import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import {
   CollectionToolbar,
   ProductResultsLayout,
@@ -42,8 +44,19 @@ export default function CategoryPage() {
     updateParam,
   } = useCategory();
 
+  const handleCloseSidebar = useCallback(() => setSidebarOpen(false), [setSidebarOpen]);
+  const handleOpenFilters = useCallback(() => setSidebarOpen(true), [setSidebarOpen]);
+  const handleRemoveFilter = useCallback((...args) => removeFilter(...args), [removeFilter]);
+  const handleClearFilters = useCallback(() => clearFiltersAction(), [clearFiltersAction]);
+  const handleSortChange = useCallback((value) => updateParam("sort", value), [updateParam]);
+
+  const toolbarProps = useMemo(() => ({
+    sortValue: searchParams.get("sort") || "",
+    sortOptions: firstLoadDone && (pageInfo.total || products.length) <= 1 ? [] : SORT_OPTIONS,
+  }), [searchParams, firstLoadDone, pageInfo.total, products.length]);
+
   return (
-    <>
+    <AppErrorBoundary>
       <Seo
         title={`${categoryTitle.replace(/\b\w/g, (c) => c.toUpperCase())} | Sam Global`}
         description={
@@ -82,10 +95,10 @@ export default function CategoryPage() {
             ) : null
           }
           filters={activeFilters}
-          onRemoveFilter={removeFilter}
-          onClearFilters={clearFiltersAction}
+          onRemoveFilter={handleRemoveFilter}
+          onClearFilters={handleClearFilters}
           sidebarOpen={sidebarOpen}
-          onCloseSidebar={() => setSidebarOpen(false)}
+          onCloseSidebar={handleCloseSidebar}
           loading={
             (productState.loading && !products.length) ||
             (!firstLoadDone && !products.length)
@@ -109,18 +122,14 @@ export default function CategoryPage() {
           sentinelRef={sentinelRef}
           toolbar={
             <CollectionToolbar
-              sortValue={searchParams.get("sort") || ""}
-              sortOptions={
-                firstLoadDone && (pageInfo.total || products.length) <= 1
-                  ? []
-                  : SORT_OPTIONS
-              }
-              onSortChange={(value) => updateParam("sort", value)}
-              onOpenFilters={() => setSidebarOpen(true)}
+              sortValue={toolbarProps.sortValue}
+              sortOptions={toolbarProps.sortOptions}
+              onSortChange={handleSortChange}
+              onOpenFilters={handleOpenFilters}
             />
           }
         />
       </div>
-    </>
+    </AppErrorBoundary>
   );
 }

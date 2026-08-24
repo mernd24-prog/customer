@@ -11,6 +11,8 @@ import NeedHelpPanel from "../../components/ecommerce/NeedHelpPanel";
 import StickySidebarLayout from "../../components/ui/layout/StickySidebarLayout";
 import SupportTicketSidebar from "./components/SupportTicketSidebar";
 import { SUPPORT_PAGE_SKELETON } from "../../components/ui/skeleton/layouts";
+import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
+import { SkeletonLoader } from "../../components/ui/skeleton";
 import { useCmsRecord } from "../../hooks/useCmsRecord";
 import { apiRequest } from "../../api/client";
 import { endpoints } from "../../api/endpoints";
@@ -233,7 +235,7 @@ export default function SupportHelpCenter() {
   }
 
   return (
-    <>
+    <AppErrorBoundary>
       <Seo
         title={`${pageTitle || "Customer Support"} | Sam Global`}
         description={pageDescription}
@@ -277,7 +279,7 @@ export default function SupportHelpCenter() {
                     className="flex w-full items-center gap-3 border-b border-[#04258626] p-2 text-[#2E2E2E] last:border-b-0"
                   >
                     <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#FFC82E]">
-                      <img
+                      <img loading="lazy" width="400" height="400"
                         src={topic.image}
                         alt=""
                         className="size-5 object-contain"
@@ -328,7 +330,7 @@ export default function SupportHelpCenter() {
                         className="group flex min-w-0 flex-col items-center text-center"
                       >
                         <div className="flex h-[64px] w-[64px] items-center justify-center overflow-hidden rounded-full bg-[#F5C72E] transition-transform duration-200 group-hover:scale-105">
-                          <img
+                          <img loading="lazy" width="400" height="400"
                             src={topic.image}
                             alt={topic.title}
                             className="h-[40px] w-[40px] object-contain"
@@ -443,9 +445,16 @@ export default function SupportHelpCenter() {
 
                 <div className="divide-y divide-[#EFE5D2] px-5 max-h-[225px] overflow-y-auto custom-scrollbar">
                   {supportLoading && (
-                    <p className="py-5 text-sm font-medium text-[#666666]">
-                      Loading Tickets...
-                    </p>
+                    <div className="py-5">
+                      <SkeletonLoader
+                        count={3}
+                        layout={[
+                          { type: "box", width: "100%", height: "24px" },
+                          { type: "box", width: "60%", height: "16px", className: "mt-2" },
+                        ]}
+                        wrapperClass="mb-4"
+                      />
+                    </div>
                   )}
 
                   {!supportLoading && supportError && (
@@ -604,6 +613,6 @@ export default function SupportHelpCenter() {
         ticket={selectedTicket}
         onClose={() => setSelectedTicket(null)}
       />
-    </>
+    </AppErrorBoundary>
   );
 }

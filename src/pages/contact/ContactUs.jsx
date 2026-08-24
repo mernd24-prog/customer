@@ -8,7 +8,9 @@ import {
   CheckCircle,
   X,
 } from "lucide-react";
+import Seo from "../../components/ui/Seo";
 import CustomDropdown from "../../components/ui/CustomDropdown";
+import BaseModal from "../../components/ui/overlay/BaseModal";
 
 export default function ContactUs() {
   const [form, setForm] = useState({
@@ -77,6 +79,10 @@ export default function ContactUs() {
 
   return (
     <section className=" py-16 px-4">
+      <Seo 
+        title="Contact Us - Sam Global" 
+        metaDescription="Get in touch with Sam Global for support, inquiries, or feedback." 
+      />
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left */}
@@ -134,16 +140,8 @@ export default function ContactUs() {
             </h2>
 
             {submitted && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-                <div className="bg-white rounded-3xl p-6 md:p-10 max-w-md w-full shadow-2xl relative transform transition-all">
-                  <button
-                    type="button"
-                    onClick={() => setSubmitted(false)}
-                    className="absolute right-6 top-6 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all"
-                  >
-                    <X size={24} />
-                  </button>
-
+              <BaseModal onClose={() => setSubmitted(false)} maxWidth="max-w-md">
+                <div className="p-6 md:p-10 relative">
                   <div className="flex flex-col items-center text-center mt-2">
                     <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mb-6">
                       <CheckCircle className="text-green-500 w-12 h-12" />
@@ -167,7 +165,7 @@ export default function ContactUs() {
                     </button>
                   </div>
                 </div>
-              </div>
+              </BaseModal>
             )}
 
             <form onSubmit={handleSubmit}>

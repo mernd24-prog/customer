@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, useRef, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/ui/Seo";
+import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import {
   fetchTrendingProducts,
   fetchRecommendations,
@@ -145,7 +146,7 @@ export function HomePage() {
   );
 
   return (
-    <>
+    <AppErrorBoundary>
       <Seo
         title="Sam Global | Shop Smarter"
         description="Discover the best deals on fashion, electronics, home and more at Sam Global."
@@ -221,6 +222,6 @@ export function HomePage() {
           />
         </div>
       </LazySection>
-    </>
+    </AppErrorBoundary>
   );
 }

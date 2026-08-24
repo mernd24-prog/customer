@@ -211,7 +211,7 @@ function OrderItemSummaryCard({ order, item }) {
       >
         <span className="flex aspect-square w-full max-w-[175px] lg:max-w-[190px] items-center justify-center overflow-hidden rounded-xl border border-[#EFE5D2] bg-white p-2">
           {itemImage ? (
-            <img
+            <img loading="lazy" width="400" height="400"
               src={itemImage}
               alt={getProductTitle(item)}
               className="h-full w-full object-contain"

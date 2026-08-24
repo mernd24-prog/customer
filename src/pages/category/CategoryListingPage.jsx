@@ -31,7 +31,7 @@ function CategoryTile({ category }) {
     >
       <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[14px] bg-surface-soft p-4 transition-all duration-300 ease-in-out group-hover:bg-[var(--customer-gold-soft)]">
         {imageSrc ? (
-          <img
+          <img width="400" height="400"
             src={imageSrc}
             alt={category.displayName}
             loading="lazy"

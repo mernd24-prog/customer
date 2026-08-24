@@ -51,7 +51,7 @@ export default function NewArrivalCard({
             className="flex gap-4  p-6 items-center hover:bg-slate-50 transition-colors duration-200 pl-4"
           >
             {/* Product Thumbnail */}
-            <img
+            <img loading="lazy"
               src={prod.image}
               alt={prod.title}
               width="90"

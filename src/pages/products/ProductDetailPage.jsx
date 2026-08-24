@@ -22,6 +22,7 @@ import "swiper/css/free-mode";
 import "swiper/css/zoom";
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
+import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { fetchProductById } from "../../features/product/productSlice";
 import { fetchProductWarranty } from "../../features/warranty/warrantySlice";
 import { fetchDynamicPrice } from "../../features/dynamicPricing/dynamicPricingSlice";
@@ -527,7 +528,7 @@ export default function ProductDetailPage() {
   ];
 
   return (
-    <>
+    <AppErrorBoundary>
       <Seo
         title={product?.title}
         metaDescription={product?.seo?.metaDescription}
@@ -862,6 +863,6 @@ export default function ProductDetailPage() {
           productName={getProductTitle(product)}
         />
       )}
-    </>
+    </AppErrorBoundary>
   );
 }

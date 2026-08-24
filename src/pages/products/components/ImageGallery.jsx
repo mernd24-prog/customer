@@ -178,7 +178,7 @@ function ProductGallery({
                     {item.type === "video" ? (
                       <span className="relative flex h-full w-full items-center justify-center bg-black">
                         {item.poster && (
-                          <img
+                          <img loading="lazy" width="400" height="400"
                             src={item.poster}
                             alt=""
                             className="absolute inset-0 h-full w-full object-contain p-2 opacity-70"
@@ -196,7 +196,7 @@ function ProductGallery({
                         </span>
                       </span>
                     ) : (
-                      <img
+                      <img loading="lazy" width="400" height="400"
                         src={item.src}
                         alt=""
                         className="h-full p-2  w-full object-contain"
@@ -280,7 +280,7 @@ function ProductGallery({
                     onMouseLeave={handleMouseLeave}
                     onClick={handleImageClick}
                   >
-                    <img
+                    <img loading="lazy" width="400" height="400"
                       src={item.src}
                       alt=""
                       draggable={false}

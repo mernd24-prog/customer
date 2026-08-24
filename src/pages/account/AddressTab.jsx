@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -318,7 +318,7 @@ export default function AddressTab({ user }) {
     }
   }, [editCountry, countries, editForm]);
 
-  const startEdit = (addr) => {
+  const startEdit = useCallback((addr) => {
     setEditingId(addr._id || addr.id);
     let dialCode = addr.dialCode;
     if (!dialCode && addr.country && countries.length > 0) {
@@ -335,12 +335,12 @@ export default function AddressTab({ user }) {
       dialCode,
       isDefault: Boolean(addr.isDefault),
     });
-  };
+  }, [countries, editForm]);
 
-  const cancelEdit = () => {
+  const cancelEdit = useCallback(() => {
     setEditingId(null);
     editForm.reset();
-  };
+  }, [editForm]);
 
   const handleAdd = async (values) => {
     const addressFields = Object.fromEntries(
@@ -383,11 +383,11 @@ export default function AddressTab({ user }) {
     });
   };
 
-  const handleDelete = (addressId) => {
+  const handleDelete = useCallback((addressId) => {
     setDeleteAddressId(addressId);
-  };
+  }, []);
 
-  const confirmDelete = async () => {
+  const confirmDelete = useCallback(async () => {
     if (!deleteAddressId) return;
     await run(
       dispatch,
@@ -396,19 +396,43 @@ export default function AddressTab({ user }) {
     );
     setDeleteAddressId(null);
     dispatch(fetchMe());
-  };
+  }, [deleteAddressId, dispatch, run]);
+  
+  const handleToggleAddForm = useCallback(() => {
+    if (!showAddForm) {
+      addForm.reset();
+    }
+    setShowAddForm((value) => !value);
+  }, [showAddForm, addForm]);
+
+  const handleCloseAddForm = useCallback(() => {
+    setShowAddForm(false);
+    addForm.reset();
+  }, [addForm]);
+
+  const handleShowAllAddresses = useCallback(() => {
+    setShowAllAddresses(!showAllAddresses);
+  }, [showAllAddresses]);
+
+  if (loading && addresses.length === 0 && !showAddForm) {
+    return (
+      <div className="flex flex-col gap-4 animate-pulse">
+        <div className="h-10 w-full sm:w-48 self-end rounded bg-cream" />
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <div className="h-48 w-full rounded-[12px] bg-cream" />
+          <div className="h-48 w-full rounded-[12px] bg-cream" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="grid gap-5  ">
         <div className="flex  flex-col gap-3 border-b border-gold-soft pb-5 sm:flex-row  sm:justify-end">
           <button
             type="button"
-            onClick={() => {
-              if (!showAddForm) {
-                addForm.reset();
-              }
-              setShowAddForm((value) => !value);
-            }}
+            onClick={handleToggleAddForm}
             className="inline-flex min-h-10 items-center  justify-center gap-2 rounded-[8px] border border-gold bg-gold px-4  text-sm font-semibold text-white transition-all duration-300 ease-in-out hover:bg-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 sm:w-auto"
           >
             {showAddForm ? <ChevronUp size={16} /> : <Plus size={16} />}
@@ -417,7 +441,7 @@ export default function AddressTab({ user }) {
         </div>
 
         {showAddForm && (
-          <BaseModal onClose={() => setShowAddForm(false)} maxWidth="max-w-3xl">
+          <BaseModal onClose={handleCloseAddForm} maxWidth="max-w-3xl">
             <form
               className="flex flex-col max-h-[85vh] rounded-[10px] bg-white p-4 sm:p-6"
               onSubmit={addForm.handleSubmit(handleAdd, handleInvalidAdd)}
@@ -449,10 +473,7 @@ export default function AddressTab({ user }) {
                 <Button
                   type="button"
                   variant="secondary"
-                  onClick={() => {
-                    setShowAddForm(false);
-                    addForm.reset();
-                  }}
+                  onClick={handleCloseAddForm}
                   className="w-full sm:w-auto"
                 >
                   Cancel
@@ -517,7 +538,7 @@ export default function AddressTab({ user }) {
               <div className="flex justify-center w-full">
                 <button
                   type="button"
-                  onClick={() => setShowAllAddresses(!showAllAddresses)}
+                  onClick={handleShowAllAddresses}
                   className="flex w-full items-center justify-center gap-2 rounded-full border border-gold px-6 py-2.5 text-sm font-semibold text-gold transition-colors hover:bg-gold-soft hover:text-gold-dark"
                 >
                   {showAllAddresses ? (

@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronLeft, Star, ThumbsUp } from "lucide-react";
 import CustomDropdown from "../../components/ui/CustomDropdown";
 import ReviewMediaLightbox from "../../components/ecommerce/ReviewMediaLightbox";
+import Seo from "../../components/ui/Seo";
+import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { useAuthModal } from "../../features/auth/AuthModalContext";
 import {
   fetchProductReviews,
@@ -66,7 +68,7 @@ function ProductReviewSidebar({ product, productId }) {
         Back to Product
       </Link>
 
-      <img
+      <img loading="lazy" width="400" height="400"
         src={product.image}
         alt={product.title}
         className="aspect-[8/8] max-w-[800px] w-full rounded-[4px] bg-[var(--customer-cream)] object-contain"
@@ -231,7 +233,7 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
   return (
     <article className="border-b border-border py-5 last:border-b-0">
       <div className="mb-3 flex items-center gap-2">
-        <img
+        <img loading="lazy" width="400" height="400"
           src={review.buyerImage || "/image/png/person.png"}
           alt={name}
           className="size-10 rounded-full object-cover"
@@ -271,7 +273,7 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
               onClick={() => setLightboxIndex(index)}
               className="block h-20 w-20  overflow-hidden rounded-[8px] border border-gold/20 bg-cream sm:h-24 sm:w-24"
             >
-              <img
+              <img loading="lazy" width="400" height="400"
                 src={url}
                 alt={`Review media ${index + 1}`}
                 className="h-full w-full object-cover"
@@ -526,25 +528,32 @@ export default function ReviewDetailsPage() {
           ),
         ]
       : visibleReviews;
-  const handleFilter = (star) => {
+  const handleFilter = useCallback((star) => {
     setRatingFilter((current) => (current === star ? null : star));
     setPage(1);
-  };
-  const handleSort = (value) => {
+  }, []);
+  
+  const handleSort = useCallback((value) => {
     setSort(value);
     setPage(1);
-  };
-  const handleHelpful = (reviewId) => {
+  }, []);
+  
+  const handleHelpful = useCallback((reviewId) => {
     if (!userId) {
       openAuthModal();
       return;
     }
     if (!reviewId) return;
     dispatch(markReviewHelpful({ productId, reviewId }));
-  };
+  }, [userId, openAuthModal, dispatch, productId]);
 
   return (
-    <main className="bg-white">
+    <AppErrorBoundary>
+      <main className="bg-white">
+      <Seo 
+        title={product?.title ? `${product.title} Reviews - Sam Global` : "Product Reviews - Sam Global"} 
+        metaDescription={`Read customer reviews and ratings for ${product?.title || 'this product'}.`} 
+      />
       <div className="mx-auto grid max-w-[1180px] gap-8 px-4 py-8 lg:grid-cols-[280px_1fr]">
         <ProductReviewSidebar product={product} productId={productId} />
 
@@ -581,5 +590,6 @@ export default function ReviewDetailsPage() {
         </section>
       </div>
     </main>
+  </AppErrorBoundary>
   );
 }

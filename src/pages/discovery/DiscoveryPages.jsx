@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, memo } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/ui/Seo";
 import { EmptyState } from "../../components/ui";
+import ApiState from "../../components/ui/ApiState";
 import { ProductGrid } from "../../components/ecommerce";
 import { useProductActions } from "../../hooks/useProductActions";
 import { fetchProducts } from "../../features/product/productSlice";
@@ -13,10 +14,12 @@ import {
 import { getRecentlyViewed } from "../../utils/recentlyViewed";
 import { tokenStorage } from "../../api/tokenStorage";
 
-function ProductGridPage({
+const ProductGridPage = memo(function ProductGridPage({
   title,
   description,
   items = [],
+  loading = false,
+  error = null,
   sourceLink,
   sourceText,
 }) {
@@ -38,7 +41,13 @@ function ProductGridPage({
           )}
         </div>
 
-        {items.length ? (
+        <ApiState
+          loading={loading}
+          error={error}
+          empty={!loading && !items.length}
+          emptyTitle="No Products Available"
+          emptyText="Check back later or explore other sections."
+        >
           <ProductGrid
             products={items}
             onAddToCart={addToCart}
@@ -46,22 +55,16 @@ function ProductGridPage({
             isWishlisted={isWishlisted}
             className="grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
           />
-        ) : (
-          <EmptyState
-            title="No Products Available"
-            description="Check back later or explore other sections."
-          />
-        )}
+        </ApiState>
       </section>
     </>
   );
-}
+});
 
 export function RecentlyUploadedPage() {
   const dispatch = useDispatch();
-  const products = useSelector((s) =>
-    Array.isArray(s.product.list) ? s.product.list : [],
-  );
+  const { list, loading, error } = useSelector((s) => s.product);
+  const products = Array.isArray(list) ? list : [];
   useEffect(() => {
     dispatch(fetchProducts({ newArrival: "true", sort: "newest", page: 1, limit: 48 })).catch(
       () => {},
@@ -72,6 +75,8 @@ export function RecentlyUploadedPage() {
       title="Recently Uploaded"
       description="Freshly added products uploaded by sellers."
       items={products}
+      loading={loading}
+      error={error}
       sourceLink="/products?newArrival=true&sort=newest"
       sourceText="All recent products"
     />
@@ -80,9 +85,8 @@ export function RecentlyUploadedPage() {
 
 export function NewArrivalsPage() {
   const dispatch = useDispatch();
-  const products = useSelector((s) =>
-    Array.isArray(s.product.list) ? s.product.list : [],
-  );
+  const { list, loading, error } = useSelector((s) => s.product);
+  const products = Array.isArray(list) ? list : [];
   useEffect(() => {
     dispatch(fetchProducts({ newArrival: "true", sort: "newest", page: 1, limit: 48 })).catch(
       () => {},
@@ -93,6 +97,8 @@ export function NewArrivalsPage() {
       title="New Arrivals"
       description="Latest arrivals curated for fast discovery."
       items={products}
+      loading={loading}
+      error={error}
       sourceLink="/products?newArrival=true&sort=newest"
       sourceText="View all arrivals"
     />
@@ -101,13 +107,14 @@ export function NewArrivalsPage() {
 
 export function RelatedProductsPage() {
   const dispatch = useDispatch();
-  const recommendations = useSelector((s) =>
-    Array.isArray(s.recommendation.list) ? s.recommendation.list : [],
-  );
-  const fallbackProducts = useSelector((s) =>
-    Array.isArray(s.product.list) ? s.product.list : [],
-  );
+  const recState = useSelector((s) => s.recommendation);
+  const prodState = useSelector((s) => s.product);
+  const recommendations = Array.isArray(recState.list) ? recState.list : [];
+  const fallbackProducts = Array.isArray(prodState.list) ? prodState.list : [];
   const products = recommendations.length ? recommendations : fallbackProducts;
+  const isAuth = tokenStorage.getAccessToken();
+  const loading = isAuth ? recState.loading : prodState.loading;
+  const error = isAuth ? recState.error : prodState.error;
   useEffect(() => {
     if (tokenStorage.getAccessToken()) {
       dispatch(fetchRecommendations({ limit: 48 })).catch(() => {});
@@ -122,6 +129,8 @@ export function RelatedProductsPage() {
       title="Related Products"
       description="Products customers often view together and similar picks."
       items={products}
+      loading={loading}
+      error={error}
       sourceLink="/recommendations"
       sourceText="Personalized recommendations"
     />
@@ -130,15 +139,13 @@ export function RelatedProductsPage() {
 
 export function TrendingNowPage() {
   const dispatch = useDispatch();
-  const trending = useSelector((s) =>
-    Array.isArray(s.recommendation.trendingList)
-      ? s.recommendation.trendingList
-      : [],
-  );
-  const fallbackProducts = useSelector((s) =>
-    Array.isArray(s.product.list) ? s.product.list : [],
-  );
+  const recState = useSelector((s) => s.recommendation);
+  const prodState = useSelector((s) => s.product);
+  const trending = Array.isArray(recState.trendingList) ? recState.trendingList : [];
+  const fallbackProducts = Array.isArray(prodState.list) ? prodState.list : [];
   const products = trending.length ? trending : fallbackProducts;
+  const loading = recState.loading || prodState.loading;
+  const error = recState.error || prodState.error;
   useEffect(() => {
     dispatch(fetchTrendingProducts({ period: "week" })).catch(() => {});
     dispatch(fetchProducts({ sort: "rating", page: 1, limit: 48 })).catch(
@@ -150,6 +157,8 @@ export function TrendingNowPage() {
       title="Trending Now"
       description="Most popular products trending across categories."
       items={products}
+      loading={loading}
+      error={error}
       sourceLink="/products?sort=rating"
       sourceText="Top rated products"
     />

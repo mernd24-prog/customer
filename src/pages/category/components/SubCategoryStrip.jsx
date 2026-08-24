@@ -43,7 +43,7 @@ export function SubCategoryStrip({ categories = [], loading }) {
                 >
                   <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[10px] bg-[var(--customer-surface-soft)] p-2 transition-colors group-hover:bg-[var(--customer-gold-soft)]">
                     {category.image ? (
-                      <img
+                      <img width="400" height="400"
                         src={category.image}
                         alt={category.name}
                         loading="lazy"

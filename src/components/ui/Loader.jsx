@@ -2,7 +2,7 @@
 
 const loaderImage = (
   <div className="flex flex-col items-center gap-4">
-    <img src="/image/svg/loader.svg" alt="Loading" className="h-full w-full" />
+    <img loading="lazy" width="400" height="400" src="/image/svg/loader.svg" alt="Loading" className="h-full w-full" />
   </div>
 );
 

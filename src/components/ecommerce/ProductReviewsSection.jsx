@@ -126,7 +126,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <span className="size-8 shrink-0 overflow-hidden rounded-full border border-[#CE9F2D]/30 bg-[#FAF6EE]">
-            <img
+            <img loading="lazy" width="400" height="400"
               src={buyerImage || "/image/png/person.png"}
               alt={name}
               className="h-full w-full object-cover"
@@ -182,7 +182,7 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
               onClick={() => setLightboxIndex(index)}
               className="block size-14 shrink-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white hover:opacity-90 transition-opacity"
             >
-              <img
+              <img loading="lazy" width="400" height="400"
                 src={url}
                 alt={`Review media ${index + 1}`}
                 className="h-full w-full object-cover"
@@ -752,7 +752,7 @@ export default function ProductReviewsSection({ productId, product }) {
             <div className="flex flex-1 items-center justify-center rounded-xl border border-[#E7D9B8] bg-[#FAF6EE]/50 px-4 py-8 text-center">
               <div className="mx-auto flex w-full max-w-[320px] flex-col items-center">
                 <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-[#CE9F2D]/15">
-                  <img
+                  <img width="400" height="400"
                     src="/image/png/noReview.png"
                     alt="No Reviews Yet"
                     className="h-full w-full object-contain"

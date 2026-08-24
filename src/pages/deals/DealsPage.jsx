@@ -420,7 +420,7 @@ export default function DealsPage() {
           <div className="grid gap-0 h-[320px] sm:h-[380px] md:h-[371px] xl:h-[500px] lg:grid-cols-[52%_48%]">
             {/* Mobile & Tablet Banner */}
             <div className="relative lg:hidden h-full">
-              <img
+              <img loading="lazy" width="400" height="400"
                 src={bannerImage}
                 alt="Deals"
                 className="absolute inset-0 h-full w-full object-cover"
@@ -479,7 +479,7 @@ export default function DealsPage() {
 
             {/* Desktop Image */}
             <div className="relative hidden lg:block overflow-hidden -ml-px">
-              <img
+              <img loading="lazy" width="400" height="400"
                 src={bannerImage}
                 alt="Deals"
                 className="h-full w-full object-cover object-right"

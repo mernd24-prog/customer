@@ -1,4 +1,6 @@
+import { useCallback, useMemo } from "react";
 import useCheckout from "./hooks/useCheckout";
+import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { getPaymentProviderLabel } from "../../utils/pages/checkoutUtils";
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
@@ -65,8 +67,27 @@ export default function CheckoutPage() {
     isBuyNowCheckout,
   } = useCheckout();
 
+  const handleCloseGuestOtp = useCallback(() => {
+    setShowGuestOtpModal(false);
+    if (!currentUser) {
+      navigate("/cart");
+    }
+  }, [setShowGuestOtpModal, currentUser, navigate]);
+
+  const handleSuccessGuestOtp = useCallback(() => {
+    setShowGuestOtpModal(false);
+  }, [setShowGuestOtpModal]);
+
+  const handleCloseNewAddress = useCallback(() => {
+    setValue("useNewAddress", false);
+  }, [setValue]);
+  
+  const handleExcludeBlockedItem = useCallback((blocker) => {
+    excludeBlockedItem(blocker);
+  }, [excludeBlockedItem]);
+
   return (
-    <>
+    <AppErrorBoundary>
       {isPostPaymentProcessing && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--customer-cream)]">
           <Loader size="xl" />
@@ -74,13 +95,8 @@ export default function CheckoutPage() {
       )}
       <GuestOtpAuthModal
         open={showGuestOtpModal}
-        onClose={() => {
-          setShowGuestOtpModal(false);
-          if (!currentUser) {
-            navigate("/cart");
-          }
-        }}
-        onSuccess={() => setShowGuestOtpModal(false)}
+        onClose={handleCloseGuestOtp}
+        onSuccess={handleSuccessGuestOtp}
       />
       <Seo title="Checkout | Sam Global" />
 
@@ -136,7 +152,7 @@ export default function CheckoutPage() {
                       {!isBuyNowCheckout && (
                         <button
                           type="button"
-                          onClick={() => excludeBlockedItem(blocker)}
+                          onClick={() => handleExcludeBlockedItem(blocker)}
                           className="shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
                         >
                           Exclude item
@@ -182,7 +198,7 @@ export default function CheckoutPage() {
                 {/* New address form */}
                 {(useNewAddress || addresses.length === 0) &&
                   (addresses.length > 0 ? (
-                    <BaseModal onClose={() => setValue("useNewAddress", false)}>
+                    <BaseModal onClose={handleCloseNewAddress}>
                       <div className="w-full bg-surface p-4 sm:p-5 rounded-[10px] max-h-[75vh] overflow-y-auto [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]">
                         <ShippingAddressForm
                           register={register}
@@ -200,7 +216,7 @@ export default function CheckoutPage() {
                           showSavedAddressFields={true}
                           addressLabels={addressLabels}
                           loading={checkoutActionLoading}
-                          onCancel={() => setValue("useNewAddress", false)}
+                          onCancel={handleCloseNewAddress}
                           onSave={handleSaveShippingAddressOnly}
                         />
                       </div>
@@ -223,7 +239,7 @@ export default function CheckoutPage() {
                         showSavedAddressFields={true}
                         addressLabels={addressLabels}
                         loading={checkoutActionLoading}
-                        onCancel={() => setValue("useNewAddress", false)}
+                        onCancel={handleCloseNewAddress}
                         onSave={handleSaveShippingAddressOnly}
                       />
                     </div>
@@ -258,6 +274,6 @@ export default function CheckoutPage() {
           </form>
         </ApiState>
       </div>
-    </>
+    </AppErrorBoundary>
   );
 }
