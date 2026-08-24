@@ -1,4 +1,4 @@
-import { SUPPORT_TOPIC_IMAGE_BY_TITLE } from "../../data/supportPage";
+import { SUPPORT_TOPIC_IMAGE_BY_TITLE } from "../../../data/supportPage";
 
 export function getTopicImage(title = "") {
   const normalized = title.toLowerCase();

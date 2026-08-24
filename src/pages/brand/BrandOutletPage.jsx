@@ -2,11 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import Seo from "../../components/ui/Seo";
+import BrandCard from "../../components/ecommerce/BrandCard";
 import {
-  BrandCard,
   CollectionToolbar,
   Pagination,
-} from "../../components/ecommerce";
+} from "../../modules/products/components";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import { fetchBrands } from "../../features/catalog/catalogSlice";
 import { getImageUrlFromValue } from "../../utils/ecommerce";

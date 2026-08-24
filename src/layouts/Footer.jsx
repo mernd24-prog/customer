@@ -263,7 +263,7 @@ export function Footer({ data = footerData }) {
                 srcSet="/image/webp/logoWithName-small.webp 1x, /image/webp/logoWithName.webp 2x"
                 type="image/webp"
               />
-              <img loading="lazy"
+              <img
                 src="/image/webp/logoWithName.webp"
                 alt="Sam Global"
                 width="290"

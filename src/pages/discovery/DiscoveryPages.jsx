@@ -4,7 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/ui/Seo";
 import { EmptyState } from "../../components/ui";
 import ApiState from "../../components/ui/ApiState";
-import { ProductGrid } from "../../components/ecommerce";
+import {
+  ProductGrid,
+} from "../../modules/products/components";
 import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
 import { fetchProducts } from "../../modules/products/slices/productSlice";
 import {

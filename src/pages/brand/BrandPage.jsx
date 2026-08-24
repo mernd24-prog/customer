@@ -5,12 +5,14 @@ import { Store } from "lucide-react";
 import Seo from "../../components/ui/Seo";
 import {
   Breadcrumbs,
+} from "../../components/ecommerce";
+import {
   ProductListingLayout,
   CheckboxListFilter,
   OptionFilter,
   PriceRangeFilter,
   RatingFilter,
-} from "../../components/ecommerce";
+} from "../../modules/products/components";
 import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
 import { fetchProducts } from "../../modules/products/slices/productSlice";
 import { fetchBrands } from "../../features/catalog/catalogSlice";

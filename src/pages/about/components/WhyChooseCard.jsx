@@ -12,9 +12,11 @@ export default function WhyChooseCard({ data }) {
         <div className="flex flex-row gap-4 ">
           {imageUrl && (
             <div>
-              <img loading="lazy" width="400" height="400"
+              <img
                 src={imageUrl}
                 alt={imageAlt || card?.title || ""}
+                width="400"
+                height="400"
                 loading="lazy"
                 className="aspect-square object-contain bg-primary rounded-lg group-hover:bg-blue transition-all duration-300 ease-in-out p-1 md:p-2"
               />

@@ -1,4 +1,4 @@
-import SectionHeader from "./SectionHeader";
+import SectionHeader from "../../../components/ecommerce/SectionHeader";
 import ProductGrid from "./ProductGrid";
 
 export default function ProductSection({

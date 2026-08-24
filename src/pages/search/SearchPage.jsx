@@ -16,7 +16,7 @@ import {
   ProductGrid,
   ProductFilterSidebar,
   ProductListingLayout,
-} from "../../components/ecommerce";
+} from "../../modules/products/components";
 import { buildRatingCountMap, isProductInStock, getAvailabilityCounts, sortProducts } from "../../utils/ecommerce";
 import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
 import {
