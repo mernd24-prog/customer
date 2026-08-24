@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "../../utils/common";
@@ -15,12 +15,26 @@ export default function HeaderDropdown({
   ariaLabel = label,
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const hasDropdown = Boolean(children);
   const isExternal =
     path && (path.startsWith("http://") || path.startsWith("https://"));
 
+  useEffect(() => {
+    const handleScroll = (event) => {
+      if (dropdownRef.current?.contains(event.target)) return;
+      setIsOpen(false);
+    };
+
+    window.addEventListener("scroll", handleScroll, true);
+    return () => {
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, []);
+
   return (
     <div
+      ref={dropdownRef}
       className="relative  inline-flex items-center"
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) {

@@ -58,7 +58,9 @@ function RatingPill({ rating }) {
         : "bg-[#CE9F2D]";
 
   return (
-    <span className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] sm:text-xs font-bold text-white shadow-xs ${bgColor}`}>
+    <span
+      className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] sm:text-xs font-bold text-white shadow-xs ${bgColor}`}
+    >
       <IoIosStar className="text-xs" /> {rating}
     </span>
   );

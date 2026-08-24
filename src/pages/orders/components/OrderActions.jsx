@@ -12,7 +12,7 @@ export default function OrderActions({
   hasCancellableQuantity,
 }) {
   const hasRetryPayment = status === "pending_payment" || status === "payment_failed";
-  const hasCancelAction = canCancelOrder(order) && hasCancellableQuantity;
+  const hasCancelAction = Boolean(selectedOrderItem) && canCancelOrder(order) && hasCancellableQuantity;
 
   if (!hasRetryPayment && !hasCancelAction) {
     return null;

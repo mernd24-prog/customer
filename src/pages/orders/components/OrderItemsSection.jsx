@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useSearchParams } from "react-router-dom";
-
+import { useSearchParams } from "react-router-dom";
 import { fetchMyProductReview } from "../../../features/review/reviewSlice";
 import { OrderItemCard } from "./OrderItemCard";
 import { OrderItemReviewAction, ReviewModal } from "./OrderItemReview";
@@ -22,10 +21,11 @@ import {
   getReturnedQuantityForItem,
   getReturnableQuantityForItem,
   getItemQuantity,
-  getCancellationForItem
+  getCancellationForItem,
 } from "../hooks/useOrderItems";
 function OrderItemsSection({
   items = [],
+  selectedOrderItem,
   orderId,
   orderStatus,
   shipments = [],
@@ -36,6 +36,7 @@ function OrderItemsSection({
 }) {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
+  const isSingleItemView = Boolean(selectedOrderItem || searchParams.get("orderItemId"));
   const [reviewTarget, setReviewTarget] = useState(null);
   const [expandedItemId, setExpandedItemId] = useState("");
   const [reviewByItem, setReviewByItem] = useState({});
@@ -104,7 +105,14 @@ function OrderItemsSection({
       });
     });
     return result;
-  }, [items, orderStatus, returns, cancellations, sellerFulfillmentGroups, shipments]);
+  }, [
+    items,
+    orderStatus,
+    returns,
+    cancellations,
+    sellerFulfillmentGroups,
+    shipments,
+  ]);
 
   const reviewableItems = useMemo(
     () =>
@@ -236,9 +244,9 @@ function OrderItemsSection({
       grouped.get(key).items.push(item);
     });
     return Array.from(grouped.values()).map((group) => {
-      const itemStatuses = group.items.map((item) =>
-        itemFulfillment.get(getItemId(item))?.status,
-      ).filter(Boolean);
+      const itemStatuses = group.items
+        .map((item) => itemFulfillment.get(getItemId(item))?.status)
+        .filter(Boolean);
       const uniqueStatuses = [...new Set(itemStatuses)];
       return {
         ...group,
@@ -257,11 +265,6 @@ function OrderItemsSection({
 
   return (
     <section className="grid gap-5">
-      {/* <OrderDetailSectionCard
-        title={packageGroups.length > 1 ? "Order" : "Order"}
-        borderClassName="border-[#CE9F2D66]  h-fit "
-        bodyClassName=" grid gap-8 p-4 sm:p-6 lg:p-7"
-      > */}
       {packageGroups.map((group) => (
         <div
           key={group.key}
@@ -311,11 +314,6 @@ function OrderItemsSection({
                 </div>
                 <div className="flex flex-wrap items-start justify-between gap-4 w-full">
                   <div className="flex flex-wrap gap-2 text-xs font-semibold mt-2">
-                    {/* <span
-                        className={`rounded-full px-3 py-1 capitalize ${fulfillment.delivered ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-700"}`}
-                      >
-                        {label(fulfillment.status)}
-                      </span> */}
                     <span
                       className={`rounded-full px-3 py-1 ${policy.returnable ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}
                     >
@@ -345,98 +343,9 @@ function OrderItemsSection({
                       </span>
                     )}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const next = new URLSearchParams(searchParams);
-                      next.set("orderItemId", itemId);
-                      setSearchParams(next);
-                      setExpandedItemId(itemId);
-                    }}
-                    className={`mt-2 inline-flex min-h-9 items-center rounded-lg border px-4 text-sm font-bold transition ${expanded ? "border-[#CE9F2D] bg-[#FFF8E7] text-[#8A6500]" : "border-[#E7D9B8] bg-white text-[#1B1D60] hover:border-[#CE9F2D] hover:bg-[#FFF8E7]"}`}
-                  >
-                    {expanded ? "Viewing item progress" : "View item progress"}
-                  </button>
-                  {/* {expanded && (
-                      <div className="grid gap-3 rounded-xl border border-[#E7D9B8] bg-white p-4">
-                        <div className="grid gap-2 rounded-lg bg-[#F8FAFC] px-3 py-3 text-xs text-[#5E6472] sm:grid-cols-2 lg:grid-cols-4">
-                          <span>
-                            <strong className="block text-[#1B1D60]">
-                              Item status
-                            </strong>
-                            <span className="capitalize">
-                              {label(fulfillment.status)}
-                            </span>
-                          </span>
-                          <span>
-                            <strong className="block text-[#1B1D60]">
-                              Courier
-                            </strong>
-                            {tracking.courier
-                              ? label(tracking.courier)
-                              : "Not added yet"}
-                          </span>
-                          <span>
-                            <strong className="block text-[#1B1D60]">
-                              Tracking / AWB
-                            </strong>
-                            {tracking.trackingNumber || "Not added yet"}
-                          </span>
-                          <span>
-                            <strong className="block text-[#1B1D60]">
-                              Delivered on
-                            </strong>
-                            {fulfillment.deliveredAt
-                              ? formatDate(fulfillment.deliveredAt)
-                              : "Pending"}
-                          </span>
-                          {tracking.trackingUrl && (
-                            <a
-                              href={tracking.trackingUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="font-bold text-[#3E4093] underline-offset-2 hover:underline"
-                            >
-                              Open courier tracking
-                            </a>
-                          )}
-                        </div>
 
-                        {returnRequest && (
-                          <div className="grid gap-2 rounded-lg bg-[#FFF8E7] px-3 py-3 text-xs text-[#5E6472] sm:grid-cols-3">
-                            <span>
-                              <strong className="block text-[#1B1D60]">
-                                Return/refund
-                              </strong>
-                              {`${label(returnRequest.status)} · ${returnableQuantity > 0 ? `${returnableQuantity} left` : "No quantity left"}`}
-                            </span>
-                            <span>
-                              <strong className="block text-[#1B1D60]">
-                                Refund status
-                              </strong>
-                              {returnRequest?.refund?.status
-                                ? label(returnRequest.refund.status)
-                                : "Not started"}
-                            </span>
-                            <span>
-                              <strong className="block text-[#1B1D60]">
-                                Refund amount
-                              </strong>
-                              {returnRequest?.refundAmount ||
-                              returnRequest?.refundBreakup?.totalRefundAmount
-                                ? itemProps.formatMoney(
-                                    returnRequest.refundAmount ||
-                                      returnRequest.refundBreakup
-                                        ?.totalRefundAmount,
-                                    itemProps.currency,
-                                  )
-                                : "—"}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    )} */}
-                  {fulfillment.delivered &&
+                  {isSingleItemView &&
+                    fulfillment.delivered &&
                     returnedQuantity === 0 &&
                     Boolean(getReviewProductId(item)) && (
                       <OrderItemReviewAction
@@ -452,21 +361,12 @@ function OrderItemsSection({
                         onReviewClick={setReviewTarget}
                       />
                     )}
-                  {/* {canReturn && (
-                      <Link
-                        to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(itemId)}`}
-                        className="inline-flex min-h-9 items-center gap-2 rounded-[8px] border border-[#CE9F2D] bg-white px-4 text-sm font-bold text-[#1B1D60] transition hover:bg-[#FFF8E7]"
-                      >
-                        <RotateCcw size={15} /> Return or replace
-                      </Link>
-                    )} */}
                 </div>
               </div>
             );
           })}
         </div>
       ))}
-      {/* </OrderDetailSectionCard> */}
 
       {reviewTarget && (
         <ReviewModal
