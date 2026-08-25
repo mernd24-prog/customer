@@ -49,6 +49,130 @@ export function getProductId(product) {
   return "";
 }
 
+export function getProductSlug(product) {
+  if (!product) return "";
+  if (typeof product !== "object") return "";
+  return product.slug || product.handle || product.seoSlug || "";
+}
+
+export function getProductUrlSlug(product) {
+  const slug = getProductSlug(product);
+  const titleSlug = product?.title
+    ? String(product.title)
+        .trim()
+        .toLowerCase()
+        .replace(/&/g, "and")
+        .replace(/['’]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+    : "";
+  return titleSlug || slug.replace(/-\d{10,}$/, "");
+}
+
+export function getProductPublicCode(product) {
+  if (!product) return "";
+  if (typeof product !== "object") return "";
+  return product.publicCode || product.public_code || product.code || "";
+}
+
+export function getVariantPublicCode(variant) {
+  if (!variant || typeof variant !== "object") return "";
+  return variant.publicVariantCode || variant.public_variant_code || "";
+}
+
+export function getVariantRouteKey(variant) {
+  if (!variant || typeof variant !== "object") return "";
+  return getVariantPublicCode(variant) || variant.sku || variant.code || variant._id || variant.id || "";
+}
+
+const PRODUCT_TOKEN_VERSION = "p1";
+const VARIANT_TOKEN_VERSION = "v1";
+const ROUTE_TOKEN_MASK = "sam-global-product-route-v1";
+
+function getRouteTokenMaskByte(index) {
+  return ROUTE_TOKEN_MASK.charCodeAt(index % ROUTE_TOKEN_MASK.length);
+}
+
+function encodeBase64Url(value) {
+  const text = JSON.stringify(value);
+  const bytes =
+    typeof TextEncoder !== "undefined"
+      ? new TextEncoder().encode(text)
+      : Uint8Array.from(unescape(encodeURIComponent(text)), (char) => char.charCodeAt(0));
+  const binary = String.fromCharCode(
+    ...Array.from(bytes, (byte, index) => byte ^ getRouteTokenMaskByte(index) ^ ((index * 31) & 255)),
+  );
+  const encoded =
+    typeof btoa === "function"
+      ? btoa(binary)
+      : Buffer.from(binary, "binary").toString("base64");
+  return encoded.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+function decodeBase64Url(token) {
+  const normalized = String(token || "").replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized.padEnd(normalized.length + ((4 - (normalized.length % 4)) % 4), "=");
+  const binary =
+    typeof atob === "function"
+      ? atob(padded)
+      : Buffer.from(padded, "base64").toString("binary");
+  const decodedBinary = String.fromCharCode(
+    ...Array.from(binary, (char, index) => char.charCodeAt(0) ^ getRouteTokenMaskByte(index) ^ ((index * 31) & 255)),
+  );
+
+  if (typeof TextDecoder !== "undefined") {
+    const bytes = Uint8Array.from(decodedBinary, (char) => char.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }
+
+  return JSON.parse(decodeURIComponent(escape(decodedBinary)));
+}
+
+export function encodeProductRouteToken(payload = {}) {
+  return encodeBase64Url({ t: PRODUCT_TOKEN_VERSION, ...payload });
+}
+
+export function decodeProductRouteToken(token) {
+  try {
+    const payload = decodeBase64Url(token);
+    if (!payload || payload.t !== PRODUCT_TOKEN_VERSION) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+export function encodeVariantRouteToken(payload = {}) {
+  return encodeBase64Url({ t: VARIANT_TOKEN_VERSION, ...payload });
+}
+
+export function decodeVariantRouteToken(token) {
+  try {
+    const payload = decodeBase64Url(token);
+    if (!payload || payload.t !== VARIANT_TOKEN_VERSION) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+export function getProductPublicPath(product, options = {}) {
+  const slug = getProductSlug(product);
+  const urlSlug = getProductUrlSlug(product);
+  const id = getProductId(product);
+  const variantCode = getVariantRouteKey(options.variant) || options.variantCode || "";
+
+  if (id || slug) {
+    const token = encodeProductRouteToken({ p: id || slug, s: urlSlug || slug || undefined });
+    const query = variantCode
+      ? `?x=${encodeURIComponent(encodeVariantRouteToken({ v: variantCode }))}`
+      : "";
+    return `/products/i/${encodeURIComponent(token)}${query}`;
+  }
+
+  return "/products";
+}
+
 export function getProductListFromResponse(result) {
   const data = result?.data ?? result;
   if (Array.isArray(data)) return data;

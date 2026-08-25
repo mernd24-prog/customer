@@ -1,3 +1,5 @@
+import { getProductPublicPath } from "../../../utils/ecommerce";
+
 export {
   getItemProductId,
   getOrderItemVariantId as getItemVariantId,
@@ -41,7 +43,7 @@ export const getItemQuantity = (item = {}) =>
 
 export const getOrderItemProductPath = (item) => {
   const productId = getItemProductId(item);
-  return productId ? `/products/${productId}` : "";
+  return productId ? getProductPublicPath(item?.product || item?.productId || { id: productId }) : "";
 };
 export const STATUS_LABELS = {
   initiated: "Order Confirmed",

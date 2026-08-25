@@ -1,5 +1,15 @@
-import { Link } from "react-router-dom";
-import { MdOutlineShoppingCart, MdContentCopy, MdDateRange } from "react-icons/md";
+import { useEffect, useState, useMemo } from "react";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  MdOutlineShoppingCart,
+  MdDateRange,
+} from "react-icons/md";
 import { FaShoppingCart } from "react-icons/fa";
 import { BsCreditCardFill } from "react-icons/bs";
 import ShowMoreText from "../../../utils/showMore";
@@ -12,7 +22,7 @@ import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 import { useToastThunk } from "../../../hooks/useToastThunk";
-import { notify } from "../../../utils/notify";
+import { getOpaqueOrderPath } from "../../../utils/routeTokens";
 
 import NeedHelpPanel from "../../../components/ecommerce/NeedHelpPanel";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
@@ -115,7 +125,7 @@ function OrderListItemStatusSummary({ statuses = [] }) {
 
 function OrderItemSummaryCard({ order, item }) {
   const id = getOrderId(order);
-  const apiOrderId = getOrderId(order);
+  const productTitle = getProductTitle(item);
   const createdAt = order.created_at || order.createdAt;
   const currency = getOrderCurrency(order);
   const paymentMethod = humanize(getPaymentMethod(order), "N/A");
@@ -136,36 +146,19 @@ function OrderItemSummaryCard({ order, item }) {
     item.line_total ??
     item.lineTotal ??
     Number(item.unit_price || item.unitPrice || 0) * Number(item.quantity || 0);
-  const itemDetailPath = `/orders/${id}?orderItemId=${encodeURIComponent(itemId)}`;
-
-  const handleCopyOrderId = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    navigator.clipboard
-      .writeText(apiOrderId)
-      .then(() =>
-        notify.success(`Order ID #${apiOrderId} copied to clipboard!`),
-      )
-      .catch((err) => console.error("Failed to copy Order ID:", err));
-  };
+  const itemDetailPath = getOpaqueOrderPath(id, {
+    query: `?orderItemId=${encodeURIComponent(itemId)}`,
+  });
 
   return (
     <article className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-[#FFFCF6]">
       <div className="flex flex-col gap-2 border-b border-[#E7D9B8] bg-[#CE9F2D33] px-3 py-3 text-sm font-semibold text-ink md:flex-row md:items-center md:justify-between md:px-4">
         <span className="flex min-w-0 items-center gap-1.5">
           <FaShoppingCart className="shrink-0 text-sm text-[#2564EB]" />
-          <span className="shrink-0">Order ID :</span>
-          <span className="min-w-0 break-all text-xs md:text-sm">
-            #{apiOrderId}
+          <span className="shrink-0">Order :</span>
+          <span className="min-w-0 truncate text-xs md:text-sm">
+            {productTitle}
           </span>
-          <button
-            type="button"
-            onClick={handleCopyOrderId}
-            className="flex shrink-0 items-center justify-center rounded-full p-1 hover:bg-[#CE9F2D33]"
-            title="Copy Order ID"
-          >
-            <MdContentCopy className="text-[#2E2E2E] text-sm cursor-pointer" />
-          </button>
         </span>
         <span className="flex flex-wrap items-center gap-4 text-xs md:text-sm">
           <span className="inline-flex items-center gap-1.5">
@@ -192,7 +185,7 @@ function OrderItemSummaryCard({ order, item }) {
           {itemImage ? (
             <img loading="lazy" width="400" height="400"
               src={itemImage}
-              alt={getProductTitle(item)}
+              alt={productTitle}
               className="h-full w-full object-contain"
             />
           ) : (
@@ -203,7 +196,7 @@ function OrderItemSummaryCard({ order, item }) {
         <span className="min-w-0">
           <span className="block text-base font-extrabold text-[#1B1D60] md:text-lg">
             <ShowMoreText
-              text={getProductTitle(item)}
+              text={productTitle}
               mode="characters"
               limit={65}
               moreLabel="more"
@@ -295,7 +288,7 @@ export default function OrderListPage() {
                       <input
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
-                        placeholder="Search by product name or Order ID..."
+                        placeholder="Search by product name or order reference..."
                         className="h-12 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-9 text-base font-medium text-ink outline-none focus:outline-none"
                       />
                       {Boolean(query) && (

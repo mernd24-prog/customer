@@ -25,6 +25,7 @@ export default function ProductsPage() {
     sidebarOpen,
     setSidebarOpen,
     products,
+    effectiveSort,
     handleSortChange,
     handleFilterChange,
     handlePriceFilterChange,
@@ -52,7 +53,7 @@ export default function ProductsPage() {
       seoDescription="Browse products with filters, sort, and pagination."
       totalResults={products.length}
       pageSize={pageSize}
-      sortValue={searchParams.get("sort") || ""}
+      sortValue={effectiveSort}
       sortOptions={SORT_OPTIONS}
       onSortChange={handleSortChange}
       sidebarOpen={sidebarOpen}

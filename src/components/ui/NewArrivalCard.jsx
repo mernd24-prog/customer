@@ -3,6 +3,7 @@ import { IoArrowForwardOutline } from "react-icons/io5";
 import { TextWhiteButton } from "../ui/button/static";
 import { formatPageTitle } from "../../utils/common";
 import StarRating from "../../modules/products/components/starRating";
+import { getProductPublicPath } from "../../utils/ecommerce";
 
 export default function NewArrivalCard({
   title = "",
@@ -45,7 +46,7 @@ export default function NewArrivalCard({
         {displayProducts.map((prod, index) => (
           <Link
             key={prod.id || index}
-            to={`/products/${prod.id}`}
+            to={getProductPublicPath(prod)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex gap-4  p-6 items-center hover:bg-slate-50 transition-colors duration-200 pl-4"

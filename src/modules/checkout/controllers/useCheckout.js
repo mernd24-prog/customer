@@ -35,6 +35,10 @@ import {
   getProductPrice,
   getVariantPrice,
 } from "../../../utils/ecommerce";
+import {
+  getOpaqueOrderPath,
+  getOpaquePaymentResultPath,
+} from "../../../utils/routeTokens";
 import { normalizeId } from "../../../utils/ecommerce/cart";
 import { normalizeDialCode } from "../../../lib/utils";
 import {
@@ -277,7 +281,7 @@ export default function useCheckout() {
     }
 
     clearCompletedCheckout();
-    navigate(`/payment/success?orderId=${completedCheckout.orderId}`, {
+    navigate(getOpaquePaymentResultPath("success", completedCheckout.orderId), {
       replace: true,
     });
   }, [cart.items, cartState.loading, navigate]);
@@ -1054,7 +1058,7 @@ export default function useCheckout() {
       window.sessionStorage.removeItem(CHECKOUT_CART_ITEM_IDS_STORAGE_KEY);
       clearCheckoutIdempotency();
       dispatch(fetchCart());
-      navigate(`/payment/success?orderId=${orderId}`, { replace: true });
+      navigate(getOpaquePaymentResultPath("success", orderId), { replace: true });
       shouldReleaseSubmitLock = false;
     };
 
@@ -1157,7 +1161,7 @@ export default function useCheckout() {
       }
 
       if (payableAmount === null) {
-        navigate(`/orders/${encodeURIComponent(orderId)}`, { replace: true });
+        navigate(getOpaqueOrderPath(orderId), { replace: true });
         notify.error({
           title: "Payment could not be started",
           message:
@@ -1179,7 +1183,7 @@ export default function useCheckout() {
           )
         ) {
           navigate(
-            `/payment/failed?orderId=${encodeURIComponent(orderId)}&reason=pending_confirmation`,
+            getOpaquePaymentResultPath("failed", orderId, "pending_confirmation"),
             { replace: true },
           );
           return;
@@ -1214,7 +1218,7 @@ export default function useCheckout() {
           title: "Payment amount mismatch",
           message: `${message} The order is saved; review it before retrying payment.`,
         });
-        navigate(`/orders/${encodeURIComponent(orderId)}`, { replace: true });
+        navigate(getOpaqueOrderPath(orderId), { replace: true });
         return;
       }
 
@@ -1250,7 +1254,7 @@ export default function useCheckout() {
               message,
             });
             navigate(
-              `/payment/failed?orderId=${encodeURIComponent(orderId)}&reason=${reason}`,
+              getOpaquePaymentResultPath("failed", orderId, reason),
               { replace: true },
             );
             return;
@@ -1277,7 +1281,7 @@ export default function useCheckout() {
         ["pending_payment", "payment_failed"].includes(confirmedStatus)
       ) {
         navigate(
-          `/payment/failed?orderId=${encodeURIComponent(orderId)}&reason=pending_confirmation`,
+          getOpaquePaymentResultPath("failed", orderId, "pending_confirmation"),
           { replace: true },
         );
         return;
@@ -1292,7 +1296,7 @@ export default function useCheckout() {
             "We could not finish payment confirmation. Check this order before retrying so you are not charged twice.",
         });
         navigate(
-          `/payment/failed?orderId=${encodeURIComponent(activeOrderId)}&reason=pending_confirmation`,
+          getOpaquePaymentResultPath("failed", activeOrderId, "pending_confirmation"),
           { replace: true },
         );
       }

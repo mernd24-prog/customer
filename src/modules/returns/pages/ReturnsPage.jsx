@@ -1,4 +1,5 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
 import { ArrowLeft, Package, RotateCcw } from "lucide-react";
 import Seo from "../../../components/ui/Seo";
 import Button from "../../../components/ui/buttons/Button";
@@ -20,7 +21,8 @@ import {
   getReturnableQuantityForItem,
   isItemDelivered,
   getItemQuantity
-} from "../../../utils/pages/returnUtils";
+} from "../../utils/pages/returnUtils";
+import { decodeRouteToken, getOpaqueReturnRequestPath } from "../../utils/routeTokens";
 
 function ReturnRequestPage({ orderId }) {
   const {
@@ -422,6 +424,18 @@ function ReturnRequestPage({ orderId }) {
 }
 
 export default function ReturnsPage({ request = false }) {
-  const { orderId } = useParams();
-  if (request) return <ReturnRequestPage orderId={orderId} />;
+  const { orderId, orderToken } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const tokenPayload = decodeRouteToken(orderToken, "order");
+  const resolvedOrderId = tokenPayload?.id || orderId;
+
+  useEffect(() => {
+    if (!request || !orderId || !resolvedOrderId) return;
+    navigate(getOpaqueReturnRequestPath(resolvedOrderId, location.search), {
+      replace: true,
+    });
+  }, [location.search, navigate, orderId, request, resolvedOrderId]);
+
+  if (request) return <ReturnRequestPage orderId={resolvedOrderId} />;
 }

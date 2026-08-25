@@ -14,7 +14,13 @@ import {
 import { trackAnalyticsEvent } from "../../../features/analytics/analyticsSlice";
 import { addRecentlyViewed, getRecentlyViewed } from "../../../utils/recentlyViewed";
 import { tokenStorage } from "../../../api/tokenStorage";
-import { getProductId } from "../../../utils/ecommerce";
+import {
+  decodeVariantRouteToken,
+  encodeVariantRouteToken,
+  getProductId,
+  getProductSlug,
+  getVariantRouteKey,
+} from "../../../utils/ecommerce";
 import {
   applyImageFallback,
   getImageFallbackSrc,
@@ -41,14 +47,21 @@ import { useProductDetailImages } from "./useProductDetailImages";
 import { useProductDetailVariants } from "./useProductDetailVariants";
 import { useSearchParams } from "react-router-dom";
 
-export function useProductDetailController(productId, rawParamId) {
+export function useProductDetailController(productId, rawParamId, matchProductId = productId) {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Extract Global State
   const productState = useSelector((s) => s.product);
   const currentProduct = productState.current;
-  const product = String(getProductId(currentProduct) || "") === String(productId || "") ? currentProduct : null;
+  const productIdentifier = String(matchProductId || productId || "");
+  const productRequestIdentifier = String(productId || "");
+  const product = [
+    getProductId(currentProduct),
+    getProductSlug(currentProduct),
+  ].some((value) => String(value || "") === productIdentifier)
+    ? currentProduct
+    : null;
   const loadedProductId = getProductId(product);
 
   const warrantyState = useSelector((s) => s.warranty);
@@ -90,8 +103,9 @@ export function useProductDetailController(productId, rawParamId) {
     }
 
     const pathVariantKey = rawParamId && rawParamId.includes(":") ? rawParamId.split(":")[1] : null;
-    const paramVariantKey = searchParams.get("variant") || searchParams.get("variantId") || searchParams.get("sku") || pathVariantKey;
-    const storedVariantKey = productId ? window.sessionStorage.getItem(`selected_variant_${productId}`) : null;
+    const opaqueVariantPayload = decodeVariantRouteToken(searchParams.get("x"));
+    const paramVariantKey = opaqueVariantPayload?.v || searchParams.get("v") || searchParams.get("variant") || searchParams.get("variantId") || searchParams.get("sku") || pathVariantKey;
+    const storedVariantKey = productIdentifier ? window.sessionStorage.getItem(`selected_variant_${productIdentifier}`) : null;
     const targetKey = paramVariantKey || storedVariantKey;
 
     let targetVariant = null;
@@ -101,7 +115,8 @@ export function useProductDetailController(productId, rawParamId) {
           String(v._id || "") === String(targetKey) ||
           String(v.id || "") === String(targetKey) ||
           String(v.sku || "") === String(targetKey) ||
-          String(v.code || "") === String(targetKey),
+          String(v.code || "") === String(targetKey) ||
+          String(getVariantRouteKey(v) || "") === String(targetKey),
       );
     }
 
@@ -112,54 +127,85 @@ export function useProductDetailController(productId, rawParamId) {
       if (current && variants.some((variant) => (variant._id || variant.sku) === (current._id || current.sku))) return current;
       return defaultVariant;
     });
-  }, [variants, searchParams, productId, rawParamId]);
+  }, [variants, searchParams, productIdentifier, rawParamId]);
 
-  const selectedVariantKey = selectedVariant?._id || selectedVariant?.sku || "";
+  const selectedVariantKey = selectedVariant?.sku || selectedVariant?._id || "";
 
   useEffect(() => {
-    if (!selectedVariant || !productId) return;
-    const variantKey = selectedVariant._id || selectedVariant.id || selectedVariant.sku;
-    if (!variantKey) return;
+    if (!selectedVariant || !productIdentifier) return;
+    const variantKey = getVariantRouteKey(selectedVariant);
 
-    window.sessionStorage.setItem(`selected_variant_${productId}`, variantKey);
+    if (variantKey) {
+      window.sessionStorage.setItem(`selected_variant_${productIdentifier}`, variantKey);
+    }
 
-    const currentParam = searchParams.get("variant");
-    if (currentParam !== String(variantKey)) {
+    const currentParam = searchParams.get("x");
+    const hasReadableVariantParam =
+      searchParams.has("v") ||
+      searchParams.has("variant") ||
+      searchParams.has("variantId") ||
+      searchParams.has("sku");
+
+    const publicVariantToken = variantKey
+      ? encodeVariantRouteToken({ v: variantKey })
+      : "";
+
+    if (publicVariantToken && (currentParam !== publicVariantToken || hasReadableVariantParam)) {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev);
-          next.set("variant", variantKey);
+          next.set("x", publicVariantToken);
+          next.delete("v");
+          next.delete("variant");
+          next.delete("variantId");
+          next.delete("sku");
+          return next;
+        },
+        { replace: true },
+      );
+    } else if (!variantKey && hasReadableVariantParam) {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.delete("v");
+          next.delete("variant");
+          next.delete("variantId");
+          next.delete("sku");
           return next;
         },
         { replace: true },
       );
     }
-  }, [selectedVariant, productId, searchParams, setSearchParams]);
+  }, [selectedVariant, productIdentifier, searchParams, setSearchParams]);
 
   // Initial Fetching
   useEffect(() => {
-    if (!productId) return;
-    dispatch(fetchProductById({ productId }));
-    dispatch(fetchProductWarranty({ productId })).catch(() => {});
-    dispatch(fetchRelatedProducts({ productId })).catch(() => {});
-    dispatch(fetchCrossSellProducts({ productId })).catch(() => {});
+    if (!productRequestIdentifier) return;
+    dispatch(fetchProductById({ productId: productRequestIdentifier }));
     sideEffectsRanFor.current = null;
     setDeliveryResult(null);
-  }, [dispatch, productId]);
+  }, [dispatch, productRequestIdentifier]);
+
+  useEffect(() => {
+    if (!loadedProductId) return;
+    dispatch(fetchProductWarranty({ productId: loadedProductId })).catch(() => {});
+    dispatch(fetchRelatedProducts({ productId: productRequestIdentifier || loadedProductId })).catch(() => {});
+    dispatch(fetchCrossSellProducts({ productId: productRequestIdentifier || loadedProductId })).catch(() => {});
+  }, [dispatch, loadedProductId, productRequestIdentifier]);
 
   // Side Effects (Analytics, Recommendations, Recently Viewed)
   useEffect(() => {
     if (!product) return;
-    if (sideEffectsRanFor.current === productId) return;
-    sideEffectsRanFor.current = productId;
+    if (sideEffectsRanFor.current === loadedProductId) return;
+    sideEffectsRanFor.current = loadedProductId;
 
     dispatch(fetchRecommendations({ category: product.category, period: "week", limit: 8 })).catch(() => {});
 
-    if (isLoggedIn) {
-      dispatch(trackAnalyticsEvent({ eventName: "product_view", metadata: { productId } })).catch(() => {});
-      dispatch(trackRecommendationInteraction({ productId, interactionType: "viewed" })).catch(() => {});
+    if (isLoggedIn && loadedProductId) {
+      dispatch(trackAnalyticsEvent({ eventName: "product_view", metadata: { productId: loadedProductId } })).catch(() => {});
+      dispatch(trackRecommendationInteraction({ productId: loadedProductId, interactionType: "viewed" })).catch(() => {});
     }
-  }, [dispatch, isLoggedIn, product, productId]);
+  }, [dispatch, isLoggedIn, product, loadedProductId]);
 
   useEffect(() => {
     if (!isLoggedIn || !product) {
@@ -167,23 +213,23 @@ export function useProductDetailController(productId, rawParamId) {
       return;
     }
     addRecentlyViewed(product);
-    setRecentlyViewedList(getRecentlyViewed().filter((p) => String(getProductId(p)) !== String(productId)));
-  }, [isLoggedIn, product, productId]);
+    setRecentlyViewedList(getRecentlyViewed().filter((p) => String(getProductId(p)) !== String(loadedProductId)));
+  }, [isLoggedIn, product, loadedProductId]);
 
   // Dynamic Pricing fetch
   useEffect(() => {
-    if (!loadedProductId || String(loadedProductId) !== String(productId)) return;
-    const requestKey = `${productId}:${selectedVariantKey}:${quantity}`;
+    if (!loadedProductId) return;
+    const requestKey = `${loadedProductId}:${selectedVariantKey}:${quantity}`;
     if (dynamicPriceRequestKey.current === requestKey) return;
     dynamicPriceRequestKey.current = requestKey;
 
     dispatch(fetchDynamicPrice({
-      productId,
+      productId: loadedProductId,
       variantId: selectedVariant?._id,
       sku: selectedVariant?.sku,
       quantity,
     })).catch(() => {});
-  }, [dispatch, loadedProductId, productId, quantity, selectedVariantKey, selectedVariant?._id, selectedVariant?.sku]);
+  }, [dispatch, loadedProductId, quantity, selectedVariantKey, selectedVariant?._id, selectedVariant?.sku]);
 
   // Stock Validation
   const getAvailableStock = (v) => v?.stockQuantity ?? v?.inventoryQuantity ?? v?.quantity;
@@ -201,7 +247,7 @@ export function useProductDetailController(productId, rawParamId) {
   // Derived State extracted from Page
 
   const { variantOptions, selectedAttributes, findVariantForSelection } = useProductDetailVariants({ product, variants, selectedVariant });
-  const { selectedVariantPrice, productPrice, activeDealPrice, activeDealOriginalPrice, activeDealBadge, dynamicPrice, baseDisplayPrice, safeDynamicPrice, price, mrp, discount, currency, shipping, shippingEtaMin, shippingEtaMax, shippingEtaText, staticIsFree, staticCharge, productCodAvailable, productCodDisabled } = useProductDetailPricing({ product, selectedVariant, dynamicState, productId });
+  const { selectedVariantPrice, productPrice, activeDealPrice, activeDealOriginalPrice, activeDealBadge, dynamicPrice, baseDisplayPrice, safeDynamicPrice, price, mrp, discount, currency, shipping, shippingEtaMin, shippingEtaMax, shippingEtaText, staticIsFree, staticCharge, productCodAvailable, productCodDisabled } = useProductDetailPricing({ product, selectedVariant, dynamicState, productId: loadedProductId || productId });
   const { fallbackProductImage, variantImages, commonImages, productImages, rawMergedImages, images, productVideo } = useProductDetailImages({ product, selectedVariant });
 
   
@@ -359,12 +405,13 @@ export function useProductDetailController(productId, rawParamId) {
     productTitlePreview,
     isProductTitleTruncated,
     product,
+    loadedProductId,
     productState,
     warranty: warrantyState.current,
     dynamicState,
-    relatedProducts: relatedState.relatedByProduct[productId]?.items || [],
-    crossSellProducts: crossSellState.crossSellByProduct[productId]?.items || [],
-    recommendedProducts: (recommendationState?.list || []).filter((p) => String(getProductId(p) || "") !== String(productId || "")),
+    relatedProducts: relatedState.relatedByProduct[loadedProductId]?.items || [],
+    crossSellProducts: crossSellState.crossSellByProduct[loadedProductId]?.items || [],
+    recommendedProducts: (recommendationState?.list || []).filter((p) => String(getProductId(p) || "") !== String(loadedProductId || "")),
     recentlyViewedList,
     isLoggedIn,
     quantity,

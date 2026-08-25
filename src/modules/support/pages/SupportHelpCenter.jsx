@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2, ChevronDown } from "lucide-react";
-import BaseModal from "../../../components/ui/overlay/BaseModal";
+import { ChevronDown } from "lucide-react";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 
 import Seo from "../../../components/ui/Seo";
@@ -9,7 +8,6 @@ import ApiState from "../../../components/ui/ApiState";
 import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
 import NeedHelpPanel from "../../../components/ecommerce/NeedHelpPanel";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
-import SupportTicketSidebar from "../components/SupportTicketSidebar";
 import { useSupportController } from "../controllers/useSupportController";
 import { RaiseTicketModal } from "../components/RaiseTicketModal";
 import { TicketSuccessModal } from "../components/TicketSuccessModal";
@@ -17,10 +15,7 @@ import { SUPPORT_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import { SkeletonLoader } from "../../../components/ui/skeleton";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
-import { apiRequest } from "../../../api/client";
-import { endpoints } from "../../../api/endpoints";
-import { notify } from "../../../utils/notify";
-import { useAuthModal } from "../../../modules/auth/context/AuthModalContext";
+import { useAuthModal } from "../../../features/auth/AuthModalContext";
 import { useSelector } from "react-redux";
 import {
   SUPPORT_CONTACT_ITEMS,
@@ -38,12 +33,6 @@ const CUSTOMER_SUPPORT_CATEGORIES = [
   { value: "ACCOUNT_ISSUE", label: "Account Issue" },
   { value: "OTHER", label: "Other" },
 ];
-
-const CUSTOMER_SUPPORT_INITIAL_FORM = {
-  category: "ORDER_ISSUE",
-  subject: "",
-  message: "",
-};
 
 import {
   normalizeHelpTopics,
@@ -80,7 +69,6 @@ export default function SupportHelpCenter() {
 
   const [selectedSupportCategory, setSelectedSupportCategory] = useState("");
   const [helpPanelExpandedIndex, setHelpPanelExpandedIndex] = useState(null);
-  const [selectedTicket, setSelectedTicket] = useState(null);
 
   const {
     supportQueries,
@@ -382,9 +370,9 @@ export default function SupportHelpCenter() {
                   {!supportLoading &&
                     !supportError &&
                     supportQueries.map((ticket) => (
-                      <button
+                      <Link
                         key={ticket.id}
-                        onClick={() => setSelectedTicket(ticket)}
+                        to={`/support/tickets/${encodeURIComponent(ticket.id)}`}
                         className="w-full py-4 text-left  transition-colors cursor-pointer px-2 -mx-2 rounded-lg"
                       >
                         <div className="flex items-start justify-between gap-3">
@@ -400,7 +388,7 @@ export default function SupportHelpCenter() {
 
                           <SupportStatusBadge status={ticket.status} />
                         </div>
-                      </button>
+                      </Link>
                     ))}
                 </div>
               </section>
@@ -411,12 +399,6 @@ export default function SupportHelpCenter() {
 
       <RaiseTicketModal />
       <TicketSuccessModal />
-
-      <SupportTicketSidebar
-        isOpen={!!selectedTicket}
-        ticket={selectedTicket}
-        onClose={() => setSelectedTicket(null)}
-      />
     </AppErrorBoundary>
   );
 }

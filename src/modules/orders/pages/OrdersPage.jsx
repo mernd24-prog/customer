@@ -1,19 +1,32 @@
-import { useParams } from "react-router-dom";
-import Seo from "../../../components/ui/Seo";
-import OrderDetailPage from "./OrderDetailPage";
-import OrderListPage from "./OrderListPage";
+import { useEffect } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import Seo from "../../components/ui/Seo";
+import OrderDetail from "./components/OrderDetail";
+import OrderList from "./components/OrderList";
+import { decodeRouteToken, getOpaqueOrderPath } from "../../utils/routeTokens";
 
 export default function OrdersPage({ detail = false, track = false }) {
-  const { orderId } = useParams();
+  const { orderId, orderToken } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const tokenPayload = decodeRouteToken(orderToken, "order");
+  const resolvedOrderId = tokenPayload?.id || orderId;
+
+  useEffect(() => {
+    if (!orderId || !resolvedOrderId) return;
+    navigate(getOpaqueOrderPath(resolvedOrderId, { track, query: location.search }), {
+      replace: true,
+    });
+  }, [location.search, navigate, orderId, resolvedOrderId, track]);
   
   if (detail || track) {
     return (
       <>
         <Seo 
-          title={`Order ${orderId ? `Details - ${orderId}` : 'Details'} - Sam Global`} 
+          title="Order Details - Sam Global"
           metaDescription="View your order details and track its status." 
         />
-        <OrderDetailPage orderId={orderId} track={track} />
+        <OrderDetail orderId={resolvedOrderId} track={track} />
       </>
     );
   }

@@ -19,6 +19,7 @@ import {
 import { capitalizeFirst } from "../../../utils/stringUtils";
 import { getFilterSections } from "./getFilterSections";
 import { getActiveFilters } from "./getActiveFilters";
+import { decodeProductFilterToken } from "../utils/productFilterToken";
 
 export function useProductsPageController() {
   const dispatch = useDispatch();
@@ -36,6 +37,10 @@ export function useProductsPageController() {
   const productState = useSelector((s) => s.product);
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
+  const hiddenParams = useMemo(
+    () => decodeProductFilterToken(searchParams.get("f")),
+    [searchParams],
+  );
 
   const selectedBrands = useMemo(
     () => parseMultiValue(searchParams.get("brand")),
@@ -49,7 +54,8 @@ export function useProductsPageController() {
   const products = items;
   const totalPages = pageInfo.totalPages || 1;
   const currentPage = pageInfo.page || 1;
-  const pageSize = Number(searchParams.get("limit") || 12);
+  const effectiveSort = searchParams.get("sort") || hiddenParams.sort || "";
+  const pageSize = Number(searchParams.get("limit") || hiddenParams.limit || 12);
 
   const availabilityCounts = useMemo(
     () => getAvailabilityCounts(products, productFacets),
@@ -149,8 +155,9 @@ export function useProductsPageController() {
   }, [facetBrandOptions, products]);
 
   const getParams = useCallback(() => {
-    const params = {};
+    const params = { ...hiddenParams };
     for (const [key, value] of searchParams.entries()) {
+      if (key === "f") continue;
       if (params[key]) {
         params[key] = [].concat(params[key], value);
       } else {
@@ -158,7 +165,7 @@ export function useProductsPageController() {
       }
     }
     return params;
-  }, [searchParams]);
+  }, [hiddenParams, searchParams]);
 
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -306,6 +313,7 @@ export function useProductsPageController() {
   return {
     searchParams,
     setSearchParams,
+    effectiveSort,
     viewMode,
     sidebarOpen,
     setSidebarOpen,

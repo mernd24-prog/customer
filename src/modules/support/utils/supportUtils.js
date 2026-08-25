@@ -136,6 +136,7 @@ export function normalizeSupportQueries(result) {
     id: item.queryId || item.id,
     subject: item.subject || "Support request",
     message: item.message || "",
+    messages: Array.isArray(item.messages) ? item.messages : [],
     category: item.category || "OTHER",
     categoryLabel: formatSupportCategory(item.category || "OTHER"),
     status: item.status || "pending",

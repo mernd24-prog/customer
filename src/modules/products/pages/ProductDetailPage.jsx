@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useEffect, useMemo } from "react";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useProductDetailController } from "../controllers";
 import { useCartActions, useWishlistActions } from "../controllers/actions";
@@ -18,6 +18,8 @@ import {
   buildCartItem,
   isProductCodAvailable,
   getAvailableStock,
+  getProductPublicPath,
+  decodeProductRouteToken,
 } from "../../../utils/ecommerce";
 import { formatPageTitle } from "../../../utils/common";
 import ProductReviewsSection from "../../../modules/products/components/ProductReviewsSection";
@@ -49,10 +51,15 @@ import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
 export default function ProductDetailPage() {
-  const { productId: rawParamId } = useParams();
-  const productId = rawParamId ? String(rawParamId).split(":")[0] : "";
+  const { productId: rawParamId, publicCode, productToken } = useParams();
+  const tokenPayload = decodeProductRouteToken(productToken);
+  const rawRouteProductId = publicCode || (rawParamId ? String(rawParamId).split(":")[0] : "");
+  const isRawObjectIdRoute = !productToken && /^[a-f0-9]{24}$/i.test(rawRouteProductId);
+  const productId = isRawObjectIdRoute ? "" : productToken || rawRouteProductId;
+  const decodedProductId = tokenPayload?.p || rawRouteProductId;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     product,
@@ -109,7 +116,24 @@ export default function ProductDetailPage() {
     selectedAttributes,
     findVariantForSelection,
     detailRows,
-  } = useProductDetailController(productId, rawParamId);
+    loadedProductId,
+  } = useProductDetailController(productId, rawParamId, decodedProductId);
+  const resolvedProductId = loadedProductId || getProductId(product) || productId;
+
+  useEffect(() => {
+    if (isRawObjectIdRoute) {
+      navigate("/products", { replace: true });
+    }
+  }, [isRawObjectIdRoute, navigate]);
+
+  useEffect(() => {
+    if (!product) return;
+    const nextPath = getProductPublicPath(product, { variant: selectedVariant });
+    const currentPath = `${location.pathname}${location.search}`;
+    if (nextPath && nextPath !== currentPath) {
+      navigate(nextPath, { replace: true });
+    }
+  }, [location.pathname, location.search, navigate, product, selectedVariant]);
 
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
@@ -306,7 +330,7 @@ export default function ProductDetailPage() {
 
                       {/* Delivery Checker link directly below Quantity Selector */}
                       <DeliveryChecker
-                        productId={productId}
+                        productId={resolvedProductId}
                         product={product}
                         onResultChange={setDeliveryResult}
                       />
@@ -371,7 +395,7 @@ export default function ProductDetailPage() {
                 effectiveDescription={productDescription}
               />
 
-              <ProductReviewsSection productId={productId} product={product} />
+              <ProductReviewsSection productId={productId || resolvedProductId} product={product} realProductId={resolvedProductId} />
 
               {recommendedProducts.length > 0 && (
                 <ProductRecommendationSection

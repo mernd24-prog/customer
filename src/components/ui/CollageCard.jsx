@@ -5,6 +5,7 @@ import {
   compactLabel,
   collageLabelWidthClass,
 } from "../../utils/collage";
+import { productFilterUrl } from "../../modules/products/utils/productFilterToken";
 
 function CollageImage({ src, title, label, count, index }) {
   const imageLabel = label || title;
@@ -41,9 +42,15 @@ export default function CollageCard({ section }) {
     .filter((item) => item?.image)
     .slice(0, 4);
 
+  const sectionKey = String(section.key || "").toLowerCase();
+  const sectionTitle = String(section.title || "").toLowerCase();
   const cardLink = section.category
     ? `/categories/${section.category}`
-    : "/products";
+    : sectionKey.includes("new-arrivals") || sectionTitle.includes("new arrival")
+      ? productFilterUrl({ newArrival: "true", sort: "newest" })
+      : sectionKey.includes("trending") || sectionTitle.includes("trending")
+        ? productFilterUrl({ sort: "popular" })
+        : "/products";
 
   const normalizeCat = (c) =>
     String(c || "")

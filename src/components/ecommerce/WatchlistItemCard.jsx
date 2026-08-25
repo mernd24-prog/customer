@@ -4,8 +4,8 @@ import { X } from "lucide-react";
 import Button from "../ui/buttons/Button";
 import {
   formatMoney,
-  getProductId,
   getProductImage,
+  getProductPublicPath,
   getProductPrice,
   getProductTitle,
 } from "../../utils/ecommerce";
@@ -16,7 +16,7 @@ export function WatchlistItemCard({
   onAddToCart,
   onRemove,
 }) {
-  const id = getProductId(product);
+  const productPath = getProductPublicPath(product);
   const title = getProductTitle(product);
   const image = getProductImage(product);
   const price = formatMoney(getProductPrice(product), product?.currency);
@@ -25,7 +25,7 @@ export function WatchlistItemCard({
     return (
       <article className="group relative flex gap-3 border-b border-border p-3 transition-all duration-300 ease-in-out hover:bg-cream">
         <Link
-          to={`/products/${id}`}
+          to={productPath}
           target="_blank"
           rel="noopener noreferrer"
           className="h-16 w-16 shrink-0 overflow-hidden rounded-[8px] border border-border"
@@ -44,7 +44,7 @@ export function WatchlistItemCard({
           <div className="min-w-0">
             <h4 className="truncate text-[13px] font-semibold text-ink transition-all duration-300 ease-in-out group-hover:text-gold">
               <Link
-                to={`/products/${id}`}
+                to={productPath}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block min-w-0 truncate"
@@ -57,7 +57,7 @@ export function WatchlistItemCard({
           </div>
 
           <Link
-            to={`/products/${id}`}
+            to={productPath}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-1  text-[11px] font-medium text-gold hover:underline"
@@ -97,7 +97,7 @@ export function WatchlistItemCard({
 
           <div className="flex  flex-1 flex-col">
             <Link
-              to={`/products/${id}`}
+              to={productPath}
               target="_blank"
               rel="noopener noreferrer"
               className=" text-[22px] font-bold leading-8 text-ink  sm:text-[24px] sm:leading-[34px]"

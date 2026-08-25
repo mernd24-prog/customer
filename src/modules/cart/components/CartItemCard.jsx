@@ -4,6 +4,7 @@ import {
   applyImageFallback,
   getOptimizedCloudinaryUrl,
   generateCloudinarySrcSet,
+  getProductPublicPath,
 } from "../../../utils/ecommerce";
 import { calculateDiscountPercent } from "../../../utils/ecommerce/money";
 import { Link } from "react-router-dom";
@@ -32,10 +33,7 @@ export default function CartItemCard({
   isWishlisted = false,
 }) {
   const [isSaving, setIsSaving] = useState(false);
-  const rawProductId = item?.productId
-    ? String(item.productId).split(":")[0]
-    : "";
-  const productPath = rawProductId ? `/products/${rawProductId}` : "";
+  const productPath = getProductPublicPath(item?.product || item?.productId || item);
   const price = Number(item?.price || 0);
   const oldPrice = Number(item?.oldPrice || 0);
   const stock =

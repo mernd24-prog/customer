@@ -1,22 +1,93 @@
-import Seo from "../../../components/ui/Seo";
-import ApiState from "../../../components/ui/ApiState";
-import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
-import BrandButton from "../../../components/ui/buttons/Button";
-import { FailedIcon } from "../../../components/ui/icons";
-import usePaymentResult from "../controllers/usePaymentResult";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+
+import Seo from "../../components/ui/Seo";
+import ApiState from "../../components/ui/ApiState";
+import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
+import BrandButton from "../../components/ui/buttons/Button";
+import Loader from "../../components/ui/Loader";
+import { fetchOrderById } from "../../features/order/orderSlice";
+import { fetchMe } from "../../features/user/userSlice";
+import {
+  findFetchedOrder,
+  getDeliveryDateRange,
+  formatOrderDate,
+  getOrderNumber,
+} from "../../utils/orderHelpers";
+import { FailedIcon } from "../../components/ui/icons";
+import { decodeRouteToken, getOpaqueOrderPath } from "../../utils/routeTokens";
 
 export function PaymentResultPage() {
-  const {
-    orderId,
-    reason,
-    order,
-    orderState,
-    isConfirmed,
-    isActuallyFailed,
-    deliveryLabel,
-    handleViewOrder,
-    navigate
-  } = usePaymentResult();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const orderState = useSelector((state) => state.order);
+  const userState = useSelector((state) => state.user);
+  const [searchParams] = useSearchParams();
+  const [pageReady, setPageReady] = useState(false);
+
+  const orderTokenPayload = decodeRouteToken(searchParams.get("o"), "order");
+  const orderId = orderTokenPayload?.id || searchParams.get("orderId");
+  const reason = searchParams.get("reason") || "";
+
+  useEffect(() => {
+    if (!searchParams.get("orderId") || !orderId) return;
+    const status = location.pathname.includes("/payment/failed") ? "failed" : "success";
+    navigate(getOpaquePaymentResultPath(status, orderId, reason), { replace: true });
+  }, [location.pathname, navigate, orderId, reason, searchParams]);
+
+  const order = findFetchedOrder(orderState, orderId);
+  const displayOrderRef = getOrderNumber(order) || orderId;
+  const currentUser = userState.current || userState.data || {};
+  const orderStatus = String(order?.status || order?.orderStatus || "").toLowerCase();
+  const paymentStatus = String(
+    order?.paymentStatus || order?.payment_status || "",
+  ).toLowerCase();
+  const isCod = String(
+    order?.paymentProvider || order?.payment_provider || order?.paymentMethod || "",
+  ).toLowerCase() === "cod";
+  const isConfirmed = Boolean(order) &&
+    (isCod ? paymentStatus === "authorized" : paymentStatus === "captured") &&
+    !["pending_payment", "payment_failed"].includes(orderStatus);
+  const isActuallyFailed = paymentStatus === "failed" || orderStatus === "payment_failed";
+  const isPending = Boolean(orderId) && !isConfirmed && !isActuallyFailed;
+
+  const deliveryDateRange = getDeliveryDateRange(order || {});
+  const deliveryLabel = deliveryDateRange
+    ? deliveryDateRange.minDate
+      ? `${formatOrderDate(deliveryDateRange.minDate)} – ${formatOrderDate(deliveryDateRange.maxDate)}`
+      : formatOrderDate(deliveryDateRange.maxDate)
+    : "To be confirmed";
+
+  useEffect(() => {
+    if (orderId) {
+      setPageReady(false);
+      dispatch(fetchOrderById({ orderId })).finally(() => {
+        setPageReady(true);
+      });
+    } else {
+      setPageReady(true);
+    }
+  }, [dispatch, orderId]);
+
+  useEffect(() => {
+    if (!orderId || !isPending) return undefined;
+    const interval = window.setInterval(() => {
+      dispatch(fetchOrderById({ orderId }));
+    }, 3000);
+    const timeout = window.setTimeout(() => window.clearInterval(interval), 30000);
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(timeout);
+    };
+  }, [dispatch, isPending, orderId]);
+
+  useEffect(() => {
+    if (!currentUser?.id && !currentUser?._id && !userState.loading) {
+      dispatch(fetchMe());
+    }
+  }, [currentUser?._id, currentUser?.id, dispatch, userState.loading]);
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -57,7 +128,15 @@ export function PaymentResultPage() {
           <BrandButton
             variant="secondary"
             rounded
-            onClick={handleViewOrder}
+            onClick={() => {
+              if (orderId) {
+                dispatch(fetchOrderById({ orderId })).unwrap().finally(() => {
+                  navigate(getOpaqueOrderPath(orderId));
+                });
+              } else {
+                navigate("/orders");
+              }
+            }}
             label={isActuallyFailed || reason === "dismissed" ? "View order and retry" : "View order status"}
             className="h-12 w-full min-w-[180px] text-sm sm:w-auto"
           />
@@ -139,7 +218,11 @@ export function PaymentResultPage() {
                           <BrandButton
                             variant="secondary"
                             rounded
-                            onClick={handleViewOrder}
+                            onClick={() => {
+                              dispatch(fetchOrderById({ orderId })).unwrap().finally(() => {
+                navigate(getOpaqueOrderPath(orderId));
+                              });
+                            }}
                             label="View order details"
                             className="h-10 w-full min-w-[160px] text-xs sm:text-sm sm:w-auto px-6"
                           />
@@ -149,7 +232,7 @@ export function PaymentResultPage() {
                   </div>
 
                   <div className="mt-auto flex flex-col gap-2 border-t border-[#CE9F2D]/30 bg-[#FFF4D7] px-5 py-3 text-xs sm:text-sm font-semibold text-[#1B1D60] sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-3.5">
-                    <span className="break-words">Order ID : #{orderId}</span>
+                    <span className="break-words">Order : #{displayOrderRef}</span>
 
                     <span className="break-words">
                       Estimated Delivery : {deliveryLabel}

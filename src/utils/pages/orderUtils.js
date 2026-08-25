@@ -1,4 +1,4 @@
-import { getImageUrlFromValue } from "../../utils/ecommerce";
+import { getImageUrlFromValue, getProductPublicPath } from "../../utils/ecommerce";
 import {
   getOrderId,
   getOrderNumber,
@@ -159,7 +159,7 @@ export const getItemProductId = (item) => {
 
 export const getItemProductPath = (item) => {
   const productId = getItemProductId(item);
-  return productId ? `/products/${productId}` : "";
+  return productId ? getProductPublicPath(getItemProduct(item) || { id: productId }) : "";
 };
 
 
