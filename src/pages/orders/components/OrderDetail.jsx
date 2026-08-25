@@ -21,6 +21,7 @@ import OrderCancellations from "./OrderCancellations";
 import OrderReturns from "./OrderReturns";
 import OrderDocuments from "./OrderDocuments";
 import OrderActions from "./OrderActions";
+import { getOpaqueReturnRequestPath } from "../../../utils/routeTokens";
 
 import {
   getOrderNumber,
@@ -131,7 +132,10 @@ export default function OrderDetail({ orderId, track }) {
                     Boolean(selectedOrderItem) &&
                     selectedItemCanReturn && (
                       <Link
-                        to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}`}
+                        to={getOpaqueReturnRequestPath(
+                          orderId,
+                          `?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}`,
+                        )}
                         className="block w-full sm:w-auto"
                       >
                         <Button className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] bg-[#CE9F2D] px-[24px] py-[15px] text-white hover:bg-[#B88200]">

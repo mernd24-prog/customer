@@ -38,6 +38,9 @@ const FAQPage = lazy(() => import("../pages/faq/FAQPage"));
 const SupportHelpCenter = lazy(
   () => import("../modules/support/pages/SupportHelpCenter"),
 );
+const SupportTicketDetailsPage = lazy(
+  () => import("../modules/support/pages/SupportTicketDetailsPage"),
+);
 const CmsPage = lazy(() => import("../pages/cms/CmsPage"));
 const BrandOutletPage = lazy(() => import("../pages/brand/BrandOutletPage"));
 
@@ -164,6 +167,7 @@ export default function AppRoutes() {
           {/* Not working */}
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/support" element={<SupportHelpCenter />} />
+          <Route path="/support/tickets/:ticketId" element={<SupportTicketDetailsPage />} />
 
           {/* <Route path="/deals" element={<DealsPage />} /> */}
           <Route path="/brand-outlet" element={<BrandOutletPage />} />
@@ -198,6 +202,7 @@ export default function AppRoutes() {
             <Route path="/wishlist" element={<WatchlistPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/products" element={<ProductsPage />} />
+            <Route path="/products/pr" element={<ProductsPage />} />
             <Route path="/new-arrivals" element={<NewArrivalsPage />} />
             <Route
               path="/recently-uploaded"
@@ -207,11 +212,27 @@ export default function AppRoutes() {
             <Route path="/trending-now" element={<TrendingNowPage />} />
             <Route path="/recently-viewed" element={<RecentlyViewedPage />} />
             <Route
+              path="/products/i/:productToken"
+              element={<ProductDetailPage />}
+            />
+            <Route
               path="/products/:productId"
               element={<ProductDetailPage />}
             />
             <Route
+              path="/products/:slug/p/:publicCode"
+              element={<ProductDetailPage />}
+            />
+            <Route
+              path="/products/i/:productToken/reviews"
+              element={<ReviewDetailsPage />}
+            />
+            <Route
               path="/products/:productId/reviews"
+              element={<ReviewDetailsPage />}
+            />
+            <Route
+              path="/products/:slug/p/:publicCode/reviews"
               element={<ReviewDetailsPage />}
             />
             <Route path="/about-us" element={<AboutPage />} />
@@ -273,6 +294,11 @@ export default function AppRoutes() {
 
               {/* Orders */}
               <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/orders/i/:orderToken" element={<OrdersPage detail />} />
+              <Route
+                path="/orders/i/:orderToken/track"
+                element={<OrdersPage detail track />}
+              />
               <Route path="/orders/:orderId" element={<OrdersPage detail />} />
               <Route
                 path="/orders/:orderId/track"
@@ -281,6 +307,10 @@ export default function AppRoutes() {
 
               {/* Returns */}
               <Route path="/returns" element={<ReturnsPage />} />
+              <Route
+                path="/returns/request/i/:orderToken"
+                element={<ReturnsPage request />}
+              />
               <Route
                 path="/returns/request/:orderId"
                 element={<ReturnsPage request />}
@@ -295,6 +325,10 @@ export default function AppRoutes() {
 
               {/* Warranty */}
               <Route path="/warranty" element={<WarrantyPage />} />
+              <Route
+                path="/warranty/i/:warrantyToken"
+                element={<WarrantyPage detail />}
+              />
               <Route
                 path="/warranty/:warrantyId"
                 element={<WarrantyPage detail />}

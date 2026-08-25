@@ -8,6 +8,7 @@ import {
   getImageFallbackSrc,
   getProductId,
   getProductImage,
+  getProductPublicPath,
   getProductTitle,
 } from "../../../utils/ecommerce";
 
@@ -49,12 +50,6 @@ function CartLine({ item, onClose }) {
           ? productEntities[item.productId]
           : null) ||
         {};
-  const id =
-    getProductId(product) ||
-    (typeof item?.productId === "string"
-      ? item.productId
-      : getProductId(item)) ||
-    item?._id;
   const baseTitle = getProductTitle(product, item?.title || "Product");
   const title =
     item?.variantTitle &&
@@ -90,7 +85,7 @@ function CartLine({ item, onClose }) {
 
   return (
     <Link
-      to={`/products/${id}`}
+      to={getProductPublicPath(product || item)}
       onClick={onClose}
       className="group flex items-center gap-3 rounded-xl border border-[var(--customer-border)] bg-white p-2.5 transition-all duration-300 "
       aria-label={`View ${title}`}
@@ -136,7 +131,7 @@ export default function AddedToCartModal({
     addedProduct?.image ||
     addedProduct?.imageUrl ||
     getImageFallbackSrc(addedTitle, "cart");
-  const addedProductId = getProductId(addedProduct);
+  const addedProductPath = getProductPublicPath(addedProduct);
 
   const subtotal = cartItems.reduce((sum, item) => {
     const product = typeof item?.productId === "object" ? item.productId : {};
@@ -169,7 +164,7 @@ export default function AddedToCartModal({
             </div>
           </div>
           <Link
-            to={`/products/${addedProductId}`}
+            to={addedProductPath}
             onClick={onClose}
             className="group relative mt-5 flex items-center gap-4 rounded-2xl border border-white bg-white/80 p-3 shadow-sm backdrop-blur transition-all duration-300  sm:p-4"
             aria-label={`View ${addedTitle}`}

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { ShieldCheck } from "lucide-react";
@@ -14,9 +14,13 @@ import {
   registerWarranty,
   claimWarranty,
 } from "../../features/warranty/warrantySlice";
+import { decodeRouteToken, getOpaqueWarrantyPath } from "../../utils/routeTokens";
 
 export function WarrantyPage({ detail = false }) {
-  const { warrantyId } = useParams();
+  const { warrantyId, warrantyToken } = useParams();
+  const navigate = useNavigate();
+  const tokenPayload = decodeRouteToken(warrantyToken, "warranty");
+  const resolvedWarrantyId = tokenPayload?.id || warrantyId;
   const dispatch = useDispatch();
   const state = useSelector((s) => s.warranty);
   const run = useToastThunk();
@@ -24,8 +28,13 @@ export function WarrantyPage({ detail = false }) {
   const registerForm = useForm();
 
   useEffect(() => {
-    if (detail) dispatch(fetchWarrantyById({ warrantyId }));
-  }, [detail, dispatch, warrantyId]);
+    if (detail) dispatch(fetchWarrantyById({ warrantyId: resolvedWarrantyId }));
+  }, [detail, dispatch, resolvedWarrantyId]);
+
+  useEffect(() => {
+    if (!detail || !warrantyId || !resolvedWarrantyId) return;
+    navigate(getOpaqueWarrantyPath(resolvedWarrantyId), { replace: true });
+  }, [detail, navigate, resolvedWarrantyId, warrantyId]);
 
   const warranty = state.current;
   const warranties = Array.isArray(state.list) ? state.list : [];
@@ -151,7 +160,7 @@ export function WarrantyPage({ detail = false }) {
                       <p className=" text-xs text-gray">{w.period}</p>
                     </div>
                   </div>
-                  <Link to={`/warranty/${w.id}`}>
+                  <Link to={getOpaqueWarrantyPath(w.id)}>
                     <BrandButton
                       variant="secondary"
                       rounded

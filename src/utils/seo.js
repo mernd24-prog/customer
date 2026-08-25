@@ -1,4 +1,5 @@
 import { DEFAULT_SEO, SITE_CONFIG } from "../config/site";
+import { getProductPublicPath } from "./ecommerce";
 
 export function absoluteUrl(path = "", baseUrl = SITE_CONFIG.url) {
   if (!path) return baseUrl;
@@ -60,7 +61,7 @@ export function buildProductJsonLd(product = {}, url) {
           "@type": "Offer",
           url: absoluteUrl(
             url ||
-              `/products/${product.id || product._id || product.productId || ""}`,
+              getProductPublicPath(product),
           ),
           priceCurrency: product.currency || "INR",
           price: product.price,

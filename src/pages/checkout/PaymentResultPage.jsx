@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
@@ -13,21 +13,32 @@ import {
   findFetchedOrder,
   getDeliveryDateRange,
   formatOrderDate,
+  getOrderNumber,
 } from "../../utils/orderHelpers";
 import { FailedIcon } from "../../components/ui/icons";
+import { decodeRouteToken, getOpaqueOrderPath } from "../../utils/routeTokens";
 
 export function PaymentResultPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const orderState = useSelector((state) => state.order);
   const userState = useSelector((state) => state.user);
   const [searchParams] = useSearchParams();
   const [pageReady, setPageReady] = useState(false);
 
-  const orderId = searchParams.get("orderId");
+  const orderTokenPayload = decodeRouteToken(searchParams.get("o"), "order");
+  const orderId = orderTokenPayload?.id || searchParams.get("orderId");
   const reason = searchParams.get("reason") || "";
 
+  useEffect(() => {
+    if (!searchParams.get("orderId") || !orderId) return;
+    const status = location.pathname.includes("/payment/failed") ? "failed" : "success";
+    navigate(getOpaquePaymentResultPath(status, orderId, reason), { replace: true });
+  }, [location.pathname, navigate, orderId, reason, searchParams]);
+
   const order = findFetchedOrder(orderState, orderId);
+  const displayOrderRef = getOrderNumber(order) || orderId;
   const currentUser = userState.current || userState.data || {};
   const orderStatus = String(order?.status || order?.orderStatus || "").toLowerCase();
   const paymentStatus = String(
@@ -120,7 +131,7 @@ export function PaymentResultPage() {
             onClick={() => {
               if (orderId) {
                 dispatch(fetchOrderById({ orderId })).unwrap().finally(() => {
-                  navigate(`/orders/${encodeURIComponent(orderId)}`);
+                  navigate(getOpaqueOrderPath(orderId));
                 });
               } else {
                 navigate("/orders");
@@ -209,7 +220,7 @@ export function PaymentResultPage() {
                             rounded
                             onClick={() => {
                               dispatch(fetchOrderById({ orderId })).unwrap().finally(() => {
-                                navigate(`/orders/${encodeURIComponent(orderId)}`);
+                navigate(getOpaqueOrderPath(orderId));
                               });
                             }}
                             label="View order details"
@@ -221,7 +232,7 @@ export function PaymentResultPage() {
                   </div>
 
                   <div className="mt-auto flex flex-col gap-2 border-t border-[#CE9F2D]/30 bg-[#FFF4D7] px-5 py-3 text-xs sm:text-sm font-semibold text-[#1B1D60] sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-3.5">
-                    <span className="break-words">Order ID : #{orderId}</span>
+                    <span className="break-words">Order : #{displayOrderRef}</span>
 
                     <span className="break-words">
                       Estimated Delivery : {deliveryLabel}

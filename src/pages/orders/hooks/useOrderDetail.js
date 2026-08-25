@@ -18,6 +18,7 @@ import { fetchNotifications } from "../../../features/notification/notificationS
 import { downloadAuthDocument, getDocumentId } from "../../../utils/downloadAuthDocument";
 import { openRazorpayCheckout } from "../../../utils/razorpay";
 import { endpoints } from "../../../api/endpoints";
+import { getOpaquePaymentResultPath } from "../../../utils/routeTokens";
 import {
   getOrderId,
   getOrderStatus,
@@ -589,8 +590,8 @@ export function useOrderDetail({ orderId, track }) {
       const orderStatus = getOrderStatus(refreshedOrder);
       navigate(
         paymentStatus === "captured" && !["pending_payment", "payment_failed"].includes(orderStatus)
-          ? `/payment/success?orderId=${orderId}`
-          : `/payment/failed?orderId=${orderId}&reason=pending_confirmation`,
+          ? getOpaquePaymentResultPath("success", orderId)
+          : getOpaquePaymentResultPath("failed", orderId, "pending_confirmation"),
       );
     } catch (error) {
       const reason = error?.code === "PAYMENT_GATEWAY_FAILED"
@@ -598,7 +599,7 @@ export function useOrderDetail({ orderId, track }) {
         : error?.code === "PAYMENT_DISMISSED"
           ? "dismissed"
           : "pending_confirmation";
-      navigate(`/payment/failed?orderId=${orderId}&reason=${reason}`);
+      navigate(getOpaquePaymentResultPath("failed", orderId, reason));
     } finally {
       setRetrying(false);
       dispatch(fetchOrderById({ orderId }));

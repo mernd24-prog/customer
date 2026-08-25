@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronLeft, Star, ThumbsUp } from "lucide-react";
 import CustomDropdown from "../../components/ui/CustomDropdown";
@@ -12,7 +12,7 @@ import {
   fetchMyProductReview,
   markReviewHelpful,
 } from "../../features/review/reviewSlice";
-import { getImageUrlFromValue } from "../../utils/ecommerce";
+import { getImageUrlFromValue, getProductPublicPath } from "../../utils/ecommerce";
 import {
   sortReviews,
   getUserDisplayName,
@@ -61,7 +61,7 @@ function ProductReviewSidebar({ product, productId }) {
   return (
     <aside className="lg:sticky lg:top-[calc(var(--customer-header-height,95px)+80px)] lg:self-start">
       <Link
-        to={productId ? `/products/${productId}` : "/products"}
+        to={getProductPublicPath(product || { id: productId })}
         className="mb-4 inline-flex items-center gap-1 text-xs font-bold uppercase text-gold-dark"
       >
         <ChevronLeft size={16} />
@@ -419,8 +419,12 @@ function ReviewPagination({ page, totalPages, onPrev, onNext }) {
 }
 
 export default function ReviewDetailsPage() {
-  const { productId } = useParams();
+  const { productId: routeProductId, publicCode, productToken } = useParams();
+  const rawRouteProductId = publicCode || routeProductId;
+  const isRawObjectIdRoute = !productToken && /^[a-f0-9]{24}$/i.test(String(rawRouteProductId || ""));
+  const productId = isRawObjectIdRoute ? "" : productToken || rawRouteProductId;
   const { state } = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { openAuthModal } = useAuthModal();
 
@@ -448,6 +452,12 @@ export default function ReviewDetailsPage() {
   const [ratingFilter, setRatingFilter] = useState(null);
   const [sort, setSort] = useState("newest");
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    if (isRawObjectIdRoute) {
+      navigate("/products", { replace: true });
+    }
+  }, [isRawObjectIdRoute, navigate]);
 
   const loading = Boolean(bucket.loading);
   const error = bucket.error || "";

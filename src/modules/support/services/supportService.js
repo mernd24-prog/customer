@@ -2,14 +2,22 @@ import { apiRequest } from "../../../api/client";
 import { endpoints } from "../../../api/endpoints";
 
 export const supportService = {
-  fetchSupportQueries: async (selectedCategory = "") => {
+  fetchSupportQueries: async (selectedCategory = "", limit = 5) => {
     const result = await apiRequest({
       method: "get",
       url: endpoints.support.queries,
       params: {
-        limit: 5,
+        limit,
         ...(selectedCategory ? { category: selectedCategory } : {}),
       },
+    });
+    return result;
+  },
+
+  fetchSupportTicket: async (queryId) => {
+    const result = await apiRequest({
+      method: "get",
+      url: endpoints.support.query(queryId),
     });
     return result;
   },

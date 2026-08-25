@@ -11,6 +11,7 @@ import StickySidebarLayout from "../../components/ui/layout/StickySidebarLayout"
 import { fetchNotifications } from "../../features/notification/notificationSlice";
 import notificationData from "../../data/notificationData";
 import { SKELETON_PRESETS } from "../../components/ui/skeleton/skeletonPresets";
+import { getOpaqueOrderPath } from "../../utils/routeTokens";
 
 const formatNotificationDate = (value) => {
   if (!value) return "";
@@ -177,12 +178,13 @@ export function NotificationsPage() {
                     notificationData.default;
 
                   const orderId = notif.payload?.orderId;
+                  const rawViewUrl = notif.payload?.viewUrl || "";
 
                   const actionPath = orderId
                     ? notificationItem.actionPath === "/orders/:orderId/track"
-                      ? `/orders/${orderId}/track`
-                      : notificationItem.actionPath === "/orders"
-                        ? `/orders/${orderId}`
+                      ? getOpaqueOrderPath(orderId, { track: true })
+                      : notificationItem.actionPath === "/orders" || rawViewUrl.startsWith("/orders/")
+                        ? getOpaqueOrderPath(orderId)
                         : notificationItem.actionPath
                     : notificationItem.actionPath;
 

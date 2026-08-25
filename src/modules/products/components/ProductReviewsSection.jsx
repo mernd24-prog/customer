@@ -16,7 +16,7 @@ import {
 import { fetchMyOrders } from "../../../features/order/orderSlice";
 import ReviewImageUploader from "../../../components/ecommerce/ReviewImageUploader";
 import ReviewMediaLightbox from "../../../components/ecommerce/ReviewMediaLightbox";
-import { getImageUrlFromValue } from "../../../utils/ecommerce";
+import { getImageUrlFromValue, getProductPublicPath } from "../../../utils/ecommerce";
 import ShowMoreText from "../../../utils/showMore";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -452,7 +452,7 @@ function sortReviewsByOption(reviews, sort) {
   return sorted;
 }
 
-export default function ProductReviewsSection({ productId, product }) {
+export default function ProductReviewsSection({ productId, product, realProductId = productId }) {
   const dispatch = useDispatch();
   const { openAuthModal } = useAuthModal();
 
@@ -474,7 +474,7 @@ export default function ProductReviewsSection({ productId, product }) {
       (["delivered", "fulfilled", "completed"].includes(o.status) && o.items) ||
       [].some(
         (item) =>
-          String(item.productId || item.product_id) === String(productId),
+          String(item.productId || item.product_id) === String(realProductId),
       ),
   );
 
@@ -776,7 +776,7 @@ export default function ProductReviewsSection({ productId, product }) {
           {displayTotal > 0 && (
             <div className="mt-3 pt-3 border-t border-[#E7D9B8]/40 flex justify-end">
               <Link
-                to={`/products/${productId}/reviews`}
+                to={`${getProductPublicPath(product || { id: productId })}/reviews`}
                 state={{ product }}
                 className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#CE9F2D] hover:text-[#A96F14] transition-colors"
               >

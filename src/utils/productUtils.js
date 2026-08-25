@@ -1,6 +1,7 @@
 import {
   getProductImage as getVariantProductImage,
   getProductMrp,
+  getProductPublicPath,
   getProductPrice,
 } from "./ecommerce";
 
@@ -10,8 +11,7 @@ export const formatPrice = (product) => {
 };
 
 export const getProductLink = (product) => {
-  const slug = product?.slug || product?.id || product?._id;
-  return slug ? `/products/${slug}` : "/products";
+  return getProductPublicPath(product);
 };
 
 export const getProductImage = (product) => {

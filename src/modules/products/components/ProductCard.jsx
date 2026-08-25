@@ -8,7 +8,7 @@ import Price from "./Price";
 import Rating from "./Rating";
 import WishlistButton from "../../../components/ecommerce/WishlistButton";
 import {
-  getProductId,
+  getProductPublicPath,
   getProductImage,
   getProductTitle,
   getProductPrice,
@@ -102,7 +102,6 @@ export default function ProductCard({
   }, [target, location.pathname]);
 
   const cardProduct = product || {};
-  const id = getProductId(cardProduct);
   const title = titleProp || getProductTitle(cardProduct);
   const rawBrand = brandProp || cardProduct?.brand;
   const brand =
@@ -133,7 +132,7 @@ export default function ProductCard({
     0;
   const discountPercent =
     discountPercentProp ?? cardProduct?.discountPercent ?? 0;
-  const to = href || `/products/${id}`;
+  const to = href || getProductPublicPath(cardProduct);
   const isListVariant = variant === "list" || variant === "compact";
   const isFeatured =
     cardProduct?.metadata?.featured === true ||
