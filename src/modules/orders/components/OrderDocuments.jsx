@@ -1,6 +1,6 @@
 import { Download, FileText } from "lucide-react";
 import Button from "../../../components/ui/buttons/Button";
-import OrderDetailSectionCard from "./OrderDetailSectionCard";
+import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 
 export default function OrderDocuments({
   downloadableDocuments,
@@ -30,7 +30,7 @@ export default function OrderDocuments({
     (visiblePendingSellerDocuments?.length || 0);
 
   return (
-    <OrderDetailSectionCard
+    <DetailSectionCard
       title={
         <div className="flex items-center gap-2">
           <FileText size={18} className="text-[#3E4093]" />
@@ -128,6 +128,6 @@ export default function OrderDocuments({
             </Button>
           )}
       </div>
-    </OrderDetailSectionCard>
+    </DetailSectionCard>
   );
 }

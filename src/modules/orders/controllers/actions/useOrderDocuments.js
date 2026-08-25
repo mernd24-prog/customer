@@ -8,10 +8,11 @@ import { notify } from "../../../../utils/notify";
 import {
   hasDeliveredSellerPackage,
   getOrderItemId,
-  getCustomerPlatformFeeAmount
+  getCustomerPlatformFeeAmount,
+  isDeliveredOrderItem
 } from "../../../../utils/pages/orderUtils";
 
-export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleReturns, cancellations }) {
+export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleReturns, visibleCancellations }) {
   const dispatch = useDispatch();
   const [invoices, setInvoices] = useState(null);
   const [, setInvoicesLoading] = useState(false);
@@ -110,7 +111,50 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         : []),
     ].map(String);
     if (explicitIds.includes(selectedItemId)) return true;
-    if (!coveredItems.length) return true;
+    if (!coveredItems.length) {
+      const docSellerId =
+        document.sellerId ||
+        document.seller_id ||
+        metadata.sellerId ||
+        metadata.seller_id ||
+        metadata.seller?.id ||
+        metadata.seller?._id;
+      
+      const itemSellerId =
+        selectedOrderItem.seller_id ||
+        selectedOrderItem.sellerId ||
+        selectedOrderItem.seller?.id ||
+        selectedOrderItem.seller?._id;
+
+      if (docSellerId && itemSellerId) {
+        if (String(docSellerId) !== String(itemSellerId)) {
+          return false;
+        }
+      } else {
+        // Fallback to name matching if IDs are missing
+        const docSellerName =
+          document.sellerName ||
+          metadata.seller?.businessName ||
+          metadata.seller?.displayName;
+          
+        if (docSellerName) {
+          const fulfillmentGroups = order?.relations?.sellerFulfillmentGroups || [];
+          const itemFulfillment = fulfillmentGroups.find(
+            (g) => String(g.sellerId || g.seller_id) === String(itemSellerId)
+          );
+          const itemSellerName =
+            itemFulfillment?.sellerName ||
+            selectedOrderItem.sellerName ||
+            selectedOrderItem.seller?.displayName ||
+            selectedOrderItem.seller?.businessName;
+            
+          if (itemSellerName && docSellerName !== itemSellerName) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
     return coveredItems.some(
       (item) =>
         String(
@@ -122,9 +166,15 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
   const visibleCustomerInvoices = selectedOrderItem
     ? customerInvoices.filter(documentCoversSelectedItem)
     : customerInvoices;
-  const visiblePendingSellerDocuments = selectedOrderItem
-    ? pendingSellerDocuments.filter(documentCoversSelectedItem)
-    : pendingSellerDocuments;
+  const isItemDelivered = selectedOrderItem 
+    ? isDeliveredOrderItem(selectedOrderItem) 
+    : hasDeliveredSellerPackage(order);
+
+  const visiblePendingSellerDocuments = isItemDelivered 
+    ? (selectedOrderItem
+      ? pendingSellerDocuments.filter(documentCoversSelectedItem)
+      : pendingSellerDocuments)
+    : [];
 
   const returnReverseInvoices = visibleReturns
     .map((returnRequest) => {
@@ -152,7 +202,7 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
     })
     .filter(Boolean);
 
-  const cancellationReverseInvoices = cancellations
+  const cancellationReverseInvoices = visibleCancellations
     .map((cancellation) => {
       const creditNoteId =
         cancellation.credit_note_id || cancellation.creditNoteId;
@@ -197,7 +247,7 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         filename: `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || `receipt-${orderId}`}.pdf`,
       }
       : null,
-    customerFeeInvoice && getDocumentId(customerFeeInvoice)
+    customerFeeInvoice && getDocumentId(customerFeeInvoice) && (!selectedOrderItem || isDeliveredOrderItem(selectedOrderItem))
       ? {
         id: getDocumentId(customerFeeInvoice),
         title: "Platform fee invoice",
@@ -208,7 +258,7 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         filename: `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
       }
       : null,
-    !customerFeeInvoice && customerPlatformFee > 0
+    !customerFeeInvoice && customerPlatformFee > 0 && (!selectedOrderItem || isDeliveredOrderItem(selectedOrderItem))
       ? {
         id: `pending-platform-fee-${orderId}`,
         title: "Platform fee invoice",
@@ -216,7 +266,7 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         pending: true,
       }
       : null,
-    ...(selectedOrderItem ? [] : cancellationReverseInvoices),
+    ...cancellationReverseInvoices,
     ...returnReverseInvoices,
   ].filter(Boolean);
 

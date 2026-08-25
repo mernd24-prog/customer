@@ -21,7 +21,7 @@ import {
   generateCloudinarySrcSet,
 } from "../../../utils/ecommerce";
 import { cn } from "../../../utils/common";
-import StarRating from "./starRating";
+import StarRating from "../../../components/ui/display/StarRating";
 
 const getDealEndDateValue = (product = {}) =>
   product?.deal?.endAt ||

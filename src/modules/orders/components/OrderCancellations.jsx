@@ -1,10 +1,10 @@
 import { formatMoney } from "../../../utils/ecommerce";
-import OrderDetailSectionCard from "./OrderDetailSectionCard";
+import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 
 export default function OrderCancellations({ cancellations, currency, isCodOrder }) {
   if (!cancellations || !cancellations.length) return null;
   return (
-    <OrderDetailSectionCard
+    <DetailSectionCard
       title="Cancellation and refund status"
       headerClassName="!min-h-[60px] !py-4"
       titleClassName="text-lg font-bold"
@@ -65,6 +65,6 @@ export default function OrderCancellations({ cancellations, currency, isCodOrder
           );
         })}
       </div>
-    </OrderDetailSectionCard>
+    </DetailSectionCard>
   );
 }

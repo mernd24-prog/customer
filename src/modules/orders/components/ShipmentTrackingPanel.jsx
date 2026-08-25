@@ -1,5 +1,5 @@
 import { Clock3, ExternalLink, Package, Truck } from "lucide-react";
-import OrderDetailSectionCard from "./OrderDetailSectionCard";
+import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 
 const STATUS_LABELS = { out_for_delivery: "Out For Delivery" };
 
@@ -119,7 +119,7 @@ export default function ShipmentTrackingPanel({
             className="grid gap-6 lg:grid-cols-2"
           >
             {/* Shipment Information */}
-            <OrderDetailSectionCard
+            <DetailSectionCard
               title={isReverse ? "Return Pickup Information" : "Shipment Information"}
 
               headerClassName="!min-h-[60px] !py-4"
@@ -192,10 +192,10 @@ export default function ShipmentTrackingPanel({
                   </div>
                 )}
               </div>
-            </OrderDetailSectionCard>
+            </DetailSectionCard>
 
             {/* Tracking Timeline */}
-            <OrderDetailSectionCard
+            <DetailSectionCard
               title={isReverse ? "Return Timeline" : "Tracking Timeline"}
               headerClassName="!min-h-[60px] !py-4"
               titleClassName="text-lg font-bold"
@@ -241,7 +241,7 @@ export default function ShipmentTrackingPanel({
                   </div>
                 ))}
               </div>
-            </OrderDetailSectionCard>
+            </DetailSectionCard>
           </div>
         );
       })}

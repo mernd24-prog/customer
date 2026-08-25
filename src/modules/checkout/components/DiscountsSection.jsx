@@ -1,6 +1,6 @@
 import FormField from "../../../components/ui/FormField";
 import { formatMoney } from "../../../utils/ecommerce";
-import OrderDetailSectionCard from "../../../modules/orders/components/OrderDetailSectionCard";
+import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 import { Wallet } from "lucide-react";
 
 export default function DiscountsSection({
@@ -21,7 +21,7 @@ export default function DiscountsSection({
   };
 
   return (
-    <OrderDetailSectionCard title="Discounts">
+    <DetailSectionCard title="Discounts">
       <div className="flex flex-col gap-4 lg:gap-[36px] rounded-[20px] px-[15px] py-[20px] lg:px-[25px] lg:py-[30px] lg:flex-row">
         <div className="flex-1">
           <FormField
@@ -68,6 +68,6 @@ export default function DiscountsSection({
           <input type="hidden" {...register("walletAmount")} />
         </div>
       </div>
-    </OrderDetailSectionCard>
+    </DetailSectionCard>
   );
 }

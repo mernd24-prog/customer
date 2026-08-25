@@ -15,7 +15,7 @@ export function useCheckServiceability() {
       address?.postalCode || address?.postal_code || address?.pincode || address?.zip || "",
     ).trim();
     const productId = product?._id || product?.id || product?.productId?._id || product?.productId;
-    if (!/^d{6}$/.test(pincode) || !productId) return true;
+    if (!/^\d{6}$/.test(pincode) || !productId) return true;
 
     try {
       const payload = await dispatch(checkServiceability({ pincode, productId })).unwrap();
