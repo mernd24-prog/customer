@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setGuestCart, updateCart } from "../../../../features/cart/cartSlice";
-import { openAddedToCartModal } from "../../../../features/cart/cartUiSlice";
+import { setGuestCart, updateCart } from "../../../../modules/cart/slices/cartSlice";
+import { openAddedToCartModal } from "../../../../modules/cart/slices/cartUiSlice";
 import { addProductToCartPayload, writeGuestCart } from "../../../../utils/ecommerce";
 import { useToastThunk } from "../../../../hooks/useToastThunk";
 import { useCheckServiceability } from "./useCheckServiceability";

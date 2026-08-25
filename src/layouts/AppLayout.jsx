@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Header, CategoryBar } from "./Header";
 import React, { Suspense } from "react";
 const AddedToCartModal = React.lazy(
-  () => import("../pages/cart/components/AddedToCartModal"),
+  () => import("../modules/cart/components/AddedToCartModal"),
 );
 const GuestOtpAuthModal = React.lazy(
   () => import("../components/ui/overlay/GuestOtpAuthModal"),
@@ -13,9 +13,9 @@ const GuestOtpAuthModal = React.lazy(
 const ScrollTopButton = React.lazy(
   () => import("../components/ui/ScrollTopButton"),
 );
-import { closeAddedToCartModal } from "../features/cart/cartUiSlice";
+import { closeAddedToCartModal } from "../modules/cart/slices/cartUiSlice";
 import { footerData } from "../data/footer";
-import { AUTH_ROUTES } from "../features/auth/authRoutes";
+import { AUTH_ROUTES } from "../modules/auth/routes/apiRoutes";
 
 const LazyFooter = React.lazy(() =>
   import("./Footer").then((module) => ({ default: module.Footer })),

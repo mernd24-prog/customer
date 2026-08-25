@@ -1,0 +1,166 @@
+import Seo from "../../../components/ui/Seo";
+import ApiState from "../../../components/ui/ApiState";
+import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
+import BrandButton from "../../../components/ui/buttons/Button";
+import { FailedIcon } from "../../../components/ui/icons";
+import usePaymentResult from "../controllers/usePaymentResult";
+
+export function PaymentResultPage() {
+  const {
+    orderId,
+    reason,
+    order,
+    orderState,
+    isConfirmed,
+    isActuallyFailed,
+    deliveryLabel,
+    handleViewOrder,
+    navigate
+  } = usePaymentResult();
+
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Cart", href: "/cart" },
+    { label: "Checkout" },
+    { label: isConfirmed ? "Order Placed" : isActuallyFailed ? "Payment Failed" : "Payment Pending" },
+  ];
+
+  const resultCard = (
+    <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <Breadcrumbs
+        items={breadcrumbItems}
+        className="mb-6"
+      />
+      <section className={`overflow-hidden rounded-[20px] border bg-white shadow-[0_24px_60px_rgba(27,29,96,0.06)] ${isActuallyFailed ? "border-red-200" : "border-amber-200"}`}>
+        <div className="bg-[linear-gradient(135deg,#FFF6F6_0%,#FFFFFF_100%)] px-6 py-8 text-center sm:px-10">
+          <div className="flex flex-col items-center justify-center gap-5">
+            <div className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-full ${isActuallyFailed ? "bg-red-100 text-red-500" : "bg-amber-100 text-amber-600"}`}>
+              {isActuallyFailed
+                ? <FailedIcon className="h-10 w-10" />
+                : <span className="text-4xl" aria-hidden="true">⌛</span>}
+            </div>
+            <div className="flex flex-col items-center">
+              <h1 className="text-[32px] font-bold leading-tight text-[#3E4093]">
+                {isActuallyFailed ? "Payment Failed" : reason === "dismissed" ? "Payment Not Completed" : "Payment Confirmation Pending"}
+              </h1>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-[#2E2E2E]">
+                {isActuallyFailed
+                  ? "Razorpay could not complete this payment. Your order is saved; retry safely from its order page."
+                  : reason === "dismissed"
+                    ? "You closed Razorpay before payment completed. Your order is saved and will not be shipped until payment is confirmed."
+                    : "We have not received final payment confirmation yet. This page checks automatically; please do not pay twice."}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col justify-center gap-3 border-t border-red-100 px-6 py-5 sm:flex-row sm:px-10">
+          <BrandButton
+            variant="secondary"
+            rounded
+            onClick={handleViewOrder}
+            label={isActuallyFailed || reason === "dismissed" ? "View order and retry" : "View order status"}
+            className="h-12 w-full min-w-[180px] text-sm sm:w-auto"
+          />
+        </div>
+      </section>
+    </div>
+  );
+
+  if (!orderId) {
+    return (
+      <>
+        <Seo
+          title={
+            "Payment Status | Sam Global"
+          }
+        />
+        <div className="mx-auto flex min-h-[60vh] w-full max-w-md items-center px-4 py-12">
+          <div className="w-full rounded-[var(--customer-radius)] border border-border bg-white p-8 text-center">
+            <h1 className="text-2xl font-bold text-ink">Order reference missing</h1>
+            <p className="mt-2 text-sm text-muted">Open My Orders to check whether an order was created.</p>
+            <BrandButton variant="secondary" rounded onClick={() => navigate("/orders")} label="View Orders" className="mt-5" />
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if ((!order && !orderState.loading && orderState.error) || (order && !isConfirmed)) {
+    return <><Seo title="Payment Status | Sam Global" />{resultCard}</>;
+  }
+
+  return (
+    <>
+      <Seo
+        title={
+          isConfirmed ? "Payment Successful | Sam Global" : "Payment Status | Sam Global"
+        }
+      />
+      <div className="!main-container py-4 min-[375px]:py-10 sm:py-2 lg:py-[3rem]">
+        <ApiState
+          loading={orderState.loading && !order}
+          error={orderState.error}
+          empty={!order}
+        >
+          <div className="grid gap-6 xl:gap-12">
+            <section className="grid !sm:mt-10">
+              <Breadcrumbs
+                items={breadcrumbItems}
+                className="sm:mt-6 xl:mt-2"
+              />
+            </section>
+
+            <div className="mx-auto flex w-full justify-center">
+              <div className="w-full max-w-3xl">
+                <section className="flex w-full flex-col overflow-hidden rounded-[16px] border border-[#CE9F2D]/40 bg-[#fffcf6] shadow-sm sm:rounded-[18px]">
+                  <div className="flex flex-col gap-4 px-5 py-6 text-center sm:px-8 sm:py-8">
+                    <div className="flex flex-col items-center justify-center gap-3 sm:gap-4">
+                      <div className="shrink-0">
+                        <img loading="lazy" width="400" height="400"
+                          src="/image/png/Group.png"
+                          alt="Order Placed Successfully"
+                          className="size-16 sm:size-20 object-contain"
+                        />
+                      </div>
+
+                      <div className="flex flex-col items-center">
+                        <h1 className="break-words text-xl sm:text-2xl font-bold text-[#3E4093]">
+                          Order Placed Successfully!
+                        </h1>
+
+                        <p className="my-2 max-w-xl text-xs sm:text-sm font-medium text-[#2E2E2E] leading-relaxed">
+                          Thank You for Shopping with Sam Global.
+                          <br className="hidden sm:block" />
+                          Your order has been received and is being prepared for
+                          shipment.
+                        </p>
+
+                        <div className="mt-3 flex flex-col justify-center gap-3 sm:flex-row sm:items-center">
+                          <BrandButton
+                            variant="secondary"
+                            rounded
+                            onClick={handleViewOrder}
+                            label="View order details"
+                            className="h-10 w-full min-w-[160px] text-xs sm:text-sm sm:w-auto px-6"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-auto flex flex-col gap-2 border-t border-[#CE9F2D]/30 bg-[#FFF4D7] px-5 py-3 text-xs sm:text-sm font-semibold text-[#1B1D60] sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-3.5">
+                    <span className="break-words">Order ID : #{orderId}</span>
+
+                    <span className="break-words">
+                      Estimated Delivery : {deliveryLabel}
+                    </span>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </ApiState>
+      </div>
+    </>
+  );
+}

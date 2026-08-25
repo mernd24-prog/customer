@@ -6,13 +6,11 @@ export function getTopicImage(title = "") {
   const match = Object.entries(SUPPORT_TOPIC_IMAGE_BY_TITLE).find(([key]) =>
     normalized.includes(key),
   );
-
   return match?.[1] || "/image/png/default-topic.png";
 }
 
 export function parseBodySections(body = "") {
   if (!body) return [];
-
   const sections = [];
   let current = null;
 
@@ -79,9 +77,7 @@ export function normalizeHelpTopics(page) {
   if (points.length) {
     return mapCards(points);
   }
-
   const rootPoints = Array.isArray(page?.points) ? page.points : [];
-
   return mapCards(rootPoints.filter((item) => !item?.description)).slice(0, 8);
 }
 
@@ -146,9 +142,9 @@ export function normalizeSupportQueries(result) {
     adminNotes: item.adminNotes || "",
     statusHistory: Array.isArray(item.statusHistory)
       ? item.statusHistory.map((historyItem) => ({
-          ...historyItem,
-          changedAt: formatSupportDate(historyItem.changedAt),
-        }))
+        ...historyItem,
+        changedAt: formatSupportDate(historyItem.changedAt),
+      }))
       : [],
     resolvedAt: item.resolvedAt ? formatSupportDate(item.resolvedAt) : "",
     createdAt: formatSupportDate(item.createdAt),

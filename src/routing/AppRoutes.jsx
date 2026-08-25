@@ -2,14 +2,19 @@ import { lazy, Suspense } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import AppLayout from "../layouts/AppLayout";
 import { BuyerOnlyRoute, GuestRoute, ProtectedRoute } from "./RouteGuards";
-import { AUTH_ROUTES } from "../features/auth/authRoutes";
+import { AUTH_ROUTES } from "../modules/auth/routes/apiRoutes";
+import { PRODUCT_ROUTES } from "../modules/products/routes/apiRoutes";
+import { ORDER_ROUTES } from "../modules/orders/routes/apiRoutes";
+import { CHECKOUT_ROUTES } from "../modules/checkout/routes/apiRoutes";
+import { CART_ROUTES } from "../modules/cart/routes/apiRoutes";
+import { RETURNS_ROUTES } from "../modules/returns/routes/apiRoutes";
 import Loader from "../components/ui/Loader";
 
 
 const CategoryListingPage = lazy(() => import("../pages/category/CategoryListingPage"),);
 const DownloadApp = lazy(() => import("../pages/downloadApp/DownloadApp"));
 const PolicyPage = lazy(() => import("../pages/policiesPage/PoliciesPages"));
-const ReturnsPage = lazy(() => import("../pages/returns/ReturnsPage.jsx"));
+const ReturnsPage = lazy(() => import("../modules/returns/pages/ReturnsPage.jsx"));
 const ContactUs = lazy(() => import("../pages/contact/ContactUs.jsx"));
 const SellerPolicy = lazy(
   () => import("../pages/seller/sellerPolicy/sellerPolicy.jsx"),
@@ -21,18 +26,18 @@ const BecomeASeller = lazy(
 const lazyNamed = (loader, exportName) =>
   lazy(() => loader().then((module) => ({ default: module[exportName] })));
 
-const LoginPage = lazy(() => import("../pages/auth/LoginPage"));
+const LoginPage = lazy(() => import("../modules/auth/pages/LoginPage"));
 const BuyerRegisterPage = lazy(
-  () => import("../features/auth/BuyerRegisterPage"),
+  () => import("../modules/auth/pages/BuyerRegisterPage"),
 );
-const RegisterOtpPage = lazy(() => import("../pages/auth/RegisterOtpPage"));
+const RegisterOtpPage = lazy(() => import("../modules/auth/pages/RegisterOtpPage"));
 const VerifyRegistrationPage = lazy(
-  () => import("../pages/auth/VerifyRegistrationPage"),
+  () => import("../modules/auth/pages/VerifyRegistrationPage"),
 );
 const ForgotPasswordPage = lazy(
-  () => import("../pages/auth/ForgotPasswordPage"),
+  () => import("../modules/auth/pages/ForgotPasswordPage"),
 );
-const ResetPasswordPage = lazy(() => import("../pages/auth/ResetPasswordPage"));
+const ResetPasswordPage = lazy(() => import("../modules/auth/pages/ResetPasswordPage"));
 
 const FAQPage = lazy(() => import("../pages/faq/FAQPage"));
 const SupportHelpCenter = lazy(
@@ -48,7 +53,6 @@ const HomePage = lazyNamed(
 const WatchlistPage = lazy(() => import("../pages/watchList/WatchListPage"));
 const SearchPage = lazy(() => import("../pages/search/SearchPage"));
 const ProductsPage = lazy(() => import("../modules/products/pages/ProductsPage"));
-// const DealsPage = lazy(() => import("../pages/deals/DealsPage"));
 const ProductDetailPage = lazy(
   () => import("../modules/products/pages/ProductDetailPage"),
 );
@@ -81,15 +85,15 @@ const CategoryPage = lazy(() => import("../pages/category/CategoryPage"));
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 
 const AccountPage = lazy(() => import("../pages/account/AccountPage"));
-const CartPage = lazy(() => import("../pages/cart/CartPage"));
-const CheckoutPage = lazy(() => import("../pages/checkout/CheckoutPage"));
+const CartPage = lazy(() => import("../modules/cart/pages/CartPage"));
+const CheckoutPage = lazy(() => import("../modules/checkout/pages/CheckoutPage"));
 const PaymentResultPage = lazyNamed(
-  () => import("../pages/checkout/PaymentResultPage"),
+  () => import("../modules/checkout/pages/PaymentResultPage"),
   "PaymentResultPage",
 );
-const OrdersPage = lazy(() => import("../pages/orders/OrdersPage"));
+const OrdersPage = lazy(() => import("../modules/orders/pages/OrdersPage"));
 const ReturnsRefundsPage = lazy(
-  () => import("../pages/returnRefund/ReturnsRefunds.jsx"),
+  () => import("../modules/returns/pages/ReturnsRefundsPage.jsx"),
 );
 const WalletPage = lazyNamed(
   () => import("../pages/wallet/WalletPage"),
@@ -196,22 +200,22 @@ export default function AppRoutes() {
           <Route element={<BuyerOnlyRoute />}>
             <Route index element={<HomePage />} />
             <Route path="/wishlist" element={<WatchlistPage />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/products" element={<ProductsPage />} />
-            <Route path="/new-arrivals" element={<NewArrivalsPage />} />
+            <Route path={PRODUCT_ROUTES.search} element={<SearchPage />} />
+            <Route path={PRODUCT_ROUTES.products} element={<ProductsPage />} />
+            <Route path={PRODUCT_ROUTES.newArrivals} element={<NewArrivalsPage />} />
             <Route
-              path="/recently-uploaded"
+              path={PRODUCT_ROUTES.recentlyUploaded}
               element={<RecentlyUploadedPage />}
             />
-            <Route path="/related-products" element={<RelatedProductsPage />} />
-            <Route path="/trending-now" element={<TrendingNowPage />} />
-            <Route path="/recently-viewed" element={<RecentlyViewedPage />} />
+            <Route path={PRODUCT_ROUTES.relatedProducts} element={<RelatedProductsPage />} />
+            <Route path={PRODUCT_ROUTES.trendingNow} element={<TrendingNowPage />} />
+            <Route path={PRODUCT_ROUTES.recentlyViewed} element={<RecentlyViewedPage />} />
             <Route
-              path="/products/:productId"
+              path={PRODUCT_ROUTES.productDetail()}
               element={<ProductDetailPage />}
             />
             <Route
-              path="/products/:productId/reviews"
+              path={PRODUCT_ROUTES.productReviews()}
               element={<ReviewDetailsPage />}
             />
             <Route path="/about-us" element={<AboutPage />} />
@@ -239,8 +243,8 @@ export default function AppRoutes() {
               element={<Navigate to="/notification-preferences" replace />}
             />
             {/* Cart & Checkout */}
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path={CART_ROUTES.cart} element={<CartPage />} />
+            <Route path={CHECKOUT_ROUTES.checkout} element={<CheckoutPage />} />
           </Route>
           {/* ── Protected buyer routes (must be logged in) ────────────── */}
           <Route element={<ProtectedRoute />}>
@@ -265,28 +269,28 @@ export default function AppRoutes() {
               <Route path="/account/kyc" element={<AccountPage tab="kyc" />} />
 
               {/* Payment results */}
-              <Route path="/payment/success" element={<PaymentResultPage />} />
+              <Route path={CHECKOUT_ROUTES.success} element={<PaymentResultPage />} />
               <Route
-                path="/payment/failed"
+                path={CHECKOUT_ROUTES.failed}
                 element={<PaymentResultPage failed />}
               />
 
               {/* Orders */}
-              <Route path="/orders" element={<OrdersPage />} />
-              <Route path="/orders/:orderId" element={<OrdersPage detail />} />
+              <Route path={ORDER_ROUTES.list} element={<OrdersPage />} />
+              <Route path={ORDER_ROUTES.detail()} element={<OrdersPage detail />} />
               <Route
-                path="/orders/:orderId/track"
+                path={ORDER_ROUTES.track()}
                 element={<OrdersPage detail track />}
               />
 
               {/* Returns */}
-              <Route path="/returns" element={<ReturnsPage />} />
+              <Route path={RETURNS_ROUTES.returns} element={<ReturnsPage />} />
               <Route
-                path="/returns/request/:orderId"
+                path={RETURNS_ROUTES.request()}
                 element={<ReturnsPage request />}
               />
               {/* Returns & Refunds */}
-              <Route path="/returns-refunds" element={<ReturnsRefundsPage />} />
+              <Route path={RETURNS_ROUTES.returnsRefunds} element={<ReturnsRefundsPage />} />
 
               {/* Financial */}
               <Route path="/wallet" element={<WalletPage />} />

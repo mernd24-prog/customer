@@ -13,7 +13,7 @@ import HeaderDropdown from "./HeaderDropdown";
 import MenuDropdown from "./MenuDropdown";
 
 import { fetchMe } from "../../features/user/userSlice";
-import { logout } from "../../features/auth/authSlice";
+import { logout } from "../../modules/auth/slices/authSlice";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import { asArray, keyOr, textOr } from "../../utils/content";
 import { navbarIcons as navData } from "../.../../constants/header.constant/image.constant";

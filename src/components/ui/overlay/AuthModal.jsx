@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../../utils/common";
-import { AUTH_ROUTES } from "../../../features/auth/authRoutes";
+import { AUTH_ROUTES } from "../../../modules/auth/routes/apiRoutes";
 import { X } from "lucide-react";
 
 import { LockIcon } from "../../../components/ui/icons";

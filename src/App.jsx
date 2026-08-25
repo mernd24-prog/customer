@@ -4,9 +4,9 @@ import {
 } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AuthModalProvider } from "./features/auth/AuthModalContext";
-import { checkAuthStatus, logout } from "./features/auth/authSlice";
-import { fetchCart, setGuestCart } from "./features/cart/cartSlice";
+import { AuthModalProvider } from "./modules/auth/context/AuthModalContext";
+import { checkAuthStatus, logout } from "./modules/auth/slices/authSlice";
+import { fetchCart, setGuestCart } from "./modules/cart/slices/cartSlice";
 import { readGuestCart } from "./utils/ecommerce/cart";
 import { fetchCmsPages } from "./features/cms/cmsSlice";
 import { tokenStorage } from "./api/tokenStorage";

@@ -6,7 +6,7 @@ import CustomDropdown from "../../components/ui/CustomDropdown";
 import ReviewMediaLightbox from "../../components/ecommerce/ReviewMediaLightbox";
 import Seo from "../../components/ui/Seo";
 import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
-import { useAuthModal } from "../../features/auth/AuthModalContext";
+import { useAuthModal } from "../../modules/auth/context/AuthModalContext";
 import {
   fetchProductReviews,
   fetchMyProductReview,

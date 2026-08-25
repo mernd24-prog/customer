@@ -1,0 +1,100 @@
+import { createSlice } from "@reduxjs/toolkit";
+import { createApiSlice, defaultInitialState } from "../../../features/createApiSlice";
+import { authThunks } from "../../../features/domainThunks";
+import { tokenStorage } from "../../../api/tokenStorage";
+
+const sessionThunks = [
+  authThunks.loginUser,
+  authThunks.socialLogin,
+  authThunks.registerUser,
+  authThunks.verifyRegistration,
+  authThunks.verifyOtp,
+  authThunks.otpAuth,
+  authThunks.refreshSession,
+];
+const currentPayloadThunks = [authThunks.checkAuthStatus];
+
+function extractTokens(payload = {}) {
+  if (payload?.tokens) return payload.tokens;
+  if (payload?.session?.tokens) return payload.session.tokens;
+  return payload;
+}
+
+function extractSessionUser(payload = {}) {
+  return payload?.user || payload?.session?.user || payload;
+}
+
+function hasSession(payload = {}) {
+  const tokens = extractTokens(payload);
+  return Boolean(tokens?.accessToken || tokens?.refreshToken || payload?.user || payload?.session?.user);
+}
+
+const authSlice = createSlice({
+  name: "auth",
+  initialState: defaultInitialState,
+  reducers: {
+    logout: () => {
+      tokenStorage.clear();
+      // Wipe cart data so the next user starts with a clean slate
+      [
+        "sam_global_saved_for_later_items",
+      ].forEach((k) => window.localStorage.removeItem(k));
+      [
+        "sam_global_selected_checkout_item_ids",
+        "sam_global_checkout_cart_item_ids",
+        "sam_global_buy_now_items",
+      ].forEach((k) => window.sessionStorage.removeItem(k));
+      return defaultInitialState;
+    },
+    clearError: (state) => {
+      state.error = null;
+    },
+    resetState: () => defaultInitialState
+  },
+  extraReducers: (builder) => {
+    Object.values(authThunks).forEach((thunk) => {
+      builder
+        .addCase(thunk.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(thunk.fulfilled, (state, action) => {
+          const session = action.payload.data || {};
+          const tokens = extractTokens(session);
+          if (tokens?.accessToken || tokens?.refreshToken) tokenStorage.setTokens(tokens);
+          state.loading = false;
+          state.meta = action.payload.meta;
+          state.lastFetchedAt = Date.now();
+          if (sessionThunks.includes(thunk) && hasSession(session)) {
+            state.current = extractSessionUser(session);
+          } else if (currentPayloadThunks.includes(thunk)) {
+            state.current = extractSessionUser(session);
+          }
+        })
+        .addCase(thunk.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload || action.error.message;
+        });
+    });
+  }
+});
+
+export const {
+  registerUser,
+  registerUserWithOtp,
+  verifyRegistration,
+  loginUser,
+  socialLogin,
+  refreshSession,
+  sendOtp,
+  verifyOtp,
+  otpAuth,
+  resendOtp,
+  forgotPassword,
+  resetPassword,
+  changePassword,
+  checkAuthStatus
+} = authThunks;
+
+export const { logout, clearError, resetState } = authSlice.actions;
+export default authSlice.reducer;

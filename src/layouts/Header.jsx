@@ -31,7 +31,7 @@ import { TopHeader } from "./header/TopHeader";
 //import { CategoryMegaMenu } from "../components/ecommerce";
 import { navbarIcons as navData } from "../constants/image.constant";
 import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
-import { logout } from "../features/auth/authSlice";
+import { logout } from "../modules/auth/slices/authSlice";
 import { fetchMe } from "../features/user/userSlice";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
 import { fetchProducts } from "../modules/products/slices/productSlice";

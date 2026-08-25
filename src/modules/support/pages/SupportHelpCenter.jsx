@@ -20,7 +20,7 @@ import { useCmsRecord } from "../../../hooks/useCmsRecord";
 import { apiRequest } from "../../../api/client";
 import { endpoints } from "../../../api/endpoints";
 import { notify } from "../../../utils/notify";
-import { useAuthModal } from "../../../features/auth/AuthModalContext";
+import { useAuthModal } from "../../../modules/auth/context/AuthModalContext";
 import { useSelector } from "react-redux";
 import {
   SUPPORT_CONTACT_ITEMS,

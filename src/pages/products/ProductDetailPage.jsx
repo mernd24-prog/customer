@@ -7,7 +7,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import QuantitySelector from "../../pages/cart/components/QuantitySelector";
+import QuantitySelector from "../../modules/cart/components/QuantitySelector";
 import { IoIosSearch } from "react-icons/io";
 import Rating from "../../components/ecommerce/Rating";
 import { Banknote, Heart, Share2, Truck, ZoomIn, X } from "lucide-react";

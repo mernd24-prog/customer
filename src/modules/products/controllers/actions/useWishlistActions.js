@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateCart } from "../../../../features/cart/cartSlice";
-import { openAddedToCartModal } from "../../../../features/cart/cartUiSlice";
+import { updateCart } from "../../../../modules/cart/slices/cartSlice";
+import { openAddedToCartModal } from "../../../../modules/cart/slices/cartUiSlice";
 import { addProductToCartPayload, wishlistItemKey, wishlistPayload } from "../../../../utils/ecommerce";
 import { useToastThunk } from "../../../../hooks/useToastThunk";
-import { useAuthModal } from "../../../../features/auth/AuthModalContext";
+import { useAuthModal } from "../../../../modules/auth/context/AuthModalContext";
 import { store } from "../../../../app/store";
 import { useCheckServiceability } from "./useCheckServiceability";
 

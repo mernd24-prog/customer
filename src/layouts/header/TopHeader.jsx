@@ -7,7 +7,7 @@ import { HeaderGoldButton } from "../../components/ui/button/static";
 import HeaderDropdown from "./HeaderDropdown";
 import MenuDropdown from "./MenuDropdown";
 
-import { logout } from "../../features/auth/authSlice";
+import { logout } from "../../modules/auth/slices/authSlice";
 import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 
