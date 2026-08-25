@@ -110,7 +110,26 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         : []),
     ].map(String);
     if (explicitIds.includes(selectedItemId)) return true;
-    if (!coveredItems.length) return true;
+    if (!coveredItems.length) {
+      const docSellerId =
+        document.sellerId ||
+        document.seller_id ||
+        metadata.sellerId ||
+        metadata.seller_id ||
+        metadata.seller?.id ||
+        metadata.seller?._id;
+      if (docSellerId) {
+        const itemSellerId =
+          selectedOrderItem.seller_id ||
+          selectedOrderItem.sellerId ||
+          selectedOrderItem.seller?.id ||
+          selectedOrderItem.seller?._id;
+        if (itemSellerId && String(docSellerId) !== String(itemSellerId)) {
+          return false;
+        }
+      }
+      return true;
+    }
     return coveredItems.some(
       (item) =>
         String(
