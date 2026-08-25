@@ -9,11 +9,11 @@ import {
 } from "../slices/returnsSlice";
 import { notify } from "../../../utils/notify";
 import { ChevronDown } from "lucide-react";
-import ReturnItemCard from "./component/ReturnItemCard";
-import ReturnTrackingCard from "./component/ReturnTrackingCard";
-import { RETURNS_PAGE_SKELETON } from "../../components/ui/skeleton/layouts";
-import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
-import { getProductPublicPath } from "../../utils/ecommerce";
+import ReturnItemCard from "../components/ReturnItemCard";
+import ReturnTrackingCard from "../components/ReturnTrackingCard";
+import { RETURNS_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
+import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
+import { getProductPublicPath } from "../../../utils/ecommerce";
 
 /* ─── Status filter options ───────────────────────────────────────────── */
 const STATUS_FILTERS = [

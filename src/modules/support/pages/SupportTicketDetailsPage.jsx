@@ -7,7 +7,7 @@ import ApiState from "../../../components/ui/ApiState";
 import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import Button from "../../../components/ui/buttons/Button";
-import { useAuthModal } from "../../../features/auth/AuthModalContext";
+import { useAuthModal } from "../../auth/context/AuthModalContext";
 import { useSelector } from "react-redux";
 import { SUPPORT_BREADCRUMBS } from "../../../data/supportPage";
 import { supportService } from "../services/supportService";

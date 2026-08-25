@@ -16,11 +16,11 @@ import OrderProgress from "../components/OrderProgress";
 import ShipmentTrackingPanel from "../components/ShipmentTrackingPanel";
 import OrderDetailInfoGrid from "../components/OrderDetailInfoGrid";
 
-import { useOrderDetail } from "../hooks/useOrderDetail";
-import OrderCancellations from "./OrderCancellations";
-import OrderReturns from "./OrderReturns";
-import OrderDocuments from "./OrderDocuments";
-import OrderActions from "./OrderActions";
+import { useOrderDetail } from "../controllers/useOrderDetail";
+import OrderCancellations from "../components/OrderCancellations";
+import OrderReturns from "../components/OrderReturns";
+import OrderDocuments from "../components/OrderDocuments";
+import OrderActions from "../components/OrderActions";
 import { getOpaqueReturnRequestPath } from "../../../utils/routeTokens";
 
 import {
