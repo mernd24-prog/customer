@@ -3,6 +3,7 @@ import {
   getProductImage,
   getImageFallbackSrc,
   getProductTitle,
+  composeProductVariantTitle,
   getProductMrp,
   getProductPrice,
   getVariantPrice,
@@ -17,12 +18,7 @@ export function adaptItemForCard(item, fullProduct = null) {
   const productId = item.productId?._id || getProductId(item.productId || {});
   const variantKey = item.variantId || item.variantSku || "";
   const baseTitle = getProductTitle(product, item.title || "Product");
-  const title =
-    item.variantTitle &&
-    item.variantTitle !== "Default Title" &&
-    item.variantTitle !== baseTitle
-      ? `${baseTitle} - ${item.variantTitle}`
-      : baseTitle;
+  const title = composeProductVariantTitle(baseTitle, item.variantTitle);
   let image =
     getProductImage(product) ||
     item.image ||

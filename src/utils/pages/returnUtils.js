@@ -1,4 +1,7 @@
-import { getImageUrlFromValue } from "../../utils/ecommerce";
+import {
+  composeProductVariantTitle,
+  getImageUrlFromValue,
+} from "../../utils/ecommerce";
 import {
   getOrderItemVariantSku as getItemVariantSku,
   getOrderItemVariantId as getItemVariantId,
@@ -69,14 +72,17 @@ export const getItemProductId = (item) =>
     : item?.productId) ||
   "";
 export const getItemTitle = (item) =>
-  item?.product_title ||
-  item?.productTitle ||
-  item?.title ||
-  item?.name ||
-  (typeof item?.productId === "object"
-    ? item.productId?.title || item.productId?.name
-    : null) ||
-  "Product";
+  composeProductVariantTitle(
+    item?.product_title ||
+      item?.productTitle ||
+      item?.title ||
+      item?.name ||
+      (typeof item?.productId === "object"
+        ? item.productId?.title || item.productId?.name
+        : null) ||
+      "Product",
+    item?.variantTitle || item?.variant_title || item?.variant?.title,
+  );
 export const getItemQuantity = (item) => Math.max(1, asNumber(item?.quantity || 1));
 export const getItemLineTotal = (item) =>
   item?.line_total ??

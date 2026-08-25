@@ -61,19 +61,39 @@ export function getProductListFromResponse(result) {
   );
 }
 
+export function composeProductVariantTitle(baseTitle, variantTitle) {
+  const base = String(baseTitle || "").trim();
+  const variant = String(variantTitle || "").trim();
+  if (!variant || variant.toLowerCase() === "default title") return base;
+  if (!base) return variant;
+
+  const normalizedBase = base.toLowerCase();
+  const normalizedVariant = variant.toLowerCase();
+  if (
+    normalizedBase === normalizedVariant ||
+    normalizedBase.includes(normalizedVariant)
+  ) {
+    return base;
+  }
+  if (normalizedVariant.includes(normalizedBase)) return variant;
+  return `${base} - ${variant}`;
+}
+
 export function getProductTitle(product, fallback = "Untitled product") {
   const baseTitle =
-    product?.title || product?.name || product?.productName || fallback;
-  const variantTitle = product?.selectedVariant?.title;
+    product?.title ||
+    product?.productTitle ||
+    product?.product_title ||
+    product?.name ||
+    product?.productName ||
+    fallback;
+  const variantTitle =
+    product?.selectedVariant?.title ||
+    product?.variant?.title ||
+    product?.variantTitle ||
+    product?.variant_title;
 
-  if (
-    variantTitle &&
-    variantTitle !== baseTitle &&
-    variantTitle !== "Default Title"
-  ) {
-    return `${baseTitle} - ${variantTitle}`;
-  }
-  return baseTitle;
+  return composeProductVariantTitle(baseTitle, variantTitle);
 }
 
 function normalizeBooleanFlag(value) {

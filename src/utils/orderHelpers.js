@@ -4,7 +4,10 @@
  * from the API response (handles both camelCase and snake_case shapes).
  */
 
-import { getImageUrlFromValue } from "./ecommerce";
+import {
+  composeProductVariantTitle,
+  getImageUrlFromValue,
+} from "./ecommerce";
 
 // ---------------------------------------------------------------------------
 // Generic
@@ -107,13 +110,16 @@ export const getItemLineTotal = (item) =>
   asNumber(getItemUnitPrice(item)) * asNumber(item?.quantity || 1);
 
 export const getOrderProductTitle = (item) =>
-  getItemProduct(item)?.title ||
-  getItemProduct(item)?.name ||
-  item?.product_title ||
-  item?.productTitle ||
-  item?.title ||
-  item?.name ||
-  "Product";
+  composeProductVariantTitle(
+    getItemProduct(item)?.title ||
+      getItemProduct(item)?.name ||
+      item?.product_title ||
+      item?.productTitle ||
+      item?.title ||
+      item?.name ||
+      "Product",
+    item?.variantTitle || item?.variant_title || item?.variant?.title,
+  );
 
 export const getOrderItemColor = (item) => {
   const attributes =

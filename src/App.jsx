@@ -10,6 +10,7 @@ import { fetchCart, setGuestCart } from "./modules/cart/slices/cartSlice";
 import { readGuestCart } from "./utils/ecommerce/cart";
 import { fetchCmsPages } from "./features/cms/cmsSlice";
 import { tokenStorage } from "./api/tokenStorage";
+import { disconnectRealtime, reconnectRealtime } from "./api/realtime";
 
 import ScrollToTop from "./components/ui/ScrollToTop";
 import Loader from "./components/ui/Loader";
@@ -83,8 +84,10 @@ export default function App() {
 
   useEffect(() => {
     if (currentUser) {
+      reconnectRealtime();
       dispatch(fetchCart()).catch(() => {});
     } else {
+      disconnectRealtime();
       const guestCart = readGuestCart();
       dispatch(setGuestCart(guestCart));
     }

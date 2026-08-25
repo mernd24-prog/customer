@@ -58,6 +58,8 @@ export default function ProductDetailPage() {
     product,
     productState,
     productTitle,
+    productDescription,
+    productShortDescription,
     productTitlePreview,
     isProductTitleTruncated,
     warranty,
@@ -124,8 +126,8 @@ export default function ProductDetailPage() {
   return (
     <AppErrorBoundary>
       <Seo
-        title={product?.title}
-        metaDescription={product?.seo?.metaDescription}
+        title={productTitle}
+        metaDescription={productShortDescription || product?.seo?.metaDescription}
         keywords={product?.seo?.keywords || []}
         image={product?.seo?.ogImage}
       />
@@ -190,7 +192,7 @@ export default function ProductDetailPage() {
                   <ImageGallery
                     images={images}
                     video={productVideo}
-                    fallbackLabel={getProductTitle(product)}
+                    fallbackLabel={productTitle}
                     isWishlisted={isWishlisted({ ...product, selectedVariant })}
                     onWishlist={() =>
                       toggleWishlist({ ...product, selectedVariant })
@@ -200,7 +202,7 @@ export default function ProductDetailPage() {
                       setZoomOpen(true);
                     }}
                     onModalClose={() => setZoomOpen(false)}
-                    productTitle={getProductTitle(product)}
+                    productTitle={productTitle}
                     shareOpen={!zoomOpen && shareOpen}
                     onShareToggle={() => setShareOpen((prev) => !prev)}
                     onShareClose={() => setShareOpen(false)}
@@ -212,7 +214,7 @@ export default function ProductDetailPage() {
                     <div className="min-w-0 w-full">
                       <h1 className="break-words block text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px] leading-snug">
                         <ShowMoreText
-                          text={getProductTitle(product)}
+                          text={productTitle}
                           mode="lines"
                           limit={1}
                           buttonClassName="ml-1 text-sm font-semibold text-black/50 hover:underline"
@@ -365,6 +367,8 @@ export default function ProductDetailPage() {
                 detailRows={detailRows}
                 warranty={warranty}
                 product={product}
+                selectedVariant={selectedVariant}
+                effectiveDescription={productDescription}
               />
 
               <ProductReviewsSection productId={productId} product={product} />

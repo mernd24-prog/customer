@@ -1,6 +1,7 @@
 import { Banknote, Building2, CreditCard, Smartphone } from "lucide-react";
 
 import OrderPaymentSummary from "../../../modules/orders/components/OrderPaymentSummary";
+import { composeProductVariantTitle } from "../../../utils/ecommerce";
 
 const withQuotedPrices = (items = [], quote = {}) => {
   const quotedItems = Array.isArray(quote?.items)
@@ -31,13 +32,10 @@ const withQuotedPrices = (items = [], quote = {}) => {
       item.variantTitle ||
       item.variant_title ||
       "";
-    const safeTitle =
-      variantTitle &&
-      variantTitle !== "Default Title" &&
-      variantTitle !== baseTitle &&
-      !baseTitle.includes(variantTitle)
-        ? `${baseTitle} - ${variantTitle}`
-        : item._safeTitle || baseTitle;
+    const safeTitle = composeProductVariantTitle(
+      item._safeTitle || baseTitle,
+      variantTitle,
+    );
 
     return {
       ...item,

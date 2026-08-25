@@ -20,6 +20,7 @@ import {
   getImageFallbackSrc,
   getProductImage,
   getProductTitle,
+  composeProductVariantTitle,
   getProductPrice,
   getProductMrp,
   getVariantPrice,
@@ -211,7 +212,27 @@ export function useProductDetailController(productId, rawParamId) {
 
   
 
-  const attributes = product?.attributes || product?.specifications || {};
+  const productAttributes = product?.attributes || {};
+  const variantAttributes = selectedVariant?.attributes || {};
+  const productSpecifications = product?.specifications || {};
+  const variantSpecifications = selectedVariant?.specifications || {};
+  const flattenSpecifications = (source = {}) =>
+    Object.entries(source || {}).reduce((result, [section, value]) => {
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        Object.entries(value).forEach(([key, nestedValue]) => {
+          result[`${section} · ${key}`] = nestedValue;
+        });
+      } else {
+        result[section] = value;
+      }
+      return result;
+    }, {});
+  const attributes = {
+    ...productAttributes,
+    ...flattenSpecifications(productSpecifications),
+    ...variantAttributes,
+    ...flattenSpecifications(variantSpecifications),
+  };
 
 
 
@@ -254,7 +275,36 @@ export function useProductDetailController(productId, rawParamId) {
     }, {}),
   );
 
-  const productTitle = getProductTitle(product);
+  const baseProductTitle = getProductTitle(product);
+  const variantTitleDetail = selectedVariant?.title?.trim() || "";
+  const productTitle = composeProductVariantTitle(
+    baseProductTitle,
+    variantTitleDetail,
+  );
+
+  const appendVariantContent = (
+    baseContent = "",
+    variantContent = "",
+    separator = " — ",
+  ) => {
+    const base = String(baseContent || "").trim();
+    const variant = String(variantContent || "").trim();
+    if (!variant) return base;
+    if (!base) return variant;
+    if (base.toLowerCase().includes(variant.toLowerCase())) return base;
+    if (variant.toLowerCase().includes(base.toLowerCase())) return variant;
+    return `${base}${separator}${variant}`;
+  };
+
+  const productDescription = appendVariantContent(
+    product?.description,
+    selectedVariant?.description,
+    "<br/><br/>",
+  );
+  const productShortDescription = appendVariantContent(
+    product?.shortDescription,
+    selectedVariant?.shortDescription,
+  );
 
   const { preview: productTitlePreview, isTruncated: isProductTitleTruncated } =
     getShowMoreText(productTitle, {
@@ -304,6 +354,8 @@ export function useProductDetailController(productId, rawParamId) {
     rawDetails,
     detailRows,
     productTitle,
+    productDescription,
+    productShortDescription,
     productTitlePreview,
     isProductTitleTruncated,
     product,

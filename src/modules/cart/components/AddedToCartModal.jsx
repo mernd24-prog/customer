@@ -9,6 +9,7 @@ import {
   getProductId,
   getProductImage,
   getProductTitle,
+  composeProductVariantTitle,
 } from "../../../utils/ecommerce";
 
 function getCartLineDisplayPrice(item, product) {
@@ -56,12 +57,7 @@ function CartLine({ item, onClose }) {
       : getProductId(item)) ||
     item?._id;
   const baseTitle = getProductTitle(product, item?.title || "Product");
-  const title =
-    item?.variantTitle &&
-    item.variantTitle !== "Default Title" &&
-    item.variantTitle !== baseTitle
-      ? `${baseTitle} - ${item.variantTitle}`
-      : baseTitle;
+  const title = composeProductVariantTitle(baseTitle, item?.variantTitle);
 
   let image =
     getProductImage(product) ||

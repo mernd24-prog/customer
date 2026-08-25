@@ -4,6 +4,7 @@ import {
   getProductId,
   getProductImage,
   getProductTitle,
+  composeProductVariantTitle,
   getProductPrice,
   getVariantPrice,
 } from "../../utils/ecommerce";
@@ -242,13 +243,7 @@ export const adaptCheckoutItem = (item = {}, index = 0, fullProduct = null) => {
   const variantKey = item.variantId || item.variantSku || "";
   const baseTitle = getCartItemTitle(item);
   const variantTitle = getCartItemVariantTitle(item);
-  const title =
-    variantTitle &&
-    variantTitle !== "Default Title" &&
-    variantTitle !== baseTitle &&
-    !baseTitle.includes(variantTitle)
-      ? `${baseTitle} - ${variantTitle}`
-      : baseTitle;
+  const title = composeProductVariantTitle(baseTitle, variantTitle);
   const image =
     getProductImage(product) ||
     item.image ||

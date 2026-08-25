@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchOrderById } from "../slices/orderSlice";
 import { fetchReturnByOrder } from "../../returns/slices/returnsSlice";
 import { fetchNotifications } from "../../../features/notification/notificationSlice";
+import { getProductTitle } from "../../../utils/ecommerce";
 
 import { useOrderPayment } from "./actions/useOrderPayment";
 import { useOrderCancel } from "./actions/useOrderCancel";
@@ -363,12 +364,7 @@ export function useOrderDetail({ orderId, track }) {
     0;
     
   const getReturnItemTitle = (item = {}) =>
-    item.productTitle ||
-    item.productName ||
-    item.title ||
-    item.name ||
-    item.productId ||
-    "Returned item";
+    getProductTitle(item, item.productId || "Returned item");
     
   const getReturnItemQuantity = (item = {}) =>
     item.approvedQuantity ||

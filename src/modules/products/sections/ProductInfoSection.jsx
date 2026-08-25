@@ -86,6 +86,8 @@ export default function ProductInfoSection({
   detailRows,
   warranty,
   product,
+  selectedVariant,
+  effectiveDescription,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -144,11 +146,13 @@ export default function ProductInfoSection({
 
       {activeInfoTab === "description" && (
         <InfoCard title="Description">
-          {product?.description ? (
+          {effectiveDescription || selectedVariant?.description || product?.description ? (
             <div
               className="rich-text-content px-4 py-4 text-[#4E4E4E]"
               dangerouslySetInnerHTML={{
-                __html: decodeHtml(product.description),
+                __html: decodeHtml(
+                  effectiveDescription || selectedVariant?.description || product.description,
+                ),
               }}
             />
           ) : (
