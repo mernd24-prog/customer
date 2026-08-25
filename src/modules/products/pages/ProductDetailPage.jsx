@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useProductDetailController } from "../controllers";
 import { useCartActions, useWishlistActions } from "../controllers/actions";
+import ProductServiceBadges from "../components/ProductServiceBadges";
 import {
   applyImageFallback,
   getProductId,
