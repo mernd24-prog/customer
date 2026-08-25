@@ -8,10 +8,11 @@ import { notify } from "../../../../utils/notify";
 import {
   hasDeliveredSellerPackage,
   getOrderItemId,
-  getCustomerPlatformFeeAmount
+  getCustomerPlatformFeeAmount,
+  isDeliveredOrderItem
 } from "../../../../utils/pages/orderUtils";
 
-export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleReturns, cancellations }) {
+export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleReturns, visibleCancellations }) {
   const dispatch = useDispatch();
   const [invoices, setInvoices] = useState(null);
   const [, setInvoicesLoading] = useState(false);
@@ -195,7 +196,7 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
     })
     .filter(Boolean);
 
-  const cancellationReverseInvoices = cancellations
+  const cancellationReverseInvoices = visibleCancellations
     .map((cancellation) => {
       const creditNoteId =
         cancellation.credit_note_id || cancellation.creditNoteId;
@@ -240,7 +241,7 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         filename: `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || `receipt-${orderId}`}.pdf`,
       }
       : null,
-    customerFeeInvoice && getDocumentId(customerFeeInvoice)
+    customerFeeInvoice && getDocumentId(customerFeeInvoice) && (!selectedOrderItem || isDeliveredOrderItem(selectedOrderItem))
       ? {
         id: getDocumentId(customerFeeInvoice),
         title: "Platform fee invoice",
@@ -251,7 +252,7 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         filename: `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
       }
       : null,
-    !customerFeeInvoice && customerPlatformFee > 0
+    !customerFeeInvoice && customerPlatformFee > 0 && (!selectedOrderItem || isDeliveredOrderItem(selectedOrderItem))
       ? {
         id: `pending-platform-fee-${orderId}`,
         title: "Platform fee invoice",
@@ -259,7 +260,7 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         pending: true,
       }
       : null,
-    ...(selectedOrderItem ? [] : cancellationReverseInvoices),
+    ...cancellationReverseInvoices,
     ...returnReverseInvoices,
   ].filter(Boolean);
 

@@ -104,20 +104,25 @@ export function useOrderDetail({ orderId, track }) {
     ? items.find((item) => getOrderItemId(item) === String(selectedOrderItemId))
     : null;
   const selectedItemReturn = selectedOrderItem
-    ? returns.find((returnRequest) =>
-      (returnRequest.items || []).some((returnItem) =>
-        returnItemMatchesOrderItem(returnItem, selectedOrderItem),
-      ),
-    )
+    ? returns.find((returnRequest) => {
+        const items = Array.isArray(returnRequest.items) ? returnRequest.items : [];
+        if (!items.length) return true;
+        return items.some((returnItem) =>
+          returnItemMatchesOrderItem(returnItem, selectedOrderItem),
+        );
+      })
     : null;
     
-  const cancellationMatchesSelectedItem = (cancellation = {}) =>
-    selectedOrderItem &&
-    (Array.isArray(cancellation.items) ? cancellation.items : []).some(
+  const cancellationMatchesSelectedItem = (cancellation = {}) => {
+    if (!selectedOrderItem) return true;
+    const items = Array.isArray(cancellation.items) ? cancellation.items : [];
+    if (!items.length) return true; // Assume order-level cancellation covers all items
+    return items.some(
       (item) =>
         String(item.orderItemId || item.order_item_id || item.id || "") ===
         getOrderItemId(selectedOrderItem),
     );
+  };
   const visibleCancellations = selectedOrderItem
     ? cancellations.filter(cancellationMatchesSelectedItem)
     : cancellations;
@@ -289,7 +294,9 @@ export function useOrderDetail({ orderId, track }) {
 
   const returnCoversSelectedItem = (returnRequest = {}) => {
     if (!selectedOrderItem) return true;
-    return (returnRequest.items || []).some((returnItem) =>
+    const items = Array.isArray(returnRequest.items) ? returnRequest.items : [];
+    if (!items.length) return true; // Assume order-level return covers all items
+    return items.some((returnItem) =>
       returnItemMatchesOrderItem(returnItem, selectedOrderItem),
     );
   };
@@ -343,7 +350,7 @@ export function useOrderDetail({ orderId, track }) {
     pendingSellerDocuments, visibleCustomerInvoices, visiblePendingSellerDocuments,
     downloadableDocuments
   } = useOrderDocuments({ 
-    orderId, order, selectedOrderItem, visibleReturns, cancellations 
+    orderId, order, selectedOrderItem, visibleReturns, visibleCancellations 
   });
 
   const getReturnNumber = (returnRequest = {}) =>

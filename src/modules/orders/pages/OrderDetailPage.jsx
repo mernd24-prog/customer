@@ -9,7 +9,7 @@ import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
-import OrderDetailSectionCard from "../components/OrderDetailSectionCard";
+import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 import OrderItemsSection from "../components/OrderItemsSection";
 import OrderPaymentSummary from "../components/OrderPaymentSummary";
 import OrderProgress from "../components/OrderProgress";
@@ -269,7 +269,7 @@ export default function OrderDetailPage({ orderId, track }) {
 
             <section className="grid gap-4 sm:gap-8">
               {Boolean(selectedOrderItem) && hasKnownStatus(order) && (
-                <OrderDetailSectionCard
+                <DetailSectionCard
                   title="Selected Item Progress"
                   headerClassName="!min-h-[56px] !py-4"
                   bodyClassName="overflow-hidden px-4"
@@ -285,7 +285,7 @@ export default function OrderDetailPage({ orderId, track }) {
                     }
                     timeline={selectedOrderItem.timeline || []}
                   />
-                </OrderDetailSectionCard>
+                </DetailSectionCard>
               )}
 
               {Boolean(selectedOrderItem) && (track || visibleShipments.length > 0) && (
@@ -302,7 +302,7 @@ export default function OrderDetailPage({ orderId, track }) {
             </section>
 
             <OrderCancellations
-              cancellations={cancellations}
+              cancellations={visibleCancellations}
               currency={currency}
             />
 
