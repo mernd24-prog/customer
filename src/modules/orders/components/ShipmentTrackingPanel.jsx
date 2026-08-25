@@ -19,6 +19,7 @@ const dateTime = (value) =>
 export default function ShipmentTrackingPanel({
   shipments = [],
   orderDeliveryStatus = null,
+  orderItems = [],
 }) {
   if (!shipments.length) {
     return (
@@ -112,6 +113,26 @@ export default function ShipmentTrackingPanel({
             new Date(right.event_time || right.created_at || 0),
         );
         const trackingNumber = shipment.tracking_number || shipment.awb_number;
+        
+        let shipmentProductNames = "";
+        if (shipments.length > 1) {
+          const itemIds = Array.isArray(shipment.items)
+            ? shipment.items.map((i) => String(i.orderItemId || i.order_item_id || i.id || ""))
+            : [];
+          const matchedItems = orderItems.filter(item => {
+            if (itemIds.length) {
+              return itemIds.includes(String(item.id || item._id || ""));
+            }
+            const shipmentSellerId = String(shipment.seller_id || "");
+            const itemSellerId = String(item.sellerId || item.seller_id || item.seller?.id || "");
+            if (shipmentSellerId && shipmentSellerId === itemSellerId) return true;
+            
+            const shipmentOrgId = String(shipment.organization_id || "");
+            const itemOrgId = String(item.organizationId || item.organization_id || item.organization?.id || "");
+            return shipmentOrgId && shipmentOrgId === itemOrgId;
+          });
+          shipmentProductNames = matchedItems.map(i => i.productTitle || i.product_title || "Product").join(", ");
+        }
 
         return (
           <div
@@ -127,6 +148,13 @@ export default function ShipmentTrackingPanel({
               bodyClassName="p-5"
             >
               <div className="space-y-5 text-sm text-[#2E2E2E]">
+                {shipmentProductNames && (
+                  <div className="mb-4 rounded-lg bg-[#F9F5EB] p-3 text-[#1B1D60]">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[#8A5A00] mb-1">Package contains</p>
+                    <p className="font-medium line-clamp-2">{shipmentProductNames}</p>
+                  </div>
+                )}
+                
                 <div className="flex items-start gap-3">
                   <Truck className="mt-0.5 shrink-0 text-[#3E4093]" size={18} />
                   <div>

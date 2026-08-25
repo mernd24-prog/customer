@@ -32,6 +32,7 @@ import { TopHeader } from "./header/TopHeader";
 import { navbarIcons as navData } from "../constants/image.constant";
 import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
 import { logout } from "../modules/auth/slices/authSlice";
+import { notify } from "../utils/notify";
 import { fetchMe } from "../features/user/userSlice";
 import { asArray, hrefOr, keyOr, textOr } from "../utils/content";
 import { fetchProducts } from "../modules/products/slices/productSlice";
@@ -62,8 +63,9 @@ function getHeaderHeight() {
   if (typeof window === "undefined") return 0;
 
   // Prefer reading inline style to avoid forced layout from getComputedStyle
-  let value = document.documentElement.style.getPropertyValue(HEADER_HEIGHT_VAR);
-  
+  let value =
+    document.documentElement.style.getPropertyValue(HEADER_HEIGHT_VAR);
+
   if (!value) {
     value = window
       .getComputedStyle(document.documentElement)
@@ -188,6 +190,7 @@ export const Navbar = ({ icons: propIcons }) => {
           path: undefined,
           action: () => {
             dispatch(logout());
+            notify.success("Logged out successfully");
             navigate("/", { replace: true });
           },
         };
@@ -258,9 +261,16 @@ export const Navbar = ({ icons: propIcons }) => {
         <div className="order-1  flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6">
           <Link to="/" aria-label="Sam Global Home">
             <picture>
-              <source srcSet="/image/png/logo-small.avif 1x, /image/png/logo.avif 2x" type="image/avif" />
-              <source srcSet="/image/png/logo-small.webp 1x, /image/png/logo.webp 2x" type="image/webp" />
-              <img loading="lazy"
+              <source
+                srcSet="/image/png/logo-small.avif 1x, /image/png/logo.avif 2x"
+                type="image/avif"
+              />
+              <source
+                srcSet="/image/png/logo-small.webp 1x, /image/png/logo.webp 2x"
+                type="image/webp"
+              />
+              <img
+                loading="lazy"
                 src="/image/png/logo-small.webp"
                 alt="Sam Global"
                 width="130"
@@ -299,7 +309,10 @@ export const Navbar = ({ icons: propIcons }) => {
                   to={getNavbarIconPath(item)}
                   aria-label={getNavbarIconLabel(item)}
                 >
-                  <img loading="lazy" width="400" height="400"
+                  <img
+                    loading="lazy"
+                    width="400"
+                    height="400"
                     src={item?.img}
                     alt={getNavbarIconLabel(item)}
                     className={`object-contain ${
@@ -340,7 +353,7 @@ export const Navbar = ({ icons: propIcons }) => {
                 </span>
               )}
             </HeaderIconButton>
-             <HeaderIconButton
+            <HeaderIconButton
               to="/wishlist"
               className={`relative h-8 w-8 overflow-visible bg-[#1B1D600D] text-[#1B1D60] min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10 transition-all ${
                 location.pathname === "/wishlist"
@@ -368,7 +381,10 @@ export const Navbar = ({ icons: propIcons }) => {
               showChevron
               icon={
                 <div className="flex items-center gap-2.5">
-                  <img loading="lazy" width="400" height="400"
+                  <img
+                    loading="lazy"
+                    width="400"
+                    height="400"
                     src={profileAvatar}
                     alt=""
                     className="h-8 w-8 rounded-full object-cover min-[375px]:h-9 min-[375px]:w-9 md:h-10 md:w-10"
@@ -792,16 +808,6 @@ export const CategoryBar = ({ headerData, compact = false }) => {
             </div>
           </div>
         </div>
-        {/* {activeMenu && isPinned && (
-          <div
-            id="sticky-category-mega-menu"
-            className="absolute left-0 top-full z-[9999] w-full"
-            onMouseEnter={keepCategoryMenuOpen}
-            onMouseLeave={handleCategoryMouseLeave}
-          >
-            <CategoryMegaMenu data={megaMenuData} activeCategory={activeMenu} />
-          </div>
-        )} */}
       </nav>
     </header>
   );
@@ -830,14 +836,16 @@ export const Header = () => {
   useEffect(() => {
     const updateHeaderHeight = () => {
       const height = headerRef.current?.offsetHeight || 0;
-      const currentHeight = Number.parseFloat(document.documentElement.style.getPropertyValue(HEADER_HEIGHT_VAR));
+      const currentHeight = Number.parseFloat(
+        document.documentElement.style.getPropertyValue(HEADER_HEIGHT_VAR),
+      );
       if (height !== currentHeight) {
         document.documentElement.style.setProperty(
           HEADER_HEIGHT_VAR,
           `${height}px`,
         );
       }
-    };  
+    };
 
     updateHeaderHeight();
 

@@ -16,7 +16,7 @@ import {
 import { fetchMyOrders } from "../../orders/slices/orderSlice";
 import ReviewImageUploader from "../../../components/ecommerce/ReviewImageUploader";
 import ReviewMediaLightbox from "../../../components/ecommerce/ReviewMediaLightbox";
-import { getImageUrlFromValue, getProductPublicPath } from "../../../utils/ecommerce";
+import { getImageUrlFromValue } from "../../../utils/ecommerce";
 import ShowMoreText from "../../../utils/showMore";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -128,7 +128,10 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <span className="size-8 shrink-0 overflow-hidden rounded-full border border-[#CE9F2D]/30 bg-[#FAF6EE]">
-            <img loading="lazy" width="400" height="400"
+            <img
+              loading="lazy"
+              width="400"
+              height="400"
               src={buyerImage || "/image/png/person.png"}
               alt={name}
               className="h-full w-full object-cover"
@@ -184,7 +187,10 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
               onClick={() => setLightboxIndex(index)}
               className="block size-14 shrink-0 overflow-hidden rounded-lg border border-[#E7D9B8] bg-white hover:opacity-90 transition-opacity"
             >
-              <img loading="lazy" width="400" height="400"
+              <img
+                loading="lazy"
+                width="400"
+                height="400"
                 src={url}
                 alt={`Review media ${index + 1}`}
                 className="h-full w-full object-cover"
@@ -452,7 +458,7 @@ function sortReviewsByOption(reviews, sort) {
   return sorted;
 }
 
-export default function ProductReviewsSection({ productId, product, realProductId = productId }) {
+export default function ProductReviewsSection({ productId, product }) {
   const dispatch = useDispatch();
   const { openAuthModal } = useAuthModal();
 
@@ -474,7 +480,7 @@ export default function ProductReviewsSection({ productId, product, realProductI
       (["delivered", "fulfilled", "completed"].includes(o.status) && o.items) ||
       [].some(
         (item) =>
-          String(item.productId || item.product_id) === String(realProductId),
+          String(item.productId || item.product_id) === String(productId),
       ),
   );
 
@@ -754,7 +760,9 @@ export default function ProductReviewsSection({ productId, product, realProductI
             <div className="flex flex-1 items-center justify-center rounded-xl border border-[#E7D9B8] bg-[#FAF6EE]/50 px-4 py-8 text-center">
               <div className="mx-auto flex w-full max-w-[320px] flex-col items-center">
                 <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-[#CE9F2D]/15">
-                  <img width="400" height="400"
+                  <img
+                    width="400"
+                    height="400"
                     src="/image/png/noReview.png"
                     alt="No Reviews Yet"
                     className="h-full w-full object-contain"
@@ -776,7 +784,7 @@ export default function ProductReviewsSection({ productId, product, realProductI
           {displayTotal > 0 && (
             <div className="mt-3 pt-3 border-t border-[#E7D9B8]/40 flex justify-end">
               <Link
-                to={`${getProductPublicPath(product || { id: productId })}/reviews`}
+                to={`/products/${productId}/reviews`}
                 state={{ product }}
                 className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#CE9F2D] hover:text-[#A96F14] transition-colors"
               >

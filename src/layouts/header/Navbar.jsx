@@ -1,4 +1,3 @@
-
 import { Fragment, useEffect, useMemo, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +13,7 @@ import MenuDropdown from "./MenuDropdown";
 
 import { fetchMe } from "../../features/user/userSlice";
 import { logout } from "../../modules/auth/slices/authSlice";
+import { notify } from "../../utils/notify";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import { asArray, keyOr, textOr } from "../../utils/content";
 import { navbarIcons as navData } from "../.../../constants/header.constant/image.constant";
@@ -61,12 +61,13 @@ export const Navbar = ({ icons: propIcons }) => {
 
   const accountMenuItems = withIcons([
     ...baseAccountMenuItems.map((item) => {
-      if (item.path === "/sign-out") {
+      if (item.path === "/sign-out" || item.label === "Sign Out") {
         return {
           ...item,
           path: undefined,
           action: () => {
             dispatch(logout());
+            notify.success("Logged out successfully");
             navigate("/", { replace: true });
           },
         };

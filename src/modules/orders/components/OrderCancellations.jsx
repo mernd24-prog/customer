@@ -45,7 +45,7 @@ export default function OrderCancellations({ cancellations, currency, isCodOrder
               <div className="mt-2 space-y-1 text-xs text-muted">
                 {(cancellation.items || []).map((item) => (
                   <div key={item.orderItemId || item.order_item_id}>
-                    {item.productTitle || item.product_title || "Product"}: {item.quantity} unit(s)
+                    {item.productTitle || item.product_title || "Product"} (Qty: {item.quantity})
                   </div>
                 ))}
               </div>

@@ -21,7 +21,6 @@ import OrderCancellations from "../components/OrderCancellations";
 import OrderReturns from "../components/OrderReturns";
 import OrderDocuments from "../components/OrderDocuments";
 import OrderActions from "../components/OrderActions";
-import { getOpaqueReturnRequestPath } from "../../../utils/routeTokens";
 
 import {
   getOrderNumber,
@@ -41,7 +40,7 @@ import {
 
 import { formatMoney } from "../../../utils/ecommerce";
 
-export default function OrderDetailPage({ orderId, track }) {
+export default function OrderDetailPage({ orderId }) {
   const {
     state,
     notificationState,
@@ -110,7 +109,7 @@ export default function OrderDetailPage({ orderId, track }) {
     isCodOrder,
     visibleReturns,
     visiblePendingSellerDocuments,
-  } = useOrderDetail({ orderId, track });
+  } = useOrderDetail({ orderId });
   return (
     <>
       <Seo title={`Order ${getOrderNumber(order) || "Details"} | Sam Global`} />
@@ -128,14 +127,10 @@ export default function OrderDetailPage({ orderId, track }) {
                 </div>
 
                 <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap items-center md:w-auto md:justify-end">
-                  {!track &&
-                    Boolean(selectedOrderItem) &&
+                  {Boolean(selectedOrderItem) &&
                     selectedItemCanReturn && (
                       <Link
-                        to={getOpaqueReturnRequestPath(
-                          orderId,
-                          `?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}`,
-                        )}
+                        to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}`}
                         className="block w-full sm:w-auto"
                       >
                         <Button className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] bg-[#CE9F2D] px-[24px] py-[15px] text-white hover:bg-[#B88200]">
@@ -203,8 +198,7 @@ export default function OrderDetailPage({ orderId, track }) {
                 ]}
               />
 
-              {!track &&
-                ["delivered", "fulfilled", "partially_returned"].includes(
+              {["delivered", "fulfilled", "partially_returned"].includes(
                   status,
                 ) &&
                 !returnWindowOpen && (
@@ -215,7 +209,6 @@ export default function OrderDetailPage({ orderId, track }) {
                 )}
             </section>
 
-            {!track && (
               <StickySidebarLayout
                 sidebarPosition="right"
                 containerClass="flex flex-col xl:flex-row gap-4 md:gap-6 xl:gap-8"
@@ -269,42 +262,56 @@ export default function OrderDetailPage({ orderId, track }) {
                   )
                 }
               />
-            )}
 
             <section className="grid gap-4 sm:gap-8">
-              {Boolean(selectedOrderItem) && hasKnownStatus(order) && (
+              {hasKnownStatus(order) && (
                 <DetailSectionCard
-                  title="Selected Item Progress"
+                  title={selectedOrderItem ? "Selected Item Progress" : "Order Progress"}
                   headerClassName="!min-h-[56px] !py-4"
                   bodyClassName="overflow-hidden px-4"
                   titleClassName="text-lg font-bold leading-none"
                 >
                   <OrderProgress
                     status={selectedItemStatus || progressStatus}
-                    cancellations={visibleCancellations}
-                    returns={selectedItemReturn ? [selectedItemReturn] : []}
-                    timeline={selectedOrderItem.timeline || []}
+                    cancellations={
+                      selectedOrderItem
+                        ? visibleCancellations
+                        : visibleCancellations.filter((c) => {
+                            const items = Array.isArray(c.items) ? c.items : [];
+                            return items.length === 0 || String(c.scope || "").toLowerCase() === "full";
+                          })
+                    }
+                    returns={
+                      selectedOrderItem
+                        ? (selectedItemReturn ? [selectedItemReturn] : [])
+                        : visibleReturns.filter((r) => {
+                            const items = Array.isArray(r.items) ? r.items : [];
+                            return items.length === 0 || String(r.scope || "").toLowerCase() === "full";
+                          })
+                    }
+                    timeline={selectedOrderItem ? (selectedOrderItem.timeline || []) : (order.timeline || [])}
                   />
                 </DetailSectionCard>
               )}
 
-              {Boolean(selectedOrderItem) &&
-                (track || visibleShipments.length > 0) && (
-                  <ShipmentTrackingPanel
-                    shipments={visibleShipments}
-                    orderDeliveryStatus={getDeliveryStatus(order)}
-                    notifications={
-                      Array.isArray(notificationState.list)
-                        ? notificationState.list
-                        : []
-                    }
-                  />
-                )}
+              {visibleShipments.length > 0 && (
+                <ShipmentTrackingPanel
+                  shipments={visibleShipments}
+                  orderDeliveryStatus={getDeliveryStatus(order)}
+                  notifications={
+                    Array.isArray(notificationState.list)
+                      ? notificationState.list
+                      : []
+                  }
+                  orderItems={items}
+                />
+              )}
             </section>
 
             <OrderCancellations
               cancellations={visibleCancellations}
               currency={currency}
+              orderItems={items}
             />
 
             <OrderReturns
@@ -318,8 +325,7 @@ export default function OrderDetailPage({ orderId, track }) {
               selectedOrderItem={selectedOrderItem}
             />
 
-            {Boolean(selectedOrderItem) && (
-              <OrderDocuments
+            <OrderDocuments
                 downloadableDocuments={downloadableDocuments}
                 visiblePendingSellerDocuments={visiblePendingSellerDocuments}
                 invoiceDownloadAvailable={invoiceDownloadAvailable}
@@ -329,8 +335,8 @@ export default function OrderDetailPage({ orderId, track }) {
                 handleDownload={handleDownload}
                 order={order}
                 selectedOrderItem={selectedOrderItem}
+                orderItems={items}
               />
-            )}
 
             <OrderActions
               order={order}

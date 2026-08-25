@@ -8,7 +8,7 @@ import HeaderDropdown from "./HeaderDropdown";
 import MenuDropdown from "./MenuDropdown";
 
 import { logout } from "../../modules/auth/slices/authSlice";
-import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
+import { notify } from "../../utils/notify";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 
 import { DEFAULT_TOP_NAV_LINKS } from "../../constants/header.constant";
@@ -48,7 +48,7 @@ export const TopHeader = () => {
       case "more":
         return <MenuDropdown title={dropdown.title} items={dropdown.items} />;
       default:
-        return null;  
+        return null;
     }
   };
 
@@ -106,6 +106,7 @@ export const TopHeader = () => {
               "
               onClick={() => {
                 dispatch(logout());
+                notify.success("Logged out successfully");
                 navigate("/", { replace: true });
               }}
             >
