@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { EmptyState, Seo } from "../../components/ui";
-import CartItemCard from "../../pages/cart/components/CartItemCard";
+import CartItemCard from "../../modules/cart/components/CartItemCard";
 import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
 import { useWatchlistProducts } from "../../hooks/useWatchlistProducts";
 import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";

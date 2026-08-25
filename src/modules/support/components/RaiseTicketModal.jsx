@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import BaseModal from "../../../components/ui/overlay/BaseModal";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 import { useSelector } from "react-redux";
-import { useAuthModal } from "../../../features/auth/AuthModalContext";
+import { useAuthModal } from "../../../modules/auth/context/AuthModalContext";
 import { useSupportController } from "../controllers/useSupportController";
 
 const CUSTOMER_SUPPORT_CATEGORIES = [

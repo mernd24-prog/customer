@@ -1,25 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { makeThunk } from "../../../features/createApiSlice";
-import { endpoints } from "../../../api/endpoints";
+import { PRODUCT_API_ENDPOINTS } from "../routes/apiRoutes";
 
 const q = (arg) => arg?.params || arg;
 
 export const fetchRelatedProducts = makeThunk("relatedProducts/fetchRelated", {
-  url: ({ productId }) => endpoints.products.related(productId),
+  url: ({ productId }) => PRODUCT_API_ENDPOINTS.related(productId),
   params: q,
   cache: true,
   cacheTtl: 120000,
 });
 
 export const fetchCrossSellProducts = makeThunk("relatedProducts/fetchCrossSell", {
-  url: ({ productId }) => endpoints.products.crossSell(productId),
+  url: ({ productId }) => PRODUCT_API_ENDPOINTS.crossSell(productId),
   params: q,
   cache: true,
   cacheTtl: 120000,
 });
 
 export const fetchUpSellProducts = makeThunk("relatedProducts/fetchUpSell", {
-  url: ({ productId }) => endpoints.products.upSell(productId),
+  url: ({ productId }) => PRODUCT_API_ENDPOINTS.upSell(productId),
   params: q,
   cache: true,
   cacheTtl: 120000,

@@ -5,7 +5,7 @@ import { KeyRound } from "lucide-react";
 import FormField from "../../components/ui/FormField";
 import Button from "../../components/ui/buttons/Button";
 import { useToastThunk } from "../../hooks/useToastThunk";
-import { changePassword } from "../../features/auth/authSlice";
+import { changePassword } from "../../modules/auth/slices/authSlice";
 import { securitySchema } from "../../validations/validationSchemas";
 
 export default function SecurityTab() {

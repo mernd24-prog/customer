@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useAuthModal } from "../../../features/auth/AuthModalContext";
+import { useAuthModal } from "../../../modules/auth/context/AuthModalContext";
 import { ChevronRight, ThumbsUp } from "lucide-react";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 import { IoIosStar } from "react-icons/io";
@@ -13,7 +13,7 @@ import {
   deleteMyReview,
   resetSubmitState,
 } from "../../../features/review/reviewSlice";
-import { fetchMyOrders } from "../../../features/order/orderSlice";
+import { fetchMyOrders } from "../../orders/slices/orderSlice";
 import ReviewImageUploader from "../../../components/ecommerce/ReviewImageUploader";
 import ReviewMediaLightbox from "../../../components/ecommerce/ReviewMediaLightbox";
 import { getImageUrlFromValue } from "../../../utils/ecommerce";
