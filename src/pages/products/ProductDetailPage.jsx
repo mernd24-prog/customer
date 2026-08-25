@@ -61,10 +61,10 @@ import {
   SELECTED_CHECKOUT_STORAGE_KEY,
 } from "../../constants";
 import GuestOtpAuthModal from "../../components/ui/overlay/GuestOtpAuthModal";
-import StarRating from "./components/starRating";
+import StarRating from "../../components/ui/display/StarRating";
 import ShareProductPopover from "./components/socialMediaShare";
-import ProductPriceBlock from "./components/oldAndNewPrice";
-import ProductStockStatus from "./components/stockStatus";
+import ProductPriceBlock from "../../components/ecommerce/ProductPriceBlock";
+import ProductStockStatus from "../../components/ecommerce/ProductStockStatus";
 import SizeChartSidebar from "./components/SizeChartSidebar";
 import ShowMoreText, { getShowMoreText } from "../../utils/showMore";
 import { PRODUCT_DETAIL_SKELETON } from "../../components/ui/skeleton/layouts";

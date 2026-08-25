@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { IoArrowForwardOutline } from "react-icons/io5";
 import { TextWhiteButton } from "../ui/button/static";
 import { formatPageTitle } from "../../utils/common";
-import StarRating from "../../modules/products/components/starRating";
+import StarRating from "./display/StarRating";
 
 export default function NewArrivalCard({
   title = "",

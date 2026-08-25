@@ -278,10 +278,7 @@ export default function AppRoutes() {
               {/* Orders */}
               <Route path={ORDER_ROUTES.list} element={<OrdersPage />} />
               <Route path={ORDER_ROUTES.detail()} element={<OrdersPage detail />} />
-              <Route
-                path={ORDER_ROUTES.track()}
-                element={<OrdersPage detail track />}
-              />
+
 
               {/* Returns */}
               <Route path={RETURNS_ROUTES.returns} element={<ReturnsPage />} />

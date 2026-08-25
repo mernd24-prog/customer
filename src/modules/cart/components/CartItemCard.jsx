@@ -9,9 +9,9 @@ import { calculateDiscountPercent } from "../../../utils/ecommerce/money";
 import { Link } from "react-router-dom";
 import { Heart, Trash2 } from "lucide-react";
 import { FaShoppingCart } from "react-icons/fa";
-import ProductPriceBlock from "../../../modules/products/components/oldAndNewPrice";
-import ProductStockStatus from "../../../modules/products/components/stockStatus";
-import StarRating from "../../../modules/products/components/starRating";
+import ProductPriceBlock from "../../../components/ecommerce/ProductPriceBlock";
+import ProductStockStatus from "../../../components/ecommerce/ProductStockStatus";
+import StarRating from "../../../components/ui/display/StarRating";
 import ShowMoreText from "../../../utils/showMore";
 
 export default function CartItemCard({

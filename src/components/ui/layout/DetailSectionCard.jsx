@@ -1,4 +1,4 @@
-function OrderDetailSectionCard({
+function DetailSectionCard({
   title,
   children,
   className = "h-fit",
@@ -32,4 +32,4 @@ function OrderDetailSectionCard({
   );
 }
 
-export default OrderDetailSectionCard;
+export default DetailSectionCard;

@@ -179,11 +179,9 @@ export function NotificationsPage() {
                   const orderId = notif.payload?.orderId;
 
                   const actionPath = orderId
-                    ? notificationItem.actionPath === "/orders/:orderId/track"
-                      ? `/orders/${orderId}/track`
-                      : notificationItem.actionPath === "/orders"
-                        ? `/orders/${orderId}`
-                        : notificationItem.actionPath
+                    ? notificationItem.actionPath === "/orders"
+                      ? `/orders/${orderId}`
+                      : notificationItem.actionPath
                     : notificationItem.actionPath;
 
                   return (

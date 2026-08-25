@@ -1,4 +1,4 @@
-import OrderDetailSectionCard from "./OrderDetailSectionCard";
+import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 import { formatMoney } from "../../../utils/ecommerce/money";
 import ShowMoreText from "../../../utils/showMore";
 
@@ -167,7 +167,7 @@ function OrderPaymentSummary({
     variant === "checkout" ? paymentMethods : paymentMethods;
 
   return (
-    <OrderDetailSectionCard
+    <DetailSectionCard
       title={title}
       className="h-full w-full"
       borderClassName="border-[#CE9F2D66]"
@@ -487,7 +487,7 @@ function OrderPaymentSummary({
           )}
         </>
       )}
-    </OrderDetailSectionCard>
+    </DetailSectionCard>
   );
 }
 

@@ -20,7 +20,7 @@ import {
   fetchStates,
   fetchZipCodes,
 } from "../../../features/global/globalSlice";
-import OrderDetailSectionCard from "../../../modules/orders/components/OrderDetailSectionCard";
+import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 import BaseModal from "../../../components/ui/overlay/BaseModal";
 import { useToastThunk } from "../../../hooks/useToastThunk";
 import { normalizeDialCode } from "../../../utils/common";
@@ -285,7 +285,7 @@ export default function AddressSelection({
     "flex items-start gap-2  font-medium leading-[18px] text-[#1B1D60] text-[14px] sm:leading-[22px] md:text-[16px] md:leading-[26px] lg:text-[18px] lg:leading-[30px]";
 
   return (
-    <OrderDetailSectionCard
+    <DetailSectionCard
       title="Delivery Address"
       className="w-full"
       bodyClassName="flex mt-4 sm:mt-0 flex-col w-full max-w-full gap-5 px-4 pb-0 sm:px-5 sm:pt-5 sm:pb-0 md:px-[25px] lg:pb-0"
@@ -438,6 +438,6 @@ export default function AddressSelection({
           {errors.selectedAddressId.message}
         </p>
       )}
-    </OrderDetailSectionCard>
+    </DetailSectionCard>
   );
 }

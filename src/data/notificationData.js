@@ -7,26 +7,26 @@ const notificationData = {
 
   "order.status_updated.v1": {
     icon: "/image/png/Payment Successful.png",
-    action: "View Details",
+    action: "View Order",
     actionPath: "/orders",
   },
 
   "invoice.generated.v1": {
     icon: "/image/png/Invoice Generated.png",
-    action: "Download Invoice",
+    action: "View Order",
     actionPath: "/orders",
   },
 
   "order.paid.v1": {
     icon: "/image/png/Payment Successful.png",
-    action: "View Details",
+    action: "View Order",
     actionPath: "/orders",
   },
 
   "shipment.tracking_updated.v1": {
     icon: "/image/png/Order Confirmed.png",
-    action: "Track Delivery",
-    actionPath: "/orders/:orderId/track",
+    action: "View Order",
+    actionPath: "/orders",
   },
 
   "shipment.delivered.v1": {
@@ -37,7 +37,7 @@ const notificationData = {
 
   default: {
     icon: "/image/png/Store Announcement.png",
-    action: "View Details",
+    action: "View Order",
     actionPath: "/orders",
   },
 };

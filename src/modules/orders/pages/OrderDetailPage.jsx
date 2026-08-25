@@ -278,27 +278,24 @@ export default function OrderDetailPage({ orderId, track }) {
                   <OrderProgress
                     status={selectedItemStatus || progressStatus}
                     cancellations={visibleCancellations}
-                    returns={
-                      selectedItemReturn
-                        ? [selectedItemReturn]
-                        : []
-                    }
+                    returns={selectedItemReturn ? [selectedItemReturn] : []}
                     timeline={selectedOrderItem.timeline || []}
                   />
                 </DetailSectionCard>
               )}
 
-              {Boolean(selectedOrderItem) && (track || visibleShipments.length > 0) && (
-                <ShipmentTrackingPanel
-                  shipments={visibleShipments}
-                  orderDeliveryStatus={getDeliveryStatus(order)}
-                  notifications={
-                    Array.isArray(notificationState.list)
-                      ? notificationState.list
-                      : []
-                  }
-                />
-              )}
+              {Boolean(selectedOrderItem) &&
+                (track || visibleShipments.length > 0) && (
+                  <ShipmentTrackingPanel
+                    shipments={visibleShipments}
+                    orderDeliveryStatus={getDeliveryStatus(order)}
+                    notifications={
+                      Array.isArray(notificationState.list)
+                        ? notificationState.list
+                        : []
+                    }
+                  />
+                )}
             </section>
 
             <OrderCancellations
