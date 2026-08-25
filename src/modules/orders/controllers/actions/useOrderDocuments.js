@@ -166,9 +166,15 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
   const visibleCustomerInvoices = selectedOrderItem
     ? customerInvoices.filter(documentCoversSelectedItem)
     : customerInvoices;
-  const visiblePendingSellerDocuments = selectedOrderItem
-    ? pendingSellerDocuments.filter(documentCoversSelectedItem)
-    : pendingSellerDocuments;
+  const isItemDelivered = selectedOrderItem 
+    ? isDeliveredOrderItem(selectedOrderItem) 
+    : hasDeliveredSellerPackage(order);
+
+  const visiblePendingSellerDocuments = isItemDelivered 
+    ? (selectedOrderItem
+      ? pendingSellerDocuments.filter(documentCoversSelectedItem)
+      : pendingSellerDocuments)
+    : [];
 
   const returnReverseInvoices = visibleReturns
     .map((returnRequest) => {
