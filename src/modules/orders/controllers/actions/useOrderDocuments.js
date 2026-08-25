@@ -118,14 +118,38 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         metadata.seller_id ||
         metadata.seller?.id ||
         metadata.seller?._id;
-      if (docSellerId) {
-        const itemSellerId =
-          selectedOrderItem.seller_id ||
-          selectedOrderItem.sellerId ||
-          selectedOrderItem.seller?.id ||
-          selectedOrderItem.seller?._id;
-        if (itemSellerId && String(docSellerId) !== String(itemSellerId)) {
+      
+      const itemSellerId =
+        selectedOrderItem.seller_id ||
+        selectedOrderItem.sellerId ||
+        selectedOrderItem.seller?.id ||
+        selectedOrderItem.seller?._id;
+
+      if (docSellerId && itemSellerId) {
+        if (String(docSellerId) !== String(itemSellerId)) {
           return false;
+        }
+      } else {
+        // Fallback to name matching if IDs are missing
+        const docSellerName =
+          document.sellerName ||
+          metadata.seller?.businessName ||
+          metadata.seller?.displayName;
+          
+        if (docSellerName) {
+          const fulfillmentGroups = order?.relations?.sellerFulfillmentGroups || [];
+          const itemFulfillment = fulfillmentGroups.find(
+            (g) => String(g.sellerId || g.seller_id) === String(itemSellerId)
+          );
+          const itemSellerName =
+            itemFulfillment?.sellerName ||
+            selectedOrderItem.sellerName ||
+            selectedOrderItem.seller?.displayName ||
+            selectedOrderItem.seller?.businessName;
+            
+          if (itemSellerName && docSellerName !== itemSellerName) {
+            return false;
+          }
         }
       }
       return true;
