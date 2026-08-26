@@ -27,7 +27,7 @@ import {
   getOrderItemId,
   findShipmentForOrderItem,
   resolveOrderItemDisplayStatus,
-  returnItemMatchesOrderItem
+  returnItemMatchesOrderItem,
 } from "../../../utils/pages/orderUtils";
 
 export function useOrderDetail({ orderId, track }) {
@@ -56,7 +56,7 @@ export function useOrderDetail({ orderId, track }) {
   const cancellations = Array.isArray(order?.relations?.cancellations)
     ? order.relations.cancellations
     : [];
-  
+
   const embeddedReturns = Array.isArray(order?.relations?.returns)
     ? order.relations.returns
     : Array.isArray(order?.returns)
@@ -66,37 +66,37 @@ export function useOrderDetail({ orderId, track }) {
         : [];
   const fetchedReturns = Array.isArray(returnsState.list)
     ? returnsState.list.filter(
-      (returnRequest) =>
-        String(returnRequest.orderId || returnRequest.order_id || "") ===
-        String(orderId),
-    )
+        (returnRequest) =>
+          String(returnRequest.orderId || returnRequest.order_id || "") ===
+          String(orderId),
+      )
     : [];
   const returns = [...fetchedReturns, ...embeddedReturns].filter(
     (returnRequest, index, list) => {
       const id = String(
         returnRequest.id ||
-        returnRequest._id ||
-        returnRequest.returnId ||
-        returnRequest.returnNumber ||
-        returnRequest.return_number ||
-        index,
+          returnRequest._id ||
+          returnRequest.returnId ||
+          returnRequest.returnNumber ||
+          returnRequest.return_number ||
+          index,
       );
       return (
         list.findIndex(
           (candidate, candidateIndex) =>
             String(
               candidate.id ||
-              candidate._id ||
-              candidate.returnId ||
-              candidate.returnNumber ||
-              candidate.return_number ||
-              candidateIndex,
+                candidate._id ||
+                candidate.returnId ||
+                candidate.returnNumber ||
+                candidate.return_number ||
+                candidateIndex,
             ) === id,
         ) === index
       );
     },
   );
-  
+
   const shipments = Array.isArray(order?.relations?.shipments)
     ? order.relations.shipments
     : [];
@@ -106,14 +106,16 @@ export function useOrderDetail({ orderId, track }) {
     : null;
   const selectedItemReturn = selectedOrderItem
     ? returns.find((returnRequest) => {
-        const items = Array.isArray(returnRequest.items) ? returnRequest.items : [];
+        const items = Array.isArray(returnRequest.items)
+          ? returnRequest.items
+          : [];
         if (!items.length) return true;
         return items.some((returnItem) =>
           returnItemMatchesOrderItem(returnItem, selectedOrderItem),
         );
       })
     : null;
-    
+
   const cancellationMatchesSelectedItem = (cancellation = {}) => {
     if (!selectedOrderItem) return true;
     const items = Array.isArray(cancellation.items) ? cancellation.items : [];
@@ -127,21 +129,21 @@ export function useOrderDetail({ orderId, track }) {
   const visibleCancellations = selectedOrderItem
     ? cancellations.filter(cancellationMatchesSelectedItem)
     : cancellations;
-    
+
   const selectedItemStatus = selectedOrderItem
     ? resolveOrderItemDisplayStatus(
-      selectedOrderItem,
-      getProgressStatus(order),
-      shipments,
-      order?.relations?.sellerFulfillmentGroups || [],
-      cancellations,
-    )
+        selectedOrderItem,
+        getProgressStatus(order),
+        shipments,
+        order?.relations?.sellerFulfillmentGroups || [],
+        cancellations,
+      )
     : null;
   const selectedItemAmount = selectedOrderItem
     ? (selectedOrderItem.line_total ??
       selectedOrderItem.lineTotal ??
       Number(selectedOrderItem.unit_price || selectedOrderItem.unitPrice || 0) *
-      Number(selectedOrderItem.quantity || 0))
+        Number(selectedOrderItem.quantity || 0))
     : null;
   const selectedItemShipment = selectedOrderItem
     ? findShipmentForOrderItem(shipments, selectedOrderItem)
@@ -180,7 +182,7 @@ export function useOrderDetail({ orderId, track }) {
       true
     );
   });
-  
+
   const itemReturnDeadlines = returnableItems
     .map(
       (item) =>
@@ -192,10 +194,10 @@ export function useOrderDetail({ orderId, track }) {
     .filter(Boolean);
   const returnEligibleUntil = itemReturnDeadlines.length
     ? itemReturnDeadlines.reduce((latest, value) =>
-      new Date(value).getTime() > new Date(latest).getTime() ? value : latest,
-    )
+        new Date(value).getTime() > new Date(latest).getTime() ? value : latest,
+      )
     : null;
-    
+
   const returnWindowOpen = returnableItems.some((item) => {
     const deadline =
       item.return_eligible_until ||
@@ -208,72 +210,72 @@ export function useOrderDetail({ orderId, track }) {
     ["delivered", "fulfilled", "partially_returned"].includes(status) &&
     returnWindowOpen &&
     returnableItems.length > 0;
-    
+
   const selectedItemReturnPolicy = selectedOrderItem
     ? selectedOrderItem.return_policy_snapshot ||
-    selectedOrderItem.returnPolicySnapshot ||
-    selectedOrderItem.product_snapshot?.returnPolicy ||
-    {}
+      selectedOrderItem.returnPolicySnapshot ||
+      selectedOrderItem.product_snapshot?.returnPolicy ||
+      {}
     : {};
   const selectedItemReturnDeadline = selectedOrderItem
     ? selectedOrderItem.return_eligible_until ||
-    selectedOrderItem.returnEligibleUntil ||
-    selectedItemReturnPolicy.eligibleUntil ||
-    null
+      selectedOrderItem.returnEligibleUntil ||
+      selectedItemReturnPolicy.eligibleUntil ||
+      null
     : null;
   const selectedItemReturnWindowOpen = selectedOrderItem
     ? !selectedItemReturnDeadline ||
-    new Date(selectedItemReturnDeadline).getTime() >= Date.now()
+      new Date(selectedItemReturnDeadline).getTime() >= Date.now()
     : false;
-    
+
   const selectedItemReturnedQuantity = selectedOrderItem
     ? returns.reduce((sum, returnRequest) => {
-      const returnStatus = String(returnRequest.status || "").toLowerCase();
-      const refundStatus = String(
-        returnRequest.refund?.status ||
-        returnRequest.refundStatus ||
-        returnRequest.refund_status ||
-        "",
-      ).toLowerCase();
-      if (["rejected", "qc_failure_upheld"].includes(returnStatus))
-        return sum;
-      if (
-        returnStatus === "closed" &&
-        !["completed", "not_required"].includes(refundStatus)
-      )
-        return sum;
-      return (
-        sum +
-        (returnRequest.items || [])
-          .filter((returnItem) =>
-            returnItemMatchesOrderItem(returnItem, selectedOrderItem),
-          )
-          .reduce(
-            (itemSum, returnItem) =>
-              itemSum +
-              Number(
-                returnItem.receivedQuantity ??
-                returnItem.received_quantity ??
-                returnItem.approvedQuantity ??
-                returnItem.approved_quantity ??
-                returnItem.requestedQuantity ??
-                returnItem.requested_quantity ??
-                returnItem.quantity ??
-                0,
-              ),
-            0,
-          )
-      );
-    }, 0)
+        const returnStatus = String(returnRequest.status || "").toLowerCase();
+        const refundStatus = String(
+          returnRequest.refund?.status ||
+            returnRequest.refundStatus ||
+            returnRequest.refund_status ||
+            "",
+        ).toLowerCase();
+        if (["rejected", "qc_failure_upheld"].includes(returnStatus))
+          return sum;
+        if (
+          returnStatus === "closed" &&
+          !["completed", "not_required"].includes(refundStatus)
+        )
+          return sum;
+        return (
+          sum +
+          (returnRequest.items || [])
+            .filter((returnItem) =>
+              returnItemMatchesOrderItem(returnItem, selectedOrderItem),
+            )
+            .reduce(
+              (itemSum, returnItem) =>
+                itemSum +
+                Number(
+                  returnItem.receivedQuantity ??
+                    returnItem.received_quantity ??
+                    returnItem.approvedQuantity ??
+                    returnItem.approved_quantity ??
+                    returnItem.requestedQuantity ??
+                    returnItem.requested_quantity ??
+                    returnItem.quantity ??
+                    0,
+                ),
+              0,
+            )
+        );
+      }, 0)
     : 0;
-    
+
   const selectedItemReturnableQuantity = selectedOrderItem
     ? Math.max(
-      0,
-      Number(selectedOrderItem.quantity || 0) - selectedItemReturnedQuantity,
-    )
+        0,
+        Number(selectedOrderItem.quantity || 0) - selectedItemReturnedQuantity,
+      )
     : 0;
-    
+
   const selectedItemCanReturn = Boolean(
     selectedOrderItem &&
     selectedItemReturnableQuantity > 0 &&
@@ -285,9 +287,9 @@ export function useOrderDetail({ orderId, track }) {
     ["delivered", "fulfilled", "completed"].includes(
       String(
         selectedOrderItem.delivery_status ||
-        selectedOrderItem.deliveryStatus ||
-        selectedItemStatus ||
-        "",
+          selectedOrderItem.deliveryStatus ||
+          selectedItemStatus ||
+          "",
       ).toLowerCase(),
     ),
   );
@@ -326,32 +328,56 @@ export function useOrderDetail({ orderId, track }) {
   }, [dispatch, shipments, track]);
 
   // Hook 1: Payment Actions
-  const { retrying, handleRetryPayment } = useOrderPayment({ 
-    orderId, 
-    order, 
-    userState: userState.current 
+  const { retrying, handleRetryPayment } = useOrderPayment({
+    orderId,
+    order,
+    userState: userState.current,
   });
 
   // Hook 2: Cancel Actions
-  const { 
-    cancelModalOpen, setCancelModalOpen, 
-    cancelReason, setCancelReason,
-    cancelReasonError, setCancelReasonError, 
-    cancelReasonCode, setCancelReasonCode,
-    cancelItems, setCancelItems, 
-    handleCancelOrder, openCancellation, hasCancellableQuantity 
-  } = useOrderCancel({ 
-    orderId, items, selectedOrderItem, cancellations, loading: state.loading 
+  const {
+    cancelModalOpen,
+    setCancelModalOpen,
+    cancelReason,
+    setCancelReason,
+    cancelReasonError,
+    setCancelReasonError,
+    cancelReasonCode,
+    setCancelReasonCode,
+    cancelItems,
+    setCancelItems,
+    handleCancelOrder,
+    openCancellation,
+    hasCancellableQuantity,
+  } = useOrderCancel({
+    orderId,
+    items,
+    selectedOrderItem,
+    cancellations,
+    loading: state.loading,
   });
 
   // Hook 3: Document Actions
   const {
-    invoices, downloadingId, setDownloadingId, handleDownload, getInvoiceUrl,
-    invoiceDownloadAvailable, customerInvoices, orderReceipt, customerFeeInvoice,
-    pendingSellerDocuments, visibleCustomerInvoices, visiblePendingSellerDocuments,
-    downloadableDocuments
-  } = useOrderDocuments({ 
-    orderId, order, selectedOrderItem, visibleReturns, visibleCancellations 
+    invoices,
+    downloadingId,
+    setDownloadingId,
+    handleDownload,
+    getInvoiceUrl,
+    invoiceDownloadAvailable,
+    customerInvoices,
+    orderReceipt,
+    customerFeeInvoice,
+    pendingSellerDocuments,
+    visibleCustomerInvoices,
+    visiblePendingSellerDocuments,
+    downloadableDocuments,
+  } = useOrderDocuments({
+    orderId,
+    order,
+    selectedOrderItem,
+    visibleReturns,
+    visibleCancellations,
   });
 
   const getReturnNumber = (returnRequest = {}) =>
@@ -360,7 +386,7 @@ export function useOrderDetail({ orderId, track }) {
     returnRequest.id ||
     returnRequest._id ||
     "Return request";
-    
+
   const getReturnRefundAmount = (returnRequest = {}) =>
     returnRequest.refundAmount ||
     returnRequest.refund?.requestedAmount ||
@@ -369,10 +395,10 @@ export function useOrderDetail({ orderId, track }) {
     returnRequest.refundBreakup?.totalRefundAmount ||
     returnRequest.refund_breakup?.total_refund_amount ||
     0;
-    
+
   const getReturnItemTitle = (item = {}) =>
     getProductTitle(item, item.productId || "Returned item");
-    
+
   const getReturnItemQuantity = (item = {}) =>
     item.approvedQuantity ||
     item.approved_quantity ||
@@ -448,6 +474,6 @@ export function useOrderDetail({ orderId, track }) {
     getReturnNumber,
     isCodOrder,
     visibleReturns,
-    visiblePendingSellerDocuments
+    visiblePendingSellerDocuments,
   };
 }

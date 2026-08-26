@@ -14,7 +14,11 @@ import {
 import { createPortal } from "react-dom";
 import { cn } from "../../../utils/common";
 
-export default function DeliveryChecker({ productId, onResultChange }) {
+export default function DeliveryChecker({
+  productId: initialProductId,
+  onResultChange,
+  standalone = false,
+}) {
   const dispatch = useDispatch();
   const [pincode, setPincode] = useState("");
   const [lastCheckedPincode, setLastCheckedPincode] = useState("");
@@ -22,6 +26,27 @@ export default function DeliveryChecker({ productId, onResultChange }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeProductId, setActiveProductId] = useState(initialProductId);
+
+  useEffect(() => {
+    setActiveProductId(initialProductId);
+  }, [initialProductId]);
+
+  useEffect(() => {
+    const handleOpen = (e) => {
+      if (e.defaultPrevented) return;
+      e.preventDefault();
+      if (e.detail?.productId) {
+        setActiveProductId(e.detail.productId);
+      }
+      if (e.detail?.pincode) {
+        setPincode(String(e.detail.pincode));
+      }
+      setIsModalOpen(true);
+    };
+    window.addEventListener("open-delivery-checker", handleOpen);
+    return () => window.removeEventListener("open-delivery-checker", handleOpen);
+  }, []);
 
   useEffect(() => {
     if (!error && result?.serviceable !== false) return undefined;
@@ -45,8 +70,9 @@ export default function DeliveryChecker({ productId, onResultChange }) {
     setError("");
     setLoading(true);
     try {
+      const targetProductId = activeProductId || initialProductId;
       const payload = await dispatch(
-        checkServiceability({ pincode: pin, productId }),
+        checkServiceability({ pincode: pin, productId: targetProductId }),
       ).unwrap();
       const nextResult = payload?.data || payload;
       setResult(nextResult);
@@ -89,10 +115,15 @@ export default function DeliveryChecker({ productId, onResultChange }) {
     onResultChange?.(null);
   };
 
+  if (standalone) {
+    if (!isModalOpen) return null;
+  }
+
   return (
-    <div className="w-full">
+    <div className={standalone ? "" : "w-full"}>
       {/* Trigger Link directly below Quantity Selector */}
-      <div className=" flex flex-col gap-1 ">
+      {!standalone && (
+        <div className=" flex flex-col gap-1 ">
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
@@ -107,7 +138,7 @@ export default function DeliveryChecker({ productId, onResultChange }) {
           >
             <MapPin size={15} />
           </div>
-          <span className="underline my-4 decoration-gold/50 underline-offset-4 group-hover:decoration-gold">
+          <span className="underline decoration-gold/50 underline-offset-4 group-hover:decoration-gold">
             {lastCheckedPincode
               ? `Delivering to ${lastCheckedPincode} (Change)`
               : "Check Delivery & Pincode Availability"}
@@ -136,6 +167,7 @@ export default function DeliveryChecker({ productId, onResultChange }) {
             </div>
           ))}
       </div>
+      )}
 
       {/* Modal Popup portal styled like AuthModal */}
       {isModalOpen &&

@@ -1,27 +1,17 @@
-import { useEffect, useState, useMemo } from "react";
-import {
-  Link,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  MdOutlineShoppingCart,
-  MdDateRange,
-} from "react-icons/md";
+import { Link } from "react-router-dom";
+
+import { MdDateRange } from "react-icons/md";
 import { FaShoppingCart } from "react-icons/fa";
 import { BsCreditCardFill } from "react-icons/bs";
 import ShowMoreText from "../../../utils/showMore";
-import { Download, IndianRupee, ReceiptText, RefreshCw, RotateCcw, Search, Truck, XCircle, X, Package } from "lucide-react";
+import { Search, Truck, X, Package } from "lucide-react";
 
 import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
-import Button from "../../../components/ui/buttons/Button";
-import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
+
 import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
-import { useToastThunk } from "../../../hooks/useToastThunk";
+
 import { getOpaqueOrderPath } from "../../../utils/routeTokens";
 
 import NeedHelpPanel from "../../../components/ecommerce/NeedHelpPanel";
@@ -29,68 +19,24 @@ import CustomDropdown from "../../../components/ui/CustomDropdown";
 
 import { useOrderList } from "../controllers/useOrderList";
 
-import { formatMoney, getImageUrlFromValue } from "../../../utils/ecommerce";
+import { formatMoney } from "../../../utils/ecommerce";
 import {
   COMPACT_STATUS_BADGE,
   items,
   ORDER_BREADCRUMBS,
-  ORDER_FILTERS,
 } from "../../../data/orderPage";
 import { ORDER_LIST_SKELETON } from "../../../components/ui/skeleton/layouts";
 
 import {
   getOrderId,
-  getOrderNumber,
   getOrderStatus,
-  getDeliveryStatus,
-  getProgressStatus,
-  hasKnownStatus,
-  canCancelOrder,
-  getOrderItems,
-  isDeliveredOrderItem,
-  hasDeliveredSellerPackage,
-  getItemProduct,
-  getItemProductId,
-  getItemProductPath,
-  getItemImage,
-  getOrderCurrency,
-  getAddressValue,
-  getProductTitle,
-  getItemAttributes,
-  getItemUnitPrice,
-  getItemLineTotal,
-  idsMatch,
-  getOrderCollection,
-  unwrapOrder,
-  getMatchingOrder,
-  getItemsTotal,
-  getAmount,
-  getCustomerOrderAmount,
-  getTaxIncludedAmount,
-  getTaxPayableAmount,
-  getCustomerPlatformFeeAmount,
-  getCustomerPlatformFeeTaxAmount,
-  getCustomerPlatformFeeTaxRate,
-  splitInclusivePlatformFee,
   formatOrderDate,
-  formatOrderId,
-  getApiOrderId,
-  normalizeOrderSearchText,
-  getOrderRelations,
+  getOrderCurrency,
+  getProductTitle,
   getPaymentMethod,
-  asNumber,
-  STATUS_LABELS,
   humanize,
   getOrderItemColor,
   getOrderItemId,
-  getOrderItemVariantId,
-  getOrderItemVariantSku,
-  getReturnItemProductId,
-  getReturnItemVariantId,
-  getReturnItemVariantSku,
-  returnItemMatchesOrderItem,
-  getSellerGroupKey,
-  getOrderItemSellerGroupKey,
   findShipmentForOrderItem,
   resolveOrderItemDisplayStatus,
   getOrderCardImage,
@@ -124,14 +70,18 @@ function OrderListItemStatusSummary({ statuses = [] }) {
 }
 
 function OrderItemSummaryCard({ order, item }) {
+  if (!order || !item) return null;
+
   const id = getOrderId(order);
   const productTitle = getProductTitle(item);
-  const createdAt = order.created_at || order.createdAt;
+  const createdAt = order?.created_at || order?.createdAt;
   const currency = getOrderCurrency(order);
   const paymentMethod = humanize(getPaymentMethod(order), "N/A");
   const shipments = Array.isArray(order?.relations?.shipments)
     ? order.relations.shipments
-    : [];
+    : Array.isArray(order?.shipments)
+      ? order.shipments
+      : [];
   const itemId = getOrderItemId(item);
   const itemStatus = resolveOrderItemDisplayStatus(
     item,
@@ -143,11 +93,11 @@ function OrderItemSummaryCard({ order, item }) {
   const shipment = findShipmentForOrderItem(shipments, item);
   const itemImage = getOrderCardImage(item);
   const itemTotal =
-    item.line_total ??
-    item.lineTotal ??
-    Number(item.unit_price || item.unitPrice || 0) * Number(item.quantity || 0);
+    item?.line_total ??
+    item?.lineTotal ??
+    Number(item?.unit_price || item?.unitPrice || 0) * Number(item?.quantity || 0);
   const itemDetailPath = getOpaqueOrderPath(id, {
-    query: `?orderItemId=${encodeURIComponent(itemId)}`,
+    query: itemId ? `?orderItemId=${encodeURIComponent(itemId)}` : "",
   });
 
   return (
@@ -183,7 +133,10 @@ function OrderItemSummaryCard({ order, item }) {
       >
         <span className="flex aspect-square w-full max-w-[175px] lg:max-w-[190px] items-center justify-center overflow-hidden rounded-xl border border-[#EFE5D2] bg-white p-2">
           {itemImage ? (
-            <img loading="lazy" width="400" height="400"
+            <img
+              loading="lazy"
+              width="400"
+              height="400"
               src={itemImage}
               alt={productTitle}
               className="h-full w-full object-contain"

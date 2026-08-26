@@ -64,16 +64,13 @@ export default function OrderDetailPage({ orderId, track }) {
     progressStatus,
     returnEligibleUntil,
     returnWindowOpen,
-    canRequestReturn,
+
     selectedOrderItem,
     selectedItemReturn,
     selectedItemStatus,
     selectedItemAmount,
-    selectedItemShipment,
     visibleShipments,
     selectedItemReturnWindowOpen,
-    selectedItemReturnableQuantity,
-    selectedItemReturnedQuantity,
     selectedItemCanReturn,
     selectedItemReturnDeadline,
     visibleOrderItems,
@@ -223,6 +220,7 @@ export default function OrderDetailPage({ orderId, track }) {
                 mainContent={
                   <OrderItemsSection
                     items={visibleOrderItems}
+                    order={order}
                     selectedOrderItem={selectedOrderItem}
                     orderId={orderId}
                     orderStatus={status}

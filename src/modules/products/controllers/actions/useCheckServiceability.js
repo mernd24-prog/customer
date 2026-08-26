@@ -23,13 +23,29 @@ export function useCheckServiceability() {
       if (result?.serviceable !== false) return true;
       notify.error({
         title: "Not deliverable to your address",
-        message: `This product cannot be delivered to pincode ${pincode}. Choose another address or product.`,
+        message: `This product cannot be delivered to pincode ${pincode}.`,
+        actionLabel: "Check Availability",
+        onAction: () => {
+          window.dispatchEvent(
+            new CustomEvent("open-delivery-checker", {
+              detail: { productId, pincode },
+            }),
+          );
+        },
       });
       return false;
     } catch (error) {
       notify.error({
         title: "Delivery check unavailable",
         message: typeof error === "string" ? error : "Please try adding this product again.",
+        actionLabel: "Check Availability",
+        onAction: () => {
+          window.dispatchEvent(
+            new CustomEvent("open-delivery-checker", {
+              detail: { productId, pincode },
+            }),
+          );
+        },
       });
       return false;
     }

@@ -182,6 +182,7 @@ export const endpoints = {
   support: {
     queries: `${API_PREFIX}/support/queries`,
     query: (queryId) => `${API_PREFIX}/support/queries/${queryId}`,
+    reply: (queryId) => `${API_PREFIX}/support/queries/${queryId}/replies`,
   },
   analytics: {
     overview: `${API_PREFIX}/analytics`,

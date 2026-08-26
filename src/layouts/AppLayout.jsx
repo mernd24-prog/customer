@@ -13,6 +13,9 @@ const GuestOtpAuthModal = React.lazy(
 const ScrollTopButton = React.lazy(
   () => import("../components/ui/ScrollTopButton"),
 );
+const DeliveryChecker = React.lazy(
+  () => import("../modules/products/components/DeliveryChecker"),
+);
 import { closeAddedToCartModal } from "../modules/cart/slices/cartUiSlice";
 import { footerData } from "../data/footer";
 import { AUTH_ROUTES } from "../modules/auth/routes/apiRoutes";
@@ -44,6 +47,9 @@ const HIDE_CATEGORY_BAR_ROUTES = [
   ...Object.values(AUTH_ROUTES),
   "/checkout",
   "/categories",
+  "/support",
+  "/faq",
+  "/contact-us",
 ];
 
 export default function AppLayout() {
@@ -140,6 +146,7 @@ export default function AppLayout() {
 
       <Suspense fallback={null}>
         <ScrollTopButton />
+        <DeliveryChecker standalone />
 
         {addedModalOpen && (
           <AddedToCartModal

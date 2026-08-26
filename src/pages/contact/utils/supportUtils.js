@@ -126,6 +126,9 @@ export function formatSupportDate(value) {
     day: "2-digit",
     month: "short",
     year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
   }).format(date);
 }
 
@@ -136,22 +139,49 @@ export function normalizeSupportQueries(result) {
       ? result
       : [];
 
-  return items.map((item) => ({
-    id: item.queryId || item.id,
-    subject: item.subject || "Support request",
-    message: item.message || "",
-    category: item.category || "OTHER",
-    categoryLabel: formatSupportCategory(item.category || "OTHER"),
-    status: item.status || "pending",
-    adminNotes: item.adminNotes || "",
-    statusHistory: Array.isArray(item.statusHistory)
-      ? item.statusHistory.map((historyItem) => ({
-          ...historyItem,
-          changedAt: formatSupportDate(historyItem.changedAt),
-        }))
-      : [],
-    resolvedAt: item.resolvedAt ? formatSupportDate(item.resolvedAt) : "",
-    createdAt: formatSupportDate(item.createdAt),
-    updatedAt: formatSupportDate(item.updatedAt || item.createdAt),
-  }));
+  return items.map((item) => {
+    const messages = (
+      Array.isArray(item.messages)
+        ? item.messages
+        : Array.isArray(item.metadata?.messages)
+          ? item.metadata.messages
+          : []
+    ).map((m) => {
+      const rawTime = m.createdAt || m.created_at || m.sentAt || null;
+      return {
+        ...m,
+        rawCreatedAt: rawTime,
+        createdAt: formatSupportDate(rawTime),
+      };
+    });
+
+    const statusHistory = (
+      Array.isArray(item.statusHistory)
+        ? item.statusHistory
+        : Array.isArray(item.metadata?.statusHistory)
+          ? item.metadata.statusHistory
+          : []
+    ).map((historyItem) => ({
+      ...historyItem,
+      rawChangedAt: historyItem.changedAt || null,
+      changedAt: formatSupportDate(historyItem.changedAt),
+    }));
+
+    return {
+      id: item.queryId || item.id,
+      subject: item.subject || "Support request",
+      message: item.message || "",
+      messages,
+      category: item.category || "OTHER",
+      categoryLabel: formatSupportCategory(item.category || "OTHER"),
+      status: item.status || "pending",
+      adminNotes: item.adminNotes || "",
+      statusHistory,
+      resolvedAt: item.resolvedAt ? formatSupportDate(item.resolvedAt) : "",
+      rawCreatedAt: item.createdAt || null,
+      rawUpdatedAt: item.updatedAt || item.createdAt || null,
+      createdAt: formatSupportDate(item.createdAt),
+      updatedAt: formatSupportDate(item.updatedAt || item.createdAt),
+    };
+  });
 }

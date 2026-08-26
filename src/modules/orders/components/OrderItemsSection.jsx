@@ -25,6 +25,7 @@ import {
 } from "../utils/orderItems";
 function OrderItemsSection({
   items = [],
+  order,
   selectedOrderItem,
   orderId,
   orderStatus,
@@ -309,7 +310,7 @@ function OrderItemsSection({
                   className={`rounded-xl text-left transition ${expanded ? "bg-white shadow-sm ring-1 ring-[#CE9F2D66]" : ""}`}
                 >
                   <div className="p-2">
-                    <OrderItemCard item={item} {...itemProps} />
+                    <OrderItemCard item={item} order={order} {...itemProps} />
                   </div>
                 </div>
                 <div className="flex flex-wrap items-start justify-between gap-4 w-full">
@@ -337,11 +338,7 @@ function OrderItemsSection({
                         {getItemQuantity(item)}
                       </span>
                     )}
-                    {policy.returnable && returnableQuantity > 0 && (
-                      <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">
-                        Returnable Item: {returnableQuantity}
-                      </span>
-                    )}
+
                   </div>
 
                   {isSingleItemView &&

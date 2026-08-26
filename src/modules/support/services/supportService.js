@@ -37,5 +37,14 @@ export const supportService = {
       },
     });
     return response;
-  }
+  },
+
+  sendReply: async (queryId, message) => {
+    const response = await apiRequest({
+      method: "post",
+      url: endpoints.support.reply(queryId),
+      data: { message },
+    });
+    return response;
+  },
 };

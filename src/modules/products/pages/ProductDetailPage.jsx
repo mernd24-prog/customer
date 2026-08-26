@@ -233,8 +233,8 @@ export default function ProductDetailPage() {
                   />
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-3">
-                  <div className="flex min-w-0 items-start justify-between gap-3 ">
+                <div className="flex min-w-0 flex-col gap-4 sm:gap-5">
+                  <div className="flex min-w-0 items-start justify-between gap-3">
                     <div className="min-w-0 w-full">
                       <h1 className="break-words block text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px] leading-snug">
                         <ShowMoreText
@@ -248,7 +248,7 @@ export default function ProductDetailPage() {
                   </div>
 
                   {Number(product.rating || 0) > 0 && (
-                    <div className="flex items-center mt-1">
+                    <div className="flex items-center -mt-2">
                       <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
                         {Number(product.rating || 0).toFixed(1)}
                       </span>
@@ -299,7 +299,7 @@ export default function ProductDetailPage() {
                     dealBadge={activeDealBadge}
                   />
 
-                  <div className="my-4">
+                  <div className="flex flex-col gap-3">
                     <div className="w-full md:w-fit">
                       <QuantitySelector
                         quantity={quantity}
@@ -327,14 +327,13 @@ export default function ProductDetailPage() {
                           {quantityStockMessage}
                         </p>
                       ) : null}
-
-                      {/* Delivery Checker link directly below Quantity Selector */}
-                      <DeliveryChecker
-                        productId={resolvedProductId}
-                        product={product}
-                        onResultChange={setDeliveryResult}
-                      />
                     </div>
+
+                    <DeliveryChecker
+                      productId={resolvedProductId}
+                      product={product}
+                      onResultChange={setDeliveryResult}
+                    />
                   </div>
 
                   {!deliveryResult && (

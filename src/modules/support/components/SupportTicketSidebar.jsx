@@ -117,7 +117,11 @@ export default function SupportTicketSidebar({ isOpen, onClose, ticket }) {
             </div>
           </div>
 
-          {ticket.adminNotes ? (
+          {ticket.adminNotes &&
+          (!Array.isArray(ticket.statusHistory) ||
+            !ticket.statusHistory.some(
+              (sh) => (sh.note || "").trim() === (ticket.adminNotes || "").trim(),
+            )) ? (
             <div className="border-t border-[#EFE5D2] pt-4 shrink-0">
               <p className="text-xs text-[#666666] font-semibold uppercase tracking-wider mb-1">
                 Support Note

@@ -112,7 +112,7 @@
 /* Card Content Layout */
 .customer-toast-card {
   display: flex !important;
-  align-items: center !important;
+  align-items: flex-start !important;
   gap: 14px !important;
   padding: 12px 38px 12px 14px !important;
   width: 100% !important;
@@ -129,6 +129,7 @@
 .customer-toast-card__icon-wrap {
   flex-shrink: 0 !important;
   margin-left: 0 !important;
+  margin-top: 1px !important;
 }
 
 .customer-toast-card__icon {

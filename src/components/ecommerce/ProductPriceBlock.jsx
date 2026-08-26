@@ -22,7 +22,7 @@ export default function ProductPriceBlock({
             {dealBadge}
           </span>
         ) : null}
-        <div className="my-2 flex flex-wrap items-center gap-3">
+        <div className="mb-1 flex flex-wrap items-center gap-3">
           <span className={cn("    font-bold  text-navy", priceClassName)}>
             {formatMoney(price, currency)}
           </span>

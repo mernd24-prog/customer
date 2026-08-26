@@ -1,4 +1,7 @@
-import { getImageUrlFromValue, getProductPublicPath } from "../../utils/ecommerce";
+import {
+  getImageUrlFromValue,
+  getProductPublicPath,
+} from "../../utils/ecommerce";
 import {
   getOrderId,
   getOrderNumber,
@@ -142,7 +145,6 @@ export const hasDeliveredSellerPackage = (order = {}) => {
   );
 };
 
-
 export const getItemProductId = (item) => {
   const product = getItemProduct(item);
   return (
@@ -159,11 +161,10 @@ export const getItemProductId = (item) => {
 
 export const getItemProductPath = (item) => {
   const productId = getItemProductId(item);
-  return productId ? getProductPublicPath(getItemProduct(item) || { id: productId }) : "";
+  return productId
+    ? getProductPublicPath(getItemProduct(item) || { id: productId })
+    : "";
 };
-
-
-
 
 export const getItemAttributes = (item) => {
   const attributes =
@@ -314,7 +315,8 @@ export const splitInclusivePlatformFee = (fee, taxAmount, taxRate = 18) => {
   };
 };
 
-export const getApiOrderId = (order) => String(getOrderNumber(order) || "").trim();
+export const getApiOrderId = (order) =>
+  String(getOrderNumber(order) || "").trim();
 export const normalizeOrderSearchText = (value = "") =>
   String(value)
     .toLowerCase()
@@ -520,7 +522,9 @@ const mostAdvancedForwardItemStatus = (item = {}, shipment = null) => {
     ...timelineStatuses,
   ]
     .map((status) => String(status || "").toLowerCase())
-    .filter((status) => Object.prototype.hasOwnProperty.call(FORWARD_ITEM_STATUS_RANK, status));
+    .filter((status) =>
+      Object.prototype.hasOwnProperty.call(FORWARD_ITEM_STATUS_RANK, status),
+    );
   return candidates.reduce(
     (latest, status) =>
       FORWARD_ITEM_STATUS_RANK[status] > FORWARD_ITEM_STATUS_RANK[latest]
@@ -563,33 +567,38 @@ export const resolveOrderItemDisplayStatus = (
     }
   }
 
-  return (
-    cancellation?.status === "requested" ? "cancellation_requested" :
-    cancellation?.status === "approved" ? "cancellation_approved" :
-    cancellation?.status === "rejected" ? "cancellation_rejected" :
-    item.cancellation_status ||
-    item.cancellationStatus ||
-    item.return_status ||
-    item.returnStatus ||
-    fulfillmentReturnStatus ||
-    (payoutStatus === "refunded" ? "refunded" : "") ||
-    (payoutStatus === "held" && fallback.includes("return") ? fallback : "") ||
-    forwardItemStatus ||
-    fallbackStatus ||
-    "processing"
-  );
+  return cancellation?.status === "requested"
+    ? "cancellation_requested"
+    : cancellation?.status === "approved"
+      ? "cancellation_approved"
+      : cancellation?.status === "rejected"
+        ? "cancellation_rejected"
+        : item.cancellation_status ||
+          item.cancellationStatus ||
+          item.return_status ||
+          item.returnStatus ||
+          fulfillmentReturnStatus ||
+          (payoutStatus === "refunded" ? "refunded" : "") ||
+          (payoutStatus === "held" && fallback.includes("return")
+            ? fallback
+            : "") ||
+          forwardItemStatus ||
+          fallbackStatus ||
+          "processing";
 };
 
 export const getOrderCardImage = (item) => {
-  let img = (
+  let img =
     getImageUrlFromValue(getItemImage(item)) ||
     getImageUrlFromValue(getItemProduct(item)?.image) ||
     getImageUrlFromValue(getItemProduct(item)?.imageUrl) ||
-    getImageUrlFromValue(getItemProduct(item)?.thumbnail)
-  );
+    getImageUrlFromValue(getItemProduct(item)?.thumbnail);
   if (img && img.includes("res.cloudinary.com") && img.includes("/upload/")) {
     // Add f_auto, q_auto and resize to 200x200 max to fix Lighthouse image delivery issue
-    img = img.replace(/\/upload\/(v\d+\/)/, "/upload/w_200,h_200,c_fit,f_auto,q_auto/$1");
+    img = img.replace(
+      /\/upload\/(v\d+\/)/,
+      "/upload/w_200,h_200,c_fit,f_auto,q_auto/$1",
+    );
   }
   return img;
 };
