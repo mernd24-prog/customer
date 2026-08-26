@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { IndianRupee, RotateCcw, ReceiptText } from "lucide-react";
+import { IndianRupee, RotateCcw, ReceiptText, RefreshCw, XCircle } from "lucide-react";
 
 import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
@@ -12,13 +12,10 @@ import CustomDropdown from "../../../components/ui/CustomDropdown";
 import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 import OrderItemsSection from "../components/OrderItemsSection";
 import OrderPaymentSummary from "../components/OrderPaymentSummary";
-import OrderProgress from "../components/OrderProgress";
-import ShipmentTrackingPanel from "../components/ShipmentTrackingPanel";
 import OrderDetailInfoGrid from "../components/OrderDetailInfoGrid";
 
 import { useOrderDetail } from "../controllers/useOrderDetail";
 import OrderCancellations from "../components/OrderCancellations";
-import OrderReturns from "../components/OrderReturns";
 import OrderDocuments from "../components/OrderDocuments";
 import OrderActions from "../components/OrderActions";
 
@@ -127,6 +124,32 @@ export default function OrderDetailPage({ orderId }) {
                 </div>
 
                 <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap items-center md:w-auto md:justify-end">
+                  {(status === "pending_payment" || status === "payment_failed") && (
+                    <Button
+                      className="flex h-[54px] w-full sm:w-auto items-center justify-center gap-[10px] rounded-[10px] px-[24px] py-[15px] text-white"
+                      loading={retrying}
+                      onClick={handleRetryPayment}
+                    >
+                      <RefreshCw size={18} />
+                      <span className="text-center text-[14px] sm:text-[15px] font-semibold leading-[20px] sm:leading-[24px]">
+                        Retry payment
+                      </span>
+                    </Button>
+                  )}
+
+                  {canCancelOrder(order) && hasCancellableQuantity && (
+                    <Button
+                      variant="secondary"
+                      className="flex h-[54px] w-full sm:w-auto items-center justify-center gap-[10px] rounded-[10px] border border-[#CE9F2D] px-[24px] py-[15px] text-[#1B1D60] hover:bg-[#FFF9EA]"
+                      onClick={openCancellation}
+                    >
+                      <XCircle size={18} className="text-red-500" />
+                      <span className="text-center text-[14px] sm:text-[15px] font-semibold leading-[20px] sm:leading-[24px]">
+                        {selectedOrderItem ? "Cancel item" : "Cancel order"}
+                      </span>
+                    </Button>
+                  )}
+
                   {Boolean(selectedOrderItem) &&
                     selectedItemCanReturn && (
                       <Link
@@ -232,6 +255,7 @@ export default function OrderDetailPage({ orderId }) {
                     getOrderItemColor={getOrderItemColor}
                     getItemLineTotal={getItemLineTotal}
                     formatMoney={formatMoney}
+                    isCodOrder={isCodOrder}
                   />
                 }
                 sidebarContent={
@@ -263,67 +287,7 @@ export default function OrderDetailPage({ orderId }) {
                 }
               />
 
-            <section className="grid gap-4 sm:gap-8">
-              {hasKnownStatus(order) && (
-                <DetailSectionCard
-                  title={selectedOrderItem ? "Selected Item Progress" : "Order Progress"}
-                  headerClassName="!min-h-[56px] !py-4"
-                  bodyClassName="overflow-hidden px-4"
-                  titleClassName="text-lg font-bold leading-none"
-                >
-                  <OrderProgress
-                    status={selectedItemStatus || progressStatus}
-                    cancellations={
-                      selectedOrderItem
-                        ? visibleCancellations
-                        : visibleCancellations.filter((c) => {
-                            const items = Array.isArray(c.items) ? c.items : [];
-                            return items.length === 0 || String(c.scope || "").toLowerCase() === "full";
-                          })
-                    }
-                    returns={
-                      selectedOrderItem
-                        ? (selectedItemReturn ? [selectedItemReturn] : [])
-                        : visibleReturns.filter((r) => {
-                            const items = Array.isArray(r.items) ? r.items : [];
-                            return items.length === 0 || String(r.scope || "").toLowerCase() === "full";
-                          })
-                    }
-                    timeline={selectedOrderItem ? (selectedOrderItem.timeline || []) : (order.timeline || [])}
-                  />
-                </DetailSectionCard>
-              )}
 
-              {visibleShipments.length > 0 && (
-                <ShipmentTrackingPanel
-                  shipments={visibleShipments}
-                  orderDeliveryStatus={getDeliveryStatus(order)}
-                  notifications={
-                    Array.isArray(notificationState.list)
-                      ? notificationState.list
-                      : []
-                  }
-                  orderItems={items}
-                />
-              )}
-            </section>
-
-            <OrderCancellations
-              cancellations={visibleCancellations}
-              currency={currency}
-              orderItems={items}
-            />
-
-            <OrderReturns
-              visibleReturns={visibleReturns}
-              currency={currency}
-              getReturnRefundAmount={getReturnRefundAmount}
-              getReturnItemTitle={getReturnItemTitle}
-              getReturnItemQuantity={getReturnItemQuantity}
-              getReturnNumber={getReturnNumber}
-              isCodOrder={isCodOrder}
-              selectedOrderItem={selectedOrderItem}
-            />
 
             <OrderDocuments
                 downloadableDocuments={downloadableDocuments}
@@ -337,17 +301,6 @@ export default function OrderDetailPage({ orderId }) {
                 selectedOrderItem={selectedOrderItem}
                 orderItems={items}
               />
-
-            <OrderActions
-              order={order}
-              status={status}
-              canCancelOrder={canCancelOrder}
-              retrying={retrying}
-              handleRetryPayment={handleRetryPayment}
-              openCancellation={openCancellation}
-              selectedOrderItem={selectedOrderItem}
-              hasCancellableQuantity={hasCancellableQuantity}
-            />
           </div>
         </ApiState>
       </div>

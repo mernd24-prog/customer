@@ -160,17 +160,17 @@ function OrderItemSummaryCard({ order, item }) {
             {productTitle}
           </span>
         </span>
-        <span className="flex flex-wrap items-center gap-4 text-xs md:text-sm">
-          <span className="inline-flex items-center gap-1.5">
-            <MdDateRange className="text-[#2564EB]" />
+        <span className="flex shrink-0 flex-wrap items-center gap-4 text-xs md:flex-nowrap md:text-sm">
+          <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+            <MdDateRange className="text-[#2564EB] shrink-0" />
             {formatOrderDate(createdAt)}
           </span>
-          <span className="inline-flex items-center gap-1.5">
-            <BsCreditCardFill className="text-[#2564EB]" />
+          <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+            <BsCreditCardFill className="text-[#2564EB] shrink-0" />
             {paymentMethod}
           </span>
           <span
-            className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold capitalize ${COMPACT_STATUS_BADGE[itemStatus] || "bg-[#2564EB] text-white"}`}
+            className={`inline-flex shrink-0 rounded-full px-3 py-1.5 text-xs font-bold capitalize whitespace-nowrap ${COMPACT_STATUS_BADGE[itemStatus] || "bg-[#2564EB] text-white"}`}
           >
             {humanize(itemStatus, "Processing")}
           </span>

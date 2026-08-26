@@ -12,14 +12,69 @@ export function OrderItemCard({
   getItemLineTotal,
   getOrderItemColor,
   formatMoney,
+  compact = false,
 }) {
   const productPath =
     getItemProductPath?.(item) || getOrderItemProductPath(item);
 
-  const eta = item.product_snapshot.shipping.processingDays;
+  const eta = item.product_snapshot?.shipping?.processingDays;
   const itemColor = getOrderItemColor(item);
   const shouldShowColor =
     itemColor != null && String(itemColor).trim().toLowerCase() !== "n/a";
+
+  if (compact) {
+    const itemSize = item.product_snapshot?.attributes?.size;
+    return (
+      <div className="w-full">
+        <div className="flex w-full flex-row items-center gap-4 sm:gap-6">
+          <div className="shrink-0 flex items-center justify-center overflow-hidden rounded-xl border border-[#E7D9B8] bg-white p-1.5 w-[90px] h-[75px] sm:w-[110px] sm:h-[85px] lg:w-[130px] lg:h-[100px]">
+            {getItemImage(item) ? (
+              productPath ? (
+                <Link to={productPath} className="flex h-full w-full items-center justify-center">
+                  <img loading="lazy" width="400" height="400"
+                    src={getItemImage(item)}
+                    alt={getProductTitle(item)}
+                    className="max-h-full max-w-full object-contain mix-blend-multiply"
+                  />
+                </Link>
+              ) : (
+                <img loading="lazy" width="400" height="400"
+                  src={getItemImage(item)}
+                  alt={getProductTitle(item)}
+                  className="max-h-full max-w-full object-contain mix-blend-multiply"
+                />
+              )
+            ) : (
+              <Package size={28} className="text-[#D9CBAE]" />
+            )}
+          </div>
+
+          <div className="flex min-w-0 flex-1 flex-col justify-center">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-bold text-[#1B1D60]">
+              {shouldShowColor && <span>Color: {itemColor}</span>}
+              <span>Quantity: {String(item.quantity || 1).padStart(2, '0')}</span>
+              {itemSize && <span>Size: {itemSize}</span>}
+            </div>
+
+            {eta !== undefined && eta !== null && eta !== "" ? (
+              <p className="mt-1.5 text-xs font-semibold text-[#6F7480]">
+                Estimated Delivery: {eta} {Number(eta) === 1 ? "day" : "days"}
+              </p>
+            ) : null}
+            
+            <div className="mt-2.5">
+              <p className="text-[18px] font-bold text-[#1B1D60]">
+                {formatMoney(getItemLineTotal(item), currency)}
+              </p>
+              <p className="text-[11px] font-medium text-[#2E2E2E]">
+                Inclusive of all taxes
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -97,4 +152,3 @@ export function OrderItemCard({
     </div>
   );
 }
-
