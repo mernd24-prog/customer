@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { IoArrowForwardOutline } from "react-icons/io5";
-import { TextWhiteButton } from "../ui/button/static";
+import { TextWhiteButton } from "./button/static";
 import { formatPageTitle } from "../../utils/common";
-import StarRating from "../../modules/products/components/starRating";
+import StarRating from "./display/StarRating";
 import { getProductPublicPath } from "../../utils/ecommerce";
 
 export default function NewArrivalCard({

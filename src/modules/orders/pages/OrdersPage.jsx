@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import Seo from "../../components/ui/Seo";
-import OrderDetail from "./components/OrderDetail";
-import OrderList from "./components/OrderList";
-import { decodeRouteToken, getOpaqueOrderPath } from "../../utils/routeTokens";
+import Seo from "../../../components/ui/Seo";
+import OrderDetailPage from "./OrderDetailPage";
+import OrderListPage from "./OrderListPage";
+import { decodeRouteToken, getOpaqueOrderPath } from "../../../utils/routeTokens";
 
 export default function OrdersPage({ detail = false, track = false }) {
   const { orderId, orderToken } = useParams();
@@ -26,7 +26,7 @@ export default function OrdersPage({ detail = false, track = false }) {
           title="Order Details - Sam Global"
           metaDescription="View your order details and track its status." 
         />
-        <OrderDetail orderId={resolvedOrderId} track={track} />
+        <OrderDetailPage orderId={resolvedOrderId} track={track} />
       </>
     );
   }

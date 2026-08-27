@@ -15,7 +15,7 @@ import { SUPPORT_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import { SkeletonLoader } from "../../../components/ui/skeleton";
 import { useCmsRecord } from "../../../hooks/useCmsRecord";
-import { useAuthModal } from "../../../features/auth/AuthModalContext";
+import { useAuthModal } from "../../auth/context/AuthModalContext";
 import { useSelector } from "react-redux";
 import {
   SUPPORT_CONTACT_ITEMS,

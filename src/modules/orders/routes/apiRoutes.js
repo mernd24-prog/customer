@@ -13,4 +13,5 @@ export const ORDER_API_ENDPOINTS = {
 export const ORDER_ROUTES = Object.freeze({
   list: "/orders",
   detail: (orderId = ":orderId") => `/orders/${orderId}`,
+  track: (orderId = ":orderId") => `/orders/${orderId}/track`,
 });

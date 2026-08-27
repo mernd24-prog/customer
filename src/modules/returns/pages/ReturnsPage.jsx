@@ -21,8 +21,8 @@ import {
   getReturnableQuantityForItem,
   isItemDelivered,
   getItemQuantity
-} from "../../utils/pages/returnUtils";
-import { decodeRouteToken, getOpaqueReturnRequestPath } from "../../utils/routeTokens";
+} from "../../../utils/pages/returnUtils";
+import { decodeRouteToken, getOpaqueReturnRequestPath } from "../../../utils/routeTokens";
 
 function ReturnRequestPage({ orderId }) {
   const {
