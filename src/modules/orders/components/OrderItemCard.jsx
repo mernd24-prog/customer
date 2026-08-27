@@ -12,6 +12,10 @@ export function OrderItemCard({
   getItemLineTotal,
   getOrderItemColor,
   formatMoney,
+  cancelledQuantity: cancelledQuantityProp,
+  returnedQuantity: returnedQuantityProp = 0,
+  delivered = false,
+  effectiveStatus = "",
   compact = false,
 }) {
   const productPath =
@@ -21,6 +25,45 @@ export function OrderItemCard({
   const itemColor = getOrderItemColor(item);
   const shouldShowColor =
     itemColor != null && String(itemColor).trim().toLowerCase() !== "n/a";
+  const orderedQuantity = Math.max(Number(item.quantity || 1), 0);
+  const cancelledQuantity = Math.min(
+    orderedQuantity,
+    Math.max(Number(cancelledQuantityProp ?? item.cancelled_quantity ?? item.cancelledQuantity ?? 0), 0),
+  );
+  const nonCancelledQuantity = Math.max(orderedQuantity - cancelledQuantity, 0);
+  const returnedQuantity = Math.min(
+    nonCancelledQuantity,
+    Math.max(Number(returnedQuantityProp || 0), 0),
+  );
+  const deliveredQuantity = delivered
+    ? Math.max(nonCancelledQuantity - returnedQuantity, 0)
+    : 0;
+  const remainingQuantity = Math.max(
+    nonCancelledQuantity - returnedQuantity - deliveredQuantity,
+    0,
+  );
+  const returnPending = String(effectiveStatus || "").includes("request");
+  const showQuantityBreakdown = cancelledQuantity > 0 || returnedQuantity > 0;
+
+  const quantityBreakdown = showQuantityBreakdown ? (
+    <div className="mt-2 flex flex-wrap gap-1.5 text-[11px] font-semibold">
+      <span className="rounded-full bg-[#F4F6FA] px-2.5 py-1 text-[#1B1D60]">Ordered {orderedQuantity}</span>
+      {cancelledQuantity > 0 && (
+        <span className="rounded-full bg-red-50 px-2.5 py-1 text-red-700">Cancelled {cancelledQuantity}</span>
+      )}
+      {returnedQuantity > 0 && (
+        <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-700">
+          {returnPending ? "Return requested" : "Returned"} {returnedQuantity}
+        </span>
+      )}
+      {deliveredQuantity > 0 && (
+        <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700">Delivered {deliveredQuantity}</span>
+      )}
+      {remainingQuantity > 0 && (
+        <span className="rounded-full bg-blue-50 px-2.5 py-1 text-blue-700">Remaining {remainingQuantity}</span>
+      )}
+    </div>
+  ) : null;
 
   if (compact) {
     const itemSize = item.product_snapshot?.attributes?.size;
@@ -55,6 +98,7 @@ export function OrderItemCard({
               <span>Quantity: {String(item.quantity || 1).padStart(2, '0')}</span>
               {itemSize && <span>Size: {itemSize}</span>}
             </div>
+            {quantityBreakdown}
 
             {eta !== undefined && eta !== null && eta !== "" ? (
               <p className="mt-1.5 text-xs font-semibold text-[#6F7480]">
@@ -132,6 +176,7 @@ export function OrderItemCard({
               </strong>
             </span>
           </div>
+          {quantityBreakdown}
 
           {eta !== undefined && eta !== null && eta !== "" ? (
             <p className="mb-3 text-[14px] font-semibold leading-5 text-[#5F6078]">

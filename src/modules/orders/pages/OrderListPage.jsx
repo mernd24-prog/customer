@@ -141,6 +141,16 @@ function OrderItemSummaryCard({ order, item }) {
     order?.relations?.cancellations || order?.cancellations || [],
   );
   const shipment = findShipmentForOrderItem(shipments, item);
+  const orderedQuantity = Math.max(Number(item.quantity || 0), 0);
+  const cancelledQuantity = Math.min(
+    orderedQuantity,
+    Math.max(Number(item.cancelled_quantity || item.cancelledQuantity || 0), 0),
+  );
+  const activeQuantity = Math.max(orderedQuantity - cancelledQuantity, 0);
+  const remainingDelivered = activeQuantity > 0 && (
+    isDeliveredOrderItem(item) ||
+    ["delivered", "fulfilled", "completed"].includes(String(shipment?.status || "").toLowerCase())
+  );
   const itemImage = getOrderCardImage(item);
   const itemTotal =
     item.line_total ??
@@ -207,8 +217,18 @@ function OrderItemSummaryCard({ order, item }) {
           </span>
           <span className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-[#5E6472]">
             <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">
-              Qty {Number(item.quantity || 0)}
+              Ordered {orderedQuantity}
             </span>
+            {cancelledQuantity > 0 && (
+              <span className="rounded-full bg-red-50 px-3 py-1.5 text-red-700">
+                Cancelled {cancelledQuantity}
+              </span>
+            )}
+            {cancelledQuantity > 0 && activeQuantity > 0 && (
+              <span className={`rounded-full px-3 py-1.5 ${remainingDelivered ? "bg-emerald-50 text-emerald-700" : "bg-blue-50 text-blue-700"}`}>
+                {remainingDelivered ? "Delivered" : "Remaining"} {activeQuantity}
+              </span>
+            )}
             {getOrderItemColor(item) !== "N/A" && (
               <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">
                 Color: {getOrderItemColor(item)}

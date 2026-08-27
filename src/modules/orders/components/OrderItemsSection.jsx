@@ -471,8 +471,22 @@ function OrderItemsSection({
           r.items?.some(ri => group.items.some(gi => (gi.id || gi._id) === (ri.orderItemId || ri.order_item_id || ri.itemId || ri.item_id)))
         );
         
-        const isCancelled = group.status === "cancelled" || group.status === "cancellation_requested" || groupCancellation;
-        const isReturned = group.status === "returned" || group.status === "return_requested" || group.status === "partially_returned" || groupReturn;
+        const orderedGroupQuantity = group.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+        const cancelledGroupQuantity = group.items.reduce(
+          (sum, item) => sum + Number(item.cancelled_quantity || item.cancelledQuantity || 0),
+          0,
+        );
+        const isFullyCancelled = orderedGroupQuantity > 0 && cancelledGroupQuantity >= orderedGroupQuantity;
+        const isCancelled = group.status === "cancelled" || isFullyCancelled;
+        const isPartiallyCancelled = cancelledGroupQuantity > 0 && !isFullyCancelled;
+        const returnedGroupQuantity = group.items.reduce(
+          (sum, item) => sum + getReturnedQuantityForItem(returns, item),
+          0,
+        );
+        const nonCancelledGroupQuantity = Math.max(orderedGroupQuantity - cancelledGroupQuantity, 0);
+        const isFullyReturned = nonCancelledGroupQuantity > 0 && returnedGroupQuantity >= nonCancelledGroupQuantity;
+        const isReturned = group.status === "returned" || isFullyReturned;
+        const isPartiallyReturned = returnedGroupQuantity > 0 && !isFullyReturned;
 
         return (
           <div
@@ -508,7 +522,15 @@ function OrderItemsSection({
 
                   return (
                     <div key={item.id || item._id || index} className="grid gap-3">
-                      <OrderItemCard item={item} {...itemProps} compact={true} />
+                      <OrderItemCard
+                        item={item}
+                        {...itemProps}
+                        compact={true}
+                        cancelledQuantity={Number(item.cancelled_quantity || item.cancelledQuantity || 0)}
+                        returnedQuantity={returnedQuantity}
+                        delivered={Boolean(fulfillment.delivered)}
+                        effectiveStatus={fulfillment.status}
+                      />
                       <div className="flex flex-wrap items-center justify-between gap-4 w-full">
                         <div className="flex flex-wrap items-center gap-2 text-[13px] font-bold text-[#2E2E2E]">
                           <span className="flex items-center h-6">
@@ -535,6 +557,18 @@ function OrderItemsSection({
                   );
                 })}
               </div>
+
+              {isPartiallyCancelled && groupCancellation && (
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs font-semibold text-amber-800">
+                  {cancelledGroupQuantity} of {orderedGroupQuantity} unit(s) cancelled. The remaining {orderedGroupQuantity - cancelledGroupQuantity} unit(s) continue through delivery normally.
+                </div>
+              )}
+
+              {isPartiallyReturned && groupReturn && (
+                <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-xs font-semibold text-blue-800">
+                  {returnedGroupQuantity} of {nonCancelledGroupQuantity} non-cancelled unit(s) are in the return flow. Other units keep their own delivery status.
+                </div>
+              )}
 
               {/* Courier Info */}
               {!isCancelled && (
