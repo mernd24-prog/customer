@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": {
+ "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "NODE_OPTIONS=--experimental-global-webcrypto vite build",
-    "seo:sitemap": "node scripts/generate-sitemap.mjs",
+    "build": "NODE_OPTIONS=--experimental-global-webcrypto vite build && npm run seo:sitemap",
+    "seo:sitemap": "node scripts/generate-sitemap.js",
     "preview": "vite preview --host 0.0.0.0",
     "lint": "eslint ."
-  },
+},
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@reduxjs/toolkit": "^2.3.0",
@@ -39,6 +39,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "postcss": "^8.5.13",
     "sharp": "^0.35.3",
+    "sitemap": "^9.0.1",
     "vite": "^5.4.11",
     "vite-plugin-purgecss": "^0.2.13"
   }
