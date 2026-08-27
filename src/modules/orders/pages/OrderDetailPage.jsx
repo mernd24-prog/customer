@@ -313,8 +313,8 @@ export default function OrderDetailPage({ orderId }) {
         }
         description={
           selectedOrderItem
-            ? "Submit the selected quantity for seller/admin approval. No refund or cancellation is processed before approval."
-            : "Submit the selected item quantities for seller/admin approval. Refund processing starts only after approval."
+            ? "Cancel this complete product line for seller/admin approval. No refund or cancellation is processed before approval."
+            : "Select the products to cancel. All remaining units of each selected product will be cancelled after approval."
         }
         confirmLabel={
           state.loading ? "Submitting..." : "Submit cancellation request"
@@ -332,7 +332,7 @@ export default function OrderDetailPage({ orderId }) {
         <div className="grid gap-4">
           <div className="grid gap-3 rounded-xl border border-[#E7D9B8] bg-[#FFFDF9] p-3.5 sm:p-4">
             <p className="text-sm font-bold text-[#1B1D60]">
-              Select item quantities
+              Select products
             </p>
             {(selectedOrderItem ? [selectedOrderItem] : items).map((item) => {
               const itemId = String(getOrderItemId(item));
@@ -390,26 +390,10 @@ export default function OrderDetailPage({ orderId }) {
                     </span>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    <input
-                      type="number"
-                      min="1"
-                      max={remaining}
-                      disabled={!selected || remaining <= 0 || state.loading}
-                      className="w-16 rounded-md border border-[#DCDDE5] bg-[#F7F7FA] py-1 text-center font-bold text-[#1B1D60] outline-none  focus:bg-white"
-                      value={selected ? cancelItems[itemId] : ""}
-                      aria-label={`Cancellation quantity for ${getProductTitle(item)}`}
-                      onChange={(event) =>
-                        setCancelItems((current) => ({
-                          ...current,
-                          [itemId]: Math.min(
-                            Math.max(Number(event.target.value || 1), 1),
-                            remaining,
-                          ),
-                        }))
-                      }
-                    />
-                    <span className="rounded-md bg-[#F4F4F7] px-2 py-1 text-xs font-semibold text-[#5F6078]">
-                      of {remaining}
+                    <span className={`rounded-md px-2.5 py-1 text-xs font-semibold ${selected ? "bg-red-50 text-red-700" : "bg-[#F4F4F7] text-[#5F6078]"}`}>
+                      {selected
+                        ? `Cancel all ${remaining} unit${remaining === 1 ? "" : "s"}`
+                        : `${remaining} unit${remaining === 1 ? "" : "s"}`}
                     </span>
                     {pendingQuantity > 0 && (
                       <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
@@ -424,7 +408,7 @@ export default function OrderDetailPage({ orderId }) {
               (quantity) => Number(quantity) > 0,
             ) && (
               <p className="text-xs font-semibold text-red-600">
-                Select at least one item and quantity.
+                Select at least one product.
               </p>
             )}
           </div>

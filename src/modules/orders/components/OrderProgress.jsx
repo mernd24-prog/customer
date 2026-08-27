@@ -83,7 +83,7 @@ const PROGRESS_MESSAGES = {
   partially_refunded: "Partial refund has been processed.",
   refund_completed: "Refund completed.",
   refunded: "Refund completed.",
-  partially_cancelled: "The approved item quantity has been cancelled successfully.",
+  partially_cancelled: "The selected product cancellation has been approved. Other products continue normally.",
   cancelled: "Cancellation completed successfully.",
 };
 

@@ -45,10 +45,7 @@ export function useOrderCancel({ orderId, items, selectedOrderItem, cancellation
     if (loading) return;
     const selectedItems = Object.entries(cancelItems)
       .filter(([, quantity]) => Number(quantity) > 0)
-      .map(([orderItemId, quantity]) => ({
-        orderItemId,
-        quantity: Number(quantity),
-      }));
+      .map(([orderItemId]) => ({ orderItemId }));
     if (cancelReason.trim().length < 10) {
       setCancelReasonError(true);
       return;
@@ -65,7 +62,7 @@ export function useOrderCancel({ orderId, items, selectedOrderItem, cancellation
         items: selectedItems,
         idempotencyKey: cancelRequestKey.current,
       }),
-      "Cancellation request submitted for seller/admin approval",
+      "Product cancellation request submitted for seller/admin approval",
     );
     if (!result) return;
     setCancelModalOpen(false);
