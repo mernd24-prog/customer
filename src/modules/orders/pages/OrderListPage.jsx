@@ -38,6 +38,7 @@ import {
   getOrderItemColor,
   getOrderItemId,
   findShipmentForOrderItem,
+  isDeliveredOrderItem,
   resolveOrderItemDisplayStatus,
   getOrderCardImage,
 } from "../../../utils/pages/orderUtils";

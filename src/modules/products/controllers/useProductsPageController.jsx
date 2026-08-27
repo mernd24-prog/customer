@@ -167,6 +167,31 @@ export function useProductsPageController() {
     return params;
   }, [hiddenParams, searchParams]);
 
+  const getPaginationMeta = useCallback((payload = {}, fallbackItems = []) => {
+    const meta =
+      payload?.meta?.pagination ||
+      payload?.data?.meta?.pagination ||
+      payload?.data?.pagination ||
+      payload?.meta ||
+      payload?.pagination ||
+      {};
+    return {
+      page: Number(meta.page ?? meta.currentPage ?? 1) || 1,
+      totalPages: Number(meta.totalPages ?? meta.pages ?? 1) || 1,
+      total: Number(meta.total ?? meta.count ?? fallbackItems.length) || fallbackItems.length,
+    };
+  }, []);
+
+  const mergeUniqueProducts = useCallback((currentItems = [], nextItems = []) => {
+    const seen = new Set();
+    return [...currentItems, ...nextItems].filter((product, index) => {
+      const key = product?._id || product?.id || product?.slug || `product-${index}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, []);
+
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
@@ -232,7 +257,7 @@ export function useProductsPageController() {
   // Fetch products whenever search params change
   useEffect(() => {
     const seq = ++requestSequenceRef.current;
-    const params = getParams();
+    const params = { ...getParams(), page: 1, limit: pageSize };
     setIsLoadingMore(true);
 
     dispatch(fetchProducts(params))
@@ -246,18 +271,7 @@ export function useProductsPageController() {
         setItems(sorted);
         setIsLoadingMore(false);
         setFirstLoadDone(true);
-
-        const meta =
-          payload?.data?.meta ||
-          payload?.data?.pagination ||
-          payload?.meta ||
-          payload?.pagination ||
-          {};
-        setPageInfo({
-          page: meta.page ?? meta.currentPage ?? 1,
-          totalPages: meta.totalPages ?? meta.pages ?? 1,
-          total: meta.total ?? meta.count ?? sorted.length,
-        });
+        setPageInfo(getPaginationMeta(payload, sorted));
 
         if (newContextKey !== facetsContextKey) {
           const facets =
@@ -269,8 +283,58 @@ export function useProductsPageController() {
       .catch(() => {
         if (seq !== requestSequenceRef.current) return;
         setIsLoadingMore(false);
+        setFirstLoadDone(true);
       });
-  }, [dispatch, searchParams, getParams, currentContextKey]);
+  }, [dispatch, searchParams, getParams, currentContextKey, getPaginationMeta, pageSize]);
+
+  const loadNextPage = useCallback(() => {
+    if (isLoadingMore || !firstLoadDone || currentPage >= totalPages) return;
+    const seq = requestSequenceRef.current;
+    const nextPage = currentPage + 1;
+    const params = { ...getParams(), page: nextPage, limit: pageSize };
+    setIsLoadingMore(true);
+
+    dispatch(fetchProducts(params))
+      .unwrap()
+      .then((payload) => {
+        if (seq !== requestSequenceRef.current) return;
+        const list = getProductListFromResponse(payload);
+        const sorted = sortProducts(list, params.sort);
+        setItems((prev) => mergeUniqueProducts(prev, sorted));
+        setPageInfo(getPaginationMeta(payload, sorted));
+        setIsLoadingMore(false);
+      })
+      .catch(() => {
+        if (seq !== requestSequenceRef.current) return;
+        setIsLoadingMore(false);
+      });
+  }, [
+    currentPage,
+    dispatch,
+    firstLoadDone,
+    getPaginationMeta,
+    getParams,
+    isLoadingMore,
+    mergeUniqueProducts,
+    pageSize,
+    totalPages,
+  ]);
+
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node || currentPage >= totalPages) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          loadNextPage();
+        }
+      },
+      { rootMargin: "600px 0px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [currentPage, loadNextPage, totalPages]);
 
   const handleClearFilters = useCallback(() => {
     setSearchParams((prev) => {
