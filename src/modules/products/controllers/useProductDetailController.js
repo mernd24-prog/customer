@@ -5,6 +5,7 @@ import { fetchProductWarranty } from "../../../features/warranty/warrantySlice";
 import { fetchDynamicPrice } from "../../../features/dynamicPricing/dynamicPricingSlice";
 import {
   trackRecommendationInteraction,
+  fetchRecommendations,
 } from "../../../features/recommendation/recommendationSlice";
 import {
   fetchRelatedProducts,
