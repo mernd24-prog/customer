@@ -4,7 +4,6 @@ import { fetchProductById } from "../slices/productSlice";
 import { fetchProductWarranty } from "../../../features/warranty/warrantySlice";
 import { fetchDynamicPrice } from "../../../features/dynamicPricing/dynamicPricingSlice";
 import {
-  fetchRecommendations,
   trackRecommendationInteraction,
 } from "../../../features/recommendation/recommendationSlice";
 import {
@@ -68,11 +67,11 @@ export function useProductDetailController(productId, rawParamId, matchProductId
   const dynamicState = useSelector((s) => s.dynamicPricing);
   const relatedState = useSelector((s) => s.relatedProducts);
   const crossSellState = useSelector((s) => s.relatedProducts); // Usually these share the same slice state
-  const recommendationState = useSelector((s) => s.recommendation);
   const user = useSelector((s) => s.auth.current);
   
   const userId = user?.id || user?._id || user?.userId || user?.email;
   const isLoggedIn = Boolean(userId && (tokenStorage.getAccessToken() || tokenStorage.getRefreshToken()));
+  const relatedLookupKey = productRequestIdentifier || loadedProductId;
 
   // Local State
   const [quantity, setQuantity] = useState(1);
@@ -198,8 +197,6 @@ export function useProductDetailController(productId, rawParamId, matchProductId
     if (!product) return;
     if (sideEffectsRanFor.current === loadedProductId) return;
     sideEffectsRanFor.current = loadedProductId;
-
-    dispatch(fetchRecommendations({ category: product.category, period: "week", limit: 8 })).catch(() => {});
 
     if (isLoggedIn && loadedProductId) {
       dispatch(trackAnalyticsEvent({ eventName: "product_view", metadata: { productId: loadedProductId } })).catch(() => {});
@@ -409,9 +406,21 @@ export function useProductDetailController(productId, rawParamId, matchProductId
     productState,
     warranty: warrantyState.current,
     dynamicState,
-    relatedProducts: relatedState.relatedByProduct[loadedProductId]?.items || [],
-    crossSellProducts: crossSellState.crossSellByProduct[loadedProductId]?.items || [],
-    recommendedProducts: (recommendationState?.list || []).filter((p) => String(getProductId(p) || "") !== String(loadedProductId || "")),
+    relatedProducts: (
+      relatedState.relatedByProduct[relatedLookupKey]?.items ||
+      relatedState.relatedByProduct[loadedProductId]?.items ||
+      []
+    ),
+    crossSellProducts: (
+      crossSellState.crossSellByProduct[relatedLookupKey]?.items ||
+      crossSellState.crossSellByProduct[loadedProductId]?.items ||
+      []
+    ),
+    recommendedProducts: (
+      relatedState.relatedByProduct[relatedLookupKey]?.items ||
+      relatedState.relatedByProduct[loadedProductId]?.items ||
+      []
+    ).filter((p) => String(getProductId(p) || "") !== String(loadedProductId || "")),
     recentlyViewedList,
     isLoggedIn,
     quantity,

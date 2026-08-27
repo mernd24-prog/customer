@@ -396,17 +396,7 @@ export default function ProductDetailPage() {
 
               <ProductReviewsSection productId={productId || resolvedProductId} product={product} realProductId={resolvedProductId} />
 
-              {recommendedProducts.length > 0 && (
-                <ProductRecommendationSection
-                  title="Recommended For You"
-                  linkText="View all →"
-                  products={recommendedProducts}
-                  addToCart={addToCart}
-                  toggleWishlist={toggleWishlist}
-                  isWishlisted={isWishlisted}
-                  className="mt-12"
-                />
-              )}
+
 
               {/* <ProductRecommendationSection
                 title="Related Products"
@@ -427,7 +417,17 @@ export default function ProductDetailPage() {
                 isWishlisted={isWishlisted}
                 className="mt-10"
               />
-
+              {recommendedProducts.length > 0 && (
+                <ProductRecommendationSection
+                  title="Recommended For You"
+                  linkText="View all →"
+                  products={recommendedProducts}
+                  addToCart={addToCart}
+                  toggleWishlist={toggleWishlist}
+                  isWishlisted={isWishlisted}
+                  className="mt-12"
+                />
+              )}
               {/* {isLoggedIn && (
                 <ProductRecommendationSection
                   title="Recently Viewed"

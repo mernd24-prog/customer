@@ -20,6 +20,21 @@ const initialState = {
   lastFetchedAt: null,
 };
 
+const extractProducts = (payload) => {
+  const data = payload?.data?.data || payload?.data || payload || {};
+  return Array.isArray(data)
+    ? data
+    : Array.isArray(data?.items)
+      ? data.items
+      : Array.isArray(data?.products)
+        ? data.products
+        : Array.isArray(data?.list)
+          ? data.list
+          : Array.isArray(data?.results)
+            ? data.results
+            : [];
+};
+
 const recommendationSlice = createSlice({
   name: "recommendation",
   initialState,
@@ -42,12 +57,7 @@ const recommendationSlice = createSlice({
         state.loadingRecommendations = false;
         state.loading = state.loadingTrending;
         state.lastFetchedAt = Date.now();
-        const data = action.payload?.data;
-        state.list = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.items)
-            ? data.items
-            : [];
+        state.list = extractProducts(action.payload);
       })
       .addCase(fetchRecommendations.rejected, (state, action) => {
         const message =
@@ -69,12 +79,7 @@ const recommendationSlice = createSlice({
         state.loadingTrending = false;
         state.loading = state.loadingRecommendations;
         state.lastFetchedAt = Date.now();
-        const data = action.payload?.data;
-        state.trendingList = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.items)
-            ? data.items
-            : [];
+        state.trendingList = extractProducts(action.payload);
       })
       .addCase(fetchTrendingProducts.rejected, (state, action) => {
         const message =

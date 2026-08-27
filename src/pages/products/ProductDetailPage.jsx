@@ -27,10 +27,12 @@ import { fetchProductById } from "../../features/product/productSlice";
 import { fetchProductWarranty } from "../../features/warranty/warrantySlice";
 import { fetchDynamicPrice } from "../../features/dynamicPricing/dynamicPricingSlice";
 import {
-  fetchRecommendations,
   trackRecommendationInteraction,
 } from "../../features/recommendation/recommendationSlice";
-import { fetchCrossSellProducts } from "../../features/product/relatedProductsSlice";
+import {
+  fetchCrossSellProducts,
+  fetchRelatedProducts,
+} from "../../modules/products/slices/relatedProductsSlice";
 import { trackAnalyticsEvent } from "../../features/analytics/analyticsSlice";
 import { useProductActions } from "../../hooks/useProductActions";
 import {
@@ -99,7 +101,6 @@ export default function ProductDetailPage() {
   const dynamicState = useSelector((s) => s.dynamicPricing);
   const relatedState = useSelector((s) => s.relatedProducts);
   const crossSellState = useSelector((s) => s.relatedProducts);
-  const recommendationState = useSelector((s) => s.recommendation);
   const user = useSelector((s) => s.auth.current);
   const userId = user?.id || user?._id || user?.userId || user?.email;
   const isLoggedIn = Boolean(
@@ -107,7 +108,8 @@ export default function ProductDetailPage() {
   );
 
   const warranty = warrantyState.current;
-  const recommendedProducts = (recommendationState?.list || []).filter(
+  const relatedProducts = relatedState.relatedByProduct[productId]?.items || [];
+  const recommendedProducts = relatedProducts.filter(
     (p) => String(getProductId(p) || "") !== String(productId || ""),
   );
 
@@ -118,8 +120,7 @@ export default function ProductDetailPage() {
 
   //const allProducts = Array.isArray(productState.list) ? productState.list : [];
 
-  const crossSellProducts =
-    crossSellState.crossSellByProduct[productId]?.items || [];
+  const crossSellProducts = crossSellState.crossSellByProduct[productId]?.items || [];
 
   const [quantity, setQuantity] = useState(1);
   const [deliveryResult, setDeliveryResult] = useState(null);
@@ -144,6 +145,7 @@ export default function ProductDetailPage() {
   useEffect(() => {
     dispatch(fetchProductById({ productId }));
     dispatch(fetchProductWarranty({ productId })).catch(() => {});
+    dispatch(fetchRelatedProducts({ productId })).catch(() => {});
     dispatch(fetchCrossSellProducts({ productId })).catch(() => {});
     sideEffectsRanFor.current = null;
     setDeliveryResult(null);
@@ -154,14 +156,6 @@ export default function ProductDetailPage() {
 
     if (sideEffectsRanFor.current === productId) return;
     sideEffectsRanFor.current = productId;
-
-    dispatch(
-      fetchRecommendations({
-        category: product.category,
-        period: "week",
-        limit: 8,
-      }),
-    ).catch(() => {});
 
     if (isLoggedIn) {
       dispatch(
