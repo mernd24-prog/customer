@@ -182,11 +182,8 @@ export const endpoints = {
   support: {
     queries: `${API_PREFIX}/support/queries`,
     query: (queryId) => `${API_PREFIX}/support/queries/${queryId}`,
-<<<<<<< HEAD
     aiChat: `${API_PREFIX}/support/ai-chat`,
-=======
     reply: (queryId) => `${API_PREFIX}/support/queries/${queryId}/replies`,
->>>>>>> origin/main
   },
   analytics: {
     overview: `${API_PREFIX}/analytics`,
