@@ -195,15 +195,33 @@ export function useProductDetailController(productId, rawParamId, matchProductId
 
   // Side Effects (Analytics, Recommendations, Recently Viewed)
   useEffect(() => {
-    if (!product) return;
+    if (!product || !loadedProductId) return;
     if (sideEffectsRanFor.current === loadedProductId) return;
     sideEffectsRanFor.current = loadedProductId;
 
-    dispatch(fetchRecommendations({ category: product.category, period: "week", limit: 8 })).catch(() => {});
+    dispatch(
+      fetchRecommendations({
+        productId: loadedProductId,
+        category: product.category || "",
+        period: "week",
+        limit: 8,
+        cache: false,
+      }),
+    ).catch(() => {});
 
-    if (isLoggedIn && loadedProductId) {
-      dispatch(trackAnalyticsEvent({ eventName: "product_view", metadata: { productId: loadedProductId } })).catch(() => {});
-      dispatch(trackRecommendationInteraction({ productId: loadedProductId, interactionType: "viewed" })).catch(() => {});
+    if (isLoggedIn) {
+      dispatch(
+        trackAnalyticsEvent({
+          eventName: "product_view",
+          metadata: { productId: loadedProductId },
+        }),
+      ).catch(() => {});
+      dispatch(
+        trackRecommendationInteraction({
+          productId: loadedProductId,
+          interactionType: "viewed",
+        }),
+      ).catch(() => {});
     }
   }, [dispatch, isLoggedIn, product, loadedProductId]);
 

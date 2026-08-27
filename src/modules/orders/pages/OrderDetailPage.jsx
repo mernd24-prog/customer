@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { IndianRupee, RotateCcw, ReceiptText, RefreshCw, XCircle } from "lucide-react";
+import { IndianRupee, RotateCcw, ReceiptText, RefreshCw, XCircle, FileText, Download } from "lucide-react";
 
 import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
@@ -16,7 +16,7 @@ import OrderDetailInfoGrid from "../components/OrderDetailInfoGrid";
 
 import { useOrderDetail } from "../controllers/useOrderDetail";
 import OrderCancellations from "../components/OrderCancellations";
-import OrderDocuments from "../components/OrderDocuments";
+
 import OrderActions from "../components/OrderActions";
 
 import {
@@ -137,11 +137,11 @@ export default function OrderDetailPage({ orderId }) {
                   {canCancelOrder(order) && hasCancellableQuantity && (
                     <Button
                       variant="secondary"
-                      className="flex h-[54px] w-full sm:w-auto items-center justify-center gap-[10px] rounded-[10px] border border-[#CE9F2D] px-[24px] py-[15px] text-[#1B1D60] hover:bg-[#FFF9EA]"
+                      className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50/50 px-5 py-2.5 text-red-600 shadow-sm transition-all hover:bg-red-100/80 hover:border-red-300 hover:text-red-700 active:scale-[0.98]"
                       onClick={openCancellation}
                     >
                       <XCircle size={18} className="text-red-500" />
-                      <span className="text-center text-[14px] sm:text-[15px] font-semibold leading-[20px] sm:leading-[24px]">
+                      <span className="text-center text-sm font-semibold">
                         {selectedOrderItem ? "Cancel item" : "Cancel order"}
                       </span>
                     </Button>
@@ -254,50 +254,81 @@ export default function OrderDetailPage({ orderId }) {
                     getItemLineTotal={getItemLineTotal}
                     formatMoney={formatMoney}
                     isCodOrder={isCodOrder}
+                    downloadableDocuments={downloadableDocuments}
+                    visiblePendingSellerDocuments={visiblePendingSellerDocuments}
+                    invoiceDownloadAvailable={invoiceDownloadAvailable}
+                    customerInvoices={customerInvoices}
+                    getInvoiceUrl={getInvoiceUrl}
+                    downloadingId={downloadingId}
+                    handleDownload={handleDownload}
                   />
                 }
                 sidebarContent={
                   (subtotal !== undefined || items.length > 0) && (
-                    <OrderPaymentSummary
-                      variant="order"
-                      subtotal={subtotal}
-                      discount={discount}
-                      discountFundingType={pricingSummary.discountFundingType}
-                      sellerFundedDiscount={
-                        pricingSummary.sellerFundedDiscountAmount
-                      }
-                      marketplaceFundedDiscount={
-                        pricingSummary.marketplaceFundedDiscountAmount
-                      }
-                      paymentPartnerFundedDiscount={
-                        pricingSummary.paymentPartnerFundedDiscountAmount
-                      }
-                      walletDiscount={walletDiscount}
-                      shipping={shipping}
-                      customerPlatformFee={customerPlatformFeeBase}
-                      customerPlatformFeeTax={customerPlatformFeeTax}
-                      customerAmount={customerAmount}
-                      currency={currency}
-                      formatMoney={formatMoney}
-                      asNumber={asNumber}
-                    />
+                    <div className="flex flex-col gap-4">
+                      <OrderPaymentSummary
+                        variant="order"
+                        subtotal={subtotal}
+                        discount={discount}
+                        discountFundingType={pricingSummary.discountFundingType}
+                        sellerFundedDiscount={
+                          pricingSummary.sellerFundedDiscountAmount
+                        }
+                        marketplaceFundedDiscount={
+                          pricingSummary.marketplaceFundedDiscountAmount
+                        }
+                        paymentPartnerFundedDiscount={
+                          pricingSummary.paymentPartnerFundedDiscountAmount
+                        }
+                        walletDiscount={walletDiscount}
+                        shipping={shipping}
+                        customerPlatformFee={customerPlatformFeeBase}
+                        customerPlatformFeeTax={customerPlatformFeeTax}
+                        customerAmount={customerAmount}
+                        currency={currency}
+                        formatMoney={formatMoney}
+                        asNumber={asNumber}
+                      />
+                      {(() => {
+                        const globalDocuments = (downloadableDocuments || []).filter(
+                          (doc) => doc.type === "platform_fee" || doc.type === "order_receipt"
+                        );
+                        if (globalDocuments.length === 0 || visibleOrderItems.length <= 1) return null;
+                        
+                        return (
+                          <div className="flex flex-col gap-3 p-4 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8]">
+                            <h4 className="font-bold text-[#1B1D60] mb-1 flex items-center gap-2 text-sm">
+                              <FileText size={16} className="text-[#3E4093]" /> Order Documents
+                            </h4>
+                            <div className="flex flex-col gap-2">
+                              {globalDocuments.map((document) => (
+                                <div
+                                  key={`${document.title}-${document.id}`}
+                                  className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 text-sm transition-all hover:border-[#CE9F2D80]"
+                                >
+                                  <div className="min-w-0 flex items-center gap-1.5">
+                                    <span className="font-semibold text-[13px] text-[#2E2E2E] truncate">
+                                      {document.title}
+                                    </span>
+                                  </div>
+                                  <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    loading={downloadingId === document.downloadPath}
+                                    onClick={() => handleDownload(document.downloadPath, document.filename)}
+                                    className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3 shrink-0"
+                                  >
+                                    <Download size={12} /> Download
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
                   )
                 }
-              />
-
-
-
-            <OrderDocuments
-                downloadableDocuments={downloadableDocuments}
-                visiblePendingSellerDocuments={visiblePendingSellerDocuments}
-                invoiceDownloadAvailable={invoiceDownloadAvailable}
-                customerInvoices={customerInvoices}
-                getInvoiceUrl={getInvoiceUrl}
-                downloadingId={downloadingId}
-                handleDownload={handleDownload}
-                order={order}
-                selectedOrderItem={selectedOrderItem}
-                orderItems={items}
               />
           </div>
         </ApiState>

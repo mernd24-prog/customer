@@ -36,7 +36,8 @@ import ProductStockStatus from "../../../components/ecommerce/ProductStockStatus
 import SizeChartSidebar from "../components/SizeChartSidebar";
 import ShowMoreText, { getShowMoreText } from "../../../utils/showMore";
 import { PRODUCT_DETAIL_SKELETON } from "../../../components/ui/skeleton/layouts";
-import { Star, Banknote, Truck } from "lucide-react";import QuantitySelector from "../../cart/components/QuantitySelector";
+import { Star, Banknote, Truck } from "lucide-react";
+import QuantitySelector from "../../cart/components/QuantitySelector";
 import ImageGallery from "../components/ImageGallery";
 import DeliveryChecker from "../components/DeliveryChecker";
 import VariantSelector from "../components/VariantSelector";
@@ -53,8 +54,10 @@ import Seo from "../../../components/ui/Seo";
 export default function ProductDetailPage() {
   const { productId: rawParamId, publicCode, productToken } = useParams();
   const tokenPayload = decodeProductRouteToken(productToken);
-  const rawRouteProductId = publicCode || (rawParamId ? String(rawParamId).split(":")[0] : "");
-  const isRawObjectIdRoute = !productToken && /^[a-f0-9]{24}$/i.test(rawRouteProductId);
+  const rawRouteProductId =
+    publicCode || (rawParamId ? String(rawParamId).split(":")[0] : "");
+  const isRawObjectIdRoute =
+    !productToken && /^[a-f0-9]{24}$/i.test(rawRouteProductId);
   const productId = isRawObjectIdRoute ? "" : productToken || rawRouteProductId;
   const decodedProductId = tokenPayload?.p || rawRouteProductId;
   const dispatch = useDispatch();
@@ -118,7 +121,8 @@ export default function ProductDetailPage() {
     detailRows,
     loadedProductId,
   } = useProductDetailController(productId, rawParamId, decodedProductId);
-  const resolvedProductId = loadedProductId || getProductId(product) || productId;
+  const resolvedProductId =
+    loadedProductId || getProductId(product) || productId;
 
   useEffect(() => {
     if (isRawObjectIdRoute) {
@@ -128,7 +132,9 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!product) return;
-    const nextPath = getProductPublicPath(product, { variant: selectedVariant });
+    const nextPath = getProductPublicPath(product, {
+      variant: selectedVariant,
+    });
     const currentPath = `${location.pathname}${location.search}`;
     if (nextPath && nextPath !== currentPath) {
       navigate(nextPath, { replace: true });
@@ -151,7 +157,9 @@ export default function ProductDetailPage() {
     <AppErrorBoundary>
       <Seo
         title={productTitle}
-        metaDescription={productShortDescription || product?.seo?.metaDescription}
+        metaDescription={
+          productShortDescription || product?.seo?.metaDescription
+        }
         keywords={product?.seo?.keywords || []}
         image={product?.seo?.ogImage}
       />
@@ -394,7 +402,11 @@ export default function ProductDetailPage() {
                 effectiveDescription={productDescription}
               />
 
-              <ProductReviewsSection productId={productId || resolvedProductId} product={product} realProductId={resolvedProductId} />
+              <ProductReviewsSection
+                productId={productId || resolvedProductId}
+                product={product}
+                realProductId={resolvedProductId}
+              />
 
               {recommendedProducts.length > 0 && (
                 <ProductRecommendationSection

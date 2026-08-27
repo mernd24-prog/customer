@@ -1,4 +1,4 @@
-import { Clock3, ExternalLink, Package, Truck } from "lucide-react";
+import { Clock3, ExternalLink, Package, Truck, Check, X } from "lucide-react";
 import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 
 const STATUS_LABELS = { out_for_delivery: "Out For Delivery" };
@@ -47,8 +47,8 @@ export default function ShipmentTrackingPanel({
           e.note?.toLowerCase()?.includes("reverse") ||
           e.note?.toLowerCase()?.includes("return") ||
           e.status?.toLowerCase()?.includes("reverse") ||
-          e.status?.toLowerCase()?.includes("return")
-      )
+          e.status?.toLowerCase()?.includes("return"),
+      ),
     );
     const isReverseB = Boolean(
       b.return_id ||
@@ -60,8 +60,8 @@ export default function ShipmentTrackingPanel({
           e.note?.toLowerCase()?.includes("reverse") ||
           e.note?.toLowerCase()?.includes("return") ||
           e.status?.toLowerCase()?.includes("reverse") ||
-          e.status?.toLowerCase()?.includes("return")
-      )
+          e.status?.toLowerCase()?.includes("return"),
+      ),
     );
     if (isReverseA === isReverseB) return 0;
     return isReverseA ? 1 : -1;
@@ -86,8 +86,8 @@ export default function ShipmentTrackingPanel({
               e.note?.toLowerCase()?.includes("reverse") ||
               e.note?.toLowerCase()?.includes("return") ||
               e.status?.toLowerCase()?.includes("reverse") ||
-              e.status?.toLowerCase()?.includes("return")
-          )
+              e.status?.toLowerCase()?.includes("return"),
+          ),
         );
 
         const displayStatus =
@@ -113,25 +113,37 @@ export default function ShipmentTrackingPanel({
             new Date(right.event_time || right.created_at || 0),
         );
         const trackingNumber = shipment.tracking_number || shipment.awb_number;
-        
+
         let shipmentProductNames = "";
         if (shipments.length > 1) {
           const itemIds = Array.isArray(shipment.items)
-            ? shipment.items.map((i) => String(i.orderItemId || i.order_item_id || i.id || ""))
+            ? shipment.items.map((i) =>
+                String(i.orderItemId || i.order_item_id || i.id || ""),
+              )
             : [];
-          const matchedItems = orderItems.filter(item => {
+          const matchedItems = orderItems.filter((item) => {
             if (itemIds.length) {
               return itemIds.includes(String(item.id || item._id || ""));
             }
             const shipmentSellerId = String(shipment.seller_id || "");
-            const itemSellerId = String(item.sellerId || item.seller_id || item.seller?.id || "");
-            if (shipmentSellerId && shipmentSellerId === itemSellerId) return true;
-            
+            const itemSellerId = String(
+              item.sellerId || item.seller_id || item.seller?.id || "",
+            );
+            if (shipmentSellerId && shipmentSellerId === itemSellerId)
+              return true;
+
             const shipmentOrgId = String(shipment.organization_id || "");
-            const itemOrgId = String(item.organizationId || item.organization_id || item.organization?.id || "");
+            const itemOrgId = String(
+              item.organizationId ||
+                item.organization_id ||
+                item.organization?.id ||
+                "",
+            );
             return shipmentOrgId && shipmentOrgId === itemOrgId;
           });
-          shipmentProductNames = matchedItems.map(i => i.productTitle || i.product_title || "Product").join(", ");
+          shipmentProductNames = matchedItems
+            .map((i) => i.productTitle || i.product_title || "Product")
+            .join(", ");
         }
 
         return (
@@ -141,8 +153,9 @@ export default function ShipmentTrackingPanel({
           >
             {/* Shipment Information */}
             <DetailSectionCard
-              title={isReverse ? "Return Pickup Information" : "Shipment Information"}
-
+              title={
+                isReverse ? "Return Pickup Information" : "Shipment Information"
+              }
               headerClassName="!min-h-[60px] !py-4"
               titleClassName="text-lg font-bold"
               bodyClassName="p-5"
@@ -150,11 +163,15 @@ export default function ShipmentTrackingPanel({
               <div className="space-y-5 text-sm text-[#2E2E2E]">
                 {shipmentProductNames && (
                   <div className="mb-4 rounded-lg bg-[#F9F5EB] p-3 text-[#1B1D60]">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-[#8A5A00] mb-1">Package contains</p>
-                    <p className="font-medium line-clamp-2">{shipmentProductNames}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[#8A5A00] mb-1">
+                      Package contains
+                    </p>
+                    <p className="font-medium line-clamp-2">
+                      {shipmentProductNames}
+                    </p>
                   </div>
                 )}
-                
+
                 <div className="flex items-start gap-3">
                   <Truck className="mt-0.5 shrink-0 text-[#3E4093]" size={18} />
                   <div>
@@ -238,36 +255,74 @@ export default function ShipmentTrackingPanel({
                         event_time: shipment.updated_at,
                       },
                     ]
-                ).map((event, eventIndex, arr) => (
-                  <div
-                    key={event.id || eventIndex}
-                    className="relative pb-5 pl-5 last:pb-0"
-                  >
-                    {eventIndex !== arr.length - 1 && (
-                      <span className="absolute -left-[1px] top-[10px] h-full w-[2px] bg-[#CE9F2D66]" />
-                    )}
-                    <span className="absolute -left-[6px] top-1 h-3 w-3 rounded-full bg-[#CE9F2D]" />
+                ).map((event, eventIndex, arr) => {
+                  const isLast = eventIndex === arr.length - 1;
+                  const lineDelay = `${eventIndex * 0.5}s`;
+                  const ballDelay = `${eventIndex * 0.5}s`;
+                  const isCancelledEvent =
+                    event.status === "cancelled" ||
+                    event.status === "cancellation_requested";
 
-                    <p className="text-sm font-semibold capitalize text-[#2E2E2E] ">
-                      {label(event.status)}
-                    </p>
+                  return (
+                    <div
+                      key={event.id || eventIndex}
+                      className="relative pb-6 pl-7 last:pb-0"
+                    >
+                      {/* Background track line */}
+                      {!isLast && (
+                        <span className="absolute left-[7px] top-[10px] bottom-[-14px] w-[2px] bg-[#E0E0E0] z-0" />
+                      )}
 
-                    <p className="mt-1 text-xs text-[#6F7480]">
-                      {[
-                        dateTime(event.event_time || event.created_at),
-                        event.location,
-                      ]
-                        .filter(Boolean)
-                        .join(" • ")}
-                    </p>
+                      {/* Animated active progress fill line */}
+                      {!isLast && (
+                        <span
+                          className={`absolute left-[7px] top-[10px] bottom-[-14px] w-[2px] ${
+                            isCancelledEvent ? "bg-[#E53935]" : "bg-[#26A541]"
+                          } origin-top animate-timeline-line z-0`}
+                          style={{ animationDelay: lineDelay }}
+                        />
+                      )}
 
-                    {event.note && (
-                      <p className="mt-1 text-xs text-[#6F7480]">
-                        {event.note.replace(/_/g, " ")}
-                      </p>
-                    )}
-                  </div>
-                ))}
+                      {/* Timeline ball (dot) color fill */}
+                      <span
+                        className={`absolute left-0 top-0.5 z-10 h-4 w-4 rounded-full flex items-center justify-center ${
+                          isCancelledEvent
+                            ? "animate-ball-fill-red"
+                            : "animate-ball-fill-green"
+                        } ${isLast ? "animate-timeline-pulse" : ""}`}
+                        style={{ animationDelay: ballDelay }}
+                      >
+                        {isCancelledEvent ? (
+                          <X className="h-2.5 w-2.5 stroke-[3] text-current" />
+                        ) : (
+                          <Check className="h-2.5 w-2.5 stroke-[3] text-current" />
+                        )}
+                      </span>
+
+                      {/* Event content details - Always fully visible */}
+                      <div>
+                        <p className={`text-sm font-semibold capitalize ${isCancelledEvent ? "text-[#E53935]" : "text-[#2E2E2E]"}`}>
+                          {label(event.status)}
+                        </p>
+
+                        <p className="mt-1 text-xs text-[#6F7480]">
+                          {[
+                            dateTime(event.event_time || event.created_at),
+                            event.location,
+                          ]
+                            .filter(Boolean)
+                            .join(" • ")}
+                        </p>
+
+                        {event.note && (
+                          <p className="mt-1 text-xs text-[#6F7480]">
+                            {event.note.replace(/_/g, " ")}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </DetailSectionCard>
           </div>
