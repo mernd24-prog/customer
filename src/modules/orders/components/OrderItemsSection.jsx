@@ -205,6 +205,7 @@ const getReturnSteps = (returnRequest, group, currency, formatMoney, isCodOrder)
 
 function OrderItemsSection({
   items = [],
+  order,
   selectedOrderItem,
   orderId,
   orderStatus,

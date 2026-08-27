@@ -43,14 +43,14 @@ function SupportStatusBadge({ status }) {
 
   const className =
     normalized === "resolved" || normalized === "closed"
-      ? "bg-[#E8F8F5] text-[#117A65]"
+      ? "border border-emerald-300/60 bg-emerald-50 text-emerald-700"
       : normalized === "in_progress"
-        ? "bg-[#EEF2FF] text-[#3E4093]"
-        : "bg-[#FEF9E7] text-[#B7950B]";
+        ? "border border-sky-300/60 bg-sky-50 text-sky-700"
+        : "border border-amber-300/60 bg-amber-50 text-amber-800";
 
   return (
     <span
-      className={`inline-flex rounded-full px-3 py-1 text-[12px] font-semibold capitalize ${className}`}
+      className={`inline-flex items-center shrink-0 whitespace-nowrap rounded-full px-2.5 py-[3px] text-[11px] font-semibold leading-none capitalize ${className}`}
     >
       {normalized.replace(/_/g, " ")}
     </span>
@@ -137,14 +137,13 @@ export default function SupportHelpCenter() {
         description={pageDescription}
       />
 
-      <main className="main-container p-0 sm:px-6 sm:py-6 lg:px-0 lg:py-8">
+      <main className="main-container  sm:px-6 sm:py-6 lg:px-0 lg:py-8">
         <Breadcrumbs items={SUPPORT_BREADCRUMBS} />
         <div className="mb-7 mt-4 sm:mt-5">
           <h1 className="text-[26px] font-bold leading-tight text-[#3E4093] sm:text-[30px] lg:text-[32px]">
             Help & Support
           </h1>
         </div>
-    
         {quickActions.length > 0 && (
           <section className="relative mb-5 md:hidden">
             <button
@@ -172,7 +171,10 @@ export default function SupportHelpCenter() {
                     className="flex w-full items-center gap-3 border-b border-[#04258626] p-2 text-[#2E2E2E] last:border-b-0"
                   >
                     <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#FFC82E]">
-                      <img loading="lazy" width="400" height="400"
+                      <img
+                        loading="lazy"
+                        width="400"
+                        height="400"
                         src={topic.image}
                         alt=""
                         className="size-5 object-contain"
@@ -258,7 +260,10 @@ export default function SupportHelpCenter() {
                         className="group flex min-w-0 flex-col items-center text-center"
                       >
                         <div className="flex h-[64px] w-[64px] items-center justify-center overflow-hidden rounded-full bg-[#F5C72E] transition-transform duration-200 group-hover:scale-105">
-                          <img loading="lazy" width="400" height="400"
+                          <img
+                            loading="lazy"
+                            width="400"
+                            height="400"
                             src={topic.image}
                             alt={topic.title}
                             className="h-[40px] w-[40px] object-contain"
@@ -378,7 +383,12 @@ export default function SupportHelpCenter() {
                         count={3}
                         layout={[
                           { type: "box", width: "100%", height: "24px" },
-                          { type: "box", width: "60%", height: "16px", className: "mt-2" },
+                          {
+                            type: "box",
+                            width: "60%",
+                            height: "16px",
+                            className: "mt-2",
+                          },
                         ]}
                         wrapperClass="mb-4"
                       />

@@ -3,8 +3,9 @@ import { tokenStorage } from "./tokenStorage";
 
 const defaultSocketUrl = () =>
   `${window.location.protocol}//${window.location.hostname}:4000`;
-const socketUrl = (import.meta.env.VITE_API_BASE_URL || defaultSocketUrl())
-  .replace(/\/+$/, "");
+const socketUrl = (
+  import.meta.env.VITE_API_BASE_URL || defaultSocketUrl()
+).replace(/\/+$/, "");
 
 let socket = null;
 const listeners = new Set();
@@ -15,7 +16,8 @@ const publish = (event) => {
   if (event?.id && seenEventIds.has(event.id)) return;
   if (event?.id) {
     seenEventIds.add(event.id);
-    if (seenEventIds.size > 500) seenEventIds.delete(seenEventIds.values().next().value);
+    if (seenEventIds.size > 500)
+      seenEventIds.delete(seenEventIds.values().next().value);
   }
   listeners.forEach((listener) => listener(event));
 };
@@ -32,7 +34,9 @@ const createSocket = () => {
     reconnectionDelayMax: 10000,
   });
   nextSocket.on("connect", () => {
-    console.info(`Realtime connected (${nextSocket.id}) via ${nextSocket.io.engine.transport.name}`);
+    console.info(
+      `Realtime connected (${nextSocket.id}) via ${nextSocket.io.engine.transport.name}`,
+    );
     joinedOrderIds.forEach((orderId) => nextSocket.emit("join:order", orderId));
     window.dispatchEvent(new CustomEvent("realtime:connected"));
   });

@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { Package } from "lucide-react";
 import ShowMoreText from "../../../utils/showMore";
-import { getOrderItemProductPath } from "../utils/orderItems";
+import { getOrderItemProductPath, formatDate } from "../utils/orderItems";
 
 export function OrderItemCard({
   item,
+  order,
   currency,
   getItemImage,
   getProductTitle,
@@ -120,6 +121,61 @@ export function OrderItemCard({
     );
   }
 
+  const getEstimatedDeliveryDateStr = () => {
+    const explicit =
+      item?.expected_delivery_at ||
+      item?.expectedDeliveryAt ||
+      item?.delivery_date ||
+      item?.deliveryDate ||
+      order?.expected_delivery ||
+      order?.expectedDelivery ||
+      order?.relations?.shipments?.[0]?.expected_delivery_at ||
+      order?.relations?.shipments?.[0]?.expectedDeliveryAt;
+
+    if (explicit) {
+      const formatted = formatDate(explicit);
+      if (formatted) return formatted;
+    }
+
+    const shipping =
+      item?.product_snapshot?.shipping ||
+      item?.productSnapshot?.shipping ||
+      item?.shipping ||
+      {};
+
+    const days = Number(
+      shipping.estimatedDaysMax ??
+        shipping.processingDays ??
+        shipping.estimatedDaysMin ??
+        item?.eta ??
+        0,
+    );
+
+    const baseDateVal =
+      item?.created_at ||
+      item?.createdAt ||
+      order?.created_at ||
+      order?.createdAt;
+
+    const baseDate = baseDateVal ? new Date(baseDateVal) : new Date();
+
+    if (!Number.isNaN(baseDate.getTime()) && days > 0) {
+      const target = new Date(baseDate);
+      target.setDate(target.getDate() + days);
+      return formatDate(target);
+    }
+
+    if (!Number.isNaN(baseDate.getTime()) && baseDateVal) {
+      const target = new Date(baseDate);
+      target.setDate(target.getDate() + 3);
+      return formatDate(target);
+    }
+
+    return null;
+  };
+
+  const deliveryDateStr = getEstimatedDeliveryDateStr();
+
   return (
     <div className="w-full">
       <div className="flex w-full flex-row items-start gap-4 sm:gap-6 lg:gap-8">
@@ -178,9 +234,9 @@ export function OrderItemCard({
           </div>
           {quantityBreakdown}
 
-          {eta !== undefined && eta !== null && eta !== "" ? (
+          {deliveryDateStr ? (
             <p className="mb-3 text-[14px] font-semibold leading-5 text-[#5F6078]">
-              Estimated Delivery: {eta} {Number(eta) === 1 ? "day" : "days"}
+              Estimated Delivery: {deliveryDateStr}
             </p>
           ) : null}
 
