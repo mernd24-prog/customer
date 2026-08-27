@@ -37,5 +37,17 @@ export const supportService = {
       },
     });
     return response;
-  }
+  },
+
+  sendAiChatMessage: async (message, history = []) => {
+    const response = await apiRequest({
+      method: "post",
+      url: endpoints.support.aiChat,
+      data: {
+        message,
+        history,
+      },
+    });
+    return response;
+  },
 };

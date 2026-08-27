@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Ticket, Sparkles, X, Loader2, Info } from "lucide-react";
+
 import BaseModal from "../../../components/ui/overlay/BaseModal";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
-import { useSelector } from "react-redux";
 import { useAuthModal } from "../../../modules/auth/context/AuthModalContext";
 import { useSupportController } from "../controllers/useSupportController";
 
@@ -32,8 +34,10 @@ export function RaiseTicketModal() {
   
   const user = useSelector((state) => state.auth.current);
   const isSignedIn = Boolean(user);
+  const { openAuthModal } = useAuthModal();
 
   const [form, setForm] = useState({ ...INITIAL_FORM });
+  const isFromAiChat = Boolean(raiseTicketModalData?.subject || raiseTicketModalData?.message);
 
   // Form Hydration Lifecycle
   useEffect(() => {
@@ -64,7 +68,10 @@ export function RaiseTicketModal() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!isSignedIn) return;
+    if (!isSignedIn) {
+      openAuthModal?.();
+      return;
+    }
     
     const success = await submitTicket(form);
     if (success) {
@@ -75,14 +82,47 @@ export function RaiseTicketModal() {
   if (!raiseTicketModalOpen) return null;
 
   return (
-    <BaseModal onClose={handleCloseRaiseTicketModal} maxWidth="max-w-md">
-      <div className="p-6 sm:p-8">
-        <h3 className="text-xl font-bold text-[#1B1D60] mb-5">
-          Raise a Ticket
-        </h3>
+    <BaseModal onClose={handleCloseRaiseTicketModal} maxWidth="max-w-lg">
+      <div className="p-6 sm:p-7">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-[#CE9F2D] border border-amber-200/80">
+              <Ticket size={20} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-[#1B1D60]">
+                Raise a Support Ticket
+              </h3>
+              <p className="text-xs text-slate-500 font-medium">
+                Our support team will respond to your query directly
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleCloseRaiseTicketModal}
+            aria-label="Close modal"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* AI Chat Pre-fill Alert */}
+        {isFromAiChat && (
+          <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-amber-200 bg-amber-50/80 p-3 text-xs text-amber-900">
+            <Sparkles size={16} className="text-[#CE9F2D] shrink-0" />
+            <span className="leading-relaxed">
+              Details have been pre-filled from your AI chat. You can review or edit before submitting.
+            </span>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <CustomDropdown
-            label="Category"
+            label="Issue Category"
             options={CUSTOMER_SUPPORT_CATEGORIES}
             value={form.category}
             onChange={handleCategoryChange}
@@ -90,45 +130,60 @@ export function RaiseTicketModal() {
           />
 
           <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
+            <span className="mb-1.5 block text-xs font-bold text-slate-700 uppercase tracking-wide">
               Subject
             </span>
             <input
               name="subject"
               value={form.subject}
               onChange={handleChange}
-              placeholder="Example: Refund Not Received"
-              className="h-11 w-full rounded-lg border border-[#E7D9B8] bg-white px-3 text-sm text-[#2E2E2E] focus:outline-none placeholder:text-[#9A9A9A] focus:border-[#CE9F2D]"
+              placeholder="e.g. Order #1234 Delivery Delay"
+              className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 focus:outline-none transition"
+              required
             />
           </label>
 
           <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-[#2E2E2E]">
-              Message
+            <span className="mb-1.5 block text-xs font-bold text-slate-700 uppercase tracking-wide">
+              Detailed Description
             </span>
             <textarea
               name="message"
               value={form.message}
               onChange={handleChange}
               rows={4}
-              placeholder="Write Your Issue Here..."
-              className="w-full resize-none rounded-lg border border-[#E7D9B8] bg-white px-3 py-3 text-sm leading-5 text-[#2E2E2E] placeholder:text-[#9A9A9A] focus:border-[#CE9F2D] focus:outline-none focus:ring-0 focus:shadow-none"
+              placeholder="Describe your issue with order numbers, items, or screenshots..."
+              className="w-full resize-none rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 focus:border-[#CE9F2D] focus:ring-2 focus:ring-[#CE9F2D]/20 focus:outline-none transition"
+              required
             />
           </label>
 
-          <button
-            type="submit"
-            disabled={supportSubmitting || !isSignedIn}
-            className="h-11 w-full rounded-lg bg-[#CE9F2D] text-sm font-bold text-white transition hover:bg-[#C9961F] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {supportSubmitting ? "Sending..." : "Send Message"}
-          </button>
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={supportSubmitting}
+              className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#CE9F2D] text-sm font-bold text-white shadow-md transition hover:bg-[#B88B22] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {supportSubmitting ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  <span>Submitting Ticket...</span>
+                </>
+              ) : (
+                <>
+                  <Ticket size={16} />
+                  <span>Submit Ticket</span>
+                </>
+              )}
+            </button>
 
-          {!isSignedIn && (
-            <p className="text-center text-xs font-medium text-[#666666]">
-              Login Is Required to Send a Support Message.
-            </p>
-          )}
+            {!isSignedIn && (
+              <p className="mt-2.5 text-center text-xs font-medium text-slate-500 flex items-center justify-center gap-1.5">
+                <Info size={13} className="text-amber-600" />
+                <span>You will be prompted to log in before submitting.</span>
+              </p>
+            )}
+          </div>
         </form>
       </div>
     </BaseModal>
