@@ -64,14 +64,15 @@ function ReviewRating({ rating = 0 }) {
 }
 
 function ExistingReviewCard({ review }) {
+  const reviewObj = typeof review === "object" && review !== null ? review : {};
   const [lightboxIndex, setLightboxIndex] = useState(null);
-  const media = Array.isArray(review?.media)
-    ? review.media.filter(Boolean)
+  const media = Array.isArray(reviewObj?.media)
+    ? reviewObj.media.filter(Boolean)
     : [];
-  const status = String(review?.status || "pending").replace(/_/g, " ");
-  const reviewText = review?.reviewText || review?.text || "";
-  const rating = Math.round(Number(review?.rating) || 0);
-  const submittedAt = review?.createdAt || review?.created_at;
+  const status = String(reviewObj?.status || "pending").replace(/_/g, " ");
+  const reviewText = reviewObj?.reviewText || reviewObj?.text || "";
+  const rating = Math.round(Number(reviewObj?.rating) || 0);
+  const submittedAt = reviewObj?.createdAt || reviewObj?.created_at;
   const submittedDateValue = submittedAt ? new Date(submittedAt) : null;
   const submittedDate =
     submittedDateValue && !Number.isNaN(submittedDateValue.getTime())
@@ -85,7 +86,7 @@ function ExistingReviewCard({ review }) {
 
   return (
     <section
-      className="mt-5 overflow-hidden rounded-2xl border border-[#E2E3EA] bg-white w-full"
+      className="mt-3 overflow-hidden rounded-2xl border border-[#E2E3EA] bg-white w-full"
       aria-label="Your product review"
     >
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#ECECF1] bg-[#F5ECD5] px-4 py-3.5 sm:px-5">
@@ -114,30 +115,30 @@ function ExistingReviewCard({ review }) {
         </span>
       </div>
 
-      <div className="p-4 sm:p-5 flex flex-col md:flex-row md:items-start gap-6 md:gap-10 justify-between">
-        <div className="flex-1 min-w-0">
+      <div className="p-4 sm:p-5 flex flex-col gap-4 w-full">
+        {rating > 0 && (
           <div className="flex flex-wrap items-center gap-3">
             <ReviewRating rating={rating} />
             <span className="text-sm font-bold text-[#1B1D60]">
               {rating}.0 out of 5
             </span>
           </div>
+        )}
 
-          {review?.title && (
-            <h4 className="mt-4 text-base font-bold text-[#22232B] sm:text-lg">
-              {review.title}
-            </h4>
-          )}
+        {reviewObj?.title && (
+          <h4 className="text-base font-bold text-[#22232B] sm:text-lg break-words">
+            {reviewObj.title}
+          </h4>
+        )}
 
-          {reviewText && (
-            <p className="mt-2 max-w-full break-words text-sm leading-6 text-[#4E505C] sm:text-[14px]">
-              {reviewText}
-            </p>
-          )}
-        </div>
+        {reviewText && (
+          <p className="max-w-full break-words text-sm leading-6 text-[#4E505C] sm:text-[14px]">
+            {reviewText}
+          </p>
+        )}
 
         {media.length > 0 && (
-          <div className="shrink-0 md:mt-0">
+          <div className="mt-1">
             <p className="mb-2.5 flex items-center gap-2 text-xs font-bold uppercase tracking-[.08em] text-[#6B6B80]">
               <Camera size={15} /> Photos from your review ({media.length})
             </p>

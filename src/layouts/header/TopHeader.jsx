@@ -1,56 +1,19 @@
-import { useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { LogOut } from "lucide-react";
 
 import { HeaderGoldButton } from "../../components/ui/button/static";
-import HeaderDropdown from "./HeaderDropdown";
-import MenuDropdown from "./MenuDropdown";
 
 import { logout } from "../../modules/auth/slices/authSlice";
 import { notify } from "../../utils/notify";
 import { asArray, hrefOr, keyOr, textOr } from "../../utils/content";
 
 import { DEFAULT_TOP_NAV_LINKS } from "../../constants/header.constant";
-import { withIcons } from "./categoryHelpers";
 
 export const TopHeader = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser = useSelector((s) => s.auth.current);
-
-  const dropdowns = useMemo(
-    () => [
-      {
-        type: "more",
-        label: "More",
-        title: "More",
-        items: withIcons([
-          {
-            label: "Seller Login",
-            path: "/become-a-seller",
-            icon: "store",
-          },
-          {
-            label: "Help and Support",
-            path: "/support",
-            icon: "lifeBuoy",
-          },
-        ]),
-      },
-    ],
-    [],
-  );
-
-  const renderDropdown = (dropdown) => {
-    switch (dropdown.type) {
-      case "menu":
-      case "more":
-        return <MenuDropdown title={dropdown.title} items={dropdown.items} />;
-      default:
-        return null;
-    }
-  };
 
   return (
     <div className="hidden h-[40px] w-full items-center justify-center bg-[var(--customer-black)] text-[14px] font-medium text-[#FFFFFF] lg:flex">
@@ -75,16 +38,18 @@ export const TopHeader = () => {
             Become a Seller
           </Link>
 
-          {dropdowns.map((dropdown) => (
-            <HeaderDropdown
-              key={dropdown.type}
-              label={dropdown.label}
-              icon={dropdown.icon}
-              path={dropdown.path}
-            >
-              {renderDropdown(dropdown)}
-            </HeaderDropdown>
-          ))}
+          <Link
+            to="/support"
+            title="Help & Support"
+            aria-label="Help & Support"
+            className="flex items-center justify-center text-[#FFFFFF] transition-all duration-300 ease-in-out hover:opacity-80"
+          >
+            <img
+              src="/image/png/help&support.png"
+              alt="Help & Support"
+              className="h-5 w-5 object-contain brightness-0 invert"
+            />
+          </Link>
 
           {currentUser ? (
             <HeaderGoldButton

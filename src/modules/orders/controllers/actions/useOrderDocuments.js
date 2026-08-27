@@ -166,15 +166,9 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
   const visibleCustomerInvoices = selectedOrderItem
     ? customerInvoices.filter(documentCoversSelectedItem)
     : customerInvoices;
-  const isItemDelivered = selectedOrderItem 
-    ? isDeliveredOrderItem(selectedOrderItem) 
-    : hasDeliveredSellerPackage(order);
-
-  const visiblePendingSellerDocuments = isItemDelivered 
-    ? (selectedOrderItem
-      ? pendingSellerDocuments.filter(documentCoversSelectedItem)
-      : pendingSellerDocuments)
-    : [];
+  const visiblePendingSellerDocuments = selectedOrderItem
+    ? pendingSellerDocuments.filter(documentCoversSelectedItem)
+    : pendingSellerDocuments;
 
   const returnReverseInvoices = visibleReturns
     .map((returnRequest) => {
@@ -198,6 +192,8 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         subtitle: `For return ${returnNumber}`,
         downloadPath,
         filename: `reverse-invoice-${returnNumber}.pdf`,
+        type: "return_reverse",
+        returnRequest
       };
     })
     .filter(Boolean);
@@ -218,6 +214,8 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         subtitle: `For cancellation ${cancellationNumber}`,
         downloadPath,
         filename: `reverse-invoice-${cancellationNumber}.pdf`,
+        type: "cancellation_reverse",
+        cancellation
       };
     })
     .filter(Boolean);
@@ -230,13 +228,15 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
       if (!invoiceId) return null;
       return {
         id: invoiceId,
-        title: "Seller tax invoice",
-        subtitle: `${invoiceSellerName(invoice, index)} · ${invoiceItemSummary(invoice)}`,
+        title: "Tax invoice",
+        subtitle: invoiceItemSummary(invoice),
         downloadPath: endpoints.tax.invoiceDownload(invoiceId),
         filename: `${invoice.invoice_number || invoice.invoiceNumber || `invoice-${index + 1}`}.pdf`,
+        invoice,
+        type: "tax_invoice"
       };
     }),
-    !selectedOrderItem && orderReceipt && getDocumentId(orderReceipt)
+    orderReceipt && getDocumentId(orderReceipt)
       ? {
         id: getDocumentId(orderReceipt),
         title: "Order receipt",
@@ -245,9 +245,10 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
           getDocumentId(orderReceipt),
         ),
         filename: `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || `receipt-${orderId}`}.pdf`,
+        type: "order_receipt"
       }
       : null,
-    customerFeeInvoice && getDocumentId(customerFeeInvoice) && (!selectedOrderItem || isDeliveredOrderItem(selectedOrderItem))
+    customerFeeInvoice && getDocumentId(customerFeeInvoice)
       ? {
         id: getDocumentId(customerFeeInvoice),
         title: "Platform fee invoice",
@@ -256,19 +257,17 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
           getDocumentId(customerFeeInvoice),
         ),
         filename: `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
-      }
-      : null,
-    !customerFeeInvoice && customerPlatformFee > 0 && (!selectedOrderItem || isDeliveredOrderItem(selectedOrderItem))
-      ? {
-        id: `pending-platform-fee-${orderId}`,
-        title: "Platform fee invoice",
-        subtitle: "Will be available after payment document is generated.",
-        pending: true,
+        type: "platform_fee"
       }
       : null,
     ...cancellationReverseInvoices,
     ...returnReverseInvoices,
-  ].filter(Boolean);
+  ].filter(Boolean)
+  .filter((doc, index, self) => 
+    index === self.findIndex((d) => 
+      d.id === doc.id || (d.title === doc.title && d.subtitle === doc.subtitle)
+    )
+  );
 
   return {
     invoices,

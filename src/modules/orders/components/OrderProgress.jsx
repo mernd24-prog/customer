@@ -193,7 +193,7 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
         }}
       >
         <span
-          className={`block h-full transition-all duration-500 ease-out ${colorClass}`}
+          className={`block h-full transition-all duration-500 ease-out animate-horizontal-progress ${colorClass}`}
           style={{ width: `${progressWidth}%` }}
         />
       </span>
@@ -208,13 +208,13 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
           >
             <div className="relative flex items-center justify-center">
               <div
-                className={`flex items-center justify-center rounded-full ${
-                  done ? "bg-[#B88200]" : "bg-[#83858C]"
+                className={`flex items-center justify-center rounded-full transition-transform duration-300 ${
+                  done ? "bg-[#26A541]" : "bg-[#83858C]"
                 } ${compact ? "h-9 w-9" : "h-12 w-12"}`}
               >
                 <div
                   className={`flex items-center justify-center rounded-full ${
-                    done ? "bg-[#CE9F2D]" : "bg-[#8A8C92]"
+                    done ? "bg-[#26A541]" : "bg-[#8A8C92]"
                   } ${compact ? "h-7 w-7" : "h-8 w-8"}`}
                 >
                   <img loading="lazy" width="400" height="400"
@@ -227,7 +227,7 @@ function StepBar({ steps, activeStatus, colorClass = "border-gold bg-gold" }) {
             </div>
             <p
               className={`mt-2 flex min-h-[32px] w-full items-start justify-center px-1 text-center font-sans text-xs font-semibold leading-4 ${
-                current || done ? "text-[#CE9F2D]" : "text-muted"
+                current || done ? "text-[#26A541]" : "text-muted"
               }`}
             >
               {customerLabel(step)}
@@ -256,18 +256,20 @@ function MobileStepBar({ steps, activeStatus }) {
           return (
             <div key={step} className="relative flex min-h-12 gap-3">
               {index < steps.length - 1 && (
-                <span
-                  className={`absolute bottom-0 left-[15px] top-8 w-0.5 ${
-                    done && activeIndex > index
-                      ? "bg-[#CE9F2D]"
-                      : "bg-[#D7D7D7]"
-                  }`}
-                />
+                <>
+                  <span className="absolute bottom-[-16px] left-[15px] top-[16px] w-0.5 bg-[#E0E0E0]" />
+                  {done && activeIndex > index && (
+                    <span
+                      className="absolute bottom-[-16px] left-[15px] top-[16px] w-0.5 bg-[#26A541] origin-top animate-timeline-line z-0"
+                      style={{ animationDelay: `${0.15 + index * 0.25}s` }}
+                    />
+                  )}
+                </>
               )}
               <span
                 className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 ${
                   done
-                    ? "border-[#B88200] bg-[#CE9F2D]"
+                    ? "border-[#26A541] bg-[#26A541]"
                     : "border-[#A9A9A9] bg-white"
                 }`}
               >
@@ -284,7 +286,7 @@ function MobileStepBar({ steps, activeStatus }) {
               <div className="min-w-0 pb-5 pt-1">
                 <p
                   className={`text-sm font-semibold capitalize leading-5 ${
-                    current || done ? "text-[#B88200]" : "text-muted"
+                    current || done ? "text-[#26A541]" : "text-muted"
                   }`}
                 >
                   {label}
