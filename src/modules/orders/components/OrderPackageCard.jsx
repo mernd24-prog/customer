@@ -697,98 +697,100 @@ export function OrderPackageCard({
             });
           })()}
         </div>
-      </div>
 
-      {(() => {
-        const packageItemIds = group.items.map((i) => String(getItemId(i)));
+        {(() => {
+          const packageItemIds = group.items.map((i) => String(getItemId(i)));
 
-        const packageDocuments = (itemProps.downloadableDocuments || []).filter(
-          (doc) => {
-            if (doc.type === "platform_fee" || doc.type === "order_receipt") {
-              return totalGroups === 1;
-            }
-            if (doc.type === "tax_invoice") {
-              const coveredItemIds = (
-                doc.invoice?.metadata?.items ||
-                doc.invoice?.metadata?.lineItems ||
-                []
-              ).map((i) =>
-                String(i.orderItemId || i.order_item_id || i.id || i._id),
-              );
-              if (coveredItemIds.length > 0) {
-                return packageItemIds.some((id) => coveredItemIds.includes(id));
-              } else {
-                const docSellerName =
-                  doc.invoice?.sellerName ||
-                  doc.invoice?.metadata?.seller?.businessName ||
-                  doc.invoice?.metadata?.seller?.displayName;
-                return docSellerName === group.sellerName;
+          const packageDocuments = (itemProps.downloadableDocuments || []).filter(
+            (doc) => {
+              if (doc.type === "platform_fee" || doc.type === "order_receipt") {
+                return totalGroups === 1;
               }
-            }
-            if (doc.type === "return_reverse") {
-              const returnItemIds = (doc.returnRequest?.items || []).map((i) =>
-                String(
-                  i.orderItemId || i.order_item_id || i.itemId || i.item_id,
-                ),
-              );
-              return packageItemIds.some((id) => returnItemIds.includes(id));
-            }
-            if (doc.type === "cancellation_reverse") {
-              const cancelItemIds = (doc.cancellation?.items || []).map((i) =>
-                String(i.orderItemId || i.order_item_id),
-              );
-              return packageItemIds.some((id) => cancelItemIds.includes(id));
-            }
-            return false;
-          },
-        );
+              if (doc.type === "tax_invoice") {
+                const coveredItemIds = (
+                  doc.invoice?.metadata?.items ||
+                  doc.invoice?.metadata?.lineItems ||
+                  []
+                ).map((i) =>
+                  String(i.orderItemId || i.order_item_id || i.id || i._id),
+                );
+                if (coveredItemIds.length > 0) {
+                  return packageItemIds.some((id) => coveredItemIds.includes(id));
+                } else {
+                  const docSellerName =
+                    doc.invoice?.sellerName ||
+                    doc.invoice?.metadata?.seller?.businessName ||
+                    doc.invoice?.metadata?.seller?.displayName;
+                  return docSellerName === group.sellerName;
+                }
+              }
+              if (doc.type === "return_reverse") {
+                const returnItemIds = (doc.returnRequest?.items || []).map((i) =>
+                  String(
+                    i.orderItemId || i.order_item_id || i.itemId || i.item_id,
+                  ),
+                );
+                return packageItemIds.some((id) => returnItemIds.includes(id));
+              }
+              if (doc.type === "cancellation_reverse") {
+                const cancelItemIds = (doc.cancellation?.items || []).map((i) =>
+                  String(i.orderItemId || i.order_item_id),
+                );
+                return packageItemIds.some((id) => cancelItemIds.includes(id));
+              }
+              return false;
+            },
+          );
 
-        if (packageDocuments.length === 0) {
-          return null;
-        }
+          if (packageDocuments.length === 0) {
+            return null;
+          }
 
-        return (
-          <div className="col-span-full border-t border-[#E7D9B8] p-3 lg:px-5 lg:py-3 bg-[#FFFDF8] rounded-b-xl">
-            <div className="flex flex-wrap gap-3">
-              {packageDocuments.map((document) => (
-                <div
-                  key={`${document.title}-${document.id}`}
-                  className="flex items-center gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 text-sm transition-all hover:border-[#CE9F2D80] w-fit"
-                >
-                  <div className="min-w-0 flex items-center gap-1.5">
-                    <FileText size={15} className="text-[#3E4093]" />
-                    <span className="font-semibold text-[13px] text-[#2E2E2E]">
-                      {document.title}
-                    </span>
+          return (
+            <div className="mt-4 pt-4 border-t border-[#ede4cf] flex flex-col gap-3">
+              <h4 className="font-bold text-[#1B1D60] flex items-center gap-2 text-sm">
+                <FileText size={16} className="text-[#3E4093]" /> Order Documents
+              </h4>
+              <div className="flex flex-col gap-2">
+                {packageDocuments.map((document) => (
+                  <div
+                    key={`${document.title}-${document.id}`}
+                    className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 text-sm transition-all hover:border-[#CE9F2D80]"
+                  >
+                    <div className="min-w-0 flex items-center gap-1.5">
+                      <span className="font-semibold text-[13px] text-[#2E2E2E] truncate">
+                        {document.title}
+                      </span>
+                    </div>
+                    {document.pending ? (
+                      <span className="rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D] shrink-0">
+                        Pending
+                      </span>
+                    ) : (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        loading={
+                          itemProps.downloadingId === document.downloadPath
+                        }
+                        onClick={() =>
+                          itemProps.handleDownload(
+                            document.downloadPath,
+                            document.filename,
+                          )
+                        }
+                        className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3 shrink-0"
+                      >
+                        <Download size={12} /> Download
+                      </Button>
+                    )}
                   </div>
-                  {document.pending ? (
-                    <span className="rounded-full bg-[#CE9F2D1A] px-2.5 py-0.5 text-[11px] font-bold text-[#CE9F2D]">
-                      Pending
-                    </span>
-                  ) : (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      loading={
-                        itemProps.downloadingId === document.downloadPath
-                      }
-                      onClick={() =>
-                        itemProps.handleDownload(
-                          document.downloadPath,
-                          document.filename,
-                        )
-                      }
-                      className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3"
-                    >
-                      <Download size={12} /> Download
-                    </Button>
-                  )}
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        );
-      })()}
+          );
+        })()}
+      </div>
     </div>
   );
 }
