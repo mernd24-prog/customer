@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Bot, Sparkles, MessageCircle } from "lucide-react";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 
 import Seo from "../../../components/ui/Seo";
@@ -9,8 +9,6 @@ import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
 import NeedHelpPanel from "../../../components/ecommerce/NeedHelpPanel";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 import { useSupportController } from "../controllers/useSupportController";
-import { RaiseTicketModal } from "../components/RaiseTicketModal";
-import { TicketSuccessModal } from "../components/TicketSuccessModal";
 import { SUPPORT_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import { SkeletonLoader } from "../../../components/ui/skeleton";
@@ -208,6 +206,42 @@ export default function SupportHelpCenter() {
           sidebarClass="w-full md:w-[280px] lg:w-[320px] xl:w-[340px]"
           mainContent={
             <div className="min-w-0 space-y-5">
+              {/* AI Support Assistant Banner */}
+              <section className="relative overflow-hidden rounded-[14px] border border-[#CE9F2D]/30 bg-gradient-to-r from-[#1B1D60] via-[#242777] to-[#1B1D60] p-5 text-white shadow-md">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3.5">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#CE9F2D] ring-2 ring-white/20">
+                      <Bot size={24} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-base font-bold tracking-tight text-white">
+                          Instant AI Help Assistant
+                        </h2>
+                        <span className="flex items-center gap-1 rounded-full bg-[#CE9F2D] px-2 py-0.5 text-[10px] font-bold text-[#1B1D60]">
+                          <Sparkles size={11} />
+                          24/7 Live
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs text-gray-200 leading-relaxed max-w-xl">
+                        Have a question about your order, returns, or store policies? Ask our AI assistant for instant, grounded answers.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("open-ai-chat"));
+                    }}
+                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[#CE9F2D] px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-[#B88B22] hover:scale-105"
+                  >
+                    <MessageCircle size={15} />
+                    <span>Ask AI Now</span>
+                  </button>
+                </div>
+              </section>
+
               {quickActions.length > 0 && (
                 <section className="hidden overflow-hidden rounded-[10px] border border-[#E7D9B8] bg-white md:block">
                   <div className="bg-[#F7EED8] px-5  py-3">
@@ -396,9 +430,6 @@ export default function SupportHelpCenter() {
           }
         />{" "}
       </main>
-
-      <RaiseTicketModal />
-      <TicketSuccessModal />
     </AppErrorBoundary>
   );
 }

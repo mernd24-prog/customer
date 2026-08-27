@@ -14,6 +14,9 @@ import { disconnectRealtime, reconnectRealtime } from "./api/realtime";
 
 import ScrollToTop from "./components/ui/ScrollToTop";
 import Loader from "./components/ui/Loader";
+import AiSupportChatWidget from "./modules/support/components/AiSupportChatWidget";
+import { RaiseTicketModal } from "./modules/support/components/RaiseTicketModal";
+import { TicketSuccessModal } from "./modules/support/components/TicketSuccessModal";
 
 const CART_STORAGE_KEYS = [
   "sam_global_saved_for_later_items", // localStorage
@@ -108,6 +111,9 @@ export default function App() {
       <AuthModalProvider>
         <ScrollToTop />
         <AppRoutes />
+        <AiSupportChatWidget />
+        <RaiseTicketModal />
+        <TicketSuccessModal />
       </AuthModalProvider>
     </BrowserRouter>
   );
