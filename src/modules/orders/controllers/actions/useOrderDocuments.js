@@ -50,24 +50,39 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
     order?.relations?.invoice?.url ||
     null;
 
-  const invoiceDownloadAvailable = hasDeliveredSellerPackage(order);
-  const customerInvoices = Array.isArray(invoices?.sellerInvoices)
-    ? invoices.sellerInvoices
-    : [];
-  const orderReceipt = invoices?.orderInvoice || null;
   const relationInvoices = Array.isArray(order?.relations?.invoices)
     ? order.relations.invoices
     : [];
+
   const getInvoiceType = (invoice = {}) =>
     String(
       invoice.invoiceType || invoice.invoice_type || invoice.type || "",
     ).toLowerCase();
+
+  const invoiceDownloadAvailable = hasDeliveredSellerPackage(order);
+  const customerInvoices = Array.isArray(invoices?.sellerInvoices)
+    ? invoices.sellerInvoices
+    : [];
+
+  // Fallback to relationInvoices if API response doesn't have orderInvoice or customerFeeInvoice
+  const orderReceipt =
+    invoices?.orderInvoice ||
+    relationInvoices.find(
+      (invoice) =>
+        getInvoiceType(invoice) === "order_receipt" ||
+        getInvoiceType(invoice) === "marketplace_receipt",
+    ) ||
+    null;
+
   const customerFeeInvoice =
     invoices?.customerFeeInvoice ||
     relationInvoices.find(
-      (invoice) => getInvoiceType(invoice) === "platform_customer_fee",
+      (invoice) =>
+        getInvoiceType(invoice) === "platform_customer_fee" ||
+        getInvoiceType(invoice) === "platform_fee",
     ) ||
     null;
+
   const pendingSellerDocuments = invoices?.pendingSellerDocuments || [];
 
   const invoiceSellerName = (invoice, index) => {
@@ -236,38 +251,33 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         type: "tax_invoice"
       };
     }),
-    orderReceipt && getDocumentId(orderReceipt)
+    orderReceipt || orderId
       ? {
-        id: getDocumentId(orderReceipt),
+        id: getDocumentId(orderReceipt) || `receipt-${orderId}`,
         title: "Order receipt",
         subtitle: "Marketplace payment summary",
-        downloadPath: endpoints.tax.invoiceDownload(
-          getDocumentId(orderReceipt),
-        ),
-        filename: `${orderReceipt.invoice_number || orderReceipt.invoiceNumber || `receipt-${orderId}`}.pdf`,
+        downloadPath: (orderReceipt && getDocumentId(orderReceipt))
+          ? endpoints.tax.invoiceDownload(getDocumentId(orderReceipt))
+          : endpoints.tax.invoice(orderId),
+        filename: `${orderReceipt?.invoice_number || orderReceipt?.invoiceNumber || `receipt-${orderId}`}.pdf`,
         type: "order_receipt"
       }
       : null,
-    customerFeeInvoice && getDocumentId(customerFeeInvoice)
+    customerFeeInvoice || (customerPlatformFee > 0 && orderId)
       ? {
-        id: getDocumentId(customerFeeInvoice),
+        id: getDocumentId(customerFeeInvoice) || `platform-fee-${orderId}`,
         title: "Platform fee invoice",
         subtitle: "Marketplace tax invoice for platform fee",
-        downloadPath: endpoints.tax.invoiceDownload(
-          getDocumentId(customerFeeInvoice),
-        ),
-        filename: `${customerFeeInvoice.invoice_number || customerFeeInvoice.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
+        downloadPath: (customerFeeInvoice && getDocumentId(customerFeeInvoice))
+          ? endpoints.tax.invoiceDownload(getDocumentId(customerFeeInvoice))
+          : endpoints.tax.invoice(orderId),
+        filename: `${customerFeeInvoice?.invoice_number || customerFeeInvoice?.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
         type: "platform_fee"
       }
       : null,
     ...cancellationReverseInvoices,
     ...returnReverseInvoices,
-  ].filter(Boolean)
-  .filter((doc, index, self) => 
-    index === self.findIndex((d) => 
-      d.id === doc.id || (d.title === doc.title && d.subtitle === doc.subtitle)
-    )
-  );
+  ].filter(Boolean);
 
   return {
     invoices,

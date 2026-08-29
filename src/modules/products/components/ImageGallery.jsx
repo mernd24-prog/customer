@@ -37,7 +37,7 @@ function ProductGallery({
     0,
     mediaItems.length - visibleThumbnailCount,
   );
-  const shouldCollapseThumbnails = !isModal && hasHiddenThumbnails;
+  const shouldCollapseThumbnails = !isModal && hasHiddenThumbnails && isLarge;
   const thumbnailItems = shouldCollapseThumbnails
     ? mediaItems.slice(0, visibleThumbnailCount)
     : mediaItems;
@@ -134,10 +134,10 @@ function ProductGallery({
         {mediaItems.length > 1 && (
           <div className="order-2 h-[84px] w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[92px]">
             <div
-              className={`flex h-full w-full gap-3 hide-scrollbar no-scrollbar overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden xl:flex-col ${
+              className={`flex h-full w-full gap-3 overflow-x-auto overflow-y-hidden hide-scrollbar no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden xl:flex-col xl:overflow-x-hidden xl:overflow-y-auto ${
                 isModal
-                  ? "overflow-y-auto xl:gap-5"
-                  : "overflow-y-auto xl:overflow-hidden xl:gap-4"
+                  ? "xl:gap-5"
+                  : "xl:gap-4"
               }`}
             >
               {thumbnailItems.map((item, i) => {

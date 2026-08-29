@@ -179,7 +179,7 @@ export function OrderItemCard({
   return (
     <div className="w-full">
       <div className="flex w-full flex-row items-start gap-4 sm:gap-6 lg:gap-8">
-        <div className="aspect-square shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#CE9F2D33] bg-white p-2 w-[100px] sm:w-[180px] lg:w-[210px] 2xl:w-[220px]">
+        <div className="aspect-square shrink-0 flex items-center justify-center overflow-hidden rounded-xl border border-[#CE9F2D33] bg-white p-2 w-[85px] sm:w-[130px] md:w-[150px] lg:w-[170px]">
           {getItemImage(item) ? (
             productPath ? (
               <Link to={productPath}>

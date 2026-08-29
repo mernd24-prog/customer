@@ -1,60 +1,78 @@
+import { Check, Truck } from "lucide-react";
 import ShowMoreText from "../../../utils/showMore";
-import { CheckIcon } from "../../../components/ui/icons";
 
-export default function ReturnTrackingCard({ steps: customSteps }) {
+const sanitizeDescription = (text) => {
+  if (!text) return "";
+  let str = String(text)
+    .replace(/https?:\/\/[^\s]+/g, "")
+    .replace(/#:\~:[^\s]+/g, "")
+    .trim();
+  if (str.includes("Timeline-,") || str.includes("Accept Return")) return "";
+  return str;
+};
+
+export default function ReturnTrackingCard({ steps: customSteps, title }) {
   const stepsToRender = customSteps || [];
+
   return (
-    <section className="rounded-xl rounded-t-none border border-[#E7D9B8] bg-white px-3 py-4 min-[375px]:px-4 sm:px-6 lg:px-6 lg:py-9  ">
-      <div>
+    <section className="border-t border-[#EAEFF5] bg-[#FAFBFD]/60 p-4 sm:p-6 rounded-b-2xl">
+      <div className="mb-4 flex items-center gap-2 text-[#1B1D60]">
+        <Truck size={18} className="text-[#3E4093]" />
+        <h3 className="text-sm sm:text-base font-bold text-[#1B1D60]">
+          {title || "Return Tracking Timeline"}
+        </h3>
+      </div>
+
+      <div className="pl-1 sm:pl-2 space-y-6 sm:space-y-7">
         {stepsToRender.map((step, index) => {
           const isLast = index === stepsToRender.length - 1;
+          const isCompleted = step.completed ?? true;
+          const cleanDesc = sanitizeDescription(step.description);
 
           return (
             <div
-              key={step.title}
-              className="relative grid grid-cols-[30px_minmax(0,1fr)] gap-3 pb-4 min-[375px]:grid-cols-[34px_minmax(0,1fr)] sm:grid-cols-[40px_minmax(0,1fr)_180px] sm:gap-4 lg:grid-cols-[50px_minmax(0,1fr)_260px] lg:gap-5 lg:pb-7"
+              key={step.title + index}
+              className="relative flex items-start gap-3.5"
             >
+              {/* Continuous unbroken vertical line running behind circles */}
               {!isLast && (
-                <span className=" absolute left-[14px] top-7 h-full w-px bg-[#D7C07A] min-[375px]:left-[16px] sm:left-[15px] sm:top-8 lg:top-[30px]" />
+                <span className="absolute left-[9px] top-[10px] bottom-[-28px] sm:bottom-[-32px] w-[2px] bg-[#26A541] z-0" />
               )}
 
+              {/* Status Circle Dot */}
               <span
-                className={`relative  z-10 flex items-center justify-center rounded-full border font-semibold ${
-                  step.completed
-                    ? "border-[#E0B84C] bg-[#FFF4D7] text-[#CE9F2D]"
-                    : step.active
-                      ? "border-[#1B1D60] bg-[#E9EAFB] text-[#1B1D60]"
-                      : "border-[#BDBDBD] bg-[#E5E5E5] text-[#555]"
-                } h-7 w-7 text-[12px] sm:h-8 sm:w-8 sm:text-[13px] lg:h-[30px] lg:w-[30px] lg:text-[16px]`}
+                className={`relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white shadow-2xs ${
+                  isCompleted ? "bg-[#26A541]" : "bg-[#3E4093]"
+                }`}
               >
-                {step.completed ? (
-                  <CheckIcon className="h-[8px] w-[11px]" />
-                ) : (
-                  index + 1
-                )}
+                <Check size={12} className="stroke-[3]" />
               </span>
 
-              <div className="min-w-0">
-                <h3 className="text-[14px] font-bold leading-tight text-[#1B1D60] sm:text-[16px]">
-                  {step.title}
-                </h3>
+              {/* Step Meta */}
+              <div className="min-w-0 flex-1 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-[#1B1D60]">
+                    {step.title}
+                  </h4>
 
-                {step.description && (
-                  <div className="mt-1 text-[12px] font-medium leading-snug text-[#454545] sm:text-[13px]">
-                    <ShowMoreText
-                      label="Reason for Return"
-                      text={step.description}
-                      mode="characters"
-                      limit={170}
-                      buttonClassName="ml-1.5 text-xs sm:text-sm font-semibold text-[#3E4093] hover:underline cursor-pointer"
-                    />
-                  </div>
+                  {cleanDesc && (
+                    <div className="mt-0.5 text-xs font-medium text-[#6E6E6E]">
+                      <ShowMoreText
+                        text={cleanDesc}
+                        mode="characters"
+                        limit={120}
+                        buttonClassName="ml-1 text-xs font-semibold text-[#3E4093] hover:underline"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {step.time && (
+                  <span className="shrink-0 text-[11px] sm:text-xs font-medium text-[#6F7480]">
+                    {step.time}
+                  </span>
                 )}
               </div>
-
-              <p className="col-start-2 text-[12px] font-medium text-[#454545] sm:col-start-auto sm:text-right sm:text-[13px]">
-                {step.time}
-              </p>
             </div>
           );
         })}

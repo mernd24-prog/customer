@@ -72,7 +72,12 @@ const buildTrackingSteps = (ret) => {
       .replace(/_/g, " ")
       .replace(/\b\w/g, (c) => c.toUpperCase());
 
-    let description = t.note || t.reason || "";
+    let rawNote = t.note || t.reason || "";
+    if (rawNote && (rawNote.includes("http://") || rawNote.includes("https://") || rawNote.includes("Timeline-,"))) {
+      rawNote = "";
+    }
+
+    let description = rawNote;
     if (status === "requested" && !description) {
       description = ret.description || "";
     }
@@ -236,7 +241,7 @@ function ReturnsRefundsPage() {
 
   const renderReturnsList = useCallback((list) => {
     return (
-      <div className="flex flex-col  gap-y-14">
+      <div className="flex flex-col gap-4">
         {list.map((ret) => {
           const returnId =
             ret._id || ret.id || ret.returnId || ret.returnNumber;
@@ -255,7 +260,7 @@ function ReturnsRefundsPage() {
           return (
             <div
               key={returnId}
-              className="overflow-hidden rounded-[15px] border border-[#CE9F2D66] bg-white"
+              className="overflow-hidden rounded-2xl border border-[#D9DDE8] bg-white shadow-2xs transition-all"
             >
               {ret.items?.map((item, idx) => {
                 const title = item.productTitle || "Product";
@@ -295,7 +300,7 @@ function ReturnsRefundsPage() {
                     onTrackRequest={() => toggleTracking(returnId)}
                     trackLabel={isExpanded ? "Hide Tracking" : "Track Order"}
                     productPath={productPath}
-                    className="!rounded-none !border-0"
+                    className="!border-0 !rounded-none"
                   />
                 );
               })}
@@ -468,9 +473,6 @@ function ReturnsRefundsPage() {
         <h1 className="lg:mb-4 lg:mt-5 text-[24px] sm:text-[28px] lg:text-[32px] font-bold text-[#3E4093] ">
           Returns & Refunds
         </h1>
-        <p className="mb-4 max-w-[600px] font-sans text-[14px] sm:text-[16px] font-medium text-[#2E2E2E] ">
-          Manage Your Return Requests and Track Refund Status.
-        </p>
 
         <ApiState
           loading={state.loading && !returns.length}

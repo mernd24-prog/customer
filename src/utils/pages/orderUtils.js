@@ -567,6 +567,20 @@ export const resolveOrderItemDisplayStatus = (
     }
   }
 
+  let timelineCancellationStatus = "";
+  if (Array.isArray(item.timeline)) {
+    const timelineEvent = item.timeline.find(
+      (t) => t.source === "cancellation" || String(t.status || "").includes("cancellation")
+    );
+    if (timelineEvent && timelineEvent.status) {
+      timelineCancellationStatus = timelineEvent.status;
+    }
+  }
+
+  const isFullyCancelled = 
+    Number(item.quantity || 0) > 0 && 
+    Number(item.quantity || 0) <= Number(item.cancelled_quantity || item.cancelledQuantity || 0);
+
   return cancellation?.status === "requested"
     ? "cancellation_requested"
     : cancellation?.status === "approved"
@@ -575,6 +589,8 @@ export const resolveOrderItemDisplayStatus = (
         ? "cancellation_rejected"
         : item.cancellation_status ||
           item.cancellationStatus ||
+          timelineCancellationStatus ||
+          (isFullyCancelled ? "cancelled" : "") ||
           item.return_status ||
           item.returnStatus ||
           fulfillmentReturnStatus ||

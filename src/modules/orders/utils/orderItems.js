@@ -132,8 +132,22 @@ export const resolveItemStatus = ({
     return `cancellation_${cancellationRequest.status}`;
   }
 
+  let timelineCancellationStatus = "";
+  if (Array.isArray(item.timeline)) {
+    const timelineEvent = item.timeline.find(
+      (t) => t.source === "cancellation" || String(t.status || "").includes("cancellation")
+    );
+    if (timelineEvent && timelineEvent.status) {
+      timelineCancellationStatus = timelineEvent.status;
+    }
+  }
+
+  const isFullyCancelled = 
+    Number(item.quantity || 0) > 0 && 
+    Number(item.quantity || 0) <= Number(item.cancelled_quantity || item.cancelledQuantity || 0);
+
   const cancellationStatus =
-    item.cancellation_status || item.cancellationStatus;
+    item.cancellation_status || item.cancellationStatus || timelineCancellationStatus || (isFullyCancelled ? "cancelled" : "");
   const payoutStatus = String(
     item.payout_status || item.payoutStatus || "",
   ).toLowerCase();

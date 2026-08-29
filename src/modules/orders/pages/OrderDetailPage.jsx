@@ -290,10 +290,13 @@ export default function OrderDetailPage({ orderId }) {
                         asNumber={asNumber}
                       />
                       {(() => {
-                        const globalDocuments = (downloadableDocuments || []).filter(
-                          (doc) => doc.type === "platform_fee" || doc.type === "order_receipt"
-                        );
-                        if (globalDocuments.length === 0 || visibleOrderItems.length <= 1) return null;
+                        const globalDocuments = (downloadableDocuments || []).filter((doc) => {
+                          if (visibleOrderItems.length <= 1) {
+                            return false;
+                          }
+                          return doc.type === "platform_fee" || doc.type === "order_receipt";
+                        });
+                        if (globalDocuments.length === 0) return null;
                         
                         return (
                           <div className="flex flex-col gap-3 p-4 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8]">

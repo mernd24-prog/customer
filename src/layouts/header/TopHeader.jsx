@@ -45,7 +45,7 @@ export const TopHeader = () => {
             className="flex items-center justify-center text-[#FFFFFF] transition-all duration-300 ease-in-out hover:opacity-80"
           >
             <img
-              src="/image/png/help&support.png"
+              src="/image/svg/customer-support.svg"
               alt="Help & Support"
               className="h-5 w-5 object-contain brightness-0 invert"
             />

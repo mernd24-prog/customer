@@ -129,10 +129,11 @@ export function useOrderDetail({ orderId, track }) {
         ) === index
       );
     },
-  );
   const shipments = Array.isArray(order?.relations?.shipments)
     ? order.relations.shipments
-    : [];
+    : Array.isArray(order?.shipments)
+      ? order.shipments
+      : [];
   const selectedOrderItemId = searchParams.get("orderItemId") || "";
   const selectedOrderItem = selectedOrderItemId
     ? items.find((item) => getOrderItemId(item) === String(selectedOrderItemId))

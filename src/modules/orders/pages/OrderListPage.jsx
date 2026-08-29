@@ -113,25 +113,25 @@ function OrderItemSummaryCard({ order, item }) {
 
   return (
     <article className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-[#FFFCF6]">
-      <div className="flex flex-col gap-2 border-b border-[#E7D9B8] bg-[#CE9F2D33] px-3 py-3 text-sm font-semibold text-ink md:flex-row md:items-center md:justify-between md:px-4">
+      <div className="flex flex-col gap-2 border-b border-[#E7D9B8] bg-[#CE9F2D33] px-3 py-2.5 text-sm font-semibold text-ink md:flex-row md:items-center md:justify-between md:px-4">
         <span className="flex min-w-0 items-center gap-1.5">
           <FaShoppingCart className="shrink-0 text-sm text-[#2564EB]" />
-          <span className="shrink-0">Order :</span>
+          <span className="shrink-0 text-xs md:text-sm">Order :</span>
           <span className="min-w-0 truncate text-xs md:text-sm">
             {productTitle}
           </span>
         </span>
-        <span className="flex shrink-0 flex-wrap items-center gap-4 text-xs md:flex-nowrap md:text-sm">
-          <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+        <span className="flex shrink-0 flex-wrap items-center justify-between gap-2 sm:gap-4 text-xs md:flex-nowrap md:text-sm">
+          <span className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] sm:text-xs">
             <MdDateRange className="text-[#2564EB] shrink-0" />
             {formatOrderDate(createdAt)}
           </span>
-          <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+          <span className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] sm:text-xs">
             <BsCreditCardFill className="text-[#2564EB] shrink-0" />
             {paymentMethod}
           </span>
           <span
-            className={`inline-flex shrink-0 rounded-full px-3 py-1.5 text-xs font-bold capitalize whitespace-nowrap ${COMPACT_STATUS_BADGE[itemStatus] || "bg-[#2564EB] text-white"}`}
+            className={`inline-flex shrink-0 rounded-full px-2.5 py-1 text-[11px] sm:text-xs font-bold capitalize whitespace-nowrap ${COMPACT_STATUS_BADGE[itemStatus] || "bg-[#2564EB] text-white"}`}
           >
             {humanize(itemStatus, "Processing")}
           </span>
@@ -140,9 +140,9 @@ function OrderItemSummaryCard({ order, item }) {
 
       <Link
         to={itemDetailPath}
-        className="grid gap-4 px-4 py-5 transition hover:bg-[#FFFCF6] sm:grid-cols-[175px_minmax(0,1fr)] lg:grid-cols-[190px_minmax(0,1fr)] md:px-5"
+        className="grid grid-cols-[100px_minmax(0,1fr)] sm:grid-cols-[175px_minmax(0,1fr)] lg:grid-cols-[190px_minmax(0,1fr)] gap-3 sm:gap-4 px-3 py-4 md:px-5 transition hover:bg-[#FFFCF6]"
       >
-        <span className="flex aspect-square w-full max-w-[175px] lg:max-w-[190px] items-center justify-center overflow-hidden rounded-xl border border-[#EFE5D2] bg-white p-2">
+        <span className="flex aspect-square w-full max-w-[100px] sm:max-w-[175px] lg:max-w-[190px] items-center justify-center overflow-hidden rounded-xl border border-[#EFE5D2] bg-white p-1.5 sm:p-2">
           {itemImage ? (
             <img
               loading="lazy"
