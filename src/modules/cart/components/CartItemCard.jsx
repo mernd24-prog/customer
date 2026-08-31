@@ -10,8 +10,8 @@ import { calculateDiscountPercent } from "../../../utils/ecommerce/money";
 import { Link } from "react-router-dom";
 import { Heart, Trash2 } from "lucide-react";
 import { FaShoppingCart } from "react-icons/fa";
-import ProductPriceBlock from "../../../components/ecommerce/ProductPriceBlock";
-import ProductStockStatus from "../../../components/ecommerce/ProductStockStatus";
+import ProductPriceBlock from "../../products/components/ProductPriceBlock";
+import ProductStockStatus from "../../products/components/ProductStockStatus";
 import StarRating from "../../../components/ui/display/StarRating";
 import ShowMoreText from "../../../utils/showMore";
 

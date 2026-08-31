@@ -7,7 +7,7 @@ import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayo
 import CartItemCard from "../components/CartItemCard";
 import BrandButton from "../../../components/ui/buttons/Button";
 import ProductCard from "../../products/components/ProductCard";
-import { Breadcrumbs } from "../../../components/ecommerce";
+import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { ConfirmModal } from "../../../components/ui";
 import GuestOtpAuthModal from "../../../components/ui/overlay/GuestOtpAuthModal";
 import OrderPaymentSummary from "../../orders/components/OrderPaymentSummary";

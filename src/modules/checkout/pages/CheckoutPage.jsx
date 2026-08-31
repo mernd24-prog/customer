@@ -4,7 +4,7 @@ import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import { getPaymentProviderLabel } from "../utils/checkoutUtils";
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
-import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
+import Breadcrumbs from "../../common/components/Breadcrumbs";
 import OrderDetailLayout, {
   OrderDetailAside,
 } from "../../orders/components/OrderDetailLayout";

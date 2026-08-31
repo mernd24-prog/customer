@@ -196,10 +196,14 @@ function ProductGallery({
                         </span>
                       </span>
                     ) : (
-                      <img loading="lazy" width="400" height="400"
+                      <img 
+                        loading={i === 0 ? "eager" : "lazy"} 
+                        fetchPriority={i === 0 ? "high" : "auto"}
+                        width="400" 
+                        height="400"
                         src={item.src}
                         alt=""
-                        className="h-full p-2  w-full object-contain"
+                        className="h-full p-2 w-full object-contain"
                         onError={(event) =>
                           applyImageFallback(event, fallbackLabel, "product")
                         }
@@ -280,7 +284,11 @@ function ProductGallery({
                     onMouseLeave={handleMouseLeave}
                     onClick={handleImageClick}
                   >
-                    <img loading="lazy" width="400" height="400"
+                    <img 
+                      loading={i === 0 ? "eager" : "lazy"} 
+                      fetchPriority={i === 0 ? "high" : "auto"}
+                      width="400" 
+                      height="400"
                       src={item.src}
                       alt=""
                       draggable={false}

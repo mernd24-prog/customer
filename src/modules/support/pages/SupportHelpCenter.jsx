@@ -5,8 +5,8 @@ import CustomDropdown from "../../../components/ui/CustomDropdown";
 
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
-import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
-import NeedHelpPanel from "../../../components/ecommerce/NeedHelpPanel";
+import Breadcrumbs from "../../common/components/Breadcrumbs";
+import NeedHelpPanel from "../components/NeedHelpPanel";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 import { useSupportController } from "../controllers/useSupportController";
 import { SUPPORT_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";

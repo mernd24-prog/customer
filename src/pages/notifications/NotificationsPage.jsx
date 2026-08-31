@@ -17,8 +17,8 @@ import {
 
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
-import Breadcrumbs from "../../components/ecommerce/Breadcrumbs";
-import NeedHelpPanel from "../../components/ecommerce/NeedHelpPanel";
+import Breadcrumbs from "../../modules/common/components/Breadcrumbs";
+import NeedHelpPanel from "../../modules/support/components/NeedHelpPanel";
 import StickySidebarLayout from "../../components/ui/layout/StickySidebarLayout";
 import { fetchNotifications } from "../../features/notification/notificationSlice";
 import notificationData from "../../data/notificationData";
@@ -566,8 +566,7 @@ export function NotificationsPage() {
                               </p>
 
                               {/* Compact Metadata Line with Product Name retained */}
-                              {(details.orderDisplayId ||
-                                details.productName ||
+                              {(details.productName ||
                                 details.itemCount ||
                                 details.amount) && (
                                 <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[13px] text-[#6E6E6E] font-medium">
@@ -579,8 +578,7 @@ export function NotificationsPage() {
                                       {details.productName}
                                     </span>
                                   )}
-                                  {(details.orderDisplayId ||
-                                    details.productName) &&
+                                  {details.productName &&
                                     details.itemCount && (
                                       <span className="text-[#C0C4D0]">•</span>
                                     )}
@@ -592,8 +590,7 @@ export function NotificationsPage() {
                                         : "Items"}
                                     </span>
                                   )}
-                                  {(details.orderDisplayId ||
-                                    details.productName ||
+                                  {(details.productName ||
                                     details.itemCount) &&
                                     details.amount && (
                                       <span className="text-[#C0C4D0]">•</span>

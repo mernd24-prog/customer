@@ -10,7 +10,7 @@ import {
 
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
-import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
+import Breadcrumbs from "../../common/components/Breadcrumbs";
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import Button from "../../../components/ui/buttons/Button";
 import { useAuthModal } from "../../auth/context/AuthModalContext";

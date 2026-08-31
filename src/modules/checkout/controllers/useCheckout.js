@@ -51,7 +51,7 @@ import {
   optionalMoneyField,
   validatePostalCodeForCountry,
 } from "../../../validations";
-import { ADDRESS_LABEL_OPTIONS } from "../../../components/address/AddressFormFields";
+import { ADDRESS_LABEL_OPTIONS } from "../../common/components/address/AddressFormFields";
 import {
   getAddressId,
   fetchFullList,

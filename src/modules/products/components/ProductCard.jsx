@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Banknote, Clock3, Heart, ShoppingCart } from "lucide-react";
-import AddToCartButton from "../../../components/ecommerce/AddToCartButton";
+import AddToCartButton from "./AddToCartButton";
 import Label from "../../../components/ui/label/Label";
 import { IconCircleButton, PillButton } from "../../../components/ui/button/static";
 import Price from "./Price";
 import Rating from "./Rating";
-import WishlistButton from "../../../components/ecommerce/WishlistButton";
+import WishlistButton from "../../wishlist/components/WishlistButton";
 import {
   getProductPublicPath,
   getProductImage,

@@ -9,12 +9,12 @@ import { Search, Truck, X, Package } from "lucide-react";
 import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
 
-import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
+import Breadcrumbs from "../../common/components/Breadcrumbs";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 
 import { getOpaqueOrderPath } from "../../../utils/routeTokens";
 
-import NeedHelpPanel from "../../../components/ecommerce/NeedHelpPanel";
+import NeedHelpPanel from "../../support/components/NeedHelpPanel";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 
 import { useOrderList } from "../controllers/useOrderList";

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { formatPageTitle } from "../../../utils/common";
@@ -22,14 +22,36 @@ const decodeHtml = (html) => {
 };
 
 function InfoTabs({ tabs, activeTab, onChange }) {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const activeBtn = containerRef.current.querySelector(
+        `[data-tab-key="${activeTab}"]`
+      );
+      if (activeBtn) {
+        const container = containerRef.current;
+        container.scrollTo({
+          left: activeBtn.offsetLeft,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [activeTab]);
+
   return (
-    <div className="flex  overflow-x-auto border-b border-border">
+    <div
+      ref={containerRef}
+      className="flex overflow-x-auto border-b border-border relative scroll-smooth no-scrollbar"
+      style={{ scrollbarWidth: "none" }}
+    >
       {tabs.map((tab) => (
         <button
           key={tab.key}
+          data-tab-key={tab.key}
           type="button"
           onClick={() => onChange(tab.key)}
-          className={`min-w-max px-5  lg:py-4 py-2 text-lg font-medium ${
+          className={`min-w-max px-5 lg:py-4 py-2 text-lg font-medium transition-colors ${
             activeTab === tab.key
               ? "border-b-2 border-navy font-semibold text-navy"
               : "text-[#2E2E2E]"

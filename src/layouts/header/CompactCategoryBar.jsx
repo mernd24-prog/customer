@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { CategoryMegaMenu } from "../../components/ecommerce";
+import CategoryMegaMenu from "../../modules/catalog/components/CategoryMegaMenu";
 import { HEADER_HEIGHT_VAR } from "../../constants/header.constant";
 import { StickyNavStrip } from "./StickyNavStrip";
 

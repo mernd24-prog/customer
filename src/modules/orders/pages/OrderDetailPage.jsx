@@ -6,13 +6,14 @@ import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
 import Button from "../../../components/ui/buttons/Button";
 import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
-import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
+import Breadcrumbs from "../../common/components/Breadcrumbs";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 import OrderItemsSection from "../components/OrderItemsSection";
 import OrderPaymentSummary from "../components/OrderPaymentSummary";
 import OrderDetailInfoGrid from "../components/OrderDetailInfoGrid";
+import OrderAddressCard from "../components/OrderAddressCard";
 
 import { useOrderDetail } from "../controllers/useOrderDetail";
 import OrderCancellations from "../components/OrderCancellations";
@@ -229,39 +230,49 @@ export default function OrderDetailPage({ orderId }) {
                 )}
             </section>
 
+
+
               <StickySidebarLayout
                 sidebarPosition="right"
                 containerClass="flex flex-col xl:flex-row gap-4 md:gap-6 xl:gap-8"
                 sidebarClass="w-full xl:w-[320px] 2xl:w-[380px]"
                 mainContent={
-                  <OrderItemsSection
-                    items={visibleOrderItems}
-                    order={order}
-                    selectedOrderItem={selectedOrderItem}
-                    orderId={orderId}
-                    orderStatus={status}
-                    shipments={shipments}
-                    sellerFulfillmentGroups={
-                      order?.relations?.sellerFulfillmentGroups || []
-                    }
-                    returns={visibleReturns}
-                    cancellations={visibleCancellations}
-                    currency={currency}
-                    getItemImage={getItemImage}
-                    getProductTitle={getProductTitle}
-                    getItemProductPath={getItemProductPath}
-                    getOrderItemColor={getOrderItemColor}
-                    getItemLineTotal={getItemLineTotal}
-                    formatMoney={formatMoney}
-                    isCodOrder={isCodOrder}
-                    downloadableDocuments={downloadableDocuments}
-                    visiblePendingSellerDocuments={visiblePendingSellerDocuments}
-                    invoiceDownloadAvailable={invoiceDownloadAvailable}
-                    customerInvoices={customerInvoices}
-                    getInvoiceUrl={getInvoiceUrl}
-                    downloadingId={downloadingId}
-                    handleDownload={handleDownload}
-                  />
+                  <div className="flex flex-col gap-4 md:gap-6 xl:gap-8">
+                    <OrderItemsSection
+                      items={visibleOrderItems}
+                      order={order}
+                      selectedOrderItem={selectedOrderItem}
+                      orderId={orderId}
+                      orderStatus={status}
+                      shipments={shipments}
+                      sellerFulfillmentGroups={
+                        order?.relations?.sellerFulfillmentGroups || []
+                      }
+                      returns={visibleReturns}
+                      cancellations={visibleCancellations}
+                      currency={currency}
+                      getItemImage={getItemImage}
+                      getProductTitle={getProductTitle}
+                      getItemProductPath={getItemProductPath}
+                      getOrderItemColor={getOrderItemColor}
+                      getItemLineTotal={getItemLineTotal}
+                      formatMoney={formatMoney}
+                      isCodOrder={isCodOrder}
+                      downloadableDocuments={downloadableDocuments}
+                      visiblePendingSellerDocuments={visiblePendingSellerDocuments}
+                      invoiceDownloadAvailable={invoiceDownloadAvailable}
+                      customerInvoices={customerInvoices}
+                      getInvoiceUrl={getInvoiceUrl}
+                      downloadingId={downloadingId}
+                      handleDownload={handleDownload}
+                    />
+                    {(order?.shipping_address || order?.shippingAddress || order?.billing_address || order?.billingAddress) && (
+                      <OrderAddressCard
+                        shippingAddress={order?.shipping_address || order?.shippingAddress}
+                        billingAddress={order?.billing_address || order?.billingAddress || order?.shipping_address || order?.shippingAddress}
+                      />
+                    )}
+                  </div>
                 }
                 sidebarContent={
                   (subtotal !== undefined || items.length > 0) && (
