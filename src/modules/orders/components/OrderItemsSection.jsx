@@ -278,7 +278,7 @@ function OrderItemsSection({
   };
 
   return (
-    <section className="grid gap-5">
+    <section className="grid gap-5 w-full">
       {packageGroups.map((group, groupIndex) => (
         <OrderPackageCard
           key={group.key}

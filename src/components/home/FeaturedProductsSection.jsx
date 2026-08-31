@@ -1,6 +1,9 @@
 import ProductCard from "../../modules/products/components/ProductCard";
 
-import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
+import {
+  useCartActions,
+  useWishlistActions,
+} from "../../modules/products/controllers/actions";
 import SectionContainer from "../ui/SectionContainer";
 import { getProductId } from "../../utils/ecommerce";
 import { SkeletonLoader } from "../../components/ui/skeleton";
@@ -74,11 +77,11 @@ export default function FeaturedProductsSection({
         <SkeletonLoader
           preset="PRODUCT_CARD"
           count={5}
-          containerClass="grid grid-cols-1 mt-6 md:mt-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+          containerClass="grid grid-cols-2 mt-4 md:mt-0 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
           wrapperClass="min-w-0"
         />
       ) : (
-        <div className="grid grid-cols-1 mt-6 md:mt-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid grid-cols-2 mt-4 md:mt-0 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {displayProducts.map((product, index) => (
             <ProductCard
               key={getProductId(product) || `featured-product-${index}`}

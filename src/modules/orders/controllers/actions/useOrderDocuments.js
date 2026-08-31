@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { fetchMarketplaceInvoices } from "../../../../features/tax/taxSlice";
-import { downloadAuthDocument, getDocumentId } from "../../../../utils/downloadAuthDocument";
+import {
+  downloadAuthDocument,
+  getDocumentId,
+} from "../../../../utils/downloadAuthDocument";
 import { ORDER_API_ENDPOINTS } from "../../routes/apiRoutes";
 import { endpoints } from "../../../../api/endpoints";
 import { notify } from "../../../../utils/notify";
@@ -9,10 +12,16 @@ import {
   hasDeliveredSellerPackage,
   getOrderItemId,
   getCustomerPlatformFeeAmount,
-  isDeliveredOrderItem
+  isDeliveredOrderItem,
 } from "../../../../utils/pages/orderUtils";
 
-export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleReturns, visibleCancellations }) {
+export function useOrderDocuments({
+  orderId,
+  order,
+  selectedOrderItem,
+  visibleReturns,
+  visibleCancellations,
+}) {
   const dispatch = useDispatch();
   const [invoices, setInvoices] = useState(null);
   const [, setInvoicesLoading] = useState(false);
@@ -27,7 +36,7 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
     dispatch(fetchMarketplaceInvoices({ orderId }))
       .unwrap()
       .then((result) => setInvoices(result?.data || result))
-      .catch(() => { })
+      .catch(() => {})
       .finally(() => setInvoicesLoading(false));
   }, [dispatch, orderId]);
 
@@ -134,7 +143,7 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         metadata.seller_id ||
         metadata.seller?.id ||
         metadata.seller?._id;
-      
+
       const itemSellerId =
         selectedOrderItem.seller_id ||
         selectedOrderItem.sellerId ||
@@ -151,18 +160,19 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
           document.sellerName ||
           metadata.seller?.businessName ||
           metadata.seller?.displayName;
-          
+
         if (docSellerName) {
-          const fulfillmentGroups = order?.relations?.sellerFulfillmentGroups || [];
+          const fulfillmentGroups =
+            order?.relations?.sellerFulfillmentGroups || [];
           const itemFulfillment = fulfillmentGroups.find(
-            (g) => String(g.sellerId || g.seller_id) === String(itemSellerId)
+            (g) => String(g.sellerId || g.seller_id) === String(itemSellerId),
           );
           const itemSellerName =
             itemFulfillment?.sellerName ||
             selectedOrderItem.sellerName ||
             selectedOrderItem.seller?.displayName ||
             selectedOrderItem.seller?.businessName;
-            
+
           if (itemSellerName && docSellerName !== itemSellerName) {
             return false;
           }
@@ -208,7 +218,7 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         downloadPath,
         filename: `reverse-invoice-${returnNumber}.pdf`,
         type: "return_reverse",
-        returnRequest
+        returnRequest,
       };
     })
     .filter(Boolean);
@@ -230,7 +240,7 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         downloadPath,
         filename: `reverse-invoice-${cancellationNumber}.pdf`,
         type: "cancellation_reverse",
-        cancellation
+        cancellation,
       };
     })
     .filter(Boolean);
@@ -248,32 +258,21 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
         downloadPath: endpoints.tax.invoiceDownload(invoiceId),
         filename: `${invoice.invoice_number || invoice.invoiceNumber || `invoice-${index + 1}`}.pdf`,
         invoice,
-        type: "tax_invoice"
+        type: "tax_invoice",
       };
     }),
     orderReceipt || orderId
       ? {
-        id: getDocumentId(orderReceipt) || `receipt-${orderId}`,
-        title: "Order receipt",
-        subtitle: "Marketplace payment summary",
-        downloadPath: (orderReceipt && getDocumentId(orderReceipt))
-          ? endpoints.tax.invoiceDownload(getDocumentId(orderReceipt))
-          : endpoints.tax.invoice(orderId),
-        filename: `${orderReceipt?.invoice_number || orderReceipt?.invoiceNumber || `receipt-${orderId}`}.pdf`,
-        type: "order_receipt"
-      }
-      : null,
-    customerFeeInvoice || (customerPlatformFee > 0 && orderId)
-      ? {
-        id: getDocumentId(customerFeeInvoice) || `platform-fee-${orderId}`,
-        title: "Platform fee invoice",
-        subtitle: "Marketplace tax invoice for platform fee",
-        downloadPath: (customerFeeInvoice && getDocumentId(customerFeeInvoice))
-          ? endpoints.tax.invoiceDownload(getDocumentId(customerFeeInvoice))
-          : endpoints.tax.invoice(orderId),
-        filename: `${customerFeeInvoice?.invoice_number || customerFeeInvoice?.invoiceNumber || `platform-fee-${orderId}`}.pdf`,
-        type: "platform_fee"
-      }
+          id: getDocumentId(orderReceipt) || `receipt-${orderId}`,
+          title: "Order receipt",
+          subtitle: "Marketplace payment summary",
+          downloadPath:
+            orderReceipt && getDocumentId(orderReceipt)
+              ? endpoints.tax.invoiceDownload(getDocumentId(orderReceipt))
+              : endpoints.tax.invoice(orderId),
+          filename: `${orderReceipt?.invoice_number || orderReceipt?.invoiceNumber || `receipt-${orderId}`}.pdf`,
+          type: "order_receipt",
+        }
       : null,
     ...cancellationReverseInvoices,
     ...returnReverseInvoices,
@@ -292,6 +291,6 @@ export function useOrderDocuments({ orderId, order, selectedOrderItem, visibleRe
     pendingSellerDocuments,
     visibleCustomerInvoices,
     visiblePendingSellerDocuments,
-    downloadableDocuments
+    downloadableDocuments,
   };
 }

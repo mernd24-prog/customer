@@ -86,19 +86,17 @@ function ExistingReviewCard({ review }) {
 
   return (
     <section
-      className="mt-3 overflow-hidden rounded-2xl border border-[#E2E3EA] bg-white w-full"
-      aria-label="Your product review"
+      className="mt-3 pt-3 border-t border-[#E7D9B8] w-full flex flex-col gap-3"
+      aria-label="Product review"
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#ECECF1] bg-[#F5ECD5] px-4 py-3.5 sm:px-5">
-        <div className="flex items-center gap-3">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-[#E9F7ED] text-[#21812C]">
-            <BadgeCheck size={20} />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <span className="grid h-7 w-7 place-items-center rounded-full bg-[#E9F7ED] text-[#21812C]">
+            <BadgeCheck size={16} />
           </span>
           <div>
-            <h3 className="text-sm font-bold text-[#1B1D60] sm:text-base">
-              Your product review
-            </h3>
-            <p className="mt-0.5 text-xs text-[#6B6B80]">
+            <h3 className="text-sm font-bold text-[#1B1D60]">Product review</h3>
+            <p className="text-xs text-[#6B6B80]">
               {submittedDate
                 ? `Submitted on ${submittedDate}`
                 : "Thanks for sharing your experience"}
@@ -106,7 +104,7 @@ function ExistingReviewCard({ review }) {
           </div>
         </div>
         <span
-          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold capitalize ${isPublished ? "border-[#BFE5C6] bg-[#EFFAF1] text-[#21812C]" : "border-[#E7D39B] bg-[#FFF8E5] text-[#8B650B]"}`}
+          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-bold capitalize ${isPublished ? "border-[#BFE5C6] bg-[#EFFAF1] text-[#21812C]" : "border-[#E7D39B] bg-[#FFF8E5] text-[#8B650B]"}`}
         >
           <span
             className={`h-1.5 w-1.5 rounded-full ${isPublished ? "bg-[#2DA33A]" : "bg-[#CE9F2D]"}`}
@@ -115,9 +113,9 @@ function ExistingReviewCard({ review }) {
         </span>
       </div>
 
-      <div className="p-4 sm:p-5 flex flex-col gap-4 w-full">
+      <div className="flex flex-col gap-3.5 w-full">
         {rating > 0 && (
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <ReviewRating rating={rating} />
             <span className="text-sm font-bold text-[#1B1D60]">
               {rating}.0 out of 5
@@ -126,35 +124,38 @@ function ExistingReviewCard({ review }) {
         )}
 
         {reviewObj?.title && (
-          <h4 className="text-base font-bold text-[#22232B] sm:text-lg break-words">
+          <h4 className="text-sm sm:text-base font-bold text-[#22232B] break-words">
             {reviewObj.title}
           </h4>
         )}
 
         {reviewText && (
-          <p className="max-w-full break-words text-sm leading-6 text-[#4E505C] sm:text-[14px]">
+          <p className="max-w-full break-words text-sm leading-relaxed text-[#4E505C]">
             {reviewText}
           </p>
         )}
 
         {media.length > 0 && (
-          <div className="mt-1">
-            <p className="mb-2.5 flex items-center gap-2 text-xs font-bold uppercase tracking-[.08em] text-[#6B6B80]">
-              <Camera size={15} /> Photos from your review ({media.length})
+          <div>
+            <p className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#6B6B80]">
+              <Camera size={14} /> Photos from your review ({media.length})
             </p>
-            <div className="flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap gap-2">
               {media.slice(0, 5).map((url, index) => (
                 <button
                   type="button"
                   key={`${url}-${index}`}
                   onClick={() => setLightboxIndex(index)}
-                  className="group relative block size-16 overflow-hidden rounded-lg border border-[#DCDDE5] bg-[#F7F7FA] shadow-sm transition hover:border-[#CE9F2D] hover:shadow-md sm:size-20"
+                  className="group relative block size-14 sm:size-16 overflow-hidden rounded-lg border border-[#E2E3EA] bg-[#F7F7FA] shadow-sm transition hover:border-[#CE9F2D]"
                   aria-label={`Preview review image ${index + 1}`}
                 >
-                  <img loading="lazy" width="400" height="400"
+                  <img
+                    loading="lazy"
+                    width="400"
+                    height="400"
                     src={url}
                     alt={`Review image ${index + 1}`}
-                    className="h-full w-full object-contain transition duration-300 group-hover:scale-105"
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                   />
                 </button>
               ))}

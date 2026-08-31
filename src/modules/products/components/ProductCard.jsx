@@ -3,7 +3,10 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Banknote, Clock3, Heart, ShoppingCart } from "lucide-react";
 import AddToCartButton from "../../../components/ecommerce/AddToCartButton";
 import Label from "../../../components/ui/label/Label";
-import { IconCircleButton, PillButton } from "../../../components/ui/button/static";
+import {
+  IconCircleButton,
+  PillButton,
+} from "../../../components/ui/button/static";
 import Price from "./Price";
 import Rating from "./Rating";
 import WishlistButton from "../../../components/ecommerce/WishlistButton";
@@ -284,7 +287,10 @@ export default function ProductCard({
               <div className="group flex aspect-square w-full items-center justify-center overflow-hidden p-4">
                 <img
                   src={getOptimizedCloudinaryUrl(activeImage, 300)}
-                  srcSet={generateCloudinarySrcSet(activeImage, [200, 300, 400])}
+                  srcSet={generateCloudinarySrcSet(
+                    activeImage,
+                    [200, 300, 400],
+                  )}
                   sizes="(max-width: 640px) 180px, 300px"
                   alt=""
                   width="300"
@@ -301,9 +307,10 @@ export default function ProductCard({
                         key={idx}
                         className={cn(
                           "h-1 rounded-full transition-all duration-300 shadow-sm",
-                          activeImageIndex % Math.min(allImages.length, 5) === idx
+                          activeImageIndex % Math.min(allImages.length, 5) ===
+                            idx
                             ? "w-4 bg-[#1B1D60]"
-                            : "w-1.5 bg-black/30"
+                            : "w-1.5 bg-black/30",
                         )}
                       />
                     ))}
@@ -397,11 +404,11 @@ export default function ProductCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
-        `group relative flex min-w-0 flex-col overflow-hidden rounded-[20px] border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out`,
+        `group relative flex min-w-0 flex-col overflow-hidden rounded-[14px] sm:rounded-[20px] border border-[#CE9F2D80]/50 bg-white transition-all duration-300 ease-in-out`,
         className,
       )}
     >
-      <div className="absolute left-4 top-4 z-20 flex max-w-[calc(100%-2rem)] flex-wrap items-center gap-2">
+      <div className="absolute left-2 top-2 sm:left-4 sm:top-4 z-20 flex max-w-[calc(100%-1rem)] sm:max-w-[calc(100%-2rem)] flex-wrap items-center gap-1 sm:gap-2">
         {isFeatured && (
           <Label
             variant="featured"
@@ -409,9 +416,9 @@ export default function ProductCard({
               flex items-center justify-center
               rounded-[50px]
               bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)]
-              text-[12px] font-semibold
+              px-2 py-0.5 text-[10px] font-semibold
               text-white
-              sm:text-[14px]
+              sm:px-3 sm:py-1 sm:text-[14px]
             "
           >
             Featured
@@ -421,17 +428,17 @@ export default function ProductCard({
           <Label
             variant="success"
             className="
-              flex h-[24px] min-w-[72px] items-center justify-center
+              flex h-[20px] min-w-[54px] items-center justify-center
               rounded-[50px]
               bg-[#E8F5E8]
-              px-[12px] py-[5px]
+              px-[8px] py-[3px]
               font-dmSans
-              text-[12px] font-semibold
+              text-[10px] font-semibold
               leading-none
               tracking-[0%]
               text-[#117A65]
               sm:h-[28px] sm:min-w-[84px]
-              sm:px-[15px]
+              sm:px-[15px] sm:py-[5px]
               sm:text-[14px]
               "
           >
@@ -442,16 +449,16 @@ export default function ProductCard({
           <Label
             variant="success"
             className="
-              flex h-[24px] items-center justify-center
+              flex h-[20px] items-center justify-center
               rounded-[50px]
               bg-[#1B1D60]
-              px-[12px] py-[5px]
+              px-[8px] py-[3px]
               font-dmSans
-              text-[12px] font-semibold
+              text-[10px] font-semibold
               leading-none
               text-white
               sm:h-[28px]
-              sm:px-[15px]
+              sm:px-[15px] sm:py-[5px]
               sm:text-[14px]
             "
           >
@@ -464,15 +471,15 @@ export default function ProductCard({
         to={to}
         target={resolvedTarget === "_self" ? undefined : resolvedTarget}
         rel={resolvedTarget === "_blank" ? "noopener noreferrer" : undefined}
-        className="flex flex-1 flex-col"
+        className="flex flex-1 flex-col min-w-0"
       >
-        <div className="relative flex justify-center overflow-hidden h-[260px] items-center w-auto rounded-t-[20px] transition-all duration-300 ease-in-out group-hover:scale-[1.01]">
+        <div className="relative flex justify-center overflow-hidden h-[160px] xs:h-[190px] sm:h-[230px] md:h-[260px] items-center w-full rounded-t-[14px] sm:rounded-t-[20px] transition-all duration-300 ease-in-out group-hover:scale-[1.01]">
           {activeImage ? (
             <>
               <img
                 src={getOptimizedCloudinaryUrl(activeImage, 400)}
                 srcSet={generateCloudinarySrcSet(activeImage, [300, 400, 800])}
-                sizes="(max-width: 640px) 300px, (max-width: 1024px) 400px, 800px"
+                sizes="(max-width: 640px) 250px, (max-width: 1024px) 400px, 800px"
                 alt=""
                 width="400"
                 height="400"
@@ -490,7 +497,7 @@ export default function ProductCard({
                         "h-1 rounded-full transition-all duration-300 shadow-sm",
                         activeImageIndex % Math.min(allImages.length, 6) === idx
                           ? "w-4 bg-[#1B1D60]"
-                          : "w-1.5 bg-black/30"
+                          : "w-1.5 bg-black/30",
                       )}
                     />
                   ))}
@@ -504,11 +511,11 @@ export default function ProductCard({
           )}
         </div>
 
-        <div className="flex min-w-0 flex-col px-4 pt-3 pb-2">
+        <div className="flex min-w-0 flex-col px-2.5 sm:px-4 pt-2 sm:pt-3 pb-1 sm:pb-2">
           <StarRating rating={rating} count={ratingCount} />
 
           <h3
-            className="my-[10px]  w-full text-sm font-semibold text-[#2E2E2E] line-clamp-1"
+            className="my-1 sm:my-[10px] w-full text-xs sm:text-sm font-semibold text-[#2E2E2E] line-clamp-1"
             title={title}
           >
             {title}
@@ -518,17 +525,17 @@ export default function ProductCard({
             price={price}
             oldPrice={oldPrice}
             currency={currency || cardProduct?.currency}
-            className="my-1 flex items-center gap-2.5"
-            priceClassName="text-base font-extrabold text-[#1B1D60] md:text-lg 2xl:text-[20px]"
-            oldPriceClassName="text-base font-semibold text-[#737373] line-through md:text-lg 2xl:text-[20px]"
+            className="my-0.5 sm:my-1 flex flex-wrap items-baseline gap-1 sm:gap-2.5"
+            priceClassName="text-sm sm:text-base font-extrabold text-[#1B1D60] md:text-lg 2xl:text-[20px]"
+            oldPriceClassName="text-xs sm:text-base font-semibold text-[#737373] line-through md:text-lg 2xl:text-[20px]"
           />
 
           {isDealProduct && dealEndDate && (
-            <div className="mt-auto flex items-center justify-between gap-3 rounded-[12px] border border-[#EEDFB9] bg-[#FFFDF8] px-3 py-2">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.5px] text-[#9A6A00]">
-                <Clock3 size={13} /> Deal Ends
+            <div className="mt-auto flex items-center justify-between gap-1.5 sm:gap-3 rounded-[8px] sm:rounded-[12px] border border-[#EEDFB9] bg-[#FFFDF8] px-2 sm:px-3 py-1 sm:py-2">
+              <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.5px] text-[#9A6A00]">
+                <Clock3 size={12} className="sm:w-[13px] sm:h-[13px]" /> Deal
               </span>
-              <span className="truncate text-[12px] font-bold text-[#1B1D60]">
+              <span className="truncate text-[10px] sm:text-[12px] font-bold text-[#1B1D60]">
                 {dealEndDate}
               </span>
             </div>
@@ -537,19 +544,23 @@ export default function ProductCard({
       </Link>
 
       {showActions && (
-        <div className="mt-auto flex items-center gap-3 px-4 pb-3 pt-1">
+        <div className="mt-auto flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 pb-2.5 sm:pb-3 pt-1">
           <PillButton
             disabled={!isInStock}
             onClick={handleAddToCart}
             rightIcon={
-              <ShoppingCart size={18} strokeWidth={2.4} className="shrink-0" />
+              <ShoppingCart
+                size={15}
+                strokeWidth={2.4}
+                className="shrink-0 hidden xs:inline-block sm:inline-block"
+              />
             }
             className={cn(
-              "w-full flex-1 gap-1.5 sm:gap-2 text-[13px] sm:text-[14px] md:text-[15px] font-semibold focus-visible:outline-[#1B1D60] whitespace-nowrap px-3 sm:px-4",
+              "w-full flex-1 gap-1 sm:gap-2 text-[10px] sm:text-[14px] md:text-[15px] font-semibold focus-visible:outline-[#1B1D60] whitespace-nowrap px-2 sm:px-4 py-1.5 sm:py-2.5 h-8 sm:h-10",
               !isInStock && "cursor-not-allowed opacity-60",
             )}
           >
-            Add to Cart
+            <span className="truncate">Add to Cart</span>
           </PillButton>
           <IconCircleButton
             title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
@@ -559,14 +570,14 @@ export default function ProductCard({
                 : `Add ${title} to wishlist`
             }
             onClick={handleWishlist}
-            className={
-              isWishlisted
-                ? "border-[#1B1D60] text-[#1B1D60] hover:border-[#1B1D60]"
-                : "border-[#1B1D60] text-[#1B1D60] hover:border-[#1B1D60]"
-            }
+            className={cn(
+              "h-8 w-8 min-w-[32px] sm:h-10 sm:w-10 shrink-0 p-0 flex items-center justify-center border-[#1B1D60] text-[#1B1D60] hover:border-[#1B1D60]",
+              isWishlisted && "border-[#1B1D60]",
+            )}
           >
             <Heart
-              size={19}
+              size={17}
+              className="sm:w-[19px] sm:h-[19px]"
               fill={isWishlisted ? "#1B1D60" : "none"}
               stroke={isWishlisted ? "#1B1D60" : "#1B1D60"}
             />

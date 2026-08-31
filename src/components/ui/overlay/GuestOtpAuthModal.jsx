@@ -230,7 +230,7 @@ export default function GuestOtpAuthModal({
           onClick={() => onClose?.()}
           disabled={isSubmitting}
           className={cn(
-            "absolute right-0 top-8 z-30 flex h-9 w-9 items-center justify-center",
+            "absolute right-6 top-12 z-30 flex h-9 w-9 items-center justify-center",
             "rounded-full bg-white text-muted shadow-md",
             "transition hover:bg-cream hover:text-ink",
             "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold",

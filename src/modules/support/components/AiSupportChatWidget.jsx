@@ -85,7 +85,9 @@ export default function AiSupportChatWidget() {
   }, []);
 
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent("ai-chat-toggle", { detail: { isOpen } }));
+    window.dispatchEvent(
+      new CustomEvent("ai-chat-toggle", { detail: { isOpen } }),
+    );
     if (isOpen) {
       scrollToBottom();
       inputRef.current?.focus();
@@ -132,7 +134,8 @@ export default function AiSupportChatWidget() {
             "I'm sorry, I couldn't process that request at this moment.",
           found: aiData.found !== false,
           suggestedCategory: aiData.suggestedCategory || "ORDER_ISSUE",
-          suggestedSubject: aiData.suggestedSubject || messageContent.slice(0, 70),
+          suggestedSubject:
+            aiData.suggestedSubject || messageContent.slice(0, 70),
           suggestedMessage: aiData.suggestedMessage || messageContent,
           relevantLinks: Array.isArray(aiData.relevantLinks)
             ? aiData.relevantLinks
@@ -145,8 +148,7 @@ export default function AiSupportChatWidget() {
         const fallbackErrorMsg = {
           id: `ai-err-${Date.now()}`,
           role: "assistant",
-          text:
-            "I am having trouble reaching the knowledge service right now. Would you like to raise a support ticket so our team can help you?",
+          text: "I am having trouble reaching the knowledge service right now. Would you like to raise a support ticket so our team can help you?",
           found: false,
           suggestedCategory: "OTHER",
           suggestedSubject: messageContent.slice(0, 70),
@@ -234,10 +236,16 @@ export default function AiSupportChatWidget() {
           aria-label="Toggle AI Support Chat"
         >
           {isOpen ? (
-            <ChevronDown size={28} className="transition-transform duration-200" />
+            <ChevronDown
+              size={28}
+              className="transition-transform duration-200"
+            />
           ) : (
             <>
-              <Bot size={28} className="transition-transform duration-200 group-hover:scale-110" />
+              <Bot
+                size={28}
+                className="transition-transform duration-200 group-hover:scale-110"
+              />
               <span className="absolute -top-1 -right-1 flex h-4 w-4">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#CE9F2D] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-4 w-4 bg-[#CE9F2D] border-2 border-white"></span>
@@ -268,7 +276,9 @@ export default function AiSupportChatWidget() {
                   </span>
                 </div>
                 <p className="text-[11px] text-gray-300 font-medium">
-                  {isSignedIn ? `Hi ${user?.name?.split(" ")[0] || "there"}, how can we help?` : "Instant grounded answers 24/7"}
+                  {isSignedIn
+                    ? `Hi ${user?.name?.split(" ")[0] || "there"}, how can we help?`
+                    : "Instant grounded answers 24/7"}
                 </p>
               </div>
             </div>
@@ -354,13 +364,17 @@ export default function AiSupportChatWidget() {
                   {msg.role === "assistant" && msg.found === false && (
                     <div className="mt-2.5 w-full rounded-xl border border-amber-200 bg-amber-50 p-3.5 shadow-sm">
                       <div className="flex items-start gap-2.5">
-                        <HelpCircle size={17} className="mt-0.5 text-[#CE9F2D] shrink-0" />
+                        <HelpCircle
+                          size={17}
+                          className="mt-0.5 text-[#CE9F2D] shrink-0"
+                        />
                         <div>
                           <p className="text-xs font-bold text-slate-900">
                             Need human assistance?
                           </p>
                           <p className="text-[11px] text-slate-600 mt-0.5 leading-normal">
-                            Our customer care specialists are ready to help resolve this issue.
+                            Our customer care specialists are ready to help
+                            resolve this issue.
                           </p>
                         </div>
                       </div>
@@ -397,7 +411,10 @@ export default function AiSupportChatWidget() {
                     </span>
                   </div>
                   <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-slate-400">
-                    <Loader2 size={12} className="animate-spin text-[#1B1D60]" />
+                    <Loader2
+                      size={12}
+                      className="animate-spin text-[#1B1D60]"
+                    />
                     <span>Preparing verified answer...</span>
                   </div>
                 </div>
@@ -445,7 +462,9 @@ export default function AiSupportChatWidget() {
                   <button
                     key={i}
                     type="button"
-                    onClick={() => handleSendMessage(prompt.replace(/^[^\s]+\s/, ""))}
+                    onClick={() =>
+                      handleSendMessage(prompt.replace(/^[^\s]+\s/, ""))
+                    }
                     className="shrink-0 whitespace-nowrap rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 hover:border-[#CE9F2D] hover:bg-amber-50 hover:text-[#1B1D60] transition cursor-pointer active:scale-95"
                   >
                     {prompt}
@@ -464,7 +483,11 @@ export default function AiSupportChatWidget() {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={isTyping ? "AI is responding..." : "Ask about orders, returns, payments..."}
+                placeholder={
+                  isTyping
+                    ? "AI is responding..."
+                    : "Ask about orders, returns, payments..."
+                }
                 disabled={isTyping}
                 className="w-full bg-transparent text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none disabled:opacity-50"
               />

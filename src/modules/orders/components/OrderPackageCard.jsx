@@ -54,6 +54,7 @@ export function OrderPackageCard({
   ...itemProps
 }) {
   const shipment = group.shipments[0] || {};
+
   const expectedDelivery = group.expectedDeliveryAt;
   const groupItemTimelineEvents = group.items.flatMap((i) => i.timeline || []);
   const parentTimelineEvents =
@@ -229,13 +230,12 @@ export function OrderPackageCard({
   return (
     <div
       key={group.key}
-      className="grid rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] w-full min-w-0 xl:grid-cols-[minmax(0,1fr)_360px] 2xl:grid-cols-[minmax(0,1.2fr)_380px] overflow-hidden"
+      className="grid rounded-xl border border-[#E7D9B8] bg-[#FFFDF8] w-full min-w-0  xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1.2fr)_360px] overflow-hidden"
     >
       {/* Left Column: Items and Courier */}
       <div className="flex flex-col gap-3 p-4 sm:p-5 min-w-0 w-full">
         <div className="-mx-4 lg:-ml-5 lg:-mr-6 flex items-center justify-between gap-4 border-b border-[#ede4cf] px-4 lg:pl-5 lg:pr-6 pb-4">
           <h3 className="font-bold text-[#1B1D60] text-base md:text-lg truncate flex-1 min-w-0">
-            Package:{" "}
             {group.items
               .map((i) => itemProps.getProductTitle(i).split(" - ")[0])
               .join(", ")}
@@ -247,12 +247,11 @@ export function OrderPackageCard({
               group.status === "cancellation_requested" ||
               group.status === "cancellation_approved"
                 ? "bg-[#FCE8E8] text-[#991B1B]"
-                : isReturned ||
-                  group.status === "returned"
-                ? "bg-[#FFF9EA] text-[#B88200]"
-                : group.status === "delivered" || group.status === "fulfilled"
-                ? "bg-[#E6F4EA] text-[#0D652D]"
-                : "bg-[#F0F1FF] text-[#201B78]"
+                : isReturned || group.status === "returned"
+                  ? "bg-[#FFF9EA] text-[#B88200]"
+                  : group.status === "delivered" || group.status === "fulfilled"
+                    ? "bg-[#E6F4EA] text-[#0D652D]"
+                    : "bg-[#F0F1FF] text-[#201B78]"
             }`}
           >
             {label(
@@ -293,6 +292,11 @@ export function OrderPackageCard({
                   item={item}
                   {...itemProps}
                   compact={true}
+                  expectedDeliveryAt={
+                    group.expectedDeliveryAt ||
+                    shipment.expected_delivery_at ||
+                    shipment.expectedDeliveryAt
+                  }
                   cancelledQuantity={Number(
                     item.cancelled_quantity || item.cancelledQuantity || 0,
                   )}
@@ -300,24 +304,11 @@ export function OrderPackageCard({
                   delivered={Boolean(fulfillment.delivered)}
                   effectiveStatus={fulfillment.status}
                 />
-                <div className="flex flex-wrap items-center justify-between gap-4 w-full">
-                  <div className="flex flex-wrap items-center gap-2 text-[13px] font-bold text-[#2E2E2E]">
-                    <span className="flex items-center h-6">
-                      {policy.returnable
-                        ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}`
-                        : "Non-returnable"}
-                    </span>
-                    {returnRequest && (
-                      <span className="flex items-center h-6 rounded-full bg-blue-50 px-3 text-blue-700">
-                        {label(fulfillment.status)}
-                      </span>
-                    )}
-                  </div>
-                  {isSingleItemView &&
-                    fulfillment.delivered &&
-                    returnedQuantity === 0 &&
-                    Boolean(getReviewProductId(item)) &&
-                    !reviewByItem[reviewKeyForItem(orderId, item)] && (
+                {fulfillment.delivered &&
+                  returnedQuantity === 0 &&
+                  Boolean(getReviewProductId(item)) &&
+                  !reviewByItem[reviewKeyForItem(orderId, item)] && (
+                    <div className="flex flex-wrap items-center justify-end gap-4 w-full">
                       <OrderItemReviewAction
                         item={item}
                         orderId={orderId}
@@ -328,14 +319,13 @@ export function OrderPackageCard({
                         )}
                         onReviewClick={setReviewTarget}
                       />
-                    )}
-                </div>
-                {isSingleItemView &&
-                  fulfillment.delivered &&
+                    </div>
+                  )}
+                {fulfillment.delivered &&
                   returnedQuantity === 0 &&
                   Boolean(getReviewProductId(item)) &&
                   reviewByItem[reviewKeyForItem(orderId, item)] && (
-                    <div className="w-full mt-1">
+                    <div className="w-full">
                       <ExistingReviewCard
                         review={reviewByItem[reviewKeyForItem(orderId, item)]}
                       />
