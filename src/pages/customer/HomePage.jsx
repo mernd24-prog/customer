@@ -212,7 +212,7 @@ export function HomePage() {
       </LazySection>
 
       <LazySection minHeight="400px">
-        <div className="mt-16">
+        <div className="">
           <HomeProductsForYouSection
             title="Explore Our Collection"
             description="Handpicked products loved by thousands of shoppers"

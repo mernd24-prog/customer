@@ -570,16 +570,19 @@ export const resolveOrderItemDisplayStatus = (
   let timelineCancellationStatus = "";
   if (Array.isArray(item.timeline)) {
     const timelineEvent = item.timeline.find(
-      (t) => t.source === "cancellation" || String(t.status || "").includes("cancellation")
+      (t) =>
+        t.source === "cancellation" ||
+        String(t.status || "").includes("cancellation"),
     );
     if (timelineEvent && timelineEvent.status) {
       timelineCancellationStatus = timelineEvent.status;
     }
   }
 
-  const isFullyCancelled = 
-    Number(item.quantity || 0) > 0 && 
-    Number(item.quantity || 0) <= Number(item.cancelled_quantity || item.cancelledQuantity || 0);
+  const isFullyCancelled =
+    Number(item.quantity || 0) > 0 &&
+    Number(item.quantity || 0) <=
+      Number(item.cancelled_quantity || item.cancelledQuantity || 0);
 
   return cancellation?.status === "requested"
     ? "cancellation_requested"

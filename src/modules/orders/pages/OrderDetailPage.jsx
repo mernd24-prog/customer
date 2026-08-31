@@ -1,6 +1,14 @@
 import { Link } from "react-router-dom";
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { IndianRupee, RotateCcw, ReceiptText, RefreshCw, XCircle, FileText, Download } from "lucide-react";
+import {
+  IndianRupee,
+  RotateCcw,
+  ReceiptText,
+  RefreshCw,
+  XCircle,
+  FileText,
+  Download,
+} from "lucide-react";
 
 import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
@@ -9,7 +17,6 @@ import ConfirmModal from "../../../components/ui/overlay/ConfirmModal";
 import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
-import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 import OrderItemsSection from "../components/OrderItemsSection";
 import OrderPaymentSummary from "../components/OrderPaymentSummary";
 import OrderDetailInfoGrid from "../components/OrderDetailInfoGrid";
@@ -121,7 +128,8 @@ export default function OrderDetailPage({ orderId }) {
                 </div>
 
                 <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap items-center md:w-auto md:justify-end">
-                  {(status === "pending_payment" || status === "payment_failed") && (
+                  {(status === "pending_payment" ||
+                    status === "payment_failed") && (
                     <Button
                       className="flex h-[54px] w-full sm:w-auto items-center justify-center gap-[10px] rounded-[10px] px-[24px] py-[15px] text-white"
                       loading={retrying}
@@ -147,20 +155,19 @@ export default function OrderDetailPage({ orderId }) {
                     </Button>
                   )}
 
-                  {Boolean(selectedOrderItem) &&
-                    selectedItemCanReturn && (
-                      <Link
-                        to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}`}
-                        className="block w-full sm:w-auto"
-                      >
-                        <Button className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] bg-[#CE9F2D] px-[24px] py-[15px] text-white hover:bg-[#B88200]">
-                          <RotateCcw size={18} />
-                          <span className="text-center text-[14px] sm:text-[15px] font-semibold leading-[20px] sm:leading-[24px] text-white">
-                            Request Return
-                          </span>
-                        </Button>
-                      </Link>
-                    )}
+                  {Boolean(selectedOrderItem) && selectedItemCanReturn && (
+                    <Link
+                      to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}`}
+                      className="block w-full sm:w-auto"
+                    >
+                      <Button className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] bg-[#CE9F2D] px-[24px] py-[15px] text-white hover:bg-[#B88200]">
+                        <RotateCcw size={18} />
+                        <span className="text-center text-[14px] sm:text-[15px] font-semibold leading-[20px] sm:leading-[24px] text-white">
+                          Request Return
+                        </span>
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </div>
               <OrderDetailInfoGrid
@@ -219,8 +226,8 @@ export default function OrderDetailPage({ orderId }) {
               />
 
               {["delivered", "fulfilled", "partially_returned"].includes(
-                  status,
-                ) &&
+                status,
+              ) &&
                 !returnWindowOpen && (
                   <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                     All eligible item return windows closed by{" "}
@@ -229,110 +236,124 @@ export default function OrderDetailPage({ orderId }) {
                 )}
             </section>
 
-              <StickySidebarLayout
-                sidebarPosition="right"
-                containerClass="flex flex-col xl:flex-row gap-4 md:gap-6 xl:gap-8"
-                sidebarClass="w-full xl:w-[320px] 2xl:w-[380px]"
-                mainContent={
-                  <OrderItemsSection
-                    items={visibleOrderItems}
-                    order={order}
-                    selectedOrderItem={selectedOrderItem}
-                    orderId={orderId}
-                    orderStatus={status}
-                    shipments={shipments}
-                    sellerFulfillmentGroups={
-                      order?.relations?.sellerFulfillmentGroups || []
-                    }
-                    returns={visibleReturns}
-                    cancellations={visibleCancellations}
-                    currency={currency}
-                    getItemImage={getItemImage}
-                    getProductTitle={getProductTitle}
-                    getItemProductPath={getItemProductPath}
-                    getOrderItemColor={getOrderItemColor}
-                    getItemLineTotal={getItemLineTotal}
-                    formatMoney={formatMoney}
-                    isCodOrder={isCodOrder}
-                    downloadableDocuments={downloadableDocuments}
-                    visiblePendingSellerDocuments={visiblePendingSellerDocuments}
-                    invoiceDownloadAvailable={invoiceDownloadAvailable}
-                    customerInvoices={customerInvoices}
-                    getInvoiceUrl={getInvoiceUrl}
-                    downloadingId={downloadingId}
-                    handleDownload={handleDownload}
-                  />
-                }
-                sidebarContent={
-                  (subtotal !== undefined || items.length > 0) && (
-                    <div className="flex flex-col gap-4">
-                      <OrderPaymentSummary
-                        variant="order"
-                        subtotal={subtotal}
-                        discount={discount}
-                        discountFundingType={pricingSummary.discountFundingType}
-                        sellerFundedDiscount={
-                          pricingSummary.sellerFundedDiscountAmount
+            <StickySidebarLayout
+              sidebarPosition="right"
+              containerClass="w-full flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8"
+              sidebarClass="w-full lg:w-[320px] xl:w-[350px] 2xl:w-[380px]"
+              mainClass="w-full flex min-w-0 flex-1 flex-col"
+              mainContent={
+                <OrderItemsSection
+                  items={visibleOrderItems}
+                  order={order}
+                  selectedOrderItem={selectedOrderItem}
+                  orderId={orderId}
+                  orderStatus={status}
+                  shipments={shipments}
+                  sellerFulfillmentGroups={
+                    order?.relations?.sellerFulfillmentGroups || []
+                  }
+                  returns={visibleReturns}
+                  cancellations={visibleCancellations}
+                  currency={currency}
+                  getItemImage={getItemImage}
+                  getProductTitle={getProductTitle}
+                  getItemProductPath={getItemProductPath}
+                  getOrderItemColor={getOrderItemColor}
+                  getItemLineTotal={getItemLineTotal}
+                  formatMoney={formatMoney}
+                  isCodOrder={isCodOrder}
+                  downloadableDocuments={downloadableDocuments}
+                  visiblePendingSellerDocuments={visiblePendingSellerDocuments}
+                  invoiceDownloadAvailable={invoiceDownloadAvailable}
+                  customerInvoices={customerInvoices}
+                  getInvoiceUrl={getInvoiceUrl}
+                  downloadingId={downloadingId}
+                  handleDownload={handleDownload}
+                />
+              }
+              sidebarContent={
+                (subtotal !== undefined || items.length > 0) && (
+                  <div className="flex flex-col gap-4">
+                    <OrderPaymentSummary
+                      variant="order"
+                      subtotal={subtotal}
+                      discount={discount}
+                      discountFundingType={pricingSummary.discountFundingType}
+                      sellerFundedDiscount={
+                        pricingSummary.sellerFundedDiscountAmount
+                      }
+                      marketplaceFundedDiscount={
+                        pricingSummary.marketplaceFundedDiscountAmount
+                      }
+                      paymentPartnerFundedDiscount={
+                        pricingSummary.paymentPartnerFundedDiscountAmount
+                      }
+                      walletDiscount={walletDiscount}
+                      shipping={shipping}
+                      customerPlatformFee={customerPlatformFeeBase}
+                      customerPlatformFeeTax={customerPlatformFeeTax}
+                      customerAmount={customerAmount}
+                      currency={currency}
+                      formatMoney={formatMoney}
+                      asNumber={asNumber}
+                    />
+                    {(() => {
+                      const globalDocuments = (
+                        downloadableDocuments || []
+                      ).filter((doc) => {
+                        if (visibleOrderItems.length <= 1) {
+                          return false;
                         }
-                        marketplaceFundedDiscount={
-                          pricingSummary.marketplaceFundedDiscountAmount
-                        }
-                        paymentPartnerFundedDiscount={
-                          pricingSummary.paymentPartnerFundedDiscountAmount
-                        }
-                        walletDiscount={walletDiscount}
-                        shipping={shipping}
-                        customerPlatformFee={customerPlatformFeeBase}
-                        customerPlatformFeeTax={customerPlatformFeeTax}
-                        customerAmount={customerAmount}
-                        currency={currency}
-                        formatMoney={formatMoney}
-                        asNumber={asNumber}
-                      />
-                      {(() => {
-                        const globalDocuments = (downloadableDocuments || []).filter((doc) => {
-                          if (visibleOrderItems.length <= 1) {
-                            return false;
-                          }
-                          return doc.type === "platform_fee" || doc.type === "order_receipt";
-                        });
-                        if (globalDocuments.length === 0) return null;
-                        
                         return (
-                          <div className="flex flex-col gap-3 p-4 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8]">
-                            <h4 className="font-bold text-[#1B1D60] mb-1 flex items-center gap-2 text-sm">
-                              <FileText size={16} className="text-[#3E4093]" /> Order Documents
-                            </h4>
-                            <div className="flex flex-col gap-2">
-                              {globalDocuments.map((document) => (
-                                <div
-                                  key={`${document.title}-${document.id}`}
-                                  className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 text-sm transition-all hover:border-[#CE9F2D80]"
-                                >
-                                  <div className="min-w-0 flex items-center gap-1.5">
-                                    <span className="font-semibold text-[13px] text-[#2E2E2E] truncate">
-                                      {document.title}
-                                    </span>
-                                  </div>
-                                  <Button
-                                    variant="secondary"
-                                    size="sm"
-                                    loading={downloadingId === document.downloadPath}
-                                    onClick={() => handleDownload(document.downloadPath, document.filename)}
-                                    className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3 shrink-0"
-                                  >
-                                    <Download size={12} /> Download
-                                  </Button>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
+                          doc.type === "platform_fee" ||
+                          doc.type === "order_receipt"
                         );
-                      })()}
-                    </div>
-                  )
-                }
-              />
+                      });
+                      if (globalDocuments.length === 0) return null;
+
+                      return (
+                        <div className="flex flex-col gap-3 p-4 rounded-xl border border-[#E7D9B8] bg-[#FFFDF8]">
+                          <h4 className="font-bold text-[#1B1D60] mb-1 flex items-center gap-2 text-sm">
+                            <FileText size={16} className="text-[#3E4093]" />{" "}
+                            Order Documents
+                          </h4>
+                          <div className="flex flex-col gap-2">
+                            {globalDocuments.map((document) => (
+                              <div
+                                key={`${document.title}-${document.id}`}
+                                className="flex items-center justify-between gap-3 rounded-lg border border-[#CE9F2D40] bg-white px-3 py-2 text-sm transition-all hover:border-[#CE9F2D80]"
+                              >
+                                <div className="min-w-0 flex items-center gap-1.5">
+                                  <span className="font-semibold text-[13px] text-[#2E2E2E] truncate">
+                                    {document.title}
+                                  </span>
+                                </div>
+                                <Button
+                                  variant="secondary"
+                                  size="sm"
+                                  loading={
+                                    downloadingId === document.downloadPath
+                                  }
+                                  onClick={() =>
+                                    handleDownload(
+                                      document.downloadPath,
+                                      document.filename,
+                                    )
+                                  }
+                                  className="border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] h-7 text-xs px-3 shrink-0"
+                                >
+                                  <Download size={12} /> Download
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )
+              }
+            />
           </div>
         </ApiState>
       </div>
@@ -363,9 +384,7 @@ export default function OrderDetailPage({ orderId }) {
       >
         <div className="grid gap-4">
           <div className="grid gap-3 rounded-xl border border-[#E7D9B8] bg-[#FFFDF9] p-3.5 sm:p-4">
-            <p className="text-sm font-bold text-[#1B1D60]">
-              Select products
-            </p>
+            <p className="text-sm font-bold text-[#1B1D60]">Select products</p>
             {(selectedOrderItem ? [selectedOrderItem] : items).map((item) => {
               const itemId = String(getOrderItemId(item));
               const pendingQuantity = cancellations
@@ -422,7 +441,9 @@ export default function OrderDetailPage({ orderId }) {
                     </span>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className={`rounded-md px-2.5 py-1 text-xs font-semibold ${selected ? "bg-red-50 text-red-700" : "bg-[#F4F4F7] text-[#5F6078]"}`}>
+                    <span
+                      className={`rounded-md px-2.5 py-1 text-xs font-semibold ${selected ? "bg-red-50 text-red-700" : "bg-[#F4F4F7] text-[#5F6078]"}`}
+                    >
                       {selected
                         ? `Cancel all ${remaining} unit${remaining === 1 ? "" : "s"}`
                         : `${remaining} unit${remaining === 1 ? "" : "s"}`}

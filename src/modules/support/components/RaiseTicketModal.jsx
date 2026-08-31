@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Ticket, Sparkles, X, Loader2, Info } from "lucide-react";
+import { Ticket, Sparkles, Loader2, Info, LifeBuoy } from "lucide-react";
 
 import BaseModal from "../../../components/ui/overlay/BaseModal";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
@@ -24,20 +24,22 @@ const INITIAL_FORM = {
 };
 
 export function RaiseTicketModal() {
-  const { 
-    raiseTicketModalOpen, 
-    raiseTicketModalData, 
-    handleCloseRaiseTicketModal, 
-    submitTicket, 
-    supportSubmitting 
+  const {
+    raiseTicketModalOpen,
+    raiseTicketModalData,
+    handleCloseRaiseTicketModal,
+    submitTicket,
+    supportSubmitting,
   } = useSupportController();
-  
+
   const user = useSelector((state) => state.auth.current);
   const isSignedIn = Boolean(user);
   const { openAuthModal } = useAuthModal();
 
   const [form, setForm] = useState({ ...INITIAL_FORM });
-  const isFromAiChat = Boolean(raiseTicketModalData?.subject || raiseTicketModalData?.message);
+  const isFromAiChat = Boolean(
+    raiseTicketModalData?.subject || raiseTicketModalData?.message,
+  );
 
   // Form Hydration Lifecycle
   useEffect(() => {
@@ -72,7 +74,7 @@ export function RaiseTicketModal() {
       openAuthModal?.();
       return;
     }
-    
+
     const success = await submitTicket(form);
     if (success) {
       setForm({ ...INITIAL_FORM });
@@ -85,11 +87,8 @@ export function RaiseTicketModal() {
     <BaseModal onClose={handleCloseRaiseTicketModal} maxWidth="max-w-lg">
       <div className="p-6 sm:p-7">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+        <div className="border-b border-slate-100 pb-4 mb-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-[#CE9F2D] border border-amber-200/80">
-              <Ticket size={20} />
-            </div>
             <div>
               <h3 className="text-lg font-bold text-[#1B1D60]">
                 Raise a Support Ticket
@@ -99,15 +98,6 @@ export function RaiseTicketModal() {
               </p>
             </div>
           </div>
-
-          <button
-            type="button"
-            onClick={handleCloseRaiseTicketModal}
-            aria-label="Close modal"
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
-          >
-            <X size={18} />
-          </button>
         </div>
 
         {/* AI Chat Pre-fill Alert */}
@@ -115,7 +105,8 @@ export function RaiseTicketModal() {
           <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-amber-200 bg-amber-50/80 p-3 text-xs text-amber-900">
             <Sparkles size={16} className="text-[#CE9F2D] shrink-0" />
             <span className="leading-relaxed">
-              Details have been pre-filled from your AI chat. You can review or edit before submitting.
+              Details have been pre-filled from your AI chat. You can review or
+              edit before submitting.
             </span>
           </div>
         )}
