@@ -6,7 +6,7 @@ import { ShoppingBag } from "lucide-react";
 import moreImage from "/image/png/MoreImage.png";
 import ImageSkeleton from "../../components/ui/Image";
 import { CategoryMoreButton } from "../../components/ui/button/static";
-import { CategoryMegaMenu } from "../../components/ecommerce";
+import CategoryMegaMenu from "../../modules/catalog/components/CategoryMegaMenu";
 import { getCmsPayload, useCmsRecord } from "../../hooks/useCmsRecord";
 import { fetchCategories } from "../../features/catalog/catalogSlice";
 import { asArray, keyOr, textOr } from "../../utils/content";

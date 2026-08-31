@@ -11,7 +11,7 @@ import { RETURNS_ROUTES } from "../modules/returns/routes/apiRoutes";
 import Loader from "../components/ui/Loader";
 
 
-const CategoryListingPage = lazy(() => import("../pages/category/CategoryListingPage"),);
+const CategoryListingPage = lazy(() => import("../modules/catalog/pages/CategoryListingPage"),);
 const DownloadApp = lazy(() => import("../pages/downloadApp/DownloadApp"));
 const PolicyPage = lazy(() => import("../pages/policiesPage/PoliciesPages"));
 const ReturnsPage = lazy(() => import("../modules/returns/pages/ReturnsPage.jsx"));
@@ -47,14 +47,14 @@ const SupportTicketDetailsPage = lazy(
   () => import("../modules/support/pages/SupportTicketDetailsPage"),
 );
 const CmsPage = lazy(() => import("../pages/cms/CmsPage"));
-const BrandOutletPage = lazy(() => import("../pages/brand/BrandOutletPage"));
+const BrandOutletPage = lazy(() => import("../modules/catalog/pages/BrandOutletPage"));
 
 const HomePage = lazyNamed(
   () => import("../pages/customer/HomePage"),
   "HomePage",
 );
-const WatchlistPage = lazy(() => import("../pages/watchList/WatchListPage"));
-const SearchPage = lazy(() => import("../pages/search/SearchPage"));
+const WatchlistPage = lazy(() => import("../modules/wishlist/pages/WatchListPage"));
+const SearchPage = lazy(() => import("../modules/catalog/pages/SearchPage"));
 const ProductsPage = lazy(() => import("../modules/products/pages/ProductsPage"));
 const ProductDetailPage = lazy(
   () => import("../modules/products/pages/ProductDetailPage"),
@@ -83,11 +83,11 @@ const RecentlyViewedPage = lazyNamed(
   "RecentlyViewedPage",
 );
 const AboutPage = lazy(() => import("../pages/about/AboutPage"));
-const BrandPage = lazy(() => import("../pages/brand/BrandPage"));
-const CategoryPage = lazy(() => import("../pages/category/CategoryPage"));
+const BrandPage = lazy(() => import("../modules/catalog/pages/BrandPage"));
+const CategoryPage = lazy(() => import("../modules/catalog/pages/CategoryPage"));
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 
-const AccountPage = lazy(() => import("../pages/account/AccountPage"));
+const AccountPage = lazy(() => import("../modules/account/pages/AccountPage"));
 const CartPage = lazy(() => import("../modules/cart/pages/CartPage"));
 const CheckoutPage = lazy(() => import("../modules/checkout/pages/CheckoutPage"));
 const PaymentResultPage = lazyNamed(
@@ -99,11 +99,11 @@ const ReturnsRefundsPage = lazy(
   () => import("../modules/returns/pages/ReturnsRefundsPage.jsx"),
 );
 const WalletPage = lazyNamed(
-  () => import("../pages/wallet/WalletPage"),
+  () => import("../modules/wallet/pages/WalletPage"),
   "WalletPage",
 );
 const PaymentsPage = lazyNamed(
-  () => import("../pages/payments/PaymentsPage"),
+  () => import("../modules/wallet/pages/PaymentsPage"),
   "PaymentsPage",
 );
 const SubscriptionPage = lazyNamed(

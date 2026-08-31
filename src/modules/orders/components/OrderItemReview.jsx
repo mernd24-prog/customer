@@ -2,8 +2,8 @@ import { useState } from "react";
 import { BadgeCheck, Camera } from "lucide-react";
 import { IoIosStar } from "react-icons/io";
 import { useDispatch } from "react-redux";
-import ReviewImageUploader from "../../../components/ecommerce/ReviewImageUploader";
-import ReviewMediaLightbox from "../../../components/ecommerce/ReviewMediaLightbox";
+import ReviewImageUploader from "../../products/components/ReviewImageUploader";
+import ReviewMediaLightbox from "../../products/components/ReviewMediaLightbox";
 import BaseModal from "../../../components/ui/overlay/BaseModal";
 import {
   fetchMyProductReview,

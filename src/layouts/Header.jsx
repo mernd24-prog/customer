@@ -28,7 +28,7 @@ import {
 import HeaderDropdown from "./header/HeaderDropdown";
 import MenuDropdown from "./header/MenuDropdown";
 import { TopHeader } from "./header/TopHeader";
-//import { CategoryMegaMenu } from "../components/ecommerce";
+//import CategoryMegaMenu from "../modules/catalog/components/CategoryMegaMenu";
 import { navbarIcons as navData } from "../constants/image.constant";
 import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
 import { logout } from "../modules/auth/slices/authSlice";

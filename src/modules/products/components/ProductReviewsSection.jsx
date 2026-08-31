@@ -14,8 +14,8 @@ import {
   resetSubmitState,
 } from "../../../features/review/reviewSlice";
 import { fetchMyOrders } from "../../orders/slices/orderSlice";
-import ReviewImageUploader from "../../../components/ecommerce/ReviewImageUploader";
-import ReviewMediaLightbox from "../../../components/ecommerce/ReviewMediaLightbox";
+import ReviewImageUploader from "./ReviewImageUploader";
+import ReviewMediaLightbox from "./ReviewMediaLightbox";
 import { getImageUrlFromValue } from "../../../utils/ecommerce";
 import ShowMoreText from "../../../utils/showMore";
 

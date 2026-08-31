@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, lazy, Suspense } from "react";
 import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useProductDetailController } from "../controllers";
@@ -22,18 +22,15 @@ import {
   decodeProductRouteToken,
 } from "../../../utils/ecommerce";
 import { formatPageTitle } from "../../../utils/common";
-import ProductReviewsSection from "../../../modules/products/components/ProductReviewsSection";
 import CUSTOMER_ROUTES from "../../../constants/routes";
 import {
   BUY_NOW_STORAGE_KEY,
   SELECTED_CHECKOUT_STORAGE_KEY,
 } from "../../../constants";
-import GuestOtpAuthModal from "../../../components/ui/overlay/GuestOtpAuthModal";
 import StarRating from "../../../components/ui/display/StarRating";
 import ShareProductPopover from "../components/socialMediaShare";
-import ProductPriceBlock from "../../../components/ecommerce/ProductPriceBlock";
-import ProductStockStatus from "../../../components/ecommerce/ProductStockStatus";
-import SizeChartSidebar from "../components/SizeChartSidebar";
+import ProductPriceBlock from "../components/ProductPriceBlock";
+import ProductStockStatus from "../components/ProductStockStatus";
 import ShowMoreText, { getShowMoreText } from "../../../utils/showMore";
 import { PRODUCT_DETAIL_SKELETON } from "../../../components/ui/skeleton/layouts";
 import { Star, Banknote, Truck } from "lucide-react";
@@ -42,8 +39,12 @@ import ImageGallery from "../components/ImageGallery";
 import DeliveryChecker from "../components/DeliveryChecker";
 import VariantSelector from "../components/VariantSelector";
 import ProductActionButtons from "../components/ProductActionButtons";
-import ProductInfoSection from "../sections/ProductInfoSection";
-import ProductRecommendationSection from "../sections/ProductRecommendationSection";
+
+const ProductInfoSection = lazy(() => import("../sections/ProductInfoSection"));
+const ProductRecommendationSection = lazy(() => import("../sections/ProductRecommendationSection"));
+const ProductReviewsSection = lazy(() => import("../../../modules/products/components/ProductReviewsSection"));
+const GuestOtpAuthModal = lazy(() => import("../../../components/ui/overlay/GuestOtpAuthModal"));
+const SizeChartSidebar = lazy(() => import("../components/SizeChartSidebar"));
 import {
   getActiveDealPrice,
   getActiveDealOriginalPrice,
@@ -391,22 +392,26 @@ export default function ProductDetailPage() {
 
               {/* <ProductFeatureGrid /> */}
 
-              <ProductInfoSection
-                infoTabs={infoTabs}
-                activeInfoTab={activeInfoTab}
-                setActiveInfoTab={setActiveInfoTab}
-                detailRows={detailRows}
-                warranty={warranty}
-                product={product}
-                selectedVariant={selectedVariant}
-                effectiveDescription={productDescription}
-              />
+              <Suspense fallback={<div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />}>
+                <ProductInfoSection
+                  infoTabs={infoTabs}
+                  activeInfoTab={activeInfoTab}
+                  setActiveInfoTab={setActiveInfoTab}
+                  detailRows={detailRows}
+                  warranty={warranty}
+                  product={product}
+                  selectedVariant={selectedVariant}
+                  effectiveDescription={productDescription}
+                />
+              </Suspense>
 
-              <ProductReviewsSection
-                productId={productId || resolvedProductId}
-                product={product}
-                realProductId={resolvedProductId}
-              />
+              <Suspense fallback={<div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />}>
+                <ProductReviewsSection
+                  productId={productId || resolvedProductId}
+                  product={product}
+                  realProductId={resolvedProductId}
+                />
+              </Suspense>
 
 
 
@@ -420,26 +425,28 @@ export default function ProductDetailPage() {
                 className="mt-12"
               /> */}
 
-              <ProductRecommendationSection
-                title="Complete the Look"
-                linkText="Explore more →"
-                products={crossSellProducts}
-                addToCart={addToCart}
-                toggleWishlist={toggleWishlist}
-                isWishlisted={isWishlisted}
-                className="mt-10"
-              />
-              {recommendedProducts.length > 0 && (
+              <Suspense fallback={<div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />}>
                 <ProductRecommendationSection
-                  title="Recommended For You"
-                  linkText="View all →"
-                  products={recommendedProducts}
+                  title="Complete the Look"
+                  linkText="Explore more →"
+                  products={crossSellProducts}
                   addToCart={addToCart}
                   toggleWishlist={toggleWishlist}
                   isWishlisted={isWishlisted}
-                  className="mt-12"
+                  className="mt-10"
                 />
-              )}
+                {recommendedProducts.length > 0 && (
+                  <ProductRecommendationSection
+                    title="Recommended For You"
+                    linkText="View all →"
+                    products={recommendedProducts}
+                    addToCart={addToCart}
+                    toggleWishlist={toggleWishlist}
+                    isWishlisted={isWishlisted}
+                    className="mt-12"
+                  />
+                )}
+              </Suspense>
               {/* {isLoggedIn && (
                 <ProductRecommendationSection
                   title="Recently Viewed"
@@ -456,21 +463,25 @@ export default function ProductDetailPage() {
         </ApiState>
       </div>
 
-      <GuestOtpAuthModal
-        open={showGuestOtpModal}
-        onClose={() => setShowGuestOtpModal(false)}
-        onSuccess={() => {
-          setShowGuestOtpModal(false);
-          navigate("/checkout");
-        }}
-      />
-      {product && (
-        <SizeChartSidebar
-          isOpen={isSizeChartOpen}
-          onClose={() => setIsSizeChartOpen(false)}
-          productName={getProductTitle(product)}
-        />
-      )}
+      <Suspense fallback={null}>
+        {showGuestOtpModal && (
+          <GuestOtpAuthModal
+            open={showGuestOtpModal}
+            onClose={() => setShowGuestOtpModal(false)}
+            onSuccess={() => {
+              setShowGuestOtpModal(false);
+              navigate("/checkout");
+            }}
+          />
+        )}
+        {product && isSizeChartOpen && (
+          <SizeChartSidebar
+            isOpen={isSizeChartOpen}
+            onClose={() => setIsSizeChartOpen(false)}
+            productName={getProductTitle(product)}
+          />
+        )}
+      </Suspense>
     </AppErrorBoundary>
   );
 }

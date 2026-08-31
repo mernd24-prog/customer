@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ChevronLeft, Star, ThumbsUp } from "lucide-react";
 import CustomDropdown from "../../components/ui/CustomDropdown";
-import ReviewMediaLightbox from "../../components/ecommerce/ReviewMediaLightbox";
+import ReviewMediaLightbox from "../../modules/products/components/ReviewMediaLightbox";
 import Seo from "../../components/ui/Seo";
 import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { useAuthModal } from "../../modules/auth/context/AuthModalContext";

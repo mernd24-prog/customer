@@ -1,5 +1,5 @@
 import Seo from "../../../components/ui/Seo";
-import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
+import Breadcrumbs from "../../common/components/Breadcrumbs";
 import ApiState from "../../../components/ui/ApiState";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";

@@ -27,6 +27,9 @@ export default function ReturnTrackingCard({ steps: customSteps, title }) {
         {stepsToRender.map((step, index) => {
           const isLast = index === stepsToRender.length - 1;
           const isCompleted = step.completed ?? true;
+          const isNextStepCompleted = index < stepsToRender.length - 1 && (stepsToRender[index + 1].completed ?? true);
+          const lineDelay = `${index * 0.35}s`;
+          const ballDelay = `${index * 0.35}s`;
           const cleanDesc = sanitizeDescription(step.description);
 
           return (
@@ -34,19 +37,34 @@ export default function ReturnTrackingCard({ steps: customSteps, title }) {
               key={step.title + index}
               className="relative flex items-start gap-3.5"
             >
-              {/* Continuous unbroken vertical line running behind circles */}
+              {/* Background track line */}
               {!isLast && (
-                <span className="absolute left-[9px] top-[10px] bottom-[-28px] sm:bottom-[-32px] w-[2px] bg-[#26A541] z-0" />
+                <span className="absolute left-[9px] top-[10px] bottom-[-28px] sm:bottom-[-32px] w-[2px] bg-[#E0E0E0] z-0" />
+              )}
+
+              {/* Animated active progress fill line */}
+              {!isLast && isCompleted && isNextStepCompleted && (
+                <span
+                  className="absolute left-[9px] top-[10px] bottom-[-28px] sm:bottom-[-32px] w-[2px] bg-[#26A541] origin-top animate-timeline-line z-0"
+                  style={{ animationDelay: lineDelay }}
+                />
               )}
 
               {/* Status Circle Dot */}
-              <span
-                className={`relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white shadow-2xs ${
-                  isCompleted ? "bg-[#26A541]" : "bg-[#3E4093]"
-                }`}
-              >
-                <Check size={12} className="stroke-[3]" />
-              </span>
+              {isCompleted ? (
+                <span
+                  className={`relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white shadow-2xs animate-ball-fill-green ${
+                    isLast || !isNextStepCompleted ? "animate-timeline-pulse" : ""
+                  }`}
+                  style={{ animationDelay: ballDelay }}
+                >
+                  <Check size={12} className="stroke-[3] text-current" />
+                </span>
+              ) : (
+                <span className="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#D7D7D7] bg-[#F5F5F5]">
+                  <Check size={12} className="stroke-[2] text-[#B0B0B0]" />
+                </span>
+              )}
 
               {/* Step Meta */}
               <div className="min-w-0 flex-1 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">

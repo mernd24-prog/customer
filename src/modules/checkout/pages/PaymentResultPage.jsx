@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import Seo from "../../../components/ui/Seo";
 import ApiState from "../../../components/ui/ApiState";
-import Breadcrumbs from "../../../components/ecommerce/Breadcrumbs";
+import Breadcrumbs from "../../common/components/Breadcrumbs";
 import BrandButton from "../../../components/ui/buttons/Button";
 import Loader from "../../../components/ui/Loader";
 import { fetchOrderById } from "../../orders/slices/orderSlice";

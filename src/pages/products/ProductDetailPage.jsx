@@ -65,8 +65,8 @@ import {
 import GuestOtpAuthModal from "../../components/ui/overlay/GuestOtpAuthModal";
 import StarRating from "../../components/ui/display/StarRating";
 import ShareProductPopover from "./components/socialMediaShare";
-import ProductPriceBlock from "../../components/ecommerce/ProductPriceBlock";
-import ProductStockStatus from "../../components/ecommerce/ProductStockStatus";
+import ProductPriceBlock from "../../modules/products/components/ProductPriceBlock";
+import ProductStockStatus from "../../modules/products/components/ProductStockStatus";
 import SizeChartSidebar from "./components/SizeChartSidebar";
 import ShowMoreText, { getShowMoreText } from "../../utils/showMore";
 import { PRODUCT_DETAIL_SKELETON } from "../../components/ui/skeleton/layouts";

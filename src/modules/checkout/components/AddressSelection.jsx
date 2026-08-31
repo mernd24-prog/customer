@@ -12,8 +12,8 @@ import {
 import Button from "../../../components/ui/buttons/Button";
 import AddressFormFields, {
   ADDRESS_LABEL_OPTIONS,
-} from "../../../components/address/AddressFormFields";
-import AddressEditModal from "../../../components/address/AddressEditModal";
+} from "../../common/components/address/AddressFormFields";
+import AddressEditModal from "../../common/components/address/AddressEditModal";
 import { updateAddress, fetchMe } from "../../../features/user/userSlice";
 import {
   fetchCities,
