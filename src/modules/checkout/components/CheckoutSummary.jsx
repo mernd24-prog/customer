@@ -161,7 +161,7 @@ export default function CheckoutSummary({
         paymentMethods={paymentOptions}
         selectedPaymentProvider={selectedPaymentProvider}
         onPaymentProviderChange={onPaymentProviderChange}
-        buttonText={quoteLoading ? "Checking delivery..." : buttonLabel}
+        buttonText={buttonLabel}
         loading={loading || quoteLoading}
         disabled={Boolean(quoteError)}
         selectedLabel={selectedLabel}

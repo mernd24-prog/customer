@@ -470,14 +470,7 @@ function OrderPaymentSummary({
             disabled={loading || disabled}
             className="mt-6 flex h-[54px] w-full items-center justify-center gap-2 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {loading ? (
-              <>
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                Please Wait...
-              </>
-            ) : (
-              buttonText
-            )}
+            {buttonText}
           </button>
 
           {selectedLabel && (

@@ -612,7 +612,7 @@ export default function ProductDetailPage() {
                   />
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-3">
+                <div className="flex min-w-0 flex-col gap-4">
                   <div className="flex min-w-0 items-start justify-between gap-3 ">
                     <div className="min-w-0 w-full">
                       <h1 className="break-words block text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px] leading-snug">
@@ -627,7 +627,7 @@ export default function ProductDetailPage() {
                   </div>
 
                   {Number(product.rating || 0) > 0 && (
-                    <div className="flex items-center mt-1">
+                    <div className="flex items-center">
                       <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
                         {Number(product.rating || 0).toFixed(1)}
                       </span>
@@ -678,43 +678,40 @@ export default function ProductDetailPage() {
                     dealBadge={activeDealBadge}
                   />
 
-                  <div className="my-4">
-                    <div className="w-full md:w-fit">
-                      <QuantitySelector
-                        quantity={quantity}
-                        onIncrease={() =>
-                          setQuantity((currentQuantity) => {
-                            if (!inStock || quantityAtStockLimit) {
-                              return currentQuantity;
-                            }
-                            return currentQuantity + 1;
-                          })
-                        }
-                        onDecrease={() =>
-                          setQuantity((currentQuantity) =>
-                            Math.max(1, currentQuantity - 1),
-                          )
-                        }
-                        max={availableStock ?? undefined}
-                        increaseDisabled={!inStock || quantityAtStockLimit}
-                        increaseDisabledLabel={
-                          quantityStockMessage || undefined
-                        }
-                      />
-                      {quantityStockMessage ? (
-                        <p className="mt-1 text-xs font-semibold text-red-600">
-                          {quantityStockMessage}
-                        </p>
-                      ) : null}
-
-                      {/* Delivery Checker link directly below Quantity Selector */}
-                      <DeliveryChecker
-                        productId={productId}
-                        product={product}
-                        onResultChange={setDeliveryResult}
-                      />
-                    </div>
+                  <div className="w-full md:w-fit">
+                    <QuantitySelector
+                      quantity={quantity}
+                      onIncrease={() =>
+                        setQuantity((currentQuantity) => {
+                          if (!inStock || quantityAtStockLimit) {
+                            return currentQuantity;
+                          }
+                          return currentQuantity + 1;
+                        })
+                      }
+                      onDecrease={() =>
+                        setQuantity((currentQuantity) =>
+                          Math.max(1, currentQuantity - 1),
+                        )
+                      }
+                      max={availableStock ?? undefined}
+                      increaseDisabled={!inStock || quantityAtStockLimit}
+                      increaseDisabledLabel={
+                        quantityStockMessage || undefined
+                      }
+                    />
+                    {quantityStockMessage ? (
+                      <p className="mt-1 text-xs font-semibold text-red-600">
+                        {quantityStockMessage}
+                      </p>
+                    ) : null}
                   </div>
+
+                  <DeliveryChecker
+                    productId={productId}
+                    product={product}
+                    onResultChange={setDeliveryResult}
+                  />
 
                   {!deliveryResult && (
                     <ProductServiceBadges

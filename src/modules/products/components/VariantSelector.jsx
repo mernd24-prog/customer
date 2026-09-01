@@ -32,7 +32,7 @@ export default function VariantSelector({
   });
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       {sortedVariantOptions.map((option) => (
         <div key={option.slug} className="w-full">
           {/* Variant Label */}
@@ -93,11 +93,31 @@ export default function VariantSelector({
 
               const matchingVariantStock = getAvailableStock(matchingVariant);
 
-              const isUnavailable =
-                Boolean(matchingVariant) &&
-                (matchingVariantStock === 0 ||
-                  matchingVariant?.inStock === false ||
-                  matchingVariant?.isAvailable === false);
+              let isUnavailable = false;
+              if (isColorOption) {
+                const colorVariants = variants.filter(
+                  (v) =>
+                    String(
+                      v.attributes?.[option.slug] ||
+                        v.attributes?.color ||
+                        v.attributes?.colour ||
+                        "",
+                    ).toLowerCase() === String(value).toLowerCase(),
+                );
+                const hasInStock = colorVariants.some((v) => {
+                  const s = getAvailableStock(v);
+                  return (
+                    s > 0 && v?.inStock !== false && v?.isAvailable !== false
+                  );
+                });
+                isUnavailable = colorVariants.length > 0 && !hasInStock;
+              } else {
+                isUnavailable =
+                  Boolean(matchingVariant) &&
+                  (matchingVariantStock === 0 ||
+                    matchingVariant?.inStock === false ||
+                    matchingVariant?.isAvailable === false);
+              }
 
               // Color swatch image
               const swatchImage =

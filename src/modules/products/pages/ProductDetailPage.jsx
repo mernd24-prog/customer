@@ -41,9 +41,15 @@ import VariantSelector from "../components/VariantSelector";
 import ProductActionButtons from "../components/ProductActionButtons";
 
 const ProductInfoSection = lazy(() => import("../sections/ProductInfoSection"));
-const ProductRecommendationSection = lazy(() => import("../sections/ProductRecommendationSection"));
-const ProductReviewsSection = lazy(() => import("../../../modules/products/components/ProductReviewsSection"));
-const GuestOtpAuthModal = lazy(() => import("../../../components/ui/overlay/GuestOtpAuthModal"));
+const ProductRecommendationSection = lazy(
+  () => import("../sections/ProductRecommendationSection"),
+);
+const ProductReviewsSection = lazy(
+  () => import("../../../modules/products/components/ProductReviewsSection"),
+);
+const GuestOtpAuthModal = lazy(
+  () => import("../../../components/ui/overlay/GuestOtpAuthModal"),
+);
 const SizeChartSidebar = lazy(() => import("../components/SizeChartSidebar"));
 import {
   getActiveDealPrice,
@@ -242,7 +248,7 @@ export default function ProductDetailPage() {
                   />
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-4 sm:gap-5">
+                <div className="flex min-w-0 flex-col gap-4">
                   <div className="flex min-w-0 items-start justify-between gap-3">
                     <div className="min-w-0 w-full">
                       <h1 className="break-words block text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px] leading-snug">
@@ -257,7 +263,7 @@ export default function ProductDetailPage() {
                   </div>
 
                   {Number(product.rating || 0) > 0 && (
-                    <div className="flex items-center -mt-2">
+                    <div className="flex items-center">
                       <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
                         {Number(product.rating || 0).toFixed(1)}
                       </span>
@@ -308,42 +314,40 @@ export default function ProductDetailPage() {
                     dealBadge={activeDealBadge}
                   />
 
-                  <div className="flex flex-col gap-3">
-                    <div className="w-full md:w-fit">
-                      <QuantitySelector
-                        quantity={quantity}
-                        onIncrease={() =>
-                          setQuantity((currentQuantity) => {
-                            if (!inStock || quantityAtStockLimit) {
-                              return currentQuantity;
-                            }
-                            return currentQuantity + 1;
-                          })
-                        }
-                        onDecrease={() =>
-                          setQuantity((currentQuantity) =>
-                            Math.max(1, currentQuantity - 1),
-                          )
-                        }
-                        max={availableStock ?? undefined}
-                        increaseDisabled={!inStock || quantityAtStockLimit}
-                        increaseDisabledLabel={
-                          quantityStockMessage || undefined
-                        }
-                      />
-                      {quantityStockMessage ? (
-                        <p className="mt-1 text-xs font-semibold text-red-600">
-                          {quantityStockMessage}
-                        </p>
-                      ) : null}
-                    </div>
-
-                    <DeliveryChecker
-                      productId={resolvedProductId}
-                      product={product}
-                      onResultChange={setDeliveryResult}
+                  <div className="w-full md:w-fit">
+                    <QuantitySelector
+                      quantity={quantity}
+                      onIncrease={() =>
+                        setQuantity((currentQuantity) => {
+                          if (!inStock || quantityAtStockLimit) {
+                            return currentQuantity;
+                          }
+                          return currentQuantity + 1;
+                        })
+                      }
+                      onDecrease={() =>
+                        setQuantity((currentQuantity) =>
+                          Math.max(1, currentQuantity - 1),
+                        )
+                      }
+                      max={availableStock ?? undefined}
+                      increaseDisabled={!inStock || quantityAtStockLimit}
+                      increaseDisabledLabel={
+                        quantityStockMessage || undefined
+                      }
                     />
+                    {quantityStockMessage ? (
+                      <p className="mt-1 text-xs font-semibold text-red-600">
+                        {quantityStockMessage}
+                      </p>
+                    ) : null}
                   </div>
+
+                  <DeliveryChecker
+                    productId={resolvedProductId}
+                    product={product}
+                    onResultChange={setDeliveryResult}
+                  />
 
                   {!deliveryResult && (
                     <ProductServiceBadges
@@ -392,7 +396,11 @@ export default function ProductDetailPage() {
 
               {/* <ProductFeatureGrid /> */}
 
-              <Suspense fallback={<div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />}>
+              <Suspense
+                fallback={
+                  <div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />
+                }
+              >
                 <ProductInfoSection
                   infoTabs={infoTabs}
                   activeInfoTab={activeInfoTab}
@@ -405,15 +413,17 @@ export default function ProductDetailPage() {
                 />
               </Suspense>
 
-              <Suspense fallback={<div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />}>
+              <Suspense
+                fallback={
+                  <div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />
+                }
+              >
                 <ProductReviewsSection
                   productId={productId || resolvedProductId}
                   product={product}
                   realProductId={resolvedProductId}
                 />
               </Suspense>
-
-
 
               {/* <ProductRecommendationSection
                 title="Related Products"
@@ -425,7 +435,11 @@ export default function ProductDetailPage() {
                 className="mt-12"
               /> */}
 
-              <Suspense fallback={<div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />}>
+              <Suspense
+                fallback={
+                  <div className="h-40 animate-pulse bg-gray-100 rounded-lg mt-8" />
+                }
+              >
                 <ProductRecommendationSection
                   title="Complete the Look"
                   linkText="Explore more →"
