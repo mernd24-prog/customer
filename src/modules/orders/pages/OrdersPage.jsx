@@ -24,13 +24,13 @@ export default function OrdersPage({ detail = false, track = false }) {
       <>
         <Seo 
           title="Order Details - Sam Global"
-          metaDescription="View your order details and track its status." 
+          metaDescription="View your order details and track its status."
         />
         <OrderDetailPage orderId={resolvedOrderId} track={track} />
       </>
     );
   }
-  
+
   return (
     <>
       <Seo 

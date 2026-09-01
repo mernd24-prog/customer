@@ -28,7 +28,7 @@ export default function NeedHelpPanel({
         h-fit w-full
         overflow-hidden
         rounded-xl
-        border  border-[#E7D9B8]
+        border border-[#F0E6D2]
         bg-white
         ${sticky ? "lg:sticky lg:top-28" : ""}
         ${className} 
@@ -38,7 +38,7 @@ export default function NeedHelpPanel({
       <div
         className={
           hasColoredHeader
-            ? "bg-[#F7EED8] px-5 py-4"
+            ? "bg-[#FCFAF2] px-5 py-4"
             : "bg-white px-6 pb-2 pt-6"
         }
       >

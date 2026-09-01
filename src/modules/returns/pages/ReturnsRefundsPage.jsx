@@ -260,7 +260,7 @@ function ReturnsRefundsPage() {
           return (
             <div
               key={returnId}
-              className="overflow-hidden rounded-2xl border border-[#D9DDE8] bg-white shadow-2xs transition-all"
+              className="overflow-hidden rounded-2xl border border-[#E7D9B8] bg-[#FFFCF6] shadow-2xs transition-all"
             >
               {ret.items?.map((item, idx) => {
                 const title = item.productTitle || "Product";

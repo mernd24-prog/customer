@@ -12,6 +12,7 @@ import {
   getReviewOrderItemId,
   reviewKeyForItem,
   getItemId,
+  getItemProductId,
   getItemSellerGroupKey,
   resolveReturnForItem,
   resolveItemStatus,
@@ -41,8 +42,9 @@ function OrderItemsSection({
 }) {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
+  const requestedItemParam = searchParams.get("item") || searchParams.get("orderItemId");
   const isSingleItemView = Boolean(
-    selectedOrderItem || searchParams.get("orderItemId"),
+    selectedOrderItem || requestedItemParam,
   );
   const [reviewTarget, setReviewTarget] = useState(null);
   const [expandedItemId, setExpandedItemId] = useState("");
@@ -134,9 +136,8 @@ function OrderItemsSection({
   );
 
   useEffect(() => {
-    const requestedItemId = searchParams.get("orderItemId");
-    if (requestedItemId) {
-      const nextId = String(requestedItemId);
+    if (requestedItemParam) {
+      const nextId = String(requestedItemParam);
       setExpandedItemId(nextId);
       window.requestAnimationFrame(() => {
         document.getElementById(`order-item-${nextId}`)?.scrollIntoView({
@@ -257,7 +258,8 @@ function OrderItemsSection({
       }
       grouped.get(key).items.push(item);
     });
-    return Array.from(grouped.values()).map((group) => {
+    
+    let result = Array.from(grouped.values()).map((group) => {
       const itemStatuses = group.items
         .map((item) => itemFulfillment.get(getItemId(item))?.status)
         .filter(Boolean);
@@ -267,7 +269,17 @@ function OrderItemsSection({
         status: uniqueStatuses.length === 1 ? uniqueStatuses[0] : group.status,
       };
     });
-  }, [itemFulfillment, items, returns, sellerFulfillmentGroups, shipments]);
+    
+    if (requestedItemParam) {
+      const matchItem = (i) => String(getItemId(i)) === String(requestedItemParam) || String(getReviewProductId(i)) === String(requestedItemParam) || String(getItemProductId(i)) === String(requestedItemParam);
+      result = result.filter(g => g.items.some(matchItem));
+      result.forEach(g => {
+        g.items = g.items.filter(matchItem);
+      });
+    }
+    
+    return result;
+  }, [itemFulfillment, items, returns, sellerFulfillmentGroups, shipments, requestedItemParam]);
 
   const handleSubmitted = (review) => {
     if (!reviewTarget) return;
