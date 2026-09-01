@@ -14,39 +14,49 @@ export default function VariantSelector({
 }) {
   const variants = product?.variants || [];
 
+  // Always show Color variant first, then all other variants
+  const sortedVariantOptions = [...variantOptions].sort((a, b) => {
+    const aIsColor =
+      a.displayType === "color_swatch" ||
+      a.slug?.toLowerCase().includes("color") ||
+      a.slug?.toLowerCase().includes("colour");
+    const bIsColor =
+      b.displayType === "color_swatch" ||
+      b.slug?.toLowerCase().includes("color") ||
+      b.slug?.toLowerCase().includes("colour");
+
+    if (aIsColor && !bIsColor) return -1;
+    if (!aIsColor && bIsColor) return 1;
+
+    return 0;
+  });
+
   return (
     <div className="flex flex-col gap-6">
-      {variantOptions.map((option) => (
-        <div
-          key={option.slug}
-          className={
-            option.displayType === "color_swatch"
-              ? "order-2 w-full"
-              : "order-1 w-full"
-          }
-        >
-          <div className="flex items-center gap-4 mb-3">
-            <p
-              className={`font-semibold capitalize text-ink ${
-                option.displayType === "color_swatch" ? "text-lg" : "text-lg"
-              }`}
-            >
+      {sortedVariantOptions.map((option) => (
+        <div key={option.slug} className="w-full">
+          {/* Variant Label */}
+          <div className="mb-3 flex items-center gap-4">
+            <p className="text-lg font-semibold capitalize text-ink">
               {option.displayType === "color_swatch" ? "Colour" : option.name}:
             </p>
+
+            {/* Size Chart */}
             {option.name?.toLowerCase() === "size" &&
               (product?.category?.toLowerCase().includes("fashion") ||
                 product?.parentCategory?.toLowerCase().includes("fashion")) && (
                 <button
                   type="button"
                   onClick={onSizeChartClick}
-                  className="text-sm font-bold text-gold hover:text-gold-dark hover:underline transition-colors"
+                  className="text-sm font-bold text-gold transition-colors hover:text-gold-dark hover:underline"
                 >
                   Size Chart
                 </button>
               )}
           </div>
 
-          <div className="flex  w-fit flex-wrap gap-4">
+          {/* Variant Values */}
+          <div className="flex w-fit flex-wrap gap-4">
             {option.values.map((value, valueIndex) => {
               const isSelected =
                 String(selectedAttributes[option.slug]) === String(value);
@@ -67,17 +77,29 @@ export default function VariantSelector({
                 ),
               );
 
-              // Storage row should not show slashes/Not Available states, but RAM and Color should.
+              const isColorOption =
+                option.displayType === "color_swatch" ||
+                option.slug?.toLowerCase().includes("color") ||
+                option.slug?.toLowerCase().includes("colour");
+
+              /*
+               * Storage row and Color options should not be disabled when switching,
+               * allowing fallback to available variants in that color.
+               */
               const isComboAvailable =
-                option.slug === "storage" ? true : Boolean(exactVariant);
+                option.slug === "storage" || isColorOption
+                  ? true
+                  : Boolean(exactVariant);
 
               const matchingVariantStock = getAvailableStock(matchingVariant);
+
               const isUnavailable =
                 Boolean(matchingVariant) &&
                 (matchingVariantStock === 0 ||
                   matchingVariant?.inStock === false ||
                   matchingVariant?.isAvailable === false);
 
+              // Color swatch image
               const swatchImage =
                 option.displayType === "color_swatch"
                   ? getColorSwatchImage({
@@ -88,8 +110,14 @@ export default function VariantSelector({
                       index: valueIndex,
                     })
                   : "";
+
               const swatchColor = option?.valueCodes?.[value] || value;
 
+              {
+                /* =========================
+                  COLOR VARIANT
+              ========================== */
+              }
               if (option.displayType === "color_swatch") {
                 return (
                   <button
@@ -104,7 +132,7 @@ export default function VariantSelector({
                         ? "border border-gold shadow-sm"
                         : "border border-gold/20 hover:border-gold/50"
                     } ${isUnavailable ? "opacity-55 grayscale" : ""} ${
-                      !isComboAvailable ? "opacity-40   cursor-not-allowed" : ""
+                      !isComboAvailable ? "cursor-not-allowed opacity-40" : ""
                     }`}
                     title={`${value}${
                       !isComboAvailable
@@ -115,7 +143,10 @@ export default function VariantSelector({
                     }`}
                   >
                     {swatchImage ? (
-                      <img loading="lazy" width="400" height="400"
+                      <img
+                        loading="lazy"
+                        width="400"
+                        height="400"
                         src={swatchImage}
                         alt={`${value} colour`}
                         className="h-full w-full object-contain p-3"
@@ -135,11 +166,13 @@ export default function VariantSelector({
                               : "var(--customer-cream)",
                         }}
                       >
-                        <span className="rounded bg-white/80 px-1.5 py-0.5 ">
+                        <span className="rounded bg-white/80 px-1.5 py-0.5">
                           {value}
                         </span>
                       </span>
                     )}
+
+                    {/* Out Of Stock */}
                     {isUnavailable && (
                       <span className="absolute inset-x-0 bottom-0 bg-red-600 px-1 py-1 text-[10px] font-semibold text-white">
                         Out Of Stock
@@ -149,6 +182,11 @@ export default function VariantSelector({
                 );
               }
 
+              {
+                /* =========================
+                  OTHER VARIANTS
+              ========================== */
+              }
               return (
                 <button
                   key={value}
@@ -157,7 +195,13 @@ export default function VariantSelector({
                   onClick={() =>
                     matchingVariant && setSelectedVariant(matchingVariant)
                   }
-                  aria-label={`${option.name} ${value}${!isComboAvailable ? ", not available in this combination" : isUnavailable ? ", out Of Stock" : ""}`}
+                  aria-label={`${option.name} ${value}${
+                    !isComboAvailable
+                      ? ", not available in this combination"
+                      : isUnavailable
+                        ? ", out Of Stock"
+                        : ""
+                  }`}
                   title={
                     !isComboAvailable
                       ? `${value} - Not available in this combination`
@@ -176,12 +220,14 @@ export default function VariantSelector({
                   <span
                     className={
                       isUnavailable || !isComboAvailable
-                        ? "line-through text-gray-400"
+                        ? "text-gray-400 line-through"
                         : ""
                     }
                   >
                     {value}
                   </span>
+
+                  {/* Out Of Stock */}
                   {isUnavailable && (
                     <span className="mt-0.5 block whitespace-nowrap text-[9px] font-semibold leading-none no-underline">
                       Out Of Stock

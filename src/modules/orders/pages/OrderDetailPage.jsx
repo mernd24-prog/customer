@@ -20,19 +20,11 @@ import CustomDropdown from "../../../components/ui/CustomDropdown";
 import OrderItemsSection from "../components/OrderItemsSection";
 import OrderPaymentSummary from "../components/OrderPaymentSummary";
 import OrderDetailInfoGrid from "../components/OrderDetailInfoGrid";
-import OrderAddressCard from "../components/OrderAddressCard";
-
 import { useOrderDetail } from "../controllers/useOrderDetail";
-import OrderCancellations from "../components/OrderCancellations";
-
-import OrderActions from "../components/OrderActions";
 
 import {
   getOrderNumber,
-  getDeliveryStatus,
-  hasKnownStatus,
   getItemImage,
-  getOrderCurrency,
   getProductTitle,
   getItemProductPath,
   formatOrderDate,
@@ -48,12 +40,10 @@ import { formatMoney } from "../../../utils/ecommerce";
 export default function OrderDetailPage({ orderId }) {
   const {
     state,
-    notificationState,
     order,
     items,
     cancellations,
     visibleCancellations,
-    returns,
     shipments,
     currency,
     subtotal,
@@ -65,24 +55,16 @@ export default function OrderDetailPage({ orderId }) {
     pricingSummary,
     customerAmount,
     status,
-    progressStatus,
     returnEligibleUntil,
     returnWindowOpen,
-
     selectedOrderItem,
-    selectedItemReturn,
-    selectedItemStatus,
     selectedItemAmount,
-    visibleShipments,
     selectedItemReturnWindowOpen,
     selectedItemCanReturn,
     selectedItemReturnDeadline,
     visibleOrderItems,
     invoiceDownloadAvailable,
     customerInvoices,
-    orderReceipt,
-    customerFeeInvoice,
-    pendingSellerDocuments,
     downloadableDocuments,
     breadcrumbItems,
     cancelModalOpen,
@@ -97,17 +79,12 @@ export default function OrderDetailPage({ orderId }) {
     setCancelReasonError,
     setCancelReasonCode,
     setCancelItems,
-    setDownloadingId,
     handleRetryPayment,
     handleDownload,
     handleCancelOrder,
     openCancellation,
     hasCancellableQuantity,
     getInvoiceUrl,
-    getReturnRefundAmount,
-    getReturnItemTitle,
-    getReturnItemQuantity,
-    getReturnNumber,
     isCodOrder,
     visibleReturns,
     visiblePendingSellerDocuments,
@@ -146,10 +123,10 @@ export default function OrderDetailPage({ orderId }) {
                   {canCancelOrder(order) && hasCancellableQuantity && (
                     <Button
                       variant="secondary"
-                      className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50/50 px-5 py-2.5 text-red-600 shadow-sm transition-all hover:bg-red-100/80 hover:border-red-300 hover:text-red-700 active:scale-[0.98]"
+                      className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-[#CE9F2D66] bg-[#FFFDF8] px-5 py-2.5 text-[#1B1D60] shadow-sm transition-all hover:bg-[#FFF9EA] hover:border-[#CE9F2D] active:scale-[0.98]"
                       onClick={openCancellation}
                     >
-                      <XCircle size={18} className="text-red-500" />
+                      <XCircle size={18} className="text-[#CE9F2D]" />
                       <span className="text-center text-sm font-semibold">
                         {selectedOrderItem ? "Cancel item" : "Cancel order"}
                       </span>
@@ -360,15 +337,11 @@ export default function OrderDetailPage({ orderId }) {
       </div>
       <ConfirmModal
         open={cancelModalOpen}
-        title={
-          selectedOrderItem
-            ? "Request item cancellation?"
-            : "Request cancellation?"
-        }
+        title={selectedOrderItem ? "Cancel order?" : "Cancel order?"}
         description={
           selectedOrderItem
-            ? "Cancel this complete product line for seller/admin approval. No refund or cancellation is processed before approval."
-            : "Select the products to cancel. All remaining units of each selected product will be cancelled after approval."
+            ? "You can cancel this item before it is shipped.\nNo cancellation is processed before approval."
+            : "You can cancel items before they are shipped.\nNo cancellation is processed before approval."
         }
         confirmLabel={
           state.loading ? "Submitting..." : "Submit cancellation request"
@@ -384,8 +357,7 @@ export default function OrderDetailPage({ orderId }) {
         onConfirm={handleCancelOrder}
       >
         <div className="grid gap-4">
-          <div className="grid gap-3 rounded-xl border border-[#E7D9B8] bg-[#FFFDF9] p-3.5 sm:p-4">
-            <p className="text-sm font-bold text-[#1B1D60]">Select products</p>
+          <div className="grid gap-2 rounded-xl border border-[#E7D9B8] bg-[#FFFDF9] p-3">
             {(selectedOrderItem ? [selectedOrderItem] : items).map((item) => {
               const itemId = String(getOrderItemId(item));
               const pendingQuantity = cancellations
@@ -414,45 +386,55 @@ export default function OrderDetailPage({ orderId }) {
                 cancelItems,
                 itemId,
               );
+              const imgSrc = getItemImage(item);
+              const color = getOrderItemColor(item);
+              const price = getItemLineTotal(item);
+
               return (
                 <div
                   key={itemId}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#E2E3EA] bg-white p-3 text-sm transition hover:border-[#CE9F2D66]"
+                  className="flex items-center gap-3 rounded-xl  bg-white "
                 >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    {!selectedOrderItem && (
-                      <input
-                        type="checkbox"
-                        checked={selected}
-                        disabled={remaining <= 0 || state.loading}
-                        aria-label={`Select ${getProductTitle(item)} for cancellation`}
-                        className="h-4 w-4 rounded border-gray-300 text-[#CE9F2D]"
-                        onChange={(event) =>
-                          setCancelItems((current) => {
-                            const next = { ...current };
-                            if (event.target.checked) next[itemId] = remaining;
-                            else delete next[itemId];
-                            return next;
-                          })
-                        }
-                      />
-                    )}
-                    <span className="min-w-0 flex-1 line-clamp-2 font-semibold text-[#1B1D60]">
+                  {/* Checkbox (multi-item mode only) */}
+                  {!selectedOrderItem && (
+                    <input
+                      type="checkbox"
+                      checked={selected}
+                      disabled={remaining <= 0 || state.loading}
+                      aria-label={`Select ${getProductTitle(item)} for cancellation`}
+                      className="h-4 w-4 shrink-0 rounded border-gray-300 accent-[#CE9F2D]"
+                      onChange={(event) =>
+                        setCancelItems((current) => {
+                          const next = { ...current };
+                          if (event.target.checked) next[itemId] = remaining;
+                          else delete next[itemId];
+                          return next;
+                        })
+                      }
+                    />
+                  )}
+
+                  {/* Product image */}
+                  {imgSrc && (
+                    <img
+                      src={imgSrc}
+                      alt={getProductTitle(item)}
+                      className="h-[60px] w-[60px] shrink-0 rounded-lg object-cover"
+                    />
+                  )}
+
+                  {/* Info */}
+                  <div className="min-w-0 flex-1">
+                    <p className="line-clamp-1 text-sm font-bold text-[#1B1D60]">
                       {getProductTitle(item)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span
-                      className={`rounded-md px-2.5 py-1 text-xs font-semibold ${selected ? "bg-red-50 text-red-700" : "bg-[#F4F4F7] text-[#5F6078]"}`}
-                    >
-                      {selected
-                        ? `Cancel all ${remaining} unit${remaining === 1 ? "" : "s"}`
-                        : `${remaining} unit${remaining === 1 ? "" : "s"}`}
-                    </span>
-                    {pendingQuantity > 0 && (
-                      <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
-                        {pendingQuantity} pending
-                      </span>
+                    </p>
+                    <p className="mt-0.5 text-xs text-[#5F6078]">
+                      {color && color !== "N/A" ? `Color: ${color}` : ""}
+                    </p>
+                    {price > 0 && (
+                      <p className="mt-1 text-sm font-bold text-[#1B1D60]">
+                        {formatMoney(price, currency)}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -460,11 +442,12 @@ export default function OrderDetailPage({ orderId }) {
             })}
             {!Object.values(cancelItems).some(
               (quantity) => Number(quantity) > 0,
-            ) && (
-              <p className="text-xs font-semibold text-red-600">
-                Select at least one product.
-              </p>
-            )}
+            ) &&
+              !selectedOrderItem && (
+                <p className="text-xs font-semibold text-red-600">
+                  Select at least one product.
+                </p>
+              )}
           </div>
           <div className="grid gap-1.5">
             <span className="text-sm font-bold text-[#1B1D60]">

@@ -344,6 +344,7 @@ export function useProductDetailController(productId, rawParamId, matchProductId
   const productTitle = composeProductVariantTitle(
     baseProductTitle,
     variantTitleDetail,
+    { variants },
   );
 
   const appendVariantContent = (

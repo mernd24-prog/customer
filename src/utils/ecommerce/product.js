@@ -185,11 +185,30 @@ export function getProductListFromResponse(result) {
   );
 }
 
-export function composeProductVariantTitle(baseTitle, variantTitle) {
-  const base = String(baseTitle || "").trim();
+export function composeProductVariantTitle(baseTitle, variantTitle, options = {}) {
+  let base = String(baseTitle || "").trim();
   const variant = String(variantTitle || "").trim();
   if (!variant || variant.toLowerCase() === "default title") return base;
   if (!base) return variant;
+
+  const variants = Array.isArray(options)
+    ? options
+    : options?.variants || options?.allVariants || [];
+
+  if (Array.isArray(variants) && variants.length > 0) {
+    for (const v of variants) {
+      const vTitle = String(
+        v?.title || v?.name || v?.variantTitle || v?.variant_title || "",
+      ).trim();
+      if (!vTitle || vTitle.toLowerCase() === "default title") continue;
+      if (vTitle.toLowerCase() === variant.toLowerCase()) continue;
+
+      const escaped = vTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      base = base
+        .replace(new RegExp(`\\s*[-–—/]\\s*${escaped}\\b`, "gi"), "")
+        .trim();
+    }
+  }
 
   const normalizedBase = base.toLowerCase();
   const normalizedVariant = variant.toLowerCase();
@@ -200,7 +219,7 @@ export function composeProductVariantTitle(baseTitle, variantTitle) {
     return base;
   }
   if (normalizedVariant.includes(normalizedBase)) return variant;
-  return `${base} - ${variant}`;
+  return `${base} – ${variant}`;
 }
 
 export function getProductTitle(product, fallback = "Untitled product") {
@@ -211,13 +230,18 @@ export function getProductTitle(product, fallback = "Untitled product") {
     product?.name ||
     product?.productName ||
     fallback;
+  const selectedVar = product?.selectedVariant || product?.variant;
   const variantTitle =
-    product?.selectedVariant?.title ||
-    product?.variant?.title ||
+    selectedVar?.title ||
+    selectedVar?.name ||
+    selectedVar?.variantTitle ||
+    selectedVar?.variant_title ||
     product?.variantTitle ||
     product?.variant_title;
 
-  return composeProductVariantTitle(baseTitle, variantTitle);
+  const variants = product?.variants || [];
+
+  return composeProductVariantTitle(baseTitle, variantTitle, { variants });
 }
 
 function normalizeBooleanFlag(value) {

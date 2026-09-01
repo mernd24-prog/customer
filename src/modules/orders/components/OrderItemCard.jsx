@@ -30,7 +30,15 @@ export function OrderItemCard({
   const orderedQuantity = Math.max(Number(item.quantity || 1), 0);
   const cancelledQuantity = Math.min(
     orderedQuantity,
-    Math.max(Number(cancelledQuantityProp ?? item.cancelled_quantity ?? item.cancelledQuantity ?? 0), 0),
+    Math.max(
+      Number(
+        cancelledQuantityProp ??
+          item.cancelled_quantity ??
+          item.cancelledQuantity ??
+          0,
+      ),
+      0,
+    ),
   );
   const nonCancelledQuantity = Math.max(orderedQuantity - cancelledQuantity, 0);
   const returnedQuantity = Math.min(
@@ -48,22 +56,30 @@ export function OrderItemCard({
   const showQuantityBreakdown = cancelledQuantity > 0 || returnedQuantity > 0;
 
   const quantityBreakdown = showQuantityBreakdown ? (
-    <div className="mt-2 flex flex-wrap gap-1.5 text-[11px] font-semibold">
-      <span className="rounded-full bg-[#F4F6FA] px-2.5 py-1 text-[#1B1D60]">Ordered {orderedQuantity}</span>
+    <div className=" flex flex-wrap gap-1.5 text-[11px] font-semibold">
+      {/* <span className="rounded-full bg-[#F4F6FA] px-2.5 py-1 text-[#1B1D60]">
+        Ordered {orderedQuantity}
+      </span>
       {cancelledQuantity > 0 && (
-        <span className="rounded-full bg-red-50 px-2.5 py-1 text-red-700">Cancelled {cancelledQuantity}</span>
-      )}
-      {returnedQuantity > 0 && (
+        <span className="rounded-full bg-red-50 px-2.5 py-1 text-red-700">
+          Cancelled {cancelledQuantity}
+        </span>
+      )} */}
+      {/* {returnedQuantity > 0 && (
         <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-700">
           {returnPending ? "Return requested" : "Returned"} {returnedQuantity}
         </span>
-      )}
+      )} */}
       {deliveredQuantity > 0 && (
-        <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700">Delivered {deliveredQuantity}</span>
+        <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700">
+          Delivered {deliveredQuantity}
+        </span>
       )}
-      {remainingQuantity > 0 && (
-        <span className="rounded-full bg-blue-50 px-2.5 py-1 text-blue-700">Remaining {remainingQuantity}</span>
-      )}
+      {/* {remainingQuantity > 0 && (
+        <span className="rounded-full bg-blue-50 px-2.5 py-1 text-blue-700">
+          Remaining {remainingQuantity}
+        </span>
+      )} */}
     </div>
   ) : null;
 
@@ -131,15 +147,24 @@ export function OrderItemCard({
           <div className="aspect-square shrink-0 flex items-center justify-center overflow-hidden rounded-xl border border-[#E7D9B8] bg-white p-1.5 w-[85px] sm:w-[110px] lg:w-[125px]">
             {getItemImage(item) ? (
               productPath ? (
-                <Link to={productPath} className="flex h-full w-full items-center justify-center">
-                  <img loading="lazy" width="400" height="400"
+                <Link
+                  to={productPath}
+                  className="flex h-full w-full items-center justify-center"
+                >
+                  <img
+                    loading="lazy"
+                    width="400"
+                    height="400"
                     src={getItemImage(item)}
                     alt={getProductTitle(item)}
                     className="h-full w-full object-contain mix-blend-multiply"
                   />
                 </Link>
               ) : (
-                <img loading="lazy" width="400" height="400"
+                <img
+                  loading="lazy"
+                  width="400"
+                  height="400"
                   src={getItemImage(item)}
                   alt={getProductTitle(item)}
                   className="h-full w-full object-contain mix-blend-multiply"
@@ -153,7 +178,9 @@ export function OrderItemCard({
           <div className="flex min-w-0 flex-1 flex-col justify-center">
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-bold text-[#1B1D60]">
               {shouldShowColor && <span>Color: {itemColor}</span>}
-              <span>Quantity: {String(item.quantity || 1).padStart(2, '0')}</span>
+              <span>
+                Quantity: {String(item.quantity || 1).padStart(2, "0")}
+              </span>
               {itemSize && <span>Size: {itemSize}</span>}
             </div>
             {quantityBreakdown}
@@ -167,7 +194,7 @@ export function OrderItemCard({
                 Estimated Delivery: {eta} {Number(eta) === 1 ? "day" : "days"}
               </p>
             ) : null}
-            
+
             <div className="mt-2.5">
               <p className="text-[18px] font-bold text-[#1B1D60]">
                 {formatMoney(getItemLineTotal(item), currency)}
@@ -182,8 +209,6 @@ export function OrderItemCard({
     );
   }
 
-
-
   return (
     <div className="w-full">
       <div className="flex w-full flex-row items-start gap-4 sm:gap-6 lg:gap-8">
@@ -191,14 +216,20 @@ export function OrderItemCard({
           {getItemImage(item) ? (
             productPath ? (
               <Link to={productPath}>
-                <img loading="lazy" width="400" height="400"
+                <img
+                  loading="lazy"
+                  width="400"
+                  height="400"
                   src={getItemImage(item)}
                   alt={getProductTitle(item)}
                   className="h-full w-full object-contain"
                 />
               </Link>
             ) : (
-              <img loading="lazy" width="400" height="400"
+              <img
+                loading="lazy"
+                width="400"
+                height="400"
                 src={getItemImage(item)}
                 alt={getProductTitle(item)}
                 className="h-full w-full object-contain"

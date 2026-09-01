@@ -10,11 +10,14 @@ import { CART_ROUTES } from "../modules/cart/routes/apiRoutes";
 import { RETURNS_ROUTES } from "../modules/returns/routes/apiRoutes";
 import Loader from "../components/ui/Loader";
 
-
-const CategoryListingPage = lazy(() => import("../modules/catalog/pages/CategoryListingPage"),);
+const CategoryListingPage = lazy(
+  () => import("../modules/catalog/pages/CategoryListingPage"),
+);
 const DownloadApp = lazy(() => import("../pages/downloadApp/DownloadApp"));
 const PolicyPage = lazy(() => import("../pages/policiesPage/PoliciesPages"));
-const ReturnsPage = lazy(() => import("../modules/returns/pages/ReturnsPage.jsx"));
+const ReturnsPage = lazy(
+  () => import("../modules/returns/pages/ReturnsPage.jsx"),
+);
 const ContactUs = lazy(() => import("../pages/contact/ContactUs.jsx"));
 const SellerPolicy = lazy(
   () => import("../pages/seller/sellerPolicy/sellerPolicy.jsx"),
@@ -30,14 +33,18 @@ const LoginPage = lazy(() => import("../modules/auth/pages/LoginPage"));
 const BuyerRegisterPage = lazy(
   () => import("../modules/auth/pages/BuyerRegisterPage"),
 );
-const RegisterOtpPage = lazy(() => import("../modules/auth/pages/RegisterOtpPage"));
+const RegisterOtpPage = lazy(
+  () => import("../modules/auth/pages/RegisterOtpPage"),
+);
 const VerifyRegistrationPage = lazy(
   () => import("../modules/auth/pages/VerifyRegistrationPage"),
 );
 const ForgotPasswordPage = lazy(
   () => import("../modules/auth/pages/ForgotPasswordPage"),
 );
-const ResetPasswordPage = lazy(() => import("../modules/auth/pages/ResetPasswordPage"));
+const ResetPasswordPage = lazy(
+  () => import("../modules/auth/pages/ResetPasswordPage"),
+);
 
 const FAQPage = lazy(() => import("../pages/faq/FAQPage"));
 const SupportHelpCenter = lazy(
@@ -47,15 +54,21 @@ const SupportTicketDetailsPage = lazy(
   () => import("../modules/support/pages/SupportTicketDetailsPage"),
 );
 const CmsPage = lazy(() => import("../pages/cms/CmsPage"));
-const BrandOutletPage = lazy(() => import("../modules/catalog/pages/BrandOutletPage"));
+const BrandOutletPage = lazy(
+  () => import("../modules/catalog/pages/BrandOutletPage"),
+);
 
 const HomePage = lazyNamed(
   () => import("../pages/customer/HomePage"),
   "HomePage",
 );
-const WatchlistPage = lazy(() => import("../modules/wishlist/pages/WatchListPage"));
+const WatchlistPage = lazy(
+  () => import("../modules/wishlist/pages/WatchListPage"),
+);
 const SearchPage = lazy(() => import("../modules/catalog/pages/SearchPage"));
-const ProductsPage = lazy(() => import("../modules/products/pages/ProductsPage"));
+const ProductsPage = lazy(
+  () => import("../modules/products/pages/ProductsPage"),
+);
 const ProductDetailPage = lazy(
   () => import("../modules/products/pages/ProductDetailPage"),
 );
@@ -84,12 +97,16 @@ const RecentlyViewedPage = lazyNamed(
 );
 const AboutPage = lazy(() => import("../pages/about/AboutPage"));
 const BrandPage = lazy(() => import("../modules/catalog/pages/BrandPage"));
-const CategoryPage = lazy(() => import("../modules/catalog/pages/CategoryPage"));
+const CategoryPage = lazy(
+  () => import("../modules/catalog/pages/CategoryPage"),
+);
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 
 const AccountPage = lazy(() => import("../modules/account/pages/AccountPage"));
 const CartPage = lazy(() => import("../modules/cart/pages/CartPage"));
-const CheckoutPage = lazy(() => import("../modules/checkout/pages/CheckoutPage"));
+const CheckoutPage = lazy(
+  () => import("../modules/checkout/pages/CheckoutPage"),
+);
 const PaymentResultPage = lazyNamed(
   () => import("../modules/checkout/pages/PaymentResultPage"),
   "PaymentResultPage",
@@ -171,7 +188,10 @@ export default function AppRoutes() {
           {/* Not working */}
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/support" element={<SupportHelpCenter />} />
-          <Route path="/support/tickets/:ticketId" element={<SupportTicketDetailsPage />} />
+          <Route
+            path="/support/tickets/:ticketId"
+            element={<SupportTicketDetailsPage />}
+          />
 
           {/* <Route path="/deals" element={<DealsPage />} /> */}
           <Route path="/brand-outlet" element={<BrandOutletPage />} />
@@ -212,9 +232,18 @@ export default function AppRoutes() {
               path={PRODUCT_ROUTES.recentlyUploaded}
               element={<RecentlyUploadedPage />}
             />
-            <Route path={PRODUCT_ROUTES.relatedProducts} element={<RelatedProductsPage />} />
-            <Route path={PRODUCT_ROUTES.trendingNow} element={<TrendingNowPage />} />
-            <Route path={PRODUCT_ROUTES.recentlyViewed} element={<RecentlyViewedPage />} />
+            <Route
+              path={PRODUCT_ROUTES.relatedProducts}
+              element={<RelatedProductsPage />}
+            />
+            <Route
+              path={PRODUCT_ROUTES.trendingNow}
+              element={<TrendingNowPage />}
+            />
+            <Route
+              path={PRODUCT_ROUTES.recentlyViewed}
+              element={<RecentlyViewedPage />}
+            />
             <Route
               path="/products/i/:productToken"
               element={<ProductDetailPage />}
@@ -290,7 +319,10 @@ export default function AppRoutes() {
               <Route path="/account/kyc" element={<AccountPage tab="kyc" />} />
 
               {/* Payment results */}
-              <Route path={CHECKOUT_ROUTES.success} element={<PaymentResultPage />} />
+              <Route
+                path={CHECKOUT_ROUTES.success}
+                element={<PaymentResultPage />}
+              />
               <Route
                 path={CHECKOUT_ROUTES.failed}
                 element={<PaymentResultPage failed />}
@@ -298,7 +330,10 @@ export default function AppRoutes() {
 
               {/* Orders */}
               <Route path="/orders" element={<OrdersPage />} />
-              <Route path="/orders/i/:orderToken" element={<OrdersPage detail />} />
+              <Route
+                path="/orders/i/:orderToken"
+                element={<OrdersPage detail />}
+              />
               <Route
                 path="/orders/i/:orderToken/track"
                 element={<OrdersPage detail track />}
@@ -320,7 +355,10 @@ export default function AppRoutes() {
                 element={<ReturnsPage request />}
               />
               {/* Returns & Refunds */}
-              <Route path={RETURNS_ROUTES.returnsRefunds} element={<ReturnsRefundsPage />} />
+              <Route
+                path={RETURNS_ROUTES.returnsRefunds}
+                element={<ReturnsRefundsPage />}
+              />
 
               {/* Financial */}
               <Route path="/wallet" element={<WalletPage />} />

@@ -26,9 +26,7 @@ import AppErrorBoundary from "../../components/ui/AppErrorBoundary";
 import { fetchProductById } from "../../features/product/productSlice";
 import { fetchProductWarranty } from "../../features/warranty/warrantySlice";
 import { fetchDynamicPrice } from "../../features/dynamicPricing/dynamicPricingSlice";
-import {
-  trackRecommendationInteraction,
-} from "../../features/recommendation/recommendationSlice";
+import { trackRecommendationInteraction } from "../../features/recommendation/recommendationSlice";
 import {
   fetchCrossSellProducts,
   fetchRelatedProducts,
@@ -120,7 +118,8 @@ export default function ProductDetailPage() {
 
   //const allProducts = Array.isArray(productState.list) ? productState.list : [];
 
-  const crossSellProducts = crossSellState.crossSellByProduct[productId]?.items || [];
+  const crossSellProducts =
+    crossSellState.crossSellByProduct[productId]?.items || [];
 
   const [quantity, setQuantity] = useState(1);
   const [deliveryResult, setDeliveryResult] = useState(null);
@@ -344,17 +343,24 @@ export default function ProductDetailPage() {
       [axis]: value,
     };
 
-    return (
-      variants.find((variant) =>
-        Object.entries(nextSelection).every(
-          ([key, selectedValue]) =>
-            String(variant.attributes?.[key]) === String(selectedValue),
-        ),
-      ) ||
-      variants.find(
-        (variant) => String(variant.attributes?.[axis]) === String(value),
-      )
+    const exactMatch = variants.find((variant) =>
+      Object.entries(nextSelection).every(
+        ([key, selectedVal]) =>
+          String(variant.attributes?.[key]) === String(selectedVal),
+      ),
     );
+    if (exactMatch) return exactMatch;
+
+    const matches = variants.filter(
+      (variant) => String(variant.attributes?.[axis]) === String(value),
+    );
+
+    const inStockMatch = matches.find((v) => {
+      const stock = Number(v?.stock ?? v?.availableStock ?? 0);
+      return stock > 0 && v?.inStock !== false && v?.isAvailable !== false;
+    });
+
+    return inStockMatch || matches[0] || null;
   };
 
   const selectedVariantPrice = getVariantPrice(selectedVariant);
@@ -502,7 +508,7 @@ export default function ProductDetailPage() {
     }, {}),
   );
 
-  const productTitle = getProductTitle(product);
+  const productTitle = getProductTitle({ ...product, selectedVariant });
 
   const { preview: productTitlePreview, isTruncated: isProductTitleTruncated } =
     getShowMoreText(productTitle, {
@@ -589,7 +595,7 @@ export default function ProductDetailPage() {
                   <ImageGallery
                     images={images}
                     video={productVideo}
-                    fallbackLabel={getProductTitle(product)}
+                    fallbackLabel={productTitle}
                     isWishlisted={isWishlisted({ ...product, selectedVariant })}
                     onWishlist={() =>
                       toggleWishlist({ ...product, selectedVariant })
@@ -599,7 +605,7 @@ export default function ProductDetailPage() {
                       setZoomOpen(true);
                     }}
                     onModalClose={() => setZoomOpen(false)}
-                    productTitle={getProductTitle(product)}
+                    productTitle={productTitle}
                     shareOpen={!zoomOpen && shareOpen}
                     onShareToggle={() => setShareOpen((prev) => !prev)}
                     onShareClose={() => setShareOpen(false)}
@@ -611,7 +617,7 @@ export default function ProductDetailPage() {
                     <div className="min-w-0 w-full">
                       <h1 className="break-words block text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px] leading-snug">
                         <ShowMoreText
-                          text={getProductTitle(product)}
+                          text={productTitle}
                           mode="lines"
                           limit={1}
                           buttonClassName="ml-1 text-sm font-semibold text-black/50 hover:underline"
@@ -828,7 +834,7 @@ export default function ProductDetailPage() {
         <SizeChartSidebar
           isOpen={isSizeChartOpen}
           onClose={() => setIsSizeChartOpen(false)}
-          productName={getProductTitle(product)}
+          productName={productTitle}
         />
       )}
     </AppErrorBoundary>

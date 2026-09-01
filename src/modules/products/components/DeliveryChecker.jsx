@@ -45,7 +45,8 @@ export default function DeliveryChecker({
       setIsModalOpen(true);
     };
     window.addEventListener("open-delivery-checker", handleOpen);
-    return () => window.removeEventListener("open-delivery-checker", handleOpen);
+    return () =>
+      window.removeEventListener("open-delivery-checker", handleOpen);
   }, []);
 
   useEffect(() => {
@@ -124,49 +125,49 @@ export default function DeliveryChecker({
       {/* Trigger Link directly below Quantity Selector */}
       {!standalone && (
         <div className=" flex flex-col gap-1 ">
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(true)}
-          className="group inline-flex w-fit items-center gap-2 text-xs sm:text-sm font-semibold text-ink transition-colors hover:text-gold focus:outline-none"
-        >
-          <div
-            className="flex h-7 w-7 items-center justify-center rounded-full text-gold transition-all group-hover:scale-105"
-            style={{
-              background:
-                "linear-gradient(135deg, var(--customer-gold-soft) 0%, var(--customer-cream) 100%)",
-            }}
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="group inline-flex w-fit items-center gap-2 text-xs sm:text-sm font-semibold text-ink transition-colors hover:text-gold focus:outline-none"
           >
-            <MapPin size={15} />
-          </div>
-          <span className="underline decoration-gold/50 underline-offset-4 group-hover:decoration-gold">
-            {lastCheckedPincode
-              ? `Delivering to ${lastCheckedPincode} (Change)`
-              : "Check Delivery & Pincode Availability"}
-          </span>
-          <span className="text-xs font-bold text-gold transition-transform group-hover:translate-x-1">
-            →
-          </span>
-        </button>
+            <div
+              className="flex h-7 w-7 items-center justify-center rounded-full text-gold transition-all group-hover:scale-105"
+              style={{
+                background:
+                  "linear-gradient(135deg, var(--customer-gold-soft) 0%, var(--customer-cream) 100%)",
+              }}
+            >
+              <MapPin size={15} />
+            </div>
+            <span className="underline decoration-gold/50 underline-offset-4 group-hover:decoration-gold">
+              {lastCheckedPincode
+                ? `Delivering to ${lastCheckedPincode} (Change)`
+                : "Check Delivery & Pincode Availability"}
+            </span>
+            <span className="text-xs font-bold text-gold transition-transform group-hover:translate-x-1">
+              →
+            </span>
+          </button>
 
-        {/* Quick inline status if already checked */}
-        {result &&
-          (result.serviceable ? (
-            <div className="flex items-center gap-2 pt-0.5 text-xs font-medium text-emerald-700">
-              <CheckCircle2 size={14} className="shrink-0 text-emerald-600" />
-              <span>
-                Deliverable to <strong>{lastCheckedPincode}</strong>
-                {etaText ? ` • Ships in ${etaText} days` : ""}
-              </span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 pt-0.5 text-xs font-medium text-red-600">
-              <XCircle size={14} className="shrink-0 text-red-500" />
-              <span>
-                Sorry, we do not ship to this pincode. Try another one.
-              </span>
-            </div>
-          ))}
-      </div>
+          {/* Quick inline status if already checked */}
+          {result &&
+            (result.serviceable ? (
+              <div className="flex items-center gap-2 pt-0.5 text-xs font-medium text-emerald-700">
+                <CheckCircle2 size={14} className="shrink-0 text-emerald-600" />
+                <span>
+                  Deliverable to <strong>{lastCheckedPincode}</strong>
+                  {etaText ? ` • Ships in ${etaText} days` : ""}
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 pt-0.5 text-xs font-medium text-red-600">
+                <XCircle size={14} className="shrink-0 text-red-500" />
+                <span>
+                  Sorry, we do not ship to this pincode. Try another one.
+                </span>
+              </div>
+            ))}
+        </div>
       )}
 
       {/* Modal Popup portal styled like AuthModal */}

@@ -15,8 +15,8 @@ export default function WhyChooseCard({ data }) {
               <img
                 src={imageUrl}
                 alt={imageAlt || card?.title || ""}
-                width="400"
-                height="400"
+                width="40"
+                height="40"
                 loading="lazy"
                 className="aspect-square object-contain bg-primary rounded-lg group-hover:bg-blue transition-all duration-300 ease-in-out p-1 md:p-2"
               />

@@ -70,6 +70,7 @@ export const STATUS_LABELS = {
   cancellation_rejected: "Cancellation Rejected",
   cancellation_failed: "Cancellation Failed",
   return_completed: "Return Completed",
+  completed: "Cancellation Completed",
 };
 
 export const label = (value = "") => {

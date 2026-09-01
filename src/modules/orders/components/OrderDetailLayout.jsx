@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
 
 function OrderDetailLayout({ children }) {
@@ -8,6 +8,7 @@ function OrderDetailLayout({ children }) {
 
   return (
     <StickySidebarLayout
+      stickyMain={true}
       sidebarPosition="right"
       containerClass="flex flex-col lg:flex-row gap-4 md:gap-6 xl:gap-8"
       sidebarClass="w-full lg:w-[340px] xl:w-[380px] 2xl:w-[420px]"
@@ -18,7 +19,10 @@ function OrderDetailLayout({ children }) {
 }
 
 function OrderDetailAside({ children, className = "" }) {
-  const cleanClassName = className.replace(/xl:sticky\s+|xl:top-\w+\s+|xl:self-start\s+/g, '');
+  const cleanClassName = className.replace(
+    /xl:sticky\s+|xl:top-\w+\s+|xl:self-start\s+/g,
+    "",
+  );
   return (
     <aside className={`grid gap-4 w-full ${cleanClassName}`}>{children}</aside>
   );
