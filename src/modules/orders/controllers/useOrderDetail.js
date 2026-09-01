@@ -372,6 +372,7 @@ export function useOrderDetail({ orderId, track }) {
     visibleCustomerInvoices,
     visiblePendingSellerDocuments,
     downloadableDocuments,
+    invoicesLoading,
   } = useOrderDocuments({
     orderId,
     order,
@@ -448,6 +449,7 @@ export function useOrderDetail({ orderId, track }) {
     customerFeeInvoice,
     pendingSellerDocuments,
     downloadableDocuments,
+    invoicesLoading,
     breadcrumbItems,
     cancelModalOpen,
     cancelReason,

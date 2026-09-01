@@ -339,9 +339,15 @@ export default function OrderDetailPage({ orderId }) {
         open={cancelModalOpen}
         title={selectedOrderItem ? "Cancel order?" : "Cancel order?"}
         description={
-          selectedOrderItem
-            ? "You can cancel this item before it is shipped.\nNo cancellation is processed before approval."
-            : "You can cancel items before they are shipped.\nNo cancellation is processed before approval."
+          <span>
+            {selectedOrderItem
+              ? "You can cancel this item before it is shipped.\nNo cancellation is processed before approval."
+              : "You can cancel items before they are shipped.\nNo cancellation is processed before approval."}
+            <br />
+            <span className="text-xs mt-1 block">
+              Read our <Link to="/refund-policy" target="_blank" rel="noopener noreferrer" className="text-[#CE9F2D] hover:text-[#A96F14] hover:underline font-bold transition-colors">Cancellation Policy</Link>
+            </span>
+          </span>
         }
         confirmLabel={
           state.loading ? "Submitting..." : "Submit cancellation request"

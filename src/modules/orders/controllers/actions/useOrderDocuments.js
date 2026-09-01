@@ -24,7 +24,7 @@ export function useOrderDocuments({
 }) {
   const dispatch = useDispatch();
   const [invoices, setInvoices] = useState(null);
-  const [, setInvoicesLoading] = useState(false);
+  const [invoicesLoading, setInvoicesLoading] = useState(false);
   const [downloadingId, setDownloadingId] = useState(null);
 
   useEffect(() => {
@@ -261,6 +261,14 @@ export function useOrderDocuments({
         type: "tax_invoice",
       };
     }),
+    ...visiblePendingSellerDocuments.map((doc, index) => ({
+      id: `pending-${index}`,
+      title: "Tax invoice",
+      subtitle: "Generating invoice...",
+      pending: true,
+      type: "tax_invoice",
+      invoice: doc,
+    })),
     orderReceipt || orderId
       ? {
           id: getDocumentId(orderReceipt) || `receipt-${orderId}`,
@@ -292,5 +300,6 @@ export function useOrderDocuments({
     visibleCustomerInvoices,
     visiblePendingSellerDocuments,
     downloadableDocuments,
+    invoicesLoading,
   };
 }
