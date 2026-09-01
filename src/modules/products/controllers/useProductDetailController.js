@@ -29,6 +29,8 @@ import {
   composeProductVariantTitle,
   getProductPrice,
   getProductMrp,
+  getDefaultVariant,
+  getAvailableStock as getVariantAvailableStock,
   getVariantPrice,
   getImageUrlFromValue,
   firstMoneyValue,
@@ -120,7 +122,7 @@ export function useProductDetailController(productId, rawParamId, matchProductId
       );
     }
 
-    const defaultVariant = variants.find((variant) => variant.isDefault) || variants[0];
+    const defaultVariant = getDefaultVariant(product) || variants[0];
 
     setSelectedVariant((current) => {
       if (targetVariant) return targetVariant;
@@ -250,7 +252,7 @@ export function useProductDetailController(productId, rawParamId, matchProductId
   }, [dispatch, loadedProductId, quantity, selectedVariantKey, selectedVariant?._id, selectedVariant?.sku]);
 
   // Stock Validation
-  const getAvailableStock = (v) => v?.stockQuantity ?? v?.inventoryQuantity ?? v?.quantity;
+  const getAvailableStock = (v) => getVariantAvailableStock(v) ?? v?.stockQuantity ?? v?.inventoryQuantity ?? v?.quantity;
   const availableStock = getAvailableStock(selectedVariant) ?? getAvailableStock(product);
 
   useEffect(() => {

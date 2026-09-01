@@ -16,6 +16,8 @@ import {
   getProductTitle,
   getProductPrice,
   getProductMrp,
+  getDefaultVariant,
+  getAvailableStock,
   applyImageFallback,
   getImageFallbackSrc,
   getProductAvailableStock,
@@ -105,15 +107,21 @@ export default function ProductCard({
   }, [target, location.pathname]);
 
   const cardProduct = product || {};
+  const displayVariant =
+    cardProduct?.selectedVariant || getDefaultVariant(cardProduct);
+  const displayProduct = displayVariant
+    ? { ...cardProduct, selectedVariant: displayVariant }
+    : cardProduct;
   const title = titleProp || getProductTitle(cardProduct);
   const rawBrand = brandProp || cardProduct?.brand;
   const brand =
     typeof rawBrand === "object"
       ? rawBrand?.name || rawBrand?.title || rawBrand?.label || ""
       : rawBrand || "";
+  const variantImage = getProductImage(displayProduct);
   const image =
+    variantImage ||
     imageProp ||
-    getProductImage(cardProduct) ||
     getImageFallbackSrc(title, cardProduct?.category || brand);
   const subtitle =
     subtitleProp ||
@@ -121,8 +129,8 @@ export default function ProductCard({
     cardProduct?.category ||
     cardProduct?.brand ||
     "";
-  const price = priceProp ?? getProductPrice(cardProduct) ?? 0;
-  const oldPrice = oldPriceProp ?? getProductMrp(cardProduct) ?? 0;
+  const price = priceProp ?? getProductPrice(displayProduct) ?? 0;
+  const oldPrice = oldPriceProp ?? getProductMrp(displayProduct) ?? 0;
   const rating =
     ratingProp ?? cardProduct?.rating ?? cardProduct?.averageRating ?? 0;
   const ratingCount =
@@ -135,7 +143,7 @@ export default function ProductCard({
     0;
   const discountPercent =
     discountPercentProp ?? cardProduct?.discountPercent ?? 0;
-  const to = href || getProductPublicPath(cardProduct);
+  const to = href || getProductPublicPath(cardProduct, { variant: displayVariant });
   const isListVariant = variant === "list" || variant === "compact";
   const isFeatured =
     cardProduct?.metadata?.featured === true ||
@@ -165,7 +173,7 @@ export default function ProductCard({
     ? `${computedDiscountPercent}% Off`
     : "";
 
-  const availableStock = getProductAvailableStock(cardProduct);
+  const availableStock = getProductAvailableStock(displayProduct);
   const codAvailable = isProductCodAvailable(cardProduct);
 
   const isInStock =
@@ -195,9 +203,14 @@ export default function ProductCard({
       }
     };
 
-    addImg(imageProp || getProductImage(cardProduct));
+    addImg(variantImage || imageProp);
 
-    if (Array.isArray(cardProduct?.images)) {
+    const displayVariantImages = Array.isArray(displayVariant?.images)
+      ? displayVariant.images
+      : [];
+    displayVariantImages.forEach(addImg);
+
+    if (!displayVariantImages.length && Array.isArray(cardProduct?.images)) {
       cardProduct.images.forEach(addImg);
     }
     if (Array.isArray(cardProduct?.gallery)) {
@@ -211,13 +224,14 @@ export default function ProductCard({
     }
     if (Array.isArray(cardProduct?.variants)) {
       cardProduct.variants.forEach((v) => {
+        if ((getAvailableStock(v) ?? 0) <= 0) return;
         addImg(v?.image);
         if (Array.isArray(v?.images)) v.images.forEach(addImg);
       });
     }
 
     return list.length > 0 ? list : image ? [image] : [];
-  }, [cardProduct, imageProp, image]);
+  }, [cardProduct, displayProduct, displayVariant, imageProp, image, variantImage]);
 
   useEffect(() => {
     if (!isHovered || allImages.length <= 1) {
@@ -244,13 +258,13 @@ export default function ProductCard({
   const handleWishlist = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    onWishlist?.(cardProduct);
+    onWishlist?.(displayProduct);
   };
 
   const handleAddToCart = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    onAddToCart?.(cardProduct);
+    onAddToCart?.(displayProduct);
   };
 
   const handleBrandClick = (event) => {

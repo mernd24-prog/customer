@@ -48,6 +48,7 @@ import {
   getProductTitle,
   getProductPrice,
   getProductMrp,
+  getDefaultVariant,
   getVariantPrice,
   getImageUrlFromValue,
   firstMoneyValue,
@@ -295,8 +296,7 @@ export default function ProductDetailPage() {
       );
     }
 
-    const defaultVariant =
-      variants.find((variant) => variant.isDefault) || variants[0];
+    const defaultVariant = getDefaultVariant(product) || variants[0];
 
     setSelectedVariant((current) => {
       if (targetVariant) {

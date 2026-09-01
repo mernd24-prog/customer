@@ -287,9 +287,24 @@ export function getVariantPrice(variant) {
 export function getDefaultVariant(product) {
   const variants = Array.isArray(product?.variants) ? product.variants : [];
   if (!variants.length) return null;
+  const activeVariants = variants.filter(
+    (variant) => variant?.status !== "inactive" && variant?.status !== "out_of_stock",
+  );
+  const inStockVariants = activeVariants.filter(
+    (variant) => (getAvailableStock(variant) ?? 0) > 0,
+  );
+  const lowestPricedVariant = (items = []) =>
+    [...items].sort(
+      (left, right) =>
+        (getVariantPrice(left) ?? Number.POSITIVE_INFINITY) -
+        (getVariantPrice(right) ?? Number.POSITIVE_INFINITY),
+    )[0];
+
   return (
-    variants.find((variant) => variant?.isDefault === true) ||
-    variants.find((variant) => variant?.status !== "inactive") ||
+    inStockVariants.find((variant) => variant?.isDefault === true) ||
+    lowestPricedVariant(inStockVariants) ||
+    activeVariants.find((variant) => variant?.isDefault === true) ||
+    activeVariants[0] ||
     variants[0] ||
     null
   );

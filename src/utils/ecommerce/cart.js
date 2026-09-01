@@ -79,8 +79,25 @@ function getDefaultVariant(product) {
   if (!Array.isArray(product?.variants) || product.variants.length === 0) {
     return null;
   }
+  const activeVariants = product.variants.filter(
+    (variant) => variant?.status !== "inactive" && variant?.status !== "out_of_stock",
+  );
+  const inStockVariants = activeVariants.filter(
+    (variant) => (getAvailableStock(variant) ?? 0) > 0,
+  );
+  const lowestPricedVariant = (items = []) =>
+    [...items].sort(
+      (left, right) =>
+        (getVariantPrice(left) ?? Number.POSITIVE_INFINITY) -
+        (getVariantPrice(right) ?? Number.POSITIVE_INFINITY),
+    )[0];
+
   return (
-    product.variants.find((variant) => variant.isDefault) || product.variants[0]
+    inStockVariants.find((variant) => variant.isDefault) ||
+    lowestPricedVariant(inStockVariants) ||
+    activeVariants.find((variant) => variant.isDefault) ||
+    activeVariants[0] ||
+    product.variants[0]
   );
 }
 
@@ -297,8 +314,7 @@ export function cartLineKey(item) {
   const productId = normalizeId(item.productId || item.product);
   const defaultVariant =
     !item.variantId && !item.variantSku && Array.isArray(product?.variants)
-      ? product.variants.find((variant) => variant.isDefault) ||
-        product.variants[0]
+      ? getDefaultVariant(product)
       : null;
   return normalizeCartItemId({
     productId,
