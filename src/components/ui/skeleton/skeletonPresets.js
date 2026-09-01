@@ -499,42 +499,34 @@ export const SKELETON_PRESETS = {
   NOTIFICATIONS_PAGE_SKELETON: [
     {
       type: "col",
-      className: "w-full",
+      className: "w-full gap-2.5",
       count: 4,
       children: [
         {
           type: "row",
-          className: "flex gap-4 border-b border-[#D9DDE8] py-6 sm:gap-5 sm:py-7 lg:gap-6 items-start",
+          className: "relative flex items-start gap-3.5 p-4 sm:px-5 rounded-2xl border border-[#EAEFF5] bg-white shadow-sm",
           children: [
             {
               type: "box",
-              width: "56px",
-              height: "56px",
+              width: "44px",
+              height: "44px",
               variant: "circle",
-              className: "shrink-0 border border-gold/40 !bg-transparent",
+              className: "shrink-0 mt-0.5",
             },
             {
               type: "col",
-              className: "flex-1 min-w-0 pt-1 gap-0",
+              className: "min-w-0 flex-1 gap-1",
               children: [
                 {
                   type: "row",
-                  className: "justify-between gap-4 items-center mb-1.5",
+                  className: "justify-between gap-4 items-start sm:items-center",
                   children: [
-                    {
-                      type: "row",
-                      className: "gap-2 items-center",
-                      children: [
-                        { type: "box", width: "8px", height: "8px", variant: "circle" },
-                        { type: "box", width: "160px", height: "20px", rounded: "rounded-md" },
-                      ]
-                    },
-                    { type: "box", width: "80px", height: "14px", rounded: "rounded-md", className: "hidden sm:block" }
+                    { type: "box", width: "160px", height: "18px", rounded: "rounded-md" },
+                    { type: "box", width: "60px", height: "12px", rounded: "rounded-md" },
                   ]
                 },
-                { type: "box", width: "90%", height: "14px", rounded: "rounded-md", className: "mb-1" },
-                { type: "box", width: "70%", height: "14px", rounded: "rounded-md", className: "mb-3" },
-                { type: "box", width: "100px", height: "14px", rounded: "rounded-md" }
+                { type: "box", width: "95%", height: "14px", rounded: "rounded-md", className: "mt-1" },
+                { type: "box", width: "75%", height: "14px", rounded: "rounded-md" }
               ]
             }
           ]

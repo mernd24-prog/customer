@@ -52,10 +52,10 @@ export default function ReturnItemCard({
 
   return (
     <article
-      className={`w-full overflow-hidden rounded-2xl border border-[#D9DDE8] bg-white shadow-2xs transition-shadow hover:shadow-xs ${className}`}
+      className={`w-full overflow-hidden rounded-2xl border border-[#E7D9B8] bg-[#FFFCF6] shadow-2xs transition-shadow hover:shadow-xs ${className}`}
     >
       {/* ── Top Header Bar ────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EAEFF5] bg-[#FAFBFD] px-4 py-2.5 sm:px-5">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EFE5D2] bg-[#FFFDF9] px-4 py-2.5 sm:px-5">
         <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-semibold text-[#4E4E4E]">
           <div className="flex items-center gap-1.5 text-[#1B1D60]">
             <span className="text-[#6E6E6E]">Return ID:</span>
@@ -64,7 +64,7 @@ export default function ReturnItemCard({
               type="button"
               onClick={handleCopyReturnId}
               title="Copy Return ID"
-              className="text-[#6E6E6E] hover:text-[#3E4093] transition-colors"
+              className="text-[#6E6E6E] hover:text-[#CE9F2D] transition-colors"
             >
               <Copy size={13} />
             </button>
@@ -116,7 +116,7 @@ export default function ReturnItemCard({
           <div className="min-w-0 flex-1 flex flex-col justify-between space-y-3">
             {/* Top Meta with improved spacing */}
             <div className="space-y-2">
-              <h2 className="text-sm sm:text-base font-bold leading-snug text-[#1B1D60] hover:text-[#3E4093] transition-colors">
+              <h2 className="text-sm sm:text-base font-bold leading-snug text-[#1B1D60] hover:text-[#CE9F2D] transition-colors">
                 {productPath ? (
                   <Link to={productPath} className="inline-flex items-baseline gap-1 group">
                     <ShowMoreText
@@ -126,9 +126,9 @@ export default function ReturnItemCard({
                       moreLabel="more"
                       lessLabel="less"
                       textClassName="inline"
-                      buttonClassName="ml-1 text-xs font-semibold text-[#3E4093] hover:underline"
+                      buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] hover:underline"
                     />
-                    <ArrowUpRight size={13} className="opacity-0 group-hover:opacity-100 transition-opacity text-[#3E4093] inline shrink-0" />
+                    <ArrowUpRight size={13} className="opacity-0 group-hover:opacity-100 transition-opacity text-[#CE9F2D] inline shrink-0" />
                   </Link>
                 ) : (
                   <ShowMoreText
@@ -138,7 +138,7 @@ export default function ReturnItemCard({
                     moreLabel="more"
                     lessLabel="less"
                     textClassName="inline"
-                    buttonClassName="ml-1 text-xs font-semibold text-[#3E4093] hover:underline"
+                    buttonClassName="ml-1 text-xs font-semibold text-[#CE9F2D] hover:underline"
                   />
                 )}
               </h2>
@@ -157,10 +157,10 @@ export default function ReturnItemCard({
             </div>
 
             {/* ── Info Grid directly below Qty inside right column ────── */}
-            <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 rounded-xl border border-[#EAEFF5] bg-[#FAFBFD] p-3.5">
+            <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 rounded-xl border border-[#EFE5D2] bg-[#FFFDF9] p-3.5">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 flex-1">
                 {/* Reason */}
-                <div className="min-w-0 space-y-0.5 border-b sm:border-b-0 sm:border-r border-[#EAEFF5] pb-2 sm:pb-0 sm:pr-3">
+                <div className="min-w-0 space-y-0.5 border-b sm:border-b-0 sm:border-r border-[#EFE5D2] pb-2 sm:pb-0 sm:pr-3">
                   <p className="text-[11px] font-medium text-[#6E6E6E] flex items-center gap-1">
                     <AlertCircle size={13} className="text-[#CE9F2D] shrink-0" />
                     Reason for Return
@@ -171,13 +171,13 @@ export default function ReturnItemCard({
                       text={capitalizeFirst(reason) || "Not specified"}
                       mode="lines"
                       limit={1}
-                      buttonClassName="ml-1 text-[11px] font-semibold text-[#3E4093] hover:underline"
+                      buttonClassName="ml-1 text-[11px] font-semibold text-[#CE9F2D] hover:underline"
                     />
                   </div>
                 </div>
 
                 {/* Refund Amount */}
-                <div className="min-w-0 space-y-0.5 border-b sm:border-b-0 sm:border-r border-[#EAEFF5] pb-2 sm:pb-0 sm:pr-3">
+                <div className="min-w-0 space-y-0.5 border-b sm:border-b-0 sm:border-r border-[#EFE5D2] pb-2 sm:pb-0 sm:pr-3">
                   <p className="text-[11px] font-medium text-[#6E6E6E] flex items-center gap-1">
                     <PackageCheck size={13} className="text-[#0D652D] shrink-0" />
                     Refund Amount
@@ -190,7 +190,7 @@ export default function ReturnItemCard({
                 {/* Expected Date */}
                 <div className="min-w-0 space-y-0.5">
                   <p className="text-[11px] font-medium text-[#6E6E6E] flex items-center gap-1">
-                    <Calendar size={13} className="text-[#3E4093] shrink-0" />
+                    <Calendar size={13} className="text-[#CE9F2D] shrink-0" />
                     Expected Date
                   </p>
                   <p className="text-xs sm:text-sm font-semibold text-[#1B1D60]">
@@ -200,11 +200,11 @@ export default function ReturnItemCard({
               </div>
 
               {/* Action Button */}
-              <div className="shrink-0 pt-2 xl:pt-0 xl:pl-3 border-t xl:border-t-0 xl:border-l border-[#EAEFF5] flex items-center justify-end">
+              <div className="shrink-0 pt-2 xl:pt-0 xl:pl-3 border-t xl:border-t-0 xl:border-l border-[#EFE5D2] flex items-center justify-end">
                 <button
                   type="button"
                   onClick={onTrackRequest}
-                  className="w-full xl:w-auto inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#3E4093] px-3.5 py-2 text-xs font-bold text-white shadow-2xs hover:bg-[#2F3175] transition-colors"
+                  className="w-full xl:w-auto inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#CE9F2D] px-3.5 py-2 text-xs font-bold text-white shadow-2xs hover:opacity-90 transition-opacity"
                 >
                   <Truck size={14} />
                   <span>{trackLabel}</span>
