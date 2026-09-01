@@ -91,7 +91,7 @@ export default function CheckoutPage() {
 
   return (
     <AppErrorBoundary>
-      {(checkoutActionLoading || isPostPaymentProcessing) && (
+      {(checkoutActionLoading || isPostPaymentProcessing || quoteLoading) && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--customer-cream)]">
           <Loader size="xl" />
         </div>
