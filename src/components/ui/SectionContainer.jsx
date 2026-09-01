@@ -1,4 +1,4 @@
-import { FaAngleRight } from "react-icons/fa6";
+import { ArrowRight } from "lucide-react";
 import { OutlineSmallButton } from "../ui/button/static";
 
 export default function SectionContainer({
@@ -40,7 +40,7 @@ export default function SectionContainer({
             {hasAction && actionHref ? (
               <OutlineSmallButton
                 to={actionHref}
-                rightIcon={<FaAngleRight className="text-[10px]" />}
+                rightIcon={<ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />}
                 className="self-start   my-2  sm:self-center md:block hidden"
                 aria-label={`${actionLabel} ${title || ""}`}
               >
@@ -59,7 +59,7 @@ export default function SectionContainer({
         {hasAction && actionHref ? (
           <OutlineSmallButton
             to={actionHref}
-            rightIcon={<FaAngleRight className="text-[10px]" />}
+            rightIcon={<ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />}
             className="self-start text-center md:hidden block    sm:self-center"
             aria-label={`${actionLabel} ${title || ""}`}
           >

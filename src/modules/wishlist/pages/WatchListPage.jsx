@@ -8,7 +8,7 @@ import Breadcrumbs from "../../common/components/Breadcrumbs";
 import { wishlistItemKey } from "../../../utils/ecommerce";
 import { adaptProductToItem } from "../../../utils/pages/watchListUtils";
 import { OutlineSmallButton } from "../../../components/ui/button/static";
-import { FaAngleRight } from "react-icons/fa6";
+import { ArrowRight } from "lucide-react";
 import { SkeletonLoader } from "../../../components/ui/skeleton";
 
 export default function WatchlistPage() {
@@ -157,7 +157,7 @@ export default function WatchlistPage() {
               <div className="flex items-center gap-3 mt-6 lg:mt-8">
                 <OutlineSmallButton
                   to="/products"
-                  rightIcon={<FaAngleRight className="text-[10px]" />}
+                  rightIcon={<ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />}
                   className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
                 >
                   Continue Shopping
@@ -187,7 +187,7 @@ export default function WatchlistPage() {
                 </div>
                 <OutlineSmallButton
                   to="/products"
-                  rightIcon={<FaAngleRight className="text-[10px]" />}
+                  rightIcon={<ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />}
                   className="self-start sm:self-center"
                 >
                   Browse All Products

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import ProductCard from "../../../modules/products/components/ProductCard";
 
 import { getProductId } from "../../../utils/ecommerce";
@@ -23,9 +24,10 @@ export default function ProductRecommendationSection({
 
         <Link
           to="/products"
-          className="text-base lg:text-xl font-medium text-gold hover:text-gold-dark transition-all duration-300 ease-in-out"
+          className="group inline-flex items-center gap-1.5 text-base lg:text-xl font-medium text-gold hover:text-gold-dark transition-all duration-300 ease-in-out"
         >
-          {linkText}
+          <span>{linkText.replace(" →", "").replace("→", "")}</span>
+          <ArrowRight className="w-4 h-4 lg:w-5 lg:h-5 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
         </Link>
       </div>
 

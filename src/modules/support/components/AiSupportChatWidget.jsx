@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Loader2,
   HelpCircle,
+  MessageSquareText,
 } from "lucide-react";
 
 import { supportService } from "../services/supportService";
@@ -211,10 +212,12 @@ export default function AiSupportChatWidget() {
   return (
     <>
       {/* Floating Action Trigger Button */}
-      <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5">
+      <div className="fixed bottom-6 right-6 z-40 flex items-center gap-3">
         {unreadPrompt && !isOpen && (
-          <div className="relative animate-bounce rounded-full bg-white px-3.5 py-2 text-xs font-semibold text-[#1B1D60] shadow-xl border border-[#E7D9B8] flex items-center gap-1.5">
-            <Sparkles size={14} className="text-[#CE9F2D]" />
+          <div className="relative rounded-2xl bg-white px-4 py-2.5 text-[13px] font-semibold text-[#1B1D60] shadow-[0_4px_14px_0_rgba(0,0,0,0.12)] border border-slate-200 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F5C72E]/20 text-[#CE9F2D]">
+              <Sparkles size={14} />
+            </span>
             <span>Need Help? Chat with AI</span>
             <button
               type="button"
@@ -222,29 +225,31 @@ export default function AiSupportChatWidget() {
                 e.stopPropagation();
                 setUnreadPrompt(false);
               }}
-              className="ml-1 text-gray-400 hover:text-gray-600 transition"
+              className="ml-1 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
               aria-label="Dismiss prompt"
             >
-              <X size={13} />
+              <X size={14} />
             </button>
           </div>
         )}
 
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="group relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-[#1B1D60] via-[#242777] to-[#1B1D60] text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-[#CE9F2D]/40"
+          className="group relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#1B1D60] text-white shadow-[0_4px_14px_0_rgba(27,29,96,0.39)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_6px_20px_rgba(27,29,96,0.23)] active:scale-95 focus:outline-none focus:ring-4 focus:ring-[#1B1D60]/20"
           aria-label="Toggle AI Support Chat"
         >
           {isOpen ? (
-            <ChevronDown
-              size={28}
-              className="transition-transform duration-200"
+            <X
+              size={26}
+              className="transition-transform duration-200 rotate-90 scale-0 group-hover:rotate-0 group-hover:scale-100"
+              style={{ transform: isOpen ? 'rotate(0deg) scale(1)' : 'rotate(-90deg) scale(0)' }}
             />
           ) : (
             <>
-              <Bot
-                size={28}
+              <MessageSquareText
+                size={26}
                 className="transition-transform duration-200 group-hover:scale-110"
+                style={{ position: isOpen ? 'absolute' : 'relative', transform: isOpen ? 'rotate(90deg) scale(0)' : 'rotate(0deg) scale(1)' }}
               />
               <span className="absolute -top-1 -right-1 flex h-4 w-4">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#CE9F2D] opacity-75"></span>

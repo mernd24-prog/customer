@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FaAngleRight } from "react-icons/fa6";
+import { ArrowRight } from "lucide-react";
 import { TextGoldButton } from "../ui/button/static";
 import { applyImageFallback, getImageFallbackSrc } from "../../utils/ecommerce";
 import { cn } from "../../utils/common";
@@ -53,7 +53,7 @@ export default function CategoryCard({
             as="span"
             className="my-0.5 text-xs sm:text-sm"
             rightIcon={
-              <FaAngleRight className="text-[10px] sm:text-[12px] mt-0.5" />
+              <ArrowRight className="w-3.5 h-3.5 mt-0.5" strokeWidth={2.5} />
             }
           >
             {ctaLabel}

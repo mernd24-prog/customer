@@ -1,5 +1,6 @@
 import { useEffect, memo } from "react";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../components/ui/Seo";
 import { EmptyState } from "../../components/ui";
@@ -38,8 +39,9 @@ const ProductGridPage = memo(function ProductGridPage({
             <p className="mt-1 text-[13px] leading-[20px] text-muted">{description}</p>
           </div>
           {sourceLink && (
-            <Link to={sourceLink} className="text-[13px] leading-[20px] tracking-[0.5px] font-medium text-gold">
-              {sourceText || "Explore more"} →
+            <Link to={sourceLink} className="group inline-flex items-center gap-1.5 text-[13px] leading-[20px] tracking-[0.5px] font-medium text-gold hover:text-gold-dark transition-colors">
+              <span>{sourceText || "Explore more"}</span>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
             </Link>
           )}
         </div>

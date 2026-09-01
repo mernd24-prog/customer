@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useAuthModal } from "../../../modules/auth/context/AuthModalContext";
-import { ChevronRight, ThumbsUp } from "lucide-react";
+import { ArrowRight, ThumbsUp } from "lucide-react";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
 import { IoIosStar } from "react-icons/io";
 import {
@@ -48,7 +48,7 @@ function StarInput({ value, onChange, size = 24 }) {
   );
 }
 
-function RatingPill({ rating }) {
+function RatingPill({ rating, className = "" }) {
   const numRating = Number(rating);
   const bgColor =
     numRating > 3
@@ -59,7 +59,7 @@ function RatingPill({ rating }) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] sm:text-xs font-bold text-white shadow-xs ${bgColor}`}
+      className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] sm:text-xs font-bold text-white shadow-xs ${bgColor} ${className}`}
     >
       <IoIosStar className="text-xs" /> {rating}
     </span>
@@ -158,10 +158,10 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         </span>
       </div>
 
-      <div className="mt-2 flex flex-wrap items-center gap-2">
-        <RatingPill rating={rating} />
+      <div className="mt-2 text-xs sm:text-sm leading-[1.6]">
+        <RatingPill rating={rating} className="mr-2 align-middle relative -top-[1.5px]" />
         {review.title && (
-          <span className="text-xs sm:text-sm font-bold text-[#1F2430]">
+          <span className="font-bold text-[#1F2430] inline">
             {review.title}
           </span>
         )}
@@ -786,9 +786,10 @@ export default function ProductReviewsSection({ productId, product }) {
               <Link
                 to={`/products/${productId}/reviews`}
                 state={{ product }}
-                className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#CE9F2D] hover:text-[#A96F14] transition-colors"
+                className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#CE9F2D] hover:text-[#A96F14] transition-colors"
               >
-                View All Reviews ({displayTotal}) <ChevronRight size={14} />
+                <span>View All Reviews ({displayTotal})</span>
+                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
               </Link>
             </div>
           )}

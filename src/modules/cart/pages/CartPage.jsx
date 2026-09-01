@@ -12,7 +12,7 @@ import { ConfirmModal } from "../../../components/ui";
 import GuestOtpAuthModal from "../../../components/ui/overlay/GuestOtpAuthModal";
 import OrderPaymentSummary from "../../orders/components/OrderPaymentSummary";
 import { OutlineSmallButton } from "../../../components/ui/button/static";
-import { FaAngleRight } from "react-icons/fa6";
+import { ArrowRight } from "lucide-react";
 import { CART_PAGE_SKELETON } from "../../../components/ui/skeleton/layouts";
 import { formatMoney, toNum } from "../../../utils/ecommerce/money";
 import {
@@ -273,7 +273,7 @@ export default function CartPage() {
                     <div className="flex items-center gap-3 ">
                       <OutlineSmallButton
                         to="/products"
-                        rightIcon={<FaAngleRight className="text-[10px]" />}
+                        rightIcon={<ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />}
                         className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
                       >
                         Continue Shopping
@@ -339,7 +339,7 @@ export default function CartPage() {
                   <div className="flex items-center gap-3 ">
                     <OutlineSmallButton
                       to="/products"
-                      rightIcon={<FaAngleRight className="text-[10px]" />}
+                      rightIcon={<ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />}
                       className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold  transition-all duration-300 ease-in-out"
                     >
                       Browse All Products
