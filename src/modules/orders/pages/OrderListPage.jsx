@@ -98,15 +98,18 @@ function OrderItemSummaryCard({ order, item }) {
     Math.max(Number(item.cancelled_quantity || item.cancelledQuantity || 0), 0),
   );
   const activeQuantity = Math.max(orderedQuantity - cancelledQuantity, 0);
-  const remainingDelivered = activeQuantity > 0 && (
-    isDeliveredOrderItem(item) ||
-    ["delivered", "fulfilled", "completed"].includes(String(shipment?.status || "").toLowerCase())
-  );
+  const remainingDelivered =
+    activeQuantity > 0 &&
+    (isDeliveredOrderItem(item) ||
+      ["delivered", "fulfilled", "completed"].includes(
+        String(shipment?.status || "").toLowerCase(),
+      ));
   const itemImage = getOrderCardImage(item);
   const itemTotal =
     item?.line_total ??
     item?.lineTotal ??
-    Number(item?.unit_price || item?.unitPrice || 0) * Number(item?.quantity || 0);
+    Number(item?.unit_price || item?.unitPrice || 0) *
+      Number(item?.quantity || 0);
   const itemDetailPath = getOpaqueOrderPath(id, {
     query: itemId ? `?orderItemId=${encodeURIComponent(itemId)}` : "",
   });
@@ -170,17 +173,20 @@ function OrderItemSummaryCard({ order, item }) {
             />
           </span>
           <span className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-[#5E6472]">
-            <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">
+            {/* <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">
               Ordered {orderedQuantity}
-            </span>
-            {cancelledQuantity > 0 && (
+            </span> */}
+            {/* {cancelledQuantity > 0 && (
               <span className="rounded-full bg-red-50 px-3 py-1.5 text-red-700">
                 Cancelled {cancelledQuantity}
               </span>
-            )}
+            )} */}
             {cancelledQuantity > 0 && activeQuantity > 0 && (
-              <span className={`rounded-full px-3 py-1.5 ${remainingDelivered ? "bg-emerald-50 text-emerald-700" : "bg-blue-50 text-blue-700"}`}>
-                {remainingDelivered ? "Delivered" : "Remaining"} {activeQuantity}
+              <span
+                className={`rounded-full px-3 py-1.5 ${remainingDelivered ? "bg-emerald-50 text-emerald-700" : "bg-blue-50 text-blue-700"}`}
+              >
+                {remainingDelivered ? "Delivered" : "Remaining"}{" "}
+                {activeQuantity}
               </span>
             )}
             {getOrderItemColor(item) !== "N/A" && (

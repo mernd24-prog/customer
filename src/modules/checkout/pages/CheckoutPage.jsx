@@ -81,14 +81,17 @@ export default function CheckoutPage() {
   const handleCloseNewAddress = useCallback(() => {
     setValue("useNewAddress", false);
   }, [setValue]);
-  
-  const handleExcludeBlockedItem = useCallback((blocker) => {
-    excludeBlockedItem(blocker);
-  }, [excludeBlockedItem]);
+
+  const handleExcludeBlockedItem = useCallback(
+    (blocker) => {
+      excludeBlockedItem(blocker);
+    },
+    [excludeBlockedItem],
+  );
 
   return (
     <AppErrorBoundary>
-      {isPostPaymentProcessing && (
+      {(checkoutActionLoading || isPostPaymentProcessing) && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--customer-cream)]">
           <Loader size="xl" />
         </div>
@@ -133,7 +136,8 @@ export default function CheckoutPage() {
             {deliverabilityBlockers.length > 0 && (
               <div className="mb-4 rounded-xl border border-amber-300 bg-amber-50 p-4">
                 <p className="font-semibold text-amber-900">
-                  This product is no longer available. Please remove it from your cart and try again later.
+                  This product is no longer available. Please remove it from
+                  your cart and try again later.
                 </p>
                 <div className="mt-3 space-y-2">
                   {deliverabilityBlockers.map((blocker) => (

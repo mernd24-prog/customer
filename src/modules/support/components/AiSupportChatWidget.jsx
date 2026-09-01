@@ -465,7 +465,7 @@ export default function AiSupportChatWidget() {
                     onClick={() =>
                       handleSendMessage(prompt.replace(/^[^\s]+\s/, ""))
                     }
-                    className="shrink-0 whitespace-nowrap rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700 hover:border-[#CE9F2D] hover:bg-amber-50 hover:text-[#1B1D60] transition cursor-pointer active:scale-95"
+                    className="shrink-0 whitespace-nowrap rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold text-slate-700  hover:bg-amber-50 hover:text-[#1B1D60] transition cursor-pointer active:scale-95"
                   >
                     {prompt}
                   </button>
@@ -475,8 +475,8 @@ export default function AiSupportChatWidget() {
           )}
 
           {/* Input Footer */}
-          <div className="border-t border-slate-200 bg-white p-3">
-            <div className="flex items-center gap-2 rounded-xl border border-slate-300 bg-[#F8FAFC] px-3.5 py-2 focus-within:border-[#CE9F2D] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#CE9F2D]/20 transition">
+          <div className="border-t border-slate-100 bg-white p-3">
+            <div className="flex h-11 items-center gap-2 rounded-full border border-slate-200 bg-slate-50 pl-4 pr-1.5 transition-all focus-within:border-[#1B1D60] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#1B1D60]/15">
               <input
                 ref={inputRef}
                 type="text"
@@ -489,19 +489,19 @@ export default function AiSupportChatWidget() {
                     : "Ask about orders, returns, payments..."
                 }
                 disabled={isTyping}
-                className="w-full bg-transparent text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none disabled:opacity-50"
+                className="h-full w-full min-w-0 flex-1 !border-0 !border-none !bg-transparent !p-0 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 !outline-none !ring-0 !shadow-none focus:!border-none focus:!outline-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0 disabled:opacity-50"
               />
               <button
                 type="button"
                 onClick={() => handleSendMessage()}
-                disabled={!inputText.trim() || isTyping}
+                disabled={isTyping}
                 aria-label="Send message"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#1B1D60] text-white transition hover:bg-[#252877] disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1B1D60] text-white transition-all hover:bg-[#252877] active:scale-95 cursor-pointer"
               >
                 {isTyping ? (
-                  <Loader2 size={15} className="animate-spin text-white" />
+                  <Loader2 size={14} className="animate-spin text-white" />
                 ) : (
-                  <Send size={14} />
+                  <Send size={14} className="text-white ml-0.5" />
                 )}
               </button>
             </div>
