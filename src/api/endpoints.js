@@ -138,6 +138,7 @@ export const endpoints = {
     cmsPage: (slug) => `${API_PREFIX}/cms/${slug}`,
     brands: `${API_PREFIX}/platform/brands`,
     brand: (brandId) => `${API_PREFIX}/platform/brands/${brandId}`,
+    collections: `${API_PREFIX}/platform/collections`,
     warrantyTemplates: `${API_PREFIX}/platform/warranty-templates`,
     productOptions: `${API_PREFIX}/platform/product-options`,
     productOptionValues: `${API_PREFIX}/platform/product-option-values`,
@@ -207,11 +208,6 @@ export const endpoints = {
     points: `${API_PREFIX}/loyalty/points`,
     history: `${API_PREFIX}/loyalty/history`,
     redeem: `${API_PREFIX}/loyalty/redeem`,
-  },
-  badges: {
-    list: `${API_PREFIX}/platform/badges`,
-    active: `${API_PREFIX}/platform/badges/active`,
-    detail: (badgeId) => `${API_PREFIX}/platform/badges/${badgeId}`,
   },
   recommendations: {
     list: `${API_PREFIX}/recommendations`,

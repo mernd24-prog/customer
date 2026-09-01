@@ -31,7 +31,6 @@ import tax from "../features/tax/taxSlice";
 import fraud from "../features/fraud/fraudSlice";
 import review from "../features/review/reviewSlice";
 import relatedProducts from "../modules/products/slices/relatedProductsSlice";
-import badges from "../features/badges/badgeSlice";
 import support from "../modules/support/slices/supportSlice";
 
 export const store = configureStore({
@@ -68,7 +67,6 @@ export const store = configureStore({
     fraud,
     review,
     relatedProducts,
-    badges,
     support,
   }
 });

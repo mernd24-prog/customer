@@ -494,20 +494,7 @@ export const notificationThunks = {
   ),
 };
 
-export const badgeThunks = {
-  fetchBadges: makeThunk("badges/fetchBadges", {
-    url: endpoints.badges.list,
-    params: (arg) => arg,
-    cache: true,
-  }),
-  fetchActiveBadges: makeThunk("badges/fetchActiveBadges", {
-    url: endpoints.badges.active,
-    cache: true,
-  }),
-  fetchBadge: makeThunk("badges/fetchBadge", {
-    url: ({ badgeId }) => endpoints.badges.detail(badgeId),
-  }),
-};
+ 
 
 export const loyaltyThunks = {
   fetchLoyaltyProfile: makeThunk("loyalty/fetchLoyaltyProfile", {

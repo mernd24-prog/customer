@@ -34,6 +34,7 @@ const CollageSection = React.lazy(
 const ShowcaseSection = React.lazy(
   () => import("../../components/home/ShowcaseSection"),
 );
+const FeaturedCollectionsSection = React.lazy(() => import("../../components/home/FeaturedCollectionsSection"));
 
 import { toStandardProductCard as toNewArrivalProduct } from "../../utils/productUtils";
 import { getProductListFromResponse } from "../../utils/ecommerce";
@@ -163,6 +164,10 @@ export function HomePage() {
         subtitle="Curated collections for every style & home"
         className="text-[#3E4093] font-regular text-[18px] "
       />
+{/* 
+      <LazySection minHeight="280px">
+        <FeaturedCollectionsSection />
+      </LazySection> */}
 
       <LazySection minHeight="400px">
         <CollageSection cmsPages={cmsPages} />
