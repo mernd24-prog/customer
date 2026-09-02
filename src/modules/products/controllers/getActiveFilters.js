@@ -7,16 +7,19 @@ export function getActiveFilters(searchParams, attributeFacets) {
 
   return [
     ...parseMultiValue(searchParams.get("category")).map((val) => ({
+      key: `category:${val}`,
       type: "category",
       label: "Category: " + capitalizeFirst(val.replace(/-/g, " ")),
       value: val,
     })),
     ...parseMultiValue(searchParams.get("brand")).map((val) => ({
+      key: `brand:${val}`,
       type: "brand",
       label: "Brand: " + capitalizeFirst(val.replace(/-/g, " ")),
       value: val,
     })),
     ...parseMultiValue(searchParams.get("rating")).map((val) => ({
+      key: `rating:${val}`,
       type: "rating",
       label: val + String.fromCharCode(9733) + " & above",
       value: val,
@@ -24,6 +27,7 @@ export function getActiveFilters(searchParams, attributeFacets) {
     ...(minPrice || maxPrice
       ? [
           {
+            key: "price",
             type: "price",
             label: "Price: \u20B9" + (minPrice || "0") + " - \u20B9" + (maxPrice || "\u221E"),
             value: "price",
@@ -44,8 +48,9 @@ export function getActiveFilters(searchParams, attributeFacets) {
           );
           const displayLabel = option?.label || val;
           return {
+            key: `${k}:${val}`,
             type: "attribute",
-            key: k,
+            attributeKey: k,
             label: attribute.label + ": " + capitalizeFirst(displayLabel),
             value: val,
           };

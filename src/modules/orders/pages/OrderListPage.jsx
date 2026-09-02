@@ -274,9 +274,9 @@ export default function OrderListPage() {
             containerClass="flex flex-col xl:flex-row gap-5 sm:gap-6 lg:gap-7 lg:mt-4"
             sidebarClass="w-full xl:w-[280px] 2xl:w-[280px] transition-[top] duration-300 ease-in-out"
             mainContent={
-              <div className="min-w-0 rounded-xl bg-white sm:p-4">
+              <div className="min-w-0 rounded-xl bg-white">
                 {!(state.loading && !orderItemsList.length) && (
-                  <div className="my-4 flex flex-col gap-3">
+                  <div className="mb-4 flex flex-col gap-3">
                     <label className="relative block w-full">
                       <Search
                         size={15}

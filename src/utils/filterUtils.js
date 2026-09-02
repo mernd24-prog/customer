@@ -110,3 +110,23 @@ export function flattenCategoryList(data) {
     ...flattenCategoryList(category?.children || category?.subCategories || []),
   ]);
 }
+
+export function computeActiveFiltersCount(activeFilters, searchParams, ignoreKeys = ["category", "categoryId", "q"]) {
+  if (!activeFilters || !Array.isArray(activeFilters)) return 0;
+  
+  return activeFilters.reduce((sum, filter) => {
+    if (!filter) return sum;
+    if (ignoreKeys.includes(filter.key)) return sum;
+    
+    if (filter.groupKey && searchParams) {
+      const val = searchParams.get(filter.groupKey);
+      if (val) return sum + val.split(",").length;
+    }
+    return sum + 1;
+  }, 0);
+}
+
+export function getClearFiltersAction(activeFilters, searchParams, handleClearFilters, ignoreKeys = ["category", "categoryId", "q"]) {
+  const count = computeActiveFiltersCount(activeFilters, searchParams, ignoreKeys);
+  return count > 1 ? handleClearFilters : undefined;
+}

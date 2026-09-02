@@ -94,7 +94,7 @@ export default function CategoryPage() {
           }
           filters={activeFilters}
           onRemoveFilter={handleRemoveFilter}
-          onClearFilters={handleClearFilters}
+          onClearFilters={clearFiltersAction}
           sidebarOpen={sidebarOpen}
           onCloseSidebar={handleCloseSidebar}
           loading={

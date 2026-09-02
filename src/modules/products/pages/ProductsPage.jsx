@@ -41,6 +41,7 @@ export default function ProductsPage() {
     toggleWishlist,
     filterSections,
     activeFilters,
+    removeFilter,
     clearFiltersAction,
     pageTitle,
   } = useProductsPageController();
@@ -60,7 +61,8 @@ export default function ProductsPage() {
       setSidebarOpen={setSidebarOpen}
       filterSections={filterSections}
       activeFilters={activeFilters}
-      onClearFilters={clearFiltersAction ?? clearAllFilters}
+      onRemoveFilter={removeFilter}
+      onClearFilters={clearFiltersAction}
       loading={productState.loading && !products.length}
       refreshing={productState.loading && products.length > 0 && !isLoadingMore}
       error={products.length === 0 ? productState.error : null}

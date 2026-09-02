@@ -26,6 +26,7 @@ import {
   getCategoryKey,
   getMatchingCategoryKeys,
 } from "../../../utils/pages/categoryUtils";
+import { getClearFiltersAction } from "../../../utils/filterUtils";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 
 export default function useCategory() {
@@ -703,7 +704,9 @@ export default function useCategory() {
       .filter(Boolean);
   }, [categoryFilter, filterableAttributes, searchParams, supportedAttributeKeys, priceLimits.min, priceLimits.max]);
 
-  const clearFiltersAction = activeFilters.length > 1 ? handleClearFilters : undefined;
+  const clearFiltersAction = useMemo(() => 
+    getClearFiltersAction(activeFilters, searchParams, handleClearFilters, ["category"]),
+  [activeFilters, searchParams, handleClearFilters]);
 
   return {
     categoryKey,
