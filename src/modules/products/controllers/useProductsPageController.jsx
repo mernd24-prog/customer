@@ -16,6 +16,7 @@ import {
   getFacetList,
   normalizeFacetOption,
 } from "../../../utils/filterUtils";
+import { getClearFiltersAction } from "../../../utils/filterUtils";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 import { getFilterSections } from "./getFilterSections";
 import { getActiveFilters } from "./getActiveFilters";
@@ -339,7 +340,6 @@ export function useProductsPageController() {
   const handleClearFilters = useCallback(() => {
     setSearchParams((prev) => {
       const next = new URLSearchParams();
-      if (prev.has("category")) next.set("category", prev.get("category"));
       if (prev.has("q")) next.set("q", prev.get("q"));
       if (prev.has("collectionIds"))
         next.set("collectionIds", prev.get("collectionIds"));
@@ -348,10 +348,38 @@ export function useProductsPageController() {
     scrollToTop();
   }, [scrollToTop, setSearchParams]);
 
+  const removeFilter = useCallback(
+    (key, filter) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        if (filter?.type === "price" || key === "price") {
+          next.delete("minPrice");
+          next.delete("maxPrice");
+        } else if (filter?.type && filter.value !== undefined) {
+          const paramKey = filter.type === "attribute" ? filter.attributeKey : filter.type;
+          const currentValues = parseMultiValue(next.get(paramKey));
+          const nextValues = currentValues.filter((v) => String(v) !== String(filter.value));
+          if (nextValues.length > 0) {
+            next.set(paramKey, serializeMultiValue(nextValues));
+          } else {
+            next.delete(paramKey);
+          }
+        } else {
+          next.delete(key);
+        }
+        next.delete("page");
+        return next;
+      });
+      scrollToTop();
+    },
+    [scrollToTop, setSearchParams],
+  );
+
   const activeFilters = getActiveFilters(searchParams, attributeFacets);
 
-  const clearFiltersAction =
-    activeFilters.length > 1 ? handleClearFilters : undefined;
+  const clearFiltersAction = useMemo(() => 
+    getClearFiltersAction(activeFilters, searchParams, handleClearFilters, ["category", "categoryId", "q"]),
+  [activeFilters, searchParams, handleClearFilters]);
 
   const isSearchMode = Boolean(searchParams.get("q"));
   const pageTitle = isSearchMode
@@ -404,6 +432,7 @@ export function useProductsPageController() {
     toggleWishlist,
     filterSections,
     activeFilters,
+    removeFilter,
     clearFiltersAction,
     pageTitle,
   };

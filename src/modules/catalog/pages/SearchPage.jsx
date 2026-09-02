@@ -26,6 +26,7 @@ import {
 } from "../../../features/search/searchSlice";
 import { sanitizeSearchQuery } from "../../../validations";
 import { parseMultiValue, serializeMultiValue, flattenCategoryList } from "../../../utils/filterUtils";
+import { getClearFiltersAction } from "../../../utils/filterUtils";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 
 const SORT_OPTIONS = [
@@ -440,10 +441,9 @@ export default function SearchPage() {
         };
       }),
   ]
-    .flat()
-    .filter(Boolean);
-
-  const clearFiltersAction = activeFilters.length > 1 ? handleClearFilters : undefined;
+  const clearFiltersAction = useMemo(() => 
+    getClearFiltersAction(activeFilters, searchParams, handleClearFilters, ["q", "categoryId"]),
+  [activeFilters, searchParams, handleClearFilters]);
 
   const removeFilter = (key, filter) => {
     setSearchParams((prev) => {

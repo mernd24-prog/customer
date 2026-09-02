@@ -28,6 +28,7 @@ import {
   serializeMultiValue,
   unwrapProducts,
   getPagination,
+  getClearFiltersAction,
   getResponseFacets,
   getFacetList,
   normalizeFacetOption,
@@ -312,8 +313,9 @@ export default function DealsPage() {
     [searchParams, categoryOptions, selectedBrands, selectedRatings],
   );
 
-  const clearFiltersAction =
-    activeFilters.length > 1 ? handleClearFilters : undefined;
+  const clearFiltersAction = useMemo(() => 
+    getClearFiltersAction(activeFilters, searchParams, handleClearFilters, ["category"]),
+  [activeFilters, searchParams, handleClearFilters]);
 
   const filterSections = [
     categoryOptions.length > 0 && {

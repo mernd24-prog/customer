@@ -108,17 +108,17 @@ export function PaymentResultPage() {
       />
       <section className={`overflow-hidden rounded-[20px] border bg-white shadow-[0_24px_60px_rgba(27,29,96,0.06)] ${isActuallyFailed ? "border-red-200" : "border-amber-200"}`}>
         <div className="bg-[linear-gradient(135deg,#FFF6F6_0%,#FFFFFF_100%)] px-6 py-8 text-center sm:px-10">
-          <div className="flex flex-col items-center justify-center gap-5">
-            <div className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-full ${isActuallyFailed ? "bg-red-100 text-red-500" : "bg-amber-100 text-amber-600"}`}>
+          <div className="flex flex-col items-center justify-center gap-4 sm:gap-5">
+            <div className={`flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-full ${isActuallyFailed ? "bg-red-100 text-red-500" : "bg-amber-100 text-amber-600"}`}>
               {isActuallyFailed
-                ? <FailedIcon className="h-10 w-10" />
-                : <span className="text-4xl" aria-hidden="true">⌛</span>}
+                ? <FailedIcon className="h-8 w-8 sm:h-10 sm:w-10" />
+                : <span className="text-3xl sm:text-4xl" aria-hidden="true">⌛</span>}
             </div>
             <div className="flex flex-col items-center">
-              <h1 className="text-[32px] font-bold leading-tight text-[#3E4093]">
+              <h1 className="text-2xl sm:text-[32px] font-bold leading-tight text-[#3E4093]">
                 {isActuallyFailed ? "Payment Failed" : reason === "dismissed" ? "Payment Not Completed" : "Payment Confirmation Pending"}
               </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-[#2E2E2E]">
+              <p className="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed sm:leading-6 text-[#2E2E2E]">
                 {isActuallyFailed
                   ? "Razorpay could not complete this payment. Your order is saved; retry safely from its order page."
                   : reason === "dismissed"
@@ -134,14 +134,18 @@ export function PaymentResultPage() {
             rounded
             onClick={() => {
               if (orderId) {
-                dispatch(fetchOrderById({ orderId })).unwrap().finally(() => {
-                  navigate(getOpaqueOrderPath(orderId));
-                });
+                if (isActuallyFailed || reason === "dismissed") {
+                  navigate("/orders");
+                } else {
+                  dispatch(fetchOrderById({ orderId })).unwrap().finally(() => {
+                    navigate(getOpaqueOrderPath(orderId));
+                  });
+                }
               } else {
                 navigate("/orders");
               }
             }}
-            label={isActuallyFailed || reason === "dismissed" ? "View order and retry" : "View order status"}
+            label={isActuallyFailed || reason === "dismissed" ? "All pending orders" : "View order status"}
             className="h-12 w-full min-w-[180px] text-sm sm:w-auto"
           />
         </div>

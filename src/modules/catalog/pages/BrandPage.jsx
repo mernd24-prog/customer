@@ -32,6 +32,7 @@ import {
   slugToBrandName,
 } from "../../../utils/ecommerce/brand";
 import { getBrandName, getBrandLogo } from "../../../utils/pages/brandUtils";
+import { getClearFiltersAction } from "../../../utils/filterUtils";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 import LoadingSkeleton from "../components/BrandLoadingSkeleton";
 import { useSearchParamHelper } from "../../../hooks/useSearchParamsHelper";
@@ -370,8 +371,9 @@ export default function BrandPage() {
       }),
   ].filter(Boolean);
 
-  const clearFiltersAction =
-    activeFilters.length > 1 ? handleClearFilters : undefined;
+  const clearFiltersAction = useMemo(() => 
+    getClearFiltersAction(activeFilters, searchParams, handleClearFilters, ["brand"]),
+  [activeFilters, searchParams, handleClearFilters]);
 
   const filterSections = [
     ((pageInfo.total || items.length) > 1 ||

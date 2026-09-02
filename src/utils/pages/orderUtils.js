@@ -547,6 +547,11 @@ export const resolveOrderItemDisplayStatus = (
     item.payout_status || item.payoutStatus || "",
   ).toLowerCase();
   const fallback = String(fallbackStatus || "").toLowerCase();
+  
+  if (["pending_payment", "payment_failed"].includes(fallback)) {
+    return fallback;
+  }
+
   const forwardItemStatus = mostAdvancedForwardItemStatus(item, shipment);
 
   let fulfillmentReturnStatus = "";

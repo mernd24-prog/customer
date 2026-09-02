@@ -84,7 +84,7 @@ export function OrderPackageCard({
   ].filter(Boolean);
 
   const currentRank = Math.max(
-    1,
+    0,
     ...allStatuses.map((s) => STATUS_RANK[s] || 0),
   );
   const isDelivered = currentRank >= 5;

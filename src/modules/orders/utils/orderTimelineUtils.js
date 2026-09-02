@@ -16,8 +16,9 @@ export const TIMELINE_STEPS = [
 ];
 
 export const STATUS_RANK = {
-  initiated: 1,
-  pending_payment: 1,
+  initiated: 0,
+  pending_payment: 0,
+  payment_failed: 0,
   confirmed: 1,
   processing: 1,
   packed: 2,

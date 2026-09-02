@@ -13,14 +13,18 @@ import Seo from "../../../components/ui/Seo";
 
 import Breadcrumbs from "../../common/components/Breadcrumbs";
 import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
+import ProductFilterSidebar, { FilterSection, CheckboxListFilter } from "../../products/components/ProductFilterSidebar";
 
 import { getOpaqueOrderPath } from "../../../utils/routeTokens";
 
 import NeedHelpPanel from "../../support/components/NeedHelpPanel";
-import CustomDropdown from "../../../components/ui/CustomDropdown";
 
 import { useOrderList } from "../controllers/useOrderList";
 import { ReviewModal } from "../components/OrderItemReview";
+import { useOrderPayment } from "../controllers/actions/useOrderPayment";
+import { useSelector } from "react-redux";
+import { RefreshCw } from "lucide-react";
+import Button from "../../../components/ui/buttons/Button";
 
 import { formatMoney } from "../../../utils/ecommerce";
 import {
@@ -77,6 +81,37 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
     query: itemId ? `?orderItemId=${encodeURIComponent(itemId)}` : "",
   });
 
+  const paymentStatus = String(
+    order?.paymentStatus || order?.payment_status || "",
+  ).toLowerCase();
+
+  const paymentMethod = String(
+    order?.paymentMethod || order?.payment_method || "",
+  ).toLowerCase();
+  
+  const isCod = paymentMethod === "cod" || paymentMethod === "cash_on_delivery";
+  const orderStatus = getOrderStatus(order);
+  const isPaymentPending = orderStatus === "pending_payment" || orderStatus === "payment_failed";
+  
+  const canPayOnline = 
+    (isPaymentPending || isCod) && 
+    paymentStatus !== "captured" && 
+    !["cancelled", "returned", "delivered", "completed"].includes(orderStatus);
+
+  const userState = useSelector((s) => s.user?.current);
+  const { retrying, handleRetryPayment } = useOrderPayment({
+    orderId: id,
+    order,
+    userState,
+  });
+
+  const handleCardClick = (e) => {
+    if (isPaymentPending && !isCod) {
+      e.preventDefault();
+      handleRetryPayment();
+    }
+  };
+
   const s = String(itemStatus).toLowerCase();
   let statusDotColor = "bg-[#D7A522]";
   if (["delivered", "completed"].includes(s)) statusDotColor = "bg-[#21812C]";
@@ -86,6 +121,7 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
     <article className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-[#FFFCF6] transition hover:shadow-sm">
       <Link
         to={itemDetailPath}
+        onClick={handleCardClick}
         className="flex flex-col md:flex-row md:items-start gap-4 p-4 md:p-5 transition hover:bg-[#FFFDF9]"
       >
         <div className="flex flex-1 gap-4 min-w-0">
@@ -146,18 +182,43 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
             {s === 'delivered' ? 'Your item has been delivered' : s === 'cancelled' ? 'Your order was cancelled' : 'Your order is being processed'}
           </p>
 
-          {isDeliveredOrderItem(item) && !item.has_reviewed && !item.is_reviewed && (
+          {canPayOnline ? (
             <button
               type="button"
+              disabled={retrying}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (onReviewClick) onReviewClick(item, order);
+                handleRetryPayment();
               }}
-              className="mt-2 flex w-fit items-center gap-1.5 text-sm font-semibold text-[#2564EB] transition hover:text-[#1d4ed8]"
+              className="mt-3 flex w-fit items-center gap-1.5 rounded-full border border-[#D7A522] bg-[#FFFCF6] px-4 py-1.5 text-sm font-semibold text-[#D7A522] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-all hover:bg-[#D7A522] hover:text-white"
             >
-              <IoIosStar size={16} className="fill-[#2564EB]" /> Rate & Review Product
+              {retrying ? (
+                <span className="flex items-center gap-2">
+                  <svg className="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  Processing...
+                </span>
+              ) : (
+                "Pay Now"
+              )}
             </button>
+          ) : (
+            isDeliveredOrderItem(item) && !item.has_reviewed && !item.is_reviewed && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (onReviewClick) onReviewClick(item, order);
+                }}
+                className="mt-2 flex w-fit items-center gap-1.5 text-sm font-semibold text-[#2564EB] transition hover:text-[#1d4ed8]"
+              >
+                <IoIosStar size={16} className="fill-[#2564EB]" /> Rate & Review Product
+              </button>
+            )
           )}
         </div>
       </Link>
@@ -176,11 +237,14 @@ export default function OrderListPage() {
   const {
     state,
     navigate,
-    activeFilter,
-    setActiveFilter,
+    statusFilters,
+    setStatusFilters,
+    timeFilters,
+    setTimeFilters,
     query,
     setQuery,
-    availableFilters,
+    availableStatusFilters,
+    availableTimeFilters,
     orderItemsList,
   } = useOrderList();
 
@@ -206,14 +270,14 @@ export default function OrderListPage() {
             heading="My Order"
           />
           <StickySidebarLayout
-            sidebarPosition="right"
+            sidebarPosition="left"
             containerClass="flex flex-col xl:flex-row gap-5 sm:gap-6 lg:gap-7 lg:mt-4"
-            sidebarClass="w-full xl:w-[320px] 2xl:w-[340px] transition-[top] duration-300 ease-in-out"
+            sidebarClass="w-full xl:w-[280px] 2xl:w-[280px] transition-[top] duration-300 ease-in-out"
             mainContent={
-              <div className="min-w-0 rounded-xl bg-white sm:p-4">
+              <div className="min-w-0 rounded-xl bg-white">
                 {!(state.loading && !orderItemsList.length) && (
-                  <div className="my-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <label className="relative block w-full sm:max-w-[450px]">
+                  <div className="mb-4 flex flex-col gap-3">
+                    <label className="relative block w-full">
                       <Search
                         size={15}
                         className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
@@ -221,7 +285,7 @@ export default function OrderListPage() {
                       <input
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
-                        placeholder="Search by product name or order reference..."
+                        placeholder="Search your orders here"
                         className="h-12 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-9 text-base font-medium text-ink outline-none focus:outline-none"
                       />
                       {Boolean(query) && (
@@ -235,20 +299,6 @@ export default function OrderListPage() {
                         </button>
                       )}
                     </label>
-
-                    <CustomDropdown
-                      className="w-full  lg:w-[220px]"
-                      buttonClassName="h-12 rounded-[10px] border-[#1B1D604D] font-semibold text-ink"
-                      options={availableFilters.map((f) => ({
-                        value: f.value,
-                        label: f.label === "All" ? "All Status" : f.label,
-                      }))}
-                      value={activeFilter}
-                      onChange={(val) => {
-                        setActiveFilter(val);
-                      }}
-                      placeholder="All Status"
-                    />
                   </div>
                 )}
 
@@ -263,11 +313,11 @@ export default function OrderListPage() {
                   skeletonLayout={ORDER_LIST_SKELETON}
                   skeletonContainerClass=""
                   emptyTitle={
-                    activeFilter ? "No orders found" : "No orders yet"
+                    statusFilters.length || timeFilters.length ? "No orders found" : "No orders yet"
                   }
                   emptyText={
-                    activeFilter || query
-                      ? "Try a different filter."
+                    statusFilters.length || timeFilters.length || query
+                      ? "Try adjusting your filters."
                       : "Once you place an order, it will appear here."
                   }
                   emptyActionLabel="Continue Shopping"
@@ -288,11 +338,43 @@ export default function OrderListPage() {
             }
             sidebarContent={
               <div className="min-w-0 self-start xl:h-fit">
-                <NeedHelpPanel
-                  title="Need Help ?"
-                  items={orderHelpItems}
-                  headerStyle="plain"
-                  sticky={false}
+                <ProductFilterSidebar
+                  onClearAll={
+                    statusFilters.length > 0 || timeFilters.length > 0
+                      ? () => {
+                          setStatusFilters([]);
+                          setTimeFilters([]);
+                        }
+                      : undefined
+                  }
+                  sections={[
+                    {
+                      title: "ORDER STATUS",
+                      defaultOpen: true,
+                      searchable: false,
+                      content: (
+                        <CheckboxListFilter
+                          name="status"
+                          options={availableStatusFilters}
+                          selected={statusFilters}
+                          onChange={setStatusFilters}
+                        />
+                      ),
+                    },
+                    {
+                      title: "ORDER TIME",
+                      defaultOpen: true,
+                      searchable: false,
+                      content: (
+                        <CheckboxListFilter
+                          name="time"
+                          options={availableTimeFilters}
+                          selected={timeFilters}
+                          onChange={setTimeFilters}
+                        />
+                      ),
+                    },
+                  ]}
                 />
               </div>
             }
