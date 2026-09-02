@@ -725,14 +725,6 @@ export const taxThunks = {
   }),
 };
 
-export const fraudThunks = {
-  reviewFraud: makeThunk("fraud/reviewFraud", {
-    method: "post",
-    url: ({ fraudId }) => endpoints.fraud.review(fraudId),
-    data: body,
-  }),
-};
-
 export const rbacThunks = {
   fetchPermissionSetupModules: makeThunk("rbac/fetchPermissionSetupModules", {
     url: endpoints.rbac.permissionManagementModules,
@@ -996,10 +988,6 @@ export const adminThunks = {
   }),
   fetchReturnsAnalytics: makeThunk("admin/fetchReturnsAnalytics", {
     url: endpoints.admin.returnsAnalytics,
-    params: q,
-  }),
-  fetchChargebacks: makeThunk("admin/fetchChargebacks", {
-    url: endpoints.admin.chargebacks,
     params: q,
   }),
   fetchSystemHealth: makeThunk("admin/fetchSystemHealth", {

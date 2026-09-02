@@ -24,7 +24,7 @@ export const {
   createWebhook, fetchWebhooks,
   upsertFeatureFlag, fetchFeatureFlags,
   // Analytics & monitoring
-  fetchRealtimeAnalytics, fetchReturnsAnalytics, fetchChargebacks,
+  fetchRealtimeAnalytics, fetchReturnsAnalytics,
   fetchSystemHealth, fetchSystemQueues,
   pauseQueue, resumeQueue,
   fetchDeadLetter, retryDeadLetter, discardDeadLetter,

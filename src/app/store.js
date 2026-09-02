@@ -28,7 +28,6 @@ import dynamicPricing from "../features/dynamicPricing/dynamicPricingSlice";
 import admin from "../features/admin/adminSlice";
 import rbac from "../features/rbac/rbacSlice";
 import tax from "../features/tax/taxSlice";
-import fraud from "../features/fraud/fraudSlice";
 import review from "../features/review/reviewSlice";
 import relatedProducts from "../modules/products/slices/relatedProductsSlice";
 import support from "../modules/support/slices/supportSlice";
@@ -64,7 +63,6 @@ export const store = configureStore({
     admin,
     rbac,
     tax,
-    fraud,
     review,
     relatedProducts,
     support,

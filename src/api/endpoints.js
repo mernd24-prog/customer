@@ -253,9 +253,6 @@ export const endpoints = {
     creditNoteDownload: (creditNoteId) => `${API_PREFIX}/tax/credit-notes/${creditNoteId}/download`,
     reports: `${API_PREFIX}/tax/reports`,
   },
-  fraud: {
-    review: (fraudId) => `${API_PREFIX}/fraud/${fraudId}/review`,
-  },
   rbac: {
     permissionManagementModules: `${API_PREFIX}/rbac/permission-management/modules`,
     modules: `${API_PREFIX}/rbac/modules`,
@@ -308,7 +305,6 @@ export const endpoints = {
     featureFlags: `${API_PREFIX}/admin/platform/feature-flags`,
     realtimeAnalytics: `${API_PREFIX}/admin/analytics/realtime`,
     returnsAnalytics: `${API_PREFIX}/admin/returns/analytics`,
-    chargebacks: `${API_PREFIX}/admin/chargebacks`,
     systemHealth: `${API_PREFIX}/admin/system/health`,
     systemQueues: `${API_PREFIX}/admin/system/queues`,
     pauseQueue: (queueName) =>
