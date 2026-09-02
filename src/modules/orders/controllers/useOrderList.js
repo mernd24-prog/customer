@@ -19,22 +19,34 @@ export function useOrderList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const state = useSelector((s) => s.order);
-  const [activeFilter, setActiveFilter] = useState("");
+  const [statusFilters, setStatusFilters] = useState([]);
+  const [timeFilters, setTimeFilters] = useState([]);
   const [query, setQuery] = useState("");
 
   const allOrders = state.list.length
     ? state.list
     : getOrderCollection(state.current);
 
-  const availableFilters = useMemo(() => {
-    return ORDER_FILTERS;
-  }, []);
+  const availableStatusFilters = [
+    { label: "On the way", value: "on_the_way" },
+    { label: "Delivered", value: "delivered" },
+    { label: "Cancelled", value: "cancelled" },
+    { label: "Returned", value: "returned" },
+  ];
+
+  const currentYear = new Date().getFullYear();
+  const availableTimeFilters = [
+    { label: "Last 30 days", value: "last_30_days" },
+    { label: String(currentYear), value: String(currentYear) },
+    { label: String(currentYear - 1), value: String(currentYear - 1) },
+    { label: String(currentYear - 2), value: String(currentYear - 2) },
+    { label: "Older", value: "older" },
+  ];
 
   const orderItemsList = useMemo(() => {
     let term = query.trim().toLowerCase();
     const normalizedTerm = normalizeOrderSearchText(query);
 
-    // Strip leading '#' if present since it's only a visual prefix
     if (term.startsWith("#")) {
       term = term.slice(1);
     }
@@ -50,6 +62,8 @@ export function useOrderList() {
       const shipments = Array.isArray(order?.relations?.shipments)
         ? order.relations.shipments
         : [];
+      
+      const orderDate = new Date(order?.created_at || order?.createdAt || Date.now());
 
       return getOrderItems(order)
         .map((item) => {
@@ -60,33 +74,48 @@ export function useOrderList() {
             [],
             order?.relations?.cancellations || order?.cancellations || [],
           );
-          return { order, item, itemStatus };
+          return { order, item, itemStatus, orderDate };
         })
-        .filter(({ order, item, itemStatus }) => {
-          if (activeFilter) {
+        .filter(({ order, item, itemStatus, orderDate }) => {
+          // Status Filtering
+          if (statusFilters.length > 0) {
             const normalizedItemStatus = String(itemStatus || "").toLowerCase();
             const normalizedOrderStatus = String(
               getOrderStatus(order) || "",
             ).toLowerCase();
+            
+            const isDelivered = ["delivered", "fulfilled", "completed", "partially_delivered"].includes(normalizedItemStatus) || ["delivered", "fulfilled", "completed", "partially_delivered"].includes(normalizedOrderStatus);
+            const isCancelled = ["cancelled", "payment_failed", "cancellation_requested", "cancellation_approved"].includes(normalizedItemStatus) || ["cancelled", "payment_failed", "cancellation_requested", "cancellation_approved"].includes(normalizedOrderStatus);
+            const isReturned = ["returned", "return_requested", "return_approved", "partially_returned", "refunded", "partially_refunded"].includes(normalizedItemStatus) || ["returned", "return_requested", "return_approved", "partially_returned", "refunded", "partially_refunded"].includes(normalizedOrderStatus);
+            const isOnTheWay = !isDelivered && !isCancelled && !isReturned; // anything else like processing, shipped, etc.
 
-            if (activeFilter === "return_requested") {
-              if (
-                ![
-                  "return_requested",
-                  "return_approved",
-                  "partially_returned",
-                  "returned",
-                  "refunded",
-                ].includes(normalizedItemStatus)
-              ) {
-                return false;
-              }
-            } else if (
-              normalizedItemStatus !== activeFilter &&
-              normalizedOrderStatus !== activeFilter
-            ) {
+            const matchesStatus = statusFilters.some(f => {
+              if (f === "delivered") return isDelivered;
+              if (f === "cancelled") return isCancelled;
+              if (f === "returned") return isReturned;
+              if (f === "on_the_way") return isOnTheWay;
               return false;
-            }
+            });
+
+            if (!matchesStatus) return false;
+          }
+
+          // Time Filtering
+          if (timeFilters.length > 0) {
+            const now = new Date();
+            const daysDiff = (now - orderDate) / (1000 * 60 * 60 * 24);
+            const orderYear = orderDate.getFullYear();
+            
+            const matchesTime = timeFilters.some(f => {
+              if (f === "last_30_days") return daysDiff <= 30;
+              if (f === String(currentYear)) return orderYear === currentYear;
+              if (f === String(currentYear - 1)) return orderYear === currentYear - 1;
+              if (f === String(currentYear - 2)) return orderYear === currentYear - 2;
+              if (f === "older") return orderYear < currentYear - 2;
+              return false;
+            });
+
+            if (!matchesTime) return false;
           }
 
           if (!term) return true;
@@ -116,7 +145,7 @@ export function useOrderList() {
           );
         });
     });
-  }, [activeFilter, allOrders, query]);
+  }, [statusFilters, timeFilters, allOrders, query, currentYear]);
 
   useEffect(() => {
     dispatch(fetchMyOrders());
@@ -125,11 +154,14 @@ export function useOrderList() {
   return {
     state,
     navigate,
-    activeFilter,
-    setActiveFilter,
+    statusFilters,
+    setStatusFilters,
+    timeFilters,
+    setTimeFilters,
     query,
     setQuery,
-    availableFilters,
+    availableStatusFilters,
+    availableTimeFilters,
     orderItemsList,
   };
 }

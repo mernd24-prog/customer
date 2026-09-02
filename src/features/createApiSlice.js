@@ -106,6 +106,27 @@ export function createApiSlice({
               state.entities = Object.fromEntries(
                 data.map((item, index) => [idOf(item) ?? index, item]),
               );
+            } else if (data?.orders && Array.isArray(data.orders)) {
+              state.list = data.orders;
+              state.current = data;
+              state.entities = Object.fromEntries(
+                data.orders.map((item, index) => [idOf(item) ?? index, item]),
+              );
+            } else if (idOf(data) !== undefined && idOf(data) !== null) {
+              state.current = data;
+              const keys = [
+                idOf(data),
+                data?.slug,
+                action.payload?.arg?.slug,
+                action.meta?.arg?.slug,
+                action.payload?.arg?.id,
+                action.meta?.arg?.id,
+                action.payload?.arg?.productId,
+                action.meta?.arg?.productId,
+              ].filter((key) => key !== undefined && key !== null);
+              keys.forEach((key) => {
+                state.entities[key] = data;
+              });
             } else if (
               Array.isArray(data?.items) ||
               Array.isArray(data?.results) ||
@@ -127,27 +148,8 @@ export function createApiSlice({
               state.entities = Object.fromEntries(
                 list.map((item, index) => [idOf(item) ?? index, item]),
               );
-            } else if (data?.orders && Array.isArray(data.orders)) {
-              state.list = data.orders;
-              state.current = data;
-              state.entities = Object.fromEntries(
-                data.orders.map((item, index) => [idOf(item) ?? index, item]),
-              );
             } else if (data !== undefined && data !== null) {
               state.current = data;
-              const keys = [
-                idOf(data),
-                data?.slug,
-                action.payload?.arg?.slug,
-                action.meta?.arg?.slug,
-                action.payload?.arg?.id,
-                action.meta?.arg?.id,
-                action.payload?.arg?.productId,
-                action.meta?.arg?.productId,
-              ].filter((key) => key !== undefined && key !== null);
-              keys.forEach((key) => {
-                state.entities[key] = data;
-              });
             }
           })
           .addCase(thunk.rejected, (state, action) => {

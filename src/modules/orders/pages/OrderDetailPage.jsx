@@ -203,15 +203,6 @@ export default function OrderDetailPage({ orderId }) {
                 ]}
               />
 
-              {["delivered", "fulfilled", "partially_returned"].includes(
-                status,
-              ) &&
-                !returnWindowOpen && (
-                  <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                    All eligible item return windows closed by{" "}
-                    {formatOrderDate(returnEligibleUntil)}.
-                  </p>
-                )}
             </section>
 
             <StickySidebarLayout
