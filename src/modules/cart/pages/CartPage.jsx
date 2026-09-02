@@ -125,6 +125,10 @@ export default function CartPage() {
         open={!!itemToRemove}
         title="Remove Item"
         description="Are you sure you want to remove this item from your cart?"
+        image={
+          (typeof itemToRemove === "object" ? itemToRemove?.image : null) ||
+          items.find((item) => item.id === itemToRemove || item === itemToRemove)?.image
+        }
         confirmLabel="Remove"
         cancelLabel="Cancel"
         onConfirm={() => {
@@ -220,9 +224,12 @@ export default function CartPage() {
 
                   {checkoutBlockedByStock && (
                     <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                      <p className="font-semibold">Out-of-stock items cannot proceed to checkout.</p>
+                      <p className="font-semibold">
+                        Out-of-stock items cannot proceed to checkout.
+                      </p>
                       <p className="mt-1 text-xs">
-                        Deselect, remove, or move to wishlist: {stockBlockedItems.map((item) => item.title).join(", ")}
+                        Deselect, remove, or move to wishlist:{" "}
+                        {stockBlockedItems.map((item) => item.title).join(", ")}
                       </p>
                     </div>
                   )}
@@ -246,9 +253,12 @@ export default function CartPage() {
                         formatMoney={formatMoney}
                         asNumber={toNum}
                         buttonText={checkoutButtonText}
-                        disabled={!selectedItems.length || checkoutBlockedByStock}
+                        disabled={
+                          !selectedItems.length || checkoutBlockedByStock
+                        }
                         onCheckout={() => {
-                          if (!selectedItems.length || checkoutBlockedByStock) return;
+                          if (!selectedItems.length || checkoutBlockedByStock)
+                            return;
 
                           window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
                           window.sessionStorage.setItem(
@@ -267,13 +277,16 @@ export default function CartPage() {
                     </div>
                   )}
 
-
-
                   {hasCartItems && (
                     <div className="flex items-center gap-3 ">
                       <OutlineSmallButton
                         to="/products"
-                        rightIcon={<ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />}
+                        rightIcon={
+                          <ArrowRight
+                            className="w-3.5 h-3.5"
+                            strokeWidth={2.5}
+                          />
+                        }
                         className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold transition-all duration-300 ease-in-out"
                       >
                         Continue Shopping
@@ -303,7 +316,8 @@ export default function CartPage() {
                       buttonText={checkoutButtonText}
                       disabled={!selectedItems.length || checkoutBlockedByStock}
                       onCheckout={() => {
-                        if (!selectedItems.length || checkoutBlockedByStock) return;
+                        if (!selectedItems.length || checkoutBlockedByStock)
+                          return;
 
                         window.sessionStorage.removeItem(BUY_NOW_STORAGE_KEY);
                         window.sessionStorage.setItem(
@@ -323,42 +337,6 @@ export default function CartPage() {
                 )
               }
             />
-
-            {/* RECENTLY VIEWED SECTION
-            {recentViewedItems && recentViewedItems.length > 0 && (
-              <div className="mt-8 lg:mt-16">
-                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between lg:mb-8">
-                  <div>
-                    <h2 className="text-xl font-bold text-[#3F4095] sm:text-2xl lg:text-[28px]">
-                      Recently Viewed
-                    </h2>
-                    <p className="mt-2 text-sm text-[#666] sm:text-[15px]">
-                      Multiple widgets available in the product designer
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3 ">
-                    <OutlineSmallButton
-                      to="/products"
-                      rightIcon={<ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />}
-                      className="xl:text-[18px] text-[14px] xl:font-bold lg:text-[16px] lg:font-semibold  transition-all duration-300 ease-in-out"
-                    >
-                      Browse All Products
-                    </OutlineSmallButton>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 lg:gap-6">
-                  {recentViewedItems.map((item) => (
-                    <ProductCard
-                      key={getProductId(item)}
-                      product={item}
-                      onAddToCart={addToCart}
-                      onWishlist={toggleWishlist}
-                      isWishlisted={isWishlisted(item)}
-                    />
-                  ))}
-                </div>
-              </div>
-            )} */}
           </ApiState>
         </div>
       </section>

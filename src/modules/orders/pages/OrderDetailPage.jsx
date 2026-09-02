@@ -123,7 +123,7 @@ export default function OrderDetailPage({ orderId }) {
                   {canCancelOrder(order) && hasCancellableQuantity && (
                     <Button
                       variant="secondary"
-                      className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-[#CE9F2D66] bg-[#FFFDF8] px-5 py-2.5 text-[#1B1D60] shadow-sm transition-all hover:bg-[#FFF9EA] hover:border-[#CE9F2D] active:scale-[0.98]"
+                      className="flex h-[46px] d sm:h-[48px] w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-[#CE9F2D66] bg-[#FFFDF8] px-5 py-2.5 text-[#1B1D60] shadow-sm transition-all hover:bg-[#FFF9EA] hover:border-[#CE9F2D] active:scale-[0.98]"
                       onClick={openCancellation}
                     >
                       <XCircle size={18} className="text-[#CE9F2D]" />
@@ -345,7 +345,15 @@ export default function OrderDetailPage({ orderId }) {
               : "You can cancel items before they are shipped.\nNo cancellation is processed before approval."}
             <br />
             <span className="text-xs mt-1 block">
-              Read our <Link to="/refund-policy" target="_blank" rel="noopener noreferrer" className="text-[#CE9F2D] hover:text-[#A96F14] hover:underline font-bold transition-colors">Cancellation Policy</Link>
+              Read our{" "}
+              <Link
+                to="/refund-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#CE9F2D] hover:text-[#A96F14] hover:underline font-bold transition-colors"
+              >
+                Cancellation Policy
+              </Link>
             </span>
           </span>
         }
