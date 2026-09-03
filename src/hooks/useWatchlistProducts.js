@@ -14,19 +14,39 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
     [wishlist],
   );
   const wishlistEntries = useMemo(
-    () => (Array.isArray(wishlist) ? wishlist : []).map(normalizeWishlistItem).filter((item) => item.productId),
+    () =>
+      (Array.isArray(wishlist) ? wishlist : [])
+        .map(normalizeWishlistItem)
+        .filter((item) => item.productId),
     [wishlist],
   );
   const productEntities = useSelector((state) => state.product.entities) || {};
   const allProducts = useSelector((state) => state.product.list) || [];
 
+  const knownProductById = useMemo(() => {
+    const entries = new Map();
+    Object.values(productEntities || {}).forEach((product) => {
+      const id = getProductId(product);
+      if (id) entries.set(String(id), product);
+    });
+    (Array.isArray(allProducts) ? allProducts : []).forEach((product) => {
+      const id = getProductId(product);
+      if (id && !entries.has(String(id))) entries.set(String(id), product);
+    });
+    (Array.isArray(fallback) ? fallback : []).forEach((product) => {
+      const id = getProductId(product);
+      if (id && !entries.has(String(id))) entries.set(String(id), product);
+    });
+    return entries;
+  }, [allProducts, fallback, productEntities]);
+
   const missingIds = useMemo(() => {
     return wishlistIds.filter(
       (id) =>
-        !productEntities[id] &&
+        !knownProductById.has(String(id)) &&
         !Object.prototype.hasOwnProperty.call(fetchedProducts, id),
     );
-  }, [wishlistIds, productEntities, fetchedProducts]);
+  }, [wishlistIds, knownProductById, fetchedProducts]);
 
   const isLoading = missingIds.length > 0;
 
@@ -73,7 +93,13 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
       return { ...product, selectedVariant, wishlistEntry: entry, wishlistKey: wishlistItemKey(entry) };
     };
     const matchedProducts = wishlistEntries
-      .map((entry) => decorate(productEntities[entry.productId] || fetchedProducts[entry.productId], entry))
+      .map((entry) =>
+        decorate(
+          knownProductById.get(String(entry.productId)) ||
+            fetchedProducts[entry.productId],
+          entry,
+        ),
+      )
       .filter(Boolean);
 
     if (matchedProducts.length === wishlistIds.length && matchedProducts.length > 0) {
@@ -105,7 +131,7 @@ export function useWatchlistProducts({ fallback = [] } = {}) {
   }, [
     wishlistIds,
     wishlistEntries,
-    productEntities,
+    knownProductById,
     fetchedProducts,
     allProducts,
     fallback,
