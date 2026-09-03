@@ -183,6 +183,11 @@ export function OrderPackageCard({
 
   const packageDocuments = (itemProps.downloadableDocuments || []).filter(
     (doc) => {
+      const isTaxOrReceipt = doc.type === "tax_invoice" || doc.type === "order_receipt";
+      if (isTaxOrReceipt && !isDelivered) {
+        return false;
+      }
+
       if (totalGroups === 1) {
         return true;
       }

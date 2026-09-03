@@ -286,7 +286,7 @@ export default function OrderListPage() {
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
                         placeholder="Search your orders here"
-                        className="h-12 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-9 text-base font-medium text-ink outline-none focus:outline-none"
+                        className="h-10 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-9 text-base font-medium text-ink outline-none focus:outline-none"
                       />
                       {Boolean(query) && (
                         <button
@@ -349,9 +349,9 @@ export default function OrderListPage() {
                   }
                   sections={[
                     {
-                      title: "ORDER STATUS",
+                      title: "Order Status",
                       defaultOpen: true,
-                      searchable: false,
+                      searchable: true,
                       content: (
                         <CheckboxListFilter
                           name="status"
@@ -362,9 +362,9 @@ export default function OrderListPage() {
                       ),
                     },
                     {
-                      title: "ORDER TIME",
+                      title: "Order Time",
                       defaultOpen: true,
-                      searchable: false,
+                      searchable: true,
                       content: (
                         <CheckboxListFilter
                           name="time"

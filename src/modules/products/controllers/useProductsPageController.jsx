@@ -29,10 +29,15 @@ export function useProductsPageController() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [items, setItems] = useState([]);
   const [productFacets, setProductFacets] = useState({});
-  const [pageInfo, setPageInfo] = useState({ page: 1, totalPages: 1, total: 0 });
+  const [pageInfo, setPageInfo] = useState({
+    page: 1,
+    totalPages: 1,
+    total: 0,
+  });
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [facetsContextKey, setFacetsContextKey] = useState("");
+  const [globalPriceLimits, setGlobalPriceLimits] = useState({ min: 0, max: 0 });
   const sentinelRef = useRef(null);
   const requestSequenceRef = useRef(0);
   const productState = useSelector((s) => s.product);
@@ -56,7 +61,9 @@ export function useProductsPageController() {
   const totalPages = pageInfo.totalPages || 1;
   const currentPage = pageInfo.page || 1;
   const effectiveSort = searchParams.get("sort") || hiddenParams.sort || "";
-  const pageSize = Number(searchParams.get("limit") || hiddenParams.limit || 12);
+  const pageSize = Number(
+    searchParams.get("limit") || hiddenParams.limit || 12,
+  );
 
   const availabilityCounts = useMemo(
     () => getAvailabilityCounts(products, productFacets),
@@ -75,7 +82,9 @@ export function useProductsPageController() {
 
   const facetBrandOptions = useMemo(
     () =>
-      getFacetList(productFacets, ["brand", "brands"]).map(normalizeFacetOption),
+      getFacetList(productFacets, ["brand", "brands"]).map(
+        normalizeFacetOption,
+      ),
     [productFacets],
   );
 
@@ -117,17 +126,21 @@ export function useProductsPageController() {
   );
 
   const currentContextKey = useMemo(() => {
-    const p = new URLSearchParams(searchParams);
-    p.delete("minPrice");
-    p.delete("maxPrice");
-    p.delete("page");
+    const p = new URLSearchParams();
+    if (searchParams.has("category"))
+      p.set("category", searchParams.get("category"));
+    if (searchParams.has("q")) p.set("q", searchParams.get("q"));
+    if (searchParams.has("collectionIds"))
+      p.set("collectionIds", searchParams.get("collectionIds"));
     return p.toString();
   }, [searchParams]);
 
-  const absolutePriceLimits = useMemo(
-    () => calculateAbsolutePriceLimits(products),
-    [products],
-  );
+  const absolutePriceLimits = useMemo(() => {
+    if (productFacets?.price_range?.min !== undefined && productFacets?.price_range?.max !== undefined) {
+      return { min: productFacets.price_range.min, max: productFacets.price_range.max };
+    }
+    return globalPriceLimits.max > 0 ? globalPriceLimits : calculateAbsolutePriceLimits(products);
+  }, [productFacets?.price_range, globalPriceLimits, products]);
 
   const categoryOptions = useMemo(() => {
     if (facetCategoryOptions.length) return facetCategoryOptions;
@@ -138,7 +151,7 @@ export function useProductsPageController() {
       .map((cat) => ({
         value: cat,
         label: capitalizeFirst(cat.replace(/-/g, " ")),
-        count: products.filter((p) => p.category === cat).length,
+        count: undefined,
       }));
   }, [facetCategoryOptions, products]);
 
@@ -151,7 +164,7 @@ export function useProductsPageController() {
       .map((brand) => ({
         value: brand,
         label: capitalizeFirst(brand),
-        count: products.filter((p) => p.brand === brand).length,
+        count: undefined,
       }));
   }, [facetBrandOptions, products]);
 
@@ -179,19 +192,25 @@ export function useProductsPageController() {
     return {
       page: Number(meta.page ?? meta.currentPage ?? 1) || 1,
       totalPages: Number(meta.totalPages ?? meta.pages ?? 1) || 1,
-      total: Number(meta.total ?? meta.count ?? fallbackItems.length) || fallbackItems.length,
+      total:
+        Number(meta.total ?? meta.count ?? fallbackItems.length) ||
+        fallbackItems.length,
     };
   }, []);
 
-  const mergeUniqueProducts = useCallback((currentItems = [], nextItems = []) => {
-    const seen = new Set();
-    return [...currentItems, ...nextItems].filter((product, index) => {
-      const key = product?._id || product?.id || product?.slug || `product-${index}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  }, []);
+  const mergeUniqueProducts = useCallback(
+    (currentItems = [], nextItems = []) => {
+      const seen = new Set();
+      return [...currentItems, ...nextItems].filter((product, index) => {
+        const key =
+          product?._id || product?.id || product?.slug || `product-${index}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    },
+    [],
+  );
 
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -206,6 +225,24 @@ export function useProductsPageController() {
         } else {
           next.delete(key);
         }
+        next.delete("page");
+        return next;
+      });
+    },
+    [setSearchParams],
+  );
+
+  const updateParams = useCallback(
+    (entries) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        entries.forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== "") {
+            next.set(key, value);
+          } else {
+            next.delete(key);
+          }
+        });
         next.delete("page");
         return next;
       });
@@ -261,32 +298,48 @@ export function useProductsPageController() {
     const params = { ...getParams(), page: 1, limit: pageSize };
     setIsLoadingMore(true);
 
-    dispatch(fetchProducts(params))
-      .unwrap()
-      .then((payload) => {
-        if (seq !== requestSequenceRef.current) return;
-        const list = getProductListFromResponse(payload);
-        const sorted = sortProducts(list, params.sort);
+    const timer = setTimeout(() => {
+      dispatch(fetchProducts(params))
+        .unwrap()
+        .then((payload) => {
+          if (seq !== requestSequenceRef.current) return;
+          const list = getProductListFromResponse(payload);
+          const sorted = sortProducts(list, params.sort);
 
-        const newContextKey = currentContextKey;
-        setItems(sorted);
-        setIsLoadingMore(false);
-        setFirstLoadDone(true);
-        setPageInfo(getPaginationMeta(payload, sorted));
+          const newContextKey = currentContextKey;
+          setItems(sorted);
+          setIsLoadingMore(false);
+          
+          setGlobalPriceLimits((prev) => {
+            if (prev.max === 0) return calculateAbsolutePriceLimits(sorted);
+            return prev;
+          });
+          
+          setFirstLoadDone(true);
+          setPageInfo(getPaginationMeta(payload, sorted));
 
-        if (newContextKey !== facetsContextKey) {
-          const facets =
-            payload?.data?.facets || payload?.facets || {};
-          setProductFacets(facets);
-          setFacetsContextKey(newContextKey);
-        }
-      })
-      .catch(() => {
-        if (seq !== requestSequenceRef.current) return;
-        setIsLoadingMore(false);
-        setFirstLoadDone(true);
-      });
-  }, [dispatch, searchParams, getParams, currentContextKey, getPaginationMeta, pageSize]);
+          if (newContextKey !== facetsContextKey) {
+            const facets = payload?.data?.facets || payload?.facets || {};
+            setProductFacets(facets);
+            setFacetsContextKey(newContextKey);
+          }
+        })
+        .catch(() => {
+          if (seq !== requestSequenceRef.current) return;
+          setIsLoadingMore(false);
+          setFirstLoadDone(true);
+        });
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [
+    dispatch,
+    searchParams,
+    getParams,
+    currentContextKey,
+    getPaginationMeta,
+    pageSize,
+  ]);
 
   const loadNextPage = useCallback(() => {
     if (isLoadingMore || !firstLoadDone || currentPage >= totalPages) return;
@@ -340,6 +393,7 @@ export function useProductsPageController() {
   const handleClearFilters = useCallback(() => {
     setSearchParams((prev) => {
       const next = new URLSearchParams();
+      if (prev.has("category")) next.set("category", prev.get("category"));
       if (prev.has("q")) next.set("q", prev.get("q"));
       if (prev.has("collectionIds"))
         next.set("collectionIds", prev.get("collectionIds"));
@@ -356,9 +410,12 @@ export function useProductsPageController() {
           next.delete("minPrice");
           next.delete("maxPrice");
         } else if (filter?.type && filter.value !== undefined) {
-          const paramKey = filter.type === "attribute" ? filter.attributeKey : filter.type;
+          const paramKey =
+            filter.type === "attribute" ? filter.attributeKey : filter.type;
           const currentValues = parseMultiValue(next.get(paramKey));
-          const nextValues = currentValues.filter((v) => String(v) !== String(filter.value));
+          const nextValues = currentValues.filter(
+            (v) => String(v) !== String(filter.value),
+          );
           if (nextValues.length > 0) {
             next.set(paramKey, serializeMultiValue(nextValues));
           } else {
@@ -377,13 +434,19 @@ export function useProductsPageController() {
 
   const activeFilters = getActiveFilters(searchParams, attributeFacets);
 
-  const clearFiltersAction = useMemo(() => 
-    getClearFiltersAction(activeFilters, searchParams, handleClearFilters, ["category", "categoryId", "q"]),
-  [activeFilters, searchParams, handleClearFilters]);
+  const clearFiltersAction = useMemo(
+    () =>
+      getClearFiltersAction(activeFilters, searchParams, handleClearFilters, [
+        "category",
+        "categoryId",
+        "q",
+      ]),
+    [activeFilters, searchParams, handleClearFilters],
+  );
 
   const isSearchMode = Boolean(searchParams.get("q"));
   const pageTitle = isSearchMode
-    ? "Search: \"" + searchParams.get("q") + "\""
+    ? 'Search: "' + searchParams.get("q") + '"'
     : searchParams.get("category")
       ? searchParams.get("category") + " Products"
       : "All Products";
@@ -399,6 +462,7 @@ export function useProductsPageController() {
     effectiveRatingCounts,
     searchParams,
     updateParam,
+    updateParams,
     handlePriceChange,
   });
 

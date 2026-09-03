@@ -20,6 +20,7 @@ export function getFilterSections({
   effectiveRatingCounts,
   searchParams,
   updateParam,
+  updateParams,
   handlePriceChange,
 }) {
   const selectedBrands = parseMultiValue(searchParams.get("brand"));
