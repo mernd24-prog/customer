@@ -15,12 +15,14 @@ import {
   serializeMultiValue,
   getFacetList,
   normalizeFacetOption,
+  formatCategoryOptionsForTree,
+  getPagination,
 } from "../../../utils/filterUtils";
-import { getClearFiltersAction } from "../../../utils/filterUtils";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 import { getFilterSections } from "./getFilterSections";
-import { getActiveFilters } from "./getActiveFilters";
 import { decodeProductFilterToken } from "../utils/productFilterToken";
+import { useCatalogFilters } from "./useCatalogFilters";
+import { getRootCategories } from "../../../utils/pages/categoryUtils";
 
 export function useProductsPageController() {
   const dispatch = useDispatch();
@@ -37,12 +39,19 @@ export function useProductsPageController() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [facetsContextKey, setFacetsContextKey] = useState("");
-  const [globalPriceLimits, setGlobalPriceLimits] = useState({ min: 0, max: 0 });
+  const [globalPriceLimits, setGlobalPriceLimits] = useState({
+    min: 0,
+    max: 0,
+  });
   const sentinelRef = useRef(null);
   const requestSequenceRef = useRef(0);
   const productState = useSelector((s) => s.product);
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
+  const catalogCategoryList =
+    useSelector(
+      (state) => state.catalog?.list || state.catalog?.globalCategories,
+    ) || [];
   const hiddenParams = useMemo(
     () => decodeProductFilterToken(searchParams.get("f")),
     [searchParams],
@@ -136,10 +145,18 @@ export function useProductsPageController() {
   }, [searchParams]);
 
   const absolutePriceLimits = useMemo(() => {
-    if (productFacets?.price_range?.min !== undefined && productFacets?.price_range?.max !== undefined) {
-      return { min: productFacets.price_range.min, max: productFacets.price_range.max };
+    if (
+      productFacets?.price_range?.min !== undefined &&
+      productFacets?.price_range?.max !== undefined
+    ) {
+      return {
+        min: productFacets.price_range.min,
+        max: productFacets.price_range.max,
+      };
     }
-    return globalPriceLimits.max > 0 ? globalPriceLimits : calculateAbsolutePriceLimits(products);
+    return globalPriceLimits.max > 0
+      ? globalPriceLimits
+      : calculateAbsolutePriceLimits(products);
   }, [productFacets?.price_range, globalPriceLimits, products]);
 
   const categoryOptions = useMemo(() => {
@@ -181,23 +198,6 @@ export function useProductsPageController() {
     return params;
   }, [hiddenParams, searchParams]);
 
-  const getPaginationMeta = useCallback((payload = {}, fallbackItems = []) => {
-    const meta =
-      payload?.meta?.pagination ||
-      payload?.data?.meta?.pagination ||
-      payload?.data?.pagination ||
-      payload?.meta ||
-      payload?.pagination ||
-      {};
-    return {
-      page: Number(meta.page ?? meta.currentPage ?? 1) || 1,
-      totalPages: Number(meta.totalPages ?? meta.pages ?? 1) || 1,
-      total:
-        Number(meta.total ?? meta.count ?? fallbackItems.length) ||
-        fallbackItems.length,
-    };
-  }, []);
-
   const mergeUniqueProducts = useCallback(
     (currentItems = [], nextItems = []) => {
       const seen = new Set();
@@ -212,58 +212,19 @@ export function useProductsPageController() {
     [],
   );
 
-  const scrollToTop = useCallback(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
-
-  const updateParam = useCallback(
-    (key, value) => {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        if (value) {
-          next.set(key, value);
-        } else {
-          next.delete(key);
-        }
-        next.delete("page");
-        return next;
-      });
-    },
-    [setSearchParams],
-  );
-
-  const updateParams = useCallback(
-    (entries) => {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        entries.forEach(([key, value]) => {
-          if (value !== undefined && value !== null && value !== "") {
-            next.set(key, value);
-          } else {
-            next.delete(key);
-          }
-        });
-        next.delete("page");
-        return next;
-      });
-    },
-    [setSearchParams],
-  );
-
-  const handlePriceChange = useCallback(
-    (min, max) => {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        if (min != null) next.set("minPrice", String(min));
-        else next.delete("minPrice");
-        if (max != null) next.set("maxPrice", String(max));
-        else next.delete("maxPrice");
-        next.delete("page");
-        return next;
-      });
-    },
-    [setSearchParams],
-  );
+  const {
+    updateParam,
+    updateParams,
+    handlePriceChange,
+    removeFilter,
+    handleClearFilters,
+    activeFilters,
+    clearFiltersAction,
+  } = useCatalogFilters({
+    attributeFacets,
+    absolutePriceLimits,
+    clearExceptions: ["q", "collectionIds", "f"],
+  });
 
   const handleFilterChange = useCallback(
     (key, value) => updateParam(key, value),
@@ -281,16 +242,8 @@ export function useProductsPageController() {
   );
 
   const clearAllFilters = useCallback(() => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams();
-      if (prev.has("category")) next.set("category", prev.get("category"));
-      if (prev.has("q")) next.set("q", prev.get("q"));
-      if (prev.has("collectionIds"))
-        next.set("collectionIds", prev.get("collectionIds"));
-      return next;
-    });
-    scrollToTop();
-  }, [scrollToTop, setSearchParams]);
+    handleClearFilters();
+  }, [handleClearFilters]);
 
   // Fetch products whenever search params change
   useEffect(() => {
@@ -309,14 +262,14 @@ export function useProductsPageController() {
           const newContextKey = currentContextKey;
           setItems(sorted);
           setIsLoadingMore(false);
-          
+
           setGlobalPriceLimits((prev) => {
             if (prev.max === 0) return calculateAbsolutePriceLimits(sorted);
             return prev;
           });
-          
+
           setFirstLoadDone(true);
-          setPageInfo(getPaginationMeta(payload, sorted));
+          setPageInfo(getPagination(payload, sorted));
 
           if (newContextKey !== facetsContextKey) {
             const facets = payload?.data?.facets || payload?.facets || {};
@@ -332,14 +285,7 @@ export function useProductsPageController() {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [
-    dispatch,
-    searchParams,
-    getParams,
-    currentContextKey,
-    getPaginationMeta,
-    pageSize,
-  ]);
+  }, [dispatch, searchParams, getParams, currentContextKey, pageSize]);
 
   const loadNextPage = useCallback(() => {
     if (isLoadingMore || !firstLoadDone || currentPage >= totalPages) return;
@@ -355,7 +301,7 @@ export function useProductsPageController() {
         const list = getProductListFromResponse(payload);
         const sorted = sortProducts(list, params.sort);
         setItems((prev) => mergeUniqueProducts(prev, sorted));
-        setPageInfo(getPaginationMeta(payload, sorted));
+        setPageInfo(getPagination(payload, sorted));
         setIsLoadingMore(false);
       })
       .catch(() => {
@@ -366,7 +312,6 @@ export function useProductsPageController() {
     currentPage,
     dispatch,
     firstLoadDone,
-    getPaginationMeta,
     getParams,
     isLoadingMore,
     mergeUniqueProducts,
@@ -389,60 +334,6 @@ export function useProductsPageController() {
     observer.observe(node);
     return () => observer.disconnect();
   }, [currentPage, loadNextPage, totalPages]);
-
-  const handleClearFilters = useCallback(() => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams();
-      if (prev.has("category")) next.set("category", prev.get("category"));
-      if (prev.has("q")) next.set("q", prev.get("q"));
-      if (prev.has("collectionIds"))
-        next.set("collectionIds", prev.get("collectionIds"));
-      return next;
-    });
-    scrollToTop();
-  }, [scrollToTop, setSearchParams]);
-
-  const removeFilter = useCallback(
-    (key, filter) => {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        if (filter?.type === "price" || key === "price") {
-          next.delete("minPrice");
-          next.delete("maxPrice");
-        } else if (filter?.type && filter.value !== undefined) {
-          const paramKey =
-            filter.type === "attribute" ? filter.attributeKey : filter.type;
-          const currentValues = parseMultiValue(next.get(paramKey));
-          const nextValues = currentValues.filter(
-            (v) => String(v) !== String(filter.value),
-          );
-          if (nextValues.length > 0) {
-            next.set(paramKey, serializeMultiValue(nextValues));
-          } else {
-            next.delete(paramKey);
-          }
-        } else {
-          next.delete(key);
-        }
-        next.delete("page");
-        return next;
-      });
-      scrollToTop();
-    },
-    [scrollToTop, setSearchParams],
-  );
-
-  const activeFilters = getActiveFilters(searchParams, attributeFacets);
-
-  const clearFiltersAction = useMemo(
-    () =>
-      getClearFiltersAction(activeFilters, searchParams, handleClearFilters, [
-        "category",
-        "categoryId",
-        "q",
-      ]),
-    [activeFilters, searchParams, handleClearFilters],
-  );
 
   const isSearchMode = Boolean(searchParams.get("q"));
   const pageTitle = isSearchMode

@@ -14,6 +14,7 @@ import {
   getProductTitle,
   normalizeOrderSearchText,
 } from "../../../utils/pages/orderUtils";
+import { getPagination } from "../../../utils/filterUtils";
 
 export function useOrderList() {
   const dispatch = useDispatch();
@@ -22,6 +23,9 @@ export function useOrderList() {
   const [statusFilters, setStatusFilters] = useState([]);
   const [timeFilters, setTimeFilters] = useState([]);
   const [query, setQuery] = useState("");
+  const [pageSize, setPageSize] = useState(2);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalOrdersState, setTotalOrdersState] = useState(0);
 
   const allOrders = state.list.length
     ? state.list
@@ -157,7 +161,15 @@ export function useOrderList() {
             if (!matchesTime) return false;
           }
 
-          if (!term) return true;
+          if (!query) return true;
+          const term = query.toLowerCase();
+          const normalizedTerm = normalizeOrderSearchText(term);
+          const id = String(order.id || "").toLowerCase();
+          const apiOrderId = String(order.api_order_id || "").toLowerCase();
+          const orderNumber = String(order.order_number || "").toLowerCase();
+          const formattedId = `ord-${order.id}`.toLowerCase();
+          const visibleOrderIdText = (order.order_number || `ORD-${order.id}`).toLowerCase();
+
           const itemText = getProductTitle(item).toLowerCase();
           const normalizedOrderText = normalizeOrderSearchText(
             [
@@ -184,10 +196,25 @@ export function useOrderList() {
           );
         });
     });
-  }, [statusFilters, timeFilters, allOrders, query, currentYear]);
+
+    return result.sort((a, b) => b.orderDate - a.orderDate);
+  }, [allOrders, currentYear, statusFilters, timeFilters, query]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilters, timeFilters, query, pageSize]);
+
+  const totalOrders = orderItemsList.length;
+  const totalPages = Math.max(1, Math.ceil(totalOrders / pageSize));
+  
+  const paginatedOrders = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return orderItemsList.slice(start, start + pageSize);
+  }, [orderItemsList, currentPage, pageSize]);
 
   useEffect(() => {
-    dispatch(fetchMyOrders());
+    dispatch(fetchMyOrders({ params: { limit: 200 } }));
   }, [dispatch]);
 
   return {
@@ -201,6 +228,12 @@ export function useOrderList() {
     setQuery,
     availableStatusFilters,
     availableTimeFilters,
-    orderItemsList,
+    orderItemsList: paginatedOrders,
+    totalOrders,
+    pageSize,
+    setPageSize,
+    currentPage,
+    setCurrentPage,
+    totalPages,
   };
 }

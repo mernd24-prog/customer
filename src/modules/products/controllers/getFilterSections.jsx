@@ -10,14 +10,15 @@ import { parseMultiValue, serializeMultiValue } from "../../../utils/filterUtils
 import { capitalizeFirst } from "../../../utils/stringUtils";
 
 export function getFilterSections({
-  categoryOptions,
-  brandOptions,
-  collectionOptions,
-  productFacets,
-  attributeFacets,
-  availabilityCounts,
-  absolutePriceLimits,
-  effectiveRatingCounts,
+  categoryOptions = [],
+  brandOptions = [],
+  collectionOptions = [],
+  tagOptions = [],
+  productFacets = {},
+  attributeFacets = [],
+  availabilityCounts = {},
+  absolutePriceLimits = { min: 0, max: 0 },
+  effectiveRatingCounts = {},
   searchParams,
   updateParam,
   updateParams,
@@ -72,21 +73,21 @@ export function getFilterSections({
         />
       ),
     },
-    // tagOptions.length > 0 && {
-    // key: "tags",
-    // title: "Tags",
-    // content: (
-    // <OptionFilter
-    // name="tags"
-    // options={tagOptions}
-    // selected={parseMultiValue(searchParams.get("tags"))}
-    // multiple
-    // onChange={(values) =>
-    // updateParam("tags", serializeMultiValue(values))
-    // }
-    // />
-    // ),
-    // },
+    tagOptions.length > 0 && {
+      key: "tags",
+      title: "Tags",
+      content: (
+        <OptionFilter
+          name="tags"
+          options={tagOptions}
+          selected={parseMultiValue(searchParams.get("tags"))}
+          multiple
+          onChange={(values) =>
+            updateParam("tags", serializeMultiValue(values))
+          }
+        />
+      ),
+    },
     Object.values(productFacets.merchandising || {}).some(
       (count) => Number(count) > 0,
     ) && {

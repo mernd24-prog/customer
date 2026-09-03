@@ -7,9 +7,20 @@ import {
   OptionFilter,
   PriceRangeFilter,
 } from "../../../modules/products/components";
-import { useCartActions, useWishlistActions } from "../../../modules/products/controllers/actions";
+import { useCatalogFilters } from "../../../modules/products/controllers/useCatalogFilters";
+import {
+  useStickyFacet,
+  useStickyAttributes,
+} from "../../../modules/products/controllers/useFacetCache";
+import {
+  useCartActions,
+  useWishlistActions,
+} from "../../../modules/products/controllers/actions";
 import { fetchProducts } from "../../../modules/products/slices/productSlice";
-import { fetchCategoryByKey, fetchCategories } from "../../../features/catalog/catalogSlice";
+import {
+  fetchCategoryByKey,
+  fetchCategories,
+} from "../../../features/catalog/catalogSlice";
 import {
   isProductInStock,
   getProductPrice,
@@ -26,8 +37,13 @@ import {
   getCategoryKey,
   getMatchingCategoryKeys,
 } from "../../../utils/pages/categoryUtils";
-import { getClearFiltersAction } from "../../../utils/filterUtils";
+import {
+  getClearFiltersAction,
+  formatCategoryOptionsForTree,
+  flattenCategoryList,
+} from "../../../utils/filterUtils";
 import { capitalizeFirst } from "../../../utils/stringUtils";
+import { getFilterSections } from "../../../modules/products/controllers/getFilterSections";
 
 export default function useCategory() {
   const { categoryKey } = useParams();
@@ -56,12 +72,21 @@ export default function useCategory() {
   const didInitialProductsLoadRef = useRef(false);
   const productLoadTimerRef = useRef(null);
   const inFlightProductLoadKeyRef = useRef("");
+  const catalogList =
+    useSelector(
+      (state) => state.catalog?.list || state.catalog?.globalCategories,
+    ) || [];
+  const catalogCategoryList = useMemo(
+    () => flattenCategoryList(catalogList),
+    [catalogList],
+  );
   const productState = useSelector((s) => s.product);
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
-  const catalogCategoryList =
-    useSelector((state) => state.catalog?.globalCategories || state.catalog?.list) || [];
-  const categoryTree = useMemo(() => buildCategoryTree(catalogCategoryList), [catalogCategoryList]);
+  const categoryTree = useMemo(
+    () => buildCategoryTree(catalogCategoryList),
+    [catalogCategoryList],
+  );
 
   const brandContextKey = useMemo(() => {
     const p = new URLSearchParams(searchParams);
@@ -70,38 +95,30 @@ export default function useCategory() {
     return `${categoryKey}_${p.toString()}`;
   }, [searchParams, categoryKey]);
 
-  const brandOptionsRef = useRef({ context: "", options: [] });
-  const allBrands = useMemo(() => {
-    const rawBrands = productFacets?.brands || [];
-    const currentSelected = parseMultiValue(searchParams.get("brand"));
-
-    if (brandContextKey !== brandOptionsRef.current.context || currentSelected.length === 0) {
-      brandOptionsRef.current = {
-        context: brandContextKey,
-        options: rawBrands,
-      };
-    }
-
-    if (currentSelected.length > 0 && brandOptionsRef.current.options.length > 0) {
-      const mergedMap = new Map();
-      brandOptionsRef.current.options.forEach((opt) => mergedMap.set(opt.value, { ...opt }));
-      rawBrands.forEach((opt) => mergedMap.set(opt.value, opt));
-      return Array.from(mergedMap.values());
-    }
-
-    return brandOptionsRef.current.options;
-  }, [productFacets?.brands, searchParams, brandContextKey]);
+  const allBrands = useStickyFacet(
+    productFacets?.brands || [],
+    parseMultiValue(searchParams.get("brand")),
+    brandContextKey,
+  );
 
   const products = useMemo(() => {
     if (!categoryKey) return items;
-    const targetCats = [String(categoryKey).toLowerCase().replace(/[^a-z0-9]/g, "")];
+    const targetCats = [
+      String(categoryKey)
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, ""),
+    ];
     const validKeys = getMatchingCategoryKeys(targetCats, categoryTree);
     const sortKey = searchParams.get("sort") || "";
 
     const filtered = items.filter((p) => {
       const cat = p.categoryId || p.category;
       if (!cat) return false;
-      const catStr = String(typeof cat === "object" ? cat.slug || cat.key || cat.id || cat.name : cat)
+      const catStr = String(
+        typeof cat === "object"
+          ? cat.slug || cat.key || cat.id || cat.name
+          : cat,
+      )
         .toLowerCase()
         .replace(/[^a-z0-9]/g, "");
 
@@ -110,7 +127,10 @@ export default function useCategory() {
       }
 
       return targetCats.some(
-        (targetCat) => catStr === targetCat || catStr.includes(targetCat) || targetCat.includes(catStr),
+        (targetCat) =>
+          catStr === targetCat ||
+          catStr.includes(targetCat) ||
+          targetCat.includes(catStr),
       );
     });
 
@@ -119,7 +139,7 @@ export default function useCategory() {
 
   const availabilityCounts = useMemo(
     () => getAvailabilityCounts(products, productFacets),
-    [products, productFacets]
+    [products, productFacets],
   );
 
   const attributesContextKey = useMemo(() => {
@@ -131,40 +151,14 @@ export default function useCategory() {
     return `${categoryKey}_${p.toString()}`;
   }, [searchParams, categoryKey]);
 
-  const attributesOptionsRef = useRef({ context: "", attributes: [] });
-  const allAttributes = useMemo(() => {
-    const rawAttributes = productFacets?.attributes || [];
-    const hasAnyAttrSelected = Array.from(searchParams.keys()).some((k) => k.startsWith("attr_"));
-
-    if (attributesContextKey !== attributesOptionsRef.current.context || !hasAnyAttrSelected) {
-      attributesOptionsRef.current = {
-        context: attributesContextKey,
-        attributes: rawAttributes,
-      };
-    }
-
-    if (hasAnyAttrSelected && attributesOptionsRef.current.attributes.length > 0) {
-      const mergedAttributes = attributesOptionsRef.current.attributes.map((cachedAttr) => {
-        const rawAttr = rawAttributes.find((ra) => ra.key === cachedAttr.key);
-        if (!rawAttr) return cachedAttr;
-        const mergedValuesMap = new Map();
-        (cachedAttr.values || []).forEach((v) => mergedValuesMap.set(v.value, { ...v }));
-        (rawAttr.values || []).forEach((v) => mergedValuesMap.set(v.value, v));
-        return {
-          ...cachedAttr,
-          values: Array.from(mergedValuesMap.values()),
-        };
-      });
-      rawAttributes.forEach((rawAttr) => {
-        if (!mergedAttributes.find((ma) => ma.key === rawAttr.key)) {
-          mergedAttributes.push(rawAttr);
-        }
-      });
-      return mergedAttributes;
-    }
-
-    return attributesOptionsRef.current.attributes;
-  }, [productFacets?.attributes, searchParams, attributesContextKey]);
+  const hasAnyAttrSelected = Array.from(searchParams.keys()).some((k) =>
+    k.startsWith("attr_"),
+  );
+  const allAttributes = useStickyAttributes(
+    productFacets?.attributes || [],
+    hasAnyAttrSelected,
+    attributesContextKey,
+  );
 
   const filterableAttributes = useMemo(
     () =>
@@ -190,9 +184,14 @@ export default function useCategory() {
 
   const attributeCountMaps = useMemo(() => {
     return filterableAttributes.reduce((maps, attribute) => {
-      const facet = (allAttributes || []).find((item) => String(item.key) === String(attribute.key));
+      const facet = (allAttributes || []).find(
+        (item) => String(item.key) === String(attribute.key),
+      );
       maps[attribute.key] = Object.fromEntries(
-        (facet?.values || []).map((option) => [String(option.value), Number(option.count || 0)]),
+        (facet?.values || []).map((option) => [
+          String(option.value),
+          Number(option.count || 0),
+        ]),
       );
       return maps;
     }, {});
@@ -215,15 +214,20 @@ export default function useCategory() {
   useEffect(() => {
     if (currentContextKey !== facetsContextKey) return;
 
-    const { min: currentMin, max: currentMax } = calculateAbsolutePriceLimits(productFacets, products);
+    const { min: currentMin, max: currentMax } = calculateAbsolutePriceLimits(
+      productFacets,
+      products,
+    );
 
     if (currentMin != null && currentMax != null) {
       setAbsolutePriceLimits((prev) => {
         if (prev.key !== currentContextKey) {
           return { min: currentMin, max: currentMax, key: currentContextKey };
         }
-        const newMin = prev.min == null ? currentMin : Math.min(prev.min, currentMin);
-        const newMax = prev.max == null ? currentMax : Math.max(prev.max, currentMax);
+        const newMin =
+          prev.min == null ? currentMin : Math.min(prev.min, currentMin);
+        const newMax =
+          prev.max == null ? currentMax : Math.max(prev.max, currentMax);
 
         if (newMin !== prev.min || newMax !== prev.max) {
           return { min: newMin, max: newMax, key: currentContextKey };
@@ -247,7 +251,7 @@ export default function useCategory() {
   const getParams = useCallback(
     (pageOverride) => {
       const params = {
-        category: categoryKey,
+        category: searchParams.get("category") || categoryKey,
         brand: searchParams.get("brand") || undefined,
         minPrice: searchParams.get("minPrice") || undefined,
         maxPrice: searchParams.get("maxPrice") || undefined,
@@ -272,13 +276,17 @@ export default function useCategory() {
       const loadKey = JSON.stringify({ params, append });
       if (!append && inFlightProductLoadKeyRef.current === loadKey) return [];
       if (!append) inFlightProductLoadKeyRef.current = loadKey;
-      const requestSequence = append ? requestSequenceRef.current : ++requestSequenceRef.current;
+      const requestSequence = append
+        ? requestSequenceRef.current
+        : ++requestSequenceRef.current;
       if (append) setIsLoadingMore(true);
       try {
         const result = await dispatch(fetchProducts(params)).unwrap();
         if (requestSequence !== requestSequenceRef.current) return [];
         const data = result?.data;
-        let list = Array.isArray(data) ? data : data?.products || data?.items || data?.list || [];
+        let list = Array.isArray(data)
+          ? data
+          : data?.products || data?.items || data?.list || [];
 
         const p = new URLSearchParams(searchParams);
         p.delete("minPrice");
@@ -324,13 +332,22 @@ export default function useCategory() {
     }, delay);
 
     return () => {
-      if (productLoadTimerRef.current) clearTimeout(productLoadTimerRef.current);
+      if (productLoadTimerRef.current)
+        clearTimeout(productLoadTimerRef.current);
     };
   }, [loadProducts]);
 
   useEffect(() => {
     if (!categoryData) return;
-    const globalFilterKeys = new Set(["brand", "minPrice", "maxPrice", "inStock", "outOfStock", "sort", "limit"]);
+    const globalFilterKeys = new Set([
+      "brand",
+      "minPrice",
+      "maxPrice",
+      "inStock",
+      "outOfStock",
+      "sort",
+      "limit",
+    ]);
     let changed = false;
 
     const currentParams = new URLSearchParams(searchParams);
@@ -376,14 +393,18 @@ export default function useCategory() {
         dispatch(fetchCategories({ parentKey: categoryKey, limit: 200 }))
           .then((subAction) => {
             const subData = subAction?.payload?.data;
-            const subs = Array.isArray(subData) ? subData : subData?.items || subData?.list || [];
+            const subs = Array.isArray(subData)
+              ? subData
+              : subData?.items || subData?.list || [];
             if (!subs.length && d?.parentKey) {
               dispatch(fetchCategoryByKey({ categoryKey: d.parentKey }))
                 .unwrap()
                 .then((parentResult) => {
                   const parent = parentResult?.data || parentResult;
                   setSidebarCategory(parent || d);
-                  return dispatch(fetchCategories({ parentKey: d.parentKey, limit: 200 }));
+                  return dispatch(
+                    fetchCategories({ parentKey: d.parentKey, limit: 200 }),
+                  );
                 })
                 .then((siblingAction) => {
                   const siblingData = siblingAction?.payload?.data;
@@ -402,7 +423,9 @@ export default function useCategory() {
             setSidebarCategory(d);
             setSubCategories(subs);
             if (subs.length) {
-              setCategoryData((prev) => (prev ? { ...prev, children: subs } : prev));
+              setCategoryData((prev) =>
+                prev ? { ...prev, children: subs } : prev,
+              );
             }
           })
           .catch(() => {});
@@ -413,7 +436,13 @@ export default function useCategory() {
   }, [dispatch, categoryKey]);
 
   useEffect(() => {
-    if (!sentinelRef.current || !firstLoadDone || productState.loading || isLoadingMore) return undefined;
+    if (
+      !sentinelRef.current ||
+      !firstLoadDone ||
+      productState.loading ||
+      isLoadingMore
+    )
+      return undefined;
     if (currentPage >= totalPages) return undefined;
     const observer = new IntersectionObserver(
       (entries) => {
@@ -424,91 +453,34 @@ export default function useCategory() {
     );
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
-  }, [currentPage, totalPages, firstLoadDone, loadProducts, productState.loading, isLoadingMore]);
+  }, [
+    currentPage,
+    totalPages,
+    firstLoadDone,
+    loadProducts,
+    productState.loading,
+    isLoadingMore,
+  ]);
 
-  const updateParam = useCallback(
-    (key, value) => {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        if (value == null || value === "") next.delete(key);
-        else next.set(key, value);
-        next.delete("page");
-        return next;
-      });
-      scrollToResultsTop();
-    },
-    [scrollToResultsTop, setSearchParams],
-  );
+  const {
+    updateParam,
+    updateParams,
+    handlePriceChange,
+    removeFilter,
+    handleClearFilters,
+    activeFilters: defaultActiveFilters,
+  } = useCatalogFilters({
+    attributeFacets: filterableAttributes,
+    absolutePriceLimits: priceLimits,
+    clearExceptions: [],
+  });
 
-  const updateParams = useCallback(
-    (entries) => {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        entries.forEach(([key, value]) => {
-          if (value == null || value === "") next.delete(key);
-          else next.set(key, value);
-        });
-        next.delete("page");
-        return next;
-      });
-      scrollToResultsTop();
-    },
-    [scrollToResultsTop, setSearchParams],
-  );
-
-  const handlePriceChange = useCallback(
-    ({ minPrice, maxPrice }) => {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        if (minPrice) next.set("minPrice", minPrice);
-        else next.delete("minPrice");
-        if (maxPrice) next.set("maxPrice", maxPrice);
-        else next.delete("maxPrice");
-        next.delete("page");
-        return next;
-      });
-      scrollToResultsTop();
-    },
-    [scrollToResultsTop, setSearchParams],
-  );
-
-  const removeFilter = useCallback(
-    (key, filter) => {
-      if (key === "category" && filter?.href) {
-        navigate(filter.href);
-        return;
-      }
-
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
-        if (key === "price") {
-          next.delete("minPrice");
-          next.delete("maxPrice");
-        } else if (filter?.groupKey) {
-          if (filter.value === undefined) {
-            next.delete(filter.groupKey);
-          } else {
-            const nextValues = parseMultiValue(next.get(filter.groupKey)).filter((value) => value !== filter.value);
-            const serialized = serializeMultiValue(nextValues);
-            if (serialized) next.set(filter.groupKey, serialized);
-            else next.delete(filter.groupKey);
-          }
-        } else next.delete(key);
-        next.delete("page");
-        return next;
-      });
-      scrollToResultsTop();
-    },
-    [navigate, scrollToResultsTop, setSearchParams],
-  );
-
-  const handleClearFilters = useCallback(() => {
-    setSearchParams(new URLSearchParams());
-    scrollToResultsTop();
-  }, [scrollToResultsTop, setSearchParams]);
-
-  const categoryTitle = categoryData?.title || categoryData?.name || (categoryKey || "").replace(/-/g, " ");
-  const sidebarCategoryTitle = sidebarCategory?.title || sidebarCategory?.name || categoryTitle;
+  const categoryTitle =
+    categoryData?.title ||
+    categoryData?.name ||
+    (categoryKey || "").replace(/-/g, " ");
+  const sidebarCategoryTitle =
+    sidebarCategory?.title || sidebarCategory?.name || categoryTitle;
   const categoryDesc = categoryData?.description;
   const isRootCategory =
     sidebarCategory?.parentKey === null ||
@@ -522,10 +494,14 @@ export default function useCategory() {
   const visibleSubCategories = subCategories.filter((category) =>
     visibleCategoryKeys.has(String(getCategoryKey(category))),
   );
-  const isInitialLoading = (productState.loading && !products.length) || (!firstLoadDone && !products.length);
+  const isInitialLoading =
+    (productState.loading && !products.length) ||
+    (!firstLoadDone && !products.length);
 
-  const showSubCategoryStrip = isRootCategory && (visibleSubCategories.length > 0 || isInitialLoading);
-  const showCategorySidebar = !isRootCategory && visibleSubCategories.length > 0;
+  const showSubCategoryStrip =
+    isRootCategory && (visibleSubCategories.length > 0 || isInitialLoading);
+  const showCategorySidebar =
+    !isRootCategory && visibleSubCategories.length > 0;
   const categoryFilter = useMemo(() => {
     if (!categoryData || isRootCategory) return null;
     const parentKey =
@@ -538,22 +514,15 @@ export default function useCategory() {
       label: getCategoryLabel(categoryData) || categoryTitle,
       href: parentKey ? CUSTOMER_ROUTES.category(parentKey) : "/products",
     };
-  }, [categoryData, categoryKey, categoryTitle, isRootCategory, sidebarCategory]);
+  }, [
+    categoryData,
+    categoryKey,
+    categoryTitle,
+    isRootCategory,
+    sidebarCategory,
+  ]);
 
   const filterSections = useMemo(() => {
-    const availabilityOptions = [
-      {
-        value: "inStock",
-        label: "In Stock",
-        count: availabilityCounts.inStock,
-      },
-      {
-        value: "outOfStock",
-        label: "Out of Stock",
-        count: availabilityCounts.outOfStock,
-      },
-    ].filter((option) => option.count >= 1);
-
     const brandOptions = allBrands
       .map((brand) => ({
         value: String(brand.value),
@@ -562,151 +531,74 @@ export default function useCategory() {
       }))
       .filter((brand) => brand.count > 0);
 
-    const globalFilters = [
-      absolutePriceLimits.min != null &&
-        absolutePriceLimits.max != null &&
-        absolutePriceLimits.max > 0 &&
-        absolutePriceLimits.min < absolutePriceLimits.max && {
-          key: "price",
-          title: "Price Range",
-          content: (
-            <PriceRangeFilter
-              min={searchParams.get("minPrice")}
-              max={searchParams.get("maxPrice")}
-              minLimit={priceLimits.min}
-              maxLimit={priceLimits.max}
-              onChange={handlePriceChange}
-            />
-          ),
-        },
-      brandOptions.length > 0 && {
-        key: "brand",
-        title: "Brand",
-        content: (
-          <OptionFilter
-            name="brand"
-            options={brandOptions}
-            selected={parseMultiValue(searchParams.get("brand"))}
-            multiple
-            onChange={(values) => updateParam("brand", serializeMultiValue(values))}
-          />
-        ),
-      },
-      {
-        key: "inStock",
-        title: "Availability",
-        content: (
-          <CheckboxListFilter
-            name="availability"
-            options={availabilityOptions}
-            selected={["inStock", "outOfStock"].filter((value) => searchParams.get(value) === "true")}
-            onChange={(values) => {
-              const selectedValues = new Set(values);
-              updateParams([
-                ["inStock", selectedValues.has("inStock") ? "true" : undefined],
-                ["outOfStock", selectedValues.has("outOfStock") ? "true" : undefined],
-              ]);
-            }}
-          />
-        ),
-      },
-    ].filter((filter) => filter.key !== "inStock" || availabilityOptions.length);
-
-    const categoryFilters = filterableAttributes
-      .map((attribute) => {
-        const options = attribute.options
+    const attributeFacets = filterableAttributes
+      .map((attribute) => ({
+        key: attribute.key,
+        label: attribute.label || attribute.key,
+        searchable: attribute.searchable,
+        values: attribute.options
           .map((option) => ({
             value: option,
             label: option,
-            count: getFacetOptionCount(attributeCountMaps[attribute.key], option),
+            count: getFacetOptionCount(
+              attributeCountMaps[attribute.key],
+              option,
+            ),
           }))
-          .filter((option) => option.count >= 1);
+          .filter((option) => option.count >= 1),
+      }))
+      .filter((attribute) => attribute.values.length > 0);
 
-        if (!options.length) return null;
+    // Build category options from facets (subcategories with products)
+    const rawCategoryOptions = (productFacets.categories || [])
+      .filter((cat) => Number(cat.count || 0) > 0)
+      .map((cat) => ({
+        value: String(cat.value || cat.key || cat.categoryKey || ""),
+        label: cat.title || cat.label || cat.name || String(cat.value || ""),
+        count: Number(cat.count || 0),
+      }))
+      .filter((opt) => opt.value);
 
-        return {
-          key: `attr_${attribute.key}`,
-          title: attribute.label || attribute.key,
-          searchable: attribute.searchable && options.length > 6,
-          content: (
-            <OptionFilter
-              name={`attr_${attribute.key}`}
-              options={options}
-              selected={parseMultiValue(searchParams.get(`attr_${attribute.key}`))}
-              multiple
-              onChange={(values) => updateParam(`attr_${attribute.key}`, serializeMultiValue(values))}
-            />
-          ),
-        };
-      })
-      .filter(Boolean);
-
-    const finalFilters = [...globalFilters, ...categoryFilters];
-
-    return finalFilters.flat().filter(Boolean);
+    return getFilterSections({
+      categoryOptions: [],
+      brandOptions,
+      collectionOptions: [],
+      productFacets: {},
+      attributeFacets,
+      availabilityCounts,
+      absolutePriceLimits: {
+        min: absolutePriceLimits.min ?? 0,
+        max: absolutePriceLimits.max ?? 150000,
+      },
+      effectiveRatingCounts: {},
+      searchParams,
+      updateParam,
+      updateParams,
+      handlePriceChange,
+    });
   }, [
+    catalogCategoryList,
+    productFacets,
+    allBrands,
     filterableAttributes,
-    searchParams,
-    availabilityCounts,
     attributeCountMaps,
-    handlePriceChange,
+    availabilityCounts,
+    absolutePriceLimits,
+    searchParams,
     updateParam,
     updateParams,
-    priceLimits.min,
-    priceLimits.max,
-    absolutePriceLimits,
-    allBrands,
+    handlePriceChange,
   ]);
 
-  const activeFilters = useMemo(() => {
-    const attributeLabelByKey = new Map(
-      filterableAttributes.map((attribute) => [attribute.key, attribute.label || attribute.key]),
-    );
+  const activeFilters = defaultActiveFilters;
 
-    return [
-      categoryFilter,
-      searchParams.get("inStock") === "true" && {
-        key: "inStock",
-        label: "In Stock Only",
-      },
-      searchParams.get("outOfStock") === "true" && {
-        key: "outOfStock",
-        label: "Out of Stock",
-      },
-
-      searchParams.get("brand") && {
-        key: "brand",
-        groupKey: "brand",
-        label: `Brand: ${searchParams.get("brand").split(",").join(", ")}`,
-      },
-
-      ...Array.from(searchParams.entries())
-        .filter(([key, value]) => {
-          if (!key.startsWith("attr_") || !value) return false;
-          const attributeKey = key.replace(/^attr_/, "");
-          return supportedAttributeKeys.has(attributeKey);
-        })
-        .map(([key, value]) => {
-          const attributeKey = key.replace(/^attr_/, "");
-          const label = attributeLabelByKey.get(attributeKey) || capitalizeFirst(attributeKey);
-          return {
-            key,
-            groupKey: key,
-            label: `${label}: ${value.split(",").join(", ")}`,
-          };
-        }),
-      (searchParams.get("minPrice") || searchParams.get("maxPrice")) && {
-        key: "price",
-        label: `Price: ₹${Number(searchParams.get("minPrice") || priceLimits.min || 0).toLocaleString("en-IN")} – ₹${Number(searchParams.get("maxPrice") || priceLimits.max || 150000).toLocaleString("en-IN")}`,
-      },
-    ]
-      .flat()
-      .filter(Boolean);
-  }, [categoryFilter, filterableAttributes, searchParams, supportedAttributeKeys, priceLimits.min, priceLimits.max]);
-
-  const clearFiltersAction = useMemo(() => 
-    getClearFiltersAction(activeFilters, searchParams, handleClearFilters, ["category"]),
-  [activeFilters, searchParams, handleClearFilters]);
+  const clearFiltersAction = useMemo(
+    () =>
+      getClearFiltersAction(activeFilters, searchParams, handleClearFilters, [
+        "category",
+      ]),
+    [activeFilters, searchParams, handleClearFilters],
+  );
 
   return {
     categoryKey,

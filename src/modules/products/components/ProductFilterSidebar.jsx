@@ -148,8 +148,12 @@ export function PriceRangeFilter({
 }) {
   const applyTimerRef = useRef(null);
   const activeThumbRef = useRef(null);
-  const safeMin = min !== "" && min != null ? min : (minLimit ?? 0);
-  const safeMax = max !== "" && max != null ? max : (maxLimit ?? 150000);
+  const safeMin =
+    min !== "" && min != null && !isNaN(Number(min)) ? min : (minLimit ?? 0);
+  const safeMax =
+    max !== "" && max != null && !isNaN(Number(max))
+      ? max
+      : (maxLimit ?? 150000);
   const rangeValuesRef = useRef({
     min: Number(safeMin),
     max: Number(safeMax),
@@ -158,13 +162,17 @@ export function PriceRangeFilter({
   const [localMax, setLocalMax] = useState(Number(safeMax));
 
   useEffect(() => {
-    const nextMin = min !== "" && min != null ? min : (minLimit ?? 0);
+    const nextMin =
+      min !== "" && min != null && !isNaN(Number(min)) ? min : (minLimit ?? 0);
     rangeValuesRef.current.min = Number(nextMin);
     setLocalMin(Number(nextMin));
   }, [min, minLimit]);
 
   useEffect(() => {
-    const nextMax = max !== "" && max != null ? max : (maxLimit ?? 150000);
+    const nextMax =
+      max !== "" && max != null && !isNaN(Number(max))
+        ? max
+        : (maxLimit ?? 150000);
     rangeValuesRef.current.max = Number(nextMax);
     setLocalMax(Number(nextMax));
   }, [max, maxLimit]);
@@ -321,7 +329,7 @@ export function PriceRangeFilter({
           onPointerCancel={stopRangePointer}
         >
           {/* Background Track */}
-          <div className="absolute left-[8px] right-[8px] top-1/2 -translate-y-1/2">
+          <div className="absolute left-[9px] right-[9px] top-1/2 -translate-y-1/2">
             <div className="h-[3px] rounded-full bg-[#E6E1D8]" />
 
             {/* Active Track */}
@@ -361,7 +369,7 @@ export function PriceRangeFilter({
           <div
             className="absolute top-1/2 z-10 h-[18px] w-[18px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-[#CE9F2D] bg-white"
             style={{
-              left: `calc(8px + (${minPercent} * (164px / 100)))`,
+              left: `calc(9px + (${minPercent} * (162px / 100)))`,
             }}
           />
 
@@ -369,7 +377,7 @@ export function PriceRangeFilter({
           <div
             className="absolute top-1/2 z-10 h-[18px] w-[18px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-[#CE9F2D] bg-white"
             style={{
-              left: `calc(8px + (${maxPercent} * (164px / 100)))`,
+              left: `calc(9px + (${maxPercent} * (162px / 100)))`,
             }}
           />
         </div>
@@ -395,6 +403,130 @@ export function PriceRangeFilter({
         </button>
       )}
     </form>
+  );
+}
+
+// Recursively count all selected leaf values inside a group tree
+function countGroupSelections(options, selectedSet) {
+  let count = 0;
+  options.forEach(opt => {
+    if (opt.isGroup) {
+      count += countGroupSelections(opt.options || [], selectedSet);
+    } else {
+      const val = String(opt.value ?? opt.id ?? opt._id ?? opt.categoryKey ?? "");
+      if (selectedSet.has(val)) count++;
+    }
+  });
+  return count;
+}
+
+// Check if any leaf inside the group is selected (for auto-expand)
+function groupHasActiveChild(options, selectedSet) {
+  return options.some(opt => {
+    if (opt.isGroup) return groupHasActiveChild(opt.options || [], selectedSet);
+    const val = String(opt.value ?? opt.id ?? opt._id ?? opt.categoryKey ?? "");
+    return selectedSet.has(val);
+  });
+}
+
+function FilterOptionGroup({ group, selectedSet, onChange, isMultiSelect, selectedValues, name, depth = 0 }) {
+  const isActive = groupHasActiveChild(group.options || [], selectedSet);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (isActive) setExpanded(true);
+  }, [isActive]);
+
+  const selectedCount = countGroupSelections(group.options || [], selectedSet);
+
+  // Depth-aware styles
+  const isRoot = depth === 0;
+  const headerClass = `flex w-full min-w-0 items-center justify-between py-1.5 text-left transition-colors duration-200`;
+
+  const labelClass = isRoot
+    ? "text-[14px] font-semibold text-[#111827]"
+    : "text-[13px] font-medium text-[#434343]";
+
+  return (
+    <div className={`max-w-full overflow-hidden ${isRoot ? "mb-1" : "mb-0.5"}`}>
+      <button
+        type="button"
+        onClick={() => setExpanded(prev => !prev)}
+        className={headerClass}
+      >
+        {/* min-w-0 allows truncate to work inside flex */}
+        <span className={`${labelClass} min-w-0 truncate`}>{group.label}</span>
+        <div className="flex items-center gap-1.5 shrink-0">
+          {selectedCount > 0 && (
+            <span className="text-[12px] text-[#999] font-medium">
+              ({selectedCount})
+            </span>
+          )}
+          <ChevronDown
+            size={18}
+            className={`shrink-0 text-[#3E4093] transition-transform duration-300 ease-in-out ${expanded ? "rotate-180" : ""}`}
+          />
+        </div>
+      </button>
+
+      {expanded && (
+        <div className={`flex flex-col ${isRoot ? "mt-0.5 ml-1 pl-2 gap-0" : "ml-2 pl-1 gap-0"}`}>
+          {(group.options || []).map(option => {
+            // Nested group → recurse
+            if (option.isGroup) {
+              return (
+                <FilterOptionGroup
+                  key={option.value}
+                  group={option}
+                  selectedSet={selectedSet}
+                  onChange={onChange}
+                  isMultiSelect={isMultiSelect}
+                  selectedValues={selectedValues}
+                  name={name}
+                  depth={depth + 1}
+                />
+              );
+            }
+
+            // Leaf checkbox
+            const value = String(option.value ?? option.id ?? option._id ?? option.categoryKey ?? "");
+            const label = option.label ?? option.title ?? option.name ?? value;
+            const count = option.count ?? option.doc_count;
+            const checked = selectedSet.has(value);
+            return (
+              <label
+                key={value}
+                className="flex min-w-0 cursor-pointer items-center gap-2 py-1 pr-1 leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D]"
+              >
+                <input
+                  type="checkbox"
+                  name={name}
+                  value={value}
+                  checked={checked}
+                  onChange={() => {
+                    const v = String(value).trim();
+                    if (!isMultiSelect) {
+                      onChange?.(checked ? [] : [v]);
+                      return;
+                    }
+                    const nextValues = checked
+                      ? selectedValues.filter(item => String(item).trim() !== v)
+                      : [...selectedValues.filter(item => String(item).trim() !== v), v];
+                    onChange?.(nextValues);
+                  }}
+                  className="sr-only"
+                />
+                <FilterTick checked={checked} />
+                <span className="min-w-0 flex-1 truncate overflow-hidden text-[14px] font-medium text-[#434343]">{label}</span>
+                {count != null && (
+                  <span className="shrink-0 text-[12px] text-[#888] whitespace-nowrap">({count})</span>
+                )}
+              </label>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -469,13 +601,24 @@ export function OptionFilter({
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
   const filteredOptions = normalizedSearchQuery
-    ? options.filter((option) => {
-        const value =
-          option.value ?? option.id ?? option._id ?? option.categoryKey;
-        const label = option.label ?? option.title ?? option.name ?? value;
-
-        return String(label).toLowerCase().includes(normalizedSearchQuery);
-      })
+    ? options.map(opt => {
+        if (opt.isGroup) {
+           const matchGroup = String(opt.label).toLowerCase().includes(normalizedSearchQuery);
+           const matchedChildren = opt.options.filter(child => {
+             const val = child.value ?? child.id ?? child._id ?? child.categoryKey;
+             const lbl = child.label ?? child.title ?? child.name ?? val;
+             return String(lbl).toLowerCase().includes(normalizedSearchQuery);
+           });
+           if (matchGroup || matchedChildren.length > 0) {
+             return { ...opt, options: matchedChildren.length ? matchedChildren : opt.options };
+           }
+           return null;
+        }
+        const value = opt.value ?? opt.id ?? opt._id ?? opt.categoryKey;
+        const label = opt.label ?? opt.title ?? opt.name ?? value;
+        if (String(label).toLowerCase().includes(normalizedSearchQuery)) return opt;
+        return null;
+      }).filter(Boolean)
     : options;
   const allowViewMoreForFiltered = (filteredOptions?.length || 0) > 5;
   const visibleOptions =
@@ -487,24 +630,34 @@ export function OptionFilter({
   return (
     <div className="grid gap-1">
       <div
-        className={`grid max-w-full gap-0.5 ${
-          shouldScroll ? "filter-scrollbar  overflow-y-auto pr-2" : ""
+        className={`grid max-w-full gap-0.5 overflow-x-hidden ${
+          shouldScroll ? "filter-scrollbar overflow-y-auto pr-2" : ""
         }`}
       >
         {visibleOptions.map((option) => {
-          const value =
-            option.value ?? option.id ?? option._id ?? option.categoryKey;
+          if (option.isGroup) {
+            return (
+              <FilterOptionGroup 
+                key={option.label}
+                group={option}
+                selectedSet={selectedSet}
+                onChange={onChange}
+                isMultiSelect={isMultiSelect}
+                selectedValues={selectedValues}
+                name={name}
+              />
+            );
+          }
 
+          const value = String(option.value ?? option.id ?? option._id ?? option.categoryKey);
           const label = option.label ?? option.title ?? option.name ?? value;
-
           const count = option.count ?? option.doc_count;
-
           const checked = selectedSet.has(String(value));
 
           return (
             <label
               key={value}
-              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none   text-[#434343] transition-colors duration-200 hover:text-[#2D347D]  sm:text-[16px]"
+              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[16px]"
             >
               <input
                 type="checkbox"
@@ -516,23 +669,17 @@ export function OptionFilter({
                     onChange?.(checked ? undefined : String(value));
                     return;
                   }
-
                   const nextValues = checked
                     ? selectedValues.filter((item) => item !== String(value))
                     : [...selectedValues, String(value)];
                   onChange?.(nextValues);
                 }}
-                className="sr-only "
+                className="sr-only"
               />
-
-              <FilterTick checked={checked} className="" />
-
-              <span className="min-w-0 flex-1 truncate leading-normal">
-                {label}
-              </span>
-
+              <FilterTick checked={checked} />
+              <span className="min-w-0 flex-1 truncate leading-normal">{label}</span>
               {count != null && (
-                <span className="shrink-0  font-medium leading-none text-[#373737] text-[14px]">
+                <span className="shrink-0 font-medium leading-none text-[#373737] text-[14px] whitespace-nowrap">
                   ( {count} )
                 </span>
               )}
