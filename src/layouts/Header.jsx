@@ -30,7 +30,6 @@ import MenuDropdown from "./header/MenuDropdown";
 import { TopHeader } from "./header/TopHeader";
 //import CategoryMegaMenu from "../modules/catalog/components/CategoryMegaMenu";
 import { navbarIcons as navData } from "../constants/image.constant";
-import { useWatchlistProducts } from "../hooks/useWatchlistProducts";
 import { logout } from "../modules/auth/slices/authSlice";
 import { notify } from "../utils/notify";
 import { fetchMe } from "../features/user/userSlice";
@@ -169,7 +168,6 @@ export const Navbar = ({ icons: propIcons }) => {
   const currentUser = useSelector((s) => s.auth.current);
   const profileUser = useSelector((s) => s.user.current) || currentUser;
   const cartItems = useSelector((s) => s.cart.current?.items) || [];
-  const { products: wishlistedProducts } = useWatchlistProducts();
   const displayIcons = propIcons || navData;
   const utilityIcons = asArray(displayIcons).filter(
     (item) => !["IN", "Word", "Account", "Cart"].includes(item?.name),
@@ -205,6 +203,10 @@ export const Navbar = ({ icons: propIcons }) => {
   const cartState = useSelector((s) => s.cart);
   const cart = cartState.current || {};
   const cartItemsLength = useMemo(() => cart.items?.length || 0, [cart.items]);
+  const wishlistCount = useMemo(
+    () => (Array.isArray(cart.wishlist) ? cart.wishlist.length : 0),
+    [cart.wishlist],
+  );
 
   useEffect(() => {
     if (currentUser) {
@@ -360,14 +362,14 @@ export const Navbar = ({ icons: propIcons }) => {
                   ? "border border-[#1B1D6099]"
                   : "border border-transparent"
               }`}
-              aria-label={`Watchlist with ${wishlistedProducts.length} ${wishlistedProducts.length === 1 ? "item" : "items"}`}
+              aria-label={`Watchlist with ${wishlistCount} ${wishlistCount === 1 ? "item" : "items"}`}
             >
               <Heart className="h-4 w-4 fill-current md:h-5 md:w-5 " />
-              {wishlistedProducts.length > 0 && (
+              {wishlistCount > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[12px] font-bold text-white shadow-sm">
-                  {wishlistedProducts.length > 99
+                  {wishlistCount > 99
                     ? "99+"
-                    : wishlistedProducts.length}
+                    : wishlistCount}
                 </span>
               )}
             </HeaderIconButton>
