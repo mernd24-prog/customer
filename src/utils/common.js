@@ -20,4 +20,8 @@ export function normalizeDialCode(dialCode = "") {
     .trim()
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
-
+export function scrollToTop() {
+  if (typeof window !== "undefined") {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}

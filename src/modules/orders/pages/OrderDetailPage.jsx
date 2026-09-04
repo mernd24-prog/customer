@@ -273,6 +273,10 @@ export default function OrderDetailPage({ orderId }) {
                         if (visibleOrderItems.length <= 1) {
                           return false;
                         }
+                        const isDelivered = ["delivered", "completed", "partially_delivered"].includes(String(status).toLowerCase());
+                        if (doc.type === "order_receipt" && !isDelivered) {
+                           return false;
+                        }
                         return (
                           doc.type === "platform_fee" ||
                           doc.type === "order_receipt"

@@ -7,6 +7,8 @@ import { BsCreditCardFill } from "react-icons/bs";
 import { IoIosStar } from "react-icons/io";
 import ShowMoreText from "../../../utils/showMore";
 import { Search, Truck, X, Package } from "lucide-react";
+import CustomDropdown from "../../../components/ui/CustomDropdown";
+import Pagination from "../../products/components/Pagination";
 
 import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
@@ -246,6 +248,12 @@ export default function OrderListPage() {
     availableStatusFilters,
     availableTimeFilters,
     orderItemsList,
+    totalOrders,
+    pageSize,
+    setPageSize,
+    currentPage,
+    setCurrentPage,
+    totalPages,
   } = useOrderList();
 
   const [reviewModalState, setReviewModalState] = useState({
@@ -275,9 +283,9 @@ export default function OrderListPage() {
             sidebarClass="w-full xl:w-[280px] 2xl:w-[280px] transition-[top] duration-300 ease-in-out"
             mainContent={
               <div className="min-w-0 rounded-xl bg-white">
-                {!(state.loading && !orderItemsList.length) && (
-                  <div className="mb-4 flex flex-col gap-3">
-                    <label className="relative block w-full">
+                {!(state.loading && !totalOrders && !orderItemsList.length) && (
+                  <div className="mb-4 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                    <label className="relative block w-full sm:max-w-[400px]">
                       <Search
                         size={15}
                         className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
@@ -286,7 +294,7 @@ export default function OrderListPage() {
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
                         placeholder="Search your orders here"
-                        className="h-12 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-9 text-base font-medium text-ink outline-none focus:outline-none"
+                        className="h-10 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-9 text-base font-medium text-ink outline-none focus:outline-none"
                       />
                       {Boolean(query) && (
                         <button
@@ -299,11 +307,26 @@ export default function OrderListPage() {
                         </button>
                       )}
                     </label>
+                    <div className="w-full sm:w-auto shrink-0 flex justify-end">
+                      <CustomDropdown
+                        className="w-full sm:w-[150px]"
+                        buttonClassName="h-10 w-full rounded-[10px] border border-[#1B1D604D] bg-white px-3 text-sm font-semibold text-[#1B1D60] focus:outline-none"
+                        options={[
+                          { value: 2, label: "2 per page" },
+                          { value: 4, label: "4 per page" },
+                          { value: 6, label: "6 per page" },
+                          { value: 8, label: "8 per page" },
+                        ]}
+                        value={pageSize}
+                        onChange={setPageSize}
+                        placeholder="Per page"
+                      />
+                    </div>
                   </div>
                 )}
 
                 <ApiState
-                  loading={state.loading && !orderItemsList.length}
+                  loading={state.loading && !totalOrders}
                   error={state.error}
                   empty={
                     !orderItemsList.length &&
@@ -333,6 +356,14 @@ export default function OrderListPage() {
                       />
                     ))}
                   </div>
+
+                  {totalPages > 1 && (
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                    />
+                  )}
                 </ApiState>
               </div>
             }
@@ -349,9 +380,9 @@ export default function OrderListPage() {
                   }
                   sections={[
                     {
-                      title: "ORDER STATUS",
+                      title: "Order Status",
                       defaultOpen: true,
-                      searchable: false,
+                      searchable: true,
                       content: (
                         <CheckboxListFilter
                           name="status"
@@ -362,9 +393,9 @@ export default function OrderListPage() {
                       ),
                     },
                     {
-                      title: "ORDER TIME",
+                      title: "Order Time",
                       defaultOpen: true,
-                      searchable: false,
+                      searchable: true,
                       content: (
                         <CheckboxListFilter
                           name="time"

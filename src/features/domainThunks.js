@@ -39,7 +39,7 @@ export const authThunks = {
   }),
   refreshSession: makeThunk("auth/refreshSession", {
     method: "post",
-    url: endpoints.auth.refresh,
+    url: endpoints.auth.refresh, 
     data: body,
   }),
   sendOtp: makeThunk("auth/sendOtp", {
@@ -232,7 +232,7 @@ export const orderThunks = {
     url: endpoints.orders.create,
     data: body,
   }),
-  fetchMyOrders: makeThunk("order/fetchMyOrders", { url: endpoints.orders.me }),
+  fetchMyOrders: makeThunk("order/fetchMyOrders", { url: endpoints.orders.me, params: q }),
   fetchSellerOrders: makeThunk("order/fetchSellerOrders", {
     url: endpoints.orders.sellerMe,
   }),

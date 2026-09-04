@@ -18,6 +18,7 @@ import {
   getBrandLogo,
   getBrandProductCount
 } from "../../../utils/pages/brandUtils";
+import { getPagination } from "../../../utils/filterUtils";
 
 const PAGE_SIZE_OPTIONS = [12, 20, 36, 48];
 
@@ -61,13 +62,12 @@ export default function BrandOutletPage() {
         };
       })
       .filter(
-        (brand) =>
-          brand.displayName && brand.routeKey && brand.productCount > 0,
+        (brand) => brand.displayName && brand.routeKey && brand.productCount > 0
       )
       .sort((a, b) =>
         a.displayName.localeCompare(b.displayName, undefined, {
           sensitivity: "base",
-        }),
+        })
       );
   }, [brandList]);
 
