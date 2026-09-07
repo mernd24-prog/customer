@@ -77,8 +77,12 @@ export const sanitizeTextInput = (value = "") =>
 
 export const hasNoMarkup = (value = "") => !/[<>]/.test(value);
 
-export const sanitizeSearchQuery = (value = "", maxLength = 100) =>
-  sanitizeTextInput(value).replace(/[<>]/g, "").slice(0, maxLength);
+export const DEFAULT_SEARCH_QUERY_MAX_LENGTH = 255;
+
+export const sanitizeSearchQuery = (
+  value = "",
+  maxLength = DEFAULT_SEARCH_QUERY_MAX_LENGTH,
+) => sanitizeTextInput(value).replace(/[<>]/g, "").slice(0, maxLength);
 
 export const isValidSearchQuery = (value = "", options = {}) => {
   const { min = 1, max = 100 } = options;
