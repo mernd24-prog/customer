@@ -16,6 +16,7 @@ import { scrollToTop } from "../../../utils/common";
 import LoadingSkeleton from "../components/BrandLoadingSkeleton";
 import { PAGE_SIZES, SORT_OPTIONS } from "../../../constants/data.constant";
 import useBrandPageController from "../controllers/useBrandPageController";
+import { Link } from "react-router-dom";
 
 export default function BrandPage() {
   const addToCart = useCartActions();
