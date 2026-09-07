@@ -82,13 +82,19 @@ export function ShowMoreText({
   buttonClassName = "",
   ellipsis = "...",
   defaultExpanded = false,
+  isHtml = false,
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const lineTextRef = useRef(null);
 
+  const cleanText = useMemo(() => {
+    if (!isHtml || !text) return text;
+    return text.replace(/<[^>]*>/g, " ");
+  }, [isHtml, text]);
+
   const showMore = useMemo(
-    () => getShowMoreText(text, { mode, limit }),
-    [limit, mode, text],
+    () => getShowMoreText(isHtml ? cleanText : text, { mode, limit }),
+    [limit, mode, text, cleanText, isHtml],
   );
 
   const isLineMode = mode === "lines";
@@ -201,7 +207,6 @@ export function ShowMoreText({
 
     measureOverflow();
 
-    // Re-measure on resize without causing ResizeObserver infinite loops
     if (
       typeof window.ResizeObserver !== "undefined" &&
       lineTextRef.current &&
@@ -212,7 +217,6 @@ export function ShowMoreText({
           if (isActive) measureOverflow();
         });
       });
-      // Observe the parent to avoid triggering self-loops when text length changes
       observer.observe(lineTextRef.current.parentElement);
     } else {
       window.addEventListener("resize", measureOverflow);
@@ -244,7 +248,6 @@ export function ShowMoreText({
       finalPreview = dynamicPreview;
       isTruncated = isDynamicallyTruncated;
     } else {
-      // Fallback while calculating
       isTruncated = false;
     }
   }
@@ -254,9 +257,19 @@ export function ShowMoreText({
 
   return (
     <span className={className}>
-      <span ref={isLineMode ? lineTextRef : null} className={textClassName}>
-        {displayText}
-      </span>
+      {isHtml ? (
+        <span
+          ref={isLineMode ? lineTextRef : null}
+          className={textClassName}
+          dangerouslySetInnerHTML={{
+            __html: expanded || !isTruncated ? text : displayText,
+          }}
+        />
+      ) : (
+        <span ref={isLineMode ? lineTextRef : null} className={textClassName}>
+          {displayText}
+        </span>
+      )}
       {isTruncated && (
         <button
           type="button"

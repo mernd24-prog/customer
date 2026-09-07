@@ -10,6 +10,8 @@ import {
   ShieldCheck,
   X,
   MapPin,
+  ArrowRight,
+  Loader2,
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { cn } from "../../../utils/common";
@@ -128,25 +130,33 @@ export default function DeliveryChecker({
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="group inline-flex w-fit items-center gap-2 text-xs sm:text-sm font-semibold text-ink transition-colors hover:text-gold focus:outline-none"
+            disabled={loading}
+            className="inline-flex w-fit items-center gap-2 text-xs sm:text-sm font-semibold text-ink focus:outline-none disabled:opacity-75"
           >
             <div
-              className="flex h-7 w-7 items-center justify-center rounded-full text-gold transition-all group-hover:scale-105"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gold"
               style={{
                 background:
                   "linear-gradient(135deg, var(--customer-gold-soft) 0%, var(--customer-cream) 100%)",
               }}
             >
-              <MapPin size={15} />
+              {loading ? (
+                <Loader2 size={15} className="animate-spin text-gold" />
+              ) : (
+                <MapPin size={15} />
+              )}
             </div>
-            <span className="underline decoration-gold/50 underline-offset-4 group-hover:decoration-gold">
-              {lastCheckedPincode
-                ? `Delivering to ${lastCheckedPincode} (Change)`
-                : "Check Delivery & Pincode Availability"}
+            <span className="underline decoration-gold/50 underline-offset-4 leading-normal transition-colors hover:text-gold hover:decoration-gold">
+              {loading
+                ? "Checking Availability..."
+                : lastCheckedPincode
+                  ? `Delivering to ${lastCheckedPincode} (Change)`
+                  : "Check Delivery & Pincode Availability"}
             </span>
-            <span className="text-xs font-bold text-gold transition-transform group-hover:translate-x-1">
-              →
-            </span>
+            <ArrowRight
+              size={20}
+              className="shrink-0 text-gold"
+            />
           </button>
 
           {/* Quick inline status if already checked */}

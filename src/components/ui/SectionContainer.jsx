@@ -18,20 +18,20 @@ export default function SectionContainer({
   const hasAction = Boolean(actionLabel && (actionHref || onAction));
 
   return (
-    <section className={`mt-8 bg-white ${className}`}>
+    <section className={` bg-white ${className}`}>
       {hasHeader && (
         <header
           className={`text-[var(--customer-ink)] ${headerbgColor || "bg-white"}`}
         >
           <div
-            className={`mb-2 flex flex-col gap-2  sm:gap-4 sm:flex-row sm:items-center sm:justify-between ${headerClassName}`}
+            className={` flex flex-col gap-2 my-8 lg:my-10 sm:gap-4 sm:flex-row sm:items-center sm:justify-between ${headerClassName}`}
           >
             <div className="min-w-0 ">
               {title && (
                 <h2 className="font-bold text-h2 text-[#3E4093]">{title}</h2>
               )}
               {subtitle && (
-                <p className=" md:py-4 text-small  align-middle text-[#2E2E2E]">
+                <p className="  text-small  lg:pt-3 align-middle text-[#2E2E2E]">
                   {subtitle}
                 </p>
               )}
@@ -40,8 +40,10 @@ export default function SectionContainer({
             {hasAction && actionHref ? (
               <OutlineSmallButton
                 to={actionHref}
-                rightIcon={<ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />}
-                className="self-start   my-2  sm:self-center md:block hidden"
+                rightIcon={
+                  <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
+                }
+                className="self-start my-2 sm:self-center md:inline-flex hidden"
                 aria-label={`${actionLabel} ${title || ""}`}
               >
                 {actionLabel}
@@ -59,8 +61,8 @@ export default function SectionContainer({
         {hasAction && actionHref ? (
           <OutlineSmallButton
             to={actionHref}
-            rightIcon={<ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />}
-            className="self-start text-center md:hidden block    sm:self-center"
+            rightIcon={<ArrowRight className="w-4 h-4" strokeWidth={2.2} />}
+            className="self-start text-center md:hidden inline-flex sm:self-center"
             aria-label={`${actionLabel} ${title || ""}`}
           >
             {actionLabel}

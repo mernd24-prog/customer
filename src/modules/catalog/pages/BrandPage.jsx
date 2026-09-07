@@ -90,7 +90,7 @@ export default function BrandPage() {
       }
       topContent={
         <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
-          <div className="grid  gap-0 h-[320px] sm:h-[380px] md:h-[371px] xl:h-[500px] lg:grid-cols-[52%_48%]">
+          <div className="grid  gap-0 h-[320px] sm:h-[380px] md:h-[350px] lg:grid-cols-[52%_48%]">
             <div className="relative lg:hidden h-full">
               <div className="absolute inset-0 bg-black/30" />
               <div className="absolute inset-0 flex items-center">

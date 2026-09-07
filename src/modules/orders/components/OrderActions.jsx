@@ -26,21 +26,26 @@ export default function OrderActions({
     <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center py-2">
       {(status === "pending_payment" || status === "payment_failed") && (
         <Button
-          className="min-h-[38px] w-full sm:w-auto text-white"
+          className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-2 rounded-[10px] px-5 py-2.5 text-white"
           loading={retrying}
           onClick={handleRetryPayment}
         >
-          <RefreshCw size={15} /> Retry payment
+          <RefreshCw size={16} />
+          <span className="text-center text-sm font-semibold">
+            Retry payment
+          </span>
         </Button>
       )}
       {hasCancelAction && (
         <Button
           variant="secondary"
-          className="min-h-[36px] w-full border-[#CE9F2D] font-bold text-[#1B1D60] hover:bg-[#FFF9EA] sm:w-auto px-4 rounded-[10px]"
+          className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-2 rounded-[10px] border border-[#CE9F2D] bg-[#FFFDF8] px-5 py-2.5 text-[#1B1D60] shadow-sm transition-all hover:bg-[#FFF9EA] hover:border-[#CE9F2D] active:scale-[0.98]"
           onClick={openCancellation}
         >
-          <XCircle size={15} className="text-red-500" />{" "}
-          {selectedOrderItem ? "Cancel selected item" : "Cancel order"}
+          <XCircle size={16} className="text-[#CE9F2D]" />
+          <span className="text-center text-sm font-semibold">
+            {selectedOrderItem ? "Cancel item" : "Cancel order"}
+          </span>
         </Button>
       )}
     </div>

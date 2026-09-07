@@ -47,7 +47,7 @@ export default function Breadcrumbs({
                   to={item.href}
                   title={item.label}
                   className={cn(
-                    "font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]",
+                    "font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E] transition-colors duration-200 hover:text-[#CE9F2D]",
                     linkClassName,
                   )}
                 >

@@ -48,9 +48,7 @@ export const Navbar = ({ icons: propIcons }) => {
 
   const accountLabel = profileUser?.profile?.firstName
     ? `${profileUser.profile.firstName} ${profileUser.profile.lastName || ""}`.trim()
-    : profileUser?.firstName ||
-      profileUser?.email?.split("@")[0] ||
-      "My Sam";
+    : profileUser?.firstName || profileUser?.email?.split("@")[0] || "My Sam";
 
   const profileAvatar =
     profileUser?.profile?.avatarUrl ||
@@ -141,9 +139,16 @@ export const Navbar = ({ icons: propIcons }) => {
         <div className="order-1 flex min-w-0 shrink items-center gap-3 min-[375px]:gap-4 sm:gap-6 group relative">
           <Link to="/" aria-label="Sam Global Home">
             <picture>
-              <source srcSet="/image/png/logo-small.avif 1x, /image/png/logo.avif 2x" type="image/avif" />
-              <source srcSet="/image/png/logo-small.webp 1x, /image/png/logo.webp 2x" type="image/webp" />
-              <img loading="lazy"
+              <source
+                srcSet="/image/png/logo-small.avif 1x, /image/png/logo.avif 2x"
+                type="image/avif"
+              />
+              <source
+                srcSet="/image/png/logo-small.webp 1x, /image/png/logo.webp 2x"
+                type="image/webp"
+              />
+              <img
+                loading="lazy"
                 src="/image/png/logo-small.webp"
                 alt="Sam Global"
                 width="130"
@@ -183,7 +188,10 @@ export const Navbar = ({ icons: propIcons }) => {
                   to={getNavbarIconPath(item)}
                   aria-label={getNavbarIconLabel(item, navbarIconLabels)}
                 >
-                  <img loading="lazy" width="400" height="400"
+                  <img
+                    loading="lazy"
+                    width="400"
+                    height="400"
                     src={item?.img}
                     alt={getNavbarIconLabel(item, navbarIconLabels)}
                     className={`object-contain ${
@@ -214,7 +222,7 @@ export const Navbar = ({ icons: propIcons }) => {
             >
               <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
               {cartItemCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[12px] font-bold text-white shadow-sm">
+                <span className="absolute -top-1.5 -right-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
                   {cartItemCount > 99 ? "99+" : cartItemCount}
                 </span>
               )}
@@ -228,10 +236,8 @@ export const Navbar = ({ icons: propIcons }) => {
             >
               <Heart className="h-4 w-4 fill-current md:h-5 md:w-5" />
               {wishlistCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[12px] font-bold text-white shadow-sm">
-                  {wishlistCount > 99
-                    ? "99+"
-                    : wishlistCount}
+                <span className="absolute -top-1.5 -right-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+                  {wishlistCount > 99 ? "99+" : wishlistCount}
                 </span>
               )}
             </HeaderIconButton>
@@ -246,7 +252,10 @@ export const Navbar = ({ icons: propIcons }) => {
               showChevron
               icon={
                 <div className="flex items-center gap-2.5">
-                  <img loading="lazy" width="400" height="400"
+                  <img
+                    loading="lazy"
+                    width="400"
+                    height="400"
                     src={profileAvatar}
                     alt=""
                     className="h-8 w-8 rounded-full object-cover min-[375px]:h-9 min-[375px]:w-9 md:h-12 md:w-12"

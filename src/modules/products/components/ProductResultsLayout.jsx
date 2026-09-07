@@ -92,7 +92,7 @@ export default function ProductResultsLayout({
               >
                 <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <h4 className="text-m md:text-[20px] m-0">
-                    Showing {rangeStart}-{rangeEnd} Of {totalCount} Results
+                    Showing {rangeStart}-{rangeEnd} of {totalCount} Results
                   </h4>
                   {toolbar}
                 </div>

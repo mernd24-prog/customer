@@ -17,7 +17,8 @@ export default function ConfirmModal({
 }) {
   if (!open) return null;
 
-  const imageUrl = typeof image === "string" ? image : image?.url || image?.src || "";
+  const imageUrl =
+    typeof image === "string" ? image : image?.url || image?.src || "";
 
   return (
     <BaseModal onClose={onCancel} maxWidth="max-w-md">
@@ -66,7 +67,6 @@ export default function ConfirmModal({
             size="sm"
             onClick={onConfirm}
             disabled={confirmDisabled}
-            icon={<SendHorizonal size={14} />}
             iconPosition="left"
             className="h-[42px] rounded-[10px] bg-[#CE9F2D] px-5 font-semibold text-[#1B1D60] hover:bg-[#B88200]"
           >

@@ -19,7 +19,7 @@ function FilterTick({ checked }) {
       }`}
     >
       <span
-        className={`h-[7px] w-[7px] rounded-[1px] bg-white transition-opacity duration-200 ${
+        className={`h-2 w-2 rounded-[1px] bg-white transition-opacity duration-200 ${
           checked ? "opacity-100" : "opacity-0"
         }`}
       />
@@ -104,7 +104,7 @@ export function FilterSection({
             onClick={() => setOpen((value) => !value)}
             className="flex min-w-0 flex-1 items-center justify-between gap-3 text-left font-dm-sans text-xl font-semibold leading-none tracking-normal text-[#2D347D] transition-colors duration-200 sm:text-[20px]"
           >
-            <span className="truncate">{title}</span>
+            <span className="truncate pb-[2px] -mb-[2px]">{title}</span>
             <ChevronDown
               size={18}
               className={`shrink-0 text-[#3E4093] transition-transform duration-300 ease-in-out ${
@@ -127,13 +127,15 @@ export function FilterSection({
       )}
 
       <div
-        className={`grid transition-all  duration-300 ease-in-out ${
+        className={`grid transition-all duration-300 ease-in-out ${
           open
             ? "mt-3 grid-rows-[1fr] opacity-100 sm:mt-4"
-            : "grid-rows-[0fr] opacity-0"
+            : "mt-0 grid-rows-[0fr] opacity-0 pointer-events-none"
         }`}
       >
-        <div className="overflow-hidden">{content}</div>
+        <div className={open ? "overflow-visible py-0.5" : "overflow-hidden"}>
+          {content}
+        </div>
       </div>
     </div>
   );
@@ -629,11 +631,7 @@ export function OptionFilter({
 
   return (
     <div className="grid gap-1">
-      <div
-        className={`grid max-w-full gap-0.5 overflow-x-hidden ${
-          shouldScroll ? "filter-scrollbar overflow-y-auto pr-2" : ""
-        }`}
-      >
+      <div className="grid max-w-full gap-0.5">
         {visibleOptions.map((option) => {
           if (option.isGroup) {
             return (
@@ -676,8 +674,13 @@ export function OptionFilter({
                 }}
                 className="sr-only"
               />
-              <FilterTick checked={checked} />
-              <span className="min-w-0 flex-1 truncate leading-normal">{label}</span>
+
+              <FilterTick checked={checked} className="" />
+
+              <span className="min-w-0 flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
+                {label}
+              </span>
+
               {count != null && (
                 <span className="shrink-0 font-medium leading-none text-[#373737] text-[14px] whitespace-nowrap">
                   ( {count} )
@@ -727,11 +730,7 @@ export function CheckboxListFilter({
   const shouldScroll = options.length > 5;
 
   return (
-    <div
-      className={`grid gap-1 ${
-        shouldScroll ? "filter-scrollbar  overflow-y-auto pr-2" : ""
-      }`}
-    >
+    <div className="grid gap-1">
       {options.map((option) => {
         const value = String(option.value ?? option.id ?? option.key ?? "");
         const label = option.label ?? option.name ?? value;
@@ -759,7 +758,7 @@ export function CheckboxListFilter({
 
             <FilterTick checked={checked} />
 
-            <span className="min-w-0  flex-1 truncate leading-normal">
+            <span className="min-w-0  flex-1 truncate leading-normal pb-[2px] -mb-[2px]">
               {label}
             </span>
 
@@ -879,17 +878,17 @@ export default function ProductFilterSidebar({
 }) {
   return (
     <aside
-      className={`w-full [scrollbar-color:#CE9F2D33_transparent] [scrollbar-width:thin]  overflow-x-hidden lg:sticky lg:top-24 lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
+      className={`w-full lg:sticky lg:top-[var(--customer-header-height,135px)] lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
     >
-      <div className="w-full overflow-hidden rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] shadow-none">
+      <div className="w-full rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] shadow-none">
         <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-3 min-[375px]:px-5 sm:px-6 sm:py-4">
-          <h3 className="text-h4 font-semibold  text-[#373737] ">Filters</h3>
+          <h3 className="text-h4 font-semibold text-[#373737]">Filters</h3>
 
           {onClearAll && (
             <button
               type="button"
               onClick={onClearAll}
-              className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[14px]   text-[14px] font-semibold text-[#5960B8]  sm:text-[16px]"
+              className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[14px] text-[14px] font-semibold text-[#5960B8] sm:text-[16px]"
             >
               Clear All
             </button>
@@ -901,7 +900,7 @@ export default function ProductFilterSidebar({
         {loading ? (
           <FilterSkeleton />
         ) : (
-          <div className="px-4  min-[375px]:px-5 ">
+          <div className="px-4 pb-6 min-[375px]:px-5">
             {sections.map((section) => (
               <FilterSection
                 key={section.key || section.title}

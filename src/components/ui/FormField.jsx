@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function FormField({
   placeholder,
@@ -9,6 +9,7 @@ export default function FormField({
   registration,
   type = "text",
   className = "",
+  loading = false,
   ...props
 }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,6 +29,9 @@ export default function FormField({
     registration?.name?.toLowerCase().includes("name") ||
     id?.toLowerCase().includes("city") ||
     registration?.name?.toLowerCase().includes("city");
+  const isCoupon =
+    id?.toLowerCase().includes("coupon") ||
+    registration?.name?.toLowerCase().includes("coupon");
 
   const handleChange = (e) => {
     if (isWallet) {
@@ -40,6 +44,8 @@ export default function FormField({
       e.target.value = e.target.value.replace(/\D/g, "");
     } else if (isTextOnly) {
       e.target.value = e.target.value.replace(/[^A-Za-z\s'.-]/g, "");
+    } else if (isCoupon) {
+      e.target.value = e.target.value.slice(0, 7);
     }
 
     registration?.onChange?.(e);
@@ -52,20 +58,24 @@ export default function FormField({
       htmlFor={id}
     >
       <span>{label}</span>
-      <span className="relative ">
+      <span className="relative">
         <input
           placeholder={placeholder}
           id={id}
           type={inputType}
           inputMode={isWallet ? "decimal" : undefined}
-          className={`customer-input ${isPassword ? "!pr-12" : ""} ${className}`}
+          className={`customer-input ${isPassword || loading ? "!pr-12" : ""} ${className}`}
           aria-invalid={Boolean(error)}
           {...registration}
           {...props}
           onChange={handleChange}
           maxLength={props.maxLength}
         />
-        {isPassword ? (
+        {loading ? (
+          <div className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center text-[#CE9F2D]">
+            <Loader2 size={18} className="animate-spin text-[#CE9F2D]" />
+          </div>
+        ) : isPassword ? (
           <button
             type="button"
             aria-label={showPassword ? "Hide password" : "Show password"}
@@ -73,13 +83,13 @@ export default function FormField({
               event.preventDefault();
               setShowPassword((currentValue) => !currentValue);
             }}
-            className="absolute  right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[var(--customer-muted)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40"
+            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[var(--customer-muted)] transition-all duration-300 ease-in-out hover:bg-[var(--customer-gold-soft)] hover:text-[var(--customer-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         ) : null}
       </span>
-      <span className="min-h-4  text-xs font-normal text-red-600">
+      <span className="min-h-4 text-xs font-normal text-red-600">
         {error?.message}
       </span>
     </label>

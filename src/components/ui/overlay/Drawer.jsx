@@ -45,7 +45,7 @@ export default function Drawer({
         onClick={onClose}
       />
       <div
-        className={`absolute  top-0 ${sideClass} h-full ${width} overflow-y-auto border-l border-[var(--customer-border)] bg-white p-4 shadow-[var(--customer-shadow-strong)]`}
+        className={`absolute top-0 ${sideClass} h-full ${width} overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden border-l border-[var(--customer-border)] bg-white p-4 shadow-[var(--customer-shadow-strong)]`}
       >
         <div className=" flex items-center justify-end  pb-3">
           <button

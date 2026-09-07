@@ -5,35 +5,23 @@ import { useProductDetailController } from "../controllers";
 import { useCartActions, useWishlistActions } from "../controllers/actions";
 import ProductServiceBadges from "../components/ProductServiceBadges";
 import {
-  applyImageFallback,
   getProductId,
-  getImageFallbackSrc,
-  getProductImage,
   getProductTitle,
-  getProductPrice,
-  getProductMrp,
-  getVariantPrice,
-  getImageUrlFromValue,
-  firstMoneyValue,
-  buildCartItem,
-  isProductCodAvailable,
-  getAvailableStock,
   getProductPublicPath,
   decodeProductRouteToken,
 } from "../../../utils/ecommerce";
-import { formatPageTitle } from "../../../utils/common";
+
 import CUSTOMER_ROUTES from "../../../constants/routes";
 import {
   BUY_NOW_STORAGE_KEY,
   SELECTED_CHECKOUT_STORAGE_KEY,
 } from "../../../constants";
-import StarRating from "../../../components/ui/display/StarRating";
-import ShareProductPopover from "../components/socialMediaShare";
+
 import ProductPriceBlock from "../components/ProductPriceBlock";
 import ProductStockStatus from "../components/ProductStockStatus";
-import ShowMoreText, { getShowMoreText } from "../../../utils/showMore";
+import ShowMoreText from "../../../utils/showMore";
 import { PRODUCT_DETAIL_SKELETON } from "../../../components/ui/skeleton/layouts";
-import { Star, Banknote, Truck } from "lucide-react";
+import { Star } from "lucide-react";
 import QuantitySelector from "../../cart/components/QuantitySelector";
 import ImageGallery from "../components/ImageGallery";
 import DeliveryChecker from "../components/DeliveryChecker";
@@ -51,13 +39,11 @@ const GuestOtpAuthModal = lazy(
   () => import("../../../components/ui/overlay/GuestOtpAuthModal"),
 );
 const SizeChartSidebar = lazy(() => import("../components/SizeChartSidebar"));
-import {
-  getActiveDealPrice,
-  getActiveDealOriginalPrice,
-} from "../../../utils/pages/productUtils";
+
 import AppErrorBoundary from "../../../components/ui/AppErrorBoundary";
 import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
+
 export default function ProductDetailPage() {
   const { productId: rawParamId, publicCode, productToken } = useParams();
   const tokenPayload = decodeProductRouteToken(productToken);
@@ -67,7 +53,7 @@ export default function ProductDetailPage() {
     !productToken && /^[a-f0-9]{24}$/i.test(rawRouteProductId);
   const productId = isRawObjectIdRoute ? "" : productToken || rawRouteProductId;
   const decodedProductId = tokenPayload?.p || rawRouteProductId;
-  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -81,10 +67,8 @@ export default function ProductDetailPage() {
     isProductTitleTruncated,
     warranty,
     dynamicState,
-    relatedProducts,
     crossSellProducts,
     recommendedProducts,
-    recentlyViewedList,
     isLoggedIn,
     quantity,
     setQuantity,
@@ -102,8 +86,6 @@ export default function ProductDetailPage() {
     setIsSizeChartOpen,
     showGuestOtpModal,
     setShowGuestOtpModal,
-    searchParams,
-    setSearchParams,
     safeDynamicPrice,
     price,
     images,
@@ -186,7 +168,7 @@ export default function ProductDetailPage() {
               <nav className="mt-8 flex flex-wrap items-center gap-1 text-sm text-[#2E2E2E] lg:mt-12 lg:text-lg">
                 <Link
                   to="/"
-                  className="font-medium text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-ink"
+                  className="font-medium text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
                 >
                   Home
                 </Link>
@@ -197,7 +179,7 @@ export default function ProductDetailPage() {
                   <>
                     <Link
                       to={CUSTOMER_ROUTES.category(product.parentCategory)}
-                      className="capitalize transition-all duration-300 ease-in-out hover:text-ink"
+                      className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
                     >
                       {(product.parentCategory || "").replace(/-/g, " ")}
                     </Link>
@@ -211,7 +193,7 @@ export default function ProductDetailPage() {
                     <>
                       <Link
                         to={CUSTOMER_ROUTES.category(product.category)}
-                        className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-ink"
+                        className="font-medium capitalize text-[#2E2E2E] transition-all duration-300 ease-in-out hover:text-[#CE9F2D]"
                       >
                         {(product.category || "").replace(/-/g, " ")}
                       </Link>
@@ -332,9 +314,7 @@ export default function ProductDetailPage() {
                       }
                       max={availableStock ?? undefined}
                       increaseDisabled={!inStock || quantityAtStockLimit}
-                      increaseDisabledLabel={
-                        quantityStockMessage || undefined
-                      }
+                      increaseDisabledLabel={quantityStockMessage || undefined}
                     />
                     {quantityStockMessage ? (
                       <p className="mt-1 text-xs font-semibold text-red-600">
@@ -441,7 +421,7 @@ export default function ProductDetailPage() {
                 }
               >
                 <ProductRecommendationSection
-                  title="Complete the Look"
+                  title="You May Also Like"
                   linkText="Explore more →"
                   products={crossSellProducts}
                   addToCart={addToCart}
@@ -451,7 +431,7 @@ export default function ProductDetailPage() {
                 />
                 {recommendedProducts.length > 0 && (
                   <ProductRecommendationSection
-                    title="Recommended For You"
+                    title="Related Products"
                     linkText="View all →"
                     products={recommendedProducts}
                     addToCart={addToCart}

@@ -304,6 +304,7 @@ export default function useCheckout() {
     watch,
     setValue,
     setError,
+    clearErrors,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(checkoutFormSchema),
@@ -332,6 +333,43 @@ export default function useCheckout() {
   const selectedCity = watch("city");
   const watchedPostalCode = watch("postalCode");
   const watchedCouponCode = watch("couponCode");
+  const [debouncedCouponCode, setDebouncedCouponCode] = useState("");
+  const [isCouponDebouncing, setIsCouponDebouncing] = useState(false);
+
+  useEffect(() => {
+    const rawValue = (watchedCouponCode || "").trim();
+
+    if (rawValue.length > 7) {
+      setValue("couponCode", rawValue.slice(0, 7), { shouldValidate: true });
+      return;
+    }
+
+    if (!rawValue) {
+      clearErrors("couponCode");
+      setIsCouponDebouncing(false);
+      setDebouncedCouponCode("");
+      return;
+    }
+
+    setIsCouponDebouncing(true);
+
+    const timer = setTimeout(() => {
+      setIsCouponDebouncing(false);
+      if (rawValue.length > 0 && rawValue.length < 7) {
+        setError("couponCode", {
+          type: "manual",
+          message: "Code must be exactly 7 digits",
+        });
+        setDebouncedCouponCode("");
+      } else if (rawValue.length === 7) {
+        clearErrors("couponCode");
+        setDebouncedCouponCode(rawValue);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [watchedCouponCode, setError, clearErrors, setValue]);
+
   const watchedWalletAmount = watch("walletAmount");
   const watchedFullName = watch("fullName");
   const watchedDialCode = watch("dialCode");
@@ -594,7 +632,7 @@ export default function useCheckout() {
     if (!quoteShippingAddress || !orderItems.length) return null;
     return {
       currency: "INR",
-      couponCode: watchedCouponCode || undefined,
+      couponCode: debouncedCouponCode || undefined,
       walletAmount: Number(watchedWalletAmount || 0),
       paymentProvider,
       shippingAddress: quoteShippingAddress,
@@ -604,7 +642,7 @@ export default function useCheckout() {
     orderItems,
     paymentProvider,
     quoteShippingAddress,
-    watchedCouponCode,
+    debouncedCouponCode,
     watchedWalletAmount,
   ]);
   const clientDeliverabilityBlockers = useMemo(
@@ -866,6 +904,13 @@ export default function useCheckout() {
             ? "This product is no longer available. Please remove it from your cart and try again later."
             : rawMsg;
 
+          if (quotePayload?.couponCode) {
+            setError("couponCode", {
+              type: "manual",
+              message: rawMsg || "Invalid coupon or influencer code",
+            });
+          }
+
           setQuoteError(errMsg);
           notify.error({
             title: "Update Failed",
@@ -883,7 +928,8 @@ export default function useCheckout() {
     };
   }, [dispatch, quotePayload, deliverabilityError, deliveryCheckLoading]);
 
-  const checkoutActionLoading = orderState.loading || submittingOrder;
+  const checkoutActionLoading =
+    (orderState.loading && !quoteLoading) || submittingOrder;
 
   const saveCheckoutAddress = async (values) => {
     const addressResult = checkoutAddressSchema.safeParse({
@@ -1399,5 +1445,6 @@ export default function useCheckout() {
     saveCheckoutAddress,
     handleSaveShippingAddressOnly,
     submit,
+    isCouponDebouncing,
   };
 }

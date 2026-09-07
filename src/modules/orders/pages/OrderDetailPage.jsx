@@ -109,12 +109,12 @@ export default function OrderDetailPage({ orderId }) {
                   {(status === "pending_payment" ||
                     status === "payment_failed") && (
                     <Button
-                      className="flex h-[54px] w-full sm:w-auto items-center justify-center gap-[10px] rounded-[10px] px-[24px] py-[15px] text-white"
+                      className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-2 rounded-[10px] px-5 py-2.5 text-white"
                       loading={retrying}
                       onClick={handleRetryPayment}
                     >
-                      <RefreshCw size={18} />
-                      <span className="text-center text-[14px] sm:text-[15px] font-semibold leading-[20px] sm:leading-[24px]">
+                      <RefreshCw size={16} />
+                      <span className="text-center text-sm font-semibold">
                         Retry payment
                       </span>
                     </Button>
@@ -123,10 +123,10 @@ export default function OrderDetailPage({ orderId }) {
                   {canCancelOrder(order) && hasCancellableQuantity && (
                     <Button
                       variant="secondary"
-                      className="flex h-[46px] d sm:h-[48px] w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-[#CE9F2D66] bg-[#FFFDF8] px-5 py-2.5 text-[#1B1D60] shadow-sm transition-all hover:bg-[#FFF9EA] hover:border-[#CE9F2D] active:scale-[0.98]"
+                      className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-2 rounded-[10px] border border-[#CE9F2D] bg-[#FFFDF8] px-5 py-2.5 text-[#1B1D60] shadow-sm transition-all hover:bg-[#FFF9EA] hover:border-[#CE9F2D] active:scale-[0.98]"
                       onClick={openCancellation}
                     >
-                      <XCircle size={18} className="text-[#CE9F2D]" />
+                      <XCircle size={16} className="text-[#CE9F2D]" />
                       <span className="text-center text-sm font-semibold">
                         {selectedOrderItem ? "Cancel item" : "Cancel order"}
                       </span>
@@ -138,9 +138,9 @@ export default function OrderDetailPage({ orderId }) {
                       to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}`}
                       className="block w-full sm:w-auto"
                     >
-                      <Button className="flex h-[54px] w-full sm:w-[196px] items-center justify-center gap-[10px] rounded-[10px] bg-[#CE9F2D] px-[24px] py-[15px] text-white hover:bg-[#B88200]">
-                        <RotateCcw size={18} />
-                        <span className="text-center text-[14px] sm:text-[15px] font-semibold leading-[20px] sm:leading-[24px] text-white">
+                      <Button className="flex h-[46px] sm:h-[48px] w-full sm:w-[196px] items-center justify-center gap-2 rounded-[10px] bg-[#CE9F2D] px-5 py-2.5 text-white hover:bg-[#B88200]">
+                        <RotateCcw size={16} />
+                        <span className="text-center text-sm font-semibold text-white">
                           Request Return
                         </span>
                       </Button>
@@ -202,7 +202,6 @@ export default function OrderDetailPage({ orderId }) {
                     : []),
                 ]}
               />
-
             </section>
 
             <StickySidebarLayout

@@ -350,7 +350,7 @@ export const Navbar = ({ icons: propIcons }) => {
               <ShoppingCart className="h-4 w-4 fill-current md:h-5 md:w-5" />
 
               {cartItemCount > 0 && (
-                <span className="absolute  -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1  text-[12px] font-bold  text-white shadow-sm">
+                <span className="absolute -top-1.5 -right-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
                   {cartItemCount > 99 ? "99+" : cartItemCount}
                 </span>
               )}
@@ -366,10 +366,8 @@ export const Navbar = ({ icons: propIcons }) => {
             >
               <Heart className="h-4 w-4 fill-current md:h-5 md:w-5 " />
               {wishlistCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-[19px] min-w-[19px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[12px] font-bold text-white shadow-sm">
-                  {wishlistCount > 99
-                    ? "99+"
-                    : wishlistCount}
+                <span className="absolute -top-1.5 -right-1.5 flex h-[20px] min-w-[20px] items-center justify-center rounded-full border-2 border-white bg-[#CE9F2D] px-1 text-[11px] font-extrabold leading-none text-white shadow-sm">
+                  {wishlistCount > 99 ? "99+" : wishlistCount}
                 </span>
               )}
             </HeaderIconButton>

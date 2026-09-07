@@ -26,7 +26,7 @@ export const DynamicButton = React.forwardRef(
     ref,
   ) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-medium transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+      "group inline-flex items-center justify-center font-medium transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 
     const variants = {
       unstyled: "",
@@ -110,11 +110,15 @@ export const DynamicButton = React.forwardRef(
           </svg>
         )}
         {!isLoading && leftIcon && (
-          <span className="mr-2 inline-flex shrink-0">{leftIcon}</span>
+          <span className="mr-2 inline-flex items-center justify-center shrink-0 self-center">
+            {leftIcon}
+          </span>
         )}
         {children}
         {!isLoading && rightIcon && (
-          <span className="ml-2 inline-flex shrink-0">{rightIcon}</span>
+          <span className="ml-2 inline-flex items-center justify-center shrink-0 self-center transition-transform duration-300">
+            {rightIcon}
+          </span>
         )}
       </>
     );

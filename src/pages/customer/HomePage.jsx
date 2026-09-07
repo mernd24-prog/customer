@@ -34,7 +34,9 @@ const CollageSection = React.lazy(
 const ShowcaseSection = React.lazy(
   () => import("../../components/home/ShowcaseSection"),
 );
-const FeaturedCollectionsSection = React.lazy(() => import("../../components/home/FeaturedCollectionsSection"));
+const FeaturedCollectionsSection = React.lazy(
+  () => import("../../components/home/FeaturedCollectionsSection"),
+);
 
 import { toStandardProductCard as toNewArrivalProduct } from "../../utils/productUtils";
 import { getProductListFromResponse } from "../../utils/ecommerce";
@@ -160,11 +162,11 @@ export function HomePage() {
           ?.filter((c) => c?.isDashboardVisible !== false)
           .slice(0, 10)}
         loading={homeLoading}
-        title="Time For a Spring Refresh"
+        title="Time for a Spring Refresh"
         subtitle="Curated collections for every style & home"
         className="text-[#3E4093] font-regular text-[18px] "
       />
-{/* 
+      {/* 
       <LazySection minHeight="280px">
         <FeaturedCollectionsSection />
       </LazySection> */}

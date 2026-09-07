@@ -42,12 +42,12 @@ export const TopHeader = () => {
             to="/support"
             title="Help & Support"
             aria-label="Help & Support"
-            className="flex items-center justify-center text-[#FFFFFF] transition-all duration-300 ease-in-out hover:opacity-80"
+            className="flex items-center justify-center text-[#FFFFFF]"
           >
             <img
               src="/image/svg/customer-support.svg"
               alt="Help & Support"
-              className="h-5 w-5 object-contain brightness-0 invert"
+              className="h-6 w-6 object-contain brightness-0 invert"
             />
           </Link>
 

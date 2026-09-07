@@ -76,7 +76,7 @@ export default function WatchlistPage() {
     <>
       <Seo title="My Wishlist | Sam Global" />
 
-      <section className="min-h-screen py-3 sm:py-6 lg:py-8 mt-8 lg:mt-0">
+      <section className="py-3 sm:py-6 lg:py-8 mt-8 lg:mt-0">
         <div>
           <Breadcrumbs items={breadcrumbItems} />
 

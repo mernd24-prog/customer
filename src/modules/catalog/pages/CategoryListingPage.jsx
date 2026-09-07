@@ -29,35 +29,64 @@ function CategoryTile({ category }) {
       to={CUSTOMER_ROUTES.category(category.routeKey)}
       className="group block text-center"
     >
-      <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[14px] bg-surface-soft p-4 transition-all duration-300 ease-in-out group-hover:bg-[var(--customer-gold-soft)]">
-        {imageSrc ? (
-          <img width="400" height="400"
-            src={imageSrc}
-            alt={category.displayName}
-            loading="lazy"
-            decoding="async"
-            // onError={(event) =>
-            //   applyImageFallback(event, category.displayName, "category")
-            // }
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = "/image/png/favicon.png";
-            }}
-            className="h-20 md:h-1/2 w-full object-contain transition-all duration-300 ease-in-out group-hover:scale-[1.03]"
-          />
-        ) : (
-          <Grid2X2
-            size={46}
-            strokeWidth={1.4}
-            className="text-[var(--customer-border-strong)]"
-          />
-        )}
+      <div
+        className="
+          overflow-hidden mt-2 rounded-[12px]
+          border border-[#EEE8DA]
+          bg-[#FAF8F3]
+          p-1.5
+          shadow-[0_2px_8px_rgba(0,0,0,0.04)]
+          transition-all duration-300
+          hover:-translate-y-0.5
+          hover:border-[#E5D6B5]
+          hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)]
+        "
+      >
+        <div
+          className="
+            flex  lg:h-[200px] w-full
+            items-center justify-center
+            overflow-hidden rounded-[9px]
+            bg-white
+            p-3
+            transition-all duration-300
+          "
+        >
+          {imageSrc ? (
+            <img
+              width="100"
+              height="100"
+              src={imageSrc}
+              alt={category.displayName}
+              loading="lazy"
+              decoding="async"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/image/png/favicon.png";
+              }}
+              className="
+                h-[100px] w-[100px]
+                object-contain
+                transition-transform duration-300
+               
+              "
+            />
+          ) : (
+            <Grid2X2
+              size={36}
+              strokeWidth={1.4}
+              className="text-[var(--customer-border-strong)]"
+            />
+          )}
+        </div>
       </div>
-      <h2 className="mt-3 line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
+
+      <h2 className="mt-2 line-clamp-2 text-sm font-bold leading-5 text-ink sm:text-base">
         {category.displayName}
       </h2>
+
       {count !== undefined && count !== null && count !== "" ? (
-        <p className="mt-1 text-xs font-semibold text-muted">
+        <p className="mt-0.5 text-xs font-semibold text-muted">
           {Number(count).toLocaleString()} Products
         </p>
       ) : null}
@@ -271,7 +300,7 @@ export default function CategoryListingPage() {
         <div>
           <div className="min-w-0 w-full">
             <section className="pb-7">
-              <h1 className="mb-4 text-[20px] font-bold leading-tight text-ink sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">
+              <h1 className="mb-4 text-[20px] font-bold leading-tight text-blue sm:mb-6 sm:text-[26px] lg:mb-7 lg:text-[28px]">
                 Shop All Categories
               </h1>
 

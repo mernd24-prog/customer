@@ -65,6 +65,9 @@ export default function CheckoutPage() {
     deliveryCheckLoading,
     excludeBlockedItem,
     isBuyNowCheckout,
+    isCouponDebouncing,
+    watchedWalletAmount,
+    watchedCouponCode,
   } = useCheckout();
 
   const handleCloseGuestOtp = useCallback(() => {
@@ -91,7 +94,7 @@ export default function CheckoutPage() {
 
   return (
     <AppErrorBoundary>
-      {(checkoutActionLoading || isPostPaymentProcessing || quoteLoading) && (
+      {(checkoutActionLoading || isPostPaymentProcessing) && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--customer-cream)]">
           <Loader size="xl" />
         </div>
@@ -254,6 +257,11 @@ export default function CheckoutPage() {
                   register={register}
                   errors={errors}
                   walletBalance={walletBalance}
+                  setValue={setValue}
+                  watchedWalletAmount={watchedWalletAmount}
+                  watchedCouponCode={watchedCouponCode}
+                  quoteLoading={quoteLoading}
+                  isCouponDebouncing={isCouponDebouncing}
                 />
               </div>
 

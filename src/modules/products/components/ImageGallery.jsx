@@ -135,9 +135,7 @@ function ProductGallery({
           <div className="order-2 h-[84px] w-full shrink-0 overflow-hidden xl:order-1 xl:h-full xl:w-[92px]">
             <div
               className={`flex h-full w-full gap-3 overflow-x-auto overflow-y-hidden hide-scrollbar no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden xl:flex-col xl:overflow-x-hidden xl:overflow-y-auto ${
-                isModal
-                  ? "xl:gap-5"
-                  : "xl:gap-4"
+                isModal ? "xl:gap-5" : "xl:gap-4"
               }`}
             >
               {thumbnailItems.map((item, i) => {
@@ -178,7 +176,10 @@ function ProductGallery({
                     {item.type === "video" ? (
                       <span className="relative flex h-full w-full items-center justify-center bg-black">
                         {item.poster && (
-                          <img loading="lazy" width="400" height="400"
+                          <img
+                            loading="lazy"
+                            width="400"
+                            height="400"
                             src={item.poster}
                             alt=""
                             className="absolute inset-0 h-full w-full object-contain p-2 opacity-70"
@@ -196,10 +197,10 @@ function ProductGallery({
                         </span>
                       </span>
                     ) : (
-                      <img 
-                        loading={i === 0 ? "eager" : "lazy"} 
+                      <img
+                        loading={i === 0 ? "eager" : "lazy"}
                         fetchPriority={i === 0 ? "high" : "auto"}
-                        width="400" 
+                        width="400"
                         height="400"
                         src={item.src}
                         alt=""
@@ -284,10 +285,10 @@ function ProductGallery({
                     onMouseLeave={handleMouseLeave}
                     onClick={handleImageClick}
                   >
-                    <img 
-                      loading={i === 0 ? "eager" : "lazy"} 
+                    <img
+                      loading={i === 0 ? "eager" : "lazy"}
                       fetchPriority={i === 0 ? "high" : "auto"}
-                      width="400" 
+                      width="400"
                       height="400"
                       src={item.src}
                       alt=""
@@ -381,7 +382,7 @@ export default function ImageGallery({
         <IconActionButton
           title="Zoom Image"
           onClick={() => openModal(activeIndex)}
-          className="hidden text-ink md:flex"
+          className="hidden text-[#1B1D60] md:flex"
         >
           <ZoomIn size={18} />
         </IconActionButton>
@@ -389,7 +390,7 @@ export default function ImageGallery({
         <IconActionButton
           title="Add to Wishlist"
           onClick={onWishlist}
-          className={isWishlisted ? "text-navy" : "text-ink"}
+          className="text-[#1B1D60]"
         >
           <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
         </IconActionButton>
@@ -398,7 +399,7 @@ export default function ImageGallery({
           <IconActionButton
             title="Share Product"
             onClick={onShareToggle}
-            className="text-navy"
+            className="text-[#1B1D60]"
           >
             <Share2 size={18} />
           </IconActionButton>
