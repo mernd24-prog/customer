@@ -13,7 +13,10 @@ import {
   parseMultiValue,
   slugToBrandName,
 } from "../../../utils/ecommerce/brand";
-import { getNormalizedAttributeFacets, getPagination } from "../../../utils/filterUtils";
+import {
+  getNormalizedAttributeFacets,
+  getPagination,
+} from "../../../utils/filterUtils";
 import { getBrandName } from "../../../utils/pages/brandUtils";
 import { getFilterSections } from "../../../modules/products/controllers/getFilterSections";
 import { useCatalogFilters } from "../../../modules/products/controllers/useCatalogFilters";
@@ -32,7 +35,7 @@ export default function useBrandPageController() {
   const [items, setItems] = useState([]);
   const [productFacets, setProductFacets] = useState({});
   const [facetsContextKey, setFacetsContextKey] = useState("");
-  
+
   const [pageInfo, setPageInfo] = useState({
     page: 1,
     totalPages: 1,
@@ -140,7 +143,11 @@ export default function useBrandPageController() {
           if (fuzzy) {
             setBrand(fuzzy);
           } else {
-            setBrandError("Brand Coming Soon");
+            // Do not set an error here — allow product listing to load using the
+            // slug-derived brand name. Showing a "Brand Coming Soon" page
+            // prevents products from rendering even if the product search
+            // returns results for the slug.
+            setBrand(null);
           }
         }
         setBrandLoading(false);

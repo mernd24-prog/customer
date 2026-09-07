@@ -52,13 +52,14 @@ export default function NewArrivalCard({
             className="flex gap-4  p-6 items-center hover:bg-slate-50 transition-colors duration-200 pl-4"
           >
             {/* Product Thumbnail */}
-            <img loading="lazy"
-              src={prod.image}
-              alt={prod.title}
-              width="90"
-              height="90"
-              className="h-[90px] w-[90px] rounded-[10px] border border-[var(--customer-border)] object-cover transition-all duration-300 hover:scale-105 md:h-[90px] md:w-[90px]"
-            />
+            <div className="flex-shrink-0 h-[90px] w-[90px] rounded-[10px] border border-[var(--customer-border)] overflow-hidden transition-all duration-300  md:h-[90px] md:w-[90px] bg-white flex items-center justify-center">
+              <img
+                loading="lazy"
+                src={prod.image}
+                alt={prod.title}
+                className="h-full w-full object-contain"
+              />
+            </div>
 
             {/* Product Info */}
             <div className="flex  flex-col min-w-0 flex-grow text-left">

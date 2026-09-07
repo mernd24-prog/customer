@@ -316,11 +316,11 @@ export default function ProductDetailPage() {
                       increaseDisabled={!inStock || quantityAtStockLimit}
                       increaseDisabledLabel={quantityStockMessage || undefined}
                     />
-                    {quantityStockMessage ? (
+                    {/* {quantityStockMessage ? (
                       <p className="mt-1 text-xs font-semibold text-red-600">
                         {quantityStockMessage}
                       </p>
-                    ) : null}
+                    ) : null} */}
                   </div>
 
                   <DeliveryChecker

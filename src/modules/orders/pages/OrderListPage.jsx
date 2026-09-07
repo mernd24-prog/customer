@@ -14,8 +14,8 @@ import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
 
 import Breadcrumbs from "../../common/components/Breadcrumbs";
-import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
-import ProductFilterSidebar, { FilterSection, CheckboxListFilter } from "../../products/components/ProductFilterSidebar";
+// Note: Sidebar removed — rendering main content full width
+// sidebar removed
 
 import { getOpaqueOrderPath } from "../../../utils/routeTokens";
 
@@ -90,14 +90,15 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
   const paymentMethod = String(
     order?.paymentMethod || order?.payment_method || "",
   ).toLowerCase();
-  
+
   const isCod = paymentMethod === "cod" || paymentMethod === "cash_on_delivery";
   const orderStatus = getOrderStatus(order);
-  const isPaymentPending = orderStatus === "pending_payment" || orderStatus === "payment_failed";
-  
-  const canPayOnline = 
-    (isPaymentPending || isCod) && 
-    paymentStatus !== "captured" && 
+  const isPaymentPending =
+    orderStatus === "pending_payment" || orderStatus === "payment_failed";
+
+  const canPayOnline =
+    (isPaymentPending || isCod) &&
+    paymentStatus !== "captured" &&
     !["cancelled", "returned", "delivered", "completed"].includes(orderStatus);
 
   const userState = useSelector((s) => s.user?.current);
@@ -117,7 +118,8 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
   const s = String(itemStatus).toLowerCase();
   let statusDotColor = "bg-[#D7A522]";
   if (["delivered", "completed"].includes(s)) statusDotColor = "bg-[#21812C]";
-  else if (["cancelled", "failed", "returned", "refunded"].includes(s)) statusDotColor = "bg-[#DC2626]";
+  else if (["cancelled", "failed", "returned", "refunded"].includes(s))
+    statusDotColor = "bg-[#DC2626]";
 
   return (
     <article className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-[#FFFCF6] transition hover:shadow-sm">
@@ -174,14 +176,21 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
 
         <div className="md:w-64 shrink-0 flex flex-col gap-1.5 mt-2 md:mt-0">
           <div className="flex items-center gap-2">
-            <div className={`h-2.5 w-2.5 shrink-0 rounded-full ${statusDotColor}`} />
+            <div
+              className={`h-2.5 w-2.5 shrink-0 rounded-full ${statusDotColor}`}
+            />
             <span className="font-bold text-sm text-[#1B1D60] capitalize">
-              {humanize(itemStatus, "Processing")} on {formatOrderDate(createdAt)}
+              {humanize(itemStatus, "Processing")} on{" "}
+              {formatOrderDate(createdAt)}
             </span>
           </div>
-          
+
           <p className="text-xs text-[#5E6472]">
-            {s === 'delivered' ? 'Your item has been delivered' : s === 'cancelled' ? 'Your order was cancelled' : 'Your order is being processed'}
+            {s === "delivered"
+              ? "Your item has been delivered"
+              : s === "cancelled"
+                ? "Your order was cancelled"
+                : "Your order is being processed"}
           </p>
 
           {canPayOnline ? (
@@ -197,9 +206,24 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
             >
               {retrying ? (
                 <span className="flex items-center gap-2">
-                  <svg className="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  <svg
+                    className="h-3.5 w-3.5 animate-spin"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    />
                   </svg>
                   Processing...
                 </span>
@@ -208,7 +232,9 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
               )}
             </button>
           ) : (
-            isDeliveredOrderItem(item) && !item.has_reviewed && !item.is_reviewed && (
+            ["delivered", "refunded"].includes(s) &&
+            !item.has_reviewed &&
+            !item.is_reviewed && (
               <button
                 type="button"
                 onClick={(e) => {
@@ -218,7 +244,8 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
                 }}
                 className="mt-2 flex w-fit items-center gap-1.5 text-sm font-semibold text-[#2564EB] transition hover:text-[#1d4ed8]"
               >
-                <IoIosStar size={16} className="fill-[#2564EB]" /> Rate & Review Product
+                <IoIosStar size={16} className="fill-[#2564EB]" /> Rate & Review
+                Product
               </button>
             )
           )}
@@ -270,146 +297,117 @@ export default function OrderListPage() {
     <>
       <Seo title="My Orders | Sam Global" />
 
-      <section className="min-h-screen bg-white  py-5 sm:py-8 lg:py-10">
+      <section className=" bg-white  py-5 sm:py-8 lg:py-10">
         <div className="mx-auto w-full max-w-[1740px] px-4 sm:px-6 lg:px-8">
           <Breadcrumbs
             items={ORDER_BREADCRUMBS}
             className="mb-2 flex flex-wrap  items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
             heading="My Order"
           />
-          <StickySidebarLayout
-            sidebarPosition="left"
-            containerClass="flex flex-col xl:flex-row gap-5 sm:gap-6 lg:gap-7 lg:mt-4"
-            sidebarClass="w-full xl:w-[280px] 2xl:w-[280px] transition-[top] duration-300 ease-in-out"
-            mainContent={
-              <div className="min-w-0 rounded-xl bg-white">
-                {!(state.loading && !totalOrders && !orderItemsList.length) && (
-                  <div className="mb-4 flex flex-col sm:flex-row gap-3 items-center justify-between">
-                    <label className="relative block w-full sm:max-w-[400px]">
+          <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7 lg:mt-4">
+            <div className="min-w-0 rounded-xl bg-white">
+              {!(state.loading && !totalOrders && !orderItemsList.length) && (
+                <div className="mb-4 flex flex-col gap-3">
+                  {/* Top filter chips */}
+                  {/* status chips moved into dropdown per request */}
+
+                  {/* Search + controls */}
+                  <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+                    <label className="relative block w-full sm:max-w-[640px]">
                       <Search
-                        size={15}
-                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+                        size={16}
+                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]"
                       />
                       <input
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
-                        placeholder="Search your orders here"
-                        className="h-10 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-9 text-base font-medium text-ink outline-none focus:outline-none"
+                        placeholder="Search by order ID, product name or tracking number"
+                        className="h-12 w-full rounded-full border border-[#E6E9F2] bg-[#FAFBFF] pl-12 pr-12 text-base font-medium text-ink outline-none focus:ring-2 focus:ring-[#1B1D60]/20"
                       />
                       {Boolean(query) && (
                         <button
                           type="button"
                           onClick={() => setQuery("")}
                           aria-label="Clear search"
-                          className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-[#1B1D6080] hover:text-[#1B1D60] transition"
+                          className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-[#6B7280] hover:text-[#374151] transition"
                         >
                           <X size={16} />
                         </button>
                       )}
                     </label>
+
                     <div className="w-full sm:w-auto shrink-0 flex justify-end">
                       <CustomDropdown
-                        className="w-full sm:w-[150px]"
-                        buttonClassName="h-10 w-full rounded-[10px] border border-[#1B1D604D] bg-white px-3 text-sm font-semibold text-[#1B1D60] focus:outline-none"
+                        className="w-full sm:w-[180px]"
+                        buttonClassName="h-10 w-full rounded-[10px] border border-[#E6E9F2] bg-white px-3 text-sm font-semibold text-[#1B1D60] focus:outline-none"
                         options={[
-                          { value: 2, label: "2 per page" },
-                          { value: 4, label: "4 per page" },
-                          { value: 6, label: "6 per page" },
-                          { value: 8, label: "8 per page" },
+                          { value: "all", label: "All Orders" },
+                          ...availableStatusFilters.map((f) => ({
+                            value: f.value,
+                            label: f.label,
+                          })),
                         ]}
-                        value={pageSize}
-                        onChange={setPageSize}
-                        placeholder="Per page"
+                        value={
+                          statusFilters && statusFilters.length === 1
+                            ? statusFilters[0]
+                            : "all"
+                        }
+                        onChange={(v) => {
+                          if (v === "all") setStatusFilters([]);
+                          else setStatusFilters([v]);
+                        }}
+                        placeholder="Status"
                       />
                     </div>
                   </div>
-                )}
+                </div>
+              )}
 
-                <ApiState
-                  loading={state.loading && !totalOrders}
-                  error={state.error}
-                  empty={
-                    !orderItemsList.length &&
-                    !state.loading &&
-                    !!state.lastFetchedAt
-                  }
-                  skeletonLayout={ORDER_LIST_SKELETON}
-                  skeletonContainerClass=""
-                  emptyTitle={
-                    statusFilters.length || timeFilters.length ? "No orders found" : "No orders yet"
-                  }
-                  emptyText={
-                    statusFilters.length || timeFilters.length || query
-                      ? "Try adjusting your filters."
-                      : "Once you place an order, it will appear here."
-                  }
-                  emptyActionLabel="Continue Shopping"
-                  onEmptyAction={() => navigate("/products")}
-                >
-                  <div className="flex  flex-col gap-4  ">
-                    {orderItemsList.map(({ order, item }) => (
-                      <OrderItemSummaryCard
-                        key={`${getOrderId(order)}:${getOrderItemId(item)}`}
-                        order={order}
-                        item={item}
-                        onReviewClick={handleReviewClick}
-                      />
-                    ))}
-                  </div>
-
-                  {totalPages > 1 && (
+              <ApiState
+                loading={state.loading && !totalOrders}
+                error={state.error}
+                empty={
+                  !orderItemsList.length &&
+                  !state.loading &&
+                  !!state.lastFetchedAt
+                }
+                skeletonLayout={ORDER_LIST_SKELETON}
+                skeletonContainerClass=""
+                emptyTitle={
+                  statusFilters.length || timeFilters.length
+                    ? "No orders found"
+                    : "No orders yet"
+                }
+                emptyText={
+                  statusFilters.length || timeFilters.length || query
+                    ? "Try adjusting your filters."
+                    : "Once you place an order, it will appear here."
+                }
+                emptyActionLabel="Continue Shopping"
+                onEmptyAction={() => navigate("/products")}
+              >
+                <div className="flex  flex-col gap-4  ">
+                  {orderItemsList.map(({ order, item }) => (
+                    <OrderItemSummaryCard
+                      key={`${getOrderId(order)}:${getOrderItemId(item)}`}
+                      order={order}
+                      item={item}
+                      onReviewClick={handleReviewClick}
+                    />
+                  ))}
+                </div>
+                {totalPages > 1 && (
+                  <div className="mt-6">
                     <Pagination
                       currentPage={currentPage}
                       totalPages={totalPages}
                       onPageChange={setCurrentPage}
                     />
-                  )}
-                </ApiState>
-              </div>
-            }
-            sidebarContent={
-              <div className="min-w-0 self-start xl:h-fit">
-                <ProductFilterSidebar
-                  onClearAll={
-                    statusFilters.length > 0 || timeFilters.length > 0
-                      ? () => {
-                          setStatusFilters([]);
-                          setTimeFilters([]);
-                        }
-                      : undefined
-                  }
-                  sections={[
-                    {
-                      title: "Order Status",
-                      defaultOpen: true,
-                      searchable: true,
-                      content: (
-                        <CheckboxListFilter
-                          name="status"
-                          options={availableStatusFilters}
-                          selected={statusFilters}
-                          onChange={setStatusFilters}
-                        />
-                      ),
-                    },
-                    {
-                      title: "Order Time",
-                      defaultOpen: true,
-                      searchable: true,
-                      content: (
-                        <CheckboxListFilter
-                          name="time"
-                          options={availableTimeFilters}
-                          selected={timeFilters}
-                          onChange={setTimeFilters}
-                        />
-                      ),
-                    },
-                  ]}
-                />
-              </div>
-            }
-          />
+                  </div>
+                )}
+              </ApiState>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -418,7 +416,9 @@ export default function OrderListPage() {
           item={reviewModalState.item}
           orderId={getOrderId(reviewModalState.order)}
           getProductTitle={getProductTitle}
-          onClose={() => setReviewModalState({ isOpen: false, item: null, order: null })}
+          onClose={() =>
+            setReviewModalState({ isOpen: false, item: null, order: null })
+          }
           onSubmitted={() => {
             setReviewModalState({ isOpen: false, item: null, order: null });
           }}
