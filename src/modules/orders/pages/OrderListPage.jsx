@@ -118,7 +118,6 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
   };
 
   const s = String(itemStatus).toLowerCase();
-<<<<<<< HEAD
   let statusBadgeStyle = "bg-amber-50/90 text-[#A96F14] border-amber-200/90";
   let statusDotColor = "bg-amber-500";
 
@@ -145,12 +144,6 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
 
   const isDelivered = ["delivered", "completed", "refunded"].includes(s);
   const isUnreviewed = !item.has_reviewed && !item.is_reviewed;
-=======
-  let statusDotColor = "bg-[#D7A522]";
-  if (["delivered", "completed"].includes(s)) statusDotColor = "bg-[#21812C]";
-  else if (["cancelled", "failed", "returned", "refunded"].includes(s))
-    statusDotColor = "bg-[#DC2626]";
->>>>>>> origin/aditi-dev
 
   return (
     <article className="group relative overflow-hidden rounded-xl border border-[#E4DDCF] bg-white transition-all duration-200 hover:border-[#D6A323]/40 shadow-2xs">
@@ -213,7 +206,6 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
             </span>
           </div>
 
-<<<<<<< HEAD
           {/* Status & Date */}
           <div className="flex flex-col justify-center gap-1 min-w-[140px] lg:items-start">
             <div className="flex items-center">
@@ -230,75 +222,6 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
           {/* Action Button (Pay Now or Rate Product) */}
           <div className="flex items-center justify-end shrink-0 min-w-[110px]">
             {canPayOnline ? (
-=======
-        <div className="md:w-28 shrink-0 mt-2 md:mt-0">
-          <span className="block text-lg font-semibold text-[#1B1D60]">
-            {formatMoney(itemTotal, currency)}
-          </span>
-        </div>
-
-        <div className="md:w-64 shrink-0 flex flex-col gap-1.5 mt-2 md:mt-0">
-          <div className="flex items-center gap-2">
-            <div
-              className={`h-2.5 w-2.5 shrink-0 rounded-full ${statusDotColor}`}
-            />
-            <span className="font-bold text-sm text-[#1B1D60] capitalize">
-              {humanize(itemStatus, "Processing")} on{" "}
-              {formatOrderDate(createdAt)}
-            </span>
-          </div>
-
-          <p className="text-xs text-[#5E6472]">
-            {s === "delivered"
-              ? "Your item has been delivered"
-              : s === "cancelled"
-                ? "Your order was cancelled"
-                : "Your order is being processed"}
-          </p>
-
-          {canPayOnline ? (
-            <button
-              type="button"
-              disabled={retrying}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleRetryPayment();
-              }}
-              className="mt-3 flex w-fit items-center gap-1.5 rounded-full border border-[#D7A522] bg-[#FFFCF6] px-4 py-1.5 text-sm font-semibold text-[#D7A522] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-all hover:bg-[#D7A522] hover:text-white"
-            >
-              {retrying ? (
-                <span className="flex items-center gap-2">
-                  <svg
-                    className="h-3.5 w-3.5 animate-spin"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8H4z"
-                    />
-                  </svg>
-                  Processing...
-                </span>
-              ) : (
-                "Pay Now"
-              )}
-            </button>
-          ) : (
-            ["delivered", "refunded"].includes(s) &&
-            !item.has_reviewed &&
-            !item.is_reviewed && (
->>>>>>> origin/aditi-dev
               <button
                 type="button"
                 disabled={retrying}
@@ -309,7 +232,6 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
                 }}
                 className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-[#D6A323] to-[#A96F14] hover:from-[#A96F14] hover:to-[#86560B] px-4 py-2 text-xs font-bold text-white shadow-2xs hover:shadow-xs transition-all active:scale-95 whitespace-nowrap cursor-pointer"
               >
-<<<<<<< HEAD
                 {retrying ? (
                   <span className="flex items-center gap-1.5">
                     <RefreshCw className="h-3.5 w-3.5 animate-spin" />
@@ -318,10 +240,6 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
                 ) : (
                   "Pay Now"
                 )}
-=======
-                <IoIosStar size={16} className="fill-[#2564EB]" /> Rate & Review
-                Product
->>>>>>> origin/aditi-dev
               </button>
             ) : (
               isDelivered && isUnreviewed && (
@@ -427,32 +345,20 @@ export default function OrderListPage() {
                     <label className="relative block w-full sm:max-w-[640px]">
                       <Search
                         size={16}
-<<<<<<< HEAD
                         className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#9E886A]"
-=======
-                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]"
->>>>>>> origin/aditi-dev
                       />
                       <input
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
                         placeholder="Search by order ID, product name or tracking number"
-<<<<<<< HEAD
                         className="h-11 w-full rounded-lg border border-[#E4DDCF] bg-[#FAF6EE]/40 pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none transition-all focus:outline-none focus:bg-white focus:ring-3 focus:ring-[#D6A323]/15 shadow-2xs"
-=======
-                        className="h-12 w-full rounded-full border border-[#E6E9F2] bg-[#FAFBFF] pl-12 pr-12 text-base font-medium text-ink outline-none focus:ring-2 focus:ring-[#1B1D60]/20"
->>>>>>> origin/aditi-dev
                       />
                       {Boolean(query) && (
                         <button
                           type="button"
                           onClick={() => setQuery("")}
                           aria-label="Clear search"
-<<<<<<< HEAD
                           className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-[#6F7480] hover:text-[#1F2430] transition"
-=======
-                          className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-[#6B7280] hover:text-[#374151] transition"
->>>>>>> origin/aditi-dev
                         >
                           <X size={16} />
                         </button>
@@ -461,13 +367,8 @@ export default function OrderListPage() {
 
                     <div className="w-full sm:w-auto shrink-0 flex justify-end">
                       <CustomDropdown
-<<<<<<< HEAD
                         className="w-full sm:w-[190px]"
                         buttonClassName="h-11 w-full rounded-lg border border-[#E4DDCF] bg-white px-4 text-sm font-bold text-[#1F2430] shadow-2xs transition-all hover:border-[#D6A323]/60 focus:outline-none"
-=======
-                        className="w-full sm:w-[180px]"
-                        buttonClassName="h-10 w-full rounded-[10px] border border-[#E6E9F2] bg-white px-3 text-sm font-semibold text-[#1B1D60] focus:outline-none"
->>>>>>> origin/aditi-dev
                         options={[
                           { value: "all", label: "All Orders" },
                           ...availableStatusFilters.map((f) => ({
@@ -514,11 +415,7 @@ export default function OrderListPage() {
                 emptyActionLabel="Continue Shopping"
                 onEmptyAction={() => navigate("/products")}
               >
-<<<<<<< HEAD
                 <div className="flex flex-col gap-3">
-=======
-                <div className="flex  flex-col gap-4  ">
->>>>>>> origin/aditi-dev
                   {orderItemsList.map(({ order, item }) => (
                     <OrderItemSummaryCard
                       key={`${getOrderId(order)}:${getOrderItemId(item)}`}
@@ -550,11 +447,7 @@ export default function OrderListPage() {
           initialRating={reviewModalState.initialRating}
           getProductTitle={getProductTitle}
           onClose={() =>
-<<<<<<< HEAD
             setReviewModalState({ isOpen: false, item: null, order: null, initialRating: 0 })
-=======
-            setReviewModalState({ isOpen: false, item: null, order: null })
->>>>>>> origin/aditi-dev
           }
           onSubmitted={() => {
             setReviewModalState({ isOpen: false, item: null, order: null, initialRating: 0 });
@@ -563,4 +456,4 @@ export default function OrderListPage() {
       )}
     </>
   );
-} 
+}
