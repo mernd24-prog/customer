@@ -14,8 +14,8 @@ import ApiState from "../../../components/ui/ApiState";
 import Seo from "../../../components/ui/Seo";
 
 import Breadcrumbs from "../../common/components/Breadcrumbs";
-import StickySidebarLayout from "../../../components/ui/layout/StickySidebarLayout";
-import ProductFilterSidebar, { FilterSection, CheckboxListFilter } from "../../products/components/ProductFilterSidebar";
+// Note: Sidebar removed — rendering main content full width
+// sidebar removed
 
 import { getOpaqueOrderPath } from "../../../utils/routeTokens";
 
@@ -90,14 +90,15 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
   const paymentMethod = String(
     order?.paymentMethod || order?.payment_method || "",
   ).toLowerCase();
-  
+
   const isCod = paymentMethod === "cod" || paymentMethod === "cash_on_delivery";
   const orderStatus = getOrderStatus(order);
-  const isPaymentPending = orderStatus === "pending_payment" || orderStatus === "payment_failed";
-  
-  const canPayOnline = 
-    (isPaymentPending || isCod) && 
-    paymentStatus !== "captured" && 
+  const isPaymentPending =
+    orderStatus === "pending_payment" || orderStatus === "payment_failed";
+
+  const canPayOnline =
+    (isPaymentPending || isCod) &&
+    paymentStatus !== "captured" &&
     !["cancelled", "returned", "delivered", "completed"].includes(orderStatus);
 
   const userState = useSelector((s) => s.user?.current);
@@ -107,6 +108,8 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
     userState,
   });
 
+  const [hoverStar, setHoverStar] = useState(0);
+
   const handleCardClick = (e) => {
     if (isPaymentPending && !isCod) {
       e.preventDefault();
@@ -115,19 +118,43 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
   };
 
   const s = String(itemStatus).toLowerCase();
-  let statusDotColor = "bg-[#D7A522]";
-  if (["delivered", "completed"].includes(s)) statusDotColor = "bg-[#21812C]";
-  else if (["cancelled", "failed", "returned", "refunded"].includes(s)) statusDotColor = "bg-[#DC2626]";
+  let statusBadgeStyle = "bg-amber-50/90 text-[#A96F14] border-amber-200/90";
+  let statusDotColor = "bg-amber-500";
+
+  if (["delivered", "completed"].includes(s)) {
+    statusBadgeStyle = "bg-emerald-50/90 text-emerald-700 border-emerald-200/90";
+    statusDotColor = "bg-emerald-500";
+  } else if (
+    [
+      "cancelled",
+      "failed",
+      "returned",
+      "refunded",
+      "payment_failed",
+      "cancellation_approved",
+      "cancellation_rejected",
+    ].includes(s)
+  ) {
+    statusBadgeStyle = "bg-rose-50/90 text-rose-700 border-rose-200/90";
+    statusDotColor = "bg-rose-500";
+  } else if (["pending_payment"].includes(s)) {
+    statusBadgeStyle = "bg-amber-50/90 text-amber-700 border-amber-200/90";
+    statusDotColor = "bg-amber-500";
+  }
+
+  const isDelivered = ["delivered", "completed", "refunded"].includes(s);
+  const isUnreviewed = !item.has_reviewed && !item.is_reviewed;
 
   return (
-    <article className="overflow-hidden rounded-xl border border-[#E7D9B8] bg-[#FFFCF6] transition hover:shadow-sm">
-      <Link
-        to={itemDetailPath}
-        onClick={handleCardClick}
-        className="flex flex-col md:flex-row md:items-start gap-4 p-4 md:p-5 transition hover:bg-[#FFFDF9]"
-      >
-        <div className="flex flex-1 gap-4 min-w-0">
-          <span className="flex aspect-square w-20 sm:w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#EFE5D2] bg-white p-1.5 sm:p-2">
+    <article className="group relative overflow-hidden rounded-xl border border-[#E4DDCF] bg-white transition-all duration-200 hover:border-[#D6A323]/40 shadow-2xs">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-4">
+        {/* Left section: Thumbnail & Details (Link to detail) */}
+        <Link
+          to={itemDetailPath}
+          onClick={handleCardClick}
+          className="flex flex-1 items-center gap-3 sm:gap-4 min-w-0 group/link"
+        >
+          <div className="relative flex aspect-square w-16 sm:w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E4DDCF]/80 bg-[#FAF6EE]/50 p-1.5">
             {itemImage ? (
               <img
                 loading="lazy"
@@ -138,11 +165,12 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
                 className="h-full w-full object-contain"
               />
             ) : (
-              <Package size={34} className="text-[#D9CBAE]" />
+              <Package size={28} className="text-[#9E886A]/50" />
             )}
-          </span>
-          <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-            <span className="block text-sm font-semibold text-[#1B1D60] md:text-base">
+          </div>
+
+          <div className="flex flex-col gap-1 min-w-0 flex-1">
+            <h3 className="text-sm font-bold text-[#1F2430] group-hover/link:text-[#201B78] transition-colors leading-snug line-clamp-2">
               <ShowMoreText
                 text={productTitle}
                 mode="characters"
@@ -150,80 +178,107 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
                 moreLabel="more"
                 lessLabel="less"
                 textClassName="inline"
-                buttonClassName="ml-1 text-sm font-semibold text-[#1B1D60] hover:underline"
+                buttonClassName="ml-1 text-xs font-semibold text-[#201B78] hover:underline"
               />
-            </span>
-            <span className="flex flex-wrap gap-2 text-xs font-semibold text-[#5E6472] mt-1">
+            </h3>
+
+            <div className="flex flex-wrap items-center gap-1.5 text-xs">
               {getOrderItemColor(item) !== "N/A" && (
-                <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">
-                  Color: {getOrderItemColor(item)}
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-medium bg-[#FAF6EE] text-[#1F2430] border border-[#E4DDCF]/80">
+                  <span className="text-[#6F7480] font-normal">Color:</span>
+                  {getOrderItemColor(item)}
                 </span>
               )}
-              <span className="rounded-full bg-[#F4F6FA] px-3 py-1.5">
-                Qty: {orderedQuantity}
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-medium bg-[#FAF6EE] text-[#1F2430] border border-[#E4DDCF]/80">
+                <span className="text-[#6F7480] font-normal">Qty:</span>
+                {orderedQuantity}
               </span>
+            </div>
+          </div>
+        </Link>
+
+        {/* Right Columns: Price | Status & Date | Action Button */}
+        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between lg:justify-end gap-4 lg:gap-6 pt-3 lg:pt-0 border-t lg:border-t-0 border-[#E4DDCF]/60 shrink-0">
+          {/* Price */}
+          <div className="flex flex-col justify-center min-w-[100px] lg:text-right">
+            <span className="text-base sm:text-lg font-extrabold text-[#1F2430] tracking-tight">
+              {formatMoney(itemTotal, currency)}
             </span>
           </div>
-        </div>
 
-        <div className="md:w-28 shrink-0 mt-2 md:mt-0">
-          <span className="block text-lg font-semibold text-[#1B1D60]">
-            {formatMoney(itemTotal, currency)}
-          </span>
-        </div>
-
-        <div className="md:w-64 shrink-0 flex flex-col gap-1.5 mt-2 md:mt-0">
-          <div className="flex items-center gap-2">
-            <div className={`h-2.5 w-2.5 shrink-0 rounded-full ${statusDotColor}`} />
-            <span className="font-bold text-sm text-[#1B1D60] capitalize">
-              {humanize(itemStatus, "Processing")} on {formatOrderDate(createdAt)}
+          {/* Status & Date */}
+          <div className="flex flex-col justify-center gap-1 min-w-[140px] lg:items-start">
+            <div className="flex items-center">
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold whitespace-nowrap border ${statusBadgeStyle} shadow-2xs`}>
+                <span className={`h-1.5 w-1.5 rounded-full ${statusDotColor} animate-pulse shrink-0`} />
+                <span>{humanize(itemStatus, "Processing")}</span>
+              </span>
+            </div>
+            <span className="text-[11px] font-semibold text-[#6F7480] whitespace-nowrap pl-0.5">
+              {formatOrderDate(createdAt)}
             </span>
           </div>
-          
-          <p className="text-xs text-[#5E6472] pl-[18px]">
-            {s === 'delivered' ? 'Your item has been delivered' : s === 'cancelled' ? 'Your order was cancelled' : 'Your order is being processed'}
-          </p>
 
-          {canPayOnline ? (
-            <button
-              type="button"
-              disabled={retrying}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleRetryPayment();
-              }}
-              className="mt-3 ml-[18px] flex w-fit items-center gap-1.5 rounded-full border border-[#D7A522] bg-[#FFFCF6] px-4 py-1.5 text-sm font-semibold text-[#D7A522] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-all hover:bg-[#D7A522] hover:text-white"
-            >
-              {retrying ? (
-                <span className="flex items-center gap-2">
-                  <svg className="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
-                  Processing...
-                </span>
-              ) : (
-                "Pay Now"
-              )}
-            </button>
-          ) : (
-            isDeliveredOrderItem(item) && !item.has_reviewed && !item.is_reviewed && (
+          {/* Action Button (Pay Now or Rate Product) */}
+          <div className="flex items-center justify-end shrink-0 min-w-[110px]">
+            {canPayOnline ? (
               <button
                 type="button"
+                disabled={retrying}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  if (onReviewClick) onReviewClick(item, order);
+                  handleRetryPayment();
                 }}
-                className="mt-2 ml-[18px] flex w-fit items-center gap-1.5 text-sm font-semibold text-[#2564EB] transition hover:text-[#1d4ed8]"
+                className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-[#D6A323] to-[#A96F14] hover:from-[#A96F14] hover:to-[#86560B] px-4 py-2 text-xs font-bold text-white shadow-2xs hover:shadow-xs transition-all active:scale-95 whitespace-nowrap cursor-pointer"
               >
-                <IoIosStar size={16} className="fill-[#2564EB]" /> Rate & Review Product
+                {retrying ? (
+                  <span className="flex items-center gap-1.5">
+                    <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                    Processing...
+                  </span>
+                ) : (
+                  "Pay Now"
+                )}
               </button>
-            )
-          )}
+            ) : (
+              isDelivered && isUnreviewed && (
+                <div className="flex flex-col gap-0.5 items-end">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F7480]">
+                    Rate product
+                  </span>
+                  <div className="flex items-center gap-0.5">
+                    {[1, 2, 3, 4, 5].map((rating) => (
+                      <button
+                        key={rating}
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (onReviewClick) onReviewClick(item, order, rating);
+                        }}
+                        onMouseEnter={() => setHoverStar(rating)}
+                        onMouseLeave={() => setHoverStar(0)}
+                        className="p-0.5 transition-transform hover:scale-125 focus:outline-none"
+                        title={`Rate ${rating} star${rating > 1 ? "s" : ""}`}
+                      >
+                        <IoIosStar
+                          size={18}
+                          className={
+                            rating <= (hoverStar || 0)
+                              ? "fill-amber-400 text-amber-400"
+                              : "fill-[#D7D7E0] text-[#D7D7E0] hover:fill-amber-300"
+                          }
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )
+            )}
+          </div>
         </div>
-      </Link>
+      </div>
     </article>
   );
 }
@@ -260,156 +315,128 @@ export default function OrderListPage() {
     isOpen: false,
     item: null,
     order: null,
+    initialRating: 0,
   });
 
-  const handleReviewClick = (item, order) => {
-    setReviewModalState({ isOpen: true, item, order });
+  const handleReviewClick = (item, order, rating = 0) => {
+    setReviewModalState({ isOpen: true, item, order, initialRating: rating });
   };
 
   return (
     <>
       <Seo title="My Orders | Sam Global" />
 
-      <section className="min-h-screen bg-white  py-5 sm:py-8 lg:py-10">
+      <section className=" bg-white  py-5 sm:py-8 lg:py-10">
         <div className="mx-auto w-full max-w-[1740px] px-4 sm:px-6 lg:px-8">
           <Breadcrumbs
             items={ORDER_BREADCRUMBS}
             className="mb-2 flex flex-wrap  items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
             heading="My Order"
           />
-          <StickySidebarLayout
-            sidebarPosition="left"
-            containerClass="flex flex-col xl:flex-row gap-5 sm:gap-6 lg:gap-7 lg:mt-4"
-            sidebarClass="w-full xl:w-[280px] 2xl:w-[280px] transition-[top] duration-300 ease-in-out"
-            mainContent={
-              <div className="min-w-0 rounded-xl bg-white">
-                {!(state.loading && !totalOrders && !orderItemsList.length) && (
-                  <div className="mb-4 flex flex-col sm:flex-row gap-3 items-center justify-between">
-                    <label className="relative block w-full sm:max-w-[400px]">
+          <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7 lg:mt-4">
+            <div className="min-w-0 rounded-xl bg-white">
+              {!(state.loading && !totalOrders && !orderItemsList.length) && (
+                <div className="mb-4 flex flex-col gap-3">
+                  {/* Top filter chips */}
+                  {/* status chips moved into dropdown per request */}
+
+                  {/* Search + controls */}
+                  <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+                    <label className="relative block w-full sm:max-w-[640px]">
                       <Search
-                        size={15}
-                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+                        size={16}
+                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#9E886A]"
                       />
                       <input
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
-                        placeholder="Search your orders here"
-                        className="h-10 w-full rounded-[10px] border border-[#1B1D604D] bg-[#FAF8FFB2] pl-9 pr-9 text-base font-medium text-ink outline-none focus:outline-none"
+                        placeholder="Search by order ID, product name or tracking number"
+                        className="h-11 w-full rounded-lg border border-[#E4DDCF] bg-[#FAF6EE]/40 pl-11 pr-11 text-sm font-medium text-[#1F2430] placeholder-[#6F7480] outline-none transition-all focus:outline-none focus:bg-white focus:ring-3 focus:ring-[#D6A323]/15 shadow-2xs"
                       />
                       {Boolean(query) && (
                         <button
                           type="button"
                           onClick={() => setQuery("")}
                           aria-label="Clear search"
-                          className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-[#1B1D6080] hover:text-[#1B1D60] transition"
+                          className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-[#6F7480] hover:text-[#1F2430] transition"
                         >
                           <X size={16} />
                         </button>
                       )}
                     </label>
+
                     <div className="w-full sm:w-auto shrink-0 flex justify-end">
                       <CustomDropdown
-                        className="w-full sm:w-[150px]"
-                        buttonClassName="h-10 w-full rounded-[10px] border border-[#1B1D604D] bg-white px-3 text-sm font-semibold text-[#1B1D60] focus:outline-none"
+                        className="w-full sm:w-[190px]"
+                        buttonClassName="h-11 w-full rounded-lg border border-[#E4DDCF] bg-white px-4 text-sm font-bold text-[#1F2430] shadow-2xs transition-all hover:border-[#D6A323]/60 focus:outline-none"
                         options={[
-                          { value: 2, label: "2 per page" },
-                          { value: 4, label: "4 per page" },
-                          { value: 6, label: "6 per page" },
-                          { value: 8, label: "8 per page" },
+                          { value: "all", label: "All Orders" },
+                          ...availableStatusFilters.map((f) => ({
+                            value: f.value,
+                            label: f.label,
+                          })),
                         ]}
-                        value={pageSize}
-                        onChange={setPageSize}
-                        placeholder="Per page"
+                        value={
+                          statusFilters && statusFilters.length === 1
+                            ? statusFilters[0]
+                            : "all"
+                        }
+                        onChange={(v) => {
+                          if (v === "all") setStatusFilters([]);
+                          else setStatusFilters([v]);
+                        }}
+                        placeholder="Status"
                       />
                     </div>
                   </div>
-                )}
+                </div>
+              )}
 
-                <ApiState
-                  loading={state.loading && !totalOrders}
-                  error={state.error}
-                  empty={
-                    !orderItemsList.length &&
-                    !state.loading &&
-                    !!state.lastFetchedAt
-                  }
-                  skeletonLayout={ORDER_LIST_SKELETON}
-                  skeletonContainerClass=""
-                  emptyTitle={
-                    statusFilters.length || timeFilters.length ? "No orders found" : "No orders yet"
-                  }
-                  emptyText={
-                    statusFilters.length || timeFilters.length || query
-                      ? "Try adjusting your filters."
-                      : "Once you place an order, it will appear here."
-                  }
-                  emptyActionLabel="Continue Shopping"
-                  onEmptyAction={() => navigate("/products")}
-                >
-                  <div className="flex  flex-col gap-4  ">
-                    {orderItemsList.map(({ order, item }) => (
-                      <OrderItemSummaryCard
-                        key={`${getOrderId(order)}:${getOrderItemId(item)}`}
-                        order={order}
-                        item={item}
-                        onReviewClick={handleReviewClick}
-                      />
-                    ))}
-                  </div>
-
-                  {totalPages > 1 && (
+              <ApiState
+                loading={state.loading && !totalOrders}
+                error={state.error}
+                empty={
+                  !orderItemsList.length &&
+                  !state.loading &&
+                  !!state.lastFetchedAt
+                }
+                skeletonLayout={ORDER_LIST_SKELETON}
+                skeletonContainerClass=""
+                emptyTitle={
+                  statusFilters.length || timeFilters.length
+                    ? "No orders found"
+                    : "No orders yet"
+                }
+                emptyText={
+                  statusFilters.length || timeFilters.length || query
+                    ? "Try adjusting your filters."
+                    : "Once you place an order, it will appear here."
+                }
+                emptyActionLabel="Continue Shopping"
+                onEmptyAction={() => navigate("/products")}
+              >
+                <div className="flex flex-col gap-3">
+                  {orderItemsList.map(({ order, item }) => (
+                    <OrderItemSummaryCard
+                      key={`${getOrderId(order)}:${getOrderItemId(item)}`}
+                      order={order}
+                      item={item}
+                      onReviewClick={handleReviewClick}
+                    />
+                  ))}
+                </div>
+                {totalPages > 1 && (
+                  <div className="mt-6">
                     <Pagination
                       currentPage={currentPage}
                       totalPages={totalPages}
                       onPageChange={setCurrentPage}
                     />
-                  )}
-                </ApiState>
-              </div>
-            }
-            sidebarContent={
-              <div className="min-w-0 self-start xl:h-fit">
-                <ProductFilterSidebar
-                  onClearAll={
-                    statusFilters.length > 0 || timeFilters.length > 0
-                      ? () => {
-                          setStatusFilters([]);
-                          setTimeFilters([]);
-                        }
-                      : undefined
-                  }
-                  sections={[
-                    {
-                      title: "Order Status",
-                      defaultOpen: true,
-                      searchable: true,
-                      content: (
-                        <CheckboxListFilter
-                          name="status"
-                          options={availableStatusFilters}
-                          selected={statusFilters}
-                          onChange={setStatusFilters}
-                        />
-                      ),
-                    },
-                    {
-                      title: "Order Time",
-                      defaultOpen: true,
-                      searchable: true,
-                      content: (
-                        <CheckboxListFilter
-                          name="time"
-                          options={availableTimeFilters}
-                          selected={timeFilters}
-                          onChange={setTimeFilters}
-                        />
-                      ),
-                    },
-                  ]}
-                />
-              </div>
-            }
-          />
+                  </div>
+                )}
+              </ApiState>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -417,13 +444,16 @@ export default function OrderListPage() {
         <ReviewModal
           item={reviewModalState.item}
           orderId={getOrderId(reviewModalState.order)}
+          initialRating={reviewModalState.initialRating}
           getProductTitle={getProductTitle}
-          onClose={() => setReviewModalState({ isOpen: false, item: null, order: null })}
+          onClose={() =>
+            setReviewModalState({ isOpen: false, item: null, order: null, initialRating: 0 })
+          }
           onSubmitted={() => {
-            setReviewModalState({ isOpen: false, item: null, order: null });
+            setReviewModalState({ isOpen: false, item: null, order: null, initialRating: 0 });
           }}
         />
       )}
     </>
   );
-}
+} 

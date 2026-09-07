@@ -23,7 +23,7 @@ export function useOrderList() {
   const [statusFilters, setStatusFilters] = useState([]);
   const [timeFilters, setTimeFilters] = useState([]);
   const [query, setQuery] = useState("");
-  const [pageSize, setPageSize] = useState(2);
+  const [pageSize, setPageSize] = useState(6);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalOrdersState, setTotalOrdersState] = useState(0);
 
@@ -207,7 +207,14 @@ export function useOrderList() {
 
   const totalOrders = orderItemsList.length;
   const totalPages = Math.max(1, Math.ceil(totalOrders / pageSize));
-  
+
+  // Reset page if currentPage exceeds totalPages
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [currentPage, totalPages]);
+
   const paginatedOrders = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return orderItemsList.slice(start, start + pageSize);

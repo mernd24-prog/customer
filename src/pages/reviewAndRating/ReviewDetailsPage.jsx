@@ -304,6 +304,10 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
         <ReviewMediaLightbox
           images={media}
           index={lightboxIndex}
+          review={review}
+          currentUser={currentUser}
+          currentUserId={currentUserId}
+          onHelpful={onHelpful}
           onClose={() => setLightboxIndex(null)}
           onIndexChange={setLightboxIndex}
         />

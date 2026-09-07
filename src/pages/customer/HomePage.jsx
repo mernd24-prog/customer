@@ -158,9 +158,7 @@ export function HomePage() {
       <CategoryBar />
 
       <HomeCategoryGrid
-        categories={categories
-          ?.filter((c) => c?.isDashboardVisible !== false)
-          .slice(0, 10)}
+        categories={categories}
         loading={homeLoading}
         title="Time for a Spring Refresh"
         subtitle="Curated collections for every style & home"
