@@ -180,7 +180,7 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
             </span>
           </div>
           
-          <p className="text-xs text-[#5E6472]">
+          <p className="text-xs text-[#5E6472] pl-[18px]">
             {s === 'delivered' ? 'Your item has been delivered' : s === 'cancelled' ? 'Your order was cancelled' : 'Your order is being processed'}
           </p>
 
@@ -193,7 +193,7 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
                 e.stopPropagation();
                 handleRetryPayment();
               }}
-              className="mt-3 flex w-fit items-center gap-1.5 rounded-full border border-[#D7A522] bg-[#FFFCF6] px-4 py-1.5 text-sm font-semibold text-[#D7A522] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-all hover:bg-[#D7A522] hover:text-white"
+              className="mt-3 ml-[18px] flex w-fit items-center gap-1.5 rounded-full border border-[#D7A522] bg-[#FFFCF6] px-4 py-1.5 text-sm font-semibold text-[#D7A522] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-all hover:bg-[#D7A522] hover:text-white"
             >
               {retrying ? (
                 <span className="flex items-center gap-2">
@@ -216,7 +216,7 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
                   e.stopPropagation();
                   if (onReviewClick) onReviewClick(item, order);
                 }}
-                className="mt-2 flex w-fit items-center gap-1.5 text-sm font-semibold text-[#2564EB] transition hover:text-[#1d4ed8]"
+                className="mt-2 ml-[18px] flex w-fit items-center gap-1.5 text-sm font-semibold text-[#2564EB] transition hover:text-[#1d4ed8]"
               >
                 <IoIosStar size={16} className="fill-[#2564EB]" /> Rate & Review Product
               </button>
