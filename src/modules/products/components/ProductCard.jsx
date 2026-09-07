@@ -143,7 +143,8 @@ export default function ProductCard({
     0;
   const discountPercent =
     discountPercentProp ?? cardProduct?.discountPercent ?? 0;
-  const to = href || getProductPublicPath(cardProduct, { variant: displayVariant });
+  const to =
+    href || getProductPublicPath(cardProduct, { variant: displayVariant });
   const isListVariant = variant === "list" || variant === "compact";
   const isFeatured =
     cardProduct?.metadata?.featured === true ||
@@ -231,7 +232,14 @@ export default function ProductCard({
     }
 
     return list.length > 0 ? list : image ? [image] : [];
-  }, [cardProduct, displayProduct, displayVariant, imageProp, image, variantImage]);
+  }, [
+    cardProduct,
+    displayProduct,
+    displayVariant,
+    imageProp,
+    image,
+    variantImage,
+  ]);
 
   useEffect(() => {
     if (!isHovered || allImages.length <= 1) {
@@ -444,13 +452,13 @@ export default function ProductCard({
             className="
               flex h-[20px] min-w-[54px] items-center justify-center
               rounded-[50px]
-              bg-[#E8F5E8]
+              bg-blue
               px-[8px] py-[3px]
               font-dmSans
               text-[10px] font-semibold
               leading-none
               tracking-[0%]
-              text-[#117A65]
+              text-white
               sm:h-[28px] sm:min-w-[84px]
               sm:px-[15px] sm:py-[5px]
               sm:text-[14px]

@@ -214,9 +214,9 @@ export default function AiSupportChatWidget() {
       {/* Floating Action Trigger Button */}
       <div className="fixed bottom-6 right-6 z-40 flex items-center gap-3">
         {unreadPrompt && !isOpen && (
-          <div className="relative rounded-2xl bg-white px-4 py-2.5 text-[13px] font-semibold text-[#1B1D60] shadow-[0_4px_14px_0_rgba(0,0,0,0.12)] border border-slate-200 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="relative rounded-2xl bg-white px-4 py-2 text-[12px] font-semibold text-[#1B1D60] shadow-[0_4px_14px_0_rgba(0,0,0,0.12)] border border-slate-200 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F5C72E]/20 text-[#CE9F2D]">
-              <Sparkles size={14} />
+              <Sparkles size={10} />
             </span>
             <span>Need Help? Chat with AI</span>
             <button
@@ -235,21 +235,30 @@ export default function AiSupportChatWidget() {
 
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="group relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#1B1D60] text-white shadow-[0_4px_14px_0_rgba(27,29,96,0.39)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_6px_20px_rgba(27,29,96,0.23)] active:scale-95 focus:outline-none focus:ring-4 focus:ring-[#1B1D60]/20"
+          className="group relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#1B1D60] text-white shadow-[0_4px_14px_0_rgba(27,29,96,0.39)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_6px_20px_rgba(27,29,96,0.23)] active:scale-95 focus:outline-none focus:ring-4 focus:ring-[#1B1D60]/20"
           aria-label="Toggle AI Support Chat"
         >
           {isOpen ? (
             <X
               size={26}
               className="transition-transform duration-200 rotate-90 scale-0 group-hover:rotate-0 group-hover:scale-100"
-              style={{ transform: isOpen ? 'rotate(0deg) scale(1)' : 'rotate(-90deg) scale(0)' }}
+              style={{
+                transform: isOpen
+                  ? "rotate(0deg) scale(1)"
+                  : "rotate(-90deg) scale(0)",
+              }}
             />
           ) : (
             <>
               <MessageSquareText
                 size={26}
                 className="transition-transform duration-200 group-hover:scale-110"
-                style={{ position: isOpen ? 'absolute' : 'relative', transform: isOpen ? 'rotate(90deg) scale(0)' : 'rotate(0deg) scale(1)' }}
+                style={{
+                  position: isOpen ? "absolute" : "relative",
+                  transform: isOpen
+                    ? "rotate(90deg) scale(0)"
+                    : "rotate(0deg) scale(1)",
+                }}
               />
               <span className="absolute -top-1 -right-1 flex h-4 w-4">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#CE9F2D] opacity-75"></span>

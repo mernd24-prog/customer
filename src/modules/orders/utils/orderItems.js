@@ -127,9 +127,20 @@ export const resolveItemStatus = ({
 }) => {
   if (cancellationRequest?.status) {
     if (cancellationRequest.status === "requested") return "cancellation_requested";
-    if (cancellationRequest.status === "approved") return "cancellation_approved";
+    if (
+      cancellationRequest.status === "approved" ||
+      cancellationRequest.status === "completed" ||
+      cancellationRequest.status === "cancellation_approved" ||
+      cancellationRequest.metadata?.approvedAt
+    )
+      return "cancellation_approved";
     if (cancellationRequest.status === "rejected") return "cancellation_rejected";
     if (cancellationRequest.status === "failed") return "cancellation_failed";
+    if (cancellationRequest.status === "manual_review") {
+      return cancellationRequest.metadata?.approvedAt
+        ? "cancellation_approved"
+        : "cancellation_requested";
+    }
     return `cancellation_${cancellationRequest.status}`;
   }
 

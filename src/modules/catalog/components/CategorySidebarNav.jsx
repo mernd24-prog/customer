@@ -42,14 +42,14 @@ export function CategorySidebarNav({
               >
                 <span
                   aria-hidden="true"
-                  className={`mt-0.5 inline-flex h-[17px] w-[17px] shrink-0 items-center justify-center rounded-[4px] border transition-colors ${
+                  className={`mt-0.5 inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-[4px] border transition-colors ${
                     isActive
                       ? "border-[#3E4093] bg-[#3E4093]"
                       : "border-[#3E4093] bg-transparent"
                   }`}
                 >
                   <span
-                    className={`h-[7px] w-[7px] rounded-[2px] bg-white transition-opacity ${
+                    className={`h-2 w-2 rounded-[1px] bg-white transition-opacity ${
                       isActive ? "opacity-100" : "opacity-0"
                     }`}
                   />

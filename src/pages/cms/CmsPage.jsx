@@ -98,7 +98,7 @@ export default function CmsPage({ slugOverride = "" }) {
       <div className="border-b border-border bg-cream px-4 py-6 sm:px-6">
         <div className="w-container">
           <nav className="mb-2 flex items-center gap-1  text-xs text-gray">
-            <Link to="/" className="hover:text-ink">
+            <Link to="/" className="transition-colors duration-200 hover:text-[#CE9F2D]">
               Home
             </Link>
             <span>/</span>

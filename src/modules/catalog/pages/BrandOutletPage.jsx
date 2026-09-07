@@ -16,7 +16,7 @@ import {
   getBrandName,
   getBrandRouteKey,
   getBrandLogo,
-  getBrandProductCount
+  getBrandProductCount,
 } from "../../../utils/pages/brandUtils";
 
 const PAGE_SIZE_OPTIONS = [12, 20, 36, 48];
@@ -122,7 +122,7 @@ export default function BrandOutletPage() {
           <div className="mt-6 lg:mt-10">
             <section className="pb-7">
               <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h1 className="text-[20px] font-bold leading-tight text-[var(--customer-ink)] sm:text-[26px] lg:text-[28px]">
+                <h1 className="text-[20px] font-bold leading-tight text-blue sm:text-[26px] lg:text-[28px]">
                   Shop Brands Available Now
                 </h1>
               </div>
@@ -139,12 +139,14 @@ export default function BrandOutletPage() {
 
               {loading ? (
                 <div className={brandGridClass}>
-                  {Array.from({ length: limit > 20 ? 20 : limit }).map((_, index) => (
-                    <div
-                      key={index}
-                      className="h-[190px] animate-pulse rounded-[14px] bg-[var(--customer-surface-soft)] sm:h-[215px] lg:h-[235px]"
-                    />
-                  ))}
+                  {Array.from({ length: limit > 20 ? 20 : limit }).map(
+                    (_, index) => (
+                      <div
+                        key={index}
+                        className="h-[190px] animate-pulse rounded-[14px] bg-[var(--customer-surface-soft)] sm:h-[215px] lg:h-[235px]"
+                      />
+                    ),
+                  )}
                 </div>
               ) : error ? (
                 <div
@@ -162,7 +164,46 @@ export default function BrandOutletPage() {
                         image={brand.displayLogo}
                         subtitle=""
                         href={CUSTOMER_ROUTES.brand(brand.routeKey)}
-                        className="min-h-0 items-center border-0 bg-transparent p-0 text-center shadow-none hover:translate-y-0 hover:border-transparent hover:shadow-none [&>div:first-child]:h-[150px] [&>div:first-child]:w-full [&>div:first-child]:rounded-[14px] [&>div:first-child]:border-0 [&>div:first-child]:bg-[var(--customer-surface-soft)] [&>div:first-child]:p-7 [&>div:first-child_img]:max-h-[90px] [&>div:first-child_img]:max-w-[120px] [&>div:nth-child(2)]:mt-3 [&>div:nth-child(2)]:flex-none [&>div:nth-child(2)_p]:hidden sm:[&>div:first-child]:h-[170px] sm:[&>div:first-child_img]:max-h-[110px] sm:[&>div:first-child_img]:max-w-[140px] lg:[&>div:first-child]:h-[190px] lg:[&>div:first-child_img]:max-h-[125px] lg:[&>div:first-child_img]:max-w-[155px]"
+                        className="
+                        min-h-0 items-center
+                        rounded-[12px]
+                        border border-[#EEE8DA]
+                        bg-[#FAF8F3]
+                        p-1.5
+                        text-center
+                        shadow-[0_2px_8px_rgba(0,0,0,0.04)]
+                        transition-all duration-300 ease-out
+                        hover:-translate-y-0.5
+                        hover:border-[#E5D6B5]
+                        hover:bg-[#F9F5EC]
+                        hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)]
+
+                        [&>div:first-child]:h-[150px]
+                        [&>div:first-child]:w-full
+                        [&>div:first-child]:rounded-[9px]
+                        [&>div:first-child]:border-0
+                        [&>div:first-child]:bg-white
+                        [&>div:first-child]:p-4
+
+                        [&>div:first-child_img]:max-h-[90px]
+                        [&>div:first-child_img]:max-w-[120px]
+                        [&>div:first-child_img]:object-contain
+                        [&>div:first-child_img]:transition-transform
+                        [&>div:first-child_img]:duration-300
+                        group-hover:[&>div:first-child_img]:scale-[1.04]
+
+                        [&>div:nth-child(2)]:mt-2.5
+                        [&>div:nth-child(2)]:flex-none
+                        [&>div:nth-child(2)_p]:hidden
+
+                        sm:[&>div:first-child]:h-[165px]
+                        sm:[&>div:first-child_img]:max-h-[100px]
+                        sm:[&>div:first-child_img]:max-w-[135px]
+
+                        lg:[&>div:first-child]:h-[180px]
+                        lg:[&>div:first-child_img]:max-h-[115px]
+                        lg:[&>div:first-child_img]:max-w-[150px]
+                      "
                       />
                     ))}
                   </div>
@@ -189,4 +230,3 @@ export default function BrandOutletPage() {
     </>
   );
 }
-

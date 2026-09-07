@@ -8,7 +8,7 @@ const buttonStyles = {
     "h-[35px] rounded-[6px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-[14px] py-[7px] text-[13px] leading-[20px] tracking-[0.5px] font-semibold text-white hover:bg-[linear-gradient(#bd9025,#bd9025)]",
 
   outlineSmall:
-    "inline-flex h-fit py-3 items-center justify-center gap-[1px] rounded-[10px] border border-[#3E409380] bg-transparent    text-sm lg:text-base font-semibold leading-none tracking-normal align-middle text-[#3E4093] transition-all duration-300 ",
+    "inline-flex h-[42px] px-4 items-center justify-center gap-2 rounded-[10px] border border-[#3E4093] bg-transparent text-sm lg:text-base font-semibold text-[#3E4093] transition-all duration-300 hover:bg-[#3E4093] hover:text-white hover:border-[#3E4093] hover:shadow-md  cursor-pointer",
 
   outlineLight:
     "border border-white/50 bg-transparent text-white hover:bg-white/10",
@@ -32,7 +32,7 @@ const buttonStyles = {
   categoryMore:
     "group flex h-auto min-h-0 min-w-[80px] flex-col items-center rounded-md bg-transparent px-0 py-0 text-inherit shadow-none outline-none transition-all duration-300 ease-in-out hover:bg-transparent focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2 sm:min-w-[100px] lg:min-w-[140px]",
   continueShopping:
-    "mx-auto mt-6 h-[42px] w-full max-w-[210px] rounded-full bg-gradient-to-r from-[#B8891F] to-[#CE9F2D] px-5 text-[13px] font-bold text-[#1B1D60] shadow-sm transition-all duration-300 hover:shadow-md sm:h-[52px] sm:max-w-[240px] sm:px-8 sm:text-[15px]",
+    "mx-auto mt-6 flex items-center justify-center h-[42px] w-full max-w-[210px] rounded-full bg-gradient-to-r from-[#B8891F] to-[#CE9F2D] px-5 text-[13px] font-bold text-[#1B1D60] shadow-sm transition-all duration-300 hover:from-[#3E4093] hover:to-[#1B1D60] hover:text-white hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer sm:h-[52px] sm:max-w-[240px] sm:px-8 sm:text-[15px]",
 };
 
 export const PrimaryGradientButton = ({ children, ...props }) => (
@@ -166,7 +166,10 @@ export const CategoryMoreButton = ({
     >
       {/* ICON */}
       <span className="mx-auto flex h-[50px] w-[50px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 shadow-sm transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform sm:h-[65px] sm:w-[65px] sm:p-2 lg:h-[75px] lg:w-[75px]">
-        <img loading="lazy" width="400" height="400"
+        <img
+          loading="lazy"
+          width="400"
+          height="400"
           src={icon}
           alt={label}
           className="h-7 w-7 object-contain sm:h-9 sm:w-7 lg:h-9 lg:w-9"

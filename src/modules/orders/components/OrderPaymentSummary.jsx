@@ -1,6 +1,7 @@
 import DetailSectionCard from "../../../components/ui/layout/DetailSectionCard";
 import { formatMoney } from "../../../utils/ecommerce/money";
 import ShowMoreText from "../../../utils/showMore";
+import { Loader2 } from "lucide-react";
 
 function SummaryRow({
   label,
@@ -171,7 +172,7 @@ function OrderPaymentSummary({
       title={title}
       className="h-full w-full"
       borderClassName="border-[#CE9F2D66]"
-      bodyClassName="flex flex-col px-4 py-4 text-sm"
+      bodyClassName="flex flex-col px-5 py-5 text-sm"
     >
       {variant === "checkout" && (
         <>
@@ -457,10 +458,13 @@ function OrderPaymentSummary({
         <button
           type="button"
           onClick={onCheckout}
-          disabled={disabled}
-          className="mt-6 h-[54px] w-full rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-sm font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
+          disabled={disabled || loading}
+          className="mt-6 flex h-[54px] w-full items-center justify-center gap-2.5 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-sm font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
         >
-          {buttonText}
+          {loading && (
+            <Loader2 className="h-5 w-5 animate-spin text-white shrink-0" />
+          )}
+          <span>{buttonText}</span>
         </button>
       )}
       {variant === "checkout" && buttonText && (
@@ -468,9 +472,12 @@ function OrderPaymentSummary({
           <button
             type="submit"
             disabled={loading || disabled}
-            className="mt-6 flex h-[54px] w-full items-center justify-center gap-2 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-6 flex h-[54px] w-full items-center justify-center gap-2.5 rounded-[10px] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-4 text-[16px] font-semibold leading-[24px] text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {buttonText}
+            {loading && (
+              <Loader2 className="h-5 w-5 animate-spin text-white shrink-0" />
+            )}
+            <span>{buttonText}</span>
           </button>
 
           {selectedLabel && (

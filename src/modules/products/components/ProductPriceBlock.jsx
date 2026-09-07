@@ -51,7 +51,7 @@ export default function ProductPriceBlock({
       </div>
 
       <p className="text-xs font-medium text-[#2E2E2E] lg:text-sm">
-        Inclusive of All Taxes
+        Inclusive of all taxes
       </p>
 
       {safeDynamicPrice && dynamicState.current?.loyalty && (

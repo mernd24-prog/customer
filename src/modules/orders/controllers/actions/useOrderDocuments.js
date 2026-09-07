@@ -188,12 +188,17 @@ export function useOrderDocuments({
     );
   };
 
-  const visibleCustomerInvoices = selectedOrderItem
-    ? customerInvoices.filter(documentCoversSelectedItem)
-    : customerInvoices;
-  const visiblePendingSellerDocuments = selectedOrderItem
-    ? pendingSellerDocuments.filter(documentCoversSelectedItem)
-    : pendingSellerDocuments;
+  const visibleCustomerInvoices = invoiceDownloadAvailable
+    ? selectedOrderItem
+      ? customerInvoices.filter(documentCoversSelectedItem)
+      : customerInvoices
+    : [];
+
+  const visiblePendingSellerDocuments = invoiceDownloadAvailable
+    ? selectedOrderItem
+      ? pendingSellerDocuments.filter(documentCoversSelectedItem)
+      : pendingSellerDocuments
+    : [];
 
   const returnReverseInvoices = visibleReturns
     .map((returnRequest) => {
@@ -269,7 +274,7 @@ export function useOrderDocuments({
       type: "tax_invoice",
       invoice: doc,
     })),
-    orderReceipt || orderId
+    invoiceDownloadAvailable && (orderReceipt || orderId)
       ? {
           id: getDocumentId(orderReceipt) || `receipt-${orderId}`,
           title: "Order receipt",

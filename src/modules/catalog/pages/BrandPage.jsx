@@ -371,9 +371,13 @@ export default function BrandPage() {
       }),
   ].filter(Boolean);
 
-  const clearFiltersAction = useMemo(() => 
-    getClearFiltersAction(activeFilters, searchParams, handleClearFilters, ["brand"]),
-  [activeFilters, searchParams, handleClearFilters]);
+  const clearFiltersAction = useMemo(
+    () =>
+      getClearFiltersAction(activeFilters, searchParams, handleClearFilters, [
+        "brand",
+      ]),
+    [activeFilters, searchParams, handleClearFilters],
+  );
 
   const filterSections = [
     ((pageInfo.total || items.length) > 1 ||
@@ -437,26 +441,27 @@ export default function BrandPage() {
               ].filter(
                 (option) =>
                   Number(option.count || 0) > 0 ||
-                  (option.value === "inStock" && searchParams.get("inStock") === "true") ||
-                  (option.value === "outOfStock" && searchParams.get("outOfStock") === "true")
+                  (option.value === "inStock" &&
+                    searchParams.get("inStock") === "true") ||
+                  (option.value === "outOfStock" &&
+                    searchParams.get("outOfStock") === "true"),
               )}
               selected={["inStock", "outOfStock"].filter(
                 (value) => searchParams.get(value) === "true",
               )}
               onChange={(values) => {
                 const currentSelected = ["inStock", "outOfStock"].filter(
-                  (value) => searchParams.get(value) === "true"
+                  (value) => searchParams.get(value) === "true",
                 );
-                const newlySelected = values.find((v) => !currentSelected.includes(v));
+                const newlySelected = values.find(
+                  (v) => !currentSelected.includes(v),
+                );
                 const finalSelected = newlySelected
                   ? [newlySelected]
                   : values.filter((v) => currentSelected.includes(v));
                 const selectedSet = new Set(finalSelected);
                 updateParams([
-                  [
-                    "inStock",
-                    selectedSet.has("inStock") ? "true" : undefined,
-                  ],
+                  ["inStock", selectedSet.has("inStock") ? "true" : undefined],
                   [
                     "outOfStock",
                     selectedSet.has("outOfStock") ? "true" : undefined,
@@ -513,7 +518,7 @@ export default function BrandPage() {
       }
       topContent={
         <div className="relative full-banner mt-4 overflow-hidden bg-[#1B1D60]">
-          <div className="grid  gap-0 h-[320px] sm:h-[380px] md:h-[371px] xl:h-[500px] lg:grid-cols-[52%_48%]">
+          <div className="grid  gap-0 h-[320px] sm:h-[380px] md:h-[350px] lg:grid-cols-[52%_48%]">
             <div className="relative lg:hidden h-full">
               <div className="absolute inset-0 bg-black/30" />
               <div className="absolute inset-0 flex items-center">

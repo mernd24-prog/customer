@@ -7,6 +7,7 @@ import {
   getImageUrlFromValue,
 } from "../../../utils/ecommerce";
 import { ProductGallery } from "../components/ImageGallery";
+import ShowMoreText from "../../../utils/showMore";
 
 const decodeHtml = (html) => {
   if (!html || typeof html !== "string") return html || "";
@@ -27,7 +28,7 @@ function InfoTabs({ tabs, activeTab, onChange }) {
   useEffect(() => {
     if (containerRef.current) {
       const activeBtn = containerRef.current.querySelector(
-        `[data-tab-key="${activeTab}"]`
+        `[data-tab-key="${activeTab}"]`,
       );
       if (activeBtn) {
         const container = containerRef.current;
@@ -53,7 +54,7 @@ function InfoTabs({ tabs, activeTab, onChange }) {
           onClick={() => onChange(tab.key)}
           className={`min-w-max px-5 lg:py-4 py-2 text-lg font-medium transition-colors ${
             activeTab === tab.key
-              ? "border-b-2 border-navy font-semibold text-navy"
+              ? "border-b-2 border-blue font-semibold text-blue"
               : "text-[#2E2E2E]"
           }`}
         >
@@ -168,15 +169,25 @@ export default function ProductInfoSection({
 
       {activeInfoTab === "description" && (
         <InfoCard title="Description">
-          {effectiveDescription || selectedVariant?.description || product?.description ? (
-            <div
-              className="rich-text-content px-4 py-4 text-[#4E4E4E]"
-              dangerouslySetInnerHTML={{
-                __html: decodeHtml(
-                  effectiveDescription || selectedVariant?.description || product.description,
-                ),
-              }}
-            />
+          {effectiveDescription ||
+          selectedVariant?.description ||
+          product?.description ? (
+            <div className="px-4 py-4 text-[#4E4E4E]">
+              <ShowMoreText
+                text={decodeHtml(
+                  effectiveDescription ||
+                    selectedVariant?.description ||
+                    product.description,
+                )}
+                isHtml={true}
+                mode="characters"
+                limit={800}
+                moreLabel="Read More"
+                lessLabel="Read Less"
+                buttonClassName="inline-block mt-2 text-sm font-bold text-[#CE9F2D] hover:underline cursor-pointer"
+                textClassName="rich-text-content"
+              />
+            </div>
           ) : (
             <p className="px-4 py-4 text-sm lg:text-base text-[#4E4E4E] whitespace-pre-line">
               No Description Available.
@@ -304,7 +315,9 @@ export default function ProductInfoSection({
                     className="relative flex aspect-square w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#E7D9B8] bg-white cursor-pointer transition-colors hover:border-gold sm:h-[180px] sm:w-[180px] md:h-[200px] md:w-[200px]"
                     onClick={() => setIsModalOpen(true)}
                   >
-                    <img width="400" height="400"
+                    <img
+                      width="400"
+                      height="400"
                       src={getImageUrlFromValue(image)}
                       alt={`${getProductTitle(product)} detail ${index + 1}`}
                       className="h-full w-full object-contain p-2"

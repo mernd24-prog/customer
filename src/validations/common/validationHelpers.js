@@ -198,10 +198,13 @@ export const locationField = (field, options = {}) =>
     ...options,
   });
 
-export const couponCodeField = optionalString(30)
+export const couponCodeField = optionalString(7)
   .transform((value) => value?.toUpperCase())
+  .refine((value) => !value || value.length === 7, {
+    message: "Code must be exactly 7 digits",
+  })
   .refine((value) => !value || REGEX.couponCode.test(value), {
-    message: "Enter a valid coupon code",
+    message: "Enter a valid coupon or influencer code",
   });
 
 export const referralCodeField = optionalString(30)

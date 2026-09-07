@@ -4,13 +4,16 @@ import { Autoplay, Pagination } from "swiper/modules";
 import { Tag } from "lucide-react";
 import { bannerData } from "../constants/image.constant";
 import Label from "../components/ui/label/Label";
-import { OutlineLightButton, SolidLargeButton } from "../components/ui/button/static";
+import {
+  OutlineLightButton,
+  SolidLargeButton,
+} from "../components/ui/button/static";
 
 // Swiper styles
 import "swiper/css";
 
 const SWIPER_MODULES = [Autoplay, Pagination];
-const AUTOPLAY_CONFIG = { delay: 2000, disableOnInteraction: false };
+const AUTOPLAY_CONFIG = { delay: 3000, disableOnInteraction: false };
 const PAGINATION_CONFIG = { clickable: true };
 
 const HeroSwiper = memo(({ content }) => {
@@ -20,6 +23,7 @@ const HeroSwiper = memo(({ content }) => {
       spaceBetween={0}
       centeredSlides={false}
       loop
+      speed={1000}
       autoplay={AUTOPLAY_CONFIG}
       pagination={PAGINATION_CONFIG}
       modules={SWIPER_MODULES}
@@ -29,7 +33,10 @@ const HeroSwiper = memo(({ content }) => {
         const item = content[index] || content[0];
 
         return (
-          <SwiperSlide key={slide.id} className="relative overflow-hidden bg-[#1B1D60]">
+          <SwiperSlide
+            key={slide.id}
+            className="relative overflow-hidden bg-[#1B1D60]"
+          >
             <img
               src={slide.image}
               alt="Banner Background"
@@ -48,22 +55,34 @@ const HeroSwiper = memo(({ content }) => {
                   <Label
                     variant="seasonSale"
                     className="max-w-[290px] px-2 py-1 text-[10px] leading-4 text-center min-[375px]:max-w-[330px] min-[375px]:text-[11px] sm:max-w-fit sm:text-[12px] lg:text-[14px]"
-                    leftIcon={<Tag size={12} className="text-[#CE9F2D] lg:h-[14px] lg:w-[14px]" />}
+                    leftIcon={
+                      <Tag
+                        size={12}
+                        className="text-[#CE9F2D] lg:h-[14px] lg:w-[14px]"
+                      />
+                    }
                   >
                     {item.badge}
                   </Label>
                   <h2 className="banner-heading mt-4 md:mt-0 max-w-[681px] lg:max-w-[800px] font-bold">
-                    {item.title} <br /> <span className="text-[#CE9F2D]">{item.highlight}</span>
+                    {item.title} <br />{" "}
+                    <span className="text-[#CE9F2D]">{item.highlight}</span>
                   </h2>
                 </div>
                 <p className="max-w-xl lg:max-w-2xl font-medium text-center text-sm md:text-base xl:text-lg text-white/80 lg:text-left">
                   {item.description}
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3 pt-1 md:pt-3 lg:justify-start">
-                  <SolidLargeButton to={item.primaryLink} className="h-[40px] min-w-[116px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold shadow-none hover:scale-105 sm:h-[44px] sm:min-w-[128px] sm:px-5 sm:text-base lg:h-[48px] lg:w-[141px] lg:min-w-0 lg:rounded-[10px] lg:px-[22px]">
+                  <SolidLargeButton
+                    to={item.primaryLink}
+                    className="h-[42px] min-w-[160px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold shadow-none sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-[10px]"
+                  >
                     {item.primaryButton}
                   </SolidLargeButton>
-                  <OutlineLightButton to={item.secondaryLink} className="h-[42px] min-w-[156px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold hover:scale-105 sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-[10px]">
+                  <OutlineLightButton
+                    to={item.secondaryLink}
+                    className="h-[42px] min-w-[160px] rounded-[8px] px-4 text-sm md:text-[16px] xl:font-semibold sm:h-[46px] sm:min-w-[184px] sm:px-5 sm:text-base lg:h-[50px] lg:w-[212px] lg:min-w-0 lg:rounded-[10px]"
+                  >
                     {item.secondaryButton}
                   </OutlineLightButton>
                 </div>

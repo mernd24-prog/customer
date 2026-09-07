@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProductById } from "../slices/productSlice";
+import { fetchProductById, fetchProducts } from "../slices/productSlice";
 import { fetchProductWarranty } from "../../../features/warranty/warrantySlice";
 import { fetchDynamicPrice } from "../../../features/dynamicPricing/dynamicPricingSlice";
 import {
@@ -12,7 +12,10 @@ import {
   fetchCrossSellProducts,
 } from "../slices/relatedProductsSlice";
 import { trackAnalyticsEvent } from "../../../features/analytics/analyticsSlice";
-import { addRecentlyViewed, getRecentlyViewed } from "../../../utils/recentlyViewed";
+import {
+  addRecentlyViewed,
+  getRecentlyViewed,
+} from "../../../utils/recentlyViewed";
 import { tokenStorage } from "../../../api/tokenStorage";
 import {
   decodeVariantRouteToken,
@@ -35,7 +38,7 @@ import {
   getImageUrlFromValue,
   firstMoneyValue,
   buildCartItem,
-  isProductCodAvailable
+  isProductCodAvailable,
 } from "../../../utils/ecommerce";
 import {
   getActiveDealPrice,
@@ -43,13 +46,16 @@ import {
 } from "../../../utils/pages/productUtils";
 import { getShowMoreText } from "../../../utils/showMore";
 
-
 import { useProductDetailPricing } from "./useProductDetailPricing";
 import { useProductDetailImages } from "./useProductDetailImages";
 import { useProductDetailVariants } from "./useProductDetailVariants";
 import { useSearchParams } from "react-router-dom";
 
-export function useProductDetailController(productId, rawParamId, matchProductId = productId) {
+export function useProductDetailController(
+  productId,
+  rawParamId,
+  matchProductId = productId,
+) {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -71,9 +77,11 @@ export function useProductDetailController(productId, rawParamId, matchProductId
   const relatedState = useSelector((s) => s.relatedProducts);
   const crossSellState = useSelector((s) => s.relatedProducts); // Usually these share the same slice state
   const user = useSelector((s) => s.auth.current);
-  
+
   const userId = user?.id || user?._id || user?.userId || user?.email;
-  const isLoggedIn = Boolean(userId && (tokenStorage.getAccessToken() || tokenStorage.getRefreshToken()));
+  const isLoggedIn = Boolean(
+    userId && (tokenStorage.getAccessToken() || tokenStorage.getRefreshToken()),
+  );
   const relatedLookupKey = productRequestIdentifier || loadedProductId;
 
   // Local State
@@ -92,22 +100,33 @@ export function useProductDetailController(productId, rawParamId, matchProductId
 
   // Tab Setup
   useEffect(() => {
-    setActiveInfoTab(product?.commonImages?.length ? "common-images" : "details");
+    setActiveInfoTab(
+      product?.commonImages?.length ? "common-images" : "details",
+    );
   }, [product?._id, product?.id, product?.commonImages?.length]);
 
   // Variant Selection and Syncing
   const variants = product?.variants || [];
-  
+
   useEffect(() => {
     if (!variants.length) {
       setSelectedVariant(null);
       return;
     }
 
-    const pathVariantKey = rawParamId && rawParamId.includes(":") ? rawParamId.split(":")[1] : null;
+    const pathVariantKey =
+      rawParamId && rawParamId.includes(":") ? rawParamId.split(":")[1] : null;
     const opaqueVariantPayload = decodeVariantRouteToken(searchParams.get("x"));
-    const paramVariantKey = opaqueVariantPayload?.v || searchParams.get("v") || searchParams.get("variant") || searchParams.get("variantId") || searchParams.get("sku") || pathVariantKey;
-    const storedVariantKey = productIdentifier ? window.sessionStorage.getItem(`selected_variant_${productIdentifier}`) : null;
+    const paramVariantKey =
+      opaqueVariantPayload?.v ||
+      searchParams.get("v") ||
+      searchParams.get("variant") ||
+      searchParams.get("variantId") ||
+      searchParams.get("sku") ||
+      pathVariantKey;
+    const storedVariantKey = productIdentifier
+      ? window.sessionStorage.getItem(`selected_variant_${productIdentifier}`)
+      : null;
     const targetKey = paramVariantKey || storedVariantKey;
 
     let targetVariant = null;
@@ -126,7 +145,14 @@ export function useProductDetailController(productId, rawParamId, matchProductId
 
     setSelectedVariant((current) => {
       if (targetVariant) return targetVariant;
-      if (current && variants.some((variant) => (variant._id || variant.sku) === (current._id || current.sku))) return current;
+      if (
+        current &&
+        variants.some(
+          (variant) =>
+            (variant._id || variant.sku) === (current._id || current.sku),
+        )
+      )
+        return current;
       return defaultVariant;
     });
   }, [variants, searchParams, productIdentifier, rawParamId]);
@@ -138,7 +164,10 @@ export function useProductDetailController(productId, rawParamId, matchProductId
     const variantKey = getVariantRouteKey(selectedVariant);
 
     if (variantKey) {
-      window.sessionStorage.setItem(`selected_variant_${productIdentifier}`, variantKey);
+      window.sessionStorage.setItem(
+        `selected_variant_${productIdentifier}`,
+        variantKey,
+      );
     }
 
     const currentParam = searchParams.get("x");
@@ -152,7 +181,10 @@ export function useProductDetailController(productId, rawParamId, matchProductId
       ? encodeVariantRouteToken({ v: variantKey })
       : "";
 
-    if (publicVariantToken && (currentParam !== publicVariantToken || hasReadableVariantParam)) {
+    if (
+      publicVariantToken &&
+      (currentParam !== publicVariantToken || hasReadableVariantParam)
+    ) {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev);
@@ -184,15 +216,28 @@ export function useProductDetailController(productId, rawParamId, matchProductId
   useEffect(() => {
     if (!productRequestIdentifier) return;
     dispatch(fetchProductById({ productId: productRequestIdentifier }));
+    if (!productState.list?.length) {
+      dispatch(fetchProducts({ limit: 10, page: 1 })).catch(() => {});
+    }
     sideEffectsRanFor.current = null;
     setDeliveryResult(null);
   }, [dispatch, productRequestIdentifier]);
 
   useEffect(() => {
     if (!loadedProductId) return;
-    dispatch(fetchProductWarranty({ productId: loadedProductId })).catch(() => {});
-    dispatch(fetchRelatedProducts({ productId: productRequestIdentifier || loadedProductId })).catch(() => {});
-    dispatch(fetchCrossSellProducts({ productId: productRequestIdentifier || loadedProductId })).catch(() => {});
+    dispatch(fetchProductWarranty({ productId: loadedProductId })).catch(
+      () => {},
+    );
+    dispatch(
+      fetchRelatedProducts({
+        productId: productRequestIdentifier || loadedProductId,
+      }),
+    ).catch(() => {});
+    dispatch(
+      fetchCrossSellProducts({
+        productId: productRequestIdentifier || loadedProductId,
+      }),
+    ).catch(() => {});
   }, [dispatch, loadedProductId, productRequestIdentifier]);
 
   // Side Effects (Analytics, Recommendations, Recently Viewed)
@@ -233,7 +278,11 @@ export function useProductDetailController(productId, rawParamId, matchProductId
       return;
     }
     addRecentlyViewed(product);
-    setRecentlyViewedList(getRecentlyViewed().filter((p) => String(getProductId(p)) !== String(loadedProductId)));
+    setRecentlyViewedList(
+      getRecentlyViewed().filter(
+        (p) => String(getProductId(p)) !== String(loadedProductId),
+      ),
+    );
   }, [isLoggedIn, product, loadedProductId]);
 
   // Dynamic Pricing fetch
@@ -243,17 +292,31 @@ export function useProductDetailController(productId, rawParamId, matchProductId
     if (dynamicPriceRequestKey.current === requestKey) return;
     dynamicPriceRequestKey.current = requestKey;
 
-    dispatch(fetchDynamicPrice({
-      productId: loadedProductId,
-      variantId: selectedVariant?._id,
-      sku: selectedVariant?.sku,
-      quantity,
-    })).catch(() => {});
-  }, [dispatch, loadedProductId, quantity, selectedVariantKey, selectedVariant?._id, selectedVariant?.sku]);
+    dispatch(
+      fetchDynamicPrice({
+        productId: loadedProductId,
+        variantId: selectedVariant?._id,
+        sku: selectedVariant?.sku,
+        quantity,
+      }),
+    ).catch(() => {});
+  }, [
+    dispatch,
+    loadedProductId,
+    quantity,
+    selectedVariantKey,
+    selectedVariant?._id,
+    selectedVariant?.sku,
+  ]);
 
   // Stock Validation
-  const getAvailableStock = (v) => getVariantAvailableStock(v) ?? v?.stockQuantity ?? v?.inventoryQuantity ?? v?.quantity;
-  const availableStock = getAvailableStock(selectedVariant) ?? getAvailableStock(product);
+  const getAvailableStock = (v) =>
+    getVariantAvailableStock(v) ??
+    v?.stockQuantity ??
+    v?.inventoryQuantity ??
+    v?.quantity;
+  const availableStock =
+    getAvailableStock(selectedVariant) ?? getAvailableStock(product);
 
   useEffect(() => {
     setQuantity((currentQuantity) =>
@@ -263,20 +326,46 @@ export function useProductDetailController(productId, rawParamId, matchProductId
     );
   }, [availableStock, selectedVariantKey]);
 
-
   // Derived State extracted from Page
 
-  const { variantOptions, selectedAttributes, findVariantForSelection } = useProductDetailVariants({ product, variants, selectedVariant });
-  const { selectedVariantPrice, productPrice, activeDealPrice, activeDealOriginalPrice, activeDealBadge, dynamicPrice, baseDisplayPrice, safeDynamicPrice, price, mrp, discount, currency, shipping, shippingEtaMin, shippingEtaMax, shippingEtaText, staticIsFree, staticCharge, productCodAvailable, productCodDisabled } = useProductDetailPricing({ product, selectedVariant, dynamicState, productId: loadedProductId || productId });
-  const { fallbackProductImage, variantImages, commonImages, productImages, rawMergedImages, images, productVideo } = useProductDetailImages({ product, selectedVariant });
-
-  
-
-  
-
-  
-
-  
+  const { variantOptions, selectedAttributes, findVariantForSelection } =
+    useProductDetailVariants({ product, variants, selectedVariant });
+  const {
+    selectedVariantPrice,
+    productPrice,
+    activeDealPrice,
+    activeDealOriginalPrice,
+    activeDealBadge,
+    dynamicPrice,
+    baseDisplayPrice,
+    safeDynamicPrice,
+    price,
+    mrp,
+    discount,
+    currency,
+    shipping,
+    shippingEtaMin,
+    shippingEtaMax,
+    shippingEtaText,
+    staticIsFree,
+    staticCharge,
+    productCodAvailable,
+    productCodDisabled,
+  } = useProductDetailPricing({
+    product,
+    selectedVariant,
+    dynamicState,
+    productId: loadedProductId || productId,
+  });
+  const {
+    fallbackProductImage,
+    variantImages,
+    commonImages,
+    productImages,
+    rawMergedImages,
+    images,
+    productVideo,
+  } = useProductDetailImages({ product, selectedVariant });
 
   const productAttributes = product?.attributes || {};
   const variantAttributes = selectedVariant?.attributes || {};
@@ -299,8 +388,6 @@ export function useProductDetailController(productId, rawParamId, matchProductId
     ...variantAttributes,
     ...flattenSpecifications(variantSpecifications),
   };
-
-
 
   const inStock =
     availableStock != null
@@ -379,7 +466,47 @@ export function useProductDetailController(productId, rawParamId, matchProductId
       limit: 35,
     });
 
-  
+  const rawRelated =
+    relatedState.relatedByProduct[relatedLookupKey]?.items ||
+    relatedState.relatedByProduct[loadedProductId]?.items ||
+    [];
+
+  const rawCrossSell =
+    crossSellState.crossSellByProduct[relatedLookupKey]?.items ||
+    crossSellState.crossSellByProduct[loadedProductId]?.items ||
+    [];
+
+  const catalogList = Array.isArray(productState.list) ? productState.list : [];
+
+  const crossSellProducts = useMemo(() => {
+    const list = [...rawCrossSell];
+    if (list.length < 5) {
+      rawRelated.forEach((item) => {
+        if (
+          String(getProductId(item)) !== String(loadedProductId) &&
+          !list.some(
+            (p) => String(getProductId(p)) === String(getProductId(item)),
+          )
+        ) {
+          list.push(item);
+        }
+      });
+    }
+    if (list.length < 5) {
+      catalogList.forEach((item) => {
+        if (
+          String(getProductId(item)) !== String(loadedProductId) &&
+          !list.some(
+            (p) => String(getProductId(p)) === String(getProductId(item)),
+          )
+        ) {
+          list.push(item);
+        }
+      });
+    }
+    return list.slice(0, 5);
+  }, [rawCrossSell, rawRelated, catalogList, loadedProductId]);
+
   return {
     variants,
     variantOptions,
@@ -430,21 +557,11 @@ export function useProductDetailController(productId, rawParamId, matchProductId
     productState,
     warranty: warrantyState.current,
     dynamicState,
-    relatedProducts: (
-      relatedState.relatedByProduct[relatedLookupKey]?.items ||
-      relatedState.relatedByProduct[loadedProductId]?.items ||
-      []
+    relatedProducts: rawRelated,
+    crossSellProducts,
+    recommendedProducts: rawRelated.filter(
+      (p) => String(getProductId(p) || "") !== String(loadedProductId || ""),
     ),
-    crossSellProducts: (
-      crossSellState.crossSellByProduct[relatedLookupKey]?.items ||
-      crossSellState.crossSellByProduct[loadedProductId]?.items ||
-      []
-    ),
-    recommendedProducts: (
-      relatedState.relatedByProduct[relatedLookupKey]?.items ||
-      relatedState.relatedByProduct[loadedProductId]?.items ||
-      []
-    ).filter((p) => String(getProductId(p) || "") !== String(loadedProductId || "")),
     recentlyViewedList,
     isLoggedIn,
     quantity,

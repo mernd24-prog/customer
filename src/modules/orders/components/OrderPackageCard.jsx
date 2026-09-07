@@ -139,6 +139,28 @@ export function OrderPackageCard({
     hasCancellationEvent ||
     isFullyCancelled;
 
+  const resolvedCancellationStatus = isCancelled
+    ? groupCancellation?.metadata?.approvedAt ||
+      groupCancellation?.status === "approved" ||
+      groupCancellation?.status === "completed" ||
+      groupCancellation?.status === "cancellation_approved" ||
+      group.items.some((i) => i.effective_status === "cancellation_approved")
+      ? "cancellation_approved"
+      : groupCancellation?.status === "manual_review" ||
+        groupCancellation?.status === "requested"
+        ? "cancellation_requested"
+        : groupCancellation?.status ||
+          group.items.find((i) => i.cancellation_status)?.cancellation_status ||
+          group.items
+            .flatMap((i) => i.timeline || [])
+            .find(
+              (t) =>
+                t.source === "cancellation" ||
+                t.status?.includes("cancellation"),
+            )?.status ||
+          "cancellation_approved"
+    : group.status || "confirmed";
+
   const isPartiallyCancelled = cancelledGroupQuantity > 0 && !isFullyCancelled;
   const returnedGroupQuantity = group.items.reduce(
     (sum, item) => sum + getReturnedQuantityForItem(returns, item),
@@ -190,6 +212,9 @@ export function OrderPackageCard({
         return false;
       }
       if (doc.type === "tax_invoice") {
+        if (!isDelivered) {
+          return false;
+        }
         const coveredItemIds = (
           doc.invoice?.metadata?.items ||
           doc.invoice?.metadata?.lineItems ||
@@ -242,33 +267,20 @@ export function OrderPackageCard({
           </h3>
           <span
             className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-              isCancelled ||
-              group.status === "cancelled" ||
-              group.status === "cancellation_requested" ||
-              group.status === "cancellation_approved"
-                ? "bg-[#FCE8E8] text-[#991B1B]"
-                : isReturned || group.status === "returned"
-                  ? "bg-[#FFF9EA] text-[#B88200]"
-                  : group.status === "delivered" || group.status === "fulfilled"
-                    ? "bg-[#E6F4EA] text-[#0D652D]"
-                    : "bg-[#F0F1FF] text-[#201B78]"
+              resolvedCancellationStatus === "cancellation_approved"
+                ? "bg-[#E6F4EA] text-[#0D652D]"
+                : isCancelled ||
+                  group.status === "cancelled" ||
+                  group.status === "cancellation_requested"
+                  ? "bg-[#FCE8E8] text-[#991B1B]"
+                  : isReturned || group.status === "returned"
+                    ? "bg-[#FFF9EA] text-[#B88200]"
+                    : group.status === "delivered" || group.status === "fulfilled"
+                      ? "bg-[#E6F4EA] text-[#0D652D]"
+                      : "bg-[#F0F1FF] text-[#201B78]"
             }`}
           >
-            {label(
-              isCancelled
-                ? groupCancellation?.status ||
-                    group.items.find((i) => i.cancellation_status)
-                      ?.cancellation_status ||
-                    group.items
-                      .flatMap((i) => i.timeline || [])
-                      .find(
-                        (t) =>
-                          t.source === "cancellation" ||
-                          t.status?.includes("cancellation"),
-                      )?.status ||
-                    "cancellation_approved"
-                : group.status || "confirmed",
-            )}
+            {label(resolvedCancellationStatus)}
           </span>
         </div>
 

@@ -90,7 +90,7 @@ export const footerData = {
     ],
   },
 
-  copyright: "© 2026 Samglobal Marketplace Pvt. Ltd. All rights reserved.",
+  copyright: "© 2026 Samglobal Marketplace Pvt. Ltd. All Rights Reserved.",
   socialLinks: [
     {
       label: "Instagram",

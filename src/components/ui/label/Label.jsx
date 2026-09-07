@@ -10,9 +10,10 @@ const variants = {
   sectionLabel:
     "min-h-[28px] min-w-[83px] justify-center rounded-[50px] border border-[#E8B84B] bg-white px-[14px] py-[5px] text-[#8A6500]",
 
-  featured: "bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] text-white font-semibold",
+  featured:
+    "bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] text-white font-semibold",
 
-  success: "bg-[#E8F5E8] text-[#117A65] font-semibold",
+  success: "bg-blue text-white font-semibold",
 
   bestseller: "bg-[#1B1D60] text-white font-semibold",
 

@@ -127,7 +127,9 @@ export default function CartPage() {
         description="Are you sure you want to remove this item from your cart?"
         image={
           (typeof itemToRemove === "object" ? itemToRemove?.image : null) ||
-          items.find((item) => item.id === itemToRemove || item === itemToRemove)?.image
+          items.find(
+            (item) => item.id === itemToRemove || item === itemToRemove,
+          )?.image
         }
         confirmLabel="Remove"
         cancelLabel="Cancel"
@@ -144,11 +146,11 @@ export default function CartPage() {
         description="Review items in your shopping cart."
       />
 
-      <section className="bg-white mt-8">
+      <section className="bg-white mt-6 sm:mt-8 mb-12">
         <div className="mx-auto w-full max-w-[1900px]">
           <Breadcrumbs
             items={breadcrumbItems}
-            className="mb-2 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
+            className="mb-6 sm:mb-8 flex flex-wrap items-center gap-[10px] sm:gap-[12px] lg:gap-[15px]"
             linkClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#2E2E2E]"
             currentClassName="font-medium text-[14px] sm:text-[16px] lg:text-[18px] leading-[100%] text-[#CE9F2D]"
             separatorClassName="text-[#2E2E2E]"
@@ -173,13 +175,13 @@ export default function CartPage() {
 
             <StickySidebarLayout
               sidebarPosition="right"
-              containerClass="flex flex-col lg:flex-row gap-5 sm:gap-6 lg:gap-8 xl:gap-9"
+              containerClass="flex flex-col lg:flex-row gap-6 sm:gap-7 lg:gap-8 xl:gap-9"
               sidebarClass="w-full lg:w-[350px] 2xl:w-[369px] shrink-0 transition-[top] duration-300 ease-in-out"
               mainContent={
-                <div className="min-w-0 space-y-5 sm:space-y-6 lg:space-y-8">
+                <div className="min-w-0 space-y-6 sm:space-y-7 lg:space-y-8">
                   {hasCartItems && (
-                    <div className="flex items-center justify-between">
-                      <label className="flex items-center gap-2 text-sm font-bold text-[#2d2d2d] sm:text-[15px]">
+                    <div className="flex items-center justify-between py-1">
+                      <label className="flex items-center gap-2 text-sm font-bold text-[#2d2d2d] sm:text-[15px] cursor-pointer">
                         <input
                           type="checkbox"
                           checked={
@@ -200,11 +202,12 @@ export default function CartPage() {
                   )}
 
                   {hasCartItems && (
-                    <div className="rounded-[16px] border border-[#F0E6D2] bg-[#FFFDF8] sm:rounded-[20px]">
-                      {items.map((item) => (
+                    <div className="rounded-[16px] border border-[#F0E6D2] bg-[#FFFDF8]  sm:rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+                      {items.map((item, index) => (
                         <div key={item.id}>
                           <CartItemCard
                             item={item}
+                            isLastItem={index === items.length - 1}
                             selected={normalizedSelectedItemIds.includes(
                               normalizeCartItemId(item),
                             )}
@@ -223,7 +226,7 @@ export default function CartPage() {
                   )}
 
                   {checkoutBlockedByStock && (
-                    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-sm text-red-700">
                       <p className="font-semibold">
                         Out-of-stock items cannot proceed to checkout.
                       </p>
@@ -236,7 +239,7 @@ export default function CartPage() {
 
                   {/* On screens below lg, display Order Summary ABOVE Wishlist */}
                   {hasCartItems && (
-                    <div className="block lg:hidden my-2 sm:my-4">
+                    <div className="block lg:hidden pt-2">
                       <OrderPaymentSummary
                         variant="cart"
                         mrpSubtotal={mrpSubtotal}
@@ -278,7 +281,7 @@ export default function CartPage() {
                   )}
 
                   {hasCartItems && (
-                    <div className="flex items-center gap-3 ">
+                    <div className="flex items-center gap-3 pt-2">
                       <OutlineSmallButton
                         to="/products"
                         rightIcon={

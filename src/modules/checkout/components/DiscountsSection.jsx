@@ -9,8 +9,14 @@ export default function DiscountsSection({
   walletBalance,
   setValue,
   watchedWalletAmount,
+  watchedCouponCode,
+  quoteLoading,
+  isCouponDebouncing,
 }) {
   const isWalletApplied = Number(watchedWalletAmount) > 0;
+  const isCouponLoading =
+    isCouponDebouncing ||
+    (Boolean(watchedCouponCode?.trim()) && quoteLoading);
 
   const handleWalletToggle = (e) => {
     if (e.target.checked) {
@@ -30,6 +36,8 @@ export default function DiscountsSection({
             placeholder="Enter Coupon or Influencer Code"
             registration={register("couponCode")}
             error={errors.couponCode}
+            maxLength={7}
+            loading={isCouponLoading}
           />
         </div>
 
