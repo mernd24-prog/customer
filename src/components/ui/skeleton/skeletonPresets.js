@@ -93,12 +93,21 @@ export const SKELETON_PRESETS = {
 
   CATEGORY_CARD: [
     {
-      type: "box",
-      height: "256px",
-      rounded: "rounded-lg",
-      className: "w-full",
+      type: "col",
+      className: "relative flex flex-col h-full min-h-[300px] sm:min-h-[340px] w-full overflow-hidden rounded-[16px] sm:rounded-[18px] border border-[#EAD9B6]/80 bg-[#FFFCF6] !gap-0 shadow-xs",
+      children: [
+        { type: "box", height: "220px", width: "100%", className: "rounded-t-[16px] shrink-0 sm:h-[250px]" },
+        {
+          type: "col",
+          className: "p-3 sm:p-3.5 flex-1 flex flex-col justify-between !gap-2 bg-[#FFFCF6]",
+          children: [
+            { type: "box", width: "65%", height: "16px", rounded: "rounded-md" },
+            { type: "box", width: "100%", height: "1px", className: "bg-[#E8DAAF]/60 my-0.5" },
+            { type: "box", width: "40%", height: "14px", rounded: "rounded-md" },
+          ],
+        },
+      ],
     },
-    { type: "box", width: "75%", height: "18px", className: "mx-auto mt-3" },
   ],
 
   TOP_DEAL_CARD: [

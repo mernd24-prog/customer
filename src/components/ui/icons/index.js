@@ -5,3 +5,6 @@ export * from "./CloseIcon";
 export * from "./InfoCircleIcon";
 export * from "./CheckIcon";
 export * from "./SpinnerIcon";
+export * from "./CategoryWavyDividerSvg";
+export * from "./CategoryBotanicalLeafSvg";
+

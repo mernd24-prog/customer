@@ -168,6 +168,7 @@ function ExistingReviewCard({ review }) {
         <ReviewMediaLightbox
           images={media}
           index={lightboxIndex}
+          review={reviewObj}
           onClose={() => setLightboxIndex(null)}
           onIndexChange={setLightboxIndex}
         />
@@ -176,9 +177,9 @@ function ExistingReviewCard({ review }) {
   );
 }
 
-function ReviewModal({ item, orderId, getProductTitle, onClose, onSubmitted }) {
+function ReviewModal({ item, orderId, initialRating = 0, getProductTitle, onClose, onSubmitted }) {
   const dispatch = useDispatch();
-  const [form, setForm] = useState({ rating: 0, title: "", reviewText: "" });
+  const [form, setForm] = useState({ rating: initialRating || 0, title: "", reviewText: "" });
   const [reviewImages, setReviewImages] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const productId = getReviewProductId(item);

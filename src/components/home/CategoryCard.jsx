@@ -1,63 +1,65 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { TextGoldButton } from "../ui/button/static";
 import { applyImageFallback, getImageFallbackSrc } from "../../utils/ecommerce";
 import { cn } from "../../utils/common";
+
+export function getCategoryTheme(item = {}, index = 0) {
+  if (item && (item.bgColor || item.bgHex)) {
+    return { bgHex: item.bgColor || item.bgHex };
+  }
+  return { bgHex: "#FFFCF6" };
+}
 
 export default function CategoryCard({
   image,
   title,
-  stylesCount,
   href,
   ctaLabel = "Shop Now",
   active = false,
   onClick,
   className = "",
+  index = 0,
+  categoryItem = null,
 }) {
-  const content = (
+  const cardImage = image || getImageFallbackSrc(title, "category");
+
+  const cardContent = (
     <article
       className={cn(
-        "group flex flex-col h-full overflow-hidden rounded-xl lg:rounded-[20px] border border-[#CE9F2D66] bg-white transition-all duration-300 ease-in-out hover:shadow-[0_14px_34px_rgba(17,24,39,0.1)]",
-        active && "ring-2 ring-[#33368F]/40",
-        className,
+        "relative flex flex-col h-full min-h-[300px] sm:min-h-[340px] w-full overflow-hidden rounded-[16px] sm:rounded-[18px] border border-[#EAD9B6]/80 bg-[#FFFCF6] select-none transition-all duration-300 hover:shadow-md hover:border-[#CE9F2D]/60",
+        active && "ring-2 ring-[#1B1D60]",
+        className
       )}
     >
-      <div className="relative overflow-hidden bg-[var(--customer-cream)] shrink-0">
+      {/* Top Image Container with Scoped Hover Scale */}
+      <div className="group/image relative h-[220px] sm:h-[250px] w-full overflow-hidden bg-white shrink-0 rounded-t-[16px] sm:rounded-t-[18px]">
         <img
-          src={image || getImageFallbackSrc(title, "category")}
-          alt={title}
-          width="284"
-          height="160"
-          className="h-[160px] xs:h-[150px]  md:h-[250px] w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105"
+          src={cardImage}
+          alt={title || "Category"}
+          width="280"
+          height="260"
+          className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover/image:scale-105"
           loading="lazy"
           decoding="async"
           onError={(event) => applyImageFallback(event, title, "category")}
         />
       </div>
 
-      <div className="flex flex-1 flex-col justify-between p-3 sm:p-4">
-        <div className="flex flex-col gap-1 sm:gap-2">
-          <h3 className="line-clamp-1 text-sm sm:text-base font-semibold text-[#2E2E2E]">
-            {title}
-          </h3>
+      {/* Bottom Content Area */}
+      <div className="group/cta flex flex-col justify-between p-3 sm:p-3.5 bg-[#FFFCF6] gap-2 flex-1">
+        <h3 className="line-clamp-1 text-sm sm:text-[15px] font-extrabold text-[#1B1D60] tracking-tight group-hover/cta:text-[#A96F14] transition-colors">
+          {title}
+        </h3>
 
-          {stylesCount ? (
-            <p className="font-medium text-xs sm:text-sm text-[#2E2E2E]">
-              {stylesCount}
-            </p>
-          ) : null}
-        </div>
+        {/* Subtle Horizontal Divider Line */}
+        <div className="w-full border-b border-[#E8DAAF]/60 my-0.5" />
 
-        <div className="mt-3 sm:mt-4 border-t border-[#CE9F2D4D] pt-2">
-          <TextGoldButton
-            as="span"
-            className="my-0.5 text-xs sm:text-sm"
-            rightIcon={
-              <ArrowRight className="w-3.5 h-3.5 mt-0.5" strokeWidth={2.5} />
-            }
-          >
-            {ctaLabel}
-          </TextGoldButton>
+        {/* Shop Now CTA with Aligned Arrow Icon Badge */}
+        <div className="flex items-center justify-between w-full text-[#A96F14] font-bold text-xs sm:text-[13px] transition-colors pt-0.5">
+          <span className="tracking-wide group-hover/cta:text-[#CE9F2D] transition-colors">{ctaLabel}</span>
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#CE9F2D]/15 text-[#A96F14] group-hover/cta:bg-[#CE9F2D] group-hover/cta:text-white transition-all duration-300 shadow-2xs">
+            <ArrowRight size={13} strokeWidth={2.5} className="transition-transform group-hover/cta:translate-x-0.5" />
+          </span>
         </div>
       </div>
     </article>
@@ -65,8 +67,8 @@ export default function CategoryCard({
 
   if (href) {
     return (
-      <Link to={href} onClick={onClick} className="block h-full ">
-        {content}
+      <Link to={href} onClick={onClick} className="block h-full w-full group">
+        {cardContent}
       </Link>
     );
   }
@@ -75,9 +77,14 @@ export default function CategoryCard({
     <button
       type="button"
       onClick={onClick}
-      className="block h-full w-full text-left hover:bg-transparent"
+      className="block h-full w-full text-left focus:outline-none group"
     >
-      {content}
+      {cardContent}
     </button>
   );
 }
+
+
+
+
+

@@ -144,7 +144,7 @@ export function OrderItemCard({
     return (
       <div className="w-full">
         <div className="flex w-full flex-row items-start gap-4 sm:gap-6">
-          <div className="aspect-square shrink-0 flex items-center justify-center overflow-hidden rounded-xl border border-[#E7D9B8] bg-white p-1.5 w-[85px] sm:w-[110px] lg:w-[125px]">
+          <div className="aspect-square shrink-0 flex items-center justify-center overflow-hidden rounded-xl border border-[#E4DDCF] bg-[#FAF6EE]/50 p-2 w-[85px] sm:w-[110px] lg:w-[125px] shadow-2xs">
             {getItemImage(item) ? (
               productPath ? (
                 <Link
@@ -157,7 +157,7 @@ export function OrderItemCard({
                     height="400"
                     src={getItemImage(item)}
                     alt={getProductTitle(item)}
-                    className="h-full w-full object-contain mix-blend-multiply"
+                    className="h-full w-full object-contain"
                   />
                 </Link>
               ) : (
@@ -167,39 +167,47 @@ export function OrderItemCard({
                   height="400"
                   src={getItemImage(item)}
                   alt={getProductTitle(item)}
-                  className="h-full w-full object-contain mix-blend-multiply"
+                  className="h-full w-full object-contain"
                 />
               )
             ) : (
-              <Package size={28} className="text-[#D9CBAE]" />
+              <Package size={28} className="text-[#9E886A]/50" />
             )}
           </div>
 
           <div className="flex min-w-0 flex-1 flex-col justify-center">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-bold text-[#1B1D60]">
-              {shouldShowColor && <span>Color: {itemColor}</span>}
-              <span>
-                Quantity: {String(item.quantity || 1).padStart(2, "0")}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs font-semibold text-[#1F2430]">
+              {shouldShowColor && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
+                  <span className="text-[#6F7480] font-normal">Color:</span> {itemColor}
+                </span>
+              )}
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
+                <span className="text-[#6F7480] font-normal">Qty:</span> {String(item.quantity || 1).padStart(2, "0")}
               </span>
-              {itemSize && <span>Size: {itemSize}</span>}
+              {itemSize && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
+                  <span className="text-[#6F7480] font-normal">Size:</span> {itemSize}
+                </span>
+              )}
             </div>
             {quantityBreakdown}
 
             {deliveryDateStr ? (
-              <p className="mt-1.5 text-xs font-semibold text-[#6F7480]">
-                Estimated Delivery: {deliveryDateStr}
+              <p className="mt-2 text-xs font-medium text-[#6F7480]">
+                Estimated Delivery: <span className="font-semibold text-[#1F2430]">{deliveryDateStr}</span>
               </p>
             ) : eta !== undefined && eta !== null && eta !== "" ? (
-              <p className="mt-1.5 text-xs font-semibold text-[#6F7480]">
-                Estimated Delivery: {eta} {Number(eta) === 1 ? "day" : "days"}
+              <p className="mt-2 text-xs font-medium text-[#6F7480]">
+                Estimated Delivery: <span className="font-semibold text-[#1F2430]">{eta} {Number(eta) === 1 ? "day" : "days"}</span>
               </p>
             ) : null}
 
             <div className="mt-2.5">
-              <p className="text-[18px] font-bold text-[#1B1D60]">
+              <p className="text-lg font-bold text-[#1F2430]">
                 {formatMoney(getItemLineTotal(item), currency)}
               </p>
-              <p className="text-[11px] font-medium text-[#2E2E2E]">
+              <p className="text-[11px] font-medium text-[#6F7480]">
                 Inclusive of all taxes
               </p>
             </div>
@@ -212,7 +220,7 @@ export function OrderItemCard({
   return (
     <div className="w-full">
       <div className="flex w-full flex-row items-start gap-4 sm:gap-6 lg:gap-8">
-        <div className="aspect-square shrink-0 flex items-center justify-center overflow-hidden rounded-xl border border-[#CE9F2D33] bg-white p-2 w-[85px] sm:w-[130px] md:w-[150px] lg:w-[170px]">
+        <div className="aspect-square shrink-0 flex items-center justify-center overflow-hidden rounded-xl border border-[#E4DDCF] bg-[#FAF6EE]/50 p-2 w-[85px] sm:w-[130px] md:w-[150px] lg:w-[170px] shadow-2xs">
           {getItemImage(item) ? (
             productPath ? (
               <Link to={productPath}>
@@ -236,12 +244,12 @@ export function OrderItemCard({
               />
             )
           ) : (
-            <Package size={28} className="text-[#D9CBAE]" />
+            <Package size={28} className="text-[#9E886A]/50" />
           )}
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-col pt-2 sm:pt-3">
-          <span className="block text-base font-extrabold text-[#2E2E2E] md:text-lg">
+        <div className="flex min-w-0 flex-1 flex-col pt-1 sm:pt-2">
+          <h3 className="block text-base font-bold text-[#1F2430] md:text-lg leading-snug">
             <ShowMoreText
               text={getProductTitle(item)}
               mode="characters"
@@ -249,41 +257,33 @@ export function OrderItemCard({
               moreLabel="more"
               lessLabel="less"
               textClassName="inline"
-              buttonClassName="ml-1 text-sm font-semibold text-[#1B1D60] hover:underline"
+              buttonClassName="ml-1 text-sm font-semibold text-[#201B78] hover:underline"
             />
-          </span>
+          </h3>
 
-          <div className="my-3 flex flex-wrap gap-x-6 gap-y-2 text-ink sm:my-4">
+          <div className="my-2.5 flex flex-wrap items-center gap-2 text-xs font-semibold text-[#1F2430]">
             {shouldShowColor && (
-              <span className="text-sm font-medium text-[#2E2E2E] sm:text-base">
-                Color:{" "}
-                <span className="font-semibold text-[#1B1D60]">
-                  <strong className="font-bold text-[#25247B]">
-                    {itemColor}
-                  </strong>
-                </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
+                <span className="text-[#6F7480] font-normal">Color:</span> {itemColor}
               </span>
             )}
-            <span className="text-sm font-medium text-[#2E2E2E] sm:text-base">
-              Quantity:{" "}
-              <strong className="font-bold text-[#25247B]">
-                {String(item.quantity || 1).padStart(2, "0")}
-              </strong>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
+              <span className="text-[#6F7480] font-normal">Qty:</span> {String(item.quantity || 1).padStart(2, "0")}
             </span>
           </div>
           {quantityBreakdown}
 
           {deliveryDateStr ? (
-            <p className="mb-3 text-[14px] font-semibold leading-5 text-[#5F6078]">
-              Estimated Delivery: {deliveryDateStr}
+            <p className="mb-2 text-xs font-medium text-[#6F7480]">
+              Estimated Delivery: <span className="font-semibold text-[#1F2430]">{deliveryDateStr}</span>
             </p>
           ) : null}
 
           <div className="mt-1">
-            <p className="text-base font-extrabold leading-8 text-[#1B1D60] sm:text-xl">
+            <p className="text-lg font-extrabold text-[#1F2430] sm:text-xl">
               {formatMoney(getItemLineTotal(item), currency)}
             </p>
-            <p className="mt-0.5 text-sm font-medium text-[#2E2E2E] sm:text-base">
+            <p className="mt-0.5 text-xs font-medium text-[#6F7480]">
               Inclusive of all taxes
             </p>
           </div>

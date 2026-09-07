@@ -31,7 +31,7 @@ export default function SectionContainer({
                 <h2 className="font-bold text-h2 text-[#3E4093]">{title}</h2>
               )}
               {subtitle && (
-                <p className="  text-small  lg:pt-3 align-middle text-[#2E2E2E]">
+                <p className="font-medium text-p md:text-small lg:pt-1.5 align-middle text-[var(--customer-muted,#5E626D)]">
                   {subtitle}
                 </p>
               )}
