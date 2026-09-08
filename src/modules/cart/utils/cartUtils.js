@@ -18,7 +18,18 @@ export function adaptItemForCard(item, fullProduct = null) {
   const product = fullProduct || item.productId || {};
   const productId = item.productId?._id || getProductId(item.productId || {});
   const variantKey = item.variantId || item.variantSku || "";
-  const baseTitle = getProductTitle(product, item.title || "Product");
+  // Use only the plain product title (no variant baked in) as the base.
+  // item.title is intentionally NOT used as a fallback here because it is
+  // stored at add-to-cart time and may already contain a different variant's
+  // name (e.g. "Adisa Bag – Brown"). Appending the current variantTitle on
+  // top of that would yield "Adisa Bag – Brown – Peach".
+  const rawProductTitle =
+    product?.title ||
+    product?.productTitle ||
+    product?.product_title ||
+    product?.name ||
+    product?.productName;
+  const baseTitle = rawProductTitle || item.title || "Product";
   const title = composeProductVariantTitle(baseTitle, item.variantTitle);
   let image =
     getProductImage(product) ||

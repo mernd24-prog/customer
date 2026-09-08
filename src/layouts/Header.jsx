@@ -583,7 +583,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   }, [catalogTree, headerData, globalCategories]);
 
   const visibleCategories = useMemo(
-    () => asArray(categories).slice(0, 8),
+    () => asArray(categories).slice(0, 9),
     [categories],
   );
 

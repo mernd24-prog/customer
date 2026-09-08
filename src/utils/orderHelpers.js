@@ -478,14 +478,20 @@ export const getCustomerOrderAmount = (order) => {
 // Date / formatting
 // ---------------------------------------------------------------------------
 
-export const formatOrderDate = (value) =>
-  value
-    ? new Date(value).toLocaleString("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      })
-    : "";
+export const formatOrderDate = (value) => {
+  if (!value) return "";
+  const date = new Date(value);
+  const currentYear = new Date().getFullYear();
+  const dateYear = date.getFullYear();
+  
+  const month = date.toLocaleString("en-US", { month: "short" });
+  const day = String(date.getDate()).padStart(2, '0');
+  
+  if (dateYear === currentYear) {
+    return `${month} ${day}`;
+  }
+  return `${month} ${day}, ${dateYear}`;
+};
 
 export const formatOrderId = (id = "") => String(id);
 
