@@ -17,55 +17,22 @@ export function useWishlistActions() {
   const wishlist = useSelector((state) => state.cart.current?.wishlist);
   const checkSavedAddressServiceability = useCheckServiceability();
 
-  const wishlistProductIds = useMemo(() => {
-    if (!Array.isArray(wishlist)) return new Set();
-    return new Set(
-      wishlist
-        .map((entry) => {
-          if (!entry) return null;
-          const pid =
-            (typeof entry === "string" ? entry : null) ||
-            (typeof entry?.productId === "string" ? entry.productId : null) ||
-            entry?.productId?._id ||
-            entry?.productId?.id ||
-            (typeof entry?.product === "string" ? entry.product : null) ||
-            entry?.product?._id ||
-            entry?.product?.id ||
-            entry?._id ||
-            entry?.id;
-          return pid ? String(pid) : null;
-        })
-        .filter(Boolean),
-    );
-  }, [wishlist]);
 
   const wishlistIds = useMemo(
     () => (Array.isArray(wishlist) ? wishlist.map(wishlistItemKey) : []),
     [wishlist],
   );
 
+
   const isWishlisted = useCallback(
     (product) => {
       if (!product) return false;
+      // Compare by exact productId+variantId key so only the specific wishlisted
+      // variant shows as wishlisted (not all variants of the same product).
       const key = wishlistItemKey(product);
-      if (wishlistIds.includes(key)) return true;
-
-      const pid =
-        (typeof product === "string" ? product : null) ||
-        (typeof product?.productId === "string" ? product.productId : null) ||
-        product?.productId?._id ||
-        product?.productId?.id ||
-        (typeof product?.product === "string" ? product.product : null) ||
-        product?.product?._id ||
-        product?.product?.id ||
-        product?._id ||
-        product?.id;
-
-      if (pid && wishlistProductIds.has(String(pid))) return true;
-
-      return false;
+      return wishlistIds.includes(key);
     },
-    [wishlistIds, wishlistProductIds],
+    [wishlistIds],
   );
 
   const toggleWishlist = useCallback(

@@ -23,8 +23,6 @@ import NeedHelpPanel from "../../support/components/NeedHelpPanel";
 
 import { useOrderList } from "../controllers/useOrderList";
 import { ReviewModal } from "../components/OrderItemReview";
-import { useOrderPayment } from "../controllers/actions/useOrderPayment";
-import { useSelector } from "react-redux";
 import { RefreshCw } from "lucide-react";
 import Button from "../../../components/ui/buttons/Button";
 
@@ -83,38 +81,10 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
     query: itemId ? `?orderItemId=${encodeURIComponent(itemId)}` : "",
   });
 
-  const paymentStatus = String(
-    order?.paymentStatus || order?.payment_status || "",
-  ).toLowerCase();
-
-  const paymentMethod = String(
-    order?.paymentMethod || order?.payment_method || "",
-  ).toLowerCase();
-
-  const isCod = paymentMethod === "cod" || paymentMethod === "cash_on_delivery";
-  const orderStatus = getOrderStatus(order);
-  const isPaymentPending =
-    orderStatus === "pending_payment" || orderStatus === "payment_failed";
-
-  const canPayOnline =
-    (isPaymentPending || isCod) &&
-    paymentStatus !== "captured" &&
-    !["cancelled", "returned", "delivered", "completed"].includes(orderStatus);
-
-  const userState = useSelector((s) => s.user?.current);
-  const { retrying, handleRetryPayment } = useOrderPayment({
-    orderId: id,
-    order,
-    userState,
-  });
-
   const [hoverStar, setHoverStar] = useState(0);
 
-  const handleCardClick = (e) => {
-    if (isPaymentPending && !isCod) {
-      e.preventDefault();
-      handleRetryPayment();
-    }
+  const handleCardClick = () => {
+    // Always navigate to order detail page, even for payment_failed/pending_payment
   };
 
   const s = String(itemStatus).toLowerCase();
@@ -139,6 +109,8 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
   }
 
   const isDelivered = ["delivered", "completed", "refunded"].includes(s);
+  // Refunded and returned items should NOT show the review option
+  const canReview = isDelivered && !["refunded", "returned"].includes(s);
   const isUnreviewed = !item.has_reviewed && !item.is_reviewed;
 
   return (
@@ -217,7 +189,7 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
           </p>
 
           {/* Review Section positioned under Status without creating extra space */}
-          {isDelivered && (
+          {canReview && (
             <div
               className="mt-2"
               onClick={(e) => {
@@ -313,7 +285,7 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
              <span className="text-xs font-semibold text-[#1F2430]">
                 {humanize(itemStatus, "Processing")}
              </span>
-             {isDelivered && (
+             {canReview && (
                <div 
                  className="mt-1 w-fit"
                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
@@ -444,10 +416,6 @@ export default function OrderListPage() {
             <div className="min-w-0 rounded-xl bg-white">
               {!(state.loading && !totalOrders && !orderItemsList.length) && (
                 <div className="mb-4 flex flex-col gap-3">
-                  {/* Top filter chips */}
-                  {/* status chips moved into dropdown per request */}
-
-                  {/* Search + controls */}
                   <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
                     <label className="relative block w-full sm:max-w-[640px]">
                       <Search
