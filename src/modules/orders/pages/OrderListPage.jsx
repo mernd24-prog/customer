@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { MdDateRange } from "react-icons/md";
 import { FaShoppingCart } from "react-icons/fa";
 import { BsCreditCardFill } from "react-icons/bs";
-import { IoIosStar } from "react-icons/io";
+import { PiStarThin, PiStarFill } from "react-icons/pi";
 import ShowMoreText from "../../../utils/showMore";
 import { Search, Truck, X, Package } from "lucide-react";
 import CustomDropdown from "../../../components/ui/CustomDropdown";
@@ -118,12 +118,10 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
   };
 
   const s = String(itemStatus).toLowerCase();
-  let statusBadgeStyle = "bg-amber-50/90 text-[#A96F14] border-amber-200/90";
-  let statusDotColor = "bg-amber-500";
+  let statusDotColor = "bg-[#ff9f00]"; // default yellow/orange
 
   if (["delivered", "completed"].includes(s)) {
-    statusBadgeStyle = "bg-emerald-50/90 text-emerald-700 border-emerald-200/90";
-    statusDotColor = "bg-emerald-500";
+    statusDotColor = "bg-[#26a541]"; // green
   } else if (
     [
       "cancelled",
@@ -135,11 +133,9 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
       "cancellation_rejected",
     ].includes(s)
   ) {
-    statusBadgeStyle = "bg-rose-50/90 text-rose-700 border-rose-200/90";
-    statusDotColor = "bg-rose-500";
+    statusDotColor = "bg-[#ff6161]"; // red
   } else if (["pending_payment"].includes(s)) {
-    statusBadgeStyle = "bg-amber-50/90 text-amber-700 border-amber-200/90";
-    statusDotColor = "bg-amber-500";
+    statusDotColor = "bg-[#ff9f00]"; // orange
   }
 
   const isDelivered = ["delivered", "completed", "refunded"].includes(s);
@@ -147,12 +143,11 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
 
   return (
     <article className="group relative overflow-hidden rounded-xl border border-[#E4DDCF] bg-white transition-all duration-200 hover:border-[#D6A323]/40 shadow-2xs">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-4">
-        {/* Left section: Thumbnail & Details (Link to detail) */}
+            <div className="hidden sm:grid grid-cols-12 items-start gap-4 p-4">
         <Link
           to={itemDetailPath}
           onClick={handleCardClick}
-          className="flex flex-1 items-center gap-3 sm:gap-4 min-w-0 group/link"
+          className="col-span-7 flex items-start gap-4 min-w-0 group/link"
         >
           <div className="relative flex aspect-square w-16 sm:w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E4DDCF]/80 bg-[#FAF6EE]/50 p-1.5">
             {itemImage ? (
@@ -197,86 +192,198 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
           </div>
         </Link>
 
-        {/* Right Columns: Price | Status & Date | Action Button */}
-        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between lg:justify-end gap-4 lg:gap-6 pt-3 lg:pt-0 border-t lg:border-t-0 border-[#E4DDCF]/60 shrink-0">
-          {/* Price */}
-          <div className="flex flex-col justify-center min-w-[100px] lg:text-right">
-            <span className="text-base sm:text-lg font-extrabold text-[#1F2430] tracking-tight">
-              {formatMoney(itemTotal, currency)}
+        {/* Middle Section: Price (col-span-2) */}
+        <div className="col-span-2 flex flex-col items-start justify-start min-w-0">
+          <span className="text-base sm:text-lg font-extrabold text-[#1F2430] tracking-tight">
+            {formatMoney(itemTotal, currency)}
+          </span>
+        </div>
+
+        {/* Right Section: Status & Date & Actions (col-span-3) */}
+        <div className="col-span-3 flex flex-col justify-start items-start min-w-0">
+          <div className="flex items-center gap-2">
+            <span className={`h-2.5 w-2.5 rounded-full ${statusDotColor} shrink-0`} />
+            <span className="text-sm font-semibold text-[#1F2430] whitespace-nowrap">
+              {humanize(itemStatus, "Processing")} on {formatOrderDate(createdAt)}
             </span>
           </div>
 
-          {/* Status & Date */}
-          <div className="flex flex-col justify-center gap-1 min-w-[140px] lg:items-start">
-            <div className="flex items-center">
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold whitespace-nowrap border ${statusBadgeStyle} shadow-2xs`}>
-                <span className={`h-1.5 w-1.5 rounded-full ${statusDotColor} animate-pulse shrink-0`} />
-                <span>{humanize(itemStatus, "Processing")}</span>
-              </span>
+          <p className="text-xs text-[#6F7480] mt-0.5">
+            {s === "delivered"
+              ? "Your item has been delivered"
+              : s === "cancelled"
+              ? "Your order was cancelled"
+              : "Your order is being processed"}
+          </p>
+
+          {/* Review Section positioned under Status without creating extra space */}
+          {isDelivered && (
+            <div
+              className="mt-2"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              {isUnreviewed ? (
+                <div className="flex justify-center items-center gap-2.5">
+                  <div 
+                    className="flex items-center gap-1"
+                    onMouseLeave={() => setHoverStar(0)}
+                  >
+                    {[1, 2, 3, 4, 5].map((star) => {
+                      const isFilled = star <= (hoverStar || 0);
+                      return (
+                        <button
+                          key={star}
+                          type="button" 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (onReviewClick) onReviewClick(item, order, star);
+                          }}
+                          onMouseEnter={() => setHoverStar(star)}
+                          className="focus:outline-none transition-transform hover:scale-115"
+                          aria-label={`${star} star`}
+                        >
+                          {isFilled ? (
+                            <PiStarFill size={24} className="text-[#F59E0B]" />
+                          ) : (
+                            <PiStarThin size={24} className="text-[#9CA3AF]" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button
+                    type="button" 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (onReviewClick) onReviewClick(item, order, hoverStar || 5);
+                    }}
+                    className="text-xs font-semibold text-[#201B78] hover:text-[#15115D] no-underline border-none outline-none focus:outline-none whitespace-nowrap cursor-pointer"
+                  >
+                    Rate & Review Product
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <PiStarFill key={star} size={20} className="text-[#16A34A]" />
+                    ))}
+                  </div>
+                  <span className="inline-flex items-center rounded-md bg-[#DCFCE7] px-2 py-0.5 text-[11px] font-bold text-[#15803D]">
+                    Reviewed
+                  </span>
+                </div>
+              )}
             </div>
-            <span className="text-[11px] font-semibold text-[#6F7480] whitespace-nowrap pl-0.5">
-              {formatOrderDate(createdAt)}
-            </span>
-          </div>
+          )}
+        </div>
+      </div>
 
-          {/* Action Button (Pay Now or Rate Product) */}
-          <div className="flex items-center justify-end shrink-0 min-w-[110px]">
-            {canPayOnline ? (
-              <button
-                type="button"
-                disabled={retrying}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleRetryPayment();
-                }}
-                className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-[#D6A323] to-[#A96F14] hover:from-[#A96F14] hover:to-[#86560B] px-4 py-2 text-xs font-bold text-white shadow-2xs hover:shadow-xs transition-all active:scale-95 whitespace-nowrap cursor-pointer"
-              >
-                {retrying ? (
-                  <span className="flex items-center gap-1.5">
-                    <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                    Processing...
-                  </span>
-                ) : (
-                  "Pay Now"
-                )}
-              </button>
+      {/* Mobile Layout */}
+      <div className="flex sm:hidden p-3.5 gap-3 items-center">
+        <Link
+          to={itemDetailPath}
+          onClick={handleCardClick}
+          className="flex flex-1 items-center gap-3 min-w-0"
+        >
+          <div className="relative flex aspect-square w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E4DDCF]/80 bg-[#FAF6EE]/50 p-1.5">
+            {itemImage ? (
+              <img
+                loading="lazy"
+                width="400"
+                height="400"
+                src={itemImage}
+                alt={productTitle}
+                className="h-full w-full object-contain"
+              />
             ) : (
-              isDelivered && isUnreviewed && (
-                <div className="flex flex-col gap-0.5 items-end">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F7480]">
-                    Rate product
-                  </span>
-                  <div className="flex items-center gap-0.5">
-                    {[1, 2, 3, 4, 5].map((rating) => (
+              <Package size={28} className="text-[#9E886A]/50" />
+            )}
+          </div>
+          
+          <div className="flex flex-col gap-1 min-w-0 flex-1">
+             <h3 className="text-sm font-bold text-[#1F2430] leading-snug line-clamp-1">
+                {productTitle}
+             </h3>
+             <span className="text-xs font-semibold text-[#1F2430]">
+                {humanize(itemStatus, "Processing")}
+             </span>
+             {isDelivered && (
+               <div 
+                 className="mt-1 w-fit"
+                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+               >
+                 {isUnreviewed ? (
+                   <div className="flex items-center gap-2 mt-1">
+                     <div 
+                       className="flex items-center gap-0.5"
+                       onMouseLeave={() => setHoverStar(0)}
+                     >
+                       {[1, 2, 3, 4, 5].map((star) => {
+                         const isFilled = star <= (hoverStar || 0);
+                         return (
+                           <button
+                             key={star}
+                             type="button" 
+                             onClick={(e) => {
+                               e.preventDefault();
+                               e.stopPropagation();
+                               if (onReviewClick) onReviewClick(item, order, star);
+                             }}
+                             onMouseEnter={() => setHoverStar(star)}
+                             className="focus:outline-none"
+                             aria-label={`${star} star`}
+                           >
+                              {isFilled ? (
+                                <PiStarFill size={19} className="text-[#F59E0B]" />
+                              ) : (
+                                <PiStarThin size={19} className="text-[#9CA3AF]" />
+                              )}
+                           </button>
+                         );
+                       })}
+                     </div>
                       <button
-                        key={rating}
                         type="button"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          if (onReviewClick) onReviewClick(item, order, rating);
+                          if (onReviewClick) onReviewClick(item, order, hoverStar || 5);
                         }}
-                        onMouseEnter={() => setHoverStar(rating)}
-                        onMouseLeave={() => setHoverStar(0)}
-                        className="p-0.5 transition-transform hover:scale-125 focus:outline-none"
-                        title={`Rate ${rating} star${rating > 1 ? "s" : ""}`}
+                        className="text-[11px] font-semibold text-[#201B78] hover:text-[#15115D] no-underline border-none outline-none focus:outline-none cursor-pointer"
                       >
-                        <IoIosStar
-                          size={18}
-                          className={
-                            rating <= (hoverStar || 0)
-                              ? "fill-amber-400 text-amber-400"
-                              : "fill-[#D7D7E0] text-[#D7D7E0] hover:fill-amber-300"
-                          }
-                        />
+                        Rate & Review
                       </button>
-                    ))}
-                  </div>
-                </div>
-              )
-            )}
+                   </div>
+                 ) : (
+                   <div className="inline-flex items-center gap-1.5 rounded-lg bg-[#F0FDF4] px-2.5 py-1">
+                     <div className="flex items-center gap-0.5">
+                       {[1, 2, 3, 4, 5].map((star) => (
+                         <PiStarFill key={star} size={18} className="text-[#16A34A]" />
+                       ))}
+                     </div>
+                     <span className="text-[#BBF7D0]">|</span>
+                     <span className="text-[11px] font-bold text-[#1F2430]">5.0</span>
+                     <span className="text-[#BBF7D0]">|</span>
+                     <span className="text-[10px] font-bold text-[#065F46]">Reviewed</span>
+                   </div>
+                 )}
+               </div>
+             )}
           </div>
+        </Link>
+        <div className="flex flex-col items-end shrink-0">
+          <span className="text-sm font-extrabold text-[#1F2430] tracking-tight">
+            {formatMoney(itemTotal, currency)}
+          </span>
+          <span className="text-[10px] font-medium text-[#6F7480] mt-1">
+             {formatOrderDate(createdAt)}
+          </span>
         </div>
       </div>
     </article>

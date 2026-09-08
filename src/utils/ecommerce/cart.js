@@ -34,13 +34,15 @@ function getWritableProductId(value) {
   if (!value) return "";
   if (typeof value !== "object") return normalizeObjectId(value);
 
+  const nestedProduct = value.productId || value.product;
+  if (nestedProduct && nestedProduct !== value) {
+    const resolvedNested = getWritableProductId(nestedProduct);
+    if (resolvedNested) return resolvedNested;
+  }
+
   const directId = normalizeObjectId(value._id || value.id || value.productId);
   if (directId) return directId;
 
-  const nestedProduct = value.product || value.productId;
-  if (nestedProduct && nestedProduct !== value) {
-    return getWritableProductId(nestedProduct);
-  }
   return "";
 }
 

@@ -34,7 +34,7 @@ function StarInput({ value, onChange }) {
             size={30}
             className={
               rating <= (hovered || value)
-                ? "fill-[#CE9F2D] text-[#CE9F2D]"
+                ? "fill-[#F59E0B] text-[#F59E0B]"
                 : "fill-[#D7D7E0] text-[#D7D7E0]"
             }
           />
@@ -54,7 +54,7 @@ function ReviewRating({ rating = 0 }) {
           size={16}
           className={
             star <= value
-              ? "fill-[#CE9F2D] text-[#CE9F2D]"
+              ? "fill-[#F59E0B] text-[#F59E0B]"
               : "fill-[#D7D7E0] text-[#D7D7E0]"
           }
         />
@@ -218,7 +218,17 @@ function ReviewModal({ item, orderId, initialRating = 0, getProductTitle, onClos
       notify.success("Review submitted for approval.");
       onSubmitted(result?.data || true);
     } catch (error) {
-      notify.error(error || "Failed to submit review.");
+      const errorMessage =
+        typeof error === "string" ? error : error?.message || "";
+      if (
+        errorMessage.toLowerCase().includes("already exists") ||
+        errorMessage.includes("DUPLICATE_ENTRY")
+      ) {
+        notify.info("You have already reviewed this product.");
+        onSubmitted?.({ alreadyReviewed: true, productId, orderItemId });
+      } else {
+        notify.error(error || "Failed to submit review.");
+      }
     } finally {
       setSubmitting(false);
     }
