@@ -1,5 +1,26 @@
 import { useMemo } from "react";
 
+const attributeAliases = (key = "") => {
+  const normalized = String(key || "").trim().toLowerCase();
+  return Array.from(
+    new Set([
+      key,
+      normalized,
+      normalized.replace(/-/g, "_"),
+      normalized.replace(/_/g, "-"),
+      normalized.replace(/[-_]+/g, " "),
+    ].filter(Boolean)),
+  );
+};
+
+const getAttributeValue = (variant = {}, key = "") => {
+  const attributes = variant?.attributes || {};
+  const matchingKey = attributeAliases(key).find(
+    (candidate) => attributes[candidate] != null,
+  );
+  return matchingKey ? attributes[matchingKey] : undefined;
+};
+
 export function useProductDetailVariants({
   product,
   variants,
@@ -44,7 +65,21 @@ export function useProductDetailVariants({
     }));
   }, [product?.options, variants]);
 
-  const selectedAttributes = selectedVariant?.attributes || {};
+  const selectedAttributes = useMemo(
+    () =>
+      variantOptions.reduce((result, option) => {
+        const value = getAttributeValue(selectedVariant, option.slug);
+        if (value != null && value !== "") result[option.slug] = value;
+        return result;
+      }, {}),
+    [selectedVariant, variantOptions],
+  );
+
+  const variantMatchesSelection = (variant, selection) =>
+    Object.entries(selection).every(
+      ([key, selectedVal]) =>
+        String(getAttributeValue(variant, key)) === String(selectedVal),
+    );
 
   const findVariantForSelection = (axis, value) => {
     const nextSelection = {
@@ -53,15 +88,12 @@ export function useProductDetailVariants({
     };
 
     const exactMatch = variants.find((variant) =>
-      Object.entries(nextSelection).every(
-        ([key, selectedVal]) =>
-          String(variant.attributes?.[key]) === String(selectedVal),
-      ),
+      variantMatchesSelection(variant, nextSelection),
     );
     if (exactMatch) return exactMatch;
 
     const matches = variants.filter(
-      (variant) => String(variant.attributes?.[axis]) === String(value),
+      (variant) => String(getAttributeValue(variant, axis)) === String(value),
     );
 
     const inStockMatch = matches.find((v) => {
@@ -76,5 +108,7 @@ export function useProductDetailVariants({
     variantOptions,
     selectedAttributes,
     findVariantForSelection,
+    variantMatchesSelection,
+    getVariantAttributeValue: getAttributeValue,
   };
 }

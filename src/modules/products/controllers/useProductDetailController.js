@@ -328,7 +328,13 @@ export function useProductDetailController(
 
   // Derived State extracted from Page
 
-  const { variantOptions, selectedAttributes, findVariantForSelection } =
+  const {
+    variantOptions,
+    selectedAttributes,
+    findVariantForSelection,
+    variantMatchesSelection,
+    getVariantAttributeValue,
+  } =
     useProductDetailVariants({ product, variants, selectedVariant });
   const {
     selectedVariantPrice,
@@ -512,6 +518,8 @@ export function useProductDetailController(
     variantOptions,
     selectedAttributes,
     findVariantForSelection,
+    variantMatchesSelection,
+    getVariantAttributeValue,
     selectedVariantPrice,
     productPrice,
     activeDealPrice,

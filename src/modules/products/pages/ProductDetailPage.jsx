@@ -107,6 +107,8 @@ export default function ProductDetailPage() {
     variantOptions,
     selectedAttributes,
     findVariantForSelection,
+    variantMatchesSelection,
+    getVariantAttributeValue,
     detailRows,
     loadedProductId,
   } = useProductDetailController(productId, rawParamId, decodedProductId);
@@ -344,6 +346,8 @@ export default function ProductDetailPage() {
                       variantOptions={variantOptions}
                       selectedAttributes={selectedAttributes}
                       findVariantForSelection={findVariantForSelection}
+                      variantMatchesSelection={variantMatchesSelection}
+                      getVariantAttributeValue={getVariantAttributeValue}
                       setSelectedVariant={setSelectedVariant}
                       product={product}
                       onSizeChartClick={() => setIsSizeChartOpen(true)}

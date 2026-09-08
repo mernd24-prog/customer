@@ -25,8 +25,28 @@ export function OrderItemCard({
 
   const eta = item.product_snapshot?.shipping?.processingDays;
   const itemColor = getOrderItemColor(item);
-  const shouldShowColor =
-    itemColor != null && String(itemColor).trim().toLowerCase() !== "n/a";
+  const rawVariantAttributes =
+    item?.attributes && typeof item.attributes === "object"
+      ? item.attributes
+      : item?.product_snapshot?.variant?.attributes ||
+        item?.productSnapshot?.variant?.attributes ||
+        item?.product_snapshot?.attributes ||
+        item?.productSnapshot?.attributes ||
+        {};
+  const variantAttributes = Object.entries(rawVariantAttributes).filter(
+    ([, value]) => value !== null && value !== undefined && value !== "",
+  );
+  if (
+    !variantAttributes.some(([key]) => /^(color|colour)$/i.test(key)) &&
+    itemColor != null &&
+    String(itemColor).trim().toLowerCase() !== "n/a"
+  ) {
+    variantAttributes.unshift(["color", itemColor]);
+  }
+  const formatAttributeLabel = (key) =>
+    String(key || "")
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
   const orderedQuantity = Math.max(Number(item.quantity || 1), 0);
   const cancelledQuantity = Math.min(
     orderedQuantity,
@@ -140,7 +160,6 @@ export function OrderItemCard({
   const deliveryDateStr = getEstimatedDeliveryDateStr();
 
   if (compact) {
-    const itemSize = item.product_snapshot?.attributes?.size;
     return (
       <div className="w-full">
         <div className="flex w-full flex-row items-start gap-4 sm:gap-6">
@@ -177,19 +196,17 @@ export function OrderItemCard({
 
           <div className="flex min-w-0 flex-1 flex-col justify-center">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs font-semibold text-[#1F2430]">
-              {shouldShowColor && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
-                  <span className="text-[#6F7480] font-normal">Color:</span> {itemColor}
+              {variantAttributes.map(([key, value]) => (
+                <span key={key} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
+                  <span className="text-[#6F7480] font-normal">
+                    {formatAttributeLabel(key)}:
+                  </span>{" "}
+                  {String(value)}
                 </span>
-              )}
+              ))}
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
                 <span className="text-[#6F7480] font-normal">Qty:</span> {String(item.quantity || 1).padStart(2, "0")}
               </span>
-              {itemSize && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
-                  <span className="text-[#6F7480] font-normal">Size:</span> {itemSize}
-                </span>
-              )}
             </div>
             {quantityBreakdown}
 
@@ -262,11 +279,14 @@ export function OrderItemCard({
           </h3>
 
           <div className="my-2.5 flex flex-wrap items-center gap-2 text-xs font-semibold text-[#1F2430]">
-            {shouldShowColor && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
-                <span className="text-[#6F7480] font-normal">Color:</span> {itemColor}
+            {variantAttributes.map(([key, value]) => (
+              <span key={key} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
+                <span className="text-[#6F7480] font-normal">
+                  {formatAttributeLabel(key)}:
+                </span>{" "}
+                {String(value)}
               </span>
-            )}
+            ))}
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
               <span className="text-[#6F7480] font-normal">Qty:</span> {String(item.quantity || 1).padStart(2, "0")}
             </span>

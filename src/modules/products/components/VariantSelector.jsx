@@ -8,6 +8,8 @@ export default function VariantSelector({
   variantOptions,
   selectedAttributes,
   findVariantForSelection,
+  variantMatchesSelection,
+  getVariantAttributeValue,
   setSelectedVariant,
   product,
   onSizeChartClick,
@@ -68,13 +70,10 @@ export default function VariantSelector({
 
               // Check if this exact combination exists
               const exactVariant = variants.find((variant) =>
-                Object.entries({
+                variantMatchesSelection(variant, {
                   ...selectedAttributes,
                   [option.slug]: value,
-                }).every(
-                  ([key, selectedVal]) =>
-                    String(variant.attributes?.[key]) === String(selectedVal),
-                ),
+                }),
               );
 
               const isColorOption =
@@ -98,9 +97,9 @@ export default function VariantSelector({
                 const colorVariants = variants.filter(
                   (v) =>
                     String(
-                      v.attributes?.[option.slug] ||
-                        v.attributes?.color ||
-                        v.attributes?.colour ||
+                      getVariantAttributeValue(v, option.slug) ||
+                        getVariantAttributeValue(v, "color") ||
+                        getVariantAttributeValue(v, "colour") ||
                         "",
                     ).toLowerCase() === String(value).toLowerCase(),
                 );
