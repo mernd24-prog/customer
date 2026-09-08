@@ -73,6 +73,7 @@ import { PRODUCT_DETAIL_SKELETON } from "../../components/ui/skeleton/layouts";
 import ImageGallery from "./components/ImageGallery";
 import DeliveryChecker from "./components/DeliveryChecker";
 import VariantSelector from "./components/VariantSelector";
+import ImageVariantPicker from "../../modules/products/components/ImageVariantPicker";
 import ProductActionButtons from "./components/ProductActionButtons";
 import ProductServiceBadges from "../../modules/products/components/ProductServiceBadges";
 import ProductInfoSection from "./sections/ProductInfoSection";
@@ -729,6 +730,16 @@ export default function ProductDetailPage() {
                       setSelectedVariant={setSelectedVariant}
                       product={product}
                       onSizeChartClick={() => setIsSizeChartOpen(true)}
+                    />
+                  )}
+
+                  {/* Image-based picker when variants exist but have no attributes */}
+                  {variants.length > 1 && variantOptions.length === 0 && (
+                    <ImageVariantPicker
+                      variants={variants}
+                      selectedVariant={selectedVariant}
+                      setSelectedVariant={setSelectedVariant}
+                      productTitle={productTitle}
                     />
                   )}
 
