@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import { MdDateRange } from "react-icons/md";
@@ -23,6 +23,10 @@ import NeedHelpPanel from "../../support/components/NeedHelpPanel";
 
 import { useOrderList } from "../controllers/useOrderList";
 import { ReviewModal } from "../components/OrderItemReview";
+import { getReviewProductId } from "../utils/orderItems";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMyOrders } from "../slices/orderSlice";
+import { fetchMyProductReview } from "../../../features/review/reviewSlice";
 import { RefreshCw } from "lucide-react";
 import Button from "../../../components/ui/buttons/Button";
 
@@ -50,8 +54,13 @@ import {
   getOrderCardImage,
 } from "../../../utils/pages/orderUtils";
 
-function OrderItemSummaryCard({ order, item, onReviewClick }) {
+function OrderItemSummaryCard({ order, item, onReviewClick, locallyReviewedProducts = new Set() }) {
   if (!order || !item) return null;
+
+  const dispatch = useDispatch();
+  const productId = getReviewProductId(item);
+  const myReview = useSelector((state) => state.review?.myReviewByProduct?.[productId]);
+  const [hasCheckedReview, setHasCheckedReview] = useState(false);
 
   const id = getOrderId(order);
   const productTitle = getProductTitle(item);
@@ -111,7 +120,20 @@ function OrderItemSummaryCard({ order, item, onReviewClick }) {
   const isDelivered = ["delivered", "completed", "refunded"].includes(s);
   // Refunded and returned items should NOT show the review option
   const canReview = isDelivered && !["refunded", "returned"].includes(s);
-  const isUnreviewed = !item.has_reviewed && !item.is_reviewed;
+  const isUnreviewed = 
+    !item.has_reviewed && 
+    !item.is_reviewed && 
+    !locallyReviewedProducts.has(productId) &&
+    !myReview;
+
+  // Eager fetch to know if user already reviewed it in a past order
+  useEffect(() => {
+    if (canReview && isUnreviewed && !hasCheckedReview && productId) {
+      dispatch(fetchMyProductReview({ productId })).finally(() => {
+        setHasCheckedReview(true);
+      });
+    }
+  }, [canReview, isUnreviewed, hasCheckedReview, productId, dispatch]);
 
   return (
     <article className="group relative overflow-hidden rounded-xl border border-[#E4DDCF] bg-white transition-all duration-200 hover:border-[#D6A323]/40 shadow-2xs">
@@ -390,6 +412,10 @@ export default function OrderListPage() {
     totalPages,
   } = useOrderList();
 
+  const dispatch = useDispatch();
+
+  const [locallyReviewedProducts, setLocallyReviewedProducts] = useState(new Set());
+
   const [reviewModalState, setReviewModalState] = useState({
     isOpen: false,
     item: null,
@@ -496,6 +522,7 @@ export default function OrderListPage() {
                       key={`${getOrderId(order)}:${getOrderItemId(item)}`}
                       order={order}
                       item={item}
+                      locallyReviewedProducts={locallyReviewedProducts}
                       onReviewClick={handleReviewClick}
                     />
                   ))}
@@ -524,8 +551,14 @@ export default function OrderListPage() {
           onClose={() =>
             setReviewModalState({ isOpen: false, item: null, order: null, initialRating: 0 })
           }
-          onSubmitted={() => {
+          onSubmitted={(res) => {
             setReviewModalState({ isOpen: false, item: null, order: null, initialRating: 0 });
+            dispatch(fetchMyOrders({ page: currentPage, limit: pageSize }));
+            
+            const pId = res?.productId || getReviewProductId(reviewModalState.item);
+            if (pId) {
+              setLocallyReviewedProducts(prev => new Set([...prev, pId]));
+            }
           }}
         />
       )}
