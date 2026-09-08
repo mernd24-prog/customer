@@ -194,87 +194,87 @@ function OrderItemSummaryCard({ order, item, onReviewClick, locallyReviewedProdu
         </div>
 
         {/* Right Section: Status & Date & Actions (col-span-3) */}
-        <div className="col-span-3 flex flex-col justify-start items-start min-w-0">
-          <div className="flex items-center gap-2">
-            <span className={`h-2.5 w-2.5 rounded-full ${statusDotColor} shrink-0`} />
+        <div className="col-span-3 flex min-w-0 gap-2 items-start justify-start">
+          <span className={`h-2.5 w-2.5 rounded-full ${statusDotColor} shrink-0 mt-[5px]`} />
+          <div className="flex flex-col items-start min-w-0">
             <span className="text-sm font-semibold text-[#1F2430] whitespace-nowrap">
               {humanize(itemStatus, "Processing")} on {formatOrderDate(createdAt)}
             </span>
+
+            <p className="text-xs text-[#6F7480] mt-0.5">
+              {s === "delivered"
+                ? "Your item has been delivered"
+                : s === "cancelled"
+                ? "Your order was cancelled"
+                : "Your order is being processed"}
+            </p>
+
+            {/* Review Section positioned under Status without creating extra space */}
+            {canReview && (
+              <div
+                className="mt-2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
+                {isUnreviewed ? (
+                  <div className="flex justify-center items-center gap-2.5">
+                    <div 
+                      className="flex items-center gap-1"
+                      onMouseLeave={() => setHoverStar(0)}
+                    >
+                      {[1, 2, 3, 4, 5].map((star) => {
+                        const isFilled = star <= (hoverStar || 0);
+                        return (
+                          <button
+                            key={star}
+                            type="button" 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              if (onReviewClick) onReviewClick(item, order, star);
+                            }}
+                            onMouseEnter={() => setHoverStar(star)}
+                            className="focus:outline-none transition-transform hover:scale-115"
+                            aria-label={`${star} star`}
+                          >
+                            {isFilled ? (
+                              <PiStarFill size={24} className="text-[#F59E0B]" />
+                            ) : (
+                              <PiStarThin size={24} className="text-[#9CA3AF]" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <button
+                      type="button" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (onReviewClick) onReviewClick(item, order, hoverStar || 5);
+                      }}
+                      className="text-xs font-semibold text-[#201B78] hover:text-[#15115D] no-underline border-none outline-none focus:outline-none whitespace-nowrap cursor-pointer"
+                    >
+                      Rate & Review Product
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <PiStarFill key={star} size={20} className="text-[#16A34A]" />
+                      ))}
+                    </div>
+                    <span className="inline-flex items-center rounded-md bg-[#DCFCE7] px-2 py-0.5 text-[11px] font-bold text-[#15803D]">
+                      Reviewed
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-
-          <p className="text-xs text-[#6F7480] mt-0.5">
-            {s === "delivered"
-              ? "Your item has been delivered"
-              : s === "cancelled"
-              ? "Your order was cancelled"
-              : "Your order is being processed"}
-          </p>
-
-          {/* Review Section positioned under Status without creating extra space */}
-          {canReview && (
-            <div
-              className="mt-2"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              {isUnreviewed ? (
-                <div className="flex justify-center items-center gap-2.5">
-                  <div 
-                    className="flex items-center gap-1"
-                    onMouseLeave={() => setHoverStar(0)}
-                  >
-                    {[1, 2, 3, 4, 5].map((star) => {
-                      const isFilled = star <= (hoverStar || 0);
-                      return (
-                        <button
-                          key={star}
-                          type="button" 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (onReviewClick) onReviewClick(item, order, star);
-                          }}
-                          onMouseEnter={() => setHoverStar(star)}
-                          className="focus:outline-none transition-transform hover:scale-115"
-                          aria-label={`${star} star`}
-                        >
-                          {isFilled ? (
-                            <PiStarFill size={24} className="text-[#F59E0B]" />
-                          ) : (
-                            <PiStarThin size={24} className="text-[#9CA3AF]" />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <button
-                    type="button" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (onReviewClick) onReviewClick(item, order, hoverStar || 5);
-                    }}
-                    className="text-xs font-semibold text-[#201B78] hover:text-[#15115D] no-underline border-none outline-none focus:outline-none whitespace-nowrap cursor-pointer"
-                  >
-                    Rate & Review Product
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <PiStarFill key={star} size={20} className="text-[#16A34A]" />
-                    ))}
-                  </div>
-                  <span className="inline-flex items-center rounded-md bg-[#DCFCE7] px-2 py-0.5 text-[11px] font-bold text-[#15803D]">
-                    Reviewed
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </div>
 

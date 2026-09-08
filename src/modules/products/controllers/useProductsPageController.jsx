@@ -300,7 +300,10 @@ export function useProductsPageController() {
         if (seq !== requestSequenceRef.current) return;
         const list = getProductListFromResponse(payload);
         const sorted = sortProducts(list, params.sort);
-        setItems((prev) => mergeUniqueProducts(prev, sorted));
+        setItems((prev) => {
+          const merged = mergeUniqueProducts(prev, list);
+          return sortProducts(merged, params.sort);
+        });
         setPageInfo(getPagination(payload, sorted));
         setIsLoadingMore(false);
       })
