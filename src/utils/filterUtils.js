@@ -87,6 +87,7 @@ export const normalizeFacetOption = (option = {}) => {
 
   return value
     ? {
+      ...option,
       value: String(value),
       label: String(label),
       count: option.count ?? option.doc_count ?? option.total,
@@ -151,135 +152,102 @@ export function getNormalizedAttributeFacets(attributes = [], filterColorOnly = 
 }
 
 export function formatCategoryOptionsForTree(options = [], catalogCategoryList = []) {
-  if (!catalogCategoryList?.length || !options?.length) return options;
+  if (!options?.length) return [];
 
-  const getKey = (c) => String(c.categoryKey || c.key || c.slug || "").toLowerCase().trim();
-  const getLabel = (c) => c.title || c.name || c.label || "";
+  const keyOf = (category = {}) =>
+    String(
+      category.categoryKey ||
+        category.key ||
+        category.slug ||
+        category.value ||
+        "",
+    )
+      .toLowerCase()
+      .trim();
+  const labelOf = (category = {}, fallback = "") =>
+    String(category.title || category.name || category.label || fallback || "").trim();
 
-  const catMap = new Map();
-  flattenCategoryList(catalogCategoryList).forEach(c => {
-    const k = getKey(c);
-    if (k) catMap.set(k, c);
+  // Facets themselves contain parentKey/level. Merge them with the catalog so
+  // hierarchy is available even when the catalog request finishes later.
+  const nodeMap = new Map();
+  [...flattenCategoryList(catalogCategoryList), ...options].forEach((category) => {
+    const key = keyOf(category);
+    if (!key) return;
+    nodeMap.set(key, { ...(nodeMap.get(key) || {}), ...category });
   });
 
-  // Find catalog parent via parentKey field OR hyphen-prefix scan in catMap
-  function catalogParent(key) {
-    const cat = catMap.get(key);
-    if (cat?.parentKey) return String(cat.parentKey).toLowerCase().trim();
-    const parts = key.split("-");
-    // Try longest matching prefix in catMap
-    for (let i = parts.length - 1; i > 0; i--) {
-      const prefix = parts.slice(0, i).join("-");
-      if (catMap.has(prefix)) return prefix;
+  const ancestryOf = (key) => {
+    const ancestors = [];
+    const visited = new Set([key]);
+    let node = nodeMap.get(key);
+    let parent = node?.parentKey || node?.parent_key;
+    while (parent && ancestors.length < 12) {
+      const parentKey = String(parent).toLowerCase().trim();
+      if (!parentKey || visited.has(parentKey)) break;
+      ancestors.unshift(parentKey);
+      visited.add(parentKey);
+      node = nodeMap.get(parentKey);
+      parent = node?.parentKey || node?.parent_key;
     }
-    // Always fall back to first segment as synthetic parent group
-    if (parts.length > 1) return parts[0];
-    return null;
-  }
+    return ancestors;
+  };
 
-  // fallback: use provided string, then humanize last segment of key
-  function labelFor(key, fallback) {
-    const cat = catMap.get(key);
-    if (cat && getLabel(cat)) return getLabel(cat);
-    if (fallback) return fallback;
-    // Humanize only the last segment so "electronics-mobiles" → "Mobiles"
-    const parts = key.split("-");
-    const lastPart = parts[parts.length - 1];
-    return lastPart.charAt(0).toUpperCase() + lastPart.slice(1);
-  }
+  const normalized = options
+    .map((option) => {
+      const key = keyOf(option);
+      if (!key) return null;
+      return {
+        ...option,
+        value: String(option.value || key),
+        label: labelOf(nodeMap.get(key), option.label || key),
+        _key: key,
+        _ancestors: ancestryOf(key),
+      };
+    })
+    .filter(Boolean);
 
-  // Pre-compute ancestor chain for each option key (bounded, no recursion)
-  // ancestors[0] = root, ancestors[last] = direct parent
-  const ancestorMap = new Map();
-  options.forEach(opt => {
-    const key = String(opt.value).toLowerCase().trim();
-    const chain = [];
-    let cur = key;
-    const visited = new Set([cur]);
-    for (let d = 0; d < 8; d++) {
-      const p = catalogParent(cur);
-      if (!p || visited.has(p)) break;  // removed catMap.has(p) — allows synthetic roots
-      chain.unshift(p);
-      visited.add(p);
-      cur = p;
+  const groups = new Map();
+  const roots = [];
+  normalized.forEach((option) => {
+    const rootKey = option._ancestors[0];
+    if (!rootKey) roots.push(option);
+    else {
+      if (!groups.has(rootKey)) groups.set(rootKey, []);
+      groups.get(rootKey).push(option);
     }
-    ancestorMap.set(key, chain);
   });
 
-  // Single-level grouping:
-  // - Top-level accordion for each root ancestor
-  // - Inside each accordion: ALL descendants as flat checkboxes
-  //   with intermediate parent name prefixed ("Mobiles iPhones", "Camera DSLR Cameras")
-  function buildTree(opts) {
-    // 1. Which keys will become root accordion headers?
-    //    Only keys that are anc[0] (root ancestor) of SOME OTHER option
-    const rootGroupKeys = new Set();
-    opts.forEach(opt => {
-      const anc = ancestorMap.get(String(opt.value).toLowerCase().trim()) || [];
-      if (anc.length > 0) rootGroupKeys.add(anc[0]);
+  const groupedRootKeys = new Set(groups.keys());
+  const result = roots
+    .filter((option) => !groupedRootKeys.has(option._key))
+    .map(({ _key, _ancestors, ...option }) => option);
+
+  groups.forEach((descendants, rootKey) => {
+    const rootOption = normalized.find((option) => option._key === rootKey);
+    const children = descendants.map((option) => {
+      const intermediateLabels = option._ancestors
+        .slice(1)
+        .map((key) => labelOf(nodeMap.get(key)))
+        .filter(Boolean);
+      const { _key, _ancestors, ...cleanOption } = option;
+      return {
+        ...cleanOption,
+        label: [...intermediateLabels, cleanOption.label].join(" › "),
+      };
     });
 
-    const rootLeaves = [];  // items with no parent AND not a group container → flat checkbox
-    const rootGroups = new Map(); // rootKey → all opts belonging to this root
+    if (rootOption) {
+      const { _key, _ancestors, ...cleanRoot } = rootOption;
+      children.unshift({ ...cleanRoot, label: `All ${cleanRoot.label}` });
+    }
 
-    opts.forEach(opt => {
-      const key = String(opt.value).toLowerCase().trim();
-      const anc = ancestorMap.get(key) || [];
-      if (anc.length > 0) {
-        // Has a root ancestor → belongs in that group
-        const rk = anc[0];
-        if (!rootGroups.has(rk)) rootGroups.set(rk, []);
-        rootGroups.get(rk).push(opt);
-      } else if (rootGroupKeys.has(key)) {
-        // This item IS itself a group header (other items reference it as root)
-        // It will be created as the accordion — skip adding it as a leaf
-        if (!rootGroups.has(key)) rootGroups.set(key, []);
-        // Push itself into its own group so it appears as a child checkbox
-        rootGroups.get(key).push(opt);
-      } else {
-        // No parent, not a container → flat leaf checkbox
-        rootLeaves.push({ ...opt, label: labelFor(key, opt.label) });
-      }
+    result.push({
+      isGroup: true,
+      value: `__group_${rootKey}`,
+      label: labelOf(nodeMap.get(rootKey), rootOption?.label || rootKey),
+      options: children.sort((left, right) => left.label.localeCompare(right.label)),
     });
+  });
 
-    const result = [...rootLeaves];
-
-    rootGroups.forEach((groupOpts, rk) => {
-      // Inside this root group, find which keys are intermediate containers
-      // (they appear as ancestors[1+] of other options in this group)
-      const containerKeys = new Set();
-      groupOpts.forEach(opt => {
-        const anc = ancestorMap.get(String(opt.value).toLowerCase().trim()) || [];
-        anc.slice(1).forEach(ak => containerKeys.add(ak)); // skip [0] which is rk
-      });
-
-      // Flatten: skip container keys, prefix leaf labels with intermediate parent names
-      const sortedChildren = groupOpts
-        .filter(opt => !containerKeys.has(String(opt.value).toLowerCase().trim()))
-        .map(opt => {
-          const key = String(opt.value).toLowerCase().trim();
-          const anc = ancestorMap.get(key) || [];
-          const intermediates = anc.slice(1); // skip root (anc[0] = rk)
-          const prefix = intermediates.map(ak => labelFor(ak)).filter(Boolean).join(" ");
-          const myLabel = labelFor(key, opt.label);
-          return { ...opt, label: prefix ? `${prefix} ${myLabel}` : myLabel };
-        })
-        .sort((a, b) => a.label.localeCompare(b.label));
-
-      const srcOpt = opts.find(o => String(o.value).toLowerCase().trim() === rk);
-      result.push({
-        isGroup: true,
-        label: labelFor(rk, srcOpt?.label),
-        value: `__group_${rk}`,
-        options: sortedChildren,
-      });
-    });
-
-    return result.sort((a, b) => a.label.localeCompare(b.label));
-  }
-
-  const tree = buildTree(options);
-  const hasGroups = tree.some(n => n.isGroup);
-  return hasGroups ? tree : options;
+  return result.sort((left, right) => left.label.localeCompare(right.label));
 }
-

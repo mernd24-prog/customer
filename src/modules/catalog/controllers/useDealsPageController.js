@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getPublicDealProducts } from "../../../api/deals";
 import {
   buildRatingCountMap,
@@ -18,9 +18,10 @@ import {
 } from "../../../utils/filterUtils";
 import { getFilterSections } from "../../../modules/products/controllers/getFilterSections";
 import { useCatalogFilters } from "../../../modules/products/controllers/useCatalogFilters";
-import { getRootCategories } from "../../../utils/pages/categoryUtils";
+import { fetchCategories } from "../../../features/catalog/catalogSlice";
 
 export default function useDealsPageController() {
+  const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [pageInfo, setPageInfo] = useState({
@@ -81,13 +82,25 @@ export default function useDealsPageController() {
     }, {});
   }, [dealFacets]);
 
-  const catalogCategoryList = useSelector((state) => state.catalog?.list || state.catalog?.globalCategories) || [];
+  const globalCategories = useSelector((state) => state.catalog?.globalCategories);
+  const catalogList = useSelector((state) => state.catalog?.list);
+  const catalogCategoryList = useMemo(
+    () => [
+      ...(Array.isArray(globalCategories) ? globalCategories : []),
+      ...(Array.isArray(catalogList) ? catalogList : []),
+    ],
+    [catalogList, globalCategories],
+  );
+  useEffect(() => {
+    if (!catalogCategoryList.length) dispatch(fetchCategories());
+  }, [catalogCategoryList.length, dispatch]);
 
   const categoryOptions = useMemo(() => {
-    return dealCategoryOptions.filter(
-      (option) => Number(option.count || 0) > 0,
+    return formatCategoryOptionsForTree(
+      dealCategoryOptions.filter((option) => Number(option.count || 0) > 0),
+      catalogCategoryList,
     );
-  }, [dealCategoryOptions]);
+  }, [catalogCategoryList, dealCategoryOptions]);
 
   const brandOptions = dealBrandOptions.filter(
     (option) => Number(option.count || 0) > 0,

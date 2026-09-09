@@ -22,7 +22,7 @@ import { capitalizeFirst } from "../../../utils/stringUtils";
 import { getFilterSections } from "./getFilterSections";
 import { decodeProductFilterToken } from "../utils/productFilterToken";
 import { useCatalogFilters } from "./useCatalogFilters";
-import { getRootCategories } from "../../../utils/pages/categoryUtils";
+import { fetchCategories } from "../../../features/catalog/catalogSlice";
 
 export function useProductsPageController() {
   const dispatch = useDispatch();
@@ -38,7 +38,9 @@ export function useProductsPageController() {
   });
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
-  const [facetsContextKey, setFacetsContextKey] = useState("");
+  // null means facets have never been hydrated. Using an empty string here
+  // made the unfiltered first request look like an already-loaded context.
+  const [facetsContextKey, setFacetsContextKey] = useState(null);
   const [globalPriceLimits, setGlobalPriceLimits] = useState({
     min: 0,
     max: 0,
@@ -48,10 +50,19 @@ export function useProductsPageController() {
   const productState = useSelector((s) => s.product);
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
-  const catalogCategoryList =
-    useSelector(
-      (state) => state.catalog?.list || state.catalog?.globalCategories,
-    ) || [];
+  const globalCategories = useSelector((state) => state.catalog?.globalCategories);
+  const catalogList = useSelector((state) => state.catalog?.list);
+  const catalogCategoryList = useMemo(
+    () => [
+      ...(Array.isArray(globalCategories) ? globalCategories : []),
+      ...(Array.isArray(catalogList) ? catalogList : []),
+    ],
+    [catalogList, globalCategories],
+  );
+
+  useEffect(() => {
+    if (!catalogCategoryList.length) dispatch(fetchCategories());
+  }, [catalogCategoryList.length, dispatch]);
   const hiddenParams = useMemo(
     () => decodeProductFilterToken(searchParams.get("f")),
     [searchParams],
@@ -160,9 +171,14 @@ export function useProductsPageController() {
   }, [productFacets?.price_range, globalPriceLimits, products]);
 
   const categoryOptions = useMemo(() => {
-    if (facetCategoryOptions.length) return facetCategoryOptions;
+    if (facetCategoryOptions.length) {
+      return formatCategoryOptionsForTree(
+        facetCategoryOptions.filter((option) => Number(option.count || 0) > 0),
+        catalogCategoryList,
+      );
+    }
     const seen = new Set();
-    return products
+    const fallbackOptions = products
       .map((p) => p.category)
       .filter((cat) => cat && !seen.has(cat) && seen.add(cat))
       .map((cat) => ({
@@ -170,7 +186,8 @@ export function useProductsPageController() {
         label: capitalizeFirst(cat.replace(/-/g, " ")),
         count: undefined,
       }));
-  }, [facetCategoryOptions, products]);
+    return formatCategoryOptionsForTree(fallbackOptions, catalogCategoryList);
+  }, [catalogCategoryList, facetCategoryOptions, products]);
 
   const brandOptions = useMemo(() => {
     if (facetBrandOptions.length) return facetBrandOptions;

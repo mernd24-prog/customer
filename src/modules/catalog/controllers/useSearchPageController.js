@@ -14,7 +14,7 @@ import { scrollToTop } from "../../../utils/common";
 import { getFilterSections } from "../../../modules/products/controllers/getFilterSections";
 import { useCatalogFilters } from "../../../modules/products/controllers/useCatalogFilters";
 import { useStickyFacet } from "../../../modules/products/controllers/useFacetCache";
-import { getRootCategories } from "../../../utils/pages/categoryUtils";
+import { fetchCategories } from "../../../features/catalog/catalogSlice";
 
 export default function useSearchPageController() {
   const dispatch = useDispatch();
@@ -24,7 +24,18 @@ export default function useSearchPageController() {
   const navigate = useNavigate();
 
   const searchState = useSelector((s) => s.search);
-  const categoriesRaw = useSelector((s) => s.catalog.list) || [];
+  const globalCategories = useSelector((state) => state.catalog?.globalCategories);
+  const catalogList = useSelector((state) => state.catalog?.list);
+  const categoriesRaw = useMemo(
+    () => [
+      ...(Array.isArray(globalCategories) ? globalCategories : []),
+      ...(Array.isArray(catalogList) ? catalogList : []),
+    ],
+    [catalogList, globalCategories],
+  );
+  useEffect(() => {
+    if (!categoriesRaw.length) dispatch(fetchCategories());
+  }, [categoriesRaw.length, dispatch]);
   const facets = searchState.facets || {};
   const sort = searchParams.get("sort") || "";
 
@@ -252,13 +263,14 @@ export default function useSearchPageController() {
     defaultRemoveFilter(key, filter);
   };
 
-  const catalogCategoryList = useSelector((state) => state.catalog?.list || state.catalog?.globalCategories) || [];
+  const catalogCategoryList = categoriesRaw;
 
   const categoryOptions = useMemo(() => {
-    return getFacetList(facets, ["categories", "category"])
+    const options = getFacetList(facets, ["categories", "category"])
       .map(normalizeFacetOption)
       .filter((option) => option.value && option.label && option.count > 0);
-  }, [facets]);
+    return formatCategoryOptionsForTree(options, catalogCategoryList);
+  }, [catalogCategoryList, facets]);
 
   const brandContextKey = useMemo(() => {
     const p = new URLSearchParams(searchParams);
