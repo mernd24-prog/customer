@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
 import { SKELETON_PRESETS, SkeletonLoader } from "../ui/skeleton";
 import CollageCard from "../ui/CollageCard";
 import { apiRequest } from "../../api/client";
@@ -48,20 +52,27 @@ export default function CollageSection({ cmsPages = [] }) {
 
   const visibleSections = apiFailed
     ? resolveVisibleSections(apiSections, sections, FALLBACK_COLLAGE_SECTIONS)
-    : apiSections.filter(hasImages).map(completeSection).slice(0, 4);
+    : apiSections.filter(hasImages).map(completeSection);
+
+  // Filter out Electronics and limit to 3 sections as requested
+  const finalSections = visibleSections
+    .filter((s) => !String(s.title || "").toLowerCase().includes("electronic"))
+    .slice(0, 3);
 
   return (
-    <section className="my-6 overflow-hidden sm:my-7 md:my-8">
+    <section className="my-6 overflow-hidden sm:my-7 md:my-8 relative">
       {loading ? (
         <SkeletonLoader
           layout={SKELETON_PRESETS.HERO_CARDS}
-          count={4}
-          containerClass="grid grid-cols-1 gap-4 lg:gap-8 md:grid-cols-2 xl:grid-cols-4 h-full"
+          count={3}
+          containerClass="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6"
         />
       ) : (
-        <div className="grid grid-cols-1 gap-4 lg:gap-8 md:grid-cols-2  2xl:grid-cols-4 h-full">
-          {visibleSections.map((section, idx) => (
-            <CollageCard key={idx} section={section} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+          {finalSections.map((section, idx) => (
+            <div key={idx} className="h-auto">
+              <CollageCard section={section} />
+            </div>
           ))}
         </div>
       )}

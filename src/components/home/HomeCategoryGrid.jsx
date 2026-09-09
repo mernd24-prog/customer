@@ -61,7 +61,7 @@ export default function HomeCategoryGrid({
         actionLabel={actionLabel}
         actionHref={actionHref}
       >
-        <div className="relative mt-2 rounded-[24px] bg-gradient-to-b from-[#FFFDF8] via-[#FAF4E8] to-[#F7EED8] p-3.5 sm:p-4.5 border-0 shadow-none overflow-hidden">
+        <div className="relative mt-2 rounded-[24px] bg-transparent p-3.5 sm:p-4.5 border-0 shadow-none overflow-hidden">
           <SkeletonLoader
             preset="CATEGORY_CARD"
             count={5}
@@ -85,18 +85,18 @@ export default function HomeCategoryGrid({
       actionHref={actionHref}
     >
       {/* Background container block */}
-      <div className="relative group/carousel  rounded-[24px] bg-gradient-to-b from-[#FFFDF8] via-[#FAF4E8] to-[#F7EED8]  border-0 shadow-none pb-6">
+      <div className="relative group/carousel rounded-3xl pb-6">
         {/* Left Navigation Arrow */}
         <button
           ref={prevRef}
           type="button"
           aria-label="Previous categories"
           className={cn(
-            "hidden sm:flex absolute -left-4 lg:-left-5 top-1/2 -translate-y-1/2 z-30 h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-white shadow-lg border border-[#EAD9B6] items-center justify-center text-[#1B1D60] transition-all hover:bg-[#FFFDF8] active:scale-95 focus:outline-none",
-            isBeginning && "!hidden pointer-events-none",
+            "hidden sm:flex absolute -left-5 lg:-left-6 top-1/2 -translate-y-1/2 z-30 h-12 w-12 rounded-full bg-white/90 backdrop-blur-md shadow-xl border border-black/5 items-center justify-center text-gray-800 transition-all hover:bg-white hover:scale-105 active:scale-95 focus:outline-none",
+            isBeginning && "opacity-0 pointer-events-none",
           )}
         >
-          <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 stroke-[2.5]" />
+          <ChevronLeft className="h-6 w-6 stroke-[2]" />
         </button>
 
         {/* Swiper Slider */}
@@ -193,13 +193,13 @@ export default function HomeCategoryGrid({
           type="button"
           aria-label="Next categories"
           className={cn(
-            "hidden sm:flex absolute -right-4 lg:-right-5 top-1/2 -translate-y-1/2 z-30 h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-white shadow-lg border border-[#EAD9B6] items-center justify-center text-[#1B1D60] transition-all hover:bg-[#FFFDF8] active:scale-95 focus:outline-none",
-            isEnd && "!hidden pointer-events-none",
+            "hidden sm:flex absolute -right-5 lg:-right-6 top-1/2 -translate-y-1/2 z-30 h-12 w-12 rounded-full bg-white/90 backdrop-blur-md shadow-xl border border-black/5 items-center justify-center text-gray-800 transition-all hover:bg-white hover:scale-105 active:scale-95 focus:outline-none",
+            isEnd && "opacity-0 pointer-events-none",
           )}
         >
-          <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 stroke-[2.5]" />
+          <ChevronRight className="h-6 w-6 stroke-[2]" />
         </button>
-        <div className="category-custom-pagination flex justify-center w-full mt-4 gap-1"></div>
+        <div className="category-custom-pagination flex justify-center w-full mt-6 gap-2"></div>
       </div>
     </SectionContainer>
   );

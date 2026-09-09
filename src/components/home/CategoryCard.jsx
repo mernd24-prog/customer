@@ -26,40 +26,39 @@ export default function CategoryCard({
   const cardContent = (
     <article
       className={cn(
-        "relative flex flex-col h-full min-h-[300px] sm:min-h-[340px] w-full overflow-hidden rounded-[16px] sm:rounded-[18px] border border-[#EAD9B6]/80 bg-[#FFFCF6] select-none transition-all duration-300 hover:shadow-md hover:border-[#CE9F2D]/60",
-        active && "ring-2 ring-[#1B1D60]",
+        "group relative flex flex-col h-full min-h-[300px] sm:min-h-[360px] w-full overflow-hidden rounded-2xl select-none transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-black/10",
+        active && "ring-2 ring-indigo-500 ring-offset-2",
         className
       )}
     >
-      {/* Top Image Container with Scoped Hover Scale */}
-      <div className="group/image relative h-[220px] sm:h-[250px] w-full overflow-hidden bg-white shrink-0 rounded-t-[16px] sm:rounded-t-[18px]">
+      {/* Background Image Container */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden bg-gray-100">
         <img
           src={cardImage}
           alt={title || "Category"}
-          width="280"
-          height="260"
-          className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover/image:scale-105"
+          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
           loading="lazy"
           decoding="async"
           onError={(event) => applyImageFallback(event, title, "category")}
         />
+        {/* Top Gradient Overlay for Text Readability */}
+        <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-black/80 to-transparent transition-opacity duration-500 opacity-80 group-hover:opacity-100" />
       </div>
 
-      {/* Bottom Content Area */}
-      <div className="group/cta flex flex-col justify-between p-3 sm:p-3.5 bg-[#FFFCF6] gap-2 flex-1">
-        <h3 className="line-clamp-1 text-sm sm:text-[15px] font-extrabold text-[#1B1D60] tracking-tight transition-colors">
-          {title}
-        </h3>
-
-        {/* Subtle Horizontal Divider Line */}
-        <div className="w-full border-b border-[#E8DAAF]/60 my-0.5" />
-
-        {/* Shop Now CTA with Aligned Arrow Icon Badge */}
-        <div className="flex items-center justify-between w-full text-[#A96F14] font-bold text-xs sm:text-[13px] transition-colors pt-0.5">
-          <span className="tracking-wide transition-colors">{ctaLabel}</span>
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#CE9F2D]/15 text-[#A96F14] transition-all duration-300 shadow-2xs">
-            <ArrowRight size={13} strokeWidth={2.5} className="transition-transform" />
-          </span>
+      {/* Content Overlay */}
+      <div className="relative flex flex-col justify-between h-full p-5 sm:p-6 z-10 text-white drop-shadow-md">
+        <div className="flex flex-col">
+          <h3 className="text-xl sm:text-2xl font-bold tracking-tight mb-2 drop-shadow-lg">
+            {title}
+          </h3>
+          
+          {/* Shop Now CTA */}
+          <div className="flex items-center gap-2 text-sm font-semibold tracking-wide text-white drop-shadow-lg">
+            <span>
+              {ctaLabel}
+            </span>
+            <ArrowRight size={16} strokeWidth={2.5} className="opacity-0 group-hover:opacity-100" />
+          </div>
         </div>
       </div>
     </article>
