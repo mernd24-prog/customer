@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Autoplay, Pagination } from "swiper/modules";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import CategoryCard from "./CategoryCard";
 import SectionContainer from "../ui/SectionContainer";
@@ -11,6 +11,7 @@ import { cn } from "../../utils/common";
 
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 export default function HomeCategoryGrid({
   categories = [],
@@ -84,7 +85,7 @@ export default function HomeCategoryGrid({
       actionHref={actionHref}
     >
       {/* Background container block */}
-      <div className="relative group/carousel  rounded-[24px] bg-gradient-to-b from-[#FFFDF8] via-[#FAF4E8] to-[#F7EED8]  border-0 shadow-none">
+      <div className="relative group/carousel  rounded-[24px] bg-gradient-to-b from-[#FFFDF8] via-[#FAF4E8] to-[#F7EED8]  border-0 shadow-none pb-6">
         {/* Left Navigation Arrow */}
         <button
           ref={prevRef}
@@ -100,7 +101,13 @@ export default function HomeCategoryGrid({
 
         {/* Swiper Slider */}
         <Swiper
-          modules={[Navigation]}
+          modules={[Navigation, Autoplay, Pagination]}
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true
+          }}
+
           onBeforeInit={(swiper) => {
             swiper.params.navigation.prevEl = prevRef.current;
             swiper.params.navigation.nextEl = nextRef.current;
@@ -124,7 +131,11 @@ export default function HomeCategoryGrid({
             1024: { slidesPerView: 4.4, spaceBetween: 16 },
             1280: { slidesPerView: 5, spaceBetween: 18 },
           }}
-          className="w-full !py-1 !px-0.5"
+          pagination={{
+            el: '.category-custom-pagination',
+            clickable: true,
+          }}
+          className="category-grid-swiper w-full !pt-1 !pb-0 !px-0.5"
         >
           {displayCategories.map((item, idx) => {
             const itemTitle =
@@ -188,6 +199,7 @@ export default function HomeCategoryGrid({
         >
           <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 stroke-[2.5]" />
         </button>
+        <div className="category-custom-pagination flex justify-center w-full mt-4 gap-1"></div>
       </div>
     </SectionContainer>
   );
