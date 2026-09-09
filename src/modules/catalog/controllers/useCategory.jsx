@@ -28,20 +28,14 @@ import {
   calculateAbsolutePriceLimits,
   sortProducts,
 } from "../../../utils/ecommerce";
-import { buildCategoryTree } from "../../../layouts/header/categoryHelpers";
 import {
   parseMultiValue,
   serializeMultiValue,
   getFacetOptionCount,
   getCategoryLabel,
   getCategoryKey,
-  getMatchingCategoryKeys,
 } from "../../../utils/pages/categoryUtils";
-import {
-  getClearFiltersAction,
-  formatCategoryOptionsForTree,
-  flattenCategoryList,
-} from "../../../utils/filterUtils";
+import { getClearFiltersAction } from "../../../utils/filterUtils";
 import { capitalizeFirst } from "../../../utils/stringUtils";
 import { getFilterSections } from "../../../modules/products/controllers/getFilterSections";
 
@@ -62,7 +56,7 @@ export default function useCategory() {
     total: 0,
   });
   const [productFacets, setProductFacets] = useState({});
-  const [facetsContextKey, setFacetsContextKey] = useState("");
+  const [facetsContextKey, setFacetsContextKey] = useState(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [categoryError, setCategoryError] = useState(null);
@@ -72,22 +66,9 @@ export default function useCategory() {
   const didInitialProductsLoadRef = useRef(false);
   const productLoadTimerRef = useRef(null);
   const inFlightProductLoadKeyRef = useRef("");
-  const catalogList =
-    useSelector(
-      (state) => state.catalog?.list || state.catalog?.globalCategories,
-    ) || [];
-  const catalogCategoryList = useMemo(
-    () => flattenCategoryList(catalogList),
-    [catalogList],
-  );
   const productState = useSelector((s) => s.product);
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
-  const categoryTree = useMemo(
-    () => buildCategoryTree(catalogCategoryList),
-    [catalogCategoryList],
-  );
-
   const brandContextKey = useMemo(() => {
     const p = new URLSearchParams(searchParams);
     p.delete("brand");
@@ -102,40 +83,12 @@ export default function useCategory() {
   );
 
   const products = useMemo(() => {
-    if (!categoryKey) return items;
-    const targetCats = [
-      String(categoryKey)
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, ""),
-    ];
-    const validKeys = getMatchingCategoryKeys(targetCats, categoryTree);
     const sortKey = searchParams.get("sort") || "";
-
-    const filtered = items.filter((p) => {
-      const cat = p.categoryId || p.category;
-      if (!cat) return false;
-      const catStr = String(
-        typeof cat === "object"
-          ? cat.slug || cat.key || cat.id || cat.name
-          : cat,
-      )
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, "");
-
-      if (validKeys.size > 0 && validKeys.has(catStr)) {
-        return true;
-      }
-
-      return targetCats.some(
-        (targetCat) =>
-          catStr === targetCat ||
-          catStr.includes(targetCat) ||
-          targetCat.includes(catStr),
-      );
-    });
-
-    return sortProducts(filtered, sortKey);
-  }, [items, categoryKey, categoryTree, searchParams]);
+    // listProducts already expands the selected category to every descendant.
+    // Rechecking each product against only the route key incorrectly removes
+    // child products, such as `note-book` products on the `books` page.
+    return sortProducts(items, sortKey);
+  }, [items, searchParams]);
 
   const availabilityCounts = useMemo(
     () => getAvailabilityCounts(products, productFacets),
@@ -549,16 +502,6 @@ export default function useCategory() {
       }))
       .filter((attribute) => attribute.values.length > 0);
 
-    // Build category options from facets (subcategories with products)
-    const rawCategoryOptions = (productFacets.categories || [])
-      .filter((cat) => Number(cat.count || 0) > 0)
-      .map((cat) => ({
-        value: String(cat.value || cat.key || cat.categoryKey || ""),
-        label: cat.title || cat.label || cat.name || String(cat.value || ""),
-        count: Number(cat.count || 0),
-      }))
-      .filter((opt) => opt.value);
-
     return getFilterSections({
       categoryOptions: [],
       brandOptions,
@@ -577,7 +520,6 @@ export default function useCategory() {
       handlePriceChange,
     });
   }, [
-    catalogCategoryList,
     productFacets,
     allBrands,
     filterableAttributes,
