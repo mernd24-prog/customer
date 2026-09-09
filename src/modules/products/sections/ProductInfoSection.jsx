@@ -113,6 +113,45 @@ export default function ProductInfoSection({
   effectiveDescription,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const catalogueContainerRef = useRef(null);
+  const [catalogueMaxItems, setCatalogueMaxItems] = useState(4);
+
+  useEffect(() => {
+    if (!catalogueContainerRef.current) return;
+
+    const updateMaxItems = () => {
+      if (!catalogueContainerRef.current) return;
+      const width = catalogueContainerRef.current.clientWidth;
+      let targetCardWidth = 160;
+      let gap = 16;
+
+      if (width < 450) {
+        targetCardWidth = 110;
+        gap = 10;
+      } else if (width < 640) {
+        targetCardWidth = 130;
+        gap = 12;
+      } else if (width < 1024) {
+        targetCardWidth = 150;
+        gap = 16;
+      }
+
+      const count = Math.max(1, Math.floor((width + gap) / (targetCardWidth + gap)));
+      setCatalogueMaxItems(count);
+    };
+
+    updateMaxItems();
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateMaxItems();
+    });
+
+    resizeObserver.observe(catalogueContainerRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [product?.commonImages?.length, activeInfoTab]);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -303,37 +342,48 @@ export default function ProductInfoSection({
       {activeInfoTab === "common-images" &&
         product.commonImages?.length > 0 && (
           <InfoCard title="Catalogue Images" roundedClass="rounded-xl">
-            <div className="grid grid-cols-2 gap-4 p-4 sm:flex sm:flex-wrap">
-              {product.commonImages.slice(0, 4).map((image, index) => {
-                const isLast = index === 3;
-                const hasMore = product.commonImages.length > 4;
-                const extraCount = product.commonImages.length - 4;
+            <div
+              ref={catalogueContainerRef}
+              className="flex flex-wrap gap-3 sm:gap-4 p-4"
+            >
+              {(() => {
+                const totalImages = product.commonImages.length;
+                const maxItems = Math.min(totalImages, catalogueMaxItems);
+                const hasMore = totalImages > catalogueMaxItems;
+                const extraCount = totalImages - catalogueMaxItems;
+                const visibleImages = hasMore
+                  ? product.commonImages.slice(0, catalogueMaxItems)
+                  : product.commonImages;
 
-                return (
-                  <div
-                    key={`${image}-${index}`}
-                    className="relative flex aspect-square w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#E7D9B8] bg-white cursor-pointer transition-colors hover:border-gold sm:h-[180px] sm:w-[180px] md:h-[200px] md:w-[200px]"
-                    onClick={() => setIsModalOpen(true)}
-                  >
-                    <img
-                      width="400"
-                      height="400"
-                      src={getImageUrlFromValue(image)}
-                      alt={`${getProductTitle(product)} detail ${index + 1}`}
-                      className="h-full w-full object-contain p-2"
-                      loading="lazy"
-                      onError={(event) => {
-                        event.currentTarget.style.display = "none";
-                      }}
-                    />
-                    {isLast && hasMore && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white text-3xl font-bold">
-                        +{extraCount}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                return visibleImages.map((image, index) => {
+                  const isLast = index === visibleImages.length - 1 && hasMore;
+
+                  return (
+                    <div
+                      key={`${image}-${index}`}
+                      className="relative flex aspect-square flex-1 min-w-[110px] max-w-[190px] sm:min-w-[130px] sm:max-w-[200px] md:min-w-[150px] md:max-w-[210px] items-center justify-center overflow-hidden rounded-xl border border-[#E7D9B8] bg-white cursor-pointer transition-all hover:border-gold hover:shadow-md"
+                      onClick={() => setIsModalOpen(true)}
+                    >
+                      <img
+                        width="400"
+                        height="400"
+                        src={getImageUrlFromValue(image)}
+                        alt={`${getProductTitle(product)} detail ${index + 1}`}
+                        className="h-full w-full object-contain p-2"
+                        loading="lazy"
+                        onError={(event) => {
+                          event.currentTarget.style.display = "none";
+                        }}
+                      />
+                      {isLast && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white text-2xl sm:text-3xl font-bold rounded-xl backdrop-blur-[1px]">
+                          +{extraCount}
+                        </div>
+                      )}
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </InfoCard>
         )}

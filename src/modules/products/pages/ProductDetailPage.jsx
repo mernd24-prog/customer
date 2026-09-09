@@ -212,7 +212,7 @@ export default function ProductDetailPage() {
                 </span>
               </nav>
               <div className="grid min-w-0 mt-8 lg:mt-14 items-start gap-6 lg:grid-cols-[minmax(0,0.94fr)_minmax(40px,1.16fr)] md:gap-10">
-                <div className="min-w-0">
+                <div className="min-w-0 lg:sticky lg:top-[calc(var(--customer-header-height,95px)+16px)] lg:self-start">
                   <ImageGallery
                     images={images}
                     video={productVideo}

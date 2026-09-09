@@ -34,16 +34,20 @@ export default function HomeCategoryGrid({
     if (!rawList.length) return [];
 
     let rootList = getRootCategories(rawList);
-    rootList = rootList.filter((c) => c?.isDashboardVisible !== false && c?.active !== false);
+    rootList = rootList.filter(
+      (c) => c?.isDashboardVisible !== false && c?.active !== false,
+    );
 
     if (rootList && rootList.length > 0) {
       return rootList;
     }
 
     return rawList.filter((c) => {
-      if (!c || c.isDashboardVisible === false || c.active === false) return false;
+      if (!c || c.isDashboardVisible === false || c.active === false)
+        return false;
       const hasParent = Boolean(c.parentKey || c.parentId || c.parent);
-      const isLevel0 = c.level === 0 || c.level === "0" || c.level === undefined;
+      const isLevel0 =
+        c.level === 0 || c.level === "0" || c.level === undefined;
       return !hasParent || isLevel0;
     });
   }, [categories]);
@@ -80,7 +84,7 @@ export default function HomeCategoryGrid({
       actionHref={actionHref}
     >
       {/* Background container block */}
-      <div className="relative group/carousel mt-2 rounded-[24px] bg-gradient-to-b from-[#FFFDF8] via-[#FAF4E8] to-[#F7EED8] p-3.5 sm:p-4.5 border-0 shadow-none">
+      <div className="relative group/carousel  rounded-[24px] bg-gradient-to-b from-[#FFFDF8] via-[#FAF4E8] to-[#F7EED8]  border-0 shadow-none">
         {/* Left Navigation Arrow */}
         <button
           ref={prevRef}
@@ -88,7 +92,7 @@ export default function HomeCategoryGrid({
           aria-label="Previous categories"
           className={cn(
             "hidden sm:flex absolute -left-4 lg:-left-5 top-1/2 -translate-y-1/2 z-30 h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-white shadow-lg border border-[#EAD9B6] items-center justify-center text-[#1B1D60] transition-all hover:bg-[#FFFDF8] active:scale-95 focus:outline-none",
-            isBeginning && "!hidden pointer-events-none"
+            isBeginning && "!hidden pointer-events-none",
           )}
         >
           <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 stroke-[2.5]" />
@@ -124,15 +128,17 @@ export default function HomeCategoryGrid({
         >
           {displayCategories.map((item, idx) => {
             const itemTitle =
-              item.displayName || item.title || item.name || "Featured Collection";
+              item.displayName ||
+              item.title ||
+              item.name ||
+              "Featured Collection";
             const itemImage =
               item.displayImage ||
               item.bannerUrl ||
               item.imageUrl ||
               item.image ||
               item.thumbnail;
-            const categorySlug =
-              item.categoryKey || item.slug || item.routeKey;
+            const categorySlug = item.categoryKey || item.slug || item.routeKey;
 
             return (
               <SwiperSlide
@@ -151,7 +157,9 @@ export default function HomeCategoryGrid({
                   image={itemImage}
                   title={itemTitle}
                   stylesCount={
-                    item.stylesCount || item.productCountLabel || item.countLabel
+                    item.stylesCount ||
+                    item.productCountLabel ||
+                    item.countLabel
                   }
                   href={
                     categorySlug
@@ -175,7 +183,7 @@ export default function HomeCategoryGrid({
           aria-label="Next categories"
           className={cn(
             "hidden sm:flex absolute -right-4 lg:-right-5 top-1/2 -translate-y-1/2 z-30 h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-white shadow-lg border border-[#EAD9B6] items-center justify-center text-[#1B1D60] transition-all hover:bg-[#FFFDF8] active:scale-95 focus:outline-none",
-            isEnd && "!hidden pointer-events-none"
+            isEnd && "!hidden pointer-events-none",
           )}
         >
           <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 stroke-[2.5]" />
@@ -184,8 +192,3 @@ export default function HomeCategoryGrid({
     </SectionContainer>
   );
 }
-
-
-
-
-

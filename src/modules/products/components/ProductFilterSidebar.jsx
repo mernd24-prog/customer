@@ -878,9 +878,9 @@ export default function ProductFilterSidebar({
 }) {
   return (
     <aside
-      className={`w-full lg:sticky lg:top-[var(--customer-header-height,135px)] lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] ${className}`}
+      className={`w-full rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] lg:sticky lg:top-[calc(var(--customer-header-height,95px)+16px)] lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] max-h-[calc(100vh-var(--customer-header-height,95px)-32px)] overflow-y-auto filter-scrollbar ${className}`}
     >
-      <div className="w-full rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] shadow-none">
+      <div className="w-full shadow-none">
         <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-3 min-[375px]:px-5 sm:px-6 sm:py-4">
           <h3 className="text-h4 font-semibold text-[#373737]">Filters</h3>
 
