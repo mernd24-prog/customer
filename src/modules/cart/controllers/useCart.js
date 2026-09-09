@@ -285,8 +285,9 @@ export default function useCart() {
       const current = prev[id] ?? item?.quantity ?? 1;
       const product = item?.productId || {};
       const stock = item ? getCartItemStock(item, product) : null;
+      const effectiveMax = stock !== null ? Math.min(stock, 10) : 10;
 
-      if (stock !== null && current >= stock) return prev;
+      if (current >= effectiveMax) return prev;
 
       return { ...prev, [id]: current + 1 };
     });

@@ -167,7 +167,7 @@ function mergeCartItems(items = []) {
 
   return [...byKey.values()].map((item) => ({
     ...item,
-    quantity: Number(item.quantity) > 0 ? Number(item.quantity) : 1,
+    quantity: Math.min(Number(item.quantity) > 0 ? Number(item.quantity) : 1, 10),
   }));
 }
 
@@ -199,7 +199,7 @@ export function buildCartItem(product, quantity = 1) {
     variantSku: variant?.sku || "",
     variantTitle: variant?.title || "",
     attributes: variant?.attributes || {},
-    quantity,
+    quantity: Math.min(quantity, 10),
     price: getProductPrice(product) ?? getVariantPrice(variant),
     mrp: getProductMrp(product),
     deal: product?.deal || null,
@@ -216,7 +216,7 @@ export function addProductToCartPayload(cart, product, quantity = 1) {
   const items = existing.some((item) => cartItemKey(item) === key)
     ? existing.map((item) =>
         cartItemKey(item) === key
-          ? { ...item, quantity: item.quantity + quantity }
+          ? { ...item, quantity: Math.min(item.quantity + quantity, 10) }
           : item,
       )
     : [nextItem, ...existing]; // Add new item at the top

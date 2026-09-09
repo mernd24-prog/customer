@@ -118,8 +118,6 @@ export default function ProductDetailPage() {
       ? firstMoneyValue(dynamicState.current?.price)
       : undefined;
 
-  //const allProducts = Array.isArray(productState.list) ? productState.list : [];
-
   const crossSellProducts =
     crossSellState.crossSellByProduct[productId]?.items || [];
 

@@ -378,6 +378,7 @@ export function useProductsPageController() {
   });
 
   return {
+    firstLoadDone,
     searchParams,
     setSearchParams,
     effectiveSort,

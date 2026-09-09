@@ -1,21 +1,18 @@
 export const mothersDayData = [
   {
-    image: "/image/png/rakhii.webp",
-    imageSmall: "/image/png/rakhii-small.webp",
-    title: "Designer Rakhis",
-    description: "Threads of Love",
+    image: "/image/png/chaniyaCholi5.webp",
+    title: "Designer Chaniya Cholis",
+    description: "Traditional Festive Elegance",
   },
   {
-    image: "/image/png/gifts2.webp",
-    imageSmall: "/image/png/gifts2-small.webp",
-    title: "Personalised Gifts",
-    description: "Custom & Unique",
+    image: "/image/png/chaniyaCholi1.webp",
+    title: "Navratri Ethnic Wear",
+    description: "Vibrant & Unique Styles",
   },
 
   {
-    image: "/image/png/raksaha.webp",
-    imageSmall: "/image/png/raksaha-small.webp",
-    title: "Rakhi Gift Hampers",
-    description: "Sweets & Festive Treats",
+    image: "/image/png/chaniyaCholi4.webp",
+    title: "Garba Special Collection",
+    description: "Dandiya Night Favorites",
   },
 ];

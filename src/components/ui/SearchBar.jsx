@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, X } from "lucide-react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { sanitizeSearchQuery } from "../../validations";
@@ -483,6 +483,16 @@ const SearchBar = ({
     handleSearch(category);
   };
 
+  const handleClear = () => {
+    if (onChange) {
+      onChange({ target: { value: "" } });
+    }
+    setInternalQuery("");
+    setIsSuggestionOpen(false);
+    setActiveSuggestionIndex(-1);
+    dispatch(clearSuggestions());
+  };
+
   const handleKeyDown = (e) => {
     onKeyDown?.(e);
     if (e.key === "Escape") {
@@ -519,6 +529,7 @@ const SearchBar = ({
         handleSuggestionSelect(suggestions[activeSuggestionIndex]);
         return;
       }
+      e.preventDefault();
       handleSearch();
     }
   };
@@ -629,6 +640,7 @@ const SearchBar = ({
             value={searchQuery}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
+            autoComplete="off"
             onFocus={() => {
               setIsDropdownOpen(false);
               if (
@@ -651,6 +663,18 @@ const SearchBar = ({
             }
             className="h-full min-w-0 w-full flex-1 border-none bg-transparent pl-2 pr-2 text-[11px] font-medium leading-[16px] tracking-[0%] text-[#2E2E2E] outline-none ring-0 text-ellipsis overflow-hidden whitespace-nowrap placeholder:text-[#2E2E2E] placeholder:text-ellipsis focus:ring-0 focus-visible:outline-none min-[375px]:pl-2.5 min-[375px]:text-[12px] min-[425px]:text-[13px] sm:px-4 xl:text-[15px]"
           />
+
+          {/* Clear Button */}
+          {Boolean(searchQuery) && (
+            <button
+              type="button"
+              onClick={handleClear}
+              className="mr-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+              aria-label="Clear search text"
+            >
+              <X size={14} />
+            </button>
+          )}
 
           {/* Search Button */}
           <button

@@ -40,7 +40,8 @@ export function adaptItemForCard(item, fullProduct = null) {
 
   let livePrice = getProductPrice(product);
   let liveMrp = getProductMrp(product);
-  const activeDealPrice = getProductDealPrice(item) ?? getProductDealPrice(product);
+  const activeDealPrice =
+    getProductDealPrice(item) ?? getProductDealPrice(product);
   const activeDealOriginalPrice =
     item?.deal?.originalPrice ??
     item?.deal?.original_price ??
@@ -103,14 +104,21 @@ export function adaptItemForCard(item, fullProduct = null) {
   const attributes = item.attributes || {};
   const color = item.color || item.selectedColor || attributes.color;
   const size = item.size || item.selectedSize || attributes.size;
+  const MAX_PER_PERSON_QUANTITY = 10;
   const stock = getCartItemStock(item, product);
   const outOfStock = stock !== null && stock <= 0;
-  const stockLimitReached = stock !== null && stock > 0 && quantity >= stock;
+  const effectiveMaxStock =
+    stock !== null
+      ? Math.min(stock, MAX_PER_PERSON_QUANTITY)
+      : MAX_PER_PERSON_QUANTITY;
+  const stockLimitReached = quantity >= effectiveMaxStock;
   const stockMessage = outOfStock
     ? "Out of stock"
-    : stockLimitReached
-      ? `Only ${stock} in stock`
-      : "";
+    : quantity >= MAX_PER_PERSON_QUANTITY
+      ? "Maximum limit of 10 items"
+      : stockLimitReached
+        ? `Only ${stock} in stock`
+        : "";
   const rating =
     item.rating ??
     item.averageRating ??
@@ -146,6 +154,7 @@ export function adaptItemForCard(item, fullProduct = null) {
     rating,
     reviewCount,
     stock,
+    maxQuantity: effectiveMaxStock,
     attributes,
     stockMessage,
     increaseDisabled: outOfStock || stockLimitReached,

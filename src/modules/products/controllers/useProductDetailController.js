@@ -310,6 +310,7 @@ export function useProductDetailController(
   ]);
 
   // Stock Validation
+  const MAX_PER_PERSON_QUANTITY = 10;
   const getAvailableStock = (v) =>
     getVariantAvailableStock(v) ??
     v?.stockQuantity ??
@@ -317,25 +318,25 @@ export function useProductDetailController(
     v?.quantity;
   const availableStock =
     getAvailableStock(selectedVariant) ?? getAvailableStock(product);
+  const effectiveMaxStock =
+    availableStock != null
+      ? Math.min(availableStock, MAX_PER_PERSON_QUANTITY)
+      : MAX_PER_PERSON_QUANTITY;
 
   useEffect(() => {
     setQuantity((currentQuantity) =>
-      availableStock == null
-        ? currentQuantity
-        : Math.max(1, Math.min(currentQuantity, availableStock)),
+      Math.max(1, Math.min(currentQuantity, effectiveMaxStock)),
     );
-  }, [availableStock, selectedVariantKey]);
+  }, [effectiveMaxStock, selectedVariantKey]);
 
   // Derived State extracted from Page
-
   const {
     variantOptions,
     selectedAttributes,
     findVariantForSelection,
     variantMatchesSelection,
     getVariantAttributeValue,
-  } =
-    useProductDetailVariants({ product, variants, selectedVariant });
+  } = useProductDetailVariants({ product, variants, selectedVariant });
   const {
     selectedVariantPrice,
     productPrice,
@@ -402,13 +403,14 @@ export function useProductDetailController(
         ? product.inStock
         : true;
 
-  const quantityAtStockLimit =
-    availableStock != null && quantity >= availableStock;
+  const quantityAtStockLimit = quantity >= effectiveMaxStock;
   const quantityStockMessage = !inStock
     ? "Out Of Stock"
-    : quantityAtStockLimit
-      ? `Only ${availableStock} in stock`
-      : "";
+    : quantity >= MAX_PER_PERSON_QUANTITY
+      ? "Maximum limit of 10 items"
+      : quantityAtStockLimit
+        ? `Only ${availableStock} in stock`
+        : "";
 
   const categoryLabel = product?.category
     ? (product.category || "")
@@ -549,6 +551,7 @@ export function useProductDetailController(
     productVideo,
     attributes,
     availableStock,
+    effectiveMaxStock,
     inStock,
     quantityAtStockLimit,
     quantityStockMessage,

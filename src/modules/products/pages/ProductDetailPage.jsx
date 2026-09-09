@@ -95,6 +95,7 @@ export default function ProductDetailPage() {
     discount,
     currency,
     availableStock,
+    effectiveMaxStock,
     inStock,
     quantityAtStockLimit,
     quantityStockMessage,
@@ -315,15 +316,15 @@ export default function ProductDetailPage() {
                           Math.max(1, currentQuantity - 1),
                         )
                       }
-                      max={availableStock ?? undefined}
+                      max={effectiveMaxStock}
                       increaseDisabled={!inStock || quantityAtStockLimit}
                       increaseDisabledLabel={quantityStockMessage || undefined}
                     />
-                    {/* {quantityStockMessage ? (
-                      <p className="mt-1 text-xs font-semibold text-red-600">
+                    {quantityStockMessage ? (
+                      <p className="mt-1 text-xs font-semibold text-amber-600">
                         {quantityStockMessage}
                       </p>
-                    ) : null} */}
+                    ) : null}
                   </div>
 
                   <DeliveryChecker

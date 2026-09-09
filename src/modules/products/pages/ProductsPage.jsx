@@ -20,6 +20,7 @@ const SORT_OPTIONS = [
 
 export default function ProductsPage() {
   const {
+    firstLoadDone,
     searchParams,
     viewMode,
     sidebarOpen,
@@ -63,10 +64,13 @@ export default function ProductsPage() {
       activeFilters={activeFilters}
       onRemoveFilter={removeFilter}
       onClearFilters={clearFiltersAction}
-      loading={productState.loading && !products.length}
+      loading={
+        (productState.loading && !products.length) ||
+        (!firstLoadDone && !products.length)
+      }
       refreshing={productState.loading && products.length > 0 && !isLoadingMore}
-      error={products.length === 0 ? productState.error : null}
-      empty={!products.length && !productState.loading}
+      error={products.length === 0 && firstLoadDone ? productState.error : null}
+      empty={!products.length && !productState.loading && firstLoadDone}
       emptyTitle={isSearchMode ? "No results found" : "No Products Found"}
       emptyText={
         isSearchMode

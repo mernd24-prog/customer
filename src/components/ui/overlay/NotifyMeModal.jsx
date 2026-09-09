@@ -1,37 +1,58 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { CheckCircle2, BellRing } from "lucide-react";
 import BaseModal from "./BaseModal";
-import PhoneField from "../PhoneField";
 import Button from "../buttons/Button";
-import { getProductImage, getProductTitle } from "../../../utils/ecommerce";
+import {
+  getProductImage,
+  getProductTitle,
+  getProductPrice,
+  getVariantPrice,
+} from "../../../utils/ecommerce";
 
 export default function NotifyMeModal({
   open,
   onClose,
   product,
   selectedVariant,
+  userId: propUserId,
   onSubmit,
 }) {
+  const currentUser = useSelector((state) => state.auth?.current);
+  const resolvedUserId =
+    propUserId ||
+    currentUser?._id ||
+    currentUser?.id ||
+    currentUser?.userId ||
+    null;
+
   const [fullName, setFullName] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [dialCode, setDialCode] = useState("+91");
+  const [email, setEmail] = useState("");
   const [touched, setTouched] = useState({
     fullName: false,
-    mobileNumber: false,
+    email: false,
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (open) {
-      setFullName("");
-      setMobileNumber("");
-      setDialCode("+91");
-      setTouched({ fullName: false, mobileNumber: false });
+      const defaultName =
+        currentUser?.name ||
+        currentUser?.fullName ||
+        [currentUser?.firstName, currentUser?.lastName]
+          .filter(Boolean)
+          .join(" ") ||
+        "";
+      const defaultEmail = currentUser?.email || "";
+
+      setFullName(defaultName);
+      setEmail(defaultEmail);
+      setTouched({ fullName: false, email: false });
       setSubmitting(false);
       setSubmitted(false);
     }
-  }, [open]);
+  }, [open, currentUser]);
 
   if (!open) return null;
 
@@ -59,26 +80,44 @@ export default function NotifyMeModal({
     variantLabel = `Colour: ${product.color}`;
   }
 
+  const displayPrice =
+    getVariantPrice(selectedVariant) ??
+    getProductPrice(product) ??
+    selectedVariant?.selling_price ??
+    selectedVariant?.sellingPrice ??
+    selectedVariant?.price ??
+    product?.selling_price ??
+    product?.sellingPrice ??
+    product?.price ??
+    0;
+
   const isFullNameValid = fullName.trim().length >= 2;
-  const isMobileValid = /^[6-9]\d{9}$/.test(mobileNumber.trim());
-  const isFormValid = isFullNameValid && isMobileValid;
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const isFormValid = isFullNameValid && isEmailValid;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isFormValid || submitting) return;
 
+    const payload = {
+      userId: resolvedUserId,
+      name: fullName.trim(),
+      email: email.trim(),
+      productId: product?._id || product?.id,
+      variantId: selectedVariant?._id || selectedVariant?.id || null,
+      price: displayPrice,
+      sku: selectedVariant?.sku || product?.sku || "",
+    };
+
+    console.log("[NotifyMe] Form submission data / Payload:", payload);
+
     setSubmitting(true);
     try {
       if (onSubmit) {
-        await onSubmit({
-          fullName: fullName.trim(),
-          mobileNumber: mobileNumber.trim(),
-          dialCode,
-          product,
-          selectedVariant,
-        });
+        await onSubmit(payload);
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        // Simulating brief processing time
+        await new Promise((resolve) => setTimeout(resolve, 400));
       }
       setSubmitted(true);
     } catch (err) {
@@ -105,7 +144,7 @@ export default function NotifyMeModal({
           </h3>
 
           <p className="mb-6 max-w-xs text-sm font-medium text-[#6F7480]">
-            We’ll notify you when this product is back in stock.
+            We’ll notify you at <span className="font-semibold text-[#2D347D]">{email}</span> when this product is back in stock.
           </p>
 
           <Button
@@ -162,9 +201,9 @@ export default function NotifyMeModal({
                   {variantLabel}
                 </p>
               )}
-              {product?.price != null && (
+              {displayPrice > 0 && (
                 <p className="mt-0.5 text-xs font-bold text-blue">
-                  ₹{Number(product.price).toLocaleString("en-IN")}
+                  ₹{Number(displayPrice).toLocaleString("en-IN")}
                 </p>
               )}
             </div>
@@ -202,31 +241,34 @@ export default function NotifyMeModal({
               )}
             </div>
 
-            {/* Mobile Number */}
+            {/* Email Address */}
             <div>
-              <PhoneField
-                id="notify-mobile-number"
-                label="Mobile Number *"
-                placeholder="10-digit mobile number"
-                dialCodes={["+91"]}
-                phoneRegistration={{
-                  value: mobileNumber,
-                  onChange: (e) => setMobileNumber(e.target.value),
-                  onBlur: () =>
-                    setTouched((prev) => ({ ...prev, mobileNumber: true })),
-                }}
-                dialCodeRegistration={{
-                  value: dialCode,
-                  onChange: (e) => setDialCode(e.target.value),
-                }}
-                error={
-                  touched.mobileNumber && !isMobileValid
-                    ? {
-                        message: "Please enter a valid 10-digit mobile number.",
-                      }
-                    : undefined
+              <label
+                htmlFor="notify-email"
+                className="mb-1.5 block text-base font-medium text-black/90"
+              >
+                Email Address <span className="text-black">*</span>
+              </label>
+              <input
+                id="notify-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={() =>
+                  setTouched((prev) => ({ ...prev, email: true }))
                 }
+                placeholder="Enter your email address"
+                className={`h-11 w-full rounded-[8px] border bg-white px-3 text-sm font-medium text-[#2E2E2E] outline-none transition-colors duration-200 placeholder:text-[#8D8F98] ${
+                  touched.email && !isEmailValid
+                    ? "border-red-500 focus:border-red-500"
+                    : "border-[#EEDFB9] focus:outline-none"
+                }`}
               />
+              {touched.email && !isEmailValid && (
+                <p className="mt-1 text-xs font-medium text-red-600">
+                  Please enter a valid email address.
+                </p>
+              )}
             </div>
 
             {/* Actions */}

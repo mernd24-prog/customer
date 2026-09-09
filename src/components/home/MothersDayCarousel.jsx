@@ -1,14 +1,11 @@
 import { Link } from "react-router-dom";
 import { IoChevronForward } from "react-icons/io5";
-import { GhostPillButton, SolidLargeButton } from "../ui/button/static";
-import { FaAngleRight } from "react-icons/fa6";
+
 import { hrefOr } from "../../utils/content";
 
 export default function MothersDayCarousel({
   data = [],
   heading = "SAM-Special Gifts For Mother's Day",
-  ctaLabel = "Get Inspired",
-  onCtaClick,
 }) {
   const cards = Array.isArray(data) ? data : [];
 
@@ -25,10 +22,10 @@ export default function MothersDayCarousel({
           <h2 className="relative z-10 text-lg sm:text-xl lg:text-2xl 2xl:text-[28px] font-bold leading-snug">
             {isDefaultHeading ? (
               <>
-                Celebrate Raksha Bandhan <br className="hidden lg:block mt-1" />
+                Celebrate Navratri <br className="hidden lg:block mt-1" />
                 With{" "}
                 <span className="text-[#D6A323] font-extrabold">
-                  Tokens of Love
+                  Festive Joy
                 </span>
               </>
             ) : (
@@ -36,8 +33,8 @@ export default function MothersDayCarousel({
             )}
           </h2>
           <p className="relative z-10 mt-4 mb-8 text-sm md:text-base text-white/80 max-w-md">
-            Express Your Bond of Protection with Thoughtfully Curated Rakhi
-            Gifts, Hampers, and Special Tokens for Your Siblings.
+            Embrace the Spirit of Navratri with Vibrant Ethnic Wear, Traditional
+            Chaniya Cholis, Accessories, and Special Festive Collections.
           </p>
         </div>
 
@@ -88,7 +85,8 @@ export default function MothersDayCarousel({
                   </h3>
 
                   <span className="inline-flex items-center justify-center gap-1.5 h-[32px] xl:h-[36px] w-fit rounded-full bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] group-hover:bg-[linear-gradient(#bd9025,#bd9025)] px-4 text-xs xl:text-sm font-bold leading-none text-white shadow-md transition-all duration-300">
-                    Explore <IoChevronForward className="text-xs text-white shrink-0" />
+                    Explore{" "}
+                    <IoChevronForward className="text-xs text-white shrink-0" />
                   </span>
                 </div>
               </Link>
