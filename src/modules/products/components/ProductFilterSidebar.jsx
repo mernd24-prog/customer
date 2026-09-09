@@ -91,7 +91,7 @@ export function FilterSection({
           <button
             type="button"
             onClick={closeSearch}
-            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[#5960B8] transition-colors duration-200 hover:bg-white hover:text-[#2D347D]"
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[#5960B8] transition-colors duration-200 hover:bg-white "
             aria-label={`Close ${title} search`}
           >
             <X size={15} />
@@ -117,7 +117,7 @@ export function FilterSection({
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F4F4F6] text-[#6F7480] transition-colors duration-200 hover:bg-[#ECECF0] hover:text-[#2D347D]"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F4F4F6] text-[#6F7480] transition-colors duration-200 hover:bg-[#ECECF0] "
               aria-label={`Search ${title}`}
             >
               <Search size={17} />
@@ -498,7 +498,7 @@ function FilterOptionGroup({ group, selectedSet, onChange, isMultiSelect, select
             return (
               <label
                 key={value}
-                className="flex min-w-0 cursor-pointer items-center gap-2 py-1 pr-1 leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D]"
+                className="flex min-w-0 cursor-pointer items-center gap-2 py-1 pr-1 leading-none text-[#434343] transition-colors duration-200 "
               >
                 <input
                   type="checkbox"
@@ -655,7 +655,7 @@ export function OptionFilter({
           return (
             <label
               key={value}
-              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[16px]"
+              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[16px]"
             >
               <input
                 type="checkbox"
@@ -700,7 +700,7 @@ export function OptionFilter({
         <button
           type="button"
           onClick={() => setExpanded((value) => !value)}
-          className="pt-2 text-left text-[16px] font-semibold leading-none text-[#5960B8] transition-colors duration-200 hover:text-[#2D347D]"
+          className="pt-2 text-left text-[16px] font-semibold leading-none text-[#5960B8] transition-colors duration-200 "
         >
           {expanded ? "View Less" : "View More"}
         </button>
@@ -740,7 +740,7 @@ export function CheckboxListFilter({
         return (
           <label
             key={value}
-            className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[16px]"
+            className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[16px]"
           >
             <input
               type="checkbox"
@@ -803,7 +803,7 @@ export function RatingFilter({
           return (
             <label
               key={stars}
-              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200 hover:text-[#2D347D] sm:text-[16px]"
+              className="flex min-w-0 cursor-pointer items-center gap-3 py-1 text-[18px] font-medium leading-none text-[#434343] transition-colors duration-200  sm:text-[16px]"
             >
               <input
                 type="checkbox"
@@ -878,7 +878,12 @@ export default function ProductFilterSidebar({
 }) {
   return (
     <aside
-      className={`w-full rounded-[20px] border border-[#EEDFB9] bg-[#FFFDF8] lg:sticky lg:top-[calc(var(--customer-header-height,95px)+16px)] lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] max-h-[calc(100vh-var(--customer-header-height,95px)-32px)] overflow-y-auto filter-scrollbar ${className}`}
+      className={`w-full rounded-[20px] border 
+        border-[#EEDFB9]
+         bg-[#FFFDF8] lg:sticky
+          lg:top-[calc(var(--customer-header-height,95px)+62px)]
+           lg:w-[280px] lg:shrink-0 lg:self-start xl:w-[263px] 
+           max-h-[calc(100vh-var(--customer-header-height,95px)-78px)] overflow-y-auto filter-scrollbar ${className}`}
     >
       <div className="w-full shadow-none">
         <div className="flex items-center justify-between gap-4 border-b border-[#EEDFB9] px-4 py-3 min-[375px]:px-5 sm:px-6 sm:py-4">

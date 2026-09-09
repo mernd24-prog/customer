@@ -47,7 +47,7 @@ export default function CategoryCard({
 
       {/* Bottom Content Area */}
       <div className="group/cta flex flex-col justify-between p-3 sm:p-3.5 bg-[#FFFCF6] gap-2 flex-1">
-        <h3 className="line-clamp-1 text-sm sm:text-[15px] font-extrabold text-[#1B1D60] tracking-tight group-hover/cta:text-[#A96F14] transition-colors">
+        <h3 className="line-clamp-1 text-sm sm:text-[15px] font-extrabold text-[#1B1D60] tracking-tight transition-colors">
           {title}
         </h3>
 
@@ -56,9 +56,9 @@ export default function CategoryCard({
 
         {/* Shop Now CTA with Aligned Arrow Icon Badge */}
         <div className="flex items-center justify-between w-full text-[#A96F14] font-bold text-xs sm:text-[13px] transition-colors pt-0.5">
-          <span className="tracking-wide group-hover/cta:text-[#CE9F2D] transition-colors">{ctaLabel}</span>
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#CE9F2D]/15 text-[#A96F14] group-hover/cta:bg-[#CE9F2D] group-hover/cta:text-white transition-all duration-300 shadow-2xs">
-            <ArrowRight size={13} strokeWidth={2.5} className="transition-transform group-hover/cta:translate-x-0.5" />
+          <span className="tracking-wide transition-colors">{ctaLabel}</span>
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#CE9F2D]/15 text-[#A96F14] transition-all duration-300 shadow-2xs">
+            <ArrowRight size={13} strokeWidth={2.5} className="transition-transform" />
           </span>
         </div>
       </div>

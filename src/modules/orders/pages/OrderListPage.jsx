@@ -158,7 +158,7 @@ function OrderItemSummaryCard({ order, item, onReviewClick, locallyReviewedProdu
             )}
           </div>
 
-          <div className="flex flex-col gap-1 min-w-0 flex-1">
+          <div className="flex flex-col gap-2 min-w-0 flex-1">
             <h3 className="text-sm font-bold text-[#1F2430] group-hover/link:text-[#201B78] transition-colors leading-snug line-clamp-2">
               <ShowMoreText
                 text={productTitle}
@@ -171,7 +171,7 @@ function OrderItemSummaryCard({ order, item, onReviewClick, locallyReviewedProdu
               />
             </h3>
 
-            <div className="flex flex-wrap items-center gap-1.5 text-xs">
+            <div className="flex flex-wrap items-center gap-1.5 text-xs mt-1">
               {getOrderItemColor(item) !== "N/A" && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-medium bg-[#FAF6EE] text-[#1F2430] border border-[#E4DDCF]/80">
                   <span className="text-[#6F7480] font-normal">Color:</span>
@@ -300,11 +300,11 @@ function OrderItemSummaryCard({ order, item, onReviewClick, locallyReviewedProdu
             )}
           </div>
           
-          <div className="flex flex-col gap-1 min-w-0 flex-1">
+          <div className="flex flex-col gap-2 min-w-0 flex-1">
              <h3 className="text-sm font-bold text-[#1F2430] leading-snug line-clamp-1">
                 {productTitle}
              </h3>
-             <span className="text-xs font-semibold text-[#1F2430]">
+             <span className="text-xs font-semibold text-[#1F2430] mt-0.5">
                 {humanize(itemStatus, "Processing")}
              </span>
              {canReview && (

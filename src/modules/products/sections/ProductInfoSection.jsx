@@ -70,7 +70,7 @@ function InfoCard({ title, children, roundedClass = "rounded-[8px]" }) {
     <div
       className={`mt-5 overflow-hidden ${roundedClass} border border-[#E7D9B8] bg-white`}
     >
-      <div className="bg-[#CE9F2D33] px-4 py-6">
+      <div className="bg-[#EAD9B6] px-4 py-6">
         <h2 className="text-sm md:text-lg font-bold text-[#2E2E2E]">{title}</h2>
       </div>
 

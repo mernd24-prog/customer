@@ -44,6 +44,7 @@ export default function ProductsPage() {
     removeFilter,
     clearFiltersAction,
     pageTitle,
+    firstLoadDone,
   } = useProductsPageController();
 
   const isSearchMode = Boolean(searchParams.get("q"));
@@ -63,10 +64,10 @@ export default function ProductsPage() {
       activeFilters={activeFilters}
       onRemoveFilter={removeFilter}
       onClearFilters={clearFiltersAction}
-      loading={productState.loading && !products.length}
+      loading={(productState.loading && !products.length) || (!firstLoadDone && !products.length)}
       refreshing={productState.loading && products.length > 0 && !isLoadingMore}
       error={products.length === 0 ? productState.error : null}
-      empty={!products.length && !productState.loading}
+      empty={!products.length && !productState.loading && firstLoadDone}
       emptyTitle={isSearchMode ? "No results found" : "No Products Found"}
       emptyText={
         isSearchMode

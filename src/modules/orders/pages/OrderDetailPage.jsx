@@ -109,26 +109,29 @@ export default function OrderDetailPage({ orderId }) {
                   {(status === "pending_payment" ||
                     status === "payment_failed") && (
                     <Button
-                      className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-2 rounded-[10px] px-5 py-2.5 text-white"
+                      variant="secondary"
+                      className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-3 rounded-[10px] border border-[#CE9F2D] bg-white px-5 py-2.5 transition-colors hover:bg-[#FFF9EA] active:bg-[#F2E5C5]"
                       loading={retrying}
                       onClick={handleRetryPayment}
                     >
-                      <RefreshCw size={16} />
-                      <span className="text-center text-sm font-semibold">
-                        Retry payment
+                      <RefreshCw size={16} className="text-[#CE9F2D]" />
+                      <div className="w-[1px] h-4 bg-[#CE9F2D]/30" />
+                      <span className="text-sm font-semibold text-[#1B1D60]">
+                        Retry Payment
                       </span>
                     </Button>
                   )}
 
-                  {canCancelOrder(order) && hasCancellableQuantity && (
+                  {status !== "pending_payment" && status !== "payment_failed" && canCancelOrder(order) && hasCancellableQuantity && (
                     <Button
                       variant="secondary"
-                      className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-2 rounded-[10px] border border-[#CE9F2D] bg-[#FFFDF8] px-5 py-2.5 text-[#1B1D60] shadow-sm transition-all hover:bg-[#FFF9EA] hover:border-[#CE9F2D] active:scale-[0.98]"
+                      className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-3 rounded-[10px] border border-[#CE9F2D] bg-white px-5 py-2.5 transition-colors hover:bg-[#FFF9EA] active:bg-[#F2E5C5]"
                       onClick={openCancellation}
                     >
                       <XCircle size={16} className="text-[#CE9F2D]" />
-                      <span className="text-center text-sm font-semibold">
-                        {selectedOrderItem ? "Cancel item" : "Cancel order"}
+                      <div className="w-[1px] h-4 bg-[#CE9F2D]/30" />
+                      <span className="text-sm font-semibold text-[#1B1D60]">
+                        {selectedOrderItem ? "Cancel Item" : "Cancel Order"}
                       </span>
                     </Button>
                   )}
@@ -138,9 +141,13 @@ export default function OrderDetailPage({ orderId }) {
                       to={`/returns/request/${orderId}?orderItemId=${encodeURIComponent(getOrderItemId(selectedOrderItem))}`}
                       className="block w-full sm:w-auto"
                     >
-                      <Button className="flex h-[46px] sm:h-[48px] w-full sm:w-[196px] items-center justify-center gap-2 rounded-[10px] bg-[#CE9F2D] px-5 py-2.5 text-white hover:bg-[#B88200]">
-                        <RotateCcw size={16} />
-                        <span className="text-center text-sm font-semibold text-white">
+                      <Button
+                        variant="secondary"
+                        className="flex h-[46px] sm:h-[48px] w-full sm:w-auto items-center justify-center gap-3 rounded-[10px] border border-[#CE9F2D] bg-white px-5 py-2.5 transition-colors hover:bg-[#FFF9EA] active:bg-[#F2E5C5]"
+                      >
+                        <RotateCcw size={16} className="text-[#CE9F2D]" />
+                        <div className="w-[1px] h-4 bg-[#CE9F2D]/30" />
+                        <span className="text-sm font-semibold text-[#1B1D60]">
                           Request Return
                         </span>
                       </Button>

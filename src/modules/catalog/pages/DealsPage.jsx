@@ -143,7 +143,7 @@ export default function DealsPage() {
       activeFilters={activeFilters}
       onRemoveFilter={removeFilter}
       onClearFilters={clearFiltersAction}
-      loading={loading && !products.length}
+      loading={(loading && !products.length) || (!firstLoadDone && !products.length)}
       error={error}
       empty={!products.length && !loading && firstLoadDone}
       emptyTitle="No active deals found"
@@ -151,7 +151,7 @@ export default function DealsPage() {
       products={products}
       viewMode="grid"
       onAddToCart={addToCart}
-      onWishlist={toggleWishlist}
+      onWishlist={toggleWishlist} 
       isWishlisted={isWishlisted}
       currentPage={currentPage}
       totalPages={totalPages}

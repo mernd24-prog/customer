@@ -583,7 +583,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   }, [catalogTree, headerData, globalCategories]);
 
   const visibleCategories = useMemo(
-    () => asArray(categories).slice(0, 9),
+    () => asArray(categories).slice(0, 10),
     [categories],
   );
 
@@ -682,11 +682,11 @@ export const CategoryBar = ({ headerData, compact = false }) => {
       />
 
       {/* Golden Overlay */}
-      <div className="absolute inset-0 bg-[#CE9F2D33]  z-10  " />
+      <div className="absolute inset-0 bg-[#EAD9B6]  z-10  " />
 
       <div className="customer-container mx-auto w-full relative z-20">
         <div className="w-full overflow-x-auto hide-scrollbar">
-          <div className="mx-auto flex w-max gap-4 py-3 sm:gap-5 lg:gap-5">
+          <div className="mx-auto flex w-max gap-2 py-3 sm:gap-3 lg:gap-3">
             {visibleCategories.map((item, index) => {
               // Always use categoryKey first — it's the canonical route key from the DB
               const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;

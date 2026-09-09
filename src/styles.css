@@ -701,30 +701,30 @@ select:not([multiple]):disabled {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--customer-gold);
+  background-color: var(--customer-border) !important;
 }
 
 .filter-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #ce9f2d #FFFDF8;
+  scrollbar-color: #CE9F2D33 transparent;
 }
 
 .filter-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 2px !important;
 }
 
 .filter-scrollbar::-webkit-scrollbar-track {
-  background: #FFFDF8;
+  background-color: transparent !important;
   border-radius: 999px;
 }
 
 .filter-scrollbar::-webkit-scrollbar-thumb {
-  background: #ce9f2d;
+  background-color: #CE9F2D33 !important;
   border-radius: 999px;
 }
 
 .filter-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #b8871f;
+  background-color: #CE9F2D33 !important;
 }
 
 .price-range-input {

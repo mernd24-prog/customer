@@ -3,7 +3,7 @@ import { MapPin, Pencil, Phone, Trash2 } from "lucide-react";
 export default function SharedAddressCard({ addr, addrId, startEdit, handleDelete }) {
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between gap-3 bg-[#CE9F2D33] px-4 py-5">
+      <div className="flex items-center justify-between gap-3 bg-[#EAD9B6] px-4 py-5">
         <p className="text-sm font-bold capitalize text-[#2E2E2E] lg:text-[18px] ">
           {addr.label || "Address"}
         </p>

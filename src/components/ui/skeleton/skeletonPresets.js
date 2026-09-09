@@ -517,25 +517,25 @@ export const SKELETON_PRESETS = {
           children: [
             {
               type: "box",
-              width: "44px",
+              width: "44px", // h-11 w-11
               height: "44px",
               variant: "circle",
               className: "shrink-0 mt-0.5",
             },
             {
               type: "col",
-              className: "min-w-0 flex-1 gap-1",
+              className: "min-w-0 flex-1 gap-1 pt-1",
               children: [
                 {
                   type: "row",
-                  className: "justify-between gap-4 items-start sm:items-center",
+                  className: "justify-between gap-2 sm:gap-4 items-start sm:items-center mb-1",
                   children: [
                     { type: "box", width: "160px", height: "18px", rounded: "rounded-md" },
-                    { type: "box", width: "60px", height: "12px", rounded: "rounded-md" },
+                    { type: "box", width: "70px", height: "14px", rounded: "rounded-md", className: "shrink-0" },
                   ]
                 },
-                { type: "box", width: "95%", height: "14px", rounded: "rounded-md", className: "mt-1" },
-                { type: "box", width: "75%", height: "14px", rounded: "rounded-md" }
+                { type: "box", width: "100%", height: "14px", rounded: "rounded-md" },
+                { type: "box", width: "85%", height: "14px", rounded: "rounded-md" },
               ]
             }
           ]

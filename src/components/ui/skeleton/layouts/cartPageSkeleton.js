@@ -3,61 +3,58 @@ import { SKELETON_PRESETS } from "../skeletonPresets";
 export const CART_PAGE_SKELETON = [
   {
     type: "row",
-    className: "flex flex-col md:flex-row gap-5 sm:gap-6 lg:gap-8 xl:gap-9 items-start",
+    className: "flex flex-col xl:flex-row gap-6 lg:gap-8 xl:gap-11 items-start w-full",
     children: [
       {
         type: "col",
-        className: "min-w-0 flex-1 space-y-5 sm:space-y-6 lg:space-y-8 w-full",
+        className: "min-w-0 flex-1 w-full",
         children: [
           {
             type: "row",
             count: 2,
-            className:
-              "w-full rounded-[15px] border border-[#EFE5D2] p-4 bg-white flex-col sm:flex-row",
+            className: "grid grid-cols-1 sm:grid-cols-[170px_1fr] lg:grid-cols-[190px_1fr] gap-5 sm:gap-6 pb-6 sm:pb-7 mb-6 sm:mb-7 border-b border-[#CE9F2D4D]",
             children: [
               {
-                type: "box",
-                width: "120px",
-                height: "120px",
-                className: "shrink-0 rounded-[12px] w-full sm:w-[120px]",
+                type: "col",
+                className: "flex-col items-start sm:items-center gap-3 w-full",
+                children: [
+                  {
+                    type: "box",
+                    width: "165px",
+                    height: "165px",
+                    className: "w-full max-w-full sm:max-w-[165px] rounded-[10px] border border-[#F0E6D2] bg-white flex-1 shrink-0",
+                  }
+                ]
               },
               {
                 type: "col",
-                className: "flex-1 justify-between w-full",
+                className: "min-w-0 flex-col justify-between py-1",
                 children: [
                   {
                     type: "col",
-                    className: "gap-2 mb-4",
+                    className: "w-full",
                     children: [
-                      {
-                        type: "box",
-                        width: "90%",
-                        height: "20px",
-                        className: "rounded-md",
-                      },
-                      {
-                        type: "box",
-                        width: "50%",
-                        height: "16px",
-                        className: "rounded-md",
-                      },
+                      { type: "box", width: "100px", height: "16px", rounded: "rounded-md", className: "mb-3" }, // Stars
+                      { type: "box", width: "90%", height: "24px", rounded: "rounded-md", className: "mb-3.5" }, // Title
+                      { type: "box", width: "40%", height: "24px", rounded: "rounded-md", className: "mb-1.5" }, // Price
+                      { type: "box", width: "30%", height: "16px", rounded: "rounded-md", className: "mb-3" }, // MRP
                     ],
                   },
                   {
                     type: "row",
-                    className: "justify-between",
+                    className: "pt-4 gap-6",
                     children: [
                       {
                         type: "box",
                         width: "120px",
-                        height: "36px",
-                        className: "rounded-full",
+                        height: "20px",
+                        rounded: "rounded-md",
                       },
                       {
                         type: "box",
-                        width: "40px",
-                        height: "40px",
-                        className: "rounded-[10px]",
+                        width: "80px",
+                        height: "20px",
+                        rounded: "rounded-md",
                       },
                     ],
                   },

@@ -5,7 +5,7 @@ const ImageSkeleton = ({ src, alt, className = "", imageClassName = "" }) => {
 
   return (
     <div
-      className={`relative flex h-7 md:h-10 w-7 md:w-10 items-center justify-center ${className}`}
+      className={`relative flex h-full w-full items-center justify-center ${className}`}
     >
       {/* Skeleton */}
       {loading && (
@@ -13,10 +13,10 @@ const ImageSkeleton = ({ src, alt, className = "", imageClassName = "" }) => {
       )}
 
       {/* Image */}
-      <img loading="lazy" width="400" height="400"
+      <img loading="lazy" width="600" height="600"
         src={src}
         alt={alt}
-        className={`h-12 w-12  rounded object-contain  transition-all duration-300 ease-in-out ${imageClassName} ${
+        className={`h-full w-full rounded object-contain transition-all duration-300 ease-in-out ${imageClassName} ${
           loading ? "opacity-0" : "opacity-100"
         }`}
         onLoad={() => setLoading(false)}

@@ -1,49 +1,94 @@
 export const ORDER_LIST_SKELETON = [
   {
     type: "row",
-    className: "my-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between w-full",
+    className: "mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between w-full",
     children: [
-      { type: "box", className: "w-full sm:max-w-[450px] h-12", rounded: "rounded-[10px]" },
-      { type: "box", className: "w-full lg:w-[220px] h-12", rounded: "rounded-[10px]" }
+      { type: "box", width: "100%", height: "44px", className: "sm:max-w-[450px]", rounded: "rounded-lg" },
+      { type: "box", width: "100%", height: "44px", className: "sm:max-w-[190px]", rounded: "rounded-lg" }
     ]
   },
   {
     type: "col",
-    className: "w-full gap-4",
+    className: "w-full gap-3",
     children: [
       {
         type: "col",
-        className: "overflow-hidden rounded-xl border border-[#E7D9B8] bg-[#FFFCF6] !gap-0",
+        className: "overflow-hidden rounded-xl border border-[#E4DDCF] bg-white shadow-2xs !gap-0",
         count: 3,
         children: [
-          {
-            type: "row",
-            className: "border-b border-[#E7D9B8] bg-[#CE9F2D33] px-3 py-3 text-sm md:px-4 items-center justify-between min-h-[46px]",
-            children: [
-              { type: "box", width: "220px", height: "16px", rounded: "rounded-md" },
-              { type: "box", width: "160px", height: "22px", rounded: "rounded-full" },
-            ]
-          },
+          // Desktop Skeleton
           {
             type: "grid",
-            className: "gap-4 px-4 py-5 md:px-5 sm:grid-cols-[150px_minmax(0,1fr)] items-start",
+            className: "hidden sm:grid grid-cols-12 items-start gap-4 p-4",
             children: [
-              { type: "box", className: "aspect-square w-full max-w-[150px] shrink-0 border border-[#EFE5D2]", rounded: "rounded-xl" },
+              {
+                type: "row",
+                className: "col-span-7 flex items-start gap-4",
+                children: [
+                  { type: "box", width: "80px", height: "80px", className: "shrink-0", rounded: "rounded-lg" },
+                  {
+                    type: "col",
+                    className: "flex-1 min-w-0 !gap-2 pt-1",
+                    children: [
+                      { type: "box", width: "90%", height: "20px", rounded: "rounded-md" },
+                      { type: "box", width: "60%", height: "20px", rounded: "rounded-md" },
+                      {
+                        type: "row",
+                        className: "flex-wrap gap-1.5 mt-1",
+                        children: [
+                          { type: "box", width: "70px", height: "22px", rounded: "rounded-md" },
+                          { type: "box", width: "60px", height: "22px", rounded: "rounded-md" }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
               {
                 type: "col",
-                className: "flex-1 min-w-0 !gap-0 pt-0",
+                className: "col-span-2 pt-1",
                 children: [
-                  { type: "box", width: "80%", height: "24px", rounded: "rounded-md", className: "md:h-[28px]" }, // Title
-                  { 
-                    type: "row", 
-                    className: "flex-wrap gap-2 mt-3", // Badges
+                  { type: "box", width: "80%", height: "28px", rounded: "rounded-md" }
+                ]
+              },
+              {
+                type: "row",
+                className: "col-span-3 gap-2 pt-1",
+                children: [
+                  { type: "box", width: "10px", height: "10px", rounded: "rounded-full" },
+                  {
+                    type: "col",
+                    className: "flex-1 !gap-2",
                     children: [
-                      { type: "box", width: "64px", height: "28px", rounded: "rounded-full" },
-                      { type: "box", width: "90px", height: "28px", rounded: "rounded-full" }
+                      { type: "box", width: "100%", height: "20px", rounded: "rounded-md" },
+                      { type: "box", width: "80%", height: "16px", rounded: "rounded-md" }
                     ]
-                  },
-                  { type: "box", width: "110px", height: "32px", rounded: "rounded-md", className: "mt-4" }, // Price
-                  { type: "box", width: "160px", height: "36px", rounded: "rounded-lg", className: "mt-4" } // Button
+                  }
+                ]
+              }
+            ]
+          },
+          // Mobile Skeleton
+          {
+            type: "row",
+            className: "flex sm:hidden p-3.5 gap-3 items-center",
+            children: [
+              { type: "box", width: "64px", height: "64px", className: "shrink-0", rounded: "rounded-lg" },
+              {
+                type: "col",
+                className: "flex-1 min-w-0 !gap-2",
+                children: [
+                  { type: "box", width: "100%", height: "20px", rounded: "rounded-md" },
+                  { type: "box", width: "70%", height: "16px", rounded: "rounded-md" },
+                  { type: "box", width: "90px", height: "24px", rounded: "rounded-md", className: "mt-1" }
+                ]
+              },
+              {
+                type: "col",
+                className: "shrink-0 items-end !gap-1.5",
+                children: [
+                  { type: "box", width: "60px", height: "20px", rounded: "rounded-md" },
+                  { type: "box", width: "50px", height: "14px", rounded: "rounded-md" }
                 ]
               }
             ]
