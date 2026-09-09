@@ -411,5 +411,6 @@ export function useProductsPageController() {
     removeFilter,
     clearFiltersAction,
     pageTitle,
+    firstLoadDone,
   };
 }

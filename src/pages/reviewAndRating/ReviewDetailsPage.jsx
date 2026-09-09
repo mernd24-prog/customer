@@ -175,7 +175,7 @@ function ReviewsHeader({ total, sort, onSort }) {
 
       <CustomDropdown
         className="z-30 w-[190px]"
-        buttonClassName="h-10 rounded-[10px] border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] focus:ring-2 focus:ring-[#CE9F2D33]"
+        buttonClassName="h-10 rounded-[10px] border-[#CE9F2D] font-semibold text-[#1B1D60] hover:bg-[#FFF9EA] focus:ring-2 focus:ring-[#EAD9B6]"
         options={sortOptions}
         value={sort}
         onChange={onSort}

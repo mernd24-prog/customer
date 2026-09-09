@@ -15,7 +15,7 @@ function DetailSectionCard({
     >
       {title || headerContent ? (
         <div
-          className={` flex  min-h-[81px]  items-center justify-between rounded-t-[15px] bg-[#CE9F2D33] px-[20px] md:py-[25px] ${headerClassName}`}
+          className={` flex  min-h-[81px]  items-center justify-between rounded-t-[15px] bg-[#EAD9B6] px-[20px] md:py-[25px] ${headerClassName}`}
         >
           {title ? (
             <TitleTag

@@ -231,7 +231,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
         className="absolute inset-y-0 right-0 w-1/2 bg-cover bg-center bg-no-repeat z-0"
         style={{ backgroundImage: "url('/image/webp/cat.webp')" }}
       />
-      <div className="absolute inset-0 bg-[#CE9F2D33] z-10" />
+      <div className="absolute inset-0 bg-[#EAD9B6] z-10" />
       <div className="w-full relative z-20">  
         <div
           className="hide-scrollbar flex justify-start gap-4 overflow-x-auto px-2 py-3 sm:gap-5 lg:gap-5 lg:justify-center"

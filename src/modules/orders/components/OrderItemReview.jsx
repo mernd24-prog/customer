@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import ReviewImageUploader from "../../products/components/ReviewImageUploader";
 import ReviewMediaLightbox from "../../products/components/ReviewMediaLightbox";
 import BaseModal from "../../../components/ui/overlay/BaseModal";
+import ShowMoreText from "../../../utils/showMore";
+
 import {
   fetchMyProductReview,
   submitProductReview,
@@ -123,18 +125,25 @@ function ExistingReviewCard({ review }) {
           </div>
         )}
 
-        {reviewObj?.title && (
-          <h4 className="text-sm sm:text-base font-bold text-[#22232B] break-words">
-            {reviewObj.title}
-          </h4>
-        )}
+        <ShowMoreText
+          text={reviewObj.title}
+          mode="characters"
+          limit={65}
+          moreLabel="more"
+          lessLabel="less"
+          textClassName="inline text-sm sm:text-base font-semibold text-[#22232B] break-words"
+          buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+        />
 
-        {reviewText && (
-          <p className="max-w-full break-words text-sm leading-relaxed text-[#4E505C]">
-            {reviewText}
-          </p>
-        )}
-
+        <ShowMoreText
+          text={reviewText}
+          mode="characters"
+          limit={65}
+          moreLabel="more"
+          lessLabel="less"
+          textClassName="inline max-w-full break-words text-sm leading-relaxed text-[#4E505C]"
+          buttonClassName="ml-1 text-xs font-semibold text-[#1B1D60] hover:underline"
+        />
         {media.length > 0 && (
           <div>
             <p className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#6B6B80]">
@@ -177,9 +186,20 @@ function ExistingReviewCard({ review }) {
   );
 }
 
-function ReviewModal({ item, orderId, initialRating = 0, getProductTitle, onClose, onSubmitted }) {
+function ReviewModal({
+  item,
+  orderId,
+  initialRating = 0,
+  getProductTitle,
+  onClose,
+  onSubmitted,
+}) {
   const dispatch = useDispatch();
-  const [form, setForm] = useState({ rating: initialRating || 0, title: "", reviewText: "" });
+  const [form, setForm] = useState({
+    rating: initialRating || 0,
+    title: "",
+    reviewText: "",
+  });
   const [reviewImages, setReviewImages] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const productId = getReviewProductId(item);
