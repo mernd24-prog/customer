@@ -219,10 +219,9 @@ export const Navbar = ({ icons: propIcons }) => {
     const q = urlParams.get("q") || "";
     if (location.pathname === "/search") {
       setSearchQuery(q);
-    } else if (location.pathname === "/" && prevPathnameRef.current !== "/") {
+    } else {
       setSearchQuery("");
     }
-    prevPathnameRef.current = location.pathname;
   }, [location.pathname, location.search]);
 
   const handleSearch = (nextQuery = searchQuery, category = null) => {

@@ -34,9 +34,6 @@ const CollageSection = React.lazy(
 const ShowcaseSection = React.lazy(
   () => import("../../components/home/ShowcaseSection"),
 );
-const FeaturedCollectionsSection = React.lazy(
-  () => import("../../components/home/FeaturedCollectionsSection"),
-);
 
 import { toStandardProductCard as toNewArrivalProduct } from "../../utils/productUtils";
 import { getProductListFromResponse } from "../../utils/ecommerce";
@@ -174,12 +171,7 @@ export function HomePage() {
       </LazySection>
 
       <LazySection minHeight="150px">
-        <ShoppingMadeEasyBanner
-          cmsPage={cmsPages.find(
-            (p) =>
-              p.slug === "promotion_banner" || p.slug === "promotion-banner",
-          )}
-        />
+        <ShoppingMadeEasyBanner />
       </LazySection>
 
       <LazySection minHeight="450px">

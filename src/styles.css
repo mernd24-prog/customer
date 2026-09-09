@@ -706,7 +706,7 @@ select:not([multiple]):disabled {
 
 .filter-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #ce9f2d #FFFDF8;
+  scrollbar-color: #ce9f2d transparent;
 }
 
 .filter-scrollbar::-webkit-scrollbar {
@@ -714,8 +714,7 @@ select:not([multiple]):disabled {
 }
 
 .filter-scrollbar::-webkit-scrollbar-track {
-  background: #FFFDF8;
-  border-radius: 999px;
+  background: transparent;
 }
 
 .filter-scrollbar::-webkit-scrollbar-thumb {

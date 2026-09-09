@@ -146,17 +146,14 @@ export default function DeliveryChecker({
                 <MapPin size={15} />
               )}
             </div>
-            <span className="underline decoration-gold/50 underline-offset-4 leading-normal transition-colors hover:text-gold hover:decoration-gold">
+            <span className="underline decoration-gold/50 underline-offset-4 leading-normal transition-colors">
               {loading
                 ? "Checking Availability..."
                 : lastCheckedPincode
                   ? `Delivering to ${lastCheckedPincode} (Change)`
                   : "Check Delivery & Pincode Availability"}
             </span>
-            <ArrowRight
-              size={20}
-              className="shrink-0 text-gold"
-            />
+            <ArrowRight size={20} className="shrink-0 text-gold" />
           </button>
 
           {/* Quick inline status if already checked */}
@@ -272,7 +269,7 @@ export default function DeliveryChecker({
                         );
                       }}
                       placeholder="Enter 6-digit Pincode"
-                      className="h-11 flex-1 min-w-0 rounded-[8px] border border-border bg-white px-4 text-sm font-medium text-ink placeholder:text-muted/60 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                      className="h-11 flex-1 min-w-0 rounded-[8px] border border-border bg-white px-4 text-sm font-medium text-ink placeholder:text-muted/60  focus:outline-none "
                       autoFocus
                     />
                     <button
@@ -291,7 +288,7 @@ export default function DeliveryChecker({
                         "shadow-sm hover:shadow-md",
                         "transition-all duration-300 ease-in-out hover:brightness-105 active:brightness-95",
                         "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100",
-                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-gold",
+                        "focus:outline-none ",
                       )}
                     >
                       {loading ? (

@@ -20,9 +20,12 @@ import {
   getCancelledQuantityForItem,
   getReturnableQuantityForItem,
   isItemDelivered,
-  getItemQuantity
+  getItemQuantity,
 } from "../../../utils/pages/returnUtils";
-import { decodeRouteToken, getOpaqueReturnRequestPath } from "../../../utils/routeTokens";
+import {
+  decodeRouteToken,
+  getOpaqueReturnRequestPath,
+} from "../../../utils/routeTokens";
 
 function ReturnRequestPage({ orderId }) {
   const {
@@ -46,7 +49,7 @@ function ReturnRequestPage({ orderId }) {
     quantityExceedsRemaining,
     handleItemSelect,
     submit,
-    setValue
+    setValue,
   } = useReturnRequest(orderId);
 
   return (
@@ -60,7 +63,7 @@ function ReturnRequestPage({ orderId }) {
           <ArrowLeft size={16} className="text-[#CE9F2D]" /> Back to Orders
         </Link>
 
-        <div className="overflow-hidden rounded-2xl border border-[#E7D9B8] bg-white p-5 shadow-[0_4px_20px_rgba(27,29,96,0.05)] sm:p-7 lg:p-9">
+        <div className="overflow-hidden rounded-2xl border border-[#E7D9B8] bg-white p-5 shadow-[0_4px_20px_rgba(27,29,96,0.05)] sm:p-7 lg:p-6">
           <div className="mb-6 border-b border-[#EFE5D2] pb-5">
             <h1 className="text-2xl font-extrabold text-[#1B1D60]">
               Request a Return
@@ -68,6 +71,16 @@ function ReturnRequestPage({ orderId }) {
             <p className="mt-1 text-sm font-medium text-[#5E6472]">
               Select the item you want to return from this order and specify the
               return reason.
+            </p>
+            <p className="mt-2 text-xs font-medium text-[#5E6472]">
+              Before return, please read our{" "}
+              <Link
+                to="/refund-policy"
+                className="font-bold text-[#CE9F2D] hover:underline"
+              >
+                Return & Refund Policy
+              </Link>
+              .
             </p>
           </div>
 
@@ -144,7 +157,10 @@ function ReturnRequestPage({ orderId }) {
                         }`}
                       >
                         {img ? (
-                          <img loading="lazy" width="400" height="400"
+                          <img
+                            loading="lazy"
+                            width="400"
+                            height="400"
                             src={img}
                             alt={title}
                             className="h-20 w-20 sm:h-24 sm:w-24 flex-shrink-0 rounded-xl border border-[#EFE5D2] object-contain p-1.5 bg-white shadow-xs"
@@ -192,15 +208,15 @@ function ReturnRequestPage({ orderId }) {
                               ? "Checking existing return requests…"
                               : cancelledQuantity >= getItemQuantity(item)
                                 ? "Cancelled items cannot be returned"
-                              : returnableQuantity <= 0 && existingReturn
-                                ? `All units already ${String(existingReturn.status || "requested").replace(/_/g, " ")}`
-                                : !delivered
-                                  ? "Return available after this item is delivered"
-                                  : expired
-                                    ? "Return window has closed"
-                                    : policy.returnable
-                                      ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}${policy.inspectionRequired ? " · QC required" : ""}`
-                                      : "This item is not returnable"}
+                                : returnableQuantity <= 0 && existingReturn
+                                  ? `All units already ${String(existingReturn.status || "requested").replace(/_/g, " ")}`
+                                  : !delivered
+                                    ? "Return available after this item is delivered"
+                                    : expired
+                                      ? "Return window has closed"
+                                      : policy.returnable
+                                        ? `Returnable${policy.days ? ` for ${policy.days} days` : ""}${policy.inspectionRequired ? " · QC required" : ""}`
+                                        : "This item is not returnable"}
                           </p>
                         </div>
 

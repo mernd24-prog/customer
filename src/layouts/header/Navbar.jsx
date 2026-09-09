@@ -92,13 +92,15 @@ export const Navbar = ({ icons: propIcons }) => {
     }
   }, [currentUser, dispatch]);
 
-  // Clear Search when navigating back to homepage
   useEffect(() => {
-    if (location.pathname === "/" && prevPathnameRef.current !== "/") {
+    const urlParams = new URLSearchParams(location.search);
+    const q = urlParams.get("q") || "";
+    if (location.pathname === "/search") {
+      setSearchQuery(q);
+    } else {
       setSearchQuery("");
     }
-    prevPathnameRef.current = location.pathname;
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   const handleSearch = (nextQuery = searchQuery, category = null) => {
     const trimmedQuery = nextQuery.trim();
