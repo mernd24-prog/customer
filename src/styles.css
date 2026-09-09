@@ -902,3 +902,37 @@ select:not([multiple]):disabled {
 .animate-horizontal-progress {
   animation: horizontalProgressGrow 1.1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
+
+.category-custom-pagination .swiper-pagination-bullet {
+  width: 8px !important;
+  height: 8px !important;
+  background-color: #1B1D60 !important;
+  opacity: 0.25 !important;
+  margin: 0 4px !important;
+  border-radius: 50% !important;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-block !important;
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.category-custom-pagination .swiper-pagination-bullet-active {
+  width: 24px !important;
+  border-radius: 4px !important;
+  background-color: #1B1D60 !important;
+  opacity: 1 !important;
+}
+
+.category-custom-pagination .swiper-pagination-bullet:hover {
+  opacity: 0.8 !important;
+}
+
+.category-custom-pagination.swiper-pagination {
+  bottom: 0px !important;
+  z-index: 10;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
