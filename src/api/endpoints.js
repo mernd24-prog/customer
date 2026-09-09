@@ -181,6 +181,9 @@ export const endpoints = {
     create: `${API_PREFIX}/notifications`,
     preferences: `${API_PREFIX}/notifications/preferences`,
   },
+  stockNotifications: {
+    create: `${API_PREFIX}/stock-notifications`,
+  },
   support: {
     queries: `${API_PREFIX}/support/queries`,
     query: (queryId) => `${API_PREFIX}/support/queries/${queryId}`,
