@@ -158,8 +158,7 @@ export function HomePage() {
         categories={categories}
         loading={homeLoading}
         title="Time for a Spring Refresh"
-        subtitle="Curated collections for every style & home"
-        className="text-[#3E4093] font-regular text-[18px] "
+        subtitle=""
       />
       {/* 
       <LazySection minHeight="280px">
@@ -209,13 +208,14 @@ export function HomePage() {
       </LazySection> */}
 
       <LazySection minHeight="400px">
-        <HomeProductsForYouSection
-          title="Explore Our Collection"
-          description="Handpicked products loved by thousands of shoppers"
-          actionLabel="Browse All Products"
-          limit={10}
-          fallbackProducts={homeProducts}
-        />
+        <div className="">
+          <HomeProductsForYouSection
+            title="Explore Our Collection"
+            actionLabel="Browse All Products"
+            limit={10}
+            fallbackProducts={homeProducts}
+          />
+        </div>
       </LazySection>
     </AppErrorBoundary>
   );

@@ -28,7 +28,7 @@ export default function CategoryCard({
       className={cn(
         "group relative flex flex-col h-full min-h-[300px] sm:min-h-[360px] w-full overflow-hidden rounded-2xl select-none transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-black/10",
         active && "ring-2 ring-indigo-500 ring-offset-2",
-        className
+        className,
       )}
     >
       {/* Background Image Container */}
@@ -51,13 +51,15 @@ export default function CategoryCard({
           <h3 className="text-xl sm:text-2xl font-bold tracking-tight mb-2 drop-shadow-lg">
             {title}
           </h3>
-          
+
           {/* Shop Now CTA */}
           <div className="flex items-center gap-2 text-sm font-semibold tracking-wide text-white drop-shadow-lg">
-            <span>
-              {ctaLabel}
-            </span>
-            <ArrowRight size={16} strokeWidth={2.5} className="opacity-0 group-hover:opacity-100" />
+            <span>{ctaLabel}</span>
+            <ArrowRight
+              size={16}
+              strokeWidth={2.5}
+              className="opacity-0 group-hover:opacity-100"
+            />
           </div>
         </div>
       </div>
@@ -82,8 +84,3 @@ export default function CategoryCard({
     </button>
   );
 }
-
-
-
-
-

@@ -1,41 +1,5 @@
 import { Link } from "react-router-dom";
-import Label from "../ui/label/Label";
-import {
-  collageImageHeightClass,
-  compactLabel,
-  collageLabelWidthClass,
-} from "../../utils/collage";
 import { productFilterUrl } from "../../modules/products/utils/productFilterToken";
-
-function CollageImage({ src, title, label, count, index }) {
-  const imageLabel = label || title;
-  const displayLabel = compactLabel(imageLabel);
-  return (
-    <div
-      className={`group relative w-full overflow-hidden rounded-xl bg-gray-50 ${collageImageHeightClass(count, index)}`}
-    >
-      <img
-        src={src}
-        alt={label}
-        width="300"
-        height="300"
-        className="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-110"
-        loading="lazy"
-      />
-      
-      {/* Strong dark gradient overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-300 pointer-events-none" />
-
-      {imageLabel && (
-        <div className="absolute bottom-3 left-3 right-3 z-10 pointer-events-none">
-          <span className="block min-w-0 truncate font-sans text-[12px] sm:text-[13px] font-bold tracking-wide text-white drop-shadow-lg transform transition-transform duration-300 group-hover:-translate-y-0.5">
-            {displayLabel}
-          </span>
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function CollageCard({ section }) {
   const images = (section.images || [])
@@ -46,7 +10,8 @@ export default function CollageCard({ section }) {
   const sectionTitle = String(section.title || "").toLowerCase();
   const cardLink = section.category
     ? `/categories/${section.category}`
-    : sectionKey.includes("new-arrivals") || sectionTitle.includes("new arrival")
+    : sectionKey.includes("new-arrivals") ||
+        sectionTitle.includes("new arrival")
       ? productFilterUrl({ newArrival: "true", sort: "newest" })
       : sectionKey.includes("trending") || sectionTitle.includes("trending")
         ? productFilterUrl({ sort: "popular" })
@@ -92,7 +57,6 @@ export default function CollageCard({ section }) {
       )
         return true;
 
-      // Partial word match (e.g. "mens-fashion" and "mens-watches" share "mens", "womens-fashion" and "...women" share "women")
       const pTokens = pCat.split("-").filter(Boolean);
       return sectionTokens.some((token) =>
         pTokens.some(
@@ -102,49 +66,128 @@ export default function CollageCard({ section }) {
     });
 
   const displayImages = images.slice(0, 4);
-  
+  const mainImage =
+    section.displayImage ||
+    section.bannerUrl ||
+    (displayImages[0] ? displayImages[0].image : "");
+
+  // Clean themes matching the original reference image
+  const themeIndex = sectionTitle ? sectionTitle.length % 3 : 0;
+  const themes = [
+    {
+      bg: "bg-gradient-to-br from-[#FFF5F2] to-[#FFF0EB]",
+      badge: "bg-[#FBD9D0] text-[#8C3A21]",
+    }, // Peach
+    {
+      bg: "bg-gradient-to-br from-[#F2F9F2] to-[#E6F4E6]",
+      badge: "bg-[#438258] text-white",
+    }, // Green
+    {
+      bg: "bg-gradient-to-br from-[#F7F2FA] to-[#F1E8F6]",
+      badge: "bg-[#B892D8] text-white",
+    }, // Purple
+  ];
+  const theme = themes[themeIndex];
+
   return (
-    <Link to={cardLink} state={{ fallbackProducts }} className="block w-full h-full">
-      <article className="flex flex-col h-full overflow-hidden rounded-xl bg-[#FFFCF6] border border-[#EAD9B6]/80 shadow-sm hover:shadow-md transition-shadow p-4 sm:p-5">
-        
+    <Link
+      to={cardLink}
+      state={{ fallbackProducts }}
+      className="block w-full h-full group/card"
+    >
+      <article
+        className={`relative flex flex-col h-full min-h-[300px] sm:min-h-[380px] lg:min-h-[440px] overflow-hidden rounded-[24px] ${theme.bg} shadow-sm hover:shadow-xl transition-all duration-300 border border-white/60`}
+      >
+        {/* Subtle background element */}
+        <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white/40 rounded-full blur-3xl pointer-events-none" />
+
         {/* Header Section */}
-        <div className="mb-4 flex items-start justify-between gap-2">
-          <div className="min-w-0 flex-1">
-            <h2 className="text-lg sm:text-xl font-bold text-[#1B1D60] mb-1 truncate">
-              {section.title}
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-500 truncate">
-              Explore top picks & more
-            </p>
-          </div>
-          {section.label && (
-            <Label
-              variant="sectionLabel"
-              className="shrink-0 text-[10px] font-bold text-[#A96F14] bg-[#CE9F2D]/15 border-0 rounded px-2 py-1"
-            >
-              {section.label}
-            </Label>
+        <div className="p-3 sm:p-4 flex flex-col relative z-10">
+          <h2 className="text-lg sm:text-xl lg:text-[22px] font-bold text-gray-800 tracking-tight leading-snug">
+            {section.title || "Featured Collection"}
+          </h2>
+          <p className="text-[12px] sm:text-[13px] text-gray-500 font-medium mt-0.5">
+            {section.subtitle || "Explore our handpicked styles"}
+          </p>
+        </div>
+        <div className="grid grid-cols-5 grid-rows-2 gap-1.5 px-3 pb-3 sm:px-4 sm:pb-4 flex-1 relative z-10">
+          {displayImages.map((img, idx) => {
+            let colSpanClass = "col-span-2";
+            if (themeIndex === 0) {
+              colSpanClass =
+                idx === 0 || idx === 3 ? "col-span-3" : "col-span-2";
+            } else if (themeIndex === 1) {
+              colSpanClass =
+                idx === 1 || idx === 2 ? "col-span-3" : "col-span-2";
+            } else {
+              colSpanClass =
+                idx === 0 || idx === 2 ? "col-span-3" : "col-span-2";
+            }
+
+            return (
+              <div
+                key={idx}
+                className={`relative w-full h-full bg-white/80 overflow-hidden group/img rounded-xl shadow-sm ${colSpanClass}`}
+              >
+                <img
+                  src={img.image}
+                  alt={img.label || img.title || section.title}
+                  className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover/img:scale-110"
+                  loading="lazy"
+                />
+              </div>
+            );
+          })}
+
+          {/* Fill empty spots if less than 4 images */}
+          {Array.from({ length: Math.max(0, 4 - displayImages.length) }).map(
+            (_, idx) => {
+              const emptyIdx = displayImages.length + idx;
+              let colSpanClass = "col-span-2";
+              if (themeIndex === 0) {
+                colSpanClass =
+                  emptyIdx === 0 || emptyIdx === 3
+                    ? "col-span-3"
+                    : "col-span-2";
+              } else if (themeIndex === 1) {
+                colSpanClass =
+                  emptyIdx === 1 || emptyIdx === 2
+                    ? "col-span-3"
+                    : "col-span-2";
+              } else {
+                colSpanClass =
+                  emptyIdx === 0 || emptyIdx === 2
+                    ? "col-span-3"
+                    : "col-span-2";
+              }
+              return (
+                <div
+                  key={`empty-${idx}`}
+                  className={`w-full h-full bg-white/40 rounded-xl ${colSpanClass}`}
+                />
+              );
+            },
           )}
         </div>
 
-        {/* 2x2 Image Grid */}
-        <div className="grid grid-cols-2 gap-2 flex-1">
-          {displayImages.map((img, idx) => (
-            <div key={idx} className="relative w-full h-24 sm:h-28 md:h-32 lg:h-36 bg-white rounded-lg overflow-hidden border border-[#EAD9B6]/40 group">
-              <img 
-                src={img.image} 
-                alt={img.label || section.title} 
-                className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" 
-                loading="lazy" 
+        {/* Action Button */}
+        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-900 shadow-sm transition-transform duration-300 group-hover/card:scale-110">
+            <svg
+              className="h-5 w-5 -rotate-45"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
               />
-            </div>
-          ))}
-          {/* Fill empty spots if less than 4 images */}
-          {Array.from({ length: Math.max(0, 4 - displayImages.length) }).map((_, idx) => (
-            <div key={`empty-${idx}`} className="w-full h-24 sm:h-28 md:h-32 lg:h-36 bg-gray-50/50 rounded-lg border border-[#EAD9B6]/40" />
-          ))}
+            </svg>
+          </div>
         </div>
-        
       </article>
     </Link>
   );

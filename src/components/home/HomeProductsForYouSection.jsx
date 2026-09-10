@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import SkeletonLoader from "../ui/skeleton/SkeletonLoader";
 import ProductCard from "../../modules/products/components/ProductCard";
 
-import { useCartActions, useWishlistActions } from "../../modules/products/controllers/actions";
+import {
+  useCartActions,
+  useWishlistActions,
+} from "../../modules/products/controllers/actions";
 import {
   getProductId,
   getProductListFromResponse,
@@ -79,6 +82,9 @@ export default function HomeProductsForYouSection({
       subtitle={description}
       actionLabel={actionLabel}
       actionHref={actionHref}
+      actionStyle="icon"
+      className="rounded-3xl pt-3 pb-3 mb-8"
+      style={{ backgroundImage: "linear-gradient(to bottom, #e1d5b4, #e2d1f0)" }}
     >
       {loading && !products.length ? (
         <SkeletonLoader
