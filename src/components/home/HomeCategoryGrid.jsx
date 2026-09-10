@@ -88,7 +88,7 @@ export default function HomeCategoryGrid({
       actionStyle="icon"
     >
       {/* Background container block */}
-      <div className="relative group/carousel rounded-3xl pb-6">
+      <div className="relative group/carousel rounded-3xl my-4">
         {/* Left Navigation Arrow */}
         <button
           ref={prevRef}

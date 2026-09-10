@@ -74,7 +74,9 @@ export default function FeaturedProductsSection({
       actionHref={actionHref}
       actionStyle="icon"
       className="rounded-3xl pt-3 pb-3 mb-8"
-      style={{ backgroundImage: "linear-gradient(to bottom, #e1d5b4, #e2d1f0)" }}
+      style={{
+        backgroundImage: "linear-gradient(to bottom, #e1d5b4, #e2d1f0)",
+      }}
     >
       {loading ? (
         <SkeletonLoader
@@ -84,7 +86,7 @@ export default function FeaturedProductsSection({
           wrapperClass="min-w-0"
         />
       ) : (
-        <div className="grid grid-cols-2 mt-4 md:mt-0 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid grid-cols-2  my-4 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {displayProducts.map((product, index) => (
             <ProductCard
               key={getProductId(product) || `featured-product-${index}`}

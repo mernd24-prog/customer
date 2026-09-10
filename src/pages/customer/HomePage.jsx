@@ -169,13 +169,13 @@ export function HomePage() {
         <MothersDaySwiper data={mothersDayData} />
       </LazySection>
 
+      <LazySection minHeight="150px">
+        <ShoppingMadeEasyBanner />
+      </LazySection>
+
       <LazySection minHeight="400px">
         <CollageSection cmsPages={cmsPages} />
       </LazySection>
-
-      {/* <LazySection minHeight="150px">
-        <ShoppingMadeEasyBanner />
-      </LazySection> */}
 
       <LazySection minHeight="450px">
         <FeaturedProductsSection

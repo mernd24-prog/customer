@@ -310,23 +310,25 @@ export function useProductDetailController(
   ]);
 
   // Stock Validation
-  const MAX_PER_PERSON_QUANTITY = 10;
   const getAvailableStock = (v) =>
     getVariantAvailableStock(v) ??
     v?.stockQuantity ??
     v?.inventoryQuantity ??
     v?.quantity;
-  const availableStock =
+  const rawAvailableStock =
     getAvailableStock(selectedVariant) ?? getAvailableStock(product);
-  const effectiveMaxStock =
-    availableStock != null
-      ? Math.min(availableStock, MAX_PER_PERSON_QUANTITY)
-      : MAX_PER_PERSON_QUANTITY;
+  const availableStock =
+    rawAvailableStock != null && !isNaN(Number(rawAvailableStock))
+      ? Number(rawAvailableStock)
+      : null;
+  const effectiveMaxStock = availableStock != null ? availableStock : 999;
 
   useEffect(() => {
-    setQuantity((currentQuantity) =>
-      Math.max(1, Math.min(currentQuantity, effectiveMaxStock)),
-    );
+    setQuantity((currentQuantity) => {
+      const num = Number(currentQuantity);
+      const validCurrent = Number.isFinite(num) && num >= 1 ? num : 1;
+      return Math.max(1, Math.min(validCurrent, effectiveMaxStock));
+    });
   }, [effectiveMaxStock, selectedVariantKey]);
 
   // Derived State extracted from Page
@@ -403,14 +405,13 @@ export function useProductDetailController(
         ? product.inStock
         : true;
 
-  const quantityAtStockLimit = quantity >= effectiveMaxStock;
+  const quantityAtStockLimit =
+    availableStock != null ? quantity >= effectiveMaxStock : false;
   const quantityStockMessage = !inStock
     ? "Out Of Stock"
-    : quantity >= MAX_PER_PERSON_QUANTITY
-      ? "Maximum limit of 10 items"
-      : quantityAtStockLimit
-        ? `Only ${availableStock} in stock`
-        : "";
+    : quantityAtStockLimit
+      ? `Only ${availableStock} in stock`
+      : "";
 
   const categoryLabel = product?.category
     ? (product.category || "")

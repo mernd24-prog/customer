@@ -104,21 +104,17 @@ export function adaptItemForCard(item, fullProduct = null) {
   const attributes = item.attributes || {};
   const color = item.color || item.selectedColor || attributes.color;
   const size = item.size || item.selectedSize || attributes.size;
-  const MAX_PER_PERSON_QUANTITY = 10;
-  const stock = getCartItemStock(item, product);
+  const rawStock = getCartItemStock(item, product);
+  const stock =
+    rawStock != null && !isNaN(Number(rawStock)) ? Number(rawStock) : null;
   const outOfStock = stock !== null && stock <= 0;
-  const effectiveMaxStock =
-    stock !== null
-      ? Math.min(stock, MAX_PER_PERSON_QUANTITY)
-      : MAX_PER_PERSON_QUANTITY;
-  const stockLimitReached = quantity >= effectiveMaxStock;
+  const effectiveMaxStock = stock !== null ? stock : 999;
+  const stockLimitReached = stock !== null && quantity >= effectiveMaxStock;
   const stockMessage = outOfStock
     ? "Out of stock"
-    : quantity >= MAX_PER_PERSON_QUANTITY
-      ? "Maximum limit of 10 items"
-      : stockLimitReached
-        ? `Only ${stock} in stock`
-        : "";
+    : stockLimitReached
+      ? `Only ${stock} in stock`
+      : "";
   const rating =
     item.rating ??
     item.averageRating ??

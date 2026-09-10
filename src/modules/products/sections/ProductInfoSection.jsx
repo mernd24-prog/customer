@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
+import { X, Star, ShieldCheck } from "lucide-react";
 import { formatPageTitle } from "../../../utils/common";
 import {
   getProductTitle,
@@ -136,7 +136,10 @@ export default function ProductInfoSection({
         gap = 16;
       }
 
-      const count = Math.max(1, Math.floor((width + gap) / (targetCardWidth + gap)));
+      const count = Math.max(
+        1,
+        Math.floor((width + gap) / (targetCardWidth + gap)),
+      );
       setCatalogueMaxItems(count);
     };
 
@@ -390,13 +393,85 @@ export default function ProductInfoSection({
 
       {activeInfoTab === "seller" && (
         <InfoCard title="Seller Information">
-          {product.seller ? (
-            <div className="flex items-center gap-3 px-4 py-4">
-              <div>
-                <p className="text-sm font-semibold text-ink">
-                  Store Name:{" "}
-                  {product.seller.name || product.seller.storeName || "Seller"}
-                </p>
+          {product.seller || product.sellerName ? (
+            <div className="px-4 py-4 sm:px-6">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 text-sm">
+                <div>
+                  <span className="text-xs font-medium text-muted block mb-1">
+                    Store Name
+                  </span>
+                  <p className="font-semibold text-ink">
+                    {product.seller?.name ||
+                      product.seller?.storeName ||
+                      product.sellerName ||
+                      "Seller"}
+                  </p>
+                </div>
+
+                <div>
+                  <span className="text-xs font-medium text-muted block mb-1">
+                    Rating
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <div className="inline-flex items-center gap-1 rounded-[4px] bg-[#CE9F2D] px-2 py-0.5 text-white">
+                      <Star size={12} className="fill-white text-white" />
+                      <span className="text-xs font-bold leading-none">
+                        {Number(
+                          product.seller?.rating ??
+                            product.seller?.averageRating ??
+                            product.sellerRating ??
+                            0,
+                        ).toFixed(1)}
+                      </span>
+                    </div>
+                    <span className="text-xs font-medium text-[#2E2E2E]">
+                      (
+                      {product.seller?.reviewCount ??
+                        product.seller?.reviewsCount ??
+                        product.seller?.ratingsCount ??
+                        0}
+                      )
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-xs font-medium text-muted block mb-1">
+                    Joined SamGlobal
+                  </span>
+                  <p className="font-semibold text-ink">
+                    {(() => {
+                      const joinedDate =
+                        product.seller?.joinAt ||
+                        product.seller?.createdAt ||
+                        product.joinAt ||
+                        product.sellerCreatedAt ||
+                        product.createdAt;
+                      if (!joinedDate) return "N/A";
+                      const date = new Date(joinedDate);
+                      if (Number.isNaN(date.getTime())) return "N/A";
+                      return date.toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      });
+                    })()}
+                  </p>
+                </div>
+              </div>
+
+              {/* Trusted Seller Guarantee Line */}
+              <div className="border-t border-border/80 pt-3.5 mt-4 flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+                <div className="flex items-center gap-1.5 font-bold text-[#1E8A38]">
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#EBF6EE] text-[#1E8A38]">
+                    <ShieldCheck size={13} strokeWidth={2.5} />
+                  </div>
+                  <span>Trusted & Verified Seller</span>
+                </div>
+                <span className="text-muted/60 hidden sm:inline">•</span>
+                <span className="text-muted text-xs sm:text-sm">
+                  100% Genuine Products & Quality Assured on Sam Global
+                </span>
               </div>
             </div>
           ) : (

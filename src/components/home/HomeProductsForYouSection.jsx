@@ -84,7 +84,9 @@ export default function HomeProductsForYouSection({
       actionHref={actionHref}
       actionStyle="icon"
       className="rounded-3xl pt-3 pb-3 mb-8"
-      style={{ backgroundImage: "linear-gradient(to bottom, #e1d5b4, #e2d1f0)" }}
+      style={{
+        backgroundImage: "linear-gradient(to bottom, #e1d5b4, #e2d1f0)",
+      }}
     >
       {loading && !products.length ? (
         <SkeletonLoader
@@ -94,7 +96,7 @@ export default function HomeProductsForYouSection({
           wrapperClass="customer-card min-w-0 p-3"
         />
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 my-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {products.map((product) => (
             <ProductCard
               key={getProductId(product)}

@@ -26,6 +26,8 @@ const BecomeASeller = lazy(
   () => import("../pages/seller/becomeASeller/becomeASeller.jsx"),
 );
 
+import DealsPage from "../modules/catalog/pages/DealsPage.jsx";
+
 const lazyNamed = (loader, exportName) =>
   lazy(() => loader().then((module) => ({ default: module[exportName] })));
 
@@ -193,7 +195,7 @@ export default function AppRoutes() {
             element={<SupportTicketDetailsPage />}
           />
 
-          {/* <Route path="/deals" element={<DealsPage />} /> */}
+          <Route path="/deals" element={<DealsPage />} />
           <Route path="/brand-outlet" element={<BrandOutletPage />} />
           <Route
             path="/who-we-are"

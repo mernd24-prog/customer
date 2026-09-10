@@ -11,7 +11,7 @@ import Loader from "../../../components/ui/Loader";
 
 const PAGE_SIZE = 20;
 const categoryGridClass =
-  "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-5 xl:grid-cols-5";
+  "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 lg:gap-5 xl:grid-cols-5";
 
 import {
   getCategoryListFromResponse,
@@ -44,7 +44,7 @@ function CategoryTile({ category }) {
       >
         <div
           className="
-            flex  lg:h-[200px] w-full
+            flex  lg:h-[150px] w-full
             items-center justify-center
             overflow-hidden rounded-[9px]
             bg-white
@@ -65,7 +65,7 @@ function CategoryTile({ category }) {
                 e.currentTarget.src = "/image/png/favicon.png";
               }}
               className="
-                h-[100px] w-[100px]
+                h-[70px] w-[70px]
                 object-contain
                 transition-transform duration-300
                

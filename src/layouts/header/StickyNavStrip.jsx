@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { keyOr, textOr } from "../../utils/content";
 import { buildCategorySlug } from "./categoryHelpers";
