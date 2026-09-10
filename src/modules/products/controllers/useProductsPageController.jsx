@@ -50,7 +50,9 @@ export function useProductsPageController() {
   const productState = useSelector((s) => s.product);
   const addToCart = useCartActions();
   const { isWishlisted, toggleWishlist } = useWishlistActions();
-  const globalCategories = useSelector((state) => state.catalog?.globalCategories);
+  const globalCategories = useSelector(
+    (state) => state.catalog?.globalCategories,
+  );
   const catalogList = useSelector((state) => state.catalog?.list);
   const catalogCategoryList = useMemo(
     () => [

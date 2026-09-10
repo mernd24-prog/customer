@@ -56,7 +56,12 @@ export default function CollageSection({ cmsPages = [] }) {
 
   // Filter out Electronics and limit to 3 sections as requested
   const finalSections = visibleSections
-    .filter((s) => !String(s.title || "").toLowerCase().includes("electronic"))
+    .filter(
+      (s) =>
+        !String(s.title || "")
+          .toLowerCase()
+          .includes("electronic"),
+    )
     .slice(0, 3);
 
   return (

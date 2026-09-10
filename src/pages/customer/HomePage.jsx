@@ -158,21 +158,24 @@ export function HomePage() {
         categories={categories}
         loading={homeLoading}
         title="Time for a Spring Refresh"
-        subtitle="Curated collections for every style & home"
-        className="text-[#3E4093] font-regular text-[18px] "
+        subtitle=""
       />
       {/* 
       <LazySection minHeight="280px">
         <FeaturedCollectionsSection />
       </LazySection> */}
 
+      <LazySection minHeight="380px">
+        <MothersDaySwiper data={mothersDayData} />
+      </LazySection>
+
       <LazySection minHeight="400px">
         <CollageSection cmsPages={cmsPages} />
       </LazySection>
 
-      <LazySection minHeight="150px">
+      {/* <LazySection minHeight="150px">
         <ShoppingMadeEasyBanner />
-      </LazySection>
+      </LazySection> */}
 
       <LazySection minHeight="450px">
         <FeaturedProductsSection
@@ -184,7 +187,7 @@ export function HomePage() {
         />
       </LazySection>
 
-      <LazySection minHeight="500px">
+      {/* <LazySection minHeight="500px">
         <section className="">
           <ShowcaseSection
             title="New Arrivals"
@@ -202,17 +205,13 @@ export function HomePage() {
             loading={loading}
           />
         </section>
-      </LazySection>
-
-      <LazySection minHeight="380px">
-        <MothersDaySwiper data={mothersDayData} />
-      </LazySection>
+      </LazySection> */}
 
       <LazySection minHeight="400px">
         <div className="">
           <HomeProductsForYouSection
             title="Explore Our Collection"
-            description="Handpicked products loved by thousands of shoppers"
+            
             actionLabel="Browse All Products"
             limit={10}
             fallbackProducts={homeProducts}

@@ -72,6 +72,9 @@ export default function FeaturedProductsSection({
       title={title}
       actionLabel={actionLabel}
       actionHref={actionHref}
+      actionStyle="icon"
+      className="rounded-3xl pt-3 pb-3 mb-8"
+      style={{ backgroundImage: "linear-gradient(to bottom, #e1d5b4, #e2d1f0)" }}
     >
       {loading ? (
         <SkeletonLoader

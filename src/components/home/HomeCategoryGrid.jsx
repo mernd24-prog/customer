@@ -1,13 +1,14 @@
 import { useMemo, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay, Pagination } from "swiper/modules";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import CategoryCard from "./CategoryCard";
 import SectionContainer from "../ui/SectionContainer";
 import CUSTOMER_ROUTES from "../../constants/routes";
 import { SkeletonLoader } from "../../components/ui/skeleton";
 import { getRootCategories } from "../../utils/pages/categoryUtils";
 import { cn } from "../../utils/common";
+import { Link } from "react-router-dom";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -60,6 +61,7 @@ export default function HomeCategoryGrid({
         subtitle={subtitle}
         actionLabel={actionLabel}
         actionHref={actionHref}
+        actionStyle="icon"
       >
         <div className="relative mt-2 rounded-[24px] bg-transparent p-3.5 sm:p-4.5 border-0 shadow-none overflow-hidden">
           <SkeletonLoader
@@ -83,6 +85,7 @@ export default function HomeCategoryGrid({
       subtitle={subtitle}
       actionLabel={actionLabel}
       actionHref={actionHref}
+      actionStyle="icon"
     >
       {/* Background container block */}
       <div className="relative group/carousel rounded-3xl pb-6">
@@ -105,9 +108,8 @@ export default function HomeCategoryGrid({
           autoplay={{
             delay: 3000,
             disableOnInteraction: false,
-            pauseOnMouseEnter: true
+            pauseOnMouseEnter: true,
           }}
-
           onBeforeInit={(swiper) => {
             swiper.params.navigation.prevEl = prevRef.current;
             swiper.params.navigation.nextEl = nextRef.current;
@@ -132,7 +134,7 @@ export default function HomeCategoryGrid({
             1280: { slidesPerView: 5, spaceBetween: 18 },
           }}
           pagination={{
-            el: '.category-custom-pagination',
+            el: ".category-custom-pagination",
             clickable: true,
           }}
           className="category-grid-swiper w-full !pt-1 !pb-0 !px-0.5"

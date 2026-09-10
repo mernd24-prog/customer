@@ -20,6 +20,7 @@ const SORT_OPTIONS = [
 
 export default function ProductsPage() {
   const {
+    firstLoadDone,
     searchParams,
     viewMode,
     sidebarOpen,
