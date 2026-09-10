@@ -62,13 +62,15 @@ export default function HomeCategoryGrid({
         actionLabel={actionLabel}
         actionHref={actionHref}
         actionStyle="icon"
+        className="pt-2 pb-8 sm:pt-4 sm:pb-8 lg:pb-10"
+        disablePadding={true}
       >
         <div className="relative mt-2 rounded-[24px] bg-transparent p-3.5 sm:p-4.5 border-0 shadow-none overflow-hidden">
           <SkeletonLoader
             preset="CATEGORY_CARD"
             count={5}
-            containerClass="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4.5"
-            wrapperClass="w-full h-full"
+            containerClass="flex overflow-hidden gap-3.5 sm:gap-4.5 w-full"
+            wrapperClass="w-[calc(100%/1.6-12px)] sm:w-[calc(100%/2.5-16px)] md:w-[calc(100%/3.5-20px)] lg:w-[calc(100%/4.5-24px)] flex-none h-full"
           />
         </div>
       </SectionContainer>
@@ -86,6 +88,7 @@ export default function HomeCategoryGrid({
       actionLabel={actionLabel}
       actionHref={actionHref}
       actionStyle="icon"
+      disablePadding={true}
     >
       {/* Background container block */}
       <div className="relative group/carousel rounded-3xl my-4">
@@ -95,7 +98,7 @@ export default function HomeCategoryGrid({
           type="button"
           aria-label="Previous categories"
           className={cn(
-            "hidden sm:flex absolute -left-5 lg:-left-6 top-1/2 -translate-y-1/2 z-30 h-12 w-12 rounded-full bg-white/90 backdrop-blur-md shadow-xl border border-black/5 items-center justify-center text-gray-800 transition-all hover:bg-white hover:scale-105 active:scale-95 focus:outline-none",
+            "hidden sm:flex absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 z-30 h-12 w-12 rounded-full bg-white/90 backdrop-blur-md shadow-xl border border-black/5 items-center justify-center text-gray-800 transition-all hover:bg-white hover:scale-105 active:scale-95 focus:outline-none",
             isBeginning && "opacity-0 pointer-events-none",
           )}
         >
@@ -127,9 +130,10 @@ export default function HomeCategoryGrid({
             nextEl: nextRef.current,
           }}
           breakpoints={{
-            320: { slidesPerView: 2.2, spaceBetween: 12 },
-            480: { slidesPerView: 2.8, spaceBetween: 14 },
-            640: { slidesPerView: 3.6, spaceBetween: 14 },
+            320: { slidesPerView: 1.6, spaceBetween: 12 },
+            480: { slidesPerView: 2.2, spaceBetween: 14 },
+            640: { slidesPerView: 2.8, spaceBetween: 14 },
+            768: { slidesPerView: 3.6, spaceBetween: 16 },
             1024: { slidesPerView: 4.4, spaceBetween: 16 },
             1280: { slidesPerView: 5, spaceBetween: 18 },
           }}
@@ -195,7 +199,7 @@ export default function HomeCategoryGrid({
           type="button"
           aria-label="Next categories"
           className={cn(
-            "hidden sm:flex absolute -right-5 lg:-right-6 top-1/2 -translate-y-1/2 z-30 h-12 w-12 rounded-full bg-white/90 backdrop-blur-md shadow-xl border border-black/5 items-center justify-center text-gray-800 transition-all hover:bg-white hover:scale-105 active:scale-95 focus:outline-none",
+            "hidden sm:flex absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 z-30 h-12 w-12 rounded-full bg-white/90 backdrop-blur-md shadow-xl border border-black/5 items-center justify-center text-gray-800 transition-all hover:bg-white hover:scale-105 active:scale-95 focus:outline-none",
             isEnd && "opacity-0 pointer-events-none",
           )}
         >

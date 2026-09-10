@@ -15,36 +15,35 @@ import {
   hasImages,
 } from "../../utils/collage";
 
-const loadCollageSections = () => {
-  return apiRequest({
-    url: endpoints.home.collectionCollages,
-    params: { limit: 4, itemsPerSection: 4, v: 8 },
-  });
-};
-
 export default function CollageSection({ cmsPages = [] }) {
   const [loading, setLoading] = useState(true);
   const [apiSections, setApiSections] = useState([]);
   const [apiFailed, setApiFailed] = useState(false);
 
   useEffect(() => {
-    let active = true;
+    const abortController = new AbortController();
 
-    const request = loadCollageSections().catch(() => {
-      if (active) setApiFailed(true);
-      return { data: [] };
-    });
-
-    request.then((response) => {
-      if (!active) return;
-      const sections = Array.isArray(response?.data) ? response.data : [];
-      if (!sections.length) setApiFailed(true);
-      setApiSections(sections);
-      setLoading(false);
-    });
+    apiRequest({
+      url: endpoints.home.collectionCollages,
+      params: { limit: 4, itemsPerSection: 4, v: 8 },
+      signal: abortController.signal,
+    })
+      .catch((err) => {
+        if (err.name !== "AbortError") {
+          setApiFailed(true);
+        }
+        return { data: [] };
+      })
+      .then((response) => {
+        if (abortController.signal.aborted) return;
+        const sections = Array.isArray(response?.data) ? response.data : [];
+        if (!sections.length) setApiFailed(true);
+        setApiSections(sections);
+        setLoading(false);
+      });
 
     return () => {
-      active = false;
+      abortController.abort();
     };
   }, []);
 
@@ -70,10 +69,10 @@ export default function CollageSection({ cmsPages = [] }) {
         <SkeletonLoader
           layout={SKELETON_PRESETS.HERO_CARDS}
           count={3}
-          containerClass="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6"
+          containerClass="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6"
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           {finalSections.map((section, idx) => (
             <div key={idx} className="h-auto">
               <CollageCard section={section} />

@@ -68,6 +68,10 @@ const reviewSlice = createSlice({
       .addCase(fetchMyProductReview.fulfilled, (state, action) => {
         const pid = action.meta.arg?.productId;
         if (pid) state.myReviewByProduct[pid] = action.payload?.data || null;
+      })
+      .addCase(fetchMyProductReview.rejected, (state, action) => {
+        const pid = action.meta.arg?.productId;
+        if (pid) state.myReviewByProduct[pid] = null;
       });
 
     // Submit review

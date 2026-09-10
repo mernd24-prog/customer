@@ -23,7 +23,7 @@ export function OrderItemCard({
   const productPath =
     getItemProductPath?.(item) || getOrderItemProductPath(item);
 
-  const eta = item.product_snapshot?.shipping?.processingDays;
+  const eta = item?.product_snapshot?.shipping?.processingDays;
   const itemColor = getOrderItemColor(item);
   const rawVariantAttributes =
     item?.attributes && typeof item.attributes === "object"
@@ -47,14 +47,14 @@ export function OrderItemCard({
     String(key || "")
       .replace(/[-_]+/g, " ")
       .replace(/\b\w/g, (letter) => letter.toUpperCase());
-  const orderedQuantity = Math.max(Number(item.quantity || 1), 0);
+  const orderedQuantity = Math.max(Number(item?.quantity || 1), 0);
   const cancelledQuantity = Math.min(
     orderedQuantity,
     Math.max(
       Number(
         cancelledQuantityProp ??
-          item.cancelled_quantity ??
-          item.cancelledQuantity ??
+          item?.cancelled_quantity ??
+          item?.cancelledQuantity ??
           0,
       ),
       0,
@@ -205,7 +205,7 @@ export function OrderItemCard({
                 </span>
               ))}
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
-                <span className="text-[#6F7480] font-normal">Qty:</span> {String(item.quantity || 1).padStart(2, "0")}
+                <span className="text-[#6F7480] font-normal">Qty:</span> {String(item?.quantity || 1).padStart(2, "0")}
               </span>
             </div>
             {quantityBreakdown}
@@ -288,7 +288,7 @@ export function OrderItemCard({
               </span>
             ))}
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF6EE] border border-[#E4DDCF]/80">
-              <span className="text-[#6F7480] font-normal">Qty:</span> {String(item.quantity || 1).padStart(2, "0")}
+              <span className="text-[#6F7480] font-normal">Qty:</span> {String(item?.quantity || 1).padStart(2, "0")}
             </span>
           </div>
           {quantityBreakdown}

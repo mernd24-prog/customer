@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { productFilterUrl } from "../../modules/products/utils/productFilterToken";
 
@@ -24,46 +25,48 @@ export default function CollageCard({ section }) {
   const sectionCat = normalizeCat(section.category);
   const sectionTokens = sectionCat.split("-").filter(Boolean);
 
-  const fallbackProducts = images
-    .map((img) => ({
-      _id: img.productId || img._id || img.id,
-      id: img.productId || img._id || img.id,
-      name: img.label || img.title,
-      title: img.label || img.title,
-      price: img.price,
-      mrp: img.mrp || img.oldPrice,
-      discountPercent: img.discountPercent,
-      rating: img.rating,
-      reviewCount: img.reviewCount,
-      image: img.image,
-      category: img.category || section.category,
-      source: img.source,
-      inStock: true,
-    }))
-    .filter((p) => {
-      if (!section.category) return true;
-      const cat = p.category;
-      if (!cat) return false;
-      const catId =
-        typeof cat === "object"
-          ? cat.slug || cat.key || cat.id || cat._id || cat.name
-          : cat;
-      const pCat = normalizeCat(catId);
+  const fallbackProducts = useMemo(() => {
+    return images
+      .map((img) => ({
+        _id: img.productId || img._id || img.id,
+        id: img.productId || img._id || img.id,
+        name: img.label || img.title,
+        title: img.label || img.title,
+        price: img.price,
+        mrp: img.mrp || img.oldPrice,
+        discountPercent: img.discountPercent,
+        rating: img.rating,
+        reviewCount: img.reviewCount,
+        image: img.image,
+        category: img.category || section.category,
+        source: img.source,
+        inStock: true,
+      }))
+      .filter((p) => {
+        if (!section.category) return true;
+        const cat = p.category;
+        if (!cat) return false;
+        const catId =
+          typeof cat === "object"
+            ? cat.slug || cat.key || cat.id || cat._id || cat.name
+            : cat;
+        const pCat = normalizeCat(catId);
 
-      if (
-        pCat === sectionCat ||
-        pCat.includes(sectionCat) ||
-        sectionCat.includes(pCat)
-      )
-        return true;
+        if (
+          pCat === sectionCat ||
+          pCat.includes(sectionCat) ||
+          sectionCat.includes(pCat)
+        )
+          return true;
 
-      const pTokens = pCat.split("-").filter(Boolean);
-      return sectionTokens.some((token) =>
-        pTokens.some(
-          (pToken) => token.includes(pToken) || pToken.includes(token),
-        ),
-      );
-    });
+        const pTokens = pCat.split("-").filter(Boolean);
+        return sectionTokens.some((token) =>
+          pTokens.some(
+            (pToken) => token.includes(pToken) || pToken.includes(token),
+          ),
+        );
+      });
+  }, [images, section.category, sectionCat, sectionTokens]);
 
   const displayImages = images.slice(0, 4);
   const mainImage =
@@ -71,8 +74,13 @@ export default function CollageCard({ section }) {
     section.bannerUrl ||
     (displayImages[0] ? displayImages[0].image : "");
 
-  // Clean themes matching the original reference image
-  const themeIndex = sectionTitle ? sectionTitle.length % 3 : 0;
+  // Use string hash for consistent theme index
+  const getHash = (str) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    return Math.abs(hash);
+  };
+  const themeIndex = sectionTitle ? getHash(sectionTitle) % 3 : 0;
   const themes = [
     {
       bg: "bg-gradient-to-br from-[#FFF5F2] to-[#FFF0EB]",

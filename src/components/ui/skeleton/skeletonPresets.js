@@ -94,16 +94,14 @@ export const SKELETON_PRESETS = {
   CATEGORY_CARD: [
     {
       type: "col",
-      className: "relative flex flex-col h-full min-h-[300px] sm:min-h-[340px] w-full overflow-hidden rounded-[16px] sm:rounded-[18px] border border-[#EAD9B6]/80 bg-[#FFFCF6] !gap-0 shadow-xs",
+      className: "relative flex flex-col h-full min-h-[300px] sm:min-h-[360px] w-full overflow-hidden rounded-[16px] bg-[#EFE5D2]/50 !gap-0",
       children: [
-        { type: "box", height: "220px", width: "100%", className: "rounded-t-[16px] shrink-0 sm:h-[250px]" },
         {
           type: "col",
-          className: "p-3 sm:p-3.5 flex-1 flex flex-col justify-between !gap-2 bg-[#FFFCF6]",
+          className: "absolute bottom-0 left-0 w-full p-5 sm:p-6 !gap-3",
           children: [
-            { type: "box", width: "65%", height: "16px", rounded: "rounded-md" },
-            { type: "box", width: "100%", height: "1px", className: "bg-[#E8DAAF]/60 my-0.5" },
-            { type: "box", width: "40%", height: "14px", rounded: "rounded-md" },
+            { type: "box", width: "70%", height: "24px", rounded: "rounded-md" },
+            { type: "box", width: "40%", height: "16px", rounded: "rounded-md" },
           ],
         },
       ],

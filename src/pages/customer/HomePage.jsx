@@ -90,7 +90,6 @@ export function HomePage() {
   const dispatch = useDispatch();
   const categoryList = useSelector((s) => s.catalog.globalCategories);
   const categories = Array.isArray(categoryList) ? categoryList : [];
-
   const [homeProducts, setHomeProducts] = useState([]);
   const [homeLoading, setHomeLoading] = useState(true);
   const hasFetchedRef = useRef(false);
@@ -102,6 +101,7 @@ export function HomePage() {
   const trendingProducts = Array.isArray(trendingList) ? trendingList : [];
 
   const isTrendingLoading = useSelector((s) => s.recommendation.loading);
+  const isCmsLoading = useSelector((s) => s.cms.loading);
   const loading = homeLoading || isTrendingLoading;
 
   useEffect(() => {
@@ -174,7 +174,7 @@ export function HomePage() {
       </LazySection>
 
       <LazySection minHeight="400px">
-        <CollageSection cmsPages={cmsPages} />
+        <CollageSection cmsPages={cmsPages} loading={isCmsLoading || homeLoading} />
       </LazySection>
 
       <LazySection minHeight="450px">
