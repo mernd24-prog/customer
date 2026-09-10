@@ -452,9 +452,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
 
-    openTimeoutRef.current = setTimeout(() => {
-      setActiveMenu(item);
-    }, CATEGORY_MENU_OPEN_DELAY_MS);
+    setActiveMenu(item);
   };
 
   const handleCategoryMouseLeave = () => {
@@ -465,7 +463,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
 
     closeTimeoutRef.current = setTimeout(() => {
       setActiveMenu(null);
-    }, CATEGORY_MENU_CLOSE_DELAY_MS);
+    }, 150);
   };
 
   useEffect(() => {
@@ -668,24 +666,11 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   return (
     <header
       ref={categoryBarRef}
-      className="relative left-1/2 right-1/2  -ml-[50vw] -mr-[50vw] w-screen h-[130px] sm:h-[150px] lg:h-[167px] flex items-center"
+      className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#FFF8ED] border-b border-[#EAD8B5] flex items-stretch min-h-[85px] sm:min-h-[112px] lg:min-h-[150px]"
     >
-      {/* Split Background Images */}
-      <div
-        className="absolute inset-y-0 left-0 w-1/2 bg-cover bg-center bg-no-repeat z-0"
-        style={{ backgroundImage: "url('/image/webp/cat1.webp')" }}
-      />
-      <div
-        className="absolute inset-y-0 right-0 w-1/2 bg-cover bg-center bg-no-repeat z-0"
-        style={{ backgroundImage: "url('/image/webp/cat.webp')" }}
-      />
-
-      {/* Golden Overlay */}
-      <div className="absolute inset-0 bg-[#EAD9B6]  z-10  " />
-
-      <div className="customer-container mx-auto w-full relative z-20">
-        <div className="w-full overflow-x-auto hide-scrollbar">
-          <div className="mx-auto flex w-max gap-2 py-3 sm:gap-3 lg:gap-3">
+      <div className="customer-container mx-auto w-full relative z-20 flex items-stretch px-2 sm:px-4">
+        <div className="w-full overflow-x-auto hide-scrollbar flex items-stretch">
+          <div className="mx-auto flex w-full min-w-max xl:min-w-0 items-stretch justify-between gap-1 sm:gap-1.5 lg:gap-2.5">
             {visibleCategories.map((item, index) => {
               // Always use categoryKey first — it's the canonical route key from the DB
               const categoryHref = `/categories/${item?.categoryKey || keyOr(item?.slug, buildCategorySlug(textOr(item?.name, "category")))}`;
@@ -694,33 +679,56 @@ export const CategoryBar = ({ headerData, compact = false }) => {
                 location.pathname === categoryHref ||
                 location.pathname.startsWith(categoryHref + "/");
 
+              const rawName = textOr(item?.name, "Category");
+              const categoryTitle = /^beauty/i.test(rawName)
+                ? "Beauty"
+                : /^food/i.test(rawName)
+                  ? "Food"
+                  : rawName;
+
               return (
                 <div
                   key={keyOr(item?.name, `category-${index}`)}
-                  className="relative"
+                  className="relative flex-1 flex items-stretch h-full min-w-[62px] sm:min-w-[88px] lg:min-w-[105px]"
                   onMouseEnter={() => handleCategoryMouseEnter(item)}
                   onMouseLeave={handleCategoryMouseLeave}
                 >
                   <Link
                     to={categoryHref}
-                    className="group flex min-w-[80px] sm:min-w-[100px] lg:min-w-[140px]  flex-col items-center rounded-md outline-none transition-all duration-300 ease-in-out focus-visible:ring-2 focus-visible:ring-[var(--customer-gold)]/40 focus-visible:ring-offset-2"
+                    className={`group relative flex w-full h-full flex-col items-center justify-center px-1 sm:px-2 lg:px-3 pt-3 sm:pt-4 lg:pt-4.5 pb-2 sm:pb-2.5 lg:pb-3 transition-all duration-200 ease-in-out ${
+                      isActive
+                        ? "bg-[linear-gradient(180deg,rgba(206,159,45,0)_0%,rgba(206,159,45,0.4)_100%)]"
+                        : "hover:bg-[linear-gradient(180deg,rgba(206,159,45,0)_0%,rgba(206,159,45,0.4)_100%)]"
+                    }`}
                   >
-                    <div className="mx-auto flex h-[50px]  w-[50px] sm:h-[65px] sm:w-[65px]  lg:h-[75px] lg:w-[75px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 sm:p-2 shadow-sm transition-transform duration-300 ease-in-out  group-hover:-translate-y-0.5  will-change-transform ">
+                    <div className="flex h-[28px] w-[32px] sm:h-[42px] sm:w-[46px] lg:h-[46px] lg:w-[52px] items-center justify-center transition-transform duration-200 group-hover:scale-105">
                       {item?.iconUrl ? (
                         <ImageSkeleton
                           src={item?.iconUrl}
-                          alt={textOr(item?.name, "Category")}
+                          alt={categoryTitle}
+                          imageClassName="object-contain max-h-full max-w-full"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center rounded-full bg-[#f6efde] text-[var(--customer-navy)]">
-                          <ShoppingBag className="w-5 h-5  sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
+                        <div className="flex h-full w-full items-center justify-center text-[#2D347D]">
+                          <ShoppingBag className="w-6 h-6 sm:w-8 sm:h-8" />
                         </div>
                       )}
                     </div>
 
-                    <span className="mt-1  lg:mt-2 line-clamp-1 w-full max-w-[80px] sm:max-w-[100px] lg:max-w-[140px] text-center   text-small  text-[#2E2E2E]">
-                      {textOr(item?.name, "Category")}
+                    <span
+                      className={`mt-3 sm:mt-4 lg:mt-4.5 text-center text-[11px] sm:text-[13px] md:text-[14px] lg:text-[15px] whitespace-normal 2xl:whitespace-nowrap leading-tight transition-colors duration-200 ${
+                        isActive
+                          ? "font-bold text-[#1E204A]"
+                          : "font-semibold text-[#2D2D2D] group-hover:text-[#1E204A]"
+                      }`}
+                    >
+                      {categoryTitle}
                     </span>
+
+                    {/* Active bottom line indicator touching bottom edge */}
+                    {isActive && (
+                      <div className="absolute bottom-0 left-0 right-0 h-[3px] sm:h-[4px] bg-[#2D347D]" />
+                    )}
                   </Link>
                 </div>
               );

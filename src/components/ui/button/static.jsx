@@ -159,32 +159,46 @@ export const CategoryMoreButton = ({
   ...props
 }) => {
   return (
-    <DynamicButton
-      variant="unstyled"
-      className={`${buttonStyles.categoryMore} ${className}`}
-      {...props}
-    >
-      {/* ICON */}
-      <span className="mx-auto flex h-[50px] w-[50px] items-center justify-center overflow-hidden rounded-full bg-[#FBCC39] p-1.5 shadow-sm transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5 will-change-transform sm:h-[65px] sm:w-[65px] sm:p-2 lg:h-[75px] lg:w-[75px]">
-        <img
-          loading="lazy"
-          width="400"
-          height="400"
-          src={icon}
-          alt={label}
-          className="h-7 w-7 object-contain sm:h-9 sm:w-7 lg:h-9 lg:w-9"
-        />
-      </span>
-
-      {/* LABEL */}
-      <span
-        className={`mt-1 line-clamp-1 w-full max-w-[80px] text-center text-[12px] leading-[18px] tracking-[0.5px] leading-none tracking-wide text-[#2E2E2E] sm:max-w-[100px] sm:text-[11px] sm:leading-[16px] sm:tracking-[0.5px] lg:mt-2 lg:max-w-[140px] lg:text-[18px] lg:leading-[26px] ${
-          active ? "font-bold" : "font-medium"
-        }`}
+    <div className="relative flex-1 flex items-stretch h-full min-w-[62px] sm:min-w-[88px] lg:min-w-[105px]">
+      <DynamicButton
+        variant="unstyled"
+        className={cn(
+          "group relative flex w-full h-full flex-col items-center justify-center px-1 sm:px-2 lg:px-3 pt-3 sm:pt-4 lg:pt-4.5 pb-2 sm:pb-2.5 lg:pb-3 transition-all duration-200 ease-in-out",
+          active
+            ? "bg-[linear-gradient(180deg,rgba(206,159,45,0)_0%,rgba(206,159,45,0.4)_100%)]"
+            : "hover:bg-[linear-gradient(180deg,rgba(206,159,45,0)_0%,rgba(206,159,45,0.4)_100%)]",
+          className
+        )}
+        {...props}
       >
-        {label}
-      </span>
-    </DynamicButton>
+        {/* ICON */}
+        <span className="flex h-[28px] w-[32px] sm:h-[42px] sm:w-[46px] lg:h-[46px] lg:w-[52px] items-center justify-center transition-transform duration-200 group-hover:scale-105">
+          <img
+            loading="lazy"
+            width="400"
+            height="400"
+            src={icon}
+            alt={label}
+            className="h-full w-full object-contain"
+          />
+        </span>
+
+        {/* LABEL */}
+        <span
+          className={`mt-3 sm:mt-4 lg:mt-4.5 text-center text-[11px] sm:text-[13px] md:text-[14px] lg:text-[15px] whitespace-normal 2xl:whitespace-nowrap leading-tight transition-colors duration-200 ${
+            active
+              ? "font-bold text-[#1E204A]"
+              : "font-semibold text-[#2D2D2D] group-hover:text-[#1E204A]"
+          }`}
+        >
+          {label}
+        </span>
+
+        {active && (
+          <div className="absolute bottom-0 left-0 right-0 h-[3px] sm:h-[4px] bg-[#2D347D]" />
+        )}
+      </DynamicButton>
+    </div>
   );
 };
 
