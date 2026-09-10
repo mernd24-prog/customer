@@ -916,6 +916,9 @@ select:not([multiple]):disabled {
   outline: none !important;
   border: none !important;
   box-shadow: none !important;
+  text-decoration: none !important;
+  position: relative !important;
+  overflow: hidden !important;
 }
 
 .category-custom-pagination .swiper-pagination-bullet-active {

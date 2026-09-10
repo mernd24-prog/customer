@@ -12,26 +12,26 @@ function CollageImage({ src, title, label, count, index }) {
   const displayLabel = compactLabel(imageLabel);
   return (
     <div
-      className={`relative w-full overflow-hidden bg-[var(--customer-cream)] ${collageImageHeightClass(count, index)}`}
+      className={`group relative w-full overflow-hidden rounded-xl bg-gray-50 ${collageImageHeightClass(count, index)}`}
     >
       <img
         src={src}
         alt={label}
         width="300"
         height="300"
-        className="h-full w-full object-cover object-top transition-all duration-300 ease-in-out hover:scale-105"
+        className="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-110"
         loading="lazy"
       />
+      
+      {/* Strong dark gradient overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-300 pointer-events-none" />
+
       {imageLabel && (
-        <Label
-          variant="imageLabel"
-          className={`absolute bottom-[14px] left-1/2 flex min-h-[29px] -translate-x-1/2 items-center justify-center rounded-[25px] border border-[#CE9F2D] bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] px-3 py-[5px] text-white font-bold shadow-md ${collageLabelWidthClass(count, index)}`}
-          title={imageLabel}
-        >
-          <span className="block min-w-0 truncate font-dm-sans text-[12px] font-bold leading-[16px] text-white">
+        <div className="absolute bottom-3 left-3 right-3 z-10 pointer-events-none">
+          <span className="block min-w-0 truncate font-sans text-[12px] sm:text-[13px] font-bold tracking-wide text-white drop-shadow-lg transform transition-transform duration-300 group-hover:-translate-y-0.5">
             {displayLabel}
           </span>
-        </Label>
+        </div>
       )}
     </div>
   );
@@ -101,33 +101,50 @@ export default function CollageCard({ section }) {
       );
     });
 
+  const displayImages = images.slice(0, 4);
+  
   return (
-    <Link to={cardLink} state={{ fallbackProducts }} className="block ">
-      <article className="overflow-hidden rounded-[24px] border border-[#E8B84B] bg-[#F8EFD8] transition-shadow hover:shadow-md">
-        <div className="flex min-h-[76px] items-center justify-between gap-3 px-4 py-4 sm:px-5 sm:py-5 lg:px-6">
-          <h2 className="min-w-0 flex-1 overflow-hidden line-clamp-1 text-extaSmall font-bold text-[#2E2E2E]">
-            {section.title}
-          </h2>
-
-          <Label
-            variant="sectionLabel"
-            className="shrink-0 text-[12px] font-medium"
-          >
-            {section.label}
-          </Label>
+    <Link to={cardLink} state={{ fallbackProducts }} className="block w-full h-full">
+      <article className="flex flex-col h-full overflow-hidden rounded-xl bg-[#FFFCF6] border border-[#EAD9B6]/80 shadow-sm hover:shadow-md transition-shadow p-4 sm:p-5">
+        
+        {/* Header Section */}
+        <div className="mb-4 flex items-start justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <h2 className="text-lg sm:text-xl font-bold text-[#1B1D60] mb-1 truncate">
+              {section.title}
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-500 truncate">
+              Explore top picks & more
+            </p>
+          </div>
+          {section.label && (
+            <Label
+              variant="sectionLabel"
+              className="shrink-0 text-[10px] font-bold text-[#A96F14] bg-[#CE9F2D]/15 border-0 rounded px-2 py-1"
+            >
+              {section.label}
+            </Label>
+          )}
         </div>
-        <div className="grid grid-cols-2 gap-0">
-          {images.map((ele, idx) => (
-            <CollageImage
-              key={idx}
-              src={ele.image}
-              title={ele.title || ele.label}
-              label={ele.label}
-              count={images.length}
-              index={idx}
-            />
+
+        {/* 2x2 Image Grid */}
+        <div className="grid grid-cols-2 gap-2 flex-1">
+          {displayImages.map((img, idx) => (
+            <div key={idx} className="relative w-full h-24 sm:h-28 md:h-32 lg:h-36 bg-white rounded-lg overflow-hidden border border-[#EAD9B6]/40 group">
+              <img 
+                src={img.image} 
+                alt={img.label || section.title} 
+                className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" 
+                loading="lazy" 
+              />
+            </div>
+          ))}
+          {/* Fill empty spots if less than 4 images */}
+          {Array.from({ length: Math.max(0, 4 - displayImages.length) }).map((_, idx) => (
+            <div key={`empty-${idx}`} className="w-full h-24 sm:h-28 md:h-32 lg:h-36 bg-gray-50/50 rounded-lg border border-[#EAD9B6]/40" />
           ))}
         </div>
+        
       </article>
     </Link>
   );
