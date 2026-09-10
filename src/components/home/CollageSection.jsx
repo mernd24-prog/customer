@@ -60,7 +60,7 @@ export default function CollageSection({ cmsPages = [] }) {
     .slice(0, 3);
 
   return (
-    <section className="my-6 overflow-hidden sm:my-7 md:my-8 relative">
+    <section className="py-8 lg:py-10 overflow-hidden relative">
       {loading ? (
         <SkeletonLoader
           layout={SKELETON_PRESETS.HERO_CARDS}

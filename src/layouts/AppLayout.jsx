@@ -46,7 +46,6 @@ const EMPTY_ITEMS = [];
 const HIDE_CATEGORY_BAR_ROUTES = [
   ...Object.values(AUTH_ROUTES),
   "/checkout",
-  "/categories",
   "/support",
   "/faq",
   "/contact-us",

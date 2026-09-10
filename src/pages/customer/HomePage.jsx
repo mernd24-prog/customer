@@ -166,13 +166,17 @@ export function HomePage() {
         <FeaturedCollectionsSection />
       </LazySection> */}
 
+      <LazySection minHeight="380px">
+        <MothersDaySwiper data={mothersDayData} />
+      </LazySection>
+
       <LazySection minHeight="400px">
         <CollageSection cmsPages={cmsPages} />
       </LazySection>
 
-      <LazySection minHeight="150px">
+      {/* <LazySection minHeight="150px">
         <ShoppingMadeEasyBanner />
-      </LazySection>
+      </LazySection> */}
 
       <LazySection minHeight="450px">
         <FeaturedProductsSection
@@ -184,7 +188,7 @@ export function HomePage() {
         />
       </LazySection>
 
-      <LazySection minHeight="500px">
+      {/* <LazySection minHeight="500px">
         <section className="">
           <ShowcaseSection
             title="New Arrivals"
@@ -202,22 +206,16 @@ export function HomePage() {
             loading={loading}
           />
         </section>
-      </LazySection>
-
-      <LazySection minHeight="380px">
-        <MothersDaySwiper data={mothersDayData} />
-      </LazySection>
+      </LazySection> */}
 
       <LazySection minHeight="400px">
-        <div className="">
-          <HomeProductsForYouSection
-            title="Explore Our Collection"
-            description="Handpicked products loved by thousands of shoppers"
-            actionLabel="Browse All Products"
-            limit={10}
-            fallbackProducts={homeProducts}
-          />
-        </div>
+        <HomeProductsForYouSection
+          title="Explore Our Collection"
+          description="Handpicked products loved by thousands of shoppers"
+          actionLabel="Browse All Products"
+          limit={10}
+          fallbackProducts={homeProducts}
+        />
       </LazySection>
     </AppErrorBoundary>
   );

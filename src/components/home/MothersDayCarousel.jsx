@@ -1,92 +1,77 @@
 import { Link } from "react-router-dom";
 import { IoChevronForward } from "react-icons/io5";
-
 import { hrefOr } from "../../utils/content";
 
-export default function MothersDayCarousel({
-  data = [],
-  heading = "SAM-Special Gifts For Mother's Day",
-}) {
+export default function MothersDayCarousel({ data = [] }) {
   const cards = Array.isArray(data) ? data : [];
-
   if (!cards.length) return null;
 
-  const isDefaultHeading = heading === "SAM-Special Gifts For Mother's Day";
-
   return (
-    <section className="my-8 full-banner relative bg-[#1B1E5C] w-full py-8 lg:py-10">
-      <div className="customer-container grid grid-cols-1 xl:grid-cols-4 gap-6 items-center">
-        {/* Left Text Block */}
+    <section
+      className="full-banner relative w-full overflow-hidden"
+      style={{
+        minHeight: "380px",
+        background: "linear-gradient(135deg, #FFF4D6 0%, #FAF6EE 50%, #F2EADC 100%)",
+      }}
+    >
 
-        <div className="flex flex-col items-center text-center xl:items-start xl:text-left text-white py-2">
-          <h2 className="relative z-10 text-lg sm:text-xl lg:text-2xl 2xl:text-[28px] font-bold leading-snug">
-            {isDefaultHeading ? (
-              <>
-                Celebrate Navratri <br className="hidden lg:block mt-1" />
-                With{" "}
-                <span className="text-[#D6A323] font-extrabold">
-                  Festive Joy
-                </span>
-              </>
-            ) : (
-              heading
-            )}
-          </h2>
-          <p className="relative z-10 mt-4 mb-8 text-sm md:text-base text-white/80 max-w-md">
-            Embrace the Spirit of Navratri with Vibrant Ethnic Wear, Traditional
-            Chaniya Cholis, Accessories, and Special Festive Collections.
-          </p>
-        </div>
 
-        {/* Right Cards Section */}
-        <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
+      {/* Main content */}
+      <div className="relative z-10 customer-container grid grid-cols-1 xl:grid-cols-3 gap-6 items-center py-8 lg:py-10">
+        {/* ── Right Cards Grid ── */}
+        <div className="xl:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 w-full">
           {cards.map((card, index) => {
             const cardLink = hrefOr(card?.link || card?.href, "/products");
+
             return (
               <Link
                 key={index}
                 to={cardLink}
-                className="relative overflow-hidden  rounded-md md:rounded-2xl group shadow-xl h-[300px] xl:h-[380px] w-full block"
+                className="relative overflow-hidden rounded-2xl group shadow-xl h-[400px] xl:h-[440px] w-full block"
               >
-                {/* Background Image */}
-                <picture>
-                  {card.imageSmall && card.image && (
-                    <>
-                      <source
-                        srcSet={`${card.imageSmall.replace(".webp", ".avif")} 371w`}
-                        sizes="100vw"
-                        type="image/avif"
-                      />
-                      <source
-                        srcSet={`${card.imageSmall} 371w`}
-                        sizes="100vw"
-                        type="image/webp"
-                      />
-                    </>
-                  )}
-                  <img
-                    src={card.imageSmall || card.image}
-                    alt={card.title}
-                    loading="lazy"
-                    decoding="async"
-                    width="371"
-                    height="380"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                  />
-                </picture>
+                {/* Product image */}
+                <img
+                  src={card.imageSmall || card.image}
+                  alt={card.title}
+                  loading="lazy"
+                  decoding="async"
+                  width="371"
+                  height="480"
+                  className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                />
 
-                {/* Soft Bottom Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/15 to-transparent pointer-events-none transition-opacity duration-300" />
+                {/* Bottom gradient */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background:
+                      "linear-gradient(to top, rgba(10,5,2,0.82) 0%, rgba(10,5,2,0.25) 45%, transparent 100%)",
+                  }}
+                />
 
-                {/* Content at Bottom Left */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 xl:p-5 flex flex-col justify-end text-white z-10">
-                  <h3 className="text-lg xl:text-xl font-bold mb-3 text-white drop-shadow-md">
+                {/* Bottom content */}
+                <div className="absolute bottom-0 left-0 right-0 px-4 pb-5 pt-8 flex flex-col justify-end text-white z-10">
+                  <h3 className="text-lg xl:text-xl font-bold mb-1 leading-tight drop-shadow-lg">
                     {card.title}
                   </h3>
+                  {card.description && (
+                    <p className="text-sm text-white/80 mb-4 drop-shadow-sm">
+                      {card.description}
+                    </p>
+                  )}
 
-                  <span className="inline-flex items-center justify-center gap-1.5 h-[32px] xl:h-[36px] w-fit rounded-full bg-[#1F2430] bg-[linear-gradient(#CE9F2D,#CE9F2D)] group-hover:bg-[linear-gradient(#bd9025,#bd9025)] px-4 text-xs xl:text-sm font-bold leading-none text-white shadow-md transition-all duration-300">
-                    Explore{" "}
-                    <IoChevronForward className="text-xs text-white shrink-0" />
+                  {/* Explore button — dark frosted pill */}
+                  <span
+                    className="inline-flex items-center gap-2 h-9 w-fit rounded-full px-5 text-sm font-semibold leading-none shadow-lg transition-all duration-300 group-hover:bg-white group-hover:text-black"
+                    style={{
+                      background: "rgba(20,14,10,0.70)",
+                      color: "#fff",
+                      backdropFilter: "blur(6px)",
+                      border: "1px solid rgba(255,255,255,0.18)",
+                    }}
+                  >
+                    Explore
+                    <IoChevronForward className="text-xs shrink-0 transition-transform duration-300 group-hover:translate-x-0.5" />
                   </span>
                 </div>
               </Link>

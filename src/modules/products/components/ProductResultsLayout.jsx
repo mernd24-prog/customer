@@ -55,7 +55,7 @@ export default function ProductResultsLayout({
     <>
       <ActiveFilterChips filters={filters} onRemove={onRemoveFilter} />
 
-      <div className="flex  items-start gap-8 w-full mt-14">
+      <div className="flex  items-start gap-8 w-full mt-8">
         {(!empty || filterSections?.length > 0 || loading) && (
           <div className="hidden lg:block lg:sticky lg:top-[calc(var(--customer-header-height,95px)+62px)] lg:self-start">
             <ProductFilterSidebar

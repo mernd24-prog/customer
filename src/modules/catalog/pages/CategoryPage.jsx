@@ -44,16 +44,37 @@ export default function CategoryPage() {
     updateParam,
   } = useCategory();
 
-  const handleCloseSidebar = useCallback(() => setSidebarOpen(false), [setSidebarOpen]);
-  const handleOpenFilters = useCallback(() => setSidebarOpen(true), [setSidebarOpen]);
-  const handleRemoveFilter = useCallback((...args) => removeFilter(...args), [removeFilter]);
-  const handleClearFilters = useCallback(() => clearFiltersAction(), [clearFiltersAction]);
-  const handleSortChange = useCallback((value) => updateParam("sort", value), [updateParam]);
+  const handleCloseSidebar = useCallback(
+    () => setSidebarOpen(false),
+    [setSidebarOpen],
+  );
+  const handleOpenFilters = useCallback(
+    () => setSidebarOpen(true),
+    [setSidebarOpen],
+  );
+  const handleRemoveFilter = useCallback(
+    (...args) => removeFilter(...args),
+    [removeFilter],
+  );
+  const handleClearFilters = useCallback(
+    () => clearFiltersAction(),
+    [clearFiltersAction],
+  );
+  const handleSortChange = useCallback(
+    (value) => updateParam("sort", value),
+    [updateParam],
+  );
 
-  const toolbarProps = useMemo(() => ({
-    sortValue: searchParams.get("sort") || "",
-    sortOptions: firstLoadDone && (pageInfo.total || products.length) <= 1 ? [] : SORT_OPTIONS,
-  }), [searchParams, firstLoadDone, pageInfo.total, products.length]);
+  const toolbarProps = useMemo(
+    () => ({
+      sortValue: searchParams.get("sort") || "",
+      sortOptions:
+        firstLoadDone && (pageInfo.total || products.length) <= 1
+          ? []
+          : SORT_OPTIONS,
+    }),
+    [searchParams, firstLoadDone, pageInfo.total, products.length],
+  );
 
   return (
     <AppErrorBoundary>

@@ -44,6 +44,7 @@ export default function ProductsPage() {
     removeFilter,
     clearFiltersAction,
     pageTitle,
+    firstLoadDone,
   } = useProductsPageController();
 
   const isSearchMode = Boolean(searchParams.get("q"));

@@ -23,7 +23,7 @@ export function SubCategoryStrip({ categories = [], loading }) {
 
   return (
     <section className=" bg-white">
-      <div className="w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden my-6 md:mt-8">
+      <div className="w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden my-6  md:my-10">
         <div className="flex w-max gap-4 px-4 sm:px-0">
           {loading
             ? Array.from({ length: 6 }).map((_, index) => (
@@ -43,7 +43,9 @@ export function SubCategoryStrip({ categories = [], loading }) {
                 >
                   <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-[10px] bg-[var(--customer-surface-soft)] p-2 transition-colors group-hover:bg-[var(--customer-gold-soft)]">
                     {category.image ? (
-                      <img width="400" height="400"
+                      <img
+                        width="400"
+                        height="400"
                         src={category.image}
                         alt={category.name}
                         loading="lazy"

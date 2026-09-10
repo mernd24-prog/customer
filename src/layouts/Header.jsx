@@ -666,7 +666,7 @@ export const CategoryBar = ({ headerData, compact = false }) => {
   return (
     <header
       ref={categoryBarRef}
-      className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#FFF8ED] border-b border-[#EAD8B5] flex items-stretch min-h-[85px] sm:min-h-[112px] lg:min-h-[150px]"
+      className="relative left-1/2 mb-8 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#FFF8ED] border-b border-[#EAD8B5] flex items-stretch min-h-[85px] sm:min-h-[112px] lg:min-h-[150px]"
     >
       <div className="customer-container mx-auto w-full relative z-20 flex items-stretch px-2 sm:px-4">
         <div className="w-full overflow-x-auto hide-scrollbar flex items-stretch">

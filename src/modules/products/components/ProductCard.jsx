@@ -536,8 +536,22 @@ export default function ProductCard({
         <div className="flex min-w-0 flex-col px-2.5 sm:px-4 pt-2 sm:pt-3 pb-1 sm:pb-2">
           <StarRating rating={rating} count={ratingCount} />
 
+          {brand && (
+            <div
+              className="mt-1.5 sm:mt-2 text-xs sm:text-base font-bold text-[#2E2E2E] truncate  tracking-tight"
+              title={brand}
+            >
+              {brand}
+            </div>
+          )}
+
           <h3
-            className="my-1 sm:my-[10px] w-full text-xs sm:text-sm font-semibold text-[#2E2E2E] line-clamp-1"
+            className={cn(
+              "w-full line-clamp-1",
+              brand
+                ? "mb-1.5 sm:mb-2.5 mt-0.5 sm:mt-1 text-xs sm:text-[16px] text-black font-normal"
+                : "my-1 sm:my-[10px] text-xs sm:text-sm font-semibold text-[#2E2E2E]",
+            )}
             title={title}
           >
             {title}
