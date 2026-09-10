@@ -3,13 +3,6 @@ import { ArrowRight } from "lucide-react";
 import { applyImageFallback, getImageFallbackSrc } from "../../utils/ecommerce";
 import { cn } from "../../utils/common";
 
-export function getCategoryTheme(item = {}, index = 0) {
-  if (item && (item.bgColor || item.bgHex)) {
-    return { bgHex: item.bgColor || item.bgHex };
-  }
-  return { bgHex: "#FFFCF6" };
-}
-
 export default function CategoryCard({
   image,
   title,
@@ -19,7 +12,6 @@ export default function CategoryCard({
   onClick,
   className = "",
   index = 0,
-  categoryItem = null,
 }) {
   const cardImage = image || getImageFallbackSrc(title, "category");
 

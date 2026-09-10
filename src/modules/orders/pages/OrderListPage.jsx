@@ -24,9 +24,7 @@ import NeedHelpPanel from "../../support/components/NeedHelpPanel";
 import { useOrderList } from "../controllers/useOrderList";
 import { ReviewModal } from "../components/OrderItemReview";
 import { getReviewProductId } from "../utils/orderItems";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchMyOrders } from "../slices/orderSlice";
-import { fetchMyProductReview } from "../../../features/review/reviewSlice";
+import { useDispatch } from "react-redux";
 import { RefreshCw } from "lucide-react";
 import Button from "../../../components/ui/buttons/Button";
 
@@ -38,351 +36,18 @@ import {
 } from "../../../data/orderPage";
 import { ORDER_LIST_SKELETON } from "../../../components/ui/skeleton/layouts";
 
+import { fetchMyOrders } from "../slices/orderSlice";
+import { fetchMyProductReview } from "../../../features/review/reviewSlice";
+import OrderItemSummaryCard from "../components/OrderItemSummaryCard";
+
 import {
   getOrderId,
   getOrderStatus,
-  formatOrderDate,
-  getOrderCurrency,
   getProductTitle,
-  getPaymentMethod,
-  humanize,
-  getOrderItemColor,
-  getOrderItemId,
-  findShipmentForOrderItem,
-  isDeliveredOrderItem,
   resolveOrderItemDisplayStatus,
-  getOrderCardImage,
+  getOrderItemId,
 } from "../../../utils/pages/orderUtils";
 
-function OrderItemSummaryCard({ order, item, onReviewClick, locallyReviewedProducts = new Set() }) {
-  if (!order || !item) return null;
-
-  const dispatch = useDispatch();
-  const productId = getReviewProductId(item);
-  const myReview = useSelector((state) => state.review?.myReviewByProduct?.[productId]);
-  const [hasCheckedReview, setHasCheckedReview] = useState(false);
-
-  const id = getOrderId(order);
-  const productTitle = getProductTitle(item);
-  const createdAt = order?.created_at || order?.createdAt;
-  const currency = getOrderCurrency(order);
-  const shipments = Array.isArray(order?.relations?.shipments)
-    ? order.relations.shipments
-    : Array.isArray(order?.shipments)
-      ? order.shipments
-      : [];
-  const itemId = getOrderItemId(item);
-  const itemStatus = resolveOrderItemDisplayStatus(
-    item,
-    getOrderStatus(order),
-    shipments,
-    [],
-    order?.relations?.cancellations || order?.cancellations || [],
-  );
-  const orderedQuantity = Math.max(Number(item.quantity || 0), 0);
-  const itemImage = getOrderCardImage(item);
-  const itemTotal =
-    item?.line_total ??
-    item?.lineTotal ??
-    Number(item?.unit_price || item?.unitPrice || 0) *
-      Number(item?.quantity || 0);
-  const itemDetailPath = getOpaqueOrderPath(id, {
-    query: itemId ? `?orderItemId=${encodeURIComponent(itemId)}` : "",
-  });
-
-  const [hoverStar, setHoverStar] = useState(0);
-
-  const handleCardClick = () => {
-    // Always navigate to order detail page, even for payment_failed/pending_payment
-  };
-
-  const s = String(itemStatus).toLowerCase();
-  let statusDotColor = "bg-[#ff9f00]"; // default yellow/orange
-
-  if (["delivered", "completed"].includes(s)) {
-    statusDotColor = "bg-[#26a541]"; // green
-  } else if (
-    [
-      "cancelled",
-      "failed",
-      "returned",
-      "refunded",
-      "payment_failed",
-      "cancellation_approved",
-      "cancellation_rejected",
-    ].includes(s)
-  ) {
-    statusDotColor = "bg-[#ff6161]"; // red
-  } else if (["pending_payment"].includes(s)) {
-    statusDotColor = "bg-[#ff9f00]"; // orange
-  }
-
-  const isDelivered = ["delivered", "completed", "refunded"].includes(s);
-  // Refunded and returned items should NOT show the review option
-  const canReview = isDelivered && !["refunded", "returned"].includes(s);
-  const isUnreviewed = 
-    !item.has_reviewed && 
-    !item.is_reviewed && 
-    !locallyReviewedProducts.has(productId) &&
-    !myReview;
-
-  // Eager fetch to know if user already reviewed it in a past order
-  useEffect(() => {
-    if (canReview && isUnreviewed && !hasCheckedReview && productId) {
-      dispatch(fetchMyProductReview({ productId })).finally(() => {
-        setHasCheckedReview(true);
-      });
-    }
-  }, [canReview, isUnreviewed, hasCheckedReview, productId, dispatch]);
-
-  return (
-    <article className="group relative overflow-hidden rounded-xl border border-[#E4DDCF] bg-white transition-all duration-200 hover:border-[#D6A323]/40 shadow-2xs">
-            <div className="hidden sm:grid grid-cols-12 items-start gap-4 p-4">
-        <Link
-          to={itemDetailPath}
-          onClick={handleCardClick}
-          className="col-span-7 flex items-start gap-4 min-w-0 group/link"
-        >
-          <div className="relative flex aspect-square w-16 sm:w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E4DDCF]/80 bg-[#FAF6EE]/50 p-1.5">
-            {itemImage ? (
-              <img
-                loading="lazy"
-                width="400"
-                height="400"
-                src={itemImage}
-                alt={productTitle}
-                className="h-full w-full object-contain"
-              />
-            ) : (
-              <Package size={28} className="text-[#9E886A]/50" />
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2 min-w-0 flex-1">
-            <h3 className="text-sm font-bold text-[#1F2430] group-hover/link:text-[#201B78] transition-colors leading-snug line-clamp-2">
-              <ShowMoreText
-                text={productTitle}
-                mode="characters"
-                limit={58}
-                moreLabel="more"
-                lessLabel="less"
-                textClassName="inline"
-                buttonClassName="ml-1 text-xs font-semibold text-[#201B78] hover:underline"
-              />
-            </h3>
-
-            <div className="flex flex-wrap items-center gap-1.5 text-xs mt-1">
-              {getOrderItemColor(item) !== "N/A" && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-medium bg-[#FAF6EE] text-[#1F2430] border border-[#E4DDCF]/80">
-                  <span className="text-[#6F7480] font-normal">Color:</span>
-                  {getOrderItemColor(item)}
-                </span>
-              )}
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-medium bg-[#FAF6EE] text-[#1F2430] border border-[#E4DDCF]/80">
-                <span className="text-[#6F7480] font-normal">Qty:</span>
-                {orderedQuantity}
-              </span>
-            </div>
-          </div>
-        </Link>
-
-        {/* Middle Section: Price (col-span-2) */}
-        <div className="col-span-2 flex flex-col items-start justify-start min-w-0">
-          <span className="text-base sm:text-lg font-extrabold text-[#1F2430] tracking-tight">
-            {formatMoney(itemTotal, currency)}
-          </span>
-        </div>
-
-        {/* Right Section: Status & Date & Actions (col-span-3) */}
-        <div className="col-span-3 flex min-w-0 gap-2 items-start justify-start">
-          <span className={`h-2.5 w-2.5 rounded-full ${statusDotColor} shrink-0 mt-[5px]`} />
-          <div className="flex flex-col items-start min-w-0">
-            <span className="text-sm font-semibold text-[#1F2430] whitespace-nowrap">
-              {humanize(itemStatus, "Processing")} on {formatOrderDate(createdAt)}
-            </span>
-
-            <p className="text-xs text-[#6F7480] mt-0.5">
-              {s === "delivered"
-                ? "Your item has been delivered"
-                : s === "cancelled"
-                ? "Your order was cancelled"
-                : "Your order is being processed"}
-            </p>
-
-            {/* Review Section positioned under Status without creating extra space */}
-            {canReview && (
-              <div
-                className="mt-2"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-              >
-                {isUnreviewed ? (
-                  <div className="flex justify-center items-center gap-2.5">
-                    <div 
-                      className="flex items-center gap-1"
-                      onMouseLeave={() => setHoverStar(0)}
-                    >
-                      {[1, 2, 3, 4, 5].map((star) => {
-                        const isFilled = star <= (hoverStar || 0);
-                        return (
-                          <button
-                            key={star}
-                            type="button" 
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              if (onReviewClick) onReviewClick(item, order, star);
-                            }}
-                            onMouseEnter={() => setHoverStar(star)}
-                            className="focus:outline-none transition-transform hover:scale-115"
-                            aria-label={`${star} star`}
-                          >
-                            {isFilled ? (
-                              <PiStarFill size={24} className="text-[#F59E0B]" />
-                            ) : (
-                              <PiStarThin size={24} className="text-[#9CA3AF]" />
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <button
-                      type="button" 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (onReviewClick) onReviewClick(item, order, hoverStar || 5);
-                      }}
-                      className="text-xs font-semibold text-[#201B78] hover:text-[#15115D] no-underline border-none outline-none focus:outline-none whitespace-nowrap cursor-pointer"
-                    >
-                      Rate & Review Product
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <PiStarFill key={star} size={20} className="text-[#16A34A]" />
-                      ))}
-                    </div>
-                    <span className="inline-flex items-center rounded-md bg-[#DCFCE7] px-2 py-0.5 text-[11px] font-bold text-[#15803D]">
-                      Reviewed
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Layout */}
-      <div className="flex sm:hidden p-3.5 gap-3 items-center">
-        <Link
-          to={itemDetailPath}
-          onClick={handleCardClick}
-          className="flex flex-1 items-center gap-3 min-w-0"
-        >
-          <div className="relative flex aspect-square w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E4DDCF]/80 bg-[#FAF6EE]/50 p-1.5">
-            {itemImage ? (
-              <img
-                loading="lazy"
-                width="400"
-                height="400"
-                src={itemImage}
-                alt={productTitle}
-                className="h-full w-full object-contain"
-              />
-            ) : (
-              <Package size={28} className="text-[#9E886A]/50" />
-            )}
-          </div>
-          
-          <div className="flex flex-col gap-2 min-w-0 flex-1">
-             <h3 className="text-sm font-bold text-[#1F2430] leading-snug line-clamp-1">
-                {productTitle}
-             </h3>
-             <span className="text-xs font-semibold text-[#1F2430] mt-0.5">
-                {humanize(itemStatus, "Processing")}
-             </span>
-             {canReview && (
-               <div 
-                 className="mt-1 w-fit"
-                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-               >
-                 {isUnreviewed ? (
-                   <div className="flex items-center gap-2 mt-1">
-                     <div 
-                       className="flex items-center gap-0.5"
-                       onMouseLeave={() => setHoverStar(0)}
-                     >
-                       {[1, 2, 3, 4, 5].map((star) => {
-                         const isFilled = star <= (hoverStar || 0);
-                         return (
-                           <button
-                             key={star}
-                             type="button" 
-                             onClick={(e) => {
-                               e.preventDefault();
-                               e.stopPropagation();
-                               if (onReviewClick) onReviewClick(item, order, star);
-                             }}
-                             onMouseEnter={() => setHoverStar(star)}
-                             className="focus:outline-none"
-                             aria-label={`${star} star`}
-                           >
-                              {isFilled ? (
-                                <PiStarFill size={19} className="text-[#F59E0B]" />
-                              ) : (
-                                <PiStarThin size={19} className="text-[#9CA3AF]" />
-                              )}
-                           </button>
-                         );
-                       })}
-                     </div>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          if (onReviewClick) onReviewClick(item, order, hoverStar || 5);
-                        }}
-                        className="text-[11px] font-semibold text-[#201B78] hover:text-[#15115D] no-underline border-none outline-none focus:outline-none cursor-pointer"
-                      >
-                        Rate & Review
-                      </button>
-                   </div>
-                 ) : (
-                   <div className="inline-flex items-center gap-1.5 rounded-lg bg-[#F0FDF4] px-2.5 py-1">
-                     <div className="flex items-center gap-0.5">
-                       {[1, 2, 3, 4, 5].map((star) => (
-                         <PiStarFill key={star} size={18} className="text-[#16A34A]" />
-                       ))}
-                     </div>
-                     <span className="text-[#BBF7D0]">|</span>
-                     <span className="text-[11px] font-bold text-[#1F2430]">5.0</span>
-                     <span className="text-[#BBF7D0]">|</span>
-                     <span className="text-[10px] font-bold text-[#065F46]">Reviewed</span>
-                   </div>
-                 )}
-               </div>
-             )}
-          </div>
-        </Link>
-        <div className="flex flex-col items-end shrink-0">
-          <span className="text-sm font-extrabold text-[#1F2430] tracking-tight">
-            {formatMoney(itemTotal, currency)}
-          </span>
-          <span className="text-[10px] font-medium text-[#6F7480] mt-1">
-             {formatOrderDate(createdAt)}
-          </span>
-        </div>
-      </div>
-    </article>
-  );
-}
 
 const orderHelpItems = items.map((item) => ({
   icon: item.icon,
@@ -422,6 +87,30 @@ export default function OrderListPage() {
     order: null,
     initialRating: 0,
   });
+
+  // Batch fetch reviews for products shown on the current page
+  useEffect(() => {
+    if (orderItemsList?.length > 0) {
+      const productIdsToFetch = new Set();
+      
+      orderItemsList.forEach(({ order, item }) => {
+        const s = String(resolveOrderItemDisplayStatus(item, getOrderStatus(order), order?.shipments || [], [], order?.cancellations || [])).toLowerCase();
+        const canReview = ["delivered", "completed"].includes(s); // simplifcation
+        const isUnreviewed = !item.has_reviewed && !item.is_reviewed;
+        
+        if (canReview && isUnreviewed) {
+          const productId = getReviewProductId(item);
+          if (productId && !locallyReviewedProducts.has(productId)) {
+            productIdsToFetch.add(productId);
+          }
+        }
+      });
+
+      productIdsToFetch.forEach((productId) => {
+         dispatch(fetchMyProductReview({ productId }));
+      });
+    }
+  }, [orderItemsList, dispatch, locallyReviewedProducts]);
 
   const handleReviewClick = (item, order, rating = 0) => {
     setReviewModalState({ isOpen: true, item, order, initialRating: rating });
