@@ -9,6 +9,8 @@ import {
   getProductPrice,
   getVariantPrice,
 } from "../../../utils/ecommerce";
+import { apiRequest } from "../../../api/client";
+import { endpoints } from "../../../api/endpoints";
 
 export default function NotifyMeModal({
   open,
@@ -116,8 +118,11 @@ export default function NotifyMeModal({
       if (onSubmit) {
         await onSubmit(payload);
       } else {
-        // Simulating brief processing time
-        await new Promise((resolve) => setTimeout(resolve, 400));
+        await apiRequest({
+          method: "post",
+          url: endpoints.stockNotifications.create,
+          data: payload,
+        });
       }
       setSubmitted(true);
     } catch (err) {
