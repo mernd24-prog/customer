@@ -1,5 +1,15 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Truck, Copy, Calendar, PackageCheck, AlertCircle, ArrowUpRight } from "lucide-react";
+import {
+  Truck,
+  Copy,
+  Check,
+  CalendarDays,
+  Store,
+  PackageCheck,
+  AlertCircle,
+  ArrowUpRight,
+} from "lucide-react";
 import { ImageWithFallback } from "../../../components/ui";
 import { formatMoney } from "../../../utils/ecommerce";
 import ShowMoreText from "../../../utils/showMore";
@@ -41,11 +51,15 @@ export default function ReturnItemCard({
 }) {
   const badgeStyle = getStatusBadgeStyle(status);
 
+  const [copied, setCopied] = useState(false);
+
   const handleCopyReturnId = (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (returnId) {
       navigator.clipboard.writeText(returnId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
       notify.success("Return ID copied to clipboard!");
     }
   };
@@ -56,7 +70,7 @@ export default function ReturnItemCard({
     >
       {/* ── Top Header Bar ────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#EFE5D2] bg-[#FFFDF9] px-4 py-2.5 sm:px-5">
-        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-semibold text-[#4E4E4E]">
+        <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-xs font-semibold text-[#4E4E4E]">
           <div className="flex items-center gap-1.5 text-[#1B1D60]">
             <span className="text-[#6E6E6E]">Return ID:</span>
             <span className="font-mono font-bold text-[#1B1D60]">{returnId}</span>
@@ -64,19 +78,22 @@ export default function ReturnItemCard({
               type="button"
               onClick={handleCopyReturnId}
               title="Copy Return ID"
-              className="text-[#6E6E6E] hover:text-[#CE9F2D] transition-colors"
+              className="inline-flex items-center justify-center p-1 rounded hover:bg-[#FAF3E0] text-[#7A7365] hover:text-[#CE9F2D] transition-colors"
             >
-              <Copy size={13} />
+              {copied ? (
+                <Check size={13} className="text-emerald-600" />
+              ) : (
+                <Copy size={13} />
+              )}
             </button>
           </div>
           {requestedOn && (
-            <>
-              <span className="text-[#C0C4D0]">•</span>
-              <span className="flex items-center gap-1 text-[#6E6E6E]">
-                <Calendar size={13} className="text-[#6E6E6E]" />
-                Requested on {requestedOn}
+            <span className="flex items-center gap-1.5 text-[#6E6E6E]">
+              <CalendarDays size={13} className="text-[#CE9F2D] shrink-0" />
+              <span>
+                Requested on <span className="font-medium text-[#2E2E2E]">{requestedOn}</span>
               </span>
-            </>
+            </span>
           )}
         </div>
 
@@ -190,7 +207,7 @@ export default function ReturnItemCard({
                 {/* Expected Date */}
                 <div className="min-w-0 space-y-0.5">
                   <p className="text-[11px] font-medium text-[#6E6E6E] flex items-center gap-1">
-                    <Calendar size={13} className="text-[#CE9F2D] shrink-0" />
+                    <CalendarDays size={13} className="text-[#CE9F2D] shrink-0" />
                     Expected Date
                   </p>
                   <p className="text-xs sm:text-sm font-semibold text-[#1B1D60]">

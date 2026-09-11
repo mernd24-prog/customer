@@ -1,16 +1,76 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
+import {
+  Bell,
+  BellRing,
+  Mail,
+  MessageSquareText,
+  Smartphone,
+  SlidersHorizontal,
+  Clock,
+  Globe,
+  BookmarkCheck,
+  ChevronRight,
+  Check,
+  Sparkles,
+} from "lucide-react";
 
 import Seo from "../../components/ui/Seo";
 import ApiState from "../../components/ui/ApiState";
-import BrandButton from "../../components/ui/buttons/Button";
+import CustomDropdown from "../../components/ui/CustomDropdown";
 import { useToastThunk } from "../../hooks/useToastThunk";
 import {
   fetchNotificationPreferences,
   updateNotificationPreferences,
 } from "../../features/notification/notificationSlice";
 import { useFetch } from "../customer/helpers";
+import { cn } from "../../utils/common";
+import { BotanicalLeavesSvg } from "../../components/ui/icons";
+
+const CHANNELS = [
+  {
+    key: "email",
+    title: "Email Notifications",
+    description:
+      "Receive updates about your orders, offers and account activity via email.",
+    icon: Mail,
+  },
+  {
+    key: "sms",
+    title: "SMS Notifications",
+    description: "Get important updates directly on your mobile number.",
+    icon: MessageSquareText,
+  },
+  {
+    key: "push",
+    title: "Push Notifications",
+    description: "Stay informed with real-time updates on your device.",
+    icon: Bell,
+  },
+  {
+    key: "inApp",
+    title: "In-app Notifications",
+    description: "View all updates directly in the Sam Global app.",
+    icon: Smartphone,
+  },
+];
+
+const FREQUENCY_OPTIONS = [
+  { value: "real_time", label: "Real Time" },
+  { value: "daily", label: "Daily Digest" },
+  { value: "weekly", label: "Weekly Summary" },
+];
+
+const TIMEZONE_OPTIONS = [
+  { value: "UTC", label: "UTC" },
+  { value: "Asia/Kolkata", label: "Asia/Kolkata (IST)" },
+  { value: "America/New_York", label: "America/New_York (EST)" },
+  { value: "Europe/London", label: "Europe/London (GMT)" },
+  { value: "Asia/Dubai", label: "Asia/Dubai (GST)" },
+  { value: "Asia/Singapore", label: "Asia/Singapore (SGT)" },
+];
+
 
 export function PreferencesPage() {
   const dispatch = useDispatch();
@@ -20,16 +80,20 @@ export function PreferencesPage() {
     (s) => s.notification,
   );
   const run = useToastThunk();
-  const { register, handleSubmit, reset } = useForm({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { handleSubmit, reset, watch, setValue } = useForm({
     defaultValues: {
       email: true,
       sms: true,
       push: true,
       inApp: true,
       frequency: "real_time",
-      timezone: "Asia/Kolkata",
+      timezone: "UTC",
     },
   });
+
+  const values = watch();
 
   useEffect(() => {
     if (!state.current) return;
@@ -40,105 +104,217 @@ export function PreferencesPage() {
       push: prefs.channels?.push ?? true,
       inApp: prefs.channels?.inApp ?? true,
       frequency: prefs.frequency || "real_time",
-      timezone: prefs.timezone || "Asia/Kolkata",
+      timezone: prefs.timezone || "UTC",
     });
   }, [state.current, reset]);
 
-  const CHANNELS = [
-    { key: "email", label: "Email notifications" },
-    { key: "sms", label: "SMS notifications" },
-    { key: "push", label: "Push notifications" },
-    { key: "inApp", label: "In-app notifications" },
-  ];
+  const onSubmit = async (v) => {
+    try {
+      setIsSubmitting(true);
+      await run(
+        dispatch,
+        updateNotificationPreferences({
+          channels: {
+            email: Boolean(v.email),
+            sms: Boolean(v.sms),
+            push: Boolean(v.push),
+            inApp: Boolean(v.inApp),
+          },
+          eventTypes: {
+            order: true,
+            payment: true,
+            shipping: true,
+            promo: true,
+            referral: true,
+            newProduct: true,
+          },
+          frequency: v.frequency || "real_time",
+          doNotDisturbStart: "22:00",
+          doNotDisturbEnd: "07:00",
+          timezone: v.timezone || "UTC",
+        }),
+        "Preferences saved",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <>
       <Seo title="Notification Preferences | Sam Global" />
-      <div className="">
-        <h1 className=" my-6 text-2xl font-bold text-blue">
-          Notification Preferences
-        </h1>
-        <ApiState loading={state.loading} error={state.error} empty={false}>
-          <form
-            className="rounded-[12px] border border-border bg-white p-6 sm:p-8"
-            onSubmit={handleSubmit((v) =>
-              run(
-                dispatch,
-                updateNotificationPreferences({
-                  channels: {
-                    email: v.email,
-                    sms: v.sms,
-                    push: v.push,
-                    inApp: v.inApp,
-                  },
-                  eventTypes: {
-                    order: true,
-                    payment: true,
-                    shipping: true,
-                    promo: true,
-                    referral: true,
-                    newProduct: true,
-                  },
-                  frequency: v.frequency,
-                  doNotDisturbStart: "22:00",
-                  doNotDisturbEnd: "07:00",
-                  timezone: v.timezone,
-                }),
-                "Preferences saved",
-              ),
-            )}
-          >
-            <div className="mb-6">
-              <h2 className="mb-1  text-base font-semibold text-ink">
-                Channels
-              </h2>
-              <p className=" text-sm text-muted">
-                Choose how you&apos;d like to receive notifications.
+      <div className="w-full py-6 sm:py-8 lg:py-10">
+        {/* Top Header */}
+        <div className="relative mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5 sm:gap-5">
+           
+
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#1B1D60] tracking-tight">
+                Notification Preferences
+              </h1>
+              <p className="text-xs sm:text-sm text-[#6F7480] mt-1 font-medium">
+                Choose how you&apos;d like to receive notifications and stay
+                updated with your orders, offers and more.
               </p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {CHANNELS.map(({ key, label }) => (
-                <label
-                  key={key}
-                  className="flex cursor-pointer items-center justify-between gap-3 rounded-[10px] border border-border px-4 py-3"
-                >
-                  <span className=" text-sm font-medium text-ink">{label}</span>
-                  <input
-                    type="checkbox"
-                    {...register(key)}
-                    className="h-4 w-4 accent-gold"
-                  />
-                </label>
-              ))}
-            </div>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <label className="grid gap-1.5">
-                <span className=" text-sm font-medium text-ink">Frequency</span>
-                <select
-                  {...register("frequency")}
-                  className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5  text-sm text-ink outline-none focus:border-gold"
-                >
-                  <option value="real_time">Real Time</option>
-                  <option value="daily">Daily Digest</option>
-                </select>
-              </label>
-              <label className="grid gap-1.5">
-                <span className=" text-sm font-medium text-ink">Timezone</span>
-                <input
-                  {...register("timezone")}
-                  className="rounded-[8px] border border-border-strong bg-white px-3 py-2.5  text-sm text-ink outline-none focus:border-gold"
-                />
-              </label>
-            </div>
-            <div className="mt-6">
-              <BrandButton
-                variant="primary"
-                rounded
-                type="submit"
-                label="Save Preferences"
-                className="h-11 px-8 text-sm font-semibold"
-              />
-            </div>
+          </div>
+
+          
+        </div>
+
+        {/* Main Card */}
+        <ApiState loading={state.loading} error={state.error} empty={false}>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="rounded-2xl sm:rounded-3xl border border-[#E7D9B8] bg-white p-5 sm:p-7 lg:p-9 shadow-[0_10px_35px_rgba(17,24,39,0.06)]"
+          >
+            <div>
+              {/* Channels Heading with Sliders Icon */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-full bg-[#FAF3E0] border border-[#EADBBD] flex items-center justify-center text-[#CE9F2D] shadow-2xs shrink-0">
+                  <SlidersHorizontal size={18} />
+                </div>
+                <div>
+                  <h2 className="text-lg sm:text-xl font-bold text-[#1B1D60] leading-tight">
+                    Notification Channels
+                  </h2>
+                  <p className="text-xs sm:text-[13px] text-[#6F7480] mt-0.5">
+                    Select the channels you want to receive notifications
+                    through.
+                  </p>
+                </div>
+              </div>
+
+                  {/* 2x2 Channels Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
+                    {CHANNELS.map((ch) => {
+                      const isChecked = Boolean(values[ch.key]);
+                      const Icon = ch.icon;
+
+                      return (
+                        <div
+                          key={ch.key}
+                          onClick={() =>
+                            setValue(ch.key, !isChecked, { shouldDirty: true })
+                          }
+                          className={cn(
+                            "group relative flex items-center justify-between gap-3.5 p-4 rounded-xl border transition-all duration-200 cursor-pointer select-none",
+                            isChecked
+                              ? "border-[#E2D2B2] bg-[#FAF6EE]/80 shadow-xs"
+                              : "border-[#ECE2D0] bg-white hover:border-[#CE9F2D]/60 hover:bg-[#FAF6EE]/40",
+                          )}
+                        >
+                          <div className="flex items-center gap-3.5 min-w-0">
+                            {/* Double ring circular icon badge */}
+                            <div className="w-11 h-11 rounded-full bg-[#FAF3E0] border border-[#EADBBD] p-1 flex items-center justify-center shrink-0">
+                              <div className="w-full h-full rounded-full bg-[#1B1D60] flex items-center justify-center text-[#CE9F2D] shadow-xs group-hover:scale-105 transition-transform duration-200">
+                                <Icon size={16} />
+                              </div>
+                            </div>
+
+                            <div className="min-w-0">
+                              <h4 className="text-[14px] font-bold text-[#1B1D60] leading-tight">
+                                {ch.title}
+                              </h4>
+                              <p className="text-[11px] sm:text-[12px] text-[#6F7480] mt-1 leading-snug line-clamp-2">
+                                {ch.description}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Custom Checkbox */}
+                          <div
+                            className={cn(
+                              "w-5 h-5 rounded-[5px] border flex items-center justify-center shrink-0 transition-colors duration-200",
+                              isChecked
+                                ? "bg-[#CE9F2D] border-[#CE9F2D] text-white shadow-2xs"
+                                : "border-[#CBD5E1] bg-white group-hover:border-[#CE9F2D]",
+                            )}
+                          >
+                            {isChecked && (
+                              <Check size={13} className="stroke-[3]" />
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Frequency & Timezone Row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mt-6 pt-5 border-t border-[#F2EADC]">
+                    {/* Frequency */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Clock size={16} className="text-[#1B1D60] shrink-0" />
+                        <span className="text-sm font-bold text-[#1B1D60]">
+                          Frequency
+                        </span>
+                      </div>
+                      <p className="text-[11px] sm:text-xs text-[#6F7480] mb-2.5">
+                        How often would you like to receive notifications?
+                      </p>
+                      <CustomDropdown
+                        options={FREQUENCY_OPTIONS}
+                        value={values.frequency}
+                        onChange={(val) =>
+                          setValue("frequency", val, { shouldDirty: true })
+                        }
+                        className="w-full"
+                        buttonClassName="h-11 rounded-lg border-[#CE9F2D] bg-white text-xs sm:text-sm font-semibold text-[#1B1D60]"
+                      />
+                    </div>
+
+                    {/* Timezone */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Globe size={16} className="text-[#1B1D60] shrink-0" />
+                        <span className="text-sm font-bold text-[#1B1D60]">
+                          Timezone
+                        </span>
+                      </div>
+                      <p className="text-[11px] sm:text-xs text-[#6F7480] mb-2.5">
+                        Select your preferred timezone.
+                      </p>
+                      <CustomDropdown
+                        options={TIMEZONE_OPTIONS}
+                        value={values.timezone}
+                        onChange={(val) =>
+                          setValue("timezone", val, { shouldDirty: true })
+                        }
+                        className="w-full"
+                        buttonClassName="h-11 rounded-lg border-[#CE9F2D] bg-white text-xs sm:text-sm font-semibold text-[#1B1D60]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Save Preferences Button */}
+                <div className="mt-8 flex items-center justify-start">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={cn(
+                      "flex items-center gap-2.5 px-6 py-3 rounded-xl",
+                      "bg-gradient-to-r from-[#D6A323] via-[#CE9F2D] to-[#B8871B]",
+                      "text-white font-bold text-[14px]",
+                      "shadow-[0_4px_16px_rgba(206,159,45,0.35)]",
+                      "hover:shadow-[0_6px_22px_rgba(206,159,45,0.45)] hover:scale-[1.01] active:scale-[0.99]",
+                      "transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed",
+                    )}
+                  >
+                    <BookmarkCheck size={18} className="text-white shrink-0" />
+                    <span>
+                      {isSubmitting
+                        ? "Saving Preferences..."
+                        : "Save Preferences"}
+                    </span>
+                    <ChevronRight
+                      size={16}
+                      className="text-white/90 shrink-0"
+                    />
+                  </button>
+                </div>
           </form>
         </ApiState>
       </div>

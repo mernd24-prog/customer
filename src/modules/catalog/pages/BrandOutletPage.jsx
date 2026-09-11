@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import Seo from "../../../components/ui/Seo";
 import BrandCard from "../components/BrandCard";
+import { EmptyState } from "../../../components/ui/feedback";
 import {
   CollectionToolbar,
   Pagination,
@@ -211,13 +213,27 @@ export default function BrandOutletPage() {
                   />
                 </>
               ) : (
-                <div
-                  className={`${stateContainerClass} border border-[var(--customer-border)] bg-[var(--customer-cream)]`}
+                <EmptyState
+                  imageSrc="/image/png/NoProductFound.png"
+                  title="No Brands Found"
+                  description="We couldn't find any brands available at the moment. Please check back later or explore our products."
                 >
-                  <p className="text-sm font-semibold text-[var(--customer-ink)]">
-                    No Brands Available Right Now.
-                  </p>
-                </div>
+                  <div className="flex flex-wrap items-center justify-center gap-3.5">
+                    <Link
+                      to="/products"
+                      className="inline-flex items-center justify-center gap-2 h-11 px-6 rounded-full bg-gradient-to-r from-[#B8891F] to-[#CE9F2D] text-white font-bold text-sm shadow-sm hover:from-[#3E4093] hover:to-[#1B1D60] hover:shadow-md transition-all duration-200"
+                    >
+                      <span>Explore Products</span>
+                      <ArrowRight size={16} />
+                    </Link>
+                    <Link
+                      to="/categories"
+                      className="inline-flex items-center justify-center gap-2 h-11 px-6 rounded-full border border-[#CE9F2D] text-[#1B1D60] font-bold text-sm hover:bg-[#FAF8F3] hover:border-[#B8891F] transition-all duration-200"
+                    >
+                      <span>Browse Categories</span>
+                    </Link>
+                  </div>
+                </EmptyState>
               )}
             </section>
           </div>

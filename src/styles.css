@@ -704,6 +704,34 @@ select:not([multiple]):disabled {
   background-color: var(--customer-border) !important;
 }
 
+/* Custom slim pill scrollbar for dropdown menus */
+.dropdown-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.dropdown-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+}
+
+.dropdown-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #CE9F2D;
+  border-radius: 9999px;
+}
+
+.dropdown-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #A96F14;
+}
+
+.dropdown-scrollbar::-webkit-scrollbar-button,
+.dropdown-scrollbar::-webkit-scrollbar-button:single-button,
+.dropdown-scrollbar::-webkit-scrollbar-button:vertical:decrement,
+.dropdown-scrollbar::-webkit-scrollbar-button:vertical:increment {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 .filter-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #CE9F2D33 transparent;

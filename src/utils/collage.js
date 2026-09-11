@@ -91,26 +91,17 @@ export const completeSection = (section = {}) => ({
   images: (section.images || []).filter((item) => item?.image).slice(0, 4),
 });
 
-export const resolveVisibleSections = (apiSections = [], cmsSections = [], fallbackSections = []) => {
-  const realApiSections = apiSections.filter(hasImages).map(completeSection);
+export const resolveVisibleSections = (apiSections = [], cmsSections = []) => {
+  const realApiSections = (Array.isArray(apiSections) ? apiSections : [])
+    .filter(hasImages)
+    .map(completeSection);
   if (realApiSections.length) return realApiSections.slice(0, 4);
 
-  const byKeyOrTitle = (items = []) => {
-    const map = new Map();
-    items.forEach((section) => {
-      if (section.key) map.set(section.key, section);
-      if (section.title) map.set(section.title, section);
-    });
-    return map;
-  };
-  const apiMap = byKeyOrTitle(apiSections);
-  const cmsMap = byKeyOrTitle(cmsSections);
+  const realCmsSections = (Array.isArray(cmsSections) ? cmsSections : [])
+    .filter(hasImages)
+    .map(completeSection);
+  if (realCmsSections.length) return realCmsSections.slice(0, 4);
 
-  return fallbackSections.map((fallback) => {
-    const apiSection = apiMap.get(fallback.key) || apiMap.get(fallback.title);
-    if (hasImages(apiSection)) return completeSection(apiSection);
-    const cmsSection = cmsMap.get(fallback.key) || cmsMap.get(fallback.title);
-    if (hasImages(cmsSection)) return completeSection(cmsSection);
-    return completeSection(fallback);
-  });
+  return [];
 };
+

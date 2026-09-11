@@ -173,19 +173,18 @@ export function HomePage() {
         <ShoppingMadeEasyBanner />
       </LazySection>
 
-      <LazySection minHeight="400px">
-        <CollageSection cmsPages={cmsPages} loading={isCmsLoading || homeLoading} />
-      </LazySection>
 
-      <LazySection minHeight="450px">
-        <FeaturedProductsSection
-          title="Featured Products"
-          actionLabel="View All Products"
-          actionHref="/products"
-          products={featuredProducts}
-          loading={loading}
-        />
-      </LazySection>
+      {!loading && !featuredProducts.length ? null : (
+        <LazySection minHeight="450px">
+          <FeaturedProductsSection
+            title="Featured Products"
+            actionLabel="View All Products"
+            actionHref="/products"
+            products={featuredProducts}
+            loading={loading}
+          />
+        </LazySection>
+      )}
 
       {/* <LazySection minHeight="500px">
         <section className="">
