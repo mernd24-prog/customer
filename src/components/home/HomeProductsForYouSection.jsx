@@ -61,7 +61,10 @@ export default function HomeProductsForYouSection({
       .unwrap()
       .then((result) => {
         setLocalProducts(getProductListFromResponse(result));
-        const pagination = getPagination(result, getProductListFromResponse(result));
+        const pagination = getPagination(
+          result,
+          getProductListFromResponse(result),
+        );
         setTotalPages(pagination.totalPages || 1);
         setPage(1);
       })
@@ -73,14 +76,16 @@ export default function HomeProductsForYouSection({
     if (isLoadingMore || page >= totalPages) return;
     setIsLoadingMore(true);
     const nextPage = page + 1;
-    
+
     dispatch(fetchProducts({ limit, page: nextPage, sort: "newest" }))
       .unwrap()
       .then((result) => {
         const newProducts = getProductListFromResponse(result);
         setLocalProducts((prev) => {
-          const seen = new Set(prev.map(p => getProductId(p)));
-          const uniqueNew = newProducts.filter(p => !seen.has(getProductId(p)));
+          const seen = new Set(prev.map((p) => getProductId(p)));
+          const uniqueNew = newProducts.filter(
+            (p) => !seen.has(getProductId(p)),
+          );
           return [...prev, ...uniqueNew];
         });
         const pagination = getPagination(result, newProducts);
@@ -107,17 +112,15 @@ export default function HomeProductsForYouSection({
     return () => observer.disconnect();
   }, [page, totalPages, loadNextPage]);
 
-  const products = (
-    localProducts.length
-      ? localProducts
-      : reduxProducts.length
-        ? reduxProducts
-        : trending.length
-          ? trending
-          : recommendations.length
-            ? recommendations
-            : fallback
-  );
+  const products = localProducts.length
+    ? localProducts
+    : reduxProducts.length
+      ? reduxProducts
+      : trending.length
+        ? trending
+        : recommendations.length
+          ? recommendations
+          : fallback;
 
   return (
     <SectionContainer
@@ -139,7 +142,7 @@ export default function HomeProductsForYouSection({
           />
         ) : products.length > 0 ? (
           <>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 my-4 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {products.map((product) => (
                 <ProductCard
                   key={getProductId(product)}
@@ -151,7 +154,10 @@ export default function HomeProductsForYouSection({
               ))}
             </div>
             {page < totalPages && (
-              <div ref={sentinelRef} className="h-10 mt-8 flex items-center justify-center">
+              <div
+                ref={sentinelRef}
+                className="h-10 mt-8 flex items-center justify-center"
+              >
                 {isLoadingMore && (
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
                 )}

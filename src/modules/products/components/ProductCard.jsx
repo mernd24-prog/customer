@@ -511,7 +511,12 @@ export default function ProductCard({
                 onError={handleImageError}
               />
               {isHovered && allImages.length > 1 && (
-                <div className="absolute bottom-3 inset-x-0 z-20 flex justify-center items-center gap-1.5 px-2 pointer-events-none">
+                <div
+                  className={cn(
+                    "absolute inset-x-0 z-20 flex justify-center items-center gap-1.5 px-2 pointer-events-none",
+                    isDealProduct && dealEndDate ? "bottom-8" : "bottom-3",
+                  )}
+                >
                   {allImages.slice(0, 6).map((_, idx) => (
                     <div
                       key={idx}
@@ -529,6 +534,26 @@ export default function ProductCard({
           ) : (
             <div className="flex h-full w-full items-center justify-center text-[var(--customer-border-strong)]">
               <ShoppingCart size={48} strokeWidth={1.4} />
+            </div>
+          )}
+          {isDealProduct && dealEndDate && (
+            <div className="absolute inset-x-0 bottom-0 z-20 flex h-[26px] sm:h-[29px] items-center justify-between px-2.5 sm:px-3 bg-[#FFFDF8]/95 backdrop-blur-md border-t border-[#EEDFB9]/80 shadow-[0_-2px_6px_rgba(0,0,0,0.02)] pointer-events-none">
+              <div className="flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-[#1B1D60]">
+                <span className="relative flex h-2 w-2 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                <span className="flex items-center gap-1">
+                  <span>Ends</span>
+                </span>
+              </div>
+              <span className="truncate flex gap-1 items-center text-xs sm:text-[13px] font-bold text-[#1B1D60]">
+                <Clock3
+                  size={13}
+                  className="text-[#1B1D60] shrink-0 font-bold"
+                />
+                {dealEndDate}
+              </span>
             </div>
           )}
         </div>
@@ -565,17 +590,6 @@ export default function ProductCard({
             priceClassName="text-sm sm:text-base font-extrabold text-[#1B1D60] md:text-lg 2xl:text-[20px]"
             oldPriceClassName="text-xs sm:text-base font-semibold text-[#737373] line-through md:text-lg 2xl:text-[20px]"
           />
-
-          {isDealProduct && dealEndDate && (
-            <div className="mt-auto flex items-center justify-between gap-1.5 sm:gap-3 rounded-[8px] sm:rounded-[12px] border border-[#EEDFB9] bg-[#FFFDF8] px-2 sm:px-3 py-1 sm:py-2">
-              <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.5px] text-[#9A6A00]">
-                <Clock3 size={12} className="sm:w-[13px] sm:h-[13px]" /> Deal
-              </span>
-              <span className="truncate text-[10px] sm:text-[12px] font-bold text-[#1B1D60]">
-                {dealEndDate}
-              </span>
-            </div>
-          )}
         </div>
       </Link>
 

@@ -413,6 +413,19 @@ export function useProductDetailController(
       ? `Only ${availableStock} in stock`
       : "";
 
+  const rawBrand =
+    product?.brand ||
+    product?.brandName ||
+    product?.brand?.name ||
+    product?.brand?.title ||
+    product?.brandTitle ||
+    selectedVariant?.brand ||
+    "";
+  const brand =
+    typeof rawBrand === "object"
+      ? rawBrand?.name || rawBrand?.title || rawBrand?.label || ""
+      : String(rawBrand || "").trim();
+
   const categoryLabel = product?.category
     ? (product.category || "")
         .replace(/-/g, " ")
@@ -420,7 +433,7 @@ export function useProductDetailController(
     : null;
 
   const rawDetails = {
-    Brand: product?.brand,
+    Brand: brand || product?.brand,
     Category: categoryLabel,
     ...attributes,
   };
@@ -557,6 +570,7 @@ export function useProductDetailController(
     quantityAtStockLimit,
     quantityStockMessage,
     categoryLabel,
+    brand,
     rawDetails,
     detailRows,
     productTitle,

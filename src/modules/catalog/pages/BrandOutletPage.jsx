@@ -18,7 +18,7 @@ import {
   getBrandLogo,
   getBrandProductCount,
 } from "../../../utils/pages/brandUtils";
-import { getPagination } from "../../../utils/filterUtils";
+import { scrollToTop } from "../../../utils/common";
 
 const PAGE_SIZE_OPTIONS = [12, 20, 36, 48];
 
@@ -28,48 +28,43 @@ export default function BrandOutletPage() {
   const [brandList, setBrandList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [viewMode] = useState("grid");
 
   const page = Math.max(1, Number(searchParams.get("page") || 1));
-  const limit = Number(searchParams.get("limit") || 20);
+  const limit = Math.max(1, Number(searchParams.get("limit") || 12));
+  const sort = searchParams.get("sort") || "name-asc";
+  const search = searchParams.get("q") || "";
 
   useEffect(() => {
-    setLoading(true);
-    setError("");
-
-    dispatch(fetchBrands({ params: { limit: 500 } }))
-      .then((result) => {
-        const brands = listFromPayload(result?.payload);
-        setBrandList(brands);
+    dispatch(fetchBrands({ limit: 500 }))
+      .unwrap()
+      .then((res) => {
+        setBrandList(listFromPayload(res));
       })
       .catch((err) => {
-        setError(String(err?.message || err || "Failed to load brands"));
+        setError(err?.message || "Failed to load brands.");
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, [dispatch]);
 
   const brands = useMemo(() => {
-    return brandList
-      .map((brand) => {
-        const brandName = getBrandName(brand);
-        return {
-          ...brand,
-          displayName: brandName,
-          routeKey: getBrandRouteKey(brand),
-          displayLogo: getBrandLogo(brand),
-          productCount: getBrandProductCount(brand),
-        };
-      })
-      .filter(
-        (brand) => brand.displayName && brand.routeKey && brand.productCount > 0
-      )
-      .sort((a, b) =>
-        a.displayName.localeCompare(b.displayName, undefined, {
-          sensitivity: "base",
-        })
-      );
-  }, [brandList]);
+    let list = Array.isArray(brandList) ? [...brandList] : [];
+
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      list = list.filter((b) => getBrandName(b).toLowerCase().includes(q));
+    }
+
+    if (sort === "name-asc") {
+      list.sort((a, b) => getBrandName(a).localeCompare(getBrandName(b)));
+    } else if (sort === "name-desc") {
+      list.sort((a, b) => getBrandName(b).localeCompare(getBrandName(a)));
+    } else if (sort === "products-desc") {
+      list.sort((a, b) => getBrandProductCount(b) - getBrandProductCount(a));
+    }
+
+    return list;
+  }, [brandList, search, sort]);
 
   const totalBrands = brands.length;
   const totalPages = Math.max(1, Math.ceil(totalBrands / limit));
@@ -81,23 +76,24 @@ export default function BrandOutletPage() {
   }, [brands, currentPage, limit]);
 
   const updateParam = (key, value) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (value == null || value === "") {
-        next.delete(key);
-      } else {
-        next.set(key, value);
-      }
-      if (key !== "page") {
-        next.delete("page");
-      }
-      return next;
+    scrollToTop(() => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        if (value == null || value === "") {
+          next.delete(key);
+        } else {
+          next.set(key, value);
+        }
+        if (key !== "page") {
+          next.delete("page");
+        }
+        return next;
+      });
     });
   };
 
   const handlePageChange = (newPage) => {
     updateParam("page", newPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const startItem = totalBrands ? (currentPage - 1) * limit + 1 : 0;

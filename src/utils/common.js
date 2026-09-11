@@ -20,8 +20,35 @@ export function normalizeDialCode(dialCode = "") {
     .trim()
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
-export function scrollToTop() {
-  if (typeof window !== "undefined") {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+export function scrollToTop(callback) {
+  if (typeof window === "undefined") {
+    callback?.();
+    return;
+  }
+
+  if (window.scrollY <= 10) {
+    callback?.();
+    return;
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  if (typeof callback === "function") {
+    let timer = null;
+    const onScroll = () => {
+      if (window.scrollY <= 5) {
+        window.removeEventListener("scroll", onScroll);
+        if (timer) clearTimeout(timer);
+        callback();
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    // Fallback in case scroll finishes or is interrupted
+    timer = setTimeout(() => {
+      window.removeEventListener("scroll", onScroll);
+      callback();
+    }, 280);
   }
 }

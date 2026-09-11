@@ -80,26 +80,26 @@ export default function CartItemCard({
           !isLastItem ? " border-b border-[#CE9F2D4D]" : ""
         }`}
       >
-        <div className="flex flex-col items-start sm:items-center gap-3 w-full">
-          <div className="flex items-start gap-3 w-full">
-            {showCheckbox && (
-              <label className="flex shrink-0 cursor-pointer items-center justify-center p-1 pt-1.5 sm:pt-2 rounded transition hover:bg-black/5">
-                <input
-                  type="checkbox"
-                  checked={selected}
-                  onChange={(event) =>
-                    onSelect?.(item?.id, event.target.checked)
-                  }
-                  className="h-4 w-4 rounded-[4px] border-[#A9B4D8] accent-[#3F4095] cursor-pointer"
-                />
-                <span className="sr-only">
-                  Select {item?.title} For Checkout
-                </span>
-              </label>
-            )}
+        <div className="flex items-start gap-2.5 sm:gap-3 w-full">
+          {showCheckbox && (
+            <label className="flex shrink-0 cursor-pointer items-center justify-center p-1 pt-1.5 sm:pt-2 rounded transition hover:bg-black/5">
+              <input
+                type="checkbox"
+                checked={selected}
+                onChange={(event) =>
+                  onSelect?.(item?.id, event.target.checked)
+                }
+                className="h-4 w-4 rounded-[4px] border-[#A9B4D8] accent-[#3F4095] cursor-pointer"
+              />
+              <span className="sr-only">
+                Select {item?.title} For Checkout
+              </span>
+            </label>
+          )}
 
+          <div className="flex flex-col items-center gap-3 flex-1 min-w-0">
             {item?.image && (
-              <div className="relative flex aspect-square w-full max-w-full sm:max-w-[165px] h-auto max-h-[260px] sm:max-h-[190px] items-center justify-center overflow-hidden rounded-[10px] border border-[#F0E6D2] bg-white flex-1">
+              <div className="relative flex aspect-square w-full max-w-full sm:max-w-[165px] h-auto max-h-[260px] sm:max-h-[190px] items-center justify-center overflow-hidden rounded-[10px] border border-[#F0E6D2] bg-white">
                 {productPath ? (
                   <Link
                     to={productPath}
@@ -140,25 +140,25 @@ export default function CartItemCard({
                 )}
               </div>
             )}
-          </div>
 
-          {showQuantitySelector && (
-            <div className="hidden sm:flex mt-1.5 w-full flex-col items-center">
-              <QuantitySelector
-                quantity={item.quantity}
-                onIncrease={() => onIncrease(item.id)}
-                onDecrease={() => onDecrease(item.id)}
-                max={quantityMax}
-                increaseDisabled={item.increaseDisabled}
-                increaseDisabledLabel={item.stockMessage || undefined}
-              />
-              {item.stockMessage ? (
-                <p className="mt-1 text-center text-xs font-semibold text-red-600">
-                  {item.stockMessage}
-                </p>
-              ) : null}
-            </div>
-          )}
+            {showQuantitySelector && (
+              <div className="hidden sm:flex mt-1.5 w-full flex-col items-center">
+                <QuantitySelector
+                  quantity={item.quantity}
+                  onIncrease={() => onIncrease(item.id)}
+                  onDecrease={() => onDecrease(item.id)}
+                  max={quantityMax}
+                  increaseDisabled={item.increaseDisabled}
+                  increaseDisabledLabel={item.stockMessage || undefined}
+                />
+                {item.stockMessage ? (
+                  <p className="mt-1 text-center text-xs font-semibold text-red-600">
+                    {item.stockMessage}
+                  </p>
+                ) : null}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="min-w-0 flex flex-col justify-between py-1">

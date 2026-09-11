@@ -111,6 +111,8 @@ export default function ProductDetailPage() {
     findVariantForSelection,
     variantMatchesSelection,
     getVariantAttributeValue,
+    categoryLabel,
+    brand,
     detailRows,
     loadedProductId,
   } = useProductDetailController(productId, rawParamId, decodedProductId);
@@ -206,7 +208,7 @@ export default function ProductDetailPage() {
                     </>
                   )}
 
-                <span title={productTitle} className="font-medium text-gold">
+                <span title={productTitle} className="font-medium text-gold ">
                   {isProductTitleTruncated
                     ? `${productTitlePreview}...`
                     : productTitle}
@@ -234,58 +236,71 @@ export default function ProductDetailPage() {
                   />
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-4">
-                  <div className="flex min-w-0 items-start justify-between gap-3">
-                    <div className="min-w-0 w-full">
-                      <h1 className="break-words block text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px] leading-snug">
-                        <ShowMoreText
-                          text={productTitle}
-                          mode="lines"
-                          limit={1}
-                          buttonClassName="ml-1 text-sm font-semibold text-black/50 hover:underline"
-                        />
-                      </h1>
-                    </div>
-                  </div>
+                <div className="flex min-w-0 flex-col gap-3.5 sm:gap-4">
+                  <div className="flex min-w-0 flex-col gap-2">
+                    {brand && (
+                      <Link
+                        to={`/brands/${encodeURIComponent(brand)}`}
+                        className="w-fit text-xl sm:text-2xl font-extrabold tracking-tight text-[#1B1D60] hover:text-[#CE9F2D] transition-colors leading-tight"
+                      >
+                        {brand}
+                      </Link>
+                    )}
 
-                  {Number(product.rating || 0) > 0 && (
-                    <div className="flex items-center">
-                      <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
-                        {Number(product.rating || 0).toFixed(1)}
-                      </span>
-                      <div className="flex gap-0.5">
-                        {Array.from({ length: 5 }).map((_, i) => {
-                          const stars = Math.round(
-                            Math.max(
-                              0,
-                              Math.min(Number(product.rating || 0), 5),
-                            ),
-                          );
-                          return (
-                            <Star
-                              key={i}
-                              size={16}
-                              className={
-                                i < stars
-                                  ? "fill-[#F58220] text-[#F58220]"
-                                  : "fill-border text-border"
-                              }
-                            />
-                          );
-                        })}
+                    <h1
+                      className={`break-words block leading-snug ${
+                        brand
+                          ? "text-sm sm:text-base font-medium text-[#595E6B]"
+                          : "text-lg font-bold text-[#1B1D60] md:text-xl lg:text-[22px]"
+                      }`}
+                    >
+                      <ShowMoreText
+                        text={productTitle}
+                        mode="lines"
+                        limit={2}
+                        buttonClassName="ml-1 text-xs sm:text-sm font-semibold text-[#CE9F2D] hover:underline"
+                      />
+                    </h1>
+
+                    {Number(product.rating || 0) > 0 && (
+                      <div className="flex items-center">
+                        <span className="mr-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
+                          {Number(product.rating || 0).toFixed(1)}
+                        </span>
+                        <div className="flex gap-0.5">
+                          {Array.from({ length: 5 }).map((_, i) => {
+                            const stars = Math.round(
+                              Math.max(
+                                0,
+                                Math.min(Number(product.rating || 0), 5),
+                              ),
+                            );
+                            return (
+                              <Star
+                                key={i}
+                                size={16}
+                                className={
+                                  i < stars
+                                    ? "fill-[#F58220] text-[#F58220]"
+                                    : "fill-border text-border"
+                                }
+                              />
+                            );
+                          })}
+                        </div>
+                        <span className="ml-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
+                          ({product.reviewCount || product.ratingCount || "0"})
+                        </span>
                       </div>
-                      <span className="ml-3 font-dm-sans text-[12px] font-medium leading-[100%] tracking-[0px] align-middle text-[#2E2E2E] sm:text-[13px] lg:text-[14px]">
-                        ({product.reviewCount || product.ratingCount || "0"})
-                      </span>
-                    </div>
-                  )}
+                    )}
 
-                  <ProductStockStatus
-                    inStock={inStock}
-                    selectedVariant={selectedVariant}
-                    product={product}
-                    availableStock={availableStock}
-                  />
+                    <ProductStockStatus
+                      inStock={inStock}
+                      selectedVariant={selectedVariant}
+                      product={product}
+                      availableStock={availableStock}
+                    />
+                  </div>
 
                   <ProductPriceBlock
                     price={price}

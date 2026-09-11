@@ -152,7 +152,7 @@ export function HomePage() {
         description="Discover the best deals on fashion, electronics, home and more at Sam Global."
       />
       <Banner />
-      <CategoryBar />
+      <CategoryBar loading={homeLoading && !categories.length} />
 
       <HomeCategoryGrid
         categories={categories}

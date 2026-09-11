@@ -159,7 +159,10 @@ function ProductReviewCard({ review, currentUser, currentUserId, onHelpful }) {
       </div>
 
       <div className="mt-2 text-xs sm:text-sm leading-[1.6]">
-        <RatingPill rating={rating} className="mr-2 align-middle relative -top-[1.5px]" />
+        <RatingPill
+          rating={rating}
+          className="mr-2 align-middle relative -top-[1.5px]"
+        />
         {review.title && (
           <span className="font-bold text-[#1F2430] inline">
             {review.title}
@@ -793,7 +796,10 @@ export default function ProductReviewsSection({ productId, product }) {
                 className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#CE9F2D] hover:text-[#A96F14] transition-colors"
               >
                 <span>View All Reviews ({displayTotal})</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
+                <ArrowRight
+                  className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1"
+                  strokeWidth={2.5}
+                />
               </Link>
             </div>
           )}

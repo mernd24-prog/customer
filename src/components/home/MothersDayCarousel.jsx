@@ -59,7 +59,7 @@ export default function MothersDayCarousel({ data = [] }) {
               type="button"
               onClick={() => handleScroll("left")}
               aria-label="Scroll left"
-              className="absolute -left-2 sm:left-1 lg:-left-4 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white/95 text-gray-800 shadow-md transition-all duration-200 hover:bg-white hover:scale-105 hover:shadow-lg focus:outline-none"
+              className="absolute -left-2 sm:left-1 lg:-left-4 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white/95 text-gray-800 shadow-md transition-all duration-200 hover:bg-white  hover:shadow-lg focus:outline-none"
             >
               <IoChevronBack className="text-lg sm:text-xl text-[#333]" />
             </button>
@@ -71,7 +71,7 @@ export default function MothersDayCarousel({ data = [] }) {
               type="button"
               onClick={() => handleScroll("right")}
               aria-label="Scroll right"
-              className="absolute -right-2 sm:right-1 lg:-right-4 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white/95 text-gray-800 shadow-md transition-all duration-200 hover:bg-white hover:scale-105 hover:shadow-lg focus:outline-none"
+              className="absolute -right-2 sm:right-1 lg:-right-4 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-white/95 text-gray-800 shadow-md transition-all duration-200 hover:bg-white  hover:shadow-lg focus:outline-none"
             >
               <IoChevronForward className="text-lg sm:text-xl text-[#333]" />
             </button>
@@ -89,7 +89,7 @@ export default function MothersDayCarousel({ data = [] }) {
                 <Link
                   key={index}
                   to={cardLink}
-                  className="relative overflow-hidden rounded-xl sm:rounded-2xl group shadow-md sm:shadow-xl h-[240px] min-[375px]:h-[270px] min-[425px]:h-[310px] sm:h-[360px] md:h-[380px] lg:h-[420px] xl:h-[450px] w-[72vw] min-[375px]:w-[68vw] min-[425px]:w-[260px] sm:w-[280px] md:w-[300px] lg:w-[calc(25%-15px)] shrink-0 snap-start block transition-transform duration-300 hover:-translate-y-1"
+                  className="relative overflow-hidden rounded-xl sm:rounded-2xl group shadow-md sm:shadow-xl h-[240px] min-[375px]:h-[270px] min-[425px]:h-[310px] sm:h-[360px] md:h-[380px] lg:h-[420px] xl:h-[450px] w-[72vw] min-[375px]:w-[68vw] min-[425px]:w-[260px] sm:w-[280px] md:w-[300px] lg:w-[calc(25%-15px)] shrink-0 snap-start block"
                 >
                   {/* Product image */}
                   <img
@@ -99,7 +99,7 @@ export default function MothersDayCarousel({ data = [] }) {
                     decoding="async"
                     width="371"
                     height="480"
-                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
                   />
 
                   {/* Bottom gradient */}
@@ -118,9 +118,9 @@ export default function MothersDayCarousel({ data = [] }) {
                     </h3>
 
                     {/* Explore button */}
-                    <span className="mt-1 sm:mt-2 inline-flex items-center gap-1 sm:gap-1.5 h-[28px] sm:h-[32px] md:h-[36px] w-fit rounded-full bg-[#CE9F2D] px-2.5 sm:px-4 text-[11px] sm:text-xs md:text-sm font-bold leading-none text-white shadow-md transition-all duration-300 group-hover:bg-[#B88B22] group-hover:shadow-lg group-hover:scale-105">
+                    <span className="mt-1 sm:mt-2 inline-flex items-center gap-1 sm:gap-1.5 h-[28px] sm:h-[32px] md:h-[36px] w-fit rounded-full bg-[#CE9F2D] px-2.5 sm:px-4 text-[11px] sm:text-xs md:text-sm font-bold leading-none text-white shadow-md transition-colors duration-300 group-hover:bg-[#B88B22] group-hover:shadow-lg">
                       Explore
-                      <IoChevronForward className="text-[10px] sm:text-xs shrink-0 transition-transform duration-300 group-hover:translate-x-0.5" />
+                      <IoChevronForward className="text-[10px] sm:text-xs shrink-0" />
                     </span>
                   </div>
                 </Link>

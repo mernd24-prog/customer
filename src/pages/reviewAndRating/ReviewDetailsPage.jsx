@@ -12,7 +12,10 @@ import {
   fetchMyProductReview,
   markReviewHelpful,
 } from "../../features/review/reviewSlice";
-import { getImageUrlFromValue, getProductPublicPath } from "../../utils/ecommerce";
+import {
+  getImageUrlFromValue,
+  getProductPublicPath,
+} from "../../utils/ecommerce";
 import {
   sortReviews,
   getUserDisplayName,
@@ -68,7 +71,10 @@ function ProductReviewSidebar({ product, productId }) {
         Back to Product
       </Link>
 
-      <img loading="lazy" width="400" height="400"
+      <img
+        loading="lazy"
+        width="400"
+        height="400"
         src={product.image}
         alt={product.title}
         className="aspect-[8/8] max-w-[800px] w-full rounded-[4px] bg-[var(--customer-cream)] object-contain"
@@ -233,7 +239,10 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
   return (
     <article className="border-b border-border py-5 last:border-b-0">
       <div className="mb-3 flex items-center gap-2">
-        <img loading="lazy" width="400" height="400"
+        <img
+          loading="lazy"
+          width="400"
+          height="400"
           src={review.buyerImage || "/image/png/person.png"}
           alt={name}
           className="size-10 rounded-full object-cover"
@@ -273,7 +282,10 @@ function ReviewCard({ review, currentUser, currentUserId, onHelpful }) {
               onClick={() => setLightboxIndex(index)}
               className="block h-20 w-20  overflow-hidden rounded-[8px] border border-gold/20 bg-cream sm:h-24 sm:w-24"
             >
-              <img loading="lazy" width="400" height="400"
+              <img
+                loading="lazy"
+                width="400"
+                height="400"
                 src={url}
                 alt={`Review media ${index + 1}`}
                 className="h-full w-full object-cover"
@@ -425,7 +437,8 @@ function ReviewPagination({ page, totalPages, onPrev, onNext }) {
 export default function ReviewDetailsPage() {
   const { productId: routeProductId, publicCode, productToken } = useParams();
   const rawRouteProductId = publicCode || routeProductId;
-  const isRawObjectIdRoute = !productToken && /^[a-f0-9]{24}$/i.test(String(rawRouteProductId || ""));
+  const isRawObjectIdRoute =
+    !productToken && /^[a-f0-9]{24}$/i.test(String(rawRouteProductId || ""));
   const productId = isRawObjectIdRoute ? "" : productToken || rawRouteProductId;
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -546,64 +559,71 @@ export default function ReviewDetailsPage() {
     setRatingFilter((current) => (current === star ? null : star));
     setPage(1);
   }, []);
-  
+
   const handleSort = useCallback((value) => {
     setSort(value);
     setPage(1);
   }, []);
-  
-  const handleHelpful = useCallback((reviewId) => {
-    if (!userId) {
-      openAuthModal();
-      return;
-    }
-    if (!reviewId) return;
-    dispatch(markReviewHelpful({ productId, reviewId }));
-  }, [userId, openAuthModal, dispatch, productId]);
+
+  const handleHelpful = useCallback(
+    (reviewId) => {
+      if (!userId) {
+        openAuthModal();
+        return;
+      }
+      if (!reviewId) return;
+      dispatch(markReviewHelpful({ productId, reviewId }));
+    },
+    [userId, openAuthModal, dispatch, productId],
+  );
 
   return (
     <AppErrorBoundary>
       <main className="bg-white">
-      <Seo 
-        title={product?.title ? `${product.title} Reviews - Sam Global` : "Product Reviews - Sam Global"} 
-        metaDescription={`Read customer reviews and ratings for ${product?.title || 'this product'}.`} 
-      />
-      <div className="mx-auto grid max-w-[1180px] gap-8 px-4 py-8 lg:grid-cols-[280px_1fr]">
-        <ProductReviewSidebar product={product} productId={productId} />
+        <Seo
+          title={
+            product?.title
+              ? `${product.title} Reviews - Sam Global`
+              : "Product Reviews - Sam Global"
+          }
+          metaDescription={`Read customer reviews and ratings for ${product?.title || "this product"}.`}
+        />
+        <div className="mx-auto grid max-w-[1180px] gap-8 px-4 py-8 lg:grid-cols-[280px_1fr]">
+          <ProductReviewSidebar product={product} productId={productId} />
 
-        <section className="min-w-0">
-          <RatingSummary
-            avgRating={avgRating}
-            reviewCount={reviewCount}
-            ratingDist={ratingDist}
-            ratingFilter={ratingFilter}
-            onFilter={handleFilter}
-          />
-
-          <div className="py-5">
-            <ReviewsHeader total={total} sort={sort} onSort={handleSort} />
-
-            <ReviewList
-              loading={loading}
-              error={error}
-              visibleReviews={pinnedVisibleReviews}
+          <section className="min-w-0">
+            <RatingSummary
+              avgRating={avgRating}
+              reviewCount={reviewCount}
+              ratingDist={ratingDist}
               ratingFilter={ratingFilter}
-              userId={userId}
-              currentUser={currentUser}
-              onHelpful={handleHelpful}
-              hasReviewed={myReview?.status === "published"}
+              onFilter={handleFilter}
             />
 
-            <ReviewPagination
-              page={page}
-              totalPages={totalPages}
-              onPrev={() => setPage((p) => p - 1)}
-              onNext={() => setPage((p) => p + 1)}
-            />
-          </div>
-        </section>
-      </div>
-    </main>
-  </AppErrorBoundary>
+            <div className="py-5">
+              <ReviewsHeader total={total} sort={sort} onSort={handleSort} />
+
+              <ReviewList
+                loading={loading}
+                error={error}
+                visibleReviews={pinnedVisibleReviews}
+                ratingFilter={ratingFilter}
+                userId={userId}
+                currentUser={currentUser}
+                onHelpful={handleHelpful}
+                hasReviewed={myReview?.status === "published"}
+              />
+
+              <ReviewPagination
+                page={page}
+                totalPages={totalPages}
+                onPrev={() => setPage((p) => p - 1)}
+                onNext={() => setPage((p) => p + 1)}
+              />
+            </div>
+          </section>
+        </div>
+      </main>
+    </AppErrorBoundary>
   );
 }

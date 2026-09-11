@@ -27,9 +27,12 @@ import {
 import { CompactCategoryBar } from "./CompactCategoryBar";
 import { StickyNavStrip } from "./StickyNavStrip";
 
-export const CategoryBar = ({ headerData, compact = false }) => {
+export const CategoryBar = ({ headerData, compact = false, loading = false }) => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const catalogLoading = useSelector(
+    (state) => state.catalog?.loading || state.catalog?.discoveryNavigationLoading,
+  );
   const catalogCategoryList =
     useSelector(
       (state) => state.catalog.globalCategories || state.catalog.list,
@@ -202,7 +205,60 @@ export const CategoryBar = ({ headerData, compact = false }) => {
     [categories],
   );
 
-  if (!categories.length) return null;
+  const isLoading =
+    loading ||
+    (!categories.length && (catalogLoading || !headerData));
+
+  if (isLoading || !categories.length) {
+    if (compact) {
+      return (
+        <nav
+          aria-label="Category Navigation Loading"
+          style={{ top: `var(${HEADER_HEIGHT_VAR}, 0px)` }}
+          className="fixed left-0 z-40 w-full bg-white border-b border-[var(--customer-border)]"
+        >
+          <div className="customer-container mx-auto w-full relative">
+            <div className="w-full overflow-x-auto hide-scrollbar">
+              <div className="mx-auto flex h-[44px] w-max items-center gap-5 whitespace-nowrap px-4 sm:gap-7 sm:px-6 lg:h-[46px] animate-pulse">
+                {[64, 52, 58, 80, 48, 70, 46, 88, 68, 56].map((w, i) => (
+                  <div
+                    key={`compact-cat-skel-${i}`}
+                    className="h-3.5 sm:h-4 bg-slate-200/80 rounded-full"
+                    style={{ width: `${w}px` }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </nav>
+      );
+    }
+
+    return (
+      <header
+        className="relative left-1/2 mb-8 right-1/2 -ml-[50vw] -mr-[50vw] w-screen bg-[#FFF8ED] border-b border-[#EAD8B5] flex items-stretch min-h-[85px] sm:min-h-[112px] lg:min-h-[150px]"
+      >
+        <div className="customer-container mx-auto w-full relative z-20 flex items-stretch px-2 sm:px-4">
+          <div className="w-full overflow-x-auto hide-scrollbar flex items-stretch">
+            <div className="mx-auto flex w-full min-w-max xl:min-w-0 items-stretch justify-between gap-1 sm:gap-1.5 lg:gap-2.5 py-3 sm:pt-4 sm:pb-2.5 lg:pt-4.5 lg:pb-3">
+              {[54, 46, 50, 68, 42, 58, 38, 72, 62, 58].map((w, index) => (
+                <div
+                  key={`category-skeleton-${index}`}
+                  className="flex-1 flex flex-col items-center justify-center px-1 sm:px-2 lg:px-3 min-w-[62px] sm:min-w-[88px] lg:min-w-[105px] animate-pulse"
+                >
+                  <div className="h-[28px] w-[32px] sm:h-[42px] sm:w-[46px] lg:h-[46px] lg:w-[52px] rounded-lg bg-[#EAD8B5]/60 flex items-center justify-center" />
+                  <div
+                    className="mt-3 sm:mt-4 lg:mt-4.5 h-2.5 sm:h-3 lg:h-3.5 rounded-full bg-[#EAD8B5]/75"
+                    style={{ width: `${w}px`, maxWidth: "85%" }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   // ── Compact mode: fixed text-only bar ──────────────────────────────────
   if (compact) {
