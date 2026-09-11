@@ -75,16 +75,16 @@ export default function FeaturedProductsSection({
         actionHref={actionHref}
         actionStyle="icon"
         mobileActionStyle="button"
-        className="rounded-3xl py-2 mb-8"
+        className="rounded-3xl py-2 px-3 sm:px-5 my-8 md:my-12"
         style={{ backgroundImage: "linear-gradient(to bottom, #e1d5b4, #e2d1f0)" }}
         disablePadding={true}
-        contentClassName="px-2 sm:px-2 lg:px-2"
-        headerClassName="px-4 sm:px-4 lg:px-4"
+        contentClassName="px-2 sm:px-3"
+        headerClassName="px-2 sm:px-3"
       >
         <SkeletonLoader
           preset="PRODUCT_CARD"
           count={5}
-          containerClass="grid grid-cols-2 mt-4 md:mt-0 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+          containerClass="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
           wrapperClass="min-w-0"
         />
       </SectionContainer>
@@ -102,13 +102,13 @@ export default function FeaturedProductsSection({
       actionHref={actionHref}
       actionStyle="icon"
       mobileActionStyle="button"
-      className="rounded-3xl py-2 mb-8"
+      className="rounded-3xl py-2 px-3 sm:px-5 my-8 md:my-12"
       style={{ backgroundImage: "linear-gradient(to bottom, #e1d5b4, #e2d1f0)" }}
       disablePadding={true}
-      contentClassName="px-2 sm:px-2 lg:px-2"
-      headerClassName="px-4 sm:px-4 lg:px-4"
+      contentClassName="px-2 sm:px-3 pb-2"
+      headerClassName="px-2 sm:px-3"
     >
-      <div className="grid grid-cols-2 my-4 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {displayProducts.map((product, index) => (
           <ProductCard
             key={getProductId(product) || `featured-product-${index}`}

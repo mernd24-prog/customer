@@ -5,7 +5,7 @@ export default function ShoppingMadeEasyBanner({ className = "" }) {
   return (
     <Link
       to="/deals"
-      className={`group mt-8 md:mt-12 flex w-full aspect-[16/9] sm:aspect-[2/1] md:aspect-[2.5/1] lg:aspect-[3/1] items-center overflow-hidden rounded-xl cursor-pointer block ${className}`}
+      className={`group my-8 md:my-12 flex w-full aspect-[16/9] sm:aspect-[2/1] md:aspect-[2.5/1] lg:aspect-[3/1] items-center overflow-hidden rounded-xl cursor-pointer block ${className}`}
       style={{
         backgroundImage: `url("${defaultBannerImage}")`,
         backgroundSize: "cover",

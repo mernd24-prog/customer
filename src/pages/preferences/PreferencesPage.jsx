@@ -63,12 +63,12 @@ const FREQUENCY_OPTIONS = [
 ];
 
 const TIMEZONE_OPTIONS = [
-  { value: "UTC", label: "UTC" },
-  { value: "Asia/Kolkata", label: "Asia/Kolkata (IST)" },
-  { value: "America/New_York", label: "America/New_York (EST)" },
-  { value: "Europe/London", label: "Europe/London (GMT)" },
-  { value: "Asia/Dubai", label: "Asia/Dubai (GST)" },
-  { value: "Asia/Singapore", label: "Asia/Singapore (SGT)" },
+  { value: "Asia/Kolkata", label: "Asia/Kolkata (IST, UTC+05:30)" },
+  { value: "UTC", label: "UTC (Coordinated Universal Time)" },
+  { value: "Asia/Dubai", label: "Asia/Dubai (GST, UTC+04:00)" },
+  { value: "Asia/Singapore", label: "Asia/Singapore (SGT, UTC+08:00)" },
+  { value: "Europe/London", label: "Europe/London (GMT/BST)" },
+  { value: "America/New_York", label: "America/New_York (EST/EDT)" },
 ];
 
 
@@ -89,7 +89,7 @@ export function PreferencesPage() {
       push: true,
       inApp: true,
       frequency: "real_time",
-      timezone: "UTC",
+      timezone: "Asia/Kolkata",
     },
   });
 
@@ -104,7 +104,7 @@ export function PreferencesPage() {
       push: prefs.channels?.push ?? true,
       inApp: prefs.channels?.inApp ?? true,
       frequency: prefs.frequency || "real_time",
-      timezone: prefs.timezone || "UTC",
+      timezone: prefs.timezone || "Asia/Kolkata",
     });
   }, [state.current, reset]);
 
@@ -131,7 +131,7 @@ export function PreferencesPage() {
           frequency: v.frequency || "real_time",
           doNotDisturbStart: "22:00",
           doNotDisturbEnd: "07:00",
-          timezone: v.timezone || "UTC",
+          timezone: v.timezone || "Asia/Kolkata",
         }),
         "Preferences saved",
       );
@@ -172,8 +172,8 @@ export function PreferencesPage() {
             <div>
               {/* Channels Heading with Sliders Icon */}
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-full bg-[#FAF3E0] border border-[#EADBBD] flex items-center justify-center text-[#CE9F2D] shadow-2xs shrink-0">
-                  <SlidersHorizontal size={18} />
+                <div className="w-10 h-10 rounded-xl bg-[#F4F6FB] border border-[#E2E8F0] flex items-center justify-center text-[#3E4093] shrink-0">
+                  <SlidersHorizontal size={18} strokeWidth={1.8} />
                 </div>
                 <div>
                   <h2 className="text-lg sm:text-xl font-bold text-[#1B1D60] leading-tight">
@@ -206,11 +206,16 @@ export function PreferencesPage() {
                           )}
                         >
                           <div className="flex items-center gap-3.5 min-w-0">
-                            {/* Double ring circular icon badge */}
-                            <div className="w-11 h-11 rounded-full bg-[#FAF3E0] border border-[#EADBBD] p-1 flex items-center justify-center shrink-0">
-                              <div className="w-full h-full rounded-full bg-[#1B1D60] flex items-center justify-center text-[#CE9F2D] shadow-xs group-hover:scale-105 transition-transform duration-200">
-                                <Icon size={16} />
-                              </div>
+                            {/* Soft, balanced icon container */}
+                            <div
+                              className={cn(
+                                "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-200",
+                                isChecked
+                                  ? "bg-[#FAF4E6] text-[#9A751E] border border-[#EADBBD]"
+                                  : "bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0] group-hover:bg-[#F1F5F9] group-hover:text-[#1B1D60]",
+                              )}
+                            >
+                              <Icon size={18} strokeWidth={1.8} />
                             </div>
 
                             <div className="min-w-0">
